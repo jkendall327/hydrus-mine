@@ -3651,3 +3651,10 @@ thumbnail Debug clear-action evidence gap, colour-picker clipping, thumbnail
 preview-checkbox input/enabled behavior and idle Options clipping remain pending.
 Six earlier sidebar/tab descriptions are corrected without changing their
 counts or assessments; original archived reviews remain unchanged.
+
+Colour-picker geometry and thumbnail preview-checkbox behavior are under the
+next bounded repair. The proposed layout retains the native RGB-only picker
+scope; it does not add Qt HSV/HTML/history features. Actual checkbox/dropdown input, displayed-state checks and
+disabled-state observations preserve the existing staging, cancellation and
+consumer assertions. These seven candidates remain unapproved until full Linux
+validation and fresh render review. The signed-off ledger remains 319.

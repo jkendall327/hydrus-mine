@@ -213,6 +213,8 @@ export component OptionsWindow inherits Window {
     callback page-chosen(int);
     // (each by the option's place among the page's rows)
     callback check-toggled(int, bool);
+    in property <bool> measure-check-states: false;
+    callback check-state-measured(int, MenuChoiceFrame, bool, bool);
     callback canvas-toggled(int, int, bool);
     callback number-edited(int, int);
     callback none-toggled(int, bool);
@@ -229,6 +231,9 @@ export component OptionsWindow inherits Window {
     // (a tag sort's type, order or grouping: the row, which, the choice)
     callback tag-sort-chosen(int, int, int);
     callback menu-choice-geometry(int,int,MenuChoiceFrame);
+    // Opt-in, read-only observation of the standard dropdown's displayed state.
+    in property <bool> measure-choice-states: false;
+    callback choice-state-measured(int,MenuChoiceFrame,int,string,bool);
     out property <length> options-scroll-y: option-scroll.content-y;
     in property <ContextCogServices> collect-cog-services;
     in property <[ContextCogItem]> collect-cog-extra;
@@ -389,9 +394,18 @@ export component OptionsWindow inherits Window {
                             }
                             if row.kind == 1: HorizontalLayout {
                                 width: 260px;
-                                CheckBox {
+                                check := CheckBox {
                                     checked: row.checked;
+                                    enabled: row.enabled;
                                     toggled => { root.check-toggled(i, self.checked); }
+                                }
+                                // Observe the actual widget without changing its state.
+                                Timer {
+                                    interval: 1ms;
+                                    running: root.measure-check-states;
+                                    triggered => {
+                                        root.check-state-measured(i,{x:check.absolute-position.x,y:check.absolute-position.y,w:check.width,h:check.height},check.checked,check.enabled);
+                                    }
                                 }
                             }
                             if row.kind == 33: VerticalLayout {
@@ -539,12 +553,22 @@ export component OptionsWindow inherits Window {
                                     clicked => { root.checker-clicked(i); }
                                 }
                             }
-                            if row.kind == 5 || row.kind == 15: ComboBox {
-                                enabled: row.enabled;
+                            if row.kind == 5 || row.kind == 15: HorizontalLayout {
                                 width: 260px;
-                                model: row.items;
-                                current-index: row.index;
-                                selected => { root.choice-chosen(i, self.current-index); }
+                                observed-choice := ComboBox {
+                                    enabled: row.enabled;
+                                    width: 260px;
+                                    model: row.items;
+                                    current-index: row.index;
+                                    selected => { root.choice-chosen(i, self.current-index); }
+                                }
+                                Timer {
+                                    interval: 1ms;
+                                    running: root.measure-choice-states;
+                                    triggered => {
+                                        root.choice-state-measured(i,{x:observed-choice.absolute-position.x,y:observed-choice.absolute-position.y,w:observed-choice.width,h:observed-choice.height},observed-choice.current-index,observed-choice.current-value,observed-choice.enabled);
+                                    }
+                                }
                             }
                             if row.kind == 10: VerticalLayout {
                                 width: 260px;

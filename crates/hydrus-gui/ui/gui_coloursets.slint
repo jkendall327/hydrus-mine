@@ -45,9 +45,27 @@ export component GuiColoursets {
         }
     }
 }
+export struct GuiColourPickerFrame { x:length,y:length,w:length,h:length }
+export struct GuiColourPickerSize { w:length,h:length }
 export component GuiColourPickerWindow inherits Window {
     title: "Select Color";
-    preferred-width: 440px;
+    preferred-width: max(440px, content.min-width);
+    preferred-height: content.preferred-height;
+    min-width: content.min-width;
+    min-height: content.min-height;
+    out property <GuiColourPickerSize> opening-size: {w:root.preferred-width,h:root.preferred-height};
+    out property <GuiColourPickerSize> minimum-size: {w:root.min-width,h:root.min-height};
+    // Read-only measurements of the real labels, editors and action buttons.
+    out property <[GuiColourPickerFrame]> control-frames: [
+        {x:red-label.absolute-position.x,y:red-label.absolute-position.y,w:red-label.width,h:red-label.height},
+        {x:red-input.absolute-position.x,y:red-input.absolute-position.y,w:red-input.width,h:red-input.height},
+        {x:green-label.absolute-position.x,y:green-label.absolute-position.y,w:green-label.width,h:green-label.height},
+        {x:green-input.absolute-position.x,y:green-input.absolute-position.y,w:green-input.width,h:green-input.height},
+        {x:blue-label.absolute-position.x,y:blue-label.absolute-position.y,w:blue-label.width,h:blue-label.height},
+        {x:blue-input.absolute-position.x,y:blue-input.absolute-position.y,w:blue-input.width,h:blue-input.height},
+        {x:ok.absolute-position.x,y:ok.absolute-position.y,w:ok.width,h:ok.height},
+        {x:cancel.absolute-position.x,y:cancel.absolute-position.y,w:cancel.width,h:cancel.height}
+    ];
     background: Theme.window;
     in-out property <int> red;
     in-out property <int> green;
@@ -61,19 +79,32 @@ export component GuiColourPickerWindow inherits Window {
             if event.text == Key.Return { root.accepted(root.red,root.green,root.blue); return accept; }
             reject
         }
-        VerticalLayout {
-            padding:12px;spacing:10px;
+        content := VerticalLayout {
+            padding:12px;spacing:10px;alignment:start;
             HorizontalLayout {
-                spacing:8px;
-                Rectangle { width:42px;height:42px;background:rgb(root.red,root.green,root.blue);border-width:1px;border-color:Theme.border; }
-                Text { text:"Red:";vertical-alignment:center; }
-                SpinBox { minimum:0;maximum:255;value<=>root.red; }
-                Text { text:"Green:";vertical-alignment:center; }
-                SpinBox { minimum:0;maximum:255;value<=>root.green; }
-                Text { text:"Blue:";vertical-alignment:center; }
-                SpinBox { minimum:0;maximum:255;value<=>root.blue; }
+                spacing:8px;vertical-stretch:0;
+                Rectangle { width:42px;height:42px;horizontal-stretch:0;vertical-stretch:0;background:rgb(root.red,root.green,root.blue);border-width:1px;border-color:Theme.border; }
+                GridLayout {
+                    spacing:8px;
+                    Row {
+                        red-label := Text { text:"Red:";vertical-alignment:center; }
+                        red-input := SpinBox { minimum:0;maximum:255;value<=>root.red; }
+                    }
+                    Row {
+                        green-label := Text { text:"Green:";vertical-alignment:center; }
+                        green-input := SpinBox { minimum:0;maximum:255;value<=>root.green; }
+                    }
+                    Row {
+                        blue-label := Text { text:"Blue:";vertical-alignment:center; }
+                        blue-input := SpinBox { minimum:0;maximum:255;value<=>root.blue; }
+                    }
+                }
             }
-            HorizontalLayout { alignment:end; Button { text:"OK";clicked=>{root.accepted(root.red,root.green,root.blue);} } Button { text:"Cancel";clicked=>{root.cancelled();} } }
+            HorizontalLayout {
+                alignment:end;vertical-stretch:0;
+                ok := Button { text:"OK";clicked=>{root.accepted(root.red,root.green,root.blue);} }
+                cancel := Button { text:"Cancel";clicked=>{root.cancelled();} }
+            }
         }
     }
 }

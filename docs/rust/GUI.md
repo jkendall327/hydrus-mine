@@ -4535,3 +4535,13 @@ and accepted draft within the existing deadline; the fresh capture shows my tags
 Full Linux validation and independent review at `7c3c1aac5` support 18 further
 scoped completions, bringing the published ledger to 319. Capture and consumer
 limits remain explicit in the checkpoint; 56 candidates remain pending.
+
+The next seven-candidate repair stacks the RGB picker controls beside its swatch
+and derives opening/minimum dimensions from the content. Strict regressions
+measure every label, editor and action at both sizes. Colour settings replay
+uses actual checkbox/dropdown input and checks displayed values before capture.
+Thumbnail preview settings
+now honor their enabled state in the real checkbox, and replay selects them
+through pointer input while checking that disabled children cannot toggle.
+Full Linux execution and fresh independent review remain pending; no new
+completion credit is assigned before that checkpoint.

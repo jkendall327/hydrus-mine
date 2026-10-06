@@ -7,7 +7,12 @@ use hydrus_store::{
 };
 use serde_json::{Value, json};
 use slint::{ComponentHandle as _, Model as _};
-use std::time::{Duration, Instant};
+use std::{
+    cell::RefCell,
+    collections::BTreeMap,
+    rc::Rc,
+    time::{Duration, Instant},
+};
 const OVERRIDE: &str = "override what is set in the stylesheet with the colours on this page: ";
 const CURRENT: &str = "current colourset: ";
 fn values(settings: &Settings) -> Value {
@@ -84,6 +89,153 @@ fn save_png(windows: &headless::Windows, index: usize, name: &str, width: u32, h
     )
     .unwrap();
 }
+type CheckStates = Rc<RefCell<BTreeMap<i32, (hydrus_gui::MenuChoiceFrame, bool, bool)>>>;
+type ChoiceStates =
+    Rc<RefCell<BTreeMap<i32, (hydrus_gui::MenuChoiceFrame, i32, slint::SharedString, bool)>>>;
+struct ColourControls {
+    checks: CheckStates,
+    choices: ChoiceStates,
+}
+fn observe_colour_controls(options: &OptionsWindow) -> ColourControls {
+    let controls = ColourControls {
+        checks: Rc::default(),
+        choices: Rc::default(),
+    };
+    options.on_check_state_measured({
+        let checks = controls.checks.clone();
+        move |row, frame, checked, enabled| {
+            checks.borrow_mut().insert(row, (frame, checked, enabled));
+        }
+    });
+    options.on_choice_state_measured({
+        let choices = controls.choices.clone();
+        move |row, frame, index, label, enabled| {
+            choices
+                .borrow_mut()
+                .insert(row, (frame, index, label, enabled));
+        }
+    });
+    options.set_measure_check_states(true);
+    options.set_measure_choice_states(true);
+    controls
+}
+fn wait_colour_controls(
+    options: &OptionsWindow,
+    native: &slint::platform::software_renderer::MinimalSoftwareWindow,
+    controls: &ColourControls,
+    checked: bool,
+    index: i32,
+    label: &str,
+) {
+    // A fresh Timer observation must describe the actual widgets after input.
+    controls.checks.borrow_mut().clear();
+    controls.choices.borrow_mut().clear();
+    let check_row = row(options, OVERRIDE);
+    let choice_row = row(options, CURRENT);
+    let deadline = Instant::now() + Duration::from_secs(2);
+    loop {
+        headless::render(native, 950, 700);
+        let check_matches =
+            controls
+                .checks
+                .borrow()
+                .get(&check_row)
+                .is_some_and(|(frame, actual, enabled)| {
+                    frame.w > 0.0 && frame.h > 0.0 && *actual == checked && *enabled
+                });
+        let choice_matches = controls.choices.borrow().get(&choice_row).is_some_and(
+            |(frame, actual, text, enabled)| {
+                frame.w > 0.0
+                    && frame.h > 0.0
+                    && *actual == index
+                    && text.as_str() == label
+                    && *enabled
+            },
+        );
+        if check_matches && choice_matches {
+            break;
+        }
+        assert!(
+            Instant::now() < deadline,
+            "real Colours controls did not display override={checked}, current={index}/{label}"
+        );
+        std::thread::sleep(Duration::from_millis(2));
+    }
+}
+fn click_colour_control(
+    native: &slint::platform::software_renderer::MinimalSoftwareWindow,
+    frame: &hydrus_gui::MenuChoiceFrame,
+) {
+    use slint::platform::{PointerEventButton, WindowEvent};
+    assert!(frame.w > 0.0 && frame.h > 0.0);
+    let position = slint::LogicalPosition::new(frame.x + frame.w / 2.0, frame.y + frame.h / 2.0);
+    assert!(position.x > 0.0 && position.x < 950.0);
+    assert!(position.y > 0.0 && position.y < 700.0);
+    native.dispatch_event(WindowEvent::PointerMoved { position });
+    native.dispatch_event(WindowEvent::PointerPressed {
+        position,
+        button: PointerEventButton::Left,
+    });
+    native.dispatch_event(WindowEvent::PointerReleased {
+        position,
+        button: PointerEventButton::Left,
+    });
+}
+fn colour_choice_key(
+    native: &slint::platform::software_renderer::MinimalSoftwareWindow,
+    key: slint::platform::Key,
+) {
+    let text: slint::SharedString = key.into();
+    native.dispatch_event(slint::platform::WindowEvent::KeyPressed { text: text.clone() });
+    native.dispatch_event(slint::platform::WindowEvent::KeyReleased { text });
+    headless::render(native, 950, 700);
+}
+// Geometry comes from the actual controls after painting this exact viewport.
+fn assert_picker_controls_visible(
+    picker: &hydrus_gui::GuiColourPickerWindow,
+    size: slint::PhysicalSize,
+) {
+    let names = [
+        "Red label",
+        "Red editor",
+        "Green label",
+        "Green editor",
+        "Blue label",
+        "Blue editor",
+        "OK",
+        "Cancel",
+    ];
+    let frames: Vec<_> = picker.get_control_frames().iter().collect();
+    assert_eq!(frames.len(), names.len());
+    let logical = size.to_logical(1.0);
+    for (frame, name) in frames.iter().zip(names) {
+        assert!(
+            [frame.x, frame.y, frame.w, frame.h]
+                .into_iter()
+                .all(f32::is_finite)
+                && frame.w > 0.0
+                && frame.h > 0.0
+                && frame.x >= 0.0
+                && frame.y >= 0.0
+                && frame.x + frame.w <= logical.width
+                && frame.y + frame.h <= logical.height,
+            "{name} must fit the actual picker viewport: {frame:?}, viewport={size:?}"
+        );
+    }
+    for (index, frame) in frames.iter().enumerate() {
+        for (other_index, other) in frames.iter().enumerate().skip(index + 1) {
+            assert!(
+                frame.x + frame.w <= other.x
+                    || other.x + other.w <= frame.x
+                    || frame.y + frame.h <= other.y
+                    || other.y + other.h <= frame.y,
+                "{} and {} must not overlap",
+                names[index],
+                names[other_index]
+            );
+        }
+    }
+}
 #[test]
 fn real_options_stage_all_roles_cancel_hidden_inputs_and_retire_owned_picker() {
     let qt = hydrus_testkit::fixture_json("gui_coloursets.json");
@@ -102,8 +254,30 @@ fn real_options_stage_all_roles_cancel_hidden_inputs_and_retire_owned_picker() {
     );
     options.invoke_gui_colour_chosen(0, 0);
     assert!(hydrus_gui::options_gui_colours::last_opened().is_none());
-    options.invoke_check_toggled(row(&options, OVERRIDE), true);
-    options.invoke_choice_chosen(row(&options, CURRENT), 1);
+    let controls = observe_colour_controls(&options);
+    wait_colour_controls(&options, &options_native, &controls, false, 0, "default");
+    let check_frame = controls
+        .checks
+        .borrow()
+        .get(&row(&options, OVERRIDE))
+        .unwrap()
+        .0
+        .clone();
+    click_colour_control(&options_native, &check_frame);
+    wait_colour_controls(&options, &options_native, &controls, true, 0, "default");
+    assert!(options.get_gui_colour_enabled());
+    let choice_frame = controls
+        .choices
+        .borrow()
+        .get(&row(&options, CURRENT))
+        .unwrap()
+        .0
+        .clone();
+    click_colour_control(&options_native, &choice_frame);
+    headless::render(&options_native, 950, 700);
+    colour_choice_key(&options_native, slint::platform::Key::DownArrow);
+    colour_choice_key(&options_native, slint::platform::Key::Return);
+    wait_colour_controls(&options, &options_native, &controls, true, 1, "darkmode");
     for edit in qt["role_edits"].as_array().unwrap() {
         let set = i32::from(edit["set"] == "darkmode");
         let role = i32::try_from(edit["role"].as_u64().unwrap()).unwrap();
@@ -130,13 +304,24 @@ fn real_options_stage_all_roles_cancel_hidden_inputs_and_retire_owned_picker() {
             assert!(bound.options.borrow().is_some());
             // The final real Store assertion requires darkmode, proving this
             // blocked current-choice callback did not replace the staged choice.
-            save_png(
-                &windows,
-                windows.count() - 1,
-                "gui-colour-picker.png",
-                440,
-                160,
-            );
+            // Exercise the production opening and minimum layout sizes, rather
+            // than making only the screenshot larger. Preserve the owned picker.
+            let adapter = windows.get(windows.count() - 1).unwrap();
+            for (name, requested) in [
+                ("gui-colour-picker.png", picker.get_opening_size()),
+                ("gui-colour-picker-minimum.png", picker.get_minimum_size()),
+            ] {
+                assert!(requested.w.is_finite() && requested.h.is_finite());
+                assert!(requested.w > 0.0 && requested.h > 0.0);
+                let size = slint::LogicalSize::new(requested.w.ceil(), requested.h.ceil())
+                    .to_physical(1.0);
+                for _ in 0..3 {
+                    headless::render(&adapter, size.width, size.height);
+                }
+                assert_eq!(picker.window().size(), size);
+                assert_picker_controls_visible(&picker, size);
+                save_png(&windows, windows.count() - 1, name, size.width, size.height);
+            }
         }
         picker.invoke_accepted(i32::from(rgb[0]), i32::from(rgb[1]), i32::from(rgb[2]));
         assert!(!picker.window().is_visible());
@@ -158,6 +343,7 @@ fn real_options_stage_all_roles_cancel_hidden_inputs_and_retire_owned_picker() {
         headless::render(&options_native, 950, 700);
     }
     assert_eq!(json!(colours(&options)), qt["saved"]["sets"]["darkmode"]);
+    wait_colour_controls(&options, &options_native, &controls, true, 1, "darkmode");
     save_png(&windows, 1, "gui-coloursets-options.png", 950, 700);
     options.invoke_apply();
     assert!(bound.options.borrow().is_none());
@@ -194,7 +380,32 @@ fn real_options_stage_all_roles_cancel_hidden_inputs_and_retire_owned_picker() {
     assert_eq!(values(&store.read(gui_colours::load).unwrap()), qt["saved"]);
     drop(old);
     assert!(weak.upgrade().is_none());
-    successor.invoke_check_toggled(row(&successor, OVERRIDE), false);
+    let successor_native = windows.get(windows.count() - 1).unwrap();
+    let successor_controls = observe_colour_controls(&successor);
+    wait_colour_controls(
+        &successor,
+        &successor_native,
+        &successor_controls,
+        true,
+        1,
+        "darkmode",
+    );
+    let frame = successor_controls
+        .checks
+        .borrow()
+        .get(&row(&successor, OVERRIDE))
+        .unwrap()
+        .0
+        .clone();
+    click_colour_control(&successor_native, &frame);
+    wait_colour_controls(
+        &successor,
+        &successor_native,
+        &successor_controls,
+        false,
+        1,
+        "darkmode",
+    );
     assert!(!successor.get_gui_colour_enabled());
     save_png(
         &windows,
