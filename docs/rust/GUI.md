@@ -4563,3 +4563,10 @@ or preference write. Full Linux validation and independent rendered review
 approve these three candidates at `c768fef48`. The checkpoint publishes 331
 signed-off leaves, 91 new across six October 6 checkpoints, with 44 pending;
 all 698 GUI and 67 media tests pass. The earlier compile-only failure is retained.
+
+The next three-candidate batch corrects duplicate-filter status text to the
+reference's black default while retaining the saved media-text colour override.
+Rendered regressions inspect foreground glyphs in the actual status bounds
+across the existing eight background/transparency cases and observe saved
+override-on/off updates in an already-open window. Full Linux validation and
+fresh independent render review are pending; the signed-off total remains 331.

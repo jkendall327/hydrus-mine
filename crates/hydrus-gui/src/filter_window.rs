@@ -892,6 +892,38 @@ mod colour_tests {
     };
     use serde_json::json;
 
+    fn assert_status_ink(window: &DuplicateFilterWindow, pixels: &[u8], colour: [u8; 3]) {
+        let (x, y, width, height) = (
+            window.get_status_x(),
+            window.get_status_y(),
+            window.get_status_width(),
+            window.get_status_height(),
+        );
+        assert!([x, y, width, height].into_iter().all(f32::is_finite));
+        assert!(x >= 0.0 && y >= 0.0 && width > 0.0 && height > 0.0);
+        assert!(x + width <= window.get_canvas_width() && y + height <= 600.0);
+        assert!(window.get_index_text().starts_with("File "));
+        assert_eq!(
+            window.get_status_colour(),
+            slint::Brush::from(slint::Color::from_rgb_u8(colour[0], colour[1], colour[2]))
+        );
+        // Only the actual glyph region: the transparent media probe and buttons
+        // are elsewhere, so their pixels cannot satisfy this status assertion.
+        let mut ink = 0;
+        for row in y.ceil() as usize..(y + height).floor() as usize {
+            for column in x.ceil() as usize..(x + width).floor() as usize {
+                let offset = (row * 800 + column) * 4;
+                if pixels[offset..offset + 3] == colour {
+                    ink += 1;
+                }
+            }
+        }
+        assert!(
+            ink >= 20,
+            "status must paint readable foreground glyphs: {ink}"
+        );
+    }
+
     #[test]
     fn live_pair_switch_preferences_and_painter_replay_qt_then_retire() {
         let fixture = hydrus_testkit::fixture_json("duplicate_colours.json");
@@ -996,6 +1028,7 @@ mod colour_tests {
             window.set_media_width(64.0);
             window.set_media_height(64.0);
             let pixels = crate::headless::render_snapshot(&adapter, 800, 600);
+            assert_status_ink(&window, &pixels, [0, 0, 0]);
             for (position, expected) in case["pixels"].as_object().unwrap() {
                 let (x, y) = position.split_once(',').unwrap();
                 let x = x.parse::<usize>().unwrap() + 100;
@@ -1016,6 +1049,45 @@ mod colour_tests {
             // Export exactly the native buffer checked against Qt's background samples.
             crate::headless::save_png(
                 &render_dir.join(format!("duplicate-colours-painter-{case_index}-native.png")),
+                &pixels,
+                800,
+                600,
+            )
+            .unwrap();
+        }
+        // Saved role overrides reach the existing owner through its normal
+        // 250ms Theme observer; switching the override off restores Qt's black.
+        for (enabled, expected, name) in [
+            (true, [151, 23, 91], "override"),
+            (false, [0, 0, 0], "override-off"),
+        ] {
+            store
+                .write(move |tx| {
+                    let mut colours = hydrus_store::gui_colours::load(tx.conn())?;
+                    colours.override_stylesheet = enabled;
+                    colours.sets[colours.current.min(1)][11] =
+                        hydrus_store::services::Rgb([151, 23, 91]);
+                    settings::set(tx.conn(), &colours)
+                })
+                .unwrap();
+            let started = std::time::Instant::now();
+            let expected_brush = slint::Brush::from(slint::Color::from_rgb_u8(
+                expected[0],
+                expected[1],
+                expected[2],
+            ));
+            loop {
+                crate::headless::render(&adapter, 800, 600);
+                if window.get_status_colour() == expected_brush {
+                    break;
+                }
+                assert!(started.elapsed() < Duration::from_secs(2));
+                std::thread::sleep(Duration::from_millis(10));
+            }
+            let pixels = crate::headless::render_snapshot(&adapter, 800, 600);
+            assert_status_ink(&window, &pixels, expected);
+            crate::headless::save_png(
+                &render_dir.join(format!("duplicate-colours-status-{name}-native.png")),
                 &pixels,
                 800,
                 600,

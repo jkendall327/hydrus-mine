@@ -3683,3 +3683,11 @@ thresholds: 331 signed off, 91 new across six October 6 checkpoints, 44 pending.
 The earlier compile-only E0373 failure is retained; the repaired run passes all
 698 GUI and 67 media tests. No matching Qt Options/menu images or full-pixel
 parity are claimed. Prior checkpoint paragraphs remain historical records.
+
+The next duplicate-colour repair uses Qt Canvas's default black status text
+instead of pale grey on the default white background. Saved role 11 still
+overrides that fallback; it does not introduce automatic contrast selection or
+arbitrary QSS parity. Existing A/B colour calculations, transparency samples,
+staging and ownership assertions remain intact. The three existing colour
+candidates await full Linux execution and fresh render review; no additional
+completion credit is claimed yet.
