@@ -23,6 +23,56 @@ JOBS = {'check': {'fmt', 'clippy', 'test', 'parity ratchet'},
         'parity-models': {'reference and backend tests'},
         'other-platforms (windows-latest)': {'build', 'test'},
         'other-platforms (macos-latest)': {'build', 'test'}}
+PUBLICATION_POLICY = '.github/publication-validation.json'
+LINUX_PLATFORMS = ['linux']
+DEFERRED_PLATFORMS = ['windows', 'macos']
+CROSS_PLATFORM_PLATFORMS = ['linux', 'windows', 'macos']
+
+
+def ci_scope(ci, commit):
+    """Resolve scope from immutable source policy, preserving legacy CI gates."""
+    scope = ci.get('validation_scope', 'cross-platform')
+    require(scope in ('linux', 'cross-platform'), 'Unknown CI validation scope')
+    if scope == 'cross-platform':
+        for field, expected in (('required_platforms', CROSS_PLATFORM_PLATFORMS),
+                                ('deferred_platforms', [])):
+            require(field not in ci or ci[field] == expected,
+                    f'CI {field} differs from cross-platform scope')
+        return {'validation_scope': scope, 'required_platforms': list(CROSS_PLATFORM_PLATFORMS),
+                'deferred_platforms': []}
+    try:
+        text = git('show', f'{commit}:{PUBLICATION_POLICY}')
+        policy = json.loads(text)
+    except (subprocess.CalledProcessError, json.JSONDecodeError) as error:
+        raise ValueError('Linux CI requires a valid policy at the exact source commit') from error
+    require(isinstance(policy, dict), 'Linux publication policy must be an object')
+    version = policy.get('schema_version')
+    require(isinstance(version, int) and not isinstance(version, bool) and version == 1,
+            'Unsupported Linux publication policy schema')
+    require(policy.get('publication_scope') == 'linux'
+            and policy.get('required_platforms') == LINUX_PLATFORMS
+            and policy.get('deferred_platforms') == DEFERRED_PLATFORMS
+            and policy.get('effective_date') == '2026-10-06'
+            and isinstance(policy.get('reason'), str) and policy['reason'].strip(),
+            'Linux publication policy differs from the owner-authorized scope')
+    require(ci.get('required_platforms') == LINUX_PLATFORMS
+            and ci.get('deferred_platforms') == DEFERRED_PLATFORMS,
+            'Linux CI must explicitly declare required and deferred platforms')
+    return {'validation_scope': scope, 'required_platforms': list(LINUX_PLATFORMS),
+            'deferred_platforms': list(DEFERRED_PLATFORMS),
+            'publication_policy': {'path': PUBLICATION_POLICY, 'source_commit': commit,
+                                   'sha256': hashlib.sha256(text.encode()).hexdigest(),
+                                   'effective_date': policy['effective_date'], 'reason': policy['reason']}}
+
+
+def validation_summary(validation):
+    if validation['validation_scope'] == 'linux':
+        hosted = ('Exact successful hosted Linux check and parity-models jobs. '
+                  'Windows and macOS validation is deferred under the exact-source owner policy. ')
+    else:
+        hosted = 'Exact successful hosted Linux check, Windows, macOS and parity-models jobs. '
+    return (hosted + 'Source inspection and author reference-recording provenance are separate; '
+            'no local Cargo or mutation testing by this tool.')
 
 
 def require(condition, message):
@@ -196,18 +246,31 @@ def validate_ci(ci, commit):
     require(ci.get('source_commit') == commit and ci.get('head_sha', ci.get('headSha')) == commit,
             'CI evidence must name the exact source SHA and run head SHA')
     require(ci.get('status') == 'completed' and ci.get('conclusion') == 'success', 'CI is not completed/successful')
+    validation = ci_scope(ci, commit)
+    required_jobs = {name: JOBS[name] for name in ('check', 'parity-models')} if validation['validation_scope'] == 'linux' else JOBS
     jobs = ci.get('jobs', [])
-    require(len(jobs) == len(JOBS) and {j.get('name') for j in jobs} == set(JOBS), 'CI required job set differs')
+    require(isinstance(jobs, list) and all(isinstance(job, dict) for job in jobs)
+            and len(jobs) == len(required_jobs) and {j.get('name') for j in jobs} == set(required_jobs),
+            'CI required job set differs')
     run_id = ci.get('run_id')
     require(isinstance(run_id, int) and not isinstance(run_id, bool) and run_id > 0, 'Invalid CI run ID')
     require(ci.get('url') == f'https://github.com/jkendall327/hydrus-mine/actions/runs/{run_id}', 'CI run URL differs')
     for job in jobs:
         require(job.get('run_id') == run_id and job.get('status') == 'completed'
                 and job.get('conclusion') == 'success', f'Unsuccessful/wrong-run CI job: {job.get("name")}')
-        steps = {s['name']: s for s in job.get('steps', [])}
-        for name in JOBS[job['name']]:
+        historical_head = commit if validation['validation_scope'] == 'cross-platform' else None
+        require(job.get('head_sha', job.get('headSha', historical_head)) == commit,
+                f'Wrong-source CI job: {job.get("name")}')
+        records = job.get('steps', [])
+        require(isinstance(records, list) and all(isinstance(step, dict) for step in records),
+                f'Invalid CI steps: {job.get("name")}')
+        steps = {s.get('name'): s for s in records}
+        for name in required_jobs[job['name']]:
+            require(sum(step.get('name') == name for step in records) == 1,
+                    f'CI required step duplicated/absent: {job["name"]}/{name}')
             require(name in steps and steps[name].get('status') == 'completed'
                     and steps[name].get('conclusion') == 'success', f'CI required step failed/absent: {job["name"]}/{name}')
+    return validation
 
 
 def write_outputs(output, files):
@@ -271,7 +334,10 @@ def prepare(commit, output):
 
 def publish(commit, output, patch, review, ci):
     cv = checkpoint(commit)
-    validate_ci(ci, commit)
+    validation = validate_ci(ci, commit)
+    ci = dict(ci, **validation)
+    if 'publication_policy' not in validation:
+        ci.pop('publication_policy', None)
     baseline, frozen, snapshots, prior, claims = inputs(commit)
     validate_ci(prior['ci_evidence'], prior['source_commit'])
     previous_reference = {n['id']: n['status'] for n in snapshots['reference']['nodes']}
@@ -352,8 +418,11 @@ def publish(commit, output, patch, review, ci):
     completed_ids = sorted(set(prior_ids) | set(selected))
     now = datetime.now(timezone.utc).isoformat()
     progress = dict(prior)
+    if 'publication_policy' not in validation:
+        progress.pop('publication_policy', None)
     completed_rows = [proposals[k] for k in completed_ids]
     progress.update(source_commit=commit, ci='passed', ci_evidence=ci, completed_at_utc=now,
+                    **validation,
                     milestone=len(completed_ids), concrete_implementation_completions=len(completed_ids),
                     completed_feature_ids=completed_ids, before=BEFORE,
                     after=dict(Counter(n['status'] for n in reference.values())), proposals=list(proposals.values()),
@@ -366,7 +435,7 @@ def publish(commit, output, patch, review, ci):
                     first_pass_parent_or_alias_count=sum(r['classification'] == 'parent_or_alias' and r['after'] == 'first_pass' for r in proposals.values()),
                     first_pass_evidence_only_count=sum(r['change_kind'].startswith('evidence') and r['after'] == 'first_pass' for r in proposals.values()),
                     counting_method='Frozen 1,812 original IDs; explicit reviewed concrete implementation leaves only; parents, aliases, evidence-only changes and native IDs excluded.',
-                    validation_summary='Exact successful hosted check, Windows, macOS and parity-models jobs. Source inspection and author reference-recording provenance are separate; no local Cargo or mutation testing by this tool.')
+                    validation_summary=validation_summary(validation))
     progress['reference_recording_provenance'] = list(prior.get('reference_recording_provenance', [])) + [
         {'id': key, 'manifest': claims[key]['manifest'], 'source_commit': commit,
          'author_reference_recording': claims[key]['claim'].get('reference_recording', claims[key]['claim'].get('referenceRecording', claims[key]['claim'].get('reference_evidence'))),
@@ -378,7 +447,10 @@ def publish(commit, output, patch, review, ci):
             data['generated_at'] = now
         data['runtime_validation'] = ci
         data['tests_run'] = True
-        data['tests_scope'] = 'Hosted CI at exact source; scoped per-node evidence and limits apply. Historical source-only inspection is not runtime proof.'
+        data['tests_scope'] = (f'Hosted {validation["validation_scope"]} CI at exact source; '
+                               f'required platforms: {", ".join(validation["required_platforms"])}; '
+                               f'deferred platforms: {", ".join(validation["deferred_platforms"]) or "none"}. '
+                               'Scoped per-node evidence and limits apply. Historical source-only inspection is not runtime proof.')
         if name == 'native':
             data['caveats'] = [re.sub(r'All \d+ exported Slint Window components',
                 f'All {source["exported_window_count"]} exported Slint Window components', caveat)
@@ -388,11 +460,15 @@ def publish(commit, output, patch, review, ci):
             f'{DATA}/audit/anchor-remap-{commit[:8]}-publication.json', f'{DATA}/overnight/progress.json',
             f'{DATA}/overnight/reviewed-patch.json', f'{DATA}/overnight/ci-evidence.json']))
         data['overnight_progress'] = {k: progress[k] for k in ('goal', 'milestone', 'concrete_implementation_completions',
-            'completed_feature_ids', 'before', 'after', 'validation_summary', 'source_commit', 'ci_evidence',
+            'completed_feature_ids', 'before', 'after', 'validation_summary', 'validation_scope',
+            'required_platforms', 'deferred_platforms', 'source_commit', 'ci_evidence',
             'additional_concrete_implementation_completions', 'counting_method')}
         for node in data['nodes']:
             if node['id'] in changed[name] and 'implementation_validation' in node:
+                if 'publication_policy' not in validation:
+                    node['implementation_validation'].pop('publication_policy', None)
                 node['implementation_validation'].update(ci='passed', source_commit=commit, run_url=ci['url'], tests_executed_at_checkpoint=True)
+                node['implementation_validation'].update(validation)
         validations[name] = cv.validate(data, name)
         require(not validations[name]['audit']['weak_first_pass'], f'{name}: weak first-pass assessment')
     audit = validations['native']['audit']
@@ -430,6 +506,7 @@ def publish(commit, output, patch, review, ci):
                   f'{DATA}/overnight/ci-evidence.json': ci, f'{DATA}/audit/anchor-remap-{commit[:8]}-publication.json': audit_report,
                   'source-census.json': source, 'docs/rust/gui-progress.html': html,
                   'publication-summary.json': {'source_commit': commit, 'prior_completions': len(prior_ids),
+                     **validation, 'validation_summary': progress['validation_summary'],
                      'additional_completions': len(selected), 'validated_original_leaf_completions': len(completed_ids),
                      'reference_statuses': progress['after'], 'native_entries': len(snapshots['native']['nodes']),
                      'exported_windows': source['exported_window_count'], 'ci_url': ci['url'],

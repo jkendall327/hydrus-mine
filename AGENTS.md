@@ -72,8 +72,8 @@ box. Each one is a commit that passes CI on its own.
    reference, behavioral regressions, rendered UI inspection and independent
    review instead. Do not run cargo-mutants unless the owner requests it.
 6. **Validate and publish each small batch.** The owner's current instruction
-   (2026-10-06) prioritizes validated delivery. Full native compilation, strict
-   linting, cross-platform tests, rendered review and evidence publication are
+   (2026-10-06) prioritizes validated Linux delivery. Full native compilation,
+   strict linting, Linux workspace tests, rendered review and evidence publication are
    routine work; do not wait for another request. Pause broad new feature work
    until the current repair batch has a published validated checkpoint.
 7. **Write it down.** `docs/rust/GUI.md` says what works, in the user's
@@ -89,6 +89,13 @@ box. Each one is a commit that passes CI on its own.
    validated checkpoint, explicitly reassess batch size and approach before
    continuing the same cycle. Validate and publish the next small batch before
    accumulating another broad implementation backlog.
+
+The owner's later October 6 instruction makes Linux the required publication
+platform. macOS and Windows are deferred to avoid delaying Linux checkpoints;
+the workflow retains them behind `secondary_platforms=true`. Record Linux-only
+validation explicitly, preserve historical cross-platform evidence, and do not
+claim the deferred platforms passed. The exact-source publication policy is
+`.github/publication-validation.json`.
 
 ## Commits
 

@@ -209,3 +209,22 @@ succeeded, retained all ten original translation-domain strings, emitted the
 new measured-frame getters and reported imported UI/static resource dependencies.
 This verifies source generation and the child path; full generated-Rust compilation
 and cross-platform runtime validation remain CI gates.
+
+## Subsequent platform priority
+
+The owner's later October 6 instruction makes Linux the required publication
+platform and defers macOS and Windows. Full Linux strict linting, workspace
+tests, reference/backend replays and the parity ratchet remain required.
+Secondary-platform jobs and the Windows artifact replay stay available through
+`secondary_platforms=true`, with their evidence preserved separately. This is
+an explicit delivery-scope decision, not a cross-platform success claim.
+
+The first extracted-UI run, `37417762189` at `04a82acc6`, reached the GUI
+integration-test target on Linux and macOS but failed on three misplaced lint
+attributes; its parity lane also exposed a Qt/MPV expectation mismatch. These
+are repaired separately. Linux saved a rolling workspace snapshot under its
+source/run/attempt key even after the failure (651,369,586 compressed bytes).
+The subsequent platform-policy workflow edit changes the cache compatibility
+key, so the next run must seed that new configuration before reuse can be
+observed. Keep this conservative invalidation; no successful before/after timing
+claim follows from these failed builds.

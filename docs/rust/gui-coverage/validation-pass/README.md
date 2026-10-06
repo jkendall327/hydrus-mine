@@ -179,4 +179,12 @@ the complete MPV defaults and both full row lists exactly, without label
 substitution. Three ICC geometry lint expectations also move from macro
 invocations (where Rust ignores them) to single-assertion blocks; exact float
 equality and strict warnings remain. These are validation repairs, not new
-feature credit; their full native/cross-platform rerun is still required.
+feature credit; their full native Linux rerun is still required.
+
+The owner's subsequent October 6 instruction prioritizes Linux, their actual
+platform. Current checkpoints require full strict Linux compilation, workspace
+tests, reference/backend replays, the parity ratchet and rendered review.
+Windows and macOS are deferred and remain opt-in workflow jobs; a Linux
+checkpoint does not certify them. Publication tooling checks this policy at the
+exact source commit and labels the scope. Historical cross-platform evidence
+and earlier completed sign-offs retain their original scope.

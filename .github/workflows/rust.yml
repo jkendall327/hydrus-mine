@@ -10,7 +10,12 @@ on:
   workflow_dispatch:
     inputs:
       full_validation:
-        description: Run full workspace and cross-platform validation for publication
+        description: Run full Linux workspace validation for publication
+        type: boolean
+        required: false
+        default: false
+      secondary_platforms:
+        description: Also validate Windows and macOS (requires full_validation)
         type: boolean
         required: false
         default: false
@@ -21,9 +26,9 @@ on:
         default: false
 
 concurrency:
-  # Each integration PR owns one current run. Separate checkpoint branches still
-  # validate concurrently; repairing a PR supersedes its obsolete running head.
-  group: rust-${{ github.ref }}
+  # Keep one current Linux run per branch. An optional secondary-platform run
+  # has its own group so it cannot hold up or cancel Linux checkpoint delivery.
+  group: rust-${{ github.ref }}-${{ github.event_name == 'workflow_dispatch' && inputs.secondary_platforms && 'secondary' || 'linux' }}
   cancel-in-progress: true
 
 env:
@@ -216,10 +221,10 @@ jobs:
           CARGO_BUILD_JOBS: 2
         run: cargo test -p hydrus-core -p hydrus-download -p hydrus-downloader-exchange -p hydrus-gui-model -p hydrus-net -p hydrus-search -p hydrus-store --locked --no-fail-fast
 
-  # hydrus-rs should build and pass its tests on Windows and macOS too; the
-  # Linux job above is the full check (lints and the parity ratchet).
+  # The owner prioritizes Linux checkpoints. Keep secondary platform coverage
+  # available explicitly without blocking routine Linux delivery.
   other-platforms:
-    if: github.event_name == 'workflow_dispatch' && inputs.full_validation
+    if: github.event_name == 'workflow_dispatch' && inputs.full_validation && inputs.secondary_platforms
     strategy:
       fail-fast: false
       matrix:
