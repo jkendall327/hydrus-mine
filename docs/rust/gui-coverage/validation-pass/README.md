@@ -32,6 +32,17 @@ then passed fresh review and were published. Favourites remains deferred. The
 original subprocess failure's precise cause was not recorded, so no particular
 spawn error is claimed as established.
 
+The next bounded cohort targets 18 existing candidates: 12 affected by the
+shared Speed and Memory helper layout, favourites, and five previously deferred
+export/consumer claims. The thumbnail Debug clear action retains its separate
+evidence gap. Helper captions now use separate wrapped rows; a native regression
+measures strict separation at 900x640 and existing 1100px capture sizes, with long
+and short warnings. The favourites capture observes the real displayed service
+after bounded event-loop settling and reasserts the accepted draft. Existing
+assertions are unchanged. Slint generation passes without warnings; generated
+Rust compilation, strict linting, full tests and fresh renders remain pending.
+No new completion is counted from this preparation.
+
 The initial full hosted run is
 https://github.com/jkendall327/hydrus-mine/actions/runs/37396014073.
 No result from a different source commit establishes validation of the final

@@ -126,6 +126,10 @@ export component OptionsWindow inherits Window {
     callback gui-colour-chosen(int,int);
     callback gui-colour-clipboard(int,int,bool);
     callback noneable-text-geometry(int,length,length,length,length);
+    // Optional logical layout observation, following the existing deferred frame
+    // pattern. It is off during ordinary Options use and never queries an OS.
+    in property <bool> measure-speed-memory-layout: false;
+    callback speed-memory-geometry(int,string,MenuChoiceFrame);
 
     in property <[TableRow]> routing-url-rows;
     in property <[TableRow]> routing-file-rows;
@@ -350,12 +354,26 @@ export component OptionsWindow inherits Window {
                           HorizontalLayout {
                             spacing: 8px;
                             min-height: 26px;
-                            if row.kind == 0: Text {
-                                text: row.label;
-                                font-weight: 700;
-                                vertical-alignment: center;
-                                horizontal-alignment: center;
+                            if row.kind == 0: HorizontalLayout {
                                 horizontal-stretch: 1;
+                                heading := Text {
+                                    text: row.label;
+                                    font-weight: 700;
+                                    vertical-alignment: center;
+                                    horizontal-alignment: center;
+                                    horizontal-stretch: 1;
+                                    property <MenuChoiceFrame> frame: {x:self.absolute-position.x,y:self.absolute-position.y,w:self.width,h:self.height};
+                                    property <bool> measurement-pending: true;
+                                    changed frame => { self.measurement-pending = true; }
+                                }
+                                Timer {
+                                    interval: 1ms;
+                                    running: root.measure-speed-memory-layout && heading.measurement-pending;
+                                    triggered => {
+                                        heading.measurement-pending = false;
+                                        root.speed-memory-geometry(i,"heading",heading.frame);
+                                    }
+                                }
                             }
                             if row.kind != 0 && row.kind != 37: Rectangle {
                                 horizontal-stretch: 1;
@@ -388,19 +406,27 @@ export component OptionsWindow inherits Window {
                                 width: row.unit == "" ? 260px : 400px;
                                 spacing:4px;
                                 HorizontalLayout {
-                                SpinBox {
+                                numeric := SpinBox {
                                     minimum: row.minimum;
                                     maximum: row.maximum;
                                     value: row.number;
                                     edited(value) => { root.number-edited(i, value); }
+                                    property <MenuChoiceFrame> frame: {x:self.absolute-position.x,y:self.absolute-position.y,w:self.width,h:self.height};
+                                    property <bool> measurement-pending: true;
+                                    changed frame => { self.measurement-pending = true; }
+                                }
+                                Timer {
+                                    interval: 1ms;
+                                    running: root.measure-speed-memory-layout && numeric.measurement-pending;
+                                    triggered => {
+                                        numeric.measurement-pending = false;
+                                        root.speed-memory-geometry(i,"number",numeric.frame);
+                                    }
                                 }
                                 }
-                                if row.unit != "": Text {text:row.unit;wrap:word-wrap;}
-                                if row.label == "Num next to prefetch in Media Viewer:": Text {
-                                    text: "Prefetch numbers exceed cache prefetch limit? " + root.prefetch-warning;
-                                    color: root.prefetch-warning == "No, looks good!" ? Theme.text : Theme.error;
-                                    wrap: word-wrap;
-                                }
+                                // Only the two cache estimates move out of the control
+                                // column; every other numeric-unit row stays as authored.
+                                if row.unit != "" && row.label != "Maximum image size (in % of cache) that can be cached:" && row.label != "Maximum % of cache that will be prefetched per media viewer:": Text {text:row.unit;wrap:word-wrap;}
                             }
                             if row.kind == 3: HorizontalLayout {
                                 width: 260px;
@@ -762,6 +788,52 @@ export component OptionsWindow inherits Window {
                                 TimeFields {
                                     fields: row.fields;
                                     edited(f, value) => { root.field-edited(i, f, value); }
+                                }
+                            }
+                            // Captions own a full row whose intrinsic wrapped height
+                            // contributes before the next model row/control/heading.
+                            if row.kind == 2 && row.unit != "" && (row.label == "Maximum image size (in % of cache) that can be cached:" || row.label == "Maximum % of cache that will be prefetched per media viewer:"): VerticalLayout {
+                                estimate := Text {
+                                    horizontal-stretch: 1;
+                                    text: row.unit;
+                                    color: Theme.text;
+                                    wrap: word-wrap;
+                                    min-height: self.preferred-height;
+                                    vertical-stretch: 0;
+                                    property <MenuChoiceFrame> frame: {x:self.absolute-position.x,y:self.absolute-position.y,w:self.width,h:self.height};
+                                    property <bool> measurement-pending: true;
+                                    changed frame => { self.measurement-pending = true; }
+                                }
+                                Timer {
+                                    interval: 1ms;
+                                    running: root.measure-speed-memory-layout && estimate.measurement-pending;
+                                    triggered => {
+                                        estimate.measurement-pending = false;
+                                        root.speed-memory-geometry(i,"estimate",estimate.frame);
+                                    }
+                                }
+                            }
+                            // Qt places the capacity warning after all three counts.
+                            // Preserve the existing warning string and colour policy.
+                            if row.kind == 2 && row.label == "Num pairs to prefetch in Duplicate Filter:": VerticalLayout {
+                                warning := Text {
+                                    horizontal-stretch: 1;
+                                    text: "Prefetch numbers exceed cache prefetch limit? " + root.prefetch-warning;
+                                    color: root.prefetch-warning == "No, looks good!" ? Theme.text : Theme.error;
+                                    wrap: word-wrap;
+                                    min-height: self.preferred-height;
+                                    vertical-stretch: 0;
+                                    property <MenuChoiceFrame> frame: {x:self.absolute-position.x,y:self.absolute-position.y,w:self.width,h:self.height};
+                                    property <bool> measurement-pending: true;
+                                    changed frame => { self.measurement-pending = true; }
+                                }
+                                Timer {
+                                    interval: 1ms;
+                                    running: root.measure-speed-memory-layout && warning.measurement-pending;
+                                    triggered => {
+                                        warning.measurement-pending = false;
+                                        root.speed-memory-geometry(i,"warning",warning.frame);
+                                    }
                                 }
                             }
                         }

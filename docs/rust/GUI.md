@@ -4525,3 +4525,11 @@ Completion credit remains limited to the 61 independently reviewed original
 leaves banked across three checkpoints, with the latest
 [301-item checkpoint](gui-coverage/checkpoints/6b66240c1/README.md);
 other repaired behavior retains its scoped assessment.
+
+The next bounded repair gives the two Speed and Memory cache-percentage helpers
+their own wrapped rows and places the capacity warning after all three prefetch
+counts. A native regression measures separation at the preferred opening size
+and existing capture sizes. Favourites capture now waits for the dropdown's
+actual displayed service and asserts that settling preserves the accepted draft.
+Full Linux execution and fresh rendered review of these changes remain pending;
+the signed-off ledger stays at 301.

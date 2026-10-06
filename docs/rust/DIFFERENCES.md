@@ -3640,3 +3640,9 @@ Completion credit remains limited to the 61 independently reviewed original
 leaves banked across three checkpoints, with the latest
 [301-item checkpoint](gui-coverage/checkpoints/6b66240c1/README.md);
 other repaired behavior retains its scoped assessment.
+
+Speed and Memory helper overlap and the favourites service-label capture are
+under a bounded repair. The authored geometry and settled-label regressions
+preserve existing assertions; they have not yet passed full Linux validation or
+fresh rendered review. These candidates receive no new completion credit, and
+the separate thumbnail Debug clear-action evidence gap remains deferred.

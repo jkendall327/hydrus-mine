@@ -106,7 +106,40 @@ fn most_used_child_stages_each_service_cancels_descendants_and_persists_options(
         ),
         f["edited"]["tags"]
     );
-    let pixels = headless::render(&windows.get(image_index).unwrap(), 520, 440);
+    let selected_service = i32::try_from(mine).unwrap();
+    let selected_label = edit.get_services().row_data(mine).unwrap();
+    assert_eq!(selected_label, "my tags");
+    assert_eq!(edit.get_service(), selected_service);
+    let editor_window = windows.get(image_index).unwrap();
+    // ComboBox updates current-value from current-index through a deferred
+    // change handler. Observe its displayed value after real draws, without
+    // setting the caption or changing the selected service to make it match.
+    let deadline = std::time::Instant::now() + std::time::Duration::from_secs(2);
+    loop {
+        headless::render(&editor_window, 520, 440);
+        if edit.get_displayed_service() == selected_label {
+            break;
+        }
+        assert!(
+            std::time::Instant::now() < deadline,
+            "most-used editor label did not settle: selected={selected_label:?}, displayed={:?}",
+            edit.get_displayed_service()
+        );
+        std::thread::sleep(std::time::Duration::from_millis(8));
+    }
+    let pixels = headless::render(&editor_window, 520, 440);
+    assert_eq!(edit.get_service(), selected_service);
+    assert_eq!(edit.get_displayed_service(), selected_label);
+    assert_eq!(
+        serde_json::json!(
+            edit.get_tags()
+                .iter()
+                .map(|tag| tag.to_string())
+                .collect::<Vec<_>>()
+        ),
+        f["edited"]["tags"],
+        "settling the displayed service must preserve its accepted draft"
+    );
     headless::save_png(
         &std::path::Path::new(env!("CARGO_TARGET_TMPDIR")).join("most-used-tags-options.png"),
         &pixels,
