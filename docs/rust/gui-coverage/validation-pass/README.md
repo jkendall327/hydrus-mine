@@ -3,12 +3,12 @@
 The pass started from merged source `3702cdbee99473cfd7af073aa044fe847f78f405`.
 The prior checkpoint validated `028fd72f` (240 original leaves).
 
-The latest October 6 checkpoint validates `6b66240c1` and publishes **301 signed-off
-original leaves: 21 new in this batch, 61 across today's three checkpoints,
-74 candidates still pending**. Full Linux validation
-passed, including all 696 native GUI tests, and the selected 21 received fresh
+The latest October 6 checkpoint validates `7c3c1aac5` and publishes **319 signed-off
+original leaves: 18 new in this batch, 79 across today's four checkpoints,
+56 candidates still pending**. Full Linux validation
+passed, including all 697 native GUI tests, and the selected 18 received fresh
 rendered/behavioral review. Windows/macOS are deferred.
-[Durable checkpoint evidence](../checkpoints/6b66240c1/README.md) retains the
+[Durable checkpoint evidence](../checkpoints/7c3c1aac5/README.md) retains the
 selected images, logs, hashes and review limits. The notes below preserve the
 chronological investigation and failed-run history.
 Source review of all 153 parity manifests is recorded in `review-1.md` through
@@ -18,9 +18,10 @@ previously validated IDs. Structural parents may retain a scoped assessment but
 receive no completed-leaf credit.
 The supplemental `demotions-render-evidence.json` defers seven further claims
 whose defining native behavior lacks assertions, initially leaving 135 candidates.
-Sixty-one are now published; 74 remain unresolved. No pending candidate receives
-completion credit. Favourites was removed from the prepared batch because its
-fresh service-label capture is inconsistent with the selected test service.
+Seventy-nine are now published; 56 remain unresolved. No pending candidate receives
+completion credit. Favourites was withheld from the preceding batch because its
+capture disagreed with the selected service; actual dropdown input and fresh
+review resolve that blocker in the latest checkpoint.
 
 The next 22-candidate validation at publication source `4b7455ce1` passed all
 696 GUI tests but failed one media subprocess test before its PID marker was
@@ -28,20 +29,19 @@ observed. The [failed-run evidence](failed-runs/4b7455ce1/README.md) preserves
 the exact outcome. Test transport hardening retains all timing values and
 assertions and leaves production behavior unchanged. Repaired source `6b66240c1`
 passed full Linux validation, including all 67 media unit tests; 21 candidates
-then passed fresh review and were published. Favourites remains deferred. The
+then passed fresh review and were published. Favourites stayed deferred at that checkpoint. The
 original subprocess failure's precise cause was not recorded, so no particular
 spawn error is claimed as established.
 
-The next bounded cohort targets 18 existing candidates: 12 affected by the
-shared Speed and Memory helper layout, favourites, and five previously deferred
-export/consumer claims. The thumbnail Debug clear action retains its separate
-evidence gap. Helper captions now use separate wrapped rows; a native regression
-measures strict separation at 900x640 and existing 1100px capture sizes, with long
-and short warnings. The favourites capture observes the real displayed service
-after bounded event-loop settling and reasserts the accepted draft. Existing
-assertions are unchanged. Slint generation passes without warnings; generated
-Rust compilation, strict linting, full tests and fresh renders remain pending.
-No new completion is counted from this preparation.
+The next bounded cohort of 18 existing candidates is now published: 12 affected
+by the shared Speed and Memory layout, favourites, and five export/consumer
+claims. Intrinsic numeric-row sizing and real favourites dropdown input passed
+full Linux run `37447108755`, with 697 GUI and 67 media unit passes. Five independent
+review groups inspected fresh images; the staged report passed desktop/narrow
+Chromium checks. Six prior wording errors were corrected with zero new credit,
+while archived reviews retain their original hashes. The thumbnail Debug clear
+claim remains deferred; the next small repairs target colour-picker clipping
+and actual thumbnail preview-checkbox input/enabled behavior.
 
 The initial full hosted run is
 https://github.com/jkendall327/hydrus-mine/actions/runs/37396014073.
@@ -255,4 +255,5 @@ override around a 30px-minimum spinbox; numeric rows now honor intrinsic height.
 The favourites replay bypassed actual ComboBox selection; it now uses measured
 pointer and popup keyboard input and preserves its two-second displayed-label
 assertion. Fresh full Linux validation and rendered review remain required.
-The signed-off total remains 301; these repairs add no completion credit.
+At that repair commit the signed-off total remained 301; credit was added only
+after the subsequent successful full run and independent review.

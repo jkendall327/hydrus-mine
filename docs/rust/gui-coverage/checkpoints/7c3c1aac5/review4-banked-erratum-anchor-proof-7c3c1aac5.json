@@ -1,0 +1,294 @@
+{
+  "from_commit": "6b66240c16164a0021f0dd9e128995a25ed28c1d",
+  "to_commit": "7c3c1aac5a60a9e3fb1e7a8864cb439914d4fd60",
+  "anchors": [
+    {
+      "path": "crates/hydrus-gui/src/sidebar_layout.rs",
+      "from_commit": "6b66240c16164a0021f0dd9e128995a25ed28c1d",
+      "old_line": 212,
+      "line": 212,
+      "method": "identical_git_blob",
+      "line_sha256": "7a08ec7b9083c0007a6c98823c2aff366b0f4eb93acdf6c38651fc4a9265e2a2"
+    },
+    {
+      "path": "hydrus/client/gui/ClientGUI.py",
+      "from_commit": "6b66240c16164a0021f0dd9e128995a25ed28c1d",
+      "old_line": 3916,
+      "line": 3916,
+      "method": "identical_git_blob",
+      "line_sha256": "8dd8d68f339a615125a49429fc13d75b74ab2e9865155b081668e164dfcd787b"
+    },
+    {
+      "path": "crates/hydrus-gui/ui/page_splitter.slint",
+      "from_commit": "6b66240c16164a0021f0dd9e128995a25ed28c1d",
+      "old_line": 3,
+      "line": 3,
+      "method": "identical_git_blob",
+      "line_sha256": "f3dbc3ab38038ce79a03f56963ea5f8c06b69afe565a30edb271e6ad70a4e0d6"
+    },
+    {
+      "path": "crates/hydrus-gui/ui/main.slint",
+      "from_commit": "6b66240c16164a0021f0dd9e128995a25ed28c1d",
+      "old_line": 275,
+      "line": 275,
+      "method": "identical_git_blob",
+      "line_sha256": "bdade1b87fe182a498551a00f7be45308c505f1a9fd626ef6b9514c8014567aa"
+    },
+    {
+      "path": "crates/hydrus-gui-model/src/page_layout.rs",
+      "from_commit": "6b66240c16164a0021f0dd9e128995a25ed28c1d",
+      "old_line": 54,
+      "line": 54,
+      "method": "identical_git_blob",
+      "line_sha256": "a07054ba1c56ae0f6d762671dae117525b1e9a12377ed9f248db8594b8d7e5af"
+    },
+    {
+      "path": "crates/hydrus-gui-model/src/main_menu.rs",
+      "from_commit": "6b66240c16164a0021f0dd9e128995a25ed28c1d",
+      "old_line": 533,
+      "line": 533,
+      "method": "identical_git_blob",
+      "line_sha256": "ac752081c6156eb62f52db319af07215a0e9f399b971bf924e44d801778bb1e8"
+    },
+    {
+      "path": "crates/hydrus-store/src/page_layout.rs",
+      "from_commit": "6b66240c16164a0021f0dd9e128995a25ed28c1d",
+      "old_line": 81,
+      "line": 81,
+      "method": "identical_git_blob",
+      "line_sha256": "f664b6d96bc17f43e5c695312b3494de5c23c615b9bc4af7449913e4aa25eec1"
+    },
+    {
+      "path": "crates/hydrus-gui/src/lib.rs",
+      "from_commit": "6b66240c16164a0021f0dd9e128995a25ed28c1d",
+      "old_line": 3339,
+      "line": 3339,
+      "method": "identical_git_blob",
+      "line_sha256": "4d80b137e645df09e22f5332dffa33051ba23e3bbf5102051efb314864fe11af"
+    },
+    {
+      "path": "crates/hydrus-gui/tests/gui/sidebar_layout.rs",
+      "from_commit": "6b66240c16164a0021f0dd9e128995a25ed28c1d",
+      "old_line": 95,
+      "line": 95,
+      "method": "identical_git_blob",
+      "line_sha256": "8e12464b25ca75a104fa01bf5b9d3d86d244cbb41aab5c1aa174b28984a79b2f"
+    },
+    {
+      "path": "crates/hydrus-gui-model/tests/model/page_layout.rs",
+      "from_commit": "6b66240c16164a0021f0dd9e128995a25ed28c1d",
+      "old_line": 12,
+      "line": 12,
+      "method": "identical_git_blob",
+      "line_sha256": "b26fc4cde06f0266d78bf131e7c89f956914d9f8eaf4cb5369904ead402a361a"
+    },
+    {
+      "path": "crates/hydrus-store/src/page_layout.rs",
+      "from_commit": "6b66240c16164a0021f0dd9e128995a25ed28c1d",
+      "old_line": 91,
+      "line": 91,
+      "method": "identical_git_blob",
+      "line_sha256": "15095e6982f525afaf069c212cd0973c3d0a4db99a58960b495d2172c790bee0"
+    },
+    {
+      "path": "oracle/record_sidebar_layout.py",
+      "from_commit": "6b66240c16164a0021f0dd9e128995a25ed28c1d",
+      "old_line": 1,
+      "line": 1,
+      "method": "identical_git_blob",
+      "line_sha256": "381f9bfc69d49d39040a7d5fc3197ce385019a2ba2de649622f841a8c658ed37"
+    },
+    {
+      "path": "oracle/fixtures/sidebar_layout.json",
+      "from_commit": "6b66240c16164a0021f0dd9e128995a25ed28c1d",
+      "old_line": 1,
+      "line": 1,
+      "method": "identical_git_blob",
+      "line_sha256": "021fb596db81e6d02bf3d2586ee3981fe519f275c0ac9ca76bbcf2ebb4097d96"
+    },
+    {
+      "path": "hydrus/client/gui/ClientGUI.py",
+      "from_commit": "6b66240c16164a0021f0dd9e128995a25ed28c1d",
+      "old_line": 3876,
+      "line": 3876,
+      "method": "identical_git_blob",
+      "line_sha256": "e82f3e545063f7ca6ade465a730d79850263f7eb5a32d5dd2b2ddf20cb65f2af"
+    },
+    {
+      "path": "hydrus/client/gui/pages/ClientGUIPages.py",
+      "from_commit": "6b66240c16164a0021f0dd9e128995a25ed28c1d",
+      "old_line": 769,
+      "line": 769,
+      "method": "identical_git_blob",
+      "line_sha256": "10b316b14e149b9115f40fdb0554705d5d057fedcfdfe98452ade641b6e0624b"
+    },
+    {
+      "path": "crates/hydrus-store/src/settings.rs",
+      "from_commit": "6b66240c16164a0021f0dd9e128995a25ed28c1d",
+      "old_line": 502,
+      "line": 502,
+      "method": "identical_git_blob",
+      "line_sha256": "fd7923a01b453fa942ef22e8adc8258b087d324833a1cbdf2653085bb66a03f5"
+    },
+    {
+      "path": "hydrus/client/gui/panels/options/GUIPagesPanel.py",
+      "from_commit": "6b66240c16164a0021f0dd9e128995a25ed28c1d",
+      "old_line": 216,
+      "line": 216,
+      "method": "identical_git_blob",
+      "line_sha256": "921b046e97f6af52ca84ae3c918a342298ceefe6ac1a8a5b322b67f79a52a4ea"
+    },
+    {
+      "path": "crates/hydrus-store/src/import/decode.rs",
+      "from_commit": "6b66240c16164a0021f0dd9e128995a25ed28c1d",
+      "old_line": 450,
+      "line": 450,
+      "method": "identical_git_blob",
+      "line_sha256": "c78382f9df9751b9f1d20713e99722ac5d56de95de00449a297391c80968ce51"
+    },
+    {
+      "path": "crates/hydrus-gui/src/tab_presentation.rs",
+      "from_commit": "6b66240c16164a0021f0dd9e128995a25ed28c1d",
+      "old_line": 93,
+      "line": 93,
+      "method": "identical_git_blob",
+      "line_sha256": "260bbeb343f6090f7212ccc6b4fc13456135b500b9eddde56e2579f92bde1e33"
+    },
+    {
+      "path": "crates/hydrus-gui/ui/main.slint",
+      "from_commit": "6b66240c16164a0021f0dd9e128995a25ed28c1d",
+      "old_line": 877,
+      "line": 877,
+      "method": "identical_git_blob",
+      "line_sha256": "c316a2771eecb006b0a218fdd0e843af66992463c85335c54bd91e572292086d"
+    },
+    {
+      "path": "crates/hydrus-gui-model/src/options.rs",
+      "from_commit": "6b66240c16164a0021f0dd9e128995a25ed28c1d",
+      "old_line": 2846,
+      "line": 2846,
+      "method": "identical_git_blob",
+      "line_sha256": "ccba35a8cb2a6c2b3503371a70ea278b7278aa3cc413fe1d1a9c8d1231e0c6b9"
+    },
+    {
+      "path": "crates/hydrus-gui/ui/notebook_tabs.slint",
+      "from_commit": "6b66240c16164a0021f0dd9e128995a25ed28c1d",
+      "old_line": 294,
+      "line": 294,
+      "method": "identical_git_blob",
+      "line_sha256": "56f2d0848560adfd3964274d816cbf9842a9c7d6b4efb588b7aab6b5c04d3a38"
+    },
+    {
+      "path": "crates/hydrus-gui/src/lib.rs",
+      "from_commit": "6b66240c16164a0021f0dd9e128995a25ed28c1d",
+      "old_line": 1106,
+      "line": 1106,
+      "method": "identical_git_blob",
+      "line_sha256": "a8194d1825d610b00bd230460602cebc692e604e38623b4463588a1448239bbc"
+    },
+    {
+      "path": "crates/hydrus-gui-model/tests/model/tab_presentation.rs",
+      "from_commit": "6b66240c16164a0021f0dd9e128995a25ed28c1d",
+      "old_line": 43,
+      "line": 43,
+      "method": "identical_git_blob",
+      "line_sha256": "dae9fb03ed4927b31aed8fa401a90ff260147a924a6695f2da6db66b80ad4aaf"
+    },
+    {
+      "path": "crates/hydrus-gui/tests/gui/tab_presentation.rs",
+      "from_commit": "6b66240c16164a0021f0dd9e128995a25ed28c1d",
+      "old_line": 142,
+      "line": 142,
+      "method": "identical_git_blob",
+      "line_sha256": "e30e74aac2bad8eff39f70bfb10c21bbda11c995eb09aea852a878938e89c9f9"
+    },
+    {
+      "path": "crates/hydrus-gui/tests/gui/tab_presentation.rs",
+      "from_commit": "6b66240c16164a0021f0dd9e128995a25ed28c1d",
+      "old_line": 312,
+      "line": 312,
+      "method": "identical_git_blob",
+      "line_sha256": "b3c36165be8775cefa6012b62e973c222187a160d3af8a9b6c87a9c92cf9e2d1"
+    },
+    {
+      "path": "oracle/record_tab_presentation.py",
+      "from_commit": "6b66240c16164a0021f0dd9e128995a25ed28c1d",
+      "old_line": 16,
+      "line": 16,
+      "method": "identical_git_blob",
+      "line_sha256": "5d8f3da7e90a56971fc931a2718571d7065d1d7bdacdab73c7cc84b9f660e4bd"
+    },
+    {
+      "path": "oracle/fixtures/tab_presentation.json",
+      "from_commit": "6b66240c16164a0021f0dd9e128995a25ed28c1d",
+      "old_line": 1,
+      "line": 1,
+      "method": "identical_git_blob",
+      "line_sha256": "021fb596db81e6d02bf3d2586ee3981fe519f275c0ac9ca76bbcf2ebb4097d96"
+    },
+    {
+      "path": "hydrus/client/gui/panels/options/GUIPagesPanel.py",
+      "from_commit": "6b66240c16164a0021f0dd9e128995a25ed28c1d",
+      "old_line": 227,
+      "line": 227,
+      "method": "identical_git_blob",
+      "line_sha256": "cf98059dcc170c2adf0c8b236bf8ab10ff8b62726289dd23e73f4bc275bdbf4e"
+    },
+    {
+      "path": "crates/hydrus-gui-model/src/options.rs",
+      "from_commit": "6b66240c16164a0021f0dd9e128995a25ed28c1d",
+      "old_line": 2862,
+      "line": 2862,
+      "method": "identical_git_blob",
+      "line_sha256": "1396df6b18ac488171930c747501e0f4205c978677452649b9721625cbbff628"
+    },
+    {
+      "path": "crates/hydrus-gui-model/src/tab_presentation.rs",
+      "from_commit": "6b66240c16164a0021f0dd9e128995a25ed28c1d",
+      "old_line": 4,
+      "line": 4,
+      "method": "identical_git_blob",
+      "line_sha256": "55b21af0d78f7c367d806ab462e4bd731f79aff816dfd54322c9a51a50337821"
+    },
+    {
+      "path": "crates/hydrus-gui/src/tab_presentation.rs",
+      "from_commit": "6b66240c16164a0021f0dd9e128995a25ed28c1d",
+      "old_line": 18,
+      "line": 18,
+      "method": "identical_git_blob",
+      "line_sha256": "8647c73a9ae51ddf9ef425d1e1d1eb58d43eba7bb4877f31e1c6d4934b1f2e2a"
+    },
+    {
+      "path": "crates/hydrus-gui/ui/notebook_tabs.slint",
+      "from_commit": "6b66240c16164a0021f0dd9e128995a25ed28c1d",
+      "old_line": 15,
+      "line": 15,
+      "method": "identical_git_blob",
+      "line_sha256": "292e0b0264cd70c75fafae8fcd7232fd3483491165366006850250048561d1d6"
+    },
+    {
+      "path": "crates/hydrus-gui/ui/notebook_tabs.slint",
+      "from_commit": "6b66240c16164a0021f0dd9e128995a25ed28c1d",
+      "old_line": 148,
+      "line": 148,
+      "method": "identical_git_blob",
+      "line_sha256": "7675c3beeda31cd3f6d304bb331321df91a3c568bf73440f601c865ad5dfe63b"
+    },
+    {
+      "path": "crates/hydrus-gui-model/tests/model/tab_presentation.rs",
+      "from_commit": "6b66240c16164a0021f0dd9e128995a25ed28c1d",
+      "old_line": 170,
+      "line": 170,
+      "method": "identical_git_blob",
+      "line_sha256": "0f7df5ad43616b5f9649988682454366da1f839f2847b2c8868ac5bfc9b90f8f"
+    },
+    {
+      "path": "crates/hydrus-gui/tests/gui/tab_presentation.rs",
+      "from_commit": "6b66240c16164a0021f0dd9e128995a25ed28c1d",
+      "old_line": 474,
+      "line": 474,
+      "method": "identical_git_blob",
+      "line_sha256": "07db507934810f35f7c0d210d0913655d155940c969eb41bf8360b2a15edc0d3"
+    }
+  ]
+}

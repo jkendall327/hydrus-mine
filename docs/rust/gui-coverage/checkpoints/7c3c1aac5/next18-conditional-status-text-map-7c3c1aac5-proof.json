@@ -1,0 +1,28 @@
+{
+  "source_commit": "7c3c1aac5a60a9e3fb1e7a8864cb439914d4fd60",
+  "run_id": 37447108755,
+  "map_path": "/workspace/validation-reviews/next18-conditional-status-text-map-7c3c1aac5.json",
+  "map_sha256": "b40b3f565dde3e2823ab9dc4a8c2b47f70adf87eb8810db92d7e26789046183e",
+  "input_path": "/workspace/validation-reviews/publication-subset-preflight-next18-7c3c1aac5-linux/subset-proposal-patch.json",
+  "input_sha256": "b713f71439521bf636cfd25daff627f43a4194567ffb38afc4819694ac0b0c55",
+  "summary": {
+    "operations": 99,
+    "operation_counts": {
+      "remove_exact_list_item": 87,
+      "replace_exact_list_item": 12
+    },
+    "field_counts": {
+      "limitations": 63,
+      "remaining": 36
+    },
+    "assessment_changes": 0,
+    "preserved_true_behavior_or_provenance_flags": 20,
+    "selected_anchors_evidence_statuses_implementation_metadata_and_native_unchanged": true,
+    "input_patch_unchanged": true,
+    "conditional_packet_written": false
+  },
+  "approval": false,
+  "ci_claimed_passed": false,
+  "render_claimed_passed": false,
+  "canonical_writes": false
+}

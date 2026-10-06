@@ -4521,16 +4521,17 @@ Validation repairs now invalidate cached thumbnail colours when the stylesheet
 changes and hide an exact retired colour picker on repeated Cancel. Wheel
 controls publish their initial measured geometry as well as later changes.
 These repairs passed full Linux replay at `56b93ae49` (696 GUI tests).
-Completion credit remains limited to the 61 independently reviewed original
-leaves banked across three checkpoints, with the latest
-[301-item checkpoint](gui-coverage/checkpoints/6b66240c1/README.md);
+Completion credit remains limited to the 79 independently reviewed original
+leaves banked across four checkpoints, with the latest
+[319-item checkpoint](gui-coverage/checkpoints/7c3c1aac5/README.md);
 other repaired behavior retains its scoped assessment.
 
-The next bounded repair gives the two Speed and Memory cache-percentage helpers
-their own wrapped rows and places the capacity warning after all three prefetch
-counts. A native regression measures separation at the preferred opening size
-and existing capture sizes; numeric rows now reserve their controls' intrinsic
-height. Favourites replay selects through the actual dropdown popup and checks
-both its displayed service and the accepted draft within the existing deadline.
-Full Linux execution and fresh rendered review of these changes remain pending;
-the signed-off ledger stays at 301.
+The two Speed and Memory cache-percentage helpers now have their own wrapped
+rows, and the capacity warning follows all three prefetch counts. Numeric rows
+reserve their controls' intrinsic height. Strict native geometry checks pass
+at the preferred opening size and existing capture sizes. Favourites replay
+selects through the actual dropdown popup and verifies its displayed service
+and accepted draft within the existing deadline; the fresh capture shows my tags.
+Full Linux validation and independent review at `7c3c1aac5` support 18 further
+scoped completions, bringing the published ledger to 319. Capture and consumer
+limits remain explicit in the checkpoint; 56 candidates remain pending.

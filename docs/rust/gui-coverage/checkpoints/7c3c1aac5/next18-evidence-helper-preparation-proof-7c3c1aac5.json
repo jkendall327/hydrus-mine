@@ -1,0 +1,24 @@
+{
+  "source_commit": "7c3c1aac5a60a9e3fb1e7a8864cb439914d4fd60",
+  "run_id": 37447108755,
+  "prepared_at_utc": "2026-10-06T10:09:05.482770+00:00",
+  "helper": "/workspace/validation-reviews/prepare-next18-evidence-copy-7c3c1aac5.py",
+  "helper_sha256": "1539ee28cb2f0e3e0d6f774bac42f9ff02e0cc72b313c9667a46586f50edb4a1",
+  "instructions_sha256": "0d3304fa6dee2330e47b9d23978297fb944be12663549f1d89a3fc2e86b45e79",
+  "ast_parse": "passed",
+  "immutable_erratum_input_check": "passed: six exact literal limitation changes plus explicit source origin on cv.repin anchors; original archived JSON/Markdown and prior301 ledger hashes unchanged",
+  "smoke_command": [
+    "python3",
+    "/workspace/validation-reviews/prepare-next18-evidence-copy-7c3c1aac5.py"
+  ],
+  "smoke_exit_code": 1,
+  "smoke_stderr": "BLOCKED (no copy/publication): Missing/nonregular evidence file: /workspace/validation-reviews/ci-7c3c1aac5/ci-evidence.json",
+  "smoke_output_tree_absent": true,
+  "successful_gate_branch_executed": false,
+  "old115d_failed_run_retained_evidence": "/workspace/validation-reviews/failed115d-preservation-proof-for-7c3c1aac5.json",
+  "new_approval_created": false,
+  "canonical_writes": false,
+  "builds": false,
+  "network": false,
+  "scope": "Preparation proof only; actual current CI/fresh native reviews/browser remain pending."
+}

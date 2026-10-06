@@ -3636,15 +3636,18 @@ Validation repairs now invalidate cached thumbnail colours when the stylesheet
 changes and hide an exact retired colour picker on repeated Cancel. Wheel
 controls publish their initial measured geometry as well as later changes.
 These repairs passed full Linux replay at `56b93ae49` (696 GUI tests).
-Completion credit remains limited to the 61 independently reviewed original
-leaves banked across three checkpoints, with the latest
-[301-item checkpoint](gui-coverage/checkpoints/6b66240c1/README.md);
+Completion credit remains limited to the 79 independently reviewed original
+leaves banked across four checkpoints, with the latest
+[319-item checkpoint](gui-coverage/checkpoints/7c3c1aac5/README.md);
 other repaired behavior retains its scoped assessment.
 
-Speed and Memory helper overlap and the favourites service-label capture are
-under a bounded repair after run `37443398472` exposed a numeric-row height
-override and callback-only dropdown setup. Intrinsic numeric-row sizing and
-actual dropdown input address those causes. The geometry and label regressions
-preserve existing assertions; they have not yet passed full Linux validation or
-fresh rendered review. These candidates receive no new completion credit, and
-the separate thumbnail Debug clear-action evidence gap remains deferred.
+Speed and Memory helper overlap and favourites capture setup are repaired and
+validated at `7c3c1aac5`; the preceding failed run is retained in the checkpoint.
+All 697 GUI tests pass with existing assertions intact. The 18 new approvals are
+finite: watcher timing controls are below the saved Options viewport, some
+consumer captures lack matching Qt UI images, and neither headless images nor
+injected clocks establish physical-display or wall-clock parity. The separate
+thumbnail Debug clear-action evidence gap, colour-picker clipping, thumbnail
+preview-checkbox input/enabled behavior and idle Options clipping remain pending.
+Six earlier sidebar/tab descriptions are corrected without changing their
+counts or assessments; original archived reviews remain unchanged.

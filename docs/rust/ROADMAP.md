@@ -6,16 +6,16 @@ commit, `GUI.md` and `DIFFERENCES.md` say what was done); when you stop
 partway, say exactly where.
 
 The owner's current priority (2026-10-06) is **validated delivery on Linux**.
-The latest checkpoint banks 301 original concrete feature completions, including
-61 newly signed off across three October 6 Linux checkpoints with fresh rendered review.
-There are 74 candidates awaiting sign-off, including the deferred favourites
-capture and shared Speed and Memory helper layout. Keep these counts separate
-from inventory assessments.
+The latest checkpoint banks 319 original concrete feature completions, including
+79 newly signed off across four October 6 Linux checkpoints with fresh rendered review.
+There are 56 candidates awaiting sign-off. The next small repair targets are
+colour-picker clipping and thumbnail preview-checkbox input/enabled behavior.
+Keep these counts separate from inventory assessments.
 Work in small batches, validate and publish each routinely, and reassess any
 batch that goes 24 hours without a new checkpoint. Broad implementation must
 not rebuild an unvalidated backlog. Windows and macOS are deferred; strict
 Linux linting, full tests, reference replays and rendered review remain required.
-See [the checkpoint evidence](gui-coverage/checkpoints/6b66240c1/README.md).
+See [the checkpoint evidence](gui-coverage/checkpoints/7c3c1aac5/README.md).
 
 The first parallel slate (2026-10-03) adds detailed embedded metadata,
 manual file export, local service review/management, tag sibling/parent
@@ -63,8 +63,8 @@ and all 121 exported native windows into nested work, including shared editors,
 all 38 reference option tabs and 19 system-predicate groups. It contains 1,812
 reference nodes and 1,799 native nodes, with per-node assessments, concrete
 remaining work and pinned source/evidence links. The frozen reference inventory
-now has 521 Missing, 389 Partial and 902 First pass entries; its status changes
-also include parent/alias assessments, which do not inflate the 301-item signed-off completion count.
+now has 504 Missing, 388 Partial and 920 First pass entries; its status changes
+also include parent/alias assessments, which do not inflate the 319-item signed-off completion count.
 Native first-pass claims cite scoped regression evidence; source-supported but
 unverified behavior is partial. These counts are not a whole-client completion
 percentage. Maintenance instructions and scope limits are in
@@ -241,7 +241,7 @@ completion goals.
 The October 6 delivery policy supersedes the earlier implementation-throughput
 policy described in this history. Do not defer full validation until project
 end. Current repair work is consolidated in PR #59, with full Linux validation
-at source `6b66240c1` and a published 301-item ledger. Automatic quick CI gives
+at source `7c3c1aac5` and a published 319-item ledger. Automatic quick CI gives
 early diagnostics; dispatch the full Linux gate routinely for publication.
 Secondary platforms remain opt-in under `.github/publication-validation.json`.
 The broader implementation history above is not additional signed-off credit.
