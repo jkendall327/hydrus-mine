@@ -46,6 +46,13 @@ export global Theme {
     out property <brush> muted: self.dark ? #ffffff80 : #00000080;
     // behind a dialog
     out property <brush> shade: #00000080;
+    // The Rust thumbnail model copies these brushes into cached whole-cell
+    // paints; stylesheet changes must invalidate those copies as saved roles do.
+    changed window => { self.colours-changed(); }
+    changed panel => { self.colours-changed(); }
+    changed border => { self.colours-changed(); }
+    changed accent => { self.colours-changed(); }
+    changed text => { self.colours-changed(); }
 }
 
 // a row of a tag or predicate list: its text, in its namespace's colour

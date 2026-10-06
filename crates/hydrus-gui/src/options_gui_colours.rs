@@ -168,11 +168,13 @@ pub(crate) fn bind(
                 let children = Rc::downgrade(&children);
                 let show = show.clone();
                 move || {
-                    if !alive.replace(false) {
-                        return;
-                    }
+                    // A retained retired picker can be shown again. Always hide
+                    // this exact window; owner cleanup and refresh happen once.
                     if let Some(picker) = weak.upgrade() {
                         let _ = picker.hide();
+                    }
+                    if !alive.replace(false) {
+                        return;
                     }
                     if let Some(children) = children.upgrade() {
                         children.borrow_mut().picker.take();

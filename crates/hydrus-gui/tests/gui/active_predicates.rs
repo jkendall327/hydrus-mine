@@ -236,11 +236,12 @@ fn captured_menu_and_populated_child_cannot_edit_hidden_replaced_rebound_or_drop
 #[test]
 fn dropping_hidden_components_releases_a_populated_editor_without_cancel_cycle() {
     let (_dir, store) = setup();
-    let _windows = headless::init();
+    let windows = headless::init();
     let (ui, bound) = main(&store);
     add(&ui, "system:filesize < 7KB");
     let child = editor(&ui, &bound);
     let weak_child = child.as_weak();
+    let weak_slot = std::rc::Rc::downgrade(&bound.predicate_editor);
     let weak_main = ui.as_weak();
     ui.hide().unwrap();
     drop(ui);
@@ -253,6 +254,14 @@ fn dropping_hidden_components_releases_a_populated_editor_without_cancel_cycle()
     // Scope this to callback cycles: shown Slint windows retain components.
     // Automatic child closure on parent destruction needs separate coverage.
     child.hide().unwrap();
+    // The collector also owns Main's adapter. Its platform close handler
+    // retains the accepted-exit callback and therefore the child slot, even
+    // after Main's component dies. Release that independent external owner.
+    drop(windows);
+    assert!(
+        weak_slot.upgrade().is_none(),
+        "the retained child callbacks must not keep their owning slot alive"
+    );
     drop(child);
     assert!(
         weak_child.upgrade().is_none(),
@@ -700,7 +709,8 @@ fn retained_or_system_child_does_not_keep_the_or_or_main_component_alive() {
         Pages::single(SearchPage::restored(store, context, true, None, Vec::new())),
     );
     let child = active_or(&ui, &bound, &decoded(&case["selected"]), false);
-    child.invoke_edited("system:filesize".into());
+    // Empty input offers system editors; typed text searches tags instead.
+    child.invoke_edited("".into());
     // A populated OR inserts its draft summary at index zero. Choose the
     // actual system suggestion rather than broadcasting that summary.
     let system_index = child
@@ -754,7 +764,8 @@ fn hidden_or_parent_reconciles_actual_system_and_nested_child_cancellation() {
         Pages::single(SearchPage::restored(store, context, true, None, Vec::new())),
     );
     let child = active_or(&ui, &bound, &decoded(&case["selected"]), false);
-    child.invoke_edited("system:filesize".into());
+    // Empty input offers system editors; typed text searches tags instead.
+    child.invoke_edited("".into());
     // A populated OR inserts its draft summary at index zero. Choose the
     // actual system suggestion rather than broadcasting that summary.
     let system_index = child
@@ -793,7 +804,8 @@ fn hidden_or_parent_reconciles_actual_system_and_nested_child_cancellation() {
         "nested OR Cancel reconciles the still-owned hidden parent"
     );
     let before = bound.current.borrow().borrow().active_predicates().to_vec();
-    child.invoke_edited("system:filesize".into());
+    // Empty input offers system editors; typed text searches tags instead.
+    child.invoke_edited("".into());
     // A populated OR inserts its draft summary at index zero. Choose the
     // actual system suggestion rather than broadcasting that summary.
     let system_index = child

@@ -524,14 +524,16 @@ export component OptionsWindow inherits Window {
                                 width: 260px;
                                 spacing: 2px;
                                 WheelMenuChoice {
-                                    changed frame => { root.menu-choice-geometry(i,0,self.frame); }
+                                    measure-frame: true;
+                                    measured(frame) => { root.menu-choice-geometry(i,0,frame); }
                                     model: row.items;
                                     current-index: row.index;
                                     wheel-count: row.sort-wheel-count;
                                     selected(index) => { root.sort-chosen(i, index); }
                                 }
                                 WheelMenuChoice {
-                                    changed frame => { root.menu-choice-geometry(i,1,self.frame); }
+                                    measure-frame: true;
+                                    measured(frame) => { root.menu-choice-geometry(i,1,frame); }
                                     model: row.orders;
                                     current-index: row.order-index;
                                     selected(index) => { root.order-chosen(i, index); }
@@ -581,25 +583,29 @@ export component OptionsWindow inherits Window {
                                 width: 260px;
                                 spacing: 2px;
                                 WheelMenuChoice {
-                                    changed frame => { root.menu-choice-geometry(i,0,self.frame); }
+                                    measure-frame: true;
+                                    measured(frame) => { root.menu-choice-geometry(i,0,frame); }
                                     model: row.items;
                                     current-index: row.index;
                                     selected(index) => { root.tag-sort-chosen(i, 0, index); }
                                 }
                                 WheelMenuChoice {
-                                    changed frame => { root.menu-choice-geometry(i,1,self.frame); }
+                                    measure-frame: true;
+                                    measured(frame) => { root.menu-choice-geometry(i,1,frame); }
                                     model: row.orders;
                                     current-index: row.order-index;
                                     selected(index) => { root.tag-sort-chosen(i, 1, index); }
                                 }
                                 if row.kind == 35 && row.sibling-sort-visible: WheelMenuChoice {
-                                    changed frame => { root.menu-choice-geometry(i,3,self.frame); }
+                                    measure-frame: true;
+                                    measured(frame) => { root.menu-choice-geometry(i,3,frame); }
                                     model: ["siblings", "tags"];
                                     current-index: row.sibling-sort-index;
                                     selected(index) => { root.tag-sort-chosen(i, 3, index); }
                                 }
                                 if row.grouped: WheelMenuChoice {
-                                    changed frame => { root.menu-choice-geometry(i,2,self.frame); }
+                                    measure-frame: true;
+                                    measured(frame) => { root.menu-choice-geometry(i,2,frame); }
                                     model: row.groups;
                                     current-index: row.group-index;
                                     selected(index) => { root.tag-sort-chosen(i, 2, index); }

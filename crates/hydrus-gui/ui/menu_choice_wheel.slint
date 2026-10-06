@@ -16,6 +16,17 @@ export component WheelMenuChoice inherits TouchArea {
     out property <string> current-value: choice.current-value;
     out property <bool> popup-open: choice.accessible-expanded;
     callback selected(int);
+    // Opt-in observation must publish a constant initial frame as well as changes.
+    // Defer until layout has been measured, as Options' noneable controls do.
+    in property <bool> measure-frame: false;
+    callback measured(MenuChoiceFrame);
+    property <bool> measurement-pending: true;
+    changed frame => { root.measurement-pending = true; }
+    Timer {
+        interval: 1ms;
+        running: root.measure-frame && root.measurement-pending;
+        triggered => { root.measurement-pending = false; root.measured(root.frame); }
+    }
     min-width: layout.min-width;
     min-height: layout.min-height;
     horizontal-stretch: 1;

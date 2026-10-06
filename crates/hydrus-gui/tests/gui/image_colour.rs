@@ -126,6 +126,35 @@ fn query_select(ui: &MainWindow, bound: &hydrus_gui::Bound, file: HashId) -> i32
     ui.invoke_thumbnail_clicked(index, false, false);
     index
 }
+// Re-entering an active Everything predicate removes it. Refresh the owned
+// query without changing its predicates, location, or full result membership.
+fn refresh_select(ui: &MainWindow, bound: &hydrus_gui::Bound, file: HashId) -> i32 {
+    let current = bound.current.borrow().clone();
+    let predicates = current.borrow().predicates();
+    assert_eq!(predicates, vec!["system:everything".to_owned()]);
+    let location = current.borrow().location().clone();
+    let mut files = current.borrow().results().to_vec();
+    files.sort();
+    assert!(
+        files.contains(&file),
+        "owned query retains the requested file"
+    );
+    ui.invoke_refresh_page();
+    assert_eq!(current.borrow().predicates(), predicates);
+    assert_eq!(current.borrow().location(), &location);
+    let mut refreshed = current.borrow().results().to_vec();
+    refreshed.sort();
+    assert_eq!(refreshed, files, "Refresh preserves owned query membership");
+    let index = current
+        .borrow()
+        .results()
+        .iter()
+        .position(|id| *id == file)
+        .unwrap();
+    let index = i32::try_from(index).unwrap();
+    ui.invoke_thumbnail_clicked(index, false, false);
+    index
+}
 // A visible owner also needs a measured native preview viewport before SetMedia.
 fn settle_viewport(ui: &MainWindow, bound: &hydrus_gui::Bound, windows: &headless::Windows) {
     assert!(ui.window().is_visible());
@@ -344,11 +373,21 @@ fn actual_saved_icc_updates_preview_viewer_tiles_and_archive_without_resetting_o
         .write(|c| {
             let mut prefs: settings::GuiSettings = settings::get(c.conn())?;
             prefs.confirm_exit = false;
-            settings::set(c.conn(), &prefs)
+            settings::set(c.conn(), &prefs)?;
+            // Isolate completed owner retirement from the separate maintenance question.
+            let mut shutdown: settings::ShutdownWork = settings::get(c.conn())?;
+            shutdown.action = 0;
+            settings::set(c.conn(), &shutdown)
         })
         .unwrap();
     ui.window()
         .dispatch_event(slint::platform::WindowEvent::CloseRequested);
+    assert!(
+        !ui.window().is_visible(),
+        "completed exit precedes retained ICC callbacks"
+    );
+    assert!(!old.window().is_visible());
+    assert!(store.read(image_colour::load).unwrap().normalise_icc);
     old.show().unwrap();
     old.invoke_apply();
     old.invoke_check_toggled(row, false);
@@ -454,7 +493,7 @@ fn held_old_colour_reply_cannot_replace_current_or_rebound_canvas_and_ineligible
     }));
     ui.invoke_select_none();
     bound.preview.refresh();
-    query_select(&ui, &bound, file);
+    refresh_select(&ui, &bound, file);
     entered.recv_timeout(Duration::from_secs(10)).unwrap();
     bound.preview.set_decoder(Arc::new(move |store, _| {
         let policy = store.read(image_colour::load).unwrap();

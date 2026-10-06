@@ -3,7 +3,7 @@
 
 use slint::{ComponentHandle as _, Model as _};
 
-use hydrus_gui::{MainWindow, MediaViewer, Pages, Palette, SearchPage, bind, headless};
+use hydrus_gui::{MainWindow, MediaViewer, Pages, Palette, SearchPage, Theme, bind, headless};
 use hydrus_search::{SortBy, SortOrder};
 use hydrus_store::Store;
 use hydrus_store::import::import_legacy;
@@ -334,9 +334,39 @@ fn a_search_page_finds_files_and_shows_their_thumbnails() {
     assert!(colours.len() > 1000, "{} colours", colours.len());
 
     // the same in dark mode: every colour the window draws follows it
+    let theme = ui.global::<Theme<'_>>();
+    assert!(
+        !theme.get_colours_override(),
+        "stylesheet palette owns the cell roles"
+    );
+    let light_panel = theme.get_panel();
     ui.global::<Palette<'_>>()
         .set_color_scheme(ColorScheme::Dark);
+    // render processes Slint's real changed-property handlers before painting.
     let dark = headless::render(&main_window, width, height);
+    assert_ne!(
+        theme.get_panel(),
+        light_panel,
+        "the style palette actually switched"
+    );
+    let painted = bound
+        .rows
+        .row_data(0)
+        .unwrap()
+        .thumbnails
+        .iter()
+        .find(|thumbnail| thumbnail.paint.image.size().width > 0)
+        .expect("the visible grid retains decoded cell paints");
+    assert_eq!(
+        painted.paint.fill,
+        theme.invoke_thumbnail_background(painted.local, painted.selected)
+    );
+    assert_eq!(
+        painted.paint.border_brush,
+        theme.invoke_thumbnail_border(painted.local, painted.selected)
+    );
+    assert_eq!(painted.paint.window_brush, theme.get_window());
+    assert_eq!(painted.paint.text_brush, theme.get_text());
     headless::save_png(&shots.join("search_page_dark.png"), &dark, width, height).unwrap();
     let light_pixels = |pixels: &[u8]| {
         pixels

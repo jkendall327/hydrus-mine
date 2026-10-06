@@ -185,6 +185,11 @@ fn real_options_stage_all_roles_cancel_hidden_inputs_and_retire_owned_picker() {
     old.show().unwrap();
     old.invoke_accepted(3, 5, 7);
     old.invoke_cancelled();
+    assert!(
+        !old.window().is_visible(),
+        "Cancel must hide the reopened retired picker itself"
+    );
+    assert!(successor.window().is_visible());
     assert_eq!(colours(&successor), before);
     assert_eq!(values(&store.read(gui_colours::load).unwrap()), qt["saved"]);
     drop(old);

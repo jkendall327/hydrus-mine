@@ -4516,3 +4516,8 @@ No and timed auto-no register skipped work and continue. Password dialogs accept
 text only at a text step and Yes only at the current clear confirmation. Retired
 password dialogs cannot change the lock. Network-error close callbacks hide only
 their own window, preserving a replacement error.
+
+Validation repairs now invalidate cached thumbnail colours when the stylesheet
+changes and hide an exact retired colour picker on repeated Cancel. Wheel
+controls publish their initial measured geometry as well as later changes.
+These repairs await full Linux replay and add no feature-completion credit.

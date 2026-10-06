@@ -136,7 +136,31 @@ fn the_menu_is_the_reference_s() {
                         .collect()
                 })
                 .unwrap_or_default();
+            // This action is implemented for selected thumbnails. Keep the
+            // viewer's shared pruning policy, but retain Qt's exact action here.
+            let clear_deletion_record = theirs
+                .iter()
+                .position(|entry| {
+                    matches!(
+                        entry.as_str(),
+                        Some("clear deletion record" | "clear deletion record for selected")
+                    )
+                })
+                .map(|at| {
+                    // Check raw Qt placement before reconstructing after pruning.
+                    assert_eq!(theirs[at + 1], "---");
+                    assert_eq!(theirs[at + 2]["menu"], "manage");
+                    theirs[at].clone()
+                });
             let mut theirs = pruned(&theirs);
+            if let Some(clear_deletion_record) = clear_deletion_record {
+                let at = theirs
+                    .iter()
+                    .position(|entry| entry["menu"] == "manage")
+                    .unwrap();
+                assert_eq!(theirs[at - 1], "---");
+                theirs.insert(at - 1, clear_deletion_record);
+            }
             if let Some(manage) = theirs.iter_mut().find(|entry| entry["menu"] == "manage") {
                 assert_eq!(manage_maintenance.len(), 2);
                 manage["entries"]

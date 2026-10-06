@@ -188,3 +188,21 @@ Windows and macOS are deferred and remain opt-in workflow jobs; a Linux
 checkpoint does not certify them. Publication tooling checks this policy at the
 exact source commit and labels the scope. Historical cross-platform evidence
 and earlier completed sign-offs retain their original scope.
+
+The first Linux-only run, `37420034077` at `129c3fd20`, passed strict
+workspace Clippy and the reference/backend job. Native GUI runtime reached
+685 passes and 11 failures. The follow-up repairs forward stylesheet brush
+changes to the existing thumbnail-paint invalidator, hide an exact retired
+colour picker on repeated Cancel, and publish initial measured wheel-control
+frames through the existing deferred measurement pattern. Regression assertions
+are preserved or strengthened.
+
+Replay setup now distinguishes Refresh from predicate toggling, completed exit
+from a pending shutdown-maintenance question, and blank-input system editors
+from tag searches. The hidden-component lifetime test releases its independent
+headless adapter collector before asserting slot/component destruction; it does
+not establish automatic closure of a shown child on parent destruction. The
+thumbnail menu retains Qt's recorded clear-deletion action, verifies its raw
+placement and still compares the complete menu. Slint generation with warnings
+denied and formatting pass; full Linux replay of these repairs is pending.
+No feature assessments or signed-off totals change.
