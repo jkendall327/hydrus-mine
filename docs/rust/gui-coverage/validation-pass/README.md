@@ -155,3 +155,17 @@ entry behavior intentionally toggle that predicate off on repeated entry. The
 replays retain exact predicates, location, full file membership and existing
 selection/wheel/preview ownership assertions; no query-domain or worker behavior
 is changed.
+
+The extended sidebar recorder ran successfully against the real Qt client in an
+isolated checkout/database on October 6. All ten legacy top-level fixture fields
+and the original PNG match exactly. New raw observations show Restore retaining
+the accepted hash, rendered raster and original viewing start with no completed
+interval; selecting that same file preserves the interval, and final collapse
+emits one FinishViewing call. The native assertion now checks this retained state
+and preserves its existing exact `(1, 2000)` accounting and selection assertions.
+
+Supplemental actions labelled as a hidden page switch did not change the recorded
+current page; they do not prove an actual switch. The observed 568ms FinishViewing
+call is below Qt's 5000ms minimum and is not a persisted view. Raw timestamps and
+these observations remain intact in the fixture; no fixed native duration is
+inferred from them. The separate existing hidden-page tests cover real switching.

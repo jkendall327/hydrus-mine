@@ -1013,5 +1013,988 @@
     "Native minimum sizes/font/layout may differ; signed legacy positions and physical Qt results retained here.",
     "Accepted exit calls _SaveSplitterPositions after confirmation in _Exit; the recorder does not exit the driver-owned frame.",
     "Session serialization does not include live Page splitter geometry."
-  ]
+  ],
+  "preview_restore_probe": [
+    {
+      "action": "before disable global hide",
+      "now_ms": 1791263143151,
+      "current": "one",
+      "hide_preview": true,
+      "saved": [
+        420,
+        -260
+      ],
+      "page": {
+        "page_key": "f710806e2cd218e25ccfa9de9e2d8295a05b24e0ebde86346a391623b2747787",
+        "accepted": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+        "hidden_page": null,
+        "start": 1791263142304,
+        "canvas_visible": false,
+        "splitter_hidden": false,
+        "geometry": {
+          "sash": [
+            420,
+            -260
+          ],
+          "horizontal": [
+            420,
+            968
+          ],
+          "vertical": [
+            926,
+            0
+          ],
+          "sidebar_visible": true,
+          "preview_visible": false,
+          "preview_splitter_hidden": false
+        },
+        "focused": null,
+        "selected": [],
+        "raster_rendered": true,
+        "raster_ready": true
+      },
+      "interval_cursor": 0,
+      "intervals": []
+    },
+    {
+      "action": "after disable before restore publication",
+      "now_ms": 1791263143152,
+      "current": "one",
+      "hide_preview": false,
+      "saved": [
+        420,
+        -260
+      ],
+      "page": {
+        "page_key": "f710806e2cd218e25ccfa9de9e2d8295a05b24e0ebde86346a391623b2747787",
+        "accepted": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+        "hidden_page": null,
+        "start": 1791263142304,
+        "canvas_visible": false,
+        "splitter_hidden": false,
+        "geometry": {
+          "sash": [
+            420,
+            -260
+          ],
+          "horizontal": [
+            420,
+            968
+          ],
+          "vertical": [
+            926,
+            0
+          ],
+          "sidebar_visible": true,
+          "preview_visible": false,
+          "preview_splitter_hidden": false
+        },
+        "focused": null,
+        "selected": [],
+        "raster_rendered": true,
+        "raster_ready": true
+      },
+      "interval_cursor": 0,
+      "intervals": []
+    },
+    {
+      "action": "after restore publication before settle",
+      "now_ms": 1791263143152,
+      "current": "one",
+      "hide_preview": false,
+      "saved": [
+        420,
+        -260
+      ],
+      "page": {
+        "page_key": "f710806e2cd218e25ccfa9de9e2d8295a05b24e0ebde86346a391623b2747787",
+        "accepted": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+        "hidden_page": null,
+        "start": 1791263142304,
+        "canvas_visible": false,
+        "splitter_hidden": false,
+        "geometry": {
+          "sash": [
+            420,
+            -260
+          ],
+          "horizontal": [
+            420,
+            968
+          ],
+          "vertical": [
+            926,
+            0
+          ],
+          "sidebar_visible": true,
+          "preview_visible": false,
+          "preview_splitter_hidden": false
+        },
+        "focused": null,
+        "selected": [],
+        "raster_rendered": true,
+        "raster_ready": true
+      },
+      "interval_cursor": 0,
+      "intervals": []
+    },
+    {
+      "action": "after restore event settle",
+      "now_ms": 1791263143216,
+      "current": "one",
+      "hide_preview": false,
+      "saved": [
+        420,
+        -260
+      ],
+      "page": {
+        "page_key": "f710806e2cd218e25ccfa9de9e2d8295a05b24e0ebde86346a391623b2747787",
+        "accepted": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+        "hidden_page": null,
+        "start": 1791263142304,
+        "canvas_visible": true,
+        "splitter_hidden": false,
+        "geometry": {
+          "sash": [
+            420,
+            -260
+          ],
+          "horizontal": [
+            420,
+            968
+          ],
+          "vertical": [
+            662,
+            260
+          ],
+          "sidebar_visible": true,
+          "preview_visible": true,
+          "preview_splitter_hidden": false
+        },
+        "focused": null,
+        "selected": [],
+        "raster_rendered": true,
+        "raster_ready": true
+      },
+      "interval_cursor": 0,
+      "intervals": []
+    },
+    {
+      "action": "after legacy restore snapshot settle",
+      "now_ms": 1791263143278,
+      "current": "one",
+      "hide_preview": false,
+      "saved": [
+        420,
+        -260
+      ],
+      "page": {
+        "page_key": "f710806e2cd218e25ccfa9de9e2d8295a05b24e0ebde86346a391623b2747787",
+        "accepted": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+        "hidden_page": null,
+        "start": 1791263142304,
+        "canvas_visible": true,
+        "splitter_hidden": false,
+        "geometry": {
+          "sash": [
+            420,
+            -260
+          ],
+          "horizontal": [
+            420,
+            968
+          ],
+          "vertical": [
+            662,
+            260
+          ],
+          "sidebar_visible": true,
+          "preview_visible": true,
+          "preview_splitter_hidden": false
+        },
+        "focused": null,
+        "selected": [],
+        "raster_rendered": true,
+        "raster_ready": true
+      },
+      "interval_cursor": 0,
+      "intervals": []
+    }
+  ],
+  "preview_restore_selection_probe": [
+    {
+      "action": "before initial physical-handler selection",
+      "now_ms": 1791263144362,
+      "current": "restore selection probe",
+      "hide_preview": false,
+      "saved": [
+        420,
+        -260
+      ],
+      "page": {
+        "page_key": "0d06a3bd7c3df590b85f6ae6c2e7ee38522efbce3d61b140294cc6cbb89fb36a",
+        "accepted": null,
+        "hidden_page": null,
+        "start": 1791263144236,
+        "canvas_visible": true,
+        "splitter_hidden": false,
+        "geometry": {
+          "sash": [
+            420,
+            -260
+          ],
+          "horizontal": [
+            420,
+            968
+          ],
+          "vertical": [
+            662,
+            260
+          ],
+          "sidebar_visible": true,
+          "preview_visible": true,
+          "preview_splitter_hidden": false
+        },
+        "focused": null,
+        "selected": [],
+        "raster_rendered": null,
+        "raster_ready": null
+      },
+      "interval_cursor": 2,
+      "intervals": [
+        {
+          "hash": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+          "canvas": 1,
+          "start": 1791263142304,
+          "elapsed": 1098
+        },
+        {
+          "hash": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+          "canvas": 1,
+          "start": 1791263143988,
+          "elapsed": 73
+        }
+      ]
+    },
+    {
+      "action": "after initial selection settle",
+      "now_ms": 1791263144430,
+      "current": "restore selection probe",
+      "hide_preview": false,
+      "saved": [
+        420,
+        -260
+      ],
+      "page": {
+        "page_key": "0d06a3bd7c3df590b85f6ae6c2e7ee38522efbce3d61b140294cc6cbb89fb36a",
+        "accepted": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+        "hidden_page": null,
+        "start": 1791263144363,
+        "canvas_visible": true,
+        "splitter_hidden": false,
+        "geometry": {
+          "sash": [
+            420,
+            -260
+          ],
+          "horizontal": [
+            420,
+            968
+          ],
+          "vertical": [
+            662,
+            260
+          ],
+          "sidebar_visible": true,
+          "preview_visible": true,
+          "preview_splitter_hidden": false
+        },
+        "focused": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+        "selected": [
+          "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea"
+        ],
+        "raster_rendered": true,
+        "raster_ready": true
+      },
+      "interval_cursor": 2,
+      "intervals": [
+        {
+          "hash": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+          "canvas": 1,
+          "start": 1791263142304,
+          "elapsed": 1098
+        },
+        {
+          "hash": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+          "canvas": 1,
+          "start": 1791263143988,
+          "elapsed": 73
+        }
+      ]
+    },
+    {
+      "action": "after global hide and restore settle",
+      "now_ms": 1791263144492,
+      "current": "restore selection probe",
+      "hide_preview": true,
+      "saved": [
+        420,
+        -260
+      ],
+      "page": {
+        "page_key": "0d06a3bd7c3df590b85f6ae6c2e7ee38522efbce3d61b140294cc6cbb89fb36a",
+        "accepted": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+        "hidden_page": null,
+        "start": 1791263144363,
+        "canvas_visible": false,
+        "splitter_hidden": false,
+        "geometry": {
+          "sash": [
+            420,
+            -260
+          ],
+          "horizontal": [
+            420,
+            968
+          ],
+          "vertical": [
+            926,
+            0
+          ],
+          "sidebar_visible": true,
+          "preview_visible": false,
+          "preview_splitter_hidden": false
+        },
+        "focused": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+        "selected": [
+          "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea"
+        ],
+        "raster_rendered": true,
+        "raster_ready": true
+      },
+      "interval_cursor": 2,
+      "intervals": [
+        {
+          "hash": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+          "canvas": 1,
+          "start": 1791263142304,
+          "elapsed": 1098
+        },
+        {
+          "hash": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+          "canvas": 1,
+          "start": 1791263143988,
+          "elapsed": 73
+        }
+      ]
+    },
+    {
+      "action": "after hidden page switch away",
+      "now_ms": 1791263144618,
+      "current": "restore selection probe",
+      "hide_preview": true,
+      "saved": [
+        420,
+        -260
+      ],
+      "page": {
+        "page_key": "0d06a3bd7c3df590b85f6ae6c2e7ee38522efbce3d61b140294cc6cbb89fb36a",
+        "accepted": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+        "hidden_page": null,
+        "start": 1791263144363,
+        "canvas_visible": false,
+        "splitter_hidden": false,
+        "geometry": {
+          "sash": [
+            420,
+            -260
+          ],
+          "horizontal": [
+            420,
+            968
+          ],
+          "vertical": [
+            926,
+            0
+          ],
+          "sidebar_visible": true,
+          "preview_visible": false,
+          "preview_splitter_hidden": false
+        },
+        "focused": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+        "selected": [
+          "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea"
+        ],
+        "raster_rendered": true,
+        "raster_ready": true
+      },
+      "interval_cursor": 2,
+      "intervals": [
+        {
+          "hash": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+          "canvas": 1,
+          "start": 1791263142304,
+          "elapsed": 1098
+        },
+        {
+          "hash": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+          "canvas": 1,
+          "start": 1791263143988,
+          "elapsed": 73
+        }
+      ]
+    },
+    {
+      "action": "after hidden page return",
+      "now_ms": 1791263144742,
+      "current": "restore selection probe",
+      "hide_preview": true,
+      "saved": [
+        420,
+        -260
+      ],
+      "page": {
+        "page_key": "0d06a3bd7c3df590b85f6ae6c2e7ee38522efbce3d61b140294cc6cbb89fb36a",
+        "accepted": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+        "hidden_page": null,
+        "start": 1791263144363,
+        "canvas_visible": false,
+        "splitter_hidden": false,
+        "geometry": {
+          "sash": [
+            420,
+            -260
+          ],
+          "horizontal": [
+            420,
+            968
+          ],
+          "vertical": [
+            926,
+            0
+          ],
+          "sidebar_visible": true,
+          "preview_visible": false,
+          "preview_splitter_hidden": false
+        },
+        "focused": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+        "selected": [
+          "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea"
+        ],
+        "raster_rendered": true,
+        "raster_ready": true
+      },
+      "interval_cursor": 2,
+      "intervals": [
+        {
+          "hash": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+          "canvas": 1,
+          "start": 1791263142304,
+          "elapsed": 1098
+        },
+        {
+          "hash": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+          "canvas": 1,
+          "start": 1791263143988,
+          "elapsed": 73
+        }
+      ]
+    },
+    {
+      "action": "after collapse while globally hidden",
+      "now_ms": 1791263144804,
+      "current": "restore selection probe",
+      "hide_preview": true,
+      "saved": [
+        420,
+        -260
+      ],
+      "page": {
+        "page_key": "0d06a3bd7c3df590b85f6ae6c2e7ee38522efbce3d61b140294cc6cbb89fb36a",
+        "accepted": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+        "hidden_page": null,
+        "start": 1791263144363,
+        "canvas_visible": false,
+        "splitter_hidden": false,
+        "geometry": {
+          "sash": [
+            420,
+            -260
+          ],
+          "horizontal": [
+            420,
+            968
+          ],
+          "vertical": [
+            926,
+            0
+          ],
+          "sidebar_visible": true,
+          "preview_visible": false,
+          "preview_splitter_hidden": false
+        },
+        "focused": null,
+        "selected": [
+          "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea"
+        ],
+        "raster_rendered": true,
+        "raster_ready": true
+      },
+      "interval_cursor": 2,
+      "intervals": [
+        {
+          "hash": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+          "canvas": 1,
+          "start": 1791263142304,
+          "elapsed": 1098
+        },
+        {
+          "hash": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+          "canvas": 1,
+          "start": 1791263143988,
+          "elapsed": 73
+        }
+      ]
+    },
+    {
+      "action": "after disable before restore publication",
+      "now_ms": 1791263144804,
+      "current": "restore selection probe",
+      "hide_preview": false,
+      "saved": [
+        420,
+        -260
+      ],
+      "page": {
+        "page_key": "0d06a3bd7c3df590b85f6ae6c2e7ee38522efbce3d61b140294cc6cbb89fb36a",
+        "accepted": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+        "hidden_page": null,
+        "start": 1791263144363,
+        "canvas_visible": false,
+        "splitter_hidden": false,
+        "geometry": {
+          "sash": [
+            420,
+            -260
+          ],
+          "horizontal": [
+            420,
+            968
+          ],
+          "vertical": [
+            926,
+            0
+          ],
+          "sidebar_visible": true,
+          "preview_visible": false,
+          "preview_splitter_hidden": false
+        },
+        "focused": null,
+        "selected": [
+          "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea"
+        ],
+        "raster_rendered": true,
+        "raster_ready": true
+      },
+      "interval_cursor": 2,
+      "intervals": [
+        {
+          "hash": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+          "canvas": 1,
+          "start": 1791263142304,
+          "elapsed": 1098
+        },
+        {
+          "hash": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+          "canvas": 1,
+          "start": 1791263143988,
+          "elapsed": 73
+        }
+      ]
+    },
+    {
+      "action": "after restore publication before settle",
+      "now_ms": 1791263144804,
+      "current": "restore selection probe",
+      "hide_preview": false,
+      "saved": [
+        420,
+        -260
+      ],
+      "page": {
+        "page_key": "0d06a3bd7c3df590b85f6ae6c2e7ee38522efbce3d61b140294cc6cbb89fb36a",
+        "accepted": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+        "hidden_page": null,
+        "start": 1791263144363,
+        "canvas_visible": false,
+        "splitter_hidden": false,
+        "geometry": {
+          "sash": [
+            420,
+            -260
+          ],
+          "horizontal": [
+            420,
+            968
+          ],
+          "vertical": [
+            926,
+            0
+          ],
+          "sidebar_visible": true,
+          "preview_visible": false,
+          "preview_splitter_hidden": false
+        },
+        "focused": null,
+        "selected": [
+          "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea"
+        ],
+        "raster_rendered": true,
+        "raster_ready": true
+      },
+      "interval_cursor": 2,
+      "intervals": [
+        {
+          "hash": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+          "canvas": 1,
+          "start": 1791263142304,
+          "elapsed": 1098
+        },
+        {
+          "hash": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+          "canvas": 1,
+          "start": 1791263143988,
+          "elapsed": 73
+        }
+      ]
+    },
+    {
+      "action": "after restore event settle before next selection",
+      "now_ms": 1791263144868,
+      "current": "restore selection probe",
+      "hide_preview": false,
+      "saved": [
+        420,
+        -260
+      ],
+      "page": {
+        "page_key": "0d06a3bd7c3df590b85f6ae6c2e7ee38522efbce3d61b140294cc6cbb89fb36a",
+        "accepted": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+        "hidden_page": null,
+        "start": 1791263144363,
+        "canvas_visible": true,
+        "splitter_hidden": false,
+        "geometry": {
+          "sash": [
+            420,
+            -260
+          ],
+          "horizontal": [
+            420,
+            968
+          ],
+          "vertical": [
+            662,
+            260
+          ],
+          "sidebar_visible": true,
+          "preview_visible": true,
+          "preview_splitter_hidden": false
+        },
+        "focused": null,
+        "selected": [
+          "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea"
+        ],
+        "raster_rendered": true,
+        "raster_ready": true
+      },
+      "interval_cursor": 2,
+      "intervals": [
+        {
+          "hash": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+          "canvas": 1,
+          "start": 1791263142304,
+          "elapsed": 1098
+        },
+        {
+          "hash": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+          "canvas": 1,
+          "start": 1791263143988,
+          "elapsed": 73
+        }
+      ]
+    },
+    {
+      "action": "after next selection before settle",
+      "now_ms": 1791263144868,
+      "current": "restore selection probe",
+      "hide_preview": false,
+      "saved": [
+        420,
+        -260
+      ],
+      "page": {
+        "page_key": "0d06a3bd7c3df590b85f6ae6c2e7ee38522efbce3d61b140294cc6cbb89fb36a",
+        "accepted": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+        "hidden_page": null,
+        "start": 1791263144363,
+        "canvas_visible": true,
+        "splitter_hidden": false,
+        "geometry": {
+          "sash": [
+            420,
+            -260
+          ],
+          "horizontal": [
+            420,
+            968
+          ],
+          "vertical": [
+            662,
+            260
+          ],
+          "sidebar_visible": true,
+          "preview_visible": true,
+          "preview_splitter_hidden": false
+        },
+        "focused": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+        "selected": [
+          "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea"
+        ],
+        "raster_rendered": true,
+        "raster_ready": true
+      },
+      "interval_cursor": 2,
+      "intervals": [
+        {
+          "hash": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+          "canvas": 1,
+          "start": 1791263142304,
+          "elapsed": 1098
+        },
+        {
+          "hash": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+          "canvas": 1,
+          "start": 1791263143988,
+          "elapsed": 73
+        }
+      ]
+    },
+    {
+      "action": "after next selection settle",
+      "now_ms": 1791263144931,
+      "current": "restore selection probe",
+      "hide_preview": false,
+      "saved": [
+        420,
+        -260
+      ],
+      "page": {
+        "page_key": "0d06a3bd7c3df590b85f6ae6c2e7ee38522efbce3d61b140294cc6cbb89fb36a",
+        "accepted": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+        "hidden_page": null,
+        "start": 1791263144363,
+        "canvas_visible": true,
+        "splitter_hidden": false,
+        "geometry": {
+          "sash": [
+            420,
+            -260
+          ],
+          "horizontal": [
+            420,
+            968
+          ],
+          "vertical": [
+            662,
+            260
+          ],
+          "sidebar_visible": true,
+          "preview_visible": true,
+          "preview_splitter_hidden": false
+        },
+        "focused": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+        "selected": [
+          "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea"
+        ],
+        "raster_rendered": true,
+        "raster_ready": true
+      },
+      "interval_cursor": 2,
+      "intervals": [
+        {
+          "hash": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+          "canvas": 1,
+          "start": 1791263142304,
+          "elapsed": 1098
+        },
+        {
+          "hash": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+          "canvas": 1,
+          "start": 1791263143988,
+          "elapsed": 73
+        }
+      ]
+    },
+    {
+      "action": "after final collapse before settle",
+      "now_ms": 1791263144932,
+      "current": "restore selection probe",
+      "hide_preview": false,
+      "saved": [
+        420,
+        -260
+      ],
+      "page": {
+        "page_key": "0d06a3bd7c3df590b85f6ae6c2e7ee38522efbce3d61b140294cc6cbb89fb36a",
+        "accepted": null,
+        "hidden_page": null,
+        "start": 1791263144931,
+        "canvas_visible": false,
+        "splitter_hidden": false,
+        "geometry": {
+          "sash": [
+            420,
+            -260
+          ],
+          "horizontal": [
+            420,
+            968
+          ],
+          "vertical": [
+            662,
+            260
+          ],
+          "sidebar_visible": true,
+          "preview_visible": false,
+          "preview_splitter_hidden": false
+        },
+        "focused": null,
+        "selected": [
+          "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea"
+        ],
+        "raster_rendered": null,
+        "raster_ready": null
+      },
+      "interval_cursor": 3,
+      "intervals": [
+        {
+          "hash": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+          "canvas": 1,
+          "start": 1791263142304,
+          "elapsed": 1098
+        },
+        {
+          "hash": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+          "canvas": 1,
+          "start": 1791263143988,
+          "elapsed": 73
+        },
+        {
+          "hash": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+          "canvas": 1,
+          "start": 1791263144363,
+          "elapsed": 568
+        }
+      ]
+    },
+    {
+      "action": "after final collapse settle",
+      "now_ms": 1791263144995,
+      "current": "restore selection probe",
+      "hide_preview": false,
+      "saved": [
+        420,
+        -260
+      ],
+      "page": {
+        "page_key": "0d06a3bd7c3df590b85f6ae6c2e7ee38522efbce3d61b140294cc6cbb89fb36a",
+        "accepted": null,
+        "hidden_page": null,
+        "start": 1791263144931,
+        "canvas_visible": false,
+        "splitter_hidden": false,
+        "geometry": {
+          "sash": [
+            420,
+            -260
+          ],
+          "horizontal": [
+            420,
+            968
+          ],
+          "vertical": [
+            926,
+            0
+          ],
+          "sidebar_visible": true,
+          "preview_visible": false,
+          "preview_splitter_hidden": false
+        },
+        "focused": null,
+        "selected": [
+          "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea"
+        ],
+        "raster_rendered": null,
+        "raster_ready": null
+      },
+      "interval_cursor": 3,
+      "intervals": [
+        {
+          "hash": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+          "canvas": 1,
+          "start": 1791263142304,
+          "elapsed": 1098
+        },
+        {
+          "hash": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+          "canvas": 1,
+          "start": 1791263143988,
+          "elapsed": 73
+        },
+        {
+          "hash": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+          "canvas": 1,
+          "start": 1791263144363,
+          "elapsed": 568
+        }
+      ]
+    }
+  ],
+  "preview_restore_intervals": [
+    {
+      "hash": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+      "canvas": 1,
+      "start": 1791263142304,
+      "elapsed": 1098
+    },
+    {
+      "hash": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+      "canvas": 1,
+      "start": 1791263143988,
+      "elapsed": 73
+    },
+    {
+      "hash": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+      "canvas": 1,
+      "start": 1791263144363,
+      "elapsed": 568
+    }
+  ],
+  "preview_restore_probe_metadata": {
+    "hashes": [
+      "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+      "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5"
+    ],
+    "statistics_active": true,
+    "preview_min_time_ms": 5000,
+    "preview_max_time_ms": 60000,
+    "limits": [
+      "Intervals are actual canvas FinishViewing calls, delegated to the unchanged real manager; they are not completed database rows or post-cap totals.",
+      "Real clock retained: timestamps/durations are observations, not fixed expected numbers. Compare accepted identity, start continuity and interval call boundaries.",
+      "Raster readiness is sampled separately from accepted identity; immediate snapshots do not process extra Qt events.",
+      "The selection probe is a distinct populated page after all legacy observations and PNG capture; its results do not overwrite preview_consumer or steps.",
+      "Selection uses the actual thumbnail mouse handler _HitMedia with connected focus/clear signals; collapse uses EventPreviewUnsplit. Existing select helper includes explicit PageShown as before."
+    ]
+  }
 }
