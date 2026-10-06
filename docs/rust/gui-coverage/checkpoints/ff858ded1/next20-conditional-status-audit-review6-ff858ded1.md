@@ -1,0 +1,17 @@
+# Independent conditional text and CI audit
+
+Exact source `ff858ded14518d4a9a1d39bb5aafe0213c992983`, run `37428534955`. All26 checks passed; no semantic blockers in the proposed105 text operations. No native-render or publication approval is supplied.
+
+The mapping digest matches the current20-reference-only subset. The independent in-memory preview verifies all105 exact before values and produces only43 text-field changes. All95 whole-item removals are validation/preparation or author-execution provenance; seven mixed replacements retain behavior/credit/fixture-safety boundaries. Three assessment substitutions remove only the conditional hosted-validation clause. All other limits, source anchors, evidence, statuses, implementation-validation fields, manifest paths and native objects remain unchanged. The duplicates real “pending label” assessment is preserved.
+
+The20 preparation-is-not-approval sentences remain true, but are process boilerplate rather than product limits. Removing them from live limitations after all gates is safe because the final evidence gates remain explicit. Historical no-local-execution statements are not disproved by hosted success: original exact text is preserved in this mapping/author packets; final current validation belongs in separate exact-source metadata.
+
+The seven replacements preserve no-parent/alias/new-ID credit; disposable copied-media/fixture safety; weak GUI ownership, retained Control chain, immediate private Bound retirement and weak timer/next-poll semantics; and tree real pointer/focused-key versus consumer-callback double-click distinction. Every remaining substantive limitation is byte-identical in the preview, including single-line OR topology, popup-tool-window differences, wider Notes/tree/transfer/backend families, platform/minimized behavior and finite-control scope.
+
+CI evidence names this exact SHA/run and completed successful check and parity-models jobs, with fmt/strict Clippy/full tests/ratchet/reference-backend steps successful. GUI log says696passed,0failed,0ignored in221.51s. All outcome log hashes, workflow hash and publication-policy hash match. Scope is Linux; Windows/macOS remain deferred and are not passed by this audit.
+
+Compile observations match logs: workspace snapshot rejected before mutation for added/deleted input paths; Checking/Compiling hydrus-gui; Clippy Finished10m17s=617s, test-profile Finished12m13s=733s. The preceding bank commit changes57publication/evidence files and no product source. These are ordinary validation observations after rejected workspace reuse, not an isolated benchmark or performance-gain proof. “Generated UI recompiled” is supported as the GUI crate including generated Rust code compiling; fresh generator execution is not separately demonstrated by these log lines.
+
+Nonblocking provenance drift: the mapping Markdown still says full Linux check running, and ci_passed=false records its earlier creation. Final composition should state the independently checked completed Linux evidence. Keep render/approval flags pending until the four selected-scoped reviews arrive; the template is not evidence. Do not apply native_render_review=passed or review_required=false from CI alone.
+
+Apply original-index list operations grouped by field or in descending index order, with exact digest/before matching. Ascending sequential deletions would shift later indexes. No resulting packet has been written by this reviewer.

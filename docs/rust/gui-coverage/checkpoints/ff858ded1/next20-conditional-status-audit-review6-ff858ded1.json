@@ -1,0 +1,252 @@
+{
+  "source_commit": "ff858ded14518d4a9a1d39bb5aafe0213c992983",
+  "run_id": 37428534955,
+  "ci_confirmed_passed_linux_only": true,
+  "native_render_review_approval": false,
+  "publication_approval": false,
+  "scope": "Read-only independent text mapping and supplied immutable CI/log audit; no builds, actual patch writes, canonical edits or render inspections. In-memory text preview only.",
+  "inputs": [
+    {
+      "path": "/workspace/validation-reviews/next20-conditional-status-text-map-ff858ded1.json",
+      "sha256": "c7b55b8c74201ee9a9d13a6f486bd93bce22dc4966af27dded6aa2ff51687c67"
+    },
+    {
+      "path": "/workspace/validation-reviews/publication-subset-preflight-next20-ff858ded1-linux/subset-proposal-patch.json",
+      "sha256": "5ac23e2c153c0a901d2b37ddef39141367d2e189c9c291964d200fb104211880"
+    },
+    {
+      "path": "/workspace/validation-reviews/ci-ff858ded1/ci-evidence.json",
+      "sha256": "f46fbab6b9ebef2905956f7114b939ca2da1148e5d57d81d61b68beaee11aefe"
+    },
+    {
+      "path": "/workspace/validation-reviews/ci-ff858ded1/validation-outcome.json",
+      "sha256": "8e43f48400e4ac7e1478cacd06cf831cfd23aab292d145cbbdcbcca63e525b7e"
+    }
+  ],
+  "checks": {
+    "mapping_input_digest_matches": true,
+    "flag_input_digest_matches": true,
+    "patch_updates_exact_selected20": true,
+    "mapping_selected_ids_match": true,
+    "all_operation_ids_selected": true,
+    "only_text_fields_modified": true,
+    "all_exact_before_values_match": true,
+    "no_reference_additions_or_native_edits": true,
+    "untouched_fields_preserved": true,
+    "every_non_targeted_text_item_preserved": true,
+    "three_assessment_edits_only_hosted_condition": true,
+    "duplicates_pending_label_assessment_unchanged": true,
+    "every_explicit_preserved_record_retained": true,
+    "no_actual_packet_or_canonical_write": true,
+    "CI_source_and_run_match": true,
+    "CI_run_complete_success": true,
+    "CI_scope_linux_only": true,
+    "CI_exact_required_jobs_pass": true,
+    "CI_required_steps_pass": true,
+    "log_hashes_match_outcome": true,
+    "publication_policy_matches_source": true,
+    "workflow_at_source_matches_source": true,
+    "GUI696zero_fail_zero_ignore_matches_log": true,
+    "compile_durations_match_logs": true,
+    "snapshot_rejection_matches_log": true,
+    "preceding_bank_commit_has_no_product_source_changes": true
+  },
+  "blockers": [],
+  "operations": {
+    "remove_exact_list_item": 95,
+    "replace_exact_list_item": 7,
+    "replace_exact_substring": 3
+  },
+  "text_fields_modified": 43,
+  "mixed_operations_verified": [
+    {
+      "id": "audit-options-help-debug-action-fetch-a-url",
+      "field": "limitations",
+      "original_index": 4,
+      "operation": "replace_exact_list_item",
+      "before": "Exact Rust/native replay and native PNG inspection remain hosted pending. No parents, semantic aliases or new native window IDs receive credit.",
+      "conditional_after": "No parents, semantic aliases or new native window IDs receive credit.",
+      "reason": "Remove validation status while preserving existing credit or disposable-fixture safety boundary."
+    },
+    {
+      "id": "audit-options-files-and-trash-allow-deferred-file-deletes-during-normal-time",
+      "field": "limitations",
+      "original_index": 4,
+      "operation": "replace_exact_list_item",
+      "before": "Hosted exact-source Rust/Clippy/native execution and inspection of the authored Options PNG remain pending. Physical native tests use disposable copied media; none were executed locally.",
+      "conditional_after": "Physical native tests use disposable copied media.",
+      "reason": "Remove validation status while preserving existing credit or disposable-fixture safety boundary."
+    },
+    {
+      "id": "audit-options-files-and-trash-allow-deferred-file-deletes-during-normal-time",
+      "field": "limitations",
+      "original_index": 5,
+      "operation": "replace_exact_list_item",
+      "before": "The GUI owner uses a weak window and off-thread jobs capture no GUI state. Retained Control owns Monitor\u2192Pages\u2192Store until final owner drop. A private Bound Owner immediately retires work on binding drop despite retained Main callbacks/Control; weak owner timer or next poll detects a dropped Main. The actual held-wait dropped-Bound/fresh-successor regression and dropped-Main polling assertion are authored, not locally executed.",
+      "conditional_after": "The GUI owner uses a weak window and off-thread jobs capture no GUI state. Retained Control owns Monitor\u2192Pages\u2192Store until final owner drop. A private Bound Owner immediately retires work on binding drop despite retained Main callbacks/Control; weak owner timer or next poll detects a dropped Main.",
+      "reason": "Remove only author/execution status; retain weak Main, retained Control/Store lifetime, private Bound retirement, weak-timer/next-poll scope verbatim."
+    },
+    {
+      "id": "audit-options-files-and-trash-allow-trash-maintenance-during-normal-time",
+      "field": "limitations",
+      "original_index": 4,
+      "operation": "replace_exact_list_item",
+      "before": "Hosted exact-source Rust/Clippy/native execution and inspection of the authored Options PNG remain pending. Physical native tests use disposable copied media; none were executed locally.",
+      "conditional_after": "Physical native tests use disposable copied media.",
+      "reason": "Remove validation status while preserving existing credit or disposable-fixture safety boundary."
+    },
+    {
+      "id": "audit-options-files-and-trash-allow-trash-maintenance-during-normal-time",
+      "field": "limitations",
+      "original_index": 5,
+      "operation": "replace_exact_list_item",
+      "before": "The GUI owner uses a weak window and off-thread jobs capture no GUI state. Retained Control owns Monitor\u2192Pages\u2192Store until final owner drop. A private Bound Owner immediately retires work on binding drop despite retained Main callbacks/Control; weak owner timer or next poll detects a dropped Main. The actual held-wait dropped-Bound/fresh-successor regression and dropped-Main polling assertion are authored, not locally executed.",
+      "conditional_after": "The GUI owner uses a weak window and off-thread jobs capture no GUI state. Retained Control owns Monitor\u2192Pages\u2192Store until final owner drop. A private Bound Owner immediately retires work on binding drop despite retained Main callbacks/Control; weak owner timer or next poll detects a dropped Main.",
+      "reason": "Remove only author/execution status; retain weak Main, retained Control/Store lifetime, private Bound retirement, weak-timer/next-poll scope verbatim."
+    },
+    {
+      "id": "audit-options-gui-pages-navigation-and-drag-and-drop-experimental-show-tab-tree-view",
+      "field": "limitations",
+      "original_index": 3,
+      "operation": "replace_exact_list_item",
+      "before": "Native real pointer checks cover single-click and disclosure; Return/arrow/Home/End are dispatched through the focused real Slint window. Double-click sequences are replayed through the consumer callbacks as well as the real Qt mouse recording. Hosted native execution/PNG review remains pending; no local Cargo builds/tests were run.",
+      "conditional_after": "Native real pointer checks cover single-click and disclosure; Return/arrow/Home/End are dispatched through the focused real Slint window. Double-click sequences are replayed through the consumer callbacks as well as the real Qt mouse recording.",
+      "reason": "Remove only validation/author status; retain real pointer versus consumer double-click and focused key dispatch scope verbatim."
+    },
+    {
+      "id": "audit-options-files-and-trash-when-maintenance-physically-deletes-files-wait-this-long-between-each-delete",
+      "field": "limitations",
+      "original_index": 3,
+      "operation": "replace_exact_list_item",
+      "before": "Hosted exact-source Rust/Clippy/native execution and inspection of the authored Options PNG remain pending. Physical mutation regressions are authored against disposable copied fixtures, not executed locally.",
+      "conditional_after": "Physical file-mutation regressions use disposable copied fixtures.",
+      "reason": "Remove validation status while preserving existing credit or disposable-fixture safety boundary."
+    }
+  ],
+  "assessment_clauses_verified": [
+    {
+      "id": "audit-options-files-and-trash-allow-deferred-file-deletes-during-normal-time",
+      "match": "Conditional finite-control FirstPass requires hosted validation; broader maintenance parents remain Partial.",
+      "replacement": "Broader maintenance parents remain Partial."
+    },
+    {
+      "id": "audit-options-files-and-trash-allow-trash-maintenance-during-normal-time",
+      "match": "Conditional finite-control FirstPass requires hosted validation; broader maintenance parents remain Partial.",
+      "replacement": "Broader maintenance parents remain Partial."
+    },
+    {
+      "id": "audit-options-files-and-trash-when-maintenance-physically-deletes-files-wait-this-long-between-each-delete",
+      "match": "Conditional finite-control FirstPass requires hosted validation; broader maintenance parents remain Partial.",
+      "replacement": "Broader maintenance parents remain Partial."
+    }
+  ],
+  "preserved_records": [
+    {
+      "id": "audit-options-help-debug-action-make-a-new-page-in-five-seconds",
+      "field": "limitations",
+      "original_index": 1,
+      "text": "Actual Qt CallLater/background SingleJob/pub timing and actual GUI page creation are observed with unmodified scheduler/clock. Native owned-clock launch offsets0/1000 and deadlines5000/6000 are separate deterministic authored inputs, not claims of physically executed native five-second timers.",
+      "disposition": "preserve_exactly",
+      "reason": "Substantive behavior, platform, timing, ownership, concurrency or credit scope; lexical pending/authored/preparation does not establish stale validation status."
+    },
+    {
+      "id": "audit-options-help-debug-action-make-a-new-page-in-five-seconds",
+      "field": "limitations",
+      "original_index": 3,
+      "text": "Merely hidden Main receives existing work without being raised; new native GUI invocation while hidden is refused. Real Qt minimized delivery was recorded, while backend-specific native minimized state remains a hosted/platform limit. Native accepted-exit/rebind/destruction permanently disposes pending requests more strongly than independent Qt backend callbacks.",
+      "disposition": "preserve_exactly",
+      "reason": "Substantive behavior, platform, timing, ownership, concurrency or credit scope; lexical pending/authored/preparation does not establish stale validation status."
+    },
+    {
+      "id": "audit-options-duplicates-duplicates-filter-page-hide-the-x-done-notification-on-preparation-tab-when-99-searched",
+      "field": "limitations",
+      "original_index": 1,
+      "text": "Finite label policy does not establish broader duplicates preparation maintenance, duplicate filter colours or Options parent parity; those parents remain Partial.",
+      "disposition": "preserve_exactly",
+      "reason": "Substantive behavior, platform, timing, ownership, concurrency or credit scope; lexical pending/authored/preparation does not establish stale validation status."
+    },
+    {
+      "id": "audit-options-duplicates-duplicates-filter-page-hide-the-x-done-notification-on-preparation-tab-when-99-searched",
+      "field": "limitations",
+      "original_index": 2,
+      "text": "The existing native preparation publication path is reused on Apply/page show/refresh, without introducing another observer, timer or background search worker.",
+      "disposition": "preserve_exactly",
+      "reason": "Substantive behavior, platform, timing, ownership, concurrency or credit scope; lexical pending/authored/preparation does not establish stale validation status."
+    },
+    {
+      "id": "audit-options-duplicates-duplicates-filter-page-hide-the-x-done-notification-on-preparation-tab-when-99-searched",
+      "field": "assessment",
+      "original_index": 0,
+      "text": "Enabled-default duplicates filter page checkbox stages, cancels, applies and reopens; real serialisable ClientOptions imports or retained legacy backfill map the same Boolean, with native override and corrupt-value errors. The existing native preparation publisher now reads saved policy instead of hardcoded true, relabels the visible page after Options Apply and reads afresh for future pages. Strict >99% suppression and the 99.95% ->99.9% pending label match actual Qt; fully searched/empty names, counts, gauge and search availability remain unchanged. Existing owned Options rejects hidden edits/Apply and retired Cancel/rebind/accepted-close writes. Changed-field persistence preserves concurrent duplicate filter preferences.",
+      "disposition": "preserve_exactly",
+      "reason": "Substantive behavior, platform, timing, ownership, concurrency or credit scope; lexical pending/authored/preparation does not establish stale validation status."
+    },
+    {
+      "id": "audit-media-notes-missing-cog",
+      "field": "limitations",
+      "original_index": 2,
+      "text": "Native Options writes only changed fields and retains unedited concurrent preferences, while cog changes use an atomic read/edit/write of the latest typed setting. Retired owner and unanswered child guards, frozen file target, reopen/import and no file-note changes on Cancel are authored native boundaries. No reference parity is claimed for programmatic concurrent dialogs beyond the recorded reachable workflows.",
+      "disposition": "preserve_exactly",
+      "reason": "Substantive behavior, platform, timing, ownership, concurrency or credit scope; lexical pending/authored/preparation does not establish stale validation status."
+    },
+    {
+      "id": "audit-options-notes-start-editing-notes-with-the-text-cursor-at-the-end-of-the-document",
+      "field": "limitations",
+      "original_index": 2,
+      "text": "Native Options writes only changed fields and retains unedited concurrent preferences, while cog changes use an atomic read/edit/write of the latest typed setting. Retired owner and unanswered child guards, frozen file target, reopen/import and no file-note changes on Cancel are authored native boundaries. No reference parity is claimed for programmatic concurrent dialogs beyond the recorded reachable workflows.",
+      "disposition": "preserve_exactly",
+      "reason": "Substantive behavior, platform, timing, ownership, concurrency or credit scope; lexical pending/authored/preparation does not establish stale validation status."
+    },
+    {
+      "id": "audit-options-notes-when-middle-clicking-a-note-hover-only-copy-the-text",
+      "field": "limitations",
+      "original_index": 2,
+      "text": "Native Options writes only changed fields and retains unedited concurrent preferences, while cog changes use an atomic read/edit/write of the latest typed setting. Retired owner and unanswered child guards, frozen file target, reopen/import and no file-note changes on Cancel are authored native boundaries. No reference parity is claimed for programmatic concurrent dialogs beyond the recorded reachable workflows.",
+      "disposition": "preserve_exactly",
+      "reason": "Substantive behavior, platform, timing, ownership, concurrency or credit scope; lexical pending/authored/preparation does not establish stale validation status."
+    },
+    {
+      "id": "audit-options-menu-menu-file-quick-export-directory",
+      "field": "limitations",
+      "original_index": 1,
+      "text": "Actual Qt recording is Linux; authored expected filesystem targets normalize per platform while raw saved strings remain unchanged. Windows account lookup follows Python USERPROFILE/HOMEDRIVE+HOMEPATH; POSIX standard-library home lookup is cfg-limited with a documented deprecation allowance.",
+      "disposition": "preserve_exactly",
+      "reason": "Substantive behavior, platform, timing, ownership, concurrency or credit scope; lexical pending/authored/preparation does not establish stale validation status."
+    }
+  ],
+  "real_limit_review": "All unmodified limitations retained by exact-item identity. Full status-only removals contain validation/preparation/author-local execution provenance, not substantive product boundaries. The20 preparation-is-not-approval lines remain true as an invariant but are evidence-process boilerplate, not behavior gaps; dropping them from live limitations after gates cannot itself approve features. Original provenance survives exactly in mapping/author manifests.",
+  "CI_log_proof": [
+    {
+      "line": 489,
+      "text": "2026-10-06T07:16:14.8863196Z Ignoring workspace snapshot before mutation: input paths added/deleted; reject workspace snapshot"
+    },
+    {
+      "line": 1238,
+      "text": "2026-10-06T07:25:42.0108247Z     Checking hydrus-gui v0.1.0 (/home/runner/work/hydrus-mine/hydrus-mine/crates/hydrus-gui)"
+    },
+    {
+      "line": 1241,
+      "text": "2026-10-06T07:27:21.1687107Z     Finished `dev` profile [unoptimized + debuginfo] target(s) in 10m 17s"
+    },
+    {
+      "line": 1301,
+      "text": "2026-10-06T07:34:22.9526801Z    Compiling hydrus-gui v0.1.0 (/home/runner/work/hydrus-mine/hydrus-mine/crates/hydrus-gui)"
+    },
+    {
+      "line": 1304,
+      "text": "2026-10-06T07:39:36.4063686Z     Finished `test` profile [unoptimized + debuginfo] target(s) in 12m 13s"
+    },
+    {
+      "line": 2659,
+      "text": "2026-10-06T07:45:48.1125959Z test result: ok. 696 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 221.51s"
+    },
+    {
+      "line": 4286,
+      "text": "2026-10-06T07:48:13.6340581Z     Finished `dev` profile [unoptimized + debuginfo] target(s) in 23.17s"
+    }
+  ],
+  "compile_observation_limits": "Checking/Compiling hydrus-gui proves the GUI crate (including generated Rust UI) was checked/compiled. It does not separately prove fresh Slint generator execution.617s Clippy/733s test-profile compile are ordinary validation summaries after workspace snapshot rejection, not isolated UI timings, a cold-build guarantee or demonstrated performance improvement. Dependency caches and host/workload affect timing.",
+  "nonblocking_stale_narrative": "Mapping Markdown says Linux check still running, and map ci_passed=false reflects creation before this green completion. Preserve historical conditional mapping until authorized final composition; update final current CI narrative with verified completed Linux evidence. native_render_review_passed=false/approval=false must stay pending until root receives all required selected-scoped reviewers.",
+  "metadata_template_warning": "Do not apply passed native_render_review/review_required=false placeholders from template merely because CI is green. Require complete per-ID fresh evidence path/hash and explicit root selected-scope authorization; preserve each original manifest.",
+  "application_rule": "Original list indexes refer to immutable input. Group by field or remove descending indexes; never apply105 removals sequentially in ascending original-index order or broad regex. Require exact digest/before values."
+}

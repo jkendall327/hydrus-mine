@@ -1,0 +1,117 @@
+{
+  "source_commit": "ff858ded14518d4a9a1d39bb5aafe0213c992983",
+  "run_id": 37428534955,
+  "audit_status": "blockers",
+  "independent_render_approval_by_this_reviewer": false,
+  "publication_or_canonical_write_by_this_reviewer": false,
+  "scope": "Final scratch composition and staged-output preservation audit only. Existing4 signed source/run-matched reviewers supply selected render/behavior approval; this reviewer does not repeat or add visual approval. No builds or canonical edits.",
+  "inputs": [
+    {
+      "path": "/workspace/validation-reviews/publication-final-next20-ff858ded1-linux/selected-patch.json",
+      "sha256": "1df8aa34a8ae9b7a248c696ec185fabd1ccc65194c27c54893eae5816eb86b0d"
+    },
+    {
+      "path": "/workspace/validation-reviews/publication-final-next20-ff858ded1-linux/review.json",
+      "sha256": "94fb8b4cd14e476310826e90f72cc35d0c9a7a621ce2d5fff706b0c8ff6e0591"
+    },
+    {
+      "path": "/workspace/validation-reviews/publication-final-next20-ff858ded1-linux/status-reconciliation-audit.json",
+      "sha256": "96b10de2a625e9a8cd51a0d2e0156ec89c3595182cddffb0a6ff49fb16b1868a"
+    },
+    {
+      "path": "/workspace/validation-reviews/publication-staged-next20-ff858ded1-linux/publication-summary.json",
+      "sha256": "8a2400d62f6e2ad5af604706ca1872d42a8b07bac22122f60aa44931c5b3c359"
+    }
+  ],
+  "checks": {
+    "exact_final_source": true,
+    "final_patch_review_audit_digests_match": false,
+    "mapping_digest_and_operations_exact": true,
+    "CI_digest_exact": true,
+    "exact_selected20_edits_only": true,
+    "no_reference_additions_or_native_edits": true,
+    "review_ids_exact_selected_no_native_credit": true,
+    "reviewer_approval_union_exact20": true,
+    "reviewers_exact_source_run": true,
+    "all80_added_scope_limits_verbatim_review_evidence": true,
+    "status_reconciliation_plus_review_limits_exact": true,
+    "selected_source_anchor_fields_unchanged": true,
+    "selected_other_nonvalidation_fields_unchanged": true,
+    "selected_original_evidence_prefix_preserved": true,
+    "manifest_paths_preserved": true,
+    "passed_metadata_scoped_exact_source_linux": true,
+    "per_id_review_evidence_matches_approving_packet": true,
+    "review_packet_hashes_match": true,
+    "source_census_digest_matches": false,
+    "ledger_exact260_plus20": false,
+    "ledger_additional_exact20": true,
+    "frozen_before_counts_preserved": true,
+    "reference_ID_hierarchy_set_preserved": true,
+    "reference_hierarchy_relationships_unchanged": true,
+    "all260_banked_full_node_objects_preserved": true,
+    "only_selected20_reference_statuses_changed": false,
+    "unselected_semantic_and_validation_metadata_preserved": true,
+    "only_expected_unselected_aggregate_anchor_changes": true,
+    "reference_root_only_document_anchor_line_remap": false,
+    "reference_root_remapped_anchor_hash_valid": true,
+    "native_ID_hierarchy_set_preserved": true,
+    "native_hierarchy_relationships_unchanged": true,
+    "native1799_full_objects_except_root_doc_anchor_preserved": true,
+    "native_no_status_assessment_limit_metadata_change": true,
+    "native_root_only_document_anchor_line_remap": false,
+    "native_root_remapped_anchor_hash_valid": true,
+    "generated_UI_crate_compile_log_proof": true
+  },
+  "blockers": [
+    "final_patch_review_audit_digests_match",
+    "source_census_digest_matches",
+    "ledger_exact260_plus20",
+    "only_selected20_reference_statuses_changed",
+    "reference_root_only_document_anchor_line_remap",
+    "native_root_only_document_anchor_line_remap"
+  ],
+  "selected_count": 20,
+  "prior_completed_count": 260,
+  "new_cumulative_count": 280,
+  "added_scope_limit_count": 80,
+  "native_node_count": 1799,
+  "staged_node_delta_fields": {
+    "reference": {},
+    "native": {}
+  },
+  "allowed_ancestor_aggregate_updates": [],
+  "allowed_source_only_root_anchor_remaps": [
+    {
+      "domain": "reference",
+      "id": "client",
+      "path": "docs/rust/ROADMAP.md",
+      "old_line": 207,
+      "new_line": 212,
+      "line_sha256": "b7c6ea3b42da1cc23e44950b86fb94aeea5411a0db780220864581fd1bf6f632"
+    },
+    {
+      "domain": "native",
+      "id": "native",
+      "path": "docs/rust/ROADMAP.md",
+      "old_line": 207,
+      "new_line": 212,
+      "line_sha256": "b7c6ea3b42da1cc23e44950b86fb94aeea5411a0db780220864581fd1bf6f632"
+    }
+  ],
+  "added_scope_limits_truth": "Every added string is verbatim in a current approving reviewer JSON. They explicitly preserve platform/capture/consumer-test limits rather than broaden feature completion. Named fresh image observations belong to signed reviewers, not an independent image inspection by this audit. Local-transfer wording freshly inspect is carried from reviewer checklist but corresponding supplement was actually viewed in its signed packet; it does not indicate pending final render approval.",
+  "compile_observation_clarification": {
+    "proof": [
+      {
+        "line": 1236,
+        "text": "2026-10-06T07:17:33.4826534Z    Compiling hydrus-gui-ui v0.1.0 (/home/runner/work/hydrus-mine/hydrus-mine/crates/hydrus-gui-ui)"
+      },
+      {
+        "line": 1299,
+        "text": "2026-10-06T07:28:54.0015274Z    Compiling hydrus-gui-ui v0.1.0 (/home/runner/work/hydrus-mine/hydrus-mine/crates/hydrus-gui-ui)"
+      }
+    ],
+    "supported": "The split generated UI crate hydrus-gui-ui compiled in both relevant validation profiles. generated_UI_recompiled=true is directly supported.",
+    "not_claimed": "No isolated Slint generator duration, isolated generated-code compile timing, fresh generator-run proof, cold-build guarantee or performance gain.617s and733s are whole-profile ordinary validation summaries after workspace snapshot rejection."
+  },
+  "remaining_final_delivery_gate": "Browser verification and root final canonical/publication integration are outside this preservation audit."
+}

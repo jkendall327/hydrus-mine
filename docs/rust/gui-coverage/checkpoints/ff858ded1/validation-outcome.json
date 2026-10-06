@@ -1,0 +1,54 @@
+{
+  "source_commit": "ff858ded14518d4a9a1d39bb5aafe0213c992983",
+  "run_id": 37428534955,
+  "conclusion": "success",
+  "validation_scope": "linux",
+  "required_platforms": [
+    "linux"
+  ],
+  "deferred_platforms": [
+    "windows",
+    "macos"
+  ],
+  "gui_tests": {
+    "passed": 696,
+    "failed": 0,
+    "ignored": 0,
+    "runtime_seconds": 221.51
+  },
+  "steps": {
+    "fmt": {
+      "conclusion": "success",
+      "started_at": "2026-10-06T07:16:57Z",
+      "completed_at": "2026-10-06T07:17:03Z"
+    },
+    "clippy": {
+      "conclusion": "success",
+      "started_at": "2026-10-06T07:17:04Z",
+      "completed_at": "2026-10-06T07:27:21Z"
+    },
+    "test": {
+      "conclusion": "success",
+      "started_at": "2026-10-06T07:27:22Z",
+      "completed_at": "2026-10-06T07:47:48Z"
+    },
+    "parity ratchet": {
+      "conclusion": "success",
+      "started_at": "2026-10-06T07:47:50Z",
+      "completed_at": "2026-10-06T07:48:13Z"
+    }
+  },
+  "ordinary_validation_compile_observations": {
+    "clippy_seconds": 617,
+    "test_profile_compile_seconds": 733,
+    "generated_UI_recompiled": true,
+    "workspace_snapshot_reuse": false,
+    "restore_diagnostic": "Ignoring workspace snapshot before mutation: input paths added/deleted; reject workspace snapshot",
+    "limitation": "The preceding publication added tracked evidence files. The conservative whole-repository path-set guard rejected the restored workspace snapshot before mutation. No source-behavior change or isolated benchmark; dependency fallback and normal rebuild succeeded. The bounded performance investigation remains closed."
+  },
+  "logs": {
+    "linux-full.log": "6acc9c03f36d3466662cb26a53dc0dcab0fbb86e2a8f58c977914ecf96627b40",
+    "parity-models.log": "6aad00b41ad9335d5be3657d940ffad9e4c9a056fa39e4c2962127f3cdecc90a",
+    "clippy.log": "0e02b237a8842040c491f04d08bada541813647b53a8fa4cb2f4d8e9791dfd0f"
+  }
+}

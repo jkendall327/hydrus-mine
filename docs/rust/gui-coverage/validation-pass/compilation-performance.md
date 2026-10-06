@@ -250,3 +250,17 @@ extraction benchmark or controlled cold-build comparison. Test execution was
 slower; no peak-memory or isolated linking improvement is established.
 [Logs and measurements](../checkpoints/56b93ae49/validation-outcome.json) are
 retained with the checkpoint. The bounded investigation remains closed.
+
+The next ordinary validation run, `37428534955` at publication-only source
+`ff858ded1`, passed but exposed a remaining cache limitation. Adding tracked
+evidence files changed the whole-repository input path set. The downloaded
+workspace snapshot was rejected before mutation with
+`input paths added/deleted; reject workspace snapshot`; the conservative guard
+then allowed a normal build with dependency fallback. Both profiles compiled
+`hydrus-gui-ui`. Clippy took 10m17s and test-profile compilation 12m13s; all
+696 GUI tests passed in 221.51s. This is a confirmed cache-reuse limitation for
+publication commits that add files, not evidence of an isolated extraction
+regression or a fresh Slint-generation timing. No safety guard was weakened and
+no further optimization experiment was started.
+[Exact logs and observations](../checkpoints/ff858ded1/validation-outcome.json)
+are retained with the second checkpoint.
