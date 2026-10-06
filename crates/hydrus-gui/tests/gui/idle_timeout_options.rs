@@ -266,8 +266,9 @@ fn complete_idle_captions_and_actual_none_states_fit_opening_and_capture_sizes()
             api_seconds: (!ignored).then_some(60),
             ..GuiIdleSettings::default()
         };
+        let written = settings.clone();
         store
-            .write(|ctx| settings::set(ctx.conn(), &settings))
+            .write(move |ctx| settings::set(ctx.conn(), &written))
             .unwrap();
         for (width, height) in [(900, 640), (1000, 850)] {
             let window = open(&ui, &bound);
