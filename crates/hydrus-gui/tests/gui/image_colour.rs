@@ -208,7 +208,9 @@ fn actual_saved_icc_updates_preview_viewer_tiles_and_archive_without_resetting_o
         clippy::float_cmp,
         reason = "ICC repaint must preserve accepted geometry exactly; no new layout is requested"
     )]
-    assert_eq!(rect(&viewer), before_rect, "ICC reload preserves zoom/pan");
+    {
+        assert_eq!(rect(&viewer), before_rect, "ICC reload preserves zoom/pan");
+    }
     wait(|| viewer.get_sharp_shown());
     let raster = hydrus_media::decode_image_with_icc(
         &std::fs::read(hydrus_testkit::fixture_path(
@@ -259,7 +261,9 @@ fn actual_saved_icc_updates_preview_viewer_tiles_and_archive_without_resetting_o
         clippy::float_cmp,
         reason = "ICC repaint must preserve accepted geometry exactly; no new layout is requested"
     )]
-    assert_eq!(rect(&viewer), before_rect);
+    {
+        assert_eq!(rect(&viewer), before_rect);
+    }
     viewer.invoke_close_requested();
     viewer.show().unwrap();
     set(&store, false);
@@ -290,15 +294,17 @@ fn actual_saved_icc_updates_preview_viewer_tiles_and_archive_without_resetting_o
         clippy::float_cmp,
         reason = "ICC repaint must preserve accepted geometry exactly; no new layout is requested"
     )]
-    assert_eq!(
-        [
-            archive.get_media_x(),
-            archive.get_media_y(),
-            archive.get_media_width(),
-            archive.get_media_height()
-        ],
-        before
-    );
+    {
+        assert_eq!(
+            [
+                archive.get_media_x(),
+                archive.get_media_y(),
+                archive.get_media_width(),
+                archive.get_media_height()
+            ],
+            before
+        );
+    }
     archive.invoke_close_requested();
     // Global hide rejects SetMedia but not ICC cache notifications on accepted media.
     store
