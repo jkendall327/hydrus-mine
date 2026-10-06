@@ -1,0 +1,622 @@
+{
+  "baseline_git_head": "63f9e35abf1b1647e68ea4f1c850efee3ac8c365",
+  "method": "Publish exactly three original leaves after exact-source full Linux CI and fresh independent behavioral/rendered review. Preserve prior331 IDs and assessments, native inventory and all unselected assessments except exact source anchor remaps and ancestor counts. Windows/macOS deferred; consumer and capture limits retained.",
+  "reference": {
+    "updates": [
+      {
+        "id": "audit-options-duplicates-colours-background-light-dark-switch-intensity-for-a",
+        "status": "first_pass",
+        "assessment": "Options duplicates > colours exposes A intensity 1–9 or do not change. Save stages until Apply, Cancel preserves saved zero/None, Apply normalises the eagerly displayed reference zero to one even without visiting the page, and import/serialization/reopen retain typed preferences. The actual duplicate canvas applies A to the original ordered pair with QColor-equivalent rounding and reads saved updates live.",
+        "evidence": [
+          {
+            "path": "crates/hydrus-gui-model/src/options.rs",
+            "line": 2041,
+            "anchor_git_head": "63f9e35abf1b1647e68ea4f1c850efee3ac8c365",
+            "line_sha256": "dae4de7a749053afb5300f094965f97a4e0e3e12a6651242f8bf0b51c19ad018",
+            "symbol": "background light/dark switch intensity for A:",
+            "role": "native_implementation",
+            "description": "docs/rust/gui-coverage/parity/duplicate-colours.json: declared native_implementation; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "crates/hydrus-store/src/settings.rs",
+            "line": 29,
+            "anchor_git_head": "63f9e35abf1b1647e68ea4f1c850efee3ac8c365",
+            "line_sha256": "6a038ed08dcb01f27dcbf77aa3635296fc48e0cc6f728aebfc3a5b573554d112",
+            "symbol": "pub struct DuplicateColourSettings",
+            "role": "native_implementation",
+            "description": "docs/rust/gui-coverage/parity/duplicate-colours.json: declared native_implementation; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "crates/hydrus-store/src/import/decode.rs",
+            "line": 836,
+            "anchor_git_head": "63f9e35abf1b1647e68ea4f1c850efee3ac8c365",
+            "line_sha256": "78ba4e57b95c9bbeace9490a9c1ab3261de6fd8430870b09b4f90841810fdc11",
+            "symbol": "let mut duplicate_colours",
+            "role": "native_implementation",
+            "description": "docs/rust/gui-coverage/parity/duplicate-colours.json: declared native_implementation; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "crates/hydrus-gui-model/src/duplicate_colours.rs",
+            "line": 22,
+            "anchor_git_head": "63f9e35abf1b1647e68ea4f1c850efee3ac8c365",
+            "line_sha256": "4c4e10930dcac9eb265f4741f05ec9161a4985b8686a1de35fad76d5aac65f6f",
+            "symbol": "pub fn adjusted",
+            "role": "native_implementation",
+            "description": "docs/rust/gui-coverage/parity/duplicate-colours.json: declared native_implementation; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "crates/hydrus-gui/src/filter_window.rs",
+            "line": 170,
+            "anchor_git_head": "63f9e35abf1b1647e68ea4f1c850efee3ac8c365",
+            "line_sha256": "58e2fe10fc2d1d2f504516c83c38bdd7499c07aaa4d4485fe36f538f7cfe534a",
+            "symbol": "fn refresh_colours",
+            "role": "native_implementation",
+            "description": "docs/rust/gui-coverage/parity/duplicate-colours.json: declared native_implementation; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "crates/hydrus-gui/ui/duplicate_filter.slint",
+            "line": 145,
+            "anchor_git_head": "63f9e35abf1b1647e68ea4f1c850efee3ac8c365",
+            "line_sha256": "248308877b16aeb9a10bf810ccee14e855b35b5920050859032ffa21f69c5ce6",
+            "symbol": "if root.transparency-mode > 0",
+            "role": "native_implementation",
+            "description": "docs/rust/gui-coverage/parity/duplicate-colours.json: declared native_implementation; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "hydrus/client/gui/panels/options/DuplicatesPanel.py",
+            "line": 154,
+            "anchor_git_head": "63f9e35abf1b1647e68ea4f1c850efee3ac8c365",
+            "line_sha256": "c05990787c2ccefcf0323a85b3a84c0cd1cab8d48cb89c6f3244b1723aba7fbf",
+            "role": "reference_source",
+            "description": "docs/rust/gui-coverage/parity/duplicate-colours.json: declared reference_source; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "crates/hydrus-gui-model/tests/model/duplicate_colours.rs",
+            "line": 21,
+            "anchor_git_head": "63f9e35abf1b1647e68ea4f1c850efee3ac8c365",
+            "line_sha256": "a435ea173a13e84537f4e1355a9b42948d19ed26085889617fc287f18fa1a59f",
+            "symbol": "fn qcolor_rounding",
+            "role": "authored_regression",
+            "description": "docs/rust/gui-coverage/parity/duplicate-colours.json: declared authored_regression; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "crates/hydrus-gui-model/tests/model/duplicate_colours.rs",
+            "line": 64,
+            "anchor_git_head": "63f9e35abf1b1647e68ea4f1c850efee3ac8c365",
+            "line_sha256": "85e1f5539769d1996b12deb76bb0dd21560bbc5709d420c9627499b778dab583",
+            "symbol": "fn options_keep_saved_zero",
+            "role": "authored_regression",
+            "description": "docs/rust/gui-coverage/parity/duplicate-colours.json: declared authored_regression; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "crates/hydrus-gui/tests/gui/duplicate_colours.rs",
+            "line": 56,
+            "anchor_git_head": "63f9e35abf1b1647e68ea4f1c850efee3ac8c365",
+            "line_sha256": "0005985480950dc636417062c014a84afcdb965da7c82b31ecdbd9b9fe50feab",
+            "symbol": "fn options_replay_cancel",
+            "role": "authored_regression",
+            "description": "docs/rust/gui-coverage/parity/duplicate-colours.json: declared authored_regression; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "crates/hydrus-gui/src/filter_window.rs",
+            "line": 928,
+            "anchor_git_head": "63f9e35abf1b1647e68ea4f1c850efee3ac8c365",
+            "line_sha256": "041a704c322d87db9c8be557d95ab16363e184d99d078806adffdf2019a9d947",
+            "symbol": "fn live_pair_switch",
+            "role": "authored_regression",
+            "description": "docs/rust/gui-coverage/parity/duplicate-colours.json: declared authored_regression; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "crates/hydrus-store/src/import/decode.rs",
+            "line": 3627,
+            "anchor_git_head": "63f9e35abf1b1647e68ea4f1c850efee3ac8c365",
+            "line_sha256": "7d3387022bf2df680e8bce9fbf5b3cfdcdc90eec8e8dcc91f11956d915314500",
+            "symbol": "fn duplicate_colours_import",
+            "role": "authored_regression",
+            "description": "docs/rust/gui-coverage/parity/duplicate-colours.json: declared authored_regression; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "oracle/record_duplicate_colours.py",
+            "line": 1,
+            "anchor_git_head": "63f9e35abf1b1647e68ea4f1c850efee3ac8c365",
+            "line_sha256": "381f9bfc69d49d39040a7d5fc3197ce385019a2ba2de649622f841a8c658ed37",
+            "role": "reference_recording",
+            "description": "docs/rust/gui-coverage/parity/duplicate-colours.json: declared reference_recording; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "oracle/fixtures/duplicate_colours.json",
+            "line": 1,
+            "anchor_git_head": "63f9e35abf1b1647e68ea4f1c850efee3ac8c365",
+            "line_sha256": "021fb596db81e6d02bf3d2586ee3981fe519f275c0ac9ca76bbcf2ebb4097d96",
+            "role": "reference_recording",
+            "description": "docs/rust/gui-coverage/parity/duplicate-colours.json: declared reference_recording; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          }
+        ],
+        "limitations": [
+          "Broader colour Options, duplicate filter and duplicate-colours parent rows remain Partial; no parent, duplicate claim or alias receives completion credit.",
+          "Normal canvas base is white or the imported active override colour. Arbitrary QSS stylesheet palettes remain outside these leaves. The separately banked native colour-set controls receive no additional credit from this duplicate-colour slice; broader QColorDialog topology and application/OS palette workflows remain outside scope.",
+          "Native checker is clipped to the actual image box and shares the existing greenscreen preference. The native painter test isolates the same background operation with a transparent probe while the real frozen PNG/JPEG metadata and real pair switch select the policy; no file media or relationship is modified.",
+          "Actual Qt Options recording drives its real page controls and UpdateOptions, serialization/reopen and abandoned page draft. Full Qt modal parent Cancel was not recorded; native regression separately invokes actual owned Options Cancel/Apply and retired-owner/successor boundaries.",
+          "Validation scope is Linux only; Windows and macOS are deferred.",
+          "Qt final real opaqueB/hover-layout screenshot differs from native controlled transparent-probe painter states; no whole-filter pixel equality, decoded-image fidelity or arbitrary palette contrast is inferred.",
+          "Default black follows the recorded Qt Canvas role; universal readability across arbitrary saved/custom/QSS palettes is not claimed. Slint and Qt font metrics, widget styling and filter topology differ.",
+          "The two role11 override captures naturally restore real opaqueB media and additional slow comparison results while the existing owner timer runs; they validate status colour/visibility only, not recorded background-probe or comparison-score equality."
+        ],
+        "remaining": [],
+        "implementation_validation": {
+          "source_commit": "63f9e35abf1b1647e68ea4f1c850efee3ac8c365",
+          "ci": "passed",
+          "tests_executed_at_checkpoint": true,
+          "native_render_review": "passed",
+          "manifest": "docs/rust/gui-coverage/parity/duplicate-colours.json",
+          "review_required": false,
+          "run_url": "https://github.com/jkendall327/hydrus-mine/actions/runs/37510853142",
+          "validation_scope": "linux",
+          "required_platforms": [
+            "linux"
+          ],
+          "deferred_platforms": [
+            "windows",
+            "macos"
+          ],
+          "independent_review_evidence": {
+            "path": "docs/rust/gui-coverage/checkpoints/63f9e35ab/final-review-2-63f9e35ab.json",
+            "sha256": "2533425b8a2b6d7e3097bdc49f8033191a3e8fd47aa08d74b9779e99faa0170a"
+          }
+        },
+        "native_source": {
+          "path": "crates/hydrus-gui-model/src/options.rs",
+          "line": 2041,
+          "anchor_git_head": "63f9e35abf1b1647e68ea4f1c850efee3ac8c365",
+          "line_sha256": "dae4de7a749053afb5300f094965f97a4e0e3e12a6651242f8bf0b51c19ad018",
+          "symbol": "background light/dark switch intensity for A:"
+        },
+        "reference_source": {
+          "path": "hydrus/client/gui/panels/options/DuplicatesPanel.py",
+          "line": 154,
+          "anchor_git_head": "63f9e35abf1b1647e68ea4f1c850efee3ac8c365",
+          "line_sha256": "c05990787c2ccefcf0323a85b3a84c0cd1cab8d48cb89c6f3244b1723aba7fbf"
+        }
+      },
+      {
+        "id": "audit-options-duplicates-colours-background-light-dark-switch-intensity-for-b",
+        "status": "first_pass",
+        "assessment": "Options duplicates > colours exposes independent B intensity 1–9 or do not change with staged Apply/Cancel, import and persistent reopen. The actual duplicate canvas switches to B using the original frozen pair order and applies its own intensity against the normal canvas base; already open owners read current saved values.",
+        "evidence": [
+          {
+            "path": "crates/hydrus-gui-model/src/options.rs",
+            "line": 2047,
+            "anchor_git_head": "63f9e35abf1b1647e68ea4f1c850efee3ac8c365",
+            "line_sha256": "2fc0271d7519ded5ef33444d5180ea87c4f9f869036bc3acb1437e2b0ffd876d",
+            "symbol": "background light/dark switch intensity for B:",
+            "role": "native_implementation",
+            "description": "docs/rust/gui-coverage/parity/duplicate-colours.json: declared native_implementation; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "crates/hydrus-store/src/settings.rs",
+            "line": 29,
+            "anchor_git_head": "63f9e35abf1b1647e68ea4f1c850efee3ac8c365",
+            "line_sha256": "6a038ed08dcb01f27dcbf77aa3635296fc48e0cc6f728aebfc3a5b573554d112",
+            "symbol": "pub struct DuplicateColourSettings",
+            "role": "native_implementation",
+            "description": "docs/rust/gui-coverage/parity/duplicate-colours.json: declared native_implementation; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "crates/hydrus-store/src/import/decode.rs",
+            "line": 836,
+            "anchor_git_head": "63f9e35abf1b1647e68ea4f1c850efee3ac8c365",
+            "line_sha256": "78ba4e57b95c9bbeace9490a9c1ab3261de6fd8430870b09b4f90841810fdc11",
+            "symbol": "let mut duplicate_colours",
+            "role": "native_implementation",
+            "description": "docs/rust/gui-coverage/parity/duplicate-colours.json: declared native_implementation; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "crates/hydrus-gui-model/src/duplicate_colours.rs",
+            "line": 22,
+            "anchor_git_head": "63f9e35abf1b1647e68ea4f1c850efee3ac8c365",
+            "line_sha256": "4c4e10930dcac9eb265f4741f05ec9161a4985b8686a1de35fad76d5aac65f6f",
+            "symbol": "pub fn adjusted",
+            "role": "native_implementation",
+            "description": "docs/rust/gui-coverage/parity/duplicate-colours.json: declared native_implementation; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "crates/hydrus-gui/src/filter_window.rs",
+            "line": 170,
+            "anchor_git_head": "63f9e35abf1b1647e68ea4f1c850efee3ac8c365",
+            "line_sha256": "58e2fe10fc2d1d2f504516c83c38bdd7499c07aaa4d4485fe36f538f7cfe534a",
+            "symbol": "fn refresh_colours",
+            "role": "native_implementation",
+            "description": "docs/rust/gui-coverage/parity/duplicate-colours.json: declared native_implementation; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "crates/hydrus-gui/ui/duplicate_filter.slint",
+            "line": 145,
+            "anchor_git_head": "63f9e35abf1b1647e68ea4f1c850efee3ac8c365",
+            "line_sha256": "248308877b16aeb9a10bf810ccee14e855b35b5920050859032ffa21f69c5ce6",
+            "symbol": "if root.transparency-mode > 0",
+            "role": "native_implementation",
+            "description": "docs/rust/gui-coverage/parity/duplicate-colours.json: declared native_implementation; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "hydrus/client/gui/panels/options/DuplicatesPanel.py",
+            "line": 155,
+            "anchor_git_head": "63f9e35abf1b1647e68ea4f1c850efee3ac8c365",
+            "line_sha256": "162dd7b6cd1054a40a7167487d68ee9c54d3b7f361b6354174057370c0214fb5",
+            "role": "reference_source",
+            "description": "docs/rust/gui-coverage/parity/duplicate-colours.json: declared reference_source; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "crates/hydrus-gui-model/tests/model/duplicate_colours.rs",
+            "line": 21,
+            "anchor_git_head": "63f9e35abf1b1647e68ea4f1c850efee3ac8c365",
+            "line_sha256": "a435ea173a13e84537f4e1355a9b42948d19ed26085889617fc287f18fa1a59f",
+            "symbol": "fn qcolor_rounding",
+            "role": "authored_regression",
+            "description": "docs/rust/gui-coverage/parity/duplicate-colours.json: declared authored_regression; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "crates/hydrus-gui-model/tests/model/duplicate_colours.rs",
+            "line": 64,
+            "anchor_git_head": "63f9e35abf1b1647e68ea4f1c850efee3ac8c365",
+            "line_sha256": "85e1f5539769d1996b12deb76bb0dd21560bbc5709d420c9627499b778dab583",
+            "symbol": "fn options_keep_saved_zero",
+            "role": "authored_regression",
+            "description": "docs/rust/gui-coverage/parity/duplicate-colours.json: declared authored_regression; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "crates/hydrus-gui/tests/gui/duplicate_colours.rs",
+            "line": 56,
+            "anchor_git_head": "63f9e35abf1b1647e68ea4f1c850efee3ac8c365",
+            "line_sha256": "0005985480950dc636417062c014a84afcdb965da7c82b31ecdbd9b9fe50feab",
+            "symbol": "fn options_replay_cancel",
+            "role": "authored_regression",
+            "description": "docs/rust/gui-coverage/parity/duplicate-colours.json: declared authored_regression; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "crates/hydrus-gui/src/filter_window.rs",
+            "line": 928,
+            "anchor_git_head": "63f9e35abf1b1647e68ea4f1c850efee3ac8c365",
+            "line_sha256": "041a704c322d87db9c8be557d95ab16363e184d99d078806adffdf2019a9d947",
+            "symbol": "fn live_pair_switch",
+            "role": "authored_regression",
+            "description": "docs/rust/gui-coverage/parity/duplicate-colours.json: declared authored_regression; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "crates/hydrus-store/src/import/decode.rs",
+            "line": 3627,
+            "anchor_git_head": "63f9e35abf1b1647e68ea4f1c850efee3ac8c365",
+            "line_sha256": "7d3387022bf2df680e8bce9fbf5b3cfdcdc90eec8e8dcc91f11956d915314500",
+            "symbol": "fn duplicate_colours_import",
+            "role": "authored_regression",
+            "description": "docs/rust/gui-coverage/parity/duplicate-colours.json: declared authored_regression; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "oracle/record_duplicate_colours.py",
+            "line": 1,
+            "anchor_git_head": "63f9e35abf1b1647e68ea4f1c850efee3ac8c365",
+            "line_sha256": "381f9bfc69d49d39040a7d5fc3197ce385019a2ba2de649622f841a8c658ed37",
+            "role": "reference_recording",
+            "description": "docs/rust/gui-coverage/parity/duplicate-colours.json: declared reference_recording; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "oracle/fixtures/duplicate_colours.json",
+            "line": 1,
+            "anchor_git_head": "63f9e35abf1b1647e68ea4f1c850efee3ac8c365",
+            "line_sha256": "021fb596db81e6d02bf3d2586ee3981fe519f275c0ac9ca76bbcf2ebb4097d96",
+            "role": "reference_recording",
+            "description": "docs/rust/gui-coverage/parity/duplicate-colours.json: declared reference_recording; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          }
+        ],
+        "limitations": [
+          "Broader colour Options, duplicate filter and duplicate-colours parent rows remain Partial; no parent, duplicate claim or alias receives completion credit.",
+          "Normal canvas base is white or the imported active override colour. Arbitrary QSS stylesheet palettes remain outside these leaves. The separately banked native colour-set controls receive no additional credit from this duplicate-colour slice; broader QColorDialog topology and application/OS palette workflows remain outside scope.",
+          "Native checker is clipped to the actual image box and shares the existing greenscreen preference. The native painter test isolates the same background operation with a transparent probe while the real frozen PNG/JPEG metadata and real pair switch select the policy; no file media or relationship is modified.",
+          "Actual Qt Options recording drives its real page controls and UpdateOptions, serialization/reopen and abandoned page draft. Full Qt modal parent Cancel was not recorded; native regression separately invokes actual owned Options Cancel/Apply and retired-owner/successor boundaries.",
+          "Validation scope is Linux only; Windows and macOS are deferred.",
+          "Qt final real opaqueB/hover-layout screenshot differs from native controlled transparent-probe painter states; no whole-filter pixel equality, decoded-image fidelity or arbitrary palette contrast is inferred.",
+          "Default black follows the recorded Qt Canvas role; universal readability across arbitrary saved/custom/QSS palettes is not claimed. Slint and Qt font metrics, widget styling and filter topology differ.",
+          "The two role11 override captures naturally restore real opaqueB media and additional slow comparison results while the existing owner timer runs; they validate status colour/visibility only, not recorded background-probe or comparison-score equality."
+        ],
+        "remaining": [],
+        "implementation_validation": {
+          "source_commit": "63f9e35abf1b1647e68ea4f1c850efee3ac8c365",
+          "ci": "passed",
+          "tests_executed_at_checkpoint": true,
+          "native_render_review": "passed",
+          "manifest": "docs/rust/gui-coverage/parity/duplicate-colours.json",
+          "review_required": false,
+          "run_url": "https://github.com/jkendall327/hydrus-mine/actions/runs/37510853142",
+          "validation_scope": "linux",
+          "required_platforms": [
+            "linux"
+          ],
+          "deferred_platforms": [
+            "windows",
+            "macos"
+          ],
+          "independent_review_evidence": {
+            "path": "docs/rust/gui-coverage/checkpoints/63f9e35ab/final-review-2-63f9e35ab.json",
+            "sha256": "2533425b8a2b6d7e3097bdc49f8033191a3e8fd47aa08d74b9779e99faa0170a"
+          }
+        },
+        "native_source": {
+          "path": "crates/hydrus-gui-model/src/options.rs",
+          "line": 2047,
+          "anchor_git_head": "63f9e35abf1b1647e68ea4f1c850efee3ac8c365",
+          "line_sha256": "2fc0271d7519ded5ef33444d5180ea87c4f9f869036bc3acb1437e2b0ffd876d",
+          "symbol": "background light/dark switch intensity for B:"
+        },
+        "reference_source": {
+          "path": "hydrus/client/gui/panels/options/DuplicatesPanel.py",
+          "line": 155,
+          "anchor_git_head": "63f9e35abf1b1647e68ea4f1c850efee3ac8c365",
+          "line_sha256": "162dd7b6cd1054a40a7167487d68ee9c54d3b7f361b6354174057370c0214fb5"
+        }
+      },
+      {
+        "id": "audit-options-duplicates-colours-draw-image-transparency-as-checkerboard-in-the-duplicate-filter",
+        "status": "first_pass",
+        "assessment": "Options duplicates > colours exposes the independent duplicate-filter transparency checkbox, stages until Apply, discards Cancel and imports/persists/reopens its choice. Real duplicate canvases paint the reference 16 px RGB237/222 checker only for transparent media, use the existing shared greenscreen preference when enabled, leave opaque media at their A/B background and clip the backdrop to the actual image box.",
+        "evidence": [
+          {
+            "path": "crates/hydrus-gui-model/src/options.rs",
+            "line": 2053,
+            "anchor_git_head": "63f9e35abf1b1647e68ea4f1c850efee3ac8c365",
+            "line_sha256": "dab80a97caab665951e8b30adba3ffdb1390222f2352b83c4d2cf1cdf35d4c78",
+            "symbol": "draw image transparency as checkerboard in the duplicate filter:",
+            "role": "native_implementation",
+            "description": "docs/rust/gui-coverage/parity/duplicate-colours.json: declared native_implementation; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "crates/hydrus-store/src/settings.rs",
+            "line": 29,
+            "anchor_git_head": "63f9e35abf1b1647e68ea4f1c850efee3ac8c365",
+            "line_sha256": "6a038ed08dcb01f27dcbf77aa3635296fc48e0cc6f728aebfc3a5b573554d112",
+            "symbol": "pub struct DuplicateColourSettings",
+            "role": "native_implementation",
+            "description": "docs/rust/gui-coverage/parity/duplicate-colours.json: declared native_implementation; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "crates/hydrus-store/src/import/decode.rs",
+            "line": 836,
+            "anchor_git_head": "63f9e35abf1b1647e68ea4f1c850efee3ac8c365",
+            "line_sha256": "78ba4e57b95c9bbeace9490a9c1ab3261de6fd8430870b09b4f90841810fdc11",
+            "symbol": "let mut duplicate_colours",
+            "role": "native_implementation",
+            "description": "docs/rust/gui-coverage/parity/duplicate-colours.json: declared native_implementation; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "crates/hydrus-gui-model/src/duplicate_colours.rs",
+            "line": 22,
+            "anchor_git_head": "63f9e35abf1b1647e68ea4f1c850efee3ac8c365",
+            "line_sha256": "4c4e10930dcac9eb265f4741f05ec9161a4985b8686a1de35fad76d5aac65f6f",
+            "symbol": "pub fn adjusted",
+            "role": "native_implementation",
+            "description": "docs/rust/gui-coverage/parity/duplicate-colours.json: declared native_implementation; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "crates/hydrus-gui/src/filter_window.rs",
+            "line": 170,
+            "anchor_git_head": "63f9e35abf1b1647e68ea4f1c850efee3ac8c365",
+            "line_sha256": "58e2fe10fc2d1d2f504516c83c38bdd7499c07aaa4d4485fe36f538f7cfe534a",
+            "symbol": "fn refresh_colours",
+            "role": "native_implementation",
+            "description": "docs/rust/gui-coverage/parity/duplicate-colours.json: declared native_implementation; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "crates/hydrus-gui/ui/duplicate_filter.slint",
+            "line": 145,
+            "anchor_git_head": "63f9e35abf1b1647e68ea4f1c850efee3ac8c365",
+            "line_sha256": "248308877b16aeb9a10bf810ccee14e855b35b5920050859032ffa21f69c5ce6",
+            "symbol": "if root.transparency-mode > 0",
+            "role": "native_implementation",
+            "description": "docs/rust/gui-coverage/parity/duplicate-colours.json: declared native_implementation; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "hydrus/client/gui/panels/options/DuplicatesPanel.py",
+            "line": 156,
+            "anchor_git_head": "63f9e35abf1b1647e68ea4f1c850efee3ac8c365",
+            "line_sha256": "584bb618b563b1dd1e88ce03e8c1859bb6a52d7172e5c7210a7bab21a779a2a1",
+            "role": "reference_source",
+            "description": "docs/rust/gui-coverage/parity/duplicate-colours.json: declared reference_source; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "crates/hydrus-gui-model/tests/model/duplicate_colours.rs",
+            "line": 21,
+            "anchor_git_head": "63f9e35abf1b1647e68ea4f1c850efee3ac8c365",
+            "line_sha256": "a435ea173a13e84537f4e1355a9b42948d19ed26085889617fc287f18fa1a59f",
+            "symbol": "fn qcolor_rounding",
+            "role": "authored_regression",
+            "description": "docs/rust/gui-coverage/parity/duplicate-colours.json: declared authored_regression; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "crates/hydrus-gui-model/tests/model/duplicate_colours.rs",
+            "line": 64,
+            "anchor_git_head": "63f9e35abf1b1647e68ea4f1c850efee3ac8c365",
+            "line_sha256": "85e1f5539769d1996b12deb76bb0dd21560bbc5709d420c9627499b778dab583",
+            "symbol": "fn options_keep_saved_zero",
+            "role": "authored_regression",
+            "description": "docs/rust/gui-coverage/parity/duplicate-colours.json: declared authored_regression; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "crates/hydrus-gui/tests/gui/duplicate_colours.rs",
+            "line": 56,
+            "anchor_git_head": "63f9e35abf1b1647e68ea4f1c850efee3ac8c365",
+            "line_sha256": "0005985480950dc636417062c014a84afcdb965da7c82b31ecdbd9b9fe50feab",
+            "symbol": "fn options_replay_cancel",
+            "role": "authored_regression",
+            "description": "docs/rust/gui-coverage/parity/duplicate-colours.json: declared authored_regression; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "crates/hydrus-gui/src/filter_window.rs",
+            "line": 928,
+            "anchor_git_head": "63f9e35abf1b1647e68ea4f1c850efee3ac8c365",
+            "line_sha256": "041a704c322d87db9c8be557d95ab16363e184d99d078806adffdf2019a9d947",
+            "symbol": "fn live_pair_switch",
+            "role": "authored_regression",
+            "description": "docs/rust/gui-coverage/parity/duplicate-colours.json: declared authored_regression; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "crates/hydrus-store/src/import/decode.rs",
+            "line": 3627,
+            "anchor_git_head": "63f9e35abf1b1647e68ea4f1c850efee3ac8c365",
+            "line_sha256": "7d3387022bf2df680e8bce9fbf5b3cfdcdc90eec8e8dcc91f11956d915314500",
+            "symbol": "fn duplicate_colours_import",
+            "role": "authored_regression",
+            "description": "docs/rust/gui-coverage/parity/duplicate-colours.json: declared authored_regression; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "oracle/record_duplicate_colours.py",
+            "line": 1,
+            "anchor_git_head": "63f9e35abf1b1647e68ea4f1c850efee3ac8c365",
+            "line_sha256": "381f9bfc69d49d39040a7d5fc3197ce385019a2ba2de649622f841a8c658ed37",
+            "role": "reference_recording",
+            "description": "docs/rust/gui-coverage/parity/duplicate-colours.json: declared reference_recording; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "oracle/fixtures/duplicate_colours.json",
+            "line": 1,
+            "anchor_git_head": "63f9e35abf1b1647e68ea4f1c850efee3ac8c365",
+            "line_sha256": "021fb596db81e6d02bf3d2586ee3981fe519f275c0ac9ca76bbcf2ebb4097d96",
+            "role": "reference_recording",
+            "description": "docs/rust/gui-coverage/parity/duplicate-colours.json: declared reference_recording; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          }
+        ],
+        "limitations": [
+          "Broader colour Options, duplicate filter and duplicate-colours parent rows remain Partial; no parent, duplicate claim or alias receives completion credit.",
+          "Normal canvas base is white or the imported active override colour. Arbitrary QSS stylesheet palettes remain outside these leaves. The separately banked native colour-set controls receive no additional credit from this duplicate-colour slice; broader QColorDialog topology and application/OS palette workflows remain outside scope.",
+          "Native checker is clipped to the actual image box and shares the existing greenscreen preference. The native painter test isolates the same background operation with a transparent probe while the real frozen PNG/JPEG metadata and real pair switch select the policy; no file media or relationship is modified.",
+          "Actual Qt Options recording drives its real page controls and UpdateOptions, serialization/reopen and abandoned page draft. Full Qt modal parent Cancel was not recorded; native regression separately invokes actual owned Options Cancel/Apply and retired-owner/successor boundaries.",
+          "Validation scope is Linux only; Windows and macOS are deferred.",
+          "Qt final real opaqueB/hover-layout screenshot differs from native controlled transparent-probe painter states; no whole-filter pixel equality, decoded-image fidelity or arbitrary palette contrast is inferred.",
+          "Default black follows the recorded Qt Canvas role; universal readability across arbitrary saved/custom/QSS palettes is not claimed. Slint and Qt font metrics, widget styling and filter topology differ.",
+          "The two role11 override captures naturally restore real opaqueB media and additional slow comparison results while the existing owner timer runs; they validate status colour/visibility only, not recorded background-probe or comparison-score equality."
+        ],
+        "remaining": [],
+        "implementation_validation": {
+          "source_commit": "63f9e35abf1b1647e68ea4f1c850efee3ac8c365",
+          "ci": "passed",
+          "tests_executed_at_checkpoint": true,
+          "native_render_review": "passed",
+          "manifest": "docs/rust/gui-coverage/parity/duplicate-colours.json",
+          "review_required": false,
+          "run_url": "https://github.com/jkendall327/hydrus-mine/actions/runs/37510853142",
+          "validation_scope": "linux",
+          "required_platforms": [
+            "linux"
+          ],
+          "deferred_platforms": [
+            "windows",
+            "macos"
+          ],
+          "independent_review_evidence": {
+            "path": "docs/rust/gui-coverage/checkpoints/63f9e35ab/final-review-2-63f9e35ab.json",
+            "sha256": "2533425b8a2b6d7e3097bdc49f8033191a3e8fd47aa08d74b9779e99faa0170a"
+          }
+        },
+        "native_source": {
+          "path": "crates/hydrus-gui-model/src/options.rs",
+          "line": 2053,
+          "anchor_git_head": "63f9e35abf1b1647e68ea4f1c850efee3ac8c365",
+          "line_sha256": "dab80a97caab665951e8b30adba3ffdb1390222f2352b83c4d2cf1cdf35d4c78",
+          "symbol": "draw image transparency as checkerboard in the duplicate filter:"
+        },
+        "reference_source": {
+          "path": "hydrus/client/gui/panels/options/DuplicatesPanel.py",
+          "line": 156,
+          "anchor_git_head": "63f9e35abf1b1647e68ea4f1c850efee3ac8c365",
+          "line_sha256": "584bb618b563b1dd1e88ce03e8c1859bb6a52d7172e5c7210a7bab21a779a2a1"
+        }
+      }
+    ],
+    "additions": []
+  },
+  "native": {
+    "updates": [],
+    "additions": []
+  }
+}

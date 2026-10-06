@@ -1,0 +1,31 @@
+{
+  "source_commit": "63f9e35abf1b1647e68ea4f1c850efee3ac8c365",
+  "baseline_source_commit": "92f013884d31ebbbf3b8f0e0dd9dc4ba1798a177",
+  "source_phase": "repaired source validation pending",
+  "run_id": 37510853142,
+  "selected_candidate_ids": [
+    "audit-options-duplicates-colours-background-light-dark-switch-intensity-for-a",
+    "audit-options-duplicates-colours-background-light-dark-switch-intensity-for-b",
+    "audit-options-duplicates-colours-draw-image-transparency-as-checkerboard-in-the-duplicate-filter"
+  ],
+  "manifest_groups": {
+    "docs/rust/gui-coverage/parity/duplicate-colours.json": [
+      "audit-options-duplicates-colours-background-light-dark-switch-intensity-for-a",
+      "audit-options-duplicates-colours-background-light-dark-switch-intensity-for-b",
+      "audit-options-duplicates-colours-draw-image-transparency-as-checkerboard-in-the-duplicate-filter"
+    ]
+  },
+  "prior_completed_count": 331,
+  "pending_count": 44,
+  "selected_count": 3,
+  "unselected_pending_count": 41,
+  "conditional_bank_if_all_gates_pass": 334,
+  "not_ready_by_preparation": true,
+  "approval": false,
+  "gates": [
+    "Exact source63f9e35abf1b1647e68ea4f1c850efee3ac8c365/run37510853142: strict Linux check fmt/Clippy/fulltests/ratchet plus parity-models must finishgreen; Windows/macOS deferred under immutablepolicy.",
+    "Fresh exactsource native15captures and independent actual source/behavior/image review2 for all3. Historical captures are provenance only.",
+    "Preserve prior331 completed whole nonanchor objects, all unselected and native1799; no oldfailure/errata replay.",
+    "After actualgates resolve selected pendingwording/metadata, root actualnative inspection+finaldigest/census review and stagedbrowser/preservation gate."
+  ]
+}

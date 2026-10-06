@@ -6,17 +6,18 @@ commit, `GUI.md` and `DIFFERENCES.md` say what was done); when you stop
 partway, say exactly where.
 
 The owner's current priority (2026-10-06) is **validated delivery on Linux**.
-The latest checkpoint banks 331 original concrete feature completions, including
-91 newly signed off across six October 6 Linux checkpoints with fresh rendered review.
-There are 44 candidates awaiting sign-off. The next bounded batch targets
-duplicate-filter status readability; archive-question layout stays separate if
-its repair would expand the batch.
+The latest checkpoint banks 334 original concrete feature completions, including
+94 newly signed off across seven October 6 Linux checkpoints with fresh rendered review.
+There are 41 candidates awaiting sign-off. The next bounded batch targets
+tab/sidebar presentation, clear-all viewing statistics and two thumbnail-appearance
+evidence gaps. A dedicated manual CI reference will keep cache continuity while
+reviewed PR heads stay frozen; namespace and archive repairs remain separate.
 Keep these counts separate from inventory assessments.
 Work in small batches, validate and publish each routinely, and reassess any
 batch that goes 24 hours without a new checkpoint. Broad implementation must
 not rebuild an unvalidated backlog. Windows and macOS are deferred; strict
 Linux linting, full tests, reference replays and rendered review remain required.
-See [the checkpoint evidence](gui-coverage/checkpoints/c768fef48/README.md).
+See [the checkpoint evidence](gui-coverage/checkpoints/63f9e35ab/README.md).
 
 The first parallel slate (2026-10-03) adds detailed embedded metadata,
 manual file export, local service review/management, tag sibling/parent
@@ -64,8 +65,8 @@ and all 121 exported native windows into nested work, including shared editors,
 all 38 reference option tabs and 19 system-predicate groups. It contains 1,812
 reference nodes and 1,799 native nodes, with per-node assessments, concrete
 remaining work and pinned source/evidence links. The frozen reference inventory
-now has 492 Missing, 388 Partial and 932 First pass entries; its status changes
-also include parent/alias assessments, which do not inflate the 331-item signed-off completion count.
+now has 489 Missing, 388 Partial and 935 First pass entries; its status changes
+also include parent/alias assessments, which do not inflate the 334-item signed-off completion count.
 Native first-pass claims cite scoped regression evidence; source-supported but
 unverified behavior is partial. These counts are not a whole-client completion
 percentage. Maintenance instructions and scope limits are in

@@ -4521,9 +4521,9 @@ Validation repairs now invalidate cached thumbnail colours when the stylesheet
 changes and hide an exact retired colour picker on repeated Cancel. Wheel
 controls publish their initial measured geometry as well as later changes.
 These repairs passed full Linux replay at `56b93ae49` (696 GUI tests).
-Completion credit remains limited to the 91 independently reviewed original
-leaves banked across six checkpoints, with the latest
-[331-item checkpoint](gui-coverage/checkpoints/c768fef48/README.md);
+Completion credit remains limited to the 94 independently reviewed original
+leaves banked across seven checkpoints, with the latest
+[334-item checkpoint](gui-coverage/checkpoints/63f9e35ab/README.md);
 other repaired behavior retains its scoped assessment.
 
 The two Speed and Memory cache-percentage helpers now have their own wrapped
@@ -4564,9 +4564,12 @@ approve these three candidates at `c768fef48`. The checkpoint publishes 331
 signed-off leaves, 91 new across six October 6 checkpoints, with 44 pending;
 all 698 GUI and 67 media tests pass. The earlier compile-only failure is retained.
 
-The next three-candidate batch corrects duplicate-filter status text to the
+The three-candidate batch corrects duplicate-filter status text to the
 reference's black default while retaining the saved media-text colour override.
 Rendered regressions inspect foreground glyphs in the actual status bounds
 across the existing eight background/transparency cases and observe saved
 override-on/off updates in an already-open window. Full Linux validation and
-fresh independent render review are pending; the signed-off total remains 331.
+fresh independent review at `63f9e35ab` approve exactly these three leaves:
+334 signed off, 94 new across seven October 6 checkpoints, 41 pending. All
+698 GUI and 67 media tests pass. The 15 selected captures and preserved limits
+are recorded in the checkpoint evidence.

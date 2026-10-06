@@ -2,8 +2,8 @@
   "schema_version": 1,
   "title": "Rust GUI migration hierarchy: entrypoints, editors and expected controls",
   "repository": ".",
-  "generated_at_utc": "2026-10-06T18:15:06.345184+00:00",
-  "git_head": "c768fef48120cdf529656285b8b77aac1a5b8e27",
+  "generated_at_utc": "2026-10-06T19:34:47.361159+00:00",
+  "git_head": "63f9e35abf1b1647e68ea4f1c850efee3ac8c365",
   "scope": "Main-menu entrypoints, all exported native Slint windows, popup/importer surfaces and source-backed nested editor/control families. Missing expected controls are anchored at implementation omissions or placeholders.",
   "caveats": [
     "Historical audit provenance is source inspection. Reviewed implementation changes passed hosted CI; per-node remaining boundaries still apply.",
@@ -574,8 +574,8 @@
       "line_count": 146
     },
     "crates/hydrus-gui/ui/duplicate_filter.slint": {
-      "sha256": "7f9f30bd9009c6244ca3fa3384796e14d2bd191d1a94dbf9f7813f5759d52214",
-      "line_count": 294
+      "sha256": "6619ecb1be84503c84b38007dbcf9f0660cd499689a8adb2ce9affc3839f7faa",
+      "line_count": 300
     },
     "crates/hydrus-gui/tests/gui/duplicate_filter.rs": {
       "sha256": "14c9fb8db2cc103bb00c435f807bc7a3e62e252fc808fa6861bee336ecaafc0b",
@@ -838,12 +838,12 @@
       "line_count": 1444
     },
     "docs/rust/GUI.md": {
-      "sha256": "685a30cd667cc5b369c36d32d4eeb1d2f4a66511fa0c83945dde599c48275f79",
-      "line_count": 4563
+      "sha256": "f547be9d1e0db48d8580a9712b33ed39165839dc9028c298b90c2c0cb572684f",
+      "line_count": 4572
     },
     "docs/rust/DIFFERENCES.md": {
-      "sha256": "eca739771af80bf67cb8f239231758bc21d0c6033ccea07c1a765dc3a1f758c9",
-      "line_count": 3676
+      "sha256": "c0278a609763eded562177b83fbf53de59d82d2b7d80c202840b55a2ab4c8aed",
+      "line_count": 3693
     },
     "crates/hydrus-gui/src/tag_display_window.rs": {
       "sha256": "eab85f057282336d2ae21ee9534cd1a53d3002db95871a14935af7c734488977",
@@ -1010,8 +1010,8 @@
       "line_count": 417
     },
     "docs/rust/ROADMAP.md": {
-      "sha256": "599703fdd1261d15f13987d95715f123086b4d92c76667653023cd3aa8b5a218",
-      "line_count": 427
+      "sha256": "b66f5eb7e1e9656c2be02331620ac21f6968d26c17df8edb63a6eda299185d2f",
+      "line_count": 428
     },
     "hydrus/client/gui/panels/options/FileSearchPanel.py": {
       "sha256": "52129e357dca85a8b5b306204aed535bc77fe31f7f1391f72b280cd6bb9eaeee",
@@ -1494,8 +1494,8 @@
       "line_count": 683
     },
     "crates/hydrus-gui/src/filter_window.rs": {
-      "sha256": "9c4a206619a95a13057416779bb407fde84e9baa8e3d3341664cdd99898470c7",
-      "line_count": 1189
+      "sha256": "ee792aa3d9204641a6845c7d2acfd492f8970141bb75b224b3c966dae8504fda",
+      "line_count": 1261
     },
     "hydrus/client/ClientController.py": {
       "sha256": "537306fbde6048ab65a5e25144f6c6cb692bff9b2930b428995f8fb56e5a3ee3",
@@ -4138,7 +4138,7 @@
           "role": "documented_scope",
           "source": {
             "path": "docs/rust/ROADMAP.md",
-            "line": 213,
+            "line": 214,
             "line_sha256": "b7c6ea3b42da1cc23e44950b86fb94aeea5411a0db780220864581fd1bf6f632"
           },
           "description": "Remaining network, tag/archive and downloader-definition breadth priorities.",
@@ -130855,10 +130855,10 @@
   ],
   "snapshot_repository_url": "https://github.com/jkendall327/hydrus-mine",
   "source_anchor_audit": {
-    "git_head": "c768fef48120cdf529656285b8b77aac1a5b8e27",
+    "git_head": "63f9e35abf1b1647e68ea4f1c850efee3ac8c365",
     "unique_anchors_checked": 4052,
     "method": "Git blob equality or uniquely unchanged line/context; line fingerprints verified",
-    "prior_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b"
+    "prior_git_head": "c768fef48120cdf529656285b8b77aac1a5b8e27"
   },
   "aggregation_schema": "concrete_features_v2",
   "curation": {
@@ -130883,21 +130883,22 @@
       "docs/rust/gui-coverage/audit/anchor-remap-6b66240c-publication.json",
       "docs/rust/gui-coverage/audit/anchor-remap-7c3c1aac-publication.json",
       "docs/rust/gui-coverage/audit/anchor-remap-9bec3796-publication.json",
-      "docs/rust/gui-coverage/audit/anchor-remap-c768fef4-publication.json"
+      "docs/rust/gui-coverage/audit/anchor-remap-c768fef4-publication.json",
+      "docs/rust/gui-coverage/audit/anchor-remap-63f9e35a-publication.json"
     ],
     "status_assignment": "Curated per node; generator checks structure/provenance and does not assess runtime behavior.",
     "independent_review": "Depth checklist, repeated-label option contexts, advanced numeric limits and source-only first-pass evidence reviewed; corrected scopes are preserved in supplemental audit patches.",
     "baseline_method": "Reference/native source inspection with scoped existing recording and assertion review; no behavior tests executed by this inventory audit."
   },
   "window_depth_audit": {
-    "source_git_head": "c768fef48120cdf529656285b8b77aac1a5b8e27",
+    "source_git_head": "63f9e35abf1b1647e68ea4f1c850efee3ac8c365",
     "exported_window_count": 121,
     "criterion": "Exported Slint Window component has a source-backed assessed occurrence with nested controls or canonical/shared navigation. Non-Window surfaces are separately curated."
   },
   "overnight_progress": {
     "goal": 80,
-    "milestone": 331,
-    "concrete_implementation_completions": 331,
+    "milestone": 334,
+    "concrete_implementation_completions": 334,
     "completed_feature_ids": [
       "audit-media-menu-database-clear-cull-file-viewing-statistics-based-on-current-min-max-values",
       "audit-media-migration-pause",
@@ -130955,6 +130956,9 @@
       "audit-options-downloading-misc-delay-time-on-a-subscription-other-error",
       "audit-options-downloading-subscriptions-if-a-subscription-has-this-many-failed-file-imports-stop-and-continue-later",
       "audit-options-downloading-subscriptions-maximum-number-of-subscriptions-that-can-sync-simultaneously",
+      "audit-options-duplicates-colours-background-light-dark-switch-intensity-for-a",
+      "audit-options-duplicates-colours-background-light-dark-switch-intensity-for-b",
+      "audit-options-duplicates-colours-draw-image-transparency-as-checkerboard-in-the-duplicate-filter",
       "audit-options-duplicates-duplicates-filter-page-hide-the-x-done-notification-on-preparation-tab-when-99-searched",
       "audit-options-exporting-export-folder-default-export-directory",
       "audit-options-favourite-edit-autocomplete",
@@ -131238,8 +131242,8 @@
     },
     "after": {
       "partial": 388,
-      "first_pass": 932,
-      "missing": 492
+      "first_pass": 935,
+      "missing": 489
     },
     "validation_summary": "Exact successful hosted Linux check and parity-models jobs. Windows and macOS validation is deferred under the exact-source owner policy. Source inspection and author reference-recording provenance are separate; no local Cargo or mutation testing by this tool.",
     "validation_scope": "linux",
@@ -131250,18 +131254,18 @@
       "windows",
       "macos"
     ],
-    "source_commit": "c768fef48120cdf529656285b8b77aac1a5b8e27",
+    "source_commit": "63f9e35abf1b1647e68ea4f1c850efee3ac8c365",
     "ci_evidence": {
-      "head_sha": "c768fef48120cdf529656285b8b77aac1a5b8e27",
+      "head_sha": "63f9e35abf1b1647e68ea4f1c850efee3ac8c365",
       "status": "completed",
       "conclusion": "success",
       "run_attempt": 1,
-      "created_at": "2026-10-06T17:35:01Z",
-      "run_started_at": "2026-10-06T17:35:01Z",
-      "updated_at": "2026-10-06T18:08:02Z",
-      "source_commit": "c768fef48120cdf529656285b8b77aac1a5b8e27",
-      "run_id": 37504670811,
-      "url": "https://github.com/jkendall327/hydrus-mine/actions/runs/37504670811",
+      "created_at": "2026-10-06T18:22:50Z",
+      "run_started_at": "2026-10-06T18:22:50Z",
+      "updated_at": "2026-10-06T19:29:21Z",
+      "source_commit": "63f9e35abf1b1647e68ea4f1c850efee3ac8c365",
+      "run_id": 37510853142,
+      "url": "https://github.com/jkendall327/hydrus-mine/actions/runs/37510853142",
       "validation_scope": "linux",
       "required_platforms": [
         "linux"
@@ -131272,121 +131276,21 @@
       ],
       "jobs": [
         {
-          "id": 112410167286,
-          "run_id": 37504670811,
+          "id": 112431975218,
+          "run_id": 37510853142,
           "workflow_name": "rust",
-          "head_branch": "codex/validate-idle-preview-cache",
-          "run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/runs/37504670811",
+          "head_branch": "codex/validate-duplicate-status",
+          "run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/runs/37510853142",
           "run_attempt": 1,
-          "node_id": "CR_kwDOUzlbIs8AAAAaLCsH9g",
-          "head_sha": "c768fef48120cdf529656285b8b77aac1a5b8e27",
-          "url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/jobs/112410167286",
-          "html_url": "https://github.com/jkendall327/hydrus-mine/actions/runs/37504670811/job/112410167286",
+          "node_id": "CR_kwDOUzlbIs8AAAAaLXfLMg",
+          "head_sha": "63f9e35abf1b1647e68ea4f1c850efee3ac8c365",
+          "url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/jobs/112431975218",
+          "html_url": "https://github.com/jkendall327/hydrus-mine/actions/runs/37510853142/job/112431975218",
           "status": "completed",
           "conclusion": "success",
-          "created_at": "2026-10-06T17:35:04Z",
-          "started_at": "2026-10-06T17:35:07Z",
-          "completed_at": "2026-10-06T17:39:23Z",
-          "name": "parity-models",
-          "steps": [
-            {
-              "name": "Set up job",
-              "status": "completed",
-              "conclusion": "success",
-              "number": 1,
-              "started_at": "2026-10-06T17:35:07Z",
-              "completed_at": "2026-10-06T17:35:09Z"
-            },
-            {
-              "name": "Run actions/checkout@v4",
-              "status": "completed",
-              "conclusion": "success",
-              "number": 2,
-              "started_at": "2026-10-06T17:35:09Z",
-              "completed_at": "2026-10-06T17:35:19Z"
-            },
-            {
-              "name": "Run dtolnay/rust-toolchain@master",
-              "status": "completed",
-              "conclusion": "success",
-              "number": 3,
-              "started_at": "2026-10-06T17:35:19Z",
-              "completed_at": "2026-10-06T17:35:26Z"
-            },
-            {
-              "name": "Run Swatinem/rust-cache@v2",
-              "status": "completed",
-              "conclusion": "success",
-              "number": 4,
-              "started_at": "2026-10-06T17:35:26Z",
-              "completed_at": "2026-10-06T17:35:39Z"
-            },
-            {
-              "name": "install media tools",
-              "status": "completed",
-              "conclusion": "success",
-              "number": 5,
-              "started_at": "2026-10-06T17:35:39Z",
-              "completed_at": "2026-10-06T17:36:04Z"
-            },
-            {
-              "name": "reference and backend tests",
-              "status": "completed",
-              "conclusion": "success",
-              "number": 6,
-              "started_at": "2026-10-06T17:36:04Z",
-              "completed_at": "2026-10-06T17:39:20Z"
-            },
-            {
-              "name": "Post Run Swatinem/rust-cache@v2",
-              "status": "completed",
-              "conclusion": "success",
-              "number": 11,
-              "started_at": "2026-10-06T17:39:20Z",
-              "completed_at": "2026-10-06T17:39:20Z"
-            },
-            {
-              "name": "Post Run actions/checkout@v4",
-              "status": "completed",
-              "conclusion": "success",
-              "number": 12,
-              "started_at": "2026-10-06T17:39:20Z",
-              "completed_at": "2026-10-06T17:39:20Z"
-            },
-            {
-              "name": "Complete job",
-              "status": "completed",
-              "conclusion": "success",
-              "number": 13,
-              "started_at": "2026-10-06T17:39:20Z",
-              "completed_at": "2026-10-06T17:39:20Z"
-            }
-          ],
-          "check_run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/check-runs/112410167286",
-          "labels": [
-            "ubuntu-latest"
-          ],
-          "runner_id": 1000003473,
-          "runner_name": "GitHub Actions 1000003473",
-          "runner_group_id": 0,
-          "runner_group_name": "GitHub Actions"
-        },
-        {
-          "id": 112410167493,
-          "run_id": 37504670811,
-          "workflow_name": "rust",
-          "head_branch": "codex/validate-idle-preview-cache",
-          "run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/runs/37504670811",
-          "run_attempt": 1,
-          "node_id": "CR_kwDOUzlbIs8AAAAaLCsIxQ",
-          "head_sha": "c768fef48120cdf529656285b8b77aac1a5b8e27",
-          "url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/jobs/112410167493",
-          "html_url": "https://github.com/jkendall327/hydrus-mine/actions/runs/37504670811/job/112410167493",
-          "status": "completed",
-          "conclusion": "success",
-          "created_at": "2026-10-06T17:35:04Z",
-          "started_at": "2026-10-06T17:35:06Z",
-          "completed_at": "2026-10-06T18:08:01Z",
+          "created_at": "2026-10-06T18:24:21Z",
+          "started_at": "2026-10-06T18:24:23Z",
+          "completed_at": "2026-10-06T19:29:20Z",
           "name": "check",
           "steps": [
             {
@@ -131394,216 +131298,316 @@
               "status": "completed",
               "conclusion": "success",
               "number": 1,
-              "started_at": "2026-10-06T17:35:07Z",
-              "completed_at": "2026-10-06T17:35:09Z"
+              "started_at": "2026-10-06T18:24:24Z",
+              "completed_at": "2026-10-06T18:24:25Z"
             },
             {
               "name": "Run actions/checkout@v4",
               "status": "completed",
               "conclusion": "success",
               "number": 2,
-              "started_at": "2026-10-06T17:35:09Z",
-              "completed_at": "2026-10-06T17:35:19Z"
+              "started_at": "2026-10-06T18:24:25Z",
+              "completed_at": "2026-10-06T18:24:40Z"
             },
             {
               "name": "Run dtolnay/rust-toolchain@master",
               "status": "completed",
               "conclusion": "success",
               "number": 3,
-              "started_at": "2026-10-06T17:35:19Z",
-              "completed_at": "2026-10-06T17:35:28Z"
+              "started_at": "2026-10-06T18:24:40Z",
+              "completed_at": "2026-10-06T18:24:50Z"
             },
             {
               "name": "Run Swatinem/rust-cache@v2",
               "status": "completed",
               "conclusion": "success",
               "number": 4,
-              "started_at": "2026-10-06T17:35:28Z",
-              "completed_at": "2026-10-06T17:35:42Z"
+              "started_at": "2026-10-06T18:24:50Z",
+              "completed_at": "2026-10-06T18:24:53Z"
             },
             {
               "name": "workspace cache safety regressions",
               "status": "completed",
               "conclusion": "success",
               "number": 5,
-              "started_at": "2026-10-06T17:35:42Z",
-              "completed_at": "2026-10-06T17:35:42Z"
+              "started_at": "2026-10-06T18:24:53Z",
+              "completed_at": "2026-10-06T18:24:54Z"
             },
             {
               "name": "workspace artifact compatibility key",
               "status": "completed",
               "conclusion": "success",
               "number": 6,
-              "started_at": "2026-10-06T17:35:42Z",
-              "completed_at": "2026-10-06T17:35:42Z"
+              "started_at": "2026-10-06T18:24:54Z",
+              "completed_at": "2026-10-06T18:24:54Z"
             },
             {
               "name": "restore rolling workspace libraries",
               "status": "completed",
               "conclusion": "success",
               "number": 7,
-              "started_at": "2026-10-06T17:35:42Z",
-              "completed_at": "2026-10-06T17:35:43Z"
+              "started_at": "2026-10-06T18:24:54Z",
+              "completed_at": "2026-10-06T18:24:54Z"
             },
             {
               "name": "merge restored workspace libraries",
               "status": "completed",
               "conclusion": "success",
               "number": 8,
-              "started_at": "2026-10-06T17:35:43Z",
-              "completed_at": "2026-10-06T17:35:44Z"
+              "started_at": "2026-10-06T18:24:54Z",
+              "completed_at": "2026-10-06T18:24:56Z"
             },
             {
               "name": "fail closed on uncertain workspace restore",
               "status": "completed",
               "conclusion": "skipped",
               "number": 9,
-              "started_at": "2026-10-06T17:35:44Z",
-              "completed_at": "2026-10-06T17:35:44Z"
+              "started_at": "2026-10-06T18:24:56Z",
+              "completed_at": "2026-10-06T18:24:56Z"
             },
             {
               "name": "install media tools, and fontconfig for the GUI",
               "status": "completed",
               "conclusion": "success",
               "number": 10,
-              "started_at": "2026-10-06T17:35:44Z",
-              "completed_at": "2026-10-06T17:36:11Z"
+              "started_at": "2026-10-06T18:24:56Z",
+              "completed_at": "2026-10-06T18:25:32Z"
             },
             {
               "name": "fmt",
               "status": "completed",
               "conclusion": "success",
               "number": 11,
-              "started_at": "2026-10-06T17:36:11Z",
-              "completed_at": "2026-10-06T17:36:18Z"
+              "started_at": "2026-10-06T18:25:32Z",
+              "completed_at": "2026-10-06T18:25:38Z"
             },
             {
               "name": "GUI artifact runner tests",
               "status": "completed",
               "conclusion": "success",
               "number": 12,
-              "started_at": "2026-10-06T17:36:18Z",
-              "completed_at": "2026-10-06T17:36:18Z"
+              "started_at": "2026-10-06T18:25:38Z",
+              "completed_at": "2026-10-06T18:25:38Z"
             },
             {
               "name": "clippy",
               "status": "completed",
               "conclusion": "success",
               "number": 13,
-              "started_at": "2026-10-06T17:36:18Z",
-              "completed_at": "2026-10-06T17:47:02Z"
+              "started_at": "2026-10-06T18:25:38Z",
+              "completed_at": "2026-10-06T18:54:11Z"
             },
             {
               "name": "save immediate Clippy diagnostics",
               "status": "completed",
               "conclusion": "success",
               "number": 14,
-              "started_at": "2026-10-06T17:47:02Z",
-              "completed_at": "2026-10-06T17:47:03Z"
+              "started_at": "2026-10-06T18:54:11Z",
+              "completed_at": "2026-10-06T18:54:12Z"
             },
             {
               "name": "test",
               "status": "completed",
               "conclusion": "success",
               "number": 15,
-              "started_at": "2026-10-06T17:47:03Z",
-              "completed_at": "2026-10-06T18:07:30Z"
+              "started_at": "2026-10-06T18:54:12Z",
+              "completed_at": "2026-10-06T19:28:34Z"
             },
             {
               "name": "save immediate test diagnostics",
               "status": "completed",
               "conclusion": "success",
               "number": 16,
-              "started_at": "2026-10-06T18:07:30Z",
-              "completed_at": "2026-10-06T18:07:31Z"
+              "started_at": "2026-10-06T19:28:34Z",
+              "completed_at": "2026-10-06T19:28:35Z"
             },
             {
               "name": "parity ratchet",
               "status": "completed",
               "conclusion": "success",
               "number": 17,
-              "started_at": "2026-10-06T18:07:31Z",
-              "completed_at": "2026-10-06T18:07:55Z"
+              "started_at": "2026-10-06T19:28:35Z",
+              "completed_at": "2026-10-06T19:28:59Z"
             },
             {
               "name": "save native GUI renders",
               "status": "completed",
               "conclusion": "success",
               "number": 18,
-              "started_at": "2026-10-06T18:07:55Z",
-              "completed_at": "2026-10-06T18:07:58Z"
+              "started_at": "2026-10-06T19:28:59Z",
+              "completed_at": "2026-10-06T19:29:00Z"
             },
             {
               "name": "stage bounded workspace libraries",
               "status": "completed",
               "conclusion": "skipped",
               "number": 19,
-              "started_at": "2026-10-06T18:07:58Z",
-              "completed_at": "2026-10-06T18:07:58Z"
+              "started_at": "2026-10-06T19:29:00Z",
+              "completed_at": "2026-10-06T19:29:00Z"
             },
             {
               "name": "save rolling workspace libraries",
               "status": "completed",
               "conclusion": "skipped",
               "number": 20,
-              "started_at": "2026-10-06T18:07:58Z",
-              "completed_at": "2026-10-06T18:07:58Z"
+              "started_at": "2026-10-06T19:29:00Z",
+              "completed_at": "2026-10-06T19:29:00Z"
             },
             {
               "name": "Post Run Swatinem/rust-cache@v2",
               "status": "completed",
               "conclusion": "success",
               "number": 39,
-              "started_at": "2026-10-06T18:07:58Z",
-              "completed_at": "2026-10-06T18:07:58Z"
+              "started_at": "2026-10-06T19:29:00Z",
+              "completed_at": "2026-10-06T19:29:18Z"
             },
             {
               "name": "Post Run actions/checkout@v4",
               "status": "completed",
               "conclusion": "success",
               "number": 40,
-              "started_at": "2026-10-06T18:07:58Z",
-              "completed_at": "2026-10-06T18:07:58Z"
+              "started_at": "2026-10-06T19:29:18Z",
+              "completed_at": "2026-10-06T19:29:18Z"
             },
             {
               "name": "Complete job",
               "status": "completed",
               "conclusion": "success",
               "number": 41,
-              "started_at": "2026-10-06T18:07:58Z",
-              "completed_at": "2026-10-06T18:07:58Z"
+              "started_at": "2026-10-06T19:29:18Z",
+              "completed_at": "2026-10-06T19:29:18Z"
             }
           ],
-          "check_run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/check-runs/112410167493",
+          "check_run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/check-runs/112431975218",
           "labels": [
             "ubuntu-24.04"
           ],
-          "runner_id": 1000003474,
-          "runner_name": "GitHub Actions 1000003474",
+          "runner_id": 1000003479,
+          "runner_name": "GitHub Actions 1000003479",
+          "runner_group_id": 0,
+          "runner_group_name": "GitHub Actions"
+        },
+        {
+          "id": 112431975580,
+          "run_id": 37510853142,
+          "workflow_name": "rust",
+          "head_branch": "codex/validate-duplicate-status",
+          "run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/runs/37510853142",
+          "run_attempt": 1,
+          "node_id": "CR_kwDOUzlbIs8AAAAaLXfMnA",
+          "head_sha": "63f9e35abf1b1647e68ea4f1c850efee3ac8c365",
+          "url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/jobs/112431975580",
+          "html_url": "https://github.com/jkendall327/hydrus-mine/actions/runs/37510853142/job/112431975580",
+          "status": "completed",
+          "conclusion": "success",
+          "created_at": "2026-10-06T18:24:21Z",
+          "started_at": "2026-10-06T18:24:24Z",
+          "completed_at": "2026-10-06T18:34:12Z",
+          "name": "parity-models",
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1,
+              "started_at": "2026-10-06T18:24:25Z",
+              "completed_at": "2026-10-06T18:24:27Z"
+            },
+            {
+              "name": "Run actions/checkout@v4",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2,
+              "started_at": "2026-10-06T18:24:27Z",
+              "completed_at": "2026-10-06T18:24:43Z"
+            },
+            {
+              "name": "Run dtolnay/rust-toolchain@master",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3,
+              "started_at": "2026-10-06T18:24:43Z",
+              "completed_at": "2026-10-06T18:24:52Z"
+            },
+            {
+              "name": "Run Swatinem/rust-cache@v2",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4,
+              "started_at": "2026-10-06T18:24:52Z",
+              "completed_at": "2026-10-06T18:24:54Z"
+            },
+            {
+              "name": "install media tools",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5,
+              "started_at": "2026-10-06T18:24:54Z",
+              "completed_at": "2026-10-06T18:25:20Z"
+            },
+            {
+              "name": "reference and backend tests",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 6,
+              "started_at": "2026-10-06T18:25:20Z",
+              "completed_at": "2026-10-06T18:33:47Z"
+            },
+            {
+              "name": "Post Run Swatinem/rust-cache@v2",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 11,
+              "started_at": "2026-10-06T18:33:47Z",
+              "completed_at": "2026-10-06T18:34:10Z"
+            },
+            {
+              "name": "Post Run actions/checkout@v4",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 12,
+              "started_at": "2026-10-06T18:34:10Z",
+              "completed_at": "2026-10-06T18:34:10Z"
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 13,
+              "started_at": "2026-10-06T18:34:10Z",
+              "completed_at": "2026-10-06T18:34:10Z"
+            }
+          ],
+          "check_run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/check-runs/112431975580",
+          "labels": [
+            "ubuntu-latest"
+          ],
+          "runner_id": 1000003480,
+          "runner_name": "GitHub Actions 1000003480",
           "runner_group_id": 0,
           "runner_group_name": "GitHub Actions"
         }
       ],
       "auxiliary_jobs": [
         {
-          "id": 112410168439,
-          "run_id": 37504670811,
+          "id": 112431977070,
+          "run_id": 37510853142,
           "workflow_name": "rust",
-          "head_branch": "codex/validate-idle-preview-cache",
-          "run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/runs/37504670811",
+          "head_branch": "codex/validate-duplicate-status",
+          "run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/runs/37510853142",
           "run_attempt": 1,
-          "node_id": "CR_kwDOUzlbIs8AAAAaLCsMdw",
-          "head_sha": "c768fef48120cdf529656285b8b77aac1a5b8e27",
-          "url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/jobs/112410168439",
-          "html_url": "https://github.com/jkendall327/hydrus-mine/actions/runs/37504670811/job/112410168439",
+          "node_id": "CR_kwDOUzlbIs8AAAAaLXfSbg",
+          "head_sha": "63f9e35abf1b1647e68ea4f1c850efee3ac8c365",
+          "url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/jobs/112431977070",
+          "html_url": "https://github.com/jkendall327/hydrus-mine/actions/runs/37510853142/job/112431977070",
           "status": "completed",
           "conclusion": "skipped",
-          "created_at": "2026-10-06T17:35:04Z",
-          "started_at": "2026-10-06T17:35:04Z",
-          "completed_at": "2026-10-06T17:35:04Z",
+          "created_at": "2026-10-06T18:24:22Z",
+          "started_at": "2026-10-06T18:24:22Z",
+          "completed_at": "2026-10-06T18:24:21Z",
           "name": "quick-check",
           "steps": [],
-          "check_run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/check-runs/112410168439",
+          "check_run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/check-runs/112431977070",
           "labels": [
             "ubuntu-24.04"
           ],
@@ -131613,24 +131617,24 @@
           "runner_group_name": null
         },
         {
-          "id": 112410168984,
-          "run_id": 37504670811,
+          "id": 112431977085,
+          "run_id": 37510853142,
           "workflow_name": "rust",
-          "head_branch": "codex/validate-idle-preview-cache",
-          "run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/runs/37504670811",
+          "head_branch": "codex/validate-duplicate-status",
+          "run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/runs/37510853142",
           "run_attempt": 1,
-          "node_id": "CR_kwDOUzlbIs8AAAAaLCsOmA",
-          "head_sha": "c768fef48120cdf529656285b8b77aac1a5b8e27",
-          "url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/jobs/112410168984",
-          "html_url": "https://github.com/jkendall327/hydrus-mine/actions/runs/37504670811/job/112410168984",
+          "node_id": "CR_kwDOUzlbIs8AAAAaLXfSfQ",
+          "head_sha": "63f9e35abf1b1647e68ea4f1c850efee3ac8c365",
+          "url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/jobs/112431977085",
+          "html_url": "https://github.com/jkendall327/hydrus-mine/actions/runs/37510853142/job/112431977085",
           "status": "completed",
           "conclusion": "skipped",
-          "created_at": "2026-10-06T17:35:04Z",
-          "started_at": "2026-10-06T17:35:04Z",
-          "completed_at": "2026-10-06T17:35:04Z",
+          "created_at": "2026-10-06T18:24:22Z",
+          "started_at": "2026-10-06T18:24:22Z",
+          "completed_at": "2026-10-06T18:24:21Z",
           "name": "other-platforms",
           "steps": [],
-          "check_run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/check-runs/112410168984",
+          "check_run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/check-runs/112431977085",
           "labels": [],
           "runner_id": null,
           "runner_name": null,
@@ -131643,24 +131647,24 @@
           ]
         },
         {
-          "id": 112424707535,
-          "run_id": 37504670811,
+          "id": 112460363285,
+          "run_id": 37510853142,
           "workflow_name": "rust",
-          "head_branch": "codex/validate-idle-preview-cache",
-          "run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/runs/37504670811",
+          "head_branch": "codex/validate-duplicate-status",
+          "run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/runs/37510853142",
           "run_attempt": 1,
-          "node_id": "CR_kwDOUzlbIs8AAAAaLQjlzw",
-          "head_sha": "c768fef48120cdf529656285b8b77aac1a5b8e27",
-          "url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/jobs/112424707535",
-          "html_url": "https://github.com/jkendall327/hydrus-mine/actions/runs/37504670811/job/112424707535",
+          "node_id": "CR_kwDOUzlbIs8AAAAaLyj2FQ",
+          "head_sha": "63f9e35abf1b1647e68ea4f1c850efee3ac8c365",
+          "url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/jobs/112460363285",
+          "html_url": "https://github.com/jkendall327/hydrus-mine/actions/runs/37510853142/job/112460363285",
           "status": "completed",
           "conclusion": "skipped",
-          "created_at": "2026-10-06T18:08:02Z",
-          "started_at": "2026-10-06T18:08:02Z",
-          "completed_at": "2026-10-06T18:08:01Z",
+          "created_at": "2026-10-06T19:29:21Z",
+          "started_at": "2026-10-06T19:29:21Z",
+          "completed_at": "2026-10-06T19:29:20Z",
           "name": "workspace-cache-maintenance",
           "steps": [],
-          "check_run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/check-runs/112424707535",
+          "check_run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/check-runs/112460363285",
           "labels": [
             "ubuntu-24.04"
           ],
@@ -131677,26 +131681,26 @@
       },
       "publication_policy": {
         "path": ".github/publication-validation.json",
-        "source_commit": "c768fef48120cdf529656285b8b77aac1a5b8e27",
+        "source_commit": "63f9e35abf1b1647e68ea4f1c850efee3ac8c365",
         "sha256": "49723bd5d6b786392a1368bb3da1406747a553ef31c9de2bdef92cea5d014c5f",
         "effective_date": "2026-10-06",
         "reason": "The owner uses Linux and prioritizes validated Linux delivery. macOS is low priority; Windows is deferred because its builds materially lengthen validation. Secondary-platform CI remains available by explicit opt-in."
       }
     },
-    "additional_concrete_implementation_completions": 5,
+    "additional_concrete_implementation_completions": 3,
     "counting_method": "Frozen 1,812 original IDs; explicit reviewed concrete implementation leaves only; parents, aliases, evidence-only changes and native IDs excluded."
   },
   "runtime_validation": {
-    "head_sha": "c768fef48120cdf529656285b8b77aac1a5b8e27",
+    "head_sha": "63f9e35abf1b1647e68ea4f1c850efee3ac8c365",
     "status": "completed",
     "conclusion": "success",
     "run_attempt": 1,
-    "created_at": "2026-10-06T17:35:01Z",
-    "run_started_at": "2026-10-06T17:35:01Z",
-    "updated_at": "2026-10-06T18:08:02Z",
-    "source_commit": "c768fef48120cdf529656285b8b77aac1a5b8e27",
-    "run_id": 37504670811,
-    "url": "https://github.com/jkendall327/hydrus-mine/actions/runs/37504670811",
+    "created_at": "2026-10-06T18:22:50Z",
+    "run_started_at": "2026-10-06T18:22:50Z",
+    "updated_at": "2026-10-06T19:29:21Z",
+    "source_commit": "63f9e35abf1b1647e68ea4f1c850efee3ac8c365",
+    "run_id": 37510853142,
+    "url": "https://github.com/jkendall327/hydrus-mine/actions/runs/37510853142",
     "validation_scope": "linux",
     "required_platforms": [
       "linux"
@@ -131707,121 +131711,21 @@
     ],
     "jobs": [
       {
-        "id": 112410167286,
-        "run_id": 37504670811,
+        "id": 112431975218,
+        "run_id": 37510853142,
         "workflow_name": "rust",
-        "head_branch": "codex/validate-idle-preview-cache",
-        "run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/runs/37504670811",
+        "head_branch": "codex/validate-duplicate-status",
+        "run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/runs/37510853142",
         "run_attempt": 1,
-        "node_id": "CR_kwDOUzlbIs8AAAAaLCsH9g",
-        "head_sha": "c768fef48120cdf529656285b8b77aac1a5b8e27",
-        "url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/jobs/112410167286",
-        "html_url": "https://github.com/jkendall327/hydrus-mine/actions/runs/37504670811/job/112410167286",
+        "node_id": "CR_kwDOUzlbIs8AAAAaLXfLMg",
+        "head_sha": "63f9e35abf1b1647e68ea4f1c850efee3ac8c365",
+        "url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/jobs/112431975218",
+        "html_url": "https://github.com/jkendall327/hydrus-mine/actions/runs/37510853142/job/112431975218",
         "status": "completed",
         "conclusion": "success",
-        "created_at": "2026-10-06T17:35:04Z",
-        "started_at": "2026-10-06T17:35:07Z",
-        "completed_at": "2026-10-06T17:39:23Z",
-        "name": "parity-models",
-        "steps": [
-          {
-            "name": "Set up job",
-            "status": "completed",
-            "conclusion": "success",
-            "number": 1,
-            "started_at": "2026-10-06T17:35:07Z",
-            "completed_at": "2026-10-06T17:35:09Z"
-          },
-          {
-            "name": "Run actions/checkout@v4",
-            "status": "completed",
-            "conclusion": "success",
-            "number": 2,
-            "started_at": "2026-10-06T17:35:09Z",
-            "completed_at": "2026-10-06T17:35:19Z"
-          },
-          {
-            "name": "Run dtolnay/rust-toolchain@master",
-            "status": "completed",
-            "conclusion": "success",
-            "number": 3,
-            "started_at": "2026-10-06T17:35:19Z",
-            "completed_at": "2026-10-06T17:35:26Z"
-          },
-          {
-            "name": "Run Swatinem/rust-cache@v2",
-            "status": "completed",
-            "conclusion": "success",
-            "number": 4,
-            "started_at": "2026-10-06T17:35:26Z",
-            "completed_at": "2026-10-06T17:35:39Z"
-          },
-          {
-            "name": "install media tools",
-            "status": "completed",
-            "conclusion": "success",
-            "number": 5,
-            "started_at": "2026-10-06T17:35:39Z",
-            "completed_at": "2026-10-06T17:36:04Z"
-          },
-          {
-            "name": "reference and backend tests",
-            "status": "completed",
-            "conclusion": "success",
-            "number": 6,
-            "started_at": "2026-10-06T17:36:04Z",
-            "completed_at": "2026-10-06T17:39:20Z"
-          },
-          {
-            "name": "Post Run Swatinem/rust-cache@v2",
-            "status": "completed",
-            "conclusion": "success",
-            "number": 11,
-            "started_at": "2026-10-06T17:39:20Z",
-            "completed_at": "2026-10-06T17:39:20Z"
-          },
-          {
-            "name": "Post Run actions/checkout@v4",
-            "status": "completed",
-            "conclusion": "success",
-            "number": 12,
-            "started_at": "2026-10-06T17:39:20Z",
-            "completed_at": "2026-10-06T17:39:20Z"
-          },
-          {
-            "name": "Complete job",
-            "status": "completed",
-            "conclusion": "success",
-            "number": 13,
-            "started_at": "2026-10-06T17:39:20Z",
-            "completed_at": "2026-10-06T17:39:20Z"
-          }
-        ],
-        "check_run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/check-runs/112410167286",
-        "labels": [
-          "ubuntu-latest"
-        ],
-        "runner_id": 1000003473,
-        "runner_name": "GitHub Actions 1000003473",
-        "runner_group_id": 0,
-        "runner_group_name": "GitHub Actions"
-      },
-      {
-        "id": 112410167493,
-        "run_id": 37504670811,
-        "workflow_name": "rust",
-        "head_branch": "codex/validate-idle-preview-cache",
-        "run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/runs/37504670811",
-        "run_attempt": 1,
-        "node_id": "CR_kwDOUzlbIs8AAAAaLCsIxQ",
-        "head_sha": "c768fef48120cdf529656285b8b77aac1a5b8e27",
-        "url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/jobs/112410167493",
-        "html_url": "https://github.com/jkendall327/hydrus-mine/actions/runs/37504670811/job/112410167493",
-        "status": "completed",
-        "conclusion": "success",
-        "created_at": "2026-10-06T17:35:04Z",
-        "started_at": "2026-10-06T17:35:06Z",
-        "completed_at": "2026-10-06T18:08:01Z",
+        "created_at": "2026-10-06T18:24:21Z",
+        "started_at": "2026-10-06T18:24:23Z",
+        "completed_at": "2026-10-06T19:29:20Z",
         "name": "check",
         "steps": [
           {
@@ -131829,216 +131733,316 @@
             "status": "completed",
             "conclusion": "success",
             "number": 1,
-            "started_at": "2026-10-06T17:35:07Z",
-            "completed_at": "2026-10-06T17:35:09Z"
+            "started_at": "2026-10-06T18:24:24Z",
+            "completed_at": "2026-10-06T18:24:25Z"
           },
           {
             "name": "Run actions/checkout@v4",
             "status": "completed",
             "conclusion": "success",
             "number": 2,
-            "started_at": "2026-10-06T17:35:09Z",
-            "completed_at": "2026-10-06T17:35:19Z"
+            "started_at": "2026-10-06T18:24:25Z",
+            "completed_at": "2026-10-06T18:24:40Z"
           },
           {
             "name": "Run dtolnay/rust-toolchain@master",
             "status": "completed",
             "conclusion": "success",
             "number": 3,
-            "started_at": "2026-10-06T17:35:19Z",
-            "completed_at": "2026-10-06T17:35:28Z"
+            "started_at": "2026-10-06T18:24:40Z",
+            "completed_at": "2026-10-06T18:24:50Z"
           },
           {
             "name": "Run Swatinem/rust-cache@v2",
             "status": "completed",
             "conclusion": "success",
             "number": 4,
-            "started_at": "2026-10-06T17:35:28Z",
-            "completed_at": "2026-10-06T17:35:42Z"
+            "started_at": "2026-10-06T18:24:50Z",
+            "completed_at": "2026-10-06T18:24:53Z"
           },
           {
             "name": "workspace cache safety regressions",
             "status": "completed",
             "conclusion": "success",
             "number": 5,
-            "started_at": "2026-10-06T17:35:42Z",
-            "completed_at": "2026-10-06T17:35:42Z"
+            "started_at": "2026-10-06T18:24:53Z",
+            "completed_at": "2026-10-06T18:24:54Z"
           },
           {
             "name": "workspace artifact compatibility key",
             "status": "completed",
             "conclusion": "success",
             "number": 6,
-            "started_at": "2026-10-06T17:35:42Z",
-            "completed_at": "2026-10-06T17:35:42Z"
+            "started_at": "2026-10-06T18:24:54Z",
+            "completed_at": "2026-10-06T18:24:54Z"
           },
           {
             "name": "restore rolling workspace libraries",
             "status": "completed",
             "conclusion": "success",
             "number": 7,
-            "started_at": "2026-10-06T17:35:42Z",
-            "completed_at": "2026-10-06T17:35:43Z"
+            "started_at": "2026-10-06T18:24:54Z",
+            "completed_at": "2026-10-06T18:24:54Z"
           },
           {
             "name": "merge restored workspace libraries",
             "status": "completed",
             "conclusion": "success",
             "number": 8,
-            "started_at": "2026-10-06T17:35:43Z",
-            "completed_at": "2026-10-06T17:35:44Z"
+            "started_at": "2026-10-06T18:24:54Z",
+            "completed_at": "2026-10-06T18:24:56Z"
           },
           {
             "name": "fail closed on uncertain workspace restore",
             "status": "completed",
             "conclusion": "skipped",
             "number": 9,
-            "started_at": "2026-10-06T17:35:44Z",
-            "completed_at": "2026-10-06T17:35:44Z"
+            "started_at": "2026-10-06T18:24:56Z",
+            "completed_at": "2026-10-06T18:24:56Z"
           },
           {
             "name": "install media tools, and fontconfig for the GUI",
             "status": "completed",
             "conclusion": "success",
             "number": 10,
-            "started_at": "2026-10-06T17:35:44Z",
-            "completed_at": "2026-10-06T17:36:11Z"
+            "started_at": "2026-10-06T18:24:56Z",
+            "completed_at": "2026-10-06T18:25:32Z"
           },
           {
             "name": "fmt",
             "status": "completed",
             "conclusion": "success",
             "number": 11,
-            "started_at": "2026-10-06T17:36:11Z",
-            "completed_at": "2026-10-06T17:36:18Z"
+            "started_at": "2026-10-06T18:25:32Z",
+            "completed_at": "2026-10-06T18:25:38Z"
           },
           {
             "name": "GUI artifact runner tests",
             "status": "completed",
             "conclusion": "success",
             "number": 12,
-            "started_at": "2026-10-06T17:36:18Z",
-            "completed_at": "2026-10-06T17:36:18Z"
+            "started_at": "2026-10-06T18:25:38Z",
+            "completed_at": "2026-10-06T18:25:38Z"
           },
           {
             "name": "clippy",
             "status": "completed",
             "conclusion": "success",
             "number": 13,
-            "started_at": "2026-10-06T17:36:18Z",
-            "completed_at": "2026-10-06T17:47:02Z"
+            "started_at": "2026-10-06T18:25:38Z",
+            "completed_at": "2026-10-06T18:54:11Z"
           },
           {
             "name": "save immediate Clippy diagnostics",
             "status": "completed",
             "conclusion": "success",
             "number": 14,
-            "started_at": "2026-10-06T17:47:02Z",
-            "completed_at": "2026-10-06T17:47:03Z"
+            "started_at": "2026-10-06T18:54:11Z",
+            "completed_at": "2026-10-06T18:54:12Z"
           },
           {
             "name": "test",
             "status": "completed",
             "conclusion": "success",
             "number": 15,
-            "started_at": "2026-10-06T17:47:03Z",
-            "completed_at": "2026-10-06T18:07:30Z"
+            "started_at": "2026-10-06T18:54:12Z",
+            "completed_at": "2026-10-06T19:28:34Z"
           },
           {
             "name": "save immediate test diagnostics",
             "status": "completed",
             "conclusion": "success",
             "number": 16,
-            "started_at": "2026-10-06T18:07:30Z",
-            "completed_at": "2026-10-06T18:07:31Z"
+            "started_at": "2026-10-06T19:28:34Z",
+            "completed_at": "2026-10-06T19:28:35Z"
           },
           {
             "name": "parity ratchet",
             "status": "completed",
             "conclusion": "success",
             "number": 17,
-            "started_at": "2026-10-06T18:07:31Z",
-            "completed_at": "2026-10-06T18:07:55Z"
+            "started_at": "2026-10-06T19:28:35Z",
+            "completed_at": "2026-10-06T19:28:59Z"
           },
           {
             "name": "save native GUI renders",
             "status": "completed",
             "conclusion": "success",
             "number": 18,
-            "started_at": "2026-10-06T18:07:55Z",
-            "completed_at": "2026-10-06T18:07:58Z"
+            "started_at": "2026-10-06T19:28:59Z",
+            "completed_at": "2026-10-06T19:29:00Z"
           },
           {
             "name": "stage bounded workspace libraries",
             "status": "completed",
             "conclusion": "skipped",
             "number": 19,
-            "started_at": "2026-10-06T18:07:58Z",
-            "completed_at": "2026-10-06T18:07:58Z"
+            "started_at": "2026-10-06T19:29:00Z",
+            "completed_at": "2026-10-06T19:29:00Z"
           },
           {
             "name": "save rolling workspace libraries",
             "status": "completed",
             "conclusion": "skipped",
             "number": 20,
-            "started_at": "2026-10-06T18:07:58Z",
-            "completed_at": "2026-10-06T18:07:58Z"
+            "started_at": "2026-10-06T19:29:00Z",
+            "completed_at": "2026-10-06T19:29:00Z"
           },
           {
             "name": "Post Run Swatinem/rust-cache@v2",
             "status": "completed",
             "conclusion": "success",
             "number": 39,
-            "started_at": "2026-10-06T18:07:58Z",
-            "completed_at": "2026-10-06T18:07:58Z"
+            "started_at": "2026-10-06T19:29:00Z",
+            "completed_at": "2026-10-06T19:29:18Z"
           },
           {
             "name": "Post Run actions/checkout@v4",
             "status": "completed",
             "conclusion": "success",
             "number": 40,
-            "started_at": "2026-10-06T18:07:58Z",
-            "completed_at": "2026-10-06T18:07:58Z"
+            "started_at": "2026-10-06T19:29:18Z",
+            "completed_at": "2026-10-06T19:29:18Z"
           },
           {
             "name": "Complete job",
             "status": "completed",
             "conclusion": "success",
             "number": 41,
-            "started_at": "2026-10-06T18:07:58Z",
-            "completed_at": "2026-10-06T18:07:58Z"
+            "started_at": "2026-10-06T19:29:18Z",
+            "completed_at": "2026-10-06T19:29:18Z"
           }
         ],
-        "check_run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/check-runs/112410167493",
+        "check_run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/check-runs/112431975218",
         "labels": [
           "ubuntu-24.04"
         ],
-        "runner_id": 1000003474,
-        "runner_name": "GitHub Actions 1000003474",
+        "runner_id": 1000003479,
+        "runner_name": "GitHub Actions 1000003479",
+        "runner_group_id": 0,
+        "runner_group_name": "GitHub Actions"
+      },
+      {
+        "id": 112431975580,
+        "run_id": 37510853142,
+        "workflow_name": "rust",
+        "head_branch": "codex/validate-duplicate-status",
+        "run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/runs/37510853142",
+        "run_attempt": 1,
+        "node_id": "CR_kwDOUzlbIs8AAAAaLXfMnA",
+        "head_sha": "63f9e35abf1b1647e68ea4f1c850efee3ac8c365",
+        "url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/jobs/112431975580",
+        "html_url": "https://github.com/jkendall327/hydrus-mine/actions/runs/37510853142/job/112431975580",
+        "status": "completed",
+        "conclusion": "success",
+        "created_at": "2026-10-06T18:24:21Z",
+        "started_at": "2026-10-06T18:24:24Z",
+        "completed_at": "2026-10-06T18:34:12Z",
+        "name": "parity-models",
+        "steps": [
+          {
+            "name": "Set up job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 1,
+            "started_at": "2026-10-06T18:24:25Z",
+            "completed_at": "2026-10-06T18:24:27Z"
+          },
+          {
+            "name": "Run actions/checkout@v4",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 2,
+            "started_at": "2026-10-06T18:24:27Z",
+            "completed_at": "2026-10-06T18:24:43Z"
+          },
+          {
+            "name": "Run dtolnay/rust-toolchain@master",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 3,
+            "started_at": "2026-10-06T18:24:43Z",
+            "completed_at": "2026-10-06T18:24:52Z"
+          },
+          {
+            "name": "Run Swatinem/rust-cache@v2",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 4,
+            "started_at": "2026-10-06T18:24:52Z",
+            "completed_at": "2026-10-06T18:24:54Z"
+          },
+          {
+            "name": "install media tools",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 5,
+            "started_at": "2026-10-06T18:24:54Z",
+            "completed_at": "2026-10-06T18:25:20Z"
+          },
+          {
+            "name": "reference and backend tests",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 6,
+            "started_at": "2026-10-06T18:25:20Z",
+            "completed_at": "2026-10-06T18:33:47Z"
+          },
+          {
+            "name": "Post Run Swatinem/rust-cache@v2",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 11,
+            "started_at": "2026-10-06T18:33:47Z",
+            "completed_at": "2026-10-06T18:34:10Z"
+          },
+          {
+            "name": "Post Run actions/checkout@v4",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 12,
+            "started_at": "2026-10-06T18:34:10Z",
+            "completed_at": "2026-10-06T18:34:10Z"
+          },
+          {
+            "name": "Complete job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 13,
+            "started_at": "2026-10-06T18:34:10Z",
+            "completed_at": "2026-10-06T18:34:10Z"
+          }
+        ],
+        "check_run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/check-runs/112431975580",
+        "labels": [
+          "ubuntu-latest"
+        ],
+        "runner_id": 1000003480,
+        "runner_name": "GitHub Actions 1000003480",
         "runner_group_id": 0,
         "runner_group_name": "GitHub Actions"
       }
     ],
     "auxiliary_jobs": [
       {
-        "id": 112410168439,
-        "run_id": 37504670811,
+        "id": 112431977070,
+        "run_id": 37510853142,
         "workflow_name": "rust",
-        "head_branch": "codex/validate-idle-preview-cache",
-        "run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/runs/37504670811",
+        "head_branch": "codex/validate-duplicate-status",
+        "run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/runs/37510853142",
         "run_attempt": 1,
-        "node_id": "CR_kwDOUzlbIs8AAAAaLCsMdw",
-        "head_sha": "c768fef48120cdf529656285b8b77aac1a5b8e27",
-        "url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/jobs/112410168439",
-        "html_url": "https://github.com/jkendall327/hydrus-mine/actions/runs/37504670811/job/112410168439",
+        "node_id": "CR_kwDOUzlbIs8AAAAaLXfSbg",
+        "head_sha": "63f9e35abf1b1647e68ea4f1c850efee3ac8c365",
+        "url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/jobs/112431977070",
+        "html_url": "https://github.com/jkendall327/hydrus-mine/actions/runs/37510853142/job/112431977070",
         "status": "completed",
         "conclusion": "skipped",
-        "created_at": "2026-10-06T17:35:04Z",
-        "started_at": "2026-10-06T17:35:04Z",
-        "completed_at": "2026-10-06T17:35:04Z",
+        "created_at": "2026-10-06T18:24:22Z",
+        "started_at": "2026-10-06T18:24:22Z",
+        "completed_at": "2026-10-06T18:24:21Z",
         "name": "quick-check",
         "steps": [],
-        "check_run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/check-runs/112410168439",
+        "check_run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/check-runs/112431977070",
         "labels": [
           "ubuntu-24.04"
         ],
@@ -132048,24 +132052,24 @@
         "runner_group_name": null
       },
       {
-        "id": 112410168984,
-        "run_id": 37504670811,
+        "id": 112431977085,
+        "run_id": 37510853142,
         "workflow_name": "rust",
-        "head_branch": "codex/validate-idle-preview-cache",
-        "run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/runs/37504670811",
+        "head_branch": "codex/validate-duplicate-status",
+        "run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/runs/37510853142",
         "run_attempt": 1,
-        "node_id": "CR_kwDOUzlbIs8AAAAaLCsOmA",
-        "head_sha": "c768fef48120cdf529656285b8b77aac1a5b8e27",
-        "url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/jobs/112410168984",
-        "html_url": "https://github.com/jkendall327/hydrus-mine/actions/runs/37504670811/job/112410168984",
+        "node_id": "CR_kwDOUzlbIs8AAAAaLXfSfQ",
+        "head_sha": "63f9e35abf1b1647e68ea4f1c850efee3ac8c365",
+        "url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/jobs/112431977085",
+        "html_url": "https://github.com/jkendall327/hydrus-mine/actions/runs/37510853142/job/112431977085",
         "status": "completed",
         "conclusion": "skipped",
-        "created_at": "2026-10-06T17:35:04Z",
-        "started_at": "2026-10-06T17:35:04Z",
-        "completed_at": "2026-10-06T17:35:04Z",
+        "created_at": "2026-10-06T18:24:22Z",
+        "started_at": "2026-10-06T18:24:22Z",
+        "completed_at": "2026-10-06T18:24:21Z",
         "name": "other-platforms",
         "steps": [],
-        "check_run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/check-runs/112410168984",
+        "check_run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/check-runs/112431977085",
         "labels": [],
         "runner_id": null,
         "runner_name": null,
@@ -132078,24 +132082,24 @@
         ]
       },
       {
-        "id": 112424707535,
-        "run_id": 37504670811,
+        "id": 112460363285,
+        "run_id": 37510853142,
         "workflow_name": "rust",
-        "head_branch": "codex/validate-idle-preview-cache",
-        "run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/runs/37504670811",
+        "head_branch": "codex/validate-duplicate-status",
+        "run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/runs/37510853142",
         "run_attempt": 1,
-        "node_id": "CR_kwDOUzlbIs8AAAAaLQjlzw",
-        "head_sha": "c768fef48120cdf529656285b8b77aac1a5b8e27",
-        "url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/jobs/112424707535",
-        "html_url": "https://github.com/jkendall327/hydrus-mine/actions/runs/37504670811/job/112424707535",
+        "node_id": "CR_kwDOUzlbIs8AAAAaLyj2FQ",
+        "head_sha": "63f9e35abf1b1647e68ea4f1c850efee3ac8c365",
+        "url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/jobs/112460363285",
+        "html_url": "https://github.com/jkendall327/hydrus-mine/actions/runs/37510853142/job/112460363285",
         "status": "completed",
         "conclusion": "skipped",
-        "created_at": "2026-10-06T18:08:02Z",
-        "started_at": "2026-10-06T18:08:02Z",
-        "completed_at": "2026-10-06T18:08:01Z",
+        "created_at": "2026-10-06T19:29:21Z",
+        "started_at": "2026-10-06T19:29:21Z",
+        "completed_at": "2026-10-06T19:29:20Z",
         "name": "workspace-cache-maintenance",
         "steps": [],
-        "check_run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/check-runs/112424707535",
+        "check_run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/check-runs/112460363285",
         "labels": [
           "ubuntu-24.04"
         ],
@@ -132112,7 +132116,7 @@
     },
     "publication_policy": {
       "path": ".github/publication-validation.json",
-      "source_commit": "c768fef48120cdf529656285b8b77aac1a5b8e27",
+      "source_commit": "63f9e35abf1b1647e68ea4f1c850efee3ac8c365",
       "sha256": "49723bd5d6b786392a1368bb3da1406747a553ef31c9de2bdef92cea5d014c5f",
       "effective_date": "2026-10-06",
       "reason": "The owner uses Linux and prioritizes validated Linux delivery. macOS is low priority; Windows is deferred because its builds materially lengthen validation. Secondary-platform CI remains available by explicit opt-in."

@@ -1,0 +1,48 @@
+{
+  "source_commit": "63f9e35abf1b1647e68ea4f1c850efee3ac8c365",
+  "run_id": 37510853142,
+  "selected_ids": [
+    "audit-options-duplicates-colours-background-light-dark-switch-intensity-for-a",
+    "audit-options-duplicates-colours-background-light-dark-switch-intensity-for-b",
+    "audit-options-duplicates-colours-draw-image-transparency-as-checkerboard-in-the-duplicate-filter"
+  ],
+  "selected_count": 3,
+  "prior_count": 331,
+  "expected_native_capture_names": [
+    "duplicate-colours-painter-0-native.png",
+    "duplicate-colours-painter-1-native.png",
+    "duplicate-colours-painter-2-native.png",
+    "duplicate-colours-painter-3-native.png",
+    "duplicate-colours-painter-4-native.png",
+    "duplicate-colours-painter-5-native.png",
+    "duplicate-colours-painter-6-native.png",
+    "duplicate-colours-painter-7-native.png",
+    "duplicate-colours-options-0-native.png",
+    "duplicate-colours-options-1-native.png",
+    "duplicate-colours-options-2-native.png",
+    "duplicate-colours-options-3-native.png",
+    "duplicate-colours-options-4-native.png",
+    "duplicate-colours-status-override-native.png",
+    "duplicate-colours-status-override-off-native.png"
+  ],
+  "reference_png": "oracle/fixtures/duplicate_colours.png",
+  "source_review": "duplicate3/working-tree-source-review-2.json is historical working-tree review only; reviewer2 finalsource/CI/image review stillrequired.",
+  "capture_scope": [
+    "8 actual duplicate owner painter cases at800x600 use intentional64x64 transparent probe after frozen metadata/original pair selects A/B/checker/green policy. Existing143QColor/8mode/sourceclip assertions unchanged; status ink measured in actualText geometry must be visible.",
+    "5 real reopened Options captures1200x1800 show finite1..9/NoneA/B and independent transparency. Native fullownedOptions Cancel differs from Qt abandoned draft; preserve provenance boundary.",
+    "2 supplemental existingowner savedrole11 override/on-off captures800x600 must prove status currentcolour/ink via realboundedTheme observer; defaultblack restored without pair/reopen. Universal arbitrary custompalette contrast is notclaimed.",
+    "Qt800x600 final realopaqueB hoverlayout differs from native background probe; no wholefilter pixel equality/decodedfilefidelity inferred.",
+    "No extra credit for banked GUI-colour controls, broader duplicate parents or aliases."
+  ],
+  "images_actually_viewed_by_preparation": false,
+  "approval": false,
+  "ci": "pending",
+  "render_review": "pending",
+  "required_platforms": [
+    "linux"
+  ],
+  "deferred_platforms": [
+    "windows",
+    "macos"
+  ]
+}

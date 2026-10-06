@@ -3636,9 +3636,9 @@ Validation repairs now invalidate cached thumbnail colours when the stylesheet
 changes and hide an exact retired colour picker on repeated Cancel. Wheel
 controls publish their initial measured geometry as well as later changes.
 These repairs passed full Linux replay at `56b93ae49` (696 GUI tests).
-Completion credit remains limited to the 91 independently reviewed original
-leaves banked across six checkpoints, with the latest
-[331-item checkpoint](gui-coverage/checkpoints/c768fef48/README.md);
+Completion credit remains limited to the 94 independently reviewed original
+leaves banked across seven checkpoints, with the latest
+[334-item checkpoint](gui-coverage/checkpoints/63f9e35ab/README.md);
 other repaired behavior retains its scoped assessment.
 
 Speed and Memory helper overlap and favourites capture setup are repaired and
@@ -3684,10 +3684,14 @@ The earlier compile-only E0373 failure is retained; the repaired run passes all
 698 GUI and 67 media tests. No matching Qt Options/menu images or full-pixel
 parity are claimed. Prior checkpoint paragraphs remain historical records.
 
-The next duplicate-colour repair uses Qt Canvas's default black status text
+The duplicate-colour repair uses Qt Canvas's default black status text
 instead of pale grey on the default white background. Saved role 11 still
 overrides that fallback; it does not introduce automatic contrast selection or
 arbitrary QSS parity. Existing A/B colour calculations, transparency samples,
 staging and ownership assertions remain intact. The three existing colour
-candidates await full Linux execution and fresh render review; no additional
-completion credit is claimed yet.
+candidates passed full Linux execution and fresh independent review at
+`63f9e35ab`: 334 signed off, 94 new across seven October 6 checkpoints, 41
+pending. The two supplemental override images contain live opaque media and
+later comparison results; they prove status colour, while the eight controlled
+probe images retain background/clipping evidence. No broad pixel or palette
+parity is claimed.
