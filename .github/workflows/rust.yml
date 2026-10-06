@@ -3,9 +3,9 @@ name: rust
 on:
   push:
     branches: [master, 'claude/**', 'codex/**']
-    paths: ['crates/**', 'xtask/**', 'oracle/**', 'parity/**', 'Cargo.toml', 'Cargo.lock', 'rust-toolchain.toml', '.github/workflows/rust.yml']
+    paths: ['crates/**', 'xtask/**', 'oracle/**', 'parity/**', 'Cargo.toml', 'Cargo.lock', 'rust-toolchain.toml', '.github/workflows/rust.yml', 'scripts/gui_test_artifact.py', 'scripts/test_gui_test_artifact.py']
   pull_request:
-    paths: ['crates/**', 'xtask/**', 'oracle/**', 'parity/**', 'Cargo.toml', 'Cargo.lock', 'rust-toolchain.toml', '.github/workflows/rust.yml']
+    paths: ['crates/**', 'xtask/**', 'oracle/**', 'parity/**', 'Cargo.toml', 'Cargo.lock', 'rust-toolchain.toml', '.github/workflows/rust.yml', 'scripts/gui_test_artifact.py', 'scripts/test_gui_test_artifact.py']
   # (from the Actions tab)
   workflow_dispatch:
     inputs:
@@ -55,6 +55,8 @@ jobs:
           # Generated native GUI metadata exceeded the cheap local budget
           # (over 12 minutes and about 9 GiB). The manual full lane checks it.
           cargo clippy --workspace --exclude hydrus-gui --all-targets --locked --keep-going -- -D warnings 2>&1 | tee /tmp/hydrus-quick-clippy.log
+      - name: GUI artifact runner tests
+        run: python3 -m unittest discover -s scripts -p test_gui_test_artifact.py
       - name: save cheap compiler diagnostics
         if: ${{ failure() }}
         continue-on-error: true
@@ -90,6 +92,8 @@ jobs:
         run: sudo apt-get update && sudo apt-get install -y ffmpeg libfontconfig1-dev
       - name: fmt
         run: cargo fmt --all --check
+      - name: GUI artifact runner tests
+        run: python3 -m unittest discover -s scripts -p test_gui_test_artifact.py
       - name: compiler diagnostics
         # Catch GUI/test type errors without waiting for full code generation.
         env:
@@ -204,14 +208,29 @@ jobs:
       - name: build
         env:
           CARGO_BUILD_JOBS: 1
-        run: cargo build --workspace --all-targets --locked --keep-going
+        shell: bash
+        run: |
+          if [ "$RUNNER_OS" = "Windows" ]; then
+            python scripts/gui_test_artifact.py build --source-sha "$GITHUB_SHA"
+          else
+            cargo build --workspace --all-targets --locked --keep-going
+          fi
       - name: Windows headless owner lifetime replay
         if: runner.os == 'Windows'
         timeout-minutes: 5
         env:
           CARGO_BUILD_JOBS: 1
         run: |
-          cargo test -p hydrus-gui --test gui --locked headless_lifetime:: -- --nocapture
+          python scripts/gui_test_artifact.py replay --source-sha "$env:GITHUB_SHA"
+      - name: save Windows owner replay evidence
+        if: ${{ always() && runner.os == 'Windows' }}
+        continue-on-error: true
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-owner-replay-${{ github.run_id }}-${{ github.run_attempt }}
+          path: target/ci/windows-*
+          if-no-files-found: ignore
+          retention-days: 3
       - name: test
         env:
           CARGO_BUILD_JOBS: 1
