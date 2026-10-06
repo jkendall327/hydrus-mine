@@ -3696,7 +3696,7 @@ later comparison results; they prove status colour, while the eight controlled
 probe images retain background/clipping evidence. No broad pixel or palette
 parity is claimed.
 
-The pending presentation/appearance evidence batch changes test captures only.
+The presentation/appearance evidence batch changes test captures only.
 Native tab/sidebar geometry remains distinct from Qt; hidden sidebar and ClearAll
 states have source/JSON evidence rather than matching Qt screenshots. ClearAll
 still advises restarting the client to see changed counters. Blurhash captures
@@ -3704,4 +3704,8 @@ use the real missing-source worker and finish the owned paint clock with saved
 fade enabled; they do not establish whole-cell Qt blending parity. Background
 captures compare the recorded 31x17 marker's extent/anchor and clear policy, not
 whole-window pixels. Fade, renderer architecture and broader structural parents
-remain outside the five selected leaves. No new completion is published yet.
+remain outside the five selected leaves. Full Linux validation and fresh independent
+review at `05000f10e` approve exactly these five scoped leaves: 339 signed off,
+99 new across eight October 6 checkpoints, 36 pending. The 19 inspected captures
+and 699 passing GUI tests preserve these limitations; no broader renderer/fade,
+parent, alias or deferred-platform completion is claimed.

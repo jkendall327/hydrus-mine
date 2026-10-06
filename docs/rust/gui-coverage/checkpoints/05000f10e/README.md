@@ -1,0 +1,13 @@
+# Five presentation and thumbnail Linux completions
+
+Source `05000f10eafc4211d6856549d0073edb90ba5811` passed [full Linux validation](https://github.com/jkendall327/hydrus-mine/actions/runs/37521631512). Exactly five existing leaves qualify: notebook tab alignment, sidebar/preview visibility, clear-all viewing statistics, blurhash fallback and thumbnail background path. This checkpoint banks **339 signed off, 99 new across eight October 6 checkpoints, 36 candidates pending**. Inventory assessments remain separate.
+
+All 699 GUI tests passed without failures or ignored tests in 227.06 seconds; all 67 media tests passed in 1.01 seconds. Strict Clippy and reference/backend validation passed. Root and independent review inspected 19 fresh images, preserving all 226 original assertions. The report passed desktop and narrow browser checks. Prior 334 completions and every unselected assessment/native entry remain preserved.
+
+Tab captures verify then dismiss the deliberately tested invalid-choice error through the production popup action. Sidebar captures show actual current-page hide, new-page hidden preview and restored blank topology. ClearAll captures the actual question before decline and Information notice after accepted SQL clear; reopened Store is empty, while the notice still advises restarting the client to refresh displayed counters. Blurhash enabled/disabled captures use the same missing-source target, real worker and completed owned paint with saved fade enabled; fresh Options shows saved false. Background captures retain clipping, scroll, clear and exact 31x17 extent/anchor assertions, including nonuniform resize and the Qt-colour marker in old/default-new owners.
+
+Qt/native fonts, geometry and window contents differ. Qt has no corresponding visible blurhash recovery or ClearAll screenshot; source/JSON and exact decoder/database assertions ground those claims. Broader fade, renderer, parent and alias parity receive no credit. Windows/macOS remain deferred.
+
+The separate CI-routing change uses a dedicated manual validation ref while reviewed PR heads stay frozen. This first run missed both caches, took 27m40s for Clippy and 24m33s for test compilation, then saved a workspace snapshot. Maintenance retained 1,034,369,417 bytes within the 3 GiB aggregate cap. Later reuse must be measured before claiming a speedup. No safety gates or dependency fallbacks changed.
+
+The goal remains all individual feature leaves implemented and verified. This checkpoint is a progress report, not a stopping target. The next bounded batch targets the two suggested-tags width/layout candidates.

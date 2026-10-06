@@ -1,0 +1,597 @@
+{
+  "source_commit": "05000f10eafc4211d6856549d0073edb90ba5811",
+  "run_id": 37521631512,
+  "approval": false,
+  "mapping_sha256": "e8c8b1323090a79551ef112954e1aef0db723c89577e941edf1385f28a4e6e40",
+  "preview_stale_clause_correction": {
+    "completed_preview_ids": [
+      "audit-options-file-viewing-statistics-min-time-to-view-on-preview-viewer-to-count-as-a-view",
+      "audit-options-file-viewing-statistics-cap-any-view-on-the-preview-viewer-to-this-maximum-time"
+    ],
+    "prior_ledger_source": "63f9e35abf1b1647e68ea4f1c850efee3ac8c365",
+    "prior_ledger_digest": "1342ea8447f84f58f5756a7c4d377a41a4d9ef79b117289a2cfa647db9a900c3",
+    "exact_source_preview_nodes": [
+      {
+        "id": "audit-options-file-viewing-statistics-min-time-to-view-on-preview-viewer-to-count-as-a-view",
+        "parent_id": "options-file-viewing-statistics",
+        "label": "Min time to view on preview viewer to count as a view:",
+        "kind": "control",
+        "status": "first_pass",
+        "native_source": {
+          "path": "crates/hydrus-gui-model/src/options.rs",
+          "line": 1626,
+          "line_sha256": "9b25465690948e42af43c4a0260d2651e872520f0dcd383f3510ff0712f4a148",
+          "symbol": "fn pages",
+          "declared_symbol": "pages",
+          "source_review_scope": "Exact named declaration in the cited file; qualified owner checked. No proximity/old-offset inference.",
+          "source_review_method": "unique_named_declaration"
+        },
+        "reference_source": {
+          "path": "hydrus/client/gui/panels/options/FileViewingStatisticsPanel.py",
+          "line": 78,
+          "line_sha256": "220fc40a0fc27fe0145db39c78f842eac9c8d578a3a0c9632bf8741da57f5418"
+        },
+        "assessment": "The exact preview minimum Options row stages until Apply, retains the 5-second default, None/count-every-view and recorded 50ms widget minimum, imports/persists and reopens. Its concrete native consumer is the separately displayed focused-file still/poster preview, not thumbnail selection. Accepted current rendered frames retain their request timestamp; failed/loading/retired frames create no interval. Same-file redraw does not restart, page/file generation changes and clear/hide finish, restoring a page begins another interval, splitter reveal waits for changed focus, and accepted client close is terminal while declined close preserves the display. Finish reads the live active/minimum/cap policy and counts only intervals meeting the minimum after capping, preserving Preview canvas1 separately from media views.",
+        "evidence": [
+          {
+            "path": "crates/hydrus-gui-model/src/options.rs",
+            "line": 1626,
+            "line_sha256": "9b25465690948e42af43c4a0260d2651e872520f0dcd383f3510ff0712f4a148",
+            "symbol": "fn pages",
+            "declared_symbol": "pages",
+            "source_review_scope": "Exact named declaration in the cited file; qualified owner checked. No proximity/old-offset inference.",
+            "source_review_method": "unique_named_declaration",
+            "role": "native_implementation",
+            "description": "docs/rust/gui-coverage/parity/preview-viewing-intervals.json: declared native_implementation; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "crates/hydrus-store/src/settings.rs",
+            "line": 195,
+            "line_sha256": "c80ae19b794a63d6f1bbd25a18f76feeca6afff5ebb847adedccec2ff3e09867",
+            "symbol": "struct FileViewingStatistics",
+            "declared_symbol": "FileViewingStatistics",
+            "source_review_scope": "Exact named declaration in the cited file; qualified owner checked. No proximity/old-offset inference.",
+            "source_review_method": "unique_named_declaration",
+            "role": "native_implementation",
+            "description": "docs/rust/gui-coverage/parity/preview-viewing-intervals.json: declared native_implementation; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "crates/hydrus-store/src/import/decode.rs",
+            "line": 111,
+            "line_sha256": "b96d9fbb990ee32288d5587e39e620d131c13fc1823c944772befa250d63ba87",
+            "symbol": "fn decode_input",
+            "declared_symbol": "decode_input",
+            "source_review_scope": "Exact named declaration in the cited file; qualified owner checked. No proximity/old-offset inference.",
+            "source_review_method": "unique_named_declaration",
+            "role": "native_implementation",
+            "description": "docs/rust/gui-coverage/parity/preview-viewing-intervals.json: declared native_implementation; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "crates/hydrus-gui-model/src/viewing_statistics.rs",
+            "line": 17,
+            "line_sha256": "7036dd0525c80a87d523d33bf8e9717f2aea1b047ed7f00ce10cc5c17ad91853",
+            "symbol": "fn completed",
+            "declared_symbol": "completed/Tracker",
+            "source_review_scope": "Exact author-named function declaration; trailing annotation retained in original selector/proof.",
+            "source_review_method": "explicit_named_annotation",
+            "role": "native_implementation",
+            "description": "docs/rust/gui-coverage/parity/preview-viewing-intervals.json: declared native_implementation; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "crates/hydrus-gui/src/preview_window.rs",
+            "line": 671,
+            "line_sha256": "7a08ec7b9083c0007a6c98823c2aff366b0f4eb93acdf6c38651fc4a9265e2a2",
+            "symbol": "fn bind",
+            "declared_symbol": "State/Monitor",
+            "source_review_scope": "Current named consumer declaration replaces superseded/ambiguous author statement; declaration-level source support only. Original statement and former internal design are not asserted unchanged or separately tested.",
+            "source_review_method": "reviewed_superseded_statement_consumer",
+            "role": "native_implementation",
+            "description": "docs/rust/gui-coverage/parity/preview-viewing-intervals.json: declared native_implementation; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "crates/hydrus-gui/src/lib.rs",
+            "line": 572,
+            "line_sha256": "e39129530ffe8a1bd01a4360a9f29e8b637ae8a794d33358f8792e1822578896",
+            "symbol": "fn bind",
+            "declared_symbol": "bind/shown",
+            "source_review_scope": "Shared main-window binding entry replaces ambiguous/superseded closure statement; no individual retained-callback assertion or exact former closure is inferred.",
+            "source_review_method": "reviewed_main_binding_entry",
+            "role": "native_implementation",
+            "description": "docs/rust/gui-coverage/parity/preview-viewing-intervals.json: declared native_implementation; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "crates/hydrus-gui/src/client_exit.rs",
+            "line": 183,
+            "line_sha256": "14857b5fa7ed28997f22d916dc00ee04274e1b935d9a856a8dbe04caf4ab24eb",
+            "symbol": "fn bind",
+            "declared_symbol": "bind",
+            "source_review_scope": "Exact named declaration in the cited file; qualified owner checked. No proximity/old-offset inference.",
+            "source_review_method": "unique_named_declaration",
+            "role": "native_implementation",
+            "description": "docs/rust/gui-coverage/parity/preview-viewing-intervals.json: declared native_implementation; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "crates/hydrus-gui/ui/main.slint",
+            "line": 275,
+            "line_sha256": "bdade1b87fe182a498551a00f7be45308c505f1a9fd626ef6b9514c8014567aa",
+            "symbol": "MainWindow",
+            "role": "native_implementation",
+            "description": "docs/rust/gui-coverage/parity/preview-viewing-intervals.json: declared native_implementation; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "crates/hydrus-gui-model/tests/model/viewing_statistics.rs",
+            "line": 127,
+            "line_sha256": "8395bed81b10fb7a4d3bc7bcf8bfc7ff7d0c98a3b93385bf9990eb4cd19e4cc5",
+            "symbol": "preview_options_replay_actual_none_bounds_conversion_and_cancelled_parent",
+            "role": "authored_regression",
+            "description": "docs/rust/gui-coverage/parity/preview-viewing-intervals.json: declared authored_regression; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "crates/hydrus-gui-model/tests/model/viewing_statistics.rs",
+            "line": 83,
+            "line_sha256": "5c256ad6ec2e3b45874c84092b03aa344bd20b9470d7e83b9857b5023022cf6e",
+            "symbol": "preview_timed_policy_matches_actual_manager_and_keeps_its_own_canvas_category",
+            "role": "authored_regression",
+            "description": "docs/rust/gui-coverage/parity/preview-viewing-intervals.json: declared authored_regression; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "crates/hydrus-gui/tests/gui/preview_viewing.rs",
+            "line": 119,
+            "line_sha256": "21206c78e00b9eab1a56e6d075f12bdce06e7892bda2b030eb3c439820a613ac",
+            "symbol": "preview_display_replays_qt_page_splitter_active_clear_close_and_successor_ownership",
+            "role": "authored_regression",
+            "description": "docs/rust/gui-coverage/parity/preview-viewing-intervals.json: declared authored_regression; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "crates/hydrus-gui/tests/gui/preview_viewing.rs",
+            "line": 341,
+            "line_sha256": "421d8301c61672de3907c5d5953072ddda3b05fcb13bb2819849b138fe8735e0",
+            "symbol": "saved_preview_options_reach_open_display_duration_cap_cancel_and_confirmed_client_exit",
+            "role": "authored_regression",
+            "description": "docs/rust/gui-coverage/parity/preview-viewing-intervals.json: declared authored_regression; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "crates/hydrus-gui/tests/gui/preview_viewing.rs",
+            "line": 499,
+            "line_sha256": "e29a9f2a24b3442f9bc8c528c6d9182a0318cd7c39ab17e3ad855e1a663895da",
+            "symbol": "native_preview_minimum_cap_before_minimum_none_limits_and_inactive_finish",
+            "role": "authored_regression",
+            "description": "docs/rust/gui-coverage/parity/preview-viewing-intervals.json: declared authored_regression; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "crates/hydrus-gui/tests/gui/preview_viewing.rs",
+            "line": 571,
+            "line_sha256": "7c534a46910e3f43e7e6263562098a0bd98b82ad996f55876f71661e990fcf4c",
+            "symbol": "native_page_generation_same_file_restore_and_late_decode_cannot_publish_to_successor",
+            "role": "authored_regression",
+            "description": "docs/rust/gui-coverage/parity/preview-viewing-intervals.json: declared authored_regression; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "crates/hydrus-gui/tests/gui/preview_viewing.rs",
+            "line": 848,
+            "line_sha256": "8ca783b3982bd93e282369d4d8ccbb86ef085309d86899d182b9042054cf3b1b",
+            "symbol": "rejected_preview_decode_never_counts_a_thumbnail_selection_or_loading_placeholder",
+            "role": "authored_regression",
+            "description": "docs/rust/gui-coverage/parity/preview-viewing-intervals.json: declared authored_regression; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "crates/hydrus-gui/tests/gui/preview_viewing.rs",
+            "line": 902,
+            "line_sha256": "76215a6554a025d4cd5adbfa876f3a4826fa3313f22dbfc5334d2756a62cfcaf",
+            "symbol": "preview_rejects_actual_reference_nonlocal_invalid_resolution_and_do_not_show_statuses",
+            "role": "authored_regression",
+            "description": "docs/rust/gui-coverage/parity/preview-viewing-intervals.json: declared authored_regression; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "oracle/record_preview_viewing_intervals.py",
+            "line": 1,
+            "line_sha256": "381f9bfc69d49d39040a7d5fc3197ce385019a2ba2de649622f841a8c658ed37",
+            "role": "reference_recording",
+            "description": "docs/rust/gui-coverage/parity/preview-viewing-intervals.json: declared reference_recording; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "oracle/fixtures/preview_viewing_intervals.json",
+            "line": 1,
+            "line_sha256": "021fb596db81e6d02bf3d2586ee3981fe519f275c0ac9ca76bbcf2ebb4097d96",
+            "role": "reference_recording",
+            "description": "docs/rust/gui-coverage/parity/preview-viewing-intervals.json: declared reference_recording; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          }
+        ],
+        "limitations": [
+          "The native preview displays full still images and media posters, with failed decodes rejected. Qt accepts media before player decoding. Preview audio/video playback, embed/external buttons, zoom, hovers and ratings remain Partial and are not claimed.",
+          "Native interval writes commit at boundaries rather than buffering Qt's 60-second manager flush. Existing explicit Client API and media/filter consumers keep their paths.",
+          "Only this exact original preview minimum control is in scope; no parent or additional preview/focus/rating leaf receives credit.",
+          "There is no matching recorded Qt screenshot of these Options controls: the historical Qt PNG shows accepted media only. Readable native default/saved controls are grounded in the actual Qt constructor and recorded control/policy JSON; no pixel parity is claimed.",
+          "Validation is Linux-only at this exact source/run. Windows and macOS are deferred, not reported passed; no parent, alias, new ID or unrelated leaf completion is granted."
+        ],
+        "descendant_count": 0,
+        "descendant_status_counts": {},
+        "unique_feature_descendant_count": 0,
+        "unique_reachable_feature_count_including_shared": 1,
+        "native_id_candidates": [],
+        "remaining": [],
+        "implementation_validation": {
+          "source_commit": "c768fef48120cdf529656285b8b77aac1a5b8e27",
+          "ci": "passed",
+          "tests_executed_at_checkpoint": true,
+          "native_render_review": "passed",
+          "manifest": "docs/rust/gui-coverage/parity/preview-viewing-intervals.json",
+          "review_required": false,
+          "run_url": "https://github.com/jkendall327/hydrus-mine/actions/runs/37504670811",
+          "validation_scope": "linux",
+          "required_platforms": [
+            "linux"
+          ],
+          "deferred_platforms": [
+            "windows",
+            "macos"
+          ],
+          "independent_review_evidence": {
+            "path": "docs/rust/gui-coverage/checkpoints/c768fef48/final-review-3-c768fef48.json",
+            "sha256": "b67c5475e7ea5e3f0df1a67b796a651f3ef4a01e74cdad93b6063dc905c44a70"
+          },
+          "publication_policy": {
+            "path": ".github/publication-validation.json",
+            "source_commit": "c768fef48120cdf529656285b8b77aac1a5b8e27",
+            "sha256": "49723bd5d6b786392a1368bb3da1406747a553ef31c9de2bdef92cea5d014c5f",
+            "effective_date": "2026-10-06",
+            "reason": "The owner uses Linux and prioritizes validated Linux delivery. macOS is low priority; Windows is deferred because its builds materially lengthen validation. Secondary-platform CI remains available by explicit opt-in."
+          }
+        }
+      },
+      {
+        "id": "audit-options-file-viewing-statistics-cap-any-view-on-the-preview-viewer-to-this-maximum-time",
+        "parent_id": "options-file-viewing-statistics",
+        "label": "Cap any view on the preview viewer to this maximum time:",
+        "kind": "control",
+        "status": "first_pass",
+        "native_source": {
+          "path": "crates/hydrus-gui-model/src/options.rs",
+          "line": 1626,
+          "line_sha256": "9b25465690948e42af43c4a0260d2651e872520f0dcd383f3510ff0712f4a148",
+          "symbol": "fn pages",
+          "declared_symbol": "pages",
+          "source_review_scope": "Exact named declaration in the cited file; qualified owner checked. No proximity/old-offset inference.",
+          "source_review_method": "unique_named_declaration"
+        },
+        "reference_source": {
+          "path": "hydrus/client/gui/panels/options/FileViewingStatisticsPanel.py",
+          "line": 79,
+          "line_sha256": "53b302bc52624345cb61dd89b2fbd9ed126216157492c9efd27484399b8bedda"
+        },
+        "assessment": "The exact preview maximum Options row stages until Apply, retains the 60-second default, None/no-limit and recorded 1-second widget minimum, imports/persists and reopens. The real owned preview display reads its saved cap at interval finish, extends a finite cap to at least five times the file's actual stored duration, caps elapsed time before checking the preview minimum, and leaves None unlimited. Options Apply reaches an already-open interval, Cancel/retired Apply preserves saved limits, closed/rebound owners finish once, and late decode/page callbacks cannot charge another display. Persisted Preview canvas1 counts/durations/timestamps survive Store reopening separately from media/filter statistics.",
+        "evidence": [
+          {
+            "path": "crates/hydrus-gui-model/src/options.rs",
+            "line": 1626,
+            "line_sha256": "9b25465690948e42af43c4a0260d2651e872520f0dcd383f3510ff0712f4a148",
+            "symbol": "fn pages",
+            "declared_symbol": "pages",
+            "source_review_scope": "Exact named declaration in the cited file; qualified owner checked. No proximity/old-offset inference.",
+            "source_review_method": "unique_named_declaration",
+            "role": "native_implementation",
+            "description": "docs/rust/gui-coverage/parity/preview-viewing-intervals.json: declared native_implementation; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "crates/hydrus-store/src/settings.rs",
+            "line": 195,
+            "line_sha256": "c80ae19b794a63d6f1bbd25a18f76feeca6afff5ebb847adedccec2ff3e09867",
+            "symbol": "struct FileViewingStatistics",
+            "declared_symbol": "FileViewingStatistics",
+            "source_review_scope": "Exact named declaration in the cited file; qualified owner checked. No proximity/old-offset inference.",
+            "source_review_method": "unique_named_declaration",
+            "role": "native_implementation",
+            "description": "docs/rust/gui-coverage/parity/preview-viewing-intervals.json: declared native_implementation; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "crates/hydrus-store/src/import/decode.rs",
+            "line": 111,
+            "line_sha256": "b96d9fbb990ee32288d5587e39e620d131c13fc1823c944772befa250d63ba87",
+            "symbol": "fn decode_input",
+            "declared_symbol": "decode_input",
+            "source_review_scope": "Exact named declaration in the cited file; qualified owner checked. No proximity/old-offset inference.",
+            "source_review_method": "unique_named_declaration",
+            "role": "native_implementation",
+            "description": "docs/rust/gui-coverage/parity/preview-viewing-intervals.json: declared native_implementation; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "crates/hydrus-gui-model/src/viewing_statistics.rs",
+            "line": 17,
+            "line_sha256": "7036dd0525c80a87d523d33bf8e9717f2aea1b047ed7f00ce10cc5c17ad91853",
+            "symbol": "fn completed",
+            "declared_symbol": "completed/Tracker",
+            "source_review_scope": "Exact author-named function declaration; trailing annotation retained in original selector/proof.",
+            "source_review_method": "explicit_named_annotation",
+            "role": "native_implementation",
+            "description": "docs/rust/gui-coverage/parity/preview-viewing-intervals.json: declared native_implementation; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "crates/hydrus-gui/src/preview_window.rs",
+            "line": 671,
+            "line_sha256": "7a08ec7b9083c0007a6c98823c2aff366b0f4eb93acdf6c38651fc4a9265e2a2",
+            "symbol": "fn bind",
+            "declared_symbol": "State/Monitor",
+            "source_review_scope": "Current named consumer declaration replaces superseded/ambiguous author statement; declaration-level source support only. Original statement and former internal design are not asserted unchanged or separately tested.",
+            "source_review_method": "reviewed_superseded_statement_consumer",
+            "role": "native_implementation",
+            "description": "docs/rust/gui-coverage/parity/preview-viewing-intervals.json: declared native_implementation; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "crates/hydrus-gui/src/lib.rs",
+            "line": 572,
+            "line_sha256": "e39129530ffe8a1bd01a4360a9f29e8b637ae8a794d33358f8792e1822578896",
+            "symbol": "fn bind",
+            "declared_symbol": "bind/shown",
+            "source_review_scope": "Shared main-window binding entry replaces ambiguous/superseded closure statement; no individual retained-callback assertion or exact former closure is inferred.",
+            "source_review_method": "reviewed_main_binding_entry",
+            "role": "native_implementation",
+            "description": "docs/rust/gui-coverage/parity/preview-viewing-intervals.json: declared native_implementation; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "crates/hydrus-gui/src/client_exit.rs",
+            "line": 183,
+            "line_sha256": "14857b5fa7ed28997f22d916dc00ee04274e1b935d9a856a8dbe04caf4ab24eb",
+            "symbol": "fn bind",
+            "declared_symbol": "bind",
+            "source_review_scope": "Exact named declaration in the cited file; qualified owner checked. No proximity/old-offset inference.",
+            "source_review_method": "unique_named_declaration",
+            "role": "native_implementation",
+            "description": "docs/rust/gui-coverage/parity/preview-viewing-intervals.json: declared native_implementation; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "crates/hydrus-gui/ui/main.slint",
+            "line": 275,
+            "line_sha256": "bdade1b87fe182a498551a00f7be45308c505f1a9fd626ef6b9514c8014567aa",
+            "symbol": "MainWindow",
+            "role": "native_implementation",
+            "description": "docs/rust/gui-coverage/parity/preview-viewing-intervals.json: declared native_implementation; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "crates/hydrus-gui-model/tests/model/viewing_statistics.rs",
+            "line": 127,
+            "line_sha256": "8395bed81b10fb7a4d3bc7bcf8bfc7ff7d0c98a3b93385bf9990eb4cd19e4cc5",
+            "symbol": "preview_options_replay_actual_none_bounds_conversion_and_cancelled_parent",
+            "role": "authored_regression",
+            "description": "docs/rust/gui-coverage/parity/preview-viewing-intervals.json: declared authored_regression; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "crates/hydrus-gui-model/tests/model/viewing_statistics.rs",
+            "line": 83,
+            "line_sha256": "5c256ad6ec2e3b45874c84092b03aa344bd20b9470d7e83b9857b5023022cf6e",
+            "symbol": "preview_timed_policy_matches_actual_manager_and_keeps_its_own_canvas_category",
+            "role": "authored_regression",
+            "description": "docs/rust/gui-coverage/parity/preview-viewing-intervals.json: declared authored_regression; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "crates/hydrus-gui/tests/gui/preview_viewing.rs",
+            "line": 119,
+            "line_sha256": "21206c78e00b9eab1a56e6d075f12bdce06e7892bda2b030eb3c439820a613ac",
+            "symbol": "preview_display_replays_qt_page_splitter_active_clear_close_and_successor_ownership",
+            "role": "authored_regression",
+            "description": "docs/rust/gui-coverage/parity/preview-viewing-intervals.json: declared authored_regression; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "crates/hydrus-gui/tests/gui/preview_viewing.rs",
+            "line": 341,
+            "line_sha256": "421d8301c61672de3907c5d5953072ddda3b05fcb13bb2819849b138fe8735e0",
+            "symbol": "saved_preview_options_reach_open_display_duration_cap_cancel_and_confirmed_client_exit",
+            "role": "authored_regression",
+            "description": "docs/rust/gui-coverage/parity/preview-viewing-intervals.json: declared authored_regression; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "crates/hydrus-gui/tests/gui/preview_viewing.rs",
+            "line": 499,
+            "line_sha256": "e29a9f2a24b3442f9bc8c528c6d9182a0318cd7c39ab17e3ad855e1a663895da",
+            "symbol": "native_preview_minimum_cap_before_minimum_none_limits_and_inactive_finish",
+            "role": "authored_regression",
+            "description": "docs/rust/gui-coverage/parity/preview-viewing-intervals.json: declared authored_regression; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "crates/hydrus-gui/tests/gui/preview_viewing.rs",
+            "line": 571,
+            "line_sha256": "7c534a46910e3f43e7e6263562098a0bd98b82ad996f55876f71661e990fcf4c",
+            "symbol": "native_page_generation_same_file_restore_and_late_decode_cannot_publish_to_successor",
+            "role": "authored_regression",
+            "description": "docs/rust/gui-coverage/parity/preview-viewing-intervals.json: declared authored_regression; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "crates/hydrus-gui/tests/gui/preview_viewing.rs",
+            "line": 848,
+            "line_sha256": "8ca783b3982bd93e282369d4d8ccbb86ef085309d86899d182b9042054cf3b1b",
+            "symbol": "rejected_preview_decode_never_counts_a_thumbnail_selection_or_loading_placeholder",
+            "role": "authored_regression",
+            "description": "docs/rust/gui-coverage/parity/preview-viewing-intervals.json: declared authored_regression; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "oracle/record_preview_viewing_intervals.py",
+            "line": 1,
+            "line_sha256": "381f9bfc69d49d39040a7d5fc3197ce385019a2ba2de649622f841a8c658ed37",
+            "role": "reference_recording",
+            "description": "docs/rust/gui-coverage/parity/preview-viewing-intervals.json: declared reference_recording; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "oracle/fixtures/preview_viewing_intervals.json",
+            "line": 1,
+            "line_sha256": "021fb596db81e6d02bf3d2586ee3981fe519f275c0ac9ca76bbcf2ebb4097d96",
+            "role": "reference_recording",
+            "description": "docs/rust/gui-coverage/parity/preview-viewing-intervals.json: declared reference_recording; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          }
+        ],
+        "limitations": [
+          "The preview is a bounded still/poster presentation. Playback, audio, embed/external buttons, zoom, hover and rating controls remain Partial; no broader preview claim is proposed.",
+          "Native writes at interval boundaries rather than Qt's buffered flush; rejected rendering is explicitly uncounted.",
+          "Only the exact original preview maximum control is in scope. Broader Options/preview/statistics parents remain Partial.",
+          "There is no matching recorded Qt screenshot of these Options controls: the historical Qt PNG shows accepted media only. Readable native default/saved controls are grounded in the actual Qt constructor and recorded control/policy JSON; no pixel parity is claimed.",
+          "Validation is Linux-only at this exact source/run. Windows and macOS are deferred, not reported passed; no parent, alias, new ID or unrelated leaf completion is granted."
+        ],
+        "descendant_count": 0,
+        "descendant_status_counts": {},
+        "unique_feature_descendant_count": 0,
+        "unique_reachable_feature_count_including_shared": 1,
+        "native_id_candidates": [],
+        "remaining": [],
+        "implementation_validation": {
+          "source_commit": "c768fef48120cdf529656285b8b77aac1a5b8e27",
+          "ci": "passed",
+          "tests_executed_at_checkpoint": true,
+          "native_render_review": "passed",
+          "manifest": "docs/rust/gui-coverage/parity/preview-viewing-intervals.json",
+          "review_required": false,
+          "run_url": "https://github.com/jkendall327/hydrus-mine/actions/runs/37504670811",
+          "validation_scope": "linux",
+          "required_platforms": [
+            "linux"
+          ],
+          "deferred_platforms": [
+            "windows",
+            "macos"
+          ],
+          "independent_review_evidence": {
+            "path": "docs/rust/gui-coverage/checkpoints/c768fef48/final-review-3-c768fef48.json",
+            "sha256": "b67c5475e7ea5e3f0df1a67b796a651f3ef4a01e74cdad93b6063dc905c44a70"
+          },
+          "publication_policy": {
+            "path": ".github/publication-validation.json",
+            "source_commit": "c768fef48120cdf529656285b8b77aac1a5b8e27",
+            "sha256": "49723bd5d6b786392a1368bb3da1406747a553ef31c9de2bdef92cea5d014c5f",
+            "effective_date": "2026-10-06",
+            "reason": "The owner uses Linux and prioritizes validated Linux delivery. macOS is low priority; Windows is deferred because its builds materially lengthen validation. Secondary-platform CI remains available by explicit opt-in."
+          }
+        }
+      }
+    ],
+    "scope": "These previously banked consumers receive zero additional credit from ClearAll."
+  },
+  "sidebar_preparation_correction": {
+    "historical_reason": "Fresh blank-page Qt state lacks native counterpart; reviewed accepted gray/restored frames are different phases, not proof of fresh hidden state.",
+    "current_fact": "Both final reference and native captures are restored blank-media layouts. Missing defining hidden-state native captures were the actual previous hold; new exports are pending fresh CI/image review. No such stale clause occurs in selected patch, so this correction affects preparation reason only.",
+    "source": [
+      {
+        "commit": "05000f10eafc4211d6856549d0073edb90ba5811",
+        "path": "oracle/record_sidebar_layout.py",
+        "line": 131,
+        "text": "            one.SetSplitterPositions(420,-260);select(one)",
+        "sha256": "a045c4c52be74053f1e8472e41ff6c8e816f1cf75ad19a3d4f8fc0a3c16e888e",
+        "file_sha256": "03e7993573e411f1c0edde973069109de78b649852167016afef860387dbfc8b"
+      },
+      {
+        "commit": "05000f10eafc4211d6856549d0073edb90ba5811",
+        "path": "oracle/record_sidebar_layout.py",
+        "line": 132,
+        "text": "            one.grab().save(str(HERE/'fixtures'/'sidebar_layout_reference.png'))",
+        "sha256": "1921edfc02229ed6fe081d1f2544540c5a8d7be3d610c94dfbe3996a08f105ef",
+        "file_sha256": "03e7993573e411f1c0edde973069109de78b649852167016afef860387dbfc8b"
+      },
+      {
+        "commit": "05000f10eafc4211d6856549d0073edb90ba5811",
+        "path": "crates/hydrus-gui/tests/gui/sidebar_layout.rs",
+        "line": 275,
+        "text": "    let w = options(&ui, &bound);",
+        "sha256": "1e9955a1681857bb8ff486b08522fe41cf4591d1c09d7ded7cdbf828e099068c",
+        "file_sha256": "ab6caf6fdeba872e701f25dc08ddd15855bb02d04577d2c9ab2baa87f5a0ba71"
+      },
+      {
+        "commit": "05000f10eafc4211d6856549d0073edb90ba5811",
+        "path": "crates/hydrus-gui/tests/gui/sidebar_layout.rs",
+        "line": 280,
+        "text": "    dim(ui.get_preview_actual_height(), 260.0);",
+        "sha256": "45e85f30d637386126cb015711d3e43edf579656efa92023bccfe484c79da56a",
+        "file_sha256": "ab6caf6fdeba872e701f25dc08ddd15855bb02d04577d2c9ab2baa87f5a0ba71"
+      },
+      {
+        "commit": "05000f10eafc4211d6856549d0073edb90ba5811",
+        "path": "crates/hydrus-gui/tests/gui/sidebar_layout.rs",
+        "line": 283,
+        "text": "        &std::path::Path::new(env!(\"CARGO_TARGET_TMPDIR\")).join(\"sidebar_layout_native.png\"),",
+        "sha256": "258ecc8d22aac116bf94a9933a9db5e673a0ab90f447640adc9815be43fc1464",
+        "file_sha256": "ab6caf6fdeba872e701f25dc08ddd15855bb02d04577d2c9ab2baa87f5a0ba71"
+      }
+    ]
+  },
+  "status_text_proof": {
+    "operations": 29,
+    "remove_count": 25,
+    "replace_count": 4,
+    "assessment_edits": 0,
+    "metadata_edits": 0,
+    "map_applied": false,
+    "input_sha256": "fb1c6b53e98eb2ba5a414f1aaceb5f9d9b4d31d5ab3360bb8f6f4f777bdccc62"
+  },
+  "real_limits_preserved": [
+    "Qt/native fonts, tab thickness/overflow/tooltip behavior",
+    "Sidebar handle/minimum metrics and preview placeholder differences",
+    "Whole-cell native opacity versus Qt precomposition",
+    "Main-incarnation-owned path cache, unsupported image formats/error behavior",
+    "Broader maintenance/appearance/fade/renderer/parent/alias scope"
+  ]
+}

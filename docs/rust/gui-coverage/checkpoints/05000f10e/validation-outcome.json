@@ -1,0 +1,24 @@
+{
+  "source_commit": "05000f10eafc4211d6856549d0073edb90ba5811",
+  "run_id": 37521631512,
+  "conclusion": "success",
+  "validation_scope": "linux",
+  "clippy_seconds": 1660,
+  "test_compile_seconds": 1473,
+  "gui_tests": {
+    "passed": 699,
+    "failed": 0,
+    "ignored": 0,
+    "seconds": 227.06
+  },
+  "media_tests": {
+    "passed": 67,
+    "failed": 0,
+    "ignored": 0,
+    "seconds": 1.01
+  },
+  "native_artifact_id": 11442939248,
+  "native_images": 297,
+  "log_sha256": "1fe145c6707917eccb90fb3b98e09f2c3257b92114f280d7a3d4363a04174aef",
+  "workspace_cache": "Dependency and workspace restore missed. Dedicated ref successfully saved its first workspace snapshot; reuse is not yet measured."
+}

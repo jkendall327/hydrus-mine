@@ -3,13 +3,15 @@
 The pass started from merged source `3702cdbee99473cfd7af073aa044fe847f78f405`.
 The prior checkpoint validated `028fd72f` (240 original leaves).
 
-The latest October 6 checkpoint validates `63f9e35ab` and publishes **334 signed-off
-original leaves: 3 new in this batch, 94 across today's seven checkpoints,
-41 candidates still pending**. Full Linux validation
-passed, including all 698 native GUI tests, and the selected three received fresh
-rendered/behavioral review. Windows/macOS are deferred.
-[Durable checkpoint evidence](../checkpoints/63f9e35ab/README.md) retains the
-selected images, logs, hashes and review limits. The notes below preserve the
+The latest October 6 checkpoint validates `05000f10e` and publishes **339 signed-off
+original leaves: 5 new in this batch, 99 across today's eight checkpoints,
+36 candidates still pending**. Full Linux validation passed, including all 699
+native GUI tests, and the five selected leaves received fresh independent
+rendered/behavioral review. Windows/macOS remain deferred.
+[Durable checkpoint evidence](../checkpoints/05000f10e/README.md) retains the
+selected images, logs, hashes and review limits. The current goal is all individual
+feature leaves implemented and verified; historical numeric goals and inventory
+first-pass counts are not completion criteria. The notes below preserve the
 chronological investigation and failed-run history.
 Source review of all 153 parity manifests is recorded in `review-1.md` through
 `review-6.md`; these reports describe the initial source, not later repairs.
@@ -18,7 +20,7 @@ previously validated IDs. Structural parents may retain a scoped assessment but
 receive no completed-leaf credit.
 The supplemental `demotions-render-evidence.json` defers seven further claims
 whose defining native behavior lacks assertions, initially leaving 135 candidates.
-Ninety-four are now published; 41 remain unresolved. No pending candidate receives
+Ninety-nine are now published; 36 remain unresolved. No pending candidate receives
 completion credit. Favourites was withheld from the preceding batch because its
 capture disagreed with the selected service; actual dropdown input and fresh
 review resolved that blocker in the preceding checkpoint.

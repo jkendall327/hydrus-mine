@@ -5,19 +5,19 @@ done. Keep it current: when you finish something here, take it out (the
 commit, `GUI.md` and `DIFFERENCES.md` say what was done); when you stop
 partway, say exactly where.
 
-The owner's current priority (2026-10-06) is **validated delivery on Linux**.
-The latest checkpoint banks 334 original concrete feature completions, including
-94 newly signed off across seven October 6 Linux checkpoints with fresh rendered review.
-There are 41 candidates awaiting sign-off. The next bounded batch targets
-tab/sidebar presentation, clear-all viewing statistics and two thumbnail-appearance
-evidence gaps. A dedicated manual CI reference will keep cache continuity while
-reviewed PR heads stay frozen; namespace and archive repairs remain separate.
-Keep these counts separate from inventory assessments.
-Work in small batches, validate and publish each routinely, and reassess any
-batch that goes 24 hours without a new checkpoint. Broad implementation must
-not rebuild an unvalidated backlog. Windows and macOS are deferred; strict
-Linux linting, full tests, reference replays and rendered review remain required.
-See [the checkpoint evidence](gui-coverage/checkpoints/63f9e35ab/README.md).
+The owner's current goal (2026-10-06) is **all individual report feature leaves
+implemented, verified and published**, with Linux first. Numeric checkpoints are
+progress reports, not stopping targets. The latest checkpoint banks 339 original
+concrete feature completions, including 99 newly signed off across eight October 6
+Linux checkpoints with fresh rendered review. There are 36 existing candidates
+awaiting sign-off; the next bounded batch targets suggested-tags width/layout.
+Keep these counts separate from inventory assessments and historical first-pass
+claims. Validate and publish each small batch routinely, and reassess any batch
+that goes 24 hours without a checkpoint. Broad implementation must not rebuild
+an unvalidated backlog. Windows/macOS remain deferred; strict Linux linting,
+full tests, reference replays and rendered review remain required.
+The dedicated manual CI ref saved its first cache; later reuse is not yet measured.
+See [the checkpoint evidence](gui-coverage/checkpoints/05000f10e/README.md).
 
 The first parallel slate (2026-10-03) adds detailed embedded metadata,
 manual file export, local service review/management, tag sibling/parent

@@ -1,0 +1,313 @@
+{
+  "source_commit": "05000f10eafc4211d6856549d0073edb90ba5811",
+  "run_id": 37521631512,
+  "selected_ids": [
+    "audit-options-gui-pages-navigation-and-drag-and-drop-notebook-tab-alignment",
+    "audit-options-menu-menu-pages-show-hide-sidebar-and-preview-panel",
+    "audit-media-menu-database-clear-clear-all-file-viewing-statistics",
+    "audit-options-thumbnails-appearance-use-blurhash-missing-thumbnail-fallback",
+    "audit-options-thumbnails-media-background-experimental-image-path-for-thumbnail-panel-background-image-set-blank-to-clear"
+  ],
+  "selected_count": 5,
+  "prior_count": 334,
+  "expected_native_capture_names": [
+    "notebook_tabs_top.png",
+    "notebook_tabs_left.png",
+    "notebook_tabs_bottom.png",
+    "notebook_tabs_right.png",
+    "sidebar-hidden-current-native.png",
+    "sidebar-preview-hidden-new-native.png",
+    "sidebar_layout_native.png",
+    "viewing_statistics_clear_question.png",
+    "viewing_statistics_clear_completed.png",
+    "thumbnail-blurhash-enabled-native.png",
+    "thumbnail-blurhash-disabled-native.png",
+    "thumbnail-blurhash-disabled-options.png",
+    "thumbnail-background-native.png",
+    "thumbnail-background-cleared-native.png",
+    "thumbnail-background-small-new-1100x700-native.png",
+    "thumbnail-background-small-new-950x760-native.png",
+    "thumbnail-background-small-old-qt-marker-native.png",
+    "thumbnail-background-small-new-qt-marker-native.png"
+  ],
+  "supplemental_options_capture": "thumbnail-appearance-options.png",
+  "groups": [
+    {
+      "id": "audit-options-gui-pages-navigation-and-drag-and-drop-notebook-tab-alignment",
+      "test": "tab_presentation::apply_cancel_reopen_and_four_sides_preserve_real_nested_selection_and_full_names",
+      "native": [
+        "notebook_tabs_top.png",
+        "notebook_tabs_left.png",
+        "notebook_tabs_bottom.png",
+        "notebook_tabs_right.png"
+      ],
+      "producer": {
+        "commit": "05000f10eafc4211d6856549d0073edb90ba5811",
+        "path": "crates/hydrus-gui/tests/gui/tab_presentation.rs",
+        "line": 290,
+        "text": "                \"notebook_tabs_{}.png\",",
+        "sha256": "2723325abbca50d014be4d36a126ebc65e12f92ddad12b0cce187cb2094302fc",
+        "file_sha256": "74daba01bff9e663b8b89f84135086c0e6498b7f7fa9f7ad23ac6e7fa66aaa75"
+      },
+      "references": [
+        "oracle/fixtures/tab_presentation_qt_top.png",
+        "oracle/fixtures/tab_presentation_qt_left.png",
+        "oracle/fixtures/tab_presentation_qt_bottom.png",
+        "oracle/fixtures/tab_presentation_qt_right.png"
+      ],
+      "reference_producers": [
+        {
+          "commit": "05000f10eafc4211d6856549d0073edb90ba5811",
+          "path": "oracle/record_tab_presentation.py",
+          "line": 69,
+          "text": "            root.tabBar().grab().save(str(HERE/'fixtures'/f\"tab_presentation_qt_{choice['label']}.png\"))",
+          "sha256": "f69d1d5f06feb3110f6e71d667316bbfb796a0bad12beeceb71faa1d223fa502",
+          "file_sha256": "dadee8afb2f00a15cb4586731bce0bc29b4e3e7505d8100b93431fa1428dab88"
+        }
+      ],
+      "scope": "All four real nested selected-path notebook orientations; long vertical labels retain actual ink. Native900x600 whole windows and Qt bar-only crops differ; no whole-window pixel equality, hover/tree/drag extra credit."
+    },
+    {
+      "id": "audit-options-menu-menu-pages-show-hide-sidebar-and-preview-panel",
+      "test": "sidebar_layout::real_drag_menu_saved_defaults_per_page_reopen_restore_options_and_exit_ownership",
+      "native": [
+        "sidebar-hidden-current-native.png",
+        "sidebar-preview-hidden-new-native.png",
+        "sidebar_layout_native.png"
+      ],
+      "producer": [
+        {
+          "commit": "05000f10eafc4211d6856549d0073edb90ba5811",
+          "path": "crates/hydrus-gui/tests/gui/sidebar_layout.rs",
+          "line": 212,
+          "text": "            .join(\"sidebar-hidden-current-native.png\"),",
+          "sha256": "d489fe3c5acf21510384917eda94375bc0969e7de85df539622497eb77039620",
+          "file_sha256": "ab6caf6fdeba872e701f25dc08ddd15855bb02d04577d2c9ab2baa87f5a0ba71"
+        },
+        {
+          "commit": "05000f10eafc4211d6856549d0073edb90ba5811",
+          "path": "crates/hydrus-gui/tests/gui/sidebar_layout.rs",
+          "line": 269,
+          "text": "            .join(\"sidebar-preview-hidden-new-native.png\"),",
+          "sha256": "63f0262f0442f21c26fe26a1f696fba5c97e5b3a252a9d9b9669a65ab9038220",
+          "file_sha256": "ab6caf6fdeba872e701f25dc08ddd15855bb02d04577d2c9ab2baa87f5a0ba71"
+        },
+        {
+          "commit": "05000f10eafc4211d6856549d0073edb90ba5811",
+          "path": "crates/hydrus-gui/tests/gui/sidebar_layout.rs",
+          "line": 283,
+          "text": "        &std::path::Path::new(env!(\"CARGO_TARGET_TMPDIR\")).join(\"sidebar_layout_native.png\"),",
+          "sha256": "258ecc8d22aac116bf94a9933a9db5e673a0ab90f447640adc9815be43fc1464",
+          "file_sha256": "ab6caf6fdeba872e701f25dc08ddd15855bb02d04577d2c9ab2baa87f5a0ba71"
+        }
+      ],
+      "references": [
+        "oracle/fixtures/sidebar_layout_reference.png"
+      ],
+      "reference_producers": [
+        {
+          "commit": "05000f10eafc4211d6856549d0073edb90ba5811",
+          "path": "oracle/record_sidebar_layout.py",
+          "line": 131,
+          "text": "            one.SetSplitterPositions(420,-260);select(one)",
+          "sha256": "a045c4c52be74053f1e8472e41ff6c8e816f1cf75ad19a3d4f8fc0a3c16e888e",
+          "file_sha256": "03e7993573e411f1c0edde973069109de78b649852167016afef860387dbfc8b"
+        },
+        {
+          "commit": "05000f10eafc4211d6856549d0073edb90ba5811",
+          "path": "oracle/record_sidebar_layout.py",
+          "line": 132,
+          "text": "            one.grab().save(str(HERE/'fixtures'/'sidebar_layout_reference.png'))",
+          "sha256": "1921edfc02229ed6fe081d1f2544540c5a8d7be3d610c94dfbe3996a08f105ef",
+          "file_sha256": "03e7993573e411f1c0edde973069109de78b649852167016afef860387dbfc8b"
+        }
+      ],
+      "scope": "Actual current-sidebar hidden and global-preview hidden new page at1400x1000, plus final restored blank geometry. Hidden states use exact JSON/assertions, no matching Qt hidden PNG. Final blank Qt frame is comparable restored state; native no-preview placeholder is framework difference."
+    },
+    {
+      "id": "audit-media-menu-database-clear-clear-all-file-viewing-statistics",
+      "test": "viewing_maintenance (ClearAll sections in real menu/SQL replay)",
+      "native": [
+        "viewing_statistics_clear_question.png",
+        "viewing_statistics_clear_completed.png"
+      ],
+      "producer": [
+        {
+          "commit": "05000f10eafc4211d6856549d0073edb90ba5811",
+          "path": "crates/hydrus-gui/tests/gui/viewing_maintenance.rs",
+          "line": 82,
+          "text": "            .join(\"viewing_statistics_clear_question.png\"),",
+          "sha256": "aea1273a335d195e685fcad5f836fcf62c6d8265d3f31563a5631088d8c642d3",
+          "file_sha256": "3147373aed534c00b22b342f8f20c91bb08aaabd208ad708db4ed41dc606ba6c"
+        },
+        {
+          "commit": "05000f10eafc4211d6856549d0073edb90ba5811",
+          "path": "crates/hydrus-gui/tests/gui/viewing_maintenance.rs",
+          "line": 158,
+          "text": "            .join(\"viewing_statistics_clear_completed.png\"),",
+          "sha256": "e8d8c682b8e59d47dca115c577d6826922e53a1e011c7811f49825847d2990dc",
+          "file_sha256": "3147373aed534c00b22b342f8f20c91bb08aaabd208ad708db4ed41dc606ba6c"
+        }
+      ],
+      "references": [],
+      "no_qt_png": "Real handler recorder/SQL fixture viewing_maintenance.json has recorded question/completion strings, no Qt PNG.",
+      "scope": "680x420 actual indexed clear owner before decline and actual Information completion after accepted SQL clear. Keep decline, single admission, hidden/retired/successor/reopen assertions; no live counter refresh or cull/preview extra credit."
+    },
+    {
+      "id": "audit-options-thumbnails-appearance-use-blurhash-missing-thumbnail-fallback",
+      "test": "thumbnail_appearance::blurhash_real_metadata_default_invalid_disable_and_owned_cache_policy",
+      "native": [
+        "thumbnail-blurhash-enabled-native.png",
+        "thumbnail-blurhash-disabled-native.png",
+        "thumbnail-blurhash-disabled-options.png"
+      ],
+      "producer": [
+        {
+          "commit": "05000f10eafc4211d6856549d0073edb90ba5811",
+          "path": "crates/hydrus-gui/tests/gui/thumbnail_appearance.rs",
+          "line": 287,
+          "text": "    capture_recovery(\"thumbnail-blurhash-enabled-native.png\", &expected_rgba);",
+          "sha256": "25f545dd27053347c0aafab4db16447ea126b94fb0cb4a97a079d2b76bbc4d66",
+          "file_sha256": "ef49aa5c46ff8a26a2f8810b2424214bbeaff77e1e871346049642df03c0003e"
+        },
+        {
+          "commit": "05000f10eafc4211d6856549d0073edb90ba5811",
+          "path": "crates/hydrus-gui/tests/gui/thumbnail_appearance.rs",
+          "line": 343,
+          "text": "    capture_recovery(\"thumbnail-blurhash-disabled-native.png\", &default_rgba);",
+          "sha256": "11978ac7e180c3a9daed5a2877ec63e4566949d789699a215fa21c9ec23b0ea7",
+          "file_sha256": "ef49aa5c46ff8a26a2f8810b2424214bbeaff77e1e871346049642df03c0003e"
+        },
+        {
+          "commit": "05000f10eafc4211d6856549d0073edb90ba5811",
+          "path": "crates/hydrus-gui/tests/gui/thumbnail_appearance.rs",
+          "line": 355,
+          "text": "            .join(\"thumbnail-blurhash-disabled-options.png\"),",
+          "sha256": "8160a85b3f2c0bbbe9a902a6aa9f88998308ae25b65836573b84135fef050304",
+          "file_sha256": "ef49aa5c46ff8a26a2f8810b2424214bbeaff77e1e871346049642df03c0003e"
+        }
+      ],
+      "references": [],
+      "no_qt_png": "thumbnail_appearance.json freezes actual decoder/recovery outputs; thumbnail_appearance_qt.png is whole-cell fade/decoration and does not show blurhash recovery.",
+      "scope": "Actual loaded missing-file rows1100x700 after finite fades, valid metadata retained before false Apply; disabled reopened Options1000x850. Distinct exact recovered/default pixel assertions, generation/owner invalidation remain defining. No fade/compositor/ICC extra credit."
+    },
+    {
+      "id": "audit-options-thumbnails-media-background-experimental-image-path-for-thumbnail-panel-background-image-set-blank-to-clear",
+      "test": "thumbnail_appearance::{unscaled_background_clips_oversized_pixels_and_stays_fixed_on_scroll_and_clear,default_new_page_small_nonuniform_background_has_exact_unscaled_extent_on_resize,qt_marker_background_has_exact_extent_in_old_and_default_new_owners}",
+      "native": [
+        "thumbnail-background-native.png",
+        "thumbnail-background-cleared-native.png",
+        "thumbnail-background-small-new-1100x700-native.png",
+        "thumbnail-background-small-new-950x760-native.png",
+        "thumbnail-background-small-old-qt-marker-native.png",
+        "thumbnail-background-small-new-qt-marker-native.png"
+      ],
+      "producer": [
+        {
+          "commit": "05000f10eafc4211d6856549d0073edb90ba5811",
+          "path": "crates/hydrus-gui/tests/gui/thumbnail_appearance.rs",
+          "line": 516,
+          "text": "        &std::path::Path::new(env!(\"CARGO_TARGET_TMPDIR\")).join(\"thumbnail-background-native.png\"),",
+          "sha256": "535baeb9bb80e7137966700fcd71622fc76f46ffb1647fee91250327e049389b",
+          "file_sha256": "ef49aa5c46ff8a26a2f8810b2424214bbeaff77e1e871346049642df03c0003e"
+        },
+        {
+          "commit": "05000f10eafc4211d6856549d0073edb90ba5811",
+          "path": "crates/hydrus-gui/tests/gui/thumbnail_appearance.rs",
+          "line": 534,
+          "text": "            .join(\"thumbnail-background-cleared-native.png\"),",
+          "sha256": "754d1046211ca832f13115bab791714055c67ee037bc2e05bdea770b796e47d2",
+          "file_sha256": "ef49aa5c46ff8a26a2f8810b2424214bbeaff77e1e871346049642df03c0003e"
+        },
+        {
+          "commit": "05000f10eafc4211d6856549d0073edb90ba5811",
+          "path": "crates/hydrus-gui/tests/gui/thumbnail_appearance.rs",
+          "line": 848,
+          "text": "                \"thumbnail-background-small-new-{width}x{height}-native.png\"",
+          "sha256": "009c7b555ad746ce8c0f41cdfff2a7942ba7c4db72b3ea97f7e3a13810064c9d",
+          "file_sha256": "ef49aa5c46ff8a26a2f8810b2424214bbeaff77e1e871346049642df03c0003e"
+        },
+        {
+          "commit": "05000f10eafc4211d6856549d0073edb90ba5811",
+          "path": "crates/hydrus-gui/tests/gui/thumbnail_appearance.rs",
+          "line": 909,
+          "text": "                \"thumbnail-background-small-{mode}-qt-marker-native.png\"",
+          "sha256": "da091fa1cdf4a782bfab12c14430bd03778e0ab8b14607567f09ef779ff729a4",
+          "file_sha256": "ef49aa5c46ff8a26a2f8810b2424214bbeaff77e1e871346049642df03c0003e"
+        }
+      ],
+      "references": [
+        "oracle/fixtures/thumbnail_background_qt.png",
+        "oracle/fixtures/thumbnail_background_new_qt.png"
+      ],
+      "reference_producers": [
+        {
+          "commit": "05000f10eafc4211d6856549d0073edb90ba5811",
+          "path": "oracle/record_thumbnail_appearance.py",
+          "line": 106,
+          "text": "    # Actual old renderer draw is driven through its viewport paintEvent.",
+          "sha256": "3b1e24f475bb741c29c1a9448e890c50268888f8ceeb40ef3ac308716a6fd4f3",
+          "file_sha256": "dc70eb42dd744695b888bf52e48b548e8019360d74fb80ef473e5c6ebf84adb7"
+        },
+        {
+          "commit": "05000f10eafc4211d6856549d0073edb90ba5811",
+          "path": "oracle/record_thumbnail_appearance.py",
+          "line": 116,
+          "text": "     if origin==(0,0):canvas.save(str(HERE/'fixtures/thumbnail_background_new_qt.png'))",
+          "sha256": "c305edf68fa1ff7bc1f98ec3dcb8c9945cd9a06164a36498d7813121b8ba0ffd",
+          "file_sha256": "dc70eb42dd744695b888bf52e48b548e8019360d74fb80ef473e5c6ebf84adb7"
+        }
+      ],
+      "scope": "Actual oversized clipped background/clear at1100x700; nonuniform31x17 new-page bitmap at1100x700/950x760; exact Qt31x17 solid marker in old/new owners. Compare unscaled extent, bottom-right anchor, fixed scroll/clear, not whole viewport or renderer equality. Explicitly no renderer/fade or combined saved-palette/bitmap pixel-parity credit."
+    }
+  ],
+  "reference_images": [
+    {
+      "path": "oracle/fixtures/sidebar_layout_reference.png",
+      "source_commit": "05000f10eafc4211d6856549d0073edb90ba5811",
+      "sha256": "2240401e03972d2e3e6d75ea7d89b7497f03ba0925dbf896454ea026edc81f9f"
+    },
+    {
+      "path": "oracle/fixtures/tab_presentation_qt_bottom.png",
+      "source_commit": "05000f10eafc4211d6856549d0073edb90ba5811",
+      "sha256": "736bd70a92eb95cbc13520e2d478496f86928b5c48e64087550b6366b48c1bb1"
+    },
+    {
+      "path": "oracle/fixtures/tab_presentation_qt_left.png",
+      "source_commit": "05000f10eafc4211d6856549d0073edb90ba5811",
+      "sha256": "b17c42bd0ed94b2bc90e8ad22f2881b4257eff2fb91ceec62187cee4dbde4905"
+    },
+    {
+      "path": "oracle/fixtures/tab_presentation_qt_right.png",
+      "source_commit": "05000f10eafc4211d6856549d0073edb90ba5811",
+      "sha256": "8b4e3803b961e040a10f76a6041787054125de8086fa04eb5a52d5df73fcb2be"
+    },
+    {
+      "path": "oracle/fixtures/tab_presentation_qt_top.png",
+      "source_commit": "05000f10eafc4211d6856549d0073edb90ba5811",
+      "sha256": "e8c26ed50c0491292e8f9ffd6f13584132fb3b58347aa9059884d2000d8ef268"
+    },
+    {
+      "path": "oracle/fixtures/thumbnail_background_new_qt.png",
+      "source_commit": "05000f10eafc4211d6856549d0073edb90ba5811",
+      "sha256": "8cfd425c99bb243cc601544af9bde4f7e16ed2d71cf12ec82b8e0caa3c6e5855"
+    },
+    {
+      "path": "oracle/fixtures/thumbnail_background_qt.png",
+      "source_commit": "05000f10eafc4211d6856549d0073edb90ba5811",
+      "sha256": "c3353853c5d989b68879ab99c64b5b2b0a81af43d669bf43e96d980a14c61696"
+    }
+  ],
+  "images_actually_viewed_by_preparation": false,
+  "source_review": "presentation5/source-review-3.json/.md is historical pre-commit source review, not fresh exact-source CI/render approval.",
+  "approval": false,
+  "ci": "pending",
+  "render_review": "pending",
+  "required_platforms": [
+    "linux"
+  ],
+  "deferred_platforms": [
+    "windows",
+    "macos"
+  ]
+}

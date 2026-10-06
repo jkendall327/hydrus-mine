@@ -1,0 +1,608 @@
+{
+  "source_commit": "05000f10eafc4211d6856549d0073edb90ba5811",
+  "run_id": 37521631512,
+  "validation_scope": "linux",
+  "artifact_id": null,
+  "review_kind": "independentexactsource/reference preparation; no approvals",
+  "claims": [
+    {
+      "id": "audit-options-gui-pages-navigation-and-drag-and-drop-notebook-tab-alignment",
+      "manifest": "docs/rust/gui-coverage/parity/tab-presentation.json",
+      "native": [
+        "notebook_tabs_top.png",
+        "notebook_tabs_left.png",
+        "notebook_tabs_right.png",
+        "notebook_tabs_bottom.png"
+      ],
+      "tests": [
+        "tab_presentation::apply_cancel_reopen_and_four_sides_preserve_real_nested_selection_and_full_names"
+      ],
+      "refs": [
+        "oracle/fixtures/tab_presentation_qt_top.png",
+        "oracle/fixtures/tab_presentation_qt_left.png",
+        "oracle/fixtures/tab_presentation_qt_right.png",
+        "oracle/fixtures/tab_presentation_qt_bottom.png"
+      ],
+      "evidence": [
+        "record_tab_presentation.py:26-69 drives real GUIPagesPanel UpdateOptions, nested notebook selected indices and actual QtTabBar snapshots.",
+        "GUIPagesPanel.py:66-70,148,287 defines choices/loads/saves typed alignment.",
+        "tests/gui/tab_presentation.rs:196-224 preserves invalid999 unchanged settings, waits actual250ms popup observer within2s, dismisses done error through production callback before4orientation renders.",
+        "src/tab_presentation.rs:93+ supplies actual notebook rows and rotated SVG text; existing geometry/glyph/selected-key/session and full-name assertions remain."
+      ],
+      "check": [
+        "Four clean states show correct outer/nested bar order/orientation and readable rotated labels; no deliberately generated popup occludes bottom/right labels.",
+        "Exact recorded choices and selected stable keys retained; no hide/elide/treeview/drag sibling promotion."
+      ],
+      "limits": [
+        "Qt PNGs isolate actual outer bar; native captures include selected nested MainWindow. No whole-window pixel equality.",
+        "Native font metrics,28px thickness/equal overflow budgets, retained substring widths and hover tooltip policies differ; full stored names intact. No treeview/drag/drop/parent/alias credit."
+      ],
+      "approval": false,
+      "source_commit": "05000f10eafc4211d6856549d0073edb90ba5811",
+      "run_id": 37521631512,
+      "reference_fixture": "oracle/fixtures/tab_presentation.json"
+    },
+    {
+      "id": "audit-options-menu-menu-pages-show-hide-sidebar-and-preview-panel",
+      "manifest": "docs/rust/gui-coverage/parity/sidebar-layout.json",
+      "native": [
+        "sidebar-hidden-current-native.png",
+        "sidebar-preview-hidden-new-native.png",
+        "sidebar_layout_native.png"
+      ],
+      "tests": [
+        "sidebar_layout::real_drag_menu_saved_defaults_per_page_reopen_restore_options_and_exit_ownership",
+        "sidebar_layout::live_hide_setting_keeps_accepted_preview_refuses_replacements_and_collapse_retains_selection",
+        "sidebar_layout::pressed_old_handle_cannot_resize_same_key_successor_binding_or_same_session_reload",
+        "sidebar_layout::rebind_retires_preview_under_predecessor_splitter_before_successor_hides_it"
+      ],
+      "refs": [
+        "oracle/fixtures/sidebar_layout_reference.png"
+      ],
+      "evidence": [
+        "record_sidebar_layout.py:128-132 captures restored blank state at420/-260, not accepted-media or earlier hide state.",
+        "tests/gui/sidebar_layout.rs:200-218 real Pages current toggle stores exact selected page identity and actual width0;258-275 new page with globalhide records physical previewheight0 and hidden splitter.",
+        "src/sidebar_layout.rs:212+ binds weak current page/key/epoch owner; actual Main layout/preview state comes from production callbacks.",
+        "Existing live-hide test separately verifies accepted preview/focus/selection/owner intervals."
+      ],
+      "check": [
+        "Hidden current has no sidebar/zero measured width on same page; new globalhide page has no preview region, actualpagekeymatches.",
+        "Restored frame shows420sidebar/260preview physical topology. Do not claim Qt hidden-state screenshot parity."
+      ],
+      "limits": [
+        "Qt hidden/reveal states exist in JSON; only restored blank topology has QtPNG. Native placeholder is distinct presentation, not missing accepted media.",
+        "Native6px handles, scrollable sidebar and80px opposite-pane reserve differ from Qt minimum metrics. Hidden Qt internal splitter flag need not match native; physical state/consumer boundary governs. Current media-page toggle only; no broader session/layout/cache parent credit."
+      ],
+      "approval": false,
+      "source_commit": "05000f10eafc4211d6856549d0073edb90ba5811",
+      "run_id": 37521631512,
+      "reference_fixture": "oracle/fixtures/sidebar_layout.json"
+    },
+    {
+      "id": "audit-media-menu-database-clear-clear-all-file-viewing-statistics",
+      "manifest": "docs/rust/gui-coverage/parity/viewing-statistics-cleanup.json",
+      "native": [
+        "viewing_statistics_clear_question.png",
+        "viewing_statistics_clear_completed.png"
+      ],
+      "tests": [
+        "viewing_maintenance::real_menu_clear_and_cull_read_live_rules_preserve_declines_and_reopen",
+        "viewing_maintenance::retired_hidden_and_successor_owners_cannot_clear_or_cull_current_records",
+        "viewing_maintenance::closing_and_dropping_the_question_releases_its_timer_owner"
+      ],
+      "refs": [],
+      "evidence": [
+        "ClientGUI.py:1060-1074 actual clear prompt/doit/forgetit, content_updates clear and Information message requiringrestart.",
+        "record_viewing_maintenance.py:18-67 scripts transport/writer routing into real ClientDBFilesViewingStats on8seededSQLrows, clear false/true. NoQtPNG.",
+        "viewing_maintenance_window.rs:29-94 owns onceonly active/visible/current acceptance and changes same dialog into Information/OK; store::viewing_maintenance::clear deletes all stats.",
+        "tests/gui/viewing_maintenance.rs:66-91 captures actual indexed clear dialog beforedecline, retains exactSQLrows;141-168 captures same accepted Information owner afteremptySQL, thenreopenedStoreempty."
+      ],
+      "check": [
+        "Actual ClearAll prompt fully visible with exact doit/forgetit; actual Information completion/OK fully readable. Cull image is supplemental only, not selectedClearAll proof.",
+        "Verify exactdecline preserves8rows; acceptance and freshStore removeall canvas records; hidden/predecessor/successor/timer assertions pass."
+      ],
+      "limits": [
+        "NoQtUIPNG; source/traces/realSQLconsumer ground native surface inspection, not screenshot pixel parity.",
+        "Completion instructs restart; no immediate live media-counter refresh claim. Invalid-rule ownedWarning/integer-range scope belongs existingsharedmaintenance limits, not extra cull credit. Broader parents/aliases excluded."
+      ],
+      "approval": false,
+      "source_commit": "05000f10eafc4211d6856549d0073edb90ba5811",
+      "run_id": 37521631512,
+      "reference_fixture": "oracle/fixtures/viewing_maintenance.json"
+    },
+    {
+      "id": "audit-options-thumbnails-appearance-use-blurhash-missing-thumbnail-fallback",
+      "manifest": "docs/rust/gui-coverage/parity/thumbnail-appearance.json",
+      "native": [
+        "thumbnail-blurhash-enabled-native.png",
+        "thumbnail-blurhash-disabled-native.png",
+        "thumbnail-blurhash-disabled-options.png"
+      ],
+      "tests": [
+        "thumbnail_appearance::blurhash_real_metadata_default_invalid_disable_and_owned_cache_policy",
+        "thumbnail_appearance::staged_browse_cancel_apply_new_page_policy_and_permanent_owner_retirement"
+      ],
+      "refs": [
+        "oracle/fixtures/thumbnail_appearance_qt.png"
+      ],
+      "evidence": [
+        "ClientCaches.py:404-440 uses retained blurhash/resolution whenallowed and APPLICATION_UNKNOWN wheninvalid/absent/disabled.",
+        "record_thumbnail_appearance.py:83-98 actual HydrusBlurhash20decoder inputs and cache4recoverycases; appearanceQtPNGselecteddecoratedcell is not recovery.",
+        "tests/gui/thumbnail_appearance.rs:164-234 removes onlyprivatefixture source/thumbnail and asserts realworkerRGBA;235-287 capture keepsmissinginputs,targetid,defaultfadeenabled, usesownedclock thenexactpaintimage/finishedopacitybits.",
+        "Restored validblurhash before falseApply at310+ is discriminatory;343+ capturesactualdefault thenfreshreopenedOptionsunchecked, beforeunchangedterminalcache assertions.",
+        "grid.rs:469-483 ownedclockclearsoldsnapshots andsavedblurhashchange invalidatescache; thumbnail_paint.rs:138-162 clockprogress finishesrealpaint withoutforcedimage/opacity or savedfadechange."
+      ],
+      "check": [
+        "Actual firsttarget fallback visibly differs: enabled blurredrecovery vs disabled bundleddefault; no transientfade blank. FreshreopenedOptions unchecked agrees savedswitch.",
+        "Confirm worker admission andoldgeneration refusal tests/decoderfixture pass, targetid/sourceabsence andexactbuffer/1.0bits assertions pass."
+      ],
+      "limits": [
+        "Qt JSON/decoderbytes support recovery; no matching visible-recovery ordisabledOptionsQtPNG. AppearancePNG iscontextonly.",
+        "Fade/experimentalrenderer remainPartial/0; nativeprimitiveopacity notQtprecomposed overlap/cumulativealpha rounding. Settledcapture is nofade/renderercompletion. No appearance/cache parent/alias credit."
+      ],
+      "approval": false,
+      "source_commit": "05000f10eafc4211d6856549d0073edb90ba5811",
+      "run_id": 37521631512,
+      "reference_fixture": "oracle/fixtures/thumbnail_appearance.json",
+      "optional_supplemental_native": [
+        "thumbnail-appearance-options.png"
+      ]
+    },
+    {
+      "id": "audit-options-thumbnails-media-background-experimental-image-path-for-thumbnail-panel-background-image-set-blank-to-clear",
+      "manifest": "docs/rust/gui-coverage/parity/thumbnail-appearance.json",
+      "native": [
+        "thumbnail-background-native.png",
+        "thumbnail-background-cleared-native.png",
+        "thumbnail-background-small-new-1100x700-native.png",
+        "thumbnail-background-small-new-950x760-native.png",
+        "thumbnail-background-small-old-qt-marker-native.png",
+        "thumbnail-background-small-new-qt-marker-native.png"
+      ],
+      "tests": [
+        "thumbnail_appearance::unscaled_background_clips_oversized_pixels_and_stays_fixed_on_scroll_and_clear",
+        "thumbnail_appearance::default_new_page_small_nonuniform_background_has_exact_unscaled_extent_on_resize",
+        "thumbnail_appearance::qt_marker_background_has_exact_extent_in_old_and_default_new_owners",
+        "thumbnail_appearance::exit_cancel_preserves_nonempty_background_and_accepted_exit_permanently_clears_it",
+        "thumbnail_appearance::browse_uses_typed_draft_seed_and_hidden_appearance_controls_cannot_stage",
+        "thumbnail_appearance::staged_browse_cancel_apply_new_page_policy_and_permanent_owner_retirement"
+      ],
+      "refs": [
+        "oracle/fixtures/thumbnail_background_qt.png",
+        "oracle/fixtures/thumbnail_background_new_qt.png"
+      ],
+      "evidence": [
+        "ClientManagers.py:229-258 pathkeyedpixmap; Noneblank. ClientGUIMediaResultsPanelThumbnails.py:2080-2088 oldviewportanchor and ClientGUIMediaResultsPanel.py:4798-4825 inheritednew rectorigin/viewport-minusbitmap.",
+        "record_thumbnail_appearance.py:100-124 actual31x17RGB240/20/90marker, realoldgrab/inheritednewdraw withcounteractedscrollorigin andexactequal scrolledpixels.",
+        "thumbnail_background.rs:8 cachesactualnativeimagebyliteralpath; main.slint:2019-2031 clipsto visibleviewport,own image dimensions,bottomrightviewport anchor independentofscroll.",
+        "tests/gui/thumbnail_appearance.rs:529 replacesonlydirectrender argumentwithnamedsamebuffer, exactno-pink assertionunchanged;800+ retainsnonuniformallmarker/neighbor/resizecases;859+ supplementaryrealStore/OptionsApplytoemptyowners old/defaultnew verifies31x17allpixels andadjacentbaselineexact."
+      ],
+      "check": [
+        "Oversizednative test intentionallyfillsclippedgrid; postclear entirelynopink. Nonuniformsmallmarker retainsunscaledextent andcornerpatternatbothsizes.",
+        "SolidQtmarkerinold/defaultnewowner appearsactualbottomright31x17 only, matchesexactpixel/adjacentchecks. Editablepath/Browsevisible; no renderercredit."
+      ],
+      "limits": [
+        "Qtoldframeincludesdifferentmedia/viewport; QtnewPNG366x718 isbackground-onlycanvas, notmissingmedia. Compareextent/anchor/clearpolicy, notwhole-windowpixels.",
+        "NativeImage::load_from_path formats/errorsblank; literalwhitespacepath andmain-incarnationcache differprocess-globalQtcache. Exactlyemptypathclears; no background/fade/renderer parent/alias credit."
+      ],
+      "approval": false,
+      "source_commit": "05000f10eafc4211d6856549d0073edb90ba5811",
+      "run_id": 37521631512,
+      "reference_fixture": "oracle/fixtures/thumbnail_appearance.json",
+      "optional_supplemental_native": [
+        "thumbnail-appearance-options.png"
+      ]
+    }
+  ],
+  "approval": false,
+  "concrete_source_blockers": [],
+  "selected_only_proof": {
+    "ids": [
+      "audit-options-gui-pages-navigation-and-drag-and-drop-notebook-tab-alignment",
+      "audit-options-menu-menu-pages-show-hide-sidebar-and-preview-panel",
+      "audit-media-menu-database-clear-clear-all-file-viewing-statistics",
+      "audit-options-thumbnails-appearance-use-blurhash-missing-thumbnail-fallback",
+      "audit-options-thumbnails-media-background-experimental-image-path-for-thumbnail-panel-background-image-set-blank-to-clear"
+    ],
+    "selected_count": 5,
+    "reference_updates": 5,
+    "reference_additions": 0,
+    "native_updates": 0,
+    "native_additions": 0,
+    "banked334_unchanged": true,
+    "pending41_unchanged": true,
+    "fade_renderer_parents_aliases_credit": false,
+    "proposal_sha256": "fb1c6b53e98eb2ba5a414f1aaceb5f9d9b4d31d5ab3360bb8f6f4f777bdccc62"
+  },
+  "assertion_preservation": {
+    "baseline": "ea159b6ae2d0a87d08e6dd0a8f4616911bbdd483",
+    "original_total": 226,
+    "current_total": 252,
+    "literal_whitespace_normalized_preserved": 225,
+    "equivalent_rewrite": "Original exactpink(headless::render).is_empty now applies tosame namedrenderbuffer subsequentlyexported. No originalassertionweakened. Independentlyreadcomplete4filediff; reviewed4committedhashesmatchpriorreview.",
+    "files": [
+      {
+        "path": "/workspace/hydrus-mine/crates/hydrus-gui/tests/gui/sidebar_layout.rs",
+        "baseline_commit": "ea159b6ae2d0a87d08e6dd0a8f4616911bbdd483",
+        "baseline_sha256": "9093b5fe4f448cf9151ed127e4e8b71c82c6b7415a7ccb8a470d498752ad4a7a",
+        "reviewed_worktree_sha256": "ab6caf6fdeba872e701f25dc08ddd15855bb02d04577d2c9ab2baa87f5a0ba71",
+        "original_assertion_macros": 76,
+        "current_assertion_macros": 81,
+        "preserved_with_whitespace_normalization": 76,
+        "equivalent_rewrite": null,
+        "committed_reviewed_bytes_match": true,
+        "source_commit": "05000f10eafc4211d6856549d0073edb90ba5811"
+      },
+      {
+        "path": "/workspace/hydrus-mine/crates/hydrus-gui/tests/gui/tab_presentation.rs",
+        "baseline_commit": "ea159b6ae2d0a87d08e6dd0a8f4616911bbdd483",
+        "baseline_sha256": "9f931309dc130cdc6db2f53acc49d7df8e0c75e90891499b1edb15e39b8ce33b",
+        "reviewed_worktree_sha256": "74daba01bff9e663b8b89f84135086c0e6498b7f7fa9f7ad23ac6e7fa66aaa75",
+        "original_assertion_macros": 41,
+        "current_assertion_macros": 45,
+        "preserved_with_whitespace_normalization": 41,
+        "equivalent_rewrite": null,
+        "committed_reviewed_bytes_match": true,
+        "source_commit": "05000f10eafc4211d6856549d0073edb90ba5811"
+      },
+      {
+        "path": "/workspace/hydrus-mine/crates/hydrus-gui/tests/gui/thumbnail_appearance.rs",
+        "baseline_commit": "ea159b6ae2d0a87d08e6dd0a8f4616911bbdd483",
+        "baseline_sha256": "c0c92903414331a4ff2430bc57b690020756786d9447250762b14ac8a0e56156",
+        "reviewed_worktree_sha256": "ef49aa5c46ff8a26a2f8810b2424214bbeaff77e1e871346049642df03c0003e",
+        "original_assertion_macros": 82,
+        "current_assertion_macros": 94,
+        "preserved_with_whitespace_normalization": 81,
+        "equivalent_rewrite": {
+          "original": "assert!(pink(&headless::render(&native, 1100, 700)).is_empty())",
+          "replacement": "let cleared = headless::render(&native, 1100, 700); assert!(pink(&cleared).is_empty());",
+          "reason": "Same production render and exact absence assertion; saved buffer reused for PNG without weakening."
+        },
+        "committed_reviewed_bytes_match": true,
+        "source_commit": "05000f10eafc4211d6856549d0073edb90ba5811"
+      },
+      {
+        "path": "/workspace/hydrus-mine/crates/hydrus-gui/tests/gui/viewing_maintenance.rs",
+        "baseline_commit": "ea159b6ae2d0a87d08e6dd0a8f4616911bbdd483",
+        "baseline_sha256": "d17d5cc694795a3c824cc649fc2bd1f63913089b79d98b8c50d48578a0149893",
+        "reviewed_worktree_sha256": "3147373aed534c00b22b342f8f20c91bb08aaabd208ad708db4ed41dc606ba6c",
+        "original_assertion_macros": 27,
+        "current_assertion_macros": 32,
+        "preserved_with_whitespace_normalization": 27,
+        "equivalent_rewrite": null,
+        "committed_reviewed_bytes_match": true,
+        "source_commit": "05000f10eafc4211d6856549d0073edb90ba5811"
+      }
+    ]
+  },
+  "reference_images_actually_viewed": [
+    {
+      "path": "/workspace/hydrus-mine/oracle/fixtures/tab_presentation_qt_top.png",
+      "sha256": "e8c26ed50c0491292e8f9ffd6f13584132fb3b58347aa9059884d2000d8ef268",
+      "dimensions": [
+        787,
+        26
+      ],
+      "actually_viewed_by_reviewer2": true,
+      "purpose": "referencecontext/finiteexpectations only; no freshnativeartifact existsyet"
+    },
+    {
+      "path": "/workspace/hydrus-mine/oracle/fixtures/tab_presentation_qt_right.png",
+      "sha256": "8b4e3803b961e040a10f76a6041787054125de8086fa04eb5a52d5df73fcb2be",
+      "dimensions": [
+        26,
+        450
+      ],
+      "actually_viewed_by_reviewer2": true,
+      "purpose": "referencecontext/finiteexpectations only; no freshnativeartifact existsyet"
+    },
+    {
+      "path": "/workspace/hydrus-mine/oracle/fixtures/tab_presentation_qt_left.png",
+      "sha256": "b17c42bd0ed94b2bc90e8ad22f2881b4257eff2fb91ceec62187cee4dbde4905",
+      "dimensions": [
+        26,
+        450
+      ],
+      "actually_viewed_by_reviewer2": true,
+      "purpose": "referencecontext/finiteexpectations only; no freshnativeartifact existsyet"
+    },
+    {
+      "path": "/workspace/hydrus-mine/oracle/fixtures/tab_presentation_qt_bottom.png",
+      "sha256": "736bd70a92eb95cbc13520e2d478496f86928b5c48e64087550b6366b48c1bb1",
+      "dimensions": [
+        787,
+        26
+      ],
+      "actually_viewed_by_reviewer2": true,
+      "purpose": "referencecontext/finiteexpectations only; no freshnativeartifact existsyet"
+    },
+    {
+      "path": "/workspace/hydrus-mine/oracle/fixtures/sidebar_layout_reference.png",
+      "sha256": "2240401e03972d2e3e6d75ea7d89b7497f03ba0925dbf896454ea026edc81f9f",
+      "dimensions": [
+        1392,
+        926
+      ],
+      "actually_viewed_by_reviewer2": true,
+      "purpose": "referencecontext/finiteexpectations only; no freshnativeartifact existsyet"
+    },
+    {
+      "path": "/workspace/hydrus-mine/oracle/fixtures/thumbnail_background_qt.png",
+      "sha256": "c3353853c5d989b68879ab99c64b5b2b0a81af43d669bf43e96d980a14c61696",
+      "dimensions": [
+        460,
+        300
+      ],
+      "actually_viewed_by_reviewer2": true,
+      "purpose": "referencecontext/finiteexpectations only; no freshnativeartifact existsyet"
+    },
+    {
+      "path": "/workspace/hydrus-mine/oracle/fixtures/thumbnail_background_new_qt.png",
+      "sha256": "8cfd425c99bb243cc601544af9bde4f7e16ed2d71cf12ec82b8e0caa3c6e5855",
+      "dimensions": [
+        366,
+        718
+      ],
+      "actually_viewed_by_reviewer2": true,
+      "purpose": "referencecontext/finiteexpectations only; no freshnativeartifact existsyet"
+    },
+    {
+      "path": "/workspace/hydrus-mine/oracle/fixtures/thumbnail_appearance_qt.png",
+      "sha256": "699efdf029dc171f511c0327b02aaa1fa59e5f2dc1464b03728adc70fd2af552",
+      "dimensions": [
+        152,
+        127
+      ],
+      "actually_viewed_by_reviewer2": true,
+      "purpose": "referencecontext/finiteexpectations only; no freshnativeartifact existsyet"
+    }
+  ],
+  "expected_unique_native_images": [
+    "notebook_tabs_bottom.png",
+    "notebook_tabs_left.png",
+    "notebook_tabs_right.png",
+    "notebook_tabs_top.png",
+    "sidebar-hidden-current-native.png",
+    "sidebar-preview-hidden-new-native.png",
+    "sidebar_layout_native.png",
+    "thumbnail-background-cleared-native.png",
+    "thumbnail-background-native.png",
+    "thumbnail-background-small-new-1100x700-native.png",
+    "thumbnail-background-small-new-950x760-native.png",
+    "thumbnail-background-small-new-qt-marker-native.png",
+    "thumbnail-background-small-old-qt-marker-native.png",
+    "thumbnail-blurhash-disabled-native.png",
+    "thumbnail-blurhash-disabled-options.png",
+    "thumbnail-blurhash-enabled-native.png",
+    "viewing_statistics_clear_completed.png",
+    "viewing_statistics_clear_question.png"
+  ],
+  "expected_unique_native_image_count": 18,
+  "source_pins": [
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-gui/src/grid.rs",
+      "source_commit": "05000f10eafc4211d6856549d0073edb90ba5811",
+      "sha256": "57819137d59fc2b4455b584c54ea0f981cf829ec00477cc0c0ce79171e170065"
+    },
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-gui/src/headless.rs",
+      "source_commit": "05000f10eafc4211d6856549d0073edb90ba5811",
+      "sha256": "c366399b1f509ea4859dd2e566a6e6a2b73d86ee6581aa34434fc5a16fc4bef7"
+    },
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-gui/src/popups.rs",
+      "source_commit": "05000f10eafc4211d6856549d0073edb90ba5811",
+      "sha256": "a2c2fcc39d492009e21646ab6b9b380a393c69da7b07cd781914e294b89b7df0"
+    },
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-gui/src/sidebar_layout.rs",
+      "source_commit": "05000f10eafc4211d6856549d0073edb90ba5811",
+      "sha256": "7c717f37b1b4a675811d789eda7ada1b4cf6791788acfde8cee816780e4746f5"
+    },
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-gui/src/tab_presentation.rs",
+      "source_commit": "05000f10eafc4211d6856549d0073edb90ba5811",
+      "sha256": "62157506d10422d2a9effe3ccbd4115b9ed57f376f788fa1885d1eabe0cbe79a"
+    },
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-gui/src/thumbnail_background.rs",
+      "source_commit": "05000f10eafc4211d6856549d0073edb90ba5811",
+      "sha256": "f1381ca9760d9f024311267bf02b957fa353e7de04c0fec9b1b70e8c87cfabcc"
+    },
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-gui/src/thumbnail_paint.rs",
+      "source_commit": "05000f10eafc4211d6856549d0073edb90ba5811",
+      "sha256": "16a846d7de12c7dea843d6030067490a7948f51a1f41b812ac1b48b0cab0fbe3"
+    },
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-gui/src/viewing_maintenance_window.rs",
+      "source_commit": "05000f10eafc4211d6856549d0073edb90ba5811",
+      "sha256": "625df50f98abe5ae73355d42871f53fc6760936d67462c01c46258088125c24a"
+    },
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-gui/tests/gui/sidebar_layout.rs",
+      "source_commit": "05000f10eafc4211d6856549d0073edb90ba5811",
+      "sha256": "ab6caf6fdeba872e701f25dc08ddd15855bb02d04577d2c9ab2baa87f5a0ba71"
+    },
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-gui/tests/gui/tab_presentation.rs",
+      "source_commit": "05000f10eafc4211d6856549d0073edb90ba5811",
+      "sha256": "74daba01bff9e663b8b89f84135086c0e6498b7f7fa9f7ad23ac6e7fa66aaa75"
+    },
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-gui/tests/gui/thumbnail_appearance.rs",
+      "source_commit": "05000f10eafc4211d6856549d0073edb90ba5811",
+      "sha256": "ef49aa5c46ff8a26a2f8810b2424214bbeaff77e1e871346049642df03c0003e"
+    },
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-gui/tests/gui/viewing_maintenance.rs",
+      "source_commit": "05000f10eafc4211d6856549d0073edb90ba5811",
+      "sha256": "3147373aed534c00b22b342f8f20c91bb08aaabd208ad708db4ed41dc606ba6c"
+    },
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-gui/ui/main.slint",
+      "source_commit": "05000f10eafc4211d6856549d0073edb90ba5811",
+      "sha256": "5b115be2c3f81553f166fab91e93564031ef62f76aa239548f507a4cd606c5b0"
+    },
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-gui/ui/page_splitter.slint",
+      "source_commit": "05000f10eafc4211d6856549d0073edb90ba5811",
+      "sha256": "c9940a9cc5302312f3af4dbdf5afd47eebd1a8c11504c4ce7105d70ac0aecc57"
+    },
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-gui/ui/session_dialog.slint",
+      "source_commit": "05000f10eafc4211d6856549d0073edb90ba5811",
+      "sha256": "d93e0078b6aae0bffeba569724c77cbe5047b5ffd759f9a91748295788a0d888"
+    },
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-media/src/blurhash.rs",
+      "source_commit": "05000f10eafc4211d6856549d0073edb90ba5811",
+      "sha256": "a822511341a343eb4a59291edb7eb09bf7b8fc214844353457b74eda539c697a"
+    },
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-store/src/viewing_maintenance.rs",
+      "source_commit": "05000f10eafc4211d6856549d0073edb90ba5811",
+      "sha256": "1ebe9bced86b8c4098a482557bb59d82eb5d6a8b1e4faafd645629da8d757cfa"
+    },
+    {
+      "path": "/workspace/hydrus-mine/docs/rust/gui-coverage/parity/sidebar-layout.json",
+      "source_commit": "05000f10eafc4211d6856549d0073edb90ba5811",
+      "sha256": "837e7611590fc291f0bd957ab051ece0cae8b2687e7e1b25b549c5e774bbecf6"
+    },
+    {
+      "path": "/workspace/hydrus-mine/docs/rust/gui-coverage/parity/tab-presentation.json",
+      "source_commit": "05000f10eafc4211d6856549d0073edb90ba5811",
+      "sha256": "8602aeff87e5c953f0ef429496f406af45647cf8edf419736a5c28f2b7cb62e7"
+    },
+    {
+      "path": "/workspace/hydrus-mine/docs/rust/gui-coverage/parity/thumbnail-appearance.json",
+      "source_commit": "05000f10eafc4211d6856549d0073edb90ba5811",
+      "sha256": "ea208dc3c243e09e1a30b123e38376a5997aa4ece7d4a085d2eb6d3146ffdc26"
+    },
+    {
+      "path": "/workspace/hydrus-mine/docs/rust/gui-coverage/parity/viewing-statistics-cleanup.json",
+      "source_commit": "05000f10eafc4211d6856549d0073edb90ba5811",
+      "sha256": "1f3b7ca0d7f3b6c7c8b1d37478fda53898b339e14adeb53532e38695e3d08e15"
+    },
+    {
+      "path": "/workspace/hydrus-mine/hydrus/client/ClientManagers.py",
+      "source_commit": "05000f10eafc4211d6856549d0073edb90ba5811",
+      "sha256": "03d91bc4d253d7a84139783c8a8fdfe5d5350fb86a39bf6ee62d036bc16dd91e"
+    },
+    {
+      "path": "/workspace/hydrus-mine/hydrus/client/caches/ClientCaches.py",
+      "source_commit": "05000f10eafc4211d6856549d0073edb90ba5811",
+      "sha256": "ec4cb22925a83f552b060abe9a8434d8e8931345360b5ea1607bccdd6a6fe40a"
+    },
+    {
+      "path": "/workspace/hydrus-mine/hydrus/client/gui/ClientGUI.py",
+      "source_commit": "05000f10eafc4211d6856549d0073edb90ba5811",
+      "sha256": "fb2bc6a31759c068475021e27213a1516d4bba7c837fe1d9d95f72442ed3e5cf"
+    },
+    {
+      "path": "/workspace/hydrus-mine/hydrus/client/gui/pages/ClientGUIMediaResultsPanel.py",
+      "source_commit": "05000f10eafc4211d6856549d0073edb90ba5811",
+      "sha256": "6ce07c23d02d92a69a482240ef6d7eea10128548f5d8a0a077751dfa00789ea4"
+    },
+    {
+      "path": "/workspace/hydrus-mine/hydrus/client/gui/pages/ClientGUIMediaResultsPanelThumbnails.py",
+      "source_commit": "05000f10eafc4211d6856549d0073edb90ba5811",
+      "sha256": "d9fb2c52e61321e6732e97606e74545cba156473812eb2aac8476ea5871d2d5b"
+    },
+    {
+      "path": "/workspace/hydrus-mine/hydrus/client/gui/panels/options/GUIPagesPanel.py",
+      "source_commit": "05000f10eafc4211d6856549d0073edb90ba5811",
+      "sha256": "e108d65568810e1c9e4ad88e08cf450edf1aa6ecf16bb87d6625db73828df753"
+    },
+    {
+      "path": "/workspace/hydrus-mine/oracle/fixtures/sidebar_layout.json",
+      "source_commit": "05000f10eafc4211d6856549d0073edb90ba5811",
+      "sha256": "b62b892edd426fafdc62df73a847e0bf185c76d3d30882f948d7d5a5922c766a"
+    },
+    {
+      "path": "/workspace/hydrus-mine/oracle/fixtures/sidebar_layout_reference.png",
+      "source_commit": "05000f10eafc4211d6856549d0073edb90ba5811",
+      "sha256": "2240401e03972d2e3e6d75ea7d89b7497f03ba0925dbf896454ea026edc81f9f"
+    },
+    {
+      "path": "/workspace/hydrus-mine/oracle/fixtures/tab_presentation.json",
+      "source_commit": "05000f10eafc4211d6856549d0073edb90ba5811",
+      "sha256": "a6d6d6601d3f13c8959aa0bf80b81ef3f7e9aafccb2fe1c43763d79f2bb257bf"
+    },
+    {
+      "path": "/workspace/hydrus-mine/oracle/fixtures/tab_presentation_qt_bottom.png",
+      "source_commit": "05000f10eafc4211d6856549d0073edb90ba5811",
+      "sha256": "736bd70a92eb95cbc13520e2d478496f86928b5c48e64087550b6366b48c1bb1"
+    },
+    {
+      "path": "/workspace/hydrus-mine/oracle/fixtures/tab_presentation_qt_left.png",
+      "source_commit": "05000f10eafc4211d6856549d0073edb90ba5811",
+      "sha256": "b17c42bd0ed94b2bc90e8ad22f2881b4257eff2fb91ceec62187cee4dbde4905"
+    },
+    {
+      "path": "/workspace/hydrus-mine/oracle/fixtures/tab_presentation_qt_right.png",
+      "source_commit": "05000f10eafc4211d6856549d0073edb90ba5811",
+      "sha256": "8b4e3803b961e040a10f76a6041787054125de8086fa04eb5a52d5df73fcb2be"
+    },
+    {
+      "path": "/workspace/hydrus-mine/oracle/fixtures/tab_presentation_qt_top.png",
+      "source_commit": "05000f10eafc4211d6856549d0073edb90ba5811",
+      "sha256": "e8c26ed50c0491292e8f9ffd6f13584132fb3b58347aa9059884d2000d8ef268"
+    },
+    {
+      "path": "/workspace/hydrus-mine/oracle/fixtures/thumbnail_appearance.json",
+      "source_commit": "05000f10eafc4211d6856549d0073edb90ba5811",
+      "sha256": "70b25f7310367aac0a4c0866fee05dd6036ee9f0ef0ccb12227044050011c1cd"
+    },
+    {
+      "path": "/workspace/hydrus-mine/oracle/fixtures/thumbnail_appearance_qt.png",
+      "source_commit": "05000f10eafc4211d6856549d0073edb90ba5811",
+      "sha256": "699efdf029dc171f511c0327b02aaa1fa59e5f2dc1464b03728adc70fd2af552"
+    },
+    {
+      "path": "/workspace/hydrus-mine/oracle/fixtures/thumbnail_background_new_qt.png",
+      "source_commit": "05000f10eafc4211d6856549d0073edb90ba5811",
+      "sha256": "8cfd425c99bb243cc601544af9bde4f7e16ed2d71cf12ec82b8e0caa3c6e5855"
+    },
+    {
+      "path": "/workspace/hydrus-mine/oracle/fixtures/thumbnail_background_qt.png",
+      "source_commit": "05000f10eafc4211d6856549d0073edb90ba5811",
+      "sha256": "c3353853c5d989b68879ab99c64b5b2b0a81af43d669bf43e96d980a14c61696"
+    },
+    {
+      "path": "/workspace/hydrus-mine/oracle/fixtures/viewing_maintenance.json",
+      "source_commit": "05000f10eafc4211d6856549d0073edb90ba5811",
+      "sha256": "540528425ca748cc1b6ce80e77719954dc6347f59404c7ee258be3951233f39a"
+    },
+    {
+      "path": "/workspace/hydrus-mine/oracle/record_sidebar_layout.py",
+      "source_commit": "05000f10eafc4211d6856549d0073edb90ba5811",
+      "sha256": "03e7993573e411f1c0edde973069109de78b649852167016afef860387dbfc8b"
+    },
+    {
+      "path": "/workspace/hydrus-mine/oracle/record_tab_presentation.py",
+      "source_commit": "05000f10eafc4211d6856549d0073edb90ba5811",
+      "sha256": "dadee8afb2f00a15cb4586731bce0bc29b4e3e7505d8100b93431fa1428dab88"
+    },
+    {
+      "path": "/workspace/hydrus-mine/oracle/record_thumbnail_appearance.py",
+      "source_commit": "05000f10eafc4211d6856549d0073edb90ba5811",
+      "sha256": "dc70eb42dd744695b888bf52e48b548e8019360d74fb80ef473e5c6ebf84adb7"
+    },
+    {
+      "path": "/workspace/hydrus-mine/oracle/record_viewing_maintenance.py",
+      "source_commit": "05000f10eafc4211d6856549d0073edb90ba5811",
+      "sha256": "19f9635f070a822c5a2b4b13596cfb196578242e5b4f070e2b1fbaab026a9618"
+    }
+  ],
+  "fresh_native_images_inspected": 0,
+  "final_gates": [
+    "Exactrun37521631512 at05000f10e fullLinux requiredcheck/fmt/strictClippy/fulltests/ratchet andparitymodels green; noapprovalonpartialCI.",
+    "Freshartifactsource/run-boundmanifest;18requiredselectedPNG(+optionalsharedOptionssupplement)actualview_imageinspection, hashverification, correctvisibleowner/state andpassingnamedtestproof.",
+    "Rootfinalconditionaltext reconciliationonlyaftergates; preservefinitebehaviorlimits andprior334objects/noextraeditor/renderer/fade/parentcredit. Windows/macOSdeferred."
+  ],
+  "metadata_note": "Source/run exact05000f10e/37521631512 matches reviewer1 refreshedselection/checklist.18requiredfreshcaptures; sharedthumbnailOptionsPNGoptional. No approval beforefullgreen/artifactactualinspection.",
+  "optional_supplemental_native_images": [
+    "thumbnail-appearance-options.png"
+  ]
+}

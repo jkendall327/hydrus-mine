@@ -18,6 +18,15 @@ Read first, in this order:
    the area you work on.
 5. `oracle/README.md`: running the reference to record ground truth.
 
+## Current goal
+
+The owner's October 6 goal is **all individual feature leaves in the report
+implemented, verified and published**. Numeric checkpoints are progress reports,
+not stopping targets. Prioritize existing candidates and publish each small
+Linux-validated, independently reviewed batch before starting the next. Keep
+historical inventory first-pass assessments separate from explicit verification;
+parents and aliases do not earn individual completion credit.
+
 ## The loop, for each slice of behaviour
 
 Keep slices small: one dialog's list, one button's questions, one page's
