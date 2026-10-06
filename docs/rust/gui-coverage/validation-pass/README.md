@@ -1,4 +1,4 @@
-# Deferred GUI validation pass
+# GUI validation and delivery pass
 
 The pass starts from merged source `3702cdbee99473cfd7af073aa044fe847f78f405`.
 The previously published checkpoint remains `028fd72f` (240 original leaves).
@@ -82,3 +82,27 @@ review and manifest's `validation_review` for the specific reason.
 Migration rollback is in-memory, not crash recovery. Restore media mirroring and
 final database/sidecar replacement are not one atomic transaction. Both retain
 explicit backup/manual-recovery limitations in `docs/rust/DIFFERENCES.md`.
+
+## Current delivery priority (2026-10-06)
+
+The owner has paused broad feature work until this repair batch produces a
+published validated checkpoint. The latest publication is `215814c2b` at
+2026-10-05 00:05:53 UTC, validating source `028fd72f`: 240 signed off. At the
+October 6 04:38 UTC reassessment, zero were newly signed off in 24 hours and
+135 candidates awaited sign-off. The checkpoint gap exceeded 28 hours. Inventory
+status totals are separate and cannot stand in for these delivery metrics.
+
+The bounded compilation follow-up ends by 06:38:15 UTC on October 6; see
+[its measurements and limitations](compilation-performance.md). Existing runtime
+repairs are prepared concurrently with the isolated benchmark. Each subsequent
+small batch must receive full validation and publication before broad new work.
+A further 24-hour publication gap requires an explicit batch/approach reassessment.
+
+The completed `7d86cdca4` run failed strict Clippy and runtime tests. Current
+repairs retain exact assertions while correcting stale test entrypoints,
+platform shortcut display and completed-exit maintenance preconditions. Hidden
+or retired Options numeric callbacks now reject edits before changing a visible
+draft; a fixture-derived FFmpeg regression covers the draft, save/reopen and
+live timeout reader. Linux also enables existing interchange render exports.
+These changes still require native execution and exact-source full CI; none is
+credited as a new completion here.

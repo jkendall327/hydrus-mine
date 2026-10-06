@@ -393,7 +393,9 @@ fn named_redownload_preserves_current_and_reuses_named_page_instead_of_unrelated
     let unrelated = pages.shown().key;
     let fixture = hydrus_testkit::fixture_json("file_maintenance_current.json");
     let url = fixture["redownload"]["url"].as_str().unwrap().to_owned();
-    pages.import_maintenance_urls(&[url.clone()]).unwrap();
+    pages
+        .import_maintenance_urls(std::slice::from_ref(&url))
+        .unwrap();
     assert_eq!(pages.shown().key, unrelated);
     let targets: Vec<_> = pages
         .session()

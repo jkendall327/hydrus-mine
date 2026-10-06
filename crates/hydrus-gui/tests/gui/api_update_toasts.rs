@@ -57,7 +57,7 @@ fn api(store: Arc<Store>) -> axum::Router {
         name: "real toast fixture".into(),
         permits_everything: false,
         basic: [hydrus_api::auth::Permission::ManageHeaders].into(),
-        search_filter: Default::default(),
+        search_filter: hydrus_core::TagFilter::default(),
     };
     store
         .write(move |ctx| hydrus_api::auth::save_key(ctx.conn(), &permissions))
@@ -68,7 +68,7 @@ fn request(
     runtime: &tokio::runtime::Runtime,
     router: &axum::Router,
     worker: &str,
-    body: serde_json::Value,
+    body: &serde_json::Value,
 ) {
     let path = if worker == "cookies" {
         "/manage_cookies/set_cookies"
@@ -192,7 +192,7 @@ fn actual_api_jobs_render_expire_and_preserve_retired_gui_incarnation() {
     let _ = headless::render(&windows.get(0).unwrap(), 1100, 700);
     let fixture = hydrus_testkit::fixture_json("api_update_toasts.json");
     let cases = fixture["requests"].as_array().unwrap();
-    request(&runtime, &router, "cookies", cases[0]["body"].clone());
+    request(&runtime, &router, "cookies", &cases[0]["body"]);
     assert!(current(&store).is_empty());
     assert_eq!(ui.get_popups().row_count(), 0);
     let (w, row) = open(&ui, &bound);
@@ -202,7 +202,7 @@ fn actual_api_jobs_render_expire_and_preserve_retired_gui_incarnation() {
         .iter()
         .find(|c| c["name"] == "cookies_sorted_deduplicated")
         .unwrap();
-    request(&runtime, &router, "cookies", recorded["body"].clone());
+    request(&runtime, &router, "cookies", &recorded["body"]);
     let expected = recorded["jobs"][0]["text"].as_str().unwrap();
     wait(|| ui.get_popups().iter().any(|p| p.text_1 == expected));
     let jobs = current(&store);
@@ -221,7 +221,7 @@ fn actual_api_jobs_render_expire_and_preserve_retired_gui_incarnation() {
         .iter()
         .find(|c| c["name"] == "headers_sorted_set")
         .unwrap();
-    request(&runtime, &router, "headers", recorded["body"].clone());
+    request(&runtime, &router, "headers", &recorded["body"]);
     let expected = recorded["jobs"][0]["text"].as_str().unwrap();
     wait(|| ui.get_popups().iter().any(|p| p.text_1 == expected));
     let pixels = headless::render(&windows.get(0).unwrap(), 1100, 700);
@@ -262,7 +262,7 @@ fn actual_api_jobs_render_expire_and_preserve_retired_gui_incarnation() {
         .dispatch_event(slint::platform::WindowEvent::CloseRequested);
     ui.invoke_answer(false);
     let body = serde_json::json!({"headers":{"Live-After-Cancel":{"value":"live"}}});
-    request(&runtime, &router, "headers", body);
+    request(&runtime, &router, "headers", &body);
     wait(|| {
         ui.get_popups()
             .iter()
@@ -276,7 +276,7 @@ fn actual_api_jobs_render_expire_and_preserve_retired_gui_incarnation() {
         &runtime,
         &router,
         "headers",
-        serde_json::json!({"headers":{"Owned-Late":{"value":"late"}}}),
+        &serde_json::json!({"headers":{"Owned-Late":{"value":"late"}}}),
     );
     slint::platform::update_timers_and_animations();
     assert!(

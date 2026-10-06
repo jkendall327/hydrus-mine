@@ -215,7 +215,9 @@ fn help_warning_hidden_acknowledgement_toggle_rebind_and_final_bound_drop_are_ow
             .write(move |tx| settings::set(tx.conn(), &settings))
             .unwrap();
         menu(&ui, "help", "darkmode");
-        if !before.override_stylesheet {
+        if before.override_stylesheet {
+            assert!(hydrus_gui::gui_colour_actions::last_notice().is_none());
+        } else {
             let notice = hydrus_gui::gui_colour_actions::last_notice().unwrap();
             assert_eq!(
                 notice.get_message(),
@@ -236,8 +238,6 @@ fn help_warning_hidden_acknowledgement_toggle_rebind_and_final_bound_drop_are_ow
             notice.show().unwrap();
             notice.invoke_cancelled();
             assert!(!notice.window().is_visible());
-        } else {
-            assert!(hydrus_gui::gui_colour_actions::last_notice().is_none());
         }
         assert_eq!(
             values(&store.read(gui_colours::load).unwrap()),
@@ -287,13 +287,22 @@ fn help_warning_hidden_acknowledgement_toggle_rebind_and_final_bound_drop_are_ow
         .write(|tx| {
             let mut gui: settings::GuiSettings = settings::get(tx.conn())?;
             gui.confirm_exit = false;
-            settings::set(tx.conn(), &gui)
+            settings::set(tx.conn(), &gui)?;
+            // This boundary tests completed exit, independently of due maintenance.
+            let mut shutdown: hydrus_store::settings::ShutdownWork =
+                hydrus_store::settings::get(tx.conn())?;
+            shutdown.action = 0;
+            settings::set(tx.conn(), &shutdown)
         })
         .unwrap();
     menu(&ui, "help", "darkmode");
     let pending = hydrus_gui::gui_colour_actions::last_notice().unwrap();
     ui.window()
         .dispatch_event(slint::platform::WindowEvent::CloseRequested);
+    assert!(
+        !ui.window().is_visible(),
+        "completed exit precedes retained callbacks"
+    );
     assert!(!pending.window().is_visible());
     ui.show().unwrap();
     pending.show().unwrap();

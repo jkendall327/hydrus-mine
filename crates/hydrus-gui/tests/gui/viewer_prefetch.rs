@@ -60,7 +60,7 @@ fn pump_until(done: impl Fn() -> bool) {
 fn import(store: &Arc<Store>, name: &str) -> HashId {
     let result = FileImporter::new(store.clone(), hydrus_media::MediaTools::new())
         .import_path(
-            &hydrus_testkit::fixture_path(&format!("image_cache/{name}")),
+            &hydrus_testkit::fixture_path(format!("image_cache/{name}")),
             &FileImportOptions::default(),
         )
         .unwrap();

@@ -85,7 +85,7 @@ fn real_saved_policy_preserves_current_media_and_intervals_then_retires_final_bo
         .map(|name| {
             let result = importer
                 .import_path(
-                    &hydrus_testkit::fixture_path(&format!("image_cache/{name}")),
+                    &hydrus_testkit::fixture_path(format!("image_cache/{name}")),
                     &FileImportOptions::default(),
                 )
                 .unwrap();

@@ -808,7 +808,7 @@ fn real_media_type_wheels_reach_main_and_staged_options_including_unoffered_curr
         let value = PageSort {
             by: media_type(&case["before"]),
             ascending: case["before_order"] == 0,
-            tag_context: Default::default(),
+            tag_context: hydrus_core::search::context::TagContext::default(),
         };
         store
             .write(move |writer| {
@@ -849,7 +849,7 @@ fn real_media_type_wheels_reach_main_and_staged_options_including_unoffered_curr
         );
         assert_eq!(
             actual.order_index,
-            if case["after_order"] == 0 { 0 } else { 1 },
+            i32::from(case["after_order"] != 0),
             "{case}"
         );
         assert_eq!(

@@ -240,6 +240,7 @@ fn the_options_window_applies_its_changes() {
         page_names(&window),
         [
             "audio",
+            "colours",
             "command palette",
             "connection",
             "downloading",
@@ -267,6 +268,7 @@ fn the_options_window_applies_its_changes() {
             "shortcuts",
             "speed and memory",
             "system",
+            "system tray",
             "tag autocomplete tabs",
             "tag editing",
             "tag presentation",
@@ -1113,6 +1115,15 @@ fn options_remember_navigation_and_apply_search_placement() {
 #[test]
 fn gui_identity_and_exit_confirmation_reach_the_main_window() {
     let (_dirs, store) = store();
+    // Replay GUI exit confirmation independently of shutdown-work questions.
+    store
+        .write(|ctx| {
+            let mut shutdown: hydrus_store::settings::ShutdownWork =
+                hydrus_store::settings::get(ctx.conn())?;
+            shutdown.action = 0;
+            hydrus_store::settings::set(ctx.conn(), &shutdown)
+        })
+        .unwrap();
     let _windows = headless::init();
     let ui = MainWindow::new().unwrap();
     ui.show().unwrap();

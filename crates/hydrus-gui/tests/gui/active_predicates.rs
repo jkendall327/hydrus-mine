@@ -864,7 +864,7 @@ fn real_inherited_menus_publish_exact_qt_clipboard_text_and_open_owned_pages() {
         capture_routes(&ui, &bound, &selected);
         let captured = ui.get_active_predicate_menu().iter().collect::<Vec<_>>();
         for actual in case["actions"].as_array().unwrap() {
-            let group = if actual["group"] == "copy" { 0 } else { 1 };
+            let group = i32::from(actual["group"] != "copy");
             let action = captured
                 .iter()
                 .find(|a| a.group == group && a.label.as_str() == actual["label"].as_str().unwrap())

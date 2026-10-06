@@ -573,7 +573,7 @@ mod tests {
         let review = pane
             .lines
             .iter()
-            .position(|row| row.label == "review vacuum data")
+            .position(|row| row.label == "review vacuum data\u{2026}")
             .unwrap();
         assert!(pane.lines.row_data(review).unwrap().usable);
         window.invoke_menu_line_clicked(1, i32::try_from(review).unwrap(), 0.0, 0.0, 0.0);

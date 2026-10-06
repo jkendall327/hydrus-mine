@@ -120,15 +120,12 @@ fn assert_tree(bound: &Bound, store: &Store) {
         assert_eq!(tree.len(), rows.len());
         for (page, row) in tree.iter().zip(rows) {
             assert_eq!(page.name, row["name"].as_str().unwrap());
-            match &page.content {
-                PageContent::Pages(children) => {
-                    compare(pages, children, row["children"].as_array().unwrap(), store)
-                }
-                _ => {
-                    let opened = pages.page(&page.key).unwrap();
-                    assert_eq!(opened.borrow().files(), files(store, row));
-                    assert!(opened.borrow().selected_files().is_empty());
-                }
+            if let PageContent::Pages(children) = &page.content {
+                compare(pages, children, row["children"].as_array().unwrap(), store);
+            } else {
+                let opened = pages.page(&page.key).unwrap();
+                assert_eq!(opened.borrow().files(), files(store, row));
+                assert!(opened.borrow().selected_files().is_empty());
             }
         }
     }

@@ -30,7 +30,7 @@ fn set(store: &Store, enabled: bool) {
 }
 fn expected(enabled: bool) -> Vec<u8> {
     let fixture = hydrus_testkit::fixture_json("image_decoder_policies.json");
-    let case = &fixture["cases"][if enabled { 0 } else { 1 }];
+    let case = &fixture["cases"][usize::from(!enabled)];
     let row = case["decode"]
         .as_array()
         .unwrap()
@@ -39,7 +39,7 @@ fn expected(enabled: bool) -> Vec<u8> {
         .unwrap();
     serde_json::from_value(row["pixels"].clone()).unwrap()
 }
-fn rgb(image: slint::Image) -> Vec<u8> {
+fn rgb(image: &slint::Image) -> Vec<u8> {
     image.to_rgba8().map_or_else(Vec::new, |pixels| {
         pixels
             .as_bytes()
@@ -152,7 +152,7 @@ fn actual_saved_icc_updates_preview_viewer_tiles_and_archive_without_resetting_o
     let index = query_select(&ui, &bound, file);
     wait(|| {
         bound.preview.refresh();
-        rgb(ui.get_preview_media()) == expected(true)
+        rgb(&ui.get_preview_media()) == expected(true)
     });
     let (cancel, row) = options(&ui, &bound);
     cancel.invoke_check_toggled(row, false);
@@ -187,9 +187,13 @@ fn actual_saved_icc_updates_preview_viewer_tiles_and_archive_without_resetting_o
     edit.invoke_apply();
     wait(|| {
         bound.preview.refresh();
-        rgb(ui.get_preview_media()) == expected(false)
+        rgb(&ui.get_preview_media()) == expected(false)
     });
-    assert_eq!(rgb(viewer.get_media()), expected(false));
+    assert_eq!(rgb(&viewer.get_media()), expected(false));
+    #[expect(
+        clippy::float_cmp,
+        reason = "ICC repaint must preserve accepted geometry exactly; no new layout is requested"
+    )]
     assert_eq!(rect(&viewer), before_rect, "ICC reload preserves zoom/pan");
     wait(|| viewer.get_sharp_shown());
     let raster = hydrus_media::decode_image_with_icc(
@@ -216,11 +220,11 @@ fn actual_saved_icc_updates_preview_viewer_tiles_and_archive_without_resetting_o
     .unwrap();
     let tile = hydrus_gui::still::render(&raster, &plan);
     assert_eq!(
-        rgb(viewer.get_sharp()),
+        rgb(&viewer.get_sharp()),
         tile.data(),
         "sharp pixels must use the new profile policy"
     );
-    assert_eq!(rgb(ui.get_preview_media()), expected(false));
+    assert_eq!(rgb(&ui.get_preview_media()), expected(false));
     let render = headless::render(&native, 800, 600);
     headless::save_png(
         &std::path::Path::new(env!("CARGO_TARGET_TMPDIR")).join("icc-viewer-policy-native.png"),
@@ -233,17 +237,21 @@ fn actual_saved_icc_updates_preview_viewer_tiles_and_archive_without_resetting_o
     viewer.hide().unwrap();
     set(&store, true);
     viewer.invoke_presentation_settings_changed();
-    assert_eq!(rgb(viewer.get_media()), expected(false));
+    assert_eq!(rgb(&viewer.get_media()), expected(false));
     viewer.show().unwrap();
     viewer.invoke_presentation_settings_changed();
-    assert_eq!(rgb(viewer.get_media()), expected(true));
+    assert_eq!(rgb(&viewer.get_media()), expected(true));
+    #[expect(
+        clippy::float_cmp,
+        reason = "ICC repaint must preserve accepted geometry exactly; no new layout is requested"
+    )]
     assert_eq!(rect(&viewer), before_rect);
     viewer.invoke_close_requested();
     viewer.show().unwrap();
     set(&store, false);
     viewer.invoke_presentation_settings_changed();
     assert_eq!(
-        rgb(viewer.get_media()),
+        rgb(&viewer.get_media()),
         expected(true),
         "retired viewer cannot repaint"
     );
@@ -255,7 +263,7 @@ fn actual_saved_icc_updates_preview_viewer_tiles_and_archive_without_resetting_o
         .as_ref()
         .unwrap()
         .clone_strong();
-    assert_eq!(rgb(archive.get_media()), expected(false));
+    assert_eq!(rgb(&archive.get_media()), expected(false));
     let before = [
         archive.get_media_x(),
         archive.get_media_y(),
@@ -263,7 +271,11 @@ fn actual_saved_icc_updates_preview_viewer_tiles_and_archive_without_resetting_o
         archive.get_media_height(),
     ];
     set(&store, true);
-    wait(|| rgb(archive.get_media()) == expected(true));
+    wait(|| rgb(&archive.get_media()) == expected(true));
+    #[expect(
+        clippy::float_cmp,
+        reason = "ICC repaint must preserve accepted geometry exactly; no new layout is requested"
+    )]
     assert_eq!(
         [
             archive.get_media_x(),
@@ -286,7 +298,7 @@ fn actual_saved_icc_updates_preview_viewer_tiles_and_archive_without_resetting_o
     set(&store, false);
     wait(|| {
         bound.preview.refresh();
-        rgb(ui.get_preview_media()) == expected(false)
+        rgb(&ui.get_preview_media()) == expected(false)
     });
     assert_eq!(bound.preview.displayed_file(), Some(file));
     assert!(
@@ -303,7 +315,7 @@ fn actual_saved_icc_updates_preview_viewer_tiles_and_archive_without_resetting_o
     ui.show().unwrap();
     wait(|| {
         bound.preview.refresh();
-        rgb(ui.get_preview_media()) == expected(true)
+        rgb(&ui.get_preview_media()) == expected(true)
     });
     now.set(4000);
     let (old, row) = options(&ui, &bound);
@@ -358,7 +370,7 @@ fn held_old_colour_reply_cannot_replace_current_or_rebound_canvas_and_ineligible
     query_select(&ui, &bound, file);
     wait(|| {
         bound.preview.refresh();
-        rgb(ui.get_preview_media()) == expected(true)
+        rgb(&ui.get_preview_media()) == expected(true)
     });
     let data = std::fs::read(hydrus_testkit::fixture_path(
         "image_decoder_policies/embedded-linear.png",
@@ -393,13 +405,13 @@ fn held_old_colour_reply_cannot_replace_current_or_rebound_canvas_and_ineligible
     bound.preview.refresh();
     wait(|| {
         bound.preview.refresh();
-        rgb(ui.get_preview_media()) == expected(true)
+        rgb(&ui.get_preview_media()) == expected(true)
     });
     release.send(()).unwrap();
     published.recv_timeout(Duration::from_secs(10)).unwrap();
     bound.preview.refresh();
     assert_eq!(
-        rgb(ui.get_preview_media()),
+        rgb(&ui.get_preview_media()),
         expected(true),
         "published old generation is rejected"
     );
@@ -437,7 +449,7 @@ fn held_old_colour_reply_cannot_replace_current_or_rebound_canvas_and_ineligible
     query_select(&ui, &successor, file);
     wait(|| {
         successor.preview.refresh();
-        rgb(ui.get_preview_media()) == expected(false)
+        rgb(&ui.get_preview_media()) == expected(false)
     });
     old.show().unwrap();
     old.invoke_apply();
@@ -453,7 +465,7 @@ fn held_old_colour_reply_cannot_replace_current_or_rebound_canvas_and_ineligible
     published.recv_timeout(Duration::from_secs(10)).unwrap();
     successor.preview.refresh();
     assert_eq!(
-        rgb(ui.get_preview_media()),
+        rgb(&ui.get_preview_media()),
         expected(false),
         "retired owner's published colour cannot replace successor pixels"
     );
@@ -522,14 +534,14 @@ fn paused_animation_keeps_accepted_frame_index_and_pixels_on_icc_notification() 
     let fixture = hydrus_testkit::fixture_json("image_decoder_policies.json");
     let pixels: Vec<u8> =
         serde_json::from_value(fixture["cases"][0]["frames"][1]["pixels"].clone()).unwrap();
-    wait(|| viewer.get_scanbar_text().starts_with("2/2 - ") && rgb(viewer.get_media()) == pixels);
+    wait(|| viewer.get_scanbar_text().starts_with("2/2 - ") && rgb(&viewer.get_media()) == pixels);
     let status = viewer.get_scanbar_text();
-    let before = rgb(viewer.get_media());
+    let before = rgb(&viewer.get_media());
     set(&store, false);
     viewer.invoke_presentation_settings_changed();
     assert_eq!(viewer.get_scanbar_text(), status);
     assert_eq!(
-        rgb(viewer.get_media()),
+        rgb(&viewer.get_media()),
         before,
         "static cache notification cannot reset a paused animation to frame zero"
     );

@@ -327,12 +327,21 @@ fn hidden_rebound_closed_and_reentrant_resolver_owners_cannot_launch_or_create()
         .write(|c| {
             let mut gui: settings::GuiSettings = settings::get(c.conn())?;
             gui.confirm_exit = false;
-            settings::set(c.conn(), &gui)
+            settings::set(c.conn(), &gui)?;
+            // This boundary tests completed exit, independently of due maintenance.
+            let mut shutdown: hydrus_store::settings::ShutdownWork =
+                hydrus_store::settings::get(c.conn())?;
+            shutdown.action = 0;
+            settings::set(c.conn(), &shutdown)
         })
         .unwrap();
     let _ = ui
         .window()
         .dispatch_event_with_result(slint::platform::WindowEvent::CloseRequested);
+    assert!(
+        !ui.window().is_visible(),
+        "completed exit precedes retained callbacks"
+    );
     ui.show().unwrap();
     successor.quick_export_directory.open();
     open(&ui);

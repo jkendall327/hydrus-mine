@@ -22,7 +22,7 @@ fn main() -> Result<()> {
         .filter(|arg| !arg.to_string_lossy().starts_with('-'))
         .ok_or_else(|| anyhow!("usage: hydrus-gui <store directory>"))?
         .into();
-    let (store, _open) = open_store(&dir)?;
+    let (store, open_guard) = open_store(&dir)?;
     let lock: LockPassword = store
         .read(hydrus_store::settings::get)
         .context("reading the lock password")?;
@@ -97,7 +97,7 @@ fn main() -> Result<()> {
     client.daemon.borrow_mut().stop(daemon::GRACE);
     run.finish().context("recording a clean client shutdown")?;
     drop(client);
-    drop(_open);
+    drop(open_guard);
     // File > restart: start again, now this client has let go of the store
     if hydrus_gui::client_exit::RESTART.load(std::sync::atomic::Ordering::SeqCst) {
         let exe = std::env::current_exe().context("finding this program to restart it")?;

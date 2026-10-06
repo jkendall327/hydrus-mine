@@ -155,8 +155,10 @@ jobs:
         # Slint's GUI library and test target together exceeded 16 GiB locally.
         env:
           CARGO_BUILD_JOBS: 1
+          HYDRUS_INTERCHANGE_SCREENSHOTS: ${{ github.workspace }}/target/tmp
         run: |
           set -o pipefail
+          mkdir -p target/tmp
           cargo test --workspace --locked --no-fail-fast 2>&1 | tee /tmp/hydrus-tests.log
       - name: save immediate test diagnostics
         if: ${{ !cancelled() }}

@@ -596,7 +596,12 @@ fn pressed_old_handle_cannot_resize_same_key_successor_binding_or_same_session_r
         .write(|ctx| {
             let mut s: settings::GuiSettings = settings::get(ctx.conn())?;
             s.confirm_exit = false;
-            settings::set(ctx.conn(), &s)
+            settings::set(ctx.conn(), &s)?;
+            // This boundary tests completed exit, independently of due maintenance.
+            let mut shutdown: hydrus_store::settings::ShutdownWork =
+                hydrus_store::settings::get(ctx.conn())?;
+            shutdown.action = 0;
+            settings::set(ctx.conn(), &shutdown)
         })
         .unwrap();
     ui.window().dispatch_event(E::CloseRequested);

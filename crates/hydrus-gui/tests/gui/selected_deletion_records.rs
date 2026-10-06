@@ -246,11 +246,20 @@ fn hidden_stale_page_rebound_and_accepted_exit_cannot_clear_captured_records() {
             let mut gui: hydrus_store::settings::GuiSettings =
                 hydrus_store::settings::get(ctx.conn())?;
             gui.confirm_exit = false;
-            hydrus_store::settings::set(ctx.conn(), &gui)
+            hydrus_store::settings::set(ctx.conn(), &gui)?;
+            // This boundary tests completed exit, independently of due maintenance.
+            let mut shutdown: hydrus_store::settings::ShutdownWork =
+                hydrus_store::settings::get(ctx.conn())?;
+            shutdown.action = 0;
+            hydrus_store::settings::set(ctx.conn(), &shutdown)
         })
         .unwrap();
     ui.window()
         .dispatch_event(slint::platform::WindowEvent::CloseRequested);
+    assert!(
+        !ui.window().is_visible(),
+        "completed exit precedes retained callbacks"
+    );
     ui.show().unwrap();
     ui.invoke_menu_chosen(id);
     ui.invoke_answer(true);

@@ -110,6 +110,64 @@ fn real_options_cancel_hidden_retired_save_reopen_bounds_and_independent_field()
     );
 }
 
+#[test]
+fn visible_timeout_draft_survives_hidden_edits_and_reaches_the_live_reader() {
+    let fixture = hydrus_testkit::fixture_json("ffmpeg_timeout.json");
+    let (_dirs, store) = super::subscriptions::store();
+    let _windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    ui.show().unwrap();
+    let bound = bind(
+        &ui,
+        Pages::single(super::common::all_local_page(store.clone())),
+    );
+    let reader = ffmpeg_policy::reader(&store);
+    let loaded = fixture["loaded"].as_i64().unwrap();
+    let loaded_timeout = std::time::Duration::from_secs(fixture["loaded"].as_u64().unwrap());
+    let current = &fixture["cases"][1];
+    let ignored = i32::try_from(fixture["cases"][0]["requested"].as_i64().unwrap()).unwrap();
+    let expected = current["saved"].as_i64().unwrap();
+    let (window, row) = options(&ui, &bound);
+    window.invoke_number_edited(
+        row,
+        i32::try_from(current["requested"].as_i64().unwrap()).unwrap(),
+    );
+    assert_eq!(store.read(ffmpeg_policy::load).unwrap().seconds, loaded);
+    assert_eq!(reader(), loaded_timeout);
+    window.hide().unwrap();
+    window.invoke_number_edited(row, ignored);
+    window.invoke_apply();
+    assert_eq!(store.read(ffmpeg_policy::load).unwrap().seconds, loaded);
+    assert_eq!(reader(), loaded_timeout);
+    window.show().unwrap();
+    window.invoke_apply();
+    assert_eq!(
+        store.read(ffmpeg_policy::load).unwrap().seconds,
+        expected,
+        "an ignored hidden edit must preserve the admitted visible draft"
+    );
+    let saved_timeout = std::time::Duration::from_secs(current["published"].as_u64().unwrap());
+    assert_eq!(reader(), saved_timeout);
+    let (reopened, row) = options(&ui, &bound);
+    assert_eq!(
+        reopened
+            .get_rows()
+            .row_data(usize::try_from(row).unwrap())
+            .unwrap()
+            .number,
+        i32::try_from(current["reopened"].as_i64().unwrap()).unwrap()
+    );
+    reopened.invoke_cancel();
+    reopened.show().unwrap();
+    reopened.invoke_number_edited(row, ignored);
+    reopened.invoke_apply();
+    assert_eq!(store.read(ffmpeg_policy::load).unwrap().seconds, expected);
+    assert_eq!(reader(), saved_timeout);
+    assert!(bound.options.borrow().is_none());
+    reopened.hide().unwrap();
+    ui.hide().unwrap();
+}
+
 #[cfg(unix)]
 #[test]
 fn already_open_importer_captures_old_deadline_saved_apply_changes_next_call_and_no_store_cycle() {

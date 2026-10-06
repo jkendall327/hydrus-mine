@@ -199,7 +199,12 @@ fn actual_options_raw_connector_preserves_live_or_label_colour_query_and_retired
         .write(|c| {
             let mut settings: hydrus_store::settings::GuiSettings = settings::get(c.conn())?;
             settings.confirm_exit = false;
-            settings::set(c.conn(), &settings)
+            settings::set(c.conn(), &settings)?;
+            // This boundary tests completed exit, independently of due maintenance.
+            let mut shutdown: hydrus_store::settings::ShutdownWork =
+                hydrus_store::settings::get(c.conn())?;
+            shutdown.action = 0;
+            settings::set(c.conn(), &shutdown)
         })
         .unwrap();
     ui.window()

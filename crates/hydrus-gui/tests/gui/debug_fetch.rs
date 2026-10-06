@@ -35,7 +35,7 @@ fn submit(control: &hydrus_gui::debug_fetch::Control, url: &str) -> hydrus_gui::
     let input = control
         .windows()
         .into_iter()
-        .find(|w| w.get_input_mode())
+        .find(hydrus_gui::DebugFetchWindow::get_input_mode)
         .unwrap();
     assert_eq!(input.get_message(), "Enter the URL.");
     input.set_url(url.into());

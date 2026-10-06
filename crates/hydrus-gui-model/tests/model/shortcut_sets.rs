@@ -65,11 +65,23 @@ fn a_new_client_has_the_reference_s_default_sets() {
                 modifiers,
             };
             assert_eq!(binding.gesture, gesture, "{name}");
-            assert_eq!(
-                binding.gesture.text(false),
-                b["shortcut_text"].as_str().unwrap(),
-                "{name}"
-            );
+            let recorded_text = b["shortcut_text"].as_str().unwrap();
+            // The fixture records Linux display names. Python renders the same
+            // modifier identities as command/option on macOS.
+            let expected_text = if cfg!(target_os = "macos") {
+                recorded_text
+                    .split('+')
+                    .map(|part| match part {
+                        "ctrl" => "command",
+                        "alt" => "option",
+                        other => other,
+                    })
+                    .collect::<Vec<_>>()
+                    .join("+")
+            } else {
+                recorded_text.to_owned()
+            };
+            assert_eq!(binding.gesture.text(false), expected_text, "{name}");
             assert_eq!(command_text(binding), b["text"].as_str().unwrap(), "{name}");
         }
     }

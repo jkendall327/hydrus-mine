@@ -41,7 +41,7 @@ fn set(store: &Store, context: Context, value: &Value) {
             match context {
                 Context::SearchPage => saved.search_page = value,
                 Context::MediaViewer => saved.media_viewer = value,
-            };
+            }
             settings::set(ctx.conn(), &saved)
         })
         .unwrap();
