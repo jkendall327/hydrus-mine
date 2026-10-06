@@ -556,7 +556,7 @@ fn held_old_colour_reply_cannot_replace_current_or_rebound_canvas_and_ineligible
             settings::set(c.conn(), &rules)
         })
         .unwrap();
-    query_select(&ui, &successor, file);
+    refresh_select(&ui, &successor, file);
     successor.preview.refresh();
     assert!(!ui.get_preview_has_media());
     set(&store, false);

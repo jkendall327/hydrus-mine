@@ -206,3 +206,12 @@ thumbnail menu retains Qt's recorded clear-deletion action, verifies its raw
 placement and still compares the complete menu. Slint generation with warnings
 denied and formatting pass; full Linux replay of these repairs is pending.
 No feature assessments or signed-off totals change.
+
+Run `37422951212` at `f9bc77be8` passed strict Clippy and the
+reference/backend job, with 694 native GUI passes and two failures. Nine of the
+eleven preceding failures now pass, including the unchanged dark-palette pixel
+threshold. Fresh renders and complete logs are preserved. The remaining replays
+need Refresh at the final same-owner ICC selection and a genuinely scrollable
+Options viewport for the physical wheel-bubbling assertion. Their follow-up
+preserves the original consumer, pixel, ownership and scroll assertions.
+No new sign-offs are claimed before the next full Linux run and render review.

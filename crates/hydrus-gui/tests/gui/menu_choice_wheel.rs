@@ -5,8 +5,15 @@ use slint::platform::{Key, PointerEventButton, WindowEvent};
 use slint::{ComponentHandle as _, Model as _};
 use std::{cell::RefCell, rc::Rc};
 fn settle(native: &slint::platform::software_renderer::MinimalSoftwareWindow) {
+    settle_at(native, 1100, 800);
+}
+fn settle_at(
+    native: &slint::platform::software_renderer::MinimalSoftwareWindow,
+    width: u32,
+    height: u32,
+) {
     for _ in 0..8 {
-        headless::render(native, 1100, 800);
+        headless::render(native, width, height);
     }
 }
 fn wheel(
@@ -15,13 +22,23 @@ fn wheel(
     dx: f32,
     dy: f32,
 ) {
+    wheel_at(native, frame, dx, dy, 1100, 800);
+}
+fn wheel_at(
+    native: &slint::platform::software_renderer::MinimalSoftwareWindow,
+    frame: &hydrus_gui::MenuChoiceFrame,
+    dx: f32,
+    dy: f32,
+    width: u32,
+    height: u32,
+) {
     assert!(frame.w > 0.0 && frame.h > 0.0);
     native.dispatch_event(WindowEvent::PointerScrolled {
         position: slint::LogicalPosition::new(frame.x + frame.w / 2.0, frame.y + frame.h / 2.0),
         delta_x: dx,
         delta_y: dy,
     });
-    settle(native);
+    settle_at(native, width, height);
 }
 fn click(
     native: &slint::platform::software_renderer::MinimalSoftwareWindow,
@@ -342,7 +359,9 @@ fn options_staging_saved_policy_bubbling_and_retired_roots_are_owned() {
         }
     });
     page(&options, "tag sort");
-    settle(&native);
+    // Bubbling needs an overflowing parent viewport, as the Qt probe supplies.
+    // Preserve this size through wheel dispatch and its following render.
+    settle_at(&native, 1100, 360);
     let row = i32::try_from(
         options
             .get_rows()
@@ -357,8 +376,37 @@ fn options_staging_saved_policy_bubbling_and_retired_roots_are_owned() {
         .row_data(usize::try_from(row).unwrap())
         .unwrap()
         .index;
+    assert!(frame.y >= 0.0 && frame.y + frame.h <= 360.0);
+    assert!(frame.x > 4.0);
+    // The real row's HorizontalLayout has an 8px gap before the choice.
+    // Prove the parent can scroll using that gap, outside the ComboBox.
+    let parent_position = slint::LogicalPosition::new(frame.x - 4.0, frame.y + frame.h / 2.0);
+    let initial_scroll = options.get_options_scroll_y();
+    native.dispatch_event(WindowEvent::PointerScrolled {
+        position: parent_position,
+        delta_x: 0.0,
+        delta_y: -120.0,
+    });
+    settle_at(&native, 1100, 360);
+    assert!(
+        options.get_options_scroll_y() < initial_scroll,
+        "short Options viewport must actually overflow and scroll"
+    );
+    native.dispatch_event(WindowEvent::PointerScrolled {
+        position: parent_position,
+        delta_x: 0.0,
+        delta_y: 120.0,
+    });
+    settle_at(&native, 1100, 360);
+    assert!(
+        (options.get_options_scroll_y() - initial_scroll).abs() < 0.01,
+        "parent positive control returns to its original scroll position"
+    );
+    // Scrolling changes absolute item coordinates; use the measured live frame.
+    let frame = frames.borrow().get(&(row, 0)).unwrap().clone();
+    assert!(frame.y >= 0.0 && frame.y + frame.h <= 360.0);
     let scroll = options.get_options_scroll_y();
-    wheel(&native, &frame, 0.0, -120.0);
+    wheel_at(&native, &frame, 0.0, -120.0, 1100, 360);
     assert_eq!(
         options
             .get_rows()
