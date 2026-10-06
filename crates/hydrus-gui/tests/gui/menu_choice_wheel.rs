@@ -756,6 +756,15 @@ fn real_media_type_wheels_reach_main_and_staged_options_including_unoffered_curr
     );
     let native = windows.get(0).unwrap();
     let recorded = hydrus_testkit::fixture_json("menu_choice_wheel.json");
+    // The reference wheels one existing sort control; retain one active query.
+    // Re-entering Everything in each case would toggle it off on the second.
+    ui.invoke_search_edited("system:everything".into());
+    ui.invoke_search_accepted();
+    let predicates = bound.current.borrow().borrow().predicates();
+    assert_eq!(predicates, vec!["system:everything".to_owned()]);
+    let location = bound.current.borrow().borrow().location().clone();
+    let mut query_files = bound.current.borrow().borrow().results().to_vec();
+    query_files.sort();
     for case in recorded["media_types"]["cases"].as_array().unwrap() {
         let current = bound.current.borrow().clone();
         current
@@ -768,13 +777,20 @@ fn real_media_type_wheels_reach_main_and_staged_options_including_unoffered_curr
             } else {
                 SortOrder::Descending
             });
-        ui.invoke_search_edited("system:everything".into());
-        ui.invoke_search_accepted();
+        assert_eq!(current.borrow().predicates(), predicates, "{case}");
+        assert_eq!(current.borrow().location(), &location, "{case}");
+        // Refresh also publishes this case's directly staged sort to Main.
+        ui.invoke_refresh_page();
+        assert_eq!(current.borrow().predicates(), predicates, "{case}");
         save(&store, case["enabled"].as_bool().unwrap());
         settle(&native);
         let mut files = current.borrow().results().to_vec();
         files.sort();
-        assert!(files.len() > 1);
+        assert!(files.len() > 1, "{case}");
+        assert_eq!(
+            files, query_files,
+            "sort setup preserves query files: {case}"
+        );
         wheel(
             &native,
             &ui.get_sort_type_frame(),
@@ -794,6 +810,8 @@ fn real_media_type_wheels_reach_main_and_staged_options_including_unoffered_curr
         let mut after = current.borrow().results().to_vec();
         after.sort();
         assert_eq!(after, files);
+        assert_eq!(current.borrow().predicates(), predicates, "{case}");
+        assert_eq!(current.borrow().location(), &location, "{case}");
         // The extra current item remains offered for ordinary native selection,
         // but the actual Qt flat wheel traversal never includes it.
         if case["name"] == "unoffered-current-no-change" {

@@ -35,6 +35,26 @@ fn query(ui: &MainWindow) {
     ui.invoke_search_edited("system:everything".into());
     ui.invoke_search_accepted();
 }
+// A saved same-key page already has Everything. Entering it again removes
+// it, as the reference's active-predicate list does. Use the real F5 route.
+fn refresh_saved_query(ui: &MainWindow, bound: &hydrus_gui::Bound, required: HashId) {
+    let current = bound.current.borrow().clone();
+    let predicates = current.borrow().predicates();
+    assert_eq!(predicates, vec!["system:everything".to_owned()]);
+    let location = current.borrow().location().clone();
+    let mut files = current.borrow().results().to_vec();
+    files.sort();
+    assert!(
+        files.contains(&required),
+        "saved page retains requested file"
+    );
+    ui.invoke_refresh_page();
+    assert_eq!(current.borrow().predicates(), predicates);
+    assert_eq!(current.borrow().location(), &location);
+    let mut refreshed = current.borrow().results().to_vec();
+    refreshed.sort();
+    assert_eq!(refreshed, files, "Refresh preserves saved query membership");
+}
 // The headless adapter starts unmeasured. An owned visible preview requires
 // an actual sidebar/preview viewport before its first SetMedia or sash reveal.
 fn settle_viewport(ui: &MainWindow, bound: &hydrus_gui::Bound, windows: &headless::Windows) {
@@ -416,7 +436,7 @@ fn pending_hidden_decode_is_page_owned_and_same_key_successor_retires_snapshots_
     preferences(&store, false);
     super::sidebar_layout::restore(&ui);
     settle_viewport(&ui, &successor, &windows);
-    query(&ui);
+    refresh_saved_query(&ui, &successor, second);
     successor.preview.set_decoder(Arc::new(move |_, _| {
         Some(hydrus_media::Raster::new(5, 4, 3, vec![130; 60]).unwrap())
     }));
@@ -702,7 +722,7 @@ fn same_monitor_persisted_same_keys_fresh_pages_drop_frames_and_reject_late_old_
     preferences(&store, false);
     super::sidebar_layout::restore(&ui);
     settle_viewport(&ui, &bound, &windows);
-    query(&ui);
+    refresh_saved_query(&ui, &bound, second);
     bound.preview.set_decoder(Arc::new(|_, _| {
         Some(hydrus_media::Raster::new(5, 4, 3, vec![140; 60]).unwrap())
     }));

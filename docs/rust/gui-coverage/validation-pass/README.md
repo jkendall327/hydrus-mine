@@ -148,3 +148,10 @@ checks raw second frames, looping, seeks, flags and existing alpha composition.
 No supported fixed dependency release or public blend bypass was found. This is
 a narrow workaround, not a general decoder replacement; full native tests remain
 pending.
+
+Saved-page and media-sort replays now use actual Refresh instead of entering an
+already-present `system:everything` predicate. The reference and native predicate
+entry behavior intentionally toggle that predicate off on repeated entry. The
+replays retain exact predicates, location, full file membership and existing
+selection/wheel/preview ownership assertions; no query-domain or worker behavior
+is changed.
