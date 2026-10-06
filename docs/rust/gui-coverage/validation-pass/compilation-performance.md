@@ -136,3 +136,29 @@ The latest published checkpoint is commit `215814c2b`, October 5 at 00:05:53 UTC
 24 hours and 135 candidates awaited sign-off. The gap exceeded 28 hours. Failed
 strict Clippy/runtime validation and slow GUI compilation are the current
 blockers. These are delivery metrics, not inventory-status counts.
+
+## Bounded Linux workspace-cache pilot
+
+Manual full validation can opt in with `workspace_cache=true`; it defaults off.
+A separate rolling workspace snapshot uses a compatibility prefix followed by
+source/run/attempt, so immutable exact hits do not prevent saving newer work.
+The existing dependency cache and its fallback remain separate. Selected
+workspace libraries, generated build outputs and fingerprints have a 4 GiB
+payload cap (plus inventory metadata); housekeeping retains at most two snapshots
+per trusted ref within a 3 GiB compressed namespace budget. Other platform cache
+behavior remains unchanged.
+
+Restoring an archive alone did not retain Cargo freshness in a tiny controlled
+fresh-checkout probe (0/1 ordinary libraries fresh). The pilot therefore verifies
+tracked input bytes/modes and a complete artifact inventory before restoring
+input timestamps. It invalidates prior workspace outputs before merging;
+partial restoration rolls back timestamps and purges mixed artifacts, blocking
+compilation if recovery cannot be verified. Unsupported target layouts use the
+ordinary build path. The final helper's positive probe reused the ordinary
+library while executing both unit and integration tests. Twenty-one portable
+restore-safety regressions pass against the integrated workflow.
+
+These are correctness and tiny-library freshness results, not a hosted GUI
+speedup. Seed and reuse observations will accompany necessary repair validation;
+no separate open-ended cache experiment is required. Windows/macOS timestamp
+restoration is not enabled.

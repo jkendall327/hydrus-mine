@@ -3,14 +3,19 @@ name: rust
 on:
   push:
     branches: [master, 'claude/**', 'codex/**']
-    paths: ['crates/**', 'xtask/**', 'oracle/**', 'parity/**', 'Cargo.toml', 'Cargo.lock', 'rust-toolchain.toml', '.github/workflows/rust.yml', 'scripts/gui_test_artifact.py', 'scripts/test_gui_test_artifact.py']
+    paths: ['crates/**', 'xtask/**', 'oracle/**', 'parity/**', 'Cargo.toml', 'Cargo.lock', 'rust-toolchain.toml', '.github/workflows/rust.yml', 'scripts/gui_test_artifact.py', 'scripts/test_gui_test_artifact.py', '.github/scripts/**']
   pull_request:
-    paths: ['crates/**', 'xtask/**', 'oracle/**', 'parity/**', 'Cargo.toml', 'Cargo.lock', 'rust-toolchain.toml', '.github/workflows/rust.yml', 'scripts/gui_test_artifact.py', 'scripts/test_gui_test_artifact.py']
+    paths: ['crates/**', 'xtask/**', 'oracle/**', 'parity/**', 'Cargo.toml', 'Cargo.lock', 'rust-toolchain.toml', '.github/workflows/rust.yml', 'scripts/gui_test_artifact.py', 'scripts/test_gui_test_artifact.py', '.github/scripts/**']
   # (from the Actions tab)
   workflow_dispatch:
     inputs:
       full_validation:
-        description: Run the deferred full workspace and cross-platform validation
+        description: Run full workspace and cross-platform validation for publication
+        type: boolean
+        required: false
+        default: false
+      workspace_cache:
+        description: Opt in to the Linux workspace-cache pilot (requires full_validation)
         type: boolean
         required: false
         default: false
@@ -57,6 +62,8 @@ jobs:
           cargo clippy --workspace --exclude hydrus-gui --all-targets --locked --keep-going -- -D warnings 2>&1 | tee /tmp/hydrus-quick-clippy.log
       - name: GUI artifact runner tests
         run: python3 -m unittest discover -s scripts -p test_gui_test_artifact.py
+      - name: workspace cache safety regressions
+        run: python3 -m unittest discover -s .github/scripts/tests -v
       - name: save cheap compiler diagnostics
         if: ${{ failure() }}
         continue-on-error: true
@@ -72,7 +79,7 @@ jobs:
           cargo test -p hydrus-gui-model --test model --locked
 
   check:
-    # Deferred until the owner explicitly requests the final validation pass.
+    # Full validation is run routinely for each publication batch.
     if: github.event_name == 'workflow_dispatch' && inputs.full_validation
     runs-on: ubuntu-24.04
     steps:
@@ -81,13 +88,42 @@ jobs:
         with:
           toolchain: '1.94'
           components: rustfmt, clippy
+      # Keep the stable dependency cache and its lockfile fallback independent.
       - uses: Swatinem/rust-cache@v2
         with:
-          # Reuse compilation completed before a later diagnostic fails.
           cache-on-failure: true
-          # GUI fixture-only repairs can reuse the unchanged workspace libraries.
-          # Keep this experiment on Linux while measuring cache/storage cost.
-          cache-workspace-crates: true
+          cache-workspace-crates: ${{ !inputs.workspace_cache }}
+      - name: workspace cache safety regressions
+        run: python -m unittest discover -s .github/scripts/tests -v
+      - name: workspace artifact compatibility key
+        id: workspace-key
+        if: inputs.workspace_cache
+        continue-on-error: true
+        shell: bash
+        run: python .github/scripts/workspace_artifact_cache.py key
+      - name: restore rolling workspace libraries
+        id: workspace-cache
+        if: inputs.workspace_cache && steps.workspace-key.outcome == 'success'
+        continue-on-error: true
+        uses: actions/cache/restore@v4
+        with:
+          path: .ci-workspace-artifacts
+          key: ${{ steps.workspace-key.outputs.key }}
+          restore-keys: ${{ steps.workspace-key.outputs.restore-key }}
+      - name: merge restored workspace libraries
+        id: workspace-merge
+        if: inputs.workspace_cache && steps.workspace-key.outcome == 'success'
+        continue-on-error: true
+        shell: bash
+        env:
+          WORKSPACE_CACHE_RESTORE_OUTCOME: ${{ steps.workspace-cache.outcome }}
+        run: python .github/scripts/workspace_artifact_cache.py restore
+      - name: fail closed on uncertain workspace restore
+        if: ${{ !cancelled() && inputs.workspace_cache && steps.workspace-key.outcome == 'success' && steps.workspace-merge.outputs.safe != 'true' }}
+        shell: bash
+        run: |
+          echo "Workspace restore was not proven safe; compilation is blocked."
+          exit 1
       - name: install media tools, and fontconfig for the GUI
         run: sudo apt-get update && sudo apt-get install -y ffmpeg libfontconfig1-dev
       - name: fmt
@@ -95,9 +131,8 @@ jobs:
       - name: GUI artifact runner tests
         run: python3 -m unittest discover -s scripts -p test_gui_test_artifact.py
       - name: clippy
-        # Type-check and lint every workspace target before test code generation.
-        # Upload compiler/lint diagnostics immediately, including on failure.
-        if: ${{ !cancelled() }}
+        # Type-check and lint every target before test code generation.
+        if: ${{ !cancelled() && (steps.workspace-key.outcome != 'success' || steps.workspace-merge.outputs.safe == 'true') }}
         env:
           # Keep generated GUI library and test metadata from competing for memory.
           CARGO_BUILD_JOBS: 1
@@ -116,7 +151,7 @@ jobs:
       - name: test
         # Keep behavioral feedback flowing even when a lint needs repair.
         # The job still fails if formatting or strict Clippy fails.
-        if: ${{ !cancelled() }}
+        if: ${{ !cancelled() && (steps.workspace-key.outcome != 'success' || steps.workspace-merge.outputs.safe == 'true') }}
         # Slint's GUI library and test target together exceeded 16 GiB locally.
         env:
           CARGO_BUILD_JOBS: 1
@@ -143,6 +178,20 @@ jobs:
           path: target/tmp/*.png
           if-no-files-found: ignore
           retention-days: 3
+      # Preserve completed library work even if a later diagnostic/test fails.
+      - name: stage bounded workspace libraries
+        id: workspace-stage
+        if: ${{ !cancelled() && inputs.workspace_cache && steps.workspace-key.outcome == 'success' && steps.workspace-merge.outputs.safe == 'true' && github.event_name == 'workflow_dispatch' && github.repository == 'jkendall327/hydrus-mine' && (github.ref == 'refs/heads/master' || github.ref == 'refs/heads/codex/full-validation') }}
+        continue-on-error: true
+        shell: bash
+        run: python .github/scripts/workspace_artifact_cache.py stage
+      - name: save rolling workspace libraries
+        if: ${{ !cancelled() && steps.workspace-stage.outputs.save == 'true' && github.event_name == 'workflow_dispatch' && github.repository == 'jkendall327/hydrus-mine' && (github.ref == 'refs/heads/master' || github.ref == 'refs/heads/codex/full-validation') }}
+        continue-on-error: true
+        uses: actions/cache/save@v4
+        with:
+          path: .ci-workspace-artifacts
+          key: ${{ steps.workspace-key.outputs.key }}
 
   # Keep exact-reference backend/model replays moving when GUI compilation
   # needs a repair. This lane is only for the owner's continuing parity work.
@@ -221,3 +270,48 @@ jobs:
         env:
           CARGO_BUILD_JOBS: 1
         run: cargo test --workspace --locked --no-fail-fast
+
+  workspace-cache-maintenance:
+    # Cache housekeeping runs only after this run's full lanes finish.
+    if: ${{ always() && !cancelled() && inputs.full_validation && inputs.workspace_cache && github.event_name == 'workflow_dispatch' && github.repository == 'jkendall327/hydrus-mine' && (github.ref == 'refs/heads/master' || github.ref == 'refs/heads/codex/full-validation') }}
+    needs: [check, parity-models, other-platforms]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 3
+    continue-on-error: true
+    permissions:
+      contents: read
+      actions: write
+    steps:
+      - name: bound workspace cache snapshots
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const refs = new Set(['refs/heads/master', 'refs/heads/codex/full-validation']);
+            const familyPattern = /^(hydrus-ws-v1-check-Linux-X64-)/;
+            const budget = 3 * 1024 ** 3;
+            const entries = [];
+            for (let page = 1; ; page++) {
+              const {data} = await github.request('GET /repos/{owner}/{repo}/actions/caches', {
+                ...context.repo, page, per_page: 100
+              });
+              entries.push(...data.actions_caches.filter(cache => refs.has(cache.ref) && familyPattern.test(cache.key)));
+              if (data.actions_caches.length < 100) break;
+            }
+            entries.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+            const counts = new Map();
+            let bytes = 0;
+            for (const cache of entries) {
+              const family = cache.ref + ':' + cache.key.match(familyPattern)[1];
+              const count = counts.get(family) || 0;
+              if (count < 2 && bytes + cache.size_in_bytes <= budget) {
+                counts.set(family, count + 1);
+                bytes += cache.size_in_bytes;
+                continue;
+              }
+              // Do not delete dependency caches, PR caches or unrelated branches.
+              await github.request('DELETE /repos/{owner}/{repo}/actions/caches/{cache_id}', {
+                ...context.repo, cache_id: cache.id
+              });
+              core.info(`Removed owned workspace snapshot ${cache.key} (${cache.size_in_bytes} bytes).`);
+            }
+            core.info(`Retained workspace snapshot bytes: ${bytes}; budget: ${budget}.`);
