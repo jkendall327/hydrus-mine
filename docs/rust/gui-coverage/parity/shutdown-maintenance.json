@@ -1,0 +1,113 @@
+{
+  "schema_version": 1,
+  "agent": "shutdown-maintenance",
+  "note": "Cheap-validation implementation proposal (2026-10-05 breadth pass): strict backend/model Clippy and targeted model tests; native GUI compile/render review deferred to the final validation pass.",
+  "proposed_completed_count": 5,
+  "claims": [
+    {
+      "id": "audit-options-maintenance-and-processing-when-to-run-high-cpu-jobs-shutdown-run-jobs-on-shutdown",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "countAsCompletedLeaf": true,
+      "behavior": "Options shutdown controls (run jobs on shutdown, period, max minutes, imported from the reference's options) deciding exit-time maintenance with the reference's Maintenance is due question; File > exit/force maintenance forces it; File > restart asks the restart question and relaunches the client after exit.",
+      "source": [
+        "crates/hydrus-store/src/settings.rs",
+        "crates/hydrus-store/src/db_maintenance.rs",
+        "crates/hydrus-gui-model/src/shutdown_work.rs",
+        "crates/hydrus-gui-model/src/options.rs",
+        "crates/hydrus-gui/src/client_exit.rs",
+        "crates/hydrus-gui/src/main.rs"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/shutdown_work.rs"
+      ],
+      "limits": [
+        "Shutdown work is table analysis only; no exit splash or cancel button."
+      ]
+    },
+    {
+      "id": "audit-options-maintenance-and-processing-when-to-run-high-cpu-jobs-shutdown-only-run-shutdown-jobs-once-per",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "countAsCompletedLeaf": true,
+      "behavior": "Options shutdown controls (run jobs on shutdown, period, max minutes, imported from the reference's options) deciding exit-time maintenance with the reference's Maintenance is due question; File > exit/force maintenance forces it; File > restart asks the restart question and relaunches the client after exit.",
+      "source": [
+        "crates/hydrus-store/src/settings.rs",
+        "crates/hydrus-store/src/db_maintenance.rs",
+        "crates/hydrus-gui-model/src/shutdown_work.rs",
+        "crates/hydrus-gui-model/src/options.rs",
+        "crates/hydrus-gui/src/client_exit.rs",
+        "crates/hydrus-gui/src/main.rs"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/shutdown_work.rs"
+      ],
+      "limits": [
+        "Shutdown work is table analysis only; no exit splash or cancel button."
+      ]
+    },
+    {
+      "id": "audit-options-maintenance-and-processing-when-to-run-high-cpu-jobs-shutdown-max-number-of-minutes-to-run-shutdown-jobs",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "countAsCompletedLeaf": true,
+      "behavior": "Options shutdown controls (run jobs on shutdown, period, max minutes, imported from the reference's options) deciding exit-time maintenance with the reference's Maintenance is due question; File > exit/force maintenance forces it; File > restart asks the restart question and relaunches the client after exit.",
+      "source": [
+        "crates/hydrus-store/src/settings.rs",
+        "crates/hydrus-store/src/db_maintenance.rs",
+        "crates/hydrus-gui-model/src/shutdown_work.rs",
+        "crates/hydrus-gui-model/src/options.rs",
+        "crates/hydrus-gui/src/client_exit.rs",
+        "crates/hydrus-gui/src/main.rs"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/shutdown_work.rs"
+      ],
+      "limits": [
+        "Shutdown work is table analysis only; no exit splash or cancel button."
+      ]
+    },
+    {
+      "id": "audit-options-menu-menu-file-exit-force-maintenance",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "countAsCompletedLeaf": true,
+      "behavior": "Options shutdown controls (run jobs on shutdown, period, max minutes, imported from the reference's options) deciding exit-time maintenance with the reference's Maintenance is due question; File > exit/force maintenance forces it; File > restart asks the restart question and relaunches the client after exit.",
+      "source": [
+        "crates/hydrus-store/src/settings.rs",
+        "crates/hydrus-store/src/db_maintenance.rs",
+        "crates/hydrus-gui-model/src/shutdown_work.rs",
+        "crates/hydrus-gui-model/src/options.rs",
+        "crates/hydrus-gui/src/client_exit.rs",
+        "crates/hydrus-gui/src/main.rs"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/shutdown_work.rs"
+      ],
+      "limits": [
+        "Shutdown work is table analysis only; no exit splash or cancel button."
+      ]
+    },
+    {
+      "id": "audit-options-menu-menu-file-restart",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "countAsCompletedLeaf": true,
+      "behavior": "Options shutdown controls (run jobs on shutdown, period, max minutes, imported from the reference's options) deciding exit-time maintenance with the reference's Maintenance is due question; File > exit/force maintenance forces it; File > restart asks the restart question and relaunches the client after exit.",
+      "source": [
+        "crates/hydrus-store/src/settings.rs",
+        "crates/hydrus-store/src/db_maintenance.rs",
+        "crates/hydrus-gui-model/src/shutdown_work.rs",
+        "crates/hydrus-gui-model/src/options.rs",
+        "crates/hydrus-gui/src/client_exit.rs",
+        "crates/hydrus-gui/src/main.rs"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/shutdown_work.rs"
+      ],
+      "limits": [
+        "Shutdown work is table analysis only; no exit splash or cancel button."
+      ]
+    }
+  ]
+}

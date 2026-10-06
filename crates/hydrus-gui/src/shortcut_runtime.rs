@@ -144,10 +144,35 @@ pub(crate) fn main(window: &MainWindow, store: Arc<Store>) -> Route {
     });
     route
 }
+/// The sets whose tag and rating shortcuts the viewer runs.
+const CONTENT_SETS: [&str; 2] = ["media", "media_viewer"];
+
+fn content_command(
+    settings: &Settings,
+    gesture: &Gesture,
+    custom: &[String],
+) -> Option<hydrus_core::shortcuts::ContentCommand> {
+    CONTENT_SETS
+        .iter()
+        .copied()
+        .chain(custom.iter().map(String::as_str))
+        .find_map(|set| settings.content_command(set, gesture).cloned())
+}
+
+/// The viewer's simple command for `gesture`: its own set's, else a custom
+/// set's that is turned on.
+fn viewer_command(settings: &Settings, gesture: &Gesture, custom: &[String]) -> Option<i32> {
+    settings
+        .command("media_viewer", gesture)
+        .or_else(|| custom.iter().find_map(|set| settings.command(set, gesture)))
+}
+
 pub(crate) fn viewer(
     window: &MediaViewerWindow,
     store: Arc<Store>,
     canvas: crate::viewing_tracking::CanvasTracker,
+    content: &Rc<dyn Fn(&hydrus_core::shortcuts::ContentCommand) -> bool>,
+    custom: &Rc<RefCell<Vec<String>>>,
 ) -> Route {
     let route = Route::default();
     let execute: Rc<dyn Fn(i32) -> bool> = Rc::new({
@@ -179,6 +204,8 @@ pub(crate) fn viewer(
         let store = store.clone();
         let execute = execute.clone();
         let canvas = canvas.clone();
+        let content = content.clone();
+        let custom = custom.clone();
         move |text, bits| {
             if !canvas.active() {
                 return false;
@@ -187,9 +214,11 @@ pub(crate) fn viewer(
             let Some(gesture) = route.keyboard(&text, bits as u8, settings.merge_numpad) else {
                 return false;
             };
-            settings
-                .command("media_viewer", &gesture)
-                .is_some_and(|action| execute(action))
+            let custom = custom.borrow().clone();
+            if let Some(command) = content_command(&settings, &gesture, &custom) {
+                return content(&command);
+            }
+            viewer_command(&settings, &gesture, &custom).is_some_and(|action| execute(action))
         }
     });
     window.on_shortcut_mouse({
@@ -198,6 +227,8 @@ pub(crate) fn viewer(
         let execute = execute.clone();
         let weak = window.as_weak();
         let canvas = canvas.clone();
+        let content = content.clone();
+        let custom = custom.clone();
         move |key, press, bits| {
             if !canvas.active() {
                 return false;
@@ -206,9 +237,12 @@ pub(crate) fn viewer(
             let Some(gesture) = route.mouse(key as u32, press as u8, bits as u8) else {
                 return false;
             };
-            let done = settings
-                .command("media_viewer", &gesture)
-                .is_some_and(|action| execute(action));
+            let custom = custom.borrow().clone();
+            let done = if let Some(command) = content_command(&settings, &gesture, &custom) {
+                content(&command)
+            } else {
+                viewer_command(&settings, &gesture, &custom).is_some_and(|action| execute(action))
+            };
             if done
                 && gesture.press == 2
                 && let Some(window) = weak.upgrade()

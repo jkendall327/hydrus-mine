@@ -1,5 +1,6 @@
 //! Saved policy is read at the physical wheel boundary, inside one GUI owner.
 use std::{rc::Rc, sync::Arc};
+#[allow(clippy::needless_pass_by_value)] // (a cheap handle, as its callers hold it)
 pub(crate) fn bind(
     policy: crate::MenuChoicePolicy<'_>,
     store: &Arc<hydrus_store::Store>,

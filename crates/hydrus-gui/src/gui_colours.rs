@@ -14,6 +14,7 @@ use std::{
 pub(crate) fn bind(theme: Theme<'_>, store: &Arc<Store>, active: Rc<Cell<bool>>) {
     bind_guard(theme, store, Rc::new(move || active.get()));
 }
+#[allow(clippy::needless_pass_by_value)] // (a cheap handle, as its callers hold it)
 pub(crate) fn bind_guard(theme: Theme<'_>, store: &Arc<Store>, active: Rc<dyn Fn() -> bool>) {
     theme.invoke_retire_colours();
     let weak = <Theme<'_> as slint::Global<'_, crate::MainWindow>>::as_weak(&theme);

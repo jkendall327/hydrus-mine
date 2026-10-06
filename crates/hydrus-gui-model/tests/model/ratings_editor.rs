@@ -217,3 +217,32 @@ fn numbers(value: &Value) -> Value {
         other => other.clone(),
     }
 }
+
+#[test]
+fn a_middle_click_count_sets_an_inc_dec_control_and_nothing_else() {
+    let legacy = hydrus_testkit::legacy_fixture("basic");
+    let dir = tempfile::tempdir().unwrap();
+    hydrus_store::import::import_legacy(
+        legacy.path(),
+        &dir.path().join(hydrus_store::store::DB_FILE_NAME),
+    )
+    .unwrap();
+    let store = Store::open(dir.path()).unwrap();
+    let services = store.snapshot().services.clone();
+    let counter = services.by_name("counter").unwrap().id;
+    let files = vec![
+        HashMap::from([(counter, Rating::IncDec(4))]),
+        HashMap::new(),
+    ];
+    let mut editor = RatingsEditor::new(&services, &files);
+    let row = editor_row(&editor, "counter").unwrap();
+    let stars = editor_row(&editor, "stars").unwrap();
+    assert_eq!(editor.count(stars), None);
+    editor.set_count(stars, 9);
+    assert_eq!(editor.count(stars), None);
+    editor.set_count(row, 123_456);
+    assert_eq!(editor.count(row), Some(123_456));
+    // (a typed count can't go below nothing)
+    editor.set_count(row, -3);
+    assert_eq!(editor.count(row), Some(0));
+}

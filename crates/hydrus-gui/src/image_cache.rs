@@ -34,6 +34,7 @@ fn estimate_resolution(width: Option<u32>, height: Option<u32>) -> u64 {
 pub(crate) struct Loading {
     identity: Option<Identity>,
     cache: Weak<Shared>,
+    #[allow(clippy::option_option)] // (unfinished, or finished with no raster)
     result: Mutex<Option<Option<Arc<Raster>>>>,
     ready: Condvar,
 }
@@ -148,6 +149,15 @@ impl Handle {
             .unwrap_or_else(std::sync::PoisonError::into_inner)
             .clone();
         clock.map_or_else(|| self.0.started.elapsed(), |clock| clock())
+    }
+    /// Forget every entry (Help > debug > clear all rendering caches).
+    pub(crate) fn clear(&self) {
+        self.0
+            .data
+            .lock()
+            .unwrap_or_else(std::sync::PoisonError::into_inner)
+            .cache
+            .clear();
     }
     pub(crate) fn retire(&self) {
         let mut data = self
@@ -580,6 +590,10 @@ impl Control {
     /// Read saved settings and maintain this live cache without changing presentation.
     pub fn refresh(&self) {
         self.0.refresh();
+    }
+    /// Forget every cached image, keeping the cache live.
+    pub fn clear(&self) {
+        self.0.cache.clear();
     }
     /// Permanently release entries and prevent retained handles from admitting decodes.
     pub fn retire(&self) {

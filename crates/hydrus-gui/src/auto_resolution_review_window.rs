@@ -60,6 +60,19 @@ struct State {
     thumbs: HashMap<HashId, slint::Image>,
     /// Each pending pair's "action" cell, once worked out.
     pending_texts: HashMap<(HashId, HashId), String>,
+    /// Approving or denying in the background.
+    work: Option<Work>,
+    /// What watches the work.
+    timer: Option<slint::Timer>,
+}
+
+/// Approval or denial at work: its rows, the progress it shows and
+/// whether it is done.
+struct Work {
+    approve: bool,
+    rows: Vec<usize>,
+    status: Arc<std::sync::Mutex<String>>,
+    done: Arc<std::sync::atomic::AtomicBool>,
 }
 
 fn now() -> i64 {
@@ -159,20 +172,45 @@ impl State {
         text
     }
 
-    /// Approve or deny the pending rows `rows`, as one decision each.
+    /// Approve or deny the pending rows `rows`, as one decision each, four
+    /// at a time off the UI thread (the window shows the progress).
     fn decide(&mut self, rows: &[usize], approve: bool) {
+        if self.work.is_some() {
+            return;
+        }
         let pairs: Vec<(HashId, HashId)> = rows
             .iter()
             .filter_map(|&r| self.pending.get(r).map(|p| (p.1, p.2)))
             .collect();
-        let done = if approve {
-            hydrus_duplicates::engine::approve(&self.store, self.rule_id, &pairs)
-        } else {
-            hydrus_duplicates::engine::deny(&self.store, self.rule_id, &pairs)
-        };
-        if let Err(e) = done {
-            eprintln!("could not record the decisions: {e}");
-        }
+        let status = Arc::new(std::sync::Mutex::new(
+            crate::auto_resolution_review::action_progress(approve, 0, pairs.len()),
+        ));
+        let done = Arc::new(std::sync::atomic::AtomicBool::new(false));
+        let (store, rule_id) = (self.store.clone(), self.rule_id);
+        let (thread_status, thread_done) = (status.clone(), done.clone());
+        std::thread::spawn(move || {
+            if let Err(e) = crate::auto_resolution_review::action_pairs(
+                &store,
+                rule_id,
+                &pairs,
+                approve,
+                &thread_status,
+            ) {
+                eprintln!("could not record the decisions: {e}");
+            }
+            thread_done.store(true, std::sync::atomic::Ordering::Release);
+        });
+        self.work = Some(Work {
+            approve,
+            rows: rows.to_vec(),
+            status,
+            done,
+        });
+    }
+
+    /// The decided rows leave the pending list, the nearest row is
+    /// selected, and the other tabs will fetch again (`publish_callable`).
+    fn finish_decide(&mut self, rows: &[usize], approve: bool) {
         let earliest = rows.iter().copied().min().unwrap_or(0);
         let taken: BTreeSet<usize> = rows.iter().copied().collect();
         let mut row = 0;
@@ -328,6 +366,8 @@ pub(crate) fn open(
         asking: None,
         thumbs: HashMap::new(),
         pending_texts: HashMap::new(),
+        work: None,
+        timer: None,
     }));
     {
         // (pending and denied are fetched as it opens, and the tab shown)
@@ -644,6 +684,50 @@ pub(crate) fn open(
             slint::CloseRequestResponse::HideWindow
         }
     });
+    // (approval or denial at work: its progress on its button, then the
+    // lists once done)
+    let timer = slint::Timer::default();
+    timer.start(
+        slint::TimerMode::Repeated,
+        std::time::Duration::from_millis(100),
+        {
+            let state = Rc::downgrade(&state);
+            let weak = window.as_weak();
+            move || {
+                let (Some(state), Some(window)) = (state.upgrade(), weak.upgrade()) else {
+                    return;
+                };
+                let mut state = state.borrow_mut();
+                let Some(work) = &state.work else {
+                    return;
+                };
+                if work.done.load(std::sync::atomic::Ordering::Acquire) {
+                    let Some(work) = state.work.take() else {
+                        return;
+                    };
+                    state.finish_decide(&work.rows, work.approve);
+                    window.set_working(false);
+                    window.set_approve_text("approve".into());
+                    window.set_deny_text("deny".into());
+                    show(&window, &mut state);
+                } else {
+                    let text: SharedString = work
+                        .status
+                        .lock()
+                        .unwrap_or_else(std::sync::PoisonError::into_inner)
+                        .as_str()
+                        .into();
+                    window.set_working(true);
+                    if work.approve {
+                        window.set_approve_text(text);
+                    } else {
+                        window.set_deny_text(text);
+                    }
+                }
+            }
+        },
+    );
+    state.borrow_mut().timer = Some(timer);
     show(&window, &mut state.borrow_mut());
     window.show().map_err(|e| e.to_string())?;
     windows.borrow_mut().push((number, window));

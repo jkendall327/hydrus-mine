@@ -6,7 +6,7 @@
 // `duplicates_page`, bound by `src/duplicates_sidebar.rs`; everything it
 // does comes through `action`.
 
-import { Button, ProgressIndicator, SpinBox, TabWidget } from "std-widgets.slint";
+import { Button, ComboBox, LineEdit, ProgressIndicator, ScrollView, SpinBox, TabWidget } from "std-widgets.slint";
 import { Theme } from "theme.slint";
 import { ListTable, TableRow } from "list_table.slint";
 import { Asking } from "subscriptions.slint";
@@ -36,6 +36,29 @@ export struct DuplicatesData {
     asking-choices: [string],
 }
 
+// The filtering tab's pair search, sort and quick processing
+// (`src/duplicates_filtering_sidebar.rs`, hydrus-gui-model's
+// duplicates_filtering).
+export struct DuplicatesFiltering {
+    kinds: [string],
+    kind: int,
+    search-1: [string],
+    search-2: [string],
+    second-shown: bool,
+    distance: int,
+    distance-enabled: bool,
+    pixels: [string],
+    pixel: int,
+    count: string,
+    sorts: [string],
+    sort: int,
+    directions: [string],
+    direction: int,
+    groups: [string],
+    group: int,
+    set-buttons: [string],
+}
+
 component Label inherits Text {
     vertical-alignment: center;
     wrap: word-wrap;
@@ -46,6 +69,14 @@ export component DuplicatesSidebar inherits VerticalLayout {
     in property <DuplicatesData> data;
     in property <[TableRow]> rules;
     in property <string> note;
+    in property <DuplicatesFiltering> filtering;
+    in-out property <string> filter-input-1;
+    in-out property <string> filter-input-2;
+    // the filtering tab: "kind", "pixel", "distance", "sort", "direction",
+    // "group" (the chosen index), "add 1"/"add 2" (the inputs' text),
+    // "remove 1"/"remove 2" (a predicate's index), "refresh count",
+    // "random", "set" (the set button's index)
+    callback filtering-action(string, int);
     // what was done: "launch filter", "refresh", "distance" (the distance),
     // "work hard" (1 or 0), "search during idle", "search during active",
     // "delete pairs", "rules during idle", "rules during active", "rule"
@@ -94,6 +125,19 @@ export component DuplicatesSidebar inherits VerticalLayout {
                                     checked: root.data.search-during-active;
                                     activated => { root.action("search during active", 0, false, false); }
                                 }
+                            }
+                            MenuSeparator { }
+                            MenuItem {
+                                title: "regenerate search tree";
+                                activated => { root.action("regenerate tree", 0, false, false); }
+                            }
+                            MenuItem {
+                                title: "regenerate search numbers";
+                                activated => { root.action("regenerate numbers", 0, false, false); }
+                            }
+                            MenuItem {
+                                title: "resync potential duplicate pairs to storage";
+                                activated => { root.action("resync pairs", 0, false, false); }
                             }
                             MenuSeparator { }
                             MenuItem {
@@ -193,10 +237,46 @@ export component DuplicatesSidebar inherits VerticalLayout {
                     }
                 }
                 Label { text: root.note; }
+                Text { text: "potential duplicate pairs search"; font-weight: 700; color: Theme.text; }
+                ComboBox { model: root.filtering.kinds; current-index: root.filtering.kind; selected => { root.filtering-action("kind", self.current-index); } }
+                for text[i] in root.filtering.search-1: HorizontalLayout {
+                    Label { text: text; horizontal-stretch: 1; }
+                    Button { text: "×"; clicked => { root.filtering-action("remove 1", i); } }
+                }
+                LineEdit { placeholder-text: "tag or system predicate"; text <=> root.filter-input-1; accepted => { root.filtering-action("add 1", 0); } }
+                if root.filtering.second-shown: VerticalLayout {
+                    spacing: 6px;
+                    for text[i] in root.filtering.search-2: HorizontalLayout {
+                        Label { text: text; horizontal-stretch: 1; }
+                        Button { text: "×"; clicked => { root.filtering-action("remove 2", i); } }
+                    }
+                    LineEdit { placeholder-text: "tag or system predicate"; text <=> root.filter-input-2; accepted => { root.filtering-action("add 2", 0); } }
+                }
+                HorizontalLayout {
+                    spacing: 4px;
+                    Label { text: "maximum search distance of pair: "; }
+                    SpinBox { minimum: 0; maximum: 64; step-size: 2; value: root.filtering.distance; enabled: root.filtering.distance-enabled; edited(v) => { root.filtering-action("distance", v); } }
+                }
+                ComboBox { model: root.filtering.pixels; current-index: root.filtering.pixel; selected => { root.filtering-action("pixel", self.current-index); } }
+                HorizontalLayout {
+                    spacing: 4px;
+                    Label { text: root.filtering.count; horizontal-stretch: 1; }
+                    Button { text: "⟳"; clicked => { root.filtering-action("refresh count", 0); } }
+                }
+                Text { text: "duplicate filter"; font-weight: 700; color: Theme.text; }
+                HorizontalLayout {
+                    spacing: 4px;
+                    ComboBox { horizontal-stretch: 1; model: root.filtering.sorts; current-index: root.filtering.sort; selected => { root.filtering-action("sort", self.current-index); } }
+                    if root.filtering.directions.length > 0: ComboBox { model: root.filtering.directions; current-index: root.filtering.direction; selected => { root.filtering-action("direction", self.current-index); } }
+                    ComboBox { model: root.filtering.groups; current-index: root.filtering.group; selected => { root.filtering-action("group", self.current-index); } }
+                }
                 Button {
                     text: "launch the filter";
                     clicked => { root.action("launch filter", 0, false, false); }
                 }
+                Text { text: "quick and dirty processing"; font-weight: 700; color: Theme.text; }
+                Button { text: "show some random potential duplicates"; clicked => { root.filtering-action("random", 0); } }
+                for text[i] in root.filtering.set-buttons: Button { text: text; clicked => { root.filtering-action("set", i); } }
             }
         }
         Tab {

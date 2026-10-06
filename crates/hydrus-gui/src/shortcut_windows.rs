@@ -2,14 +2,18 @@
 use crate::{OptionsWindow, ShortcutCommandWindow, ShortcutSetWindow, TableRow};
 use hydrus_core::shortcuts::{Binding as Command, Gesture, Settings};
 use hydrus_gui_model::{
+    list_selection::ListSelection,
     options::Editor,
     shortcut_capture::{Capture, Wheel, commands},
+    shortcut_sets as sets,
 };
+use hydrus_store::store::Snapshot;
 use slint::winit_030::{
     EventResult, WinitWindowAccessor as _,
     winit::event::{ElementState, MouseButton, MouseScrollDelta, WindowEvent},
 };
 use slint::{ComponentHandle as _, ModelRc, VecModel};
+use std::sync::Arc;
 use std::{
     cell::{Cell, RefCell},
     rc::Rc,
@@ -34,6 +38,12 @@ struct Owned<T> {
 struct Slots {
     set: RefCell<Option<Owned<ShortcutSetWindow>>>,
     command: RefCell<Option<Owned<ShortcutCommandWindow>>>,
+    /// A question or message the set lists asked.
+    chooser: RefCell<Option<crate::ChoiceButtonsWindow>>,
+    /// Whether that question waits for its answer.
+    asking: Cell<bool>,
+    reserved: RefCell<ListSelection<usize>>,
+    custom: RefCell<ListSelection<usize>>,
 }
 impl Slots {
     fn cancel_command(&self) {
@@ -44,6 +54,10 @@ impl Slots {
     }
     fn cancel(&self) {
         self.cancel_command();
+        self.asking.set(false);
+        if let Some(chooser) = self.chooser.borrow_mut().take() {
+            let _ = chooser.hide();
+        }
         if let Some(child) = self.set.borrow_mut().take() {
             child.live.set(false);
             let _ = child.window.hide();
@@ -56,11 +70,13 @@ pub(crate) struct Owner {
 }
 pub(crate) fn bind(
     parent: &OptionsWindow,
+    store: &hydrus_store::Store,
     editor: &Rc<RefCell<Editor>>,
     active: &Rc<Cell<bool>>,
     other_open: Rc<dyn Fn() -> bool>,
 ) -> Owner {
     let slots = Rc::new(Slots::default());
+    let snapshot = store.snapshot();
     let settings = editor.borrow().edited_shortcuts();
     parent.set_shortcuts_merge_numpad(settings.merge_numpad);
     parent.set_shortcuts_primary_labels(settings.primary_labels);
@@ -86,26 +102,225 @@ pub(crate) fn bind(
             editor.borrow_mut().set_shortcuts(settings);
         }
     });
-    parent.on_shortcuts_clicked({
+    let paint: Rc<dyn Fn()> = Rc::new({
         let editor = editor.clone();
+        let slots = slots.clone();
+        let weak = parent.as_weak();
+        move || {
+            if let Some(parent) = weak.upgrade() {
+                paint_lists(&parent, &editor.borrow().edited_shortcuts(), &slots);
+            }
+        }
+    });
+    paint();
+    let usable: Rc<dyn Fn() -> bool> = Rc::new({
         let active = active.clone();
         let slots = slots.clone();
         let weak = parent.as_weak();
         move || {
-            if !active.get()
-                || slots.set.borrow().is_some()
-                || other_open()
-                || !weak
+            active.get()
+                && slots.set.borrow().is_none()
+                && !slots.asking.get()
+                && !other_open()
+                && weak
                     .upgrade()
                     .is_some_and(|parent| parent.window().is_visible())
-            {
+        }
+    });
+    parent.on_shortcut_set_clicked({
+        let editor = editor.clone();
+        let slots = slots.clone();
+        let usable = usable.clone();
+        let paint = paint.clone();
+        move |custom, row, ctrl, shift| {
+            let Ok(row) = usize::try_from(row) else {
+                return;
+            };
+            if !usable() {
                 return;
             }
-            if let Ok(window) = open_sets(editor.clone(), &active, &slots, &weak) {
+            let settings = editor.borrow().edited_shortcuts();
+            let count = if custom {
+                sets::custom_rows(&settings).len()
+            } else {
+                sets::reserved_rows(&settings).len()
+            };
+            if row >= count {
+                return;
+            }
+            let selection = if custom {
+                &slots.custom
+            } else {
+                &slots.reserved
+            };
+            let order: Vec<usize> = (0..count).collect();
+            selection.borrow_mut().click(&order, row, ctrl, shift);
+            paint();
+        }
+    });
+    let edit: Rc<dyn Fn(Target)> = Rc::new({
+        let editor = editor.clone();
+        let active = active.clone();
+        let slots = slots.clone();
+        let weak = parent.as_weak();
+        let paint = paint.clone();
+        let snapshot = snapshot.clone();
+        move |target| {
+            if let Ok(window) = open_set(
+                editor.clone(),
+                &active,
+                &slots,
+                &weak,
+                target,
+                paint.clone(),
+                &snapshot,
+            ) {
                 *slots.set.borrow_mut() = Some(window);
                 if let Some(parent) = weak.upgrade() {
                     parent.set_shortcuts_child_open(true);
                 }
+            }
+        }
+    });
+    let name_at = {
+        let editor = editor.clone();
+        move |custom: bool, row: usize| -> Option<String> {
+            let settings = editor.borrow().edited_shortcuts();
+            let rows = if custom {
+                sets::custom_rows(&settings)
+            } else {
+                sets::reserved_rows(&settings)
+            };
+            rows.get(row).map(|r| r.name.clone())
+        }
+    };
+    parent.on_shortcut_set_activated({
+        let usable = usable.clone();
+        let edit = edit.clone();
+        let name_at = name_at.clone();
+        move |custom, row| {
+            let Ok(row) = usize::try_from(row) else {
+                return;
+            };
+            if !usable() {
+                return;
+            }
+            if let Some(name) = name_at(custom, row) {
+                edit(if custom {
+                    Target::Custom(Some(name))
+                } else {
+                    Target::Reserved(name)
+                });
+            }
+        }
+    });
+    parent.on_shortcut_set_action({
+        let editor = editor.clone();
+        let slots = slots.clone();
+        let usable = usable.clone();
+        let paint = paint.clone();
+        move |action| {
+            if !usable() {
+                return;
+            }
+            let top = |custom: bool| {
+                let selection = if custom {
+                    &slots.custom
+                } else {
+                    &slots.reserved
+                };
+                let first = selection.borrow().selected_order().iter().min().copied();
+                first.and_then(|row| name_at(custom, row))
+            };
+            match action.as_str() {
+                "help" => crate::debug_actions::message("Information", sets::HELP),
+                "edit-reserved" => {
+                    if let Some(name) = top(false) {
+                        edit(Target::Reserved(name));
+                    }
+                }
+                "edit-custom" => {
+                    if let Some(name) = top(true) {
+                        edit(Target::Custom(Some(name)));
+                    }
+                }
+                "add" => edit(Target::Custom(None)),
+                "delete" => {
+                    let names: Vec<String> = slots
+                        .custom
+                        .borrow()
+                        .selected_order()
+                        .iter()
+                        .filter_map(|&row| name_at(true, row))
+                        .collect();
+                    if names.is_empty() {
+                        return;
+                    }
+                    let editor = editor.clone();
+                    let paint = paint.clone();
+                    let after = Rc::downgrade(&slots);
+                    ask(
+                        &slots,
+                        sets::DELETE_QUESTION,
+                        vec!["yes".into()],
+                        "no",
+                        move |yes| {
+                            if yes == Some(0) {
+                                let mut settings = editor.borrow().edited_shortcuts();
+                                sets::delete_custom(&mut settings, &names);
+                                editor.borrow_mut().set_shortcuts(settings);
+                                if let Some(slots) = after.upgrade() {
+                                    *slots.custom.borrow_mut() = ListSelection::default();
+                                }
+                                paint();
+                            }
+                        },
+                    );
+                }
+                "restore" => {
+                    let names = sets::default_names();
+                    let editor = editor.clone();
+                    let paint = paint.clone();
+                    let after = Rc::downgrade(&slots);
+                    ask(
+                        &slots,
+                        sets::RESTORE_TITLE,
+                        names.clone(),
+                        "cancel",
+                        move |chosen| {
+                            let (Some(name), Some(slots)) =
+                                (chosen.and_then(|i| names.get(i).cloned()), after.upgrade())
+                            else {
+                                return;
+                            };
+                            let settings = editor.borrow().edited_shortcuts();
+                            let restore = {
+                                let editor = editor.clone();
+                                let paint = paint.clone();
+                                let name = name.clone();
+                                move || {
+                                    let mut settings = editor.borrow().edited_shortcuts();
+                                    sets::restore(&mut settings, &name);
+                                    editor.borrow_mut().set_shortcuts(settings);
+                                    paint();
+                                }
+                            };
+                            match sets::restore_question(&settings, &name) {
+                                sets::Restore::Missing(text) => {
+                                    ask(&slots, &text, Vec::new(), "ok", move |_| restore());
+                                }
+                                sets::Restore::Replace(question) => {
+                                    ask(&slots, &question, vec!["yes".into()], "no", move |yes| {
+                                        if yes == Some(0) {
+                                            restore();
+                                        }
+                                    });
+                                }
+                            }
+                        },
+                    );
+                }
+                _ => {}
             }
         }
     });
@@ -123,60 +338,119 @@ pub(crate) fn bind(
         has_open: Rc::new(move || slots.set.borrow().is_some()),
     }
 }
-fn set_name(window: &ShortcutSetWindow, settings: &Settings) -> Option<String> {
-    settings
-        .sets
-        .keys()
-        .nth(usize::try_from(window.get_set_index()).ok()?)
-        .cloned()
+fn paint_lists(parent: &OptionsWindow, settings: &Settings, slots: &Slots) {
+    let rows = |rows: Vec<sets::SetRow>, selection: &ListSelection<usize>| {
+        ModelRc::new(VecModel::from(
+            rows.iter()
+                .enumerate()
+                .map(|(i, row)| TableRow {
+                    cells: ModelRc::new(VecModel::from(
+                        row.cells()
+                            .into_iter()
+                            .map(Into::into)
+                            .collect::<Vec<slint::SharedString>>(),
+                    )),
+                    selected: selection.selected_order().contains(&i),
+                })
+                .collect::<Vec<_>>(),
+        ))
+    };
+    let reserved = slots.reserved.borrow();
+    let custom = slots.custom.borrow();
+    parent.set_shortcut_reserved_rows(rows(sets::reserved_rows(settings), &reserved));
+    parent.set_shortcut_custom_rows(rows(sets::custom_rows(settings), &custom));
+    parent.set_shortcut_reserved_selected(!reserved.selected_order().is_empty());
+    parent.set_shortcut_custom_selected(!custom.selected_order().is_empty());
 }
-fn show_set(window: &ShortcutSetWindow, settings: &Settings) {
-    let name = set_name(window, settings).unwrap_or_default();
+/// Ask a question (or say something, with no choices) in a chooser the
+/// set lists own until it is answered.
+fn ask(
+    slots: &Rc<Slots>,
+    message: &str,
+    choices: Vec<String>,
+    no_label: &str,
+    answer: impl FnOnce(Option<usize>) + 'static,
+) {
+    let after = Rc::downgrade(slots);
+    let asked = crate::choice_buttons::open(
+        &crate::choice_buttons::Ask {
+            title: "shortcuts",
+            message,
+            choices,
+            no_label,
+        },
+        move |chosen| {
+            let Some(slots) = after.upgrade() else { return };
+            if !slots.asking.replace(false) {
+                return;
+            }
+            answer(chosen);
+        },
+    );
+    match asked {
+        Ok(window) => {
+            slots.asking.set(window.is_some());
+            // (the answered chooser is kept until the next replaces it)
+            if window.is_some() {
+                *slots.chooser.borrow_mut() = window;
+            }
+        }
+        Err(e) => eprintln!("could not ask: {e}"),
+    }
+}
+/// Which set the editor edits.
+#[derive(Clone)]
+enum Target {
+    Reserved(String),
+    /// A custom set: its current name, or none for a new one.
+    Custom(Option<String>),
+}
+impl Target {
+    fn name(&self) -> String {
+        match self {
+            Self::Reserved(name) | Self::Custom(Some(name)) => name.clone(),
+            Self::Custom(None) => sets::NEW_NAME.to_owned(),
+        }
+    }
+}
+fn show_set(window: &ShortcutSetWindow, bindings: &[Command], primary: bool, snapshot: &Snapshot) {
     let selected = window.get_selected();
-    let rows = settings
-        .sets
-        .get(&name)
-        .into_iter()
-        .flatten()
+    let rows = bindings
+        .iter()
         .enumerate()
         .map(|(i, b)| TableRow {
             cells: ModelRc::new(VecModel::from(vec![
-                b.gesture.text(settings.primary_labels).into(),
-                command_name(&name, b.action).into(),
+                b.gesture.text(primary).into(),
+                sets::command_text_with(b, Some(&snapshot.services)).into(),
             ])),
             selected: i32::try_from(i).ok() == Some(selected),
         })
         .collect::<Vec<_>>();
     window.set_rows(ModelRc::new(VecModel::from(rows)));
 }
-fn command_name(scope: &str, action: i32) -> String {
-    commands(scope)
-        .iter()
-        .find(|(a, _)| *a == action)
-        .map_or_else(
-            || format!("command {action}"),
-            |(_, label)| (*label).to_owned(),
-        )
-}
-fn open_sets(
+#[allow(clippy::too_many_lines)]
+fn open_set(
     editor: Rc<RefCell<Editor>>,
     parent_live: &Rc<Cell<bool>>,
     slots: &Rc<Slots>,
     parent: &slint::Weak<OptionsWindow>,
+    target: Target,
+    saved: Rc<dyn Fn()>,
+    snapshot: &Arc<Snapshot>,
 ) -> Result<Owned<ShortcutSetWindow>, slint::PlatformError> {
+    let snapshot = snapshot.clone();
     let window = ShortcutSetWindow::new()?;
     let live = Rc::new(Cell::new(true));
-    let draft = Rc::new(RefCell::new(editor.borrow().edited_shortcuts()));
-    window.set_sets(ModelRc::new(VecModel::from(
-        draft
-            .borrow()
-            .sets
-            .keys()
-            .map(|s| s.as_str().into())
-            .collect::<Vec<_>>(),
-    )));
-    window.set_set_index(0);
-    show_set(&window, &draft.borrow());
+    let settings = editor.borrow().edited_shortcuts();
+    let name = target.name();
+    let (merge, primary) = (settings.merge_numpad, settings.primary_labels);
+    let draft = Rc::new(RefCell::new(
+        settings.sets.get(&name).cloned().unwrap_or_default(),
+    ));
+    window.set_set_name(name.as_str().into());
+    window.set_name_enabled(matches!(target, Target::Custom(_)));
+    window.set_description(sets::description(&name).unwrap_or_default().into());
+    show_set(&window, &draft.borrow(), primary, &snapshot);
     let close: Rc<dyn Fn()> = Rc::new({
         let slots = Rc::downgrade(slots);
         let live = live.clone();
@@ -198,23 +472,8 @@ fn open_sets(
             }
         }
     });
-    window.on_set_changed({
-        let weak = window.as_weak();
-        let draft = draft.clone();
-        let live = live.clone();
-        let parent_live = parent_live.clone();
-        let slots = slots.clone();
-        move |_| {
-            if !live.get() || !parent_live.get() || slots.command.borrow().is_some() {
-                return;
-            }
-            if let Some(window) = weak.upgrade() {
-                window.set_selected(-1);
-                show_set(&window, &draft.borrow());
-            }
-        }
-    });
     window.on_selected_row({
+        let snapshot = snapshot.clone();
         let weak = window.as_weak();
         let draft = draft.clone();
         let live = live.clone();
@@ -226,16 +485,18 @@ fn open_sets(
             }
             if let Some(window) = weak.upgrade() {
                 window.set_selected(row);
-                show_set(&window, &draft.borrow());
+                show_set(&window, &draft.borrow(), primary, &snapshot);
             }
         }
     });
     window.on_action({
+        let snapshot = snapshot.clone();
         let weak = window.as_weak();
         let draft = draft.clone();
         let live = live.clone();
         let parent_live = parent_live.clone();
         let slots = slots.clone();
+        let name = name.clone();
         move |action| {
             if !live.get() || !parent_live.get() || slots.command.borrow().is_some() {
                 return;
@@ -246,9 +507,6 @@ fn open_sets(
             if window.get_remove_question() {
                 return;
             }
-            let Some(name) = set_name(&window, &draft.borrow()) else {
-                return;
-            };
             let selected = usize::try_from(window.get_selected()).ok();
             if action == "remove" {
                 window.set_remove_question(true);
@@ -262,26 +520,28 @@ fn open_sets(
                 return;
             };
             let value = index
-                .and_then(|i| draft.borrow().sets[&name].get(i).cloned())
+                .and_then(|i| draft.borrow().get(i).cloned())
                 .unwrap_or(Command {
                     gesture: Gesture::default(),
                     action: commands(&name)[0].0,
+                    text: None,
+                    content: None,
                 });
             if let Ok(child) = open_command(
                 value,
                 &name,
-                draft.borrow().merge_numpad,
-                draft.borrow().primary_labels,
+                merge,
+                primary,
                 parent_live.clone(),
                 live.clone(),
                 &slots,
+                &snapshot,
                 Rc::new({
+                    let snapshot = snapshot.clone();
                     let weak = weak.clone();
                     let draft = draft.clone();
-                    let name = name.clone();
                     move |value| {
-                        let mut draft = draft.borrow_mut();
-                        let bindings = draft.sets.get_mut(&name).expect("owned set");
+                        let mut bindings = draft.borrow_mut();
                         if let Some(index) = index {
                             bindings[index] = value;
                         } else {
@@ -291,7 +551,7 @@ fn open_sets(
                             window.set_selected(
                                 i32::try_from(index.unwrap_or(bindings.len() - 1)).unwrap_or(-1),
                             );
-                            show_set(&window, &draft);
+                            show_set(&window, &bindings, primary, &snapshot);
                         }
                     }
                 }),
@@ -302,6 +562,7 @@ fn open_sets(
         }
     });
     window.on_remove_chosen({
+        let snapshot = snapshot.clone();
         let weak = window.as_weak();
         let draft = draft.clone();
         let live = live.clone();
@@ -317,26 +578,69 @@ fn open_sets(
                 return;
             }
             window.set_remove_question(false);
-            let name = set_name(&window, &draft.borrow());
-            if yes
-                && let Some(name) = name
-                && let Ok(index) = usize::try_from(window.get_selected())
-            {
-                let mut draft = draft.borrow_mut();
-                let bindings = draft.sets.get_mut(&name).expect("owned set");
+            if yes && let Ok(index) = usize::try_from(window.get_selected()) {
+                let mut bindings = draft.borrow_mut();
                 if index < bindings.len() {
                     bindings.remove(index);
                 }
                 window.set_selected(-1);
-                show_set(&window, &draft);
+                show_set(&window, &bindings, primary, &snapshot);
             }
         }
     });
-    window.on_apply({let weak=window.as_weak();let draft=draft.clone();let live=live.clone();let parent_live=parent_live.clone();let slots=slots.clone();let close=close.clone();move ||{
-        if !live.get()||!parent_live.get()||slots.command.borrow().is_some(){return;}let Some(window)=weak.upgrade() else{return;};if window.get_remove_question(){return;}
-        let draft=draft.borrow();for (name,bindings) in &draft.sets {for (index,binding) in bindings.iter().enumerate(){if let Some(previous)=bindings[..index].iter().find(|b|b.gesture==binding.gesture){window.set_error(format!("The shortcut:\n\n{}\n\nis mapped twice:\n\n{}\n\n{}\n\nThe system only supports one command per shortcut in a set for now, please remove one.",binding.gesture.text(draft.primary_labels),command_name(name,binding.action),command_name(name,previous.action)).into());return;}}}
-        editor.borrow_mut().set_shortcuts(draft.clone());close();
-    }});
+    window.on_apply({
+        let snapshot = snapshot.clone();
+        let weak = window.as_weak();
+        let draft = draft.clone();
+        let live = live.clone();
+        let parent_live = parent_live.clone();
+        let slots = slots.clone();
+        let close = close.clone();
+        move || {
+            if !live.get() || !parent_live.get() || slots.command.borrow().is_some() {
+                return;
+            }
+            let Some(window) = weak.upgrade() else {
+                return;
+            };
+            if window.get_remove_question() {
+                return;
+            }
+            let bindings = draft.borrow().clone();
+            for (index, binding) in bindings.iter().enumerate() {
+                if let Some(previous) = bindings[..index].iter().find(|b| b.gesture == binding.gesture) {
+                    window.set_error(
+                        format!(
+                            "The shortcut:\n\n{}\n\nis mapped twice:\n\n{}\n\n{}\n\nThe system only supports one command per shortcut in a set for now, please remove one.",
+                            binding.gesture.text(primary),
+                            sets::command_text_with(binding, Some(&snapshot.services)),
+                            sets::command_text_with(previous, Some(&snapshot.services))
+                        )
+                        .into(),
+                    );
+                    return;
+                }
+            }
+            let mut settings = editor.borrow().edited_shortcuts();
+            match &target {
+                Target::Reserved(name) => {
+                    settings.sets.insert(name.clone(), bindings);
+                }
+                Target::Custom(old) => {
+                    let chosen = window.get_set_name();
+                    let chosen = if chosen.trim().is_empty() {
+                        sets::NEW_NAME
+                    } else {
+                        chosen.as_str()
+                    };
+                    sets::save_custom(&mut settings, old.as_deref(), chosen, bindings);
+                }
+            }
+            editor.borrow_mut().set_shortcuts(settings);
+            close();
+            saved();
+        }
+    });
     window.on_cancel({
         let close = close.clone();
         move || {
@@ -368,10 +672,71 @@ fn open_command(
     parent: Rc<Cell<bool>>,
     set_live: Rc<Cell<bool>>,
     slots: &Rc<Slots>,
+    snapshot: &Snapshot,
     applied: Rc<dyn Fn(Command)>,
 ) -> Result<Owned<ShortcutCommandWindow>, slint::PlatformError> {
+    use hydrus_gui_model::shortcut_content as content;
     let window = ShortcutCommandWindow::new()?;
     let live = Rc::new(Cell::new(true));
+    // tag and rating commands, for the services that take them
+    let services = Rc::new(content::services(&snapshot.services));
+    window.set_content_services(ModelRc::new(VecModel::from(
+        services
+            .iter()
+            .map(|s| s.name.as_str().into())
+            .collect::<Vec<slint::SharedString>>(),
+    )));
+    let show_service = {
+        let services = services.clone();
+        let weak = window.as_weak();
+        Rc::new(move |index: usize| {
+            let (Some(window), Some(service)) = (weak.upgrade(), services.get(index)) else {
+                return;
+            };
+            window.set_content_actions(ModelRc::new(VecModel::from(
+                content::actions(&service.value)
+                    .iter()
+                    .map(|a| (*a).into())
+                    .collect::<Vec<slint::SharedString>>(),
+            )));
+            window.set_content_hint(
+                match service.value {
+                    content::ValueKind::Tag => "the tag",
+                    content::ValueKind::Like => "like, dislike, or blank for not set",
+                    content::ValueKind::Stars { .. } => "the stars, or blank for not set",
+                    content::ValueKind::Count => "",
+                }
+                .into(),
+            );
+        })
+    };
+    if let Some(command) = &value.content
+        && let Some((index, action, text)) = content::choices(&services, command)
+    {
+        window.set_command_type(1);
+        window.set_content_service(i32::try_from(index).unwrap_or(0));
+        show_service(index);
+        let position = services
+            .get(index)
+            .and_then(|s| content::actions(&s.value).iter().position(|a| *a == action))
+            .unwrap_or(0);
+        window.set_content_action(i32::try_from(position).unwrap_or(0));
+        window.set_content_value(text.into());
+    } else if !services.is_empty() {
+        show_service(0);
+    }
+    window.on_content_service_changed({
+        let show_service = show_service.clone();
+        let weak = window.as_weak();
+        move |index| {
+            if let Ok(index) = usize::try_from(index) {
+                show_service(index);
+                if let Some(window) = weak.upgrade() {
+                    window.set_content_action(0);
+                }
+            }
+        }
+    });
     let capture = Rc::new(RefCell::new(Capture::new(value.gesture, merge)));
     let actions = commands(scope);
     window.set_commands(ModelRc::new(VecModel::from(
@@ -523,6 +888,7 @@ fn open_command(
     window.on_apply({
         let valid = valid.clone();
         let capture = capture.clone();
+        let services = services.clone();
         let weak = window.as_weak();
         let close = close.clone();
         move || {
@@ -532,6 +898,36 @@ fn open_command(
             let Some(window) = weak.upgrade() else {
                 return;
             };
+            let gesture = if window.get_mode() == 1 {
+                capture.borrow().mouse.clone()
+            } else {
+                capture.borrow().keyboard.clone()
+            };
+            if window.get_command_type() == 1 {
+                let service = usize::try_from(window.get_content_service())
+                    .ok()
+                    .and_then(|i| services.get(i));
+                let Some(service) = service else { return };
+                let action = usize::try_from(window.get_content_action())
+                    .ok()
+                    .and_then(|i| content::actions(&service.value).get(i))
+                    .copied()
+                    .unwrap_or_default();
+                match content::command(service, action, &window.get_content_value()) {
+                    Ok(command) => applied(Command {
+                        gesture,
+                        action: 0,
+                        text: None,
+                        content: Some(command),
+                    }),
+                    Err(e) => {
+                        window.set_content_error(e.into());
+                        return;
+                    }
+                }
+                close();
+                return;
+            }
             let Some((action, _)) = usize::try_from(window.get_command_index())
                 .ok()
                 .and_then(|i| actions.get(i))
@@ -539,12 +935,10 @@ fn open_command(
                 return;
             };
             applied(Command {
-                gesture: if window.get_mode() == 1 {
-                    capture.borrow().mouse.clone()
-                } else {
-                    capture.borrow().keyboard.clone()
-                },
+                gesture,
                 action: *action,
+                text: None,
+                content: None,
             });
             close();
         }

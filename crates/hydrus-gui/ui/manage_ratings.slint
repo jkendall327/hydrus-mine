@@ -28,6 +28,8 @@ export component ManageRatingsWindow inherits Window {
     in property <string> asking-message;
     // (the row; left or right; how far along it)
     callback rating-clicked(int, bool, float);
+    // (an inc/dec control's middle click: type its count)
+    callback rating-middle(int);
     callback copy();
     callback paste();
     callback chosen(int);
@@ -84,6 +86,8 @@ export component ManageRatingsWindow inherits Window {
                                 root.rating-clicked(i, true, self.mouse-x / self.width);
                             } else if (event.button == PointerEventButton.right) {
                                 root.rating-clicked(i, false, 0);
+                            } else if (event.button == PointerEventButton.middle && row.kind == 2) {
+                                root.rating-middle(i);
                             }
                         }
                     }

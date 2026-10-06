@@ -293,6 +293,14 @@ impl RatingsEditor {
         };
     }
 
+    /// An inc/dec control's count, to edit (none: not an inc/dec control).
+    pub fn count(&self, row: usize) -> Option<i64> {
+        match self.rows.get(row)?.now {
+            State::IncDec { value, .. } => Some(value),
+            _ => None,
+        }
+    }
+
     /// A count typed for an inc/dec control (its middle click).
     pub fn set_count(&mut self, row: usize, value: i64) {
         if let Some(row) = self.rows.get_mut(row)

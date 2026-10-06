@@ -14,6 +14,15 @@ pub fn clear(conn: &Connection) -> Result<()> {
     Ok(())
 }
 
+/// Delete the viewing records of these files only (the thumbnail menu's
+/// manage > viewing stats > clear).
+pub fn clear_files(conn: &Connection, files: &[hydrus_core::HashId]) -> Result<usize> {
+    Ok(conn.execute(
+        "DELETE FROM file_viewing_stats WHERE hash_id IN rarray(?1)",
+        [crate::master::id_array(files)],
+    )?)
+}
+
 /// Read the current rules at acceptance and cull both viewers atomically in the
 /// caller's writer transaction. Other canvas categories and timestamps survive.
 pub fn cull(conn: &Connection) -> Result<()> {

@@ -181,6 +181,8 @@ pub struct Store {
     snapshot: Arc<ArcSwap<Snapshot>>,
     claims: MediaClaims,
     migration_active: Arc<AtomicBool>,
+    /// This process's undoable content changes (the client's undo menu).
+    undo: std::sync::Mutex<crate::undo::UndoLog>,
 }
 
 impl Store {
@@ -219,6 +221,7 @@ impl Store {
             snapshot: Arc::new(ArcSwap::from_pointee(snapshot)),
             claims: MediaClaims::default(),
             migration_active: Arc::new(AtomicBool::new(false)),
+            undo: std::sync::Mutex::default(),
         }))
     }
 
@@ -327,6 +330,39 @@ impl Store {
 impl Store {
     /// Run content changes in one write: `f` gets a [`ContentWriter`] over
     /// the current snapshot, and derived data is flushed before commit.
+    /// This process's undo log.
+    pub fn undo_log(&self) -> std::sync::MutexGuard<'_, crate::undo::UndoLog> {
+        self.undo
+            .lock()
+            .unwrap_or_else(std::sync::PoisonError::into_inner)
+    }
+
+    /// Write `package` and record it for undoing.
+    pub fn write_undoable(&self, package: crate::undo::Package) -> Result<()> {
+        let written = package.clone();
+        self.write_content(move |w| written.apply(w))?;
+        self.undo_log().record(package);
+        Ok(())
+    }
+
+    /// Undo the latest recorded change (`Undo`); false if there was none.
+    pub fn undo(&self) -> Result<bool> {
+        let Some(package) = self.undo_log().undo() else {
+            return Ok(false);
+        };
+        self.write_content(move |w| package.apply(w))?;
+        Ok(true)
+    }
+
+    /// Redo the latest undone change (`Redo`); false if there was none.
+    pub fn redo(&self) -> Result<bool> {
+        let Some(package) = self.undo_log().redo() else {
+            return Ok(false);
+        };
+        self.write_content(move |w| package.apply(w))?;
+        Ok(true)
+    }
+
     pub fn write_content<R: Send + 'static>(
         &self,
         f: impl FnOnce(&mut ContentWriter<'_>) -> Result<R> + Send + 'static,

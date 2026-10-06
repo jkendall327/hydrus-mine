@@ -59,119 +59,81 @@ fn kept(entries: &[Value]) -> Vec<Value> {
         }
         let mut entry = entry.clone();
         if entry.get("menu").is_some_and(|menu| menu == "debug") {
-            let mut gui = entry["entries"]
-                .as_array()
-                .unwrap()
+            // the debug entries hydrus-rs has, in the recorded order
+            let label = |e: &Value| -> String {
+                e.as_str()
+                    .or_else(|| {
+                        e.get("check")
+                            .or_else(|| e.get("menu"))
+                            .and_then(Value::as_str)
+                    })
+                    .unwrap_or_default()
+                    .to_owned()
+            };
+            let keep: [(&str, &[&str]); 6] = [
+                ("debug modes", &["force idle mode"]),
+                ("profiling", &["what is this?"]),
+                (
+                    "gui actions",
+                    &[
+                        "close and reload current gui session",
+                        "make a long text popup",
+                        "make a modal popup in five seconds",
+                        "make a new page in five seconds",
+                        "make a non-cancellable modal popup in five seconds",
+                        "make a popup in five seconds",
+                        "make a QMessageBox",
+                        "make some popups",
+                        "reset multi-column list settings to default",
+                        "save 'last session' gui session",
+                    ],
+                ),
+                (
+                    "data actions",
+                    &[
+                        "flush log",
+                        "force database commit",
+                        "show env",
+                        "---",
+                        "simulate program exit signal",
+                    ],
+                ),
+                (
+                    "memory actions",
+                    &["clear all rendering caches", "clear thumbnail cache"],
+                ),
+                (
+                    "network actions",
+                    &["review current network jobs", "fetch a url"],
+                ),
+            ];
+            let submenus: Vec<Value> = keep
                 .iter()
-                .find(|e| e.get("menu").is_some_and(|name| name == "gui actions"))
-                .unwrap()
-                .clone();
-            let long_text = gui["entries"]
-                .as_array()
-                .unwrap()
-                .iter()
-                .find(|e| *e == "make a long text popup")
-                .unwrap()
-                .clone();
-            let delayed = gui["entries"]
-                .as_array()
-                .unwrap()
-                .iter()
-                .find(|e| *e == "make a popup in five seconds")
-                .unwrap()
-                .clone();
-            let recorded = gui["entries"].as_array().unwrap();
-            assert!(
-                recorded
-                    .iter()
-                    .position(|entry| entry == &long_text)
-                    .unwrap()
-                    < recorded.iter().position(|entry| entry == &delayed).unwrap()
-            );
-            let new_page = recorded
-                .iter()
-                .find(|entry| *entry == "make a new page in five seconds")
-                .unwrap()
-                .clone();
-            assert!(
-                recorded
-                    .iter()
-                    .position(|entry| entry == &long_text)
-                    .unwrap()
-                    < recorded
-                        .iter()
-                        .position(|entry| entry == &new_page)
+                .map(|(name, labels)| {
+                    let mut submenu = entry["entries"]
+                        .as_array()
                         .unwrap()
-            );
-            assert!(
-                recorded
-                    .iter()
-                    .position(|entry| entry == &new_page)
-                    .unwrap()
-                    < recorded.iter().position(|entry| entry == &delayed).unwrap()
-            );
-            let reload = recorded
-                .iter()
-                .find(|entry| *entry == "close and reload current gui session")
-                .unwrap()
-                .clone();
-            assert!(
-                recorded.iter().position(|entry| entry == &reload).unwrap()
-                    < recorded
                         .iter()
-                        .position(|entry| entry == &long_text)
+                        .find(|e| e.get("menu").is_some_and(|m| m == name))
+                        .unwrap_or_else(|| panic!("{name} recorded"))
+                        .clone();
+                    let kept: Vec<Value> = submenu["entries"]
+                        .as_array()
                         .unwrap()
-            );
-            gui["entries"] = serde_json::json!([reload, long_text, new_page, delayed]);
-            let mut memory = entry["entries"]
-                .as_array()
-                .unwrap()
-                .iter()
-                .find(|e| e.get("menu").is_some_and(|name| name == "memory actions"))
-                .unwrap()
-                .clone();
-            let clear = memory["entries"]
-                .as_array()
-                .unwrap()
-                .iter()
-                .find(|e| *e == "clear thumbnail cache")
-                .unwrap()
-                .clone();
-            memory["entries"] = serde_json::json!([clear]);
-            let mut modes = entry["entries"]
-                .as_array()
-                .unwrap()
-                .iter()
-                .find(|e| e.get("menu").is_some_and(|name| name == "debug modes"))
-                .unwrap()
-                .clone();
-            let force = modes["entries"]
-                .as_array()
-                .unwrap()
-                .iter()
-                .find(|e| e.get("check").is_some_and(|name| name == "force idle mode"))
-                .unwrap()
-                .clone();
-            modes["entries"] = serde_json::json!([force]);
-            let network = entry["entries"]
-                .as_array()
-                .unwrap()
-                .iter()
-                .find(|e| e.get("menu").is_some_and(|name| name == "network actions"))
-                .unwrap()
-                .clone();
-            let fetch = network["entries"]
-                .as_array()
-                .unwrap()
-                .iter()
-                .find(|e| *e == "fetch a url")
-                .unwrap()
-                .clone();
-            assert_eq!(
-                network["entries"],
-                serde_json::json!(["review current network jobs", fetch])
-            );
-            entry["entries"] = serde_json::json!([modes, gui, memory, network]);
+                        .iter()
+                        .filter(|e| labels.contains(&label(e).as_str()))
+                        .cloned()
+                        .collect();
+                    assert_eq!(
+                        kept.iter().filter(|e| *e != "---").count(),
+                        labels.iter().filter(|l| **l != "---").count(),
+                        "{name}"
+                    );
+                    submenu["entries"] = Value::Array(kept);
+                    submenu
+                })
+                .collect();
+            entry["entries"] = Value::Array(submenus);
         }
 
         if let Some(inner) = entry.get("entries").and_then(Value::as_array) {

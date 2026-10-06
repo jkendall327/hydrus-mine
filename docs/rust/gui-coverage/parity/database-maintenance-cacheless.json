@@ -1,0 +1,144 @@
+{
+  "schema_version": 1,
+  "agent": "database-maintenance-cacheless",
+  "note": "Cheap-validation implementation proposal (2026-10-05 breadth pass): strict backend/model Clippy and targeted model tests; native GUI compile/render review deferred to the final validation pass.",
+  "proposed_completed_count": 8,
+  "claims": [
+    {
+      "id": "audit-media-menu-database-check-and-repair-repopulate-truncated-mappings-tables",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "countAsCompletedLeaf": true,
+      "behavior": "Database menu's remaining regenerate/check and repair/db maintenance entries ask the reference's recorded questions (and Which service? over all services or repositories where it asks), then report the reference's popups for a client with nothing to fix.",
+      "source": [
+        "crates/hydrus-gui-model/src/database_maintenance.rs",
+        "crates/hydrus-gui/src/database_maintenance_window.rs"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/database_maintenance.rs"
+      ],
+      "limits": [
+        "The native store keeps none of these caches, so the jobs have no work; their outcomes are the reference's on a healthy client."
+      ]
+    },
+    {
+      "id": "audit-media-menu-database-check-and-repair-resync-combined-deleted-files",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "countAsCompletedLeaf": true,
+      "behavior": "Database menu's remaining regenerate/check and repair/db maintenance entries ask the reference's recorded questions (and Which service? over all services or repositories where it asks), then report the reference's popups for a client with nothing to fix.",
+      "source": [
+        "crates/hydrus-gui-model/src/database_maintenance.rs",
+        "crates/hydrus-gui/src/database_maintenance_window.rs"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/database_maintenance.rs"
+      ],
+      "limits": [
+        "The native store keeps none of these caches, so the jobs have no work; their outcomes are the reference's on a healthy client."
+      ]
+    },
+    {
+      "id": "audit-media-menu-database-clear-orphan-hashed-serialisables",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "countAsCompletedLeaf": true,
+      "behavior": "Database menu's remaining regenerate/check and repair/db maintenance entries ask the reference's recorded questions (and Which service? over all services or repositories where it asks), then report the reference's popups for a client with nothing to fix.",
+      "source": [
+        "crates/hydrus-gui-model/src/database_maintenance.rs",
+        "crates/hydrus-gui/src/database_maintenance_window.rs"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/database_maintenance.rs"
+      ],
+      "limits": [
+        "The native store keeps none of these caches, so the jobs have no work; their outcomes are the reference's on a healthy client."
+      ]
+    },
+    {
+      "id": "audit-media-menu-database-regenerate-local-hashes-cache",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "countAsCompletedLeaf": true,
+      "behavior": "Database menu's remaining regenerate/check and repair/db maintenance entries ask the reference's recorded questions (and Which service? over all services or repositories where it asks), then report the reference's popups for a client with nothing to fix.",
+      "source": [
+        "crates/hydrus-gui-model/src/database_maintenance.rs",
+        "crates/hydrus-gui/src/database_maintenance_window.rs"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/database_maintenance.rs"
+      ],
+      "limits": [
+        "The native store keeps none of these caches, so the jobs have no work; their outcomes are the reference's on a healthy client."
+      ]
+    },
+    {
+      "id": "audit-media-menu-database-regenerate-local-tags-cache",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "countAsCompletedLeaf": true,
+      "behavior": "Database menu's remaining regenerate/check and repair/db maintenance entries ask the reference's recorded questions (and Which service? over all services or repositories where it asks), then report the reference's popups for a client with nothing to fix.",
+      "source": [
+        "crates/hydrus-gui-model/src/database_maintenance.rs",
+        "crates/hydrus-gui/src/database_maintenance_window.rs"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/database_maintenance.rs"
+      ],
+      "limits": [
+        "The native store keeps none of these caches, so the jobs have no work; their outcomes are the reference's on a healthy client."
+      ]
+    },
+    {
+      "id": "audit-media-menu-database-regenerate-service-info-numbers",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "countAsCompletedLeaf": true,
+      "behavior": "Database menu's remaining regenerate/check and repair/db maintenance entries ask the reference's recorded questions (and Which service? over all services or repositories where it asks), then report the reference's popups for a client with nothing to fix.",
+      "source": [
+        "crates/hydrus-gui-model/src/database_maintenance.rs",
+        "crates/hydrus-gui/src/database_maintenance_window.rs"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/database_maintenance.rs"
+      ],
+      "limits": [
+        "The native store keeps none of these caches, so the jobs have no work; their outcomes are the reference's on a healthy client."
+      ]
+    },
+    {
+      "id": "audit-media-menu-database-regenerate-similar-files-search-tree",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "countAsCompletedLeaf": true,
+      "behavior": "Database menu's remaining regenerate/check and repair/db maintenance entries ask the reference's recorded questions (and Which service? over all services or repositories where it asks), then report the reference's popups for a client with nothing to fix.",
+      "source": [
+        "crates/hydrus-gui-model/src/database_maintenance.rs",
+        "crates/hydrus-gui/src/database_maintenance_window.rs"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/database_maintenance.rs"
+      ],
+      "limits": [
+        "The native store keeps none of these caches, so the jobs have no work; their outcomes are the reference's on a healthy client."
+      ]
+    },
+    {
+      "id": "audit-media-menu-database-regenerate-total-pending-count-in-the-pending-menu",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "countAsCompletedLeaf": true,
+      "behavior": "Database menu's remaining regenerate/check and repair/db maintenance entries ask the reference's recorded questions (and Which service? over all services or repositories where it asks), then report the reference's popups for a client with nothing to fix.",
+      "source": [
+        "crates/hydrus-gui-model/src/database_maintenance.rs",
+        "crates/hydrus-gui/src/database_maintenance_window.rs"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/database_maintenance.rs"
+      ],
+      "limits": [
+        "The native store keeps none of these caches, so the jobs have no work; their outcomes are the reference's on a healthy client."
+      ]
+    }
+  ]
+}

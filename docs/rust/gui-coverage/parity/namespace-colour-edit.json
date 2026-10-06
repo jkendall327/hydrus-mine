@@ -1,0 +1,44 @@
+{
+  "schema_version": 1,
+  "agent": "namespace-colour-edit",
+  "note": "Cheap-validation implementation proposal (2026-10-05 breadth pass): strict backend/model Clippy and targeted model tests; native GUI compile/render review deferred to the final validation pass.",
+  "proposed_completed_count": 2,
+  "claims": [
+    {
+      "id": "audit-options-tag-presentation-namespace-colours-edit",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "countAsCompletedLeaf": true,
+      "behavior": "Options namespace colours edit: each selected entry (defaults included) opens the colour picker in turn, OK recolours it in the Options draft, Cancel keeps it.",
+      "source": [
+        "crates/hydrus-gui-model/src/namespace_colours.rs",
+        "crates/hydrus-gui/src/options_namespace_colours.rs",
+        "crates/hydrus-gui/ui/namespace_colours.slint"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/namespace_colours.rs::edit_recolours_each_selected_entry_in_place"
+      ],
+      "limits": [
+        "Native RGB spin picker rather than QColorDialog."
+      ]
+    },
+    {
+      "id": "audit-options-tag-presentation-namespace-colours-namespace-colours-editor",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "countAsCompletedLeaf": true,
+      "behavior": "Options namespace colours edit: each selected entry (defaults included) opens the colour picker in turn, OK recolours it in the Options draft, Cancel keeps it.",
+      "source": [
+        "crates/hydrus-gui-model/src/namespace_colours.rs",
+        "crates/hydrus-gui/src/options_namespace_colours.rs",
+        "crates/hydrus-gui/ui/namespace_colours.slint"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/namespace_colours.rs::edit_recolours_each_selected_entry_in_place"
+      ],
+      "limits": [
+        "Native RGB spin picker rather than QColorDialog."
+      ]
+    }
+  ]
+}

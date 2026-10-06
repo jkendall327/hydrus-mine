@@ -541,8 +541,33 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
             .copied()
             .flatten()
             .and_then(|seconds| u64::try_from(seconds).ok());
+        if let Some(&percent) = options.integers.get("system_busy_cpu_percent") {
+            idle.busy_cpu_percent = u32::try_from(percent).unwrap_or(50);
+        }
+        if let Some(&count) = options.noneable_integers.get("system_busy_cpu_count") {
+            idle.busy_cpu_count = count.and_then(|n| u32::try_from(n).ok());
+        }
     }
     insert_setting(&mut input, &idle)?;
+    let mut shutdown = crate::settings::ShutdownWork::default();
+    if let Some(action) = legacy_options
+        .get("idle_shutdown")
+        .and_then(hydrus_legacy::objects::YamlValue::as_i64)
+    {
+        shutdown.action = u8::try_from(action).unwrap_or(2);
+    }
+    if let Some(minutes) = legacy_options
+        .get("idle_shutdown_max_minutes")
+        .and_then(hydrus_legacy::objects::YamlValue::as_i64)
+    {
+        shutdown.max_minutes = u32::try_from(minutes).unwrap_or(5);
+    }
+    if let Some(options) = &options
+        && let Some(&period) = options.integers.get("shutdown_work_period")
+    {
+        shutdown.period_seconds = u64::try_from(period).unwrap_or(86_400);
+    }
+    insert_setting(&mut input, &shutdown)?;
     let mut backups = crate::session_backups::SessionBackupSettings::default();
     if let Some(options) = &options
         && let Some(value) = options.integers.get("number_of_gui_session_backups")
@@ -989,6 +1014,18 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
         }
     }
     insert_setting(&mut input, &shortcuts)?;
+    if let Some(options) = &options {
+        insert_setting(
+            &mut input,
+            &crate::reference_options::ReferenceOptions::import(
+                &options.booleans,
+                &options.integers,
+                &options.strings,
+                &options.noneable_strings,
+                &options.string_lists,
+            ),
+        )?;
+    }
     let mut thumbnail_cache = crate::settings::ThumbnailCacheSettings::default();
     if let Some(options) = &options {
         if let Some(&n) = options.integers.get("thumbnail_cache_size") {
@@ -1606,6 +1643,28 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
             .get("maintain_similar_files_duplicate_pairs_during_idle")
         {
             similar.during_idle = b;
+        }
+        for (key, field) in [
+            (
+                "potential_duplicates_search_work_time_ms_active",
+                &mut similar.work_time_ms_active,
+            ),
+            (
+                "potential_duplicates_search_work_time_ms_idle",
+                &mut similar.work_time_ms_idle,
+            ),
+            (
+                "potential_duplicates_search_rest_percentage_active",
+                &mut similar.rest_percentage_active,
+            ),
+            (
+                "potential_duplicates_search_rest_percentage_idle",
+                &mut similar.rest_percentage_idle,
+            ),
+        ] {
+            if let Some(&n) = options.integers.get(key) {
+                *field = u32::try_from(n).unwrap_or(0);
+            }
         }
         insert_setting(&mut input, &similar)?;
         let mut auto = crate::duplicates::auto::AutoResolutionSettings::default();

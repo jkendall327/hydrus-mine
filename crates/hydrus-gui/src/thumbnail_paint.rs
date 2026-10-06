@@ -9,7 +9,7 @@ use slint::{Brush, Color};
 
 use crate::{Thumbnail, ThumbnailPaint};
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Default, Debug, Clone, PartialEq)]
 pub struct Palette {
     pub fill: Brush,
     pub selected_fill: Brush,
@@ -23,24 +23,6 @@ pub struct Palette {
     pub text: Brush,
     pub grid: Brush,
     pub banners: [Color; 4],
-}
-impl Default for Palette {
-    fn default() -> Self {
-        Self {
-            fill: Brush::default(),
-            selected_fill: Brush::default(),
-            remote_fill: Brush::default(),
-            remote_selected_fill: Brush::default(),
-            border: Brush::default(),
-            selected_border: Brush::default(),
-            remote_border: Brush::default(),
-            remote_selected_border: Brush::default(),
-            window: Brush::default(),
-            text: Brush::default(),
-            grid: Brush::default(),
-            banners: [Color::default(); 4],
-        }
-    }
 }
 impl Palette {
     pub fn paint(&self, thumbnail: &Thumbnail, border: i32, local: bool) -> ThumbnailPaint {
@@ -103,6 +85,7 @@ impl Paints {
     pub fn retain(&mut self, visible: &BTreeSet<HashId>) {
         self.frames.retain(|id, _| visible.contains(id));
     }
+    #[allow(clippy::too_many_arguments)]
     pub fn decorate(
         &mut self,
         id: HashId,

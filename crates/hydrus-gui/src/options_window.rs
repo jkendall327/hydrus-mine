@@ -433,6 +433,9 @@ fn option_row(row: &Row<'_>, store: &Store, sessions: &[(Option<String>, String)
                 (Kind::FrameLocations, Value::FrameLocations(_)) => {
                     out.kind = 26;
                 }
+                (Kind::MediaViews, Value::MediaViews(_)) => {
+                    out.kind = 38;
+                }
                 (Kind::RegexFavourites, Value::RegexFavourites(_)) => {
                     out.kind = 14;
                     out.text = "edit regex favourites".into();
@@ -524,8 +527,10 @@ pub(crate) fn open(
     let colour_list =
         crate::options_namespace_colours::bind(&window, &editor, &active, colour_slot);
     let frame_table = crate::options_frames::bind(&window, &editor, &active, frame_slot);
+    let media_views = crate::options_media_views::bind(&window, &editor, &active);
     let shortcuts = crate::shortcut_windows::bind(
         &window,
+        store,
         &editor,
         &active,
         Rc::new({
@@ -705,6 +710,7 @@ pub(crate) fn open(
     crate::sidebar_context_cog::bind_options(&window, &editor, store, &active, show_page.clone());
     (reason_queue.show)();
     (frame_table.show)();
+    (media_views.show)();
     (external_table.show)();
     let close = {
         let weak = window.as_weak();
@@ -723,6 +729,7 @@ pub(crate) fn open(
         let cancel_colours = colour_list.cancel.clone();
         let cancel_reasons = reason_queue.cancel.clone();
         let cancel_frames = frame_table.cancel.clone();
+        let cancel_media_views = media_views.cancel.clone();
         let cancel_routing = routing_table.cancel.clone();
         let cancel_external = external_table.cancel.clone();
         let cancel_shortcuts = shortcuts.cancel.clone();
@@ -731,6 +738,7 @@ pub(crate) fn open(
                 return;
             }
             cancel_shortcuts();
+            cancel_media_views();
             let child = tag_slot
                 .borrow()
                 .as_ref()

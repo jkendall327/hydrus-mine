@@ -1,0 +1,38 @@
+// A single number to edit (the reference's `EditSingleCtrlPanel` with a
+// spin box in an "edit value" dialog), as an inc/dec rating's middle click
+// opens it.
+
+import { Button, SpinBox } from "std-widgets.slint";
+import { Theme } from "theme.slint";
+
+export component EditValueWindow inherits Window {
+    in property <string> window-title: "edit value";
+    title: root.window-title;
+    background: Theme.window;
+    in-out property <int> value;
+    in property <int> minimum: 0;
+    in property <int> maximum: 1000000;
+    callback apply();
+    callback cancel();
+    VerticalLayout {
+        padding: 8px;
+        spacing: 6px;
+        SpinBox {
+            minimum: root.minimum;
+            maximum: root.maximum;
+            value <=> root.value;
+        }
+        HorizontalLayout {
+            alignment: end;
+            spacing: 6px;
+            Button {
+                text: "apply";
+                clicked => { root.apply(); }
+            }
+            Button {
+                text: "cancel";
+                clicked => { root.cancel(); }
+            }
+        }
+    }
+}

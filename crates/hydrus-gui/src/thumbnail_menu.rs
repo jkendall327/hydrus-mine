@@ -74,6 +74,10 @@ pub enum Action {
     ManageTimes,
     /// Force the selected files' filetype (the file shown's).
     ForceFiletype,
+    /// Run or schedule a file maintenance job on the selected files.
+    Regenerate(hydrus_store::file_maintenance::JobType),
+    /// Clear the selected files' viewing records.
+    ClearViewingStats,
     /// The focused file's embedded metadata window.
     EmbeddedMetadata,
     /// The selected files' URLs (the focused file's, in the viewer).
@@ -109,10 +113,14 @@ pub enum Action {
     OpenUrls(Urls),
     CopyUrls(Urls),
     UrlPage(Urls),
+    /// Download some URLs again with metadata fetched even for known files.
+    Refetch(Urls),
     /// Move the selected thumbnails (`SIMPLE_REARRANGE_THUMBNAILS`).
     Rearrange(Rearrange),
     /// One of the media viewer's own entries.
     Viewer(crate::viewer_menu::ViewerAction),
+    /// A manage > file relationships entry.
+    Relationship(hydrus_gui_model::file_relationships::Act),
 }
 
 /// Where rearranging moves the selected thumbnails (`MOVE_HOME`,
@@ -214,6 +222,8 @@ pub enum Urls {
     Focused,
     Class(u16),
     Selection,
+    /// The focused file's URLs of one of its classes.
+    FocusClass(u16),
 }
 
 /// A kind of hash the share menu copies.
@@ -637,6 +647,12 @@ pub fn open_menu(store: &Store, focused: Option<HashId>, num_selected: usize) ->
 
 /// The sha256 hashes of those of `files` with perceptual hashes (still
 /// images), in their order.
+/// Whether a file can be searched for similar files (it has a perceptual
+/// hash: `FILES_THAT_HAVE_PERCEPTUAL_HASH`).
+pub fn can_be_searched(store: &Store, file: HashId) -> bool {
+    !perceptual_hashed(store, &[file]).is_empty()
+}
+
 fn perceptual_hashed(store: &Store, files: &[HashId]) -> Vec<hydrus_core::Sha256> {
     let Ok(basic) = store.read(|c| hydrus_store::media::load_basic(c, files)) else {
         return Vec::new();
@@ -705,6 +721,10 @@ pub struct UrlFacts {
     pub classes: Vec<String>,
     /// Whether the selection has URLs of no class, or of several classes.
     pub mixed: bool,
+    /// The focused file's URL classes' names, sorted.
+    pub focus_classes: Vec<String>,
+    /// How many files are selected.
+    pub selected: usize,
 }
 
 /// Each of `files`' URLs.
@@ -742,6 +762,9 @@ pub fn url_facts(store: &Store, focused: Option<HashId>, selected: &[HashId]) ->
         }
         matched.sort();
         unmatched.sort();
+        let mut focus_classes: Vec<String> = urls_classes(&matched, &class_of);
+        focus_classes.dedup();
+        facts.focus_classes = focus_classes;
         facts.matched = matched.len();
         facts.focus = matched;
         facts
@@ -761,7 +784,21 @@ pub fn url_facts(store: &Store, focused: Option<HashId>, selected: &[HashId]) ->
     }
     facts.mixed |= seen.len() > 1;
     facts.classes = seen.into_iter().collect();
+    facts.selected = selected.len();
     facts
+}
+
+/// The classes of matched URLs (label, url), sorted.
+fn urls_classes(
+    matched: &[(String, String)],
+    class_of: &dyn Fn(&str) -> Option<String>,
+) -> Vec<String> {
+    let mut classes: Vec<String> = matched
+        .iter()
+        .filter_map(|(_, url)| class_of(url))
+        .collect();
+    classes.sort();
+    classes
 }
 
 /// The most of a list a menu shows (`SpamItems`' `MAX_TO_SHOW`).
@@ -798,8 +835,94 @@ pub fn manage_menu(services: &ServiceRegistry, notes: usize) -> Vec<Entry> {
     entries
 }
 
-/// The urls menu (`AddKnownURLsViewCopyMenu`), less forcing a metadata
-/// refetch: manage, then, if there are URLs to offer, the focused file's
+/// The thumbnail menu's manage > maintenance (each file maintenance job)
+/// and viewing stats (clear) submenus.
+pub fn maintenance_entries() -> Vec<Entry> {
+    use hydrus_gui_model::thumbnail_maintenance::HUMAN_ORDER;
+    vec![
+        Entry::Menu(
+            "maintenance".into(),
+            HUMAN_ORDER
+                .iter()
+                .map(|&job| Entry::Item(job.description().into(), Action::Regenerate(job)))
+                .collect(),
+        ),
+        Entry::Menu(
+            "viewing stats".into(),
+            vec![Entry::Item("clear".into(), Action::ClearViewingStats)],
+        ),
+    ]
+}
+
+/// The manage > "file relationships" submenu of `menu` (hydrus-gui-model's
+/// `file_relationships`): its runs between separators and its submenus.
+pub fn relationships_entry(menu: &hydrus_gui_model::file_relationships::Menu) -> Entry {
+    let item = |(label, act): &(String, hydrus_gui_model::file_relationships::Act)| match act {
+        hydrus_gui_model::file_relationships::Act::Label => Entry::Label(label.clone()),
+        act => Entry::Item(label.clone(), Action::Relationship(*act)),
+    };
+    let runs = |runs: &[Vec<(String, hydrus_gui_model::file_relationships::Act)>]| {
+        let mut out = Vec::new();
+        for run in runs.iter().filter(|r| !r.is_empty()) {
+            separate(&mut out);
+            out.extend(run.iter().map(item));
+        }
+        out
+    };
+    let mut entries = runs(&menu.before);
+    if !menu.merge.is_empty() {
+        separate(&mut entries);
+        entries.push(Entry::Menu(
+            "edit default duplicate metadata merge options".into(),
+            menu.merge.iter().map(item).collect(),
+        ));
+    }
+    let after = runs(&menu.after);
+    if !after.is_empty() {
+        separate(&mut entries);
+        entries.extend(after);
+    }
+    separate(&mut entries);
+    for (title, inner) in [
+        (
+            "remove for this file",
+            menu.remove_one.iter().map(item).collect(),
+        ),
+        ("reset for this file", runs(&menu.reset_one)),
+        (
+            "remove for all selected",
+            menu.remove_all.iter().map(item).collect(),
+        ),
+        ("advanced: reset for all selected", runs(&menu.reset_all)),
+    ] {
+        if !inner.is_empty() {
+            entries.push(Entry::Menu(title.into(), inner));
+        }
+    }
+    while entries.last() == Some(&Entry::Separator) {
+        entries.pop();
+    }
+    Entry::Menu("file relationships".into(), entries)
+}
+
+/// Put `relationships` into the manage submenu of `entries`, before its
+/// maintenance submenu, as the reference orders them.
+pub fn add_relationships(entries: &mut [Entry], relationships: Entry) {
+    for entry in entries.iter_mut() {
+        if let Entry::Menu(title, inner) = entry
+            && title == "manage"
+        {
+            let at = inner
+                .iter()
+                .position(|e| matches!(e, Entry::Menu(t, _) if t == "maintenance"))
+                .unwrap_or(inner.len());
+            inner.insert(at, relationships);
+            return;
+        }
+    }
+}
+
+/// The urls menu (`AddKnownURLsViewCopyMenu`): manage, then, if there are URLs to offer, the focused file's
 /// URLs and the selection's, to open in the web browser, open a page of
 /// the files that have them, or copy.
 pub fn urls_menu(facts: &UrlFacts) -> Entry {
@@ -877,11 +1000,40 @@ pub fn urls_menu(facts: &UrlFacts) -> Entry {
             Urls::Selection,
         );
     }
+    // force metadata refetch: the focused file's classes, then (with
+    // several selected) the selection's
+    let index = |i: usize| u16::try_from(i).unwrap_or(u16::MAX);
+    let mut refetch: Vec<Entry> = facts
+        .focus_classes
+        .iter()
+        .enumerate()
+        .map(|(i, class)| {
+            Entry::Item(
+                format!("this file's {class} urls"),
+                Action::Refetch(Urls::FocusClass(index(i))),
+            )
+        })
+        .collect();
+    if facts.selected > 1 {
+        separate(&mut refetch);
+        refetch.extend(facts.classes.iter().enumerate().map(|(i, class)| {
+            Entry::Item(
+                format!("these files' {class} urls"),
+                Action::Refetch(Urls::Class(index(i))),
+            )
+        }));
+    }
+    while refetch.last() == Some(&Entry::Separator) {
+        refetch.pop();
+    }
     let mut inner = vec![manage, Entry::Menu("open in browser".into(), visit)];
     if !facts.focus.is_empty() {
         inner.push(Entry::Menu("open in a new page".into(), pages));
     }
     inner.push(Entry::Menu("copy".into(), copy));
+    if !refetch.is_empty() {
+        inner.push(Entry::Menu("force metadata refetch".into(), refetch));
+    }
     Entry::Menu("urls".into(), inner)
 }
 
@@ -920,8 +1072,30 @@ pub fn urls_for(store: &Store, facts: &UrlFacts, which: Urls, selected: &[HashId
                 file_urls(store, selected).into_values().flatten().collect();
             urls.into_iter().collect()
         }
+        Urls::FocusClass(i) => {
+            let Some(name) = facts.focus_classes.get(usize::from(i)) else {
+                return Vec::new();
+            };
+            let classes = &store.snapshot().url_classes;
+            let urls: BTreeSet<String> = focus(0..facts.matched)
+                .into_iter()
+                .filter(|url| classes.class_for(url).is_some_and(|c| c.name == *name))
+                .collect();
+            urls.into_iter().collect()
+        }
     }
 }
+
+/// The question before a forced metadata refetch
+/// (`RedownloadURLClassURLsForceRefetch`).
+pub fn refetch_question(count: usize, class: &str) -> String {
+    format!(
+        "Open a new search page and force metadata redownload for {count} \"{class}\" URLs? This is inefficient and should only be done to fill in known gaps in one-time jobs.\n\nDO NOT USE THIS TO RECHECK TEN THOUSAND URLS EVERY MONTH JUST FOR MAYBE A FEW NEW TAGS."
+    )
+}
+
+/// The page a forced refetch's URLs go to (`RedownloadURLsForceFetch`).
+pub const REFETCH_PAGE_NAME: &str = "forced urls downloader";
 
 /// The search for the files that have a urls menu entry's URLs: one, or
 /// any of the focused file's (a page of them is "url search", on all my
@@ -1173,10 +1347,11 @@ pub fn menu(
     }
     separate(&mut entries);
     if num_selected > 0 {
-        entries.push(Entry::Menu(
-            "manage".into(),
-            manage_menu(services, notes.unwrap_or(0)),
-        ));
+        entries.push(Entry::Menu("manage".into(), {
+            let mut manage = manage_menu(services, notes.unwrap_or(0));
+            manage.extend(maintenance_entries());
+            manage
+        }));
         if let Some(locations) = local_transfer_menu(services, &roles, &chosen) {
             entries.push(locations);
         }
@@ -1293,10 +1468,114 @@ pub struct Slots {
     /// Deleting physically and undeleting.
     pub trash: Vec<SlotItem>,
     pub manage: Vec<SlotItem>,
+    /// The manage menu's submenus (maintenance, viewing stats, file
+    /// relationships).
+    pub manage_menus: Vec<Entry>,
     pub locations: Vec<Entry>,
     pub urls: Option<UrlsSlots>,
     pub open: Option<OpenSlots>,
     pub share: Option<ShareSlots>,
+}
+
+/// The manage menu's submenus in the template: maintenance's and viewing
+/// stats' items, and file relationships' parts.
+#[derive(Debug, Clone, Default, PartialEq, Eq)]
+pub struct ManageMenus {
+    pub maintenance: Vec<SlotItem>,
+    pub viewing: Vec<SlotItem>,
+    pub relationships: Option<RelationshipSlots>,
+}
+
+/// The file relationships submenu in the template: the runs before the
+/// merge options submenu, that submenu, the run after it, and the remove
+/// and reset submenus (theirs between separators).
+#[derive(Debug, Clone, Default, PartialEq, Eq)]
+pub struct RelationshipSlots {
+    pub before: Vec<Vec<SlotItem>>,
+    pub merge: Vec<SlotItem>,
+    pub after: Vec<SlotItem>,
+    pub remove_one: Vec<SlotItem>,
+    pub reset_one: Vec<Vec<SlotItem>>,
+    pub remove_all: Vec<SlotItem>,
+    pub reset_all: Vec<Vec<SlotItem>>,
+}
+
+/// An item or label as a slot item (a label copies itself).
+fn slot_item(entry: &Entry) -> Option<SlotItem> {
+    match entry {
+        Entry::Item(label, action) => Some((label.clone(), *action)),
+        Entry::Label(label) => Some((label.clone(), Action::Copy)),
+        _ => None,
+    }
+}
+
+/// A submenu's runs between separators, labels kept.
+fn runs(entries: &[Entry]) -> Vec<Vec<SlotItem>> {
+    let mut out = vec![Vec::new()];
+    for entry in entries {
+        if *entry == Entry::Separator {
+            out.push(Vec::new());
+        } else if let (Some(item), Some(run)) = (slot_item(entry), out.last_mut()) {
+            run.push(item);
+        }
+    }
+    out.retain(|run| !run.is_empty());
+    out
+}
+
+impl ManageMenus {
+    pub fn new(menus: &[Entry]) -> Self {
+        let mut out = Self::default();
+        for menu in menus {
+            let Entry::Menu(title, inner) = menu else {
+                continue;
+            };
+            match title.as_str() {
+                "maintenance" => out.maintenance = items(inner),
+                "viewing stats" => out.viewing = items(inner),
+                "file relationships" => out.relationships = Some(RelationshipSlots::new(inner)),
+                _ => {}
+            }
+        }
+        out
+    }
+}
+
+impl RelationshipSlots {
+    fn new(entries: &[Entry]) -> Self {
+        let mut out = Self::default();
+        let mut run: Vec<Entry> = Vec::new();
+        let mut merged = false;
+        let flush = |run: &mut Vec<Entry>, out: &mut Self, merged: bool| {
+            if merged {
+                out.after.extend(run.iter().filter_map(slot_item));
+            } else {
+                out.before.extend(runs(run));
+            }
+            run.clear();
+        };
+        for entry in entries {
+            match entry {
+                Entry::Menu(title, inner) => {
+                    flush(&mut run, &mut out, merged);
+                    let flat = || inner.iter().filter_map(slot_item).collect::<Vec<_>>();
+                    match title.as_str() {
+                        "edit default duplicate metadata merge options" => {
+                            out.merge = flat();
+                            merged = true;
+                        }
+                        "remove for this file" => out.remove_one = flat(),
+                        "reset for this file" => out.reset_one = runs(inner),
+                        "remove for all selected" => out.remove_all = flat(),
+                        _ => out.reset_all = runs(inner),
+                    }
+                }
+                other => run.push(other.clone()),
+            }
+        }
+        flush(&mut run, &mut out, merged);
+        out
+    }
 }
 
 /// The urls menu in the template: manage, then, if there are URLs to
@@ -1308,6 +1587,7 @@ pub struct UrlsSlots {
     pub visit: Vec<Vec<SlotItem>>,
     pub pages: Option<Vec<Vec<SlotItem>>>,
     pub copy: Vec<Vec<SlotItem>>,
+    pub refetch: Vec<Vec<SlotItem>>,
 }
 
 impl UrlsSlots {
@@ -1319,6 +1599,7 @@ impl UrlsSlots {
                 match title.as_str() {
                     "open in browser" => urls.visit = groups(sub),
                     "open in a new page" => urls.pages = Some(groups(sub)),
+                    "force metadata refetch" => urls.refetch = groups(sub),
                     _ => urls.copy = groups(sub),
                 }
             }
@@ -1336,6 +1617,9 @@ impl UrlsSlots {
                     .map(|pages| group_menu("open in a new page", pages)),
             );
             inner.push(group_menu("copy", &self.copy));
+            if !self.refetch.is_empty() {
+                inner.push(group_menu("force metadata refetch", &self.refetch));
+            }
         }
         Entry::Menu("urls".into(), inner)
     }
@@ -1662,7 +1946,14 @@ impl Slots {
                     "select" => slots.select = groups(inner),
                     "remove" => slots.remove = groups(inner),
                     "rearrange" => slots.rearrange = items(inner),
-                    "manage" => slots.manage = items(inner),
+                    "manage" => {
+                        slots.manage = items(inner);
+                        slots.manage_menus = inner
+                            .iter()
+                            .filter(|e| matches!(e, Entry::Menu(..)))
+                            .cloned()
+                            .collect();
+                    }
                     "locations" => slots.locations.clone_from(inner),
                     "urls" => slots.urls = Some(UrlsSlots::new(inner)),
                     "open" => slots.open = Some(OpenSlots::new(inner)),
@@ -1736,10 +2027,9 @@ impl Slots {
         out.extend(self.trash.iter().map(item));
         separate(&mut out);
         if !self.manage.is_empty() {
-            out.push(Entry::Menu(
-                "manage".into(),
-                self.manage.iter().map(item).collect(),
-            ));
+            let mut manage: Vec<Entry> = self.manage.iter().map(item).collect();
+            manage.extend(self.manage_menus.iter().cloned());
+            out.push(Entry::Menu("manage".into(), manage));
         }
         if !self.locations.is_empty() {
             out.push(Entry::Menu("locations".into(), self.locations.clone()));
@@ -1887,6 +2177,7 @@ mod tests {
             matched: 2,
             classes: vec!["booru".into(), "gallery".into()],
             mixed: true,
+            ..UrlFacts::default()
         };
         let Entry::Menu(title, mut inner) = urls_menu(&facts) else {
             panic!("a menu");
@@ -1943,6 +2234,7 @@ mod tests {
             matched: 1,
             classes: vec!["booru".into()],
             mixed: false,
+            ..UrlFacts::default()
         };
         let Entry::Menu(_, inner) = urls_menu(&one) else {
             panic!()
@@ -1953,6 +2245,29 @@ mod tests {
         assert_eq!(
             titles(visit),
             ["booru: https://a/1", "---", "these files' booru urls"]
+        );
+        // force metadata refetch: the focused file's classes, then the
+        // selection's when several are selected
+        let refetching = UrlFacts {
+            focus_classes: vec!["booru".into()],
+            selected: 2,
+            ..facts.clone()
+        };
+        let Entry::Menu(_, inner) = urls_menu(&refetching) else {
+            panic!()
+        };
+        let Some(Entry::Menu(title, refetch)) = inner.last() else {
+            panic!()
+        };
+        assert_eq!(title, "force metadata refetch");
+        assert_eq!(
+            titles(refetch),
+            [
+                "this file's booru urls",
+                "---",
+                "these files' booru urls",
+                "these files' gallery urls"
+            ]
         );
         // nothing to offer: manage alone
         assert_eq!(

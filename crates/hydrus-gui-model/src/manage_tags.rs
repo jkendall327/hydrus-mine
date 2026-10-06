@@ -686,8 +686,9 @@ impl ManageTags {
                 }
             }
         }
-        self.store.write_content(move |w| {
+        let recorded = self.store.write_content(move |w| {
             let now = hydrus_core::time::TimestampMs::now().0;
+            let mut recorded = Vec::new();
             for (service, tag, add, files) in &changes {
                 let tag = Tag::new(tag).expect("cleaned when entered");
                 let id = hydrus_store::master::intern_tag(w.conn(), &tag)?;
@@ -697,6 +698,16 @@ impl ManageTags {
                     MappingAction::Delete
                 };
                 w.update_mappings(*service, &action, id, files)?;
+                recorded.push(hydrus_store::undo::Change::Mappings {
+                    service: *service,
+                    change: if *add {
+                        hydrus_store::undo::MappingChange::Add
+                    } else {
+                        hydrus_store::undo::MappingChange::Delete
+                    },
+                    tag: id,
+                    files: files.clone(),
+                });
                 if *add {
                     let preferences: hydrus_store::settings::TagSuggestionSettings = hydrus_store::settings::get(w.conn())?;
                     if preferences.recent_limit.is_some() {
@@ -704,8 +715,12 @@ impl ManageTags {
                     }
                 }
             }
-            Ok(())
-        })
+            Ok(recorded)
+        })?;
+        self.store
+            .undo_log()
+            .record(hydrus_store::undo::Package(recorded));
+        Ok(())
     }
 
     pub fn text(&self) -> &str {

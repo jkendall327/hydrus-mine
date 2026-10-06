@@ -11,9 +11,11 @@ import { FrameLocationsTable } from "frame_locations.slint";
 
 import { GuiColoursets, GuiColourRow } from "gui_coloursets.slint";
 import { NamespaceColourRow, NamespaceColourList } from "namespace_colours.slint";
+import { MediaViewTable } from "media_views.slint";
 import { Button, CheckBox, ComboBox, LineEdit, ListView, ScrollView, SpinBox, StandardListView } from "std-widgets.slint";
 import { Theme } from "theme.slint";
 import { TableRow } from "list_table.slint";
+import { ShortcutSetsPanel } from "shortcuts.slint";
 import { DeletionReasonQueue } from "deletion_reasons.slint";
 import { TagNamespaceOrder } from "tag_namespace_order.slint";
 import { PaletteProviderQueue } from "palette_provider_queue.slint";
@@ -160,6 +162,17 @@ export component OptionsWindow inherits Window {
     callback frame-activated(int);
     callback frame-sort(int,bool);
     callback frame-action(string);
+    in property <[TableRow]> media-view-rows;
+    in property <bool> media-view-single;
+    in property <bool> media-view-can-add;
+    in property <bool> media-view-can-delete;
+    in property <bool> media-view-child-open;
+    in property <int> media-view-sort-column;
+    in property <bool> media-view-ascending;
+    callback media-view-clicked(int,bool,bool);
+    callback media-view-activated(int);
+    callback media-view-sort(int,bool);
+    callback media-view-action(string);
     in property <[TableRow]> tag-namespace-rows;
     in property <bool> tag-namespace-selected;
     in property <bool> tag-namespace-child-open;
@@ -250,6 +263,13 @@ export component OptionsWindow inherits Window {
     callback sort-cog-cancel();
     callback apply();
     callback shortcuts-clicked();
+    in property <[TableRow]> shortcut-reserved-rows;
+    in property <[TableRow]> shortcut-custom-rows;
+    in property <bool> shortcut-reserved-selected;
+    in property <bool> shortcut-custom-selected;
+    callback shortcut-set-clicked(bool,int,bool,bool);
+    callback shortcut-set-activated(bool,int);
+    callback shortcut-set-action(string);
     in property <bool> shortcuts-child-open;
     in-out property <bool> shortcuts-merge-numpad;
     in-out property <bool> shortcuts-primary-labels;
@@ -461,7 +481,7 @@ export component OptionsWindow inherits Window {
                             if row.kind == 32: VerticalLayout {
                                 CheckBox{text:"Treat all non-number numpad inputs as \"normal\": ";checked<=>root.shortcuts-merge-numpad;enabled:!root.gui-colour-child-open && !root.shortcuts-child-open && !root.routing-child-open && !root.regex-child-open;toggled=>{root.shortcuts-policy(self.checked,root.shortcuts-primary-labels);}}
                                 CheckBox{text:"Replace \"left/right\"-click labels with \"primary/secondary\": ";checked<=>root.shortcuts-primary-labels;enabled:!root.gui-colour-child-open && !root.shortcuts-child-open && !root.routing-child-open && !root.regex-child-open;toggled=>{root.shortcuts-policy(root.shortcuts-merge-numpad,self.checked);}}
-                                Button { text:"edit shortcuts";enabled:!root.gui-colour-child-open && !root.shortcuts-child-open && !root.routing-child-open && !root.regex-child-open;clicked=>{root.shortcuts-clicked();} }
+                                ShortcutSetsPanel { enabled:!root.gui-colour-child-open && !root.shortcuts-child-open && !root.routing-child-open && !root.regex-child-open; reserved-rows:root.shortcut-reserved-rows; custom-rows:root.shortcut-custom-rows; reserved-selected:root.shortcut-reserved-selected; custom-selected:root.shortcut-custom-selected; clicked(c,i,ctrl,shift)=>{root.shortcut-set-clicked(c,i,ctrl,shift);} activated(c,i)=>{root.shortcut-set-activated(c,i);} action(a)=>{root.shortcut-set-action(a);} }
                             }
                             if row.kind == 27: Button {
                                 text: row.text;
@@ -649,6 +669,19 @@ export component OptionsWindow inherits Window {
                                 activated(i)=>{root.frame-activated(i);}
                                 sort(i,a)=>{root.frame-sort(i,a);}
                                 action(a)=>{root.frame-action(a);}
+                            }
+                            if row.kind == 38: MediaViewTable {
+                                rows:root.media-view-rows;
+                                single:root.media-view-single;
+                                can-add:root.media-view-can-add;
+                                can-delete:root.media-view-can-delete;
+                                child-open:root.media-view-child-open;
+                                sort-column:root.media-view-sort-column;
+                                ascending:root.media-view-ascending;
+                                clicked(i,c,s)=>{root.media-view-clicked(i,c,s);}
+                                activated(i)=>{root.media-view-activated(i);}
+                                sort(i,a)=>{root.media-view-sort(i,a);}
+                                action(a)=>{root.media-view-action(a);}
                             }
                             if row.kind == 31: NamespaceColourList {
                                 rows:root.namespace-colour-rows;

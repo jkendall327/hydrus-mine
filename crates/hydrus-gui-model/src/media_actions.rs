@@ -140,14 +140,16 @@ pub fn suggested_action(
 
 /// Archive files in the inbox.
 pub fn archive(store: &Store, files: &[HashId]) -> hydrus_store::Result<()> {
-    let files = files.to_vec();
-    store.write_content(move |w| w.archive(&files))
+    store.write_undoable(hydrus_store::undo::Package(vec![
+        hydrus_store::undo::Change::Archive(files.to_vec()),
+    ]))
 }
 
 /// Return files to the inbox.
 pub fn inbox(store: &Store, files: &[HashId]) -> hydrus_store::Result<()> {
-    let files = files.to_vec();
-    store.write_content(move |w| w.inbox(&files))
+    store.write_undoable(hydrus_store::undo::Package(vec![
+        hydrus_store::undo::Change::Inbox(files.to_vec()),
+    ]))
 }
 
 /// Delete files as `deletion` says. Deleting for good leaves those the

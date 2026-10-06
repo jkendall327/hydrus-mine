@@ -95,16 +95,23 @@ fn saved_keypad_policy_preserves_digits_and_resolves_non_number_alternates() {
     let pad = Gesture::new(2, 11, 0, 12);
     let number = Gesture::new(0, 55, 0, 8);
     let mut settings = Settings::default();
-    settings.sets.get_mut("main_gui").unwrap().extend([
-        Binding {
-            gesture: pad.clone(),
-            action: 78,
-        },
-        Binding {
-            gesture: number.clone(),
-            action: 7,
-        },
-    ]);
+    settings.sets.insert(
+        "main_gui".into(),
+        vec![
+            Binding {
+                gesture: pad.clone(),
+                action: 78,
+                text: None,
+                content: None,
+            },
+            Binding {
+                gesture: number.clone(),
+                action: 7,
+                text: None,
+                content: None,
+            },
+        ],
+    );
     assert_eq!(settings.command("main_gui", &plain), Some(78));
     settings.merge_numpad = false;
     assert_eq!(settings.command("main_gui", &plain), None);

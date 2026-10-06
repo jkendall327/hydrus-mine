@@ -349,6 +349,23 @@ impl Player {
         }])
     }
 
+    /// Loop the playlist rather than the file
+    /// (`mpv_loop_playlist_instead_of_file`), and play through `device`
+    /// (none: mpv's own choice), as the reference sets them on its players.
+    pub fn set_playback_options(
+        &self,
+        loop_playlist: bool,
+        device: Option<&str>,
+    ) -> Result<(), String> {
+        self.command(&["set", "loop", if loop_playlist { "no" } else { "inf" }])?;
+        self.command(&[
+            "set",
+            "loop-playlist",
+            if loop_playlist { "inf" } else { "no" },
+        ])?;
+        self.command(&["set", "audio-device", device.unwrap_or("auto")])
+    }
+
     /// Play at `volume` (0 to 100), muted or not.
     pub fn set_audio(&self, volume: u8, mute: bool) -> Result<(), String> {
         self.command(&["set", "volume", &volume.min(100).to_string()])?;

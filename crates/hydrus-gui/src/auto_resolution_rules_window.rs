@@ -46,6 +46,10 @@ pub struct Slots {
     pub locations: Rc<RefCell<Option<crate::LocationsWindow>>>,
     /// The duplicate filter opened from the preview's lists.
     pub preview_filter: Rc<RefCell<Option<crate::DuplicateFilterWindow>>>,
+    /// Opens a page of files (the preview lists' "show in a new page").
+    pub open_files: Rc<RefCell<Option<crate::auto_resolution_review_window::OpenFiles>>>,
+    /// The rules list's png export.
+    pub png: crate::png_export_window::Slots,
 }
 
 impl std::fmt::Debug for Slots {
@@ -53,10 +57,12 @@ impl std::fmt::Debug for Slots {
         f.debug_struct("Slots")
             .field("list", &self.list.borrow().is_some())
             .field("rule", &self.rule.borrow().is_some())
+            .field("png", &self.png.has_open())
             .field("comparators", &self.comparators.borrow().len())
             .field("merge_options", &self.merge_options.borrow().is_some())
             .field("locations", &self.locations.borrow().is_some())
             .field("preview_filter", &self.preview_filter.borrow().is_some())
+            .field("open_files", &self.open_files.borrow().is_some())
             .finish()
     }
 }
@@ -976,6 +982,34 @@ fn open_rule(
             window.on_preview_fail_activated(activated);
         }
     }
+    // a list's rows clicked, and its "show in a new page"
+    for passing in [true, false] {
+        let clicked = {
+            let preview = preview.clone();
+            let weak = window.as_weak();
+            move |row: i32, control: bool, shift: bool| {
+                if let (Some(window), Ok(row)) = (weak.upgrade(), usize::try_from(row)) {
+                    preview.clicked(&window, passing, row, control, shift);
+                }
+            }
+        };
+        let show = {
+            let preview = preview.clone();
+            let open_files = slots.open_files.clone();
+            move || {
+                if let Some(open_files) = open_files.borrow().as_ref() {
+                    preview.show_selected(passing, open_files);
+                }
+            }
+        };
+        if passing {
+            window.on_preview_pass_clicked(clicked);
+            window.on_preview_pass_show(show);
+        } else {
+            window.on_preview_fail_clicked(clicked);
+            window.on_preview_fail_show(show);
+        }
+    }
     window.on_preview_fetch_changed({
         let weak = window.as_weak();
         let preview = preview.clone();
@@ -1287,6 +1321,16 @@ pub(crate) fn open(store: &Arc<Store>, slots: &Slots, applied: Rc<dyn Fn()>) -> 
             refresh();
         }
     });
+    window.on_exchange({
+        let state = state.clone();
+        let refresh = refresh.clone();
+        let store = store.clone();
+        let slots = slots.clone();
+        move |mode| {
+            exchange(&store, &slots, &state, mode);
+            refresh();
+        }
+    });
     window.on_chosen({
         let state = state.clone();
         let refresh = refresh.clone();
@@ -1349,4 +1393,102 @@ pub(crate) fn open(store: &Arc<Store>, slots: &Slots, applied: Rc<dyn Fn()>) -> 
     window.show().map_err(|e| e.to_string())?;
     *slots.list.borrow_mut() = Some(window);
     Ok(())
+}
+
+/// The numerical rating services' scales, for imported rules' rating
+/// predicates.
+fn scales(store: &Store) -> impl Fn(&hydrus_core::ServiceKey) -> Option<(u64, bool)> {
+    let snapshot = store.snapshot();
+    move |key| match snapshot.services.by_key(key).ok().map(|s| &s.kind) {
+        Some(hydrus_store::services::ServiceKind::RatingNumerical(c)) => {
+            Some((u64::from(c.num_stars), c.allow_zero))
+        }
+        _ => None,
+    }
+}
+
+/// The list's export (0-2), import (3-5) and duplicate (6) buttons.
+fn exchange(store: &Arc<Store>, slots: &Slots, state: &Rc<RefCell<ListState>>, mode: i32) {
+    use hydrus_gui_model::auto_resolution_exchange as ex;
+    let selected: Vec<Rule> = {
+        let state = state.borrow();
+        let order = state.list.order();
+        state
+            .list
+            .selection
+            .in_order(&order)
+            .into_iter()
+            .filter_map(|key| state.list.get(key).map(|e| e.rule.clone()))
+            .collect()
+    };
+    let add = |rules: Vec<Rule>, say: bool| {
+        let n = rules.len();
+        let mut state = state.borrow_mut();
+        state.list.selection = hydrus_gui_model::list_selection::ListSelection::default();
+        for rule in rules {
+            state.list.add(RuleEdit { id: None, rule });
+        }
+        drop(state);
+        if say && n > 0 {
+            crate::debug_actions::message("Information", &ex::added(n));
+        }
+    };
+    let load = |text: &str| match ex::import_text(text, &scales(store)) {
+        Ok(imported) => {
+            if !imported.refused.is_empty() {
+                crate::debug_actions::message("Warning", &ex::refused_message(&imported.refused));
+            }
+            add(imported.rules, true);
+        }
+        Err(e) => crate::debug_actions::message(
+            ex::PROBLEM_TITLE,
+            &format!("I could not understand what was in the clipboard: {e}"),
+        ),
+    };
+    match mode {
+        0 if !selected.is_empty() => crate::copy_to_clipboard(&ex::export_text(&selected)),
+        1 if !selected.is_empty() => {
+            if let Some(path) = crate::pick_exchange_export()
+                && let Err(e) = std::fs::write(&path, ex::export_text(&selected))
+            {
+                crate::debug_actions::message(ex::PROBLEM_TITLE, &e.to_string());
+            }
+        }
+        2 if !selected.is_empty() => {
+            if let Err(e) = crate::png_export_window::open(
+                &slots.png,
+                store,
+                ex::export_text(&selected),
+                Rc::new(|| {}),
+            ) {
+                crate::debug_actions::message(ex::PROBLEM_TITLE, &e);
+            }
+        }
+        3 => match crate::clipboard_text() {
+            Ok(Some(text)) => load(&text),
+            Ok(None) => {}
+            Err(e) => crate::debug_actions::message(
+                ex::PROBLEM_TITLE,
+                &format!("Problem loading from clipboard: {e}"),
+            ),
+        },
+        4 => {
+            for path in crate::pick_exchange_files("select the json files", "json") {
+                match std::fs::read_to_string(&path) {
+                    Ok(text) => load(&text),
+                    Err(e) => {
+                        crate::debug_actions::message(ex::PROBLEM_TITLE, &e.to_string());
+                        break;
+                    }
+                }
+            }
+        }
+        5 => match crate::png_export_window::import_text_with_title("select the png files") {
+            Ok(Some(text)) => load(&text),
+            Ok(None) => {}
+            Err(e) => crate::debug_actions::message(ex::PROBLEM_TITLE, &e),
+        },
+        6 => add(selected, false),
+        _ => {}
+    }
 }

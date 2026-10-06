@@ -1,0 +1,3459 @@
+{
+ "rows": [
+  {
+   "mime": 44,
+   "display": [
+    "animation",
+    "show using QtMediaPlayer",
+    "show using QtMediaPlayer",
+    "(2, 2, 2, 2, False, 4, 2)"
+   ]
+  },
+  {
+   "mime": 88,
+   "display": [
+    "animation: animated jxl",
+    "show with native hydrus viewer",
+    "show with native hydrus viewer",
+    "(2, 2, 2, 2, False, 4, 2)"
+   ]
+  },
+  {
+   "mime": 83,
+   "display": [
+    "animation: animated webp",
+    "show with native hydrus viewer",
+    "show with native hydrus viewer",
+    "(2, 2, 2, 2, False, 4, 2)"
+   ]
+  },
+  {
+   "mime": 74,
+   "display": [
+    "animation: ugoira",
+    "show with native hydrus viewer",
+    "show with native hydrus viewer",
+    "(2, 2, 2, 2, False, 4, 2)"
+   ]
+  },
+  {
+   "mime": 43,
+   "display": [
+    "application",
+    "show an 'open externally' button",
+    "show an 'open externally' button",
+    ""
+   ]
+  },
+  {
+   "mime": 59,
+   "display": [
+    "archive",
+    "show an 'open externally' button",
+    "show an 'open externally' button",
+    ""
+   ]
+  },
+  {
+   "mime": 40,
+   "display": [
+    "audio",
+    "show using QtMediaPlayer",
+    "show using QtMediaPlayer",
+    "(0, 0, 0, 0, False, 1, 1)"
+   ]
+  },
+  {
+   "mime": 41,
+   "display": [
+    "image",
+    "show with native hydrus viewer",
+    "show with native hydrus viewer",
+    "(2, 2, 2, 2, False, 4, 2)"
+   ]
+  },
+  {
+   "mime": 60,
+   "display": [
+    "image project file",
+    "show an 'open externally' button",
+    "show an 'open externally' button",
+    ""
+   ]
+  },
+  {
+   "mime": 55,
+   "display": [
+    "image project file: krita",
+    "show with native hydrus viewer",
+    "show an 'open externally' button",
+    "(2, 2, 2, 2, False, 4, 2)"
+   ]
+  },
+  {
+   "mime": 89,
+   "display": [
+    "image project file: ora",
+    "show with native hydrus viewer",
+    "show an 'open externally' button",
+    "(2, 2, 2, 2, False, 4, 2)"
+   ]
+  },
+  {
+   "mime": 35,
+   "display": [
+    "image project file: psd",
+    "show with native hydrus viewer",
+    "show an 'open externally' button",
+    "(2, 2, 2, 2, False, 4, 2)"
+   ]
+  },
+  {
+   "mime": 42,
+   "display": [
+    "video",
+    "show using QtMediaPlayer",
+    "show using QtMediaPlayer",
+    "(0, 2, 2, 2, True, 4, 2)"
+   ]
+  }
+ ],
+ "addable": [
+  [
+   "animation: animated gif",
+   3
+  ],
+  [
+   "animation: apng",
+   23
+  ],
+  [
+   "animation: avif sequence",
+   66
+  ],
+  [
+   "animation: heic sequence",
+   64
+  ],
+  [
+   "animation: heif sequence",
+   62
+  ],
+  [
+   "application: djvu",
+   72
+  ],
+  [
+   "application: doc",
+   80
+  ],
+  [
+   "application: docx",
+   76
+  ],
+  [
+   "application: epub",
+   71
+  ],
+  [
+   "application: flash",
+   5
+  ],
+  [
+   "application: pdf",
+   10
+  ],
+  [
+   "application: ppt",
+   82
+  ],
+  [
+   "application: pptx",
+   78
+  ],
+  [
+   "application: rtf",
+   75
+  ],
+  [
+   "application: xls",
+   81
+  ],
+  [
+   "application: xlsx",
+   77
+  ],
+  [
+   "archive: 7z",
+   32
+  ],
+  [
+   "archive: cbz",
+   73
+  ],
+  [
+   "archive: gzip",
+   58
+  ],
+  [
+   "archive: rar",
+   31
+  ],
+  [
+   "archive: zip",
+   11
+  ],
+  [
+   "audio: flac",
+   16
+  ],
+  [
+   "audio: m4a",
+   36
+  ],
+  [
+   "audio: matroska audio",
+   48
+  ],
+  [
+   "audio: mp3",
+   13
+  ],
+  [
+   "audio: mp4 audio",
+   49
+  ],
+  [
+   "audio: ogg",
+   15
+  ],
+  [
+   "audio: realaudio",
+   38
+  ],
+  [
+   "audio: tta",
+   39
+  ],
+  [
+   "audio: wave",
+   46
+  ],
+  [
+   "audio: wavpack",
+   53
+  ],
+  [
+   "audio: wma",
+   17
+  ],
+  [
+   "image project file: clip",
+   45
+  ],
+  [
+   "image project file: paint.net",
+   86
+  ],
+  [
+   "image project file: procreate",
+   69
+  ],
+  [
+   "image project file: sai2",
+   54
+  ],
+  [
+   "image project file: svg",
+   56
+  ],
+  [
+   "image project file: xcf",
+   57
+  ],
+  [
+   "image: avif",
+   65
+  ],
+  [
+   "image: bitmap",
+   4
+  ],
+  [
+   "image: heic",
+   63
+  ],
+  [
+   "image: heif",
+   61
+  ],
+  [
+   "image: icon",
+   7
+  ],
+  [
+   "image: jpeg",
+   1
+  ],
+  [
+   "image: jxl",
+   85
+  ],
+  [
+   "image: png",
+   2
+  ],
+  [
+   "image: qoi",
+   70
+  ],
+  [
+   "image: static gif",
+   68
+  ],
+  [
+   "image: tiff",
+   34
+  ],
+  [
+   "image: webp",
+   33
+  ],
+  [
+   "video: avi",
+   27
+  ],
+  [
+   "video: flv",
+   9
+  ],
+  [
+   "video: matroska",
+   20
+  ],
+  [
+   "video: mp4",
+   14
+  ],
+  [
+   "video: mpeg",
+   25
+  ],
+  [
+   "video: ogv",
+   47
+  ],
+  [
+   "video: quicktime",
+   26
+  ],
+  [
+   "video: realvideo",
+   37
+  ],
+  [
+   "video: webm",
+   21
+  ],
+  [
+   "video: wmv",
+   18
+  ]
+ ],
+ "deletable": [
+  1,
+  2,
+  3,
+  4,
+  5,
+  7,
+  9,
+  10,
+  11,
+  13,
+  14,
+  15,
+  16,
+  17,
+  18,
+  20,
+  21,
+  23,
+  25,
+  26,
+  27,
+  31,
+  32,
+  33,
+  34,
+  35,
+  36,
+  37,
+  38,
+  39,
+  45,
+  46,
+  47,
+  48,
+  49,
+  53,
+  54,
+  55,
+  56,
+  57,
+  58,
+  61,
+  62,
+  63,
+  64,
+  65,
+  66,
+  68,
+  69,
+  70,
+  71,
+  72,
+  73,
+  74,
+  75,
+  76,
+  77,
+  78,
+  80,
+  81,
+  82,
+  83,
+  85,
+  86,
+  88,
+  89
+ ],
+ "actions": {
+  "0": "show with native hydrus viewer",
+  "1": "show as normal, but start paused -- obselete",
+  "2": "show, but initially behind an embed button -- obselete",
+  "3": "show, but initially behind an embed button, and start paused -- obselete",
+  "4": "show an 'open externally' button",
+  "5": "do not show in the media viewer. on thumbnail activation, open externally",
+  "6": "do not show at all",
+  "7": "show using mpv",
+  "8": "show using old QtMediaPlayer test -- obselete",
+  "9": "show using QtMediaPlayer"
+ },
+ "scales": {
+  "0": "show at 100%",
+  "1": "scale to the largest regular zoom that fits",
+  "2": "scale to the canvas size"
+ },
+ "zooms": {
+  "0": "nearest neighbour",
+  "1": "bilinear interpolation",
+  "2": "pixel area resampling",
+  "3": "4x4 bilinear interpolation",
+  "4": "8x8 Lanczos interpolation"
+ },
+ "editors": [
+  {
+   "mime": 1,
+   "pretty": "image: jpeg",
+   "intro": "Setting media view options for jpeg.",
+   "media": [
+    [
+     "show with native hydrus viewer",
+     0
+    ],
+    [
+     "show an 'open externally' button",
+     4
+    ],
+    [
+     "do not show in the media viewer. on thumbnail activation, open externally",
+     5
+    ],
+    [
+     "do not show at all",
+     6
+    ]
+   ],
+   "preview": [
+    [
+     "show with native hydrus viewer",
+     0
+    ],
+    [
+     "show an 'open externally' button",
+     4
+    ],
+    [
+     "do not show at all",
+     6
+    ]
+   ],
+   "zoom_rows": true
+  },
+  {
+   "mime": 2,
+   "pretty": "image: png",
+   "intro": "Setting media view options for png.",
+   "media": [
+    [
+     "show with native hydrus viewer",
+     0
+    ],
+    [
+     "show an 'open externally' button",
+     4
+    ],
+    [
+     "do not show in the media viewer. on thumbnail activation, open externally",
+     5
+    ],
+    [
+     "do not show at all",
+     6
+    ]
+   ],
+   "preview": [
+    [
+     "show with native hydrus viewer",
+     0
+    ],
+    [
+     "show an 'open externally' button",
+     4
+    ],
+    [
+     "do not show at all",
+     6
+    ]
+   ],
+   "zoom_rows": true
+  },
+  {
+   "mime": 3,
+   "pretty": "animation: animated gif",
+   "intro": "Setting media view options for animated gif.\n\nmpv is higher quality but can be buggy. If you have problems, try the QtMediaPlayer as a fallback.",
+   "media": [
+    [
+     "show using mpv",
+     7
+    ],
+    [
+     "show using QtMediaPlayer",
+     9
+    ],
+    [
+     "show with native hydrus viewer",
+     0
+    ],
+    [
+     "show an 'open externally' button",
+     4
+    ],
+    [
+     "do not show in the media viewer. on thumbnail activation, open externally",
+     5
+    ],
+    [
+     "do not show at all",
+     6
+    ]
+   ],
+   "preview": [
+    [
+     "show using mpv",
+     7
+    ],
+    [
+     "show using QtMediaPlayer",
+     9
+    ],
+    [
+     "show with native hydrus viewer",
+     0
+    ],
+    [
+     "show an 'open externally' button",
+     4
+    ],
+    [
+     "do not show at all",
+     6
+    ]
+   ],
+   "zoom_rows": true
+  },
+  {
+   "mime": 4,
+   "pretty": "image: bitmap",
+   "intro": "Setting media view options for bitmap.",
+   "media": [
+    [
+     "show with native hydrus viewer",
+     0
+    ],
+    [
+     "show an 'open externally' button",
+     4
+    ],
+    [
+     "do not show in the media viewer. on thumbnail activation, open externally",
+     5
+    ],
+    [
+     "do not show at all",
+     6
+    ]
+   ],
+   "preview": [
+    [
+     "show with native hydrus viewer",
+     0
+    ],
+    [
+     "show an 'open externally' button",
+     4
+    ],
+    [
+     "do not show at all",
+     6
+    ]
+   ],
+   "zoom_rows": true
+  },
+  {
+   "mime": 5,
+   "pretty": "application: flash",
+   "intro": "Setting media view options for flash.",
+   "media": [
+    [
+     "show an 'open externally' button",
+     4
+    ],
+    [
+     "do not show in the media viewer. on thumbnail activation, open externally",
+     5
+    ],
+    [
+     "do not show at all",
+     6
+    ]
+   ],
+   "preview": [
+    [
+     "show an 'open externally' button",
+     4
+    ],
+    [
+     "do not show at all",
+     6
+    ]
+   ],
+   "zoom_rows": false
+  },
+  {
+   "mime": 7,
+   "pretty": "image: icon",
+   "intro": "Setting media view options for icon.",
+   "media": [
+    [
+     "show with native hydrus viewer",
+     0
+    ],
+    [
+     "show an 'open externally' button",
+     4
+    ],
+    [
+     "do not show in the media viewer. on thumbnail activation, open externally",
+     5
+    ],
+    [
+     "do not show at all",
+     6
+    ]
+   ],
+   "preview": [
+    [
+     "show with native hydrus viewer",
+     0
+    ],
+    [
+     "show an 'open externally' button",
+     4
+    ],
+    [
+     "do not show at all",
+     6
+    ]
+   ],
+   "zoom_rows": true
+  },
+  {
+   "mime": 9,
+   "pretty": "video: flv",
+   "intro": "Setting media view options for flv.\n\nmpv is higher quality but can be buggy. If you have problems, try the QtMediaPlayer as a fallback.",
+   "media": [
+    [
+     "show using mpv",
+     7
+    ],
+    [
+     "show using QtMediaPlayer",
+     9
+    ],
+    [
+     "show with native hydrus viewer (no audio support)",
+     0
+    ],
+    [
+     "show an 'open externally' button",
+     4
+    ],
+    [
+     "do not show in the media viewer. on thumbnail activation, open externally",
+     5
+    ],
+    [
+     "do not show at all",
+     6
+    ]
+   ],
+   "preview": [
+    [
+     "show using mpv",
+     7
+    ],
+    [
+     "show using QtMediaPlayer",
+     9
+    ],
+    [
+     "show with native hydrus viewer (no audio support)",
+     0
+    ],
+    [
+     "show an 'open externally' button",
+     4
+    ],
+    [
+     "do not show at all",
+     6
+    ]
+   ],
+   "zoom_rows": true
+  },
+  {
+   "mime": 10,
+   "pretty": "application: pdf",
+   "intro": "Setting media view options for pdf.",
+   "media": [
+    [
+     "show an 'open externally' button",
+     4
+    ],
+    [
+     "do not show in the media viewer. on thumbnail activation, open externally",
+     5
+    ],
+    [
+     "do not show at all",
+     6
+    ]
+   ],
+   "preview": [
+    [
+     "show an 'open externally' button",
+     4
+    ],
+    [
+     "do not show at all",
+     6
+    ]
+   ],
+   "zoom_rows": false
+  },
+  {
+   "mime": 11,
+   "pretty": "archive: zip",
+   "intro": "Setting media view options for zip.",
+   "media": [
+    [
+     "show an 'open externally' button",
+     4
+    ],
+    [
+     "do not show in the media viewer. on thumbnail activation, open externally",
+     5
+    ],
+    [
+     "do not show at all",
+     6
+    ]
+   ],
+   "preview": [
+    [
+     "show an 'open externally' button",
+     4
+    ],
+    [
+     "do not show at all",
+     6
+    ]
+   ],
+   "zoom_rows": false
+  },
+  {
+   "mime": 13,
+   "pretty": "audio: mp3",
+   "intro": "Setting media view options for mp3.\n\nmpv is higher quality but can be buggy. If you have problems, try the QtMediaPlayer as a fallback.",
+   "media": [
+    [
+     "show using mpv",
+     7
+    ],
+    [
+     "show using QtMediaPlayer",
+     9
+    ],
+    [
+     "show an 'open externally' button",
+     4
+    ],
+    [
+     "do not show in the media viewer. on thumbnail activation, open externally",
+     5
+    ],
+    [
+     "do not show at all",
+     6
+    ]
+   ],
+   "preview": [
+    [
+     "show using mpv",
+     7
+    ],
+    [
+     "show using QtMediaPlayer",
+     9
+    ],
+    [
+     "show an 'open externally' button",
+     4
+    ],
+    [
+     "do not show at all",
+     6
+    ]
+   ],
+   "zoom_rows": true
+  },
+  {
+   "mime": 14,
+   "pretty": "video: mp4",
+   "intro": "Setting media view options for mp4.\n\nmpv is higher quality but can be buggy. If you have problems, try the QtMediaPlayer as a fallback.",
+   "media": [
+    [
+     "show using mpv",
+     7
+    ],
+    [
+     "show using QtMediaPlayer",
+     9
+    ],
+    [
+     "show with native hydrus viewer (no audio support)",
+     0
+    ],
+    [
+     "show an 'open externally' button",
+     4
+    ],
+    [
+     "do not show in the media viewer. on thumbnail activation, open externally",
+     5
+    ],
+    [
+     "do not show at all",
+     6
+    ]
+   ],
+   "preview": [
+    [
+     "show using mpv",
+     7
+    ],
+    [
+     "show using QtMediaPlayer",
+     9
+    ],
+    [
+     "show with native hydrus viewer (no audio support)",
+     0
+    ],
+    [
+     "show an 'open externally' button",
+     4
+    ],
+    [
+     "do not show at all",
+     6
+    ]
+   ],
+   "zoom_rows": true
+  },
+  {
+   "mime": 15,
+   "pretty": "audio: ogg",
+   "intro": "Setting media view options for ogg.\n\nmpv is higher quality but can be buggy. If you have problems, try the QtMediaPlayer as a fallback.",
+   "media": [
+    [
+     "show using mpv",
+     7
+    ],
+    [
+     "show using QtMediaPlayer",
+     9
+    ],
+    [
+     "show an 'open externally' button",
+     4
+    ],
+    [
+     "do not show in the media viewer. on thumbnail activation, open externally",
+     5
+    ],
+    [
+     "do not show at all",
+     6
+    ]
+   ],
+   "preview": [
+    [
+     "show using mpv",
+     7
+    ],
+    [
+     "show using QtMediaPlayer",
+     9
+    ],
+    [
+     "show an 'open externally' button",
+     4
+    ],
+    [
+     "do not show at all",
+     6
+    ]
+   ],
+   "zoom_rows": true
+  },
+  {
+   "mime": 16,
+   "pretty": "audio: flac",
+   "intro": "Setting media view options for flac.\n\nmpv is higher quality but can be buggy. If you have problems, try the QtMediaPlayer as a fallback.",
+   "media": [
+    [
+     "show using mpv",
+     7
+    ],
+    [
+     "show using QtMediaPlayer",
+     9
+    ],
+    [
+     "show an 'open externally' button",
+     4
+    ],
+    [
+     "do not show in the media viewer. on thumbnail activation, open externally",
+     5
+    ],
+    [
+     "do not show at all",
+     6
+    ]
+   ],
+   "preview": [
+    [
+     "show using mpv",
+     7
+    ],
+    [
+     "show using QtMediaPlayer",
+     9
+    ],
+    [
+     "show an 'open externally' button",
+     4
+    ],
+    [
+     "do not show at all",
+     6
+    ]
+   ],
+   "zoom_rows": true
+  },
+  {
+   "mime": 17,
+   "pretty": "audio: wma",
+   "intro": "Setting media view options for wma.\n\nmpv is higher quality but can be buggy. If you have problems, try the QtMediaPlayer as a fallback.",
+   "media": [
+    [
+     "show using mpv",
+     7
+    ],
+    [
+     "show using QtMediaPlayer",
+     9
+    ],
+    [
+     "show an 'open externally' button",
+     4
+    ],
+    [
+     "do not show in the media viewer. on thumbnail activation, open externally",
+     5
+    ],
+    [
+     "do not show at all",
+     6
+    ]
+   ],
+   "preview": [
+    [
+     "show using mpv",
+     7
+    ],
+    [
+     "show using QtMediaPlayer",
+     9
+    ],
+    [
+     "show an 'open externally' button",
+     4
+    ],
+    [
+     "do not show at all",
+     6
+    ]
+   ],
+   "zoom_rows": true
+  },
+  {
+   "mime": 18,
+   "pretty": "video: wmv",
+   "intro": "Setting media view options for wmv.\n\nmpv is higher quality but can be buggy. If you have problems, try the QtMediaPlayer as a fallback.",
+   "media": [
+    [
+     "show using mpv",
+     7
+    ],
+    [
+     "show using QtMediaPlayer",
+     9
+    ],
+    [
+     "show with native hydrus viewer (no audio support)",
+     0
+    ],
+    [
+     "show an 'open externally' button",
+     4
+    ],
+    [
+     "do not show in the media viewer. on thumbnail activation, open externally",
+     5
+    ],
+    [
+     "do not show at all",
+     6
+    ]
+   ],
+   "preview": [
+    [
+     "show using mpv",
+     7
+    ],
+    [
+     "show using QtMediaPlayer",
+     9
+    ],
+    [
+     "show with native hydrus viewer (no audio support)",
+     0
+    ],
+    [
+     "show an 'open externally' button",
+     4
+    ],
+    [
+     "do not show at all",
+     6
+    ]
+   ],
+   "zoom_rows": true
+  },
+  {
+   "mime": 20,
+   "pretty": "video: matroska",
+   "intro": "Setting media view options for matroska.\n\nmpv is higher quality but can be buggy. If you have problems, try the QtMediaPlayer as a fallback.",
+   "media": [
+    [
+     "show using mpv",
+     7
+    ],
+    [
+     "show using QtMediaPlayer",
+     9
+    ],
+    [
+     "show with native hydrus viewer (no audio support)",
+     0
+    ],
+    [
+     "show an 'open externally' button",
+     4
+    ],
+    [
+     "do not show in the media viewer. on thumbnail activation, open externally",
+     5
+    ],
+    [
+     "do not show at all",
+     6
+    ]
+   ],
+   "preview": [
+    [
+     "show using mpv",
+     7
+    ],
+    [
+     "show using QtMediaPlayer",
+     9
+    ],
+    [
+     "show with native hydrus viewer (no audio support)",
+     0
+    ],
+    [
+     "show an 'open externally' button",
+     4
+    ],
+    [
+     "do not show at all",
+     6
+    ]
+   ],
+   "zoom_rows": true
+  },
+  {
+   "mime": 21,
+   "pretty": "video: webm",
+   "intro": "Setting media view options for webm.\n\nmpv is higher quality but can be buggy. If you have problems, try the QtMediaPlayer as a fallback.",
+   "media": [
+    [
+     "show using mpv",
+     7
+    ],
+    [
+     "show using QtMediaPlayer",
+     9
+    ],
+    [
+     "show with native hydrus viewer (no audio support)",
+     0
+    ],
+    [
+     "show an 'open externally' button",
+     4
+    ],
+    [
+     "do not show in the media viewer. on thumbnail activation, open externally",
+     5
+    ],
+    [
+     "do not show at all",
+     6
+    ]
+   ],
+   "preview": [
+    [
+     "show using mpv",
+     7
+    ],
+    [
+     "show using QtMediaPlayer",
+     9
+    ],
+    [
+     "show with native hydrus viewer (no audio support)",
+     0
+    ],
+    [
+     "show an 'open externally' button",
+     4
+    ],
+    [
+     "do not show at all",
+     6
+    ]
+   ],
+   "zoom_rows": true
+  },
+  {
+   "mime": 23,
+   "pretty": "animation: apng",
+   "intro": "Setting media view options for apng.\n\nmpv is higher quality but can be buggy. If you have problems, try the QtMediaPlayer as a fallback.",
+   "media": [
+    [
+     "show using mpv",
+     7
+    ],
+    [
+     "show using QtMediaPlayer",
+     9
+    ],
+    [
+     "show with native hydrus viewer",
+     0
+    ],
+    [
+     "show an 'open externally' button",
+     4
+    ],
+    [
+     "do not show in the media viewer. on thumbnail activation, open externally",
+     5
+    ],
+    [
+     "do not show at all",
+     6
+    ]
+   ],
+   "preview": [
+    [
+     "show using mpv",
+     7
+    ],
+    [
+     "show using QtMediaPlayer",
+     9
+    ],
+    [
+     "show with native hydrus viewer",
+     0
+    ],
+    [
+     "show an 'open externally' button",
+     4
+    ],
+    [
+     "do not show at all",
+     6
+    ]
+   ],
+   "zoom_rows": true
+  },
+  {
+   "mime": 25,
+   "pretty": "video: mpeg",
+   "intro": "Setting media view options for mpeg.\n\nmpv is higher quality but can be buggy. If you have problems, try the QtMediaPlayer as a fallback.",
+   "media": [
+    [
+     "show using mpv",
+     7
+    ],
+    [
+     "show using QtMediaPlayer",
+     9
+    ],
+    [
+     "show with native hydrus viewer (no audio support)",
+     0
+    ],
+    [
+     "show an 'open externally' button",
+     4
+    ],
+    [
+     "do not show in the media viewer. on thumbnail activation, open externally",
+     5
+    ],
+    [
+     "do not show at all",
+     6
+    ]
+   ],
+   "preview": [
+    [
+     "show using mpv",
+     7
+    ],
+    [
+     "show using QtMediaPlayer",
+     9
+    ],
+    [
+     "show with native hydrus viewer (no audio support)",
+     0
+    ],
+    [
+     "show an 'open externally' button",
+     4
+    ],
+    [
+     "do not show at all",
+     6
+    ]
+   ],
+   "zoom_rows": true
+  },
+  {
+   "mime": 26,
+   "pretty": "video: quicktime",
+   "intro": "Setting media view options for quicktime.\n\nmpv is higher quality but can be buggy. If you have problems, try the QtMediaPlayer as a fallback.",
+   "media": [
+    [
+     "show using mpv",
+     7
+    ],
+    [
+     "show using QtMediaPlayer",
+     9
+    ],
+    [
+     "show with native hydrus viewer (no audio support)",
+     0
+    ],
+    [
+     "show an 'open externally' button",
+     4
+    ],
+    [
+     "do not show in the media viewer. on thumbnail activation, open externally",
+     5
+    ],
+    [
+     "do not show at all",
+     6
+    ]
+   ],
+   "preview": [
+    [
+     "show using mpv",
+     7
+    ],
+    [
+     "show using QtMediaPlayer",
+     9
+    ],
+    [
+     "show with native hydrus viewer (no audio support)",
+     0
+    ],
+    [
+     "show an 'open externally' button",
+     4
+    ],
+    [
+     "do not show at all",
+     6
+    ]
+   ],
+   "zoom_rows": true
+  },
+  {
+   "mime": 27,
+   "pretty": "video: avi",
+   "intro": "Setting media view options for avi.\n\nmpv is higher quality but can be buggy. If you have problems, try the QtMediaPlayer as a fallback.",
+   "media": [
+    [
+     "show using mpv",
+     7
+    ],
+    [
+     "show using QtMediaPlayer",
+     9
+    ],
+    [
+     "show with native hydrus viewer (no audio support)",
+     0
+    ],
+    [
+     "show an 'open externally' button",
+     4
+    ],
+    [
+     "do not show in the media viewer. on thumbnail activation, open externally",
+     5
+    ],
+    [
+     "do not show at all",
+     6
+    ]
+   ],
+   "preview": [
+    [
+     "show using mpv",
+     7
+    ],
+    [
+     "show using QtMediaPlayer",
+     9
+    ],
+    [
+     "show with native hydrus viewer (no audio support)",
+     0
+    ],
+    [
+     "show an 'open externally' button",
+     4
+    ],
+    [
+     "do not show at all",
+     6
+    ]
+   ],
+   "zoom_rows": true
+  },
+  {
+   "mime": 28,
+   "pretty": "application/hydrus-update-definitions",
+   "intro": "Setting media view options for application/hydrus-update-definitions.",
+   "media": [
+    [
+     "show an 'open externally' button",
+     4
+    ],
+    [
+     "do not show in the media viewer. on thumbnail activation, open externally",
+     5
+    ],
+    [
+     "do not show at all",
+     6
+    ]
+   ],
+   "preview": [
+    [
+     "show an 'open externally' button",
+     4
+    ],
+    [
+     "do not show at all",
+     6
+    ]
+   ],
+   "zoom_rows": false
+  },
+  {
+   "mime": 29,
+   "pretty": "application/hydrus-update-content",
+   "intro": "Setting media view options for application/hydrus-update-content.",
+   "media": [
+    [
+     "show an 'open externally' button",
+     4
+    ],
+    [
+     "do not show in the media viewer. on thumbnail activation, open externally",
+     5
+    ],
+    [
+     "do not show at all",
+     6
+    ]
+   ],
+   "preview": [
+    [
+     "show an 'open externally' button",
+     4
+    ],
+    [
+     "do not show at all",
+     6
+    ]
+   ],
+   "zoom_rows": false
+  },
+  {
+   "mime": 31,
+   "pretty": "archive: rar",
+   "intro": "Setting media view options for rar.",
+   "media": [
+    [
+     "show an 'open externally' button",
+     4
+    ],
+    [
+     "do not show in the media viewer. on thumbnail activation, open externally",
+     5
+    ],
+    [
+     "do not show at all",
+     6
+    ]
+   ],
+   "preview": [
+    [
+     "show an 'open externally' button",
+     4
+    ],
+    [
+     "do not show at all",
+     6
+    ]
+   ],
+   "zoom_rows": false
+  },
+  {
+   "mime": 32,
+   "pretty": "archive: 7z",
+   "intro": "Setting media view options for 7z.",
+   "media": [
+    [
+     "show an 'open externally' button",
+     4
+    ],
+    [
+     "do not show in the media viewer. on thumbnail activation, open externally",
+     5
+    ],
+    [
+     "do not show at all",
+     6
+    ]
+   ],
+   "preview": [
+    [
+     "show an 'open externally' button",
+     4
+    ],
+    [
+     "do not show at all",
+     6
+    ]
+   ],
+   "zoom_rows": false
+  },
+  {
+   "mime": 33,
+   "pretty": "image: webp",
+   "intro": "Setting media view options for webp.",
+   "media": [
+    [
+     "show with native hydrus viewer",
+     0
+    ],
+    [
+     "show an 'open externally' button",
+     4
+    ],
+    [
+     "do not show in the media viewer. on thumbnail activation, open externally",
+     5
+    ],
+    [
+     "do not show at all",
+     6
+    ]
+   ],
+   "preview": [
+    [
+     "show with native hydrus viewer",
+     0
+    ],
+    [
+     "show an 'open externally' button",
+     4
+    ],
+    [
+     "do not show at all",
+     6
+    ]
+   ],
+   "zoom_rows": true
+  },
+  {
+   "mime": 34,
+   "pretty": "image: tiff",
+   "intro": "Setting media view options for tiff.",
+   "media": [
+    [
+     "show with native hydrus viewer",
+     0
+    ],
+    [
+     "show an 'open externally' button",
+     4
+    ],
+    [
+     "do not show in the media viewer. on thumbnail activation, open externally",
+     5
+    ],
+    [
+     "do not show at all",
+     6
+    ]
+   ],
+   "preview": [
+    [
+     "show with native hydrus viewer",
+     0
+    ],
+    [
+     "show an 'open externally' button",
+     4
+    ],
+    [
+     "do not show at all",
+     6
+    ]
+   ],
+   "zoom_rows": true
+  },
+  {
+   "mime": 35,
+   "pretty": "image project file: psd",
+   "intro": "Setting media view options for psd.",
+   "media": [
+    [
+     "show with native hydrus viewer",
+     0
+    ],
+    [
+     "show an 'open externally' button",
+     4
+    ],
+    [
+     "do not show in the media viewer. on thumbnail activation, open externally",
+     5
+    ],
+    [
+     "do not show at all",
+     6
+    ]
+   ],
+   "preview": [
+    [
+     "show with native hydrus viewer",
+     0
+    ],
+    [
+     "show an 'open externally' button",
+     4
+    ],
+    [
+     "do not show at all",
+     6
+    ]
+   ],
+   "zoom_rows": true
+  },
+  {
+   "mime": 36,
+   "pretty": "audio: m4a",
+   "intro": "Setting media view options for m4a.\n\nmpv is higher quality but can be buggy. If you have problems, try the QtMediaPlayer as a fallback.",
+   "media": [
+    [
+     "show using mpv",
+     7
+    ],
+    [
+     "show using QtMediaPlayer",
+     9
+    ],
+    [
+     "show an 'open externally' button",
+     4
+    ],
+    [
+     "do not show in the media viewer. on thumbnail activation, open externally",
+     5
+    ],
+    [
+     "do not show at all",
+     6
+    ]
+   ],
+   "preview": [
+    [
+     "show using mpv",
+     7
+    ],
+    [
+     "show using QtMediaPlayer",
+     9
+    ],
+    [
+     "show an 'open externally' button",
+     4
+    ],
+    [
+     "do not show at all",
+     6
+    ]
+   ],
+   "zoom_rows": true
+  },
+  {
+   "mime": 37,
+   "pretty": "video: realvideo",
+   "intro": "Setting media view options for realvideo.\n\nmpv is higher quality but can be buggy. If you have problems, try the QtMediaPlayer as a fallback.",
+   "media": [
+    [
+     "show using mpv",
+     7
+    ],
+    [
+     "show using QtMediaPlayer",
+     9
+    ],
+    [
+     "show with native hydrus viewer (no audio support)",
+     0
+    ],
+    [
+     "show an 'open externally' button",
+     4
+    ],
+    [
+     "do not show in the media viewer. on thumbnail activation, open externally",
+     5
+    ],
+    [
+     "do not show at all",
+     6
+    ]
+   ],
+   "preview": [
+    [
+     "show using mpv",
+     7
+    ],
+    [
+     "show using QtMediaPlayer",
+     9
+    ],
+    [
+     "show with native hydrus viewer (no audio support)",
+     0
+    ],
+    [
+     "show an 'open externally' button",
+     4
+    ],
+    [
+     "do not show at all",
+     6
+    ]
+   ],
+   "zoom_rows": true
+  },
+  {
+   "mime": 38,
+   "pretty": "audio: realaudio",
+   "intro": "Setting media view options for realaudio.\n\nmpv is higher quality but can be buggy. If you have problems, try the QtMediaPlayer as a fallback.",
+   "media": [
+    [
+     "show using mpv",
+     7
+    ],
+    [
+     "show using QtMediaPlayer",
+     9
+    ],
+    [
+     "show an 'open externally' button",
+     4
+    ],
+    [
+     "do not show in the media viewer. on thumbnail activation, open externally",
+     5
+    ],
+    [
+     "do not show at all",
+     6
+    ]
+   ],
+   "preview": [
+    [
+     "show using mpv",
+     7
+    ],
+    [
+     "show using QtMediaPlayer",
+     9
+    ],
+    [
+     "show an 'open externally' button",
+     4
+    ],
+    [
+     "do not show at all",
+     6
+    ]
+   ],
+   "zoom_rows": true
+  },
+  {
+   "mime": 39,
+   "pretty": "audio: tta",
+   "intro": "Setting media view options for tta.\n\nmpv is higher quality but can be buggy. If you have problems, try the QtMediaPlayer as a fallback.",
+   "media": [
+    [
+     "show using mpv",
+     7
+    ],
+    [
+     "show using QtMediaPlayer",
+     9
+    ],
+    [
+     "show an 'open externally' button",
+     4
+    ],
+    [
+     "do not show in the media viewer. on thumbnail activation, open externally",
+     5
+    ],
+    [
+     "do not show at all",
+     6
+    ]
+   ],
+   "preview": [
+    [
+     "show using mpv",
+     7
+    ],
+    [
+     "show using QtMediaPlayer",
+     9
+    ],
+    [
+     "show an 'open externally' button",
+     4
+    ],
+    [
+     "do not show at all",
+     6
+    ]
+   ],
+   "zoom_rows": true
+  },
+  {
+   "mime": 40,
+   "pretty": "audio",
+   "intro": "Setting media view options for audio.\n\nmpv is higher quality but can be buggy. If you have problems, try the QtMediaPlayer as a fallback.",
+   "media": [
+    [
+     "show using mpv",
+     7
+    ],
+    [
+     "show using QtMediaPlayer",
+     9
+    ],
+    [
+     "show an 'open externally' button",
+     4
+    ],
+    [
+     "do not show in the media viewer. on thumbnail activation, open externally",
+     5
+    ],
+    [
+     "do not show at all",
+     6
+    ]
+   ],
+   "preview": [
+    [
+     "show using mpv",
+     7
+    ],
+    [
+     "show using QtMediaPlayer",
+     9
+    ],
+    [
+     "show an 'open externally' button",
+     4
+    ],
+    [
+     "do not show at all",
+     6
+    ]
+   ],
+   "zoom_rows": true
+  },
+  {
+   "mime": 41,
+   "pretty": "image",
+   "intro": "Setting media view options for image.",
+   "media": [
+    [
+     "show with native hydrus viewer",
+     0
+    ],
+    [
+     "show an 'open externally' button",
+     4
+    ],
+    [
+     "do not show in the media viewer. on thumbnail activation, open externally",
+     5
+    ],
+    [
+     "do not show at all",
+     6
+    ]
+   ],
+   "preview": [
+    [
+     "show with native hydrus viewer",
+     0
+    ],
+    [
+     "show an 'open externally' button",
+     4
+    ],
+    [
+     "do not show at all",
+     6
+    ]
+   ],
+   "zoom_rows": true
+  },
+  {
+   "mime": 42,
+   "pretty": "video",
+   "intro": "Setting media view options for video.\n\nmpv is higher quality but can be buggy. If you have problems, try the QtMediaPlayer as a fallback.",
+   "media": [
+    [
+     "show using mpv",
+     7
+    ],
+    [
+     "show using QtMediaPlayer",
+     9
+    ],
+    [
+     "show with native hydrus viewer (no audio support)",
+     0
+    ],
+    [
+     "show an 'open externally' button",
+     4
+    ],
+    [
+     "do not show in the media viewer. on thumbnail activation, open externally",
+     5
+    ],
+    [
+     "do not show at all",
+     6
+    ]
+   ],
+   "preview": [
+    [
+     "show using mpv",
+     7
+    ],
+    [
+     "show using QtMediaPlayer",
+     9
+    ],
+    [
+     "show with native hydrus viewer (no audio support)",
+     0
+    ],
+    [
+     "show an 'open externally' button",
+     4
+    ],
+    [
+     "do not show at all",
+     6
+    ]
+   ],
+   "zoom_rows": true
+  },
+  {
+   "mime": 43,
+   "pretty": "application",
+   "intro": "Setting media view options for application.",
+   "media": [
+    [
+     "show an 'open externally' button",
+     4
+    ],
+    [
+     "do not show in the media viewer. on thumbnail activation, open externally",
+     5
+    ],
+    [
+     "do not show at all",
+     6
+    ]
+   ],
+   "preview": [
+    [
+     "show an 'open externally' button",
+     4
+    ],
+    [
+     "do not show at all",
+     6
+    ]
+   ],
+   "zoom_rows": false
+  },
+  {
+   "mime": 44,
+   "pretty": "animation",
+   "intro": "Setting media view options for animation.\n\nmpv is higher quality but can be buggy. If you have problems, try the QtMediaPlayer as a fallback.",
+   "media": [
+    [
+     "show using mpv",
+     7
+    ],
+    [
+     "show using QtMediaPlayer",
+     9
+    ],
+    [
+     "show with native hydrus viewer",
+     0
+    ],
+    [
+     "show an 'open externally' button",
+     4
+    ],
+    [
+     "do not show in the media viewer. on thumbnail activation, open externally",
+     5
+    ],
+    [
+     "do not show at all",
+     6
+    ]
+   ],
+   "preview": [
+    [
+     "show using mpv",
+     7
+    ],
+    [
+     "show using QtMediaPlayer",
+     9
+    ],
+    [
+     "show with native hydrus viewer",
+     0
+    ],
+    [
+     "show an 'open externally' button",
+     4
+    ],
+    [
+     "do not show at all",
+     6
+    ]
+   ],
+   "zoom_rows": true
+  },
+  {
+   "mime": 45,
+   "pretty": "image project file: clip",
+   "intro": "Setting media view options for clip.",
+   "media": [
+    [
+     "show an 'open externally' button",
+     4
+    ],
+    [
+     "do not show in the media viewer. on thumbnail activation, open externally",
+     5
+    ],
+    [
+     "do not show at all",
+     6
+    ]
+   ],
+   "preview": [
+    [
+     "show an 'open externally' button",
+     4
+    ],
+    [
+     "do not show at all",
+     6
+    ]
+   ],
+   "zoom_rows": false
+  },
+  {
+   "mime": 46,
+   "pretty": "audio: wave",
+   "intro": "Setting media view options for wave.\n\nmpv is higher quality but can be buggy. If you have problems, try the QtMediaPlayer as a fallback.",
+   "media": [
+    [
+     "show using mpv",
+     7
+    ],
+    [
+     "show using QtMediaPlayer",
+     9
+    ],
+    [
+     "show an 'open externally' button",
+     4
+    ],
+    [
+     "do not show in the media viewer. on thumbnail activation, open externally",
+     5
+    ],
+    [
+     "do not show at all",
+     6
+    ]
+   ],
+   "preview": [
+    [
+     "show using mpv",
+     7
+    ],
+    [
+     "show using QtMediaPlayer",
+     9
+    ],
+    [
+     "show an 'open externally' button",
+     4
+    ],
+    [
+     "do not show at all",
+     6
+    ]
+   ],
+   "zoom_rows": true
+  },
+  {
+   "mime": 47,
+   "pretty": "video: ogv",
+   "intro": "Setting media view options for ogv.\n\nmpv is higher quality but can be buggy. If you have problems, try the QtMediaPlayer as a fallback.",
+   "media": [
+    [
+     "show using mpv",
+     7
+    ],
+    [
+     "show using QtMediaPlayer",
+     9
+    ],
+    [
+     "show with native hydrus viewer (no audio support)",
+     0
+    ],
+    [
+     "show an 'open externally' button",
+     4
+    ],
+    [
+     "do not show in the media viewer. on thumbnail activation, open externally",
+     5
+    ],
+    [
+     "do not show at all",
+     6
+    ]
+   ],
+   "preview": [
+    [
+     "show using mpv",
+     7
+    ],
+    [
+     "show using QtMediaPlayer",
+     9
+    ],
+    [
+     "show with native hydrus viewer (no audio support)",
+     0
+    ],
+    [
+     "show an 'open externally' button",
+     4
+    ],
+    [
+     "do not show at all",
+     6
+    ]
+   ],
+   "zoom_rows": true
+  },
+  {
+   "mime": 48,
+   "pretty": "audio: matroska audio",
+   "intro": "Setting media view options for matroska audio.\n\nmpv is higher quality but can be buggy. If you have problems, try the QtMediaPlayer as a fallback.",
+   "media": [
+    [
+     "show using mpv",
+     7
+    ],
+    [
+     "show using QtMediaPlayer",
+     9
+    ],
+    [
+     "show an 'open externally' button",
+     4
+    ],
+    [
+     "do not show in the media viewer. on thumbnail activation, open externally",
+     5
+    ],
+    [
+     "do not show at all",
+     6
+    ]
+   ],
+   "preview": [
+    [
+     "show using mpv",
+     7
+    ],
+    [
+     "show using QtMediaPlayer",
+     9
+    ],
+    [
+     "show an 'open externally' button",
+     4
+    ],
+    [
+     "do not show at all",
+     6
+    ]
+   ],
+   "zoom_rows": true
+  },
+  {
+   "mime": 49,
+   "pretty": "audio: mp4 audio",
+   "intro": "Setting media view options for mp4 audio.\n\nmpv is higher quality but can be buggy. If you have problems, try the QtMediaPlayer as a fallback.",
+   "media": [
+    [
+     "show using mpv",
+     7
+    ],
+    [
+     "show using QtMediaPlayer",
+     9
+    ],
+    [
+     "show an 'open externally' button",
+     4
+    ],
+    [
+     "do not show in the media viewer. on thumbnail activation, open externally",
+     5
+    ],
+    [
+     "do not show at all",
+     6
+    ]
+   ],
+   "preview": [
+    [
+     "show using mpv",
+     7
+    ],
+    [
+     "show using QtMediaPlayer",
+     9
+    ],
+    [
+     "show an 'open externally' button",
+     4
+    ],
+    [
+     "do not show at all",
+     6
+    ]
+   ],
+   "zoom_rows": true
+  },
+  {
+   "mime": 53,
+   "pretty": "audio: wavpack",
+   "intro": "Setting media view options for wavpack.\n\nmpv is higher quality but can be buggy. If you have problems, try the QtMediaPlayer as a fallback.",
+   "media": [
+    [
+     "show using mpv",
+     7
+    ],
+    [
+     "show using QtMediaPlayer",
+     9
+    ],
+    [
+     "show an 'open externally' button",
+     4
+    ],
+    [
+     "do not show in the media viewer. on thumbnail activation, open externally",
+     5
+    ],
+    [
+     "do not show at all",
+     6
+    ]
+   ],
+   "preview": [
+    [
+     "show using mpv",
+     7
+    ],
+    [
+     "show using QtMediaPlayer",
+     9
+    ],
+    [
+     "show an 'open externally' button",
+     4
+    ],
+    [
+     "do not show at all",
+     6
+    ]
+   ],
+   "zoom_rows": true
+  },
+  {
+   "mime": 54,
+   "pretty": "image project file: sai2",
+   "intro": "Setting media view options for sai2.",
+   "media": [
+    [
+     "show an 'open externally' button",
+     4
+    ],
+    [
+     "do not show in the media viewer. on thumbnail activation, open externally",
+     5
+    ],
+    [
+     "do not show at all",
+     6
+    ]
+   ],
+   "preview": [
+    [
+     "show an 'open externally' button",
+     4
+    ],
+    [
+     "do not show at all",
+     6
+    ]
+   ],
+   "zoom_rows": false
+  },
+  {
+   "mime": 55,
+   "pretty": "image project file: krita",
+   "intro": "Setting media view options for krita.",
+   "media": [
+    [
+     "show with native hydrus viewer",
+     0
+    ],
+    [
+     "show an 'open externally' button",
+     4
+    ],
+    [
+     "do not show in the media viewer. on thumbnail activation, open externally",
+     5
+    ],
+    [
+     "do not show at all",
+     6
+    ]
+   ],
+   "preview": [
+    [
+     "show with native hydrus viewer",
+     0
+    ],
+    [
+     "show an 'open externally' button",
+     4
+    ],
+    [
+     "do not show at all",
+     6
+    ]
+   ],
+   "zoom_rows": true
+  },
+  {
+   "mime": 56,
+   "pretty": "image project file: svg",
+   "intro": "Setting media view options for svg.",
+   "media": [
+    [
+     "show an 'open externally' button",
+     4
+    ],
+    [
+     "do not show in the media viewer. on thumbnail activation, open externally",
+     5
+    ],
+    [
+     "do not show at all",
+     6
+    ]
+   ],
+   "preview": [
+    [
+     "show an 'open externally' button",
+     4
+    ],
+    [
+     "do not show at all",
+     6
+    ]
+   ],
+   "zoom_rows": false
+  },
+  {
+   "mime": 57,
+   "pretty": "image project file: xcf",
+   "intro": "Setting media view options for xcf.",
+   "media": [
+    [
+     "show an 'open externally' button",
+     4
+    ],
+    [
+     "do not show in the media viewer. on thumbnail activation, open externally",
+     5
+    ],
+    [
+     "do not show at all",
+     6
+    ]
+   ],
+   "preview": [
+    [
+     "show an 'open externally' button",
+     4
+    ],
+    [
+     "do not show at all",
+     6
+    ]
+   ],
+   "zoom_rows": false
+  },
+  {
+   "mime": 58,
+   "pretty": "archive: gzip",
+   "intro": "Setting media view options for gzip.",
+   "media": [
+    [
+     "show an 'open externally' button",
+     4
+    ],
+    [
+     "do not show in the media viewer. on thumbnail activation, open externally",
+     5
+    ],
+    [
+     "do not show at all",
+     6
+    ]
+   ],
+   "preview": [
+    [
+     "show an 'open externally' button",
+     4
+    ],
+    [
+     "do not show at all",
+     6
+    ]
+   ],
+   "zoom_rows": false
+  },
+  {
+   "mime": 59,
+   "pretty": "archive",
+   "intro": "Setting media view options for archive.",
+   "media": [
+    [
+     "show an 'open externally' button",
+     4
+    ],
+    [
+     "do not show in the media viewer. on thumbnail activation, open externally",
+     5
+    ],
+    [
+     "do not show at all",
+     6
+    ]
+   ],
+   "preview": [
+    [
+     "show an 'open externally' button",
+     4
+    ],
+    [
+     "do not show at all",
+     6
+    ]
+   ],
+   "zoom_rows": false
+  },
+  {
+   "mime": 60,
+   "pretty": "image project file",
+   "intro": "Setting media view options for image project file.",
+   "media": [
+    [
+     "show an 'open externally' button",
+     4
+    ],
+    [
+     "do not show in the media viewer. on thumbnail activation, open externally",
+     5
+    ],
+    [
+     "do not show at all",
+     6
+    ]
+   ],
+   "preview": [
+    [
+     "show an 'open externally' button",
+     4
+    ],
+    [
+     "do not show at all",
+     6
+    ]
+   ],
+   "zoom_rows": false
+  },
+  {
+   "mime": 61,
+   "pretty": "image: heif",
+   "intro": "Setting media view options for heif.",
+   "media": [
+    [
+     "show with native hydrus viewer",
+     0
+    ],
+    [
+     "show an 'open externally' button",
+     4
+    ],
+    [
+     "do not show in the media viewer. on thumbnail activation, open externally",
+     5
+    ],
+    [
+     "do not show at all",
+     6
+    ]
+   ],
+   "preview": [
+    [
+     "show with native hydrus viewer",
+     0
+    ],
+    [
+     "show an 'open externally' button",
+     4
+    ],
+    [
+     "do not show at all",
+     6
+    ]
+   ],
+   "zoom_rows": true
+  },
+  {
+   "mime": 62,
+   "pretty": "animation: heif sequence",
+   "intro": "Setting media view options for heif sequence.\n\nmpv is higher quality but can be buggy. If you have problems, try the QtMediaPlayer as a fallback.",
+   "media": [
+    [
+     "show using mpv",
+     7
+    ],
+    [
+     "show using QtMediaPlayer",
+     9
+    ],
+    [
+     "show with native hydrus viewer",
+     0
+    ],
+    [
+     "show an 'open externally' button",
+     4
+    ],
+    [
+     "do not show in the media viewer. on thumbnail activation, open externally",
+     5
+    ],
+    [
+     "do not show at all",
+     6
+    ]
+   ],
+   "preview": [
+    [
+     "show using mpv",
+     7
+    ],
+    [
+     "show using QtMediaPlayer",
+     9
+    ],
+    [
+     "show with native hydrus viewer",
+     0
+    ],
+    [
+     "show an 'open externally' button",
+     4
+    ],
+    [
+     "do not show at all",
+     6
+    ]
+   ],
+   "zoom_rows": true
+  },
+  {
+   "mime": 63,
+   "pretty": "image: heic",
+   "intro": "Setting media view options for heic.",
+   "media": [
+    [
+     "show with native hydrus viewer",
+     0
+    ],
+    [
+     "show an 'open externally' button",
+     4
+    ],
+    [
+     "do not show in the media viewer. on thumbnail activation, open externally",
+     5
+    ],
+    [
+     "do not show at all",
+     6
+    ]
+   ],
+   "preview": [
+    [
+     "show with native hydrus viewer",
+     0
+    ],
+    [
+     "show an 'open externally' button",
+     4
+    ],
+    [
+     "do not show at all",
+     6
+    ]
+   ],
+   "zoom_rows": true
+  },
+  {
+   "mime": 64,
+   "pretty": "animation: heic sequence",
+   "intro": "Setting media view options for heic sequence.\n\nmpv is higher quality but can be buggy. If you have problems, try the QtMediaPlayer as a fallback.",
+   "media": [
+    [
+     "show using mpv",
+     7
+    ],
+    [
+     "show using QtMediaPlayer",
+     9
+    ],
+    [
+     "show with native hydrus viewer",
+     0
+    ],
+    [
+     "show an 'open externally' button",
+     4
+    ],
+    [
+     "do not show in the media viewer. on thumbnail activation, open externally",
+     5
+    ],
+    [
+     "do not show at all",
+     6
+    ]
+   ],
+   "preview": [
+    [
+     "show using mpv",
+     7
+    ],
+    [
+     "show using QtMediaPlayer",
+     9
+    ],
+    [
+     "show with native hydrus viewer",
+     0
+    ],
+    [
+     "show an 'open externally' button",
+     4
+    ],
+    [
+     "do not show at all",
+     6
+    ]
+   ],
+   "zoom_rows": true
+  },
+  {
+   "mime": 65,
+   "pretty": "image: avif",
+   "intro": "Setting media view options for avif.",
+   "media": [
+    [
+     "show with native hydrus viewer",
+     0
+    ],
+    [
+     "show an 'open externally' button",
+     4
+    ],
+    [
+     "do not show in the media viewer. on thumbnail activation, open externally",
+     5
+    ],
+    [
+     "do not show at all",
+     6
+    ]
+   ],
+   "preview": [
+    [
+     "show with native hydrus viewer",
+     0
+    ],
+    [
+     "show an 'open externally' button",
+     4
+    ],
+    [
+     "do not show at all",
+     6
+    ]
+   ],
+   "zoom_rows": true
+  },
+  {
+   "mime": 66,
+   "pretty": "animation: avif sequence",
+   "intro": "Setting media view options for avif sequence.\n\nmpv is higher quality but can be buggy. If you have problems, try the QtMediaPlayer as a fallback.",
+   "media": [
+    [
+     "show using mpv",
+     7
+    ],
+    [
+     "show using QtMediaPlayer",
+     9
+    ],
+    [
+     "show with native hydrus viewer",
+     0
+    ],
+    [
+     "show an 'open externally' button",
+     4
+    ],
+    [
+     "do not show in the media viewer. on thumbnail activation, open externally",
+     5
+    ],
+    [
+     "do not show at all",
+     6
+    ]
+   ],
+   "preview": [
+    [
+     "show using mpv",
+     7
+    ],
+    [
+     "show using QtMediaPlayer",
+     9
+    ],
+    [
+     "show with native hydrus viewer",
+     0
+    ],
+    [
+     "show an 'open externally' button",
+     4
+    ],
+    [
+     "do not show at all",
+     6
+    ]
+   ],
+   "zoom_rows": true
+  },
+  {
+   "mime": 68,
+   "pretty": "image: static gif",
+   "intro": "Setting media view options for static gif.",
+   "media": [
+    [
+     "show with native hydrus viewer",
+     0
+    ],
+    [
+     "show an 'open externally' button",
+     4
+    ],
+    [
+     "do not show in the media viewer. on thumbnail activation, open externally",
+     5
+    ],
+    [
+     "do not show at all",
+     6
+    ]
+   ],
+   "preview": [
+    [
+     "show with native hydrus viewer",
+     0
+    ],
+    [
+     "show an 'open externally' button",
+     4
+    ],
+    [
+     "do not show at all",
+     6
+    ]
+   ],
+   "zoom_rows": true
+  },
+  {
+   "mime": 69,
+   "pretty": "image project file: procreate",
+   "intro": "Setting media view options for procreate.",
+   "media": [
+    [
+     "show an 'open externally' button",
+     4
+    ],
+    [
+     "do not show in the media viewer. on thumbnail activation, open externally",
+     5
+    ],
+    [
+     "do not show at all",
+     6
+    ]
+   ],
+   "preview": [
+    [
+     "show an 'open externally' button",
+     4
+    ],
+    [
+     "do not show at all",
+     6
+    ]
+   ],
+   "zoom_rows": false
+  },
+  {
+   "mime": 70,
+   "pretty": "image: qoi",
+   "intro": "Setting media view options for qoi.",
+   "media": [
+    [
+     "show with native hydrus viewer",
+     0
+    ],
+    [
+     "show an 'open externally' button",
+     4
+    ],
+    [
+     "do not show in the media viewer. on thumbnail activation, open externally",
+     5
+    ],
+    [
+     "do not show at all",
+     6
+    ]
+   ],
+   "preview": [
+    [
+     "show with native hydrus viewer",
+     0
+    ],
+    [
+     "show an 'open externally' button",
+     4
+    ],
+    [
+     "do not show at all",
+     6
+    ]
+   ],
+   "zoom_rows": true
+  },
+  {
+   "mime": 71,
+   "pretty": "application: epub",
+   "intro": "Setting media view options for epub.",
+   "media": [
+    [
+     "show an 'open externally' button",
+     4
+    ],
+    [
+     "do not show in the media viewer. on thumbnail activation, open externally",
+     5
+    ],
+    [
+     "do not show at all",
+     6
+    ]
+   ],
+   "preview": [
+    [
+     "show an 'open externally' button",
+     4
+    ],
+    [
+     "do not show at all",
+     6
+    ]
+   ],
+   "zoom_rows": false
+  },
+  {
+   "mime": 72,
+   "pretty": "application: djvu",
+   "intro": "Setting media view options for djvu.",
+   "media": [
+    [
+     "show an 'open externally' button",
+     4
+    ],
+    [
+     "do not show in the media viewer. on thumbnail activation, open externally",
+     5
+    ],
+    [
+     "do not show at all",
+     6
+    ]
+   ],
+   "preview": [
+    [
+     "show an 'open externally' button",
+     4
+    ],
+    [
+     "do not show at all",
+     6
+    ]
+   ],
+   "zoom_rows": false
+  },
+  {
+   "mime": 73,
+   "pretty": "archive: cbz",
+   "intro": "Setting media view options for cbz.",
+   "media": [
+    [
+     "show an 'open externally' button",
+     4
+    ],
+    [
+     "do not show in the media viewer. on thumbnail activation, open externally",
+     5
+    ],
+    [
+     "do not show at all",
+     6
+    ]
+   ],
+   "preview": [
+    [
+     "show an 'open externally' button",
+     4
+    ],
+    [
+     "do not show at all",
+     6
+    ]
+   ],
+   "zoom_rows": false
+  },
+  {
+   "mime": 74,
+   "pretty": "animation: ugoira",
+   "intro": "Setting media view options for ugoira.",
+   "media": [
+    [
+     "show with native hydrus viewer",
+     0
+    ],
+    [
+     "show an 'open externally' button",
+     4
+    ],
+    [
+     "do not show in the media viewer. on thumbnail activation, open externally",
+     5
+    ],
+    [
+     "do not show at all",
+     6
+    ]
+   ],
+   "preview": [
+    [
+     "show with native hydrus viewer",
+     0
+    ],
+    [
+     "show an 'open externally' button",
+     4
+    ],
+    [
+     "do not show at all",
+     6
+    ]
+   ],
+   "zoom_rows": true
+  },
+  {
+   "mime": 75,
+   "pretty": "application: rtf",
+   "intro": "Setting media view options for rtf.",
+   "media": [
+    [
+     "show an 'open externally' button",
+     4
+    ],
+    [
+     "do not show in the media viewer. on thumbnail activation, open externally",
+     5
+    ],
+    [
+     "do not show at all",
+     6
+    ]
+   ],
+   "preview": [
+    [
+     "show an 'open externally' button",
+     4
+    ],
+    [
+     "do not show at all",
+     6
+    ]
+   ],
+   "zoom_rows": false
+  },
+  {
+   "mime": 76,
+   "pretty": "application: docx",
+   "intro": "Setting media view options for docx.",
+   "media": [
+    [
+     "show an 'open externally' button",
+     4
+    ],
+    [
+     "do not show in the media viewer. on thumbnail activation, open externally",
+     5
+    ],
+    [
+     "do not show at all",
+     6
+    ]
+   ],
+   "preview": [
+    [
+     "show an 'open externally' button",
+     4
+    ],
+    [
+     "do not show at all",
+     6
+    ]
+   ],
+   "zoom_rows": false
+  },
+  {
+   "mime": 77,
+   "pretty": "application: xlsx",
+   "intro": "Setting media view options for xlsx.",
+   "media": [
+    [
+     "show an 'open externally' button",
+     4
+    ],
+    [
+     "do not show in the media viewer. on thumbnail activation, open externally",
+     5
+    ],
+    [
+     "do not show at all",
+     6
+    ]
+   ],
+   "preview": [
+    [
+     "show an 'open externally' button",
+     4
+    ],
+    [
+     "do not show at all",
+     6
+    ]
+   ],
+   "zoom_rows": false
+  },
+  {
+   "mime": 78,
+   "pretty": "application: pptx",
+   "intro": "Setting media view options for pptx.",
+   "media": [
+    [
+     "show an 'open externally' button",
+     4
+    ],
+    [
+     "do not show in the media viewer. on thumbnail activation, open externally",
+     5
+    ],
+    [
+     "do not show at all",
+     6
+    ]
+   ],
+   "preview": [
+    [
+     "show an 'open externally' button",
+     4
+    ],
+    [
+     "do not show at all",
+     6
+    ]
+   ],
+   "zoom_rows": false
+  },
+  {
+   "mime": 80,
+   "pretty": "application: doc",
+   "intro": "Setting media view options for doc.",
+   "media": [
+    [
+     "show an 'open externally' button",
+     4
+    ],
+    [
+     "do not show in the media viewer. on thumbnail activation, open externally",
+     5
+    ],
+    [
+     "do not show at all",
+     6
+    ]
+   ],
+   "preview": [
+    [
+     "show an 'open externally' button",
+     4
+    ],
+    [
+     "do not show at all",
+     6
+    ]
+   ],
+   "zoom_rows": false
+  },
+  {
+   "mime": 81,
+   "pretty": "application: xls",
+   "intro": "Setting media view options for xls.",
+   "media": [
+    [
+     "show an 'open externally' button",
+     4
+    ],
+    [
+     "do not show in the media viewer. on thumbnail activation, open externally",
+     5
+    ],
+    [
+     "do not show at all",
+     6
+    ]
+   ],
+   "preview": [
+    [
+     "show an 'open externally' button",
+     4
+    ],
+    [
+     "do not show at all",
+     6
+    ]
+   ],
+   "zoom_rows": false
+  },
+  {
+   "mime": 82,
+   "pretty": "application: ppt",
+   "intro": "Setting media view options for ppt.",
+   "media": [
+    [
+     "show an 'open externally' button",
+     4
+    ],
+    [
+     "do not show in the media viewer. on thumbnail activation, open externally",
+     5
+    ],
+    [
+     "do not show at all",
+     6
+    ]
+   ],
+   "preview": [
+    [
+     "show an 'open externally' button",
+     4
+    ],
+    [
+     "do not show at all",
+     6
+    ]
+   ],
+   "zoom_rows": false
+  },
+  {
+   "mime": 83,
+   "pretty": "animation: animated webp",
+   "intro": "Setting media view options for animated webp.",
+   "media": [
+    [
+     "show with native hydrus viewer",
+     0
+    ],
+    [
+     "show an 'open externally' button",
+     4
+    ],
+    [
+     "do not show in the media viewer. on thumbnail activation, open externally",
+     5
+    ],
+    [
+     "do not show at all",
+     6
+    ]
+   ],
+   "preview": [
+    [
+     "show with native hydrus viewer",
+     0
+    ],
+    [
+     "show an 'open externally' button",
+     4
+    ],
+    [
+     "do not show at all",
+     6
+    ]
+   ],
+   "zoom_rows": true
+  },
+  {
+   "mime": 85,
+   "pretty": "image: jxl",
+   "intro": "Setting media view options for jxl.",
+   "media": [
+    [
+     "show with native hydrus viewer",
+     0
+    ],
+    [
+     "show an 'open externally' button",
+     4
+    ],
+    [
+     "do not show in the media viewer. on thumbnail activation, open externally",
+     5
+    ],
+    [
+     "do not show at all",
+     6
+    ]
+   ],
+   "preview": [
+    [
+     "show with native hydrus viewer",
+     0
+    ],
+    [
+     "show an 'open externally' button",
+     4
+    ],
+    [
+     "do not show at all",
+     6
+    ]
+   ],
+   "zoom_rows": true
+  },
+  {
+   "mime": 86,
+   "pretty": "image project file: paint.net",
+   "intro": "Setting media view options for paint.net.",
+   "media": [
+    [
+     "show an 'open externally' button",
+     4
+    ],
+    [
+     "do not show in the media viewer. on thumbnail activation, open externally",
+     5
+    ],
+    [
+     "do not show at all",
+     6
+    ]
+   ],
+   "preview": [
+    [
+     "show an 'open externally' button",
+     4
+    ],
+    [
+     "do not show at all",
+     6
+    ]
+   ],
+   "zoom_rows": false
+  },
+  {
+   "mime": 88,
+   "pretty": "animation: animated jxl",
+   "intro": "Setting media view options for animated jxl.",
+   "media": [
+    [
+     "show with native hydrus viewer",
+     0
+    ],
+    [
+     "show an 'open externally' button",
+     4
+    ],
+    [
+     "do not show in the media viewer. on thumbnail activation, open externally",
+     5
+    ],
+    [
+     "do not show at all",
+     6
+    ]
+   ],
+   "preview": [
+    [
+     "show with native hydrus viewer",
+     0
+    ],
+    [
+     "show an 'open externally' button",
+     4
+    ],
+    [
+     "do not show at all",
+     6
+    ]
+   ],
+   "zoom_rows": true
+  },
+  {
+   "mime": 89,
+   "pretty": "image project file: ora",
+   "intro": "Setting media view options for ora.",
+   "media": [
+    [
+     "show with native hydrus viewer",
+     0
+    ],
+    [
+     "show an 'open externally' button",
+     4
+    ],
+    [
+     "do not show in the media viewer. on thumbnail activation, open externally",
+     5
+    ],
+    [
+     "do not show at all",
+     6
+    ]
+   ],
+   "preview": [
+    [
+     "show with native hydrus viewer",
+     0
+    ],
+    [
+     "show an 'open externally' button",
+     4
+    ],
+    [
+     "do not show at all",
+     6
+    ]
+   ],
+   "zoom_rows": true
+  }
+ ]
+}

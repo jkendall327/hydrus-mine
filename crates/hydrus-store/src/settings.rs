@@ -592,6 +592,95 @@ impl Setting for GuiSessionSettings {
     const KEY: &'static str = "gui_sessions";
 }
 
+/// Shutdown maintenance (Options > maintenance and processing > shutdown):
+/// whether to run it (0: never, 1: if needed, 2: if needed but ask first),
+/// at most how many minutes, at most once per how many seconds, and when it
+/// last ran (seconds).
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, serde::Deserialize)]
+#[serde(default)]
+pub struct ShutdownWork {
+    pub action: u8,
+    pub max_minutes: u32,
+    pub period_seconds: u64,
+    pub last_done: i64,
+}
+impl Default for ShutdownWork {
+    fn default() -> Self {
+        Self {
+            action: 2,
+            max_minutes: 5,
+            period_seconds: 86_400,
+            last_done: 0,
+        }
+    }
+}
+impl Setting for ShutdownWork {
+    const KEY: &'static str = "shutdown_work";
+}
+
+/// One kind of background work's ideal work packet time (ms) and rest after
+/// it (a percentage of the time worked).
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, serde::Deserialize)]
+pub struct WorkRest {
+    pub work_ms: u32,
+    pub rest_percentage: u32,
+}
+
+const fn work_rest(work_ms: u32, rest_percentage: u32) -> WorkRest {
+    WorkRest {
+        work_ms,
+        rest_percentage,
+    }
+}
+
+/// Options > maintenance and processing's repository processing, sibling/
+/// parent sync and deferred table delete timings (the reference's
+/// `repository_processing_*`, `tag_display_processing_*`,
+/// `tag_display_maintenance_during_*` and `deferred_table_delete_*`).
+/// hydrus-rs keeps and edits them; it syncs and deletes as it writes, and
+/// has no repositories, so none of its work reads them yet.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, serde::Deserialize)]
+#[serde(default)]
+pub struct BackgroundWork {
+    pub repository_very_idle: WorkRest,
+    pub repository_idle: WorkRest,
+    pub repository_normal: WorkRest,
+    pub tag_display_during_idle: bool,
+    pub tag_display_during_active: bool,
+    pub tag_display_idle: WorkRest,
+    pub tag_display_normal: WorkRest,
+    pub tag_display_work_hard: WorkRest,
+    pub deferred_delete_idle: WorkRest,
+    pub deferred_delete_normal: WorkRest,
+    pub deferred_delete_work_hard: WorkRest,
+    /// Database > db maintenance's "work deferred delete jobs during idle /
+    /// normal time".
+    pub deferred_delete_during_idle: bool,
+    pub deferred_delete_during_active: bool,
+}
+impl Default for BackgroundWork {
+    fn default() -> Self {
+        Self {
+            repository_very_idle: work_rest(30_000, 3),
+            repository_idle: work_rest(10_000, 5),
+            repository_normal: work_rest(500, 10),
+            tag_display_during_idle: true,
+            tag_display_during_active: true,
+            tag_display_idle: work_rest(15_000, 3),
+            tag_display_normal: work_rest(100, 9_900),
+            tag_display_work_hard: work_rest(5_000, 5),
+            deferred_delete_idle: work_rest(20_000, 10),
+            deferred_delete_normal: work_rest(250, 1_000),
+            deferred_delete_work_hard: work_rest(5_000, 10),
+            deferred_delete_during_idle: true,
+            deferred_delete_during_active: true,
+        }
+    }
+}
+impl Setting for BackgroundWork {
+    const KEY: &'static str = "background_work";
+}
+
 /// Idle eligibility from the reference's user-action and mouse timers.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, serde::Deserialize)]
 #[serde(default)]
@@ -600,6 +689,10 @@ pub struct GuiIdleSettings {
     pub user_seconds: Option<u64>,
     pub mouse_seconds: Option<u64>,
     pub api_seconds: Option<u64>,
+    /// The CPU-busy check: busy when this many cores (none: ignore CPU use)
+    /// ran above this percentage.
+    pub busy_cpu_percent: u32,
+    pub busy_cpu_count: Option<u32>,
 }
 impl Default for GuiIdleSettings {
     fn default() -> Self {
@@ -608,6 +701,8 @@ impl Default for GuiIdleSettings {
             user_seconds: Some(1800),
             mouse_seconds: Some(600),
             api_seconds: None,
+            busy_cpu_percent: 50,
+            busy_cpu_count: Some(1),
         }
     }
 }

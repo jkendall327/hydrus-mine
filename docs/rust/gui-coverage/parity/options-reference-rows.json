@@ -1,0 +1,932 @@
+{
+  "schema_version": 1,
+  "agent": "options-reference-rows",
+  "note": "Cheap-validation implementation proposal (2026-10-05 breadth pass): strict backend/model Clippy and targeted model tests; native GUI compile/render review deferred to the final validation pass.",
+  "proposed_completed_count": 2,
+  "claims": [
+    {
+      "id": "audit-options-media-playback-mpv-debug-loop-playlist-instead-of-loop-file-in-mpv",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "countAsCompletedLeaf": true,
+      "behavior": "Options rows the reference has and hydrus-rs lacked, each with the reference's label, box, position, default and range (recorded options_dialog.json): audio's preview volume; connection's REQUESTS_CA_BUNDLE debug; exporting's drag-and-drop box; gui misc's native menubar, locale integers, non-tool child windows, macOS debug menus and Qt file dialogs; frame locations' self-sizing viewer padding; gui pages' hide-page signal; importing's URL drop page switch; media playback's mpv, QtMediaPlayer and system rows; hovers' pinned duplicates hover and preview window hovers; popups' other-display freeze; the image tile cache and video buffer boxes; system sleep's file system wait; the system tray page; tag editing's petition reason count. Values are kept as the reference keeps them (ReferenceOptions) and imported from a legacy client. mpv's preferred audio device and playlist looping apply to each file played.",
+      "source": [
+        "crates/hydrus-store/src/reference_options.rs",
+        "crates/hydrus-gui-model/src/options.rs",
+        "crates/hydrus-gui-model/src/options_popup_width.rs",
+        "crates/hydrus-store/src/import/decode.rs",
+        "crates/hydrus-gui/src/mpv.rs",
+        "crates/hydrus-gui/src/playback.rs"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/options_dialog.rs::the_options_pages_are_the_references",
+        "crates/hydrus-store/src/reference_options.rs::tests"
+      ],
+      "limits": [
+        "Except mpv audio device and looping, the values are kept and edited but nothing in hydrus-rs reads them (no system tray, Qt styles, tile cache, drag-out or QtMediaPlayer)."
+      ]
+    },
+    {
+      "id": "audit-options-media-playback-mpv-preferred-audio-output-device",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "countAsCompletedLeaf": true,
+      "behavior": "Options rows the reference has and hydrus-rs lacked, each with the reference's label, box, position, default and range (recorded options_dialog.json): audio's preview volume; connection's REQUESTS_CA_BUNDLE debug; exporting's drag-and-drop box; gui misc's native menubar, locale integers, non-tool child windows, macOS debug menus and Qt file dialogs; frame locations' self-sizing viewer padding; gui pages' hide-page signal; importing's URL drop page switch; media playback's mpv, QtMediaPlayer and system rows; hovers' pinned duplicates hover and preview window hovers; popups' other-display freeze; the image tile cache and video buffer boxes; system sleep's file system wait; the system tray page; tag editing's petition reason count. Values are kept as the reference keeps them (ReferenceOptions) and imported from a legacy client. mpv's preferred audio device and playlist looping apply to each file played.",
+      "source": [
+        "crates/hydrus-store/src/reference_options.rs",
+        "crates/hydrus-gui-model/src/options.rs",
+        "crates/hydrus-gui-model/src/options_popup_width.rs",
+        "crates/hydrus-store/src/import/decode.rs",
+        "crates/hydrus-gui/src/mpv.rs",
+        "crates/hydrus-gui/src/playback.rs"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/options_dialog.rs::the_options_pages_are_the_references",
+        "crates/hydrus-store/src/reference_options.rs::tests"
+      ],
+      "limits": [
+        "Except mpv audio device and looping, the values are kept and edited but nothing in hydrus-rs reads them (no system tray, Qt styles, tile cache, drag-out or QtMediaPlayer)."
+      ]
+    },
+    {
+      "id": "audit-options-audio-the-preview-window-has-its-own-volume",
+      "before": "missing",
+      "proposedStatus": "partial",
+      "countAsCompletedLeaf": false,
+      "behavior": "Options rows the reference has and hydrus-rs lacked, each with the reference's label, box, position, default and range (recorded options_dialog.json): audio's preview volume; connection's REQUESTS_CA_BUNDLE debug; exporting's drag-and-drop box; gui misc's native menubar, locale integers, non-tool child windows, macOS debug menus and Qt file dialogs; frame locations' self-sizing viewer padding; gui pages' hide-page signal; importing's URL drop page switch; media playback's mpv, QtMediaPlayer and system rows; hovers' pinned duplicates hover and preview window hovers; popups' other-display freeze; the image tile cache and video buffer boxes; system sleep's file system wait; the system tray page; tag editing's petition reason count. Values are kept as the reference keeps them (ReferenceOptions) and imported from a legacy client. mpv's preferred audio device and playlist looping apply to each file played.",
+      "source": [
+        "crates/hydrus-store/src/reference_options.rs",
+        "crates/hydrus-gui-model/src/options.rs",
+        "crates/hydrus-gui-model/src/options_popup_width.rs",
+        "crates/hydrus-store/src/import/decode.rs",
+        "crates/hydrus-gui/src/mpv.rs",
+        "crates/hydrus-gui/src/playback.rs"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/options_dialog.rs::the_options_pages_are_the_references",
+        "crates/hydrus-store/src/reference_options.rs::tests"
+      ],
+      "limits": [
+        "Except mpv audio device and looping, the values are kept and edited but nothing in hydrus-rs reads them (no system tray, Qt styles, tile cache, drag-out or QtMediaPlayer)."
+      ]
+    },
+    {
+      "id": "audit-options-connection-general-debug-set-the-requests-ca-bundle-env-to-certifi-cacert-pem-on-program-start",
+      "before": "missing",
+      "proposedStatus": "partial",
+      "countAsCompletedLeaf": false,
+      "behavior": "Options rows the reference has and hydrus-rs lacked, each with the reference's label, box, position, default and range (recorded options_dialog.json): audio's preview volume; connection's REQUESTS_CA_BUNDLE debug; exporting's drag-and-drop box; gui misc's native menubar, locale integers, non-tool child windows, macOS debug menus and Qt file dialogs; frame locations' self-sizing viewer padding; gui pages' hide-page signal; importing's URL drop page switch; media playback's mpv, QtMediaPlayer and system rows; hovers' pinned duplicates hover and preview window hovers; popups' other-display freeze; the image tile cache and video buffer boxes; system sleep's file system wait; the system tray page; tag editing's petition reason count. Values are kept as the reference keeps them (ReferenceOptions) and imported from a legacy client. mpv's preferred audio device and playlist looping apply to each file played.",
+      "source": [
+        "crates/hydrus-store/src/reference_options.rs",
+        "crates/hydrus-gui-model/src/options.rs",
+        "crates/hydrus-gui-model/src/options_popup_width.rs",
+        "crates/hydrus-store/src/import/decode.rs",
+        "crates/hydrus-gui/src/mpv.rs",
+        "crates/hydrus-gui/src/playback.rs"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/options_dialog.rs::the_options_pages_are_the_references",
+        "crates/hydrus-store/src/reference_options.rs::tests"
+      ],
+      "limits": [
+        "Except mpv audio device and looping, the values are kept and edited but nothing in hydrus-rs reads them (no system tray, Qt styles, tile cache, drag-out or QtMediaPlayer)."
+      ]
+    },
+    {
+      "id": "audit-options-exporting-drag-and-drop-bugfix-set-drag-and-drops-to-have-a-move-flag",
+      "before": "missing",
+      "proposedStatus": "partial",
+      "countAsCompletedLeaf": false,
+      "behavior": "Options rows the reference has and hydrus-rs lacked, each with the reference's label, box, position, default and range (recorded options_dialog.json): audio's preview volume; connection's REQUESTS_CA_BUNDLE debug; exporting's drag-and-drop box; gui misc's native menubar, locale integers, non-tool child windows, macOS debug menus and Qt file dialogs; frame locations' self-sizing viewer padding; gui pages' hide-page signal; importing's URL drop page switch; media playback's mpv, QtMediaPlayer and system rows; hovers' pinned duplicates hover and preview window hovers; popups' other-display freeze; the image tile cache and video buffer boxes; system sleep's file system wait; the system tray page; tag editing's petition reason count. Values are kept as the reference keeps them (ReferenceOptions) and imported from a legacy client. mpv's preferred audio device and playlist looping apply to each file played.",
+      "source": [
+        "crates/hydrus-store/src/reference_options.rs",
+        "crates/hydrus-gui-model/src/options.rs",
+        "crates/hydrus-gui-model/src/options_popup_width.rs",
+        "crates/hydrus-store/src/import/decode.rs",
+        "crates/hydrus-gui/src/mpv.rs",
+        "crates/hydrus-gui/src/playback.rs"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/options_dialog.rs::the_options_pages_are_the_references",
+        "crates/hydrus-store/src/reference_options.rs::tests"
+      ],
+      "limits": [
+        "Except mpv audio device and looping, the values are kept and edited but nothing in hydrus-rs reads them (no system tray, Qt styles, tile cache, drag-out or QtMediaPlayer)."
+      ]
+    },
+    {
+      "id": "audit-options-exporting-drag-and-drop-copy-files-to-temp-folder-for-drag-and-drop-works-for-50-200mb-file-dnds-fixes-discord",
+      "before": "missing",
+      "proposedStatus": "partial",
+      "countAsCompletedLeaf": false,
+      "behavior": "Options rows the reference has and hydrus-rs lacked, each with the reference's label, box, position, default and range (recorded options_dialog.json): audio's preview volume; connection's REQUESTS_CA_BUNDLE debug; exporting's drag-and-drop box; gui misc's native menubar, locale integers, non-tool child windows, macOS debug menus and Qt file dialogs; frame locations' self-sizing viewer padding; gui pages' hide-page signal; importing's URL drop page switch; media playback's mpv, QtMediaPlayer and system rows; hovers' pinned duplicates hover and preview window hovers; popups' other-display freeze; the image tile cache and video buffer boxes; system sleep's file system wait; the system tray page; tag editing's petition reason count. Values are kept as the reference keeps them (ReferenceOptions) and imported from a legacy client. mpv's preferred audio device and playlist looping apply to each file played.",
+      "source": [
+        "crates/hydrus-store/src/reference_options.rs",
+        "crates/hydrus-gui-model/src/options.rs",
+        "crates/hydrus-gui-model/src/options_popup_width.rs",
+        "crates/hydrus-store/src/import/decode.rs",
+        "crates/hydrus-gui/src/mpv.rs",
+        "crates/hydrus-gui/src/playback.rs"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/options_dialog.rs::the_options_pages_are_the_references",
+        "crates/hydrus-store/src/reference_options.rs::tests"
+      ],
+      "limits": [
+        "Except mpv audio device and looping, the values are kept and edited but nothing in hydrus-rs reads them (no system tray, Qt styles, tile cache, drag-out or QtMediaPlayer)."
+      ]
+    },
+    {
+      "id": "audit-options-exporting-drag-and-drop-drag-and-drop-export-filename-pattern",
+      "before": "missing",
+      "proposedStatus": "partial",
+      "countAsCompletedLeaf": false,
+      "behavior": "Options rows the reference has and hydrus-rs lacked, each with the reference's label, box, position, default and range (recorded options_dialog.json): audio's preview volume; connection's REQUESTS_CA_BUNDLE debug; exporting's drag-and-drop box; gui misc's native menubar, locale integers, non-tool child windows, macOS debug menus and Qt file dialogs; frame locations' self-sizing viewer padding; gui pages' hide-page signal; importing's URL drop page switch; media playback's mpv, QtMediaPlayer and system rows; hovers' pinned duplicates hover and preview window hovers; popups' other-display freeze; the image tile cache and video buffer boxes; system sleep's file system wait; the system tray page; tag editing's petition reason count. Values are kept as the reference keeps them (ReferenceOptions) and imported from a legacy client. mpv's preferred audio device and playlist looping apply to each file played.",
+      "source": [
+        "crates/hydrus-store/src/reference_options.rs",
+        "crates/hydrus-gui-model/src/options.rs",
+        "crates/hydrus-gui-model/src/options_popup_width.rs",
+        "crates/hydrus-store/src/import/decode.rs",
+        "crates/hydrus-gui/src/mpv.rs",
+        "crates/hydrus-gui/src/playback.rs"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/options_dialog.rs::the_options_pages_are_the_references",
+        "crates/hydrus-store/src/reference_options.rs::tests"
+      ],
+      "limits": [
+        "Except mpv audio device and looping, the values are kept and edited but nothing in hydrus-rs reads them (no system tray, Qt styles, tile cache, drag-out or QtMediaPlayer)."
+      ]
+    },
+    {
+      "id": "audit-options-gui-frame-locations-debug-when-rescuing-resizing-to-media-media-viewer-add-top-left-safety-padding",
+      "before": "missing",
+      "proposedStatus": "partial",
+      "countAsCompletedLeaf": false,
+      "behavior": "Options rows the reference has and hydrus-rs lacked, each with the reference's label, box, position, default and range (recorded options_dialog.json): audio's preview volume; connection's REQUESTS_CA_BUNDLE debug; exporting's drag-and-drop box; gui misc's native menubar, locale integers, non-tool child windows, macOS debug menus and Qt file dialogs; frame locations' self-sizing viewer padding; gui pages' hide-page signal; importing's URL drop page switch; media playback's mpv, QtMediaPlayer and system rows; hovers' pinned duplicates hover and preview window hovers; popups' other-display freeze; the image tile cache and video buffer boxes; system sleep's file system wait; the system tray page; tag editing's petition reason count. Values are kept as the reference keeps them (ReferenceOptions) and imported from a legacy client. mpv's preferred audio device and playlist looping apply to each file played.",
+      "source": [
+        "crates/hydrus-store/src/reference_options.rs",
+        "crates/hydrus-gui-model/src/options.rs",
+        "crates/hydrus-gui-model/src/options_popup_width.rs",
+        "crates/hydrus-store/src/import/decode.rs",
+        "crates/hydrus-gui/src/mpv.rs",
+        "crates/hydrus-gui/src/playback.rs"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/options_dialog.rs::the_options_pages_are_the_references",
+        "crates/hydrus-store/src/reference_options.rs::tests"
+      ],
+      "limits": [
+        "Except mpv audio device and looping, the values are kept and edited but nothing in hydrus-rs reads them (no system tray, Qt styles, tile cache, drag-out or QtMediaPlayer)."
+      ]
+    },
+    {
+      "id": "audit-options-gui-misc-anti-crash-bugfix-use-qt-file-directory-selection-dialogs-rather-than-os-native",
+      "before": "missing",
+      "proposedStatus": "partial",
+      "countAsCompletedLeaf": false,
+      "behavior": "Options rows the reference has and hydrus-rs lacked, each with the reference's label, box, position, default and range (recorded options_dialog.json): audio's preview volume; connection's REQUESTS_CA_BUNDLE debug; exporting's drag-and-drop box; gui misc's native menubar, locale integers, non-tool child windows, macOS debug menus and Qt file dialogs; frame locations' self-sizing viewer padding; gui pages' hide-page signal; importing's URL drop page switch; media playback's mpv, QtMediaPlayer and system rows; hovers' pinned duplicates hover and preview window hovers; popups' other-display freeze; the image tile cache and video buffer boxes; system sleep's file system wait; the system tray page; tag editing's petition reason count. Values are kept as the reference keeps them (ReferenceOptions) and imported from a legacy client. mpv's preferred audio device and playlist looping apply to each file played.",
+      "source": [
+        "crates/hydrus-store/src/reference_options.rs",
+        "crates/hydrus-gui-model/src/options.rs",
+        "crates/hydrus-gui-model/src/options_popup_width.rs",
+        "crates/hydrus-store/src/import/decode.rs",
+        "crates/hydrus-gui/src/mpv.rs",
+        "crates/hydrus-gui/src/playback.rs"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/options_dialog.rs::the_options_pages_are_the_references",
+        "crates/hydrus-store/src/reference_options.rs::tests"
+      ],
+      "limits": [
+        "Except mpv audio device and looping, the values are kept and edited but nothing in hydrus-rs reads them (no system tray, Qt styles, tile cache, drag-out or QtMediaPlayer)."
+      ]
+    },
+    {
+      "id": "audit-options-gui-misc-bugfix-if-on-macos-show-dialog-menus-in-a-debug-menu",
+      "before": "missing",
+      "proposedStatus": "partial",
+      "countAsCompletedLeaf": false,
+      "behavior": "Options rows the reference has and hydrus-rs lacked, each with the reference's label, box, position, default and range (recorded options_dialog.json): audio's preview volume; connection's REQUESTS_CA_BUNDLE debug; exporting's drag-and-drop box; gui misc's native menubar, locale integers, non-tool child windows, macOS debug menus and Qt file dialogs; frame locations' self-sizing viewer padding; gui pages' hide-page signal; importing's URL drop page switch; media playback's mpv, QtMediaPlayer and system rows; hovers' pinned duplicates hover and preview window hovers; popups' other-display freeze; the image tile cache and video buffer boxes; system sleep's file system wait; the system tray page; tag editing's petition reason count. Values are kept as the reference keeps them (ReferenceOptions) and imported from a legacy client. mpv's preferred audio device and playlist looping apply to each file played.",
+      "source": [
+        "crates/hydrus-store/src/reference_options.rs",
+        "crates/hydrus-gui-model/src/options.rs",
+        "crates/hydrus-gui-model/src/options_popup_width.rs",
+        "crates/hydrus-store/src/import/decode.rs",
+        "crates/hydrus-gui/src/mpv.rs",
+        "crates/hydrus-gui/src/playback.rs"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/options_dialog.rs::the_options_pages_are_the_references",
+        "crates/hydrus-store/src/reference_options.rs::tests"
+      ],
+      "limits": [
+        "Except mpv audio device and looping, the values are kept and edited but nothing in hydrus-rs reads them (no system tray, Qt styles, tile cache, drag-out or QtMediaPlayer)."
+      ]
+    },
+    {
+      "id": "audit-options-gui-misc-bugfix-set-child-windows-as-non-tool-flagged",
+      "before": "missing",
+      "proposedStatus": "partial",
+      "countAsCompletedLeaf": false,
+      "behavior": "Options rows the reference has and hydrus-rs lacked, each with the reference's label, box, position, default and range (recorded options_dialog.json): audio's preview volume; connection's REQUESTS_CA_BUNDLE debug; exporting's drag-and-drop box; gui misc's native menubar, locale integers, non-tool child windows, macOS debug menus and Qt file dialogs; frame locations' self-sizing viewer padding; gui pages' hide-page signal; importing's URL drop page switch; media playback's mpv, QtMediaPlayer and system rows; hovers' pinned duplicates hover and preview window hovers; popups' other-display freeze; the image tile cache and video buffer boxes; system sleep's file system wait; the system tray page; tag editing's petition reason count. Values are kept as the reference keeps them (ReferenceOptions) and imported from a legacy client. mpv's preferred audio device and playlist looping apply to each file played.",
+      "source": [
+        "crates/hydrus-store/src/reference_options.rs",
+        "crates/hydrus-gui-model/src/options.rs",
+        "crates/hydrus-gui-model/src/options_popup_width.rs",
+        "crates/hydrus-store/src/import/decode.rs",
+        "crates/hydrus-gui/src/mpv.rs",
+        "crates/hydrus-gui/src/playback.rs"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/options_dialog.rs::the_options_pages_are_the_references",
+        "crates/hydrus-store/src/reference_options.rs::tests"
+      ],
+      "limits": [
+        "Except mpv audio device and looping, the values are kept and edited but nothing in hydrus-rs reads them (no system tray, Qt styles, tile cache, drag-out or QtMediaPlayer)."
+      ]
+    },
+    {
+      "id": "audit-options-gui-misc-test-use-your-locale-for-integer-rendering",
+      "before": "missing",
+      "proposedStatus": "partial",
+      "countAsCompletedLeaf": false,
+      "behavior": "Options rows the reference has and hydrus-rs lacked, each with the reference's label, box, position, default and range (recorded options_dialog.json): audio's preview volume; connection's REQUESTS_CA_BUNDLE debug; exporting's drag-and-drop box; gui misc's native menubar, locale integers, non-tool child windows, macOS debug menus and Qt file dialogs; frame locations' self-sizing viewer padding; gui pages' hide-page signal; importing's URL drop page switch; media playback's mpv, QtMediaPlayer and system rows; hovers' pinned duplicates hover and preview window hovers; popups' other-display freeze; the image tile cache and video buffer boxes; system sleep's file system wait; the system tray page; tag editing's petition reason count. Values are kept as the reference keeps them (ReferenceOptions) and imported from a legacy client. mpv's preferred audio device and playlist looping apply to each file played.",
+      "source": [
+        "crates/hydrus-store/src/reference_options.rs",
+        "crates/hydrus-gui-model/src/options.rs",
+        "crates/hydrus-gui-model/src/options_popup_width.rs",
+        "crates/hydrus-store/src/import/decode.rs",
+        "crates/hydrus-gui/src/mpv.rs",
+        "crates/hydrus-gui/src/playback.rs"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/options_dialog.rs::the_options_pages_are_the_references",
+        "crates/hydrus-store/src/reference_options.rs::tests"
+      ],
+      "limits": [
+        "Except mpv audio device and looping, the values are kept and edited but nothing in hydrus-rs reads them (no system tray, Qt styles, tile cache, drag-out or QtMediaPlayer)."
+      ]
+    },
+    {
+      "id": "audit-options-gui-misc-use-native-menubar-if-available",
+      "before": "missing",
+      "proposedStatus": "partial",
+      "countAsCompletedLeaf": false,
+      "behavior": "Options rows the reference has and hydrus-rs lacked, each with the reference's label, box, position, default and range (recorded options_dialog.json): audio's preview volume; connection's REQUESTS_CA_BUNDLE debug; exporting's drag-and-drop box; gui misc's native menubar, locale integers, non-tool child windows, macOS debug menus and Qt file dialogs; frame locations' self-sizing viewer padding; gui pages' hide-page signal; importing's URL drop page switch; media playback's mpv, QtMediaPlayer and system rows; hovers' pinned duplicates hover and preview window hovers; popups' other-display freeze; the image tile cache and video buffer boxes; system sleep's file system wait; the system tray page; tag editing's petition reason count. Values are kept as the reference keeps them (ReferenceOptions) and imported from a legacy client. mpv's preferred audio device and playlist looping apply to each file played.",
+      "source": [
+        "crates/hydrus-store/src/reference_options.rs",
+        "crates/hydrus-gui-model/src/options.rs",
+        "crates/hydrus-gui-model/src/options_popup_width.rs",
+        "crates/hydrus-store/src/import/decode.rs",
+        "crates/hydrus-gui/src/mpv.rs",
+        "crates/hydrus-gui/src/playback.rs"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/options_dialog.rs::the_options_pages_are_the_references",
+        "crates/hydrus-store/src/reference_options.rs::tests"
+      ],
+      "limits": [
+        "Except mpv audio device and looping, the values are kept and edited but nothing in hydrus-rs reads them (no system tray, Qt styles, tile cache, drag-out or QtMediaPlayer)."
+      ]
+    },
+    {
+      "id": "audit-options-gui-pages-opening-and-closing-bugfix-force-hide-page-signal-when-creating-a-new-page",
+      "before": "missing",
+      "proposedStatus": "partial",
+      "countAsCompletedLeaf": false,
+      "behavior": "Options rows the reference has and hydrus-rs lacked, each with the reference's label, box, position, default and range (recorded options_dialog.json): audio's preview volume; connection's REQUESTS_CA_BUNDLE debug; exporting's drag-and-drop box; gui misc's native menubar, locale integers, non-tool child windows, macOS debug menus and Qt file dialogs; frame locations' self-sizing viewer padding; gui pages' hide-page signal; importing's URL drop page switch; media playback's mpv, QtMediaPlayer and system rows; hovers' pinned duplicates hover and preview window hovers; popups' other-display freeze; the image tile cache and video buffer boxes; system sleep's file system wait; the system tray page; tag editing's petition reason count. Values are kept as the reference keeps them (ReferenceOptions) and imported from a legacy client. mpv's preferred audio device and playlist looping apply to each file played.",
+      "source": [
+        "crates/hydrus-store/src/reference_options.rs",
+        "crates/hydrus-gui-model/src/options.rs",
+        "crates/hydrus-gui-model/src/options_popup_width.rs",
+        "crates/hydrus-store/src/import/decode.rs",
+        "crates/hydrus-gui/src/mpv.rs",
+        "crates/hydrus-gui/src/playback.rs"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/options_dialog.rs::the_options_pages_are_the_references",
+        "crates/hydrus-store/src/reference_options.rs::tests"
+      ],
+      "limits": [
+        "Except mpv audio device and looping, the values are kept and edited but nothing in hydrus-rs reads them (no system tray, Qt styles, tile cache, drag-out or QtMediaPlayer)."
+      ]
+    },
+    {
+      "id": "audit-options-importing-drag-and-drop-when-dnding-a-url-onto-the-program-switch-to-the-page-where-it-lands",
+      "before": "missing",
+      "proposedStatus": "partial",
+      "countAsCompletedLeaf": false,
+      "behavior": "Options rows the reference has and hydrus-rs lacked, each with the reference's label, box, position, default and range (recorded options_dialog.json): audio's preview volume; connection's REQUESTS_CA_BUNDLE debug; exporting's drag-and-drop box; gui misc's native menubar, locale integers, non-tool child windows, macOS debug menus and Qt file dialogs; frame locations' self-sizing viewer padding; gui pages' hide-page signal; importing's URL drop page switch; media playback's mpv, QtMediaPlayer and system rows; hovers' pinned duplicates hover and preview window hovers; popups' other-display freeze; the image tile cache and video buffer boxes; system sleep's file system wait; the system tray page; tag editing's petition reason count. Values are kept as the reference keeps them (ReferenceOptions) and imported from a legacy client. mpv's preferred audio device and playlist looping apply to each file played.",
+      "source": [
+        "crates/hydrus-store/src/reference_options.rs",
+        "crates/hydrus-gui-model/src/options.rs",
+        "crates/hydrus-gui-model/src/options_popup_width.rs",
+        "crates/hydrus-store/src/import/decode.rs",
+        "crates/hydrus-gui/src/mpv.rs",
+        "crates/hydrus-gui/src/playback.rs"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/options_dialog.rs::the_options_pages_are_the_references",
+        "crates/hydrus-store/src/reference_options.rs::tests"
+      ],
+      "limits": [
+        "Except mpv audio device and looping, the values are kept and edited but nothing in hydrus-rs reads them (no system tray, Qt styles, tile cache, drag-out or QtMediaPlayer)."
+      ]
+    },
+    {
+      "id": "audit-options-media-playback-qtmediaplayer-debug-set-null-audio-device-on-silent-media",
+      "before": "missing",
+      "proposedStatus": "partial",
+      "countAsCompletedLeaf": false,
+      "behavior": "Options rows the reference has and hydrus-rs lacked, each with the reference's label, box, position, default and range (recorded options_dialog.json): audio's preview volume; connection's REQUESTS_CA_BUNDLE debug; exporting's drag-and-drop box; gui misc's native menubar, locale integers, non-tool child windows, macOS debug menus and Qt file dialogs; frame locations' self-sizing viewer padding; gui pages' hide-page signal; importing's URL drop page switch; media playback's mpv, QtMediaPlayer and system rows; hovers' pinned duplicates hover and preview window hovers; popups' other-display freeze; the image tile cache and video buffer boxes; system sleep's file system wait; the system tray page; tag editing's petition reason count. Values are kept as the reference keeps them (ReferenceOptions) and imported from a legacy client. mpv's preferred audio device and playlist looping apply to each file played.",
+      "source": [
+        "crates/hydrus-store/src/reference_options.rs",
+        "crates/hydrus-gui-model/src/options.rs",
+        "crates/hydrus-gui-model/src/options_popup_width.rs",
+        "crates/hydrus-store/src/import/decode.rs",
+        "crates/hydrus-gui/src/mpv.rs",
+        "crates/hydrus-gui/src/playback.rs"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/options_dialog.rs::the_options_pages_are_the_references",
+        "crates/hydrus-store/src/reference_options.rs::tests"
+      ],
+      "limits": [
+        "Except mpv audio device and looping, the values are kept and edited but nothing in hydrus-rs reads them (no system tray, Qt styles, tile cache, drag-out or QtMediaPlayer)."
+      ]
+    },
+    {
+      "id": "audit-options-media-playback-qtmediaplayer-debug-use-the-same-qtmediaplayer-through-media-transitions",
+      "before": "missing",
+      "proposedStatus": "partial",
+      "countAsCompletedLeaf": false,
+      "behavior": "Options rows the reference has and hydrus-rs lacked, each with the reference's label, box, position, default and range (recorded options_dialog.json): audio's preview volume; connection's REQUESTS_CA_BUNDLE debug; exporting's drag-and-drop box; gui misc's native menubar, locale integers, non-tool child windows, macOS debug menus and Qt file dialogs; frame locations' self-sizing viewer padding; gui pages' hide-page signal; importing's URL drop page switch; media playback's mpv, QtMediaPlayer and system rows; hovers' pinned duplicates hover and preview window hovers; popups' other-display freeze; the image tile cache and video buffer boxes; system sleep's file system wait; the system tray page; tag editing's petition reason count. Values are kept as the reference keeps them (ReferenceOptions) and imported from a legacy client. mpv's preferred audio device and playlist looping apply to each file played.",
+      "source": [
+        "crates/hydrus-store/src/reference_options.rs",
+        "crates/hydrus-gui-model/src/options.rs",
+        "crates/hydrus-gui-model/src/options_popup_width.rs",
+        "crates/hydrus-store/src/import/decode.rs",
+        "crates/hydrus-gui/src/mpv.rs",
+        "crates/hydrus-gui/src/playback.rs"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/options_dialog.rs::the_options_pages_are_the_references",
+        "crates/hydrus-store/src/reference_options.rs::tests"
+      ],
+      "limits": [
+        "Except mpv audio device and looping, the values are kept and edited but nothing in hydrus-rs reads them (no system tray, Qt styles, tile cache, drag-out or QtMediaPlayer)."
+      ]
+    },
+    {
+      "id": "audit-options-media-playback-qtmediaplayer-test-use-opengl-window-in-qtmediaplayer",
+      "before": "missing",
+      "proposedStatus": "partial",
+      "countAsCompletedLeaf": false,
+      "behavior": "Options rows the reference has and hydrus-rs lacked, each with the reference's label, box, position, default and range (recorded options_dialog.json): audio's preview volume; connection's REQUESTS_CA_BUNDLE debug; exporting's drag-and-drop box; gui misc's native menubar, locale integers, non-tool child windows, macOS debug menus and Qt file dialogs; frame locations' self-sizing viewer padding; gui pages' hide-page signal; importing's URL drop page switch; media playback's mpv, QtMediaPlayer and system rows; hovers' pinned duplicates hover and preview window hovers; popups' other-display freeze; the image tile cache and video buffer boxes; system sleep's file system wait; the system tray page; tag editing's petition reason count. Values are kept as the reference keeps them (ReferenceOptions) and imported from a legacy client. mpv's preferred audio device and playlist looping apply to each file played.",
+      "source": [
+        "crates/hydrus-store/src/reference_options.rs",
+        "crates/hydrus-gui-model/src/options.rs",
+        "crates/hydrus-gui-model/src/options_popup_width.rs",
+        "crates/hydrus-store/src/import/decode.rs",
+        "crates/hydrus-gui/src/mpv.rs",
+        "crates/hydrus-gui/src/playback.rs"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/options_dialog.rs::the_options_pages_are_the_references",
+        "crates/hydrus-store/src/reference_options.rs::tests"
+      ],
+      "limits": [
+        "Except mpv audio device and looping, the values are kept and edited but nothing in hydrus-rs reads them (no system tray, Qt styles, tile cache, drag-out or QtMediaPlayer)."
+      ]
+    },
+    {
+      "id": "audit-options-media-playback-mpv-debug-set-null-audio-device-on-silent-media",
+      "before": "missing",
+      "proposedStatus": "partial",
+      "countAsCompletedLeaf": false,
+      "behavior": "Options rows the reference has and hydrus-rs lacked, each with the reference's label, box, position, default and range (recorded options_dialog.json): audio's preview volume; connection's REQUESTS_CA_BUNDLE debug; exporting's drag-and-drop box; gui misc's native menubar, locale integers, non-tool child windows, macOS debug menus and Qt file dialogs; frame locations' self-sizing viewer padding; gui pages' hide-page signal; importing's URL drop page switch; media playback's mpv, QtMediaPlayer and system rows; hovers' pinned duplicates hover and preview window hovers; popups' other-display freeze; the image tile cache and video buffer boxes; system sleep's file system wait; the system tray page; tag editing's petition reason count. Values are kept as the reference keeps them (ReferenceOptions) and imported from a legacy client. mpv's preferred audio device and playlist looping apply to each file played.",
+      "source": [
+        "crates/hydrus-store/src/reference_options.rs",
+        "crates/hydrus-gui-model/src/options.rs",
+        "crates/hydrus-gui-model/src/options_popup_width.rs",
+        "crates/hydrus-store/src/import/decode.rs",
+        "crates/hydrus-gui/src/mpv.rs",
+        "crates/hydrus-gui/src/playback.rs"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/options_dialog.rs::the_options_pages_are_the_references",
+        "crates/hydrus-store/src/reference_options.rs::tests"
+      ],
+      "limits": [
+        "Except mpv audio device and looping, the values are kept and edited but nothing in hydrus-rs reads them (no system tray, Qt styles, tile cache, drag-out or QtMediaPlayer)."
+      ]
+    },
+    {
+      "id": "audit-options-media-playback-mpv-debug-use-legacy-mpv-communication-method",
+      "before": "missing",
+      "proposedStatus": "partial",
+      "countAsCompletedLeaf": false,
+      "behavior": "Options rows the reference has and hydrus-rs lacked, each with the reference's label, box, position, default and range (recorded options_dialog.json): audio's preview volume; connection's REQUESTS_CA_BUNDLE debug; exporting's drag-and-drop box; gui misc's native menubar, locale integers, non-tool child windows, macOS debug menus and Qt file dialogs; frame locations' self-sizing viewer padding; gui pages' hide-page signal; importing's URL drop page switch; media playback's mpv, QtMediaPlayer and system rows; hovers' pinned duplicates hover and preview window hovers; popups' other-display freeze; the image tile cache and video buffer boxes; system sleep's file system wait; the system tray page; tag editing's petition reason count. Values are kept as the reference keeps them (ReferenceOptions) and imported from a legacy client. mpv's preferred audio device and playlist looping apply to each file played.",
+      "source": [
+        "crates/hydrus-store/src/reference_options.rs",
+        "crates/hydrus-gui-model/src/options.rs",
+        "crates/hydrus-gui-model/src/options_popup_width.rs",
+        "crates/hydrus-store/src/import/decode.rs",
+        "crates/hydrus-gui/src/mpv.rs",
+        "crates/hydrus-gui/src/playback.rs"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/options_dialog.rs::the_options_pages_are_the_references",
+        "crates/hydrus-store/src/reference_options.rs::tests"
+      ],
+      "limits": [
+        "Except mpv audio device and looping, the values are kept and edited but nothing in hydrus-rs reads them (no system tray, Qt styles, tile cache, drag-out or QtMediaPlayer)."
+      ]
+    },
+    {
+      "id": "audit-options-media-playback-mpv-linux-debug-do-not-allow-combined-setgeometry-on-mpv-window",
+      "before": "missing",
+      "proposedStatus": "partial",
+      "countAsCompletedLeaf": false,
+      "behavior": "Options rows the reference has and hydrus-rs lacked, each with the reference's label, box, position, default and range (recorded options_dialog.json): audio's preview volume; connection's REQUESTS_CA_BUNDLE debug; exporting's drag-and-drop box; gui misc's native menubar, locale integers, non-tool child windows, macOS debug menus and Qt file dialogs; frame locations' self-sizing viewer padding; gui pages' hide-page signal; importing's URL drop page switch; media playback's mpv, QtMediaPlayer and system rows; hovers' pinned duplicates hover and preview window hovers; popups' other-display freeze; the image tile cache and video buffer boxes; system sleep's file system wait; the system tray page; tag editing's petition reason count. Values are kept as the reference keeps them (ReferenceOptions) and imported from a legacy client. mpv's preferred audio device and playlist looping apply to each file played.",
+      "source": [
+        "crates/hydrus-store/src/reference_options.rs",
+        "crates/hydrus-gui-model/src/options.rs",
+        "crates/hydrus-gui-model/src/options_popup_width.rs",
+        "crates/hydrus-store/src/import/decode.rs",
+        "crates/hydrus-gui/src/mpv.rs",
+        "crates/hydrus-gui/src/playback.rs"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/options_dialog.rs::the_options_pages_are_the_references",
+        "crates/hydrus-store/src/reference_options.rs::tests"
+      ],
+      "limits": [
+        "Except mpv audio device and looping, the values are kept and edited but nothing in hydrus-rs reads them (no system tray, Qt styles, tile cache, drag-out or QtMediaPlayer)."
+      ]
+    },
+    {
+      "id": "audit-options-media-playback-mpv-test-destroy-recreate-mpv-players-instead-of-recycling-them",
+      "before": "missing",
+      "proposedStatus": "partial",
+      "countAsCompletedLeaf": false,
+      "behavior": "Options rows the reference has and hydrus-rs lacked, each with the reference's label, box, position, default and range (recorded options_dialog.json): audio's preview volume; connection's REQUESTS_CA_BUNDLE debug; exporting's drag-and-drop box; gui misc's native menubar, locale integers, non-tool child windows, macOS debug menus and Qt file dialogs; frame locations' self-sizing viewer padding; gui pages' hide-page signal; importing's URL drop page switch; media playback's mpv, QtMediaPlayer and system rows; hovers' pinned duplicates hover and preview window hovers; popups' other-display freeze; the image tile cache and video buffer boxes; system sleep's file system wait; the system tray page; tag editing's petition reason count. Values are kept as the reference keeps them (ReferenceOptions) and imported from a legacy client. mpv's preferred audio device and playlist looping apply to each file played.",
+      "source": [
+        "crates/hydrus-store/src/reference_options.rs",
+        "crates/hydrus-gui-model/src/options.rs",
+        "crates/hydrus-gui-model/src/options_popup_width.rs",
+        "crates/hydrus-store/src/import/decode.rs",
+        "crates/hydrus-gui/src/mpv.rs",
+        "crates/hydrus-gui/src/playback.rs"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/options_dialog.rs::the_options_pages_are_the_references",
+        "crates/hydrus-store/src/reference_options.rs::tests"
+      ],
+      "limits": [
+        "Except mpv audio device and looping, the values are kept and edited but nothing in hydrus-rs reads them (no system tray, Qt styles, tile cache, drag-out or QtMediaPlayer)."
+      ]
+    },
+    {
+      "id": "audit-options-media-playback-mpv-test-use-the-same-mpv-player-through-media-transitions",
+      "before": "missing",
+      "proposedStatus": "partial",
+      "countAsCompletedLeaf": false,
+      "behavior": "Options rows the reference has and hydrus-rs lacked, each with the reference's label, box, position, default and range (recorded options_dialog.json): audio's preview volume; connection's REQUESTS_CA_BUNDLE debug; exporting's drag-and-drop box; gui misc's native menubar, locale integers, non-tool child windows, macOS debug menus and Qt file dialogs; frame locations' self-sizing viewer padding; gui pages' hide-page signal; importing's URL drop page switch; media playback's mpv, QtMediaPlayer and system rows; hovers' pinned duplicates hover and preview window hovers; popups' other-display freeze; the image tile cache and video buffer boxes; system sleep's file system wait; the system tray page; tag editing's petition reason count. Values are kept as the reference keeps them (ReferenceOptions) and imported from a legacy client. mpv's preferred audio device and playlist looping apply to each file played.",
+      "source": [
+        "crates/hydrus-store/src/reference_options.rs",
+        "crates/hydrus-gui-model/src/options.rs",
+        "crates/hydrus-gui-model/src/options_popup_width.rs",
+        "crates/hydrus-store/src/import/decode.rs",
+        "crates/hydrus-gui/src/mpv.rs",
+        "crates/hydrus-gui/src/playback.rs"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/options_dialog.rs::the_options_pages_are_the_references",
+        "crates/hydrus-store/src/reference_options.rs::tests"
+      ],
+      "limits": [
+        "Except mpv audio device and looping, the values are kept and edited but nothing in hydrus-rs reads them (no system tray, Qt styles, tile cache, drag-out or QtMediaPlayer)."
+      ]
+    },
+    {
+      "id": "audit-options-media-playback-system-allow-loading-of-truncated-images",
+      "before": "missing",
+      "proposedStatus": "partial",
+      "countAsCompletedLeaf": false,
+      "behavior": "Options rows the reference has and hydrus-rs lacked, each with the reference's label, box, position, default and range (recorded options_dialog.json): audio's preview volume; connection's REQUESTS_CA_BUNDLE debug; exporting's drag-and-drop box; gui misc's native menubar, locale integers, non-tool child windows, macOS debug menus and Qt file dialogs; frame locations' self-sizing viewer padding; gui pages' hide-page signal; importing's URL drop page switch; media playback's mpv, QtMediaPlayer and system rows; hovers' pinned duplicates hover and preview window hovers; popups' other-display freeze; the image tile cache and video buffer boxes; system sleep's file system wait; the system tray page; tag editing's petition reason count. Values are kept as the reference keeps them (ReferenceOptions) and imported from a legacy client. mpv's preferred audio device and playlist looping apply to each file played.",
+      "source": [
+        "crates/hydrus-store/src/reference_options.rs",
+        "crates/hydrus-gui-model/src/options.rs",
+        "crates/hydrus-gui-model/src/options_popup_width.rs",
+        "crates/hydrus-store/src/import/decode.rs",
+        "crates/hydrus-gui/src/mpv.rs",
+        "crates/hydrus-gui/src/playback.rs"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/options_dialog.rs::the_options_pages_are_the_references",
+        "crates/hydrus-store/src/reference_options.rs::tests"
+      ],
+      "limits": [
+        "Except mpv audio device and looping, the values are kept and edited but nothing in hydrus-rs reads them (no system tray, Qt styles, tile cache, drag-out or QtMediaPlayer)."
+      ]
+    },
+    {
+      "id": "audit-options-media-playback-system-load-images-with-pil",
+      "before": "missing",
+      "proposedStatus": "partial",
+      "countAsCompletedLeaf": false,
+      "behavior": "Options rows the reference has and hydrus-rs lacked, each with the reference's label, box, position, default and range (recorded options_dialog.json): audio's preview volume; connection's REQUESTS_CA_BUNDLE debug; exporting's drag-and-drop box; gui misc's native menubar, locale integers, non-tool child windows, macOS debug menus and Qt file dialogs; frame locations' self-sizing viewer padding; gui pages' hide-page signal; importing's URL drop page switch; media playback's mpv, QtMediaPlayer and system rows; hovers' pinned duplicates hover and preview window hovers; popups' other-display freeze; the image tile cache and video buffer boxes; system sleep's file system wait; the system tray page; tag editing's petition reason count. Values are kept as the reference keeps them (ReferenceOptions) and imported from a legacy client. mpv's preferred audio device and playlist looping apply to each file played.",
+      "source": [
+        "crates/hydrus-store/src/reference_options.rs",
+        "crates/hydrus-gui-model/src/options.rs",
+        "crates/hydrus-gui-model/src/options_popup_width.rs",
+        "crates/hydrus-store/src/import/decode.rs",
+        "crates/hydrus-gui/src/mpv.rs",
+        "crates/hydrus-gui/src/playback.rs"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/options_dialog.rs::the_options_pages_are_the_references",
+        "crates/hydrus-store/src/reference_options.rs::tests"
+      ],
+      "limits": [
+        "Except mpv audio device and looping, the values are kept and edited but nothing in hydrus-rs reads them (no system tray, Qt styles, tile cache, drag-out or QtMediaPlayer)."
+      ]
+    },
+    {
+      "id": "audit-options-media-playback-system-prefer-system-ffmpeg",
+      "before": "missing",
+      "proposedStatus": "partial",
+      "countAsCompletedLeaf": false,
+      "behavior": "Options rows the reference has and hydrus-rs lacked, each with the reference's label, box, position, default and range (recorded options_dialog.json): audio's preview volume; connection's REQUESTS_CA_BUNDLE debug; exporting's drag-and-drop box; gui misc's native menubar, locale integers, non-tool child windows, macOS debug menus and Qt file dialogs; frame locations' self-sizing viewer padding; gui pages' hide-page signal; importing's URL drop page switch; media playback's mpv, QtMediaPlayer and system rows; hovers' pinned duplicates hover and preview window hovers; popups' other-display freeze; the image tile cache and video buffer boxes; system sleep's file system wait; the system tray page; tag editing's petition reason count. Values are kept as the reference keeps them (ReferenceOptions) and imported from a legacy client. mpv's preferred audio device and playlist looping apply to each file played.",
+      "source": [
+        "crates/hydrus-store/src/reference_options.rs",
+        "crates/hydrus-gui-model/src/options.rs",
+        "crates/hydrus-gui-model/src/options_popup_width.rs",
+        "crates/hydrus-store/src/import/decode.rs",
+        "crates/hydrus-gui/src/mpv.rs",
+        "crates/hydrus-gui/src/playback.rs"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/options_dialog.rs::the_options_pages_are_the_references",
+        "crates/hydrus-store/src/reference_options.rs::tests"
+      ],
+      "limits": [
+        "Except mpv audio device and looping, the values are kept and edited but nothing in hydrus-rs reads them (no system tray, Qt styles, tile cache, drag-out or QtMediaPlayer)."
+      ]
+    },
+    {
+      "id": "audit-options-media-viewer-hovers-hover-windows-pin-the-duplicates-right-duplicates-filter-hover-window-so-it-is-always-visible",
+      "before": "missing",
+      "proposedStatus": "partial",
+      "countAsCompletedLeaf": false,
+      "behavior": "Options rows the reference has and hydrus-rs lacked, each with the reference's label, box, position, default and range (recorded options_dialog.json): audio's preview volume; connection's REQUESTS_CA_BUNDLE debug; exporting's drag-and-drop box; gui misc's native menubar, locale integers, non-tool child windows, macOS debug menus and Qt file dialogs; frame locations' self-sizing viewer padding; gui pages' hide-page signal; importing's URL drop page switch; media playback's mpv, QtMediaPlayer and system rows; hovers' pinned duplicates hover and preview window hovers; popups' other-display freeze; the image tile cache and video buffer boxes; system sleep's file system wait; the system tray page; tag editing's petition reason count. Values are kept as the reference keeps them (ReferenceOptions) and imported from a legacy client. mpv's preferred audio device and playlist looping apply to each file played.",
+      "source": [
+        "crates/hydrus-store/src/reference_options.rs",
+        "crates/hydrus-gui-model/src/options.rs",
+        "crates/hydrus-gui-model/src/options_popup_width.rs",
+        "crates/hydrus-store/src/import/decode.rs",
+        "crates/hydrus-gui/src/mpv.rs",
+        "crates/hydrus-gui/src/playback.rs"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/options_dialog.rs::the_options_pages_are_the_references",
+        "crates/hydrus-store/src/reference_options.rs::tests"
+      ],
+      "limits": [
+        "Except mpv audio device and looping, the values are kept and edited but nothing in hydrus-rs reads them (no system tray, Qt styles, tile cache, drag-out or QtMediaPlayer)."
+      ]
+    },
+    {
+      "id": "audit-options-media-viewer-hovers-preview-window-hovers-draw-ratings-and-locations-top-right-in-preview-window-background",
+      "before": "missing",
+      "proposedStatus": "partial",
+      "countAsCompletedLeaf": false,
+      "behavior": "Options rows the reference has and hydrus-rs lacked, each with the reference's label, box, position, default and range (recorded options_dialog.json): audio's preview volume; connection's REQUESTS_CA_BUNDLE debug; exporting's drag-and-drop box; gui misc's native menubar, locale integers, non-tool child windows, macOS debug menus and Qt file dialogs; frame locations' self-sizing viewer padding; gui pages' hide-page signal; importing's URL drop page switch; media playback's mpv, QtMediaPlayer and system rows; hovers' pinned duplicates hover and preview window hovers; popups' other-display freeze; the image tile cache and video buffer boxes; system sleep's file system wait; the system tray page; tag editing's petition reason count. Values are kept as the reference keeps them (ReferenceOptions) and imported from a legacy client. mpv's preferred audio device and playlist looping apply to each file played.",
+      "source": [
+        "crates/hydrus-store/src/reference_options.rs",
+        "crates/hydrus-gui-model/src/options.rs",
+        "crates/hydrus-gui-model/src/options_popup_width.rs",
+        "crates/hydrus-store/src/import/decode.rs",
+        "crates/hydrus-gui/src/mpv.rs",
+        "crates/hydrus-gui/src/playback.rs"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/options_dialog.rs::the_options_pages_are_the_references",
+        "crates/hydrus-store/src/reference_options.rs::tests"
+      ],
+      "limits": [
+        "Except mpv audio device and looping, the values are kept and edited but nothing in hydrus-rs reads them (no system tray, Qt styles, tile cache, drag-out or QtMediaPlayer)."
+      ]
+    },
+    {
+      "id": "audit-options-media-viewer-hovers-preview-window-hovers-pop-in-this-hover-on-mouseover",
+      "before": "missing",
+      "proposedStatus": "partial",
+      "countAsCompletedLeaf": false,
+      "behavior": "Options rows the reference has and hydrus-rs lacked, each with the reference's label, box, position, default and range (recorded options_dialog.json): audio's preview volume; connection's REQUESTS_CA_BUNDLE debug; exporting's drag-and-drop box; gui misc's native menubar, locale integers, non-tool child windows, macOS debug menus and Qt file dialogs; frame locations' self-sizing viewer padding; gui pages' hide-page signal; importing's URL drop page switch; media playback's mpv, QtMediaPlayer and system rows; hovers' pinned duplicates hover and preview window hovers; popups' other-display freeze; the image tile cache and video buffer boxes; system sleep's file system wait; the system tray page; tag editing's petition reason count. Values are kept as the reference keeps them (ReferenceOptions) and imported from a legacy client. mpv's preferred audio device and playlist looping apply to each file played.",
+      "source": [
+        "crates/hydrus-store/src/reference_options.rs",
+        "crates/hydrus-gui-model/src/options.rs",
+        "crates/hydrus-gui-model/src/options_popup_width.rs",
+        "crates/hydrus-store/src/import/decode.rs",
+        "crates/hydrus-gui/src/mpv.rs",
+        "crates/hydrus-gui/src/playback.rs"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/options_dialog.rs::the_options_pages_are_the_references",
+        "crates/hydrus-store/src/reference_options.rs::tests"
+      ],
+      "limits": [
+        "Except mpv audio device and looping, the values are kept and edited but nothing in hydrus-rs reads them (no system tray, Qt styles, tile cache, drag-out or QtMediaPlayer)."
+      ]
+    },
+    {
+      "id": "audit-options-popup-notifications-popup-window-toaster-freeze-the-popup-toaster-when-mouse-is-on-another-display",
+      "before": "missing",
+      "proposedStatus": "partial",
+      "countAsCompletedLeaf": false,
+      "behavior": "Options rows the reference has and hydrus-rs lacked, each with the reference's label, box, position, default and range (recorded options_dialog.json): audio's preview volume; connection's REQUESTS_CA_BUNDLE debug; exporting's drag-and-drop box; gui misc's native menubar, locale integers, non-tool child windows, macOS debug menus and Qt file dialogs; frame locations' self-sizing viewer padding; gui pages' hide-page signal; importing's URL drop page switch; media playback's mpv, QtMediaPlayer and system rows; hovers' pinned duplicates hover and preview window hovers; popups' other-display freeze; the image tile cache and video buffer boxes; system sleep's file system wait; the system tray page; tag editing's petition reason count. Values are kept as the reference keeps them (ReferenceOptions) and imported from a legacy client. mpv's preferred audio device and playlist looping apply to each file played.",
+      "source": [
+        "crates/hydrus-store/src/reference_options.rs",
+        "crates/hydrus-gui-model/src/options.rs",
+        "crates/hydrus-gui-model/src/options_popup_width.rs",
+        "crates/hydrus-store/src/import/decode.rs",
+        "crates/hydrus-gui/src/mpv.rs",
+        "crates/hydrus-gui/src/playback.rs"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/options_dialog.rs::the_options_pages_are_the_references",
+        "crates/hydrus-store/src/reference_options.rs::tests"
+      ],
+      "limits": [
+        "Except mpv audio device and looping, the values are kept and edited but nothing in hydrus-rs reads them (no system tray, Qt styles, tile cache, drag-out or QtMediaPlayer)."
+      ]
+    },
+    {
+      "id": "audit-options-speed-and-memory-image-tile-cache-ideal-tile-width-height-px",
+      "before": "missing",
+      "proposedStatus": "partial",
+      "countAsCompletedLeaf": false,
+      "behavior": "Options rows the reference has and hydrus-rs lacked, each with the reference's label, box, position, default and range (recorded options_dialog.json): audio's preview volume; connection's REQUESTS_CA_BUNDLE debug; exporting's drag-and-drop box; gui misc's native menubar, locale integers, non-tool child windows, macOS debug menus and Qt file dialogs; frame locations' self-sizing viewer padding; gui pages' hide-page signal; importing's URL drop page switch; media playback's mpv, QtMediaPlayer and system rows; hovers' pinned duplicates hover and preview window hovers; popups' other-display freeze; the image tile cache and video buffer boxes; system sleep's file system wait; the system tray page; tag editing's petition reason count. Values are kept as the reference keeps them (ReferenceOptions) and imported from a legacy client. mpv's preferred audio device and playlist looping apply to each file played.",
+      "source": [
+        "crates/hydrus-store/src/reference_options.rs",
+        "crates/hydrus-gui-model/src/options.rs",
+        "crates/hydrus-gui-model/src/options_popup_width.rs",
+        "crates/hydrus-store/src/import/decode.rs",
+        "crates/hydrus-gui/src/mpv.rs",
+        "crates/hydrus-gui/src/playback.rs"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/options_dialog.rs::the_options_pages_are_the_references",
+        "crates/hydrus-store/src/reference_options.rs::tests"
+      ],
+      "limits": [
+        "Except mpv audio device and looping, the values are kept and edited but nothing in hydrus-rs reads them (no system tray, Qt styles, tile cache, drag-out or QtMediaPlayer)."
+      ]
+    },
+    {
+      "id": "audit-options-speed-and-memory-image-tile-cache-image-tile-cache-timeout",
+      "before": "missing",
+      "proposedStatus": "partial",
+      "countAsCompletedLeaf": false,
+      "behavior": "Options rows the reference has and hydrus-rs lacked, each with the reference's label, box, position, default and range (recorded options_dialog.json): audio's preview volume; connection's REQUESTS_CA_BUNDLE debug; exporting's drag-and-drop box; gui misc's native menubar, locale integers, non-tool child windows, macOS debug menus and Qt file dialogs; frame locations' self-sizing viewer padding; gui pages' hide-page signal; importing's URL drop page switch; media playback's mpv, QtMediaPlayer and system rows; hovers' pinned duplicates hover and preview window hovers; popups' other-display freeze; the image tile cache and video buffer boxes; system sleep's file system wait; the system tray page; tag editing's petition reason count. Values are kept as the reference keeps them (ReferenceOptions) and imported from a legacy client. mpv's preferred audio device and playlist looping apply to each file played.",
+      "source": [
+        "crates/hydrus-store/src/reference_options.rs",
+        "crates/hydrus-gui-model/src/options.rs",
+        "crates/hydrus-gui-model/src/options_popup_width.rs",
+        "crates/hydrus-store/src/import/decode.rs",
+        "crates/hydrus-gui/src/mpv.rs",
+        "crates/hydrus-gui/src/playback.rs"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/options_dialog.rs::the_options_pages_are_the_references",
+        "crates/hydrus-store/src/reference_options.rs::tests"
+      ],
+      "limits": [
+        "Except mpv audio device and looping, the values are kept and edited but nothing in hydrus-rs reads them (no system tray, Qt styles, tile cache, drag-out or QtMediaPlayer)."
+      ]
+    },
+    {
+      "id": "audit-options-speed-and-memory-image-tile-cache-memory-reserved-for-image-tile-cache",
+      "before": "missing",
+      "proposedStatus": "partial",
+      "countAsCompletedLeaf": false,
+      "behavior": "Options rows the reference has and hydrus-rs lacked, each with the reference's label, box, position, default and range (recorded options_dialog.json): audio's preview volume; connection's REQUESTS_CA_BUNDLE debug; exporting's drag-and-drop box; gui misc's native menubar, locale integers, non-tool child windows, macOS debug menus and Qt file dialogs; frame locations' self-sizing viewer padding; gui pages' hide-page signal; importing's URL drop page switch; media playback's mpv, QtMediaPlayer and system rows; hovers' pinned duplicates hover and preview window hovers; popups' other-display freeze; the image tile cache and video buffer boxes; system sleep's file system wait; the system tray page; tag editing's petition reason count. Values are kept as the reference keeps them (ReferenceOptions) and imported from a legacy client. mpv's preferred audio device and playlist looping apply to each file played.",
+      "source": [
+        "crates/hydrus-store/src/reference_options.rs",
+        "crates/hydrus-gui-model/src/options.rs",
+        "crates/hydrus-gui-model/src/options_popup_width.rs",
+        "crates/hydrus-store/src/import/decode.rs",
+        "crates/hydrus-gui/src/mpv.rs",
+        "crates/hydrus-gui/src/playback.rs"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/options_dialog.rs::the_options_pages_are_the_references",
+        "crates/hydrus-store/src/reference_options.rs::tests"
+      ],
+      "limits": [
+        "Except mpv audio device and looping, the values are kept and edited but nothing in hydrus-rs reads them (no system tray, Qt styles, tile cache, drag-out or QtMediaPlayer)."
+      ]
+    },
+    {
+      "id": "audit-options-speed-and-memory-video-buffer-memory-for-video-buffer",
+      "before": "missing",
+      "proposedStatus": "partial",
+      "countAsCompletedLeaf": false,
+      "behavior": "Options rows the reference has and hydrus-rs lacked, each with the reference's label, box, position, default and range (recorded options_dialog.json): audio's preview volume; connection's REQUESTS_CA_BUNDLE debug; exporting's drag-and-drop box; gui misc's native menubar, locale integers, non-tool child windows, macOS debug menus and Qt file dialogs; frame locations' self-sizing viewer padding; gui pages' hide-page signal; importing's URL drop page switch; media playback's mpv, QtMediaPlayer and system rows; hovers' pinned duplicates hover and preview window hovers; popups' other-display freeze; the image tile cache and video buffer boxes; system sleep's file system wait; the system tray page; tag editing's petition reason count. Values are kept as the reference keeps them (ReferenceOptions) and imported from a legacy client. mpv's preferred audio device and playlist looping apply to each file played.",
+      "source": [
+        "crates/hydrus-store/src/reference_options.rs",
+        "crates/hydrus-gui-model/src/options.rs",
+        "crates/hydrus-gui-model/src/options_popup_width.rs",
+        "crates/hydrus-store/src/import/decode.rs",
+        "crates/hydrus-gui/src/mpv.rs",
+        "crates/hydrus-gui/src/playback.rs"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/options_dialog.rs::the_options_pages_are_the_references",
+        "crates/hydrus-store/src/reference_options.rs::tests"
+      ],
+      "limits": [
+        "Except mpv audio device and looping, the values are kept and edited but nothing in hydrus-rs reads them (no system tray, Qt styles, tile cache, drag-out or QtMediaPlayer)."
+      ]
+    },
+    {
+      "id": "audit-options-system-system-sleep-include-the-file-system-in-this-wait",
+      "before": "missing",
+      "proposedStatus": "partial",
+      "countAsCompletedLeaf": false,
+      "behavior": "Options rows the reference has and hydrus-rs lacked, each with the reference's label, box, position, default and range (recorded options_dialog.json): audio's preview volume; connection's REQUESTS_CA_BUNDLE debug; exporting's drag-and-drop box; gui misc's native menubar, locale integers, non-tool child windows, macOS debug menus and Qt file dialogs; frame locations' self-sizing viewer padding; gui pages' hide-page signal; importing's URL drop page switch; media playback's mpv, QtMediaPlayer and system rows; hovers' pinned duplicates hover and preview window hovers; popups' other-display freeze; the image tile cache and video buffer boxes; system sleep's file system wait; the system tray page; tag editing's petition reason count. Values are kept as the reference keeps them (ReferenceOptions) and imported from a legacy client. mpv's preferred audio device and playlist looping apply to each file played.",
+      "source": [
+        "crates/hydrus-store/src/reference_options.rs",
+        "crates/hydrus-gui-model/src/options.rs",
+        "crates/hydrus-gui-model/src/options_popup_width.rs",
+        "crates/hydrus-store/src/import/decode.rs",
+        "crates/hydrus-gui/src/mpv.rs",
+        "crates/hydrus-gui/src/playback.rs"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/options_dialog.rs::the_options_pages_are_the_references",
+        "crates/hydrus-store/src/reference_options.rs::tests"
+      ],
+      "limits": [
+        "Except mpv audio device and looping, the values are kept and edited but nothing in hydrus-rs reads them (no system tray, Qt styles, tile cache, drag-out or QtMediaPlayer)."
+      ]
+    },
+    {
+      "id": "audit-options-system-tray-always-show-the-hydrus-system-tray-icon",
+      "before": "missing",
+      "proposedStatus": "partial",
+      "countAsCompletedLeaf": false,
+      "behavior": "Options rows the reference has and hydrus-rs lacked, each with the reference's label, box, position, default and range (recorded options_dialog.json): audio's preview volume; connection's REQUESTS_CA_BUNDLE debug; exporting's drag-and-drop box; gui misc's native menubar, locale integers, non-tool child windows, macOS debug menus and Qt file dialogs; frame locations' self-sizing viewer padding; gui pages' hide-page signal; importing's URL drop page switch; media playback's mpv, QtMediaPlayer and system rows; hovers' pinned duplicates hover and preview window hovers; popups' other-display freeze; the image tile cache and video buffer boxes; system sleep's file system wait; the system tray page; tag editing's petition reason count. Values are kept as the reference keeps them (ReferenceOptions) and imported from a legacy client. mpv's preferred audio device and playlist looping apply to each file played.",
+      "source": [
+        "crates/hydrus-store/src/reference_options.rs",
+        "crates/hydrus-gui-model/src/options.rs",
+        "crates/hydrus-gui-model/src/options_popup_width.rs",
+        "crates/hydrus-store/src/import/decode.rs",
+        "crates/hydrus-gui/src/mpv.rs",
+        "crates/hydrus-gui/src/playback.rs"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/options_dialog.rs::the_options_pages_are_the_references",
+        "crates/hydrus-store/src/reference_options.rs::tests"
+      ],
+      "limits": [
+        "Except mpv audio device and looping, the values are kept and edited but nothing in hydrus-rs reads them (no system tray, Qt styles, tile cache, drag-out or QtMediaPlayer)."
+      ]
+    },
+    {
+      "id": "audit-options-system-tray-bugfix-do-minimise-hide-using-event-deferred-state-prep-tech",
+      "before": "missing",
+      "proposedStatus": "partial",
+      "countAsCompletedLeaf": false,
+      "behavior": "Options rows the reference has and hydrus-rs lacked, each with the reference's label, box, position, default and range (recorded options_dialog.json): audio's preview volume; connection's REQUESTS_CA_BUNDLE debug; exporting's drag-and-drop box; gui misc's native menubar, locale integers, non-tool child windows, macOS debug menus and Qt file dialogs; frame locations' self-sizing viewer padding; gui pages' hide-page signal; importing's URL drop page switch; media playback's mpv, QtMediaPlayer and system rows; hovers' pinned duplicates hover and preview window hovers; popups' other-display freeze; the image tile cache and video buffer boxes; system sleep's file system wait; the system tray page; tag editing's petition reason count. Values are kept as the reference keeps them (ReferenceOptions) and imported from a legacy client. mpv's preferred audio device and playlist looping apply to each file played.",
+      "source": [
+        "crates/hydrus-store/src/reference_options.rs",
+        "crates/hydrus-gui-model/src/options.rs",
+        "crates/hydrus-gui-model/src/options_popup_width.rs",
+        "crates/hydrus-store/src/import/decode.rs",
+        "crates/hydrus-gui/src/mpv.rs",
+        "crates/hydrus-gui/src/playback.rs"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/options_dialog.rs::the_options_pages_are_the_references",
+        "crates/hydrus-store/src/reference_options.rs::tests"
+      ],
+      "limits": [
+        "Except mpv audio device and looping, the values are kept and edited but nothing in hydrus-rs reads them (no system tray, Qt styles, tile cache, drag-out or QtMediaPlayer)."
+      ]
+    },
+    {
+      "id": "audit-options-system-tray-bugfix-do-minimise-hide-with-post-show-state-restoration",
+      "before": "missing",
+      "proposedStatus": "partial",
+      "countAsCompletedLeaf": false,
+      "behavior": "Options rows the reference has and hydrus-rs lacked, each with the reference's label, box, position, default and range (recorded options_dialog.json): audio's preview volume; connection's REQUESTS_CA_BUNDLE debug; exporting's drag-and-drop box; gui misc's native menubar, locale integers, non-tool child windows, macOS debug menus and Qt file dialogs; frame locations' self-sizing viewer padding; gui pages' hide-page signal; importing's URL drop page switch; media playback's mpv, QtMediaPlayer and system rows; hovers' pinned duplicates hover and preview window hovers; popups' other-display freeze; the image tile cache and video buffer boxes; system sleep's file system wait; the system tray page; tag editing's petition reason count. Values are kept as the reference keeps them (ReferenceOptions) and imported from a legacy client. mpv's preferred audio device and playlist looping apply to each file played.",
+      "source": [
+        "crates/hydrus-store/src/reference_options.rs",
+        "crates/hydrus-gui-model/src/options.rs",
+        "crates/hydrus-gui-model/src/options_popup_width.rs",
+        "crates/hydrus-store/src/import/decode.rs",
+        "crates/hydrus-gui/src/mpv.rs",
+        "crates/hydrus-gui/src/playback.rs"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/options_dialog.rs::the_options_pages_are_the_references",
+        "crates/hydrus-store/src/reference_options.rs::tests"
+      ],
+      "limits": [
+        "Except mpv audio device and looping, the values are kept and edited but nothing in hydrus-rs reads them (no system tray, Qt styles, tile cache, drag-out or QtMediaPlayer)."
+      ]
+    },
+    {
+      "id": "audit-options-system-tray-close-the-main-window-to-system-tray",
+      "before": "missing",
+      "proposedStatus": "partial",
+      "countAsCompletedLeaf": false,
+      "behavior": "Options rows the reference has and hydrus-rs lacked, each with the reference's label, box, position, default and range (recorded options_dialog.json): audio's preview volume; connection's REQUESTS_CA_BUNDLE debug; exporting's drag-and-drop box; gui misc's native menubar, locale integers, non-tool child windows, macOS debug menus and Qt file dialogs; frame locations' self-sizing viewer padding; gui pages' hide-page signal; importing's URL drop page switch; media playback's mpv, QtMediaPlayer and system rows; hovers' pinned duplicates hover and preview window hovers; popups' other-display freeze; the image tile cache and video buffer boxes; system sleep's file system wait; the system tray page; tag editing's petition reason count. Values are kept as the reference keeps them (ReferenceOptions) and imported from a legacy client. mpv's preferred audio device and playlist looping apply to each file played.",
+      "source": [
+        "crates/hydrus-store/src/reference_options.rs",
+        "crates/hydrus-gui-model/src/options.rs",
+        "crates/hydrus-gui-model/src/options_popup_width.rs",
+        "crates/hydrus-store/src/import/decode.rs",
+        "crates/hydrus-gui/src/mpv.rs",
+        "crates/hydrus-gui/src/playback.rs"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/options_dialog.rs::the_options_pages_are_the_references",
+        "crates/hydrus-store/src/reference_options.rs::tests"
+      ],
+      "limits": [
+        "Except mpv audio device and looping, the values are kept and edited but nothing in hydrus-rs reads them (no system tray, Qt styles, tile cache, drag-out or QtMediaPlayer)."
+      ]
+    },
+    {
+      "id": "audit-options-system-tray-minimise-the-main-window-to-system-tray",
+      "before": "missing",
+      "proposedStatus": "partial",
+      "countAsCompletedLeaf": false,
+      "behavior": "Options rows the reference has and hydrus-rs lacked, each with the reference's label, box, position, default and range (recorded options_dialog.json): audio's preview volume; connection's REQUESTS_CA_BUNDLE debug; exporting's drag-and-drop box; gui misc's native menubar, locale integers, non-tool child windows, macOS debug menus and Qt file dialogs; frame locations' self-sizing viewer padding; gui pages' hide-page signal; importing's URL drop page switch; media playback's mpv, QtMediaPlayer and system rows; hovers' pinned duplicates hover and preview window hovers; popups' other-display freeze; the image tile cache and video buffer boxes; system sleep's file system wait; the system tray page; tag editing's petition reason count. Values are kept as the reference keeps them (ReferenceOptions) and imported from a legacy client. mpv's preferred audio device and playlist looping apply to each file played.",
+      "source": [
+        "crates/hydrus-store/src/reference_options.rs",
+        "crates/hydrus-gui-model/src/options.rs",
+        "crates/hydrus-gui-model/src/options_popup_width.rs",
+        "crates/hydrus-store/src/import/decode.rs",
+        "crates/hydrus-gui/src/mpv.rs",
+        "crates/hydrus-gui/src/playback.rs"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/options_dialog.rs::the_options_pages_are_the_references",
+        "crates/hydrus-store/src/reference_options.rs::tests"
+      ],
+      "limits": [
+        "Except mpv audio device and looping, the values are kept and edited but nothing in hydrus-rs reads them (no system tray, Qt styles, tile cache, drag-out or QtMediaPlayer)."
+      ]
+    },
+    {
+      "id": "audit-options-system-tray-start-the-client-minimised-to-system-tray",
+      "before": "missing",
+      "proposedStatus": "partial",
+      "countAsCompletedLeaf": false,
+      "behavior": "Options rows the reference has and hydrus-rs lacked, each with the reference's label, box, position, default and range (recorded options_dialog.json): audio's preview volume; connection's REQUESTS_CA_BUNDLE debug; exporting's drag-and-drop box; gui misc's native menubar, locale integers, non-tool child windows, macOS debug menus and Qt file dialogs; frame locations' self-sizing viewer padding; gui pages' hide-page signal; importing's URL drop page switch; media playback's mpv, QtMediaPlayer and system rows; hovers' pinned duplicates hover and preview window hovers; popups' other-display freeze; the image tile cache and video buffer boxes; system sleep's file system wait; the system tray page; tag editing's petition reason count. Values are kept as the reference keeps them (ReferenceOptions) and imported from a legacy client. mpv's preferred audio device and playlist looping apply to each file played.",
+      "source": [
+        "crates/hydrus-store/src/reference_options.rs",
+        "crates/hydrus-gui-model/src/options.rs",
+        "crates/hydrus-gui-model/src/options_popup_width.rs",
+        "crates/hydrus-store/src/import/decode.rs",
+        "crates/hydrus-gui/src/mpv.rs",
+        "crates/hydrus-gui/src/playback.rs"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/options_dialog.rs::the_options_pages_are_the_references",
+        "crates/hydrus-store/src/reference_options.rs::tests"
+      ],
+      "limits": [
+        "Except mpv audio device and looping, the values are kept and edited but nothing in hydrus-rs reads them (no system tray, Qt styles, tile cache, drag-out or QtMediaPlayer)."
+      ]
+    },
+    {
+      "id": "audit-options-tag-editing-tag-dialogs-number-of-recent-petition-reasons-to-remember-in-dialogs",
+      "before": "missing",
+      "proposedStatus": "partial",
+      "countAsCompletedLeaf": false,
+      "behavior": "Options rows the reference has and hydrus-rs lacked, each with the reference's label, box, position, default and range (recorded options_dialog.json): audio's preview volume; connection's REQUESTS_CA_BUNDLE debug; exporting's drag-and-drop box; gui misc's native menubar, locale integers, non-tool child windows, macOS debug menus and Qt file dialogs; frame locations' self-sizing viewer padding; gui pages' hide-page signal; importing's URL drop page switch; media playback's mpv, QtMediaPlayer and system rows; hovers' pinned duplicates hover and preview window hovers; popups' other-display freeze; the image tile cache and video buffer boxes; system sleep's file system wait; the system tray page; tag editing's petition reason count. Values are kept as the reference keeps them (ReferenceOptions) and imported from a legacy client. mpv's preferred audio device and playlist looping apply to each file played.",
+      "source": [
+        "crates/hydrus-store/src/reference_options.rs",
+        "crates/hydrus-gui-model/src/options.rs",
+        "crates/hydrus-gui-model/src/options_popup_width.rs",
+        "crates/hydrus-store/src/import/decode.rs",
+        "crates/hydrus-gui/src/mpv.rs",
+        "crates/hydrus-gui/src/playback.rs"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/options_dialog.rs::the_options_pages_are_the_references",
+        "crates/hydrus-store/src/reference_options.rs::tests"
+      ],
+      "limits": [
+        "Except mpv audio device and looping, the values are kept and edited but nothing in hydrus-rs reads them (no system tray, Qt styles, tile cache, drag-out or QtMediaPlayer)."
+      ]
+    }
+  ]
+}

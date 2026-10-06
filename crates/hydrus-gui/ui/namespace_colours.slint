@@ -27,6 +27,7 @@ export component NamespaceColourList inherits Rectangle {
         }
         HorizontalLayout {
             Button {text:"add";enabled:root.enabled && !root.child-open;clicked=>{root.action("add");}}
+            Button {text:"edit";enabled:root.enabled && !root.child-open;clicked=>{root.action("edit");}}
             Button {text:"delete";enabled:root.enabled && !root.child-open;clicked=>{root.action("delete");}}
         }
     }

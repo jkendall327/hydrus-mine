@@ -1,0 +1,29 @@
+{
+  "schema_version": 1,
+  "agent": "clear-orphan-files",
+  "note": "Cheap-validation implementation proposal (2026-10-05 breadth pass): strict backend/model Clippy and targeted model tests; native GUI compile/render review deferred to the final validation pass.",
+  "proposed_completed_count": 1,
+  "claims": [
+    {
+      "id": "audit-media-database-clear-orphan-files",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "countAsCompletedLeaf": true,
+      "behavior": "Database > file maintenance > clear orphan files: the reference's question with move/delete/forget it, a folder picker for moving, then a cancellable 'clearing orphans' popup scanning every prefix folder for files and thumbnails not held by local file storage (_IsAnOrphan), moving (thumbnails into a thumbnails subfolder, non-conflicting names) or deleting them, and the reference's final line.",
+      "source": [
+        "crates/hydrus-store/src/orphan_files.rs",
+        "crates/hydrus-gui-model/src/orphan_files.rs",
+        "crates/hydrus-gui/src/orphan_files_window.rs",
+        "crates/hydrus-gui-model/src/main_menu.rs",
+        "crates/hydrus-gui/src/menu_bar.rs"
+      ],
+      "tests": [
+        "crates/hydrus-store/src/orphan_files.rs::tests",
+        "crates/hydrus-gui-model/tests/model/orphan_files.rs"
+      ],
+      "limits": [
+        "No repositories, so nothing is kept for pending uploads; refuses for in-place shared media."
+      ]
+    }
+  ]
+}

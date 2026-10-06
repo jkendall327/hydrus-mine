@@ -112,6 +112,26 @@ impl Editor {
     pub fn add_random(&mut self, raw: &str) -> Result<(), &'static str> {
         self.add(raw, rand::random())
     }
+    /// The selected entries, protected rows too, for "edit" to recolour one
+    /// after another (`GetSelectedNamespaceColours`).
+    pub fn selected(&self) -> Vec<(Option<String>, [u8; 3])> {
+        self.rows()
+            .into_iter()
+            .filter(|row| row.selected)
+            .map(|row| (row.namespace, row.rgb))
+            .collect()
+    }
+    /// Recolour one entry, keeping its place and selection; a cancelled
+    /// picker gives back the colour it was given.
+    pub fn set_colour(&mut self, namespace: Option<&str>, rgb: [u8; 3]) {
+        if let Some(entry) = self
+            .colours
+            .iter_mut()
+            .find(|(existing, _)| existing.as_deref() == namespace)
+        {
+            entry.1 = rgb;
+        }
+    }
     /// Protected default rows alone offer no destructive question.
     pub fn removal_question(&self) -> Option<&'static str> {
         self.colours

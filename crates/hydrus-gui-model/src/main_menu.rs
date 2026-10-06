@@ -220,9 +220,16 @@ pub enum Command {
     OpenInstallDirectory,
     OpenDatabaseDirectory,
     OpenQuickExportDirectory,
+    /// Exit, then start again.
+    Restart,
+    /// Exit, running shutdown maintenance whether due or not.
+    ExitForceMaintenance,
     Exit,
     /// Forget the closed pages, asking first.
     ClearClosedPages,
+    /// Undo or redo the latest content change.
+    UndoContent,
+    RedoContent,
     /// Toggle one historical predicate on the currently visible media page.
     UndoSearch {
         kind: crate::predicate_history::Kind,
@@ -258,6 +265,12 @@ pub enum Command {
     /// Scan and optionally fill missing global archive times.
     RepairArchiveTimes,
     ClearViewingStatistics,
+    /// Review the files' statistics ("how boned am I?").
+    HowBoned,
+    /// Set, change or clear the lock password.
+    SetPassword,
+    /// Ask, then run, a Database menu maintenance job.
+    DatabaseMaintenance(crate::database_maintenance::Job),
     /// Clear only this GUI incarnation's thumbnail cache and redraw its current grid.
     ClearThumbnailCache,
     /// Publish two real cards and grow their text/title at the recorded cadence.
@@ -270,6 +283,25 @@ pub enum Command {
     DebugForceIdleMode,
     /// Publish the actual delayed message after five seconds.
     DebugDelayedTextPopup,
+    Debug(crate::debug_actions::Action),
+    /// Tags > sync's idle (`true`) or normal time switch.
+    TagDisplaySync(bool),
+    TagDisplaySyncNow,
+    /// Tags > sibling/parent sync > review current sibling/parent sync.
+    TagSyncReview,
+    /// Database > db maintenance > review vacuum data.
+    ReviewVacuum,
+    /// Database > file maintenance > clear orphan files.
+    ClearOrphanFiles,
+    /// Database > locations.
+    Locations,
+    /// A Database > backup entry.
+    Backup(crate::database_backup::Action),
+    /// Database > db maintenance's deferred delete idle (`true`) or normal
+    /// time switch.
+    DeferredDelete(bool),
+    /// Pages > weight > "total session weight"'s information.
+    SessionWeightReport,
     /// Freeze the Help menu's default location for a delayed real query page.
     DebugDelayedNewPage(hydrus_core::search::context::LocationContext),
     CullViewingStatistics,
@@ -356,11 +388,24 @@ pub struct Facts {
     /// The default local file location captured when this menu is constructed.
     pub default_location: hydrus_core::search::context::LocationContext,
     pub maintenance: FileMaintenanceSettings,
+    /// Whether sibling/parent sync works in idle and normal time.
+    pub tag_display_sync: (bool, bool),
+    /// Whether deferred table deletes work in idle and normal time.
+    pub deferred_delete: (bool, bool),
+    /// The backup location and last backup, whether the store keeps its
+    /// files in the default place (else no backups), and the time now
+    /// (seconds).
+    pub backup: hydrus_store::backup::BackupSettings,
+    pub locations_default: bool,
+    pub now: i64,
     pub pauses: Pauses,
     pub network_boot_pause: hydrus_store::settings::NetworkBootPause,
     pub clipboard_urls: hydrus_store::settings::ClipboardUrls,
     /// The repositories, and their pending content (none: no repositories).
     pub pending: Option<Vec<Pending>>,
+    /// The content undo and redo entries' texts, where there are any.
+    pub undo: Option<String>,
+    pub redo: Option<String>,
 }
 
 impl Facts {
@@ -387,6 +432,7 @@ impl Facts {
             search_domains.push((service.key.clone(), service.name.clone()));
         }
         search_domains.extend(by_name(ServiceType::FileRepository));
+        let locations_default = hydrus_store::backup::locations_are_default(store)?;
         store.read(|conn| {
             let mut import_folders: Vec<String> =
                 hydrus_store::import_folders::import_folders(conn)?
@@ -408,7 +454,10 @@ impl Facts {
                     })
                     .collect()
             });
+            let (undo, redo) = store.undo_log().strings(services);
             Ok(Facts {
+                undo,
+                redo,
                 darkmode: hydrus_store::gui_colours::load(conn)?.current == 1,
                 advanced,
                 folders: settings::get(conn)?,
@@ -425,6 +474,20 @@ impl Facts {
                 default_location: settings::get::<settings::SearchDefaults>(conn)?
                     .resolved_local_location(services),
                 maintenance: settings::get(conn)?,
+                tag_display_sync: {
+                    let work: settings::BackgroundWork = settings::get(conn)?;
+                    (work.tag_display_during_idle, work.tag_display_during_active)
+                },
+                backup: settings::get(conn)?,
+                locations_default,
+                now: hydrus_core::TimestampMs::now().millis() / 1000,
+                deferred_delete: {
+                    let work: settings::BackgroundWork = settings::get(conn)?;
+                    (
+                        work.deferred_delete_during_idle,
+                        work.deferred_delete_during_active,
+                    )
+                },
                 pauses: settings::get(conn)?,
                 network_boot_pause: settings::get(conn)?,
                 clipboard_urls: settings::get(conn)?,
@@ -475,7 +538,7 @@ pub fn menubar(facts: &Facts) -> Vec<Entry> {
         database_menu(facts),
         network_menu(facts),
         services_menu(),
-        tags_menu(),
+        tags_menu(facts),
     ];
     if let Some(pending) = &facts.pending {
         menus.push(pending_menu(pending));
@@ -613,8 +676,8 @@ fn file_menu(facts: &Facts) -> Entry {
             SEP,
             item(dots("options"), Command::Options),
             SEP,
-            todo("restart"),
-            todo("exit/force maintenance"),
+            item("restart", Command::Restart),
+            item("exit/force maintenance", Command::ExitForceMaintenance),
             item("exit", Command::Exit),
         ],
     )
@@ -626,6 +689,8 @@ fn undo_menu(facts: &Facts) -> Entry {
     if facts.closed_pages.is_empty()
         && facts.search_added.is_empty()
         && facts.search_removed.is_empty()
+        && facts.undo.is_none()
+        && facts.redo.is_none()
     {
         // (as hydrus leaves it: disabled, never filled)
         return Entry::Menu {
@@ -649,6 +714,13 @@ fn undo_menu(facts: &Facts) -> Entry {
         };
     }
     let mut entries = Vec::new();
+    if let Some(undo) = &facts.undo {
+        entries.push(item(undo.clone(), Command::UndoContent));
+    }
+    if let Some(redo) = &facts.redo {
+        entries.push(item(redo.clone(), Command::RedoContent));
+    }
+    entries.push(SEP);
     if !facts.closed_pages.is_empty() {
         let mut closed = vec![item(dots("clear all"), Command::ClearClosedPages), SEP];
         for (index, name) in facts.closed_pages.iter().enumerate().rev() {
@@ -702,10 +774,10 @@ fn pages_menu(facts: &Facts) -> Entry {
         "weight",
         vec![
             copy_label(format!("{} pages open", human_int(facts.page_count as u64))),
-            todo(format!(
-                "total session weight: {}",
-                human_int(facts.session_weight)
-            )),
+            item(
+                format!("total session weight: {}", human_int(facts.session_weight)),
+                Command::SessionWeightReport,
+            ),
         ],
     );
     let history = match &facts.history {
@@ -891,30 +963,67 @@ fn pages_menu(facts: &Facts) -> Entry {
 /// (`ClientGUISession.RESERVED_SESSION_NAMES`).
 pub const RESERVED_SESSION_NAMES: [&str; 2] = ["last session", "exit session"];
 
-/// `_InitialiseMenuInfoDatabase`, as its updater fills it for a database
-/// in its default location with no backup location set.
+/// The database menu's backup submenu, as its updater shows it: set up a
+/// location, or update and change it, then restore; or, for a database in
+/// several locations, a note.
+fn backup_entries(facts: &Facts) -> Vec<Entry> {
+    use crate::database_backup::Action;
+    if !facts.locations_default {
+        return vec![item(
+            "database is stored in multiple locations",
+            Command::Backup(Action::Multiple),
+        )];
+    }
+    let mut entries = match &facts.backup.path {
+        None => vec![item(
+            dots("set up a database backup location"),
+            Command::Backup(Action::SetUp),
+        )],
+        Some(_) => vec![
+            item(
+                dots(&crate::database_backup::update_label(
+                    facts.backup.last_backup,
+                    facts.now,
+                )),
+                Command::Backup(Action::Update),
+            ),
+            item(
+                dots("change database backup location"),
+                Command::Backup(Action::SetUp),
+            ),
+        ],
+    };
+    entries.push(SEP);
+    entries.push(item(
+        dots("restore from a database backup"),
+        Command::Backup(Action::Restore),
+    ));
+    entries
+}
+
+/// `_InitialiseMenuInfoDatabase`, as its updater fills it.
 fn database_menu(facts: &Facts) -> Entry {
+    // (the maintenance jobs hydrus-rs runs, else greyed out)
+    let job = |label: &str| -> Entry {
+        match crate::database_maintenance::Job::from_label(label) {
+            Some(job) => item(dots(label), Command::DatabaseMaintenance(job)),
+            None => todo(dots(label)),
+        }
+    };
     let all_todo = |labels: &[&str]| -> Vec<Entry> {
         labels
             .iter()
-            .map(|l| if *l == "---" { SEP } else { todo(*l) })
+            .map(|l| if *l == "---" { SEP } else { job(l) })
             .collect()
     };
     menu(
         "&database",
         vec![
-            menu(
-                "backup",
-                vec![
-                    todo(dots("set up a database backup location")),
-                    SEP,
-                    todo(dots("restore from a database backup")),
-                ],
-            ),
+            menu("backup", backup_entries(facts)),
             SEP,
-            todo(dots("locations")),
+            item(dots("locations"), Command::Locations),
             SEP,
-            todo("how boned am I?"),
+            item("how boned am I?", Command::HowBoned),
             item("view file history", Command::FileHistory),
             SEP,
             menu(
@@ -936,7 +1045,7 @@ fn database_menu(facts: &Facts) -> Entry {
                         facts.maintenance.during_active,
                     ),
                     SEP,
-                    todo(dots("clear orphan files")),
+                    item(dots("clear orphan files"), Command::ClearOrphanFiles),
                     SEP,
                     item(
                         dots("fix missing file archived times"),
@@ -949,56 +1058,60 @@ fn database_menu(facts: &Facts) -> Entry {
                 vec![
                     todo("review deferred delete table data"),
                     SEP,
-                    check("work deferred delete jobs during idle time", None, true),
-                    check("work deferred delete jobs during normal time", None, true),
+                    check(
+                        "work deferred delete jobs during idle time",
+                        Some(Command::DeferredDelete(true)),
+                        facts.deferred_delete.0,
+                    ),
+                    check(
+                        "work deferred delete jobs during normal time",
+                        Some(Command::DeferredDelete(false)),
+                        facts.deferred_delete.1,
+                    ),
                     SEP,
-                    todo(dots("analyze")),
-                    todo(dots("review vacuum data")),
+                    job("analyze"),
+                    item(dots("review vacuum data"), Command::ReviewVacuum),
                     SEP,
-                    todo(dots("clear/fix orphan file records")),
-                    todo(dots("clear orphan URL mappings")),
-                    todo(dots("clear orphan tables")),
-                    todo(dots("clear orphan hashed serialisables")),
+                    job("clear/fix orphan file records"),
+                    job("clear orphan URL mappings"),
+                    job("clear orphan tables"),
+                    job("clear orphan hashed serialisables"),
                     SEP,
-                    todo(dots("get tables using definitions")),
+                    job("get tables using definitions"),
                 ],
             ),
             menu(
                 "check and repair",
                 all_todo(&[
-                    &dots("fix invalid tags"),
-                    &dots("fix logically inconsistent mappings"),
+                    "fix invalid tags",
+                    "fix logically inconsistent mappings",
                     "---",
-                    &dots("repopulate truncated mappings tables"),
+                    "repopulate truncated mappings tables",
                     "---",
-                    &dots("resync combined deleted files"),
-                    &dots("resync tag mappings cache files"),
+                    "resync combined deleted files",
+                    "resync tag mappings cache files",
                 ]),
             ),
             menu(
                 "regenerate",
                 all_todo(&[
-                    &dots("total pending count, in the pending menu"),
-                    &dots(
-                        "tag storage mappings cache (all, with deferred siblings & parents calculation)",
-                    ),
-                    &dots("tag storage mappings cache (just pending tags, instant calculation)"),
-                    &dots(
-                        "tag display mappings cache (all, deferred siblings & parents calculation)",
-                    ),
-                    &dots("tag display mappings cache (just pending tags, instant calculation)"),
-                    &dots("tag display mappings cache (missing file repopulation)"),
-                    &dots("tag siblings lookup cache"),
-                    &dots("tag parents lookup cache"),
-                    &dots("tag text search cache"),
-                    &dots("tag text search cache (subtags repopulation)"),
-                    &dots("tag text search cache (searchable subtag maps)"),
+                    "total pending count, in the pending menu",
+                    "tag storage mappings cache (all, with deferred siblings & parents calculation)",
+                    "tag storage mappings cache (just pending tags, instant calculation)",
+                    "tag display mappings cache (all, deferred siblings & parents calculation)",
+                    "tag display mappings cache (just pending tags, instant calculation)",
+                    "tag display mappings cache (missing file repopulation)",
+                    "tag siblings lookup cache",
+                    "tag parents lookup cache",
+                    "tag text search cache",
+                    "tag text search cache (subtags repopulation)",
+                    "tag text search cache (searchable subtag maps)",
                     "---",
-                    &dots("local hashes cache"),
-                    &dots("local tags cache"),
+                    "local hashes cache",
+                    "local tags cache",
                     "---",
-                    &dots("service info numbers"),
-                    &dots("similar files search tree"),
+                    "service info numbers",
+                    "similar files search tree",
                 ]),
             ),
             menu(
@@ -1015,7 +1128,7 @@ fn database_menu(facts: &Facts) -> Entry {
                 ],
             ),
             SEP,
-            todo(dots("set a password")),
+            item(dots("set a password"), Command::SetPassword),
         ],
     )
 }
@@ -1161,7 +1274,7 @@ fn services_menu() -> Entry {
 }
 
 /// `_InitialiseMenuInfoTags`.
-fn tags_menu() -> Entry {
+fn tags_menu(facts: &Facts) -> Entry {
     menu(
         "&tags",
         vec![
@@ -1187,12 +1300,20 @@ fn tags_menu() -> Entry {
             menu(
                 "sync",
                 vec![
-                    todo("review current sibling/parent sync"),
+                    item("review current sibling/parent sync", Command::TagSyncReview),
                     SEP,
-                    todo("sync now"),
+                    item("sync now", Command::TagDisplaySyncNow),
                     SEP,
-                    check("sync tag display during idle time", None, true),
-                    check("sync tag display during normal time", None, true),
+                    check(
+                        "sync tag display during idle time",
+                        Some(Command::TagDisplaySync(true)),
+                        facts.tag_display_sync.0,
+                    ),
+                    check(
+                        "sync tag display during normal time",
+                        Some(Command::TagDisplaySync(false)),
+                        facts.tag_display_sync.1,
+                    ),
                 ],
             ),
         ],
@@ -1227,6 +1348,8 @@ fn pending_menu(pending: &[Pending]) -> Entry {
 
 /// `_InitialiseMenuInfoHelp`, with implemented debug GUI and thumbnail-memory actions.
 fn help_menu(facts: &Facts) -> Entry {
+    use crate::debug_actions::Action as DebugAction;
+    let debug = Command::Debug;
     let link = |label: &str, url: &'static str| item(label, Command::OpenUrl(url));
     menu(
         "&help",
@@ -1280,6 +1403,10 @@ fn help_menu(facts: &Facts) -> Entry {
                         )],
                     ),
                     menu(
+                        "profiling",
+                        vec![item("what is this?", debug(DebugAction::ProfileInfo))],
+                    ),
+                    menu(
                         "gui actions",
                         vec![
                             item(
@@ -1288,18 +1415,52 @@ fn help_menu(facts: &Facts) -> Entry {
                             ),
                             item("make a long text popup", Command::DebugLongTextPopup),
                             item(
+                                "make a modal popup in five seconds",
+                                debug(DebugAction::ModalPopup { cancellable: true }),
+                            ),
+                            item(
                                 "make a new page in five seconds",
                                 Command::DebugDelayedNewPage(facts.default_location.clone()),
+                            ),
+                            item(
+                                "make a non-cancellable modal popup in five seconds",
+                                debug(DebugAction::ModalPopup { cancellable: false }),
                             ),
                             item(
                                 "make a popup in five seconds",
                                 Command::DebugDelayedTextPopup,
                             ),
+                            item("make a QMessageBox", debug(DebugAction::MessageBox)),
+                            item("make some popups", debug(DebugAction::SomePopups)),
+                            item(
+                                "reset multi-column list settings to default",
+                                debug(DebugAction::ResetColumns),
+                            ),
+                            item(
+                                "save 'last session' gui session",
+                                debug(DebugAction::SaveLastSession),
+                            ),
+                        ],
+                    ),
+                    menu(
+                        "data actions",
+                        vec![
+                            item("flush log", debug(DebugAction::FlushLog)),
+                            item("force database commit", debug(DebugAction::ForceCommit)),
+                            item("show env", debug(DebugAction::ShowEnv)),
+                            SEP,
+                            item("simulate program exit signal", debug(DebugAction::Exit)),
                         ],
                     ),
                     menu(
                         "memory actions",
-                        vec![item("clear thumbnail cache", Command::ClearThumbnailCache)],
+                        vec![
+                            item(
+                                "clear all rendering caches",
+                                debug(DebugAction::ClearRenderingCaches),
+                            ),
+                            item("clear thumbnail cache", Command::ClearThumbnailCache),
+                        ],
                     ),
                     menu(
                         "network actions",

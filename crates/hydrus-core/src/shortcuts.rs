@@ -123,11 +123,43 @@ fn hydrus_casefold(character: char) -> char {
         .expect("nonempty casefold")
 }
 
-/// One supported simple application command bound to a gesture.
+/// A simple application command bound to a gesture. A command with data
+/// (a seek's distance, a focus move's direction) keeps the reference's
+/// text for it, and is shown but not run.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct Binding {
     pub gesture: Gesture,
     pub action: i32,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub text: Option<String>,
+    /// A content command (a tag or rating to apply) rather than the simple
+    /// `action`, which is then ignored.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub content: Option<ContentCommand>,
+}
+
+/// A tag or rating a shortcut applies to the files it is used on
+/// (`APPLICATION_COMMAND_TYPE_CONTENT`).
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub enum ContentCommand {
+    /// Add a tag, or with `flip` remove it where every file has it.
+    Tag {
+        service: crate::ServiceKey,
+        tag: String,
+        flip: bool,
+    },
+    /// Set a like/dislike (1, 0 stars) or numerical rating (stars; none
+    /// clears it), or with `flip` clear it where every file has it.
+    Rating {
+        service: crate::ServiceKey,
+        stars: Option<u32>,
+        flip: bool,
+    },
+    /// One star (or one count) more or less.
+    Step {
+        service: crate::ServiceKey,
+        up: bool,
+    },
 }
 /// Staged named sets and the original capture/display policies.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -142,18 +174,31 @@ impl Default for Settings {
         Self {
             merge_numpad: true,
             primary_labels: false,
-            sets: BTreeMap::from([
-                ("main_gui".into(), Vec::new()),
-                ("media_viewer".into(), Vec::new()),
-            ]),
+            sets: default_sets(),
         }
     }
 }
+
+/// The reference's built-in sets as a new client has them
+/// (`ClientDefaults.GetDefaultShortcuts`, `oracle/dump_shortcut_sets.py`).
+pub fn default_sets() -> BTreeMap<String, Vec<Binding>> {
+    serde_json::from_str(include_str!("default_shortcuts.json")).expect("valid default shortcuts")
+}
 impl Settings {
+    /// The content command `gesture` runs in the set `name`, if any.
+    pub fn content_command(&self, name: &str, gesture: &Gesture) -> Option<&ContentCommand> {
+        self.sets
+            .get(name)?
+            .iter()
+            .find(|b| b.gesture == *gesture)
+            .and_then(|b| b.content.as_ref())
+    }
+
     pub fn command(&self, name: &str, gesture: &Gesture) -> Option<i32> {
         let bindings = self.sets.get(name)?;
         bindings
             .iter()
+            .filter(|binding| binding.text.is_none() && binding.content.is_none())
             .find(|binding| {
                 binding.gesture == *gesture
                     || (self.merge_numpad

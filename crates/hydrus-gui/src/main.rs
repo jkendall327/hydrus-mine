@@ -22,6 +22,13 @@ fn main() -> Result<()> {
         .filter(|arg| !arg.to_string_lossy().starts_with('-'))
         .ok_or_else(|| anyhow!("usage: hydrus-gui <store directory>"))?
         .into();
+    // a backup asked to be restored before this start (the reference's
+    // restart after "restore from a database backup")
+    if let Some((from, media)) = hydrus_store::backup::take_restore_request(&dir) {
+        eprintln!("restoring the backup at {}", from.display());
+        hydrus_store::backup::restore(&dir, &from, &media, &mut |text| eprintln!("{text}"))
+            .with_context(|| format!("restoring the backup at {}", from.display()))?;
+    }
     let store =
         Store::open(&dir).with_context(|| format!("opening the store at {}", dir.display()))?;
     // one client at a time on a store, as the reference allows one on its
@@ -101,6 +108,16 @@ fn main() -> Result<()> {
     // (as hydrus stops its downloads on closing)
     client.daemon.borrow_mut().stop(daemon::GRACE);
     run.finish().context("recording a clean client shutdown")?;
+    drop(client);
+    drop(_open);
+    // File > restart: start again, now this client has let go of the store
+    if hydrus_gui::client_exit::RESTART.load(std::sync::atomic::Ordering::SeqCst) {
+        let exe = std::env::current_exe().context("finding this program to restart it")?;
+        std::process::Command::new(exe)
+            .args(std::env::args_os().skip(1))
+            .spawn()
+            .context("restarting the client")?;
+    }
     Ok(())
 }
 

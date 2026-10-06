@@ -10,7 +10,7 @@ import { ImportFavouriteRow, ImportFavouritesButton } from "import_options_favou
 import { ListTable, TableColumn, TableRow } from "list_table.slint";
 
 // The list's original three transport choices (full selected package).
-component SubscriptionExchangeButton inherits ContextMenuArea {
+export component SubscriptionExchangeButton inherits ContextMenuArea {
     in property <string> label;
     in property <[string]> choices;
     in property <bool> available;

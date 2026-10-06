@@ -55,6 +55,7 @@ fn idle_requires_boot_user_mouse_and_api_timeouts_and_enabled_normal_work() {
         user_seconds: Some(10),
         mouse_seconds: Some(5),
         api_seconds: None,
+        ..GuiIdleSettings::default()
     };
     let mut idle = Idle::new(0);
     assert!(!idle.eligible(120_000, &settings));
@@ -84,6 +85,7 @@ fn idle_requires_boot_user_mouse_and_api_timeouts_and_enabled_normal_work() {
             user_seconds: Some(10),
             mouse_seconds: Some(5),
             api_seconds: step["api_seconds"].as_u64(),
+            ..GuiIdleSettings::default()
         };
         assert_eq!(
             idle.eligible(step["now"].as_i64().unwrap(), &config),
@@ -115,6 +117,7 @@ fn real_auxiliary_dialog_mouse_and_api_actions_update_independent_idle_timers() 
                 user_seconds: (key == "last_user_action").then_some(2),
                 mouse_seconds: (key == "last_mouse_action").then_some(2),
                 api_seconds: (key == "last_client_api_action").then_some(2),
+                ..GuiIdleSettings::default()
             };
             let at = step["times"][key].as_i64().unwrap();
             for check in [now, now + 2_000, now + 2_001] {

@@ -1,0 +1,77 @@
+{
+  "schema_version": 1,
+  "agent": "database-backup",
+  "note": "Cheap-validation implementation proposal (2026-10-05 breadth pass): strict backend/model Clippy and targeted model tests; native GUI compile/render review deferred to the final validation pass.",
+  "proposed_completed_count": 3,
+  "claims": [
+    {
+      "id": "audit-media-database-backup-path",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "countAsCompletedLeaf": true,
+      "behavior": "Database > backup: set up/change the backup location with the reference's explanation, directory checks and questions; update database backup (with last-time label) asking, saving the session and backing up the database plus mirroring media in a cancellable popup; restore from a database backup picking a directory, asking, and restarting to restore before the store opens; the multiple-locations note.",
+      "source": [
+        "crates/hydrus-store/src/backup.rs",
+        "crates/hydrus-gui-model/src/database_backup.rs",
+        "crates/hydrus-gui-model/src/main_menu.rs",
+        "crates/hydrus-gui/src/database_backup_window.rs",
+        "crates/hydrus-gui/src/main.rs",
+        "crates/hydrus-gui/src/menu_bar.rs",
+        "crates/hydrus-gui/src/lib.rs"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/database_backup.rs",
+        "crates/hydrus-store/src/backup.rs::tests"
+      ],
+      "limits": [
+        "One native database file instead of the reference's four; online backup without closing the database; non-modal progress."
+      ]
+    },
+    {
+      "id": "audit-media-database-backup-update",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "countAsCompletedLeaf": true,
+      "behavior": "Database > backup: set up/change the backup location with the reference's explanation, directory checks and questions; update database backup (with last-time label) asking, saving the session and backing up the database plus mirroring media in a cancellable popup; restore from a database backup picking a directory, asking, and restarting to restore before the store opens; the multiple-locations note.",
+      "source": [
+        "crates/hydrus-store/src/backup.rs",
+        "crates/hydrus-gui-model/src/database_backup.rs",
+        "crates/hydrus-gui-model/src/main_menu.rs",
+        "crates/hydrus-gui/src/database_backup_window.rs",
+        "crates/hydrus-gui/src/main.rs",
+        "crates/hydrus-gui/src/menu_bar.rs",
+        "crates/hydrus-gui/src/lib.rs"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/database_backup.rs",
+        "crates/hydrus-store/src/backup.rs::tests"
+      ],
+      "limits": [
+        "One native database file instead of the reference's four; online backup without closing the database; non-modal progress."
+      ]
+    },
+    {
+      "id": "audit-media-menu-database-restore-from-a-database-backup",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "countAsCompletedLeaf": true,
+      "behavior": "Database > backup: set up/change the backup location with the reference's explanation, directory checks and questions; update database backup (with last-time label) asking, saving the session and backing up the database plus mirroring media in a cancellable popup; restore from a database backup picking a directory, asking, and restarting to restore before the store opens; the multiple-locations note.",
+      "source": [
+        "crates/hydrus-store/src/backup.rs",
+        "crates/hydrus-gui-model/src/database_backup.rs",
+        "crates/hydrus-gui-model/src/main_menu.rs",
+        "crates/hydrus-gui/src/database_backup_window.rs",
+        "crates/hydrus-gui/src/main.rs",
+        "crates/hydrus-gui/src/menu_bar.rs",
+        "crates/hydrus-gui/src/lib.rs"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/database_backup.rs",
+        "crates/hydrus-store/src/backup.rs::tests"
+      ],
+      "limits": [
+        "One native database file instead of the reference's four; online backup without closing the database; non-modal progress."
+      ]
+    }
+  ]
+}

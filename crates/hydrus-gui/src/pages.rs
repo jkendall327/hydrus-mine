@@ -1479,19 +1479,32 @@ impl Pages {
     /// Integrity maintenance uses a named URL importer without selecting it.
     /// Reuse the current matching page, otherwise the first open matching page.
     pub fn import_maintenance_urls(&mut self, urls: &[String]) -> Result<(), String> {
-        const NAME: &str = hydrus_import::maintenance::REDOWNLOAD_PAGE_NAME;
-        fn matching(pages: &[Page], out: &mut Vec<PageKey>, named: bool) {
+        self.import_urls_to_named_page(urls, hydrus_import::maintenance::REDOWNLOAD_PAGE_NAME, None)
+    }
+
+    /// Pend `urls` on the URL importer named `name` (`GetOrMakeURLImportPage`):
+    /// the current matching page, else the first open one, else a new one
+    /// given that name and, if any, `options` as its own import options.
+    pub fn import_urls_to_named_page(
+        &mut self,
+        urls: &[String],
+        name: &str,
+        options: Option<hydrus_core::import_options::ImportOptionsSlice>,
+    ) -> Result<(), String> {
+        fn matching(pages: &[Page], out: &mut Vec<PageKey>, named: Option<&str>) {
             for page in pages {
                 match &page.content {
                     PageContent::Downloader {
                         kind: DownloaderKind::Urls,
                         ..
-                    } if !named || page.name == NAME => out.push(page.key),
+                    } if named.is_none_or(|name| page.name == name) => out.push(page.key),
                     PageContent::Pages(children) => matching(children, out, named),
                     _ => {}
                 }
             }
         }
+        let name_owned = name.to_owned();
+        let name = name_owned.as_str();
         if urls.is_empty() {
             return Ok(());
         }
@@ -1515,18 +1528,17 @@ impl Pages {
                 hydrus_core::url::UrlType::Post
                     | hydrus_core::url::UrlType::Gallery
                     | hydrus_core::url::UrlType::Watchable
-            ) && capability.parser.is_err()
+            ) && let Err(error) = &capability.parser
             {
                 return Err(format!(
                     "This URL was recognised as a \"{}\" but it cannot be parsed: {}\n\nSince this URL cannot be parsed, a downloader cannot be created for it! Please check your url class links under the 'networking' menu.",
-                    capability.match_name,
-                    capability.parser.unwrap_err()
+                    capability.match_name, error
                 ));
             }
             normalised.push(url);
         }
         let mut candidates = Vec::new();
-        matching(&self.session.pages, &mut candidates, true);
+        matching(&self.session.pages, &mut candidates, Some(name));
         let shown = self.shown().key;
         let (key, created) = if candidates.contains(&shown) {
             (shown, false)
@@ -1534,7 +1546,7 @@ impl Pages {
             (*key, false)
         } else {
             let mut existing = Vec::new();
-            matching(&self.session.pages, &mut existing, false);
+            matching(&self.session.pages, &mut existing, None);
             let target = self.new_page_target.take();
             let depth = self.new_page_depth.take();
             let result = self.new_page_selected(&NewPage::Urls, false);
@@ -1542,6 +1554,7 @@ impl Pages {
             self.new_page_depth = depth;
             result?;
             // The new page has not been renamed yet; find its previously absent key.
+            #[allow(clippy::items_after_statements)]
             fn new_url(pages: &[Page], existing: &[PageKey]) -> Option<PageKey> {
                 for page in pages {
                     match &page.content {
@@ -1561,7 +1574,7 @@ impl Pages {
             }
             let key = new_url(&self.session.pages, &existing)
                 .ok_or("Could not create the missing files redownloader page.")?;
-            self.rename_key(&key, NAME);
+            self.rename_key(&key, name);
             (key, true)
         };
         let page = self
@@ -1575,7 +1588,10 @@ impl Pages {
         self.store
             .write(move |ctx| {
                 if created {
-                    hydrus_store::queues::rename_queue(ctx.conn(), queue, NAME)?;
+                    hydrus_store::queues::rename_queue(ctx.conn(), queue, &name_owned)?;
+                    if let Some(options) = &options {
+                        hydrus_store::queues::set_queue_options(ctx.conn(), queue, options)?;
+                    }
                 }
                 hydrus_store::queues::request_urls(ctx.conn(), queue, &normalised)
             })
@@ -2121,6 +2137,41 @@ impl Pages {
             self.notebook_at(depth).map_or(0, <[Page]>::len),
             self.path.get(depth).copied().unwrap_or(0),
         );
+        // the media pages in the clicked notebook (or this tab's notebook),
+        // to show one (`selectable_media_pages`)
+        let notebook = match &page.content {
+            PageContent::Pages(_) => Some(page.key),
+            _ => self.notebook_key(depth),
+        };
+        // (a key that isn't a page's gives the top notebook's pages)
+        let leaves = self.pages_under(&notebook.unwrap_or(PageKey([0; 32])));
+        let all = self.session.all_pages();
+        let selectable: Vec<crate::main_menu::Entry> = leaves
+            .iter()
+            .filter_map(|key| all.iter().find(|p| p.key == *key))
+            .map(|p| {
+                let (files, progress) = self.file_summary(p);
+                crate::main_menu::Entry::Item {
+                    label: hydrus_core::pages::name_for_menu(&p.name, files, progress, true),
+                    enabled: true,
+                    command: Some(crate::main_menu::Command::ShowPage(p.key)),
+                }
+            })
+            .collect();
+        if !selectable.is_empty() {
+            let at = entries
+                .iter()
+                .position(|e| *e == crate::main_menu::Entry::Separator)
+                .map_or(entries.len().min(1), |i| i + 1);
+            entries.insert(
+                at,
+                crate::main_menu::Entry::Menu {
+                    label: "pages".into(),
+                    entries: selectable,
+                    enabled: true,
+                },
+            );
+        }
         entries.push(crate::main_menu::Entry::Separator);
         for (label, before) in [("new page", None), ("new page here", Some(page.key))] {
             entries.push(crate::main_menu::Entry::Item {
@@ -2949,13 +3000,31 @@ impl Pages {
         self.weight_for_pages(self.session.pages.clone())
     }
 
-    fn weight_for_pages(&self, mut pages: Vec<Page>) -> u64 {
-        fn walk(me: &Pages, pages: &[Page], files: &mut u64, queues: &mut Vec<i64>) {
+    fn weight_for_pages(&self, pages: Vec<Page>) -> u64 {
+        let (files, seeds) = self.hashes_and_seeds(pages, &[]);
+        files + 20 * seeds
+    }
+
+    /// The files the pages show and the URLs (file and gallery seeds) their
+    /// downloaders hold (`GetTotalNumHashesAndSeeds`), the pages opened
+    /// being those open or among `also` (a closed page's).
+    fn hashes_and_seeds(
+        &self,
+        mut pages: Vec<Page>,
+        also: &[(PageKey, Rc<RefCell<SearchPage>>)],
+    ) -> (u64, u64) {
+        fn walk(
+            me: &Pages,
+            pages: &[Page],
+            also: &[(PageKey, Rc<RefCell<SearchPage>>)],
+            files: &mut u64,
+            queues: &mut Vec<i64>,
+        ) {
             for page in pages {
                 match &page.content {
-                    PageContent::Pages(children) => walk(me, children, files, queues),
+                    PageContent::Pages(children) => walk(me, children, also, files, queues),
                     content => {
-                        *files += me.file_summary(page).0 as u64;
+                        *files += me.file_summary_with(page, also).0 as u64;
                         if let PageContent::Downloader { queues: q, .. } = content {
                             queues.extend(q);
                         }
@@ -2964,8 +3033,10 @@ impl Pages {
             }
         }
         refresh_contents(&mut pages, &self.open);
+        let closed_open: HashMap<PageKey, Rc<RefCell<SearchPage>>> = also.iter().cloned().collect();
+        refresh_contents(&mut pages, &closed_open);
         let (mut files, mut queues) = (0, Vec::new());
-        walk(self, &pages, &mut files, &mut queues);
+        walk(self, &pages, also, &mut files, &mut queues);
         let seeds: u64 = self
             .store
             .read(|conn| {
@@ -2983,7 +3054,23 @@ impl Pages {
                 Ok(seeds)
             })
             .unwrap_or(0);
-        files + 20 * seeds
+        (files, seeds)
+    }
+
+    /// Pages > weight > "total session weight"'s information
+    /// (`_ShowPageWeightInfo`): the open pages' and the closed ones'.
+    pub fn weight_report(&self) -> String {
+        let active = self.hashes_and_seeds(self.session.pages.clone(), &[]);
+        let closed = self.closed.iter().fold((0, 0), |(f, s), closed| {
+            let (cf, cs) = self.hashes_and_seeds(vec![closed.page.clone()], &closed.open);
+            (f + cf, s + cs)
+        });
+        hydrus_gui_model::session_weight::report(
+            self.page_count(),
+            active,
+            self.closed.len(),
+            closed,
+        )
     }
 
     /// Note the page shown in the history (the reference's

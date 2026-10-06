@@ -1,0 +1,51 @@
+// Database > db maintenance > review vacuum data.
+import { Button } from "std-widgets.slint";
+import { Theme } from "theme.slint";
+import { ListTable, TableRow } from "list_table.slint";
+
+export component VacuumReviewWindow inherits Window {
+    title: "review vacuum data";
+    preferred-width: 980px;
+    preferred-height: 420px;
+    background: Theme.window;
+    in property <string> info;
+    in property <[TableRow]> rows;
+    in property <bool> can-vacuum;
+    in property <string> question;
+    callback clicked(int, bool, bool);
+    callback vacuum-clicked();
+    callback answered(bool);
+    callback close-clicked();
+    VerticalLayout {
+        padding: 12px;
+        spacing: 8px;
+        Text { text: root.info; wrap: word-wrap; color: Theme.text; }
+        ListTable {
+            columns: [
+                {title: "name", width: 120px, stretch: false},
+                {title: "size", width: 80px, stretch: false},
+                {title: "internal free space", width: 130px, stretch: false},
+                {title: "last vacuum", width: 140px, stretch: false},
+                {title: "can vacuum?", width: 280px, stretch: true},
+                {title: "vacuum time estimate", width: 200px, stretch: false}];
+            rows: root.rows;
+            row-clicked(i, ctrl, shift) => { root.clicked(i, ctrl, shift); }
+        }
+        HorizontalLayout {
+            alignment: start;
+            Button { text: "vacuum"; enabled: root.can-vacuum && root.question == ""; clicked => { root.vacuum-clicked(); } }
+        }
+        if root.question != "": VerticalLayout {
+            Text { text: root.question; color: Theme.text; wrap: word-wrap; }
+            HorizontalLayout {
+                alignment: start;
+                Button { text: "do it"; clicked => { root.answered(true); } }
+                Button { text: "forget it"; clicked => { root.answered(false); } }
+            }
+        }
+        HorizontalLayout {
+            alignment: end;
+            Button { text: "close"; clicked => { root.close-clicked(); } }
+        }
+    }
+}

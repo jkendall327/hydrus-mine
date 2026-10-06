@@ -579,3 +579,36 @@ pub fn open(
     LAST.with(|last| *last.borrow_mut() = Some(window.as_weak()));
     Ok(window)
 }
+
+/// Edit the client's default merge options for `relationship` ("edit
+/// default duplicate metadata merge options"), saving them on apply.
+pub fn edit_default(store: &Arc<Store>, relationship: PairRelationship, slot: &Slot) {
+    use hydrus_store::duplicates::DuplicateMergeSettings;
+    use hydrus_store::settings;
+    let current: DuplicateMergeSettings = store.read(settings::get).unwrap_or_default();
+    let options = current
+        .for_relationship(relationship)
+        .cloned()
+        .unwrap_or_default();
+    let applied: Rc<dyn Fn(MergeOptions)> = {
+        let store = store.clone();
+        Rc::new(move |options| {
+            let done = store.write(move |ctx| {
+                let mut s: DuplicateMergeSettings = settings::get(ctx.conn())?;
+                match relationship {
+                    PairRelationship::Better => s.better = options,
+                    PairRelationship::SameQuality => s.same_quality = options,
+                    _ => s.alternate = options,
+                }
+                settings::set(ctx.conn(), &s)
+            });
+            if let Err(e) = done {
+                eprintln!("could not save the merge options: {e}");
+            }
+        })
+    };
+    match open(store, relationship, &options, false, slot, applied) {
+        Ok(window) => *slot.borrow_mut() = Some(window),
+        Err(e) => eprintln!("could not open the merge options: {e}"),
+    }
+}

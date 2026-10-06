@@ -7,7 +7,7 @@
 import { Button, CheckBox, ComboBox, LineEdit, ScrollView, SpinBox, TextEdit } from "std-widgets.slint";
 import { Theme } from "theme.slint";
 import { ListTable, TableRow } from "list_table.slint";
-import { Asking } from "subscriptions.slint";
+import { Asking, SubscriptionExchangeButton } from "subscriptions.slint";
 import { PairList, PairRow } from "auto_resolution_review.slint";
 
 component Label inherits Text {
@@ -136,6 +136,8 @@ export component AutoResolutionRulesWindow inherits Window {
     callback add();
     callback edit();
     callback delete();
+    /// export to clipboard/json/png (0-2), import from them (3-5), duplicate (6)
+    callback exchange(int);
     callback chosen(int);
     callback cancelled();
     callback apply();
@@ -215,6 +217,13 @@ export component AutoResolutionRulesWindow inherits Window {
                 enabled: root.any-selected;
                 clicked => { root.delete(); }
             }
+            SubscriptionExchangeButton { label: "export"; choices: ["to clipboard", "to json file", "to png file"]; available: root.any-selected && !root.asking; selected(mode) => { root.exchange(mode); } }
+            SubscriptionExchangeButton { label: "import"; choices: ["from clipboard", "from json files", "from png files (you can also drag and drop pngs onto this list)"]; available: !root.asking; selected(mode) => { root.exchange(mode + 3); } }
+            Button {
+                text: "duplicate";
+                enabled: root.any-selected && !root.asking;
+                clicked => { root.exchange(6); }
+            }
             Rectangle { horizontal-stretch: 1; }
             Button {
                 text: "apply";
@@ -293,6 +302,13 @@ export component AutoResolutionRuleWindow inherits Window {
     // a pair double-clicked: the duplicate filter on the list from it
     callback preview-pass-activated(int);
     callback preview-fail-activated(int);
+    // (a row clicked: row, control, shift; and "show in a new page")
+    callback preview-pass-clicked(int, bool, bool);
+    callback preview-fail-clicked(int, bool, bool);
+    callback preview-pass-show();
+    callback preview-fail-show();
+    in property <string> preview-pass-menu;
+    in property <string> preview-fail-menu;
     callback apply();
     callback cancel();
     VerticalLayout {
@@ -554,6 +570,9 @@ export component AutoResolutionRuleWindow inherits Window {
                 columns: ["A", "B", "action"];
                 rows: root.preview-pass-rows;
                 row-activated(r) => { root.preview-pass-activated(r); }
+                row-clicked(r, c, sh) => { root.preview-pass-clicked(r, c, sh); }
+                menu-label: root.preview-pass-menu;
+                show-in-page => { root.preview-pass-show(); }
             }
             Text {
                 text: "pairs that will be skipped";
@@ -567,6 +586,9 @@ export component AutoResolutionRuleWindow inherits Window {
                 columns: ["1", "2", ""];
                 rows: root.preview-fail-rows;
                 row-activated(r) => { root.preview-fail-activated(r); }
+                row-clicked(r, c, sh) => { root.preview-fail-clicked(r, c, sh); }
+                menu-label: root.preview-fail-menu;
+                show-in-page => { root.preview-fail-show(); }
             }
         }
         if root.errors != "": Label {

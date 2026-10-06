@@ -80,7 +80,17 @@ pub(crate) struct Hooks {
     pub manage_services: Rc<dyn Fn()>,
     pub repair_archive_times: Rc<dyn Fn()>,
     pub viewing_maintenance: Rc<dyn Fn(bool)>,
+    /// Ask about, then run, a Database menu maintenance job.
+    pub database_maintenance: Rc<dyn Fn(hydrus_gui_model::database_maintenance::Job)>,
+    pub set_password: Rc<dyn Fn()>,
+    pub how_boned: Rc<dyn Fn()>,
     pub clear_thumbnail_cache: Rc<dyn Fn()>,
+    /// Run a Help > debug action.
+    pub debug: Rc<dyn Fn(hydrus_gui_model::debug_actions::Action)>,
+    /// Run a Database > backup entry.
+    pub backup: Rc<dyn Fn(hydrus_gui_model::database_backup::Action)>,
+    /// Open Database > locations.
+    pub locations: Rc<dyn Fn()>,
     pub file_history: Rc<dyn Fn()>,
     pub file_maintenance: Rc<dyn Fn()>,
     /// Toggle watcher or other recognised clipboard URL imports.
@@ -611,29 +621,14 @@ fn run(window: &MainWindow, hooks: &Hooks, command: Command) {
             }
         }
         Command::CheckImportFolder(name) => {
-            let done = store.write(move |ctx| {
-                let conn = ctx.conn();
-                for folder in hydrus_store::import_folders::import_folders(conn)? {
-                    if name.as_deref().is_none_or(|n| n == folder.name()) {
-                        let mut settings = folder.settings.clone();
-                        settings.check_now = true;
-                        hydrus_store::import_folders::set_settings(conn, folder.id(), &settings)?;
-                    }
-                }
-                Ok(())
-            });
-            if let Err(e) = done {
+            if let Err(e) = hydrus_gui_model::folder_runs::check_import_folders(&store, name) {
                 eprintln!("could not check the import folders: {e}");
             }
         }
         Command::RunExportFolder(name) => {
-            flip::<hydrus_store::settings::ExportFolders>(&store, move |folders| {
-                for folder in &mut folders.0 {
-                    if name.as_deref().is_none_or(|n| n == folder.name) {
-                        folder.run_now = true;
-                    }
-                }
-            });
+            if let Err(e) = hydrus_gui_model::folder_runs::run_export_folders(&store, name) {
+                eprintln!("could not run the export folders: {e}");
+            }
         }
         Command::OpenInstallDirectory => match std::env::current_exe() {
             Ok(exe) => {
@@ -645,10 +640,29 @@ fn run(window: &MainWindow, hooks: &Hooks, command: Command) {
         },
         Command::OpenDatabaseDirectory => crate::launch(&store.dir().to_string_lossy()),
         Command::OpenQuickExportDirectory => hooks.quick_export_directory.open(),
-        Command::Exit => {
+        Command::Exit | Command::Restart | Command::ExitForceMaintenance => {
+            crate::client_exit::set_mode(match command {
+                Command::Restart => hydrus_gui_model::shutdown_work::ExitMode::Restart,
+                Command::ExitForceMaintenance => {
+                    hydrus_gui_model::shutdown_work::ExitMode::ForceMaintenance
+                }
+                _ => hydrus_gui_model::shutdown_work::ExitMode::Exit,
+            });
             let _ = window
                 .window()
                 .dispatch_event_with_result(slint::platform::WindowEvent::CloseRequested);
+        }
+        Command::UndoContent | Command::RedoContent => {
+            let store = hooks.pages.borrow().store().clone();
+            let done = if command == Command::UndoContent {
+                store.undo()
+            } else {
+                store.redo()
+            };
+            match done {
+                Ok(_) => (hooks.reshow)(),
+                Err(error) => eprintln!("could not undo or redo: {error}"),
+            }
         }
         Command::ClearClosedPages => {
             let count = hooks.pages.borrow_mut().closed_names().len();
@@ -765,6 +779,10 @@ fn run(window: &MainWindow, hooks: &Hooks, command: Command) {
         Command::ManageFileMaintenance => (hooks.file_maintenance)(),
         Command::RepairArchiveTimes => (hooks.repair_archive_times)(),
         Command::ClearThumbnailCache => (hooks.clear_thumbnail_cache)(),
+        Command::Debug(action) => (hooks.debug)(action),
+        Command::Backup(action) => (hooks.backup)(action),
+        Command::Locations => (hooks.locations)(),
+        Command::ClearOrphanFiles => crate::orphan_files_window::open(&store),
         Command::DebugFetchUrl => hooks.debug_fetch.open(),
         Command::DebugLongTextPopup => hooks.debug_long_popup.start(),
         Command::DebugForceIdleMode => {
@@ -772,10 +790,54 @@ fn run(window: &MainWindow, hooks: &Hooks, command: Command) {
         }
         Command::DebugDelayedTextPopup => hooks.debug_long_popup.start_delayed_popup(),
         Command::DebugDelayedNewPage(location) => {
-            hooks.debug_long_popup.start_delayed_page(location)
+            hooks.debug_long_popup.start_delayed_page(location);
         }
         Command::ClearViewingStatistics => (hooks.viewing_maintenance)(false),
         Command::CullViewingStatistics => (hooks.viewing_maintenance)(true),
+        Command::DatabaseMaintenance(job) => (hooks.database_maintenance)(job),
+        Command::SetPassword => (hooks.set_password)(),
+        Command::HowBoned => (hooks.how_boned)(),
+        Command::DeferredDelete(idle) => {
+            flip::<hydrus_store::settings::BackgroundWork>(&store, move |w| {
+                let field = if idle {
+                    &mut w.deferred_delete_during_idle
+                } else {
+                    &mut w.deferred_delete_during_active
+                };
+                *field = !*field;
+            });
+        }
+        Command::TagDisplaySync(idle) => {
+            flip::<hydrus_store::settings::BackgroundWork>(&store, move |w| {
+                let field = if idle {
+                    &mut w.tag_display_during_idle
+                } else {
+                    &mut w.tag_display_during_active
+                };
+                *field = !*field;
+            });
+        }
+        // (hydrus-rs applies siblings and parents as it writes: there is
+        // never work left)
+        Command::SessionWeightReport => {
+            let report = hooks.pages.borrow().weight_report();
+            crate::debug_actions::message("Information", &report);
+        }
+        Command::ReviewVacuum => crate::vacuum_review_window::open(&store),
+        Command::TagSyncReview => crate::tag_sync_review_window::open(&store),
+        Command::TagDisplaySyncNow => {
+            let now = hydrus_core::time::TimestampMs::now().millis() / 1000;
+            #[allow(clippy::cast_precision_loss)] // (seconds)
+            let popup = hydrus_store::popups::Job::text(
+                "Seems like we are all synced already!",
+                now as f64,
+            );
+            if let Err(e) =
+                store.write(move |ctx| hydrus_store::popups::add(ctx.conn(), &popup, now))
+            {
+                eprintln!("could not say so: {e}");
+            }
+        }
         Command::FileMaintenance(idle) => {
             flip::<hydrus_store::file_maintenance::FileMaintenanceSettings>(&store, move |m| {
                 let field = if idle {

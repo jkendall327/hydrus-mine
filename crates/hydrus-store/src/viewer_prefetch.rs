@@ -16,7 +16,7 @@ pub struct Preferences {
     pub previous: u64,
     pub next: u64,
     pub percentage: u64,
-    /// Retained supporting duplicate-filter count; no native editor in this slice.
+    /// Pairs the duplicate filter prefetches.
     pub duplicate_pairs: u64,
 }
 impl Default for Preferences {
@@ -58,7 +58,7 @@ impl Preferences {
             previous: self.previous.min(50),
             next: self.next.min(50),
             percentage: self.percentage.clamp(10, 50),
-            duplicate_pairs: self.duplicate_pairs,
+            duplicate_pairs: self.duplicate_pairs.min(25),
         }
     }
     pub fn save_changed(self, conn: &Connection, before: Self) -> Result<()> {
@@ -75,6 +75,12 @@ impl Preferences {
                 &mut latest.previous,
             ),
             (self.next, before.next, displayed.next, &mut latest.next),
+            (
+                self.duplicate_pairs,
+                before.duplicate_pairs,
+                displayed.duplicate_pairs,
+                &mut latest.duplicate_pairs,
+            ),
             (
                 self.percentage,
                 before.percentage,

@@ -242,6 +242,12 @@ impl DisplayGraph {
         out
     }
 
+    /// How many rules apply, as the reference counts its lookup caches'
+    /// rows: each non-ideal sibling's ideal, and each ideal's ancestors.
+    pub fn rule_count(&self) -> usize {
+        self.bad_to_ideal.len() + self.ancestors.values().map(Vec::len).sum::<usize>()
+    }
+
     /// Every tag the graph mentions.
     pub fn all_tags(&self) -> BTreeSet<TagId> {
         let mut out: BTreeSet<TagId> = self.bad_to_ideal.keys().copied().collect();
@@ -396,6 +402,15 @@ mod tests {
         // chains built in the other order resolve the same
         let g2 = DisplayGraph::build([(t(3), t(2)), (t(2), t(1))], []);
         assert_eq!(g, g2);
+    }
+
+    #[test]
+    fn rules_count_as_the_reference_s_lookup_rows() {
+        // 3 -> 2 -> 1 is two sibling rows; 1's parent 4 and grandparent 5
+        // are 1's two ancestor rows and 4's one.
+        let g = DisplayGraph::build([(t(2), t(1)), (t(3), t(2))], [(t(1), t(4)), (t(4), t(5))]);
+        assert_eq!(g.rule_count(), 5);
+        assert_eq!(DisplayGraph::default().rule_count(), 0);
     }
 
     #[test]

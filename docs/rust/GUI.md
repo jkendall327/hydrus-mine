@@ -1135,11 +1135,11 @@ and extra info appear only when present; PNG EXIF includes the reference's
 orientation note. PDFs show Author, Title, Subject and Keywords. Non-local files
 show "This file is not local to this computer!" in human-readable text. Missing
 local files leave basics visible and show a read error.
-Not yet: clearing deletion records, manage's
-duplicates, maintenance and viewing stats,
-locations, urls → force metadata refetch, open's custom
-similarity distance, and
-share's copying of bitmaps.
+Urls → force metadata refetch lists the focused file's URL classes ("this
+file's booru urls") and, with several selected, the selection's; after the
+reference's question it pends those URLs on a "forced urls downloader" page
+whose prefetch fetches metadata even for files known by URL or hash. Not yet:
+open's custom similarity distance and share's copying of bitmaps.
 
 Share → "export files" opens a manual export window for the selected local
 thumbnails or the viewer's file (`ui/export_files.slint`,
@@ -1476,7 +1476,10 @@ files are eligible for the similar files search and how many it has
 searched at the search distance (named by the distance menu, "exact
 match" to "speculative", or set exactly), names the tab "preparation (60%
 done)" while there is work left, starts and stops working hard, and from
-its cog menu switches the search on in idle and normal time and deletes
+its cog menu switches the search on in idle and normal time, asks the
+reference's questions for "regenerate search tree" and "regenerate search
+numbers", resyncs potential pairs to local file storage (dropping the pairs
+of files no longer stored and saying how many in a popup), and deletes
 every potential pair to search again (asking first). Filtering launches
 the duplicate filter, and its "edit default duplicate metadata merge
 options" menu edits the client's merge options for "this is better",
@@ -1513,8 +1516,12 @@ boundaries; authored store/model/native regressions await hosted execution.
 (`src/auto_resolution_rules_window.rs`,
 `hydrus-gui-model/src/auto_resolution_rules.rs`): the rules with their
 search, comparison, action, progress and operation, its warning, and
-"add suggested" (the reference's suggested rules), "add", "edit" and
-"delete" (asking first); "apply" writes them (a changed rule starting its
+"add suggested" (the reference's suggested rules), "add", "edit",
+"delete" (asking first), "export" (to the clipboard, a json file or a png),
+"import" (from the clipboard, json files or pngs: hydrus-rs's exports or the
+reference's own serialised rules, one or a list, saying "N objects added!",
+and warning of anything that isn't a rule) and "duplicate"; imported and
+duplicated rules are named apart from the others; "apply" writes them (a changed rule starting its
 work over, as the reference's does). The rule editor sets the name,
 paused, operation and most pending pairs, and has tabs for the search
 (which pairs, the location both searches search, chosen in the
@@ -2078,6 +2085,11 @@ File-count ties include importer total/completed progress; name ties use file
 count descending and exact lexical names. Equal keys remain stable. Recorded
 against actual reference methods on Qt tabs by `oracle/record_tab_context.py`;
 model replay and session GUI tests cover ordering and reopening.
+
+Tab right-click also has the reference's "pages" submenu: every media page in
+the clicked page of pages (or, for a media page's tab, in its notebook), named
+as the Pages menu names them ("name - N files", elided), each selecting that
+page. It sits after the close entries, before "select".
 
 Pages > sessions > append backup groups rolling snapshots by saved-session name
 and timestamp. Named saves retain ten older snapshots by default (the retention
@@ -3592,6 +3604,21 @@ storage and inbox state. `local_transfer_confirmations.json` records actual Qt
 Options, the local action menu and real migration writes on a copied fixture DB;
 model/native regressions cover those decisions, persistence and stale owners.
 
+Options also has the reference's remaining rows on these pages, with its
+labels, positions, defaults and ranges: audio's "The preview window has its own
+volume"; connection's REQUESTS_CA_BUNDLE debug switch; exporting's "drag and
+drop" box (copy to the temp folder, the "move" flag, enabled with it, and the
+filename pattern); gui misc's native menubar, locale integers, non-tool child
+windows, macOS debug menus and Qt file dialogs; frame locations' self-sizing
+viewer padding; gui pages' forced hide-page signal; importing's "drag and drop"
+page switch; media playback's mpv and QtMediaPlayer boxes and system's system
+FFMPEG, truncated images and PIL switches; hovers' pinned duplicates hover and
+the "preview window hovers" box; popups' other-display freeze; speed and
+memory's "image tile cache" and "video buffer" boxes; system sleep's file system
+wait; the "system tray" page; and tag editing's petition reason count. An
+imported client brings its values. mpv plays through the preferred audio
+device, and loops the playlist rather than the file when asked.
+
 Options > shortcuts stages the reference numpad-merge and primary/secondary
 mouse-label policies and opens an owned shortcut-set editor. Each command child
 keeps independent keyboard and mouse captures. Keyboard capture retains raw
@@ -3600,9 +3627,37 @@ casefolds characters, and applies the non-number numpad policy. Child OK updates
 the set draft; set OK updates Options; only Options Apply persists. Cancel and
 closed owners reject retained child callbacks. Saved main GUI bindings call the
 existing refresh, close-page and new-page callbacks; saved media viewer bindings
-call close, navigation, zoom and fullscreen callbacks. This slice offers only
-those commands and the two reserved sets, leaving broader set/command management
-Partial. Existing hardcoded shortcuts remain fallbacks for unmatched bindings.
+call close, navigation, zoom and fullscreen callbacks. Existing hardcoded
+shortcuts remain fallbacks for unmatched bindings.
+
+A shortcut's command can also be "tag or rating": a local tag service with
+"flip on/off" or "set" and the tag, or a rating service with "flip on/off",
+"set", "increment" or "decrement" and the value ("like", "dislike", a number
+of stars, or blank for not set). The lists word them as the reference does
+("flip on/off tag mappings "blue eyes" for my tags", "set ratings 3/5 for
+stars"). In the media viewer, such shortcuts in the "media" and
+"media_viewer" sets apply to the file shown, as the reference's do: a tag is
+added where the file lacks it, else flipped off; a rating is set, else
+flipped off; increment and decrement move a numerical rating a star (from
+none to its lowest or highest) or an inc/dec count by one.
+The media viewer's top hover has the reference's keyboard button: "edit
+shortcuts" opens the options, and with custom sets, "set current shortcuts"
+turns them on or off for this viewer and "set default shortcuts" for every
+new one (kept as `default_media_viewer_custom_shortcuts`). A viewer's
+custom sets' shortcuts run after its own set's.
+
+The page lists the sets as the reference does. "built-in hydrus shortcut sets"
+shows each built-in set the client has, by its pretty name in the reference's
+order, with its number of shortcuts; "edit" (or a double-click) opens that set
+with its description, and "restore defaults" offers every default set: one the
+client lacks is restored after saying so, one it has asks "Are you certain you
+want to restore the defaults for "…"? Any custom shortcuts you have set will be
+wiped." "custom user sets" explains that they are advanced, and adds ("new
+shortcuts"), edits, renames and deletes ("Remove all selected?") custom sets;
+names are made unique as "name (1)", "name (2)". A "help" button shows the
+reference's help. A new client starts with the reference's eleven default sets
+(107 shortcuts); a command with data (a seek's distance, a thumbnail focus
+move) is listed with the reference's text.
 
 Mouse capture includes press/release, double-click and vertical wheel gestures,
 with the recorded strict small-wheel accumulation and disabled release selector
@@ -4063,8 +4118,9 @@ question PNG are authored; hosted Rust execution and rendered inspection remain
 pending. This covers the selected thumbnail action only.
 
 Options → speed and memory now stages the per-viewer image-cache percentage
-(default 25%, 10–50%) and previous/next image-prefetch counts (defaults 2/3,
-0–50), with the reference pixel estimate and over-budget warning. Cancel,
+(default 25%, 10–50%), previous/next image-prefetch counts (defaults 2/3,
+0–50) and the duplicate filter's pairs to prefetch (default 3, 0–25), with the
+reference pixel estimate and over-budget warning. Cancel,
 reopen, imported ClientOptions, typed native precedence and per-field concurrent
 saves apply to these controls. A passive normalization does not overwrite a
 concurrent explicit setting. Retained hidden Options or a parent with an owned
@@ -4126,8 +4182,18 @@ rebind and final binding drop cancel admission at the next file boundary. Hidden
 input and retained callbacks cannot target a successor review or Main binding.
 The actual Qt recording is file_maintenance_current.json; native/model/Store
 regressions and file-maintenance-current.png are authored and hosted execution
-and final rendered review remain pending. New scheduling/search and the parent
-maintenance family remain incomplete.
+and final rendered review remain pending. The parent maintenance family
+remains incomplete.
+
+The window's second tab, "add new work", picks files as the reference's does:
+"select files by search" takes typed predicates (one per line entered, each
+removable; none means everything) in the default local file domain, and "run
+this search" says "loading…" then "N files found"; "easy select" picks all
+media files or all repository update files. "add job" offers every job in the
+reference's order, "see description" shows the job's description and weight,
+and adding on more than 1,000 files asks "Are you sure you want to schedule
+"job" on N files?" (do it/forget it) before queueing it and saying "Jobs
+added!", refreshing the scheduled work.
 Accepted Clear/Refresh commands are serviced between fetched batches while the
 same actor retains its physical lease; Clear never races that actor's in-flight
 file results. Ordinary daemon passes defer on lease contention, and forced waits
@@ -4148,3 +4214,247 @@ Main destruction or final binding-clone release reject late delivery. The privat
 saved reload slot is removed before reconstruction. The real Qt recorder is
 `oracle/record_debug_session_reload.py`; Store isolation and native reconstruction,
 importer, hidden/retired ownership replays are authored for hosted execution.
+
+## Database maintenance entries
+
+Database > db maintenance, check and repair and regenerate now run the entries
+whose purpose the native store has: analyze (soft or full), clear/fix orphan
+file records, clear orphan URL mappings, clear orphan tables, get tables using
+definitions, fix invalid tags, fix logically inconsistent mappings, resync tag
+mappings cache files, both tag storage and all three tag display mappings cache
+entries, the siblings and parents lookup caches and the three tag text search
+cache entries. Each asks the reference's question with its buttons, then, where
+the reference does, "Which service?" (all services, then each tag service by
+name). Accepted jobs run off the UI thread and send the reference's popups: the
+titled working popup finishing "done!", then its result messages ("No orphan
+tables!", "Found 3 bad mappings! ..."). Get tables using definitions copies the
+`table,column` lines to the clipboard. The recording is
+`oracle/record_database_maintenance.py`; `tests/model/database_maintenance.rs`
+replays its questions, choices and popups on the imported basic client.
+
+The rest of those menus (total pending count, local hashes and local tags
+caches, service info numbers, similar files search tree, repopulate truncated
+mappings tables, resync combined deleted files, clear orphan hashed
+serialisables) now ask their questions too, with "Which service?" over every
+service for service info numbers and over the repositories for the pending
+count, and report as the reference does on a client with nothing to fix.
+
+## Set a password and how boned am I?
+
+Database > set a password asks the reference's text, then asks again (or, left
+blank, "Clear any existing password?"), warns "Those passwords did not match!"
+on a mismatch, and saves the lock the startup unlock window checks. Recorded by
+`oracle/record_set_password.py`; `tests/model/set_password.rs` replays its
+scripted answers.
+
+Database > how boned am I? opens "review your fate": a file domain and typed
+predicates on the left, and on the right Mr. Bones (or his special message) over
+the files, views and duplicates tabs, worded as the reference's. A single plain
+local domain also counts its deleted files. Searches load off the UI thread; a
+newer search or stop drops an older result. Recorded by
+`oracle/record_how_boned.py`; `tests/model/how_boned.rs` checks every text on the
+imported basic client.
+
+## Idle-time maintenance
+
+The client now tells `hydrus serve` whether it is idle (Options > maintenance
+and processing > idle: the user, mouse and Client API timers, behind "Run
+maintenance jobs when the client is idle and the system is not otherwise
+busy"). The daemon's potential duplicates search, duplicates auto-resolution
+and file maintenance then work with their idle or normal settings: whether to
+work, the "ideal work packet time" and "rest time percentage", and file
+maintenance's idle throttle, all now on the page. The status bar shows "idle"
+and, from the "Consider the system busy if CPU usage is above: N% on M cores"
+check sampled once a minute, "CPU busy".
+
+The same page also has the reference's "repository processing" ("very idle",
+"idle" and "normal" work packet times and rest percentages), "sibling/parent
+sync processing" (whether to work in idle and normal time, and idle, normal
+and work-hard timings) and "deferred table delete" (idle, normal and
+work-hard timings) boxes, with the reference's defaults and ranges, saved
+with Options.
+Tags > sync's "sync tag display during idle time" and "during normal time"
+switch the same sibling/parent sync settings, and "sync now" says "Seems
+like we are all synced already!", as the reference does with no work left.
+Database > db maintenance > "review vacuum data…" opens the reference's
+explanation and a list of the database file: its size, internal free space
+(with the percentage), last vacuum ("never done" or how long ago), "can
+vacuum?" ("yes!" or the reference's not-enough-disk-space reason) and the
+vacuum time estimate. "vacuum", for selected files that can all be
+vacuumed, asks "Do vacuum now? Estimated time to vacuum is …" (do it/forget
+it); "do it" closes the window and vacuums with a "database maintenance -
+vacuum" popup ("vacuuming main", then "done!"), recording the time.
+
+Tags > sync > "review current sibling/parent sync" opens "tag display sync":
+the reference's explanation, a line saying when sync runs (green when it runs
+all the time, orange otherwise), and a tab (or listbook entry) per tag
+service, opened on the default tag service's and remembering a changed tab
+when the tag dialogs do. Each says "All synced!" and "N rules, all synced!"
+(sibling lookup rows plus parent ancestry rows, as the reference counts
+them) or "No siblings/parents applying to this service.", with a refresh
+button.
+Database > db maintenance's "work deferred delete jobs during idle time" and
+"during normal time" switch the deferred table delete settings likewise.
+
+## Thumbnail manage > maintenance and viewing stats
+
+The thumbnail menu's manage submenu now ends with "maintenance", every file
+maintenance job in the reference's order, and "viewing stats > clear". A job
+asks the reference's question (with "do it now", "do it later" or "forget it"
+over 50 files) and runs on the selected files off the UI thread, or schedules
+them in the file maintenance queue. Clearing asks, then deletes only the selected
+files' viewing records. The labels and descriptions are dumped by
+`oracle/dump_regen_jobs.py` and checked in `tests/model/thumbnail_maintenance.rs`.
+
+## Shutdown maintenance, restart and exit/force maintenance
+
+Options > maintenance and processing > shutdown sets whether to run jobs on
+shutdown ("do not run…", "…if needed", "…if needed, but ask first"), at most how
+often and for how many minutes. On exit, when due, the client runs the work or
+asks "Maintenance is due" (auto-no in 15 seconds; no stops it asking until the
+next period) listing the outstanding jobs. The work analyzes the tables that have
+no planner statistics, within the minutes allowed. File > exit/force maintenance
+runs it whatever the schedule, and File > restart asks the restart question,
+exits, and starts the client again once it has let go of the store.
+
+## Content undo and redo
+
+The undo menu now starts with "undo …" and "redo …" for the client's content
+changes: archive/inbox and Manage Tags' applied tag changes, named as the
+reference names them ("undo archive 2 files", "redo my tags->add tags for 3
+files"). Undoing writes the inverse change, redoing the change again; a new
+change forgets what could be redone. `tests/model/content_undo.rs` covers it.
+
+## Namespace colour edit and per-filetype media handling
+
+Options > tag presentation > namespace colours now has "edit": each selected
+entry, defaults included, opens the colour picker in turn; OK recolours it in the
+draft, Cancel keeps its colour.
+
+Options > media playback > per-filetype handling lists each filetype's media and
+preview show actions and zoom info as the reference does, sorted by column.
+"add" offers the searchable filetypes without a row, then edits a copy of the
+class's options; "edit" (or double-click) opens "edit media view options
+information" with the filetype's own show-action choices, start paused/embed
+switches, scaling, half/double zooms and interpolation qualities, enabled as
+`_UpdateControls` enables them; "delete" removes specific filetypes but never the
+classes. Edits stay in the Options draft until Apply. Dumped by
+`oracle/dump_media_view_options.py`; `tests/model/media_view_options.rs`.
+
+## Duplicates page filtering
+
+A duplicates page's filtering tab now edits its potential pair search as the
+reference's panel does: the search kind ("at least one file matches the search",
+"both files match the search", "the two files match different searches", the
+second search shown only for the last), typed tag/system predicates per search,
+"maximum search distance of pair" (disabled when pixel dupes are required) and the
+pixel-dupe preference. A count line ("N pairs searched; M match") recounts off the
+UI thread as the search changes, or on refresh. The duplicate filter box sorts
+pairs by larger/smaller filesize, similarity or random with the matching
+direction words, and picks mixed pairs or group mode; "launch the filter" uses
+all of these. "quick and dirty processing" shows a random potential group in the
+page and sets the shown files as same quality, alternates or false positives
+after the reference's questions, then shows another group.
+`tests/model/duplicates_filtering.rs` covers the model.
+
+## Help > debug actions
+
+Help > debug now also has profiling > "what is this?" (the reference's
+explanation), gui actions > "make a modal popup in five seconds" and its
+non-cancellable twin (a "debug modal job" popup counting down ten seconds),
+"make a QMessageBox" (its warning), "make some popups" (the reference's test
+popups: six numbered messages, the very long message and title, a client API
+file popup, two mergeable file popups, the unicode one, a pausable and
+cancellable job with a gauge, an error, then three delayed messages),
+"reset multi-column list settings to default" (its question) and "save 'last
+session' gui session"; data actions > "flush log", "force database commit",
+"show env" (every environment variable in a popup and the log) and "simulate
+program exit signal" (leaves the event loop at once); and memory actions >
+"clear all rendering caches" (the image cache and thumbnails).
+`tests/model/debug_actions.rs` checks the texts and popups;
+`tests/model/main_menu.rs` the menu against the recording.
+
+## Pages > weight report
+
+Pages > weight > "total session weight: N" now explains the number as the
+reference does: the open pages' count and total, their file and URL weights
+(a file 1, a URL 20), and the closed pages' (in the undo list) total, file
+and URL weights. `tests/model/session_weight.rs` checks the wording.
+
+## Thumbnail manage > file relationships
+
+A thumbnail's manage menu now has the reference's "file relationships"
+submenu for the focused file: whether it is in a duplicate group and is its
+best file (with "show the best quality file of this file's group"), "view N
+duplicates / alternates / not related/false positive / potential duplicates"
+(each opening a page of them), in the page's domain and, where it differs,
+hydrus local file storage's. It sets the focused file as its group's best;
+with several selected, sets it better than the others, all as same quality,
+all as alternates or all pair combinations as potential duplicates, and edits
+the default merge options. "remove for this file" and "reset for this file"
+take the file out of its duplicate or alternate group, dissolve them, clear
+false positives, search it again or drop its potentials; "remove for all
+selected" and "advanced: reset for all selected" do so for the selection.
+The manage menu's maintenance and viewing stats submenus now show in the
+thumbnail menu too (they were dropped by its template before).
+`tests/model/file_relationships.rs` checks the menu and its store actions.
+
+## Database > backup
+
+Database > backup sets up a backup location as the reference does: it
+explains backups, picks a directory, refuses the database's own directory or
+an unchanged one, says what the chosen directory holds ("looks currently
+empty", "a client database already exists", ...), keeps it and offers to back
+up now. "update database backup (last 3 days ago)" asks before updating or
+creating, saves the session, then copies the database with SQLite's online
+backup and mirrors the media directory (copying what differs in size or
+date, deleting what the client no longer has) in a cancellable "backing up
+db" popup ending "backup complete!". "change database backup location"
+picks again. "restore from a database backup" picks a backup, asks, and
+restarts, restoring it before the store opens. A client with media in
+several locations shows "database is stored in multiple locations", whose
+note explains. `tests/model/database_backup.rs` and hydrus-store's
+`backup` tests cover the menu, texts, mirror, backup and restore.
+
+## Database > locations
+
+Database > locations opens the reference's "database locations" window: the
+advanced-use warning, the install, database and media/thumbnail size lines,
+and the media locations list (location, beneath db dir?, disk free space,
+current usage, weight, max size, ideal usage, with "DOES NOT EXIST" for a
+missing one). Locations can be added, weighted up or down, limited ("edit max
+size", or "no limit"), and removed (asking as the reference does; one still
+holding folders keeps weight 0 until emptied). A thumbnail location override
+can be set and cleared. The granularity line and "files need to be moved"
+show, and "move files now" asks for a run time (10/30 minutes, an hour, a
+custom number of minutes, or indefinitely), then moves prefix folders on a
+worker with a cancellable "rebalancing files" popup, as the reference's
+rebalancer chooses them (over-limit and removed locations first, then
+overweight ones to the most-free starving ones; thumbnails then follow their
+files or go to the override). hydrus-store's `storage_locations` tests cover
+the shares and a full rebalance; `tests/model/database_locations.rs` the
+rows and buttons.
+
+"manage granularity" opens the reference's granularity window: this client's
+line and its "I AM READY TO GO FROM 2 TO 3" (or back) button, and the
+offline-folder buttons. The client migration asks its last check ("yes, I
+have a backup and I am ready"), then moves every file and thumbnail between
+`f3a` and `f3a/b` folders on a worker with a pausable, cancellable popup;
+a cancelled or failed one is undone. The offline migration asks, picks the
+folder, says what granularity it looks like, and moves it likewise. Both
+report the files moved, the time, and any weird files or folders left
+alone. hydrus-store's `granularity` tests cover both ways, the scan, and an
+undone cancel.
+
+## Database > file maintenance > clear orphan files
+
+"clear orphan files" asks the reference's question with "move them
+somewhere", "delete them" and "forget it"; moving picks a folder. A worker
+then checks every prefix folder for files and thumbnails local file storage
+doesn't hold (and anything not named by a hash), in a cancellable "clearing
+orphans" popup ("checking f3a", "reviewed 1,200 files, found 3 orphans"),
+moves them (thumbnails into a `thumbnails` folder, renamed if taken) or
+deletes them, and ends "2 orphan files and 0 orphan thumbnails cleared!" or
+"no orphans found!". A client using another install's files in place refuses.
+hydrus-store's `orphan_files` test covers a stray file and thumbnail moved.
+

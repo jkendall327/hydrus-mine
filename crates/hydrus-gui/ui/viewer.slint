@@ -1,5 +1,6 @@
 import { Theme } from "theme.slint";
 import { ViewerEyeMenu, ViewerEyeButton } from "viewer_eye_menu.slint";
+import { ViewerShortcutButton } from "viewer_shortcut_menu.slint";
 // The media viewer's window: one file, at its default zoom (fitted to the
 // window, by default). Right and left (or down and up, page down and up,
 // or the mouse wheel) move through the page's files, home and end to the
@@ -136,6 +137,12 @@ export component MediaViewerWindow inherits Window {
     }
     no-frame: root.viewer-window-frameless;
     in property <ViewerEyeMenu> eye-menu;
+    // the keyboard button's custom shortcut sets
+    in property <[string]> shortcut-names;
+    in property <[bool]> shortcut-current;
+    in property <[bool]> shortcut-defaults;
+    callback shortcut-menu-requested();
+    callback shortcut-menu-chosen(int, int);
     callback eye-menu-requested();
     callback eye-menu-chosen(int);
     preferred-width: 1000px;
@@ -1311,6 +1318,14 @@ export component MediaViewerWindow inherits Window {
                             HoverButton {
                                 icon: @image-url("../../../static/drag.png");
                                 clicked => { root.show-in-file-browser(); }
+                            }
+                            ViewerShortcutButton {
+                                icon: @image-url("../../../static/keyboard.png");
+                                names: root.shortcut-names;
+                                current: root.shortcut-current;
+                                defaults: root.shortcut-defaults;
+                                requested => { root.shortcut-menu-requested(); }
+                                chosen(kind, i) => { root.shortcut-menu-chosen(kind, i); }
                             }
                             ViewerEyeButton {
                                 menu: root.eye-menu;

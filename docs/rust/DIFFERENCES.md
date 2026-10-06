@@ -423,8 +423,9 @@ search.
   A numerical rating pasted as a whole number (`1`) is copied back as a
   float (`1.0`), and an inc/dec count pasted as a fraction is ignored
   (the reference keeps it). Its controls are a fixed size, not the
-  options' dialog rating size, and an inc/dec control's middle click
-  (typing a count) isn't there; its shortcut to apply isn't bound.
+  options' dialog rating size; its shortcut to apply isn't bound. An inc/dec
+  control's middle click opens "edit value" with a spin box (0 to
+  1,000,000) as the reference does.
 - **The "manage times" dialog**'s date-time editor takes the date and
   time typed ("yyyy-MM-dd", "hh:mm:ss.zzz") rather than from a calendar
   and a time box, and the cascading step as milliseconds rather than
@@ -519,8 +520,11 @@ in-memory predicate tests their comparators use by
   groups; the reference lists them in its table's order (when they were
   queued), which hydrus-rs doesn't keep. A double-clicked pair with no
   local file says so on the terminal, not in a dialog. The rule preview's
-  lists have no right-click menu. Approving and denying happen at once, without the
-  reference's "approving: 1/4" progress and popup.
+  lists select as the reference's do, and their right-click menu shows the
+  selected rows' files in a new page. Approving and denying work four pairs at a
+  time off the UI thread, showing "approving: 4/12" on the button and, after
+  four seconds, in a popup, as the reference does; the popup's text is
+  checked between chunks rather than live.
 - **Jpeg quality is read from the file's header** (its quantisation tables
   and sampling factors, as Pillow reads them), for "A has clearly better
   jpeg quality" and "is a progressive jpeg".
@@ -865,10 +869,24 @@ deleted sidecars by `crates/hydrus-download/tests/local_import.rs`.
   search's deterministic size ordering rather than the reference's random sample
   when that domain cannot sort at database level. They
   don't pause the folders while open, as the reference does.
-- **The duplicates page's preparation tab** has no "regenerate search
-  tree" or "regenerate search numbers" (hydrus-rs builds its search index
-  afresh, and counts searched files directly) or "resync potential pairs
-  to storage" yet. Working hard tells `hydrus serve` to search whatever
+- **Options > maintenance and processing**'s repository processing,
+  sibling/parent sync and deferred table delete timings are kept and
+  edited, but nothing reads them yet: hydrus-rs has no repository
+  processing, and it syncs siblings/parents and drops tables as it writes
+  rather than in background work. Their boxes lack the reference's one-line
+  explanations, aren't collapsible, and aren't imported from a legacy
+  client's options.
+- **Tags > sync**: hydrus-rs applies siblings and parents as it writes, so
+  "sync now" always finds nothing to do, and its idle/normal switches are
+  kept without a consumer. "review current sibling/parent sync" isn't
+  there yet.
+- **Database > db maintenance**'s deferred delete switches are kept without
+  a consumer: hydrus-rs drops tables as it writes.
+- **The duplicates page's preparation tab**'s "regenerate search tree"
+  and "regenerate search numbers" ask the reference's questions but then
+  only refresh: hydrus-rs builds its search index afresh and counts
+  searched files directly, so there is no cache to regenerate. The resync
+  reports in one finished popup, not a cancellable progress one. Working hard tells `hydrus serve` to search whatever
   its idle and normal time switches say (it has no idle time of its own).
   The tab's name always hides the percentage once over 99% done (the
   reference's option for it isn't kept). The auto-resolution tab can't
@@ -2660,6 +2678,23 @@ packet proposes only the two original Missing Options leaves. Authored Rust and
 native regressions await hosted CI; no local Cargo build, Rust test or mutation
 run was performed for this slice.
 
+Tag and rating shortcuts: only local tag services take tags (no pending or
+petitioning to repositories); the tag is typed rather than chosen with an
+autocomplete, and the rating typed rather than clicked on a rating control.
+They run in the media viewer only (not on thumbnails), from the "media" and
+"media_viewer" sets and the custom sets turned on in the viewer. The
+interactive "popup ... entry dialog" commands and file domain commands
+aren't offered.
+
+Options > shortcuts' set lists: the command editor still offers only the
+commands with a native executor (three for the main window, six for the
+viewers), so editing a default binding for another command replaces it with
+one of those, and only those run. Default bindings with data are shown, not
+run. The viewer's "edit shortcuts" opens the whole options dialog rather
+than a shortcuts dialog of its own. A custom set can't take a built-in set's name (the reference only
+keeps custom names apart from each other). "restore defaults" chooses from
+buttons rather than a list, and the help shows in a message window.
+
 Shortcut capture now has an owned Options > set > command path and persisted
 keyboard consumers in the main GUI and media viewer. The two capture policies
 migrate from typed legacy booleans. Legacy shortcut sets remain retained as raw
@@ -3371,3 +3406,179 @@ synchronous Store boundary on the UI thread; broader asynchronous session/large
 library optimizations remain outside this one debug action. Qt's observed first
 page/first-child and empty-thumbnail-selection reset is retained. The neighboring
 manual save-last-session action and wider debug GUI/style families remain unclaimed.
+
+## Database maintenance entries
+
+- The native store keeps fewer derived caches (ADR-6), so each maintenance job
+  regenerates what serves its purpose: the tag storage/display counts (one
+  rebuild serves "all", "just pending" and "missing file repopulation"), the
+  subtag search indexes (global, whichever tag service is chosen) and the
+  in-memory sibling/parent graphs. Analyze is SQLite's `ANALYZE` (full) or
+  `PRAGMA optimize` (soft). Orphan tables are per-tag-service tables whose
+  service is gone.
+- Local hashes cache, local tags cache, service info numbers, total pending
+  count, similar files search tree, repopulate truncated mappings tables,
+  resync combined deleted files and clear orphan hashed serialisables ask
+  the reference's questions (and which service, where it asks) but find
+  nothing to do: the native store has no such caches or separate tables
+  (pending counts and service numbers are counted live; the similar-files
+  index is built per search). They show the popups the reference shows on a
+  client with nothing wrong ("Done with no errors found!", "Done! Rows
+  recovered: 0", "No orphans found!").
+- Get tables using definitions works on the native schema; the reference
+  v688's read raises `NotImplementedError` from one of its modules, so it
+  shows an error there. Its lines have no schema names (one database file).
+- Recovering orphan file records doesn't open a page of the recovered files.
+  Resyncing tag counts reports "N desynced tag counts in SERVICE!" per tag
+  service, where the reference reports surplus or missing files per
+  file/tag-service cache. Fixed invalid tags aren't written to a log.
+- The jobs show their result popups but no step-by-step progress text, and
+  can't be cancelled once started.
+
+## How boned am I?
+
+- The search panel is a domain list and a typed tag/system predicate box (as in
+  file history), not the reference's full read autocomplete with its results
+  list; "all files ever imported or deleted" isn't offered as a domain.
+- The files table is laid out as text columns rather than Qt's grid.
+
+## File maintenance > add new work
+
+- The search is a typed tag/system predicate box (as in file history), not
+  the reference's read autocomplete, and always searches the default local
+  file domain; there is no domain or tag-service button.
+- The description and "Jobs added!" show in the tab rather than as message
+  boxes.
+
+## Review current sibling/parent sync
+
+- hydrus-rs applies siblings and parents as it writes, so there is never
+  work to show: every service reads as synced and "work hard now!" never
+  appears. Repository "waiting on" lines can't arise without repositories.
+
+## Auto-resolution rule export and import
+
+- Rules export as hydrus-rs JSON, not the reference's serialised form, so
+  the reference can't import them; hydrus-rs imports both. Comparator lists
+  don't have their own export/import buttons, and an image on the clipboard
+  isn't read (use "from png files").
+
+## Options kept but not used
+
+- These Options rows are kept and edited, as the reference keeps them, but
+  nothing in hydrus-rs reads them yet: the preview window's own volume, the
+  REQUESTS_CA_BUNDLE switch (hydrus-rs uses its own TLS roots), drag-and-drop
+  export (no files can be dragged out yet), the Qt-only gui misc and frame
+  switches, the hide-page signal, the URL drop page switch, mpv's null audio,
+  legacy mediator, player reuse and setGeometry switches, every QtMediaPlayer
+  row, system FFMPEG, truncated images and PIL (hydrus-rs decodes images its
+  own way), the pinned duplicates hover, the preview window hovers, the
+  other-display popup freeze, the image tile cache and video buffer (hydrus-rs
+  renders whole images and leaves video to mpv), the file system wake wait,
+  the system tray page (there is no tray icon) and the petition reason count.
+- The mpv box lacks "Set a new mpv.conf on dialog ok?" and the audio device
+  fetch button; the QtMediaPlayer box lacks its device choice and fetch button.
+  The style page isn't offered: Slint has no Qt styles or stylesheets.
+
+## Review vacuum data
+
+- hydrus-rs has one database file (listed as "main"), not the reference's
+  four. It vacuums in place with SQLite's `VACUUM` while every store
+  connection is paused, rather than vacuuming into a copy and swapping it
+  in with the connections closed; the effect on the file is the same.
+- The window opens directly, without the "loading database data" popup.
+
+## Idle-time maintenance
+
+- The GUI publishes its idle state to a marker file the daemon reads; without
+  a GUI (or once it stops publishing for 15 seconds) the daemon works in normal
+  time. Idle time doesn't wait for the reference's two-minute boot delay beyond
+  what the GUI's own idle check already applies.
+- CPU use is read from Linux's `/proc/stat`; elsewhere "CPU busy" is never
+  shown. As in the reference v688, CPU busyness only reaches the status bar.
+- Similar-files search packets search 16 files at a time until the packet time
+  passes, so a packet can run over by one batch.
+- The status bar has no "hydrus busy" or database activity fields yet.
+
+## Thumbnail manage > maintenance
+
+- "Do it now" queues the job for the selected files and runs that job type's
+  due work at once, so other files already queued for the same job type may run
+  with them. There is no popup of its progress, and the focused file isn't
+  cleared from the preview first.
+
+## Shutdown maintenance
+
+- The shutdown work is analyzing tables without statistics; there is no
+  repository processing (remote repositories are out of scope). It runs on the
+  UI thread before the window closes, without the reference's exit splash or
+  its cancel button.
+- Restart is offered on every platform (the reference hides it for frozen
+  Linux builds).
+
+## Content undo
+
+- Only archive/inbox (thumbnail, viewer and filter actions through
+  `media_actions`) and Manage Tags' applied changes are recorded; tag changes
+  made elsewhere (write-tag menus, filename tagging, migration) are not yet.
+  A content package listing several actions or services names them sorted,
+  where the reference's set order varies.
+
+## Per-filetype media handling
+
+- "add" chooses the filetype from a column of buttons rather than the
+  reference's filterable list. The editor offers mpv whatever the client's mpv
+  availability, and shows no mpv/QtMediaPlayer advice beyond the reference's
+  intro text.
+
+## Duplicates page filtering
+
+- The pair searches are typed predicates (as in file history), not read
+  autocompletes, and keep the page's file domain; there is no count pause,
+  estimate or optimisation cog: counts are exact and run once per change.
+- Setting the shown files' relationship applies each pair once with the default
+  merge options; the reference runs its merges twice so content propagates
+  between all files.
+
+## Help > debug actions
+
+- "make some popups" leaves out the reference's popups whose buttons call
+  back into the client (user call test, auto-account creation, gap
+  downloader) and its network-job popup, and the test job's subjob doesn't
+  start pulsing after two seconds.
+- The "modal" popups are ordinary popups: hydrus-rs has no modal popup
+  dialog.
+- "reset multi-column list settings to default" asks, then has nothing to
+  reset: hydrus-rs doesn't save list column widths.
+- "force database commit" checkpoints SQLite's write-ahead log (hydrus-rs
+  commits each write as it happens); "flush log" writes its line to
+  standard error.
+
+## Thumbnail manage > file relationships
+
+- "set a relationship with custom metadata merge options" and "set selected
+  collections as groups of alternates" aren't offered yet. The viewer's
+  menu doesn't have the submenu yet.
+- A group's "best quality file" is offered when the group has other files in
+  the page's domain; the reference counts its members per domain the same
+  way, but hydrus-rs doesn't distinguish a king outside the domain.
+
+## Database > backup
+
+- A backup holds hydrus-rs's one database file and the media directory
+  (`client_files` there), not the reference's four .db files. The backup
+  works with the database live (SQLite's online backup) rather than closing
+  it, and shows its progress in an ordinary popup, not a modal one.
+- "Simple" means the media is in one location, which may be outside the
+  database directory (an imported client's); the reference requires its
+  default `client_files`.
+
+## Database > locations
+
+- "manage granularity" runs its progress in an ordinary popup rather than
+  a modal dialog, and its questions in button windows.
+- The prefix folder moved first is the first in order, not a random one.
+- The list selects one location; it sorts by location only.
+- The rebalance runs from a non-modal popup and the window stays open
+  (the reference closes the panel and shows a modal progress dialog).
+

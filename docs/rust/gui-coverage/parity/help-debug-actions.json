@@ -1,0 +1,260 @@
+{
+  "schema_version": 1,
+  "agent": "help-debug-actions",
+  "note": "Cheap-validation implementation proposal (2026-10-05 breadth pass): strict backend/model Clippy and targeted model tests; native GUI compile/render review deferred to the final validation pass.",
+  "proposed_completed_count": 12,
+  "claims": [
+    {
+      "id": "audit-options-help-debug-action-flush-log",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "countAsCompletedLeaf": true,
+      "behavior": "Help > debug gains profiling's what is this?, the delayed modal popups, QMessageBox, make some popups, reset multi-column list settings (question), save last session, flush log, force database commit, show env, simulate program exit signal and clear all rendering caches, in the recorded menu order.",
+      "source": [
+        "crates/hydrus-gui-model/src/debug_actions.rs",
+        "crates/hydrus-gui-model/src/main_menu.rs",
+        "crates/hydrus-gui/src/debug_actions.rs",
+        "crates/hydrus-gui/src/menu_bar.rs",
+        "crates/hydrus-gui/src/image_cache.rs"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/debug_actions.rs",
+        "crates/hydrus-gui-model/tests/model/main_menu.rs"
+      ],
+      "limits": [
+        "Modal popups are ordinary popups; some popups omits callback and network-job popups; no column widths to reset."
+      ]
+    },
+    {
+      "id": "audit-options-help-debug-action-force-database-commit",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "countAsCompletedLeaf": true,
+      "behavior": "Help > debug gains profiling's what is this?, the delayed modal popups, QMessageBox, make some popups, reset multi-column list settings (question), save last session, flush log, force database commit, show env, simulate program exit signal and clear all rendering caches, in the recorded menu order.",
+      "source": [
+        "crates/hydrus-gui-model/src/debug_actions.rs",
+        "crates/hydrus-gui-model/src/main_menu.rs",
+        "crates/hydrus-gui/src/debug_actions.rs",
+        "crates/hydrus-gui/src/menu_bar.rs",
+        "crates/hydrus-gui/src/image_cache.rs"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/debug_actions.rs",
+        "crates/hydrus-gui-model/tests/model/main_menu.rs"
+      ],
+      "limits": [
+        "Modal popups are ordinary popups; some popups omits callback and network-job popups; no column widths to reset."
+      ]
+    },
+    {
+      "id": "audit-options-help-debug-action-show-env",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "countAsCompletedLeaf": true,
+      "behavior": "Help > debug gains profiling's what is this?, the delayed modal popups, QMessageBox, make some popups, reset multi-column list settings (question), save last session, flush log, force database commit, show env, simulate program exit signal and clear all rendering caches, in the recorded menu order.",
+      "source": [
+        "crates/hydrus-gui-model/src/debug_actions.rs",
+        "crates/hydrus-gui-model/src/main_menu.rs",
+        "crates/hydrus-gui/src/debug_actions.rs",
+        "crates/hydrus-gui/src/menu_bar.rs",
+        "crates/hydrus-gui/src/image_cache.rs"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/debug_actions.rs",
+        "crates/hydrus-gui-model/tests/model/main_menu.rs"
+      ],
+      "limits": [
+        "Modal popups are ordinary popups; some popups omits callback and network-job popups; no column widths to reset."
+      ]
+    },
+    {
+      "id": "audit-options-help-debug-action-simulate-program-exit-signal",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "countAsCompletedLeaf": true,
+      "behavior": "Help > debug gains profiling's what is this?, the delayed modal popups, QMessageBox, make some popups, reset multi-column list settings (question), save last session, flush log, force database commit, show env, simulate program exit signal and clear all rendering caches, in the recorded menu order.",
+      "source": [
+        "crates/hydrus-gui-model/src/debug_actions.rs",
+        "crates/hydrus-gui-model/src/main_menu.rs",
+        "crates/hydrus-gui/src/debug_actions.rs",
+        "crates/hydrus-gui/src/menu_bar.rs",
+        "crates/hydrus-gui/src/image_cache.rs"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/debug_actions.rs",
+        "crates/hydrus-gui-model/tests/model/main_menu.rs"
+      ],
+      "limits": [
+        "Modal popups are ordinary popups; some popups omits callback and network-job popups; no column widths to reset."
+      ]
+    },
+    {
+      "id": "audit-options-help-debug-action-make-a-qmessagebox",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "countAsCompletedLeaf": true,
+      "behavior": "Help > debug gains profiling's what is this?, the delayed modal popups, QMessageBox, make some popups, reset multi-column list settings (question), save last session, flush log, force database commit, show env, simulate program exit signal and clear all rendering caches, in the recorded menu order.",
+      "source": [
+        "crates/hydrus-gui-model/src/debug_actions.rs",
+        "crates/hydrus-gui-model/src/main_menu.rs",
+        "crates/hydrus-gui/src/debug_actions.rs",
+        "crates/hydrus-gui/src/menu_bar.rs",
+        "crates/hydrus-gui/src/image_cache.rs"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/debug_actions.rs",
+        "crates/hydrus-gui-model/tests/model/main_menu.rs"
+      ],
+      "limits": [
+        "Modal popups are ordinary popups; some popups omits callback and network-job popups; no column widths to reset."
+      ]
+    },
+    {
+      "id": "audit-options-help-debug-action-make-a-modal-popup-in-five-seconds",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "countAsCompletedLeaf": true,
+      "behavior": "Help > debug gains profiling's what is this?, the delayed modal popups, QMessageBox, make some popups, reset multi-column list settings (question), save last session, flush log, force database commit, show env, simulate program exit signal and clear all rendering caches, in the recorded menu order.",
+      "source": [
+        "crates/hydrus-gui-model/src/debug_actions.rs",
+        "crates/hydrus-gui-model/src/main_menu.rs",
+        "crates/hydrus-gui/src/debug_actions.rs",
+        "crates/hydrus-gui/src/menu_bar.rs",
+        "crates/hydrus-gui/src/image_cache.rs"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/debug_actions.rs",
+        "crates/hydrus-gui-model/tests/model/main_menu.rs"
+      ],
+      "limits": [
+        "Modal popups are ordinary popups; some popups omits callback and network-job popups; no column widths to reset."
+      ]
+    },
+    {
+      "id": "audit-options-help-debug-action-make-a-non-cancellable-modal-popup-in-five-seconds",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "countAsCompletedLeaf": true,
+      "behavior": "Help > debug gains profiling's what is this?, the delayed modal popups, QMessageBox, make some popups, reset multi-column list settings (question), save last session, flush log, force database commit, show env, simulate program exit signal and clear all rendering caches, in the recorded menu order.",
+      "source": [
+        "crates/hydrus-gui-model/src/debug_actions.rs",
+        "crates/hydrus-gui-model/src/main_menu.rs",
+        "crates/hydrus-gui/src/debug_actions.rs",
+        "crates/hydrus-gui/src/menu_bar.rs",
+        "crates/hydrus-gui/src/image_cache.rs"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/debug_actions.rs",
+        "crates/hydrus-gui-model/tests/model/main_menu.rs"
+      ],
+      "limits": [
+        "Modal popups are ordinary popups; some popups omits callback and network-job popups; no column widths to reset."
+      ]
+    },
+    {
+      "id": "audit-options-help-debug-action-make-some-popups",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "countAsCompletedLeaf": true,
+      "behavior": "Help > debug gains profiling's what is this?, the delayed modal popups, QMessageBox, make some popups, reset multi-column list settings (question), save last session, flush log, force database commit, show env, simulate program exit signal and clear all rendering caches, in the recorded menu order.",
+      "source": [
+        "crates/hydrus-gui-model/src/debug_actions.rs",
+        "crates/hydrus-gui-model/src/main_menu.rs",
+        "crates/hydrus-gui/src/debug_actions.rs",
+        "crates/hydrus-gui/src/menu_bar.rs",
+        "crates/hydrus-gui/src/image_cache.rs"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/debug_actions.rs",
+        "crates/hydrus-gui-model/tests/model/main_menu.rs"
+      ],
+      "limits": [
+        "Modal popups are ordinary popups; some popups omits callback and network-job popups; no column widths to reset."
+      ]
+    },
+    {
+      "id": "audit-options-help-debug-action-reset-multi-column-list-settings-to-default",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "countAsCompletedLeaf": true,
+      "behavior": "Help > debug gains profiling's what is this?, the delayed modal popups, QMessageBox, make some popups, reset multi-column list settings (question), save last session, flush log, force database commit, show env, simulate program exit signal and clear all rendering caches, in the recorded menu order.",
+      "source": [
+        "crates/hydrus-gui-model/src/debug_actions.rs",
+        "crates/hydrus-gui-model/src/main_menu.rs",
+        "crates/hydrus-gui/src/debug_actions.rs",
+        "crates/hydrus-gui/src/menu_bar.rs",
+        "crates/hydrus-gui/src/image_cache.rs"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/debug_actions.rs",
+        "crates/hydrus-gui-model/tests/model/main_menu.rs"
+      ],
+      "limits": [
+        "Modal popups are ordinary popups; some popups omits callback and network-job popups; no column widths to reset."
+      ]
+    },
+    {
+      "id": "audit-options-help-debug-action-save-last-session-gui-session",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "countAsCompletedLeaf": true,
+      "behavior": "Help > debug gains profiling's what is this?, the delayed modal popups, QMessageBox, make some popups, reset multi-column list settings (question), save last session, flush log, force database commit, show env, simulate program exit signal and clear all rendering caches, in the recorded menu order.",
+      "source": [
+        "crates/hydrus-gui-model/src/debug_actions.rs",
+        "crates/hydrus-gui-model/src/main_menu.rs",
+        "crates/hydrus-gui/src/debug_actions.rs",
+        "crates/hydrus-gui/src/menu_bar.rs",
+        "crates/hydrus-gui/src/image_cache.rs"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/debug_actions.rs",
+        "crates/hydrus-gui-model/tests/model/main_menu.rs"
+      ],
+      "limits": [
+        "Modal popups are ordinary popups; some popups omits callback and network-job popups; no column widths to reset."
+      ]
+    },
+    {
+      "id": "audit-options-help-debug-action-clear-all-rendering-caches",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "countAsCompletedLeaf": true,
+      "behavior": "Help > debug gains profiling's what is this?, the delayed modal popups, QMessageBox, make some popups, reset multi-column list settings (question), save last session, flush log, force database commit, show env, simulate program exit signal and clear all rendering caches, in the recorded menu order.",
+      "source": [
+        "crates/hydrus-gui-model/src/debug_actions.rs",
+        "crates/hydrus-gui-model/src/main_menu.rs",
+        "crates/hydrus-gui/src/debug_actions.rs",
+        "crates/hydrus-gui/src/menu_bar.rs",
+        "crates/hydrus-gui/src/image_cache.rs"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/debug_actions.rs",
+        "crates/hydrus-gui-model/tests/model/main_menu.rs"
+      ],
+      "limits": [
+        "Modal popups are ordinary popups; some popups omits callback and network-job popups; no column widths to reset."
+      ]
+    },
+    {
+      "id": "audit-options-help-debug-action-what-is-this",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "countAsCompletedLeaf": true,
+      "behavior": "Help > debug gains profiling's what is this?, the delayed modal popups, QMessageBox, make some popups, reset multi-column list settings (question), save last session, flush log, force database commit, show env, simulate program exit signal and clear all rendering caches, in the recorded menu order.",
+      "source": [
+        "crates/hydrus-gui-model/src/debug_actions.rs",
+        "crates/hydrus-gui-model/src/main_menu.rs",
+        "crates/hydrus-gui/src/debug_actions.rs",
+        "crates/hydrus-gui/src/menu_bar.rs",
+        "crates/hydrus-gui/src/image_cache.rs"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/debug_actions.rs",
+        "crates/hydrus-gui-model/tests/model/main_menu.rs"
+      ],
+      "limits": [
+        "Modal popups are ordinary popups; some popups omits callback and network-job popups; no column widths to reset."
+      ]
+    }
+  ]
+}

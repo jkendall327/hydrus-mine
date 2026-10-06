@@ -1,0 +1,103 @@
+{
+  "schema_version": 1,
+  "agent": "duplicates-filtering",
+  "note": "Cheap-validation implementation proposal (2026-10-05 breadth pass): strict backend/model Clippy and targeted model tests; native GUI compile/render review deferred to the final validation pass.",
+  "proposed_completed_count": 4,
+  "claims": [
+    {
+      "id": "audit-media-filter-sidebar-sort-group",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "countAsCompletedLeaf": true,
+      "behavior": "Duplicates page filtering tab: pair search kind, per-search typed predicates, pixel-dupe preference and maximum distance edit the page search used by the filter; exact pair counts off the UI thread; pair sort/direction and mixed/group mode; random potential group shown in the page and same-quality/alternate/false-positive setting with the reference questions.",
+      "source": [
+        "crates/hydrus-gui-model/src/duplicates_filtering.rs",
+        "crates/hydrus-gui/src/duplicates_filtering_sidebar.rs",
+        "crates/hydrus-gui/ui/duplicates_page.slint",
+        "crates/hydrus-gui/src/page.rs"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/duplicates_filtering.rs"
+      ],
+      "limits": [
+        "Typed predicates instead of autocompletes; no count pause/estimate/cog; single-pass merges."
+      ]
+    },
+    {
+      "id": "audit-media-filter-sidebar-pixels",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "countAsCompletedLeaf": true,
+      "behavior": "Duplicates page filtering tab: pair search kind, per-search typed predicates, pixel-dupe preference and maximum distance edit the page search used by the filter; exact pair counts off the UI thread; pair sort/direction and mixed/group mode; random potential group shown in the page and same-quality/alternate/false-positive setting with the reference questions.",
+      "source": [
+        "crates/hydrus-gui-model/src/duplicates_filtering.rs",
+        "crates/hydrus-gui/src/duplicates_filtering_sidebar.rs",
+        "crates/hydrus-gui/ui/duplicates_page.slint",
+        "crates/hydrus-gui/src/page.rs"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/duplicates_filtering.rs"
+      ],
+      "limits": [
+        "Typed predicates instead of autocompletes; no count pause/estimate/cog; single-pass merges."
+      ]
+    },
+    {
+      "id": "audit-media-filter-sidebar-random",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "countAsCompletedLeaf": true,
+      "behavior": "Duplicates page filtering tab: pair search kind, per-search typed predicates, pixel-dupe preference and maximum distance edit the page search used by the filter; exact pair counts off the UI thread; pair sort/direction and mixed/group mode; random potential group shown in the page and same-quality/alternate/false-positive setting with the reference questions.",
+      "source": [
+        "crates/hydrus-gui-model/src/duplicates_filtering.rs",
+        "crates/hydrus-gui/src/duplicates_filtering_sidebar.rs",
+        "crates/hydrus-gui/ui/duplicates_page.slint",
+        "crates/hydrus-gui/src/page.rs"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/duplicates_filtering.rs"
+      ],
+      "limits": [
+        "Typed predicates instead of autocompletes; no count pause/estimate/cog; single-pass merges."
+      ]
+    },
+    {
+      "id": "audit-media-filter-sidebar-search",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "countAsCompletedLeaf": true,
+      "behavior": "Duplicates page filtering tab: pair search kind, per-search typed predicates, pixel-dupe preference and maximum distance edit the page search used by the filter; exact pair counts off the UI thread; pair sort/direction and mixed/group mode; random potential group shown in the page and same-quality/alternate/false-positive setting with the reference questions.",
+      "source": [
+        "crates/hydrus-gui-model/src/duplicates_filtering.rs",
+        "crates/hydrus-gui/src/duplicates_filtering_sidebar.rs",
+        "crates/hydrus-gui/ui/duplicates_page.slint",
+        "crates/hydrus-gui/src/page.rs"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/duplicates_filtering.rs"
+      ],
+      "limits": [
+        "Typed predicates instead of autocompletes; no count pause/estimate/cog; single-pass merges."
+      ]
+    },
+    {
+      "id": "audit-media-duplicate-search-count",
+      "before": "missing",
+      "proposedStatus": "partial",
+      "countAsCompletedLeaf": false,
+      "behavior": "Duplicates page filtering tab: pair search kind, per-search typed predicates, pixel-dupe preference and maximum distance edit the page search used by the filter; exact pair counts off the UI thread; pair sort/direction and mixed/group mode; random potential group shown in the page and same-quality/alternate/false-positive setting with the reference questions.",
+      "source": [
+        "crates/hydrus-gui-model/src/duplicates_filtering.rs",
+        "crates/hydrus-gui/src/duplicates_filtering_sidebar.rs",
+        "crates/hydrus-gui/ui/duplicates_page.slint",
+        "crates/hydrus-gui/src/page.rs"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/duplicates_filtering.rs"
+      ],
+      "limits": [
+        "Typed predicates instead of autocompletes; no count pause/estimate/cog; single-pass merges."
+      ]
+    }
+  ]
+}

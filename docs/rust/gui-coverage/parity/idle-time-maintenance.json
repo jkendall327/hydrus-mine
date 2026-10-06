@@ -1,0 +1,320 @@
+{
+  "schema_version": 1,
+  "agent": "idle-time-maintenance",
+  "note": "Cheap-validation implementation proposal (2026-10-05 breadth pass): strict backend/model Clippy and targeted model tests; native GUI compile/render review deferred to the final validation pass.",
+  "proposed_completed_count": 12,
+  "claims": [
+    {
+      "id": "audit-options-maintenance-and-processing-duplicates-auto-resolution-idle-ideal-work-packet-time",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "countAsCompletedLeaf": true,
+      "behavior": "Options > maintenance and processing idle-time controls, saved and imported from the reference's options, reaching real consumers: the GUI publishes its idle state, and hydrus serve's similar-files search, duplicates auto-resolution and file maintenance choose idle or normal switches, packets, rests and throttles; the CPU-busy check and idle state show in the status bar.",
+      "source": [
+        "crates/hydrus-store/src/idle_state.rs",
+        "crates/hydrus-store/src/similar.rs",
+        "crates/hydrus-store/src/settings.rs",
+        "crates/hydrus-store/src/import/decode.rs",
+        "crates/hydrus-cli/src/main.rs",
+        "crates/hydrus-gui-model/src/options.rs",
+        "crates/hydrus-gui/src/maintenance_runtime.rs",
+        "crates/hydrus-gui/ui/main.slint"
+      ],
+      "tests": [
+        "crates/hydrus-store/src/idle_state.rs::tests"
+      ],
+      "limits": [
+        "CPU sampling reads /proc/stat (Linux only).",
+        "No hydrus busy/database activity status fields."
+      ]
+    },
+    {
+      "id": "audit-options-maintenance-and-processing-duplicates-auto-resolution-idle-rest-time-percentage",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "countAsCompletedLeaf": true,
+      "behavior": "Options > maintenance and processing idle-time controls, saved and imported from the reference's options, reaching real consumers: the GUI publishes its idle state, and hydrus serve's similar-files search, duplicates auto-resolution and file maintenance choose idle or normal switches, packets, rests and throttles; the CPU-busy check and idle state show in the status bar.",
+      "source": [
+        "crates/hydrus-store/src/idle_state.rs",
+        "crates/hydrus-store/src/similar.rs",
+        "crates/hydrus-store/src/settings.rs",
+        "crates/hydrus-store/src/import/decode.rs",
+        "crates/hydrus-cli/src/main.rs",
+        "crates/hydrus-gui-model/src/options.rs",
+        "crates/hydrus-gui/src/maintenance_runtime.rs",
+        "crates/hydrus-gui/ui/main.slint"
+      ],
+      "tests": [
+        "crates/hydrus-store/src/idle_state.rs::tests"
+      ],
+      "limits": [
+        "CPU sampling reads /proc/stat (Linux only).",
+        "No hydrus busy/database activity status fields."
+      ]
+    },
+    {
+      "id": "audit-options-maintenance-and-processing-duplicates-auto-resolution-work-duplicates-auto-resolution-in-idle-time",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "countAsCompletedLeaf": true,
+      "behavior": "Options > maintenance and processing idle-time controls, saved and imported from the reference's options, reaching real consumers: the GUI publishes its idle state, and hydrus serve's similar-files search, duplicates auto-resolution and file maintenance choose idle or normal switches, packets, rests and throttles; the CPU-busy check and idle state show in the status bar.",
+      "source": [
+        "crates/hydrus-store/src/idle_state.rs",
+        "crates/hydrus-store/src/similar.rs",
+        "crates/hydrus-store/src/settings.rs",
+        "crates/hydrus-store/src/import/decode.rs",
+        "crates/hydrus-cli/src/main.rs",
+        "crates/hydrus-gui-model/src/options.rs",
+        "crates/hydrus-gui/src/maintenance_runtime.rs",
+        "crates/hydrus-gui/ui/main.slint"
+      ],
+      "tests": [
+        "crates/hydrus-store/src/idle_state.rs::tests"
+      ],
+      "limits": [
+        "CPU sampling reads /proc/stat (Linux only).",
+        "No hydrus busy/database activity status fields."
+      ]
+    },
+    {
+      "id": "audit-options-maintenance-and-processing-file-maintenance-idle-throttle",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "countAsCompletedLeaf": true,
+      "behavior": "Options > maintenance and processing idle-time controls, saved and imported from the reference's options, reaching real consumers: the GUI publishes its idle state, and hydrus serve's similar-files search, duplicates auto-resolution and file maintenance choose idle or normal switches, packets, rests and throttles; the CPU-busy check and idle state show in the status bar.",
+      "source": [
+        "crates/hydrus-store/src/idle_state.rs",
+        "crates/hydrus-store/src/similar.rs",
+        "crates/hydrus-store/src/settings.rs",
+        "crates/hydrus-store/src/import/decode.rs",
+        "crates/hydrus-cli/src/main.rs",
+        "crates/hydrus-gui-model/src/options.rs",
+        "crates/hydrus-gui/src/maintenance_runtime.rs",
+        "crates/hydrus-gui/ui/main.slint"
+      ],
+      "tests": [
+        "crates/hydrus-store/src/idle_state.rs::tests"
+      ],
+      "limits": [
+        "CPU sampling reads /proc/stat (Linux only).",
+        "No hydrus busy/database activity status fields."
+      ]
+    },
+    {
+      "id": "audit-options-maintenance-and-processing-file-maintenance-run-file-maintenance-during-idle-time",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "countAsCompletedLeaf": true,
+      "behavior": "Options > maintenance and processing idle-time controls, saved and imported from the reference's options, reaching real consumers: the GUI publishes its idle state, and hydrus serve's similar-files search, duplicates auto-resolution and file maintenance choose idle or normal switches, packets, rests and throttles; the CPU-busy check and idle state show in the status bar.",
+      "source": [
+        "crates/hydrus-store/src/idle_state.rs",
+        "crates/hydrus-store/src/similar.rs",
+        "crates/hydrus-store/src/settings.rs",
+        "crates/hydrus-store/src/import/decode.rs",
+        "crates/hydrus-cli/src/main.rs",
+        "crates/hydrus-gui-model/src/options.rs",
+        "crates/hydrus-gui/src/maintenance_runtime.rs",
+        "crates/hydrus-gui/ui/main.slint"
+      ],
+      "tests": [
+        "crates/hydrus-store/src/idle_state.rs::tests"
+      ],
+      "limits": [
+        "CPU sampling reads /proc/stat (Linux only).",
+        "No hydrus busy/database activity status fields."
+      ]
+    },
+    {
+      "id": "audit-options-maintenance-and-processing-potential-duplicates-search-idle-ideal-work-packet-time",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "countAsCompletedLeaf": true,
+      "behavior": "Options > maintenance and processing idle-time controls, saved and imported from the reference's options, reaching real consumers: the GUI publishes its idle state, and hydrus serve's similar-files search, duplicates auto-resolution and file maintenance choose idle or normal switches, packets, rests and throttles; the CPU-busy check and idle state show in the status bar.",
+      "source": [
+        "crates/hydrus-store/src/idle_state.rs",
+        "crates/hydrus-store/src/similar.rs",
+        "crates/hydrus-store/src/settings.rs",
+        "crates/hydrus-store/src/import/decode.rs",
+        "crates/hydrus-cli/src/main.rs",
+        "crates/hydrus-gui-model/src/options.rs",
+        "crates/hydrus-gui/src/maintenance_runtime.rs",
+        "crates/hydrus-gui/ui/main.slint"
+      ],
+      "tests": [
+        "crates/hydrus-store/src/idle_state.rs::tests"
+      ],
+      "limits": [
+        "CPU sampling reads /proc/stat (Linux only).",
+        "No hydrus busy/database activity status fields."
+      ]
+    },
+    {
+      "id": "audit-options-maintenance-and-processing-potential-duplicates-search-idle-rest-time-percentage",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "countAsCompletedLeaf": true,
+      "behavior": "Options > maintenance and processing idle-time controls, saved and imported from the reference's options, reaching real consumers: the GUI publishes its idle state, and hydrus serve's similar-files search, duplicates auto-resolution and file maintenance choose idle or normal switches, packets, rests and throttles; the CPU-busy check and idle state show in the status bar.",
+      "source": [
+        "crates/hydrus-store/src/idle_state.rs",
+        "crates/hydrus-store/src/similar.rs",
+        "crates/hydrus-store/src/settings.rs",
+        "crates/hydrus-store/src/import/decode.rs",
+        "crates/hydrus-cli/src/main.rs",
+        "crates/hydrus-gui-model/src/options.rs",
+        "crates/hydrus-gui/src/maintenance_runtime.rs",
+        "crates/hydrus-gui/ui/main.slint"
+      ],
+      "tests": [
+        "crates/hydrus-store/src/idle_state.rs::tests"
+      ],
+      "limits": [
+        "CPU sampling reads /proc/stat (Linux only).",
+        "No hydrus busy/database activity status fields."
+      ]
+    },
+    {
+      "id": "audit-options-maintenance-and-processing-potential-duplicates-search-normal-ideal-work-packet-time",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "countAsCompletedLeaf": true,
+      "behavior": "Options > maintenance and processing idle-time controls, saved and imported from the reference's options, reaching real consumers: the GUI publishes its idle state, and hydrus serve's similar-files search, duplicates auto-resolution and file maintenance choose idle or normal switches, packets, rests and throttles; the CPU-busy check and idle state show in the status bar.",
+      "source": [
+        "crates/hydrus-store/src/idle_state.rs",
+        "crates/hydrus-store/src/similar.rs",
+        "crates/hydrus-store/src/settings.rs",
+        "crates/hydrus-store/src/import/decode.rs",
+        "crates/hydrus-cli/src/main.rs",
+        "crates/hydrus-gui-model/src/options.rs",
+        "crates/hydrus-gui/src/maintenance_runtime.rs",
+        "crates/hydrus-gui/ui/main.slint"
+      ],
+      "tests": [
+        "crates/hydrus-store/src/idle_state.rs::tests"
+      ],
+      "limits": [
+        "CPU sampling reads /proc/stat (Linux only).",
+        "No hydrus busy/database activity status fields."
+      ]
+    },
+    {
+      "id": "audit-options-maintenance-and-processing-potential-duplicates-search-normal-rest-time-percentage",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "countAsCompletedLeaf": true,
+      "behavior": "Options > maintenance and processing idle-time controls, saved and imported from the reference's options, reaching real consumers: the GUI publishes its idle state, and hydrus serve's similar-files search, duplicates auto-resolution and file maintenance choose idle or normal switches, packets, rests and throttles; the CPU-busy check and idle state show in the status bar.",
+      "source": [
+        "crates/hydrus-store/src/idle_state.rs",
+        "crates/hydrus-store/src/similar.rs",
+        "crates/hydrus-store/src/settings.rs",
+        "crates/hydrus-store/src/import/decode.rs",
+        "crates/hydrus-cli/src/main.rs",
+        "crates/hydrus-gui-model/src/options.rs",
+        "crates/hydrus-gui/src/maintenance_runtime.rs",
+        "crates/hydrus-gui/ui/main.slint"
+      ],
+      "tests": [
+        "crates/hydrus-store/src/idle_state.rs::tests"
+      ],
+      "limits": [
+        "CPU sampling reads /proc/stat (Linux only).",
+        "No hydrus busy/database activity status fields."
+      ]
+    },
+    {
+      "id": "audit-options-maintenance-and-processing-when-to-run-high-cpu-jobs-idle-consider-the-system-busy-if-cpu-usage-is-above",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "countAsCompletedLeaf": true,
+      "behavior": "Options > maintenance and processing idle-time controls, saved and imported from the reference's options, reaching real consumers: the GUI publishes its idle state, and hydrus serve's similar-files search, duplicates auto-resolution and file maintenance choose idle or normal switches, packets, rests and throttles; the CPU-busy check and idle state show in the status bar.",
+      "source": [
+        "crates/hydrus-store/src/idle_state.rs",
+        "crates/hydrus-store/src/similar.rs",
+        "crates/hydrus-store/src/settings.rs",
+        "crates/hydrus-store/src/import/decode.rs",
+        "crates/hydrus-cli/src/main.rs",
+        "crates/hydrus-gui-model/src/options.rs",
+        "crates/hydrus-gui/src/maintenance_runtime.rs",
+        "crates/hydrus-gui/ui/main.slint"
+      ],
+      "tests": [
+        "crates/hydrus-store/src/idle_state.rs::tests"
+      ],
+      "limits": [
+        "CPU sampling reads /proc/stat (Linux only).",
+        "No hydrus busy/database activity status fields."
+      ]
+    },
+    {
+      "id": "audit-options-maintenance-and-processing-when-to-run-high-cpu-jobs-idle-on",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "countAsCompletedLeaf": true,
+      "behavior": "Options > maintenance and processing idle-time controls, saved and imported from the reference's options, reaching real consumers: the GUI publishes its idle state, and hydrus serve's similar-files search, duplicates auto-resolution and file maintenance choose idle or normal switches, packets, rests and throttles; the CPU-busy check and idle state show in the status bar.",
+      "source": [
+        "crates/hydrus-store/src/idle_state.rs",
+        "crates/hydrus-store/src/similar.rs",
+        "crates/hydrus-store/src/settings.rs",
+        "crates/hydrus-store/src/import/decode.rs",
+        "crates/hydrus-cli/src/main.rs",
+        "crates/hydrus-gui-model/src/options.rs",
+        "crates/hydrus-gui/src/maintenance_runtime.rs",
+        "crates/hydrus-gui/ui/main.slint"
+      ],
+      "tests": [
+        "crates/hydrus-store/src/idle_state.rs::tests"
+      ],
+      "limits": [
+        "CPU sampling reads /proc/stat (Linux only).",
+        "No hydrus busy/database activity status fields."
+      ]
+    },
+    {
+      "id": "audit-options-maintenance-and-processing-when-to-run-high-cpu-jobs-idle-run-maintenance-jobs-when-the-client-is-idle-and-the-system-is-not-otherwise-busy",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "countAsCompletedLeaf": true,
+      "behavior": "Options > maintenance and processing idle-time controls, saved and imported from the reference's options, reaching real consumers: the GUI publishes its idle state, and hydrus serve's similar-files search, duplicates auto-resolution and file maintenance choose idle or normal switches, packets, rests and throttles; the CPU-busy check and idle state show in the status bar.",
+      "source": [
+        "crates/hydrus-store/src/idle_state.rs",
+        "crates/hydrus-store/src/similar.rs",
+        "crates/hydrus-store/src/settings.rs",
+        "crates/hydrus-store/src/import/decode.rs",
+        "crates/hydrus-cli/src/main.rs",
+        "crates/hydrus-gui-model/src/options.rs",
+        "crates/hydrus-gui/src/maintenance_runtime.rs",
+        "crates/hydrus-gui/ui/main.slint"
+      ],
+      "tests": [
+        "crates/hydrus-store/src/idle_state.rs::tests"
+      ],
+      "limits": [
+        "CPU sampling reads /proc/stat (Linux only).",
+        "No hydrus busy/database activity status fields."
+      ]
+    },
+    {
+      "id": "audit-options-status-activity",
+      "before": "missing",
+      "proposedStatus": "partial",
+      "countAsCompletedLeaf": false,
+      "behavior": "Options > maintenance and processing idle-time controls, saved and imported from the reference's options, reaching real consumers: the GUI publishes its idle state, and hydrus serve's similar-files search, duplicates auto-resolution and file maintenance choose idle or normal switches, packets, rests and throttles; the CPU-busy check and idle state show in the status bar.",
+      "source": [
+        "crates/hydrus-store/src/idle_state.rs",
+        "crates/hydrus-store/src/similar.rs",
+        "crates/hydrus-store/src/settings.rs",
+        "crates/hydrus-store/src/import/decode.rs",
+        "crates/hydrus-cli/src/main.rs",
+        "crates/hydrus-gui-model/src/options.rs",
+        "crates/hydrus-gui/src/maintenance_runtime.rs",
+        "crates/hydrus-gui/ui/main.slint"
+      ],
+      "tests": [
+        "crates/hydrus-store/src/idle_state.rs::tests"
+      ],
+      "limits": [
+        "CPU sampling reads /proc/stat (Linux only).",
+        "No hydrus busy/database activity status fields."
+      ]
+    }
+  ]
+}

@@ -1,5 +1,5 @@
 //! The PopupPanel width and API notification controls, using the shared staged Options editor.
-use super::{Page, boxed, check, int};
+use super::{Page, boxed, check, int, kept_check};
 
 pub(super) fn page() -> Page {
     Page {
@@ -17,6 +17,10 @@ pub(super) fn page() -> Page {
                     "BUGFIX: Force this width as the fixed width for all popup messages: ",
                     |s| s.popup_width.fixed,
                     |s, v| s.popup_width.fixed = v,
+                ),
+                kept_check(
+                    "Freeze the popup toaster when mouse is on another display: ",
+                    "freeze_message_manager_when_mouse_on_other_monitor",
                 ),
                 check(
                     "Freeze the popup toaster when the main gui is minimised: ",

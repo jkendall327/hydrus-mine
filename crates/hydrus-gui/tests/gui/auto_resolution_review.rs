@@ -238,6 +238,8 @@ fn pairs_are_approved_denied_and_undone_as_the_reference_does() {
     assert!(window.get_can_act());
     window.invoke_approve();
     assert!(!window.get_asking());
+    // (approving works off the UI thread, showing its progress)
+    settle(&window);
     assert_eq!(window.get_label(), "1 pairs remaining.");
     assert_eq!(window.get_rows().row_count(), 1);
     assert!(window.get_rows().row_data(0).unwrap().selected);
@@ -252,6 +254,7 @@ fn pairs_are_approved_denied_and_undone_as_the_reference_does() {
     window.invoke_tab_chosen(0);
     window.invoke_row_clicked(0, false, false);
     window.invoke_deny();
+    settle(&window);
     assert_eq!(window.get_label(), "Found 0 pairs.");
     check(&steps[1], rule_id(reviewed), &window);
     window.invoke_tab_chosen(2);
@@ -413,4 +416,25 @@ fn a_pending_pair_is_approved_in_the_duplicate_filter() {
     let mut pair = [approved.0, approved.1];
     pair.sort();
     assert_eq!(shown, pair);
+}
+
+/// Let an approval or denial at work finish and reach the window.
+fn settle(window: &hydrus_gui::AutoResolutionReviewWindow) {
+    let deadline = std::time::Instant::now() + std::time::Duration::from_secs(20);
+    loop {
+        slint::platform::update_timers_and_animations();
+        if !window.get_working() && window.get_approve_text() == "approve" {
+            // (one more pass, in case the work had not yet been noticed)
+            std::thread::sleep(std::time::Duration::from_millis(150));
+            slint::platform::update_timers_and_animations();
+            if !window.get_working() {
+                return;
+            }
+        }
+        assert!(
+            std::time::Instant::now() < deadline,
+            "the decisions never finished"
+        );
+        std::thread::sleep(std::time::Duration::from_millis(20));
+    }
 }

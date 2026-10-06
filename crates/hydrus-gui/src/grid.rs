@@ -572,7 +572,7 @@ impl Model for ThumbnailRows {
             .iter()
             .map(|file| {
                 page.collection(*file)
-                    .map_or_else(|| vec![*file], |collection| collection.to_vec())
+                    .map_or_else(|| vec![*file], <[hydrus_core::HashId]>::to_vec)
             })
             .collect();
         let files: Vec<HashId> = members.iter().flatten().copied().collect();

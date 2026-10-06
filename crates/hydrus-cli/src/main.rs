@@ -546,19 +546,45 @@ fn run_server(dir: &Path, port: Option<u16>, bind: Option<IpAddr>, attached: boo
         if let Some(subscriptions) = &state.subscriptions {
             subscriptions.start();
         }
-        // the similar-files search, finding potential duplicates as files come in
+        // the similar-files search, finding potential duplicates as files come
+        // in: packets of work and rests, by the GUI's idle state
         let searcher = store.clone();
         tokio::spawn(async move {
+            use hydrus_store::idle_state::{Pace, is_idle};
+            use hydrus_store::similar::SimilarFilesSettings;
             loop {
                 let store = searcher.clone();
+                let settings: SimilarFilesSettings =
+                    store.read(hydrus_store::settings::get).unwrap_or_default();
+                let idle = is_idle(store.dir(), hydrus_core::time::TimestampMs::now().millis());
+                let mut pace = Pace::choose(
+                    idle,
+                    (settings.during_active, settings.work_time_ms_active, settings.rest_percentage_active),
+                    (settings.during_idle, settings.work_time_ms_idle, settings.rest_percentage_idle),
+                );
+                pace.allowed |= settings.work_hard;
+                if !pace.allowed {
+                    tokio::time::sleep(Duration::from_secs(10)).await;
+                    continue;
+                }
+                let started = std::time::Instant::now();
+                let work = pace.work;
                 let done = tokio::task::spawn_blocking(move || {
-                    hydrus_store::similar::run_search(&store, 1000)
+                    let mut total = 0;
+                    loop {
+                        let n = hydrus_store::similar::run_search(&store, 16)?;
+                        total += n;
+                        if n == 0 || started.elapsed() >= work {
+                            return Ok::<_, hydrus_store::StoreError>((total, n > 0));
+                        }
+                    }
                 })
                 .await;
                 match done {
-                    Ok(Ok(n)) if n > 0 => {
+                    Ok(Ok((n, more))) if n > 0 => {
                         tracing::debug!(files = n, "searched for similar files");
-                        tokio::time::sleep(Duration::from_millis(100)).await;
+                        let rest = if more { pace.rest(started.elapsed()) } else { Duration::from_secs(30) };
+                        tokio::time::sleep(rest.max(Duration::from_millis(100))).await;
                     }
                     Ok(Err(e)) => {
                         tracing::error!(error = %e, "the similar-files search failed");
@@ -584,12 +610,21 @@ fn run_server(dir: &Path, port: Option<u16>, bind: Option<IpAddr>, attached: boo
                 let settings: FileMaintenanceSettings = maintainer
                     .read(hydrus_store::settings::get)
                     .unwrap_or_default();
-                if !settings.during_active {
+                let idle = hydrus_store::idle_state::is_idle(
+                    maintainer.dir(),
+                    hydrus_core::time::TimestampMs::now().millis(),
+                );
+                let (allowed, files, seconds) = if idle {
+                    (settings.during_idle, settings.idle_files, settings.idle_seconds)
+                } else {
+                    (settings.during_active, settings.active_files, settings.active_seconds)
+                };
+                if !allowed {
                     tokio::time::sleep(Duration::from_secs(60)).await;
                     continue;
                 }
-                let window = Duration::from_secs(settings.active_seconds.max(1));
-                let budget = settings.active_files.saturating_mul(100);
+                let window = Duration::from_secs(seconds.max(1));
+                let budget = files.saturating_mul(100);
                 let started = std::time::Instant::now();
                 let worker = importer.clone();
                 let redownloader = redownloader.clone();
@@ -637,11 +672,19 @@ fn run_server(dir: &Path, port: Option<u16>, bind: Option<IpAddr>, attached: boo
                         continue;
                     }
                 };
-                if !settings.during_active {
+                let pace = hydrus_store::idle_state::Pace::choose(
+                    hydrus_store::idle_state::is_idle(
+                        store.dir(),
+                        hydrus_core::time::TimestampMs::now().millis(),
+                    ),
+                    (settings.during_active, settings.work_time_ms_active, settings.rest_percentage_active),
+                    (settings.during_idle, settings.work_time_ms_idle, settings.rest_percentage_idle),
+                );
+                if !pace.allowed {
                     tokio::time::sleep(Duration::from_secs(10)).await;
                     continue;
                 }
-                let budget = Duration::from_millis(u64::from(settings.work_time_ms_active));
+                let budget = pace.work;
                 let started = std::time::Instant::now();
                 let done = tokio::task::spawn_blocking(move || {
                     hydrus_duplicates::work_rules(
@@ -655,8 +698,7 @@ fn run_server(dir: &Path, port: Option<u16>, bind: Option<IpAddr>, attached: boo
                 let rest = match done {
                     Ok(Ok(done)) if done.more_to_do => {
                         tracing::debug!(?done, "auto-resolution worked");
-                        let worked = started.elapsed().min(budget * 5);
-                        worked * settings.rest_percentage_active / 100
+                        pace.rest(started.elapsed())
                     }
                     Ok(Ok(done)) => {
                         if done != hydrus_duplicates::WorkDone::default() {

@@ -1,0 +1,49 @@
+// Tags > sibling/parent sync > review current sibling/parent sync.
+import { Button } from "std-widgets.slint";
+import { Theme } from "theme.slint";
+import { TagServicePanels } from "tag_service_panels.slint";
+
+export component TagSyncReviewWindow inherits Window {
+    title: "tag display sync";
+    preferred-width: 640px;
+    preferred-height: 360px;
+    background: Theme.window;
+    in property <string> message;
+    in property <string> status;
+    in property <bool> status-valid;
+    in property <[string]> service-names;
+    in property <int> service-index;
+    in property <bool> use-listbook;
+    in property <string> summary;
+    in property <string> progress;
+    callback service-chosen(int);
+    callback refresh-clicked();
+    callback close-clicked();
+    VerticalLayout {
+        padding: 12px;
+        spacing: 8px;
+        Text { text: root.message; wrap: word-wrap; color: Theme.text; }
+        Text { text: root.status; wrap: word-wrap; color: root.status-valid ? Theme.valid : Theme.warning; }
+        TagServicePanels {
+            names: root.service-names;
+            index: root.service-index;
+            use-listbook: root.use-listbook;
+            chosen(i) => { root.service-chosen(i); }
+            VerticalLayout {
+                padding: 8px;
+                spacing: 6px;
+                alignment: start;
+                Text { text: root.summary; color: Theme.text; }
+                Text { text: root.progress; color: Theme.text; }
+                HorizontalLayout {
+                    alignment: end;
+                    Button { text: "refresh"; clicked => { root.refresh-clicked(); } }
+                }
+            }
+        }
+        HorizontalLayout {
+            alignment: end;
+            Button { text: "close"; clicked => { root.close-clicked(); } }
+        }
+    }
+}
