@@ -14,6 +14,9 @@ export component ExportTags inherits FocusScope {
     callback context-menu(int,length,length);
     callback sort-chosen(int,int);
     callback sort-geometry(int,MenuChoiceFrame);
+    // Structurally present controls expose their measured frame directly.
+    out property <MenuChoiceFrame> sort-type-frame: type-choice.frame;
+    out property <MenuChoiceFrame> sort-order-frame: order-choice.frame;
     callback copy();
     callback select-all();
     key-pressed(event) => {
@@ -26,9 +29,9 @@ export component ExportTags inherits FocusScope {
         VerticalLayout {
             padding: 5px; spacing: 4px;
             Text { text: "files' tags"; color: Theme.text; font-weight: 700; horizontal-alignment: center; }
-            WheelMenuChoice { enabled:root.enabled;changed frame => {root.sort-geometry(0,self.frame);} model: ["sort by tag", "sort by subtag", "sort by count"]; current-index: root.sort-type; selected(index) => {root.sort-chosen(0,index);} }
+            type-choice := WheelMenuChoice { enabled:root.enabled;changed frame => {root.sort-geometry(0,self.frame);} model: ["sort by tag", "sort by subtag", "sort by count"]; current-index: root.sort-type; selected(index) => {root.sort-chosen(0,index);} }
             HorizontalLayout {
-                WheelMenuChoice { enabled:root.enabled;changed frame => {root.sort-geometry(1,self.frame);} model: root.orders; current-index: root.order; selected(index) => {root.sort-chosen(1,index);} }
+                order-choice := WheelMenuChoice { enabled:root.enabled;changed frame => {root.sort-geometry(1,self.frame);} model: root.orders; current-index: root.order; selected(index) => {root.sort-chosen(1,index);} }
                 if root.sort-type != 1: WheelMenuChoice { enabled:root.enabled;changed frame => {root.sort-geometry(2,self.frame);} model: ["no grouping", "namespace (a-z)", "namespace (user)"]; current-index: root.group; selected(index) => {root.sort-chosen(2,index);} }
             }
             ScrollView {

@@ -512,7 +512,10 @@ fn system_children_gate_immediate_durable_actions_on_hidden_switched_and_locked_
                 _ => unreachable!(),
             }
             let expected = original.borrow().predicates();
-            assert!(system.window().is_visible()); // No timer polling invalidates this handle first.
+            // Page changes can synchronously retire this child. A retained
+            // handle explicitly re-shown under the wrong owner still cannot write.
+            system.show().unwrap();
+            assert!(system.window().is_visible());
             system.invoke_recent_forgotten(0);
             system.invoke_defaults_action(0, "set this as new default".into());
             system.invoke_defaults_action(0, "reset to original default".into());

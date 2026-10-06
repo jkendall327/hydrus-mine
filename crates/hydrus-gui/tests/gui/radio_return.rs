@@ -86,7 +86,7 @@ fn options(ui: &MainWindow, bound: &Bound) -> (OptionsWindow, i32) {
 fn gui_options_cancel_hidden_stale_apply_save_reopen_and_live_existing_editor() {
     let fixture = hydrus_testkit::fixture_json("radio_return.json");
     let (_dirs, store) = super::subscriptions::store();
-    let _windows = headless::init();
+    let windows = headless::init();
     let ui = MainWindow::new().unwrap();
     ui.show().unwrap();
     let bound = bind(
@@ -118,6 +118,58 @@ fn gui_options_cancel_hidden_stale_apply_save_reopen_and_live_existing_editor() 
     assert!(!reopened.get_rows().row_data(row as usize).unwrap().checked);
     reopened.invoke_cancel();
     let editor = predicate(&ui, &bound, false);
+    let native = windows.get(windows.count() - 1).unwrap();
+    headless::render(&native, 1000, 500);
+    let before = editor
+        .get_panels()
+        .row_data(0)
+        .unwrap()
+        .fields
+        .row_data(1)
+        .unwrap()
+        .chosen;
+    let count = editor
+        .get_panels()
+        .row_data(0)
+        .unwrap()
+        .fields
+        .row_data(1)
+        .unwrap()
+        .options
+        .row_count() as i32;
+    assert!(count > 1);
+    let down = before + 1 < count;
+    key(
+        editor.window(),
+        if down { Key::DownArrow } else { Key::UpArrow }.into(),
+    );
+    assert_eq!(
+        editor
+            .get_panels()
+            .row_data(0)
+            .unwrap()
+            .fields
+            .row_data(1)
+            .unwrap()
+            .chosen,
+        before + if down { 1 } else { -1 },
+        "real filesize radio group has keyboard focus"
+    );
+    key(
+        editor.window(),
+        if down { Key::UpArrow } else { Key::DownArrow }.into(),
+    );
+    assert_eq!(
+        editor
+            .get_panels()
+            .row_data(0)
+            .unwrap()
+            .fields
+            .row_data(1)
+            .unwrap()
+            .chosen,
+        before
+    );
     assert!(!editor.invoke_force_radio_ok(0));
     // Saved edits are consulted on every key event, not cached at opening.
     save(&store, true);

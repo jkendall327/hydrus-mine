@@ -126,6 +126,19 @@ fn query_select(ui: &MainWindow, bound: &hydrus_gui::Bound, file: HashId) -> i32
     ui.invoke_thumbnail_clicked(index, false, false);
     index
 }
+// A visible owner also needs a measured native preview viewport before SetMedia.
+fn settle_viewport(ui: &MainWindow, bound: &hydrus_gui::Bound, windows: &headless::Windows) {
+    assert!(ui.window().is_visible());
+    let native = windows.get(0).unwrap();
+    for _ in 0..3 {
+        headless::render(&native, 1400, 1000);
+    }
+    bound.preview.refresh();
+    assert!(ui.get_layout_available_width() > 0.0);
+    assert!(ui.get_sidebar_actual_width() > 0.0);
+    assert!(ui.get_preview_actual_height() > 0.0);
+    assert!(!ui.get_preview_splitter_hidden());
+}
 fn rect(window: &MediaViewerWindow) -> [f32; 4] {
     [
         window.get_media_x(),
@@ -149,6 +162,7 @@ fn actual_saved_icc_updates_preview_viewer_tiles_and_archive_without_resetting_o
         let now = now.clone();
         move || now.get()
     }));
+    settle_viewport(&ui, &bound, &windows);
     let index = query_select(&ui, &bound, file);
     wait(|| {
         bound.preview.refresh();
@@ -360,13 +374,14 @@ impl Drop for Published {
 fn held_old_colour_reply_cannot_replace_current_or_rebound_canvas_and_ineligible_preview_stays_empty()
  {
     let (_dirs, store, file) = setup();
-    let _windows = headless::init();
+    let windows = headless::init();
     let ui = MainWindow::new().unwrap();
     ui.show().unwrap();
     let bound = bind(
         &ui,
         Pages::single(super::common::all_local_page(store.clone())),
     );
+    settle_viewport(&ui, &bound, &windows);
     query_select(&ui, &bound, file);
     wait(|| {
         bound.preview.refresh();
@@ -446,6 +461,7 @@ fn held_old_colour_reply_cannot_replace_current_or_rebound_canvas_and_ineligible
         &ui,
         Pages::single(super::common::all_local_page(store.clone())),
     );
+    settle_viewport(&ui, &successor, &windows);
     query_select(&ui, &successor, file);
     wait(|| {
         successor.preview.refresh();

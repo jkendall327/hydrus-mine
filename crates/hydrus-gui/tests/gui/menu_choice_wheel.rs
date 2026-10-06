@@ -333,7 +333,6 @@ fn options_staging_saved_policy_bubbling_and_retired_roots_are_owned() {
             .enabled
     );
     let options = open(&ui, &bound);
-    page(&options, "tag sort");
     let native = windows.get(windows.count() - 1).unwrap();
     let frames = Rc::new(RefCell::new(std::collections::BTreeMap::new()));
     options.on_menu_choice_geometry({
@@ -342,6 +341,7 @@ fn options_staging_saved_policy_bubbling_and_retired_roots_are_owned() {
             frames.borrow_mut().insert((row, part), frame);
         }
     });
+    page(&options, "tag sort");
     settle(&native);
     let row = i32::try_from(
         options
@@ -375,7 +375,6 @@ fn options_staging_saved_policy_bubbling_and_retired_roots_are_owned() {
     options.invoke_cancel();
     save(&store, true);
     let options = open(&ui, &bound);
-    page(&options, "tag sort");
     let native = windows.get(windows.count() - 1).unwrap();
     let frames = Rc::new(RefCell::new(std::collections::BTreeMap::new()));
     options.on_menu_choice_geometry({
@@ -384,6 +383,7 @@ fn options_staging_saved_policy_bubbling_and_retired_roots_are_owned() {
             frames.borrow_mut().insert((row, part), frame);
         }
     });
+    page(&options, "tag sort");
     settle(&native);
     let frame = frames.borrow().get(&(row, 0)).unwrap().clone();
     options.hide().unwrap();
@@ -652,7 +652,7 @@ fn manual_export_tag_choices_read_live_policy_and_publish_real_sidebar_rows() {
     };
     let ascending = rows();
     assert!(ascending.len() > 1);
-    let order = frames.borrow().get(&1).unwrap().clone();
+    let order = window.get_tag_sort_order_frame();
     wheel(&native, &order, 0.0, -120.0);
     assert_eq!(window.get_tag_sort_order(), 1);
     let descending = rows();
@@ -667,7 +667,7 @@ fn manual_export_tag_choices_read_live_policy_and_publish_real_sidebar_rows() {
     wheel(&native, &group, 0.0, 120.0);
     assert_eq!(window.get_tag_sort_group(), 2);
     let grouped = rows();
-    let kind = frames.borrow().get(&0).unwrap().clone();
+    let kind = window.get_tag_sort_type_frame();
     wheel(&native, &kind, 0.0, 120.0);
     assert_eq!(window.get_tag_sort_type(), 2);
     assert_eq!(

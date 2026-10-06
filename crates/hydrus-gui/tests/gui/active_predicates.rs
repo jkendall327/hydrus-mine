@@ -701,7 +701,15 @@ fn retained_or_system_child_does_not_keep_the_or_or_main_component_alive() {
     );
     let child = active_or(&ui, &bound, &decoded(&case["selected"]), false);
     child.invoke_edited("system:filesize".into());
-    child.invoke_enter(false);
+    // A populated OR inserts its draft summary at index zero. Choose the
+    // actual system suggestion rather than broadcasting that summary.
+    let system_index = child
+        .get_suggestions()
+        .iter()
+        .position(|row| row.text.as_str() == "system:filesize")
+        .unwrap();
+    assert!(system_index > 0);
+    child.invoke_chosen(i32::try_from(system_index).unwrap());
     let system = bound
         .search_or
         .system
@@ -743,7 +751,15 @@ fn hidden_or_parent_reconciles_actual_system_and_nested_child_cancellation() {
     );
     let child = active_or(&ui, &bound, &decoded(&case["selected"]), false);
     child.invoke_edited("system:filesize".into());
-    child.invoke_enter(false);
+    // A populated OR inserts its draft summary at index zero. Choose the
+    // actual system suggestion rather than broadcasting that summary.
+    let system_index = child
+        .get_suggestions()
+        .iter()
+        .position(|row| row.text.as_str() == "system:filesize")
+        .unwrap();
+    assert!(system_index > 0);
+    child.invoke_chosen(i32::try_from(system_index).unwrap());
     assert!(child.get_blocked());
     let system = bound
         .search_or
@@ -774,7 +790,15 @@ fn hidden_or_parent_reconciles_actual_system_and_nested_child_cancellation() {
     );
     let before = bound.current.borrow().borrow().active_predicates().to_vec();
     child.invoke_edited("system:filesize".into());
-    child.invoke_enter(false);
+    // A populated OR inserts its draft summary at index zero. Choose the
+    // actual system suggestion rather than broadcasting that summary.
+    let system_index = child
+        .get_suggestions()
+        .iter()
+        .position(|row| row.text.as_str() == "system:filesize")
+        .unwrap();
+    assert!(system_index > 0);
+    child.invoke_chosen(i32::try_from(system_index).unwrap());
     let system = bound
         .search_or
         .system

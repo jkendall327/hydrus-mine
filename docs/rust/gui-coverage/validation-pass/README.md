@@ -121,3 +121,11 @@ retired callbacks. The predicate-editor callback-cycle test releases Slint's
 shown-window retention before its final Weak assertion. This does not establish
 automatic closure of a shown child when its parent is destroyed; that boundary
 remains a publication gap requiring separate evidence or repair.
+
+Widget replay repairs establish measured preview geometry, deliver actual tab
+changes before reading colour rows, and select the system predicate suggestion
+rather than a populated OR summary. Radio focus is checked with real arrow keys
+before Return. The palette-only screenshot test disables independent legacy
+colour overrides without relaxing its pixel threshold. Manual export exposes
+the existing sort controls' measured frames directly, following Manage Tags;
+wheel tests continue sending native pointer events and asserting exact results.

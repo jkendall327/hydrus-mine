@@ -93,6 +93,7 @@ fn real_options_stage_all_roles_cancel_hidden_inputs_and_retire_owned_picker() {
     ui.show().unwrap();
     let bound = bind(&ui, Pages::open(store.clone()).unwrap());
     let options = open(&ui, &bound);
+    let options_native = windows.get(windows.count() - 1).unwrap();
     assert_eq!(options.get_gui_colour_tab(), 0);
     assert!(!options.get_gui_colour_enabled());
     assert_eq!(
@@ -107,6 +108,10 @@ fn real_options_stage_all_roles_cancel_hidden_inputs_and_retire_owned_picker() {
         let set = i32::from(edit["set"] == "darkmode");
         let role = i32::try_from(edit["role"].as_u64().unwrap()).unwrap();
         options.set_gui_colour_tab(set);
+        // Process the real tab binding before observing its row model.
+        for _ in 0..3 {
+            headless::render(&options_native, 950, 700);
+        }
         options.invoke_gui_colour_chosen(set, role);
         let picker = hydrus_gui::options_gui_colours::last_opened().unwrap();
         let rgb: [u8; 3] = serde_json::from_value(edit["colour"].clone()).unwrap();
@@ -142,8 +147,16 @@ fn real_options_stage_all_roles_cancel_hidden_inputs_and_retire_owned_picker() {
         qt["before_update"]
     );
     options.set_gui_colour_tab(0);
+    // Process the real tab binding before observing its row model.
+    for _ in 0..3 {
+        headless::render(&options_native, 950, 700);
+    }
     assert_eq!(json!(colours(&options)), qt["saved"]["sets"]["default"]);
     options.set_gui_colour_tab(1);
+    // Process the real tab binding before observing its row model.
+    for _ in 0..3 {
+        headless::render(&options_native, 950, 700);
+    }
     assert_eq!(json!(colours(&options)), qt["saved"]["sets"]["darkmode"]);
     save_png(&windows, 1, "gui-coloursets-options.png", 950, 700);
     options.invoke_apply();

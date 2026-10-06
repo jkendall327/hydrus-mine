@@ -19,6 +19,15 @@ fn a_search_page_finds_files_and_shows_their_thumbnails() {
     )
     .unwrap();
     let store = Store::open(native.path()).unwrap();
+    // This test switches the stylesheet palette. Legacy role overrides instead
+    // intentionally retain their own thumbnail/tag colours across that switch.
+    store
+        .write(|writer| {
+            let mut colours = hydrus_store::gui_colours::load(writer.conn())?;
+            colours.override_stylesheet = false;
+            hydrus_store::settings::set(writer.conn(), &colours)
+        })
+        .unwrap();
 
     let mut page = super::common::all_local_page(store.clone());
     assert!(page.results().is_empty(), "nothing until searched");
