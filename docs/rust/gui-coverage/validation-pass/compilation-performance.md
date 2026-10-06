@@ -121,3 +121,18 @@ for clean inactive cache while retaining memory, disk, OOM and wall-clock bounds
 Generated-UI extraction and cache retention/freshness remain under investigation.
 Their benefits and the complete revised CI sequence will be reported only after
 measurements.
+
+## Delivery timebox (2026-10-06)
+
+Further compilation experiments are capped at 06:38:15 UTC on October 6,
+following the owner's validated-delivery reassessment at 04:38:15 UTC. Finish
+one baseline/UI-extraction comparison where practical; defer the larger edit
+matrix and additional cache design. Incomplete measurements must be labelled
+as such, not used to extend optimization indefinitely. Then prioritize the
+existing repair batch, full validation and publication of qualifying completions.
+
+The latest published checkpoint is commit `215814c2b`, October 5 at 00:05:53 UTC:
+240 signed off. At this reassessment, zero were newly signed off in the preceding
+24 hours and 135 candidates awaited sign-off. The gap exceeded 28 hours. Failed
+strict Clippy/runtime validation and slow GUI compilation are the current
+blockers. These are delivery metrics, not inventory-status counts.

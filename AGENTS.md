@@ -71,28 +71,29 @@ box. Each one is a commit that passes CI on its own.
    current breadth-work instruction is to omit mutation testing: use the
    reference, behavioral regressions, rendered UI inspection and independent
    review instead. Do not run cargo-mutants unless the owner requests it.
-6. **Keep full visual verification deferred.** The owner's current instruction
-   (2026-10-05) prioritizes implementation with cheap validation. Use the reference
-   and cached Slint source checks as needed; defer native GUI compilation,
-   full suites, rendered review and exhaustive audits to the final project pass.
+6. **Validate and publish each small batch.** The owner's current instruction
+   (2026-10-06) prioritizes validated delivery. Full native compilation, strict
+   linting, cross-platform tests, rendered review and evidence publication are
+   routine work; do not wait for another request. Pause broad new feature work
+   until the current repair batch has a published validated checkpoint.
 7. **Write it down.** `docs/rust/GUI.md` says what works, in the user's
    terms; `docs/rust/DIFFERENCES.md` says what is missing or different
    from the reference, and why. Update both in the same commit as the
    code.
-8. **Use cheap validation.** Formatting, strict backend/model Clippy/type checks,
-   simple builds and targeted fast tests are appropriate. Automatic CI has one
-   Linux lint/model lane excluding `hydrus-gui`: its generated metadata exceeded
-   the cheap budget (over 12 minutes and about 9 GiB in one compiler process).
-   Native GUI Clippy/type checking, `scripts/check.sh`, full workspace/native
-   suites, platform runs and audits
-   are deferred until the owner requests the final validation pass. Preserve
-   authored regressions for that pass. Keep implemented and fully validated item
-   counts separate. CI denies warnings, including clippy's pedantic set.
+8. **Bank validated progress.** Use cheap checks for early feedback, then run
+   full validation before publishing completions. Preserve assertions, strict
+   warnings and honest feature assessments. Keep inventory statuses separate
+   from signed-off completions. Report the signed-off total, new sign-offs in
+   the last 24 hours, candidates awaiting sign-off, time since the last successful
+   published checkpoint and current blocker. If 24 hours pass without a new
+   validated checkpoint, explicitly reassess batch size and approach before
+   continuing the same cycle. Validate and publish the next small batch before
+   accumulating another broad implementation backlog.
 
 ## Commits
 
 - Small and self-contained. Fix build/type errors and other bugs that block
-  ongoing work; record non-blocking defects for the deferred validation pass.
+  validation; record remaining defects honestly without claiming completion.
 - Subject in the imperative, saying what the user gets, often "..., as
   the reference does". The body says what changed and which recording
   proves it.
@@ -111,10 +112,10 @@ box. Each one is a commit that passes CI on its own.
   `docs/rust/DIFFERENCES.md`. Keep edits there small (a module line, a
   callback's wiring, a paragraph) so merges stay easy; put the bulk of a
   feature in its own files.
-- Integrate slices as they become ready and use cheap backend/model checks.
-  Run strict Clippy before expensive code generation; avoid full GUI compilation
-  and suites during implementation mode. Keep one current integration CI run,
-  cancelling superseded heads, rather than validating every intermediate branch.
+- Integrate small slices with cheap backend/model checks for early feedback,
+  then routinely run strict Clippy and full validation for publication. Avoid
+  competing heavy GUI builds. Preserve the current validation run's evidence;
+  do not let new implementation repeatedly displace a publication checkpoint.
 - When worktrees share a Cargo target directory, set `HYDRUS_FIXTURE_DIR`
   to the current worktree's absolute `oracle/fixtures` path. Otherwise a
   cached `hydrus-testkit` can read the checkout it was compiled in.
