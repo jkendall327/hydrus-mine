@@ -3636,9 +3636,9 @@ Validation repairs now invalidate cached thumbnail colours when the stylesheet
 changes and hide an exact retired colour picker on repeated Cancel. Wheel
 controls publish their initial measured geometry as well as later changes.
 These repairs passed full Linux replay at `56b93ae49` (696 GUI tests).
-Completion credit remains limited to the 79 independently reviewed original
-leaves banked across four checkpoints, with the latest
-[319-item checkpoint](gui-coverage/checkpoints/7c3c1aac5/README.md);
+Completion credit remains limited to the 86 independently reviewed original
+leaves banked across five checkpoints, with the latest
+[326-item checkpoint](gui-coverage/checkpoints/9bec37964/README.md);
 other repaired behavior retains its scoped assessment.
 
 Speed and Memory helper overlap and favourites capture setup are repaired and
@@ -3652,9 +3652,12 @@ preview-checkbox input/enabled behavior and idle Options clipping remain pending
 Six earlier sidebar/tab descriptions are corrected without changing their
 counts or assessments; original archived reviews remain unchanged.
 
-Colour-picker geometry and thumbnail preview-checkbox behavior are under the
-next bounded repair. The proposed layout retains the native RGB-only picker
+Colour-picker geometry and thumbnail preview-checkbox behavior are validated
+at `9bec37964`. The layout retains the native RGB-only picker
 scope; it does not add Qt HSV/HTML/history features. Actual checkbox/dropdown input, displayed-state checks and
 disabled-state observations preserve the existing staging, cancellation and
-consumer assertions. These seven candidates remain unapproved until full Linux
-validation and fresh render review. The signed-off ledger remains 319.
+consumer assertions. Full Linux validation and fresh independent render review
+approve these seven scoped leaves, bringing the ledger to 326 with 49 candidates
+pending. The preceding paragraph records the earlier checkpoint; picker and
+checkbox blockers are now resolved. Idle clipping and clear-action evidence
+remain in the next bounded batch.

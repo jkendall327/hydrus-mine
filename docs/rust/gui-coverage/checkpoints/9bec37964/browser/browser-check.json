@@ -1,0 +1,167 @@
+{
+  "schema_version": 1,
+  "status": "passed",
+  "source_commit": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+  "expected_signed_off": 326,
+  "expected_additional": 7,
+  "started_at_utc": "2026-10-06T16:32:55.967208+00:00",
+  "publication_performed": false,
+  "html": "/workspace/validation-reviews/publication-next7-9bec37964-linux/staged/docs/rust/gui-progress.html",
+  "html_sha256": "546e4e293586303d34839935a1dba285c130dc859e1c7adbd950aabdf93a4919",
+  "publication_audit": "/workspace/validation-reviews/publication-next7-9bec37964-linux/staged/docs/rust/gui-coverage/audit/anchor-remap-9bec3796-publication.json",
+  "publication_audit_sha256": "dd5d1ed1d7dab46c75fa856bb1c6ee9cf1b35c09acef7a335ad8ead440a0013c",
+  "additional_selected_ids": [
+    "audit-options-colours-current-colourset",
+    "audit-options-colours-override-what-is-set-in-the-stylesheet-with-the-colours-on-this-page",
+    "audit-options-menu-menu-help-darkmode",
+    "audit-options-thumbnails-interaction-on-ctrl-selection-focus-thumbnails-in-the-preview-window",
+    "audit-options-thumbnails-interaction-on-shift-selection-focus-thumbnails-in-the-preview-window",
+    "audit-options-thumbnails-interaction-only-on-files-with-no-duration",
+    "audit-options-thumbnails-interaction-only-on-files-with-no-duration-2"
+  ],
+  "prior_signed_off": 319,
+  "url_scope": {
+    "url": "http://127.0.0.1:36903/gui-progress.html",
+    "origin": "http://127.0.0.1:36903",
+    "served_directory": "/workspace/validation-reviews/publication-next7-9bec37964-linux/staged/docs/rust",
+    "directory_listing": false,
+    "escaping_symlinks": false,
+    "external_requests_allowed": false,
+    "source_links_followed": false
+  },
+  "js_errors": [],
+  "blocked_external_requests": [],
+  "failed_requests": [],
+  "rendered_note": "Overnight implementation: 326 original concrete features reached first pass (goal 80). Missing: 862 \u2192 497. Partial: 378 \u2192 388. Goal counting excludes parent/alias completions and evidence-only reassessments. Exact successful hosted Linux check and parity-models jobs. Windows and macOS validation is deferred under the exact-source owner policy. Source inspection and author reference-recording provenance are separate; no local Cargo or mutation testing by this tool.",
+  "inventory_counts": {
+    "reference": 1812,
+    "native": 1799
+  },
+  "inventory_status_counts": {
+    "reference": {
+      "first_pass": 927,
+      "partial": 388,
+      "missing": 497,
+      "unassessed": 0
+    },
+    "native": {
+      "first_pass": 850,
+      "partial": 860,
+      "missing": 89,
+      "unassessed": 0
+    }
+  },
+  "completion_filter": "326 matching \u00b7 1812 inventoried",
+  "selected_additional_node": "audit-options-colours-current-colourset",
+  "completion_links": {
+    "snapshot": "https://github.com/jkendall327/hydrus-mine/commit/9bec37964725add7a4f6f072c6a9426ef2e3789b",
+    "source_anchors": [
+      "https://github.com/jkendall327/hydrus-mine/blob/9bec37964725add7a4f6f072c6a9426ef2e3789b/hydrus/client/gui/panels/options/ColoursPanel.py#L125",
+      "https://github.com/jkendall327/hydrus-mine/blob/9bec37964725add7a4f6f072c6a9426ef2e3789b/crates/hydrus-store/src/gui_colours.rs#L20",
+      "https://github.com/jkendall327/hydrus-mine/blob/9bec37964725add7a4f6f072c6a9426ef2e3789b/crates/hydrus-store/src/gui_colours.rs#L20",
+      "https://github.com/jkendall327/hydrus-mine/blob/9bec37964725add7a4f6f072c6a9426ef2e3789b/crates/hydrus-store/src/gui_colours.rs#L78",
+      "https://github.com/jkendall327/hydrus-mine/blob/9bec37964725add7a4f6f072c6a9426ef2e3789b/crates/hydrus-store/src/gui_colours.rs#L125",
+      "https://github.com/jkendall327/hydrus-mine/blob/9bec37964725add7a4f6f072c6a9426ef2e3789b/crates/hydrus-store/src/import/decode.rs#L871",
+      "https://github.com/jkendall327/hydrus-mine/blob/9bec37964725add7a4f6f072c6a9426ef2e3789b/crates/hydrus-gui-model/src/options.rs#L5957",
+      "https://github.com/jkendall327/hydrus-mine/blob/9bec37964725add7a4f6f072c6a9426ef2e3789b/crates/hydrus-gui/src/options_gui_colours.rs#L56",
+      "https://github.com/jkendall327/hydrus-mine/blob/9bec37964725add7a4f6f072c6a9426ef2e3789b/crates/hydrus-gui/src/options_window.rs#L526",
+      "https://github.com/jkendall327/hydrus-mine/blob/9bec37964725add7a4f6f072c6a9426ef2e3789b/crates/hydrus-gui/src/gui_colours.rs#L18",
+      "https://github.com/jkendall327/hydrus-mine/blob/9bec37964725add7a4f6f072c6a9426ef2e3789b/crates/hydrus-gui/src/gui_colours.rs#L20",
+      "https://github.com/jkendall327/hydrus-mine/blob/9bec37964725add7a4f6f072c6a9426ef2e3789b/crates/hydrus-gui/src/gui_colour_actions.rs#L43",
+      "https://github.com/jkendall327/hydrus-mine/blob/9bec37964725add7a4f6f072c6a9426ef2e3789b/crates/hydrus-gui/src/gui_colour_actions.rs#L89",
+      "https://github.com/jkendall327/hydrus-mine/blob/9bec37964725add7a4f6f072c6a9426ef2e3789b/crates/hydrus-gui/ui/gui_coloursets.slint#L50",
+      "https://github.com/jkendall327/hydrus-mine/blob/9bec37964725add7a4f6f072c6a9426ef2e3789b/crates/hydrus-gui/ui/theme.slint#L16",
+      "https://github.com/jkendall327/hydrus-mine/blob/9bec37964725add7a4f6f072c6a9426ef2e3789b/crates/hydrus-gui/src/grid.rs#L570",
+      "https://github.com/jkendall327/hydrus-mine/blob/9bec37964725add7a4f6f072c6a9426ef2e3789b/crates/hydrus-gui/src/lib.rs#L765",
+      "https://github.com/jkendall327/hydrus-mine/blob/9bec37964725add7a4f6f072c6a9426ef2e3789b/hydrus/client/gui/panels/options/ColoursPanel.py#L125",
+      "https://github.com/jkendall327/hydrus-mine/blob/9bec37964725add7a4f6f072c6a9426ef2e3789b/crates/hydrus-gui-model/tests/model/gui_colours.rs#L54",
+      "https://github.com/jkendall327/hydrus-mine/blob/9bec37964725add7a4f6f072c6a9426ef2e3789b/crates/hydrus-gui-model/tests/model/gui_colours.rs#L123",
+      "https://github.com/jkendall327/hydrus-mine/blob/9bec37964725add7a4f6f072c6a9426ef2e3789b/crates/hydrus-gui-model/tests/model/gui_colours.rs#L154",
+      "https://github.com/jkendall327/hydrus-mine/blob/9bec37964725add7a4f6f072c6a9426ef2e3789b/crates/hydrus-gui/tests/gui/gui_colours.rs#L240",
+      "https://github.com/jkendall327/hydrus-mine/blob/9bec37964725add7a4f6f072c6a9426ef2e3789b/crates/hydrus-gui/tests/gui/gui_colours.rs#L430",
+      "https://github.com/jkendall327/hydrus-mine/blob/9bec37964725add7a4f6f072c6a9426ef2e3789b/crates/hydrus-gui/tests/gui/gui_colours.rs#L693",
+      "https://github.com/jkendall327/hydrus-mine/blob/9bec37964725add7a4f6f072c6a9426ef2e3789b/crates/hydrus-gui/src/options_gui_colours.rs#L333",
+      "https://github.com/jkendall327/hydrus-mine/blob/9bec37964725add7a4f6f072c6a9426ef2e3789b/oracle/record_gui_coloursets.py#L1",
+      "https://github.com/jkendall327/hydrus-mine/blob/9bec37964725add7a4f6f072c6a9426ef2e3789b/oracle/fixtures/gui_coloursets.json#L1",
+      "https://github.com/jkendall327/hydrus-mine/blob/9bec37964725add7a4f6f072c6a9426ef2e3789b/hydrus/client/gui/panels/options/ColoursPanel.py#L10",
+      "https://github.com/jkendall327/hydrus-mine/blob/9bec37964725add7a4f6f072c6a9426ef2e3789b/hydrus/client/gui/panels/options/ColoursPanel.py#L150",
+      "https://github.com/jkendall327/hydrus-mine/blob/9bec37964725add7a4f6f072c6a9426ef2e3789b/hydrus/client/gui/ClientGUI.py#L7899",
+      "https://github.com/jkendall327/hydrus-mine/blob/9bec37964725add7a4f6f072c6a9426ef2e3789b/hydrus/client/gui/widgets/ClientGUIColourPicker.py#L196",
+      "https://github.com/jkendall327/hydrus-mine/blob/9bec37964725add7a4f6f072c6a9426ef2e3789b/hydrus/client/gui/canvas/ClientGUICanvas.py#L835",
+      "https://github.com/jkendall327/hydrus-mine/blob/9bec37964725add7a4f6f072c6a9426ef2e3789b/hydrus/client/gui/lists/ClientGUIListBoxes.py#L3249",
+      "https://github.com/jkendall327/hydrus-mine/blob/9bec37964725add7a4f6f072c6a9426ef2e3789b/hydrus/client/gui/search/ClientGUIACDropdown.py#L1453"
+    ]
+  },
+  "viewports": {
+    "desktop": {
+      "width": 1440,
+      "height": 1000
+    },
+    "narrow": {
+      "width": 390,
+      "height": 844
+    }
+  },
+  "screenshots": {
+    "desktop": {
+      "path": "/workspace/validation-reviews/report-browser-9bec37964/report-desktop.png",
+      "sha256": "143439e7bbce1fbcf6ebea126a7e3ad1b589edc71281e3433954956205b8b81a"
+    },
+    "narrow": {
+      "path": "/workspace/validation-reviews/report-browser-9bec37964/report-narrow.png",
+      "sha256": "ac4851a55c56cad10fba7e765c96004d7f5d706be4a602264e7176d068a9f9ea"
+    }
+  },
+  "reference_interaction": {
+    "search": "8 matching \u00b7 1812 inventoried",
+    "unchecked_status": "missing",
+    "filtered": "5 matching \u00b7 1812 inventoried",
+    "snapshot": "https://github.com/jkendall327/hydrus-mine/commit/9bec37964725add7a4f6f072c6a9426ef2e3789b",
+    "source_anchors": [
+      "https://github.com/jkendall327/hydrus-mine/blob/9bec37964725add7a4f6f072c6a9426ef2e3789b/hydrus/client/gui/ClientGUI.py#L3366",
+      "https://github.com/jkendall327/hydrus-mine/blob/9bec37964725add7a4f6f072c6a9426ef2e3789b/crates/hydrus-gui-model/src/main_menu.rs#L1073",
+      "https://github.com/jkendall327/hydrus-mine/blob/9bec37964725add7a4f6f072c6a9426ef2e3789b/crates/hydrus-gui-model/src/main_menu.rs#L1005",
+      "https://github.com/jkendall327/hydrus-mine/blob/9bec37964725add7a4f6f072c6a9426ef2e3789b/crates/hydrus-gui/src/menu_bar.rs#L843",
+      "https://github.com/jkendall327/hydrus-mine/blob/9bec37964725add7a4f6f072c6a9426ef2e3789b/crates/hydrus-cli/src/main.rs#L618",
+      "https://github.com/jkendall327/hydrus-mine/blob/9bec37964725add7a4f6f072c6a9426ef2e3789b/crates/hydrus-gui/src/vacuum_review_window.rs#L213",
+      "https://github.com/jkendall327/hydrus-mine/blob/9bec37964725add7a4f6f072c6a9426ef2e3789b/crates/hydrus-gui-model/tests/model/vacuum_review.rs#L34"
+    ]
+  },
+  "native_interaction": {
+    "search": "18 matching \u00b7 1799 inventoried",
+    "unchecked_status": "partial",
+    "filtered": "4 matching \u00b7 1799 inventoried",
+    "snapshot": "https://github.com/jkendall327/hydrus-mine/commit/9bec37964725add7a4f6f072c6a9426ef2e3789b",
+    "source_anchors": [
+      "https://github.com/jkendall327/hydrus-mine/blob/9bec37964725add7a4f6f072c6a9426ef2e3789b/hydrus/client/gui/ClientGUI.py#L3275",
+      "https://github.com/jkendall327/hydrus-mine/blob/9bec37964725add7a4f6f072c6a9426ef2e3789b/crates/hydrus-gui-model/src/main_menu.rs#L1019",
+      "https://github.com/jkendall327/hydrus-mine/blob/9bec37964725add7a4f6f072c6a9426ef2e3789b/crates/hydrus-gui-model/src/main_menu.rs#L1005",
+      "https://github.com/jkendall327/hydrus-mine/blob/9bec37964725add7a4f6f072c6a9426ef2e3789b/crates/hydrus-gui-model/src/main_menu.rs#L1009",
+      "https://github.com/jkendall327/hydrus-mine/blob/9bec37964725add7a4f6f072c6a9426ef2e3789b/crates/hydrus-gui/src/menu_bar.rs#L799",
+      "https://github.com/jkendall327/hydrus-mine/blob/9bec37964725add7a4f6f072c6a9426ef2e3789b/crates/hydrus-gui/src/database_maintenance_window.rs#L126"
+    ]
+  },
+  "narrow": {
+    "width": 390,
+    "documentWidth": 390,
+    "bodyWidth": 390
+  },
+  "browser_version": "151.0.7922.173",
+  "checks": [
+    "real Chromium render",
+    "no JS/console errors",
+    "exact inventory counts",
+    "separate completion ledger and inventory counts",
+    "selected additional IDs",
+    "visible cumulative completion note",
+    "explicit Linux/deferred Windows/macOS",
+    "completion filter rendered IDs",
+    "reference/native tabs",
+    "search and status filters",
+    "rendered exact-SHA snapshot/source links",
+    "390px no document/body overflow",
+    "desktop/narrow screenshots hashed",
+    "input digests stable"
+  ],
+  "finished_at_utc": "2026-10-06T16:33:00.343319+00:00"
+}

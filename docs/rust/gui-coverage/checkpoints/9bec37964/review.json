@@ -1,0 +1,53 @@
+{
+  "source_commit": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+  "reviewed_by": "Codex root with independent exact-source behavioral/rendered reviews2 and5; separate source/preservation checks",
+  "patch_sha256": "457d97b232d5db217e60a27c6a302f9a1b134602eeebf1b829aa7e9424785be0",
+  "reviewed_source_census_sha256": "4c9917f91e715b30b9f6f9e20d7a33dd04e4d49ab3cdd07df85f2c68d1b0c1cb",
+  "selected_completion_ids": [
+    "audit-options-colours-current-colourset",
+    "audit-options-colours-override-what-is-set-in-the-stylesheet-with-the-colours-on-this-page",
+    "audit-options-menu-menu-help-darkmode",
+    "audit-options-thumbnails-interaction-on-ctrl-selection-focus-thumbnails-in-the-preview-window",
+    "audit-options-thumbnails-interaction-on-shift-selection-focus-thumbnails-in-the-preview-window",
+    "audit-options-thumbnails-interaction-only-on-files-with-no-duration",
+    "audit-options-thumbnails-interaction-only-on-files-with-no-duration-2"
+  ],
+  "reviewed_assessment_ids": [
+    "audit-options-colours-current-colourset",
+    "audit-options-colours-override-what-is-set-in-the-stylesheet-with-the-colours-on-this-page",
+    "audit-options-menu-menu-help-darkmode",
+    "audit-options-thumbnails-interaction-on-ctrl-selection-focus-thumbnails-in-the-preview-window",
+    "audit-options-thumbnails-interaction-on-shift-selection-focus-thumbnails-in-the-preview-window",
+    "audit-options-thumbnails-interaction-only-on-files-with-no-duration",
+    "audit-options-thumbnails-interaction-only-on-files-with-no-duration-2"
+  ],
+  "reviewed_native_ids": [
+    "dialog.shared.rgb-colour.rgb"
+  ],
+  "independent_reviews": [
+    {
+      "path": "docs/rust/gui-coverage/checkpoints/9bec37964/final-review-2-9bec37964.json",
+      "sha256": "a21bc417b0c91dad1cb240631502327e2bdbf48db9255483f7e86ec41e57a4b7"
+    },
+    {
+      "path": "docs/rust/gui-coverage/checkpoints/9bec37964/final-review-5-9bec37964.json",
+      "sha256": "cef9b90772795fbebcd8ad8c61ef7860fdbb8881cf71811dd01a94cd981082fc"
+    }
+  ],
+  "validation_scope": "linux",
+  "required_platforms": [
+    "linux"
+  ],
+  "deferred_platforms": [
+    "windows",
+    "macos"
+  ],
+  "root_actual_native_inspection": [
+    "gui-colour-picker.png",
+    "gui-colour-picker-minimum.png",
+    "gui-coloursets-options.png",
+    "gui-coloursets-disabled.png",
+    "thumbnail_preview_selection_options.png"
+  ],
+  "scope": "Only seven selected original concrete leaves gain credit. No parent, alias, native hierarchy or deferred-platform credit. Browser verification and preservation audit required before canonical publication."
+}
