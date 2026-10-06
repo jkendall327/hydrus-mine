@@ -29,7 +29,7 @@ fn options(ui: &MainWindow, bound: &Bound) -> (OptionsWindow, i32) {
 fn real_options_cancel_hidden_retired_save_reopen_bounds_and_independent_field() {
     let fixture = hydrus_testkit::fixture_json("ffmpeg_timeout.json");
     let (_dirs, store) = super::subscriptions::store();
-    let _windows = headless::init();
+    let windows = headless::init();
     let ui = MainWindow::new().unwrap();
     ui.show().unwrap();
     let bound = bind(
@@ -57,7 +57,7 @@ fn real_options_cancel_hidden_retired_save_reopen_bounds_and_independent_field()
         15,
         "hidden edits must not be staged for later Apply"
     );
-    for case in fixture["cases"].as_array().unwrap() {
+    for (case_index, case) in fixture["cases"].as_array().unwrap().iter().enumerate() {
         let (w, row) = options(&ui, &bound);
         let before = store.read(ffmpeg_policy::load).unwrap();
         w.invoke_number_edited(row, case["requested"].as_i64().unwrap() as i32);
@@ -88,6 +88,16 @@ fn real_options_cancel_hidden_retired_save_reopen_bounds_and_independent_field()
             reopened.get_rows().row_data(row as usize).unwrap().number,
             i32::try_from(case["reopened"].as_i64().unwrap()).unwrap()
         );
+        // Capture the system group, including this persisted timeout and the ICC field.
+        let pixels = headless::render(&windows.get(windows.count() - 1).unwrap(), 1200, 1800);
+        headless::save_png(
+            &std::path::Path::new(env!("CARGO_TARGET_TMPDIR"))
+                .join(format!("ffmpeg-timeout-options-{case_index}-native.png")),
+            &pixels,
+            1200,
+            1800,
+        )
+        .unwrap();
         reopened.invoke_cancel();
     }
     assert_eq!(

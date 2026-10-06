@@ -102,6 +102,55 @@ fn menu_snapshot_overlapping_hidden_delivery_current_notebook_and_real_query() {
     ui.show().unwrap();
     defaults(&store, builtin_keys::MY_FILES, builtin_keys::COMBINED_TAG);
     let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+    // Representative menu surfaces only: the action-result consumers are untested here.
+    // Keyboard submenu placement uses the real menu geometry published by Slint.
+    let adapter = windows.get(0).unwrap();
+    let help = ui
+        .get_menu_titles()
+        .iter()
+        .position(|title| title.label == "help")
+        .unwrap();
+    for (group, filename) in [
+        ("gui actions", "help-debug-gui-actions-menu-native.png"),
+        ("data actions", "help-debug-data-actions-menu-native.png"),
+        ("profiling", "help-debug-profiling-menu-native.png"),
+    ] {
+        ui.invoke_menu_title_pressed(help as i32, 20.0, 22.0);
+        let lines = ui.get_menu_panes().row_data(0).unwrap().lines;
+        let debug = lines.iter().position(|line| line.label == "debug").unwrap();
+        let steps = lines
+            .iter()
+            .take(debug + 1)
+            .filter(|line| line.kind != 2)
+            .count();
+        let _ = headless::render(&adapter, 1400, 900);
+        for _ in 0..steps {
+            ui.invoke_menu_key(slint::platform::Key::DownArrow.into(), false);
+        }
+        ui.invoke_menu_key(slint::platform::Key::RightArrow.into(), false);
+        let index = ui
+            .get_menu_panes()
+            .row_data(1)
+            .unwrap()
+            .lines
+            .iter()
+            .position(|line| line.label == group)
+            .unwrap();
+        let _ = headless::render(&adapter, 1400, 900);
+        for _ in 0..index {
+            ui.invoke_menu_key(slint::platform::Key::DownArrow.into(), false);
+        }
+        ui.invoke_menu_key(slint::platform::Key::RightArrow.into(), false);
+        let pixels = headless::render(&adapter, 1400, 900);
+        headless::save_png(
+            &std::path::Path::new(env!("CARGO_TARGET_TMPDIR")).join(filename),
+            &pixels,
+            1400,
+            900,
+        )
+        .unwrap();
+        ui.invoke_menu_dismissed();
+    }
     let now = clock(&bound);
     let source = bound.pages.borrow().shown().key;
     let initial = bound.pages.borrow().page_count();

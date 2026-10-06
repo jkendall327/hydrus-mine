@@ -128,6 +128,16 @@ fn actual_importing_controls_cancel_apply_reopen_and_ignore_retired_edits() {
             .unwrap();
         assert_eq!(json!(control.number), boundary["controls"][key]);
     }
+    // Capture the exact importing page after its recorded loaded-boundary assertions.
+    let pixels = headless::render(&windows.get(windows.count() - 1).unwrap(), 1100, 760);
+    headless::save_png(
+        &std::path::Path::new(env!("CARGO_TARGET_TMPDIR"))
+            .join("options_import_work_slots_loaded.png"),
+        &pixels,
+        1100,
+        760,
+    )
+    .unwrap();
     accepted.invoke_apply();
     assert_eq!(
         json!(store.read(settings::get::<ImportWorkSlots>).unwrap()),

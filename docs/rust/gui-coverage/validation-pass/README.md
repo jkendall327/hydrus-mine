@@ -7,12 +7,17 @@ Source review of all 153 parity manifests is recorded in `review-1.md` through
 The six `demotions-*.json` files record explicit credit decisions. They exclude
 previously validated IDs. Structural parents may retain a scoped assessment but
 receive no completed-leaf credit.
+The supplemental `demotions-render-evidence.json` defers seven further claims
+whose defining native behavior lacks assertions, leaving 135 candidates.
 
 The initial full hosted run is
 https://github.com/jkendall327/hydrus-mine/actions/runs/37396014073.
 No result from a different source commit establishes validation of the final
 repair batch. Native execution, platform validation and rendered review are
 required before publication. Mutation testing remains disabled.
+The initial Linux runner shut down during Clippy with exit 143; it did not save
+Clippy/test/render artifacts or its cache. The retry bounds Clippy to one build
+job to avoid concurrent generated GUI metadata competing for memory.
 
 ## Repairs under validation
 
@@ -58,6 +63,13 @@ producer ownership; their repaired regressions pass locally without disabling
 features or suppressing assertions. The initial native compiler lane also found
 42 GUI test errors; corrections are being prepared against current production
 APIs before the next full hosted source checkpoint.
+
+The first repair commit corrects all 42 reported sites, preserves imported
+shortcut defaults in capture tests, and explicitly isolates confirmed-close
+tests from the separate shutdown-maintenance prompt. Native recheck is pending.
+Existing tests now export additional representative UI images. The sibling-colour
+reference replay matches the entire checked-in JSON and recovers four Qt renders;
+their native comparison is still pending.
 
 ## Remaining boundaries
 

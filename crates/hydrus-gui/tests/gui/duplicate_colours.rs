@@ -92,7 +92,7 @@ fn options_replay_cancel_retired_apply_bounds_and_persisted_reopen() {
         fixture["initial_displayed"],
         "Apply normalises the eagerly created spin box even on another page"
     );
-    for event in fixture["options"].as_array().unwrap() {
+    for (case_index, event) in fixture["options"].as_array().unwrap().iter().enumerate() {
         let before: DuplicateColourSettings = store.read(settings::get).unwrap();
         let cancelled = open(&ui, &bound);
         edit(&cancelled, &fixture, &event["input"]);
@@ -132,6 +132,16 @@ fn options_replay_cancel_retired_apply_bounds_and_persisted_reopen() {
                 assert_eq!(json!(row.number), event["reopened"][index]);
             }
         }
+        // A tall viewport keeps the colours group visible below the scoring controls.
+        let pixels = headless::render(&windows.get(windows.count() - 1).unwrap(), 1200, 1800);
+        headless::save_png(
+            &std::path::Path::new(env!("CARGO_TARGET_TMPDIR"))
+                .join(format!("duplicate-colours-options-{case_index}-native.png")),
+            &pixels,
+            1200,
+            1800,
+        )
+        .unwrap();
         reopened.invoke_cancel();
     }
     ui.hide().unwrap();

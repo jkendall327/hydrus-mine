@@ -4300,7 +4300,11 @@ service, opened on the default tag service's and remembering a changed tab
 when the tag dialogs do. Each says "All synced!" and "N rules, all synced!"
 (sibling lookup rows plus parent ancestry rows, as the reference counts
 them) or "No siblings/parents applying to this service.", with a refresh
-button.
+button. Close and window X retire that review's callbacks; a retained older
+review cannot change the remembered service, refresh itself or close a successor.
+Only the current visible review accepts service and refresh input. A native
+owner regression in `tag_sync_review_window.rs` covers notebook/listbook modes,
+both closing paths, hidden input and live service memory with a real Store.
 Database > db maintenance's "work deferred delete jobs during idle time" and
 "during normal time" switch the deferred table delete settings likewise.
 

@@ -152,6 +152,18 @@ fn actual_menu_and_toaster_replay_every_recorded_deadline_and_durable_string() {
     }
     let reopened = Store::open(store.dir()).unwrap();
     assert_eq!(jobs(&reopened), expected);
+    for (filename, pixels) in [
+        ("debug-long-popup-initial-native.png", &initial_pixels),
+        ("debug-long-popup-final-native.png", &final_pixels),
+    ] {
+        headless::save_png(
+            &std::path::Path::new(env!("CARGO_TARGET_TMPDIR")).join(filename),
+            pixels,
+            1000,
+            700,
+        )
+        .unwrap();
+    }
     ui.hide().unwrap();
 }
 

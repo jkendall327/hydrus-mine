@@ -97,7 +97,18 @@ fn keyboard_capture_applies_through_owned_set_then_options_and_saved_main_execut
     let parent = options(&ui, &bound);
     parent.set_shortcuts_merge_numpad(false);
     parent.invoke_shortcuts_policy(false, true);
+    // The actual shortcuts page, before a child disables the two set lists.
+    let pixels = headless::render(&windows.get(windows.count() - 1).unwrap(), 1100, 960);
+    headless::save_png(
+        &std::path::Path::new(env!("CARGO_TARGET_TMPDIR")).join("options_shortcut_sets.png"),
+        &pixels,
+        1100,
+        960,
+    )
+    .unwrap();
     let (sets, command) = add(&parent, "main_gui");
+    let set_native = windows.get(windows.count() - 2).unwrap();
+    let command_native = windows.get(windows.count() - 1).unwrap();
     let pixels = headless::render(&windows.get(windows.count() - 1).unwrap(), 700, 330);
     assert!(!pixels.is_empty());
     // Dispatch real widget keys, rather than calling its capture callback directly.
@@ -119,6 +130,15 @@ fn keyboard_capture_applies_through_owned_set_then_options_and_saved_main_execut
             "ctrl+shift+q"
         }
     );
+    // Save the captured key text already verified above; keep the original key replay intact.
+    let pixels = headless::render_snapshot(&command_native, 700, 420);
+    headless::save_png(
+        &std::path::Path::new(env!("CARGO_TARGET_TMPDIR")).join("shortcut_capture_keyboard.png"),
+        &pixels,
+        700,
+        420,
+    )
+    .unwrap();
     parent.invoke_apply();
     sets.invoke_apply();
     assert_eq!(
@@ -128,6 +148,16 @@ fn keyboard_capture_applies_through_owned_set_then_options_and_saved_main_execut
     );
     command.invoke_apply();
     assert_eq!(sets.get_rows().row_count(), original_count + 1);
+    // The tested built-in editor after accepting the captured binding into its draft.
+    let pixels = headless::render(&set_native, 800, 600);
+    headless::save_png(
+        &std::path::Path::new(env!("CARGO_TARGET_TMPDIR"))
+            .join("shortcut_set_builtin_main_gui.png"),
+        &pixels,
+        800,
+        600,
+    )
+    .unwrap();
     parent.invoke_apply();
     assert!(bound.options.borrow().is_some());
     sets.invoke_apply();

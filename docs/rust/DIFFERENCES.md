@@ -878,8 +878,8 @@ deleted sidecars by `crates/hydrus-download/tests/local_import.rs`.
   client's options.
 - **Tags > sync**: hydrus-rs applies siblings and parents as it writes, so
   "sync now" always finds nothing to do, and its idle/normal switches are
-  kept without a consumer. "review current sibling/parent sync" isn't
-  there yet.
+  kept without a background-work consumer. The review reports each service's
+  current sync state but has no pending-work scheduler to control.
 - **Database > db maintenance**'s deferred delete switches are kept without
   a consumer: hydrus-rs drops tables as it writes.
 - **The duplicates page's preparation tab**'s "regenerate search tree"
@@ -3455,6 +3455,9 @@ manual save-last-session action and wider debug GUI/style families remain unclai
 - hydrus-rs applies siblings and parents as it writes, so there is never
   work to show: every service reads as synced and "work hard now!" never
   appears. Repository "waiting on" lines can't arise without repositories.
+- Retired and hidden review callbacks cannot change service memory or refresh;
+  an old Close/X cannot dismiss its successor. This ownership repair does not
+  add the reference's background sync work or progress controls.
 
 ## Auto-resolution rule export and import
 

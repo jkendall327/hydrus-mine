@@ -108,6 +108,9 @@ jobs:
           retention-days: 3
       - name: clippy
         if: ${{ !cancelled() }}
+        env:
+          # Keep generated GUI library and test metadata from competing for memory.
+          CARGO_BUILD_JOBS: 1
         run: |
           set -o pipefail
           cargo clippy --workspace --all-targets --locked --keep-going 2>&1 | tee /tmp/hydrus-clippy.log
@@ -190,6 +193,8 @@ jobs:
         with:
           # their cold builds are long: keep what a failed run built
           cache-on-failure: true
+          # Retain unchanged GUI libraries across integration-test-only repairs.
+          cache-workspace-crates: true
       - name: install ffmpeg (Windows)
         if: runner.os == 'Windows'
         run: choco install ffmpeg -y --no-progress

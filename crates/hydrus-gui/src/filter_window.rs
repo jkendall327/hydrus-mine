@@ -951,7 +951,11 @@ mod colour_tests {
             .set_size(slint::LogicalSize::new(800.0, 600.0));
         let adapter = windows.get(0).unwrap();
         let mut showing_a = true;
-        for case in fixture["canvas"].as_array().unwrap() {
+        // Library tests lack Cargo's integration-test CARGO_TARGET_TMPDIR.
+        // Use the same workspace target/tmp directory uploaded by the native-render CI step.
+        let render_dir = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../../target/tmp");
+        std::fs::create_dir_all(&render_dir).unwrap();
+        for (case_index, case) in fixture["canvas"].as_array().unwrap().iter().enumerate() {
             let preferences = DuplicateColourSettings {
                 intensity_a: serde_json::from_value(case["a"].clone()).unwrap(),
                 intensity_b: serde_json::from_value(case["b"].clone()).unwrap(),
@@ -1009,6 +1013,14 @@ mod colour_tests {
                 &rgb,
                 "backdrop is clipped to the image"
             );
+            // Export exactly the native buffer checked against Qt's background samples.
+            crate::headless::save_png(
+                &render_dir.join(format!("duplicate-colours-painter-{case_index}-native.png")),
+                &pixels,
+                800,
+                600,
+            )
+            .unwrap();
         }
         window.invoke_close_requested();
         assert!(slot.borrow().is_none());

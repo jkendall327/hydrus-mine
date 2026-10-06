@@ -23,7 +23,8 @@
     "selected_importer": "2 passed",
     "main_menu": "13 passed",
     "popup_producer": "1 passed",
-    "strict_repair_clippy": "passed: hydrus-store, hydrus-import, hydrus-download, hydrus-gui-model all targets, -D warnings"
+    "strict_repair_clippy": "passed: hydrus-store, hydrus-import, hydrus-download, hydrus-gui-model all targets, -D warnings",
+    "sibling_colours_reference": "exact JSON equality; four Qt PNGs recovered"
   },
   "integrated_review_batches": [
     1,
@@ -34,7 +35,7 @@
     6
   ],
   "source_reviews_complete": true,
-  "remaining_proposed_additional_completions": 142,
+  "remaining_proposed_additional_completions": 135,
   "initial_ci_model_lane": "failed: 4 stale menu assertions, retired popup owner assertion, shortcut default-set assertion",
   "native_source_census": {
     "exported_windows": 121,
@@ -42,5 +43,7 @@
     "curated_hierarchy_proposed": true,
     "rendered_review": "pending"
   },
-  "initial_ci_compiler_lane": "failed: 42 GUI integration-test diagnostics; all reported sites repaired, hosted recheck pending"
+  "initial_ci_compiler_lane": "failed: 42 GUI integration-test diagnostics; all reported sites repaired, hosted recheck pending",
+  "supplemental_render_demotions": 7,
+  "initial_ci_check_interruption": "Runner shutdown during Clippy at 2026-10-06T01:39:59Z, exit143; Clippy upload/test/render/cache steps skipped. Next full lane bounds Clippy jobs to1."
 }
