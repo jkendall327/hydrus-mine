@@ -118,6 +118,779 @@
    ]
   }
  ],
+ "default_contexts": {
+  "qt": {
+   "mpv_available": false,
+   "platform_macos": false,
+   "views": [
+    [
+     35,
+     [
+      0,
+      false,
+      false,
+      4,
+      false,
+      false,
+      [
+       2,
+       2,
+       2,
+       2,
+       false,
+       4,
+       2
+      ]
+     ]
+    ],
+    [
+     40,
+     [
+      9,
+      false,
+      false,
+      9,
+      false,
+      false,
+      [
+       0,
+       0,
+       0,
+       0,
+       false,
+       1,
+       1
+      ]
+     ]
+    ],
+    [
+     41,
+     [
+      0,
+      false,
+      false,
+      0,
+      false,
+      false,
+      [
+       2,
+       2,
+       2,
+       2,
+       false,
+       4,
+       2
+      ]
+     ]
+    ],
+    [
+     42,
+     [
+      9,
+      false,
+      false,
+      9,
+      false,
+      false,
+      [
+       0,
+       2,
+       2,
+       2,
+       true,
+       4,
+       2
+      ]
+     ]
+    ],
+    [
+     43,
+     [
+      4,
+      false,
+      false,
+      4,
+      false,
+      false,
+      [
+       0,
+       0,
+       0,
+       0,
+       false,
+       1,
+       1
+      ]
+     ]
+    ],
+    [
+     44,
+     [
+      9,
+      false,
+      false,
+      9,
+      false,
+      false,
+      [
+       2,
+       2,
+       2,
+       2,
+       false,
+       4,
+       2
+      ]
+     ]
+    ],
+    [
+     55,
+     [
+      0,
+      false,
+      false,
+      4,
+      false,
+      false,
+      [
+       2,
+       2,
+       2,
+       2,
+       false,
+       4,
+       2
+      ]
+     ]
+    ],
+    [
+     59,
+     [
+      4,
+      false,
+      false,
+      4,
+      false,
+      false,
+      [
+       0,
+       0,
+       0,
+       0,
+       false,
+       1,
+       1
+      ]
+     ]
+    ],
+    [
+     60,
+     [
+      4,
+      false,
+      false,
+      4,
+      false,
+      false,
+      [
+       0,
+       0,
+       0,
+       0,
+       false,
+       1,
+       1
+      ]
+     ]
+    ],
+    [
+     74,
+     [
+      0,
+      false,
+      false,
+      0,
+      false,
+      false,
+      [
+       2,
+       2,
+       2,
+       2,
+       false,
+       4,
+       2
+      ]
+     ]
+    ],
+    [
+     83,
+     [
+      0,
+      false,
+      false,
+      0,
+      false,
+      false,
+      [
+       2,
+       2,
+       2,
+       2,
+       false,
+       4,
+       2
+      ]
+     ]
+    ],
+    [
+     88,
+     [
+      0,
+      false,
+      false,
+      0,
+      false,
+      false,
+      [
+       2,
+       2,
+       2,
+       2,
+       false,
+       4,
+       2
+      ]
+     ]
+    ],
+    [
+     89,
+     [
+      0,
+      false,
+      false,
+      4,
+      false,
+      false,
+      [
+       2,
+       2,
+       2,
+       2,
+       false,
+       4,
+       2
+      ]
+     ]
+    ]
+   ],
+   "rows": [
+    {
+     "mime": 44,
+     "display": [
+      "animation",
+      "show using QtMediaPlayer",
+      "show using QtMediaPlayer",
+      "(2, 2, 2, 2, False, 4, 2)"
+     ]
+    },
+    {
+     "mime": 88,
+     "display": [
+      "animation: animated jxl",
+      "show with native hydrus viewer",
+      "show with native hydrus viewer",
+      "(2, 2, 2, 2, False, 4, 2)"
+     ]
+    },
+    {
+     "mime": 83,
+     "display": [
+      "animation: animated webp",
+      "show with native hydrus viewer",
+      "show with native hydrus viewer",
+      "(2, 2, 2, 2, False, 4, 2)"
+     ]
+    },
+    {
+     "mime": 74,
+     "display": [
+      "animation: ugoira",
+      "show with native hydrus viewer",
+      "show with native hydrus viewer",
+      "(2, 2, 2, 2, False, 4, 2)"
+     ]
+    },
+    {
+     "mime": 43,
+     "display": [
+      "application",
+      "show an 'open externally' button",
+      "show an 'open externally' button",
+      ""
+     ]
+    },
+    {
+     "mime": 59,
+     "display": [
+      "archive",
+      "show an 'open externally' button",
+      "show an 'open externally' button",
+      ""
+     ]
+    },
+    {
+     "mime": 40,
+     "display": [
+      "audio",
+      "show using QtMediaPlayer",
+      "show using QtMediaPlayer",
+      "(0, 0, 0, 0, False, 1, 1)"
+     ]
+    },
+    {
+     "mime": 41,
+     "display": [
+      "image",
+      "show with native hydrus viewer",
+      "show with native hydrus viewer",
+      "(2, 2, 2, 2, False, 4, 2)"
+     ]
+    },
+    {
+     "mime": 60,
+     "display": [
+      "image project file",
+      "show an 'open externally' button",
+      "show an 'open externally' button",
+      ""
+     ]
+    },
+    {
+     "mime": 55,
+     "display": [
+      "image project file: krita",
+      "show with native hydrus viewer",
+      "show an 'open externally' button",
+      "(2, 2, 2, 2, False, 4, 2)"
+     ]
+    },
+    {
+     "mime": 89,
+     "display": [
+      "image project file: ora",
+      "show with native hydrus viewer",
+      "show an 'open externally' button",
+      "(2, 2, 2, 2, False, 4, 2)"
+     ]
+    },
+    {
+     "mime": 35,
+     "display": [
+      "image project file: psd",
+      "show with native hydrus viewer",
+      "show an 'open externally' button",
+      "(2, 2, 2, 2, False, 4, 2)"
+     ]
+    },
+    {
+     "mime": 42,
+     "display": [
+      "video",
+      "show using QtMediaPlayer",
+      "show using QtMediaPlayer",
+      "(0, 2, 2, 2, True, 4, 2)"
+     ]
+    }
+   ]
+  },
+  "mpv": {
+   "mpv_available": true,
+   "platform_macos": false,
+   "views": [
+    [
+     35,
+     [
+      0,
+      false,
+      false,
+      4,
+      false,
+      false,
+      [
+       2,
+       2,
+       2,
+       2,
+       false,
+       4,
+       2
+      ]
+     ]
+    ],
+    [
+     40,
+     [
+      7,
+      false,
+      false,
+      7,
+      false,
+      false,
+      [
+       0,
+       0,
+       0,
+       0,
+       false,
+       1,
+       1
+      ]
+     ]
+    ],
+    [
+     41,
+     [
+      0,
+      false,
+      false,
+      0,
+      false,
+      false,
+      [
+       2,
+       2,
+       2,
+       2,
+       false,
+       4,
+       2
+      ]
+     ]
+    ],
+    [
+     42,
+     [
+      7,
+      false,
+      false,
+      7,
+      false,
+      false,
+      [
+       2,
+       2,
+       2,
+       2,
+       false,
+       4,
+       2
+      ]
+     ]
+    ],
+    [
+     43,
+     [
+      4,
+      false,
+      false,
+      4,
+      false,
+      false,
+      [
+       0,
+       0,
+       0,
+       0,
+       false,
+       1,
+       1
+      ]
+     ]
+    ],
+    [
+     44,
+     [
+      7,
+      false,
+      false,
+      7,
+      false,
+      false,
+      [
+       2,
+       2,
+       2,
+       2,
+       false,
+       4,
+       2
+      ]
+     ]
+    ],
+    [
+     55,
+     [
+      0,
+      false,
+      false,
+      4,
+      false,
+      false,
+      [
+       2,
+       2,
+       2,
+       2,
+       false,
+       4,
+       2
+      ]
+     ]
+    ],
+    [
+     59,
+     [
+      4,
+      false,
+      false,
+      4,
+      false,
+      false,
+      [
+       0,
+       0,
+       0,
+       0,
+       false,
+       1,
+       1
+      ]
+     ]
+    ],
+    [
+     60,
+     [
+      4,
+      false,
+      false,
+      4,
+      false,
+      false,
+      [
+       0,
+       0,
+       0,
+       0,
+       false,
+       1,
+       1
+      ]
+     ]
+    ],
+    [
+     74,
+     [
+      0,
+      false,
+      false,
+      0,
+      false,
+      false,
+      [
+       2,
+       2,
+       2,
+       2,
+       false,
+       4,
+       2
+      ]
+     ]
+    ],
+    [
+     83,
+     [
+      0,
+      false,
+      false,
+      0,
+      false,
+      false,
+      [
+       2,
+       2,
+       2,
+       2,
+       false,
+       4,
+       2
+      ]
+     ]
+    ],
+    [
+     88,
+     [
+      0,
+      false,
+      false,
+      0,
+      false,
+      false,
+      [
+       2,
+       2,
+       2,
+       2,
+       false,
+       4,
+       2
+      ]
+     ]
+    ],
+    [
+     89,
+     [
+      0,
+      false,
+      false,
+      4,
+      false,
+      false,
+      [
+       2,
+       2,
+       2,
+       2,
+       false,
+       4,
+       2
+      ]
+     ]
+    ]
+   ],
+   "rows": [
+    {
+     "mime": 44,
+     "display": [
+      "animation",
+      "show using mpv",
+      "show using mpv",
+      "(2, 2, 2, 2, False, 4, 2)"
+     ]
+    },
+    {
+     "mime": 88,
+     "display": [
+      "animation: animated jxl",
+      "show with native hydrus viewer",
+      "show with native hydrus viewer",
+      "(2, 2, 2, 2, False, 4, 2)"
+     ]
+    },
+    {
+     "mime": 83,
+     "display": [
+      "animation: animated webp",
+      "show with native hydrus viewer",
+      "show with native hydrus viewer",
+      "(2, 2, 2, 2, False, 4, 2)"
+     ]
+    },
+    {
+     "mime": 74,
+     "display": [
+      "animation: ugoira",
+      "show with native hydrus viewer",
+      "show with native hydrus viewer",
+      "(2, 2, 2, 2, False, 4, 2)"
+     ]
+    },
+    {
+     "mime": 43,
+     "display": [
+      "application",
+      "show an 'open externally' button",
+      "show an 'open externally' button",
+      ""
+     ]
+    },
+    {
+     "mime": 59,
+     "display": [
+      "archive",
+      "show an 'open externally' button",
+      "show an 'open externally' button",
+      ""
+     ]
+    },
+    {
+     "mime": 40,
+     "display": [
+      "audio",
+      "show using mpv",
+      "show using mpv",
+      "(0, 0, 0, 0, False, 1, 1)"
+     ]
+    },
+    {
+     "mime": 41,
+     "display": [
+      "image",
+      "show with native hydrus viewer",
+      "show with native hydrus viewer",
+      "(2, 2, 2, 2, False, 4, 2)"
+     ]
+    },
+    {
+     "mime": 60,
+     "display": [
+      "image project file",
+      "show an 'open externally' button",
+      "show an 'open externally' button",
+      ""
+     ]
+    },
+    {
+     "mime": 55,
+     "display": [
+      "image project file: krita",
+      "show with native hydrus viewer",
+      "show an 'open externally' button",
+      "(2, 2, 2, 2, False, 4, 2)"
+     ]
+    },
+    {
+     "mime": 89,
+     "display": [
+      "image project file: ora",
+      "show with native hydrus viewer",
+      "show an 'open externally' button",
+      "(2, 2, 2, 2, False, 4, 2)"
+     ]
+    },
+    {
+     "mime": 35,
+     "display": [
+      "image project file: psd",
+      "show with native hydrus viewer",
+      "show an 'open externally' button",
+      "(2, 2, 2, 2, False, 4, 2)"
+     ]
+    },
+    {
+     "mime": 42,
+     "display": [
+      "video",
+      "show using mpv",
+      "show using mpv",
+      "(2, 2, 2, 2, False, 4, 2)"
+     ]
+    }
+   ]
+  }
+ },
+ "macos_mpv_available_matches_qt": true,
  "addable": [
   [
    "animation: animated gif",

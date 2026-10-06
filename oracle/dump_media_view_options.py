@@ -3,8 +3,10 @@
 new client's options (pretty filetype, media and preview show actions and zoom
 info, in the list's sort order), which filetypes "add" offers and which rows
 "delete" may remove, and for every filetype the edit panel's intro text and
-media/preview show-action choices (mpv taken as available). Pure reference
+media/preview show-action choices. Defaults are recorded explicitly with and
+without mpv on a non-macOS platform; the macOS fallback is checked too. Pure reference
 functions and constants; the panel's own methods run on a stand-in object."""
+import argparse
 import json
 import os
 import sys
@@ -15,15 +17,33 @@ sys.path.insert(0, os.path.dirname(HERE))
 from hydrus.core import HydrusConstants as HC
 from hydrus.client import ClientConstants as CC
 from hydrus.client import ClientOptions
+from hydrus.client.gui.canvas import ClientGUIMPV
 from hydrus.client.gui.panels.options import MediaPlaybackPanel as P
 
 panel = P.MediaPlaybackPanel.__new__(P.MediaPlaybackPanel)
-options = ClientOptions.ClientOptions()
-rows = []
-for mime, view in options.GetMediaViewOptions().items():
-    data = (mime, *view[:6], view[6])
-    rows.append(dict(mime=mime, display=list(P.MediaPlaybackPanel._GetListCtrlDisplayTuple(panel, data))))
-rows.sort(key=lambda r: r["display"])
+def defaults(mpv_available, platform_macos):
+    original = ClientGUIMPV.MPV_IS_AVAILABLE, HC.PLATFORM_MACOS
+    try:
+        ClientGUIMPV.MPV_IS_AVAILABLE = mpv_available
+        HC.PLATFORM_MACOS = platform_macos
+        views = ClientOptions.ClientOptions().GetMediaViewOptions()
+    finally:
+        ClientGUIMPV.MPV_IS_AVAILABLE, HC.PLATFORM_MACOS = original
+    rows = []
+    for mime, view in views.items():
+        data = (mime, *view[:6], view[6])
+        rows.append(dict(mime=mime, display=list(P.MediaPlaybackPanel._GetListCtrlDisplayTuple(panel, data))))
+    rows.sort(key=lambda row: row["display"])
+    return dict(mpv_available=mpv_available, platform_macos=platform_macos,
+                views=[[mime, list(view)] for mime, view in sorted(views.items())], rows=rows)
+
+
+qt_defaults = defaults(False, False)
+mpv_defaults = defaults(True, False)
+macos_defaults = defaults(True, True)
+assert macos_defaults["rows"] == qt_defaults["rows"]
+assert macos_defaults["views"] == qt_defaults["views"]
+rows = qt_defaults["rows"]
 set_mimes = {r["mime"] for r in rows}
 addable = sorted((P.MediaPlaybackPanel._GetPrettyMime(panel, m), m) for m in set(HC.SEARCHABLE_MIMES) - set_mimes)
 
@@ -52,6 +72,8 @@ def choices(mime):
 
 out = dict(
     rows=rows,
+    default_contexts={"qt": qt_defaults, "mpv": mpv_defaults},
+    macos_mpv_available_matches_qt=True,
     addable=[[pretty, mime] for pretty, mime in addable],
     deletable=sorted(HC.SEARCHABLE_MIMES),
     actions={str(k): v for k, v in CC.media_viewer_action_string_lookup.items()},
@@ -59,7 +81,9 @@ out = dict(
     zooms={str(k): v for k, v in CC.zoom_string_lookup.items()},
     editors=[choices(mime) for mime in sorted(CC.media_viewer_capabilities)],
 )
-path = os.path.join(HERE, "fixtures/media_view_options.json")
+parser = argparse.ArgumentParser(description=__doc__)
+parser.add_argument("--output", default=os.path.join(HERE, "fixtures/media_view_options.json"))
+path = parser.parse_args().output
 with open(path, "w") as stream:
     json.dump(out, stream, indent=1)
     stream.write("\n")

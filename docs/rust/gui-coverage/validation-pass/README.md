@@ -169,3 +169,14 @@ current page; they do not prove an actual switch. The observed 568ms FinishViewi
 call is below Qt's 5000ms minimum and is not a persisted view. Raw timestamps and
 these observations remain intact in the fixture; no fixed native duration is
 inferred from them. The separate existing hidden-page tests cover real switching.
+
+The next full run, `37417762189` at `04a82acc6`, exposed a hybrid model
+expectation: MPV display labels had been substituted into the older Qt player
+recording without changing Qt's different video zoom defaults. The recorder now
+captures both actual reference default branches explicitly and checks the macOS
+fallback. All original fixture fields remain unchanged. Model replay compares
+the complete MPV defaults and both full row lists exactly, without label
+substitution. Three ICC geometry lint expectations also move from macro
+invocations (where Rust ignores them) to single-assertion blocks; exact float
+equality and strict warnings remain. These are validation repairs, not new
+feature credit; their full native/cross-platform rerun is still required.
