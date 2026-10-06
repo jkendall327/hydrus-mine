@@ -327,11 +327,7 @@ mod deadline_tests {
         atomic::{AtomicU64, Ordering},
     };
 
-    fn quoted(path: &Path) -> String {
-        format!("'{}'", path.to_string_lossy().replace('\'', "'\\''"))
-    }
     fn transport(dir: &Path) -> (Ffmpeg, PathBuf, PathBuf) {
-        use std::os::unix::fs::PermissionsExt as _;
         let fifo = dir.join("release");
         assert!(
             Command::new("mkfifo")
@@ -342,17 +338,32 @@ mod deadline_tests {
         );
         let marker = dir.join("pid");
         let exe = dir.join("ffmpeg");
-        std::fs::write(&exe, format!("#!/bin/sh\nprintf '%s' \"$$\" > {}\nread -r reply < {}\nif [ \"$1\" = '-version' ]; then printf 'ffmpeg version authored Copyright local\\n'; else printf 'ffmpeg version authored\\nInput #0, authored, from local:\\n' >&2; fi\n",quoted(&marker),quoted(&fifo))).unwrap();
-        std::fs::set_permissions(&exe, std::fs::Permissions::from_mode(0o755)).unwrap();
+        // Execute a committed, read-only inode, rather than a script another
+        // concurrently spawning process could inherit while it is being written.
+        let script =
+            Path::new(env!("CARGO_MANIFEST_DIR")).join("tests/fixtures/ffmpeg-deadline.sh");
+        std::os::unix::fs::symlink(script, &exe).unwrap();
         (Ffmpeg::with_executable(exe), marker, fifo)
     }
-    fn started(marker: &Path) -> String {
+
+    fn started(marker: &Path, result: Option<&mpsc::Receiver<Result<Option<String>>>>) -> String {
         let deadline = Instant::now() + Duration::from_secs(3);
         loop {
             if let Ok(pid) = std::fs::read_to_string(marker)
                 && !pid.is_empty()
             {
                 return pid;
+            }
+            if let Some(result) = result {
+                match result.try_recv() {
+                    Ok(completed) => {
+                        panic!("real subprocess finished before publishing its PID: {completed:?}");
+                    }
+                    Err(mpsc::TryRecvError::Disconnected) => {
+                        panic!("real subprocess worker disconnected before publishing its PID");
+                    }
+                    Err(mpsc::TryRecvError::Empty) => {}
+                }
             }
             assert!(
                 Instant::now() < deadline,
@@ -373,7 +384,7 @@ mod deadline_tests {
             error.to_string(),
             "damaged or unusual file: ffmpeg could not read file info quick enough!"
         );
-        let pid = started(&marker);
+        let pid = started(&marker, None);
         let alive = Command::new("kill")
             .args(["-0", &pid])
             .stderr(Stdio::null())
@@ -396,7 +407,7 @@ mod deadline_tests {
         let current = ffmpeg.clone();
         let (done, result) = mpsc::channel();
         let worker = thread::spawn(move || done.send(current.version()).unwrap());
-        started(&marker);
+        started(&marker, Some(&result));
         policy.store(20, Ordering::SeqCst);
         assert!(
             matches!(

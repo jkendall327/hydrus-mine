@@ -21,6 +21,13 @@ whose defining native behavior lacks assertions, initially leaving 135 candidate
 Forty are now published; 22 more are prepared for final revalidation and 73
 remain unresolved. No pending candidate receives completion credit.
 
+The next 22-candidate validation at publication source `4b7455ce1` passed all
+696 GUI tests but failed one media subprocess test before its PID marker was
+observed. The [failed-run evidence](failed-runs/4b7455ce1/README.md) preserves
+the exact outcome. Test transport hardening retains all timing values and
+assertions and leaves production behavior unchanged; the 22 remain pending
+until repaired-source full Linux validation and fresh review pass.
+
 The initial full hosted run is
 https://github.com/jkendall327/hydrus-mine/actions/runs/37396014073.
 No result from a different source commit establishes validation of the final
