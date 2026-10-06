@@ -248,3 +248,11 @@ need Refresh at the final same-owner ICC selection and a genuinely scrollable
 Options viewport for the physical wheel-bubbling assertion. Their follow-up
 preserves the original consumer, pixel, ownership and scroll assertions.
 No new sign-offs are claimed before the next full Linux run and render review.
+
+Run `37443398472` at `115d5532a` passed strict Clippy and parity models but
+failed two of 697 GUI tests. Its strict geometry check exposed a 26px row
+override around a 30px-minimum spinbox; numeric rows now honor intrinsic height.
+The favourites replay bypassed actual ComboBox selection; it now uses measured
+pointer and popup keyboard input and preserves its two-second displayed-label
+assertion. Fresh full Linux validation and rendered review remain required.
+The signed-off total remains 301; these repairs add no completion credit.

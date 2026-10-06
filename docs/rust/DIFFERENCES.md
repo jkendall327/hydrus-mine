@@ -3642,7 +3642,9 @@ leaves banked across three checkpoints, with the latest
 other repaired behavior retains its scoped assessment.
 
 Speed and Memory helper overlap and the favourites service-label capture are
-under a bounded repair. The authored geometry and settled-label regressions
+under a bounded repair after run `37443398472` exposed a numeric-row height
+override and callback-only dropdown setup. Intrinsic numeric-row sizing and
+actual dropdown input address those causes. The geometry and label regressions
 preserve existing assertions; they have not yet passed full Linux validation or
 fresh rendered review. These candidates receive no new completion credit, and
 the separate thumbnail Debug clear-action evidence gap remains deferred.

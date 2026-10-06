@@ -353,7 +353,7 @@ export component OptionsWindow inherits Window {
                           if row.kind == 37: Text { text: row.label; wrap: word-wrap; color: Theme.text; }
                           HorizontalLayout {
                             spacing: 8px;
-                            min-height: 26px;
+                            min-height: row.kind == 2 ? max(26px, self.preferred-height) : 26px;
                             if row.kind == 0: HorizontalLayout {
                                 horizontal-stretch: 1;
                                 heading := Text {

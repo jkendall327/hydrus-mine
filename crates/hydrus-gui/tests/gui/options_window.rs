@@ -87,7 +87,47 @@ fn most_used_child_stages_each_service_cancels_descendants_and_persists_options(
         .iter()
         .position(|s| s == "my tags")
         .unwrap();
-    edit.invoke_service_chosen(i32::try_from(mine).unwrap());
+    let editor_window = windows.get(image_index).unwrap();
+    // A callback-only invocation edits the draft without selecting the standard
+    // ComboBox. Draw its initial state, then use the actual popup input route.
+    headless::render(&editor_window, 520, 440);
+    assert_eq!(edit.get_service(), 0);
+    assert_eq!(edit.get_displayed_service_index(), 0);
+    assert_eq!(
+        edit.get_displayed_service(),
+        edit.get_services().row_data(0).unwrap()
+    );
+    let frame = edit.get_service_choice_frame();
+    assert!(frame.w > 0.0 && frame.h > 0.0);
+    let position = slint::LogicalPosition::new(frame.x + frame.w / 2.0, frame.y + frame.h / 2.0);
+    assert!(position.x > 0.0 && position.x < 520.0);
+    assert!(position.y > 0.0 && position.y < 440.0);
+    editor_window.dispatch_event(slint::platform::WindowEvent::PointerMoved { position });
+    editor_window.dispatch_event(slint::platform::WindowEvent::PointerPressed {
+        position,
+        button: slint::platform::PointerEventButton::Left,
+    });
+    editor_window.dispatch_event(slint::platform::WindowEvent::PointerReleased {
+        position,
+        button: slint::platform::PointerEventButton::Left,
+    });
+    headless::render(&editor_window, 520, 440);
+    for _ in 0..mine {
+        let text: slint::SharedString = slint::platform::Key::DownArrow.into();
+        editor_window
+            .dispatch_event(slint::platform::WindowEvent::KeyPressed { text: text.clone() });
+        editor_window.dispatch_event(slint::platform::WindowEvent::KeyReleased { text });
+        headless::render(&editor_window, 520, 440);
+    }
+    let text: slint::SharedString = slint::platform::Key::Return.into();
+    editor_window.dispatch_event(slint::platform::WindowEvent::KeyPressed { text: text.clone() });
+    editor_window.dispatch_event(slint::platform::WindowEvent::KeyReleased { text });
+    headless::render(&editor_window, 520, 440);
+    assert_eq!(
+        edit.get_displayed_service_index(),
+        i32::try_from(mine).unwrap()
+    );
+    assert_eq!(edit.get_service(), i32::try_from(mine).unwrap());
     edit.invoke_edit_tags();
     let child = slots.tags.borrow().as_ref().unwrap().clone_strong();
     for tag in f["edited"]["tags"].as_array().unwrap() {
@@ -110,7 +150,6 @@ fn most_used_child_stages_each_service_cancels_descendants_and_persists_options(
     let selected_label = edit.get_services().row_data(mine).unwrap();
     assert_eq!(selected_label, "my tags");
     assert_eq!(edit.get_service(), selected_service);
-    let editor_window = windows.get(image_index).unwrap();
     // ComboBox updates current-value from current-index through a deferred
     // change handler. Observe its displayed value after real draws, without
     // setting the caption or changing the selected service to make it match.
@@ -130,6 +169,7 @@ fn most_used_child_stages_each_service_cancels_descendants_and_persists_options(
     let pixels = headless::render(&editor_window, 520, 440);
     assert_eq!(edit.get_service(), selected_service);
     assert_eq!(edit.get_displayed_service(), selected_label);
+    assert_eq!(edit.get_displayed_service_index(), selected_service);
     assert_eq!(
         serde_json::json!(
             edit.get_tags()

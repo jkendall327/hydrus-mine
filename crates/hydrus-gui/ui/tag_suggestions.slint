@@ -1,3 +1,4 @@
+import { MenuChoiceFrame } from "menu_choice_wheel.slint";
 import { Button, ComboBox, VerticalBox, HorizontalBox, ListView } from "std-widgets.slint";
 import { Theme } from "theme.slint";
 import { TableRow, TableColumn, ListTable } from "list_table.slint";
@@ -56,6 +57,8 @@ export component MostUsedTagsWindow inherits Window {
     in property <[string]> services;
     in property <int> service;
     out property <string> displayed-service: service-choice.current-value;
+    out property <int> displayed-service-index: service-choice.current-index;
+    out property <MenuChoiceFrame> service-choice-frame: {x:service-choice.absolute-position.x,y:service-choice.absolute-position.y,w:service-choice.width,h:service-choice.height};
     in property <[string]> tags;
     in property <bool> child-open;
     callback service-chosen(int);

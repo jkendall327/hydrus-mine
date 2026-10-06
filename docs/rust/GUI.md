@@ -4529,7 +4529,8 @@ other repaired behavior retains its scoped assessment.
 The next bounded repair gives the two Speed and Memory cache-percentage helpers
 their own wrapped rows and places the capacity warning after all three prefetch
 counts. A native regression measures separation at the preferred opening size
-and existing capture sizes. Favourites capture now waits for the dropdown's
-actual displayed service and asserts that settling preserves the accepted draft.
+and existing capture sizes; numeric rows now reserve their controls' intrinsic
+height. Favourites replay selects through the actual dropdown popup and checks
+both its displayed service and the accepted draft within the existing deadline.
 Full Linux execution and fresh rendered review of these changes remain pending;
 the signed-off ledger stays at 301.
