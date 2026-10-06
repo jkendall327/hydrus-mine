@@ -50,6 +50,71 @@ fn clear(ui: &MainWindow) {
     hover(ui, "memory actions");
     choose(ui, "clear thumbnail cache");
 }
+// Navigate the production menu key route after drawing each parent. Its
+// placement observer supplies the real submenu anchors, unlike dummy hover
+// coordinates that are sufficient to dispatch an action but not to picture it.
+fn highlight_menu_line(ui: &MainWindow, label: &str) {
+    let (pane, target) = line(ui, label);
+    let pane = usize::try_from(pane).unwrap();
+    let count = ui
+        .get_menu_panes()
+        .row_data(pane)
+        .unwrap()
+        .lines
+        .row_count();
+    for _ in 0..count {
+        if ui.get_menu_panes().row_data(pane).unwrap().current == target {
+            return;
+        }
+        assert!(ui.invoke_menu_key(slint::platform::Key::DownArrow.into(), false));
+    }
+    assert_eq!(ui.get_menu_panes().row_data(pane).unwrap().current, target);
+}
+fn capture_clear_menu(ui: &MainWindow, windows: &headless::Windows) {
+    let native = windows.get(0).unwrap();
+    for _ in 0..3 {
+        headless::render(&native, 1100, 850);
+    }
+    assert!(ui.invoke_menu_key("h".into(), true));
+    assert_eq!(ui.get_menu_panes().row_count(), 1);
+    for label in ["debug", "memory actions"] {
+        for _ in 0..3 {
+            headless::render(&native, 1100, 850);
+        }
+        highlight_menu_line(ui, label);
+        let (pane, index) = line(ui, label);
+        let entry = ui
+            .get_menu_panes()
+            .row_data(usize::try_from(pane).unwrap())
+            .unwrap()
+            .lines
+            .row_data(usize::try_from(index).unwrap())
+            .unwrap();
+        assert_eq!(entry.kind, 3, "{label} is the real submenu");
+        assert!(entry.usable);
+        assert!(ui.invoke_menu_key(slint::platform::Key::RightArrow.into(), false));
+    }
+    assert_eq!(ui.get_menu_panes().row_count(), 3);
+    highlight_menu_line(ui, "clear thumbnail cache");
+    let (pane, index) = line(ui, "clear thumbnail cache");
+    let entry = ui
+        .get_menu_panes()
+        .row_data(usize::try_from(pane).unwrap())
+        .unwrap()
+        .lines
+        .row_data(usize::try_from(index).unwrap())
+        .unwrap();
+    assert_eq!(entry.kind, 0);
+    assert!(entry.usable);
+    let pixels = headless::render(&native, 1100, 850);
+    headless::save_png(
+        &std::path::Path::new(env!("CARGO_TARGET_TMPDIR")).join("thumbnail-cache-clear-menu.png"),
+        &pixels,
+        1100,
+        850,
+    )
+    .unwrap();
+}
 fn options(ui: &MainWindow, bound: &Bound) -> OptionsWindow {
     menu(ui, "file");
     choose(ui, "options…");
@@ -194,12 +259,32 @@ fn staged_exact_byte_units_timeout_policy_clear_reopen_and_incarnation_retiremen
     assert!(bound.rows.cached() > 0);
     // Clear is the real nested menu action, without a question or a settings write.
     let before = saved(&store);
-    clear(&ui);
+    assert_eq!(fixture["debug"]["label"], "clear thumbnail cache");
+    capture_clear_menu(&ui, &windows);
+    choose(&ui, "clear thumbnail cache");
+    assert_eq!(ui.get_menu_panes().row_count(), 0);
     assert_eq!(bound.rows.cached(), 0);
     assert!(ui.get_question().is_empty());
     assert_eq!(saved(&store), before);
     fill(&bound);
     assert!(bound.rows.cached() > 0);
+    // Keep the immediate zero/no-question/unchanged-settings assertions above
+    // any draw: a real thumbnail paint may itself request and refill the cache.
+    let native = windows.get(0).unwrap();
+    headless::render(&native, 1100, 850);
+    bound.rows.wait();
+    let pixels = headless::render_snapshot(&native, 1100, 850);
+    assert!(bitmap(&bound).is_some());
+    assert!(bound.rows.cached() > 0);
+    assert!(ui.get_question().is_empty());
+    assert_eq!(saved(&store), before);
+    headless::save_png(
+        &std::path::Path::new(env!("CARGO_TARGET_TMPDIR")).join("thumbnail-cache-reloaded.png"),
+        &pixels,
+        1100,
+        850,
+    )
+    .unwrap();
     let decoded = bound.rows.cached_bytes();
     ui.hide().unwrap();
     clear(&ui);

@@ -3661,3 +3661,16 @@ approve these seven scoped leaves, bringing the ledger to 326 with 49 candidates
 pending. The preceding paragraph records the earlier checkpoint; picker and
 checkbox blockers are now resolved. Idle clipping and clear-action evidence
 remain in the next bounded batch.
+
+The next idle layout repair preserves complete ignore captions and their existing
+None/enabled interlocks. Its two-line presentation differs from Qt's horizontal
+Noneable control. Only browsing/API threshold candidates are under validation;
+mouse movement is still observed in application windows rather than globally.
+No additional approval is claimed before full Linux replay and render review.
+
+The next preview and thumbnail-clear evidence additions do not change product
+behavior. Preview captures show freshly bound default/saved Options states;
+controlled interval timing, cap-before-minimum and cancellation checks remain.
+The clear-menu and reloaded-thumbnail captures supplement cache-state assertions;
+images alone do not establish access-history reset, generation or memory parity.
+Qt/native storage accounting and preview-acceptance differences remain scoped.

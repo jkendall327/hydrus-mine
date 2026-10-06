@@ -273,6 +273,70 @@ fn row(options: &OptionsWindow, label: &str) -> i32 {
     )
     .unwrap()
 }
+// Capture a freshly opened owner: callback-only edits can change the editor
+// without replacing the standard NumberField/CheckBox bindings already drawn.
+fn capture_preview_options(
+    windows: &headless::Windows,
+    options: &OptionsWindow,
+    name: &str,
+    minimum_none: bool,
+    maximum_values: [i32; 4],
+) {
+    assert!(options.window().is_visible());
+    let native = windows.get(windows.count() - 1).unwrap();
+    // Let the standard fields settle from their new, saved row bindings.
+    for _ in 0..3 {
+        headless::render(&native, 1100, 850);
+    }
+    for (label, none, minimum, phrase, expected) in [
+        (
+            "Min time to view on preview viewer to count as a view:",
+            minimum_none,
+            50,
+            "count every view",
+            vec![("minutes", 0), ("seconds", 5), ("ms", 0)],
+        ),
+        (
+            "Cap any view on the preview viewer to this maximum time:",
+            false,
+            1000,
+            "no limit",
+            ["hours", "minutes", "seconds", "ms"]
+                .into_iter()
+                .zip(maximum_values)
+                .collect::<Vec<_>>(),
+        ),
+    ] {
+        let actual = options
+            .get_rows()
+            .row_data(usize::try_from(row(options, label)).unwrap())
+            .unwrap();
+        assert_eq!(actual.kind, 24, "{label}");
+        assert_eq!(actual.is_none, none, "{label}");
+        assert_eq!(actual.minimum, minimum, "{label}");
+        assert_eq!(actual.none_phrase, phrase, "{label}");
+        assert_eq!(
+            actual
+                .fields
+                .iter()
+                .map(|field| (field.label.to_string(), field.value))
+                .collect::<Vec<_>>(),
+            expected
+                .into_iter()
+                .map(|(unit, value)| (unit.to_owned(), value))
+                .collect::<Vec<_>>(),
+            "{label}"
+        );
+    }
+    let pixels = headless::render_snapshot(&native, 1100, 850);
+    headless::save_png(
+        &std::path::Path::new(env!("CARGO_TARGET_TMPDIR")).join(name),
+        &pixels,
+        1100,
+        850,
+    )
+    .unwrap();
+}
 #[test]
 fn saved_preview_options_reach_open_display_duration_cap_cancel_and_confirmed_client_exit() {
     let fixture = hydrus_testkit::fixture_json("preview_viewing_intervals.json");
@@ -301,6 +365,18 @@ fn saved_preview_options_reach_open_display_duration_cap_cancel_and_confirmed_cl
     settle_viewport(&ui, &bound.preview, &windows.get(0).unwrap());
     select(&ui, &bound, first);
     let edit = options(&ui, &bound);
+    capture_preview_options(
+        &windows,
+        &edit,
+        "preview-viewing-options-defaults.png",
+        false,
+        [0, 1, 0, 0],
+    );
+    assert_eq!(
+        clock.get(),
+        200_000,
+        "capture does not advance viewing time"
+    );
     let minimum = row(
         &edit,
         "Min time to view on preview viewer to count as a view:",
@@ -332,6 +408,24 @@ fn saved_preview_options_reach_open_display_duration_cap_cancel_and_confirmed_cl
     };
     assert_eq!((read(first).views, read(first).viewtime_ms), (1, 1000));
     let edit = options(&ui, &bound);
+    capture_preview_options(
+        &windows,
+        &edit,
+        "preview-viewing-options-saved.png",
+        true,
+        [0, 0, 1, 0],
+    );
+    assert_eq!(
+        clock.get(),
+        202_000,
+        "capture does not advance viewing time"
+    );
+    assert_eq!(
+        store.read(settings::get::<FileViewingStatistics>).unwrap(),
+        saved,
+        "opening and painting the saved owner do not write preferences"
+    );
+    assert_eq!((read(first).views, read(first).viewtime_ms), (1, 1000));
     edit.invoke_none_toggled(
         row(
             &edit,

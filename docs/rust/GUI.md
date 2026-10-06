@@ -4546,3 +4546,18 @@ through pointer input while checking that disabled children cannot toggle.
 Full Linux execution at `9bec37964` and fresh independent review approve these
 seven scoped leaves: 326 signed off, 86 new across five October 6 checkpoints,
 and 49 candidates pending. All 697 GUI tests pass without ignored tests.
+
+The next bounded validation batch moves the three long idle-ignore captions onto
+separate lines beneath their numeric controls; other Noneable-number layouts
+stay unchanged. New regressions measure actual caption/control bounds and
+checked/enabled/value states at the preferred and existing capture sizes.
+Browsing/API thresholds remain the two selected idle candidates; mouse-idle
+system-wide observation remains outside scope. Full Linux execution and fresh
+render review are required before any additional completion credit.
+
+Preview minimum/maximum replay now exports freshly opened default and saved
+Options states while retaining its controlled viewing clock and interval
+assertions. Thumbnail-cache replay exports the actual nested clear-action menu
+and a reloaded consumer after asserting immediate clearing without a question
+or preference write. These three candidates remain pending the next full Linux
+validation and independent rendered review.
