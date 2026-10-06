@@ -4583,3 +4583,10 @@ review at `05000f10e` approve exactly these five leaves: 339 signed off, 99 new
 across eight October 6 checkpoints, 36 pending. All 699 GUI and 67 media tests
 pass; 19 fresh captures support the scoped claims and all 226 original assertions
 remain intact.
+
+The next two-candidate evidence batch exports reopened saved suggested-tags width
+240/side-by-side Options and actual populated adjacent/notebook consumers. Real
+recent-tag fixture history supplies a useful tag without forcing rows. Existing
+only-add, staging, persistence, broadcast and retirement checks remain. These two
+leaves await their own full Linux validation and independent fresh-image review;
+339 completions remain banked, with 36 existing candidates pending.

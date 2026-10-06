@@ -35,7 +35,7 @@ fn tags_of(store: &Store, file: HashId, service: &str) -> BTreeSet<String> {
 fn most_used_panels_filter_only_add_broadcast_and_retire_closed_consumers() {
     let (_dirs, store) = crate::subscriptions::store();
     let f = hydrus_testkit::fixture_json("tag_suggestions.json");
-    let _headless_windows = headless::init();
+    let windows = headless::init();
     let mut page = SearchPage::new(store.clone());
     page.enter();
     let files = page.results().to_vec();
@@ -55,6 +55,13 @@ fn most_used_panels_filter_only_add_broadcast_and_retire_closed_consumers() {
         .unwrap()
         .key
         .to_hex();
+    let service = store.snapshot().services.by_name("my tags").unwrap().id;
+    assert!(!files.is_empty());
+    assert!(
+        files
+            .iter()
+            .all(|file| !tags_of(&store, *file, "my tags").contains("parity:recent"))
+    );
     let tags: Vec<String> = serde_json::from_value(f["edited"]["tags"].clone()).unwrap();
     let own = key.clone();
     store
@@ -69,6 +76,12 @@ fn most_used_panels_filter_only_add_broadcast_and_retire_closed_consumers() {
                     enabled: false,
                     ..hydrus_store::related_tags::Settings::default()
                 },
+            )?;
+            let recent = hydrus_core::Tag::new("parity:recent").unwrap();
+            let tag = hydrus_store::master::intern_tag(ctx.conn(), &recent)?;
+            ctx.conn().execute(
+                "INSERT INTO recent_tags(service_id,tag_id,used_ms) VALUES(?,?,?) ON CONFLICT(service_id,tag_id) DO UPDATE SET used_ms=excluded.used_ms",
+                rusqlite::params![service, tag, hydrus_core::time::TimestampMs::now().0],
             )?;
             hydrus_store::settings::set(
                 ctx.conn(),
@@ -103,6 +116,29 @@ fn most_used_panels_filter_only_add_broadcast_and_retire_closed_consumers() {
         rows.row_data(0).unwrap().cells.row_data(0).unwrap(),
         "parity:new2"
     );
+    assert!(manage.get_most_used_enabled());
+    assert!(manage.get_recent_tags_enabled());
+    assert!(
+        manage
+            .get_recent_tag_rows()
+            .iter()
+            .any(|row| row.cells.row_data(0).unwrap() == "parity:recent")
+    );
+    assert!(
+        !manage
+            .get_recent_tag_rows()
+            .iter()
+            .any(|row| row.cells.row_data(0).unwrap() == "parity:present")
+    );
+    let pixels = headless::render(&windows.get(windows.count() - 1).unwrap(), 1100, 700);
+    headless::save_png(
+        &std::path::Path::new(env!("CARGO_TARGET_TMPDIR"))
+            .join("suggested-tags-columns-width240-populated.png"),
+        &pixels,
+        1100,
+        700,
+    )
+    .unwrap();
     manage.invoke_side_clicked(0, 0, false, false);
     manage.invoke_side_activated(0, 0);
     manage.invoke_side_activated(0, 0);
@@ -161,6 +197,47 @@ fn most_used_panels_filter_only_add_broadcast_and_retire_closed_consumers() {
             .len(),
         5
     );
+    assert!(bound.manage_tags.borrow().is_none());
+    store
+        .write(|ctx| {
+            let mut prefs: hydrus_store::settings::TagSuggestionSettings =
+                hydrus_store::settings::get(ctx.conn())?;
+            prefs.columns = false;
+            hydrus_store::settings::set(ctx.conn(), &prefs)
+        })
+        .unwrap();
+    // A new owner reads the saved notebook choice; the retired columns owner
+    // keeps its opening preferences and cannot change the successor.
+    assert!(manage.get_suggested_columns());
+    ui.invoke_manage_tags_selected();
+    let notebook = bound.manage_tags.borrow().as_ref().unwrap().clone_strong();
+    notebook.invoke_service_chosen(i32::try_from(mine).unwrap());
+    assert!(!notebook.get_suggested_columns());
+    assert_eq!(
+        notebook.get_suggested_width().to_bits(),
+        240.0_f32.to_bits()
+    );
+    assert_eq!(notebook.get_suggested_page(), 1);
+    assert!(notebook.get_most_used_enabled());
+    assert!(notebook.get_recent_tags_enabled());
+    assert!(notebook.get_most_used_rows().row_count() > 0);
+    assert!(
+        notebook
+            .get_recent_tag_rows()
+            .iter()
+            .any(|row| row.cells.row_data(0).unwrap() == "parity:recent")
+    );
+    let pixels = headless::render(&windows.get(windows.count() - 1).unwrap(), 1100, 700);
+    headless::save_png(
+        &std::path::Path::new(env!("CARGO_TARGET_TMPDIR"))
+            .join("suggested-tags-notebook-width240-recent-populated.png"),
+        &pixels,
+        1100,
+        700,
+    )
+    .unwrap();
+    notebook.invoke_cancel();
+    assert!(bound.manage_tags.borrow().is_none());
     ui.hide().unwrap();
 }
 

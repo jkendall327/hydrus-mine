@@ -3709,3 +3709,11 @@ review at `05000f10e` approve exactly these five scoped leaves: 339 signed off,
 99 new across eight October 6 checkpoints, 36 pending. The 19 inspected captures
 and 699 passing GUI tests preserve these limitations; no broader renderer/fade,
 parent, alias or deferred-platform completion is claimed.
+
+The pending suggested-tags width/layout captures grant no recent, related, lookup
+or parent credit. Opening preferences remain owner-local; persisted most-used
+broadcasts retain the existing 200ms observer. Native frames differ from the Qt
+post-activation frame, its inline editing and Clear action. Current fixture CJK
+glyph rendering differs while Unicode row/draft data remains asserted. The saved
+width property is not a direct measured-geometry observation; fresh list bounds
+and readability still require rendered review.

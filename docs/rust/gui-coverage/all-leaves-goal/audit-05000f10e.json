@@ -1,0 +1,202 @@
+{
+  "schema_version": 1,
+  "audit_source_commit": "05000f10eafc4211d6856549d0073edb90ba5811",
+  "original_frozen_source_commit": "4356918f41d2cb2b0159eb8c466d987de9fa9339",
+  "inventory_source_anchor_commit": "63f9e35abf1b1647e68ea4f1c850efee3ac8c365",
+  "ledger_validated_source_commit": "63f9e35abf1b1647e68ea4f1c850efee3ac8c365",
+  "statuses_preserved": true,
+  "new_signoffs": 0,
+  "checklist_definition": "Current original-ID terminal leaves excluding structural kinds, target aliases and canonical-editor aliases; all original IDs remain in an explicit crosswalk. Existing sign-off means membership in completed_feature_ids, never inventory first_pass alone.",
+  "summary": {
+    "reference_ids": 1812,
+    "native_inventory_ids": 1799,
+    "all_reference_inventory_status_counts": {
+      "partial": 388,
+      "first_pass": 935,
+      "missing": 489
+    },
+    "current_terminal_individual_leaves": 1274,
+    "baseline_status_counts_for_current_leaves": {
+      "missing": 680,
+      "partial": 133,
+      "first_pass": 461
+    },
+    "current_leaf_inventory_status_counts": {
+      "first_pass": 801,
+      "missing": 351,
+      "partial": 122
+    },
+    "baseline_deficit_leaves": 813,
+    "signed_off_implementation_leaves": 334,
+    "unsigned_total": 940,
+    "unsigned_baseline_deficit": 479,
+    "unsigned_historical_first_pass": 461,
+    "unsigned_deficit_origin_first_pass": 6,
+    "unsigned_partial": 122,
+    "unsigned_missing": 351,
+    "current_nonalias_nonstructural_concrete_nodes_in_report_navigation_metrics": 1527,
+    "current_concrete_nonterminal_nodes_in_report_navigation_metrics": 253,
+    "current_excluded_original_ids": 538,
+    "frozen_terminal_leaves_before_alias_crosswalk": 1275,
+    "frozen_deficit_before_alias_crosswalk": 814
+  },
+  "arithmetic": [
+    "1274 = 461 baseline-first-pass + 813 baseline-partial/missing",
+    "813 = 334 implementation sign-offs + 479 unsigned baseline-deficit leaves",
+    "479 = 6 unsigned inventory-first-pass + 122 partial + 351 missing",
+    "940 = 461 historical first-pass needing explicit verification + 479 unsigned baseline-deficit leaves",
+    "801 current leaf first_pass = 461 historical + 334 signed-off implementation + 6 unsigned deficit-origin first_pass",
+    "1812 = 1274 current individual leaves + 538 explicit parent/alias exclusions"
+  ],
+  "unsigned_first_pass_from_baseline_deficit_ids": [
+    "audit-network-bandwidth-defaults",
+    "audit-network-bandwidth-detail",
+    "audit-network-bandwidth-history",
+    "audit-network-bandwidth-rows",
+    "audit-options-predicate-filetype-mime-mode",
+    "audit-shared-tag-apply"
+  ],
+  "alias_crosswalk_change": [
+    {
+      "id": "audit-options-tabs-context-action-2080-other-pages",
+      "label": "other pages",
+      "baseline_status": "missing",
+      "inventory_status": "first_pass",
+      "frozen_classification": {
+        "classification": "individual_terminal_leaf",
+        "exclusion_reasons": [],
+        "child_count": 0
+      },
+      "current_classification": {
+        "classification": "excluded_parent_or_alias",
+        "exclusion_reasons": [
+          "target_alias"
+        ],
+        "child_count": 0
+      },
+      "target_id": "audit-options-tabs-context-action-2074-close-other-page-s",
+      "canonical_editor": null,
+      "signed_off": false
+    }
+  ],
+  "report_semantics": {
+    "cards": "Counts every current inventory node of a status, including parents, aliases and historical assessments. Reference first_pass card935 is not801 individual leaves or334 implementation sign-offs.",
+    "completion_filter": "Uses explicit overnight_progress.completed_feature_ids only; Completed this run displays cumulative334 membership, not all935 first_pass nodes or exclusively the newest3.",
+    "navigation_metrics": "Concrete predicate excludes structural kinds and target/canonical aliases, but does not require terminality;1527 includes253 concrete nonterminal nodes. Nested/reachable breadth and native inventory1799 are not a completion denominator.",
+    "original_goal_metadata": 80,
+    "scope": "Inventory first_pass is a supported stated slice, not complete parent/reference parity; this audit does not establish behavior for any unsigned ID."
+  },
+  "publication_tool_constraint": "gui_publish.countable requires baseline status missing/partial, implementation/new_behavior, first_pass proposal and not explicit countAsCompletedLeaf=false. Its implementation ledger cannot admit the461 baseline-first-pass IDs as new implementation completions. Evidence-only recertification should not be relabeled implementation to inflate that count.",
+  "recommended_bookkeeping": "Keep334 implementation ledger unchanged. Freeze the audited1274 all-individual-leaf goal plus the1812-ID crosswalk. Track explicit independent verification of historical and evidence-only leaves in a separate all-leaf verification ledger (union/deduplicate original IDs with accepted existing implementation sign-offs). Each accepted record retains exact source/CI/scope/test/reference/render review and limitations; lack of proof stays unsigned. Any future alias/parent change must have an explicit crosswalk and reviewed denominator adjustment, never silently shrink the checklist.",
+  "checklist_protocol": [
+    "Deterministically preserve all1274 current concrete terminal original IDs and their baseline/current statuses.",
+    "Carry every940 unsigned ID, including all461 historical first_pass; six unsigned reassessed first_pass remain unsigned.",
+    "Use inventory status to route review versus repair work, not to mark sign-off automatically. Existing inventory limitations remain visible even for first_pass.",
+    "Signed334 records remain prior accepted implementation evidence; no fresh independent behavioral review is claimed by this bookkeeping audit.",
+    "For each next finite batch, satisfy real reference, defining action/consumer, cancellation/persistence, source pins, required exact-source fullLinux CI and fresh actual render/independent review before adding verification credit. Windows/macOS remain explicitly deferred under current publication policy.",
+    "Preserve original1812 ID membership and538 current exclusion records; retain alias audit-options-tabs-context-action-2080-other-pages mapped to audit-options-tabs-context-action-2074-close-other-page-s.",
+    "Refresh counts/checklist against a named committed checkpoint after each publication, without modifying baseline statuses or evidence-only change kinds."
+  ],
+  "input_fingerprints": [
+    {
+      "read_commit": "4356918f41d2cb2b0159eb8c466d987de9fa9339",
+      "path": "docs/rust/gui-coverage/reference-inventory.json",
+      "sha256": "bf09a4fea025c553416ca52efdd0b2e410dbf0b8248c0c41b6a26330967bbd0e"
+    },
+    {
+      "read_commit": "05000f10eafc4211d6856549d0073edb90ba5811",
+      "path": "docs/rust/gui-coverage/reference-inventory.json",
+      "sha256": "773dadaaffb06d25960497bbd612cacd30c2791ad62c1029fffaf15e3d0448c4"
+    },
+    {
+      "read_commit": "05000f10eafc4211d6856549d0073edb90ba5811",
+      "path": "docs/rust/gui-coverage/native-inventory.json",
+      "sha256": "d483541f98652c20bd73c0632c66a616c4c7e90e3b00e9f5a759f2d56c230b6f"
+    },
+    {
+      "read_commit": "05000f10eafc4211d6856549d0073edb90ba5811",
+      "path": "docs/rust/gui-coverage/overnight/baseline.json",
+      "sha256": "f809e51c0fd3de7068d30f5cbac4dacb043859c3f85c5357d60c6474b804c8e5"
+    },
+    {
+      "read_commit": "05000f10eafc4211d6856549d0073edb90ba5811",
+      "path": "docs/rust/gui-coverage/overnight/progress.json",
+      "sha256": "288ba07a90185552aae7a3f3c197e30cc3d2f0d1ec1195cf9625f385c5e0ad64"
+    },
+    {
+      "read_commit": "05000f10eafc4211d6856549d0073edb90ba5811",
+      "path": "docs/rust/gui-progress.html",
+      "sha256": "34b9cb211e28f9924e14f0c05b90a5f11855d26c86570869ae8be79cd5c9257a"
+    }
+  ],
+  "source_evidence": [
+    {
+      "source_commit": "05000f10eafc4211d6856549d0073edb90ba5811",
+      "path": "scripts/gui_burndown.py",
+      "line": 29,
+      "end_line": 92,
+      "sha256": "8f77f7ebf254e331e5b1c4dd99d72f15ffbaee2232961a9c605ec2f4ddf2cddb",
+      "span_sha256": "372812e978652fa3b09345e9ede6930a0feb76d2c06373fe77f9a2bdce24d94a"
+    },
+    {
+      "source_commit": "05000f10eafc4211d6856549d0073edb90ba5811",
+      "path": "scripts/gui_publish.py",
+      "line": 128,
+      "end_line": 152,
+      "sha256": "73d6e08103635089eec72347a310bc23a1798b263e10127d4a743c53a475d823",
+      "span_sha256": "c3a75a26983b2b4f0faecf126d36e000efcf4f89a530194dc941581834c50301"
+    },
+    {
+      "source_commit": "05000f10eafc4211d6856549d0073edb90ba5811",
+      "path": "scripts/gui_publish.py",
+      "line": 230,
+      "end_line": 242,
+      "sha256": "73d6e08103635089eec72347a310bc23a1798b263e10127d4a743c53a475d823",
+      "span_sha256": "1de18fc791dd9da6c665db7061a36fb63a543505c3a8c4e6cd4df7c56c8a8a56"
+    },
+    {
+      "source_commit": "05000f10eafc4211d6856549d0073edb90ba5811",
+      "path": "scripts/gui_publish.py",
+      "line": 390,
+      "end_line": 437,
+      "sha256": "73d6e08103635089eec72347a310bc23a1798b263e10127d4a743c53a475d823",
+      "span_sha256": "67e2c1f3c67eca3164c5288b49d44a4f289426ec997a9871182db8799c684bf0"
+    },
+    {
+      "source_commit": "05000f10eafc4211d6856549d0073edb90ba5811",
+      "path": "scripts/gui_coverage.py",
+      "line": 143,
+      "end_line": 195,
+      "sha256": "1fed3a80e0cb690cb50c8fa117e42584a9a16e11fa1a5be8bef50496df9ca2d6",
+      "span_sha256": "d904c0d1dcb344ee52e39bea02ea1790d67d857c3eb458de751ec5683d8f26da"
+    },
+    {
+      "source_commit": "05000f10eafc4211d6856549d0073edb90ba5811",
+      "path": "docs/rust/gui-coverage/viewer.template.html",
+      "line": 40,
+      "end_line": 50,
+      "sha256": "150880badccf59a4f15e0cd7219a6a32f9eeadcd67cc8ddd84def42b582663ca",
+      "span_sha256": "3253ead8e494088bd0d57c4aa616835593f74c2089c39dcf956f3e7559047333"
+    },
+    {
+      "source_commit": "05000f10eafc4211d6856549d0073edb90ba5811",
+      "path": "docs/rust/gui-coverage/viewer.template.html",
+      "line": 72,
+      "end_line": 75,
+      "sha256": "150880badccf59a4f15e0cd7219a6a32f9eeadcd67cc8ddd84def42b582663ca",
+      "span_sha256": "2f6d2353f5370bac2d92fcd38f02c133bb56219c1c64d1521cc973125b72229e"
+    },
+    {
+      "source_commit": "05000f10eafc4211d6856549d0073edb90ba5811",
+      "path": "docs/rust/gui-coverage/README.md",
+      "line": 17,
+      "end_line": 37,
+      "sha256": "a9f68989ff8face69d8c4e9a92c8c503581f07fd714be89ad141aa8bf27e6246",
+      "span_sha256": "7dafa67f70e5a6ebc9a385ddad6f4fb72395f5943cf666bd37030f036176d3b6"
+    }
+  ],
+  "repository_edits": false,
+  "builds_run": false,
+  "statuses_changed": false,
+  "completion_claims_added": false
+}
