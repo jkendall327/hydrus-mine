@@ -12,10 +12,17 @@ from pathlib import Path, PurePosixPath
 import stat
 import subprocess
 
-VERSION = 1
+VERSION = 2
 MAX_LEDGER_BYTES = 16 * 1024**2
 MAX_INPUTS = 100_000
 BASELINE_NAME = ".ci-workspace-inputs.json"
+# Archived publication evidence is not a Rust/Slint build input.
+# Never restore its timestamps: it retains ordinary checkout freshness. Still
+# validate every index entry/path below before applying this exact exclusion.
+PUBLICATION_PREFIXES = (
+    "docs/rust/gui-coverage/checkpoints/",
+    "docs/rust/gui-coverage/audit/",
+)
 
 
 def safe_path(root: Path, relative: str) -> Path:
@@ -41,6 +48,7 @@ def safe_path(root: Path, relative: str) -> Path:
 def tracked_inputs(root: Path) -> dict[str, str]:
     raw = subprocess.check_output(["git", "ls-files", "--stage", "-z"], cwd=root)
     result: dict[str, str] = {}
+    seen: set[str] = set()
     for record in raw.split(b"\x00"):
         if not record:
             continue
@@ -48,9 +56,14 @@ def tracked_inputs(root: Path) -> dict[str, str]:
         mode, _object, stage = header.decode("ascii").split()
         relative = raw_path.decode("utf-8")
         # Symlinks, submodules, conflicted indexes and duplicate paths fail closed.
-        if mode not in ("100644", "100755") or stage != "0" or relative in result:
+        if mode not in ("100644", "100755") or stage != "0" or relative in seen:
             raise ValueError("unsupported Git input/index mode")
+        seen.add(relative)
+        if len(seen) > MAX_INPUTS:
+            raise ValueError("unsupported input count")
         safe_path(root, relative)
+        if relative.startswith(PUBLICATION_PREFIXES):
+            continue
         result[relative] = mode
     if not result or len(result) > MAX_INPUTS:
         raise ValueError("unsupported input count")
@@ -150,7 +163,7 @@ def preflight(root: Path, cached: dict, newest_artifact_ns: int) -> tuple[dict, 
 
 def stamp_matching(root: Path, cached: dict, current: dict, matching: list[str]) -> int:
     old, now = validate(cached), validate(current)
-    # Recheck ALL tracked inputs before any timestamp changes.
+    # Recheck every included input and validate all tracked paths before stamping.
     if not same_inputs(current, capture(root), include_mtime=True):
         raise ValueError("inputs changed after preflight")
     for relative in matching:

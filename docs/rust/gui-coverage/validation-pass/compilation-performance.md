@@ -280,3 +280,18 @@ Linux workflow contract is unchanged. The first dedicated-ref run will seed its
 cache; later actual reuse must be measured before claiming an improvement.
 Run `37510853142` missed both caches and took 28m33s for the Clippy step and 26m02s
 for test compilation; these are hosted observations, not a controlled benchmark.
+
+A second bounded correction excludes only archived evidence under
+`docs/rust/gui-coverage/checkpoints/` and `docs/rust/gui-coverage/audit/` from
+the timestamp ledger. These prefixes cover all 53 files added by the latest
+publication; source inspection found no Rust, Slint, build-script or xtask
+consumer. All tracked entries still pass mode, conflict, duplicate, total-count
+and safe-path checks before exclusion. Excluded files retain checkout timestamps;
+build inputs and neighbouring coverage paths retain the existing path-set,
+content, mode and timestamp guards.
+
+The original 21 safety tests remain, with four additional real-Git-index tests
+covering publication additions/changes/deletions, retained-input invalidation,
+unsafe excluded paths and rejection of the old ledger version. Ledger version 2
+and the existing helper compatibility hash require one fresh cache seed.
+Hosted reuse and timing improvement from this correction are not yet established.
