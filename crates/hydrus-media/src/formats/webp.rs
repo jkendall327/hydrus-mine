@@ -2,7 +2,10 @@
 //! frame durations, and the first frame of an animation as libwebp's
 //! `WebPAnimDecoder` (which Pillow uses) renders it.
 
-use std::io::Cursor;
+use std::{
+    fs::File,
+    io::{self, Cursor, Read, Seek, SeekFrom},
+};
 
 use crate::error::{MediaError, Result};
 
@@ -61,6 +64,152 @@ fn riff(payload: &[u8]) -> Vec<u8> {
 
 fn u24(b: &[u8]) -> u32 {
     u32::from(b[0]) | u32::from(b[1]) << 8 | u32::from(b[2]) << 16
+}
+
+/// Work around image-webp 0.2.4 rounding opaque blended pixels down by one.
+/// For a conforming animation declared opaque in VP8X, replacement and alpha
+/// blending are identical. Present its ANMF no-blend bits to the decoder while
+/// leaving the file, timing/disposal flags and alpha-bearing streams unchanged.
+/// Retain only byte offsets, not a second compressed-animation buffer.
+#[derive(Debug)]
+pub(crate) struct AnimationReader {
+    file: File,
+    position: u64,
+    no_blend_offsets: Vec<u64>,
+}
+
+impl AnimationReader {
+    pub(crate) fn new(file: File, data: &[u8]) -> Self {
+        Self {
+            file,
+            position: 0,
+            no_blend_offsets: opaque_frame_flags(data).unwrap_or_default(),
+        }
+    }
+}
+
+impl Read for AnimationReader {
+    fn read(&mut self, buffer: &mut [u8]) -> io::Result<usize> {
+        let count = self.file.read(buffer)?;
+        let end = self.position.saturating_add(count as u64);
+        let first = self
+            .no_blend_offsets
+            .partition_point(|offset| *offset < self.position);
+        for offset in &self.no_blend_offsets[first..] {
+            if *offset >= end {
+                break;
+            }
+            let index = usize::try_from(*offset - self.position)
+                .expect("a flag within the read fits the buffer index");
+            buffer[index] |= 0b10;
+        }
+        self.position = end;
+        Ok(count)
+    }
+}
+
+impl Seek for AnimationReader {
+    fn seek(&mut self, position: SeekFrom) -> io::Result<u64> {
+        self.position = self.file.seek(position)?;
+        Ok(self.position)
+    }
+}
+
+// Reject incomplete/ambiguous containers for rewriting; the ordinary decoder
+// still receives those original bytes and remains responsible for validation.
+fn opaque_frame_flags(data: &[u8]) -> Option<Vec<u64>> {
+    if data.len() < 12 || &data[..4] != b"RIFF" || &data[8..12] != b"WEBP" {
+        return None;
+    }
+    let limit = usize::try_from(u32::from_le_bytes(data[4..8].try_into().ok()?))
+        .ok()?
+        .checked_add(8)?;
+    if limit < 12 || limit > data.len() {
+        return None;
+    }
+    let mut offset = 12usize;
+    let mut opaque = None;
+    let mut flags = Vec::new();
+    let mut animation = false;
+    while offset < limit {
+        let start = offset.checked_add(8)?;
+        if start > limit {
+            return None;
+        }
+        let size =
+            usize::try_from(u32::from_le_bytes(data[offset + 4..start].try_into().ok()?)).ok()?;
+        let end = start.checked_add(size)?;
+        let next = end.checked_add(size % 2)?;
+        if next > limit {
+            return None;
+        }
+        match &data[offset..offset + 4] {
+            b"VP8X" => {
+                if offset != 12 || size != 10 || opaque.is_some() {
+                    return None;
+                }
+                // VP8X A means at least one frame has transparency; animation
+                // must be set and A must be clear for this narrow workaround.
+                opaque = Some(data[start] & 0b0001_0010 == 0b10);
+            }
+            b"ANIM" => {
+                if opaque.is_none() || animation || size != 6 {
+                    return None;
+                }
+                animation = true;
+            }
+            b"ANMF" => {
+                if !animation
+                    || size < 16
+                    || data[start + 15] & !0b11 != 0
+                    || !opaque_frame_payload(&data[start + 16..end])
+                {
+                    return None;
+                }
+                flags.push(u64::try_from(start + 15).ok()?);
+            }
+            _ => {}
+        }
+        offset = next;
+    }
+    (opaque == Some(true)).then_some(flags)
+}
+
+// The VP8X transparency declaration is the semantic guarantee. Reject an
+// explicit ALPH subchunk or contradictory VP8L alpha hint as well; the hint
+// alone must never authorize this workaround (it does not affect decoding).
+fn opaque_frame_payload(data: &[u8]) -> bool {
+    let mut offset = 0usize;
+    let mut bitstream = false;
+    while offset < data.len() {
+        let Some(start) = offset.checked_add(8).filter(|start| *start <= data.len()) else {
+            return false;
+        };
+        let size = u32::from_le_bytes(data[offset + 4..start].try_into().unwrap()) as usize;
+        let Some(end) = start.checked_add(size) else {
+            return false;
+        };
+        let Some(next) = end.checked_add(size % 2).filter(|next| *next <= data.len()) else {
+            return false;
+        };
+        match &data[offset..offset + 4] {
+            b"ALPH" => return false,
+            b"VP8 " | b"VP8L" => {
+                if bitstream {
+                    return false;
+                }
+                if &data[offset..offset + 4] == b"VP8L"
+                    && (size < 5 || data[start] != 0x2f || data[start + 4] & 0xf0 != 0)
+                {
+                    return false;
+                }
+                bitstream = true;
+            }
+            _ => {}
+        }
+        offset = next;
+    }
+    bitstream
 }
 
 /// Frame 0 of an animated WebP on a zeroed RGBA canvas, as libwebp's
@@ -149,6 +298,73 @@ pub(crate) fn any_frame_has_useful_alpha(data: &[u8], num_frames: u64) -> Option
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    fn read_presented(data: &[u8]) -> Vec<u8> {
+        let mut temporary = tempfile::tempfile().unwrap();
+        std::io::Write::write_all(&mut temporary, data).unwrap();
+        temporary.rewind().unwrap();
+        let mut reader = AnimationReader::new(temporary, data);
+        let mut presented = Vec::new();
+        reader.read_to_end(&mut presented).unwrap();
+        // Re-reading each byte backwards exercises buffering and arbitrary seeks.
+        for (index, expected) in presented.iter().enumerate().rev() {
+            reader.seek(SeekFrom::Start(index as u64)).unwrap();
+            let mut byte = [0];
+            reader.read_exact(&mut byte).unwrap();
+            assert_eq!(byte[0], *expected);
+        }
+        presented
+    }
+
+    #[test]
+    fn opaque_reader_preserves_payload_duration_disposal_and_file_bytes_across_seeks() {
+        let path = hydrus_testkit::fixture_path("image_decoder_policies/embedded-animation.webp");
+        let original = std::fs::read(&path).unwrap();
+        let mut data = original.clone();
+        let offsets = opaque_frame_flags(&data).unwrap();
+        assert_eq!(offsets.len(), 2);
+        // Exercise disposal without changing the workaround's opaque guarantee.
+        data[usize::try_from(offsets[0]).unwrap()] |= 1;
+        let presented = read_presented(&data);
+        let mut expected = data.clone();
+        for offset in offsets {
+            expected[usize::try_from(offset).unwrap()] |= 2;
+        }
+        assert_eq!(presented, expected);
+        assert_eq!(frame_durations_ms(&presented), [100, 150]);
+        assert_eq!(std::fs::read(path).unwrap(), original);
+    }
+
+    #[test]
+    fn alpha_bearing_and_incomplete_or_contradictory_containers_are_not_rewritten() {
+        let alpha =
+            std::fs::read(hydrus_testkit::fixture_path("media/webp_anim_alpha.webp")).unwrap();
+        assert_eq!(read_presented(&alpha), alpha);
+        // A corrupt global declaration must not override an explicit frame alpha hint.
+        let mut contradictory = alpha.clone();
+        contradictory[20] &= !0x10;
+        assert_eq!(read_presented(&contradictory), contradictory);
+        let data = std::fs::read(hydrus_testkit::fixture_path(
+            "image_decoder_policies/embedded-animation.webp",
+        ))
+        .unwrap();
+        for length in [0, 11, 21, data.len() - 1] {
+            assert_eq!(read_presented(&data[..length]), data[..length]);
+        }
+        let mut oversized = data.clone();
+        oversized[4..8].copy_from_slice(&u32::MAX.to_le_bytes());
+        assert_eq!(read_presented(&oversized), oversized);
+        // The odd payload's mandatory pad byte is inside the RIFF boundary.
+        let mut padded = data.clone();
+        padded.extend_from_slice(b"JUNK\x01\0\0\0x\0");
+        let size = u32::try_from(padded.len() - 8).unwrap();
+        padded[4..8].copy_from_slice(&size.to_le_bytes());
+        assert_ne!(read_presented(&padded), padded);
+        padded.pop();
+        let size = u32::try_from(padded.len() - 8).unwrap();
+        padded[4..8].copy_from_slice(&size.to_le_bytes());
+        assert_eq!(read_presented(&padded), padded);
+    }
 
     #[test]
     fn chunk_walk_handles_padding_and_truncation() {

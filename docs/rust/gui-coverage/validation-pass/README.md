@@ -136,3 +136,15 @@ enabling a button whose commit guard still refuses it. The minimum 1200ms delay,
 owner/visibility checks and transaction assertions remain unchanged. Independent
 source review confirms timer rearming and ownership; runtime confirmation of the
 reported failure remains pending.
+
+The animated WebP repair addresses image-webp 0.2.4's opaque alpha-blending
+roundoff. Independent Pillow/libwebp reproduction matches the recorded frames;
+applying the dependency's blend formula and ICC conversion reproduces all 192
+failed native channels. For conforming declared-opaque animations only, a bounded
+reader presents no-blend frame flags, preserving original files, timing and
+disposal. Parsing and decoding use the same open file. Alpha-bearing and malformed
+container paths are left unchanged. Exact pixel assertions remain; added coverage
+checks raw second frames, looping, seeks, flags and existing alpha composition.
+No supported fixed dependency release or public blend bypass was found. This is
+a narrow workaround, not a general decoder replacement; full native tests remain
+pending.

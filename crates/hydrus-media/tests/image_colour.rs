@@ -76,6 +76,47 @@ fn native_owned_animation_policy_changes_future_frames_without_resetting_positio
         assert_eq!(duration, 150);
         policy.store(false, Ordering::Release);
         assert_eq!(frames.next_frame().unwrap().0.data(), pixels(&off[0]));
+        assert_eq!(
+            frames.next_frame().unwrap().0.data(),
+            pixels(&off[1]),
+            "opaque second-frame pixels remain exact with ICC disabled: {name}"
+        );
         assert_eq!(frames.durations(), [100, 150]);
+    }
+}
+
+#[test]
+fn alpha_bearing_animation_retains_existing_blend_disposal_pixels_and_durations() {
+    use std::io::Write;
+    let path = hydrus_testkit::fixture_path("media/webp_anim_alpha.webp");
+    let mut data = std::fs::read(path).unwrap();
+    let mut offset = 12;
+    let mut frames_seen = 0;
+    while offset + 8 <= data.len() {
+        let size = u32::from_le_bytes(data[offset + 4..offset + 8].try_into().unwrap()) as usize;
+        if &data[offset..offset + 4] == b"ANMF" {
+            // First frame disposal and second frame blending are real decoder consumers.
+            data[offset + 8 + 15] = if frames_seen == 0 { 3 } else { 0 };
+            frames_seen += 1;
+        }
+        offset += 8 + size + size % 2;
+    }
+    assert_eq!(frames_seen, 2);
+    let mut file = tempfile::NamedTempFile::new().unwrap();
+    file.write_all(&data).unwrap();
+    let mut original = image_webp::WebPDecoder::new(std::io::Cursor::new(&data)).unwrap();
+    assert!(original.has_alpha());
+    let mut frames =
+        Frames::open_with_icc(file.path(), Mime::AnimationWebp, &[], None, false).unwrap();
+    let mut expected = vec![0; original.output_buffer_size().unwrap()];
+    for _ in 0..original.num_frames() {
+        let duration = original.read_frame(&mut expected).unwrap();
+        let (actual, actual_duration) = frames.next_frame().unwrap();
+        assert_eq!(
+            actual.data(),
+            expected,
+            "alpha-bearing blend/disposal pixels are unchanged"
+        );
+        assert_eq!(actual_duration, if duration == 0 { 83 } else { duration });
     }
 }
