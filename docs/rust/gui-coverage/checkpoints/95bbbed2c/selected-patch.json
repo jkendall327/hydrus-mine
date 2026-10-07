@@ -1,0 +1,247 @@
+{
+  "baseline_git_head": "95bbbed2cdd5f254a71330a00a2eb15f24b771a8",
+  "method": "Publish exactly one original leaf after exact-source full Linux CI and fresh independent behavioral/rendered review. Preserve prior 368 IDs and assessments, native inventory and all unselected assessments except exact source anchor remaps and ancestor counts. Windows/macOS deferred; consumer and capture limits retained.",
+  "reference": {
+    "updates": [
+      {
+        "id": "audit-media-services-missing-rating-preview",
+        "status": "first_pass",
+        "assessment": "Local like/dislike, numerical and inc/dec service configuration has four independent interactive examples labelled Thumbnails, Media Viewer, Preview Window and Dialog (Default). Staged colour/shape/star-count/padding/fraction changes repaint actual graphics. Like left/right toggles; numerical left chooses and right clears; counter left/right changes and middle value Accept/Cancel affects only its sample. Owned counter prompt blocks child Apply until answered. Samples never enter ServiceKind or file ratings. Child Apply stages actual service configuration, parent Apply persists it, reopen initializes fresh samples from saved configuration; child/parent Cancel and retained closed-child callbacks cannot commit or clear a successor. Numerical samples retain the recorded opening click conversion while live count changes repaint the stored fraction. Whole-widget numerical pointer routing includes painted fraction text and blank space, updates only while the left button is held, preserves last valid value when dragging outside, clears on outside press/right press, and ignores post-release hover. Opening fraction-side/count/allow-zero conversion and saved one-star normalization remain distinct, as recorded. Left-held numerical drags survive an additional Right press/release within the widget. Chord presses retain Qt Left priority; right-only drag and hover after Left release remain inert. Cross-edge chord capture remains a documented framework limitation.",
+        "evidence": [
+          {
+            "path": "crates/hydrus-gui-model/src/rating_example.rs",
+            "line": 21,
+            "anchor_git_head": "95bbbed2cdd5f254a71330a00a2eb15f24b771a8",
+            "line_sha256": "a29cb7169e9366f700b3271c98db51eb005f582827424c08bea95eefea249cfc",
+            "symbol": "pub struct Example",
+            "role": "scoped_implementation",
+            "description": "pub struct Example",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui/src/services_editor_window.rs",
+            "line": 158,
+            "anchor_git_head": "95bbbed2cdd5f254a71330a00a2eb15f24b771a8",
+            "line_sha256": "b7c425ffe3e662769db84525ed8128f2b550ea2359c9aed54f9ce39c340a4e5c",
+            "symbol": "fn edit(",
+            "role": "scoped_implementation",
+            "description": "fn edit(",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui/src/services_editor_window.rs",
+            "line": 315,
+            "anchor_git_head": "95bbbed2cdd5f254a71330a00a2eb15f24b771a8",
+            "line_sha256": "bdf744bfe67befdeec13cfcbc0b115bd78b78dd0f3674fd8e5dc7830b1491f4c",
+            "symbol": "w.set_examples",
+            "role": "scoped_implementation",
+            "description": "w.set_examples",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui/ui/services_editor.slint",
+            "line": 50,
+            "anchor_git_head": "95bbbed2cdd5f254a71330a00a2eb15f24b771a8",
+            "line_sha256": "d86512335b0cd433447a7b5c6fe497d02561e26daae98998c672254839fbee24",
+            "symbol": "component RatingExamplePanel",
+            "role": "scoped_implementation",
+            "description": "component RatingExamplePanel",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui/ui/services_editor.slint",
+            "line": 222,
+            "anchor_git_head": "95bbbed2cdd5f254a71330a00a2eb15f24b771a8",
+            "line_sha256": "f2913387aaa028773d489e122d17fd5811bdd6a58167d18286d0f9674153ec10",
+            "symbol": "RatingExamplePanel {",
+            "role": "scoped_implementation",
+            "description": "RatingExamplePanel {",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui/ui/viewer.slint",
+            "line": 66,
+            "anchor_git_head": "95bbbed2cdd5f254a71330a00a2eb15f24b771a8",
+            "line_sha256": "85ee3baf14ff6152b2b92160f12bf9b1af48c1cfc275a535f4a164ff00a52640",
+            "symbol": "export component RatingGraphic",
+            "role": "scoped_implementation",
+            "description": "export component RatingGraphic",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui-model/src/rating_example.rs",
+            "line": 75,
+            "anchor_git_head": "95bbbed2cdd5f254a71330a00a2eb15f24b771a8",
+            "line_sha256": "3e87d7d0d3da08f225044ec3646bb94057104751662ddff6f9c3d8f20ea4ebdd",
+            "symbol": "pub fn pointer(",
+            "role": "scoped_implementation",
+            "description": "pub fn pointer(",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui/src/services_editor_window.rs",
+            "line": 367,
+            "anchor_git_head": "95bbbed2cdd5f254a71330a00a2eb15f24b771a8",
+            "line_sha256": "49540de56b6801b6834b2981c48444804a588dfa0d3a2614291b3b1711d8b357",
+            "symbol": "window.on_preview_pointer",
+            "role": "scoped_implementation",
+            "description": "window.on_preview_pointer",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui/ui/services_editor.slint",
+            "line": 8,
+            "anchor_git_head": "95bbbed2cdd5f254a71330a00a2eb15f24b771a8",
+            "line_sha256": "667d821936675f379f46d985fcf1c770c2f5907b5e61a27f8de99e74da4fd9ab",
+            "symbol": "component RatingSampleControl",
+            "role": "scoped_implementation",
+            "description": "component RatingSampleControl",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui-model/tests/model/services_editor.rs",
+            "line": 503,
+            "anchor_git_head": "95bbbed2cdd5f254a71330a00a2eb15f24b771a8",
+            "line_sha256": "7da3e7c968a71a29a0b772e19f5e7eec824f10c4978c62262bfdc5e258a85c7a",
+            "symbol": "fn rating_examples_replay_qt_samples_live_configuration_and_no_saved_values",
+            "role": "authored_behavioral_regression",
+            "description": "fn rating_examples_replay_qt_samples_live_configuration_and_no_saved_values",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui/tests/gui/services_editor.rs",
+            "line": 397,
+            "anchor_git_head": "95bbbed2cdd5f254a71330a00a2eb15f24b771a8",
+            "line_sha256": "83b8b577e4a86f5b94f6ce81ea7832e1150ac3865ed96a71acee5d8584693c84",
+            "symbol": "fn live_rating_examples_stage_only_configuration_and_retire_cancelled_owners",
+            "role": "authored_behavioral_regression",
+            "description": "fn live_rating_examples_stage_only_configuration_and_retire_cancelled_owners",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui-model/tests/model/services_editor.rs",
+            "line": 650,
+            "anchor_git_head": "95bbbed2cdd5f254a71330a00a2eb15f24b771a8",
+            "line_sha256": "70fb7fa5972693b6ad737c8eb04e55f18027ffb9b1ecb65a201174f10d1ba9c6",
+            "symbol": "fn rating_example_whole_widget_pointer_routes_replay_qt",
+            "role": "authored_behavioral_regression",
+            "description": "fn rating_example_whole_widget_pointer_routes_replay_qt",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui/tests/gui/services_editor.rs",
+            "line": 870,
+            "anchor_git_head": "95bbbed2cdd5f254a71330a00a2eb15f24b771a8",
+            "line_sha256": "5371824db805c76d444b437975eb8e312ad77410477e552c2c0a542658b7fccc",
+            "symbol": "fn numerical_examples_drag_and_fraction_text_use_the_whole_widget_hit_area",
+            "role": "authored_behavioral_regression",
+            "description": "fn numerical_examples_drag_and_fraction_text_use_the_whole_widget_hit_area",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui/tests/gui/services_editor.rs",
+            "line": 743,
+            "anchor_git_head": "95bbbed2cdd5f254a71330a00a2eb15f24b771a8",
+            "line_sha256": "88af4b99dfc0d7c9c013d0519f5a0e7109914e106d15d1fe84a8f8732669b6b7",
+            "symbol": "fn one_star_rating_preview_replays_four_samples_and_preserves_saved_normalization",
+            "role": "authored_behavioral_regression",
+            "description": "fn one_star_rating_preview_replays_four_samples_and_preserves_saved_normalization",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui/tests/gui/services_editor.rs",
+            "line": 1070,
+            "anchor_git_head": "95bbbed2cdd5f254a71330a00a2eb15f24b771a8",
+            "line_sha256": "548d926179efaf4b6172b1e34d6994cad3624ab1a68ee54dc7850a5b151ba084",
+            "symbol": "fn rating_preview_capture(",
+            "role": "authored_behavioral_regression",
+            "description": "fn rating_preview_capture(",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui/tests/gui/services_editor.rs",
+            "line": 1120,
+            "anchor_git_head": "95bbbed2cdd5f254a71330a00a2eb15f24b771a8",
+            "line_sha256": "25c95a3eb15f49feccb7f964bef38b915cf740803388ce7a93c4bf9c697f0b66",
+            "symbol": "fn settled_rating_preview(",
+            "role": "authored_behavioral_regression",
+            "description": "fn settled_rating_preview(",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui/tests/gui/services_editor.rs",
+            "line": 1174,
+            "anchor_git_head": "95bbbed2cdd5f254a71330a00a2eb15f24b771a8",
+            "line_sha256": "f15ee5e90b70b378af0c6772314b9af017834c112e0bd1ccd9fb5b5eb217c9f1",
+            "symbol": "fn rating_preview_samples(",
+            "role": "authored_behavioral_regression",
+            "description": "fn rating_preview_samples(",
+            "executed_in_inventory": false
+          }
+        ],
+        "limitations": [
+          "All four examples use their saved context sizing preferences, including the implemented Dialog consumers; the Preview Window canvas is still absent. Full mixed-button drag capture across an edge after Right release remains outside this FirstPass example scope.",
+          "Native uses existing shared rating graphics and inline owned counter-value prompt rather than a separate Qt modal child. Named SVG graphics retain existing fallback.",
+          "Reference keeps opening numerical click conversion, including star count and allow-zero, while live display settings repaint stored fraction; native mirrors this observed contract.",
+          "Service management and rating preferences parents stay partial; no remote/IPFS/account/listener scope, aliases or parent promotions.",
+          "Historical author metadata records authored regressions without local Cargo builds, Rust tests or mutation testing. Current exact-source Linux execution and fresh native rendered review are recorded separately in the accepted checkpoint.",
+          "Slint 1.18 drops its private mouse grab on every button release. In-widget Left-held movement continues across Right release, but leaving the sample then invalidates pressed state; a chord drag cannot resume on re-entry while Left remains held. Full mixed-button cross-edge capture parity is not claimed.",
+          "Current native captures use the asserted action sequence, not identical final Qt states: native like Thumbnail/Preview are selected while the Qt Thumbnail is cleared; native counter Thumbnail/Preview1, MediaViewer0 and Dialog12,345 differ from Qt Thumbnail2. Numerical native Thumbnail/Preview3/7 and other contexts-/7, edited colors/padding and saved20/15/12/12 icon sizes remain separately asserted. No equal-state pixel claim.",
+          "Four context examples and inline counter input are captured at supported640x1000 with one ordinary ScrollView wheel at finite coordinates. Only first-control geometry is public; complete four-context visibility/readability remains a fresh-image review gate. Universal geometry, OS chrome and physical button coordinate parity are not claimed.",
+          "Preview Window is only an example context, not a Preview canvas. Native hierarchy, service/rating/rendering parents, aliases, additional Dialog sizing consumers and deferred platforms receive no completion credit.",
+          "The independent current wheel follow-up waits at least810ms for the source-backed800ms gesture filter to expire at original1100x800 before one physical wheel. All92 assertions/two-second deadline remain. This finite after-timeout precondition does not prove immediate hide/show recovery or the precise historical failure cause; no additional wheel completion is claimed. Prior failed/run history remains in the published a6d28f4e4 checkpoint, not duplicated here.",
+          "Linux-only validation at the exact reviewed source; macOS and Windows are deferred. No OS chrome, popup placement or universal geometry claim.",
+          "All four examples and the inline counter controls were actually inspected at the supported 640×1000 viewport. Only the first control has public geometry; complete visibility is established by these frames, not by that getter or by a universal layout assertion. The numerical capture is scrolled and crops the upper heading/name area.",
+          "Native captures retain saved context icon sizes 20/15/12/12 and the existing native action sequence. Native thumbnail like is selected and counter is 1; Qt final thumbnail like is cleared and counter is 2. Numerical samples, edited configuration and model replay remain separately asserted. These are different demonstrated states, with no identical-state pixel or font equality claim.",
+          "Colour edits in this capture setup invoke the existing callback directly. Sample graphics use the staged edited colours, while the visible colour LineEdit strings retain their initial text. This does not validate physical colour-entry projection or imply a persistent typed-input defect.",
+          "Native uses the shared rating graphics and an owned inline counter-value input instead of the separate Qt modal child. Named SVG graphics retain the existing fallback; no complete SVG backend or matching modal topology is claimed.",
+          "Preview Window is an example context label, not implementation or verification of a live Preview canvas. Service management and rating preferences parents remain partial; aliases, remote/IPFS/account/listener surfaces and additional Dialog consumer or broader rendering credit are excluded.",
+          "Opening numerical click conversion, including star count and allow-zero, remains distinct from live fraction repainting and saved one-star normalization, as recorded. Whole-widget pointer and ordinary single-button drag assertions remain; full mixed-button cross-edge capture parity is excluded because Slint drops its private grab on button release.",
+          "Configuration, persistence, sample-only data, child/parent Cancel and retained closed-child successor protection are covered by the defining tests. The new exports add presentation evidence without broadening generic owner or platform event coverage.",
+          "The independent wheel follow-up now passes at the original 1100×800 viewport after at least 810 ms of real timer/render pumping, with the unchanged single positive wheel, exact index 2 and all 92 assertions. This proves finite recovery after gesture expiry; immediate hide/show recovery and the precise historical failure cause remain unproved. No additional wheel completion credit is awarded.",
+          "No local Cargo build/test or mutation test was run for this independent review. Hosted full Linux results and actual source-bound render inspection supply the current validation; historical source-only pending observations are superseded only for this selected leaf."
+        ],
+        "remaining": [],
+        "native_source": {
+          "path": "crates/hydrus-gui/ui/services_editor.slint",
+          "line": 50,
+          "anchor_git_head": "95bbbed2cdd5f254a71330a00a2eb15f24b771a8",
+          "line_sha256": "d86512335b0cd433447a7b5c6fe497d02561e26daae98998c672254839fbee24",
+          "symbol": "component RatingExamplePanel"
+        },
+        "reference_source": {
+          "path": "hydrus/client/gui/services/ClientGUIClientsideServices.py",
+          "line": 1260,
+          "line_sha256": "8a4d1a328cd5f5e5f46716ed9c36b400f50256c13446705cef137d90d528aba0",
+          "anchor_git_head": "95bbbed2cdd5f254a71330a00a2eb15f24b771a8"
+        },
+        "implementation_validation": {
+          "source_commit": "95bbbed2cdd5f254a71330a00a2eb15f24b771a8",
+          "ci": "passed",
+          "tests_executed_at_checkpoint": true,
+          "native_render_review": "passed",
+          "manifest": "docs/rust/gui-coverage/parity/local-service-followup.json",
+          "review_required": false,
+          "run_url": "https://github.com/jkendall327/hydrus-mine/actions/runs/37618131717",
+          "validation_scope": "linux",
+          "required_platforms": [
+            "linux"
+          ],
+          "deferred_platforms": [
+            "windows",
+            "macos"
+          ],
+          "independent_review_evidence": {
+            "path": "docs/rust/gui-coverage/checkpoints/95bbbed2c/final-review-2-95bbbed2c.json",
+            "sha256": "06b549568b815185c647ec7adc22d3162c35f199ab4fabf6cea33b1795ac114c"
+          }
+        }
+      }
+    ],
+    "additions": []
+  },
+  "native": {
+    "updates": [],
+    "additions": []
+  }
+}

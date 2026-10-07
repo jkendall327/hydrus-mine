@@ -6,8 +6,8 @@ source-proven shared-alias crosswalk: 813 originally partial/missing and 461
 historical first-pass leaves. The approximate 800 figure describes the original
 implementation deficit, not the whole verification checklist.
 
-At the `a6d28f4e4` validation checkpoint, 368 have explicit implementation
-sign-off and 906 remain outside that ledger. The 7 existing proposed candidates
+At the `95bbbed2c` validation checkpoint, 369 have explicit implementation
+sign-off and 905 remain outside that ledger. The 6 existing proposed candidates
 are a subset of
 that remaining work. Historical first-pass status earns no automatic fresh
 verification credit. Structural parents, aliases and native surfaces do not add
@@ -30,4 +30,5 @@ the three filesize/hash leaves, the radio Return preference, four sort/group
 controls, three viewer-eye preferences, the sidebar tag-display action and two
 command-editor controls, registered-call Delete/Duplicate and Add Defaults, plus
 URL Add/Edit, nested File Choose/Add/Edit/Order and outer MIME mapping
-Add/Edit/Delete without changing the exhaustive goal IDs or exclusions.
+Add/Edit/Delete and live rating configuration examples without changing the
+exhaustive goal IDs or exclusions.

@@ -1,0 +1,48 @@
+{
+  "schema_version": 1,
+  "source_commit": "95bbbed2cdd5f254a71330a00a2eb15f24b771a8",
+  "run_id": 37618131717,
+  "state": "conditional_mapping_NOT_applied",
+  "selected_ids": [
+    "audit-media-services-missing-rating-preview"
+  ],
+  "input_patch": "/workspace/validation-reviews/rating-preview1/prep-95bbbed2c/subset-preflight/subset-proposal-patch.json",
+  "input_sha256": "e87cb0227b203c921f17aa20f2078dada21dc7f9083f81b615338451284800b9",
+  "mandatory_preconditions": [
+    "Exact source 95bbbed2cdd5f254a71330a00a2eb15f24b771a8, full Linux run 37618131717: strict check and parity-models pending; Windows/macOS deferred under immutable policy.",
+    "All four defining fresh native captures require root and independent review2 actual inspection and exact fingerprints; Qt final states and saved native sizes differ.",
+    "Prior368/unselected/native1799/frozen1812/all1274 goal preservation and actual desktop/narrow browser checks required.",
+    "Only accepted one-leaf publication may reach369 signed off,6 existing pending and905 outside the goal. No parent, alias, Preview canvas or wheel credit."
+  ],
+  "conditional_operations": [
+    {
+      "id": "audit-media-services-missing-rating-preview",
+      "field": "limitations",
+      "original_index": 4,
+      "operation": "replace_exact_list_item",
+      "before": "Rust model/native/store-consumer regressions authored for root hosted CI; no local Cargo build/test or mutation test.",
+      "conditional_after": "Historical author metadata records authored regressions without local Cargo builds, Rust tests or mutation testing. Current exact-source Linux execution and fresh native rendered review are recorded separately in the accepted checkpoint.",
+      "reason": "Reconcile only now-resolved validation status after actual gates; retain historical authorship/no-local-build provenance."
+    },
+    {
+      "id": "audit-media-services-missing-rating-preview",
+      "field": "remaining",
+      "original_index": 0,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source full Linux validation remains pending.",
+      "conditional_after": null,
+      "reason": "Remove only pending exact-source validation/render preparation status after real gates."
+    },
+    {
+      "id": "audit-media-services-missing-rating-preview",
+      "field": "remaining",
+      "original_index": 1,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source four defining fresh images and independent rendered/behavioral review remain pending.",
+      "conditional_after": null,
+      "reason": "Remove only pending exact-source validation/render preparation status after real gates."
+    }
+  ],
+  "operation_contract": "Full exact-before equality, descending index per ID/field: two pending removals and one historical provenance replacement. No assessment or true behavior limit removed.",
+  "approval": false
+}

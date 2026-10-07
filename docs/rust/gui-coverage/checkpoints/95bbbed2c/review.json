@@ -1,0 +1,34 @@
+{
+  "source_commit": "95bbbed2cdd5f254a71330a00a2eb15f24b771a8",
+  "reviewed_by": "Codex root with independent exact-source behavioral/rendered review2; separate source/preservation checks",
+  "patch_sha256": "1a1accd20f48d389749a3e3abe37dbda7475c79b9a9eeaec17ebb43e35b9d860",
+  "reviewed_source_census_sha256": "53c72add1445d7aa8a425834f5a05719bc02347d8052fd00a49c30ad76807504",
+  "selected_completion_ids": [
+    "audit-media-services-missing-rating-preview"
+  ],
+  "reviewed_assessment_ids": [
+    "audit-media-services-missing-rating-preview"
+  ],
+  "reviewed_native_ids": [],
+  "independent_reviews": [
+    {
+      "path": "docs/rust/gui-coverage/checkpoints/95bbbed2c/final-review-2-95bbbed2c.json",
+      "sha256": "06b549568b815185c647ec7adc22d3162c35f199ab4fabf6cea33b1795ac114c"
+    }
+  ],
+  "validation_scope": "linux",
+  "required_platforms": [
+    "linux"
+  ],
+  "deferred_platforms": [
+    "windows",
+    "macos"
+  ],
+  "root_actual_native_inspection": [
+    "/workspace/validation-reviews/ci-95bbbed2c/native-renders/service-rating-like-four-contexts.png",
+    "/workspace/validation-reviews/ci-95bbbed2c/native-renders/service-rating-numerical-four-contexts.png",
+    "/workspace/validation-reviews/ci-95bbbed2c/native-renders/service-rating-counter-four-contexts.png",
+    "/workspace/validation-reviews/ci-95bbbed2c/native-renders/service-rating-counter-inline-edit.png"
+  ],
+  "scope": "Only the selected live rating configuration examples gain credit. No parent, alias, native hierarchy or deferred-platform credit. Browser verification and preservation audit required before canonical publication."
+}

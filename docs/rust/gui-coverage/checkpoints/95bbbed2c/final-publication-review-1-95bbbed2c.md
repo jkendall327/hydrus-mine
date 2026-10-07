@@ -1,0 +1,13 @@
+No material publication blockers found.
+
+Reviewed the current rating checkpoint at exact source `95bbbed2cdd5f254a71330a00a2eb15f24b771a8`, full Linux run `37618131717`. All 62 audited payloads and 10 supplemental records match recorded hashes and byte counts, including relocated census/summary files and executed versus historical unbound scripts. Canonical inventory nodes exactly match the source-pinned publication pipeline.
+
+Exactly one completion is added: `audit-media-services-missing-rating-preview`. Prior 368 completions remain preserved; the ledger is 369, existing pending candidates are six, and 905 of the unchanged 1,274 goal leaves remain outside the explicit ledger. Only this one goal flag changes. Unselected assessments and all 1,799 native nodes retain their scopes apart from exact anchor repins and aggregate updates. Inventory FirstPass 970 is correctly distinct from 369 completions; 129 since 240 across 21 checkpoints is cumulative, not a last-24-hours count.
+
+The exact-source Linux evidence records 710 GUI and 67 media passes, with no failures or ignored tests. The frozen independent review approves exactly the selected leaf. Four fresh image hashes match durable images, the native manifest and root review. Desktop and narrow browser results bind the canonical HTML and publication audit. Current execution metadata correctly records `notes_update_pending: false`.
+
+The reviewed GUI, DIFFERENCES, ROADMAP, validation README, goal files, checkpoint README and performance section preserve native-versus-Qt state and icon-size differences, callback-driven colour text limitations, the distinction between the Preview Window example and a live Preview canvas, and finite wheel recovery after gesture expiry. Immediate hide/show recovery, historical wheel failure cause, broader renderer/parent/alias credit and secondary-platform validation remain excluded. Service assertions retain all original 139, with 156 current across five tests; wheel assertions remain 92 across six tests.
+
+Performance wording agrees with recorded logs: 72 seconds Clippy, 244 seconds test compilation and 662 seconds for the test step; 4,123 input mtimes and 293 artifacts restored, no generated-UI compile/check entry, 2,200,258,229 snapshot payload bytes and 690,173,746 retained compressed bytes. No controlled speedup or separate generation/linking measurement is claimed.
+
+This review creates no new feature approval. No builds or canonical writes were performed. The adjacent JSON records reviewed file hashes and all verified payload hashes. The separate selected-deletion pointer-control gap requires its planned repair and does not affect this rating checkpoint.

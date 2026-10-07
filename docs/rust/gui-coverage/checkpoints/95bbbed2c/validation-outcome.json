@@ -1,0 +1,81 @@
+{
+  "source_commit": "95bbbed2cdd5f254a71330a00a2eb15f24b771a8",
+  "run_id": 37618131717,
+  "conclusion": "success",
+  "validation_scope": "linux",
+  "required_platforms": [
+    "linux"
+  ],
+  "deferred_platforms": [
+    "windows",
+    "macos"
+  ],
+  "gui_tests": {
+    "passed": 710,
+    "failed": 0,
+    "ignored": 0,
+    "seconds": 178.19
+  },
+  "media_tests": {
+    "passed": 67,
+    "failed": 0,
+    "ignored": 0,
+    "seconds": 1.01
+  },
+  "selected_tests_passed": [
+    "test services_editor::deleting_relation_source_refreshes_open_viewer_and_locked_selection ... ok",
+    "test services_editor::one_star_rating_preview_replays_four_samples_and_preserves_saved_normalization ... ok",
+    "test services_editor::staged_rating_config_applies_and_cancel_writes_nothing ... ok",
+    "test services_editor::live_rating_examples_stage_only_configuration_and_retire_cancelled_owners ... ok",
+    "test services_editor::numerical_examples_drag_and_fraction_text_use_the_whole_widget_hit_area ... ok",
+    "test services_editor::numerical_example_one_star_retains_live_conversion_but_saves_normalized_scale ... ok",
+    "test services_editor::rating_example_whole_widget_pointer_routes_replay_qt ... ok",
+    "test services_editor::rating_examples_replay_qt_samples_live_configuration_and_no_saved_values ... ok"
+  ],
+  "assertion_preservation": {
+    "services_editor": {
+      "prior": 139,
+      "current": 156,
+      "prior_tests": 5,
+      "current_tests": 5
+    },
+    "menu_choice_wheel": {
+      "prior": 92,
+      "current": 92
+    }
+  },
+  "timings": {
+    "clippy_seconds": 72.0,
+    "clippy_cargo_seconds": 72.0,
+    "test_compile_seconds": 244.0,
+    "test_step_seconds": 662.0
+  },
+  "cache_observations": [
+    "2026-10-07T12:02:03.0949838Z Version: 20261002.596",
+    "2026-10-07T12:02:03.0959561Z Version: 20261004.327.1",
+    "2026-10-07T12:02:53.1344314Z Restored from cache key \"v0-rust-check-Linux-x64-ff0b8b70-0ea5e1be\" full match: true.",
+    "2026-10-07T12:02:55.0825207Z Workspace restore prefix: hydrus-ws-v1-check-Linux-X64-ca9bfc0c8b9baf8c381365db-",
+    "2026-10-07T12:03:17.7857805Z Verified and restored 4123 tracked-input mtimes and 293 coherent workspace artifact files; Cargo freshness checks remain enabled.",
+    "2026-10-07T12:16:25.0103916Z Workspace library snapshot candidate: 293 artifact files plus input ledger, 2200258229 bytes (limit 4294967296).",
+    "2026-10-07T12:16:35.1504666Z Cache saved with key: hydrus-ws-v1-check-Linux-X64-ca9bfc0c8b9baf8c381365db-95bbbed2cdd5f254a71330a00a2eb15f24b771a8-37618131717-1",
+    "2026-10-07T12:16:42.9941746Z Retained workspace snapshot bytes: 690173746; budget: 3221225472."
+  ],
+  "native_artifact_id": 11481791282,
+  "native_zip_sha256": "9124ac906bc0156cc625629dde2c7547fa3b85200efb6dcc3865357b6248b519",
+  "native_image_count": 380,
+  "limits": [
+    "Hosted observations, not controlled attribution or separate Slint generation/Rust/link timing.",
+    "The wheel regression retains original viewport and one input after documented gesture expiry; immediate recovery and retrospective failure causation remain unproven.",
+    "GUI and media suites have no failed or ignored tests. Existing ignored tests in other workspace suites remain; no assertions or tests were weakened.",
+    "Exactly one service-editor rating-preview leaf; runtime alone does not approve visibility of all four contexts or inline counter controls. Native and reference final action states/sizes differ."
+  ],
+  "evidence_sha256": {
+    "full-check.log": "9ab175c40136c0c3529bf1203ec1e2719d2cbe9331054a6044183f1ffd5bba19",
+    "tests.log": "679c856cc454de37543d1022ed83111ce7e11be2808d74dabe132fe103be7ac1",
+    "parity.log": "b11d001e33ebd4eb20ecd9b1307cbf81a5c41537e3fd80ff0d161b48661020cd",
+    "clippy.log": "950c15c543389d0c4c34173d8093336cb68ffaa97a880ceef1004b3ab8b5ddb0",
+    "maintenance.log": "59a2393c8f13f12dfec9b7515feb01f0ef333061b20164a7b5642264a7bad427",
+    "ci-evidence.json": "52f774103d9bcf2238a546f2a18a3b24ab4fc6c51dc5da4b89923f3cb6bdda79",
+    "native-render-manifest.json": "f51524c1d6c1570a2d394e4a28ddb8ae20c0069b5ece165304631d667dc2f7ef"
+  }
+}

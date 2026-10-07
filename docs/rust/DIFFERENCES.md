@@ -2278,8 +2278,9 @@ This framework boundary remains explicit; full chord capture parity is not claim
 The rating-preview evidence follow-up targets all four service-editor examples
 for like, numerical and counter services, plus the inline counter input. The
 earlier 640×900 export showed only the first example. New captures scroll the
-actual owned editor at 640×1000 and await full Linux execution and rendered
-review. Native examples retain the tested saved 20/15/12/12 icon sizes rather
+actual owned editor at 640×1000. Full Linux run `37618131717` and fresh
+independent rendered review passed for this one leaf.
+[Evidence](gui-coverage/checkpoints/95bbbed2c/README.md). Native examples retain the tested saved 20/15/12/12 icon sizes rather
 than the Qt recorder's default sizing. Preview Window is an example label,
 not evidence of a live Preview canvas. Captures retain the existing native
 action sequence: the first like sample is selected and the first counter is 1;
@@ -3364,7 +3365,8 @@ retain a wheel-routing timestamp for 800 ms even when content is clamped and
 no animation is active. Pumping real timers/layout for at least 810 ms tests
 one distinct subsequent gesture without retrying input or changing assertions.
 This source-supported precondition does not prove the earlier failure's precise
-cause or immediate hide/show recovery; fresh Linux execution remains pending.
+cause or immediate hide/show recovery. Full Linux run `37618131717` passed
+this finite after-expiry precondition; no new wheel completion is claimed.
 
 The actual Qt media-type Random roundtrip is recorded separately as a remaining
 limitation: SHA-256 hash sort (system20) ASC → Random (system4) → hash ASC

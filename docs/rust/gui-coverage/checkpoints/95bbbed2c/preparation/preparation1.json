@@ -1,0 +1,26 @@
+{
+  "source_commit": "95bbbed2cdd5f254a71330a00a2eb15f24b771a8",
+  "run_id": 37618131717,
+  "baseline_source_commit": "dfce4078c277e932be874b32d882ef07e0f8b694",
+  "claims": [
+    {
+      "id": "audit-media-services-missing-rating-preview",
+      "manifest": "docs/rust/gui-coverage/parity/local-service-followup.json",
+      "publication_preparation": "unresolved",
+      "reason": "Current four-context exports authored; exact-source hosted execution and actual rendered review pending."
+    }
+  ],
+  "next_bank_priority_ids": [
+    "audit-media-services-missing-rating-preview"
+  ],
+  "selected_ids": [
+    "audit-media-services-missing-rating-preview"
+  ],
+  "final_gates": [
+    "Exact source 95bbbed2cdd5f254a71330a00a2eb15f24b771a8, full Linux run 37618131717: strict check and parity-models pending; Windows/macOS deferred under immutable policy.",
+    "All four defining fresh native captures require root and independent review2 actual inspection and exact fingerprints; Qt final states and saved native sizes differ.",
+    "Prior368/unselected/native1799/frozen1812/all1274 goal preservation and actual desktop/narrow browser checks required.",
+    "Only accepted one-leaf publication may reach369 signed off,6 existing pending and905 outside the goal. No parent, alias, Preview canvas or wheel credit."
+  ],
+  "approval": false
+}

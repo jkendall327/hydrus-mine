@@ -1,0 +1,67 @@
+{
+  "source_commit": "95bbbed2cdd5f254a71330a00a2eb15f24b771a8",
+  "run_id": 37618131717,
+  "artifact_id": 11481791282,
+  "native_zip_sha256": "9124ac906bc0156cc625629dde2c7547fa3b85200efb6dcc3865357b6248b519",
+  "actually_viewed": [
+    {
+      "name": "service-rating-like-four-contexts.png",
+      "path": "/workspace/validation-reviews/ci-95bbbed2c/native-renders/service-rating-like-four-contexts.png",
+      "sha256": "d3d37b892e3b98138d49b5b93a784bd7aecc97c459dcbff79adf01f695a3104c",
+      "width": 640,
+      "height": 1000,
+      "observation": "All four named contexts, distinct star sizes and fills, and Apply/Cancel visible. Native thumbnail selected; Qt final thumbnail cleared."
+    },
+    {
+      "name": "service-rating-numerical-four-contexts.png",
+      "path": "/workspace/validation-reviews/ci-95bbbed2c/native-renders/service-rating-numerical-four-contexts.png",
+      "sha256": "049711996805606fb573c57089802b2d70541f299777dce16ecfd0bd68f46d39",
+      "width": 640,
+      "height": 1000,
+      "observation": "All four contexts show seven diamonds and readable fractions: Thumbnail and Preview Window3/7; Media Viewer and Dialog -/7. Footer visible; upper name area partly outside scrolled viewport."
+    },
+    {
+      "name": "service-rating-counter-four-contexts.png",
+      "path": "/workspace/validation-reviews/ci-95bbbed2c/native-renders/service-rating-counter-four-contexts.png",
+      "sha256": "7d073eee2d1b784b4ecd95ca82eb1060527bd658eea8109c838e335b17f2d9fa",
+      "width": 640,
+      "height": 1000,
+      "observation": "All four counter samples visible, including accepted Dialog12,345; Thumbnail1, Media Viewer0, Preview Window1. Footer readable."
+    },
+    {
+      "name": "service-rating-counter-inline-edit.png",
+      "path": "/workspace/validation-reviews/ci-95bbbed2c/native-renders/service-rating-counter-inline-edit.png",
+      "sha256": "c835a1cf3a232547d01ee8d40df581f2c0a53ce019eaecb96beaa706e4536e9e",
+      "width": 640,
+      "height": 1000,
+      "observation": "Four contexts remain visible with pending inline12345 and ok/cancel. Dialog remains0 before accepting. Apply disabled during inline edit; outer Cancel visible."
+    }
+  ],
+  "reference_images_actually_viewed": [
+    {
+      "path": "/workspace/hydrus-mine/oracle/fixtures/service_rating_preview_7.png",
+      "sha256": "cf6ded9ef605ec274a2c7ca913712def336c7cf1a639c75e55dc974673a1645b",
+      "actually_viewed": true,
+      "scope": "Historical Qt final example state; default sizes and final action states differ from native snapshots."
+    },
+    {
+      "path": "/workspace/hydrus-mine/oracle/fixtures/service_rating_preview_6.png",
+      "sha256": "f98a7ac01f74eb09e5c6261735639f78b32848ca69db0ee99ad1174d2c9f6116",
+      "actually_viewed": true,
+      "scope": "Historical Qt final example state; default sizes and final action states differ from native snapshots."
+    },
+    {
+      "path": "/workspace/hydrus-mine/oracle/fixtures/service_rating_preview_22.png",
+      "sha256": "935a436905dc2d6b143f87a4abb6e4feda9a4a98b32900184b538c797dd3b7e4",
+      "actually_viewed": true,
+      "scope": "Historical Qt final example state; default sizes and final action states differ from native snapshots."
+    }
+  ],
+  "independent_review_pending": false,
+  "root_visual_blockers": [],
+  "scope": "Exactly service-editor live rating examples at640x1000; callback-driven colour setup updates graphics while displayed colour strings retain initial values. This does not prove typed colour editing is stale. Saved icon sizes20/15/12/12 differ from Qt defaults. No pixel equality, universal geometry, actual Preview canvas, cross-edge chord or additional consumer credit.",
+  "independent_review": {
+    "path": "/workspace/validation-reviews/final-review-2-95bbbed2c.json",
+    "sha256": "06b549568b815185c647ec7adc22d3162c35f199ab4fabf6cea33b1795ac114c"
+  }
+}
