@@ -438,6 +438,7 @@ pub struct Bound {
     pub favourites: favourites_window::Slots,
     /// A system predicate's editor while one is open.
     pub predicate_editor: Rc<RefCell<Option<PredicateEditorWindow>>>,
+    _predicate_editor_owner: Rc<predicate_editor_window::Owner>,
     pub search_or: search_or_window::Slot,
     _autocomplete_tabs: Rc<slint::Timer>,
     /// Files dropped on the main window: the "review files to import"
@@ -599,6 +600,11 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
     let vacuum_review = vacuum_review_window::Slot::default();
     let manage_tags: Rc<RefCell<Option<ManageTagsWindow>>> = Rc::default();
     let predicate_editor: Rc<RefCell<Option<PredicateEditorWindow>>> = Rc::default();
+    let predicate_editor_owner = Rc::new(predicate_editor_window::Owner::new(
+        window,
+        &predicate_editor,
+    ));
+    let predicate_editor_live = predicate_editor_owner.valid_callback();
 
     let pages = Rc::new(RefCell::new(pages));
     menu_choice_wheel::bind(
@@ -709,7 +715,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         let vacuum_review = vacuum_review.clone();
         let options = options.clone();
         let manage_tags = manage_tags.clone();
-        let predicate_editor = predicate_editor.clone();
+        let retire_predicate_editor = predicate_editor_owner.retire_callback();
         let rows = rows.clone();
         let retire_colours = gui_colour_actions.retire_callback();
         let launcher = external_launches.clone();
@@ -741,13 +747,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             if let Some(child) = child {
                 child.invoke_cancel();
             }
-            let child = predicate_editor
-                .borrow()
-                .as_ref()
-                .map(slint::ComponentHandle::clone_strong);
-            if let Some(child) = child {
-                child.invoke_cancel();
-            }
+            retire_predicate_editor();
             let child = manage_tags
                 .borrow()
                 .as_ref()
@@ -1220,7 +1220,11 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         &search_or,
         page.clone(),
         shown.clone(),
-        binding_active.clone(),
+        Rc::new({
+            let active = binding_active.clone();
+            let live = predicate_editor_live.clone();
+            move || active.get() && live()
+        }),
         active_search_launcher,
     );
 
@@ -1471,12 +1475,14 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         let current_page = page.clone();
         let main = window.as_weak();
         let active = binding_active.clone();
+        let live = predicate_editor_live.clone();
         move |page: Rc<RefCell<SearchPage>>| {
             // A refused activation is consumed, not queued behind an owner question/hide.
             let Some((blank, shift)) = page.borrow_mut().take_system_editor_wanted() else {
                 return;
             };
-            if !active.get()
+            if !live()
+                || !active.get()
                 || main.upgrade().is_none_or(|main| {
                     !main.window().is_visible() || !main.get_question().is_empty()
                 })
@@ -1506,8 +1512,10 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                 let current_page = current_page.clone();
                 let main = main.clone();
                 let active = active.clone();
+                let live = live.clone();
                 move || {
-                    active.get()
+                    live()
+                        && active.get()
                         && original.upgrade().is_some_and(|original| {
                             Rc::ptr_eq(&original, &current_page())
                                 && original.borrow().lock().is_none()
@@ -3353,7 +3361,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             let retire_popups = popup_timer.retire_callback();
             let options = options.clone();
             let manage_tags = manage_tags.clone();
-            let predicate_editor = predicate_editor.clone();
+            let retire_predicate_editor = predicate_editor_owner.retire_callback();
             let rows = rows.clone();
             let sidebar_layout = sidebar_layout.clone();
             let binding_active = binding_active.clone();
@@ -3400,13 +3408,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                 if let Some(child) = child {
                     child.invoke_cancel();
                 }
-                let child = predicate_editor
-                    .borrow()
-                    .as_ref()
-                    .map(slint::ComponentHandle::clone_strong);
-                if let Some(child) = child {
-                    child.invoke_cancel();
-                }
+                retire_predicate_editor();
                 preview.close();
                 shortcuts.retire();
                 launcher.cancel();
@@ -5377,6 +5379,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         favourites: favourite_dialogs,
         _autocomplete_tabs: autocomplete_tabs,
         predicate_editor,
+        _predicate_editor_owner: predicate_editor_owner,
         search_or,
         drop_files: review_files,
         sync,

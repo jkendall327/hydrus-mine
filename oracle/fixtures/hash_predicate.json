@@ -1533,5 +1533,134 @@
     "original_value": null,
     "result": 0,
     "original_after": null
+  },
+  "parent_destruction": {
+    "cases": [
+      {
+        "kind": "filesize",
+        "nested_warning": false,
+        "destroyed_signals": [
+          "owner",
+          "launcher",
+          "dialog",
+          "panel",
+          "editor"
+        ],
+        "dialog_parent_is_owner_window": true,
+        "panel_parent_is_dialog": true,
+        "before": {
+          "owner": {
+            "valid": true,
+            "visible": true
+          },
+          "launcher": {
+            "valid": true,
+            "visible": false
+          },
+          "dialog": {
+            "valid": true,
+            "visible": true
+          },
+          "panel": {
+            "valid": true,
+            "visible": true
+          },
+          "editor": {
+            "valid": true,
+            "visible": true
+          }
+        },
+        "original_value_before": null,
+        "valid_immediately_after_delete_later": {
+          "owner": true,
+          "launcher": true,
+          "dialog": true,
+          "panel": true,
+          "editor": true
+        },
+        "after_bounded_drain": {
+          "owner": false,
+          "launcher": false,
+          "dialog": false,
+          "panel": false,
+          "editor": false
+        },
+        "original_value_after": null,
+        "client_main_survives": true,
+        "final_valid": {
+          "owner": false,
+          "launcher": false,
+          "dialog": false,
+          "panel": false,
+          "editor": false
+        }
+      },
+      {
+        "kind": "hash",
+        "nested_warning": false,
+        "destroyed_signals": [
+          "owner",
+          "launcher",
+          "dialog",
+          "panel",
+          "editor"
+        ],
+        "dialog_parent_is_owner_window": true,
+        "panel_parent_is_dialog": true,
+        "before": {
+          "owner": {
+            "valid": true,
+            "visible": true
+          },
+          "launcher": {
+            "valid": true,
+            "visible": false
+          },
+          "dialog": {
+            "valid": true,
+            "visible": true
+          },
+          "panel": {
+            "valid": true,
+            "visible": true
+          },
+          "editor": {
+            "valid": true,
+            "visible": true
+          }
+        },
+        "original_value_before": null,
+        "valid_immediately_after_delete_later": {
+          "owner": true,
+          "launcher": true,
+          "dialog": true,
+          "panel": true,
+          "editor": true
+        },
+        "after_bounded_drain": {
+          "owner": false,
+          "launcher": false,
+          "dialog": false,
+          "panel": false,
+          "editor": false
+        },
+        "original_value_after": null,
+        "client_main_survives": true,
+        "final_valid": {
+          "owner": false,
+          "launcher": false,
+          "dialog": false,
+          "panel": false,
+          "editor": false
+        }
+      }
+    ],
+    "qt_callback_errors": [],
+    "drain_policy": {
+      "maximum_rounds": 8,
+      "process_events_max_time_ms": 10,
+      "send_posted_event_type": "QEvent.DeferredDelete"
+    },
+    "scope": "Standalone QWidget.window() owner; shown nonmodal actual DialogEdit/FleshOutPredicatePanel; no Main destruction, nested warning destruction or production search publication."
   }
 }

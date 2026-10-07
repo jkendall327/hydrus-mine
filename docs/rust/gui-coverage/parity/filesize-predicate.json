@@ -7,7 +7,9 @@
   "implementation_commits": [
     "7070a5a00c925eb2b9c895bbfca31527cc1b4920",
     "ea6779413f546793d7ee3f32776a3a5cc5f5a827",
-    "e30ef47d27e95b3f51ca981e0059b2ff53b9f455"
+    "e30ef47d27e95b3f51ca981e0059b2ff53b9f455",
+    "1dabc102059d4595e975ef636037dbfe720688b1",
+    "340b458b87454b3eba567247e4d0656e4dc74e9c"
   ],
   "eligible_concrete_first_pass_count": 1,
   "parent_promotions": 0,
@@ -27,7 +29,9 @@
     "reference": "Actual Qt 2026-10-05 11:12:44–46; real fixture/PNG inspected.",
     "source_checks": "Cached Slint compilation, rustfmt --check, git diff --check and Python recorder/fixture invariants pass.",
     "rust_tests": "Authored only; hosted Rust/native rendered replay and exact-source PNG review pending.",
-    "independent_review": "Root accepted immutable source 7070a5a00 and final guard source e30ef47d after direct bounded review: radios, keys, typed units/query/bounds, row synchronization, Cancel/reopen, page/lock identity, hidden/pending/retired owner and refused-activation consumption. No runtime attestation."
+    "independent_review": "Root accepted immutable source 7070a5a00 and final guard source e30ef47d after direct bounded review: radios, keys, typed units/query/bounds, row synchronization, Cancel/reopen, page/lock identity, hidden/pending/retired owner and refused-activation consumption. No runtime attestation.",
+    "lifetime_repair_checks": "Owner source and four native lifetime regressions authored; rustfmt --check and git diff --check pass for tests. Full exact-source Linux Rust/Clippy and fresh native render review remain pending; no local Cargo/build/mutation execution.",
+    "lifetime_reference": "record_parent_destruction successfully rerun on 2026-10-07 UTC; original ten hash fixture keys value-identical. Standalone nonmodal Qt owner cascade only, not client Main or active nested warning destruction."
   },
   "evidence_hashes": [
     {
@@ -155,8 +159,8 @@
       "proposed_status": "first_pass",
       "change_kind": "implementation",
       "countAsCompletedLeaf": true,
-      "exactBehavior": "File-size editor exposes five exclusive comparison radios (<,≈,=,≠,>) with clamped arrow navigation, Space and the default Enter path. Amount clamps to 0–1,048,576 and B/KB/MB/GB/TB remain separated binary units; selecting a unit does not convert the amount. Typed values reach the existing query executor with actual Qt hash outcomes for all operator/unit combinations and equality boundaries. Explicit supplied-value reconstruction preserves raw units in the model; native saved-default units persist/reopen and preserve unrelated default families. Cancel leaves the search unchanged. Hidden child/main or pending main questions refuse edits/acceptance; rebind and accepted exit cancel the owned main child, declined exit stays live, and a refused activation is consumed rather than resurrected later.",
-      "behavior": "File-size editor exposes five exclusive comparison radios (<,≈,=,≠,>) with clamped arrow navigation, Space and the default Enter path. Amount clamps to 0–1,048,576 and B/KB/MB/GB/TB remain separated binary units; selecting a unit does not convert the amount. Typed values reach the existing query executor with actual Qt hash outcomes for all operator/unit combinations and equality boundaries. Explicit supplied-value reconstruction preserves raw units in the model; native saved-default units persist/reopen and preserve unrelated default families. Cancel leaves the search unchanged. Hidden child/main or pending main questions refuse edits/acceptance; rebind and accepted exit cancel the owned main child, declined exit stays live, and a refused activation is consumed rather than resurrected later.",
+      "exactBehavior": "File-size editor exposes five exclusive comparison radios (<,≈,=,≠,>) with clamped arrow navigation, Space and the default Enter path. Amount clamps to 0–1,048,576 and B/KB/MB/GB/TB remain separated binary units; selecting a unit does not convert the amount. Typed values reach the existing query executor with actual Qt hash outcomes for all operator/unit combinations and equality boundaries. Explicit supplied-value reconstruction preserves raw units in the model; native saved-default units persist/reopen and preserve unrelated default families. Cancel leaves the search unchanged. Hidden child/main or pending main questions refuse edits/acceptance; rebind and accepted exit cancel the owned main child, declined exit stays live, and a refused activation is consumed rather than resurrected later. Main-owned lifetime state retires the editor on actual Main-component destruction or final Bound-owner drop as well as rebind/accepted exit, hides owned notices and clears only its own slot. Nonfinal Bound clones, temporary Main hide and pending/declined exit retain the draft; retired/re-shown callbacks and Return cannot publish or change recents/defaults.",
+      "behavior": "File-size editor exposes five exclusive comparison radios (<,≈,=,≠,>) with clamped arrow navigation, Space and the default Enter path. Amount clamps to 0–1,048,576 and B/KB/MB/GB/TB remain separated binary units; selecting a unit does not convert the amount. Typed values reach the existing query executor with actual Qt hash outcomes for all operator/unit combinations and equality boundaries. Explicit supplied-value reconstruction preserves raw units in the model; native saved-default units persist/reopen and preserve unrelated default families. Cancel leaves the search unchanged. Hidden child/main or pending main questions refuse edits/acceptance; rebind and accepted exit cancel the owned main child, declined exit stays live, and a refused activation is consumed rather than resurrected later. Main-owned lifetime state retires the editor on actual Main-component destruction or final Bound-owner drop as well as rebind/accepted exit, hides owned notices and clears only its own slot. Nonfinal Bound clones, temporary Main hide and pending/declined exit retain the draft; retired/re-shown callbacks and Return cannot publish or change recents/defaults.",
       "reference_source": {
         "relativepath": "hydrus/client/gui/search/ClientGUIPredicatesSingle.py",
         "line": 3148,
@@ -290,6 +294,27 @@
           "symbol": "fn legacy_file_comparison(",
           "line_sha256": "ef2f2d9e95797dac32b1a656a0edf7ccf94a69ce3a4299f467d58c84fbc8e500",
           "commit": "e30ef47d27e95b3f51ca981e0059b2ff53b9f455"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/predicate_editor_window.rs",
+          "line": 52,
+          "symbol": "pub(crate) struct Owner(Rc<MainOwner>);",
+          "line_sha256": "947fe84b1d84a5a0a6d546060b26927580cb7569189e842aa324a5627cc2563d",
+          "commit": "1dabc102059d4595e975ef636037dbfe720688b1"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/predicate_editor_window.rs",
+          "line": 70,
+          "symbol": "state.parent.upgrade().is_none()",
+          "line_sha256": "7798a0d708469d11e5ce33eb40abe0c91d0dbd57bdc374f45e6a77a53628112e",
+          "commit": "1dabc102059d4595e975ef636037dbfe720688b1"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/predicate_editor_window.rs",
+          "line": 102,
+          "symbol": "impl Drop for Owner {",
+          "line_sha256": "3806ad3163a6069fe80abc5fcf2967c2e112e3b78368233667e861a4c012f1dc",
+          "commit": "1dabc102059d4595e975ef636037dbfe720688b1"
         }
       ],
       "test_anchors": [
@@ -313,6 +338,27 @@
           "symbol": "fn hidden_cancelled_rebound_and_accepted_closed_main_cannot_accept_a_retained_size_draft",
           "line_sha256": "a1189979b56bec3b556c921a97909b59b9df4f472984c2ef1c02a498eac159ed",
           "commit": "e30ef47d27e95b3f51ca981e0059b2ff53b9f455"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/filesize_predicate.rs",
+          "line": 305,
+          "symbol": "fn destroyed_main_automatically_closes_new_size_while_bound_child_and_collector_survive",
+          "line_sha256": "ffbd8546e798d791216eb558a3ab1b73b9454005d0c23ef0f5d1e0164f5f8463",
+          "commit": "340b458b87454b3eba567247e4d0656e4dc74e9c"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/filesize_predicate.rs",
+          "line": 372,
+          "symbol": "fn only_final_bound_drop_retires_size_and_old_timers_cannot_retire_a_live_successor",
+          "line_sha256": "043b3e5fbb840d589246fffcf4a1f9eab5199105f4440d907095dc0d77de5f7e",
+          "commit": "340b458b87454b3eba567247e4d0656e4dc74e9c"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/active_predicates.rs",
+          "line": 1140,
+          "symbol": "fn destroyed_main_automatically_closes_existing_size_before_retained_handles_release",
+          "line_sha256": "4cf9992b1f316d65b8f5125183fa8045152b2425537512c041cfe9774e354895",
+          "commit": "340b458b87454b3eba567247e4d0656e4dc74e9c"
         }
       ],
       "reference_recording": {
@@ -330,11 +376,66 @@
       },
       "limits": [
         "Conditional source proposal only: hosted Rust/native tests, exact-source native screenshot and render review remain pending; no local Cargo/Rust build/test/mutation execution.",
-        "Generic active-predicate list editing is separately Missing (audit-options-search-active-edit), excluded from this leaf; native reopen uses real saved typed custom defaults, while explicit existing-value reconstruction is model-tested.",
+        "Generic active-predicate list editing remains a separate Partial action (audit-options-search-active-edit), excluded from this leaf. The new populated-existing-size lifetime test is a bounded safety check, not generic editing completion; native reopen uses saved typed defaults, while explicit reconstruction remains model-covered.",
         "Separate global radio-Enter preference is outside this finite editor slice; the recorded true-default Enter path is supported.",
         "Reference TB predicate ToString returns error:cannot render this predicate while its typed value/query remain valid; native renders TB explicitly. Existing free-text parser TB limitation stays documented.",
-        "All structural/shared predicate editor aliases and Options/filesize parents remain Partial and uncounted. Other predicate kinds retain their existing widgets, model and query semantics."
-      ]
+        "All structural/shared predicate editor aliases and Options/filesize parents remain Partial and uncounted. Other predicate kinds retain their existing widgets, model and query semantics.",
+        "The new owner/lifetime assertions and matching cleanup-warning export await full exact-source Linux CI and fresh independent native render review; they add no completion credit yet.",
+        "Qt destruction recording covers two nonmodal standalone QWidget.window() parent cascades with retained wrappers and unchanged blank predicates. It does not destroy client Main, run nested exec() teardown or establish active nested-warning closure. Native notice closure is a separate safety boundary.",
+        "Native Main-death cleanup is observed through a repeated 50 ms timer with a bounded test deadline; final Bound-owner drop closes synchronously. Strong headless warning adapters/windows are retained in native notice tests; the private SessionDialog component is not separately exposed. OS chrome, modality, focus or destruction geometry equality is not claimed."
+      ],
+      "reference_recording_extension": {
+        "script": "oracle/record_hash_predicate.py",
+        "fixture": "oracle/fixtures/hash_predicate.json",
+        "fixture_section": "parent_destruction",
+        "executed": true,
+        "executed_utc": "2026-10-07T01:57:03Z",
+        "exit_code": 0,
+        "source_status": "Successfully rerun in root working tree; immutable integrated source pin pending. Historical reference_recording commit/provenance below is preserved.",
+        "script_sha256_at_preparation": "f48f77e9b6fff5a44fec35ebb9908fd552b9e49fbe09e98c0fd240d8aaa5edfa",
+        "fixture_sha256_at_preparation": "ea4363fff431e29739fd4ca1e9a12062e2c155ea3ea95e28249e40f0eefc7154",
+        "root_recorder_log_sha256": "8ef1c81e27650509de5598fd030e9bd8075b1f1b2e1ea013a1abf610ba6603c0",
+        "original_fixture_keys_value_identical": 10,
+        "result": "Two shown nonmodal actual DialogEdit/FleshOutPredicatePanel cascades under standalone QWidget.window() parents (filesize and hash). All five Python wrappers per case remain retained while owner.deleteLater plus bounded DeferredDelete/processEvents makes owner, launcher, dialog, panel and editor invalid and emits each destroyed signal. Original blank predicate values remain null and client Main survives. No Qt callback errors.",
+        "limits": [
+          "Standalone QWidget parent, not client Main destruction.",
+          "Nonmodal shown dialogs, not nested exec() teardown.",
+          "No active nested-warning destruction or production search publication recorded. Native cleanup-notice teardown is a separate safety regression; the failed nested-warning attempt earns no reference claim."
+        ]
+      }
     }
-  ]
+  ],
+  "lifetime_repair_preparation": {
+    "production_commit": "1dabc102059d4595e975ef636037dbfe720688b1",
+    "test_commit": "340b458b87454b3eba567247e4d0656e4dc74e9c",
+    "integrated_source_status": "Root working-tree integration; final immutable source and exact-source full Linux validation pending. Existing source_commit/reference pins retain historical provenance.",
+    "selected_cohort_count": 3,
+    "selected_cohort_ids": [
+      "audit-options-predicate-filesize-size",
+      "audit-options-predicate-hash-hash-hashes",
+      "audit-options-predicate-hash-hash-clean"
+    ],
+    "signed_off_implementation_leaves": 343,
+    "pending_candidate_leaves": 32,
+    "reference_recording_extension": {
+      "script": "oracle/record_hash_predicate.py",
+      "fixture": "oracle/fixtures/hash_predicate.json",
+      "fixture_section": "parent_destruction",
+      "executed": true,
+      "executed_utc": "2026-10-07T01:57:03Z",
+      "exit_code": 0,
+      "source_status": "Successfully rerun in root working tree; immutable integrated source pin pending. Historical reference_recording commit/provenance below is preserved.",
+      "script_sha256_at_preparation": "f48f77e9b6fff5a44fec35ebb9908fd552b9e49fbe09e98c0fd240d8aaa5edfa",
+      "fixture_sha256_at_preparation": "ea4363fff431e29739fd4ca1e9a12062e2c155ea3ea95e28249e40f0eefc7154",
+      "root_recorder_log_sha256": "8ef1c81e27650509de5598fd030e9bd8075b1f1b2e1ea013a1abf610ba6603c0",
+      "original_fixture_keys_value_identical": 10,
+      "result": "Two shown nonmodal actual DialogEdit/FleshOutPredicatePanel cascades under standalone QWidget.window() parents (filesize and hash). All five Python wrappers per case remain retained while owner.deleteLater plus bounded DeferredDelete/processEvents makes owner, launcher, dialog, panel and editor invalid and emits each destroyed signal. Original blank predicate values remain null and client Main survives. No Qt callback errors.",
+      "limits": [
+        "Standalone QWidget parent, not client Main destruction.",
+        "Nonmodal shown dialogs, not nested exec() teardown.",
+        "No active nested-warning destruction or production search publication recorded. Native cleanup-notice teardown is a separate safety regression; the failed nested-warning attempt earns no reference claim."
+      ]
+    },
+    "scope": "Only filesize and both hash leaves proposed. No radio, generic active-edit, parent, alias or deferred-platform completion credit."
+  }
 }

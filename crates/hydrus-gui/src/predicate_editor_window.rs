@@ -2,10 +2,13 @@
 //! ready-made buttons (each adding its predicates) and its panels (each
 //! field changed as it is set, "ok" adding what the panel makes, or saying
 //! why it can't).
+//! Main-owned editors share a Bound lifecycle owner with weak callbacks; parent
+//! destruction retires the child independently of temporary input restrictions.
 
 use std::cell::{Cell, RefCell};
 use std::rc::Rc;
 use std::sync::Arc;
+use std::time::Duration;
 
 use slint::{ComponentHandle as _, Model as _, ModelRc, SharedString, VecModel};
 
@@ -18,7 +21,89 @@ use crate::predicate_editors::{
     Blank, Context, Editor, Field, Kind, Panel, Pressed,
     defaults::{CustomDefaults, CustomDefaultsExt},
 };
-use crate::{EditorField, EditorPanel, EditorTreeRow, PredicateEditorWindow};
+use crate::{EditorField, EditorPanel, EditorTreeRow, MainWindow, PredicateEditorWindow};
+
+struct MainOwner {
+    parent: slint::Weak<MainWindow>,
+    slot: Rc<RefCell<Option<PredicateEditorWindow>>>,
+    live: Cell<bool>,
+    observer: slint::Timer,
+}
+impl MainOwner {
+    fn retire(&self) {
+        if !self.live.replace(false) {
+            return;
+        }
+        self.observer.stop();
+        // Cancel clears the exact editor's slot and its nested notices. Release
+        // the borrow first: the existing close callback borrows the slot again.
+        let child = self
+            .slot
+            .borrow()
+            .as_ref()
+            .map(slint::ComponentHandle::clone_strong);
+        if let Some(child) = child {
+            child.invoke_cancel();
+        }
+    }
+}
+
+/// Only Bound clones share this owner; callbacks and the observer hold Weak state.
+pub(crate) struct Owner(Rc<MainOwner>);
+impl Owner {
+    pub(crate) fn new(
+        parent: &MainWindow,
+        slot: &Rc<RefCell<Option<PredicateEditorWindow>>>,
+    ) -> Self {
+        let state = Rc::new(MainOwner {
+            parent: parent.as_weak(),
+            slot: slot.clone(),
+            live: Cell::new(true),
+            observer: slint::Timer::default(),
+        });
+        state
+            .observer
+            .start(slint::TimerMode::Repeated, Duration::from_millis(50), {
+                let weak = Rc::downgrade(&state);
+                move || {
+                    if let Some(state) = weak.upgrade()
+                        && state.parent.upgrade().is_none()
+                    {
+                        state.retire();
+                    }
+                }
+            });
+        Self(state)
+    }
+
+    /// Permanent admission, independent of temporary hide/question input guards.
+    pub(crate) fn valid_callback(&self) -> Rc<dyn Fn() -> bool> {
+        Rc::new({
+            let weak = Rc::downgrade(&self.0);
+            move || {
+                weak.upgrade()
+                    .is_some_and(|state| state.live.get() && state.parent.upgrade().is_some())
+            }
+        })
+    }
+
+    /// Retire on accepted exit/rebinding without retaining the shared Bound owner.
+    pub(crate) fn retire_callback(&self) -> Rc<dyn Fn()> {
+        Rc::new({
+            let weak = Rc::downgrade(&self.0);
+            move || {
+                if let Some(state) = weak.upgrade() {
+                    state.retire();
+                }
+            }
+        })
+    }
+}
+impl Drop for Owner {
+    fn drop(&mut self) {
+        self.0.retire();
+    }
+}
 
 /// A field as the window shows it.
 fn field_row(panel: &Panel, i: usize) -> EditorField {

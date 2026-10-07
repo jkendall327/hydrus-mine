@@ -13,6 +13,10 @@ eight selected images, logs, hashes, review limits and preceding generation fail
 The current goal is all individual feature leaves implemented and verified;
 historical numeric goals and inventory first-pass counts are not completion
 criteria. The next bounded cohort is filesize plus both hash predicate leaves.
+Its shared-owner repair and four new lifetime regressions are prepared, with
+all 192 existing assertions preserved and the actual Qt parent-cascade recorder
+rerun successfully. Full exact-source Linux validation and fresh independent
+render review remain pending; these three candidates have no completion credit.
 The notes below preserve the chronological investigation and failed-run history.
 Source review of all 153 parity manifests is recorded in `review-1.md` through
 `review-6.md`; these reports describe the initial source, not later repairs.

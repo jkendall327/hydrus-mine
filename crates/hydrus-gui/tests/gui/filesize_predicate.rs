@@ -194,6 +194,12 @@ fn hidden_cancelled_rebound_and_accepted_closed_main_cannot_accept_a_retained_si
     assert_eq!(fields(&window).row_data(2).unwrap().value, 200);
     window.show().unwrap();
     ui.hide().unwrap();
+    super::active_predicates::drain_predicate_timers_for_observer();
+    assert!(
+        window.window().is_visible(),
+        "temporary Main hide must preserve the draft"
+    );
+    assert!(bound.predicate_editor.borrow().is_some());
     window.invoke_chose(0, 1, 4);
     window.invoke_number_edited(0, 2, 99);
     window.invoke_ok(0);
@@ -238,6 +244,22 @@ fn hidden_cancelled_rebound_and_accepted_closed_main_cannot_accept_a_retained_si
     assert!(bound.current.borrow().borrow().predicates().is_empty());
     assert!(successor.current.borrow().borrow().predicates().is_empty());
     let child = open(&ui, &successor);
+    super::active_predicates::drain_predicate_timers_for_observer();
+    retired.invoke_cancel();
+    retired.invoke_ok(0);
+    assert!(
+        child.window().is_visible(),
+        "a retained rebound owner cannot retire the successor"
+    );
+    assert!(std::ptr::eq(
+        successor
+            .predicate_editor
+            .borrow()
+            .as_ref()
+            .unwrap()
+            .window(),
+        child.window()
+    ));
     let mut gui: settings::GuiSettings = store.read(settings::get).unwrap();
     gui.confirm_exit = true;
     store
@@ -252,11 +274,19 @@ fn hidden_cancelled_rebound_and_accepted_closed_main_cannot_accept_a_retained_si
         .unwrap();
     ui.window().dispatch_event(WindowEvent::CloseRequested);
     assert!(!ui.get_question().is_empty());
+    super::active_predicates::drain_predicate_timers_for_observer();
+    assert!(
+        child.window().is_visible(),
+        "pending exit must preserve the draft"
+    );
+    assert!(successor.predicate_editor.borrow().is_some());
     child.invoke_number_edited(0, 2, 99);
     child.invoke_ok(0);
     assert_eq!(fields(&child).row_data(2).unwrap().value, 200);
     assert!(successor.current.borrow().borrow().predicates().is_empty());
     ui.invoke_answer(false);
+    super::active_predicates::drain_predicate_timers_for_observer();
+    assert!(successor.predicate_editor.borrow().is_some());
     assert!(child.window().is_visible());
     child.invoke_number_edited(0, 2, 201);
     assert_eq!(fields(&child).row_data(2).unwrap().value, 201);
@@ -269,4 +299,180 @@ fn hidden_cancelled_rebound_and_accepted_closed_main_cannot_accept_a_retained_si
     child.invoke_number_edited(0, 2, 99);
     child.invoke_ok(0);
     assert!(successor.current.borrow().borrow().predicates().is_empty());
+}
+
+#[test]
+fn destroyed_main_automatically_closes_new_size_while_bound_child_and_collector_survive() {
+    let (_guards, store) = store();
+    store
+        .write(|writer| {
+            settings::set(
+                writer.conn(),
+                &hydrus_store::radio_return::RadioReturn {
+                    force_dialog_ok: true,
+                },
+            )
+        })
+        .unwrap();
+    let windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    ui.show().unwrap();
+    let bound = bind(&ui, Pages::single(SearchPage::new(store.clone())));
+    let current = bound.current.borrow().clone();
+    let before = current.borrow().active_predicates().to_vec();
+    let saved = super::active_predicates::predicate_settings(&store);
+    let child = open(&ui, &bound);
+    assert!(!child.get_editing_existing());
+    assert!(
+        child.invoke_force_radio_ok(0),
+        "the live Return route is enabled"
+    );
+    child.invoke_number_edited(0, 2, 211);
+    assert_eq!(fields(&child).row_data(2).unwrap().value, 211);
+    let weak_main = ui.as_weak();
+    ui.hide().unwrap();
+    drop(ui);
+    assert!(weak_main.upgrade().is_none());
+    super::active_predicates::drain_predicate_timers_until(
+        "Main death must close a new size draft",
+        || bound.predicate_editor.borrow().is_none() && !child.window().is_visible(),
+    );
+    assert!(windows.count() >= 2);
+    assert_eq!(current.borrow().active_predicates(), before);
+    assert_eq!(super::active_predicates::predicate_settings(&store), saved);
+
+    child.show().unwrap();
+    child.invoke_number_edited(0, 2, 99);
+    child.invoke_defaults_action(0, "set this as new default".into());
+    assert_eq!(child.get_radio_default_panel(), 0);
+    assert!(
+        !child.invoke_force_radio_ok(0),
+        "retired Return admission is refused"
+    );
+    for event in [
+        WindowEvent::KeyPressed {
+            text: Key::Return.into(),
+        },
+        WindowEvent::KeyReleased {
+            text: Key::Return.into(),
+        },
+    ] {
+        child.window().dispatch_event(event);
+    }
+    child.invoke_ok(0);
+    child.invoke_cancel();
+    assert_eq!(fields(&child).row_data(2).unwrap().value, 211);
+    assert!(bound.predicate_editor.borrow().is_none());
+    assert_eq!(current.borrow().active_predicates(), before);
+    assert_eq!(super::active_predicates::predicate_settings(&store), saved);
+    child.hide().unwrap();
+}
+
+#[test]
+fn only_final_bound_drop_retires_size_and_old_timers_cannot_retire_a_live_successor() {
+    let (_guards, store) = store();
+    store
+        .write(|writer| {
+            settings::set(
+                writer.conn(),
+                &hydrus_store::radio_return::RadioReturn {
+                    force_dialog_ok: true,
+                },
+            )
+        })
+        .unwrap();
+    let windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    ui.show().unwrap();
+    let bound = bind(&ui, Pages::single(SearchPage::new(store.clone())));
+    let survivor = bound.clone();
+    let old = open(&ui, &bound);
+    assert!(old.invoke_force_radio_ok(0));
+    old.invoke_number_edited(0, 2, 211);
+    let current = bound.current.borrow().clone();
+    let slot = bound.predicate_editor.clone();
+    let before = current.borrow().active_predicates().to_vec();
+    let saved = super::active_predicates::predicate_settings(&store);
+    let stale_launch = ui
+        .get_suggestions()
+        .iter()
+        .position(|row| row.text == "system:filesize")
+        .unwrap();
+    drop(bound);
+    super::active_predicates::drain_predicate_timers_for_observer();
+    assert!(
+        old.window().is_visible(),
+        "a nonfinal Bound clone keeps its owner live"
+    );
+    assert!(std::ptr::eq(
+        slot.borrow().as_ref().unwrap().window(),
+        old.window()
+    ));
+    old.invoke_number_edited(0, 2, 212);
+    assert_eq!(fields(&old).row_data(2).unwrap().value, 212);
+
+    drop(survivor);
+    super::active_predicates::drain_predicate_timers_until(
+        "final Bound drop must retire its child",
+        || slot.borrow().is_none() && !old.window().is_visible(),
+    );
+    assert!(
+        ui.as_weak().upgrade().is_some(),
+        "Main itself remains alive"
+    );
+    assert!(windows.count() >= 2, "external adapters still survive");
+    ui.invoke_suggestion_chosen(i32::try_from(stale_launch).unwrap());
+    assert!(
+        slot.borrow().is_none(),
+        "retired launch callback cannot recreate the slot"
+    );
+    old.show().unwrap();
+    old.invoke_number_edited(0, 2, 99);
+    old.invoke_defaults_action(0, "set this as new default".into());
+    old.invoke_defaults_action(0, "reset to original default".into());
+    assert!(!old.invoke_force_radio_ok(0));
+    for event in [
+        WindowEvent::KeyPressed {
+            text: Key::Return.into(),
+        },
+        WindowEvent::KeyReleased {
+            text: Key::Return.into(),
+        },
+    ] {
+        old.window().dispatch_event(event);
+    }
+    old.invoke_ok(0);
+    assert_eq!(fields(&old).row_data(2).unwrap().value, 212);
+    assert_eq!(current.borrow().active_predicates(), before);
+    assert_eq!(super::active_predicates::predicate_settings(&store), saved);
+
+    let successor = bind(&ui, Pages::single(SearchPage::new(store.clone())));
+    let live = open(&ui, &successor);
+    super::active_predicates::drain_predicate_timers_for_observer();
+    old.invoke_cancel();
+    old.invoke_ok(0);
+    assert!(
+        live.window().is_visible(),
+        "retired owner/timer cannot hide a successor"
+    );
+    assert!(std::ptr::eq(
+        successor
+            .predicate_editor
+            .borrow()
+            .as_ref()
+            .unwrap()
+            .window(),
+        live.window()
+    ));
+    assert!(slot.borrow().is_none());
+    assert_eq!(current.borrow().active_predicates(), before);
+    assert_eq!(super::active_predicates::predicate_settings(&store), saved);
+    live.invoke_number_edited(0, 2, 123);
+    live.invoke_ok(0);
+    assert_eq!(
+        successor.current.borrow().borrow().predicates(),
+        ["system:filesize < 123KB"]
+    );
+    assert!(successor.predicate_editor.borrow().is_none());
+    old.hide().unwrap();
 }

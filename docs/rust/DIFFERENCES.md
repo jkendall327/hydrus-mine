@@ -3007,6 +3007,30 @@ free-text parser limit remain. Structural predicate/Options parents stay
 Partial; no canonical ledger is changed. Rust/native render validation is
 pending hosted CI.
 
+The new filesize/hash owner retires on actual Main-component disappearance
+through a repeated 50 ms weak-owner check, or immediately on final Bound-owner
+drop, rebind or accepted exit. Temporary hide and pending/declined exit do not
+retire it. Authored tests retain child/slot/page/headless adapters before checking
+automatic closure and stale input refusal; the private notice component is not
+separately exposed. The actual Qt `parent_destruction` recording demonstrates
+standalone QWidget.window() parent cascades for shown nonmodal filesize/hash
+DialogEdit/FleshOutPredicatePanel children, with five wrappers retained per case.
+It preserves all ten original hash fixture keys and unchanged blank predicates;
+client Main survives. Client Main destruction, nested exec teardown and active
+nested-warning destruction are not recorded. Native nested-notice teardown is
+a separate safety boundary; the failed Qt nested-warning attempt earns no claim.
+
+The authored `hash-predicate-cleanup-warning-native.png` captures the actual
+recorded four-section cleanup message, while `hash-predicate-warning-native.png`
+remains the invalid-acceptance notice. Native warnings omit Qt's warning icon and
+platform chrome; forced cleanup keeps the inline "You sure?" question. Typed
+hash sets reconstruct in deterministic sorted order where Qt can preserve tuple
+order; raw cleanup preserves first valid occurrence order. The TB text/parser
+limits above remain. Only filesize and both hash leaves are proposed; generic
+active editing, radio preferences, predicate parents/aliases and deferred
+Windows/macOS receive no credit. Full exact-source Linux validation and fresh
+independent render review remain pending: 343 signed off, 32 candidates pending.
+
 The two archive/delete finish policies now reach selectable deletion scopes and
 an owned 1.2-second multiple-button guard. The native finish and Forget questions
 are modal layers within the existing filter canvas; Qt creates separate dialogs.
