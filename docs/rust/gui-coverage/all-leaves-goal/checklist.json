@@ -4,12 +4,12 @@
   "goal": "All individual feature leaves in the report implemented and explicitly verified.",
   "classification_audit_source": "05000f10eafc4211d6856549d0073edb90ba5811",
   "classification_audit": "audit-05000f10e.json",
-  "validated_implementation_source": "1c2b1afaf0fff7bf7bc984d17c5623e9e70098a5",
+  "validated_implementation_source": "1a49a30f058d47ea29cf6ea1f1dc919d14d9f243",
   "distinct_terminal_leaves": 1274,
   "baseline_deficit_leaves": 813,
   "historical_first_pass_leaves": 461,
-  "explicit_implementation_signoffs": 370,
-  "remaining_without_explicit_signoff": 904,
+  "explicit_implementation_signoffs": 373,
+  "remaining_without_explicit_signoff": 901,
   "implementation_ledger": "../overnight/progress.json",
   "historical_verification_approvals": [],
   "leaves": [
@@ -5786,12 +5786,12 @@
     {
       "id": "audit-options-thumbnails-interaction-do-not-scroll-down-on-key-navigation-if-thumbnail-at-least-this-visible",
       "baseline_status": "missing",
-      "signed_off_in_implementation_ledger": false
+      "signed_off_in_implementation_ledger": true
     },
     {
       "id": "audit-options-thumbnails-interaction-experimental-scroll-thumbnails-at-this-rate-per-scroll-tick",
       "baseline_status": "missing",
-      "signed_off_in_implementation_ledger": false
+      "signed_off_in_implementation_ledger": true
     },
     {
       "id": "audit-options-thumbnails-interaction-on-ctrl-selection-focus-thumbnails-in-the-preview-window",
@@ -5821,7 +5821,7 @@
     {
       "id": "audit-options-thumbnails-interaction-when-shift-selecting-move-the-navigate-from-here-position-with-it",
       "baseline_status": "missing",
-      "signed_off_in_implementation_ledger": false
+      "signed_off_in_implementation_ledger": true
     },
     {
       "id": "audit-options-thumbnails-media-background-experimental-image-path-for-thumbnail-panel-background-image-set-blank-to-clear",
@@ -6384,6 +6384,6 @@
       "signed_off_in_implementation_ledger": true
     }
   ],
-  "previous_checkpoint_commit": "74596132a9fff04b5d22e1a900bc4f3dc4bb7647",
-  "checkpoint_evidence": "../checkpoints/1c2b1afaf/README.md"
+  "previous_checkpoint_commit": "2e4912e688110d7b3ed6aad07aed0e72835d65d0",
+  "checkpoint_evidence": "../checkpoints/1a49a30f0/README.md"
 }

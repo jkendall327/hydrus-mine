@@ -3417,11 +3417,14 @@ preferred widths do not fit; this is a native layout accommodation. Bounded
 actual-frame checks cover the supported narrow and wider allocations.
 The visible search content supplies its intrinsic height to the existing sidebar
 ScrollView, while hidden search content still contributes zero minimum height.
-The pending regression requires a real wheel to move the actual scroll offset
-and bring the scoped controls fully into that viewport. New
+The regression demonstrated that one real wheel moved the actual scroll offset
+and brought the scoped controls fully into that viewport at the accepted source. New
 captures retain the actual reopened Options windows for saved true/40/0.5 and
-false/1/1.5 settings. Exact-source full Linux execution and fresh independent
-rendered review remain pending; this source change adds no completion credit.
+false/1/1.5 settings. Full Linux run `37644009033` and fresh independent
+inspection of all four frames passed for exactly three thumbnail-navigation
+preferences: 373 signed, 2 existing candidates pending. All 711 GUI and
+67 media tests passed. No sidebar/preview/sibling credit is added.
+[Evidence](gui-coverage/checkpoints/1a49a30f0/README.md).
 The four independent Ctrl/Shift preview-focus checkboxes are also staged here.
 The no-duration child is enabled by its own parent and preserves its checked value
 while disabled. Shift focus on all files disables the existing ghost-navigation

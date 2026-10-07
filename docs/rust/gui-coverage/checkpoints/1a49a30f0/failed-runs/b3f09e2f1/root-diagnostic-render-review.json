@@ -1,0 +1,30 @@
+{
+  "source_commit": "b3f09e2f1f4a721e05f6fe5f7f7f4a24a8fb1a83",
+  "run_id": 37632337153,
+  "artifact_id": 11491100576,
+  "native_zip_sha256": "8437ef0d1da9cefcde159838925122dc460536c5ff8d17a33822040a104fcdf3",
+  "actually_viewed": [
+    {
+      "name": "thumbnail-navigation-options-saved-true.png",
+      "sha256": "406061d9da137089cee2453759fb9a63d6686c11be8ce47a010cc3ac3f70341a",
+      "width": 1000,
+      "height": 900,
+      "actually_viewed": true,
+      "observation": "All three full navigation captions, actual saved true / 40 / 0.5 controls, and Apply/Cancel are readable. Unrelated upper sidebar label is elided. Diagnostic image from failed source, not approval for a successor."
+    },
+    {
+      "name": "thumbnail-navigation-options-saved-false.png",
+      "sha256": "6500c3213252368f1b62b04b56bc8cb37b5e14fd317d95118580d0631671cc0a",
+      "width": 1000,
+      "height": 900,
+      "actually_viewed": true,
+      "observation": "All three full navigation captions, actual saved false / 1 / 1.5 controls, and Apply/Cancel are readable. Unrelated upper sidebar label is elided. Diagnostic image from failed source, not approval for a successor."
+    }
+  ],
+  "missing_required_captures": [
+    "thumbnail-navigation.png",
+    "thumbnail-navigation-sidebar-wide.png"
+  ],
+  "approval": false,
+  "scope": "Failed-source diagnostics only; new exact-source four-image review still required."
+}

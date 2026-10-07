@@ -1,0 +1,14 @@
+{
+  "ui_sha256": "c5d4028b418adb7b98e70b379fa464c4b0bcc8174695a0acb896ccbade769c9e",
+  "compiler": "cached Slint1.18.1 build-script generation only",
+  "exit_code": 0,
+  "warnings": 0,
+  "log": "/workspace/validation-reviews/thumbnail-navigation3/slint-generation.log",
+  "log_sha256": "c059df360da48af769d8960b99774350e6fa9575a99885dd408da8e50f2dd1dc",
+  "generated_file": "/workspace/validation-reviews/thumbnail-navigation3/slint-generation/main.rs",
+  "generated_sha256": "185d70df1269d494733c06cf45933eeb75150d761bc8d13c9efd2613a3369847",
+  "manifest_dir": "/workspace/thumbnail-navigation-repair/crates/hydrus-gui-ui",
+  "out_dir": "/workspace/validation-reviews/thumbnail-navigation3/slint-generation",
+  "target": "x86_64-unknown-linux-gnu",
+  "rust_compile_or_runtime": false
+}

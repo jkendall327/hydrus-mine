@@ -1,0 +1,710 @@
+{
+  "source_commit": "1a49a30f058d47ea29cf6ea1f1dc919d14d9f243",
+  "run_id": 37644009033,
+  "artifact_id": 11495850566,
+  "native_zip_sha256": "adbc10c7cb9e7ba5d55f28fabec84c030784d3d64eafdd7f07ee7d6763bab041",
+  "validation_scope": "linux",
+  "claims": [
+    {
+      "id": "audit-options-thumbnails-interaction-when-shift-selecting-move-the-navigate-from-here-position-with-it",
+      "approval": true,
+      "caveats": [
+        "Linux-only exact-source validation; Windows and macOS are deferred. Exactly these three navigation preferences qualify. No parent, alias, generic sidebar, preview-focus or broader thumbnail-family credit.",
+        "Native responsive stacking is a Slint accommodation. Qt uses horizontal paired controls; the inspected wider historical Qt image has different dimensions/location/query state. No matched narrow 700\u00d7600 or saved Options pixel parity is claimed.",
+        "Supported native geometry is Main 700\u00d7600/sidebar 280, Main 1100\u00d7700/sidebar 400 and Options 1000\u00d7900. Both Main exports are scrolled views that reveal the scoped controls; unscrolled top sort/collect visibility and arbitrary sidebar widths are not claimed.",
+        "The current 57-assertion GUI test preserves all preceding 51 and original 17 assertions; 19 model assertions across three tests are unchanged. Actual input, offset/row translation and strict viewport containment pass at this source. Earlier b3 and 9e failures and their incomplete captures remain historical diagnostics only.",
+        "Only the first two saved-control frames are measured. All three full labels, checkbox state, visibility 40 or 1 and raw rate 0.5 or 1.5 were independently verified in actual fresh pixels. Universal font, layout and OS input parity remain unclaimed.",
+        "Saved last-hit behavior is independent of preview-focus preferences. Real click/Shift/right/Shift/right histories and model replay preserve focused versus last-hit starting priority and selected range shrinking; no Preview playback evidence.",
+        "Reference recording uses a private real Qt ThumbnailsPanel draft, UpdateOptions and serialized reopen plus actual thumbnail decision/wheel handlers. The MPV availability seam is only for offscreen startup; no Preview playback or full Qt parent Options/disk-save workflow is established. Native Options edits are callback-driven; actual thumbnail pointer/key/wheel consumers and reopened visible states are verified."
+      ],
+      "behavior_evidence": "Options > thumbnails > interaction stages the exact original controls, imports independent legacy keys, applies to live consumers, preserves saved values on Cancel and reopens persisted drafts. The independent saved last-hit option changes non-Shift movement-key starting priority after Shift selection. Actual recorded consecutive click/Shift/right/Shift/right histories preserve focused-versus-last-hit distinction, selected ranges and range shrinking. The original move_focus API retains default behavior; the actual SearchPage consumer reads the live setting."
+    },
+    {
+      "id": "audit-options-thumbnails-interaction-do-not-scroll-down-on-key-navigation-if-thumbnail-at-least-this-visible",
+      "approval": true,
+      "caveats": [
+        "Linux-only exact-source validation; Windows and macOS are deferred. Exactly these three navigation preferences qualify. No parent, alias, generic sidebar, preview-focus or broader thumbnail-family credit.",
+        "Native responsive stacking is a Slint accommodation. Qt uses horizontal paired controls; the inspected wider historical Qt image has different dimensions/location/query state. No matched narrow 700\u00d7600 or saved Options pixel parity is claimed.",
+        "Supported native geometry is Main 700\u00d7600/sidebar 280, Main 1100\u00d7700/sidebar 400 and Options 1000\u00d7900. Both Main exports are scrolled views that reveal the scoped controls; unscrolled top sort/collect visibility and arbitrary sidebar widths are not claimed.",
+        "The current 57-assertion GUI test preserves all preceding 51 and original 17 assertions; 19 model assertions across three tests are unchanged. Actual input, offset/row translation and strict viewport containment pass at this source. Earlier b3 and 9e failures and their incomplete captures remain historical diagnostics only.",
+        "Only the first two saved-control frames are measured. All three full labels, checkbox state, visibility 40 or 1 and raw rate 0.5 or 1.5 were independently verified in actual fresh pixels. Universal font, layout and OS input parity remain unclaimed.",
+        "Physical Down-key reveal tests use the native source-derived target; separate model replay compares actual Qt recorded strict visibility boundaries and default point margins. Only the regular vertical grid is covered; horizontal/masonry/full graphics layouts and direct-scrollbar wheel routes are excluded.",
+        "Reference recording uses a private real Qt ThumbnailsPanel draft, UpdateOptions and serialized reopen plus actual thumbnail decision/wheel handlers. The MPV availability seam is only for offscreen startup; no Preview playback or full Qt parent Options/disk-save workflow is established. Native Options edits are callback-driven; actual thumbnail pointer/key/wheel consumers and reopened visible states are verified."
+      ],
+      "behavior_evidence": "Options > thumbnails > interaction stages the exact original controls, imports independent legacy keys, applies to live consumers, preserves saved values on Cancel and reopens persisted drafts. The 1\u201399 spin box clamps as Qt, persists across reopen and reaches actual keyboard scroll-to callbacks. The regular grid chooses top/bottom point with the strict visibility comparison, includes thumbnail margin, Qt50px ensureVisible point margin and content-end clamp. Model replays exact threshold neighbours; native real Down-key checks partially visible target rows on both sides of the threshold."
+    },
+    {
+      "id": "audit-options-thumbnails-interaction-experimental-scroll-thumbnails-at-this-rate-per-scroll-tick",
+      "approval": true,
+      "caveats": [
+        "Linux-only exact-source validation; Windows and macOS are deferred. Exactly these three navigation preferences qualify. No parent, alias, generic sidebar, preview-focus or broader thumbnail-family credit.",
+        "Native responsive stacking is a Slint accommodation. Qt uses horizontal paired controls; the inspected wider historical Qt image has different dimensions/location/query state. No matched narrow 700\u00d7600 or saved Options pixel parity is claimed.",
+        "Supported native geometry is Main 700\u00d7600/sidebar 280, Main 1100\u00d7700/sidebar 400 and Options 1000\u00d7900. Both Main exports are scrolled views that reveal the scoped controls; unscrolled top sort/collect visibility and arbitrary sidebar widths are not claimed.",
+        "The current 57-assertion GUI test preserves all preceding 51 and original 17 assertions; 19 model assertions across three tests are unchanged. Actual input, offset/row translation and strict viewport containment pass at this source. Earlier b3 and 9e failures and their incomplete captures remain historical diagnostics only.",
+        "Only the first two saved-control frames are measured. All three full labels, checkbox state, visibility 40 or 1 and raw rate 0.5 or 1.5 were independently verified in actual fresh pixels. Universal font, layout and OS input parity remain unclaimed.",
+        "Winit uses 60px per line and the recorded Qt default of three wheel lines with a page cap. Qt platform wheel-line preferences and fractional wheel accumulation are excluded. Decimal/Unicode/underscore rate parsing, ties-to-even, absolute negative steps, zero and invalid text are covered; nonfinite/out-of-signed-int rates retain the prior native step instead of reproducing Qt conversion exceptions.",
+        "Reference recording uses a private real Qt ThumbnailsPanel draft, UpdateOptions and serialized reopen plus actual thumbnail decision/wheel handlers. The MPV availability seam is only for offscreen startup; no Preview playback or full Qt parent Options/disk-save workflow is established. Native Options edits are callback-driven; actual thumbnail pointer/key/wheel consumers and reopened visible states are verified."
+      ],
+      "behavior_evidence": "Options > thumbnails > interaction stages the exact original controls, imports independent legacy keys, applies to live consumers, preserves saved values on Cancel and reopens persisted drafts. Raw rate text stages/persists/reopens and drives actual row TouchArea wheel events. Python-compatible decimal/underscore text is accepted; malformed text silently retains the saved value. Span\u00d7rate rounds ties-to-even, Qt takes absolute negative steps, zero stops movement, and native rate application retains the previous step for nonfinite/out-of-signed-int results. Default three-line wheel steps cap to one page without changing selection."
+    }
+  ],
+  "selected_count": 3,
+  "approval_scope": "Exactly selected three navigation preferences; finite scoped Linux approval, no parent or extra leaf credit.",
+  "required_jobs": [
+    {
+      "id": 112869925828,
+      "name": "parity-models",
+      "conclusion": "success",
+      "head_sha": "1a49a30f058d47ea29cf6ea1f1dc919d14d9f243"
+    },
+    {
+      "id": 112869926140,
+      "name": "check",
+      "conclusion": "success",
+      "head_sha": "1a49a30f058d47ea29cf6ea1f1dc919d14d9f243"
+    }
+  ],
+  "full_test_summary": {
+    "gui": {
+      "passed": 711,
+      "failed": 0,
+      "ignored": 0,
+      "seconds": 185.02
+    },
+    "media": {
+      "passed": 67,
+      "failed": 0,
+      "ignored": 0,
+      "seconds": 1.01
+    },
+    "strict_clippy": "passed",
+    "parity_ratchet": "passed",
+    "maintenance": "passed"
+  },
+  "native_manifest_path": "/workspace/validation-reviews/ci-1a49a30f0/native-render-manifest.json",
+  "native_manifest_sha256": "7479e675fa9b854e4dc8e98f858286a8ac7bbe36296c6a2d058c80b5ec1be898",
+  "native_image_count": 384,
+  "images_actually_viewed": [
+    {
+      "name": "thumbnail-navigation.png",
+      "path": "/workspace/validation-reviews/ci-1a49a30f0/native-renders/thumbnail-navigation.png",
+      "sha256": "50a098e67bdb2366a80c02407228e69ebacb0442baa683c1ea8e47dd8e7a0e4d",
+      "dimensions": [
+        700,
+        600
+      ],
+      "source_commit": "1a49a30f058d47ea29cf6ea1f1dc919d14d9f243",
+      "run_id": 37644009033,
+      "artifact_id": 11495850566,
+      "actually_viewed": true,
+      "observation": "Actually viewed at 700\u00d7600: four full inclusion/domain captions occupy distinct stacked buttons inside the 280 sidebar viewport. Two thumbnail columns and populated preview remain. The sidebar is scrolled, so the upper sort/collect rows are offscreen. Scrollbar lies in the padding edge and does not obscure these captions; unrelated thumbnail captions elide.",
+      "producer": {
+        "path": "crates/hydrus-gui/tests/gui/thumbnail_navigation.rs",
+        "line": 588,
+        "line_sha256": "56043a2028ad5b448d0c30a0c0da262cc91ac49190e729f8a5c0e28f423305b9"
+      }
+    },
+    {
+      "name": "thumbnail-navigation-sidebar-wide.png",
+      "path": "/workspace/validation-reviews/ci-1a49a30f0/native-renders/thumbnail-navigation-sidebar-wide.png",
+      "sha256": "b3073c9470498d5eab4974a7443719a957d133fade4d34d425c652482a0e7e6c",
+      "dimensions": [
+        1100,
+        700
+      ],
+      "source_commit": "1a49a30f058d47ea29cf6ea1f1dc919d14d9f243",
+      "run_id": 37644009033,
+      "artifact_id": 11495850566,
+      "actually_viewed": true,
+      "observation": "Actually viewed at 1100\u00d7700: actual 400 sidebar has two readable horizontally paired rows with distinct gaps. All four captions are complete and contained; predicate/search and preview content remain populated. This is also a scrolled view; top sort/collect visibility is not established.",
+      "producer": {
+        "path": "crates/hydrus-gui/tests/gui/thumbnail_navigation.rs",
+        "line": 571,
+        "line_sha256": "727c259aa54b420342b45ecfe6bdf742464b286f76d12fed5dab84652eb7bd0e"
+      }
+    },
+    {
+      "name": "thumbnail-navigation-options-saved-true.png",
+      "path": "/workspace/validation-reviews/ci-1a49a30f0/native-renders/thumbnail-navigation-options-saved-true.png",
+      "sha256": "406061d9da137089cee2453759fb9a63d6686c11be8ce47a010cc3ac3f70341a",
+      "dimensions": [
+        1000,
+        900
+      ],
+      "source_commit": "1a49a30f058d47ea29cf6ea1f1dc919d14d9f243",
+      "run_id": 37644009033,
+      "artifact_id": 11495850566,
+      "actually_viewed": true,
+      "observation": "Actually viewed at 1000\u00d7900: full selected preference labels, checked shift box, visibility 40 and raw rate 0.5 are readable; the three controls and Apply/Cancel footer do not overlap.",
+      "producer": {
+        "path": "crates/hydrus-gui/tests/gui/thumbnail_navigation.rs",
+        "line": 443,
+        "line_sha256": "eadb2df6dfe9fcedd24005d951acc3b549b66755bc5273ec033b400f665968ca"
+      }
+    },
+    {
+      "name": "thumbnail-navigation-options-saved-false.png",
+      "path": "/workspace/validation-reviews/ci-1a49a30f0/native-renders/thumbnail-navigation-options-saved-false.png",
+      "sha256": "6500c3213252368f1b62b04b56bc8cb37b5e14fd317d95118580d0631671cc0a",
+      "dimensions": [
+        1000,
+        900
+      ],
+      "source_commit": "1a49a30f058d47ea29cf6ea1f1dc919d14d9f243",
+      "run_id": 37644009033,
+      "artifact_id": 11495850566,
+      "actually_viewed": true,
+      "observation": "Actually viewed at 1000\u00d7900: same complete labels, unchecked shift box, clamped visibility 1 and raw rate 1.5 are readable; controls/footer remain separated.",
+      "producer": {
+        "path": "crates/hydrus-gui/tests/gui/thumbnail_navigation.rs",
+        "line": 445,
+        "line_sha256": "a38fe682d9a8e04adec46be91f18bc5b52486c1d2c53b204613be0f598e3f69d"
+      }
+    }
+  ],
+  "required_images_viewed": [
+    "thumbnail-navigation.png",
+    "thumbnail-navigation-sidebar-wide.png",
+    "thumbnail-navigation-options-saved-true.png",
+    "thumbnail-navigation-options-saved-false.png"
+  ],
+  "supplemental_images_viewed": [],
+  "reference_images_actually_viewed": [
+    {
+      "path": "/workspace/hydrus-mine/oracle/fixtures/sidebar_layout_reference.png",
+      "sha256": "2240401e03972d2e3e6d75ea7d89b7497f03ba0925dbf896454ea026edc81f9f",
+      "dimensions": [
+        1392,
+        926
+      ],
+      "actually_viewed": true,
+      "historical_reference": true,
+      "observation": "Wider Qt sidebar has horizontal inclusion and domain button pairs with my-files location and different query/preview state. This is supporting historical context only: no matched native narrow navigation or saved Options pixel pair."
+    }
+  ],
+  "exact_passing_test_proof": [
+    {
+      "path": "/workspace/validation-reviews/ci-1a49a30f0/tests.log",
+      "line": 1385,
+      "text": "test thumbnail_navigation::owned_options_replay_cancel_save_reopen_and_real_keyboard_wheel_consumers ... ok",
+      "sha256": "dda2f73f8f3276a963f02e2ce9da74479c4117d824036f10137e1a5ece177a34"
+    },
+    {
+      "path": "/workspace/validation-reviews/ci-1a49a30f0/tests.log",
+      "line": 1906,
+      "text": "test thumbnail_navigation::exact_visibility_boundaries_and_rate_ties_negative_zero_and_errors_match_qt ... ok",
+      "sha256": "dda2f73f8f3276a963f02e2ce9da74479c4117d824036f10137e1a5ece177a34"
+    },
+    {
+      "path": "/workspace/validation-reviews/ci-1a49a30f0/parity.log",
+      "line": 1921,
+      "text": "2026-10-07T15:30:44.1829181Z test thumbnail_navigation::exact_visibility_boundaries_and_rate_ties_negative_zero_and_errors_match_qt ... ok",
+      "sha256": "46d1141ec203c2787aaeccc88d10ea57ffae4589b6acf9d03fc5b0aa716fbd3d"
+    },
+    {
+      "path": "/workspace/validation-reviews/ci-1a49a30f0/tests.log",
+      "line": 1907,
+      "text": "test thumbnail_navigation::optional_last_hit_origin_preserves_actual_ranges_focus_and_repeated_navigation ... ok",
+      "sha256": "dda2f73f8f3276a963f02e2ce9da74479c4117d824036f10137e1a5ece177a34"
+    },
+    {
+      "path": "/workspace/validation-reviews/ci-1a49a30f0/parity.log",
+      "line": 1922,
+      "text": "2026-10-07T15:30:44.1860321Z test thumbnail_navigation::optional_last_hit_origin_preserves_actual_ranges_focus_and_repeated_navigation ... ok",
+      "sha256": "46d1141ec203c2787aaeccc88d10ea57ffae4589b6acf9d03fc5b0aa716fbd3d"
+    },
+    {
+      "path": "/workspace/validation-reviews/ci-1a49a30f0/tests.log",
+      "line": 1930,
+      "text": "test thumbnail_navigation::staged_exact_controls_import_cancel_invalid_rate_save_and_reopen_match_qt ... ok",
+      "sha256": "dda2f73f8f3276a963f02e2ce9da74479c4117d824036f10137e1a5ece177a34"
+    },
+    {
+      "path": "/workspace/validation-reviews/ci-1a49a30f0/parity.log",
+      "line": 1945,
+      "text": "2026-10-07T15:30:44.9148030Z test thumbnail_navigation::staged_exact_controls_import_cancel_invalid_rate_save_and_reopen_match_qt ... ok",
+      "sha256": "46d1141ec203c2787aaeccc88d10ea57ffae4589b6acf9d03fc5b0aa716fbd3d"
+    }
+  ],
+  "source_pins": {
+    "crates/hydrus-gui-model/src/options.rs": {
+      "sha256": "0959b5f502712b18a6cf8ebb089f1448770b25b291100468cd2e6fba9acb0ae0",
+      "git_blob": "66a403d85ff7a834ef47c5395a3040eb41f6716e"
+    },
+    "crates/hydrus-gui-model/src/selection.rs": {
+      "sha256": "81011d5c7693d798a7fa3ae7882281e0b4796ecf258efd914bebf341616576cc",
+      "git_blob": "d2f9ce7c17445c3addae05658e258a41357971a4"
+    },
+    "crates/hydrus-gui-model/src/thumbnail_navigation.rs": {
+      "sha256": "efa17bc44299028630c363c1a74be2237892c85f7167b564d8b615d3b5557cf1",
+      "git_blob": "d1c11806a98f077c4e4ceae70c38c7837ae0420b"
+    },
+    "crates/hydrus-gui-model/tests/model/thumbnail_navigation.rs": {
+      "sha256": "f64e30cae3bf509d563273658c30e871d6affe03c17e699c14280fac02fe45d3",
+      "git_blob": "469e57115b2e834ba262f22d499c35921762b101"
+    },
+    "crates/hydrus-gui/src/lib.rs": {
+      "sha256": "b71c9e66ab1f71337cb525b0363ae1e7eb1434a47d44f61bb313733195d4c67a",
+      "git_blob": "9299f427925f8493ccd3e51eca7404d558912869"
+    },
+    "crates/hydrus-gui/src/page.rs": {
+      "sha256": "8c968c29c99b14e862ee643d5aea5af5e78eadb8c532202fffc18084885b0c8d",
+      "git_blob": "5ca0a1057d5497530d7f4be69f200bb5e33fef20"
+    },
+    "crates/hydrus-gui/src/thumbnail_navigation.rs": {
+      "sha256": "f689c8fc437dd650c0dba0ae778945cd5347f4b7d02afb0f51b8afbf19627064",
+      "git_blob": "b5315cbfae3de52c0e675a12665a57e7933ac8ad"
+    },
+    "crates/hydrus-gui/tests/gui/thumbnail_navigation.rs": {
+      "sha256": "2e2b0f519060a720b2ab163e2c4e6560db45e2e039544066e4526509ac4c67de",
+      "git_blob": "ec0db641ac1222a95efa553ee146eb86179ed1a9"
+    },
+    "crates/hydrus-gui/ui/main.slint": {
+      "sha256": "e6d43cf6e76fe7a2619287924551381afe89bd5629db41d1523c251793825c7c",
+      "git_blob": "d730723fa3bbd96edad78b7f6c507441bcda96f3"
+    },
+    "crates/hydrus-store/src/import/decode.rs": {
+      "sha256": "ce988cd231d08607710465c9a64c3aa01e4a1eaec75a9f698a1d16b25204434d",
+      "git_blob": "fc8ba40b7deb6d17447594768072b2b32d82365c"
+    },
+    "crates/hydrus-store/src/settings.rs": {
+      "sha256": "e74448ef8754a400fccbe274393d067e4b6b171e189bdc97c5d8edcbd3bb2687",
+      "git_blob": "7251e0b86c220989c54fa7e5fee3c96c72735a95"
+    },
+    "docs/rust/DIFFERENCES.md": {
+      "sha256": "00b61fed11fffc3ba5639c86670716c5be9623e677546fbe676a66d79d1b87d1",
+      "git_blob": "137ffd32ad1b0d22f840e80019fa1e1ca55392af"
+    },
+    "docs/rust/GUI.md": {
+      "sha256": "8b2cec1fb4bd10951b819939c071d0dd8224ee2022e7b1f9b40c64d82065b03f",
+      "git_blob": "8d4d47094daa965325ec5b1eb0a0fc08d9cdf2aa"
+    },
+    "hydrus/client/gui/panels/options/ThumbnailsPanel.py": {
+      "sha256": "424aa25a179767c3e1faafd931694f5906b11ce9aabd04241cdc520396513f89",
+      "git_blob": "65ae62b7088a2940ee44f17189f7e91fe6a24a84"
+    },
+    "oracle/fixtures/sidebar_layout_reference.png": {
+      "sha256": "2240401e03972d2e3e6d75ea7d89b7497f03ba0925dbf896454ea026edc81f9f",
+      "git_blob": "f4fbbb7556a0a11961bcc268c6b08ca97a23c34c"
+    },
+    "oracle/fixtures/thumbnail_navigation.json": {
+      "sha256": "f357122514393fe1610b97d2cb7c037ef1173736c2014a4708e35f1c3dcd8766",
+      "git_blob": "793bc88e767376d77067b371a7593e081ea1b027"
+    },
+    "oracle/record_thumbnail_navigation.py": {
+      "sha256": "3d3f337fdafdfc9ff9308e16b1277848b0a67756913c6a39bd806c98f6b29e75",
+      "git_blob": "eee851be1be64e6d7959ab70a7cca4a433e9e74e"
+    }
+  },
+  "current_proposal_source_anchors_verified": {
+    "count": 67,
+    "all_match_exact_commit": true,
+    "anchors": [
+      {
+        "path": "crates/hydrus-store/src/settings.rs",
+        "line": 57,
+        "line_sha256": "794b0c2e043439277b729bc49340165eba346e29e8873a7d9617569552555911"
+      },
+      {
+        "path": "crates/hydrus-store/src/import/decode.rs",
+        "line": 1287,
+        "line_sha256": "b8cdc7a0925c9675199893ebd8580895155b1d16a5ebe11997bf5fb6314c0038"
+      },
+      {
+        "path": "crates/hydrus-gui-model/src/options.rs",
+        "line": 375,
+        "line_sha256": "db566577a87769aed32c225d5aa2553c3e1a3325e23d7fce16e5f90a72594c04"
+      },
+      {
+        "path": "crates/hydrus-gui-model/src/options.rs",
+        "line": 4861,
+        "line_sha256": "991626a21c1fddedc79b8029823a50c21c8cd2257b22a21e9aafd5ecb5599f17"
+      },
+      {
+        "path": "crates/hydrus-gui/src/lib.rs",
+        "line": 4458,
+        "line_sha256": "8a75a3e81f1eeeb930467203562085abc918d9fbb306d5c2f66db133755a5275"
+      },
+      {
+        "path": "crates/hydrus-gui-model/src/selection.rs",
+        "line": 207,
+        "line_sha256": "a29ca34d0e007c56b12d80f58cecc0deb7f802a6689dbfbbe98e135988cf3d6a"
+      },
+      {
+        "path": "crates/hydrus-gui/src/page.rs",
+        "line": 2782,
+        "line_sha256": "3622c14eddde92119672054bf1fa76f22c9ef5af241cb7c2e22df6ed172d149a"
+      },
+      {
+        "path": "crates/hydrus-gui-model/tests/model/thumbnail_navigation.rs",
+        "line": 15,
+        "line_sha256": "4ccf191332c9313da292558861edad10f2b028c8d49dd3ab8515526da5491376"
+      },
+      {
+        "path": "crates/hydrus-gui-model/tests/model/thumbnail_navigation.rs",
+        "line": 71,
+        "line_sha256": "6a34651b3f9059e2f6d16e81b02d7ca79765850edc5c2c6d53336281a58da597"
+      },
+      {
+        "path": "crates/hydrus-gui-model/tests/model/thumbnail_navigation.rs",
+        "line": 105,
+        "line_sha256": "cae71975da933192992a3f3d5758fec2dcad99843f989a514eec375e6bf7e26f"
+      },
+      {
+        "path": "crates/hydrus-gui/tests/gui/thumbnail_navigation.rs",
+        "line": 355,
+        "line_sha256": "69ed6f7a1aba5a6d97b67860d923e17c27c5011d8536698dcc1ec150d13e6626"
+      },
+      {
+        "path": "crates/hydrus-gui/ui/main.slint",
+        "line": 278,
+        "line_sha256": "9957baeea0f73d6b3ecf78a275a66c5ab3a104a58999c82f71bda72cb554fd58"
+      },
+      {
+        "path": "crates/hydrus-gui/ui/main.slint",
+        "line": 767,
+        "line_sha256": "f3fb8dd5eaf55a575923cd343d89cdba3a16300fdc3640ec1744706fe4247f91"
+      },
+      {
+        "path": "crates/hydrus-gui/tests/gui/thumbnail_navigation.rs",
+        "line": 30,
+        "line_sha256": "f0b0e61de7d04be10291208278b517fed80779423b9394abd9624610e6e5bb52"
+      },
+      {
+        "path": "crates/hydrus-gui/tests/gui/thumbnail_navigation.rs",
+        "line": 50,
+        "line_sha256": "acf5f7faf7098ac806fcde910cf9ac8d75776d74d99c8780f84d2754a04d836e"
+      },
+      {
+        "path": "crates/hydrus-gui/tests/gui/thumbnail_navigation.rs",
+        "line": 203,
+        "line_sha256": "fd6acf809b953089a5d35e2db425080b603f2abd72353d83bda3ad25a7ab5225"
+      },
+      {
+        "path": "crates/hydrus-gui/tests/gui/thumbnail_navigation.rs",
+        "line": 568,
+        "line_sha256": "516e8e61a4a0019484db760376c2bc9fe8d1432c9fd26c7563a109527cb4a154"
+      },
+      {
+        "path": "crates/hydrus-gui/ui/main.slint",
+        "line": 373,
+        "line_sha256": "bb6f058550edb175cdc51cbb060b1e90e0bea5d7a64858a26e60681f2b6a1aaf"
+      },
+      {
+        "path": "crates/hydrus-gui/ui/main.slint",
+        "line": 1314,
+        "line_sha256": "9c0cb1cf4d49c13dd55238285734b0ea8f5f6ea316caf6814562bd9458da52b4"
+      },
+      {
+        "path": "crates/hydrus-gui-model/src/selection.rs",
+        "line": 207,
+        "line_sha256": "a29ca34d0e007c56b12d80f58cecc0deb7f802a6689dbfbbe98e135988cf3d6a"
+      },
+      {
+        "path": "hydrus/client/gui/panels/options/ThumbnailsPanel.py",
+        "line": 164,
+        "line_sha256": "e7e5029bef6a69bfb9fe20ad689962ecba633db09518482db7aa52793b4f08a4"
+      },
+      {
+        "path": "crates/hydrus-store/src/settings.rs",
+        "line": 57,
+        "line_sha256": "794b0c2e043439277b729bc49340165eba346e29e8873a7d9617569552555911"
+      },
+      {
+        "path": "crates/hydrus-store/src/import/decode.rs",
+        "line": 1287,
+        "line_sha256": "b8cdc7a0925c9675199893ebd8580895155b1d16a5ebe11997bf5fb6314c0038"
+      },
+      {
+        "path": "crates/hydrus-gui-model/src/options.rs",
+        "line": 375,
+        "line_sha256": "db566577a87769aed32c225d5aa2553c3e1a3325e23d7fce16e5f90a72594c04"
+      },
+      {
+        "path": "crates/hydrus-gui-model/src/options.rs",
+        "line": 4861,
+        "line_sha256": "991626a21c1fddedc79b8029823a50c21c8cd2257b22a21e9aafd5ecb5599f17"
+      },
+      {
+        "path": "crates/hydrus-gui/src/lib.rs",
+        "line": 4458,
+        "line_sha256": "8a75a3e81f1eeeb930467203562085abc918d9fbb306d5c2f66db133755a5275"
+      },
+      {
+        "path": "crates/hydrus-gui-model/src/thumbnail_navigation.rs",
+        "line": 45,
+        "line_sha256": "b693589f9b887e156348f4e57611e6a49ea6ba765024879131b0d71ac32bdd4e"
+      },
+      {
+        "path": "crates/hydrus-gui/src/thumbnail_navigation.rs",
+        "line": 21,
+        "line_sha256": "4520a9a1ac9dbf428f9e6d77aca12fb2eec358f75a68594117d8cba3607ecf14"
+      },
+      {
+        "path": "crates/hydrus-gui/ui/main.slint",
+        "line": 201,
+        "line_sha256": "05bb2ad05dc586935488b39999d62d94dc88245725562ea4d959c684f6311c6b"
+      },
+      {
+        "path": "crates/hydrus-gui-model/tests/model/thumbnail_navigation.rs",
+        "line": 15,
+        "line_sha256": "4ccf191332c9313da292558861edad10f2b028c8d49dd3ab8515526da5491376"
+      },
+      {
+        "path": "crates/hydrus-gui-model/tests/model/thumbnail_navigation.rs",
+        "line": 71,
+        "line_sha256": "6a34651b3f9059e2f6d16e81b02d7ca79765850edc5c2c6d53336281a58da597"
+      },
+      {
+        "path": "crates/hydrus-gui-model/tests/model/thumbnail_navigation.rs",
+        "line": 105,
+        "line_sha256": "cae71975da933192992a3f3d5758fec2dcad99843f989a514eec375e6bf7e26f"
+      },
+      {
+        "path": "crates/hydrus-gui/tests/gui/thumbnail_navigation.rs",
+        "line": 355,
+        "line_sha256": "69ed6f7a1aba5a6d97b67860d923e17c27c5011d8536698dcc1ec150d13e6626"
+      },
+      {
+        "path": "crates/hydrus-gui/ui/main.slint",
+        "line": 278,
+        "line_sha256": "9957baeea0f73d6b3ecf78a275a66c5ab3a104a58999c82f71bda72cb554fd58"
+      },
+      {
+        "path": "crates/hydrus-gui/ui/main.slint",
+        "line": 767,
+        "line_sha256": "f3fb8dd5eaf55a575923cd343d89cdba3a16300fdc3640ec1744706fe4247f91"
+      },
+      {
+        "path": "crates/hydrus-gui/tests/gui/thumbnail_navigation.rs",
+        "line": 30,
+        "line_sha256": "f0b0e61de7d04be10291208278b517fed80779423b9394abd9624610e6e5bb52"
+      },
+      {
+        "path": "crates/hydrus-gui/tests/gui/thumbnail_navigation.rs",
+        "line": 50,
+        "line_sha256": "acf5f7faf7098ac806fcde910cf9ac8d75776d74d99c8780f84d2754a04d836e"
+      },
+      {
+        "path": "crates/hydrus-gui/tests/gui/thumbnail_navigation.rs",
+        "line": 203,
+        "line_sha256": "fd6acf809b953089a5d35e2db425080b603f2abd72353d83bda3ad25a7ab5225"
+      },
+      {
+        "path": "crates/hydrus-gui/tests/gui/thumbnail_navigation.rs",
+        "line": 568,
+        "line_sha256": "516e8e61a4a0019484db760376c2bc9fe8d1432c9fd26c7563a109527cb4a154"
+      },
+      {
+        "path": "crates/hydrus-gui/ui/main.slint",
+        "line": 373,
+        "line_sha256": "bb6f058550edb175cdc51cbb060b1e90e0bea5d7a64858a26e60681f2b6a1aaf"
+      },
+      {
+        "path": "crates/hydrus-gui/ui/main.slint",
+        "line": 1314,
+        "line_sha256": "9c0cb1cf4d49c13dd55238285734b0ea8f5f6ea316caf6814562bd9458da52b4"
+      },
+      {
+        "path": "crates/hydrus-gui-model/src/thumbnail_navigation.rs",
+        "line": 45,
+        "line_sha256": "b693589f9b887e156348f4e57611e6a49ea6ba765024879131b0d71ac32bdd4e"
+      },
+      {
+        "path": "hydrus/client/gui/panels/options/ThumbnailsPanel.py",
+        "line": 165,
+        "line_sha256": "3e9e286652047edbd32d676cad931fe064d463a7b206c2a7b0b295a6f9e6508a"
+      },
+      {
+        "path": "crates/hydrus-store/src/settings.rs",
+        "line": 57,
+        "line_sha256": "794b0c2e043439277b729bc49340165eba346e29e8873a7d9617569552555911"
+      },
+      {
+        "path": "crates/hydrus-store/src/import/decode.rs",
+        "line": 1287,
+        "line_sha256": "b8cdc7a0925c9675199893ebd8580895155b1d16a5ebe11997bf5fb6314c0038"
+      },
+      {
+        "path": "crates/hydrus-gui-model/src/options.rs",
+        "line": 375,
+        "line_sha256": "db566577a87769aed32c225d5aa2553c3e1a3325e23d7fce16e5f90a72594c04"
+      },
+      {
+        "path": "crates/hydrus-gui-model/src/options.rs",
+        "line": 4861,
+        "line_sha256": "991626a21c1fddedc79b8029823a50c21c8cd2257b22a21e9aafd5ecb5599f17"
+      },
+      {
+        "path": "crates/hydrus-gui/src/lib.rs",
+        "line": 4458,
+        "line_sha256": "8a75a3e81f1eeeb930467203562085abc918d9fbb306d5c2f66db133755a5275"
+      },
+      {
+        "path": "crates/hydrus-gui-model/src/thumbnail_navigation.rs",
+        "line": 5,
+        "line_sha256": "181f772062ae9f5da69a916000fac2347d7c757d2e2a9eccea16c3248e52d1a2"
+      },
+      {
+        "path": "crates/hydrus-gui-model/src/thumbnail_navigation.rs",
+        "line": 31,
+        "line_sha256": "191159e486437a499c68211b2324253df6d30d161504d1e5008589ddd5c2ec54"
+      },
+      {
+        "path": "crates/hydrus-gui-model/src/thumbnail_navigation.rs",
+        "line": 70,
+        "line_sha256": "b4852b7e33de89e9e06347bbc5cbcb98ffe15a31dabc5d6a9a3c18e1648c7c09"
+      },
+      {
+        "path": "crates/hydrus-gui/src/thumbnail_navigation.rs",
+        "line": 11,
+        "line_sha256": "3b17e2ab05d83c9361d101b29bff5bb0c5430d430d513d6f2f8af1ac65d78ce7"
+      },
+      {
+        "path": "crates/hydrus-gui/ui/main.slint",
+        "line": 245,
+        "line_sha256": "819bdeef19f5d736238f8663e8c52bd78784651bc26c0b55fdebca5c952c619f"
+      },
+      {
+        "path": "crates/hydrus-gui-model/tests/model/thumbnail_navigation.rs",
+        "line": 15,
+        "line_sha256": "4ccf191332c9313da292558861edad10f2b028c8d49dd3ab8515526da5491376"
+      },
+      {
+        "path": "crates/hydrus-gui-model/tests/model/thumbnail_navigation.rs",
+        "line": 71,
+        "line_sha256": "6a34651b3f9059e2f6d16e81b02d7ca79765850edc5c2c6d53336281a58da597"
+      },
+      {
+        "path": "crates/hydrus-gui-model/tests/model/thumbnail_navigation.rs",
+        "line": 105,
+        "line_sha256": "cae71975da933192992a3f3d5758fec2dcad99843f989a514eec375e6bf7e26f"
+      },
+      {
+        "path": "crates/hydrus-gui/tests/gui/thumbnail_navigation.rs",
+        "line": 355,
+        "line_sha256": "69ed6f7a1aba5a6d97b67860d923e17c27c5011d8536698dcc1ec150d13e6626"
+      },
+      {
+        "path": "crates/hydrus-gui/ui/main.slint",
+        "line": 278,
+        "line_sha256": "9957baeea0f73d6b3ecf78a275a66c5ab3a104a58999c82f71bda72cb554fd58"
+      },
+      {
+        "path": "crates/hydrus-gui/ui/main.slint",
+        "line": 767,
+        "line_sha256": "f3fb8dd5eaf55a575923cd343d89cdba3a16300fdc3640ec1744706fe4247f91"
+      },
+      {
+        "path": "crates/hydrus-gui/tests/gui/thumbnail_navigation.rs",
+        "line": 30,
+        "line_sha256": "f0b0e61de7d04be10291208278b517fed80779423b9394abd9624610e6e5bb52"
+      },
+      {
+        "path": "crates/hydrus-gui/tests/gui/thumbnail_navigation.rs",
+        "line": 50,
+        "line_sha256": "acf5f7faf7098ac806fcde910cf9ac8d75776d74d99c8780f84d2754a04d836e"
+      },
+      {
+        "path": "crates/hydrus-gui/tests/gui/thumbnail_navigation.rs",
+        "line": 203,
+        "line_sha256": "fd6acf809b953089a5d35e2db425080b603f2abd72353d83bda3ad25a7ab5225"
+      },
+      {
+        "path": "crates/hydrus-gui/tests/gui/thumbnail_navigation.rs",
+        "line": 568,
+        "line_sha256": "516e8e61a4a0019484db760376c2bc9fe8d1432c9fd26c7563a109527cb4a154"
+      },
+      {
+        "path": "crates/hydrus-gui/ui/main.slint",
+        "line": 373,
+        "line_sha256": "bb6f058550edb175cdc51cbb060b1e90e0bea5d7a64858a26e60681f2b6a1aaf"
+      },
+      {
+        "path": "crates/hydrus-gui/ui/main.slint",
+        "line": 1314,
+        "line_sha256": "9c0cb1cf4d49c13dd55238285734b0ea8f5f6ea316caf6814562bd9458da52b4"
+      },
+      {
+        "path": "crates/hydrus-gui-model/src/thumbnail_navigation.rs",
+        "line": 31,
+        "line_sha256": "191159e486437a499c68211b2324253df6d30d161504d1e5008589ddd5c2ec54"
+      },
+      {
+        "path": "hydrus/client/gui/panels/options/ThumbnailsPanel.py",
+        "line": 166,
+        "line_sha256": "5287205717371f3eb51f7f94376fbc0af37a0abe042fa9b8ee8319630b02a514"
+      }
+    ]
+  },
+  "assertion_preservation": {
+    "previous_assertions": 51,
+    "current_assertions": 57,
+    "original_banked_assertions": 17,
+    "tests_before": 1,
+    "tests_after": 1,
+    "all_51_previous_macro_spans_bytewise_in_order": true,
+    "all_original_banked_lines_bytewise_in_order": true,
+    "old_strict_geometry_assertion_block_byte_identical": true,
+    "saved_options_and_real_physical_consumer_tail_byte_identical": true,
+    "no_assertion_removed_or_weakened": true,
+    "model_source_and19_assertions3_tests_unchanged": true,
+    "original_viewports_sidebar_and_two_columns_unchanged": true
+  },
+  "original_assertion_total": 17,
+  "current_assertion_total": 57,
+  "intermediate_assertion_total": 51,
+  "original_test_total": 1,
+  "current_test_total": 1,
+  "model_original_assertion_total": 19,
+  "model_current_assertion_total": 19,
+  "model_test_total": 3,
+  "source_blockers": [],
+  "proof_hashes": {
+    "/workspace/validation-reviews/thumbnail-navigation3/source-review-2-1a49a30f0.json": "d35d4c59d3d35a85a1e99baaf9e42a399ecb83f470108ad2ebb32c65947829b0",
+    "/workspace/validation-reviews/thumbnail-navigation3/source-review-2-1a49a30f0.md": "19c983009e42f38c169b5edf47f10f442398b993c0c7fe56e6f6059bcb7f4cc9",
+    "/workspace/validation-reviews/thumbnail-navigation3/repair1/failed-layout-diagnosis-2.json": "085313e93b9a66737e8fb707aaf0883de82fc2e179419e07b192d3764fc035d7",
+    "/workspace/validation-reviews/thumbnail-navigation3/repair2/diagnostic-render-review-2-9e4b3c592.json": "15b8b06742086681084f65cc5e492d0ded91fa48c89dab7c1f7a63e9173a5ac3",
+    "/workspace/validation-reviews/thumbnail-navigation3/repair2/diagnostic-render-review-2-9e4b3c592.md": "dca817a4700ccae4b1c6e35b66877ce04272a3de755dfd45fe5bbc3804a28b71",
+    "/workspace/validation-reviews/thumbnail-navigation3/prep-1a49a30f0/subset-preflight/subset-proposal-patch.json": "e54a43c90e779e586d74bac996f51f88ae19366493ca102b0a02306444a2003a",
+    "/workspace/validation-reviews/thumbnail-navigation3/prep-1a49a30f0/render-checklist.json": "7968aaa0d1fa7eb3e04c7accd28b9023a812cc1fa73c093741e9a76be6d9e0aa",
+    "/workspace/validation-reviews/thumbnail-navigation3/prep-1a49a30f0/source-preservation-proof.json": "f7ba4a0ec8714f9f16790f169a809c84af3dfc7af01e845cf92fd21afac32553",
+    "/workspace/validation-reviews/thumbnail-navigation3/prep-1a49a30f0/prior370-preservation-proof.json": "5924c7d4b7d81d63115c0eafde0644588d75f3ccab8b6283e5581c7d1e848d4a",
+    "/workspace/validation-reviews/ci-1a49a30f0/ci-evidence.json": "9abac67e60414eb8092e737af4dbe0e17b2bd1f6ae24823e837b24c95f87b547",
+    "/workspace/validation-reviews/ci-1a49a30f0/validation-outcome.json": "1b5a557088fcacfa34c5ae6ac68f68b4354a57d80d145d1856335c85219a55ab",
+    "/workspace/validation-reviews/ci-1a49a30f0/full-check.log": "f52e0ebab10c93823cd4e515bf7a1b50bb2f8674f49cfd478cc75aee4164ba34",
+    "/workspace/validation-reviews/ci-1a49a30f0/tests.log": "dda2f73f8f3276a963f02e2ce9da74479c4117d824036f10137e1a5ece177a34",
+    "/workspace/validation-reviews/ci-1a49a30f0/parity.log": "46d1141ec203c2787aaeccc88d10ea57ffae4589b6acf9d03fc5b0aa716fbd3d",
+    "/workspace/validation-reviews/ci-1a49a30f0/clippy.log": "f2d01edc4f38983353bb9df85754d6f445720677694664c333188824c733c6c2",
+    "/workspace/validation-reviews/ci-1a49a30f0/maintenance.log": "a2c02bbbdbb51822dc252511e95ba7a6ddd616f92238acdd103e1fe2661287a3"
+  },
+  "scope_and_preservation": {
+    "proposal_reference_updates": [
+      "audit-options-thumbnails-interaction-when-shift-selecting-move-the-navigate-from-here-position-with-it",
+      "audit-options-thumbnails-interaction-do-not-scroll-down-on-key-navigation-if-thumbnail-at-least-this-visible",
+      "audit-options-thumbnails-interaction-experimental-scroll-thumbnails-at-this-rate-per-scroll-tick"
+    ],
+    "proposal_reference_additions": 0,
+    "native_updates_or_additions": 0,
+    "prior_completed_leaves_unchanged": 370,
+    "parents_aliases_and_unselected_credit": false
+  },
+  "provenance": {
+    "historical_source_reviews": "Frozen source-only observations and pending gates are history, superseded for this exact source by current full Linux and actual four-image inspection. Old source reviews and failed runs are unchanged.",
+    "failed_runs": [
+      {
+        "source_commit": "b3f09e2f1f4a721e05f6fe5f7f7f4a24a8fb1a83",
+        "run_id": 37632337153,
+        "result": "Clippy borrow lint and geometry failure; only two Options diagnostics."
+      },
+      {
+        "source_commit": "9e4b3c59215d017a0a0e0948898901121f0618f5",
+        "run_id": 37638222068,
+        "result": "Clippy passed, narrow containment failed; only two Options and wide Main diagnostics."
+      }
+    ],
+    "undispatched_source": "Lint-only 6fc source was not dispatched and earns no runtime credit.",
+    "reference_basis": "Actual recorded Qt staged/private UpdateOptions/reopen behavior and thumbnail decision/wheel handlers, exact source horizontal pairs, historical wider sidebar context. Recorder disables MPV availability only for offscreen startup; no Preview playback or matched navigation PNG.",
+    "builds_or_product_canonical_edits_by_reviewer": false
+  }
+}

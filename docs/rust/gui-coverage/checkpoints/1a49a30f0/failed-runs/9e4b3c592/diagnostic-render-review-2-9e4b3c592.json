@@ -1,0 +1,110 @@
+{
+  "source_commit": "9e4b3c59215d017a0a0e0948898901121f0618f5",
+  "run_id": 37638222068,
+  "artifact_id": 11492413115,
+  "native_zip_sha256": "2de7ab38bc1f58293f40c7fb97c551e8c1a5491ae2ccde56b769a5d511bab3c1",
+  "validation_scope": "linux diagnostic; failed run",
+  "approval": false,
+  "claims_approved": [],
+  "images": [
+    {
+      "name": "thumbnail-navigation-options-saved-false.png",
+      "path": "/workspace/validation-reviews/ci-9e4b3c592/native-renders/thumbnail-navigation-options-saved-false.png",
+      "sha256": "6500c3213252368f1b62b04b56bc8cb37b5e14fd317d95118580d0631671cc0a",
+      "dimensions": [
+        1000,
+        900
+      ],
+      "actually_viewed": true,
+      "observation": "Actually viewed: full three selected labels readable, shift checkbox unchecked, numeric visibility1 and raw rate1.5 visible, Apply/Cancel separated below. This is a failed-run diagnostic, not fresh repair eligibility."
+    },
+    {
+      "name": "thumbnail-navigation-options-saved-true.png",
+      "path": "/workspace/validation-reviews/ci-9e4b3c592/native-renders/thumbnail-navigation-options-saved-true.png",
+      "sha256": "406061d9da137089cee2453759fb9a63d6686c11be8ce47a010cc3ac3f70341a",
+      "dimensions": [
+        1000,
+        900
+      ],
+      "actually_viewed": true,
+      "observation": "Actually viewed: full selected labels readable, shift checkbox checked, visibility40 and raw rate0.5 visible; footer and controls do not overlap."
+    },
+    {
+      "name": "thumbnail-navigation-sidebar-wide.png",
+      "path": "/workspace/validation-reviews/ci-9e4b3c592/native-renders/thumbnail-navigation-sidebar-wide.png",
+      "sha256": "41e668c0cc5d5d7145b78591d24b454dd4bfe6a2f268306e26b29758235ab7f9",
+      "dimensions": [
+        1100,
+        700
+      ],
+      "actually_viewed": true,
+      "observation": "Actually viewed: all four full paired captions readable at actual400 sidebar; row controls contained with visible horizontal gaps. The selected file/preview layout is populated. Some thumbnail captions elide outside the selected controls. No narrow capture was produced."
+    }
+  ],
+  "missing_required_image": "thumbnail-navigation.png",
+  "current_result": "Strict Clippy passed. GUI710 passed,1 failed,0 ignored; new thumbnail navigation test failed narrow viewport containment at line127. No selected eligibility.",
+  "runtime_evidence": {
+    "path": "/workspace/validation-reviews/ci-9e4b3c592/full-check.log",
+    "sha256": "c96916f7c901ddd41605f8d4cf2789853fdae33d1072d766dbbf19d3ac2a1e53",
+    "lines": [
+      2733,
+      2751
+    ],
+    "wide": "Actual280 at1100\u00d7700 contained with264-wide stacked pairs; actual400 then contained with384-wide horizontally paired rows. Both pass.",
+    "narrow": "Viewport x0,y50,w280,h280; lower buttons y330 and366 remain unchanged after helper wheel and exceed bottom330. The original full containment assertion correctly fails."
+  },
+  "source_findings": [
+    {
+      "kind": "demonstrated generated extent defect",
+      "detail": "Explicit search-sidebar min-height0 contributes min0 to the surrounding vertical layout. Outer Flickable.content_height=max(viewport_height,that minimum), leaving extent280 despite naturally overflowing children. Slint rejects vertical scroll when content_height is not greater than viewport height. This is a production search-sidebar content-extent defect; an input-only gutter change cannot repair it.",
+      "suggestion": "Restore cycle-free intrinsic visible search content minimum/extent. Preserve explicit zero allocation for hidden search sidebar and retain importer/note branches unchanged; inspect hidden generated constraints rather than assuming max0 alone handles an intrinsic minimum."
+    },
+    {
+      "kind": "finite test route and readiness improvement",
+      "detail": "Current wheel targets the viewport center, which may contain nested ActivePredicates ScrollView/search controls. The actual event recipient is not logged. The global35ms settling baseline may already be met at dispatch; two identical observer frames alone cannot prove outer scrolling.",
+      "suggestion": "Dispatch the same single computed ordinary wheel in the source-derived exposed padding gutter, clear old observations and settle from a post-input baseline. Assert positive outer offset/frame translation and final full containment, under the unchanged bounded deadline; no set-scroll, retry or widened image."
+    },
+    {
+      "kind": "800ms check",
+      "detail": "Flickable800ms child-filter grouping only applies after an earlier accepted scroll and a nearby pointer position; no scrollable extent is already sufficient to explain this failure. Do not introduce an800ms wait as a substitute for fixing the content range. If additional routing evidence later shows retained grouping, describe that finite precondition separately."
+    }
+  ],
+  "generated_source_proof": {
+    "path": "/workspace/validation-reviews/thumbnail-navigation3/repair1/slint-generation/main.rs",
+    "sha256": "8d50b1de4d5f94b724031338d3aeadd8343dd4607bb530eae0fac74ace898052",
+    "content_height_binding": "r#flickable_5362 () + sp :: r#Flickable :: FIELD_OFFSETS . r#content_height ()) . apply_pin (_self) , & self_rc , move | _self , _ : & () | (sp :: LogicalLength :: new (((InnerMainWindow :: FIELD_OFFSETS . r#root_5346_flickable_5362_height ()) . apply_pin (_self) . get () . get () as sp :: Coord) . max (((InnerMainWindow :: FIELD_OFFSETS . r#root_5346_empty_5364_layoutinfo_v ()) . apply_pin (_self) . get ()) . r#min as sp :: Coord) as sp :: Coord)) as _) ;",
+    "search_cell_constraint_excerpt": "r#root_5346_search_sidebar_5404_layoutinfo_v ()) . apply_pin (_self) . get () ;\n                             sp :: LayoutInfo {\n                                 r#max : if (InnerMainWindow :: FIELD_OFFSETS . r#root_5346_search_sidebar_5404_visible ()) . apply_pin (_self) . get () {\n                                     (100000f64) as _ }\n                                 else {\n                                     0f64 }\n                                 as _ , r#max_percent : ((r#layout_info) . r#max_percent) . clone () as _ , r#min : 0f64 as _ , r#min_percent : ((r#layout_info) . r#min_percent) . clone () as _ , r#preferred : ((r#layout_info) . r#preferred) . clone () as _ , r#stretch : ((r#layout_info) . r#stretch) . clone () as _ , }\n                             }\n                         as _ , .. :: core :: default :: Default :: default () }\n                    ) ;\n                     let r#cells = sp :: Slice :: from_slice (& items_vec) ;\n                     let r#repeated_indices = sp :: Slice :: from_slice "
+  },
+  "source_anchors": [
+    {
+      "path": "crates/hydrus-gui/ui/main.slint",
+      "line": 1309,
+      "symbol": "min-height:0px on search-sidebar"
+    },
+    {
+      "path": "crates/hydrus-gui/ui/main.slint",
+      "line": 1404,
+      "symbol": "Nested active-predicate ScrollView region"
+    },
+    {
+      "path": "crates/hydrus-gui/ui/active_predicates.slint",
+      "line": 23,
+      "symbol": "Nested ScrollView"
+    },
+    {
+      "path": "crates/hydrus-gui/tests/gui/thumbnail_navigation.rs",
+      "line": 86,
+      "symbol": "One computed wheel followed by remeasurement"
+    },
+    {
+      "path": "i-slint-core-1.18.1/items/flickable.rs",
+      "line": 456,
+      "symbol": "Allowed scroll direction requires content extent beyond viewport"
+    }
+  ],
+  "limits": [
+    "Keep every51 current and17 original assertions, real thumbnail Shift/key/wheel consumers, algorithms, saved values, and existing700\u00d7600/1100\u00d7700 captures; no dimensions widened to bypass containment.",
+    "These three actual views are diagnostic only. Fresh repaired full Linux and all four current captures remain required; no parent, alias, generic sidebar/graphics layout or OS credit.",
+    "No edits, builds, recording or approvals occurred. Earlier source review frozen unchanged; this diagnosis supersedes its unvalidated scroll-extent assumption."
+  ]
+}

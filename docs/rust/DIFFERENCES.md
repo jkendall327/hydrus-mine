@@ -2447,10 +2447,13 @@ stacking is native accommodation: the Qt source has horizontal pairs, and the
 wider reference image does not establish matching narrow geometry.
 The visible search-content minimum now preserves intrinsic height so the existing
 ScrollView has a real scroll extent; hidden search content remains zero minimum.
-Actual wheel movement and viewport containment remain repaired-source CI gates.
-Actual saved Options captures and supported narrow/wider frame checks await exact-source full
-Linux execution and fresh independent review. No local Cargo builds/tests or
-mutation runs were performed, and no additional completion is yet claimed.
+Actual wheel movement and strict viewport containment passed the repaired-source
+full Linux regression and fresh four-frame review.
+Actual saved Options captures and supported narrow/wider frame checks passed full Linux run
+`37644009033` and fresh independent review. No local Cargo builds/tests or
+mutation runs were performed. Exactly three navigation preference leaves receive
+credit; sidebar, preview-focus siblings and broader parents remain separately
+assessed. [Evidence](gui-coverage/checkpoints/1a49a30f0/README.md).
 
 The namespace-colour Add/Delete and OR-row namespace preferences now have staged
 Options controls and real list consumers. Rejected namespace input closes its

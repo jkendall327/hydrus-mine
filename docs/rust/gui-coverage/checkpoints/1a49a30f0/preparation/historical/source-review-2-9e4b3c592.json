@@ -1,0 +1,223 @@
+{
+  "review_kind": "Independent repaired exact-source review; runtime and rendered eligibility pending",
+  "source_commit": "9e4b3c59215d017a0a0e0948898901121f0618f5",
+  "agent_commit": "9e4b3c59215d017a0a0e0948898901121f0618f5",
+  "parent_commit": "6fc8f7106bb0085513628b274d42994c1f10832e",
+  "baseline_commit": "2e4912e688110d7b3ed6aad07aed0e72835d65d0",
+  "selected_ids": [
+    "audit-options-thumbnails-interaction-when-shift-selecting-move-the-navigate-from-here-position-with-it",
+    "audit-options-thumbnails-interaction-do-not-scroll-down-on-key-navigation-if-thumbnail-at-least-this-visible",
+    "audit-options-thumbnails-interaction-experimental-scroll-thumbnails-at-this-rate-per-scroll-tick"
+  ],
+  "approval": false,
+  "source_blockers": [],
+  "conclusion": "No concrete source/API/sequencing blocker remains in this ten-line repair. Generated allocation and real resize sequencing address the two demonstrated failures. New exact-source full Linux and four actual fresh capture gates remain mandatory.",
+  "integration_verified": true,
+  "files": {
+    "crates/hydrus-gui/ui/main.slint": {
+      "sha256": "138d9b710c28f2df3fc06772606cba6d1c513c0e33f2c2c0ee96d06fb0b51044",
+      "git_blob": "db0d14b6df4ffb5045eef3745cac3e0e9afa4765"
+    },
+    "crates/hydrus-gui/tests/gui/thumbnail_navigation.rs": {
+      "sha256": "2768c62a880a5fbb7eb29308c415e116e7c6d025762e7fe8f35e97c8e5fe998e",
+      "git_blob": "31410ca0c72968e39ba94e19e637f1db8330c61c"
+    },
+    "docs/rust/GUI.md": {
+      "sha256": "5e17c08324b4ba49bc2459728b9e56fbd6b7886df781f19c607db0caf44b0c11",
+      "git_blob": "266d4a6d557558fc6ea28e57907e8bc135f1e7df"
+    },
+    "docs/rust/DIFFERENCES.md": {
+      "sha256": "85d765b0230b09fdfcc2f4d4881ee163507ddbed2865d879adde6032a400b096",
+      "git_blob": "e7653f0c0a71332ab9cfd0a6eb5c4a0de9477212"
+    },
+    "crates/hydrus-gui-model/src/thumbnail_navigation.rs": {
+      "sha256": "efa17bc44299028630c363c1a74be2237892c85f7167b564d8b615d3b5557cf1",
+      "git_blob": "d1c11806a98f077c4e4ceae70c38c7837ae0420b"
+    },
+    "crates/hydrus-gui-model/tests/model/thumbnail_navigation.rs": {
+      "sha256": "f64e30cae3bf509d563273658c30e871d6affe03c17e699c14280fac02fe45d3",
+      "git_blob": "469e57115b2e834ba262f22d499c35921762b101"
+    }
+  },
+  "preservation": {
+    "gui_old_assertions": 17,
+    "gui_failed_and_lint_repaired_assertions": 48,
+    "gui_current_assertions": 51,
+    "gui_current_tests": 1,
+    "original_lines_checks": [
+      {
+        "source_commit": "6fc8f7106bb0085513628b274d42994c1f10832e",
+        "all_original_lines_retained_in_order": true,
+        "assertions": 48,
+        "tests": 1
+      },
+      {
+        "source_commit": "2e4912e688110d7b3ed6aad07aed0e72835d65d0",
+        "all_original_lines_retained_in_order": true,
+        "assertions": 17,
+        "tests": 1
+      }
+    ],
+    "old_macros_relaxed_or_removed": false,
+    "model_source_and_tests_unchanged": true,
+    "model_assertions": 19,
+    "model_tests": 3,
+    "unchanged_capture_dimensions": [
+      [
+        700,
+        600
+      ],
+      [
+        1100,
+        700
+      ],
+      [
+        1000,
+        900
+      ],
+      [
+        1000,
+        900
+      ]
+    ],
+    "algorithms_options_source_and_callbacks_unchanged": true
+  },
+  "repair_findings": [
+    {
+      "issue": "Production pair overrun",
+      "failed_observation": "Pair x8,width280 extended to288 beyond actual sidebar right280; generated pair width omitted side subtraction.",
+      "current_resolution": "The search sidebar explicitly binds padding-left/right to self.padding. Uniform inherited style padding remains unchanged; exact current generation subtracts 8 + 8 from both available widths. No fixed padding correction or caption abbreviation is introduced.",
+      "source_lines": [
+        1305,
+        1306
+      ]
+    },
+    {
+      "issue": "Wide geometry phase never established",
+      "failed_observation": "Requested400 preceded1100x700 resize; sidebar-measured callback republished saved280.",
+      "current_resolution": "Settle the actual 1100\u00d7700 resize first with stacked controls and assert actual width 280; then request 400 at the same size and assert actual width 400 with paired controls. Restore 700\u00d7600 and assert actual width 280, preserving every containment, results, layout and two-column assertion.",
+      "source_lines": [
+        532,
+        533,
+        534,
+        535,
+        536,
+        545,
+        546,
+        547,
+        548,
+        549
+      ]
+    }
+  ],
+  "generation_proof": {
+    "ui_sha256": "138d9b710c28f2df3fc06772606cba6d1c513c0e33f2c2c0ee96d06fb0b51044",
+    "exit_code": 0,
+    "warnings": 0,
+    "compiler": "cached Slint1.18.1 generation only",
+    "log_sha256": "0d6b98fbfdb691d835312a837163019fef10bfb167267eba31d5f09f0ff43c52",
+    "generated_sha256": "8d50b1de4d5f94b724031338d3aeadd8343dd4607bb530eae0fac74ace898052",
+    "pair_bindings_sha256": "a82deb7fd2d6ab13cc3eca174086b2966a4f65a1a31cd26c5123fd4d89b2d797",
+    "both_pair_bindings_subtract_effective_padding": true,
+    "local_Rust_build_or_runtime": false
+  },
+  "capture_checklist": [
+    {
+      "filename": "thumbnail-navigation.png",
+      "viewport": [
+        700,
+        600
+      ],
+      "role": "Defining narrow consumer, restored 280 sidebar and two columns; all four full captions visible after actual sidebar scroll if needed."
+    },
+    {
+      "filename": "thumbnail-navigation-sidebar-wide.png",
+      "viewport": [
+        1100,
+        700
+      ],
+      "role": "Actual wide 400 sidebar with readable horizontal paired controls; framework geometry evidence only."
+    },
+    {
+      "filename": "thumbnail-navigation-options-saved-true.png",
+      "viewport": [
+        1000,
+        900
+      ],
+      "role": "Actual reopened saved true / 40 / 0.5 controls with full captions."
+    },
+    {
+      "filename": "thumbnail-navigation-options-saved-false.png",
+      "viewport": [
+        1000,
+        900
+      ],
+      "role": "Actual reopened saved false / 1 / 1.5 controls with full captions."
+    }
+  ],
+  "limits": [
+    "Exactly the three saved navigation preferences; no generic sidebar, preview-focus, parent or alias completion credit. Responsive native stacking is an explicit framework accommodation, not recorded Qt stacking behavior.",
+    "No exact narrow 700\u00d7600/280-sidebar Qt image pair. Wider Qt image has a different location context; reference recorder emits JSON at 1100\u00d7650 and supplies no defining navigation PNG.",
+    "Native GUI threshold expectations use the native target; separate model replay compares actual Qt recorded boundary values. This distinction remains explicit.",
+    "Vertical regular-grid consumers only. Platform wheel-line preferences, Qt fractional accumulation, horizontal/masonry/full graphics layouts and direct-scrollbar wheel input remain outside this slice.",
+    "Native rate behavior retains prior steps for nonfinite/out-of-signed-int values rather than reproducing Qt conversion exceptions. Accepted raw text and invalid-text preservation remain unchanged.",
+    "Reference MPV availability override is limited to offscreen startup; no Preview playback evidence. Saved Options setup remains existing callback-driven editing with physical thumbnail consumers and actual reopened visual states.",
+    "Only first two saved control frames are measured; all captions and the text rate must pass fresh actual visual inspection. Universal geometry and OS font/layout/input parity are unclaimed."
+  ],
+  "history": {
+    "failed_source_commit": "b3f09e2f1f4a721e05f6fe5f7f7f4a24a8fb1a83",
+    "failed_run_id": 37632337153,
+    "gui_result": "710 passed,1 failed,0 ignored; new sidebar containment failed before both Main exports.",
+    "clippy_result": "Known redundant borrow failed; independent direct metadata probe and6fc repair preserved separately.",
+    "prior_review_correction": "Earlier frozen source-only reviews missed the redundant-borrow lint and did not catch the effective-padding/resize publication issues. Those historical packets remain unchanged; this packet and retained failed-run diagnosis supersede their unvalidated allocation/setup observations.",
+    "failed_images_are_not_fresh_repaired_evidence": true
+  },
+  "documentation_review": "GUI/DIFFERENCES are byte-identical to6fc. Pending exact CI/fresh-image narrative and finite native stacking versus Qt horizontal-pair limits remain correct; independently assessed preview-focus controls receive no new credit.",
+  "provenance": [
+    {
+      "path": "/workspace/validation-reviews/thumbnail-navigation3/source-review-2.json",
+      "sha256": "4169d4d1e091f2ea90c46f96a74fd98785526562969d3ec4c067b6f047e77850"
+    },
+    {
+      "path": "/workspace/validation-reviews/thumbnail-navigation3/source-review-2.md",
+      "sha256": "15b079b07890fc5e831ebfc35816196127d24d8f74ca005c217b2c0ca1ed5495"
+    },
+    {
+      "path": "/workspace/validation-reviews/thumbnail-navigation3/source-review-2-6fc8f7106.json",
+      "sha256": "3b20cbe3cc56f3e949c73cee8f0d5f6a5b06fdea65af3b89c760714bb493e497"
+    },
+    {
+      "path": "/workspace/validation-reviews/thumbnail-navigation3/source-review-2-6fc8f7106.md",
+      "sha256": "8467171c36cf3c0076ac7219bdb075592743d73dd5c5d1e98b197fdb9291d237"
+    },
+    {
+      "path": "/workspace/validation-reviews/thumbnail-navigation3/needless-borrow-probe/result.json",
+      "sha256": "4476a6dad7bfe3dbcd996ecca8a6b22e4aae45cdc0cffea2298e99ace9e443cc"
+    },
+    {
+      "path": "/workspace/validation-reviews/thumbnail-navigation3/repair1/failed-layout-diagnosis-2.json",
+      "sha256": "085313e93b9a66737e8fb707aaf0883de82fc2e179419e07b192d3764fc035d7"
+    },
+    {
+      "path": "/workspace/validation-reviews/thumbnail-navigation3/repair1/failed-layout-diagnosis-2.md",
+      "sha256": "2490ce97a67388982776d517a74f98066ba5a21777f0431b2de5e4a70b0f09bb"
+    },
+    {
+      "path": "/workspace/validation-reviews/thumbnail-navigation3/repair1/implementation-proof-3.json",
+      "sha256": "b8a2c7380f47d795181ae780c898fb1e9003e15fc17cc8eab84841215126079b"
+    },
+    {
+      "path": "/workspace/validation-reviews/thumbnail-navigation3/repair1/slint-generation-result.json",
+      "sha256": "0a87a0c39b79015ac340d0b7342d3d542fec4942231638fe12f9ac5da2f755d7"
+    },
+    {
+      "path": "/workspace/validation-reviews/thumbnail-navigation3/repair1/generated-content-width-bindings.txt",
+      "sha256": "a82deb7fd2d6ab13cc3eca174086b2966a4f65a1a31cd26c5123fd4d89b2d797"
+    }
+  ],
+  "builds_run": false,
+  "product_edits": false,
+  "canonical_edits": false,
+  "fresh_native_images_viewed": false,
+  "hosted_validation": "Repaired exact-source full Linux pending; old failed outcomes retained. No feature approval."
+}

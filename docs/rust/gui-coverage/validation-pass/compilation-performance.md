@@ -533,3 +533,13 @@ Routine hosted performance: strict Clippy took 72 seconds, test compilation/link
 Run 37624387284 spent 641 seconds in strict Clippy (640 seconds reported by Cargo), 646 seconds compiling tests, and 1,111 seconds in the complete test step. The 711 GUI tests ran in 209.01 seconds; all 67 media tests passed. These are hosted observations, not separate Slint-generation/Rust/link timings.
 
 This source changes the generated Main UI. The runner also used image `20260927.320.1` and workspace compatibility prefix `68e3726939ec9009de9276fa`, rather than the preceding rating run's `20261004.327.1` image and warm snapshot. Dependencies restored, but no compatible workspace snapshot was available. Both factors prevent attributing the increased compilation time solely to the UI edit. The successful run saved 293 workspace artifacts plus their input ledger (2,201,086,297 bytes); maintenance retained 690,309,880 compressed bytes, within the 3 GiB budget. No further optimization experiment was added to this delivery batch.
+
+## Thumbnail navigation checkpoint: UI repair iterations
+
+The initial `b3f09e2f1` run failed a new lint and geometry assertion; `9e4b3c592` passed strict Clippy but failed the narrow-sidebar visibility assertion. Both had 710 GUI passes and one failure, with all 67 media tests passing. Their Clippy steps each took 686 seconds; complete test steps took 1,146 and 1,139 seconds respectively. Both restored 293 workspace artifacts. Failed runs earn no completion credit and remain preserved in the checkpoint.
+
+Repaired source `1a49a30f0`, full Linux run `37644009033`, passed strict Clippy in 753 seconds, compiled tests in 572 seconds, and completed the test step in 1,004 seconds. All 711 GUI tests passed in 185.02 seconds and all 67 media tests in 1.01 seconds. The generated UI crate rebuilt for the changed Slint source. These are hosted observations, not a controlled speedup comparison or separate generation, Rust compilation, linking or peak-memory measurements.
+
+Runner image `20260927.320.1` restored 4,133 verified input mtimes and 293 coherent workspace artifact files under prefix `68e3726939ec9009de9276fa`; dependencies also restored. A new source/run-specific snapshot retained 293 artifacts plus the input ledger, totaling 2,201,608,392 bytes. Maintenance retained 690,551,990 compressed bytes within the 3 GiB budget. The cache reused compatible artifacts while the changed generated UI still required compilation. No additional optimization experiment was opened.
+
+[Successful outcome and both failed-run histories](../checkpoints/1a49a30f0/README.md) retain the actual logs and scope.

@@ -1,0 +1,32 @@
+{
+  "source_commit": "9e4b3c59215d017a0a0e0948898901121f0618f5",
+  "run_id": 37638222068,
+  "artifact_id": 11492413115,
+  "zip_sha256": "2de7ab38bc1f58293f40c7fb97c551e8c1a5491ae2ccde56b769a5d511bab3c1",
+  "approval": false,
+  "actually_viewed": [
+    {
+      "name": "thumbnail-navigation-options-saved-false.png",
+      "bytes": 103477,
+      "sha256": "6500c3213252368f1b62b04b56bc8cb37b5e14fd317d95118580d0631671cc0a"
+    },
+    {
+      "name": "thumbnail-navigation-options-saved-true.png",
+      "bytes": 103784,
+      "sha256": "406061d9da137089cee2453759fb9a63d6686c11be8ce47a010cc3ac3f70341a"
+    },
+    {
+      "name": "thumbnail-navigation-sidebar-wide.png",
+      "bytes": 286508,
+      "sha256": "41e668c0cc5d5d7145b78591d24b454dd4bfe6a2f268306e26b29758235ab7f9"
+    }
+  ],
+  "observations": [
+    "Actual reopened true/40/0.5 and false/1/1.5 fields and all three full captions are readable at1000x900.",
+    "Actual wide400 sidebar at1100x700 shows four full labels in two horizontal pairs with no overlapping buttons.",
+    "Required narrow thumbnail-navigation.png is absent because the visibility assertion failed; these diagnostic images do not grant completion."
+  ],
+  "missing_required": [
+    "thumbnail-navigation.png"
+  ]
+}

@@ -1,0 +1,111 @@
+{
+  "source_commit": "1c2b1afaf0fff7bf7bc984d17c5623e9e70098a5",
+  "selected_ids": [
+    "audit-options-thumbnails-interaction-when-shift-selecting-move-the-navigate-from-here-position-with-it",
+    "audit-options-thumbnails-interaction-do-not-scroll-down-on-key-navigation-if-thumbnail-at-least-this-visible",
+    "audit-options-thumbnails-interaction-experimental-scroll-thumbnails-at-this-rate-per-scroll-tick"
+  ],
+  "recommendation": "One cohesive three-leaf batch after current selected-deletion checkpoint banks. Main narrow sidebar readability repair plus insertion-only reopened Options exports; no new functional consumer implementation identified.",
+  "approval": false,
+  "fresh_runtime_validation": false,
+  "images": [
+    {
+      "path": "/workspace/validation-reviews/ci-95bbbed2c/native-renders/thumbnail-navigation.png",
+      "source_commit": "95bbbed2cdd5f254a71330a00a2eb15f24b771a8",
+      "run_id": 37618131717,
+      "artifact_id": 11481791282,
+      "historical": true,
+      "actually_viewed": true,
+      "dimensions": [
+        700,
+        600
+      ],
+      "sha256": "b4ab818548a1506980a6d37edb3e84f83480332561711b0f31dccd7a00d72de0"
+    },
+    {
+      "path": "/workspace/hydrus-mine/oracle/fixtures/sidebar_layout_reference.png",
+      "source_commit": "1c2b1afaf0fff7bf7bc984d17c5623e9e70098a5",
+      "historical_recording": true,
+      "actually_viewed": true,
+      "dimensions": [
+        1392,
+        926
+      ],
+      "limit": "Different sidebar-layout recorder state and larger viewport; not a narrow Qt pixel pair.",
+      "sha256": "2240401e03972d2e3e6d75ea7d89b7497f03ba0925dbf896454ea026edc81f9f"
+    }
+  ],
+  "source_files": [
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-gui/tests/gui/thumbnail_navigation.rs",
+      "sha256": "dc99046c1dd10576eb332c763c118867c10e2ef7d705742778a3e47850ac3e79"
+    },
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-gui/ui/main.slint",
+      "sha256": "63cff2b671bc09d8e77d325dbeaf53678dc0f48d82a400d9001da5bedf274f10"
+    },
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-gui/ui/options.slint",
+      "sha256": "cd6bc428d6ad2a4a8d07556d05eb4e4421cae9fa72f344771877fd9aa1d3db93"
+    },
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-gui/src/thumbnail_navigation.rs",
+      "sha256": "f689c8fc437dd650c0dba0ae778945cd5347f4b7d02afb0f51b8afbf19627064"
+    },
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-gui/src/page.rs",
+      "sha256": "8c968c29c99b14e862ee643d5aea5af5e78eadb8c532202fffc18084885b0c8d"
+    },
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-gui-model/src/options.rs",
+      "sha256": "0959b5f502712b18a6cf8ebb089f1448770b25b291100468cd2e6fba9acb0ae0"
+    },
+    {
+      "path": "/workspace/hydrus-mine/oracle/record_thumbnail_navigation.py",
+      "sha256": "3d3f337fdafdfc9ff9308e16b1277848b0a67756913c6a39bd806c98f6b29e75"
+    },
+    {
+      "path": "/workspace/hydrus-mine/oracle/fixtures/thumbnail_navigation.json",
+      "sha256": "f357122514393fe1610b97d2cb7c037ef1173736c2014a4708e35f1c3dcd8766"
+    },
+    {
+      "path": "/workspace/hydrus-mine/docs/rust/gui-coverage/parity/thumbnail-navigation.json",
+      "sha256": "6780bcd499a5b4ab37a143837d6e1d763f87740d040f1ed0554aea6b2309f1e7"
+    },
+    {
+      "path": "/workspace/hydrus-mine/hydrus/client/gui/search/ClientGUIACDropdown.py",
+      "sha256": "04b0ddd953a1df62e47b4d5f10d61e01f83fe1100effa68b326b2371c655aad5"
+    },
+    {
+      "path": "/workspace/hydrus-mine/hydrus/client/gui/widgets/ClientGUICommon.py",
+      "sha256": "5251e5a3aee653e339ce459da02437f7255776509bf70ce03fc9e61f1134991c"
+    }
+  ],
+  "baseline": {
+    "gui_assertions": 17,
+    "gui_tests": 1,
+    "preserve_width": 700,
+    "preserve_height": 600,
+    "preserve_sidebar_width": 280,
+    "preserve_thumbnail_columns": 2
+  },
+  "confirmed_gap": "Actual historical consumer screenshot has include-current/pending caption ends meeting neighbouring controls and combined-local-domain text overflowing its button near all-known-tags. Options saved controls have no export.",
+  "minimal_plan": [
+    "Keep all existing settings validation/Cancel/Apply/reopen, actual shift/pointer/Right/Down/wheel assertions and 280px/two-column geometry unchanged.",
+    "Replace only the two problematic Main sidebar paired-button rows with a content-width-aware narrow arrangement that stacks at 280px and retains pairing where both full labels fit. Preserve exact captions/callbacks; do not fix by widening the consumer or merely abbreviating domain identity. Derive fit from standard intrinsic preferred button widths, not OS-specific fixed font estimates; cheap Slint generation required.",
+    "Add fresh actual consumer capture at original700x600 after stable real rendering; inspect all four affected labels and retain two thumbnail columns. Minimal default-off geometry observation is justified only if needed to assert actual full controls disjoint/contained and narrow versus wider arrangement.",
+    "At existing reopened event0 and event1 assertions, retain exact actual Options adapter and export stable real saved controls with all three full labels. Use supported900x900 or1000x900 Options and real wheel scrolling to the interaction section, while Main remains700x600. Expected event0 true/40/0.5; event1 false/1/1.5. Keep all other recorded parsing/clamping events and all existing tests."
+  ],
+  "anticipated_captures": [
+    "thumbnail-navigation.png (existing corrected narrow consumer)",
+    "thumbnail-navigation-options-saved-true.png",
+    "thumbnail-navigation-options-saved-false.png"
+  ],
+  "limits": [
+    "Qt source is paired horizontal QPushButton/OnOffButton layouts, not adaptive stacking; proposed native narrow stacking is an explicit framework adaptation preserving text and behavior.",
+    "No exact Qt700x600/280-sidebar image was found or generated. Qt sidebar reference PNG is wider and uses my-files; native uses combined-local-domains. Do not call these pixel parity.",
+    "Recorder has no PNG and uses actual Qt thumbnail handlers at1100x650; native700x600 assertion geometry is deliberately different.",
+    "17 existing GUI assertion macros/one test cover genuine saved settings, cancellation, pointer/shift/key/wheel consumers and Store reopen. No demonstrated additional functional consumer defect; source-derived threshold targets and Winit60px versus Qt120-angle normalization stay explicit.",
+    "This read-only preflight neither implements nor approves the three claims. Current full CI remains untouched."
+  ]
+}
