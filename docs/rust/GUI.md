@@ -3224,6 +3224,15 @@ parent Apply persists it. Cancel, reopening and closed-owner callbacks leave
 samples and unapplied configuration behind. The actual three-kind Qt replay is
 `service_rating_preview.json`; hosted native coverage also saves a populated PNG.
 
+The rating-preview validation adds separate captures of all four contexts
+for each recorded service kind, plus the counter's inline value editor. It
+retains the actual edit-window adapter and scrolls the real content at 640×1000;
+the existing configuration, persistence, owner and pointer assertions remain.
+Full Linux run `37618131717` and fresh independent inspection of all four
+frames passed. Exactly the live rating examples leaf is banked: 369 signed off,
+6 existing candidates pending. All 710 GUI and 67 media tests passed.
+[Evidence](gui-coverage/checkpoints/95bbbed2c/README.md).
+
 
 The browser viewer's eye button now opens view options. The three Media Viewer
 Hovers collapse controls stage independently in Options, save on Apply, and
@@ -4185,6 +4194,14 @@ otherwise traverse the actual flattened menu; an unoffered current sort remains
 available to pointer selection but does not participate in wheel traversal.
 Matching order labels preserve the existing order; changed labels select the
 new default. This bounded implementation proposes zero completion credit.
+
+The validated follow-up restores the original 1100×800 hide/show wheel
+regression without resizing. It pumps real layout and timers for at least
+810 ms before the single enabled wheel, allowing Slint's documented 800 ms
+scroll-event filter to expire. All 92 assertions remain, including hidden-owner
+rejection and the exact selected index. Full Linux run `37618131717` passed;
+this checks recovery between gestures, not immediate hide/show recovery. No
+additional wheel completion is claimed.
 
 
 Options → popup notifications now stages “Make a short-lived popup on cookie/header

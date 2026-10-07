@@ -1,0 +1,184 @@
+{
+  "source_commit": "95bbbed2cdd5f254a71330a00a2eb15f24b771a8",
+  "claims": [
+    {
+      "id": "audit-media-services-missing-rating-preview",
+      "before_canonical_full_object": {
+        "id": "audit-media-services-missing-rating-preview",
+        "label": "Live rating configuration example panel",
+        "parent_id": "service-ratings",
+        "kind": "feature",
+        "status": "missing",
+        "native_source": {
+          "path": "crates/hydrus-gui/ui/services_editor.slint",
+          "line": 119,
+          "line_sha256": "e47c85ac3834a167942d17d5227746813405dc1760c62236aae12f83e54cad7a"
+        },
+        "reference_source": {
+          "path": "hydrus/client/gui/services/ClientGUIClientsideServices.py",
+          "line": 1260,
+          "line_sha256": "8a4d1a328cd5f5e5f46716ed9c36b400f50256c13446705cef137d90d528aba0"
+        },
+        "evidence": [
+          {
+            "path": "crates/hydrus-gui/ui/services_editor.slint",
+            "line": 119,
+            "role": "native_unavailable_surface",
+            "description": "Native rating configuration fields have no interactive live example widget.",
+            "executed_in_inventory": false,
+            "line_sha256": "e47c85ac3834a167942d17d5227746813405dc1760c62236aae12f83e54cad7a"
+          }
+        ],
+        "limitations": [
+          "Native rating configuration fields have no interactive live example widget."
+        ],
+        "assessment_method": "Source inspection; existing assertion bodies inspected where listed. No tests executed in this audit.",
+        "native_id_candidates": [
+          "audit.media.services.missing.rating-preview"
+        ],
+        "edge_relation": "contains_feature",
+        "assessment": "Native rating configuration fields have no interactive live example widget.",
+        "descendant_count": 0,
+        "descendant_status_counts": {},
+        "unique_feature_descendant_count": 0,
+        "unique_reachable_feature_count_including_shared": 1
+      },
+      "historical_manifest_claim_verbatim": {
+        "reference_id": "audit-media-services-missing-rating-preview",
+        "before": "missing",
+        "previous_status": "missing",
+        "proposedStatus": "first_pass",
+        "proposed_status": "first_pass",
+        "exactBehavior": "Local like/dislike, numerical and inc/dec service configuration has four independent interactive examples labelled Thumbnails, Media Viewer, Preview Window and Dialog (Default). Staged colour/shape/star-count/padding/fraction changes repaint actual graphics. Like left/right toggles; numerical left chooses and right clears; counter left/right changes and middle value Accept/Cancel affects only its sample. Owned counter prompt blocks child Apply until answered. Samples never enter ServiceKind or file ratings. Child Apply stages actual service configuration, parent Apply persists it, reopen initializes fresh samples from saved configuration; child/parent Cancel and retained closed-child callbacks cannot commit or clear a successor. Numerical samples retain the recorded opening click conversion while live count changes repaint the stored fraction. Whole-widget numerical pointer routing includes painted fraction text and blank space, updates only while the left button is held, preserves last valid value when dragging outside, clears on outside press/right press, and ignores post-release hover. Opening fraction-side/count/allow-zero conversion and saved one-star normalization remain distinct, as recorded. Left-held numerical drags survive an additional Right press/release within the widget. Chord presses retain Qt Left priority; right-only drag and hover after Left release remain inert. Cross-edge chord capture remains a documented framework limitation.",
+        "source_anchors": [
+          {
+            "relativepath": "crates/hydrus-gui-model/src/rating_example.rs",
+            "line": 21,
+            "symbol": "pub struct Example",
+            "commit": "5fb75bc9c9f0c461cb205df266e0e7da6689b467"
+          },
+          {
+            "relativepath": "crates/hydrus-gui/src/services_editor_window.rs",
+            "line": 158,
+            "symbol": "fn edit(",
+            "commit": "5fb75bc9c9f0c461cb205df266e0e7da6689b467"
+          },
+          {
+            "relativepath": "crates/hydrus-gui/src/services_editor_window.rs",
+            "line": 317,
+            "symbol": "w.set_examples",
+            "commit": "5fb75bc9c9f0c461cb205df266e0e7da6689b467"
+          },
+          {
+            "relativepath": "crates/hydrus-gui/ui/services_editor.slint",
+            "line": 50,
+            "symbol": "component RatingExamplePanel",
+            "commit": "96cc29256d14fc7d99099b0b4a68e408d587c921"
+          },
+          {
+            "relativepath": "crates/hydrus-gui/ui/services_editor.slint",
+            "line": 224,
+            "symbol": "RatingExamplePanel {",
+            "commit": "96cc29256d14fc7d99099b0b4a68e408d587c921"
+          },
+          {
+            "relativepath": "crates/hydrus-gui/ui/viewer.slint",
+            "line": 61,
+            "symbol": "export component RatingGraphic",
+            "commit": "5fb75bc9c9f0c461cb205df266e0e7da6689b467"
+          },
+          {
+            "relativepath": "crates/hydrus-gui-model/src/rating_example.rs",
+            "line": 75,
+            "symbol": "pub fn pointer(",
+            "commit": "efe8fe605d685d6e3db70b5aeb4369f198af4352"
+          },
+          {
+            "relativepath": "crates/hydrus-gui/src/services_editor_window.rs",
+            "line": 367,
+            "symbol": "window.on_preview_pointer",
+            "commit": "efe8fe605d685d6e3db70b5aeb4369f198af4352"
+          },
+          {
+            "relativepath": "crates/hydrus-gui/ui/services_editor.slint",
+            "line": 8,
+            "symbol": "component RatingSampleControl",
+            "commit": "efe8fe605d685d6e3db70b5aeb4369f198af4352"
+          }
+        ],
+        "test_anchors": [
+          {
+            "relativepath": "crates/hydrus-gui-model/tests/model/services_editor.rs",
+            "line": 503,
+            "symbol": "fn rating_examples_replay_qt_samples_live_configuration_and_no_saved_values",
+            "commit": "5fb75bc9c9f0c461cb205df266e0e7da6689b467"
+          },
+          {
+            "relativepath": "crates/hydrus-gui/tests/gui/services_editor.rs",
+            "line": 396,
+            "symbol": "fn live_rating_examples_stage_only_configuration_and_retire_cancelled_owners",
+            "commit": "5fb75bc9c9f0c461cb205df266e0e7da6689b467"
+          },
+          {
+            "relativepath": "crates/hydrus-gui-model/tests/model/services_editor.rs",
+            "line": 650,
+            "symbol": "fn rating_example_whole_widget_pointer_routes_replay_qt",
+            "commit": "efe8fe605d685d6e3db70b5aeb4369f198af4352"
+          },
+          {
+            "relativepath": "crates/hydrus-gui/tests/gui/services_editor.rs",
+            "line": 819,
+            "symbol": "fn numerical_examples_drag_and_fraction_text_use_the_whole_widget_hit_area",
+            "commit": "efe8fe605d685d6e3db70b5aeb4369f198af4352"
+          }
+        ],
+        "referenceRecording": {
+          "script": "oracle/record_service_rating_preview.py",
+          "fixture": "oracle/fixtures/service_rating_preview.json",
+          "screenshots": [
+            "oracle/fixtures/service_rating_preview_7.png",
+            "oracle/fixtures/service_rating_preview_6.png",
+            "oracle/fixtures/service_rating_preview_22.png"
+          ],
+          "commit": "5fb75bc9c9f0c461cb205df266e0e7da6689b467",
+          "executed_at": "2026-10-04 21:58:08–21:58:09 UTC",
+          "result": "Passed actual Qt three local kinds; initial state and each left/right/middle action replayed, queued actual live data changes settled, exact fraction output and opening numerical conversion captured. All examples return empty persistence contribution and original service dictionaries remain unchanged. Fresh temporary basic fixture, no reference edits or service commits; only real counter dialog exec decision scripted. Three actual example PNGs inspected."
+        },
+        "limitations": [
+          "All four examples use their saved context sizing preferences, including the implemented Dialog consumers; the Preview Window canvas is still absent. Full mixed-button drag capture across an edge after Right release remains outside this FirstPass example scope.",
+          "Native uses existing shared rating graphics and inline owned counter-value prompt rather than a separate Qt modal child. Named SVG graphics retain existing fallback.",
+          "Reference keeps opening numerical click conversion, including star count and allow-zero, while live display settings repaint stored fraction; native mirrors this observed contract.",
+          "Service management and rating preferences parents stay partial; no remote/IPFS/account/listener scope, aliases or parent promotions.",
+          "Rust model/native/store-consumer regressions authored for root hosted CI; no local Cargo build/test or mutation test.",
+          "Slint 1.18 drops its private mouse grab on every button release. In-widget Left-held movement continues across Right release, but leaving the sample then invalidates pressed state; a chord drag cannot resume on re-entry while Left remains held. Full mixed-button cross-edge capture parity is not claimed."
+        ],
+        "native_png": "service-rating-examples.png (hosted CARGO_TARGET_TMPDIR)",
+        "continuationRecordings": [
+          {
+            "script": "oracle/record_rating_preview_pointer.py",
+            "fixture": "oracle/fixtures/rating_preview_pointer.json",
+            "screenshot": "oracle/fixtures/rating_preview_pointer.png",
+            "commit": "efe8fe605d685d6e3db70b5aeb4369f198af4352",
+            "executed_at": "2026-10-04 22:30:01–22:30:02 UTC",
+            "result": "Passed actual Qt numerical example press, held move, outside move/press, release, ordinary hover, fraction text click and right click for all three opening fraction sides. Whole-widget x/width/icon dimensions and exact rating/state/fractions captured; original service dictionary unchanged, other sample unrated, example persistence contribution empty. Real mouse events dispatched through Qt, no handlers/conversion/paint patched. Populated drag PNG inspected."
+          }
+        ],
+        "native_geometry_repairs": [
+          {
+            "commit": "cb35c4a38",
+            "source": "crates/hydrus-gui/ui/services_editor.slint",
+            "symbol": "EditServiceWindow preferred-width/preferred-height",
+            "test": "crates/hydrus-gui/tests/gui/services_editor.rs::numerical_examples_drag_and_fraction_text_use_the_whole_widget_hit_area",
+            "diagnosis": "Hosted c263 replay exposed equal 389px hit widths after 680px and 640px paints. Cached generated source proved the literal initial Window.width had constant-folded the scroll viewport to 616px; native Resize correctly updated the root item but not that fixed descendant.",
+            "repair": "Initial dimensions use preferred-width/height so the generated scroll viewport binds actual WindowItem width/height. Persistent read-only hit geometry remains intact; real-pointer/fraction/collapse assertions are preserved and actual window dimensions/full 40px hit-area growth are asserted.",
+            "verification": "cargo fmt --all and git diff --check passed; cached Slint compiler generated live WindowItem.width-24 viewport binding without warnings. No local Rust/native execution; hosted replay pending. This evidence update changes no eligible count or broader preview status."
+          }
+        ]
+      },
+      "current_pending_assessment": "Local like/dislike, numerical and inc/dec service configuration has four independent interactive examples labelled Thumbnails, Media Viewer, Preview Window and Dialog (Default). Staged colour/shape/star-count/padding/fraction changes repaint actual graphics. Like left/right toggles; numerical left chooses and right clears; counter left/right changes and middle value Accept/Cancel affects only its sample. Owned counter prompt blocks child Apply until answered. Samples never enter ServiceKind or file ratings. Child Apply stages actual service configuration, parent Apply persists it, reopen initializes fresh samples from saved configuration; child/parent Cancel and retained closed-child callbacks cannot commit or clear a successor. Numerical samples retain the recorded opening click conversion while live count changes repaint the stored fraction. Whole-widget numerical pointer routing includes painted fraction text and blank space, updates only while the left button is held, preserves last valid value when dragging outside, clears on outside press/right press, and ignores post-release hover. Opening fraction-side/count/allow-zero conversion and saved one-star normalization remain distinct, as recorded. Left-held numerical drags survive an additional Right press/release within the widget. Chord presses retain Qt Left priority; right-only drag and hover after Left release remain inert. Cross-edge chord capture remains a documented framework limitation.",
+      "stale_no_live_widget_assessment_reconciled_from_committed_source_only": true,
+      "approval": false
+    }
+  ],
+  "approval": false
+}

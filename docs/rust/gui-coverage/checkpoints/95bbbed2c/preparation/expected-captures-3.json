@@ -1,0 +1,110 @@
+{
+  "claim_id": "audit-media-services-missing-rating-preview",
+  "base_commit": "dfce4078c277e932be874b32d882ef07e0f8b694",
+  "test": "services_editor::live_rating_examples_stage_only_configuration_and_retire_cancelled_owners",
+  "captures": [
+    {
+      "filename": "service-rating-like-four-contexts.png",
+      "width": 640,
+      "height": 1000,
+      "kind": 7,
+      "state": "edited like samples and custom border/fill; pending input closed",
+      "adapter": "exact retained EditServiceWindow adapter; pointer identity asserted",
+      "transport": "software renderer of actual visible editor; ordinary ScrollView wheel once, no forced scroll property",
+      "fresh_review_required": [
+        "Thumbnails",
+        "Media Viewer",
+        "Preview Window",
+        "Dialog (Default)",
+        "all sample graphics/fractions/counter text",
+        "apply/cancel footer",
+        "inline input and ok/cancel when applicable"
+      ]
+    },
+    {
+      "filename": "service-rating-numerical-four-contexts.png",
+      "width": 640,
+      "height": 1000,
+      "kind": 6,
+      "state": "seven diamonds, 3/7 thumbnail/preview, -/7 other contexts; padding3/fraction-right",
+      "adapter": "exact retained EditServiceWindow adapter; pointer identity asserted",
+      "transport": "software renderer of actual visible editor; ordinary ScrollView wheel once, no forced scroll property",
+      "fresh_review_required": [
+        "Thumbnails",
+        "Media Viewer",
+        "Preview Window",
+        "Dialog (Default)",
+        "all sample graphics/fractions/counter text",
+        "apply/cancel footer",
+        "inline input and ok/cancel when applicable"
+      ]
+    },
+    {
+      "filename": "service-rating-counter-four-contexts.png",
+      "width": 640,
+      "height": 1000,
+      "kind": 22,
+      "state": "accepted Dialog counter12,345, other samples unchanged, pending input closed",
+      "adapter": "exact retained EditServiceWindow adapter; pointer identity asserted",
+      "transport": "software renderer of actual visible editor; ordinary ScrollView wheel once, no forced scroll property",
+      "fresh_review_required": [
+        "Thumbnails",
+        "Media Viewer",
+        "Preview Window",
+        "Dialog (Default)",
+        "all sample graphics/fractions/counter text",
+        "apply/cancel footer",
+        "inline input and ok/cancel when applicable"
+      ]
+    },
+    {
+      "filename": "service-rating-counter-inline-edit.png",
+      "width": 640,
+      "height": 1000,
+      "kind": 22,
+      "state": "pending Dialog input12345 before No; sample remains0 and parentApply disabled",
+      "adapter": "exact retained EditServiceWindow adapter; pointer identity asserted",
+      "transport": "software renderer of actual visible editor; ordinary ScrollView wheel once, no forced scroll property",
+      "fresh_review_required": [
+        "Thumbnails",
+        "Media Viewer",
+        "Preview Window",
+        "Dialog (Default)",
+        "all sample graphics/fractions/counter text",
+        "apply/cancel footer",
+        "inline input and ok/cancel when applicable"
+      ]
+    }
+  ],
+  "readiness": "Initial and post-wheel bounded real settling: >=35ms, two identical pixels and bit-identical finite first-control frame, inactive animations, 2s deadline per phase. Only post-wheel requires first-control viewport containment.",
+  "geometry_limit": "Only first-control geometry is public; full four-context visual containment/readability is a fresh-image review gate, not inferred from getter. Scroll x24,y500 is finite supported640x1000 setup, not general coordinates.",
+  "reference_images": [
+    {
+      "path": "/workspace/rating-preview-tests/oracle/fixtures/service_rating_preview_7.png",
+      "sha256": "cf6ded9ef605ec274a2c7ca913712def336c7cf1a639c75e55dc974673a1645b",
+      "actually_viewed": true
+    },
+    {
+      "path": "/workspace/rating-preview-tests/oracle/fixtures/service_rating_preview_6.png",
+      "sha256": "f98a7ac01f74eb09e5c6261735639f78b32848ca69db0ee99ad1174d2c9f6116",
+      "actually_viewed": true
+    },
+    {
+      "path": "/workspace/rating-preview-tests/oracle/fixtures/service_rating_preview_22.png",
+      "sha256": "935a436905dc2d6b143f87a4abb6e4feda9a4a98b32900184b538c797dd3b7e4",
+      "actually_viewed": true
+    }
+  ],
+  "scope_exclusions": [
+    "live Preview canvas",
+    "general rating renderer parents",
+    "aliases",
+    "cross-edge mixed-button drag",
+    "OS chrome",
+    "Windows/macOS parity",
+    "Qt pixel equality across different configured state/style/size"
+  ],
+  "agent_commit": "8ce321516173994cc25a776e225b2547f365513c",
+  "source_sha256": "d82d9a5c63552d0b54f1a19087391382e6ba3a19a0b46cd2050c1a473793fd64",
+  "reference_state_limits": "Native existing asserted sequence differs from final Qt recorder samples: native like Thumbnail/Preview are liked and others null; numerical Thumbnail/Preview3/7, others-/7; counter Thumbnail/Preview1, MediaViewer0, Dialog12,345. Qt final PNGs show Thumbnail null/counter2, MediaViewer disliked/counter0, Preview liked/counter1, Dialog liked or cleared numerical/counter12345. Native edited colors/configuration and per-context20/15/12/12 sizes are asserted independently; no pixel or identical-final-state claim."
+}

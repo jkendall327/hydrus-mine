@@ -1,0 +1,676 @@
+{
+  "source_commit": "95bbbed2cdd5f254a71330a00a2eb15f24b771a8",
+  "run_id": 37618131717,
+  "helper_sha256": "f0e188257808aff9ab0352536f4a1863d86e1cbe1d178a947e88aef57faf3a58",
+  "state": "gates_and_staged_preservation_verified_for_root_review",
+  "publication_performed": false,
+  "new_approval_created": false,
+  "canonical_writes": false,
+  "selected_count": 1,
+  "prior368_nonanchor_nodes_preserved": true,
+  "all_goal1274_and_original_topology_preserved": true,
+  "goal_updates_after_root_actual_publication_only": true,
+  "unselected_assessments_limits_metadata_and_topology_preserved": true,
+  "native1799_preserved_except_exact_source_anchor_remaps": true,
+  "node_delta_fields": {
+    "reference": {
+      "client": [
+        "descendant_status_counts",
+        "evidence"
+      ],
+      "services": [
+        "descendant_status_counts"
+      ],
+      "service-edit": [
+        "descendant_status_counts",
+        "evidence"
+      ],
+      "service-editor": [
+        "descendant_status_counts",
+        "evidence"
+      ],
+      "service-ratings": [
+        "descendant_status_counts",
+        "evidence"
+      ],
+      "audit-media-services-add": [
+        "evidence"
+      ],
+      "audit-media-services-delete": [
+        "evidence"
+      ],
+      "audit-media-services-apply": [
+        "evidence"
+      ],
+      "audit-media-service-name": [
+        "evidence"
+      ],
+      "audit-media-service-rating-colours": [
+        "evidence"
+      ],
+      "audit-media-service-star-appearance": [
+        "evidence"
+      ],
+      "audit-media-service-numerical": [
+        "evidence"
+      ],
+      "audit-media-services-missing-rating-preview": [
+        "assessment",
+        "evidence",
+        "implementation_validation",
+        "limitations",
+        "native_source",
+        "remaining",
+        "status"
+      ]
+    },
+    "native": {
+      "native": [
+        "evidence"
+      ],
+      "catalog.serviceseditorwindow": [
+        "evidence"
+      ],
+      "catalog.editservicewindow": [
+        "evidence"
+      ],
+      "audit.media.services.add": [
+        "evidence"
+      ],
+      "audit.media.services.delete": [
+        "evidence"
+      ],
+      "audit.media.services.apply": [
+        "evidence"
+      ],
+      "audit.media.service.name": [
+        "evidence"
+      ],
+      "audit.media.service.rating-colours": [
+        "evidence"
+      ],
+      "audit.media.service.star-appearance": [
+        "evidence"
+      ],
+      "audit.media.service.numerical": [
+        "evidence"
+      ]
+    }
+  },
+  "exact_source_anchor_remaps": [
+    {
+      "inventory": "reference",
+      "id": "client",
+      "fields": [
+        "evidence"
+      ],
+      "proof": "Exact source pipeline equals staged whole node; inherited anchors remap using committed unchanged line/hash/context, never nearest guesses. No explicit authored semantic source substitution in this packet."
+    },
+    {
+      "inventory": "reference",
+      "id": "service-edit",
+      "fields": [
+        "evidence"
+      ],
+      "proof": "Exact source pipeline equals staged whole node; inherited anchors remap using committed unchanged line/hash/context, never nearest guesses. No explicit authored semantic source substitution in this packet."
+    },
+    {
+      "inventory": "reference",
+      "id": "service-editor",
+      "fields": [
+        "evidence"
+      ],
+      "proof": "Exact source pipeline equals staged whole node; inherited anchors remap using committed unchanged line/hash/context, never nearest guesses. No explicit authored semantic source substitution in this packet."
+    },
+    {
+      "inventory": "reference",
+      "id": "service-ratings",
+      "fields": [
+        "evidence"
+      ],
+      "proof": "Exact source pipeline equals staged whole node; inherited anchors remap using committed unchanged line/hash/context, never nearest guesses. No explicit authored semantic source substitution in this packet."
+    },
+    {
+      "inventory": "reference",
+      "id": "audit-media-services-add",
+      "fields": [
+        "evidence"
+      ],
+      "proof": "Exact source pipeline equals staged whole node; inherited anchors remap using committed unchanged line/hash/context, never nearest guesses. No explicit authored semantic source substitution in this packet."
+    },
+    {
+      "inventory": "reference",
+      "id": "audit-media-services-delete",
+      "fields": [
+        "evidence"
+      ],
+      "proof": "Exact source pipeline equals staged whole node; inherited anchors remap using committed unchanged line/hash/context, never nearest guesses. No explicit authored semantic source substitution in this packet."
+    },
+    {
+      "inventory": "reference",
+      "id": "audit-media-services-apply",
+      "fields": [
+        "evidence"
+      ],
+      "proof": "Exact source pipeline equals staged whole node; inherited anchors remap using committed unchanged line/hash/context, never nearest guesses. No explicit authored semantic source substitution in this packet."
+    },
+    {
+      "inventory": "reference",
+      "id": "audit-media-service-name",
+      "fields": [
+        "evidence"
+      ],
+      "proof": "Exact source pipeline equals staged whole node; inherited anchors remap using committed unchanged line/hash/context, never nearest guesses. No explicit authored semantic source substitution in this packet."
+    },
+    {
+      "inventory": "reference",
+      "id": "audit-media-service-rating-colours",
+      "fields": [
+        "evidence"
+      ],
+      "proof": "Exact source pipeline equals staged whole node; inherited anchors remap using committed unchanged line/hash/context, never nearest guesses. No explicit authored semantic source substitution in this packet."
+    },
+    {
+      "inventory": "reference",
+      "id": "audit-media-service-star-appearance",
+      "fields": [
+        "evidence"
+      ],
+      "proof": "Exact source pipeline equals staged whole node; inherited anchors remap using committed unchanged line/hash/context, never nearest guesses. No explicit authored semantic source substitution in this packet."
+    },
+    {
+      "inventory": "reference",
+      "id": "audit-media-service-numerical",
+      "fields": [
+        "evidence"
+      ],
+      "proof": "Exact source pipeline equals staged whole node; inherited anchors remap using committed unchanged line/hash/context, never nearest guesses. No explicit authored semantic source substitution in this packet."
+    },
+    {
+      "inventory": "native",
+      "id": "native",
+      "fields": [
+        "evidence"
+      ],
+      "proof": "Exact source pipeline equals staged whole node; inherited anchors remap using committed unchanged line/hash/context, never nearest guesses. No explicit authored semantic source substitution in this packet."
+    },
+    {
+      "inventory": "native",
+      "id": "catalog.serviceseditorwindow",
+      "fields": [
+        "evidence"
+      ],
+      "proof": "Exact source pipeline equals staged whole node; inherited anchors remap using committed unchanged line/hash/context, never nearest guesses. No explicit authored semantic source substitution in this packet."
+    },
+    {
+      "inventory": "native",
+      "id": "catalog.editservicewindow",
+      "fields": [
+        "evidence"
+      ],
+      "proof": "Exact source pipeline equals staged whole node; inherited anchors remap using committed unchanged line/hash/context, never nearest guesses. No explicit authored semantic source substitution in this packet."
+    },
+    {
+      "inventory": "native",
+      "id": "audit.media.services.add",
+      "fields": [
+        "evidence"
+      ],
+      "proof": "Exact source pipeline equals staged whole node; inherited anchors remap using committed unchanged line/hash/context, never nearest guesses. No explicit authored semantic source substitution in this packet."
+    },
+    {
+      "inventory": "native",
+      "id": "audit.media.services.delete",
+      "fields": [
+        "evidence"
+      ],
+      "proof": "Exact source pipeline equals staged whole node; inherited anchors remap using committed unchanged line/hash/context, never nearest guesses. No explicit authored semantic source substitution in this packet."
+    },
+    {
+      "inventory": "native",
+      "id": "audit.media.services.apply",
+      "fields": [
+        "evidence"
+      ],
+      "proof": "Exact source pipeline equals staged whole node; inherited anchors remap using committed unchanged line/hash/context, never nearest guesses. No explicit authored semantic source substitution in this packet."
+    },
+    {
+      "inventory": "native",
+      "id": "audit.media.service.name",
+      "fields": [
+        "evidence"
+      ],
+      "proof": "Exact source pipeline equals staged whole node; inherited anchors remap using committed unchanged line/hash/context, never nearest guesses. No explicit authored semantic source substitution in this packet."
+    },
+    {
+      "inventory": "native",
+      "id": "audit.media.service.rating-colours",
+      "fields": [
+        "evidence"
+      ],
+      "proof": "Exact source pipeline equals staged whole node; inherited anchors remap using committed unchanged line/hash/context, never nearest guesses. No explicit authored semantic source substitution in this packet."
+    },
+    {
+      "inventory": "native",
+      "id": "audit.media.service.star-appearance",
+      "fields": [
+        "evidence"
+      ],
+      "proof": "Exact source pipeline equals staged whole node; inherited anchors remap using committed unchanged line/hash/context, never nearest guesses. No explicit authored semantic source substitution in this packet."
+    },
+    {
+      "inventory": "native",
+      "id": "audit.media.service.numerical",
+      "fields": [
+        "evidence"
+      ],
+      "proof": "Exact source pipeline equals staged whole node; inherited anchors remap using committed unchanged line/hash/context, never nearest guesses. No explicit authored semantic source substitution in this packet."
+    }
+  ],
+  "ancestor_count_summaries": [
+    {
+      "inventory": "reference",
+      "id": "client",
+      "before": {
+        "partial": 384,
+        "missing": 458,
+        "first_pass": 969
+      },
+      "after": {
+        "partial": 384,
+        "missing": 457,
+        "first_pass": 970
+      }
+    },
+    {
+      "inventory": "reference",
+      "id": "services",
+      "before": {
+        "missing": 11,
+        "partial": 13,
+        "first_pass": 32
+      },
+      "after": {
+        "missing": 10,
+        "partial": 13,
+        "first_pass": 33
+      }
+    },
+    {
+      "inventory": "reference",
+      "id": "service-edit",
+      "before": {
+        "first_pass": 6,
+        "partial": 3,
+        "missing": 1
+      },
+      "after": {
+        "first_pass": 7,
+        "partial": 3
+      }
+    },
+    {
+      "inventory": "reference",
+      "id": "service-editor",
+      "before": {
+        "first_pass": 3,
+        "partial": 2,
+        "missing": 1
+      },
+      "after": {
+        "first_pass": 4,
+        "partial": 2
+      }
+    },
+    {
+      "inventory": "reference",
+      "id": "service-ratings",
+      "before": {
+        "missing": 1,
+        "first_pass": 2,
+        "partial": 1
+      },
+      "after": {
+        "first_pass": 3,
+        "partial": 1
+      }
+    }
+  ],
+  "staged_ledger": 369,
+  "pending_after_root_banks1": 6,
+  "validation_scope": "linux",
+  "required_platforms": [
+    "linux"
+  ],
+  "deferred_platforms": [
+    "windows",
+    "macos"
+  ],
+  "patch_digest": "1a1accd20f48d389749a3e3abe37dbda7475c79b9a9eeaec17ebb43e35b9d860",
+  "source_census_digest": "53c72add1445d7aa8a425834f5a05719bc02347d8052fd00a49c30ad76807504",
+  "artifact_id": 11481791282,
+  "historical_image_provenance": [],
+  "historical_images_counted_as_fresh": false,
+  "current_assertions": {
+    "services_editor": 156,
+    "menu_choice_wheel": 92
+  },
+  "prior_assertions": {
+    "services_editor": 139
+  },
+  "completed_failed_run_evidence_added": false,
+  "historical_wheel_evidence_checkpoint": "docs/rust/gui-coverage/checkpoints/a6d28f4e4/README.md",
+  "files": {
+    "docs/rust/gui-coverage/reference-inventory.json": {
+      "input": "/workspace/validation-reviews/publication-rating-preview1-95bbbed2c-linux/staged/docs/rust/gui-coverage/reference-inventory.json",
+      "sha256": "22bac468972e4c4f906eae915b3ef7bc565099d3d89ce2fe301e530f5563258a",
+      "bytes": 9148288
+    },
+    "docs/rust/gui-coverage/native-inventory.json": {
+      "input": "/workspace/validation-reviews/publication-rating-preview1-95bbbed2c-linux/staged/docs/rust/gui-coverage/native-inventory.json",
+      "sha256": "17d71606935faf862acbb4b8900bfd8b7ef4896772d2c8ee0ec8b9da0f9d18e2",
+      "bytes": 6385301
+    },
+    "docs/rust/gui-coverage/overnight/progress.json": {
+      "input": "/workspace/validation-reviews/publication-rating-preview1-95bbbed2c-linux/staged/docs/rust/gui-coverage/overnight/progress.json",
+      "sha256": "fd35f8c60c7b4222cb3feaef66d01e5f5f57e38670a5012cddca9e5662d72eaa",
+      "bytes": 671394
+    },
+    "docs/rust/gui-coverage/overnight/reviewed-patch.json": {
+      "input": "/workspace/validation-reviews/publication-rating-preview1-95bbbed2c-linux/staged/docs/rust/gui-coverage/overnight/reviewed-patch.json",
+      "sha256": "285a20d7a2aef6789c084a0d65616e3b7cca1d3c710c170df76a7c34de636c97",
+      "bytes": 16745690
+    },
+    "docs/rust/gui-coverage/overnight/ci-evidence.json": {
+      "input": "/workspace/validation-reviews/publication-rating-preview1-95bbbed2c-linux/staged/docs/rust/gui-coverage/overnight/ci-evidence.json",
+      "sha256": "52f774103d9bcf2238a546f2a18a3b24ab4fc6c51dc5da4b89923f3cb6bdda79",
+      "bytes": 15921
+    },
+    "docs/rust/gui-coverage/audit/anchor-remap-95bbbed2-publication.json": {
+      "input": "/workspace/validation-reviews/publication-rating-preview1-95bbbed2c-linux/staged/docs/rust/gui-coverage/audit/anchor-remap-95bbbed2-publication.json",
+      "sha256": "ca58d08ab25c37c561b23a6df11e38821cd2bf9946b5f4f53ef2b1939733a7f1",
+      "bytes": 3360701
+    },
+    "docs/rust/gui-progress.html": {
+      "input": "/workspace/validation-reviews/publication-rating-preview1-95bbbed2c-linux/staged/docs/rust/gui-progress.html",
+      "sha256": "6ec3100e9936a10f1574b113aa79291f631b3bf11d2fdb860ebc032025683643",
+      "bytes": 12535207
+    },
+    "publication-summary.json": {
+      "input": "/workspace/validation-reviews/publication-rating-preview1-95bbbed2c-linux/staged/publication-summary.json",
+      "sha256": "6a26dcd8de477798901892b031f49ec4dbafb4e1cd56c6037063601ed2a01f44",
+      "bytes": 1454
+    },
+    "source-census.json": {
+      "input": "/workspace/validation-reviews/publication-rating-preview1-95bbbed2c-linux/staged/source-census.json",
+      "sha256": "773bf2943e199a6390835015c8916715c64e621a26d32e9fc3430254d9e3aabb",
+      "bytes": 3530225
+    },
+    "docs/rust/gui-coverage/checkpoints/95bbbed2c/selected-patch.json": {
+      "input": "/workspace/validation-reviews/publication-rating-preview1-95bbbed2c-linux/selected-patch.json",
+      "sha256": "e9b20d2459a11cb7c0f135b56b74fd706a69235fe20b66959d4f1cacfbd64b73",
+      "bytes": 18408
+    },
+    "docs/rust/gui-coverage/checkpoints/95bbbed2c/review.json": {
+      "input": "/workspace/validation-reviews/publication-rating-preview1-95bbbed2c-linux/review.json",
+      "sha256": "23c39da922ea036e69798492a8bebff21cf23b758c66220c296347bb382c8dbb",
+      "bytes": 1622
+    },
+    "docs/rust/gui-coverage/checkpoints/95bbbed2c/status-reconciliation-audit.json": {
+      "input": "/workspace/validation-reviews/publication-rating-preview1-95bbbed2c-linux/status-reconciliation-audit.json",
+      "sha256": "a525f1f621bd199bee9ffbf6005d9a20289c716aaf16ed78db84bd7ff1603577",
+      "bytes": 5437
+    },
+    "docs/rust/gui-coverage/checkpoints/95bbbed2c/ci-evidence.json": {
+      "input": "/workspace/validation-reviews/ci-95bbbed2c/ci-evidence.json",
+      "sha256": "52f774103d9bcf2238a546f2a18a3b24ab4fc6c51dc5da4b89923f3cb6bdda79",
+      "bytes": 15921
+    },
+    "docs/rust/gui-coverage/checkpoints/95bbbed2c/native-render-manifest.json": {
+      "input": "/workspace/validation-reviews/ci-95bbbed2c/native-renders/native-render-manifest.json",
+      "sha256": "f51524c1d6c1570a2d394e4a28ddb8ae20c0069b5ece165304631d667dc2f7ef",
+      "bytes": 62670
+    },
+    "docs/rust/gui-coverage/checkpoints/95bbbed2c/browser/browser-check.json": {
+      "input": "/workspace/validation-reviews/report-browser-95bbbed2c/browser-check.json",
+      "sha256": "ca03d0f961a790dfa8ae5dde918e650b230a4d23247e357dbe709d3725342181",
+      "bytes": 9236
+    },
+    "docs/rust/gui-coverage/checkpoints/95bbbed2c/browser/report-desktop.png": {
+      "input": "/workspace/validation-reviews/report-browser-95bbbed2c/report-desktop.png",
+      "sha256": "51fa728fa00486b49fbd06b95b8c0ebb4485ed8898ca3373995c5cb115a82cf3",
+      "bytes": 619316
+    },
+    "docs/rust/gui-coverage/checkpoints/95bbbed2c/browser/report-narrow.png": {
+      "input": "/workspace/validation-reviews/report-browser-95bbbed2c/report-narrow.png",
+      "sha256": "0162ec1d9b673b889a79883216d75c767331c6ddd5863dd220dd23bcaba21b65",
+      "bytes": 521059
+    },
+    "docs/rust/gui-coverage/checkpoints/95bbbed2c/final-review-2-95bbbed2c.json": {
+      "input": "/workspace/validation-reviews/final-review-2-95bbbed2c.json",
+      "sha256": "06b549568b815185c647ec7adc22d3162c35f199ab4fabf6cea33b1795ac114c",
+      "bytes": 19572
+    },
+    "docs/rust/gui-coverage/checkpoints/95bbbed2c/final-review-2-95bbbed2c.md": {
+      "input": "/workspace/validation-reviews/final-review-2-95bbbed2c.md",
+      "sha256": "d155b738ac9f22f503318e31ff61815e582ab8a4c4d4b222439b8f50e9e23ba6",
+      "bytes": 6318
+    },
+    "docs/rust/gui-coverage/checkpoints/95bbbed2c/native/service-rating-like-four-contexts.png": {
+      "input": "/workspace/validation-reviews/ci-95bbbed2c/native-renders/service-rating-like-four-contexts.png",
+      "sha256": "d3d37b892e3b98138d49b5b93a784bd7aecc97c459dcbff79adf01f695a3104c",
+      "bytes": 42295
+    },
+    "docs/rust/gui-coverage/checkpoints/95bbbed2c/native/service-rating-counter-inline-edit.png": {
+      "input": "/workspace/validation-reviews/ci-95bbbed2c/native-renders/service-rating-counter-inline-edit.png",
+      "sha256": "c835a1cf3a232547d01ee8d40df581f2c0a53ce019eaecb96beaa706e4536e9e",
+      "bytes": 35681
+    },
+    "docs/rust/gui-coverage/checkpoints/95bbbed2c/native/service-rating-counter-four-contexts.png": {
+      "input": "/workspace/validation-reviews/ci-95bbbed2c/native-renders/service-rating-counter-four-contexts.png",
+      "sha256": "7d073eee2d1b784b4ecd95ca82eb1060527bd658eea8109c838e335b17f2d9fa",
+      "bytes": 33926
+    },
+    "docs/rust/gui-coverage/checkpoints/95bbbed2c/native/service-rating-numerical-four-contexts.png": {
+      "input": "/workspace/validation-reviews/ci-95bbbed2c/native-renders/service-rating-numerical-four-contexts.png",
+      "sha256": "049711996805606fb573c57089802b2d70541f299777dce16ecfd0bd68f46d39",
+      "bytes": 51429
+    },
+    "docs/rust/gui-coverage/checkpoints/95bbbed2c/full-check.log": {
+      "input": "/workspace/validation-reviews/ci-95bbbed2c/full-check.log",
+      "sha256": "9ab175c40136c0c3529bf1203ec1e2719d2cbe9331054a6044183f1ffd5bba19",
+      "bytes": 426302
+    },
+    "docs/rust/gui-coverage/checkpoints/95bbbed2c/tests.log": {
+      "input": "/workspace/validation-reviews/ci-95bbbed2c/tests.log",
+      "sha256": "679c856cc454de37543d1022ed83111ce7e11be2808d74dabe132fe103be7ac1",
+      "bytes": 214657
+    },
+    "docs/rust/gui-coverage/checkpoints/95bbbed2c/parity.log": {
+      "input": "/workspace/validation-reviews/ci-95bbbed2c/parity.log",
+      "sha256": "b11d001e33ebd4eb20ecd9b1307cbf81a5c41537e3fd80ff0d161b48661020cd",
+      "bytes": 242171
+    },
+    "docs/rust/gui-coverage/checkpoints/95bbbed2c/maintenance.log": {
+      "input": "/workspace/validation-reviews/ci-95bbbed2c/maintenance.log",
+      "sha256": "59a2393c8f13f12dfec9b7515feb01f0ef333061b20164a7b5642264a7bad427",
+      "bytes": 4546
+    },
+    "docs/rust/gui-coverage/checkpoints/95bbbed2c/root-render-review.json": {
+      "input": "/workspace/validation-reviews/ci-95bbbed2c/root-render-review.json",
+      "sha256": "da2d502ce71054d7b07127a3c2c4e3e772bac5d95366bbfe847d397287f9fc19",
+      "bytes": 3876
+    },
+    "docs/rust/gui-coverage/checkpoints/95bbbed2c/clippy.log": {
+      "input": "/workspace/validation-reviews/ci-95bbbed2c/clippy.log",
+      "sha256": "950c15c543389d0c4c34173d8093336cb68ffaa97a880ceef1004b3ab8b5ddb0",
+      "bytes": 2021
+    },
+    "docs/rust/gui-coverage/checkpoints/95bbbed2c/validation-outcome.json": {
+      "input": "/workspace/validation-reviews/ci-95bbbed2c/validation-outcome.json",
+      "sha256": "7573e8583752d3dcacf9d8a63c198561cb3cf0c198907a1d9fbf03aa5e5be4c6",
+      "bytes": 4136
+    },
+    "docs/rust/gui-coverage/checkpoints/95bbbed2c/preparation/selection.json": {
+      "input": "/workspace/validation-reviews/rating-preview1/prep-95bbbed2c/selection.json",
+      "sha256": "aeed65ad80ce01ad5bd7c4040a8c34a4ea586491a0f1168486976c21a212216c",
+      "bytes": 1146
+    },
+    "docs/rust/gui-coverage/checkpoints/95bbbed2c/preparation/preparation1.json": {
+      "input": "/workspace/validation-reviews/rating-preview1/prep-95bbbed2c/preparation1.json",
+      "sha256": "3efd9e2874ca16038d266fe5362a5cf7cd1756eab113841e9da38affa1ee955b",
+      "bytes": 1342
+    },
+    "docs/rust/gui-coverage/checkpoints/95bbbed2c/preparation/conditional-status-map.json": {
+      "input": "/workspace/validation-reviews/rating-preview1/prep-95bbbed2c/conditional-status-map.json",
+      "sha256": "afce5deb43bca95bb3b38050bb60307dfe31c2ed5d19b35e790ddf2f172dfbdd",
+      "bytes": 2899
+    },
+    "docs/rust/gui-coverage/checkpoints/95bbbed2c/preparation/prior368-preservation-proof.json": {
+      "input": "/workspace/validation-reviews/rating-preview1/prep-95bbbed2c/prior368-preservation-proof.json",
+      "sha256": "bb361cf36247f720125adf74f018aabc8537c7a75d1148b81945434bb5d18acc",
+      "bytes": 2305
+    },
+    "docs/rust/gui-coverage/checkpoints/95bbbed2c/preparation/render-checklist.json": {
+      "input": "/workspace/validation-reviews/rating-preview1/prep-95bbbed2c/render-checklist.json",
+      "sha256": "8718750d50d54029dabe0c56af4d552457d3e74ac493c52f3b55245c05aba1d6",
+      "bytes": 5528
+    },
+    "docs/rust/gui-coverage/checkpoints/95bbbed2c/preparation/preparation-summary.json": {
+      "input": "/workspace/validation-reviews/rating-preview1/prep-95bbbed2c/preparation-summary.json",
+      "sha256": "16b4987bb9e771b081864d69400cadb56c6e8197df47c5f89bc05e1ae0d84a34",
+      "bytes": 5355
+    },
+    "docs/rust/gui-coverage/checkpoints/95bbbed2c/preparation/scope-reconciliation-proof.json": {
+      "input": "/workspace/validation-reviews/rating-preview1/prep-95bbbed2c/scope-reconciliation-proof.json",
+      "sha256": "44ede9496c1f16c0f5c9778243550e73df2b2d5c7778290d26217eb7d77430c6",
+      "bytes": 13350
+    },
+    "docs/rust/gui-coverage/checkpoints/95bbbed2c/preparation/source-anchor-proof.json": {
+      "input": "/workspace/validation-reviews/rating-preview1/prep-95bbbed2c/source-anchor-proof.json",
+      "sha256": "ad678541add9b592a3a401793671f189983f5302808619a137deb4797b9620c0",
+      "bytes": 12793
+    },
+    "docs/rust/gui-coverage/checkpoints/95bbbed2c/preparation/committed-source-review-provenance.json": {
+      "input": "/workspace/validation-reviews/rating-preview1/prep-95bbbed2c/committed-source-review-provenance.json",
+      "sha256": "9308bbbb2ffa93d22036052102e86af4253c19f8a396f4a3b205b2d3d1b832f7",
+      "bytes": 3766
+    },
+    "docs/rust/gui-coverage/checkpoints/95bbbed2c/preparation/binding-anchor-proof.json": {
+      "input": "/workspace/validation-reviews/rating-preview1/prep-95bbbed2c/binding-anchor-proof.json",
+      "sha256": "49e02f27642fb9b7cf675158c59cf98138280476ae33d48742e49dcbae1a49f4",
+      "bytes": 215
+    },
+    "docs/rust/gui-coverage/checkpoints/95bbbed2c/preparation/inherited-wiring-anchor-proof.json": {
+      "input": "/workspace/validation-reviews/rating-preview1/prep-95bbbed2c/inherited-wiring-anchor-proof.json",
+      "sha256": "88b664aace58bd2a5f8a0cba6470cc538e7960b14fb48be0dc0ef5a0e44dfe52",
+      "bytes": 258949
+    },
+    "docs/rust/gui-coverage/checkpoints/95bbbed2c/preparation/README.md": {
+      "input": "/workspace/validation-reviews/rating-preview1/prep-95bbbed2c/README.md",
+      "sha256": "9283098874aa3b1908d7e61e084a17f7e26dde628abfecd648ad966b937b0eb2",
+      "bytes": 2738
+    },
+    "docs/rust/gui-coverage/checkpoints/95bbbed2c/preparation/source-review-2.json": {
+      "input": "/workspace/validation-reviews/rating-preview1/source-review-2.json",
+      "sha256": "7787c2dc2670266a176bdb92be93b67c47d0df25eea0b92ae4e9ff8d6c300c5c",
+      "bytes": 7219
+    },
+    "docs/rust/gui-coverage/checkpoints/95bbbed2c/preparation/source-review-2.md": {
+      "input": "/workspace/validation-reviews/rating-preview1/source-review-2.md",
+      "sha256": "7704d4bd0702754252e4b108e34db1a13f56d353281fcc969d08b8dbb16a9a34",
+      "bytes": 2688
+    },
+    "docs/rust/gui-coverage/checkpoints/95bbbed2c/preparation/assertion-preservation-3.json": {
+      "input": "/workspace/validation-reviews/rating-preview1/assertion-preservation-3.json",
+      "sha256": "e9d4c7f49ef4e0b5225b8aa27a1a09cd0678f7dad91cc7d0bbe9d6e56ac022fd",
+      "bytes": 1196
+    },
+    "docs/rust/gui-coverage/checkpoints/95bbbed2c/preparation/expected-captures-3.json": {
+      "input": "/workspace/validation-reviews/rating-preview1/expected-captures-3.json",
+      "sha256": "e9fe1b17a52a1ca8aee9606c5bcf074c35332d7b6e88b6243f12173e8c3131cd",
+      "bytes": 5256
+    },
+    "docs/rust/gui-coverage/checkpoints/95bbbed2c/preparation/implementation-notes-3.md": {
+      "input": "/workspace/validation-reviews/rating-preview1/implementation-notes-3.md",
+      "sha256": "834a1ed2608cd0babf82d3f2fc123d72658dd68090ea6ba2083d4ee9195dab11",
+      "bytes": 4148
+    },
+    "docs/rust/gui-coverage/checkpoints/95bbbed2c/preparation/wheel-preservation-root.json": {
+      "input": "/workspace/validation-reviews/rating-preview1/wheel-preservation-root.json",
+      "sha256": "e5f45628e373c4028352e27fd0eb2b484e809841b1806263895cfed6e553db7f",
+      "bytes": 726
+    },
+    "docs/rust/gui-coverage/checkpoints/95bbbed2c/preparation/subset-source-preflight.json": {
+      "input": "/workspace/validation-reviews/rating-preview1/prep-95bbbed2c/subset-preflight/subset-source-preflight.json",
+      "sha256": "bd514d5bdc381262636bbbbe7487af99f240bd7825c8b97eba4f5ea177e1ef51",
+      "bytes": 32634
+    },
+    "docs/rust/gui-coverage/checkpoints/95bbbed2c/preparation/prepare-evidence-copy-95bbbed2c.py": {
+      "input": "/workspace/validation-reviews/rating-preview1/prep-95bbbed2c/prepare-evidence-copy-95bbbed2c.py",
+      "sha256": "f0e188257808aff9ab0352536f4a1863d86e1cbe1d178a947e88aef57faf3a58",
+      "bytes": 32169
+    },
+    "docs/rust/gui-coverage/checkpoints/95bbbed2c/preparation/update-publication-notes.py": {
+      "input": "/workspace/validation-reviews/rating-preview1/prep-95bbbed2c/update-publication-notes.py",
+      "sha256": "15aa38c9876f62e7e4ddf08de170f6e1f91205c0db34fa4d3e4c982c98073e71",
+      "bytes": 12393
+    },
+    "docs/rust/gui-coverage/checkpoints/95bbbed2c/preparation/wheel-expiry/candidate-gesture-source-review-2.json": {
+      "input": "/workspace/validation-reviews/mime-mappings3/repair1/candidate-gesture-source-review-2.json",
+      "sha256": "67f798221f4ece47c64158a46913e577f31ed6aafc1c3d6c221a4ac81953a168",
+      "bytes": 1748
+    },
+    "docs/rust/gui-coverage/checkpoints/95bbbed2c/preparation/wheel-expiry/candidate-gesture-source-review-2.md": {
+      "input": "/workspace/validation-reviews/mime-mappings3/repair1/candidate-gesture-source-review-2.md",
+      "sha256": "e5ff9aaaca0f91dbfa819caa2aac9a0fe31f1a88af57c5e337cb1e63eaf5ad75",
+      "bytes": 1474
+    },
+    "docs/rust/gui-coverage/checkpoints/95bbbed2c/preparation/historical-preflight.md": {
+      "input": "/workspace/validation-reviews/mime-mappings3/next-preview-preflight-3.md",
+      "sha256": "14188fad87466d1447d282c2053b5d427c979fddec553bd2f31c48672e7f82d1",
+      "bytes": 6204
+    },
+    "docs/rust/gui-coverage/checkpoints/95bbbed2c/reference/committed/record_service_rating_preview.py": {
+      "input": "/workspace/hydrus-mine/oracle/record_service_rating_preview.py",
+      "sha256": "19703de8e569480837ad919fe63ac5f9e6e91b3595d998ff4d70534d66d37d13",
+      "bytes": 6979
+    },
+    "docs/rust/gui-coverage/checkpoints/95bbbed2c/reference/committed/record_rating_preview_pointer.py": {
+      "input": "/workspace/hydrus-mine/oracle/record_rating_preview_pointer.py",
+      "sha256": "4b8d7a133783923e94bb99a0fb7f486bda72124c3e2ddc6e3d1bf953dacde412",
+      "bytes": 7157
+    },
+    "docs/rust/gui-coverage/checkpoints/95bbbed2c/reference/committed/service_rating_preview.json": {
+      "input": "/workspace/hydrus-mine/oracle/fixtures/service_rating_preview.json",
+      "sha256": "d9245214cbddb72f1ec86bfcd9c44006223a1abadeedc9708bd439095b20784e",
+      "bytes": 42829
+    },
+    "docs/rust/gui-coverage/checkpoints/95bbbed2c/reference/committed/service_rating_preview_7.png": {
+      "input": "/workspace/hydrus-mine/oracle/fixtures/service_rating_preview_7.png",
+      "sha256": "cf6ded9ef605ec274a2c7ca913712def336c7cf1a639c75e55dc974673a1645b",
+      "bytes": 8195
+    },
+    "docs/rust/gui-coverage/checkpoints/95bbbed2c/reference/committed/service_rating_preview_6.png": {
+      "input": "/workspace/hydrus-mine/oracle/fixtures/service_rating_preview_6.png",
+      "sha256": "f98a7ac01f74eb09e5c6261735639f78b32848ca69db0ee99ad1174d2c9f6116",
+      "bytes": 9806
+    },
+    "docs/rust/gui-coverage/checkpoints/95bbbed2c/reference/committed/service_rating_preview_22.png": {
+      "input": "/workspace/hydrus-mine/oracle/fixtures/service_rating_preview_22.png",
+      "sha256": "935a436905dc2d6b143f87a4abb6e4feda9a4a98b32900184b538c797dd3b7e4",
+      "bytes": 9042
+    },
+    "docs/rust/gui-coverage/checkpoints/95bbbed2c/reference/committed/rating_preview_pointer.json": {
+      "input": "/workspace/hydrus-mine/oracle/fixtures/rating_preview_pointer.json",
+      "sha256": "4be65b49be4cd6d9011f4a9163bb7ab5d922f76d4c7bcc5a3f0cada1c5439758",
+      "bytes": 23868
+    },
+    "docs/rust/gui-coverage/checkpoints/95bbbed2c/reference/committed/rating_preview_pointer.png": {
+      "input": "/workspace/hydrus-mine/oracle/fixtures/rating_preview_pointer.png",
+      "sha256": "7122fa429c2b913c2fd681f78e9f4cbd137c66eee659fdc75eef347c8530e4c0",
+      "bytes": 10650
+    }
+  },
+  "scope": "Evidence integrity/preservation audit only. Existing root/reviewer packets supply approval; helper does not inspect images or grant approval."
+}

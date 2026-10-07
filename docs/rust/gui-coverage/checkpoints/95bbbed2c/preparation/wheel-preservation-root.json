@@ -1,0 +1,13 @@
+{
+  "base": "dfce4078c277e932be874b32d882ef07e0f8b694",
+  "path": "crates/hydrus-gui/tests/gui/menu_choice_wheel.rs",
+  "before_sha256": "5e135151677af6b2a60fc7287ce61e5e81410d307235cf6f6eccbf8ef166f58b",
+  "after_sha256": "b0f484aa59919c5eca6e3afdab97eb74c4959fe4025f39314e65db991c06f634",
+  "before_assertions": 92,
+  "after_assertions": 92,
+  "prefix_and_all_behavior_tests_input_helpers_bytewise_preserved": true,
+  "source_basis": "PinnedSlint1.18.1Flickable800msrecent-wheel filter;810msreal timer/layout pumping before a distinct physicalwheel.",
+  "scope": "Unresized1100x800 recovery after gesture expiry, not immediate recovery or retrospective failure-cause proof.",
+  "deadline_seconds": 2,
+  "input_retries": 0
+}

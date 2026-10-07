@@ -1,0 +1,106 @@
+{
+  "source_commit": "95bbbed2cdd5f254a71330a00a2eb15f24b771a8",
+  "run_id": 37618131717,
+  "selected_count": 1,
+  "prior_completed_count": 368,
+  "conditional_bank_if_all_gates_pass": 369,
+  "conditional_pending_after_bank": 6,
+  "conditional_outside_goal_after_bank": 905,
+  "source_schema_preflight": "passed",
+  "unresolved_anchors": [],
+  "patch_digest": "8c79ca45fc25d11d4b3e4c30b37b5f083bd6156c6adb39465428f20aa8b25b38",
+  "source_census_digest": "53c72add1445d7aa8a425834f5a05719bc02347d8052fd00a49c30ad76807504",
+  "conditional_status_operations": 3,
+  "expected_native_captures": 4,
+  "current_assertions": {
+    "services_editor": 156,
+    "menu_choice_wheel": 92
+  },
+  "native_artifact_id": null,
+  "native_zip_sha256": null,
+  "approval": false,
+  "builds": false,
+  "canonical_writes": false,
+  "input_hashes": {
+    "/workspace/validation-reviews/rating-preview1/prep-95bbbed2c/subset-preflight/subset-proposal-patch.json": "e87cb0227b203c921f17aa20f2078dada21dc7f9083f81b615338451284800b9",
+    "/workspace/validation-reviews/rating-preview1/prep-95bbbed2c/selection.json": "aeed65ad80ce01ad5bd7c4040a8c34a4ea586491a0f1168486976c21a212216c",
+    "/workspace/validation-reviews/rating-preview1/prep-95bbbed2c/conditional-status-map.json": "afce5deb43bca95bb3b38050bb60307dfe31c2ed5d19b35e790ddf2f172dfbdd",
+    "/workspace/validation-reviews/rating-preview1/assertion-preservation-3.json": "e9d4c7f49ef4e0b5225b8aa27a1a09cd0678f7dad91cc7d0bbe9d6e56ac022fd",
+    "/workspace/validation-reviews/rating-preview1/expected-captures-3.json": "e9fe1b17a52a1ca8aee9606c5bcf074c35332d7b6e88b6243f12173e8c3131cd"
+  },
+  "committed_validation_pass_README_sha256": "69097adb41bf70e6576e72d72c50172a44e4bc31998c7adb085b2bbf0f2f8074",
+  "helper_sha256": "5b5d3f1707f706e7f70a8cf3157ba79bb4314c006f2f9cc0b2f1e6ac6658f781",
+  "finalizer_sha256": "fde0e8ad344987ca481318235859c23c0280af6cbd72391744e69bb061fff21b",
+  "notes_updater_sha256": "15aa38c9876f62e7e4ddf08de170f6e1f91205c0db34fa4d3e4c982c98073e71",
+  "scripts_syntax_checked_without_execution": [
+    "/workspace/validation-reviews/rating-preview1/prep-95bbbed2c/prepare-map-census.py",
+    "/workspace/validation-reviews/rating-preview1/prep-95bbbed2c/construct-subset.py",
+    "/workspace/validation-reviews/rating-preview1/prep-95bbbed2c/verify-preservation.py",
+    "/workspace/validation-reviews/rating-preview1/prep-95bbbed2c/prepare-source.py",
+    "/workspace/validation-reviews/rating-preview1/prep-95bbbed2c/update-publication-notes.py",
+    "/workspace/validation-reviews/rating-preview1/prep-95bbbed2c/prepare-evidence-copy-95bbbed2c.py",
+    "/workspace/validation-reviews/rating-preview1/prep-95bbbed2c/adapt-execution-tools.py",
+    "/workspace/validation-reviews/finalize-rating-preview1-95bbbed2c.py"
+  ],
+  "notes_exact_before_strings_static_checked": [
+    {
+      "path": "docs/rust/GUI.md",
+      "before": "The next rating-preview validation adds separate captures of all four contexts",
+      "count": 1
+    },
+    {
+      "path": "docs/rust/GUI.md",
+      "before": "Full Linux execution and fresh image inspection are pending, so this source\nfollow-up adds no completion yet.",
+      "count": 1
+    },
+    {
+      "path": "docs/rust/GUI.md",
+      "before": "The next validation follow-up restores the original 1100\u00d7800 hide/show wheel",
+      "count": 1
+    },
+    {
+      "path": "docs/rust/GUI.md",
+      "before": "rejection and the exact selected index. Fresh execution is pending; this checks\nrecovery between gestures, not immediate hide/show recovery.",
+      "count": 1
+    },
+    {
+      "path": "docs/rust/DIFFERENCES.md",
+      "before": "actual owned editor at 640\u00d71000 and await full Linux execution and rendered\nreview.",
+      "count": 1
+    },
+    {
+      "path": "docs/rust/DIFFERENCES.md",
+      "before": "cause or immediate hide/show recovery; fresh Linux execution remains pending.",
+      "count": 1
+    },
+    {
+      "path": "docs/rust/gui-coverage/validation-pass/README.md",
+      "before": "One hundred and twenty-eight are now published; 7 remain unresolved.",
+      "count": 1
+    },
+    {
+      "path": "docs/rust/gui-coverage/all-leaves-goal/README.md",
+      "before": "At the `a6d28f4e4` validation checkpoint, 368 have explicit implementation\nsign-off and 906 remain outside that ledger. The 7 existing proposed candidates",
+      "count": 1
+    },
+    {
+      "path": "docs/rust/gui-coverage/all-leaves-goal/README.md",
+      "before": "Add/Edit/Delete without changing the exhaustive goal IDs or exclusions.",
+      "count": 1
+    },
+    {
+      "path": "docs/rust/ROADMAP.md",
+      "before": "now has 458 Missing, 385 Partial and 969 First pass entries; its status changes\nalso include parent/alias assessments, which do not inflate the 368-item signed-off completion count.",
+      "count": 1
+    }
+  ],
+  "copy_helper_executed": false,
+  "finalizer_executed": false,
+  "artifact_placeholders_unbound": true,
+  "historical_wheel_checkpoint": "docs/rust/gui-coverage/checkpoints/a6d28f4e4/README.md",
+  "historical_failed_evidence_duplicated": false,
+  "unbound_original_script_hashes": {
+    "finalize-rating-preview1-95bbbed2c.py": "e0278221e726f2acdab4c2bc6deb6dbe172f7ecca781c882e07988f1fdaf8909",
+    "prepare-evidence-copy-95bbbed2c.py": "2476bc62b9137def6b95709b2e16b21d66922c033d47f65fbbe78451dc23ffea"
+  }
+}

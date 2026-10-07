@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "base_commit": "dfce4078c277e932be874b32d882ef07e0f8b694",
+  "agent_commit": "8ce321516173994cc25a776e225b2547f365513c",
+  "claim_id": "audit-media-services-missing-rating-preview",
+  "owned_file": "crates/hydrus-gui/tests/gui/services_editor.rs",
+  "original_sha256": "3f55e449c4b34f8819f3b9a4dca457d19bb46e9d28695c10cfc00b427e9629fc",
+  "current_sha256": "d82d9a5c63552d0b54f1a19087391382e6ba3a19a0b46cd2050c1a473793fd64",
+  "original_assertion_macros": 139,
+  "current_assertion_macros": 156,
+  "original_tests": 5,
+  "current_tests": 5,
+  "all_original_lines_bytewise_in_order": true,
+  "diff_insertion_only": true,
+  "production_slint_oracle_changes": false,
+  "checks": [
+    "rustfmt completed",
+    "git diff --check passed"
+  ],
+  "source_review": "Independent review 2 of exact final bytes found no concrete source/API/sequencing blocker; runtime/images pending",
+  "runtime_render_status": "not run; full hosted exact-source Linux CI and fresh four-context/inline render review required",
+  "insertions": 155,
+  "deletions": 0,
+  "sample_preservation": "Every row/graphic/shape value, encoded colors and float bit patterns; no ModelRc allocation equality"
+}

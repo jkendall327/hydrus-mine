@@ -1,5 +1,6 @@
 //! Actual staged add/edit/delete/cancel flows over a native store.
 use hydrus_gui::{MainWindow, Pages, bind, headless};
+use slint::platform::WindowAdapter as _;
 use slint::{ComponentHandle as _, Model as _};
 
 #[test]
@@ -465,6 +466,10 @@ fn live_rating_examples_stage_only_configuration_and_retire_cancelled_owners() {
             .as_ref()
             .unwrap()
             .clone_strong();
+        // Retain this exact edit adapter before a later child/successor can
+        // become the collector's last window. Captures use its actual viewport.
+        let native = windows.get(windows.count() - 1).unwrap();
+        assert!(std::ptr::eq(native.window(), edit.window()));
         assert_eq!(edit.get_examples().row_count(), 4);
         assert!(edit.get_example_expanded());
         assert_eq!(
@@ -543,6 +548,9 @@ fn live_rating_examples_stage_only_configuration_and_retire_cancelled_owners() {
             edit.invoke_counter_edit(3);
             assert!(edit.get_counter_editing());
             edit.set_counter_value(12345);
+            rating_preview_capture(&native, &edit, "service-rating-counter-inline-edit.png");
+            assert!(edit.get_counter_editing());
+            assert_eq!(edit.get_counter_value(), 12345);
             edit.invoke_apply_clicked();
             assert!(bound.services_editor.edit.borrow().is_some());
             edit.invoke_counter_answered(false);
@@ -580,6 +588,15 @@ fn live_rating_examples_stage_only_configuration_and_retire_cancelled_owners() {
                     .brush
             );
         }
+        let capture = match result["kind"].as_u64().unwrap() {
+            7 => "service-rating-like-four-contexts.png",
+            6 => "service-rating-numerical-four-contexts.png",
+            22 => "service-rating-counter-four-contexts.png",
+            kind => panic!("unrecorded rating preview kind {kind}"),
+        };
+        rating_preview_capture(&native, &edit, capture);
+        assert!(!edit.get_counter_editing());
+        assert_eq!(rating_counts(), counts);
         // Child Cancel discards samples and configuration; a retained child is inert.
         edit.invoke_cancel_clicked();
         let old_samples = edit.get_examples().iter().collect::<Vec<_>>();
@@ -1044,4 +1061,142 @@ fn numerical_examples_drag_and_fraction_text_use_the_whole_widget_hit_area() {
             before.as_ref()
         );
     }
+}
+
+// These are service-editor examples, not a live Preview canvas. The real
+// ScrollView is scrolled to the bottom so all four contexts and the footer can
+// be inspected in the fresh image; the existing first-control geometry proves
+// the owned panel is reached. There is no new production measurement hook.
+fn rating_preview_capture(
+    native: &slint::platform::software_renderer::MinimalSoftwareWindow,
+    edit: &hydrus_gui::EditServiceWindow,
+    filename: &str,
+) {
+    use slint::platform::WindowEvent;
+    const WIDTH: u32 = 640;
+    const HEIGHT: u32 = 1000;
+    assert!(edit.window().is_visible());
+    assert!(std::ptr::eq(native.window(), edit.window()));
+    assert!(edit.get_example_expanded());
+    assert_eq!(edit.get_examples().row_count(), 4);
+    // Deferred preview refresh rebuilds shape models, and Flickable clamps
+    // changed content on a later turn. Settle before taking a semantic baseline.
+    settled_rating_preview(native, edit, filename, false);
+    let samples = rating_preview_samples(edit);
+    let counter_editing = edit.get_counter_editing();
+    let counter_value = edit.get_counter_value();
+    let before_y = edit.get_first_preview_y();
+    // x=24 lies inside the ScrollView's 12px outer inset, over labels rather
+    // than the rating hit area/SpinBox/ComboBox. One ordinary wheel dispatch
+    // reaches the bottom; no selected callback or forced scroll property.
+    native.dispatch_event(WindowEvent::PointerScrolled {
+        position: slint::LogicalPosition::new(24.0, HEIGHT as f32 / 2.0),
+        delta_x: 0.0,
+        delta_y: -10000.0,
+    });
+    let pixels = settled_rating_preview(native, edit, filename, true);
+    assert_eq!(
+        edit.window().size(),
+        slint::PhysicalSize::new(WIDTH, HEIGHT)
+    );
+    assert!(
+        edit.get_first_preview_y() <= before_y,
+        "ordinary downward wheel must not move the preview away from the bottom"
+    );
+    assert_eq!(rating_preview_samples(edit), samples);
+    assert_eq!(edit.get_counter_editing(), counter_editing);
+    assert_eq!(edit.get_counter_value(), counter_value);
+    assert!(pixels.chunks_exact(4).any(|pixel| pixel[3] == 255));
+    assert!(pixels.chunks_exact(4).any(|pixel| pixel != &pixels[..4]));
+    headless::save_png(
+        &std::path::Path::new(env!("CARGO_TARGET_TMPDIR")).join(filename),
+        &pixels,
+        WIDTH,
+        HEIGHT,
+    )
+    .unwrap();
+}
+
+fn settled_rating_preview(
+    native: &slint::platform::software_renderer::MinimalSoftwareWindow,
+    edit: &hydrus_gui::EditServiceWindow,
+    filename: &str,
+    require_visible: bool,
+) -> Vec<u8> {
+    use std::time::{Duration, Instant};
+    const WIDTH: u32 = 640;
+    const HEIGHT: u32 = 1000;
+    let counter_editing = edit.get_counter_editing();
+    let started = Instant::now();
+    let mut previous = None;
+    loop {
+        let pixels = headless::render(native, WIDTH, HEIGHT);
+        let frame = [
+            edit.get_first_preview_x(),
+            edit.get_first_preview_y(),
+            edit.get_first_preview_width(),
+            edit.get_first_preview_height(),
+        ];
+        let valid = frame.into_iter().all(f32::is_finite)
+            && frame[0] >= 0.0
+            && frame[1] >= 12.0
+            && frame[2] > 0.0
+            && frame[3] > 0.0
+            && frame[0] + frame[2] <= WIDTH as f32
+            && (!require_visible || frame[1] + frame[3] < HEIGHT as f32);
+        let bits = frame.map(f32::to_bits);
+        if valid
+            && started.elapsed() >= Duration::from_millis(35)
+            && !edit.window().has_active_animations()
+            && previous
+                .as_ref()
+                .is_some_and(|(old_frame, old_pixels)| *old_frame == bits && *old_pixels == pixels)
+        {
+            eprintln!(
+                "rating preview {filename}: viewport={WIDTH}x{HEIGHT}, first={frame:?}, counter_editing={counter_editing}, elapsed={:?}",
+                started.elapsed(),
+            );
+            break pixels;
+        }
+        assert!(
+            started.elapsed() < Duration::from_secs(2),
+            "rating preview {filename} did not settle: first={frame:?}, require_visible={require_visible}, visible={}, animations={}",
+            edit.window().is_visible(),
+            edit.window().has_active_animations(),
+        );
+        previous = Some((bits, pixels));
+        std::thread::sleep(Duration::from_millis(1));
+    }
+}
+
+// ModelRc equality is allocation identity. Preview refresh can rebuild an
+// equivalent model, so compare every actual sample/graphic/shape field by value.
+fn rating_preview_samples(edit: &hydrus_gui::EditServiceWindow) -> serde_json::Value {
+    serde_json::json!(
+        edit.get_examples()
+            .iter()
+            .map(|row| {
+                serde_json::json!({
+                    "label": row.label.to_string(),
+                    "icon_size_bits": row.icon_size.to_bits(),
+                    "incdec_height_bits": row.incdec_height.to_bits(),
+                    "outline_bits": row.outline.to_bits(),
+                    "counter_width_bits": row.counter_width.to_bits(),
+                    "fraction": row.fraction.to_string(),
+                    "fraction_placement": row.fraction_placement,
+                    "graphic": {
+                        "kind": row.graphic.kind,
+                        "shape": row.graphic.shape.to_string(),
+                        "pad_bits": row.graphic.pad.to_bits(),
+                        "text": row.graphic.text.to_string(),
+                        "pen": row.graphic.pen.as_argb_encoded(),
+                        "brush": row.graphic.brush.as_argb_encoded(),
+                        "shapes": row.graphic.shapes.iter().map(|shape| {
+                            [shape.pen.as_argb_encoded(), shape.brush.as_argb_encoded()]
+                        }).collect::<Vec<_>>(),
+                    },
+                })
+            })
+            .collect::<Vec<_>>()
+    )
 }

@@ -519,3 +519,11 @@ and saved keys, image versions, timestamps and timings remain in the checkpoint'
 [outcome](../checkpoints/791b72d19/validation-outcome.json).
 No separate Slint/Rust/link or peak-memory attribution is claimed for this
 validation observation, and no new optimization experiment was opened.
+
+## Live rating examples checkpoint
+
+Source `95bbbed2c`, run `37618131717`.
+
+Routine hosted performance: strict Clippy took 72 seconds, test compilation/linking 244 seconds, and the full test step 662 seconds. The same runner image `20261004.327.1` restored 4,123 tracked-input mtimes and 293 coherent workspace artifact files. Neither Clippy nor test compilation rebuilt `hydrus-gui-ui`. A new source/run-specific snapshot saved 293 artifacts plus the input ledger (2,200,258,229 bytes); maintenance retained 690,173,746 compressed bytes within its 3 GiB budget. These observations confirm continued artifact reuse; they are not controlled cold/warm attribution or separate generation, Rust compilation and linking measurements. No additional optimization experiment was needed for this checkpoint.
+
+[Raw logs and outcome](../checkpoints/95bbbed2c/README.md).

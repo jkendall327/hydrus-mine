@@ -1,0 +1,61 @@
+{
+  "source_commit": "95bbbed2cdd5f254a71330a00a2eb15f24b771a8",
+  "ci_evidence_sha256": "52f774103d9bcf2238a546f2a18a3b24ab4fc6c51dc5da4b89923f3cb6bdda79",
+  "mapping_sha256": "afce5deb43bca95bb3b38050bb60307dfe31c2ed5d19b35e790ddf2f172dfbdd",
+  "mapping_applied_after_gates": true,
+  "operations": [
+    {
+      "id": "audit-media-services-missing-rating-preview",
+      "field": "limitations",
+      "original_index": 4,
+      "operation": "replace_exact_list_item",
+      "before": "Rust model/native/store-consumer regressions authored for root hosted CI; no local Cargo build/test or mutation test.",
+      "conditional_after": "Historical author metadata records authored regressions without local Cargo builds, Rust tests or mutation testing. Current exact-source Linux execution and fresh native rendered review are recorded separately in the accepted checkpoint.",
+      "reason": "Reconcile only now-resolved validation status after actual gates; retain historical authorship/no-local-build provenance."
+    },
+    {
+      "id": "audit-media-services-missing-rating-preview",
+      "field": "remaining",
+      "original_index": 0,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source full Linux validation remains pending.",
+      "conditional_after": null,
+      "reason": "Remove only pending exact-source validation/render preparation status after real gates."
+    },
+    {
+      "id": "audit-media-services-missing-rating-preview",
+      "field": "remaining",
+      "original_index": 1,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source four defining fresh images and independent rendered/behavioral review remain pending.",
+      "conditional_after": null,
+      "reason": "Remove only pending exact-source validation/render preparation status after real gates."
+    }
+  ],
+  "added_review_scope_limits": {
+    "audit-media-services-missing-rating-preview": [
+      "Linux-only validation at the exact reviewed source; macOS and Windows are deferred. No OS chrome, popup placement or universal geometry claim.",
+      "All four examples and the inline counter controls were actually inspected at the supported 640×1000 viewport. Only the first control has public geometry; complete visibility is established by these frames, not by that getter or by a universal layout assertion. The numerical capture is scrolled and crops the upper heading/name area.",
+      "Native captures retain saved context icon sizes 20/15/12/12 and the existing native action sequence. Native thumbnail like is selected and counter is 1; Qt final thumbnail like is cleared and counter is 2. Numerical samples, edited configuration and model replay remain separately asserted. These are different demonstrated states, with no identical-state pixel or font equality claim.",
+      "Colour edits in this capture setup invoke the existing callback directly. Sample graphics use the staged edited colours, while the visible colour LineEdit strings retain their initial text. This does not validate physical colour-entry projection or imply a persistent typed-input defect.",
+      "Native uses the shared rating graphics and an owned inline counter-value input instead of the separate Qt modal child. Named SVG graphics retain the existing fallback; no complete SVG backend or matching modal topology is claimed.",
+      "Preview Window is an example context label, not implementation or verification of a live Preview canvas. Service management and rating preferences parents remain partial; aliases, remote/IPFS/account/listener surfaces and additional Dialog consumer or broader rendering credit are excluded.",
+      "Opening numerical click conversion, including star count and allow-zero, remains distinct from live fraction repainting and saved one-star normalization, as recorded. Whole-widget pointer and ordinary single-button drag assertions remain; full mixed-button cross-edge capture parity is excluded because Slint drops its private grab on button release.",
+      "Configuration, persistence, sample-only data, child/parent Cancel and retained closed-child successor protection are covered by the defining tests. The new exports add presentation evidence without broadening generic owner or platform event coverage.",
+      "The independent wheel follow-up now passes at the original 1100×800 viewport after at least 810 ms of real timer/render pumping, with the unchanged single positive wheel, exact index 2 and all 92 assertions. This proves finite recovery after gesture expiry; immediate hide/show recovery and the precise historical failure cause remain unproved. No additional wheel completion credit is awarded.",
+      "No local Cargo build/test or mutation test was run for this independent review. Hosted full Linux results and actual source-bound render inspection supply the current validation; historical source-only pending observations are superseded only for this selected leaf."
+    ]
+  },
+  "reviews": [
+    {
+      "path": "docs/rust/gui-coverage/checkpoints/95bbbed2c/final-review-2-95bbbed2c.json",
+      "sha256": "06b549568b815185c647ec7adc22d3162c35f199ab4fabf6cea33b1795ac114c"
+    }
+  ],
+  "selected_ids": [
+    "audit-media-services-missing-rating-preview"
+  ],
+  "prior368_completion_ids_and_assessments_preserved": true,
+  "source_only_native_anchor_ids": [],
+  "final_patch_digest": "1a1accd20f48d389749a3e3abe37dbda7475c79b9a9eeaec17ebb43e35b9d860"
+}
