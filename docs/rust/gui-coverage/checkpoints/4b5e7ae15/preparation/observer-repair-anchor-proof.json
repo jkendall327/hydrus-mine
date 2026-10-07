@@ -1,0 +1,93 @@
+{
+  "source_commit": "4b5e7ae151c2317bf83ef0aad8e9a0161f9a498d",
+  "previous_source_commit": "80bcb531f7df156e448cc212254f941541101dc3",
+  "run_id": 37551810449,
+  "field_deltas": [
+    {
+      "before": {
+        "path": "crates/hydrus-gui/ui/session_dialog.slint",
+        "line": 110,
+        "anchor_git_head": "80bcb531f7df156e448cc212254f941541101dc3",
+        "line_sha256": "8b1e15ce317b59dde34aecc80a56000ace32cc219400ad69f79a2df43cf30002",
+        "role": "native_implementation",
+        "description": "Current exactsource namespace Add/Delete repair, only selected original leaves; handler and real-widget evidence kept distinct.",
+        "executed_in_inventory": false,
+        "execution_scope": "Source/recording provenance; native execution still pending."
+      },
+      "after": {
+        "path": "crates/hydrus-gui/ui/session_dialog.slint",
+        "line": 112,
+        "anchor_git_head": "4b5e7ae151c2317bf83ef0aad8e9a0161f9a498d",
+        "line_sha256": "db9d5fdf2d7ddf66bbf3b4cc82c87ce5990ce1ea32d613a6cec332d9ad48f6a7",
+        "role": "native_implementation",
+        "description": "Current exactsource namespace Add/Delete repair, only selected original leaves; handler and real-widget evidence kept distinct.",
+        "executed_in_inventory": false,
+        "execution_scope": "Source/recording provenance; native execution still pending."
+      },
+      "old_text": "                if root.asking-name: name-apply := Button {",
+      "new_text": "                    name-apply := Button {",
+      "reason": "Exact reviewed structural extraction: ApplyButton declaration moves into zero-spacing conditional HorizontalLayout, Timer sibling; anchor actualButton declaration, not generic wrapper or nearestline."
+    },
+    {
+      "before": {
+        "path": "crates/hydrus-gui/ui/session_dialog.slint",
+        "line": 110,
+        "anchor_git_head": "80bcb531f7df156e448cc212254f941541101dc3",
+        "line_sha256": "8b1e15ce317b59dde34aecc80a56000ace32cc219400ad69f79a2df43cf30002",
+        "role": "native_implementation",
+        "description": "Current exactsource namespace Add/Delete repair, only selected original leaves; handler and real-widget evidence kept distinct.",
+        "executed_in_inventory": false,
+        "execution_scope": "Source/recording provenance; native execution still pending."
+      },
+      "after": {
+        "path": "crates/hydrus-gui/ui/session_dialog.slint",
+        "line": 112,
+        "anchor_git_head": "4b5e7ae151c2317bf83ef0aad8e9a0161f9a498d",
+        "line_sha256": "db9d5fdf2d7ddf66bbf3b4cc82c87ce5990ce1ea32d613a6cec332d9ad48f6a7",
+        "role": "native_implementation",
+        "description": "Current exactsource namespace Add/Delete repair, only selected original leaves; handler and real-widget evidence kept distinct.",
+        "executed_in_inventory": false,
+        "execution_scope": "Source/recording provenance; native execution still pending."
+      },
+      "old_text": "                if root.asking-name: name-apply := Button {",
+      "new_text": "                    name-apply := Button {",
+      "reason": "Exact reviewed structural extraction: ApplyButton declaration moves into zero-spacing conditional HorizontalLayout, Timer sibling; anchor actualButton declaration, not generic wrapper or nearestline."
+    }
+  ],
+  "source_review_packet": "/workspace/validation-reviews/namespace2/slint-observer-repair-review-3.json",
+  "source_review_sha256": "ebaa3d91c97174cae9f9fd7789f35bcbbb68819718e4620a9eac4d75e0c5fe0c",
+  "source_old_sha256": "162431847a311481eedc7712f5222d09cab56e31806306067faed0e333c32c32",
+  "source_new_sha256": "e0e95b66f749c57ecae8b74597345704e9e9a793304c2fa1807327673d011518",
+  "changed_paths": [
+    "crates/hydrus-gui/ui/session_dialog.slint"
+  ],
+  "behavior_assessments_limits_unchanged": true,
+  "native_execution": "pending_repaired_source",
+  "historical80b_failure": "StandardButton cannot contain Timer; check failed, parity still active per root. Preserve oldpacket/logs; no repairedsource run ID yet.",
+  "approval": false,
+  "generation_only_evidence": {
+    "path": "/workspace/validation-reviews/namespace2/slint-generation-check/result.json",
+    "sha256": "b0e86e29fbb08284543470ce7b3483f2ed232bfa51454dc75bd37d3072e75aeb",
+    "ui_sha256_matches_repaired_commit": true,
+    "result": {
+      "kind": "cached Slint 1.18.1 compiler generation only; no Rust compilation or runtime tests",
+      "exit_code": 0,
+      "elapsed_seconds": 8.059107234992553,
+      "child_maxrss_kib": 1326364,
+      "checked_ui_sha256": "e0e95b66f749c57ecae8b74597345704e9e9a793304c2fa1807327673d011518",
+      "base_source": "80bcb531f7df156e448cc212254f941541101dc3",
+      "only_dirty_source": "crates/hydrus-gui/ui/session_dialog.slint"
+    },
+    "scope": "Sourcegeneration only; no Rust tests/render/fullCI approval."
+  },
+  "frozen_prior_packet_fingerprints": {
+    "selection.json": "2b615f2c8a53fc5a6ab9ce486677ce7923a1b8f723444e4688b5bb2e57245b7a",
+    "subset-preflight/subset-proposal-patch.json": "f8f229a15c757d239a76a5867f46d7f95cabf15ed96d70b6641179d76a4f6aa8",
+    "conditional-status-map.json": "256236cb631bb213e1c1203e8da8204bd4fcba57ccd88dde54f3bf7cc41bd272",
+    "preparation-summary.json": "6bab1e1022a012c3045b11b999a18e387f1f7ae74d1d3c90bcf7b30edcd13de4"
+  },
+  "retained_previous_failure_files": [
+    "/workspace/validation-reviews/ci-80bcb531f/failed-validation.json",
+    "/workspace/validation-reviews/ci-80bcb531f/full-check.log"
+  ]
+}

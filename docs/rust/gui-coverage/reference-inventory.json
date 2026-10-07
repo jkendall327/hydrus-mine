@@ -1,9 +1,9 @@
 {
   "schema_version": 1,
   "inventory_name": "Hydrus reference GUI nested feature inventory",
-  "generated_at": "2026-10-06T23:56:22.060596+00:00",
+  "generated_at": "2026-10-07T01:41:11.394078+00:00",
   "repository_root": ".",
-  "git_head": "e886e68ed9c49751617bcf28df50957d99e3c03e",
+  "git_head": "4b5e7ae151c2317bf83ef0aad8e9a0161f9a498d",
   "reference_version": "v688 (repository docs)",
   "read_only": true,
   "tests_run": true,
@@ -27,8 +27,8 @@
     "node_count": 1812,
     "status_counts": {
       "partial": 388,
-      "first_pass": 942,
-      "missing": 482
+      "first_pass": 944,
+      "missing": 480
     },
     "kind_counts": {
       "root": 1,
@@ -143,8 +143,8 @@
       "descendant_count": 1811,
       "descendant_status_counts": {
         "partial": 387,
-        "missing": 482,
-        "first_pass": 942
+        "missing": 480,
+        "first_pass": 944
       },
       "unique_feature_descendant_count": 1527,
       "unique_reachable_feature_count_including_shared": 1527,
@@ -204,8 +204,8 @@
       "descendant_count": 704,
       "descendant_status_counts": {
         "partial": 109,
-        "first_pass": 348,
-        "missing": 247
+        "first_pass": 350,
+        "missing": 245
       },
       "unique_feature_descendant_count": 594,
       "unique_reachable_feature_count_including_shared": 659,
@@ -1344,7 +1344,7 @@
         },
         {
           "path": "crates/hydrus-gui/ui/session_dialog.slint",
-          "line": 79,
+          "line": 94,
           "symbol": "if root.regex-mode: HorizontalLayout",
           "role": "scoped_implementation",
           "executed_in_inventory": false,
@@ -19544,9 +19544,9 @@
       },
       "descendant_count": 644,
       "descendant_status_counts": {
-        "first_pass": 325,
+        "first_pass": 327,
         "partial": 75,
-        "missing": 244
+        "missing": 242
       },
       "unique_feature_descendant_count": 544,
       "unique_reachable_feature_count_including_shared": 580,
@@ -21597,8 +21597,8 @@
       "descendant_count": 31,
       "descendant_status_counts": {
         "partial": 4,
-        "first_pass": 19,
-        "missing": 8
+        "first_pass": 21,
+        "missing": 6
       },
       "unique_feature_descendant_count": 25,
       "unique_reachable_feature_count_including_shared": 26,
@@ -81451,7 +81451,7 @@
         },
         {
           "path": "crates/hydrus-gui/ui/session_dialog.slint",
-          "line": 21,
+          "line": 22,
           "line_sha256": "c90c03da3a0af9d89882f9d8f68ebb0ca86f08ad46f6b09580b3d495ed527684",
           "symbol": "in property <string> notice-ok-label:",
           "role": "native_implementation",
@@ -82040,7 +82040,8 @@
       ],
       "descendant_count": 4,
       "descendant_status_counts": {
-        "missing": 4
+        "first_pass": 2,
+        "missing": 2
       },
       "unique_feature_descendant_count": 4,
       "unique_reachable_feature_count_including_shared": 4,
@@ -82092,40 +82093,282 @@
       "parent_id": "audit-options-tag-presentation-namespace-colours",
       "label": "add",
       "kind": "action",
-      "status": "missing",
-      "native_source": null,
+      "status": "first_pass",
+      "native_source": {
+        "path": "crates/hydrus-gui-model/src/namespace_colours.rs",
+        "line": 32,
+        "line_sha256": "144953260bcfb350614ed1822469096bdfa9455922e11f29ddb5afb0a6aa2261",
+        "symbol": "fn label(namespace:"
+      },
       "reference_source": {
         "path": "hydrus/client/gui/panels/options/TagPresentationPanel.py",
         "line": 117,
         "line_sha256": "4ab19efe8e7680c11be81304ff3a9fee77be444e66abc3dbb38050a842bf6c01"
       },
-      "assessment": "Reference editor/control 'add' is recorded on 'tag presentation' and defined by the referenced options panel. No corresponding editable row exists in native options::pages; this is a missing GUI editing path, even if a setting is imported or consumed elsewhere.",
+      "assessment": "Options stages a new namespace with the exact Enter the namespace. prompt, lower/strip/trailing-colon and shared garbage cleanup, exact reserved/default and duplicate warnings, and fresh random RGB. Cancel changes neither list nor saved settings; accepted Add changes only the parent draft until Apply. Saved/reopened colours drive real media tag rows. Pending child blocks Apply, hidden owner rejects acceptance, parent Cancel retires callbacks, and retained old Cancel cannot clear a successor slot. Initial strip includes Python control-character whitespace U+001C–U+001F. Sorted Add preserves selected namespace identities while retaining numeric last-hit, Shift anchor, and range bookkeeping, as recorded for Shift/Ctrl+Shift contraction. Nested colon namespaces retain the literal namespace plus trailing-colon label (artist:inner:) and sort by that painted text. Invalid handler input closes Enter Text then opens an owned Warning notice with the exact message and sole OK button; acknowledgement releases the child slot, parent Apply is blocked, parent Cancel retires it, and stale question/notice callbacks cannot mutate or clear a successor. Actual empty Apply/Return is rejected before the handler: a nested Warning says Cannot enter blank text here!, acknowledgement retains the same visible entry, and parent cancellation retires both. Whitespace still reaches the handler.",
       "evidence": [
         {
-          "path": "crates/hydrus-gui-model/src/options.rs",
-          "line": 1626,
-          "role": "source_inspection",
-          "description": "Inspected complete native options registry: the explicitly listed native getter/setter rows are offered.",
+          "path": "crates/hydrus-gui-model/src/namespace_colours.rs",
+          "line": 32,
+          "line_sha256": "144953260bcfb350614ed1822469096bdfa9455922e11f29ddb5afb0a6aa2261",
+          "symbol": "fn label(namespace:",
+          "role": "native_implementation",
+          "description": "docs/rust/gui-coverage/parity/namespace-colour-controls.json: declared native_implementation; supports the bounded assessment above, not whole-parent parity.",
           "executed_in_inventory": false,
-          "line_sha256": "9b25465690948e42af43c4a0260d2651e872520f0dcd383f3510ff0712f4a148"
+          "execution_scope": "Source/recording provenance only; no new execution asserted."
         },
         {
-          "path": "oracle/record_options_dialog.py",
-          "line": 1,
-          "role": "existing_oracle_recorder",
-          "description": "Existing recorder traverses the real Qt options dialog, including these page/box/control labels.",
+          "path": "crates/hydrus-gui-model/src/namespace_colours.rs",
+          "line": 70,
+          "line_sha256": "604666495125dd694fa5143d65cf8f13be3673607eac640dad544894366b0ff9",
+          "symbol": "pub fn add(",
+          "role": "native_implementation",
+          "description": "docs/rust/gui-coverage/parity/namespace-colour-controls.json: declared native_implementation; supports the bounded assessment above, not whole-parent parity.",
           "executed_in_inventory": false,
-          "line_sha256": "381f9bfc69d49d39040a7d5fc3197ce385019a2ba2de649622f841a8c658ed37"
+          "execution_scope": "Source/recording provenance only; no new execution asserted."
+        },
+        {
+          "path": "crates/hydrus-gui-model/src/namespace_colours.rs",
+          "line": 136,
+          "line_sha256": "fb23ecf14ab85b0d9c54cfaf3effdd719dd4240bd7bfcf2c3b3aaab2a5880c1c",
+          "symbol": "pub fn removal_question(",
+          "role": "native_implementation",
+          "description": "docs/rust/gui-coverage/parity/namespace-colour-controls.json: declared native_implementation; supports the bounded assessment above, not whole-parent parity.",
+          "executed_in_inventory": false,
+          "execution_scope": "Source/recording provenance only; no new execution asserted."
+        },
+        {
+          "path": "crates/hydrus-gui/src/options_namespace_colours.rs",
+          "line": 134,
+          "line_sha256": "14857b5fa7ed28997f22d916dc00ee04274e1b935d9a856a8dbe04caf4ab24eb",
+          "symbol": "pub(crate) fn bind(",
+          "role": "native_implementation",
+          "description": "docs/rust/gui-coverage/parity/namespace-colour-controls.json: declared native_implementation; supports the bounded assessment above, not whole-parent parity.",
+          "executed_in_inventory": false,
+          "execution_scope": "Source/recording provenance only; no new execution asserted."
+        },
+        {
+          "path": "crates/hydrus-gui-model/src/options.rs",
+          "line": 370,
+          "line_sha256": "5be9708c88adb6f6e013066bf456ccba90440652a4f319875d6a702c9473486b",
+          "symbol": "namespace_colours: hydrus_core",
+          "role": "native_implementation",
+          "description": "docs/rust/gui-coverage/parity/namespace-colour-controls.json: declared native_implementation; supports the bounded assessment above, not whole-parent parity.",
+          "executed_in_inventory": false,
+          "execution_scope": "Source/recording provenance only; no new execution asserted."
+        },
+        {
+          "path": "crates/hydrus-gui-model/src/options.rs",
+          "line": 4550,
+          "line_sha256": "3c2e3c6222a78704a90609007a00693b9773d16e25cfd3d8164b2ec6efaaf4be",
+          "symbol": "Namespace for the OR top row:",
+          "role": "native_implementation",
+          "description": "docs/rust/gui-coverage/parity/namespace-colour-controls.json: declared native_implementation; supports the bounded assessment above, not whole-parent parity.",
+          "executed_in_inventory": false,
+          "execution_scope": "Source/recording provenance only; no new execution asserted."
+        },
+        {
+          "path": "crates/hydrus-gui/ui/namespace_colours.slint",
+          "line": 4,
+          "line_sha256": "cf6c8d819a0c8cbc343226f73f15ae53f7630079b5f0c829898bf54ad5699c48",
+          "symbol": "export component NamespaceColourList",
+          "role": "native_implementation",
+          "description": "docs/rust/gui-coverage/parity/namespace-colour-controls.json: declared native_implementation; supports the bounded assessment above, not whole-parent parity.",
+          "executed_in_inventory": false,
+          "execution_scope": "Source/recording provenance only; no new execution asserted."
+        },
+        {
+          "path": "crates/hydrus-gui/src/options_namespace_colours.rs",
+          "line": 18,
+          "line_sha256": "d79aa17782fe3d04d5686e4ef2661a470337096dd782791a0f4c0ed759f6f790",
+          "symbol": "fn warning_notice(",
+          "role": "native_implementation",
+          "description": "docs/rust/gui-coverage/parity/namespace-colour-controls.json: declared native_implementation; supports the bounded assessment above, not whole-parent parity.",
+          "executed_in_inventory": false,
+          "execution_scope": "Source/recording provenance only; no new execution asserted."
+        },
+        {
+          "path": "crates/hydrus-gui/ui/session_dialog.slint",
+          "line": 22,
+          "line_sha256": "c90c03da3a0af9d89882f9d8f68ebb0ca86f08ad46f6b09580b3d495ed527684",
+          "symbol": "in property <string> notice-ok-label:",
+          "role": "native_implementation",
+          "description": "docs/rust/gui-coverage/parity/namespace-colour-controls.json: declared native_implementation; supports the bounded assessment above, not whole-parent parity.",
+          "executed_in_inventory": false,
+          "execution_scope": "Source/recording provenance only; no new execution asserted."
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/namespace_colours.rs",
+          "line": 20,
+          "line_sha256": "282a58c6b4f3cc374464505e0e9373c6e305679a865ed153985cef5cc0208a15",
+          "symbol": "fn qt_namespace_add_normalization",
+          "role": "authored_regression",
+          "description": "docs/rust/gui-coverage/parity/namespace-colour-controls.json: declared authored_regression; supports the bounded assessment above, not whole-parent parity.",
+          "executed_in_inventory": false,
+          "execution_scope": "Source/recording provenance only; no new execution asserted."
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/namespace_colours.rs",
+          "line": 75,
+          "line_sha256": "e83df1e327dd3c5392c10dcc77a707280e2b9c0acb5f3516d65845ef199296a1",
+          "symbol": "fn actual_namespace_questions",
+          "role": "authored_regression",
+          "description": "docs/rust/gui-coverage/parity/namespace-colour-controls.json: declared authored_regression; supports the bounded assessment above, not whole-parent parity.",
+          "executed_in_inventory": false,
+          "execution_scope": "Source/recording provenance only; no new execution asserted."
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/namespace_colours.rs",
+          "line": 141,
+          "line_sha256": "af36872445bfb337ac9556a35d952c87931bd09a0d5bbac6b01f59338ab41625",
+          "symbol": "fn sorted_add_keeps",
+          "role": "authored_regression",
+          "description": "docs/rust/gui-coverage/parity/namespace-colour-controls.json: declared authored_regression; supports the bounded assessment above, not whole-parent parity.",
+          "executed_in_inventory": false,
+          "execution_scope": "Source/recording provenance only; no new execution asserted."
+        },
+        {
+          "path": "oracle/record_namespace_colour_controls.py",
+          "line": 1,
+          "line_sha256": "381f9bfc69d49d39040a7d5fc3197ce385019a2ba2de649622f841a8c658ed37",
+          "role": "reference_recording",
+          "description": "docs/rust/gui-coverage/parity/namespace-colour-controls.json: declared reference_recording; supports the bounded assessment above, not whole-parent parity.",
+          "executed_in_inventory": false,
+          "execution_scope": "Source/recording provenance only; no new execution asserted."
+        },
+        {
+          "path": "oracle/fixtures/namespace_colour_controls.json",
+          "line": 1,
+          "line_sha256": "021fb596db81e6d02bf3d2586ee3981fe519f275c0ac9ca76bbcf2ebb4097d96",
+          "role": "reference_recording",
+          "description": "docs/rust/gui-coverage/parity/namespace-colour-controls.json: declared reference_recording; supports the bounded assessment above, not whole-parent parity.",
+          "executed_in_inventory": false,
+          "execution_scope": "Source/recording provenance only; no new execution asserted."
+        },
+        {
+          "path": "crates/hydrus-gui/ui/session_dialog.slint",
+          "line": 82,
+          "line_sha256": "a0cb98a3e60803fc60a21dd6b23317ef0e700a66891c9ed718748373ccbb798b",
+          "role": "native_implementation",
+          "description": "Current exactsource namespace Add/Delete repair, only selected original leaves; handler and real-widget evidence kept distinct.",
+          "executed_in_inventory": false,
+          "execution_scope": "Source/recording provenance; native execution still pending."
+        },
+        {
+          "path": "crates/hydrus-gui/ui/session_dialog.slint",
+          "line": 112,
+          "line_sha256": "db9d5fdf2d7ddf66bbf3b4cc82c87ce5990ce1ea32d613a6cec332d9ad48f6a7",
+          "role": "native_implementation",
+          "description": "Current exactsource namespace Add/Delete repair, only selected original leaves; handler and real-widget evidence kept distinct.",
+          "executed_in_inventory": false,
+          "execution_scope": "Source/recording provenance; native execution still pending."
+        },
+        {
+          "path": "crates/hydrus-gui/src/options_namespace_colours.rs",
+          "line": 245,
+          "line_sha256": "e3cf9edc9df366163cf920ec266765952dae6931dd8686ba2de4e6866f60d10c",
+          "role": "native_implementation",
+          "description": "Current exactsource namespace Add/Delete repair, only selected original leaves; handler and real-widget evidence kept distinct.",
+          "executed_in_inventory": false,
+          "execution_scope": "Source/recording provenance; native execution still pending."
+        },
+        {
+          "path": "crates/hydrus-gui/src/options_namespace_colours.rs",
+          "line": 280,
+          "line_sha256": "6e9897acdbf609a106646063fbc384d04441a32a1847c208f361960a376cff1b",
+          "role": "native_implementation",
+          "description": "Current exactsource namespace Add/Delete repair, only selected original leaves; handler and real-widget evidence kept distinct.",
+          "executed_in_inventory": false,
+          "execution_scope": "Source/recording provenance; native execution still pending."
+        },
+        {
+          "path": "crates/hydrus-gui/src/options_namespace_colours.rs",
+          "line": 305,
+          "line_sha256": "aaa82b953fa33a8a1c07c3f49e019f013b50933dd6f086997169f5bb05fb53e3",
+          "role": "native_implementation",
+          "description": "Current exactsource namespace Add/Delete repair, only selected original leaves; handler and real-widget evidence kept distinct.",
+          "executed_in_inventory": false,
+          "execution_scope": "Source/recording provenance; native execution still pending."
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/namespace_colours.rs",
+          "line": 584,
+          "line_sha256": "9ed19a7206c1ba4782d4c4d87d777e895c37c4453dc571ba93f5be67ba65b970",
+          "role": "authored_regression",
+          "description": "Current exactsource namespace Add/Delete repair, only selected original leaves; handler and real-widget evidence kept distinct.",
+          "executed_in_inventory": false,
+          "execution_scope": "Source/recording provenance; native execution still pending."
+        },
+        {
+          "path": "oracle/record_namespace_entry_validation.py",
+          "line": 1,
+          "line_sha256": "381f9bfc69d49d39040a7d5fc3197ce385019a2ba2de649622f841a8c658ed37",
+          "role": "reference_recording",
+          "description": "Current exactsource namespace Add/Delete repair, only selected original leaves; handler and real-widget evidence kept distinct.",
+          "executed_in_inventory": false,
+          "execution_scope": "Source/recording provenance; native execution still pending."
+        },
+        {
+          "path": "oracle/fixtures/namespace_entry_validation.json",
+          "line": 1,
+          "line_sha256": "021fb596db81e6d02bf3d2586ee3981fe519f275c0ac9ca76bbcf2ebb4097d96",
+          "role": "reference_recording",
+          "description": "Current exactsource namespace Add/Delete repair, only selected original leaves; handler and real-widget evidence kept distinct.",
+          "executed_in_inventory": false,
+          "execution_scope": "Source/recording provenance; native execution still pending."
         }
       ],
       "limitations": [
-        "Native options registry has no editable 'add' control in this page/box path."
+        "Only the two original Namespace Add/Delete leaves are in scope; the separately banked OR leaf receives no additional credit. Namespace editor/other rendering/Tag Presentation parents remain Partial.",
+        "Full colour-picker editing, inherited colour-list menus and keyboard navigation remain outside this slice.",
+        "Native Warning notices use the exact Qt title/message/OK button with private ownership. Handler warnings replace the completed entry; exact-empty widget warnings retain it in the primary slot and use a nested per-input slot. Child launch failures appear in a dedicated namespace-list message; Qt icons and platform messagebox decoration are not replicated.",
+        "Native OR active predicates retain a single-line row, coloured using the recorded OR header namespace. Expanded header/independently coloured child topology remains a broader Partial boundary.",
+        "Inactive Qt OR connecting string preference is not implemented or counted; actual source still uses fixed OR text.",
+        "Only the two original Namespace Add/Delete leaves are approved; the separately banked OR leaf receives no additional credit. Namespace editor/other rendering/Tag Presentation parents remain Partial; no alias or broader backend credit.",
+        "Full colour-picker editing, Namespace Edit/picker lifetime, inherited colour-list menus and broader keyboard navigation remain outside this slice.",
+        "Direct handler fixture replay differs from actual exact-empty widget validation. Old EnterText substitution preserves handler normalization/warnings, not real blank acceptance; fresh physical Apply/Return verifies the separate nested veto and same-entry retention path. Whitespace still reaches the handler.",
+        "Native Warning notices have exact title/message/OK and private ownership. Handler warnings replace the completed entry; exact-empty warnings retain primary input with a nested per-input slot. Child launch failures use the dedicated namespace-list message. Qt warning icons/platform messagebox decoration are not replicated.",
+        "Native fixed520x200 content frames have different footer proportions/spacing and font metrics from compact Qt dialogs. Qt reference parent is standalone offscreen TagPresentationPanel, not full Options-window parity; mixed selection uses its real list helper. No whole-dialog pixel/geometry equality or native OS modality/chrome equivalence is claimed.",
+        "Continued typing explicitly activates the retained native entry and physically clicks its reenabled LineEdit after acknowledgement. Automatic OS focus restoration is not established. Headless PNGs omit title chrome: Delete title/type is runtime asserted; nested blank-warning title is source-grounded while its message/OK are actually rendered.",
+        "New Qt fixture records random namespace RGB without fixing it. Native Add uses fresh random channels; normalization/staging/consumers are validated, not exact random RGB equality with the new Qt rows. Original controlled handler/model expectations remain unchanged.",
+        "Native OR active predicates retain a single-line row coloured by the recorded OR header namespace. Expanded header/independently coloured child topology remains broader Partial; inactive Qt OR connecting-string preference is not implemented or counted and fixed OR text remains. Existing OR assertions are preserved but earn no additional credit here.",
+        "Explicit parent Cancel/close and active/visible/retired callback boundaries are validated. Automatic destruction closure for every shown child is not established by this packet. Supplemental draft list viewport does not show every namespace at once; protected-row retention is established by exact assertions.",
+        "Validation is Linux only; Windows and macOS are deferred. No parent, alias, fade, renderer or other-family completion credit."
       ],
       "descendant_count": 0,
       "descendant_status_counts": {},
       "unique_feature_descendant_count": 0,
       "unique_reachable_feature_count_including_shared": 1,
-      "native_id_candidates": []
+      "native_id_candidates": [],
+      "remaining": [],
+      "implementation_validation": {
+        "source_commit": "4b5e7ae151c2317bf83ef0aad8e9a0161f9a498d",
+        "ci": "passed",
+        "tests_executed_at_checkpoint": true,
+        "native_render_review": "passed",
+        "manifest": "docs/rust/gui-coverage/parity/namespace-colour-controls.json",
+        "review_required": false,
+        "run_url": "https://github.com/jkendall327/hydrus-mine/actions/runs/37551810449",
+        "validation_scope": "linux",
+        "required_platforms": [
+          "linux"
+        ],
+        "deferred_platforms": [
+          "windows",
+          "macos"
+        ],
+        "independent_review_evidence": {
+          "path": "docs/rust/gui-coverage/checkpoints/4b5e7ae15/final-review-2-4b5e7ae15.json",
+          "sha256": "7ce38c851bc0fdd53fa1ceb010727012455e93ef79e3152dd7015543c06d9b0e"
+        },
+        "publication_policy": {
+          "path": ".github/publication-validation.json",
+          "source_commit": "4b5e7ae151c2317bf83ef0aad8e9a0161f9a498d",
+          "sha256": "49723bd5d6b786392a1368bb3da1406747a553ef31c9de2bdef92cea5d014c5f",
+          "effective_date": "2026-10-06",
+          "reason": "The owner uses Linux and prioritizes validated Linux delivery. macOS is low priority; Windows is deferred because its builds materially lengthen validation. Secondary-platform CI remains available by explicit opt-in."
+        }
+      }
     },
     {
       "id": "audit-options-tag-presentation-namespace-colours-edit",
@@ -82172,40 +82415,282 @@
       "parent_id": "audit-options-tag-presentation-namespace-colours",
       "label": "delete",
       "kind": "action",
-      "status": "missing",
-      "native_source": null,
+      "status": "first_pass",
+      "native_source": {
+        "path": "crates/hydrus-gui-model/src/namespace_colours.rs",
+        "line": 32,
+        "line_sha256": "144953260bcfb350614ed1822469096bdfa9455922e11f29ddb5afb0a6aa2261",
+        "symbol": "fn label(namespace:"
+      },
       "reference_source": {
         "path": "hydrus/client/gui/panels/options/TagPresentationPanel.py",
         "line": 119,
         "line_sha256": "2567b73134041b43e46a3526950b9a57793e971f17dcac4672d44b3f86dd0d4f"
       },
-      "assessment": "Reference editor/control 'delete' is recorded on 'tag presentation' and defined by the referenced options panel. No corresponding editable row exists in native options::pages; this is a missing GUI editing path, even if a setting is imported or consumed elsewhere.",
+      "assessment": "Ctrl/Shift selected ordinary namespaces offer exactly Delete all selected colours?; No preserves the list and settings, Yes removes selected ordinary entries while preserving default namespaced and unnamespaced colours even within mixed selection. Protected-only selection offers no deletion question. All changes remain in the Options parent draft; parent Cancel discards, Apply persists and fresh reopen restores the mapping. Current tag-list colours consume saved mappings. Delete remains enabled for empty/protected selections, which do not open a question or change the draft; accepted deletion resets range bookkeeping. The native confirmation uses the reference Are you sure? title and yes/no mode.",
       "evidence": [
         {
-          "path": "crates/hydrus-gui-model/src/options.rs",
-          "line": 1626,
-          "role": "source_inspection",
-          "description": "Inspected complete native options registry: the explicitly listed native getter/setter rows are offered.",
+          "path": "crates/hydrus-gui-model/src/namespace_colours.rs",
+          "line": 32,
+          "line_sha256": "144953260bcfb350614ed1822469096bdfa9455922e11f29ddb5afb0a6aa2261",
+          "symbol": "fn label(namespace:",
+          "role": "native_implementation",
+          "description": "docs/rust/gui-coverage/parity/namespace-colour-controls.json: declared native_implementation; supports the bounded assessment above, not whole-parent parity.",
           "executed_in_inventory": false,
-          "line_sha256": "9b25465690948e42af43c4a0260d2651e872520f0dcd383f3510ff0712f4a148"
+          "execution_scope": "Source/recording provenance only; no new execution asserted."
         },
         {
-          "path": "oracle/record_options_dialog.py",
-          "line": 1,
-          "role": "existing_oracle_recorder",
-          "description": "Existing recorder traverses the real Qt options dialog, including these page/box/control labels.",
+          "path": "crates/hydrus-gui-model/src/namespace_colours.rs",
+          "line": 70,
+          "line_sha256": "604666495125dd694fa5143d65cf8f13be3673607eac640dad544894366b0ff9",
+          "symbol": "pub fn add(",
+          "role": "native_implementation",
+          "description": "docs/rust/gui-coverage/parity/namespace-colour-controls.json: declared native_implementation; supports the bounded assessment above, not whole-parent parity.",
           "executed_in_inventory": false,
-          "line_sha256": "381f9bfc69d49d39040a7d5fc3197ce385019a2ba2de649622f841a8c658ed37"
+          "execution_scope": "Source/recording provenance only; no new execution asserted."
+        },
+        {
+          "path": "crates/hydrus-gui-model/src/namespace_colours.rs",
+          "line": 136,
+          "line_sha256": "fb23ecf14ab85b0d9c54cfaf3effdd719dd4240bd7bfcf2c3b3aaab2a5880c1c",
+          "symbol": "pub fn removal_question(",
+          "role": "native_implementation",
+          "description": "docs/rust/gui-coverage/parity/namespace-colour-controls.json: declared native_implementation; supports the bounded assessment above, not whole-parent parity.",
+          "executed_in_inventory": false,
+          "execution_scope": "Source/recording provenance only; no new execution asserted."
+        },
+        {
+          "path": "crates/hydrus-gui/src/options_namespace_colours.rs",
+          "line": 134,
+          "line_sha256": "14857b5fa7ed28997f22d916dc00ee04274e1b935d9a856a8dbe04caf4ab24eb",
+          "symbol": "pub(crate) fn bind(",
+          "role": "native_implementation",
+          "description": "docs/rust/gui-coverage/parity/namespace-colour-controls.json: declared native_implementation; supports the bounded assessment above, not whole-parent parity.",
+          "executed_in_inventory": false,
+          "execution_scope": "Source/recording provenance only; no new execution asserted."
+        },
+        {
+          "path": "crates/hydrus-gui-model/src/options.rs",
+          "line": 370,
+          "line_sha256": "5be9708c88adb6f6e013066bf456ccba90440652a4f319875d6a702c9473486b",
+          "symbol": "namespace_colours: hydrus_core",
+          "role": "native_implementation",
+          "description": "docs/rust/gui-coverage/parity/namespace-colour-controls.json: declared native_implementation; supports the bounded assessment above, not whole-parent parity.",
+          "executed_in_inventory": false,
+          "execution_scope": "Source/recording provenance only; no new execution asserted."
+        },
+        {
+          "path": "crates/hydrus-gui-model/src/options.rs",
+          "line": 4550,
+          "line_sha256": "3c2e3c6222a78704a90609007a00693b9773d16e25cfd3d8164b2ec6efaaf4be",
+          "symbol": "Namespace for the OR top row:",
+          "role": "native_implementation",
+          "description": "docs/rust/gui-coverage/parity/namespace-colour-controls.json: declared native_implementation; supports the bounded assessment above, not whole-parent parity.",
+          "executed_in_inventory": false,
+          "execution_scope": "Source/recording provenance only; no new execution asserted."
+        },
+        {
+          "path": "crates/hydrus-gui/ui/namespace_colours.slint",
+          "line": 4,
+          "line_sha256": "cf6c8d819a0c8cbc343226f73f15ae53f7630079b5f0c829898bf54ad5699c48",
+          "symbol": "export component NamespaceColourList",
+          "role": "native_implementation",
+          "description": "docs/rust/gui-coverage/parity/namespace-colour-controls.json: declared native_implementation; supports the bounded assessment above, not whole-parent parity.",
+          "executed_in_inventory": false,
+          "execution_scope": "Source/recording provenance only; no new execution asserted."
+        },
+        {
+          "path": "crates/hydrus-gui/src/options_namespace_colours.rs",
+          "line": 18,
+          "line_sha256": "d79aa17782fe3d04d5686e4ef2661a470337096dd782791a0f4c0ed759f6f790",
+          "symbol": "fn warning_notice(",
+          "role": "native_implementation",
+          "description": "docs/rust/gui-coverage/parity/namespace-colour-controls.json: declared native_implementation; supports the bounded assessment above, not whole-parent parity.",
+          "executed_in_inventory": false,
+          "execution_scope": "Source/recording provenance only; no new execution asserted."
+        },
+        {
+          "path": "crates/hydrus-gui/ui/session_dialog.slint",
+          "line": 22,
+          "line_sha256": "c90c03da3a0af9d89882f9d8f68ebb0ca86f08ad46f6b09580b3d495ed527684",
+          "symbol": "in property <string> notice-ok-label:",
+          "role": "native_implementation",
+          "description": "docs/rust/gui-coverage/parity/namespace-colour-controls.json: declared native_implementation; supports the bounded assessment above, not whole-parent parity.",
+          "executed_in_inventory": false,
+          "execution_scope": "Source/recording provenance only; no new execution asserted."
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/namespace_colours.rs",
+          "line": 20,
+          "line_sha256": "282a58c6b4f3cc374464505e0e9373c6e305679a865ed153985cef5cc0208a15",
+          "symbol": "fn qt_namespace_add_normalization",
+          "role": "authored_regression",
+          "description": "docs/rust/gui-coverage/parity/namespace-colour-controls.json: declared authored_regression; supports the bounded assessment above, not whole-parent parity.",
+          "executed_in_inventory": false,
+          "execution_scope": "Source/recording provenance only; no new execution asserted."
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/namespace_colours.rs",
+          "line": 75,
+          "line_sha256": "e83df1e327dd3c5392c10dcc77a707280e2b9c0acb5f3516d65845ef199296a1",
+          "symbol": "fn actual_namespace_questions",
+          "role": "authored_regression",
+          "description": "docs/rust/gui-coverage/parity/namespace-colour-controls.json: declared authored_regression; supports the bounded assessment above, not whole-parent parity.",
+          "executed_in_inventory": false,
+          "execution_scope": "Source/recording provenance only; no new execution asserted."
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/namespace_colours.rs",
+          "line": 141,
+          "line_sha256": "af36872445bfb337ac9556a35d952c87931bd09a0d5bbac6b01f59338ab41625",
+          "symbol": "fn sorted_add_keeps",
+          "role": "authored_regression",
+          "description": "docs/rust/gui-coverage/parity/namespace-colour-controls.json: declared authored_regression; supports the bounded assessment above, not whole-parent parity.",
+          "executed_in_inventory": false,
+          "execution_scope": "Source/recording provenance only; no new execution asserted."
+        },
+        {
+          "path": "oracle/record_namespace_colour_controls.py",
+          "line": 1,
+          "line_sha256": "381f9bfc69d49d39040a7d5fc3197ce385019a2ba2de649622f841a8c658ed37",
+          "role": "reference_recording",
+          "description": "docs/rust/gui-coverage/parity/namespace-colour-controls.json: declared reference_recording; supports the bounded assessment above, not whole-parent parity.",
+          "executed_in_inventory": false,
+          "execution_scope": "Source/recording provenance only; no new execution asserted."
+        },
+        {
+          "path": "oracle/fixtures/namespace_colour_controls.json",
+          "line": 1,
+          "line_sha256": "021fb596db81e6d02bf3d2586ee3981fe519f275c0ac9ca76bbcf2ebb4097d96",
+          "role": "reference_recording",
+          "description": "docs/rust/gui-coverage/parity/namespace-colour-controls.json: declared reference_recording; supports the bounded assessment above, not whole-parent parity.",
+          "executed_in_inventory": false,
+          "execution_scope": "Source/recording provenance only; no new execution asserted."
+        },
+        {
+          "path": "crates/hydrus-gui/ui/session_dialog.slint",
+          "line": 82,
+          "line_sha256": "a0cb98a3e60803fc60a21dd6b23317ef0e700a66891c9ed718748373ccbb798b",
+          "role": "native_implementation",
+          "description": "Current exactsource namespace Add/Delete repair, only selected original leaves; handler and real-widget evidence kept distinct.",
+          "executed_in_inventory": false,
+          "execution_scope": "Source/recording provenance; native execution still pending."
+        },
+        {
+          "path": "crates/hydrus-gui/ui/session_dialog.slint",
+          "line": 112,
+          "line_sha256": "db9d5fdf2d7ddf66bbf3b4cc82c87ce5990ce1ea32d613a6cec332d9ad48f6a7",
+          "role": "native_implementation",
+          "description": "Current exactsource namespace Add/Delete repair, only selected original leaves; handler and real-widget evidence kept distinct.",
+          "executed_in_inventory": false,
+          "execution_scope": "Source/recording provenance; native execution still pending."
+        },
+        {
+          "path": "crates/hydrus-gui/src/options_namespace_colours.rs",
+          "line": 245,
+          "line_sha256": "e3cf9edc9df366163cf920ec266765952dae6931dd8686ba2de4e6866f60d10c",
+          "role": "native_implementation",
+          "description": "Current exactsource namespace Add/Delete repair, only selected original leaves; handler and real-widget evidence kept distinct.",
+          "executed_in_inventory": false,
+          "execution_scope": "Source/recording provenance; native execution still pending."
+        },
+        {
+          "path": "crates/hydrus-gui/src/options_namespace_colours.rs",
+          "line": 280,
+          "line_sha256": "6e9897acdbf609a106646063fbc384d04441a32a1847c208f361960a376cff1b",
+          "role": "native_implementation",
+          "description": "Current exactsource namespace Add/Delete repair, only selected original leaves; handler and real-widget evidence kept distinct.",
+          "executed_in_inventory": false,
+          "execution_scope": "Source/recording provenance; native execution still pending."
+        },
+        {
+          "path": "crates/hydrus-gui/src/options_namespace_colours.rs",
+          "line": 305,
+          "line_sha256": "aaa82b953fa33a8a1c07c3f49e019f013b50933dd6f086997169f5bb05fb53e3",
+          "role": "native_implementation",
+          "description": "Current exactsource namespace Add/Delete repair, only selected original leaves; handler and real-widget evidence kept distinct.",
+          "executed_in_inventory": false,
+          "execution_scope": "Source/recording provenance; native execution still pending."
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/namespace_colours.rs",
+          "line": 584,
+          "line_sha256": "9ed19a7206c1ba4782d4c4d87d777e895c37c4453dc571ba93f5be67ba65b970",
+          "role": "authored_regression",
+          "description": "Current exactsource namespace Add/Delete repair, only selected original leaves; handler and real-widget evidence kept distinct.",
+          "executed_in_inventory": false,
+          "execution_scope": "Source/recording provenance; native execution still pending."
+        },
+        {
+          "path": "oracle/record_namespace_entry_validation.py",
+          "line": 1,
+          "line_sha256": "381f9bfc69d49d39040a7d5fc3197ce385019a2ba2de649622f841a8c658ed37",
+          "role": "reference_recording",
+          "description": "Current exactsource namespace Add/Delete repair, only selected original leaves; handler and real-widget evidence kept distinct.",
+          "executed_in_inventory": false,
+          "execution_scope": "Source/recording provenance; native execution still pending."
+        },
+        {
+          "path": "oracle/fixtures/namespace_entry_validation.json",
+          "line": 1,
+          "line_sha256": "021fb596db81e6d02bf3d2586ee3981fe519f275c0ac9ca76bbcf2ebb4097d96",
+          "role": "reference_recording",
+          "description": "Current exactsource namespace Add/Delete repair, only selected original leaves; handler and real-widget evidence kept distinct.",
+          "executed_in_inventory": false,
+          "execution_scope": "Source/recording provenance; native execution still pending."
         }
       ],
       "limitations": [
-        "Native options registry has no editable 'delete' control in this page/box path."
+        "Only the two original Namespace Add/Delete leaves are in scope; the separately banked OR leaf receives no additional credit. Namespace editor/other rendering/Tag Presentation parents remain Partial.",
+        "Full colour-picker editing, inherited colour-list menus and keyboard navigation remain outside this slice.",
+        "Native Warning notices use the exact Qt title/message/OK button and the same Options-owned private child slot. Child launch failures appear in a dedicated namespace-list message; Qt icons and platform messagebox decoration are not replicated.",
+        "Native OR active predicates retain a single-line row, coloured using the recorded OR header namespace. Expanded header/independently coloured child topology remains a broader Partial boundary.",
+        "Inactive Qt OR connecting string preference is not implemented or counted; actual source still uses fixed OR text.",
+        "Only the two original Namespace Add/Delete leaves are approved; the separately banked OR leaf receives no additional credit. Namespace editor/other rendering/Tag Presentation parents remain Partial; no alias or broader backend credit.",
+        "Full colour-picker editing, Namespace Edit/picker lifetime, inherited colour-list menus and broader keyboard navigation remain outside this slice.",
+        "Direct handler fixture replay differs from actual exact-empty widget validation. Old EnterText substitution preserves handler normalization/warnings, not real blank acceptance; fresh physical Apply/Return verifies the separate nested veto and same-entry retention path. Whitespace still reaches the handler.",
+        "Native Warning notices have exact title/message/OK and private ownership. Handler warnings replace the completed entry; exact-empty warnings retain primary input with a nested per-input slot. Child launch failures use the dedicated namespace-list message. Qt warning icons/platform messagebox decoration are not replicated.",
+        "Native fixed520x200 content frames have different footer proportions/spacing and font metrics from compact Qt dialogs. Qt reference parent is standalone offscreen TagPresentationPanel, not full Options-window parity; mixed selection uses its real list helper. No whole-dialog pixel/geometry equality or native OS modality/chrome equivalence is claimed.",
+        "Continued typing explicitly activates the retained native entry and physically clicks its reenabled LineEdit after acknowledgement. Automatic OS focus restoration is not established. Headless PNGs omit title chrome: Delete title/type is runtime asserted; nested blank-warning title is source-grounded while its message/OK are actually rendered.",
+        "New Qt fixture records random namespace RGB without fixing it. Native Add uses fresh random channels; normalization/staging/consumers are validated, not exact random RGB equality with the new Qt rows. Original controlled handler/model expectations remain unchanged.",
+        "Native OR active predicates retain a single-line row coloured by the recorded OR header namespace. Expanded header/independently coloured child topology remains broader Partial; inactive Qt OR connecting-string preference is not implemented or counted and fixed OR text remains. Existing OR assertions are preserved but earn no additional credit here.",
+        "Explicit parent Cancel/close and active/visible/retired callback boundaries are validated. Automatic destruction closure for every shown child is not established by this packet. Supplemental draft list viewport does not show every namespace at once; protected-row retention is established by exact assertions.",
+        "Validation is Linux only; Windows and macOS are deferred. No parent, alias, fade, renderer or other-family completion credit."
       ],
       "descendant_count": 0,
       "descendant_status_counts": {},
       "unique_feature_descendant_count": 0,
       "unique_reachable_feature_count_including_shared": 1,
-      "native_id_candidates": []
+      "native_id_candidates": [],
+      "remaining": [],
+      "implementation_validation": {
+        "source_commit": "4b5e7ae151c2317bf83ef0aad8e9a0161f9a498d",
+        "ci": "passed",
+        "tests_executed_at_checkpoint": true,
+        "native_render_review": "passed",
+        "manifest": "docs/rust/gui-coverage/parity/namespace-colour-controls.json",
+        "review_required": false,
+        "run_url": "https://github.com/jkendall327/hydrus-mine/actions/runs/37551810449",
+        "validation_scope": "linux",
+        "required_platforms": [
+          "linux"
+        ],
+        "deferred_platforms": [
+          "windows",
+          "macos"
+        ],
+        "independent_review_evidence": {
+          "path": "docs/rust/gui-coverage/checkpoints/4b5e7ae15/final-review-2-4b5e7ae15.json",
+          "sha256": "7ce38c851bc0fdd53fa1ceb010727012455e93ef79e3152dd7015543c06d9b0e"
+        },
+        "publication_policy": {
+          "path": ".github/publication-validation.json",
+          "source_commit": "4b5e7ae151c2317bf83ef0aad8e9a0161f9a498d",
+          "sha256": "49723bd5d6b786392a1368bb3da1406747a553ef31c9de2bdef92cea5d014c5f",
+          "effective_date": "2026-10-06",
+          "reason": "The owner uses Linux and prioritizes validated Linux delivery. macOS is low priority; Windows is deferred because its builds materially lengthen validation. Secondary-platform CI remains available by explicit opt-in."
+        }
+      }
     },
     {
       "id": "audit-options-tag-sort-tag-sort",
@@ -161724,12 +162209,12 @@
       "line_count": 430
     },
     "docs/rust/DIFFERENCES.md": {
-      "sha256": "33a5de7cee680a36e73594a3642d4bd6701c379397bcabb49ed25727d02bdb45",
-      "line_count": 3719
+      "sha256": "081a2dee61329c607f2afdccebac2aea0372dbb7f8da59c7ab3c853ec5554f0b",
+      "line_count": 3730
     },
     "docs/rust/GUI.md": {
-      "sha256": "cfda0344c1222e3c87357e0c2cd558795ed3f297e8962307fda741385b8bb0e2",
-      "line_count": 4592
+      "sha256": "ddb17f1f3ad5e262156de1629c2577f5672c922ebd2da1def1ffcde00e1c2bf9",
+      "line_count": 4602
     },
     "crates/hydrus-gui/tests/gui/subscriptions.rs": {
       "sha256": "c844a8f1c46f74881f0d85628e69792fea477390ffda6bbeb6aa2c51c61d0c8b",
@@ -162024,7 +162509,7 @@
       "line_count": 206
     },
     "docs/rust/ROADMAP.md": {
-      "sha256": "2fc62f07b9da5aa6ed2aca89c8bacd7eeba54273588cd5cb97ba994ba3d5e3e1",
+      "sha256": "7b328fd183bc718dfa29672aab1e267e89a0489fd4dc1ec9262e44b17623e339",
       "line_count": 429
     },
     "hydrus/client/gui/metadata/ClientGUIMigrateTags.py": {
@@ -163900,8 +164385,8 @@
       "line_count": 31
     },
     "crates/hydrus-gui/ui/session_dialog.slint": {
-      "sha256": "d93e0078b6aae0bffeba569724c77cbe5047b5ffd759f9a91748295788a0d888",
-      "line_count": 123
+      "sha256": "e0e95b66f749c57ecae8b74597345704e9e9a793304c2fa1807327673d011518",
+      "line_count": 154
     },
     "oracle/fixtures/namespace_sorts.json": {
       "sha256": "5d4ad1dae8a293e889d116e6e1d873ab3844a69acf5129de43c7aa1bd6949a57",
@@ -165816,8 +166301,8 @@
       "line_count": 829
     },
     "crates/hydrus-gui/tests/gui/namespace_colours.rs": {
-      "sha256": "ae6233299118dac7ad551b59b2cf009c4302aa50dc0ab42c20cb3cefa76e57d1",
-      "line_count": 559
+      "sha256": "b8daf25973ca2016b0c9928016c3b050134943ba128fbd5e1f6c26a9a0ba0c58",
+      "line_count": 919
     },
     "crates/hydrus-gui/ui/debug_fetch.slint": {
       "sha256": "78032be3b19b53c2348b4d032c52a9dc686edfb08044b27f7aa353966c37f5dd",
@@ -165840,8 +166325,8 @@
       "line_count": 100
     },
     "crates/hydrus-gui/src/options_namespace_colours.rs": {
-      "sha256": "729af94003e886432471e4bbd05298351abb51b0578dbe4c79977e8745550cc0",
-      "line_count": 337
+      "sha256": "b7615f23f841d6fc53301a9a56b3adba9c2df8973b1e768442d273bdd191ab82",
+      "line_count": 397
     },
     "crates/hydrus-gui/tests/gui/archive_delete_policies.rs": {
       "sha256": "8b532e1fe98bbdf6185bcdb5ac833e1222a4b43a398416e411fba5ae088c812d",
@@ -166742,13 +167227,21 @@
     "crates/hydrus-gui/ui/tag_suggestions.slint": {
       "sha256": "35865ee4d39a68ff2e82eef06935ad93c5acb04112baf8a1a3dae7686b0d6a78",
       "line_count": 76
+    },
+    "oracle/record_namespace_entry_validation.py": {
+      "sha256": "34ba57eb6fb4855bfa0684b2e0859cedae0e120b1d1be7b3208de546a092a5ea",
+      "line_count": 126
+    },
+    "oracle/fixtures/namespace_entry_validation.json": {
+      "sha256": "010ac752f33842aa9329b1d93be1275367764f32f168235d5b7bbab5a9ab2442",
+      "line_count": 1137
     }
   },
   "source_anchor_audit": {
-    "git_head": "e886e68ed9c49751617bcf28df50957d99e3c03e",
-    "unique_anchors_checked": 5554,
+    "git_head": "4b5e7ae151c2317bf83ef0aad8e9a0161f9a498d",
+    "unique_anchors_checked": 5570,
     "method": "Git blob equality or uniquely unchanged line/context; line fingerprints verified",
-    "prior_git_head": "05000f10eafc4211d6856549d0073edb90ba5811"
+    "prior_git_head": "e886e68ed9c49751617bcf28df50957d99e3c03e"
   },
   "aggregation_schema": "concrete_features_v2",
   "curation": {
@@ -166776,17 +167269,18 @@
       "docs/rust/gui-coverage/audit/anchor-remap-c768fef4-publication.json",
       "docs/rust/gui-coverage/audit/anchor-remap-63f9e35a-publication.json",
       "docs/rust/gui-coverage/audit/anchor-remap-05000f10-publication.json",
-      "docs/rust/gui-coverage/audit/anchor-remap-e886e68e-publication.json"
+      "docs/rust/gui-coverage/audit/anchor-remap-e886e68e-publication.json",
+      "docs/rust/gui-coverage/audit/anchor-remap-4b5e7ae1-publication.json"
     ],
     "status_assignment": "Curated per node; generator checks structure/provenance and does not assess runtime behavior.",
     "independent_review": "Depth checklist, repeated-label option contexts, advanced numeric limits and source-only first-pass evidence reviewed; corrected scopes are preserved in supplemental audit patches.",
     "baseline_method": "Reference/native source inspection with scoped existing recording and assertion review; no behavior tests executed by this inventory audit."
   },
-  "generated_at_utc": "2026-10-06T23:56:22.060596+00:00",
+  "generated_at_utc": "2026-10-07T01:41:11.394078+00:00",
   "overnight_progress": {
     "goal": 80,
-    "milestone": 341,
-    "concrete_implementation_completions": 341,
+    "milestone": 343,
+    "concrete_implementation_completions": 343,
     "completed_feature_ids": [
       "audit-media-menu-database-clear-clear-all-file-viewing-statistics",
       "audit-media-menu-database-clear-cull-file-viewing-statistics-based-on-current-min-max-values",
@@ -167076,6 +167570,8 @@
       "audit-options-tag-editing-tag-edit-autocomplete-when-pasting-multiline-content-into-a-write-autocomplete-skip-the-yes-no-check",
       "audit-options-tag-presentation-default-taglist-display-type-advanced-tag-display-type-for-new-media-viewer-taglists",
       "audit-options-tag-presentation-default-taglist-display-type-advanced-tag-display-type-for-new-page-sidebar-taglists",
+      "audit-options-tag-presentation-namespace-colours-add",
+      "audit-options-tag-presentation-namespace-colours-delete",
       "audit-options-tag-presentation-other-rendering-fade-the-colour-of-the-sibling-connector-string-on-qt6",
       "audit-options-tag-presentation-other-rendering-namespace-for-the-colour-of-the-sibling-connecting-string",
       "audit-options-tag-presentation-other-rendering-namespace-for-the-or-top-row",
@@ -167137,8 +167633,8 @@
     },
     "after": {
       "partial": 388,
-      "first_pass": 942,
-      "missing": 482
+      "first_pass": 944,
+      "missing": 480
     },
     "validation_summary": "Exact successful hosted Linux check and parity-models jobs. Windows and macOS validation is deferred under the exact-source owner policy. Source inspection and author reference-recording provenance are separate; no local Cargo or mutation testing by this tool.",
     "validation_scope": "linux",
@@ -167149,18 +167645,18 @@
       "windows",
       "macos"
     ],
-    "source_commit": "e886e68ed9c49751617bcf28df50957d99e3c03e",
+    "source_commit": "4b5e7ae151c2317bf83ef0aad8e9a0161f9a498d",
     "ci_evidence": {
-      "head_sha": "e886e68ed9c49751617bcf28df50957d99e3c03e",
+      "head_sha": "4b5e7ae151c2317bf83ef0aad8e9a0161f9a498d",
       "status": "completed",
       "conclusion": "success",
       "run_attempt": 1,
-      "created_at": "2026-10-06T22:27:58Z",
-      "run_started_at": "2026-10-06T22:27:58Z",
-      "updated_at": "2026-10-06T23:01:47Z",
-      "source_commit": "e886e68ed9c49751617bcf28df50957d99e3c03e",
-      "run_id": 37540746618,
-      "url": "https://github.com/jkendall327/hydrus-mine/actions/runs/37540746618",
+      "created_at": "2026-10-07T00:24:38Z",
+      "run_started_at": "2026-10-07T00:24:38Z",
+      "updated_at": "2026-10-07T01:37:03Z",
+      "source_commit": "4b5e7ae151c2317bf83ef0aad8e9a0161f9a498d",
+      "run_id": 37551810449,
+      "url": "https://github.com/jkendall327/hydrus-mine/actions/runs/37551810449",
       "validation_scope": "linux",
       "required_platforms": [
         "linux"
@@ -167171,21 +167667,21 @@
       ],
       "jobs": [
         {
-          "id": 112532877849,
-          "run_id": 37540746618,
+          "id": 112568817473,
+          "run_id": 37551810449,
           "workflow_name": "rust",
           "head_branch": "codex/validation-runner",
-          "run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/runs/37540746618",
+          "run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/runs/37551810449",
           "run_attempt": 1,
-          "node_id": "CR_kwDOUzlbIs8AAAAaM3tyGQ",
-          "head_sha": "e886e68ed9c49751617bcf28df50957d99e3c03e",
-          "url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/jobs/112532877849",
-          "html_url": "https://github.com/jkendall327/hydrus-mine/actions/runs/37540746618/job/112532877849",
+          "node_id": "CR_kwDOUzlbIs8AAAAaNZ_XQQ",
+          "head_sha": "4b5e7ae151c2317bf83ef0aad8e9a0161f9a498d",
+          "url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/jobs/112568817473",
+          "html_url": "https://github.com/jkendall327/hydrus-mine/actions/runs/37551810449/job/112568817473",
           "status": "completed",
           "conclusion": "success",
-          "created_at": "2026-10-06T22:28:00Z",
-          "started_at": "2026-10-06T22:28:02Z",
-          "completed_at": "2026-10-06T22:32:13Z",
+          "created_at": "2026-10-07T00:24:39Z",
+          "started_at": "2026-10-07T00:24:41Z",
+          "completed_at": "2026-10-07T00:27:57Z",
           "name": "parity-models",
           "steps": [
             {
@@ -167193,99 +167689,99 @@
               "status": "completed",
               "conclusion": "success",
               "number": 1,
-              "started_at": "2026-10-06T22:28:02Z",
-              "completed_at": "2026-10-06T22:28:03Z"
+              "started_at": "2026-10-07T00:24:42Z",
+              "completed_at": "2026-10-07T00:24:43Z"
             },
             {
               "name": "Run actions/checkout@v4",
               "status": "completed",
               "conclusion": "success",
               "number": 2,
-              "started_at": "2026-10-06T22:28:04Z",
-              "completed_at": "2026-10-06T22:28:15Z"
+              "started_at": "2026-10-07T00:24:43Z",
+              "completed_at": "2026-10-07T00:24:53Z"
             },
             {
               "name": "Run dtolnay/rust-toolchain@master",
               "status": "completed",
               "conclusion": "success",
               "number": 3,
-              "started_at": "2026-10-06T22:28:15Z",
-              "completed_at": "2026-10-06T22:28:24Z"
+              "started_at": "2026-10-07T00:24:53Z",
+              "completed_at": "2026-10-07T00:24:59Z"
             },
             {
               "name": "Run Swatinem/rust-cache@v2",
               "status": "completed",
               "conclusion": "success",
               "number": 4,
-              "started_at": "2026-10-06T22:28:24Z",
-              "completed_at": "2026-10-06T22:28:34Z"
+              "started_at": "2026-10-07T00:24:59Z",
+              "completed_at": "2026-10-07T00:25:13Z"
             },
             {
               "name": "install media tools",
               "status": "completed",
               "conclusion": "success",
               "number": 5,
-              "started_at": "2026-10-06T22:28:34Z",
-              "completed_at": "2026-10-06T22:28:55Z"
+              "started_at": "2026-10-07T00:25:13Z",
+              "completed_at": "2026-10-07T00:25:37Z"
             },
             {
               "name": "reference and backend tests",
               "status": "completed",
               "conclusion": "success",
               "number": 6,
-              "started_at": "2026-10-06T22:28:55Z",
-              "completed_at": "2026-10-06T22:32:10Z"
+              "started_at": "2026-10-07T00:25:37Z",
+              "completed_at": "2026-10-07T00:27:55Z"
             },
             {
               "name": "Post Run Swatinem/rust-cache@v2",
               "status": "completed",
               "conclusion": "success",
               "number": 11,
-              "started_at": "2026-10-06T22:32:10Z",
-              "completed_at": "2026-10-06T22:32:11Z"
+              "started_at": "2026-10-07T00:27:55Z",
+              "completed_at": "2026-10-07T00:27:55Z"
             },
             {
               "name": "Post Run actions/checkout@v4",
               "status": "completed",
               "conclusion": "success",
               "number": 12,
-              "started_at": "2026-10-06T22:32:11Z",
-              "completed_at": "2026-10-06T22:32:11Z"
+              "started_at": "2026-10-07T00:27:55Z",
+              "completed_at": "2026-10-07T00:27:55Z"
             },
             {
               "name": "Complete job",
               "status": "completed",
               "conclusion": "success",
               "number": 13,
-              "started_at": "2026-10-06T22:32:11Z",
-              "completed_at": "2026-10-06T22:32:11Z"
+              "started_at": "2026-10-07T00:27:55Z",
+              "completed_at": "2026-10-07T00:27:55Z"
             }
           ],
-          "check_run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/check-runs/112532877849",
+          "check_run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/check-runs/112568817473",
           "labels": [
             "ubuntu-latest"
           ],
-          "runner_id": 1000003491,
-          "runner_name": "GitHub Actions 1000003491",
+          "runner_id": 1000003504,
+          "runner_name": "GitHub Actions 1000003504",
           "runner_group_id": 0,
           "runner_group_name": "GitHub Actions"
         },
         {
-          "id": 112532878374,
-          "run_id": 37540746618,
+          "id": 112568817700,
+          "run_id": 37551810449,
           "workflow_name": "rust",
           "head_branch": "codex/validation-runner",
-          "run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/runs/37540746618",
+          "run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/runs/37551810449",
           "run_attempt": 1,
-          "node_id": "CR_kwDOUzlbIs8AAAAaM3t0Jg",
-          "head_sha": "e886e68ed9c49751617bcf28df50957d99e3c03e",
-          "url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/jobs/112532878374",
-          "html_url": "https://github.com/jkendall327/hydrus-mine/actions/runs/37540746618/job/112532878374",
+          "node_id": "CR_kwDOUzlbIs8AAAAaNZ_YJA",
+          "head_sha": "4b5e7ae151c2317bf83ef0aad8e9a0161f9a498d",
+          "url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/jobs/112568817700",
+          "html_url": "https://github.com/jkendall327/hydrus-mine/actions/runs/37551810449/job/112568817700",
           "status": "completed",
           "conclusion": "success",
-          "created_at": "2026-10-06T22:28:00Z",
-          "started_at": "2026-10-06T22:28:02Z",
-          "completed_at": "2026-10-06T23:01:38Z",
+          "created_at": "2026-10-07T00:24:39Z",
+          "started_at": "2026-10-07T00:24:41Z",
+          "completed_at": "2026-10-07T01:36:57Z",
           "name": "check",
           "steps": [
             {
@@ -167293,216 +167789,216 @@
               "status": "completed",
               "conclusion": "success",
               "number": 1,
-              "started_at": "2026-10-06T22:28:03Z",
-              "completed_at": "2026-10-06T22:28:04Z"
+              "started_at": "2026-10-07T00:24:42Z",
+              "completed_at": "2026-10-07T00:24:43Z"
             },
             {
               "name": "Run actions/checkout@v4",
               "status": "completed",
               "conclusion": "success",
               "number": 2,
-              "started_at": "2026-10-06T22:28:04Z",
-              "completed_at": "2026-10-06T22:28:15Z"
+              "started_at": "2026-10-07T00:24:43Z",
+              "completed_at": "2026-10-07T00:24:54Z"
             },
             {
               "name": "Run dtolnay/rust-toolchain@master",
               "status": "completed",
               "conclusion": "success",
               "number": 3,
-              "started_at": "2026-10-06T22:28:15Z",
-              "completed_at": "2026-10-06T22:28:25Z"
+              "started_at": "2026-10-07T00:24:54Z",
+              "completed_at": "2026-10-07T00:25:02Z"
             },
             {
               "name": "Run Swatinem/rust-cache@v2",
               "status": "completed",
               "conclusion": "success",
               "number": 4,
-              "started_at": "2026-10-06T22:28:25Z",
-              "completed_at": "2026-10-06T22:28:41Z"
+              "started_at": "2026-10-07T00:25:02Z",
+              "completed_at": "2026-10-07T00:25:03Z"
             },
             {
               "name": "workspace cache safety regressions",
               "status": "completed",
               "conclusion": "success",
               "number": 5,
-              "started_at": "2026-10-06T22:28:41Z",
-              "completed_at": "2026-10-06T22:28:42Z"
+              "started_at": "2026-10-07T00:25:03Z",
+              "completed_at": "2026-10-07T00:25:04Z"
             },
             {
               "name": "workspace artifact compatibility key",
               "status": "completed",
               "conclusion": "success",
               "number": 6,
-              "started_at": "2026-10-06T22:28:42Z",
-              "completed_at": "2026-10-06T22:28:42Z"
+              "started_at": "2026-10-07T00:25:04Z",
+              "completed_at": "2026-10-07T00:25:04Z"
             },
             {
               "name": "restore rolling workspace libraries",
               "status": "completed",
               "conclusion": "success",
               "number": 7,
-              "started_at": "2026-10-06T22:28:42Z",
-              "completed_at": "2026-10-06T22:28:43Z"
+              "started_at": "2026-10-07T00:25:04Z",
+              "completed_at": "2026-10-07T00:25:04Z"
             },
             {
               "name": "merge restored workspace libraries",
               "status": "completed",
               "conclusion": "success",
               "number": 8,
-              "started_at": "2026-10-06T22:28:43Z",
-              "completed_at": "2026-10-06T22:28:44Z"
+              "started_at": "2026-10-07T00:25:04Z",
+              "completed_at": "2026-10-07T00:25:05Z"
             },
             {
               "name": "fail closed on uncertain workspace restore",
               "status": "completed",
               "conclusion": "skipped",
               "number": 9,
-              "started_at": "2026-10-06T22:28:44Z",
-              "completed_at": "2026-10-06T22:28:44Z"
+              "started_at": "2026-10-07T00:25:05Z",
+              "completed_at": "2026-10-07T00:25:05Z"
             },
             {
               "name": "install media tools, and fontconfig for the GUI",
               "status": "completed",
               "conclusion": "success",
               "number": 10,
-              "started_at": "2026-10-06T22:28:44Z",
-              "completed_at": "2026-10-06T22:29:07Z"
+              "started_at": "2026-10-07T00:25:05Z",
+              "completed_at": "2026-10-07T00:25:36Z"
             },
             {
               "name": "fmt",
               "status": "completed",
               "conclusion": "success",
               "number": 11,
-              "started_at": "2026-10-06T22:29:07Z",
-              "completed_at": "2026-10-06T22:29:12Z"
+              "started_at": "2026-10-07T00:25:36Z",
+              "completed_at": "2026-10-07T00:25:42Z"
             },
             {
               "name": "GUI artifact runner tests",
               "status": "completed",
               "conclusion": "success",
               "number": 12,
-              "started_at": "2026-10-06T22:29:12Z",
-              "completed_at": "2026-10-06T22:29:12Z"
+              "started_at": "2026-10-07T00:25:42Z",
+              "completed_at": "2026-10-07T00:25:43Z"
             },
             {
               "name": "clippy",
               "status": "completed",
               "conclusion": "success",
               "number": 13,
-              "started_at": "2026-10-06T22:29:12Z",
-              "completed_at": "2026-10-06T22:41:53Z"
+              "started_at": "2026-10-07T00:25:43Z",
+              "completed_at": "2026-10-07T01:01:54Z"
             },
             {
               "name": "save immediate Clippy diagnostics",
               "status": "completed",
               "conclusion": "success",
               "number": 14,
-              "started_at": "2026-10-06T22:41:53Z",
-              "completed_at": "2026-10-06T22:41:54Z"
+              "started_at": "2026-10-07T01:01:54Z",
+              "completed_at": "2026-10-07T01:01:55Z"
             },
             {
               "name": "test",
               "status": "completed",
               "conclusion": "success",
               "number": 15,
-              "started_at": "2026-10-06T22:41:54Z",
-              "completed_at": "2026-10-06T23:01:21Z"
+              "started_at": "2026-10-07T01:01:55Z",
+              "completed_at": "2026-10-07T01:35:56Z"
             },
             {
               "name": "save immediate test diagnostics",
               "status": "completed",
               "conclusion": "success",
               "number": 16,
-              "started_at": "2026-10-06T23:01:21Z",
-              "completed_at": "2026-10-06T23:01:22Z"
+              "started_at": "2026-10-07T01:35:56Z",
+              "completed_at": "2026-10-07T01:35:57Z"
             },
             {
               "name": "parity ratchet",
               "status": "completed",
               "conclusion": "success",
               "number": 17,
-              "started_at": "2026-10-06T23:01:22Z",
-              "completed_at": "2026-10-06T23:01:23Z"
+              "started_at": "2026-10-07T01:35:57Z",
+              "completed_at": "2026-10-07T01:36:21Z"
             },
             {
               "name": "save native GUI renders",
               "status": "completed",
               "conclusion": "success",
               "number": 18,
-              "started_at": "2026-10-06T23:01:23Z",
-              "completed_at": "2026-10-06T23:01:25Z"
+              "started_at": "2026-10-07T01:36:21Z",
+              "completed_at": "2026-10-07T01:36:23Z"
             },
             {
               "name": "stage bounded workspace libraries",
               "status": "completed",
               "conclusion": "success",
               "number": 19,
-              "started_at": "2026-10-06T23:01:25Z",
-              "completed_at": "2026-10-06T23:01:30Z"
+              "started_at": "2026-10-07T01:36:23Z",
+              "completed_at": "2026-10-07T01:36:28Z"
             },
             {
               "name": "save rolling workspace libraries",
               "status": "completed",
               "conclusion": "success",
               "number": 20,
-              "started_at": "2026-10-06T23:01:30Z",
-              "completed_at": "2026-10-06T23:01:36Z"
+              "started_at": "2026-10-07T01:36:28Z",
+              "completed_at": "2026-10-07T01:36:34Z"
             },
             {
               "name": "Post Run Swatinem/rust-cache@v2",
               "status": "completed",
               "conclusion": "success",
               "number": 39,
-              "started_at": "2026-10-06T23:01:36Z",
-              "completed_at": "2026-10-06T23:01:36Z"
+              "started_at": "2026-10-07T01:36:34Z",
+              "completed_at": "2026-10-07T01:36:55Z"
             },
             {
               "name": "Post Run actions/checkout@v4",
               "status": "completed",
               "conclusion": "success",
               "number": 40,
-              "started_at": "2026-10-06T23:01:36Z",
-              "completed_at": "2026-10-06T23:01:36Z"
+              "started_at": "2026-10-07T01:36:55Z",
+              "completed_at": "2026-10-07T01:36:55Z"
             },
             {
               "name": "Complete job",
               "status": "completed",
               "conclusion": "success",
               "number": 41,
-              "started_at": "2026-10-06T23:01:36Z",
-              "completed_at": "2026-10-06T23:01:36Z"
+              "started_at": "2026-10-07T01:36:55Z",
+              "completed_at": "2026-10-07T01:36:55Z"
             }
           ],
-          "check_run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/check-runs/112532878374",
+          "check_run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/check-runs/112568817700",
           "labels": [
             "ubuntu-24.04"
           ],
-          "runner_id": 1000003492,
-          "runner_name": "GitHub Actions 1000003492",
+          "runner_id": 1000003505,
+          "runner_name": "GitHub Actions 1000003505",
           "runner_group_id": 0,
           "runner_group_name": "GitHub Actions"
         }
       ],
       "auxiliary_jobs": [
         {
-          "id": 112532879274,
-          "run_id": 37540746618,
+          "id": 112568818347,
+          "run_id": 37551810449,
           "workflow_name": "rust",
           "head_branch": "codex/validation-runner",
-          "run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/runs/37540746618",
+          "run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/runs/37551810449",
           "run_attempt": 1,
-          "node_id": "CR_kwDOUzlbIs8AAAAaM3t3qg",
-          "head_sha": "e886e68ed9c49751617bcf28df50957d99e3c03e",
-          "url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/jobs/112532879274",
-          "html_url": "https://github.com/jkendall327/hydrus-mine/actions/runs/37540746618/job/112532879274",
+          "node_id": "CR_kwDOUzlbIs8AAAAaNZ_aqw",
+          "head_sha": "4b5e7ae151c2317bf83ef0aad8e9a0161f9a498d",
+          "url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/jobs/112568818347",
+          "html_url": "https://github.com/jkendall327/hydrus-mine/actions/runs/37551810449/job/112568818347",
           "status": "completed",
           "conclusion": "skipped",
-          "created_at": "2026-10-06T22:28:00Z",
-          "started_at": "2026-10-06T22:28:00Z",
-          "completed_at": "2026-10-06T22:28:00Z",
+          "created_at": "2026-10-07T00:24:40Z",
+          "started_at": "2026-10-07T00:24:40Z",
+          "completed_at": "2026-10-07T00:24:39Z",
           "name": "quick-check",
           "steps": [],
-          "check_run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/check-runs/112532879274",
+          "check_run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/check-runs/112568818347",
           "labels": [
             "ubuntu-24.04"
           ],
@@ -167512,24 +168008,24 @@
           "runner_group_name": null
         },
         {
-          "id": 112532879783,
-          "run_id": 37540746618,
+          "id": 112568818542,
+          "run_id": 37551810449,
           "workflow_name": "rust",
           "head_branch": "codex/validation-runner",
-          "run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/runs/37540746618",
+          "run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/runs/37551810449",
           "run_attempt": 1,
-          "node_id": "CR_kwDOUzlbIs8AAAAaM3t5pw",
-          "head_sha": "e886e68ed9c49751617bcf28df50957d99e3c03e",
-          "url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/jobs/112532879783",
-          "html_url": "https://github.com/jkendall327/hydrus-mine/actions/runs/37540746618/job/112532879783",
+          "node_id": "CR_kwDOUzlbIs8AAAAaNZ_bbg",
+          "head_sha": "4b5e7ae151c2317bf83ef0aad8e9a0161f9a498d",
+          "url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/jobs/112568818542",
+          "html_url": "https://github.com/jkendall327/hydrus-mine/actions/runs/37551810449/job/112568818542",
           "status": "completed",
           "conclusion": "skipped",
-          "created_at": "2026-10-06T22:28:00Z",
-          "started_at": "2026-10-06T22:28:00Z",
-          "completed_at": "2026-10-06T22:28:00Z",
+          "created_at": "2026-10-07T00:24:40Z",
+          "started_at": "2026-10-07T00:24:40Z",
+          "completed_at": "2026-10-07T00:24:39Z",
           "name": "other-platforms",
           "steps": [],
-          "check_run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/check-runs/112532879783",
+          "check_run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/check-runs/112568818542",
           "labels": [],
           "runner_id": null,
           "runner_name": null,
@@ -167542,21 +168038,21 @@
           ]
         },
         {
-          "id": 112544121806,
-          "run_id": 37540746618,
+          "id": 112588531819,
+          "run_id": 37551810449,
           "workflow_name": "rust",
           "head_branch": "codex/validation-runner",
-          "run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/runs/37540746618",
+          "run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/runs/37551810449",
           "run_attempt": 1,
-          "node_id": "CR_kwDOUzlbIs8AAAAaNCcDzg",
-          "head_sha": "e886e68ed9c49751617bcf28df50957d99e3c03e",
-          "url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/jobs/112544121806",
-          "html_url": "https://github.com/jkendall327/hydrus-mine/actions/runs/37540746618/job/112544121806",
+          "node_id": "CR_kwDOUzlbIs8AAAAaNsyoaw",
+          "head_sha": "4b5e7ae151c2317bf83ef0aad8e9a0161f9a498d",
+          "url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/jobs/112588531819",
+          "html_url": "https://github.com/jkendall327/hydrus-mine/actions/runs/37551810449/job/112588531819",
           "status": "completed",
           "conclusion": "success",
-          "created_at": "2026-10-06T23:01:38Z",
-          "started_at": "2026-10-06T23:01:42Z",
-          "completed_at": "2026-10-06T23:01:47Z",
+          "created_at": "2026-10-07T01:36:57Z",
+          "started_at": "2026-10-07T01:36:59Z",
+          "completed_at": "2026-10-07T01:37:02Z",
           "name": "workspace-cache-maintenance",
           "steps": [
             {
@@ -167564,32 +168060,32 @@
               "status": "completed",
               "conclusion": "success",
               "number": 1,
-              "started_at": "2026-10-06T23:01:43Z",
-              "completed_at": "2026-10-06T23:01:44Z"
+              "started_at": "2026-10-07T01:36:59Z",
+              "completed_at": "2026-10-07T01:37:00Z"
             },
             {
               "name": "bound workspace cache snapshots",
               "status": "completed",
               "conclusion": "success",
               "number": 2,
-              "started_at": "2026-10-06T23:01:44Z",
-              "completed_at": "2026-10-06T23:01:44Z"
+              "started_at": "2026-10-07T01:37:00Z",
+              "completed_at": "2026-10-07T01:37:01Z"
             },
             {
               "name": "Complete job",
               "status": "completed",
               "conclusion": "success",
               "number": 3,
-              "started_at": "2026-10-06T23:01:44Z",
-              "completed_at": "2026-10-06T23:01:44Z"
+              "started_at": "2026-10-07T01:37:01Z",
+              "completed_at": "2026-10-07T01:37:01Z"
             }
           ],
-          "check_run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/check-runs/112544121806",
+          "check_run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/check-runs/112588531819",
           "labels": [
             "ubuntu-24.04"
           ],
-          "runner_id": 1000003495,
-          "runner_name": "GitHub Actions 1000003495",
+          "runner_id": 1000003506,
+          "runner_name": "GitHub Actions 1000003506",
           "runner_group_id": 0,
           "runner_group_name": "GitHub Actions"
         }
@@ -167601,7 +168097,7 @@
       },
       "publication_policy": {
         "path": ".github/publication-validation.json",
-        "source_commit": "e886e68ed9c49751617bcf28df50957d99e3c03e",
+        "source_commit": "4b5e7ae151c2317bf83ef0aad8e9a0161f9a498d",
         "sha256": "49723bd5d6b786392a1368bb3da1406747a553ef31c9de2bdef92cea5d014c5f",
         "effective_date": "2026-10-06",
         "reason": "The owner uses Linux and prioritizes validated Linux delivery. macOS is low priority; Windows is deferred because its builds materially lengthen validation. Secondary-platform CI remains available by explicit opt-in."
@@ -167611,16 +168107,16 @@
     "counting_method": "Frozen 1,812 original IDs; explicit reviewed concrete implementation leaves only; parents, aliases, evidence-only changes and native IDs excluded."
   },
   "runtime_validation": {
-    "head_sha": "e886e68ed9c49751617bcf28df50957d99e3c03e",
+    "head_sha": "4b5e7ae151c2317bf83ef0aad8e9a0161f9a498d",
     "status": "completed",
     "conclusion": "success",
     "run_attempt": 1,
-    "created_at": "2026-10-06T22:27:58Z",
-    "run_started_at": "2026-10-06T22:27:58Z",
-    "updated_at": "2026-10-06T23:01:47Z",
-    "source_commit": "e886e68ed9c49751617bcf28df50957d99e3c03e",
-    "run_id": 37540746618,
-    "url": "https://github.com/jkendall327/hydrus-mine/actions/runs/37540746618",
+    "created_at": "2026-10-07T00:24:38Z",
+    "run_started_at": "2026-10-07T00:24:38Z",
+    "updated_at": "2026-10-07T01:37:03Z",
+    "source_commit": "4b5e7ae151c2317bf83ef0aad8e9a0161f9a498d",
+    "run_id": 37551810449,
+    "url": "https://github.com/jkendall327/hydrus-mine/actions/runs/37551810449",
     "validation_scope": "linux",
     "required_platforms": [
       "linux"
@@ -167631,21 +168127,21 @@
     ],
     "jobs": [
       {
-        "id": 112532877849,
-        "run_id": 37540746618,
+        "id": 112568817473,
+        "run_id": 37551810449,
         "workflow_name": "rust",
         "head_branch": "codex/validation-runner",
-        "run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/runs/37540746618",
+        "run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/runs/37551810449",
         "run_attempt": 1,
-        "node_id": "CR_kwDOUzlbIs8AAAAaM3tyGQ",
-        "head_sha": "e886e68ed9c49751617bcf28df50957d99e3c03e",
-        "url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/jobs/112532877849",
-        "html_url": "https://github.com/jkendall327/hydrus-mine/actions/runs/37540746618/job/112532877849",
+        "node_id": "CR_kwDOUzlbIs8AAAAaNZ_XQQ",
+        "head_sha": "4b5e7ae151c2317bf83ef0aad8e9a0161f9a498d",
+        "url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/jobs/112568817473",
+        "html_url": "https://github.com/jkendall327/hydrus-mine/actions/runs/37551810449/job/112568817473",
         "status": "completed",
         "conclusion": "success",
-        "created_at": "2026-10-06T22:28:00Z",
-        "started_at": "2026-10-06T22:28:02Z",
-        "completed_at": "2026-10-06T22:32:13Z",
+        "created_at": "2026-10-07T00:24:39Z",
+        "started_at": "2026-10-07T00:24:41Z",
+        "completed_at": "2026-10-07T00:27:57Z",
         "name": "parity-models",
         "steps": [
           {
@@ -167653,99 +168149,99 @@
             "status": "completed",
             "conclusion": "success",
             "number": 1,
-            "started_at": "2026-10-06T22:28:02Z",
-            "completed_at": "2026-10-06T22:28:03Z"
+            "started_at": "2026-10-07T00:24:42Z",
+            "completed_at": "2026-10-07T00:24:43Z"
           },
           {
             "name": "Run actions/checkout@v4",
             "status": "completed",
             "conclusion": "success",
             "number": 2,
-            "started_at": "2026-10-06T22:28:04Z",
-            "completed_at": "2026-10-06T22:28:15Z"
+            "started_at": "2026-10-07T00:24:43Z",
+            "completed_at": "2026-10-07T00:24:53Z"
           },
           {
             "name": "Run dtolnay/rust-toolchain@master",
             "status": "completed",
             "conclusion": "success",
             "number": 3,
-            "started_at": "2026-10-06T22:28:15Z",
-            "completed_at": "2026-10-06T22:28:24Z"
+            "started_at": "2026-10-07T00:24:53Z",
+            "completed_at": "2026-10-07T00:24:59Z"
           },
           {
             "name": "Run Swatinem/rust-cache@v2",
             "status": "completed",
             "conclusion": "success",
             "number": 4,
-            "started_at": "2026-10-06T22:28:24Z",
-            "completed_at": "2026-10-06T22:28:34Z"
+            "started_at": "2026-10-07T00:24:59Z",
+            "completed_at": "2026-10-07T00:25:13Z"
           },
           {
             "name": "install media tools",
             "status": "completed",
             "conclusion": "success",
             "number": 5,
-            "started_at": "2026-10-06T22:28:34Z",
-            "completed_at": "2026-10-06T22:28:55Z"
+            "started_at": "2026-10-07T00:25:13Z",
+            "completed_at": "2026-10-07T00:25:37Z"
           },
           {
             "name": "reference and backend tests",
             "status": "completed",
             "conclusion": "success",
             "number": 6,
-            "started_at": "2026-10-06T22:28:55Z",
-            "completed_at": "2026-10-06T22:32:10Z"
+            "started_at": "2026-10-07T00:25:37Z",
+            "completed_at": "2026-10-07T00:27:55Z"
           },
           {
             "name": "Post Run Swatinem/rust-cache@v2",
             "status": "completed",
             "conclusion": "success",
             "number": 11,
-            "started_at": "2026-10-06T22:32:10Z",
-            "completed_at": "2026-10-06T22:32:11Z"
+            "started_at": "2026-10-07T00:27:55Z",
+            "completed_at": "2026-10-07T00:27:55Z"
           },
           {
             "name": "Post Run actions/checkout@v4",
             "status": "completed",
             "conclusion": "success",
             "number": 12,
-            "started_at": "2026-10-06T22:32:11Z",
-            "completed_at": "2026-10-06T22:32:11Z"
+            "started_at": "2026-10-07T00:27:55Z",
+            "completed_at": "2026-10-07T00:27:55Z"
           },
           {
             "name": "Complete job",
             "status": "completed",
             "conclusion": "success",
             "number": 13,
-            "started_at": "2026-10-06T22:32:11Z",
-            "completed_at": "2026-10-06T22:32:11Z"
+            "started_at": "2026-10-07T00:27:55Z",
+            "completed_at": "2026-10-07T00:27:55Z"
           }
         ],
-        "check_run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/check-runs/112532877849",
+        "check_run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/check-runs/112568817473",
         "labels": [
           "ubuntu-latest"
         ],
-        "runner_id": 1000003491,
-        "runner_name": "GitHub Actions 1000003491",
+        "runner_id": 1000003504,
+        "runner_name": "GitHub Actions 1000003504",
         "runner_group_id": 0,
         "runner_group_name": "GitHub Actions"
       },
       {
-        "id": 112532878374,
-        "run_id": 37540746618,
+        "id": 112568817700,
+        "run_id": 37551810449,
         "workflow_name": "rust",
         "head_branch": "codex/validation-runner",
-        "run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/runs/37540746618",
+        "run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/runs/37551810449",
         "run_attempt": 1,
-        "node_id": "CR_kwDOUzlbIs8AAAAaM3t0Jg",
-        "head_sha": "e886e68ed9c49751617bcf28df50957d99e3c03e",
-        "url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/jobs/112532878374",
-        "html_url": "https://github.com/jkendall327/hydrus-mine/actions/runs/37540746618/job/112532878374",
+        "node_id": "CR_kwDOUzlbIs8AAAAaNZ_YJA",
+        "head_sha": "4b5e7ae151c2317bf83ef0aad8e9a0161f9a498d",
+        "url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/jobs/112568817700",
+        "html_url": "https://github.com/jkendall327/hydrus-mine/actions/runs/37551810449/job/112568817700",
         "status": "completed",
         "conclusion": "success",
-        "created_at": "2026-10-06T22:28:00Z",
-        "started_at": "2026-10-06T22:28:02Z",
-        "completed_at": "2026-10-06T23:01:38Z",
+        "created_at": "2026-10-07T00:24:39Z",
+        "started_at": "2026-10-07T00:24:41Z",
+        "completed_at": "2026-10-07T01:36:57Z",
         "name": "check",
         "steps": [
           {
@@ -167753,216 +168249,216 @@
             "status": "completed",
             "conclusion": "success",
             "number": 1,
-            "started_at": "2026-10-06T22:28:03Z",
-            "completed_at": "2026-10-06T22:28:04Z"
+            "started_at": "2026-10-07T00:24:42Z",
+            "completed_at": "2026-10-07T00:24:43Z"
           },
           {
             "name": "Run actions/checkout@v4",
             "status": "completed",
             "conclusion": "success",
             "number": 2,
-            "started_at": "2026-10-06T22:28:04Z",
-            "completed_at": "2026-10-06T22:28:15Z"
+            "started_at": "2026-10-07T00:24:43Z",
+            "completed_at": "2026-10-07T00:24:54Z"
           },
           {
             "name": "Run dtolnay/rust-toolchain@master",
             "status": "completed",
             "conclusion": "success",
             "number": 3,
-            "started_at": "2026-10-06T22:28:15Z",
-            "completed_at": "2026-10-06T22:28:25Z"
+            "started_at": "2026-10-07T00:24:54Z",
+            "completed_at": "2026-10-07T00:25:02Z"
           },
           {
             "name": "Run Swatinem/rust-cache@v2",
             "status": "completed",
             "conclusion": "success",
             "number": 4,
-            "started_at": "2026-10-06T22:28:25Z",
-            "completed_at": "2026-10-06T22:28:41Z"
+            "started_at": "2026-10-07T00:25:02Z",
+            "completed_at": "2026-10-07T00:25:03Z"
           },
           {
             "name": "workspace cache safety regressions",
             "status": "completed",
             "conclusion": "success",
             "number": 5,
-            "started_at": "2026-10-06T22:28:41Z",
-            "completed_at": "2026-10-06T22:28:42Z"
+            "started_at": "2026-10-07T00:25:03Z",
+            "completed_at": "2026-10-07T00:25:04Z"
           },
           {
             "name": "workspace artifact compatibility key",
             "status": "completed",
             "conclusion": "success",
             "number": 6,
-            "started_at": "2026-10-06T22:28:42Z",
-            "completed_at": "2026-10-06T22:28:42Z"
+            "started_at": "2026-10-07T00:25:04Z",
+            "completed_at": "2026-10-07T00:25:04Z"
           },
           {
             "name": "restore rolling workspace libraries",
             "status": "completed",
             "conclusion": "success",
             "number": 7,
-            "started_at": "2026-10-06T22:28:42Z",
-            "completed_at": "2026-10-06T22:28:43Z"
+            "started_at": "2026-10-07T00:25:04Z",
+            "completed_at": "2026-10-07T00:25:04Z"
           },
           {
             "name": "merge restored workspace libraries",
             "status": "completed",
             "conclusion": "success",
             "number": 8,
-            "started_at": "2026-10-06T22:28:43Z",
-            "completed_at": "2026-10-06T22:28:44Z"
+            "started_at": "2026-10-07T00:25:04Z",
+            "completed_at": "2026-10-07T00:25:05Z"
           },
           {
             "name": "fail closed on uncertain workspace restore",
             "status": "completed",
             "conclusion": "skipped",
             "number": 9,
-            "started_at": "2026-10-06T22:28:44Z",
-            "completed_at": "2026-10-06T22:28:44Z"
+            "started_at": "2026-10-07T00:25:05Z",
+            "completed_at": "2026-10-07T00:25:05Z"
           },
           {
             "name": "install media tools, and fontconfig for the GUI",
             "status": "completed",
             "conclusion": "success",
             "number": 10,
-            "started_at": "2026-10-06T22:28:44Z",
-            "completed_at": "2026-10-06T22:29:07Z"
+            "started_at": "2026-10-07T00:25:05Z",
+            "completed_at": "2026-10-07T00:25:36Z"
           },
           {
             "name": "fmt",
             "status": "completed",
             "conclusion": "success",
             "number": 11,
-            "started_at": "2026-10-06T22:29:07Z",
-            "completed_at": "2026-10-06T22:29:12Z"
+            "started_at": "2026-10-07T00:25:36Z",
+            "completed_at": "2026-10-07T00:25:42Z"
           },
           {
             "name": "GUI artifact runner tests",
             "status": "completed",
             "conclusion": "success",
             "number": 12,
-            "started_at": "2026-10-06T22:29:12Z",
-            "completed_at": "2026-10-06T22:29:12Z"
+            "started_at": "2026-10-07T00:25:42Z",
+            "completed_at": "2026-10-07T00:25:43Z"
           },
           {
             "name": "clippy",
             "status": "completed",
             "conclusion": "success",
             "number": 13,
-            "started_at": "2026-10-06T22:29:12Z",
-            "completed_at": "2026-10-06T22:41:53Z"
+            "started_at": "2026-10-07T00:25:43Z",
+            "completed_at": "2026-10-07T01:01:54Z"
           },
           {
             "name": "save immediate Clippy diagnostics",
             "status": "completed",
             "conclusion": "success",
             "number": 14,
-            "started_at": "2026-10-06T22:41:53Z",
-            "completed_at": "2026-10-06T22:41:54Z"
+            "started_at": "2026-10-07T01:01:54Z",
+            "completed_at": "2026-10-07T01:01:55Z"
           },
           {
             "name": "test",
             "status": "completed",
             "conclusion": "success",
             "number": 15,
-            "started_at": "2026-10-06T22:41:54Z",
-            "completed_at": "2026-10-06T23:01:21Z"
+            "started_at": "2026-10-07T01:01:55Z",
+            "completed_at": "2026-10-07T01:35:56Z"
           },
           {
             "name": "save immediate test diagnostics",
             "status": "completed",
             "conclusion": "success",
             "number": 16,
-            "started_at": "2026-10-06T23:01:21Z",
-            "completed_at": "2026-10-06T23:01:22Z"
+            "started_at": "2026-10-07T01:35:56Z",
+            "completed_at": "2026-10-07T01:35:57Z"
           },
           {
             "name": "parity ratchet",
             "status": "completed",
             "conclusion": "success",
             "number": 17,
-            "started_at": "2026-10-06T23:01:22Z",
-            "completed_at": "2026-10-06T23:01:23Z"
+            "started_at": "2026-10-07T01:35:57Z",
+            "completed_at": "2026-10-07T01:36:21Z"
           },
           {
             "name": "save native GUI renders",
             "status": "completed",
             "conclusion": "success",
             "number": 18,
-            "started_at": "2026-10-06T23:01:23Z",
-            "completed_at": "2026-10-06T23:01:25Z"
+            "started_at": "2026-10-07T01:36:21Z",
+            "completed_at": "2026-10-07T01:36:23Z"
           },
           {
             "name": "stage bounded workspace libraries",
             "status": "completed",
             "conclusion": "success",
             "number": 19,
-            "started_at": "2026-10-06T23:01:25Z",
-            "completed_at": "2026-10-06T23:01:30Z"
+            "started_at": "2026-10-07T01:36:23Z",
+            "completed_at": "2026-10-07T01:36:28Z"
           },
           {
             "name": "save rolling workspace libraries",
             "status": "completed",
             "conclusion": "success",
             "number": 20,
-            "started_at": "2026-10-06T23:01:30Z",
-            "completed_at": "2026-10-06T23:01:36Z"
+            "started_at": "2026-10-07T01:36:28Z",
+            "completed_at": "2026-10-07T01:36:34Z"
           },
           {
             "name": "Post Run Swatinem/rust-cache@v2",
             "status": "completed",
             "conclusion": "success",
             "number": 39,
-            "started_at": "2026-10-06T23:01:36Z",
-            "completed_at": "2026-10-06T23:01:36Z"
+            "started_at": "2026-10-07T01:36:34Z",
+            "completed_at": "2026-10-07T01:36:55Z"
           },
           {
             "name": "Post Run actions/checkout@v4",
             "status": "completed",
             "conclusion": "success",
             "number": 40,
-            "started_at": "2026-10-06T23:01:36Z",
-            "completed_at": "2026-10-06T23:01:36Z"
+            "started_at": "2026-10-07T01:36:55Z",
+            "completed_at": "2026-10-07T01:36:55Z"
           },
           {
             "name": "Complete job",
             "status": "completed",
             "conclusion": "success",
             "number": 41,
-            "started_at": "2026-10-06T23:01:36Z",
-            "completed_at": "2026-10-06T23:01:36Z"
+            "started_at": "2026-10-07T01:36:55Z",
+            "completed_at": "2026-10-07T01:36:55Z"
           }
         ],
-        "check_run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/check-runs/112532878374",
+        "check_run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/check-runs/112568817700",
         "labels": [
           "ubuntu-24.04"
         ],
-        "runner_id": 1000003492,
-        "runner_name": "GitHub Actions 1000003492",
+        "runner_id": 1000003505,
+        "runner_name": "GitHub Actions 1000003505",
         "runner_group_id": 0,
         "runner_group_name": "GitHub Actions"
       }
     ],
     "auxiliary_jobs": [
       {
-        "id": 112532879274,
-        "run_id": 37540746618,
+        "id": 112568818347,
+        "run_id": 37551810449,
         "workflow_name": "rust",
         "head_branch": "codex/validation-runner",
-        "run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/runs/37540746618",
+        "run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/runs/37551810449",
         "run_attempt": 1,
-        "node_id": "CR_kwDOUzlbIs8AAAAaM3t3qg",
-        "head_sha": "e886e68ed9c49751617bcf28df50957d99e3c03e",
-        "url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/jobs/112532879274",
-        "html_url": "https://github.com/jkendall327/hydrus-mine/actions/runs/37540746618/job/112532879274",
+        "node_id": "CR_kwDOUzlbIs8AAAAaNZ_aqw",
+        "head_sha": "4b5e7ae151c2317bf83ef0aad8e9a0161f9a498d",
+        "url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/jobs/112568818347",
+        "html_url": "https://github.com/jkendall327/hydrus-mine/actions/runs/37551810449/job/112568818347",
         "status": "completed",
         "conclusion": "skipped",
-        "created_at": "2026-10-06T22:28:00Z",
-        "started_at": "2026-10-06T22:28:00Z",
-        "completed_at": "2026-10-06T22:28:00Z",
+        "created_at": "2026-10-07T00:24:40Z",
+        "started_at": "2026-10-07T00:24:40Z",
+        "completed_at": "2026-10-07T00:24:39Z",
         "name": "quick-check",
         "steps": [],
-        "check_run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/check-runs/112532879274",
+        "check_run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/check-runs/112568818347",
         "labels": [
           "ubuntu-24.04"
         ],
@@ -167972,24 +168468,24 @@
         "runner_group_name": null
       },
       {
-        "id": 112532879783,
-        "run_id": 37540746618,
+        "id": 112568818542,
+        "run_id": 37551810449,
         "workflow_name": "rust",
         "head_branch": "codex/validation-runner",
-        "run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/runs/37540746618",
+        "run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/runs/37551810449",
         "run_attempt": 1,
-        "node_id": "CR_kwDOUzlbIs8AAAAaM3t5pw",
-        "head_sha": "e886e68ed9c49751617bcf28df50957d99e3c03e",
-        "url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/jobs/112532879783",
-        "html_url": "https://github.com/jkendall327/hydrus-mine/actions/runs/37540746618/job/112532879783",
+        "node_id": "CR_kwDOUzlbIs8AAAAaNZ_bbg",
+        "head_sha": "4b5e7ae151c2317bf83ef0aad8e9a0161f9a498d",
+        "url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/jobs/112568818542",
+        "html_url": "https://github.com/jkendall327/hydrus-mine/actions/runs/37551810449/job/112568818542",
         "status": "completed",
         "conclusion": "skipped",
-        "created_at": "2026-10-06T22:28:00Z",
-        "started_at": "2026-10-06T22:28:00Z",
-        "completed_at": "2026-10-06T22:28:00Z",
+        "created_at": "2026-10-07T00:24:40Z",
+        "started_at": "2026-10-07T00:24:40Z",
+        "completed_at": "2026-10-07T00:24:39Z",
         "name": "other-platforms",
         "steps": [],
-        "check_run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/check-runs/112532879783",
+        "check_run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/check-runs/112568818542",
         "labels": [],
         "runner_id": null,
         "runner_name": null,
@@ -168002,21 +168498,21 @@
         ]
       },
       {
-        "id": 112544121806,
-        "run_id": 37540746618,
+        "id": 112588531819,
+        "run_id": 37551810449,
         "workflow_name": "rust",
         "head_branch": "codex/validation-runner",
-        "run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/runs/37540746618",
+        "run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/runs/37551810449",
         "run_attempt": 1,
-        "node_id": "CR_kwDOUzlbIs8AAAAaNCcDzg",
-        "head_sha": "e886e68ed9c49751617bcf28df50957d99e3c03e",
-        "url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/jobs/112544121806",
-        "html_url": "https://github.com/jkendall327/hydrus-mine/actions/runs/37540746618/job/112544121806",
+        "node_id": "CR_kwDOUzlbIs8AAAAaNsyoaw",
+        "head_sha": "4b5e7ae151c2317bf83ef0aad8e9a0161f9a498d",
+        "url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/jobs/112588531819",
+        "html_url": "https://github.com/jkendall327/hydrus-mine/actions/runs/37551810449/job/112588531819",
         "status": "completed",
         "conclusion": "success",
-        "created_at": "2026-10-06T23:01:38Z",
-        "started_at": "2026-10-06T23:01:42Z",
-        "completed_at": "2026-10-06T23:01:47Z",
+        "created_at": "2026-10-07T01:36:57Z",
+        "started_at": "2026-10-07T01:36:59Z",
+        "completed_at": "2026-10-07T01:37:02Z",
         "name": "workspace-cache-maintenance",
         "steps": [
           {
@@ -168024,32 +168520,32 @@
             "status": "completed",
             "conclusion": "success",
             "number": 1,
-            "started_at": "2026-10-06T23:01:43Z",
-            "completed_at": "2026-10-06T23:01:44Z"
+            "started_at": "2026-10-07T01:36:59Z",
+            "completed_at": "2026-10-07T01:37:00Z"
           },
           {
             "name": "bound workspace cache snapshots",
             "status": "completed",
             "conclusion": "success",
             "number": 2,
-            "started_at": "2026-10-06T23:01:44Z",
-            "completed_at": "2026-10-06T23:01:44Z"
+            "started_at": "2026-10-07T01:37:00Z",
+            "completed_at": "2026-10-07T01:37:01Z"
           },
           {
             "name": "Complete job",
             "status": "completed",
             "conclusion": "success",
             "number": 3,
-            "started_at": "2026-10-06T23:01:44Z",
-            "completed_at": "2026-10-06T23:01:44Z"
+            "started_at": "2026-10-07T01:37:01Z",
+            "completed_at": "2026-10-07T01:37:01Z"
           }
         ],
-        "check_run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/check-runs/112544121806",
+        "check_run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/check-runs/112588531819",
         "labels": [
           "ubuntu-24.04"
         ],
-        "runner_id": 1000003495,
-        "runner_name": "GitHub Actions 1000003495",
+        "runner_id": 1000003506,
+        "runner_name": "GitHub Actions 1000003506",
         "runner_group_id": 0,
         "runner_group_name": "GitHub Actions"
       }
@@ -168061,7 +168557,7 @@
     },
     "publication_policy": {
       "path": ".github/publication-validation.json",
-      "source_commit": "e886e68ed9c49751617bcf28df50957d99e3c03e",
+      "source_commit": "4b5e7ae151c2317bf83ef0aad8e9a0161f9a498d",
       "sha256": "49723bd5d6b786392a1368bb3da1406747a553ef31c9de2bdef92cea5d014c5f",
       "effective_date": "2026-10-06",
       "reason": "The owner uses Linux and prioritizes validated Linux delivery. macOS is low priority; Windows is deferred because its builds materially lengthen validation. Secondary-platform CI remains available by explicit opt-in."

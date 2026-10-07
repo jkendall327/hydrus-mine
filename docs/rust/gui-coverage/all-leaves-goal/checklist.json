@@ -4,12 +4,12 @@
   "goal": "All individual feature leaves in the report implemented and explicitly verified.",
   "classification_audit_source": "05000f10eafc4211d6856549d0073edb90ba5811",
   "classification_audit": "audit-05000f10e.json",
-  "validated_implementation_source": "e886e68ed9c49751617bcf28df50957d99e3c03e",
+  "validated_implementation_source": "4b5e7ae151c2317bf83ef0aad8e9a0161f9a498d",
   "distinct_terminal_leaves": 1274,
   "baseline_deficit_leaves": 813,
   "historical_first_pass_leaves": 461,
-  "explicit_implementation_signoffs": 341,
-  "remaining_without_explicit_signoff": 933,
+  "explicit_implementation_signoffs": 343,
+  "remaining_without_explicit_signoff": 931,
   "implementation_ledger": "../overnight/progress.json",
   "historical_verification_approvals": [],
   "leaves": [
@@ -5601,12 +5601,12 @@
     {
       "id": "audit-options-tag-presentation-namespace-colours-add",
       "baseline_status": "missing",
-      "signed_off_in_implementation_ledger": false
+      "signed_off_in_implementation_ledger": true
     },
     {
       "id": "audit-options-tag-presentation-namespace-colours-delete",
       "baseline_status": "missing",
-      "signed_off_in_implementation_ledger": false
+      "signed_off_in_implementation_ledger": true
     },
     {
       "id": "audit-options-tag-presentation-namespace-colours-edit",
@@ -6384,6 +6384,6 @@
       "signed_off_in_implementation_ledger": true
     }
   ],
-  "previous_checkpoint_commit": "a95eeefd638eb806efc91bd81cdb30248b888b0f",
-  "checkpoint_evidence": "../checkpoints/e886e68ed/README.md"
+  "previous_checkpoint_commit": "b87f0e2af634e8ec7ae68bfb2f01e14143d76758",
+  "checkpoint_evidence": "../checkpoints/4b5e7ae15/README.md"
 }

@@ -1,0 +1,34 @@
+{
+  "source_commit": "4b5e7ae151c2317bf83ef0aad8e9a0161f9a498d",
+  "run_id": 37551810449,
+  "baseline_source_commit": "b87f0e2af634e8ec7ae68bfb2f01e14143d76758",
+  "claims": [
+    {
+      "id": "audit-options-tag-presentation-namespace-colours-add",
+      "manifest": "docs/rust/gui-coverage/parity/namespace-colour-controls.json",
+      "publication_preparation": "unresolved",
+      "reason": "Current real-input repair and defining captures authored; exactsourceCI/freshreview pending."
+    },
+    {
+      "id": "audit-options-tag-presentation-namespace-colours-delete",
+      "manifest": "docs/rust/gui-coverage/parity/namespace-colour-controls.json",
+      "publication_preparation": "unresolved",
+      "reason": "Current real-input repair and defining captures authored; exactsourceCI/freshreview pending."
+    }
+  ],
+  "next_bank_priority_ids": [
+    "audit-options-tag-presentation-namespace-colours-add",
+    "audit-options-tag-presentation-namespace-colours-delete"
+  ],
+  "selected_ids": [
+    "audit-options-tag-presentation-namespace-colours-add",
+    "audit-options-tag-presentation-namespace-colours-delete"
+  ],
+  "final_gates": [
+    "Exact source4b5e7ae151c2317bf83ef0aad8e9a0161f9a498d/full Linux run37551810449 pending: fullLinux strictcheck fmt/Clippy/tests/ratchet and parity-models green; Windows/macOS deferred under exactsource policy.",
+    "Fresh actual source-bound Add/Delete captures and independent exactsource behavioral/render approval; current source-review3/design4 is provenance only.",
+    "Root actualinspection/finalpatch+census review and stagedbrowser, preservingprior341/unselected/native1799 and alreadybankedOR wholeobject.",
+    "Refresh goal/checklist only from actual accepted canonical ledger after publication, never planned2."
+  ],
+  "approval": false
+}

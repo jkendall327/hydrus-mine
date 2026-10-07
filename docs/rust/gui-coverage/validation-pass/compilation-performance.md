@@ -303,3 +303,21 @@ saved a seed. Clippy compilation took 12m40s, test compilation 12m00s and all
 Maintenance retained 1,379,443,388 bytes under the 3 GiB cap. These are ordinary
 validation observations, not a controlled benchmark or proof of workspace reuse
 under the new policy. [Evidence](../checkpoints/e886e68ed/validation-outcome.json).
+
+## Runner-image cache miss, 2026-10-07 UTC
+
+Validated source `4b5e7ae15`, run `37551810449`, used Ubuntu image
+`20261004.327.1`, following `20260927.320.1` in the preceding run. Pinned rustc
+remained 1.94.1. The workspace compatibility key includes the image version and
+changed from `af4fa2e32ed1c3da4471dd09` to `d375ff77746ca54e3a64f5c5`;
+no compatible snapshot was found. Swatinem also missed: its environment key
+includes installed Rust versions, and the preinstalled version changed from
+1.98.1 to 1.99.0. The existing caches had not disappeared from the API inventory.
+
+Strict Clippy took 36m11s and test compilation 25m32s; the 700-test GUI suite
+then passed in 228.13s. These are run observations, not an isolated speedup or
+a Slint-generation/Rust/linking breakdown. Both cache mechanisms saved new
+snapshots; bounded maintenance retained 1,146,920,388 workspace-cache bytes.
+The full logs and exact-source result are preserved in
+[the checkpoint](../checkpoints/4b5e7ae15/README.md). No further optimization
+experiment was added to this validation batch.
