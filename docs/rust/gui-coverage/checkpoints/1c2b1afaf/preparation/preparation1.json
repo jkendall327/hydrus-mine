@@ -1,0 +1,26 @@
+{
+  "source_commit": "1c2b1afaf0fff7bf7bc984d17c5623e9e70098a5",
+  "run_id": 37624387284,
+  "baseline_source_commit": "74596132a9fff04b5d22e1a900bc4f3dc4bb7647",
+  "claims": [
+    {
+      "id": "audit-media-context-missing-clear-deleted",
+      "manifest": "docs/rust/gui-coverage/parity/selected-deletion-records.json",
+      "publication_preparation": "unresolved",
+      "reason": "New real pointer/key regression and readable Main Yes/No export authored; exact-source runtime/render review pending."
+    }
+  ],
+  "next_bank_priority_ids": [
+    "audit-media-context-missing-clear-deleted"
+  ],
+  "selected_ids": [
+    "audit-media-context-missing-clear-deleted"
+  ],
+  "final_gates": [
+    "Exact source 1c2b1afaf0fff7bf7bc984d17c5623e9e70098a5, full Linux run 37624387284: strict check and parity-models pending; Windows/macOS deferred under exact-source policy.",
+    "One defining fresh pointer question PNG requires actual root and independent review2 inspection and exact hashes; old immediate-render question is supplemental only.",
+    "Prior369, all unselected/native1799/frozen1812/allgoal1274 preservation and desktop/narrow browser checks required.",
+    "Only accepted selected1 publication may reach370 signed,5 existing pending,904 outside goal; no parent/global-clear/viewer/generic-owner credit."
+  ],
+  "approval": false
+}

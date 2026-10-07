@@ -4309,9 +4309,17 @@ departure permanently invalidates this action even after returning; an owned
 advanced-deletion child also blocks it.
 Actual old/default Qt menu, collection, retained QAction, acceptance, concurrent
 re-add/new-delete and batch/error paths are recorded in
-`selected_deletion_records.json`. Store/model/native replays and the native
-question PNG are authored; hosted Rust execution and rendered inspection remain
-pending. This covers the selected thumbnail action only.
+`selected_deletion_records.json`. The Main question now has clickable yes/no controls as well as its existing
+Enter/Escape answers. Authored tests use measured real pointer and key events,
+compare full relevant deletion tables and the physical queue, and preserve all
+original replay and owner assertions. A held press is released after an actual
+Escape press/release retires the old controls and a successor question opens;
+a fresh positive answer proves recovery. This is processed retirement, not an
+unobserved same-turn replacement guarantee. Full Linux run `37624387284`
+and fresh independent inspection of the measured pointer-question controls
+passed. Exactly this selected thumbnail action gains sign-off: 370 signed,
+5 existing candidates pending. All 711 GUI and 67 media tests passed.
+[Evidence](gui-coverage/checkpoints/1c2b1afaf/README.md).
 
 Options → speed and memory now stages the per-viewer image-cache percentage
 (default 25%, 10–50%), previous/next image-prefetch counts (defaults 2/3,

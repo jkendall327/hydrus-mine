@@ -527,3 +527,9 @@ Source `95bbbed2c`, run `37618131717`.
 Routine hosted performance: strict Clippy took 72 seconds, test compilation/linking 244 seconds, and the full test step 662 seconds. The same runner image `20261004.327.1` restored 4,123 tracked-input mtimes and 293 coherent workspace artifact files. Neither Clippy nor test compilation rebuilt `hydrus-gui-ui`. A new source/run-specific snapshot saved 293 artifacts plus the input ledger (2,200,258,229 bytes); maintenance retained 690,173,746 compressed bytes within its 3 GiB budget. These observations confirm continued artifact reuse; they are not controlled cold/warm attribution or separate generation, Rust compilation and linking measurements. No additional optimization experiment was needed for this checkpoint.
 
 [Raw logs and outcome](../checkpoints/95bbbed2c/README.md).
+
+## Selected-deletion checkpoint: UI change and workspace cache miss
+
+Run 37624387284 spent 641 seconds in strict Clippy (640 seconds reported by Cargo), 646 seconds compiling tests, and 1,111 seconds in the complete test step. The 711 GUI tests ran in 209.01 seconds; all 67 media tests passed. These are hosted observations, not separate Slint-generation/Rust/link timings.
+
+This source changes the generated Main UI. The runner also used image `20260927.320.1` and workspace compatibility prefix `68e3726939ec9009de9276fa`, rather than the preceding rating run's `20261004.327.1` image and warm snapshot. Dependencies restored, but no compatible workspace snapshot was available. Both factors prevent attributing the increased compilation time solely to the UI edit. The successful run saved 293 workspace artifacts plus their input ledger (2,201,086,297 bytes); maintenance retained 690,309,880 compressed bytes, within the 3 GiB budget. No further optimization experiment was added to this delivery batch.

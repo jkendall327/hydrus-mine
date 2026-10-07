@@ -1,0 +1,11 @@
+{
+  "source_commit": "1c2b1afaf0fff7bf7bc984d17c5623e9e70098a5",
+  "run_id": 37624387284,
+  "artifact_id": 11485056903,
+  "native_zip_sha256": "8ad2b7a65f5634442110f24669d86aeeb0dc41e9283587fa794884b322c2f3ad",
+  "root_render_sha256": "6542bf69ae66b2e0077d4e2106b738b10b93b41ff6dcf05f3ec0fcb0ac8c01c6",
+  "independent_review_sha256": "df87ebde7147faeb9560c2a92881262494c44080eb4d2c5cd2caef437c68b78b",
+  "bound_finalizer_sha256": "054e8b3ea6d057cf52e71ea70733e73dbd497549d8c7cf1c6095c7d6858d48ee",
+  "bound_helper_sha256": "9bf45927c215e60d066cccee083a1dcd6c469ec72a0eec36563b89e9062784ad",
+  "binding_after_green_and_actual_root_and_independent_review": true
+}

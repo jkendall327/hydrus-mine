@@ -1,0 +1,19 @@
+{
+  "candidate_id": "audit-media-context-missing-clear-deleted",
+  "captures": [
+    {
+      "filename": "selected-deletion-records-pointer-question.png",
+      "width": 1100,
+      "height": 700,
+      "state": "Actual live Main selected-deletion question, measured Yes/No controls, mixed captured files0/1; after new deletion file3 and selection change, before physical No",
+      "adapter": "exact retained windows.get(0), ptr::eq with MainWindow.window() asserted",
+      "readiness": "new Timer frames, >=35ms, inactive animations, exact stable frame bits and rendered pixels; 2-second deadline",
+      "fresh_required": true
+    }
+  ],
+  "existing_supplemental": "Original selected_deletion_records_question.png export retained untouched; immediate-render history is not the defining new controls evidence",
+  "limitations": [
+    "No matching Qt question PNG currently established by this packet; exact recorded question and reference source controls ground finite behavior.",
+    "No universal geometry, OS window, parent or platform credit."
+  ]
+}
