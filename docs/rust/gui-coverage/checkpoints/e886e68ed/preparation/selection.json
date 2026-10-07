@@ -1,0 +1,22 @@
+{
+  "source_commit": "e886e68ed9c49751617bcf28df50957d99e3c03e",
+  "run_id": 37540746618,
+  "source_phase": "repaired source validation pending",
+  "selected_candidate_ids": [
+    "audit-options-tag-suggestions-suggested-tags-width-of-suggested-tags-columns",
+    "audit-options-tag-suggestions-suggested-tags-column-layout"
+  ],
+  "prior_completed_count": 339,
+  "selected_count": 2,
+  "pending_count": 36,
+  "conditional_bank_if_all_gates_pass": 341,
+  "conditional_pending_after_bank": 34,
+  "not_ready_by_preparation": true,
+  "approval": false,
+  "gates": [
+    "Exact sourcee886e68ed9c49751617bcf28df50957d99e3c03e/run37540746618: required Linux strictcheck fmt/Clippy/fulltests/ratchet and parity-models green; Windows/macOS deferred under exact-source policy.",
+    "Fresh actual source-bound three defining PNGs and independent final-reviewer2 approval of exactly2; source review3 is historical provenance only.",
+    "Root actualinspection, final patch+census digestreview, stagedbrowser and prior339/unselected/native1799 preservation.",
+    "Refresh all-leaves goal/checklist only from actual accepted post-publication ledger; planned2 creates no goal progress."
+  ]
+}

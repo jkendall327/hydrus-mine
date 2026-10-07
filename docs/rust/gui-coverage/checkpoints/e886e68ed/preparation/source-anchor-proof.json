@@ -1,0 +1,421 @@
+{
+  "input": "/workspace/validation-reviews/suggested2/prep-e886e68ed/selected-author-proposal.json",
+  "input_sha256": "3d481d2123a03f96488821cf3fbbbcb15b2f03e5315b9b04b546b59f8388c971",
+  "from_commit": "05000f10eafc4211d6856549d0073edb90ba5811",
+  "to_commit": "e886e68ed9c49751617bcf28df50957d99e3c03e",
+  "output": "/workspace/validation-reviews/suggested2/prep-e886e68ed/selected-source-proposal.json",
+  "method": "Exact Git-blob/unchanged-line/context remap or whitelisted reviewed transformation; no nearest-line guesses",
+  "reviewed_transformations": [
+    {
+      "path": "crates/hydrus-gui/src/vacuum_review_window.rs",
+      "old_text": "    window: VacuumReviewWindow,",
+      "new_text": "    _window: VacuumReviewWindow,",
+      "target_tokens": [
+        "struct Open {",
+        "    state: Rc<Confirmation>,"
+      ],
+      "proof": "Open retains the same strong child handle as a lifetime holder. Prefixing the field with underscore removes the production dead-code warning; the holder is still initialized and dropped with Open."
+    },
+    {
+      "path": "crates/hydrus-gui/src/vacuum_review_window.rs",
+      "old_text": "            .map(|open| open.window.clone_strong())",
+      "new_text": "            .and_then(|open| open.state.window.upgrade())",
+      "target_tokens": [
+        "    fn window(&self) -> Option<VacuumReviewWindow> {",
+        "    _window: VacuumReviewWindow,"
+      ],
+      "proof": "The cfg(test) accessor now upgrades Confirmation.window. Open._window still retains the exact same strong child, so the accessor yields that child while current Open exists. Existing assertions and admission/lifetime behavior are preserved."
+    },
+    {
+      "path": "crates/hydrus-gui/src/vacuum_review_window.rs",
+      "old_text": "        window: window.clone_strong(),",
+      "new_text": "        _window: window.clone_strong(),",
+      "target_tokens": [
+        "    *slot.0.current.borrow_mut() = Some(Open {",
+        "        state: state.clone(),"
+      ],
+      "proof": "The constructor continues retaining window.clone_strong in the renamed lifetime holder; no window/state association or ownership boundary changes."
+    },
+    {
+      "path": "crates/hydrus-gui/src/tag_sync_review_window.rs",
+      "old_text": "    use slint::{ComponentHandle as _, Model as _};",
+      "new_text": "    use slint::Model as _;",
+      "target_tokens": [
+        "mod tests {",
+        "    use super::*;",
+        "use slint::{ComponentHandle as _, ModelRc, SharedString, VecModel};"
+      ],
+      "proof": "Tests already inherit ComponentHandle through super::* from the production import. Removing the redundant explicit test import changes no assertions or native owner behavior."
+    }
+  ],
+  "changed_files": [
+    ".github/scripts/input_mtime_ledger.py",
+    ".github/scripts/tests/test_publication_input_ledger.py",
+    "AGENTS.md",
+    "crates/hydrus-gui/tests/gui/manage_tags.rs",
+    "crates/hydrus-gui/tests/gui/options_window.rs",
+    "docs/rust/DIFFERENCES.md",
+    "docs/rust/GUI.md",
+    "docs/rust/ROADMAP.md",
+    "docs/rust/gui-coverage/all-leaves-goal/README.md",
+    "docs/rust/gui-coverage/all-leaves-goal/audit-05000f10e.json",
+    "docs/rust/gui-coverage/all-leaves-goal/audit-05000f10e.md",
+    "docs/rust/gui-coverage/all-leaves-goal/checklist.json",
+    "docs/rust/gui-coverage/all-leaves-goal/original-1812-id-crosswalk.json",
+    "docs/rust/gui-coverage/audit/anchor-remap-05000f10-publication.json",
+    "docs/rust/gui-coverage/checkpoints/05000f10e/README.md",
+    "docs/rust/gui-coverage/checkpoints/05000f10e/browser/browser-check.json",
+    "docs/rust/gui-coverage/checkpoints/05000f10e/browser/report-desktop.png",
+    "docs/rust/gui-coverage/checkpoints/05000f10e/browser/report-narrow.png",
+    "docs/rust/gui-coverage/checkpoints/05000f10e/ci-evidence.json",
+    "docs/rust/gui-coverage/checkpoints/05000f10e/clippy-outcome.json",
+    "docs/rust/gui-coverage/checkpoints/05000f10e/clippy.log",
+    "docs/rust/gui-coverage/checkpoints/05000f10e/final-review-2-05000f10e.json",
+    "docs/rust/gui-coverage/checkpoints/05000f10e/final-review-2-05000f10e.md",
+    "docs/rust/gui-coverage/checkpoints/05000f10e/linux-full.log",
+    "docs/rust/gui-coverage/checkpoints/05000f10e/native-render-manifest.json",
+    "docs/rust/gui-coverage/checkpoints/05000f10e/native/notebook_tabs_bottom.png",
+    "docs/rust/gui-coverage/checkpoints/05000f10e/native/notebook_tabs_left.png",
+    "docs/rust/gui-coverage/checkpoints/05000f10e/native/notebook_tabs_right.png",
+    "docs/rust/gui-coverage/checkpoints/05000f10e/native/notebook_tabs_top.png",
+    "docs/rust/gui-coverage/checkpoints/05000f10e/native/sidebar-hidden-current-native.png",
+    "docs/rust/gui-coverage/checkpoints/05000f10e/native/sidebar-preview-hidden-new-native.png",
+    "docs/rust/gui-coverage/checkpoints/05000f10e/native/sidebar_layout_native.png",
+    "docs/rust/gui-coverage/checkpoints/05000f10e/native/thumbnail-appearance-options.png",
+    "docs/rust/gui-coverage/checkpoints/05000f10e/native/thumbnail-background-cleared-native.png",
+    "docs/rust/gui-coverage/checkpoints/05000f10e/native/thumbnail-background-native.png",
+    "docs/rust/gui-coverage/checkpoints/05000f10e/native/thumbnail-background-small-new-1100x700-native.png",
+    "docs/rust/gui-coverage/checkpoints/05000f10e/native/thumbnail-background-small-new-950x760-native.png",
+    "docs/rust/gui-coverage/checkpoints/05000f10e/native/thumbnail-background-small-new-qt-marker-native.png",
+    "docs/rust/gui-coverage/checkpoints/05000f10e/native/thumbnail-background-small-old-qt-marker-native.png",
+    "docs/rust/gui-coverage/checkpoints/05000f10e/native/thumbnail-blurhash-disabled-native.png",
+    "docs/rust/gui-coverage/checkpoints/05000f10e/native/thumbnail-blurhash-disabled-options.png",
+    "docs/rust/gui-coverage/checkpoints/05000f10e/native/thumbnail-blurhash-enabled-native.png",
+    "docs/rust/gui-coverage/checkpoints/05000f10e/native/viewing_statistics_clear_completed.png",
+    "docs/rust/gui-coverage/checkpoints/05000f10e/native/viewing_statistics_clear_question.png",
+    "docs/rust/gui-coverage/checkpoints/05000f10e/parity-models.log",
+    "docs/rust/gui-coverage/checkpoints/05000f10e/preparation/conditional-status-map-05000f10e.json",
+    "docs/rust/gui-coverage/checkpoints/05000f10e/preparation/independent-source-reference-review-2-05000f10e.json",
+    "docs/rust/gui-coverage/checkpoints/05000f10e/preparation/independent-source-reference-review-2-05000f10e.md",
+    "docs/rust/gui-coverage/checkpoints/05000f10e/preparation/preparation-summary-05000f10e.json",
+    "docs/rust/gui-coverage/checkpoints/05000f10e/preparation/prior334-preservation-proof-05000f10e.json",
+    "docs/rust/gui-coverage/checkpoints/05000f10e/preparation/render-checklist-05000f10e.json",
+    "docs/rust/gui-coverage/checkpoints/05000f10e/preparation/root-reference-inspection.json",
+    "docs/rust/gui-coverage/checkpoints/05000f10e/preparation/scope-reconciliation-source-proof-05000f10e.json",
+    "docs/rust/gui-coverage/checkpoints/05000f10e/preparation/selection-05000f10e.json",
+    "docs/rust/gui-coverage/checkpoints/05000f10e/preparation/source-review-3.json",
+    "docs/rust/gui-coverage/checkpoints/05000f10e/preparation/source-review-3.md",
+    "docs/rust/gui-coverage/checkpoints/05000f10e/preparation/subset-source-preflight.json",
+    "docs/rust/gui-coverage/checkpoints/05000f10e/preservation-and-copy-audit.json",
+    "docs/rust/gui-coverage/checkpoints/05000f10e/publication-summary.json",
+    "docs/rust/gui-coverage/checkpoints/05000f10e/review.json",
+    "docs/rust/gui-coverage/checkpoints/05000f10e/root-render-review.json",
+    "docs/rust/gui-coverage/checkpoints/05000f10e/selected-patch.json",
+    "docs/rust/gui-coverage/checkpoints/05000f10e/source-census.json",
+    "docs/rust/gui-coverage/checkpoints/05000f10e/status-reconciliation-audit.json",
+    "docs/rust/gui-coverage/checkpoints/05000f10e/validation-outcome.json",
+    "docs/rust/gui-coverage/checkpoints/05000f10e/workspace-cache-maintenance.log",
+    "docs/rust/gui-coverage/native-inventory.json",
+    "docs/rust/gui-coverage/overnight/ci-evidence.json",
+    "docs/rust/gui-coverage/overnight/progress.json",
+    "docs/rust/gui-coverage/overnight/reviewed-patch.json",
+    "docs/rust/gui-coverage/reference-inventory.json",
+    "docs/rust/gui-coverage/validation-pass/README.md",
+    "docs/rust/gui-coverage/validation-pass/compilation-performance.md",
+    "docs/rust/gui-coverage/viewer.template.html",
+    "docs/rust/gui-progress.html"
+  ],
+  "source_only": true,
+  "canonical_write": false,
+  "build_or_test_execution": false,
+  "execution_render_status": "Pending. All input flags/scopes remain verbatim; migration is not execution/render evidence.",
+  "inherited_missing_commit_resolutions": {},
+  "mapping_records": [
+    {
+      "old_commit": "05000f10eafc4211d6856549d0073edb90ba5811",
+      "path": "crates/hydrus-gui-model/src/options.rs",
+      "old_line": 4705,
+      "old_text": "                        \"Width of suggested tags columns: \",",
+      "old_line_sha256": "6852a157d9f0906860af271e7fff0aac8ba074ac1758b305c4ffac195d85774d",
+      "new_commit": "e886e68ed9c49751617bcf28df50957d99e3c03e",
+      "new_line": 4705,
+      "new_text": "                        \"Width of suggested tags columns: \",",
+      "new_line_sha256": "6852a157d9f0906860af271e7fff0aac8ba074ac1758b305c4ffac195d85774d",
+      "method": "identical_git_blob",
+      "proof": "Exact committed source text and unique line/context, or identical file blob.",
+      "locations": [
+        "/reference/updates/0/evidence/0",
+        "/reference/updates/0/native_source"
+      ]
+    },
+    {
+      "old_commit": "05000f10eafc4211d6856549d0073edb90ba5811",
+      "path": "crates/hydrus-gui/ui/tag_suggestions.slint",
+      "old_line": 5,
+      "old_text": "export component TagSuggestionPanels inherits Rectangle {",
+      "old_line_sha256": "364d743ee63dd2f24797edeb12bf22b6af785352d439f102e74f71790f400741",
+      "new_commit": "e886e68ed9c49751617bcf28df50957d99e3c03e",
+      "new_line": 5,
+      "new_text": "export component TagSuggestionPanels inherits Rectangle {",
+      "new_line_sha256": "364d743ee63dd2f24797edeb12bf22b6af785352d439f102e74f71790f400741",
+      "method": "identical_git_blob",
+      "proof": "Exact committed source text and unique line/context, or identical file blob.",
+      "locations": [
+        "/reference/updates/0/evidence/1",
+        "/reference/updates/1/evidence/1"
+      ]
+    },
+    {
+      "old_commit": "05000f10eafc4211d6856549d0073edb90ba5811",
+      "path": "crates/hydrus-gui/src/manage_tags_window.rs",
+      "old_line": 176,
+      "old_text": "    let refresh_sides = Rc::new({",
+      "old_line_sha256": "68bfdcdd1c8cbbd810834c29eace12f8af7fcde8d10a93a1345c37561066aab4",
+      "new_commit": "e886e68ed9c49751617bcf28df50957d99e3c03e",
+      "new_line": 176,
+      "new_text": "    let refresh_sides = Rc::new({",
+      "new_line_sha256": "68bfdcdd1c8cbbd810834c29eace12f8af7fcde8d10a93a1345c37561066aab4",
+      "method": "identical_git_blob",
+      "proof": "Exact committed source text and unique line/context, or identical file blob.",
+      "locations": [
+        "/reference/updates/0/evidence/2",
+        "/reference/updates/1/evidence/2"
+      ]
+    },
+    {
+      "old_commit": "05000f10eafc4211d6856549d0073edb90ba5811",
+      "path": "crates/hydrus-store/src/settings.rs",
+      "old_line": 157,
+      "old_text": "pub struct TagSuggestionSettings {",
+      "old_line_sha256": "69ad6c81de63f010645f3f87527b51f5c4082fc8b5089d5dd5c18fa2de6201e4",
+      "new_commit": "e886e68ed9c49751617bcf28df50957d99e3c03e",
+      "new_line": 157,
+      "new_text": "pub struct TagSuggestionSettings {",
+      "new_line_sha256": "69ad6c81de63f010645f3f87527b51f5c4082fc8b5089d5dd5c18fa2de6201e4",
+      "method": "identical_git_blob",
+      "proof": "Exact committed source text and unique line/context, or identical file blob.",
+      "locations": [
+        "/reference/updates/0/evidence/3",
+        "/reference/updates/1/evidence/3"
+      ]
+    },
+    {
+      "old_commit": "05000f10eafc4211d6856549d0073edb90ba5811",
+      "path": "hydrus/client/gui/panels/options/TagSuggestionsPanel.py",
+      "old_line": 288,
+      "old_text": "        rows.append( ( 'Width of suggested tags columns: ', self._suggested_tags_width ) )",
+      "old_line_sha256": "7048e3c1df7afaeddfb769e223a91946cf9b217d07327bd0a7f034ddcc378384",
+      "new_commit": "e886e68ed9c49751617bcf28df50957d99e3c03e",
+      "new_line": 288,
+      "new_text": "        rows.append( ( 'Width of suggested tags columns: ', self._suggested_tags_width ) )",
+      "new_line_sha256": "7048e3c1df7afaeddfb769e223a91946cf9b217d07327bd0a7f034ddcc378384",
+      "method": "identical_git_blob",
+      "proof": "Exact committed source text and unique line/context, or identical file blob.",
+      "locations": [
+        "/reference/updates/0/evidence/4",
+        "/reference/updates/0/reference_source"
+      ]
+    },
+    {
+      "old_commit": "05000f10eafc4211d6856549d0073edb90ba5811",
+      "path": "crates/hydrus-gui-model/tests/model/tag_suggestions.rs",
+      "old_line": 23,
+      "old_text": "fn layout_and_default_choices_replay_all_recorded_available_pages_without_eager_writes() {",
+      "old_line_sha256": "3bc2a6db5dedc6936bc68d628fa2305a22ba4eddb8671a5b71052c12f4937636",
+      "new_commit": "e886e68ed9c49751617bcf28df50957d99e3c03e",
+      "new_line": 23,
+      "new_text": "fn layout_and_default_choices_replay_all_recorded_available_pages_without_eager_writes() {",
+      "new_line_sha256": "3bc2a6db5dedc6936bc68d628fa2305a22ba4eddb8671a5b71052c12f4937636",
+      "method": "identical_git_blob",
+      "proof": "Exact committed source text and unique line/context, or identical file blob.",
+      "locations": [
+        "/reference/updates/0/evidence/5",
+        "/reference/updates/1/evidence/5"
+      ]
+    },
+    {
+      "old_commit": "05000f10eafc4211d6856549d0073edb90ba5811",
+      "path": "crates/hydrus-gui/tests/gui/options_window.rs",
+      "old_line": 65,
+      "old_text": "fn most_used_child_stages_each_service_cancels_descendants_and_persists_options() {",
+      "old_line_sha256": "89f07bc19d14b0234cb083fde86f20a72bb336571633dc5e925997a5e9d7e0c2",
+      "new_commit": "e886e68ed9c49751617bcf28df50957d99e3c03e",
+      "new_line": 65,
+      "new_text": "fn most_used_child_stages_each_service_cancels_descendants_and_persists_options() {",
+      "new_line_sha256": "89f07bc19d14b0234cb083fde86f20a72bb336571633dc5e925997a5e9d7e0c2",
+      "method": "unique_unchanged_line",
+      "proof": "Exact committed source text and unique line/context, or identical file blob.",
+      "locations": [
+        "/reference/updates/0/evidence/6",
+        "/reference/updates/1/evidence/6"
+      ]
+    },
+    {
+      "old_commit": "05000f10eafc4211d6856549d0073edb90ba5811",
+      "path": "crates/hydrus-gui/tests/gui/manage_tags.rs",
+      "old_line": 35,
+      "old_text": "fn most_used_panels_filter_only_add_broadcast_and_retire_closed_consumers() {",
+      "old_line_sha256": "30d39dcd7a1161be9752288b839c484580b79dc699db869b4a7097767bd6a5dd",
+      "new_commit": "e886e68ed9c49751617bcf28df50957d99e3c03e",
+      "new_line": 35,
+      "new_text": "fn most_used_panels_filter_only_add_broadcast_and_retire_closed_consumers() {",
+      "new_line_sha256": "30d39dcd7a1161be9752288b839c484580b79dc699db869b4a7097767bd6a5dd",
+      "method": "unique_unchanged_line",
+      "proof": "Exact committed source text and unique line/context, or identical file blob.",
+      "locations": [
+        "/reference/updates/0/evidence/7",
+        "/reference/updates/1/evidence/7"
+      ]
+    },
+    {
+      "old_commit": "05000f10eafc4211d6856549d0073edb90ba5811",
+      "path": "crates/hydrus-store/src/import/decode.rs",
+      "old_line": 5036,
+      "old_text": "    fn suggested_layout_and_unavailable_default_pages_migrate_without_losing_choices() {",
+      "old_line_sha256": "ee907391b25825975fe0a53b6367e92cc87674abbc40d91b29301bc474cd45be",
+      "new_commit": "e886e68ed9c49751617bcf28df50957d99e3c03e",
+      "new_line": 5036,
+      "new_text": "    fn suggested_layout_and_unavailable_default_pages_migrate_without_losing_choices() {",
+      "new_line_sha256": "ee907391b25825975fe0a53b6367e92cc87674abbc40d91b29301bc474cd45be",
+      "method": "identical_git_blob",
+      "proof": "Exact committed source text and unique line/context, or identical file blob.",
+      "locations": [
+        "/reference/updates/0/evidence/8",
+        "/reference/updates/1/evidence/8"
+      ]
+    },
+    {
+      "old_commit": "05000f10eafc4211d6856549d0073edb90ba5811",
+      "path": "oracle/record_tag_suggestions.py",
+      "old_line": 1,
+      "old_text": "#!/usr/bin/env python3",
+      "old_line_sha256": "381f9bfc69d49d39040a7d5fc3197ce385019a2ba2de649622f841a8c658ed37",
+      "new_commit": "e886e68ed9c49751617bcf28df50957d99e3c03e",
+      "new_line": 1,
+      "new_text": "#!/usr/bin/env python3",
+      "new_line_sha256": "381f9bfc69d49d39040a7d5fc3197ce385019a2ba2de649622f841a8c658ed37",
+      "method": "identical_git_blob",
+      "proof": "Exact committed source text and unique line/context, or identical file blob.",
+      "locations": [
+        "/reference/updates/0/evidence/9",
+        "/reference/updates/1/evidence/9"
+      ]
+    },
+    {
+      "old_commit": "05000f10eafc4211d6856549d0073edb90ba5811",
+      "path": "oracle/fixtures/tag_suggestions.json",
+      "old_line": 1,
+      "old_text": "{",
+      "old_line_sha256": "021fb596db81e6d02bf3d2586ee3981fe519f275c0ac9ca76bbcf2ebb4097d96",
+      "new_commit": "e886e68ed9c49751617bcf28df50957d99e3c03e",
+      "new_line": 1,
+      "new_text": "{",
+      "new_line_sha256": "021fb596db81e6d02bf3d2586ee3981fe519f275c0ac9ca76bbcf2ebb4097d96",
+      "method": "identical_git_blob",
+      "proof": "Exact committed source text and unique line/context, or identical file blob.",
+      "locations": [
+        "/reference/updates/0/evidence/10",
+        "/reference/updates/1/evidence/10"
+      ]
+    },
+    {
+      "old_commit": "05000f10eafc4211d6856549d0073edb90ba5811",
+      "path": "crates/hydrus-gui-model/src/options.rs",
+      "old_line": 4711,
+      "old_text": "                        \"Column layout: \",",
+      "old_line_sha256": "a96fec6f9c4c9ea897e78764f2f8189cabfdbd66612d055b856d677e4c2bf259",
+      "new_commit": "e886e68ed9c49751617bcf28df50957d99e3c03e",
+      "new_line": 4711,
+      "new_text": "                        \"Column layout: \",",
+      "new_line_sha256": "a96fec6f9c4c9ea897e78764f2f8189cabfdbd66612d055b856d677e4c2bf259",
+      "method": "identical_git_blob",
+      "proof": "Exact committed source text and unique line/context, or identical file blob.",
+      "locations": [
+        "/reference/updates/1/evidence/0",
+        "/reference/updates/1/native_source"
+      ]
+    },
+    {
+      "old_commit": "05000f10eafc4211d6856549d0073edb90ba5811",
+      "path": "hydrus/client/gui/panels/options/TagSuggestionsPanel.py",
+      "old_line": 289,
+      "old_text": "        rows.append( ( 'Column layout: ', self._suggested_tags_layout ) )",
+      "old_line_sha256": "9fe36569c1767575b28f33be8656a6014c257f2d1f03d73df8098bfd52a24f6c",
+      "new_commit": "e886e68ed9c49751617bcf28df50957d99e3c03e",
+      "new_line": 289,
+      "new_text": "        rows.append( ( 'Column layout: ', self._suggested_tags_layout ) )",
+      "new_line_sha256": "9fe36569c1767575b28f33be8656a6014c257f2d1f03d73df8098bfd52a24f6c",
+      "method": "identical_git_blob",
+      "proof": "Exact committed source text and unique line/context, or identical file blob.",
+      "locations": [
+        "/reference/updates/1/evidence/4",
+        "/reference/updates/1/reference_source"
+      ]
+    }
+  ],
+  "failures": [],
+  "status": "source_schema_passed_execution_render_pending",
+  "anchor_records": 26,
+  "unique_anchors": 13,
+  "mapping_methods": {
+    "identical_git_blob": 11,
+    "unique_unchanged_line": 2
+  },
+  "IDs_statuses_assessments_assertion_descriptions": "Preserved verbatim by non-source invariant check",
+  "execution_render_fields_preserved": 50,
+  "publish_authored_anchor_preflight": {
+    "status": "passed",
+    "records": 26,
+    "requirements": "Every authored anchor has explicit target SHA, strict non-bool integer line in range, and exact committed line fingerprint; checked before apply_patches."
+  },
+  "schema_application": [
+    {
+      "patch": "scratch-artifact/selected-source-proposal.json",
+      "baseline_git_head": "e886e68ed9c49751617bcf28df50957d99e3c03e",
+      "native": {
+        "additions": 0,
+        "updates": 0,
+        "deletions": 0
+      },
+      "reference": {
+        "additions": 0,
+        "updates": 2,
+        "deletions": 0
+      }
+    }
+  ],
+  "validation_in_memory": {
+    "native": {
+      "nodes": 1799,
+      "source_anchors": 4052,
+      "statuses": {
+        "partial": 860,
+        "first_pass": 850,
+        "missing": 89
+      },
+      "audit": {
+        "weak_first_pass": [],
+        "exported_window_count": 121,
+        "opaque_native_windows": [],
+        "unassessed_nodes": [],
+        "catch_all_nodes": []
+      },
+      "inherited_repin_unique_anchors": 4052
+    },
+    "reference": {
+      "nodes": 1812,
+      "source_anchors": 5548,
+      "statuses": {
+        "partial": 388,
+        "first_pass": 942,
+        "missing": 482
+      },
+      "audit": {
+        "weak_first_pass": []
+      },
+      "inherited_repin_unique_anchors": 5554
+    }
+  },
+  "output_sha256": "5c89fc7903e137045eccd7e02403a90be13c8a007e7fc5f44ffebf9a150aa58a",
+  "limitation": "Source/schema alignment does not independently certify semantic changes elsewhere in the target diff, hosted execution, platform behavior or rendered parity."
+}

@@ -1,0 +1,89 @@
+{
+  "baseline_source_commit": "a95eeefd638eb806efc91bd81cdb30248b888b0f",
+  "reviewed_source": "Uncommitted working-file hashes below; repin to final committed source before CI/publication.",
+  "scope": "Independent read-only bounded input-ledger correction review. No feature approval, build, test execution or repository edit.",
+  "recommendation": "Retain correction for trusted Linux host-debug opt-in pilot; no safety blocker found in intended scope.",
+  "findings": [],
+  "minor_portability_note": {
+    "path": ".github/scripts/tests/test_publication_input_ledger.py",
+    "line": 101,
+    "detail": "Direct symlink_to lacks existing tests make_symlink skip-on-unsupported handling. Linux pilot unaffected; Windows without symlink privileges may fail this test. Optional guard is a test-portability improvement, not restore safety defect."
+  },
+  "checks": {
+    "exact_two_slash_terminated_prefixes": true,
+    "git_mode_stage_duplicate_total_count_before_exclusion": true,
+    "safe_path_before_exclusion": true,
+    "excluded_paths_not_hashed_or_stamped": true,
+    "retained_path_add_delete_content_mode_mtime_guards_preserved": true,
+    "existing_ledger_operations_byte_preserved_except_stamp_comment": true,
+    "original21_safety_test_file_unchanged": true,
+    "cache_helper_and_workflow_unchanged": true,
+    "ledger_version2_rejects_old_contract": true,
+    "artifact_schema4_format_unchanged": true,
+    "existing_compatibility_hash_includes_changed_ledger_helper": true,
+    "no_current_rust_slint_xtask_consumer_of_two_evidence_dirs": true,
+    "python_static_ast": "passed",
+    "new_real_index_tests": [
+      "test_publication_add_change_delete_preserves_build_reuse_without_stamping_evidence",
+      "test_added_deleted_build_or_neighbouring_docs_input_still_rejects_before_stamp",
+      "test_excluded_paths_still_reject_unsafe_index_entries_and_total_count",
+      "test_previous_full_repository_ledger_version_is_not_accepted"
+    ],
+    "test_results": "Parent reports25passed (21original+4new); independent reviewer did not rerun tests.",
+    "new_compilation_measurement": false
+  },
+  "preserved_safety": "Copy-before-stamp, all-workspace fingerprint/output isolation, complete artifact inventory, explicit-layout rejection, failed-copy/stamp rollback+whole-target-purge, fail-closed Cargo workflow guard and safe miss/key-failure fallback unchanged.",
+  "docs_review": "New appendix precisely states53publication paths, narrow scope/all-index checks, ledgerversion2+compatibility coldseed, original21+new4 tests, and hosted reuse/timing unestablished. No speedup or feature-validation claim.",
+  "files": [
+    {
+      "path": ".github/scripts/input_mtime_ledger.py",
+      "working_sha256": "63137dcaa7e179ba16a85d46b73ecc1f9ca4fadee1ba5b4f97b3cdf39f65fa0b",
+      "baseline_sha256": "2cfa7d45c9d427a31d9444b611e877c7d31cd5c28dd0050832ac171371d3e2bd",
+      "unchanged_from_baseline": false,
+      "lines": 233
+    },
+    {
+      "path": ".github/scripts/tests/test_publication_input_ledger.py",
+      "working_sha256": "72a7c2b4163372913ccd1dfa0140315b5db0aa8e1a5f692e37f165a03da64c9a",
+      "baseline_sha256": null,
+      "unchanged_from_baseline": false,
+      "lines": 114
+    },
+    {
+      "path": "docs/rust/gui-coverage/validation-pass/compilation-performance.md",
+      "working_sha256": "96f9962e074c4516209444322317644ef8f5f07b0695e621b38c09b592404337",
+      "baseline_sha256": "694c733a20a3cc16bce1e388f8c597597bb15893f762c36a7dd46daeaa4fb03f",
+      "unchanged_from_baseline": false,
+      "lines": 297
+    },
+    {
+      "path": ".github/scripts/workspace_artifact_cache.py",
+      "working_sha256": "521ac3ffe3f027ec4acf32b99f85fcd3b17ebd23f152ae4bcb7bb4443abb6834",
+      "baseline_sha256": "521ac3ffe3f027ec4acf32b99f85fcd3b17ebd23f152ae4bcb7bb4443abb6834",
+      "unchanged_from_baseline": true,
+      "lines": 311
+    },
+    {
+      "path": ".github/scripts/tests/test_workspace_artifact_cache.py",
+      "working_sha256": "207cc98fed415d90099bdfe9ccf837555d0632a4a0c7da41d785c61e98599f6b",
+      "baseline_sha256": "207cc98fed415d90099bdfe9ccf837555d0632a4a0c7da41d785c61e98599f6b",
+      "unchanged_from_baseline": true,
+      "lines": 358
+    },
+    {
+      "path": ".github/workflows/rust.yml",
+      "working_sha256": "79fdf111717ddc84bdf965b4d6d7e627a7bc6c7d1e96824189951da3fec7ecd8",
+      "baseline_sha256": "79fdf111717ddc84bdf965b4d6d7e627a7bc6c7d1e96824189951da3fec7ecd8",
+      "unchanged_from_baseline": true,
+      "lines": 324
+    }
+  ],
+  "limitations": [
+    "Trusted immutable checkout/no concurrent writers remains required.",
+    "A future Rust/Slint/build-script dependency within excluded evidence dirs requires a new contract review.",
+    "25 passing Python tests are portable safety-model evidence; actual hosted compilation reuse still must be observed."
+  ],
+  "approval_created": false,
+  "repository_edits": false,
+  "builds_or_tests_run": false
+}

@@ -1,0 +1,42 @@
+{
+  "source_commit": "e886e68ed9c49751617bcf28df50957d99e3c03e",
+  "run_id": 37540746618,
+  "baseline_source_commit": "a95eeefd638eb806efc91bd81cdb30248b888b0f",
+  "claims": [
+    {
+      "id": "audit-options-tag-suggestions-suggested-tags-column-layout",
+      "label": "Column layout:",
+      "manifest": "docs/rust/gui-coverage/parity/tag-suggestions.json",
+      "review_batch": 1,
+      "publication_preparation": "unresolved",
+      "reason": "Committed actual Options240/side-by-side, populated columns and fresh notebook/recent captures now authored; exact-source CI/fresh reviewer2 inspection pending.",
+      "deferral_code": "missing_defining_surface",
+      "historical_deferral_reason": "Width/layout Options pane and same-state recent-column configuration absent; favourites consumer does not show this control."
+    },
+    {
+      "id": "audit-options-tag-suggestions-suggested-tags-width-of-suggested-tags-columns",
+      "label": "Width of suggested tags columns:",
+      "manifest": "docs/rust/gui-coverage/parity/tag-suggestions.json",
+      "review_batch": 1,
+      "publication_preparation": "unresolved",
+      "reason": "Committed actual Options240/side-by-side, populated columns and fresh notebook/recent captures now authored; exact-source CI/fresh reviewer2 inspection pending.",
+      "deferral_code": "missing_defining_surface",
+      "historical_deferral_reason": "Column-width control absent from native exports; service child/current notebook do not establish actual width setting surface."
+    }
+  ],
+  "next_bank_priority_ids": [
+    "audit-options-tag-suggestions-suggested-tags-width-of-suggested-tags-columns",
+    "audit-options-tag-suggestions-suggested-tags-column-layout"
+  ],
+  "selected_ids": [
+    "audit-options-tag-suggestions-suggested-tags-width-of-suggested-tags-columns",
+    "audit-options-tag-suggestions-suggested-tags-column-layout"
+  ],
+  "final_gates": [
+    "Exact sourcee886e68ed9c49751617bcf28df50957d99e3c03e/run37540746618: required Linux strictcheck fmt/Clippy/fulltests/ratchet and parity-models green; Windows/macOS deferred under exact-source policy.",
+    "Fresh actual source-bound three defining PNGs and independent final-reviewer2 approval of exactly2; source review3 is historical provenance only.",
+    "Root actualinspection, final patch+census digestreview, stagedbrowser and prior339/unselected/native1799 preservation.",
+    "Refresh all-leaves goal/checklist only from actual accepted post-publication ledger; planned2 creates no goal progress."
+  ],
+  "approval": false
+}

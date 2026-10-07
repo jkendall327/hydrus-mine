@@ -274,6 +274,49 @@ fn most_used_child_stages_each_service_cancels_descendants_and_persists_options(
         row(&options, "Width of suggested tags columns: ").1.number,
         240
     );
+    let (layout_index, layout) = row(&options, "Column layout: ");
+    assert_eq!(layout.kind, 5);
+    assert_eq!(layout.index, 1);
+    assert_eq!(layout.items.row_data(1).unwrap(), "side-by-side");
+    let measured = std::rc::Rc::new(std::cell::Cell::new(false));
+    options.on_choice_state_measured({
+        let measured = measured.clone();
+        move |index, frame, selected, label, enabled| {
+            if index == layout_index {
+                measured.set(
+                    frame.w > 0.0
+                        && frame.h > 0.0
+                        && selected == 1
+                        && label == "side-by-side"
+                        && enabled,
+                );
+            }
+        }
+    });
+    options.set_measure_choice_states(true);
+    let parent_native = windows.get(windows.count() - 1).unwrap();
+    let deadline = std::time::Instant::now() + std::time::Duration::from_secs(2);
+    loop {
+        headless::render(&parent_native, 1000, 850);
+        if measured.get() {
+            break;
+        }
+        assert!(
+            std::time::Instant::now() < deadline,
+            "saved layout must reach the actual ComboBox"
+        );
+        std::thread::sleep(std::time::Duration::from_millis(10));
+    }
+    let pixels = headless::render_snapshot(&parent_native, 1000, 850);
+    headless::save_png(
+        &std::path::Path::new(env!("CARGO_TARGET_TMPDIR"))
+            .join("suggested-tags-options-width240-columns.png"),
+        &pixels,
+        1000,
+        850,
+    )
+    .unwrap();
+    options.set_measure_choice_states(false);
     options.invoke_most_used_tags_clicked();
     let edit = slots.editor.borrow().as_ref().unwrap().clone_strong();
     edit.invoke_service_chosen(i32::try_from(mine).unwrap());

@@ -1,0 +1,131 @@
+{
+  "schema_version": 1,
+  "source_commit": "e886e68ed9c49751617bcf28df50957d99e3c03e",
+  "run_id": 37540746618,
+  "state": "conditional_mapping_NOT_applied",
+  "input_patch": "/workspace/validation-reviews/suggested2/prep-e886e68ed/subset-preflight/subset-proposal-patch.json",
+  "input_sha256": "fc30c7ceb1a20ac9058252668e6f31dcab0e327eb92572b0d0f62c9c45565bc9",
+  "selected_ids": [
+    "audit-options-tag-suggestions-suggested-tags-width-of-suggested-tags-columns",
+    "audit-options-tag-suggestions-suggested-tags-column-layout"
+  ],
+  "mandatory_preconditions": [
+    "Exact sourcee886e68ed9c49751617bcf28df50957d99e3c03e/run37540746618: required Linux strictcheck fmt/Clippy/fulltests/ratchet and parity-models green; Windows/macOS deferred under exact-source policy.",
+    "Fresh actual source-bound three defining PNGs and independent final-reviewer2 approval of exactly2; source review3 is historical provenance only.",
+    "Root actualinspection, final patch+census digestreview, stagedbrowser and prior339/unselected/native1799 preservation.",
+    "Refresh all-leaves goal/checklist only from actual accepted post-publication ledger; planned2 creates no goal progress."
+  ],
+  "conditional_operations": [
+    {
+      "id": "audit-options-tag-suggestions-suggested-tags-width-of-suggested-tags-columns",
+      "field": "limitations",
+      "original_index": 1,
+      "operation": "replace_exact_list_item",
+      "before": "Related/lookup panels, weights/durations and complete suggestion-list keyboard/context menus are absent. Their ordinary availability/default selection is not claimed.",
+      "conditional_after": "Related/lookup panels, weights/durations and complete suggestion-list keyboard/context menus are outside this width/layout packet. Their availability/default selection and separately banked related-tag weight editor receive no additional credit here.",
+      "reason": "Apply only after actual exact-source green Linux CI/fresh reviewer2. Preserve authored provenance literally in this map, every real limit and zero parent/alias/other-leaf credit. Related blanket absence is replaced by scope exclusion rather than asserting unsupported current implementation facts."
+    },
+    {
+      "id": "audit-options-tag-suggestions-suggested-tags-width-of-suggested-tags-columns",
+      "field": "limitations",
+      "original_index": 5,
+      "operation": "remove_exact_list_item",
+      "before": "Author did not run local Cargo builds/tests/mutations; hosted CI and native authored PNG inspection are pending.",
+      "conditional_after": null,
+      "reason": "Apply only after actual exact-source green Linux CI/fresh reviewer2. Preserve authored provenance literally in this map, every real limit and zero parent/alias/other-leaf credit. Related blanket absence is replaced by scope exclusion rather than asserting unsupported current implementation facts."
+    },
+    {
+      "id": "audit-options-tag-suggestions-suggested-tags-width-of-suggested-tags-columns",
+      "field": "limitations",
+      "original_index": 6,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source native rendering and independent behavioral review are separate from CI; preparation alone validates no completion.",
+      "conditional_after": null,
+      "reason": "Apply only after actual exact-source green Linux CI/fresh reviewer2. Preserve authored provenance literally in this map, every real limit and zero parent/alias/other-leaf credit. Related blanket absence is replaced by scope exclusion rather than asserting unsupported current implementation facts."
+    },
+    {
+      "id": "audit-options-tag-suggestions-suggested-tags-width-of-suggested-tags-columns",
+      "field": "limitations",
+      "original_index": 7,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source hosted Rust/native execution remains pending; regressions below are authored, not marked executed by preparation.",
+      "conditional_after": null,
+      "reason": "Apply only after actual exact-source green Linux CI/fresh reviewer2. Preserve authored provenance literally in this map, every real limit and zero parent/alias/other-leaf credit. Related blanket absence is replaced by scope exclusion rather than asserting unsupported current implementation facts."
+    },
+    {
+      "id": "audit-options-tag-suggestions-suggested-tags-width-of-suggested-tags-columns",
+      "field": "remaining",
+      "original_index": 0,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source hosted full validation remains pending.",
+      "conditional_after": null,
+      "reason": "Apply only after actual exact-source green Linux CI/fresh reviewer2. Preserve authored provenance literally in this map, every real limit and zero parent/alias/other-leaf credit. Related blanket absence is replaced by scope exclusion rather than asserting unsupported current implementation facts."
+    },
+    {
+      "id": "audit-options-tag-suggestions-suggested-tags-width-of-suggested-tags-columns",
+      "field": "remaining",
+      "original_index": 1,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source native rendered review and final assessment reconciliation remain pending.",
+      "conditional_after": null,
+      "reason": "Apply only after actual exact-source green Linux CI/fresh reviewer2. Preserve authored provenance literally in this map, every real limit and zero parent/alias/other-leaf credit. Related blanket absence is replaced by scope exclusion rather than asserting unsupported current implementation facts."
+    },
+    {
+      "id": "audit-options-tag-suggestions-suggested-tags-column-layout",
+      "field": "limitations",
+      "original_index": 1,
+      "operation": "replace_exact_list_item",
+      "before": "Related/lookup panels, weights/durations and complete suggestion-list keyboard/context menus are absent. Their ordinary availability/default selection is not claimed.",
+      "conditional_after": "Related/lookup panels, weights/durations and complete suggestion-list keyboard/context menus are outside this width/layout packet. Their availability/default selection and separately banked related-tag weight editor receive no additional credit here.",
+      "reason": "Apply only after actual exact-source green Linux CI/fresh reviewer2. Preserve authored provenance literally in this map, every real limit and zero parent/alias/other-leaf credit. Related blanket absence is replaced by scope exclusion rather than asserting unsupported current implementation facts."
+    },
+    {
+      "id": "audit-options-tag-suggestions-suggested-tags-column-layout",
+      "field": "limitations",
+      "original_index": 5,
+      "operation": "remove_exact_list_item",
+      "before": "Author did not run local Cargo builds/tests/mutations; hosted CI and native authored PNG inspection are pending.",
+      "conditional_after": null,
+      "reason": "Apply only after actual exact-source green Linux CI/fresh reviewer2. Preserve authored provenance literally in this map, every real limit and zero parent/alias/other-leaf credit. Related blanket absence is replaced by scope exclusion rather than asserting unsupported current implementation facts."
+    },
+    {
+      "id": "audit-options-tag-suggestions-suggested-tags-column-layout",
+      "field": "limitations",
+      "original_index": 6,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source native rendering and independent behavioral review are separate from CI; preparation alone validates no completion.",
+      "conditional_after": null,
+      "reason": "Apply only after actual exact-source green Linux CI/fresh reviewer2. Preserve authored provenance literally in this map, every real limit and zero parent/alias/other-leaf credit. Related blanket absence is replaced by scope exclusion rather than asserting unsupported current implementation facts."
+    },
+    {
+      "id": "audit-options-tag-suggestions-suggested-tags-column-layout",
+      "field": "limitations",
+      "original_index": 7,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source hosted Rust/native execution remains pending; regressions below are authored, not marked executed by preparation.",
+      "conditional_after": null,
+      "reason": "Apply only after actual exact-source green Linux CI/fresh reviewer2. Preserve authored provenance literally in this map, every real limit and zero parent/alias/other-leaf credit. Related blanket absence is replaced by scope exclusion rather than asserting unsupported current implementation facts."
+    },
+    {
+      "id": "audit-options-tag-suggestions-suggested-tags-column-layout",
+      "field": "remaining",
+      "original_index": 0,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source hosted full validation remains pending.",
+      "conditional_after": null,
+      "reason": "Apply only after actual exact-source green Linux CI/fresh reviewer2. Preserve authored provenance literally in this map, every real limit and zero parent/alias/other-leaf credit. Related blanket absence is replaced by scope exclusion rather than asserting unsupported current implementation facts."
+    },
+    {
+      "id": "audit-options-tag-suggestions-suggested-tags-column-layout",
+      "field": "remaining",
+      "original_index": 1,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source native rendered review and final assessment reconciliation remain pending.",
+      "conditional_after": null,
+      "reason": "Apply only after actual exact-source green Linux CI/fresh reviewer2. Preserve authored provenance literally in this map, every real limit and zero parent/alias/other-leaf credit. Related blanket absence is replaced by scope exclusion rather than asserting unsupported current implementation facts."
+    }
+  ],
+  "metadata": "Root composes source/run/actual passed execution/render metadata only after real gates; preparation retains original authored pending checkpoint.",
+  "additional_final_scope_caveat": "Physical list width has no dedicated measurement observer. The240 opening preference and intrinsic source constraints do not establish a measured rendered240px list width.",
+  "approval": false
+}

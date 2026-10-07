@@ -1,0 +1,151 @@
+{
+  "source_commit": "e886e68ed9c49751617bcf28df50957d99e3c03e",
+  "ci_evidence_sha256": "e1c03fdd42818c6d587be71dbf2a7a8a04c7ee9e91c82244a8180b5056c0eabb",
+  "mapping_sha256": "4e6f3c6e25ae0fcc805a1613e3c67014ebd285e1ea80f6a3976393a0aeddf9cb",
+  "mapping_applied_after_gates": true,
+  "operations": [
+    {
+      "id": "audit-options-tag-suggestions-suggested-tags-width-of-suggested-tags-columns",
+      "field": "limitations",
+      "original_index": 1,
+      "operation": "replace_exact_list_item",
+      "before": "Related/lookup panels, weights/durations and complete suggestion-list keyboard/context menus are absent. Their ordinary availability/default selection is not claimed.",
+      "conditional_after": "Related/lookup panels, weights/durations and complete suggestion-list keyboard/context menus are outside this width/layout packet. Their availability/default selection and separately banked related-tag weight editor receive no additional credit here.",
+      "reason": "Apply only after actual exact-source green Linux CI/fresh reviewer2. Preserve authored provenance literally in this map, every real limit and zero parent/alias/other-leaf credit. Related blanket absence is replaced by scope exclusion rather than asserting unsupported current implementation facts."
+    },
+    {
+      "id": "audit-options-tag-suggestions-suggested-tags-width-of-suggested-tags-columns",
+      "field": "limitations",
+      "original_index": 5,
+      "operation": "remove_exact_list_item",
+      "before": "Author did not run local Cargo builds/tests/mutations; hosted CI and native authored PNG inspection are pending.",
+      "conditional_after": null,
+      "reason": "Apply only after actual exact-source green Linux CI/fresh reviewer2. Preserve authored provenance literally in this map, every real limit and zero parent/alias/other-leaf credit. Related blanket absence is replaced by scope exclusion rather than asserting unsupported current implementation facts."
+    },
+    {
+      "id": "audit-options-tag-suggestions-suggested-tags-width-of-suggested-tags-columns",
+      "field": "limitations",
+      "original_index": 6,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source native rendering and independent behavioral review are separate from CI; preparation alone validates no completion.",
+      "conditional_after": null,
+      "reason": "Apply only after actual exact-source green Linux CI/fresh reviewer2. Preserve authored provenance literally in this map, every real limit and zero parent/alias/other-leaf credit. Related blanket absence is replaced by scope exclusion rather than asserting unsupported current implementation facts."
+    },
+    {
+      "id": "audit-options-tag-suggestions-suggested-tags-width-of-suggested-tags-columns",
+      "field": "limitations",
+      "original_index": 7,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source hosted Rust/native execution remains pending; regressions below are authored, not marked executed by preparation.",
+      "conditional_after": null,
+      "reason": "Apply only after actual exact-source green Linux CI/fresh reviewer2. Preserve authored provenance literally in this map, every real limit and zero parent/alias/other-leaf credit. Related blanket absence is replaced by scope exclusion rather than asserting unsupported current implementation facts."
+    },
+    {
+      "id": "audit-options-tag-suggestions-suggested-tags-width-of-suggested-tags-columns",
+      "field": "remaining",
+      "original_index": 0,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source hosted full validation remains pending.",
+      "conditional_after": null,
+      "reason": "Apply only after actual exact-source green Linux CI/fresh reviewer2. Preserve authored provenance literally in this map, every real limit and zero parent/alias/other-leaf credit. Related blanket absence is replaced by scope exclusion rather than asserting unsupported current implementation facts."
+    },
+    {
+      "id": "audit-options-tag-suggestions-suggested-tags-width-of-suggested-tags-columns",
+      "field": "remaining",
+      "original_index": 1,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source native rendered review and final assessment reconciliation remain pending.",
+      "conditional_after": null,
+      "reason": "Apply only after actual exact-source green Linux CI/fresh reviewer2. Preserve authored provenance literally in this map, every real limit and zero parent/alias/other-leaf credit. Related blanket absence is replaced by scope exclusion rather than asserting unsupported current implementation facts."
+    },
+    {
+      "id": "audit-options-tag-suggestions-suggested-tags-column-layout",
+      "field": "limitations",
+      "original_index": 1,
+      "operation": "replace_exact_list_item",
+      "before": "Related/lookup panels, weights/durations and complete suggestion-list keyboard/context menus are absent. Their ordinary availability/default selection is not claimed.",
+      "conditional_after": "Related/lookup panels, weights/durations and complete suggestion-list keyboard/context menus are outside this width/layout packet. Their availability/default selection and separately banked related-tag weight editor receive no additional credit here.",
+      "reason": "Apply only after actual exact-source green Linux CI/fresh reviewer2. Preserve authored provenance literally in this map, every real limit and zero parent/alias/other-leaf credit. Related blanket absence is replaced by scope exclusion rather than asserting unsupported current implementation facts."
+    },
+    {
+      "id": "audit-options-tag-suggestions-suggested-tags-column-layout",
+      "field": "limitations",
+      "original_index": 5,
+      "operation": "remove_exact_list_item",
+      "before": "Author did not run local Cargo builds/tests/mutations; hosted CI and native authored PNG inspection are pending.",
+      "conditional_after": null,
+      "reason": "Apply only after actual exact-source green Linux CI/fresh reviewer2. Preserve authored provenance literally in this map, every real limit and zero parent/alias/other-leaf credit. Related blanket absence is replaced by scope exclusion rather than asserting unsupported current implementation facts."
+    },
+    {
+      "id": "audit-options-tag-suggestions-suggested-tags-column-layout",
+      "field": "limitations",
+      "original_index": 6,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source native rendering and independent behavioral review are separate from CI; preparation alone validates no completion.",
+      "conditional_after": null,
+      "reason": "Apply only after actual exact-source green Linux CI/fresh reviewer2. Preserve authored provenance literally in this map, every real limit and zero parent/alias/other-leaf credit. Related blanket absence is replaced by scope exclusion rather than asserting unsupported current implementation facts."
+    },
+    {
+      "id": "audit-options-tag-suggestions-suggested-tags-column-layout",
+      "field": "limitations",
+      "original_index": 7,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source hosted Rust/native execution remains pending; regressions below are authored, not marked executed by preparation.",
+      "conditional_after": null,
+      "reason": "Apply only after actual exact-source green Linux CI/fresh reviewer2. Preserve authored provenance literally in this map, every real limit and zero parent/alias/other-leaf credit. Related blanket absence is replaced by scope exclusion rather than asserting unsupported current implementation facts."
+    },
+    {
+      "id": "audit-options-tag-suggestions-suggested-tags-column-layout",
+      "field": "remaining",
+      "original_index": 0,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source hosted full validation remains pending.",
+      "conditional_after": null,
+      "reason": "Apply only after actual exact-source green Linux CI/fresh reviewer2. Preserve authored provenance literally in this map, every real limit and zero parent/alias/other-leaf credit. Related blanket absence is replaced by scope exclusion rather than asserting unsupported current implementation facts."
+    },
+    {
+      "id": "audit-options-tag-suggestions-suggested-tags-column-layout",
+      "field": "remaining",
+      "original_index": 1,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source native rendered review and final assessment reconciliation remain pending.",
+      "conditional_after": null,
+      "reason": "Apply only after actual exact-source green Linux CI/fresh reviewer2. Preserve authored provenance literally in this map, every real limit and zero parent/alias/other-leaf credit. Related blanket absence is replaced by scope exclusion rather than asserting unsupported current implementation facts."
+    }
+  ],
+  "added_review_scope_limits": {
+    "audit-options-tag-suggestions-suggested-tags-width-of-suggested-tags-columns": [
+      "Exactly the width and notebook/side-by-side layout leaves are approved; broader suggested-tag/Options parents, aliases, default-page, recent/related/lookup and most-used-editor completion receive no additional credit.",
+      "Physical list width has no dedicated measurement observer. The240 opening preference and intrinsic source constraints do not establish a measured rendered240px list width; Qt likewise sets a minimum width, and native lists can stretch.",
+      "Manage Tags captures width, layout and availability when opened. Existing owners retain opening preferences; only already-present most-used panels observe persisted broadcasts, using the native200ms observer. Existing Cancel/stale-owner/persistence assertions remain intact.",
+      "Recent is a real persisted read/add consumer and current/pending-on-all filter. Clear confirmation, read-time decay and recent settings editor remain outside this packet.",
+      "Native per-service editing uses an owned selection/list window and shared write-tag child rather than Qt inline Options editing; existing write-autocomplete limitations remain. No remote/IPFS fetching or uploads are covered; imported real service keys can be retained.",
+      "Qt columns PNG is postactivation and includes Clear; native columns PNG is preactivation. The fresh notebook follows preserved Apply/broadcast assertions and retains their additional row in its inactive most-used model. Full-dialog topology and whole-window pixel equality are not claimed; no direct matching Qt Options/notebook PNG exists.",
+      "Fresh native columns show parity: without the kanji glyph, while Qt renders parity:漢字; Unicode row/draft data assertions remain. Font/framework/glyph parity is outside these width/layout leaves.",
+      "Validation is Linux only; Windows and macOS are deferred. No fade, renderer, parent, alias or broader-family completion credit is granted."
+    ],
+    "audit-options-tag-suggestions-suggested-tags-column-layout": [
+      "Exactly the width and notebook/side-by-side layout leaves are approved; broader suggested-tag/Options parents, aliases, default-page, recent/related/lookup and most-used-editor completion receive no additional credit.",
+      "Physical list width has no dedicated measurement observer. The240 opening preference and intrinsic source constraints do not establish a measured rendered240px list width; Qt likewise sets a minimum width, and native lists can stretch.",
+      "Manage Tags captures width, layout and availability when opened. Existing owners retain opening preferences; only already-present most-used panels observe persisted broadcasts, using the native200ms observer. Existing Cancel/stale-owner/persistence assertions remain intact.",
+      "Recent is a real persisted read/add consumer and current/pending-on-all filter. Clear confirmation, read-time decay and recent settings editor remain outside this packet.",
+      "Native per-service editing uses an owned selection/list window and shared write-tag child rather than Qt inline Options editing; existing write-autocomplete limitations remain. No remote/IPFS fetching or uploads are covered; imported real service keys can be retained.",
+      "Qt columns PNG is postactivation and includes Clear; native columns PNG is preactivation. The fresh notebook follows preserved Apply/broadcast assertions and retains their additional row in its inactive most-used model. Full-dialog topology and whole-window pixel equality are not claimed; no direct matching Qt Options/notebook PNG exists.",
+      "Fresh native columns show parity: without the kanji glyph, while Qt renders parity:漢字; Unicode row/draft data assertions remain. Font/framework/glyph parity is outside these width/layout leaves.",
+      "Validation is Linux only; Windows and macOS are deferred. No fade, renderer, parent, alias or broader-family completion credit is granted."
+    ]
+  },
+  "reviews": [
+    {
+      "path": "docs/rust/gui-coverage/checkpoints/e886e68ed/final-review-2-e886e68ed.json",
+      "sha256": "bc08a1144d094ae04b0c5f5af79f7a4c2361358641f57d7032e7f1b7ac82ba57"
+    }
+  ],
+  "selected_ids": [
+    "audit-options-tag-suggestions-suggested-tags-width-of-suggested-tags-columns",
+    "audit-options-tag-suggestions-suggested-tags-column-layout"
+  ],
+  "prior339_completion_ids_and_assessments_preserved": true,
+  "source_only_native_anchor_ids": [],
+  "final_patch_digest": "91de246728024b40192dbfdadcb5e1ab2835cf1b5ed987dbc6d847addf2ff9fe"
+}
