@@ -25,8 +25,8 @@ and both cancellation orders. Strict Clippy and all 2,197 workspace tests passed
 including 713 GUI and 67 media tests. Fresh reference replay and independent review
 of the native renders passed. Only this one leaf gains credit; native transaction
 and layout differences remain explicit. The OR connector's invisible emoji remains
-the existing candidate awaiting sign-off. The runner's indirect Ubuntu mirror list
-also needs a separate infrastructure correction.
+the existing candidate awaiting sign-off. Linux validation now resolves the runner's
+indirect Ubuntu mirror list to the primary archive while preserving signed metadata.
 [Evidence](gui-coverage/checkpoints/2e2a24281/README.md).
 
 The first parallel slate (2026-10-03) adds detailed embedded metadata,
