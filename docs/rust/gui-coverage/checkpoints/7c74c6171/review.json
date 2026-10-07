@@ -1,0 +1,50 @@
+{
+  "source_commit": "7c74c617165a22814a8d0202008794b2beb53de0",
+  "reviewed_by": "Codex root with independent exact-source behavioral/rendered review2; separate source/preservation checks",
+  "patch_sha256": "2cab17e6f1b6905aa80907b49d91657e5c42a9f71f195e7a7be3e7a2e87dbf54",
+  "reviewed_source_census_sha256": "38f3d92b3c9a36f9ba0ed810a588b5bcc64620b25501914acf05733fd15207f7",
+  "selected_completion_ids": [
+    "audit-options-tag-sort-tag-sort-default-tag-sort-in-search-page-manage-tags-dialogs",
+    "audit-options-tag-sort-tag-sort-default-tag-sort-in-media-viewer-manage-tags-dialogs",
+    "audit-options-tag-sort-tag-sort-namespace-grouping-sort-add",
+    "audit-options-tag-sort-tag-sort-namespace-grouping-sort-edit"
+  ],
+  "reviewed_assessment_ids": [
+    "audit-options-tag-sort-tag-sort-default-tag-sort-in-search-page-manage-tags-dialogs",
+    "audit-options-tag-sort-tag-sort-default-tag-sort-in-media-viewer-manage-tags-dialogs",
+    "audit-options-tag-sort-tag-sort-namespace-grouping-sort-add",
+    "audit-options-tag-sort-tag-sort-namespace-grouping-sort-edit"
+  ],
+  "reviewed_native_ids": [],
+  "independent_reviews": [
+    {
+      "path": "docs/rust/gui-coverage/checkpoints/7c74c6171/final-review-2-7c74c6171.json",
+      "sha256": "f236c52b83cd8c5d3dd8c672b9f40c5b3f8cdd51c090ae4f34444ce26422d612"
+    }
+  ],
+  "validation_scope": "linux",
+  "required_platforms": [
+    "linux"
+  ],
+  "deferred_platforms": [
+    "windows",
+    "macos"
+  ],
+  "root_actual_native_inspection": [
+    "manage-tags-sort-options.png",
+    "manage-tags-sort-search-page.png",
+    "manage-tags-sort-media-viewer.png",
+    "tag-sort-layout-initial-900x640.png",
+    "tag-sort-layout-initial-1000x850.png",
+    "tag-sort-layout-initial-900x640-scrolled.png",
+    "tag-sort-layout-saved-900x640.png",
+    "tag-sort-layout-saved-1000x850.png",
+    "tag-sort-layout-saved-900x640-scrolled.png",
+    "tag-namespace-order-options.png",
+    "tag-namespace-order-options-scrolled.png",
+    "tag-namespace-order-enter-text.png",
+    "tag-namespace-order-add-blank.png",
+    "tag-namespace-order-edit.png"
+  ],
+  "scope": "Only the two selected Manage Tags defaults and namespace grouping Add/Edit leaves gain credit. No parent, alias, native hierarchy or deferred-platform credit. Browser verification and preservation audit required before canonical publication."
+}

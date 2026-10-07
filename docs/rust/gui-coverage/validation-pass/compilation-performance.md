@@ -362,3 +362,22 @@ All 705 GUI and 67 media tests passed. The logs do not isolate generation, Rust
 compilation and linking, or establish the cause of runtime variation.
 [Exact outcome and logs](../checkpoints/32d9dbb74/validation-outcome.json) are
 retained. No further optimization experiment was opened.
+
+## Sort/group checkpoint after runner-image change
+
+Source `7c74c6171`, full Linux run `37567007002`, used runner image
+`20261004.327.1`, following `20260927.320.1` in the radio checkpoint.
+The dependency cache hit, but no workspace snapshot matched compatibility prefix
+`d375ff77746ca54e3a64f5c5`. No workspace artifacts or input mtimes were restored.
+All 25 cache safety tests passed. A fresh 293-file snapshot was saved under this
+run's key: 2,200,273,639 uncompressed bytes and 345,087,701 compressed bytes.
+Bounded maintenance retained 1,379,396,172 bytes, within the 3 GiB cap.
+
+Strict Clippy reported 9m45s (586s for the workflow step), test compilation
+11m32s, and the full test step 19m56s. All 706 GUI tests passed in 234.50s;
+all 67 media tests passed in 1.01s. The generated UI crate was rebuilt.
+This change edits Slint and the runner image also changed, with a workspace
+cache miss. These observations cannot attribute the slower build solely to the
+Slint edit or separate generation, Rust compilation and linking.
+[Exact outcome and logs](../checkpoints/7c74c6171/validation-outcome.json) are
+retained. No further optimization experiment was opened.

@@ -1,0 +1,97 @@
+{
+  "source_commit": "7c74c617165a22814a8d0202008794b2beb53de0",
+  "run_id": 37567007002,
+  "artifact_id": 11459759822,
+  "native_zip_sha256": "71d73ee380cc3c85dff32e0d2c0ac56594d73129efaa4eb2c5ddfe0d231b512f",
+  "actually_viewed": [
+    {
+      "name": "manage-tags-sort-options.png",
+      "bytes": 73699,
+      "sha256": "a92e5369938b38b39c35c23ad9dc2947de912853e32a6580903bd2e62bc2fd68",
+      "observations": "Saved/reopened defaults clearly separate search-page subtag/z-a/tags from media-viewer count/fewest/no-grouping. Vertical controls and labels legible, no overlap with next rows or grouping heading. Lower queue outside viewport; dedicated scrolled captures cover it."
+    },
+    {
+      "name": "manage-tags-sort-search-page.png",
+      "bytes": 54732,
+      "sha256": "69dce3db51fa988154ee448eb73f94a29b3ce8f872d19a814a47dd555f43bfb7",
+      "observations": "Actual720x680 reopened selected-files Manage Tags: count/most-first/namespace-user controls, three service tabs, fixture tags and counts, apply/cancel visible. These lifetime values differ from the separate saved Options capture, as recorded."
+    },
+    {
+      "name": "manage-tags-sort-media-viewer.png",
+      "bytes": 50057,
+      "sha256": "4bd64fdf908ea6e7e9a550505628d6473dc5bdf349db13fd8dfb678f20023432",
+      "observations": "Actual720x680 reopened current-file Manage Tags: count/most-first/namespace-user controls and fixture one-file counts visible, distinct from multi-file consumer. No matching standalone Qt consumer PNG."
+    },
+    {
+      "name": "tag-sort-layout-initial-900x640.png",
+      "bytes": 58346,
+      "sha256": "140b1fbe2e3d2e75bad27aab4a3e725d3efc87a0f014aac7b4ead42ad766d804",
+      "observations": "Actual initial values with tag/a-z/siblings/user grouping for both Manage Tags contexts. All four sort stacks separate cleanly and clear namespace heading; lower queue may extend below viewport, covered by scrolled frames. At900wide, some explanatory prose is clipped horizontally; selected captions/dropdowns and scrolled queue controls remain readable. "
+    },
+    {
+      "name": "tag-sort-layout-initial-1000x850.png",
+      "bytes": 85341,
+      "sha256": "f47b2665ddc417a8a73a0c9b4555767b8cf3b15e0bad9aeff5acee597635c2f2",
+      "observations": "Actual initial values with tag/a-z/siblings/user grouping for both Manage Tags contexts. All four sort stacks separate cleanly and clear namespace heading; lower queue may extend below viewport, covered by scrolled frames. At1000wide, explanation fits the supported pane. "
+    },
+    {
+      "name": "tag-sort-layout-initial-900x640-scrolled.png",
+      "bytes": 63995,
+      "sha256": "c14606aaaf67ef38fded14f090b0b6f5d0428f6a0e4c4caf2a2bf0aec3c3ae6e",
+      "observations": "Actual initial values with tag/a-z/siblings/user grouping for both Manage Tags contexts. After real wheel, the visible default queue entries and arrow/delete/Add/disabled-Edit controls are visible above Apply/Cancel. Upper rows intentionally scrolled offscreen. At900wide, some explanatory prose is clipped horizontally; selected captions/dropdowns and scrolled queue controls remain readable. "
+    },
+    {
+      "name": "tag-sort-layout-saved-900x640.png",
+      "bytes": 68736,
+      "sha256": "03a5403b6c01f5810e26d495f20361ec0da520b04b339a8dc5dd0ebc08e95c15",
+      "observations": "Actual saved/reopened independent values (search Manage Tags subtag/z-a/tags; viewer count/fewest/no-grouping). All four sort stacks separate cleanly and clear namespace heading; lower queue may extend below viewport, covered by scrolled frames. At900wide, some explanatory prose is clipped horizontally; selected captions/dropdowns and scrolled queue controls remain readable. "
+    },
+    {
+      "name": "tag-sort-layout-saved-1000x850.png",
+      "bytes": 84643,
+      "sha256": "59a4ee638b421dd52acf63467ef3b266ba62a195e14dda40bfecdc3bdffa22e8",
+      "observations": "Actual saved/reopened independent values (search Manage Tags subtag/z-a/tags; viewer count/fewest/no-grouping). All four sort stacks separate cleanly and clear namespace heading; lower queue may extend below viewport, covered by scrolled frames. At1000wide, explanation fits the supported pane. "
+    },
+    {
+      "name": "tag-sort-layout-saved-900x640-scrolled.png",
+      "bytes": 63199,
+      "sha256": "54df53cfd935b5520ab27ff99faecb5adba6f7352878e83976a919d1e04baa4b",
+      "observations": "Actual saved/reopened independent values (search Manage Tags subtag/z-a/tags; viewer count/fewest/no-grouping). After real wheel, the visible default queue entries and arrow/delete/Add/disabled-Edit controls are visible above Apply/Cancel. Upper rows intentionally scrolled offscreen. At900wide, some explanatory prose is clipped horizontally; selected captions/dropdowns and scrolled queue controls remain readable. "
+    },
+    {
+      "name": "tag-namespace-order-options.png",
+      "bytes": 85254,
+      "sha256": "c5732deaba887a2431a8ccd2e1c33984a35254cb27dbd49632b6c516c03a4aee",
+      "observations": "Actual1000x850 saved raw queue top frame: studio begins list; sort controls clear heading. Queue/action bottom outside viewport, not proof of full queue visibility alone."
+    },
+    {
+      "name": "tag-namespace-order-options-scrolled.png",
+      "bytes": 82291,
+      "sha256": "116bfd3cbb7230ce18a496b36bbb7d827eeff292928f9c531328889c0cff0430",
+      "observations": "Actual1000x850 real-wheel frame exposes the first five visible saved queue entries studio/series/character/species/unnamespaced; additional raw entries remain in the internal list viewport, arrow/delete controls, Add and inactive Edit, plus Apply/Cancel. No selected row explains disabled Edit."
+    },
+    {
+      "name": "tag-namespace-order-enter-text.png",
+      "bytes": 9618,
+      "sha256": "927ad517a4df39c9b6d63632c6d07e1ea17a91281934041dc9018d55e105d868",
+      "observations": "Actual520x220 Add: full allow-blank/colon instruction, namespace default, focused field, Apply/Cancel visible."
+    },
+    {
+      "name": "tag-namespace-order-add-blank.png",
+      "bytes": 8404,
+      "sha256": "831f87241f1d5dfd9b26b3ac9b8ac7c62a85c00098ac61a9941f9783b2d99fcf",
+      "observations": "Actual520x220 blank-valid Add: empty focused field, complete prompt and visibly enabled Apply/Cancel. Runtime assertions establish acceptance; still alone does not."
+    },
+    {
+      "name": "tag-namespace-order-edit.png",
+      "bytes": 9347,
+      "sha256": "cff4a21a857344d7aebf2a2f50cde10212b304a8c99ad65b43e2eefb2b3bf55b",
+      "observations": "Actual520x220 Edit: creator prepopulated, complete prompt and Apply/Cancel visible. Matching Qt PNG is blank Add state, not populated Edit."
+    }
+  ],
+  "reference_provenance": "/workspace/validation-reviews/sort4/reference/root-provenance.json",
+  "reference_provenance_sha256": "e049af33ffa2aeb6c7eceb917b87a25a4616039e030fbef569461dabf2f9f048",
+  "independent_review_pending": false,
+  "scope": "All14 native images actually viewed. Vertical native vs horizontal Qt; parent default vs saved states differ. No Qt standalone consumer or populated Edit PNG. Narrow explanatory prose clips; no whole-Options pixel parity claim. Linux only. Internal queue viewport does not display every stored raw entry at once; complete queue equality is assertion-backed.",
+  "independent_review_sha256": "f236c52b83cd8c5d3dd8c672b9f40c5b3f8cdd51c090ae4f34444ce26422d612"
+}

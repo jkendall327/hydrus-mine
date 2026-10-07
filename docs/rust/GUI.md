@@ -3769,14 +3769,15 @@ colours while sorting can use their sibling ideals. The actual Qt recording
 `manage_tags_sort.json` covers 72 combinations and both captured-dialog lifetimes;
 `manage_tags_sort_options.png` shows the actual controls.
 
-The current four-leaf validation repair gives stacked Tag Sort dropdowns their
+The validated four-leaf repair gives stacked Tag Sort dropdowns their
 intrinsic row height so they no longer paint over the next context or the
-namespace-grouping heading. Authored geometry checks cover the normal 900×640
+namespace-grouping heading. Passing geometry checks cover the normal 900×640
 window and a 1000×850 window, with initial and saved/reopened controls. Dedicated
 captures cover both Manage Tags consumers and the namespace Add/Edit children.
 The October 7 Qt rerun preserves all 72 sort combinations and both lifetimes;
-exact-source Linux execution and fresh native review remain pending. The published
-ledger remains 347 signed off with 28 existing candidates awaiting sign-off.
+exact-source Linux run `37567007002` and fresh independent native review passed,
+including all 706 GUI and 67 media tests. The published ledger is 351 signed off
+with 24 existing candidates pending. [Evidence](gui-coverage/checkpoints/7c74c6171/README.md).
 
 Speed and Memory > download pages update now stages the four experimental gallery
 and watcher list-update controls: seconds/milliseconds with a 250 ms minimum and
@@ -3981,11 +3982,12 @@ while a child owns input, Cancel discards the draft, and rebind or accepted clie
 exit closes the exact children permanently. Hidden or retired callbacks cannot
 stage changes. Saved namespace order reaches the existing sidebar/viewer tag-sort
 consumers; presentation saves preserve concurrent unrelated fields. Actual Qt
-queue/prompt/sort recording and authored model/native regressions cover this
+queue/prompt/sort recording and passing model/native regressions cover this
 finite scope, including real Enter Text blank/whitespace Apply and Cancel
-handlers with their “apply”/“cancel” buttons. Hosted Rust execution and native PNG review remain pending.
+handlers with their “apply”/“cancel” buttons. Exact-source Linux execution and
+fresh native PNG review passed at `7c74c6171`.
 
-The same pending Tag Sort layout repair preserves raw namespace values and
+The same validated Tag Sort layout repair preserves raw namespace values and
 selection identities. It adds a blank-valid Add capture matching the recorded
 Qt input state and a populated Edit capture, while retaining the original Add
 default and queue replay. The actual October 7 Qt rerun reproduces all 18 queue

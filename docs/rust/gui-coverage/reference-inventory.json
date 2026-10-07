@@ -1,9 +1,9 @@
 {
   "schema_version": 1,
   "inventory_name": "Hydrus reference GUI nested feature inventory",
-  "generated_at": "2026-10-07T03:15:09.630931+00:00",
+  "generated_at": "2026-10-07T04:09:59.962443+00:00",
   "repository_root": ".",
-  "git_head": "32d9dbb74d0c6b55d6d402dc9e44c72ece4a3192",
+  "git_head": "7c74c617165a22814a8d0202008794b2beb53de0",
   "reference_version": "v688 (repository docs)",
   "read_only": true,
   "tests_run": true,
@@ -27,8 +27,8 @@
     "node_count": 1812,
     "status_counts": {
       "partial": 385,
-      "first_pass": 948,
-      "missing": 479
+      "first_pass": 952,
+      "missing": 475
     },
     "kind_counts": {
       "root": 1,
@@ -128,7 +128,7 @@
           "role": "documented_scope",
           "source": {
             "path": "docs/rust/ROADMAP.md",
-            "line": 219,
+            "line": 218,
             "line_sha256": "b7c6ea3b42da1cc23e44950b86fb94aeea5411a0db780220864581fd1bf6f632"
           },
           "description": "Remaining network, tag/archive and downloader-definition breadth priorities.",
@@ -143,8 +143,8 @@
       "descendant_count": 1811,
       "descendant_status_counts": {
         "partial": 384,
-        "missing": 479,
-        "first_pass": 948
+        "missing": 475,
+        "first_pass": 952
       },
       "unique_feature_descendant_count": 1527,
       "unique_reachable_feature_count_including_shared": 1527,
@@ -204,8 +204,8 @@
       "descendant_count": 704,
       "descendant_status_counts": {
         "partial": 109,
-        "first_pass": 351,
-        "missing": 244
+        "first_pass": 355,
+        "missing": 240
       },
       "unique_feature_descendant_count": 594,
       "unique_reachable_feature_count_including_shared": 659,
@@ -19544,9 +19544,9 @@
       },
       "descendant_count": 644,
       "descendant_status_counts": {
-        "first_pass": 328,
+        "first_pass": 332,
         "partial": 75,
-        "missing": 241
+        "missing": 237
       },
       "unique_feature_descendant_count": 544,
       "unique_reachable_feature_count_including_shared": 580,
@@ -21107,7 +21107,7 @@
         },
         {
           "path": "crates/hydrus-gui/ui/options.slint",
-          "line": 587,
+          "line": 600,
           "role": "scoped_implementation",
           "description": "Expose the regex favourites options page and its embedded editor route; child Apply updates the options draft, parent Apply persists and parent Cancel discards child drafts and closes stale handles. Counted separately from its concrete editor leaf.",
           "executed_in_inventory": false,
@@ -21659,8 +21659,8 @@
       "descendant_count": 9,
       "descendant_status_counts": {
         "partial": 1,
-        "missing": 6,
-        "first_pass": 2
+        "missing": 2,
+        "first_pass": 6
       },
       "unique_feature_descendant_count": 7,
       "unique_reachable_feature_count_including_shared": 8,
@@ -29005,7 +29005,7 @@
         },
         {
           "path": "crates/hydrus-gui/ui/options.slint",
-          "line": 576,
+          "line": 589,
           "authored_location": "crates/hydrus-gui/ui/options.slint:295",
           "role": "scoped_implementation",
           "executed_in_inventory": false,
@@ -44413,7 +44413,7 @@
         },
         {
           "path": "crates/hydrus-gui/ui/options.slint",
-          "line": 927,
+          "line": 940,
           "role": "scoped_implementation",
           "description": "Editable top/bottom choice is imported and persisted; reopening moves the search field and displays suggestions below the top field or above the bottom field. Initial current combo text, none labels and units are searchable with their owning row highlighted.",
           "executed_in_inventory": false,
@@ -69976,7 +69976,7 @@
         },
         {
           "path": "crates/hydrus-gui/ui/options.slint",
-          "line": 413,
+          "line": 426,
           "line_sha256": "50bcc3ea75082de5b8b6468bf4a59d9209d8aee8809a636a066383594c07fccd",
           "symbol": "if row.kind == 33:",
           "role": "native_implementation",
@@ -70299,7 +70299,7 @@
         },
         {
           "path": "crates/hydrus-gui/ui/options.slint",
-          "line": 413,
+          "line": 426,
           "line_sha256": "50bcc3ea75082de5b8b6468bf4a59d9209d8aee8809a636a066383594c07fccd",
           "symbol": "if row.kind == 33:",
           "role": "native_implementation",
@@ -70842,7 +70842,7 @@
         },
         {
           "path": "crates/hydrus-gui/ui/options.slint",
-          "line": 422,
+          "line": 435,
           "line_sha256": "554caa53b5a8e8ebbcd9042123ded0fb75e7f2141db76c4f4cb37b763a57bcd0",
           "symbol": "width: row.unit == \"\" ? 260px : 400px;",
           "role": "shared_support",
@@ -71563,7 +71563,7 @@
         },
         {
           "path": "crates/hydrus-gui/ui/options.slint",
-          "line": 422,
+          "line": 435,
           "line_sha256": "554caa53b5a8e8ebbcd9042123ded0fb75e7f2141db76c4f4cb37b763a57bcd0",
           "symbol": "width: row.unit == \"\" ? 260px : 400px;",
           "role": "shared_support",
@@ -72284,7 +72284,7 @@
         },
         {
           "path": "crates/hydrus-gui/ui/options.slint",
-          "line": 422,
+          "line": 435,
           "line_sha256": "554caa53b5a8e8ebbcd9042123ded0fb75e7f2141db76c4f4cb37b763a57bcd0",
           "symbol": "width: row.unit == \"\" ? 260px : 400px;",
           "role": "shared_support",
@@ -77797,7 +77797,7 @@
         },
         {
           "path": "crates/hydrus-gui/ui/options.slint",
-          "line": 553,
+          "line": 566,
           "symbol": "if row.kind == 16",
           "role": "scoped_implementation",
           "executed_in_inventory": false,
@@ -83371,8 +83371,8 @@
       ],
       "descendant_count": 8,
       "descendant_status_counts": {
-        "missing": 6,
-        "first_pass": 2
+        "missing": 2,
+        "first_pass": 6
       },
       "unique_feature_descendant_count": 7,
       "unique_reachable_feature_count_including_shared": 7,
@@ -83429,40 +83429,365 @@
       "parent_id": "audit-options-tag-sort-tag-sort",
       "label": "Default tag sort in search page manage tags dialogs:",
       "kind": "control",
-      "status": "missing",
-      "native_source": null,
+      "status": "first_pass",
+      "native_source": {
+        "path": "crates/hydrus-gui-model/src/options.rs",
+        "line": 4638,
+        "line_sha256": "71eea2b1dd2d9b728278db03b65f33ca9373ae47732ea127af4495e380e0161b",
+        "symbol": "\"Default tag sort in search page manage tags dialogs: \","
+      },
       "reference_source": {
         "path": "hydrus/client/gui/panels/options/TagSortPanel.py",
         "line": 53,
-        "line_sha256": "4dc5bcf7991dbb5cf437f5c73d528a52afc83c63ce4fae9bb2888e9686a427da"
+        "line_sha256": "4dc5bcf7991dbb5cf437f5c73d528a52afc83c63ce4fae9bb2888e9686a427da",
+        "symbol": "'Default tag sort in search page manage tags dialogs: '"
       },
-      "assessment": "Reference editor/control 'Default tag sort in search page manage tags dialogs:' is recorded on 'tag sort' and defined by the referenced options panel. No corresponding editable row exists in native options::pages; this is a missing GUI editing path, even if a setting is imported or consumed elsewhere.",
+      "assessment": "Exact independently staged search page Manage Tags default, with tag/subtag/count type, remembered text/count order, siblings/tags and namespace grouping; default tag/ASC/siblings/user-grouped. Typed legacy context 1 imports independently of sidebar/viewer sorts. Apply merges only the changed context, Cancel preserves it, real Store reopen restores it. Native selected-file main launch reads this default at opening; every local service tab captures its own control. Local sorting retains logical tags/counts/segmented colours and uses sibling ideals only when decorators are enabled. Later policy changes leave open controls/local overrides intact; successors read the new policy. Hidden/retired sort callbacks cannot change drafts; rebind and accepted main close cancel owned children/workers, Exit Cancel retains them, and closed/re-shown viewer launchers remain inert. Stacked native sort/group dropdowns now receive intrinsic row height. Authored real-frame checks cover four contexts with initial and saved/reopened values at900x640 and1000x850, within-row containment, strict dropdown/row separation, namespace heading clearance and actual narrow-view scrolling. Separate asserted captures show the selected-files search-page and current-file media-viewer Manage Tags consumers.",
       "evidence": [
         {
           "path": "crates/hydrus-gui-model/src/options.rs",
-          "line": 1626,
-          "role": "source_inspection",
-          "description": "Inspected complete native options registry: the explicitly listed native getter/setter rows are offered.",
-          "executed_in_inventory": false,
-          "line_sha256": "9b25465690948e42af43c4a0260d2651e872520f0dcd383f3510ff0712f4a148"
+          "line": 4638,
+          "line_sha256": "71eea2b1dd2d9b728278db03b65f33ca9373ae47732ea127af4495e380e0161b",
+          "symbol": "\"Default tag sort in search page manage tags dialogs: \",",
+          "role": "scoped_implementation",
+          "description": "\"Default tag sort in search page manage tags dialogs: \",",
+          "executed_in_inventory": false
         },
         {
-          "path": "oracle/record_options_dialog.py",
-          "line": 1,
-          "role": "existing_oracle_recorder",
-          "description": "Existing recorder traverses the real Qt options dialog, including these page/box/control labels.",
-          "executed_in_inventory": false,
-          "line_sha256": "381f9bfc69d49d39040a7d5fc3197ce385019a2ba2de649622f841a8c658ed37"
+          "path": "crates/hydrus-store/src/manage_tags_sort.rs",
+          "line": 29,
+          "line_sha256": "2316f29ba4b36bac799702b5e5afbec41bb9c5644e2ecee9f9bf4492ef35e496",
+          "symbol": "pub struct Settings",
+          "role": "scoped_implementation",
+          "description": "pub struct Settings",
+          "executed_in_inventory": false
+        },
+        {
+          "path": "crates/hydrus-store/src/import/decode.rs",
+          "line": 2716,
+          "line_sha256": "08f69267a215af2a24f24a437fd38812d2e5a61da24a6522270d32c53dc33a4e",
+          "symbol": "fn manage_tags_sort(",
+          "role": "scoped_implementation",
+          "description": "fn manage_tags_sort(",
+          "executed_in_inventory": false
+        },
+        {
+          "path": "crates/hydrus-gui-model/src/options.rs",
+          "line": 85,
+          "line_sha256": "24162436236313206e97e0d9ae4543c681d4d3aa606860e221a5c1b09d682670",
+          "symbol": "(@save $conn:ident, $after:ident, $before:ident, manage_tags_sort)",
+          "role": "scoped_implementation",
+          "description": "(@save $conn:ident, $after:ident, $before:ident, manage_tags_sort)",
+          "executed_in_inventory": false
+        },
+        {
+          "path": "crates/hydrus-gui-model/src/manage_tags_sort.rs",
+          "line": 20,
+          "line_sha256": "501c41111dad564ce0ed219ef3b170cf1473ad0ce7a93322e180fc5817b11c53",
+          "symbol": "pub fn choose(",
+          "role": "scoped_implementation",
+          "description": "pub fn choose(",
+          "executed_in_inventory": false
+        },
+        {
+          "path": "crates/hydrus-gui-model/src/manage_tags.rs",
+          "line": 65,
+          "line_sha256": "b9925452f240c937b8a990c57d1325d5b5b8ed252befedf4ce9d60e7a85210e1",
+          "symbol": "pub fn new_at(",
+          "role": "scoped_implementation",
+          "description": "pub fn new_at(",
+          "executed_in_inventory": false
+        },
+        {
+          "path": "crates/hydrus-gui-model/src/manage_tags.rs",
+          "line": 353,
+          "line_sha256": "c510e1fadb580eb1d3bac38412753ef6ae79835270ad2f695b808f5628c5ea61",
+          "symbol": "fn plain_rows(",
+          "role": "scoped_implementation",
+          "description": "fn plain_rows(",
+          "executed_in_inventory": false
+        },
+        {
+          "path": "crates/hydrus-gui/src/manage_tags_window.rs",
+          "line": 501,
+          "line_sha256": "73ad4084a23f9724ad6d2e91e0099e4b4f8584f5ff28bdccdb4ed8fac2a4b2de",
+          "symbol": "window.on_sort_chosen({",
+          "role": "scoped_implementation",
+          "description": "window.on_sort_chosen({",
+          "executed_in_inventory": false
+        },
+        {
+          "path": "crates/hydrus-gui/src/options_window.rs",
+          "line": 365,
+          "line_sha256": "8ec0c49582811993415961fb5a0f8cc02e0cfe2752c64975d5144d371f24a6ce",
+          "symbol": "(Kind::ManageTagsSort, Value::ManageTagsSort(control))",
+          "role": "scoped_implementation",
+          "description": "(Kind::ManageTagsSort, Value::ManageTagsSort(control))",
+          "executed_in_inventory": false
+        },
+        {
+          "path": "crates/hydrus-gui/ui/options.slint",
+          "line": 685,
+          "line_sha256": "ba4f8fd2bf038a94b81f94dbec7582837226354b42a389fd680731cf1bb00a0a",
+          "symbol": "if row.kind == 12 || row.kind == 35:",
+          "role": "scoped_implementation",
+          "description": "if row.kind == 12 || row.kind == 35:",
+          "executed_in_inventory": false
+        },
+        {
+          "path": "crates/hydrus-gui/ui/manage_tags.slint",
+          "line": 46,
+          "line_sha256": "f4a6974a98bc1969793377b72718d8ebc311d03a8a9d9a8db5da19b5e0f6ba61",
+          "symbol": "callback sort-chosen(",
+          "role": "scoped_implementation",
+          "description": "callback sort-chosen(",
+          "executed_in_inventory": false
+        },
+        {
+          "path": "crates/hydrus-gui/src/lib.rs",
+          "line": 2032,
+          "line_sha256": "34dbe5504f591c38d5711908d30a61d0a6b68c8ace6869eb89174efffae47c21",
+          "symbol": "let open_manage_tags_viewer = {",
+          "role": "scoped_implementation",
+          "description": "let open_manage_tags_viewer = {",
+          "executed_in_inventory": false
+        },
+        {
+          "path": "crates/hydrus-gui/src/lib.rs",
+          "line": 7221,
+          "line_sha256": "7e353722cc834d2a0f5cf042175882656c6160d5f46110df48be0a2e9aecc3e4",
+          "symbol": "let manage_tags_of: Rc<dyn Fn(HashId)>",
+          "role": "scoped_implementation",
+          "description": "let manage_tags_of: Rc<dyn Fn(HashId)>",
+          "executed_in_inventory": false
+        },
+        {
+          "path": "crates/hydrus-gui/ui/options.slint",
+          "line": 376,
+          "line_sha256": "ed758098cbaadeb5515b485d78d2ab05a7ea3c6c9e601f19b6eae193765df166",
+          "symbol": "row.kind == 2 || row.kind == 12 || row.kind == 35",
+          "role": "scoped_implementation",
+          "description": "row.kind == 2 || row.kind == 12 || row.kind == 35",
+          "executed_in_inventory": false
+        },
+        {
+          "path": "crates/hydrus-store/src/import/decode.rs",
+          "line": 5401,
+          "line_sha256": "119134dd35a5394d57c253726f0c57a228c8a6fef8945023f56e099d1aae72cc",
+          "symbol": "fn manage_tags_sort_contexts_import_siblings_independently_of_sidebar_sorts(",
+          "role": "authored_behavioral_regression",
+          "description": "fn manage_tags_sort_contexts_import_siblings_independently_of_sidebar_sorts(",
+          "executed_in_inventory": false
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/manage_tags_sort.rs",
+          "line": 107,
+          "line_sha256": "adeb2645e608b81f59e37879e1893a1740410e5e0adf8fe48271f8890f17c4b6",
+          "symbol": "fn independent_defaults_stage_cancel_apply_reopen_and_merge_only_changed_context(",
+          "role": "authored_behavioral_regression",
+          "description": "fn independent_defaults_stage_cancel_apply_reopen_and_merge_only_changed_context(",
+          "executed_in_inventory": false
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/manage_tags_sort.rs",
+          "line": 170,
+          "line_sha256": "9352d080da092ec413b2cf7617c30d749d36bf01cc849f2b84e82a33644323bd",
+          "symbol": "fn both_contexts_replay_all_real_sort_types_orders_siblings_and_groupings(",
+          "role": "authored_behavioral_regression",
+          "description": "fn both_contexts_replay_all_real_sort_types_orders_siblings_and_groupings(",
+          "executed_in_inventory": false
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/manage_tags_sort.rs",
+          "line": 195,
+          "line_sha256": "617704a6b338dda7fa12fc046f32751a063efc58aef76c21e3363426bcb9665d",
+          "symbol": "fn open_service_tabs_keep_local_sort_after_options_change_and_new_dialog_reads_default(",
+          "role": "authored_behavioral_regression",
+          "description": "fn open_service_tabs_keep_local_sort_after_options_change_and_new_dialog_reads_default(",
+          "executed_in_inventory": false
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/manage_tags_sort.rs",
+          "line": 231,
+          "line_sha256": "a03b9ebd3ea653358661fdbce00ba38ee41271ee851cde0f3b54e50b31978d79",
+          "symbol": "fn sibling_sort_uses_raw_tags_when_storage_sibling_information_is_disabled(",
+          "role": "authored_behavioral_regression",
+          "description": "fn sibling_sort_uses_raw_tags_when_storage_sibling_information_is_disabled(",
+          "executed_in_inventory": false
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/options_dialog.rs",
+          "line": 320,
+          "line_sha256": "2e4053a451ef04758e30175d072f01c7009dedbafb7841218b7f44da90aeada3",
+          "symbol": "(Kind::ManageTagsSort, Value::ManageTagsSort(control))",
+          "role": "authored_behavioral_regression",
+          "description": "(Kind::ManageTagsSort, Value::ManageTagsSort(control))",
+          "executed_in_inventory": false
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/manage_tags_sort.rs",
+          "line": 123,
+          "line_sha256": "2963b7940dd6a71c810bb96777fc0f29e1613f0fe886bb471cbf22e247a951a9",
+          "symbol": "fn native_options_stage_cancel_save_reopen_and_reject_retired_sender(",
+          "role": "authored_behavioral_regression",
+          "description": "fn native_options_stage_cancel_save_reopen_and_reject_retired_sender(",
+          "executed_in_inventory": false
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/manage_tags_sort.rs",
+          "line": 412,
+          "line_sha256": "e4f15d4c7c028355c7145d8148955ec88e8642e382caacace20195fa37c49111",
+          "symbol": "fn main_selection_and_viewer_current_file_use_distinct_defaults_and_live_dialog_keeps_its_sort(",
+          "role": "authored_behavioral_regression",
+          "description": "fn main_selection_and_viewer_current_file_use_distinct_defaults_and_live_dialog_keeps_its_sort(",
+          "executed_in_inventory": false
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/manage_tags_sort.rs",
+          "line": 517,
+          "line_sha256": "45f25fb41a7eb78217628e9e4899aba54eb8ee682c540b12e2ceb97e7786803f",
+          "symbol": "fn rebind_and_accepted_exit_retire_visible_sort_children_and_old_viewer_launcher(",
+          "role": "authored_behavioral_regression",
+          "description": "fn rebind_and_accepted_exit_retire_visible_sort_children_and_old_viewer_launcher(",
+          "executed_in_inventory": false
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/manage_tags_sort.rs",
+          "line": 213,
+          "line_sha256": "1e904fb06acc72776a5f7f00ecde1188e0fbb0435b871aa1642151c051f2d69c",
+          "symbol": "fn actual_sort_stacks_fit_their_rows_and_scroll_without_overlap_at_both_viewports(",
+          "role": "authored_behavioral_regression",
+          "description": "fn actual_sort_stacks_fit_their_rows_and_scroll_without_overlap_at_both_viewports(",
+          "executed_in_inventory": false
+        },
+        {
+          "path": "hydrus/client/gui/ClientGUITagSorting.py",
+          "line": 10,
+          "line_sha256": "43a88c0579ea1de62bcb22538581fb984d2eed0350d651186bfb06e3b119589a",
+          "symbol": "class TagSortControl(",
+          "role": "actual_reference_consumer",
+          "description": "class TagSortControl(",
+          "executed_in_inventory": false
+        },
+        {
+          "path": "hydrus/client/gui/ClientGUITagSorting.py",
+          "line": 86,
+          "line_sha256": "58154dae648d32712b23ff3315b97e2483e3bfb13e22472c20a25e993ed87422",
+          "symbol": "def _UpdateControlsAfterSortTypeChanged(",
+          "role": "actual_reference_consumer",
+          "description": "def _UpdateControlsAfterSortTypeChanged(",
+          "executed_in_inventory": false
+        },
+        {
+          "path": "hydrus/client/gui/lists/ClientGUIListBoxes.py",
+          "line": 5108,
+          "line_sha256": "ad4e61a2ff62019059c663cc2fbbcaa21b0bf75efb6bb2c858069c224ef789a2",
+          "symbol": "item_to_sibling_key_wrapper = lambda term: term.GetBestTag()",
+          "role": "actual_reference_consumer",
+          "description": "item_to_sibling_key_wrapper = lambda term: term.GetBestTag()",
+          "executed_in_inventory": false
+        },
+        {
+          "path": "hydrus/client/gui/lists/ClientGUIListBoxes.py",
+          "line": 5336,
+          "line_sha256": "9f78840325d55de16ea69c6b683ce956fd540b0bfa0e50757f00ad7da686e8e0",
+          "symbol": "class StaticBoxSorterForListBoxTags(",
+          "role": "actual_reference_consumer",
+          "description": "class StaticBoxSorterForListBoxTags(",
+          "executed_in_inventory": false
+        },
+        {
+          "path": "hydrus/client/metadata/ClientTagSorting.py",
+          "line": 214,
+          "line_sha256": "b0a5b803e6f1b25f526fc3e442affa6e555f0a7ab5fbf44da181f56cffd56357",
+          "symbol": "def SortTags(",
+          "role": "actual_reference_consumer",
+          "description": "def SortTags(",
+          "executed_in_inventory": false
+        },
+        {
+          "path": "hydrus/client/gui/metadata/ClientGUIManageTags.py",
+          "line": 382,
+          "line_sha256": "2a00094cb53b213b7127fd42db1b909d5b7eb8f2ae7dc905d17b891cc9360dd4",
+          "symbol": "self._tags_box_sorter = ClientGUIListBoxes.StaticBoxSorterForListBoxTags",
+          "role": "actual_reference_consumer",
+          "description": "self._tags_box_sorter = ClientGUIListBoxes.StaticBoxSorterForListBoxTags",
+          "executed_in_inventory": false
+        },
+        {
+          "path": "hydrus/client/gui/canvas/ClientGUICanvas.py",
+          "line": 618,
+          "line_sha256": "043091f78ae1afdb05ca5916214a6b6e2569892d6d374c6de970080cd0195d89",
+          "symbol": "CC.TAG_PRESENTATION_MEDIA_VIEWER_MANAGE_TAGS, [ self._current_media ]",
+          "role": "actual_reference_consumer",
+          "description": "CC.TAG_PRESENTATION_MEDIA_VIEWER_MANAGE_TAGS, [ self._current_media ]",
+          "executed_in_inventory": false
+        },
+        {
+          "path": "hydrus/client/gui/pages/ClientGUIMediaResultsPanel.py",
+          "line": 999,
+          "line_sha256": "e54b4b31276678d32ec63be95c899cecd86d3bdfba49e46a44f973ea49b7ba8e",
+          "symbol": "CC.TAG_PRESENTATION_SEARCH_PAGE_MANAGE_TAGS",
+          "role": "actual_reference_consumer",
+          "description": "CC.TAG_PRESENTATION_SEARCH_PAGE_MANAGE_TAGS",
+          "executed_in_inventory": false
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/manage_tags_sort.rs",
+          "line": 213,
+          "line_sha256": "1e904fb06acc72776a5f7f00ecde1188e0fbb0435b871aa1642151c051f2d69c",
+          "role": "authored_layout_regression",
+          "description": "actual_sort_stacks_fit_their_rows_and_scroll_without_overlap_at_both_viewports; actual default/applied900x640 and1000x850 geometry and real narrow-scroll queue containment; current exact-source execution pending",
+          "executed_in_inventory": false
         }
       ],
       "limitations": [
-        "Native options registry has no editable 'Default tag sort in search page manage tags dialogs:' control in this page/box path."
+        "Only this original default-sort Options control is proposed; Manage Tags/tag-sort/Options parent families remain Partial. Repository-service workflows and immediate viewer tag commits are outside this slice.",
+        "Native uses existing core human/numeric ordering and segmented rendering; the implementation changes sort keys without replacing logical storage tags. Existing sidebar/media-viewer tag-display sorts remain separate.",
+        "Qt parent PNG is initial/default; saved native parent captures show applied values. Native choices remain vertical rather than horizontal. New separate Manage Tags consumer PNGs have recorded behavior support but no corresponding Qt consumer PNG; no pixel equality or parent-family credit.",
+        "Represented Options sort rows use intrinsic allocation with strict actual-widget geometry assertions for initial/applied narrow/normal states and real scroll access. Qt parent default state differs from native saved/applied captures; native vertical layout differs from Qt horizontal layout. No equal-state pixel/font or OS-key transport claim.",
+        "No matching standalone Qt populated Edit or Manage Tags consumer PNG exists; defining native exports are grounded in recorded state and assertions. Optional Qt client API listener startup was sandbox-denied in these direct Qt/DB reruns; complete fixtures matched with exit0/normal shutdown, and no API connectivity validation is claimed.",
+        "No matching standalone Qt image exists for populated Edit or the Manage Tags consumers. Native exports are grounded in recorded state and assertions. The optional Qt client API listener was denied by the sandbox during these direct Qt/DB reruns. Complete fixtures matched, both recorders exited with code 0 and shut down normally, and no API connectivity validation is claimed.",
+        "The standalone Manage Tags consumer images show the current logical tag counts, decorations and controls. The related suggestion pane was captured while searching, so no related-pane or broader Manage Tags workflow or rendering credit is granted. Exact fixture, row and source assertions establish the distinct selected-files/search-page and current-one-file/viewer contexts; identical control captions alone do not establish that distinction.",
+        "Validation is Linux only; Windows and macOS are deferred. Exactly four original leaves are approved. No completion credit is granted to Options, tag-sort or namespace families, aliases, new IDs, Paste, the ordered queue, generic Manage Tags or repository workflows, immediate viewer commits, the namespace parser or tag-display chooser, radio or global keyboard behavior, or additional consumers.",
+        "At 900 px, some namespace-grouping explanatory prose clips horizontally at line ends. The selected sort controls, queue action buttons and dedicated Add/Edit messages remain readable. Broader parent prose and pixel parity are not claimed.",
+        "Geometry tests pass for all four actual sort contexts, in default and saved states at the natural viewports. They require finite positive frames, containment within allocated rows, separation within and between rows, and separation from the actual kind-0 namespace heading. Real wheel scrolling is validated. Upper clipping in scrolled frames and a lower queue outside the viewport in unscrolled frames are deliberate pane states. The internal queue viewport does not show all rows simultaneously; exact rows, raw values and identities are established by assertions.",
+        "The native vertical stacks differ from Qt horizontal rows. Native font, button and footer proportions, the compact Qt blank entry versus the 520×220 native entry, and saved versus default parent states remain explicit differences. Whole-dialog pixel or geometry equality, OS chrome, modality, focus and universal keyboard transport equivalence are not claimed."
       ],
       "descendant_count": 0,
       "descendant_status_counts": {},
       "unique_feature_descendant_count": 0,
       "unique_reachable_feature_count_including_shared": 1,
-      "native_id_candidates": []
+      "native_id_candidates": [],
+      "remaining": [],
+      "implementation_validation": {
+        "source_commit": "7c74c617165a22814a8d0202008794b2beb53de0",
+        "ci": "passed",
+        "tests_executed_at_checkpoint": true,
+        "native_render_review": "passed",
+        "manifest": "docs/rust/gui-coverage/parity/manage-tags-sort.json",
+        "review_required": false,
+        "run_url": "https://github.com/jkendall327/hydrus-mine/actions/runs/37567007002",
+        "validation_scope": "linux",
+        "required_platforms": [
+          "linux"
+        ],
+        "deferred_platforms": [
+          "windows",
+          "macos"
+        ],
+        "independent_review_evidence": {
+          "path": "docs/rust/gui-coverage/checkpoints/7c74c6171/final-review-2-7c74c6171.json",
+          "sha256": "f236c52b83cd8c5d3dd8c672b9f40c5b3f8cdd51c090ae4f34444ce26422d612"
+        },
+        "publication_policy": {
+          "path": ".github/publication-validation.json",
+          "source_commit": "7c74c617165a22814a8d0202008794b2beb53de0",
+          "sha256": "49723bd5d6b786392a1368bb3da1406747a553ef31c9de2bdef92cea5d014c5f",
+          "effective_date": "2026-10-06",
+          "reason": "The owner uses Linux and prioritizes validated Linux delivery. macOS is low priority; Windows is deferred because its builds materially lengthen validation. Secondary-platform CI remains available by explicit opt-in."
+        }
+      }
     },
     {
       "id": "audit-options-tag-sort-tag-sort-default-tag-sort-in-the-media-viewer",
@@ -83515,40 +83840,365 @@
       "parent_id": "audit-options-tag-sort-tag-sort",
       "label": "Default tag sort in media viewer manage tags dialogs:",
       "kind": "control",
-      "status": "missing",
-      "native_source": null,
+      "status": "first_pass",
+      "native_source": {
+        "path": "crates/hydrus-gui-model/src/options.rs",
+        "line": 4659,
+        "line_sha256": "5a1d8d59e4cbc9bbbe55182805a68bee5fc0c8fb8790273adc00ca97547b7b4e",
+        "symbol": "\"Default tag sort in media viewer manage tags dialogs: \","
+      },
       "reference_source": {
         "path": "hydrus/client/gui/panels/options/TagSortPanel.py",
         "line": 55,
-        "line_sha256": "b0ed3a3ad5205df00a1b74d34f90d717ccdf634ab1f098e36db83430444b9057"
+        "line_sha256": "b0ed3a3ad5205df00a1b74d34f90d717ccdf634ab1f098e36db83430444b9057",
+        "symbol": "'Default tag sort in media viewer manage tags dialogs: '"
       },
-      "assessment": "Reference editor/control 'Default tag sort in media viewer manage tags dialogs:' is recorded on 'tag sort' and defined by the referenced options panel. No corresponding editable row exists in native options::pages; this is a missing GUI editing path, even if a setting is imported or consumed elsewhere.",
+      "assessment": "Exact independently staged media viewer Manage Tags default, with tag/subtag/count type, remembered text/count order, siblings/tags and namespace grouping; default tag/ASC/siblings/user-grouped. Typed legacy context 3 imports independently of sidebar/viewer sorts. Apply merges only the changed context, Cancel preserves it, real Store reopen restores it. Native current-one-file viewer F3/context menu reads this default at opening; every local service tab captures its own control. Local sorting retains logical tags/counts/segmented colours and uses sibling ideals only when decorators are enabled. Later policy changes leave open controls/local overrides intact; successors read the new policy. Hidden/retired sort callbacks cannot change drafts; rebind and accepted main close cancel owned children/workers, Exit Cancel retains them, and closed/re-shown viewer launchers remain inert. Stacked native sort/group dropdowns now receive intrinsic row height. Authored real-frame checks cover four contexts with initial and saved/reopened values at900x640 and1000x850, within-row containment, strict dropdown/row separation, namespace heading clearance and actual narrow-view scrolling. Separate asserted captures show the selected-files search-page and current-file media-viewer Manage Tags consumers.",
       "evidence": [
         {
           "path": "crates/hydrus-gui-model/src/options.rs",
-          "line": 1626,
-          "role": "source_inspection",
-          "description": "Inspected complete native options registry: the explicitly listed native getter/setter rows are offered.",
-          "executed_in_inventory": false,
-          "line_sha256": "9b25465690948e42af43c4a0260d2651e872520f0dcd383f3510ff0712f4a148"
+          "line": 4659,
+          "line_sha256": "5a1d8d59e4cbc9bbbe55182805a68bee5fc0c8fb8790273adc00ca97547b7b4e",
+          "symbol": "\"Default tag sort in media viewer manage tags dialogs: \",",
+          "role": "scoped_implementation",
+          "description": "\"Default tag sort in media viewer manage tags dialogs: \",",
+          "executed_in_inventory": false
         },
         {
-          "path": "oracle/record_options_dialog.py",
-          "line": 1,
-          "role": "existing_oracle_recorder",
-          "description": "Existing recorder traverses the real Qt options dialog, including these page/box/control labels.",
-          "executed_in_inventory": false,
-          "line_sha256": "381f9bfc69d49d39040a7d5fc3197ce385019a2ba2de649622f841a8c658ed37"
+          "path": "crates/hydrus-store/src/manage_tags_sort.rs",
+          "line": 29,
+          "line_sha256": "2316f29ba4b36bac799702b5e5afbec41bb9c5644e2ecee9f9bf4492ef35e496",
+          "symbol": "pub struct Settings",
+          "role": "scoped_implementation",
+          "description": "pub struct Settings",
+          "executed_in_inventory": false
+        },
+        {
+          "path": "crates/hydrus-store/src/import/decode.rs",
+          "line": 2716,
+          "line_sha256": "08f69267a215af2a24f24a437fd38812d2e5a61da24a6522270d32c53dc33a4e",
+          "symbol": "fn manage_tags_sort(",
+          "role": "scoped_implementation",
+          "description": "fn manage_tags_sort(",
+          "executed_in_inventory": false
+        },
+        {
+          "path": "crates/hydrus-gui-model/src/options.rs",
+          "line": 85,
+          "line_sha256": "24162436236313206e97e0d9ae4543c681d4d3aa606860e221a5c1b09d682670",
+          "symbol": "(@save $conn:ident, $after:ident, $before:ident, manage_tags_sort)",
+          "role": "scoped_implementation",
+          "description": "(@save $conn:ident, $after:ident, $before:ident, manage_tags_sort)",
+          "executed_in_inventory": false
+        },
+        {
+          "path": "crates/hydrus-gui-model/src/manage_tags_sort.rs",
+          "line": 20,
+          "line_sha256": "501c41111dad564ce0ed219ef3b170cf1473ad0ce7a93322e180fc5817b11c53",
+          "symbol": "pub fn choose(",
+          "role": "scoped_implementation",
+          "description": "pub fn choose(",
+          "executed_in_inventory": false
+        },
+        {
+          "path": "crates/hydrus-gui-model/src/manage_tags.rs",
+          "line": 65,
+          "line_sha256": "b9925452f240c937b8a990c57d1325d5b5b8ed252befedf4ce9d60e7a85210e1",
+          "symbol": "pub fn new_at(",
+          "role": "scoped_implementation",
+          "description": "pub fn new_at(",
+          "executed_in_inventory": false
+        },
+        {
+          "path": "crates/hydrus-gui-model/src/manage_tags.rs",
+          "line": 353,
+          "line_sha256": "c510e1fadb580eb1d3bac38412753ef6ae79835270ad2f695b808f5628c5ea61",
+          "symbol": "fn plain_rows(",
+          "role": "scoped_implementation",
+          "description": "fn plain_rows(",
+          "executed_in_inventory": false
+        },
+        {
+          "path": "crates/hydrus-gui/src/manage_tags_window.rs",
+          "line": 501,
+          "line_sha256": "73ad4084a23f9724ad6d2e91e0099e4b4f8584f5ff28bdccdb4ed8fac2a4b2de",
+          "symbol": "window.on_sort_chosen({",
+          "role": "scoped_implementation",
+          "description": "window.on_sort_chosen({",
+          "executed_in_inventory": false
+        },
+        {
+          "path": "crates/hydrus-gui/src/options_window.rs",
+          "line": 365,
+          "line_sha256": "8ec0c49582811993415961fb5a0f8cc02e0cfe2752c64975d5144d371f24a6ce",
+          "symbol": "(Kind::ManageTagsSort, Value::ManageTagsSort(control))",
+          "role": "scoped_implementation",
+          "description": "(Kind::ManageTagsSort, Value::ManageTagsSort(control))",
+          "executed_in_inventory": false
+        },
+        {
+          "path": "crates/hydrus-gui/ui/options.slint",
+          "line": 685,
+          "line_sha256": "ba4f8fd2bf038a94b81f94dbec7582837226354b42a389fd680731cf1bb00a0a",
+          "symbol": "if row.kind == 12 || row.kind == 35:",
+          "role": "scoped_implementation",
+          "description": "if row.kind == 12 || row.kind == 35:",
+          "executed_in_inventory": false
+        },
+        {
+          "path": "crates/hydrus-gui/ui/manage_tags.slint",
+          "line": 46,
+          "line_sha256": "f4a6974a98bc1969793377b72718d8ebc311d03a8a9d9a8db5da19b5e0f6ba61",
+          "symbol": "callback sort-chosen(",
+          "role": "scoped_implementation",
+          "description": "callback sort-chosen(",
+          "executed_in_inventory": false
+        },
+        {
+          "path": "crates/hydrus-gui/src/lib.rs",
+          "line": 2032,
+          "line_sha256": "34dbe5504f591c38d5711908d30a61d0a6b68c8ace6869eb89174efffae47c21",
+          "symbol": "let open_manage_tags_viewer = {",
+          "role": "scoped_implementation",
+          "description": "let open_manage_tags_viewer = {",
+          "executed_in_inventory": false
+        },
+        {
+          "path": "crates/hydrus-gui/src/lib.rs",
+          "line": 7221,
+          "line_sha256": "7e353722cc834d2a0f5cf042175882656c6160d5f46110df48be0a2e9aecc3e4",
+          "symbol": "let manage_tags_of: Rc<dyn Fn(HashId)>",
+          "role": "scoped_implementation",
+          "description": "let manage_tags_of: Rc<dyn Fn(HashId)>",
+          "executed_in_inventory": false
+        },
+        {
+          "path": "crates/hydrus-gui/ui/options.slint",
+          "line": 376,
+          "line_sha256": "ed758098cbaadeb5515b485d78d2ab05a7ea3c6c9e601f19b6eae193765df166",
+          "symbol": "row.kind == 2 || row.kind == 12 || row.kind == 35",
+          "role": "scoped_implementation",
+          "description": "row.kind == 2 || row.kind == 12 || row.kind == 35",
+          "executed_in_inventory": false
+        },
+        {
+          "path": "crates/hydrus-store/src/import/decode.rs",
+          "line": 5401,
+          "line_sha256": "119134dd35a5394d57c253726f0c57a228c8a6fef8945023f56e099d1aae72cc",
+          "symbol": "fn manage_tags_sort_contexts_import_siblings_independently_of_sidebar_sorts(",
+          "role": "authored_behavioral_regression",
+          "description": "fn manage_tags_sort_contexts_import_siblings_independently_of_sidebar_sorts(",
+          "executed_in_inventory": false
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/manage_tags_sort.rs",
+          "line": 107,
+          "line_sha256": "adeb2645e608b81f59e37879e1893a1740410e5e0adf8fe48271f8890f17c4b6",
+          "symbol": "fn independent_defaults_stage_cancel_apply_reopen_and_merge_only_changed_context(",
+          "role": "authored_behavioral_regression",
+          "description": "fn independent_defaults_stage_cancel_apply_reopen_and_merge_only_changed_context(",
+          "executed_in_inventory": false
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/manage_tags_sort.rs",
+          "line": 170,
+          "line_sha256": "9352d080da092ec413b2cf7617c30d749d36bf01cc849f2b84e82a33644323bd",
+          "symbol": "fn both_contexts_replay_all_real_sort_types_orders_siblings_and_groupings(",
+          "role": "authored_behavioral_regression",
+          "description": "fn both_contexts_replay_all_real_sort_types_orders_siblings_and_groupings(",
+          "executed_in_inventory": false
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/manage_tags_sort.rs",
+          "line": 195,
+          "line_sha256": "617704a6b338dda7fa12fc046f32751a063efc58aef76c21e3363426bcb9665d",
+          "symbol": "fn open_service_tabs_keep_local_sort_after_options_change_and_new_dialog_reads_default(",
+          "role": "authored_behavioral_regression",
+          "description": "fn open_service_tabs_keep_local_sort_after_options_change_and_new_dialog_reads_default(",
+          "executed_in_inventory": false
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/manage_tags_sort.rs",
+          "line": 231,
+          "line_sha256": "a03b9ebd3ea653358661fdbce00ba38ee41271ee851cde0f3b54e50b31978d79",
+          "symbol": "fn sibling_sort_uses_raw_tags_when_storage_sibling_information_is_disabled(",
+          "role": "authored_behavioral_regression",
+          "description": "fn sibling_sort_uses_raw_tags_when_storage_sibling_information_is_disabled(",
+          "executed_in_inventory": false
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/options_dialog.rs",
+          "line": 320,
+          "line_sha256": "2e4053a451ef04758e30175d072f01c7009dedbafb7841218b7f44da90aeada3",
+          "symbol": "(Kind::ManageTagsSort, Value::ManageTagsSort(control))",
+          "role": "authored_behavioral_regression",
+          "description": "(Kind::ManageTagsSort, Value::ManageTagsSort(control))",
+          "executed_in_inventory": false
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/manage_tags_sort.rs",
+          "line": 123,
+          "line_sha256": "2963b7940dd6a71c810bb96777fc0f29e1613f0fe886bb471cbf22e247a951a9",
+          "symbol": "fn native_options_stage_cancel_save_reopen_and_reject_retired_sender(",
+          "role": "authored_behavioral_regression",
+          "description": "fn native_options_stage_cancel_save_reopen_and_reject_retired_sender(",
+          "executed_in_inventory": false
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/manage_tags_sort.rs",
+          "line": 412,
+          "line_sha256": "e4f15d4c7c028355c7145d8148955ec88e8642e382caacace20195fa37c49111",
+          "symbol": "fn main_selection_and_viewer_current_file_use_distinct_defaults_and_live_dialog_keeps_its_sort(",
+          "role": "authored_behavioral_regression",
+          "description": "fn main_selection_and_viewer_current_file_use_distinct_defaults_and_live_dialog_keeps_its_sort(",
+          "executed_in_inventory": false
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/manage_tags_sort.rs",
+          "line": 517,
+          "line_sha256": "45f25fb41a7eb78217628e9e4899aba54eb8ee682c540b12e2ceb97e7786803f",
+          "symbol": "fn rebind_and_accepted_exit_retire_visible_sort_children_and_old_viewer_launcher(",
+          "role": "authored_behavioral_regression",
+          "description": "fn rebind_and_accepted_exit_retire_visible_sort_children_and_old_viewer_launcher(",
+          "executed_in_inventory": false
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/manage_tags_sort.rs",
+          "line": 213,
+          "line_sha256": "1e904fb06acc72776a5f7f00ecde1188e0fbb0435b871aa1642151c051f2d69c",
+          "symbol": "fn actual_sort_stacks_fit_their_rows_and_scroll_without_overlap_at_both_viewports(",
+          "role": "authored_behavioral_regression",
+          "description": "fn actual_sort_stacks_fit_their_rows_and_scroll_without_overlap_at_both_viewports(",
+          "executed_in_inventory": false
+        },
+        {
+          "path": "hydrus/client/gui/ClientGUITagSorting.py",
+          "line": 10,
+          "line_sha256": "43a88c0579ea1de62bcb22538581fb984d2eed0350d651186bfb06e3b119589a",
+          "symbol": "class TagSortControl(",
+          "role": "actual_reference_consumer",
+          "description": "class TagSortControl(",
+          "executed_in_inventory": false
+        },
+        {
+          "path": "hydrus/client/gui/ClientGUITagSorting.py",
+          "line": 86,
+          "line_sha256": "58154dae648d32712b23ff3315b97e2483e3bfb13e22472c20a25e993ed87422",
+          "symbol": "def _UpdateControlsAfterSortTypeChanged(",
+          "role": "actual_reference_consumer",
+          "description": "def _UpdateControlsAfterSortTypeChanged(",
+          "executed_in_inventory": false
+        },
+        {
+          "path": "hydrus/client/gui/lists/ClientGUIListBoxes.py",
+          "line": 5108,
+          "line_sha256": "ad4e61a2ff62019059c663cc2fbbcaa21b0bf75efb6bb2c858069c224ef789a2",
+          "symbol": "item_to_sibling_key_wrapper = lambda term: term.GetBestTag()",
+          "role": "actual_reference_consumer",
+          "description": "item_to_sibling_key_wrapper = lambda term: term.GetBestTag()",
+          "executed_in_inventory": false
+        },
+        {
+          "path": "hydrus/client/gui/lists/ClientGUIListBoxes.py",
+          "line": 5336,
+          "line_sha256": "9f78840325d55de16ea69c6b683ce956fd540b0bfa0e50757f00ad7da686e8e0",
+          "symbol": "class StaticBoxSorterForListBoxTags(",
+          "role": "actual_reference_consumer",
+          "description": "class StaticBoxSorterForListBoxTags(",
+          "executed_in_inventory": false
+        },
+        {
+          "path": "hydrus/client/metadata/ClientTagSorting.py",
+          "line": 214,
+          "line_sha256": "b0a5b803e6f1b25f526fc3e442affa6e555f0a7ab5fbf44da181f56cffd56357",
+          "symbol": "def SortTags(",
+          "role": "actual_reference_consumer",
+          "description": "def SortTags(",
+          "executed_in_inventory": false
+        },
+        {
+          "path": "hydrus/client/gui/metadata/ClientGUIManageTags.py",
+          "line": 382,
+          "line_sha256": "2a00094cb53b213b7127fd42db1b909d5b7eb8f2ae7dc905d17b891cc9360dd4",
+          "symbol": "self._tags_box_sorter = ClientGUIListBoxes.StaticBoxSorterForListBoxTags",
+          "role": "actual_reference_consumer",
+          "description": "self._tags_box_sorter = ClientGUIListBoxes.StaticBoxSorterForListBoxTags",
+          "executed_in_inventory": false
+        },
+        {
+          "path": "hydrus/client/gui/canvas/ClientGUICanvas.py",
+          "line": 618,
+          "line_sha256": "043091f78ae1afdb05ca5916214a6b6e2569892d6d374c6de970080cd0195d89",
+          "symbol": "CC.TAG_PRESENTATION_MEDIA_VIEWER_MANAGE_TAGS, [ self._current_media ]",
+          "role": "actual_reference_consumer",
+          "description": "CC.TAG_PRESENTATION_MEDIA_VIEWER_MANAGE_TAGS, [ self._current_media ]",
+          "executed_in_inventory": false
+        },
+        {
+          "path": "hydrus/client/gui/pages/ClientGUIMediaResultsPanel.py",
+          "line": 999,
+          "line_sha256": "e54b4b31276678d32ec63be95c899cecd86d3bdfba49e46a44f973ea49b7ba8e",
+          "symbol": "CC.TAG_PRESENTATION_SEARCH_PAGE_MANAGE_TAGS",
+          "role": "actual_reference_consumer",
+          "description": "CC.TAG_PRESENTATION_SEARCH_PAGE_MANAGE_TAGS",
+          "executed_in_inventory": false
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/manage_tags_sort.rs",
+          "line": 213,
+          "line_sha256": "1e904fb06acc72776a5f7f00ecde1188e0fbb0435b871aa1642151c051f2d69c",
+          "role": "authored_layout_regression",
+          "description": "actual_sort_stacks_fit_their_rows_and_scroll_without_overlap_at_both_viewports; actual default/applied900x640 and1000x850 geometry and real narrow-scroll queue containment; current exact-source execution pending",
+          "executed_in_inventory": false
         }
       ],
       "limitations": [
-        "Native options registry has no editable 'Default tag sort in media viewer manage tags dialogs:' control in this page/box path."
+        "Only this original default-sort Options control is proposed; Manage Tags/tag-sort/Options parent families remain Partial. Repository-service workflows and immediate viewer tag commits are outside this slice.",
+        "Native uses existing core human/numeric ordering and segmented rendering; the implementation changes sort keys without replacing logical storage tags. Existing sidebar/media-viewer tag-display sorts remain separate.",
+        "Qt parent PNG is initial/default; saved native parent captures show applied values. Native choices remain vertical rather than horizontal. New separate Manage Tags consumer PNGs have recorded behavior support but no corresponding Qt consumer PNG; no pixel equality or parent-family credit.",
+        "Represented Options sort rows use intrinsic allocation with strict actual-widget geometry assertions for initial/applied narrow/normal states and real scroll access. Qt parent default state differs from native saved/applied captures; native vertical layout differs from Qt horizontal layout. No equal-state pixel/font or OS-key transport claim.",
+        "No matching standalone Qt populated Edit or Manage Tags consumer PNG exists; defining native exports are grounded in recorded state and assertions. Optional Qt client API listener startup was sandbox-denied in these direct Qt/DB reruns; complete fixtures matched with exit0/normal shutdown, and no API connectivity validation is claimed.",
+        "No matching standalone Qt image exists for populated Edit or the Manage Tags consumers. Native exports are grounded in recorded state and assertions. The optional Qt client API listener was denied by the sandbox during these direct Qt/DB reruns. Complete fixtures matched, both recorders exited with code 0 and shut down normally, and no API connectivity validation is claimed.",
+        "The standalone Manage Tags consumer images show the current logical tag counts, decorations and controls. The related suggestion pane was captured while searching, so no related-pane or broader Manage Tags workflow or rendering credit is granted. Exact fixture, row and source assertions establish the distinct selected-files/search-page and current-one-file/viewer contexts; identical control captions alone do not establish that distinction.",
+        "Validation is Linux only; Windows and macOS are deferred. Exactly four original leaves are approved. No completion credit is granted to Options, tag-sort or namespace families, aliases, new IDs, Paste, the ordered queue, generic Manage Tags or repository workflows, immediate viewer commits, the namespace parser or tag-display chooser, radio or global keyboard behavior, or additional consumers.",
+        "At 900 px, some namespace-grouping explanatory prose clips horizontally at line ends. The selected sort controls, queue action buttons and dedicated Add/Edit messages remain readable. Broader parent prose and pixel parity are not claimed.",
+        "Geometry tests pass for all four actual sort contexts, in default and saved states at the natural viewports. They require finite positive frames, containment within allocated rows, separation within and between rows, and separation from the actual kind-0 namespace heading. Real wheel scrolling is validated. Upper clipping in scrolled frames and a lower queue outside the viewport in unscrolled frames are deliberate pane states. The internal queue viewport does not show all rows simultaneously; exact rows, raw values and identities are established by assertions.",
+        "The native vertical stacks differ from Qt horizontal rows. Native font, button and footer proportions, the compact Qt blank entry versus the 520×220 native entry, and saved versus default parent states remain explicit differences. Whole-dialog pixel or geometry equality, OS chrome, modality, focus and universal keyboard transport equivalence are not claimed."
       ],
       "descendant_count": 0,
       "descendant_status_counts": {},
       "unique_feature_descendant_count": 0,
       "unique_reachable_feature_count_including_shared": 1,
-      "native_id_candidates": []
+      "native_id_candidates": [],
+      "remaining": [],
+      "implementation_validation": {
+        "source_commit": "7c74c617165a22814a8d0202008794b2beb53de0",
+        "ci": "passed",
+        "tests_executed_at_checkpoint": true,
+        "native_render_review": "passed",
+        "manifest": "docs/rust/gui-coverage/parity/manage-tags-sort.json",
+        "review_required": false,
+        "run_url": "https://github.com/jkendall327/hydrus-mine/actions/runs/37567007002",
+        "validation_scope": "linux",
+        "required_platforms": [
+          "linux"
+        ],
+        "deferred_platforms": [
+          "windows",
+          "macos"
+        ],
+        "independent_review_evidence": {
+          "path": "docs/rust/gui-coverage/checkpoints/7c74c6171/final-review-2-7c74c6171.json",
+          "sha256": "f236c52b83cd8c5d3dd8c672b9f40c5b3f8cdd51c090ae4f34444ce26422d612"
+        },
+        "publication_policy": {
+          "path": ".github/publication-validation.json",
+          "source_commit": "7c74c617165a22814a8d0202008794b2beb53de0",
+          "sha256": "49723bd5d6b786392a1368bb3da1406747a553ef31c9de2bdef92cea5d014c5f",
+          "effective_date": "2026-10-06",
+          "reason": "The owner uses Linux and prioritizes validated Linux delivery. macOS is low priority; Windows is deferred because its builds materially lengthen validation. Secondary-platform CI remains available by explicit opt-in."
+        }
+      }
     },
     {
       "id": "audit-options-tag-sort-tag-sort-namespace-grouping-sort",
@@ -83586,7 +84236,8 @@
       ],
       "descendant_count": 3,
       "descendant_status_counts": {
-        "missing": 3
+        "missing": 1,
+        "first_pass": 2
       },
       "unique_feature_descendant_count": 3,
       "unique_reachable_feature_count_including_shared": 3,
@@ -83636,7 +84287,7 @@
       ],
       "descendant_count": 2,
       "descendant_status_counts": {
-        "missing": 2
+        "first_pass": 2
       },
       "unique_feature_descendant_count": 2,
       "unique_reachable_feature_count_including_shared": 3,
@@ -83647,82 +84298,858 @@
       "parent_id": "audit-options-tag-sort-tag-sort-namespace-grouping-sort-ordered-editor-list",
       "label": "add",
       "kind": "action",
-      "status": "missing",
-      "native_source": null,
+      "status": "first_pass",
+      "native_source": {
+        "path": "crates/hydrus-gui-model/src/options.rs",
+        "line": 4678,
+        "line_sha256": "dffbe72bef1386b4812240e53fe9aa39d216712354212f18422f06e6f15f4998",
+        "symbol": "Kind::TagNamespaceOrder,"
+      },
       "reference_source": {
         "path": "hydrus/client/gui/panels/options/TagSortPanel.py",
-        "line": 14,
-        "symbol": "TagSortPanel",
-        "line_sha256": "a5e49291acd77ad64544a6dedf625c8f4a64e45ecbaefc52f71a2a3d42305f8e"
+        "line": 69,
+        "line_sha256": "74e4933c62261fc3439fd4c472e8f4ae6f5164c0f5ac314a1377ab874b4df767",
+        "symbol": "def _AddNamespaceGroupBySort("
       },
-      "assessment": "Reference editor/control 'add' is recorded on 'tag sort' and defined by the referenced options panel. No corresponding editable row exists in native options::pages; this is a missing GUI editing path, even if a setting is imported or consumed elsewhere.",
+      "assessment": "Add opens the actual staged namespace grouping Enter Text child with raw namespace default and exact apply/cancel buttons. Blank is valid; colon, whitespace, case, nested colons, hyphens, Unicode and duplicate entries are preserved without tag cleanup or deduplication. Blank/colon rows render as unnamespaced/namespaced. Add appends without changing queue selection. Parent Apply is blocked while the exact child owns input, Cancel discards the draft, Apply saves raw order and reopen restores it. Existing sidebar/viewer user-group sort consumes the saved first-match order; six actual Qt sort orders are replayed. Concurrent unrelated sort/display/connector fields survive save. Hidden, stale, rebound and accepted-close owners cannot stage or save retained callbacks. Stacked native sort/group dropdowns now receive intrinsic row height. Authored real-frame checks cover four contexts with initial and saved/reopened values at900x640 and1000x850, within-row containment, strict dropdown/row separation, namespace heading clearance and actual narrow-view scrolling. Actual blank-valid Add and populated Edit captures complement the original raw-default Add and saved queue frames without changing transactions.",
       "evidence": [
         {
-          "path": "crates/hydrus-gui-model/src/options.rs",
-          "line": 1626,
-          "role": "source_inspection",
-          "description": "Inspected complete native options registry: the explicitly listed native getter/setter rows are offered.",
-          "executed_in_inventory": false,
-          "line_sha256": "9b25465690948e42af43c4a0260d2651e872520f0dcd383f3510ff0712f4a148"
+          "path": "crates/hydrus-gui-model/src/tag_namespace_order.rs",
+          "line": 9,
+          "line_sha256": "1a56db63ba3848212f79c2f33f40d9968a562f0b07fb4e2d3809791367af2882",
+          "symbol": "pub struct Editor",
+          "role": "scoped_implementation",
+          "description": "pub struct Editor",
+          "executed_in_inventory": false
         },
         {
-          "path": "oracle/record_options_dialog.py",
-          "line": 1,
-          "role": "existing_oracle_recorder",
-          "description": "Existing recorder traverses the real Qt options dialog, including these page/box/control labels.",
-          "executed_in_inventory": false,
-          "line_sha256": "381f9bfc69d49d39040a7d5fc3197ce385019a2ba2de649622f841a8c658ed37"
+          "path": "crates/hydrus-gui-model/src/tag_namespace_order.rs",
+          "line": 16,
+          "line_sha256": "807024924ae2deab05710cfb0b5ce869d48ff354d41b49aca4a3b3680d26bbee",
+          "symbol": "pub fn label(",
+          "role": "scoped_implementation",
+          "description": "pub fn label(",
+          "executed_in_inventory": false
+        },
+        {
+          "path": "crates/hydrus-gui-model/src/tag_namespace_order.rs",
+          "line": 26,
+          "line_sha256": "d9d7d3d6c53051f7b65157547869e09e253550b1fafbdd9444e6e3952ee72a99",
+          "symbol": "pub(crate) fn save_presentation(",
+          "role": "scoped_implementation",
+          "description": "pub(crate) fn save_presentation(",
+          "executed_in_inventory": false
+        },
+        {
+          "path": "crates/hydrus-gui-model/src/options.rs",
+          "line": 4678,
+          "line_sha256": "dffbe72bef1386b4812240e53fe9aa39d216712354212f18422f06e6f15f4998",
+          "symbol": "Kind::TagNamespaceOrder,",
+          "role": "scoped_implementation",
+          "description": "Kind::TagNamespaceOrder,",
+          "executed_in_inventory": false
+        },
+        {
+          "path": "crates/hydrus-gui-model/src/options.rs",
+          "line": 5670,
+          "line_sha256": "1806b46843fab972d5f276cc45c03d9eca442f4ef97208fe580b060b490b8d4d",
+          "symbol": "pub fn edited_tag_namespace_order(",
+          "role": "scoped_implementation",
+          "description": "pub fn edited_tag_namespace_order(",
+          "executed_in_inventory": false
+        },
+        {
+          "path": "crates/hydrus-gui-model/src/options.rs",
+          "line": 5680,
+          "line_sha256": "2b220da08d41492f1f9ebe9f0692fb8eb7895fd4264dfcae6b1e266c514ecea8",
+          "symbol": "pub fn set_tag_namespace_order(",
+          "role": "scoped_implementation",
+          "description": "pub fn set_tag_namespace_order(",
+          "executed_in_inventory": false
+        },
+        {
+          "path": "crates/hydrus-gui/src/options_tag_namespace_order.rs",
+          "line": 71,
+          "line_sha256": "f6256ea77440b6836362d6ace9d40b6d94613abee0b939de72c77eb62953d6b8",
+          "symbol": "let valid: Rc<dyn Fn() -> bool>",
+          "role": "scoped_implementation",
+          "description": "let valid: Rc<dyn Fn() -> bool>",
+          "executed_in_inventory": false
+        },
+        {
+          "path": "crates/hydrus-gui/src/options_tag_namespace_order.rs",
+          "line": 206,
+          "line_sha256": "568451773756c66924e279700457bf758de24c83475cca30cf698d752cbf6a1f",
+          "symbol": "let child_valid: Rc<dyn Fn() -> bool>",
+          "role": "scoped_implementation",
+          "description": "let child_valid: Rc<dyn Fn() -> bool>",
+          "executed_in_inventory": false
+        },
+        {
+          "path": "crates/hydrus-gui/src/options_tag_namespace_order.rs",
+          "line": 160,
+          "line_sha256": "7a2de1ba545eb821501df2ed50270dae38a7d37fcc93774f7b38db3891a5fd77",
+          "symbol": "dialog.set_name_ok_label(\"apply\".into());",
+          "role": "scoped_implementation",
+          "description": "dialog.set_name_ok_label(\"apply\".into());",
+          "executed_in_inventory": false
+        },
+        {
+          "path": "crates/hydrus-gui/src/options_tag_namespace_order.rs",
+          "line": 193,
+          "line_sha256": "29ca5283c5f72b4e86afd20c5db63ad3f2202cd18ee12d6123edeb2df26d5c7c",
+          "symbol": "std::ptr::eq(current.window(), dialog.window())",
+          "role": "scoped_implementation",
+          "description": "std::ptr::eq(current.window(), dialog.window())",
+          "executed_in_inventory": false
+        },
+        {
+          "path": "crates/hydrus-gui/src/options_tag_namespace_order.rs",
+          "line": 235,
+          "line_sha256": "471665387904cb00b89917c09efbc18998848bb2cbe1fa6c5c2d5da266b33657",
+          "symbol": "queue.borrow_mut().0.replace(*key, text.to_string());",
+          "role": "scoped_implementation",
+          "description": "queue.borrow_mut().0.replace(*key, text.to_string());",
+          "executed_in_inventory": false
+        },
+        {
+          "path": "crates/hydrus-gui/src/options_tag_namespace_order.rs",
+          "line": 237,
+          "line_sha256": "ab9e28deb97bdb89cb2ef830924825fa7eeed0be49dd112eb2542b5f11b6a766",
+          "symbol": "queue.borrow_mut().0.add(text.to_string());",
+          "role": "scoped_implementation",
+          "description": "queue.borrow_mut().0.add(text.to_string());",
+          "executed_in_inventory": false
+        },
+        {
+          "path": "crates/hydrus-gui/src/options_tag_namespace_order.rs",
+          "line": 186,
+          "line_sha256": "35fceb563397152d4846ab5f142e0d266f5af983294dfb881f15602593f9aea1",
+          "symbol": "alive.replace(false)",
+          "role": "scoped_implementation",
+          "description": "alive.replace(false)",
+          "executed_in_inventory": false
+        },
+        {
+          "path": "crates/hydrus-gui/src/options_window.rs",
+          "line": 749,
+          "line_sha256": "9d69e68ff7038d4b7a7bccf3b684308f371a39c0f74c2114f7e07d41958ea1e7",
+          "symbol": "cancel_tag_namespace_order();",
+          "role": "scoped_implementation",
+          "description": "cancel_tag_namespace_order();",
+          "executed_in_inventory": false
+        },
+        {
+          "path": "crates/hydrus-gui/src/options_window.rs",
+          "line": 1716,
+          "line_sha256": "fee7c958368f2dd0dc07522d404be7081ce5e58511c8b6c4ec89bab12315d46f",
+          "symbol": "|| tag_namespace_open()",
+          "role": "scoped_implementation",
+          "description": "|| tag_namespace_open()",
+          "executed_in_inventory": false
+        },
+        {
+          "path": "crates/hydrus-gui/ui/tag_namespace_order.slint",
+          "line": 4,
+          "line_sha256": "8f89c9d676b628dc25317a65c55c66a37b4e98e184a4b2b0ea6444f08d36bdc2",
+          "symbol": "export component TagNamespaceOrder",
+          "role": "scoped_implementation",
+          "description": "export component TagNamespaceOrder",
+          "executed_in_inventory": false
+        },
+        {
+          "path": "crates/hydrus-gui/ui/options.slint",
+          "line": 746,
+          "line_sha256": "0dc24a92a2a1d763b029d1ad53b83384b557176bb95335dd028d3b9ccaa2b790",
+          "symbol": "if row.kind == 37: TagNamespaceOrder",
+          "role": "scoped_implementation",
+          "description": "if row.kind == 37: TagNamespaceOrder",
+          "executed_in_inventory": false
+        },
+        {
+          "path": "crates/hydrus-core/src/tag_sort.rs",
+          "line": 75,
+          "line_sha256": "75bb7d59c8e5c88892bdfb3ee788f85999a8bb79acd13eb2d9fa38db1d3323b1",
+          "symbol": "fn namespace_user_key(",
+          "role": "scoped_implementation",
+          "description": "fn namespace_user_key(",
+          "executed_in_inventory": false
+        },
+        {
+          "path": "crates/hydrus-core/src/tag_sort.rs",
+          "line": 93,
+          "line_sha256": "38c6173c59471aa75921e7a75b24b2e1fdd78603b412a06fc5702dd00429884d",
+          "symbol": "pub fn sort_tags",
+          "role": "scoped_implementation",
+          "description": "pub fn sort_tags",
+          "executed_in_inventory": false
+        },
+        {
+          "path": "crates/hydrus-gui/src/page.rs",
+          "line": 3132,
+          "line_sha256": "75704c16cd8bea153d67df0ca7aaef0091d370a42a9f22457f9b3f3eed31ec52",
+          "symbol": "&presentation.user_namespaces,",
+          "role": "scoped_implementation",
+          "description": "&presentation.user_namespaces,",
+          "executed_in_inventory": false
+        },
+        {
+          "path": "crates/hydrus-store/src/import/decode.rs",
+          "line": 2804,
+          "line_sha256": "e6e3fe2414f5cded3f48d2748972dbca44fdb78faca33d2ee40f77727c6998cf",
+          "symbol": "user_namespace_group_by_sort",
+          "role": "scoped_implementation",
+          "description": "user_namespace_group_by_sort",
+          "executed_in_inventory": false
+        },
+        {
+          "path": "crates/hydrus-gui/ui/options.slint",
+          "line": 376,
+          "line_sha256": "ed758098cbaadeb5515b485d78d2ab05a7ea3c6c9e601f19b6eae193765df166",
+          "symbol": "row.kind == 2 || row.kind == 12 || row.kind == 35",
+          "role": "scoped_implementation",
+          "description": "row.kind == 2 || row.kind == 12 || row.kind == 35",
+          "executed_in_inventory": false
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/tag_namespace_order.rs",
+          "line": 18,
+          "line_sha256": "0e39f54b0066ee9d796bd409a545f989f13d7c87b5d2aae0a88de834580a0540",
+          "symbol": "fn raw_allow_blank_queue_actions_and_all_tag_sorts_match_qt",
+          "role": "authored_behavioral_regression",
+          "description": "fn raw_allow_blank_queue_actions_and_all_tag_sorts_match_qt",
+          "executed_in_inventory": false
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/tag_namespace_order.rs",
+          "line": 122,
+          "line_sha256": "a82164989e93c7f36b12842fa966b746d1005e72b719324a757d0dfb4b7a52bc",
+          "symbol": "fn namespace_changes_merge_with_concurrent_presentation_edits_and_unchanged_list",
+          "role": "authored_behavioral_regression",
+          "description": "fn namespace_changes_merge_with_concurrent_presentation_edits_and_unchanged_list",
+          "executed_in_inventory": false
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/tag_namespace_order.rs",
+          "line": 76,
+          "line_sha256": "772823aeff0ee5c22863825855479ae73bb99632fae93db20f1071ca6b40d89a",
+          "symbol": "fn real_queue_matches_all_reference_prompts_and_parent_transactions",
+          "role": "authored_behavioral_regression",
+          "description": "fn real_queue_matches_all_reference_prompts_and_parent_transactions",
+          "executed_in_inventory": false
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/tag_namespace_order.rs",
+          "line": 331,
+          "line_sha256": "3cb882d4ac61374bbb0d5bdc9e27d3d3bc604dd9711f332400a7e02d7b4a326f",
+          "symbol": "fn saved_order_reaches_the_real_sidebar_tag_sort",
+          "role": "authored_behavioral_regression",
+          "description": "fn saved_order_reaches_the_real_sidebar_tag_sort",
+          "executed_in_inventory": false
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/tag_namespace_order.rs",
+          "line": 416,
+          "line_sha256": "abea382f3aaa62ce017f5e1565efeaed73161ba55f2192d09e0ecf98a61a5c79",
+          "symbol": "fn hidden_stale_rebound_and_accepted_close_children_cannot_stage_or_save",
+          "role": "authored_behavioral_regression",
+          "description": "fn hidden_stale_rebound_and_accepted_close_children_cannot_stage_or_save",
+          "executed_in_inventory": false
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/manage_tags_sort.rs",
+          "line": 213,
+          "line_sha256": "1e904fb06acc72776a5f7f00ecde1188e0fbb0435b871aa1642151c051f2d69c",
+          "symbol": "fn actual_sort_stacks_fit_their_rows_and_scroll_without_overlap_at_both_viewports(",
+          "role": "authored_behavioral_regression",
+          "description": "fn actual_sort_stacks_fit_their_rows_and_scroll_without_overlap_at_both_viewports(",
+          "executed_in_inventory": false
+        },
+        {
+          "path": "hydrus/client/gui/panels/options/TagSortPanel.py",
+          "line": 14,
+          "line_sha256": "a5e49291acd77ad64544a6dedf625c8f4a64e45ecbaefc52f71a2a3d42305f8e",
+          "symbol": "class TagSortPanel",
+          "role": "actual_reference_consumer",
+          "description": "class TagSortPanel",
+          "executed_in_inventory": false
+        },
+        {
+          "path": "hydrus/client/gui/panels/options/TagSortPanel.py",
+          "line": 69,
+          "line_sha256": "74e4933c62261fc3439fd4c472e8f4ae6f5164c0f5ac314a1377ab874b4df767",
+          "symbol": "def _AddNamespaceGroupBySort(",
+          "role": "actual_reference_consumer",
+          "description": "def _AddNamespaceGroupBySort(",
+          "executed_in_inventory": false
+        },
+        {
+          "path": "hydrus/client/gui/panels/options/TagSortPanel.py",
+          "line": 76,
+          "line_sha256": "c6c87734b4e166b9c83ab582fd5d5a8e3c987b54c3bf83e6d6a6b18b2eaeb16d",
+          "symbol": "def _EditNamespaceGroupBySort(",
+          "role": "actual_reference_consumer",
+          "description": "def _EditNamespaceGroupBySort(",
+          "executed_in_inventory": false
+        },
+        {
+          "path": "hydrus/client/gui/panels/options/TagSortPanel.py",
+          "line": 108,
+          "line_sha256": "ec561c946930e94bfb9b2f35a354e4758fab4834b484ee29ffc9b0209a86e212",
+          "symbol": "def UpdateOptions(",
+          "role": "actual_reference_consumer",
+          "description": "def UpdateOptions(",
+          "executed_in_inventory": false
+        },
+        {
+          "path": "hydrus/client/gui/lists/ClientGUIListBoxes.py",
+          "line": 1048,
+          "line_sha256": "ac6b4a23cd680148b47393af5d81946e7a5f49d5f2d757f1e7b3bfe37f5e0502",
+          "symbol": "class QueueListBox",
+          "role": "actual_reference_consumer",
+          "description": "class QueueListBox",
+          "executed_in_inventory": false
+        },
+        {
+          "path": "hydrus/client/gui/lists/ClientGUIListBoxes.py",
+          "line": 1226,
+          "line_sha256": "d0acd9b5467d04a5a99ab18fd3944180e1d0dae8ae215020db0005f138f1b1f3",
+          "symbol": "top_list_widget_item = items[0]",
+          "role": "actual_reference_consumer",
+          "description": "top_list_widget_item = items[0]",
+          "executed_in_inventory": false
+        },
+        {
+          "path": "hydrus/client/metadata/ClientTags.py",
+          "line": 41,
+          "line_sha256": "73c4655fd5b629392919ab166d8fee102e9d171345194a49e1561885688bdd6e",
+          "symbol": "def RenderNamespaceForUser(",
+          "role": "actual_reference_consumer",
+          "description": "def RenderNamespaceForUser(",
+          "executed_in_inventory": false
+        },
+        {
+          "path": "hydrus/client/metadata/ClientTagSorting.py",
+          "line": 173,
+          "line_sha256": "98f22be2970101c0ef4c023f7a7ac8e7b5adfcb0533625a109b2cccf7f340c0a",
+          "symbol": "def namespace_user_key_factory(",
+          "role": "actual_reference_consumer",
+          "description": "def namespace_user_key_factory(",
+          "executed_in_inventory": false
+        },
+        {
+          "path": "hydrus/client/gui/ClientGUIDialogsQuick.py",
+          "line": 42,
+          "line_sha256": "96ceefb5cabc9c3de5e93d3909db5bc3571b83e7a9a28191ca18a2e9469577b3",
+          "symbol": "def EnterText(",
+          "role": "actual_reference_consumer",
+          "description": "def EnterText(",
+          "executed_in_inventory": false
+        },
+        {
+          "path": "hydrus/client/gui/ClientGUITopLevelWindowsPanels.py",
+          "line": 121,
+          "line_sha256": "6ba5fad56785e5c0408a1d22f64a26ac61b9b5d9392b49217378df1508edfe8e",
+          "symbol": "self._apply = QW.QPushButton( 'apply', self )",
+          "role": "actual_reference_consumer",
+          "description": "self._apply = QW.QPushButton( 'apply', self )",
+          "executed_in_inventory": false
+        },
+        {
+          "path": "hydrus/client/gui/panels/ClientGUIScrolledPanelsTextEntry.py",
+          "line": 12,
+          "line_sha256": "af2b178775ac2353655b8b9f4644baa8066e90ffcbf2bad7b144e069424f8fac",
+          "symbol": "class EditTextPanel",
+          "role": "actual_reference_consumer",
+          "description": "class EditTextPanel",
+          "executed_in_inventory": false
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/manage_tags_sort.rs",
+          "line": 213,
+          "line_sha256": "1e904fb06acc72776a5f7f00ecde1188e0fbb0435b871aa1642151c051f2d69c",
+          "role": "authored_layout_regression",
+          "description": "actual_sort_stacks_fit_their_rows_and_scroll_without_overlap_at_both_viewports; actual default/applied900x640 and1000x850 geometry and real narrow-scroll queue containment; current exact-source execution pending",
+          "executed_in_inventory": false
         }
       ],
       "limitations": [
-        "Native options registry has no editable 'add' control in this page/box path."
+        "Clipboard Paste remains absent. No namespace grouping family/ordered-editor-list, Options/tag-sort parent, aliases, global radio-Enter preference or generic active-predicate editor promotion.",
+        "Originally requested nested file-sort namespace parser/tag-display chooser was already implemented and is unchanged; no evidence-only credit or new claim for it.",
+        "Existing typed TagPresentation storage/import and core first-match sort consumer remain; this slice adds the missing user-facing raw grouping Add/Edit transaction and field-scoped saves. Existing viewer uses the same unchanged sort consumer, while new native downstream replay explicitly exercises the real sidebar.",
+        "EnterText and removal questions are native owned SessionDialog children with existing platform typography; no pixel/font equivalence or untested keyboard transport attestation.",
+        "The Qt Enter Text PNG has blank input; native Add-default contains namespace, and a new blank-valid Add frame supplies the matching input state. Populated Edit has recorded default/state support but no matching Qt PNG. No clipboard Paste, queue/Options parent, alias or pixel-equality credit.",
+        "Represented Options sort rows use intrinsic allocation with strict actual-widget geometry assertions for initial/applied narrow/normal states and real scroll access. Qt parent default state differs from native saved/applied captures; native vertical layout differs from Qt horizontal layout. No equal-state pixel/font or OS-key transport claim.",
+        "No matching standalone Qt populated Edit or Manage Tags consumer PNG exists; defining native exports are grounded in recorded state and assertions. Optional Qt client API listener startup was sandbox-denied in these direct Qt/DB reruns; complete fixtures matched with exit0/normal shutdown, and no API connectivity validation is claimed.",
+        "No matching standalone Qt image exists for populated Edit or the Manage Tags consumers. Native exports are grounded in recorded state and assertions. The optional Qt client API listener was denied by the sandbox during these direct Qt/DB reruns. Complete fixtures matched, both recorders exited with code 0 and shut down normally, and no API connectivity validation is claimed.",
+        "Validation is Linux only; Windows and macOS are deferred. Exactly four original leaves are approved. No completion credit is granted to Options, tag-sort or namespace families, aliases, new IDs, Paste, the ordered queue, generic Manage Tags or repository workflows, immediate viewer commits, the namespace parser or tag-display chooser, radio or global keyboard behavior, or additional consumers.",
+        "At 900 px, some namespace-grouping explanatory prose clips horizontally at line ends. The selected sort controls, queue action buttons and dedicated Add/Edit messages remain readable. Broader parent prose and pixel parity are not claimed.",
+        "Geometry tests pass for all four actual sort contexts, in default and saved states at the natural viewports. They require finite positive frames, containment within allocated rows, separation within and between rows, and separation from the actual kind-0 namespace heading. Real wheel scrolling is validated. Upper clipping in scrolled frames and a lower queue outside the viewport in unscrolled frames are deliberate pane states. The internal queue viewport does not show all rows simultaneously; exact rows, raw values and identities are established by assertions.",
+        "The native vertical stacks differ from Qt horizontal rows. Native font, button and footer proportions, the compact Qt blank entry versus the 520×220 native entry, and saved versus default parent states remain explicit differences. Whole-dialog pixel or geometry equality, OS chrome, modality, focus and universal keyboard transport equivalence are not claimed."
       ],
       "descendant_count": 0,
       "descendant_status_counts": {},
       "unique_feature_descendant_count": 0,
       "unique_reachable_feature_count_including_shared": 1,
-      "native_id_candidates": []
+      "native_id_candidates": [],
+      "remaining": [],
+      "implementation_validation": {
+        "source_commit": "7c74c617165a22814a8d0202008794b2beb53de0",
+        "ci": "passed",
+        "tests_executed_at_checkpoint": true,
+        "native_render_review": "passed",
+        "manifest": "docs/rust/gui-coverage/parity/tag-namespace-order.json",
+        "review_required": false,
+        "run_url": "https://github.com/jkendall327/hydrus-mine/actions/runs/37567007002",
+        "validation_scope": "linux",
+        "required_platforms": [
+          "linux"
+        ],
+        "deferred_platforms": [
+          "windows",
+          "macos"
+        ],
+        "independent_review_evidence": {
+          "path": "docs/rust/gui-coverage/checkpoints/7c74c6171/final-review-2-7c74c6171.json",
+          "sha256": "f236c52b83cd8c5d3dd8c672b9f40c5b3f8cdd51c090ae4f34444ce26422d612"
+        },
+        "publication_policy": {
+          "path": ".github/publication-validation.json",
+          "source_commit": "7c74c617165a22814a8d0202008794b2beb53de0",
+          "sha256": "49723bd5d6b786392a1368bb3da1406747a553ef31c9de2bdef92cea5d014c5f",
+          "effective_date": "2026-10-06",
+          "reason": "The owner uses Linux and prioritizes validated Linux delivery. macOS is low priority; Windows is deferred because its builds materially lengthen validation. Secondary-platform CI remains available by explicit opt-in."
+        }
+      }
     },
     {
       "id": "audit-options-tag-sort-tag-sort-namespace-grouping-sort-edit",
       "parent_id": "audit-options-tag-sort-tag-sort-namespace-grouping-sort-ordered-editor-list",
       "label": "edit",
       "kind": "action",
-      "status": "missing",
-      "native_source": null,
+      "status": "first_pass",
+      "native_source": {
+        "path": "crates/hydrus-gui-model/src/options.rs",
+        "line": 4678,
+        "line_sha256": "dffbe72bef1386b4812240e53fe9aa39d216712354212f18422f06e6f15f4998",
+        "symbol": "Kind::TagNamespaceOrder,"
+      },
       "reference_source": {
         "path": "hydrus/client/gui/panels/options/TagSortPanel.py",
-        "line": 14,
-        "symbol": "TagSortPanel",
-        "line_sha256": "a5e49291acd77ad64544a6dedf625c8f4a64e45ecbaefc52f71a2a3d42305f8e"
+        "line": 76,
+        "line_sha256": "c6c87734b4e166b9c83ab582fd5d5a8e3c987b54c3bf83e6d6a6b18b2eaeb16d",
+        "symbol": "def _EditNamespaceGroupBySort("
       },
-      "assessment": "Reference editor/control 'edit' is recorded on 'tag sort' and defined by the referenced options panel. No corresponding editable row exists in native options::pages; this is a missing GUI editing path, even if a setting is imported or consumed elsewhere.",
+      "assessment": "Edit opens Enter Text for the first/top selected stable queue row, initializes its exact raw string, accepts blank/colon/whitespace/case/duplicates unchanged, and preserves selection and row identity. Cancel retains the original row; frozen child ownership refuses intervening selection/page/parent Apply. Raw values stage only into the parent Options draft and persist/reopen on its accepted Apply, preserving concurrent presentation fields. Stable identities distinguish duplicate rows. Up/Down and confirmed removal provide the actual ordered consumer setup without claiming the broader list/Paste family. Hidden/stale/successor/accepted-close callbacks cannot edit a different owner. Stacked native sort/group dropdowns now receive intrinsic row height. Authored real-frame checks cover four contexts with initial and saved/reopened values at900x640 and1000x850, within-row containment, strict dropdown/row separation, namespace heading clearance and actual narrow-view scrolling. Actual blank-valid Add and populated Edit captures complement the original raw-default Add and saved queue frames without changing transactions.",
       "evidence": [
         {
-          "path": "crates/hydrus-gui-model/src/options.rs",
-          "line": 1626,
-          "role": "source_inspection",
-          "description": "Inspected complete native options registry: the explicitly listed native getter/setter rows are offered.",
-          "executed_in_inventory": false,
-          "line_sha256": "9b25465690948e42af43c4a0260d2651e872520f0dcd383f3510ff0712f4a148"
+          "path": "crates/hydrus-gui-model/src/tag_namespace_order.rs",
+          "line": 9,
+          "line_sha256": "1a56db63ba3848212f79c2f33f40d9968a562f0b07fb4e2d3809791367af2882",
+          "symbol": "pub struct Editor",
+          "role": "scoped_implementation",
+          "description": "pub struct Editor",
+          "executed_in_inventory": false
         },
         {
-          "path": "oracle/record_options_dialog.py",
-          "line": 1,
-          "role": "existing_oracle_recorder",
-          "description": "Existing recorder traverses the real Qt options dialog, including these page/box/control labels.",
-          "executed_in_inventory": false,
-          "line_sha256": "381f9bfc69d49d39040a7d5fc3197ce385019a2ba2de649622f841a8c658ed37"
+          "path": "crates/hydrus-gui-model/src/tag_namespace_order.rs",
+          "line": 16,
+          "line_sha256": "807024924ae2deab05710cfb0b5ce869d48ff354d41b49aca4a3b3680d26bbee",
+          "symbol": "pub fn label(",
+          "role": "scoped_implementation",
+          "description": "pub fn label(",
+          "executed_in_inventory": false
+        },
+        {
+          "path": "crates/hydrus-gui-model/src/tag_namespace_order.rs",
+          "line": 26,
+          "line_sha256": "d9d7d3d6c53051f7b65157547869e09e253550b1fafbdd9444e6e3952ee72a99",
+          "symbol": "pub(crate) fn save_presentation(",
+          "role": "scoped_implementation",
+          "description": "pub(crate) fn save_presentation(",
+          "executed_in_inventory": false
+        },
+        {
+          "path": "crates/hydrus-gui-model/src/options.rs",
+          "line": 4678,
+          "line_sha256": "dffbe72bef1386b4812240e53fe9aa39d216712354212f18422f06e6f15f4998",
+          "symbol": "Kind::TagNamespaceOrder,",
+          "role": "scoped_implementation",
+          "description": "Kind::TagNamespaceOrder,",
+          "executed_in_inventory": false
+        },
+        {
+          "path": "crates/hydrus-gui-model/src/options.rs",
+          "line": 5670,
+          "line_sha256": "1806b46843fab972d5f276cc45c03d9eca442f4ef97208fe580b060b490b8d4d",
+          "symbol": "pub fn edited_tag_namespace_order(",
+          "role": "scoped_implementation",
+          "description": "pub fn edited_tag_namespace_order(",
+          "executed_in_inventory": false
+        },
+        {
+          "path": "crates/hydrus-gui-model/src/options.rs",
+          "line": 5680,
+          "line_sha256": "2b220da08d41492f1f9ebe9f0692fb8eb7895fd4264dfcae6b1e266c514ecea8",
+          "symbol": "pub fn set_tag_namespace_order(",
+          "role": "scoped_implementation",
+          "description": "pub fn set_tag_namespace_order(",
+          "executed_in_inventory": false
+        },
+        {
+          "path": "crates/hydrus-gui/src/options_tag_namespace_order.rs",
+          "line": 71,
+          "line_sha256": "f6256ea77440b6836362d6ace9d40b6d94613abee0b939de72c77eb62953d6b8",
+          "symbol": "let valid: Rc<dyn Fn() -> bool>",
+          "role": "scoped_implementation",
+          "description": "let valid: Rc<dyn Fn() -> bool>",
+          "executed_in_inventory": false
+        },
+        {
+          "path": "crates/hydrus-gui/src/options_tag_namespace_order.rs",
+          "line": 206,
+          "line_sha256": "568451773756c66924e279700457bf758de24c83475cca30cf698d752cbf6a1f",
+          "symbol": "let child_valid: Rc<dyn Fn() -> bool>",
+          "role": "scoped_implementation",
+          "description": "let child_valid: Rc<dyn Fn() -> bool>",
+          "executed_in_inventory": false
+        },
+        {
+          "path": "crates/hydrus-gui/src/options_tag_namespace_order.rs",
+          "line": 160,
+          "line_sha256": "7a2de1ba545eb821501df2ed50270dae38a7d37fcc93774f7b38db3891a5fd77",
+          "symbol": "dialog.set_name_ok_label(\"apply\".into());",
+          "role": "scoped_implementation",
+          "description": "dialog.set_name_ok_label(\"apply\".into());",
+          "executed_in_inventory": false
+        },
+        {
+          "path": "crates/hydrus-gui/src/options_tag_namespace_order.rs",
+          "line": 193,
+          "line_sha256": "29ca5283c5f72b4e86afd20c5db63ad3f2202cd18ee12d6123edeb2df26d5c7c",
+          "symbol": "std::ptr::eq(current.window(), dialog.window())",
+          "role": "scoped_implementation",
+          "description": "std::ptr::eq(current.window(), dialog.window())",
+          "executed_in_inventory": false
+        },
+        {
+          "path": "crates/hydrus-gui/src/options_tag_namespace_order.rs",
+          "line": 235,
+          "line_sha256": "471665387904cb00b89917c09efbc18998848bb2cbe1fa6c5c2d5da266b33657",
+          "symbol": "queue.borrow_mut().0.replace(*key, text.to_string());",
+          "role": "scoped_implementation",
+          "description": "queue.borrow_mut().0.replace(*key, text.to_string());",
+          "executed_in_inventory": false
+        },
+        {
+          "path": "crates/hydrus-gui/src/options_tag_namespace_order.rs",
+          "line": 237,
+          "line_sha256": "ab9e28deb97bdb89cb2ef830924825fa7eeed0be49dd112eb2542b5f11b6a766",
+          "symbol": "queue.borrow_mut().0.add(text.to_string());",
+          "role": "scoped_implementation",
+          "description": "queue.borrow_mut().0.add(text.to_string());",
+          "executed_in_inventory": false
+        },
+        {
+          "path": "crates/hydrus-gui/src/options_tag_namespace_order.rs",
+          "line": 186,
+          "line_sha256": "35fceb563397152d4846ab5f142e0d266f5af983294dfb881f15602593f9aea1",
+          "symbol": "alive.replace(false)",
+          "role": "scoped_implementation",
+          "description": "alive.replace(false)",
+          "executed_in_inventory": false
+        },
+        {
+          "path": "crates/hydrus-gui/src/options_window.rs",
+          "line": 749,
+          "line_sha256": "9d69e68ff7038d4b7a7bccf3b684308f371a39c0f74c2114f7e07d41958ea1e7",
+          "symbol": "cancel_tag_namespace_order();",
+          "role": "scoped_implementation",
+          "description": "cancel_tag_namespace_order();",
+          "executed_in_inventory": false
+        },
+        {
+          "path": "crates/hydrus-gui/src/options_window.rs",
+          "line": 1716,
+          "line_sha256": "fee7c958368f2dd0dc07522d404be7081ce5e58511c8b6c4ec89bab12315d46f",
+          "symbol": "|| tag_namespace_open()",
+          "role": "scoped_implementation",
+          "description": "|| tag_namespace_open()",
+          "executed_in_inventory": false
+        },
+        {
+          "path": "crates/hydrus-gui/ui/tag_namespace_order.slint",
+          "line": 4,
+          "line_sha256": "8f89c9d676b628dc25317a65c55c66a37b4e98e184a4b2b0ea6444f08d36bdc2",
+          "symbol": "export component TagNamespaceOrder",
+          "role": "scoped_implementation",
+          "description": "export component TagNamespaceOrder",
+          "executed_in_inventory": false
+        },
+        {
+          "path": "crates/hydrus-gui/ui/options.slint",
+          "line": 746,
+          "line_sha256": "0dc24a92a2a1d763b029d1ad53b83384b557176bb95335dd028d3b9ccaa2b790",
+          "symbol": "if row.kind == 37: TagNamespaceOrder",
+          "role": "scoped_implementation",
+          "description": "if row.kind == 37: TagNamespaceOrder",
+          "executed_in_inventory": false
+        },
+        {
+          "path": "crates/hydrus-core/src/tag_sort.rs",
+          "line": 75,
+          "line_sha256": "75bb7d59c8e5c88892bdfb3ee788f85999a8bb79acd13eb2d9fa38db1d3323b1",
+          "symbol": "fn namespace_user_key(",
+          "role": "scoped_implementation",
+          "description": "fn namespace_user_key(",
+          "executed_in_inventory": false
+        },
+        {
+          "path": "crates/hydrus-core/src/tag_sort.rs",
+          "line": 93,
+          "line_sha256": "38c6173c59471aa75921e7a75b24b2e1fdd78603b412a06fc5702dd00429884d",
+          "symbol": "pub fn sort_tags",
+          "role": "scoped_implementation",
+          "description": "pub fn sort_tags",
+          "executed_in_inventory": false
+        },
+        {
+          "path": "crates/hydrus-gui/src/page.rs",
+          "line": 3132,
+          "line_sha256": "75704c16cd8bea153d67df0ca7aaef0091d370a42a9f22457f9b3f3eed31ec52",
+          "symbol": "&presentation.user_namespaces,",
+          "role": "scoped_implementation",
+          "description": "&presentation.user_namespaces,",
+          "executed_in_inventory": false
+        },
+        {
+          "path": "crates/hydrus-store/src/import/decode.rs",
+          "line": 2804,
+          "line_sha256": "e6e3fe2414f5cded3f48d2748972dbca44fdb78faca33d2ee40f77727c6998cf",
+          "symbol": "user_namespace_group_by_sort",
+          "role": "scoped_implementation",
+          "description": "user_namespace_group_by_sort",
+          "executed_in_inventory": false
+        },
+        {
+          "path": "crates/hydrus-gui/ui/options.slint",
+          "line": 376,
+          "line_sha256": "ed758098cbaadeb5515b485d78d2ab05a7ea3c6c9e601f19b6eae193765df166",
+          "symbol": "row.kind == 2 || row.kind == 12 || row.kind == 35",
+          "role": "scoped_implementation",
+          "description": "row.kind == 2 || row.kind == 12 || row.kind == 35",
+          "executed_in_inventory": false
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/tag_namespace_order.rs",
+          "line": 18,
+          "line_sha256": "0e39f54b0066ee9d796bd409a545f989f13d7c87b5d2aae0a88de834580a0540",
+          "symbol": "fn raw_allow_blank_queue_actions_and_all_tag_sorts_match_qt",
+          "role": "authored_behavioral_regression",
+          "description": "fn raw_allow_blank_queue_actions_and_all_tag_sorts_match_qt",
+          "executed_in_inventory": false
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/tag_namespace_order.rs",
+          "line": 122,
+          "line_sha256": "a82164989e93c7f36b12842fa966b746d1005e72b719324a757d0dfb4b7a52bc",
+          "symbol": "fn namespace_changes_merge_with_concurrent_presentation_edits_and_unchanged_list",
+          "role": "authored_behavioral_regression",
+          "description": "fn namespace_changes_merge_with_concurrent_presentation_edits_and_unchanged_list",
+          "executed_in_inventory": false
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/tag_namespace_order.rs",
+          "line": 76,
+          "line_sha256": "772823aeff0ee5c22863825855479ae73bb99632fae93db20f1071ca6b40d89a",
+          "symbol": "fn real_queue_matches_all_reference_prompts_and_parent_transactions",
+          "role": "authored_behavioral_regression",
+          "description": "fn real_queue_matches_all_reference_prompts_and_parent_transactions",
+          "executed_in_inventory": false
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/tag_namespace_order.rs",
+          "line": 331,
+          "line_sha256": "3cb882d4ac61374bbb0d5bdc9e27d3d3bc604dd9711f332400a7e02d7b4a326f",
+          "symbol": "fn saved_order_reaches_the_real_sidebar_tag_sort",
+          "role": "authored_behavioral_regression",
+          "description": "fn saved_order_reaches_the_real_sidebar_tag_sort",
+          "executed_in_inventory": false
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/tag_namespace_order.rs",
+          "line": 416,
+          "line_sha256": "abea382f3aaa62ce017f5e1565efeaed73161ba55f2192d09e0ecf98a61a5c79",
+          "symbol": "fn hidden_stale_rebound_and_accepted_close_children_cannot_stage_or_save",
+          "role": "authored_behavioral_regression",
+          "description": "fn hidden_stale_rebound_and_accepted_close_children_cannot_stage_or_save",
+          "executed_in_inventory": false
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/manage_tags_sort.rs",
+          "line": 213,
+          "line_sha256": "1e904fb06acc72776a5f7f00ecde1188e0fbb0435b871aa1642151c051f2d69c",
+          "symbol": "fn actual_sort_stacks_fit_their_rows_and_scroll_without_overlap_at_both_viewports(",
+          "role": "authored_behavioral_regression",
+          "description": "fn actual_sort_stacks_fit_their_rows_and_scroll_without_overlap_at_both_viewports(",
+          "executed_in_inventory": false
+        },
+        {
+          "path": "hydrus/client/gui/panels/options/TagSortPanel.py",
+          "line": 14,
+          "line_sha256": "a5e49291acd77ad64544a6dedf625c8f4a64e45ecbaefc52f71a2a3d42305f8e",
+          "symbol": "class TagSortPanel",
+          "role": "actual_reference_consumer",
+          "description": "class TagSortPanel",
+          "executed_in_inventory": false
+        },
+        {
+          "path": "hydrus/client/gui/panels/options/TagSortPanel.py",
+          "line": 69,
+          "line_sha256": "74e4933c62261fc3439fd4c472e8f4ae6f5164c0f5ac314a1377ab874b4df767",
+          "symbol": "def _AddNamespaceGroupBySort(",
+          "role": "actual_reference_consumer",
+          "description": "def _AddNamespaceGroupBySort(",
+          "executed_in_inventory": false
+        },
+        {
+          "path": "hydrus/client/gui/panels/options/TagSortPanel.py",
+          "line": 76,
+          "line_sha256": "c6c87734b4e166b9c83ab582fd5d5a8e3c987b54c3bf83e6d6a6b18b2eaeb16d",
+          "symbol": "def _EditNamespaceGroupBySort(",
+          "role": "actual_reference_consumer",
+          "description": "def _EditNamespaceGroupBySort(",
+          "executed_in_inventory": false
+        },
+        {
+          "path": "hydrus/client/gui/panels/options/TagSortPanel.py",
+          "line": 108,
+          "line_sha256": "ec561c946930e94bfb9b2f35a354e4758fab4834b484ee29ffc9b0209a86e212",
+          "symbol": "def UpdateOptions(",
+          "role": "actual_reference_consumer",
+          "description": "def UpdateOptions(",
+          "executed_in_inventory": false
+        },
+        {
+          "path": "hydrus/client/gui/lists/ClientGUIListBoxes.py",
+          "line": 1048,
+          "line_sha256": "ac6b4a23cd680148b47393af5d81946e7a5f49d5f2d757f1e7b3bfe37f5e0502",
+          "symbol": "class QueueListBox",
+          "role": "actual_reference_consumer",
+          "description": "class QueueListBox",
+          "executed_in_inventory": false
+        },
+        {
+          "path": "hydrus/client/gui/lists/ClientGUIListBoxes.py",
+          "line": 1226,
+          "line_sha256": "d0acd9b5467d04a5a99ab18fd3944180e1d0dae8ae215020db0005f138f1b1f3",
+          "symbol": "top_list_widget_item = items[0]",
+          "role": "actual_reference_consumer",
+          "description": "top_list_widget_item = items[0]",
+          "executed_in_inventory": false
+        },
+        {
+          "path": "hydrus/client/metadata/ClientTags.py",
+          "line": 41,
+          "line_sha256": "73c4655fd5b629392919ab166d8fee102e9d171345194a49e1561885688bdd6e",
+          "symbol": "def RenderNamespaceForUser(",
+          "role": "actual_reference_consumer",
+          "description": "def RenderNamespaceForUser(",
+          "executed_in_inventory": false
+        },
+        {
+          "path": "hydrus/client/metadata/ClientTagSorting.py",
+          "line": 173,
+          "line_sha256": "98f22be2970101c0ef4c023f7a7ac8e7b5adfcb0533625a109b2cccf7f340c0a",
+          "symbol": "def namespace_user_key_factory(",
+          "role": "actual_reference_consumer",
+          "description": "def namespace_user_key_factory(",
+          "executed_in_inventory": false
+        },
+        {
+          "path": "hydrus/client/gui/ClientGUIDialogsQuick.py",
+          "line": 42,
+          "line_sha256": "96ceefb5cabc9c3de5e93d3909db5bc3571b83e7a9a28191ca18a2e9469577b3",
+          "symbol": "def EnterText(",
+          "role": "actual_reference_consumer",
+          "description": "def EnterText(",
+          "executed_in_inventory": false
+        },
+        {
+          "path": "hydrus/client/gui/ClientGUITopLevelWindowsPanels.py",
+          "line": 121,
+          "line_sha256": "6ba5fad56785e5c0408a1d22f64a26ac61b9b5d9392b49217378df1508edfe8e",
+          "symbol": "self._apply = QW.QPushButton( 'apply', self )",
+          "role": "actual_reference_consumer",
+          "description": "self._apply = QW.QPushButton( 'apply', self )",
+          "executed_in_inventory": false
+        },
+        {
+          "path": "hydrus/client/gui/panels/ClientGUIScrolledPanelsTextEntry.py",
+          "line": 12,
+          "line_sha256": "af2b178775ac2353655b8b9f4644baa8066e90ffcbf2bad7b144e069424f8fac",
+          "symbol": "class EditTextPanel",
+          "role": "actual_reference_consumer",
+          "description": "class EditTextPanel",
+          "executed_in_inventory": false
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/manage_tags_sort.rs",
+          "line": 213,
+          "line_sha256": "1e904fb06acc72776a5f7f00ecde1188e0fbb0435b871aa1642151c051f2d69c",
+          "role": "authored_layout_regression",
+          "description": "actual_sort_stacks_fit_their_rows_and_scroll_without_overlap_at_both_viewports; actual default/applied900x640 and1000x850 geometry and real narrow-scroll queue containment; current exact-source execution pending",
+          "executed_in_inventory": false
         }
       ],
       "limitations": [
-        "Native options registry has no editable 'edit' control in this page/box path."
+        "Clipboard Paste remains absent. No namespace grouping family/ordered-editor-list, Options/tag-sort parent, aliases, global radio-Enter preference or generic active-predicate editor promotion.",
+        "Originally requested nested file-sort namespace parser/tag-display chooser was already implemented and is unchanged; no evidence-only credit or new claim for it.",
+        "Existing typed TagPresentation storage/import and core first-match sort consumer remain; this slice adds the missing user-facing raw grouping Add/Edit transaction and field-scoped saves. Existing viewer uses the same unchanged sort consumer, while new native downstream replay explicitly exercises the real sidebar.",
+        "EnterText and removal questions are native owned SessionDialog children with existing platform typography; no pixel/font equivalence or untested keyboard transport attestation.",
+        "The Qt Enter Text PNG has blank input; native Add-default contains namespace, and a new blank-valid Add frame supplies the matching input state. Populated Edit has recorded default/state support but no matching Qt PNG. No clipboard Paste, queue/Options parent, alias or pixel-equality credit.",
+        "Represented Options sort rows use intrinsic allocation with strict actual-widget geometry assertions for initial/applied narrow/normal states and real scroll access. Qt parent default state differs from native saved/applied captures; native vertical layout differs from Qt horizontal layout. No equal-state pixel/font or OS-key transport claim.",
+        "No matching standalone Qt populated Edit or Manage Tags consumer PNG exists; defining native exports are grounded in recorded state and assertions. Optional Qt client API listener startup was sandbox-denied in these direct Qt/DB reruns; complete fixtures matched with exit0/normal shutdown, and no API connectivity validation is claimed.",
+        "No matching standalone Qt image exists for populated Edit or the Manage Tags consumers. Native exports are grounded in recorded state and assertions. The optional Qt client API listener was denied by the sandbox during these direct Qt/DB reruns. Complete fixtures matched, both recorders exited with code 0 and shut down normally, and no API connectivity validation is claimed.",
+        "Validation is Linux only; Windows and macOS are deferred. Exactly four original leaves are approved. No completion credit is granted to Options, tag-sort or namespace families, aliases, new IDs, Paste, the ordered queue, generic Manage Tags or repository workflows, immediate viewer commits, the namespace parser or tag-display chooser, radio or global keyboard behavior, or additional consumers.",
+        "At 900 px, some namespace-grouping explanatory prose clips horizontally at line ends. The selected sort controls, queue action buttons and dedicated Add/Edit messages remain readable. Broader parent prose and pixel parity are not claimed.",
+        "Geometry tests pass for all four actual sort contexts, in default and saved states at the natural viewports. They require finite positive frames, containment within allocated rows, separation within and between rows, and separation from the actual kind-0 namespace heading. Real wheel scrolling is validated. Upper clipping in scrolled frames and a lower queue outside the viewport in unscrolled frames are deliberate pane states. The internal queue viewport does not show all rows simultaneously; exact rows, raw values and identities are established by assertions.",
+        "The native vertical stacks differ from Qt horizontal rows. Native font, button and footer proportions, the compact Qt blank entry versus the 520×220 native entry, and saved versus default parent states remain explicit differences. Whole-dialog pixel or geometry equality, OS chrome, modality, focus and universal keyboard transport equivalence are not claimed."
       ],
       "descendant_count": 0,
       "descendant_status_counts": {},
       "unique_feature_descendant_count": 0,
       "unique_reachable_feature_count_including_shared": 1,
-      "native_id_candidates": []
+      "native_id_candidates": [],
+      "remaining": [],
+      "implementation_validation": {
+        "source_commit": "7c74c617165a22814a8d0202008794b2beb53de0",
+        "ci": "passed",
+        "tests_executed_at_checkpoint": true,
+        "native_render_review": "passed",
+        "manifest": "docs/rust/gui-coverage/parity/tag-namespace-order.json",
+        "review_required": false,
+        "run_url": "https://github.com/jkendall327/hydrus-mine/actions/runs/37567007002",
+        "validation_scope": "linux",
+        "required_platforms": [
+          "linux"
+        ],
+        "deferred_platforms": [
+          "windows",
+          "macos"
+        ],
+        "independent_review_evidence": {
+          "path": "docs/rust/gui-coverage/checkpoints/7c74c6171/final-review-2-7c74c6171.json",
+          "sha256": "f236c52b83cd8c5d3dd8c672b9f40c5b3f8cdd51c090ae4f34444ce26422d612"
+        },
+        "publication_policy": {
+          "path": ".github/publication-validation.json",
+          "source_commit": "7c74c617165a22814a8d0202008794b2beb53de0",
+          "sha256": "49723bd5d6b786392a1368bb3da1406747a553ef31c9de2bdef92cea5d014c5f",
+          "effective_date": "2026-10-06",
+          "reason": "The owner uses Linux and prioritizes validated Linux delivery. macOS is low priority; Windows is deferred because its builds materially lengthen validation. Secondary-platform CI remains available by explicit opt-in."
+        }
+      }
     },
     {
       "id": "audit-options-tag-suggestions-suggested-tags",
@@ -121779,7 +123206,7 @@
         },
         {
           "path": "crates/hydrus-gui/ui/options.slint",
-          "line": 632,
+          "line": 645,
           "role": "scoped_implementation",
           "executed_in_inventory": false,
           "line_sha256": "196965a6b65cd305992b0e8ed8f4e69df42110196fb1902b6e7d1fdf2b2ffb3a"
@@ -121921,7 +123348,7 @@
         },
         {
           "path": "crates/hydrus-gui/ui/options.slint",
-          "line": 632,
+          "line": 645,
           "role": "scoped_implementation",
           "executed_in_inventory": false,
           "line_sha256": "196965a6b65cd305992b0e8ed8f4e69df42110196fb1902b6e7d1fdf2b2ffb3a"
@@ -163672,12 +165099,12 @@
       "line_count": 430
     },
     "docs/rust/DIFFERENCES.md": {
-      "sha256": "1360deac26568ab0a618d4f0025b622cbee7da98f6b4b8993b7be6a16dbabb63",
-      "line_count": 3768
+      "sha256": "961914695f56d56e98cfcde05498ef19dfe6c00df78eae746787285d604e4057",
+      "line_count": 3787
     },
     "docs/rust/GUI.md": {
-      "sha256": "3cc0e2501f4e5d33eb325893e262cff4d8acd487990b4cbbd43e6a7edf29d6e3",
-      "line_count": 4637
+      "sha256": "e400539de385fbbd3145846dc78c5e3aeb121c1b003833c2c7fdba6eadfe3da0",
+      "line_count": 4653
     },
     "crates/hydrus-gui/tests/gui/subscriptions.rs": {
       "sha256": "c844a8f1c46f74881f0d85628e69792fea477390ffda6bbeb6aa2c51c61d0c8b",
@@ -163972,8 +165399,8 @@
       "line_count": 206
     },
     "docs/rust/ROADMAP.md": {
-      "sha256": "01e6f2be844e67cf909fe102c2fc368a70d26fb4bc1ae0763dfacf910d0d2cd7",
-      "line_count": 433
+      "sha256": "522736ef60ed438e8266a76ef8eae5fc44d2c007fed3c03203ac155a835cd7ab",
+      "line_count": 432
     },
     "hydrus/client/gui/metadata/ClientGUIMigrateTags.py": {
       "sha256": "2013021e9d1e20f85b1718875f831685034668a06c11364d335611a5a305f0de",
@@ -165176,8 +166603,8 @@
       "line_count": 99
     },
     "crates/hydrus-gui/ui/options.slint": {
-      "sha256": "87be44fae0357ba886e5f4758d8747dc4c2a0d48c8a985fe46994ced555b8310",
-      "line_count": 979
+      "sha256": "cd6bc428d6ad2a4a8d07556d05eb4e4421cae9fa72f344771877fd9aa1d3db93",
+      "line_count": 992
     },
     "crates/hydrus-gui-model/src/tab_context.rs": {
       "sha256": "4dc8602da5e11d2f14a8728faa7d15f029549ad0fe15785a009756b70525e276",
@@ -168758,13 +170185,77 @@
     "crates/hydrus-gui/tests/gui/radio_return.rs": {
       "sha256": "5ce4948f9a69b659bdb3a325517633ab0d126db61c7c9d4fd20f7234b403b833",
       "line_count": 627
+    },
+    "hydrus/client/metadata/ClientTags.py": {
+      "sha256": "c4e6aedefc269c6b77ba950754fbf7c9c198f1dcade6a29d310b7530181e4bf8",
+      "line_count": 139
+    },
+    "crates/hydrus-gui-model/tests/model/manage_tags_sort.rs": {
+      "sha256": "4a1fd5482a1e227499541a76edc5af26d7036c58f82b8a644ed23df4c2bf1d26",
+      "line_count": 263
+    },
+    "crates/hydrus-gui/ui/tag_namespace_order.slint": {
+      "sha256": "bb47617cf392ea18079cd5491d40bec9291b59aa5b16098dcbdf2531cd305a4c",
+      "line_count": 35
+    },
+    "hydrus/client/gui/ClientGUIDialogsQuick.py": {
+      "sha256": "0b8a62f0a6b5b9ceb472c06ab87b214790b685bf8f87bdea906bfd56b995524b",
+      "line_count": 388
+    },
+    "hydrus/client/gui/panels/ClientGUIScrolledPanelsTextEntry.py": {
+      "sha256": "c314d80439075f76f23b86f1ea4014be789202ab4f583eca987b09f74574b5dd",
+      "line_count": 118
+    },
+    "crates/hydrus-gui-model/tests/model/tag_namespace_order.rs": {
+      "sha256": "cc9a3116f7e2343ed26418998ba50a49a7a77b87e437525842f1f5076a8efa19",
+      "line_count": 198
+    },
+    "crates/hydrus-core/src/tag_sort.rs": {
+      "sha256": "e6dd0cb6a5817aa3e5a1a2e6cfdf300120c45ea62ef5f969cf38461c5af894d8",
+      "line_count": 210
+    },
+    "crates/hydrus-gui-model/src/manage_tags_sort.rs": {
+      "sha256": "1ff45c8ba01704895432d49816bfa983f3b8d5e436840161f15c3d90cc3a27bc",
+      "line_count": 63
+    },
+    "hydrus/client/gui/ClientGUITopLevelWindowsPanels.py": {
+      "sha256": "ee8cf027adee0ab8ff84b992c78a78eb85d0e5bdd13c953733835d2ace5ca280",
+      "line_count": 280
+    },
+    "hydrus/client/gui/ClientGUITagSorting.py": {
+      "sha256": "da95336e6b9dbe8d197ce26cf2978d83d72656276124bd44d60efc3abd364681",
+      "line_count": 157
+    },
+    "crates/hydrus-gui/src/options_tag_namespace_order.rs": {
+      "sha256": "40529255333151a97c4da85738e931876b2d770c710aca2c6d675fc3f6c18f9e",
+      "line_count": 311
+    },
+    "crates/hydrus-gui-model/src/tag_namespace_order.rs": {
+      "sha256": "183d5ed5c884e689633e70971b4efac794f8c30c8a20d6c96f4dc68eea5bd855",
+      "line_count": 69
+    },
+    "crates/hydrus-store/src/manage_tags_sort.rs": {
+      "sha256": "931a732fc230950296f8fec4c44b1326f44dde2bcb50b48bb68a86837425f452",
+      "line_count": 43
+    },
+    "crates/hydrus-gui/tests/gui/manage_tags_sort.rs": {
+      "sha256": "b8fcb302b359adf0fab0592c7cf0cac000787134f33a6d4dbc6c435af85cb2ae",
+      "line_count": 679
+    },
+    "hydrus/client/metadata/ClientTagSorting.py": {
+      "sha256": "585926d09c7e905f657eef8c08e5cc7a736e5091460d5140c0a4c1f85e40116b",
+      "line_count": 287
+    },
+    "crates/hydrus-gui/tests/gui/tag_namespace_order.rs": {
+      "sha256": "63c96613849bb1a2f5c7d1f2536b4984271128cfa842f29114f166d6dd8b7a25",
+      "line_count": 494
     }
   },
   "source_anchor_audit": {
-    "git_head": "32d9dbb74d0c6b55d6d402dc9e44c72ece4a3192",
-    "unique_anchors_checked": 5669,
+    "git_head": "7c74c617165a22814a8d0202008794b2beb53de0",
+    "unique_anchors_checked": 5738,
     "method": "Git blob equality or uniquely unchanged line/context; line fingerprints verified",
-    "prior_git_head": "170ab05251e79db77e0b97692f30d17843a3ca78"
+    "prior_git_head": "32d9dbb74d0c6b55d6d402dc9e44c72ece4a3192"
   },
   "aggregation_schema": "concrete_features_v2",
   "curation": {
@@ -168795,17 +170286,18 @@
       "docs/rust/gui-coverage/audit/anchor-remap-e886e68e-publication.json",
       "docs/rust/gui-coverage/audit/anchor-remap-4b5e7ae1-publication.json",
       "docs/rust/gui-coverage/audit/anchor-remap-170ab052-publication.json",
-      "docs/rust/gui-coverage/audit/anchor-remap-32d9dbb7-publication.json"
+      "docs/rust/gui-coverage/audit/anchor-remap-32d9dbb7-publication.json",
+      "docs/rust/gui-coverage/audit/anchor-remap-7c74c617-publication.json"
     ],
     "status_assignment": "Curated per node; generator checks structure/provenance and does not assess runtime behavior.",
     "independent_review": "Depth checklist, repeated-label option contexts, advanced numeric limits and source-only first-pass evidence reviewed; corrected scopes are preserved in supplemental audit patches.",
     "baseline_method": "Reference/native source inspection with scoped existing recording and assertion review; no behavior tests executed by this inventory audit."
   },
-  "generated_at_utc": "2026-10-07T03:15:09.630931+00:00",
+  "generated_at_utc": "2026-10-07T04:09:59.962443+00:00",
   "overnight_progress": {
     "goal": 80,
-    "milestone": 347,
-    "concrete_implementation_completions": 347,
+    "milestone": 351,
+    "concrete_implementation_completions": 351,
     "completed_feature_ids": [
       "audit-media-menu-database-clear-clear-all-file-viewing-statistics",
       "audit-media-menu-database-clear-cull-file-viewing-statistics-based-on-current-min-max-values",
@@ -169109,6 +170601,10 @@
       "audit-options-tag-presentation-tag-banners-on-media-viewer-top",
       "audit-options-tag-presentation-tag-banners-on-thumbnail-bottom-right",
       "audit-options-tag-presentation-tag-banners-on-thumbnail-top",
+      "audit-options-tag-sort-tag-sort-default-tag-sort-in-media-viewer-manage-tags-dialogs",
+      "audit-options-tag-sort-tag-sort-default-tag-sort-in-search-page-manage-tags-dialogs",
+      "audit-options-tag-sort-tag-sort-namespace-grouping-sort-add",
+      "audit-options-tag-sort-tag-sort-namespace-grouping-sort-edit",
       "audit-options-tag-suggestions-suggested-tags-column-layout",
       "audit-options-tag-suggestions-suggested-tags-width-of-suggested-tags-columns",
       "audit-options-thumbnails-appearance-use-blurhash-missing-thumbnail-fallback",
@@ -169162,8 +170658,8 @@
     },
     "after": {
       "partial": 385,
-      "first_pass": 948,
-      "missing": 479
+      "first_pass": 952,
+      "missing": 475
     },
     "validation_summary": "Exact successful hosted Linux check and parity-models jobs. Windows and macOS validation is deferred under the exact-source owner policy. Source inspection and author reference-recording provenance are separate; no local Cargo or mutation testing by this tool.",
     "validation_scope": "linux",
@@ -169174,18 +170670,18 @@
       "windows",
       "macos"
     ],
-    "source_commit": "32d9dbb74d0c6b55d6d402dc9e44c72ece4a3192",
+    "source_commit": "7c74c617165a22814a8d0202008794b2beb53de0",
     "ci_evidence": {
-      "head_sha": "32d9dbb74d0c6b55d6d402dc9e44c72ece4a3192",
+      "head_sha": "7c74c617165a22814a8d0202008794b2beb53de0",
       "status": "completed",
       "conclusion": "success",
       "run_attempt": 1,
-      "created_at": "2026-10-07T02:55:39Z",
-      "run_started_at": "2026-10-07T02:55:39Z",
-      "updated_at": "2026-10-07T03:11:56Z",
-      "source_commit": "32d9dbb74d0c6b55d6d402dc9e44c72ece4a3192",
-      "run_id": 37564321392,
-      "url": "https://github.com/jkendall327/hydrus-mine/actions/runs/37564321392",
+      "created_at": "2026-10-07T03:29:48Z",
+      "run_started_at": "2026-10-07T03:29:48Z",
+      "updated_at": "2026-10-07T04:01:26Z",
+      "source_commit": "7c74c617165a22814a8d0202008794b2beb53de0",
+      "run_id": 37567007002,
+      "url": "https://github.com/jkendall327/hydrus-mine/actions/runs/37567007002",
       "validation_scope": "linux",
       "required_platforms": [
         "linux"
@@ -169196,21 +170692,21 @@
       ],
       "jobs": [
         {
-          "id": 112608466449,
-          "run_id": 37564321392,
+          "id": 112616919427,
+          "run_id": 37567007002,
           "workflow_name": "rust",
           "head_branch": "codex/validation-runner",
-          "run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/runs/37564321392",
+          "run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/runs/37567007002",
           "run_attempt": 1,
-          "node_id": "CR_kwDOUzlbIs8AAAAaN_zWEQ",
-          "head_sha": "32d9dbb74d0c6b55d6d402dc9e44c72ece4a3192",
-          "url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/jobs/112608466449",
-          "html_url": "https://github.com/jkendall327/hydrus-mine/actions/runs/37564321392/job/112608466449",
+          "node_id": "CR_kwDOUzlbIs8AAAAaOH3Rgw",
+          "head_sha": "7c74c617165a22814a8d0202008794b2beb53de0",
+          "url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/jobs/112616919427",
+          "html_url": "https://github.com/jkendall327/hydrus-mine/actions/runs/37567007002/job/112616919427",
           "status": "completed",
           "conclusion": "success",
-          "created_at": "2026-10-07T02:55:41Z",
-          "started_at": "2026-10-07T02:55:43Z",
-          "completed_at": "2026-10-07T03:11:49Z",
+          "created_at": "2026-10-07T03:29:49Z",
+          "started_at": "2026-10-07T03:30:11Z",
+          "completed_at": "2026-10-07T04:01:16Z",
           "name": "check",
           "steps": [
             {
@@ -169218,211 +170714,211 @@
               "status": "completed",
               "conclusion": "success",
               "number": 1,
-              "started_at": "2026-10-07T02:55:44Z",
-              "completed_at": "2026-10-07T02:55:46Z"
+              "started_at": "2026-10-07T03:30:12Z",
+              "completed_at": "2026-10-07T03:30:13Z"
             },
             {
               "name": "Run actions/checkout@v4",
               "status": "completed",
               "conclusion": "success",
               "number": 2,
-              "started_at": "2026-10-07T02:55:46Z",
-              "completed_at": "2026-10-07T02:55:57Z"
+              "started_at": "2026-10-07T03:30:13Z",
+              "completed_at": "2026-10-07T03:30:25Z"
             },
             {
               "name": "Run dtolnay/rust-toolchain@master",
               "status": "completed",
               "conclusion": "success",
               "number": 3,
-              "started_at": "2026-10-07T02:55:57Z",
-              "completed_at": "2026-10-07T02:56:05Z"
+              "started_at": "2026-10-07T03:30:25Z",
+              "completed_at": "2026-10-07T03:30:34Z"
             },
             {
               "name": "Run Swatinem/rust-cache@v2",
               "status": "completed",
               "conclusion": "success",
               "number": 4,
-              "started_at": "2026-10-07T02:56:05Z",
-              "completed_at": "2026-10-07T02:56:19Z"
+              "started_at": "2026-10-07T03:30:34Z",
+              "completed_at": "2026-10-07T03:30:44Z"
             },
             {
               "name": "workspace cache safety regressions",
               "status": "completed",
               "conclusion": "success",
               "number": 5,
-              "started_at": "2026-10-07T02:56:19Z",
-              "completed_at": "2026-10-07T02:56:20Z"
+              "started_at": "2026-10-07T03:30:44Z",
+              "completed_at": "2026-10-07T03:30:46Z"
             },
             {
               "name": "workspace artifact compatibility key",
               "status": "completed",
               "conclusion": "success",
               "number": 6,
-              "started_at": "2026-10-07T02:56:20Z",
-              "completed_at": "2026-10-07T02:56:20Z"
+              "started_at": "2026-10-07T03:30:46Z",
+              "completed_at": "2026-10-07T03:30:46Z"
             },
             {
               "name": "restore rolling workspace libraries",
               "status": "completed",
               "conclusion": "success",
               "number": 7,
-              "started_at": "2026-10-07T02:56:20Z",
-              "completed_at": "2026-10-07T02:56:28Z"
+              "started_at": "2026-10-07T03:30:46Z",
+              "completed_at": "2026-10-07T03:30:46Z"
             },
             {
               "name": "merge restored workspace libraries",
               "status": "completed",
               "conclusion": "success",
               "number": 8,
-              "started_at": "2026-10-07T02:56:28Z",
-              "completed_at": "2026-10-07T02:56:36Z"
+              "started_at": "2026-10-07T03:30:46Z",
+              "completed_at": "2026-10-07T03:30:47Z"
             },
             {
               "name": "fail closed on uncertain workspace restore",
               "status": "completed",
               "conclusion": "skipped",
               "number": 9,
-              "started_at": "2026-10-07T02:56:36Z",
-              "completed_at": "2026-10-07T02:56:36Z"
+              "started_at": "2026-10-07T03:30:47Z",
+              "completed_at": "2026-10-07T03:30:47Z"
             },
             {
               "name": "install media tools, and fontconfig for the GUI",
               "status": "completed",
               "conclusion": "success",
               "number": 10,
-              "started_at": "2026-10-07T02:56:36Z",
-              "completed_at": "2026-10-07T02:57:05Z"
+              "started_at": "2026-10-07T03:30:47Z",
+              "completed_at": "2026-10-07T03:31:11Z"
             },
             {
               "name": "fmt",
               "status": "completed",
               "conclusion": "success",
               "number": 11,
-              "started_at": "2026-10-07T02:57:05Z",
-              "completed_at": "2026-10-07T02:57:11Z"
+              "started_at": "2026-10-07T03:31:11Z",
+              "completed_at": "2026-10-07T03:31:17Z"
             },
             {
               "name": "GUI artifact runner tests",
               "status": "completed",
               "conclusion": "success",
               "number": 12,
-              "started_at": "2026-10-07T02:57:11Z",
-              "completed_at": "2026-10-07T02:57:11Z"
+              "started_at": "2026-10-07T03:31:17Z",
+              "completed_at": "2026-10-07T03:31:17Z"
             },
             {
               "name": "clippy",
               "status": "completed",
               "conclusion": "success",
               "number": 13,
-              "started_at": "2026-10-07T02:57:11Z",
-              "completed_at": "2026-10-07T02:58:42Z"
+              "started_at": "2026-10-07T03:31:17Z",
+              "completed_at": "2026-10-07T03:41:03Z"
             },
             {
               "name": "save immediate Clippy diagnostics",
               "status": "completed",
               "conclusion": "success",
               "number": 14,
-              "started_at": "2026-10-07T02:58:42Z",
-              "completed_at": "2026-10-07T02:58:43Z"
+              "started_at": "2026-10-07T03:41:03Z",
+              "completed_at": "2026-10-07T03:41:04Z"
             },
             {
               "name": "test",
               "status": "completed",
               "conclusion": "success",
               "number": 15,
-              "started_at": "2026-10-07T02:58:43Z",
-              "completed_at": "2026-10-07T03:11:29Z"
+              "started_at": "2026-10-07T03:41:04Z",
+              "completed_at": "2026-10-07T04:01:00Z"
             },
             {
               "name": "save immediate test diagnostics",
               "status": "completed",
               "conclusion": "success",
               "number": 16,
-              "started_at": "2026-10-07T03:11:29Z",
-              "completed_at": "2026-10-07T03:11:31Z"
+              "started_at": "2026-10-07T04:01:00Z",
+              "completed_at": "2026-10-07T04:01:01Z"
             },
             {
               "name": "parity ratchet",
               "status": "completed",
               "conclusion": "success",
               "number": 17,
-              "started_at": "2026-10-07T03:11:31Z",
-              "completed_at": "2026-10-07T03:11:32Z"
+              "started_at": "2026-10-07T04:01:01Z",
+              "completed_at": "2026-10-07T04:01:02Z"
             },
             {
               "name": "save native GUI renders",
               "status": "completed",
               "conclusion": "success",
               "number": 18,
-              "started_at": "2026-10-07T03:11:32Z",
-              "completed_at": "2026-10-07T03:11:34Z"
+              "started_at": "2026-10-07T04:01:02Z",
+              "completed_at": "2026-10-07T04:01:04Z"
             },
             {
               "name": "stage bounded workspace libraries",
               "status": "completed",
               "conclusion": "success",
               "number": 19,
-              "started_at": "2026-10-07T03:11:34Z",
-              "completed_at": "2026-10-07T03:11:39Z"
+              "started_at": "2026-10-07T04:01:04Z",
+              "completed_at": "2026-10-07T04:01:09Z"
             },
             {
               "name": "save rolling workspace libraries",
               "status": "completed",
               "conclusion": "success",
               "number": 20,
-              "started_at": "2026-10-07T03:11:39Z",
-              "completed_at": "2026-10-07T03:11:46Z"
+              "started_at": "2026-10-07T04:01:09Z",
+              "completed_at": "2026-10-07T04:01:14Z"
             },
             {
               "name": "Post Run Swatinem/rust-cache@v2",
               "status": "completed",
               "conclusion": "success",
               "number": 39,
-              "started_at": "2026-10-07T03:11:46Z",
-              "completed_at": "2026-10-07T03:11:46Z"
+              "started_at": "2026-10-07T04:01:14Z",
+              "completed_at": "2026-10-07T04:01:15Z"
             },
             {
               "name": "Post Run actions/checkout@v4",
               "status": "completed",
               "conclusion": "success",
               "number": 40,
-              "started_at": "2026-10-07T03:11:46Z",
-              "completed_at": "2026-10-07T03:11:46Z"
+              "started_at": "2026-10-07T04:01:15Z",
+              "completed_at": "2026-10-07T04:01:15Z"
             },
             {
               "name": "Complete job",
               "status": "completed",
               "conclusion": "success",
               "number": 41,
-              "started_at": "2026-10-07T03:11:46Z",
-              "completed_at": "2026-10-07T03:11:47Z"
+              "started_at": "2026-10-07T04:01:15Z",
+              "completed_at": "2026-10-07T04:01:15Z"
             }
           ],
-          "check_run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/check-runs/112608466449",
+          "check_run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/check-runs/112616919427",
           "labels": [
             "ubuntu-24.04"
           ],
-          "runner_id": 1000003516,
-          "runner_name": "GitHub Actions 1000003516",
+          "runner_id": 1000003522,
+          "runner_name": "GitHub Actions 1000003522",
           "runner_group_id": 0,
           "runner_group_name": "GitHub Actions"
         },
         {
-          "id": 112608466562,
-          "run_id": 37564321392,
+          "id": 112616919697,
+          "run_id": 37567007002,
           "workflow_name": "rust",
           "head_branch": "codex/validation-runner",
-          "run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/runs/37564321392",
+          "run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/runs/37567007002",
           "run_attempt": 1,
-          "node_id": "CR_kwDOUzlbIs8AAAAaN_zWgg",
-          "head_sha": "32d9dbb74d0c6b55d6d402dc9e44c72ece4a3192",
-          "url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/jobs/112608466562",
-          "html_url": "https://github.com/jkendall327/hydrus-mine/actions/runs/37564321392/job/112608466562",
+          "node_id": "CR_kwDOUzlbIs8AAAAaOH3SkQ",
+          "head_sha": "7c74c617165a22814a8d0202008794b2beb53de0",
+          "url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/jobs/112616919697",
+          "html_url": "https://github.com/jkendall327/hydrus-mine/actions/runs/37567007002/job/112616919697",
           "status": "completed",
           "conclusion": "success",
-          "created_at": "2026-10-07T02:55:41Z",
-          "started_at": "2026-10-07T02:55:43Z",
-          "completed_at": "2026-10-07T03:00:06Z",
+          "created_at": "2026-10-07T03:29:49Z",
+          "started_at": "2026-10-07T03:29:51Z",
+          "completed_at": "2026-10-07T03:33:47Z",
           "name": "parity-models",
           "steps": [
             {
@@ -169430,104 +170926,131 @@
               "status": "completed",
               "conclusion": "success",
               "number": 1,
-              "started_at": "2026-10-07T02:55:44Z",
-              "completed_at": "2026-10-07T02:55:45Z"
+              "started_at": "2026-10-07T03:29:52Z",
+              "completed_at": "2026-10-07T03:29:53Z"
             },
             {
               "name": "Run actions/checkout@v4",
               "status": "completed",
               "conclusion": "success",
               "number": 2,
-              "started_at": "2026-10-07T02:55:45Z",
-              "completed_at": "2026-10-07T02:55:59Z"
+              "started_at": "2026-10-07T03:29:53Z",
+              "completed_at": "2026-10-07T03:30:06Z"
             },
             {
               "name": "Run dtolnay/rust-toolchain@master",
               "status": "completed",
               "conclusion": "success",
               "number": 3,
-              "started_at": "2026-10-07T02:55:59Z",
-              "completed_at": "2026-10-07T02:56:07Z"
+              "started_at": "2026-10-07T03:30:06Z",
+              "completed_at": "2026-10-07T03:30:14Z"
             },
             {
               "name": "Run Swatinem/rust-cache@v2",
               "status": "completed",
               "conclusion": "success",
               "number": 4,
-              "started_at": "2026-10-07T02:56:07Z",
-              "completed_at": "2026-10-07T02:56:18Z"
+              "started_at": "2026-10-07T03:30:14Z",
+              "completed_at": "2026-10-07T03:30:23Z"
             },
             {
               "name": "install media tools",
               "status": "completed",
               "conclusion": "success",
               "number": 5,
-              "started_at": "2026-10-07T02:56:18Z",
-              "completed_at": "2026-10-07T02:56:46Z"
+              "started_at": "2026-10-07T03:30:23Z",
+              "completed_at": "2026-10-07T03:30:43Z"
             },
             {
               "name": "reference and backend tests",
               "status": "completed",
               "conclusion": "success",
               "number": 6,
-              "started_at": "2026-10-07T02:56:46Z",
-              "completed_at": "2026-10-07T03:00:03Z"
+              "started_at": "2026-10-07T03:30:43Z",
+              "completed_at": "2026-10-07T03:33:45Z"
             },
             {
               "name": "Post Run Swatinem/rust-cache@v2",
               "status": "completed",
               "conclusion": "success",
               "number": 11,
-              "started_at": "2026-10-07T03:00:03Z",
-              "completed_at": "2026-10-07T03:00:03Z"
+              "started_at": "2026-10-07T03:33:45Z",
+              "completed_at": "2026-10-07T03:33:46Z"
             },
             {
               "name": "Post Run actions/checkout@v4",
               "status": "completed",
               "conclusion": "success",
               "number": 12,
-              "started_at": "2026-10-07T03:00:03Z",
-              "completed_at": "2026-10-07T03:00:03Z"
+              "started_at": "2026-10-07T03:33:46Z",
+              "completed_at": "2026-10-07T03:33:46Z"
             },
             {
               "name": "Complete job",
               "status": "completed",
               "conclusion": "success",
               "number": 13,
-              "started_at": "2026-10-07T03:00:03Z",
-              "completed_at": "2026-10-07T03:00:03Z"
+              "started_at": "2026-10-07T03:33:46Z",
+              "completed_at": "2026-10-07T03:33:46Z"
             }
           ],
-          "check_run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/check-runs/112608466562",
+          "check_run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/check-runs/112616919697",
           "labels": [
             "ubuntu-latest"
           ],
-          "runner_id": 1000003517,
-          "runner_name": "GitHub Actions 1000003517",
+          "runner_id": 1000003523,
+          "runner_name": "GitHub Actions 1000003523",
           "runner_group_id": 0,
           "runner_group_name": "GitHub Actions"
         }
       ],
       "auxiliary_jobs": [
         {
-          "id": 112608467447,
-          "run_id": 37564321392,
+          "id": 112616920240,
+          "run_id": 37567007002,
           "workflow_name": "rust",
           "head_branch": "codex/validation-runner",
-          "run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/runs/37564321392",
+          "run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/runs/37567007002",
           "run_attempt": 1,
-          "node_id": "CR_kwDOUzlbIs8AAAAaN_zZ9w",
-          "head_sha": "32d9dbb74d0c6b55d6d402dc9e44c72ece4a3192",
-          "url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/jobs/112608467447",
-          "html_url": "https://github.com/jkendall327/hydrus-mine/actions/runs/37564321392/job/112608467447",
+          "node_id": "CR_kwDOUzlbIs8AAAAaOH3UsA",
+          "head_sha": "7c74c617165a22814a8d0202008794b2beb53de0",
+          "url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/jobs/112616920240",
+          "html_url": "https://github.com/jkendall327/hydrus-mine/actions/runs/37567007002/job/112616920240",
           "status": "completed",
           "conclusion": "skipped",
-          "created_at": "2026-10-07T02:55:41Z",
-          "started_at": "2026-10-07T02:55:41Z",
-          "completed_at": "2026-10-07T02:55:40Z",
+          "created_at": "2026-10-07T03:29:49Z",
+          "started_at": "2026-10-07T03:29:49Z",
+          "completed_at": "2026-10-07T03:29:49Z",
+          "name": "quick-check",
+          "steps": [],
+          "check_run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/check-runs/112616920240",
+          "labels": [
+            "ubuntu-24.04"
+          ],
+          "runner_id": null,
+          "runner_name": null,
+          "runner_group_id": null,
+          "runner_group_name": null
+        },
+        {
+          "id": 112616920466,
+          "run_id": 37567007002,
+          "workflow_name": "rust",
+          "head_branch": "codex/validation-runner",
+          "run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/runs/37567007002",
+          "run_attempt": 1,
+          "node_id": "CR_kwDOUzlbIs8AAAAaOH3Vkg",
+          "head_sha": "7c74c617165a22814a8d0202008794b2beb53de0",
+          "url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/jobs/112616920466",
+          "html_url": "https://github.com/jkendall327/hydrus-mine/actions/runs/37567007002/job/112616920466",
+          "status": "completed",
+          "conclusion": "skipped",
+          "created_at": "2026-10-07T03:29:49Z",
+          "started_at": "2026-10-07T03:29:49Z",
+          "completed_at": "2026-10-07T03:29:49Z",
           "name": "other-platforms",
           "steps": [],
-          "check_run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/check-runs/112608467447",
+          "check_run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/check-runs/112616920466",
           "labels": [],
           "runner_id": null,
           "runner_name": null,
@@ -169540,48 +171063,21 @@
           ]
         },
         {
-          "id": 112608467825,
-          "run_id": 37564321392,
+          "id": 112624537418,
+          "run_id": 37567007002,
           "workflow_name": "rust",
           "head_branch": "codex/validation-runner",
-          "run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/runs/37564321392",
+          "run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/runs/37567007002",
           "run_attempt": 1,
-          "node_id": "CR_kwDOUzlbIs8AAAAaN_zbcQ",
-          "head_sha": "32d9dbb74d0c6b55d6d402dc9e44c72ece4a3192",
-          "url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/jobs/112608467825",
-          "html_url": "https://github.com/jkendall327/hydrus-mine/actions/runs/37564321392/job/112608467825",
-          "status": "completed",
-          "conclusion": "skipped",
-          "created_at": "2026-10-07T02:55:41Z",
-          "started_at": "2026-10-07T02:55:41Z",
-          "completed_at": "2026-10-07T02:55:40Z",
-          "name": "quick-check",
-          "steps": [],
-          "check_run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/check-runs/112608467825",
-          "labels": [
-            "ubuntu-24.04"
-          ],
-          "runner_id": null,
-          "runner_name": null,
-          "runner_group_id": null,
-          "runner_group_name": null
-        },
-        {
-          "id": 112612512095,
-          "run_id": 37564321392,
-          "workflow_name": "rust",
-          "head_branch": "codex/validation-runner",
-          "run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/runs/37564321392",
-          "run_attempt": 1,
-          "node_id": "CR_kwDOUzlbIs8AAAAaODqRXw",
-          "head_sha": "32d9dbb74d0c6b55d6d402dc9e44c72ece4a3192",
-          "url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/jobs/112612512095",
-          "html_url": "https://github.com/jkendall327/hydrus-mine/actions/runs/37564321392/job/112612512095",
+          "node_id": "CR_kwDOUzlbIs8AAAAaOPIPSg",
+          "head_sha": "7c74c617165a22814a8d0202008794b2beb53de0",
+          "url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/jobs/112624537418",
+          "html_url": "https://github.com/jkendall327/hydrus-mine/actions/runs/37567007002/job/112624537418",
           "status": "completed",
           "conclusion": "success",
-          "created_at": "2026-10-07T03:11:50Z",
-          "started_at": "2026-10-07T03:11:51Z",
-          "completed_at": "2026-10-07T03:11:55Z",
+          "created_at": "2026-10-07T04:01:16Z",
+          "started_at": "2026-10-07T04:01:18Z",
+          "completed_at": "2026-10-07T04:01:25Z",
           "name": "workspace-cache-maintenance",
           "steps": [
             {
@@ -169589,32 +171085,32 @@
               "status": "completed",
               "conclusion": "success",
               "number": 1,
-              "started_at": "2026-10-07T03:11:52Z",
-              "completed_at": "2026-10-07T03:11:53Z"
+              "started_at": "2026-10-07T04:01:19Z",
+              "completed_at": "2026-10-07T04:01:20Z"
             },
             {
               "name": "bound workspace cache snapshots",
               "status": "completed",
               "conclusion": "success",
               "number": 2,
-              "started_at": "2026-10-07T03:11:53Z",
-              "completed_at": "2026-10-07T03:11:54Z"
+              "started_at": "2026-10-07T04:01:20Z",
+              "completed_at": "2026-10-07T04:01:23Z"
             },
             {
               "name": "Complete job",
               "status": "completed",
               "conclusion": "success",
               "number": 3,
-              "started_at": "2026-10-07T03:11:54Z",
-              "completed_at": "2026-10-07T03:11:54Z"
+              "started_at": "2026-10-07T04:01:23Z",
+              "completed_at": "2026-10-07T04:01:23Z"
             }
           ],
-          "check_run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/check-runs/112612512095",
+          "check_run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/check-runs/112624537418",
           "labels": [
             "ubuntu-24.04"
           ],
-          "runner_id": 1000003518,
-          "runner_name": "GitHub Actions 1000003518",
+          "runner_id": 1000003524,
+          "runner_name": "GitHub Actions 1000003524",
           "runner_group_id": 0,
           "runner_group_name": "GitHub Actions"
         }
@@ -169626,26 +171122,26 @@
       },
       "publication_policy": {
         "path": ".github/publication-validation.json",
-        "source_commit": "32d9dbb74d0c6b55d6d402dc9e44c72ece4a3192",
+        "source_commit": "7c74c617165a22814a8d0202008794b2beb53de0",
         "sha256": "49723bd5d6b786392a1368bb3da1406747a553ef31c9de2bdef92cea5d014c5f",
         "effective_date": "2026-10-06",
         "reason": "The owner uses Linux and prioritizes validated Linux delivery. macOS is low priority; Windows is deferred because its builds materially lengthen validation. Secondary-platform CI remains available by explicit opt-in."
       }
     },
-    "additional_concrete_implementation_completions": 1,
+    "additional_concrete_implementation_completions": 4,
     "counting_method": "Frozen 1,812 original IDs; explicit reviewed concrete implementation leaves only; parents, aliases, evidence-only changes and native IDs excluded."
   },
   "runtime_validation": {
-    "head_sha": "32d9dbb74d0c6b55d6d402dc9e44c72ece4a3192",
+    "head_sha": "7c74c617165a22814a8d0202008794b2beb53de0",
     "status": "completed",
     "conclusion": "success",
     "run_attempt": 1,
-    "created_at": "2026-10-07T02:55:39Z",
-    "run_started_at": "2026-10-07T02:55:39Z",
-    "updated_at": "2026-10-07T03:11:56Z",
-    "source_commit": "32d9dbb74d0c6b55d6d402dc9e44c72ece4a3192",
-    "run_id": 37564321392,
-    "url": "https://github.com/jkendall327/hydrus-mine/actions/runs/37564321392",
+    "created_at": "2026-10-07T03:29:48Z",
+    "run_started_at": "2026-10-07T03:29:48Z",
+    "updated_at": "2026-10-07T04:01:26Z",
+    "source_commit": "7c74c617165a22814a8d0202008794b2beb53de0",
+    "run_id": 37567007002,
+    "url": "https://github.com/jkendall327/hydrus-mine/actions/runs/37567007002",
     "validation_scope": "linux",
     "required_platforms": [
       "linux"
@@ -169656,21 +171152,21 @@
     ],
     "jobs": [
       {
-        "id": 112608466449,
-        "run_id": 37564321392,
+        "id": 112616919427,
+        "run_id": 37567007002,
         "workflow_name": "rust",
         "head_branch": "codex/validation-runner",
-        "run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/runs/37564321392",
+        "run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/runs/37567007002",
         "run_attempt": 1,
-        "node_id": "CR_kwDOUzlbIs8AAAAaN_zWEQ",
-        "head_sha": "32d9dbb74d0c6b55d6d402dc9e44c72ece4a3192",
-        "url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/jobs/112608466449",
-        "html_url": "https://github.com/jkendall327/hydrus-mine/actions/runs/37564321392/job/112608466449",
+        "node_id": "CR_kwDOUzlbIs8AAAAaOH3Rgw",
+        "head_sha": "7c74c617165a22814a8d0202008794b2beb53de0",
+        "url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/jobs/112616919427",
+        "html_url": "https://github.com/jkendall327/hydrus-mine/actions/runs/37567007002/job/112616919427",
         "status": "completed",
         "conclusion": "success",
-        "created_at": "2026-10-07T02:55:41Z",
-        "started_at": "2026-10-07T02:55:43Z",
-        "completed_at": "2026-10-07T03:11:49Z",
+        "created_at": "2026-10-07T03:29:49Z",
+        "started_at": "2026-10-07T03:30:11Z",
+        "completed_at": "2026-10-07T04:01:16Z",
         "name": "check",
         "steps": [
           {
@@ -169678,211 +171174,211 @@
             "status": "completed",
             "conclusion": "success",
             "number": 1,
-            "started_at": "2026-10-07T02:55:44Z",
-            "completed_at": "2026-10-07T02:55:46Z"
+            "started_at": "2026-10-07T03:30:12Z",
+            "completed_at": "2026-10-07T03:30:13Z"
           },
           {
             "name": "Run actions/checkout@v4",
             "status": "completed",
             "conclusion": "success",
             "number": 2,
-            "started_at": "2026-10-07T02:55:46Z",
-            "completed_at": "2026-10-07T02:55:57Z"
+            "started_at": "2026-10-07T03:30:13Z",
+            "completed_at": "2026-10-07T03:30:25Z"
           },
           {
             "name": "Run dtolnay/rust-toolchain@master",
             "status": "completed",
             "conclusion": "success",
             "number": 3,
-            "started_at": "2026-10-07T02:55:57Z",
-            "completed_at": "2026-10-07T02:56:05Z"
+            "started_at": "2026-10-07T03:30:25Z",
+            "completed_at": "2026-10-07T03:30:34Z"
           },
           {
             "name": "Run Swatinem/rust-cache@v2",
             "status": "completed",
             "conclusion": "success",
             "number": 4,
-            "started_at": "2026-10-07T02:56:05Z",
-            "completed_at": "2026-10-07T02:56:19Z"
+            "started_at": "2026-10-07T03:30:34Z",
+            "completed_at": "2026-10-07T03:30:44Z"
           },
           {
             "name": "workspace cache safety regressions",
             "status": "completed",
             "conclusion": "success",
             "number": 5,
-            "started_at": "2026-10-07T02:56:19Z",
-            "completed_at": "2026-10-07T02:56:20Z"
+            "started_at": "2026-10-07T03:30:44Z",
+            "completed_at": "2026-10-07T03:30:46Z"
           },
           {
             "name": "workspace artifact compatibility key",
             "status": "completed",
             "conclusion": "success",
             "number": 6,
-            "started_at": "2026-10-07T02:56:20Z",
-            "completed_at": "2026-10-07T02:56:20Z"
+            "started_at": "2026-10-07T03:30:46Z",
+            "completed_at": "2026-10-07T03:30:46Z"
           },
           {
             "name": "restore rolling workspace libraries",
             "status": "completed",
             "conclusion": "success",
             "number": 7,
-            "started_at": "2026-10-07T02:56:20Z",
-            "completed_at": "2026-10-07T02:56:28Z"
+            "started_at": "2026-10-07T03:30:46Z",
+            "completed_at": "2026-10-07T03:30:46Z"
           },
           {
             "name": "merge restored workspace libraries",
             "status": "completed",
             "conclusion": "success",
             "number": 8,
-            "started_at": "2026-10-07T02:56:28Z",
-            "completed_at": "2026-10-07T02:56:36Z"
+            "started_at": "2026-10-07T03:30:46Z",
+            "completed_at": "2026-10-07T03:30:47Z"
           },
           {
             "name": "fail closed on uncertain workspace restore",
             "status": "completed",
             "conclusion": "skipped",
             "number": 9,
-            "started_at": "2026-10-07T02:56:36Z",
-            "completed_at": "2026-10-07T02:56:36Z"
+            "started_at": "2026-10-07T03:30:47Z",
+            "completed_at": "2026-10-07T03:30:47Z"
           },
           {
             "name": "install media tools, and fontconfig for the GUI",
             "status": "completed",
             "conclusion": "success",
             "number": 10,
-            "started_at": "2026-10-07T02:56:36Z",
-            "completed_at": "2026-10-07T02:57:05Z"
+            "started_at": "2026-10-07T03:30:47Z",
+            "completed_at": "2026-10-07T03:31:11Z"
           },
           {
             "name": "fmt",
             "status": "completed",
             "conclusion": "success",
             "number": 11,
-            "started_at": "2026-10-07T02:57:05Z",
-            "completed_at": "2026-10-07T02:57:11Z"
+            "started_at": "2026-10-07T03:31:11Z",
+            "completed_at": "2026-10-07T03:31:17Z"
           },
           {
             "name": "GUI artifact runner tests",
             "status": "completed",
             "conclusion": "success",
             "number": 12,
-            "started_at": "2026-10-07T02:57:11Z",
-            "completed_at": "2026-10-07T02:57:11Z"
+            "started_at": "2026-10-07T03:31:17Z",
+            "completed_at": "2026-10-07T03:31:17Z"
           },
           {
             "name": "clippy",
             "status": "completed",
             "conclusion": "success",
             "number": 13,
-            "started_at": "2026-10-07T02:57:11Z",
-            "completed_at": "2026-10-07T02:58:42Z"
+            "started_at": "2026-10-07T03:31:17Z",
+            "completed_at": "2026-10-07T03:41:03Z"
           },
           {
             "name": "save immediate Clippy diagnostics",
             "status": "completed",
             "conclusion": "success",
             "number": 14,
-            "started_at": "2026-10-07T02:58:42Z",
-            "completed_at": "2026-10-07T02:58:43Z"
+            "started_at": "2026-10-07T03:41:03Z",
+            "completed_at": "2026-10-07T03:41:04Z"
           },
           {
             "name": "test",
             "status": "completed",
             "conclusion": "success",
             "number": 15,
-            "started_at": "2026-10-07T02:58:43Z",
-            "completed_at": "2026-10-07T03:11:29Z"
+            "started_at": "2026-10-07T03:41:04Z",
+            "completed_at": "2026-10-07T04:01:00Z"
           },
           {
             "name": "save immediate test diagnostics",
             "status": "completed",
             "conclusion": "success",
             "number": 16,
-            "started_at": "2026-10-07T03:11:29Z",
-            "completed_at": "2026-10-07T03:11:31Z"
+            "started_at": "2026-10-07T04:01:00Z",
+            "completed_at": "2026-10-07T04:01:01Z"
           },
           {
             "name": "parity ratchet",
             "status": "completed",
             "conclusion": "success",
             "number": 17,
-            "started_at": "2026-10-07T03:11:31Z",
-            "completed_at": "2026-10-07T03:11:32Z"
+            "started_at": "2026-10-07T04:01:01Z",
+            "completed_at": "2026-10-07T04:01:02Z"
           },
           {
             "name": "save native GUI renders",
             "status": "completed",
             "conclusion": "success",
             "number": 18,
-            "started_at": "2026-10-07T03:11:32Z",
-            "completed_at": "2026-10-07T03:11:34Z"
+            "started_at": "2026-10-07T04:01:02Z",
+            "completed_at": "2026-10-07T04:01:04Z"
           },
           {
             "name": "stage bounded workspace libraries",
             "status": "completed",
             "conclusion": "success",
             "number": 19,
-            "started_at": "2026-10-07T03:11:34Z",
-            "completed_at": "2026-10-07T03:11:39Z"
+            "started_at": "2026-10-07T04:01:04Z",
+            "completed_at": "2026-10-07T04:01:09Z"
           },
           {
             "name": "save rolling workspace libraries",
             "status": "completed",
             "conclusion": "success",
             "number": 20,
-            "started_at": "2026-10-07T03:11:39Z",
-            "completed_at": "2026-10-07T03:11:46Z"
+            "started_at": "2026-10-07T04:01:09Z",
+            "completed_at": "2026-10-07T04:01:14Z"
           },
           {
             "name": "Post Run Swatinem/rust-cache@v2",
             "status": "completed",
             "conclusion": "success",
             "number": 39,
-            "started_at": "2026-10-07T03:11:46Z",
-            "completed_at": "2026-10-07T03:11:46Z"
+            "started_at": "2026-10-07T04:01:14Z",
+            "completed_at": "2026-10-07T04:01:15Z"
           },
           {
             "name": "Post Run actions/checkout@v4",
             "status": "completed",
             "conclusion": "success",
             "number": 40,
-            "started_at": "2026-10-07T03:11:46Z",
-            "completed_at": "2026-10-07T03:11:46Z"
+            "started_at": "2026-10-07T04:01:15Z",
+            "completed_at": "2026-10-07T04:01:15Z"
           },
           {
             "name": "Complete job",
             "status": "completed",
             "conclusion": "success",
             "number": 41,
-            "started_at": "2026-10-07T03:11:46Z",
-            "completed_at": "2026-10-07T03:11:47Z"
+            "started_at": "2026-10-07T04:01:15Z",
+            "completed_at": "2026-10-07T04:01:15Z"
           }
         ],
-        "check_run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/check-runs/112608466449",
+        "check_run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/check-runs/112616919427",
         "labels": [
           "ubuntu-24.04"
         ],
-        "runner_id": 1000003516,
-        "runner_name": "GitHub Actions 1000003516",
+        "runner_id": 1000003522,
+        "runner_name": "GitHub Actions 1000003522",
         "runner_group_id": 0,
         "runner_group_name": "GitHub Actions"
       },
       {
-        "id": 112608466562,
-        "run_id": 37564321392,
+        "id": 112616919697,
+        "run_id": 37567007002,
         "workflow_name": "rust",
         "head_branch": "codex/validation-runner",
-        "run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/runs/37564321392",
+        "run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/runs/37567007002",
         "run_attempt": 1,
-        "node_id": "CR_kwDOUzlbIs8AAAAaN_zWgg",
-        "head_sha": "32d9dbb74d0c6b55d6d402dc9e44c72ece4a3192",
-        "url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/jobs/112608466562",
-        "html_url": "https://github.com/jkendall327/hydrus-mine/actions/runs/37564321392/job/112608466562",
+        "node_id": "CR_kwDOUzlbIs8AAAAaOH3SkQ",
+        "head_sha": "7c74c617165a22814a8d0202008794b2beb53de0",
+        "url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/jobs/112616919697",
+        "html_url": "https://github.com/jkendall327/hydrus-mine/actions/runs/37567007002/job/112616919697",
         "status": "completed",
         "conclusion": "success",
-        "created_at": "2026-10-07T02:55:41Z",
-        "started_at": "2026-10-07T02:55:43Z",
-        "completed_at": "2026-10-07T03:00:06Z",
+        "created_at": "2026-10-07T03:29:49Z",
+        "started_at": "2026-10-07T03:29:51Z",
+        "completed_at": "2026-10-07T03:33:47Z",
         "name": "parity-models",
         "steps": [
           {
@@ -169890,104 +171386,131 @@
             "status": "completed",
             "conclusion": "success",
             "number": 1,
-            "started_at": "2026-10-07T02:55:44Z",
-            "completed_at": "2026-10-07T02:55:45Z"
+            "started_at": "2026-10-07T03:29:52Z",
+            "completed_at": "2026-10-07T03:29:53Z"
           },
           {
             "name": "Run actions/checkout@v4",
             "status": "completed",
             "conclusion": "success",
             "number": 2,
-            "started_at": "2026-10-07T02:55:45Z",
-            "completed_at": "2026-10-07T02:55:59Z"
+            "started_at": "2026-10-07T03:29:53Z",
+            "completed_at": "2026-10-07T03:30:06Z"
           },
           {
             "name": "Run dtolnay/rust-toolchain@master",
             "status": "completed",
             "conclusion": "success",
             "number": 3,
-            "started_at": "2026-10-07T02:55:59Z",
-            "completed_at": "2026-10-07T02:56:07Z"
+            "started_at": "2026-10-07T03:30:06Z",
+            "completed_at": "2026-10-07T03:30:14Z"
           },
           {
             "name": "Run Swatinem/rust-cache@v2",
             "status": "completed",
             "conclusion": "success",
             "number": 4,
-            "started_at": "2026-10-07T02:56:07Z",
-            "completed_at": "2026-10-07T02:56:18Z"
+            "started_at": "2026-10-07T03:30:14Z",
+            "completed_at": "2026-10-07T03:30:23Z"
           },
           {
             "name": "install media tools",
             "status": "completed",
             "conclusion": "success",
             "number": 5,
-            "started_at": "2026-10-07T02:56:18Z",
-            "completed_at": "2026-10-07T02:56:46Z"
+            "started_at": "2026-10-07T03:30:23Z",
+            "completed_at": "2026-10-07T03:30:43Z"
           },
           {
             "name": "reference and backend tests",
             "status": "completed",
             "conclusion": "success",
             "number": 6,
-            "started_at": "2026-10-07T02:56:46Z",
-            "completed_at": "2026-10-07T03:00:03Z"
+            "started_at": "2026-10-07T03:30:43Z",
+            "completed_at": "2026-10-07T03:33:45Z"
           },
           {
             "name": "Post Run Swatinem/rust-cache@v2",
             "status": "completed",
             "conclusion": "success",
             "number": 11,
-            "started_at": "2026-10-07T03:00:03Z",
-            "completed_at": "2026-10-07T03:00:03Z"
+            "started_at": "2026-10-07T03:33:45Z",
+            "completed_at": "2026-10-07T03:33:46Z"
           },
           {
             "name": "Post Run actions/checkout@v4",
             "status": "completed",
             "conclusion": "success",
             "number": 12,
-            "started_at": "2026-10-07T03:00:03Z",
-            "completed_at": "2026-10-07T03:00:03Z"
+            "started_at": "2026-10-07T03:33:46Z",
+            "completed_at": "2026-10-07T03:33:46Z"
           },
           {
             "name": "Complete job",
             "status": "completed",
             "conclusion": "success",
             "number": 13,
-            "started_at": "2026-10-07T03:00:03Z",
-            "completed_at": "2026-10-07T03:00:03Z"
+            "started_at": "2026-10-07T03:33:46Z",
+            "completed_at": "2026-10-07T03:33:46Z"
           }
         ],
-        "check_run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/check-runs/112608466562",
+        "check_run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/check-runs/112616919697",
         "labels": [
           "ubuntu-latest"
         ],
-        "runner_id": 1000003517,
-        "runner_name": "GitHub Actions 1000003517",
+        "runner_id": 1000003523,
+        "runner_name": "GitHub Actions 1000003523",
         "runner_group_id": 0,
         "runner_group_name": "GitHub Actions"
       }
     ],
     "auxiliary_jobs": [
       {
-        "id": 112608467447,
-        "run_id": 37564321392,
+        "id": 112616920240,
+        "run_id": 37567007002,
         "workflow_name": "rust",
         "head_branch": "codex/validation-runner",
-        "run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/runs/37564321392",
+        "run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/runs/37567007002",
         "run_attempt": 1,
-        "node_id": "CR_kwDOUzlbIs8AAAAaN_zZ9w",
-        "head_sha": "32d9dbb74d0c6b55d6d402dc9e44c72ece4a3192",
-        "url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/jobs/112608467447",
-        "html_url": "https://github.com/jkendall327/hydrus-mine/actions/runs/37564321392/job/112608467447",
+        "node_id": "CR_kwDOUzlbIs8AAAAaOH3UsA",
+        "head_sha": "7c74c617165a22814a8d0202008794b2beb53de0",
+        "url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/jobs/112616920240",
+        "html_url": "https://github.com/jkendall327/hydrus-mine/actions/runs/37567007002/job/112616920240",
         "status": "completed",
         "conclusion": "skipped",
-        "created_at": "2026-10-07T02:55:41Z",
-        "started_at": "2026-10-07T02:55:41Z",
-        "completed_at": "2026-10-07T02:55:40Z",
+        "created_at": "2026-10-07T03:29:49Z",
+        "started_at": "2026-10-07T03:29:49Z",
+        "completed_at": "2026-10-07T03:29:49Z",
+        "name": "quick-check",
+        "steps": [],
+        "check_run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/check-runs/112616920240",
+        "labels": [
+          "ubuntu-24.04"
+        ],
+        "runner_id": null,
+        "runner_name": null,
+        "runner_group_id": null,
+        "runner_group_name": null
+      },
+      {
+        "id": 112616920466,
+        "run_id": 37567007002,
+        "workflow_name": "rust",
+        "head_branch": "codex/validation-runner",
+        "run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/runs/37567007002",
+        "run_attempt": 1,
+        "node_id": "CR_kwDOUzlbIs8AAAAaOH3Vkg",
+        "head_sha": "7c74c617165a22814a8d0202008794b2beb53de0",
+        "url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/jobs/112616920466",
+        "html_url": "https://github.com/jkendall327/hydrus-mine/actions/runs/37567007002/job/112616920466",
+        "status": "completed",
+        "conclusion": "skipped",
+        "created_at": "2026-10-07T03:29:49Z",
+        "started_at": "2026-10-07T03:29:49Z",
+        "completed_at": "2026-10-07T03:29:49Z",
         "name": "other-platforms",
         "steps": [],
-        "check_run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/check-runs/112608467447",
+        "check_run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/check-runs/112616920466",
         "labels": [],
         "runner_id": null,
         "runner_name": null,
@@ -170000,48 +171523,21 @@
         ]
       },
       {
-        "id": 112608467825,
-        "run_id": 37564321392,
+        "id": 112624537418,
+        "run_id": 37567007002,
         "workflow_name": "rust",
         "head_branch": "codex/validation-runner",
-        "run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/runs/37564321392",
+        "run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/runs/37567007002",
         "run_attempt": 1,
-        "node_id": "CR_kwDOUzlbIs8AAAAaN_zbcQ",
-        "head_sha": "32d9dbb74d0c6b55d6d402dc9e44c72ece4a3192",
-        "url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/jobs/112608467825",
-        "html_url": "https://github.com/jkendall327/hydrus-mine/actions/runs/37564321392/job/112608467825",
-        "status": "completed",
-        "conclusion": "skipped",
-        "created_at": "2026-10-07T02:55:41Z",
-        "started_at": "2026-10-07T02:55:41Z",
-        "completed_at": "2026-10-07T02:55:40Z",
-        "name": "quick-check",
-        "steps": [],
-        "check_run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/check-runs/112608467825",
-        "labels": [
-          "ubuntu-24.04"
-        ],
-        "runner_id": null,
-        "runner_name": null,
-        "runner_group_id": null,
-        "runner_group_name": null
-      },
-      {
-        "id": 112612512095,
-        "run_id": 37564321392,
-        "workflow_name": "rust",
-        "head_branch": "codex/validation-runner",
-        "run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/runs/37564321392",
-        "run_attempt": 1,
-        "node_id": "CR_kwDOUzlbIs8AAAAaODqRXw",
-        "head_sha": "32d9dbb74d0c6b55d6d402dc9e44c72ece4a3192",
-        "url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/jobs/112612512095",
-        "html_url": "https://github.com/jkendall327/hydrus-mine/actions/runs/37564321392/job/112612512095",
+        "node_id": "CR_kwDOUzlbIs8AAAAaOPIPSg",
+        "head_sha": "7c74c617165a22814a8d0202008794b2beb53de0",
+        "url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/jobs/112624537418",
+        "html_url": "https://github.com/jkendall327/hydrus-mine/actions/runs/37567007002/job/112624537418",
         "status": "completed",
         "conclusion": "success",
-        "created_at": "2026-10-07T03:11:50Z",
-        "started_at": "2026-10-07T03:11:51Z",
-        "completed_at": "2026-10-07T03:11:55Z",
+        "created_at": "2026-10-07T04:01:16Z",
+        "started_at": "2026-10-07T04:01:18Z",
+        "completed_at": "2026-10-07T04:01:25Z",
         "name": "workspace-cache-maintenance",
         "steps": [
           {
@@ -170049,32 +171545,32 @@
             "status": "completed",
             "conclusion": "success",
             "number": 1,
-            "started_at": "2026-10-07T03:11:52Z",
-            "completed_at": "2026-10-07T03:11:53Z"
+            "started_at": "2026-10-07T04:01:19Z",
+            "completed_at": "2026-10-07T04:01:20Z"
           },
           {
             "name": "bound workspace cache snapshots",
             "status": "completed",
             "conclusion": "success",
             "number": 2,
-            "started_at": "2026-10-07T03:11:53Z",
-            "completed_at": "2026-10-07T03:11:54Z"
+            "started_at": "2026-10-07T04:01:20Z",
+            "completed_at": "2026-10-07T04:01:23Z"
           },
           {
             "name": "Complete job",
             "status": "completed",
             "conclusion": "success",
             "number": 3,
-            "started_at": "2026-10-07T03:11:54Z",
-            "completed_at": "2026-10-07T03:11:54Z"
+            "started_at": "2026-10-07T04:01:23Z",
+            "completed_at": "2026-10-07T04:01:23Z"
           }
         ],
-        "check_run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/check-runs/112612512095",
+        "check_run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/check-runs/112624537418",
         "labels": [
           "ubuntu-24.04"
         ],
-        "runner_id": 1000003518,
-        "runner_name": "GitHub Actions 1000003518",
+        "runner_id": 1000003524,
+        "runner_name": "GitHub Actions 1000003524",
         "runner_group_id": 0,
         "runner_group_name": "GitHub Actions"
       }
@@ -170086,7 +171582,7 @@
     },
     "publication_policy": {
       "path": ".github/publication-validation.json",
-      "source_commit": "32d9dbb74d0c6b55d6d402dc9e44c72ece4a3192",
+      "source_commit": "7c74c617165a22814a8d0202008794b2beb53de0",
       "sha256": "49723bd5d6b786392a1368bb3da1406747a553ef31c9de2bdef92cea5d014c5f",
       "effective_date": "2026-10-06",
       "reason": "The owner uses Linux and prioritizes validated Linux delivery. macOS is low priority; Windows is deferred because its builds materially lengthen validation. Secondary-platform CI remains available by explicit opt-in."

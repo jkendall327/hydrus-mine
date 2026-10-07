@@ -1,0 +1,43 @@
+{
+  "baseline": "b5b079a332ad6036bfa016e3f213a04db009eaf0",
+  "files": {
+    "crates/hydrus-gui/tests/gui/manage_tags_sort.rs": {
+      "original_lines_preserved_in_order": true,
+      "old_assertions": 52,
+      "new_assertions": 65,
+      "old_tests": 4,
+      "new_tests": 5,
+      "sha256": "b8fcb302b359adf0fab0592c7cf0cac000787134f33a6d4dbc6c435af85cb2ae"
+    },
+    "crates/hydrus-gui/tests/gui/tag_namespace_order.rs": {
+      "original_lines_preserved_in_order": true,
+      "old_assertions": 43,
+      "new_assertions": 48,
+      "old_tests": 3,
+      "new_tests": 3,
+      "sha256": "63c96613849bb1a2f5c7d1f2536b4984271128cfa842f29114f166d6dd8b7a25"
+    }
+  },
+  "checks": [
+    "rustfmt --check for assigned Rust tests",
+    "git diff --check"
+  ],
+  "builds_or_runtime_tests": false,
+  "ui_sha256": "cd6bc428d6ad2a4a8d07556d05eb4e4421cae9fa72f344771877fd9aa1d3db93",
+  "implementation_commit": "a4771fca4038b2e3df0e0f8d75ac78be310d089d",
+  "root_generation_proof": "/workspace/validation-reviews/sort4/slint-generation-check/result.json",
+  "new_test": "manage_tags_sort::actual_sort_stacks_fit_their_rows_and_scroll_without_overlap_at_both_viewports",
+  "new_capture_names": [
+    "tag-sort-layout-initial-900x640.png",
+    "tag-sort-layout-initial-1000x850.png",
+    "tag-sort-layout-saved-900x640.png",
+    "tag-sort-layout-saved-1000x850.png",
+    "tag-sort-layout-initial-900x640-scrolled.png",
+    "tag-sort-layout-saved-900x640-scrolled.png",
+    "manage-tags-sort-search-page.png",
+    "manage-tags-sort-media-viewer.png",
+    "tag-namespace-order-add-blank.png",
+    "tag-namespace-order-edit.png",
+    "tag-namespace-order-options-scrolled.png"
+  ]
+}

@@ -1,0 +1,277 @@
+{
+  "schema_version": 1,
+  "review_kind": "source/test integration readiness only",
+  "baseline_source_commit": "b5b079a332ad6036bfa016e3f213a04db009eaf0",
+  "reviewed_agent_commit": "a4771fca4038b2e3df0e0f8d75ac78be310d089d",
+  "reviewed_source_commit": "7c74c617165a22814a8d0202008794b2beb53de0",
+  "reviewed_worktree": "/workspace/hydrus-mine",
+  "selected_ids": [
+    "audit-options-tag-sort-tag-sort-default-tag-sort-in-search-page-manage-tags-dialogs",
+    "audit-options-tag-sort-tag-sort-default-tag-sort-in-media-viewer-manage-tags-dialogs",
+    "audit-options-tag-sort-tag-sort-namespace-grouping-sort-add",
+    "audit-options-tag-sort-tag-sort-namespace-grouping-sort-edit"
+  ],
+  "approval": false,
+  "source_approval": false,
+  "blocking_findings": [],
+  "actionable_findings": [],
+  "checks": [
+    {
+      "area": "Minimal intrinsic allocation and observation",
+      "source": [
+        "options.slint:134\u2013135,359\u2013376,675\u2013715"
+      ],
+      "result": "Only kind12/35 added to existing max26px/preferredheight condition. Existing260px stacks/optional siblings-grouping/callbackindices remain. One opt-in defaultfalse repeatedrow observer publishes actual absolute outerrowframes for4sortrows, exactkind0 groupingheading andkind37queue.1msdeferreddelivery and changedframe pendingflags mirror existingmeasurement idiom; no state/value/caption forcing or unrelatedgeometryinstrumentation."
+    },
+    {
+      "area": "Fresh default/saved frames",
+      "source": [
+        "manage_tags_sort.rs:212 onward"
+      ],
+      "result": "Four cases(initial/applied \u00d7900x640/1000x850) use fresh actualOptions windows/maps/callbacks. Appliedpolicy stages through realOptions thenApply and is reopened; Storeindependent search/viewersettings equalQt initial/reopened. Actual4contexts derivevisible0,1,optional3siblings,optional2grouping fromcurrentrowmodel; absentfieldframes are never needed. Initialdeferredcallbacks settleunderreal render/timerpump<=2s. No retired optionalfieldmeasurements reused."
+    },
+    {
+      "area": "Strict geometry and actual heading",
+      "source": [
+        "manage_tags_sort.rs:new geometry test"
+      ],
+      "result": "Allactualallocation/dropdownframes finitepositive and horizontallywithinviewport; eachcontrol strictlycontained inallocatedouterrow, withinrowcontrols separated usingupperbottom<lowertop; outerrowbottom and lastcontrolbottom<nextrowtop, finalnextrow exactkind0namespacegrouping heading; headingbottom<kind37wholequeue. Actualfirstdropdownvisible. No overlap tolerance, fixedstackheight or replacedhugecapture workaround."
+    },
+    {
+      "area": "Real narrow scroll route",
+      "source": [
+        "manage_tags_sort.rs:new geometry test",
+        "options.slint:241",
+        "menu_choice_wheel.slint:actualComboBox minima/wheel policy"
+      ],
+      "result": "At640height pointerwheel dispatched at actualfirstdropdown x\u22124 inexisting8px horizontalgap; requires ScrollViewcontent_y genuinelydecreases and observedwholequeue moves fullyinsideviewport. No programmatic scroll setter/forcedframe. Rowframes remain actualabsolute coordinates as scrolling changes. Savedpolicy unchanged afteroriginalCancel. Actualruntime stillrequired to prove platform route/queue fit; test fails ratherthan relaxing geometry."
+    },
+    {
+      "area": "Saved rawqueue scroll export",
+      "source": [
+        "tag_namespace_order.rs:251\u2013322"
+      ],
+      "result": "A freshMenuChoiceFrame callback observes actualfirstsort control, finitepositiveframe; realwheel inexistinggap mustdecrease OptionsScrollY at1000x850. Savedrawqueue remains exactexpected before exported tag-namespace-order-options-scrolled.png. Originalparent/child flow follows unchanged. Actualqueue rows/capture visibility stillrequires freshimage; scrollYalone doesnotprove allrowsvisible."
+    },
+    {
+      "area": "Actual displayed-value scope",
+      "source": [
+        "manage_tags_sort.rs:122\u2013208 and new test"
+      ],
+      "result": "Originalappliedrowindex/siblingvisibility/groupingassertions remain; newcaseStore equalQt initial/reopened ensures intendedsavedpolicy. Visiblefieldorder is derived from currentUIrowmodel, notindependently asserted against everyQtchosenvalue. Source/model replay and original assertions groundsemantics; finalfreshimages must inspect intendedvisiblecaptions/default/savedstate. Do not present Storechecks alone as pixels proof."
+    },
+    {
+      "area": "Consumer exports preserve behavioral assertions",
+      "source": [
+        "manage_tags_sort.rs:consumer lifetime export insertion"
+      ],
+      "result": "Searchpage/viewerconsumerPNG720x680 emitted afteroriginal exactreopened controls/rows andsameactualpixels buffer, beforeoriginalCancel. Localoverride/afterOptions/staleoldsender assertions remain; sourcecontextsselectedfiles versuscurrentonefile unchanged. No new genericManageTags/repository/immediateviewercommit credit; no correspondingstandaloneQtconsumerPNG."
+    },
+    {
+      "area": "Raw blank Add/populated Edit captures",
+      "source": [
+        "tag_namespace_order.rs:126\u2013148,184\u2013204"
+      ],
+      "result": "FirstrecordedEditPNG520x220 afterexistingexactcreator rawdefaultassertion andbeforeoriginalCancel, with exportedflagassert. Real_text blankAddPNG520x220 aftersetting actualemptyentry andassertempty beforeoriginalacceptance. Existingrawblankallowed/whitespace/duplicates/stableidentity/parentfreeze/Cancel/persist/concurrent/hiddenstaleowner semantics unchanged. Namespace-colours exactemptyguard doesnotapply togrouping Add."
+    },
+    {
+      "area": "Original assertion/API safety",
+      "source": [
+        "crates/hydrus-gui/ui/options.slint",
+        "crates/hydrus-gui/tests/gui/manage_tags_sort.rs",
+        "crates/hydrus-gui/tests/gui/tag_namespace_order.rs"
+      ],
+      "result": "BothRustdiffs insertion-only; all95oldassertions/7oldtests bytepreserved. Current113macroassertions/8tests; exactagent/rootcommittedbytes verified. Existingheadlessrender/WindowEventPointerScrolled/MenuChoiceFrame andpub(super) timerhelpers fitcurrentAPIs; f32finite/strict arithmetic usesactualmeasuredvalues. RefCellborrows releasedbeforescroll/timercallbacks; callbacks onlyinsertframes. No newcallbackstrongparentcycle: closuresholdmaps only. No sourceblocker/obviousRustAPI/lint/borrowpitfall identified; generationisnotnativecompilation/runtimeproof."
+    },
+    {
+      "area": "Final seven-file integration",
+      "source": [
+        "7c74c617165a22814a8d0202008794b2beb53de0",
+        "a4771fca4038b2e3df0e0f8d75ac78be310d089d"
+      ],
+      "result": "Root3implementationblobs matchreviewedagentcommit exactly;4docs/manifests additions reviewed pending347/28, selected4 only,14plannedcaptures(11new3old), preserved oldsource/reference/validation provenance. Historicalsource fields unchanged; implementationcommits appendonly; no ledger/native/canonical status edits. Full exactCI/freshrender pending."
+    }
+  ],
+  "scope_caveats": [
+    "Exactly4leaves; no Options/tag-sort/namespace-family parents, sharedaliases, Paste/orderedqueuefamily, genericManageTags/repositoryworkflows/immediateviewertagcommits, namespaceparser/tagdisplaychooser, radio/globalkeyboard or additionalconsumer credit.",
+    "Nativehorizontalcontrolstacks are vertical versusQthorizontalcontextrows. DefaultQtparentframes and savednativeframes legitimately differ. No font/pixel/whole-dialoggeometry/OSchrome/modality/focus or universalkeyboardtransport equality.",
+    "MatchingQtEnterText PNG is blankbeforeApply; defaultnamespaceAdd andpopulatedcreatorEdit are separatestates. PopulatedEdit/standaloneManageconsumer capturehasfixture/source support butnomatchingQtPNG.",
+    "Queue18paths questions/EnterText mockedfor scriptedmatrix; final3actualmodalEnterTexthandlers provideblank/whitespace/Cancelproof. NativeownedSessionDialog differs from Qtmodaltransport; broadchilddestruction or absentwidgetfamilies notnewlyclaimed.",
+    "Existing typedTagPresentation/firstmatchconsumer unchanged; sixsortorders replayactualsidebar, viewerusesexistingsharedconsumer. Pasteabsent andparseralreadyimplemented remainoutsideclaim.",
+    "Source-only finalcommit7c74c617165a22814a8d0202008794b2beb53de0 pinned. Full exactcommittedsourceLinuxfmt/strictClippy/tests/ratchet/parity plusactualfresh14planned nativeimages requiredbeforeapproval. Windows/macOSdeferred."
+  ],
+  "reviewed_source_pins": [
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-gui/ui/options.slint",
+      "repository_relative_path": "crates/hydrus-gui/ui/options.slint",
+      "baseline_source_commit": "b5b079a332ad6036bfa016e3f213a04db009eaf0",
+      "baseline_sha256": "87be44fae0357ba886e5f4758d8747dc4c2a0d48c8a985fe46994ced555b8310",
+      "reviewed_worktree_sha256": "cd6bc428d6ad2a4a8d07556d05eb4e4421cae9fa72f344771877fd9aa1d3db93",
+      "reviewed_agent_path": "/workspace/tag-sort-layout-tests/crates/hydrus-gui/ui/options.slint",
+      "source_commit": "7c74c617165a22814a8d0202008794b2beb53de0",
+      "agent_commit": "a4771fca4038b2e3df0e0f8d75ac78be310d089d",
+      "current_is_committed": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-gui/tests/gui/manage_tags_sort.rs",
+      "repository_relative_path": "crates/hydrus-gui/tests/gui/manage_tags_sort.rs",
+      "baseline_source_commit": "b5b079a332ad6036bfa016e3f213a04db009eaf0",
+      "baseline_sha256": "c1c3c9a1f31e5d0b8d77ee7d0953375a8db4d58338980f6194e7e01dc932d09f",
+      "reviewed_worktree_sha256": "b8fcb302b359adf0fab0592c7cf0cac000787134f33a6d4dbc6c435af85cb2ae",
+      "reviewed_agent_path": "/workspace/tag-sort-layout-tests/crates/hydrus-gui/tests/gui/manage_tags_sort.rs",
+      "source_commit": "7c74c617165a22814a8d0202008794b2beb53de0",
+      "agent_commit": "a4771fca4038b2e3df0e0f8d75ac78be310d089d",
+      "current_is_committed": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-gui/tests/gui/tag_namespace_order.rs",
+      "repository_relative_path": "crates/hydrus-gui/tests/gui/tag_namespace_order.rs",
+      "baseline_source_commit": "b5b079a332ad6036bfa016e3f213a04db009eaf0",
+      "baseline_sha256": "a6fa1e5857003f8e17d7eeca61b66a0fadc8d368c5931ae04f0a46708c64e7be",
+      "reviewed_worktree_sha256": "63c96613849bb1a2f5c7d1f2536b4984271128cfa842f29114f166d6dd8b7a25",
+      "reviewed_agent_path": "/workspace/tag-sort-layout-tests/crates/hydrus-gui/tests/gui/tag_namespace_order.rs",
+      "source_commit": "7c74c617165a22814a8d0202008794b2beb53de0",
+      "agent_commit": "a4771fca4038b2e3df0e0f8d75ac78be310d089d",
+      "current_is_committed": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/docs/rust/GUI.md",
+      "repository_relative_path": "docs/rust/GUI.md",
+      "source_commit": "7c74c617165a22814a8d0202008794b2beb53de0",
+      "sha256": "e400539de385fbbd3145846dc78c5e3aeb121c1b003833c2c7fdba6eadfe3da0",
+      "current_is_committed": true,
+      "review_scope": "pending narrative/finite capture requirements and unchanged historical provenance"
+    },
+    {
+      "path": "/workspace/hydrus-mine/docs/rust/DIFFERENCES.md",
+      "repository_relative_path": "docs/rust/DIFFERENCES.md",
+      "source_commit": "7c74c617165a22814a8d0202008794b2beb53de0",
+      "sha256": "961914695f56d56e98cfcde05498ef19dfe6c00df78eae746787285d604e4057",
+      "current_is_committed": true,
+      "review_scope": "pending narrative/finite capture requirements and unchanged historical provenance"
+    },
+    {
+      "path": "/workspace/hydrus-mine/docs/rust/gui-coverage/parity/manage-tags-sort.json",
+      "repository_relative_path": "docs/rust/gui-coverage/parity/manage-tags-sort.json",
+      "source_commit": "7c74c617165a22814a8d0202008794b2beb53de0",
+      "sha256": "a020553bd7a3d1c1226348f33083407160e9473e769fa1a0f9daf6f33a2a0a5a",
+      "current_is_committed": true,
+      "review_scope": "pending narrative/finite capture requirements and unchanged historical provenance"
+    },
+    {
+      "path": "/workspace/hydrus-mine/docs/rust/gui-coverage/parity/tag-namespace-order.json",
+      "repository_relative_path": "docs/rust/gui-coverage/parity/tag-namespace-order.json",
+      "source_commit": "7c74c617165a22814a8d0202008794b2beb53de0",
+      "sha256": "e89d94b03e33f360f218aed33d02f5e32fe15f3737abade124d4be056fd0db44",
+      "current_is_committed": true,
+      "review_scope": "pending narrative/finite capture requirements and unchanged historical provenance"
+    }
+  ],
+  "assertion_preservation": [
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-gui/tests/gui/manage_tags_sort.rs",
+      "baseline_macro_assertions": 52,
+      "current_macro_assertions": 65,
+      "baseline_test_functions": 4,
+      "current_test_functions": 5,
+      "all_original_lines_byte_preserved": true,
+      "insertion_only": true,
+      "reviewed_worktree_sha256": "b8fcb302b359adf0fab0592c7cf0cac000787134f33a6d4dbc6c435af85cb2ae",
+      "reviewed_agent_path": "/workspace/tag-sort-layout-tests/crates/hydrus-gui/tests/gui/manage_tags_sort.rs",
+      "source_commit": "7c74c617165a22814a8d0202008794b2beb53de0"
+    },
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-gui/tests/gui/tag_namespace_order.rs",
+      "baseline_macro_assertions": 43,
+      "current_macro_assertions": 48,
+      "baseline_test_functions": 3,
+      "current_test_functions": 3,
+      "all_original_lines_byte_preserved": true,
+      "insertion_only": true,
+      "reviewed_worktree_sha256": "63c96613849bb1a2f5c7d1f2536b4984271128cfa842f29114f166d6dd8b7a25",
+      "reviewed_agent_path": "/workspace/tag-sort-layout-tests/crates/hydrus-gui/tests/gui/tag_namespace_order.rs",
+      "source_commit": "7c74c617165a22814a8d0202008794b2beb53de0"
+    }
+  ],
+  "original_assertion_total": 95,
+  "current_assertion_total": 113,
+  "original_test_total": 7,
+  "current_test_total": 8,
+  "expected_native_capture_names": [
+    "manage-tags-sort-options.png",
+    "manage-tags-sort-search-page.png",
+    "manage-tags-sort-media-viewer.png",
+    "tag-namespace-order-options.png",
+    "tag-namespace-order-options-scrolled.png",
+    "tag-namespace-order-enter-text.png",
+    "tag-namespace-order-add-blank.png",
+    "tag-namespace-order-edit.png",
+    "tag-sort-layout-initial-900x640.png",
+    "tag-sort-layout-initial-1000x850.png",
+    "tag-sort-layout-saved-900x640.png",
+    "tag-sort-layout-saved-1000x850.png",
+    "tag-sort-layout-initial-900x640-scrolled.png",
+    "tag-sort-layout-saved-900x640-scrolled.png"
+  ],
+  "cached_slint_generation": {
+    "kind": "Cached Slint1.18.1 generation only; no Rust compilation or runtime validation",
+    "exit_code": 0,
+    "elapsed_seconds": 7.134893294001813,
+    "child_maxrss_kib": 1328828,
+    "checked_ui_sha256": "cd6bc428d6ad2a4a8d07556d05eb4e4421cae9fa72f344771877fd9aa1d3db93",
+    "source_worktree": "/workspace/tag-sort-layout-tests",
+    "base_source": "b5b079a332ad6036bfa016e3f213a04db009eaf0",
+    "deny_warnings": true
+  },
+  "reference_images_actually_viewed": [
+    {
+      "path": "/workspace/hydrus-mine/oracle/fixtures/manage_tags_sort_options.png",
+      "sha256": "11a989071ae84d525062b0f1c5beb1d8b649e6a5af037246d8838df276ea4033",
+      "source_commit": "b5b079a332ad6036bfa016e3f213a04db009eaf0",
+      "actually_viewed": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/oracle/fixtures/tag-namespace-order-qt.png",
+      "sha256": "00d4400443a54d23da16294f09d253548169536746706a87114d8d8c8ed14092",
+      "source_commit": "b5b079a332ad6036bfa016e3f213a04db009eaf0",
+      "actually_viewed": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/oracle/fixtures/tag-namespace-order-enter-text-qt.png",
+      "sha256": "a806a5f7e893e278bfea15a11f73b4776574564943c4fda5c6017bb24c2d0260",
+      "source_commit": "b5b079a332ad6036bfa016e3f213a04db009eaf0",
+      "actually_viewed": true
+    }
+  ],
+  "proof_hashes": [
+    {
+      "path": "/workspace/validation-reviews/sort4/source-review-preparation-2.md",
+      "sha256": "32ecf8b75a06d452d477162c02b4efa401533600ae6285282d8e4392167e485b"
+    },
+    {
+      "path": "/workspace/validation-reviews/sort4/reference/root-provenance.json",
+      "sha256": "e049af33ffa2aeb6c7eceb917b87a25a4616039e030fbef569461dabf2f9f048"
+    },
+    {
+      "path": "/workspace/validation-reviews/sort4/slint-generation-check/result.json",
+      "sha256": "7e35d298584580b05f95bc103d3315bfa198ca0fe3d4509e3fbfb9c3cd8bd6b4"
+    },
+    {
+      "path": "/workspace/validation-reviews/sort4/assertion-preservation-root.json",
+      "sha256": "9f3a799b6eb7f7a2a62dc1a9989c805cd3d575c34782d182dab1cc9569a9b715"
+    },
+    {
+      "path": "/workspace/validation-reviews/sort4/source-implementation-preservation-3.json",
+      "sha256": "2928c226a78a725efdeec1c4776499808fd31cb0a8b19bd205d51aa6599c85fc"
+    }
+  ],
+  "required_final_gates": [
+    "Exactagent/root finalsource pinned; later CI/freshartifact mustmatch7c74c617165a22814a8d0202008794b2beb53de0",
+    "Full exactsourceLinuxstrictCI/parity green",
+    "Actualfreshnativeimages/hashboundstateinspection inclnaturalviewportdefault/saved/scrolled",
+    "Prior347/unselected/native canonicalpreservation andbrowserpublication rootgate"
+  ],
+  "repository_or_canonical_edits": false,
+  "builds_tests_or_recorder_execution_by_reviewer": false,
+  "conclusion": "No concrete source/test blocker identified; nativecompilation/runtime/freshimages pending."
+}

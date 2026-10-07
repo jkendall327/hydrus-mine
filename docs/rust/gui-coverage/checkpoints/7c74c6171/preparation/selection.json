@@ -1,0 +1,24 @@
+{
+  "source_commit": "7c74c617165a22814a8d0202008794b2beb53de0",
+  "run_id": 37567007002,
+  "source_phase": "repaired source validation pending",
+  "selected_candidate_ids": [
+    "audit-options-tag-sort-tag-sort-default-tag-sort-in-search-page-manage-tags-dialogs",
+    "audit-options-tag-sort-tag-sort-default-tag-sort-in-media-viewer-manage-tags-dialogs",
+    "audit-options-tag-sort-tag-sort-namespace-grouping-sort-add",
+    "audit-options-tag-sort-tag-sort-namespace-grouping-sort-edit"
+  ],
+  "selected_count": 4,
+  "prior_completed_count": 347,
+  "pending_count": 28,
+  "conditional_bank_if_all_gates_pass": 351,
+  "conditional_pending_after_bank": 24,
+  "not_ready_by_preparation": true,
+  "approval": false,
+  "gates": [
+    "Exact source 7c74c617165a22814a8d0202008794b2beb53de0: full Linux strict check fmt/Clippy/workspace tests/ratchet plus parity-models reference/backend green; actual run 37567007002 dispatched; result pending. Windows/macOS deferred under immutable source policy.",
+    "Fresh exact-source fourteen required native captures, independent exact four-leaf source/behavior/Qt/render review and root actual inspection.",
+    "Root final patch/census digest review, immutable-source staged preservation of prior347/unselected/native1799/frozen1812/allgoal1274 and actual browser.",
+    "After actual accepted publication only update goal/checklist from ledger; conditional351/24existing/923outside is not progress."
+  ]
+}

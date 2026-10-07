@@ -2830,10 +2830,10 @@ across subsequent default changes. Sorts use sibling ideals when sibling
 information is enabled, without replacing the logical stored tags or their
 existing segmented colours. Broader Manage Tags transactions, repository tag
 services, immediate viewer commits, and tag-sort parent families remain Partial;
-this slice claims only the two default-sort controls. Model, import and native
-regressions are authored for hosted CI. No local Cargo/Rust/mutation runs occurred.
+this slice signs off only the two default-sort controls. Model, import and native
+regressions passed full Linux validation at `7c74c6171`; no mutation runs occurred.
 
-The pending four-leaf follow-up repairs the shared Options row allocation for
+The validated four-leaf follow-up repairs the shared Options row allocation for
 the two Manage Tags defaults and namespace-grouping Add/Edit. Native sort choices
 remain vertically stacked, unlike Qt's horizontal controls. Actual geometry
 regressions check dropdown separation, containment and the following heading at
@@ -2841,7 +2841,12 @@ normal and larger viewports; the page retains its natural scrolling. Reference
 parent images show initial defaults while saved native captures show applied
 values. Separate consumer captures have recorded behavior support but no matching
 Qt consumer PNG. The actual Qt rerun is unchanged; full exact-source Linux and
-fresh independent native review remain pending, with no new sign-off yet.
+fresh independent native review passed for exactly the four selected leaves.
+[Evidence](gui-coverage/checkpoints/7c74c6171/README.md).
+At 900px, some namespace-grouping explanatory prose clips horizontally; the
+selected captions, dropdowns and scrolled queue controls remain readable. The
+internal queue viewport shows only part of the stored raw list at once; complete
+raw-value equality is covered by passing assertions.
 
 The four experimental download-page update preferences now reach owned native
 gallery/watcher list status and sorting. This throttles presentation reads rather
@@ -3140,10 +3145,10 @@ Options parents remain Partial. This slice does not claim the already implemente
 nested file-sort parser or its tag-display chooser, generic predicate editing,
 radio-Enter policy, aliases, or any parent. Actual Qt recorded 18 queue paths and
 six downstream sort orders plus three real modal Enter Text handlers and both Qt
-PNGs; authored Rust/native assertions and PNG captures
-await hosted execution and exact-source rendered review.
+PNGs; Rust/native assertions and fresh PNG captures passed full Linux execution
+and independent rendered review at `7c74c6171`.
 
-The pending shared layout follow-up includes an actual blank-valid Add frame and
+The validated shared layout follow-up includes an actual blank-valid Add frame and
 a populated Edit frame. The reference Enter Text PNG contains blank input;
 the retained native Add-default frame contains `namespace`, a different valid
 state. No matching populated Qt Edit PNG or pixel equality is claimed. Raw

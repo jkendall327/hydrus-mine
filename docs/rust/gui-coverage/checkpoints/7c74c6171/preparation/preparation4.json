@@ -1,0 +1,50 @@
+{
+  "source_commit": "7c74c617165a22814a8d0202008794b2beb53de0",
+  "run_id": 37567007002,
+  "baseline_source_commit": "b5b079a332ad6036bfa016e3f213a04db009eaf0",
+  "claims": [
+    {
+      "id": "audit-options-tag-sort-tag-sort-default-tag-sort-in-search-page-manage-tags-dialogs",
+      "manifest": "docs/rust/gui-coverage/parity/manage-tags-sort.json",
+      "publication_preparation": "unresolved",
+      "reason": "Intrinsic row allocation repair with source-preserved tests and defining captures authored; own exact-source full Linux/fresh native review pending."
+    },
+    {
+      "id": "audit-options-tag-sort-tag-sort-default-tag-sort-in-media-viewer-manage-tags-dialogs",
+      "manifest": "docs/rust/gui-coverage/parity/manage-tags-sort.json",
+      "publication_preparation": "unresolved",
+      "reason": "Intrinsic row allocation repair with source-preserved tests and defining captures authored; own exact-source full Linux/fresh native review pending."
+    },
+    {
+      "id": "audit-options-tag-sort-tag-sort-namespace-grouping-sort-add",
+      "manifest": "docs/rust/gui-coverage/parity/tag-namespace-order.json",
+      "publication_preparation": "unresolved",
+      "reason": "Intrinsic row allocation repair with source-preserved tests and defining captures authored; own exact-source full Linux/fresh native review pending."
+    },
+    {
+      "id": "audit-options-tag-sort-tag-sort-namespace-grouping-sort-edit",
+      "manifest": "docs/rust/gui-coverage/parity/tag-namespace-order.json",
+      "publication_preparation": "unresolved",
+      "reason": "Intrinsic row allocation repair with source-preserved tests and defining captures authored; own exact-source full Linux/fresh native review pending."
+    }
+  ],
+  "next_bank_priority_ids": [
+    "audit-options-tag-sort-tag-sort-default-tag-sort-in-search-page-manage-tags-dialogs",
+    "audit-options-tag-sort-tag-sort-default-tag-sort-in-media-viewer-manage-tags-dialogs",
+    "audit-options-tag-sort-tag-sort-namespace-grouping-sort-add",
+    "audit-options-tag-sort-tag-sort-namespace-grouping-sort-edit"
+  ],
+  "selected_ids": [
+    "audit-options-tag-sort-tag-sort-default-tag-sort-in-search-page-manage-tags-dialogs",
+    "audit-options-tag-sort-tag-sort-default-tag-sort-in-media-viewer-manage-tags-dialogs",
+    "audit-options-tag-sort-tag-sort-namespace-grouping-sort-add",
+    "audit-options-tag-sort-tag-sort-namespace-grouping-sort-edit"
+  ],
+  "final_gates": [
+    "Exact source 7c74c617165a22814a8d0202008794b2beb53de0: full Linux strict check fmt/Clippy/workspace tests/ratchet plus parity-models reference/backend green; actual run 37567007002 dispatched; result pending. Windows/macOS deferred under immutable source policy.",
+    "Fresh exact-source fourteen required native captures, independent exact four-leaf source/behavior/Qt/render review and root actual inspection.",
+    "Root final patch/census digest review, immutable-source staged preservation of prior347/unselected/native1799/frozen1812/allgoal1274 and actual browser.",
+    "After actual accepted publication only update goal/checklist from ledger; conditional351/24existing/923outside is not progress."
+  ],
+  "approval": false
+}

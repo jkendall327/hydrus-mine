@@ -1,0 +1,1213 @@
+{
+  "source_commit": "7c74c617165a22814a8d0202008794b2beb53de0",
+  "run_id": 37567007002,
+  "artifact_id": 11459759822,
+  "native_zip_sha256": "71d73ee380cc3c85dff32e0d2c0ac56594d73129efaa4eb2c5ddfe0d231b512f",
+  "validation_scope": "linux",
+  "claims": [
+    {
+      "id": "audit-options-tag-sort-tag-sort-default-tag-sort-in-search-page-manage-tags-dialogs",
+      "approval": true,
+      "caveats": [
+        "Only this original default-sort Options control is proposed; Manage Tags/tag-sort/Options parent families remain Partial. Repository-service workflows and immediate viewer tag commits are outside this slice.",
+        "Native uses existing core human/numeric ordering and segmented rendering; the implementation changes sort keys without replacing logical storage tags. Existing sidebar/media-viewer tag-display sorts remain separate.",
+        "Qt parent PNG is initial/default; saved native parent captures show applied values. Native choices remain vertical rather than horizontal. New separate Manage Tags consumer PNGs have recorded behavior support but no corresponding Qt consumer PNG; no pixel equality or parent-family credit.",
+        "Represented Options sort rows use intrinsic allocation with strict actual-widget geometry assertions for initial/applied narrow/normal states and real scroll access. Qt parent default state differs from native saved/applied captures; native vertical layout differs from Qt horizontal layout. No equal-state pixel/font or OS-key transport claim.",
+        "No matching standalone Qt image exists for populated Edit or the Manage Tags consumers. Native exports are grounded in recorded state and assertions. The optional Qt client API listener was denied by the sandbox during these direct Qt/DB reruns. Complete fixtures matched, both recorders exited with code 0 and shut down normally, and no API connectivity validation is claimed.",
+        "The standalone Manage Tags consumer images show the current logical tag counts, decorations and controls. The related suggestion pane was captured while searching, so no related-pane or broader Manage Tags workflow or rendering credit is granted. Exact fixture, row and source assertions establish the distinct selected-files/search-page and current-one-file/viewer contexts; identical control captions alone do not establish that distinction.",
+        "Validation is Linux only; Windows and macOS are deferred. Exactly four original leaves are approved. No completion credit is granted to Options, tag-sort or namespace families, aliases, new IDs, Paste, the ordered queue, generic Manage Tags or repository workflows, immediate viewer commits, the namespace parser or tag-display chooser, radio or global keyboard behavior, or additional consumers.",
+        "At 900 px, some namespace-grouping explanatory prose clips horizontally at line ends. The selected sort controls, queue action buttons and dedicated Add/Edit messages remain readable. Broader parent prose and pixel parity are not claimed.",
+        "Geometry tests pass for all four actual sort contexts, in default and saved states at the natural viewports. They require finite positive frames, containment within allocated rows, separation within and between rows, and separation from the actual kind-0 namespace heading. Real wheel scrolling is validated. Upper clipping in scrolled frames and a lower queue outside the viewport in unscrolled frames are deliberate pane states. The internal queue viewport does not show all rows simultaneously; exact rows, raw values and identities are established by assertions.",
+        "The native vertical stacks differ from Qt horizontal rows. Native font, button and footer proportions, the compact Qt blank entry versus the 520\u00d7220 native entry, and saved versus default parent states remain explicit differences. Whole-dialog pixel or geometry equality, OS chrome, modality, focus and universal keyboard transport equivalence are not claimed."
+      ],
+      "manifest": "docs/rust/gui-coverage/parity/manage-tags-sort.json",
+      "inspected_native_image_names": [
+        "manage-tags-sort-options.png",
+        "tag-sort-layout-initial-900x640.png",
+        "tag-sort-layout-initial-1000x850.png",
+        "tag-sort-layout-initial-900x640-scrolled.png",
+        "tag-sort-layout-saved-900x640.png",
+        "tag-sort-layout-saved-1000x850.png",
+        "tag-sort-layout-saved-900x640-scrolled.png",
+        "manage-tags-sort-search-page.png"
+      ],
+      "tests": [
+        "manage_tags_sort::native_options_stage_cancel_save_reopen_and_reject_retired_sender",
+        "manage_tags_sort::actual_sort_stacks_fit_their_rows_and_scroll_without_overlap_at_both_viewports",
+        "manage_tags_sort::main_selection_and_viewer_current_file_use_distinct_defaults_and_live_dialog_keeps_its_sort",
+        "manage_tags_sort::rebind_and_accepted_exit_retire_visible_sort_children_and_old_viewer_launcher",
+        "manage_tags_sort::hidden_main_cannot_launch_or_reshow_child_but_visible_viewer_keeps_its_own_route",
+        "manage_tags_sort::independent_defaults_stage_cancel_apply_reopen_and_merge_only_changed_context",
+        "manage_tags_sort::both_contexts_replay_all_real_sort_types_orders_siblings_and_groupings",
+        "manage_tags_sort::open_service_tabs_keep_local_sort_after_options_change_and_new_dialog_reads_default",
+        "manage_tags_sort::sibling_sort_uses_raw_tags_when_storage_sibling_information_is_disabled"
+      ],
+      "source_reference_evidence": [
+        "options.slint:134\u2013135 and 359\u2013376 provide the default-off observer of actual outer rows and intrinsic allocation for kinds 12 and 35. The ComboBox stacks, indices and conditional fields remain unchanged. The geometry GUI test passes all four default/saved and 900\u00d7640/1000\u00d7850 configurations, including actual wheel scrolling.",
+        "All 95 original assertions and seven GUI tests remain, with insertion-only changes; there are now 113 assertions and eight GUI tests. The exact full Linux run passes 706 GUI tests, 67 media tests and the 14 defining GUI/model tests plus typed-import support.",
+        "All 14 fresh native frames and three Qt frames were actually inspected. Default and applied captions are correct and separated; scrolled queue Add/Edit controls are accessible; blank Add and populated creator Edit show the intended states. The root Qt reruns preserve 72 sort cases and two lifetimes, 18 queue paths, six sort orders, three real Enter Text cases and all three PNGs."
+      ]
+    },
+    {
+      "id": "audit-options-tag-sort-tag-sort-default-tag-sort-in-media-viewer-manage-tags-dialogs",
+      "approval": true,
+      "caveats": [
+        "Only this original default-sort Options control is proposed; Manage Tags/tag-sort/Options parent families remain Partial. Repository-service workflows and immediate viewer tag commits are outside this slice.",
+        "Native uses existing core human/numeric ordering and segmented rendering; the implementation changes sort keys without replacing logical storage tags. Existing sidebar/media-viewer tag-display sorts remain separate.",
+        "Qt parent PNG is initial/default; saved native parent captures show applied values. Native choices remain vertical rather than horizontal. New separate Manage Tags consumer PNGs have recorded behavior support but no corresponding Qt consumer PNG; no pixel equality or parent-family credit.",
+        "Represented Options sort rows use intrinsic allocation with strict actual-widget geometry assertions for initial/applied narrow/normal states and real scroll access. Qt parent default state differs from native saved/applied captures; native vertical layout differs from Qt horizontal layout. No equal-state pixel/font or OS-key transport claim.",
+        "No matching standalone Qt image exists for populated Edit or the Manage Tags consumers. Native exports are grounded in recorded state and assertions. The optional Qt client API listener was denied by the sandbox during these direct Qt/DB reruns. Complete fixtures matched, both recorders exited with code 0 and shut down normally, and no API connectivity validation is claimed.",
+        "The standalone Manage Tags consumer images show the current logical tag counts, decorations and controls. The related suggestion pane was captured while searching, so no related-pane or broader Manage Tags workflow or rendering credit is granted. Exact fixture, row and source assertions establish the distinct selected-files/search-page and current-one-file/viewer contexts; identical control captions alone do not establish that distinction.",
+        "Validation is Linux only; Windows and macOS are deferred. Exactly four original leaves are approved. No completion credit is granted to Options, tag-sort or namespace families, aliases, new IDs, Paste, the ordered queue, generic Manage Tags or repository workflows, immediate viewer commits, the namespace parser or tag-display chooser, radio or global keyboard behavior, or additional consumers.",
+        "At 900 px, some namespace-grouping explanatory prose clips horizontally at line ends. The selected sort controls, queue action buttons and dedicated Add/Edit messages remain readable. Broader parent prose and pixel parity are not claimed.",
+        "Geometry tests pass for all four actual sort contexts, in default and saved states at the natural viewports. They require finite positive frames, containment within allocated rows, separation within and between rows, and separation from the actual kind-0 namespace heading. Real wheel scrolling is validated. Upper clipping in scrolled frames and a lower queue outside the viewport in unscrolled frames are deliberate pane states. The internal queue viewport does not show all rows simultaneously; exact rows, raw values and identities are established by assertions.",
+        "The native vertical stacks differ from Qt horizontal rows. Native font, button and footer proportions, the compact Qt blank entry versus the 520\u00d7220 native entry, and saved versus default parent states remain explicit differences. Whole-dialog pixel or geometry equality, OS chrome, modality, focus and universal keyboard transport equivalence are not claimed."
+      ],
+      "manifest": "docs/rust/gui-coverage/parity/manage-tags-sort.json",
+      "inspected_native_image_names": [
+        "manage-tags-sort-options.png",
+        "tag-sort-layout-initial-900x640.png",
+        "tag-sort-layout-initial-1000x850.png",
+        "tag-sort-layout-initial-900x640-scrolled.png",
+        "tag-sort-layout-saved-900x640.png",
+        "tag-sort-layout-saved-1000x850.png",
+        "tag-sort-layout-saved-900x640-scrolled.png",
+        "manage-tags-sort-media-viewer.png"
+      ],
+      "tests": [
+        "manage_tags_sort::native_options_stage_cancel_save_reopen_and_reject_retired_sender",
+        "manage_tags_sort::actual_sort_stacks_fit_their_rows_and_scroll_without_overlap_at_both_viewports",
+        "manage_tags_sort::main_selection_and_viewer_current_file_use_distinct_defaults_and_live_dialog_keeps_its_sort",
+        "manage_tags_sort::rebind_and_accepted_exit_retire_visible_sort_children_and_old_viewer_launcher",
+        "manage_tags_sort::hidden_main_cannot_launch_or_reshow_child_but_visible_viewer_keeps_its_own_route",
+        "manage_tags_sort::independent_defaults_stage_cancel_apply_reopen_and_merge_only_changed_context",
+        "manage_tags_sort::both_contexts_replay_all_real_sort_types_orders_siblings_and_groupings",
+        "manage_tags_sort::open_service_tabs_keep_local_sort_after_options_change_and_new_dialog_reads_default",
+        "manage_tags_sort::sibling_sort_uses_raw_tags_when_storage_sibling_information_is_disabled"
+      ],
+      "source_reference_evidence": [
+        "options.slint:134\u2013135 and 359\u2013376 provide the default-off observer of actual outer rows and intrinsic allocation for kinds 12 and 35. The ComboBox stacks, indices and conditional fields remain unchanged. The geometry GUI test passes all four default/saved and 900\u00d7640/1000\u00d7850 configurations, including actual wheel scrolling.",
+        "All 95 original assertions and seven GUI tests remain, with insertion-only changes; there are now 113 assertions and eight GUI tests. The exact full Linux run passes 706 GUI tests, 67 media tests and the 14 defining GUI/model tests plus typed-import support.",
+        "All 14 fresh native frames and three Qt frames were actually inspected. Default and applied captions are correct and separated; scrolled queue Add/Edit controls are accessible; blank Add and populated creator Edit show the intended states. The root Qt reruns preserve 72 sort cases and two lifetimes, 18 queue paths, six sort orders, three real Enter Text cases and all three PNGs."
+      ]
+    },
+    {
+      "id": "audit-options-tag-sort-tag-sort-namespace-grouping-sort-add",
+      "approval": true,
+      "caveats": [
+        "Clipboard Paste remains absent. No namespace grouping family/ordered-editor-list, Options/tag-sort parent, aliases, global radio-Enter preference or generic active-predicate editor promotion.",
+        "Originally requested nested file-sort namespace parser/tag-display chooser was already implemented and is unchanged; no evidence-only credit or new claim for it.",
+        "Existing typed TagPresentation storage/import and core first-match sort consumer remain; this slice adds the missing user-facing raw grouping Add/Edit transaction and field-scoped saves. Existing viewer uses the same unchanged sort consumer, while new native downstream replay explicitly exercises the real sidebar.",
+        "EnterText and removal questions are native owned SessionDialog children with existing platform typography; no pixel/font equivalence or untested keyboard transport attestation.",
+        "The Qt Enter Text PNG has blank input; native Add-default contains namespace, and a new blank-valid Add frame supplies the matching input state. Populated Edit has recorded default/state support but no matching Qt PNG. No clipboard Paste, queue/Options parent, alias or pixel-equality credit.",
+        "Represented Options sort rows use intrinsic allocation with strict actual-widget geometry assertions for initial/applied narrow/normal states and real scroll access. Qt parent default state differs from native saved/applied captures; native vertical layout differs from Qt horizontal layout. No equal-state pixel/font or OS-key transport claim.",
+        "No matching standalone Qt image exists for populated Edit or the Manage Tags consumers. Native exports are grounded in recorded state and assertions. The optional Qt client API listener was denied by the sandbox during these direct Qt/DB reruns. Complete fixtures matched, both recorders exited with code 0 and shut down normally, and no API connectivity validation is claimed.",
+        "Validation is Linux only; Windows and macOS are deferred. Exactly four original leaves are approved. No completion credit is granted to Options, tag-sort or namespace families, aliases, new IDs, Paste, the ordered queue, generic Manage Tags or repository workflows, immediate viewer commits, the namespace parser or tag-display chooser, radio or global keyboard behavior, or additional consumers.",
+        "At 900 px, some namespace-grouping explanatory prose clips horizontally at line ends. The selected sort controls, queue action buttons and dedicated Add/Edit messages remain readable. Broader parent prose and pixel parity are not claimed.",
+        "Geometry tests pass for all four actual sort contexts, in default and saved states at the natural viewports. They require finite positive frames, containment within allocated rows, separation within and between rows, and separation from the actual kind-0 namespace heading. Real wheel scrolling is validated. Upper clipping in scrolled frames and a lower queue outside the viewport in unscrolled frames are deliberate pane states. The internal queue viewport does not show all rows simultaneously; exact rows, raw values and identities are established by assertions.",
+        "The native vertical stacks differ from Qt horizontal rows. Native font, button and footer proportions, the compact Qt blank entry versus the 520\u00d7220 native entry, and saved versus default parent states remain explicit differences. Whole-dialog pixel or geometry equality, OS chrome, modality, focus and universal keyboard transport equivalence are not claimed."
+      ],
+      "manifest": "docs/rust/gui-coverage/parity/tag-namespace-order.json",
+      "inspected_native_image_names": [
+        "tag-namespace-order-options.png",
+        "tag-namespace-order-options-scrolled.png",
+        "tag-namespace-order-enter-text.png",
+        "tag-namespace-order-add-blank.png",
+        "tag-namespace-order-edit.png",
+        "tag-sort-layout-initial-900x640.png",
+        "tag-sort-layout-initial-1000x850.png",
+        "tag-sort-layout-initial-900x640-scrolled.png",
+        "tag-sort-layout-saved-900x640.png",
+        "tag-sort-layout-saved-1000x850.png",
+        "tag-sort-layout-saved-900x640-scrolled.png"
+      ],
+      "tests": [
+        "manage_tags_sort::actual_sort_stacks_fit_their_rows_and_scroll_without_overlap_at_both_viewports",
+        "tag_namespace_order::real_queue_matches_all_reference_prompts_and_parent_transactions",
+        "tag_namespace_order::saved_order_reaches_the_real_sidebar_tag_sort",
+        "tag_namespace_order::hidden_stale_rebound_and_accepted_close_children_cannot_stage_or_save",
+        "tag_namespace_order::raw_allow_blank_queue_actions_and_all_tag_sorts_match_qt",
+        "tag_namespace_order::namespace_changes_merge_with_concurrent_presentation_edits_and_unchanged_list",
+        "import::decode::tests::manage_tags_sort_contexts_import_siblings_independently_of_sidebar_sorts"
+      ],
+      "source_reference_evidence": [
+        "options.slint:134\u2013135 and 359\u2013376 provide the default-off observer of actual outer rows and intrinsic allocation for kinds 12 and 35. The ComboBox stacks, indices and conditional fields remain unchanged. The geometry GUI test passes all four default/saved and 900\u00d7640/1000\u00d7850 configurations, including actual wheel scrolling.",
+        "All 95 original assertions and seven GUI tests remain, with insertion-only changes; there are now 113 assertions and eight GUI tests. The exact full Linux run passes 706 GUI tests, 67 media tests and the 14 defining GUI/model tests plus typed-import support.",
+        "All 14 fresh native frames and three Qt frames were actually inspected. Default and applied captions are correct and separated; scrolled queue Add/Edit controls are accessible; blank Add and populated creator Edit show the intended states. The root Qt reruns preserve 72 sort cases and two lifetimes, 18 queue paths, six sort orders, three real Enter Text cases and all three PNGs."
+      ]
+    },
+    {
+      "id": "audit-options-tag-sort-tag-sort-namespace-grouping-sort-edit",
+      "approval": true,
+      "caveats": [
+        "Clipboard Paste remains absent. No namespace grouping family/ordered-editor-list, Options/tag-sort parent, aliases, global radio-Enter preference or generic active-predicate editor promotion.",
+        "Originally requested nested file-sort namespace parser/tag-display chooser was already implemented and is unchanged; no evidence-only credit or new claim for it.",
+        "Existing typed TagPresentation storage/import and core first-match sort consumer remain; this slice adds the missing user-facing raw grouping Add/Edit transaction and field-scoped saves. Existing viewer uses the same unchanged sort consumer, while new native downstream replay explicitly exercises the real sidebar.",
+        "EnterText and removal questions are native owned SessionDialog children with existing platform typography; no pixel/font equivalence or untested keyboard transport attestation.",
+        "The Qt Enter Text PNG has blank input; native Add-default contains namespace, and a new blank-valid Add frame supplies the matching input state. Populated Edit has recorded default/state support but no matching Qt PNG. No clipboard Paste, queue/Options parent, alias or pixel-equality credit.",
+        "Represented Options sort rows use intrinsic allocation with strict actual-widget geometry assertions for initial/applied narrow/normal states and real scroll access. Qt parent default state differs from native saved/applied captures; native vertical layout differs from Qt horizontal layout. No equal-state pixel/font or OS-key transport claim.",
+        "No matching standalone Qt image exists for populated Edit or the Manage Tags consumers. Native exports are grounded in recorded state and assertions. The optional Qt client API listener was denied by the sandbox during these direct Qt/DB reruns. Complete fixtures matched, both recorders exited with code 0 and shut down normally, and no API connectivity validation is claimed.",
+        "Validation is Linux only; Windows and macOS are deferred. Exactly four original leaves are approved. No completion credit is granted to Options, tag-sort or namespace families, aliases, new IDs, Paste, the ordered queue, generic Manage Tags or repository workflows, immediate viewer commits, the namespace parser or tag-display chooser, radio or global keyboard behavior, or additional consumers.",
+        "At 900 px, some namespace-grouping explanatory prose clips horizontally at line ends. The selected sort controls, queue action buttons and dedicated Add/Edit messages remain readable. Broader parent prose and pixel parity are not claimed.",
+        "Geometry tests pass for all four actual sort contexts, in default and saved states at the natural viewports. They require finite positive frames, containment within allocated rows, separation within and between rows, and separation from the actual kind-0 namespace heading. Real wheel scrolling is validated. Upper clipping in scrolled frames and a lower queue outside the viewport in unscrolled frames are deliberate pane states. The internal queue viewport does not show all rows simultaneously; exact rows, raw values and identities are established by assertions.",
+        "The native vertical stacks differ from Qt horizontal rows. Native font, button and footer proportions, the compact Qt blank entry versus the 520\u00d7220 native entry, and saved versus default parent states remain explicit differences. Whole-dialog pixel or geometry equality, OS chrome, modality, focus and universal keyboard transport equivalence are not claimed."
+      ],
+      "manifest": "docs/rust/gui-coverage/parity/tag-namespace-order.json",
+      "inspected_native_image_names": [
+        "tag-namespace-order-options.png",
+        "tag-namespace-order-options-scrolled.png",
+        "tag-namespace-order-enter-text.png",
+        "tag-namespace-order-add-blank.png",
+        "tag-namespace-order-edit.png",
+        "tag-sort-layout-initial-900x640.png",
+        "tag-sort-layout-initial-1000x850.png",
+        "tag-sort-layout-initial-900x640-scrolled.png",
+        "tag-sort-layout-saved-900x640.png",
+        "tag-sort-layout-saved-1000x850.png",
+        "tag-sort-layout-saved-900x640-scrolled.png"
+      ],
+      "tests": [
+        "manage_tags_sort::actual_sort_stacks_fit_their_rows_and_scroll_without_overlap_at_both_viewports",
+        "tag_namespace_order::real_queue_matches_all_reference_prompts_and_parent_transactions",
+        "tag_namespace_order::saved_order_reaches_the_real_sidebar_tag_sort",
+        "tag_namespace_order::hidden_stale_rebound_and_accepted_close_children_cannot_stage_or_save",
+        "tag_namespace_order::raw_allow_blank_queue_actions_and_all_tag_sorts_match_qt",
+        "tag_namespace_order::namespace_changes_merge_with_concurrent_presentation_edits_and_unchanged_list",
+        "import::decode::tests::manage_tags_sort_contexts_import_siblings_independently_of_sidebar_sorts"
+      ],
+      "source_reference_evidence": [
+        "options.slint:134\u2013135 and 359\u2013376 provide the default-off observer of actual outer rows and intrinsic allocation for kinds 12 and 35. The ComboBox stacks, indices and conditional fields remain unchanged. The geometry GUI test passes all four default/saved and 900\u00d7640/1000\u00d7850 configurations, including actual wheel scrolling.",
+        "All 95 original assertions and seven GUI tests remain, with insertion-only changes; there are now 113 assertions and eight GUI tests. The exact full Linux run passes 706 GUI tests, 67 media tests and the 14 defining GUI/model tests plus typed-import support.",
+        "All 14 fresh native frames and three Qt frames were actually inspected. Default and applied captions are correct and separated; scrolled queue Add/Edit controls are accessible; blank Add and populated creator Edit show the intended states. The root Qt reruns preserve 72 sort cases and two lifetimes, 18 queue paths, six sort orders, three real Enter Text cases and all three PNGs."
+      ]
+    }
+  ],
+  "selected_count": 4,
+  "approval_scope": "Exactly two Manage Tags default preferences and namespace grouping Add/Edit; no parent, alias or other completion credit.",
+  "required_jobs": [
+    {
+      "name": "check",
+      "id": 112616919427,
+      "conclusion": "success"
+    },
+    {
+      "name": "parity-models",
+      "id": 112616919697,
+      "conclusion": "success"
+    }
+  ],
+  "full_test_summary": {
+    "gui": {
+      "passed": 706,
+      "failed": 0,
+      "ignored": 0,
+      "seconds": 234.5,
+      "log": "/workspace/validation-reviews/ci-7c74c6171/tests.log",
+      "line": 1381
+    },
+    "media": {
+      "passed": 67,
+      "failed": 0,
+      "ignored": 0,
+      "seconds": 1.01,
+      "log": "/workspace/validation-reviews/ci-7c74c6171/tests.log",
+      "line": 2288
+    },
+    "strict_clippy": "passed; workspace all-targets locked with RUSTFLAGS=-D warnings",
+    "fmt": "passed",
+    "parity_models": "passed",
+    "ratchet": "passed",
+    "cache_maintenance": "passed",
+    "test_compile": "11m32s"
+  },
+  "native_manifest_path": "/workspace/validation-reviews/ci-7c74c6171/native-render-manifest.json",
+  "native_manifest_sha256": "6aff0dd470d75394d97a3d2c2a6419420688a1ca178ffdab6c06d8cee843774a",
+  "native_image_count": 319,
+  "images_actually_viewed": [
+    {
+      "name": "manage-tags-sort-options.png",
+      "path": "/workspace/validation-reviews/ci-7c74c6171/native-renders/manage-tags-sort-options.png",
+      "source_commit": "7c74c617165a22814a8d0202008794b2beb53de0",
+      "run_id": 37567007002,
+      "artifact_id": 11459759822,
+      "sha256": "a92e5369938b38b39c35c23ad9dc2947de912853e32a6580903bd2e62bc2fd68",
+      "bytes": 73699,
+      "dimensions": [
+        1000,
+        700
+      ],
+      "actually_viewed": true,
+      "supplemental": false,
+      "observation": "Saved and reopened at 1000\u00d7700: all four context labels and stacks are separate and readable. Search-page Manage Tags shows subtag / z-a / tags; viewer Manage Tags shows count / fewest first / no grouping. The current model hides inapplicable grouping and sibling controls. The namespace heading and description follow the last row. The queue below the viewport requires scrolling; this frame does not establish visibility of all queue controls.",
+      "producer": {
+        "path": "crates/hydrus-gui/tests/gui/manage_tags_sort.rs",
+        "line": 203,
+        "text": "        &std::path::Path::new(env!(\"CARGO_TARGET_TMPDIR\")).join(\"manage-tags-sort-options.png\"),",
+        "anchor_git_head": "7c74c617165a22814a8d0202008794b2beb53de0",
+        "line_sha256": "d8bc9d47656423cda4b54a05039340a9e4d7750c27f9ed6204c267e74f52cb43"
+      },
+      "state_and_dynamic_path_proof": "Actual saved/reopened applied independent defaults; Qt parent default-state differs."
+    },
+    {
+      "name": "manage-tags-sort-search-page.png",
+      "path": "/workspace/validation-reviews/ci-7c74c6171/native-renders/manage-tags-sort-search-page.png",
+      "source_commit": "7c74c617165a22814a8d0202008794b2beb53de0",
+      "run_id": 37567007002,
+      "artifact_id": 11459759822,
+      "sha256": "69dce3db51fa988154ee448eb73f94a29b3ce8f872d19a814a47dd555f43bfb7",
+      "bytes": 54732,
+      "dimensions": [
+        720,
+        680
+      ],
+      "actually_viewed": true,
+      "supplemental": false,
+      "observation": "The actual selected-files/search-page Manage Tags consumer shows reopened count / most first / user namespace controls and logical tag rows, counts and segmented colors. Sibling-decorated ideals remain. The related pane on the right is still searching; that transient state is outside this slice. No broader Manage Tags or related-pane credit is granted. No matching Qt consumer PNG exists.",
+      "producer": {
+        "path": "crates/hydrus-gui/tests/gui/manage_tags_sort.rs",
+        "line": 502,
+        "text": "            Context::SearchPage => \"manage-tags-sort-search-page.png\",",
+        "anchor_git_head": "7c74c617165a22814a8d0202008794b2beb53de0",
+        "line_sha256": "c2568b16a9f1fc398364fe2c3a6518208b81e84e545a0967135416fae50a1486"
+      },
+      "state_and_dynamic_path_proof": "Recorded lifetime reopened policy, assert_sort+exact rows for selectedfiles/search or currentonefile/viewer. Real rendered pixels; no matching standaloneQtPNG."
+    },
+    {
+      "name": "manage-tags-sort-media-viewer.png",
+      "path": "/workspace/validation-reviews/ci-7c74c6171/native-renders/manage-tags-sort-media-viewer.png",
+      "source_commit": "7c74c617165a22814a8d0202008794b2beb53de0",
+      "run_id": 37567007002,
+      "artifact_id": 11459759822,
+      "sha256": "4bd64fdf908ea6e7e9a550505628d6473dc5bdf349db13fd8dfb678f20023432",
+      "bytes": 50057,
+      "dimensions": [
+        720,
+        680
+      ],
+      "actually_viewed": true,
+      "supplemental": false,
+      "observation": "The actual current-one-file/viewer Manage Tags consumer shows reopened count / most first / user namespace controls and recorded rows with counts of 1. The related pane is still searching and is outside this slice. The same visible default policy can occur in both recorded lifetimes; exact selection and file-identity assertions establish distinct launch contexts. No matching Qt consumer PNG exists.",
+      "producer": {
+        "path": "crates/hydrus-gui/tests/gui/manage_tags_sort.rs",
+        "line": 503,
+        "text": "            Context::MediaViewer => \"manage-tags-sort-media-viewer.png\",",
+        "anchor_git_head": "7c74c617165a22814a8d0202008794b2beb53de0",
+        "line_sha256": "bbe8509e968ef74f8ca4c15b8c5403c4894ae22d1ba26ae4c7b269d87fd48150"
+      },
+      "state_and_dynamic_path_proof": "Recorded lifetime reopened policy, assert_sort+exact rows for selectedfiles/search or currentonefile/viewer. Real rendered pixels; no matching standaloneQtPNG."
+    },
+    {
+      "name": "tag-sort-layout-initial-900x640.png",
+      "path": "/workspace/validation-reviews/ci-7c74c6171/native-renders/tag-sort-layout-initial-900x640.png",
+      "source_commit": "7c74c617165a22814a8d0202008794b2beb53de0",
+      "run_id": 37567007002,
+      "artifact_id": 11459759822,
+      "sha256": "140b1fbe2e3d2e75bad27aab4a3e725d3efc87a0f014aac7b4ead42ad766d804",
+      "bytes": 58346,
+      "dimensions": [
+        900,
+        640
+      ],
+      "actually_viewed": true,
+      "supplemental": false,
+      "observation": "All four default context stacks show tag / a-z / user namespace; both Manage Tags contexts show siblings. At 900\u00d7640, labels and controls are separate and readable, with the actual namespace heading beneath the last row. Natural pane clipping may put queue controls and action buttons below the viewport. Strict runtime allocation checks pass; the capture does not claim that the entire page is visible at once.",
+      "producer": {
+        "path": "crates/hydrus-gui/tests/gui/manage_tags_sort.rs",
+        "line": 371,
+        "text": "                    .join(format!(\"tag-sort-layout-{state}-{width}x{height}.png\")),",
+        "anchor_git_head": "7c74c617165a22814a8d0202008794b2beb53de0",
+        "line_sha256": "8257266c826da074f1e6193144ff4b5b937c270adc636dfefc2a35ee2e650fd3"
+      },
+      "state_and_dynamic_path_proof": "Actual applied false/true -> initial/saved; exact loop viewports900x640/1000x850; scrolled export only ifheight640 after PointerScrolled and queue fullinsideviewport assertions. No filename inference outside explicitly authored loop."
+    },
+    {
+      "name": "tag-sort-layout-initial-1000x850.png",
+      "path": "/workspace/validation-reviews/ci-7c74c6171/native-renders/tag-sort-layout-initial-1000x850.png",
+      "source_commit": "7c74c617165a22814a8d0202008794b2beb53de0",
+      "run_id": 37567007002,
+      "artifact_id": 11459759822,
+      "sha256": "f47b2665ddc417a8a73a0c9b4555767b8cf3b15e0bad9aeff5acee597635c2f2",
+      "bytes": 85341,
+      "dimensions": [
+        1000,
+        850
+      ],
+      "actually_viewed": true,
+      "supplemental": false,
+      "observation": "All four default context stacks show tag / a-z / user namespace; both Manage Tags contexts show siblings. At 1000\u00d7850, labels and controls are separate and readable, with the actual namespace heading beneath the last row. Natural pane clipping may put queue controls and action buttons below the viewport. Strict runtime allocation checks pass; the capture does not claim that the entire page is visible at once.",
+      "producer": {
+        "path": "crates/hydrus-gui/tests/gui/manage_tags_sort.rs",
+        "line": 371,
+        "text": "                    .join(format!(\"tag-sort-layout-{state}-{width}x{height}.png\")),",
+        "anchor_git_head": "7c74c617165a22814a8d0202008794b2beb53de0",
+        "line_sha256": "8257266c826da074f1e6193144ff4b5b937c270adc636dfefc2a35ee2e650fd3"
+      },
+      "state_and_dynamic_path_proof": "Actual applied false/true -> initial/saved; exact loop viewports900x640/1000x850; scrolled export only ifheight640 after PointerScrolled and queue fullinsideviewport assertions. No filename inference outside explicitly authored loop."
+    },
+    {
+      "name": "tag-sort-layout-initial-900x640-scrolled.png",
+      "path": "/workspace/validation-reviews/ci-7c74c6171/native-renders/tag-sort-layout-initial-900x640-scrolled.png",
+      "source_commit": "7c74c617165a22814a8d0202008794b2beb53de0",
+      "run_id": 37567007002,
+      "artifact_id": 11459759822,
+      "sha256": "c14606aaaf67ef38fded14f090b0b6f5d0428f6a0e4c4caf2a2bf0aec3c3ae6e",
+      "bytes": 63995,
+      "dimensions": [
+        900,
+        640
+      ],
+      "actually_viewed": true,
+      "supplemental": false,
+      "observation": "After an actual wheel scroll at 900\u00d7640, the lower context stack remains above the grouping heading, description and fully allocated queue/action region. Add and Edit are visible. The queue viewport shows the first five default rows; meta and lower rows are outside the internal viewport, with exact contents verified by assertions. Upper context clipping is the deliberate scroll state. Some explanatory prose clips horizontally at line ends at 900 px; broader parent prose parity is not claimed. The lower Manage Tags context retains tag / a-z / siblings / user grouping.",
+      "producer": {
+        "path": "crates/hydrus-gui/tests/gui/manage_tags_sort.rs",
+        "line": 397,
+        "text": "                        .join(format!(\"tag-sort-layout-{state}-900x640-scrolled.png\")),",
+        "anchor_git_head": "7c74c617165a22814a8d0202008794b2beb53de0",
+        "line_sha256": "6d96f83c4b05d2764c4d7830c5c75099c8b27b04d9ef9c4c54af8b960ec6153d"
+      },
+      "state_and_dynamic_path_proof": "Actual applied false/true -> initial/saved; exact loop viewports900x640/1000x850; scrolled export only ifheight640 after PointerScrolled and queue fullinsideviewport assertions. No filename inference outside explicitly authored loop."
+    },
+    {
+      "name": "tag-sort-layout-saved-900x640.png",
+      "path": "/workspace/validation-reviews/ci-7c74c6171/native-renders/tag-sort-layout-saved-900x640.png",
+      "source_commit": "7c74c617165a22814a8d0202008794b2beb53de0",
+      "run_id": 37567007002,
+      "artifact_id": 11459759822,
+      "sha256": "03a5403b6c01f5810e26d495f20361ec0da520b04b339a8dc5dd0ebc08e95c15",
+      "bytes": 68736,
+      "dimensions": [
+        900,
+        640
+      ],
+      "actually_viewed": true,
+      "supplemental": false,
+      "observation": "All four context stacks are visible. Saved search-page Manage Tags shows subtag / z-a / tags, with the grouping control hidden. Saved viewer Manage Tags shows count / fewest first / no grouping, with siblings hidden. The other contexts keep their defaults. At 900\u00d7640, labels and controls are separate and readable, with the actual namespace heading beneath the last row. Natural pane clipping may put queue controls and action buttons below the viewport. Strict runtime allocation checks pass; the capture does not claim that the entire page is visible at once.",
+      "producer": {
+        "path": "crates/hydrus-gui/tests/gui/manage_tags_sort.rs",
+        "line": 371,
+        "text": "                    .join(format!(\"tag-sort-layout-{state}-{width}x{height}.png\")),",
+        "anchor_git_head": "7c74c617165a22814a8d0202008794b2beb53de0",
+        "line_sha256": "8257266c826da074f1e6193144ff4b5b937c270adc636dfefc2a35ee2e650fd3"
+      },
+      "state_and_dynamic_path_proof": "Actual applied false/true -> initial/saved; exact loop viewports900x640/1000x850; scrolled export only ifheight640 after PointerScrolled and queue fullinsideviewport assertions. No filename inference outside explicitly authored loop."
+    },
+    {
+      "name": "tag-sort-layout-saved-1000x850.png",
+      "path": "/workspace/validation-reviews/ci-7c74c6171/native-renders/tag-sort-layout-saved-1000x850.png",
+      "source_commit": "7c74c617165a22814a8d0202008794b2beb53de0",
+      "run_id": 37567007002,
+      "artifact_id": 11459759822,
+      "sha256": "59a4ee638b421dd52acf63467ef3b266ba62a195e14dda40bfecdc3bdffa22e8",
+      "bytes": 84643,
+      "dimensions": [
+        1000,
+        850
+      ],
+      "actually_viewed": true,
+      "supplemental": false,
+      "observation": "All four context stacks are visible. Saved search-page Manage Tags shows subtag / z-a / tags, with the grouping control hidden. Saved viewer Manage Tags shows count / fewest first / no grouping, with siblings hidden. The other contexts keep their defaults. At 1000\u00d7850, labels and controls are separate and readable, with the actual namespace heading beneath the last row. Natural pane clipping may put queue controls and action buttons below the viewport. Strict runtime allocation checks pass; the capture does not claim that the entire page is visible at once.",
+      "producer": {
+        "path": "crates/hydrus-gui/tests/gui/manage_tags_sort.rs",
+        "line": 371,
+        "text": "                    .join(format!(\"tag-sort-layout-{state}-{width}x{height}.png\")),",
+        "anchor_git_head": "7c74c617165a22814a8d0202008794b2beb53de0",
+        "line_sha256": "8257266c826da074f1e6193144ff4b5b937c270adc636dfefc2a35ee2e650fd3"
+      },
+      "state_and_dynamic_path_proof": "Actual applied false/true -> initial/saved; exact loop viewports900x640/1000x850; scrolled export only ifheight640 after PointerScrolled and queue fullinsideviewport assertions. No filename inference outside explicitly authored loop."
+    },
+    {
+      "name": "tag-sort-layout-saved-900x640-scrolled.png",
+      "path": "/workspace/validation-reviews/ci-7c74c6171/native-renders/tag-sort-layout-saved-900x640-scrolled.png",
+      "source_commit": "7c74c617165a22814a8d0202008794b2beb53de0",
+      "run_id": 37567007002,
+      "artifact_id": 11459759822,
+      "sha256": "54df53cfd935b5520ab27ff99faecb5adba6f7352878e83976a919d1e04baa4b",
+      "bytes": 63199,
+      "dimensions": [
+        900,
+        640
+      ],
+      "actually_viewed": true,
+      "supplemental": false,
+      "observation": "After an actual wheel scroll at 900\u00d7640, the lower context stack remains above the grouping heading, description and fully allocated queue/action region. Add and Edit are visible. The queue viewport shows the first five default rows; meta and lower rows are outside the internal viewport, with exact contents verified by assertions. Upper context clipping is the deliberate scroll state. Some explanatory prose clips horizontally at line ends at 900 px; broader parent prose parity is not claimed. The lower Manage Tags context retains count / fewest first / no grouping.",
+      "producer": {
+        "path": "crates/hydrus-gui/tests/gui/manage_tags_sort.rs",
+        "line": 397,
+        "text": "                        .join(format!(\"tag-sort-layout-{state}-900x640-scrolled.png\")),",
+        "anchor_git_head": "7c74c617165a22814a8d0202008794b2beb53de0",
+        "line_sha256": "6d96f83c4b05d2764c4d7830c5c75099c8b27b04d9ef9c4c54af8b960ec6153d"
+      },
+      "state_and_dynamic_path_proof": "Actual applied false/true -> initial/saved; exact loop viewports900x640/1000x850; scrolled export only ifheight640 after PointerScrolled and queue fullinsideviewport assertions. No filename inference outside explicitly authored loop."
+    },
+    {
+      "name": "tag-namespace-order-options.png",
+      "path": "/workspace/validation-reviews/ci-7c74c6171/native-renders/tag-namespace-order-options.png",
+      "source_commit": "7c74c617165a22814a8d0202008794b2beb53de0",
+      "run_id": 37567007002,
+      "artifact_id": 11459759822,
+      "sha256": "c5732deaba887a2431a8ccd2e1c33984a35254cb27dbd49632b6c516c03a4aee",
+      "bytes": 85254,
+      "dimensions": [
+        1000,
+        850
+      ],
+      "actually_viewed": true,
+      "supplemental": false,
+      "observation": "Saved raw queue at 1000\u00d7850, before scrolling: four default sort contexts are separate above the namespace heading and description. The queue shows studio, series, character and species, but its bottom and action buttons are outside the pane viewport. This frame does not show the entire raw queue; the scrolled companion is required.",
+      "producer": {
+        "path": "crates/hydrus-gui/tests/gui/tag_namespace_order.rs",
+        "line": 274,
+        "text": "        &std::path::Path::new(env!(\"CARGO_TARGET_TMPDIR\")).join(\"tag-namespace-order-options.png\"),",
+        "anchor_git_head": "7c74c617165a22814a8d0202008794b2beb53de0",
+        "line_sha256": "37a0730936354766b5352893522760264bcdec5cb0640ef0ad8d5965add99624"
+      },
+      "state_and_dynamic_path_proof": "Saved studio/rawqueue parent before scroll; strict runtime/imageinspectionneeded."
+    },
+    {
+      "name": "tag-namespace-order-options-scrolled.png",
+      "path": "/workspace/validation-reviews/ci-7c74c6171/native-renders/tag-namespace-order-options-scrolled.png",
+      "source_commit": "7c74c617165a22814a8d0202008794b2beb53de0",
+      "run_id": 37567007002,
+      "artifact_id": 11459759822,
+      "sha256": "116bfd3cbb7230ce18a496b36bbb7d827eeff292928f9c531328889c0cff0430",
+      "bytes": 82291,
+      "dimensions": [
+        1000,
+        850
+      ],
+      "actually_viewed": true,
+      "supplemental": false,
+      "observation": "After an actual wheel scroll at 1000\u00d7850, the grouping heading, instruction, saved studio queue viewport and action buttons are readable inside the pane. Add is enabled and Edit is disabled because no row is selected. Visible rows begin with studio, series, character, species and unnamespaced. Remaining raw rows use the internal queue viewport; exact full contents are assertion-backed.",
+      "producer": {
+        "path": "crates/hydrus-gui/tests/gui/tag_namespace_order.rs",
+        "line": 311,
+        "text": "            .join(\"tag-namespace-order-options-scrolled.png\"),",
+        "anchor_git_head": "7c74c617165a22814a8d0202008794b2beb53de0",
+        "line_sha256": "0f75550f159fb1255301a7b6005c027292729ef5381b77a19bb9462ff26988b7"
+      },
+      "state_and_dynamic_path_proof": "Real pointerwheel decreases scrollY, savedrawqueue equality before lowerqueue capture; freshpixels determine actualcontrolreadability."
+    },
+    {
+      "name": "tag-namespace-order-enter-text.png",
+      "path": "/workspace/validation-reviews/ci-7c74c6171/native-renders/tag-namespace-order-enter-text.png",
+      "source_commit": "7c74c617165a22814a8d0202008794b2beb53de0",
+      "run_id": 37567007002,
+      "artifact_id": 11459759822,
+      "sha256": "927ad517a4df39c9b6d63632c6d07e1ea17a91281934041dc9018d55e105d868",
+      "bytes": 9618,
+      "dimensions": [
+        520,
+        220
+      ],
+      "actually_viewed": true,
+      "supplemental": true,
+      "observation": "Actual Add with the default namespace text: the complete wrapped instruction allowing blank and colon values, entry and Apply/Cancel controls are readable. The 520\u00d7220 native frame has large vertical buttons and extra whitespace. It is a different valid state from the blank Qt image and is supplemental.",
+      "producer": {
+        "path": "crates/hydrus-gui/tests/gui/tag_namespace_order.rs",
+        "line": 321,
+        "text": "            .join(\"tag-namespace-order-enter-text.png\"),",
+        "anchor_git_head": "7c74c617165a22814a8d0202008794b2beb53de0",
+        "line_sha256": "7e4c5919188af561a71ce435914e34410b0657db9abde0444cad7d50c4c2de66"
+      },
+      "state_and_dynamic_path_proof": "Supplemental Add namespace-default child differs from actualblankQtPNG."
+    },
+    {
+      "name": "tag-namespace-order-add-blank.png",
+      "path": "/workspace/validation-reviews/ci-7c74c6171/native-renders/tag-namespace-order-add-blank.png",
+      "source_commit": "7c74c617165a22814a8d0202008794b2beb53de0",
+      "run_id": 37567007002,
+      "artifact_id": 11459759822,
+      "sha256": "831f87241f1d5dfd9b26b3ac9b8ac7c62a85c00098ac61a9941f9783b2d99fcf",
+      "bytes": 8404,
+      "dimensions": [
+        520,
+        220
+      ],
+      "actually_viewed": true,
+      "supplemental": false,
+      "observation": "The actual blank real_text case before acceptance shows an empty focused entry and caret, the full instruction allowing blank input, and Apply/Cancel. It matches the Qt blank-input state. Native font, wrapping, footer and proportions differ; pixel and physical keyboard parity are not claimed.",
+      "producer": {
+        "path": "crates/hydrus-gui/tests/gui/tag_namespace_order.rs",
+        "line": 193,
+        "text": "                    .join(\"tag-namespace-order-add-blank.png\"),",
+        "anchor_git_head": "7c74c617165a22814a8d0202008794b2beb53de0",
+        "line_sha256": "5f121497235a16fd4759a5844d45e2f685a41bfd8d80e18ead5633ec7df1a0f1"
+      },
+      "state_and_dynamic_path_proof": "Actualreal_text blank case after title/default/button/rawtext assertions before acceptedApply; matches Qtblank-validstate."
+    },
+    {
+      "name": "tag-namespace-order-edit.png",
+      "path": "/workspace/validation-reviews/ci-7c74c6171/native-renders/tag-namespace-order-edit.png",
+      "source_commit": "7c74c617165a22814a8d0202008794b2beb53de0",
+      "run_id": 37567007002,
+      "artifact_id": 11459759822,
+      "sha256": "cff4a21a857344d7aebf2a2f50cde10212b304a8c99ad65b43e2eefb2b3bf55b",
+      "bytes": 9347,
+      "dimensions": [
+        520,
+        220
+      ],
+      "actually_viewed": true,
+      "supplemental": false,
+      "observation": "The first recorded Edit shows creator before Cancel, with the full instruction and readable Apply/Cancel. Its default matches the first/top selected raw creator row. No standalone Qt image of populated Edit exists.",
+      "producer": {
+        "path": "crates/hydrus-gui/tests/gui/tag_namespace_order.rs",
+        "line": 135,
+        "text": "                            .join(\"tag-namespace-order-edit.png\"),",
+        "anchor_git_head": "7c74c617165a22814a8d0202008794b2beb53de0",
+        "line_sha256": "3e2cf78929178cedcb6a29a1706837a84e05194c809e034bfbeb21ed02230ba7"
+      },
+      "state_and_dynamic_path_proof": "First populated recordedEdit captured after exactrecorded default/title checks before response; no matchingQtEditPNG."
+    }
+  ],
+  "required_images_viewed": [
+    "manage-tags-sort-options.png",
+    "manage-tags-sort-search-page.png",
+    "manage-tags-sort-media-viewer.png",
+    "tag-sort-layout-initial-900x640.png",
+    "tag-sort-layout-initial-1000x850.png",
+    "tag-sort-layout-initial-900x640-scrolled.png",
+    "tag-sort-layout-saved-900x640.png",
+    "tag-sort-layout-saved-1000x850.png",
+    "tag-sort-layout-saved-900x640-scrolled.png",
+    "tag-namespace-order-options.png",
+    "tag-namespace-order-options-scrolled.png",
+    "tag-namespace-order-enter-text.png",
+    "tag-namespace-order-add-blank.png",
+    "tag-namespace-order-edit.png"
+  ],
+  "supplemental_images_viewed": [
+    "tag-namespace-order-enter-text.png"
+  ],
+  "reference_images_actually_viewed": [
+    {
+      "path": "/workspace/hydrus-mine/oracle/fixtures/manage_tags_sort_options.png",
+      "source_commit": "7c74c617165a22814a8d0202008794b2beb53de0",
+      "sha256": "11a989071ae84d525062b0f1c5beb1d8b649e6a5af037246d8838df276ea4033",
+      "dimensions": [
+        780,
+        520
+      ],
+      "actually_viewed": true,
+      "observation": "Qt initial state with four horizontal sort contexts and the namespace queue."
+    },
+    {
+      "path": "/workspace/hydrus-mine/oracle/fixtures/tag-namespace-order-qt.png",
+      "source_commit": "7c74c617165a22814a8d0202008794b2beb53de0",
+      "sha256": "00d4400443a54d23da16294f09d253548169536746706a87114d8d8c8ed14092",
+      "dimensions": [
+        900,
+        700
+      ],
+      "actually_viewed": true,
+      "observation": "Qt initial state with four horizontal sort contexts and the namespace queue."
+    },
+    {
+      "path": "/workspace/hydrus-mine/oracle/fixtures/tag-namespace-order-enter-text-qt.png",
+      "source_commit": "7c74c617165a22814a8d0202008794b2beb53de0",
+      "sha256": "a806a5f7e893e278bfea15a11f73b4776574564943c4fda5c6017bb24c2d0260",
+      "dimensions": [
+        564,
+        112
+      ],
+      "actually_viewed": true,
+      "observation": "Actual blank Enter Text before Apply, with the instruction allowing blank input and Apply/Cancel; the compact Qt footer differs from native."
+    }
+  ],
+  "exact_passing_test_proof": [
+    {
+      "test": "manage_tags_sort::native_options_stage_cancel_save_reopen_and_reject_retired_sender",
+      "source": "/workspace/hydrus-mine/crates/hydrus-gui/tests/gui/manage_tags_sort.rs",
+      "source_line": 123,
+      "source_commit": "7c74c617165a22814a8d0202008794b2beb53de0",
+      "run_id": 37567007002,
+      "passing_records": [
+        {
+          "log": "/workspace/validation-reviews/ci-7c74c6171/tests.log",
+          "line": 933,
+          "text": "test manage_tags_sort::native_options_stage_cancel_save_reopen_and_reject_retired_sender ... ok"
+        }
+      ]
+    },
+    {
+      "test": "manage_tags_sort::actual_sort_stacks_fit_their_rows_and_scroll_without_overlap_at_both_viewports",
+      "source": "/workspace/hydrus-mine/crates/hydrus-gui/tests/gui/manage_tags_sort.rs",
+      "source_line": 213,
+      "source_commit": "7c74c617165a22814a8d0202008794b2beb53de0",
+      "run_id": 37567007002,
+      "passing_records": [
+        {
+          "log": "/workspace/validation-reviews/ci-7c74c6171/tests.log",
+          "line": 951,
+          "text": "test manage_tags_sort::actual_sort_stacks_fit_their_rows_and_scroll_without_overlap_at_both_viewports ... ok"
+        }
+      ]
+    },
+    {
+      "test": "manage_tags_sort::main_selection_and_viewer_current_file_use_distinct_defaults_and_live_dialog_keeps_its_sort",
+      "source": "/workspace/hydrus-mine/crates/hydrus-gui/tests/gui/manage_tags_sort.rs",
+      "source_line": 412,
+      "source_commit": "7c74c617165a22814a8d0202008794b2beb53de0",
+      "run_id": 37567007002,
+      "passing_records": [
+        {
+          "log": "/workspace/validation-reviews/ci-7c74c6171/tests.log",
+          "line": 935,
+          "text": "test manage_tags_sort::main_selection_and_viewer_current_file_use_distinct_defaults_and_live_dialog_keeps_its_sort ... ok"
+        }
+      ]
+    },
+    {
+      "test": "manage_tags_sort::rebind_and_accepted_exit_retire_visible_sort_children_and_old_viewer_launcher",
+      "source": "/workspace/hydrus-mine/crates/hydrus-gui/tests/gui/manage_tags_sort.rs",
+      "source_line": 517,
+      "source_commit": "7c74c617165a22814a8d0202008794b2beb53de0",
+      "run_id": 37567007002,
+      "passing_records": [
+        {
+          "log": "/workspace/validation-reviews/ci-7c74c6171/tests.log",
+          "line": 932,
+          "text": "test manage_tags_sort::rebind_and_accepted_exit_retire_visible_sort_children_and_old_viewer_launcher ... ok"
+        }
+      ]
+    },
+    {
+      "test": "manage_tags_sort::hidden_main_cannot_launch_or_reshow_child_but_visible_viewer_keeps_its_own_route",
+      "source": "/workspace/hydrus-mine/crates/hydrus-gui/tests/gui/manage_tags_sort.rs",
+      "source_line": 604,
+      "source_commit": "7c74c617165a22814a8d0202008794b2beb53de0",
+      "run_id": 37567007002,
+      "passing_records": [
+        {
+          "log": "/workspace/validation-reviews/ci-7c74c6171/tests.log",
+          "line": 930,
+          "text": "test manage_tags_sort::hidden_main_cannot_launch_or_reshow_child_but_visible_viewer_keeps_its_own_route ... ok"
+        }
+      ]
+    },
+    {
+      "test": "tag_namespace_order::real_queue_matches_all_reference_prompts_and_parent_transactions",
+      "source": "/workspace/hydrus-mine/crates/hydrus-gui/tests/gui/tag_namespace_order.rs",
+      "source_line": 76,
+      "source_commit": "7c74c617165a22814a8d0202008794b2beb53de0",
+      "run_id": 37567007002,
+      "passing_records": [
+        {
+          "log": "/workspace/validation-reviews/ci-7c74c6171/tests.log",
+          "line": 1303,
+          "text": "test tag_namespace_order::real_queue_matches_all_reference_prompts_and_parent_transactions ... ok"
+        }
+      ]
+    },
+    {
+      "test": "tag_namespace_order::saved_order_reaches_the_real_sidebar_tag_sort",
+      "source": "/workspace/hydrus-mine/crates/hydrus-gui/tests/gui/tag_namespace_order.rs",
+      "source_line": 331,
+      "source_commit": "7c74c617165a22814a8d0202008794b2beb53de0",
+      "run_id": 37567007002,
+      "passing_records": [
+        {
+          "log": "/workspace/validation-reviews/ci-7c74c6171/tests.log",
+          "line": 1302,
+          "text": "test tag_namespace_order::saved_order_reaches_the_real_sidebar_tag_sort ... ok"
+        }
+      ]
+    },
+    {
+      "test": "tag_namespace_order::hidden_stale_rebound_and_accepted_close_children_cannot_stage_or_save",
+      "source": "/workspace/hydrus-mine/crates/hydrus-gui/tests/gui/tag_namespace_order.rs",
+      "source_line": 416,
+      "source_commit": "7c74c617165a22814a8d0202008794b2beb53de0",
+      "run_id": 37567007002,
+      "passing_records": [
+        {
+          "log": "/workspace/validation-reviews/ci-7c74c6171/tests.log",
+          "line": 1301,
+          "text": "test tag_namespace_order::hidden_stale_rebound_and_accepted_close_children_cannot_stage_or_save ... ok"
+        }
+      ]
+    },
+    {
+      "test": "manage_tags_sort::independent_defaults_stage_cancel_apply_reopen_and_merge_only_changed_context",
+      "source": "/workspace/hydrus-mine/crates/hydrus-gui-model/tests/model/manage_tags_sort.rs",
+      "source_line": 107,
+      "source_commit": "7c74c617165a22814a8d0202008794b2beb53de0",
+      "run_id": 37567007002,
+      "passing_records": [
+        {
+          "log": "/workspace/validation-reviews/ci-7c74c6171/tests.log",
+          "line": 1660,
+          "text": "test manage_tags_sort::independent_defaults_stage_cancel_apply_reopen_and_merge_only_changed_context ... ok"
+        },
+        {
+          "log": "/workspace/validation-reviews/ci-7c74c6171/parity.log",
+          "line": 1671,
+          "text": "2026-10-07T03:33:05.5730536Z test manage_tags_sort::independent_defaults_stage_cancel_apply_reopen_and_merge_only_changed_context ... ok"
+        }
+      ]
+    },
+    {
+      "test": "manage_tags_sort::both_contexts_replay_all_real_sort_types_orders_siblings_and_groupings",
+      "source": "/workspace/hydrus-mine/crates/hydrus-gui-model/tests/model/manage_tags_sort.rs",
+      "source_line": 170,
+      "source_commit": "7c74c617165a22814a8d0202008794b2beb53de0",
+      "run_id": 37567007002,
+      "passing_records": [
+        {
+          "log": "/workspace/validation-reviews/ci-7c74c6171/tests.log",
+          "line": 1688,
+          "text": "test manage_tags_sort::both_contexts_replay_all_real_sort_types_orders_siblings_and_groupings ... ok"
+        },
+        {
+          "log": "/workspace/validation-reviews/ci-7c74c6171/parity.log",
+          "line": 1698,
+          "text": "2026-10-07T03:33:06.9814417Z test manage_tags_sort::both_contexts_replay_all_real_sort_types_orders_siblings_and_groupings ... ok"
+        }
+      ]
+    },
+    {
+      "test": "manage_tags_sort::open_service_tabs_keep_local_sort_after_options_change_and_new_dialog_reads_default",
+      "source": "/workspace/hydrus-mine/crates/hydrus-gui-model/tests/model/manage_tags_sort.rs",
+      "source_line": 195,
+      "source_commit": "7c74c617165a22814a8d0202008794b2beb53de0",
+      "run_id": 37567007002,
+      "passing_records": [
+        {
+          "log": "/workspace/validation-reviews/ci-7c74c6171/tests.log",
+          "line": 1662,
+          "text": "test manage_tags_sort::open_service_tabs_keep_local_sort_after_options_change_and_new_dialog_reads_default ... ok"
+        },
+        {
+          "log": "/workspace/validation-reviews/ci-7c74c6171/parity.log",
+          "line": 1675,
+          "text": "2026-10-07T03:33:05.8954546Z test manage_tags_sort::open_service_tabs_keep_local_sort_after_options_change_and_new_dialog_reads_default ... ok"
+        }
+      ]
+    },
+    {
+      "test": "manage_tags_sort::sibling_sort_uses_raw_tags_when_storage_sibling_information_is_disabled",
+      "source": "/workspace/hydrus-mine/crates/hydrus-gui-model/tests/model/manage_tags_sort.rs",
+      "source_line": 231,
+      "source_commit": "7c74c617165a22814a8d0202008794b2beb53de0",
+      "run_id": 37567007002,
+      "passing_records": [
+        {
+          "log": "/workspace/validation-reviews/ci-7c74c6171/tests.log",
+          "line": 1665,
+          "text": "test manage_tags_sort::sibling_sort_uses_raw_tags_when_storage_sibling_information_is_disabled ... ok"
+        },
+        {
+          "log": "/workspace/validation-reviews/ci-7c74c6171/parity.log",
+          "line": 1672,
+          "text": "2026-10-07T03:33:05.8344676Z test manage_tags_sort::sibling_sort_uses_raw_tags_when_storage_sibling_information_is_disabled ... ok"
+        }
+      ]
+    },
+    {
+      "test": "tag_namespace_order::raw_allow_blank_queue_actions_and_all_tag_sorts_match_qt",
+      "source": "/workspace/hydrus-mine/crates/hydrus-gui-model/tests/model/tag_namespace_order.rs",
+      "source_line": 18,
+      "source_commit": "7c74c617165a22814a8d0202008794b2beb53de0",
+      "run_id": 37567007002,
+      "passing_records": [
+        {
+          "log": "/workspace/validation-reviews/ci-7c74c6171/tests.log",
+          "line": 1881,
+          "text": "test tag_namespace_order::raw_allow_blank_queue_actions_and_all_tag_sorts_match_qt ... ok"
+        },
+        {
+          "log": "/workspace/validation-reviews/ci-7c74c6171/parity.log",
+          "line": 1891,
+          "text": "2026-10-07T03:33:12.7724118Z test tag_namespace_order::raw_allow_blank_queue_actions_and_all_tag_sorts_match_qt ... ok"
+        }
+      ]
+    },
+    {
+      "test": "tag_namespace_order::namespace_changes_merge_with_concurrent_presentation_edits_and_unchanged_list",
+      "source": "/workspace/hydrus-mine/crates/hydrus-gui-model/tests/model/tag_namespace_order.rs",
+      "source_line": 122,
+      "source_commit": "7c74c617165a22814a8d0202008794b2beb53de0",
+      "run_id": 37567007002,
+      "passing_records": [
+        {
+          "log": "/workspace/validation-reviews/ci-7c74c6171/tests.log",
+          "line": 1880,
+          "text": "test tag_namespace_order::namespace_changes_merge_with_concurrent_presentation_edits_and_unchanged_list ... ok"
+        },
+        {
+          "log": "/workspace/validation-reviews/ci-7c74c6171/parity.log",
+          "line": 1890,
+          "text": "2026-10-07T03:33:12.7692543Z test tag_namespace_order::namespace_changes_merge_with_concurrent_presentation_edits_and_unchanged_list ... ok"
+        }
+      ]
+    },
+    {
+      "test": "import::decode::tests::manage_tags_sort_contexts_import_siblings_independently_of_sidebar_sorts",
+      "source": "/workspace/hydrus-mine/crates/hydrus-store/src/import/decode.rs",
+      "source_line": 5401,
+      "source_commit": "7c74c617165a22814a8d0202008794b2beb53de0",
+      "run_id": 37567007002,
+      "passing_records": [
+        {
+          "log": "/workspace/validation-reviews/ci-7c74c6171/tests.log",
+          "line": 2641,
+          "text": "test import::decode::tests::manage_tags_sort_contexts_import_siblings_independently_of_sidebar_sorts ... ok"
+        },
+        {
+          "log": "/workspace/validation-reviews/ci-7c74c6171/parity.log",
+          "line": 2256,
+          "text": "2026-10-07T03:33:33.8795202Z test import::decode::tests::manage_tags_sort_contexts_import_siblings_independently_of_sidebar_sorts ... ok"
+        }
+      ]
+    }
+  ],
+  "source_pins": [
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-core/src/tag_sort.rs",
+      "source_commit": "7c74c617165a22814a8d0202008794b2beb53de0",
+      "sha256": "e6dd0cb6a5817aa3e5a1a2e6cfdf300120c45ea62ef5f969cf38461c5af894d8",
+      "committed_blob_and_worktree_match": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-gui-model/src/manage_tags.rs",
+      "source_commit": "7c74c617165a22814a8d0202008794b2beb53de0",
+      "sha256": "114bacd951f28d3e105934da0351b15493fa27b61571f2918d435e5a61db11c7",
+      "committed_blob_and_worktree_match": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-gui-model/src/manage_tags_sort.rs",
+      "source_commit": "7c74c617165a22814a8d0202008794b2beb53de0",
+      "sha256": "1ff45c8ba01704895432d49816bfa983f3b8d5e436840161f15c3d90cc3a27bc",
+      "committed_blob_and_worktree_match": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-gui-model/src/options.rs",
+      "source_commit": "7c74c617165a22814a8d0202008794b2beb53de0",
+      "sha256": "0959b5f502712b18a6cf8ebb089f1448770b25b291100468cd2e6fba9acb0ae0",
+      "committed_blob_and_worktree_match": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-gui-model/src/tag_namespace_order.rs",
+      "source_commit": "7c74c617165a22814a8d0202008794b2beb53de0",
+      "sha256": "183d5ed5c884e689633e70971b4efac794f8c30c8a20d6c96f4dc68eea5bd855",
+      "committed_blob_and_worktree_match": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-gui-model/tests/model/manage_tags_sort.rs",
+      "source_commit": "7c74c617165a22814a8d0202008794b2beb53de0",
+      "sha256": "4a1fd5482a1e227499541a76edc5af26d7036c58f82b8a644ed23df4c2bf1d26",
+      "committed_blob_and_worktree_match": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-gui-model/tests/model/options_dialog.rs",
+      "source_commit": "7c74c617165a22814a8d0202008794b2beb53de0",
+      "sha256": "fe84b189839077a7495d207f8242d7fcd84adf36ed1e014cc314875a9cab44f5",
+      "committed_blob_and_worktree_match": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-gui-model/tests/model/tag_namespace_order.rs",
+      "source_commit": "7c74c617165a22814a8d0202008794b2beb53de0",
+      "sha256": "cc9a3116f7e2343ed26418998ba50a49a7a77b87e437525842f1f5076a8efa19",
+      "committed_blob_and_worktree_match": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-gui/src/lib.rs",
+      "source_commit": "7c74c617165a22814a8d0202008794b2beb53de0",
+      "sha256": "b71c9e66ab1f71337cb525b0363ae1e7eb1434a47d44f61bb313733195d4c67a",
+      "committed_blob_and_worktree_match": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-gui/src/manage_tags_window.rs",
+      "source_commit": "7c74c617165a22814a8d0202008794b2beb53de0",
+      "sha256": "35d5ad952782e58e118d37ad092fa1a61de63980d24bede16086e30062e13297",
+      "committed_blob_and_worktree_match": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-gui/src/options_tag_namespace_order.rs",
+      "source_commit": "7c74c617165a22814a8d0202008794b2beb53de0",
+      "sha256": "40529255333151a97c4da85738e931876b2d770c710aca2c6d675fc3f6c18f9e",
+      "committed_blob_and_worktree_match": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-gui/src/options_window.rs",
+      "source_commit": "7c74c617165a22814a8d0202008794b2beb53de0",
+      "sha256": "f22e87448924698a5b28d9bef42d0fc240ce6e6b90ee7ae0b12b8d20fa4aba7a",
+      "committed_blob_and_worktree_match": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-gui/src/page.rs",
+      "source_commit": "7c74c617165a22814a8d0202008794b2beb53de0",
+      "sha256": "8c968c29c99b14e862ee643d5aea5af5e78eadb8c532202fffc18084885b0c8d",
+      "committed_blob_and_worktree_match": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-gui/tests/gui/manage_tags_sort.rs",
+      "source_commit": "7c74c617165a22814a8d0202008794b2beb53de0",
+      "sha256": "b8fcb302b359adf0fab0592c7cf0cac000787134f33a6d4dbc6c435af85cb2ae",
+      "committed_blob_and_worktree_match": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-gui/tests/gui/tag_namespace_order.rs",
+      "source_commit": "7c74c617165a22814a8d0202008794b2beb53de0",
+      "sha256": "63c96613849bb1a2f5c7d1f2536b4984271128cfa842f29114f166d6dd8b7a25",
+      "committed_blob_and_worktree_match": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-gui/ui/manage_tags.slint",
+      "source_commit": "7c74c617165a22814a8d0202008794b2beb53de0",
+      "sha256": "5f9101ba5a608c36345d5a5ab1b4b734002a388ab87611259864f3a8b35135ad",
+      "committed_blob_and_worktree_match": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-gui/ui/options.slint",
+      "source_commit": "7c74c617165a22814a8d0202008794b2beb53de0",
+      "sha256": "cd6bc428d6ad2a4a8d07556d05eb4e4421cae9fa72f344771877fd9aa1d3db93",
+      "committed_blob_and_worktree_match": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-gui/ui/tag_namespace_order.slint",
+      "source_commit": "7c74c617165a22814a8d0202008794b2beb53de0",
+      "sha256": "bb47617cf392ea18079cd5491d40bec9291b59aa5b16098dcbdf2531cd305a4c",
+      "committed_blob_and_worktree_match": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-store/src/import/decode.rs",
+      "source_commit": "7c74c617165a22814a8d0202008794b2beb53de0",
+      "sha256": "ce988cd231d08607710465c9a64c3aa01e4a1eaec75a9f698a1d16b25204434d",
+      "committed_blob_and_worktree_match": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-store/src/manage_tags_sort.rs",
+      "source_commit": "7c74c617165a22814a8d0202008794b2beb53de0",
+      "sha256": "931a732fc230950296f8fec4c44b1326f44dde2bcb50b48bb68a86837425f452",
+      "committed_blob_and_worktree_match": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/docs/rust/DIFFERENCES.md",
+      "source_commit": "7c74c617165a22814a8d0202008794b2beb53de0",
+      "sha256": "961914695f56d56e98cfcde05498ef19dfe6c00df78eae746787285d604e4057",
+      "committed_blob_and_worktree_match": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/docs/rust/GUI.md",
+      "source_commit": "7c74c617165a22814a8d0202008794b2beb53de0",
+      "sha256": "e400539de385fbbd3145846dc78c5e3aeb121c1b003833c2c7fdba6eadfe3da0",
+      "committed_blob_and_worktree_match": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/docs/rust/gui-coverage/parity/manage-tags-sort.json",
+      "source_commit": "7c74c617165a22814a8d0202008794b2beb53de0",
+      "sha256": "a020553bd7a3d1c1226348f33083407160e9473e769fa1a0f9daf6f33a2a0a5a",
+      "committed_blob_and_worktree_match": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/docs/rust/gui-coverage/parity/tag-namespace-order.json",
+      "source_commit": "7c74c617165a22814a8d0202008794b2beb53de0",
+      "sha256": "e89d94b03e33f360f218aed33d02f5e32fe15f3737abade124d4be056fd0db44",
+      "committed_blob_and_worktree_match": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/hydrus/client/gui/ClientGUIDialogsQuick.py",
+      "source_commit": "7c74c617165a22814a8d0202008794b2beb53de0",
+      "sha256": "0b8a62f0a6b5b9ceb472c06ab87b214790b685bf8f87bdea906bfd56b995524b",
+      "committed_blob_and_worktree_match": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/hydrus/client/gui/ClientGUITagSorting.py",
+      "source_commit": "7c74c617165a22814a8d0202008794b2beb53de0",
+      "sha256": "da95336e6b9dbe8d197ce26cf2978d83d72656276124bd44d60efc3abd364681",
+      "committed_blob_and_worktree_match": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/hydrus/client/gui/ClientGUITopLevelWindowsPanels.py",
+      "source_commit": "7c74c617165a22814a8d0202008794b2beb53de0",
+      "sha256": "ee8cf027adee0ab8ff84b992c78a78eb85d0e5bdd13c953733835d2ace5ca280",
+      "committed_blob_and_worktree_match": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/hydrus/client/gui/canvas/ClientGUICanvas.py",
+      "source_commit": "7c74c617165a22814a8d0202008794b2beb53de0",
+      "sha256": "cd8f2785f7c911c56cfdde97c3becf5b9209d2b4c1a63b78837a899b2d39baf3",
+      "committed_blob_and_worktree_match": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/hydrus/client/gui/lists/ClientGUIListBoxes.py",
+      "source_commit": "7c74c617165a22814a8d0202008794b2beb53de0",
+      "sha256": "a387b519ff8169cdeac5280f85e47a2f2ecd19459489e1dda5909af7862b367e",
+      "committed_blob_and_worktree_match": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/hydrus/client/gui/metadata/ClientGUIManageTags.py",
+      "source_commit": "7c74c617165a22814a8d0202008794b2beb53de0",
+      "sha256": "3b9e1d91a236e0fc325d270f88a8c188bc21d8657bed8795ae3261b9c1584c09",
+      "committed_blob_and_worktree_match": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/hydrus/client/gui/pages/ClientGUIMediaResultsPanel.py",
+      "source_commit": "7c74c617165a22814a8d0202008794b2beb53de0",
+      "sha256": "6ce07c23d02d92a69a482240ef6d7eea10128548f5d8a0a077751dfa00789ea4",
+      "committed_blob_and_worktree_match": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/hydrus/client/gui/panels/ClientGUIScrolledPanelsTextEntry.py",
+      "source_commit": "7c74c617165a22814a8d0202008794b2beb53de0",
+      "sha256": "c314d80439075f76f23b86f1ea4014be789202ab4f583eca987b09f74574b5dd",
+      "committed_blob_and_worktree_match": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/hydrus/client/gui/panels/options/TagSortPanel.py",
+      "source_commit": "7c74c617165a22814a8d0202008794b2beb53de0",
+      "sha256": "c1336611a2ac5c034a0dc212f15c3e4758a7f5997158272b759394a52f875662",
+      "committed_blob_and_worktree_match": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/hydrus/client/metadata/ClientTagSorting.py",
+      "source_commit": "7c74c617165a22814a8d0202008794b2beb53de0",
+      "sha256": "585926d09c7e905f657eef8c08e5cc7a736e5091460d5140c0a4c1f85e40116b",
+      "committed_blob_and_worktree_match": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/hydrus/client/metadata/ClientTags.py",
+      "source_commit": "7c74c617165a22814a8d0202008794b2beb53de0",
+      "sha256": "c4e6aedefc269c6b77ba950754fbf7c9c198f1dcade6a29d310b7530181e4bf8",
+      "committed_blob_and_worktree_match": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/oracle/fixtures/manage_tags_sort.json",
+      "source_commit": "7c74c617165a22814a8d0202008794b2beb53de0",
+      "sha256": "9578983a673054bd5d0f9413ca8fb612ae22d13767c5700aac82d9219d69acae",
+      "committed_blob_and_worktree_match": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/oracle/fixtures/tag_namespace_order.json",
+      "source_commit": "7c74c617165a22814a8d0202008794b2beb53de0",
+      "sha256": "8b49a25df8dbd581ead8546bf3730910da1be94c39f1b22b8cb6715fb1a92097",
+      "committed_blob_and_worktree_match": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/oracle/record_manage_tags_sort.py",
+      "source_commit": "7c74c617165a22814a8d0202008794b2beb53de0",
+      "sha256": "99a5282ec00c26836ae016e4fd1fb8bc959eb0a4264ad0aba6b295ac42293746",
+      "committed_blob_and_worktree_match": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/oracle/record_tag_namespace_order.py",
+      "source_commit": "7c74c617165a22814a8d0202008794b2beb53de0",
+      "sha256": "0693d545e7e79990cd4aab94c24e0a88cf986b77664aebad21350a9fbaaca0e6",
+      "committed_blob_and_worktree_match": true
+    }
+  ],
+  "assertion_preservation": [
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-gui/tests/gui/manage_tags_sort.rs",
+      "baseline_macro_assertions": 52,
+      "current_macro_assertions": 65,
+      "baseline_test_functions": 4,
+      "current_test_functions": 5,
+      "all_original_lines_byte_preserved": true,
+      "insertion_only": true,
+      "reviewed_worktree_sha256": "b8fcb302b359adf0fab0592c7cf0cac000787134f33a6d4dbc6c435af85cb2ae",
+      "reviewed_agent_path": "/workspace/tag-sort-layout-tests/crates/hydrus-gui/tests/gui/manage_tags_sort.rs",
+      "source_commit": "7c74c617165a22814a8d0202008794b2beb53de0"
+    },
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-gui/tests/gui/tag_namespace_order.rs",
+      "baseline_macro_assertions": 43,
+      "current_macro_assertions": 48,
+      "baseline_test_functions": 3,
+      "current_test_functions": 3,
+      "all_original_lines_byte_preserved": true,
+      "insertion_only": true,
+      "reviewed_worktree_sha256": "63c96613849bb1a2f5c7d1f2536b4984271128cfa842f29114f166d6dd8b7a25",
+      "reviewed_agent_path": "/workspace/tag-sort-layout-tests/crates/hydrus-gui/tests/gui/tag_namespace_order.rs",
+      "source_commit": "7c74c617165a22814a8d0202008794b2beb53de0"
+    }
+  ],
+  "original_assertion_total": 95,
+  "current_assertion_total": 113,
+  "original_test_total": 7,
+  "current_test_total": 8,
+  "source_blockers": [],
+  "proof_hashes": [
+    {
+      "path": "/workspace/validation-reviews/sort4/source-review-2.json",
+      "sha256": "88da7e30a04994e212416ce4e22bb8389af5e58da620710a5e0ce66933e651c4"
+    },
+    {
+      "path": "/workspace/validation-reviews/sort4/source-review-2.md",
+      "sha256": "2d4fabea591fee81a8285ce679e0d5bb4397d34756d3b3bf7ce7400358bd260e"
+    },
+    {
+      "path": "/workspace/validation-reviews/sort4/source-review-preparation-2.md",
+      "sha256": "32ecf8b75a06d452d477162c02b4efa401533600ae6285282d8e4392167e485b"
+    },
+    {
+      "path": "/workspace/validation-reviews/sort4/assertion-preservation-root.json",
+      "sha256": "9f3a799b6eb7f7a2a62dc1a9989c805cd3d575c34782d182dab1cc9569a9b715"
+    },
+    {
+      "path": "/workspace/validation-reviews/sort4/source-implementation-preservation-3.json",
+      "sha256": "2928c226a78a725efdeec1c4776499808fd31cb0a8b19bd205d51aa6599c85fc"
+    },
+    {
+      "path": "/workspace/validation-reviews/sort4/reference/root-provenance.json",
+      "sha256": "e049af33ffa2aeb6c7eceb917b87a25a4616039e030fbef569461dabf2f9f048"
+    },
+    {
+      "path": "/workspace/validation-reviews/sort4/reference/manage_tags_sort.actual.json",
+      "sha256": "ce904c7be5542258b547fb79b760459e53187136e49ad101c974a610b367f42d"
+    },
+    {
+      "path": "/workspace/validation-reviews/sort4/reference/tag_namespace_order.actual.json",
+      "sha256": "8902f88f029709e65a93ef316762bd3ab1b19c87824a369041bb3e8c3cc4fd31"
+    },
+    {
+      "path": "/workspace/validation-reviews/sort4/prep-7c74c6171/render-checklist.json",
+      "sha256": "e82c897070874d0a9754b5bfa3860074b8940f9fb884f55b4bb94091725ac969"
+    },
+    {
+      "path": "/workspace/validation-reviews/sort4/prep-7c74c6171/conditional-status-map.json",
+      "sha256": "4c75a26dfe6bd2cf4f011874c6b9b2ecdadcccb4be47ef07e6248fb8bfae768c"
+    },
+    {
+      "path": "/workspace/validation-reviews/sort4/prep-7c74c6171/source-anchor-proof.json",
+      "sha256": "70880d2cf58e6d5983cf77c6bcda9c7df4374b2ec59f9097f6d90557c07f2248"
+    },
+    {
+      "path": "/workspace/validation-reviews/sort4/prep-7c74c6171/subset-preflight/subset-proposal-patch.json",
+      "sha256": "fbec10e45e7e84f1f53ad987bb0c9eff60392304359b03a3c5719a38ce9dc3a1"
+    },
+    {
+      "path": "/workspace/validation-reviews/ci-7c74c6171/ci-evidence.json",
+      "sha256": "addd7d647a13dc7597a1b1e059456557b6f70f8d9df6ba7a39bab16dd42cfae2"
+    },
+    {
+      "path": "/workspace/validation-reviews/ci-7c74c6171/tests.log",
+      "sha256": "8e7922c30fab4af056d7628597b8eaeafb8b2e88c8b525f9bb1dbf89da9e3688"
+    },
+    {
+      "path": "/workspace/validation-reviews/ci-7c74c6171/full-check.log",
+      "sha256": "d5ebcd5ef127dd38abcc995c45436790f44503948e35a7b75847f91aa3270bea"
+    },
+    {
+      "path": "/workspace/validation-reviews/ci-7c74c6171/parity.log",
+      "sha256": "1d9d3d7ae58ba7d46b848535ac2aca619ffa57808e4e7bd2cc1ee92de9ccca06"
+    },
+    {
+      "path": "/workspace/validation-reviews/ci-7c74c6171/clippy.log",
+      "sha256": "8819bcf2c03a66e1204ba503a8f066f78d06baeb23a06b621f537c3cc4707581"
+    },
+    {
+      "path": "/workspace/validation-reviews/ci-7c74c6171/maintenance.log",
+      "sha256": "247ea9b330bd7c7f237abb42790505243dc93516c241bf7959af16f909c2e27e"
+    }
+  ],
+  "scope_and_preservation": "Exactly four selected IDs. This scratch review leaves the canonical prior 347, unselected claims and native inventories untouched. Root owns staged preservation, browser inspection and publication gates.",
+  "provenance": [
+    "The frozen source-only packet remains historical readiness evidence without approval. Current completed CI at the exact source and actual inspection of 14 fresh native images and three Qt images resolve only the execution and rendering gates.",
+    "The ZIP SHA is supplied by the source/run/artifact manifest. The reviewer independently recomputed all 14 image hashes, byte sizes and dimensions, producer line hashes and exact committed source blob hashes.",
+    "The root direct Qt/DB reruns exited with code 0, matched fixture values and preserved PNG bytes. Sandbox denial of the optional API listener does not invalidate those direct cases and supplies no API connectivity claim.",
+    "The reviewer performed read-only source, log and image inspection and wrote scratch reports. No builds, tests, recorders, product changes or canonical edits were performed."
+  ]
+}

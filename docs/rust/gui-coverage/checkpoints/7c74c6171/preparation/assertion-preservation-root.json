@@ -1,0 +1,24 @@
+{
+  "baseline": "b5b079a332ad6036bfa016e3f213a04db009eaf0",
+  "implementation_commit": "a4771fca4038b2e3df0e0f8d75ac78be310d089d",
+  "tests_executed": false,
+  "files": [
+    {
+      "path": "crates/hydrus-gui/tests/gui/manage_tags_sort.rs",
+      "prior_assertions": 52,
+      "current_assertions": 65,
+      "all_original_lines_preserved_in_order": true,
+      "old_sha256": "c1c3c9a1f31e5d0b8d77ee7d0953375a8db4d58338980f6194e7e01dc932d09f",
+      "new_sha256": "b8fcb302b359adf0fab0592c7cf0cac000787134f33a6d4dbc6c435af85cb2ae"
+    },
+    {
+      "path": "crates/hydrus-gui/tests/gui/tag_namespace_order.rs",
+      "prior_assertions": 43,
+      "current_assertions": 48,
+      "all_original_lines_preserved_in_order": true,
+      "old_sha256": "a6fa1e5857003f8e17d7eeca61b66a0fadc8d368c5931ae04f0a46708c64e7be",
+      "new_sha256": "63c96613849bb1a2f5c7d1f2536b4984271128cfa842f29114f166d6dd8b7a25"
+    }
+  ],
+  "slint_generation_matches_integrated_ui": true
+}
