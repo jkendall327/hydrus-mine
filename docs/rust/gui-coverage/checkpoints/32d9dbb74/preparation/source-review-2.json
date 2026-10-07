@@ -1,0 +1,331 @@
+{
+  "schema_version": 1,
+  "review_kind": "source/test/reference readiness; no native/fullCI approval",
+  "baseline_source_commit": "844ab6d7b9f7b9c9feab0a2293cf77117ed87f07",
+  "reviewed_patch_commit": "e1932e41242944bd3d0e87cd67d10912ceb1155e",
+  "reviewed_source_commit": "32d9dbb74d0c6b55d6d402dc9e44c72ece4a3192",
+  "selected_ids": [
+    "audit-options-gui-misc-force-that-hitting-enter-return-on-radio-button-lists-triggers-a-dialog-ok"
+  ],
+  "approval": false,
+  "source_approval": false,
+  "blocking_findings": [],
+  "actionable_findings": [],
+  "checks": [
+    {
+      "area": "Correct savedfalse semantics",
+      "source": [
+        "ClientGUICommon.py:864\u2013874",
+        "record_radio_return.py:66\u2013108",
+        "predicate_editor_window.rs:384\u2013423",
+        "filesize_comparison.slint:15\u201330",
+        "predicate_editor.slint:261\u2013264"
+      ],
+      "result": "Qt true explicitly ignores Enter/Return for parent default; false uses superclass radio handling. Actual Linux modal40cases all accept with unchanged selections. Native false returns reject from radio, allowing parent OK; it is not a suppress-accept policy."
+    },
+    {
+      "area": "First physical key is not artificially armed",
+      "source": [
+        "tests/gui/radio_return.rs:208\u2013250"
+      ],
+      "result": "New live editor starts radio_default_panel=-1. render settles focus; physical Down/Up proves actual radio consumes arrows and restores comparison0. No invoke_force_radio_ok precedes first Return. Physical press/release invokes savedfalse reader, arms panel0, bubbles parent OK and publishes exact filesize<200KB."
+    },
+    {
+      "area": "Retained armed stale route",
+      "source": [
+        "tests/gui/radio_return.rs:252\u2013291",
+        "predicate_editor_window.rs:26\u2013109,384\u2013423,497\u2013524"
+      ],
+      "result": "Separate old draft is explicitly prearmed while live to model retained default0. Final Bound drops with Main/window/collector/child alive. Existing bounded timer helper requires slotNone/hidden; before active predicates and recent/default snapshots are exact. Re-shown stale Return tests parent default even though radio refuses after retirement, and downstream OK refuses terminal owner; no slot/query/settings write."
+    },
+    {
+      "area": "Successor isolation and honest settings expectations",
+      "source": [
+        "tests/gui/radio_return.rs:293\u2013327",
+        "active_predicates.rs:8\u201338"
+      ],
+      "result": "Fresh successor real radio focus still begins default=-1.150ms observer span plus old Return/Cancel cannot hide/clear it or write old/current/settings. Fresh physical Return publishes123KB. Defaults tuple element1 remains exact; legitimate successful recent changes are captured afterward and all later stale keys preserve that full snapshot. No weakening of recent/default assertions."
+    },
+    {
+      "area": "Capture producer state",
+      "source": [
+        "tests/gui/radio_return.rs:115\u2013133"
+      ],
+      "result": "Actual savedfalse reopened GUI Options row is asserted unchecked with exact fixture label and Storefalse, then current latest native window rendered980x850 before original Cancel. No forced caption/check-state or geometry substitution. Still-image actual unchecked drawing, full label and checkbox visibility require fresh native inspection."
+    },
+    {
+      "area": "Preservation/API/lint",
+      "source": [
+        "tests/gui/radio_return.rs",
+        "active_predicates.rs:8\u201338"
+      ],
+      "result": "Diff insertion-only137lines, all47old assertions/all3old tests bytepreserved;84current assertions/4tests. Uses existing physical key and real collector render helpers; available pub(super) timer/settings signatures fit. No product source changes, broad warning suppression, threshold weakening or new runtime behavior claim. No immediate RustAPI/borrow/lint pitfall identified; compiled/runtime proof remains pending."
+    },
+    {
+      "area": "Final committed four-file integration",
+      "source": [
+        "32d9dbb74d0c6b55d6d402dc9e44c72ece4a3192"
+      ],
+      "result": "Reviewed test bytes unchanged and match e1932e412 patch; all prior14pins match finalcommitted blobs. Three doc/manifest edits preserve historical metadata, exact40Qt/savedfalse/physicalkey/capture/retainedlifetime limits; current pending346/29 only. No product change or canonical promotion. Full exactsourceLinux/freshnative review remains pending."
+    }
+  ],
+  "scope_caveats": [
+    "Exactly one preference leaf; no Options/GUI parent, aliases, predicate/deletion family, absent widget/dialog family or new hierarchy credit.",
+    "Actual Qt rerun is Linux/offscreen. False accepts through native radio/default in all40recorded cases; other Qt/platform fallback behavior is not asserted. Native public replay maps both reference key names to Slint Return; physical OS Enter translation is not newly proved.",
+    "Only five currently implemented radio groups (filesize/hashsign/hashtype/deleteaction/deletereason) are included. Reference controls represented by other native widgets and absent radio families are excluded.",
+    "Qt radio_return PNG is filesize after accepted dialog re-show; native old consumer PNG is pre-key rendered then saved. Qt outer Apply/footer/style differs, and no matching Qt GUI Options screenshot exists in this recorder; its staging/reopen control states are JSON-recorded. No pixel or whole-dialog geometry equality.",
+    "New lifetime safety is terminal native hide/refusal with retained windows/adapters, not Qt object deallocation or active nested modal teardown. Shared predicate owner is separately banked; radio receives no extra predicate/parent credit.",
+    "Source-only review does not execute new tests or inspect future native renders. Requires exact final commit full strict Linux CI/parity and fresh savedfalse Options/consumer render inspection. Windows/macOS deferred."
+  ],
+  "reviewed_source_pins": [
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-gui/tests/gui/radio_return.rs",
+      "sha256": "5ce4948f9a69b659bdb3a325517633ab0d126db61c7c9d4fd20f7234b403b833",
+      "baseline_sha256": "0296639d9dcb9a2527d7fccce29b2786fa090391b6731fc71eddee92d0005a70",
+      "baseline_commit": "844ab6d7b9f7b9c9feab0a2293cf77117ed87f07",
+      "unchanged_from_baseline": false,
+      "patch_commit": "e1932e41242944bd3d0e87cd67d10912ceb1155e",
+      "source_commit": "32d9dbb74d0c6b55d6d402dc9e44c72ece4a3192",
+      "current_is_committed": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-gui/src/predicate_editor_window.rs",
+      "sha256": "c7d61453c0cd2907ac0cb697cda6b6ab3286871624bb7b41f6c674ad8f1fabf4",
+      "baseline_sha256": "c7d61453c0cd2907ac0cb697cda6b6ab3286871624bb7b41f6c674ad8f1fabf4",
+      "baseline_commit": "844ab6d7b9f7b9c9feab0a2293cf77117ed87f07",
+      "unchanged_from_baseline": true,
+      "patch_commit": null,
+      "source_commit": "32d9dbb74d0c6b55d6d402dc9e44c72ece4a3192",
+      "current_is_committed": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-gui/ui/filesize_comparison.slint",
+      "sha256": "1a4f31dba3cd1ccb9b2fef7350960ce1125ef14974d392d19ba5e39a796a017d",
+      "baseline_sha256": "1a4f31dba3cd1ccb9b2fef7350960ce1125ef14974d392d19ba5e39a796a017d",
+      "baseline_commit": "844ab6d7b9f7b9c9feab0a2293cf77117ed87f07",
+      "unchanged_from_baseline": true,
+      "patch_commit": null,
+      "source_commit": "32d9dbb74d0c6b55d6d402dc9e44c72ece4a3192",
+      "current_is_committed": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-gui/ui/predicate_editor.slint",
+      "sha256": "a3099a2be8aab1aa9347fa5cf666d89482206e8b0baf661f9e90d98547795c84",
+      "baseline_sha256": "a3099a2be8aab1aa9347fa5cf666d89482206e8b0baf661f9e90d98547795c84",
+      "baseline_commit": "844ab6d7b9f7b9c9feab0a2293cf77117ed87f07",
+      "unchanged_from_baseline": true,
+      "patch_commit": null,
+      "source_commit": "32d9dbb74d0c6b55d6d402dc9e44c72ece4a3192",
+      "current_is_committed": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-gui/tests/gui/active_predicates.rs",
+      "sha256": "4375011be4878c60d38e79787385e47f59ca371f5c603ce6596d996337fb0cc2",
+      "baseline_sha256": "4375011be4878c60d38e79787385e47f59ca371f5c603ce6596d996337fb0cc2",
+      "baseline_commit": "844ab6d7b9f7b9c9feab0a2293cf77117ed87f07",
+      "unchanged_from_baseline": true,
+      "patch_commit": null,
+      "source_commit": "32d9dbb74d0c6b55d6d402dc9e44c72ece4a3192",
+      "current_is_committed": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-gui/src/predicate_notice.rs",
+      "sha256": "202b6615bfd3c6146837e3f421370a95c90ea6985d0ec2747e05b2102d57fb30",
+      "baseline_sha256": "202b6615bfd3c6146837e3f421370a95c90ea6985d0ec2747e05b2102d57fb30",
+      "baseline_commit": "844ab6d7b9f7b9c9feab0a2293cf77117ed87f07",
+      "unchanged_from_baseline": true,
+      "patch_commit": null,
+      "source_commit": "32d9dbb74d0c6b55d6d402dc9e44c72ece4a3192",
+      "current_is_committed": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-gui/src/lib.rs",
+      "sha256": "b71c9e66ab1f71337cb525b0363ae1e7eb1434a47d44f61bb313733195d4c67a",
+      "baseline_sha256": "b71c9e66ab1f71337cb525b0363ae1e7eb1434a47d44f61bb313733195d4c67a",
+      "baseline_commit": "844ab6d7b9f7b9c9feab0a2293cf77117ed87f07",
+      "unchanged_from_baseline": true,
+      "patch_commit": null,
+      "source_commit": "32d9dbb74d0c6b55d6d402dc9e44c72ece4a3192",
+      "current_is_committed": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-store/src/radio_return.rs",
+      "sha256": "34de008b280431f1e7991dabc65c445c3b532eb1263d8c9647df50b98e7107d6",
+      "baseline_sha256": "34de008b280431f1e7991dabc65c445c3b532eb1263d8c9647df50b98e7107d6",
+      "baseline_commit": "844ab6d7b9f7b9c9feab0a2293cf77117ed87f07",
+      "unchanged_from_baseline": true,
+      "patch_commit": null,
+      "source_commit": "32d9dbb74d0c6b55d6d402dc9e44c72ece4a3192",
+      "current_is_committed": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-gui-model/tests/model/radio_return.rs",
+      "sha256": "ab2c3578c9af3ab8a879fc3b8f9a7e2d163972d58a4af47b29402b8038655253",
+      "baseline_sha256": "ab2c3578c9af3ab8a879fc3b8f9a7e2d163972d58a4af47b29402b8038655253",
+      "baseline_commit": "844ab6d7b9f7b9c9feab0a2293cf77117ed87f07",
+      "unchanged_from_baseline": true,
+      "patch_commit": null,
+      "source_commit": "32d9dbb74d0c6b55d6d402dc9e44c72ece4a3192",
+      "current_is_committed": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/oracle/record_radio_return.py",
+      "sha256": "c3a47b18e31e58a4a76f1ad72a2e17e08d58b7e9da5a3569ed05418648e5b664",
+      "baseline_sha256": "c3a47b18e31e58a4a76f1ad72a2e17e08d58b7e9da5a3569ed05418648e5b664",
+      "baseline_commit": "844ab6d7b9f7b9c9feab0a2293cf77117ed87f07",
+      "unchanged_from_baseline": true,
+      "patch_commit": null,
+      "source_commit": "32d9dbb74d0c6b55d6d402dc9e44c72ece4a3192",
+      "current_is_committed": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/oracle/fixtures/radio_return.json",
+      "sha256": "2832e49dd771230860316f9c94004ccbc1ba4c1832f0ee81161da790e7638dd4",
+      "baseline_sha256": "2832e49dd771230860316f9c94004ccbc1ba4c1832f0ee81161da790e7638dd4",
+      "baseline_commit": "844ab6d7b9f7b9c9feab0a2293cf77117ed87f07",
+      "unchanged_from_baseline": true,
+      "patch_commit": null,
+      "source_commit": "32d9dbb74d0c6b55d6d402dc9e44c72ece4a3192",
+      "current_is_committed": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/oracle/fixtures/radio_return.png",
+      "sha256": "b780ad4cb92414949f83b86721e46c6d3bc0c1a7cd97f59440e9b24f27e2dd9a",
+      "baseline_sha256": "b780ad4cb92414949f83b86721e46c6d3bc0c1a7cd97f59440e9b24f27e2dd9a",
+      "baseline_commit": "844ab6d7b9f7b9c9feab0a2293cf77117ed87f07",
+      "unchanged_from_baseline": true,
+      "patch_commit": null,
+      "source_commit": "32d9dbb74d0c6b55d6d402dc9e44c72ece4a3192",
+      "current_is_committed": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/hydrus/client/gui/widgets/ClientGUICommon.py",
+      "sha256": "5251e5a3aee653e339ce459da02437f7255776509bf70ce03fc9e61f1134991c",
+      "baseline_sha256": "5251e5a3aee653e339ce459da02437f7255776509bf70ce03fc9e61f1134991c",
+      "baseline_commit": "844ab6d7b9f7b9c9feab0a2293cf77117ed87f07",
+      "unchanged_from_baseline": true,
+      "patch_commit": null,
+      "source_commit": "32d9dbb74d0c6b55d6d402dc9e44c72ece4a3192",
+      "current_is_committed": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/hydrus/client/gui/panels/options/GUIPanel.py",
+      "sha256": "e7a17cefbac5dc7b8246670ecbc7df82e9657dd0e30718c38806e7df1db548cb",
+      "baseline_sha256": "e7a17cefbac5dc7b8246670ecbc7df82e9657dd0e30718c38806e7df1db548cb",
+      "baseline_commit": "844ab6d7b9f7b9c9feab0a2293cf77117ed87f07",
+      "unchanged_from_baseline": true,
+      "patch_commit": null,
+      "source_commit": "32d9dbb74d0c6b55d6d402dc9e44c72ece4a3192",
+      "current_is_committed": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/docs/rust/GUI.md",
+      "source_commit": "32d9dbb74d0c6b55d6d402dc9e44c72ece4a3192",
+      "sha256": "3cc0e2501f4e5d33eb325893e262cff4d8acd487990b4cbbd43e6a7edf29d6e3",
+      "current_is_committed": true,
+      "review_scope": "pending narrative/manifest addition preserving finite limits and historical metadata"
+    },
+    {
+      "path": "/workspace/hydrus-mine/docs/rust/DIFFERENCES.md",
+      "source_commit": "32d9dbb74d0c6b55d6d402dc9e44c72ece4a3192",
+      "sha256": "1360deac26568ab0a618d4f0025b622cbee7da98f6b4b8993b7be6a16dbabb63",
+      "current_is_committed": true,
+      "review_scope": "pending narrative/manifest addition preserving finite limits and historical metadata"
+    },
+    {
+      "path": "/workspace/hydrus-mine/docs/rust/gui-coverage/parity/radio-return.json",
+      "source_commit": "32d9dbb74d0c6b55d6d402dc9e44c72ece4a3192",
+      "sha256": "1b39260f8fc0b86fabe265b9a48ebfaef9689ff1d3b53b9f7b39d8b3379c1fe1",
+      "current_is_committed": true,
+      "review_scope": "pending narrative/manifest addition preserving finite limits and historical metadata"
+    }
+  ],
+  "reviewed_diff_sha256": "55a9d1f854330cffd61f4e580e8b4bc94f35ba3c17dfe2b664a30ff9167d246c",
+  "assertion_preservation": {
+    "original_assertion_macro_count": 47,
+    "current_assertion_macro_count": 84,
+    "original_tests": 3,
+    "current_tests": 4,
+    "insertion_only": true,
+    "all_original_lines_byte_preserved": true
+  },
+  "new_test": {
+    "path": "/workspace/hydrus-mine/crates/hydrus-gui/tests/gui/radio_return.rs",
+    "line": 209,
+    "name": "unforced_parent_default_accepts_live_but_final_bound_retirement_is_permanent",
+    "execution_claimed": false
+  },
+  "capture": {
+    "name": "radio-return-options-false.png",
+    "producer_path": "/workspace/hydrus-mine/crates/hydrus-gui/tests/gui/radio_return.rs",
+    "producer_line": 126,
+    "dimensions": [
+      980,
+      850
+    ],
+    "state": "savedfalse reopened gui Options before Cancel; exactrow/store asserted",
+    "future_native_image_actually_viewed": false
+  },
+  "reference_rerun": {
+    "provenance_path": "/workspace/validation-reviews/radio1/reference/root-provenance.json",
+    "executed_by_root": true,
+    "executed_by_reviewer": false,
+    "exit_code": 0,
+    "actual_result_value_equal_canonical": true,
+    "case_count": 40,
+    "groups": [
+      "delete_action",
+      "delete_reason",
+      "filesize",
+      "hash_sign",
+      "hash_type"
+    ],
+    "all_results_accepted": true,
+    "all_selection_unchanged": true,
+    "all_focus_and_default_true": true
+  },
+  "reference_images_actually_viewed": [
+    {
+      "path": "/workspace/hydrus-mine/oracle/fixtures/radio_return.png",
+      "sha256": "b780ad4cb92414949f83b86721e46c6d3bc0c1a7cd97f59440e9b24f27e2dd9a",
+      "source_commit": "844ab6d7b9f7b9c9feab0a2293cf77117ed87f07",
+      "actually_viewed": true,
+      "scope": "realQtfilesize afteraccepted dialog re-show; notnativeprekey orOptionsPNG"
+    }
+  ],
+  "proof_hashes": [
+    {
+      "path": "/workspace/validation-reviews/radio1/reference/root-provenance.json",
+      "sha256": "654deb099a121e1c6eb9285e36f693c4cf94027570cbbd75a7558fdae30849cd"
+    },
+    {
+      "path": "/workspace/validation-reviews/radio1/reference/root-recorder.log",
+      "sha256": "3576eae9990b4a21531dd58112e4c58a6298ab2573b4ffd203aceaca17716516"
+    },
+    {
+      "path": "/workspace/validation-reviews/radio1/reference/radio_return.actual.json",
+      "sha256": "82e856a3156addef54e178375cae742544fdf913fac0557768519653b93e15f9"
+    },
+    {
+      "path": "/workspace/validation-reviews/radio1/preparation/defining-review-checklist.json",
+      "sha256": "9df5b935d4c078b3062e7bcab6a3264f96dbd1cf94690f440fada978f597bac9"
+    },
+    {
+      "path": "/workspace/validation-reviews/radio1/preparation/claim-scope-inventory.json",
+      "sha256": "ce622497eb4a189e698e38e9687fd96a1986240b407bbdeb2453326bd4295554"
+    },
+    {
+      "path": "/workspace/validation-reviews/predicate3/next-radio-triage.md",
+      "sha256": "788d029c395875efbe2b7488e634284246142f1ae78581c3fd850d6f6745d4c8"
+    }
+  ],
+  "required_final_gates": [
+    "Final source32d9dbb74d0c6b55d6d402dc9e44c72ece4a3192 pinned; require later exactsource CI/render evidence",
+    "Full exactsource strict Linuxfmt/Clippy/tests/ratchet/parity green",
+    "Actual fresh source/run/artifact-bound savedfalseOptions andconsumer images readable/correctstate",
+    "Root staged immutableprior346/unselected/nativepreservation and publication review"
+  ],
+  "repository_or_canonical_edits": false,
+  "builds_tests_or_recorder_execution_by_reviewer": false,
+  "conclusion": "No concrete source/test blocker identified; preserve finite scope and await exact final source/CI/freshrender gates."
+}

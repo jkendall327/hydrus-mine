@@ -116,6 +116,19 @@ fn gui_options_cancel_hidden_stale_apply_save_reopen_and_live_existing_editor() 
     assert!(!store.read(radio_return::load).unwrap().force_dialog_ok);
     let (reopened, row) = options(&ui, &bound);
     assert!(!reopened.get_rows().row_data(row as usize).unwrap().checked);
+    assert_eq!(
+        reopened.get_rows().row_data(row as usize).unwrap().label,
+        fixture["label"].as_str().unwrap()
+    );
+    assert!(!store.read(radio_return::load).unwrap().force_dialog_ok);
+    let pixels = headless::render(&windows.get(windows.count() - 1).unwrap(), 980, 850);
+    headless::save_png(
+        &std::path::Path::new(env!("CARGO_TARGET_TMPDIR")).join("radio-return-options-false.png"),
+        &pixels,
+        980,
+        850,
+    )
+    .unwrap();
     reopened.invoke_cancel();
     let editor = predicate(&ui, &bound, false);
     let native = windows.get(windows.count() - 1).unwrap();
@@ -189,6 +202,130 @@ fn gui_options_cancel_hidden_stale_apply_save_reopen_and_live_existing_editor() 
             .unwrap()
             .force_dialog_ok
     );
+    ui.hide().unwrap();
+}
+
+#[test]
+fn unforced_parent_default_accepts_live_but_final_bound_retirement_is_permanent() {
+    let (_dirs, store) = super::subscriptions::store();
+    save(&store, false);
+    let windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    ui.show().unwrap();
+    let bound = bind(&ui, Pages::single(SearchPage::new(store.clone())));
+    let focus_radio = |window: &PredicateEditorWindow| {
+        headless::render(&windows.get(windows.count() - 1).unwrap(), 1000, 500);
+        let sign = || {
+            window
+                .get_panels()
+                .row_data(0)
+                .unwrap()
+                .fields
+                .row_data(1)
+                .unwrap()
+                .chosen
+        };
+        assert_eq!(sign(), 0);
+        key(window.window(), Key::DownArrow.into());
+        assert_eq!(sign(), 1, "the actual filesize radio owns keyboard focus");
+        key(window.window(), Key::UpArrow.into());
+        assert_eq!(sign(), 0);
+    };
+
+    let live = predicate(&ui, &bound, false);
+    focus_radio(&live);
+    assert_eq!(live.get_radio_default_panel(), -1);
+    assert!(!store.read(radio_return::load).unwrap().force_dialog_ok);
+    // No direct policy callback arms this first key: the real focused radio
+    // reads saved false, arms its panel and bubbles to the parent default.
+    key(live.window(), Key::Return.into());
+    assert_eq!(live.get_radio_default_panel(), 0);
+    assert!(!live.window().is_visible());
+    assert!(bound.predicate_editor.borrow().is_none());
+    assert_eq!(
+        bound.current.borrow().borrow().predicates(),
+        ["system:filesize < 200KB"]
+    );
+
+    let old = predicate(&ui, &bound, false);
+    old.invoke_number_edited(0, 2, 211);
+    focus_radio(&old);
+    assert!(!old.invoke_force_radio_ok(0));
+    assert_eq!(old.get_radio_default_panel(), 0);
+    let current = bound.current.borrow().clone();
+    let before = current.borrow().active_predicates().to_vec();
+    let saved = super::active_predicates::predicate_settings(&store);
+    let slot = bound.predicate_editor.clone();
+    drop(bound);
+    super::active_predicates::drain_predicate_timers_until(
+        "final Bound drop must close an unforced default-route draft",
+        || slot.borrow().is_none() && !old.window().is_visible(),
+    );
+    assert!(ui.as_weak().upgrade().is_some());
+    assert!(ui.window().is_visible());
+    assert!(
+        windows.count() >= 3,
+        "the collector and child handles remain"
+    );
+    assert_eq!(current.borrow().active_predicates(), before);
+    assert_eq!(super::active_predicates::predicate_settings(&store), saved);
+
+    old.show().unwrap();
+    headless::render(&windows.get(windows.count() - 1).unwrap(), 1000, 500);
+    assert_eq!(
+        old.get_radio_default_panel(),
+        0,
+        "retain the armed default route"
+    );
+    key(old.window(), Key::Return.into());
+    assert!(slot.borrow().is_none());
+    assert_eq!(current.borrow().active_predicates(), before);
+    assert_eq!(super::active_predicates::predicate_settings(&store), saved);
+
+    let successor = bind(&ui, Pages::single(SearchPage::new(store.clone())));
+    let next = predicate(&ui, &successor, false);
+    next.invoke_number_edited(0, 2, 123);
+    focus_radio(&next);
+    super::active_predicates::drain_predicate_timers_for_observer();
+    key(old.window(), Key::Return.into());
+    old.invoke_cancel();
+    assert!(next.window().is_visible());
+    assert!(std::ptr::eq(
+        successor
+            .predicate_editor
+            .borrow()
+            .as_ref()
+            .unwrap()
+            .window(),
+        next.window()
+    ));
+    assert!(successor.current.borrow().borrow().predicates().is_empty());
+    assert_eq!(current.borrow().active_predicates(), before);
+    assert_eq!(super::active_predicates::predicate_settings(&store), saved);
+    assert!(!store.read(radio_return::load).unwrap().force_dialog_ok);
+    assert_eq!(next.get_radio_default_panel(), -1);
+    key(next.window(), Key::Return.into());
+    assert_eq!(next.get_radio_default_panel(), 0);
+    assert!(successor.predicate_editor.borrow().is_none());
+    assert!(!next.window().is_visible());
+    assert_eq!(
+        successor.current.borrow().borrow().predicates(),
+        ["system:filesize < 123KB"]
+    );
+    assert_eq!(current.borrow().active_predicates(), before);
+    let after_successor = super::active_predicates::predicate_settings(&store);
+    assert_eq!(
+        after_successor.1, saved.1,
+        "Return does not change defaults"
+    );
+    key(old.window(), Key::Return.into());
+    old.invoke_cancel();
+    assert_eq!(current.borrow().active_predicates(), before);
+    assert_eq!(
+        super::active_predicates::predicate_settings(&store),
+        after_successor
+    );
+    old.hide().unwrap();
     ui.hide().unwrap();
 }
 

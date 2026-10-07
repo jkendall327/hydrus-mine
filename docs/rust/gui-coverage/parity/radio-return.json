@@ -5,7 +5,8 @@
   "source_commit": "69cd18a71b02a07ebb44e6b6296b3f6b49044dc7",
   "implementation_commits": [
     "84607f3c98313c595ef5551401c99868fb930b4e",
-    "69cd18a71b02a07ebb44e6b6296b3f6b49044dc7"
+    "69cd18a71b02a07ebb44e6b6296b3f6b49044dc7",
+    "e1932e41242944bd3d0e87cd67d10912ceb1155e"
   ],
   "frozen_original_inventory": {
     "path": "docs/rust/gui-coverage/reference-inventory.json",
@@ -35,9 +36,10 @@
       "source_commit": "69cd18a71b02a07ebb44e6b6296b3f6b49044dc7",
       "implementation_commits": [
         "84607f3c98313c595ef5551401c99868fb930b4e",
-        "69cd18a71b02a07ebb44e6b6296b3f6b49044dc7"
+        "69cd18a71b02a07ebb44e6b6296b3f6b49044dc7",
+        "e1932e41242944bd3d0e87cd67d10912ceb1155e"
       ],
-      "behavior": "Expose the exact GUI/misc checkbox immediately after ISO-time preference. Typed default true, actual saved ClientOptions decoding, native override wins and retained legacy fallback for old imported stores. Options edits stage independently; Cancel/hidden/stale Apply do not write, changed Apply persists and unchanged Apply preserves newer saved values and other GUI fields. Every current native radio group reads live saved policy per Return: filesize, hash sign/type and advanced deletion action/reason. True uses explicit OK; false delegates to the actual parent default/button bubble. All40 actual modal Linux Qt cases accept, for both Enter/Return and all initial/live combinations; false is not promised to suppress dialog acceptance. Multiline hash text retains newline consumption. Captured pane index is armed by the focused radio and cleared on page navigation. Delete Return no longer captures before children; Escape and custom reason LineEdit behavior remain. Closed/hidden/retired child or parent cannot apply through either route.",
+      "behavior": "Expose the exact GUI/misc checkbox immediately after ISO-time preference. Typed default true, actual saved ClientOptions decoding, native override wins and retained legacy fallback for old imported stores. Options edits stage independently; Cancel/hidden/stale Apply do not write, changed Apply persists and unchanged Apply preserves newer saved values and other GUI fields. Every current native radio group reads live saved policy per Return: filesize, hash sign/type and advanced deletion action/reason. True uses explicit OK; false delegates to the actual parent default/button bubble. All40 actual modal Linux Qt cases accept, for both Enter/Return and all initial/live combinations; false is not promised to suppress dialog acceptance. Multiline hash text retains newline consumption. Captured pane index is armed by the focused radio and cleared on page navigation. Delete Return no longer captures before children; Escape and custom reason LineEdit behavior remain. Closed/hidden/retired child or parent cannot apply through either route. Saved-disabled reopening has a dedicated asserted Options capture. A physical Return with an initially unarmed panel proves live disabled-policy default acceptance; after final binding retirement, retained armed Return cannot publish, change recents/defaults or disturb a live successor.",
       "reference_source": {
         "relativepath": "hydrus/client/gui/panels/options/GUIPanel.py",
         "line": 173,
@@ -430,6 +432,20 @@
           "symbol": "out['legacy'] = c.new_options.GetSerialisableTuple()",
           "line_sha256": "fac5e0e122ec7db94f2baa961d23df74ed2afac0f0418819d9a367f00faa9a98",
           "commit": "69cd18a71b02a07ebb44e6b6296b3f6b49044dc7"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/radio_return.rs",
+          "line": 209,
+          "symbol": "fn unforced_parent_default_accepts_live_but_final_bound_retirement_is_permanent",
+          "line_sha256": "4a8f620e4f38699f76d6d90be7f60a047d90444169e167a95b65c99543674914",
+          "commit": "e1932e41242944bd3d0e87cd67d10912ceb1155e"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/radio_return.rs",
+          "line": 126,
+          "symbol": ".join(\"radio-return-options-false.png\")",
+          "line_sha256": "35edcf25edf4339d415a246d064c969b49d4ab6fc328ebe99267e7b0b0f231d0",
+          "commit": "e1932e41242944bd3d0e87cd67d10912ceb1155e"
         }
       ],
       "tests": [
@@ -437,14 +453,16 @@
         "model/radio_return::cancelled_staging_changed_save_and_unchanged_concurrent_apply_match_actual_options",
         "gui/radio_return::gui_options_cancel_hidden_stale_apply_save_reopen_and_live_existing_editor",
         "gui/radio_return::all_recorded_filesize_hash_groups_accept_with_live_policy_and_preserve_multiline_consumption",
-        "gui/radio_return::actual_advanced_delete_action_reason_defaults_and_retained_owners_follow_live_policy"
+        "gui/radio_return::actual_advanced_delete_action_reason_defaults_and_retained_owners_follow_live_policy",
+        "gui/radio_return::unforced_parent_default_accepts_live_but_final_bound_retirement_is_permanent"
       ],
       "limits": [
         "Conditional source-only completion proposal; exact hosted strict Clippy/Rust/native replay and native PNG inspection remain pending. No local Cargo/Rust builds/tests/mutations executed.",
         "Actual Qt recording is Linux/offscreen. False delegates to the native parent/default path; other Qt/platform QRadioButton fallback behavior is not asserted. Native public key replay uses Slint Return token for the reference Enter/Return records; OS physical key translation is the existing backend.",
         "Only every current implemented native radio list is included. Reference controls represented by other native widget types and absent widget/dialog families remain outside this finite checkbox claim.",
         "No parent/alias/new ID promotion or MIME-mode evidence-only reassessment; existing filesize/hash predicate and deletion families receive no completion credit from these consumer regressions.",
-        "Root active-predicate batch integration must preserve this shared on_ok(panel) routing, per-key live reader, question/notice guards, and multiline consumption; current source pins the independently reviewed single-editor API."
+        "Shared Main-owned lifetime composition was banked separately at 844ab6d7b; this preference still preserves shared on_ok(panel) routing, per-key reads, question/notice guards and multiline consumption. The new false-policy safety test retains native components and proves terminal refusal, not Qt object deallocation or active nested modal teardown.",
+        "Qt consumer image is re-shown after acceptance; the native consumer frame uses pre-key pixels. No matching Qt Options PNG exists in this recorder; actual staging/reopen states are JSON-recorded. Native fonts, layout and Apply footer differ; no pixel or OS-key-translation equality is claimed."
       ]
     }
   ],
@@ -529,5 +547,46 @@
   },
   "canonical_changes": false,
   "completed_ledger_changes": false,
-  "parents_counted": false
+  "parents_counted": false,
+  "validation_followup": {
+    "state": "source_test_additions_only_full_exact_source_Linux_and_fresh_native_review_pending",
+    "published_baseline": "844ab6d7b9f7b9c9feab0a2293cf77117ed87f07",
+    "test_commit": "e1932e41242944bd3d0e87cd67d10912ceb1155e",
+    "prior_assertions_preserved": 47,
+    "current_assertions": 84,
+    "product_changes": false,
+    "signed_off_total": 346,
+    "existing_candidates_pending": 29,
+    "expected_native_renders": [
+      {
+        "artifact": "radio-return-options-false.png",
+        "dimensions": [
+          980,
+          850
+        ],
+        "state": "Actual saved-false reopened Options before Cancel; exact label, unchecked row and persisted false asserted."
+      },
+      {
+        "artifact": "radio-return-native.png",
+        "dimensions": [
+          1000,
+          500
+        ],
+        "state": "Existing actual consumer frame, pre-key pixels saved after accepted state; not a still-image key-acceptance proof."
+      }
+    ],
+    "reference_recheck": {
+      "executed_utc": "2026-10-07T02:36:23.274125+00:00",
+      "exit_code": 0,
+      "case_count": 40,
+      "canonical_fixture_values_unchanged": true,
+      "script_sha256": "c3a47b18e31e58a4a76f1ad72a2e17e08d58b7e9da5a3569ed05418648e5b664",
+      "fixture_sha256": "2832e49dd771230860316f9c94004ccbc1ba4c1832f0ee81161da790e7638dd4",
+      "render_sha256": "b780ad4cb92414949f83b86721e46c6d3bc0c1a7cd97f59440e9b24f27e2dd9a",
+      "log_sha256": "3576eae9990b4a21531dd58112e4c58a6298ab2573b4ffd203aceaca17716516",
+      "actual_result_sha256": "82e856a3156addef54e178375cae742544fdf913fac0557768519653b93e15f9",
+      "scope": "Actual Qt five radio groups, four saved-policy transitions and Enter/Return; false still reaches default acceptance. Does not establish native OS Enter translation, new native lifetime test, or fresh native rendered approval."
+    },
+    "scope": "One radio preference leaf only; no parent/alias/predicate/deletion or deferred-platform credit. Historical author source/reference/validation fields remain provenance."
+  }
 }

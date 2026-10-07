@@ -1,0 +1,18 @@
+{
+  "base_source": "844ab6d7b9f7b9c9feab0a2293cf77117ed87f07",
+  "executed_at_utc": "2026-10-07T02:36:23.274125+00:00",
+  "command": "source /workspace/.cloud/hydrus/activate.sh && timeout 150 /workspace/.cloud/hydrus/pyenv/bin/python oracle/record_radio_return.py --child /workspace/validation-reviews/radio1/reference/radio_return.actual.json",
+  "exit_code": 0,
+  "fixture_value_equal": true,
+  "case_count": 40,
+  "script_sha256": "c3a47b18e31e58a4a76f1ad72a2e17e08d58b7e9da5a3569ed05418648e5b664",
+  "canonical_fixture_sha256": "2832e49dd771230860316f9c94004ccbc1ba4c1832f0ee81161da790e7638dd4",
+  "actual_result_sha256": "82e856a3156addef54e178375cae742544fdf913fac0557768519653b93e15f9",
+  "png_sha256": "b780ad4cb92414949f83b86721e46c6d3bc0c1a7cd97f59440e9b24f27e2dd9a",
+  "log_sha256": "3576eae9990b4a21531dd58112e4c58a6298ab2573b4ffd203aceaca17716516",
+  "scope": "Actual Qt five radio groups, four saved-policy transitions and Enter/Return; false still reaches default acceptance. Does not establish native OS Enter translation, new native lifetime test, or fresh native rendered approval.",
+  "root_viewed_reference_image": "oracle/fixtures/radio_return.png",
+  "reference_image_scope": "Actual reference filesize frame re-shown after accepted key; not native pre-key state or pixel-parity proof.",
+  "root_actually_viewed_png": true,
+  "image_scope": "Reference filesize frame re-shown after successful key acceptance; it is not a native saved-disabled Options capture or visual proof of key delivery."
+}

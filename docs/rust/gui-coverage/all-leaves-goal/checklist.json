@@ -4,12 +4,12 @@
   "goal": "All individual feature leaves in the report implemented and explicitly verified.",
   "classification_audit_source": "05000f10eafc4211d6856549d0073edb90ba5811",
   "classification_audit": "audit-05000f10e.json",
-  "validated_implementation_source": "170ab05251e79db77e0b97692f30d17843a3ca78",
+  "validated_implementation_source": "32d9dbb74d0c6b55d6d402dc9e44c72ece4a3192",
   "distinct_terminal_leaves": 1274,
   "baseline_deficit_leaves": 813,
   "historical_first_pass_leaves": 461,
-  "explicit_implementation_signoffs": 346,
-  "remaining_without_explicit_signoff": 928,
+  "explicit_implementation_signoffs": 347,
+  "remaining_without_explicit_signoff": 927,
   "implementation_ledger": "../overnight/progress.json",
   "historical_verification_approvals": [],
   "leaves": [
@@ -2486,7 +2486,7 @@
     {
       "id": "audit-options-gui-misc-force-that-hitting-enter-return-on-radio-button-lists-triggers-a-dialog-ok",
       "baseline_status": "missing",
-      "signed_off_in_implementation_ledger": false
+      "signed_off_in_implementation_ledger": true
     },
     {
       "id": "audit-options-gui-misc-mouse-wheel-can-scroll-through-menu-buttons",
@@ -6384,6 +6384,6 @@
       "signed_off_in_implementation_ledger": true
     }
   ],
-  "previous_checkpoint_commit": "1eace8c6ef5a1ed6a2367ad48bdbed28800f6484",
-  "checkpoint_evidence": "../checkpoints/170ab0525/README.md"
+  "previous_checkpoint_commit": "844ab6d7b9f7b9c9feab0a2293cf77117ed87f07",
+  "checkpoint_evidence": "../checkpoints/32d9dbb74/README.md"
 }

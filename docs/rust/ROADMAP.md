@@ -7,21 +7,20 @@ partway, say exactly where.
 
 The owner's current goal (2026-10-06) is **all individual report feature leaves
 implemented, verified and published**, with Linux first. Numeric checkpoints are
-progress reports, not stopping targets. The latest checkpoint banks 346 original
-concrete feature completions, including 106 newly signed off across eleven recent
-Linux checkpoints with fresh rendered review. There are 29 existing candidates
-awaiting sign-off; the next bounded batch targets the single radio-Return
-preference leaf through saved-disabled capture and retained-key safety coverage.
+progress reports, not stopping targets. The latest checkpoint banks 347 original
+concrete feature completions, including 107 newly signed off across twelve recent
+Linux checkpoints with fresh rendered review. There are 28 existing candidates
+awaiting sign-off; the next bounded repair targets the sort/group Options layout.
 Keep these counts separate from inventory assessments and historical first-pass
 claims. Validate and publish each small batch routinely, and reassess any batch
 that goes 24 hours without a checkpoint. Broad implementation must not rebuild
 an unvalidated backlog. Windows/macOS remain deferred; strict Linux linting,
 full tests, reference replays and rendered review remain required.
-The latest run restored 230 verified workspace artifact files on a compatible
-older runner image. Strict Clippy took 5m48s and test compilation 6m37s; the
-different runner image prevents a controlled speedup attribution. All 704 GUI
-and 67 media tests passed.
-See [the checkpoint evidence](gui-coverage/checkpoints/170ab0525/README.md).
+The latest checkpoint validates the radio Return preference, with actual saved-
+disabled Options capture and retained-key safety coverage. All 705 GUI and 67
+media tests passed. The prior predicate checkpoint's cache measurements remain
+in the compilation investigation; cache input never substitutes for validation.
+See [the checkpoint evidence](gui-coverage/checkpoints/32d9dbb74/README.md).
 
 The first parallel slate (2026-10-03) adds detailed embedded metadata,
 manual file export, local service review/management, tag sibling/parent
@@ -69,8 +68,8 @@ and all 121 exported native windows into nested work, including shared editors,
 all 38 reference option tabs and 19 system-predicate groups. It contains 1,812
 reference nodes and 1,799 native nodes, with per-node assessments, concrete
 remaining work and pinned source/evidence links. The frozen reference inventory
-now has 480 Missing, 385 Partial and 947 First pass entries; its status changes
-also include parent/alias assessments, which do not inflate the 346-item signed-off completion count.
+now has 479 Missing, 385 Partial and 948 First pass entries; its status changes
+also include parent/alias assessments, which do not inflate the 347-item signed-off completion count.
 Native first-pass claims cite scoped regression evidence; source-supported but
 unverified behavior is partial. These counts are not a whole-client completion
 percentage. Maintenance instructions and scope limits are in

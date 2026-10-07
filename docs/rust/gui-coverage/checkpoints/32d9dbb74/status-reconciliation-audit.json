@@ -1,0 +1,56 @@
+{
+  "source_commit": "32d9dbb74d0c6b55d6d402dc9e44c72ece4a3192",
+  "ci_evidence_sha256": "97a4e6de70f04250eb5474bad377332f20efbf8171ccb1858d53b689f04f496f",
+  "mapping_sha256": "ae9520a348565fde7d04a61188c386f5eaaf14028247c9c252c70b4bf1829d8f",
+  "mapping_applied_after_gates": true,
+  "operations": [
+    {
+      "id": "audit-options-gui-misc-force-that-hitting-enter-return-on-radio-button-lists-triggers-a-dialog-ok",
+      "field": "limitations",
+      "original_index": 0,
+      "operation": "remove_exact_list_item",
+      "before": "Conditional source-only completion proposal; exact hosted strict Clippy/Rust/native replay and native PNG inspection remain pending. No local Cargo/Rust builds/tests/mutations executed.",
+      "conditional_after": null,
+      "reason": "Remove only resolved pending execution/render status AFTER actual exact-source CI and fresh independent/root review; preserve false-default/finitegroups/OSkey/state/provenance limitations."
+    },
+    {
+      "id": "audit-options-gui-misc-force-that-hitting-enter-return-on-radio-button-lists-triggers-a-dialog-ok",
+      "field": "remaining",
+      "original_index": 0,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source hosted full Linux validation remains pending.",
+      "conditional_after": null,
+      "reason": "Remove only resolved pending execution/render status AFTER actual exact-source CI and fresh independent/root review; preserve false-default/finitegroups/OSkey/state/provenance limitations."
+    },
+    {
+      "id": "audit-options-gui-misc-force-that-hitting-enter-return-on-radio-button-lists-triggers-a-dialog-ok",
+      "field": "remaining",
+      "original_index": 1,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source fresh native rendered/behavioral review and final assessment reconciliation remain pending.",
+      "conditional_after": null,
+      "reason": "Remove only resolved pending execution/render status AFTER actual exact-source CI and fresh independent/root review; preserve false-default/finitegroups/OSkey/state/provenance limitations."
+    }
+  ],
+  "added_review_scope_limits": {
+    "audit-options-gui-misc-force-that-hitting-enter-return-on-radio-button-lists-triggers-a-dialog-ok": [
+      "Fresh980x850 savedfalse reopened Options label and actual unchecked drawing are validated; reference label/order/staged/reopened checkbox states come from actual QtJSON because this recorder has no matching QtOptionsPNG. Current surrounding Options rows receive no additional credit.",
+      "The new first physical Return begins with radio-default-panel=-1 after actual Down/Up focus proof and reads savedfalse through the radio. A separately live-prearmed old draft tests retained default0 after final Bound drop; old Return/Cancel preserve old page/recent/default snapshots and a live successor accepts123KB. This is finite default-route safety, not broader widget-owner parity.",
+      "Physical pointer-focused multiline hash TextEdit consumes Return as a newline under savedtrue in the existing regression. No new savedfalse multiline regression or absent widget-family coverage is asserted.",
+      "Current shared predicate lifetime composition is separately banked. Native finalBound retirement hides/refuses intentionally retained components; no object-deallocation, active nestedmodal destruction or additional genericactiveedit completion credit.",
+      "Validation is Linux only; Windows/macOS deferred. Exactly one preference leaf; no Options/GUI parent, aliases, newIDs, MIME evidence-only assessment, predicate/deletion or otherfamily credit."
+    ]
+  },
+  "reviews": [
+    {
+      "path": "docs/rust/gui-coverage/checkpoints/32d9dbb74/final-review-2-32d9dbb74.json",
+      "sha256": "298bfb27647ea0f98fb66dae968b3626a1fc540ee889a1fe60b499ed10845179"
+    }
+  ],
+  "selected_ids": [
+    "audit-options-gui-misc-force-that-hitting-enter-return-on-radio-button-lists-triggers-a-dialog-ok"
+  ],
+  "prior346_completion_ids_and_assessments_preserved": true,
+  "source_only_native_anchor_ids": [],
+  "final_patch_digest": "8d089905901c74d5f291731e34993e41d4e5242535d371bc3ea49f80d2352265"
+}
