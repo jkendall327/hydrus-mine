@@ -23,57 +23,52 @@ fn settled_options_frame(
     row: i32,
 ) -> hydrus_gui::MenuChoiceFrame {
     use std::time::{Duration, Instant};
-    // The geometry observer emits only after a frame change. Reading the same
-    // cached entry twice does not establish readiness after hide/show. Exercise
-    // a real width change, then require a new callback at the final size before
-    // dispatching the single wheel event. Never retry the input itself.
     let started = Instant::now();
-    let mut final_frame = None;
-    for width in [1101, 1100] {
-        frames.borrow_mut().remove(&(row, 0));
-        let stage_started = Instant::now();
-        let mut previous = None;
-        loop {
-            headless::render(native, width, 800);
-            let measured = frames.borrow().get(&(row, 0)).cloned();
-            if let Some(frame) = measured.as_ref() {
-                let values = [frame.x, frame.y, frame.w, frame.h];
-                let bits = values.map(f32::to_bits);
-                if values.into_iter().all(f32::is_finite)
-                    && frame.w > 0.0
-                    && frame.h > 0.0
-                    && frame.x >= 0.0
-                    && frame.y >= 0.0
-                    && frame.x + frame.w <= width as f32
-                    && frame.y + frame.h <= 800.0
+    let mut previous = None;
+    loop {
+        headless::render(native, 1100, 800);
+        let measured = frames.borrow().get(&(row, 0)).cloned();
+        if let Some(frame) = measured.as_ref() {
+            let values = [frame.x, frame.y, frame.w, frame.h];
+            let bits = values.map(f32::to_bits);
+            if values.into_iter().all(f32::is_finite)
+                && frame.w > 0.0
+                && frame.h > 0.0
+                && frame.x >= 0.0
+                && frame.y >= 0.0
+                && frame.x + frame.w <= 1100.0
+                && frame.y + frame.h <= 800.0
+            {
+                // Slint 1.18.1 Flickable retains wheel routing for 800 ms,
+                // including a rejected child event clamped at a scroll boundary.
+                // Let that prior hidden-window gesture expire at the unchanged
+                // viewport before this distinct input. Pump real timers/layout;
+                // no input is retried and immediate recovery is not asserted.
+                if started.elapsed() >= Duration::from_millis(810)
+                    && previous == Some(bits)
+                    && !options.window().has_active_animations()
                 {
-                    if stage_started.elapsed() >= Duration::from_millis(2)
-                        && previous == Some(bits)
-                        && !options.window().has_active_animations()
-                    {
-                        eprintln!(
-                            "fresh post-show Options choice measurement: width={width}, frame={frame:?}, elapsed={:?}",
-                            started.elapsed(),
-                        );
-                        final_frame = Some(frame.clone());
-                        break;
-                    }
-                    previous = Some(bits);
-                } else {
-                    previous = None;
+                    eprintln!(
+                        "Options wheel gesture expired at unchanged viewport: frame={frame:?}, elapsed={:?}, scroll_y={}",
+                        started.elapsed(),
+                        options.get_options_scroll_y(),
+                    );
+                    return frame.clone();
                 }
+                previous = Some(bits);
+            } else {
+                previous = None;
             }
-            assert!(
-                started.elapsed() < Duration::from_secs(2),
-                "Options choice row {row} did not settle after a fresh callback at width={width}: frame={measured:?}, visible={}, animations={}, scroll_y={}",
-                options.window().is_visible(),
-                options.window().has_active_animations(),
-                options.get_options_scroll_y(),
-            );
-            std::thread::sleep(Duration::from_millis(1));
         }
+        assert!(
+            started.elapsed() < Duration::from_secs(2),
+            "Options choice row {row} did not settle in the viewport: frame={measured:?}, visible={}, animations={}, scroll_y={}",
+            options.window().is_visible(),
+            options.window().has_active_animations(),
+            options.get_options_scroll_y(),
+        );
+        std::thread::sleep(Duration::from_millis(1));
     }
-    final_frame.expect("both viewport sizes produced fresh geometry callbacks")
 }
 fn wheel(
     native: &slint::platform::software_renderer::MinimalSoftwareWindow,

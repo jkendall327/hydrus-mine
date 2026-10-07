@@ -2275,6 +2275,18 @@ cannot resume that chord drag upon re-entry while Left remains held. Ordinary
 single-button captured drags retain the previously recorded outside behavior.
 This framework boundary remains explicit; full chord capture parity is not claimed.
 
+The rating-preview evidence follow-up targets all four service-editor examples
+for like, numerical and counter services, plus the inline counter input. The
+earlier 640×900 export showed only the first example. New captures scroll the
+actual owned editor at 640×1000 and await full Linux execution and rendered
+review. Native examples retain the tested saved 20/15/12/12 icon sizes rather
+than the Qt recorder's default sizing. Preview Window is an example label,
+not evidence of a live Preview canvas. Captures retain the existing native
+action sequence: the first like sample is selected and the first counter is 1;
+the Qt final stills show that like sample cleared and the counter at 2.
+These are different demonstrated states, not matched pixels. Broader rating
+rendering and the cross-edge chord-drag limit remain outside this one-leaf scope.
+
 The global missing-archive-time repair uses an owned native window for Qt's
 warning, population-choice dialogs and job popup. Native scan/repair work runs
 in the background and revalidates the captured candidates inside a single
@@ -3345,6 +3357,14 @@ and tag-row consumers, and owner retirement; their execution and exact-source
 PNG inspection are pending hosted CI. Pointer popup-row probing is bounded to a
 160px band covering the native two-row menu across widget styles and retains mandatory exact
 selection/results assertions.
+
+The next wheel-test follow-up replaces the small resize readiness workaround
+with an idle interval at the original viewport. Slint 1.18.1's Flickable can
+retain a wheel-routing timestamp for 800 ms even when content is clamped and
+no animation is active. Pumping real timers/layout for at least 810 ms tests
+one distinct subsequent gesture without retrying input or changing assertions.
+This source-supported precondition does not prove the earlier failure's precise
+cause or immediate hide/show recovery; fresh Linux execution remains pending.
 
 The actual Qt media-type Random roundtrip is recorded separately as a remaining
 limitation: SHA-256 hash sort (system20) ASC → Random (system4) → hash ASC
