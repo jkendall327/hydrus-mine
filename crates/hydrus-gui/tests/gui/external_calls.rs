@@ -1723,3 +1723,457 @@ fn list_flags(w: &OptionsWindow) -> (bool, bool, bool, i32, bool, slint::SharedS
         w.get_external_call_error(),
     )
 }
+
+#[test]
+fn defaults_physical_menu_exact_choices_saved_reopen_and_retired_selector_are_owned() {
+    let oracle = hydrus_testkit::fixture_json("external_calls.json");
+    let (_dirs, store) = store();
+    let mut prior = Callable::new("prior selection");
+    prior.call = ActualCall::Process(Process {
+        executable: "owned-program".into(),
+        ..Process::default()
+    });
+    let original = Manager { calls: vec![prior] };
+    let manager = original.clone();
+    store
+        .write(move |ctx| hydrus_store::settings::set(ctx.conn(), &manager))
+        .unwrap();
+    let defaults = hydrus_downloader_exchange::external_calls::defaults(false).unwrap();
+    let windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    ui.show().unwrap();
+    let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+    let w = open(&ui, &bound);
+    let options_index = windows.count() - 1;
+    let adapter = windows.get(options_index).unwrap();
+    w.invoke_external_call_clicked(named(&w, "prior selection"), false, false);
+    let before = (list_rows(&w), list_flags(&w));
+    let adapters_before = windows.count();
+    defaults_popup(&w, &adapter, &bound);
+    assert_eq!(
+        windows.count(),
+        adapters_before,
+        "popup uses the parent composite"
+    );
+    list_capture(
+        &windows,
+        options_index,
+        w.window(),
+        "external-defaults-menu.png",
+        (1100, 800),
+    );
+    assert_eq!(defaults_popup_count(&w), 1);
+    defaults_key(&w, &adapter, slint::platform::Key::Escape);
+    assert_eq!(defaults_popup_count(&w), 0);
+    assert_eq!((list_rows(&w), list_flags(&w)), before);
+    assert_eq!(saved(&store), original);
+    assert!(!bound.options_external_calls.has_open());
+
+    defaults_route(&w, &adapter, &bound, 0, &oracle);
+    let q = question(&bound);
+    list_capture(
+        &windows,
+        windows.count() - 1,
+        q.window(),
+        "external-defaults-platform-question.png",
+        (520, 200),
+    );
+    q.invoke_answered(false);
+    assert!(bound.options_external_calls.question.borrow().is_none());
+    assert!(bound.options_external_calls.defaults.borrow().is_none());
+    assert_default_route(&w, &original, &defaults, &oracle["default_routes"][0]);
+    assert_eq!(saved(&store), original);
+    list_capture(
+        &windows,
+        options_index,
+        w.window(),
+        "external-defaults-all-draft.png",
+        (1100, 800),
+    );
+    w.invoke_cancel();
+    assert_eq!(saved(&store), original);
+
+    let w = open(&ui, &bound);
+    let adapter = windows.get(windows.count() - 1).unwrap();
+    w.invoke_external_call_clicked(named(&w, "prior selection"), false, false);
+    defaults_route(&w, &adapter, &bound, 1, &oracle);
+    question(&bound).invoke_answered(false);
+    let selector = defaults_selector(&bound);
+    let selector_index = windows.count() - 1;
+    assert_default_choices(&selector, &oracle);
+    assert!(selector.get_rows().iter().all(|row| !row.selected));
+    list_capture(
+        &windows,
+        selector_index,
+        selector.window(),
+        "external-defaults-selector-initial.png",
+        (600, 550),
+    );
+    selector.invoke_toggled(0);
+    selector.invoke_toggled(9);
+    assert_eq!(defaults_selected(&selector), [0, 9]);
+    assert_eq!(saved(&store), original);
+    list_capture(
+        &windows,
+        selector_index,
+        selector.window(),
+        "external-defaults-selector-selected.png",
+        (600, 550),
+    );
+    selector.invoke_apply();
+    assert!(bound.options_external_calls.defaults.borrow().is_none());
+    assert!(!selector.window().is_visible());
+    let chosen = [defaults[0].clone(), defaults[9].clone()];
+    assert_default_route(&w, &original, &chosen, &oracle["default_routes"][1]);
+    assert_eq!(saved(&store), original);
+    w.invoke_apply();
+    let persisted = saved(&store);
+    assert_eq!(persisted.calls.len(), 3);
+    assert_eq!(
+        persisted
+            .calls
+            .iter()
+            .find(|call| call.key == original.calls[0].key),
+        Some(&original.calls[0])
+    );
+    assert_eq!(
+        persisted
+            .calls
+            .iter()
+            .map(|call| call.key)
+            .collect::<std::collections::BTreeSet<_>>()
+            .len(),
+        3
+    );
+    for expected in &chosen {
+        let actual = persisted
+            .calls
+            .iter()
+            .find(|call| call.name == expected.name)
+            .unwrap();
+        assert_ne!(actual.key, original.calls[0].key);
+        assert!(!defaults.iter().any(|default| default.key == actual.key));
+        let mut expected = expected.clone();
+        expected.key = actual.key;
+        assert_eq!(actual, &expected);
+    }
+    let reopened = open(&ui, &bound);
+    let cells = persisted.calls.iter().map(call_cells).collect::<Vec<_>>();
+    assert_eq!(
+        list_rows(&reopened),
+        cells
+            .into_iter()
+            .map(|cells| (cells, false))
+            .collect::<Vec<_>>()
+    );
+    assert_eq!(saved(&store), persisted);
+    list_capture(
+        &windows,
+        windows.count() - 1,
+        reopened.window(),
+        "external-defaults-reopened-saved.png",
+        (1100, 800),
+    );
+    reopened.invoke_cancel();
+    assert_eq!(saved(&store), persisted);
+    retired_defaults_selector_preserves_successor(&ui, &bound, &store, &windows, &oracle);
+}
+
+fn defaults_popup_count(w: &OptionsWindow) -> usize {
+    slint::private_unstable_api::re_exports::WindowInner::from_pub(w.window())
+        .active_popups()
+        .len()
+}
+fn defaults_key(
+    w: &OptionsWindow,
+    adapter: &slint::platform::software_renderer::MinimalSoftwareWindow,
+    key: slint::platform::Key,
+) {
+    let text: slint::SharedString = key.into();
+    w.window()
+        .dispatch_event(slint::platform::WindowEvent::KeyPressed { text: text.clone() });
+    w.window()
+        .dispatch_event(slint::platform::WindowEvent::KeyReleased { text });
+    headless::render(adapter, 1100, 800);
+}
+fn defaults_popup(
+    w: &OptionsWindow,
+    adapter: &slint::platform::software_renderer::MinimalSoftwareWindow,
+    bound: &Bound,
+) {
+    use slint::platform::{PointerEventButton, WindowEvent};
+    use std::time::{Duration, Instant};
+    let started = Instant::now();
+    let mut previous = None;
+    loop {
+        let pixels = headless::render(adapter, 1100, 800);
+        if started.elapsed() >= Duration::from_millis(35)
+            && !w.window().has_active_animations()
+            && previous.as_ref() == Some(&pixels)
+        {
+            break;
+        }
+        assert!(
+            started.elapsed() < Duration::from_secs(2),
+            "defaults pointer frame did not settle"
+        );
+        previous = Some(pixels);
+        std::thread::sleep(Duration::from_millis(5));
+    }
+    assert!(w.window().is_visible());
+    assert_eq!(w.window().scale_factor().to_bits(), 1.0_f32.to_bits());
+    assert_eq!(w.get_options_scroll_y().abs().to_bits(), 0.0_f32.to_bits());
+    assert!(w.get_search_text().is_empty());
+    assert_eq!(w.get_matches().row_count(), 0);
+    assert!(!bound.options_external_calls.has_open());
+    assert!(!w.get_external_call_child_open());
+    assert_eq!(defaults_popup_count(w), 0);
+    // Actual 625a/1943 1100x800, scale-1 PNGs place this Button at
+    // x970..1067,y425..455. This finite hit must open the real two-item menu;
+    // no callback fallback, general geometry or OS transport claim.
+    let position = slint::LogicalPosition::new(1019.0, 440.0);
+    w.window()
+        .dispatch_event(WindowEvent::PointerMoved { position });
+    w.window().dispatch_event(WindowEvent::PointerPressed {
+        position,
+        button: PointerEventButton::Left,
+    });
+    w.window().dispatch_event(WindowEvent::PointerReleased {
+        position,
+        button: PointerEventButton::Left,
+    });
+    headless::render(adapter, 1100, 800);
+    assert_eq!(
+        defaults_popup_count(w),
+        1,
+        "actual add defaults Button popup"
+    );
+    assert!(!bound.options_external_calls.has_open());
+}
+fn defaults_route(
+    w: &OptionsWindow,
+    adapter: &slint::platform::software_renderer::MinimalSoftwareWindow,
+    bound: &Bound,
+    row: usize,
+    oracle: &serde_json::Value,
+) {
+    assert!(row < 2);
+    defaults_popup(w, adapter, bound);
+    for _ in 0..=row {
+        defaults_key(w, adapter, slint::platform::Key::DownArrow);
+    }
+    defaults_key(w, adapter, slint::platform::Key::Return);
+    assert_eq!(defaults_popup_count(w), 0);
+    let q = question(bound);
+    assert!(q.window().is_visible());
+    let platform = if cfg!(windows) {
+        "Windows"
+    } else if cfg!(target_os = "macos") {
+        "macOS"
+    } else {
+        "Linux"
+    };
+    let expected = oracle["questions"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|value| {
+            value["message"]
+                .as_str()
+                .unwrap()
+                .contains("just for your platform")
+        })
+        .unwrap();
+    assert_eq!(
+        q.get_message(),
+        expected["message"]
+            .as_str()
+            .unwrap()
+            .replace("(Linux)", &format!("({platform})"))
+    );
+    assert_eq!(q.get_yes_label(), expected["yes_label"].as_str().unwrap());
+    assert_eq!(q.get_no_label(), expected["no_label"].as_str().unwrap());
+    assert!(bound.options_external_calls.defaults.borrow().is_none());
+}
+fn defaults_selector(bound: &Bound) -> hydrus_gui::ExternalDefaultsWindow {
+    bound
+        .options_external_calls
+        .defaults
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong()
+}
+fn defaults_selected(w: &hydrus_gui::ExternalDefaultsWindow) -> Vec<usize> {
+    w.get_rows()
+        .iter()
+        .enumerate()
+        .filter(|(_, row)| row.selected)
+        .map(|(i, _)| i)
+        .collect()
+}
+fn assert_default_choices(w: &hydrus_gui::ExternalDefaultsWindow, oracle: &serde_json::Value) {
+    assert_eq!(
+        serde_json::to_value(
+            w.get_rows()
+                .iter()
+                .map(|row| (row.cells.row_data(0).unwrap().to_string(), row.selected))
+                .collect::<Vec<_>>()
+        )
+        .unwrap(),
+        oracle["default_routes"][1]["choices"][0]["choices"]
+    );
+}
+fn call_cells(call: &Callable) -> Vec<String> {
+    vec![
+        call.name.clone(),
+        call.pipeline.label().to_owned(),
+        call.call.description(),
+    ]
+}
+fn assert_default_route(
+    w: &OptionsWindow,
+    prior: &Manager,
+    added: &[Callable],
+    case: &serde_json::Value,
+) {
+    let rows = list_rows(w);
+    assert_eq!(
+        serde_json::to_value(rows.iter().map(|row| &row.0[0]).collect::<Vec<_>>()).unwrap(),
+        case["names"]
+    );
+    assert_eq!(
+        serde_json::to_value(
+            rows.iter()
+                .filter(|row| row.1)
+                .map(|row| &row.0[0])
+                .collect::<Vec<_>>()
+        )
+        .unwrap(),
+        case["selected"]
+    );
+    for (cells, _) in rows {
+        let call = prior
+            .calls
+            .iter()
+            .chain(added)
+            .find(|call| call.name == cells[0])
+            .unwrap();
+        assert_eq!(cells, call_cells(call));
+    }
+}
+fn retired_defaults_selector_preserves_successor(
+    ui: &MainWindow,
+    bound: &Bound,
+    store: &Store,
+    windows: &headless::Windows,
+    oracle: &serde_json::Value,
+) {
+    let persisted = saved(store);
+    let old_options = open(ui, bound);
+    let adapter = windows.get(windows.count() - 1).unwrap();
+    defaults_route(&old_options, &adapter, bound, 1, oracle);
+    question(bound).invoke_answered(false);
+    let retired = defaults_selector(bound);
+    retired.invoke_toggled(0);
+    old_options.invoke_cancel();
+    assert!(bound.options_external_calls.defaults.borrow().is_none());
+    assert!(!retired.window().is_visible());
+    let current_options = open(ui, bound);
+    let adapter = windows.get(windows.count() - 1).unwrap();
+    defaults_route(&current_options, &adapter, bound, 1, oracle);
+    question(bound).invoke_answered(false);
+    let current = defaults_selector(bound);
+    current.invoke_toggled(1);
+    assert_eq!(defaults_selected(&current), [1]);
+    let draft = (list_rows(&current_options), list_flags(&current_options));
+    let choices = current
+        .get_rows()
+        .iter()
+        .map(|row| (row.cells.row_data(0).unwrap(), row.selected))
+        .collect::<Vec<_>>();
+    retired.invoke_toggled(9);
+    retired.invoke_apply();
+    retired.invoke_cancel();
+    retired
+        .window()
+        .dispatch_event(slint::platform::WindowEvent::CloseRequested);
+    old_options.invoke_external_call_action("defaults-all".into());
+    old_options.invoke_apply();
+    old_options.invoke_cancel();
+    assert_eq!(saved(store), persisted);
+    assert_eq!(
+        (list_rows(&current_options), list_flags(&current_options)),
+        draft
+    );
+    assert_eq!(
+        current
+            .get_rows()
+            .iter()
+            .map(|row| (row.cells.row_data(0).unwrap(), row.selected))
+            .collect::<Vec<_>>(),
+        choices
+    );
+    assert!(std::ptr::eq(
+        defaults_selector(bound).window(),
+        current.window()
+    ));
+    assert!(std::ptr::eq(
+        bound.options.borrow().as_ref().unwrap().window(),
+        current_options.window()
+    ));
+    assert!(current.window().is_visible());
+    assert!(current_options.window().is_visible());
+    assert!(!retired.window().is_visible());
+    assert!(!old_options.window().is_visible());
+    assert!(bound.options_external_calls.question.borrow().is_none());
+    current.invoke_apply();
+    assert!(bound.options_external_calls.defaults.borrow().is_none());
+    assert!(!current.window().is_visible());
+    let call = hydrus_downloader_exchange::external_calls::defaults(false)
+        .unwrap()
+        .remove(1);
+    let names = [
+        "Default OS File Launch",
+        "prior selection",
+        "xdg-open",
+        "Default OS URL Launch",
+    ];
+    let expected = names
+        .iter()
+        .map(|name| {
+            let value = persisted
+                .calls
+                .iter()
+                .chain(std::iter::once(&call))
+                .find(|value| value.name == *name)
+                .unwrap();
+            (call_cells(value), value.name == call.name)
+        })
+        .collect::<Vec<_>>();
+    assert_eq!(list_rows(&current_options), expected);
+    assert_eq!(saved(store), persisted);
+    // Current selector Cancel and native close discard choices, not the parent.
+    for close_action in ["cancel", "close", "force"] {
+        defaults_route(&current_options, &adapter, bound, 1, oracle);
+        question(bound).invoke_answered(false);
+        let cancelled = defaults_selector(bound);
+        cancelled.invoke_toggled(14);
+        let rows = list_rows(&current_options);
+        match close_action {
+            "close" => cancelled
+                .window()
+                .dispatch_event(slint::platform::WindowEvent::CloseRequested),
+            "force" => bound.options_external_calls.cancel(),
+            _ => cancelled.invoke_cancel(),
+        }
+        assert!(bound.options_external_calls.defaults.borrow().is_none());
+        assert!(!cancelled.window().is_visible());
+        assert_eq!(list_rows(&current_options), rows);
+        assert_eq!(saved(store), persisted);
+        assert!(current_options.window().is_visible());
+    }
+    current_options.invoke_cancel();
+    assert_eq!(saved(store), persisted);
+    assert!(!bound.options_external_calls.has_open());
+}
