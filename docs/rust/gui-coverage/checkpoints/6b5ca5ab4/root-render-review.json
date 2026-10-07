@@ -1,0 +1,89 @@
+{
+  "source_commit": "6b5ca5ab48238b19346e67938d8213a7a26303fb",
+  "run_id": 37583224181,
+  "artifact_id": 11466840798,
+  "native_zip_sha256": "1138f8c9f9de3adc7c92f02cdf8c937898053bf5aec188154e0255f35ae3d404",
+  "actually_viewed": [
+    {
+      "name": "external-command-parameters-selected.png",
+      "path": "/workspace/validation-reviews/ci-6b5ca5ab4/native-renders/external-command-parameters-selected.png",
+      "sha256": "149c74402714192da9727ffdfad2079bc104abbb2157c568d2726e9ed49c17ae",
+      "width": 760,
+      "height": 590,
+      "observation": "760x590: alpha/beta/gamma/delta complete; beta/delta selected. Edit/Delete and both arrows now dark and visibly enabled, unlike the failed-source frame. Full template and Copy/Paste/Apply/Cancel readable. Pasted feedback is also visible."
+    },
+    {
+      "name": "external-command-parameter-add.png",
+      "path": "/workspace/validation-reviews/ci-6b5ca5ab4/native-renders/external-command-parameter-add.png",
+      "sha256": "3c0fc49e851b7dd9ff1aed8e6f3735e36fa4e2f4a1040fa79527b1c2e20dfdcb",
+      "width": 760,
+      "height": 640,
+      "observation": "760x640: full multi-paragraph parameter prompt visible, blank entry with -o placeholder, readable ok/cancel. Buttons are tall at this supported resized view; no matched Qt child geometry claim."
+    },
+    {
+      "name": "external-command-parameter-edit.png",
+      "path": "/workspace/validation-reviews/ci-6b5ca5ab4/native-renders/external-command-parameter-edit.png",
+      "sha256": "2acca1afdca5a2e6fa037b14cd3429f303f97917a83836527b1df00e5d9f4ce6",
+      "width": 760,
+      "height": 640,
+      "observation": "760x640: full prompt visible, populated three entry and readable ok/cancel. Same tall resized button geometry limitation."
+    },
+    {
+      "name": "external-command-delete-review.png",
+      "path": "/workspace/validation-reviews/ci-6b5ca5ab4/native-renders/external-command-delete-review.png",
+      "sha256": "9545fe2dbae51cacdf41630a5569b6fd360c60317cdc98ee2bf41b467af5d957",
+      "width": 520,
+      "height": 200,
+      "observation": "520x200: exact Remove 2 selected? and yes/no readable. Captured confirmation; tall resized buttons, no Qt placement comparison."
+    },
+    {
+      "name": "external-command-copy-feedback.png",
+      "path": "/workspace/validation-reviews/ci-6b5ca5ab4/native-renders/external-command-copy-feedback.png",
+      "sha256": "987f45216d9ef9dab1c6355c8a9ed5821574d0340ae452501c0455bf57425b9a",
+      "width": 760,
+      "height": 590,
+      "observation": "760x590: raw quote-fragment rows profile=\"My and Profile\" plus 日本 and monochrome emoji visible. Cleaned full template is readable and Copied! overlay clearly painted. Edit/Delete/arrows are grey with no selection, as expected."
+    },
+    {
+      "name": "external-command-paste-review.png",
+      "path": "/workspace/validation-reviews/ci-6b5ca5ab4/native-renders/external-command-paste-review.png",
+      "sha256": "0d2137e94e24db2b4431a384884f0eb6b4952c6d08ec0a7e7abc84604e0edb9e",
+      "width": 760,
+      "height": 590,
+      "observation": "760x590: exact owned-program/30 parameters summary, every arg0 through arg29 and Look good? visible; yes/no readable, tall at supported resize."
+    },
+    {
+      "name": "external-command-paste-feedback.png",
+      "path": "/workspace/validation-reviews/ci-6b5ca5ab4/native-renders/external-command-paste-feedback.png",
+      "sha256": "ab29f114ef7774c3eeb3aa0efdbf8eee11c0ad18a262b1d38c606062e28dac05",
+      "width": 760,
+      "height": 590,
+      "observation": "760x590: raw quote-fragment/日本/emoji rows and cleaned template readable; Pasted! overlay clearly painted. Empty selection correctly leaves selection-dependent actions grey."
+    },
+    {
+      "name": "external-command-clipboard-error.png",
+      "path": "/workspace/validation-reviews/ci-6b5ca5ab4/native-renders/external-command-clipboard-error.png",
+      "sha256": "6c73f8b157108b733ac7a58e137f228ab23a4cfee4bf43f6a915b5b1a70d53dd",
+      "width": 520,
+      "height": 200,
+      "observation": "520x200: complete No text on the clipboard! and ok visible and readable; tall supported resized action."
+    }
+  ],
+  "selected_control_readiness_visually_resolved": true,
+  "japanese_glyphs_visually_resolved": true,
+  "independent_review_pending": false,
+  "limits": [
+    "Eight actual fresh frames inspected; no default-size or universal geometry claim.",
+    "Actual Qt reference scripts child answers and clipboard transport; no paired Qt child/error/feedback images or notification timing/pixel/placement parity.",
+    "Tall button geometry at supported resized child views remains explicit.",
+    "No broader command/process/parent/alias, OS launch/output, automatic Main/final Bound destruction or deferred-platform credit.",
+    "Failed predecessor retained separately; no signoff from failed run/images."
+  ],
+  "independent_review_sha256": "18ffb5c1b3c8906b1b019ca9df745dea4b1748929a659a161ee0655bbaeac2f3",
+  "actual_qt_reference": {
+    "path": "/workspace/hydrus-mine/oracle/fixtures/external_command.png",
+    "sha256": "6d7f23d37c4ea7b7415bbdc84373f4c5fb02ebc4ad5105c309da30d9e08c7fb9",
+    "actually_viewed": true,
+    "observation": "760x590 Qt command panel: owned-program, alpha/gamma/beta/delta with beta selected and complete template. Different selection and layout from native defining frame; no paired nested or timed-feedback image."
+  }
+}

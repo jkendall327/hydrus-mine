@@ -1,0 +1,405 @@
+{
+  "source_commit": "6b5ca5ab48238b19346e67938d8213a7a26303fb",
+  "run_id": 37583224181,
+  "at_utc": "2026-10-07T07:28:27.839946+00:00",
+  "executed_helper_sha256": "2590515aaabf74d9b09a6ae7e0a15ac0d6133b686d73c7a1aca63372f0d9fa78",
+  "original_unbound_helper_sha256": "29d8886877a657557beb42c8a5e705e4f84a47e71e35e4fd25a9c6494a25c46f",
+  "initial_bound_helper_sha256": "6d6cfda8aa015a4103bc33a49c0603e788ef46ebbd774ec5d65a71b97444f2d0",
+  "post_binding_guard_change": "Relative committed oracle/fixtures PNGs require safe contained path, working hash, and exact immutable blob hashes at both historical and current source. Historical evidence cannot satisfy fresh-image gates.",
+  "independent_guard_review": "review_1 found no blocker; actual Qt hash verified at both sources.",
+  "check_only_passed": true,
+  "copy_scratch_passed": true,
+  "audited_files": 97,
+  "root_canonical_payload_verified": [
+    {
+      "destination": "docs/rust/gui-coverage/reference-inventory.json",
+      "sha256": "0210b9521baaecec10a2149b29262e41a38dec1646ccf26a2c06c5878cd0d417"
+    },
+    {
+      "destination": "docs/rust/gui-coverage/native-inventory.json",
+      "sha256": "4e35804028e8ad5441511c33993f6da15722e2ac76172836ba616dfcacff13fc"
+    },
+    {
+      "destination": "docs/rust/gui-coverage/overnight/progress.json",
+      "sha256": "9fc32e4c2043ecb8fefb00fd26d5b2ddc18e7c383643656d89b806e917599c54"
+    },
+    {
+      "destination": "docs/rust/gui-coverage/overnight/reviewed-patch.json",
+      "sha256": "5791e4655c5317c7826385f1fa832837f0747c1e7d3cf662b4ef978680f06ec6"
+    },
+    {
+      "destination": "docs/rust/gui-coverage/overnight/ci-evidence.json",
+      "sha256": "13586da5801ed2a6654b770a9091bb58fe817bb64311d0f91284335e183c9f2e"
+    },
+    {
+      "destination": "docs/rust/gui-coverage/audit/anchor-remap-6b5ca5ab-publication.json",
+      "sha256": "f102f2e7ca25eff5accbaac8720fe7f97da7804aafa899d8be8ba7bd271254f8"
+    },
+    {
+      "destination": "docs/rust/gui-progress.html",
+      "sha256": "262cc234b0564e97820de584acddcd78ab614a45d7b738f1d9cd7ca55d567b68"
+    },
+    {
+      "destination": "docs/rust/gui-coverage/checkpoints/6b5ca5ab4/publication-summary.json",
+      "sha256": "509d6060380e25081ff0c123b0636dbfe0c37eda6c23254cc0f1436d9b4de1e4"
+    },
+    {
+      "destination": "docs/rust/gui-coverage/checkpoints/6b5ca5ab4/source-census.json",
+      "sha256": "a209def36bf2adde9d92c80908b3dd2b4238949e73a6042297161eedc77991d8"
+    },
+    {
+      "destination": "docs/rust/gui-coverage/checkpoints/6b5ca5ab4/selected-patch.json",
+      "sha256": "bcd8a1b9168d78c8cf6a2afbbf69a6bfdc83dd098d91b4fdcfd71c1f14ebd9f2"
+    },
+    {
+      "destination": "docs/rust/gui-coverage/checkpoints/6b5ca5ab4/review.json",
+      "sha256": "8aece3979d082e919783289638d5fe22dfc8815aecff884a7b376bf4a56daaf7"
+    },
+    {
+      "destination": "docs/rust/gui-coverage/checkpoints/6b5ca5ab4/status-reconciliation-audit.json",
+      "sha256": "5191f7da924bc02565fdf364650e8689112e3795ef953f3784727abfcbc8b7e7"
+    },
+    {
+      "destination": "docs/rust/gui-coverage/checkpoints/6b5ca5ab4/ci-evidence.json",
+      "sha256": "13586da5801ed2a6654b770a9091bb58fe817bb64311d0f91284335e183c9f2e"
+    },
+    {
+      "destination": "docs/rust/gui-coverage/checkpoints/6b5ca5ab4/native-render-manifest.json",
+      "sha256": "a36db5a7ef250e598d24a1346cdc2cd64f6e04e6b5441f4d30070862243c56b2"
+    },
+    {
+      "destination": "docs/rust/gui-coverage/checkpoints/6b5ca5ab4/browser/browser-check.json",
+      "sha256": "ec5c683fbc05571f8f9ecb75c4e453e8dfbd72ee739dc00eba9ee369ddef7918"
+    },
+    {
+      "destination": "docs/rust/gui-coverage/checkpoints/6b5ca5ab4/browser/report-desktop.png",
+      "sha256": "ade092001c9f2c4a98c22cf9fa10e585fab75141ceefbad3737a8b8ea2e55a36"
+    },
+    {
+      "destination": "docs/rust/gui-coverage/checkpoints/6b5ca5ab4/browser/report-narrow.png",
+      "sha256": "35959bfdd55e3fdeb4a2b0061dd86b550156f5ce2e50f4db7a2bf34fc191cb6f"
+    },
+    {
+      "destination": "docs/rust/gui-coverage/checkpoints/6b5ca5ab4/final-review-2-6b5ca5ab4.json",
+      "sha256": "18ffb5c1b3c8906b1b019ca9df745dea4b1748929a659a161ee0655bbaeac2f3"
+    },
+    {
+      "destination": "docs/rust/gui-coverage/checkpoints/6b5ca5ab4/final-review-2-6b5ca5ab4.md",
+      "sha256": "899d6710a387c1060e4cdc59f860b2b66b363cf1f778ad32f3172f29a33bc778"
+    },
+    {
+      "destination": "docs/rust/gui-coverage/checkpoints/6b5ca5ab4/native/external-command-paste-review.png",
+      "sha256": "0d2137e94e24db2b4431a384884f0eb6b4952c6d08ec0a7e7abc84604e0edb9e"
+    },
+    {
+      "destination": "docs/rust/gui-coverage/checkpoints/6b5ca5ab4/native/external-command-parameters-selected.png",
+      "sha256": "149c74402714192da9727ffdfad2079bc104abbb2157c568d2726e9ed49c17ae"
+    },
+    {
+      "destination": "docs/rust/gui-coverage/checkpoints/6b5ca5ab4/native/external-command-clipboard-error.png",
+      "sha256": "6c73f8b157108b733ac7a58e137f228ab23a4cfee4bf43f6a915b5b1a70d53dd"
+    },
+    {
+      "destination": "docs/rust/gui-coverage/checkpoints/6b5ca5ab4/native/external-command-paste-feedback.png",
+      "sha256": "ab29f114ef7774c3eeb3aa0efdbf8eee11c0ad18a262b1d38c606062e28dac05"
+    },
+    {
+      "destination": "docs/rust/gui-coverage/checkpoints/6b5ca5ab4/native/external-command-parameter-add.png",
+      "sha256": "3c0fc49e851b7dd9ff1aed8e6f3735e36fa4e2f4a1040fa79527b1c2e20dfdcb"
+    },
+    {
+      "destination": "docs/rust/gui-coverage/checkpoints/6b5ca5ab4/native/external-command-parameter-edit.png",
+      "sha256": "2acca1afdca5a2e6fa037b14cd3429f303f97917a83836527b1df00e5d9f4ce6"
+    },
+    {
+      "destination": "docs/rust/gui-coverage/checkpoints/6b5ca5ab4/native/external-command-copy-feedback.png",
+      "sha256": "987f45216d9ef9dab1c6355c8a9ed5821574d0340ae452501c0455bf57425b9a"
+    },
+    {
+      "destination": "docs/rust/gui-coverage/checkpoints/6b5ca5ab4/native/external-command-delete-review.png",
+      "sha256": "9545fe2dbae51cacdf41630a5569b6fd360c60317cdc98ee2bf41b467af5d957"
+    },
+    {
+      "destination": "docs/rust/gui-coverage/checkpoints/6b5ca5ab4/full-check.log",
+      "sha256": "32d5d322f9477915582d7df08817e2117b1a6b67a732a4033411bf1e9ca177cc"
+    },
+    {
+      "destination": "docs/rust/gui-coverage/checkpoints/6b5ca5ab4/tests.log",
+      "sha256": "5ebac70523eeb8eb874d4e320880aaa2a0345b25a8dc1e9ee7aac6b1aafe9c4b"
+    },
+    {
+      "destination": "docs/rust/gui-coverage/checkpoints/6b5ca5ab4/parity.log",
+      "sha256": "0ddea5b04f8177b4e3b71f39309241409f108df21bdd4a7a740fcfe994633089"
+    },
+    {
+      "destination": "docs/rust/gui-coverage/checkpoints/6b5ca5ab4/maintenance.log",
+      "sha256": "4cb4f09214d1d912dede43af644de5ff6b77213454574fa6c7c6e2f610295f70"
+    },
+    {
+      "destination": "docs/rust/gui-coverage/checkpoints/6b5ca5ab4/root-render-review.json",
+      "sha256": "d9271c9707bb7c1ba494bfea903c067019737134c1ffbe84b42df48025e23533"
+    },
+    {
+      "destination": "docs/rust/gui-coverage/checkpoints/6b5ca5ab4/clippy.log",
+      "sha256": "3493416c1a20c8294f82a35c2e93cf9aa7123dc277c90067ede5c45380b7befb"
+    },
+    {
+      "destination": "docs/rust/gui-coverage/checkpoints/6b5ca5ab4/validation-outcome.json",
+      "sha256": "3b45c3d1da7b93e89c30388cd0e9a53425814df55524d9f121897e7b2aaa285f"
+    },
+    {
+      "destination": "docs/rust/gui-coverage/checkpoints/6b5ca5ab4/preparation/selection.json",
+      "sha256": "d6bf61b342a87a64210041ed7694a24c0d2a631f552ecffadd4e3309a08f8738"
+    },
+    {
+      "destination": "docs/rust/gui-coverage/checkpoints/6b5ca5ab4/preparation/preparation1.json",
+      "sha256": "79e8df72277aed6eb6875e41c2865f20551edabff51223706969acc293497313"
+    },
+    {
+      "destination": "docs/rust/gui-coverage/checkpoints/6b5ca5ab4/preparation/conditional-status-map.json",
+      "sha256": "7be806bbce7e18ae1488a38628eb2fb40818304437dcc543559b6c8361309716"
+    },
+    {
+      "destination": "docs/rust/gui-coverage/checkpoints/6b5ca5ab4/preparation/prior355-preservation-proof.json",
+      "sha256": "cd27cb60fd04bd494b56ba89606fd5bc32111b899d11260ac3f7c795366bc4dd"
+    },
+    {
+      "destination": "docs/rust/gui-coverage/checkpoints/6b5ca5ab4/preparation/render-checklist.json",
+      "sha256": "51fd572b5aedea580d3de761d08233008734dae47c8e268ded759acbf21e57e1"
+    },
+    {
+      "destination": "docs/rust/gui-coverage/checkpoints/6b5ca5ab4/preparation/preparation-summary.json",
+      "sha256": "8fbb5016e583ec19d07559a83cfc09fdb92789279803f39cc402f4d8acd841bd"
+    },
+    {
+      "destination": "docs/rust/gui-coverage/checkpoints/6b5ca5ab4/preparation/scope-reconciliation-proof.json",
+      "sha256": "0c53fe99d07617c95f0b906e21741d1235a34b6b71f4c00ff26bc81007095ed6"
+    },
+    {
+      "destination": "docs/rust/gui-coverage/checkpoints/6b5ca5ab4/preparation/source-anchor-proof.json",
+      "sha256": "9e4ce48efb3bb5c74f768e40f0dce45ffff4d931a4153cfac1f5f7b1028232b7"
+    },
+    {
+      "destination": "docs/rust/gui-coverage/checkpoints/6b5ca5ab4/preparation/committed-source-review-provenance.json",
+      "sha256": "37296b88e8b8eb66f04b042597759ab4f64c519569afb910bb5082c4f8682ce7"
+    },
+    {
+      "destination": "docs/rust/gui-coverage/checkpoints/6b5ca5ab4/preparation/binding-anchor-proof.json",
+      "sha256": "3d902304b87a3c47a42c1115ac927148ab35ab6e1289c4920889e7facddecacc"
+    },
+    {
+      "destination": "docs/rust/gui-coverage/checkpoints/6b5ca5ab4/preparation/inherited-wiring-anchor-proof.json",
+      "sha256": "8f7439963cb3532acb72e757c79998d9b132c92e3d64fd1e583c4d8507d4b932"
+    },
+    {
+      "destination": "docs/rust/gui-coverage/checkpoints/6b5ca5ab4/preparation/README.md",
+      "sha256": "b699c8f4b3ceb14173a19ed3e3a4f5da6a3501719ba75235f763b48cecc8f5da"
+    },
+    {
+      "destination": "docs/rust/gui-coverage/checkpoints/6b5ca5ab4/preparation/source-review-2.json",
+      "sha256": "0f32c3b8d809e0cbe90c99072b0a53ff3130a961245f87f835409d8660e5ab86"
+    },
+    {
+      "destination": "docs/rust/gui-coverage/checkpoints/6b5ca5ab4/preparation/source-review-2.md",
+      "sha256": "4426c1d84b0c2ba1dece4b9be0ccd23cf5440df02b300620aa44073f5ac81a1b"
+    },
+    {
+      "destination": "docs/rust/gui-coverage/checkpoints/6b5ca5ab4/preparation/assertion-preservation-root.json",
+      "sha256": "5fb170775cae683107d3c1d7da751aeb51bbb51d363cc6c1d817e7491e25b522"
+    },
+    {
+      "destination": "docs/rust/gui-coverage/checkpoints/6b5ca5ab4/preparation/assertion-preservation-3.json",
+      "sha256": "57bd5cd2755f78e18ee36096a751c73fbcfecd94449aaea3b0dff866b4ac6134"
+    },
+    {
+      "destination": "docs/rust/gui-coverage/checkpoints/6b5ca5ab4/reference/root-provenance.json",
+      "sha256": "ee52aa69522e9bad349332840c0a311b881e001bbc5532be7c0b72395bc2dde0"
+    },
+    {
+      "destination": "docs/rust/gui-coverage/checkpoints/6b5ca5ab4/reference/before-inputs.json",
+      "sha256": "0ce500bc464ef0904d75f007971bfa908a52927ab7aa9e5b81305ef9f19b3ce5"
+    },
+    {
+      "destination": "docs/rust/gui-coverage/checkpoints/6b5ca5ab4/reference/external-command.log",
+      "sha256": "87ff7b1c2f39e63183de2acf77460b7fa01939afe2e40dfdefcc2d4a225b5e65"
+    },
+    {
+      "destination": "docs/rust/gui-coverage/checkpoints/6b5ca5ab4/reference/external_command.actual.json",
+      "sha256": "4d73edb0d40c840e162b6d463577d9657cfe86ec743e51670357ebe8cef738a9"
+    },
+    {
+      "destination": "docs/rust/gui-coverage/checkpoints/6b5ca5ab4/preparation/subset-source-preflight.json",
+      "sha256": "56dd4f47ead710b9fe4536952bb4e1529cc2a9cf8ba2ff1a5dc516fa19db2adf"
+    },
+    {
+      "destination": "docs/rust/gui-coverage/checkpoints/6b5ca5ab4/preparation/prepare-evidence-copy-6b5ca5ab4.py",
+      "sha256": "2590515aaabf74d9b09a6ae7e0a15ac0d6133b686d73c7a1aca63372f0d9fa78"
+    },
+    {
+      "destination": "docs/rust/gui-coverage/checkpoints/6b5ca5ab4/failed-runs/3c17f2f45/native/external-command-paste-review.png",
+      "sha256": "0d2137e94e24db2b4431a384884f0eb6b4952c6d08ec0a7e7abc84604e0edb9e"
+    },
+    {
+      "destination": "docs/rust/gui-coverage/checkpoints/6b5ca5ab4/failed-runs/3c17f2f45/native/external-command-parameters-selected.png",
+      "sha256": "5e7d99c03266833f31b6308f106f5c97ad00d71ceb49823f0255fb5ea8443dda"
+    },
+    {
+      "destination": "docs/rust/gui-coverage/checkpoints/6b5ca5ab4/failed-runs/3c17f2f45/native/external-command-clipboard-error.png",
+      "sha256": "6c73f8b157108b733ac7a58e137f228ab23a4cfee4bf43f6a915b5b1a70d53dd"
+    },
+    {
+      "destination": "docs/rust/gui-coverage/checkpoints/6b5ca5ab4/failed-runs/3c17f2f45/native/external-command-paste-feedback.png",
+      "sha256": "34a1e4dc9fb1fb436fd56fd3fa875d62682c782836774cf385d85b795ea5d348"
+    },
+    {
+      "destination": "docs/rust/gui-coverage/checkpoints/6b5ca5ab4/failed-runs/3c17f2f45/native/external-command-parameter-add.png",
+      "sha256": "3c0fc49e851b7dd9ff1aed8e6f3735e36fa4e2f4a1040fa79527b1c2e20dfdcb"
+    },
+    {
+      "destination": "docs/rust/gui-coverage/checkpoints/6b5ca5ab4/failed-runs/3c17f2f45/native/external-command-parameter-edit.png",
+      "sha256": "2acca1afdca5a2e6fa037b14cd3429f303f97917a83836527b1df00e5d9f4ce6"
+    },
+    {
+      "destination": "docs/rust/gui-coverage/checkpoints/6b5ca5ab4/failed-runs/3c17f2f45/native/external-command-copy-feedback.png",
+      "sha256": "13ad0090ffa5fc21758e9bf6e016d9c99c1327111890ac3c4e577e840187fd7b"
+    },
+    {
+      "destination": "docs/rust/gui-coverage/checkpoints/6b5ca5ab4/failed-runs/3c17f2f45/native/external-command-delete-review.png",
+      "sha256": "9545fe2dbae51cacdf41630a5569b6fd360c60317cdc98ee2bf41b467af5d957"
+    },
+    {
+      "destination": "docs/rust/gui-coverage/checkpoints/6b5ca5ab4/failed-runs/3c17f2f45/full-check.log",
+      "sha256": "b1e76201e795b6b0d031f58bfccb2025943c3aabe37ad1dc30fceaaeaa4b117a"
+    },
+    {
+      "destination": "docs/rust/gui-coverage/checkpoints/6b5ca5ab4/failed-runs/3c17f2f45/tests.log",
+      "sha256": "71e2e753d4da4213edd0bad6be8cb54cdd27290054aaee6dd1b0e1b981e39d98"
+    },
+    {
+      "destination": "docs/rust/gui-coverage/checkpoints/6b5ca5ab4/failed-runs/3c17f2f45/clippy.log",
+      "sha256": "4d3213f24a7e540cfca858b281c2cd0c98d1196def9c2bb38544dfdc68e2a6af"
+    },
+    {
+      "destination": "docs/rust/gui-coverage/checkpoints/6b5ca5ab4/failed-runs/3c17f2f45/parity.log",
+      "sha256": "0cce7a61f9afea9da67eff2f4ca17088eb4e8ee1b5a2494e9a3e00d1f745a651"
+    },
+    {
+      "destination": "docs/rust/gui-coverage/checkpoints/6b5ca5ab4/failed-runs/3c17f2f45/maintenance.log",
+      "sha256": "6e2480c67ee82052e7807e7fcf4be0b839fc427b2bcf497dea231e46051b97bb"
+    },
+    {
+      "destination": "docs/rust/gui-coverage/checkpoints/6b5ca5ab4/failed-runs/3c17f2f45/native-artifact.json",
+      "sha256": "7b48232baed672faaa3775a697254e5adb958c3456195e2646654d9b336ff9d0"
+    },
+    {
+      "destination": "docs/rust/gui-coverage/checkpoints/6b5ca5ab4/failed-runs/3c17f2f45/test-artifact.json",
+      "sha256": "39d6add8f742574873761990eb802780e0427541d5e2e647cdec0cde85da7bce"
+    },
+    {
+      "destination": "docs/rust/gui-coverage/checkpoints/6b5ca5ab4/failed-runs/3c17f2f45/clippy-artifact.json",
+      "sha256": "f72528cfdf07a4f09b66ac8c595d2332656f40360d5e436e2f261dad95119be4"
+    },
+    {
+      "destination": "docs/rust/gui-coverage/checkpoints/6b5ca5ab4/failed-runs/3c17f2f45/native-render-manifest.json",
+      "sha256": "5016b8fc66f36be5c7ce05c1b26a2722956597bde1dacc27e16dcd8945eb248c"
+    },
+    {
+      "destination": "docs/rust/gui-coverage/checkpoints/6b5ca5ab4/failed-runs/3c17f2f45/failed-validation-outcome.json",
+      "sha256": "6dd1f9561685754e1e9c5d0490400877e82c534805c5f06909f1278c6fa5336d"
+    },
+    {
+      "destination": "docs/rust/gui-coverage/checkpoints/6b5ca5ab4/failed-runs/3c17f2f45/root-render-diagnostic.json",
+      "sha256": "b0ef80b06a378966afaec9727f78c5b558c04be019b7b87eed1b2428edb7c706"
+    },
+    {
+      "destination": "docs/rust/gui-coverage/checkpoints/6b5ca5ab4/failed-runs/3c17f2f45/run-latest.json",
+      "sha256": "bd44c5b3dd341339f9c0c0e59fb232684097cceed8fc749159f01115fa941f93"
+    },
+    {
+      "destination": "docs/rust/gui-coverage/checkpoints/6b5ca5ab4/failed-runs/3c17f2f45/jobs-latest.json",
+      "sha256": "3cff8c91ff88a98204784e1af50e5ae6ff132627c756ff7073fb4ac1bc510ea1"
+    },
+    {
+      "destination": "docs/rust/gui-coverage/checkpoints/6b5ca5ab4/failed-runs/3c17f2f45/preparation/source-review-2.json",
+      "sha256": "0f32c3b8d809e0cbe90c99072b0a53ff3130a961245f87f835409d8660e5ab86"
+    },
+    {
+      "destination": "docs/rust/gui-coverage/checkpoints/6b5ca5ab4/failed-runs/3c17f2f45/preparation/source-review-2.md",
+      "sha256": "4426c1d84b0c2ba1dece4b9be0ccd23cf5440df02b300620aa44073f5ac81a1b"
+    },
+    {
+      "destination": "docs/rust/gui-coverage/checkpoints/6b5ca5ab4/failed-runs/3c17f2f45/preparation/diagnostic-render-review-2-3c17f2f45.json",
+      "sha256": "c0f42df708ede9ef3e724c32d19fc6ee9b6246e97171042a76f7c7b18c0d67ed"
+    },
+    {
+      "destination": "docs/rust/gui-coverage/checkpoints/6b5ca5ab4/failed-runs/3c17f2f45/preparation/diagnostic-render-review-2-3c17f2f45.md",
+      "sha256": "a877f3bf04b9909530207e63c994475e7dbc0cf048f1f8281cab5f1ff49fcb47"
+    },
+    {
+      "destination": "docs/rust/gui-coverage/checkpoints/6b5ca5ab4/failed-runs/3c17f2f45/preparation/assertion-preservation-root.json",
+      "sha256": "5fb170775cae683107d3c1d7da751aeb51bbb51d363cc6c1d817e7491e25b522"
+    },
+    {
+      "destination": "docs/rust/gui-coverage/checkpoints/6b5ca5ab4/failed-runs/3c17f2f45/preparation/assertion-preservation-3.json",
+      "sha256": "57bd5cd2755f78e18ee36096a751c73fbcfecd94449aaea3b0dff866b4ac6134"
+    },
+    {
+      "destination": "docs/rust/gui-coverage/checkpoints/6b5ca5ab4/failed-runs/3c17f2f45/preparation/selected-source-proposal.json",
+      "sha256": "1ec97aaf9a7f879a7b39bb3bf38c8fb80a2f78fe37f6aa0e245d43ae5ccfabb6"
+    },
+    {
+      "destination": "docs/rust/gui-coverage/checkpoints/6b5ca5ab4/failed-runs/3c17f2f45/preparation/conditional-status-map.json",
+      "sha256": "28f44ce9b9320b5321ea696a5f1f46269be0a8a5bb3c6c682ceea6b8e06dd3c1"
+    },
+    {
+      "destination": "docs/rust/gui-coverage/checkpoints/6b5ca5ab4/failed-runs/3c17f2f45/preparation/source-anchor-proof.json",
+      "sha256": "3947f136b5bfae47993b66eece1d18b8ed979772061cfeb33b83df327fdd92c1"
+    },
+    {
+      "destination": "docs/rust/gui-coverage/checkpoints/6b5ca5ab4/failed-runs/3c17f2f45/preparation/committed-source-review-provenance.json",
+      "sha256": "a6da4d1a30c72b10a7dd95e50c47b9b301bfed794c4d437e37901c89f7f9c850"
+    },
+    {
+      "destination": "docs/rust/gui-coverage/checkpoints/6b5ca5ab4/failed-runs/3c17f2f45/preparation/prior355-preservation-proof.json",
+      "sha256": "4621399ed061c236103f2e4cd8dcab19b1f11815d4a71428941b63894d483a0e"
+    },
+    {
+      "destination": "docs/rust/gui-coverage/checkpoints/6b5ca5ab4/failed-runs/3c17f2f45/preparation/render-checklist.json",
+      "sha256": "6774ab188557f21f3ab2788dfa7de546d923912b5566f0ebe95093c54e992ae7"
+    },
+    {
+      "destination": "docs/rust/gui-coverage/checkpoints/6b5ca5ab4/failed-runs/3c17f2f45/preparation/preparation-summary.json",
+      "sha256": "cd57dd5c3d88ab114892de68fac002c88d542ecd4fd985160de960aa1121fc35"
+    },
+    {
+      "destination": "docs/rust/gui-coverage/checkpoints/6b5ca5ab4/failed-runs/3c17f2f45/preparation/prepare-evidence-copy-3c17f2f45.py",
+      "sha256": "01396055579588e5147aa3529d566bc5d39dcd802323c5afd74b840936f76a03"
+    },
+    {
+      "destination": "docs/rust/gui-coverage/checkpoints/6b5ca5ab4/preparation/frozen-initial-preparation.json",
+      "sha256": "ebf3b0a6c91b99c613d227902e070390d5a60fa0f2bbb5bc4e0fd197ae34244e"
+    },
+    {
+      "destination": "docs/rust/gui-coverage/checkpoints/6b5ca5ab4/preparation/repair1/assertion-preservation-root.json",
+      "sha256": "3b9b637c051d806b1bb8268205d8828e18722024b129a81843d3d69a09fc959b"
+    },
+    {
+      "destination": "docs/rust/gui-coverage/checkpoints/6b5ca5ab4/preparation/repair1/diagnosis-and-preservation-3.json",
+      "sha256": "d8c2b03739eca9a4ba638a83a48593b25d17132dcdfac3bdd31df4a7d2d31340"
+    },
+    {
+      "destination": "docs/rust/gui-coverage/checkpoints/6b5ca5ab4/preparation/repair1/diagnosis-and-preservation-3.md",
+      "sha256": "185803d82f876469c80165bae8eaf4b5625a1f7c639068f95a2c30df1502302e"
+    },
+    {
+      "destination": "docs/rust/gui-coverage/checkpoints/6b5ca5ab4/preparation/repair1/repair-source-review-2.json",
+      "sha256": "e9f3cc58e76fbc269e000c4c4ad5db8ceba1ee9cbf27f0ae2a20a7c5a7aa8dc9"
+    },
+    {
+      "destination": "docs/rust/gui-coverage/checkpoints/6b5ca5ab4/preparation/repair1/repair-source-review-2.md",
+      "sha256": "43c65971c35ec09e3a4b3aa40f38cc15d907349b00710284e2f9da296e6074af"
+    }
+  ],
+  "new_approvals_created_by_helper": false,
+  "remote_publication_pending": true
+}

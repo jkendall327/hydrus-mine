@@ -1,0 +1,34 @@
+{
+  "source_commit": "6b5ca5ab48238b19346e67938d8213a7a26303fb",
+  "run_id": 37583224181,
+  "baseline_source_commit": "036c5d4921c3430ac370e5628d7843fc2f639e19",
+  "claims": [
+    {
+      "id": "audit-options-nested-external-call-command-arguments",
+      "manifest": "docs/rust/gui-coverage/parity/external-calls.json",
+      "publication_preparation": "unresolved",
+      "reason": "Existing ordered argument and clipboard editor with preserved reference/owner/store regressions; test-only eight-capture and retained-successor followup. Exact-source full Linux/fresh independent review pending."
+    },
+    {
+      "id": "audit-options-nested-external-call-command-copy",
+      "manifest": "docs/rust/gui-coverage/parity/external-calls.json",
+      "publication_preparation": "unresolved",
+      "reason": "Existing ordered argument and clipboard editor with preserved reference/owner/store regressions; test-only eight-capture and retained-successor followup. Exact-source full Linux/fresh independent review pending."
+    }
+  ],
+  "next_bank_priority_ids": [
+    "audit-options-nested-external-call-command-arguments",
+    "audit-options-nested-external-call-command-copy"
+  ],
+  "selected_ids": [
+    "audit-options-nested-external-call-command-arguments",
+    "audit-options-nested-external-call-command-copy"
+  ],
+  "final_gates": [
+    "Exact source 6b5ca5ab48238b19346e67938d8213a7a26303fb, actual run 37583224181: full Linux strict fmt/Clippy/workspace tests/ratchet plus parity-models reference/backend success pending. Windows/macOS deferred under immutable source policy.",
+    "Eight fresh defining native captures; independent reviewer2 and root actual inspection/hash verification. Actual Qt command-panel reference supports scoped comparison, with no Qt nested-dialog, feedback-timing or physical placement parity claim.",
+    "Root final patch/census review, staged prior355/unselected/native1799/frozen1812/allgoal1274 preservation and desktop/narrow browser required.",
+    "Only accepted publication may advance ledger to357, pending candidates to18 and outside-goal leaves to917. Preparation grants no approval."
+  ],
+  "approval": false
+}

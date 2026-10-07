@@ -3530,24 +3530,28 @@ keeps the draft. Clipboard failures use an owned Error/ok notice. Copy and accep
 paste show the reference's brief feedback. Parent Cancel and retired children
 cannot publish drafts; accepted arguments persist and feed actual token expansion.
 
-The current bounded validation follow-up covers only command parameter editing
+The validated follow-up covers only command parameter editing
 and full-template Copy/Paste. The October 7 actual Qt rerun matches all 26 queue
 actions, six selection histories and 20 accepted/declined clipboard outcomes,
 with unchanged recorder, fixture and command-panel PNG. The reference scripts
 dialog answers and clipboard transport; its PNG does not capture Qt input/review
-children or timed feedback for visual comparison. The follow-up adds eight live captures and retained successor checks while
+children or timed feedback for visual comparison. The follow-up adds eight live
+captures and retained successor checks while
 preserving all 115 original assertions across nine tests; the file now contains
 165 assertions. Existing queue, clipboard and saved Unicode/token-consumer
-checks remain intact. Full Linux validation and fresh
-independent rendered review remain pending; the ledger stays at 355 signed off
-with 20 existing candidates awaiting sign-off.
+checks remain intact. Full Linux run `37583224181` and fresh independent
+rendered review passed, including all 707 GUI and 67 media tests. The ledger
+now has 357 signed off and 18 existing candidates pending.
+[Evidence](gui-coverage/checkpoints/6b5ca5ab4/README.md).
 The first full run passed all three command tests but failed an existing Options
 wheel test after hide/show. The repair waits for stable measured geometry and
 finished animations before its one wheel event, retaining the exact expected
 selection and hidden-window refusal assertions. Selected command capture now
 also asserts readiness and waits for animations. The hosted GUI job installs
-CJK fonts because the diagnostic frames omitted Japanese glyphs; fresh images
-must verify that correction. Neither the failed run nor its images earns credit.
+CJK fonts because the diagnostic frames omitted Japanese glyphs. Fresh images
+now show the Japanese text and settled selected controls; the new full run
+passes the original wheel result. The failed run and its images remain
+diagnostic evidence and earn no credit.
 
 Supported process calls expose enabled input rules, tokens and the existing
 string-processor child, an ordered command-argument editor, timeout/flags and

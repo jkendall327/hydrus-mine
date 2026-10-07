@@ -1,0 +1,104 @@
+{
+  "agent_commit": "7bef4e93a81ef515839c7ccebcdd11b51d781ee5",
+  "base_source_commit": "3c17f2f4507670c3040f68fac020fa265451d50c",
+  "failed_run_id": 37580667106,
+  "approval": false,
+  "owned_files": [
+    {
+      "path": "crates/hydrus-gui/tests/gui/menu_choice_wheel.rs",
+      "base_sha256": "d222312d57c015d0bcdf6d3e979dd860ae4b5d0e245b566b3451d3e90b903ec1",
+      "new_sha256": "4f71335403855b4eaf00211d6c250fd67961c83bbc521879869f091aebfdae03",
+      "all_original_lines_preserved_in_order": true,
+      "original_assertion_macros": 87,
+      "current_assertion_macros": 92,
+      "original_test_count": 6,
+      "current_test_count": 6
+    },
+    {
+      "path": "crates/hydrus-gui/tests/gui/external_calls.rs",
+      "base_sha256": "98948c9b88b1c0b4bfd2e28ff9be3c74e956bea919de9fc1272c7faaa823d5ce",
+      "new_sha256": "9ce637bda651b9d982d3d0759b1a37f14cc1327e80d56f94c6db8c3f162d3338",
+      "all_original_lines_preserved_in_order": true,
+      "original_assertion_macros": 160,
+      "current_assertion_macros": 165,
+      "original_test_count": 9,
+      "current_test_count": 9
+    }
+  ],
+  "diff_insertions": 100,
+  "diff_deletions": 0,
+  "diagnosis": {
+    "failure_log": "/workspace/validation-reviews/ci-3c17f2f45/full-check.log",
+    "failure_log_sha256": "b1e76201e795b6b0d031f58bfccb2025943c3aabe37ad1dc30fceaaeaa4b117a",
+    "failed_test": "menu_choice_wheel::options_staging_saved_policy_bubbling_and_retired_roots_are_owned",
+    "failure_old_line": 449,
+    "left": 0,
+    "right": 2,
+    "old_gui_result": "706 passed, 1 failed, 0 ignored; all three command-focused tests passed",
+    "confirmed_source_gap": "Geometry is reported through a real 1 ms Timer, but eight tight render calls do not guarantee it runs. The test cached a frame before hide, renders while hidden, then shows and physically dispatches before fresh settled geometry.",
+    "causation_limit": "The failed log has no frame/scroll/visibility/policy diagnostics; exact missed-hit runtime path is not proven. This repair establishes the missing physical-input precondition without replacing or repeating the input or relaxing the expected result.",
+    "production_admission": "owner valid synchronously checks permanent active gate, occupied modal children and current Options visibility; allowed reloads saved policy at the wheel event. hide/show alone does not retire the active owner."
+  },
+  "source_grounding": [
+    {
+      "path": "crates/hydrus-gui/ui/menu_choice_wheel.slint",
+      "lines": "20\u201328",
+      "fact": "Deferred frame measurement Timer 1 ms; pending flags change with geometry."
+    },
+    {
+      "path": "crates/hydrus-gui/src/menu_choice_wheel.rs",
+      "lines": "8\u201330",
+      "fact": "Live owner gate and saved enabled policy are evaluated per event."
+    },
+    {
+      "path": "crates/hydrus-gui/src/options_window.rs",
+      "lines": "555\u2013588",
+      "fact": "Options gate uses active/blocked/current is_visible."
+    },
+    {
+      "path": "crates/hydrus-gui/src/headless.rs",
+      "lines": "121\u2013128",
+      "fact": "render pumps timers and paints actual software window; render_snapshot does not advance them."
+    },
+    {
+      "path": "crates/hydrus-gui/src/external_call_window.rs",
+      "lines": "382\u2013403",
+      "fact": "Command child-open refresh Timer 30 ms and show closure derive actual question-slot state."
+    },
+    {
+      "path": "crates/hydrus-gui/ui/external_calls.slint",
+      "lines": "171\u2013179",
+      "fact": "Selection controls bind enabled to selected && !child-open; no test overrides enabled."
+    },
+    {
+      "path": "Slint1.18.1 i-slint-core/api.rs",
+      "lines": "792\u2013795",
+      "fact": "Public Window::has_active_animations reads actual runtime animation driver."
+    }
+  ],
+  "wheel_repair": "After re-show, assert live visibility, saved enabled, actual owner-valid and allowed callbacks. Pump/render to a bounded 2 s deadline until timer measurements are finite/positive/in viewport, at least 2 ms have passed, consecutive coordinates are exactly bit-equal and no active animation remains. Use that frame for exactly one physical wheel. Keep both hidden original no-op and enabled expected 2 original assertion unchanged; add frame/visibility/scroll/index/count diagnostics.",
+  "selected_capture_repair": "Assert selected && !child_open before and after readiness; pump actual command rendering past 35 ms (existing 30 ms child observer) until no active animation remains, bounded 2 s; then keep the original defining capture and adapter. No forced flags or widget properties.",
+  "image_actually_viewed": {
+    "path": "/workspace/validation-reviews/ci-3c17f2f45/native-renders/external-command-parameters-selected.png",
+    "sha256": "5e7d99c03266833f31b6308f106f5c97ad00d71ceb49823f0255fb5ea8443dda",
+    "source_commit": "3c17f2f4507670c3040f68fac020fa265451d50c",
+    "run_id": 37580667106,
+    "artifact_id": 11464633382,
+    "historical_failed_run": true,
+    "observation": "Selected beta/delta rows but pale Edit/Delete/reorder controls; Pasted! is visible. Source flags/animation readiness had not been asserted. The new assertions and settled-frame review must distinguish stale capture animation from a product state defect; current image is not approval."
+  },
+  "checks": {
+    "rustfmt_edition2024": "passed",
+    "git_diff_check": "passed",
+    "local_builds_tests_mutations": "none",
+    "product_source_changes": "none",
+    "git_push": false
+  },
+  "limits": [
+    "No assertion removed, weakened or changed: menu-wheel87\u219292/same 6 tests; command160\u2192165/same 9 tests. All original lines preserved insertion-only.",
+    "No retry of physical wheel or selected actions; no direct-callback substitute for the physical wheel positive control.",
+    "Flags and animation readiness are authored but not locally executed; if new selected/child-open assertions fail, report actual state before considering production changes.",
+    "Root owns hosted CJK font setup and exact-source full Linux replay/fresh render review. Japanese glyph absence cannot be approved from emoji visibility.",
+    "Original eight filenames and model/store/clipboard/queue/consumer assertions remain unchanged; parents/aliases/platform caveats remain unchanged."
+  ]
+}

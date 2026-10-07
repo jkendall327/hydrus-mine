@@ -1,0 +1,77 @@
+{
+  "source_commit": "6b5ca5ab48238b19346e67938d8213a7a26303fb",
+  "run_id": 37583224181,
+  "conclusion": "success",
+  "validation_scope": "linux",
+  "required_platforms": [
+    "linux"
+  ],
+  "deferred_platforms": [
+    "windows",
+    "macos"
+  ],
+  "gui_tests": {
+    "passed": 707,
+    "failed": 0,
+    "ignored": 0,
+    "seconds": 241.79
+  },
+  "media_tests": {
+    "passed": 67,
+    "failed": 0,
+    "ignored": 0,
+    "seconds": 1.02
+  },
+  "selected_tests_passed": [
+    "test external_calls::actual_command_parameter_queue_buttons_keys_cancel_and_saved_argument_consumer ... ok",
+    "test external_calls::command_clipboard_exact_review_raw_rows_clean_copy_errors_and_owner_retirement ... ok",
+    "test external_calls::parameter_queue_reverse_edit_and_real_key_origin_histories_match_actual_qt ... ok",
+    "test external_calls::command_clipboard_review_and_cleaned_example_match_actual_qt ... ok",
+    "test external_calls::command_parameter_queue_selection_reorder_and_keyboard_match_actual_qt ... ok",
+    "test external_calls::command_queue_reverse_edit_and_keyboard_origins_match_actual_qt ... ok"
+  ],
+  "prior_assertions_preserved": 115,
+  "current_assertions": 165,
+  "previous_failed_source_assertions": 160,
+  "wheel_previous_assertions": 87,
+  "wheel_current_assertions": 92,
+  "wheel_tests": 6,
+  "previous_failed_source": "3c17f2f4507670c3040f68fac020fa265451d50c",
+  "previous_failed_run": 37580667106,
+  "prior_tests": 9,
+  "current_tests": 9,
+  "timings": {
+    "clippy_seconds": 619.0,
+    "clippy_cargo_seconds": 619.0,
+    "test_compile_seconds": 735.0,
+    "test_step_seconds": 1251.0
+  },
+  "cache_observations": [
+    "2026-10-07T06:44:55.5955437Z Version: 20260901.588",
+    "2026-10-07T06:44:55.5964973Z Version: 20260927.320.1",
+    "2026-10-07T06:45:31.9965064Z Restored from cache key \"v0-rust-check-Linux-x64-6601efbe-0ea5e1be\" full match: true.",
+    "2026-10-07T06:45:33.2631709Z Workspace restore prefix: hydrus-ws-v1-check-Linux-X64-68e3726939ec9009de9276fa-",
+    "2026-10-07T06:45:33.6306740Z Cache not found for input keys: hydrus-ws-v1-check-Linux-X64-68e3726939ec9009de9276fa-6b5ca5ab48238b19346e67938d8213a7a26303fb-37583224181-1, hydrus-ws-v1-check-Linux-X64-68e3726939ec9009de9276fa-",
+    "2026-10-07T06:45:34.8694541Z No workspace library snapshot restored; dependency cache remains usable.",
+    "2026-10-07T07:17:33.4303296Z Workspace library snapshot candidate: 293 artifact files plus input ledger, 2200273639 bytes (limit 4294967296).",
+    "2026-10-07T07:17:40.4774608Z Cache saved with key: hydrus-ws-v1-check-Linux-X64-68e3726939ec9009de9276fa-6b5ca5ab48238b19346e67938d8213a7a26303fb-37583224181-1",
+    "2026-10-07T07:17:48.4735926Z Retained workspace snapshot bytes: 1379324818; budget: 3221225472."
+  ],
+  "native_artifact_id": 11466840798,
+  "native_zip_sha256": "1138f8c9f9de3adc7c92f02cdf8c937898053bf5aec188154e0255f35ae3d404",
+  "native_image_count": 345,
+  "limits": [
+    "Hosted observations, not controlled attribution or separate Slint generation/Rust/link timing.",
+    "GUI and media suites have no failed or ignored tests. Existing ignored tests in other workspace suites remain; no assertions or tests were weakened.",
+    "Exactly two command-editor parameter and template clipboard leaves; runtime result alone does not approve image readability or broaden feature scope."
+  ],
+  "evidence_sha256": {
+    "full-check.log": "32d5d322f9477915582d7df08817e2117b1a6b67a732a4033411bf1e9ca177cc",
+    "tests.log": "5ebac70523eeb8eb874d4e320880aaa2a0345b25a8dc1e9ee7aac6b1aafe9c4b",
+    "parity.log": "0ddea5b04f8177b4e3b71f39309241409f108df21bdd4a7a740fcfe994633089",
+    "clippy.log": "3493416c1a20c8294f82a35c2e93cf9aa7123dc277c90067ede5c45380b7befb",
+    "maintenance.log": "4cb4f09214d1d912dede43af644de5ff6b77213454574fa6c7c6e2f610295f70",
+    "ci-evidence.json": "13586da5801ed2a6654b770a9091bb58fe817bb64311d0f91284335e183c9f2e",
+    "native-render-manifest.json": "a36db5a7ef250e598d24a1346cdc2cd64f6e04e6b5441f4d30070862243c56b2"
+  }
+}

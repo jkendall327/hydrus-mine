@@ -1,0 +1,661 @@
+{
+  "source_commit": "6b5ca5ab48238b19346e67938d8213a7a26303fb",
+  "run_id": 37583224181,
+  "artifact_id": 11466840798,
+  "native_zip_sha256": "1138f8c9f9de3adc7c92f02cdf8c937898053bf5aec188154e0255f35ae3d404",
+  "validation_scope": "linux",
+  "claims": [
+    {
+      "id": "audit-options-nested-external-call-command-arguments",
+      "approval": true,
+      "caveats": [
+        "Exactly the two original command parameter and full-template Copy/Paste leaves are approved. Broader external-program/list/reopen/command/process parents, aliases and structural completion receive no credit.",
+        "The actual Qt recorder drives real queue/selection handlers but scripts dialog answers and clipboard transport. Its only PNG is the command panel; no matched Qt input, review, error or timed notification image exists. No Qt pixel, placement or notification-timing parity is claimed.",
+        "Inspected supported views are 760 × 590 command/review/feedback, 760 × 640 long parameter input and 520 × 200 Delete/Error. Complete selected text is readable, but child buttons stretch vertically and blank areas differ from Qt. Default-size and universal dialog geometry are not established.",
+        "Retained callbacks are tested after parent Cancel against a replacement command/review/call/Options owner, with complete clipboard, saved manager, draft, selection and slot identity/visibility preservation plus positive current acceptance. Automatic Main destruction and final Bound-drop behavior are not claimed.",
+        "Physical list pointer/key histories are preserved; Add/Edit/Copy/Paste/review actions use the existing callbacks and headless clipboard transport. No physical Copy/Paste pointer route or broad OS clipboard integration is established.",
+        "Executable picker, PATH/platform availability breadth, legacy executable-manager migration, broader process output, OS launch routing, Qt PageUp/PageDown/type-ahead/scroll-to-current and physical tooltip placement remain outside these leaves. Separately banked Open Externally draft regeneration/routing receives no new credit; opening only the registered-call page still does not regenerate those defaults.",
+        "Japanese 日本 is visible in the inspected Copy/Paste rows and examples after hosted CJK font installation; emoji is monochrome and font metrics differ. This is not universal glyph/font or framework pixel parity.",
+        "Validation is Linux only; Windows and macOS remain deferred. The optional Qt API listener was unavailable, while direct Qt/database recording succeeded. No API connectivity, network or external-program execution is claimed.",
+        "The native selected frame uses raw alpha/beta/gamma/delta with beta and delta selected in reverse insertion order; the Qt panel uses alpha/gamma/beta/delta with only beta selected. Exact queue/order/current/selection behavior comes from all 26 events and six histories, not same-state pixel comparison."
+      ],
+      "manifest": "docs/rust/gui-coverage/parity/external-calls.json",
+      "inspected_native_image_names": [
+        "external-command-parameters-selected.png",
+        "external-command-parameter-add.png",
+        "external-command-parameter-edit.png",
+        "external-command-delete-review.png"
+      ],
+      "tests": [
+        "external_calls::actual_command_parameter_queue_buttons_keys_cancel_and_saved_argument_consumer",
+        "external_calls::command_clipboard_exact_review_raw_rows_clean_copy_errors_and_owner_retirement",
+        "external_calls::parameter_queue_reverse_edit_and_real_key_origin_histories_match_actual_qt",
+        "external_calls::command_clipboard_review_and_cleaned_example_match_actual_qt",
+        "external_calls::command_parameter_queue_selection_reorder_and_keyboard_match_actual_qt",
+        "external_calls::command_queue_reverse_edit_and_keyboard_origins_match_actual_qt"
+      ],
+      "source_reference_evidence": [
+        "Current exact-source full Linux execution passes all three defining GUI tests and three model replays. All 115 original assertions/nine tests remain, the initial 160 assertions remain insertion-only, and repaired current source has 165 macros across the same nine tests.",
+        "Current source admits actions only for the active non-modal owner; once-only child close rejects retired callbacks. The passing retained-successor regression preserves clipboard, full manager/draft and four owner slots, then positively accepts the current review.",
+        "Fresh eight-image inspection validates readable complete selected prompts/reviews/errors, actual Copied!/Pasted! overlays, settled enabled-looking selected actions and visible Japanese glyphs. This is finite Linux evidence with the listed Qt/geometry/transport limits."
+      ]
+    },
+    {
+      "id": "audit-options-nested-external-call-command-copy",
+      "approval": true,
+      "caveats": [
+        "Exactly the two original command parameter and full-template Copy/Paste leaves are approved. Broader external-program/list/reopen/command/process parents, aliases and structural completion receive no credit.",
+        "The actual Qt recorder drives real queue/selection handlers but scripts dialog answers and clipboard transport. Its only PNG is the command panel; no matched Qt input, review, error or timed notification image exists. No Qt pixel, placement or notification-timing parity is claimed.",
+        "Inspected supported views are 760 × 590 command/review/feedback, 760 × 640 long parameter input and 520 × 200 Delete/Error. Complete selected text is readable, but child buttons stretch vertically and blank areas differ from Qt. Default-size and universal dialog geometry are not established.",
+        "Retained callbacks are tested after parent Cancel against a replacement command/review/call/Options owner, with complete clipboard, saved manager, draft, selection and slot identity/visibility preservation plus positive current acceptance. Automatic Main destruction and final Bound-drop behavior are not claimed.",
+        "Physical list pointer/key histories are preserved; Add/Edit/Copy/Paste/review actions use the existing callbacks and headless clipboard transport. No physical Copy/Paste pointer route or broad OS clipboard integration is established.",
+        "Executable picker, PATH/platform availability breadth, legacy executable-manager migration, broader process output, OS launch routing, Qt PageUp/PageDown/type-ahead/scroll-to-current and physical tooltip placement remain outside these leaves. Separately banked Open Externally draft regeneration/routing receives no new credit; opening only the registered-call page still does not regenerate those defaults.",
+        "Japanese 日本 is visible in the inspected Copy/Paste rows and examples after hosted CJK font installation; emoji is monochrome and font metrics differ. This is not universal glyph/font or framework pixel parity.",
+        "Validation is Linux only; Windows and macOS remain deferred. The optional Qt API listener was unavailable, while direct Qt/database recording succeeded. No API connectivity, network or external-program execution is claimed.",
+        "Paste strips reference whitespace and splits literal spaces without shell parsing, retaining raw argument fragments until acceptance. All 20 accepted/declined clipboard outcomes, exact review text, missing/access-failure notices and saved Unicode/token arguments remain asserted. Copy/Paste feedback is visibly painted in native frames; Qt timing/placement remains unpaired."
+      ],
+      "manifest": "docs/rust/gui-coverage/parity/external-calls.json",
+      "inspected_native_image_names": [
+        "external-command-copy-feedback.png",
+        "external-command-paste-review.png",
+        "external-command-paste-feedback.png",
+        "external-command-clipboard-error.png"
+      ],
+      "tests": [
+        "external_calls::actual_command_parameter_queue_buttons_keys_cancel_and_saved_argument_consumer",
+        "external_calls::command_clipboard_exact_review_raw_rows_clean_copy_errors_and_owner_retirement",
+        "external_calls::parameter_queue_reverse_edit_and_real_key_origin_histories_match_actual_qt",
+        "external_calls::command_clipboard_review_and_cleaned_example_match_actual_qt",
+        "external_calls::command_parameter_queue_selection_reorder_and_keyboard_match_actual_qt",
+        "external_calls::command_queue_reverse_edit_and_keyboard_origins_match_actual_qt"
+      ],
+      "source_reference_evidence": [
+        "Current exact-source full Linux execution passes all three defining GUI tests and three model replays. All 115 original assertions/nine tests remain, the initial 160 assertions remain insertion-only, and repaired current source has 165 macros across the same nine tests.",
+        "Current source admits actions only for the active non-modal owner; once-only child close rejects retired callbacks. The passing retained-successor regression preserves clipboard, full manager/draft and four owner slots, then positively accepts the current review.",
+        "Fresh eight-image inspection validates readable complete selected prompts/reviews/errors, actual Copied!/Pasted! overlays, settled enabled-looking selected actions and visible Japanese glyphs. This is finite Linux evidence with the listed Qt/geometry/transport limits."
+      ]
+    }
+  ],
+  "selected_count": 2,
+  "approval_scope": "Exactly the two selected existing original leaves; finite Linux behavior/render evidence only. No ledger/canonical changes are performed by this review.",
+  "required_jobs": [
+    {
+      "name": "parity-models",
+      "id": 112667429989,
+      "conclusion": "success"
+    },
+    {
+      "name": "check",
+      "id": 112667430123,
+      "conclusion": "success"
+    }
+  ],
+  "full_test_summary": {
+    "gui": {
+      "passed": 707,
+      "failed": 0,
+      "ignored": 0,
+      "seconds": 241.79,
+      "log": "/workspace/validation-reviews/ci-6b5ca5ab4/tests.log",
+      "line": 1384
+    },
+    "media": {
+      "passed": 67,
+      "failed": 0,
+      "ignored": 0,
+      "seconds": 1.02,
+      "log": "/workspace/validation-reviews/ci-6b5ca5ab4/tests.log",
+      "line": 2291
+    },
+    "strict_clippy": "passed exact-source check step with warnings denied",
+    "fmt": "passed exact-source check step",
+    "parity_models": "passed required exact-source job",
+    "ratchet": "passed exact-source check step",
+    "cache_maintenance": {
+      "passed": true,
+      "job_id": 112677553679
+    },
+    "test_compile": {
+      "duration": "12m15s",
+      "seconds": 735,
+      "log": "/workspace/validation-reviews/ci-6b5ca5ab4/tests.log",
+      "line": 19
+    },
+    "selected_and_preserved_distinct_tests": 7
+  },
+  "native_manifest_path": "/workspace/validation-reviews/ci-6b5ca5ab4/native-render-manifest.json",
+  "native_manifest_sha256": "a36db5a7ef250e598d24a1346cdc2cd64f6e04e6b5441f4d30070862243c56b2",
+  "native_image_count": 345,
+  "images_actually_viewed": [
+    {
+      "name": "external-command-parameters-selected.png",
+      "path": "/workspace/validation-reviews/ci-6b5ca5ab4/native-renders/external-command-parameters-selected.png",
+      "source_commit": "6b5ca5ab48238b19346e67938d8213a7a26303fb",
+      "run_id": 37583224181,
+      "artifact_id": 11466840798,
+      "sha256": "149c74402714192da9727ffdfad2079bc104abbb2157c568d2726e9ed49c17ae",
+      "bytes": 32519,
+      "dimensions": [
+        760,
+        590
+      ],
+      "actually_viewed": true,
+      "supplemental": false,
+      "observation": "Alpha/beta/gamma/delta raw rows and exact example are readable; beta and delta are highlighted. Add/Edit/Delete/up/down labels now appear enabled and readable. The prior Pasted! overlay remains visible. This resolves the disabled-looking diagnostic frame without changing selection or forcing controls.",
+      "producer": {
+        "path": "crates/hydrus-gui/tests/gui/external_calls.rs",
+        "line": 1287,
+        "line_sha256": "3be0d9deb76cc704e8d5e8f1cbbf6804033c381a2690a319ee1a64e42020fefe",
+        "source_commit": "6b5ca5ab48238b19346e67938d8213a7a26303fb"
+      }
+    },
+    {
+      "name": "external-command-parameter-add.png",
+      "path": "/workspace/validation-reviews/ci-6b5ca5ab4/native-renders/external-command-parameter-add.png",
+      "source_commit": "6b5ca5ab48238b19346e67938d8213a7a26303fb",
+      "run_id": 37583224181,
+      "artifact_id": 11466840798,
+      "sha256": "3c0fc49e851b7dd9ff1aed8e6f3735e36fa4e2f4a1040fa79527b1c2e20dfdcb",
+      "bytes": 51073,
+      "dimensions": [
+        760,
+        640
+      ],
+      "actually_viewed": true,
+      "supplemental": false,
+      "observation": "The full reference parameter explanation fits at 760×640. Blank input shows -o; ok/cancel are visible. No text is clipped; buttons are unusually tall at this supported resized geometry.",
+      "producer": {
+        "path": "crates/hydrus-gui/tests/gui/external_calls.rs",
+        "line": 813,
+        "line_sha256": "5c355ad69366d0f841b5903d9f4c677eacc0cd22707e8dc014e974f0743a6cea",
+        "source_commit": "6b5ca5ab48238b19346e67938d8213a7a26303fb"
+      }
+    },
+    {
+      "name": "external-command-parameter-edit.png",
+      "path": "/workspace/validation-reviews/ci-6b5ca5ab4/native-renders/external-command-parameter-edit.png",
+      "source_commit": "6b5ca5ab48238b19346e67938d8213a7a26303fb",
+      "run_id": 37583224181,
+      "artifact_id": 11466840798,
+      "sha256": "2acca1afdca5a2e6fa037b14cd3429f303f97917a83836527b1df00e5d9f4ce6",
+      "bytes": 51597,
+      "dimensions": [
+        760,
+        640
+      ],
+      "actually_viewed": true,
+      "supplemental": false,
+      "observation": "The same full prompt is readable, input is populated with three and ok/cancel are visible. Supported resized geometry only; no matched Qt child image.",
+      "producer": {
+        "path": "crates/hydrus-gui/tests/gui/external_calls.rs",
+        "line": 784,
+        "line_sha256": "d9af0f8d71c3fc859479c868d898cb4b2bee77719138af10faf14ff2d4c4dd97",
+        "source_commit": "6b5ca5ab48238b19346e67938d8213a7a26303fb"
+      }
+    },
+    {
+      "name": "external-command-delete-review.png",
+      "path": "/workspace/validation-reviews/ci-6b5ca5ab4/native-renders/external-command-delete-review.png",
+      "source_commit": "6b5ca5ab48238b19346e67938d8213a7a26303fb",
+      "run_id": 37583224181,
+      "artifact_id": 11466840798,
+      "sha256": "9545fe2dbae51cacdf41630a5569b6fd360c60317cdc98ee2bf41b467af5d957",
+      "bytes": 4030,
+      "dimensions": [
+        520,
+        200
+      ],
+      "actually_viewed": true,
+      "supplemental": false,
+      "observation": "Remove 2 selected? and yes/no are fully visible at 520×200; captured count agrees with the asserted selected rows. Tall buttons are readable.",
+      "producer": {
+        "path": "crates/hydrus-gui/tests/gui/external_calls.rs",
+        "line": 898,
+        "line_sha256": "ae5d633608080bff7194701744ab2e67fe1ee606f66725a38118c0df595fa931",
+        "source_commit": "6b5ca5ab48238b19346e67938d8213a7a26303fb"
+      }
+    },
+    {
+      "name": "external-command-copy-feedback.png",
+      "path": "/workspace/validation-reviews/ci-6b5ca5ab4/native-renders/external-command-copy-feedback.png",
+      "source_commit": "6b5ca5ab48238b19346e67938d8213a7a26303fb",
+      "run_id": 37583224181,
+      "artifact_id": 11466840798,
+      "sha256": "987f45216d9ef9dab1c6355c8a9ed5821574d0340ae452501c0455bf57425b9a",
+      "bytes": 32797,
+      "dimensions": [
+        760,
+        590
+      ],
+      "actually_viewed": true,
+      "supplemental": false,
+      "observation": "Copied! is actually painted below Copy. Raw quote fragments and 日本 plus monochrome emoji are visible in the parameter list and full template. Previously missing Japanese glyphs are resolved in this inspected frame.",
+      "producer": {
+        "path": "crates/hydrus-gui/tests/gui/external_calls.rs",
+        "line": 1018,
+        "line_sha256": "c40990e7fcd85051a5dec00cb1254abc8d563a2a33bc28968842bd08dbd096c4",
+        "source_commit": "6b5ca5ab48238b19346e67938d8213a7a26303fb"
+      }
+    },
+    {
+      "name": "external-command-paste-review.png",
+      "path": "/workspace/validation-reviews/ci-6b5ca5ab4/native-renders/external-command-paste-review.png",
+      "source_commit": "6b5ca5ab48238b19346e67938d8213a7a26303fb",
+      "run_id": 37583224181,
+      "artifact_id": 11466840798,
+      "sha256": "0d2137e94e24db2b4431a384884f0eb6b4952c6d08ec0a7e7abc84604e0edb9e",
+      "bytes": 20189,
+      "dimensions": [
+        760,
+        590
+      ],
+      "actually_viewed": true,
+      "supplemental": false,
+      "observation": "The complete 30-argument question, arg0 through arg29 in recorded unsorted insertion order, Look good? and yes/no are visible. Large blank area/tall footer buttons remain a finite layout difference.",
+      "producer": {
+        "path": "crates/hydrus-gui/tests/gui/external_calls.rs",
+        "line": 983,
+        "line_sha256": "b190446c883e52c0471741c2806bdef5aec4382e875379c14adee7833e880ae8",
+        "source_commit": "6b5ca5ab48238b19346e67938d8213a7a26303fb"
+      }
+    },
+    {
+      "name": "external-command-paste-feedback.png",
+      "path": "/workspace/validation-reviews/ci-6b5ca5ab4/native-renders/external-command-paste-feedback.png",
+      "source_commit": "6b5ca5ab48238b19346e67938d8213a7a26303fb",
+      "run_id": 37583224181,
+      "artifact_id": 11466840798,
+      "sha256": "ab29f114ef7774c3eeb3aa0efdbf8eee11c0ad18a262b1d38c606062e28dac05",
+      "bytes": 32694,
+      "dimensions": [
+        760,
+        590
+      ],
+      "actually_viewed": true,
+      "supplemental": false,
+      "observation": "Pasted! is actually painted below Paste. Raw quote fragments and 日本 plus monochrome emoji are visible in the list and full template, resolving the prior CJK omission in this inspected frame.",
+      "producer": {
+        "path": "crates/hydrus-gui/tests/gui/external_calls.rs",
+        "line": 1001,
+        "line_sha256": "974b3e00e31f764c8a7047066816954c1d7ebf9416629f019ff30243bc07d661",
+        "source_commit": "6b5ca5ab48238b19346e67938d8213a7a26303fb"
+      }
+    },
+    {
+      "name": "external-command-clipboard-error.png",
+      "path": "/workspace/validation-reviews/ci-6b5ca5ab4/native-renders/external-command-clipboard-error.png",
+      "source_commit": "6b5ca5ab48238b19346e67938d8213a7a26303fb",
+      "run_id": 37583224181,
+      "artifact_id": 11466840798,
+      "sha256": "6c73f8b157108b733ac7a58e137f228ab23a4cfee4bf43f6a915b5b1a70d53dd",
+      "bytes": 3671,
+      "dimensions": [
+        520,
+        200
+      ],
+      "actually_viewed": true,
+      "supplemental": false,
+      "observation": "No text on the clipboard! and ok are fully readable at 520×200. Owned notice semantics are assertion-backed; no matched Qt error PNG exists.",
+      "producer": {
+        "path": "crates/hydrus-gui/tests/gui/external_calls.rs",
+        "line": 1050,
+        "line_sha256": "61e148d367e27e8268548df320f4a4f955f75d27ef349ebea48003b3f9916a46",
+        "source_commit": "6b5ca5ab48238b19346e67938d8213a7a26303fb"
+      }
+    }
+  ],
+  "required_images_viewed": 8,
+  "supplemental_images_viewed": 0,
+  "reference_images_actually_viewed": [
+    {
+      "path": "/workspace/hydrus-mine/oracle/fixtures/external_command.png",
+      "source_commit": "6b5ca5ab48238b19346e67938d8213a7a26303fb",
+      "sha256": "6d7f23d37c4ea7b7415bbdc84373f4c5fb02ebc4ad5105c309da30d9e08c7fb9",
+      "bytes": 41324,
+      "dimensions": [
+        760,
+        590
+      ],
+      "actually_viewed": true,
+      "observation": "Actual Qt panel shows owned-program, alpha/gamma/beta/delta and selected beta, with complete queue/example/Copy/Paste controls. This differs from the native reverse-selection state; only finite panel content/topology comparison is claimed. No Qt child/feedback image pair exists."
+    }
+  ],
+  "exact_passing_test_proof": [
+    {
+      "test": "external_calls::actual_command_parameter_queue_buttons_keys_cancel_and_saved_argument_consumer",
+      "source_path": "crates/hydrus-gui/tests/gui/external_calls.rs",
+      "source_line": 718,
+      "source_commit": "6b5ca5ab48238b19346e67938d8213a7a26303fb",
+      "run_id": 37583224181,
+      "log": "/workspace/validation-reviews/ci-6b5ca5ab4/tests.log",
+      "log_line": 757,
+      "result": "passed"
+    },
+    {
+      "test": "external_calls::command_clipboard_exact_review_raw_rows_clean_copy_errors_and_owner_retirement",
+      "source_path": "crates/hydrus-gui/tests/gui/external_calls.rs",
+      "source_line": 943,
+      "source_commit": "6b5ca5ab48238b19346e67938d8213a7a26303fb",
+      "run_id": 37583224181,
+      "log": "/workspace/validation-reviews/ci-6b5ca5ab4/tests.log",
+      "log_line": 762,
+      "result": "passed"
+    },
+    {
+      "test": "external_calls::parameter_queue_reverse_edit_and_real_key_origin_histories_match_actual_qt",
+      "source_path": "crates/hydrus-gui/tests/gui/external_calls.rs",
+      "source_line": 1211,
+      "source_commit": "6b5ca5ab48238b19346e67938d8213a7a26303fb",
+      "run_id": 37583224181,
+      "log": "/workspace/validation-reviews/ci-6b5ca5ab4/tests.log",
+      "log_line": 768,
+      "result": "passed"
+    },
+    {
+      "test": "external_calls::command_clipboard_review_and_cleaned_example_match_actual_qt",
+      "source_path": "crates/hydrus-gui-model/tests/model/external_calls.rs",
+      "source_line": 331,
+      "source_commit": "6b5ca5ab48238b19346e67938d8213a7a26303fb",
+      "run_id": 37583224181,
+      "log": "/workspace/validation-reviews/ci-6b5ca5ab4/tests.log",
+      "log_line": 1531,
+      "result": "passed"
+    },
+    {
+      "test": "external_calls::command_parameter_queue_selection_reorder_and_keyboard_match_actual_qt",
+      "source_path": "crates/hydrus-gui-model/tests/model/external_calls.rs",
+      "source_line": 365,
+      "source_commit": "6b5ca5ab48238b19346e67938d8213a7a26303fb",
+      "run_id": 37583224181,
+      "log": "/workspace/validation-reviews/ci-6b5ca5ab4/tests.log",
+      "log_line": 1532,
+      "result": "passed"
+    },
+    {
+      "test": "external_calls::command_queue_reverse_edit_and_keyboard_origins_match_actual_qt",
+      "source_path": "crates/hydrus-gui-model/tests/model/external_calls.rs",
+      "source_line": 459,
+      "source_commit": "6b5ca5ab48238b19346e67938d8213a7a26303fb",
+      "run_id": 37583224181,
+      "log": "/workspace/validation-reviews/ci-6b5ca5ab4/tests.log",
+      "log_line": 1533,
+      "result": "passed"
+    },
+    {
+      "test": "menu_choice_wheel::options_staging_saved_policy_bubbling_and_retired_roots_are_owned",
+      "source_path": "crates/hydrus-gui/tests/gui/menu_choice_wheel.rs",
+      "source_commit": "6b5ca5ab48238b19346e67938d8213a7a26303fb",
+      "run_id": 37583224181,
+      "log": "/workspace/validation-reviews/ci-6b5ca5ab4/tests.log",
+      "log_line": 953,
+      "result": "passed",
+      "scope": "Preserved blocker regression only; no new wheel feature credit."
+    }
+  ],
+  "source_pins": [
+    {
+      "path": ".github/workflows/rust.yml",
+      "source_commit": "6b5ca5ab48238b19346e67938d8213a7a26303fb",
+      "sha256": "45ffa19990d8616269f56dc909b5feb078e8830ee657a4dc484dd6f1489281e7",
+      "bytes": 15251,
+      "committed_worktree_bytes_match": true
+    },
+    {
+      "path": "crates/hydrus-gui-model/src/external_command.rs",
+      "source_commit": "6b5ca5ab48238b19346e67938d8213a7a26303fb",
+      "sha256": "de870ed59c616eb95a503001946f0c9d29ad08c98d7ffabf00a57b34f4324e75",
+      "bytes": 5795,
+      "committed_worktree_bytes_match": true
+    },
+    {
+      "path": "crates/hydrus-gui-model/tests/model/external_calls.rs",
+      "source_commit": "6b5ca5ab48238b19346e67938d8213a7a26303fb",
+      "sha256": "1867beb79add1b9b1d4ad29f595fae1f43fea24e18450c77d2596a60ed587af3",
+      "bytes": 18344,
+      "committed_worktree_bytes_match": true
+    },
+    {
+      "path": "crates/hydrus-gui/src/external_call_window.rs",
+      "source_commit": "6b5ca5ab48238b19346e67938d8213a7a26303fb",
+      "sha256": "08982225de04ed866a7b59a22d51033befaf28ed5c9ff075e1630b51e36c05d8",
+      "bytes": 37603,
+      "committed_worktree_bytes_match": true
+    },
+    {
+      "path": "crates/hydrus-gui/src/headless.rs",
+      "source_commit": "6b5ca5ab48238b19346e67938d8213a7a26303fb",
+      "sha256": "c366399b1f509ea4859dd2e566a6e6a2b73d86ee6581aa34434fc5a16fc4bef7",
+      "bytes": 5629,
+      "committed_worktree_bytes_match": true
+    },
+    {
+      "path": "crates/hydrus-gui/src/menu_choice_wheel.rs",
+      "source_commit": "6b5ca5ab48238b19346e67938d8213a7a26303fb",
+      "sha256": "18e40c6312c4e185a3c28d595340879965b25475de31f65d17f6bb08d22871ed",
+      "bytes": 1417,
+      "committed_worktree_bytes_match": true
+    },
+    {
+      "path": "crates/hydrus-gui/src/options_external_calls.rs",
+      "source_commit": "6b5ca5ab48238b19346e67938d8213a7a26303fb",
+      "sha256": "aaf0f08bee33dbd41db2868980381e607bd8a1a84038f1d7c9598c4073ad93dd",
+      "bytes": 19443,
+      "committed_worktree_bytes_match": true
+    },
+    {
+      "path": "crates/hydrus-gui/src/options_open_externally.rs",
+      "source_commit": "6b5ca5ab48238b19346e67938d8213a7a26303fb",
+      "sha256": "2625eee8d92548378ae1c5f5063b015d8f031b22f8fdf75dbb9d5b61340f33d1",
+      "bytes": 25630,
+      "committed_worktree_bytes_match": true
+    },
+    {
+      "path": "crates/hydrus-gui/src/options_window.rs",
+      "source_commit": "6b5ca5ab48238b19346e67938d8213a7a26303fb",
+      "sha256": "f22e87448924698a5b28d9bef42d0fc240ce6e6b90ee7ae0b12b8d20fa4aba7a",
+      "bytes": 73460,
+      "committed_worktree_bytes_match": true
+    },
+    {
+      "path": "crates/hydrus-gui/tests/gui/external_calls.rs",
+      "source_commit": "6b5ca5ab48238b19346e67938d8213a7a26303fb",
+      "sha256": "9ce637bda651b9d982d3d0759b1a37f14cc1327e80d56f94c6db8c3f162d3338",
+      "bytes": 49512,
+      "committed_worktree_bytes_match": true
+    },
+    {
+      "path": "crates/hydrus-gui/tests/gui/menu_choice_wheel.rs",
+      "source_commit": "6b5ca5ab48238b19346e67938d8213a7a26303fb",
+      "sha256": "4f71335403855b4eaf00211d6c250fd67961c83bbc521879869f091aebfdae03",
+      "bytes": 36528,
+      "committed_worktree_bytes_match": true
+    },
+    {
+      "path": "crates/hydrus-gui/ui/external_calls.slint",
+      "source_commit": "6b5ca5ab48238b19346e67938d8213a7a26303fb",
+      "sha256": "b1d0f41309d7e9926c5a8a705ce87364961a04b9e6accc787eb8cafa4c196858",
+      "bytes": 13241,
+      "committed_worktree_bytes_match": true
+    },
+    {
+      "path": "crates/hydrus-gui/ui/menu_choice_wheel.slint",
+      "source_commit": "6b5ca5ab48238b19346e67938d8213a7a26303fb",
+      "sha256": "5b1b7ab94cce9e021bf4f14137288b3990da2ffa41ede6bfb30081e705f7ba80",
+      "bytes": 2958,
+      "committed_worktree_bytes_match": true
+    },
+    {
+      "path": "docs/rust/DIFFERENCES.md",
+      "source_commit": "6b5ca5ab48238b19346e67938d8213a7a26303fb",
+      "sha256": "d16fddea12add5fbb38cfbd50002cd6b7557e29c80c67c7f3fc77fb4a1bf8136",
+      "bytes": 266219,
+      "committed_worktree_bytes_match": true
+    },
+    {
+      "path": "docs/rust/GUI.md",
+      "source_commit": "6b5ca5ab48238b19346e67938d8213a7a26303fb",
+      "sha256": "2c2cbfcea83c1726606c72007380868db9735e3a31c26fe655b41119705c2d29",
+      "bytes": 330711,
+      "committed_worktree_bytes_match": true
+    },
+    {
+      "path": "docs/rust/gui-coverage/parity/external-calls.json",
+      "source_commit": "6b5ca5ab48238b19346e67938d8213a7a26303fb",
+      "sha256": "798eb17e7c1afe125e721d674d41ff8465dc821a33050df7c0f359c47571d56c",
+      "bytes": 100695,
+      "committed_worktree_bytes_match": true
+    },
+    {
+      "path": "hydrus/client/gui/panels/options/ExternalProgramsPanel.py",
+      "source_commit": "6b5ca5ab48238b19346e67938d8213a7a26303fb",
+      "sha256": "59f2f9a236a0fd6e3ac8fd281afdf1578aabe6d02f8979768a2f6d1a550d8004",
+      "bytes": 61407,
+      "committed_worktree_bytes_match": true
+    },
+    {
+      "path": "oracle/fixtures/external_command.json",
+      "source_commit": "6b5ca5ab48238b19346e67938d8213a7a26303fb",
+      "sha256": "a5f56dea5369204748a90c15b12aad13fd0f4a213be926e115ed0d2656646a99",
+      "bytes": 62486,
+      "committed_worktree_bytes_match": true
+    },
+    {
+      "path": "oracle/fixtures/external_command.png",
+      "source_commit": "6b5ca5ab48238b19346e67938d8213a7a26303fb",
+      "sha256": "6d7f23d37c4ea7b7415bbdc84373f4c5fb02ebc4ad5105c309da30d9e08c7fb9",
+      "bytes": 41324,
+      "committed_worktree_bytes_match": true
+    },
+    {
+      "path": "oracle/record_external_command.py",
+      "source_commit": "6b5ca5ab48238b19346e67938d8213a7a26303fb",
+      "sha256": "ab957ef7eeab39b283f897c253ef6f9aaeaaa70215bab043ce0b97cca725655c",
+      "bytes": 9673,
+      "committed_worktree_bytes_match": true
+    }
+  ],
+  "assertion_preservation": {
+    "original_command_macros": 115,
+    "initial_followup_command_macros": 160,
+    "current_command_macros": 165,
+    "original_command_tests": 9,
+    "current_command_tests": 9,
+    "previous_wheel_macros": 87,
+    "current_wheel_macros": 92,
+    "wheel_tests": 6,
+    "all_original_command_lines_preserved_except_collector_binding_rename": true,
+    "all_repair_predecessor_lines_preserved_in_order": true,
+    "no_assertion_weakened_or_removed": true,
+    "one_physical_wheel_and_exact_expected_2_preserved": true
+  },
+  "original_assertion_total": 115,
+  "current_assertion_total": 165,
+  "original_test_total": 9,
+  "current_test_total": 9,
+  "source_blockers": [],
+  "proof_hashes": {
+    "/workspace/validation-reviews/ci-6b5ca5ab4/ci-evidence.json": "13586da5801ed2a6654b770a9091bb58fe817bb64311d0f91284335e183c9f2e",
+    "/workspace/validation-reviews/ci-6b5ca5ab4/validation-outcome.json": "3b45c3d1da7b93e89c30388cd0e9a53425814df55524d9f121897e7b2aaa285f",
+    "/workspace/validation-reviews/ci-6b5ca5ab4/native-render-manifest.json": "a36db5a7ef250e598d24a1346cdc2cd64f6e04e6b5441f4d30070862243c56b2",
+    "/workspace/validation-reviews/ci-6b5ca5ab4/full-check.log": "32d5d322f9477915582d7df08817e2117b1a6b67a732a4033411bf1e9ca177cc",
+    "/workspace/validation-reviews/ci-6b5ca5ab4/tests.log": "5ebac70523eeb8eb874d4e320880aaa2a0345b25a8dc1e9ee7aac6b1aafe9c4b",
+    "/workspace/validation-reviews/ci-6b5ca5ab4/clippy.log": "3493416c1a20c8294f82a35c2e93cf9aa7123dc277c90067ede5c45380b7befb",
+    "/workspace/validation-reviews/ci-6b5ca5ab4/parity.log": "0ddea5b04f8177b4e3b71f39309241409f108df21bdd4a7a740fcfe994633089",
+    "/workspace/validation-reviews/ci-6b5ca5ab4/maintenance.log": "4cb4f09214d1d912dede43af644de5ff6b77213454574fa6c7c6e2f610295f70",
+    "/workspace/validation-reviews/external-command2/source-review-2.json": "0f32c3b8d809e0cbe90c99072b0a53ff3130a961245f87f835409d8660e5ab86",
+    "/workspace/validation-reviews/external-command2/source-review-2.md": "4426c1d84b0c2ba1dece4b9be0ccd23cf5440df02b300620aa44073f5ac81a1b",
+    "/workspace/validation-reviews/external-command2/diagnostic-render-review-2-3c17f2f45.json": "c0f42df708ede9ef3e724c32d19fc6ee9b6246e97171042a76f7c7b18c0d67ed",
+    "/workspace/validation-reviews/external-command2/diagnostic-render-review-2-3c17f2f45.md": "a877f3bf04b9909530207e63c994475e7dbc0cf048f1f8281cab5f1ff49fcb47",
+    "/workspace/validation-reviews/external-command2/repair1/repair-source-review-2.json": "e9f3cc58e76fbc269e000c4c4ad5db8ceba1ee9cbf27f0ae2a20a7c5a7aa8dc9",
+    "/workspace/validation-reviews/external-command2/repair1/repair-source-review-2.md": "43c65971c35ec09e3a4b3aa40f38cc15d907349b00710284e2f9da296e6074af",
+    "/workspace/validation-reviews/external-command2/assertion-preservation-root.json": "5fb170775cae683107d3c1d7da751aeb51bbb51d363cc6c1d817e7491e25b522",
+    "/workspace/validation-reviews/external-command2/repair1/assertion-preservation-root.json": "3b9b637c051d806b1bb8268205d8828e18722024b129a81843d3d69a09fc959b",
+    "/workspace/validation-reviews/external-command2/reference/root-provenance.json": "ee52aa69522e9bad349332840c0a311b881e001bbc5532be7c0b72395bc2dde0",
+    "/workspace/validation-reviews/external-command2/prep-6b5ca5ab4/selection.json": "d6bf61b342a87a64210041ed7694a24c0d2a631f552ecffadd4e3309a08f8738",
+    "/workspace/validation-reviews/external-command2/prep-6b5ca5ab4/render-checklist.json": "51fd572b5aedea580d3de761d08233008734dae47c8e268ded759acbf21e57e1",
+    "/workspace/validation-reviews/external-command2/prep-6b5ca5ab4/conditional-status-map.json": "7be806bbce7e18ae1488a38628eb2fb40818304437dcc543559b6c8361309716",
+    "/workspace/validation-reviews/external-command2/prep-6b5ca5ab4/source-census.json": "a209def36bf2adde9d92c80908b3dd2b4238949e73a6042297161eedc77991d8",
+    "/workspace/validation-reviews/external-command2/prep-6b5ca5ab4/prior355-preservation-proof.json": "cd27cb60fd04bd494b56ba89606fd5bc32111b899d11260ac3f7c795366bc4dd",
+    "/workspace/validation-reviews/external-command2/prep-6b5ca5ab4/scope-reconciliation-proof.json": "0c53fe99d07617c95f0b906e21741d1235a34b6b71f4c00ff26bc81007095ed6",
+    "/workspace/validation-reviews/external-command2/prep-6b5ca5ab4/preparation-summary.json": "8fbb5016e583ec19d07559a83cfc09fdb92789279803f39cc402f4d8acd841bd",
+    "/workspace/validation-reviews/external-command2/prep-6b5ca5ab4/subset-preflight/subset-proposal-patch.json": "49275e9a98ff8c30f742146bc0d7b81e80718da81bac01b73ff0425cad8f7844"
+  },
+  "scope_and_preservation": {
+    "prior_banked_count_unchanged_by_review": 355,
+    "selected_ids_only": [
+      "audit-options-nested-external-call-command-arguments",
+      "audit-options-nested-external-call-command-copy"
+    ],
+    "unselected_promotions": [],
+    "manifest_sibling_objects_unchanged": 18,
+    "prior355_and_unselected_preservation_proof": "/workspace/validation-reviews/external-command2/prep-6b5ca5ab4/prior355-preservation-proof.json",
+    "frozen1812_preserved_in_preflight": true,
+    "native1799_no_semantic_changes_in_preflight": true,
+    "source_census_windows": 121,
+    "conditional_operations_reviewed": 10,
+    "census_and_preservation_scope": "Reviewed the selected proposal/conditional scope and exact manifest siblings; whole-inventory preservation is supported by the separately hash-bound preparation proof. This report grants no publication/canonical write."
+  },
+  "provenance": {
+    "reference_rerun": {
+      "source_commit": "036c5d4921c3430ac370e5628d7843fc2f639e19",
+      "recorder": "oracle/record_external_command.py",
+      "command": "source /workspace/.cloud/hydrus/activate.sh; timeout 180 /workspace/.cloud/hydrus/pyenv/bin/python oracle/record_external_command.py --child /workspace/validation-reviews/external-command2/reference/external_command.actual.json",
+      "exit_code": 0,
+      "started_at_utc": "2026-10-07T06:08:25Z",
+      "completed_at_utc": "2026-10-07T06:08:28Z",
+      "actual_json_equals_committed_fixture": true,
+      "queue_events": 26,
+      "queue_histories": 6,
+      "clipboard_outcomes": 20,
+      "inputs_unchanged": [
+        {
+          "path": "oracle/record_external_command.py",
+          "sha256": "ab957ef7eeab39b283f897c253ef6f9aaeaaa70215bab043ce0b97cca725655c",
+          "bytes": 9673
+        },
+        {
+          "path": "oracle/fixtures/external_command.json",
+          "sha256": "a5f56dea5369204748a90c15b12aad13fd0f4a213be926e115ed0d2656646a99",
+          "bytes": 62486
+        },
+        {
+          "path": "oracle/fixtures/external_command.png",
+          "sha256": "6d7f23d37c4ea7b7415bbdc84373f4c5fb02ebc4ad5105c309da30d9e08c7fb9",
+          "bytes": 41324
+        }
+      ],
+      "actually_viewed_reference_images": [
+        {
+          "path": "oracle/fixtures/external_command.png",
+          "sha256": "6d7f23d37c4ea7b7415bbdc84373f4c5fb02ebc4ad5105c309da30d9e08c7fb9",
+          "observation": "760x590 actual Qt command panel with owned-program, ordered alpha/gamma/beta/delta arguments, beta selected, full template, Add/Edit/reorder/delete/Copy/Paste controls visible and readable."
+        }
+      ],
+      "limits": [
+        "Real Qt queue/input handlers; dialog answers and clipboard transport are scripted.",
+        "Reference PNG covers command panel only; no direct nested input/review/error or timed notification pixel/placement comparison.",
+        "Optional API listener on ::1/127.0.0.1:45901 denied by sandbox; direct Qt/database rerun succeeded with normal shutdown. No connectivity claim.",
+        "No external program/network/OS launcher executed."
+      ],
+      "evidence_sha256": {
+        "before-inputs.json": "0ce500bc464ef0904d75f007971bfa908a52927ab7aa9e5b81305ef9f19b3ce5",
+        "external_command.actual.json": "4d73edb0d40c840e162b6d463577d9657cfe86ec743e51670357ebe8cef738a9",
+        "external-command.log": "87ff7b1c2f39e63183de2acf77460b7fa01939afe2e40dfdefcc2d4a225b5e65"
+      }
+    },
+    "source_reviews": "Frozen initial and repair packets are historical source-only observations; current runtime/render gates are satisfied here. Their pending wording is not a current caveat.",
+    "failed_initial_run": {
+      "source_commit": "3c17f2f4507670c3040f68fac020fa265451d50c",
+      "run_id": 37580667106,
+      "full_ci_success": false,
+      "gui_passed": 706,
+      "gui_failed": 1,
+      "failure": "Existing Options wheel hide/show expected 2 / actual 0; no logged hit-path diagnosis and no persistent product failure inferred.",
+      "diagnostic_packet": "/workspace/validation-reviews/external-command2/diagnostic-render-review-2-3c17f2f45.json",
+      "historical_evidence_only": true,
+      "resolution": "The unchanged one-wheel / exact-2 regression now passes. Current selected actions visibly appear enabled, and 日本 is visible in both current feedback captures. Earlier failed/disabled-looking/missing-glyph evidence remains preserved, granting no completion."
+    },
+    "artifact_integrity": "Root supplied verified API/archive safe-extraction binding; this reviewer independently verified each inspected raw image hash/size and exact committed producer against that manifest. Only the eight selected native images were inspected, not all 345 artifact PNGs.",
+    "execution": "Read-only source/log/image review and scratch report writing only; no builds, local Rust execution, mutation tests, repository edits or canonical status changes."
+  }
+}

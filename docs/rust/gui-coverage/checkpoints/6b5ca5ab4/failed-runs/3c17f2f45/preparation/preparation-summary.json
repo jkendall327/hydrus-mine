@@ -1,0 +1,35 @@
+{
+  "source_commit": "3c17f2f4507670c3040f68fac020fa265451d50c",
+  "run_id": 37580667106,
+  "selected_count": 2,
+  "prior_completed_count": 355,
+  "conditional_bank_if_all_gates_pass": 357,
+  "conditional_pending_after_bank": 18,
+  "conditional_outside_goal_after_bank": 917,
+  "source_schema_preflight": "passed",
+  "unresolved_anchors": [],
+  "patch_digest": "ca91562bf446cebedbd5ae7320f0de66a3c641f9dbc365d7c1a1a6fbc04aef73",
+  "source_census_digest": "57fbb078f11bd9b14c5a9636ea092089e1e7c03949980afeca5c2cf06eb7e71f",
+  "conditional_status_operations": 8,
+  "expected_native_captures": 8,
+  "approval": false,
+  "builds": false,
+  "canonical_writes": false,
+  "input_hashes": {
+    "/workspace/validation-reviews/external-command2/prep-3c17f2f45/subset-preflight/subset-proposal-patch.json": "9fc597c0224d9bd4cd62ce29e42336163a536078c433f346e9550f369d4984c0",
+    "/workspace/validation-reviews/external-command2/prep-3c17f2f45/selection.json": "fa3029c4f5b17a632e4de28c22a345e28cfa85c7ac565169001bafd2c604f14e",
+    "/workspace/validation-reviews/external-command2/prep-3c17f2f45/conditional-status-map.json": "28f44ce9b9320b5321ea696a5f1f46269be0a8a5bb3c6c682ceea6b8e06dd3c1",
+    "/workspace/validation-reviews/external-command2/source-review-2.json": "0f32c3b8d809e0cbe90c99072b0a53ff3130a961245f87f835409d8660e5ab86",
+    "/workspace/validation-reviews/external-command2/assertion-preservation-root.json": "5fb170775cae683107d3c1d7da751aeb51bbb51d363cc6c1d817e7491e25b522",
+    "/workspace/validation-reviews/external-command2/prep-3c17f2f45/README.md": "3290e3e006f4748e25dc1fc4784c5026da3fde6e2eb6be051cd3da0650aa831d",
+    "/workspace/validation-reviews/external-command2/prep-3c17f2f45/prior355-preservation-proof.json": "4621399ed061c236103f2e4cd8dcab19b1f11815d4a71428941b63894d483a0e"
+  },
+  "helper_sha256": "01396055579588e5147aa3529d566bc5d39dcd802323c5afd74b840936f76a03",
+  "helper_syntax_checked": true,
+  "helper_executed": false,
+  "artifact_id": null,
+  "archive_sha256": null,
+  "source_input_hashes": {
+    "docs/rust/gui-coverage/validation-pass/README.md": "86413612845fb87531b9a3a2701a6398c6ae0d08c522cc595a9c5057f91f1a11"
+  }
+}
