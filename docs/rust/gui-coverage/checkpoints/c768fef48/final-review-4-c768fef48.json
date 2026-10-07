@@ -1,0 +1,1098 @@
+{
+  "schema_version": 1,
+  "review_batch": 4,
+  "source_commit": "c768fef48120cdf529656285b8b77aac1a5b8e27",
+  "run_id": 37504670811,
+  "artifact_id": 11433007448,
+  "artifact_zip_sha256": "6de6fd545b79f9bec83f8b742ca304d40e993bfb8e00198d5bc87ce981776843",
+  "validation_scope": "linux",
+  "deferred_platforms": [
+    "windows",
+    "macos"
+  ],
+  "claims": [
+    {
+      "id": "audit-options-maintenance-and-processing-when-to-run-high-cpu-jobs-idle-permit-idle-mode-if-no-general-browsing-activity-has-occurred-in-the-past",
+      "manifest": "docs/rust/gui-coverage/parity/idle-timeout-options.json",
+      "exact_behavior": "Exact staged Noneable minute spinner (1\u20131000) with independent ignore choice, saved seconds, whole-minute floor/clamp display, enabled interlock and Qt hidden1-minute constructor/reopen behavior. Defaults and typed legacy import retain valid original stored seconds and explicit None; missing keys retain reference defaults. Cancel leaves storage/gate untouched. Unchanged Apply writes the displayed minute floor/bounds, while Cancel retains original imported seconds. Explicit edits merge independently; implicit normalization preserves newer live values written while Options was open. Saved thresholds are consumed live by the existing running idle-only session autosave monitor, with strict boot/activity boundaries. Persistence and reopen have authored model/native/store regressions. General browsing activity is observed through the existing native event-loop input route across all application windows; the threshold defaults to 30 minutes.",
+      "source_evidence": [
+        {
+          "path": "crates/hydrus-gui/ui/options.slint",
+          "line": 130,
+          "end_line": 136,
+          "line_sha256": "dda2f29821966a3e357082a52bac99ec99cf6b81e657cd592cad857fa2fc789b",
+          "sha256": "87be44fae0357ba886e5f4758d8747dc4c2a0d48c8a985fe46994ced555b8310",
+          "verified_source_commit": "c768fef48120cdf529656285b8b77aac1a5b8e27",
+          "description": "Default-off actual Noneable geometry/state observer."
+        },
+        {
+          "path": "crates/hydrus-gui/ui/options.slint",
+          "line": 358,
+          "end_line": 367,
+          "line_sha256": "3137e4545aebafd4ea8067ead9c156b7f7ec96409ae52112dcdf7d499b670da8",
+          "sha256": "87be44fae0357ba886e5f4758d8747dc4c2a0d48c8a985fe46994ced555b8310",
+          "verified_source_commit": "c768fef48120cdf529656285b8b77aac1a5b8e27",
+          "description": "Preferred row-height expansion is limited to the exact three idle None captions; previous kind-2 repair remains."
+        },
+        {
+          "path": "crates/hydrus-gui/ui/options.slint",
+          "line": 447,
+          "end_line": 515,
+          "line_sha256": "ff0f9aea8907db83a4730eb9fd0eee21ed650eb23fa7c0ccddca43105622bf63",
+          "sha256": "87be44fae0357ba886e5f4758d8747dc4c2a0d48c8a985fe46994ced555b8310",
+          "verified_source_commit": "c768fef48120cdf529656285b8b77aac1a5b8e27",
+          "description": "Idle controls use independent full-caption row and intrinsic checkbox width; checked None disables the number. Other22 Noneable controls retain original horizontal branch."
+        },
+        {
+          "path": "crates/hydrus-gui-model/src/options.rs",
+          "line": 48,
+          "end_line": 50,
+          "line_sha256": "0eda18f5d6a1ce081ceb301e3020ca032b7151ad90db24a608ef2d1d9bb75211",
+          "sha256": "0959b5f502712b18a6cf8ebb089f1448770b25b291100468cd2e6fba9acb0ae0",
+          "verified_source_commit": "c768fef48120cdf529656285b8b77aac1a5b8e27",
+          "description": "Raw seconds floor/clamp to1..1000 minutes only on explicit acceptance."
+        },
+        {
+          "path": "crates/hydrus-gui-model/src/options.rs",
+          "line": 237,
+          "end_line": 265,
+          "line_sha256": "5b4d96ee3025578ebcb4d4b206b3fbd1cf23ddc1d63751653950518a94f8e53f",
+          "sha256": "0959b5f502712b18a6cf8ebb089f1448770b25b291100468cd2e6fba9acb0ae0",
+          "verified_source_commit": "c768fef48120cdf529656285b8b77aac1a5b8e27",
+          "description": "Saved idle field merge preserves unrelated and newer fields; implicit normalization cannot overwrite newer live values."
+        },
+        {
+          "path": "crates/hydrus-gui-model/src/options.rs",
+          "line": 3037,
+          "end_line": 3106,
+          "line_sha256": "6c72fff10c35cd9a70b51ec026ac145bf17114b756bb21569783b3370bfa3406",
+          "sha256": "0959b5f502712b18a6cf8ebb089f1448770b25b291100468cd2e6fba9acb0ae0",
+          "verified_source_commit": "c768fef48120cdf529656285b8b77aac1a5b8e27",
+          "description": "Exact browsing/mouse/API labels, None captions,1..1000 bounds, minute/second conversion and idle-enabled interlock."
+        },
+        {
+          "path": "crates/hydrus-gui-model/src/options.rs",
+          "line": 5001,
+          "end_line": 5015,
+          "line_sha256": "2a44168318e224e1f830fe9ab620aa00dd4f7b3fb19ef4399abf59593cf0756d",
+          "sha256": "0959b5f502712b18a6cf8ebb089f1448770b25b291100468cd2e6fba9acb0ae0",
+          "verified_source_commit": "c768fef48120cdf529656285b8b77aac1a5b8e27",
+          "description": "Unchanged Apply accepts normalized displayed minute bounds for all three idle fields."
+        },
+        {
+          "path": "crates/hydrus-store/src/settings.rs",
+          "line": 687,
+          "end_line": 711,
+          "line_sha256": "26f144e4e5af36a70cc744183cebd9b95c7b1c5d8ed3fc8fef3d326330fd9c34",
+          "sha256": "e74448ef8754a400fccbe274393d067e4b6b171e189bdc97c5d8edcbd3bb2687",
+          "verified_source_commit": "c768fef48120cdf529656285b8b77aac1a5b8e27",
+          "description": "Typed raw seconds/None and reference defaults browsing1800s/mouse600s/API ignored."
+        },
+        {
+          "path": "crates/hydrus-gui-model/src/session_lifecycle.rs",
+          "line": 48,
+          "end_line": 87,
+          "line_sha256": "94ebae84f92e3bdfe6f45e23d3d4e45c4e8fae7b0870b5e8162f28ef65ba0ebc",
+          "sha256": "b5b74eea801d25f508ed24baef44f00149fbfd2ccf16fea92f2a40eb7a2a8ddc",
+          "verified_source_commit": "c768fef48120cdf529656285b8b77aac1a5b8e27",
+          "description": "Strict120s boot boundary and independent optional browsing/mouse/API thresholds."
+        },
+        {
+          "path": "crates/hydrus-gui/src/session_autosave.rs",
+          "line": 188,
+          "end_line": 226,
+          "line_sha256": "4b30d42a3370a15b8ce76ba6a7f9f55aa44da9fdfdafb05f4cfbe038817aa6cc",
+          "sha256": "ba9d070615d0ca1cfef8c5c1d1a71a964a7aaaa2293c38fd8e4e35e857ea11d5",
+          "verified_source_commit": "c768fef48120cdf529656285b8b77aac1a5b8e27",
+          "description": "Existing application-window event route forwards real keyboard/click/wheel/touch/focus activity; cursor movement updates independent app-only mouse timestamp."
+        },
+        {
+          "path": "crates/hydrus-gui/src/session_autosave.rs",
+          "line": 294,
+          "end_line": 335,
+          "line_sha256": "211f5667ecf62dce518f1cff7cbdf54992ef46e55219f9a8e03b08f3e144bdfe",
+          "sha256": "ba9d070615d0ca1cfef8c5c1d1a71a964a7aaaa2293c38fd8e4e35e857ea11d5",
+          "verified_source_commit": "c768fef48120cdf529656285b8b77aac1a5b8e27",
+          "description": "Running monitor reads saved idle preferences live and consumes latest API marker without SQLite."
+        },
+        {
+          "path": "crates/hydrus-gui/src/session_autosave.rs",
+          "line": 351,
+          "end_line": 388,
+          "line_sha256": "42998aff6841cadd7d2138256f7922e73e239c7b3f0c2282b363de91fdb4e2ab",
+          "sha256": "ba9d070615d0ca1cfef8c5c1d1a71a964a7aaaa2293c38fd8e4e35e857ea11d5",
+          "verified_source_commit": "c768fef48120cdf529656285b8b77aac1a5b8e27",
+          "description": "Existing idle-only session autosave consumer polls configured thresholds and persists changed session snapshot."
+        },
+        {
+          "path": "crates/hydrus-gui/src/options_window.rs",
+          "line": 1684,
+          "end_line": 1740,
+          "line_sha256": "dbf6ac2540045f422759e8e4ee186bfa980f304a4edce69ebe8585ab25e29c2c",
+          "sha256": "f22e87448924698a5b28d9bef42d0fc240ce6e6b90ee7ae0b12b8d20fa4aba7a",
+          "verified_source_commit": "c768fef48120cdf529656285b8b77aac1a5b8e27",
+          "description": "Generic actual Apply owner requires active visible Options window; blocked child ownership prevents persistence."
+        },
+        {
+          "path": "crates/hydrus-api/src/server.rs",
+          "line": 85,
+          "end_line": 104,
+          "line_sha256": "598004aa03908fd2d73213d345942c2e0ae03f1a2b92a1f03c4f4296ef64a818",
+          "sha256": "ab7e4b426f731aca85eeb9a53ac9b6f91648b93ba3dece5c09b8fdf55b9c5401",
+          "verified_source_commit": "c768fef48120cdf529656285b8b77aac1a5b8e27",
+          "description": "API activity middleware publishes timestamp before authentication/busy response handling, independently of DB lock."
+        },
+        {
+          "path": "crates/hydrus-store/src/api_activity.rs",
+          "line": 1,
+          "end_line": 44,
+          "line_sha256": "5f8c0551793a93cac7abebce12c183041e847e1255ccd61004289f99987f7aa3",
+          "sha256": "6061aeaf49564fd99d8c0f96b536d7e2dcc4902d576288f08899c29ec2f9b03a",
+          "verified_source_commit": "c768fef48120cdf529656285b8b77aac1a5b8e27",
+          "description": "Timestamp-only filesystem marker and latest read; no request body/path/key retention."
+        },
+        {
+          "path": "crates/hydrus-store/src/store.rs",
+          "line": 264,
+          "end_line": 280,
+          "sha256": "3553b71de3ecf46bdf39a02e6c18e7dbc3f9b0d0036a6cbcf080f46a22df8920",
+          "line_sha256": "c461a2297cd7bcc989aab890db8795462b4b1f617722d8fb5654b9e2e74782e5",
+          "verified_source_commit": "c768fef48120cdf529656285b8b77aac1a5b8e27",
+          "description": "Store::write requires owned Send + static writer closure; completed call awaits writer result before native controls open."
+        }
+      ],
+      "reference_evidence": [
+        {
+          "path": "hydrus/client/gui/panels/options/MaintenanceAndProcessingPanel.py",
+          "line": 27,
+          "end_line": 37,
+          "line_sha256": "c23a627a96559afa0990a8649577f5199c9b1cccc7971db8d535f8bcd464f13a",
+          "sha256": "93dd7504812ebd78326a8b8a099edd57b26887650cbfb6a9afd3267a2ef47186",
+          "verified_source_commit": "c768fef48120cdf529656285b8b77aac1a5b8e27",
+          "description": "Actual three Noneable idle control constructors/defaults/minutes and None captions; independent CPU option is separate."
+        },
+        {
+          "path": "hydrus/client/gui/widgets/ClientGUICommon.py",
+          "line": 1549,
+          "end_line": 1638,
+          "line_sha256": "e5d4cbedb3f150c34aafb044f8c82ce2abc78db14dff0720500133b282c02c8c",
+          "sha256": "5251e5a3aee653e339ce459da02437f7255776509bf70ce03fc9e61f1134991c",
+          "verified_source_commit": "c768fef48120cdf529656285b8b77aac1a5b8e27",
+          "description": "Actual Qt horizontal NoneableSpinCtrl value conversion, checked-state disabled number, retained numeric value and multiplier."
+        },
+        {
+          "path": "hydrus/client/ClientController.py",
+          "line": 761,
+          "end_line": 850,
+          "line_sha256": "333fc381c11042d6a8f88fc8b5f30bd91652be1d7f6e8d7d3d4908e812d3b1e7",
+          "sha256": "537306fbde6048ab65a5e25144f6c6cb692bff9b2930b428995f8fb56e5a3ee3",
+          "verified_source_commit": "c768fef48120cdf529656285b8b77aac1a5b8e27",
+          "description": "Actual CurrentlyIdle strict boot/activity tests; recorder holds clock/boot/timestamps and disables force override."
+        },
+        {
+          "path": "oracle/record_idle_timeout_options.py",
+          "line": 1,
+          "end_line": 62,
+          "line_sha256": "381f9bfc69d49d39040a7d5fc3197ce385019a2ba2de649622f841a8c658ed37",
+          "sha256": "3e4af9ab0a51e8ffc02de61d9d6bbca0fc8a8e24b4a5ac0a65e539177d9ef2b2",
+          "verified_source_commit": "c768fef48120cdf529656285b8b77aac1a5b8e27",
+          "description": "Actual Qt panel edit/UpdateOptions/control snapshots and CurrentlyIdle; restores globals/timestamps on exit, no maintenance jobs or screenshots."
+        },
+        {
+          "path": "oracle/fixtures/idle_timeout_options.json",
+          "line": 1,
+          "end_line": 860,
+          "line_sha256": "021fb596db81e6d02bf3d2586ee3981fe519f275c0ac9ca76bbcf2ebb4097d96",
+          "sha256": "c47c9ceb5b2c9b9501645a8a15d33430ff698db81f59a910a42abe2ee340aab4",
+          "verified_source_commit": "c768fef48120cdf529656285b8b77aac1a5b8e27",
+          "description": "Actual recorded13 edits and13 gate states: initial30/10/None minutes, raw floors/clamps, None retained values, disabled interlock, strict boot/activity boundaries and fresh None hidden1-minute reopen."
+        },
+        {
+          "path": "oracle/record_idle_timeout_constructors.py",
+          "line": 1,
+          "end_line": 67,
+          "line_sha256": "381f9bfc69d49d39040a7d5fc3197ce385019a2ba2de649622f841a8c658ed37",
+          "sha256": "055897977cce29d1a074599cd08869f5f8f5ad4d8ca77bb72106aec973fda1f2",
+          "verified_source_commit": "c768fef48120cdf529656285b8b77aac1a5b8e27",
+          "description": "Actual fresh raw0/59/119/60060/None Qt constructors; abandonment preserves raw, unchanged UpdateOptions writes60/60/60/60000/None seconds."
+        },
+        {
+          "path": "oracle/fixtures/idle_timeout_constructors.json",
+          "line": 1,
+          "end_line": 154,
+          "line_sha256": "021fb596db81e6d02bf3d2586ee3981fe519f275c0ac9ca76bbcf2ebb4097d96",
+          "sha256": "cd83438c2cb49c18dc070db05d1b425d74ae7604216cc3246a54ecbac896751f",
+          "verified_source_commit": "c768fef48120cdf529656285b8b77aac1a5b8e27",
+          "description": "Five constructor snapshots and corresponding abandoned/accepted saved seconds; no controls edited."
+        }
+      ],
+      "test_evidence": [
+        {
+          "path": "crates/hydrus-gui/tests/gui/idle_timeout_options.rs",
+          "line": 50,
+          "end_line": 173,
+          "line_sha256": "68ee298b4ea7db7c23329609d2b4fc4b2311e39bcd077e5daabe725ad2bd8ff7",
+          "sha256": "b3e9fdaf6c1f9ac8e8dbd0a8e2ae6e917a706b7dce7bd36585e71df113c79991",
+          "verified_source_commit": "c768fef48120cdf529656285b8b77aac1a5b8e27",
+          "description": "Real Options staged changes, Cancel, saved live browsing/API/mouse eligibility and idle-only autosave backup consumer, strict minute boundary; allNone persist/reopen."
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/idle_timeout_options.rs",
+          "line": 176,
+          "end_line": 239,
+          "line_sha256": "fa446a9ff7394384b520fde70a97a552048f4bdb9a7a1b1d763c14ab091d3bd3",
+          "sha256": "b3e9fdaf6c1f9ac8e8dbd0a8e2ae6e917a706b7dce7bd36585e71df113c79991",
+          "verified_source_commit": "c768fef48120cdf529656285b8b77aac1a5b8e27",
+          "description": "Raw119s Cancel retains raw and live gate; unchanged Apply accepts60s and changes existing monitor eligibility; reopened controls normalize."
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/idle_timeout_options.rs",
+          "line": 241,
+          "end_line": 359,
+          "line_sha256": "fa446a9ff7394384b520fde70a97a552048f4bdb9a7a1b1d763c14ab091d3bd3",
+          "sha256": "b3e9fdaf6c1f9ac8e8dbd0a8e2ae6e917a706b7dce7bd36585e71df113c79991",
+          "verified_source_commit": "c768fef48120cdf529656285b8b77aac1a5b8e27",
+          "description": "Actual three-widget checkbox/spin geometry/state at opening/capture sizes, strict intrinsic width/bounds/gap, row state and Cancel persistence; four fresh exports."
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/idle_timeout_options.rs",
+          "line": 1,
+          "end_line": 331,
+          "line_sha256": "8d52352145d91d4d21722b701aff8cb503442b71dafbfcc12290dcb03719bc12",
+          "sha256": "e64475e73694aaab6630251bc5b1d5bed37932c4d07bab4142a5c94c0a7a3498",
+          "verified_source_commit": "c768fef48120cdf529656285b8b77aac1a5b8e27",
+          "description": "Actual Qt controls/gate/constructor replay, saved field merge, raw Cancel normalization and concurrent implicit normalization boundaries."
+        },
+        {
+          "path": "crates/hydrus-store/src/import/decode.rs",
+          "line": 4666,
+          "end_line": 4666,
+          "line_sha256": "729a356b0a234a9021a4331f2bdf656651c04cf05df202c2f5bb550f557a043a",
+          "sha256": "ce988cd231d08607710465c9a64c3aa01e4a1eaec75a9f698a1d16b25204434d",
+          "verified_source_commit": "c768fef48120cdf529656285b8b77aac1a5b8e27",
+          "description": "Typed legacy input retains raw seconds and explicit None; absent keys preserve defaults."
+        },
+        {
+          "path": "crates/hydrus-api/tests/activity.rs",
+          "line": 1,
+          "end_line": 118,
+          "line_sha256": "3e6cd9754785988ec4349b4d60edd5035fbc43df1bba7a4c47a4dc691e551512",
+          "sha256": "74d011c24ba5f4b0ed9109c739d6106bb36a98abb91ed31e2750580d8f9cc6f6",
+          "verified_source_commit": "c768fef48120cdf529656285b8b77aac1a5b8e27",
+          "description": "Actual rejected/read API requests publish activity while DB locked, bounded marker read/update; separate backend regression, not a combined GUI+HTTP test."
+        }
+      ],
+      "approval": true,
+      "caveats": [
+        "Linux-only approval at exact c768 source/run/artifact. Windows and macOS remain deferred.",
+        "Only browsing/API editable thresholds and the existing live idle/session-autosave eligibility consumer qualify. No high-CPU maintenance jobs, CPU-busy detection, idle enable/force/debug/shutdown control, parent or alias completion credit.",
+        "The pictured mouse control is unselected layout support and remains Partial: application-window movement is observed, but global OS cursor movement is unsupported. No mouse leaf completion credit.",
+        "Neither idle Qt recorder exports a matching idle-control PNG. Behavior is grounded in actual Qt source/JSON recordings; fresh native appearance is independently inspected, without same-state screenshot or exact-pixel parity. The force-idle Qt PNG belongs to another surface.",
+        "Qt uses horizontal number/unit/None layout; native selected idle rows use two lines for complete captions. The other 22 generic Noneable layouts retain their previous branch.",
+        "The new geometry test observes actual constructor-bound checkbox/spin state at both sizes; it does not dispatch physical checkbox clicks. Existing staged callbacks, Apply/Cancel, persistence/reopen and live consumer assertions supply the behavioral evidence.",
+        "Strict intrinsic checkbox width and whole-window bounds remain asserted without tolerances; they do not independently measure inner ScrollView clipping/footer or adjacent-row overlap. Actual fresh images confirm selected captions/units/controls are visible at both tested sizes.",
+        "The unselected CPU ignore caption is visibly clipped at the right edge. This review gives it and the maintenance parent no completion credit.",
+        "GUI API consumer regression writes the timestamp marker used by middleware; separate backend actual-request tests cover rejected/read requests while SQLite is locked. This is not a combined physical GUI plus HTTP replay.",
+        "No new idle-specific hidden/closed/rebound retained Apply replay is added. Generic Options active/visible owner guard is source-inspected; no new owner-retirement regression is claimed."
+      ],
+      "passing_test_proof": [
+        {
+          "test": "rejected_and_read_requests_publish_activity_while_locked_without_waiting_on_sqlite",
+          "log_path": "/workspace/validation-reviews/ci-c768fef48/linux-full.log",
+          "log_sha256": "37a115da72cd6531d043aa9c4845d651465d00d70d6e26beb073458ddda3d214",
+          "line": 1314,
+          "text": "2026-10-06T17:59:15.9165060Z test rejected_and_read_requests_publish_activity_while_locked_without_waiting_on_sqlite ... ok"
+        },
+        {
+          "test": "idle_timeout_options::unchanged_options_acceptance_normalises_raw_seconds_and_changes_the_existing_live_gate",
+          "log_path": "/workspace/validation-reviews/ci-c768fef48/linux-full.log",
+          "log_sha256": "37a115da72cd6531d043aa9c4845d651465d00d70d6e26beb073458ddda3d214",
+          "line": 2130,
+          "text": "2026-10-06T18:02:24.8494730Z test idle_timeout_options::unchanged_options_acceptance_normalises_raw_seconds_and_changes_the_existing_live_gate ... ok"
+        },
+        {
+          "test": "idle_timeout_options::staged_timeouts_change_live_browsing_mouse_api_and_autosave_gates_only_after_apply",
+          "log_path": "/workspace/validation-reviews/ci-c768fef48/linux-full.log",
+          "log_sha256": "37a115da72cd6531d043aa9c4845d651465d00d70d6e26beb073458ddda3d214",
+          "line": 2131,
+          "text": "2026-10-06T18:02:25.1637307Z test idle_timeout_options::staged_timeouts_change_live_browsing_mouse_api_and_autosave_gates_only_after_apply ... ok"
+        },
+        {
+          "test": "idle_timeout_options::complete_idle_captions_and_actual_none_states_fit_opening_and_capture_sizes",
+          "log_path": "/workspace/validation-reviews/ci-c768fef48/linux-full.log",
+          "log_sha256": "37a115da72cd6531d043aa9c4845d651465d00d70d6e26beb073458ddda3d214",
+          "line": 2132,
+          "text": "2026-10-06T18:02:25.7954380Z test idle_timeout_options::complete_idle_captions_and_actual_none_states_fit_opening_and_capture_sizes ... ok"
+        },
+        {
+          "test": "idle_timeout_options::edited_idle_thresholds_merge_without_overwriting_live_unrelated_preferences",
+          "log_path": "/workspace/validation-reviews/ci-c768fef48/linux-full.log",
+          "log_sha256": "37a115da72cd6531d043aa9c4845d651465d00d70d6e26beb073458ddda3d214",
+          "line": 2876,
+          "text": "2026-10-06T18:05:40.2055415Z test idle_timeout_options::edited_idle_thresholds_merge_without_overwriting_live_unrelated_preferences ... ok"
+        },
+        {
+          "test": "idle_timeout_options::implicit_idle_normalisation_preserves_newer_fields_and_explicit_edits_still_apply",
+          "log_path": "/workspace/validation-reviews/ci-c768fef48/linux-full.log",
+          "log_sha256": "37a115da72cd6531d043aa9c4845d651465d00d70d6e26beb073458ddda3d214",
+          "line": 2877,
+          "text": "2026-10-06T18:05:40.3060994Z test idle_timeout_options::implicit_idle_normalisation_preserves_newer_fields_and_explicit_edits_still_apply ... ok"
+        },
+        {
+          "test": "idle_timeout_options::noneable_timeout_controls_replay_qt_defaults_floor_bounds_retention_and_reopen",
+          "log_path": "/workspace/validation-reviews/ci-c768fef48/linux-full.log",
+          "log_sha256": "37a115da72cd6531d043aa9c4845d651465d00d70d6e26beb073458ddda3d214",
+          "line": 2878,
+          "text": "2026-10-06T18:05:40.4159179Z test idle_timeout_options::noneable_timeout_controls_replay_qt_defaults_floor_bounds_retention_and_reopen ... ok"
+        },
+        {
+          "test": "idle_timeout_options::saved_timeout_choices_replay_strict_qt_boot_activity_and_ignore_gates",
+          "log_path": "/workspace/validation-reviews/ci-c768fef48/linux-full.log",
+          "log_sha256": "37a115da72cd6531d043aa9c4845d651465d00d70d6e26beb073458ddda3d214",
+          "line": 2880,
+          "text": "2026-10-06T18:05:40.4424684Z test idle_timeout_options::saved_timeout_choices_replay_strict_qt_boot_activity_and_ignore_gates ... ok"
+        },
+        {
+          "test": "idle_timeout_options::raw_imported_seconds_normalise_only_on_unchanged_acceptance_as_qt_does",
+          "log_path": "/workspace/validation-reviews/ci-c768fef48/linux-full.log",
+          "log_sha256": "37a115da72cd6531d043aa9c4845d651465d00d70d6e26beb073458ddda3d214",
+          "line": 2901,
+          "text": "2026-10-06T18:05:40.7562492Z test idle_timeout_options::raw_imported_seconds_normalise_only_on_unchanged_acceptance_as_qt_does ... ok"
+        },
+        {
+          "test": "import::decode::tests::idle_timeout_import_preserves_seconds_none_and_missing_defaults",
+          "log_path": "/workspace/validation-reviews/ci-c768fef48/linux-full.log",
+          "log_sha256": "37a115da72cd6531d043aa9c4845d651465d00d70d6e26beb073458ddda3d214",
+          "line": 3910,
+          "text": "2026-10-06T18:07:13.1877068Z test import::decode::tests::idle_timeout_import_preserves_seconds_none_and_missing_defaults ... ok"
+        }
+      ],
+      "native_images_actually_viewed": [
+        {
+          "path": "/workspace/validation-reviews/ci-c768fef48/native-renders/idle-timeout-finite-900x640.png",
+          "filename": "idle-timeout-finite-900x640.png",
+          "sha256": "5a6d21bd5909161c67dd96939881ffe8aa0df6fb7e9c37bc2a7e7882ec5d8386",
+          "dimensions": [
+            900,
+            640
+          ],
+          "actually_viewed": true,
+          "observed": "Browsing/API show enabled 1-minute spinners and unchecked full ignore captions; mouse is ignored and disabled. Selected captions, units and controls are visible with no observed overlap. Unselected CPU ignore caption clips at the right edge.",
+          "matching_qt_png": null,
+          "source_commit": "c768fef48120cdf529656285b8b77aac1a5b8e27",
+          "run_id": 37504670811,
+          "artifact_id": 11433007448
+        },
+        {
+          "path": "/workspace/validation-reviews/ci-c768fef48/native-renders/idle-timeout-finite-1000x850.png",
+          "filename": "idle-timeout-finite-1000x850.png",
+          "sha256": "852c90073a45ff8dcf8f9cf2ee9fef062ea4715658f4e3778bddd2190b4e09cc",
+          "dimensions": [
+            1000,
+            850
+          ],
+          "actually_viewed": true,
+          "observed": "Browsing/API show enabled 1-minute spinners and unchecked full ignore captions; mouse is ignored and disabled. Selected captions, units and controls are visible with no observed overlap. Unselected CPU ignore caption clips at the right edge.",
+          "matching_qt_png": null,
+          "source_commit": "c768fef48120cdf529656285b8b77aac1a5b8e27",
+          "run_id": 37504670811,
+          "artifact_id": 11433007448
+        },
+        {
+          "path": "/workspace/validation-reviews/ci-c768fef48/native-renders/idle-timeout-ignored-900x640.png",
+          "filename": "idle-timeout-ignored-900x640.png",
+          "sha256": "4c316a027694a5fabb1071ceb55007ec48d97960c194f89a1c697dc2a5ad38a8",
+          "dimensions": [
+            900,
+            640
+          ],
+          "actually_viewed": true,
+          "observed": "Browsing/API show checked full ignore captions and disabled 1-minute spinners; mouse also remains ignored. Selected captions, units and controls are visible with no observed overlap. Unselected CPU ignore caption clips at the right edge.",
+          "matching_qt_png": null,
+          "source_commit": "c768fef48120cdf529656285b8b77aac1a5b8e27",
+          "run_id": 37504670811,
+          "artifact_id": 11433007448
+        },
+        {
+          "path": "/workspace/validation-reviews/ci-c768fef48/native-renders/idle-timeout-ignored-1000x850.png",
+          "filename": "idle-timeout-ignored-1000x850.png",
+          "sha256": "4bf6b6b0a30c234380af88d9b16ac8548fb3a357edb9def9decce1118402b388",
+          "dimensions": [
+            1000,
+            850
+          ],
+          "actually_viewed": true,
+          "observed": "Browsing/API show checked full ignore captions and disabled 1-minute spinners; mouse also remains ignored. Selected captions, units and controls are visible with no observed overlap. Unselected CPU ignore caption clips at the right edge.",
+          "matching_qt_png": null,
+          "source_commit": "c768fef48120cdf529656285b8b77aac1a5b8e27",
+          "run_id": 37504670811,
+          "artifact_id": 11433007448
+        },
+        {
+          "path": "/workspace/validation-reviews/ci-c768fef48/native-renders/idle-timeout-options.png",
+          "filename": "idle-timeout-options.png",
+          "sha256": "4bf6b6b0a30c234380af88d9b16ac8548fb3a357edb9def9decce1118402b388",
+          "dimensions": [
+            1000,
+            850
+          ],
+          "actually_viewed": true,
+          "observed": "Browsing/API show checked full ignore captions and disabled 1-minute spinners; mouse also remains ignored. Selected captions, units and controls are visible with no observed overlap. Unselected CPU ignore caption clips at the right edge.",
+          "matching_qt_png": null,
+          "source_commit": "c768fef48120cdf529656285b8b77aac1a5b8e27",
+          "run_id": 37504670811,
+          "artifact_id": 11433007448
+        }
+      ],
+      "render_conclusion": "Selected browsing/API controls and complete captions are visible at 900x640 and 1000x850 in both finite and ignored states; no selected-surface render blocker found."
+    },
+    {
+      "id": "audit-options-maintenance-and-processing-when-to-run-high-cpu-jobs-idle-permit-idle-mode-if-no-client-api-requests-in-the-past",
+      "manifest": "docs/rust/gui-coverage/parity/idle-timeout-options.json",
+      "exact_behavior": "Exact staged Noneable minute spinner (1\u20131000) with independent ignore choice, saved seconds, whole-minute floor/clamp display, enabled interlock and Qt hidden1-minute constructor/reopen behavior. Defaults and typed legacy import retain valid original stored seconds and explicit None; missing keys retain reference defaults. Cancel leaves storage/gate untouched. Unchanged Apply writes the displayed minute floor/bounds, while Cancel retains original imported seconds. Explicit edits merge independently; implicit normalization preserves newer live values written while Options was open. Saved thresholds are consumed live by the existing running idle-only session autosave monitor, with strict boot/activity boundaries. Persistence and reopen have authored model/native/store regressions. Client API requests update the existing timestamp-only shared marker independently of browsing/mouse timestamps; the monitor consumes it live without the API database lock. The default ignores API activity.",
+      "source_evidence": [
+        {
+          "path": "crates/hydrus-gui/ui/options.slint",
+          "line": 130,
+          "end_line": 136,
+          "line_sha256": "dda2f29821966a3e357082a52bac99ec99cf6b81e657cd592cad857fa2fc789b",
+          "sha256": "87be44fae0357ba886e5f4758d8747dc4c2a0d48c8a985fe46994ced555b8310",
+          "verified_source_commit": "c768fef48120cdf529656285b8b77aac1a5b8e27",
+          "description": "Default-off actual Noneable geometry/state observer."
+        },
+        {
+          "path": "crates/hydrus-gui/ui/options.slint",
+          "line": 358,
+          "end_line": 367,
+          "line_sha256": "3137e4545aebafd4ea8067ead9c156b7f7ec96409ae52112dcdf7d499b670da8",
+          "sha256": "87be44fae0357ba886e5f4758d8747dc4c2a0d48c8a985fe46994ced555b8310",
+          "verified_source_commit": "c768fef48120cdf529656285b8b77aac1a5b8e27",
+          "description": "Preferred row-height expansion is limited to the exact three idle None captions; previous kind-2 repair remains."
+        },
+        {
+          "path": "crates/hydrus-gui/ui/options.slint",
+          "line": 447,
+          "end_line": 515,
+          "line_sha256": "ff0f9aea8907db83a4730eb9fd0eee21ed650eb23fa7c0ccddca43105622bf63",
+          "sha256": "87be44fae0357ba886e5f4758d8747dc4c2a0d48c8a985fe46994ced555b8310",
+          "verified_source_commit": "c768fef48120cdf529656285b8b77aac1a5b8e27",
+          "description": "Idle controls use independent full-caption row and intrinsic checkbox width; checked None disables the number. Other22 Noneable controls retain original horizontal branch."
+        },
+        {
+          "path": "crates/hydrus-gui-model/src/options.rs",
+          "line": 48,
+          "end_line": 50,
+          "line_sha256": "0eda18f5d6a1ce081ceb301e3020ca032b7151ad90db24a608ef2d1d9bb75211",
+          "sha256": "0959b5f502712b18a6cf8ebb089f1448770b25b291100468cd2e6fba9acb0ae0",
+          "verified_source_commit": "c768fef48120cdf529656285b8b77aac1a5b8e27",
+          "description": "Raw seconds floor/clamp to1..1000 minutes only on explicit acceptance."
+        },
+        {
+          "path": "crates/hydrus-gui-model/src/options.rs",
+          "line": 237,
+          "end_line": 265,
+          "line_sha256": "5b4d96ee3025578ebcb4d4b206b3fbd1cf23ddc1d63751653950518a94f8e53f",
+          "sha256": "0959b5f502712b18a6cf8ebb089f1448770b25b291100468cd2e6fba9acb0ae0",
+          "verified_source_commit": "c768fef48120cdf529656285b8b77aac1a5b8e27",
+          "description": "Saved idle field merge preserves unrelated and newer fields; implicit normalization cannot overwrite newer live values."
+        },
+        {
+          "path": "crates/hydrus-gui-model/src/options.rs",
+          "line": 3037,
+          "end_line": 3106,
+          "line_sha256": "6c72fff10c35cd9a70b51ec026ac145bf17114b756bb21569783b3370bfa3406",
+          "sha256": "0959b5f502712b18a6cf8ebb089f1448770b25b291100468cd2e6fba9acb0ae0",
+          "verified_source_commit": "c768fef48120cdf529656285b8b77aac1a5b8e27",
+          "description": "Exact browsing/mouse/API labels, None captions,1..1000 bounds, minute/second conversion and idle-enabled interlock."
+        },
+        {
+          "path": "crates/hydrus-gui-model/src/options.rs",
+          "line": 5001,
+          "end_line": 5015,
+          "line_sha256": "2a44168318e224e1f830fe9ab620aa00dd4f7b3fb19ef4399abf59593cf0756d",
+          "sha256": "0959b5f502712b18a6cf8ebb089f1448770b25b291100468cd2e6fba9acb0ae0",
+          "verified_source_commit": "c768fef48120cdf529656285b8b77aac1a5b8e27",
+          "description": "Unchanged Apply accepts normalized displayed minute bounds for all three idle fields."
+        },
+        {
+          "path": "crates/hydrus-store/src/settings.rs",
+          "line": 687,
+          "end_line": 711,
+          "line_sha256": "26f144e4e5af36a70cc744183cebd9b95c7b1c5d8ed3fc8fef3d326330fd9c34",
+          "sha256": "e74448ef8754a400fccbe274393d067e4b6b171e189bdc97c5d8edcbd3bb2687",
+          "verified_source_commit": "c768fef48120cdf529656285b8b77aac1a5b8e27",
+          "description": "Typed raw seconds/None and reference defaults browsing1800s/mouse600s/API ignored."
+        },
+        {
+          "path": "crates/hydrus-gui-model/src/session_lifecycle.rs",
+          "line": 48,
+          "end_line": 87,
+          "line_sha256": "94ebae84f92e3bdfe6f45e23d3d4e45c4e8fae7b0870b5e8162f28ef65ba0ebc",
+          "sha256": "b5b74eea801d25f508ed24baef44f00149fbfd2ccf16fea92f2a40eb7a2a8ddc",
+          "verified_source_commit": "c768fef48120cdf529656285b8b77aac1a5b8e27",
+          "description": "Strict120s boot boundary and independent optional browsing/mouse/API thresholds."
+        },
+        {
+          "path": "crates/hydrus-gui/src/session_autosave.rs",
+          "line": 188,
+          "end_line": 226,
+          "line_sha256": "4b30d42a3370a15b8ce76ba6a7f9f55aa44da9fdfdafb05f4cfbe038817aa6cc",
+          "sha256": "ba9d070615d0ca1cfef8c5c1d1a71a964a7aaaa2293c38fd8e4e35e857ea11d5",
+          "verified_source_commit": "c768fef48120cdf529656285b8b77aac1a5b8e27",
+          "description": "Existing application-window event route forwards real keyboard/click/wheel/touch/focus activity; cursor movement updates independent app-only mouse timestamp."
+        },
+        {
+          "path": "crates/hydrus-gui/src/session_autosave.rs",
+          "line": 294,
+          "end_line": 335,
+          "line_sha256": "211f5667ecf62dce518f1cff7cbdf54992ef46e55219f9a8e03b08f3e144bdfe",
+          "sha256": "ba9d070615d0ca1cfef8c5c1d1a71a964a7aaaa2293c38fd8e4e35e857ea11d5",
+          "verified_source_commit": "c768fef48120cdf529656285b8b77aac1a5b8e27",
+          "description": "Running monitor reads saved idle preferences live and consumes latest API marker without SQLite."
+        },
+        {
+          "path": "crates/hydrus-gui/src/session_autosave.rs",
+          "line": 351,
+          "end_line": 388,
+          "line_sha256": "42998aff6841cadd7d2138256f7922e73e239c7b3f0c2282b363de91fdb4e2ab",
+          "sha256": "ba9d070615d0ca1cfef8c5c1d1a71a964a7aaaa2293c38fd8e4e35e857ea11d5",
+          "verified_source_commit": "c768fef48120cdf529656285b8b77aac1a5b8e27",
+          "description": "Existing idle-only session autosave consumer polls configured thresholds and persists changed session snapshot."
+        },
+        {
+          "path": "crates/hydrus-gui/src/options_window.rs",
+          "line": 1684,
+          "end_line": 1740,
+          "line_sha256": "dbf6ac2540045f422759e8e4ee186bfa980f304a4edce69ebe8585ab25e29c2c",
+          "sha256": "f22e87448924698a5b28d9bef42d0fc240ce6e6b90ee7ae0b12b8d20fa4aba7a",
+          "verified_source_commit": "c768fef48120cdf529656285b8b77aac1a5b8e27",
+          "description": "Generic actual Apply owner requires active visible Options window; blocked child ownership prevents persistence."
+        },
+        {
+          "path": "crates/hydrus-api/src/server.rs",
+          "line": 85,
+          "end_line": 104,
+          "line_sha256": "598004aa03908fd2d73213d345942c2e0ae03f1a2b92a1f03c4f4296ef64a818",
+          "sha256": "ab7e4b426f731aca85eeb9a53ac9b6f91648b93ba3dece5c09b8fdf55b9c5401",
+          "verified_source_commit": "c768fef48120cdf529656285b8b77aac1a5b8e27",
+          "description": "API activity middleware publishes timestamp before authentication/busy response handling, independently of DB lock."
+        },
+        {
+          "path": "crates/hydrus-store/src/api_activity.rs",
+          "line": 1,
+          "end_line": 44,
+          "line_sha256": "5f8c0551793a93cac7abebce12c183041e847e1255ccd61004289f99987f7aa3",
+          "sha256": "6061aeaf49564fd99d8c0f96b536d7e2dcc4902d576288f08899c29ec2f9b03a",
+          "verified_source_commit": "c768fef48120cdf529656285b8b77aac1a5b8e27",
+          "description": "Timestamp-only filesystem marker and latest read; no request body/path/key retention."
+        },
+        {
+          "path": "crates/hydrus-store/src/store.rs",
+          "line": 264,
+          "end_line": 280,
+          "sha256": "3553b71de3ecf46bdf39a02e6c18e7dbc3f9b0d0036a6cbcf080f46a22df8920",
+          "line_sha256": "c461a2297cd7bcc989aab890db8795462b4b1f617722d8fb5654b9e2e74782e5",
+          "verified_source_commit": "c768fef48120cdf529656285b8b77aac1a5b8e27",
+          "description": "Store::write requires owned Send + static writer closure; completed call awaits writer result before native controls open."
+        }
+      ],
+      "reference_evidence": [
+        {
+          "path": "hydrus/client/gui/panels/options/MaintenanceAndProcessingPanel.py",
+          "line": 27,
+          "end_line": 37,
+          "line_sha256": "c23a627a96559afa0990a8649577f5199c9b1cccc7971db8d535f8bcd464f13a",
+          "sha256": "93dd7504812ebd78326a8b8a099edd57b26887650cbfb6a9afd3267a2ef47186",
+          "verified_source_commit": "c768fef48120cdf529656285b8b77aac1a5b8e27",
+          "description": "Actual three Noneable idle control constructors/defaults/minutes and None captions; independent CPU option is separate."
+        },
+        {
+          "path": "hydrus/client/gui/widgets/ClientGUICommon.py",
+          "line": 1549,
+          "end_line": 1638,
+          "line_sha256": "e5d4cbedb3f150c34aafb044f8c82ce2abc78db14dff0720500133b282c02c8c",
+          "sha256": "5251e5a3aee653e339ce459da02437f7255776509bf70ce03fc9e61f1134991c",
+          "verified_source_commit": "c768fef48120cdf529656285b8b77aac1a5b8e27",
+          "description": "Actual Qt horizontal NoneableSpinCtrl value conversion, checked-state disabled number, retained numeric value and multiplier."
+        },
+        {
+          "path": "hydrus/client/ClientController.py",
+          "line": 761,
+          "end_line": 850,
+          "line_sha256": "333fc381c11042d6a8f88fc8b5f30bd91652be1d7f6e8d7d3d4908e812d3b1e7",
+          "sha256": "537306fbde6048ab65a5e25144f6c6cb692bff9b2930b428995f8fb56e5a3ee3",
+          "verified_source_commit": "c768fef48120cdf529656285b8b77aac1a5b8e27",
+          "description": "Actual CurrentlyIdle strict boot/activity tests; recorder holds clock/boot/timestamps and disables force override."
+        },
+        {
+          "path": "oracle/record_idle_timeout_options.py",
+          "line": 1,
+          "end_line": 62,
+          "line_sha256": "381f9bfc69d49d39040a7d5fc3197ce385019a2ba2de649622f841a8c658ed37",
+          "sha256": "3e4af9ab0a51e8ffc02de61d9d6bbca0fc8a8e24b4a5ac0a65e539177d9ef2b2",
+          "verified_source_commit": "c768fef48120cdf529656285b8b77aac1a5b8e27",
+          "description": "Actual Qt panel edit/UpdateOptions/control snapshots and CurrentlyIdle; restores globals/timestamps on exit, no maintenance jobs or screenshots."
+        },
+        {
+          "path": "oracle/fixtures/idle_timeout_options.json",
+          "line": 1,
+          "end_line": 860,
+          "line_sha256": "021fb596db81e6d02bf3d2586ee3981fe519f275c0ac9ca76bbcf2ebb4097d96",
+          "sha256": "c47c9ceb5b2c9b9501645a8a15d33430ff698db81f59a910a42abe2ee340aab4",
+          "verified_source_commit": "c768fef48120cdf529656285b8b77aac1a5b8e27",
+          "description": "Actual recorded13 edits and13 gate states: initial30/10/None minutes, raw floors/clamps, None retained values, disabled interlock, strict boot/activity boundaries and fresh None hidden1-minute reopen."
+        },
+        {
+          "path": "oracle/record_idle_timeout_constructors.py",
+          "line": 1,
+          "end_line": 67,
+          "line_sha256": "381f9bfc69d49d39040a7d5fc3197ce385019a2ba2de649622f841a8c658ed37",
+          "sha256": "055897977cce29d1a074599cd08869f5f8f5ad4d8ca77bb72106aec973fda1f2",
+          "verified_source_commit": "c768fef48120cdf529656285b8b77aac1a5b8e27",
+          "description": "Actual fresh raw0/59/119/60060/None Qt constructors; abandonment preserves raw, unchanged UpdateOptions writes60/60/60/60000/None seconds."
+        },
+        {
+          "path": "oracle/fixtures/idle_timeout_constructors.json",
+          "line": 1,
+          "end_line": 154,
+          "line_sha256": "021fb596db81e6d02bf3d2586ee3981fe519f275c0ac9ca76bbcf2ebb4097d96",
+          "sha256": "cd83438c2cb49c18dc070db05d1b425d74ae7604216cc3246a54ecbac896751f",
+          "verified_source_commit": "c768fef48120cdf529656285b8b77aac1a5b8e27",
+          "description": "Five constructor snapshots and corresponding abandoned/accepted saved seconds; no controls edited."
+        }
+      ],
+      "test_evidence": [
+        {
+          "path": "crates/hydrus-gui/tests/gui/idle_timeout_options.rs",
+          "line": 50,
+          "end_line": 173,
+          "line_sha256": "68ee298b4ea7db7c23329609d2b4fc4b2311e39bcd077e5daabe725ad2bd8ff7",
+          "sha256": "b3e9fdaf6c1f9ac8e8dbd0a8e2ae6e917a706b7dce7bd36585e71df113c79991",
+          "verified_source_commit": "c768fef48120cdf529656285b8b77aac1a5b8e27",
+          "description": "Real Options staged changes, Cancel, saved live browsing/API/mouse eligibility and idle-only autosave backup consumer, strict minute boundary; allNone persist/reopen."
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/idle_timeout_options.rs",
+          "line": 176,
+          "end_line": 239,
+          "line_sha256": "fa446a9ff7394384b520fde70a97a552048f4bdb9a7a1b1d763c14ab091d3bd3",
+          "sha256": "b3e9fdaf6c1f9ac8e8dbd0a8e2ae6e917a706b7dce7bd36585e71df113c79991",
+          "verified_source_commit": "c768fef48120cdf529656285b8b77aac1a5b8e27",
+          "description": "Raw119s Cancel retains raw and live gate; unchanged Apply accepts60s and changes existing monitor eligibility; reopened controls normalize."
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/idle_timeout_options.rs",
+          "line": 241,
+          "end_line": 359,
+          "line_sha256": "fa446a9ff7394384b520fde70a97a552048f4bdb9a7a1b1d763c14ab091d3bd3",
+          "sha256": "b3e9fdaf6c1f9ac8e8dbd0a8e2ae6e917a706b7dce7bd36585e71df113c79991",
+          "verified_source_commit": "c768fef48120cdf529656285b8b77aac1a5b8e27",
+          "description": "Actual three-widget checkbox/spin geometry/state at opening/capture sizes, strict intrinsic width/bounds/gap, row state and Cancel persistence; four fresh exports."
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/idle_timeout_options.rs",
+          "line": 1,
+          "end_line": 331,
+          "line_sha256": "8d52352145d91d4d21722b701aff8cb503442b71dafbfcc12290dcb03719bc12",
+          "sha256": "e64475e73694aaab6630251bc5b1d5bed37932c4d07bab4142a5c94c0a7a3498",
+          "verified_source_commit": "c768fef48120cdf529656285b8b77aac1a5b8e27",
+          "description": "Actual Qt controls/gate/constructor replay, saved field merge, raw Cancel normalization and concurrent implicit normalization boundaries."
+        },
+        {
+          "path": "crates/hydrus-store/src/import/decode.rs",
+          "line": 4666,
+          "end_line": 4666,
+          "line_sha256": "729a356b0a234a9021a4331f2bdf656651c04cf05df202c2f5bb550f557a043a",
+          "sha256": "ce988cd231d08607710465c9a64c3aa01e4a1eaec75a9f698a1d16b25204434d",
+          "verified_source_commit": "c768fef48120cdf529656285b8b77aac1a5b8e27",
+          "description": "Typed legacy input retains raw seconds and explicit None; absent keys preserve defaults."
+        },
+        {
+          "path": "crates/hydrus-api/tests/activity.rs",
+          "line": 1,
+          "end_line": 118,
+          "line_sha256": "3e6cd9754785988ec4349b4d60edd5035fbc43df1bba7a4c47a4dc691e551512",
+          "sha256": "74d011c24ba5f4b0ed9109c739d6106bb36a98abb91ed31e2750580d8f9cc6f6",
+          "verified_source_commit": "c768fef48120cdf529656285b8b77aac1a5b8e27",
+          "description": "Actual rejected/read API requests publish activity while DB locked, bounded marker read/update; separate backend regression, not a combined GUI+HTTP test."
+        }
+      ],
+      "approval": true,
+      "caveats": [
+        "Linux-only approval at exact c768 source/run/artifact. Windows and macOS remain deferred.",
+        "Only browsing/API editable thresholds and the existing live idle/session-autosave eligibility consumer qualify. No high-CPU maintenance jobs, CPU-busy detection, idle enable/force/debug/shutdown control, parent or alias completion credit.",
+        "The pictured mouse control is unselected layout support and remains Partial: application-window movement is observed, but global OS cursor movement is unsupported. No mouse leaf completion credit.",
+        "Neither idle Qt recorder exports a matching idle-control PNG. Behavior is grounded in actual Qt source/JSON recordings; fresh native appearance is independently inspected, without same-state screenshot or exact-pixel parity. The force-idle Qt PNG belongs to another surface.",
+        "Qt uses horizontal number/unit/None layout; native selected idle rows use two lines for complete captions. The other 22 generic Noneable layouts retain their previous branch.",
+        "The new geometry test observes actual constructor-bound checkbox/spin state at both sizes; it does not dispatch physical checkbox clicks. Existing staged callbacks, Apply/Cancel, persistence/reopen and live consumer assertions supply the behavioral evidence.",
+        "Strict intrinsic checkbox width and whole-window bounds remain asserted without tolerances; they do not independently measure inner ScrollView clipping/footer or adjacent-row overlap. Actual fresh images confirm selected captions/units/controls are visible at both tested sizes.",
+        "The unselected CPU ignore caption is visibly clipped at the right edge. This review gives it and the maintenance parent no completion credit.",
+        "GUI API consumer regression writes the timestamp marker used by middleware; separate backend actual-request tests cover rejected/read requests while SQLite is locked. This is not a combined physical GUI plus HTTP replay.",
+        "No new idle-specific hidden/closed/rebound retained Apply replay is added. Generic Options active/visible owner guard is source-inspected; no new owner-retirement regression is claimed."
+      ],
+      "passing_test_proof": [
+        {
+          "test": "rejected_and_read_requests_publish_activity_while_locked_without_waiting_on_sqlite",
+          "log_path": "/workspace/validation-reviews/ci-c768fef48/linux-full.log",
+          "log_sha256": "37a115da72cd6531d043aa9c4845d651465d00d70d6e26beb073458ddda3d214",
+          "line": 1314,
+          "text": "2026-10-06T17:59:15.9165060Z test rejected_and_read_requests_publish_activity_while_locked_without_waiting_on_sqlite ... ok"
+        },
+        {
+          "test": "idle_timeout_options::unchanged_options_acceptance_normalises_raw_seconds_and_changes_the_existing_live_gate",
+          "log_path": "/workspace/validation-reviews/ci-c768fef48/linux-full.log",
+          "log_sha256": "37a115da72cd6531d043aa9c4845d651465d00d70d6e26beb073458ddda3d214",
+          "line": 2130,
+          "text": "2026-10-06T18:02:24.8494730Z test idle_timeout_options::unchanged_options_acceptance_normalises_raw_seconds_and_changes_the_existing_live_gate ... ok"
+        },
+        {
+          "test": "idle_timeout_options::staged_timeouts_change_live_browsing_mouse_api_and_autosave_gates_only_after_apply",
+          "log_path": "/workspace/validation-reviews/ci-c768fef48/linux-full.log",
+          "log_sha256": "37a115da72cd6531d043aa9c4845d651465d00d70d6e26beb073458ddda3d214",
+          "line": 2131,
+          "text": "2026-10-06T18:02:25.1637307Z test idle_timeout_options::staged_timeouts_change_live_browsing_mouse_api_and_autosave_gates_only_after_apply ... ok"
+        },
+        {
+          "test": "idle_timeout_options::complete_idle_captions_and_actual_none_states_fit_opening_and_capture_sizes",
+          "log_path": "/workspace/validation-reviews/ci-c768fef48/linux-full.log",
+          "log_sha256": "37a115da72cd6531d043aa9c4845d651465d00d70d6e26beb073458ddda3d214",
+          "line": 2132,
+          "text": "2026-10-06T18:02:25.7954380Z test idle_timeout_options::complete_idle_captions_and_actual_none_states_fit_opening_and_capture_sizes ... ok"
+        },
+        {
+          "test": "idle_timeout_options::edited_idle_thresholds_merge_without_overwriting_live_unrelated_preferences",
+          "log_path": "/workspace/validation-reviews/ci-c768fef48/linux-full.log",
+          "log_sha256": "37a115da72cd6531d043aa9c4845d651465d00d70d6e26beb073458ddda3d214",
+          "line": 2876,
+          "text": "2026-10-06T18:05:40.2055415Z test idle_timeout_options::edited_idle_thresholds_merge_without_overwriting_live_unrelated_preferences ... ok"
+        },
+        {
+          "test": "idle_timeout_options::implicit_idle_normalisation_preserves_newer_fields_and_explicit_edits_still_apply",
+          "log_path": "/workspace/validation-reviews/ci-c768fef48/linux-full.log",
+          "log_sha256": "37a115da72cd6531d043aa9c4845d651465d00d70d6e26beb073458ddda3d214",
+          "line": 2877,
+          "text": "2026-10-06T18:05:40.3060994Z test idle_timeout_options::implicit_idle_normalisation_preserves_newer_fields_and_explicit_edits_still_apply ... ok"
+        },
+        {
+          "test": "idle_timeout_options::noneable_timeout_controls_replay_qt_defaults_floor_bounds_retention_and_reopen",
+          "log_path": "/workspace/validation-reviews/ci-c768fef48/linux-full.log",
+          "log_sha256": "37a115da72cd6531d043aa9c4845d651465d00d70d6e26beb073458ddda3d214",
+          "line": 2878,
+          "text": "2026-10-06T18:05:40.4159179Z test idle_timeout_options::noneable_timeout_controls_replay_qt_defaults_floor_bounds_retention_and_reopen ... ok"
+        },
+        {
+          "test": "idle_timeout_options::saved_timeout_choices_replay_strict_qt_boot_activity_and_ignore_gates",
+          "log_path": "/workspace/validation-reviews/ci-c768fef48/linux-full.log",
+          "log_sha256": "37a115da72cd6531d043aa9c4845d651465d00d70d6e26beb073458ddda3d214",
+          "line": 2880,
+          "text": "2026-10-06T18:05:40.4424684Z test idle_timeout_options::saved_timeout_choices_replay_strict_qt_boot_activity_and_ignore_gates ... ok"
+        },
+        {
+          "test": "idle_timeout_options::raw_imported_seconds_normalise_only_on_unchanged_acceptance_as_qt_does",
+          "log_path": "/workspace/validation-reviews/ci-c768fef48/linux-full.log",
+          "log_sha256": "37a115da72cd6531d043aa9c4845d651465d00d70d6e26beb073458ddda3d214",
+          "line": 2901,
+          "text": "2026-10-06T18:05:40.7562492Z test idle_timeout_options::raw_imported_seconds_normalise_only_on_unchanged_acceptance_as_qt_does ... ok"
+        },
+        {
+          "test": "import::decode::tests::idle_timeout_import_preserves_seconds_none_and_missing_defaults",
+          "log_path": "/workspace/validation-reviews/ci-c768fef48/linux-full.log",
+          "log_sha256": "37a115da72cd6531d043aa9c4845d651465d00d70d6e26beb073458ddda3d214",
+          "line": 3910,
+          "text": "2026-10-06T18:07:13.1877068Z test import::decode::tests::idle_timeout_import_preserves_seconds_none_and_missing_defaults ... ok"
+        }
+      ],
+      "native_images_actually_viewed": [
+        {
+          "path": "/workspace/validation-reviews/ci-c768fef48/native-renders/idle-timeout-finite-900x640.png",
+          "filename": "idle-timeout-finite-900x640.png",
+          "sha256": "5a6d21bd5909161c67dd96939881ffe8aa0df6fb7e9c37bc2a7e7882ec5d8386",
+          "dimensions": [
+            900,
+            640
+          ],
+          "actually_viewed": true,
+          "observed": "Browsing/API show enabled 1-minute spinners and unchecked full ignore captions; mouse is ignored and disabled. Selected captions, units and controls are visible with no observed overlap. Unselected CPU ignore caption clips at the right edge.",
+          "matching_qt_png": null,
+          "source_commit": "c768fef48120cdf529656285b8b77aac1a5b8e27",
+          "run_id": 37504670811,
+          "artifact_id": 11433007448
+        },
+        {
+          "path": "/workspace/validation-reviews/ci-c768fef48/native-renders/idle-timeout-finite-1000x850.png",
+          "filename": "idle-timeout-finite-1000x850.png",
+          "sha256": "852c90073a45ff8dcf8f9cf2ee9fef062ea4715658f4e3778bddd2190b4e09cc",
+          "dimensions": [
+            1000,
+            850
+          ],
+          "actually_viewed": true,
+          "observed": "Browsing/API show enabled 1-minute spinners and unchecked full ignore captions; mouse is ignored and disabled. Selected captions, units and controls are visible with no observed overlap. Unselected CPU ignore caption clips at the right edge.",
+          "matching_qt_png": null,
+          "source_commit": "c768fef48120cdf529656285b8b77aac1a5b8e27",
+          "run_id": 37504670811,
+          "artifact_id": 11433007448
+        },
+        {
+          "path": "/workspace/validation-reviews/ci-c768fef48/native-renders/idle-timeout-ignored-900x640.png",
+          "filename": "idle-timeout-ignored-900x640.png",
+          "sha256": "4c316a027694a5fabb1071ceb55007ec48d97960c194f89a1c697dc2a5ad38a8",
+          "dimensions": [
+            900,
+            640
+          ],
+          "actually_viewed": true,
+          "observed": "Browsing/API show checked full ignore captions and disabled 1-minute spinners; mouse also remains ignored. Selected captions, units and controls are visible with no observed overlap. Unselected CPU ignore caption clips at the right edge.",
+          "matching_qt_png": null,
+          "source_commit": "c768fef48120cdf529656285b8b77aac1a5b8e27",
+          "run_id": 37504670811,
+          "artifact_id": 11433007448
+        },
+        {
+          "path": "/workspace/validation-reviews/ci-c768fef48/native-renders/idle-timeout-ignored-1000x850.png",
+          "filename": "idle-timeout-ignored-1000x850.png",
+          "sha256": "4bf6b6b0a30c234380af88d9b16ac8548fb3a357edb9def9decce1118402b388",
+          "dimensions": [
+            1000,
+            850
+          ],
+          "actually_viewed": true,
+          "observed": "Browsing/API show checked full ignore captions and disabled 1-minute spinners; mouse also remains ignored. Selected captions, units and controls are visible with no observed overlap. Unselected CPU ignore caption clips at the right edge.",
+          "matching_qt_png": null,
+          "source_commit": "c768fef48120cdf529656285b8b77aac1a5b8e27",
+          "run_id": 37504670811,
+          "artifact_id": 11433007448
+        },
+        {
+          "path": "/workspace/validation-reviews/ci-c768fef48/native-renders/idle-timeout-options.png",
+          "filename": "idle-timeout-options.png",
+          "sha256": "4bf6b6b0a30c234380af88d9b16ac8548fb3a357edb9def9decce1118402b388",
+          "dimensions": [
+            1000,
+            850
+          ],
+          "actually_viewed": true,
+          "observed": "Browsing/API show checked full ignore captions and disabled 1-minute spinners; mouse also remains ignored. Selected captions, units and controls are visible with no observed overlap. Unselected CPU ignore caption clips at the right edge.",
+          "matching_qt_png": null,
+          "source_commit": "c768fef48120cdf529656285b8b77aac1a5b8e27",
+          "run_id": 37504670811,
+          "artifact_id": 11433007448
+        }
+      ],
+      "render_conclusion": "Selected browsing/API controls and complete captions are visible at 900x640 and 1000x850 in both finite and ignored states; no selected-surface render blocker found."
+    }
+  ],
+  "approved_ids": [
+    "audit-options-maintenance-and-processing-when-to-run-high-cpu-jobs-idle-permit-idle-mode-if-no-general-browsing-activity-has-occurred-in-the-past",
+    "audit-options-maintenance-and-processing-when-to-run-high-cpu-jobs-idle-permit-idle-mode-if-no-client-api-requests-in-the-past"
+  ],
+  "selected_candidate_count": 2,
+  "prior_banked_completions_unchanged": 326,
+  "parent_credit": false,
+  "exact_pixel_parity_claimed": false,
+  "source_reference_hashes_verified": true,
+  "native_images_actually_viewed": [
+    {
+      "path": "/workspace/validation-reviews/ci-c768fef48/native-renders/idle-timeout-finite-900x640.png",
+      "filename": "idle-timeout-finite-900x640.png",
+      "sha256": "5a6d21bd5909161c67dd96939881ffe8aa0df6fb7e9c37bc2a7e7882ec5d8386",
+      "dimensions": [
+        900,
+        640
+      ],
+      "actually_viewed": true,
+      "observed": "Browsing/API show enabled 1-minute spinners and unchecked full ignore captions; mouse is ignored and disabled. Selected captions, units and controls are visible with no observed overlap. Unselected CPU ignore caption clips at the right edge.",
+      "matching_qt_png": null,
+      "source_commit": "c768fef48120cdf529656285b8b77aac1a5b8e27",
+      "run_id": 37504670811,
+      "artifact_id": 11433007448
+    },
+    {
+      "path": "/workspace/validation-reviews/ci-c768fef48/native-renders/idle-timeout-finite-1000x850.png",
+      "filename": "idle-timeout-finite-1000x850.png",
+      "sha256": "852c90073a45ff8dcf8f9cf2ee9fef062ea4715658f4e3778bddd2190b4e09cc",
+      "dimensions": [
+        1000,
+        850
+      ],
+      "actually_viewed": true,
+      "observed": "Browsing/API show enabled 1-minute spinners and unchecked full ignore captions; mouse is ignored and disabled. Selected captions, units and controls are visible with no observed overlap. Unselected CPU ignore caption clips at the right edge.",
+      "matching_qt_png": null,
+      "source_commit": "c768fef48120cdf529656285b8b77aac1a5b8e27",
+      "run_id": 37504670811,
+      "artifact_id": 11433007448
+    },
+    {
+      "path": "/workspace/validation-reviews/ci-c768fef48/native-renders/idle-timeout-ignored-900x640.png",
+      "filename": "idle-timeout-ignored-900x640.png",
+      "sha256": "4c316a027694a5fabb1071ceb55007ec48d97960c194f89a1c697dc2a5ad38a8",
+      "dimensions": [
+        900,
+        640
+      ],
+      "actually_viewed": true,
+      "observed": "Browsing/API show checked full ignore captions and disabled 1-minute spinners; mouse also remains ignored. Selected captions, units and controls are visible with no observed overlap. Unselected CPU ignore caption clips at the right edge.",
+      "matching_qt_png": null,
+      "source_commit": "c768fef48120cdf529656285b8b77aac1a5b8e27",
+      "run_id": 37504670811,
+      "artifact_id": 11433007448
+    },
+    {
+      "path": "/workspace/validation-reviews/ci-c768fef48/native-renders/idle-timeout-ignored-1000x850.png",
+      "filename": "idle-timeout-ignored-1000x850.png",
+      "sha256": "4bf6b6b0a30c234380af88d9b16ac8548fb3a357edb9def9decce1118402b388",
+      "dimensions": [
+        1000,
+        850
+      ],
+      "actually_viewed": true,
+      "observed": "Browsing/API show checked full ignore captions and disabled 1-minute spinners; mouse also remains ignored. Selected captions, units and controls are visible with no observed overlap. Unselected CPU ignore caption clips at the right edge.",
+      "matching_qt_png": null,
+      "source_commit": "c768fef48120cdf529656285b8b77aac1a5b8e27",
+      "run_id": 37504670811,
+      "artifact_id": 11433007448
+    },
+    {
+      "path": "/workspace/validation-reviews/ci-c768fef48/native-renders/idle-timeout-options.png",
+      "filename": "idle-timeout-options.png",
+      "sha256": "4bf6b6b0a30c234380af88d9b16ac8548fb3a357edb9def9decce1118402b388",
+      "dimensions": [
+        1000,
+        850
+      ],
+      "actually_viewed": true,
+      "observed": "Browsing/API show checked full ignore captions and disabled 1-minute spinners; mouse also remains ignored. Selected captions, units and controls are visible with no observed overlap. Unselected CPU ignore caption clips at the right edge.",
+      "matching_qt_png": null,
+      "source_commit": "c768fef48120cdf529656285b8b77aac1a5b8e27",
+      "run_id": 37504670811,
+      "artifact_id": 11433007448
+    }
+  ],
+  "ci_evidence": {
+    "path": "/workspace/validation-reviews/ci-c768fef48/ci-evidence.json",
+    "sha256": "745b359ff626123a70439ccaa663d165c6a3477b23654504fbabbd3727fb05c3",
+    "jobs": [
+      {
+        "name": "check",
+        "id": 112410167493,
+        "conclusion": "success"
+      },
+      {
+        "name": "parity-models",
+        "id": 112410167286,
+        "conclusion": "success"
+      }
+    ],
+    "strict_all_target_clippy": true,
+    "full_workspace_tests": true,
+    "parity_ratchet": true,
+    "gui_tests": {
+      "passed": 698,
+      "failed": 0,
+      "ignored": 0,
+      "seconds": 229.18
+    },
+    "media_tests": {
+      "passed": 67,
+      "failed": 0,
+      "ignored": 0,
+      "seconds": 1.01
+    },
+    "linux_log_path": "/workspace/validation-reviews/ci-c768fef48/linux-full.log",
+    "linux_log_sha256": "37a115da72cd6531d043aa9c4845d651465d00d70d6e26beb073458ddda3d214",
+    "parity_log_path": "/workspace/validation-reviews/ci-c768fef48/parity-models.log",
+    "parity_log_sha256": "b51d857768384c3c90a87dd719a2b2b614522d5193d58efb0e66694007664f6d"
+  },
+  "passing_test_proof": [
+    {
+      "test": "rejected_and_read_requests_publish_activity_while_locked_without_waiting_on_sqlite",
+      "log_path": "/workspace/validation-reviews/ci-c768fef48/linux-full.log",
+      "log_sha256": "37a115da72cd6531d043aa9c4845d651465d00d70d6e26beb073458ddda3d214",
+      "line": 1314,
+      "text": "2026-10-06T17:59:15.9165060Z test rejected_and_read_requests_publish_activity_while_locked_without_waiting_on_sqlite ... ok"
+    },
+    {
+      "test": "idle_timeout_options::unchanged_options_acceptance_normalises_raw_seconds_and_changes_the_existing_live_gate",
+      "log_path": "/workspace/validation-reviews/ci-c768fef48/linux-full.log",
+      "log_sha256": "37a115da72cd6531d043aa9c4845d651465d00d70d6e26beb073458ddda3d214",
+      "line": 2130,
+      "text": "2026-10-06T18:02:24.8494730Z test idle_timeout_options::unchanged_options_acceptance_normalises_raw_seconds_and_changes_the_existing_live_gate ... ok"
+    },
+    {
+      "test": "idle_timeout_options::staged_timeouts_change_live_browsing_mouse_api_and_autosave_gates_only_after_apply",
+      "log_path": "/workspace/validation-reviews/ci-c768fef48/linux-full.log",
+      "log_sha256": "37a115da72cd6531d043aa9c4845d651465d00d70d6e26beb073458ddda3d214",
+      "line": 2131,
+      "text": "2026-10-06T18:02:25.1637307Z test idle_timeout_options::staged_timeouts_change_live_browsing_mouse_api_and_autosave_gates_only_after_apply ... ok"
+    },
+    {
+      "test": "idle_timeout_options::complete_idle_captions_and_actual_none_states_fit_opening_and_capture_sizes",
+      "log_path": "/workspace/validation-reviews/ci-c768fef48/linux-full.log",
+      "log_sha256": "37a115da72cd6531d043aa9c4845d651465d00d70d6e26beb073458ddda3d214",
+      "line": 2132,
+      "text": "2026-10-06T18:02:25.7954380Z test idle_timeout_options::complete_idle_captions_and_actual_none_states_fit_opening_and_capture_sizes ... ok"
+    },
+    {
+      "test": "idle_timeout_options::edited_idle_thresholds_merge_without_overwriting_live_unrelated_preferences",
+      "log_path": "/workspace/validation-reviews/ci-c768fef48/linux-full.log",
+      "log_sha256": "37a115da72cd6531d043aa9c4845d651465d00d70d6e26beb073458ddda3d214",
+      "line": 2876,
+      "text": "2026-10-06T18:05:40.2055415Z test idle_timeout_options::edited_idle_thresholds_merge_without_overwriting_live_unrelated_preferences ... ok"
+    },
+    {
+      "test": "idle_timeout_options::implicit_idle_normalisation_preserves_newer_fields_and_explicit_edits_still_apply",
+      "log_path": "/workspace/validation-reviews/ci-c768fef48/linux-full.log",
+      "log_sha256": "37a115da72cd6531d043aa9c4845d651465d00d70d6e26beb073458ddda3d214",
+      "line": 2877,
+      "text": "2026-10-06T18:05:40.3060994Z test idle_timeout_options::implicit_idle_normalisation_preserves_newer_fields_and_explicit_edits_still_apply ... ok"
+    },
+    {
+      "test": "idle_timeout_options::noneable_timeout_controls_replay_qt_defaults_floor_bounds_retention_and_reopen",
+      "log_path": "/workspace/validation-reviews/ci-c768fef48/linux-full.log",
+      "log_sha256": "37a115da72cd6531d043aa9c4845d651465d00d70d6e26beb073458ddda3d214",
+      "line": 2878,
+      "text": "2026-10-06T18:05:40.4159179Z test idle_timeout_options::noneable_timeout_controls_replay_qt_defaults_floor_bounds_retention_and_reopen ... ok"
+    },
+    {
+      "test": "idle_timeout_options::saved_timeout_choices_replay_strict_qt_boot_activity_and_ignore_gates",
+      "log_path": "/workspace/validation-reviews/ci-c768fef48/linux-full.log",
+      "log_sha256": "37a115da72cd6531d043aa9c4845d651465d00d70d6e26beb073458ddda3d214",
+      "line": 2880,
+      "text": "2026-10-06T18:05:40.4424684Z test idle_timeout_options::saved_timeout_choices_replay_strict_qt_boot_activity_and_ignore_gates ... ok"
+    },
+    {
+      "test": "idle_timeout_options::raw_imported_seconds_normalise_only_on_unchanged_acceptance_as_qt_does",
+      "log_path": "/workspace/validation-reviews/ci-c768fef48/linux-full.log",
+      "log_sha256": "37a115da72cd6531d043aa9c4845d651465d00d70d6e26beb073458ddda3d214",
+      "line": 2901,
+      "text": "2026-10-06T18:05:40.7562492Z test idle_timeout_options::raw_imported_seconds_normalise_only_on_unchanged_acceptance_as_qt_does ... ok"
+    },
+    {
+      "test": "import::decode::tests::idle_timeout_import_preserves_seconds_none_and_missing_defaults",
+      "log_path": "/workspace/validation-reviews/ci-c768fef48/linux-full.log",
+      "log_sha256": "37a115da72cd6531d043aa9c4845d651465d00d70d6e26beb073458ddda3d214",
+      "line": 3910,
+      "text": "2026-10-06T18:07:13.1877068Z test import::decode::tests::idle_timeout_import_preserves_seconds_none_and_missing_defaults ... ok"
+    }
+  ],
+  "manifest_evidence": {
+    "path": "/workspace/validation-reviews/ci-c768fef48/native-renders/native-render-manifest.json",
+    "sha256": "561574ed3dd0bd26e1c2e01b9ca4eeec9b27cc80ea28c46ba6bae4557222a88b",
+    "total_pngs": 283
+  },
+  "existing_capture_note": "idle-timeout-options.png was separately viewed; its bytes match idle-timeout-ignored-1000x850.png, so it is supporting evidence, not a distinct visual state.",
+  "historical_failure": {
+    "source_commit": "bd11c7a0b00f63c646e03b512bf3e722e7153ec8",
+    "run_id": 37497882722,
+    "failure": "Compiler E0373: writer closure borrowed local expected settings. No native validation from this failed source is claimed.",
+    "diagnostic_path": "/workspace/validation-reviews/ci-bd11c7a0b/clippy.log",
+    "sha256": "2e37a6aa56a60c3e21d6574d36b823579ca8dd77281a9acfa9fcd145488d4938"
+  },
+  "writer_closure_repair": {
+    "source_commit": "c768fef48120cdf529656285b8b77aac1a5b8e27",
+    "description": "Owned clone moved into Store writer; original expected settings preserved for both Cancel comparisons. No assertions weakened. Exact-source strict Clippy and full runtime suite now passed."
+  },
+  "canonical_edits": false,
+  "builds_run": false,
+  "publication_performed": false
+}

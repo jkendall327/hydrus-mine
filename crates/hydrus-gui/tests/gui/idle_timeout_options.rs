@@ -237,3 +237,123 @@ fn unchanged_options_acceptance_normalises_raw_seconds_and_changes_the_existing_
     );
     reopened.invoke_cancel();
 }
+
+#[test]
+fn complete_idle_captions_and_actual_none_states_fit_opening_and_capture_sizes() {
+    use std::{
+        cell::RefCell,
+        collections::HashMap,
+        rc::Rc,
+        time::{Duration, Instant},
+    };
+    type Observation = (
+        hydrus_gui::MenuChoiceFrame,
+        hydrus_gui::MenuChoiceFrame,
+        f32,
+        bool,
+        bool,
+        i32,
+    );
+    let (_dirs, store) = crate::subscriptions::store();
+    let windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::single(SearchPage::new(store.clone())));
+    for ignored in [false, true] {
+        let settings = GuiIdleSettings {
+            enabled: true,
+            user_seconds: (!ignored).then_some(60),
+            mouse_seconds: None,
+            api_seconds: (!ignored).then_some(60),
+            ..GuiIdleSettings::default()
+        };
+        let written = settings.clone();
+        store
+            .write(move |ctx| settings::set(ctx.conn(), &written))
+            .unwrap();
+        for (width, height) in [(900, 640), (1000, 850)] {
+            let window = open(&ui, &bound);
+            let native = windows.get(windows.count() - 1).unwrap();
+            headless::render(&native, width, height);
+            let observations = Rc::new(RefCell::new(HashMap::<i32, Observation>::new()));
+            window.on_noneable_number_measured({
+                let observations = observations.clone();
+                move |index, number, check, preferred, checked, enabled, value| {
+                    observations
+                        .borrow_mut()
+                        .insert(index, (number, check, preferred, checked, enabled, value));
+                }
+            });
+            window.set_measure_noneable_numbers(true);
+            let selected = [row(&window, 0), row(&window, 1), row(&window, 2)];
+            let started = Instant::now();
+            let pixels = loop {
+                let pixels = headless::render(&native, width, height);
+                if selected
+                    .iter()
+                    .all(|index| observations.borrow().contains_key(index))
+                {
+                    break pixels;
+                }
+                assert!(
+                    started.elapsed() < Duration::from_secs(2),
+                    "actual idle controls must publish their geometry and state"
+                );
+                std::thread::yield_now();
+            };
+            for index in selected {
+                let observations = observations.borrow();
+                let (number, check, preferred, checked, enabled, value) =
+                    observations.get(&index).unwrap();
+                let expected_ignored = ignored || index == row(&window, 1);
+                assert_eq!(
+                    (*checked, *enabled, *value),
+                    (expected_ignored, !expected_ignored, 1)
+                );
+                assert!(preferred.is_finite() && *preferred > 0.0);
+                assert!(
+                    check.w >= *preferred,
+                    "the complete ignore caption must receive its intrinsic width"
+                );
+                for frame in [number, check] {
+                    assert!(
+                        [frame.x, frame.y, frame.w, frame.h]
+                            .into_iter()
+                            .all(f32::is_finite)
+                    );
+                    assert!(frame.w > 0.0 && frame.h > 0.0);
+                    assert!(frame.x >= 0.0 && frame.y >= 0.0);
+                    assert!(
+                        frame.x + frame.w <= width as f32 && frame.y + frame.h <= height as f32,
+                        "actual idle control must fit {width}x{height}: {frame:?}"
+                    );
+                }
+                assert!(
+                    number.y + number.h < check.y,
+                    "number/unit and None caption need separate rows"
+                );
+                let model = window
+                    .get_rows()
+                    .row_data(usize::try_from(index).unwrap())
+                    .unwrap();
+                assert_eq!((model.minimum, model.maximum, model.number), (1, 1000, 1));
+                assert_eq!(model.unit, "minutes");
+                assert_eq!(model.is_none, expected_ignored);
+            }
+            headless::save_png(
+                &std::path::Path::new(env!("CARGO_TARGET_TMPDIR")).join(format!(
+                    "idle-timeout-{}-{width}x{height}.png",
+                    if ignored { "ignored" } else { "finite" }
+                )),
+                &pixels,
+                width,
+                height,
+            )
+            .unwrap();
+            window.invoke_cancel();
+            assert_eq!(
+                store.read(settings::get::<GuiIdleSettings>).unwrap(),
+                settings
+            );
+        }
+    }
+}

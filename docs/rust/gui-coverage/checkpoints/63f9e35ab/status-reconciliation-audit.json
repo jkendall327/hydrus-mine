@@ -1,0 +1,231 @@
+{
+  "source_commit": "63f9e35abf1b1647e68ea4f1c850efee3ac8c365",
+  "ci_evidence_sha256": "fecf0aa817560d4453cf25d8e55330a7f749796def99e11761803b2d8213b86d",
+  "mapping_sha256": "64d4a05dc9cafa564ed50e44b74e48d15db8e57d4c9e9a692e850a1228b9ccc4",
+  "mapping_applied_after_gates": true,
+  "operations": [
+    {
+      "id": "audit-options-duplicates-colours-background-light-dark-switch-intensity-for-a",
+      "field": "limitations",
+      "original_index": 0,
+      "operation": "replace_exact_list_item",
+      "before": "Broader colour Options, duplicate filter and duplicate-colours parent rows remain Partial; no parent promotion, duplicate claim or alias is proposed.",
+      "conditional_after": "Broader colour Options, duplicate filter and duplicate-colours parent rows remain Partial; no parent, duplicate claim or alias receives completion credit.",
+      "reason": "After actual current sourceCI/fresh review resolve authored/pending validation prose only; retain real behavior/provenance and zero-parent/alias/platform credit."
+    },
+    {
+      "id": "audit-options-duplicates-colours-background-light-dark-switch-intensity-for-a",
+      "field": "limitations",
+      "original_index": 1,
+      "operation": "replace_exact_list_item",
+      "before": "Normal canvas base is white or the imported active override colour. Arbitrary QSS stylesheet palettes and a native general colour-set editor remain unsupported; this slice does not claim these separate workflows.",
+      "conditional_after": "Normal canvas base is white or the imported active override colour. Arbitrary QSS stylesheet palettes remain outside these leaves. The separately banked native colour-set controls receive no additional credit from this duplicate-colour slice; broader QColorDialog topology and application/OS palette workflows remain outside scope.",
+      "reason": "Exact immutable prior331 ledger proves separately banked native colourcontrols; remove obsolete unsupported-editor statement while preserving arbitraryQSS/broaderQt/applicationOS exclusions and zero duplicate/editor credit."
+    },
+    {
+      "id": "audit-options-duplicates-colours-background-light-dark-switch-intensity-for-a",
+      "field": "limitations",
+      "original_index": 4,
+      "operation": "remove_exact_list_item",
+      "before": "Rust model/store/native tests are authored and await hosted CI; no local Cargo builds/tests or mutation execution. Formatter, git diff --check, Python syntax and cached warning-aware Slint compiler passed.",
+      "conditional_after": null,
+      "reason": "After actual current sourceCI/fresh review resolve authored/pending validation prose only; retain real behavior/provenance and zero-parent/alias/platform credit."
+    },
+    {
+      "id": "audit-options-duplicates-colours-background-light-dark-switch-intensity-for-a",
+      "field": "limitations",
+      "original_index": 5,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source native rendering and independent behavioral review are separate from CI; preparation alone validates no completion.",
+      "conditional_after": null,
+      "reason": "After actual current sourceCI/fresh review resolve authored/pending validation prose only; retain real behavior/provenance and zero-parent/alias/platform credit."
+    },
+    {
+      "id": "audit-options-duplicates-colours-background-light-dark-switch-intensity-for-a",
+      "field": "limitations",
+      "original_index": 6,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source hosted Rust/native execution remains pending; regressions below are authored, not marked executed by preparation.",
+      "conditional_after": null,
+      "reason": "After actual current sourceCI/fresh review resolve authored/pending validation prose only; retain real behavior/provenance and zero-parent/alias/platform credit."
+    },
+    {
+      "id": "audit-options-duplicates-colours-background-light-dark-switch-intensity-for-a",
+      "field": "remaining",
+      "original_index": 0,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source hosted full validation remains pending.",
+      "conditional_after": null,
+      "reason": "After actual current sourceCI/fresh review resolve authored/pending validation prose only; retain real behavior/provenance and zero-parent/alias/platform credit."
+    },
+    {
+      "id": "audit-options-duplicates-colours-background-light-dark-switch-intensity-for-a",
+      "field": "remaining",
+      "original_index": 1,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source native rendered review and final assessment reconciliation remain pending.",
+      "conditional_after": null,
+      "reason": "After actual current sourceCI/fresh review resolve authored/pending validation prose only; retain real behavior/provenance and zero-parent/alias/platform credit."
+    },
+    {
+      "id": "audit-options-duplicates-colours-background-light-dark-switch-intensity-for-b",
+      "field": "limitations",
+      "original_index": 0,
+      "operation": "replace_exact_list_item",
+      "before": "Broader colour Options, duplicate filter and duplicate-colours parent rows remain Partial; no parent promotion, duplicate claim or alias is proposed.",
+      "conditional_after": "Broader colour Options, duplicate filter and duplicate-colours parent rows remain Partial; no parent, duplicate claim or alias receives completion credit.",
+      "reason": "After actual current sourceCI/fresh review resolve authored/pending validation prose only; retain real behavior/provenance and zero-parent/alias/platform credit."
+    },
+    {
+      "id": "audit-options-duplicates-colours-background-light-dark-switch-intensity-for-b",
+      "field": "limitations",
+      "original_index": 1,
+      "operation": "replace_exact_list_item",
+      "before": "Normal canvas base is white or the imported active override colour. Arbitrary QSS stylesheet palettes and a native general colour-set editor remain unsupported; this slice does not claim these separate workflows.",
+      "conditional_after": "Normal canvas base is white or the imported active override colour. Arbitrary QSS stylesheet palettes remain outside these leaves. The separately banked native colour-set controls receive no additional credit from this duplicate-colour slice; broader QColorDialog topology and application/OS palette workflows remain outside scope.",
+      "reason": "Exact immutable prior331 ledger proves separately banked native colourcontrols; remove obsolete unsupported-editor statement while preserving arbitraryQSS/broaderQt/applicationOS exclusions and zero duplicate/editor credit."
+    },
+    {
+      "id": "audit-options-duplicates-colours-background-light-dark-switch-intensity-for-b",
+      "field": "limitations",
+      "original_index": 4,
+      "operation": "remove_exact_list_item",
+      "before": "Rust model/store/native tests are authored and await hosted CI; no local Cargo builds/tests or mutation execution. Formatter, git diff --check, Python syntax and cached warning-aware Slint compiler passed.",
+      "conditional_after": null,
+      "reason": "After actual current sourceCI/fresh review resolve authored/pending validation prose only; retain real behavior/provenance and zero-parent/alias/platform credit."
+    },
+    {
+      "id": "audit-options-duplicates-colours-background-light-dark-switch-intensity-for-b",
+      "field": "limitations",
+      "original_index": 5,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source native rendering and independent behavioral review are separate from CI; preparation alone validates no completion.",
+      "conditional_after": null,
+      "reason": "After actual current sourceCI/fresh review resolve authored/pending validation prose only; retain real behavior/provenance and zero-parent/alias/platform credit."
+    },
+    {
+      "id": "audit-options-duplicates-colours-background-light-dark-switch-intensity-for-b",
+      "field": "limitations",
+      "original_index": 6,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source hosted Rust/native execution remains pending; regressions below are authored, not marked executed by preparation.",
+      "conditional_after": null,
+      "reason": "After actual current sourceCI/fresh review resolve authored/pending validation prose only; retain real behavior/provenance and zero-parent/alias/platform credit."
+    },
+    {
+      "id": "audit-options-duplicates-colours-background-light-dark-switch-intensity-for-b",
+      "field": "remaining",
+      "original_index": 0,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source hosted full validation remains pending.",
+      "conditional_after": null,
+      "reason": "After actual current sourceCI/fresh review resolve authored/pending validation prose only; retain real behavior/provenance and zero-parent/alias/platform credit."
+    },
+    {
+      "id": "audit-options-duplicates-colours-background-light-dark-switch-intensity-for-b",
+      "field": "remaining",
+      "original_index": 1,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source native rendered review and final assessment reconciliation remain pending.",
+      "conditional_after": null,
+      "reason": "After actual current sourceCI/fresh review resolve authored/pending validation prose only; retain real behavior/provenance and zero-parent/alias/platform credit."
+    },
+    {
+      "id": "audit-options-duplicates-colours-draw-image-transparency-as-checkerboard-in-the-duplicate-filter",
+      "field": "limitations",
+      "original_index": 0,
+      "operation": "replace_exact_list_item",
+      "before": "Broader colour Options, duplicate filter and duplicate-colours parent rows remain Partial; no parent promotion, duplicate claim or alias is proposed.",
+      "conditional_after": "Broader colour Options, duplicate filter and duplicate-colours parent rows remain Partial; no parent, duplicate claim or alias receives completion credit.",
+      "reason": "After actual current sourceCI/fresh review resolve authored/pending validation prose only; retain real behavior/provenance and zero-parent/alias/platform credit."
+    },
+    {
+      "id": "audit-options-duplicates-colours-draw-image-transparency-as-checkerboard-in-the-duplicate-filter",
+      "field": "limitations",
+      "original_index": 1,
+      "operation": "replace_exact_list_item",
+      "before": "Normal canvas base is white or the imported active override colour. Arbitrary QSS stylesheet palettes and a native general colour-set editor remain unsupported; this slice does not claim these separate workflows.",
+      "conditional_after": "Normal canvas base is white or the imported active override colour. Arbitrary QSS stylesheet palettes remain outside these leaves. The separately banked native colour-set controls receive no additional credit from this duplicate-colour slice; broader QColorDialog topology and application/OS palette workflows remain outside scope.",
+      "reason": "Exact immutable prior331 ledger proves separately banked native colourcontrols; remove obsolete unsupported-editor statement while preserving arbitraryQSS/broaderQt/applicationOS exclusions and zero duplicate/editor credit."
+    },
+    {
+      "id": "audit-options-duplicates-colours-draw-image-transparency-as-checkerboard-in-the-duplicate-filter",
+      "field": "limitations",
+      "original_index": 4,
+      "operation": "remove_exact_list_item",
+      "before": "Rust model/store/native tests are authored and await hosted CI; no local Cargo builds/tests or mutation execution. Formatter, git diff --check, Python syntax and cached warning-aware Slint compiler passed.",
+      "conditional_after": null,
+      "reason": "After actual current sourceCI/fresh review resolve authored/pending validation prose only; retain real behavior/provenance and zero-parent/alias/platform credit."
+    },
+    {
+      "id": "audit-options-duplicates-colours-draw-image-transparency-as-checkerboard-in-the-duplicate-filter",
+      "field": "limitations",
+      "original_index": 5,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source native rendering and independent behavioral review are separate from CI; preparation alone validates no completion.",
+      "conditional_after": null,
+      "reason": "After actual current sourceCI/fresh review resolve authored/pending validation prose only; retain real behavior/provenance and zero-parent/alias/platform credit."
+    },
+    {
+      "id": "audit-options-duplicates-colours-draw-image-transparency-as-checkerboard-in-the-duplicate-filter",
+      "field": "limitations",
+      "original_index": 6,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source hosted Rust/native execution remains pending; regressions below are authored, not marked executed by preparation.",
+      "conditional_after": null,
+      "reason": "After actual current sourceCI/fresh review resolve authored/pending validation prose only; retain real behavior/provenance and zero-parent/alias/platform credit."
+    },
+    {
+      "id": "audit-options-duplicates-colours-draw-image-transparency-as-checkerboard-in-the-duplicate-filter",
+      "field": "remaining",
+      "original_index": 0,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source hosted full validation remains pending.",
+      "conditional_after": null,
+      "reason": "After actual current sourceCI/fresh review resolve authored/pending validation prose only; retain real behavior/provenance and zero-parent/alias/platform credit."
+    },
+    {
+      "id": "audit-options-duplicates-colours-draw-image-transparency-as-checkerboard-in-the-duplicate-filter",
+      "field": "remaining",
+      "original_index": 1,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source native rendered review and final assessment reconciliation remain pending.",
+      "conditional_after": null,
+      "reason": "After actual current sourceCI/fresh review resolve authored/pending validation prose only; retain real behavior/provenance and zero-parent/alias/platform credit."
+    }
+  ],
+  "added_review_scope_limits": {
+    "audit-options-duplicates-colours-background-light-dark-switch-intensity-for-a": [
+      "Validation scope is Linux only; Windows and macOS are deferred.",
+      "Qt final real opaqueB/hover-layout screenshot differs from native controlled transparent-probe painter states; no whole-filter pixel equality, decoded-image fidelity or arbitrary palette contrast is inferred.",
+      "Default black follows the recorded Qt Canvas role; universal readability across arbitrary saved/custom/QSS palettes is not claimed. Slint and Qt font metrics, widget styling and filter topology differ.",
+      "The two role11 override captures naturally restore real opaqueB media and additional slow comparison results while the existing owner timer runs; they validate status colour/visibility only, not recorded background-probe or comparison-score equality."
+    ],
+    "audit-options-duplicates-colours-background-light-dark-switch-intensity-for-b": [
+      "Validation scope is Linux only; Windows and macOS are deferred.",
+      "Qt final real opaqueB/hover-layout screenshot differs from native controlled transparent-probe painter states; no whole-filter pixel equality, decoded-image fidelity or arbitrary palette contrast is inferred.",
+      "Default black follows the recorded Qt Canvas role; universal readability across arbitrary saved/custom/QSS palettes is not claimed. Slint and Qt font metrics, widget styling and filter topology differ.",
+      "The two role11 override captures naturally restore real opaqueB media and additional slow comparison results while the existing owner timer runs; they validate status colour/visibility only, not recorded background-probe or comparison-score equality."
+    ],
+    "audit-options-duplicates-colours-draw-image-transparency-as-checkerboard-in-the-duplicate-filter": [
+      "Validation scope is Linux only; Windows and macOS are deferred.",
+      "Qt final real opaqueB/hover-layout screenshot differs from native controlled transparent-probe painter states; no whole-filter pixel equality, decoded-image fidelity or arbitrary palette contrast is inferred.",
+      "Default black follows the recorded Qt Canvas role; universal readability across arbitrary saved/custom/QSS palettes is not claimed. Slint and Qt font metrics, widget styling and filter topology differ.",
+      "The two role11 override captures naturally restore real opaqueB media and additional slow comparison results while the existing owner timer runs; they validate status colour/visibility only, not recorded background-probe or comparison-score equality."
+    ]
+  },
+  "reviews": [
+    {
+      "path": "docs/rust/gui-coverage/checkpoints/63f9e35ab/final-review-2-63f9e35ab.json",
+      "sha256": "2533425b8a2b6d7e3097bdc49f8033191a3e8fd47aa08d74b9779e99faa0170a"
+    }
+  ],
+  "selected_ids": [
+    "audit-options-duplicates-colours-background-light-dark-switch-intensity-for-a",
+    "audit-options-duplicates-colours-background-light-dark-switch-intensity-for-b",
+    "audit-options-duplicates-colours-draw-image-transparency-as-checkerboard-in-the-duplicate-filter"
+  ],
+  "prior331_completion_ids_and_assessments_preserved": true,
+  "source_only_native_anchor_ids": [],
+  "final_patch_digest": "f96fa61495a3cdec8814f374d25c5cb8dd94e9a7fb5788e0bda91ad8cdc8513c"
+}

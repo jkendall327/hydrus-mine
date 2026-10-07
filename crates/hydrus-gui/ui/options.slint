@@ -130,6 +130,8 @@ export component OptionsWindow inherits Window {
     // pattern. It is off during ordinary Options use and never queries an OS.
     in property <bool> measure-speed-memory-layout: false;
     callback speed-memory-geometry(int,string,MenuChoiceFrame);
+    in property <bool> measure-noneable-numbers: false;
+    callback noneable-number-measured(int,MenuChoiceFrame,MenuChoiceFrame,length,bool,bool,int);
 
     in property <[TableRow]> routing-url-rows;
     in property <[TableRow]> routing-file-rows;
@@ -358,7 +360,7 @@ export component OptionsWindow inherits Window {
                           if row.kind == 37: Text { text: row.label; wrap: word-wrap; color: Theme.text; }
                           HorizontalLayout {
                             spacing: 8px;
-                            min-height: row.kind == 2 ? max(26px, self.preferred-height) : 26px;
+                            min-height: row.kind == 2 || (row.kind == 3 && (row.none-phrase == "ignore normal browsing" || row.none-phrase == "ignore mouse movements" || row.none-phrase == "ignore client api")) ? max(26px, self.preferred-height) : 26px;
                             if row.kind == 0: HorizontalLayout {
                                 horizontal-stretch: 1;
                                 heading := Text {
@@ -442,7 +444,45 @@ export component OptionsWindow inherits Window {
                                 // column; every other numeric-unit row stays as authored.
                                 if row.unit != "" && row.label != "Maximum image size (in % of cache) that can be cached:" && row.label != "Maximum % of cache that will be prefetched per media viewer:": Text {text:row.unit;wrap:word-wrap;}
                             }
-                            if row.kind == 3: HorizontalLayout {
+                            if row.kind == 3 && (row.none-phrase == "ignore normal browsing" || row.none-phrase == "ignore mouse movements" || row.none-phrase == "ignore client api"): VerticalLayout {
+                                // Keep full idle None captions on their own row. Their
+                                // intrinsic width participates in the control column.
+                                width: max(260px, none-box.preferred-width);
+                                spacing: 4px;
+                                HorizontalLayout {
+                                    spacing: 4px;
+                                    alignment: start;
+                                    none-number := SpinBox {
+                                        width: 100px;
+                                        minimum: row.minimum;
+                                        maximum: row.maximum;
+                                        value: row.number;
+                                        enabled: row.enabled && !none-box.checked;
+                                        edited(value) => { root.number-edited(i, value); }
+                                    }
+                                    if row.unit != "": Text {
+                                        text: row.unit;
+                                        vertical-alignment: center;
+                                    }
+                                }
+                                none-box := CheckBox {
+                                    enabled: row.enabled;
+                                    text: row.none-phrase;
+                                    checked: row.is-none;
+                                    toggled => { root.none-toggled(i, self.checked); }
+                                }
+                                Timer {
+                                    interval: 1ms;
+                                    running: root.measure-noneable-numbers;
+                                    triggered => {
+                                        root.noneable-number-measured(i,
+                                            {x:none-number.absolute-position.x,y:none-number.absolute-position.y,w:none-number.width,h:none-number.height},
+                                            {x:none-box.absolute-position.x,y:none-box.absolute-position.y,w:none-box.width,h:none-box.height},
+                                            none-box.preferred-width,none-box.checked,none-number.enabled,none-number.value);
+                                    }
+                                }
+                            }
+                            if row.kind == 3 && !(row.none-phrase == "ignore normal browsing" || row.none-phrase == "ignore mouse movements" || row.none-phrase == "ignore client api"): HorizontalLayout {
                                 width: 260px;
                                 spacing: 4px;
                                 SpinBox {
@@ -451,14 +491,14 @@ export component OptionsWindow inherits Window {
                                     minimum: row.minimum;
                                     maximum: row.maximum;
                                     value: row.number;
-                                    enabled: row.enabled && !none-box.checked;
+                                    enabled: row.enabled && !inline-none-box.checked;
                                     edited(value) => { root.number-edited(i, value); }
                                 }
                                 if row.unit != "": Text {
                                     text: row.unit;
                                     vertical-alignment: center;
                                 }
-                                none-box := CheckBox {
+                                inline-none-box := CheckBox {
                                     enabled: row.enabled;
                                     text: row.none-phrase;
                                     checked: row.is-none;

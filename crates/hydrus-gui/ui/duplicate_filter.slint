@@ -58,6 +58,12 @@ export component DuplicateFilterWindow inherits Window {
     in property <length> sharp-height;
     out property <length> canvas-width: area.width;
     out property <length> canvas-height: area.height;
+    // Direct observations of the painted status, including its actual text colour.
+    out property <length> status-x: area.x + status-label.x;
+    out property <length> status-y: area.y + status-label.y;
+    out property <length> status-width: status-label.width;
+    out property <length> status-height: status-label.height;
+    out property <brush> status-colour: status-label.color;
 
     // "better-delete", "better-keep", "same", "alternates", "false-positive",
     // "skip", "back"
@@ -162,11 +168,11 @@ export component DuplicateFilterWindow inherits Window {
                     source: root.sharp;
                     image-fit: fill;
                 }
-                Text {
+                status-label := Text {
                     x: 8px;
                     y: 6px;
                     text: root.index-text;
-                    color: Theme.colour(11,#e0e0e0);
+                    color: Theme.colour(11,#000000);
                     font-size: 14px;
                 }
                 pointer := TouchArea {

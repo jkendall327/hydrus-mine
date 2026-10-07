@@ -1,0 +1,24 @@
+{
+  "source_commit": "63f9e35abf1b1647e68ea4f1c850efee3ac8c365",
+  "selected_only_before": "Normal canvas base is white or the imported active override colour. Arbitrary QSS stylesheet palettes and a native general colour-set editor remain unsupported; this slice does not claim these separate workflows.",
+  "conditional_after": "Normal canvas base is white or the imported active override colour. Arbitrary QSS stylesheet palettes remain outside these leaves. The separately banked native colour-set controls receive no additional credit from this duplicate-colour slice; broader QColorDialog topology and application/OS palette workflows remain outside scope.",
+  "review_source": "Reviewer2 selection limits explicitly identify old unsupported-editor statement as stale; current immutable source retains separately banked finite colourcontrols. No broad editor/QColorDialog/QSS/platform parity inferred.",
+  "previous_banked_colour_ids": [
+    "audit-options-colours-current-colourset",
+    "audit-options-colours-override-what-is-set-in-the-stylesheet-with-the-colours-on-this-page",
+    "audit-options-menu-menu-help-darkmode"
+  ],
+  "source_ledger_commit": "63f9e35abf1b1647e68ea4f1c850efee3ac8c365",
+  "previous_banked_colour_node_sha256": {
+    "audit-options-colours-current-colourset": "88482f679642a97df5b4b99b73d29afff74cd97655761177282d3cf03ef5e565",
+    "audit-options-colours-override-what-is-set-in-the-stylesheet-with-the-colours-on-this-page": "54c459c6fbf37ba090ce28f06c92fb4ebc580d7776801febb48633210c5f4dcf",
+    "audit-options-menu-menu-help-darkmode": "f85c30d781fc22983327c731d175775f9b92b536de48921dd702e391ab642b8f"
+  },
+  "previous_banked_colour_assessments": {
+    "audit-options-colours-current-colourset": "Exact independent default/darkmode choice remains available with override off and is separate from the editing tab, which always opens default. All26 staged RGB roles survive Apply/Store reopen; unchanged Apply preserves concurrent Help changes and untouched roles. Saved active set reaches every represented role consumer through owner-local weak observers, including physically-local/trash versus remote selected/normal thumbnail fills/borders. Closed/rebound consumers cannot resume observer publication; real semantic RGB pixel assertions are authored.",
+    "audit-options-colours-override-what-is-set-in-the-stylesheet-with-the-colours-on-this-page": "Independent exact override checkbox gates the thirteen swatches in each editing tab while preserving the current-set selector. Cancel/reopen and field-scoped Apply preserve latest unrelated Help/role changes; imported retained ClientOptions fallback and native precedence persist. Saved override controls the thirteen represented Qt colour roles across owned thumbnail, autocomplete, tagbox, preview/viewer/archive/delete/duplicate consumers while leaving the application Palette/style unchanged. Hidden Options and stale/hidden child callbacks cannot change or save drafts; child rebind/close ownership is retained.",
+    "audit-options-menu-menu-help-darkmode": "Actual Help check action reflects the saved current set and toggles default/darkmode. When override is off the exact reference Information warning is acknowledged first, then toggles regardless; when on it toggles immediately. Stylesheet/application Palette remain unchanged. The action reads latest settings at acknowledgement, updates the main owner immediately and other live role owners within250ms. Hidden acknowledgement is inert without consuming the notice; rebind/accepted close/final Bound drop permanently retire pending notices and retained callbacks while independent Store remains live."
+  },
+  "zero_additional_colour_credit": true,
+  "approval": false
+}

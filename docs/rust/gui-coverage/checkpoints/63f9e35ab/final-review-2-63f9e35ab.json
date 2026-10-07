@@ -1,0 +1,812 @@
+{
+  "source_commit": "63f9e35abf1b1647e68ea4f1c850efee3ac8c365",
+  "run_id": 37510853142,
+  "artifact_id": 11439420211,
+  "validation_scope": "linux",
+  "claims": [
+    {
+      "id": "audit-options-duplicates-colours-background-light-dark-switch-intensity-for-a",
+      "approval": true,
+      "caveats": [
+        "Broader colour Options, duplicate filter and duplicate-colours parent rows remain Partial; no parent, duplicate claim or alias receives completion credit.",
+        "Normal canvas base is white or the imported active override colour. Arbitrary QSS stylesheet palettes remain outside these leaves. The separately banked native colour-set controls receive no additional credit from this duplicate-colour slice; broader QColorDialog topology and application/OS palette workflows remain outside scope.",
+        "Native checker is clipped to the actual image box and shares the existing greenscreen preference. The native painter test isolates the same background operation with a transparent probe while the real frozen PNG/JPEG metadata and real pair switch select the policy; no file media or relationship is modified.",
+        "Actual Qt Options recording drives its real page controls and UpdateOptions, serialization/reopen and abandoned page draft. Full Qt modal parent Cancel was not recorded; native regression separately invokes actual owned Options Cancel/Apply and retired-owner/successor boundaries.",
+        "Validation scope is Linux only; Windows and macOS are deferred.",
+        "Qt final real opaqueB/hover-layout screenshot differs from native controlled transparent-probe painter states; no whole-filter pixel equality, decoded-image fidelity or arbitrary palette contrast is inferred.",
+        "Default black follows the recorded Qt Canvas role; universal readability across arbitrary saved/custom/QSS palettes is not claimed. Slint and Qt font metrics, widget styling and filter topology differ.",
+        "The two role11 override captures naturally restore real opaqueB media and additional slow comparison results while the existing owner timer runs; they validate status colour/visibility only, not recorded background-probe or comparison-score equality."
+      ],
+      "approved_scope": "Independent A intensity1..9/None with recorded saved-zero normalization, staging/cancel/import/persistent reopen and real A consumer.",
+      "test_names": [
+        "filter_window::colour_tests::live_pair_switch_preferences_and_painter_replay_qt_then_retire",
+        "duplicate_colours::options_replay_cancel_retired_apply_bounds_and_persisted_reopen",
+        "duplicate_colours::qcolor_rounding_and_independent_transparency_replay_actual_canvas_outputs",
+        "duplicate_colours::options_keep_saved_zero_on_cancel_then_normalise_on_apply_and_preserve_concurrent_background",
+        "import::decode::tests::duplicate_colours_import_none_zero_and_explicit_preferences_then_reopen"
+      ],
+      "inspected_image_names": [
+        "duplicate-colours-painter-0-native.png",
+        "duplicate-colours-painter-1-native.png",
+        "duplicate-colours-painter-2-native.png",
+        "duplicate-colours-painter-3-native.png",
+        "duplicate-colours-painter-4-native.png",
+        "duplicate-colours-painter-5-native.png",
+        "duplicate-colours-painter-6-native.png",
+        "duplicate-colours-painter-7-native.png",
+        "duplicate-colours-options-0-native.png",
+        "duplicate-colours-options-1-native.png",
+        "duplicate-colours-options-2-native.png",
+        "duplicate-colours-options-3-native.png",
+        "duplicate-colours-options-4-native.png",
+        "duplicate-colours-status-override-native.png",
+        "duplicate-colours-status-override-off-native.png"
+      ]
+    },
+    {
+      "id": "audit-options-duplicates-colours-background-light-dark-switch-intensity-for-b",
+      "approval": true,
+      "caveats": [
+        "Broader colour Options, duplicate filter and duplicate-colours parent rows remain Partial; no parent, duplicate claim or alias receives completion credit.",
+        "Normal canvas base is white or the imported active override colour. Arbitrary QSS stylesheet palettes remain outside these leaves. The separately banked native colour-set controls receive no additional credit from this duplicate-colour slice; broader QColorDialog topology and application/OS palette workflows remain outside scope.",
+        "Native checker is clipped to the actual image box and shares the existing greenscreen preference. The native painter test isolates the same background operation with a transparent probe while the real frozen PNG/JPEG metadata and real pair switch select the policy; no file media or relationship is modified.",
+        "Actual Qt Options recording drives its real page controls and UpdateOptions, serialization/reopen and abandoned page draft. Full Qt modal parent Cancel was not recorded; native regression separately invokes actual owned Options Cancel/Apply and retired-owner/successor boundaries.",
+        "Validation scope is Linux only; Windows and macOS are deferred.",
+        "Qt final real opaqueB/hover-layout screenshot differs from native controlled transparent-probe painter states; no whole-filter pixel equality, decoded-image fidelity or arbitrary palette contrast is inferred.",
+        "Default black follows the recorded Qt Canvas role; universal readability across arbitrary saved/custom/QSS palettes is not claimed. Slint and Qt font metrics, widget styling and filter topology differ.",
+        "The two role11 override captures naturally restore real opaqueB media and additional slow comparison results while the existing owner timer runs; they validate status colour/visibility only, not recorded background-probe or comparison-score equality."
+      ],
+      "approved_scope": "Independent B intensity1..9/None with staging/cancel/import/persistent reopen and real original-pair switch/live B consumer.",
+      "test_names": [
+        "filter_window::colour_tests::live_pair_switch_preferences_and_painter_replay_qt_then_retire",
+        "duplicate_colours::options_replay_cancel_retired_apply_bounds_and_persisted_reopen",
+        "duplicate_colours::qcolor_rounding_and_independent_transparency_replay_actual_canvas_outputs",
+        "duplicate_colours::options_keep_saved_zero_on_cancel_then_normalise_on_apply_and_preserve_concurrent_background",
+        "import::decode::tests::duplicate_colours_import_none_zero_and_explicit_preferences_then_reopen"
+      ],
+      "inspected_image_names": [
+        "duplicate-colours-painter-0-native.png",
+        "duplicate-colours-painter-1-native.png",
+        "duplicate-colours-painter-2-native.png",
+        "duplicate-colours-painter-3-native.png",
+        "duplicate-colours-painter-4-native.png",
+        "duplicate-colours-painter-5-native.png",
+        "duplicate-colours-painter-6-native.png",
+        "duplicate-colours-painter-7-native.png",
+        "duplicate-colours-options-0-native.png",
+        "duplicate-colours-options-1-native.png",
+        "duplicate-colours-options-2-native.png",
+        "duplicate-colours-options-3-native.png",
+        "duplicate-colours-options-4-native.png",
+        "duplicate-colours-status-override-native.png",
+        "duplicate-colours-status-override-off-native.png"
+      ]
+    },
+    {
+      "id": "audit-options-duplicates-colours-draw-image-transparency-as-checkerboard-in-the-duplicate-filter",
+      "approval": true,
+      "caveats": [
+        "Broader colour Options, duplicate filter and duplicate-colours parent rows remain Partial; no parent, duplicate claim or alias receives completion credit.",
+        "Normal canvas base is white or the imported active override colour. Arbitrary QSS stylesheet palettes remain outside these leaves. The separately banked native colour-set controls receive no additional credit from this duplicate-colour slice; broader QColorDialog topology and application/OS palette workflows remain outside scope.",
+        "Native checker is clipped to the actual image box and shares the existing greenscreen preference. The native painter test isolates the same background operation with a transparent probe while the real frozen PNG/JPEG metadata and real pair switch select the policy; no file media or relationship is modified.",
+        "Actual Qt Options recording drives its real page controls and UpdateOptions, serialization/reopen and abandoned page draft. Full Qt modal parent Cancel was not recorded; native regression separately invokes actual owned Options Cancel/Apply and retired-owner/successor boundaries.",
+        "Validation scope is Linux only; Windows and macOS are deferred.",
+        "Qt final real opaqueB/hover-layout screenshot differs from native controlled transparent-probe painter states; no whole-filter pixel equality, decoded-image fidelity or arbitrary palette contrast is inferred.",
+        "Default black follows the recorded Qt Canvas role; universal readability across arbitrary saved/custom/QSS palettes is not claimed. Slint and Qt font metrics, widget styling and filter topology differ.",
+        "The two role11 override captures naturally restore real opaqueB media and additional slow comparison results while the existing owner timer runs; they validate status colour/visibility only, not recorded background-probe or comparison-score equality."
+      ],
+      "approved_scope": "Independent checker preference stages/persists/reopens; real metadata selects transparent media only,16px237/222 checker or existing green priority, clipped to image box.",
+      "test_names": [
+        "filter_window::colour_tests::live_pair_switch_preferences_and_painter_replay_qt_then_retire",
+        "duplicate_colours::options_replay_cancel_retired_apply_bounds_and_persisted_reopen",
+        "duplicate_colours::qcolor_rounding_and_independent_transparency_replay_actual_canvas_outputs",
+        "duplicate_colours::options_keep_saved_zero_on_cancel_then_normalise_on_apply_and_preserve_concurrent_background",
+        "import::decode::tests::duplicate_colours_import_none_zero_and_explicit_preferences_then_reopen"
+      ],
+      "inspected_image_names": [
+        "duplicate-colours-painter-0-native.png",
+        "duplicate-colours-painter-1-native.png",
+        "duplicate-colours-painter-2-native.png",
+        "duplicate-colours-painter-3-native.png",
+        "duplicate-colours-painter-4-native.png",
+        "duplicate-colours-painter-5-native.png",
+        "duplicate-colours-painter-6-native.png",
+        "duplicate-colours-painter-7-native.png",
+        "duplicate-colours-options-0-native.png",
+        "duplicate-colours-options-1-native.png",
+        "duplicate-colours-options-2-native.png",
+        "duplicate-colours-options-3-native.png",
+        "duplicate-colours-options-4-native.png",
+        "duplicate-colours-status-override-native.png",
+        "duplicate-colours-status-override-off-native.png"
+      ]
+    }
+  ],
+  "selected_count": 3,
+  "approval_scope": "Exactly3selected leaves; independent final reviewer sign-off only. Canonical publication and prior331 preservation remain root-owned.",
+  "required_jobs": [
+    {
+      "id": 112431975218,
+      "name": "check",
+      "conclusion": "success",
+      "head_sha": "63f9e35abf1b1647e68ea4f1c850efee3ac8c365"
+    },
+    {
+      "id": 112431975580,
+      "name": "parity-models",
+      "conclusion": "success",
+      "head_sha": "63f9e35abf1b1647e68ea4f1c850efee3ac8c365"
+    }
+  ],
+  "validation_outcome": {
+    "source_commit": "63f9e35abf1b1647e68ea4f1c850efee3ac8c365",
+    "run_id": 37510853142,
+    "conclusion": "success",
+    "validation_scope": "linux",
+    "clippy_seconds": 1713,
+    "test_compile_seconds": 1562,
+    "gui_tests": {
+      "passed": 698,
+      "failed": 0,
+      "ignored": 0,
+      "seconds": 224.9
+    },
+    "media_tests": {
+      "passed": 67,
+      "failed": 0,
+      "ignored": 0,
+      "seconds": 1.01
+    },
+    "native_artifact_id": 11439420211,
+    "native_images": 285,
+    "log_sha256": "8ddbf5225b714155599dc265375e1b0409fd5fd74b2425c9cf82ee540a0d3d97"
+  },
+  "native_zip_sha256": "2aca05fd3209633e627c7f7304523780fc8a02ef36736df972f207489ee1d303",
+  "native_manifest_path": "/workspace/validation-reviews/ci-63f9e35ab/native-render-manifest.json",
+  "native_manifest_sha256": "b3a1eec44714c8ac3a1a36e464852caeacbdd87162b60970c91c155c950bbd01",
+  "images_actually_viewed": [
+    {
+      "name": "duplicate-colours-painter-0-native.png",
+      "path": "/workspace/validation-reviews/ci-63f9e35ab/native-renders/duplicate-colours-painter-0-native.png",
+      "sha256": "24a4704c22f22f9b38e2086630aff076695d6417fab5ed47bd93ab2930b35c1c",
+      "bytes": 34491,
+      "dimensions": [
+        800,
+        600
+      ],
+      "actually_viewed": true,
+      "source_commit": "63f9e35abf1b1647e68ea4f1c850efee3ac8c365",
+      "run_id": 37510853142,
+      "artifact_id": 11439420211,
+      "observation": "File One status fully visible in black; canvas RGB[255, 255, 255]. Background probe blends into solid canvas; no checker/green visible.",
+      "fixture_case": 0,
+      "file_a": true,
+      "intensity_a": null,
+      "intensity_b": null,
+      "checkerboard": false,
+      "greenscreen": false,
+      "canvas_rgb": [
+        255,
+        255,
+        255
+      ],
+      "diagnostic_status_top_band_exact_ink_pixels": 54,
+      "diagnostic_top_band": [
+        0,
+        0,
+        470,
+        32
+      ]
+    },
+    {
+      "name": "duplicate-colours-painter-1-native.png",
+      "path": "/workspace/validation-reviews/ci-63f9e35ab/native-renders/duplicate-colours-painter-1-native.png",
+      "sha256": "b8ad9eb90532f4ab622c01f22ed1f7796e7358c4944f7bbcc32ed48a10a2e0d3",
+      "bytes": 34704,
+      "dimensions": [
+        800,
+        600
+      ],
+      "actually_viewed": true,
+      "source_commit": "63f9e35abf1b1647e68ea4f1c850efee3ac8c365",
+      "run_id": 37510853142,
+      "artifact_id": 11439420211,
+      "observation": "File Two status fully visible in black; canvas RGB[255, 255, 255]. Background probe blends into solid canvas; no checker/green visible.",
+      "fixture_case": 1,
+      "file_a": false,
+      "intensity_a": null,
+      "intensity_b": null,
+      "checkerboard": false,
+      "greenscreen": false,
+      "canvas_rgb": [
+        255,
+        255,
+        255
+      ],
+      "diagnostic_status_top_band_exact_ink_pixels": 72,
+      "diagnostic_top_band": [
+        0,
+        0,
+        470,
+        32
+      ]
+    },
+    {
+      "name": "duplicate-colours-painter-2-native.png",
+      "path": "/workspace/validation-reviews/ci-63f9e35ab/native-renders/duplicate-colours-painter-2-native.png",
+      "sha256": "a9542c027fed29a8c83544197018ae4df56416d31131b69da9bcf08f310c07a9",
+      "bytes": 34777,
+      "dimensions": [
+        800,
+        600
+      ],
+      "actually_viewed": true,
+      "source_commit": "63f9e35abf1b1647e68ea4f1c850efee3ac8c365",
+      "run_id": 37510853142,
+      "artifact_id": 11439420211,
+      "observation": "File One status fully visible in black; canvas RGB[212, 212, 212]. Background probe blends into solid canvas; no checker/green visible.",
+      "fixture_case": 2,
+      "file_a": true,
+      "intensity_a": 1,
+      "intensity_b": 9,
+      "checkerboard": false,
+      "greenscreen": false,
+      "canvas_rgb": [
+        212,
+        212,
+        212
+      ],
+      "diagnostic_status_top_band_exact_ink_pixels": 67,
+      "diagnostic_top_band": [
+        0,
+        0,
+        470,
+        32
+      ]
+    },
+    {
+      "name": "duplicate-colours-painter-3-native.png",
+      "path": "/workspace/validation-reviews/ci-63f9e35ab/native-renders/duplicate-colours-painter-3-native.png",
+      "sha256": "d3033bbf4e43426960dfeb6c5d3cb20450f4f0f83ff27db60e97340f9be5021d",
+      "bytes": 35037,
+      "dimensions": [
+        800,
+        600
+      ],
+      "actually_viewed": true,
+      "source_commit": "63f9e35abf1b1647e68ea4f1c850efee3ac8c365",
+      "run_id": 37510853142,
+      "artifact_id": 11439420211,
+      "observation": "File Two status fully visible in black; canvas RGB[91, 91, 91]. Background probe blends into solid canvas; no checker/green visible.",
+      "fixture_case": 3,
+      "file_a": false,
+      "intensity_a": 1,
+      "intensity_b": 9,
+      "checkerboard": false,
+      "greenscreen": false,
+      "canvas_rgb": [
+        91,
+        91,
+        91
+      ],
+      "diagnostic_status_top_band_exact_ink_pixels": 84,
+      "diagnostic_top_band": [
+        0,
+        0,
+        470,
+        32
+      ]
+    },
+    {
+      "name": "duplicate-colours-painter-4-native.png",
+      "path": "/workspace/validation-reviews/ci-63f9e35ab/native-renders/duplicate-colours-painter-4-native.png",
+      "sha256": "2ee569114028acc04b3f96ebca3c8288d5be51e213234c2c59c25577625a6806",
+      "bytes": 35038,
+      "dimensions": [
+        800,
+        600
+      ],
+      "actually_viewed": true,
+      "source_commit": "63f9e35abf1b1647e68ea4f1c850efee3ac8c365",
+      "run_id": 37510853142,
+      "artifact_id": 11439420211,
+      "observation": "File One status fully visible in black; canvas RGB[91, 91, 91]. Transparent 64x64 checker probe at100,100.",
+      "fixture_case": 4,
+      "file_a": true,
+      "intensity_a": 9,
+      "intensity_b": 1,
+      "checkerboard": true,
+      "greenscreen": false,
+      "canvas_rgb": [
+        91,
+        91,
+        91
+      ],
+      "diagnostic_status_top_band_exact_ink_pixels": 77,
+      "diagnostic_top_band": [
+        0,
+        0,
+        470,
+        32
+      ]
+    },
+    {
+      "name": "duplicate-colours-painter-5-native.png",
+      "path": "/workspace/validation-reviews/ci-63f9e35ab/native-renders/duplicate-colours-painter-5-native.png",
+      "sha256": "11164459b54a25f604c9b2b3ee52bbcbd4b4638d2cf7fc7f45f0684171a1bbd3",
+      "bytes": 35001,
+      "dimensions": [
+        800,
+        600
+      ],
+      "actually_viewed": true,
+      "source_commit": "63f9e35abf1b1647e68ea4f1c850efee3ac8c365",
+      "run_id": 37510853142,
+      "artifact_id": 11439420211,
+      "observation": "File Two status fully visible in black; canvas RGB[212, 212, 212]. Background probe blends into solid canvas; no checker/green visible.",
+      "fixture_case": 5,
+      "file_a": false,
+      "intensity_a": 9,
+      "intensity_b": 1,
+      "checkerboard": true,
+      "greenscreen": false,
+      "canvas_rgb": [
+        212,
+        212,
+        212
+      ],
+      "diagnostic_status_top_band_exact_ink_pixels": 76,
+      "diagnostic_top_band": [
+        0,
+        0,
+        470,
+        32
+      ]
+    },
+    {
+      "name": "duplicate-colours-painter-6-native.png",
+      "path": "/workspace/validation-reviews/ci-63f9e35ab/native-renders/duplicate-colours-painter-6-native.png",
+      "sha256": "c2e71ed5cfebebff81f392647dcef91b6ed3798f16cdfff2785ad82ccd6c741a",
+      "bytes": 35106,
+      "dimensions": [
+        800,
+        600
+      ],
+      "actually_viewed": true,
+      "source_commit": "63f9e35abf1b1647e68ea4f1c850efee3ac8c365",
+      "run_id": 37510853142,
+      "artifact_id": 11439420211,
+      "observation": "File One status fully visible in black; canvas RGB[159, 159, 159]. Transparent64x64 green probe at100,100.",
+      "fixture_case": 6,
+      "file_a": true,
+      "intensity_a": 3,
+      "intensity_b": 6,
+      "checkerboard": true,
+      "greenscreen": true,
+      "canvas_rgb": [
+        159,
+        159,
+        159
+      ],
+      "diagnostic_status_top_band_exact_ink_pixels": 67,
+      "diagnostic_top_band": [
+        0,
+        0,
+        470,
+        32
+      ]
+    },
+    {
+      "name": "duplicate-colours-painter-7-native.png",
+      "path": "/workspace/validation-reviews/ci-63f9e35ab/native-renders/duplicate-colours-painter-7-native.png",
+      "sha256": "98d8fa0f7b2ec7831514f4bcae48b6116888e8ee9d625fdf1d2de691a4727785",
+      "bytes": 35141,
+      "dimensions": [
+        800,
+        600
+      ],
+      "actually_viewed": true,
+      "source_commit": "63f9e35abf1b1647e68ea4f1c850efee3ac8c365",
+      "run_id": 37510853142,
+      "artifact_id": 11439420211,
+      "observation": "File Two status fully visible in black; canvas RGB[116, 116, 116]. Background probe blends into solid canvas; no checker/green visible.",
+      "fixture_case": 7,
+      "file_a": false,
+      "intensity_a": 3,
+      "intensity_b": 6,
+      "checkerboard": true,
+      "greenscreen": true,
+      "canvas_rgb": [
+        116,
+        116,
+        116
+      ],
+      "diagnostic_status_top_band_exact_ink_pixels": 84,
+      "diagnostic_top_band": [
+        0,
+        0,
+        470,
+        32
+      ]
+    },
+    {
+      "name": "duplicate-colours-options-0-native.png",
+      "path": "/workspace/validation-reviews/ci-63f9e35ab/native-renders/duplicate-colours-options-0-native.png",
+      "sha256": "f15d20c5b3149112c1cf051ab1cd961c22a7d32f7f739680ff5706422b530780",
+      "bytes": 142453,
+      "dimensions": [
+        1200,
+        1800
+      ],
+      "actually_viewed": true,
+      "source_commit": "63f9e35abf1b1647e68ea4f1c850efee3ac8c365",
+      "run_id": 37510853142,
+      "artifact_id": 11439420211,
+      "observation": "Colour group fully visible; reopened A/B/checker values[1, 3, True]. None boxes and enabled numeric controls agree.",
+      "fixture_case": 0,
+      "recorded_reopened_values": [
+        1,
+        3,
+        true
+      ]
+    },
+    {
+      "name": "duplicate-colours-options-1-native.png",
+      "path": "/workspace/validation-reviews/ci-63f9e35ab/native-renders/duplicate-colours-options-1-native.png",
+      "sha256": "0a85fe9474e8c548c8b054bec638fd7d4ac74052bb436a1c2bec0c2ef2388730",
+      "bytes": 142599,
+      "dimensions": [
+        1200,
+        1800
+      ],
+      "actually_viewed": true,
+      "source_commit": "63f9e35abf1b1647e68ea4f1c850efee3ac8c365",
+      "run_id": 37510853142,
+      "artifact_id": 11439420211,
+      "observation": "Colour group fully visible; reopened A/B/checker values[None, None, False]. None boxes and enabled numeric controls agree.",
+      "fixture_case": 1,
+      "recorded_reopened_values": [
+        null,
+        null,
+        false
+      ]
+    },
+    {
+      "name": "duplicate-colours-options-2-native.png",
+      "path": "/workspace/validation-reviews/ci-63f9e35ab/native-renders/duplicate-colours-options-2-native.png",
+      "sha256": "4fb6a90f8022d7577e1ee876b1c55bde4b3927af557909f6f7f10b21f5c858a8",
+      "bytes": 142456,
+      "dimensions": [
+        1200,
+        1800
+      ],
+      "actually_viewed": true,
+      "source_commit": "63f9e35abf1b1647e68ea4f1c850efee3ac8c365",
+      "run_id": 37510853142,
+      "artifact_id": 11439420211,
+      "observation": "Colour group fully visible; reopened A/B/checker values[1, 9, True]. None boxes and enabled numeric controls agree.",
+      "fixture_case": 2,
+      "recorded_reopened_values": [
+        1,
+        9,
+        true
+      ]
+    },
+    {
+      "name": "duplicate-colours-options-3-native.png",
+      "path": "/workspace/validation-reviews/ci-63f9e35ab/native-renders/duplicate-colours-options-3-native.png",
+      "sha256": "19ba88db8a680da153b29db7f4945fbe07111c8b5dc29232d92f2f996037e286",
+      "bytes": 142468,
+      "dimensions": [
+        1200,
+        1800
+      ],
+      "actually_viewed": true,
+      "source_commit": "63f9e35abf1b1647e68ea4f1c850efee3ac8c365",
+      "run_id": 37510853142,
+      "artifact_id": 11439420211,
+      "observation": "Colour group fully visible; reopened A/B/checker values[9, 1, False]. None boxes and enabled numeric controls agree.",
+      "fixture_case": 3,
+      "recorded_reopened_values": [
+        9,
+        1,
+        false
+      ]
+    },
+    {
+      "name": "duplicate-colours-options-4-native.png",
+      "path": "/workspace/validation-reviews/ci-63f9e35ab/native-renders/duplicate-colours-options-4-native.png",
+      "sha256": "4fb6a90f8022d7577e1ee876b1c55bde4b3927af557909f6f7f10b21f5c858a8",
+      "bytes": 142456,
+      "dimensions": [
+        1200,
+        1800
+      ],
+      "actually_viewed": true,
+      "source_commit": "63f9e35abf1b1647e68ea4f1c850efee3ac8c365",
+      "run_id": 37510853142,
+      "artifact_id": 11439420211,
+      "observation": "Colour group fully visible; reopened A/B/checker values[1, 9, True]. None boxes and enabled numeric controls agree.",
+      "fixture_case": 4,
+      "recorded_reopened_values": [
+        1,
+        9,
+        true
+      ]
+    },
+    {
+      "name": "duplicate-colours-status-override-native.png",
+      "path": "/workspace/validation-reviews/ci-63f9e35ab/native-renders/duplicate-colours-status-override-native.png",
+      "sha256": "67a6ccb8a695cffa4cc49e967ba440006950d192a79e20c87e5d6aaeb86d4830",
+      "bytes": 186246,
+      "dimensions": [
+        800,
+        600
+      ],
+      "actually_viewed": true,
+      "source_commit": "63f9e35abf1b1647e68ea4f1c850efee3ac8c365",
+      "run_id": 37510853142,
+      "artifact_id": 11439420211,
+      "observation": "Fully visible File Two status paints RGB[151, 23, 91]; actual opaque JPEG/slow comparison results present after timer polling. Supplemental status evidence only; not controlled probe parity.",
+      "expected_status_rgb": [
+        151,
+        23,
+        91
+      ],
+      "opaque_media_present": true,
+      "background_or_comparison_parity_claimed": false,
+      "diagnostic_status_top_band_exact_ink_pixels": 72,
+      "diagnostic_top_band": [
+        0,
+        0,
+        470,
+        32
+      ]
+    },
+    {
+      "name": "duplicate-colours-status-override-off-native.png",
+      "path": "/workspace/validation-reviews/ci-63f9e35ab/native-renders/duplicate-colours-status-override-off-native.png",
+      "sha256": "c7e65a60653febde21c949ca785cb15caa412f8a1de6efc8da1982e0eb023921",
+      "bytes": 185864,
+      "dimensions": [
+        800,
+        600
+      ],
+      "actually_viewed": true,
+      "source_commit": "63f9e35abf1b1647e68ea4f1c850efee3ac8c365",
+      "run_id": 37510853142,
+      "artifact_id": 11439420211,
+      "observation": "Fully visible File Two status paints RGB[0, 0, 0]; actual opaque JPEG/slow comparison results present after timer polling. Supplemental status evidence only; not controlled probe parity.",
+      "expected_status_rgb": [
+        0,
+        0,
+        0
+      ],
+      "opaque_media_present": true,
+      "background_or_comparison_parity_claimed": false,
+      "diagnostic_status_top_band_exact_ink_pixels": 84,
+      "diagnostic_top_band": [
+        0,
+        0,
+        470,
+        32
+      ]
+    }
+  ],
+  "reference_images_actually_viewed": [
+    {
+      "path": "/workspace/hydrus-mine/oracle/fixtures/duplicate_colours.png",
+      "sha256": "fdf82c0bc526a050c80b5d0197d6ffc965db2debabbc95de13cc932d5343ce10",
+      "dimensions": [
+        800,
+        600
+      ],
+      "actually_viewed": true,
+      "observation": "Final actual Qt opaqueB media with hover controls; distinct from8native controlled probe buffers. Black index label and final grey background provide context, not whole-filter pixel match."
+    }
+  ],
+  "exact_passing_test_proof": [
+    {
+      "name": "filter_window::colour_tests::live_pair_switch_preferences_and_painter_replay_qt_then_retire",
+      "passing_log_line": "2026-10-06T19:22:43.2921467Z test filter_window::colour_tests::live_pair_switch_preferences_and_painter_replay_qt_then_retire ... ok",
+      "log_line_number": 3452
+    },
+    {
+      "name": "duplicate_colours::options_replay_cancel_retired_apply_bounds_and_persisted_reopen",
+      "passing_log_line": "2026-10-06T19:23:07.0701737Z test duplicate_colours::options_replay_cancel_retired_apply_bounds_and_persisted_reopen ... ok",
+      "log_line_number": 3571
+    },
+    {
+      "name": "duplicate_colours::qcolor_rounding_and_independent_transparency_replay_actual_canvas_outputs",
+      "passing_log_line": "2026-10-06T19:26:36.6541512Z test duplicate_colours::qcolor_rounding_and_independent_transparency_replay_actual_canvas_outputs ... ok",
+      "log_line_number": 4326
+    },
+    {
+      "name": "duplicate_colours::options_keep_saved_zero_on_cancel_then_normalise_on_apply_and_preserve_concurrent_background",
+      "passing_log_line": "2026-10-06T19:26:37.1845880Z test duplicate_colours::options_keep_saved_zero_on_cancel_then_normalise_on_apply_and_preserve_concurrent_background ... ok",
+      "log_line_number": 4332
+    },
+    {
+      "name": "import::decode::tests::duplicate_colours_import_none_zero_and_explicit_preferences_then_reopen",
+      "passing_log_line": "2026-10-06T19:28:16.3565360Z test import::decode::tests::duplicate_colours_import_none_zero_and_explicit_preferences_then_reopen ... ok",
+      "log_line_number": 5452
+    }
+  ],
+  "source_pins": [
+    {
+      "path": "/workspace/hydrus-mine/docs/rust/gui-coverage/parity/duplicate-colours.json",
+      "commit": "63f9e35abf1b1647e68ea4f1c850efee3ac8c365",
+      "sha256": "fa304b6c218744fa8ad6ef5693878296e6bb03299ea5063f06ec4f9dc5b247a2"
+    },
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-gui/ui/duplicate_filter.slint",
+      "commit": "63f9e35abf1b1647e68ea4f1c850efee3ac8c365",
+      "sha256": "6619ecb1be84503c84b38007dbcf9f0660cd499689a8adb2ce9affc3839f7faa"
+    },
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-gui/src/filter_window.rs",
+      "commit": "63f9e35abf1b1647e68ea4f1c850efee3ac8c365",
+      "sha256": "ee792aa3d9204641a6845c7d2acfd492f8970141bb75b224b3c966dae8504fda"
+    },
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-gui/src/gui_colours.rs",
+      "commit": "63f9e35abf1b1647e68ea4f1c850efee3ac8c365",
+      "sha256": "b2aa0e9d3b368468331bd382c25f916c5e28a064f518ccb7fc941041f7c6a473"
+    },
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-gui/ui/theme.slint",
+      "commit": "63f9e35abf1b1647e68ea4f1c850efee3ac8c365",
+      "sha256": "330710e429932635e085728488b422122c7e5c3406bede1607918fce8bbd991f"
+    },
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-gui-model/src/duplicate_colours.rs",
+      "commit": "63f9e35abf1b1647e68ea4f1c850efee3ac8c365",
+      "sha256": "4e770c9eeffcaee907dfc19ed78c041009b51def0c3acc214ca7880896a29791"
+    },
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-gui-model/tests/model/duplicate_colours.rs",
+      "commit": "63f9e35abf1b1647e68ea4f1c850efee3ac8c365",
+      "sha256": "866108fbd7afaaf1bb2ecc6c60d2bacf03e708131e2e6de9333e905d596c09b0"
+    },
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-gui/tests/gui/duplicate_colours.rs",
+      "commit": "63f9e35abf1b1647e68ea4f1c850efee3ac8c365",
+      "sha256": "c1dc22ecfe8e11ee12a364c1a748332dadfbcc3741033863eb3d9f12f3d9f401"
+    },
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-store/src/gui_colours.rs",
+      "commit": "63f9e35abf1b1647e68ea4f1c850efee3ac8c365",
+      "sha256": "791c9d634b366799597e2384c21b5c813d987a6c61d3b215883d6c0ae47312bb"
+    },
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-store/src/settings.rs",
+      "commit": "63f9e35abf1b1647e68ea4f1c850efee3ac8c365",
+      "sha256": "e74448ef8754a400fccbe274393d067e4b6b171e189bdc97c5d8edcbd3bb2687"
+    },
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-store/src/import/decode.rs",
+      "commit": "63f9e35abf1b1647e68ea4f1c850efee3ac8c365",
+      "sha256": "ce988cd231d08607710465c9a64c3aa01e4a1eaec75a9f698a1d16b25204434d"
+    },
+    {
+      "path": "/workspace/hydrus-mine/oracle/record_duplicate_colours.py",
+      "commit": "63f9e35abf1b1647e68ea4f1c850efee3ac8c365",
+      "sha256": "3faf1b7e34cba3b68333f707a6fb30d87aa79a125687a2cca97ee387879b6a75"
+    },
+    {
+      "path": "/workspace/hydrus-mine/oracle/fixtures/duplicate_colours.json",
+      "commit": "63f9e35abf1b1647e68ea4f1c850efee3ac8c365",
+      "sha256": "242360264932a9b5ea0ae1dbcc9b87f1a4c31c4295bba69a378565777536be7f"
+    },
+    {
+      "path": "/workspace/hydrus-mine/oracle/fixtures/duplicate_colours.png",
+      "commit": "63f9e35abf1b1647e68ea4f1c850efee3ac8c365",
+      "sha256": "fdf82c0bc526a050c80b5d0197d6ffc965db2debabbc95de13cc932d5343ce10"
+    },
+    {
+      "path": "/workspace/hydrus-mine/hydrus/client/gui/canvas/ClientGUICanvas.py",
+      "commit": "63f9e35abf1b1647e68ea4f1c850efee3ac8c365",
+      "sha256": "cd8f2785f7c911c56cfdde97c3becf5b9209d2b4c1a63b78837a899b2d39baf3"
+    },
+    {
+      "path": "/workspace/hydrus-mine/hydrus/client/gui/panels/options/DuplicatesPanel.py",
+      "commit": "63f9e35abf1b1647e68ea4f1c850efee3ac8c365",
+      "sha256": "9dbc732b867942bfb52ed00c68f46430a5e3e480aabd31cc064af9fb6507271f"
+    },
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-gui/src/headless.rs",
+      "commit": "63f9e35abf1b1647e68ea4f1c850efee3ac8c365",
+      "sha256": "c366399b1f509ea4859dd2e566a6e6a2b73d86ee6581aa34434fc5a16fc4bef7"
+    },
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-gui/ui/transparency_backdrop.slint",
+      "commit": "63f9e35abf1b1647e68ea4f1c850efee3ac8c365",
+      "sha256": "8ac92dde3858b6ab8412713ceb1212b2f4a3b0a7b5f3acad0375b681f0b8e3d7"
+    },
+    {
+      "path": "/workspace/hydrus-mine/hydrus/client/gui/canvas/ClientGUICanvasMedia.py",
+      "commit": "63f9e35abf1b1647e68ea4f1c850efee3ac8c365",
+      "sha256": "861acbcdb15eacb32f497c8115918f89e17c41ab502fc540401c4df6cc477146"
+    }
+  ],
+  "source_assertion_review": {
+    "concrete_blockers": [],
+    "filter_test_deleted_lines": 0,
+    "status_observation": "Readonly direct actual Text geometry and brush; all8 buffers also require at least20exact foreground glyph pixels in finite contained status bounds. Black fallback alone changes default painting, preserving active Theme role11.",
+    "live_observer": "Saved role11 on/off uses headless::render actual timers, normal250ms Theme observer,2s bound10ms polling; no forced refresh or root status property. Override ends off before old successor assertions.",
+    "preserved": "143QColor results/8background and sampled pixel/image-clipping outputs, model saved-zero/concurrent background, native owned Cancel/stale/successor/Apply/reopen assertions retained."
+  },
+  "reference_basis": {
+    "script": "oracle/record_duplicate_colours.py",
+    "fixture": "oracle/fixtures/duplicate_colours.json",
+    "png": "oracle/fixtures/duplicate_colours.png",
+    "finite_outputs": {
+      "colours": 143,
+      "canvas": 8,
+      "options": 5
+    },
+    "basis": "Actual Qt Canvas default black media text and white background386-387; GetColour831-839 preserves active saved override. Actual reference controls and own A/B generator/painter are used by recording; no business colour handlers replaced.",
+    "consumer_source_evidence": [
+      "ClientGUICanvas.py:227-254 duplicate generator picks independent A/B when actual pair displayed, separate checker preference.",
+      "record_duplicate_colours.py:82-132 actual pair factory, real SwitchMedia, generator143outputs and actual StaticImage._DrawBackground8states; finalPNG realopaqueB.",
+      "ClientGUICanvasMedia.py:3612+ actual background uses transparent-media/checker policy and green34/255/0.",
+      "transparency_backdrop.slint16px237/222 checker clipped to actual media box; model transparency rejects opaque media."
+    ]
+  },
+  "proof_hashes": [
+    {
+      "path": "/workspace/validation-reviews/ci-63f9e35ab/ci-evidence.json",
+      "sha256": "fecf0aa817560d4453cf25d8e55330a7f749796def99e11761803b2d8213b86d"
+    },
+    {
+      "path": "/workspace/validation-reviews/ci-63f9e35ab/validation-outcome.json",
+      "sha256": "d618248a6c3e83b8d2195364f9f30946017c8ec66a2617f3d305ff6ec69924dd"
+    },
+    {
+      "path": "/workspace/validation-reviews/ci-63f9e35ab/linux-full.log",
+      "sha256": "8ddbf5225b714155599dc265375e1b0409fd5fd74b2425c9cf82ee540a0d3d97"
+    },
+    {
+      "path": "/workspace/validation-reviews/ci-63f9e35ab/parity-models.log",
+      "sha256": "2255cd8e35c5fd38d12fe229e3d72abec85b3a91d28c6bc09e0e1bc20e3c1903"
+    },
+    {
+      "path": "/workspace/validation-reviews/ci-63f9e35ab/clippy.log",
+      "sha256": "1ae649244ccf855f725654ba9311dd7922ed9efcee0af6de2b15366ad3017ee7"
+    },
+    {
+      "path": "/workspace/validation-reviews/ci-63f9e35ab/clippy-outcome.json",
+      "sha256": "e38ad757bcf62e21b8f97f981313b0747034f585d63080226beef6b13ffe6a5c"
+    },
+    {
+      "path": "/workspace/validation-reviews/duplicate3/selection-63f9e35ab.json",
+      "sha256": "b42dd5ccc8a723e1c33d6c810c2f6e1724c7537e60db5f4f20104b35565cebe8"
+    },
+    {
+      "path": "/workspace/validation-reviews/duplicate3/conditional-status-map-63f9e35ab.json",
+      "sha256": "64d4a05dc9cafa564ed50e44b74e48d15db8e57d4c9e9a692e850a1228b9ccc4"
+    },
+    {
+      "path": "/workspace/validation-reviews/duplicate3/render-checklist-63f9e35ab.json",
+      "sha256": "c1b338dd81b337c1c2445c6a2b7e42c1eb359e22721b670b5a1282de4f731955"
+    },
+    {
+      "path": "/workspace/validation-reviews/duplicate3/subset-preflight-63f9e35ab/subset-proposal-patch.json",
+      "sha256": "9b373a1356de4c3d31a61d1d694eaf4ec6e042c4c543c13f3ae3f617219c185b"
+    }
+  ],
+  "scope_and_preservation": {
+    "parent_credit": false,
+    "extra_colour_editor_credit": false,
+    "archive_selected": false,
+    "banked331_unchanged_by_review": true,
+    "selected_reference_updates": 3,
+    "native_updates": 0,
+    "reference_additions": 0
+  },
+  "provenance": [
+    "Earlier9bec pale-status captures and pending gates were historical diagnosis/preparation; all final rendered decisions use only current63f artifact11439420211.",
+    "Qt ownership/style/topology and native controlled-probe caveats are retained verbatim from conditional scope map; obsolete unsupported-editor and pending-execution sentences are not current caveats.",
+    "No product edits, builds or canonical writes by reviewer."
+  ]
+}
