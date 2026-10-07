@@ -3309,6 +3309,14 @@ repairs go through the content writer and refresh the main page's actual media
 results; an intervening archive/inbox/time edit is preserved. Closing, replacing
 or invalidating the owner prevents a retained confirmation from starting work.
 
+The repair window now wraps its full warning and population explanations to the
+actual scroll viewport, including after resize. Long explanations scroll while
+the population buttons remain available. Cancelling an accepted repair waits
+for its worker result: a completed commit reports Done and refreshes media,
+while cancellation before the write reports Cancelled with no timestamp changes.
+Reference replay, physical-control and rendering regressions cover this bounded
+repair; hosted validation and rendered sign-off are pending.
+
 
 Options > tag suggestions now stages the suggested-column width, notebook or
 side-by-side layout, the original four default-page choices, and independent

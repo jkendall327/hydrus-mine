@@ -2301,6 +2301,14 @@ media timestamp immediately; the recorder verifies the committed SQL and actual
 media consumer after restarting. Native refresh reloads its timestamp consumer
 on completion. Database file history is assessed separately below.
 
+The native repair window keeps its wrapped explanations in a scroll viewport
+above the action buttons, rather than reproducing Qt's separate dialog layouts.
+Repair cancellation retains the pending worker result, so a commit that beats
+the cancellation request still reports completion and refreshes media. Scan
+cancellation remains immediate because it performs no writes. Deterministic
+regressions hold the writer or withhold UI timer delivery to cover both orders;
+the original reference fixture reproduces exactly on a fresh Qt replay.
+
 
 Suggested tags have real local-service most-used and recent consumers, per-service
 Options list drafts and width/layout controls. Related-tag searching, its weights
