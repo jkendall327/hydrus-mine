@@ -2521,6 +2521,7 @@ dependencies = [
  "hydrus-search",
  "hydrus-store",
  "hydrus-testkit",
+ "i-slint-core",
  "jiff",
  "libloading",
  "png",

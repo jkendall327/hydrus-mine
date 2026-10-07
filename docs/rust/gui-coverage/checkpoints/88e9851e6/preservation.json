@@ -1,0 +1,14 @@
+{
+  "source_commit": "88e9851e6ab8ecec08eb03f0d5cd3a2f8b7d2339",
+  "prior_signed_off": 374,
+  "new_signed_off": 375,
+  "added_ids": [
+    "audit-options-tag-presentation-other-rendering-or-connecting-string-on-one-line"
+  ],
+  "inventory_counts": {
+    "reference": 1812,
+    "native": 1799
+  },
+  "unselected_node_preservation": "Exact equality except pinned source-anchor metadata and derived descendant-status aggregates.",
+  "passed": true
+}

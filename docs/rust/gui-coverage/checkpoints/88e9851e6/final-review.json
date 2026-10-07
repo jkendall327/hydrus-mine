@@ -1,0 +1,95 @@
+{
+  "source_commit": "88e9851e6ab8ecec08eb03f0d5cd3a2f8b7d2339",
+  "reviewed_by": "Independent archive_review agent; source, behavior, exact-source CI and direct rendered inspection",
+  "patch_sha256": "9dbed34bd97fbdac4d73ea3abc4269f9c641e184dca37f3088994301dbcfce39",
+  "selected_completion_ids": [
+    "audit-options-tag-presentation-other-rendering-or-connecting-string-on-one-line"
+  ],
+  "reviewed_assessment_ids": [
+    "audit-options-tag-presentation-other-rendering-or-connecting-string-on-one-line"
+  ],
+  "reviewed_native_ids": [],
+  "reviewed_source_census_sha256": "3c5f74b770077d0e566856d846e94a4f6bb50fb6cec9d109aa72a78af5354a3e",
+  "decision": "approved",
+  "findings": [],
+  "scope": "One original OR connecting string editor reference leaf only; no parent/native credit. Linux required and passed; Windows/macOS deferred.",
+  "ci": {
+    "run_id": 37700560044,
+    "conclusion": "success",
+    "tests_passed": 2198,
+    "tests_failed": 0,
+    "existing_ignored": 3,
+    "gui_tests": 714,
+    "media_tests": 67,
+    "verified": "Exact-head run/jobs/artifact metadata; successful check/parity-models/publication-safety/cache maintenance; test log explicitly passes actual OR control, new actual default-chain font-selection, store backfill and model isolation regressions."
+  },
+  "source_preservation": "Original OR ink assertion and full OR test unchanged from d77, as are reference recorder/fixture. Revised adapter strengthens the actual fallback-chain selection test instead of weakening failing ink coverage. All16 exact anchors verified. Prior scope review covers startup lifetime, family precedence, pinned dependencies and preserved license.",
+  "images": [
+    {
+      "path": "/workspace/validation-reviews/or-emoji/native-88e/namespace-colours-add-entry.png",
+      "sha256": "1229555726f69d568eedc754c1f7c8cc137faaa757424ea0a2daedd20dc1efe6",
+      "directly_inspected": true
+    },
+    {
+      "path": "/workspace/validation-reviews/or-emoji/native-88e/or-connector-ascii-reopened-native.png",
+      "sha256": "90929cf584d9f876ece48fefad25020aefeace62f2d63686f3117d2be99a5bdb",
+      "directly_inspected": true
+    },
+    {
+      "path": "/workspace/validation-reviews/or-emoji/native-88e/or-connector-fox-reopened-native.png",
+      "sha256": "128de6f240379f35ccccb57810fcfda52e5e706e0a09a4ae8ffeecaeca879afc",
+      "directly_inspected": true
+    },
+    {
+      "path": "/workspace/validation-reviews/or-emoji/native-88e/or-connector-options-native.png",
+      "sha256": "128de6f240379f35ccccb57810fcfda52e5e706e0a09a4ae8ffeecaeca879afc",
+      "directly_inspected": true
+    },
+    {
+      "path": "/workspace/validation-reviews/or-emoji/native-88e/related_tag_suggestions.png",
+      "sha256": "b596b3855b76dcf9f161c5ce8f5bfb76c8a5ccd1fe51f19e9a4024fa5bd5d2a6",
+      "directly_inspected": true
+    },
+    {
+      "path": "/workspace/validation-reviews/or-emoji/native-88e/suggested-tags-columns-width240-populated.png",
+      "sha256": "0995efcd7fa1e41386b60d93ce0daec059916e8ed5d563f367b96f0006600677",
+      "directly_inspected": true
+    }
+  ],
+  "reference_image": {
+    "path": "oracle/fixtures/or_connector_reference.png",
+    "sha256": "a939b427a8172382752601579c83f237245d6ea8145884b93433256d59079b0f",
+    "directly_inspected": true
+  },
+  "render_assessment": "Directly inspected all six fresh native images and Qt reference. Reopened fox is visibly recognizable monochrome glyph within the named OR editor; ASCII custom text remains readable; field/caption and surrounding controls remain intact. Qt uses colour fox and different layout, both disclosed. Latin/CJK/editor supplemental frames remain readable. No actionable visual defect in selected scope.",
+  "independent_pixel_checks": {
+    "or-connector-ascii-reopened-native.png": {
+      "bbox": null,
+      "dark_pixels": 140
+    },
+    "or-connector-fox-reopened-native.png": {
+      "bbox": [
+        645,
+        508,
+        658,
+        520
+      ],
+      "dark_pixels": 65
+    }
+  },
+  "supplemental_baseline_comparison": "Three ordinary Latin/CJK/editor PNGs are byte-identical to baseline; reopened ASCII is pixel-identical. Fox changes are confined to glyph bounds, with65 dark pixels.",
+  "limitations": [
+    "One original finite editor leaf only; no native or broader tag-presentation/OR-renderer parent credit.",
+    "Reference custom connector rendering remains disabled; native single-line OR display is not claimed equivalent to Qt multirow header/member layout.",
+    "Menu navigation, edit staging, Apply/Cancel and ownership tests dispatch callbacks. Physical input evidence covers focusing and Select All/Copy of reopened fields at one 900\u00d7900 scale-one viewport; it does not prove all typing/paste/IME input behaviors.",
+    "Multiline values are programmatic fixture inputs; this is not a multiline editor feature.",
+    "Outline emoji are monochrome; no colour/glyph-shape parity claim. Exact Slint runtime/build/core 1.18.1 pin is required by internal font adapter.",
+    "The retained font prefix repeats in Fontique\u2019s implicit system tail for unsupported characters. Repeated initialization does not grow it. Explicit bitmap font requests or configured bitmap primaries can still outrank this fallback.",
+    "Full exact-source Linux validation passed; Windows/macOS remain deferred."
+  ],
+  "remaining_publication_gates": [
+    "Root must complete selected/unselected assessment preservation and publication browser checks before canonical copy."
+  ],
+  "digest_method": "gui_publish.digest(parsedJSON), not raw-file hash",
+  "patch_raw_file_sha256": "7fbe27ca42fba7d428bdd043019edeb4ac6c4f406df819e9b46ca2b2bd6ac408"
+}

@@ -1,0 +1,13 @@
+{
+  "source_commit": "d77d369bc1af4a8622a86a78c243de0d3c6717bd",
+  "run": 37693164411,
+  "clippy": "passed",
+  "parity_models": "passed",
+  "publication_safety": "passed",
+  "gui": {
+    "passed": 713,
+    "failed": 1
+  },
+  "failure": "Unchanged new fox ink assertion failed; actual reopened field was blank. Emoji-only generic did not affect default SansSerif/SystemUi text fallback selection.",
+  "credit": false
+}

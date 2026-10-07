@@ -1,0 +1,45 @@
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+v688, 2026-10-07 21:48:29: hydrus client started
+v688, 2026-10-07 21:48:29: booting controller…
+v688, 2026-10-07 21:48:30: This plugin does not support propagateSizeHints()
+v688, 2026-10-07 21:48:30: This plugin does not support raise()
+v688, 2026-10-07 21:48:30: booting db…
+v688, 2026-10-07 21:48:30: checking database
+v688, 2026-10-07 21:48:30: initialising managers
+v688, 2026-10-07 21:48:30: booting gui…
+v688, 2026-10-07 21:48:31: starting services…
+v688, 2026-10-07 21:48:31: Running "client api" on port 45901.
+v688, 2026-10-07 21:48:31: services started
+v688, 2026-10-07 21:48:32: This plugin does not support propagateSizeHints()
+v688, 2026-10-07 21:48:32: doing fast shutdown…
+v688, 2026-10-07 21:48:32: shutting down controller…
+v688, 2026-10-07 21:48:32: hydrus client shut down
+wrote /workspace/hydrus-mine/oracle/fixtures/or_connector.json

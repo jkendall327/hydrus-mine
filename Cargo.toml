@@ -28,8 +28,10 @@ hydrus-api = { path = "crates/hydrus-api" }
 hydrus-testkit = { path = "crates/hydrus-testkit" }
 
 # external
-slint = { version = "1.18", default-features = false, features = ["std", "compat-1-2", "backend-winit", "renderer-software", "unstable-winit-030"] }
-slint-build = "1.18"
+# The emoji fallback adapter uses Slint's internal font context; upgrade these together.
+slint = { version = "=1.18.1", default-features = false, features = ["std", "compat-1-2", "backend-winit", "renderer-software", "unstable-winit-030"] }
+slint-build = "=1.18.1"
+i-slint-core = { version = "=1.18.1", default-features = false, features = ["std", "shared-parley"] }
 anyhow = "1"
 thiserror = "2"
 serde = { version = "1", features = ["derive"] }

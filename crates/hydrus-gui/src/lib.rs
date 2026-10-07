@@ -62,6 +62,7 @@ mod filename_tagging_window;
 mod filter_window;
 mod folders_lifecycle;
 mod folders_window;
+pub mod fonts;
 mod force_filetype_window;
 pub mod force_idle;
 pub mod formula_window;

@@ -40,6 +40,7 @@ fs4.workspace = true
 rfd = { version = "0.17", default-features = false, features = ["xdg-portal"] }
 tempfile.workspace = true
 slint.workspace = true
+i-slint-core.workspace = true
 
 [dev-dependencies]
 hydrus-api.workspace = true

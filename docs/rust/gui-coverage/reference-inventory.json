@@ -1,9 +1,9 @@
 {
   "schema_version": 1,
   "inventory_name": "Hydrus reference GUI nested feature inventory",
-  "generated_at": "2026-10-07T21:12:52.028887+00:00",
+  "generated_at": "2026-10-07T23:47:14.646567+00:00",
   "repository_root": ".",
-  "git_head": "2e2a2428112bdeb17a9fb9642e7a43c2934d2325",
+  "git_head": "88e9851e6ab8ecec08eb03f0d5cd3a2f8b7d2339",
   "reference_version": "v688 (repository docs)",
   "read_only": true,
   "tests_run": true,
@@ -27,8 +27,8 @@
     "node_count": 1812,
     "status_counts": {
       "partial": 385,
-      "first_pass": 975,
-      "missing": 452
+      "first_pass": 976,
+      "missing": 451
     },
     "kind_counts": {
       "root": 1,
@@ -128,7 +128,7 @@
           "role": "documented_scope",
           "source": {
             "path": "docs/rust/ROADMAP.md",
-            "line": 222,
+            "line": 225,
             "line_sha256": "b7c6ea3b42da1cc23e44950b86fb94aeea5411a0db780220864581fd1bf6f632"
           },
           "description": "Remaining network, tag/archive and downloader-definition breadth priorities.",
@@ -143,8 +143,8 @@
       "descendant_count": 1811,
       "descendant_status_counts": {
         "partial": 384,
-        "missing": 452,
-        "first_pass": 975
+        "missing": 451,
+        "first_pass": 976
       },
       "unique_feature_descendant_count": 1527,
       "unique_reachable_feature_count_including_shared": 1527,
@@ -204,8 +204,8 @@
       "descendant_count": 704,
       "descendant_status_counts": {
         "partial": 109,
-        "first_pass": 374,
-        "missing": 221
+        "first_pass": 375,
+        "missing": 220
       },
       "unique_feature_descendant_count": 594,
       "unique_reachable_feature_count_including_shared": 659,
@@ -15583,7 +15583,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 2499,
+          "line": 2500,
           "role": "scoped_implementation",
           "description": "let header_approval =",
           "executed_in_inventory": false,
@@ -15742,7 +15742,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 2499,
+          "line": 2500,
           "role": "scoped_implementation",
           "description": "let header_approval =",
           "executed_in_inventory": false,
@@ -17587,7 +17587,7 @@
       "evidence": [
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 1899,
+          "line": 1900,
           "role": "native_wiring",
           "description": "Constructs DuplicateFilter::for_page from current duplicates scope, loads batch and opens the canonical filter.",
           "executed_in_inventory": false,
@@ -19541,9 +19541,9 @@
       },
       "descendant_count": 644,
       "descendant_status_counts": {
-        "first_pass": 351,
+        "first_pass": 352,
         "partial": 75,
-        "missing": 218
+        "missing": 217
       },
       "unique_feature_descendant_count": 544,
       "unique_reachable_feature_count_including_shared": 580,
@@ -21595,8 +21595,8 @@
       "descendant_count": 31,
       "descendant_status_counts": {
         "partial": 4,
-        "first_pass": 21,
-        "missing": 6
+        "first_pass": 22,
+        "missing": 5
       },
       "unique_feature_descendant_count": 25,
       "unique_reachable_feature_count_including_shared": 26,
@@ -24878,7 +24878,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 765,
+          "line": 766,
           "line_sha256": "afd5610c796406d54a52ef2192312eb51fd73442aec43f9ad3c66a529d1d1ffc",
           "symbol": "window.global::<Theme<'_>>().on_colours_changed",
           "role": "native_implementation",
@@ -25263,7 +25263,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 765,
+          "line": 766,
           "line_sha256": "afd5610c796406d54a52ef2192312eb51fd73442aec43f9ad3c66a529d1d1ffc",
           "symbol": "window.global::<Theme<'_>>().on_colours_changed",
           "role": "native_implementation",
@@ -27534,7 +27534,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 573,
+          "line": 574,
           "line_sha256": "e39129530ffe8a1bd01a4360a9f29e8b637ae8a794d33358f8792e1822578896",
           "role": "scoped_implementation",
           "executed_in_inventory": false,
@@ -30791,7 +30791,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 573,
+          "line": 574,
           "line_sha256": "e39129530ffe8a1bd01a4360a9f29e8b637ae8a794d33358f8792e1822578896",
           "symbol": "fn bind",
           "source_review_scope": "Named entry of the explicitly cited module/fixture suite; aggregate source support, not a unique assertion for every leaf.",
@@ -33719,7 +33719,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 8138,
+          "line": 8139,
           "symbol": "refresh",
           "role": "scoped_implementation",
           "executed_in_inventory": false,
@@ -34094,7 +34094,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 8138,
+          "line": 8139,
           "symbol": "refresh",
           "role": "scoped_implementation",
           "executed_in_inventory": false,
@@ -34232,7 +34232,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 8138,
+          "line": 8139,
           "symbol": "refresh",
           "role": "scoped_implementation",
           "executed_in_inventory": false,
@@ -35677,7 +35677,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 6256,
+          "line": 6257,
           "line_sha256": "12f71f0ab9caa5160f9f8967c12a97e926ef928c9e8a9c01d64f1e3447ab2def",
           "role": "scoped_implementation",
           "executed_in_inventory": false,
@@ -35898,7 +35898,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 6256,
+          "line": 6257,
           "line_sha256": "12f71f0ab9caa5160f9f8967c12a97e926ef928c9e8a9c01d64f1e3447ab2def",
           "role": "scoped_implementation",
           "executed_in_inventory": false,
@@ -36119,7 +36119,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 6256,
+          "line": 6257,
           "line_sha256": "12f71f0ab9caa5160f9f8967c12a97e926ef928c9e8a9c01d64f1e3447ab2def",
           "role": "scoped_implementation",
           "executed_in_inventory": false,
@@ -36340,7 +36340,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 6256,
+          "line": 6257,
           "line_sha256": "12f71f0ab9caa5160f9f8967c12a97e926ef928c9e8a9c01d64f1e3447ab2def",
           "role": "scoped_implementation",
           "executed_in_inventory": false,
@@ -36555,7 +36555,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 573,
+          "line": 574,
           "line_sha256": "e39129530ffe8a1bd01a4360a9f29e8b637ae8a794d33358f8792e1822578896",
           "symbol": "fn bind",
           "declared_symbol": "bind/shown",
@@ -36819,7 +36819,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 573,
+          "line": 574,
           "line_sha256": "e39129530ffe8a1bd01a4360a9f29e8b637ae8a794d33358f8792e1822578896",
           "symbol": "fn bind",
           "declared_symbol": "bind/shown",
@@ -37762,7 +37762,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 573,
+          "line": 574,
           "line_sha256": "e39129530ffe8a1bd01a4360a9f29e8b637ae8a794d33358f8792e1822578896",
           "symbol": "fn bind",
           "declared_symbol": "bind",
@@ -37975,7 +37975,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 573,
+          "line": 574,
           "line_sha256": "e39129530ffe8a1bd01a4360a9f29e8b637ae8a794d33358f8792e1822578896",
           "symbol": "fn bind",
           "declared_symbol": "bind",
@@ -38913,7 +38913,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 4198,
+          "line": 4199,
           "line_sha256": "6b0556f69a607d779add2e5ed8571df305d2178a48937476a7a2ee3a5c144242",
           "symbol": "if previous.invoke_owner_valid() {",
           "role": "native_implementation",
@@ -39327,7 +39327,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 4198,
+          "line": 4199,
           "line_sha256": "6b0556f69a607d779add2e5ed8571df305d2178a48937476a7a2ee3a5c144242",
           "symbol": "if previous.invoke_owner_valid() {",
           "role": "native_implementation",
@@ -39651,7 +39651,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 1946,
+          "line": 1947,
           "line_sha256": "3ff3b165978e1e220f95162140bc6b9913135452740f1ebfa71a8fbffc0e6ced",
           "symbol": "let remove_from: RemoveFrom =",
           "role": "native_implementation",
@@ -39880,7 +39880,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 4221,
+          "line": 4222,
           "line_sha256": "0ea6641aca558c6e9ab045dbb650d9eeed7c4a201f1b69dab7a69ca2d17db3f4",
           "symbol": "let return_to: Rc<dyn Fn(HashId)> =",
           "role": "native_implementation",
@@ -40338,7 +40338,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 4940,
+          "line": 4941,
           "line_sha256": "e5dc5633b56226feee79f368a8ea1d98a211ddea08799e72f3b46f55800f908f",
           "symbol": "hydrus_gui_model::file_view_removal::Change::Moved(",
           "role": "native_implementation",
@@ -40799,7 +40799,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 636,
+          "line": 637,
           "line_sha256": "3316debd0132ca38ddeb816c242743cf83330b3b3bd9608a17b7d3cba0eae07b",
           "symbol": "let maintenance = maintenance_runtime::Control::bind(",
           "role": "shared_support",
@@ -40979,7 +40979,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 5305,
+          "line": 5306,
           "line_sha256": "1d0657f9d1647054caaa96fa5c7951c04ecedd426b32da400d9801a4120eb060",
           "symbol": "_maintenance_owner: Rc::new(maintenance.owner()),",
           "role": "shared_support",
@@ -41385,7 +41385,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 636,
+          "line": 637,
           "line_sha256": "3316debd0132ca38ddeb816c242743cf83330b3b3bd9608a17b7d3cba0eae07b",
           "symbol": "let maintenance = maintenance_runtime::Control::bind(",
           "role": "shared_support",
@@ -41565,7 +41565,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 5305,
+          "line": 5306,
           "line_sha256": "1d0657f9d1647054caaa96fa5c7951c04ecedd426b32da400d9801a4120eb060",
           "symbol": "_maintenance_owner: Rc::new(maintenance.owner()),",
           "role": "shared_support",
@@ -42156,7 +42156,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 6256,
+          "line": 6257,
           "line_sha256": "12f71f0ab9caa5160f9f8967c12a97e926ef928c9e8a9c01d64f1e3447ab2def",
           "role": "scoped_implementation",
           "executed_in_inventory": false,
@@ -42368,7 +42368,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 6256,
+          "line": 6257,
           "line_sha256": "12f71f0ab9caa5160f9f8967c12a97e926ef928c9e8a9c01d64f1e3447ab2def",
           "role": "scoped_implementation",
           "executed_in_inventory": false,
@@ -42545,7 +42545,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 6256,
+          "line": 6257,
           "line_sha256": "12f71f0ab9caa5160f9f8967c12a97e926ef928c9e8a9c01d64f1e3447ab2def",
           "role": "scoped_implementation",
           "executed_in_inventory": false,
@@ -42722,7 +42722,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 6256,
+          "line": 6257,
           "line_sha256": "12f71f0ab9caa5160f9f8967c12a97e926ef928c9e8a9c01d64f1e3447ab2def",
           "role": "scoped_implementation",
           "executed_in_inventory": false,
@@ -43673,7 +43673,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 573,
+          "line": 574,
           "line_sha256": "e39129530ffe8a1bd01a4360a9f29e8b637ae8a794d33358f8792e1822578896",
           "symbol": "fn bind",
           "declared_symbol": "fn show_watchers",
@@ -48028,7 +48028,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 903,
+          "line": 904,
           "role": "scoped_implementation",
           "executed_in_inventory": false,
           "line_sha256": "a29bd31d722e6ced7e06e4e3270d419e6d82380b4052d11b72597c0df02da258"
@@ -48234,7 +48234,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 1129,
+          "line": 1130,
           "line_sha256": "83322c67314dcf434f6907e605bbd90448e17fa2b268149c212495a5a2e2d4ed",
           "symbol": "tab_drag::bind",
           "role": "native_implementation",
@@ -48503,7 +48503,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 1129,
+          "line": 1130,
           "line_sha256": "83322c67314dcf434f6907e605bbd90448e17fa2b268149c212495a5a2e2d4ed",
           "symbol": "tab_drag::bind",
           "role": "native_implementation",
@@ -48831,7 +48831,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 1118,
+          "line": 1119,
           "line_sha256": "294253078b22904fcbb562504256a9044099b538430fe8b9e2f6a67a163febf8",
           "symbol": "on_tab_wheel",
           "role": "native_implementation",
@@ -49081,7 +49081,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 1129,
+          "line": 1130,
           "line_sha256": "83322c67314dcf434f6907e605bbd90448e17fa2b268149c212495a5a2e2d4ed",
           "symbol": "tab_drag::bind",
           "role": "native_implementation",
@@ -49564,7 +49564,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 1106,
+          "line": 1107,
           "line_sha256": "a8194d1825d610b00bd230460602cebc692e604e38623b4463588a1448239bbc",
           "symbol": "window.on_page_tree_chosen",
           "role": "native_implementation",
@@ -50124,7 +50124,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 1306,
+          "line": 1307,
           "role": "scoped_implementation",
           "description": "Independent chooser-created-notebook checkbox defaults false, imports rename_page_of_pages_on_pick_new and persists on Apply. After the chooser creates a notebook, the consumer optionally prompts for its name. Cancel keeps the created notebook; accepted names persist and the prompt targets the created notebook key.",
           "executed_in_inventory": false,
@@ -50579,7 +50579,7 @@
       "status": "first_pass",
       "native_source": {
         "path": "crates/hydrus-gui/src/session_autosave.rs",
-        "line": 356,
+        "line": 357,
         "role": "scoped_implementation",
         "executed_in_inventory": false,
         "line_sha256": "14b38899ee9dae157d17cbf06a51194286459f167160d0215a79256bdc0bf816"
@@ -50593,7 +50593,7 @@
       "evidence": [
         {
           "path": "crates/hydrus-gui/src/session_autosave.rs",
-          "line": 356,
+          "line": 357,
           "role": "scoped_implementation",
           "executed_in_inventory": false,
           "line_sha256": "14b38899ee9dae157d17cbf06a51194286459f167160d0215a79256bdc0bf816"
@@ -50692,7 +50692,7 @@
       "status": "partial",
       "native_source": {
         "path": "crates/hydrus-gui/src/session_autosave.rs",
-        "line": 356,
+        "line": 357,
         "line_sha256": "14b38899ee9dae157d17cbf06a51194286459f167160d0215a79256bdc0bf816",
         "role": "scoped_implementation",
         "executed_in_inventory": false
@@ -50708,7 +50708,7 @@
       "evidence": [
         {
           "path": "crates/hydrus-gui/src/session_autosave.rs",
-          "line": 356,
+          "line": 357,
           "line_sha256": "14b38899ee9dae157d17cbf06a51194286459f167160d0215a79256bdc0bf816",
           "role": "scoped_implementation",
           "executed_in_inventory": false
@@ -50970,7 +50970,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/session_autosave.rs",
-          "line": 338,
+          "line": 339,
           "role": "scoped_implementation",
           "executed_in_inventory": false,
           "line_sha256": "f8e9e2255fe8ed741f4dd2f34161d90e7d6798ebd803a0c8308055dd9b56dd46"
@@ -54812,7 +54812,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/session_autosave.rs",
-          "line": 309,
+          "line": 310,
           "line_sha256": "144f3b4080134a4fc5fb33b1a001528cb96333f537c61df6981616105b4d6697",
           "symbol": "fn idle_at",
           "declared_symbol": "Monitor::idle_at",
@@ -54825,7 +54825,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/session_autosave.rs",
-          "line": 356,
+          "line": 357,
           "line_sha256": "14b38899ee9dae157d17cbf06a51194286459f167160d0215a79256bdc0bf816",
           "symbol": "fn poll_at",
           "declared_symbol": "Monitor::poll_at",
@@ -54864,7 +54864,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/session_autosave.rs",
-          "line": 190,
+          "line": 191,
           "line_sha256": "abcb6eb78b11868fa226a0bb89369b25b5da5d85458034791dce6602fbb36c04",
           "symbol": "fn observe_window_event",
           "declared_symbol": "observe_window_event",
@@ -55182,7 +55182,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/session_autosave.rs",
-          "line": 309,
+          "line": 310,
           "line_sha256": "144f3b4080134a4fc5fb33b1a001528cb96333f537c61df6981616105b4d6697",
           "symbol": "fn idle_at",
           "declared_symbol": "Monitor::idle_at",
@@ -55195,7 +55195,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/session_autosave.rs",
-          "line": 356,
+          "line": 357,
           "line_sha256": "14b38899ee9dae157d17cbf06a51194286459f167160d0215a79256bdc0bf816",
           "symbol": "fn poll_at",
           "declared_symbol": "Monitor::poll_at",
@@ -58286,7 +58286,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 6256,
+          "line": 6257,
           "symbol": "open_viewer",
           "role": "scoped_implementation",
           "executed_in_inventory": false,
@@ -58522,7 +58522,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 6256,
+          "line": 6257,
           "symbol": "open_viewer/options Apply callback",
           "role": "scoped_implementation",
           "executed_in_inventory": false,
@@ -58917,7 +58917,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 6256,
+          "line": 6257,
           "symbol": "open_viewer",
           "role": "scoped_implementation",
           "executed_in_inventory": false,
@@ -60628,7 +60628,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/main.rs",
-          "line": 225,
+          "line": 226,
           "line_sha256": "45748f261449fefe609656ab624505f1579ea106e17a75a94edcf884ee116976",
           "symbol": "mod ffmpeg_timeout;",
           "role": "authored_regression",
@@ -61073,7 +61073,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 573,
+          "line": 574,
           "line_sha256": "e39129530ffe8a1bd01a4360a9f29e8b637ae8a794d33358f8792e1822578896",
           "symbol": "fn bind",
           "source_review_scope": "Named entry of the explicitly cited module/fixture suite; aggregate source support, not a unique assertion for every leaf.",
@@ -61486,7 +61486,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/session_autosave.rs",
-          "line": 161,
+          "line": 162,
           "symbol": "ActivityHandler",
           "role": "scoped_implementation",
           "executed_in_inventory": false,
@@ -61502,7 +61502,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 6256,
+          "line": 6257,
           "symbol": "open_viewer",
           "role": "scoped_implementation",
           "executed_in_inventory": false,
@@ -61542,7 +61542,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/session_autosave.rs",
-          "line": 398,
+          "line": 399,
           "symbol": "pointer_tests::native_motion_targets_one_window_and_releases_dead_viewers",
           "role": "authored_behavioral_regression",
           "executed_in_inventory": false,
@@ -62700,7 +62700,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 6256,
+          "line": 6257,
           "symbol": "open_viewer",
           "role": "scoped_implementation",
           "executed_in_inventory": false,
@@ -62856,7 +62856,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 6256,
+          "line": 6257,
           "symbol": "open_viewer on_scan",
           "role": "scoped_implementation",
           "executed_in_inventory": false,
@@ -63380,7 +63380,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 573,
+          "line": 574,
           "symbol": "bind",
           "role": "scoped_implementation",
           "executed_in_inventory": false,
@@ -63388,7 +63388,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 6256,
+          "line": 6257,
           "symbol": "open_viewer",
           "role": "scoped_implementation",
           "executed_in_inventory": false,
@@ -63576,7 +63576,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 573,
+          "line": 574,
           "symbol": "bind",
           "role": "scoped_implementation",
           "executed_in_inventory": false,
@@ -63584,7 +63584,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 6256,
+          "line": 6257,
           "symbol": "open_viewer",
           "role": "scoped_implementation",
           "executed_in_inventory": false,
@@ -63772,7 +63772,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 573,
+          "line": 574,
           "symbol": "bind",
           "role": "scoped_implementation",
           "executed_in_inventory": false,
@@ -63780,7 +63780,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 6256,
+          "line": 6257,
           "symbol": "open_viewer",
           "role": "scoped_implementation",
           "executed_in_inventory": false,
@@ -63968,7 +63968,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 573,
+          "line": 574,
           "symbol": "bind",
           "role": "scoped_implementation",
           "executed_in_inventory": false,
@@ -63976,7 +63976,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 6256,
+          "line": 6257,
           "symbol": "open_viewer",
           "role": "scoped_implementation",
           "executed_in_inventory": false,
@@ -64198,7 +64198,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 6256,
+          "line": 6257,
           "symbol": "open_viewer",
           "role": "scoped_implementation",
           "executed_in_inventory": false,
@@ -64369,7 +64369,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 6256,
+          "line": 6257,
           "symbol": "open_viewer",
           "role": "scoped_implementation",
           "executed_in_inventory": false,
@@ -64540,7 +64540,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 6256,
+          "line": 6257,
           "symbol": "open_viewer",
           "role": "scoped_implementation",
           "executed_in_inventory": false,
@@ -64711,7 +64711,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 6256,
+          "line": 6257,
           "symbol": "open_viewer",
           "role": "scoped_implementation",
           "executed_in_inventory": false,
@@ -65049,7 +65049,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 6256,
+          "line": 6257,
           "symbol": "open_viewer",
           "role": "scoped_implementation",
           "executed_in_inventory": false,
@@ -65708,7 +65708,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 573,
+          "line": 574,
           "line_sha256": "e39129530ffe8a1bd01a4360a9f29e8b637ae8a794d33358f8792e1822578896",
           "symbol": "fn bind",
           "declared_symbol": "open_viewer",
@@ -65952,7 +65952,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 6256,
+          "line": 6257,
           "symbol": "open_viewer",
           "role": "scoped_implementation",
           "executed_in_inventory": false,
@@ -67289,7 +67289,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 6496,
+          "line": 6497,
           "line_sha256": "6a34a5b346a1b6098a66451e22851ba0d72cfbfcca72aad3771f2c3f7bcd8466",
           "symbol": "window.on_note_copy_requested",
           "role": "native_implementation",
@@ -67610,7 +67610,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 586,
+          "line": 587,
           "line_sha256": "7ffb048a3f9a373699af125185086d571626c4e82df894a22b09114d0cb661c9",
           "symbol": "window.invoke_retire_external_launches();",
           "role": "scoped_implementation",
@@ -67816,7 +67816,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 586,
+          "line": 587,
           "line_sha256": "7ffb048a3f9a373699af125185086d571626c4e82df894a22b09114d0cb661c9",
           "symbol": "window.invoke_retire_external_launches();",
           "role": "scoped_implementation",
@@ -68115,7 +68115,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 586,
+          "line": 587,
           "line_sha256": "7ffb048a3f9a373699af125185086d571626c4e82df894a22b09114d0cb661c9",
           "symbol": "window.invoke_retire_external_launches();",
           "role": "scoped_implementation",
@@ -68354,7 +68354,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 586,
+          "line": 587,
           "line_sha256": "7ffb048a3f9a373699af125185086d571626c4e82df894a22b09114d0cb661c9",
           "symbol": "window.invoke_retire_external_launches();",
           "role": "scoped_implementation",
@@ -68593,7 +68593,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 586,
+          "line": 587,
           "line_sha256": "7ffb048a3f9a373699af125185086d571626c4e82df894a22b09114d0cb661c9",
           "symbol": "window.invoke_retire_external_launches();",
           "role": "scoped_implementation",
@@ -69500,7 +69500,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 3361,
+          "line": 3362,
           "line_sha256": "0da8360e113dd2616ad718d8ca420c52585009cdebb7242775d25e871a846827",
           "symbol": "let retire_popups = popup_timer.retire_callback();",
           "role": "shared_support",
@@ -71558,7 +71558,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 706,
+          "line": 707,
           "line_sha256": "b69000057ba4b5fdeaf7e9608b27b8bdb240e0dbeb534fbf9465917098e1039d",
           "symbol": "window.on_retire_external_launches({",
           "role": "native_implementation",
@@ -71881,7 +71881,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 706,
+          "line": 707,
           "line_sha256": "b69000057ba4b5fdeaf7e9608b27b8bdb240e0dbeb534fbf9465917098e1039d",
           "symbol": "window.on_retire_external_launches({",
           "role": "native_implementation",
@@ -72543,7 +72543,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 661,
+          "line": 662,
           "line_sha256": "baf8a5ac29a332e2a26c59489f5af70a781b77b823e56968c9e1db8b8e9d5065",
           "symbol": "image_cache::Control::bind(window",
           "role": "shared_support",
@@ -72553,7 +72553,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 573,
+          "line": 574,
           "line_sha256": "e39129530ffe8a1bd01a4360a9f29e8b637ae8a794d33358f8792e1822578896",
           "symbol": "fn bind",
           "declared_symbol": "image_cache.refresh();",
@@ -72566,7 +72566,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 5298,
+          "line": 5299,
           "line_sha256": "c67bc374f74fdc57c262084d744886389b108a45427af849d60dc4b1708d8b0f",
           "symbol": "_image_cache_owner: image_cache.owner()",
           "role": "shared_support",
@@ -73264,7 +73264,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 661,
+          "line": 662,
           "line_sha256": "baf8a5ac29a332e2a26c59489f5af70a781b77b823e56968c9e1db8b8e9d5065",
           "symbol": "image_cache::Control::bind(window",
           "role": "shared_support",
@@ -73274,7 +73274,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 573,
+          "line": 574,
           "line_sha256": "e39129530ffe8a1bd01a4360a9f29e8b637ae8a794d33358f8792e1822578896",
           "symbol": "fn bind",
           "declared_symbol": "image_cache.refresh();",
@@ -73287,7 +73287,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 5298,
+          "line": 5299,
           "line_sha256": "c67bc374f74fdc57c262084d744886389b108a45427af849d60dc4b1708d8b0f",
           "symbol": "_image_cache_owner: image_cache.owner()",
           "role": "shared_support",
@@ -73985,7 +73985,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 661,
+          "line": 662,
           "line_sha256": "baf8a5ac29a332e2a26c59489f5af70a781b77b823e56968c9e1db8b8e9d5065",
           "symbol": "image_cache::Control::bind(window",
           "role": "shared_support",
@@ -73995,7 +73995,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 573,
+          "line": 574,
           "line_sha256": "e39129530ffe8a1bd01a4360a9f29e8b637ae8a794d33358f8792e1822578896",
           "symbol": "fn bind",
           "declared_symbol": "image_cache.refresh();",
@@ -74008,7 +74008,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 5298,
+          "line": 5299,
           "line_sha256": "c67bc374f74fdc57c262084d744886389b108a45427af849d60dc4b1708d8b0f",
           "symbol": "_image_cache_owner: image_cache.owner()",
           "role": "shared_support",
@@ -74747,7 +74747,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 6321,
+          "line": 6322,
           "line_sha256": "3014111536aaf6602ccd408dd8b637c9a6d0d627f05165349d322e6e1ea3a21f",
           "symbol": "let warm = viewer_prefetch::Control::new",
           "role": "shared_support",
@@ -75599,7 +75599,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 6321,
+          "line": 6322,
           "line_sha256": "3014111536aaf6602ccd408dd8b637c9a6d0d627f05165349d322e6e1ea3a21f",
           "symbol": "let warm = viewer_prefetch::Control::new",
           "role": "shared_support",
@@ -76408,7 +76408,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 6321,
+          "line": 6322,
           "line_sha256": "3014111536aaf6602ccd408dd8b637c9a6d0d627f05165349d322e6e1ea3a21f",
           "symbol": "let warm = viewer_prefetch::Control::new",
           "role": "shared_support",
@@ -77117,7 +77117,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 823,
+          "line": 824,
           "line_sha256": "1e6e0ab66bda2e3255d891d658ee594390db9330c5bbd8d9529199abb0992679",
           "symbol": "downloader_updates.refresh();",
           "role": "native_implementation",
@@ -77468,7 +77468,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 823,
+          "line": 824,
           "line_sha256": "1e6e0ab66bda2e3255d891d658ee594390db9330c5bbd8d9529199abb0992679",
           "symbol": "downloader_updates.refresh();",
           "role": "native_implementation",
@@ -77819,7 +77819,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 823,
+          "line": 824,
           "line_sha256": "1e6e0ab66bda2e3255d891d658ee594390db9330c5bbd8d9529199abb0992679",
           "symbol": "downloader_updates.refresh();",
           "role": "native_implementation",
@@ -78170,7 +78170,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 823,
+          "line": 824,
           "line_sha256": "1e6e0ab66bda2e3255d891d658ee594390db9330c5bbd8d9529199abb0992679",
           "symbol": "downloader_updates.refresh();",
           "role": "native_implementation",
@@ -81746,7 +81746,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 513,
+          "line": 514,
           "line_sha256": "327d02667fff885ad22eac76be0138668d95464e08a261b36f5212f4ea4ef5d9",
           "role": "scoped_implementation",
           "executed_in_inventory": false,
@@ -81754,7 +81754,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 2516,
+          "line": 2517,
           "line_sha256": "128fead9d0523bba774270988bf2dc708151f41108ed15089fb9a613d6476422",
           "role": "scoped_implementation",
           "executed_in_inventory": false,
@@ -81786,7 +81786,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 348,
+          "line": 349,
           "line_sha256": "8035d00bf47d942102f00bcd9087d70d00aa3f98e5b90925ca4fcb8d272a2174",
           "role": "scoped_implementation",
           "executed_in_inventory": false,
@@ -82040,7 +82040,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 513,
+          "line": 514,
           "line_sha256": "327d02667fff885ad22eac76be0138668d95464e08a261b36f5212f4ea4ef5d9",
           "role": "scoped_implementation",
           "executed_in_inventory": false,
@@ -82064,7 +82064,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 348,
+          "line": 349,
           "line_sha256": "8035d00bf47d942102f00bcd9087d70d00aa3f98e5b90925ca4fcb8d272a2174",
           "role": "scoped_implementation",
           "executed_in_inventory": false,
@@ -82351,7 +82351,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 348,
+          "line": 349,
           "line_sha256": "8035d00bf47d942102f00bcd9087d70d00aa3f98e5b90925ca4fcb8d272a2174",
           "role": "scoped_implementation",
           "executed_in_inventory": false,
@@ -82574,7 +82574,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 899,
+          "line": 900,
           "symbol": "opened.borrow_mut().refresh_tags();",
           "role": "scoped_implementation",
           "executed_in_inventory": false,
@@ -82582,7 +82582,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 2557,
+          "line": 2558,
           "symbol": "pages.current().borrow_mut().refresh_tags();",
           "role": "scoped_implementation",
           "executed_in_inventory": false,
@@ -82953,8 +82953,7 @@
       ],
       "descendant_count": 7,
       "descendant_status_counts": {
-        "first_pass": 6,
-        "missing": 1
+        "first_pass": 7
       },
       "unique_feature_descendant_count": 7,
       "unique_reachable_feature_count_including_shared": 7,
@@ -83212,7 +83211,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 7834,
+          "line": 7835,
           "line_sha256": "497fcb12876a4565b132e9c0ea3182afe36810b22f403d8648690cd16862c1db",
           "symbol": "pub(crate) fn styled_list_text(",
           "role": "native_implementation",
@@ -83439,7 +83438,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 7834,
+          "line": 7835,
           "line_sha256": "497fcb12876a4565b132e9c0ea3182afe36810b22f403d8648690cd16862c1db",
           "symbol": "pub(crate) fn styled_list_text(",
           "role": "native_implementation",
@@ -83560,40 +83559,198 @@
       "parent_id": "audit-options-tag-presentation-other-rendering",
       "label": "OR connecting string (on one line):",
       "kind": "control",
-      "status": "missing",
+      "status": "first_pass",
       "native_source": null,
       "reference_source": {
         "path": "hydrus/client/gui/panels/options/TagPresentationPanel.py",
         "line": 200,
         "line_sha256": "388d07aa1bb8d9e39c5368784ae882e161e038496b2f3ea45b04c2560a7d7f09"
       },
-      "assessment": "Reference editor/control 'OR connecting string (on one line):' is recorded on 'tag presentation' and defined by the referenced options panel. No corresponding editable row exists in native options::pages; this is a missing GUI editing path, even if a setting is imported or consumed elsewhere.",
+      "assessment": "Options > tag presentation retains the original OR connecting string editor with recorded default, raw empty/whitespace/Unicode/programmatically loaded multiline values, staged Cancel/Apply, persistent reopen and retained ClientOptions import/backfill. Saving only this setting preserves concurrent namespace/colour updates; hidden and retired owners cannot persist drafts. Reopened ASCII and fox values are checked by physical focus/Select All/Copy; the fox must paint visible ink through the bundled outline emoji fallback. Current literal OR labels, query syntax and export behavior remain unchanged, matching the reference whose custom connector rendering loop is disabled. The fallback paints monochrome outlines while retaining platform text and CJK fallbacks. The actual sans-serif/system-UI chain retains preceding platform fonts before selecting outlines ahead of its preferred emoji face; representative ordinary text glyph choices and script mappings are preserved.",
       "evidence": [
         {
-          "path": "crates/hydrus-gui-model/src/options.rs",
-          "line": 1626,
-          "role": "source_inspection",
-          "description": "Inspected complete native options registry: the explicitly listed native getter/setter rows are offered.",
-          "executed_in_inventory": false,
-          "line_sha256": "9b25465690948e42af43c4a0260d2651e872520f0dcd383f3510ff0712f4a148"
+          "path": "crates/hydrus-store/src/or_connector.rs",
+          "line": 44,
+          "symbol": "pub fn load(",
+          "line_sha256": "c49dfa0e9377a8b793d85931ab767554c19a462542a53f3225cc0e5fe8e87893",
+          "role": "scoped_implementation",
+          "description": "pub fn load(",
+          "executed_in_inventory": false
         },
         {
-          "path": "oracle/record_options_dialog.py",
+          "path": "crates/hydrus-store/src/or_connector.rs",
+          "line": 32,
+          "symbol": "pub fn from_legacy(",
+          "line_sha256": "45934f85d2ad25c5548d1765fc3941e10df4f692bfe052dd0d38c1c5b5fcd18b",
+          "role": "scoped_implementation",
+          "description": "pub fn from_legacy(",
+          "executed_in_inventory": false
+        },
+        {
+          "path": "crates/hydrus-store/src/import/decode.rs",
+          "line": 808,
+          "symbol": "&crate::or_connector::Connector::from_legacy(options)",
+          "line_sha256": "fd8981305f45c9b39fe77946a88ec155edb4d417b0a365525eeb465244089563",
+          "role": "scoped_implementation",
+          "description": "&crate::or_connector::Connector::from_legacy(options)",
+          "executed_in_inventory": false
+        },
+        {
+          "path": "crates/hydrus-gui-model/src/options.rs",
+          "line": 4542,
+          "symbol": "\"OR connecting string (on one line): \"",
+          "line_sha256": "0210aee5f0280c08bffea9a2a76715ee6caac6de0f3ac80c35a2956b40899ce2",
+          "role": "scoped_implementation",
+          "description": "\"OR connecting string (on one line): \"",
+          "executed_in_inventory": false
+        },
+        {
+          "path": "crates/hydrus-gui/src/options_window.rs",
+          "line": 1291,
+          "symbol": "window.on_text_edited({",
+          "line_sha256": "d5d0be5d96029291969ab9e72e5bf46d7ea4b416ec54b996c546b50fa8259cc5",
+          "role": "scoped_implementation",
+          "description": "window.on_text_edited({",
+          "executed_in_inventory": false
+        },
+        {
+          "path": "crates/hydrus-gui/src/options_window.rs",
+          "line": 1684,
+          "symbol": "window.on_apply({",
+          "line_sha256": "dbf6ac2540045f422759e8e4ee186bfa980f304a4edce69ebe8585ab25e29c2c",
+          "role": "scoped_implementation",
+          "description": "window.on_apply({",
+          "executed_in_inventory": false
+        },
+        {
+          "path": "crates/hydrus-gui/src/fonts.rs",
+          "line": 18,
+          "symbol": "pub fn install_emoji_fallback(",
+          "line_sha256": "158655e8b98d229d7dc0198e7f8dea71fe11c981add25b2022983876e6da6529",
+          "role": "scoped_implementation",
+          "description": "pub fn install_emoji_fallback(",
+          "executed_in_inventory": false
+        },
+        {
+          "path": "crates/hydrus-gui/src/session_autosave.rs",
+          "line": 159,
+          "symbol": "crate::fonts::install_emoji_fallback()",
+          "line_sha256": "f407b11f61af2e7b29e748787cf4bbdc1d968fd2c0b1137dd6eafd8a841e888e",
+          "role": "scoped_implementation",
+          "description": "crate::fonts::install_emoji_fallback()",
+          "executed_in_inventory": false
+        },
+        {
+          "path": "crates/hydrus-gui/src/headless.rs",
+          "line": 117,
+          "symbol": "crate::fonts::install_emoji_fallback()",
+          "line_sha256": "f407b11f61af2e7b29e748787cf4bbdc1d968fd2c0b1137dd6eafd8a841e888e",
+          "role": "scoped_implementation",
+          "description": "crate::fonts::install_emoji_fallback()",
+          "executed_in_inventory": false
+        },
+        {
+          "path": "crates/hydrus-store/src/or_connector.rs",
+          "line": 68,
+          "symbol": "fn real_qt_serialised_raw_connector",
+          "line_sha256": "e7542bbeb0650b0f0b32937766f9d13f6adb051c6f50c29261f1fd7eadd83f9c",
+          "role": "behavioral_regression",
+          "description": "fn real_qt_serialised_raw_connector",
+          "executed_in_inventory": false
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/or_connector.rs",
+          "line": 34,
+          "symbol": "fn qt_raw_blank_newline_cancel",
+          "line_sha256": "8003efb63c256de6ac090371334bc31765d7617c67e233b4a964befcef1ebedd",
+          "role": "behavioral_regression",
+          "description": "fn qt_raw_blank_newline_cancel",
+          "executed_in_inventory": false
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/or_connector.rs",
+          "line": 129,
+          "symbol": "fn actual_options_raw_connector",
+          "line_sha256": "fc44949fbd4deace7337136c00370acad70b32f18febdb6ce32f8b3949013d85",
+          "role": "behavioral_regression",
+          "description": "fn actual_options_raw_connector",
+          "executed_in_inventory": false
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/or_connector.rs",
+          "line": 14,
+          "symbol": "fn capture_and_copy_reopened(",
+          "line_sha256": "bdd4fd1d7f9a2d837d223ddb78840e110406bc02887ec1606f322e8e64f5feec",
+          "role": "behavioral_regression",
+          "description": "fn capture_and_copy_reopened(",
+          "executed_in_inventory": false
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/emoji_fonts.rs",
+          "line": 54,
+          "symbol": "fn outline_fox_is_selected",
+          "line_sha256": "25484fe5b85f4d7bf446e3a661264c2f0d32a48e8b728b17ac4edb2bc0995eda",
+          "role": "behavioral_regression",
+          "description": "fn outline_fox_is_selected",
+          "executed_in_inventory": false
+        },
+        {
+          "path": "oracle/record_or_connector.py",
           "line": 1,
-          "role": "existing_oracle_recorder",
-          "description": "Existing recorder traverses the real Qt options dialog, including these page/box/control labels.",
-          "executed_in_inventory": false,
-          "line_sha256": "381f9bfc69d49d39040a7d5fc3197ce385019a2ba2de649622f841a8c658ed37"
+          "symbol": "#!/usr/bin/env python3",
+          "line_sha256": "381f9bfc69d49d39040a7d5fc3197ce385019a2ba2de649622f841a8c658ed37",
+          "role": "reference_recording",
+          "description": "#!/usr/bin/env python3",
+          "executed_in_inventory": false
+        },
+        {
+          "path": "oracle/fixtures/or_connector.json",
+          "line": 1,
+          "symbol": "{",
+          "line_sha256": "021fb596db81e6d02bf3d2586ee3981fe519f275c0ac9ca76bbcf2ebb4097d96",
+          "role": "reference_recording",
+          "description": "{",
+          "executed_in_inventory": false
         }
       ],
       "limitations": [
-        "Native options registry has no editable 'OR connecting string (on one line):' control in this page/box path."
+        "One original finite editor leaf only; no native or broader tag-presentation/OR-renderer parent credit.",
+        "Reference custom connector rendering remains disabled; native single-line OR display is not claimed equivalent to Qt multirow header/member layout.",
+        "Menu navigation, edit staging, Apply/Cancel and ownership tests dispatch callbacks. Physical input evidence covers focusing and Select All/Copy of reopened fields at one 900×900 scale-one viewport; it does not prove all typing/paste/IME input behaviors.",
+        "Multiline values are programmatic fixture inputs; this is not a multiline editor feature.",
+        "Outline emoji are monochrome; no colour/glyph-shape parity claim. Exact Slint runtime/build/core 1.18.1 pin is required by internal font adapter.",
+        "The retained font prefix repeats in Fontique’s implicit system tail for unsupported characters. Repeated initialization does not grow it. Explicit bitmap font requests or configured bitmap primaries can still outrank this fallback.",
+        "Full exact-source Linux validation passed; Windows/macOS remain deferred."
       ],
       "descendant_count": 0,
       "descendant_status_counts": {},
       "unique_feature_descendant_count": 0,
       "unique_reachable_feature_count_including_shared": 1,
-      "native_id_candidates": []
+      "native_id_candidates": [],
+      "assessment_method": "Exact-source full Linux validation, fresh byte-identical Qt replay and root/independent behavioral and native rendered review; only the original editor leaf is selected.",
+      "implementation_validation": {
+        "source_commit": "88e9851e6ab8ecec08eb03f0d5cd3a2f8b7d2339",
+        "ci": "passed",
+        "tests_executed_at_checkpoint": true,
+        "native_render_review": "passed",
+        "manifest": "docs/rust/gui-coverage/parity/or-label-connector.json",
+        "run_url": "https://github.com/jkendall327/hydrus-mine/actions/runs/37700560044",
+        "validation_scope": "linux",
+        "required_platforms": [
+          "linux"
+        ],
+        "deferred_platforms": [
+          "windows",
+          "macos"
+        ],
+        "publication_policy": {
+          "path": ".github/publication-validation.json",
+          "source_commit": "88e9851e6ab8ecec08eb03f0d5cd3a2f8b7d2339",
+          "sha256": "49723bd5d6b786392a1368bb3da1406747a553ef31c9de2bdef92cea5d014c5f",
+          "effective_date": "2026-10-06",
+          "reason": "The owner uses Linux and prioritizes validated Linux delivery. macOS is low priority; Windows is deferred because its builds materially lengthen validation. Secondary-platform CI remains available by explicit opt-in."
+        }
+      }
     },
     {
       "id": "audit-options-tag-presentation-other-rendering-namespace-for-the-or-top-row",
@@ -85147,7 +85304,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 2032,
+          "line": 2033,
           "line_sha256": "34dbe5504f591c38d5711908d30a61d0a6b68c8ace6869eb89174efffae47c21",
           "symbol": "let open_manage_tags_viewer = {",
           "role": "scoped_implementation",
@@ -85156,7 +85313,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 7221,
+          "line": 7222,
           "line_sha256": "7e353722cc834d2a0f5cf042175882656c6160d5f46110df48be0a2e9aecc3e4",
           "symbol": "let manage_tags_of: Rc<dyn Fn(HashId)>",
           "role": "scoped_implementation",
@@ -85558,7 +85715,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 2032,
+          "line": 2033,
           "line_sha256": "34dbe5504f591c38d5711908d30a61d0a6b68c8ace6869eb89174efffae47c21",
           "symbol": "let open_manage_tags_viewer = {",
           "role": "scoped_implementation",
@@ -85567,7 +85724,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 7221,
+          "line": 7222,
           "line_sha256": "7e353722cc834d2a0f5cf042175882656c6160d5f46110df48be0a2e9aecc3e4",
           "symbol": "let manage_tags_of: Rc<dyn Fn(HashId)>",
           "role": "scoped_implementation",
@@ -87811,7 +87968,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 540,
+          "line": 541,
           "line_sha256": "0a240eec333ee8b35a4c4cb79573794acab079dd05254c681b6bcb62575d9316",
           "symbol": "rows.set_paint_palette(",
           "role": "shared_support",
@@ -88183,7 +88340,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 4407,
+          "line": 4408,
           "line_sha256": "58ea9a55ef6e7f8143bd4c9926ae918663993938a46d9bc17209a8d4a43ff6b5",
           "symbol": "let reselect = {",
           "role": "native_implementation",
@@ -88193,7 +88350,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 573,
+          "line": 574,
           "line_sha256": "e39129530ffe8a1bd01a4360a9f29e8b637ae8a794d33358f8792e1822578896",
           "symbol": "fn bind",
           "declared_symbol": "if !binding_active.get()",
@@ -88435,7 +88592,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 4407,
+          "line": 4408,
           "line_sha256": "58ea9a55ef6e7f8143bd4c9926ae918663993938a46d9bc17209a8d4a43ff6b5",
           "symbol": "let reselect = {",
           "role": "native_implementation",
@@ -88445,7 +88602,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 573,
+          "line": 574,
           "line_sha256": "e39129530ffe8a1bd01a4360a9f29e8b637ae8a794d33358f8792e1822578896",
           "symbol": "fn bind",
           "declared_symbol": "if !binding_active.get()",
@@ -88687,7 +88844,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 4407,
+          "line": 4408,
           "line_sha256": "58ea9a55ef6e7f8143bd4c9926ae918663993938a46d9bc17209a8d4a43ff6b5",
           "symbol": "let reselect = {",
           "role": "native_implementation",
@@ -88697,7 +88854,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 573,
+          "line": 574,
           "line_sha256": "e39129530ffe8a1bd01a4360a9f29e8b637ae8a794d33358f8792e1822578896",
           "symbol": "fn bind",
           "declared_symbol": "if !binding_active.get()",
@@ -88939,7 +89096,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 4407,
+          "line": 4408,
           "line_sha256": "58ea9a55ef6e7f8143bd4c9926ae918663993938a46d9bc17209a8d4a43ff6b5",
           "symbol": "let reselect = {",
           "role": "native_implementation",
@@ -88949,7 +89106,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 573,
+          "line": 574,
           "line_sha256": "e39129530ffe8a1bd01a4360a9f29e8b637ae8a794d33358f8792e1822578896",
           "symbol": "fn bind",
           "declared_symbol": "if !binding_active.get()",
@@ -89154,7 +89311,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 4458,
+          "line": 4459,
           "line_sha256": "8a75a3e81f1eeeb930467203562085abc918d9fbb306d5c2f66db133755a5275",
           "symbol": "thumbnail_navigation::bind",
           "role": "scoped_implementation",
@@ -89400,7 +89557,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 4458,
+          "line": 4459,
           "line_sha256": "8a75a3e81f1eeeb930467203562085abc918d9fbb306d5c2f66db133755a5275",
           "symbol": "thumbnail_navigation::bind",
           "role": "scoped_implementation",
@@ -89655,7 +89812,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 4458,
+          "line": 4459,
           "line_sha256": "8a75a3e81f1eeeb930467203562085abc918d9fbb306d5c2f66db133755a5275",
           "symbol": "thumbnail_navigation::bind",
           "role": "scoped_implementation",
@@ -90135,7 +90292,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 540,
+          "line": 541,
           "line_sha256": "0a240eec333ee8b35a4c4cb79573794acab079dd05254c681b6bcb62575d9316",
           "symbol": "rows.set_paint_palette(",
           "role": "shared_support",
@@ -91280,7 +91437,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 573,
+          "line": 574,
           "line_sha256": "e39129530ffe8a1bd01a4360a9f29e8b637ae8a794d33358f8792e1822578896",
           "symbol": "fn bind",
           "source_review_scope": "Named entry of the explicitly cited module/fixture suite; aggregate source support, not a unique assertion for every leaf.",
@@ -92325,7 +92482,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 3347,
+          "line": 3348,
           "line_sha256": "4d80b137e645df09e22f5332dffa33051ba23e3bbf5102051efb314864fe11af",
           "symbol": "client_exit::bind",
           "role": "native_implementation",
@@ -92524,7 +92681,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 3347,
+          "line": 3348,
           "line_sha256": "4d80b137e645df09e22f5332dffa33051ba23e3bbf5102051efb314864fe11af",
           "symbol": "client_exit::bind",
           "role": "native_implementation",
@@ -92727,7 +92884,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 3347,
+          "line": 3348,
           "line_sha256": "4d80b137e645df09e22f5332dffa33051ba23e3bbf5102051efb314864fe11af",
           "symbol": "client_exit::bind",
           "role": "native_implementation",
@@ -92929,7 +93086,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 3347,
+          "line": 3348,
           "line_sha256": "4d80b137e645df09e22f5332dffa33051ba23e3bbf5102051efb314864fe11af",
           "symbol": "client_exit::bind",
           "role": "native_implementation",
@@ -94756,7 +94913,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 765,
+          "line": 766,
           "line_sha256": "afd5610c796406d54a52ef2192312eb51fd73442aec43f9ad3c66a529d1d1ffc",
           "symbol": "window.global::<Theme<'_>>().on_colours_changed",
           "role": "native_implementation",
@@ -98368,7 +98525,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 357,
+          "line": 358,
           "line_sha256": "52d3c8b33cbc49969f4809b85ccc848975080e36de8b892ac63f2f45dac4c65f",
           "symbol": "_debug_session_reload_owner: Rc<debug_session_reload::Owner>",
           "role": "native_implementation",
@@ -98378,7 +98535,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 649,
+          "line": 650,
           "line_sha256": "abb59ef3f31b7adab6891e059016583054a4fd09644ee7b8ad70449e2d7f2a36",
           "symbol": "debug_session_reload::Control::new",
           "role": "native_implementation",
@@ -98388,7 +98545,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 1146,
+          "line": 1147,
           "line_sha256": "180024b927302b1c5deb3b407fd975ad2e7043e2e66f269ae9bc9dac03047b35",
           "symbol": "debug_session_reload.set_change",
           "role": "native_implementation",
@@ -98398,7 +98555,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 5289,
+          "line": 5290,
           "line_sha256": "b2920b4e49b120025b7d6f2e7d9bfc8c8aa5805eead1199a2e70870adcd7f58e",
           "symbol": "Rc::new(debug_session_reload.owner())",
           "role": "native_implementation",
@@ -98408,7 +98565,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 732,
+          "line": 733,
           "line_sha256": "de17aaecab00458384c84f575a70c8e9d37161ef476b1a07f15a49fe9eb3481f",
           "symbol": "debug_session_reload.retire();",
           "role": "native_implementation",
@@ -98418,7 +98575,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 3387,
+          "line": 3388,
           "line_sha256": "b1e600c1e4c24275b897db6747a0266f93f12de4a791b926cefe466e98491f3e",
           "symbol": "debug_session_reload.retire();",
           "role": "native_implementation",
@@ -99028,7 +99185,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 643,
+          "line": 644,
           "line_sha256": "eca5310a80708e1c3b571e2713cccafed142c576b90e76d7c9aeed682301ce73",
           "symbol": "let debug_long_popup = debug_long_popup::Control::new",
           "role": "native_implementation",
@@ -99038,7 +99195,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 3331,
+          "line": 3332,
           "line_sha256": "8a437a318ac7007e9bd22b26f81133394605e75a89555af68177fc0e4db61e86",
           "symbol": "debug_long_popup.set_published",
           "role": "native_implementation",
@@ -99048,7 +99205,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 573,
+          "line": 574,
           "line_sha256": "e39129530ffe8a1bd01a4360a9f29e8b637ae8a794d33358f8792e1822578896",
           "symbol": "fn bind",
           "declared_symbol": "let popups = Rc::downgrade(&popup_timer)",
@@ -99061,7 +99218,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 731,
+          "line": 732,
           "line_sha256": "fbc37dd05ae3505591d3eb7351a88f39ae16ce121d0522ebdf4602a680b05ca3",
           "symbol": "debug_long_popup.retire();",
           "role": "native_implementation",
@@ -99071,7 +99228,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 3386,
+          "line": 3387,
           "line_sha256": "7559de1686cf14091a61e45c5e51fc1870b23e57e5abfc204b01e32d2fc0441f",
           "symbol": "debug_long_popup.retire();",
           "role": "native_implementation",
@@ -99702,7 +99859,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 1147,
+          "line": 1148,
           "line_sha256": "894ade5dcf4fcbc15a35d6d576ef5db8d2ff3423fa3ee854934a629df83f9622",
           "symbol": "debug_long_popup.set_new_page",
           "role": "native_implementation",
@@ -99712,7 +99869,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 1151,
+          "line": 1152,
           "line_sha256": "001af39175016174e08b95e2c38eae3c94e2fb050ecc05314e6083aa0e08fd44",
           "symbol": "pages.new_query_page(location.clone());",
           "role": "native_implementation",
@@ -99722,7 +99879,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 643,
+          "line": 644,
           "line_sha256": "eca5310a80708e1c3b571e2713cccafed142c576b90e76d7c9aeed682301ce73",
           "symbol": "let debug_long_popup = debug_long_popup::Control::new",
           "role": "native_implementation",
@@ -99732,7 +99889,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 731,
+          "line": 732,
           "line_sha256": "fbc37dd05ae3505591d3eb7351a88f39ae16ce121d0522ebdf4602a680b05ca3",
           "symbol": "debug_long_popup.retire();",
           "role": "native_implementation",
@@ -99742,7 +99899,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 573,
+          "line": 574,
           "line_sha256": "e39129530ffe8a1bd01a4360a9f29e8b637ae8a794d33358f8792e1822578896",
           "symbol": "fn bind",
           "declared_symbol": "let debug_long_popup_owner = debug_long_popup.owner();",
@@ -99878,7 +100035,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/main.rs",
-          "line": 215,
+          "line": 216,
           "line_sha256": "9c40abda00775bd8b152c30f56f05c5f654130d51d27ed1e5b553b1752609ddd",
           "symbol": "mod debug_delayed_pages;",
           "role": "authored_regression",
@@ -100423,7 +100580,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 643,
+          "line": 644,
           "line_sha256": "eca5310a80708e1c3b571e2713cccafed142c576b90e76d7c9aeed682301ce73",
           "symbol": "let debug_long_popup = debug_long_popup::Control::new",
           "role": "native_implementation",
@@ -100433,7 +100590,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 3331,
+          "line": 3332,
           "line_sha256": "8a437a318ac7007e9bd22b26f81133394605e75a89555af68177fc0e4db61e86",
           "symbol": "debug_long_popup.set_published",
           "role": "native_implementation",
@@ -100443,7 +100600,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 731,
+          "line": 732,
           "line_sha256": "fbc37dd05ae3505591d3eb7351a88f39ae16ce121d0522ebdf4602a680b05ca3",
           "symbol": "debug_long_popup.retire();",
           "role": "native_implementation",
@@ -100453,7 +100610,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 573,
+          "line": 574,
           "line_sha256": "e39129530ffe8a1bd01a4360a9f29e8b637ae8a794d33358f8792e1822578896",
           "symbol": "fn bind",
           "declared_symbol": "let debug_long_popup_owner = debug_long_popup.owner();",
@@ -100619,7 +100776,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/main.rs",
-          "line": 216,
+          "line": 217,
           "line_sha256": "7a2b0b8334821c990d82d348b30aa2adb596e2eefa698526c30c7f66b5fd7ad3",
           "symbol": "mod debug_delayed_popup;",
           "role": "authored_regression",
@@ -101585,7 +101742,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 706,
+          "line": 707,
           "line_sha256": "b69000057ba4b5fdeaf7e9608b27b8bdb240e0dbeb534fbf9465917098e1039d",
           "symbol": "window.on_retire_external_launches({",
           "role": "native_implementation",
@@ -101605,7 +101762,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 2977,
+          "line": 2978,
           "line_sha256": "f7f2ba544de9b1aa7b2fae8f4d96a35b57a6c247519449432010fbb7a4d9d08b",
           "symbol": "clear_thumbnail_cache: Rc::new({",
           "role": "native_implementation",
@@ -102185,7 +102342,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 355,
+          "line": 356,
           "line_sha256": "e90d451eb46d4f361f7ed1a092b404e2308253b6bca66546d99d24af3de6e79f",
           "symbol": "_debug_fetch_owner: Rc<debug_fetch::Owner>",
           "role": "native_implementation",
@@ -102195,7 +102352,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 650,
+          "line": 651,
           "line_sha256": "47eef3581c04556ef8fbde9cb81659baeecf1180ad89d34ab073fbe18a7edcae",
           "symbol": "let debug_fetch = debug_fetch::Control::new",
           "role": "native_implementation",
@@ -102205,7 +102362,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 3339,
+          "line": 3340,
           "line_sha256": "715c980ad2285362eea3b4191b222911cc83fccdb728d398c8c7f6f08fd570b9",
           "symbol": "debug_fetch.set_published",
           "role": "native_implementation",
@@ -102215,7 +102372,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 5337,
+          "line": 5338,
           "line_sha256": "3b64f8f5eb829dd3878ca236c3c532b176cb92015b3f0b24d6155937bf1cf40a",
           "symbol": "_debug_fetch_owner: Rc::new(debug_fetch.owner())",
           "role": "native_implementation",
@@ -102225,7 +102382,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 6021,
+          "line": 6022,
           "line_sha256": "79f3df163c9029b0a503c8f027fc1f87eb3959a4583c866fb904e4ddc09cc1b1",
           "symbol": "fn pick_debug_response",
           "role": "native_implementation",
@@ -102235,7 +102392,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 6028,
+          "line": 6029,
           "line_sha256": "005de24bd9fe2f330f4b4abf108ece006b35cd8d5862a178ed0248da61e5c20e",
           "symbol": "set_file_name(\"output.txt\")",
           "role": "native_implementation",
@@ -102245,7 +102402,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 733,
+          "line": 734,
           "line_sha256": "75e5bd9f8f2938b2eec5a7d149fcce6b15dc02990de81cbe92c107850f958677",
           "symbol": "debug_fetch.retire();",
           "role": "native_implementation",
@@ -102255,7 +102412,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 3388,
+          "line": 3389,
           "line_sha256": "20946c45ca78c874c354e42821487c66e341396efd847e8dd8df9b87aa6e9529",
           "symbol": "debug_fetch.retire();",
           "role": "native_implementation",
@@ -103232,7 +103389,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 1539,
+          "line": 1540,
           "role": "source_inspection",
           "description": "Blank suggestion opens this window; chosen closure adds its predicates to the live SearchPage.",
           "executed_in_inventory": false,
@@ -107568,7 +107725,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 1472,
+          "line": 1473,
           "line_sha256": "36a30428c73df873f33c8c77275c5b78a63034301e972cb5c43f95b4ebe54199",
           "symbol": "let open_editor = {",
           "role": "scoped_implementation",
@@ -107577,7 +107734,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 1480,
+          "line": 1481,
           "line_sha256": "abfa04cda47a8ce7d1a81431bf6c9bcf1830a4956ae62d39b8e4c7262cd7712d",
           "symbol": "A refused activation is consumed",
           "role": "scoped_implementation",
@@ -107586,7 +107743,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 1510,
+          "line": 1511,
           "line_sha256": "caa0668236a2ba4808e5eee5b264fcb4c2be0b983f5660f629f48804d29035fe",
           "symbol": "let owner: Rc<dyn Fn() -> bool> =",
           "role": "scoped_implementation",
@@ -107595,7 +107752,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 706,
+          "line": 707,
           "line_sha256": "b69000057ba4b5fdeaf7e9608b27b8bdb240e0dbeb534fbf9465917098e1039d",
           "symbol": "window.on_retire_external_launches({",
           "role": "scoped_implementation",
@@ -107604,7 +107761,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 3379,
+          "line": 3380,
           "line_sha256": "7f3de9dc576a3400c085c208222966fb1d15da2d310c832a4b50e76c01512f7d",
           "symbol": "sidebar_layout.accepted_exit();",
           "role": "scoped_implementation",
@@ -108196,7 +108353,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 1480,
+          "line": 1481,
           "line_sha256": "abfa04cda47a8ce7d1a81431bf6c9bcf1830a4956ae62d39b8e4c7262cd7712d",
           "symbol": "A refused activation is consumed",
           "role": "scoped_implementation",
@@ -108205,7 +108362,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 1510,
+          "line": 1511,
           "line_sha256": "caa0668236a2ba4808e5eee5b264fcb4c2be0b983f5660f629f48804d29035fe",
           "symbol": "let owner: Rc<dyn Fn() -> bool> =",
           "role": "scoped_implementation",
@@ -108510,7 +108667,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 1480,
+          "line": 1481,
           "line_sha256": "abfa04cda47a8ce7d1a81431bf6c9bcf1830a4956ae62d39b8e4c7262cd7712d",
           "symbol": "A refused activation is consumed",
           "role": "scoped_implementation",
@@ -108519,7 +108676,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 1510,
+          "line": 1511,
           "line_sha256": "caa0668236a2ba4808e5eee5b264fcb4c2be0b983f5660f629f48804d29035fe",
           "symbol": "let owner: Rc<dyn Fn() -> bool> =",
           "role": "scoped_implementation",
@@ -115003,7 +115160,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 1438,
+          "line": 1439,
           "line_sha256": "e1dfd32db3e7ec5a0a5b663d188faf68a01295a8dc615eaf552dbe6570aef5b7",
           "role": "scoped_implementation",
           "executed_in_inventory": false,
@@ -115277,7 +115434,7 @@
       "status": "partial",
       "native_source": {
         "path": "crates/hydrus-gui/src/lib.rs",
-        "line": 3246,
+        "line": 3247,
         "line_sha256": "307fb5863cf73f1e5ba9228d6255609f5fcd76efb612da078e307d62d1256398"
       },
       "reference_source": {
@@ -115411,7 +115568,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 1552,
+          "line": 1553,
           "line_sha256": "3882da987827eb8b8ff41fc77bde1c9d5ca7265929b9d35d257f9ff9aa716187",
           "role": "scoped_implementation",
           "executed_in_inventory": false,
@@ -117135,7 +117292,7 @@
       "status": "partial",
       "native_source": {
         "path": "crates/hydrus-gui/src/lib.rs",
-        "line": 7785,
+        "line": 7786,
         "line_sha256": "53d8a89fc9f94dd3f83d424704dfa7db87a5b3b08f79bb66d2189b279050dbb5"
       },
       "reference_source": {
@@ -117185,7 +117342,7 @@
       "status": "first_pass",
       "native_source": {
         "path": "crates/hydrus-gui/src/lib.rs",
-        "line": 1094,
+        "line": 1095,
         "line_sha256": "5f8fc80b2701f2b22b9f373b8f366f33ea696e73d88faeb1f3499e7ea8cce55f"
       },
       "reference_source": {
@@ -117237,7 +117394,7 @@
       "status": "first_pass",
       "native_source": {
         "path": "crates/hydrus-gui/src/lib.rs",
-        "line": 1362,
+        "line": 1363,
         "line_sha256": "e4af1e0127573adad765ddbbf32b618ebd2f40aa71155fceae855e3952afa452"
       },
       "reference_source": {
@@ -117289,7 +117446,7 @@
       "status": "first_pass",
       "native_source": {
         "path": "crates/hydrus-gui/src/lib.rs",
-        "line": 2390,
+        "line": 2391,
         "line_sha256": "77961ec22daf13774ef36bac19d0aeff17fa218dde52802e046258f1c8dbee1f"
       },
       "reference_source": {
@@ -117413,7 +117570,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 3282,
+          "line": 3283,
           "role": "source_inspection",
           "description": "Polls typed Pauses and DaemonLive settings and renders SessionBytes every second.",
           "executed_in_inventory": false,
@@ -117792,7 +117949,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 3347,
+          "line": 3348,
           "line_sha256": "4d80b137e645df09e22f5332dffa33051ba23e3bbf5102051efb314864fe11af",
           "symbol": "client_exit::bind",
           "role": "native_implementation",
@@ -123629,7 +123786,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 586,
+          "line": 587,
           "line_sha256": "7ffb048a3f9a373699af125185086d571626c4e82df894a22b09114d0cb661c9",
           "symbol": "window.invoke_retire_external_launches();",
           "role": "scoped_implementation",
@@ -123853,7 +124010,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 586,
+          "line": 587,
           "line_sha256": "7ffb048a3f9a373699af125185086d571626c4e82df894a22b09114d0cb661c9",
           "symbol": "window.invoke_retire_external_launches();",
           "role": "scoped_implementation",
@@ -124077,7 +124234,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 586,
+          "line": 587,
           "line_sha256": "7ffb048a3f9a373699af125185086d571626c4e82df894a22b09114d0cb661c9",
           "symbol": "window.invoke_retire_external_launches();",
           "role": "scoped_implementation",
@@ -124542,7 +124699,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 348,
+          "line": 349,
           "line_sha256": "8035d00bf47d942102f00bcd9087d70d00aa3f98e5b90925ca4fcb8d272a2174",
           "role": "scoped_implementation",
           "executed_in_inventory": false,
@@ -124821,7 +124978,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 348,
+          "line": 349,
           "line_sha256": "8035d00bf47d942102f00bcd9087d70d00aa3f98e5b90925ca4fcb8d272a2174",
           "role": "scoped_implementation",
           "executed_in_inventory": false,
@@ -125084,7 +125241,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 348,
+          "line": 349,
           "line_sha256": "8035d00bf47d942102f00bcd9087d70d00aa3f98e5b90925ca4fcb8d272a2174",
           "role": "scoped_implementation",
           "executed_in_inventory": false,
@@ -126618,7 +126775,7 @@
       "status": "first_pass",
       "native_source": {
         "path": "crates/hydrus-gui/src/lib.rs",
-        "line": 1743,
+        "line": 1744,
         "line_sha256": "73ad4084a23f9724ad6d2e91e0099e4b4f8584f5ff28bdccdb4ed8fac2a4b2de"
       },
       "reference_source": {
@@ -126662,7 +126819,7 @@
       "status": "first_pass",
       "native_source": {
         "path": "crates/hydrus-gui/src/lib.rs",
-        "line": 1776,
+        "line": 1777,
         "line_sha256": "f53c211c7a7ca81391efefd2854db76660c7cbba092d784eec1003fc4d885560"
       },
       "reference_source": {
@@ -126706,7 +126863,7 @@
       "status": "first_pass",
       "native_source": {
         "path": "crates/hydrus-gui/src/lib.rs",
-        "line": 1795,
+        "line": 1796,
         "line_sha256": "3693744bc798c34a60c2a984758e0aed1fbde5fcf6c339617b5c5ffd6af86073"
       },
       "reference_source": {
@@ -126758,7 +126915,7 @@
       "evidence": [
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 1776,
+          "line": 1777,
           "role": "source_inspection",
           "description": "Inspected this native subsystem and its callbacks; Reference sort/collect cog selects an independent local/repository/combined tag context. Native callbacks only change sort type/order and collect namespace/rating/unmatched keys; no per-sort/collect tag context field/editor is represented.",
           "executed_in_inventory": false,
@@ -127556,7 +127713,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 1552,
+          "line": 1553,
           "line_sha256": "3882da987827eb8b8ff41fc77bde1c9d5ca7265929b9d35d257f9ff9aa716187",
           "role": "scoped_implementation",
           "executed_in_inventory": false,
@@ -127792,7 +127949,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 1552,
+          "line": 1553,
           "line_sha256": "3882da987827eb8b8ff41fc77bde1c9d5ca7265929b9d35d257f9ff9aa716187",
           "role": "scoped_implementation",
           "executed_in_inventory": false,
@@ -127966,7 +128123,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 1552,
+          "line": 1553,
           "line_sha256": "3882da987827eb8b8ff41fc77bde1c9d5ca7265929b9d35d257f9ff9aa716187",
           "role": "scoped_implementation",
           "executed_in_inventory": false,
@@ -128202,7 +128359,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 1552,
+          "line": 1553,
           "line_sha256": "3882da987827eb8b8ff41fc77bde1c9d5ca7265929b9d35d257f9ff9aa716187",
           "role": "scoped_implementation",
           "executed_in_inventory": false,
@@ -128507,7 +128664,7 @@
       "status": "partial",
       "native_source": {
         "path": "crates/hydrus-gui/src/lib.rs",
-        "line": 6256,
+        "line": 6257,
         "line_sha256": "12f71f0ab9caa5160f9f8967c12a97e926ef928c9e8a9c01d64f1e3447ab2def"
       },
       "reference_source": {
@@ -128518,7 +128675,7 @@
       "evidence": [
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 6256,
+          "line": 6257,
           "role": "native_wiring",
           "description": "Media Viewer opens through the cited native entrypoint. Native viewer navigation, playback, hover actions, zoom/audio/slideshow and shared metadata editors are wired. Drag-out substitutes file-browser opening; exact Qt/custom-shortcut surface is not claimed.",
           "executed_in_inventory": false,
@@ -131033,7 +131190,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 2148,
+          "line": 2149,
           "line_sha256": "4f7b8c03aa0912a656cccfbae458d81d518da45c5a88c77981894432448b4085",
           "role": "scoped_implementation",
           "executed_in_inventory": false,
@@ -131240,7 +131397,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 2148,
+          "line": 2149,
           "line_sha256": "4f7b8c03aa0912a656cccfbae458d81d518da45c5a88c77981894432448b4085",
           "role": "scoped_implementation",
           "executed_in_inventory": false,
@@ -131619,7 +131776,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 2048,
+          "line": 2049,
           "line_sha256": "4dc6fd8703ef024a680a939de414212a61cd6fc3f815c72f452c7ca7faee804b",
           "symbol": "if let Some(existing) = manage_notes.borrow().as_ref()",
           "role": "native_implementation",
@@ -131867,7 +132024,7 @@
       "status": "first_pass",
       "native_source": {
         "path": "crates/hydrus-gui/src/lib.rs",
-        "line": 4767,
+        "line": 4768,
         "line_sha256": "f2e83e8b86ea4833ff5df565b883d99e7b2b9002267621991f545d97dbbcc348"
       },
       "reference_source": {
@@ -131878,7 +132035,7 @@
       "evidence": [
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 4767,
+          "line": 4768,
           "role": "native_wiring",
           "description": "Context actions pass explicit service/file scopes to native media-actions and delete prompts; lifecycle writes are real store operations rather than labels.",
           "executed_in_inventory": false,
@@ -131937,7 +132094,7 @@
       "status": "partial",
       "native_source": {
         "path": "crates/hydrus-gui/src/lib.rs",
-        "line": 5524,
+        "line": 5525,
         "line_sha256": "82b26de8170032eac44776c08a15ebb8bc660ad3f3ba2645c71d0f63b3847204"
       },
       "reference_source": {
@@ -131948,7 +132105,7 @@
       "evidence": [
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 5524,
+          "line": 5525,
           "role": "native_wiring",
           "description": "Open action dispatch builds file URLs, launches local paths, creates selected-file/duplicate/similar search pages using current locations and configured duplicate scope.",
           "executed_in_inventory": false,
@@ -132627,7 +132784,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 665,
+          "line": 666,
           "line_sha256": "5c6fc43184ae1e73bc4f30f0e787d3abb140772dd690c59f7c42c113dc960b3e",
           "symbol": "let selected_delete_epoch = Rc::new(Cell::new(0u64));",
           "role": "scoped_implementation",
@@ -132636,7 +132793,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 4553,
+          "line": 4554,
           "line_sha256": "bf628e98f431aa060e358cd43095b52b09ebefee6c8e0205f67e43aed7829fa6",
           "symbol": "let selected_delete_menu_epoch = Rc::new(Cell::new(0u64));",
           "role": "scoped_implementation",
@@ -132645,7 +132802,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 4684,
+          "line": 4685,
           "line_sha256": "7c79e5c24261106428a350bcfeeb845013bb9882b3cd238c2bce9c45c33f713d",
           "symbol": "let delete_files = Rc::downgrade(&delete_files);",
           "role": "scoped_implementation",
@@ -132654,7 +132811,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 4801,
+          "line": 4802,
           "line_sha256": "be8dcf341e79268a384a095ea034ba28960d797839839272320de5e4c4a0c3fb",
           "symbol": "|| selected_delete_menu_epoch.get() != selected_delete_epoch.get()",
           "role": "scoped_implementation",
@@ -132663,7 +132820,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 4859,
+          "line": 4860,
           "line_sha256": "3ccea0435927213add810c55413dcf85abaad2689d60dbd833afe974d7dbbb7e",
           "symbol": "|| epoch != selected_delete_epoch.get()",
           "role": "scoped_implementation",
@@ -132672,7 +132829,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 4830,
+          "line": 4831,
           "line_sha256": "373fc90976966542abf1255e42cccd1d1cf8bad058e1abc322d1607ea2ec3a44",
           "symbol": "let plan = match hydrus_gui_model::selected_deletion_records::Plan::capture(",
           "role": "scoped_implementation",
@@ -132681,7 +132838,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 4869,
+          "line": 4870,
           "line_sha256": "9fa34935538a820caaa898cc50232e2039b802c0f541ce80e02c4977292c3fb4",
           "symbol": "match plan.apply(&store)",
           "role": "scoped_implementation",
@@ -132807,7 +132964,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 896,
+          "line": 897,
           "line_sha256": "2bdf56a383e81bf4ecb957e12e448f2dc6f81064f35a59d438f0b150667964eb",
           "symbol": "selected_delete_epoch.set(selected_delete_epoch.get().wrapping_add(1));",
           "role": "scoped_implementation",
@@ -132816,7 +132973,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 1040,
+          "line": 1041,
           "line_sha256": "2bdf56a383e81bf4ecb957e12e448f2dc6f81064f35a59d438f0b150667964eb",
           "symbol": "selected_delete_epoch.set(selected_delete_epoch.get().wrapping_add(1));",
           "role": "scoped_implementation",
@@ -133097,7 +133254,7 @@
       "status": "partial",
       "native_source": {
         "path": "crates/hydrus-gui/src/lib.rs",
-        "line": 7008,
+        "line": 7009,
         "line_sha256": "dc3b7d72347f1b44435b4740ba42b87001d67b214d3d2cb18511facb89965ee5"
       },
       "reference_source": {
@@ -133116,7 +133273,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 7008,
+          "line": 7009,
           "role": "native_wiring",
           "description": "MediaViewer tracks the launching file sequence and current index, and native callbacks show/remove another file with refresh of surrounding state.",
           "executed_in_inventory": false,
@@ -133161,7 +133318,7 @@
       "status": "first_pass",
       "native_source": {
         "path": "crates/hydrus-gui/src/lib.rs",
-        "line": 7332,
+        "line": 7333,
         "line_sha256": "021662df7eeacdbcd100e735b046f8902b2fd7b9772e715d417739cd7de6f6b6"
       },
       "reference_source": {
@@ -133180,7 +133337,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 7332,
+          "line": 7333,
           "role": "native_wiring",
           "description": "Context commands call the shared zoom state and fullscreen callback; rendered media coordinates and source image/player shape are retained as zoom changes.",
           "executed_in_inventory": false,
@@ -133239,7 +133396,7 @@
       "status": "first_pass",
       "native_source": {
         "path": "crates/hydrus-gui/src/lib.rs",
-        "line": 7355,
+        "line": 7356,
         "line_sha256": "e4d9582bfb08586397e58e44d78729f4fd6a33a9cd8326d297c509f0a4d953ce"
       },
       "reference_source": {
@@ -133258,7 +133415,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 7355,
+          "line": 7356,
           "role": "native_wiring",
           "description": "Native slideshow menu/timer reads saved settings, asks custom interval and updates file/media-duration scheduling; global and viewer shuffle/once-through toggles are separately persisted.",
           "executed_in_inventory": false,
@@ -133317,7 +133474,7 @@
       "status": "first_pass",
       "native_source": {
         "path": "crates/hydrus-gui/src/lib.rs",
-        "line": 7337,
+        "line": 7338,
         "line_sha256": "e48c07229848de5d703cf84e432f7f6b3228a2528782ccaadcea4e3373af5195"
       },
       "reference_source": {
@@ -133336,7 +133493,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 7337,
+          "line": 7338,
           "role": "native_wiring",
           "description": "Global/player viewer flags and volume adjust the native playback state; forced mute is stored as an override. Controls are wired in open_viewer.",
           "executed_in_inventory": false,
@@ -133395,7 +133552,7 @@
       "status": "first_pass",
       "native_source": {
         "path": "crates/hydrus-gui/src/lib.rs",
-        "line": 6256,
+        "line": 6257,
         "line_sha256": "12f71f0ab9caa5160f9f8967c12a97e926ef928c9e8a9c01d64f1e3447ab2def"
       },
       "reference_source": {
@@ -133414,7 +133571,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 6256,
+          "line": 6257,
           "role": "native_wiring",
           "description": "Uses native decoders/animation/player/scanbar and updates hover information for the chosen media; configured media behavior and unavailable formats are subject to the separate playback implementation.",
           "executed_in_inventory": false,
@@ -133515,7 +133672,7 @@
       "status": "missing",
       "native_source": {
         "path": "crates/hydrus-gui/src/lib.rs",
-        "line": 6256,
+        "line": 6257,
         "line_sha256": "12f71f0ab9caa5160f9f8967c12a97e926ef928c9e8a9c01d64f1e3447ab2def"
       },
       "reference_source": {
@@ -133526,7 +133683,7 @@
       "evidence": [
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 6256,
+          "line": 6257,
           "role": "native_unavailable_surface",
           "description": "Native drag callback opens a file-browser path rather than constructing a reference MIME/URL drag object; drag-out remains missing.",
           "executed_in_inventory": false,
@@ -136989,7 +137146,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 3129,
+          "line": 3130,
           "line_sha256": "2826cbc31331b3f5d1cf58cc365bd94c1d082eb94203713f95a0c4517f245503",
           "role": "scoped_implementation",
           "executed_in_inventory": false,
@@ -138422,7 +138579,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 573,
+          "line": 574,
           "line_sha256": "e39129530ffe8a1bd01a4360a9f29e8b637ae8a794d33358f8792e1822578896",
           "symbol": "fn bind",
           "source_review_scope": "Named entry of the explicitly cited module/fixture suite; aggregate source support, not a unique assertion for every leaf.",
@@ -143300,7 +143457,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 573,
+          "line": 574,
           "line_sha256": "e39129530ffe8a1bd01a4360a9f29e8b637ae8a794d33358f8792e1822578896",
           "symbol": "fn bind",
           "source_review_scope": "Named entry of the explicitly cited module/fixture suite; aggregate source support, not a unique assertion for every leaf.",
@@ -143498,7 +143655,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 573,
+          "line": 574,
           "line_sha256": "e39129530ffe8a1bd01a4360a9f29e8b637ae8a794d33358f8792e1822578896",
           "symbol": "fn bind",
           "source_review_scope": "Named entry of the explicitly cited module/fixture suite; aggregate source support, not a unique assertion for every leaf.",
@@ -144466,7 +144623,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 2413,
+          "line": 2414,
           "line_sha256": "3a67696fcf137aba91d3d28ba21eebb6719fc87d3f8be517f3c87eef4ed4ec42",
           "symbol": "let file_maintenance = file_maintenance_current::Control::bind(",
           "role": "native_implementation",
@@ -144476,7 +144633,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 573,
+          "line": 574,
           "line_sha256": "e39129530ffe8a1bd01a4360a9f29e8b637ae8a794d33358f8792e1822578896",
           "symbol": "fn bind",
           "declared_symbol": "rows.clear_thumbnail_cache();",
@@ -144489,7 +144646,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 728,
+          "line": 729,
           "line_sha256": "b8632b23d08db6fdca6018d0c9378fd1cc3cf23d824814b7ef0ebcfdb60a09b1",
           "symbol": "control.retire();",
           "role": "native_implementation",
@@ -144605,7 +144762,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 2446,
+          "line": 2447,
           "line_sha256": "3af228c7c4758b4d807c6f3964a5064f614cabeaf019af77416531dafabbd790",
           "symbol": "for url in urls {",
           "role": "native_implementation",
@@ -145519,7 +145676,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 573,
+          "line": 574,
           "line_sha256": "e39129530ffe8a1bd01a4360a9f29e8b637ae8a794d33358f8792e1822578896",
           "symbol": "fn bind",
           "source_review_scope": "Named entry of the explicitly cited module/fixture suite; aggregate source support, not a unique assertion for every leaf.",
@@ -145660,7 +145817,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 573,
+          "line": 574,
           "line_sha256": "e39129530ffe8a1bd01a4360a9f29e8b637ae8a794d33358f8792e1822578896",
           "symbol": "fn bind",
           "source_review_scope": "Named entry of the explicitly cited module/fixture suite; aggregate source support, not a unique assertion for every leaf.",
@@ -147671,7 +147828,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 2672,
+          "line": 2673,
           "role": "scoped_implementation",
           "description": "let key = preferences.default_service;",
           "executed_in_inventory": false,
@@ -149653,7 +149810,7 @@
       "status": "first_pass",
       "native_source": {
         "path": "crates/hydrus-gui/src/lib.rs",
-        "line": 1899,
+        "line": 1900,
         "line_sha256": "37c784db6ffe053e2576b86526ab70605167e3837c5c6778a7350316e28fbcb0"
       },
       "reference_source": {
@@ -149664,7 +149821,7 @@
       "evidence": [
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 1899,
+          "line": 1900,
           "role": "native_wiring",
           "description": "Concrete callback/control for launch canonical duplicate filter.",
           "executed_in_inventory": false,
@@ -150197,7 +150354,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 6483,
+          "line": 6484,
           "role": "scoped_implementation",
           "description": "window.on_url_clicked",
           "executed_in_inventory": false,
@@ -153532,7 +153689,7 @@
         },
         {
           "path": "crates/hydrus-gui/src/lib.rs",
-          "line": 1834,
+          "line": 1835,
           "symbol": "                let predicates = crate::file_log::url_search(&urls);",
           "role": "scoped_implementation",
           "executed_in_inventory": false,
@@ -169085,12 +169242,12 @@
       "line_count": 430
     },
     "docs/rust/DIFFERENCES.md": {
-      "sha256": "c5a4a5cf212e08e6930b5c56d0c6691c2ae607343aceff0b2f6f3f062f2ed4ba",
-      "line_count": 3961
+      "sha256": "01cb302001e6f7a077da30b8317ef818352751c4908c1e4c2f154cec2847b560",
+      "line_count": 3979
     },
     "docs/rust/GUI.md": {
-      "sha256": "a56b5266d75ec743a198871fab9476141cb7aee3aa6e37d27124dc05c71e7ada",
-      "line_count": 4843
+      "sha256": "3b46629ab255049a5ba6aee250d2877619c5ce01933f8466eff6de8a5d0d2226",
+      "line_count": 4848
     },
     "crates/hydrus-gui/tests/gui/subscriptions.rs": {
       "sha256": "c844a8f1c46f74881f0d85628e69792fea477390ffda6bbeb6aa2c51c61d0c8b",
@@ -169385,8 +169542,8 @@
       "line_count": 206
     },
     "docs/rust/ROADMAP.md": {
-      "sha256": "316638c022f2e00f2bfde0f42d68519b4d53fce71d535d612b0d670dc46cf35a",
-      "line_count": 436
+      "sha256": "6fe21659e5a0d10e249838ea59ca11f64fa75a0101606de5a5a35eae9e97b3c0",
+      "line_count": 439
     },
     "hydrus/client/gui/metadata/ClientGUIMigrateTags.py": {
       "sha256": "2013021e9d1e20f85b1718875f831685034668a06c11364d335611a5a305f0de",
@@ -169457,8 +169614,8 @@
       "line_count": 774
     },
     "crates/hydrus-gui/src/lib.rs": {
-      "sha256": "b71c9e66ab1f71337cb525b0363ae1e7eb1434a47d44f61bb313733195d4c67a",
-      "line_count": 8279
+      "sha256": "a7d1d7c97224c8d3ea7a30e18e2f4b9b4ea178812c968dc8c6ee00a2c5e82fbe",
+      "line_count": 8280
     },
     "crates/hydrus-gui-model/tests/model/export_files.rs": {
       "sha256": "af4790fcec3809feea90751a37458f3ccfa8d4fadc266fe33fbc2394bd26f254",
@@ -171457,8 +171614,8 @@
       "line_count": 479
     },
     "crates/hydrus-gui/src/session_autosave.rs": {
-      "sha256": "ba9d070615d0ca1cfef8c5c1d1a71a964a7aaaa2293c38fd8e4e35e857ea11d5",
-      "line_count": 418
+      "sha256": "7fc2b859dc7654dd404f0780852c00eecd0449d8621b8f54b40d618af9d7270b",
+      "line_count": 419
     },
     "crates/hydrus-gui/src/login_domains_window.rs": {
       "sha256": "c79a502e41a4a41ec2d2e05b9652b9c2a209a45cedafa67b3913b5bdda333f4e",
@@ -173285,8 +173442,8 @@
       "line_count": 196
     },
     "crates/hydrus-gui/tests/gui/main.rs": {
-      "sha256": "b06708a3c7316fd9cb9633a38149e197e85f6db7b190511e448bea501d88e71d",
-      "line_count": 228
+      "sha256": "06115b7a19b3b49e5aba7cb2621fdc9bfee76344e496d61ebfa37afd88634ddc",
+      "line_count": 229
     },
     "oracle/fixtures/notebook_tree.json": {
       "sha256": "a810148c1b13077d2f5c80f838faa9a14860be093d50a9bbee33192bdc9b1f53",
@@ -174367,13 +174524,45 @@
     "crates/hydrus-gui/ui/archive_repair.slint": {
       "sha256": "097c52322cdd270a8b6a7feecbf378973827a59729ceb301eb3f9da0dd75bed8",
       "line_count": 68
+    },
+    "oracle/fixtures/or_connector.json": {
+      "sha256": "5eec9760aaa4be48ffbebc1add3e65c9e5635e4b499ad5c1ab334b6251609554",
+      "line_count": 10555
+    },
+    "crates/hydrus-gui/src/fonts.rs": {
+      "sha256": "75f2f238454455147250e9fa91c44d77c28adfc99d6df305b7aed088105a9616",
+      "line_count": 66
+    },
+    "crates/hydrus-store/src/or_connector.rs": {
+      "sha256": "8fe0df0f18e73f343fafd66c1503f9b3549f78723316ccf386f9428897fddb2c",
+      "line_count": 114
+    },
+    "crates/hydrus-gui-model/tests/model/or_connector.rs": {
+      "sha256": "5c1a11392dcaca21895ce0e650ff523b75f75ae05bad5ecce3125b25db9e5216",
+      "line_count": 112
+    },
+    "crates/hydrus-gui/tests/gui/or_connector.rs": {
+      "sha256": "8c04bd288ec455095cf2debd530c5bf2d7208a5bea0b8ea18aad194f499e14b7",
+      "line_count": 365
+    },
+    "crates/hydrus-gui/tests/gui/emoji_fonts.rs": {
+      "sha256": "c7d200e9c291d0ab4c3aa3b21ebc1fba2af98b4731bfbc898e0ece6484d3d5a8",
+      "line_count": 137
+    },
+    "oracle/record_or_connector.py": {
+      "sha256": "ebee6dd386e9c6fb1c56b3af08503b6295deeaa8b8acec2d75aaf97c80cae1de",
+      "line_count": 59
+    },
+    "crates/hydrus-gui/src/headless.rs": {
+      "sha256": "166631fee5d9be7e694a1b676859ff8353d597dccdd040d4f536ea5fddc3b94b",
+      "line_count": 159
     }
   },
   "source_anchor_audit": {
-    "git_head": "2e2a2428112bdeb17a9fb9642e7a43c2934d2325",
-    "unique_anchors_checked": 5904,
+    "git_head": "88e9851e6ab8ecec08eb03f0d5cd3a2f8b7d2339",
+    "unique_anchors_checked": 5919,
     "method": "Git blob equality or uniquely unchanged line/context; line fingerprints verified",
-    "prior_git_head": "1a49a30f058d47ea29cf6ea1f1dc919d14d9f243"
+    "prior_git_head": "2e2a2428112bdeb17a9fb9642e7a43c2934d2325"
   },
   "aggregation_schema": "concrete_features_v2",
   "curation": {
@@ -174416,17 +174605,18 @@
       "docs/rust/gui-coverage/audit/anchor-remap-95bbbed2-publication.json",
       "docs/rust/gui-coverage/audit/anchor-remap-1c2b1afa-publication.json",
       "docs/rust/gui-coverage/audit/anchor-remap-1a49a30f-publication.json",
-      "docs/rust/gui-coverage/audit/anchor-remap-2e2a2428-publication.json"
+      "docs/rust/gui-coverage/audit/anchor-remap-2e2a2428-publication.json",
+      "docs/rust/gui-coverage/audit/anchor-remap-88e9851e-publication.json"
     ],
     "status_assignment": "Curated per node; generator checks structure/provenance and does not assess runtime behavior.",
     "independent_review": "Depth checklist, repeated-label option contexts, advanced numeric limits and source-only first-pass evidence reviewed; corrected scopes are preserved in supplemental audit patches.",
     "baseline_method": "Reference/native source inspection with scoped existing recording and assertion review; no behavior tests executed by this inventory audit."
   },
-  "generated_at_utc": "2026-10-07T21:12:52.028887+00:00",
+  "generated_at_utc": "2026-10-07T23:47:14.646567+00:00",
   "overnight_progress": {
     "goal": 80,
-    "milestone": 374,
-    "concrete_implementation_completions": 374,
+    "milestone": 375,
+    "concrete_implementation_completions": 375,
     "completed_feature_ids": [
       "audit-media-context-missing-clear-deleted",
       "audit-media-menu-database-clear-clear-all-file-viewing-statistics",
@@ -174745,6 +174935,7 @@
       "audit-options-tag-presentation-other-rendering-fade-the-colour-of-the-sibling-connector-string-on-qt6",
       "audit-options-tag-presentation-other-rendering-namespace-for-the-colour-of-the-sibling-connecting-string",
       "audit-options-tag-presentation-other-rendering-namespace-for-the-or-top-row",
+      "audit-options-tag-presentation-other-rendering-or-connecting-string-on-one-line",
       "audit-options-tag-presentation-other-rendering-sibling-connecting-string",
       "audit-options-tag-presentation-selection-tags-max-number-of-thumbnails-to-compute-tags-for-when-none-are-selected",
       "audit-options-tag-presentation-tag-banners-on-media-viewer-top",
@@ -174810,8 +175001,8 @@
     },
     "after": {
       "partial": 385,
-      "first_pass": 975,
-      "missing": 452
+      "first_pass": 976,
+      "missing": 451
     },
     "validation_summary": "Exact successful hosted Linux check and parity-models jobs. Windows and macOS validation is deferred under the exact-source owner policy. Source inspection and author reference-recording provenance are separate; no local Cargo or mutation testing by this tool.",
     "validation_scope": "linux",
@@ -174822,18 +175013,18 @@
       "windows",
       "macos"
     ],
-    "source_commit": "2e2a2428112bdeb17a9fb9642e7a43c2934d2325",
+    "source_commit": "88e9851e6ab8ecec08eb03f0d5cd3a2f8b7d2339",
     "ci_evidence": {
-      "head_sha": "2e2a2428112bdeb17a9fb9642e7a43c2934d2325",
+      "head_sha": "88e9851e6ab8ecec08eb03f0d5cd3a2f8b7d2339",
       "status": "completed",
       "conclusion": "success",
       "run_attempt": 1,
-      "created_at": "2026-10-07T20:31:16Z",
-      "run_started_at": "2026-10-07T20:31:16Z",
-      "updated_at": "2026-10-07T21:08:45Z",
-      "source_commit": "2e2a2428112bdeb17a9fb9642e7a43c2934d2325",
-      "run_id": 37682619326,
-      "url": "https://github.com/jkendall327/hydrus-mine/actions/runs/37682619326",
+      "created_at": "2026-10-07T23:08:59Z",
+      "run_started_at": "2026-10-07T23:08:59Z",
+      "updated_at": "2026-10-07T23:44:51Z",
+      "source_commit": "88e9851e6ab8ecec08eb03f0d5cd3a2f8b7d2339",
+      "run_id": 37700560044,
+      "url": "https://github.com/jkendall327/hydrus-mine/actions/runs/37700560044",
       "validation_scope": "linux",
       "required_platforms": [
         "linux"
@@ -174844,121 +175035,21 @@
       ],
       "jobs": [
         {
-          "id": 113002274167,
-          "run_id": 37682619326,
+          "id": 113062734475,
+          "run_id": 37700560044,
           "workflow_name": "rust",
           "head_branch": "codex/validation-runner",
-          "run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/runs/37682619326",
+          "run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/runs/37700560044",
           "run_attempt": 1,
-          "node_id": "CR_kwDOUzlbIs8AAAAaT3Xddw",
-          "head_sha": "2e2a2428112bdeb17a9fb9642e7a43c2934d2325",
-          "url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/jobs/113002274167",
-          "html_url": "https://github.com/jkendall327/hydrus-mine/actions/runs/37682619326/job/113002274167",
+          "node_id": "CR_kwDOUzlbIs8AAAAaUxBqiw",
+          "head_sha": "88e9851e6ab8ecec08eb03f0d5cd3a2f8b7d2339",
+          "url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/jobs/113062734475",
+          "html_url": "https://github.com/jkendall327/hydrus-mine/actions/runs/37700560044/job/113062734475",
           "status": "completed",
           "conclusion": "success",
-          "created_at": "2026-10-07T20:31:18Z",
-          "started_at": "2026-10-07T20:31:20Z",
-          "completed_at": "2026-10-07T20:35:05Z",
-          "name": "parity-models",
-          "steps": [
-            {
-              "name": "Set up job",
-              "status": "completed",
-              "conclusion": "success",
-              "number": 1,
-              "started_at": "2026-10-07T20:31:21Z",
-              "completed_at": "2026-10-07T20:31:22Z"
-            },
-            {
-              "name": "Run actions/checkout@v4",
-              "status": "completed",
-              "conclusion": "success",
-              "number": 2,
-              "started_at": "2026-10-07T20:31:22Z",
-              "completed_at": "2026-10-07T20:31:37Z"
-            },
-            {
-              "name": "Run dtolnay/rust-toolchain@master",
-              "status": "completed",
-              "conclusion": "success",
-              "number": 3,
-              "started_at": "2026-10-07T20:31:37Z",
-              "completed_at": "2026-10-07T20:31:46Z"
-            },
-            {
-              "name": "Run Swatinem/rust-cache@v2",
-              "status": "completed",
-              "conclusion": "success",
-              "number": 4,
-              "started_at": "2026-10-07T20:31:46Z",
-              "completed_at": "2026-10-07T20:32:00Z"
-            },
-            {
-              "name": "install media tools",
-              "status": "completed",
-              "conclusion": "success",
-              "number": 5,
-              "started_at": "2026-10-07T20:32:00Z",
-              "completed_at": "2026-10-07T20:32:28Z"
-            },
-            {
-              "name": "reference and backend tests",
-              "status": "completed",
-              "conclusion": "success",
-              "number": 6,
-              "started_at": "2026-10-07T20:32:28Z",
-              "completed_at": "2026-10-07T20:35:02Z"
-            },
-            {
-              "name": "Post Run Swatinem/rust-cache@v2",
-              "status": "completed",
-              "conclusion": "success",
-              "number": 11,
-              "started_at": "2026-10-07T20:35:02Z",
-              "completed_at": "2026-10-07T20:35:02Z"
-            },
-            {
-              "name": "Post Run actions/checkout@v4",
-              "status": "completed",
-              "conclusion": "success",
-              "number": 12,
-              "started_at": "2026-10-07T20:35:02Z",
-              "completed_at": "2026-10-07T20:35:02Z"
-            },
-            {
-              "name": "Complete job",
-              "status": "completed",
-              "conclusion": "success",
-              "number": 13,
-              "started_at": "2026-10-07T20:35:02Z",
-              "completed_at": "2026-10-07T20:35:02Z"
-            }
-          ],
-          "check_run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/check-runs/113002274167",
-          "labels": [
-            "ubuntu-latest"
-          ],
-          "runner_id": 1000003674,
-          "runner_name": "GitHub Actions 1000003674",
-          "runner_group_id": 0,
-          "runner_group_name": "GitHub Actions"
-        },
-        {
-          "id": 113002274450,
-          "run_id": 37682619326,
-          "workflow_name": "rust",
-          "head_branch": "codex/validation-runner",
-          "run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/runs/37682619326",
-          "run_attempt": 1,
-          "node_id": "CR_kwDOUzlbIs8AAAAaT3Xekg",
-          "head_sha": "2e2a2428112bdeb17a9fb9642e7a43c2934d2325",
-          "url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/jobs/113002274450",
-          "html_url": "https://github.com/jkendall327/hydrus-mine/actions/runs/37682619326/job/113002274450",
-          "status": "completed",
-          "conclusion": "success",
-          "created_at": "2026-10-07T20:31:18Z",
-          "started_at": "2026-10-07T20:31:21Z",
-          "completed_at": "2026-10-07T21:08:38Z",
+          "created_at": "2026-10-07T23:09:00Z",
+          "started_at": "2026-10-07T23:09:02Z",
+          "completed_at": "2026-10-07T23:44:43Z",
           "name": "check",
           "steps": [
             {
@@ -174966,199 +175057,299 @@
               "status": "completed",
               "conclusion": "success",
               "number": 1,
-              "started_at": "2026-10-07T20:31:22Z",
-              "completed_at": "2026-10-07T20:31:24Z"
+              "started_at": "2026-10-07T23:09:03Z",
+              "completed_at": "2026-10-07T23:09:05Z"
             },
             {
               "name": "Run actions/checkout@v4",
               "status": "completed",
               "conclusion": "success",
               "number": 2,
-              "started_at": "2026-10-07T20:31:24Z",
-              "completed_at": "2026-10-07T20:31:42Z"
+              "started_at": "2026-10-07T23:09:05Z",
+              "completed_at": "2026-10-07T23:09:23Z"
             },
             {
               "name": "Run dtolnay/rust-toolchain@master",
               "status": "completed",
               "conclusion": "success",
               "number": 3,
-              "started_at": "2026-10-07T20:31:42Z",
-              "completed_at": "2026-10-07T20:31:50Z"
+              "started_at": "2026-10-07T23:09:23Z",
+              "completed_at": "2026-10-07T23:09:35Z"
             },
             {
               "name": "Run Swatinem/rust-cache@v2",
               "status": "completed",
               "conclusion": "success",
               "number": 4,
-              "started_at": "2026-10-07T20:31:50Z",
-              "completed_at": "2026-10-07T20:32:04Z"
+              "started_at": "2026-10-07T23:09:35Z",
+              "completed_at": "2026-10-07T23:09:51Z"
             },
             {
               "name": "workspace cache safety regressions",
               "status": "completed",
               "conclusion": "success",
               "number": 5,
-              "started_at": "2026-10-07T20:32:04Z",
-              "completed_at": "2026-10-07T20:32:05Z"
+              "started_at": "2026-10-07T23:09:51Z",
+              "completed_at": "2026-10-07T23:09:54Z"
             },
             {
               "name": "workspace artifact compatibility key",
               "status": "completed",
               "conclusion": "success",
               "number": 6,
-              "started_at": "2026-10-07T20:32:05Z",
-              "completed_at": "2026-10-07T20:32:05Z"
+              "started_at": "2026-10-07T23:09:54Z",
+              "completed_at": "2026-10-07T23:09:54Z"
             },
             {
               "name": "restore rolling workspace libraries",
               "status": "completed",
               "conclusion": "success",
               "number": 7,
-              "started_at": "2026-10-07T20:32:05Z",
-              "completed_at": "2026-10-07T20:32:06Z"
+              "started_at": "2026-10-07T23:09:54Z",
+              "completed_at": "2026-10-07T23:09:54Z"
             },
             {
               "name": "merge restored workspace libraries",
               "status": "completed",
               "conclusion": "success",
               "number": 8,
-              "started_at": "2026-10-07T20:32:06Z",
-              "completed_at": "2026-10-07T20:32:07Z"
+              "started_at": "2026-10-07T23:09:54Z",
+              "completed_at": "2026-10-07T23:09:55Z"
             },
             {
               "name": "fail closed on uncertain workspace restore",
               "status": "completed",
               "conclusion": "skipped",
               "number": 9,
-              "started_at": "2026-10-07T20:32:07Z",
-              "completed_at": "2026-10-07T20:32:07Z"
+              "started_at": "2026-10-07T23:09:55Z",
+              "completed_at": "2026-10-07T23:09:55Z"
             },
             {
               "name": "install media tools, and fontconfig for the GUI",
               "status": "completed",
               "conclusion": "success",
               "number": 10,
-              "started_at": "2026-10-07T20:32:07Z",
-              "completed_at": "2026-10-07T20:37:05Z"
+              "started_at": "2026-10-07T23:09:55Z",
+              "completed_at": "2026-10-07T23:10:38Z"
             },
             {
               "name": "fmt",
               "status": "completed",
               "conclusion": "success",
               "number": 11,
-              "started_at": "2026-10-07T20:37:05Z",
-              "completed_at": "2026-10-07T20:37:12Z"
+              "started_at": "2026-10-07T23:10:38Z",
+              "completed_at": "2026-10-07T23:10:44Z"
             },
             {
               "name": "GUI artifact runner tests",
               "status": "completed",
               "conclusion": "success",
               "number": 12,
-              "started_at": "2026-10-07T20:37:12Z",
-              "completed_at": "2026-10-07T20:37:12Z"
+              "started_at": "2026-10-07T23:10:44Z",
+              "completed_at": "2026-10-07T23:10:45Z"
             },
             {
               "name": "clippy",
               "status": "completed",
               "conclusion": "success",
               "number": 13,
-              "started_at": "2026-10-07T20:37:12Z",
-              "completed_at": "2026-10-07T20:47:27Z"
+              "started_at": "2026-10-07T23:10:45Z",
+              "completed_at": "2026-10-07T23:23:41Z"
             },
             {
               "name": "save immediate Clippy diagnostics",
               "status": "completed",
               "conclusion": "success",
               "number": 14,
-              "started_at": "2026-10-07T20:47:27Z",
-              "completed_at": "2026-10-07T20:47:29Z"
+              "started_at": "2026-10-07T23:23:41Z",
+              "completed_at": "2026-10-07T23:23:42Z"
             },
             {
               "name": "test",
               "status": "completed",
               "conclusion": "success",
               "number": 15,
-              "started_at": "2026-10-07T20:47:29Z",
-              "completed_at": "2026-10-07T21:08:16Z"
+              "started_at": "2026-10-07T23:23:42Z",
+              "completed_at": "2026-10-07T23:44:01Z"
             },
             {
               "name": "save immediate test diagnostics",
               "status": "completed",
               "conclusion": "success",
               "number": 16,
-              "started_at": "2026-10-07T21:08:16Z",
-              "completed_at": "2026-10-07T21:08:18Z"
+              "started_at": "2026-10-07T23:44:01Z",
+              "completed_at": "2026-10-07T23:44:03Z"
             },
             {
               "name": "parity ratchet",
               "status": "completed",
               "conclusion": "success",
               "number": 17,
-              "started_at": "2026-10-07T21:08:18Z",
-              "completed_at": "2026-10-07T21:08:19Z"
+              "started_at": "2026-10-07T23:44:03Z",
+              "completed_at": "2026-10-07T23:44:04Z"
             },
             {
               "name": "save native GUI renders",
               "status": "completed",
               "conclusion": "success",
               "number": 18,
-              "started_at": "2026-10-07T21:08:19Z",
-              "completed_at": "2026-10-07T21:08:22Z"
+              "started_at": "2026-10-07T23:44:04Z",
+              "completed_at": "2026-10-07T23:44:06Z"
             },
             {
               "name": "stage bounded workspace libraries",
               "status": "completed",
               "conclusion": "success",
               "number": 19,
-              "started_at": "2026-10-07T21:08:22Z",
-              "completed_at": "2026-10-07T21:08:26Z"
+              "started_at": "2026-10-07T23:44:06Z",
+              "completed_at": "2026-10-07T23:44:12Z"
             },
             {
               "name": "save rolling workspace libraries",
               "status": "completed",
               "conclusion": "success",
               "number": 20,
-              "started_at": "2026-10-07T21:08:26Z",
-              "completed_at": "2026-10-07T21:08:34Z"
+              "started_at": "2026-10-07T23:44:12Z",
+              "completed_at": "2026-10-07T23:44:18Z"
             },
             {
               "name": "Post Run Swatinem/rust-cache@v2",
               "status": "completed",
               "conclusion": "success",
               "number": 39,
-              "started_at": "2026-10-07T21:08:34Z",
-              "completed_at": "2026-10-07T21:08:35Z"
+              "started_at": "2026-10-07T23:44:18Z",
+              "completed_at": "2026-10-07T23:44:41Z"
             },
             {
               "name": "Post Run actions/checkout@v4",
               "status": "completed",
               "conclusion": "success",
               "number": 40,
-              "started_at": "2026-10-07T21:08:35Z",
-              "completed_at": "2026-10-07T21:08:35Z"
+              "started_at": "2026-10-07T23:44:41Z",
+              "completed_at": "2026-10-07T23:44:41Z"
             },
             {
               "name": "Complete job",
               "status": "completed",
               "conclusion": "success",
               "number": 41,
-              "started_at": "2026-10-07T21:08:35Z",
-              "completed_at": "2026-10-07T21:08:35Z"
+              "started_at": "2026-10-07T23:44:41Z",
+              "completed_at": "2026-10-07T23:44:41Z"
             }
           ],
-          "check_run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/check-runs/113002274450",
+          "check_run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/check-runs/113062734475",
           "labels": [
             "ubuntu-24.04"
           ],
-          "runner_id": 1000003676,
-          "runner_name": "GitHub Actions 1000003676",
+          "runner_id": 1000003708,
+          "runner_name": "GitHub Actions 1000003708",
+          "runner_group_id": 0,
+          "runner_group_name": "GitHub Actions"
+        },
+        {
+          "id": 113062734552,
+          "run_id": 37700560044,
+          "workflow_name": "rust",
+          "head_branch": "codex/validation-runner",
+          "run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/runs/37700560044",
+          "run_attempt": 1,
+          "node_id": "CR_kwDOUzlbIs8AAAAaUxBq2A",
+          "head_sha": "88e9851e6ab8ecec08eb03f0d5cd3a2f8b7d2339",
+          "url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/jobs/113062734552",
+          "html_url": "https://github.com/jkendall327/hydrus-mine/actions/runs/37700560044/job/113062734552",
+          "status": "completed",
+          "conclusion": "success",
+          "created_at": "2026-10-07T23:09:00Z",
+          "started_at": "2026-10-07T23:09:02Z",
+          "completed_at": "2026-10-07T23:13:42Z",
+          "name": "parity-models",
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1,
+              "started_at": "2026-10-07T23:09:03Z",
+              "completed_at": "2026-10-07T23:09:04Z"
+            },
+            {
+              "name": "Run actions/checkout@v4",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2,
+              "started_at": "2026-10-07T23:09:04Z",
+              "completed_at": "2026-10-07T23:09:19Z"
+            },
+            {
+              "name": "Run dtolnay/rust-toolchain@master",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3,
+              "started_at": "2026-10-07T23:09:19Z",
+              "completed_at": "2026-10-07T23:09:28Z"
+            },
+            {
+              "name": "Run Swatinem/rust-cache@v2",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4,
+              "started_at": "2026-10-07T23:09:28Z",
+              "completed_at": "2026-10-07T23:09:38Z"
+            },
+            {
+              "name": "install media tools",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5,
+              "started_at": "2026-10-07T23:09:38Z",
+              "completed_at": "2026-10-07T23:10:10Z"
+            },
+            {
+              "name": "reference and backend tests",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 6,
+              "started_at": "2026-10-07T23:10:10Z",
+              "completed_at": "2026-10-07T23:13:29Z"
+            },
+            {
+              "name": "Post Run Swatinem/rust-cache@v2",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 11,
+              "started_at": "2026-10-07T23:13:29Z",
+              "completed_at": "2026-10-07T23:13:40Z"
+            },
+            {
+              "name": "Post Run actions/checkout@v4",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 12,
+              "started_at": "2026-10-07T23:13:40Z",
+              "completed_at": "2026-10-07T23:13:41Z"
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 13,
+              "started_at": "2026-10-07T23:13:41Z",
+              "completed_at": "2026-10-07T23:13:41Z"
+            }
+          ],
+          "check_run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/check-runs/113062734552",
+          "labels": [
+            "ubuntu-latest"
+          ],
+          "runner_id": 1000003710,
+          "runner_name": "GitHub Actions 1000003710",
           "runner_group_id": 0,
           "runner_group_name": "GitHub Actions"
         }
       ],
       "publication_policy": {
         "path": ".github/publication-validation.json",
-        "source_commit": "2e2a2428112bdeb17a9fb9642e7a43c2934d2325",
+        "source_commit": "88e9851e6ab8ecec08eb03f0d5cd3a2f8b7d2339",
         "sha256": "49723bd5d6b786392a1368bb3da1406747a553ef31c9de2bdef92cea5d014c5f",
         "effective_date": "2026-10-06",
         "reason": "The owner uses Linux and prioritizes validated Linux delivery. macOS is low priority; Windows is deferred because its builds materially lengthen validation. Secondary-platform CI remains available by explicit opt-in."
@@ -175168,16 +175359,16 @@
     "counting_method": "Frozen 1,812 original IDs; explicit reviewed concrete implementation leaves only; parents, aliases, evidence-only changes and native IDs excluded."
   },
   "runtime_validation": {
-    "head_sha": "2e2a2428112bdeb17a9fb9642e7a43c2934d2325",
+    "head_sha": "88e9851e6ab8ecec08eb03f0d5cd3a2f8b7d2339",
     "status": "completed",
     "conclusion": "success",
     "run_attempt": 1,
-    "created_at": "2026-10-07T20:31:16Z",
-    "run_started_at": "2026-10-07T20:31:16Z",
-    "updated_at": "2026-10-07T21:08:45Z",
-    "source_commit": "2e2a2428112bdeb17a9fb9642e7a43c2934d2325",
-    "run_id": 37682619326,
-    "url": "https://github.com/jkendall327/hydrus-mine/actions/runs/37682619326",
+    "created_at": "2026-10-07T23:08:59Z",
+    "run_started_at": "2026-10-07T23:08:59Z",
+    "updated_at": "2026-10-07T23:44:51Z",
+    "source_commit": "88e9851e6ab8ecec08eb03f0d5cd3a2f8b7d2339",
+    "run_id": 37700560044,
+    "url": "https://github.com/jkendall327/hydrus-mine/actions/runs/37700560044",
     "validation_scope": "linux",
     "required_platforms": [
       "linux"
@@ -175188,121 +175379,21 @@
     ],
     "jobs": [
       {
-        "id": 113002274167,
-        "run_id": 37682619326,
+        "id": 113062734475,
+        "run_id": 37700560044,
         "workflow_name": "rust",
         "head_branch": "codex/validation-runner",
-        "run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/runs/37682619326",
+        "run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/runs/37700560044",
         "run_attempt": 1,
-        "node_id": "CR_kwDOUzlbIs8AAAAaT3Xddw",
-        "head_sha": "2e2a2428112bdeb17a9fb9642e7a43c2934d2325",
-        "url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/jobs/113002274167",
-        "html_url": "https://github.com/jkendall327/hydrus-mine/actions/runs/37682619326/job/113002274167",
+        "node_id": "CR_kwDOUzlbIs8AAAAaUxBqiw",
+        "head_sha": "88e9851e6ab8ecec08eb03f0d5cd3a2f8b7d2339",
+        "url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/jobs/113062734475",
+        "html_url": "https://github.com/jkendall327/hydrus-mine/actions/runs/37700560044/job/113062734475",
         "status": "completed",
         "conclusion": "success",
-        "created_at": "2026-10-07T20:31:18Z",
-        "started_at": "2026-10-07T20:31:20Z",
-        "completed_at": "2026-10-07T20:35:05Z",
-        "name": "parity-models",
-        "steps": [
-          {
-            "name": "Set up job",
-            "status": "completed",
-            "conclusion": "success",
-            "number": 1,
-            "started_at": "2026-10-07T20:31:21Z",
-            "completed_at": "2026-10-07T20:31:22Z"
-          },
-          {
-            "name": "Run actions/checkout@v4",
-            "status": "completed",
-            "conclusion": "success",
-            "number": 2,
-            "started_at": "2026-10-07T20:31:22Z",
-            "completed_at": "2026-10-07T20:31:37Z"
-          },
-          {
-            "name": "Run dtolnay/rust-toolchain@master",
-            "status": "completed",
-            "conclusion": "success",
-            "number": 3,
-            "started_at": "2026-10-07T20:31:37Z",
-            "completed_at": "2026-10-07T20:31:46Z"
-          },
-          {
-            "name": "Run Swatinem/rust-cache@v2",
-            "status": "completed",
-            "conclusion": "success",
-            "number": 4,
-            "started_at": "2026-10-07T20:31:46Z",
-            "completed_at": "2026-10-07T20:32:00Z"
-          },
-          {
-            "name": "install media tools",
-            "status": "completed",
-            "conclusion": "success",
-            "number": 5,
-            "started_at": "2026-10-07T20:32:00Z",
-            "completed_at": "2026-10-07T20:32:28Z"
-          },
-          {
-            "name": "reference and backend tests",
-            "status": "completed",
-            "conclusion": "success",
-            "number": 6,
-            "started_at": "2026-10-07T20:32:28Z",
-            "completed_at": "2026-10-07T20:35:02Z"
-          },
-          {
-            "name": "Post Run Swatinem/rust-cache@v2",
-            "status": "completed",
-            "conclusion": "success",
-            "number": 11,
-            "started_at": "2026-10-07T20:35:02Z",
-            "completed_at": "2026-10-07T20:35:02Z"
-          },
-          {
-            "name": "Post Run actions/checkout@v4",
-            "status": "completed",
-            "conclusion": "success",
-            "number": 12,
-            "started_at": "2026-10-07T20:35:02Z",
-            "completed_at": "2026-10-07T20:35:02Z"
-          },
-          {
-            "name": "Complete job",
-            "status": "completed",
-            "conclusion": "success",
-            "number": 13,
-            "started_at": "2026-10-07T20:35:02Z",
-            "completed_at": "2026-10-07T20:35:02Z"
-          }
-        ],
-        "check_run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/check-runs/113002274167",
-        "labels": [
-          "ubuntu-latest"
-        ],
-        "runner_id": 1000003674,
-        "runner_name": "GitHub Actions 1000003674",
-        "runner_group_id": 0,
-        "runner_group_name": "GitHub Actions"
-      },
-      {
-        "id": 113002274450,
-        "run_id": 37682619326,
-        "workflow_name": "rust",
-        "head_branch": "codex/validation-runner",
-        "run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/runs/37682619326",
-        "run_attempt": 1,
-        "node_id": "CR_kwDOUzlbIs8AAAAaT3Xekg",
-        "head_sha": "2e2a2428112bdeb17a9fb9642e7a43c2934d2325",
-        "url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/jobs/113002274450",
-        "html_url": "https://github.com/jkendall327/hydrus-mine/actions/runs/37682619326/job/113002274450",
-        "status": "completed",
-        "conclusion": "success",
-        "created_at": "2026-10-07T20:31:18Z",
-        "started_at": "2026-10-07T20:31:21Z",
-        "completed_at": "2026-10-07T21:08:38Z",
+        "created_at": "2026-10-07T23:09:00Z",
+        "started_at": "2026-10-07T23:09:02Z",
+        "completed_at": "2026-10-07T23:44:43Z",
         "name": "check",
         "steps": [
           {
@@ -175310,199 +175401,299 @@
             "status": "completed",
             "conclusion": "success",
             "number": 1,
-            "started_at": "2026-10-07T20:31:22Z",
-            "completed_at": "2026-10-07T20:31:24Z"
+            "started_at": "2026-10-07T23:09:03Z",
+            "completed_at": "2026-10-07T23:09:05Z"
           },
           {
             "name": "Run actions/checkout@v4",
             "status": "completed",
             "conclusion": "success",
             "number": 2,
-            "started_at": "2026-10-07T20:31:24Z",
-            "completed_at": "2026-10-07T20:31:42Z"
+            "started_at": "2026-10-07T23:09:05Z",
+            "completed_at": "2026-10-07T23:09:23Z"
           },
           {
             "name": "Run dtolnay/rust-toolchain@master",
             "status": "completed",
             "conclusion": "success",
             "number": 3,
-            "started_at": "2026-10-07T20:31:42Z",
-            "completed_at": "2026-10-07T20:31:50Z"
+            "started_at": "2026-10-07T23:09:23Z",
+            "completed_at": "2026-10-07T23:09:35Z"
           },
           {
             "name": "Run Swatinem/rust-cache@v2",
             "status": "completed",
             "conclusion": "success",
             "number": 4,
-            "started_at": "2026-10-07T20:31:50Z",
-            "completed_at": "2026-10-07T20:32:04Z"
+            "started_at": "2026-10-07T23:09:35Z",
+            "completed_at": "2026-10-07T23:09:51Z"
           },
           {
             "name": "workspace cache safety regressions",
             "status": "completed",
             "conclusion": "success",
             "number": 5,
-            "started_at": "2026-10-07T20:32:04Z",
-            "completed_at": "2026-10-07T20:32:05Z"
+            "started_at": "2026-10-07T23:09:51Z",
+            "completed_at": "2026-10-07T23:09:54Z"
           },
           {
             "name": "workspace artifact compatibility key",
             "status": "completed",
             "conclusion": "success",
             "number": 6,
-            "started_at": "2026-10-07T20:32:05Z",
-            "completed_at": "2026-10-07T20:32:05Z"
+            "started_at": "2026-10-07T23:09:54Z",
+            "completed_at": "2026-10-07T23:09:54Z"
           },
           {
             "name": "restore rolling workspace libraries",
             "status": "completed",
             "conclusion": "success",
             "number": 7,
-            "started_at": "2026-10-07T20:32:05Z",
-            "completed_at": "2026-10-07T20:32:06Z"
+            "started_at": "2026-10-07T23:09:54Z",
+            "completed_at": "2026-10-07T23:09:54Z"
           },
           {
             "name": "merge restored workspace libraries",
             "status": "completed",
             "conclusion": "success",
             "number": 8,
-            "started_at": "2026-10-07T20:32:06Z",
-            "completed_at": "2026-10-07T20:32:07Z"
+            "started_at": "2026-10-07T23:09:54Z",
+            "completed_at": "2026-10-07T23:09:55Z"
           },
           {
             "name": "fail closed on uncertain workspace restore",
             "status": "completed",
             "conclusion": "skipped",
             "number": 9,
-            "started_at": "2026-10-07T20:32:07Z",
-            "completed_at": "2026-10-07T20:32:07Z"
+            "started_at": "2026-10-07T23:09:55Z",
+            "completed_at": "2026-10-07T23:09:55Z"
           },
           {
             "name": "install media tools, and fontconfig for the GUI",
             "status": "completed",
             "conclusion": "success",
             "number": 10,
-            "started_at": "2026-10-07T20:32:07Z",
-            "completed_at": "2026-10-07T20:37:05Z"
+            "started_at": "2026-10-07T23:09:55Z",
+            "completed_at": "2026-10-07T23:10:38Z"
           },
           {
             "name": "fmt",
             "status": "completed",
             "conclusion": "success",
             "number": 11,
-            "started_at": "2026-10-07T20:37:05Z",
-            "completed_at": "2026-10-07T20:37:12Z"
+            "started_at": "2026-10-07T23:10:38Z",
+            "completed_at": "2026-10-07T23:10:44Z"
           },
           {
             "name": "GUI artifact runner tests",
             "status": "completed",
             "conclusion": "success",
             "number": 12,
-            "started_at": "2026-10-07T20:37:12Z",
-            "completed_at": "2026-10-07T20:37:12Z"
+            "started_at": "2026-10-07T23:10:44Z",
+            "completed_at": "2026-10-07T23:10:45Z"
           },
           {
             "name": "clippy",
             "status": "completed",
             "conclusion": "success",
             "number": 13,
-            "started_at": "2026-10-07T20:37:12Z",
-            "completed_at": "2026-10-07T20:47:27Z"
+            "started_at": "2026-10-07T23:10:45Z",
+            "completed_at": "2026-10-07T23:23:41Z"
           },
           {
             "name": "save immediate Clippy diagnostics",
             "status": "completed",
             "conclusion": "success",
             "number": 14,
-            "started_at": "2026-10-07T20:47:27Z",
-            "completed_at": "2026-10-07T20:47:29Z"
+            "started_at": "2026-10-07T23:23:41Z",
+            "completed_at": "2026-10-07T23:23:42Z"
           },
           {
             "name": "test",
             "status": "completed",
             "conclusion": "success",
             "number": 15,
-            "started_at": "2026-10-07T20:47:29Z",
-            "completed_at": "2026-10-07T21:08:16Z"
+            "started_at": "2026-10-07T23:23:42Z",
+            "completed_at": "2026-10-07T23:44:01Z"
           },
           {
             "name": "save immediate test diagnostics",
             "status": "completed",
             "conclusion": "success",
             "number": 16,
-            "started_at": "2026-10-07T21:08:16Z",
-            "completed_at": "2026-10-07T21:08:18Z"
+            "started_at": "2026-10-07T23:44:01Z",
+            "completed_at": "2026-10-07T23:44:03Z"
           },
           {
             "name": "parity ratchet",
             "status": "completed",
             "conclusion": "success",
             "number": 17,
-            "started_at": "2026-10-07T21:08:18Z",
-            "completed_at": "2026-10-07T21:08:19Z"
+            "started_at": "2026-10-07T23:44:03Z",
+            "completed_at": "2026-10-07T23:44:04Z"
           },
           {
             "name": "save native GUI renders",
             "status": "completed",
             "conclusion": "success",
             "number": 18,
-            "started_at": "2026-10-07T21:08:19Z",
-            "completed_at": "2026-10-07T21:08:22Z"
+            "started_at": "2026-10-07T23:44:04Z",
+            "completed_at": "2026-10-07T23:44:06Z"
           },
           {
             "name": "stage bounded workspace libraries",
             "status": "completed",
             "conclusion": "success",
             "number": 19,
-            "started_at": "2026-10-07T21:08:22Z",
-            "completed_at": "2026-10-07T21:08:26Z"
+            "started_at": "2026-10-07T23:44:06Z",
+            "completed_at": "2026-10-07T23:44:12Z"
           },
           {
             "name": "save rolling workspace libraries",
             "status": "completed",
             "conclusion": "success",
             "number": 20,
-            "started_at": "2026-10-07T21:08:26Z",
-            "completed_at": "2026-10-07T21:08:34Z"
+            "started_at": "2026-10-07T23:44:12Z",
+            "completed_at": "2026-10-07T23:44:18Z"
           },
           {
             "name": "Post Run Swatinem/rust-cache@v2",
             "status": "completed",
             "conclusion": "success",
             "number": 39,
-            "started_at": "2026-10-07T21:08:34Z",
-            "completed_at": "2026-10-07T21:08:35Z"
+            "started_at": "2026-10-07T23:44:18Z",
+            "completed_at": "2026-10-07T23:44:41Z"
           },
           {
             "name": "Post Run actions/checkout@v4",
             "status": "completed",
             "conclusion": "success",
             "number": 40,
-            "started_at": "2026-10-07T21:08:35Z",
-            "completed_at": "2026-10-07T21:08:35Z"
+            "started_at": "2026-10-07T23:44:41Z",
+            "completed_at": "2026-10-07T23:44:41Z"
           },
           {
             "name": "Complete job",
             "status": "completed",
             "conclusion": "success",
             "number": 41,
-            "started_at": "2026-10-07T21:08:35Z",
-            "completed_at": "2026-10-07T21:08:35Z"
+            "started_at": "2026-10-07T23:44:41Z",
+            "completed_at": "2026-10-07T23:44:41Z"
           }
         ],
-        "check_run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/check-runs/113002274450",
+        "check_run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/check-runs/113062734475",
         "labels": [
           "ubuntu-24.04"
         ],
-        "runner_id": 1000003676,
-        "runner_name": "GitHub Actions 1000003676",
+        "runner_id": 1000003708,
+        "runner_name": "GitHub Actions 1000003708",
+        "runner_group_id": 0,
+        "runner_group_name": "GitHub Actions"
+      },
+      {
+        "id": 113062734552,
+        "run_id": 37700560044,
+        "workflow_name": "rust",
+        "head_branch": "codex/validation-runner",
+        "run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/runs/37700560044",
+        "run_attempt": 1,
+        "node_id": "CR_kwDOUzlbIs8AAAAaUxBq2A",
+        "head_sha": "88e9851e6ab8ecec08eb03f0d5cd3a2f8b7d2339",
+        "url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/jobs/113062734552",
+        "html_url": "https://github.com/jkendall327/hydrus-mine/actions/runs/37700560044/job/113062734552",
+        "status": "completed",
+        "conclusion": "success",
+        "created_at": "2026-10-07T23:09:00Z",
+        "started_at": "2026-10-07T23:09:02Z",
+        "completed_at": "2026-10-07T23:13:42Z",
+        "name": "parity-models",
+        "steps": [
+          {
+            "name": "Set up job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 1,
+            "started_at": "2026-10-07T23:09:03Z",
+            "completed_at": "2026-10-07T23:09:04Z"
+          },
+          {
+            "name": "Run actions/checkout@v4",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 2,
+            "started_at": "2026-10-07T23:09:04Z",
+            "completed_at": "2026-10-07T23:09:19Z"
+          },
+          {
+            "name": "Run dtolnay/rust-toolchain@master",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 3,
+            "started_at": "2026-10-07T23:09:19Z",
+            "completed_at": "2026-10-07T23:09:28Z"
+          },
+          {
+            "name": "Run Swatinem/rust-cache@v2",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 4,
+            "started_at": "2026-10-07T23:09:28Z",
+            "completed_at": "2026-10-07T23:09:38Z"
+          },
+          {
+            "name": "install media tools",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 5,
+            "started_at": "2026-10-07T23:09:38Z",
+            "completed_at": "2026-10-07T23:10:10Z"
+          },
+          {
+            "name": "reference and backend tests",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 6,
+            "started_at": "2026-10-07T23:10:10Z",
+            "completed_at": "2026-10-07T23:13:29Z"
+          },
+          {
+            "name": "Post Run Swatinem/rust-cache@v2",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 11,
+            "started_at": "2026-10-07T23:13:29Z",
+            "completed_at": "2026-10-07T23:13:40Z"
+          },
+          {
+            "name": "Post Run actions/checkout@v4",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 12,
+            "started_at": "2026-10-07T23:13:40Z",
+            "completed_at": "2026-10-07T23:13:41Z"
+          },
+          {
+            "name": "Complete job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 13,
+            "started_at": "2026-10-07T23:13:41Z",
+            "completed_at": "2026-10-07T23:13:41Z"
+          }
+        ],
+        "check_run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/check-runs/113062734552",
+        "labels": [
+          "ubuntu-latest"
+        ],
+        "runner_id": 1000003710,
+        "runner_name": "GitHub Actions 1000003710",
         "runner_group_id": 0,
         "runner_group_name": "GitHub Actions"
       }
     ],
     "publication_policy": {
       "path": ".github/publication-validation.json",
-      "source_commit": "2e2a2428112bdeb17a9fb9642e7a43c2934d2325",
+      "source_commit": "88e9851e6ab8ecec08eb03f0d5cd3a2f8b7d2339",
       "sha256": "49723bd5d6b786392a1368bb3da1406747a553ef31c9de2bdef92cea5d014c5f",
       "effective_date": "2026-10-06",
       "reason": "The owner uses Linux and prioritizes validated Linux delivery. macOS is low priority; Windows is deferred because its builds materially lengthen validation. Secondary-platform CI remains available by explicit opt-in."

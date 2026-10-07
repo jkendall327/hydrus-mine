@@ -50,6 +50,23 @@ fn capture_and_copy_reopened(
     )
     .unwrap();
 
+    if raw == " 🦊 " {
+        // Inside this supported field's text area, excluding its border and
+        // caret. Keep the PNG even if glyph painting regresses to blank again.
+        let ink = (502..524)
+            .flat_map(|y| (640..690).map(move |x| (y * 900 + x) * 4))
+            .filter(|&pixel| {
+                pixels[pixel..pixel + 3]
+                    .iter()
+                    .all(|channel| *channel < 180)
+            })
+            .count();
+        assert!(
+            ink >= 10,
+            "{filename}: the saved fox must paint visible glyph ink"
+        );
+    }
+
     // Capture before caret/selection paint. Copy is real focused TextInput
     // SelectAll/Copy, not the row model or a text-edited callback.
     let sentinel = format!("impossible unopened connector clipboard: {filename}");
