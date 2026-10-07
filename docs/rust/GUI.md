@@ -3318,6 +3318,8 @@ Reference replay, physical-control and rendering regressions cover this bounded
 repair; hosted validation and rendered sign-off are pending.
 The control observer wraps ordinary buttons and preserves their intrinsic sizing
 and keyboard focus; it is disabled outside regression captures.
+The 440×480 population question fits completely; a separate 440×360 capture
+exercises scrolling while retaining the same available action buttons.
 
 
 Options > tag suggestions now stages the suggested-column width, notebook or

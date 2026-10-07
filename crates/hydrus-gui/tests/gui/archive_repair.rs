@@ -409,6 +409,15 @@ fn actual_archive_controls_wrap_scroll_and_apply_each_recorded_population() {
                 440,
                 480,
             );
+            // At 440x480 the complete question fits. Retain that capture,
+            // then reduce vertical space to exercise real overflow and wheel input.
+            capture(
+                &native,
+                &window,
+                "archive-repair-choices-short-top.png",
+                440,
+                360,
+            );
             let viewport = window.get_question_viewport();
             assert!(window.get_question_content_height() > viewport.h);
             let before = window.get_question_offset();
@@ -423,9 +432,9 @@ fn actual_archive_controls_wrap_scroll_and_apply_each_recorded_population() {
             capture(
                 &native,
                 &window,
-                "archive-repair-choices-narrow-scrolled.png",
+                "archive-repair-choices-short-scrolled.png",
                 440,
-                480,
+                360,
             );
             assert!(window.get_question_offset() < before);
             assert_eq!(times(&store, &ids), vec![None, None]);

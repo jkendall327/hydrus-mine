@@ -2310,6 +2310,8 @@ regressions hold the writer or withhold UI timer delivery to cover both orders;
 the original reference fixture reproduces exactly on a fresh Qt replay.
 Read-only test observation uses a container around each normal Slint button,
 preserving the button's minimum/preferred size, stretch and focus behavior.
+The narrow 440×480 question fits without scrolling. A shorter 440×360 viewport
+tests actual overflow rather than requiring a scrollbar when none is needed.
 
 
 Suggested tags have real local-service most-used and recent consumers, per-service
