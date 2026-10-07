@@ -3,9 +3,9 @@ name: rust
 on:
   push:
     branches: [master, 'claude/**', 'codex/**', '!codex/validation-runner']
-    paths: ['crates/**', 'xtask/**', 'oracle/**', 'parity/**', 'Cargo.toml', 'Cargo.lock', 'rust-toolchain.toml', '.github/workflows/rust.yml', 'scripts/gui_test_artifact.py', 'scripts/test_gui_test_artifact.py', '.github/scripts/**']
+    paths: ['crates/**', 'xtask/**', 'oracle/**', 'parity/**', 'Cargo.toml', 'Cargo.lock', 'rust-toolchain.toml', '.github/workflows/rust.yml', 'scripts/gui*.py', 'scripts/test_gui*.py', 'docs/rust/gui-coverage/**', '.github/publication-validation.json', '.github/scripts/**']
   pull_request:
-    paths: ['crates/**', 'xtask/**', 'oracle/**', 'parity/**', 'Cargo.toml', 'Cargo.lock', 'rust-toolchain.toml', '.github/workflows/rust.yml', 'scripts/gui_test_artifact.py', 'scripts/test_gui_test_artifact.py', '.github/scripts/**']
+    paths: ['crates/**', 'xtask/**', 'oracle/**', 'parity/**', 'Cargo.toml', 'Cargo.lock', 'rust-toolchain.toml', '.github/workflows/rust.yml', 'scripts/gui*.py', 'scripts/test_gui*.py', 'docs/rust/gui-coverage/**', '.github/publication-validation.json', '.github/scripts/**']
   # (from the Actions tab)
   workflow_dispatch:
     inputs:
@@ -36,6 +36,19 @@ env:
   RUSTFLAGS: -D warnings
 
 jobs:
+  publication-safety:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # Publication tests verify immutable historical checkpoints with Git.
+          fetch-depth: 0
+      - name: publication safety regressions
+        run: python3 -m unittest discover -s scripts -p test_gui_publish.py -v
+      - name: coverage report consistency
+        run: python3 scripts/gui_coverage.py --check
+
   quick-check:
     # Implementation mode: one current Linux lane, with no native GUI binaries,
     # native GUI suite, platform matrix, render review or parity audit.

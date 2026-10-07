@@ -174,13 +174,18 @@ class PublicationTests(unittest.TestCase):
                 publication.validate_ci(bad, self.prior['source_commit'])
 
     def test_historical_ci_cannot_be_downgraded_by_current_worktree_policy(self):
-        ci = copy.deepcopy(self.prior['ci_evidence'])
+        # Freeze the last checkpoint before Linux-only publication was allowed.
+        # The current ledger advances and legitimately contains Linux evidence.
+        historical = publication.read(
+            '7f8f4f1cf0827b1336aa278fbfb01794f057e4bc',
+            f'{publication.DATA}/overnight/progress.json')
+        ci = copy.deepcopy(historical['ci_evidence'])
         ci.update(validation_scope='linux', required_platforms=['linux'],
                   deferred_platforms=['windows', 'macos'])
         ci['jobs'] = [job for job in ci['jobs'] if job['name'] in ('check', 'parity-models')]
         with self.assertRaisesRegex(ValueError, 'exact source commit'):
-            publication.validate_ci(ci, self.prior['source_commit'])
-        publication.validate_ci(self.prior['ci_evidence'], self.prior['source_commit'])
+            publication.validate_ci(ci, historical['source_commit'])
+        publication.validate_ci(historical['ci_evidence'], historical['source_commit'])
 
     def test_original_frozen_leaves_only(self):
         classes = {'leaf': 'concrete_leaf', 'parent': 'parent_or_alias'}
