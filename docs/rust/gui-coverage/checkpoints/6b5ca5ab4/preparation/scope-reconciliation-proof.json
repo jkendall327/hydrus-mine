@@ -1,0 +1,400 @@
+{
+  "source_commit": "6b5ca5ab48238b19346e67938d8213a7a26303fb",
+  "run_id": 37583224181,
+  "selected_ids": [
+    "audit-options-nested-external-call-command-arguments",
+    "audit-options-nested-external-call-command-copy"
+  ],
+  "claims": [
+    {
+      "id": "audit-options-nested-external-call-command-arguments",
+      "before_canonical_full_object": {
+        "id": "audit-options-nested-external-call-command-arguments",
+        "parent_id": "audit-options-nested-external-call-command",
+        "label": "Parameter list, add/edit/delete/reorder and command example",
+        "kind": "control",
+        "status": "missing",
+        "native_source": null,
+        "reference_source": {
+          "path": "hydrus/client/gui/panels/options/ExternalProgramsPanel.py",
+          "line": 449,
+          "line_sha256": "ef6df445a269ee64b4addb3bde8c3c73cc36158f856bb30411c96df8999de783"
+        },
+        "assessment": "Reference builds an ordered argument list and renders the combined escaped command as an example; native has no argument-template editor.",
+        "evidence": [
+          {
+            "path": "crates/hydrus-gui-model/src/options.rs",
+            "line": 1626,
+            "role": "source_inspection",
+            "description": "Inspected this native subsystem and its callbacks; Reference builds an ordered argument list and renders the combined escaped command as an example; native has no argument-template editor.",
+            "executed_in_inventory": false,
+            "line_sha256": "9b25465690948e42af43c4a0260d2651e872520f0dcd383f3510ff0712f4a148"
+          }
+        ],
+        "limitations": [
+          "No native action/editor path for this reference workflow."
+        ],
+        "native_id_candidates": [
+          "audit.options.nested.external-call.command-arguments"
+        ],
+        "descendant_count": 0,
+        "descendant_status_counts": {},
+        "unique_feature_descendant_count": 0,
+        "unique_reachable_feature_count_including_shared": 1
+      },
+      "current_manifest_claim_verbatim": {
+        "reference_id": "audit-options-nested-external-call-command-arguments",
+        "before": "missing",
+        "previous_status": "missing",
+        "proposedStatus": "first_pass",
+        "proposed_status": "first_pass",
+        "exactBehavior": "Parameter Add leaves the new row unselected; Edit edits the first selectedItems entry (selection insertion order) even with several selected, using the exact Enter parameter message/default/placeholder and reference first-line whitespace cleaning. Delete captures indices and asks Remove N selected?, with decline/close unchanged. Up/Down iterate original selected indices including selected neighbours at boundaries, preserving Qt current focus and Shift origin. Focused list extended selection, arrows/Home/End, Ctrl+A/C/Insert/Space and Delete (macOS Backspace too) reach the real queue. Selected-text copy preserves selectedItems insertion order; the command example uses cleaned values. Child/parent Cancel and retired callbacks discard drafts; accepted values persist/reopen and feed saved Process.command token substitution. Select-all retains the previous Shift origin; Ctrl navigation replaces that origin without changing selected rows. Captured deletion chooses the previous current neighbour and retains its range origin. Reverse-order Edit and all five origin/deletion histories match actual Qt and native real pointer/key dispatch.",
+        "behavior": "Parameter Add leaves the new row unselected; Edit edits the first selectedItems entry (selection insertion order) even with several selected, using the exact Enter parameter message/default/placeholder and reference first-line whitespace cleaning. Delete captures indices and asks Remove N selected?, with decline/close unchanged. Up/Down iterate original selected indices including selected neighbours at boundaries, preserving Qt current focus and Shift origin. Focused list extended selection, arrows/Home/End, Ctrl+A/C/Insert/Space and Delete (macOS Backspace too) reach the real queue. Selected-text copy preserves selectedItems insertion order; the command example uses cleaned values. Child/parent Cancel and retired callbacks discard drafts; accepted values persist/reopen and feed saved Process.command token substitution. Select-all retains the previous Shift origin; Ctrl navigation replaces that origin without changing selected rows. Captured deletion chooses the previous current neighbour and retains its range origin. Reverse-order Edit and all five origin/deletion histories match actual Qt and native real pointer/key dispatch.",
+        "reference_source": {
+          "relativepath": "hydrus/client/gui/panels/options/ExternalProgramsPanel.py",
+          "line": 449,
+          "symbol": "Parameter list, add/edit/delete/reorder and command example"
+        },
+        "source_anchors": [
+          {
+            "relativepath": "crates/hydrus-gui-model/src/external_command.rs",
+            "line": 7,
+            "commit": "9ac22c60851462185542749743d0c5dcdc989d52",
+            "symbol": "pub struct Queue"
+          },
+          {
+            "relativepath": "crates/hydrus-gui/src/external_call_window.rs",
+            "line": 370,
+            "commit": "9ac22c60851462185542749743d0c5dcdc989d52",
+            "symbol": "fn command_open("
+          },
+          {
+            "relativepath": "crates/hydrus-gui/src/external_call_window.rs",
+            "line": 240,
+            "commit": "9ac22c60851462185542749743d0c5dcdc989d52",
+            "symbol": "fn command_action("
+          },
+          {
+            "relativepath": "crates/hydrus-gui-model/src/list_selection.rs",
+            "line": 26,
+            "commit": "9ac22c60851462185542749743d0c5dcdc989d52",
+            "symbol": "pub fn click("
+          },
+          {
+            "relativepath": "crates/hydrus-gui/src/external_call_window.rs",
+            "line": 159,
+            "commit": "9ac22c60851462185542749743d0c5dcdc989d52",
+            "symbol": "fn text_child("
+          }
+        ],
+        "test_anchors": [
+          {
+            "relativepath": "crates/hydrus-gui/tests/gui/external_calls.rs",
+            "line": 718,
+            "commit": "7bef4e93a81ef515839c7ccebcdd11b51d781ee5",
+            "symbol": "fn actual_command_parameter_queue_buttons_keys_cancel_and_saved_argument_consumer()",
+            "line_sha256": "b54ad406fdb3c0e52dbd0c53ed6905b74429af8a4df11f4f5c3099379d5f202a"
+          },
+          {
+            "relativepath": "crates/hydrus-gui/tests/gui/external_calls.rs",
+            "line": 943,
+            "commit": "7bef4e93a81ef515839c7ccebcdd11b51d781ee5",
+            "symbol": "fn command_clipboard_exact_review_raw_rows_clean_copy_errors_and_owner_retirement()",
+            "line_sha256": "4262623f2fa224b644db81e130ee6738d9003ec6b26cb07f1c6b5d9ff82d553e"
+          },
+          {
+            "relativepath": "crates/hydrus-gui-model/tests/model/external_calls.rs",
+            "line": 365,
+            "commit": "9ac22c60851462185542749743d0c5dcdc989d52",
+            "symbol": "fn command_parameter_queue_selection_reorder_and_keyboard_match_actual_qt()"
+          },
+          {
+            "relativepath": "crates/hydrus-gui-model/tests/model/external_calls.rs",
+            "line": 331,
+            "commit": "9ac22c60851462185542749743d0c5dcdc989d52",
+            "symbol": "fn command_clipboard_review_and_cleaned_example_match_actual_qt()"
+          },
+          {
+            "relativepath": "crates/hydrus-gui-model/tests/model/external_calls.rs",
+            "line": 459,
+            "commit": "9ac22c60851462185542749743d0c5dcdc989d52",
+            "symbol": "fn command_queue_reverse_edit_and_keyboard_origins_match_actual_qt()"
+          },
+          {
+            "relativepath": "crates/hydrus-gui/tests/gui/external_calls.rs",
+            "line": 1211,
+            "commit": "7bef4e93a81ef515839c7ccebcdd11b51d781ee5",
+            "symbol": "fn parameter_queue_reverse_edit_and_real_key_origin_histories_match_actual_qt()",
+            "line_sha256": "0fc5254c398a424c716fe3443da506ff5b7c66c1056f8a0f80ae3232b3da7fd6"
+          }
+        ],
+        "reference_recording": {
+          "script": "oracle/record_external_command.py",
+          "fixture": "oracle/fixtures/external_command.json",
+          "screenshot": "oracle/fixtures/external_command.png",
+          "commit": "9ac22c60851462185542749743d0c5dcdc989d52",
+          "executed_at": "2026-10-05 03:04:45–03:04:47 UTC",
+          "result": "Actual v688 Qt temporary basic client, real parameter queue button/list key handlers: boundary selected-neighbour rotations, multi-selected first-row edit, Unicode/newline cleaning, Add/Edit/Delete cancellation, clicked current/Shift anchor after reorder, selectedItems copy insertion order and Ctrl+Insert/Delete. Ten clipboard texts accepted and declined cover zero/one/many arguments, literal quotes, repeated spaces, tab/newline, Unicode/C0 whitespace and truncated summaries. Missing clipboard text records actual Error message. Only dialog responses/clipboard transport are scripted; no external program/network/OS launcher executed. Actual Qt PNG inspected. Final rerun additionally drives six real Qt queue histories: reverse-selected Edit, Ctrl+A contraction, prior Shift anchor through Ctrl+A, Ctrl+Home then Shift, and deletion of current/non-current selection followed by Shift."
+        },
+        "limitations": [
+          "Broader external-program/list/reopen and command/process parents remain Partial; executable picker/PATH/availability breadth, OS launch routing and full process output are not claimed. No new windows or parent/alias promotions.",
+          "These controls edit displayed typed process calls. Legacy executable-manager migration and regeneration when opening only the registered-call page remain absent. Open Externally OS-default draft regeneration and production routing have separate evidence in open-externally.json and receive no new credit here.",
+          "Physical tooltip placement, Qt list PageUp/PageDown/type-ahead/scroll-to-current and complete command dialog geometry are outside these two explicit control leaves.",
+          "Authored native keyboard/owner/store regressions and native command PNG await hosted CI; no local Cargo/tests or mutation testing were run.",
+          "The actual Qt recorder scripts dialog answers and clipboard transport; its one command-panel PNG does not provide paired input/review/error/feedback images. No Qt dialog pixel, placement or notification-timing parity is claimed.",
+          "Defining captures use supported resized views: 760x590 command/review/feedback, 760x640 long parameter input, and 520x200 Delete/Error. Default-size and universal geometry, physical Copy/Paste pointer input, automatic Main destruction and final Bound-drop behavior are not established.",
+          "Current two-leaf follow-up awaits exact-source full Linux execution and fresh independent native rendered review; no new sign-off is granted. Windows/macOS remain deferred.",
+          "Initial source3c17f2f45/run37580667106 passed the three command tests but failed an existing Options wheel hide/show assertion; its diagnostic selected frame looked disabled and CJK glyphs were absent. The original failure, images and source reviews are retained; they grant no completion. Readiness/font repairs await new exact-source validation and fresh inspection."
+        ],
+        "evidence": [
+          {
+            "path": "crates/hydrus-gui/tests/gui/external_calls.rs",
+            "role": "authored_native_render_and_successor_followup",
+            "executed": false,
+            "description": "Preserves all 115 original assertions and nine tests; now 160 macros including timed painted-feedback witnesses, exact Add prompt/default/placeholder and eight live defining exports. Extends parent-Cancel retirement to clipboard/full Manager/successor draft/selection/four owner slot identities/visibility, followed by positive current acceptance and normal Cancel. Exact integrated-source full Linux validation and fresh independent images remain pending."
+          },
+          {
+            "path": "crates/hydrus-gui/tests/gui/external_calls.rs",
+            "role": "authored_capture_readiness_repair",
+            "executed": false,
+            "description": "Preserves all 160 initial assertions; now165 across the same9tests. Selected command capture asserts selected/non-modal state and waits for real animations to settle. Separate existing wheel regression retains all87assertions, adds geometry/animation/visibility/policy readiness before exactly one wheel event and keeps exact expected2. Hosted CJK fonts address diagnostic missing Japanese glyphs; full rerun/fresh review pending."
+          }
+        ]
+      },
+      "current_pending_assessment": "Parameter Add leaves the new row unselected; Edit edits the first selectedItems entry (selection insertion order) even with several selected, using the exact Enter parameter message/default/placeholder and reference first-line whitespace cleaning. Delete captures indices and asks Remove N selected?, with decline/close unchanged. Up/Down iterate original selected indices including selected neighbours at boundaries, preserving Qt current focus and Shift origin. Focused list extended selection, arrows/Home/End, Ctrl+A/C/Insert/Space and Delete (macOS Backspace too) reach the real queue. Selected-text copy preserves selectedItems insertion order; the command example uses cleaned values. Child/parent Cancel and retired callbacks discard drafts; accepted values persist/reopen and feed saved Process.command token substitution. Select-all retains the previous Shift origin; Ctrl navigation replaces that origin without changing selected rows. Captured deletion chooses the previous current neighbour and retains its range origin. Reverse-order Edit and all five origin/deletion histories match actual Qt and native real pointer/key dispatch.",
+      "source_proof": "Existing command_open/action handlers, Queue/Paste model and reference-driven selected tests establish the finite implemented controls. Original115 assertions/nine tests preserved; current165 macros/eight defining exports and successor-state regressions await hosted execution and fresh review.",
+      "approval": false
+    },
+    {
+      "id": "audit-options-nested-external-call-command-copy",
+      "before_canonical_full_object": {
+        "id": "audit-options-nested-external-call-command-copy",
+        "parent_id": "audit-options-nested-external-call-command",
+        "label": "Copy command / paste parsed parameters",
+        "kind": "control",
+        "status": "missing",
+        "native_source": null,
+        "reference_source": {
+          "path": "hydrus/client/gui/panels/options/ExternalProgramsPanel.py",
+          "line": 385,
+          "line_sha256": "41b6d4cfbb3fc14f1379cac6f955ca6c3c7abe5b20afd077c1ee08aa0aee6fe3"
+        },
+        "assessment": "Reference paste parses clipboard command into executable plus argument templates and reports parsing errors; native has no clipboard-to-command editing workflow.",
+        "evidence": [
+          {
+            "path": "crates/hydrus-gui-model/src/options.rs",
+            "line": 1626,
+            "role": "source_inspection",
+            "description": "Inspected this native subsystem and its callbacks; Reference paste parses clipboard command into executable plus argument templates and reports parsing errors; native has no clipboard-to-command editing workflow.",
+            "executed_in_inventory": false,
+            "line_sha256": "9b25465690948e42af43c4a0260d2651e872520f0dcd383f3510ff0712f4a148"
+          }
+        ],
+        "limitations": [
+          "No native action/editor path for this reference workflow."
+        ],
+        "native_id_candidates": [
+          "audit.options.nested.external-call.command-copy"
+        ],
+        "descendant_count": 0,
+        "descendant_status_counts": {},
+        "unique_feature_descendant_count": 0,
+        "unique_reachable_feature_count_including_shared": 1
+      },
+      "current_manifest_claim_verbatim": {
+        "reference_id": "audit-options-nested-external-call-command-copy",
+        "before": "missing",
+        "previous_status": "missing",
+        "proposedStatus": "first_pass",
+        "proposed_status": "first_pass",
+        "exactBehavior": "Full-template Copy uses cleaned parameters and publishes exact unescaped text. Paste strips Python whitespace then splits literal spaces, retaining raw rows and quote fragments; the exact unsorted count/summary review handles zero, one, blank/repeated, Unicode/C0, tab/newline and truncated many-argument cases. No/close keep the draft; Yes updates executable/raw rows and cleaned example. Copy/accepted paste show Copied!/Pasted! feedback. Missing clipboard text opens owned Error/ok with No text on the clipboard!; access failures do not mutate the draft. Child Apply cleans arguments; parent Apply persists them, with reopened saved Process.command preserving literals/Unicode and substituting tokens. Parent Cancel and retired reviews cannot publish.",
+        "behavior": "Full-template Copy uses cleaned parameters and publishes exact unescaped text. Paste strips Python whitespace then splits literal spaces, retaining raw rows and quote fragments; the exact unsorted count/summary review handles zero, one, blank/repeated, Unicode/C0, tab/newline and truncated many-argument cases. No/close keep the draft; Yes updates executable/raw rows and cleaned example. Copy/accepted paste show Copied!/Pasted! feedback. Missing clipboard text opens owned Error/ok with No text on the clipboard!; access failures do not mutate the draft. Child Apply cleans arguments; parent Apply persists them, with reopened saved Process.command preserving literals/Unicode and substituting tokens. Parent Cancel and retired reviews cannot publish.",
+        "reference_source": {
+          "relativepath": "hydrus/client/gui/panels/options/ExternalProgramsPanel.py",
+          "line": 385,
+          "symbol": "Copy command / paste parsed parameters"
+        },
+        "source_anchors": [
+          {
+            "relativepath": "crates/hydrus-gui-model/src/external_command.rs",
+            "line": 7,
+            "commit": "9ac22c60851462185542749743d0c5dcdc989d52",
+            "symbol": "pub struct Queue"
+          },
+          {
+            "relativepath": "crates/hydrus-gui/src/external_call_window.rs",
+            "line": 370,
+            "commit": "9ac22c60851462185542749743d0c5dcdc989d52",
+            "symbol": "fn command_open("
+          },
+          {
+            "relativepath": "crates/hydrus-gui/src/external_call_window.rs",
+            "line": 240,
+            "commit": "9ac22c60851462185542749743d0c5dcdc989d52",
+            "symbol": "fn command_action("
+          },
+          {
+            "relativepath": "crates/hydrus-gui-model/src/list_selection.rs",
+            "line": 26,
+            "commit": "9ac22c60851462185542749743d0c5dcdc989d52",
+            "symbol": "pub fn click("
+          },
+          {
+            "relativepath": "crates/hydrus-gui-model/src/external_command.rs",
+            "line": 141,
+            "commit": "9ac22c60851462185542749743d0c5dcdc989d52",
+            "symbol": "pub struct Paste"
+          },
+          {
+            "relativepath": "crates/hydrus-core/src/external_calls.rs",
+            "line": 175,
+            "commit": "9ac22c60851462185542749743d0c5dcdc989d52",
+            "symbol": "pub fn clean_arguments("
+          }
+        ],
+        "test_anchors": [
+          {
+            "relativepath": "crates/hydrus-gui/tests/gui/external_calls.rs",
+            "line": 718,
+            "commit": "7bef4e93a81ef515839c7ccebcdd11b51d781ee5",
+            "symbol": "fn actual_command_parameter_queue_buttons_keys_cancel_and_saved_argument_consumer()",
+            "line_sha256": "b54ad406fdb3c0e52dbd0c53ed6905b74429af8a4df11f4f5c3099379d5f202a"
+          },
+          {
+            "relativepath": "crates/hydrus-gui/tests/gui/external_calls.rs",
+            "line": 943,
+            "commit": "7bef4e93a81ef515839c7ccebcdd11b51d781ee5",
+            "symbol": "fn command_clipboard_exact_review_raw_rows_clean_copy_errors_and_owner_retirement()",
+            "line_sha256": "4262623f2fa224b644db81e130ee6738d9003ec6b26cb07f1c6b5d9ff82d553e"
+          },
+          {
+            "relativepath": "crates/hydrus-gui-model/tests/model/external_calls.rs",
+            "line": 365,
+            "commit": "9ac22c60851462185542749743d0c5dcdc989d52",
+            "symbol": "fn command_parameter_queue_selection_reorder_and_keyboard_match_actual_qt()"
+          },
+          {
+            "relativepath": "crates/hydrus-gui-model/tests/model/external_calls.rs",
+            "line": 331,
+            "commit": "9ac22c60851462185542749743d0c5dcdc989d52",
+            "symbol": "fn command_clipboard_review_and_cleaned_example_match_actual_qt()"
+          },
+          {
+            "relativepath": "crates/hydrus-gui-model/tests/model/external_calls.rs",
+            "line": 459,
+            "commit": "9ac22c60851462185542749743d0c5dcdc989d52",
+            "symbol": "fn command_queue_reverse_edit_and_keyboard_origins_match_actual_qt()"
+          },
+          {
+            "relativepath": "crates/hydrus-gui/tests/gui/external_calls.rs",
+            "line": 1211,
+            "commit": "7bef4e93a81ef515839c7ccebcdd11b51d781ee5",
+            "symbol": "fn parameter_queue_reverse_edit_and_real_key_origin_histories_match_actual_qt()",
+            "line_sha256": "0fc5254c398a424c716fe3443da506ff5b7c66c1056f8a0f80ae3232b3da7fd6"
+          }
+        ],
+        "reference_recording": {
+          "script": "oracle/record_external_command.py",
+          "fixture": "oracle/fixtures/external_command.json",
+          "screenshot": "oracle/fixtures/external_command.png",
+          "commit": "9ac22c60851462185542749743d0c5dcdc989d52",
+          "executed_at": "2026-10-05 03:04:45–03:04:47 UTC",
+          "result": "Actual v688 Qt temporary basic client, real parameter queue button/list key handlers: boundary selected-neighbour rotations, multi-selected first-row edit, Unicode/newline cleaning, Add/Edit/Delete cancellation, clicked current/Shift anchor after reorder, selectedItems copy insertion order and Ctrl+Insert/Delete. Ten clipboard texts accepted and declined cover zero/one/many arguments, literal quotes, repeated spaces, tab/newline, Unicode/C0 whitespace and truncated summaries. Missing clipboard text records actual Error message. Only dialog responses/clipboard transport are scripted; no external program/network/OS launcher executed. Actual Qt PNG inspected. Final rerun additionally drives six real Qt queue histories: reverse-selected Edit, Ctrl+A contraction, prior Shift anchor through Ctrl+A, Ctrl+Home then Shift, and deletion of current/non-current selection followed by Shift."
+        },
+        "limitations": [
+          "Broader external-program/list/reopen and command/process parents remain Partial; executable picker/PATH/availability breadth, OS launch routing and full process output are not claimed. No new windows or parent/alias promotions.",
+          "These controls edit displayed typed process calls. Legacy executable-manager migration and regeneration when opening only the registered-call page remain absent. Open Externally OS-default draft regeneration and production routing have separate evidence in open-externally.json and receive no new credit here.",
+          "Physical tooltip placement, Qt list PageUp/PageDown/type-ahead/scroll-to-current and complete command dialog geometry are outside these two explicit control leaves.",
+          "Authored native keyboard/owner/store regressions and native command PNG await hosted CI; no local Cargo/tests or mutation testing were run.",
+          "The actual Qt recorder scripts dialog answers and clipboard transport; its one command-panel PNG does not provide paired input/review/error/feedback images. No Qt dialog pixel, placement or notification-timing parity is claimed.",
+          "Defining captures use supported resized views: 760x590 command/review/feedback, 760x640 long parameter input, and 520x200 Delete/Error. Default-size and universal geometry, physical Copy/Paste pointer input, automatic Main destruction and final Bound-drop behavior are not established.",
+          "Current two-leaf follow-up awaits exact-source full Linux execution and fresh independent native rendered review; no new sign-off is granted. Windows/macOS remain deferred.",
+          "Initial source3c17f2f45/run37580667106 passed the three command tests but failed an existing Options wheel hide/show assertion; its diagnostic selected frame looked disabled and CJK glyphs were absent. The original failure, images and source reviews are retained; they grant no completion. Readiness/font repairs await new exact-source validation and fresh inspection."
+        ],
+        "evidence": [
+          {
+            "path": "crates/hydrus-gui/tests/gui/external_calls.rs",
+            "role": "authored_native_render_and_successor_followup",
+            "executed": false,
+            "description": "Preserves all 115 original assertions and nine tests; now 160 macros including timed painted-feedback witnesses, exact Add prompt/default/placeholder and eight live defining exports. Extends parent-Cancel retirement to clipboard/full Manager/successor draft/selection/four owner slot identities/visibility, followed by positive current acceptance and normal Cancel. Exact integrated-source full Linux validation and fresh independent images remain pending."
+          },
+          {
+            "path": "crates/hydrus-gui/tests/gui/external_calls.rs",
+            "role": "authored_capture_readiness_repair",
+            "executed": false,
+            "description": "Preserves all 160 initial assertions; now165 across the same9tests. Selected command capture asserts selected/non-modal state and waits for real animations to settle. Separate existing wheel regression retains all87assertions, adds geometry/animation/visibility/policy readiness before exactly one wheel event and keeps exact expected2. Hosted CJK fonts address diagnostic missing Japanese glyphs; full rerun/fresh review pending."
+          }
+        ]
+      },
+      "current_pending_assessment": "Full-template Copy uses cleaned parameters and publishes exact unescaped text. Paste strips Python whitespace then splits literal spaces, retaining raw rows and quote fragments; the exact unsorted count/summary review handles zero, one, blank/repeated, Unicode/C0, tab/newline and truncated many-argument cases. No/close keep the draft; Yes updates executable/raw rows and cleaned example. Copy/accepted paste show Copied!/Pasted! feedback. Missing clipboard text opens owned Error/ok with No text on the clipboard!; access failures do not mutate the draft. Child Apply cleans arguments; parent Apply persists them, with reopened saved Process.command preserving literals/Unicode and substituting tokens. Parent Cancel and retired reviews cannot publish.",
+      "source_proof": "Existing command_open/action handlers, Queue/Paste model and reference-driven selected tests establish the finite implemented controls. Original115 assertions/nine tests preserved; current165 macros/eight defining exports and successor-state regressions await hosted execution and fresh review.",
+      "approval": false
+    }
+  ],
+  "manifest_sha256": "798eb17e7c1afe125e721d674d41ff8465dc821a33050df7c0f359c47571d56c",
+  "manifest_18_sibling_entries_verbatim_preserved": true,
+  "historical_manifest_validation": {
+    "reference": "Executed prior actual Qt external-call list and new command queue/clipboard recorder; both PNGs inspected",
+    "formatting": "rustfmt --edition2024, Python py_compile and git diff --check passed",
+    "slint_source_check": "cached warning-aware Slint compiler passed; no Cargo",
+    "rust_tests": "Prior external-call regressions plus authored exact queue/clipboard/model/native/store/substitution replays; hosted CI pending, no local Cargo",
+    "independent_review": "Prior three list actions independently accepted by follow_migration at0e9. tag_filters reviewed the command controls, identified four selection/edit defects, and accepted the recorded six-history correction9ac22c608 plus updated evidencea855476b. The two command leaves were Missing in the frozen original baseline; their intermediate Partial inventory assessment does not change that baseline. Hosted CI pending."
+  },
+  "historical_initial_followup": {
+    "baseline_publication": "036c5d4921c3430ac370e5628d7843fc2f639e19",
+    "implementation_commit": "1bacf7112b4da9804f9ac109bd1900b45f0e4e61",
+    "selected_ids": [
+      "audit-options-nested-external-call-command-arguments",
+      "audit-options-nested-external-call-command-copy"
+    ],
+    "published_signed_off": 355,
+    "existing_candidates_pending": 20,
+    "runtime_validation": "Pending exact integrated-source full Linux CI and fresh independent/root native capture review.",
+    "historical_metadata": "Original source_commit, validation and reference recording retain author-time provenance; current test anchors and authored follow-up are explicit, not runtime approval.",
+    "test_sha256": "98948c9b88b1c0b4bfd2e28ff9be3c74e956bea919de9fc1272c7faaa823d5ce",
+    "original_assertions": 115,
+    "current_assertions": 160,
+    "tests": 9,
+    "reference_rerun": {
+      "completed_at_utc": "2026-10-07T06:08:28Z",
+      "actual_equals_fixture": true,
+      "queue_events": 26,
+      "queue_histories": 6,
+      "clipboard_outcomes": 20,
+      "all_three_inputs_unchanged": true,
+      "provenance_sha256": "ee52aa69522e9bad349332840c0a311b881e001bbc5532be7c0b72395bc2dde0"
+    },
+    "expected_defining_images": [
+      "external-command-parameters-selected.png",
+      "external-command-parameter-add.png",
+      "external-command-parameter-edit.png",
+      "external-command-delete-review.png",
+      "external-command-copy-feedback.png",
+      "external-command-paste-review.png",
+      "external-command-paste-feedback.png",
+      "external-command-clipboard-error.png"
+    ],
+    "scope": "Exactly command parameter editing and full-template Copy/Paste; prior355 and all unselected assessments preserved. No broader command/process/list parents, aliases, launch/output or deferred-platform credit."
+  },
+  "current_validation_repair": {
+    "failed_source": "3c17f2f4507670c3040f68fac020fa265451d50c",
+    "failed_run": 37580667106,
+    "implementation_commit": "7bef4e93a81ef515839c7ccebcdd11b51d781ee5",
+    "previous_command_assertions": 160,
+    "current_command_assertions": 165,
+    "command_tests": 9,
+    "previous_wheel_assertions": 87,
+    "current_wheel_assertions": 92,
+    "wheel_tests": 6,
+    "all_previous_lines_preserved": true,
+    "failed_expected_index_preserved": 2,
+    "one_physical_wheel_event": true,
+    "diagnosis": "Old wheel test reused a pre-hide frame, rendered while hidden, then dispatched immediately aftershow before ensuring1ms geometry-observer/animation readiness. Exact failed runtime hit path was not logged; no persistent policy defect is inferred. Selected command capture also needed settled enabled-state presentation.",
+    "hosted_font_change": "Install fontconfig and fonts-noto-cjk in required Linux GUI job and log fc-match :lang=ja; unchanged Unicode fixtures/assertions and fresh rendered review must verify glyph availability.",
+    "current_test_sha256": "9ce637bda651b9d982d3d0759b1a37f14cc1327e80d56f94c6db8c3f162d3338",
+    "preservation_proof_sha256": "3b9b637c051d806b1bb8268205d8828e18722024b129a81843d3d69a09fc959b",
+    "runtime_validation": "Pending exact repaired-source full Linux and all eight fresh defining captures; no new signoff."
+  },
+  "stale_selected_Missing_absence_assessments_reconciled_source_only": true,
+  "approval": false
+}

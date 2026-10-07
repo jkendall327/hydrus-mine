@@ -1,0 +1,225 @@
+{
+  "review_type": "diagnostic actual rendered review from a failed full run; not final approval",
+  "source_commit": "3c17f2f4507670c3040f68fac020fa265451d50c",
+  "run_id": 37580667106,
+  "artifact_id": 11464633382,
+  "native_zip_sha256": "a3bb5895aef4c97e859b41864ca967fe42df23398537aaf482cdc47d56dc8550",
+  "validation_scope": "linux",
+  "approval": false,
+  "full_ci_success": false,
+  "full_run_failure": {
+    "test": "menu_choice_wheel::options_staging_saved_policy_bubbling_and_retired_roots_are_owned",
+    "source": "crates/hydrus-gui/tests/gui/menu_choice_wheel.rs:449",
+    "observed": 0,
+    "expected": 2,
+    "log": "/workspace/validation-reviews/ci-3c17f2f45/tests.log",
+    "log_line": 1386,
+    "gui_passed": 706,
+    "gui_failed": 1,
+    "gui_ignored": 0,
+    "gui_seconds": 147.78
+  },
+  "claims": [
+    {
+      "id": "audit-options-nested-external-call-command-arguments",
+      "approval": false,
+      "reason": "Full exact-source CI failed; this diagnostic packet does not approve publication."
+    },
+    {
+      "id": "audit-options-nested-external-call-command-copy",
+      "approval": false,
+      "reason": "Full exact-source CI failed; this diagnostic packet does not approve publication."
+    }
+  ],
+  "images_actually_viewed": [
+    {
+      "name": "external-command-parameters-selected.png",
+      "path": "/workspace/validation-reviews/ci-3c17f2f45/native-renders/external-command-parameters-selected.png",
+      "source_commit": "3c17f2f4507670c3040f68fac020fa265451d50c",
+      "run_id": 37580667106,
+      "artifact_id": 11464633382,
+      "sha256": "5e7d99c03266833f31b6308f106f5c97ad00d71ceb49823f0255fb5ea8443dda",
+      "bytes": 32658,
+      "dimensions": [
+        760,
+        590
+      ],
+      "actually_viewed": true,
+      "observation": "Actual beta/delta highlights in alpha/beta/gamma/delta raw order and full template. Edit/Delete/reorder appear pale/disabled despite selected rows; needs settled-state/enablement verification. A prior Pasted! overlay is also visible. Not a direct state pair for Qt selected-beta reordered rows."
+    },
+    {
+      "name": "external-command-parameter-add.png",
+      "path": "/workspace/validation-reviews/ci-3c17f2f45/native-renders/external-command-parameter-add.png",
+      "source_commit": "3c17f2f4507670c3040f68fac020fa265451d50c",
+      "run_id": 37580667106,
+      "artifact_id": 11464633382,
+      "sha256": "3c0fc49e851b7dd9ff1aed8e6f3735e36fa4e2f4a1040fa79527b1c2e20dfdcb",
+      "bytes": 51073,
+      "dimensions": [
+        760,
+        640
+      ],
+      "actually_viewed": true,
+      "observation": "Full reference parameter prompt fits/readable at760×640, blank input shows -o, ok/cancel visible. Footer buttons stretch vertically; no Qt child geometry pair."
+    },
+    {
+      "name": "external-command-parameter-edit.png",
+      "path": "/workspace/validation-reviews/ci-3c17f2f45/native-renders/external-command-parameter-edit.png",
+      "source_commit": "3c17f2f4507670c3040f68fac020fa265451d50c",
+      "run_id": 37580667106,
+      "artifact_id": 11464633382,
+      "sha256": "2acca1afdca5a2e6fa037b14cd3429f303f97917a83836527b1df00e5d9f4ce6",
+      "bytes": 51597,
+      "dimensions": [
+        760,
+        640
+      ],
+      "actually_viewed": true,
+      "observation": "Same full prompt is readable, populated three input and ok/cancel visible. Supported resized geometry only."
+    },
+    {
+      "name": "external-command-delete-review.png",
+      "path": "/workspace/validation-reviews/ci-3c17f2f45/native-renders/external-command-delete-review.png",
+      "source_commit": "3c17f2f4507670c3040f68fac020fa265451d50c",
+      "run_id": 37580667106,
+      "artifact_id": 11464633382,
+      "sha256": "9545fe2dbae51cacdf41630a5569b6fd360c60317cdc98ee2bf41b467af5d957",
+      "bytes": 4030,
+      "dimensions": [
+        520,
+        200
+      ],
+      "actually_viewed": true,
+      "observation": "Remove 2 selected? and yes/no visible/readable at520×200. Buttons are vertically stretched; no paired Qt child."
+    },
+    {
+      "name": "external-command-copy-feedback.png",
+      "path": "/workspace/validation-reviews/ci-3c17f2f45/native-renders/external-command-copy-feedback.png",
+      "source_commit": "3c17f2f4507670c3040f68fac020fa265451d50c",
+      "run_id": 37580667106,
+      "artifact_id": 11464633382,
+      "sha256": "13ad0090ffa5fc21758e9bf6e016d9c99c1327111890ac3c4e577e840187fd7b",
+      "bytes": 32150,
+      "dimensions": [
+        760,
+        590
+      ],
+      "actually_viewed": true,
+      "observation": "Copied! is visibly painted below copy button; exact ASCII quote fragments are readable. CJK characters lack visible fallback glyphs; emoji renders monochrome. Exact stored Unicode is assertion-proven, not full glyph parity."
+    },
+    {
+      "name": "external-command-paste-review.png",
+      "path": "/workspace/validation-reviews/ci-3c17f2f45/native-renders/external-command-paste-review.png",
+      "source_commit": "3c17f2f4507670c3040f68fac020fa265451d50c",
+      "run_id": 37580667106,
+      "artifact_id": 11464633382,
+      "sha256": "0d2137e94e24db2b4431a384884f0eb6b4952c6d08ec0a7e7abc84604e0edb9e",
+      "bytes": 20189,
+      "dimensions": [
+        760,
+        590
+      ],
+      "actually_viewed": true,
+      "observation": "Exact30-argument Paste review fits/readable at760×590 with all arg0…arg29 and Look good?/yes/no visible. Large blank region/tall footer buttons are finite geometry differences."
+    },
+    {
+      "name": "external-command-paste-feedback.png",
+      "path": "/workspace/validation-reviews/ci-3c17f2f45/native-renders/external-command-paste-feedback.png",
+      "source_commit": "3c17f2f4507670c3040f68fac020fa265451d50c",
+      "run_id": 37580667106,
+      "artifact_id": 11464633382,
+      "sha256": "34a1e4dc9fb1fb436fd56fd3fa875d62682c782836774cf385d85b795ea5d348",
+      "bytes": 32046,
+      "dimensions": [
+        760,
+        590
+      ],
+      "actually_viewed": true,
+      "observation": "Pasted! visibly painted below paste button; row/example fragments readable. Same CJK fallback limitation as Copy; no Qt timed-overlay pair."
+    },
+    {
+      "name": "external-command-clipboard-error.png",
+      "path": "/workspace/validation-reviews/ci-3c17f2f45/native-renders/external-command-clipboard-error.png",
+      "source_commit": "3c17f2f4507670c3040f68fac020fa265451d50c",
+      "run_id": 37580667106,
+      "artifact_id": 11464633382,
+      "sha256": "6c73f8b157108b733ac7a58e137f228ab23a4cfee4bf43f6a915b5b1a70d53dd",
+      "bytes": 3671,
+      "dimensions": [
+        520,
+        200
+      ],
+      "actually_viewed": true,
+      "observation": "No text on the clipboard! and ok readable at520×200. No paired Qt error PNG."
+    }
+  ],
+  "reference_images_actually_viewed": [
+    {
+      "path": "/workspace/hydrus-mine/oracle/fixtures/external_command.png",
+      "sha256": "6d7f23d37c4ea7b7415bbdc84373f4c5fb02ebc4ad5105c309da30d9e08c7fb9",
+      "bytes": 41324,
+      "dimensions": [
+        760,
+        590
+      ],
+      "actually_viewed": true,
+      "observation": "Qt panel shows alpha/gamma/beta/delta and selected beta; executable/example, queue and Copy/Paste controls are readable. Reference recorder scripts nested dialogs/clipboard; no child or notification pixel pairs."
+    }
+  ],
+  "native_manifest_path": "/workspace/validation-reviews/ci-3c17f2f45/native-render-manifest.json",
+  "native_manifest_sha256": "5016b8fc66f36be5c7ce05c1b26a2722956597bde1dacc27e16dcd8945eb248c",
+  "native_image_count": 345,
+  "passing_scoped_tests": [
+    {
+      "test": "external_calls::actual_command_parameter_queue_buttons_keys_cancel_and_saved_argument_consumer",
+      "log": "/workspace/validation-reviews/ci-3c17f2f45/tests.log",
+      "line": 755,
+      "result": "ok"
+    },
+    {
+      "test": "external_calls::command_clipboard_exact_review_raw_rows_clean_copy_errors_and_owner_retirement",
+      "log": "/workspace/validation-reviews/ci-3c17f2f45/tests.log",
+      "line": 758,
+      "result": "ok"
+    },
+    {
+      "test": "external_calls::parameter_queue_reverse_edit_and_real_key_origin_histories_match_actual_qt",
+      "log": "/workspace/validation-reviews/ci-3c17f2f45/tests.log",
+      "line": 763,
+      "result": "ok"
+    },
+    {
+      "test": "external_calls::command_clipboard_review_and_cleaned_example_match_actual_qt",
+      "log": "/workspace/validation-reviews/ci-3c17f2f45/tests.log",
+      "line": 1544,
+      "result": "ok"
+    },
+    {
+      "test": "external_calls::command_parameter_queue_selection_reorder_and_keyboard_match_actual_qt",
+      "log": "/workspace/validation-reviews/ci-3c17f2f45/tests.log",
+      "line": 1545,
+      "result": "ok"
+    },
+    {
+      "test": "external_calls::command_queue_reverse_edit_and_keyboard_origins_match_actual_qt",
+      "log": "/workspace/validation-reviews/ci-3c17f2f45/tests.log",
+      "line": 1546,
+      "result": "ok"
+    }
+  ],
+  "selected_visual_concerns": [
+    {
+      "image": "external-command-parameters-selected.png",
+      "observation": "Selected beta/delta are clearly highlighted, but Edit/Delete/reorder look disabled. Copy/Paste look enabled. The defining selected frame does not yet establish visibly enabled selected-row actions.",
+      "classification": "Possible unsettled binding/capture state; not a demonstrated persistent product defect.",
+      "minimum_resolution": "Verify selected=true, child_open=false and no question owner at capture, settle actual render/timer bindings and inspect a fresh frame. Do not force button state or replace original assertions."
+    }
+  ],
+  "finite_limits": [
+    "No prompt, review, error or feedback caption is clipped in the eight supported-size captures.",
+    "Long parameter/review dialogs have tall stretched buttons/blank areas; no Qt child/default-size/universal geometry parity is claimed.",
+    "CJK glyph fallback is visibly incomplete in feedback buffers, while Unicode content/token persistence remains exact in assertions. No full Unicode glyph parity is claimed.",
+    "No Qt nested child/notification image pair, physical Copy/Paste pointer, automatic Main/final Bound teardown, OS launch/output, broader parent/alias or Windows/macOS credit."
+  ],
+  "preservation_note": "Frozen source-review-2.json/.md remain unchanged. No final-review file created. No product/repository edits, builds or local Rust tests performed."
+}

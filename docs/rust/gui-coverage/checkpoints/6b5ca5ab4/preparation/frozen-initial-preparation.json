@@ -1,0 +1,29 @@
+{
+  "source_commit": "3c17f2f4507670c3040f68fac020fa265451d50c",
+  "files": {
+    "render-checklist.json": "6774ab188557f21f3ab2788dfa7de546d923912b5566f0ebe95093c54e992ae7",
+    "selected-source-proposal.json": "1ec97aaf9a7f879a7b39bb3bf38c8fb80a2f78fe37f6aa0e245d43ae5ccfabb6",
+    "construct-subset.py": "c592fc4a3e69af5c7aae2d0a409222b7722bf55141236f97ba142482bc9ce49c",
+    "prepare-evidence-copy-3c17f2f45.py": "01396055579588e5147aa3529d566bc5d39dcd802323c5afd74b840936f76a03",
+    "verify-preservation.py": "3661ebd7f33bf5d22b5679c5a06ca81ed1614511183fe67d3b5b25154890016b",
+    "prior355-preservation-proof.json": "4621399ed061c236103f2e4cd8dcab19b1f11815d4a71428941b63894d483a0e",
+    "prepare-extras.py": "4c0429e405f3c754a6560c44f21c5eb77506e5da7c9bdc02a8449f1b3c423195",
+    "prepare-source.py": "8f5ce9d2ef3adb48ffd9c689a7e35a119d2cb76b507e3af1a39d428a4ce7fc91",
+    "source-census.json": "93562d54349601a3c96bea5e9e2ef2419b98acb228d0225dde84429c1e24a2b7",
+    "preparation-summary.json": "cd57dd5c3d88ab114892de68fac002c88d542ecd4fd985160de960aa1121fc35",
+    "selection.json": "fa3029c4f5b17a632e4de28c22a345e28cfa85c7ac565169001bafd2c604f14e",
+    "source-anchor-proof.json": "3947f136b5bfae47993b66eece1d18b8ed979772061cfeb33b83df327fdd92c1",
+    "README.md": "3290e3e006f4748e25dc1fc4784c5026da3fde6e2eb6be051cd3da0650aa831d",
+    "no-inherited-semantic-updates.json": "8edc6d1a3e18d5db8da4f74d93c2434dde583c56d6cca38bcfa893ad9a758852",
+    "binding-anchor-proof.json": "04c9707e43a0df67ce978f7dc7dc578a167060b682ccc3260bc08c20ee85c98e",
+    "scope-reconciliation-proof.json": "0dac7071fc2eaa3eb1efddff617f3bc927c60ed5a0fc6a0c3afe5a776e8f15fc",
+    "preparation1.json": "22c46372742b6622b5d08908574c77744057663de2d0945cbe3ba8e41ed104b7",
+    "committed-source-review-provenance.json": "a6da4d1a30c72b10a7dd95e50c47b9b301bfed794c4d437e37901c89f7f9c850",
+    "inherited-wiring-anchor-proof.json": "b5736d5fa68d3a12310acc7cce727eff496e32c129f202776b1e3cb1d046f4b3",
+    "conditional-status-map.json": "28f44ce9b9320b5321ea696a5f1f46269be0a8a5bb3c6c682ceea6b8e06dd3c1",
+    "subset-preflight/subset-proposal-patch.json": "9fc597c0224d9bd4cd62ce29e42336163a536078c433f346e9550f369d4984c0",
+    "subset-preflight/available-inherited-semantic-companion.json": "8b77391a83a04ca822dcbf3118311f4100b8bf38336c7865c59bb413f0f0f4a9",
+    "subset-preflight/subset-source-preflight.json": "86cad6bfc61169eea18a246aa117605bdd6658a1f9a4c77a15becbef1f724bda"
+  },
+  "unchanged_historical_packet": true
+}

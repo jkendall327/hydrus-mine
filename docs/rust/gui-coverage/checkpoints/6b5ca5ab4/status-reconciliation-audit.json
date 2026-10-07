@@ -1,0 +1,135 @@
+{
+  "source_commit": "6b5ca5ab48238b19346e67938d8213a7a26303fb",
+  "ci_evidence_sha256": "13586da5801ed2a6654b770a9091bb58fe817bb64311d0f91284335e183c9f2e",
+  "mapping_sha256": "7be806bbce7e18ae1488a38628eb2fb40818304437dcc543559b6c8361309716",
+  "mapping_applied_after_gates": true,
+  "operations": [
+    {
+      "id": "audit-options-nested-external-call-command-arguments",
+      "field": "limitations",
+      "original_index": 3,
+      "operation": "replace_exact_list_item",
+      "before": "Authored native keyboard/owner/store regressions and native command PNG await hosted CI; no local Cargo/tests or mutation testing were run.",
+      "conditional_after": "Historical author metadata records authored keyboard/owner/store regressions without local Cargo or mutation testing. Current exact-source Linux execution and fresh native rendered review are recorded separately in the accepted checkpoint.",
+      "reason": "Reconcile resolved validation-status wording only after actual gates; preserve historical no-local-execution provenance and deferred-platform limits."
+    },
+    {
+      "id": "audit-options-nested-external-call-command-arguments",
+      "field": "limitations",
+      "original_index": 6,
+      "operation": "replace_exact_list_item",
+      "before": "Current two-leaf follow-up awaits exact-source full Linux execution and fresh independent native rendered review; no new sign-off is granted. Windows/macOS remain deferred.",
+      "conditional_after": "Windows/macOS remain deferred under the exact-source publication policy.",
+      "reason": "Reconcile resolved validation-status wording only after actual gates; preserve historical no-local-execution provenance and deferred-platform limits."
+    },
+    {
+      "id": "audit-options-nested-external-call-command-arguments",
+      "field": "limitations",
+      "original_index": 7,
+      "operation": "replace_exact_list_item",
+      "before": "Initial source3c17f2f45/run37580667106 passed the three command tests but failed an existing Options wheel hide/show assertion; its diagnostic selected frame looked disabled and CJK glyphs were absent. The original failure, images and source reviews are retained; they grant no completion. Readiness/font repairs await new exact-source validation and fresh inspection.",
+      "conditional_after": "Initial source3c17f2f45/run37580667106 passed the three command tests but failed an existing Options wheel hide/show assertion; its diagnostic selected frame looked disabled and CJK glyphs were absent. The original failure, images and source reviews are retained; they grant no completion.",
+      "reason": "Reconcile resolved validation-status wording only after actual gates; preserve historical no-local-execution provenance and deferred-platform limits."
+    },
+    {
+      "id": "audit-options-nested-external-call-command-arguments",
+      "field": "remaining",
+      "original_index": 0,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source hosted full Linux validation remains pending.",
+      "conditional_after": null,
+      "reason": "Remove only pending exact-source CI/fresh independent-root review status after real gates."
+    },
+    {
+      "id": "audit-options-nested-external-call-command-arguments",
+      "field": "remaining",
+      "original_index": 1,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source fresh native rendered/behavioral review and final assessment reconciliation remain pending.",
+      "conditional_after": null,
+      "reason": "Remove only pending exact-source CI/fresh independent-root review status after real gates."
+    },
+    {
+      "id": "audit-options-nested-external-call-command-copy",
+      "field": "limitations",
+      "original_index": 3,
+      "operation": "replace_exact_list_item",
+      "before": "Authored native keyboard/owner/store regressions and native command PNG await hosted CI; no local Cargo/tests or mutation testing were run.",
+      "conditional_after": "Historical author metadata records authored keyboard/owner/store regressions without local Cargo or mutation testing. Current exact-source Linux execution and fresh native rendered review are recorded separately in the accepted checkpoint.",
+      "reason": "Reconcile resolved validation-status wording only after actual gates; preserve historical no-local-execution provenance and deferred-platform limits."
+    },
+    {
+      "id": "audit-options-nested-external-call-command-copy",
+      "field": "limitations",
+      "original_index": 6,
+      "operation": "replace_exact_list_item",
+      "before": "Current two-leaf follow-up awaits exact-source full Linux execution and fresh independent native rendered review; no new sign-off is granted. Windows/macOS remain deferred.",
+      "conditional_after": "Windows/macOS remain deferred under the exact-source publication policy.",
+      "reason": "Reconcile resolved validation-status wording only after actual gates; preserve historical no-local-execution provenance and deferred-platform limits."
+    },
+    {
+      "id": "audit-options-nested-external-call-command-copy",
+      "field": "limitations",
+      "original_index": 7,
+      "operation": "replace_exact_list_item",
+      "before": "Initial source3c17f2f45/run37580667106 passed the three command tests but failed an existing Options wheel hide/show assertion; its diagnostic selected frame looked disabled and CJK glyphs were absent. The original failure, images and source reviews are retained; they grant no completion. Readiness/font repairs await new exact-source validation and fresh inspection.",
+      "conditional_after": "Initial source3c17f2f45/run37580667106 passed the three command tests but failed an existing Options wheel hide/show assertion; its diagnostic selected frame looked disabled and CJK glyphs were absent. The original failure, images and source reviews are retained; they grant no completion.",
+      "reason": "Reconcile resolved validation-status wording only after actual gates; preserve historical no-local-execution provenance and deferred-platform limits."
+    },
+    {
+      "id": "audit-options-nested-external-call-command-copy",
+      "field": "remaining",
+      "original_index": 0,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source hosted full Linux validation remains pending.",
+      "conditional_after": null,
+      "reason": "Remove only pending exact-source CI/fresh independent-root review status after real gates."
+    },
+    {
+      "id": "audit-options-nested-external-call-command-copy",
+      "field": "remaining",
+      "original_index": 1,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source fresh native rendered/behavioral review and final assessment reconciliation remain pending.",
+      "conditional_after": null,
+      "reason": "Remove only pending exact-source CI/fresh independent-root review status after real gates."
+    }
+  ],
+  "added_review_scope_limits": {
+    "audit-options-nested-external-call-command-arguments": [
+      "Exactly the two original command parameter and full-template Copy/Paste leaves are approved. Broader external-program/list/reopen/command/process parents, aliases and structural completion receive no credit.",
+      "The actual Qt recorder drives real queue/selection handlers but scripts dialog answers and clipboard transport. Its only PNG is the command panel; no matched Qt input, review, error or timed notification image exists. No Qt pixel, placement or notification-timing parity is claimed.",
+      "Inspected supported views are 760 × 590 command/review/feedback, 760 × 640 long parameter input and 520 × 200 Delete/Error. Complete selected text is readable, but child buttons stretch vertically and blank areas differ from Qt. Default-size and universal dialog geometry are not established.",
+      "Retained callbacks are tested after parent Cancel against a replacement command/review/call/Options owner, with complete clipboard, saved manager, draft, selection and slot identity/visibility preservation plus positive current acceptance. Automatic Main destruction and final Bound-drop behavior are not claimed.",
+      "Physical list pointer/key histories are preserved; Add/Edit/Copy/Paste/review actions use the existing callbacks and headless clipboard transport. No physical Copy/Paste pointer route or broad OS clipboard integration is established.",
+      "Executable picker, PATH/platform availability breadth, legacy executable-manager migration, broader process output, OS launch routing, Qt PageUp/PageDown/type-ahead/scroll-to-current and physical tooltip placement remain outside these leaves. Separately banked Open Externally draft regeneration/routing receives no new credit; opening only the registered-call page still does not regenerate those defaults.",
+      "Japanese 日本 is visible in the inspected Copy/Paste rows and examples after hosted CJK font installation; emoji is monochrome and font metrics differ. This is not universal glyph/font or framework pixel parity.",
+      "Validation is Linux only; Windows and macOS remain deferred. The optional Qt API listener was unavailable, while direct Qt/database recording succeeded. No API connectivity, network or external-program execution is claimed.",
+      "The native selected frame uses raw alpha/beta/gamma/delta with beta and delta selected in reverse insertion order; the Qt panel uses alpha/gamma/beta/delta with only beta selected. Exact queue/order/current/selection behavior comes from all 26 events and six histories, not same-state pixel comparison."
+    ],
+    "audit-options-nested-external-call-command-copy": [
+      "Exactly the two original command parameter and full-template Copy/Paste leaves are approved. Broader external-program/list/reopen/command/process parents, aliases and structural completion receive no credit.",
+      "The actual Qt recorder drives real queue/selection handlers but scripts dialog answers and clipboard transport. Its only PNG is the command panel; no matched Qt input, review, error or timed notification image exists. No Qt pixel, placement or notification-timing parity is claimed.",
+      "Inspected supported views are 760 × 590 command/review/feedback, 760 × 640 long parameter input and 520 × 200 Delete/Error. Complete selected text is readable, but child buttons stretch vertically and blank areas differ from Qt. Default-size and universal dialog geometry are not established.",
+      "Retained callbacks are tested after parent Cancel against a replacement command/review/call/Options owner, with complete clipboard, saved manager, draft, selection and slot identity/visibility preservation plus positive current acceptance. Automatic Main destruction and final Bound-drop behavior are not claimed.",
+      "Physical list pointer/key histories are preserved; Add/Edit/Copy/Paste/review actions use the existing callbacks and headless clipboard transport. No physical Copy/Paste pointer route or broad OS clipboard integration is established.",
+      "Executable picker, PATH/platform availability breadth, legacy executable-manager migration, broader process output, OS launch routing, Qt PageUp/PageDown/type-ahead/scroll-to-current and physical tooltip placement remain outside these leaves. Separately banked Open Externally draft regeneration/routing receives no new credit; opening only the registered-call page still does not regenerate those defaults.",
+      "Japanese 日本 is visible in the inspected Copy/Paste rows and examples after hosted CJK font installation; emoji is monochrome and font metrics differ. This is not universal glyph/font or framework pixel parity.",
+      "Validation is Linux only; Windows and macOS remain deferred. The optional Qt API listener was unavailable, while direct Qt/database recording succeeded. No API connectivity, network or external-program execution is claimed.",
+      "Paste strips reference whitespace and splits literal spaces without shell parsing, retaining raw argument fragments until acceptance. All 20 accepted/declined clipboard outcomes, exact review text, missing/access-failure notices and saved Unicode/token arguments remain asserted. Copy/Paste feedback is visibly painted in native frames; Qt timing/placement remains unpaired."
+    ]
+  },
+  "reviews": [
+    {
+      "path": "docs/rust/gui-coverage/checkpoints/6b5ca5ab4/final-review-2-6b5ca5ab4.json",
+      "sha256": "18ffb5c1b3c8906b1b019ca9df745dea4b1748929a659a161ee0655bbaeac2f3"
+    }
+  ],
+  "selected_ids": [
+    "audit-options-nested-external-call-command-arguments",
+    "audit-options-nested-external-call-command-copy"
+  ],
+  "prior355_completion_ids_and_assessments_preserved": true,
+  "source_only_native_anchor_ids": [],
+  "final_patch_digest": "e12e6c497ddc6f43e954eaa3e4f053a546566e361e748cdff7694975f1a1b19d"
+}

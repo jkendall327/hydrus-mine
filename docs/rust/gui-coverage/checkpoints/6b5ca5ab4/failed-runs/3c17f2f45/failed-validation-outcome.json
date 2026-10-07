@@ -1,0 +1,70 @@
+{
+  "source_commit": "3c17f2f4507670c3040f68fac020fa265451d50c",
+  "run_id": 37580667106,
+  "conclusion": "failure",
+  "new_signoffs": 0,
+  "gui_tests": {
+    "passed": 706,
+    "failed": 1,
+    "ignored": 0,
+    "seconds": 147.78
+  },
+  "media_tests": {
+    "passed": 67,
+    "failed": 0,
+    "ignored": 0,
+    "seconds": 1.01
+  },
+  "selected_tests_passed": [
+    "test external_calls::actual_command_parameter_queue_buttons_keys_cancel_and_saved_argument_consumer ... ok",
+    "test external_calls::command_clipboard_exact_review_raw_rows_clean_copy_errors_and_owner_retirement ... ok",
+    "test external_calls::parameter_queue_reverse_edit_and_real_key_origin_histories_match_actual_qt ... ok",
+    "test external_calls::command_clipboard_review_and_cleaned_example_match_actual_qt ... ok",
+    "test external_calls::command_parameter_queue_selection_reorder_and_keyboard_match_actual_qt ... ok",
+    "test external_calls::command_queue_reverse_edit_and_keyboard_origins_match_actual_qt ... ok"
+  ],
+  "failing_test": "menu_choice_wheel::options_staging_saved_policy_bubbling_and_retired_roots_are_owned",
+  "failure": {
+    "path": "crates/hydrus-gui/tests/gui/menu_choice_wheel.rs",
+    "line": 449,
+    "actual_index": 0,
+    "expected_index": 2,
+    "context": "One wheel event after Options.hide/show; uses frame acquired before hide. Precise runtime hit path not logged."
+  },
+  "timings": {
+    "clippy_seconds": 55.0,
+    "clippy_cargo_seconds": 54.9,
+    "test_compile_seconds": 181,
+    "test_step_seconds": 531.0
+  },
+  "native_artifact_id": 11464633382,
+  "native_zip_sha256": "a3bb5895aef4c97e859b41864ca967fe42df23398537aaf482cdc47d56dc8550",
+  "native_image_count": 345,
+  "required_new_images_present": [
+    "external-command-parameters-selected.png",
+    "external-command-parameter-add.png",
+    "external-command-parameter-edit.png",
+    "external-command-delete-review.png",
+    "external-command-copy-feedback.png",
+    "external-command-paste-review.png",
+    "external-command-paste-feedback.png",
+    "external-command-clipboard-error.png"
+  ],
+  "limits": [
+    "All six selected tests pass, but full workspace gate failed and grants no signoff.",
+    "Eight captures are diagnostic only; selected disabled-looking control paint and missing CJK glyphs require follow-up.",
+    "An unrefreshed geometry/timer precondition is identified in the old wheel test; failure alone does not establish product policy failure.",
+    "Linux only; Windows/macOS deferred."
+  ],
+  "evidence_sha256": {
+    "full-check.log": "b1e76201e795b6b0d031f58bfccb2025943c3aabe37ad1dc30fceaaeaa4b117a",
+    "tests.log": "71e2e753d4da4213edd0bad6be8cb54cdd27290054aaee6dd1b0e1b981e39d98",
+    "parity.log": "0cce7a61f9afea9da67eff2f4ca17088eb4e8ee1b5a2494e9a3e00d1f745a651",
+    "clippy.log": "4d3213f24a7e540cfca858b281c2cd0c98d1196def9c2bb38544dfdc68e2a6af",
+    "maintenance.log": "6e2480c67ee82052e7807e7fcf4be0b839fc427b2bcf497dea231e46051b97bb",
+    "native-render-manifest.json": "5016b8fc66f36be5c7ce05c1b26a2722956597bde1dacc27e16dcd8945eb248c",
+    "native-artifact.json": "7b48232baed672faaa3775a697254e5adb958c3456195e2646654d9b336ff9d0",
+    "test-artifact.json": "39d6add8f742574873761990eb802780e0427541d5e2e647cdec0cde85da7bce",
+    "clippy-artifact.json": "f72528cfdf07a4f09b66ac8c595d2332656f40360d5e436e2f261dad95119be4"
+  }
+}

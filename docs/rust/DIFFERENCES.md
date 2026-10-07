@@ -2511,6 +2511,26 @@ groups, full reference output/error presentation and OS default-launch tests are
 not claimed. Ordinary executable arguments use the process API; batch/shell
 interpreters retain their own quoting semantics. Harmless owned Unicode fixtures
 are authored for hosted CI; no local Rust execution is represented as evidence.
+
+The command-editor checkpoint `6b5ca5ab4` validates only parameter editing and
+full-template Copy/Paste within the finite scope below. Actual Qt recording covers
+queue/selection behavior and exact clipboard review text, but substitutes dialog
+answers and clipboard transport; its panel PNG does not establish nested-dialog
+pixel parity or notification placement. The test follow-up targets live Add/Edit,
+Delete/Paste review, missing-text notice and timed Copy/Paste feedback captures,
+plus retained callbacks against a replacement editor. Broader command/process
+parents, executable picker/PATH/launch breadth, output presentation and Qt
+PageUp/PageDown/type-ahead/scroll-to-current remain outside the pair. Full Linux
+and fresh independent rendered review passed.
+[Evidence](gui-coverage/checkpoints/6b5ca5ab4/README.md).
+
+The first follow-up run passed the command tests but failed an existing
+hide/show wheel assertion. That test now waits for measured, stable geometry
+and inactive animations without weakening its expected result. Diagnostic images
+also showed disabled-looking selected controls and missing CJK glyphs; readiness
+assertions/settling and hosted CJK fonts resolve those captured presentation
+issues in the successful rerun. All original wheel and command assertions
+pass. The earlier evidence did not establish a persistent product failure.
 Viewer drag anchoring uses the existing winit window's cursor-position API.
 Physical cursor warping depends on the platform/window manager, as Qt's cursor
 warping does. Headless native replays assert actual pointer-to-media movement,

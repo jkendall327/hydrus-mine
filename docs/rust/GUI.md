@@ -3530,6 +3530,29 @@ keeps the draft. Clipboard failures use an owned Error/ok notice. Copy and accep
 paste show the reference's brief feedback. Parent Cancel and retired children
 cannot publish drafts; accepted arguments persist and feed actual token expansion.
 
+The validated follow-up covers only command parameter editing
+and full-template Copy/Paste. The October 7 actual Qt rerun matches all 26 queue
+actions, six selection histories and 20 accepted/declined clipboard outcomes,
+with unchanged recorder, fixture and command-panel PNG. The reference scripts
+dialog answers and clipboard transport; its PNG does not capture Qt input/review
+children or timed feedback for visual comparison. The follow-up adds eight live
+captures and retained successor checks while
+preserving all 115 original assertions across nine tests; the file now contains
+165 assertions. Existing queue, clipboard and saved Unicode/token-consumer
+checks remain intact. Full Linux run `37583224181` and fresh independent
+rendered review passed, including all 707 GUI and 67 media tests. The ledger
+now has 357 signed off and 18 existing candidates pending.
+[Evidence](gui-coverage/checkpoints/6b5ca5ab4/README.md).
+The first full run passed all three command tests but failed an existing Options
+wheel test after hide/show. The repair waits for stable measured geometry and
+finished animations before its one wheel event, retaining the exact expected
+selection and hidden-window refusal assertions. Selected command capture now
+also asserts readiness and waits for animations. The hosted GUI job installs
+CJK fonts because the diagnostic frames omitted Japanese glyphs. Fresh images
+now show the Japanese text and settled selected controls; the new full run
+passes the original wheel result. The failed run and its images remain
+diagnostic evidence and earn no credit.
+
 Supported process calls expose enabled input rules, tokens and the existing
 string-processor child, an ordered command-argument editor, timeout/flags and
 preview/test inputs. Reopening a saved process and pressing its Test Call runs
@@ -3537,8 +3560,9 @@ its argument vector in an owned worker. Closing the owner cancels and reaps its
 direct child; output is discarded, and long-lived test calls use a 15 second
 deadline. Clipboard/JSON-file/PNG exchange reviews supported callable exports
 before changing the Options draft. These editor/exchange/runtime families remain
-partial: legacy executable-manager import and missing OS-call regeneration,
-deeper per-call launch menus and routing import, OS-launch test execution, rule clipboard controls,
+partial: legacy executable-manager import and regeneration when opening only
+the registered-call page, deeper per-call launch menus and routing import,
+OS-launch test execution, rule clipboard controls,
 full process output/error handling and some command/dialog interactions are not
 ported. The complete scope is recorded in the external-call parity proposal.
 Options > media viewer > mouse behaviour now stages cursor anchoring and its

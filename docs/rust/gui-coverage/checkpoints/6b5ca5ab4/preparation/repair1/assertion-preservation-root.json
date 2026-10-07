@@ -1,0 +1,30 @@
+{
+  "previous_source": "3c17f2f4507670c3040f68fac020fa265451d50c",
+  "repair_commit": "7bef4e93a81ef515839c7ccebcdd11b51d781ee5",
+  "files": [
+    {
+      "path": "crates/hydrus-gui/tests/gui/external_calls.rs",
+      "previous_sha256": "98948c9b88b1c0b4bfd2e28ff9be3c74e956bea919de9fc1272c7faaa823d5ce",
+      "current_sha256": "9ce637bda651b9d982d3d0759b1a37f14cc1327e80d56f94c6db8c3f162d3338",
+      "previous_assertions": 160,
+      "current_assertions": 165,
+      "previous_tests": 9,
+      "current_tests": 9,
+      "all_previous_lines_preserved_in_order": true
+    },
+    {
+      "path": "crates/hydrus-gui/tests/gui/menu_choice_wheel.rs",
+      "previous_sha256": "d222312d57c015d0bcdf6d3e979dd860ae4b5d0e245b566b3451d3e90b903ec1",
+      "current_sha256": "4f71335403855b4eaf00211d6c250fd67961c83bbc521879869f091aebfdae03",
+      "previous_assertions": 87,
+      "current_assertions": 92,
+      "previous_tests": 6,
+      "current_tests": 6,
+      "all_previous_lines_preserved_in_order": true
+    }
+  ],
+  "assertions_removed": false,
+  "original_failed_expected_index": 2,
+  "single_wheel_dispatch_preserved": true,
+  "production_or_slint_edits": false
+}

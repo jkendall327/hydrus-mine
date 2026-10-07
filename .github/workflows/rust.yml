@@ -130,7 +130,12 @@ jobs:
           echo "Workspace restore was not proven safe; compilation is blocked."
           exit 1
       - name: install media tools, and fontconfig for the GUI
-        run: sudo apt-get update && sudo apt-get install -y ffmpeg libfontconfig1-dev
+        # Native fixtures include Japanese parameters; preserve their glyphs in
+        # software-rendered evidence instead of relying on the runner's fonts.
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg fontconfig libfontconfig1-dev fonts-noto-cjk
+          fc-match ':lang=ja'
       - name: fmt
         run: cargo fmt --all --check
       - name: GUI artifact runner tests

@@ -428,3 +428,33 @@ needed by a subsequently assigned runner image; no claim of universal cache
 hits is made. [Successful outcome and logs](../checkpoints/9f6397368/validation-outcome.json)
 and [failed-run evidence](../checkpoints/9f6397368/failed-runs/393c12553/failed-validation-outcome.json)
 are retained. No further optimization experiment was opened.
+
+## Command checkpoint and hosted CJK fonts
+
+Initial source `3c17f2f45`, full Linux run `37580667106`, restored 4,120
+verified input mtimes and 292 workspace artifact files on runner image
+`20260927.320.1`. Strict Clippy reported 54.90s (55s workflow step), test
+compilation 181s and the full test step 531s. All three command-focused tests
+passed, but an existing Options wheel hide/show test failed: 706 GUI passes,
+one failure, zero ignored. All 67 media tests passed. This run earns no credit.
+Its logs and eight diagnostic images are retained in the new checkpoint.
+
+Repaired source `6b5ca5ab4`, run `37583224181`, preserves all original assertions
+and adds bounded layout/timer/animation readiness. The required Linux job now
+installs CJK fonts because the initial images omitted Japanese glyphs. It used
+the same `20260927.320.1` runner image; the workflow change created compatibility
+prefix `68e3726939ec9009de9276fa`. The dependency cache hit, but no compatible
+workspace snapshot was available. The generated UI crate rebuilt in Clippy.
+
+Strict Clippy reported 619s (also 619s for the workflow step), test compilation
+735s, and the full test step 1,251s. All 707 GUI tests passed in 241.79s and all
+67 media tests in 1.02s. A fresh run-specific snapshot saved 293 artifact files
+and 2,200,273,639 uncompressed bytes. Maintenance retained 1,379,324,818 compressed
+workspace-cache bytes under the 3 GiB cap.
+
+These are hosted validation observations, not a controlled performance
+comparison or separate Slint generation/Rust/link measurements. Fresh images,
+not font-discovery output alone, supply the glyph/readability evidence.
+[Successful outcome](../checkpoints/6b5ca5ab4/validation-outcome.json) and
+[initial failed-run evidence](../checkpoints/6b5ca5ab4/failed-runs/3c17f2f45/failed-validation-outcome.json)
+are retained. No further optimization experiment was opened.

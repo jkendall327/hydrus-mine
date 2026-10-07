@@ -1,0 +1,64 @@
+{
+  "source_commit": "6b5ca5ab48238b19346e67938d8213a7a26303fb",
+  "source_schema_preflight": "passed_execution_render_pending",
+  "selected_ids": [
+    "audit-options-nested-external-call-command-arguments",
+    "audit-options-nested-external-call-command-copy"
+  ],
+  "selected_count": 2,
+  "prior_completed_count": 355,
+  "prior355_raw_complete_whole_objects_preserved": true,
+  "all_unselected_raw_whole_objects_preserved": true,
+  "native1799_raw_whole_inventory_preserved": true,
+  "post_repin_unselected_nonanchor_fields_preserved": true,
+  "repin_only": "Inherited anchors use exact committed unchanged line/hash/context, including pure native_wiring_source coordinates; selected source declaration correction is separately documented in binding-anchor-proof.json. No unselected semantic substitutions.",
+  "unselected_promotions": [],
+  "required_inherited_updates": 0,
+  "frozen1812_preserved": true,
+  "prior355_nodes_digest": "a5d3e59f8ecc33f81d544d0a5dec50b1fc350ee8f448c9ee71dbcc0c996173cd",
+  "native_inventory_digest": "a7247a5fc3c9fad69bbae69ed792d7d79765fcf702d6371000cd3182ffa2f8df",
+  "subset_normalized_digest": "5a596612c2bd337d2597e0cd9d57f05e1b1ff888a577c1aa07aa7d8931958426",
+  "subset_file_sha256": "49275e9a98ff8c30f742146bc0d7b81e80718da81bac01b73ff0425cad8f7844",
+  "source_census_digest": "ee0aa86959c1850145c53c9e67093038551e4f73af95a52d0dac38a491475b28",
+  "validation_reports": {
+    "reference": {
+      "source_repin_unique_anchors": 5768,
+      "validation": {
+        "nodes": 1812,
+        "source_anchors": 5768,
+        "statuses": {
+          "partial": 385,
+          "first_pass": 958,
+          "missing": 469
+        },
+        "audit": {
+          "weak_first_pass": []
+        }
+      }
+    },
+    "native": {
+      "source_repin_unique_anchors": 4052,
+      "validation": {
+        "nodes": 1799,
+        "source_anchors": 4052,
+        "statuses": {
+          "partial": 860,
+          "first_pass": 850,
+          "missing": 89
+        },
+        "audit": {
+          "weak_first_pass": [],
+          "exported_window_count": 121,
+          "opaque_native_windows": [],
+          "unassessed_nodes": [],
+          "catch_all_nodes": []
+        }
+      }
+    }
+  },
+  "conditional_bank_if_all_gates_pass": 357,
+  "conditional_pending_after_bank": 18,
+  "approval": false,
+  "canonical_writes": false,
+  "builds": false
+}

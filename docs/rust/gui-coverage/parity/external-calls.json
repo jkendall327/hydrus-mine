@@ -1006,15 +1006,17 @@
       "test_anchors": [
         {
           "relativepath": "crates/hydrus-gui/tests/gui/external_calls.rs",
-          "line": 669,
-          "commit": "9ac22c60851462185542749743d0c5dcdc989d52",
-          "symbol": "fn actual_command_parameter_queue_buttons_keys_cancel_and_saved_argument_consumer()"
+          "line": 718,
+          "commit": "7bef4e93a81ef515839c7ccebcdd11b51d781ee5",
+          "symbol": "fn actual_command_parameter_queue_buttons_keys_cancel_and_saved_argument_consumer()",
+          "line_sha256": "b54ad406fdb3c0e52dbd0c53ed6905b74429af8a4df11f4f5c3099379d5f202a"
         },
         {
           "relativepath": "crates/hydrus-gui/tests/gui/external_calls.rs",
-          "line": 863,
-          "commit": "9ac22c60851462185542749743d0c5dcdc989d52",
-          "symbol": "fn command_clipboard_exact_review_raw_rows_clean_copy_errors_and_owner_retirement()"
+          "line": 943,
+          "commit": "7bef4e93a81ef515839c7ccebcdd11b51d781ee5",
+          "symbol": "fn command_clipboard_exact_review_raw_rows_clean_copy_errors_and_owner_retirement()",
+          "line_sha256": "4262623f2fa224b644db81e130ee6738d9003ec6b26cb07f1c6b5d9ff82d553e"
         },
         {
           "relativepath": "crates/hydrus-gui-model/tests/model/external_calls.rs",
@@ -1036,9 +1038,10 @@
         },
         {
           "relativepath": "crates/hydrus-gui/tests/gui/external_calls.rs",
-          "line": 990,
-          "commit": "9ac22c60851462185542749743d0c5dcdc989d52",
-          "symbol": "fn parameter_queue_reverse_edit_and_real_key_origin_histories_match_actual_qt()"
+          "line": 1211,
+          "commit": "7bef4e93a81ef515839c7ccebcdd11b51d781ee5",
+          "symbol": "fn parameter_queue_reverse_edit_and_real_key_origin_histories_match_actual_qt()",
+          "line_sha256": "0fc5254c398a424c716fe3443da506ff5b7c66c1056f8a0f80ae3232b3da7fd6"
         }
       ],
       "reference_recording": {
@@ -1051,9 +1054,27 @@
       },
       "limitations": [
         "Broader external-program/list/reopen and command/process parents remain Partial; executable picker/PATH/availability breadth, OS launch routing and full process output are not claimed. No new windows or parent/alias promotions.",
-        "These controls edit displayed typed process calls; legacy executable-manager migration and missing OS-launch constructor regeneration remain absent.",
+        "These controls edit displayed typed process calls. Legacy executable-manager migration and regeneration when opening only the registered-call page remain absent. Open Externally OS-default draft regeneration and production routing have separate evidence in open-externally.json and receive no new credit here.",
         "Physical tooltip placement, Qt list PageUp/PageDown/type-ahead/scroll-to-current and complete command dialog geometry are outside these two explicit control leaves.",
-        "Authored native keyboard/owner/store regressions and native command PNG await hosted CI; no local Cargo/tests or mutation testing were run."
+        "Authored native keyboard/owner/store regressions and native command PNG await hosted CI; no local Cargo/tests or mutation testing were run.",
+        "The actual Qt recorder scripts dialog answers and clipboard transport; its one command-panel PNG does not provide paired input/review/error/feedback images. No Qt dialog pixel, placement or notification-timing parity is claimed.",
+        "Defining captures use supported resized views: 760x590 command/review/feedback, 760x640 long parameter input, and 520x200 Delete/Error. Default-size and universal geometry, physical Copy/Paste pointer input, automatic Main destruction and final Bound-drop behavior are not established.",
+        "Current two-leaf follow-up awaits exact-source full Linux execution and fresh independent native rendered review; no new sign-off is granted. Windows/macOS remain deferred.",
+        "Initial source3c17f2f45/run37580667106 passed the three command tests but failed an existing Options wheel hide/show assertion; its diagnostic selected frame looked disabled and CJK glyphs were absent. The original failure, images and source reviews are retained; they grant no completion. Readiness/font repairs await new exact-source validation and fresh inspection."
+      ],
+      "evidence": [
+        {
+          "path": "crates/hydrus-gui/tests/gui/external_calls.rs",
+          "role": "authored_native_render_and_successor_followup",
+          "executed": false,
+          "description": "Preserves all 115 original assertions and nine tests; now 160 macros including timed painted-feedback witnesses, exact Add prompt/default/placeholder and eight live defining exports. Extends parent-Cancel retirement to clipboard/full Manager/successor draft/selection/four owner slot identities/visibility, followed by positive current acceptance and normal Cancel. Exact integrated-source full Linux validation and fresh independent images remain pending."
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/external_calls.rs",
+          "role": "authored_capture_readiness_repair",
+          "executed": false,
+          "description": "Preserves all 160 initial assertions; now165 across the same9tests. Selected command capture asserts selected/non-modal state and waits for real animations to settle. Separate existing wheel regression retains all87assertions, adds geometry/animation/visibility/policy readiness before exactly one wheel event and keeps exact expected2. Hosted CJK fonts address diagnostic missing Japanese glyphs; full rerun/fresh review pending."
+        }
       ]
     },
     {
@@ -1110,15 +1131,17 @@
       "test_anchors": [
         {
           "relativepath": "crates/hydrus-gui/tests/gui/external_calls.rs",
-          "line": 669,
-          "commit": "9ac22c60851462185542749743d0c5dcdc989d52",
-          "symbol": "fn actual_command_parameter_queue_buttons_keys_cancel_and_saved_argument_consumer()"
+          "line": 718,
+          "commit": "7bef4e93a81ef515839c7ccebcdd11b51d781ee5",
+          "symbol": "fn actual_command_parameter_queue_buttons_keys_cancel_and_saved_argument_consumer()",
+          "line_sha256": "b54ad406fdb3c0e52dbd0c53ed6905b74429af8a4df11f4f5c3099379d5f202a"
         },
         {
           "relativepath": "crates/hydrus-gui/tests/gui/external_calls.rs",
-          "line": 863,
-          "commit": "9ac22c60851462185542749743d0c5dcdc989d52",
-          "symbol": "fn command_clipboard_exact_review_raw_rows_clean_copy_errors_and_owner_retirement()"
+          "line": 943,
+          "commit": "7bef4e93a81ef515839c7ccebcdd11b51d781ee5",
+          "symbol": "fn command_clipboard_exact_review_raw_rows_clean_copy_errors_and_owner_retirement()",
+          "line_sha256": "4262623f2fa224b644db81e130ee6738d9003ec6b26cb07f1c6b5d9ff82d553e"
         },
         {
           "relativepath": "crates/hydrus-gui-model/tests/model/external_calls.rs",
@@ -1140,9 +1163,10 @@
         },
         {
           "relativepath": "crates/hydrus-gui/tests/gui/external_calls.rs",
-          "line": 990,
-          "commit": "9ac22c60851462185542749743d0c5dcdc989d52",
-          "symbol": "fn parameter_queue_reverse_edit_and_real_key_origin_histories_match_actual_qt()"
+          "line": 1211,
+          "commit": "7bef4e93a81ef515839c7ccebcdd11b51d781ee5",
+          "symbol": "fn parameter_queue_reverse_edit_and_real_key_origin_histories_match_actual_qt()",
+          "line_sha256": "0fc5254c398a424c716fe3443da506ff5b7c66c1056f8a0f80ae3232b3da7fd6"
         }
       ],
       "reference_recording": {
@@ -1155,9 +1179,27 @@
       },
       "limitations": [
         "Broader external-program/list/reopen and command/process parents remain Partial; executable picker/PATH/availability breadth, OS launch routing and full process output are not claimed. No new windows or parent/alias promotions.",
-        "These controls edit displayed typed process calls; legacy executable-manager migration and missing OS-launch constructor regeneration remain absent.",
+        "These controls edit displayed typed process calls. Legacy executable-manager migration and regeneration when opening only the registered-call page remain absent. Open Externally OS-default draft regeneration and production routing have separate evidence in open-externally.json and receive no new credit here.",
         "Physical tooltip placement, Qt list PageUp/PageDown/type-ahead/scroll-to-current and complete command dialog geometry are outside these two explicit control leaves.",
-        "Authored native keyboard/owner/store regressions and native command PNG await hosted CI; no local Cargo/tests or mutation testing were run."
+        "Authored native keyboard/owner/store regressions and native command PNG await hosted CI; no local Cargo/tests or mutation testing were run.",
+        "The actual Qt recorder scripts dialog answers and clipboard transport; its one command-panel PNG does not provide paired input/review/error/feedback images. No Qt dialog pixel, placement or notification-timing parity is claimed.",
+        "Defining captures use supported resized views: 760x590 command/review/feedback, 760x640 long parameter input, and 520x200 Delete/Error. Default-size and universal geometry, physical Copy/Paste pointer input, automatic Main destruction and final Bound-drop behavior are not established.",
+        "Current two-leaf follow-up awaits exact-source full Linux execution and fresh independent native rendered review; no new sign-off is granted. Windows/macOS remain deferred.",
+        "Initial source3c17f2f45/run37580667106 passed the three command tests but failed an existing Options wheel hide/show assertion; its diagnostic selected frame looked disabled and CJK glyphs were absent. The original failure, images and source reviews are retained; they grant no completion. Readiness/font repairs await new exact-source validation and fresh inspection."
+      ],
+      "evidence": [
+        {
+          "path": "crates/hydrus-gui/tests/gui/external_calls.rs",
+          "role": "authored_native_render_and_successor_followup",
+          "executed": false,
+          "description": "Preserves all 115 original assertions and nine tests; now 160 macros including timed painted-feedback witnesses, exact Add prompt/default/placeholder and eight live defining exports. Extends parent-Cancel retirement to clipboard/full Manager/successor draft/selection/four owner slot identities/visibility, followed by positive current acceptance and normal Cancel. Exact integrated-source full Linux validation and fresh independent images remain pending."
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/external_calls.rs",
+          "role": "authored_capture_readiness_repair",
+          "executed": false,
+          "description": "Preserves all 160 initial assertions; now165 across the same9tests. Selected command capture asserts selected/non-modal state and waits for real animations to settle. Separate existing wheel regression retains all87assertions, adds geometry/animation/visibility/policy readiness before exactly one wheel event and keeps exact expected2. Hosted CJK fonts address diagnostic missing Japanese glyphs; full rerun/fresh review pending."
+        }
       ]
     },
     {
@@ -1479,5 +1521,60 @@
       "external_callable.png",
       "external-command-parameters.png"
     ]
+  },
+  "validation_followup": {
+    "baseline_publication": "036c5d4921c3430ac370e5628d7843fc2f639e19",
+    "implementation_commit": "1bacf7112b4da9804f9ac109bd1900b45f0e4e61",
+    "selected_ids": [
+      "audit-options-nested-external-call-command-arguments",
+      "audit-options-nested-external-call-command-copy"
+    ],
+    "published_signed_off": 355,
+    "existing_candidates_pending": 20,
+    "runtime_validation": "Pending exact integrated-source full Linux CI and fresh independent/root native capture review.",
+    "historical_metadata": "Original source_commit, validation and reference recording retain author-time provenance; current test anchors and authored follow-up are explicit, not runtime approval.",
+    "test_sha256": "98948c9b88b1c0b4bfd2e28ff9be3c74e956bea919de9fc1272c7faaa823d5ce",
+    "original_assertions": 115,
+    "current_assertions": 160,
+    "tests": 9,
+    "reference_rerun": {
+      "completed_at_utc": "2026-10-07T06:08:28Z",
+      "actual_equals_fixture": true,
+      "queue_events": 26,
+      "queue_histories": 6,
+      "clipboard_outcomes": 20,
+      "all_three_inputs_unchanged": true,
+      "provenance_sha256": "ee52aa69522e9bad349332840c0a311b881e001bbc5532be7c0b72395bc2dde0"
+    },
+    "expected_defining_images": [
+      "external-command-parameters-selected.png",
+      "external-command-parameter-add.png",
+      "external-command-parameter-edit.png",
+      "external-command-delete-review.png",
+      "external-command-copy-feedback.png",
+      "external-command-paste-review.png",
+      "external-command-paste-feedback.png",
+      "external-command-clipboard-error.png"
+    ],
+    "scope": "Exactly command parameter editing and full-template Copy/Paste; prior355 and all unselected assessments preserved. No broader command/process/list parents, aliases, launch/output or deferred-platform credit."
+  },
+  "validation_repair": {
+    "failed_source": "3c17f2f4507670c3040f68fac020fa265451d50c",
+    "failed_run": 37580667106,
+    "implementation_commit": "7bef4e93a81ef515839c7ccebcdd11b51d781ee5",
+    "previous_command_assertions": 160,
+    "current_command_assertions": 165,
+    "command_tests": 9,
+    "previous_wheel_assertions": 87,
+    "current_wheel_assertions": 92,
+    "wheel_tests": 6,
+    "all_previous_lines_preserved": true,
+    "failed_expected_index_preserved": 2,
+    "one_physical_wheel_event": true,
+    "diagnosis": "Old wheel test reused a pre-hide frame, rendered while hidden, then dispatched immediately aftershow before ensuring1ms geometry-observer/animation readiness. Exact failed runtime hit path was not logged; no persistent policy defect is inferred. Selected command capture also needed settled enabled-state presentation.",
+    "hosted_font_change": "Install fontconfig and fonts-noto-cjk in required Linux GUI job and log fc-match :lang=ja; unchanged Unicode fixtures/assertions and fresh rendered review must verify glyph availability.",
+    "current_test_sha256": "9ce637bda651b9d982d3d0759b1a37f14cc1327e80d56f94c6db8c3f162d3338",
+    "preservation_proof_sha256": "3b9b637c051d806b1bb8268205d8828e18722024b129a81843d3d69a09fc959b",
+    "runtime_validation": "Pending exact repaired-source full Linux and all eight fresh defining captures; no new signoff."
   }
 }

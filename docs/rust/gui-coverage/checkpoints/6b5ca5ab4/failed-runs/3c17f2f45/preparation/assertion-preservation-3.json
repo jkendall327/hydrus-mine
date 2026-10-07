@@ -1,0 +1,110 @@
+{
+  "agent_commit": "1bacf7112b4da9804f9ac109bd1900b45f0e4e61",
+  "base_commit": "036c5d4921c3430ac370e5628d7843fc2f639e19",
+  "owned_file": "crates/hydrus-gui/tests/gui/external_calls.rs",
+  "source_sha256": "98948c9b88b1c0b4bfd2e28ff9be3c74e956bea919de9fc1272c7faaa823d5ce",
+  "base_source_sha256": "6bb3920be816fb7db3375018e1f30d2c99f99900b82cbc6cc4067f18372003db",
+  "selected_ids": [
+    "audit-options-nested-external-call-command-arguments",
+    "audit-options-nested-external-call-command-copy"
+  ],
+  "approval": false,
+  "preservation": {
+    "original_assertion_macros": 115,
+    "current_assertion_macros": 160,
+    "original_assertion_spans_bytewise_preserved_in_order": true,
+    "original_tests": 9,
+    "current_tests": 9,
+    "original_focused_assertion_macros": 45,
+    "current_focused_assertion_macros": 87,
+    "helper_assertion_macros": 3,
+    "diff_insertions": 231,
+    "diff_deletions": 1,
+    "sole_replaced_original_line": "Rename unused _headless_windows to windows so captures retain/use the existing collector; no assertion or behavior line removed.",
+    "fixture_queue_events": 26,
+    "fixture_queue_edge_histories": 6,
+    "fixture_clipboard_outcomes": 20,
+    "existing_replay_loops_and_saved_unicode_process_consumer_unchanged": true
+  },
+  "focused_tests": [
+    {
+      "symbol": "actual_command_parameter_queue_buttons_keys_cancel_and_saved_argument_consumer",
+      "line": 718,
+      "current_assertion_macros": 27
+    },
+    {
+      "symbol": "command_clipboard_exact_review_raw_rows_clean_copy_errors_and_owner_retirement",
+      "line": 943,
+      "current_assertion_macros": 53
+    },
+    {
+      "symbol": "parameter_queue_reverse_edit_and_real_key_origin_histories_match_actual_qt",
+      "line": 1211,
+      "current_assertion_macros": 7
+    }
+  ],
+  "new_captures": [
+    "external-command-parameters-selected.png",
+    "external-command-parameter-add.png",
+    "external-command-parameter-edit.png",
+    "external-command-delete-review.png",
+    "external-command-copy-feedback.png",
+    "external-command-paste-review.png",
+    "external-command-paste-feedback.png",
+    "external-command-clipboard-error.png"
+  ],
+  "capture_dimensions": {
+    "external-command-parameters-selected.png": [
+      760,
+      590
+    ],
+    "external-command-parameter-add.png": [
+      760,
+      640
+    ],
+    "external-command-parameter-edit.png": [
+      760,
+      640
+    ],
+    "external-command-delete-review.png": [
+      520,
+      200
+    ],
+    "external-command-copy-feedback.png": [
+      760,
+      590
+    ],
+    "external-command-paste-review.png": [
+      760,
+      590
+    ],
+    "external-command-paste-feedback.png": [
+      760,
+      590
+    ],
+    "external-command-clipboard-error.png": [
+      520,
+      200
+    ]
+  },
+  "feedback_proof": "Bounded render/event-pump loop waits at least50ms and at most2s for actual opaque #ffffdc overlay fill, verifies expected Copied!/Pasted! and live command visibility, exports the returned painted frame before3s expiry. No getter-only visual proof or timing tolerance relaxation. Fresh independent text/readability review remains required.",
+  "adapter_proof": "Command adapter indices are retained before paste-review adapters are created; selected queue capture uses its command index, not the last hidden question adapter. Child captures target the newly created live question adapter.",
+  "successor_scope": "After existing parent-Cancel retirement assertions, old command Copy/Paste/Add/Delete/Apply/Cancel and old review Yes/No/Cancel cannot change clipboard, complete Manager, successor executable/rows/selection/example/feedback/message, command/review/call/Options slot identity or visibility. Positive current review acceptance updates its draft; current command and outer Cancel close normally without writes.",
+  "checks": {
+    "rustfmt_edition2024_check": "passed",
+    "git_diff_check": "passed",
+    "local_cargo_builds_or_tests": false,
+    "mutation_tests": false,
+    "git_push": false,
+    "product_source_edits": false
+  },
+  "caveats": [
+    "Only these two original concrete leaves; no broad external/list/reopen/command/process parent, alias or structural credit.",
+    "Supported resized defining captures only, not default-size or universal dialog geometry parity.",
+    "Existing Qt recorder has one command panel PNG. The selected native reverse-selection state differs from that Qt panel; nested prompts/reviews/errors and feedback have exact reference strings/handlers but no matched Qt PNGs.",
+    "Notification proof witnesses actual painted overlay background and expected text state; fresh image inspection must verify visible glyphs/readability.",
+    "No automatic Main destruction/final Bound-drop, executable picker/PATH/platform breadth, OS launch/full process-output, Qt PageUp/PageDown/type-ahead/scroll-to-current or tooltip-placement claim.",
+    "No physical Copy/Paste pointer claim or new geometry hook: existing callbacks and real list pointer/key replay are preserved.",
+    "Exact integrated-source full Linux validation and fresh artifact review pending; Windows/macOS deferred."
+  ]
+}
