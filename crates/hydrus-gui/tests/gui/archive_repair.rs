@@ -337,7 +337,7 @@ fn click(
 
 #[test]
 fn actual_archive_controls_wrap_scroll_and_apply_each_recorded_population() {
-    use slint::platform::{WindowAdapter as _, WindowEvent};
+    use slint::platform::WindowEvent;
     let windows = headless::init();
     let fixture = hydrus_testkit::fixture_json("archive_time_repair.json");
     for choice in 0..3 {
