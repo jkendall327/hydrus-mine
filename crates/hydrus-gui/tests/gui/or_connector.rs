@@ -8,6 +8,81 @@ use hydrus_gui::{MainWindow, OptionsWindow, Pages, bind, headless};
 use hydrus_store::{or_connector, settings};
 use slint::{ComponentHandle as _, Model as _};
 const LABEL: &str = "OR connecting string (on one line): ";
+// Fixed 900x900, scale-one diagnostic of the existing one-line field. The
+// physical copy fails closed if this finite coordinate no longer focuses it;
+// fresh images must independently confirm the caption, field and glyphs.
+fn capture_and_copy_reopened(
+    native: &slint::platform::software_renderer::MinimalSoftwareWindow,
+    window: &OptionsWindow,
+    raw: &str,
+    filename: &str,
+) {
+    use slint::platform::{Key, PointerEventButton, WindowAdapter as _, WindowEvent};
+    use std::time::{Duration, Instant};
+
+    assert!(std::ptr::eq(native.window(), window.window()));
+    assert!(window.window().is_visible());
+    let started = Instant::now();
+    let mut previous = None;
+    let pixels = loop {
+        let pixels = headless::render(native, 900, 900);
+        if started.elapsed() >= Duration::from_millis(35)
+            && !window.window().has_active_animations()
+            && previous.as_ref() == Some(&pixels)
+        {
+            break pixels;
+        }
+        assert!(
+            started.elapsed() < Duration::from_secs(2),
+            "{filename}: reopened Options did not settle; visible={}, animations={}",
+            window.window().is_visible(),
+            window.window().has_active_animations(),
+        );
+        previous = Some(pixels);
+        std::thread::sleep(Duration::from_millis(5));
+    };
+    assert_eq!(window.window().size(), slint::PhysicalSize::new(900, 900));
+    headless::save_png(
+        &std::path::Path::new(env!("CARGO_TARGET_TMPDIR")).join(filename),
+        &pixels,
+        900,
+        900,
+    )
+    .unwrap();
+
+    // Capture before caret/selection paint. Copy is real focused TextInput
+    // SelectAll/Copy, not the row model or a text-edited callback.
+    let sentinel = format!("impossible unopened connector clipboard: {filename}");
+    assert_ne!(raw, sentinel);
+    headless::set_clipboard_text(&sentinel);
+    let position = slint::LogicalPosition::new(750.0, 514.0);
+    native.dispatch_event(WindowEvent::PointerMoved { position });
+    native.dispatch_event(WindowEvent::PointerPressed {
+        position,
+        button: PointerEventButton::Left,
+    });
+    native.dispatch_event(WindowEvent::PointerReleased {
+        position,
+        button: PointerEventButton::Left,
+    });
+    native.dispatch_event(WindowEvent::KeyPressed {
+        text: Key::Control.into(),
+    });
+    for text in ["a", "c"] {
+        native.dispatch_event(WindowEvent::KeyPressed { text: text.into() });
+        native.dispatch_event(WindowEvent::KeyReleased { text: text.into() });
+    }
+    native.dispatch_event(WindowEvent::KeyReleased {
+        text: Key::Control.into(),
+    });
+    assert_eq!(
+        headless::clipboard_text().as_deref(),
+        Some(raw),
+        "{filename}: the actual focused field must copy every raw byte, including spaces and Unicode"
+    );
+    assert!(window.window().is_visible());
+}
+
 fn open(ui: &MainWindow, bound: &hydrus_gui::Bound) -> (OptionsWindow, i32) {
     ui.invoke_menu_title_pressed(0, 20.0, 22.0);
     let index = ui
@@ -159,6 +234,60 @@ fn actual_options_raw_connector_preserves_live_or_label_colour_query_and_retired
                 .text,
             case["reopened"].as_str().unwrap()
         );
+        let raw = case["reopened"].as_str().unwrap();
+        if let Some(filename) = match raw {
+            " / custom / " => Some("or-connector-ascii-reopened-native.png"),
+            " 🦊 " => Some("or-connector-fox-reopened-native.png"),
+            _ => None,
+        } {
+            let native = windows.get(windows.count() - 1).unwrap();
+            let full_settings = store.read(hydrus_gui::options::Settings::load).unwrap();
+            let query = bound.current.borrow().borrow().favourite_to_save().unwrap();
+            let live_rows: Vec<_> = ui
+                .get_predicates()
+                .iter()
+                .map(|row| (row.text, row.colour))
+                .collect();
+            let control = reopen
+                .get_rows()
+                .row_data(usize::try_from(reopened_row).unwrap())
+                .unwrap();
+            assert_eq!(control.label, LABEL);
+            assert_eq!(control.kind, 6);
+            assert_eq!(control.text, raw);
+            assert!(std::ptr::eq(
+                bound.options.borrow().as_ref().unwrap().window(),
+                reopen.window()
+            ));
+            capture_and_copy_reopened(&native, &reopen, raw, filename);
+            assert_eq!(
+                store.read(hydrus_gui::options::Settings::load).unwrap(),
+                full_settings
+            );
+            assert_eq!(
+                bound.current.borrow().borrow().favourite_to_save().unwrap(),
+                query
+            );
+            assert_eq!(
+                ui.get_predicates()
+                    .iter()
+                    .map(|row| (row.text, row.colour))
+                    .collect::<Vec<_>>(),
+                live_rows
+            );
+            assert_eq!(
+                reopen
+                    .get_rows()
+                    .row_data(usize::try_from(reopened_row).unwrap())
+                    .unwrap()
+                    .text,
+                raw
+            );
+            assert!(std::ptr::eq(
+                bound.options.borrow().as_ref().unwrap().window(),
+                reopen.window()
+            ));
+        }
         reopen.invoke_cancel();
         edit.invoke_text_edited(row, "retired owner".into());
         edit.invoke_apply();
