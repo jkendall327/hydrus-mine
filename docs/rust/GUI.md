@@ -3513,6 +3513,14 @@ Order are banked: 365 signed off, 10 existing candidates pending. All 709 GUI
 and 67 media tests passed.
 [Evidence](gui-coverage/checkpoints/1e2b2e25f/README.md).
 
+The outer MIME mapping follow-up corrects its Delete question to the reference
+“Remove all selected?” while preserving the protected all-files backstop and
+nested queue count-based questions. New bounded regressions cover Add/Edit
+cancellation, staged and saved mapping values, positive/declined deletion,
+reopening, and retained pending children against usable replacement owners.
+Six defining native captures and full Linux validation remain pending; no
+additional completion is banked by this source change.
+
 The main thumbnail and viewer default-open actions read current saved routes.
 Specific filetype entries replace general-class entries, then “all files”;
 an explicit empty specific entry uses the OS default. The first URL/file call

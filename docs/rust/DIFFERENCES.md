@@ -2493,6 +2493,15 @@ rendered review passed for exactly three nested File controls.
 Outer MIME mapping controls, physical nested button coordinates,
 universal geometry and deferred platforms receive no completion credit.
 
+The outer MIME mapping Delete prompt now follows Qt simple-delete wording,
+“Remove all selected?”, including when only PNG is selected. The nested File
+queue still uses its recorded count-based prompt. The bounded outer Add/Edit/
+Delete follow-up uses callbacks and explicit capture sizes; historical Qt
+images do not show matching chooser, blank-child or confirmation states.
+Full Linux execution and fresh independent rendered review remain pending.
+No all-MIME exhaustion, universal geometry, inherited keyboard/column behavior,
+broader ownership, parent or deferred-platform completion is claimed.
+
 OS calls are regenerated only in the opened routing draft, then persisted on
 Apply, preserving registered-call-only transactions. Native regeneration assigns
 the correct single-file pipeline; the reference manager's missing-file-OS branch
