@@ -1,0 +1,559 @@
+{
+  "source_commit": "a6d28f4e498a3d7a8f00ad6a61da62166bc54383",
+  "claims": [
+    {
+      "id": "audit-options-open-externally-single-file-calls-add",
+      "before_canonical_full_object": {
+        "id": "audit-options-open-externally-single-file-calls-add",
+        "parent_id": "audit-options-open-externally-single-file-calls-editor-list",
+        "label": "add",
+        "kind": "action",
+        "status": "missing",
+        "native_source": null,
+        "reference_source": {
+          "path": "hydrus/client/gui/panels/options/OpenExternallyPanel.py",
+          "line": 136,
+          "line_sha256": "33d400f47c1722939faeced0bae0d62a9c199ad4b61199286ae9472504e366ff"
+        },
+        "assessment": "Reference editor/control 'add' is recorded on 'open externally' and defined by the referenced options panel. No corresponding editable row exists in native options::pages; this is a missing GUI editing path, even if a setting is imported or consumed elsewhere.",
+        "evidence": [
+          {
+            "path": "crates/hydrus-gui-model/src/options.rs",
+            "line": 1626,
+            "role": "source_inspection",
+            "description": "Inspected complete native options registry: the explicitly listed native getter/setter rows are offered.",
+            "executed_in_inventory": false,
+            "line_sha256": "9b25465690948e42af43c4a0260d2651e872520f0dcd383f3510ff0712f4a148"
+          },
+          {
+            "path": "oracle/record_options_dialog.py",
+            "line": 1,
+            "role": "existing_oracle_recorder",
+            "description": "Existing recorder traverses the real Qt options dialog, including these page/box/control labels.",
+            "executed_in_inventory": false,
+            "line_sha256": "381f9bfc69d49d39040a7d5fc3197ce385019a2ba2de649622f841a8c658ed37"
+          }
+        ],
+        "limitations": [
+          "Native options registry has no editable 'add' control in this page/box path."
+        ],
+        "descendant_count": 0,
+        "descendant_status_counts": {},
+        "unique_feature_descendant_count": 0,
+        "unique_reachable_feature_count_including_shared": 1,
+        "native_id_candidates": []
+      },
+      "historical_manifest_claim_verbatim": {
+        "reference_id": "audit-options-open-externally-single-file-calls-add",
+        "id": "audit-options-open-externally-single-file-calls-add",
+        "before": "missing",
+        "previous_status": "missing",
+        "proposedStatus": "first_pass",
+        "proposed_status": "first_pass",
+        "exactBehavior": "Filetype Add shows remaining general groups followed by searchable MIME types without tuple sorting or GeneralFile; an owned detached calls child stages chosen registered File calls. Child Cancel discards, child Apply selects the sorted MIME row, only Options Apply persists. Registered names wash by stable key on atomic Options Apply; removed/wrong-type keys are dropped without name remapping. Parent Cancel/reopen and owner retirement are covered.",
+        "reference_source": {
+          "relativepath": "hydrus/client/gui/panels/options/OpenExternallyPanel.py",
+          "line": 136,
+          "symbol": "_AddMimeLaunch",
+          "line_sha256": "33d400f47c1722939faeced0bae0d62a9c199ad4b61199286ae9472504e366ff"
+        },
+        "source_anchors": [
+          {
+            "relativepath": "crates/hydrus-gui/src/options_open_externally.rs",
+            "line": 325,
+            "symbol": "fn queue_action(",
+            "line_sha256": "d9f5bace01847d5ec10b4c91e4d6529aa3af335f242f27f8a495ca30986c0871",
+            "commit": "140bb93bcddceb01a596849b2210a5e02aec9ff1"
+          },
+          {
+            "relativepath": "crates/hydrus-gui/src/options_open_externally.rs",
+            "line": 409,
+            "symbol": "fn open_files(",
+            "line_sha256": "3b73d34f22e301c5b2bb577675630701af714e6d5b7b7204fd63dacd76a44e8a",
+            "commit": "140bb93bcddceb01a596849b2210a5e02aec9ff1"
+          },
+          {
+            "relativepath": "crates/hydrus-gui/src/options_open_externally.rs",
+            "line": 579,
+            "symbol": "fn file_action(",
+            "line_sha256": "50b78525b4171dde47a2f2826990faea5d6fe740fe99f6e16c926af736e3f828",
+            "commit": "140bb93bcddceb01a596849b2210a5e02aec9ff1"
+          },
+          {
+            "relativepath": "crates/hydrus-gui-model/src/open_externally.rs",
+            "line": 18,
+            "symbol": "pub fn choices(",
+            "line_sha256": "030779e364fb5a23a2c749621cf5c7f9462da0f27ddc98b2f81b9e3410a8d57d",
+            "commit": "140bb93bcddceb01a596849b2210a5e02aec9ff1"
+          },
+          {
+            "relativepath": "crates/hydrus-gui-model/src/open_externally.rs",
+            "line": 95,
+            "symbol": "pub fn move_selected(",
+            "line_sha256": "dd46b1b429757b7e3395f8546c11b2f048ebd277cfbabca84e2ed7e111ca48c2",
+            "commit": "140bb93bcddceb01a596849b2210a5e02aec9ff1"
+          },
+          {
+            "relativepath": "crates/hydrus-core/src/open_externally.rs",
+            "line": 82,
+            "symbol": "pub fn wash(&mut self",
+            "line_sha256": "13402a6dd7f2166db2935fc81d066fca54bd61c1100243aa75609339e084cce1",
+            "commit": "140bb93bcddceb01a596849b2210a5e02aec9ff1"
+          },
+          {
+            "relativepath": "crates/hydrus-gui/src/open_externally_launch.rs",
+            "line": 101,
+            "symbol": "pub fn file(",
+            "line_sha256": "4433c594bc6574ac282f2cdfd6bd118879a30d4aa31397ccc65436053d69557c",
+            "commit": "140bb93bcddceb01a596849b2210a5e02aec9ff1"
+          },
+          {
+            "relativepath": "crates/hydrus-gui/src/lib.rs",
+            "line": 473,
+            "symbol": "window.invoke_retire_external_launches();",
+            "line_sha256": "7ffb048a3f9a373699af125185086d571626c4e82df894a22b09114d0cb661c9",
+            "commit": "140bb93bcddceb01a596849b2210a5e02aec9ff1"
+          },
+          {
+            "relativepath": "crates/hydrus-store/src/settings.rs",
+            "line": 1448,
+            "symbol": "impl Setting for hydrus_core::open_externally::Routing",
+            "line_sha256": "32a53c74a236a79877d5f3631c840a16e0301822eb02f46286555eea8a7057ec",
+            "commit": "140bb93bcddceb01a596849b2210a5e02aec9ff1"
+          }
+        ],
+        "test_anchors": [
+          {
+            "relativepath": "crates/hydrus-gui-model/tests/model/open_externally.rs",
+            "line": 38,
+            "symbol": "fn actual_qt_registered_choices",
+            "line_sha256": "5287cd94749d27a4a6f67952826cf5aa960f429fbf31208ecfbeb6fe86d83212",
+            "commit": "140bb93bcddceb01a596849b2210a5e02aec9ff1"
+          },
+          {
+            "relativepath": "crates/hydrus-gui-model/tests/model/open_externally.rs",
+            "line": 101,
+            "symbol": "fn washing_renames",
+            "line_sha256": "21276bea1321b25e124015c16995df306da0c50d0c6c5d867d8ecb5db105fb39",
+            "commit": "140bb93bcddceb01a596849b2210a5e02aec9ff1"
+          },
+          {
+            "relativepath": "crates/hydrus-gui-model/tests/model/open_externally.rs",
+            "line": 165,
+            "symbol": "fn configured_empty_specific",
+            "line_sha256": "ea1daa5e54015543032c40fd62278d7d0b2da5d67f0ea94c42b10534a6ecaca1",
+            "commit": "140bb93bcddceb01a596849b2210a5e02aec9ff1"
+          },
+          {
+            "relativepath": "crates/hydrus-gui/tests/gui/open_externally.rs",
+            "line": 149,
+            "symbol": "fn options_routes_replay",
+            "line_sha256": "8300f392e32636af54b2e93a688474aa6b132aa496e98bc8cdc2a7c51e117a84",
+            "commit": "140bb93bcddceb01a596849b2210a5e02aec9ff1"
+          },
+          {
+            "relativepath": "crates/hydrus-gui/tests/gui/open_externally.rs",
+            "line": 377,
+            "symbol": "fn saved_routes_reach",
+            "line_sha256": "a51f51e5b0c3489bcf59abce9ebe265d2926054eade9b8a83479f8d8cf2407ab",
+            "commit": "140bb93bcddceb01a596849b2210a5e02aec9ff1"
+          },
+          {
+            "relativepath": "crates/hydrus-gui/tests/gui/open_externally.rs",
+            "line": 527,
+            "symbol": "fn saved_registered_vectors",
+            "line_sha256": "3623f632cbd337dd0ee856cfaadf782a28a84deb5a67c6f005f6f3ff757664aa",
+            "commit": "140bb93bcddceb01a596849b2210a5e02aec9ff1"
+          }
+        ],
+        "reference_recording": {
+          "script": "oracle/record_open_externally.py",
+          "fixture": "oracle/fixtures/open_externally.json",
+          "screenshot": "oracle/fixtures/open_externally.png",
+          "commit": "140bb93bcddceb01a596849b2210a5e02aec9ff1",
+          "executed_at": "2026-10-05 05:38:07 UTC",
+          "result": "Actual v688 Qt temporary basic client; real Options panel, nested DialogEdit/call queue, UpdateOptions and re-open/washing. Scripted chooser/confirmation outcomes, actual duplicate filtering and explicit one-choice prompt flags; MIME tuple order, GeneralFile mixed-delete protection, queue Add/Edit/Cancel/Down/captured Delete. Actual GUI launch actions dispatch typed first call inputs, exact missing-call notice/no fallback and explicit-empty/default OS selection; Callable.Call captured inputs instead of launching processes/network. Synthetic example.com Unicode URLs; PNG executed and inspected."
+        },
+        "limitations": [
+          "Broader original page/list parents remain Partial; no parent promotion. Qt decoration, column sorting/persistence and inherited queue keyboard controls are not claimed.",
+          "Legacy executable-manager/routing import, deeper per-call media/URL menus and full process output/error presentation remain Partial. OS file default regeneration uses the correct File pipeline; the reference missing-file-OS branch generates the URL pipeline.",
+          "Native asynchronous registered-process submission pauses the viewer on submission rather than after bounded execution completion; submitted external programs retain their lifetime after owner close.",
+          "Authored model/store/native regressions and native PNG assertions await hosted CI. No local Cargo builds, Rust tests or mutation tests were run."
+        ]
+      },
+      "current_pending_assessment": "Filetype Add shows remaining general groups followed by searchable MIME types without tuple sorting or GeneralFile; an owned detached calls child stages chosen registered File calls. Child Cancel discards, child Apply selects the sorted MIME row, only Options Apply persists. Registered names wash by stable key on atomic Options Apply; removed/wrong-type keys are dropped without name remapping. Parent Cancel/reopen and owner retirement are covered.",
+      "no_native_editor_absence_reconciled_from_committed_source_only": true,
+      "approval": false
+    },
+    {
+      "id": "audit-options-open-externally-single-file-calls-edit",
+      "before_canonical_full_object": {
+        "id": "audit-options-open-externally-single-file-calls-edit",
+        "parent_id": "audit-options-open-externally-single-file-calls-editor-list",
+        "label": "edit",
+        "kind": "action",
+        "status": "missing",
+        "native_source": null,
+        "reference_source": {
+          "path": "hydrus/client/gui/panels/options/OpenExternallyPanel.py",
+          "line": 137,
+          "line_sha256": "4b2cd59cc7a50f3984e16aff56e49890163bcffc18c350faafec4bab0b315734"
+        },
+        "assessment": "Reference editor/control 'edit' is recorded on 'open externally' and defined by the referenced options panel. No corresponding editable row exists in native options::pages; this is a missing GUI editing path, even if a setting is imported or consumed elsewhere.",
+        "evidence": [
+          {
+            "path": "crates/hydrus-gui-model/src/options.rs",
+            "line": 1626,
+            "role": "source_inspection",
+            "description": "Inspected complete native options registry: the explicitly listed native getter/setter rows are offered.",
+            "executed_in_inventory": false,
+            "line_sha256": "9b25465690948e42af43c4a0260d2651e872520f0dcd383f3510ff0712f4a148"
+          },
+          {
+            "path": "oracle/record_options_dialog.py",
+            "line": 1,
+            "role": "existing_oracle_recorder",
+            "description": "Existing recorder traverses the real Qt options dialog, including these page/box/control labels.",
+            "executed_in_inventory": false,
+            "line_sha256": "381f9bfc69d49d39040a7d5fc3197ce385019a2ba2de649622f841a8c658ed37"
+          }
+        ],
+        "limitations": [
+          "Native options registry has no editable 'edit' control in this page/box path."
+        ],
+        "descendant_count": 0,
+        "descendant_status_counts": {},
+        "unique_feature_descendant_count": 0,
+        "unique_reachable_feature_count_including_shared": 1,
+        "native_id_candidates": []
+      },
+      "historical_manifest_claim_verbatim": {
+        "reference_id": "audit-options-open-externally-single-file-calls-edit",
+        "id": "audit-options-open-externally-single-file-calls-edit",
+        "before": "missing",
+        "previous_status": "missing",
+        "proposedStatus": "first_pass",
+        "proposed_status": "first_pass",
+        "exactBehavior": "Filetype Edit opens the selected existing MIME queue in an owned detached child; editing preserves MIME identity and order, child Cancel discards, child Apply remains staged until Options Apply. Registered names wash by stable key on atomic Options Apply; removed/wrong-type keys are dropped without name remapping. Parent Cancel/reopen and owner retirement are covered.",
+        "reference_source": {
+          "relativepath": "hydrus/client/gui/panels/options/OpenExternallyPanel.py",
+          "line": 132,
+          "symbol": "_EditMimeLaunch",
+          "line_sha256": "9ec2a5c7bdfc020f0252e0d2f649f37ca46b1cd11493a4c0fe23013e225f981c"
+        },
+        "source_anchors": [
+          {
+            "relativepath": "crates/hydrus-gui/src/options_open_externally.rs",
+            "line": 325,
+            "symbol": "fn queue_action(",
+            "line_sha256": "d9f5bace01847d5ec10b4c91e4d6529aa3af335f242f27f8a495ca30986c0871",
+            "commit": "140bb93bcddceb01a596849b2210a5e02aec9ff1"
+          },
+          {
+            "relativepath": "crates/hydrus-gui/src/options_open_externally.rs",
+            "line": 409,
+            "symbol": "fn open_files(",
+            "line_sha256": "3b73d34f22e301c5b2bb577675630701af714e6d5b7b7204fd63dacd76a44e8a",
+            "commit": "140bb93bcddceb01a596849b2210a5e02aec9ff1"
+          },
+          {
+            "relativepath": "crates/hydrus-gui/src/options_open_externally.rs",
+            "line": 579,
+            "symbol": "fn file_action(",
+            "line_sha256": "50b78525b4171dde47a2f2826990faea5d6fe740fe99f6e16c926af736e3f828",
+            "commit": "140bb93bcddceb01a596849b2210a5e02aec9ff1"
+          },
+          {
+            "relativepath": "crates/hydrus-gui-model/src/open_externally.rs",
+            "line": 18,
+            "symbol": "pub fn choices(",
+            "line_sha256": "030779e364fb5a23a2c749621cf5c7f9462da0f27ddc98b2f81b9e3410a8d57d",
+            "commit": "140bb93bcddceb01a596849b2210a5e02aec9ff1"
+          },
+          {
+            "relativepath": "crates/hydrus-gui-model/src/open_externally.rs",
+            "line": 95,
+            "symbol": "pub fn move_selected(",
+            "line_sha256": "dd46b1b429757b7e3395f8546c11b2f048ebd277cfbabca84e2ed7e111ca48c2",
+            "commit": "140bb93bcddceb01a596849b2210a5e02aec9ff1"
+          },
+          {
+            "relativepath": "crates/hydrus-core/src/open_externally.rs",
+            "line": 82,
+            "symbol": "pub fn wash(&mut self",
+            "line_sha256": "13402a6dd7f2166db2935fc81d066fca54bd61c1100243aa75609339e084cce1",
+            "commit": "140bb93bcddceb01a596849b2210a5e02aec9ff1"
+          },
+          {
+            "relativepath": "crates/hydrus-gui/src/open_externally_launch.rs",
+            "line": 101,
+            "symbol": "pub fn file(",
+            "line_sha256": "4433c594bc6574ac282f2cdfd6bd118879a30d4aa31397ccc65436053d69557c",
+            "commit": "140bb93bcddceb01a596849b2210a5e02aec9ff1"
+          },
+          {
+            "relativepath": "crates/hydrus-gui/src/lib.rs",
+            "line": 473,
+            "symbol": "window.invoke_retire_external_launches();",
+            "line_sha256": "7ffb048a3f9a373699af125185086d571626c4e82df894a22b09114d0cb661c9",
+            "commit": "140bb93bcddceb01a596849b2210a5e02aec9ff1"
+          },
+          {
+            "relativepath": "crates/hydrus-store/src/settings.rs",
+            "line": 1448,
+            "symbol": "impl Setting for hydrus_core::open_externally::Routing",
+            "line_sha256": "32a53c74a236a79877d5f3631c840a16e0301822eb02f46286555eea8a7057ec",
+            "commit": "140bb93bcddceb01a596849b2210a5e02aec9ff1"
+          }
+        ],
+        "test_anchors": [
+          {
+            "relativepath": "crates/hydrus-gui-model/tests/model/open_externally.rs",
+            "line": 38,
+            "symbol": "fn actual_qt_registered_choices",
+            "line_sha256": "5287cd94749d27a4a6f67952826cf5aa960f429fbf31208ecfbeb6fe86d83212",
+            "commit": "140bb93bcddceb01a596849b2210a5e02aec9ff1"
+          },
+          {
+            "relativepath": "crates/hydrus-gui-model/tests/model/open_externally.rs",
+            "line": 101,
+            "symbol": "fn washing_renames",
+            "line_sha256": "21276bea1321b25e124015c16995df306da0c50d0c6c5d867d8ecb5db105fb39",
+            "commit": "140bb93bcddceb01a596849b2210a5e02aec9ff1"
+          },
+          {
+            "relativepath": "crates/hydrus-gui-model/tests/model/open_externally.rs",
+            "line": 165,
+            "symbol": "fn configured_empty_specific",
+            "line_sha256": "ea1daa5e54015543032c40fd62278d7d0b2da5d67f0ea94c42b10534a6ecaca1",
+            "commit": "140bb93bcddceb01a596849b2210a5e02aec9ff1"
+          },
+          {
+            "relativepath": "crates/hydrus-gui/tests/gui/open_externally.rs",
+            "line": 149,
+            "symbol": "fn options_routes_replay",
+            "line_sha256": "8300f392e32636af54b2e93a688474aa6b132aa496e98bc8cdc2a7c51e117a84",
+            "commit": "140bb93bcddceb01a596849b2210a5e02aec9ff1"
+          },
+          {
+            "relativepath": "crates/hydrus-gui/tests/gui/open_externally.rs",
+            "line": 377,
+            "symbol": "fn saved_routes_reach",
+            "line_sha256": "a51f51e5b0c3489bcf59abce9ebe265d2926054eade9b8a83479f8d8cf2407ab",
+            "commit": "140bb93bcddceb01a596849b2210a5e02aec9ff1"
+          },
+          {
+            "relativepath": "crates/hydrus-gui/tests/gui/open_externally.rs",
+            "line": 527,
+            "symbol": "fn saved_registered_vectors",
+            "line_sha256": "3623f632cbd337dd0ee856cfaadf782a28a84deb5a67c6f005f6f3ff757664aa",
+            "commit": "140bb93bcddceb01a596849b2210a5e02aec9ff1"
+          }
+        ],
+        "reference_recording": {
+          "script": "oracle/record_open_externally.py",
+          "fixture": "oracle/fixtures/open_externally.json",
+          "screenshot": "oracle/fixtures/open_externally.png",
+          "commit": "140bb93bcddceb01a596849b2210a5e02aec9ff1",
+          "executed_at": "2026-10-05 05:38:07 UTC",
+          "result": "Actual v688 Qt temporary basic client; real Options panel, nested DialogEdit/call queue, UpdateOptions and re-open/washing. Scripted chooser/confirmation outcomes, actual duplicate filtering and explicit one-choice prompt flags; MIME tuple order, GeneralFile mixed-delete protection, queue Add/Edit/Cancel/Down/captured Delete. Actual GUI launch actions dispatch typed first call inputs, exact missing-call notice/no fallback and explicit-empty/default OS selection; Callable.Call captured inputs instead of launching processes/network. Synthetic example.com Unicode URLs; PNG executed and inspected."
+        },
+        "limitations": [
+          "Broader original page/list parents remain Partial; no parent promotion. Qt decoration, column sorting/persistence and inherited queue keyboard controls are not claimed.",
+          "Legacy executable-manager/routing import, deeper per-call media/URL menus and full process output/error presentation remain Partial. OS file default regeneration uses the correct File pipeline; the reference missing-file-OS branch generates the URL pipeline.",
+          "Native asynchronous registered-process submission pauses the viewer on submission rather than after bounded execution completion; submitted external programs retain their lifetime after owner close.",
+          "Authored model/store/native regressions and native PNG assertions await hosted CI. No local Cargo builds, Rust tests or mutation tests were run."
+        ]
+      },
+      "current_pending_assessment": "Filetype Edit opens the selected existing MIME queue in an owned detached child; editing preserves MIME identity and order, child Cancel discards, child Apply remains staged until Options Apply. Registered names wash by stable key on atomic Options Apply; removed/wrong-type keys are dropped without name remapping. Parent Cancel/reopen and owner retirement are covered.",
+      "no_native_editor_absence_reconciled_from_committed_source_only": true,
+      "approval": false
+    },
+    {
+      "id": "audit-options-open-externally-single-file-calls-delete",
+      "before_canonical_full_object": {
+        "id": "audit-options-open-externally-single-file-calls-delete",
+        "parent_id": "audit-options-open-externally-single-file-calls-editor-list",
+        "label": "delete",
+        "kind": "action",
+        "status": "missing",
+        "native_source": null,
+        "reference_source": {
+          "path": "hydrus/client/gui/panels/options/OpenExternallyPanel.py",
+          "line": 175,
+          "line_sha256": "942658b85dac3a5e2c4447d1cb336006354f7bb34ab94b5fdc96043fbbcf4fa7"
+        },
+        "assessment": "Reference editor/control 'delete' is recorded on 'open externally' and defined by the referenced options panel. No corresponding editable row exists in native options::pages; this is a missing GUI editing path, even if a setting is imported or consumed elsewhere.",
+        "evidence": [
+          {
+            "path": "crates/hydrus-gui-model/src/options.rs",
+            "line": 1626,
+            "role": "source_inspection",
+            "description": "Inspected complete native options registry: the explicitly listed native getter/setter rows are offered.",
+            "executed_in_inventory": false,
+            "line_sha256": "9b25465690948e42af43c4a0260d2651e872520f0dcd383f3510ff0712f4a148"
+          },
+          {
+            "path": "oracle/record_options_dialog.py",
+            "line": 1,
+            "role": "existing_oracle_recorder",
+            "description": "Existing recorder traverses the real Qt options dialog, including these page/box/control labels.",
+            "executed_in_inventory": false,
+            "line_sha256": "381f9bfc69d49d39040a7d5fc3197ce385019a2ba2de649622f841a8c658ed37"
+          }
+        ],
+        "limitations": [
+          "Native options registry has no editable 'delete' control in this page/box path."
+        ],
+        "descendant_count": 0,
+        "descendant_status_counts": {},
+        "unique_feature_descendant_count": 0,
+        "unique_reachable_feature_count_including_shared": 1,
+        "native_id_candidates": []
+      },
+      "historical_manifest_claim_verbatim": {
+        "reference_id": "audit-options-open-externally-single-file-calls-delete",
+        "id": "audit-options-open-externally-single-file-calls-delete",
+        "before": "missing",
+        "previous_status": "missing",
+        "proposedStatus": "first_pass",
+        "proposed_status": "first_pass",
+        "exactBehavior": "Filetype Delete captures selected MIME identities and asks exact Remove all selected?; decline preserves rows. Any selection containing GeneralFile blocks the entire deletion. Accepted deletion stays staged until Options Apply; Cancel discards and stale callbacks cannot write. Registered names wash by stable key on atomic Options Apply; removed/wrong-type keys are dropped without name remapping. Parent Cancel/reopen and owner retirement are covered.",
+        "reference_source": {
+          "relativepath": "hydrus/client/gui/panels/options/OpenExternallyPanel.py",
+          "line": 132,
+          "symbol": "_GeneralFileIsNotSelected",
+          "line_sha256": "9ec2a5c7bdfc020f0252e0d2f649f37ca46b1cd11493a4c0fe23013e225f981c"
+        },
+        "source_anchors": [
+          {
+            "relativepath": "crates/hydrus-gui/src/options_open_externally.rs",
+            "line": 325,
+            "symbol": "fn queue_action(",
+            "line_sha256": "d9f5bace01847d5ec10b4c91e4d6529aa3af335f242f27f8a495ca30986c0871",
+            "commit": "140bb93bcddceb01a596849b2210a5e02aec9ff1"
+          },
+          {
+            "relativepath": "crates/hydrus-gui/src/options_open_externally.rs",
+            "line": 409,
+            "symbol": "fn open_files(",
+            "line_sha256": "3b73d34f22e301c5b2bb577675630701af714e6d5b7b7204fd63dacd76a44e8a",
+            "commit": "140bb93bcddceb01a596849b2210a5e02aec9ff1"
+          },
+          {
+            "relativepath": "crates/hydrus-gui/src/options_open_externally.rs",
+            "line": 579,
+            "symbol": "fn file_action(",
+            "line_sha256": "50b78525b4171dde47a2f2826990faea5d6fe740fe99f6e16c926af736e3f828",
+            "commit": "140bb93bcddceb01a596849b2210a5e02aec9ff1"
+          },
+          {
+            "relativepath": "crates/hydrus-gui-model/src/open_externally.rs",
+            "line": 18,
+            "symbol": "pub fn choices(",
+            "line_sha256": "030779e364fb5a23a2c749621cf5c7f9462da0f27ddc98b2f81b9e3410a8d57d",
+            "commit": "140bb93bcddceb01a596849b2210a5e02aec9ff1"
+          },
+          {
+            "relativepath": "crates/hydrus-gui-model/src/open_externally.rs",
+            "line": 95,
+            "symbol": "pub fn move_selected(",
+            "line_sha256": "dd46b1b429757b7e3395f8546c11b2f048ebd277cfbabca84e2ed7e111ca48c2",
+            "commit": "140bb93bcddceb01a596849b2210a5e02aec9ff1"
+          },
+          {
+            "relativepath": "crates/hydrus-core/src/open_externally.rs",
+            "line": 82,
+            "symbol": "pub fn wash(&mut self",
+            "line_sha256": "13402a6dd7f2166db2935fc81d066fca54bd61c1100243aa75609339e084cce1",
+            "commit": "140bb93bcddceb01a596849b2210a5e02aec9ff1"
+          },
+          {
+            "relativepath": "crates/hydrus-gui/src/open_externally_launch.rs",
+            "line": 101,
+            "symbol": "pub fn file(",
+            "line_sha256": "4433c594bc6574ac282f2cdfd6bd118879a30d4aa31397ccc65436053d69557c",
+            "commit": "140bb93bcddceb01a596849b2210a5e02aec9ff1"
+          },
+          {
+            "relativepath": "crates/hydrus-gui/src/lib.rs",
+            "line": 473,
+            "symbol": "window.invoke_retire_external_launches();",
+            "line_sha256": "7ffb048a3f9a373699af125185086d571626c4e82df894a22b09114d0cb661c9",
+            "commit": "140bb93bcddceb01a596849b2210a5e02aec9ff1"
+          },
+          {
+            "relativepath": "crates/hydrus-store/src/settings.rs",
+            "line": 1448,
+            "symbol": "impl Setting for hydrus_core::open_externally::Routing",
+            "line_sha256": "32a53c74a236a79877d5f3631c840a16e0301822eb02f46286555eea8a7057ec",
+            "commit": "140bb93bcddceb01a596849b2210a5e02aec9ff1"
+          }
+        ],
+        "test_anchors": [
+          {
+            "relativepath": "crates/hydrus-gui-model/tests/model/open_externally.rs",
+            "line": 38,
+            "symbol": "fn actual_qt_registered_choices",
+            "line_sha256": "5287cd94749d27a4a6f67952826cf5aa960f429fbf31208ecfbeb6fe86d83212",
+            "commit": "140bb93bcddceb01a596849b2210a5e02aec9ff1"
+          },
+          {
+            "relativepath": "crates/hydrus-gui-model/tests/model/open_externally.rs",
+            "line": 101,
+            "symbol": "fn washing_renames",
+            "line_sha256": "21276bea1321b25e124015c16995df306da0c50d0c6c5d867d8ecb5db105fb39",
+            "commit": "140bb93bcddceb01a596849b2210a5e02aec9ff1"
+          },
+          {
+            "relativepath": "crates/hydrus-gui-model/tests/model/open_externally.rs",
+            "line": 165,
+            "symbol": "fn configured_empty_specific",
+            "line_sha256": "ea1daa5e54015543032c40fd62278d7d0b2da5d67f0ea94c42b10534a6ecaca1",
+            "commit": "140bb93bcddceb01a596849b2210a5e02aec9ff1"
+          },
+          {
+            "relativepath": "crates/hydrus-gui/tests/gui/open_externally.rs",
+            "line": 149,
+            "symbol": "fn options_routes_replay",
+            "line_sha256": "8300f392e32636af54b2e93a688474aa6b132aa496e98bc8cdc2a7c51e117a84",
+            "commit": "140bb93bcddceb01a596849b2210a5e02aec9ff1"
+          },
+          {
+            "relativepath": "crates/hydrus-gui/tests/gui/open_externally.rs",
+            "line": 377,
+            "symbol": "fn saved_routes_reach",
+            "line_sha256": "a51f51e5b0c3489bcf59abce9ebe265d2926054eade9b8a83479f8d8cf2407ab",
+            "commit": "140bb93bcddceb01a596849b2210a5e02aec9ff1"
+          },
+          {
+            "relativepath": "crates/hydrus-gui/tests/gui/open_externally.rs",
+            "line": 527,
+            "symbol": "fn saved_registered_vectors",
+            "line_sha256": "3623f632cbd337dd0ee856cfaadf782a28a84deb5a67c6f005f6f3ff757664aa",
+            "commit": "140bb93bcddceb01a596849b2210a5e02aec9ff1"
+          }
+        ],
+        "reference_recording": {
+          "script": "oracle/record_open_externally.py",
+          "fixture": "oracle/fixtures/open_externally.json",
+          "screenshot": "oracle/fixtures/open_externally.png",
+          "commit": "140bb93bcddceb01a596849b2210a5e02aec9ff1",
+          "executed_at": "2026-10-05 05:38:07 UTC",
+          "result": "Actual v688 Qt temporary basic client; real Options panel, nested DialogEdit/call queue, UpdateOptions and re-open/washing. Scripted chooser/confirmation outcomes, actual duplicate filtering and explicit one-choice prompt flags; MIME tuple order, GeneralFile mixed-delete protection, queue Add/Edit/Cancel/Down/captured Delete. Actual GUI launch actions dispatch typed first call inputs, exact missing-call notice/no fallback and explicit-empty/default OS selection; Callable.Call captured inputs instead of launching processes/network. Synthetic example.com Unicode URLs; PNG executed and inspected."
+        },
+        "limitations": [
+          "Broader original page/list parents remain Partial; no parent promotion. Qt decoration, column sorting/persistence and inherited queue keyboard controls are not claimed.",
+          "Legacy executable-manager/routing import, deeper per-call media/URL menus and full process output/error presentation remain Partial. OS file default regeneration uses the correct File pipeline; the reference missing-file-OS branch generates the URL pipeline.",
+          "Native asynchronous registered-process submission pauses the viewer on submission rather than after bounded execution completion; submitted external programs retain their lifetime after owner close.",
+          "Authored model/store/native regressions and native PNG assertions await hosted CI. No local Cargo builds, Rust tests or mutation tests were run."
+        ]
+      },
+      "current_pending_assessment": "Filetype Delete captures selected MIME identities and asks exact Remove all selected?; decline preserves rows. Any selection containing GeneralFile blocks the entire deletion. Accepted deletion stays staged until Options Apply; Cancel discards and stale callbacks cannot write. Registered names wash by stable key on atomic Options Apply; removed/wrong-type keys are dropped without name remapping. Parent Cancel/reopen and owner retirement are covered.",
+      "no_native_editor_absence_reconciled_from_committed_source_only": true,
+      "approval": false
+    }
+  ],
+  "historical_manifest_unchanged": true,
+  "approval": false
+}

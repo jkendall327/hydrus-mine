@@ -1,0 +1,73 @@
+{
+  "base_commit": "da53daa67f7fb88870ae653f61def7cfbe514242",
+  "agent_commit": "5716f80e48946850dcfca10df89d833b6e5d3de9",
+  "test_source_sha256": "27fb251a2751a640ac129aa7416377a8f5a0518130c5bcad1320986e107bd0ea",
+  "approval": false,
+  "fresh_images_pending": true,
+  "expected_filenames": [
+    "mime-add-chooser.png",
+    "mime-add-blank-calls.png",
+    "mime-edit-existing-calls.png",
+    "mime-mapping-reopened.png",
+    "mime-delete-question.png",
+    "mime-delete-staged.png"
+  ],
+  "captures": [
+    {
+      "filename": "mime-add-chooser.png",
+      "dimensions": [
+        520,
+        440
+      ],
+      "state": "Actual remaining MIME chooser before Cancel: exact recorded chooser4 order/title; full list checked while visible list scrolls.",
+      "adapter": "Retained actual constructor adapter before later child creation; routing_capture pumps real timers, requires at least35ms/inactive animations/stable rendered pixels and live visibility within2s."
+    },
+    {
+      "filename": "mime-add-blank-calls.png",
+      "dimensions": [
+        580,
+        340
+      ],
+      "state": "Actual new blank edit calls child before reference Add-cancel branch; no rows or selection.",
+      "adapter": "Retained actual constructor adapter before later child creation; routing_capture pumps real timers, requires at least35ms/inactive animations/stable rendered pixels and live visibility within2s."
+    },
+    {
+      "filename": "mime-edit-existing-calls.png",
+      "dimensions": [
+        580,
+        340
+      ],
+      "state": "Existing selected PNG Edit opens edit launch path with File two then File one 日本 before adding OS; reference event9 queue.",
+      "adapter": "Retained actual constructor adapter before later child creation; routing_capture pumps real timers, requires at least35ms/inactive animations/stable rendered pixels and live visibility within2s."
+    },
+    {
+      "filename": "mime-mapping-reopened.png",
+      "dimensions": [
+        960,
+        800
+      ],
+      "state": "Actual saved/reopened event11 mapping after accepted Add then reopened accepted Edit; PNG selected, full One/Two/OS summary.",
+      "adapter": "Retained actual constructor adapter before later child creation; routing_capture pumps real timers, requires at least35ms/inactive animations/stable rendered pixels and live visibility within2s."
+    },
+    {
+      "filename": "mime-delete-question.png",
+      "dimensions": [
+        520,
+        200
+      ],
+      "state": "Owned outer Question exact recorded notices2 Remove all selected?, before No answer.",
+      "adapter": "Retained actual constructor adapter before later child creation; routing_capture pumps real timers, requires at least35ms/inactive animations/stable rendered pixels and live visibility within2s."
+    },
+    {
+      "filename": "mime-delete-staged.png",
+      "dimensions": [
+        960,
+        800
+      ],
+      "state": "After Yes, exact event13 only GeneralFile remains, selection/deletion flags clear; Store still initial until Cancel.",
+      "adapter": "Retained actual constructor adapter before later child creation; routing_capture pumps real timers, requires at least35ms/inactive animations/stable rendered pixels and live visibility within2s."
+    }
+  ],
+  "matching_qt_child_or_question_pngs": false,
+  "scope": "Finite callback routes and explicitly supported sizes. No child physical-coordinate, OS-window chrome or pixel parity claim."
+}

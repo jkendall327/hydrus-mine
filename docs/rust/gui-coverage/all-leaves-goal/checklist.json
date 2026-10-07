@@ -4,12 +4,12 @@
   "goal": "All individual feature leaves in the report implemented and explicitly verified.",
   "classification_audit_source": "05000f10eafc4211d6856549d0073edb90ba5811",
   "classification_audit": "audit-05000f10e.json",
-  "validated_implementation_source": "1e2b2e25fd89b24253f4387f71115e675fdb657b",
+  "validated_implementation_source": "a6d28f4e498a3d7a8f00ad6a61da62166bc54383",
   "distinct_terminal_leaves": 1274,
   "baseline_deficit_leaves": 813,
   "historical_first_pass_leaves": 461,
-  "explicit_implementation_signoffs": 365,
-  "remaining_without_explicit_signoff": 909,
+  "explicit_implementation_signoffs": 368,
+  "remaining_without_explicit_signoff": 906,
   "implementation_ledger": "../overnight/progress.json",
   "historical_verification_approvals": [],
   "leaves": [
@@ -4206,17 +4206,17 @@
     {
       "id": "audit-options-open-externally-single-file-calls-add",
       "baseline_status": "missing",
-      "signed_off_in_implementation_ledger": false
+      "signed_off_in_implementation_ledger": true
     },
     {
       "id": "audit-options-open-externally-single-file-calls-delete",
       "baseline_status": "missing",
-      "signed_off_in_implementation_ledger": false
+      "signed_off_in_implementation_ledger": true
     },
     {
       "id": "audit-options-open-externally-single-file-calls-edit",
       "baseline_status": "missing",
-      "signed_off_in_implementation_ledger": false
+      "signed_off_in_implementation_ledger": true
     },
     {
       "id": "audit-options-open-externally-url-calls-add",
@@ -6384,6 +6384,6 @@
       "signed_off_in_implementation_ledger": true
     }
   ],
-  "previous_checkpoint_commit": "18b3a665e6cb145c10efdc7d13c6da614308d926",
-  "checkpoint_evidence": "../checkpoints/1e2b2e25f/README.md"
+  "previous_checkpoint_commit": "da53daa67f7fb88870ae653f61def7cfbe514242",
+  "checkpoint_evidence": "../checkpoints/a6d28f4e4/README.md"
 }

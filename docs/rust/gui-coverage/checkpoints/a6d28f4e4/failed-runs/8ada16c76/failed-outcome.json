@@ -1,0 +1,200 @@
+{
+  "schema_version": 1,
+  "source_commit": "8ada16c768f07d89c676b0ec09a6a56150f26ace",
+  "run_id": 37609745626,
+  "run_attempt": 1,
+  "run_status": "completed",
+  "conclusion": "failure",
+  "validation_scope": "linux",
+  "required_platforms": [
+    "linux"
+  ],
+  "deferred_platforms": [
+    "windows",
+    "macos"
+  ],
+  "accepted_completion_delta": 0,
+  "approval": false,
+  "banked": false,
+  "canonical_writes": false,
+  "green_collector_called": false,
+  "failed_preparation_preserved": "/workspace/validation-reviews/mime-mappings3/prep-8ada16c76 remains frozen; no runtime/render approval supplied.",
+  "gui_tests": {
+    "passed": 708,
+    "failed": 2,
+    "ignored": 0,
+    "seconds": 144.48
+  },
+  "media_tests": {
+    "passed": 67,
+    "failed": 0,
+    "ignored": 0,
+    "seconds": 1.01
+  },
+  "failures": [
+    {
+      "test": "menu_choice_wheel::options_staging_saved_policy_bubbling_and_retired_roots_are_owned",
+      "path": "crates/hydrus-gui/tests/gui/menu_choice_wheel.rs",
+      "line": 529,
+      "error": "assertion left == right failed",
+      "actual": 0,
+      "expected": 2,
+      "logged_context": "re-shown Options physical wheel, visible=true, scroll_y=0, before_index=0, count=3; frame h32 w260 x828 y78",
+      "status": "Failed runtime diagnostic; root investigating. No cause attribution or approval."
+    },
+    {
+      "test": "open_externally::outer_mime_mapping_reference_replay_saved_keys_delete_and_retired_children",
+      "path": "crates/hydrus-gui/tests/gui/open_externally.rs",
+      "line": 1735,
+      "error": "Option::unwrap on None in select_mapping setup",
+      "status": "New focused MIME test failed before every selected export; root investigating. No source/final approval."
+    }
+  ],
+  "jobs": {
+    "parity-models": {
+      "id": 112753842388,
+      "status": "completed",
+      "conclusion": "success"
+    },
+    "check": {
+      "id": 112753842450,
+      "status": "completed",
+      "conclusion": "failure"
+    },
+    "other-platforms": {
+      "id": 112753844119,
+      "status": "completed",
+      "conclusion": "skipped"
+    },
+    "quick-check": {
+      "id": 112753844427,
+      "status": "completed",
+      "conclusion": "skipped"
+    },
+    "workspace-cache-maintenance": {
+      "id": 112762044870,
+      "status": "completed",
+      "conclusion": "success"
+    }
+  },
+  "required_step_outcomes": {
+    "fmt": "success",
+    "clippy": "success",
+    "test": "failure",
+    "parity ratchet": "skipped"
+  },
+  "timings": {
+    "clippy_step_seconds": 392.0,
+    "clippy_cargo_seconds": 391,
+    "test_compile_seconds": 494,
+    "test_step_seconds": 840.0,
+    "gui_runtime_seconds": 144.48,
+    "media_runtime_seconds": 1.01
+  },
+  "cache_context": {
+    "previous_observed_runner_image": "20260927.320.1",
+    "current_runner_image": "20261004.327.1",
+    "previous_workspace_prefix": "68e3726939ec9009de9276fa",
+    "current_workspace_prefix": "ca9bfc0c8b9baf8c381365db",
+    "dependency_cache_hit": true,
+    "workspace_snapshot_restored": false,
+    "generated_ui_recompiled_in_clippy_and_test": true,
+    "snapshot_artifact_file_count": 292,
+    "snapshot_payload_including_input_ledger_bytes": 2200257893,
+    "retained_compressed_snapshot_bytes": 690125418,
+    "global_budget_bytes": 3221225472,
+    "observations": [
+      "2026-10-07T10:47:47.1861158Z Version: 20261002.596",
+      "2026-10-07T10:47:47.1867053Z Version: 20261004.327.1",
+      "2026-10-07T10:48:29.8231277Z Restored from cache key \"v0-rust-check-Linux-x64-ff0b8b70-0ea5e1be\" full match: true.",
+      "2026-10-07T10:48:32.1771249Z Workspace restore prefix: hydrus-ws-v1-check-Linux-X64-ca9bfc0c8b9baf8c381365db-",
+      "2026-10-07T10:48:32.4819178Z Cache not found for input keys: hydrus-ws-v1-check-Linux-X64-ca9bfc0c8b9baf8c381365db-8ada16c768f07d89c676b0ec09a6a56150f26ace-37609745626-1, hydrus-ws-v1-check-Linux-X64-ca9bfc0c8b9baf8c381365db-",
+      "2026-10-07T10:48:33.2157370Z No workspace library snapshot restored; dependency cache remains usable.",
+      "2026-10-07T10:49:33.8830672Z    Compiling hydrus-gui-ui v0.1.0 (/home/runner/work/hydrus-mine/hydrus-mine/crates/hydrus-gui-ui)",
+      "2026-10-07T10:56:50.8930556Z    Compiling hydrus-gui-ui v0.1.0 (/home/runner/work/hydrus-mine/hydrus-mine/crates/hydrus-gui-ui)",
+      "2026-10-07T11:09:58.0408194Z Workspace library snapshot candidate: 292 artifact files plus input ledger, 2200257893 bytes (limit 4294967296).",
+      "2026-10-07T11:10:03.2764028Z Cache saved with key: hydrus-ws-v1-check-Linux-X64-ca9bfc0c8b9baf8c381365db-8ada16c768f07d89c676b0ec09a6a56150f26ace-37609745626-1",
+      "2026-10-07T11:10:09.4860545Z Version: 20261002.596",
+      "2026-10-07T11:10:09.4877564Z Version: 20261004.327.1",
+      "2026-10-07T11:10:11.3985309Z Retained workspace snapshot bytes: 690125418; budget: 3221225472."
+    ],
+    "limits": "Changed runner image/compatibility prefix and workspace miss explain different compilation inputs; this is not a controlled speed comparison or a proved cause of either GUI failure. No source callback conclusion follows from cache status."
+  },
+  "native_diagnostics": {
+    "artifact_id": 11477743874,
+    "zip_sha256": "c62b8014bf20bdab6545427caccc782dc4100108f9de69c011aec04ad3fd7534",
+    "archive_path": "/workspace/attachments/809ee42d-7322-4190-a94b-ccdcbafd391b/native-37609745626.zip",
+    "archive_metadata_digest_verified": true,
+    "archive_image_count": 370,
+    "all370_extracted_image_hashes_and_bytes_verified": true,
+    "selected_defining_images_present": [],
+    "selected_defining_images_missing": [
+      "mime-add-chooser.png",
+      "mime-add-blank-calls.png",
+      "mime-edit-existing-calls.png",
+      "mime-mapping-reopened.png",
+      "mime-delete-question.png",
+      "mime-delete-staged.png"
+    ],
+    "selected_render_review": "none; all six absent",
+    "images_inspected_by_this_preserver": false,
+    "completion_credit": 0,
+    "extractor_path": "/workspace/validation-reviews/mime-mappings3/extract-fresh-native.py",
+    "extractor_sha256": "ed7ba0195cf1e436b9d4bccd53729c243eba924b2ec8515f69f5f92557c0e1f4"
+  },
+  "raw_test_diagnostics": {
+    "source_commit": "8ada16c768f07d89c676b0ec09a6a56150f26ace",
+    "run_id": 37609745626,
+    "artifact_id": 11478248680,
+    "archive": "/workspace/attachments/42b314c4-bb2d-48db-aa6f-ae6d83fe5b5e/test-diagnostics-37609745626-1.zip",
+    "archive_sha256": "9a3d27164dd37b34c402be429bd9075146f5f6640b9deac7ab07b162889275c5",
+    "archive_size": 53266,
+    "metadata_sha256": "ae0914eace5eaa30634923b6f10d5b76c6b76ba74bf9342da3e92a4b6a596952",
+    "exact_member": "hydrus-tests.log",
+    "raw_bytes": 216015,
+    "raw_sha256": "eb40d9990bccb9e170482ac91fb9f7984be4f3964dec3e715e7c33303eca19c3",
+    "verbatim_whitespace_preserved": true,
+    "safe_single_regular_basename_member": true,
+    "approval": false
+  },
+  "evidence_sha256": {
+    "full-check.log": "3212479bd7e812d503f7538c4ec541fbe9964ef0f1536b4802a762b2262badbf",
+    "tests.log": "eb40d9990bccb9e170482ac91fb9f7984be4f3964dec3e715e7c33303eca19c3",
+    "hydrus-tests.log": "eb40d9990bccb9e170482ac91fb9f7984be4f3964dec3e715e7c33303eca19c3",
+    "parity.log": "a65a133bee329334cb90b83d38dba3981a28729b524d28638a79d77a78ad7aba",
+    "clippy.log": "f1f269aabea7c7aa33683676b4f6f3875cde32a650618ec88c0e5da17d800ba8",
+    "cache-maintenance.log": "8913457e3ab0b417bab9afcf2d7fcbd97df0cd853f995633f4bf533bd3ddc446",
+    "run-latest.json": "474ce059eff82f1070df6aca573543a9b9664f25fe7f2fc49a8e26d7801184e5",
+    "jobs-latest.json": "4942e7e8c12ad0c12c8f92be245a08a1de0c149b130cf2244dbf43f1d17bd0b0",
+    "native-render-manifest.json": "bae68f3790a44b13ce438ec48e53ff3df97bdd9492d295ec54a43121a438fad1",
+    "test-extraction-provenance.json": "9cd249fd44746cd74ab4c3ead374a12a01e7b4b22a92dc402aa7733d81dc01ee",
+    "artifact-11477743874.json": "ea4b180565496e8f46110b0b5c00487ecb01ff7c7c8223e142131ac45b5df780",
+    "artifact-11478071120.json": "928bab0e879b5be55d2b00ad911308ad572179cdfac6a8bdebd20d651aad116a",
+    "artifact-11478248680.json": "ae0914eace5eaa30634923b6f10d5b76c6b76ba74bf9342da3e92a4b6a596952"
+  },
+  "failure_excerpt_verbatim_lines": [
+    "failures:",
+    "",
+    "---- menu_choice_wheel::options_staging_saved_policy_bubbling_and_retired_roots_are_owned stdout ----",
+    "re-shown Options physical wheel: frame=MenuChoiceFrame { h: 32.0, w: 260.0, x: 828.0, y: 78.0 }, visible=true, scroll_y=0, before_index=0, count=3",
+    "",
+    "thread 'menu_choice_wheel::options_staging_saved_policy_bubbling_and_retired_roots_are_owned' (11750) panicked at crates/hydrus-gui/tests/gui/menu_choice_wheel.rs:529:5:",
+    "assertion `left == right` failed",
+    "  left: 0",
+    " right: 2",
+    "note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace",
+    "",
+    "---- open_externally::outer_mime_mapping_reference_replay_saved_keys_delete_and_retired_children stdout ----",
+    "",
+    "thread 'open_externally::outer_mime_mapping_reference_replay_saved_keys_delete_and_retired_children' (12226) panicked at crates/hydrus-gui/tests/gui/open_externally.rs:1735:10:",
+    "called `Option::unwrap()` on a `None` value",
+    "",
+    "",
+    "failures:",
+    "    menu_choice_wheel::options_staging_saved_policy_bubbling_and_retired_roots_are_owned",
+    "    open_externally::outer_mime_mapping_reference_replay_saved_keys_delete_and_retired_children",
+    "",
+    "test result: FAILED. 708 passed; 2 failed; 0 ignored; 0 measured; 0 filtered out; finished in 144.48s"
+  ],
+  "remaining_gates": "Only a future repaired immutable source with full Linux success, fresh six-image root/independent review, staged preservation and actual browser checks may publish these three leaves."
+}

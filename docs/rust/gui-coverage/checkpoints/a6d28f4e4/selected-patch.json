@@ -1,0 +1,748 @@
+{
+  "baseline_git_head": "a6d28f4e498a3d7a8f00ad6a61da62166bc54383",
+  "method": "Publish exactly three original leaves after exact-source full Linux CI and fresh independent behavioral/rendered review. Preserve prior 365 IDs and assessments, native inventory and all unselected assessments except exact source anchor remaps and ancestor counts. Windows/macOS deferred; consumer and capture limits retained.",
+  "reference": {
+    "updates": [
+      {
+        "id": "audit-options-open-externally-single-file-calls-add",
+        "status": "first_pass",
+        "assessment": "Filetype Add shows remaining general groups followed by searchable MIME types without tuple sorting or GeneralFile; an owned detached calls child stages chosen registered File calls. Child Cancel discards, child Apply selects the sorted MIME row, only Options Apply persists. Registered names wash by stable key on atomic Options Apply; removed/wrong-type keys are dropped without name remapping. Parent Cancel/reopen and owner retirement are covered.",
+        "evidence": [
+          {
+            "path": "crates/hydrus-gui/src/options_open_externally.rs",
+            "line": 323,
+            "anchor_git_head": "a6d28f4e498a3d7a8f00ad6a61da62166bc54383",
+            "line_sha256": "d9f5bace01847d5ec10b4c91e4d6529aa3af335f242f27f8a495ca30986c0871",
+            "symbol": "fn queue_action(",
+            "role": "scoped_implementation",
+            "description": "fn queue_action(",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui/src/options_open_externally.rs",
+            "line": 407,
+            "anchor_git_head": "a6d28f4e498a3d7a8f00ad6a61da62166bc54383",
+            "line_sha256": "3b73d34f22e301c5b2bb577675630701af714e6d5b7b7204fd63dacd76a44e8a",
+            "symbol": "fn open_files(",
+            "role": "scoped_implementation",
+            "description": "fn open_files(",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui/src/options_open_externally.rs",
+            "line": 577,
+            "anchor_git_head": "a6d28f4e498a3d7a8f00ad6a61da62166bc54383",
+            "line_sha256": "50b78525b4171dde47a2f2826990faea5d6fe740fe99f6e16c926af736e3f828",
+            "symbol": "fn file_action(",
+            "role": "scoped_implementation",
+            "description": "fn file_action(",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui-model/src/open_externally.rs",
+            "line": 18,
+            "anchor_git_head": "a6d28f4e498a3d7a8f00ad6a61da62166bc54383",
+            "line_sha256": "030779e364fb5a23a2c749621cf5c7f9462da0f27ddc98b2f81b9e3410a8d57d",
+            "symbol": "pub fn choices(",
+            "role": "scoped_implementation",
+            "description": "pub fn choices(",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui-model/src/open_externally.rs",
+            "line": 95,
+            "anchor_git_head": "a6d28f4e498a3d7a8f00ad6a61da62166bc54383",
+            "line_sha256": "dd46b1b429757b7e3395f8546c11b2f048ebd277cfbabca84e2ed7e111ca48c2",
+            "symbol": "pub fn move_selected(",
+            "role": "scoped_implementation",
+            "description": "pub fn move_selected(",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-core/src/open_externally.rs",
+            "line": 82,
+            "anchor_git_head": "a6d28f4e498a3d7a8f00ad6a61da62166bc54383",
+            "line_sha256": "13402a6dd7f2166db2935fc81d066fca54bd61c1100243aa75609339e084cce1",
+            "symbol": "pub fn wash(&mut self",
+            "role": "scoped_implementation",
+            "description": "pub fn wash(&mut self",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui/src/open_externally_launch.rs",
+            "line": 101,
+            "anchor_git_head": "a6d28f4e498a3d7a8f00ad6a61da62166bc54383",
+            "line_sha256": "4433c594bc6574ac282f2cdfd6bd118879a30d4aa31397ccc65436053d69557c",
+            "symbol": "pub fn file(",
+            "role": "scoped_implementation",
+            "description": "pub fn file(",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui/src/lib.rs",
+            "line": 586,
+            "anchor_git_head": "a6d28f4e498a3d7a8f00ad6a61da62166bc54383",
+            "line_sha256": "7ffb048a3f9a373699af125185086d571626c4e82df894a22b09114d0cb661c9",
+            "symbol": "window.invoke_retire_external_launches();",
+            "role": "scoped_implementation",
+            "description": "window.invoke_retire_external_launches();",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-store/src/settings.rs",
+            "line": 1590,
+            "anchor_git_head": "a6d28f4e498a3d7a8f00ad6a61da62166bc54383",
+            "line_sha256": "32a53c74a236a79877d5f3631c840a16e0301822eb02f46286555eea8a7057ec",
+            "symbol": "impl Setting for hydrus_core::open_externally::Routing",
+            "role": "scoped_implementation",
+            "description": "impl Setting for hydrus_core::open_externally::Routing",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui-model/tests/model/open_externally.rs",
+            "line": 66,
+            "anchor_git_head": "a6d28f4e498a3d7a8f00ad6a61da62166bc54383",
+            "line_sha256": "5287cd94749d27a4a6f67952826cf5aa960f429fbf31208ecfbeb6fe86d83212",
+            "symbol": "fn actual_qt_registered_choices",
+            "role": "authored_behavioral_regression",
+            "description": "fn actual_qt_registered_choices",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui-model/tests/model/open_externally.rs",
+            "line": 129,
+            "anchor_git_head": "a6d28f4e498a3d7a8f00ad6a61da62166bc54383",
+            "line_sha256": "21276bea1321b25e124015c16995df306da0c50d0c6c5d867d8ecb5db105fb39",
+            "symbol": "fn washing_renames",
+            "role": "authored_behavioral_regression",
+            "description": "fn washing_renames",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui-model/tests/model/open_externally.rs",
+            "line": 193,
+            "anchor_git_head": "a6d28f4e498a3d7a8f00ad6a61da62166bc54383",
+            "line_sha256": "ea1daa5e54015543032c40fd62278d7d0b2da5d67f0ea94c42b10534a6ecaca1",
+            "symbol": "fn configured_empty_specific",
+            "role": "authored_behavioral_regression",
+            "description": "fn configured_empty_specific",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui/tests/gui/open_externally.rs",
+            "line": 528,
+            "anchor_git_head": "a6d28f4e498a3d7a8f00ad6a61da62166bc54383",
+            "line_sha256": "8300f392e32636af54b2e93a688474aa6b132aa496e98bc8cdc2a7c51e117a84",
+            "symbol": "fn options_routes_replay",
+            "role": "authored_behavioral_regression",
+            "description": "fn options_routes_replay",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui/tests/gui/open_externally.rs",
+            "line": 840,
+            "anchor_git_head": "a6d28f4e498a3d7a8f00ad6a61da62166bc54383",
+            "line_sha256": "a51f51e5b0c3489bcf59abce9ebe265d2926054eade9b8a83479f8d8cf2407ab",
+            "symbol": "fn saved_routes_reach",
+            "role": "authored_behavioral_regression",
+            "description": "fn saved_routes_reach",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui/tests/gui/open_externally.rs",
+            "line": 1073,
+            "anchor_git_head": "a6d28f4e498a3d7a8f00ad6a61da62166bc54383",
+            "line_sha256": "3623f632cbd337dd0ee856cfaadf782a28a84deb5a67c6f005f6f3ff757664aa",
+            "symbol": "fn saved_registered_vectors",
+            "role": "authored_behavioral_regression",
+            "description": "fn saved_registered_vectors",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui/tests/gui/open_externally.rs",
+            "line": 2051,
+            "anchor_git_head": "a6d28f4e498a3d7a8f00ad6a61da62166bc54383",
+            "line_sha256": "f0657a6c9b167b2b692b45d7d092487cd70eee0b05ecb0b514a07de94fda9750",
+            "symbol": "fn outer_mime_mapping_reference_replay_saved_keys_delete_and_retired_children()",
+            "role": "authored_behavioral_regression",
+            "description": "fn outer_mime_mapping_reference_replay_saved_keys_delete_and_retired_children()",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui/tests/gui/open_externally.rs",
+            "line": 1857,
+            "anchor_git_head": "a6d28f4e498a3d7a8f00ad6a61da62166bc54383",
+            "line_sha256": "62ce2f94ca0a8726e8fa91f34c94aa089eee4b64a2bc88a88b699d79a313d03c",
+            "symbol": "fn pending_mime_mapping_retirement(",
+            "role": "authored_behavioral_regression",
+            "description": "fn pending_mime_mapping_retirement(",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui/tests/gui/open_externally.rs",
+            "line": 1730,
+            "anchor_git_head": "a6d28f4e498a3d7a8f00ad6a61da62166bc54383",
+            "line_sha256": "6681d3be58c429b6742166d3f1537838163224e07ace17a92a21342dafa3976e",
+            "symbol": "fn select_mapping(",
+            "role": "authored_behavioral_regression",
+            "description": "fn select_mapping(",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui/tests/gui/open_externally.rs",
+            "line": 1808,
+            "anchor_git_head": "a6d28f4e498a3d7a8f00ad6a61da62166bc54383",
+            "line_sha256": "1d4b020116407f8bd127818ddb0eb4640190191e6fa23a743b9d8c4d169ba003",
+            "symbol": "fn stage_mapping(",
+            "role": "authored_behavioral_regression",
+            "description": "fn stage_mapping(",
+            "executed_in_inventory": false
+          }
+        ],
+        "limitations": [
+          "Broader original page/list parents remain Partial; no parent promotion. Qt decoration, column sorting/persistence and inherited queue keyboard controls are not claimed.",
+          "Legacy executable-manager/routing import, deeper per-call media/URL menus and full process output/error presentation remain Partial. OS file default regeneration uses the correct File pipeline; the reference missing-file-OS branch generates the URL pipeline.",
+          "Native asynchronous registered-process submission pauses the viewer on submission rather than after bounded execution completion; submitted external programs retain their lifetime after owner close.",
+          "Historical author metadata records authored regressions without local Cargo builds, Rust tests or mutation testing. Current exact-source Linux execution and fresh native rendered review are recorded separately in the accepted checkpoint.",
+          "Current outer MIME entry and child responses are callback-driven. Six captures use chooser 520x440, calls 580x340, outer 960x800 and question 520x200 sizes; no physical button coordinates, universal geometry or OS focus/modality is established.",
+          "Exact full saved Routing/Manager compares keys independently of displayed names. Ordinary saved Add event 9 then reopened saved Edit event 11 and saved Delete event 13 preserve other complete fields; current single-MIME cases do not imply broad multi-selection or new launch breadth.",
+          "Pending outer MIME chooser and captured Delete question are retired against tested usable successors, including hidden callback admission and positive current routes. General Main/final Bound destruction and arbitrary page changes are excluded. Historical Qt outer panel is a later washed state, not matched chooser/blank calls/confirmation pixels. All-MIME exhaustion, column persistence/keyboard behavior, deeper process output, parents/aliases/native and deferred platforms receive no credit.",
+          "Failed source 8ada16c76/run 37609745626 retained 708 passing GUI tests and two failures; all six selected MIME captures were absent and grant no credit. The test repair disambiguates animated/static GIF by typed fixture code, preserving all 358 failed-source and 249 banked assertions (current 360 across seven tests). The wheel readiness repair retains all 92 assertions, the two-second deadline and one physical wheel/exact index 2 after a real 1101-to-1100 resize. The precise missed-event cause and reliable unresized hide/show remain unproven. No additional wheel completion or product repair is claimed.",
+          "Fresh native text, Japanese glyphs, selection, empty/existing rows and footer controls are readable at the specified sizes. The chooser shows only its top scroll viewport, with the next row partially clipped; the full 73-item order is proved by assertions, not this PNG. Question buttons are tall. Universal/default-size geometry and font/framework pixel parity are not established.",
+          "Validation is Linux only; Windows and macOS remain deferred. Only the three outer MIME Add/Edit/Delete leaves qualify; separately banked nested File/URL/defaults controls, launch consumers, parents, aliases and native hierarchy receive no additional credit."
+        ],
+        "remaining": [],
+        "native_source": {
+          "path": "crates/hydrus-gui/src/options_open_externally.rs",
+          "line": 577,
+          "anchor_git_head": "a6d28f4e498a3d7a8f00ad6a61da62166bc54383",
+          "line_sha256": "50b78525b4171dde47a2f2826990faea5d6fe740fe99f6e16c926af736e3f828",
+          "symbol": "fn file_action("
+        },
+        "reference_source": {
+          "path": "hydrus/client/gui/panels/options/OpenExternallyPanel.py",
+          "line": 136,
+          "anchor_git_head": "a6d28f4e498a3d7a8f00ad6a61da62166bc54383",
+          "line_sha256": "33d400f47c1722939faeced0bae0d62a9c199ad4b61199286ae9472504e366ff",
+          "symbol": "_AddMimeLaunch"
+        },
+        "implementation_validation": {
+          "source_commit": "a6d28f4e498a3d7a8f00ad6a61da62166bc54383",
+          "ci": "passed",
+          "tests_executed_at_checkpoint": true,
+          "native_render_review": "passed",
+          "manifest": "docs/rust/gui-coverage/parity/open-externally.json",
+          "review_required": false,
+          "run_url": "https://github.com/jkendall327/hydrus-mine/actions/runs/37613614274",
+          "validation_scope": "linux",
+          "required_platforms": [
+            "linux"
+          ],
+          "deferred_platforms": [
+            "windows",
+            "macos"
+          ],
+          "independent_review_evidence": {
+            "path": "docs/rust/gui-coverage/checkpoints/a6d28f4e4/final-review-2-a6d28f4e4.json",
+            "sha256": "e63faf8490f9edb7c4ca79cb0b14532a1a4919f5e1578af864e8a3f1b31b40b2"
+          }
+        }
+      },
+      {
+        "id": "audit-options-open-externally-single-file-calls-edit",
+        "status": "first_pass",
+        "assessment": "Filetype Edit opens the selected existing MIME queue in an owned detached child; editing preserves MIME identity and order, child Cancel discards, child Apply remains staged until Options Apply. Registered names wash by stable key on atomic Options Apply; removed/wrong-type keys are dropped without name remapping. Parent Cancel/reopen and owner retirement are covered.",
+        "evidence": [
+          {
+            "path": "crates/hydrus-gui/src/options_open_externally.rs",
+            "line": 323,
+            "anchor_git_head": "a6d28f4e498a3d7a8f00ad6a61da62166bc54383",
+            "line_sha256": "d9f5bace01847d5ec10b4c91e4d6529aa3af335f242f27f8a495ca30986c0871",
+            "symbol": "fn queue_action(",
+            "role": "scoped_implementation",
+            "description": "fn queue_action(",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui/src/options_open_externally.rs",
+            "line": 407,
+            "anchor_git_head": "a6d28f4e498a3d7a8f00ad6a61da62166bc54383",
+            "line_sha256": "3b73d34f22e301c5b2bb577675630701af714e6d5b7b7204fd63dacd76a44e8a",
+            "symbol": "fn open_files(",
+            "role": "scoped_implementation",
+            "description": "fn open_files(",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui/src/options_open_externally.rs",
+            "line": 577,
+            "anchor_git_head": "a6d28f4e498a3d7a8f00ad6a61da62166bc54383",
+            "line_sha256": "50b78525b4171dde47a2f2826990faea5d6fe740fe99f6e16c926af736e3f828",
+            "symbol": "fn file_action(",
+            "role": "scoped_implementation",
+            "description": "fn file_action(",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui-model/src/open_externally.rs",
+            "line": 18,
+            "anchor_git_head": "a6d28f4e498a3d7a8f00ad6a61da62166bc54383",
+            "line_sha256": "030779e364fb5a23a2c749621cf5c7f9462da0f27ddc98b2f81b9e3410a8d57d",
+            "symbol": "pub fn choices(",
+            "role": "scoped_implementation",
+            "description": "pub fn choices(",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui-model/src/open_externally.rs",
+            "line": 95,
+            "anchor_git_head": "a6d28f4e498a3d7a8f00ad6a61da62166bc54383",
+            "line_sha256": "dd46b1b429757b7e3395f8546c11b2f048ebd277cfbabca84e2ed7e111ca48c2",
+            "symbol": "pub fn move_selected(",
+            "role": "scoped_implementation",
+            "description": "pub fn move_selected(",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-core/src/open_externally.rs",
+            "line": 82,
+            "anchor_git_head": "a6d28f4e498a3d7a8f00ad6a61da62166bc54383",
+            "line_sha256": "13402a6dd7f2166db2935fc81d066fca54bd61c1100243aa75609339e084cce1",
+            "symbol": "pub fn wash(&mut self",
+            "role": "scoped_implementation",
+            "description": "pub fn wash(&mut self",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui/src/open_externally_launch.rs",
+            "line": 101,
+            "anchor_git_head": "a6d28f4e498a3d7a8f00ad6a61da62166bc54383",
+            "line_sha256": "4433c594bc6574ac282f2cdfd6bd118879a30d4aa31397ccc65436053d69557c",
+            "symbol": "pub fn file(",
+            "role": "scoped_implementation",
+            "description": "pub fn file(",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui/src/lib.rs",
+            "line": 586,
+            "anchor_git_head": "a6d28f4e498a3d7a8f00ad6a61da62166bc54383",
+            "line_sha256": "7ffb048a3f9a373699af125185086d571626c4e82df894a22b09114d0cb661c9",
+            "symbol": "window.invoke_retire_external_launches();",
+            "role": "scoped_implementation",
+            "description": "window.invoke_retire_external_launches();",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-store/src/settings.rs",
+            "line": 1590,
+            "anchor_git_head": "a6d28f4e498a3d7a8f00ad6a61da62166bc54383",
+            "line_sha256": "32a53c74a236a79877d5f3631c840a16e0301822eb02f46286555eea8a7057ec",
+            "symbol": "impl Setting for hydrus_core::open_externally::Routing",
+            "role": "scoped_implementation",
+            "description": "impl Setting for hydrus_core::open_externally::Routing",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui-model/tests/model/open_externally.rs",
+            "line": 66,
+            "anchor_git_head": "a6d28f4e498a3d7a8f00ad6a61da62166bc54383",
+            "line_sha256": "5287cd94749d27a4a6f67952826cf5aa960f429fbf31208ecfbeb6fe86d83212",
+            "symbol": "fn actual_qt_registered_choices",
+            "role": "authored_behavioral_regression",
+            "description": "fn actual_qt_registered_choices",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui-model/tests/model/open_externally.rs",
+            "line": 129,
+            "anchor_git_head": "a6d28f4e498a3d7a8f00ad6a61da62166bc54383",
+            "line_sha256": "21276bea1321b25e124015c16995df306da0c50d0c6c5d867d8ecb5db105fb39",
+            "symbol": "fn washing_renames",
+            "role": "authored_behavioral_regression",
+            "description": "fn washing_renames",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui-model/tests/model/open_externally.rs",
+            "line": 193,
+            "anchor_git_head": "a6d28f4e498a3d7a8f00ad6a61da62166bc54383",
+            "line_sha256": "ea1daa5e54015543032c40fd62278d7d0b2da5d67f0ea94c42b10534a6ecaca1",
+            "symbol": "fn configured_empty_specific",
+            "role": "authored_behavioral_regression",
+            "description": "fn configured_empty_specific",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui/tests/gui/open_externally.rs",
+            "line": 528,
+            "anchor_git_head": "a6d28f4e498a3d7a8f00ad6a61da62166bc54383",
+            "line_sha256": "8300f392e32636af54b2e93a688474aa6b132aa496e98bc8cdc2a7c51e117a84",
+            "symbol": "fn options_routes_replay",
+            "role": "authored_behavioral_regression",
+            "description": "fn options_routes_replay",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui/tests/gui/open_externally.rs",
+            "line": 840,
+            "anchor_git_head": "a6d28f4e498a3d7a8f00ad6a61da62166bc54383",
+            "line_sha256": "a51f51e5b0c3489bcf59abce9ebe265d2926054eade9b8a83479f8d8cf2407ab",
+            "symbol": "fn saved_routes_reach",
+            "role": "authored_behavioral_regression",
+            "description": "fn saved_routes_reach",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui/tests/gui/open_externally.rs",
+            "line": 1073,
+            "anchor_git_head": "a6d28f4e498a3d7a8f00ad6a61da62166bc54383",
+            "line_sha256": "3623f632cbd337dd0ee856cfaadf782a28a84deb5a67c6f005f6f3ff757664aa",
+            "symbol": "fn saved_registered_vectors",
+            "role": "authored_behavioral_regression",
+            "description": "fn saved_registered_vectors",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui/tests/gui/open_externally.rs",
+            "line": 2051,
+            "anchor_git_head": "a6d28f4e498a3d7a8f00ad6a61da62166bc54383",
+            "line_sha256": "f0657a6c9b167b2b692b45d7d092487cd70eee0b05ecb0b514a07de94fda9750",
+            "symbol": "fn outer_mime_mapping_reference_replay_saved_keys_delete_and_retired_children()",
+            "role": "authored_behavioral_regression",
+            "description": "fn outer_mime_mapping_reference_replay_saved_keys_delete_and_retired_children()",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui/tests/gui/open_externally.rs",
+            "line": 1857,
+            "anchor_git_head": "a6d28f4e498a3d7a8f00ad6a61da62166bc54383",
+            "line_sha256": "62ce2f94ca0a8726e8fa91f34c94aa089eee4b64a2bc88a88b699d79a313d03c",
+            "symbol": "fn pending_mime_mapping_retirement(",
+            "role": "authored_behavioral_regression",
+            "description": "fn pending_mime_mapping_retirement(",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui/tests/gui/open_externally.rs",
+            "line": 1730,
+            "anchor_git_head": "a6d28f4e498a3d7a8f00ad6a61da62166bc54383",
+            "line_sha256": "6681d3be58c429b6742166d3f1537838163224e07ace17a92a21342dafa3976e",
+            "symbol": "fn select_mapping(",
+            "role": "authored_behavioral_regression",
+            "description": "fn select_mapping(",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui/tests/gui/open_externally.rs",
+            "line": 1808,
+            "anchor_git_head": "a6d28f4e498a3d7a8f00ad6a61da62166bc54383",
+            "line_sha256": "1d4b020116407f8bd127818ddb0eb4640190191e6fa23a743b9d8c4d169ba003",
+            "symbol": "fn stage_mapping(",
+            "role": "authored_behavioral_regression",
+            "description": "fn stage_mapping(",
+            "executed_in_inventory": false
+          }
+        ],
+        "limitations": [
+          "Broader original page/list parents remain Partial; no parent promotion. Qt decoration, column sorting/persistence and inherited queue keyboard controls are not claimed.",
+          "Legacy executable-manager/routing import, deeper per-call media/URL menus and full process output/error presentation remain Partial. OS file default regeneration uses the correct File pipeline; the reference missing-file-OS branch generates the URL pipeline.",
+          "Native asynchronous registered-process submission pauses the viewer on submission rather than after bounded execution completion; submitted external programs retain their lifetime after owner close.",
+          "Historical author metadata records authored regressions without local Cargo builds, Rust tests or mutation testing. Current exact-source Linux execution and fresh native rendered review are recorded separately in the accepted checkpoint.",
+          "Current outer MIME entry and child responses are callback-driven. Six captures use chooser 520x440, calls 580x340, outer 960x800 and question 520x200 sizes; no physical button coordinates, universal geometry or OS focus/modality is established.",
+          "Exact full saved Routing/Manager compares keys independently of displayed names. Ordinary saved Add event 9 then reopened saved Edit event 11 and saved Delete event 13 preserve other complete fields; current single-MIME cases do not imply broad multi-selection or new launch breadth.",
+          "Pending outer MIME chooser and captured Delete question are retired against tested usable successors, including hidden callback admission and positive current routes. General Main/final Bound destruction and arbitrary page changes are excluded. Historical Qt outer panel is a later washed state, not matched chooser/blank calls/confirmation pixels. All-MIME exhaustion, column persistence/keyboard behavior, deeper process output, parents/aliases/native and deferred platforms receive no credit.",
+          "Failed source 8ada16c76/run 37609745626 retained 708 passing GUI tests and two failures; all six selected MIME captures were absent and grant no credit. The test repair disambiguates animated/static GIF by typed fixture code, preserving all 358 failed-source and 249 banked assertions (current 360 across seven tests). The wheel readiness repair retains all 92 assertions, the two-second deadline and one physical wheel/exact index 2 after a real 1101-to-1100 resize. The precise missed-event cause and reliable unresized hide/show remain unproven. No additional wheel completion or product repair is claimed.",
+          "Fresh native text, Japanese glyphs, selection, empty/existing rows and footer controls are readable at the specified sizes. The chooser shows only its top scroll viewport, with the next row partially clipped; the full 73-item order is proved by assertions, not this PNG. Question buttons are tall. Universal/default-size geometry and font/framework pixel parity are not established.",
+          "Validation is Linux only; Windows and macOS remain deferred. Only the three outer MIME Add/Edit/Delete leaves qualify; separately banked nested File/URL/defaults controls, launch consumers, parents, aliases and native hierarchy receive no additional credit."
+        ],
+        "remaining": [],
+        "native_source": {
+          "path": "crates/hydrus-gui/src/options_open_externally.rs",
+          "line": 577,
+          "anchor_git_head": "a6d28f4e498a3d7a8f00ad6a61da62166bc54383",
+          "line_sha256": "50b78525b4171dde47a2f2826990faea5d6fe740fe99f6e16c926af736e3f828",
+          "symbol": "fn file_action("
+        },
+        "reference_source": {
+          "path": "hydrus/client/gui/panels/options/OpenExternallyPanel.py",
+          "line": 137,
+          "anchor_git_head": "a6d28f4e498a3d7a8f00ad6a61da62166bc54383",
+          "line_sha256": "4b2cd59cc7a50f3984e16aff56e49890163bcffc18c350faafec4bab0b315734",
+          "symbol": "_EditMimeLaunch"
+        },
+        "implementation_validation": {
+          "source_commit": "a6d28f4e498a3d7a8f00ad6a61da62166bc54383",
+          "ci": "passed",
+          "tests_executed_at_checkpoint": true,
+          "native_render_review": "passed",
+          "manifest": "docs/rust/gui-coverage/parity/open-externally.json",
+          "review_required": false,
+          "run_url": "https://github.com/jkendall327/hydrus-mine/actions/runs/37613614274",
+          "validation_scope": "linux",
+          "required_platforms": [
+            "linux"
+          ],
+          "deferred_platforms": [
+            "windows",
+            "macos"
+          ],
+          "independent_review_evidence": {
+            "path": "docs/rust/gui-coverage/checkpoints/a6d28f4e4/final-review-2-a6d28f4e4.json",
+            "sha256": "e63faf8490f9edb7c4ca79cb0b14532a1a4919f5e1578af864e8a3f1b31b40b2"
+          }
+        }
+      },
+      {
+        "id": "audit-options-open-externally-single-file-calls-delete",
+        "status": "first_pass",
+        "assessment": "Filetype Delete captures selected MIME identities and asks exact Remove all selected?; decline preserves rows. Any selection containing GeneralFile blocks the entire deletion. Accepted deletion stays staged until Options Apply; Cancel discards and stale callbacks cannot write. Registered names wash by stable key on atomic Options Apply; removed/wrong-type keys are dropped without name remapping. Parent Cancel/reopen and owner retirement are covered.",
+        "evidence": [
+          {
+            "path": "crates/hydrus-gui/src/options_open_externally.rs",
+            "line": 323,
+            "anchor_git_head": "a6d28f4e498a3d7a8f00ad6a61da62166bc54383",
+            "line_sha256": "d9f5bace01847d5ec10b4c91e4d6529aa3af335f242f27f8a495ca30986c0871",
+            "symbol": "fn queue_action(",
+            "role": "scoped_implementation",
+            "description": "fn queue_action(",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui/src/options_open_externally.rs",
+            "line": 407,
+            "anchor_git_head": "a6d28f4e498a3d7a8f00ad6a61da62166bc54383",
+            "line_sha256": "3b73d34f22e301c5b2bb577675630701af714e6d5b7b7204fd63dacd76a44e8a",
+            "symbol": "fn open_files(",
+            "role": "scoped_implementation",
+            "description": "fn open_files(",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui/src/options_open_externally.rs",
+            "line": 577,
+            "anchor_git_head": "a6d28f4e498a3d7a8f00ad6a61da62166bc54383",
+            "line_sha256": "50b78525b4171dde47a2f2826990faea5d6fe740fe99f6e16c926af736e3f828",
+            "symbol": "fn file_action(",
+            "role": "scoped_implementation",
+            "description": "fn file_action(",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui-model/src/open_externally.rs",
+            "line": 18,
+            "anchor_git_head": "a6d28f4e498a3d7a8f00ad6a61da62166bc54383",
+            "line_sha256": "030779e364fb5a23a2c749621cf5c7f9462da0f27ddc98b2f81b9e3410a8d57d",
+            "symbol": "pub fn choices(",
+            "role": "scoped_implementation",
+            "description": "pub fn choices(",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui-model/src/open_externally.rs",
+            "line": 95,
+            "anchor_git_head": "a6d28f4e498a3d7a8f00ad6a61da62166bc54383",
+            "line_sha256": "dd46b1b429757b7e3395f8546c11b2f048ebd277cfbabca84e2ed7e111ca48c2",
+            "symbol": "pub fn move_selected(",
+            "role": "scoped_implementation",
+            "description": "pub fn move_selected(",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-core/src/open_externally.rs",
+            "line": 82,
+            "anchor_git_head": "a6d28f4e498a3d7a8f00ad6a61da62166bc54383",
+            "line_sha256": "13402a6dd7f2166db2935fc81d066fca54bd61c1100243aa75609339e084cce1",
+            "symbol": "pub fn wash(&mut self",
+            "role": "scoped_implementation",
+            "description": "pub fn wash(&mut self",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui/src/open_externally_launch.rs",
+            "line": 101,
+            "anchor_git_head": "a6d28f4e498a3d7a8f00ad6a61da62166bc54383",
+            "line_sha256": "4433c594bc6574ac282f2cdfd6bd118879a30d4aa31397ccc65436053d69557c",
+            "symbol": "pub fn file(",
+            "role": "scoped_implementation",
+            "description": "pub fn file(",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui/src/lib.rs",
+            "line": 586,
+            "anchor_git_head": "a6d28f4e498a3d7a8f00ad6a61da62166bc54383",
+            "line_sha256": "7ffb048a3f9a373699af125185086d571626c4e82df894a22b09114d0cb661c9",
+            "symbol": "window.invoke_retire_external_launches();",
+            "role": "scoped_implementation",
+            "description": "window.invoke_retire_external_launches();",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-store/src/settings.rs",
+            "line": 1590,
+            "anchor_git_head": "a6d28f4e498a3d7a8f00ad6a61da62166bc54383",
+            "line_sha256": "32a53c74a236a79877d5f3631c840a16e0301822eb02f46286555eea8a7057ec",
+            "symbol": "impl Setting for hydrus_core::open_externally::Routing",
+            "role": "scoped_implementation",
+            "description": "impl Setting for hydrus_core::open_externally::Routing",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui-model/tests/model/open_externally.rs",
+            "line": 66,
+            "anchor_git_head": "a6d28f4e498a3d7a8f00ad6a61da62166bc54383",
+            "line_sha256": "5287cd94749d27a4a6f67952826cf5aa960f429fbf31208ecfbeb6fe86d83212",
+            "symbol": "fn actual_qt_registered_choices",
+            "role": "authored_behavioral_regression",
+            "description": "fn actual_qt_registered_choices",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui-model/tests/model/open_externally.rs",
+            "line": 129,
+            "anchor_git_head": "a6d28f4e498a3d7a8f00ad6a61da62166bc54383",
+            "line_sha256": "21276bea1321b25e124015c16995df306da0c50d0c6c5d867d8ecb5db105fb39",
+            "symbol": "fn washing_renames",
+            "role": "authored_behavioral_regression",
+            "description": "fn washing_renames",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui-model/tests/model/open_externally.rs",
+            "line": 193,
+            "anchor_git_head": "a6d28f4e498a3d7a8f00ad6a61da62166bc54383",
+            "line_sha256": "ea1daa5e54015543032c40fd62278d7d0b2da5d67f0ea94c42b10534a6ecaca1",
+            "symbol": "fn configured_empty_specific",
+            "role": "authored_behavioral_regression",
+            "description": "fn configured_empty_specific",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui/tests/gui/open_externally.rs",
+            "line": 528,
+            "anchor_git_head": "a6d28f4e498a3d7a8f00ad6a61da62166bc54383",
+            "line_sha256": "8300f392e32636af54b2e93a688474aa6b132aa496e98bc8cdc2a7c51e117a84",
+            "symbol": "fn options_routes_replay",
+            "role": "authored_behavioral_regression",
+            "description": "fn options_routes_replay",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui/tests/gui/open_externally.rs",
+            "line": 840,
+            "anchor_git_head": "a6d28f4e498a3d7a8f00ad6a61da62166bc54383",
+            "line_sha256": "a51f51e5b0c3489bcf59abce9ebe265d2926054eade9b8a83479f8d8cf2407ab",
+            "symbol": "fn saved_routes_reach",
+            "role": "authored_behavioral_regression",
+            "description": "fn saved_routes_reach",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui/tests/gui/open_externally.rs",
+            "line": 1073,
+            "anchor_git_head": "a6d28f4e498a3d7a8f00ad6a61da62166bc54383",
+            "line_sha256": "3623f632cbd337dd0ee856cfaadf782a28a84deb5a67c6f005f6f3ff757664aa",
+            "symbol": "fn saved_registered_vectors",
+            "role": "authored_behavioral_regression",
+            "description": "fn saved_registered_vectors",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui/tests/gui/open_externally.rs",
+            "line": 2051,
+            "anchor_git_head": "a6d28f4e498a3d7a8f00ad6a61da62166bc54383",
+            "line_sha256": "f0657a6c9b167b2b692b45d7d092487cd70eee0b05ecb0b514a07de94fda9750",
+            "symbol": "fn outer_mime_mapping_reference_replay_saved_keys_delete_and_retired_children()",
+            "role": "authored_behavioral_regression",
+            "description": "fn outer_mime_mapping_reference_replay_saved_keys_delete_and_retired_children()",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui/tests/gui/open_externally.rs",
+            "line": 1857,
+            "anchor_git_head": "a6d28f4e498a3d7a8f00ad6a61da62166bc54383",
+            "line_sha256": "62ce2f94ca0a8726e8fa91f34c94aa089eee4b64a2bc88a88b699d79a313d03c",
+            "symbol": "fn pending_mime_mapping_retirement(",
+            "role": "authored_behavioral_regression",
+            "description": "fn pending_mime_mapping_retirement(",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui/tests/gui/open_externally.rs",
+            "line": 1730,
+            "anchor_git_head": "a6d28f4e498a3d7a8f00ad6a61da62166bc54383",
+            "line_sha256": "6681d3be58c429b6742166d3f1537838163224e07ace17a92a21342dafa3976e",
+            "symbol": "fn select_mapping(",
+            "role": "authored_behavioral_regression",
+            "description": "fn select_mapping(",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui/tests/gui/open_externally.rs",
+            "line": 1808,
+            "anchor_git_head": "a6d28f4e498a3d7a8f00ad6a61da62166bc54383",
+            "line_sha256": "1d4b020116407f8bd127818ddb0eb4640190191e6fa23a743b9d8c4d169ba003",
+            "symbol": "fn stage_mapping(",
+            "role": "authored_behavioral_regression",
+            "description": "fn stage_mapping(",
+            "executed_in_inventory": false
+          }
+        ],
+        "limitations": [
+          "Broader original page/list parents remain Partial; no parent promotion. Qt decoration, column sorting/persistence and inherited queue keyboard controls are not claimed.",
+          "Legacy executable-manager/routing import, deeper per-call media/URL menus and full process output/error presentation remain Partial. OS file default regeneration uses the correct File pipeline; the reference missing-file-OS branch generates the URL pipeline.",
+          "Native asynchronous registered-process submission pauses the viewer on submission rather than after bounded execution completion; submitted external programs retain their lifetime after owner close.",
+          "Historical author metadata records authored regressions without local Cargo builds, Rust tests or mutation testing. Current exact-source Linux execution and fresh native rendered review are recorded separately in the accepted checkpoint.",
+          "Current outer MIME entry and child responses are callback-driven. Six captures use chooser 520x440, calls 580x340, outer 960x800 and question 520x200 sizes; no physical button coordinates, universal geometry or OS focus/modality is established.",
+          "Exact full saved Routing/Manager compares keys independently of displayed names. Ordinary saved Add event 9 then reopened saved Edit event 11 and saved Delete event 13 preserve other complete fields; current single-MIME cases do not imply broad multi-selection or new launch breadth.",
+          "Pending outer MIME chooser and captured Delete question are retired against tested usable successors, including hidden callback admission and positive current routes. General Main/final Bound destruction and arbitrary page changes are excluded. Historical Qt outer panel is a later washed state, not matched chooser/blank calls/confirmation pixels. All-MIME exhaustion, column persistence/keyboard behavior, deeper process output, parents/aliases/native and deferred platforms receive no credit.",
+          "Failed source 8ada16c76/run 37609745626 retained 708 passing GUI tests and two failures; all six selected MIME captures were absent and grant no credit. The test repair disambiguates animated/static GIF by typed fixture code, preserving all 358 failed-source and 249 banked assertions (current 360 across seven tests). The wheel readiness repair retains all 92 assertions, the two-second deadline and one physical wheel/exact index 2 after a real 1101-to-1100 resize. The precise missed-event cause and reliable unresized hide/show remain unproven. No additional wheel completion or product repair is claimed.",
+          "Fresh native text, Japanese glyphs, selection, empty/existing rows and footer controls are readable at the specified sizes. The chooser shows only its top scroll viewport, with the next row partially clipped; the full 73-item order is proved by assertions, not this PNG. Question buttons are tall. Universal/default-size geometry and font/framework pixel parity are not established.",
+          "Validation is Linux only; Windows and macOS remain deferred. Only the three outer MIME Add/Edit/Delete leaves qualify; separately banked nested File/URL/defaults controls, launch consumers, parents, aliases and native hierarchy receive no additional credit."
+        ],
+        "remaining": [],
+        "native_source": {
+          "path": "crates/hydrus-gui/src/options_open_externally.rs",
+          "line": 577,
+          "anchor_git_head": "a6d28f4e498a3d7a8f00ad6a61da62166bc54383",
+          "line_sha256": "50b78525b4171dde47a2f2826990faea5d6fe740fe99f6e16c926af736e3f828",
+          "symbol": "fn file_action("
+        },
+        "reference_source": {
+          "path": "hydrus/client/gui/panels/options/OpenExternallyPanel.py",
+          "line": 138,
+          "anchor_git_head": "a6d28f4e498a3d7a8f00ad6a61da62166bc54383",
+          "line_sha256": "33c75f2ff252d98a2e667cd42eb44350ae3abefb2cad4478690d5251c3e931ae",
+          "symbol": "_GeneralFileIsNotSelected"
+        },
+        "implementation_validation": {
+          "source_commit": "a6d28f4e498a3d7a8f00ad6a61da62166bc54383",
+          "ci": "passed",
+          "tests_executed_at_checkpoint": true,
+          "native_render_review": "passed",
+          "manifest": "docs/rust/gui-coverage/parity/open-externally.json",
+          "review_required": false,
+          "run_url": "https://github.com/jkendall327/hydrus-mine/actions/runs/37613614274",
+          "validation_scope": "linux",
+          "required_platforms": [
+            "linux"
+          ],
+          "deferred_platforms": [
+            "windows",
+            "macos"
+          ],
+          "independent_review_evidence": {
+            "path": "docs/rust/gui-coverage/checkpoints/a6d28f4e4/final-review-2-a6d28f4e4.json",
+            "sha256": "e63faf8490f9edb7c4ca79cb0b14532a1a4919f5e1578af864e8a3f1b31b40b2"
+          }
+        }
+      }
+    ],
+    "additions": []
+  },
+  "native": {
+    "updates": [],
+    "additions": []
+  }
+}

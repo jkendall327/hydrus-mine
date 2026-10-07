@@ -591,20 +591,10 @@ impl State {
             if selected.is_empty() || selected.contains(&Mime::GeneralFile) {
                 return;
             }
-            let count = selected.len();
-            let total = self.model.borrow().routing.files.len();
-            let message = if count == total {
-                "Remove all selected?".into()
-            } else {
-                format!(
-                    "Remove {} selected?",
-                    hydrus_core::numbers::human_int(count as u64)
-                )
-            };
             let state = Rc::downgrade(self);
             if let Err(error) = self.question(
                 "Question",
-                &message,
+                "Remove all selected?",
                 false,
                 self.parent_allowed(),
                 Rc::new(move || {

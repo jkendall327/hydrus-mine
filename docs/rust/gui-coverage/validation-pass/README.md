@@ -3,14 +3,14 @@
 The pass started from merged source `3702cdbee99473cfd7af073aa044fe847f78f405`.
 The prior checkpoint validated `028fd72f` (240 original leaves).
 
-The latest checkpoint validates `1e2b2e25f` and publishes **365 signed-off
-original leaves: 3 new in this batch, 125 since the prior 240 across nineteen
-recent checkpoints, 10 existing candidates still pending**. The 125 figure is
+The latest checkpoint validates `a6d28f4e4` and publishes **368 signed-off
+original leaves: 3 new in this batch, 128 since the prior 240 across twenty
+recent checkpoints, 7 existing candidates still pending**. The 128 figure is
 cumulative checkpoint progress, not a last-24-hour sign-off count. Full Linux
-validation passed with all 709 GUI and 67 media tests passing. Exactly
-nested File Choose, Add/Edit and Order received fresh independent behavioral
+validation passed with all 710 GUI and 67 media tests passing. Exactly
+outer MIME mapping Add/Edit/Delete received fresh independent behavioral
 and rendered review. Windows/macOS remain deferred.
-[Durable checkpoint evidence](../checkpoints/1e2b2e25f/README.md) retains six fresh
+[Durable checkpoint evidence](../checkpoints/a6d28f4e4/README.md) retains six fresh
 defining frames, raw logs and source/assertion/reference/preservation proofs.
 The goal remains all individual leaves implemented and verified; numeric
 checkpoints and inventory assessments are not stopping criteria. Continue
@@ -23,7 +23,7 @@ previously validated IDs. Structural parents may retain a scoped assessment but
 receive no completed-leaf credit.
 The supplemental `demotions-render-evidence.json` defers seven further claims
 whose defining native behavior lacks assertions, initially leaving 135 candidates.
-One hundred and twenty-five are now published; 10 remain unresolved. No pending candidate receives
+One hundred and twenty-eight are now published; 7 remain unresolved. No pending candidate receives
 completion credit. Favourites was withheld from the preceding batch because its
 capture disagreed with the selected service; actual dropdown input and fresh
 review resolved that blocker in the preceding checkpoint.

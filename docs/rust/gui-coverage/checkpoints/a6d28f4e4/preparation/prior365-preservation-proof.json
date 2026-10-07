@@ -1,0 +1,65 @@
+{
+  "source_commit": "a6d28f4e498a3d7a8f00ad6a61da62166bc54383",
+  "source_schema_preflight": "passed_execution_render_pending",
+  "selected_ids": [
+    "audit-options-open-externally-single-file-calls-add",
+    "audit-options-open-externally-single-file-calls-delete",
+    "audit-options-open-externally-single-file-calls-edit"
+  ],
+  "selected_count": 3,
+  "prior_completed_count": 365,
+  "prior365_raw_complete_whole_objects_preserved": true,
+  "all_unselected_raw_whole_objects_preserved": true,
+  "native1799_raw_whole_inventory_preserved": true,
+  "post_repin_unselected_nonanchor_fields_preserved": true,
+  "repin_only": "Inherited anchors use exact committed unchanged line/hash/context, including pure native_wiring_source coordinates; selected source declaration correction is separately documented in binding-anchor-proof.json. No unselected semantic substitutions.",
+  "unselected_promotions": [],
+  "required_inherited_updates": 0,
+  "frozen1812_preserved": true,
+  "prior365_nodes_digest": "9095eec6ca40122d04bf72588106860a75dba73a66e6d6e5a617a6dbd3173367",
+  "native_inventory_digest": "e2825c928dbb6b97ab6b8fdf0a178b3a90e2dd2459ad538bb9bd2fa28daa99f9",
+  "subset_normalized_digest": "096e4581aaab95a406169f9a7dc57c27b65744038bea04064a6c2d5a9bb292ea",
+  "subset_file_sha256": "281ffb7dc93cab852de9bbb35de67af5675a2bc176f0dcee351041b148bf14b6",
+  "source_census_digest": "6d2d015ca36ca32f0eca806a6b79508181cab0097a50390d1dc992d54ed9c2d1",
+  "validation_reports": {
+    "reference": {
+      "source_repin_unique_anchors": 5825,
+      "validation": {
+        "nodes": 1812,
+        "source_anchors": 5810,
+        "statuses": {
+          "partial": 385,
+          "first_pass": 969,
+          "missing": 458
+        },
+        "audit": {
+          "weak_first_pass": []
+        }
+      }
+    },
+    "native": {
+      "source_repin_unique_anchors": 4052,
+      "validation": {
+        "nodes": 1799,
+        "source_anchors": 4052,
+        "statuses": {
+          "partial": 860,
+          "first_pass": 850,
+          "missing": 89
+        },
+        "audit": {
+          "weak_first_pass": [],
+          "exported_window_count": 121,
+          "opaque_native_windows": [],
+          "unassessed_nodes": [],
+          "catch_all_nodes": []
+        }
+      }
+    }
+  },
+  "conditional_bank_if_all_gates_pass": 368,
+  "conditional_pending_after_bank": 7,
+  "approval": false,
+  "canonical_writes": false,
+  "builds": false
+}
