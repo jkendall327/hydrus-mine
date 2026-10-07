@@ -39,6 +39,7 @@ pub fn open(
     let window = ArchiveRepairWindow::new().map_err(|e| e.to_string())?;
     window.set_question(model::SCAN_QUESTION.into());
     let active = Rc::new(Cell::new(true));
+    let repairing = Rc::new(Cell::new(false));
     let cancel = Arc::new(AtomicBool::new(false));
     let receiver = Rc::new(RefCell::new(None::<mpsc::Receiver<Completed>>));
     let plan = Rc::new(RefCell::new(None::<Plan>));
@@ -107,6 +108,7 @@ pub fn open(
         }
     });
     window.on_chosen({
+        let repairing = repairing.clone();
         let close = close.clone();
         let active = active.clone();
         let valid = valid.clone();
@@ -137,6 +139,7 @@ pub fn open(
                 return;
             };
             w.set_phase(1);
+            repairing.set(true);
             w.set_question(SharedString::new());
             w.set_status("filling in missing archive timestamps".into());
             let (send, recv) = mpsc::channel();
@@ -154,6 +157,7 @@ pub fn open(
         }
     });
     window.on_cancel_work({
+        let repairing = repairing.clone();
         let close = close.clone();
         let active = active.clone();
         let valid = valid.clone();
@@ -173,6 +177,13 @@ pub fn open(
                 return;
             }
             cancel.store(true, Ordering::Release);
+            // A repair may already have committed while its completion waits
+            // for the UI timer. Keep its result so successful writes still
+            // report Done and refresh media; only the worker can confirm rollback.
+            if repairing.get() {
+                w.set_status("cancelling archive timestamp repair".into());
+                return;
+            }
             receiver.borrow_mut().take();
             w.set_phase(3);
             w.set_status("Cancelled!".into());

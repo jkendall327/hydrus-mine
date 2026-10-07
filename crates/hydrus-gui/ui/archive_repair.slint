@@ -1,9 +1,32 @@
 import { Button, ScrollView, VerticalBox, HorizontalBox } from "std-widgets.slint";
 import { Theme } from "theme.slint";
+import { MenuChoiceFrame } from "menu_choice_wheel.slint";
+
+// Read-only control observations for real-pointer regression coverage.
+component RepairAction inherits Rectangle {
+    in property <string> text;
+    callback clicked();
+    min-width: button.min-width;
+    min-height: button.min-height;
+    preferred-width: button.preferred-width;
+    preferred-height: button.preferred-height;
+    horizontal-stretch: button.horizontal-stretch;
+    vertical-stretch: button.vertical-stretch;
+    forward-focus: button;
+    button := Button { width: parent.width; height: parent.height; text: root.text; clicked => { root.clicked(); } }
+    in property <bool> measure-controls: false;
+    callback measured(MenuChoiceFrame);
+    Timer {
+        interval: 1ms;
+        running: root.measure-controls;
+        triggered => { root.measured({x:button.absolute-position.x,y:button.absolute-position.y,w:button.width,h:button.height}); }
+    }
+}
+
 export component ArchiveRepairWindow inherits Window {
     in property <string> window-title: "missing archive times work";
     title: root.window-title;
-    width: 680px; height: 480px; background: Theme.window;
+    preferred-width: 680px; preferred-height: 480px; background: Theme.window;
     in property <int> phase;
     in property <string> question;
     in property <string> status;
@@ -12,18 +35,34 @@ export component ArchiveRepairWindow inherits Window {
     callback chosen(int);
     callback cancel-work();
     callback close-clicked();
+    in property <bool> measure-controls: false;
+    callback control-measured(int,MenuChoiceFrame);
+    out property <MenuChoiceFrame> question-viewport: {x:question-scroll.absolute-position.x,y:question-scroll.absolute-position.y,w:question-scroll.visible-width,h:question-scroll.visible-height};
+    out property <length> question-content-width: question-scroll.content-width;
+    out property <length> question-content-height: question-scroll.content-height;
+    out property <length> question-offset: question-scroll.content-y;
     VerticalBox { padding: 12px; spacing: 10px;
-        ScrollView { vertical-stretch: 1; Text { text: root.question; color: Theme.text; wrap: word-wrap; } }
+        question-scroll := ScrollView {
+            vertical-stretch: 1;
+            content-width: self.visible-width;
+            content-height: question-text.preferred-height;
+            question-text := Text {
+                width: question-scroll.visible-width;
+                text: root.question;
+                color: Theme.text;
+                wrap: word-wrap;
+            }
+        }
         Text { text: root.status; color: Theme.text; wrap: word-wrap; }
         if root.phase == 0: HorizontalBox {
-            Button { text: "start the scan"; clicked => { root.scan-answered(true); } }
-            Button { text: "forget it"; clicked => { root.scan-answered(false); } }
+            RepairAction { text: "start the scan"; clicked => { root.scan-answered(true); } measure-controls: root.measure-controls; measured(f) => { root.control-measured(0,f); } }
+            RepairAction { text: "forget it"; clicked => { root.scan-answered(false); } measure-controls: root.measure-controls; measured(f) => { root.control-measured(1,f); } }
         }
         if root.phase == 2: VerticalBox {
-            for label[i] in root.choices: Button { text: label; clicked => { root.chosen(i); } }
-            Button { text: "forget it"; clicked => { root.close-clicked(); } }
+            for label[i] in root.choices: RepairAction { text: label; clicked => { root.chosen(i); } measure-controls: root.measure-controls; measured(f) => { root.control-measured(2+i,f); } }
+            RepairAction { text: "forget it"; clicked => { root.close-clicked(); } measure-controls: root.measure-controls; measured(f) => { root.control-measured(5,f); } }
         }
-        if root.phase == 1: Button { text: "cancel"; clicked => { root.cancel-work(); } }
-        if root.phase == 3: Button { text: "close"; clicked => { root.close-clicked(); } }
+        if root.phase == 1: RepairAction { text: "cancel"; clicked => { root.cancel-work(); } measure-controls: root.measure-controls; measured(f) => { root.control-measured(6,f); } }
+        if root.phase == 3: RepairAction { text: "close"; clicked => { root.close-clicked(); } measure-controls: root.measure-controls; measured(f) => { root.control-measured(7,f); } }
     }
 }

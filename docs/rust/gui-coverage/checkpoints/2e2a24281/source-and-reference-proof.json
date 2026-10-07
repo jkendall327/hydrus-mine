@@ -1,0 +1,18 @@
+{
+  "source_commit": "2e2a2428112bdeb17a9fb9642e7a43c2934d2325",
+  "prior_source": "41700d2033f49981ed52ec774edaa29d6e770b2f",
+  "original_gui_file_preserved_as_exact_prefix": true,
+  "reference_fixture_exact_rerun_match": true,
+  "reference_script_sha256": "544ad965ab2b5f01ddcc5582b367d596cec3d13b7286ffd935f4c9501eabdd15",
+  "fixture_sha256": "584ca58c3334db0addf77232ce0f60168eb1db5617d3f4d945d61c47cec98ddc",
+  "new_gui_tests": 2,
+  "reference_replay_log": "/workspace/validation-reviews/archive-reference-replay.log",
+  "source_review": "/workspace/validation-reviews/archive-source-review.json",
+  "local_slint_generation": {
+    "exit_code": 0,
+    "compiler": "cached Slint 1.18.1 UI generation only",
+    "rust_or_runtime_validation": false,
+    "generated_sha256": "a61d4d11737f03d180b96f6c3576f76866dbb66ef4fa4cdcd9558b407adcad3a"
+  },
+  "runtime_repair": "Retain the fitting 440\u00d7480 capture; add a 440\u00d7360 overflow capture with every existing assertion preserved."
+}

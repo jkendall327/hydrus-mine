@@ -3309,6 +3309,20 @@ repairs go through the content writer and refresh the main page's actual media
 results; an intervening archive/inbox/time edit is preserved. Closing, replacing
 or invalidating the owner prevents a retained confirmation from starting work.
 
+The repair window now wraps its full warning and population explanations to the
+actual scroll viewport, including after resize. Long explanations scroll while
+the population buttons remain available. Cancelling an accepted repair waits
+for its worker result: a completed commit reports Done and refreshes media,
+while cancellation before the write reports Cancelled with no timestamp changes.
+Fresh reference replay, physical-control and rendering regressions cover this
+bounded repair. Full Linux run `37682619326` and independent rendered review passed,
+including all 713 GUI and 67 media tests.
+[Evidence](gui-coverage/checkpoints/2e2a24281/README.md).
+The control observer wraps ordinary buttons and preserves their intrinsic sizing
+and keyboard focus; it is disabled outside regression captures.
+The 440×480 population question fits completely; a separate 440×360 capture
+exercises scrolling while retaining the same available action buttons.
+
 
 Options > tag suggestions now stages the suggested-column width, notebook or
 side-by-side layout, the original four default-page choices, and independent

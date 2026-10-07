@@ -1,0 +1,7 @@
+{
+  "source_commit": "8fdb04d5a6c72075057401228679a94de6626795",
+  "run_id": 37665125076,
+  "reason": "Cancelled only after primary-mirror replacement run reached Clippy. Original remained downloading Ubuntu packages; fonts-noto-cjk started18:33:33 and installation still incomplete at18:47:14 cancellation.",
+  "gui_tests_executed": false,
+  "completion_credit": false
+}

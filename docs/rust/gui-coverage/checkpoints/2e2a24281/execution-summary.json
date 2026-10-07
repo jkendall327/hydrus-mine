@@ -1,0 +1,14 @@
+{
+  "source_commit": "2e2a2428112bdeb17a9fb9642e7a43c2934d2325",
+  "run_id": 37682619326,
+  "workspace_tests_passed": 2197,
+  "workspace_tests_failed": 0,
+  "workspace_tests_ignored": 3,
+  "gui_tests_passed": 713,
+  "media_tests_passed": 67,
+  "native_package_seconds": 298,
+  "strict_clippy_seconds": 615,
+  "workspace_test_step_seconds": 1247,
+  "workspace_cache_restore": "No compatible workspace snapshot restored; dependency cache usable. New snapshot saved on established validation branch.",
+  "scope": "Linux; Windows and macOS deferred."
+}

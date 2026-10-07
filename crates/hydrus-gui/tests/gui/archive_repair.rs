@@ -214,3 +214,364 @@ fn database_repair_has_owned_scan_population_questions_and_updates_real_media_on
     );
     ui.hide().unwrap();
 }
+
+fn menu_repair(ui: &MainWindow, bound: &hydrus_gui::Bound) -> ArchiveRepairWindow {
+    let database = ui
+        .get_menu_titles()
+        .iter()
+        .position(|r| r.label == "database")
+        .unwrap();
+    ui.invoke_menu_title_pressed(i32::try_from(database).unwrap(), 10.0, 22.0);
+    let maintenance = ui
+        .get_menu_panes()
+        .row_data(0)
+        .unwrap()
+        .lines
+        .iter()
+        .position(|r| r.label == "file maintenance")
+        .unwrap();
+    ui.invoke_menu_line_clicked(0, i32::try_from(maintenance).unwrap(), 0.0, 0.0, 0.0);
+    let repair = ui
+        .get_menu_panes()
+        .row_data(1)
+        .unwrap()
+        .lines
+        .iter()
+        .position(|r| r.label.starts_with("fix missing file archived times"))
+        .unwrap();
+    ui.invoke_menu_line_clicked(1, i32::try_from(repair).unwrap(), 0.0, 0.0, 0.0);
+    bound
+        .archive_repair
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong()
+}
+
+type Controls = Rc<RefCell<std::collections::BTreeMap<i32, hydrus_gui::MenuChoiceFrame>>>;
+fn observe(window: &ArchiveRepairWindow) -> Controls {
+    let controls = Controls::default();
+    window.set_measure_controls(true);
+    window.on_control_measured({
+        let controls = controls.clone();
+        move |id, frame| {
+            controls.borrow_mut().insert(id, frame);
+        }
+    });
+    controls
+}
+fn settled(
+    native: &slint::platform::software_renderer::MinimalSoftwareWindow,
+    width: u32,
+    height: u32,
+) -> Vec<u8> {
+    let started = Instant::now();
+    let mut previous = None;
+    loop {
+        let pixels = headless::render(native, width, height);
+        if started.elapsed() >= Duration::from_millis(40) && previous.as_ref() == Some(&pixels) {
+            return pixels;
+        }
+        assert!(
+            started.elapsed() < Duration::from_secs(3),
+            "archive repair render did not settle"
+        );
+        previous = Some(pixels);
+        std::thread::sleep(Duration::from_millis(5));
+    }
+}
+fn capture(
+    native: &slint::platform::software_renderer::MinimalSoftwareWindow,
+    window: &ArchiveRepairWindow,
+    name: &str,
+    width: u32,
+    height: u32,
+) {
+    use slint::platform::WindowAdapter as _;
+    assert!(std::ptr::eq(native.window(), window.window()));
+    assert!(window.window().is_visible());
+    let pixels = settled(native, width, height);
+    let viewport = window.get_question_viewport();
+    assert!(viewport.w > 0.0 && viewport.h > 0.0);
+    assert!(
+        (window.get_question_content_width() - viewport.w).abs() < 1.0,
+        "wrapped question must use the actual viewport, not its unwrapped preferred width"
+    );
+    headless::save_png(
+        &std::path::Path::new(env!("CARGO_TARGET_TMPDIR")).join(name),
+        &pixels,
+        width,
+        height,
+    )
+    .unwrap();
+}
+fn click(
+    native: &slint::platform::software_renderer::MinimalSoftwareWindow,
+    controls: &Controls,
+    id: i32,
+) {
+    use slint::platform::{PointerEventButton, WindowAdapter as _, WindowEvent};
+    let frame = controls.borrow().get(&id).unwrap().clone();
+    assert!(
+        [frame.x, frame.y, frame.w, frame.h]
+            .into_iter()
+            .all(f32::is_finite)
+    );
+    assert!(frame.x >= 0.0 && frame.y >= 0.0 && frame.w > 0.0 && frame.h > 0.0);
+    let size = native.window().size();
+    assert!(
+        frame.x + frame.w <= size.width as f32 + 1.0
+            && frame.y + frame.h <= size.height as f32 + 1.0
+    );
+    let position = slint::LogicalPosition::new(frame.x + frame.w / 2.0, frame.y + frame.h / 2.0);
+    native.dispatch_event(WindowEvent::PointerMoved { position });
+    native.dispatch_event(WindowEvent::PointerPressed {
+        position,
+        button: PointerEventButton::Left,
+    });
+    native.dispatch_event(WindowEvent::PointerReleased {
+        position,
+        button: PointerEventButton::Left,
+    });
+}
+
+#[test]
+fn actual_archive_controls_wrap_scroll_and_apply_each_recorded_population() {
+    use slint::platform::WindowEvent;
+    let windows = headless::init();
+    let fixture = hydrus_testkit::fixture_json("archive_time_repair.json");
+    for choice in 0..3 {
+        let dir = tempfile::tempdir().unwrap();
+        let store = Store::open(dir.path()).unwrap();
+        let ids = seed(&store);
+        let ui = MainWindow::new().unwrap();
+        ui.show().unwrap();
+        let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+        let declined = menu_repair(&ui, &bound);
+        let controls = observe(&declined);
+        let native = windows.get(windows.count() - 1).unwrap();
+        capture(
+            &native,
+            &declined,
+            &format!("archive-repair-warning-{choice}.png"),
+            680,
+            480,
+        );
+        assert_eq!(
+            declined.get_question(),
+            fixture["events"][0]["asked"][0]["message"]
+                .as_str()
+                .unwrap()
+        );
+        click(&native, &controls, 1);
+        assert!(bound.archive_repair.borrow().is_none());
+        assert_eq!(times(&store, &ids), vec![None, None]);
+
+        let window = menu_repair(&ui, &bound);
+        let controls = observe(&window);
+        let native = windows.get(windows.count() - 1).unwrap();
+        settled(&native, 680, 480);
+        click(&native, &controls, 0);
+        wait_phase(&window, 2);
+        assert_eq!(
+            window
+                .get_choices()
+                .iter()
+                .map(|s| s.to_string())
+                .collect::<Vec<_>>(),
+            ["do legacy times", "do import times", "do both"]
+        );
+        let plan = store
+            .read(|conn| {
+                hydrus_store::archive_repair::scan(
+                    conn,
+                    &hydrus_store::content::DomainRoles::new(&store.snapshot().services)?,
+                    &std::sync::atomic::AtomicBool::new(false),
+                )
+            })
+            .unwrap();
+        assert_eq!(
+            window.get_question(),
+            hydrus_gui_model::archive_repair::question(&plan)
+        );
+        capture(
+            &native,
+            &window,
+            &format!("archive-repair-choices-{choice}.png"),
+            680,
+            480,
+        );
+        if choice == 0 {
+            capture(
+                &native,
+                &window,
+                "archive-repair-choices-narrow-top.png",
+                440,
+                480,
+            );
+            // At 440x480 the complete question fits. Retain that capture,
+            // then reduce vertical space to exercise real overflow and wheel input.
+            capture(
+                &native,
+                &window,
+                "archive-repair-choices-short-top.png",
+                440,
+                360,
+            );
+            let viewport = window.get_question_viewport();
+            assert!(window.get_question_content_height() > viewport.h);
+            let before = window.get_question_offset();
+            native.dispatch_event(WindowEvent::PointerScrolled {
+                position: slint::LogicalPosition::new(
+                    viewport.x + viewport.w / 2.0,
+                    viewport.y + viewport.h / 2.0,
+                ),
+                delta_x: 0.0,
+                delta_y: -180.0,
+            });
+            capture(
+                &native,
+                &window,
+                "archive-repair-choices-short-scrolled.png",
+                440,
+                360,
+            );
+            assert!(window.get_question_offset() < before);
+            assert_eq!(times(&store, &ids), vec![None, None]);
+            capture(
+                &native,
+                &window,
+                "archive-repair-choices-wide.png",
+                840,
+                640,
+            );
+        }
+        settled(&native, 680, 480);
+        click(&native, &controls, choice + 2);
+        wait_phase(&window, 3);
+        let expected = vec![
+            if choice == 1 {
+                None
+            } else {
+                fixture["reopened_archived"][0].as_i64()
+            },
+            if choice == 0 {
+                None
+            } else {
+                fixture["reopened_archived"][1].as_i64()
+            },
+        ];
+        assert_eq!(times(&store, &ids), expected);
+        assert!(window.get_status().starts_with("Done!"));
+        capture(
+            &native,
+            &window,
+            &format!("archive-repair-done-{choice}.png"),
+            680,
+            480,
+        );
+        click(&native, &controls, 7);
+        assert!(bound.archive_repair.borrow().is_none());
+        assert_eq!(times(&store, &ids), expected);
+        if choice == 2 {
+            let reopened = menu_repair(&ui, &bound);
+            let controls = observe(&reopened);
+            let native = windows.get(windows.count() - 1).unwrap();
+            settled(&native, 680, 480);
+            click(&native, &controls, 0);
+            wait_phase(&reopened, 3);
+            assert_eq!(reopened.get_status(), "No missing archive times found!");
+            capture(
+                &native,
+                &reopened,
+                "archive-repair-no-missing.png",
+                680,
+                480,
+            );
+            click(&native, &controls, 7);
+        }
+        ui.hide().unwrap();
+    }
+}
+
+#[test]
+fn cancel_after_commit_reports_success_and_refreshes_while_cancel_before_write_rolls_back() {
+    let _windows = headless::init();
+    for committed in [false, true] {
+        let dir = tempfile::tempdir().unwrap();
+        let store = Store::open(dir.path()).unwrap();
+        let ids = seed(&store);
+        let changed = Rc::new(Cell::new(0));
+        let slot = archive_repair_window::Slot::default();
+        let window = archive_repair_window::open(
+            &store,
+            &slot,
+            {
+                let changed = changed.clone();
+                Rc::new(move || changed.set(changed.get() + 1))
+            },
+            Rc::new(|| true),
+        )
+        .unwrap();
+        window.invoke_scan_answered(true);
+        wait_phase(&window, 2);
+        let (entered_send, entered_recv) = std::sync::mpsc::channel();
+        let (release_send, release_recv) = std::sync::mpsc::channel();
+        let blocker = if committed {
+            None
+        } else {
+            let store = store.clone();
+            let thread = std::thread::spawn(move || {
+                store
+                    .write_content(move |_| {
+                        entered_send.send(()).unwrap();
+                        release_recv.recv_timeout(Duration::from_secs(10)).unwrap();
+                        Ok(())
+                    })
+                    .unwrap();
+            });
+            entered_recv.recv_timeout(Duration::from_secs(10)).unwrap();
+            Some(thread)
+        };
+        window.invoke_chosen(2);
+        if committed {
+            let started = Instant::now();
+            // Deliberately do not pump Slint: the commit is durable, but its
+            // Completed message has not yet been consumed by the UI timer.
+            while times(&store, &ids).iter().any(Option::is_none) {
+                assert!(started.elapsed() < Duration::from_secs(10));
+                std::thread::sleep(Duration::from_millis(5));
+            }
+        }
+        assert_eq!(window.get_phase(), 1);
+        assert_eq!(changed.get(), 0);
+        window.invoke_cancel_work();
+        assert_eq!(
+            window.get_phase(),
+            1,
+            "cancellation must wait for the worker's authoritative result"
+        );
+        if let Some(blocker) = blocker {
+            release_send.send(()).unwrap();
+            blocker.join().unwrap();
+        }
+        wait_phase(&window, 3);
+        assert_eq!(changed.get(), i32::from(committed));
+        if committed {
+            assert!(window.get_status().starts_with("Done!"));
+            let fixture = hydrus_testkit::fixture_json("archive_time_repair.json");
+            assert_eq!(
+                times(&store, &ids),
+                vec![
+                    fixture["reopened_archived"][0].as_i64(),
+                    fixture["reopened_archived"][1].as_i64()
+                ]
+            );
+        } else {
+            assert_eq!(window.get_status(), "Cancelled!");
+            assert_eq!(times(&store, &ids), vec![None, None]);
+        }
+        window.invoke_close_clicked();
+        assert!(slot.borrow().is_none());
+    }
+}
