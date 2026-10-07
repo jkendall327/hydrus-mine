@@ -1,0 +1,9 @@
+{
+  "source_commit": "88e9851e6ab8ecec08eb03f0d5cd3a2f8b7d2339",
+  "prior_native_assertions_and_fox_ink_check_unchanged": true,
+  "local_adapter_test": "passes against cached exact Slint1.18.1 libraries",
+  "negative_baseline": "same strengthened test fails against original d77 adapter",
+  "local_render": "actual new adapter in standalone Slint LineEdit paints fox; representative Latin/CJK row visible",
+  "limits": "cached-library diagnostic; not current full application runtime validation",
+  "required_full_run": 37700560044
+}

@@ -3978,9 +3978,13 @@ while complete saved settings and the live query remain unchanged. Startup now
 supplies an outline emoji fallback for software rendering, so the saved fox can
 paint in monochrome. The actual text-control fallback chain keeps the platform's
 text-font prefix before inserting outlines ahead of its preferred emoji face.
-Ordinary Latin/CJK glyph choices and existing literal OR
-consumers retain their behavior. The regression requires visible ink inside the
-fox field; exact-source hosted execution and fresh rendered review remain pending.
+Ordinary Latin/CJK glyph choices and existing literal OR consumers retain their
+behavior. Full Linux validation at `88e9851e6` and independent fresh rendered
+review pass: 2,198 workspace tests, including 714 GUI and 67 media tests. The
+actual fox field paints visibly; its ASCII counterpart and three ordinary text
+frames are unchanged. This signs off only the original editor leaf, bringing the
+ledger to 375 with no existing candidate pending.
+[Evidence](gui-coverage/checkpoints/88e9851e6/README.md).
 
 Delayed deletion consumers keep a weak identity for their originating page.
 Replacing a session releases that page even when its viewer stays open. A live

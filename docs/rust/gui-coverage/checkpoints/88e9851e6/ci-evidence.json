@@ -330,12 +330,5 @@
       "runner_group_id": 0,
       "runner_group_name": "GitHub Actions"
     }
-  ],
-  "publication_policy": {
-    "path": ".github/publication-validation.json",
-    "source_commit": "88e9851e6ab8ecec08eb03f0d5cd3a2f8b7d2339",
-    "sha256": "49723bd5d6b786392a1368bb3da1406747a553ef31c9de2bdef92cea5d014c5f",
-    "effective_date": "2026-10-06",
-    "reason": "The owner uses Linux and prioritizes validated Linux delivery. macOS is low priority; Windows is deferred because its builds materially lengthen validation. Secondary-platform CI remains available by explicit opt-in."
-  }
+  ]
 }

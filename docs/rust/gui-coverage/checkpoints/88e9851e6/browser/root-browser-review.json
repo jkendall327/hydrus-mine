@@ -1,0 +1,14 @@
+{
+  "reviewer": "root",
+  "source_commit": "88e9851e6ab8ecec08eb03f0d5cd3a2f8b7d2339",
+  "passed": true,
+  "directly_inspected": [
+    "report-desktop.png",
+    "report-narrow.png"
+  ],
+  "observations": [
+    "375 signed-off total and selected OR editor are visible.",
+    "Assessment, limits and source links remain readable at desktop and narrow widths.",
+    "No horizontal overflow, page errors or external requests."
+  ]
+}

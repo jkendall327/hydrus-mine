@@ -7,27 +7,26 @@ partway, say exactly where.
 
 The owner's current goal (2026-10-06) is **all individual report feature leaves
 implemented, verified and published**, with Linux first. Numeric checkpoints are
-progress reports, not stopping targets. The latest checkpoint banks 374 original
-concrete feature completions, including 134 since the prior 240 across twenty-four
+progress reports, not stopping targets. The latest checkpoint banks 375 original
+concrete feature completions, including 135 since the prior 240 across twenty-five
 recent Linux checkpoints. This cumulative count is not a last-24-hour sign-off
-count. There is 1 existing candidate awaiting sign-off. Keep these counts
-separate from inventory and historical first-pass assessments. Validate small
-batches routinely and reassess any batch that goes 24 hours without a checkpoint.
+count. No existing candidate remains awaiting sign-off; 899 of the 1,274 goal
+leaves remain outside the explicit completion ledger. Keep these counts separate
+from inventory and historical first-pass assessments. Validate small batches
+routinely and reassess any batch that goes 24 hours without a checkpoint.
 Broad feature work must not rebuild an unvalidated backlog. Windows/macOS remain
 deferred; strict Linux linting, full tests, reference replay and rendered review
 remain required.
-The latest checkpoint validates Database's missing-archive-time repair. Wrapped
-explanations remain readable after resize and scroll in a constrained viewport.
-Cancellation before writing rolls back; a commit that wins the race still reports
-Done and refreshes media. The complete original GUI regression remains unchanged,
-and two new tests exercise actual dialog buttons, all three populations, scrolling
-and both cancellation orders. Strict Clippy and all 2,197 workspace tests passed,
-including 713 GUI and 67 media tests. Fresh reference replay and independent review
-of the native renders passed. Only this one leaf gains credit; native transaction
-and layout differences remain explicit. The OR connector's invisible emoji remains
-the existing candidate awaiting sign-off. Linux validation now resolves the runner's
-indirect Ubuntu mirror list to the primary archive while preserving signed metadata.
-[Evidence](gui-coverage/checkpoints/2e2a24281/README.md).
+The latest checkpoint validates the OR connecting-string editor, including the
+previously blank saved fox. Startup now supplies monochrome outlines in the
+actual text-control fallback chain while preserving preceding platform fonts.
+Raw saved text, Cancel/reopen, legacy import, ownership and existing literal OR
+consumers retain their behavior. Strict Clippy and all 2,198 workspace tests
+passed, including 714 GUI and 67 media tests. Fresh Qt replay, six native frames
+and independent review passed. The ASCII frame and three ordinary Latin/CJK/editor
+frames are unchanged; the fox changes only within its field. Only this original
+editor leaf gains credit; broader OR layout/rendering remains separately assessed.
+[Evidence](gui-coverage/checkpoints/88e9851e6/README.md).
 
 The first parallel slate (2026-10-03) adds detailed embedded metadata,
 manual file export, local service review/management, tag sibling/parent
@@ -75,14 +74,14 @@ and all 121 exported native windows into nested work, including shared editors,
 all 38 reference option tabs and 19 system-predicate groups. It contains 1,812
 reference nodes and 1,799 native nodes, with per-node assessments, concrete
 remaining work and pinned source/evidence links. The frozen reference inventory
-now has 452 Missing, 385 Partial and 975 First pass entries; its status changes
-also include parent/alias assessments, which do not inflate the 374-item signed-off completion count.
+now has 451 Missing, 385 Partial and 976 First pass entries; its status changes
+also include parent/alias assessments, which do not inflate the 375-item signed-off completion count.
 Native first-pass claims cite scoped regression evidence; source-supported but
 unverified behavior is partial. These counts are not a whole-client completion
 percentage. Maintenance instructions and scope limits are in
 [gui-coverage/README.md](gui-coverage/README.md).
 
-Continuous source work now implements 134 further original leaf proposals over
+The earlier continuous source slate proposed 134 further original leaves over
 that validated 240 checkpoint: 53 on `codex/parity-more-controls`, five more
 on the dependent `codex/parity-next-details` branch, and 13 more on
 `codex/parity-preview-and-launching`, plus nine on
@@ -204,8 +203,8 @@ metadata filesystem jobs also retain their two original Partial assessments,
 and mouse idle tracking remains Partial because it observes application windows.
 Broader external
 call/editor boundaries also remain Partial. Inspect the current branch with
-`python3 scripts/gui_burndown.py --commit HEAD`; do not substitute its proposed
-total of 374 for the validated 240 ledger. The embedded-ICC leaf adds the saved policy with real importer, preview,
+`python3 scripts/gui_burndown.py --commit HEAD`; proposal counts are historical
+and must not replace the latest validated ledger above. The embedded-ICC leaf adds the saved policy with real importer, preview,
 viewer and maintenance consumers. The viewer tag-list now opens owned search
 pages and requests main-window activation on supported native platforms; that
 activation remains Partial because Wayland activation is unresolved. Application

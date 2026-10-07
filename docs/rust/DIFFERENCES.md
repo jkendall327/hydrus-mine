@@ -3029,10 +3029,10 @@ member rows, and ToString/copy/export still use literal “ OR ”. Native prese
 its current one-line OR labels, canonical predicates and separate namespace/OR
 colours for every edited value; it does not activate the reference's dormant
 renderer. The actual Qt recording covers save, Cancel, serialization/reopen,
-labels, member/header colours and default/collapsed copy output. This proposes
+labels, member/header colours and default/collapsed copy output. This signs off
 only the original editor control; broader OR list layout and renderer families
-remain Partial. Native rendered regression and Rust tests are authored for hosted
-execution; no local Cargo builds, Rust tests or mutation runs were performed.
+remain Partial. The original author packet's pending validation is superseded by
+the exact-source Linux checkpoint below.
 
 The OR editor regression adds settled reopened ASCII/fox frames and physical
 Select All/Copy with a clipboard sentinel at one supported 900×900 viewport.
@@ -3044,15 +3044,20 @@ implicit system tails. An emoji-only mapping was insufficient because these
 text chains reached the bitmap font first. Fontique repeats the retained prefix
 in its implicit tail for unsupported characters; repeated setup does not grow it.
 Explicitly requested bitmap fonts or configured bitmap primaries can still
-outrank the fallback. Emoji are
-monochrome and need not match Qt's glyph
-shape or colour. The adapter uses Slint's internal font context, so runtime,
+outrank the fallback. Emoji are monochrome and need not match Qt's glyph shape
+or colour. The adapter uses Slint's internal font context, so runtime,
 build helper and core are pinned together at 1.18.1. A font-selection regression
 checks the actual text-control chain's fox font, unchanged representative
 Latin/CJK/symbol glyph choices and unchanged script fallback lists; the
 real reopened field must paint ink before selection. The fresh Qt replay remains
-byte-identical. Exact-source Linux execution and fresh frame review remain gates
-for this single control, with no parent credit or custom OR renderer activation.
+byte-identical. Full Linux validation and independent fresh image review pass at
+`88e9851e6`: all 2,198 workspace tests, including 714 GUI and 67 media tests.
+The stronger font-selection test rejects the earlier Emoji-only adapter; its
+failed full run and blank field remain diagnostic history. The local cached-library
+probe is separate from current application validation. Exactly one original leaf
+is published, bringing the ledger to 375 with no existing candidate pending;
+there is no parent credit or custom OR renderer activation. Windows/macOS remain
+deferred. [Evidence](gui-coverage/checkpoints/88e9851e6/README.md).
 
 Default and registered single-file launch dispatch now reads current Store
 file-domain membership explicitly. The lightweight basic metadata reader leaves

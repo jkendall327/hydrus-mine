@@ -1,0 +1,37 @@
+{
+  "source_commit": "88e9851e6ab8ecec08eb03f0d5cd3a2f8b7d2339",
+  "reviewer": "root",
+  "result": "passed",
+  "workspace_tests": {
+    "passed": 2198,
+    "failed": 0,
+    "ignored": 3,
+    "gui_passed": 714,
+    "media_passed": 67
+  },
+  "directly_inspected_frames": [
+    "namespace-colours-add-entry.png",
+    "or-connector-ascii-reopened-native.png",
+    "or-connector-fox-reopened-native.png",
+    "or-connector-options-native.png",
+    "related_tag_suggestions.png",
+    "suggested-tags-columns-width240-populated.png"
+  ],
+  "findings": [
+    "Reopened saved fox is visible, monochrome and unclipped inside the OR field.",
+    "ASCII reopened frame is pixel-identical to the prior validated baseline.",
+    "Fox frame differs only inside bounds [645,508,658,520], with 65 dark field pixels versus zero before.",
+    "Three ordinary Latin/CJK/tag-editor frames are byte-identical to prior validated frames.",
+    "Qt reference frame has coloured emoji; no glyph-shape/colour or broader OR layout parity claimed."
+  ],
+  "ordinary_frame_byte_preservation": {
+    "related_tag_suggestions.png": true,
+    "suggested-tags-columns-width240-populated.png": true,
+    "namespace-colours-add-entry.png": true
+  },
+  "limits": [
+    "Callback-driven edit/Apply/Cancel/ownership; physical focus/SelectAll/Copy only at supported 900x900 viewport.",
+    "Explicit bitmap requests/primaries remain outside fallback repair.",
+    "Windows/macOS deferred."
+  ]
+}
