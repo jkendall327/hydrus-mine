@@ -5,6 +5,9 @@ The real multiline editor, radio groups and cleanup buttons run unchanged.
 Warning/yes-no presentation is scripted for exact cleanup paths; a final real
 QMessageBox warning is captured and acknowledged. Typed predicates execute real
 basic-file queries, with explicit reconstruction and parent Cancel also recorded.
+Shown nonmodal filesize and hash editors also record real QObject destruction
+after their standalone owner is deleted, retaining all Python wrappers. This
+does not record client Main destruction or an active nested warning teardown.
 """
 import json
 import sys
@@ -13,6 +16,74 @@ from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
+
+
+def record_parent_destruction(c):
+    """Real nonmodal Qt child cascade; standalone owners, not client Main."""
+    import sys
+    import traceback
+    from qtpy import QtCore as QC, QtWidgets as QW
+    from hydrus.client.gui import QtPorting as QP, ClientGUITopLevelWindowsPanels as W
+    from hydrus.client.gui.search import ClientGUISearch as G, ClientGUIPredicatesSingle as S
+    from hydrus.client.search import ClientSearchPredicate as P
+
+    out = {'cases': [], 'qt_callback_errors': [], 'drain_policy': {
+        'maximum_rounds': 8, 'process_events_max_time_ms': 10,
+        'send_posted_event_type': 'QEvent.DeferredDelete'},
+        'scope': 'Standalone QWidget.window() owner; shown nonmodal actual DialogEdit/FleshOutPredicatePanel; no Main destruction, nested warning destruction or production search publication.'}
+    old_hook = sys.excepthook
+    def error_hook(kind, value, tb):
+        out['qt_callback_errors'].append(''.join(traceback.format_exception(kind, value, tb)))
+        old_hook(kind, value, tb)
+    def drain():
+        for _ in range(8):
+            QC.QCoreApplication.sendPostedEvents(None, QC.QEvent.Type.DeferredDelete)
+            QW.QApplication.processEvents(QC.QEventLoop.ProcessEventsFlag.AllEvents, 10)
+    sys.excepthook = error_hook
+    try:
+        for kind, predicate_type, editor_type in [
+            ('filesize', P.PREDICATE_TYPE_SYSTEM_SIZE, S.PanelPredicateSystemSize),
+            ('hash', P.PREDICATE_TYPE_SYSTEM_HASH, S.PanelPredicateSystemHash)]:
+            owner = QW.QWidget()
+            owner.setWindowTitle('predicate lifetime scratch owner')
+            owner.resize(360, 160); owner.show()
+            launcher = QW.QWidget(owner)
+            blank = P.Predicate(predicate_type)
+            dialog = W.DialogEdit(launcher.window(), 'input predicate', hide_buttons=True)
+            panel = G.FleshOutPredicatePanel(dialog, blank)
+            dialog.SetPanel(panel); dialog.resize(1000, 550); dialog.show()
+            QW.QApplication.processEvents()
+            editor = panel.findChild(editor_type)
+            # Retain wrappers: Python collection is not destruction evidence.
+            objects = {'owner': owner, 'launcher': launcher, 'dialog': dialog, 'panel': panel, 'editor': editor}
+            event = {'kind': kind, 'nested_warning': False, 'destroyed_signals': [],
+                'dialog_parent_is_owner_window': dialog.parentWidget() is launcher.window(),
+                'panel_parent_is_dialog': panel.parentWidget() is dialog,
+                'before': {k: {'valid': QP.isValid(v), 'visible': v.isVisible()} for k,v in objects.items()},
+                'original_value_before': blank.GetValue()}
+            for name, obj in objects.items():
+                obj.destroyed.connect(lambda _obj=None, name=name: event['destroyed_signals'].append(name))
+            out['cases'].append(event)
+            try:
+                # No child close, hide, reject or collector release first.
+                owner.deleteLater()
+                event['valid_immediately_after_delete_later'] = {k: QP.isValid(v) for k,v in objects.items()}
+                drain()
+                event['after_bounded_drain'] = {k: QP.isValid(v) for k,v in objects.items()}
+                event['original_value_after'] = blank.GetValue()
+                event['client_main_survives'] = QP.isValid(c.gui)
+                event['final_valid'] = {k: QP.isValid(v) for k,v in objects.items()}
+                assert not any(event['final_valid'].values()), event
+                assert set(event['destroyed_signals']) == set(objects), event
+                assert event['original_value_after'] == event['original_value_before']
+                assert event['client_main_survives']
+            finally:
+                if QP.isValid(owner):
+                    owner.deleteLater(); drain()
+    finally:
+        sys.excepthook = old_hook
+    assert not out['qt_callback_errors'], out['qt_callback_errors']
+    return out
 
 
 def record(session):
@@ -130,6 +201,7 @@ def record(session):
         finally:
             M.ShowWarning, Q.GetYesNo = old_warning, old_question
             dialog.reject(); dialog.deleteLater()
+        out['parent_destruction'] = record_parent_destruction(c)
         return out
     return session.controller.CallBlockingToQt(session.controller.gui, work)
 

@@ -250,6 +250,19 @@ fn cleanup_replaces_real_typed_text_and_owns_warning_acknowledgement() {
             assert!(window.get_notice_open());
             assert_eq!(window.get_notice_message(), warning.as_str().unwrap());
             let notice = windows.get(windows.count() - 1).unwrap();
+            if case["name"] == "bad-lines-normal" {
+                // This is the actual recorded cleanup transport, not invalid OK.
+                assert!(notice.window().is_visible());
+                let pixels = headless::render_snapshot(&notice, 700, 560);
+                headless::save_png(
+                    &std::path::Path::new(env!("CARGO_TARGET_TMPDIR"))
+                        .join("hash-predicate-cleanup-warning-native.png"),
+                    &pixels,
+                    700,
+                    560,
+                )
+                .unwrap();
+            }
             let before = window.get_hash_text();
             window.invoke_text_edited(0, 2, "blocked".into());
             window.invoke_ok(0);
@@ -341,9 +354,16 @@ fn cleanup_replaces_real_typed_text_and_owns_warning_acknowledgement() {
         .unwrap();
     ui.window().dispatch_event(WindowEvent::CloseRequested);
     assert!(!ui.get_question().is_empty());
+    super::active_predicates::drain_predicate_timers_for_observer();
+    assert!(child.window().is_visible());
+    assert!(notice.window().is_visible());
+    assert!(successor.predicate_editor.borrow().is_some());
     key(notice.window(), Key::Return.into());
     assert!(child.get_notice_open());
     ui.invoke_answer(false);
+    super::active_predicates::drain_predicate_timers_for_observer();
+    assert!(notice.window().is_visible());
+    assert!(successor.predicate_editor.borrow().is_some());
     assert!(child.get_notice_open());
     ui.window().dispatch_event(WindowEvent::CloseRequested);
     ui.invoke_answer(true);
@@ -353,4 +373,138 @@ fn cleanup_replaces_real_typed_text_and_owns_warning_acknowledgement() {
     child.invoke_ok(0);
     assert!(successor.current.borrow().borrow().predicates().is_empty());
     child.hide().unwrap();
+}
+
+#[test]
+fn main_death_and_final_bound_drop_automatically_close_recorded_cleanup_warning() {
+    let (_guards, store) = store();
+    store
+        .write(|writer| {
+            settings::set(
+                writer.conn(),
+                &hydrus_store::radio_return::RadioReturn {
+                    force_dialog_ok: true,
+                },
+            )
+        })
+        .unwrap();
+    let fixture = hydrus_testkit::fixture_json("hash_predicate.json");
+    let case = fixture["cleanup"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|case| case["name"] == "bad-lines-normal")
+        .unwrap();
+    let windows = headless::init();
+    for main_dies in [true, false] {
+        let ui = MainWindow::new().unwrap();
+        ui.show().unwrap();
+        let bound = bind(&ui, Pages::single(SearchPage::new(store.clone())));
+        let current = bound.current.borrow().clone();
+        let slot = bound.predicate_editor.clone();
+        let before = current.borrow().active_predicates().to_vec();
+        let saved = super::active_predicates::predicate_settings(&store);
+        let child = open(&ui, &bound);
+        assert!(
+            child.invoke_force_radio_ok(0),
+            "the live Return route is enabled"
+        );
+        child.invoke_chose(0, 5, 3);
+        child.invoke_text_edited(0, 2, case["before"]["text"].as_str().unwrap().into());
+        child.invoke_pressed(0, 3);
+        assert!(child.get_notice_open());
+        assert_eq!(
+            child.get_notice_message(),
+            case["warnings"][0].as_str().unwrap()
+        );
+        let notice = windows.get(windows.count() - 1).unwrap();
+        assert!(notice.window().is_visible());
+        assert!(child.window().is_visible());
+        let text = child.get_hash_text();
+        let kind = fields(&child).row_data(5).unwrap().chosen;
+        let weak_main = ui.as_weak();
+        let stale_launch = ui
+            .get_suggestions()
+            .iter()
+            .position(|row| row.text == "system:hash")
+            .unwrap();
+        let mut retained_main = Some(ui);
+        let mut retained_bound = Some(bound);
+        if main_dies {
+            let ui = retained_main.take().unwrap();
+            ui.hide().unwrap();
+            drop(ui);
+            assert!(
+                weak_main.upgrade().is_none(),
+                "actual Main must be gone before the timer proof"
+            );
+            assert!(
+                retained_bound.is_some(),
+                "Bound is deliberately still retained"
+            );
+        } else {
+            drop(retained_bound.take());
+            assert!(
+                weak_main.upgrade().is_some(),
+                "final Bound retirement must not depend on Main death"
+            );
+        }
+        super::active_predicates::drain_predicate_timers_until(
+            "retirement must hide editor AND cleanup notice",
+            || {
+                slot.borrow().is_none()
+                    && !child.window().is_visible()
+                    && !notice.window().is_visible()
+                    && !child.get_notice_open()
+            },
+        );
+        assert!(child.get_notice_message().is_empty());
+        assert!(
+            windows.count() >= 3,
+            "collector and warning adapter remain retained"
+        );
+        assert_eq!(current.borrow().active_predicates(), before);
+        assert_eq!(super::active_predicates::predicate_settings(&store), saved);
+
+        child.show().unwrap();
+        child.invoke_text_edited(0, 2, fixture["known"]["sha256"][0].as_str().unwrap().into());
+        child.invoke_chose(0, 5, 0);
+        child.invoke_pressed(0, 3);
+        child.invoke_pressed(0, 4);
+        child.invoke_answer(true);
+        child.invoke_defaults_action(0, "set this as new default".into());
+        child.invoke_defaults_action(0, "reset to original default".into());
+        assert_eq!(child.get_radio_default_panel(), 0);
+        assert!(
+            !child.invoke_force_radio_ok(0),
+            "retired Return admission is refused"
+        );
+        key(child.window(), Key::Return.into());
+        key(notice.window(), Key::Return.into());
+        notice.window().dispatch_event(WindowEvent::CloseRequested);
+        child.invoke_ok(0);
+        assert_eq!(child.get_hash_text(), text);
+        assert_eq!(fields(&child).row_data(5).unwrap().chosen, kind);
+        assert!(!child.get_notice_open());
+        assert!(child.get_notice_message().is_empty());
+        assert!(child.get_question().is_empty());
+        assert!(slot.borrow().is_none());
+        assert!(!notice.window().is_visible());
+        assert_eq!(current.borrow().active_predicates(), before);
+        assert_eq!(super::active_predicates::predicate_settings(&store), saved);
+        assert_eq!(
+            super::active_predicates::predicate_settings(&Store::open(store.dir()).unwrap()),
+            saved
+        );
+        if let Some(ui) = &retained_main {
+            ui.invoke_suggestion_chosen(i32::try_from(stale_launch).unwrap());
+            assert!(
+                slot.borrow().is_none(),
+                "final-owner death permanently blocks the old launch callback"
+            );
+            ui.hide().unwrap();
+        }
+        child.invoke_cancel();
+        child.hide().unwrap();
+    }
 }

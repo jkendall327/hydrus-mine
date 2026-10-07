@@ -1,0 +1,40 @@
+{
+  "source_commit": "170ab05251e79db77e0b97692f30d17843a3ca78",
+  "run_id": 37560085258,
+  "approval": false,
+  "historical_baseline": "1eace8c6ef5a1ed6a2367ad48bdbed28800f6484",
+  "reference_provenance": "/workspace/validation-reviews/predicate3/reference/root-provenance.json",
+  "reference_provenance_sha256": "34c01a756124f4d48f0b907ee62bb359f5e7ec6dfab1e36133cb6020a42dc5df",
+  "reference_log_sha256": "8ef1c81e27650509de5598fd030e9bd8075b1f1b2e1ea013a1abf610ba6603c0",
+  "assertion_preservation": {
+    "crates/hydrus-gui/tests/gui/active_predicates.rs": {
+      "prior_assertions": 107,
+      "current_assertions": 125,
+      "prior_preserved_in_order": true
+    },
+    "crates/hydrus-gui/tests/gui/filesize_predicate.rs": {
+      "prior_assertions": 33,
+      "current_assertions": 71,
+      "prior_preserved_in_order": true
+    },
+    "crates/hydrus-gui/tests/gui/hash_predicate.rs": {
+      "prior_assertions": 52,
+      "current_assertions": 83,
+      "prior_preserved_in_order": true
+    }
+  },
+  "assertion_report_sha256": "3147059bef25991b84d4c54a5b8a8d81d5e16df552a0fbb47dc86be954aa5255",
+  "four_new_tests": "Author declarations/anchors committed; actual Rust execution pending",
+  "recording_scope": "Actual two nonmodal standalone QWidget.window parent cascades, retained wrappers; old ten keys unchanged. No Main/nested exec/active warning equivalence. Native notice teardown is separate safety boundary.",
+  "actual_reference_extension_current_source_verified": {
+    "source_commit": "170ab05251e79db77e0b97692f30d17843a3ca78",
+    "original10keys_value_identical": true,
+    "root_provenance_files_all_match_commit": true,
+    "two_cases": [
+      "filesize",
+      "hash"
+    ],
+    "errors": [],
+    "native_execution_claimed": false
+  }
+}

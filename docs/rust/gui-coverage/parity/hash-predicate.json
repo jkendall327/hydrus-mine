@@ -7,7 +7,9 @@
   "implementation_commits": [
     "8d1d8ded28e874d9563f5ee704776e3188fd4417",
     "503d3b2c88ae8bf1138e2e77010c3d0f24df3d22",
-    "b963ba72112eb8d65dda6eeb5c24c94513ce651d"
+    "b963ba72112eb8d65dda6eeb5c24c94513ce651d",
+    "1dabc102059d4595e975ef636037dbfe720688b1",
+    "340b458b87454b3eba567247e4d0656e4dc74e9c"
   ],
   "eligible_concrete_first_pass_count": 2,
   "parent_promotions": 0,
@@ -26,10 +28,12 @@
     "result": "Exactly two original frozen concrete Partial controls, absent both completion arrays and all prior packets. Structural/shared/native audit.options aliases, hash sign sibling, generic active Edit/global radio Enter and parents excluded."
   },
   "validation": {
-    "reference": "Actual Qt 2026-10-05 12:01:00\u201302; real fixture/controls+warning PNGs inspected.",
+    "reference": "Actual Qt 2026-10-05 12:01:00–02; real fixture/controls+warning PNGs inspected.",
     "source_checks": "Cached Slint compilation, targeted rustfmt --check, git diff --check, Python recorder syntax and fixture invariants pass.",
     "rust_tests": "Authored only; hosted Rust/native rendered replay and exact-source PNG review pending.",
-    "independent_review": "Root accepted bounded immutable 8d1d8ded controls, text synchronization, owned notice lifecycle, exact weak-slot retirement, typed queries/reconstruction and physical key/pointer source, inspected both actual Qt PNGs, and accepted final 503d3b2c exact OK-prefix correction after actual-handler recording and preserved native warning assertion. Final b963ba721 only sorts the two test-module registration lines for rustfmt. Source-only acceptance; no runtime attestation."
+    "independent_review": "Root accepted bounded immutable 8d1d8ded controls, text synchronization, owned notice lifecycle, exact weak-slot retirement, typed queries/reconstruction and physical key/pointer source, inspected both actual Qt PNGs, and accepted final 503d3b2c exact OK-prefix correction after actual-handler recording and preserved native warning assertion. Final b963ba721 only sorts the two test-module registration lines for rustfmt. Source-only acceptance; no runtime attestation.",
+    "lifetime_repair_checks": "Owner source and four native lifetime regressions authored; rustfmt --check and git diff --check pass for tests. Full exact-source Linux Rust/Clippy and fresh native render review remain pending; no local Cargo/build/mutation execution.",
+    "lifetime_reference": "record_parent_destruction successfully rerun on 2026-10-07 UTC; original ten hash fixture keys value-identical. Standalone nonmodal Qt owner cascade only, not client Main or active nested warning destruction."
   },
   "evidence_hashes": [
     {
@@ -168,6 +172,18 @@
         550,
         330
       ]
+    },
+    {
+      "artifact": "hash-predicate-cleanup-warning-native.png",
+      "status": "authored_not_executed",
+      "size": [
+        700,
+        560
+      ],
+      "fixture_case": "bad-lines-normal",
+      "reference_artifact": "oracle/fixtures/hash-predicate-warning-qt.png",
+      "test": "hash_predicate::cleanup_replaces_real_typed_text_and_owns_warning_acknowledgement",
+      "note": "Actual four-section recorded cleanup warning; render_snapshot does not advance interaction timers. Existing hash-predicate-warning-native.png is invalid acceptance and remains supplemental."
     }
   ],
   "entries": [
@@ -180,8 +196,8 @@
       "proposed_status": "first_pass",
       "change_kind": "implementation",
       "countAsCompletedLeaf": true,
-      "exactBehavior": "The actual typed hash input uses the reference multiline placeholder and vertical four-type radio group (SHA-256, MD5, SHA-1, SHA-512), alongside its existing is/is-not group. Arrow navigation clamps at edges and Space selects. Upper/lower case, allowed algorithm prefixes, 0x prefixes and duplicate newline-separated hashes reach the existing typed query consumer; inclusive/exclusive and empty sets have recorded live query outcomes. Invalid or wrong-type acceptance preserves the draft and presents the exact prefixed Qt OK warning in an owned notice. Live physical text remains synchronized after cleanup, including an empty result. Cancel publishes nothing; explicit typed reconstruction preserves algorithm/sign in the model, while typed custom defaults persist/reopen natively and keep other default families. Hidden, rebound and permanently closed owners cannot accept retained callbacks.",
-      "behavior": "The actual typed hash input uses the reference multiline placeholder and vertical four-type radio group (SHA-256, MD5, SHA-1, SHA-512), alongside its existing is/is-not group. Arrow navigation clamps at edges and Space selects. Upper/lower case, allowed algorithm prefixes, 0x prefixes and duplicate newline-separated hashes reach the existing typed query consumer; inclusive/exclusive and empty sets have recorded live query outcomes. Invalid or wrong-type acceptance preserves the draft and presents the exact prefixed Qt OK warning in an owned notice. Live physical text remains synchronized after cleanup, including an empty result. Cancel publishes nothing; explicit typed reconstruction preserves algorithm/sign in the model, while typed custom defaults persist/reopen natively and keep other default families. Hidden, rebound and permanently closed owners cannot accept retained callbacks.",
+      "exactBehavior": "The actual typed hash input uses the reference multiline placeholder and vertical four-type radio group (SHA-256, MD5, SHA-1, SHA-512), alongside its existing is/is-not group. Arrow navigation clamps at edges and Space selects. Upper/lower case, allowed algorithm prefixes, 0x prefixes and duplicate newline-separated hashes reach the existing typed query consumer; inclusive/exclusive and empty sets have recorded live query outcomes. Invalid or wrong-type acceptance preserves the draft and presents the exact prefixed Qt OK warning in an owned notice. Live physical text remains synchronized after cleanup, including an empty result. Cancel publishes nothing; explicit typed reconstruction preserves algorithm/sign in the model, while typed custom defaults persist/reopen natively and keep other default families. Hidden, rebound and permanently closed owners cannot accept retained callbacks. Main-owned lifetime state retires the editor on actual Main-component destruction or final Bound-owner drop as well as rebind/accepted exit, hides owned notices and clears only its own slot. Nonfinal Bound clones, temporary Main hide and pending/declined exit retain the draft; retired/re-shown callbacks and Return cannot publish or change recents/defaults.",
+      "behavior": "The actual typed hash input uses the reference multiline placeholder and vertical four-type radio group (SHA-256, MD5, SHA-1, SHA-512), alongside its existing is/is-not group. Arrow navigation clamps at edges and Space selects. Upper/lower case, allowed algorithm prefixes, 0x prefixes and duplicate newline-separated hashes reach the existing typed query consumer; inclusive/exclusive and empty sets have recorded live query outcomes. Invalid or wrong-type acceptance preserves the draft and presents the exact prefixed Qt OK warning in an owned notice. Live physical text remains synchronized after cleanup, including an empty result. Cancel publishes nothing; explicit typed reconstruction preserves algorithm/sign in the model, while typed custom defaults persist/reopen natively and keep other default families. Hidden, rebound and permanently closed owners cannot accept retained callbacks. Main-owned lifetime state retires the editor on actual Main-component destruction or final Bound-owner drop as well as rebind/accepted exit, hides owned notices and clears only its own slot. Nonfinal Bound clones, temporary Main hide and pending/declined exit retain the draft; retired/re-shown callbacks and Return cannot publish or change recents/defaults.",
       "reference_source": {
         "relativepath": "hydrus/client/gui/search/ClientGUIPredicatesSingle.py",
         "line": 1165,
@@ -301,6 +317,27 @@
           "symbol": "Sorry, predicate was not valid: {why}",
           "line_sha256": "a375d72d033b519acfa1493b770232cb011d35d0ba180b364d98905450c5f5d0",
           "commit": "b963ba72112eb8d65dda6eeb5c24c94513ce651d"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/predicate_editor_window.rs",
+          "line": 52,
+          "symbol": "pub(crate) struct Owner(Rc<MainOwner>);",
+          "line_sha256": "947fe84b1d84a5a0a6d546060b26927580cb7569189e842aa324a5627cc2563d",
+          "commit": "1dabc102059d4595e975ef636037dbfe720688b1"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/predicate_editor_window.rs",
+          "line": 70,
+          "symbol": "state.parent.upgrade().is_none()",
+          "line_sha256": "7798a0d708469d11e5ce33eb40abe0c91d0dbd57bdc374f45e6a77a53628112e",
+          "commit": "1dabc102059d4595e975ef636037dbfe720688b1"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/predicate_editor_window.rs",
+          "line": 102,
+          "symbol": "impl Drop for Owner {",
+          "line_sha256": "3806ad3163a6069fe80abc5fcf2967c2e112e3b78368233667e861a4c012f1dc",
+          "commit": "1dabc102059d4595e975ef636037dbfe720688b1"
         }
       ],
       "test_anchors": [
@@ -331,6 +368,20 @@
           "symbol": "fn the_editor_window_shows_what_trees_and_buttons_change",
           "line_sha256": "6bdab319ffce8db2efe77dc792a3078161e4fd2c269a0441616a7cb73e0de991",
           "commit": "b963ba72112eb8d65dda6eeb5c24c94513ce651d"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/hash_predicate.rs",
+          "line": 379,
+          "symbol": "fn main_death_and_final_bound_drop_automatically_close_recorded_cleanup_warning",
+          "line_sha256": "e726b38f643bc2a731981be7b563683e944c6bb711565a0390b4c67f8fe026ca",
+          "commit": "340b458b87454b3eba567247e4d0656e4dc74e9c"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/hash_predicate.rs",
+          "line": 259,
+          "symbol": ".join(\"hash-predicate-cleanup-warning-native.png\")",
+          "line_sha256": "98ff3e655825b83bffc09edf68afa5875605445a8fc2408af38833ca060a3e6b",
+          "commit": "340b458b87454b3eba567247e4d0656e4dc74e9c"
         }
       ],
       "reference_recording": {
@@ -352,8 +403,30 @@
         "Existing forced cleanup exact You sure? yes/no question remains inline in its owner and freezes the draft; warning notices are separate owned windows. Native notice styling uses the existing Slint notice rather than Qt warning icon.",
         "Native typed FileHashes are deterministic sets: explicit reconstruction sorts hash lines where Qt can retain tuple order. Algorithm, sign and query membership are preserved; raw cleanup preserves first valid occurrence order.",
         "Generic active-predicate Edit remains a separate scope. Explicit supplied-input reconstruction is model-covered; native reopen uses the real saved typed custom default. Global Enter-on-radio preference remains excluded; the recorded true-default Enter path is supported.",
-        "No hash family, sign sibling, Options/predicate parent or shared/structural editor alias is promoted. Other predicate kinds retain their widgets and parser/query behavior."
-      ]
+        "No hash family, sign sibling, Options/predicate parent or shared/structural editor alias is promoted. Other predicate kinds retain their widgets and parser/query behavior.",
+        "The new owner/lifetime assertions and matching cleanup-warning export await full exact-source Linux CI and fresh independent native render review; they add no completion credit yet.",
+        "Qt destruction recording covers two nonmodal standalone QWidget.window() parent cascades with retained wrappers and unchanged blank predicates. It does not destroy client Main, run nested exec() teardown or establish active nested-warning closure. Native notice closure is a separate safety boundary.",
+        "Native Main-death cleanup is observed through a repeated 50 ms timer with a bounded test deadline; final Bound-owner drop closes synchronously. Strong headless warning adapters/windows are retained in native notice tests; the private SessionDialog component is not separately exposed. OS chrome, modality, focus or destruction geometry equality is not claimed."
+      ],
+      "reference_recording_extension": {
+        "script": "oracle/record_hash_predicate.py",
+        "fixture": "oracle/fixtures/hash_predicate.json",
+        "fixture_section": "parent_destruction",
+        "executed": true,
+        "executed_utc": "2026-10-07T01:57:03Z",
+        "exit_code": 0,
+        "source_status": "Successfully rerun in root working tree; immutable integrated source pin pending. Historical reference_recording commit/provenance below is preserved.",
+        "script_sha256_at_preparation": "f48f77e9b6fff5a44fec35ebb9908fd552b9e49fbe09e98c0fd240d8aaa5edfa",
+        "fixture_sha256_at_preparation": "ea4363fff431e29739fd4ca1e9a12062e2c155ea3ea95e28249e40f0eefc7154",
+        "root_recorder_log_sha256": "8ef1c81e27650509de5598fd030e9bd8075b1f1b2e1ea013a1abf610ba6603c0",
+        "original_fixture_keys_value_identical": 10,
+        "result": "Two shown nonmodal actual DialogEdit/FleshOutPredicatePanel cascades under standalone QWidget.window() parents (filesize and hash). All five Python wrappers per case remain retained while owner.deleteLater plus bounded DeferredDelete/processEvents makes owner, launcher, dialog, panel and editor invalid and emits each destroyed signal. Original blank predicate values remain null and client Main survives. No Qt callback errors.",
+        "limits": [
+          "Standalone QWidget parent, not client Main destruction.",
+          "Nonmodal shown dialogs, not nested exec() teardown.",
+          "No active nested-warning destruction or production search publication recorded. Native cleanup-notice teardown is a separate safety regression; the failed nested-warning attempt earns no reference claim."
+        ]
+      }
     },
     {
       "reference_id": "audit-options-predicate-hash-hash-clean",
@@ -364,8 +437,8 @@
       "proposed_status": "first_pass",
       "change_kind": "implementation",
       "countAsCompletedLeaf": true,
-      "exactBehavior": "The two cleanup buttons are stacked below the multiline input. Normal cleanup uses all four types, removes duplicate valid hashes and guesses a single algorithm only on success; bad/mixed/empty input is left untouched with its exact owned warning. The notice blocks parent edits/acceptance, refuses hidden acknowledgement, and retires on parent Cancel/rebind/accepted exit. Existing forced cleanup asks exact You sure?, No preserves text/type, and Yes removes bad lines, rewrites lowercase deduplicated text (including all-bad to empty), guesses only when unique, and otherwise keeps the selected type. Real typed input is visibly replaced through a two-way TextEdit draft. Existing confirmation/error assertions remain with real notice acknowledgement before continuing.",
-      "behavior": "The two cleanup buttons are stacked below the multiline input. Normal cleanup uses all four types, removes duplicate valid hashes and guesses a single algorithm only on success; bad/mixed/empty input is left untouched with its exact owned warning. The notice blocks parent edits/acceptance, refuses hidden acknowledgement, and retires on parent Cancel/rebind/accepted exit. Existing forced cleanup asks exact You sure?, No preserves text/type, and Yes removes bad lines, rewrites lowercase deduplicated text (including all-bad to empty), guesses only when unique, and otherwise keeps the selected type. Real typed input is visibly replaced through a two-way TextEdit draft. Existing confirmation/error assertions remain with real notice acknowledgement before continuing.",
+      "exactBehavior": "The two cleanup buttons are stacked below the multiline input. Normal cleanup uses all four types, removes duplicate valid hashes and guesses a single algorithm only on success; bad/mixed/empty input is left untouched with its exact owned warning. The notice blocks parent edits/acceptance, refuses hidden acknowledgement, and retires on parent Cancel/rebind/accepted exit. Existing forced cleanup asks exact You sure?, No preserves text/type, and Yes removes bad lines, rewrites lowercase deduplicated text (including all-bad to empty), guesses only when unique, and otherwise keeps the selected type. Real typed input is visibly replaced through a two-way TextEdit draft. Existing confirmation/error assertions remain with real notice acknowledgement before continuing. Main-owned lifetime state retires the editor on actual Main-component destruction or final Bound-owner drop as well as rebind/accepted exit, hides owned notices and clears only its own slot. Nonfinal Bound clones, temporary Main hide and pending/declined exit retain the draft; retired/re-shown callbacks and Return cannot publish or change recents/defaults.",
+      "behavior": "The two cleanup buttons are stacked below the multiline input. Normal cleanup uses all four types, removes duplicate valid hashes and guesses a single algorithm only on success; bad/mixed/empty input is left untouched with its exact owned warning. The notice blocks parent edits/acceptance, refuses hidden acknowledgement, and retires on parent Cancel/rebind/accepted exit. Existing forced cleanup asks exact You sure?, No preserves text/type, and Yes removes bad lines, rewrites lowercase deduplicated text (including all-bad to empty), guesses only when unique, and otherwise keeps the selected type. Real typed input is visibly replaced through a two-way TextEdit draft. Existing confirmation/error assertions remain with real notice acknowledgement before continuing. Main-owned lifetime state retires the editor on actual Main-component destruction or final Bound-owner drop as well as rebind/accepted exit, hides owned notices and clears only its own slot. Nonfinal Bound clones, temporary Main hide and pending/declined exit retain the draft; retired/re-shown callbacks and Return cannot publish or change recents/defaults.",
       "reference_source": {
         "relativepath": "hydrus/client/gui/search/ClientGUIPredicatesSingle.py",
         "line": 1165,
@@ -506,6 +579,27 @@
           "symbol": "notices.cancel();",
           "line_sha256": "2ae4a558e3c0b25d2a5103bd5322e35f1131fc69e96e6825b16fe12e027f390f",
           "commit": "b963ba72112eb8d65dda6eeb5c24c94513ce651d"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/predicate_editor_window.rs",
+          "line": 52,
+          "symbol": "pub(crate) struct Owner(Rc<MainOwner>);",
+          "line_sha256": "947fe84b1d84a5a0a6d546060b26927580cb7569189e842aa324a5627cc2563d",
+          "commit": "1dabc102059d4595e975ef636037dbfe720688b1"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/predicate_editor_window.rs",
+          "line": 70,
+          "symbol": "state.parent.upgrade().is_none()",
+          "line_sha256": "7798a0d708469d11e5ce33eb40abe0c91d0dbd57bdc374f45e6a77a53628112e",
+          "commit": "1dabc102059d4595e975ef636037dbfe720688b1"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/predicate_editor_window.rs",
+          "line": 102,
+          "symbol": "impl Drop for Owner {",
+          "line_sha256": "3806ad3163a6069fe80abc5fcf2967c2e112e3b78368233667e861a4c012f1dc",
+          "commit": "1dabc102059d4595e975ef636037dbfe720688b1"
         }
       ],
       "test_anchors": [
@@ -536,6 +630,20 @@
           "symbol": "fn the_editor_window_shows_what_trees_and_buttons_change",
           "line_sha256": "6bdab319ffce8db2efe77dc792a3078161e4fd2c269a0441616a7cb73e0de991",
           "commit": "b963ba72112eb8d65dda6eeb5c24c94513ce651d"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/hash_predicate.rs",
+          "line": 379,
+          "symbol": "fn main_death_and_final_bound_drop_automatically_close_recorded_cleanup_warning",
+          "line_sha256": "e726b38f643bc2a731981be7b563683e944c6bb711565a0390b4c67f8fe026ca",
+          "commit": "340b458b87454b3eba567247e4d0656e4dc74e9c"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/hash_predicate.rs",
+          "line": 259,
+          "symbol": ".join(\"hash-predicate-cleanup-warning-native.png\")",
+          "line_sha256": "98ff3e655825b83bffc09edf68afa5875605445a8fc2408af38833ca060a3e6b",
+          "commit": "340b458b87454b3eba567247e4d0656e4dc74e9c"
         }
       ],
       "reference_recording": {
@@ -557,8 +665,63 @@
         "Existing forced cleanup exact You sure? yes/no question remains inline in its owner and freezes the draft; warning notices are separate owned windows. Native notice styling uses the existing Slint notice rather than Qt warning icon.",
         "Native typed FileHashes are deterministic sets: explicit reconstruction sorts hash lines where Qt can retain tuple order. Algorithm, sign and query membership are preserved; raw cleanup preserves first valid occurrence order.",
         "Generic active-predicate Edit remains a separate scope. Explicit supplied-input reconstruction is model-covered; native reopen uses the real saved typed custom default. Global Enter-on-radio preference remains excluded; the recorded true-default Enter path is supported.",
-        "No hash family, sign sibling, Options/predicate parent or shared/structural editor alias is promoted. Other predicate kinds retain their widgets and parser/query behavior."
-      ]
+        "No hash family, sign sibling, Options/predicate parent or shared/structural editor alias is promoted. Other predicate kinds retain their widgets and parser/query behavior.",
+        "The new owner/lifetime assertions and matching cleanup-warning export await full exact-source Linux CI and fresh independent native render review; they add no completion credit yet.",
+        "Qt destruction recording covers two nonmodal standalone QWidget.window() parent cascades with retained wrappers and unchanged blank predicates. It does not destroy client Main, run nested exec() teardown or establish active nested-warning closure. Native notice closure is a separate safety boundary.",
+        "Native Main-death cleanup is observed through a repeated 50 ms timer with a bounded test deadline; final Bound-owner drop closes synchronously. Strong headless warning adapters/windows are retained in native notice tests; the private SessionDialog component is not separately exposed. OS chrome, modality, focus or destruction geometry equality is not claimed."
+      ],
+      "reference_recording_extension": {
+        "script": "oracle/record_hash_predicate.py",
+        "fixture": "oracle/fixtures/hash_predicate.json",
+        "fixture_section": "parent_destruction",
+        "executed": true,
+        "executed_utc": "2026-10-07T01:57:03Z",
+        "exit_code": 0,
+        "source_status": "Successfully rerun in root working tree; immutable integrated source pin pending. Historical reference_recording commit/provenance below is preserved.",
+        "script_sha256_at_preparation": "f48f77e9b6fff5a44fec35ebb9908fd552b9e49fbe09e98c0fd240d8aaa5edfa",
+        "fixture_sha256_at_preparation": "ea4363fff431e29739fd4ca1e9a12062e2c155ea3ea95e28249e40f0eefc7154",
+        "root_recorder_log_sha256": "8ef1c81e27650509de5598fd030e9bd8075b1f1b2e1ea013a1abf610ba6603c0",
+        "original_fixture_keys_value_identical": 10,
+        "result": "Two shown nonmodal actual DialogEdit/FleshOutPredicatePanel cascades under standalone QWidget.window() parents (filesize and hash). All five Python wrappers per case remain retained while owner.deleteLater plus bounded DeferredDelete/processEvents makes owner, launcher, dialog, panel and editor invalid and emits each destroyed signal. Original blank predicate values remain null and client Main survives. No Qt callback errors.",
+        "limits": [
+          "Standalone QWidget parent, not client Main destruction.",
+          "Nonmodal shown dialogs, not nested exec() teardown.",
+          "No active nested-warning destruction or production search publication recorded. Native cleanup-notice teardown is a separate safety regression; the failed nested-warning attempt earns no reference claim."
+        ]
+      }
     }
-  ]
+  ],
+  "lifetime_repair_preparation": {
+    "production_commit": "1dabc102059d4595e975ef636037dbfe720688b1",
+    "test_commit": "340b458b87454b3eba567247e4d0656e4dc74e9c",
+    "integrated_source_status": "Root working-tree integration; final immutable source and exact-source full Linux validation pending. Existing source_commit/reference pins retain historical provenance.",
+    "selected_cohort_count": 3,
+    "selected_cohort_ids": [
+      "audit-options-predicate-filesize-size",
+      "audit-options-predicate-hash-hash-hashes",
+      "audit-options-predicate-hash-hash-clean"
+    ],
+    "signed_off_implementation_leaves": 343,
+    "pending_candidate_leaves": 32,
+    "reference_recording_extension": {
+      "script": "oracle/record_hash_predicate.py",
+      "fixture": "oracle/fixtures/hash_predicate.json",
+      "fixture_section": "parent_destruction",
+      "executed": true,
+      "executed_utc": "2026-10-07T01:57:03Z",
+      "exit_code": 0,
+      "source_status": "Successfully rerun in root working tree; immutable integrated source pin pending. Historical reference_recording commit/provenance below is preserved.",
+      "script_sha256_at_preparation": "f48f77e9b6fff5a44fec35ebb9908fd552b9e49fbe09e98c0fd240d8aaa5edfa",
+      "fixture_sha256_at_preparation": "ea4363fff431e29739fd4ca1e9a12062e2c155ea3ea95e28249e40f0eefc7154",
+      "root_recorder_log_sha256": "8ef1c81e27650509de5598fd030e9bd8075b1f1b2e1ea013a1abf610ba6603c0",
+      "original_fixture_keys_value_identical": 10,
+      "result": "Two shown nonmodal actual DialogEdit/FleshOutPredicatePanel cascades under standalone QWidget.window() parents (filesize and hash). All five Python wrappers per case remain retained while owner.deleteLater plus bounded DeferredDelete/processEvents makes owner, launcher, dialog, panel and editor invalid and emits each destroyed signal. Original blank predicate values remain null and client Main survives. No Qt callback errors.",
+      "limits": [
+        "Standalone QWidget parent, not client Main destruction.",
+        "Nonmodal shown dialogs, not nested exec() teardown.",
+        "No active nested-warning destruction or production search publication recorded. Native cleanup-notice teardown is a separate safety regression; the failed nested-warning attempt earns no reference claim."
+      ]
+    },
+    "scope": "Only filesize and both hash leaves proposed. No radio, generic active-edit, parent, alias or deferred-platform completion credit."
+  }
 }

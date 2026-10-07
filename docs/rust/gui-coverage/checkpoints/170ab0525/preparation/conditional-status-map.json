@@ -1,0 +1,132 @@
+{
+  "schema_version": 1,
+  "source_commit": "170ab05251e79db77e0b97692f30d17843a3ca78",
+  "run_id": 37560085258,
+  "state": "conditional_mapping_NOT_applied",
+  "input_patch": "/workspace/validation-reviews/predicate3/prep-170ab0525/subset-preflight/subset-proposal-patch.json",
+  "input_sha256": "eb1769b6ef94d79e5a120bfc02fe82bb21b00b9649bec82e18519eec483c2a54",
+  "selected_ids": [
+    "audit-options-predicate-filesize-size",
+    "audit-options-predicate-hash-hash-hashes",
+    "audit-options-predicate-hash-hash-clean"
+  ],
+  "mandatory_preconditions": [
+    "Exact source170ab05251e79db77e0b97692f30d17843a3ca78: full Linux strictcheck fmt/Clippy/tests/ratchet and parity-models green; run37560085258 pending. Windows/macOS deferred under exactsource policy.",
+    "Fresh exact-source four native captures with independent three-leaf source/behavior/Qt-render review and root actual inspection.",
+    "Root finalpatch+census digest review, immutable staged pipeline prior343/unselected/native1799 preservation and actual browser inspection.",
+    "Goal/checklist refresh from accepted canonical ledger AFTER publication, never planned3."
+  ],
+  "conditional_operations": [
+    {
+      "id": "audit-options-predicate-filesize-size",
+      "field": "limitations",
+      "original_index": 0,
+      "operation": "remove_exact_list_item",
+      "before": "Conditional source proposal only: hosted Rust/native tests, exact-source native screenshot and render review remain pending; no local Cargo/Rust build/test/mutation execution.",
+      "conditional_after": null,
+      "reason": "Remove only resolved validation/preparation status after actual exact-source CI and fresh independent/root review; preserve real behavior/reference/ownership scope limits."
+    },
+    {
+      "id": "audit-options-predicate-filesize-size",
+      "field": "limitations",
+      "original_index": 5,
+      "operation": "remove_exact_list_item",
+      "before": "The new owner/lifetime assertions and matching cleanup-warning export await full exact-source Linux CI and fresh independent native render review; they add no completion credit yet.",
+      "conditional_after": null,
+      "reason": "Remove only resolved validation/preparation status after actual exact-source CI and fresh independent/root review; preserve real behavior/reference/ownership scope limits."
+    },
+    {
+      "id": "audit-options-predicate-filesize-size",
+      "field": "remaining",
+      "original_index": 0,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source hosted full Linux validation remains pending.",
+      "conditional_after": null,
+      "reason": "Remove only resolved validation/preparation status after actual exact-source CI and fresh independent/root review; preserve real behavior/reference/ownership scope limits."
+    },
+    {
+      "id": "audit-options-predicate-filesize-size",
+      "field": "remaining",
+      "original_index": 1,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source fresh native rendered/behavioral review and final assessment reconciliation remain pending.",
+      "conditional_after": null,
+      "reason": "Remove only resolved validation/preparation status after actual exact-source CI and fresh independent/root review; preserve real behavior/reference/ownership scope limits."
+    },
+    {
+      "id": "audit-options-predicate-hash-hash-hashes",
+      "field": "limitations",
+      "original_index": 0,
+      "operation": "remove_exact_list_item",
+      "before": "Conditional source proposal only; hosted Rust/native tests and exact-source native PNG review remain pending. No local Cargo/Rust build/test/mutation execution.",
+      "conditional_after": null,
+      "reason": "Remove only resolved validation/preparation status after actual exact-source CI and fresh independent/root review; preserve real behavior/reference/ownership scope limits."
+    },
+    {
+      "id": "audit-options-predicate-hash-hash-hashes",
+      "field": "limitations",
+      "original_index": 5,
+      "operation": "remove_exact_list_item",
+      "before": "The new owner/lifetime assertions and matching cleanup-warning export await full exact-source Linux CI and fresh independent native render review; they add no completion credit yet.",
+      "conditional_after": null,
+      "reason": "Remove only resolved validation/preparation status after actual exact-source CI and fresh independent/root review; preserve real behavior/reference/ownership scope limits."
+    },
+    {
+      "id": "audit-options-predicate-hash-hash-hashes",
+      "field": "remaining",
+      "original_index": 0,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source hosted full Linux validation remains pending.",
+      "conditional_after": null,
+      "reason": "Remove only resolved validation/preparation status after actual exact-source CI and fresh independent/root review; preserve real behavior/reference/ownership scope limits."
+    },
+    {
+      "id": "audit-options-predicate-hash-hash-hashes",
+      "field": "remaining",
+      "original_index": 1,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source fresh native rendered/behavioral review and final assessment reconciliation remain pending.",
+      "conditional_after": null,
+      "reason": "Remove only resolved validation/preparation status after actual exact-source CI and fresh independent/root review; preserve real behavior/reference/ownership scope limits."
+    },
+    {
+      "id": "audit-options-predicate-hash-hash-clean",
+      "field": "limitations",
+      "original_index": 0,
+      "operation": "remove_exact_list_item",
+      "before": "Conditional source proposal only; hosted Rust/native tests and exact-source native PNG review remain pending. No local Cargo/Rust build/test/mutation execution.",
+      "conditional_after": null,
+      "reason": "Remove only resolved validation/preparation status after actual exact-source CI and fresh independent/root review; preserve real behavior/reference/ownership scope limits."
+    },
+    {
+      "id": "audit-options-predicate-hash-hash-clean",
+      "field": "limitations",
+      "original_index": 5,
+      "operation": "remove_exact_list_item",
+      "before": "The new owner/lifetime assertions and matching cleanup-warning export await full exact-source Linux CI and fresh independent native render review; they add no completion credit yet.",
+      "conditional_after": null,
+      "reason": "Remove only resolved validation/preparation status after actual exact-source CI and fresh independent/root review; preserve real behavior/reference/ownership scope limits."
+    },
+    {
+      "id": "audit-options-predicate-hash-hash-clean",
+      "field": "remaining",
+      "original_index": 0,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source hosted full Linux validation remains pending.",
+      "conditional_after": null,
+      "reason": "Remove only resolved validation/preparation status after actual exact-source CI and fresh independent/root review; preserve real behavior/reference/ownership scope limits."
+    },
+    {
+      "id": "audit-options-predicate-hash-hash-clean",
+      "field": "remaining",
+      "original_index": 1,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source fresh native rendered/behavioral review and final assessment reconciliation remain pending.",
+      "conditional_after": null,
+      "reason": "Remove only resolved validation/preparation status after actual exact-source CI and fresh independent/root review; preserve real behavior/reference/ownership scope limits."
+    }
+  ],
+  "operation_contract": "Exact original list-item equality, descending original_index; no scalar assessment changes. Preserve all substantive limitations and current exact committed behavior.",
+  "metadata": "Current source/tests/native render flags remain pending/unexecuted; root actual passed metadata must cite actual source/run/artifact/independent evidence.",
+  "approval": false
+}

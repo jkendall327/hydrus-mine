@@ -321,3 +321,23 @@ snapshots; bounded maintenance retained 1,146,920,388 workspace-cache bytes.
 The full logs and exact-source result are preserved in
 [the checkpoint](../checkpoints/4b5e7ae15/README.md). No further optimization
 experiment was added to this validation batch.
+
+## Verified cache restore, predicate checkpoint
+
+Source `170ab0525`, full Linux run `37560085258`, used image `20260927.320.1`
+and restored its compatible older workspace snapshot from `80bcb531f`:
+4,113 tracked-input mtimes and 230 coherent artifact files passed verification.
+The dependency cache also hit. All 25 cache safety regressions passed; Cargo
+freshness checks remained enabled. The restored snapshot is cache input, not
+validation evidence from that older failed source.
+
+Strict Clippy took 5m48s; test compilation took 6m37s and the full test step
+12m12s. All 704 GUI tests passed in 135.71s. Clippy still reported compilation
+of `hydrus-gui-ui`; these logs do not isolate Slint generation, Rust compilation
+or linking. The preceding run used a different image and missed compatible
+caches, so this is measured hosted reuse and timing, not a controlled speedup.
+
+The run saved a fresh 293-file workspace snapshot (2,200,055,047 uncompressed
+bytes). Maintenance retained 1,379,350,054 compressed workspace-cache bytes,
+within the 3 GiB cap. [Exact logs and outcome](../checkpoints/170ab0525/validation-outcome.json)
+are retained. No additional optimization experiment was opened.

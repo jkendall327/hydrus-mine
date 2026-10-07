@@ -1,0 +1,23 @@
+{
+  "source_commit": "170ab05251e79db77e0b97692f30d17843a3ca78",
+  "run_id": 37560085258,
+  "source_phase": "repaired source validation pending",
+  "selected_candidate_ids": [
+    "audit-options-predicate-filesize-size",
+    "audit-options-predicate-hash-hash-hashes",
+    "audit-options-predicate-hash-hash-clean"
+  ],
+  "prior_completed_count": 343,
+  "selected_count": 3,
+  "pending_count": 32,
+  "conditional_bank_if_all_gates_pass": 346,
+  "conditional_pending_after_bank": 29,
+  "not_ready_by_preparation": true,
+  "approval": false,
+  "gates": [
+    "Exact source170ab05251e79db77e0b97692f30d17843a3ca78: full Linux strictcheck fmt/Clippy/tests/ratchet and parity-models green; run37560085258 pending. Windows/macOS deferred under exactsource policy.",
+    "Fresh exact-source four native captures with independent three-leaf source/behavior/Qt-render review and root actual inspection.",
+    "Root finalpatch+census digest review, immutable staged pipeline prior343/unselected/native1799 preservation and actual browser inspection.",
+    "Goal/checklist refresh from accepted canonical ledger AFTER publication, never planned3."
+  ]
+}

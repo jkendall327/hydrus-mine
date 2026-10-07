@@ -1,0 +1,244 @@
+{
+  "source_commit": "1eace8c6ef5a1ed6a2367ad48bdbed28800f6484",
+  "validation_scope": "Linux offscreen Qt reference only; standalone shown nonmodal owner cascade; no native approval",
+  "successful_execution": {
+    "exit_code": 0,
+    "script": {
+      "path": "/workspace/validation-reviews/predicate3/reference/record_hash_predicate.executed-success.py",
+      "sha256": "3063a33541cc94c0608e63e104dce89aa92f7b76d6e195cf4715a5f6dc54b93a",
+      "bytes": 15455
+    },
+    "raw_result": {
+      "path": "/workspace/validation-reviews/predicate3/reference/hash_predicate.extended.json",
+      "sha256": "4ad0741cfffab960079c7ccef44c0a3dc4ecf3201c41b7683b0befde53687754",
+      "bytes": 44124
+    },
+    "baseline_original_keys_all_value_identical": true,
+    "successful_cases": [
+      "filesize",
+      "hash"
+    ],
+    "qt_callback_errors": []
+  },
+  "failed_nested_attempt": {
+    "exit_code": 134,
+    "stderr_terminal_message": "double free or corruption (out)",
+    "cause": "unestablished",
+    "complete_fixture_produced": false,
+    "successful_nested_destruction_claim": false,
+    "script": {
+      "path": "/workspace/validation-reviews/predicate3/reference/record_hash_predicate.failed-attempt.py",
+      "sha256": "26ceb63342e8be4be8f45e7d195080cac93b086d2652fba5f3d95cb12f7f5a6a",
+      "bytes": 14848
+    },
+    "log": {
+      "path": "/workspace/validation-reviews/predicate3/reference/record_hash_predicate.failed-attempt.log",
+      "sha256": "d0b3e61bf461770bc8dc33657fd0a64f4d440f686567d1120592dbb91692873d",
+      "bytes": 4669
+    },
+    "image": {
+      "path": "/workspace/validation-reviews/predicate3/reference/fixtures/hash-predicate-parent-destruction-warning-qt.png",
+      "sha256": "879881832707d5a9c4bec763913ade416e5781f9c3f686daa46dc828449137ab",
+      "bytes": 16634
+    }
+  },
+  "proposal": {
+    "existing_repo_paths_only": [
+      "oracle/record_hash_predicate.py",
+      "oracle/fixtures/hash_predicate.json"
+    ],
+    "minimal_proposal_not_rerun_after_simplification": true,
+    "patch": {
+      "path": "/workspace/validation-reviews/predicate3/reference/hash-predicate-lifecycle.proposed.patch",
+      "sha256": "bd555178be4be1ffdaf8eb855f88620ecf7eca40face6054845721253a43d935",
+      "bytes": 8098
+    }
+  },
+  "source_input_files": [
+    {
+      "path": "/workspace/hydrus-mine/oracle/record_hash_predicate.py",
+      "sha256": "0c27173f69b32dff2e1ab3a8a9508971652186f1ffc020c6109f82d8cf592137",
+      "bytes": 9106,
+      "recorded_commit_sha256": "0c27173f69b32dff2e1ab3a8a9508971652186f1ffc020c6109f82d8cf592137",
+      "matches_recorded_commit": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/oracle/record_filesize_predicate.py",
+      "sha256": "8b675d3a059ec6506c621841493344b460f84cb71e44f8ddfed952a7f9d2c1b9",
+      "bytes": 5937,
+      "recorded_commit_sha256": "8b675d3a059ec6506c621841493344b460f84cb71e44f8ddfed952a7f9d2c1b9",
+      "matches_recorded_commit": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/oracle/fixtures/hash_predicate.json",
+      "sha256": "28070b32dd3e0983f7e61a08936860e4f62484e7427e3ad470dee0051dddea9f",
+      "bytes": 54837,
+      "recorded_commit_sha256": "28070b32dd3e0983f7e61a08936860e4f62484e7427e3ad470dee0051dddea9f",
+      "matches_recorded_commit": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/oracle/fixtures/filesize_predicate.json",
+      "sha256": "7c2102976f16a617ca331c533b50593d4353608ecbf2abe0f836e94dfb39bb25",
+      "bytes": 62340,
+      "recorded_commit_sha256": "7c2102976f16a617ca331c533b50593d4353608ecbf2abe0f836e94dfb39bb25",
+      "matches_recorded_commit": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/oracle/hydrus_driver.py",
+      "sha256": "8b47179cbb28879d951961fcfdede19bea36c19d29b93170fbd155dcc50bae1f",
+      "bytes": 11981,
+      "recorded_commit_sha256": "8b47179cbb28879d951961fcfdede19bea36c19d29b93170fbd155dcc50bae1f",
+      "matches_recorded_commit": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/oracle/record_api.py",
+      "sha256": "d2fec2d95e2c9fd9d2d95c6bf12d3f5a19191333d63a3ab71d8f8a9caaaeaf78",
+      "bytes": 8401,
+      "recorded_commit_sha256": "d2fec2d95e2c9fd9d2d95c6bf12d3f5a19191333d63a3ab71d8f8a9caaaeaf78",
+      "matches_recorded_commit": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/oracle/fixtures/legacy_db/basic.tar.gz",
+      "sha256": "a89e55779fad3239d23c5b51cbb4deff42d9f188142d74b2176e7f3ae9d28025",
+      "bytes": 450180,
+      "recorded_commit_sha256": "a89e55779fad3239d23c5b51cbb4deff42d9f188142d74b2176e7f3ae9d28025",
+      "matches_recorded_commit": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/hydrus/client/gui/search/ClientGUISearch.py",
+      "sha256": "3b415e0d9d3b5766d88ccaca8ad34bc392c6fd5aa02b7d53357a815fffec17ec",
+      "bytes": 77791,
+      "recorded_commit_sha256": "3b415e0d9d3b5766d88ccaca8ad34bc392c6fd5aa02b7d53357a815fffec17ec",
+      "matches_recorded_commit": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/hydrus/client/gui/search/ClientGUIPredicatesSingle.py",
+      "sha256": "20e1a11417eb68f39ca7554172f89f1cf6ab15d47f9a9541403a280b3a87d42d",
+      "bytes": 122624,
+      "recorded_commit_sha256": "20e1a11417eb68f39ca7554172f89f1cf6ab15d47f9a9541403a280b3a87d42d",
+      "matches_recorded_commit": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/hydrus/client/gui/ClientGUITopLevelWindows.py",
+      "sha256": "0a2d57fea294cfb8cd40472f6750a568052a88a1c2070ff804df7708f51deeb1",
+      "bytes": 35507,
+      "recorded_commit_sha256": "0a2d57fea294cfb8cd40472f6750a568052a88a1c2070ff804df7708f51deeb1",
+      "matches_recorded_commit": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/hydrus/client/gui/ClientGUITopLevelWindowsPanels.py",
+      "sha256": "ee8cf027adee0ab8ff84b992c78a78eb85d0e5bdd13c953733835d2ace5ca280",
+      "bytes": 7896,
+      "recorded_commit_sha256": "ee8cf027adee0ab8ff84b992c78a78eb85d0e5bdd13c953733835d2ace5ca280",
+      "matches_recorded_commit": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/hydrus/client/gui/QtPorting.py",
+      "sha256": "53839f3750a9f2799032701080a7a0cdd4e7b8dc98852754ec9ee32c10b08293",
+      "bytes": 32407,
+      "recorded_commit_sha256": "53839f3750a9f2799032701080a7a0cdd4e7b8dc98852754ec9ee32c10b08293",
+      "matches_recorded_commit": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/hydrus/client/gui/ClientGUIDialogsMessage.py",
+      "sha256": "ac254942b26eb8103f3a427563ed39a5f1317213d3382ee50b2ff96d53aa8123",
+      "bytes": 1736,
+      "recorded_commit_sha256": "ac254942b26eb8103f3a427563ed39a5f1317213d3382ee50b2ff96d53aa8123",
+      "matches_recorded_commit": true
+    }
+  ],
+  "scratch_files": [
+    {
+      "path": "/workspace/validation-reviews/predicate3/reference/README.md",
+      "sha256": "4b44e41be90ac3f5c6f3f219e9a598e2c1e014b95e83397d7bab84f1fc968fca",
+      "bytes": 6284
+    },
+    {
+      "path": "/workspace/validation-reviews/predicate3/reference/hash-predicate-lifecycle.proposed.patch",
+      "sha256": "bd555178be4be1ffdaf8eb855f88620ecf7eca40face6054845721253a43d935",
+      "bytes": 8098
+    },
+    {
+      "path": "/workspace/validation-reviews/predicate3/reference/hash_predicate.baseline-recorded.json",
+      "sha256": "77cc14f757c8412c993b2d3503e08b2352abbddc14f3b582ec2d54b88a7cee1d",
+      "bytes": 54836
+    },
+    {
+      "path": "/workspace/validation-reviews/predicate3/reference/hash_predicate.extended.json",
+      "sha256": "4ad0741cfffab960079c7ccef44c0a3dc4ecf3201c41b7683b0befde53687754",
+      "bytes": 44124
+    },
+    {
+      "path": "/workspace/validation-reviews/predicate3/reference/hash_predicate.proposed.json",
+      "sha256": "ea4363fff431e29739fd4ca1e9a12062e2c155ea3ea95e28249e40f0eefc7154",
+      "bytes": 58134
+    },
+    {
+      "path": "/workspace/validation-reviews/predicate3/reference/parent_destruction.checkpoint.json",
+      "sha256": "05f84d92ee4b249f4beefed8f827285e88e76eb2c067423bc4120a7c75010ced",
+      "bytes": 3308
+    },
+    {
+      "path": "/workspace/validation-reviews/predicate3/reference/parent_destruction_extension.failed-attempt.py",
+      "sha256": "1ac308e4e88cfc1f8a4ba7dfe57209b6f98d646711fb2df0c538e37ab5b52d96",
+      "bytes": 5915
+    },
+    {
+      "path": "/workspace/validation-reviews/predicate3/reference/parent_destruction_extension.py",
+      "sha256": "3fce078a7a23ece792936769b306f05bec6552a05b1ba7325a2c4ed023f16c47",
+      "bytes": 3896
+    },
+    {
+      "path": "/workspace/validation-reviews/predicate3/reference/record_hash_predicate.executed-success.py",
+      "sha256": "3063a33541cc94c0608e63e104dce89aa92f7b76d6e195cf4715a5f6dc54b93a",
+      "bytes": 15455
+    },
+    {
+      "path": "/workspace/validation-reviews/predicate3/reference/record_hash_predicate.failed-attempt.log",
+      "sha256": "d0b3e61bf461770bc8dc33657fd0a64f4d440f686567d1120592dbb91692873d",
+      "bytes": 4669
+    },
+    {
+      "path": "/workspace/validation-reviews/predicate3/reference/record_hash_predicate.failed-attempt.py",
+      "sha256": "26ceb63342e8be4be8f45e7d195080cac93b086d2652fba5f3d95cb12f7f5a6a",
+      "bytes": 14848
+    },
+    {
+      "path": "/workspace/validation-reviews/predicate3/reference/record_hash_predicate.log",
+      "sha256": "635811723a38f2182aa8e768e9dbb65a48f711f4a0d0141e9dc23c32e970eb82",
+      "bytes": 4914
+    },
+    {
+      "path": "/workspace/validation-reviews/predicate3/reference/record_hash_predicate.proposed.py",
+      "sha256": "470ceedb46b075f8e1725fa4c279c42ba44160b899d15fcf7ed721d0f67a2328",
+      "bytes": 13069
+    }
+  ],
+  "actually_viewed_images": [
+    {
+      "path": "/workspace/validation-reviews/predicate3/reference/fixtures/hash-predicate-parent-destruction-warning-qt.png",
+      "sha256": "879881832707d5a9c4bec763913ade416e5781f9c3f686daa46dc828449137ab",
+      "bytes": 16634,
+      "actually_viewed": true
+    },
+    {
+      "path": "/workspace/validation-reviews/predicate3/reference/fixtures/hash-predicate-qt.png",
+      "sha256": "bc64cee3cdbf82b6080158ecf6e34a21b259a47e25952e1fafb46a35a389fce8",
+      "bytes": 22191,
+      "actually_viewed": true
+    },
+    {
+      "path": "/workspace/validation-reviews/predicate3/reference/fixtures/hash-predicate-warning-qt.png",
+      "sha256": "879881832707d5a9c4bec763913ade416e5781f9c3f686daa46dc828449137ab",
+      "bytes": 16634,
+      "actually_viewed": true
+    }
+  ],
+  "caveats": [
+    "Standalone parent instead of real client Main; DialogEdit shown nonmodally, not executing its own modal loop.",
+    "Active nested static Warning deletion failed; cause unestablished; no claim of successful nested destruction.",
+    "Original warning transport/ack remains separate successful recorded evidence.",
+    "Sandbox denied temporary localhost Client API listener; no network/API claim.",
+    "No Rust builds, canonical writes, status updates or native approval."
+  ]
+}

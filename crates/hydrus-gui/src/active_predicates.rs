@@ -11,7 +11,7 @@ use hydrus_gui_model::{
 use hydrus_search::Predicate;
 use slint::{ComponentHandle as _, Model as _, ModelRc, VecModel};
 use std::{
-    cell::{Cell, RefCell},
+    cell::RefCell,
     rc::{Rc, Weak},
 };
 
@@ -127,7 +127,7 @@ pub(crate) fn bind(
     or_slot: &crate::search_or_window::Slot,
     page: impl Fn() -> Rc<RefCell<SearchPage>> + Clone + 'static,
     shown: impl Fn(bool) + Clone + 'static,
-    active: Rc<Cell<bool>>,
+    active: Rc<dyn Fn() -> bool>,
     launch: Launch,
 ) {
     let state = Rc::new(RefCell::new(State::default()));
@@ -137,7 +137,7 @@ pub(crate) fn bind(
         let page = page.clone();
         let slot = Rc::downgrade(slot);
         move || {
-            active.get()
+            active()
                 && weak.upgrade().is_some_and(|w| permits_input(&w))
                 && slot.upgrade().is_some_and(|slot| slot.borrow().is_none())
                 && page().borrow().lock().is_none()
@@ -152,7 +152,7 @@ pub(crate) fn bind(
         let active = binding_active.clone();
         let or_slot = or_slot.clone();
         move || {
-            if !active.get() {
+            if !active() {
                 return;
             }
             if let Some(window) = weak.upgrade() {
@@ -233,7 +233,7 @@ pub(crate) fn bind(
                     let selected = selected.clone();
                     let active = binding_active.clone();
                     move || {
-                        active.get()
+                        active()
                             && original.upgrade().is_some_and(|original| {
                                 Rc::ptr_eq(&original, &page())
                                     && original.borrow().lock().is_none()
@@ -297,7 +297,7 @@ pub(crate) fn bind(
                         let weak = weak.clone();
                         let active = binding_active.clone();
                         child.on_closed(move || {
-                            if active.get()
+                            if active()
                                 && let Some(window) = weak.upgrade()
                             {
                                 window.set_search_or_open(false);
@@ -360,7 +360,7 @@ pub(crate) fn bind(
                 let selected = selected.clone();
                 let active = binding_active.clone();
                 move || {
-                    active.get()
+                    active()
                         && original.upgrade().is_some_and(|original| {
                             Rc::ptr_eq(&original, &page())
                                 && original.borrow().lock().is_none()

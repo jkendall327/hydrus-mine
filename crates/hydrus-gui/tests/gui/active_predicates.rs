@@ -4,6 +4,39 @@ use hydrus_search::{FileSearchContext, LocationContext};
 use hydrus_store::Store;
 use slint::{ComponentHandle as _, Model as _};
 use std::sync::Arc;
+// Pump the real owner observer without releasing the collector or invoking Cancel.
+pub(super) fn drain_predicate_timers_until(description: &str, mut ready: impl FnMut() -> bool) {
+    let deadline = std::time::Instant::now() + std::time::Duration::from_secs(2);
+    loop {
+        slint::platform::update_timers_and_animations();
+        if ready() {
+            return;
+        }
+        assert!(std::time::Instant::now() < deadline, "{description}");
+        std::thread::sleep(std::time::Duration::from_millis(5));
+    }
+}
+
+pub(super) fn drain_predicate_timers_for_observer() {
+    // The owner polls every 50 ms; span three observer periods to expose unwanted retirement.
+    let until = std::time::Instant::now() + std::time::Duration::from_millis(150);
+    drain_predicate_timers_until("owner observer must advance", || {
+        std::time::Instant::now() >= until
+    });
+}
+
+pub(super) fn predicate_settings(
+    store: &Store,
+) -> (
+    hydrus_core::search::recent::RecentPredicates,
+    hydrus_store::settings::CustomPredicateDefaults,
+) {
+    (
+        store.read(hydrus_store::settings::get).unwrap(),
+        store.read(hydrus_store::settings::get).unwrap(),
+    )
+}
+
 fn setup() -> (tempfile::TempDir, Arc<Store>) {
     let legacy = hydrus_testkit::legacy_fixture("basic");
     let dir = tempfile::tempdir().unwrap();
@@ -252,7 +285,7 @@ fn dropping_hidden_components_releases_a_populated_editor_without_cancel_cycle()
         "retained child is still live"
     );
     // Scope this to callback cycles: shown Slint windows retain components.
-    // Automatic child closure on parent destruction needs separate coverage.
+    // Automatic child closure on parent destruction is exercised separately.
     child.hide().unwrap();
     // The collector also owns Main's adapter. Its platform close handler
     // retains the accepted-exit callback and therefore the child slot, even
@@ -1101,4 +1134,106 @@ fn inherited_routes_refuse_hidden_question_child_page_and_retired_main_owners() 
     assert!(copied.borrow().is_empty());
     assert_eq!(successor.pages.borrow().session().pages.len(), 1);
     hydrus_gui::set_clipper(|_| {});
+}
+
+#[test]
+fn destroyed_main_automatically_closes_existing_size_before_retained_handles_release() {
+    let (_dir, store) = setup();
+    store
+        .write(|writer| {
+            hydrus_store::settings::set(
+                writer.conn(),
+                &hydrus_store::radio_return::RadioReturn {
+                    force_dialog_ok: true,
+                },
+            )
+        })
+        .unwrap();
+    let windows = headless::init();
+    let (ui, bound) = main(&store);
+    add(&ui, "system:inbox");
+    add(&ui, "system:filesize < 7KB");
+    let current = bound.current.borrow().clone();
+    let before = current.borrow().active_predicates().to_vec();
+    let before_files = current.borrow().files();
+    let saved = predicate_settings(&store);
+    let child = editor(&ui, &bound);
+    assert!(child.get_editing_existing());
+    assert!(child.window().is_visible());
+    assert!(
+        child.invoke_force_radio_ok(0),
+        "the live Return route is enabled"
+    );
+    child.invoke_number_edited(0, 2, 11);
+    assert_eq!(
+        child
+            .get_panels()
+            .row_data(0)
+            .unwrap()
+            .fields
+            .row_data(2)
+            .unwrap()
+            .value,
+        11
+    );
+    let weak_child = child.as_weak();
+    let weak_main = ui.as_weak();
+    ui.hide().unwrap();
+    drop(ui);
+    assert!(
+        weak_main.upgrade().is_none(),
+        "destroy the actual Main component"
+    );
+
+    drain_predicate_timers_until("Main destruction must close the populated editor", || {
+        bound.predicate_editor.borrow().is_none() && !child.window().is_visible()
+    });
+    assert!(
+        weak_child.upgrade().is_some(),
+        "the test still retains the child"
+    );
+    assert!(windows.count() >= 2, "the collector has not been released");
+    assert_eq!(current.borrow().active_predicates(), before);
+    assert_eq!(current.borrow().files(), before_files);
+    assert_eq!(predicate_settings(&store), saved);
+
+    // A real retained component can be re-shown, but its old admission is terminal.
+    child.show().unwrap();
+    child.invoke_number_edited(0, 2, 99);
+    child.invoke_chose(0, 1, 4);
+    child.invoke_defaults_action(0, "set this as new default".into());
+    child.invoke_defaults_action(0, "reset to original default".into());
+    assert_eq!(child.get_radio_default_panel(), 0);
+    assert!(
+        !child.invoke_force_radio_ok(0),
+        "retired Return admission is refused"
+    );
+    child
+        .window()
+        .dispatch_event(slint::platform::WindowEvent::KeyPressed {
+            text: slint::platform::Key::Return.into(),
+        });
+    child
+        .window()
+        .dispatch_event(slint::platform::WindowEvent::KeyReleased {
+            text: slint::platform::Key::Return.into(),
+        });
+    child.invoke_ok(0);
+    child.invoke_cancel();
+    assert!(bound.predicate_editor.borrow().is_none());
+    assert_eq!(
+        child
+            .get_panels()
+            .row_data(0)
+            .unwrap()
+            .fields
+            .row_data(2)
+            .unwrap()
+            .value,
+        11
+    );
+    assert_eq!(current.borrow().active_predicates(), before);
+    assert_eq!(current.borrow().files(), before_files);
+    assert_eq!(predicate_settings(&store), saved);
+    child.hide().unwrap();
 }

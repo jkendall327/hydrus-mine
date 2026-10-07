@@ -1,0 +1,51 @@
+{
+  "source_commit": "170ab05251e79db77e0b97692f30d17843a3ca78",
+  "run_id": 37560085258,
+  "artifact_id": 11456942888,
+  "native_zip_sha256": "8f974308acade8bd2a4694c396ab407f0829e6730732f8b42e013027bd59c8ff",
+  "reviewer": "Codex root",
+  "actually_viewed": [
+    {
+      "name": "filesize-predicate-native.png",
+      "bytes": 8349,
+      "sha256": "4c65f096b65ce78a60a24e76d02fa92c71ce30844b1fab800890918149221085",
+      "path": "/workspace/validation-reviews/ci-170ab0525/native-renders/filesize-predicate-native.png"
+    },
+    {
+      "name": "hash-predicate-native.png",
+      "bytes": 23005,
+      "sha256": "d928b441c56c6bad7b869cc61e80699087e0c75c80c28fe5f6e6d2e65e34b365",
+      "path": "/workspace/validation-reviews/ci-170ab0525/native-renders/hash-predicate-native.png"
+    },
+    {
+      "name": "hash-predicate-warning-native.png",
+      "bytes": 9651,
+      "sha256": "1ea263f9905104a581bef49eece5c0f770e901c465cd0e0952c4c6e4c85374f0",
+      "path": "/workspace/validation-reviews/ci-170ab0525/native-renders/hash-predicate-warning-native.png"
+    },
+    {
+      "name": "hash-predicate-cleanup-warning-native.png",
+      "bytes": 20183,
+      "sha256": "94a0452031d080106b56f9080f872a64738cc2a6d714488dcb42d7482fc8e114",
+      "path": "/workspace/validation-reviews/ci-170ab0525/native-renders/hash-predicate-cleanup-warning-native.png"
+    }
+  ],
+  "reference_images_actually_viewed": [
+    "oracle/fixtures/filesize-predicate-qt.png",
+    "oracle/fixtures/hash-predicate-qt.png",
+    "oracle/fixtures/hash-predicate-warning-qt.png"
+  ],
+  "observations": [
+    "Filesize comparison radios, amount, units, OK and Cancel are legible and within the 950x400 frame.",
+    "Hash multiline input, four algorithm radios and both cleanup labels are legible and within 1000x500; native spacing differs from Qt.",
+    "Invalid acceptance warning retains its exact prefix and nonhex message, separate from cleanup.",
+    "Actual cleanup warning contains the exact four sections (unknown prefix, nonhex, odd length, unusual length), all legible without clipping; owned OK control is visible."
+  ],
+  "limits": [
+    "Native warning has different whitespace/button geometry and lacks Qt warning icon and OS chrome; pixel/focus/OS modality equality is not claimed.",
+    "Screenshots establish defining presentation, while passing real callbacks/keys/lifetime tests establish behavior.",
+    "Qt parent destruction covers standalone nonmodal owners, not Main or nested exec; native closure hides retained components and permanently refuses callbacks rather than invalidating every retained object."
+  ],
+  "independent_review_pending": false,
+  "independent_review_sha256": "ca53d71182632871c0d6d9f94cd40cc2621dee1295feabed97f7a2d565f18260"
+}

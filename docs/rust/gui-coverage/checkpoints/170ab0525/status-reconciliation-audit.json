@@ -1,0 +1,161 @@
+{
+  "source_commit": "170ab05251e79db77e0b97692f30d17843a3ca78",
+  "ci_evidence_sha256": "1b1800b5be7fe6bacf8ef7162bfa6a03d037b553e244e04384d34b4de04aeb66",
+  "mapping_sha256": "964fdc0e236b5a2dc91391e832f8bf3928f370bf36b55e198f53713407b74e07",
+  "mapping_applied_after_gates": true,
+  "operations": [
+    {
+      "id": "audit-options-predicate-filesize-size",
+      "field": "limitations",
+      "original_index": 0,
+      "operation": "remove_exact_list_item",
+      "before": "Conditional source proposal only: hosted Rust/native tests, exact-source native screenshot and render review remain pending; no local Cargo/Rust build/test/mutation execution.",
+      "conditional_after": null,
+      "reason": "Remove only resolved validation/preparation status after actual exact-source CI and fresh independent/root review; preserve real behavior/reference/ownership scope limits."
+    },
+    {
+      "id": "audit-options-predicate-filesize-size",
+      "field": "limitations",
+      "original_index": 5,
+      "operation": "remove_exact_list_item",
+      "before": "The new owner/lifetime assertions and matching cleanup-warning export await full exact-source Linux CI and fresh independent native render review; they add no completion credit yet.",
+      "conditional_after": null,
+      "reason": "Remove only resolved validation/preparation status after actual exact-source CI and fresh independent/root review; preserve real behavior/reference/ownership scope limits."
+    },
+    {
+      "id": "audit-options-predicate-filesize-size",
+      "field": "remaining",
+      "original_index": 0,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source hosted full Linux validation remains pending.",
+      "conditional_after": null,
+      "reason": "Remove only resolved validation/preparation status after actual exact-source CI and fresh independent/root review; preserve real behavior/reference/ownership scope limits."
+    },
+    {
+      "id": "audit-options-predicate-filesize-size",
+      "field": "remaining",
+      "original_index": 1,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source fresh native rendered/behavioral review and final assessment reconciliation remain pending.",
+      "conditional_after": null,
+      "reason": "Remove only resolved validation/preparation status after actual exact-source CI and fresh independent/root review; preserve real behavior/reference/ownership scope limits."
+    },
+    {
+      "id": "audit-options-predicate-hash-hash-hashes",
+      "field": "limitations",
+      "original_index": 0,
+      "operation": "remove_exact_list_item",
+      "before": "Conditional source proposal only; hosted Rust/native tests and exact-source native PNG review remain pending. No local Cargo/Rust build/test/mutation execution.",
+      "conditional_after": null,
+      "reason": "Remove only resolved validation/preparation status after actual exact-source CI and fresh independent/root review; preserve real behavior/reference/ownership scope limits."
+    },
+    {
+      "id": "audit-options-predicate-hash-hash-hashes",
+      "field": "limitations",
+      "original_index": 5,
+      "operation": "remove_exact_list_item",
+      "before": "The new owner/lifetime assertions and matching cleanup-warning export await full exact-source Linux CI and fresh independent native render review; they add no completion credit yet.",
+      "conditional_after": null,
+      "reason": "Remove only resolved validation/preparation status after actual exact-source CI and fresh independent/root review; preserve real behavior/reference/ownership scope limits."
+    },
+    {
+      "id": "audit-options-predicate-hash-hash-hashes",
+      "field": "remaining",
+      "original_index": 0,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source hosted full Linux validation remains pending.",
+      "conditional_after": null,
+      "reason": "Remove only resolved validation/preparation status after actual exact-source CI and fresh independent/root review; preserve real behavior/reference/ownership scope limits."
+    },
+    {
+      "id": "audit-options-predicate-hash-hash-hashes",
+      "field": "remaining",
+      "original_index": 1,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source fresh native rendered/behavioral review and final assessment reconciliation remain pending.",
+      "conditional_after": null,
+      "reason": "Remove only resolved validation/preparation status after actual exact-source CI and fresh independent/root review; preserve real behavior/reference/ownership scope limits."
+    },
+    {
+      "id": "audit-options-predicate-hash-hash-clean",
+      "field": "limitations",
+      "original_index": 0,
+      "operation": "remove_exact_list_item",
+      "before": "Conditional source proposal only; hosted Rust/native tests and exact-source native PNG review remain pending. No local Cargo/Rust build/test/mutation execution.",
+      "conditional_after": null,
+      "reason": "Remove only resolved validation/preparation status after actual exact-source CI and fresh independent/root review; preserve real behavior/reference/ownership scope limits."
+    },
+    {
+      "id": "audit-options-predicate-hash-hash-clean",
+      "field": "limitations",
+      "original_index": 5,
+      "operation": "remove_exact_list_item",
+      "before": "The new owner/lifetime assertions and matching cleanup-warning export await full exact-source Linux CI and fresh independent native render review; they add no completion credit yet.",
+      "conditional_after": null,
+      "reason": "Remove only resolved validation/preparation status after actual exact-source CI and fresh independent/root review; preserve real behavior/reference/ownership scope limits."
+    },
+    {
+      "id": "audit-options-predicate-hash-hash-clean",
+      "field": "remaining",
+      "original_index": 0,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source hosted full Linux validation remains pending.",
+      "conditional_after": null,
+      "reason": "Remove only resolved validation/preparation status after actual exact-source CI and fresh independent/root review; preserve real behavior/reference/ownership scope limits."
+    },
+    {
+      "id": "audit-options-predicate-hash-hash-clean",
+      "field": "remaining",
+      "original_index": 1,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source fresh native rendered/behavioral review and final assessment reconciliation remain pending.",
+      "conditional_after": null,
+      "reason": "Remove only resolved validation/preparation status after actual exact-source CI and fresh independent/root review; preserve real behavior/reference/ownership scope limits."
+    }
+  ],
+  "added_review_scope_limits": {
+    "audit-options-predicate-filesize-size": [
+      "Only these three concrete leaves are approved. Generic active-predicate Edit, global radio-Enter preference, hash-sign sibling/family, Options/predicate parents, structural/shared aliases and other predicate kinds receive no additional credit.",
+      "Successful Qt destruction recording covers shown nonmodal real DialogEdit/FleshOutPredicatePanel under standalone QWidget.window() owners with retained Python wrappers, unchanged blank predicates and DeferredDelete draining. It does not destroy client Main, exercise active DialogEdit exec() or establish active nested static-warning teardown. Native cleanup-notice closure is a separate safety boundary.",
+      "Native retirement automatically hides the owned editor/notice and permanently refuses callbacks while retained Slint components/adapters remain alive; this is not Qt invalid-wrapper/object-deallocation parity. Main alone is hidden to release shown-platform retention before actual drop; no child/notice manual closure precedes automatic proof.",
+      "Main destruction is observed by repeated50ms owner polling and requires event-loop pumping (tests bounded<=2s); final Bound-owner drop retires synchronously. Nonfinal Bound clones, temporary Main hide and pending/declined exit preserve drafts. Retained warning adapters/windows are tested; the private SessionDialog component is not separately exposed.",
+      "Native dedicated editor/notice captures preserve the finite controls/messages but differ from Qt in font metrics, spacing, input height/width, star/icon styling, large vertical notice OK and outer Apply footer topology. No whole-dialog pixel/geometry equality, OS chrome/modality/focus, clipboard bitmap equality or arbitrary shared-editor ownership is claimed.",
+      "Validation is Linux only; Windows and macOS are deferred. No parent, alias, generic active-edit, global-radio or additional-family completion credit.",
+      "Amount remains0..1048576 and B/KB/MB/GB/TB are separate binary units without amount conversion. Qt TB typed/query value is valid but Qt ToString cannot render TB; native renders TB and existing free-text TB parser limitation remains. Explicit supplied-value reconstruction is model-covered; native saved defaults persist/reopen."
+    ],
+    "audit-options-predicate-hash-hash-hashes": [
+      "Only these three concrete leaves are approved. Generic active-predicate Edit, global radio-Enter preference, hash-sign sibling/family, Options/predicate parents, structural/shared aliases and other predicate kinds receive no additional credit.",
+      "Successful Qt destruction recording covers shown nonmodal real DialogEdit/FleshOutPredicatePanel under standalone QWidget.window() owners with retained Python wrappers, unchanged blank predicates and DeferredDelete draining. It does not destroy client Main, exercise active DialogEdit exec() or establish active nested static-warning teardown. Native cleanup-notice closure is a separate safety boundary.",
+      "Native retirement automatically hides the owned editor/notice and permanently refuses callbacks while retained Slint components/adapters remain alive; this is not Qt invalid-wrapper/object-deallocation parity. Main alone is hidden to release shown-platform retention before actual drop; no child/notice manual closure precedes automatic proof.",
+      "Main destruction is observed by repeated50ms owner polling and requires event-loop pumping (tests bounded<=2s); final Bound-owner drop retires synchronously. Nonfinal Bound clones, temporary Main hide and pending/declined exit preserve drafts. Retained warning adapters/windows are tested; the private SessionDialog component is not separately exposed.",
+      "Native dedicated editor/notice captures preserve the finite controls/messages but differ from Qt in font metrics, spacing, input height/width, star/icon styling, large vertical notice OK and outer Apply footer topology. No whole-dialog pixel/geometry equality, OS chrome/modality/focus, clipboard bitmap equality or arbitrary shared-editor ownership is claimed.",
+      "Validation is Linux only; Windows and macOS are deferred. No parent, alias, generic active-edit, global-radio or additional-family completion credit.",
+      "Typed FileHashes use deterministic set ordering where Qt explicit tuples may retain ordering; algorithm/sign/query membership and raw cleanup first-valid-occurrence order remain. Forced cleanup exact You sure? is inline and freezes the draft; owned native warning lacks Qt icon.",
+      "The550x330 invalid-acceptance warning is separate evidence. The700x560 actual bad-lines-normal cleanup notice is the four-section Qt warning comparison; larger native geometry/button and icon differences remain."
+    ],
+    "audit-options-predicate-hash-hash-clean": [
+      "Only these three concrete leaves are approved. Generic active-predicate Edit, global radio-Enter preference, hash-sign sibling/family, Options/predicate parents, structural/shared aliases and other predicate kinds receive no additional credit.",
+      "Successful Qt destruction recording covers shown nonmodal real DialogEdit/FleshOutPredicatePanel under standalone QWidget.window() owners with retained Python wrappers, unchanged blank predicates and DeferredDelete draining. It does not destroy client Main, exercise active DialogEdit exec() or establish active nested static-warning teardown. Native cleanup-notice closure is a separate safety boundary.",
+      "Native retirement automatically hides the owned editor/notice and permanently refuses callbacks while retained Slint components/adapters remain alive; this is not Qt invalid-wrapper/object-deallocation parity. Main alone is hidden to release shown-platform retention before actual drop; no child/notice manual closure precedes automatic proof.",
+      "Main destruction is observed by repeated50ms owner polling and requires event-loop pumping (tests bounded<=2s); final Bound-owner drop retires synchronously. Nonfinal Bound clones, temporary Main hide and pending/declined exit preserve drafts. Retained warning adapters/windows are tested; the private SessionDialog component is not separately exposed.",
+      "Native dedicated editor/notice captures preserve the finite controls/messages but differ from Qt in font metrics, spacing, input height/width, star/icon styling, large vertical notice OK and outer Apply footer topology. No whole-dialog pixel/geometry equality, OS chrome/modality/focus, clipboard bitmap equality or arbitrary shared-editor ownership is claimed.",
+      "Validation is Linux only; Windows and macOS are deferred. No parent, alias, generic active-edit, global-radio or additional-family completion credit.",
+      "Typed FileHashes use deterministic set ordering where Qt explicit tuples may retain ordering; algorithm/sign/query membership and raw cleanup first-valid-occurrence order remain. Forced cleanup exact You sure? is inline and freezes the draft; owned native warning lacks Qt icon.",
+      "The550x330 invalid-acceptance warning is separate evidence. The700x560 actual bad-lines-normal cleanup notice is the four-section Qt warning comparison; larger native geometry/button and icon differences remain."
+    ]
+  },
+  "reviews": [
+    {
+      "path": "docs/rust/gui-coverage/checkpoints/170ab0525/final-review-2-170ab0525.json",
+      "sha256": "ca53d71182632871c0d6d9f94cd40cc2621dee1295feabed97f7a2d565f18260"
+    }
+  ],
+  "selected_ids": [
+    "audit-options-predicate-filesize-size",
+    "audit-options-predicate-hash-hash-hashes",
+    "audit-options-predicate-hash-hash-clean"
+  ],
+  "prior343_completion_ids_and_assessments_preserved": true,
+  "source_only_native_anchor_ids": [],
+  "final_patch_digest": "24a1c6edf420477238449c7554156956934225e2878a07eee3ca889a9955d7cc"
+}
