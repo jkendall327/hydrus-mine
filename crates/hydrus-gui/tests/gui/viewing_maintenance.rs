@@ -63,6 +63,7 @@ fn real_menu_clear_and_cull_read_live_rules_preserve_declines_and_reopen() {
     ui.show().unwrap();
     let bound = bind(&ui, Pages::open(store.clone()).unwrap());
     let before = rows(&store);
+    let clear_question_index = windows.count();
     dispatch(&ui, false);
     let declined = bound
         .viewing_maintenance
@@ -73,6 +74,17 @@ fn real_menu_clear_and_cull_read_live_rules_preserve_declines_and_reopen() {
     assert_eq!(declined.get_message(), Operation::Clear.question());
     assert_eq!(declined.get_yes_label(), "do it");
     assert_eq!(declined.get_no_label(), "forget it");
+    assert_eq!(declined.get_window_title(), "Are you sure?");
+    assert!(!declined.get_notice_only());
+    let question = headless::render(&windows.get(clear_question_index).unwrap(), 680, 420);
+    headless::save_png(
+        &std::path::Path::new(env!("CARGO_TARGET_TMPDIR"))
+            .join("viewing_statistics_clear_question.png"),
+        &question,
+        680,
+        420,
+    )
+    .unwrap();
     declined.invoke_answered(false);
     assert!(bound.viewing_maintenance.borrow().is_none());
     assert_eq!(rows(&store), before);
@@ -126,6 +138,7 @@ fn real_menu_clear_and_cull_read_live_rules_preserve_declines_and_reopen() {
         fixture["events"][1]["after"]
     );
     cull.invoke_cancelled();
+    let clear_completion_index = windows.count();
     dispatch(&ui, false);
     let clear = bound
         .viewing_maintenance
@@ -136,6 +149,18 @@ fn real_menu_clear_and_cull_read_live_rules_preserve_declines_and_reopen() {
     clear.invoke_answered(true);
     assert!(rows(&store).is_empty());
     assert_eq!(clear.get_message(), Operation::Clear.completed());
+    assert!(clear.get_notice_only());
+    assert_eq!(clear.get_window_title(), "Information");
+    assert_eq!(clear.get_notice_ok_label(), "OK");
+    let completion = headless::render(&windows.get(clear_completion_index).unwrap(), 680, 420);
+    headless::save_png(
+        &std::path::Path::new(env!("CARGO_TARGET_TMPDIR"))
+            .join("viewing_statistics_clear_completed.png"),
+        &completion,
+        680,
+        420,
+    )
+    .unwrap();
     clear.invoke_cancelled();
     assert!(rows(&Store::open(dir.path()).unwrap()).is_empty());
     ui.hide().unwrap();

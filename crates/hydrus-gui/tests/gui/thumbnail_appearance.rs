@@ -233,6 +233,59 @@ fn blurhash_real_metadata_default_invalid_disable_and_owned_cache_policy() {
         .flat_map(|p| [p[0], p[1], p[2], 255])
         .collect();
     assert_eq!(loaded().to_rgba8().unwrap().as_bytes(), expected_rgba);
+    let capture_recovery = |name: &str, expected: &[u8]| {
+        assert_eq!(bound.current.borrow().borrow().results()[0], id);
+        for path in [
+            store.snapshot().storage.thumbnail_path(&media.hash),
+            store.snapshot().storage.file_path(&media.hash, info.mime),
+        ]
+        .into_iter()
+        .flatten()
+        {
+            assert!(
+                !path.is_file(),
+                "recovery must still use the missing source"
+            );
+        }
+        assert!(store.read(settings::get::<Preferences>).unwrap().fade);
+        let native = windows.get(0).unwrap();
+        let now = Rc::new(std::cell::Cell::new(Duration::ZERO));
+        bound.rows.set_paint_clock(Rc::new({
+            let now = now.clone();
+            move || now.get()
+        }));
+        headless::render(&native, 1100, 700);
+        for index in 0..bound.rows.row_count().min(5) {
+            bound.rows.row_data(index).unwrap();
+        }
+        bound.rows.wait();
+        headless::render(&native, 1100, 700);
+        now.set(Duration::from_secs(2));
+        bound.rows.paint_tick(true, 0, 10);
+        let pixels = headless::render(&native, 1100, 700);
+        let thumbnail = bound
+            .rows
+            .row_data(0)
+            .unwrap()
+            .thumbnails
+            .row_data(0)
+            .unwrap();
+        assert_eq!(bound.current.borrow().borrow().results()[0], id);
+        assert_eq!(
+            thumbnail.paint.image.to_rgba8().unwrap().as_bytes(),
+            expected
+        );
+        assert_eq!(thumbnail.fade_opacity.to_bits(), 1.0_f32.to_bits());
+        headless::save_png(
+            &std::path::Path::new(env!("CARGO_TARGET_TMPDIR")).join(name),
+            &pixels,
+            1100,
+            700,
+        )
+        .unwrap();
+    };
+    capture_recovery("thumbnail-blurhash-enabled-native.png", &expected_rgba);
+
     let image = hydrus_gui::thumbnail_recovery(&store, id, &settings, true);
     assert_eq!(
         image,
@@ -287,6 +340,25 @@ fn blurhash_real_metadata_default_invalid_disable_and_owned_cache_policy() {
         .collect();
     assert_eq!(loaded().to_rgba8().unwrap().as_bytes(), default_rgba);
     assert_ne!(loaded().to_rgba8().unwrap().as_bytes(), expected_rgba);
+    capture_recovery("thumbnail-blurhash-disabled-native.png", &default_rgba);
+    let reopened = options(&ui, &bound);
+    assert!(
+        !reopened
+            .get_rows()
+            .row_data(row(&reopened, "Use blurhash missing thumbnail fallback:") as usize)
+            .unwrap()
+            .checked
+    );
+    let pixels = headless::render(&windows.get(windows.count() - 1).unwrap(), 1000, 850);
+    headless::save_png(
+        &std::path::Path::new(env!("CARGO_TARGET_TMPDIR"))
+            .join("thumbnail-blurhash-disabled-options.png"),
+        &pixels,
+        1000,
+        850,
+    )
+    .unwrap();
+    reopened.invoke_cancel();
     ui.invoke_retire_external_launches();
     assert_eq!(bound.rows.cached(), 0);
     ui.show().unwrap();
@@ -455,7 +527,16 @@ fn unscaled_background_clips_oversized_pixels_and_stays_fixed_on_scroll_and_clea
     window.invoke_text_edited(row(&window, PATH), "".into());
     window.invoke_apply();
     assert_eq!(ui.get_thumbnail_background().size().width, 0);
-    assert!(pink(&headless::render(&native, 1100, 700)).is_empty());
+    let cleared = headless::render(&native, 1100, 700);
+    assert!(pink(&cleared).is_empty());
+    headless::save_png(
+        &std::path::Path::new(env!("CARGO_TARGET_TMPDIR"))
+            .join("thumbnail-background-cleared-native.png"),
+        &cleared,
+        1100,
+        700,
+    )
+    .unwrap();
     ui.invoke_retire_external_launches();
     ui.show().unwrap();
     assert_eq!(ui.get_thumbnail_background().size().width, 0);
@@ -762,5 +843,77 @@ fn default_new_page_small_nonuniform_background_has_exact_unscaled_extent_on_res
             &pixels[adjacent..adjacent + 4],
             &authored[16 * 31 * 4..16 * 31 * 4 + 4]
         );
+        headless::save_png(
+            &std::path::Path::new(env!("CARGO_TARGET_TMPDIR")).join(format!(
+                "thumbnail-background-small-new-{width}x{height}-native.png"
+            )),
+            &pixels,
+            width,
+            height,
+        )
+        .unwrap();
+    }
+}
+
+#[test]
+fn qt_marker_background_has_exact_extent_in_old_and_default_new_owners() {
+    let (dirs, store) = store();
+    let path = dirs[1].path().join("qt-marker.png");
+    let marker = [240, 20, 90, 255];
+    headless::save_png(&path, &marker.repeat(31 * 17), 31, 17).unwrap();
+    let windows = headless::init();
+    for new_renderer in [false, true] {
+        save(
+            &store,
+            Preferences {
+                new_renderer,
+                ..Preferences::default()
+            },
+        );
+        let ui = MainWindow::new().unwrap();
+        let bound = bind(&ui, Pages::single(SearchPage::new(store.clone())));
+        ui.show().unwrap();
+        assert_eq!(
+            bound.current.borrow().borrow().new_thumbnail_renderer(),
+            new_renderer
+        );
+        let native = windows.get(windows.count() - 1).unwrap();
+        let blank = headless::render(&native, 1100, 700);
+        let window = options(&ui, &bound);
+        window.invoke_text_edited(row(&window, PATH), path.to_string_lossy().as_ref().into());
+        window.invoke_apply();
+        let pixels = headless::render(&native, 1100, 700);
+        let right = (ui.get_grid_origin_x() + ui.get_grid_visible_width()).round() as usize;
+        let bottom = (ui.get_grid_origin_y() + ui.get_grid_visible_height()).round() as usize;
+        assert_eq!(
+            (
+                ui.get_thumbnail_background().size().width,
+                ui.get_thumbnail_background().size().height
+            ),
+            (31, 17)
+        );
+        for y in bottom - 17..bottom {
+            for x in right - 31..right {
+                let offset = (y * 1100 + x) * 4;
+                assert_eq!(&pixels[offset..offset + 4], &marker);
+            }
+        }
+        for (x, y) in [(right - 32, bottom - 1), (right - 1, bottom - 18)] {
+            let offset = (y * 1100 + x) * 4;
+            assert_ne!(&pixels[offset..offset + 4], &marker);
+            assert_eq!(&pixels[offset..offset + 4], &blank[offset..offset + 4]);
+        }
+        let mode = if new_renderer { "new" } else { "old" };
+        headless::save_png(
+            &std::path::Path::new(env!("CARGO_TARGET_TMPDIR")).join(format!(
+                "thumbnail-background-small-{mode}-qt-marker-native.png"
+            )),
+            &pixels,
+            1100,
+            700,
+        )
+        .unwrap();
+        ui.invoke_retire_external_launches();
+        ui.hide().unwrap();
     }
 }

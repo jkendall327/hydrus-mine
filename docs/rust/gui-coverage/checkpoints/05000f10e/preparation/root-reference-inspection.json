@@ -1,0 +1,45 @@
+{
+  "source_commit": "05000f10eafc4211d6856549d0073edb90ba5811",
+  "actually_viewed_via": "view_image",
+  "images": [
+    {
+      "path": "oracle/fixtures/tab_presentation_qt_top.png",
+      "sha256": "e8c26ed50c0491292e8f9ffd6f13584132fb3b58347aa9059884d2000d8ef268"
+    },
+    {
+      "path": "oracle/fixtures/tab_presentation_qt_right.png",
+      "sha256": "8b4e3803b961e040a10f76a6041787054125de8086fa04eb5a52d5df73fcb2be"
+    },
+    {
+      "path": "oracle/fixtures/tab_presentation_qt_left.png",
+      "sha256": "b17c42bd0ed94b2bc90e8ad22f2881b4257eff2fb91ceec62187cee4dbde4905"
+    },
+    {
+      "path": "oracle/fixtures/tab_presentation_qt_bottom.png",
+      "sha256": "736bd70a92eb95cbc13520e2d478496f86928b5c48e64087550b6366b48c1bb1"
+    },
+    {
+      "path": "oracle/fixtures/sidebar_layout_reference.png",
+      "sha256": "2240401e03972d2e3e6d75ea7d89b7497f03ba0925dbf896454ea026edc81f9f"
+    },
+    {
+      "path": "oracle/fixtures/thumbnail_background_qt.png",
+      "sha256": "c3353853c5d989b68879ab99c64b5b2b0a81af43d669bf43e96d980a14c61696"
+    },
+    {
+      "path": "oracle/fixtures/thumbnail_background_new_qt.png",
+      "sha256": "8cfd425c99bb243cc601544af9bde4f7e16ed2d71cf12ec82b8e0caa3c6e5855"
+    },
+    {
+      "path": "oracle/fixtures/thumbnail_appearance_qt.png",
+      "sha256": "699efdf029dc171f511c0327b02aaa1fa59e5f2dc1464b03728adc70fd2af552"
+    }
+  ],
+  "observations": [
+    "Qt four tab PNGs isolate outer bar; native captures cover actual nested MainWindow, so no full-window pixel comparison.",
+    "Sidebar Qt PNG shows restored blank topology and visible preview region; hidden states use JSON traces, not this PNG.",
+    "Old Qt background contains media with small bottom-right pink marker; new Qt background PNG is a blank painter canvas with same 31x17 bottom-right marker.",
+    "Qt appearance PNG is a selected decorated thumbnail, not blurhash fallback. Recovery is grounded in JSON and decoder bytes, not direct matching Qt screenshot."
+  ],
+  "approval": false
+}

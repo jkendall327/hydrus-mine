@@ -264,3 +264,19 @@ regression or a fresh Slint-generation timing. No safety guard was weakened and
 no further optimization experiment was started.
 [Exact logs and observations](../checkpoints/ff858ded1/validation-outcome.json)
 are retained with the second checkpoint.
+
+A bounded follow-up after the 334-completion checkpoint adds a dedicated manual
+`codex/validation-runner` ref to the existing cache-save and maintenance allowlist.
+Per-batch PR refs cannot save rolling workspace artifacts; freezing reviewed PR
+heads therefore broke continuity. The dedicated ref can advance only between
+completed checkpoints and must identify the same immutable SHA as its PR source.
+It is excluded from push triggers to prevent a push run cancelling manual full
+validation through the shared concurrency group. It must never be a PR head.
+
+The exact-ref/same-repository/manual/opt-in guards, safe-restore checks, dependency
+fallback, two-snapshot ceiling per ref/family and aggregate 3 GiB workspace-cache
+cap remain. The 21 existing cache safety tests pass, and the collector's required
+Linux workflow contract is unchanged. The first dedicated-ref run will seed its
+cache; later actual reuse must be measured before claiming an improvement.
+Run `37510853142` missed both caches and took 28m33s for the Clippy step and 26m02s
+for test compilation; these are hosted observations, not a controlled benchmark.

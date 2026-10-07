@@ -2,7 +2,7 @@ name: rust
 
 on:
   push:
-    branches: [master, 'claude/**', 'codex/**']
+    branches: [master, 'claude/**', 'codex/**', '!codex/validation-runner']
     paths: ['crates/**', 'xtask/**', 'oracle/**', 'parity/**', 'Cargo.toml', 'Cargo.lock', 'rust-toolchain.toml', '.github/workflows/rust.yml', 'scripts/gui_test_artifact.py', 'scripts/test_gui_test_artifact.py', '.github/scripts/**']
   pull_request:
     paths: ['crates/**', 'xtask/**', 'oracle/**', 'parity/**', 'Cargo.toml', 'Cargo.lock', 'rust-toolchain.toml', '.github/workflows/rust.yml', 'scripts/gui_test_artifact.py', 'scripts/test_gui_test_artifact.py', '.github/scripts/**']
@@ -188,12 +188,12 @@ jobs:
       # Preserve completed library work even if a later diagnostic/test fails.
       - name: stage bounded workspace libraries
         id: workspace-stage
-        if: ${{ !cancelled() && inputs.workspace_cache && steps.workspace-key.outcome == 'success' && steps.workspace-merge.outputs.safe == 'true' && github.event_name == 'workflow_dispatch' && github.repository == 'jkendall327/hydrus-mine' && (github.ref == 'refs/heads/master' || github.ref == 'refs/heads/codex/full-validation') }}
+        if: ${{ !cancelled() && inputs.workspace_cache && steps.workspace-key.outcome == 'success' && steps.workspace-merge.outputs.safe == 'true' && github.event_name == 'workflow_dispatch' && github.repository == 'jkendall327/hydrus-mine' && (github.ref == 'refs/heads/master' || github.ref == 'refs/heads/codex/full-validation' || github.ref == 'refs/heads/codex/validation-runner') }}
         continue-on-error: true
         shell: bash
         run: python .github/scripts/workspace_artifact_cache.py stage
       - name: save rolling workspace libraries
-        if: ${{ !cancelled() && steps.workspace-stage.outputs.save == 'true' && github.event_name == 'workflow_dispatch' && github.repository == 'jkendall327/hydrus-mine' && (github.ref == 'refs/heads/master' || github.ref == 'refs/heads/codex/full-validation') }}
+        if: ${{ !cancelled() && steps.workspace-stage.outputs.save == 'true' && github.event_name == 'workflow_dispatch' && github.repository == 'jkendall327/hydrus-mine' && (github.ref == 'refs/heads/master' || github.ref == 'refs/heads/codex/full-validation' || github.ref == 'refs/heads/codex/validation-runner') }}
         continue-on-error: true
         uses: actions/cache/save@v4
         with:
@@ -280,7 +280,7 @@ jobs:
 
   workspace-cache-maintenance:
     # Cache housekeeping runs only after this run's full lanes finish.
-    if: ${{ always() && !cancelled() && inputs.full_validation && inputs.workspace_cache && github.event_name == 'workflow_dispatch' && github.repository == 'jkendall327/hydrus-mine' && (github.ref == 'refs/heads/master' || github.ref == 'refs/heads/codex/full-validation') }}
+    if: ${{ always() && !cancelled() && inputs.full_validation && inputs.workspace_cache && github.event_name == 'workflow_dispatch' && github.repository == 'jkendall327/hydrus-mine' && (github.ref == 'refs/heads/master' || github.ref == 'refs/heads/codex/full-validation' || github.ref == 'refs/heads/codex/validation-runner') }}
     needs: [check, parity-models, other-platforms]
     runs-on: ubuntu-24.04
     timeout-minutes: 3
@@ -293,7 +293,7 @@ jobs:
         uses: actions/github-script@v7
         with:
           script: |
-            const refs = new Set(['refs/heads/master', 'refs/heads/codex/full-validation']);
+            const refs = new Set(['refs/heads/master', 'refs/heads/codex/full-validation', 'refs/heads/codex/validation-runner']);
             const familyPattern = /^(hydrus-ws-v1-check-Linux-X64-)/;
             const budget = 3 * 1024 ** 3;
             const entries = [];

@@ -4573,3 +4573,13 @@ fresh independent review at `63f9e35ab` approve exactly these three leaves:
 334 signed off, 94 new across seven October 6 checkpoints, 41 pending. All
 698 GUI and 67 media tests pass. The 15 selected captures and preserved limits
 are recorded in the checkpoint evidence.
+
+The five-candidate presentation/appearance batch adds actual hidden sidebar and
+new-page preview states, ClearAll confirmation/completion, settled blurhash
+consumers and reopened saved Options, plus cleared/resized/same-marker backgrounds.
+Tab orientation captures verify and dismiss the deliberate invalid-choice error
+through the production popup action. Full Linux validation and fresh independent
+review at `05000f10e` approve exactly these five leaves: 339 signed off, 99 new
+across eight October 6 checkpoints, 36 pending. All 699 GUI and 67 media tests
+pass; 19 fresh captures support the scoped claims and all 226 original assertions
+remain intact.

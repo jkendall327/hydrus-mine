@@ -1,0 +1,41 @@
+{
+  "source_commit": "05000f10eafc4211d6856549d0073edb90ba5811",
+  "baseline_source_commit": "fb9fff5e229b4146b42c6cc691a8dc56fe605bb4",
+  "source_phase": "repaired source validation pending",
+  "run_id": 37521631512,
+  "selected_candidate_ids": [
+    "audit-options-gui-pages-navigation-and-drag-and-drop-notebook-tab-alignment",
+    "audit-options-menu-menu-pages-show-hide-sidebar-and-preview-panel",
+    "audit-media-menu-database-clear-clear-all-file-viewing-statistics",
+    "audit-options-thumbnails-appearance-use-blurhash-missing-thumbnail-fallback",
+    "audit-options-thumbnails-media-background-experimental-image-path-for-thumbnail-panel-background-image-set-blank-to-clear"
+  ],
+  "manifest_groups": {
+    "docs/rust/gui-coverage/parity/sidebar-layout.json": [
+      "audit-options-menu-menu-pages-show-hide-sidebar-and-preview-panel"
+    ],
+    "docs/rust/gui-coverage/parity/tab-presentation.json": [
+      "audit-options-gui-pages-navigation-and-drag-and-drop-notebook-tab-alignment"
+    ],
+    "docs/rust/gui-coverage/parity/thumbnail-appearance.json": [
+      "audit-options-thumbnails-appearance-use-blurhash-missing-thumbnail-fallback",
+      "audit-options-thumbnails-media-background-experimental-image-path-for-thumbnail-panel-background-image-set-blank-to-clear"
+    ],
+    "docs/rust/gui-coverage/parity/viewing-statistics-cleanup.json": [
+      "audit-media-menu-database-clear-clear-all-file-viewing-statistics"
+    ]
+  },
+  "prior_completed_count": 334,
+  "pending_count": 41,
+  "selected_count": 5,
+  "unselected_pending_count": 36,
+  "conditional_bank_if_all_gates_pass": 339,
+  "not_ready_by_preparation": true,
+  "approval": false,
+  "gates": [
+    "Exact source05000f10eafc4211d6856549d0073edb90ba5811; fullLinux run37521631512 pending. Required strictcheck fmt/Clippy/fulltests/ratchet +parity-models must completegreen; Windows/macOS deferred under immutablepolicy.",
+    "Fresh source-bound nativecaptures and independent actual source/behavior/image reviewer2 review of exactly5. Historical captures/proofs remain provenance only.",
+    "Preserve prior334 completed nonanchor wholeobjects, all unselected and native1799; no oldfailure/errata replay.",
+    "After actualgates resolve only selected pending/stale clauses and exactmetadata; root actualinspection/finaldigest/census plus stagedbrowser/preservation required."
+  ]
+}
