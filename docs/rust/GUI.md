@@ -4592,3 +4592,11 @@ Full Linux validation and independent fresh-image review at `e886e68ed` approve
 these two leaves: 341 completions banked, 101 new across nine October 6 checkpoints,
 and 34 existing candidates pending. All 699 GUI and 67 media tests pass;
 all 717 original assertions remain.
+
+The next bounded namespace Add/Delete repair keeps the actual Add entry open
+after an empty Apply or Return submission, with an owned Warning that must be
+acknowledged before further input. Whitespace still reaches the separate
+namespace handler. Delete uses the reference “Are you sure?” title. New real Qt
+recordings and native input/ownership regressions preserve the original handler
+fixture and its assertions. These two leaves await exact-source full Linux
+validation and fresh independent rendered review; 341 sign-offs remain banked.

@@ -27,6 +27,7 @@ export QT_QPA_PLATFORM=offscreen
 
 | script | output |
 |---|---|
+| `record_namespace_entry_validation.py` | `fixtures/namespace_entry_validation.json` and namespace Add/Delete Qt PNGs: actual empty Apply/Return warning and retained input, subsequent valid entry, distinct whitespace handler path, and mixed protected/custom Delete No/Yes; preserves the earlier handler-level fixture |
 | `dump_constants.py` | `fixtures/constants.json`: file types, service types, enum codes |
 | `dump_tag_cleaning.py` | `fixtures/tag_cleaning.json`: tag cleaning on awkward inputs |
 | `record_predicate_custom_defaults.py` | `fixtures/predicate_custom_defaults.json`: actual Qt star actions across all 40 panel families, 1,600 comparability pairs, explicit-input precedence, immediate reset, owner-close persistence and actual ClientOptions serialization with an interior 3/5 rating for native import |

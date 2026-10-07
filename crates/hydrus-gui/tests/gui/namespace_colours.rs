@@ -153,7 +153,15 @@ fn actual_namespace_questions_cancel_retired_owners_reopen_and_live_colours_repl
             } else if event["input"] == " -Parity Artists::: " {
                 // One accepted add uses actual native LineEdit input and Return dispatch.
                 let native = windows.get(windows.count() - 1).unwrap();
-                headless::render(&native, 520, 200);
+                let pixels = headless::render(&native, 520, 200);
+                headless::save_png(
+                    &std::path::Path::new(env!("CARGO_TARGET_TMPDIR"))
+                        .join("namespace-colours-add-entry.png"),
+                    &pixels,
+                    520,
+                    200,
+                )
+                .unwrap();
                 native.dispatch_event(WindowEvent::WindowActiveChanged(true));
                 native.dispatch_event(WindowEvent::KeyPressed {
                     text: event["input"].as_str().unwrap().into(),
@@ -267,6 +275,20 @@ fn actual_namespace_questions_cancel_retired_owners_reopen_and_live_colours_repl
                     .unwrap()
                     .clone_strong();
                 assert_eq!(json!([child.get_message().as_str()]), event["questions"]);
+                assert_eq!(child.get_window_title(), "Are you sure?");
+                assert!(!child.get_asking_name());
+                assert!(!child.get_notice_only());
+                if event["yes"] == false {
+                    let native = windows.get(windows.count() - 1).unwrap();
+                    headless::save_png(
+                        &std::path::Path::new(env!("CARGO_TARGET_TMPDIR"))
+                            .join("namespace-colours-delete-question.png"),
+                        &headless::render_snapshot(&native, 520, 200),
+                        520,
+                        200,
+                    )
+                    .unwrap();
+                }
                 child.invoke_answered(event["yes"].as_bool().unwrap());
             }
         }
@@ -556,4 +578,342 @@ fn actual_namespace_questions_cancel_retired_owners_reopen_and_live_colours_repl
         reopened.read::<NamespaceColours>(settings::get).unwrap(),
         store.read::<NamespaceColours>(settings::get).unwrap()
     );
+}
+
+#[test]
+fn blank_native_add_apply_and_return_keep_entry_until_acknowledgement_and_parent_cancel() {
+    use slint::platform::{PointerEventButton, WindowAdapter as _};
+    use std::{
+        cell::RefCell,
+        rc::Rc,
+        time::{Duration, Instant},
+    };
+    fn key(
+        window: &slint::platform::software_renderer::MinimalSoftwareWindow,
+        text: impl Into<slint::SharedString>,
+    ) {
+        let text = text.into();
+        window.dispatch_event(WindowEvent::KeyPressed { text: text.clone() });
+        window.dispatch_event(WindowEvent::KeyReleased { text });
+    }
+    let (_dirs, store) = super::subscriptions::store();
+    let windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    ui.show().unwrap();
+    let bound = bind(
+        &ui,
+        Pages::single(super::common::all_local_page(store.clone())),
+    );
+    let fixture = hydrus_testkit::fixture_json("namespace_entry_validation.json");
+    assert_eq!(fixture["errors"], json!([]));
+    let before = store.read::<NamespaceColours>(settings::get).unwrap();
+    for use_apply in [false, true] {
+        let recorded = fixture["add_cases"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .find(|case| case["route"] == if use_apply { "apply" } else { "return" })
+            .unwrap();
+        let accepted_text = recorded["valid_entered_text"].as_str().unwrap();
+        let options = open(&ui, &bound);
+        let original_rows = labels(&options);
+        options.invoke_namespace_colour_action("add".into());
+        let entry = bound
+            .options_colour_child
+            .borrow()
+            .as_ref()
+            .unwrap()
+            .clone_strong();
+        assert_eq!(
+            entry.get_window_title(),
+            recorded["title"].as_str().unwrap()
+        );
+        assert_eq!(
+            json!([entry.get_message().as_str()]),
+            recorded["message_labels"]
+        );
+        assert_eq!(recorded["allow_blank"], false);
+        assert_eq!(entry.get_text(), "");
+        assert!(entry.get_reject_blank_submission());
+        let native = windows.get(windows.count() - 1).unwrap();
+        native.dispatch_event(WindowEvent::WindowActiveChanged(true));
+        let frame = Rc::new(RefCell::new(None));
+        entry.on_name_apply_measured({
+            let frame = frame.clone();
+            move |value| {
+                *frame.borrow_mut() = Some(value);
+            }
+        });
+        entry.set_measure_name_apply(true);
+        let start = Instant::now();
+        loop {
+            headless::render(&native, 520, 200);
+            if frame
+                .borrow()
+                .as_ref()
+                .is_some_and(|f| f.w > 0.0 && f.h > 0.0)
+            {
+                break;
+            }
+            assert!(
+                start.elapsed() < Duration::from_secs(2),
+                "actual Apply geometry must arrive"
+            );
+            std::thread::sleep(Duration::from_millis(10));
+        }
+        entry.set_measure_name_apply(false);
+        let count = windows.count();
+        if use_apply {
+            let f = frame.borrow().clone().unwrap();
+            let position = slint::LogicalPosition::new(f.x + f.w / 2.0, f.y + f.h / 2.0);
+            assert!(
+                position.x > 0.0 && position.x < 520.0 && position.y > 0.0 && position.y < 200.0
+            );
+            native.dispatch_event(WindowEvent::PointerMoved { position });
+            native.dispatch_event(WindowEvent::PointerPressed {
+                position,
+                button: PointerEventButton::Left,
+            });
+            native.dispatch_event(WindowEvent::PointerReleased {
+                position,
+                button: PointerEventButton::Left,
+            });
+        } else {
+            key(&native, Key::Return);
+        }
+        assert_eq!(
+            windows.count(),
+            count + 1,
+            "empty widget submission owns one warning"
+        );
+        let notice = windows.get(windows.count() - 1).unwrap();
+        let pixels = headless::render(&notice, 520, 200);
+        headless::save_png(
+            &std::path::Path::new(env!("CARGO_TARGET_TMPDIR")).join(if use_apply {
+                "namespace-colours-empty-apply-warning.png"
+            } else {
+                "namespace-colours-empty-return-warning.png"
+            }),
+            &pixels,
+            520,
+            200,
+        )
+        .unwrap();
+        assert!(entry.window().is_visible());
+        assert!(notice.window().is_visible());
+        assert!(entry.get_child_open());
+        assert!(std::ptr::eq(
+            entry.window(),
+            bound
+                .options_colour_child
+                .borrow()
+                .as_ref()
+                .unwrap()
+                .window()
+        ));
+        assert_eq!(entry.get_text(), "");
+        assert_eq!(labels(&options), original_rows);
+        assert_eq!(
+            store.read::<NamespaceColours>(settings::get).unwrap(),
+            before
+        );
+        entry.invoke_name_entered("blocked while warning".into());
+        entry.invoke_blank_submitted();
+        options.invoke_apply();
+        assert!(bound.options.borrow().is_some());
+        assert_eq!(windows.count(), count + 1);
+        assert_eq!(labels(&options), original_rows);
+        notice.dispatch_event(WindowEvent::WindowActiveChanged(true));
+        key(&notice, Key::Return);
+        assert!(!notice.window().is_visible());
+        assert!(entry.window().is_visible());
+        assert!(!entry.get_child_open());
+        assert!(std::ptr::eq(
+            entry.window(),
+            bound
+                .options_colour_child
+                .borrow()
+                .as_ref()
+                .unwrap()
+                .window()
+        ));
+        let retained_pixels = headless::render(&native, 520, 200);
+        if use_apply {
+            headless::save_png(
+                &std::path::Path::new(env!("CARGO_TARGET_TMPDIR"))
+                    .join("namespace-colours-empty-retained-entry.png"),
+                &retained_pixels,
+                520,
+                200,
+            )
+            .unwrap();
+        }
+        native.dispatch_event(WindowEvent::WindowActiveChanged(true));
+        // Restore focus through the real re-enabled LineEdit after either path.
+        let input = entry.get_name_input_frame();
+        assert!(input.w > 0.0 && input.h > 0.0);
+        let position =
+            slint::LogicalPosition::new(input.x + input.w / 2.0, input.y + input.h / 2.0);
+        native.dispatch_event(WindowEvent::PointerMoved { position });
+        native.dispatch_event(WindowEvent::PointerPressed {
+            position,
+            button: PointerEventButton::Left,
+        });
+        native.dispatch_event(WindowEvent::PointerReleased {
+            position,
+            button: PointerEventButton::Left,
+        });
+        key(&native, accepted_text);
+        assert_eq!(entry.get_text(), accepted_text);
+        key(&native, Key::Return);
+        assert!(bound.options_colour_child.borrow().is_none());
+        assert!(!entry.window().is_visible());
+        assert_ne!(labels(&options), original_rows);
+        let added = recorded["rows_after"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .find(|row| {
+                !recorded["rows_before"]
+                    .as_array()
+                    .unwrap()
+                    .iter()
+                    .any(|before| before["namespace"] == row["namespace"])
+            })
+            .unwrap();
+        assert!(
+            labels(&options)
+                .as_array()
+                .unwrap()
+                .contains(&json!(namespace_label(&added["namespace"])))
+        );
+        assert_eq!(
+            store.read::<NamespaceColours>(settings::get).unwrap(),
+            before
+        );
+        options.invoke_cancel();
+        let reopened = open(&ui, &bound);
+        assert_eq!(labels(&reopened), original_rows);
+        reopened.invoke_cancel();
+    }
+    // Raw whitespace reaches the namespace handler, unlike exact empty input.
+    let whitespace = fixture["add_cases"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|case| case["route"] == "whitespace")
+        .unwrap();
+    let options = open(&ui, &bound);
+    let original_rows = labels(&options);
+    options.invoke_namespace_colour_action("add".into());
+    let entry = bound
+        .options_colour_child
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
+    let native = windows.get(windows.count() - 1).unwrap();
+    headless::render(&native, 520, 200);
+    native.dispatch_event(WindowEvent::WindowActiveChanged(true));
+    key(&native, whitespace["input"].as_str().unwrap());
+    assert_eq!(
+        entry.get_text(),
+        whitespace["entered_text"].as_str().unwrap()
+    );
+    key(&native, Key::Return);
+    assert!(!entry.window().is_visible());
+    let notice = bound
+        .options_colour_child
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
+    assert!(notice.get_notice_only());
+    assert_eq!(
+        notice.get_message(),
+        whitespace["warning"]["message"].as_str().unwrap()
+    );
+    assert_eq!(
+        notice.get_window_title(),
+        whitespace["warning"]["title"].as_str().unwrap()
+    );
+    assert_eq!(
+        json!([notice.get_notice_ok_label().as_str()]),
+        whitespace["warning"]["button_labels"]
+    );
+    assert_eq!(labels(&options), original_rows);
+    assert_eq!(
+        store.read::<NamespaceColours>(settings::get).unwrap(),
+        before
+    );
+    let native = windows.get(windows.count() - 1).unwrap();
+    let pixels = headless::render(&native, 520, 200);
+    headless::save_png(
+        &std::path::Path::new(env!("CARGO_TARGET_TMPDIR"))
+            .join("namespace-colours-whitespace-warning.png"),
+        &pixels,
+        520,
+        200,
+    )
+    .unwrap();
+    key(&native, Key::Return);
+    assert!(bound.options_colour_child.borrow().is_none());
+    options.invoke_cancel();
+    // Cancelling the parent also retires the nested warning and retained input.
+    let options = open(&ui, &bound);
+    options.invoke_namespace_colour_action("add".into());
+    let retired = bound
+        .options_colour_child
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
+    let native = windows.get(windows.count() - 1).unwrap();
+    retired.hide().unwrap();
+    let count = windows.count();
+    retired.invoke_blank_submitted();
+    assert_eq!(windows.count(), count, "hidden entry cannot open a warning");
+    assert!(!retired.get_child_open());
+    retired.show().unwrap();
+    headless::render(&native, 520, 200);
+    native.dispatch_event(WindowEvent::WindowActiveChanged(true));
+    key(&native, Key::Return);
+    assert!(retired.get_child_open());
+    let retired_notice = windows.get(windows.count() - 1).unwrap();
+    headless::render(&retired_notice, 520, 200);
+    options.invoke_cancel();
+    assert!(!retired.window().is_visible());
+    assert!(!retired_notice.window().is_visible());
+    assert!(bound.options_colour_child.borrow().is_none());
+    let successor_options = open(&ui, &bound);
+    successor_options.invoke_namespace_colour_action("add".into());
+    let successor = bound
+        .options_colour_child
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
+    let count = windows.count();
+    retired.invoke_blank_submitted();
+    retired.invoke_name_entered("retired blank owner".into());
+    retired.invoke_cancelled();
+    key(&retired_notice, Key::Return);
+    assert_eq!(windows.count(), count);
+    assert!(successor.window().is_visible());
+    assert!(!successor.get_child_open());
+    assert!(std::ptr::eq(
+        successor.window(),
+        bound
+            .options_colour_child
+            .borrow()
+            .as_ref()
+            .unwrap()
+            .window()
+    ));
+    assert_eq!(
+        store.read::<NamespaceColours>(settings::get).unwrap(),
+        before
+    );
+    successor_options.invoke_cancel();
+    ui.hide().unwrap();
 }

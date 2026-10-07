@@ -3719,3 +3719,12 @@ width property is not a direct measured-geometry observation. Fresh review at
 `e886e68ed` verifies readable list boundaries and layout; CJK glyph rendering
 remains different from Qt. Exactly these two leaves are published, bringing
 the total to 341 signed off with 34 existing candidates pending.
+
+The pending namespace Add/Delete repair distinguishes the real entry widget's
+empty-text veto from the existing handler-level fixture, which substitutes
+Quick.EnterText. The new reference recorder drives actual Apply/Return and
+warning acknowledgement. Its parent panel is shown standalone, mixed Delete
+selection uses the list's real selection helper, and random RGB values are not
+fixed expected colours. Native title metadata is asserted separately because
+headless snapshots omit native title-bar decoration. No Namespace Edit, parent,
+alias or deferred-platform completion is claimed before fresh validation.
