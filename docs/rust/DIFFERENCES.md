@@ -3034,12 +3034,18 @@ only the original editor control; broader OR list layout and renderer families
 remain Partial. Native rendered regression and Rust tests are authored for hosted
 execution; no local Cargo builds, Rust tests or mutation runs were performed.
 
-The pending OR editor diagnostic adds settled reopened ASCII/fox frames and
-physical Select All/Copy with a clipboard sentinel at one supported 900×900
-viewport. This separates actual widget text from glyph painting; it does not
-establish a font cause for the historical blank-looking fox field. No font,
-renderer or custom OR consumer change is made. Exact-source Linux execution and
-fresh frame review remain gates for this single control, with no parent credit.
+The OR editor regression adds settled reopened ASCII/fox frames and physical
+Select All/Copy with a clipboard sentinel at one supported 900×900 viewport.
+The Linux system selects bitmap-only Noto Color Emoji, while Slint 1.18.1's
+software renderer requests outlines. Startup now prepends bundled SIL-licensed
+Noto Emoji outlines to the emoji fallback chain, retaining existing emoji and
+ordinary Latin/CJK fallbacks. Emoji are monochrome and need not match Qt's glyph
+shape or colour. The adapter uses Slint's internal font context, so runtime,
+build helper and core are pinned together at 1.18.1. A font-selection regression
+checks the actual fox font and unchanged ordinary/script fallback lists; the
+real reopened field must paint ink before selection. The fresh Qt replay remains
+byte-identical. Exact-source Linux execution and fresh frame review remain gates
+for this single control, with no parent credit or custom OR renderer activation.
 
 Default and registered single-file launch dispatch now reads current Store
 file-domain membership explicitly. The lightweight basic metadata reader leaves

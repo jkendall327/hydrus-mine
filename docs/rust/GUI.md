@@ -3972,12 +3972,13 @@ and copy/export syntax. Namespace formatting and the OR top-row colour remain
 independent live settings. Hidden, cancelled, rebound and closed Options owners
 cannot save a connector draft.
 
-A pending diagnostic retains the actual reopened Options window at 900×900 for
-the recorded ASCII and fox values. It captures settled pixels before selection,
-then physically focuses the field and uses Select All/Copy to check every raw
-byte while complete saved settings and the live query remain unchanged. Hosted
-execution and fresh glyph inspection are still required; fonts and the existing
-literal OR consumers are unchanged.
+The reopened Options regression retains settled 900×900 ASCII and fox frames
+before selection, then physically uses Select All/Copy to check every raw byte
+while complete saved settings and the live query remain unchanged. Startup now
+supplies an outline emoji fallback for software rendering, so the saved fox can
+paint in monochrome. Ordinary Latin/CJK font settings and existing literal OR
+consumers retain their behavior. The regression requires visible ink inside the
+fox field; exact-source hosted execution and fresh rendered review remain pending.
 
 Delayed deletion consumers keep a weak identity for their originating page.
 Replacing a session releases that page even when its viewer stays open. A live

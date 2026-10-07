@@ -155,7 +155,8 @@ pub fn install_activity_backend() -> Result<(), slint::PlatformError> {
     slint::BackendSelector::new()
         .backend_name("winit".into())
         .with_winit_custom_application_handler(ActivityHandler)
-        .select()
+        .select()?;
+    crate::fonts::install_emoji_fallback()
 }
 
 struct ActivityHandler;

@@ -26,6 +26,7 @@ mod duplicate_filter;
 mod duplicates_page;
 mod edit_subscription;
 mod embedded_metadata;
+mod emoji_fonts;
 mod existing_tags_filter;
 mod favourites;
 mod file_log;

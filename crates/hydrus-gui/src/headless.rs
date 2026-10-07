@@ -114,6 +114,8 @@ pub fn init() -> Windows {
         collector: Rc::downgrade(&windows.0),
     }))
     .expect("no platform was set yet");
+    crate::fonts::install_emoji_fallback()
+        .expect("the headless platform and bundled outline emoji font are initialized");
     windows
 }
 
