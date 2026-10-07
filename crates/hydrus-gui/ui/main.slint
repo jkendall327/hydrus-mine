@@ -272,6 +272,51 @@ component ThumbnailGrid inherits ListView {
     }
 }
 
+// Keep full search/domain identities readable at the supported narrow sidebar.
+// Fit uses intrinsic standard-button widths and an independently supplied width,
+// so changing rows cannot feed back into the containing layout's width.
+component SidebarButtonPair inherits Rectangle {
+    in property <length> available-width;
+    in property <string> first-text;
+    in property <string> second-text;
+    in property <bool> measure-controls: false;
+    callback first-clicked(length,length);
+    callback second-clicked(length,length);
+    callback controls-measured(MenuChoiceFrame,MenuChoiceFrame,MenuChoiceFrame,length,length);
+    private property <bool> stacked: root.available-width < first.preferred-width + second.preferred-width + 4px;
+    width: root.available-width;
+    height: buttons.preferred-height;
+    out property <MenuChoiceFrame> pair-frame: {x:self.absolute-position.x,y:self.absolute-position.y,w:self.width,h:self.height};
+    buttons := GridLayout {
+        spacing: 4px;
+        first := Button {
+            row: 0; col: 0;
+            min-width: 20px;
+            horizontal-stretch: 1;
+            text: root.first-text;
+            clicked => { root.first-clicked(self.absolute-position.x,self.absolute-position.y + self.height); }
+        }
+        second := Button {
+            row: root.stacked ? 1 : 0;
+            col: root.stacked ? 0 : 1;
+            min-width: 20px;
+            horizontal-stretch: 1;
+            text: root.second-text;
+            clicked => { root.second-clicked(self.absolute-position.x,self.absolute-position.y + self.height); }
+        }
+    }
+    Timer {
+        interval: 1ms;
+        running: root.measure-controls;
+        triggered => {
+            root.controls-measured(root.pair-frame,
+                {x:first.absolute-position.x,y:first.absolute-position.y,w:first.width,h:first.height},
+                {x:second.absolute-position.x,y:second.absolute-position.y,w:second.width,h:second.height},
+                first.preferred-width,second.preferred-width);
+        }
+    }
+}
+
 // Structurally present controls inside one conditional question instance.
 // Read-only observation never supplies widget geometry or changes admission.
 component MainQuestionPanel inherits Rectangle {
@@ -323,6 +368,8 @@ export component MainWindow inherits Window {
     in property <length> sidebar-requested-width:400px;
     in property <length> preview-requested-height:240px;
     out property <length> sidebar-actual-width: sidebar-pane.width;
+    out property <MenuChoiceFrame> sidebar-frame: {x:sidebar-pane.absolute-position.x,y:sidebar-pane.absolute-position.y,w:sidebar-pane.width,h:sidebar-pane.height};
+    out property <MenuChoiceFrame> sidebar-search-frame: {x:sidebar-scroll.absolute-position.x,y:sidebar-scroll.absolute-position.y,w:sidebar-scroll.visible-width,h:sidebar-scroll.visible-height};
     out property <length> preview-actual-height: preview-pane.height;
     out property <length> sidebar-handle-x: sidebar-handle.absolute-position.x;
     out property <length> sidebar-handle-y: sidebar-handle.absolute-position.y;
@@ -714,6 +761,8 @@ export component MainWindow inherits Window {
     callback answer(bool);
     // a question to answer (a deletion): enter is yes, escape no
     in property <string> question;
+    in property <bool> measure-sidebar-buttons: false;
+    callback sidebar-buttons-measured(int,MenuChoiceFrame,MenuChoiceFrame,MenuChoiceFrame,length,length);
     in property <bool> measure-question-controls: false;
     callback question-controls-measured(MenuChoiceFrame,MenuChoiceFrame,MenuChoiceFrame,MenuChoiceFrame);
     callback sort-chosen(int);
@@ -978,7 +1027,7 @@ export component MainWindow inherits Window {
                     visible: !root.sidebar-hidden;
                     VerticalLayout {
                     padding:0px;spacing:0px;
-                    ScrollView {
+                    sidebar-scroll := ScrollView {
                         vertical-stretch: 1;
                         content-width:root.sidebar-requested-width;
                         VerticalLayout {
@@ -1431,39 +1480,27 @@ export component MainWindow inherits Window {
                     // tags to search, its pause/play button (searching as
                     // the search changes, or waiting), and the file and tag
                     // domains
-                    if !root.search-locked && root.note == "": HorizontalLayout {
-                        spacing: 4px;
-                        Button {
-                            horizontal-stretch: 1;
-                            min-width: 20px;
-                            text: root.include-current ? "include current tags" : "exclude current tags";
-                            clicked => { root.include-flipped(0); }
-                        }
-                        Button {
-                            horizontal-stretch: 1;
-                            min-width: 20px;
-                            text: root.include-pending ? "include pending tags" : "exclude pending tags";
-                            clicked => { root.include-flipped(1); }
-                        }
+                    if !root.search-locked && root.note == "": SidebarButtonPair {
+                        available-width: max(0px,search-sidebar.width - search-sidebar.padding-left - search-sidebar.padding-right);
+                        first-text: root.include-current ? "include current tags" : "exclude current tags";
+                        second-text: root.include-pending ? "include pending tags" : "exclude pending tags";
+                        first-clicked(x,y) => { root.include-flipped(0); }
+                        second-clicked(x,y) => { root.include-flipped(1); }
+                        measure-controls: root.measure-sidebar-buttons;
+                        controls-measured(p,a,b,aw,bw) => { root.sidebar-buttons-measured(0,p,a,b,aw,bw); }
                     }
                     if !root.search-locked && root.note == "": Button {
                         text: root.synchronised ? "searching immediately" : "search paused";
                         clicked => { root.flip-synchronised(); }
                     }
-                    if !root.search-locked && root.note == "": HorizontalLayout {
-                        spacing: 4px;
-                        Button {
-                            horizontal-stretch: 1;
-                            min-width: 20px;
-                            text: root.location-label;
-                            clicked => { root.domain-menu-requested(0, self.absolute-position.x, self.absolute-position.y + self.height); }
-                        }
-                        Button {
-                            horizontal-stretch: 1;
-                            min-width: 20px;
-                            text: root.tags-label;
-                            clicked => { root.domain-menu-requested(1, self.absolute-position.x, self.absolute-position.y + self.height); }
-                        }
+                    if !root.search-locked && root.note == "": SidebarButtonPair {
+                        available-width: max(0px,search-sidebar.width - search-sidebar.padding-left - search-sidebar.padding-right);
+                        first-text: root.location-label;
+                        second-text: root.tags-label;
+                        first-clicked(x,y) => { root.domain-menu-requested(0,x,y); }
+                        second-clicked(x,y) => { root.domain-menu-requested(1,x,y); }
+                        measure-controls: root.measure-sidebar-buttons;
+                        controls-measured(p,a,b,aw,bw) => { root.sidebar-buttons-measured(1,p,a,b,aw,bw); }
                     }
                     if !root.search-locked && !root.float-autocomplete && root.note == "": embedded-suggestions := ReadAutocomplete {
                         scroll-geometry(y,h,c) => { if !root.float-autocomplete { root.read-scroll-y=y; root.read-view-height=h; root.read-content-height=c; } }

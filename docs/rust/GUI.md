@@ -3410,6 +3410,14 @@ Key navigation uses the saved strict visibility threshold, Qt's reveal margin
 and the content-end clamp. Actual thumbnail wheel events use the saved rate,
 including ties-to-even rounding, zero and negative rates; malformed text retains
 the previous setting. The reference replay is `thumbnail_navigation.json`.
+The current validation follow-up preserves the original 700×600 Main replay,
+280-pixel sidebar and two-column pointer targets. Paired search/domain controls
+retain their full captions and callbacks, using stacked placement when their
+preferred widths do not fit; this is a native layout accommodation. Bounded
+actual-frame checks cover the supported narrow and wider allocations. New
+captures retain the actual reopened Options windows for saved true/40/0.5 and
+false/1/1.5 settings. Exact-source full Linux execution and fresh independent
+rendered review remain pending; this source change adds no completion credit.
 The four independent Ctrl/Shift preview-focus checkboxes are also staged here.
 The no-duration child is enabled by its own parent and preserves its checked value
 while disabled. Shift focus on all files disables the existing ghost-navigation
