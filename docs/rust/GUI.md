@@ -3316,6 +3316,8 @@ for its worker result: a completed commit reports Done and refreshes media,
 while cancellation before the write reports Cancelled with no timestamp changes.
 Reference replay, physical-control and rendering regressions cover this bounded
 repair; hosted validation and rendered sign-off are pending.
+The control observer wraps ordinary buttons and preserves their intrinsic sizing
+and keyboard focus; it is disabled outside regression captures.
 
 
 Options > tag suggestions now stages the suggested-column width, notebook or

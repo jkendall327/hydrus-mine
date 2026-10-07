@@ -2308,6 +2308,8 @@ the cancellation request still reports completion and refreshes media. Scan
 cancellation remains immediate because it performs no writes. Deterministic
 regressions hold the writer or withhold UI timer delivery to cover both orders;
 the original reference fixture reproduces exactly on a fresh Qt replay.
+Read-only test observation uses a container around each normal Slint button,
+preserving the button's minimum/preferred size, stretch and focus behavior.
 
 
 Suggested tags have real local-service most-used and recent consumers, per-service
