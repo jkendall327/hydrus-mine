@@ -3017,6 +3017,13 @@ only the original editor control; broader OR list layout and renderer families
 remain Partial. Native rendered regression and Rust tests are authored for hosted
 execution; no local Cargo builds, Rust tests or mutation runs were performed.
 
+The pending OR editor diagnostic adds settled reopened ASCII/fox frames and
+physical Select All/Copy with a clipboard sentinel at one supported 900×900
+viewport. This separates actual widget text from glyph painting; it does not
+establish a font cause for the historical blank-looking fox field. No font,
+renderer or custom OR consumer change is made. Exact-source Linux execution and
+fresh frame review remain gates for this single control, with no parent credit.
+
 Default and registered single-file launch dispatch now reads current Store
 file-domain membership explicitly. The lightweight basic metadata reader leaves
 locations unloaded; treating that empty field as authoritative had rejected every

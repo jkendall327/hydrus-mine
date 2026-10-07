@@ -3958,6 +3958,13 @@ and copy/export syntax. Namespace formatting and the OR top-row colour remain
 independent live settings. Hidden, cancelled, rebound and closed Options owners
 cannot save a connector draft.
 
+A pending diagnostic retains the actual reopened Options window at 900×900 for
+the recorded ASCII and fox values. It captures settled pixels before selection,
+then physically focuses the field and uses Select All/Copy to check every raw
+byte while complete saved settings and the live query remain unchanged. Hosted
+execution and fresh glyph inspection are still required; fonts and the existing
+literal OR consumers are unchanged.
+
 Delayed deletion consumers keep a weak identity for their originating page.
 Replacing a session releases that page even when its viewer stays open. A live
 viewer can still act on its files, while its forgotten source and successor page
