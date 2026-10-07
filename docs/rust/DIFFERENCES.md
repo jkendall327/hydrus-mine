@@ -2833,6 +2833,16 @@ services, immediate viewer commits, and tag-sort parent families remain Partial;
 this slice claims only the two default-sort controls. Model, import and native
 regressions are authored for hosted CI. No local Cargo/Rust/mutation runs occurred.
 
+The pending four-leaf follow-up repairs the shared Options row allocation for
+the two Manage Tags defaults and namespace-grouping Add/Edit. Native sort choices
+remain vertically stacked, unlike Qt's horizontal controls. Actual geometry
+regressions check dropdown separation, containment and the following heading at
+normal and larger viewports; the page retains its natural scrolling. Reference
+parent images show initial defaults while saved native captures show applied
+values. Separate consumer captures have recorded behavior support but no matching
+Qt consumer PNG. The actual Qt rerun is unchanged; full exact-source Linux and
+fresh independent native review remain pending, with no new sign-off yet.
+
 The four experimental download-page update preferences now reach owned native
 gallery/watcher list status and sorting. This throttles presentation reads rather
 than importer/network work. The reference formula samples displayed items before
@@ -3132,6 +3142,13 @@ radio-Enter policy, aliases, or any parent. Actual Qt recorded 18 queue paths an
 six downstream sort orders plus three real modal Enter Text handlers and both Qt
 PNGs; authored Rust/native assertions and PNG captures
 await hosted execution and exact-source rendered review.
+
+The pending shared layout follow-up includes an actual blank-valid Add frame and
+a populated Edit frame. The reference Enter Text PNG contains blank input;
+the retained native Add-default frame contains `namespace`, a different valid
+state. No matching populated Qt Edit PNG or pixel equality is claimed. Raw
+values, stable identities, cancellation and concurrent-field saving remain
+unchanged; the broader grouping queue/Paste and Options parents remain excluded.
 
 The popup question label continues to wrap in the native client. Actual Qt `PopupMessage._text_yes_no` remains a single-line label at the same narrow/fixed width settings; the new `popup_question_layout.json`/PNG records that distinction and verifies every Qt action control fits within its card. The native layout repair preserves its existing wrapping while preventing the lower stop button from crossing the clipped card boundary. No Options or popup family completion status changes.
 

@@ -5,7 +5,8 @@
   "implementation_base": "c0394c63b937d9df67f28b6eed29d2a01e88eacd",
   "source_commit": "1cad4d41173a32ca962727306db81b1981ea7ac3",
   "implementation_commits": [
-    "1cad4d41173a32ca962727306db81b1981ea7ac3"
+    "1cad4d41173a32ca962727306db81b1981ea7ac3",
+    "a4771fca4038b2e3df0e0f8d75ac78be310d089d"
   ],
   "eligible_concrete_first_pass_count": 2,
   "parent_promotions": 0,
@@ -27,7 +28,7 @@
     "result": "Exactly two original frozen concrete Missing Add/Edit actions, absent both completed arrays and every prior packet. Structural/native aliases, grouping list/family, already implemented file-sort parser and parents excluded."
   },
   "validation": {
-    "reference": "Actual Qt 2026-10-05 12:35:39\u201342;18 queue paths,six sorts,three actual modal EnterText handlers; both PNGs inspected.",
+    "reference": "Actual Qt 2026-10-05 12:35:39–42;18 queue paths,six sorts,three actual modal EnterText handlers; both PNGs inspected.",
     "source_checks": "Cached Slint compilation, targeted rustfmt --check, git diff --check, Python recorder syntax and fixture invariants pass.",
     "rust_tests": "Authored only; hosted Rust/native execution and exact-source native PNG review pending.",
     "independent_review": "review_idle_metadata accepted immutable 1cad4d411 source and final packet: independently replayed18 raw/stable-identity queue paths, six sort consumers, actual three modal EnterText handlers and both Qt PNGs; checked scoped concurrent sort/display merge and guarded owner lifetimes. Verified65 exact line/symbol hashes plus7 whole-file hashes, exactly two original Missing Add/Edit leaves, prior94 packets/both completed arrays and truthful authored-only native artifacts. Source/packet acceptance only; no runtime attestation."
@@ -201,8 +202,8 @@
       "proposed_status": "first_pass",
       "change_kind": "implementation",
       "countAsCompletedLeaf": true,
-      "exactBehavior": "Add opens the actual staged namespace grouping Enter Text child with raw namespace default and exact apply/cancel buttons. Blank is valid; colon, whitespace, case, nested colons, hyphens, Unicode and duplicate entries are preserved without tag cleanup or deduplication. Blank/colon rows render as unnamespaced/namespaced. Add appends without changing queue selection. Parent Apply is blocked while the exact child owns input, Cancel discards the draft, Apply saves raw order and reopen restores it. Existing sidebar/viewer user-group sort consumes the saved first-match order; six actual Qt sort orders are replayed. Concurrent unrelated sort/display/connector fields survive save. Hidden, stale, rebound and accepted-close owners cannot stage or save retained callbacks.",
-      "behavior": "Add opens the actual staged namespace grouping Enter Text child with raw namespace default and exact apply/cancel buttons. Blank is valid; colon, whitespace, case, nested colons, hyphens, Unicode and duplicate entries are preserved without tag cleanup or deduplication. Blank/colon rows render as unnamespaced/namespaced. Add appends without changing queue selection. Parent Apply is blocked while the exact child owns input, Cancel discards the draft, Apply saves raw order and reopen restores it. Existing sidebar/viewer user-group sort consumes the saved first-match order; six actual Qt sort orders are replayed. Concurrent unrelated sort/display/connector fields survive save. Hidden, stale, rebound and accepted-close owners cannot stage or save retained callbacks.",
+      "exactBehavior": "Add opens the actual staged namespace grouping Enter Text child with raw namespace default and exact apply/cancel buttons. Blank is valid; colon, whitespace, case, nested colons, hyphens, Unicode and duplicate entries are preserved without tag cleanup or deduplication. Blank/colon rows render as unnamespaced/namespaced. Add appends without changing queue selection. Parent Apply is blocked while the exact child owns input, Cancel discards the draft, Apply saves raw order and reopen restores it. Existing sidebar/viewer user-group sort consumes the saved first-match order; six actual Qt sort orders are replayed. Concurrent unrelated sort/display/connector fields survive save. Hidden, stale, rebound and accepted-close owners cannot stage or save retained callbacks. Stacked native sort/group dropdowns now receive intrinsic row height. Authored real-frame checks cover four contexts with initial and saved/reopened values at900x640 and1000x850, within-row containment, strict dropdown/row separation, namespace heading clearance and actual narrow-view scrolling. Actual blank-valid Add and populated Edit captures complement the original raw-default Add and saved queue frames without changing transactions.",
+      "behavior": "Add opens the actual staged namespace grouping Enter Text child with raw namespace default and exact apply/cancel buttons. Blank is valid; colon, whitespace, case, nested colons, hyphens, Unicode and duplicate entries are preserved without tag cleanup or deduplication. Blank/colon rows render as unnamespaced/namespaced. Add appends without changing queue selection. Parent Apply is blocked while the exact child owns input, Cancel discards the draft, Apply saves raw order and reopen restores it. Existing sidebar/viewer user-group sort consumes the saved first-match order; six actual Qt sort orders are replayed. Concurrent unrelated sort/display/connector fields survive save. Hidden, stale, rebound and accepted-close owners cannot stage or save retained callbacks. Stacked native sort/group dropdowns now receive intrinsic row height. Authored real-frame checks cover four contexts with initial and saved/reopened values at900x640 and1000x850, within-row containment, strict dropdown/row separation, namespace heading clearance and actual narrow-view scrolling. Actual blank-valid Add and populated Edit captures complement the original raw-default Add and saved queue frames without changing transactions.",
       "reference_source": {
         "relativepath": "hydrus/client/gui/panels/options/TagSortPanel.py",
         "line": 69,
@@ -357,6 +358,13 @@
           "symbol": "user_namespace_group_by_sort",
           "line_sha256": "e6e3fe2414f5cded3f48d2748972dbca44fdb78faca33d2ee40f77727c6998cf",
           "commit": "1cad4d41173a32ca962727306db81b1981ea7ac3"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/ui/options.slint",
+          "line": 376,
+          "symbol": "row.kind == 2 || row.kind == 12 || row.kind == 35",
+          "line_sha256": "ed758098cbaadeb5515b485d78d2ab05a7ea3c6c9e601f19b6eae193765df166",
+          "commit": "a4771fca4038b2e3df0e0f8d75ac78be310d089d"
         }
       ],
       "test_anchors": [
@@ -394,6 +402,13 @@
           "symbol": "fn hidden_stale_rebound_and_accepted_close_children_cannot_stage_or_save",
           "line_sha256": "abea382f3aaa62ce017f5e1565efeaed73161ba55f2192d09e0ecf98a61a5c79",
           "commit": "1cad4d41173a32ca962727306db81b1981ea7ac3"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/manage_tags_sort.rs",
+          "line": 213,
+          "symbol": "fn actual_sort_stacks_fit_their_rows_and_scroll_without_overlap_at_both_viewports(",
+          "line_sha256": "1e904fb06acc72776a5f7f00ecde1188e0fbb0435b871aa1642151c051f2d69c",
+          "commit": "a4771fca4038b2e3df0e0f8d75ac78be310d089d"
         }
       ],
       "reference_recording": {
@@ -415,7 +430,8 @@
         "Clipboard Paste remains absent. No namespace grouping family/ordered-editor-list, Options/tag-sort parent, aliases, global radio-Enter preference or generic active-predicate editor promotion.",
         "Originally requested nested file-sort namespace parser/tag-display chooser was already implemented and is unchanged; no evidence-only credit or new claim for it.",
         "Existing typed TagPresentation storage/import and core first-match sort consumer remain; this slice adds the missing user-facing raw grouping Add/Edit transaction and field-scoped saves. Existing viewer uses the same unchanged sort consumer, while new native downstream replay explicitly exercises the real sidebar.",
-        "EnterText and removal questions are native owned SessionDialog children with existing platform typography; no pixel/font equivalence or untested keyboard transport attestation."
+        "EnterText and removal questions are native owned SessionDialog children with existing platform typography; no pixel/font equivalence or untested keyboard transport attestation.",
+        "The Qt Enter Text PNG has blank input; native Add-default contains namespace, and a new blank-valid Add frame supplies the matching input state. Populated Edit has recorded default/state support but no matching Qt PNG. No clipboard Paste, queue/Options parent, alias or pixel-equality credit."
       ]
     },
     {
@@ -427,8 +443,8 @@
       "proposed_status": "first_pass",
       "change_kind": "implementation",
       "countAsCompletedLeaf": true,
-      "exactBehavior": "Edit opens Enter Text for the first/top selected stable queue row, initializes its exact raw string, accepts blank/colon/whitespace/case/duplicates unchanged, and preserves selection and row identity. Cancel retains the original row; frozen child ownership refuses intervening selection/page/parent Apply. Raw values stage only into the parent Options draft and persist/reopen on its accepted Apply, preserving concurrent presentation fields. Stable identities distinguish duplicate rows. Up/Down and confirmed removal provide the actual ordered consumer setup without claiming the broader list/Paste family. Hidden/stale/successor/accepted-close callbacks cannot edit a different owner.",
-      "behavior": "Edit opens Enter Text for the first/top selected stable queue row, initializes its exact raw string, accepts blank/colon/whitespace/case/duplicates unchanged, and preserves selection and row identity. Cancel retains the original row; frozen child ownership refuses intervening selection/page/parent Apply. Raw values stage only into the parent Options draft and persist/reopen on its accepted Apply, preserving concurrent presentation fields. Stable identities distinguish duplicate rows. Up/Down and confirmed removal provide the actual ordered consumer setup without claiming the broader list/Paste family. Hidden/stale/successor/accepted-close callbacks cannot edit a different owner.",
+      "exactBehavior": "Edit opens Enter Text for the first/top selected stable queue row, initializes its exact raw string, accepts blank/colon/whitespace/case/duplicates unchanged, and preserves selection and row identity. Cancel retains the original row; frozen child ownership refuses intervening selection/page/parent Apply. Raw values stage only into the parent Options draft and persist/reopen on its accepted Apply, preserving concurrent presentation fields. Stable identities distinguish duplicate rows. Up/Down and confirmed removal provide the actual ordered consumer setup without claiming the broader list/Paste family. Hidden/stale/successor/accepted-close callbacks cannot edit a different owner. Stacked native sort/group dropdowns now receive intrinsic row height. Authored real-frame checks cover four contexts with initial and saved/reopened values at900x640 and1000x850, within-row containment, strict dropdown/row separation, namespace heading clearance and actual narrow-view scrolling. Actual blank-valid Add and populated Edit captures complement the original raw-default Add and saved queue frames without changing transactions.",
+      "behavior": "Edit opens Enter Text for the first/top selected stable queue row, initializes its exact raw string, accepts blank/colon/whitespace/case/duplicates unchanged, and preserves selection and row identity. Cancel retains the original row; frozen child ownership refuses intervening selection/page/parent Apply. Raw values stage only into the parent Options draft and persist/reopen on its accepted Apply, preserving concurrent presentation fields. Stable identities distinguish duplicate rows. Up/Down and confirmed removal provide the actual ordered consumer setup without claiming the broader list/Paste family. Hidden/stale/successor/accepted-close callbacks cannot edit a different owner. Stacked native sort/group dropdowns now receive intrinsic row height. Authored real-frame checks cover four contexts with initial and saved/reopened values at900x640 and1000x850, within-row containment, strict dropdown/row separation, namespace heading clearance and actual narrow-view scrolling. Actual blank-valid Add and populated Edit captures complement the original raw-default Add and saved queue frames without changing transactions.",
       "reference_source": {
         "relativepath": "hydrus/client/gui/panels/options/TagSortPanel.py",
         "line": 76,
@@ -583,6 +599,13 @@
           "symbol": "user_namespace_group_by_sort",
           "line_sha256": "e6e3fe2414f5cded3f48d2748972dbca44fdb78faca33d2ee40f77727c6998cf",
           "commit": "1cad4d41173a32ca962727306db81b1981ea7ac3"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/ui/options.slint",
+          "line": 376,
+          "symbol": "row.kind == 2 || row.kind == 12 || row.kind == 35",
+          "line_sha256": "ed758098cbaadeb5515b485d78d2ab05a7ea3c6c9e601f19b6eae193765df166",
+          "commit": "a4771fca4038b2e3df0e0f8d75ac78be310d089d"
         }
       ],
       "test_anchors": [
@@ -620,6 +643,13 @@
           "symbol": "fn hidden_stale_rebound_and_accepted_close_children_cannot_stage_or_save",
           "line_sha256": "abea382f3aaa62ce017f5e1565efeaed73161ba55f2192d09e0ecf98a61a5c79",
           "commit": "1cad4d41173a32ca962727306db81b1981ea7ac3"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/manage_tags_sort.rs",
+          "line": 213,
+          "symbol": "fn actual_sort_stacks_fit_their_rows_and_scroll_without_overlap_at_both_viewports(",
+          "line_sha256": "1e904fb06acc72776a5f7f00ecde1188e0fbb0435b871aa1642151c051f2d69c",
+          "commit": "a4771fca4038b2e3df0e0f8d75ac78be310d089d"
         }
       ],
       "reference_recording": {
@@ -641,8 +671,105 @@
         "Clipboard Paste remains absent. No namespace grouping family/ordered-editor-list, Options/tag-sort parent, aliases, global radio-Enter preference or generic active-predicate editor promotion.",
         "Originally requested nested file-sort namespace parser/tag-display chooser was already implemented and is unchanged; no evidence-only credit or new claim for it.",
         "Existing typed TagPresentation storage/import and core first-match sort consumer remain; this slice adds the missing user-facing raw grouping Add/Edit transaction and field-scoped saves. Existing viewer uses the same unchanged sort consumer, while new native downstream replay explicitly exercises the real sidebar.",
-        "EnterText and removal questions are native owned SessionDialog children with existing platform typography; no pixel/font equivalence or untested keyboard transport attestation."
+        "EnterText and removal questions are native owned SessionDialog children with existing platform typography; no pixel/font equivalence or untested keyboard transport attestation.",
+        "The Qt Enter Text PNG has blank input; native Add-default contains namespace, and a new blank-valid Add frame supplies the matching input state. Populated Edit has recorded default/state support but no matching Qt PNG. No clipboard Paste, queue/Options parent, alias or pixel-equality credit."
       ]
     }
-  ]
+  ],
+  "validation_followup": {
+    "state": "authored_layout_tests_and_captures_exact_source_full_Linux_and_fresh_native_review_pending",
+    "published_baseline": "b5b079a332ad6036bfa016e3f213a04db009eaf0",
+    "implementation_commit": "a4771fca4038b2e3df0e0f8d75ac78be310d089d",
+    "signed_off_total": 347,
+    "existing_candidates_pending": 28,
+    "selected_cohort_size": 4,
+    "prior_gui_assertions_preserved": 95,
+    "prior_gui_tests_preserved": 7,
+    "product_scope": "Only Options kind12/35 intrinsic outer row allocation; default-off actual row-frame observer. Models, values, callback routes, ownership and transaction behavior unchanged.",
+    "geometry_test": "actual_sort_stacks_fit_their_rows_and_scroll_without_overlap_at_both_viewports",
+    "reference_recheck": {
+      "baseline": "b5b079a332ad6036bfa016e3f213a04db009eaf0",
+      "recorded_utc": "2026-10-07T03:21:08.475314+00:00",
+      "recorders_unchanged": true,
+      "all_canonical_fixtures_and_png_bytes_unchanged": true,
+      "actual_runs": [
+        {
+          "name": "manage_tags_sort",
+          "actual_result_sha256": "ce904c7be5542258b547fb79b760459e53187136e49ad101c974a610b367f42d",
+          "canonical_values_equal": true,
+          "case_count": 72,
+          "lifetime_or_real_text_count": 2,
+          "exit_code": 0
+        },
+        {
+          "name": "tag_namespace_order",
+          "actual_result_sha256": "8902f88f029709e65a93ef316762bd3ab1b19c87824a369041bb3e8c3cc4fd31",
+          "canonical_values_equal": true,
+          "case_count": 18,
+          "lifetime_or_real_text_count": 3,
+          "exit_code": 0
+        }
+      ],
+      "input_hashes": [
+        {
+          "path": "oracle/record_manage_tags_sort.py",
+          "sha256": "99a5282ec00c26836ae016e4fd1fb8bc959eb0a4264ad0aba6b295ac42293746"
+        },
+        {
+          "path": "oracle/record_tag_namespace_order.py",
+          "sha256": "0693d545e7e79990cd4aab94c24e0a88cf986b77664aebad21350a9fbaaca0e6"
+        },
+        {
+          "path": "oracle/fixtures/manage_tags_sort.json",
+          "sha256": "9578983a673054bd5d0f9413ca8fb612ae22d13767c5700aac82d9219d69acae"
+        },
+        {
+          "path": "oracle/fixtures/tag_namespace_order.json",
+          "sha256": "8b49a25df8dbd581ead8546bf3730910da1be94c39f1b22b8cb6715fb1a92097"
+        },
+        {
+          "path": "oracle/fixtures/manage_tags_sort_options.png",
+          "sha256": "11a989071ae84d525062b0f1c5beb1d8b649e6a5af037246d8838df276ea4033"
+        },
+        {
+          "path": "oracle/fixtures/tag-namespace-order-qt.png",
+          "sha256": "00d4400443a54d23da16294f09d253548169536746706a87114d8d8c8ed14092"
+        },
+        {
+          "path": "oracle/fixtures/tag-namespace-order-enter-text-qt.png",
+          "sha256": "a806a5f7e893e278bfea15a11f73b4776574564943c4fda5c6017bb24c2d0260"
+        }
+      ],
+      "logs": [
+        {
+          "name": "manage-tags-sort.log",
+          "sha256": "69a92f19478d25ec9a1892b19afd17ecd854378233876f1db493e9ad16eab939"
+        },
+        {
+          "name": "tag-namespace-order.log",
+          "sha256": "0695cd7c45411b5d6ac7c555f7ca0db893ad2c72fafca8623aa313376afb15a6"
+        }
+      ],
+      "scope": "Actual root Qt offscreen recorders, sequential temporary basic fixtures, timeout180s each. Manage Tags actual72 sortcases and2lifetimes; namespace18scripted queuepaths6sortorders3actualmodal EnterText handlers. Scripted question answers remain explicitly distinct from real EnterText handling. No current native runtime or rendered approval.",
+      "commands": [
+        "source /workspace/.cloud/hydrus/activate.sh; timeout 180 /workspace/.cloud/hydrus/pyenv/bin/python oracle/record_manage_tags_sort.py --child /workspace/validation-reviews/sort4/reference/manage_tags_sort.actual.json",
+        "source /workspace/.cloud/hydrus/activate.sh; timeout 180 /workspace/.cloud/hydrus/pyenv/bin/python oracle/record_tag_namespace_order.py --child /workspace/validation-reviews/sort4/reference/tag_namespace_order.actual.json"
+      ],
+      "root_actually_viewed_reference_pngs": [
+        "oracle/fixtures/manage_tags_sort_options.png",
+        "oracle/fixtures/tag-namespace-order-qt.png",
+        "oracle/fixtures/tag-namespace-order-enter-text-qt.png"
+      ],
+      "reference_visual_observations": "Both parent frames show four initial/default sort contexts arranged horizontally, with namespace grouping heading/queue beneath; native layout is vertical and saved-state images differ. Actual EnterText image shows blank valid input, complete multiline instruction with native Qt scrollbars, apply/cancel footer. No matching Qt populated Edit or separate ManageTags consumer PNG exists in these recorders.",
+      "log_limit": "Both runs log sandbox-denied optional client API loopback listener startup on port45901 and offscreen Qt propagateSizeHints/raise notices. These recorders use direct Qt/DB calls, not that API; both exited0 with exact complete fixture equality and normal controller shutdown. No API connectivity validation is claimed."
+    },
+    "scope": "Exactly two Manage Tags default controls and two namespace Add/Edit leaves. Historical manifest source/reference/validation remain provenance; no current execution or completion claim. Windows/macOS deferred.",
+    "expected_native_renders": [
+      "tag-namespace-order-options.png",
+      "tag-namespace-order-options-scrolled.png",
+      "tag-namespace-order-enter-text.png",
+      "tag-namespace-order-add-blank.png",
+      "tag-namespace-order-edit.png"
+    ]
+  }
 }

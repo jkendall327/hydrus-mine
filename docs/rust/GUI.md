@@ -3769,6 +3769,15 @@ colours while sorting can use their sibling ideals. The actual Qt recording
 `manage_tags_sort.json` covers 72 combinations and both captured-dialog lifetimes;
 `manage_tags_sort_options.png` shows the actual controls.
 
+The current four-leaf validation repair gives stacked Tag Sort dropdowns their
+intrinsic row height so they no longer paint over the next context or the
+namespace-grouping heading. Authored geometry checks cover the normal 900×640
+window and a 1000×850 window, with initial and saved/reopened controls. Dedicated
+captures cover both Manage Tags consumers and the namespace Add/Edit children.
+The October 7 Qt rerun preserves all 72 sort combinations and both lifetimes;
+exact-source Linux execution and fresh native review remain pending. The published
+ledger remains 347 signed off with 28 existing candidates awaiting sign-off.
+
 Speed and Memory > download pages update now stages the four experimental gallery
 and watcher list-update controls: seconds/milliseconds with a 250 ms minimum and
 denominators 1–99, defaulting to one second and 30. Apply accepts displayed imported
@@ -3975,6 +3984,12 @@ consumers; presentation saves preserve concurrent unrelated fields. Actual Qt
 queue/prompt/sort recording and authored model/native regressions cover this
 finite scope, including real Enter Text blank/whitespace Apply and Cancel
 handlers with their “apply”/“cancel” buttons. Hosted Rust execution and native PNG review remain pending.
+
+The same pending Tag Sort layout repair preserves raw namespace values and
+selection identities. It adds a blank-valid Add capture matching the recorded
+Qt input state and a populated Edit capture, while retaining the original Add
+default and queue replay. The actual October 7 Qt rerun reproduces all 18 queue
+paths, six downstream sorts and three real modal Enter Text cases unchanged.
 
 Popup cards now measure their body at the resolved card width before the outer stack allocates their height. The narrow long-question regression checks all five actual action-button bounds, the rendered lower stop border and a pointer delivered near that lower edge; the fixed-width and width-cap checks remain. This is a layout repair with no new coverage claim. Native execution is pending hosted CI.
 

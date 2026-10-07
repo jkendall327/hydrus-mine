@@ -8,6 +8,7 @@ use hydrus_gui::{MainWindow, OptionsWindow, Pages, SessionDialog, bind, headless
 use hydrus_store::{Store, settings};
 use serde_json::{Value, json};
 use slint::{ComponentHandle as _, Model as _};
+use std::{cell::RefCell, rc::Rc};
 
 fn open(ui: &MainWindow, bound: &hydrus_gui::Bound) -> OptionsWindow {
     ui.invoke_menu_title_pressed(0, 20.0, 22.0);
@@ -82,6 +83,7 @@ fn real_queue_matches_all_reference_prompts_and_parent_transactions() {
     let before = saved(&store);
     let options = open(&ui, &bound);
     assert_eq!(labels(&options), recorded["initial"]["labels"]);
+    let mut edit_captured = false;
     for step in recorded["steps"].as_array().unwrap() {
         if let Some(indices) = step["selection"].as_array() {
             for (n, index) in indices.iter().enumerate() {
@@ -125,6 +127,19 @@ fn real_queue_matches_all_reference_prompts_and_parent_transactions() {
                     dialog.get_text(),
                     step["calls"][0]["default"].as_str().unwrap()
                 );
+                if action == "edit" && !edit_captured {
+                    let pixels =
+                        headless::render(&windows.get(windows.count() - 1).unwrap(), 520, 220);
+                    headless::save_png(
+                        &std::path::Path::new(env!("CARGO_TARGET_TMPDIR"))
+                            .join("tag-namespace-order-edit.png"),
+                        &pixels,
+                        520,
+                        220,
+                    )
+                    .unwrap();
+                    edit_captured = true;
+                }
                 if let Some(raw) = step["answer"].as_str() {
                     dialog.set_text(raw.into());
                     dialog.invoke_name_entered(dialog.get_text());
@@ -153,6 +168,10 @@ fn real_queue_matches_all_reference_prompts_and_parent_transactions() {
             "every child edit is staged until parent Apply"
         );
     }
+    assert!(
+        edit_captured,
+        "the recorded populated Edit must be exported"
+    );
     options.invoke_cancel();
     assert_eq!(saved(&store), before);
     let options = open(&ui, &bound);
@@ -166,6 +185,18 @@ fn real_queue_matches_all_reference_prompts_and_parent_transactions() {
             case["buttons"][0].as_str().unwrap()
         );
         dialog.set_text(case["typed"].as_str().unwrap().into());
+        if case["typed"] == "" {
+            assert!(dialog.get_text().is_empty());
+            let pixels = headless::render(&windows.get(windows.count() - 1).unwrap(), 520, 220);
+            headless::save_png(
+                &std::path::Path::new(env!("CARGO_TARGET_TMPDIR"))
+                    .join("tag-namespace-order-add-blank.png"),
+                &pixels,
+                520,
+                220,
+            )
+            .unwrap();
+        }
         if case["cancelled"] == true {
             dialog.invoke_cancelled();
         } else {
@@ -220,10 +251,64 @@ fn real_queue_matches_all_reference_prompts_and_parent_transactions() {
         expected
     );
     let options = open(&ui, &bound);
+    let first_sort = i32::try_from(
+        options
+            .get_rows()
+            .iter()
+            .position(|row| row.kind == 12)
+            .unwrap(),
+    )
+    .unwrap();
+    let frame = Rc::new(RefCell::new(None::<hydrus_gui::MenuChoiceFrame>));
+    options.on_menu_choice_geometry({
+        let frame = frame.clone();
+        move |row, field, measured| {
+            if row == first_sort && field == 0 {
+                *frame.borrow_mut() = Some(measured);
+            }
+        }
+    });
     let adapter = windows.get(windows.count() - 1).unwrap();
     let pixels = headless::render(&adapter, 1000, 850);
     headless::save_png(
         &std::path::Path::new(env!("CARGO_TARGET_TMPDIR")).join("tag-namespace-order-options.png"),
+        &pixels,
+        1000,
+        850,
+    )
+    .unwrap();
+    super::active_predicates::drain_predicate_timers_until(
+        "the saved queue parent must expose the real sort control frame",
+        || {
+            headless::render(&adapter, 1000, 850);
+            frame.borrow().is_some()
+        },
+    );
+    let measured = frame.borrow().clone().unwrap();
+    assert!(
+        [measured.x, measured.y, measured.w, measured.h]
+            .into_iter()
+            .all(f32::is_finite)
+    );
+    assert!(measured.w > 0.0 && measured.h > 0.0);
+    let before_scroll = options.get_options_scroll_y();
+    adapter.dispatch_event(slint::platform::WindowEvent::PointerScrolled {
+        position: slint::LogicalPosition::new(measured.x - 4.0, measured.y + measured.h / 2.0),
+        delta_x: 0.0,
+        delta_y: -1000.0,
+    });
+    super::active_predicates::drain_predicate_timers_until(
+        "the saved raw namespace queue must remain scroll-accessible",
+        || {
+            headless::render(&adapter, 1000, 850);
+            options.get_options_scroll_y() < before_scroll
+        },
+    );
+    assert_eq!(saved(&store), expected);
+    let pixels = headless::render(&adapter, 1000, 850);
+    headless::save_png(
+        &std::path::Path::new(env!("CARGO_TARGET_TMPDIR"))
+            .join("tag-namespace-order-options-scrolled.png"),
         &pixels,
         1000,
         850,
