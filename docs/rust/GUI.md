@@ -3526,9 +3526,17 @@ keys; the recorded callable-child PNG is unchanged and does not show the outer
 list or confirmation questions. Native follow-up adds defining list/question
 captures and bounded retained-answer checks against a usable replacement owner.
 All 165 existing assertions across nine tests are retained; the file now has
-239 assertions. The authored OS URL fixture now sets its actual URL pipeline.
+242 assertions. The authored OS URL fixture now sets its actual URL pipeline.
 Exact-source full Linux validation and fresh rendered review remain pending; the ledger stays at
 357 signed off with 18 existing candidates awaiting sign-off.
+Initial run `37590137304` failed strict Clippy on a clone assignment and one new
+duplicate-warning assertion on the timer-refreshed child-open flag (706 GUI
+passes, one failure). The repair uses `clone_from`, verifies the actual question
+slot is empty and its window hidden, and waits up to two seconds for the existing
+30 ms display timer through real rendering. All 239 initial assertions remain.
+Five diagnostic images were inspected; two duplicate-result images were never
+reached. This failed run earns no credit, and all seven repaired-source images
+still require fresh review.
 
 The owned command child edits the first parameter in selection insertion order, keeps
 added rows unselected, captures delete selections, and reorders adjacent selected

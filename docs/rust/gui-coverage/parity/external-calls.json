@@ -103,14 +103,15 @@
         "The October 7 actual Qt replay matches selected Delete/Duplicate questions, outcomes, selection and identity properties without normalization. Full JSON differs only at generated callable keys (26 leaves plus two decoded export keys); interpreter matches and no temporary-path JSON field differs. Its unchanged callable-child PNG does not show the outer list or questions; scripted answers provide no matched Qt outer-dialog pixel/placement proof.",
         "The authored defining native captures use supported 1100x800 Options lists, 900x420 long warning and 520x200 Delete question. Actual readability, Unicode glyphs and selected/empty states await fresh inspection. Default-size/universal geometry and physical Delete/Duplicate button input are not established.",
         "Retired pending Delete and Duplicate questions are checked after parent Cancel against live replacement questions and Options owners, with positive current answers and complete saved Manager/visible rows/selection/owner identity preservation. Automatic Main destruction, final Bound drop and broader ownership families remain outside this follow-up.",
-        "Current two-leaf follow-up awaits exact-source full Linux execution and fresh independent rendered review. No new sign-off is granted; Windows/macOS remain deferred."
+        "Current two-leaf follow-up awaits exact-source full Linux execution and fresh independent rendered review. No new sign-off is granted; Windows/macOS remain deferred.",
+        "Initial full Linux run37590137304 failed strict assigning_clones lint and a new immediate child-open display assertion after the declined warning;706 GUI tests passed and one failed. All239 initial assertions remain in the repair, which verifies actual slot/visibility closure and waits for the existing30ms display timer, with no property forcing or input retry. Five diagnostic images grant no credit; all seven repaired-source captures remain required."
       ],
       "evidence": [
         {
           "path": "crates/hydrus-gui/tests/gui/external_calls.rs",
           "role": "authored_list_capture_and_retired_answer_followup",
           "executed": false,
-          "description": "Preserves all 165 prior assertion spans across nine tests; now 239 assertion macros. Seven defining live captures wait for real timers, inactive animation and successive equal frames. Direct retired pending OS-row Delete and duplicate-warning answers preserve a live successor, with positive current acceptance. Complete six-call typed/key comparisons and saved/reopened rows remain asserted. Corrects only the authored OS URL test fixture to Pipeline::Url; production/Slint/reference inputs unchanged."
+          "description": "Preserves all 165 prior assertion spans across nine tests; now 242 assertion macros. Seven defining live captures wait for real timers, inactive animation and successive equal frames. Direct retired pending OS-row Delete and duplicate-warning answers preserve a live successor, with positive current acceptance. Complete six-call typed/key comparisons and saved/reopened rows remain asserted. Corrects only the authored OS URL test fixture to Pipeline::Url; production/Slint/reference inputs unchanged."
         }
       ]
     },
@@ -215,14 +216,15 @@
         "The October 7 actual Qt replay matches selected Delete/Duplicate questions, outcomes, selection and identity properties without normalization. Full JSON differs only at generated callable keys (26 leaves plus two decoded export keys); interpreter matches and no temporary-path JSON field differs. Its unchanged callable-child PNG does not show the outer list or questions; scripted answers provide no matched Qt outer-dialog pixel/placement proof.",
         "The authored defining native captures use supported 1100x800 Options lists, 900x420 long warning and 520x200 Delete question. Actual readability, Unicode glyphs and selected/empty states await fresh inspection. Default-size/universal geometry and physical Delete/Duplicate button input are not established.",
         "Retired pending Delete and Duplicate questions are checked after parent Cancel against live replacement questions and Options owners, with positive current answers and complete saved Manager/visible rows/selection/owner identity preservation. Automatic Main destruction, final Bound drop and broader ownership families remain outside this follow-up.",
-        "Current two-leaf follow-up awaits exact-source full Linux execution and fresh independent rendered review. No new sign-off is granted; Windows/macOS remain deferred."
+        "Current two-leaf follow-up awaits exact-source full Linux execution and fresh independent rendered review. No new sign-off is granted; Windows/macOS remain deferred.",
+        "Initial full Linux run37590137304 failed strict assigning_clones lint and a new immediate child-open display assertion after the declined warning;706 GUI tests passed and one failed. All239 initial assertions remain in the repair, which verifies actual slot/visibility closure and waits for the existing30ms display timer, with no property forcing or input retry. Five diagnostic images grant no credit; all seven repaired-source captures remain required."
       ],
       "evidence": [
         {
           "path": "crates/hydrus-gui/tests/gui/external_calls.rs",
           "role": "authored_list_capture_and_retired_answer_followup",
           "executed": false,
-          "description": "Preserves all 165 prior assertion spans across nine tests; now 239 assertion macros. Seven defining live captures wait for real timers, inactive animation and successive equal frames. Direct retired pending OS-row Delete and duplicate-warning answers preserve a live successor, with positive current acceptance. Complete six-call typed/key comparisons and saved/reopened rows remain asserted. Corrects only the authored OS URL test fixture to Pipeline::Url; production/Slint/reference inputs unchanged."
+          "description": "Preserves all 165 prior assertion spans across nine tests; now 242 assertion macros. Seven defining live captures wait for real timers, inactive animation and successive equal frames. Direct retired pending OS-row Delete and duplicate-warning answers preserve a live successor, with positive current acceptance. Complete six-call typed/key comparisons and saved/reopened rows remain asserted. Corrects only the authored OS URL test fixture to Pipeline::Url; production/Slint/reference inputs unchanged."
         }
       ]
     },
@@ -1654,5 +1656,18 @@
     "reference_full_json_difference": "26 generated callable-key leaves and two keys in decoded export; interpreter equal, no differing temporary-path field.",
     "runtime_validation": "Pending full exact-source Linux and fresh independent/root seven-image review; ledger remains357 signed off and18 pending.",
     "scope": "Exactly registered-call Delete and Duplicate. Preserve prior357, all unselected assessments and all1274 goal IDs. Add Defaults, parents, aliases, routing/OS launches and deferred platforms receive no credit."
+  },
+  "list_validation_repair": {
+    "previous_source": "625a2bdafc5b5820f4d9201f46640d7770fbecd7",
+    "previous_run": 37590137304,
+    "prior_assertions_preserved": 239,
+    "current_assertions": 242,
+    "original_baseline_assertions_preserved": 165,
+    "prior_tests": 9,
+    "current_tests": 9,
+    "test_sha256": "ef44539c033f71a470076f1661d9328f1fcc841ad75683f2a31422833e014bc7",
+    "preservation_proof_sha256": "616786a267c88b31750638c07b70899eca4a8339bfb8c5df2cfe8586fcc2006f",
+    "repair": "Equivalent clone_from; actual question slot empty/hidden assertions and bounded real-render wait for existing30ms child-open display timer. No production/Slint/fixture changes or assertion weakening.",
+    "runtime_validation": "Pending repaired exact-source full Linux and all seven fresh native images;357 signed off,18 pending unchanged."
   }
 }

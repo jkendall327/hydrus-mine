@@ -2507,6 +2507,11 @@ no outer-list/question pixel or placement comparison. Fresh native defining
 captures and replacement-owner checks still require exact-source full Linux
 validation and independent rendered review. No new sign-off is claimed; Add
 Defaults, broader parents, launching and deferred platforms remain separate.
+The first run also exposes a test synchronization error: after a declined warning,
+the owned question closes immediately while the existing 30 ms timer refreshes
+the button-disable flag. A bounded real-render wait preserves the original
+non-modal assertion. A strict clone-assignment lint is repaired without a waiver.
+The failed run and five available frames are diagnostics, not sign-off.
 
 External-call Add/Edit, import/export and nested process/command controls remain
 Partial. Recognized unsupported string-converter steps are preserved in native

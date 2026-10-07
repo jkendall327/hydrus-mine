@@ -554,6 +554,19 @@ fn duplicate_warning_decline_keeps_unsorted_unselected_prefix_accept_finishes_an
         // The selected call snapshot cannot change while its warning is pending.
         w.invoke_external_call_clicked(0, false, false);
         q.invoke_answered(accept);
+        assert!(bound.options_external_calls.question.borrow().is_none());
+        assert!(!q.window().is_visible());
+        // The closed question's display flag follows the real 30 ms owner timer.
+        // Preserve the non-modal assertion below without forcing widget state.
+        let closed_at = std::time::Instant::now();
+        while w.get_external_call_child_open() {
+            headless::render(&windows.get(list_index).unwrap(), 1100, 800);
+            assert!(
+                closed_at.elapsed() < std::time::Duration::from_secs(2),
+                "closed duplicate warning did not release the list controls"
+            );
+            std::thread::sleep(std::time::Duration::from_millis(5));
+        }
         let names = (0..w.get_external_call_rows().row_count())
             .map(|i| {
                 w.get_external_call_rows()
@@ -1532,7 +1545,7 @@ fn assert_duplicate_manager(manager: &Manager, original: &Manager) {
         );
         let mut expected = call.clone();
         expected.key = duplicate.key;
-        expected.name = duplicate.name.clone();
+        expected.name.clone_from(&duplicate.name);
         assert_eq!(duplicate, &expected);
     }
 }
