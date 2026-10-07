@@ -1,0 +1,42 @@
+{
+  "source_commit": "4b5e7ae151c2317bf83ef0aad8e9a0161f9a498d",
+  "run_id": 37551810449,
+  "state": "actual_artifact_bound_static_syntax_only_final_gates_not_executed",
+  "helper_sha256": "8f11a70ecf81488d927d3fe969ea5ad81087dfd4efbcee0bd3a0d910fe6dd9b5",
+  "map_sha256": "380851f34af1d636ead05af900637a4296389df7143c59ca9b690a2ea4a30f55",
+  "summary_sha256": "50b40a26c0c864512d76eaee628af23593216d1b99686ede1c4143104d399c5c",
+  "run_binding_proof_sha256": "4cbf692c17fbc100861525aaf7e3393ef8a03243bb07d3da885cc270dce4b63d",
+  "finalizer_sha256_at_static_review": "8f67a077f6e9101f9f8722492d3df5f583aa0a1cf2e5c35542be793a81833434",
+  "syntax_validation": "ast.parse(updated helper) passed; no final gate pipeline/copy executed. Earlier finalizer static review remains historical.",
+  "literal_map_dry_replay": "all14 exact before guards passed in memory;2scalar+12list; no approved/final output written",
+  "input_fingerprints_verified": 18,
+  "finalizer_schema_compatible": true,
+  "required_missing_now": [
+    "/workspace/validation-reviews/final-review-2-4b5e7ae15.json",
+    "/workspace/validation-reviews/final-review-2-4b5e7ae15.md",
+    "/workspace/validation-reviews/publication-namespace2-4b5e7ae15-linux/selected-patch.json",
+    "/workspace/validation-reviews/publication-namespace2-4b5e7ae15-linux/review.json",
+    "/workspace/validation-reviews/publication-namespace2-4b5e7ae15-linux/status-reconciliation-audit.json",
+    "/workspace/validation-reviews/report-browser-4b5e7ae15/browser-check.json"
+  ],
+  "artifact_placeholder": 11455327775,
+  "zip_placeholder": "83746366ecbf9357aafd36efbb5f663159dc9688f671596353c6db5ac16b47fa",
+  "prior341_and_native1799_preservation": "mandatory exact immutable pipeline gates retained; prior completed OR whole object unchanged",
+  "conditional_after_bank": 343,
+  "conditional_pending": 32,
+  "approval": false,
+  "canonical_writes": false,
+  "builds": false,
+  "helper_gates_executed": false,
+  "initial_missing_gates_at_run_binding": [
+    "/workspace/validation-reviews/ci-4b5e7ae15/ci-evidence.json",
+    "/workspace/validation-reviews/ci-4b5e7ae15/native-renders/native-render-manifest.json",
+    "/workspace/validation-reviews/final-review-2-4b5e7ae15.json",
+    "/workspace/validation-reviews/final-review-2-4b5e7ae15.md",
+    "/workspace/validation-reviews/publication-namespace2-4b5e7ae15-linux/selected-patch.json",
+    "/workspace/validation-reviews/publication-namespace2-4b5e7ae15-linux/review.json",
+    "/workspace/validation-reviews/publication-namespace2-4b5e7ae15-linux/status-reconciliation-audit.json",
+    "/workspace/validation-reviews/report-browser-4b5e7ae15/browser-check.json"
+  ],
+  "actual_manifest_identity_sha256": "b6adfba11b68ef3d2891ec1b724860170e3a2b47addfc04c2ffacadd2407ae03"
+}

@@ -1,0 +1,22 @@
+{
+  "source_commit": "4b5e7ae151c2317bf83ef0aad8e9a0161f9a498d",
+  "run_id": 37551810449,
+  "source_phase": "repaired source validation pending",
+  "selected_candidate_ids": [
+    "audit-options-tag-presentation-namespace-colours-add",
+    "audit-options-tag-presentation-namespace-colours-delete"
+  ],
+  "prior_completed_count": 341,
+  "selected_count": 2,
+  "pending_count": 34,
+  "conditional_bank_if_all_gates_pass": 343,
+  "conditional_pending_after_bank": 32,
+  "not_ready_by_preparation": true,
+  "approval": false,
+  "gates": [
+    "Exact source4b5e7ae151c2317bf83ef0aad8e9a0161f9a498d/full Linux run37551810449 pending: fullLinux strictcheck fmt/Clippy/tests/ratchet and parity-models green; Windows/macOS deferred under exactsource policy.",
+    "Fresh actual source-bound Add/Delete captures and independent exactsource behavioral/render approval; current source-review3/design4 is provenance only.",
+    "Root actualinspection/finalpatch+census review and stagedbrowser, preservingprior341/unselected/native1799 and alreadybankedOR wholeobject.",
+    "Refresh goal/checklist only from actual accepted canonical ledger after publication, never planned2."
+  ]
+}

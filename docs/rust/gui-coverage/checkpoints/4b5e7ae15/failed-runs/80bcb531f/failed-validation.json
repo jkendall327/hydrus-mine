@@ -1,0 +1,16 @@
+{
+  "source_commit": "80bcb531f7df156e448cc212254f941541101dc3",
+  "run_id": 37550653294,
+  "check_job_id": 112565054190,
+  "check_conclusion": "failure",
+  "reason": "Slint generation rejected the measurement Timer as a child of standard Button. Clippy and tests therefore failed before GUI execution.",
+  "full_check_log_sha256": "a30207480b6027c0cff46804e28ee2d4f67124e9bf020b07f13da8777116df09",
+  "parity_status": "success",
+  "completion_credit": 0,
+  "repair": "Move actual Apply Button and measurement Timer into a zero-spacing conditional HorizontalLayout; keep all assertions and behavior guards unchanged.",
+  "run_conclusion": "failure",
+  "cancelled": false,
+  "parity_log_sha256": "bf38694b3692c59db6a1c60b6e75e4495512a8d02dd0db735669c6f304f13a55",
+  "repaired_source": "4b5e7ae151c2317bf83ef0aad8e9a0161f9a498d",
+  "repaired_run_id": 37551810449
+}

@@ -1,0 +1,28 @@
+{
+  "source_commit": "4b5e7ae151c2317bf83ef0aad8e9a0161f9a498d",
+  "run_id": 37551810449,
+  "state": "actual_artifact_constants_bound_no_gate_or_copy_execution",
+  "artifact_id": 11455327775,
+  "zip_sha256": "83746366ecbf9357aafd36efbb5f663159dc9688f671596353c6db5ac16b47fa",
+  "manifest_sha256": "b6adfba11b68ef3d2891ec1b724860170e3a2b47addfc04c2ffacadd2407ae03",
+  "helper_before_sha256": "d85d6d0bdb36e7b0e30662d6c2661778188b2d774a2a03aad9cccc60ae4e23a4",
+  "helper_after_sha256": "8f11a70ecf81488d927d3fe969ea5ad81087dfd4efbcee0bd3a0d910fe6dd9b5",
+  "summary_sha256": "50b40a26c0c864512d76eaee628af23593216d1b99686ede1c4143104d399c5c",
+  "run_binding_proof_sha256": "4cbf692c17fbc100861525aaf7e3393ef8a03243bb07d3da885cc270dce4b63d",
+  "helper_static_review_sha256": "dff98f828ebf2c5319605992e0e8943231925852f653468260ee918cbdb3d03c",
+  "instructions_sha256": "e70363b39c9561a1887a670ddd917d29df14e529e2819ed25910b6ba277e5331",
+  "unchanged_source_proposal_census_mapping_and_selection_inputs": {
+    "/workspace/validation-reviews/namespace2/prep-4b5e7ae15/subset-preflight/subset-proposal-patch.json": "0e64dc915ccdef42300ca394b6ab72e56dc7e8766e57d50798bf24db2b2ab46b",
+    "/workspace/validation-reviews/namespace2/prep-4b5e7ae15/source-census.json": "bdcd91334dfab81a3b514d3e260721546b87ef09ab6396ee248c10afd6f54cc2",
+    "/workspace/validation-reviews/namespace2/prep-4b5e7ae15/conditional-status-map.json": "380851f34af1d636ead05af900637a4296389df7143c59ca9b690a2ea4a30f55",
+    "/workspace/validation-reviews/namespace2/prep-4b5e7ae15/selection.json": "5dd7cdaffa6c581b9a2c18f09998b4381e93204da26d9e98b79d9e0d254f684c",
+    "/workspace/validation-reviews/namespace2/prep-4b5e7ae15/preparation2.json": "8357ecda63df0ed4b4d64a97b8e101db7326b282b2106210c2c016e701ccc56e",
+    "/workspace/validation-reviews/namespace2/prep-4b5e7ae15/render-checklist.json": "d74859c358df8c5b259fee7ad1ab621e0af77567b5cbfe3c6a98ea50fa68df75"
+  },
+  "syntax_validation": "ast.parse only passed",
+  "approval": false,
+  "helper_gates_executed": false,
+  "copy_executed": false,
+  "canonical_writes": false,
+  "builds": false
+}

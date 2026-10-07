@@ -1,0 +1,34 @@
+{
+  "source_commit": "4b5e7ae151c2317bf83ef0aad8e9a0161f9a498d",
+  "run_id": 37551810449,
+  "files": [
+    {
+      "path": "root-render-review.json",
+      "sha256": "ff1dbf13a8898ef73fea998026e3242b2861bfa37a6479400b9a7250132bd5d6"
+    },
+    {
+      "path": "clippy-artifact-provenance.json",
+      "sha256": "6bbc689bfd19a32c6bf9405f844a6b2df32b4089fff822b4fefe55383a745c30"
+    },
+    {
+      "path": "preparation/prepare-evidence-copy-4b5e7ae15.py",
+      "sha256": "8f11a70ecf81488d927d3fe969ea5ad81087dfd4efbcee0bd3a0d910fe6dd9b5"
+    },
+    {
+      "path": "preparation/artifact-binding-proof.json",
+      "sha256": "fdeb840e1b9d5cb486da281ffa675b6f6a98b02c6bd728a0ee75e695308f17b7"
+    },
+    {
+      "path": "preparation/helper-static-review.json",
+      "sha256": "dff98f828ebf2c5319605992e0e8943231925852f653468260ee918cbdb3d03c"
+    },
+    {
+      "path": "publication-narrative-review-4.json",
+      "sha256": "f3f96c95f52f11168bd1731c35d12e9dbea358955026fde47573be9640657a7e"
+    },
+    {
+      "path": "publication-narrative-review-4.md",
+      "sha256": "bb6e43d15a176ea021552d67f3f32acdfdd50e27d845734fea50e60ade51a8df"
+    }
+  ]
+}

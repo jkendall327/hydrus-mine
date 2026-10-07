@@ -242,16 +242,31 @@ pub(crate) fn bind(
                 }
             };
             dialog.set_message(question.unwrap_or("Enter the namespace.").into());
+            dialog.set_window_title(
+                if adding {
+                    "Enter Text"
+                } else {
+                    "Are you sure?"
+                }
+                .into(),
+            );
             dialog.set_asking_name(adding);
+            dialog.set_reject_blank_submission(adding);
+            let entry_warning: Slot = Rc::new(RefCell::new(None));
             let child_active = Rc::new(Cell::new(true));
             let close: Rc<dyn Fn()> = Rc::new({
                 let child = Rc::downgrade(&child);
                 let weak = dialog.as_weak();
                 let child_active = child_active.clone();
                 let show = show.clone();
+                let entry_warning = entry_warning.clone();
                 move || {
                     if !child_active.replace(false) {
                         return;
+                    }
+                    let notice = entry_warning.borrow_mut().take();
+                    if let Some(notice) = notice {
+                        notice.invoke_cancelled();
                     }
                     if let Some(dialog) = weak.upgrade() {
                         let _ = dialog.hide();
@@ -260,6 +275,46 @@ pub(crate) fn bind(
                         child.borrow_mut().take();
                     }
                     show();
+                }
+            });
+            dialog.on_blank_submitted({
+                let entry_warning = entry_warning.clone();
+                let child_active = child_active.clone();
+                let valid = valid.clone();
+                let parent = weak.clone();
+                let entry = dialog.as_weak();
+                let sync: Rc<dyn Fn()> = Rc::new({
+                    let entry = dialog.as_weak();
+                    let entry_warning = Rc::downgrade(&entry_warning);
+                    let show = show.clone();
+                    move || {
+                        if let Some(entry) = entry.upgrade() {
+                            entry.set_child_open(
+                                entry_warning
+                                    .upgrade()
+                                    .is_some_and(|slot| slot.borrow().is_some()),
+                            );
+                        }
+                        show();
+                    }
+                });
+                move || {
+                    if !adding
+                        || !valid()
+                        || !child_active.get()
+                        || entry_warning.borrow().is_some()
+                        || entry
+                            .upgrade()
+                            .is_none_or(|entry| !entry.window().is_visible())
+                    {
+                        return;
+                    }
+                    if let Err(error) =
+                        warning_notice(&entry_warning, &sync, "Cannot enter blank text here!")
+                        && let Some(parent) = parent.upgrade()
+                    {
+                        parent.set_namespace_colour_error(error.into());
+                    }
                 }
             });
             dialog.on_name_entered({
@@ -271,8 +326,13 @@ pub(crate) fn bind(
                 let weak = weak.clone();
                 let child = Rc::downgrade(&child);
                 let show = show.clone();
+                let entry_warning = entry_warning.clone();
                 move |text| {
-                    if !adding || !valid() || !child_active.get() {
+                    if !adding
+                        || !valid()
+                        || !child_active.get()
+                        || entry_warning.borrow().is_some()
+                    {
                         return;
                     }
                     let result = list.borrow_mut().add_random(text.as_str());

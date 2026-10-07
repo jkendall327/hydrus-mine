@@ -7,6 +7,7 @@ import { Button, LineEdit } from "std-widgets.slint";
 import { RegexTools } from "regex_tools.slint";
 import { MenuPane, MenuPanes } from "main_menu.slint";
 import { Theme } from "theme.slint";
+import { MenuChoiceFrame } from "menu_choice_wheel.slint";
 
 export component SessionDialog inherits Window {
     in property <string> window-title: "Enter Text";
@@ -27,6 +28,11 @@ export component SessionDialog inherits Window {
     in property <string> placeholder;
     in property <bool> regex-mode;
     in property <bool> child-open;
+    // Opt-in widget validation; direct handler replay remains separate.
+    in property <bool> reject-blank-submission;
+    in property <bool> measure-name-apply;
+    callback name-apply-measured(MenuChoiceFrame);
+    out property <MenuChoiceFrame> name-input-frame: {x:name.absolute-position.x,y:name.absolute-position.y,w:name.width,h:name.height};
     in property <string> regex-validity;
     in property <[string]> regex-components;
     in property <[MenuPane]> favourite-panes;
@@ -39,6 +45,7 @@ export component SessionDialog inherits Window {
     callback favourite-dismissed();
     callback force-close();
     callback name-entered(string);
+    callback blank-submitted();
     callback cancelled();
     callback answered(bool);
     forward-focus: keyboard;
@@ -74,7 +81,15 @@ export component SessionDialog inherits Window {
                 placeholder-text: root.placeholder;
                 enabled: !root.child-open;
                 edited => { if root.regex-mode { root.regex-changed(); } }
-                accepted => { root.name-entered(self.text); }
+                accepted => {
+                    if !root.child-open {
+                        if root.reject-blank-submission && self.text == "" {
+                            root.blank-submitted();
+                        } else {
+                            root.name-entered(self.text);
+                        }
+                    }
+                }
             }
             if root.regex-mode: HorizontalLayout {
                 RegexTools { components: root.regex-components; show-groups: false; enabled: !root.child-open; selected(c,i) => { root.regex-tool(c,i); } }
@@ -92,10 +107,26 @@ export component SessionDialog inherits Window {
                         Button { text: root.notice-ok-label; clicked => { root.cancelled(); } }
                     }
                 }
-                if root.asking-name: Button {
-                    enabled: !root.child-open;
-                    text: root.name-ok-label;
-                    clicked => { root.name-entered(root.text); }
+                if root.asking-name: HorizontalLayout {
+                    spacing: 0px;
+                    name-apply := Button {
+                        enabled: !root.child-open;
+                        text: root.name-ok-label;
+                        clicked => {
+                            if root.reject-blank-submission && root.text == "" {
+                                root.blank-submitted();
+                            } else {
+                                root.name-entered(root.text);
+                            }
+                        }
+                    }
+                    Timer {
+                        interval: 1ms;
+                        running: root.measure-name-apply;
+                        triggered => {
+                            root.name-apply-measured({x:name-apply.absolute-position.x,y:name-apply.absolute-position.y,w:name-apply.width,h:name-apply.height});
+                        }
+                    }
                 }
                 if root.asking-name: Button {
                     enabled: !root.child-open;

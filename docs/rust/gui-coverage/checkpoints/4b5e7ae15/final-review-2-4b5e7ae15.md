@@ -1,0 +1,36 @@
+# Final Namespace Add/Delete independent review
+
+Approve exactly Add/Delete for Linux at `4b5e7ae151c2317bf83ef0aad8e9a0161f9a498d`, completed run`37551810449`, artifact`11455327775`. No concrete blocker remains within the finite scope. No repository/canonical edits or local builds.
+
+- `audit-options-tag-presentation-namespace-colours-add` — approved.
+- `audit-options-tag-presentation-namespace-colours-delete` — approved.
+
+Exact completed CI evidence verifies check/parity success and successful maintenance. Strict workspace/all-target Clippy with denied warnings, fmt/fulltests/parity/ratchet passed. GUI700pass/0fail/0ignored (228.13s), media67pass (1.01s). Four scoped GUI/model tests passed in full-check and tests.log; both model replays also passed in parity.32 exact source/reference/policy/PNG pins rechecked; all53 original assertions remain, now107, and old handler fixture is byte-identical.
+
+Actually viewed all eight fresh native PNGs and all ten committed Qt reference PNGs again. Native SHA/bytes/dimensions match both identical exact-source/run/artifact manifests. ZIP digest recorded from collection manifest (not independently rehashed by reviewer): `83746366ecbf9357aafd36efbb5f663159dc9688f671596353c6db5ac16b47fa`.
+
+- `namespace-colours-add-entry.png` — Actual blank Enter the namespace. entry, caret/LineEdit and apply/cancel visible. Native footer proportions differ from Qt; no text/control clipping in this defining entry frame. SHA256`1229555726f69d568eedc754c1f7c8cc137faaa757424ea0a2daedd20dc1efe6`.
+- `namespace-colours-delete-question.png` — Exact Delete all selected colours? prompt and yes/no visible; no name editor or OK-only notice. Are you sure? title/type verified by executed test, not visible platform chrome. SHA256`42517976f358f2f450ee27e6a654a1b3c0b89e154a5ca52ee8a70d1781be1a5c`.
+- `namespace-colours-empty-apply-warning.png` — Exact Cannot enter blank text here! and sole OK visible after actual physical measured Apply. No Qt warning icon; same input retention comes from executed identity/state assertions, not this isolated notice image. SHA256`e9cc6cec8c7dc6403db9f92fd327d4d18a40cacb83137a3b6ad351fc86650089`.
+- `namespace-colours-empty-return-warning.png` — Same exact blank warning/OK content after actual Return, independently covered by the second actual route although pixel SHA matches Apply notice. SHA256`e9cc6cec8c7dc6403db9f92fd327d4d18a40cacb83137a3b6ad351fc86650089`.
+- `namespace-colours-empty-retained-entry.png` — Actual same blank entry after warning Return acknowledgement: prompt, caret/LineEdit and apply/cancel restored. Runtime identity confirms retention; continued typing follows explicit activation/click, not automatic-focus evidence. SHA256`1229555726f69d568eedc754c1f7c8cc137faaa757424ea0a2daedd20dc1efe6`.
+- `namespace-colours-whitespace-warning.png` — Distinct exact reserved/default namespace message wraps readably and sole OK is visible. Actual whitespace accepted by widget closes input and reaches handler; runtime asserts title/message/button and unchanged draft/DB. SHA256`aa4b38dade54bb16ab39606b684d4ed706f45520a157feb63a644b3fce3f58eb`.
+- `namespace-colours-draft.png` — Supplemental actual tag-presentation Options/namespace colour list with add/edit/delete controls and nested artist:inner: row; scrolled viewport does not show every namespace simultaneously. Protected retention/selection comes from assertions; no broader Options/OR/editor completion. SHA256`a24fdd87389b379ce2a9a12165a249acab83ae2696a5bc515c2a1bc135bc2bfb`.
+- `namespace-colours-warning.png` — Supplemental actual duplicate-handler notice: Sorry, that namespace is already listed! and sole OK visible, matching old handler fixture semantics. SHA256`5eafb9da4347245e19b5ce265e4436a52421aec6456e808749402e4aefebceb4`.
+
+Fresh frames support the actual blank-veto versus whitespace-handler distinction and readable exact controls. Runtime proves two input routes, one nested warning, retained primary identity, parent Apply blocking, acknowledgement, subsequent valid physical input, no durable writes before parent Apply, parent Cancel/reopen, hidden refusal and retired-successor safety. Delete title/type is actually asserted; headless stills omit platform chrome.
+
+Original80b failed generation and never ran GUI tests; historical packets and failure record remain provenance only. Repaired4b Button112/Timer123 observer structure is now covered by actual measured pointer and full replay, not merely successful source generation.
+
+Current finite caveats, retained in both claim records:
+
+- Only the two original Namespace Add/Delete leaves are approved; the separately banked OR leaf receives no additional credit. Namespace editor/other rendering/Tag Presentation parents remain Partial; no alias or broader backend credit.
+- Full colour-picker editing, Namespace Edit/picker lifetime, inherited colour-list menus and broader keyboard navigation remain outside this slice.
+- Direct handler fixture replay differs from actual exact-empty widget validation. Old EnterText substitution preserves handler normalization/warnings, not real blank acceptance; fresh physical Apply/Return verifies the separate nested veto and same-entry retention path. Whitespace still reaches the handler.
+- Native Warning notices have exact title/message/OK and private ownership. Handler warnings replace the completed entry; exact-empty warnings retain primary input with a nested per-input slot. Child launch failures use the dedicated namespace-list message. Qt warning icons/platform messagebox decoration are not replicated.
+- Native fixed520x200 content frames have different footer proportions/spacing and font metrics from compact Qt dialogs. Qt reference parent is standalone offscreen TagPresentationPanel, not full Options-window parity; mixed selection uses its real list helper. No whole-dialog pixel/geometry equality or native OS modality/chrome equivalence is claimed.
+- Continued typing explicitly activates the retained native entry and physically clicks its reenabled LineEdit after acknowledgement. Automatic OS focus restoration is not established. Headless PNGs omit title chrome: Delete title/type is runtime asserted; nested blank-warning title is source-grounded while its message/OK are actually rendered.
+- New Qt fixture records random namespace RGB without fixing it. Native Add uses fresh random channels; normalization/staging/consumers are validated, not exact random RGB equality with the new Qt rows. Original controlled handler/model expectations remain unchanged.
+- Native OR active predicates retain a single-line row coloured by the recorded OR header namespace. Expanded header/independently coloured child topology remains broader Partial; inactive Qt OR connecting-string preference is not implemented or counted and fixed OR text remains. Existing OR assertions are preserved but earn no additional credit here.
+- Explicit parent Cancel/close and active/visible/retired callback boundaries are validated. Automatic destruction closure for every shown child is not established by this packet. Supplemental draft list viewport does not show every namespace at once; protected-row retention is established by exact assertions.
+- Validation is Linux only; Windows and macOS are deferred. No parent, alias, fade, renderer or other-family completion credit.
