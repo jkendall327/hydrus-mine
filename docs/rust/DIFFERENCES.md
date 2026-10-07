@@ -2511,6 +2511,17 @@ groups, full reference output/error presentation and OS default-launch tests are
 not claimed. Ordinary executable arguments use the process API; batch/shell
 interpreters retain their own quoting semantics. Harmless owned Unicode fixtures
 are authored for hosted CI; no local Rust execution is represented as evidence.
+
+The current command-editor follow-up selects only parameter editing and
+full-template Copy/Paste for explicit validation. Actual Qt recording covers
+queue/selection behavior and exact clipboard review text, but substitutes dialog
+answers and clipboard transport; its panel PNG does not establish nested-dialog
+pixel parity or notification placement. The test follow-up targets live Add/Edit,
+Delete/Paste review, missing-text notice and timed Copy/Paste feedback captures,
+plus retained callbacks against a replacement editor. Broader command/process
+parents, executable picker/PATH/launch breadth, output presentation and Qt
+PageUp/PageDown/type-ahead/scroll-to-current remain outside the pair. Full Linux
+and fresh independent rendered review are pending; no new sign-off is claimed.
 Viewer drag anchoring uses the existing winit window's cursor-position API.
 Physical cursor warping depends on the platform/window manager, as Qt's cursor
 warping does. Headless native replays assert actual pointer-to-media movement,

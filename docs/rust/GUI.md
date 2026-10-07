@@ -3530,6 +3530,18 @@ keeps the draft. Clipboard failures use an owned Error/ok notice. Copy and accep
 paste show the reference's brief feedback. Parent Cancel and retired children
 cannot publish drafts; accepted arguments persist and feed actual token expansion.
 
+The current bounded validation follow-up covers only command parameter editing
+and full-template Copy/Paste. The October 7 actual Qt rerun matches all 26 queue
+actions, six selection histories and 20 accepted/declined clipboard outcomes,
+with unchanged recorder, fixture and command-panel PNG. The reference scripts
+dialog answers and clipboard transport; its PNG does not capture Qt input/review
+children or timed feedback for visual comparison. The follow-up adds eight live captures and retained successor checks while
+preserving all 115 original assertions across nine tests; the file now contains
+160 assertions. Existing queue, clipboard and saved Unicode/token-consumer
+checks remain intact. Full Linux validation and fresh
+independent rendered review remain pending; the ledger stays at 355 signed off
+with 20 existing candidates awaiting sign-off.
+
 Supported process calls expose enabled input rules, tokens and the existing
 string-processor child, an ordered command-argument editor, timeout/flags and
 preview/test inputs. Reopening a saved process and pressing its Test Call runs
@@ -3537,8 +3549,9 @@ its argument vector in an owned worker. Closing the owner cancels and reaps its
 direct child; output is discarded, and long-lived test calls use a 15 second
 deadline. Clipboard/JSON-file/PNG exchange reviews supported callable exports
 before changing the Options draft. These editor/exchange/runtime families remain
-partial: legacy executable-manager import and missing OS-call regeneration,
-deeper per-call launch menus and routing import, OS-launch test execution, rule clipboard controls,
+partial: legacy executable-manager import and regeneration when opening only
+the registered-call page, deeper per-call launch menus and routing import,
+OS-launch test execution, rule clipboard controls,
 full process output/error handling and some command/dialog interactions are not
 ported. The complete scope is recorded in the external-call parity proposal.
 Options > media viewer > mouse behaviour now stages cursor anchoring and its

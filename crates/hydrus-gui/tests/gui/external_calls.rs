@@ -641,6 +641,55 @@ fn command_rows(w: &hydrus_gui::ExternalCommandWindow) -> Vec<String> {
         .map(|r| r.cells.row_data(0).unwrap().to_string())
         .collect()
 }
+fn command_capture(windows: &headless::Windows, index: usize, name: &str, size: (u32, u32)) {
+    let native = windows.get(index).unwrap();
+    headless::render(&native, size.0, size.1);
+    let pixels = headless::render(&native, size.0, size.1);
+    headless::save_png(
+        &std::path::Path::new(env!("CARGO_TARGET_TMPDIR")).join(name),
+        &pixels,
+        size.0,
+        size.1,
+    )
+    .unwrap();
+}
+fn command_feedback_capture(
+    windows: &headless::Windows,
+    index: usize,
+    w: &hydrus_gui::ExternalCommandWindow,
+    expected: &str,
+    name: &str,
+) {
+    use std::time::{Duration, Instant};
+    let native = windows.get(index).unwrap();
+    let started = Instant::now();
+    // The real overlay is admitted by a 50 ms Timer and expires after 3 s.
+    // Observe its painted opaque fill, not merely the feedback string.
+    let pixels = loop {
+        let pixels = headless::render(&native, 760, 590);
+        if started.elapsed() >= Duration::from_millis(50)
+            && pixels
+                .chunks_exact(4)
+                .any(|pixel| pixel == [255, 255, 220, 255])
+        {
+            break pixels;
+        }
+        assert!(
+            started.elapsed() < Duration::from_secs(2),
+            "the actual command feedback overlay must paint before expiry"
+        );
+        std::thread::sleep(Duration::from_millis(5));
+    };
+    assert_eq!(w.get_feedback(), expected);
+    assert!(w.window().is_visible());
+    headless::save_png(
+        &std::path::Path::new(env!("CARGO_TARGET_TMPDIR")).join(name),
+        &pixels,
+        760,
+        590,
+    )
+    .unwrap();
+}
 fn command_key(
     w: &hydrus_gui::ExternalCommandWindow,
     key: slint::SharedString,
@@ -728,6 +777,13 @@ fn actual_command_parameter_queue_buttons_keys_cancel_and_saved_argument_consume
                     q.get_placeholder(),
                     expected["placeholder"].as_str().unwrap()
                 );
+                assert!(q.window().is_visible());
+                command_capture(
+                    &windows,
+                    windows.count() - 1,
+                    "external-command-parameter-edit.png",
+                    (760, 640),
+                );
                 w.invoke_action("delete".into());
                 assert!(
                     q.get_asking_name(),
@@ -741,6 +797,22 @@ fn actual_command_parameter_queue_buttons_keys_cancel_and_saved_argument_consume
             }
             "add_unselected" => {
                 w.invoke_action("add".into());
+                let q = question(&bound);
+                let expected = &event["entries"][0];
+                assert_eq!(q.get_window_title(), expected["title"].as_str().unwrap());
+                assert_eq!(q.get_message(), expected["message"].as_str().unwrap());
+                assert_eq!(q.get_text(), expected["default"].as_str().unwrap());
+                assert_eq!(
+                    q.get_placeholder(),
+                    expected["placeholder"].as_str().unwrap()
+                );
+                assert!(q.window().is_visible());
+                command_capture(
+                    &windows,
+                    windows.count() - 1,
+                    "external-command-parameter-add.png",
+                    (760, 640),
+                );
                 question(&bound).invoke_name_entered("  added  value  ".into());
             }
             "decline_delete" | "accept_delete" => {
@@ -819,6 +891,13 @@ fn actual_command_parameter_queue_buttons_keys_cancel_and_saved_argument_consume
     command_key(&w, Key::Delete.into(), false, false);
     let q = question(&bound);
     assert_eq!(q.get_message(), "Remove 2 selected?");
+    assert!(q.window().is_visible());
+    command_capture(
+        &windows,
+        windows.count() - 1,
+        "external-command-delete-review.png",
+        (520, 200),
+    );
     q.invoke_answered(true);
     assert_eq!(command_rows(&w), ["zero", "one"]);
     // Accepted parameter editing reaches the existing saved substitution consumer.
@@ -868,7 +947,7 @@ fn command_clipboard_exact_review_raw_rows_clean_copy_errors_and_owner_retiremen
         }
     });
     let (_dirs, store) = store();
-    let _headless_windows = headless::init();
+    let windows = headless::init();
     let original = seed(&store);
     let ui = MainWindow::new().unwrap();
     let bound = bind(&ui, Pages::open(store.clone()).unwrap());
@@ -880,6 +959,7 @@ fn command_clipboard_exact_review_raw_rows_clean_copy_errors_and_owner_retiremen
     for event in reference["clipboard"].as_array().unwrap() {
         child.invoke_command_edit();
         let w = command(&bound);
+        let command_index = windows.count() - 1;
         // Reproduce the recorded before-state through the real paste route.
         hydrus_gui::set_paster(|| "before before".into());
         w.invoke_action("paste".into());
@@ -894,18 +974,50 @@ fn command_clipboard_exact_review_raw_rows_clean_copy_errors_and_owner_retiremen
         );
         w.invoke_action("add".into());
         assert!(!q.get_asking_name(), "paste review blocks queue mutation");
+        if event["raw"].as_str().unwrap().ends_with("arg29") && event["accepted"].as_bool().unwrap()
+        {
+            assert!(q.window().is_visible());
+            command_capture(
+                &windows,
+                windows.count() - 1,
+                "external-command-paste-review.png",
+                (760, 590),
+            );
+        }
         q.invoke_answered(event["accepted"].as_bool().unwrap());
         assert_eq!(
             serde_json::to_value(command_rows(&w)).unwrap(),
             event["raw_arguments"]
         );
         assert_eq!(w.get_full_template(), event["example"].as_str().unwrap());
+        if event["raw"] == "owned-program profile=\"My Profile\" 日本😀"
+            && event["accepted"].as_bool().unwrap()
+        {
+            command_feedback_capture(
+                &windows,
+                command_index,
+                &w,
+                "Pasted!",
+                "external-command-paste-feedback.png",
+            );
+        }
         w.invoke_action("copy".into());
         assert_eq!(w.get_feedback(), "Copied!");
         assert_eq!(
             headless::clipboard_text().as_deref(),
             event["copies"][0][1].as_str()
         );
+        if event["raw"] == "owned-program profile=\"My Profile\" 日本😀"
+            && event["accepted"].as_bool().unwrap()
+        {
+            command_feedback_capture(
+                &windows,
+                command_index,
+                &w,
+                "Copied!",
+                "external-command-copy-feedback.png",
+            );
+        }
         w.invoke_cancel();
         assert_eq!(saved(&store).calls, std::slice::from_ref(&original));
     }
@@ -931,6 +1043,13 @@ fn command_clipboard_exact_review_raw_rows_clean_copy_errors_and_owner_retiremen
     );
     assert_eq!(command_rows(&w), before_rows);
     assert_eq!(w.get_full_template(), before_example);
+    assert!(q.window().is_visible());
+    command_capture(
+        &windows,
+        windows.count() - 1,
+        "external-command-clipboard-error.png",
+        (520, 200),
+    );
     q.invoke_cancelled();
     hydrus_gui::set_clipboard_reader(|| Err("synthetic clipboard access failure".into()));
     w.invoke_action("paste".into());
@@ -985,6 +1104,107 @@ fn command_clipboard_exact_review_raw_rows_clean_copy_errors_and_owner_retiremen
     child.invoke_apply();
     assert_eq!(saved(&store), persisted);
     assert!(!bound.options_external_calls.has_open());
+
+    // Keep the cancelled predecessor handles while a successor owns both
+    // slots. Old actions must not publish clipboard text or disturb its draft.
+    let successor_options = open(&ui, &bound);
+    successor_options.invoke_external_call_clicked(0, false, false);
+    successor_options.invoke_external_call_action("edit".into());
+    let successor_child = call(&bound);
+    successor_child.invoke_command_edit();
+    let successor = command(&bound);
+    hydrus_gui::set_paster(|| "successor-program --kept 日本😀".into());
+    successor.invoke_action("paste".into());
+    let successor_review = question(&bound);
+    let draft = (
+        successor.get_executable(),
+        command_rows(&successor),
+        successor
+            .get_rows()
+            .iter()
+            .map(|row| row.selected)
+            .collect::<Vec<_>>(),
+        successor.get_full_template(),
+        successor.get_feedback(),
+    );
+    let review_message = successor_review.get_message();
+    headless::set_clipboard_text("successor clipboard sentinel 日本😀");
+    let clipboard = headless::clipboard_text();
+    let manager = saved(&store);
+    for action in ["copy", "paste", "add", "delete"] {
+        w.invoke_action(action.into());
+    }
+    w.invoke_apply();
+    w.invoke_cancel();
+    retired.invoke_answered(true);
+    retired.invoke_answered(false);
+    retired.invoke_cancelled();
+    assert_eq!(headless::clipboard_text(), clipboard);
+    assert_eq!(saved(&store), manager);
+    assert_eq!(manager, persisted);
+    assert_eq!(
+        (
+            successor.get_executable(),
+            command_rows(&successor),
+            successor
+                .get_rows()
+                .iter()
+                .map(|row| row.selected)
+                .collect::<Vec<_>>(),
+            successor.get_full_template(),
+            successor.get_feedback(),
+        ),
+        draft
+    );
+    assert_eq!(successor_review.get_message(), review_message);
+    assert!(std::ptr::eq(command(&bound).window(), successor.window()));
+    assert!(std::ptr::eq(
+        question(&bound).window(),
+        successor_review.window()
+    ));
+    assert!(std::ptr::eq(
+        call(&bound).window(),
+        successor_child.window()
+    ));
+    assert!(std::ptr::eq(
+        bound.options.borrow().as_ref().unwrap().window(),
+        successor_options.window()
+    ));
+    assert!(successor.window().is_visible());
+    assert!(successor_review.window().is_visible());
+    assert!(successor_child.window().is_visible());
+    assert!(successor_options.window().is_visible());
+    assert!(!w.window().is_visible());
+    assert!(!retired.window().is_visible());
+    assert!(!child.window().is_visible());
+    assert!(!options.window().is_visible());
+
+    // Current acceptance still updates only this draft; current Cancel closes
+    // its slot normally and the outer Cancel preserves the complete manager.
+    successor_review.invoke_answered(true);
+    assert_eq!(successor.get_executable(), "successor-program");
+    assert_eq!(command_rows(&successor), ["--kept", "日本😀"]);
+    assert_eq!(
+        successor.get_full_template(),
+        "successor-program --kept 日本😀"
+    );
+    assert_eq!(successor.get_feedback(), "Pasted!");
+    assert!(bound.options_external_calls.question.borrow().is_none());
+    assert!(!successor_review.window().is_visible());
+    assert!(std::ptr::eq(command(&bound).window(), successor.window()));
+    successor.invoke_cancel();
+    assert!(bound.options_external_calls.command.borrow().is_none());
+    assert!(!successor.window().is_visible());
+    assert!(std::ptr::eq(
+        call(&bound).window(),
+        successor_child.window()
+    ));
+    successor_options.invoke_cancel();
+    assert!(!bound.options_external_calls.has_open());
+    assert!(!successor_child.window().is_visible());
+    assert!(!successor_options.window().is_visible());
+    assert_eq!(saved(&store), persisted);
+    assert_eq!(headless::clipboard_text(), clipboard);
 }
 
 #[test]
@@ -1003,6 +1223,7 @@ fn parameter_queue_reverse_edit_and_real_key_origin_histories_match_actual_qt() 
     for history in reference["queue_edges"].as_array().unwrap() {
         child.invoke_command_edit();
         let w = command(&bound);
+        let command_index = windows.count() - 1;
         let native = windows.get(windows.count() - 1).unwrap();
         hydrus_gui::set_paster(|| "owned-program alpha beta gamma delta".into());
         w.invoke_action("paste".into());
@@ -1038,6 +1259,15 @@ fn parameter_queue_reverse_edit_and_real_key_origin_histories_match_actual_qt() 
                     }
                 }
                 "edit_selection_first" => {
+                    if history["name"] == "reverse_edit" {
+                        assert!(w.window().is_visible());
+                        command_capture(
+                            &windows,
+                            command_index,
+                            "external-command-parameters-selected.png",
+                            (760, 590),
+                        );
+                    }
                     w.invoke_action("edit".into());
                     let q = question(&bound);
                     assert_eq!(
