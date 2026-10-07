@@ -1,0 +1,199 @@
+{
+  "source_commit": "7c74c617165a22814a8d0202008794b2beb53de0",
+  "ci_evidence_sha256": "addd7d647a13dc7597a1b1e059456557b6f70f8d9df6ba7a39bab16dd42cfae2",
+  "mapping_sha256": "4c75a26dfe6bd2cf4f011874c6b9b2ecdadcccb4be47ef07e6248fb8bfae768c",
+  "mapping_applied_after_gates": true,
+  "operations": [
+    {
+      "id": "audit-options-tag-sort-tag-sort-default-tag-sort-in-search-page-manage-tags-dialogs",
+      "field": "limitations",
+      "original_index": 2,
+      "operation": "remove_exact_list_item",
+      "before": "Model/import/native regressions are authored for hosted CI; no local Cargo/Rust build, Rust tests or mutation runs occurred.",
+      "conditional_after": null,
+      "reason": "Resolve only current pending author/execution/render status after actual exact-source CI+fresh independent/root review; original authored/no-local-execution metadata remains immutable historical provenance."
+    },
+    {
+      "id": "audit-options-tag-sort-tag-sort-default-tag-sort-in-search-page-manage-tags-dialogs",
+      "field": "limitations",
+      "original_index": 4,
+      "operation": "replace_exact_list_item",
+      "before": "Represented Options sort rows use intrinsic allocation with strict actual-widget geometry assertions for initial/applied narrow/normal states and real scroll access. Exact-source execution and fresh render review remain pending. Qt parent default state differs from native saved/applied captures; native vertical layout differs from Qt horizontal layout. No equal-state pixel/font or OS-key transport claim.",
+      "conditional_after": "Represented Options sort rows use intrinsic allocation with strict actual-widget geometry assertions for initial/applied narrow/normal states and real scroll access. Qt parent default state differs from native saved/applied captures; native vertical layout differs from Qt horizontal layout. No equal-state pixel/font or OS-key transport claim.",
+      "reason": "Remove the exact pending execution/render sentence only; retain every geometry/state/framework/pixel/key limitation verbatim."
+    },
+    {
+      "id": "audit-options-tag-sort-tag-sort-default-tag-sort-in-search-page-manage-tags-dialogs",
+      "field": "remaining",
+      "original_index": 0,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source hosted full Linux validation remains pending.",
+      "conditional_after": null,
+      "reason": "Resolve only current pending author/execution/render status after actual exact-source CI+fresh independent/root review; original authored/no-local-execution metadata remains immutable historical provenance."
+    },
+    {
+      "id": "audit-options-tag-sort-tag-sort-default-tag-sort-in-search-page-manage-tags-dialogs",
+      "field": "remaining",
+      "original_index": 1,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source fresh native rendered/behavioral review and final assessment reconciliation remain pending.",
+      "conditional_after": null,
+      "reason": "Resolve only current pending author/execution/render status after actual exact-source CI+fresh independent/root review; original authored/no-local-execution metadata remains immutable historical provenance."
+    },
+    {
+      "id": "audit-options-tag-sort-tag-sort-default-tag-sort-in-media-viewer-manage-tags-dialogs",
+      "field": "limitations",
+      "original_index": 2,
+      "operation": "remove_exact_list_item",
+      "before": "Model/import/native regressions are authored for hosted CI; no local Cargo/Rust build, Rust tests or mutation runs occurred.",
+      "conditional_after": null,
+      "reason": "Resolve only current pending author/execution/render status after actual exact-source CI+fresh independent/root review; original authored/no-local-execution metadata remains immutable historical provenance."
+    },
+    {
+      "id": "audit-options-tag-sort-tag-sort-default-tag-sort-in-media-viewer-manage-tags-dialogs",
+      "field": "limitations",
+      "original_index": 4,
+      "operation": "replace_exact_list_item",
+      "before": "Represented Options sort rows use intrinsic allocation with strict actual-widget geometry assertions for initial/applied narrow/normal states and real scroll access. Exact-source execution and fresh render review remain pending. Qt parent default state differs from native saved/applied captures; native vertical layout differs from Qt horizontal layout. No equal-state pixel/font or OS-key transport claim.",
+      "conditional_after": "Represented Options sort rows use intrinsic allocation with strict actual-widget geometry assertions for initial/applied narrow/normal states and real scroll access. Qt parent default state differs from native saved/applied captures; native vertical layout differs from Qt horizontal layout. No equal-state pixel/font or OS-key transport claim.",
+      "reason": "Remove the exact pending execution/render sentence only; retain every geometry/state/framework/pixel/key limitation verbatim."
+    },
+    {
+      "id": "audit-options-tag-sort-tag-sort-default-tag-sort-in-media-viewer-manage-tags-dialogs",
+      "field": "remaining",
+      "original_index": 0,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source hosted full Linux validation remains pending.",
+      "conditional_after": null,
+      "reason": "Resolve only current pending author/execution/render status after actual exact-source CI+fresh independent/root review; original authored/no-local-execution metadata remains immutable historical provenance."
+    },
+    {
+      "id": "audit-options-tag-sort-tag-sort-default-tag-sort-in-media-viewer-manage-tags-dialogs",
+      "field": "remaining",
+      "original_index": 1,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source fresh native rendered/behavioral review and final assessment reconciliation remain pending.",
+      "conditional_after": null,
+      "reason": "Resolve only current pending author/execution/render status after actual exact-source CI+fresh independent/root review; original authored/no-local-execution metadata remains immutable historical provenance."
+    },
+    {
+      "id": "audit-options-tag-sort-tag-sort-namespace-grouping-sort-add",
+      "field": "limitations",
+      "original_index": 0,
+      "operation": "remove_exact_list_item",
+      "before": "Conditional source proposals only. Hosted Rust/native tests and exact-source native PNG review are pending; no local Cargo/Rust builds/tests/mutations executed.",
+      "conditional_after": null,
+      "reason": "Resolve only current pending author/execution/render status after actual exact-source CI+fresh independent/root review; original authored/no-local-execution metadata remains immutable historical provenance."
+    },
+    {
+      "id": "audit-options-tag-sort-tag-sort-namespace-grouping-sort-add",
+      "field": "limitations",
+      "original_index": 6,
+      "operation": "replace_exact_list_item",
+      "before": "Represented Options sort rows use intrinsic allocation with strict actual-widget geometry assertions for initial/applied narrow/normal states and real scroll access. Exact-source execution and fresh render review remain pending. Qt parent default state differs from native saved/applied captures; native vertical layout differs from Qt horizontal layout. No equal-state pixel/font or OS-key transport claim.",
+      "conditional_after": "Represented Options sort rows use intrinsic allocation with strict actual-widget geometry assertions for initial/applied narrow/normal states and real scroll access. Qt parent default state differs from native saved/applied captures; native vertical layout differs from Qt horizontal layout. No equal-state pixel/font or OS-key transport claim.",
+      "reason": "Remove the exact pending execution/render sentence only; retain every geometry/state/framework/pixel/key limitation verbatim."
+    },
+    {
+      "id": "audit-options-tag-sort-tag-sort-namespace-grouping-sort-add",
+      "field": "remaining",
+      "original_index": 0,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source hosted full Linux validation remains pending.",
+      "conditional_after": null,
+      "reason": "Resolve only current pending author/execution/render status after actual exact-source CI+fresh independent/root review; original authored/no-local-execution metadata remains immutable historical provenance."
+    },
+    {
+      "id": "audit-options-tag-sort-tag-sort-namespace-grouping-sort-add",
+      "field": "remaining",
+      "original_index": 1,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source fresh native rendered/behavioral review and final assessment reconciliation remain pending.",
+      "conditional_after": null,
+      "reason": "Resolve only current pending author/execution/render status after actual exact-source CI+fresh independent/root review; original authored/no-local-execution metadata remains immutable historical provenance."
+    },
+    {
+      "id": "audit-options-tag-sort-tag-sort-namespace-grouping-sort-edit",
+      "field": "limitations",
+      "original_index": 0,
+      "operation": "remove_exact_list_item",
+      "before": "Conditional source proposals only. Hosted Rust/native tests and exact-source native PNG review are pending; no local Cargo/Rust builds/tests/mutations executed.",
+      "conditional_after": null,
+      "reason": "Resolve only current pending author/execution/render status after actual exact-source CI+fresh independent/root review; original authored/no-local-execution metadata remains immutable historical provenance."
+    },
+    {
+      "id": "audit-options-tag-sort-tag-sort-namespace-grouping-sort-edit",
+      "field": "limitations",
+      "original_index": 6,
+      "operation": "replace_exact_list_item",
+      "before": "Represented Options sort rows use intrinsic allocation with strict actual-widget geometry assertions for initial/applied narrow/normal states and real scroll access. Exact-source execution and fresh render review remain pending. Qt parent default state differs from native saved/applied captures; native vertical layout differs from Qt horizontal layout. No equal-state pixel/font or OS-key transport claim.",
+      "conditional_after": "Represented Options sort rows use intrinsic allocation with strict actual-widget geometry assertions for initial/applied narrow/normal states and real scroll access. Qt parent default state differs from native saved/applied captures; native vertical layout differs from Qt horizontal layout. No equal-state pixel/font or OS-key transport claim.",
+      "reason": "Remove the exact pending execution/render sentence only; retain every geometry/state/framework/pixel/key limitation verbatim."
+    },
+    {
+      "id": "audit-options-tag-sort-tag-sort-namespace-grouping-sort-edit",
+      "field": "remaining",
+      "original_index": 0,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source hosted full Linux validation remains pending.",
+      "conditional_after": null,
+      "reason": "Resolve only current pending author/execution/render status after actual exact-source CI+fresh independent/root review; original authored/no-local-execution metadata remains immutable historical provenance."
+    },
+    {
+      "id": "audit-options-tag-sort-tag-sort-namespace-grouping-sort-edit",
+      "field": "remaining",
+      "original_index": 1,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source fresh native rendered/behavioral review and final assessment reconciliation remain pending.",
+      "conditional_after": null,
+      "reason": "Resolve only current pending author/execution/render status after actual exact-source CI+fresh independent/root review; original authored/no-local-execution metadata remains immutable historical provenance."
+    }
+  ],
+  "added_review_scope_limits": {
+    "audit-options-tag-sort-tag-sort-default-tag-sort-in-search-page-manage-tags-dialogs": [
+      "No matching standalone Qt image exists for populated Edit or the Manage Tags consumers. Native exports are grounded in recorded state and assertions. The optional Qt client API listener was denied by the sandbox during these direct Qt/DB reruns. Complete fixtures matched, both recorders exited with code 0 and shut down normally, and no API connectivity validation is claimed.",
+      "The standalone Manage Tags consumer images show the current logical tag counts, decorations and controls. The related suggestion pane was captured while searching, so no related-pane or broader Manage Tags workflow or rendering credit is granted. Exact fixture, row and source assertions establish the distinct selected-files/search-page and current-one-file/viewer contexts; identical control captions alone do not establish that distinction.",
+      "Validation is Linux only; Windows and macOS are deferred. Exactly four original leaves are approved. No completion credit is granted to Options, tag-sort or namespace families, aliases, new IDs, Paste, the ordered queue, generic Manage Tags or repository workflows, immediate viewer commits, the namespace parser or tag-display chooser, radio or global keyboard behavior, or additional consumers.",
+      "At 900 px, some namespace-grouping explanatory prose clips horizontally at line ends. The selected sort controls, queue action buttons and dedicated Add/Edit messages remain readable. Broader parent prose and pixel parity are not claimed.",
+      "Geometry tests pass for all four actual sort contexts, in default and saved states at the natural viewports. They require finite positive frames, containment within allocated rows, separation within and between rows, and separation from the actual kind-0 namespace heading. Real wheel scrolling is validated. Upper clipping in scrolled frames and a lower queue outside the viewport in unscrolled frames are deliberate pane states. The internal queue viewport does not show all rows simultaneously; exact rows, raw values and identities are established by assertions.",
+      "The native vertical stacks differ from Qt horizontal rows. Native font, button and footer proportions, the compact Qt blank entry versus the 520×220 native entry, and saved versus default parent states remain explicit differences. Whole-dialog pixel or geometry equality, OS chrome, modality, focus and universal keyboard transport equivalence are not claimed."
+    ],
+    "audit-options-tag-sort-tag-sort-default-tag-sort-in-media-viewer-manage-tags-dialogs": [
+      "No matching standalone Qt image exists for populated Edit or the Manage Tags consumers. Native exports are grounded in recorded state and assertions. The optional Qt client API listener was denied by the sandbox during these direct Qt/DB reruns. Complete fixtures matched, both recorders exited with code 0 and shut down normally, and no API connectivity validation is claimed.",
+      "The standalone Manage Tags consumer images show the current logical tag counts, decorations and controls. The related suggestion pane was captured while searching, so no related-pane or broader Manage Tags workflow or rendering credit is granted. Exact fixture, row and source assertions establish the distinct selected-files/search-page and current-one-file/viewer contexts; identical control captions alone do not establish that distinction.",
+      "Validation is Linux only; Windows and macOS are deferred. Exactly four original leaves are approved. No completion credit is granted to Options, tag-sort or namespace families, aliases, new IDs, Paste, the ordered queue, generic Manage Tags or repository workflows, immediate viewer commits, the namespace parser or tag-display chooser, radio or global keyboard behavior, or additional consumers.",
+      "At 900 px, some namespace-grouping explanatory prose clips horizontally at line ends. The selected sort controls, queue action buttons and dedicated Add/Edit messages remain readable. Broader parent prose and pixel parity are not claimed.",
+      "Geometry tests pass for all four actual sort contexts, in default and saved states at the natural viewports. They require finite positive frames, containment within allocated rows, separation within and between rows, and separation from the actual kind-0 namespace heading. Real wheel scrolling is validated. Upper clipping in scrolled frames and a lower queue outside the viewport in unscrolled frames are deliberate pane states. The internal queue viewport does not show all rows simultaneously; exact rows, raw values and identities are established by assertions.",
+      "The native vertical stacks differ from Qt horizontal rows. Native font, button and footer proportions, the compact Qt blank entry versus the 520×220 native entry, and saved versus default parent states remain explicit differences. Whole-dialog pixel or geometry equality, OS chrome, modality, focus and universal keyboard transport equivalence are not claimed."
+    ],
+    "audit-options-tag-sort-tag-sort-namespace-grouping-sort-add": [
+      "No matching standalone Qt image exists for populated Edit or the Manage Tags consumers. Native exports are grounded in recorded state and assertions. The optional Qt client API listener was denied by the sandbox during these direct Qt/DB reruns. Complete fixtures matched, both recorders exited with code 0 and shut down normally, and no API connectivity validation is claimed.",
+      "Validation is Linux only; Windows and macOS are deferred. Exactly four original leaves are approved. No completion credit is granted to Options, tag-sort or namespace families, aliases, new IDs, Paste, the ordered queue, generic Manage Tags or repository workflows, immediate viewer commits, the namespace parser or tag-display chooser, radio or global keyboard behavior, or additional consumers.",
+      "At 900 px, some namespace-grouping explanatory prose clips horizontally at line ends. The selected sort controls, queue action buttons and dedicated Add/Edit messages remain readable. Broader parent prose and pixel parity are not claimed.",
+      "Geometry tests pass for all four actual sort contexts, in default and saved states at the natural viewports. They require finite positive frames, containment within allocated rows, separation within and between rows, and separation from the actual kind-0 namespace heading. Real wheel scrolling is validated. Upper clipping in scrolled frames and a lower queue outside the viewport in unscrolled frames are deliberate pane states. The internal queue viewport does not show all rows simultaneously; exact rows, raw values and identities are established by assertions.",
+      "The native vertical stacks differ from Qt horizontal rows. Native font, button and footer proportions, the compact Qt blank entry versus the 520×220 native entry, and saved versus default parent states remain explicit differences. Whole-dialog pixel or geometry equality, OS chrome, modality, focus and universal keyboard transport equivalence are not claimed."
+    ],
+    "audit-options-tag-sort-tag-sort-namespace-grouping-sort-edit": [
+      "No matching standalone Qt image exists for populated Edit or the Manage Tags consumers. Native exports are grounded in recorded state and assertions. The optional Qt client API listener was denied by the sandbox during these direct Qt/DB reruns. Complete fixtures matched, both recorders exited with code 0 and shut down normally, and no API connectivity validation is claimed.",
+      "Validation is Linux only; Windows and macOS are deferred. Exactly four original leaves are approved. No completion credit is granted to Options, tag-sort or namespace families, aliases, new IDs, Paste, the ordered queue, generic Manage Tags or repository workflows, immediate viewer commits, the namespace parser or tag-display chooser, radio or global keyboard behavior, or additional consumers.",
+      "At 900 px, some namespace-grouping explanatory prose clips horizontally at line ends. The selected sort controls, queue action buttons and dedicated Add/Edit messages remain readable. Broader parent prose and pixel parity are not claimed.",
+      "Geometry tests pass for all four actual sort contexts, in default and saved states at the natural viewports. They require finite positive frames, containment within allocated rows, separation within and between rows, and separation from the actual kind-0 namespace heading. Real wheel scrolling is validated. Upper clipping in scrolled frames and a lower queue outside the viewport in unscrolled frames are deliberate pane states. The internal queue viewport does not show all rows simultaneously; exact rows, raw values and identities are established by assertions.",
+      "The native vertical stacks differ from Qt horizontal rows. Native font, button and footer proportions, the compact Qt blank entry versus the 520×220 native entry, and saved versus default parent states remain explicit differences. Whole-dialog pixel or geometry equality, OS chrome, modality, focus and universal keyboard transport equivalence are not claimed."
+    ]
+  },
+  "reviews": [
+    {
+      "path": "docs/rust/gui-coverage/checkpoints/7c74c6171/final-review-2-7c74c6171.json",
+      "sha256": "f236c52b83cd8c5d3dd8c672b9f40c5b3f8cdd51c090ae4f34444ce26422d612"
+    }
+  ],
+  "selected_ids": [
+    "audit-options-tag-sort-tag-sort-default-tag-sort-in-search-page-manage-tags-dialogs",
+    "audit-options-tag-sort-tag-sort-default-tag-sort-in-media-viewer-manage-tags-dialogs",
+    "audit-options-tag-sort-tag-sort-namespace-grouping-sort-add",
+    "audit-options-tag-sort-tag-sort-namespace-grouping-sort-edit"
+  ],
+  "prior347_completion_ids_and_assessments_preserved": true,
+  "source_only_native_anchor_ids": [],
+  "final_patch_digest": "2cab17e6f1b6905aa80907b49d91657e5c42a9f71f195e7a7be3e7a2e87dbf54"
+}

@@ -4,12 +4,12 @@
   "goal": "All individual feature leaves in the report implemented and explicitly verified.",
   "classification_audit_source": "05000f10eafc4211d6856549d0073edb90ba5811",
   "classification_audit": "audit-05000f10e.json",
-  "validated_implementation_source": "32d9dbb74d0c6b55d6d402dc9e44c72ece4a3192",
+  "validated_implementation_source": "7c74c617165a22814a8d0202008794b2beb53de0",
   "distinct_terminal_leaves": 1274,
   "baseline_deficit_leaves": 813,
   "historical_first_pass_leaves": 461,
-  "explicit_implementation_signoffs": 347,
-  "remaining_without_explicit_signoff": 927,
+  "explicit_implementation_signoffs": 351,
+  "remaining_without_explicit_signoff": 923,
   "implementation_ledger": "../overnight/progress.json",
   "historical_verification_approvals": [],
   "leaves": [
@@ -5696,12 +5696,12 @@
     {
       "id": "audit-options-tag-sort-tag-sort-default-tag-sort-in-media-viewer-manage-tags-dialogs",
       "baseline_status": "missing",
-      "signed_off_in_implementation_ledger": false
+      "signed_off_in_implementation_ledger": true
     },
     {
       "id": "audit-options-tag-sort-tag-sort-default-tag-sort-in-search-page-manage-tags-dialogs",
       "baseline_status": "missing",
-      "signed_off_in_implementation_ledger": false
+      "signed_off_in_implementation_ledger": true
     },
     {
       "id": "audit-options-tag-sort-tag-sort-default-tag-sort-in-search-pages",
@@ -5716,12 +5716,12 @@
     {
       "id": "audit-options-tag-sort-tag-sort-namespace-grouping-sort-add",
       "baseline_status": "missing",
-      "signed_off_in_implementation_ledger": false
+      "signed_off_in_implementation_ledger": true
     },
     {
       "id": "audit-options-tag-sort-tag-sort-namespace-grouping-sort-edit",
       "baseline_status": "missing",
-      "signed_off_in_implementation_ledger": false
+      "signed_off_in_implementation_ledger": true
     },
     {
       "id": "audit-options-tag-suggestions-suggested-tags-column-layout",
@@ -6384,6 +6384,6 @@
       "signed_off_in_implementation_ledger": true
     }
   ],
-  "previous_checkpoint_commit": "844ab6d7b9f7b9c9feab0a2293cf77117ed87f07",
-  "checkpoint_evidence": "../checkpoints/32d9dbb74/README.md"
+  "previous_checkpoint_commit": "b5b079a332ad6036bfa016e3f213a04db009eaf0",
+  "checkpoint_evidence": "../checkpoints/7c74c6171/README.md"
 }

@@ -1,0 +1,78 @@
+{
+  "source_commit": "7c74c617165a22814a8d0202008794b2beb53de0",
+  "run_id": 37567007002,
+  "conclusion": "success",
+  "validation_scope": "linux",
+  "required_platforms": [
+    "linux"
+  ],
+  "deferred_platforms": [
+    "windows",
+    "macos"
+  ],
+  "gui_tests": {
+    "passed": 706,
+    "failed": 0,
+    "ignored": 0,
+    "seconds": 234.5
+  },
+  "media_tests": {
+    "passed": 67,
+    "failed": 0,
+    "ignored": 0,
+    "seconds": 1.01
+  },
+  "selected_family_tests_passed": [
+    "test manage_tags_sort::hidden_main_cannot_launch_or_reshow_child_but_visible_viewer_keeps_its_own_route ... ok",
+    "test manage_tags_sort::rebind_and_accepted_exit_retire_visible_sort_children_and_old_viewer_launcher ... ok",
+    "test manage_tags_sort::native_options_stage_cancel_save_reopen_and_reject_retired_sender ... ok",
+    "test manage_tags_sort::main_selection_and_viewer_current_file_use_distinct_defaults_and_live_dialog_keeps_its_sort ... ok",
+    "test manage_tags_sort::actual_sort_stacks_fit_their_rows_and_scroll_without_overlap_at_both_viewports ... ok",
+    "test tag_namespace_order::hidden_stale_rebound_and_accepted_close_children_cannot_stage_or_save ... ok",
+    "test tag_namespace_order::saved_order_reaches_the_real_sidebar_tag_sort ... ok",
+    "test tag_namespace_order::real_queue_matches_all_reference_prompts_and_parent_transactions ... ok",
+    "test manage_tags_sort::independent_defaults_stage_cancel_apply_reopen_and_merge_only_changed_context ... ok",
+    "test manage_tags_sort::open_service_tabs_keep_local_sort_after_options_change_and_new_dialog_reads_default ... ok",
+    "test manage_tags_sort::sibling_sort_uses_raw_tags_when_storage_sibling_information_is_disabled ... ok",
+    "test manage_tags_sort::both_contexts_replay_all_real_sort_types_orders_siblings_and_groupings ... ok",
+    "test tag_namespace_order::namespace_changes_merge_with_concurrent_presentation_edits_and_unchanged_list ... ok",
+    "test tag_namespace_order::raw_allow_blank_queue_actions_and_all_tag_sorts_match_qt ... ok"
+  ],
+  "prior_assertions_preserved": 95,
+  "current_assertions": 113,
+  "timings": {
+    "clippy_seconds": 586.0,
+    "clippy_cargo_seconds": 585,
+    "test_compile_seconds": 692,
+    "test_step_seconds": 1196.0
+  },
+  "cache": {
+    "runner_image": "20261004.327.1",
+    "dependency_cache_hit": true,
+    "workspace_restored_from": null,
+    "reason": "No snapshot matched compatibility prefix d375ff77746ca54e3a64f5c5; prior runner image20260927.320.1 used af4fa2e32ed1c3da4471dd09.",
+    "restored_workspace_artifact_files": 0,
+    "cache_safety_tests_passed": 25,
+    "saved_artifact_files": 293,
+    "saved_uncompressed_bytes": 2200273639,
+    "maintenance_retained_bytes": 1379396172,
+    "budget_bytes": 3221225472
+  },
+  "native_artifact_id": 11459759822,
+  "native_zip_sha256": "71d73ee380cc3c85dff32e0d2c0ac56594d73129efaa4eb2c5ddfe0d231b512f",
+  "native_image_count": 319,
+  "limits": [
+    "Hosted observation, not controlled attribution or generation/Rust/link breakdown.",
+    "Runner image changed and no compatible workspace cache restored; cannot attribute slower build solely to Slint edit. Dependency fallback worked, compatible fresh workspace snapshot saved.",
+    "GUI/media had zero failures/ignored. Other workspace suites retain existing ignored tests; no assertion/test suppression introduced."
+  ],
+  "evidence_sha256": {
+    "full-check.log": "d5ebcd5ef127dd38abcc995c45436790f44503948e35a7b75847f91aa3270bea",
+    "tests.log": "8e7922c30fab4af056d7628597b8eaeafb8b2e88c8b525f9bb1dbf89da9e3688",
+    "clippy.log": "8819bcf2c03a66e1204ba503a8f066f78d06baeb23a06b621f537c3cc4707581",
+    "parity.log": "1d9d3d7ae58ba7d46b848535ac2aca619ffa57808e4e7bd2cc1ee92de9ccca06",
+    "maintenance.log": "247ea9b330bd7c7f237abb42790505243dc93516c241bf7959af16f909c2e27e",
+    "ci-evidence.json": "addd7d647a13dc7597a1b1e059456557b6f70f8d9df6ba7a39bab16dd42cfae2",
+    "native-render-manifest.json": "6aff0dd470d75394d97a3d2c2a6419420688a1ca178ffdab6c06d8cee843774a"
+  }
+}

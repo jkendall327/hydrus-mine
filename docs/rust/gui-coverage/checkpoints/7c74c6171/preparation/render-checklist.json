@@ -1,0 +1,274 @@
+{
+  "source_commit": "7c74c617165a22814a8d0202008794b2beb53de0",
+  "run_id": 37567007002,
+  "selected_ids": [
+    "audit-options-tag-sort-tag-sort-default-tag-sort-in-search-page-manage-tags-dialogs",
+    "audit-options-tag-sort-tag-sort-default-tag-sort-in-media-viewer-manage-tags-dialogs",
+    "audit-options-tag-sort-tag-sort-namespace-grouping-sort-add",
+    "audit-options-tag-sort-tag-sort-namespace-grouping-sort-edit"
+  ],
+  "expected_native_capture_names": [
+    "manage-tags-sort-options.png",
+    "manage-tags-sort-search-page.png",
+    "manage-tags-sort-media-viewer.png",
+    "tag-sort-layout-initial-900x640.png",
+    "tag-sort-layout-initial-1000x850.png",
+    "tag-sort-layout-initial-900x640-scrolled.png",
+    "tag-sort-layout-saved-900x640.png",
+    "tag-sort-layout-saved-1000x850.png",
+    "tag-sort-layout-saved-900x640-scrolled.png",
+    "tag-namespace-order-options.png",
+    "tag-namespace-order-options-scrolled.png",
+    "tag-namespace-order-enter-text.png",
+    "tag-namespace-order-add-blank.png",
+    "tag-namespace-order-edit.png"
+  ],
+  "captures": [
+    {
+      "name": "manage-tags-sort-options.png",
+      "dimensions": [
+        1000,
+        700
+      ],
+      "producer": {
+        "path": "crates/hydrus-gui/tests/gui/manage_tags_sort.rs",
+        "line": 203,
+        "text": "        &std::path::Path::new(env!(\"CARGO_TARGET_TMPDIR\")).join(\"manage-tags-sort-options.png\"),",
+        "anchor_git_head": "7c74c617165a22814a8d0202008794b2beb53de0",
+        "line_sha256": "d8bc9d47656423cda4b54a05039340a9e4d7750c27f9ed6204c267e74f52cb43"
+      },
+      "state_and_dynamic_path_proof": "Actual saved/reopened applied independent defaults; Qt parent default-state differs."
+    },
+    {
+      "name": "manage-tags-sort-search-page.png",
+      "dimensions": [
+        720,
+        680
+      ],
+      "producer": {
+        "path": "crates/hydrus-gui/tests/gui/manage_tags_sort.rs",
+        "line": 502,
+        "text": "            Context::SearchPage => \"manage-tags-sort-search-page.png\",",
+        "anchor_git_head": "7c74c617165a22814a8d0202008794b2beb53de0",
+        "line_sha256": "c2568b16a9f1fc398364fe2c3a6518208b81e84e545a0967135416fae50a1486"
+      },
+      "state_and_dynamic_path_proof": "Recorded lifetime reopened policy, assert_sort+exact rows for selectedfiles/search or currentonefile/viewer. Real rendered pixels; no matching standaloneQtPNG."
+    },
+    {
+      "name": "manage-tags-sort-media-viewer.png",
+      "dimensions": [
+        720,
+        680
+      ],
+      "producer": {
+        "path": "crates/hydrus-gui/tests/gui/manage_tags_sort.rs",
+        "line": 503,
+        "text": "            Context::MediaViewer => \"manage-tags-sort-media-viewer.png\",",
+        "anchor_git_head": "7c74c617165a22814a8d0202008794b2beb53de0",
+        "line_sha256": "bbe8509e968ef74f8ca4c15b8c5403c4894ae22d1ba26ae4c7b269d87fd48150"
+      },
+      "state_and_dynamic_path_proof": "Recorded lifetime reopened policy, assert_sort+exact rows for selectedfiles/search or currentonefile/viewer. Real rendered pixels; no matching standaloneQtPNG."
+    },
+    {
+      "name": "tag-sort-layout-initial-900x640.png",
+      "dimensions": [
+        900,
+        640
+      ],
+      "producer": {
+        "path": "crates/hydrus-gui/tests/gui/manage_tags_sort.rs",
+        "line": 371,
+        "text": "                    .join(format!(\"tag-sort-layout-{state}-{width}x{height}.png\")),",
+        "anchor_git_head": "7c74c617165a22814a8d0202008794b2beb53de0",
+        "line_sha256": "8257266c826da074f1e6193144ff4b5b937c270adc636dfefc2a35ee2e650fd3"
+      },
+      "state_and_dynamic_path_proof": "Actual applied false/true -> initial/saved; exact loop viewports900x640/1000x850; scrolled export only ifheight640 after PointerScrolled and queue fullinsideviewport assertions. No filename inference outside explicitly authored loop."
+    },
+    {
+      "name": "tag-sort-layout-initial-1000x850.png",
+      "dimensions": [
+        1000,
+        850
+      ],
+      "producer": {
+        "path": "crates/hydrus-gui/tests/gui/manage_tags_sort.rs",
+        "line": 371,
+        "text": "                    .join(format!(\"tag-sort-layout-{state}-{width}x{height}.png\")),",
+        "anchor_git_head": "7c74c617165a22814a8d0202008794b2beb53de0",
+        "line_sha256": "8257266c826da074f1e6193144ff4b5b937c270adc636dfefc2a35ee2e650fd3"
+      },
+      "state_and_dynamic_path_proof": "Actual applied false/true -> initial/saved; exact loop viewports900x640/1000x850; scrolled export only ifheight640 after PointerScrolled and queue fullinsideviewport assertions. No filename inference outside explicitly authored loop."
+    },
+    {
+      "name": "tag-sort-layout-initial-900x640-scrolled.png",
+      "dimensions": [
+        900,
+        640
+      ],
+      "producer": {
+        "path": "crates/hydrus-gui/tests/gui/manage_tags_sort.rs",
+        "line": 397,
+        "text": "                        .join(format!(\"tag-sort-layout-{state}-900x640-scrolled.png\")),",
+        "anchor_git_head": "7c74c617165a22814a8d0202008794b2beb53de0",
+        "line_sha256": "6d96f83c4b05d2764c4d7830c5c75099c8b27b04d9ef9c4c54af8b960ec6153d"
+      },
+      "state_and_dynamic_path_proof": "Actual applied false/true -> initial/saved; exact loop viewports900x640/1000x850; scrolled export only ifheight640 after PointerScrolled and queue fullinsideviewport assertions. No filename inference outside explicitly authored loop."
+    },
+    {
+      "name": "tag-sort-layout-saved-900x640.png",
+      "dimensions": [
+        900,
+        640
+      ],
+      "producer": {
+        "path": "crates/hydrus-gui/tests/gui/manage_tags_sort.rs",
+        "line": 371,
+        "text": "                    .join(format!(\"tag-sort-layout-{state}-{width}x{height}.png\")),",
+        "anchor_git_head": "7c74c617165a22814a8d0202008794b2beb53de0",
+        "line_sha256": "8257266c826da074f1e6193144ff4b5b937c270adc636dfefc2a35ee2e650fd3"
+      },
+      "state_and_dynamic_path_proof": "Actual applied false/true -> initial/saved; exact loop viewports900x640/1000x850; scrolled export only ifheight640 after PointerScrolled and queue fullinsideviewport assertions. No filename inference outside explicitly authored loop."
+    },
+    {
+      "name": "tag-sort-layout-saved-1000x850.png",
+      "dimensions": [
+        1000,
+        850
+      ],
+      "producer": {
+        "path": "crates/hydrus-gui/tests/gui/manage_tags_sort.rs",
+        "line": 371,
+        "text": "                    .join(format!(\"tag-sort-layout-{state}-{width}x{height}.png\")),",
+        "anchor_git_head": "7c74c617165a22814a8d0202008794b2beb53de0",
+        "line_sha256": "8257266c826da074f1e6193144ff4b5b937c270adc636dfefc2a35ee2e650fd3"
+      },
+      "state_and_dynamic_path_proof": "Actual applied false/true -> initial/saved; exact loop viewports900x640/1000x850; scrolled export only ifheight640 after PointerScrolled and queue fullinsideviewport assertions. No filename inference outside explicitly authored loop."
+    },
+    {
+      "name": "tag-sort-layout-saved-900x640-scrolled.png",
+      "dimensions": [
+        900,
+        640
+      ],
+      "producer": {
+        "path": "crates/hydrus-gui/tests/gui/manage_tags_sort.rs",
+        "line": 397,
+        "text": "                        .join(format!(\"tag-sort-layout-{state}-900x640-scrolled.png\")),",
+        "anchor_git_head": "7c74c617165a22814a8d0202008794b2beb53de0",
+        "line_sha256": "6d96f83c4b05d2764c4d7830c5c75099c8b27b04d9ef9c4c54af8b960ec6153d"
+      },
+      "state_and_dynamic_path_proof": "Actual applied false/true -> initial/saved; exact loop viewports900x640/1000x850; scrolled export only ifheight640 after PointerScrolled and queue fullinsideviewport assertions. No filename inference outside explicitly authored loop."
+    },
+    {
+      "name": "tag-namespace-order-options.png",
+      "dimensions": [
+        1000,
+        850
+      ],
+      "producer": {
+        "path": "crates/hydrus-gui/tests/gui/tag_namespace_order.rs",
+        "line": 274,
+        "text": "        &std::path::Path::new(env!(\"CARGO_TARGET_TMPDIR\")).join(\"tag-namespace-order-options.png\"),",
+        "anchor_git_head": "7c74c617165a22814a8d0202008794b2beb53de0",
+        "line_sha256": "37a0730936354766b5352893522760264bcdec5cb0640ef0ad8d5965add99624"
+      },
+      "state_and_dynamic_path_proof": "Saved studio/rawqueue parent before scroll; strict runtime/imageinspectionneeded."
+    },
+    {
+      "name": "tag-namespace-order-options-scrolled.png",
+      "dimensions": [
+        1000,
+        850
+      ],
+      "producer": {
+        "path": "crates/hydrus-gui/tests/gui/tag_namespace_order.rs",
+        "line": 311,
+        "text": "            .join(\"tag-namespace-order-options-scrolled.png\"),",
+        "anchor_git_head": "7c74c617165a22814a8d0202008794b2beb53de0",
+        "line_sha256": "0f75550f159fb1255301a7b6005c027292729ef5381b77a19bb9462ff26988b7"
+      },
+      "state_and_dynamic_path_proof": "Real pointerwheel decreases scrollY, savedrawqueue equality before lowerqueue capture; freshpixels determine actualcontrolreadability."
+    },
+    {
+      "name": "tag-namespace-order-enter-text.png",
+      "dimensions": [
+        520,
+        220
+      ],
+      "producer": {
+        "path": "crates/hydrus-gui/tests/gui/tag_namespace_order.rs",
+        "line": 321,
+        "text": "            .join(\"tag-namespace-order-enter-text.png\"),",
+        "anchor_git_head": "7c74c617165a22814a8d0202008794b2beb53de0",
+        "line_sha256": "7e4c5919188af561a71ce435914e34410b0657db9abde0444cad7d50c4c2de66"
+      },
+      "state_and_dynamic_path_proof": "Supplemental Add namespace-default child differs from actualblankQtPNG."
+    },
+    {
+      "name": "tag-namespace-order-add-blank.png",
+      "dimensions": [
+        520,
+        220
+      ],
+      "producer": {
+        "path": "crates/hydrus-gui/tests/gui/tag_namespace_order.rs",
+        "line": 193,
+        "text": "                    .join(\"tag-namespace-order-add-blank.png\"),",
+        "anchor_git_head": "7c74c617165a22814a8d0202008794b2beb53de0",
+        "line_sha256": "5f121497235a16fd4759a5844d45e2f685a41bfd8d80e18ead5633ec7df1a0f1"
+      },
+      "state_and_dynamic_path_proof": "Actualreal_text blank case after title/default/button/rawtext assertions before acceptedApply; matches Qtblank-validstate."
+    },
+    {
+      "name": "tag-namespace-order-edit.png",
+      "dimensions": [
+        520,
+        220
+      ],
+      "producer": {
+        "path": "crates/hydrus-gui/tests/gui/tag_namespace_order.rs",
+        "line": 135,
+        "text": "                            .join(\"tag-namespace-order-edit.png\"),",
+        "anchor_git_head": "7c74c617165a22814a8d0202008794b2beb53de0",
+        "line_sha256": "3e2cf78929178cedcb6a29a1706837a84e05194c809e034bfbeb21ed02230ba7"
+      },
+      "state_and_dynamic_path_proof": "First populated recordedEdit captured after exactrecorded default/title checks before response; no matchingQtEditPNG."
+    }
+  ],
+  "current_source_assertions": {
+    "GUI_original": 95,
+    "GUI_current": 113,
+    "original_tests": 7,
+    "current_tests": 8,
+    "current_execution": false
+  },
+  "actual_root_reference_rerun_provenance": "/workspace/validation-reviews/sort4/reference/root-provenance.json",
+  "actual_root_reference_rerun_provenance_sha256": "e049af33ffa2aeb6c7eceb917b87a25a4616039e030fbef569461dabf2f9f048",
+  "reference_images": [
+    {
+      "path": "/workspace/hydrus-mine/oracle/fixtures/manage_tags_sort_options.png",
+      "source_commit": "7c74c617165a22814a8d0202008794b2beb53de0",
+      "sha256": "11a989071ae84d525062b0f1c5beb1d8b649e6a5af037246d8838df276ea4033",
+      "root_actually_viewed": true,
+      "viewed_by_this_preparer": false
+    },
+    {
+      "path": "/workspace/hydrus-mine/oracle/fixtures/tag-namespace-order-qt.png",
+      "source_commit": "7c74c617165a22814a8d0202008794b2beb53de0",
+      "sha256": "00d4400443a54d23da16294f09d253548169536746706a87114d8d8c8ed14092",
+      "root_actually_viewed": true,
+      "viewed_by_this_preparer": false
+    },
+    {
+      "path": "/workspace/hydrus-mine/oracle/fixtures/tag-namespace-order-enter-text-qt.png",
+      "source_commit": "7c74c617165a22814a8d0202008794b2beb53de0",
+      "sha256": "a806a5f7e893e278bfea15a11f73b4776574564943c4fda5c6017bb24c2d0260",
+      "root_actually_viewed": true,
+      "viewed_by_this_preparer": false
+    }
+  ],
+  "native_artifact_id": null,
+  "native_zip_sha256": null,
+  "native_render_review": "pending",
+  "approval": false
+}

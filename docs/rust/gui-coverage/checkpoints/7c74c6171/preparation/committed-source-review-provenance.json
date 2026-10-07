@@ -1,0 +1,121 @@
+{
+  "source_commit": "7c74c617165a22814a8d0202008794b2beb53de0",
+  "run_id": 37567007002,
+  "published_baseline": "b5b079a332ad6036bfa016e3f213a04db009eaf0",
+  "assertion_preservation": {
+    "baseline": "b5b079a332ad6036bfa016e3f213a04db009eaf0",
+    "implementation_commit": "a4771fca4038b2e3df0e0f8d75ac78be310d089d",
+    "tests_executed": false,
+    "files": [
+      {
+        "path": "crates/hydrus-gui/tests/gui/manage_tags_sort.rs",
+        "prior_assertions": 52,
+        "current_assertions": 65,
+        "all_original_lines_preserved_in_order": true,
+        "old_sha256": "c1c3c9a1f31e5d0b8d77ee7d0953375a8db4d58338980f6194e7e01dc932d09f",
+        "new_sha256": "b8fcb302b359adf0fab0592c7cf0cac000787134f33a6d4dbc6c435af85cb2ae"
+      },
+      {
+        "path": "crates/hydrus-gui/tests/gui/tag_namespace_order.rs",
+        "prior_assertions": 43,
+        "current_assertions": 48,
+        "all_original_lines_preserved_in_order": true,
+        "old_sha256": "a6fa1e5857003f8e17d7eeca61b66a0fadc8d368c5931ae04f0a46708c64e7be",
+        "new_sha256": "63c96613849bb1a2f5c7d1f2536b4984271128cfa842f29114f166d6dd8b7a25"
+      }
+    ],
+    "slint_generation_matches_integrated_ui": true
+  },
+  "cached_slint_generation": {
+    "kind": "Cached Slint1.18.1 generation only; no Rust compilation or runtime validation",
+    "exit_code": 0,
+    "elapsed_seconds": 7.134893294001813,
+    "child_maxrss_kib": 1328828,
+    "checked_ui_sha256": "cd6bc428d6ad2a4a8d07556d05eb4e4421cae9fa72f344771877fd9aa1d3db93",
+    "source_worktree": "/workspace/tag-sort-layout-tests",
+    "base_source": "b5b079a332ad6036bfa016e3f213a04db009eaf0",
+    "deny_warnings": true
+  },
+  "slint_is_not_Rust_or_runtime": true,
+  "actual_reference_rerun_provenance": {
+    "baseline": "b5b079a332ad6036bfa016e3f213a04db009eaf0",
+    "recorded_utc": "2026-10-07T03:21:08.475314+00:00",
+    "recorders_unchanged": true,
+    "all_canonical_fixtures_and_png_bytes_unchanged": true,
+    "actual_runs": [
+      {
+        "name": "manage_tags_sort",
+        "actual_result_sha256": "ce904c7be5542258b547fb79b760459e53187136e49ad101c974a610b367f42d",
+        "canonical_values_equal": true,
+        "case_count": 72,
+        "lifetime_or_real_text_count": 2,
+        "exit_code": 0
+      },
+      {
+        "name": "tag_namespace_order",
+        "actual_result_sha256": "8902f88f029709e65a93ef316762bd3ab1b19c87824a369041bb3e8c3cc4fd31",
+        "canonical_values_equal": true,
+        "case_count": 18,
+        "lifetime_or_real_text_count": 3,
+        "exit_code": 0
+      }
+    ],
+    "input_hashes": [
+      {
+        "path": "oracle/record_manage_tags_sort.py",
+        "sha256": "99a5282ec00c26836ae016e4fd1fb8bc959eb0a4264ad0aba6b295ac42293746"
+      },
+      {
+        "path": "oracle/record_tag_namespace_order.py",
+        "sha256": "0693d545e7e79990cd4aab94c24e0a88cf986b77664aebad21350a9fbaaca0e6"
+      },
+      {
+        "path": "oracle/fixtures/manage_tags_sort.json",
+        "sha256": "9578983a673054bd5d0f9413ca8fb612ae22d13767c5700aac82d9219d69acae"
+      },
+      {
+        "path": "oracle/fixtures/tag_namespace_order.json",
+        "sha256": "8b49a25df8dbd581ead8546bf3730910da1be94c39f1b22b8cb6715fb1a92097"
+      },
+      {
+        "path": "oracle/fixtures/manage_tags_sort_options.png",
+        "sha256": "11a989071ae84d525062b0f1c5beb1d8b649e6a5af037246d8838df276ea4033"
+      },
+      {
+        "path": "oracle/fixtures/tag-namespace-order-qt.png",
+        "sha256": "00d4400443a54d23da16294f09d253548169536746706a87114d8d8c8ed14092"
+      },
+      {
+        "path": "oracle/fixtures/tag-namespace-order-enter-text-qt.png",
+        "sha256": "a806a5f7e893e278bfea15a11f73b4776574564943c4fda5c6017bb24c2d0260"
+      }
+    ],
+    "logs": [
+      {
+        "name": "manage-tags-sort.log",
+        "sha256": "69a92f19478d25ec9a1892b19afd17ecd854378233876f1db493e9ad16eab939"
+      },
+      {
+        "name": "tag-namespace-order.log",
+        "sha256": "0695cd7c45411b5d6ac7c555f7ca0db893ad2c72fafca8623aa313376afb15a6"
+      }
+    ],
+    "scope": "Actual root Qt offscreen recorders, sequential temporary basic fixtures, timeout180s each. Manage Tags actual72 sortcases and2lifetimes; namespace18scripted queuepaths6sortorders3actualmodal EnterText handlers. Scripted question answers remain explicitly distinct from real EnterText handling. No current native runtime or rendered approval.",
+    "commands": [
+      "source /workspace/.cloud/hydrus/activate.sh; timeout 180 /workspace/.cloud/hydrus/pyenv/bin/python oracle/record_manage_tags_sort.py --child /workspace/validation-reviews/sort4/reference/manage_tags_sort.actual.json",
+      "source /workspace/.cloud/hydrus/activate.sh; timeout 180 /workspace/.cloud/hydrus/pyenv/bin/python oracle/record_tag_namespace_order.py --child /workspace/validation-reviews/sort4/reference/tag_namespace_order.actual.json"
+    ],
+    "root_actually_viewed_reference_pngs": [
+      "oracle/fixtures/manage_tags_sort_options.png",
+      "oracle/fixtures/tag-namespace-order-qt.png",
+      "oracle/fixtures/tag-namespace-order-enter-text-qt.png"
+    ],
+    "reference_visual_observations": "Both parent frames show four initial/default sort contexts arranged horizontally, with namespace grouping heading/queue beneath; native layout is vertical and saved-state images differ. Actual EnterText image shows blank valid input, complete multiline instruction with native Qt scrollbars, apply/cancel footer. No matching Qt populated Edit or separate ManageTags consumer PNG exists in these recorders.",
+    "log_limit": "Both runs log sandbox-denied optional client API loopback listener startup on port45901 and offscreen Qt propagateSizeHints/raise notices. These recorders use direct Qt/DB calls, not that API; both exited0 with exact complete fixture equality and normal controller shutdown. No API connectivity validation is claimed."
+  },
+  "actual_reference_provenance_sha256": "e049af33ffa2aeb6c7eceb917b87a25a4616039e030fbef569461dabf2f9f048",
+  "reference_values_and_PNG_bytes_unchanged": true,
+  "tests_executed_by_this_preparer": false,
+  "images_viewed_by_this_preparer": false,
+  "approval": false
+}

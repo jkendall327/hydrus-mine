@@ -1,0 +1,10 @@
+{
+  "kind": "Cached Slint1.18.1 generation only; no Rust compilation or runtime validation",
+  "exit_code": 0,
+  "elapsed_seconds": 7.134893294001813,
+  "child_maxrss_kib": 1328828,
+  "checked_ui_sha256": "cd6bc428d6ad2a4a8d07556d05eb4e4421cae9fa72f344771877fd9aa1d3db93",
+  "source_worktree": "/workspace/tag-sort-layout-tests",
+  "base_source": "b5b079a332ad6036bfa016e3f213a04db009eaf0",
+  "deny_warnings": true
+}

@@ -9,6 +9,7 @@ use hydrus_store::{
 };
 use serde_json::{Value, json};
 use slint::{ComponentHandle as _, Model as _};
+use std::{cell::RefCell, collections::BTreeMap, rc::Rc};
 const LABELS: [&str; 2] = [
     "Default tag sort in search page manage tags dialogs: ",
     "Default tag sort in media viewer manage tags dialogs: ",
@@ -207,6 +208,206 @@ fn native_options_stage_cancel_save_reopen_and_reject_retired_sender() {
     .unwrap();
     current.invoke_cancel();
 }
+
+#[test]
+fn actual_sort_stacks_fit_their_rows_and_scroll_without_overlap_at_both_viewports() {
+    let recorded = hydrus_testkit::fixture_json("manage_tags_sort.json");
+    let (_directory, store, files) = fixture::seed_owned(&recorded);
+    let windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    ui.show().unwrap();
+    let bound = bind(
+        &ui,
+        Pages::single(SearchPage::fixed(
+            store.clone(),
+            "sort geometry",
+            None,
+            files,
+        )),
+    );
+    for applied in [false, true] {
+        for (width, height) in [(900, 640), (1000, 850)] {
+            if applied {
+                open_options(&ui);
+                let staged = bound.options.borrow().as_ref().unwrap().clone_strong();
+                page(&staged);
+                for context in 0..2 {
+                    edit(&staged, context, &recorded["options"]["applied"][context]);
+                }
+                staged.invoke_apply();
+            }
+            let saved = store.read::<Settings>(settings::get).unwrap();
+            let expected = &recorded["options"][if applied { "reopened" } else { "initial" }];
+            assert_eq!(saved.search_page, sort(&expected[0]));
+            assert_eq!(saved.media_viewer, sort(&expected[1]));
+            open_options(&ui);
+            let window = bound.options.borrow().as_ref().unwrap().clone_strong();
+            page(&window);
+            let contexts: Vec<_> = window
+                .get_rows()
+                .iter()
+                .enumerate()
+                .filter(|(_, row)| row.kind == 12 || row.kind == 35)
+                .map(|(index, row)| {
+                    let mut fields = vec![0, 1];
+                    if row.kind == 35 && row.sibling_sort_visible {
+                        fields.push(3);
+                    }
+                    if row.grouped {
+                        fields.push(2);
+                    }
+                    (i32::try_from(index).unwrap(), fields)
+                })
+                .collect();
+            assert_eq!(contexts.len(), 4);
+            let heading = i32::try_from(
+                window
+                    .get_rows()
+                    .iter()
+                    .position(|row| row.kind == 0 && row.label == "namespace grouping sort")
+                    .unwrap(),
+            )
+            .unwrap();
+            let queue = i32::try_from(
+                window
+                    .get_rows()
+                    .iter()
+                    .position(|row| row.kind == 37)
+                    .unwrap(),
+            )
+            .unwrap();
+            // Fresh windows/maps keep retired optional-field measurements out
+            // of the initial and changed sibling/grouping configurations.
+            let choices = Rc::new(RefCell::new(BTreeMap::<
+                (i32, i32),
+                hydrus_gui::MenuChoiceFrame,
+            >::new()));
+            let allocations = Rc::new(RefCell::new(
+                BTreeMap::<i32, hydrus_gui::MenuChoiceFrame>::new(),
+            ));
+            window.on_menu_choice_geometry({
+                let choices = choices.clone();
+                move |row, field, frame| {
+                    choices.borrow_mut().insert((row, field), frame);
+                }
+            });
+            window.on_tag_sort_row_geometry({
+                let allocations = allocations.clone();
+                move |row, frame| {
+                    allocations.borrow_mut().insert(row, frame);
+                }
+            });
+            let native = windows.get(windows.count() - 1).unwrap();
+            // Settle the requested viewport before enabling row observation.
+            // Dropdown callbacks are already installed for this first paint.
+            headless::render(&native, width, height);
+            window.set_measure_tag_sort_layout(true);
+            let settled = std::time::Instant::now();
+            super::active_predicates::drain_predicate_timers_until(
+                "actual tag-sort controls and allocated rows must publish geometry",
+                || {
+                    headless::render(&native, width, height);
+                    let rows = allocations.borrow();
+                    let controls = choices.borrow();
+                    settled.elapsed() >= std::time::Duration::from_millis(10)
+                        && rows.contains_key(&heading)
+                        && rows.contains_key(&queue)
+                        && contexts.iter().all(|(row, fields)| {
+                            rows.contains_key(row)
+                                && fields
+                                    .iter()
+                                    .all(|field| controls.contains_key(&(*row, *field)))
+                        })
+                },
+            );
+            let scroll_position = {
+                let rows = allocations.borrow();
+                let controls = choices.borrow();
+                for frame in rows.values().chain(controls.values()) {
+                    assert!(
+                        [frame.x, frame.y, frame.w, frame.h]
+                            .into_iter()
+                            .all(f32::is_finite)
+                    );
+                    assert!(frame.w > 0.0 && frame.h > 0.0, "{frame:?}");
+                    assert!(
+                        frame.x >= 0.0 && frame.x + frame.w <= width as f32,
+                        "{frame:?}"
+                    );
+                }
+                for (index, (row, fields)) in contexts.iter().enumerate() {
+                    let allocation = &rows[row];
+                    for field in fields {
+                        let control = &controls[&(*row, *field)];
+                        assert!(
+                            control.x >= allocation.x
+                                && control.x + control.w <= allocation.x + allocation.w
+                                && control.y >= allocation.y
+                                && control.y + control.h <= allocation.y + allocation.h,
+                            "actual control {control:?} must fit allocated row {allocation:?}"
+                        );
+                    }
+                    for pair in fields.windows(2) {
+                        let upper = &controls[&(*row, pair[0])];
+                        let lower = &controls[&(*row, pair[1])];
+                        assert!(upper.y + upper.h < lower.y, "{upper:?} overlaps {lower:?}");
+                    }
+                    let next = contexts.get(index + 1).map_or(heading, |(row, _)| *row);
+                    assert!(allocation.y + allocation.h < rows[&next].y);
+                    let last = &controls[&(*row, *fields.last().unwrap())];
+                    assert!(last.y + last.h < rows[&next].y);
+                }
+                assert!(rows[&heading].y + rows[&heading].h < rows[&queue].y);
+                let first = &controls[&(contexts[0].0, 0)];
+                assert!(first.y >= 0.0 && first.y + first.h <= height as f32);
+                // The genuine 8px gap beside the first dropdown sends wheel
+                // input to the Options ScrollView, rather than changing sort.
+                slint::LogicalPosition::new(first.x - 4.0, first.y + first.h / 2.0)
+            };
+            let state = if applied { "saved" } else { "initial" };
+            let pixels = headless::render(&native, width, height);
+            headless::save_png(
+                &std::path::Path::new(env!("CARGO_TARGET_TMPDIR"))
+                    .join(format!("tag-sort-layout-{state}-{width}x{height}.png")),
+                &pixels,
+                width,
+                height,
+            )
+            .unwrap();
+            if height == 640 {
+                let before_scroll = window.get_options_scroll_y();
+                native.dispatch_event(slint::platform::WindowEvent::PointerScrolled {
+                    position: scroll_position,
+                    delta_x: 0.0,
+                    delta_y: -1000.0,
+                });
+                super::active_predicates::drain_predicate_timers_until(
+                    "the narrow tag-sort page must scroll to the real namespace queue",
+                    || {
+                        headless::render(&native, width, height);
+                        window.get_options_scroll_y() < before_scroll
+                            && allocations.borrow().get(&queue).is_some_and(|frame| {
+                                frame.y >= 0.0 && frame.y + frame.h <= height as f32
+                            })
+                    },
+                );
+                let pixels = headless::render(&native, width, height);
+                headless::save_png(
+                    &std::path::Path::new(env!("CARGO_TARGET_TMPDIR"))
+                        .join(format!("tag-sort-layout-{state}-900x640-scrolled.png")),
+                    &pixels,
+                    width,
+                    height,
+                )
+                .unwrap();
+            }
+            window.invoke_cancel();
+            assert_eq!(store.read::<Settings>(settings::get).unwrap(), saved);
+        }
+    }
+    ui.hide().unwrap();
+}
+
 #[test]
 fn main_selection_and_viewer_current_file_use_distinct_defaults_and_live_dialog_keeps_its_sort() {
     let recorded = hydrus_testkit::fixture_json("manage_tags_sort.json");
@@ -297,6 +498,17 @@ fn main_selection_and_viewer_current_file_use_distinct_defaults_and_live_dialog_
         assert_eq!(rows(&current, &recorded), case["reopened"]["rows"]);
         let pixels = headless::render(&windows.get(windows.count() - 1).unwrap(), 720, 680);
         assert!(pixels.chunks_exact(4).any(|pixel| pixel[3] == 255));
+        let name = match context {
+            Context::SearchPage => "manage-tags-sort-search-page.png",
+            Context::MediaViewer => "manage-tags-sort-media-viewer.png",
+        };
+        headless::save_png(
+            &std::path::Path::new(env!("CARGO_TARGET_TMPDIR")).join(name),
+            &pixels,
+            720,
+            680,
+        )
+        .unwrap();
         current.invoke_cancel();
     }
 }

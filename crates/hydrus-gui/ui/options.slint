@@ -132,6 +132,8 @@ export component OptionsWindow inherits Window {
     callback speed-memory-geometry(int,string,MenuChoiceFrame);
     in property <bool> measure-noneable-numbers: false;
     callback noneable-number-measured(int,MenuChoiceFrame,MenuChoiceFrame,length,bool,bool,int);
+    in property <bool> measure-tag-sort-layout: false;
+    callback tag-sort-row-geometry(int,MenuChoiceFrame);
 
     in property <[TableRow]> routing-url-rows;
     in property <[TableRow]> routing-file-rows;
@@ -357,10 +359,21 @@ export component OptionsWindow inherits Window {
                         for row[i] in root.rows: VerticalLayout {
                             padding-left: row.depth * 16px;
                             spacing: 2px;
+                            property <MenuChoiceFrame> row-frame: {x:self.absolute-position.x,y:self.absolute-position.y,w:self.width,h:self.height};
+                            property <bool> row-measurement-pending: true;
+                            changed row-frame => { self.row-measurement-pending = true; }
+                            Timer {
+                                interval: 1ms;
+                                running: root.measure-tag-sort-layout && parent.row-measurement-pending && (row.kind == 12 || row.kind == 35 || row.kind == 37 || (row.kind == 0 && row.label == "namespace grouping sort"));
+                                triggered => {
+                                    parent.row-measurement-pending = false;
+                                    root.tag-sort-row-geometry(i,parent.row-frame);
+                                }
+                            }
                           if row.kind == 37: Text { text: row.label; wrap: word-wrap; color: Theme.text; }
                           HorizontalLayout {
                             spacing: 8px;
-                            min-height: row.kind == 2 || (row.kind == 3 && (row.none-phrase == "ignore normal browsing" || row.none-phrase == "ignore mouse movements" || row.none-phrase == "ignore client api")) ? max(26px, self.preferred-height) : 26px;
+                            min-height: row.kind == 2 || row.kind == 12 || row.kind == 35 || (row.kind == 3 && (row.none-phrase == "ignore normal browsing" || row.none-phrase == "ignore mouse movements" || row.none-phrase == "ignore client api")) ? max(26px, self.preferred-height) : 26px;
                             if row.kind == 0: HorizontalLayout {
                                 horizontal-stretch: 1;
                                 heading := Text {
