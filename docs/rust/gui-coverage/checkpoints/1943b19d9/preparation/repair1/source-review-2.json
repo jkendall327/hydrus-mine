@@ -1,0 +1,304 @@
+{
+  "review_type": "independent repaired integrated source review; no runtime/render approval",
+  "source_commit": "1943b19d987771264a06558e57b4255679190de0",
+  "baseline_commit": "625a2bdafc5b5820f4d9201f46640d7770fbecd7",
+  "original_published_baseline": "fd3e855db1500c1473a6d920d9a47cfce83ec57f",
+  "original_implementation_commit": "30b5ace45119124b1b3cce13c767aade5299b3ea",
+  "integrated_source_pin_complete": true,
+  "selected_ids": [
+    "audit-options-external-programs-external-calls-delete",
+    "audit-options-external-programs-external-calls-duplicate"
+  ],
+  "source_review_conclusion": "No concrete source blocker. Ready for full exact repaired-source Linux CI and all seven fresh defining images.",
+  "runtime_approval": false,
+  "rendered_approval": false,
+  "source_blockers": [],
+  "changed_files": [
+    "crates/hydrus-gui/tests/gui/external_calls.rs",
+    "docs/rust/DIFFERENCES.md",
+    "docs/rust/GUI.md",
+    "docs/rust/gui-coverage/parity/external-calls.json"
+  ],
+  "source_pins": [
+    {
+      "path": "crates/hydrus-gui/tests/gui/external_calls.rs",
+      "source_commit": "1943b19d987771264a06558e57b4255679190de0",
+      "sha256": "ef44539c033f71a470076f1661d9328f1fcc841ad75683f2a31422833e014bc7",
+      "bytes": 63444,
+      "changed_in_repair": true
+    },
+    {
+      "path": "docs/rust/DIFFERENCES.md",
+      "source_commit": "1943b19d987771264a06558e57b4255679190de0",
+      "sha256": "a94fbe946105051973bf7fbe9ea87b109fc9fc85147e7d0dcaa81d4eb950fe8e",
+      "bytes": 267414,
+      "changed_in_repair": true
+    },
+    {
+      "path": "docs/rust/GUI.md",
+      "source_commit": "1943b19d987771264a06558e57b4255679190de0",
+      "sha256": "23b95ef67c85cedf9426c119023186c13852d243c2e815e0ff472cedcf4824c3",
+      "bytes": 332342,
+      "changed_in_repair": true
+    },
+    {
+      "path": "docs/rust/gui-coverage/parity/external-calls.json",
+      "source_commit": "1943b19d987771264a06558e57b4255679190de0",
+      "sha256": "5cf911f12d98ee4874796a5ecc4472296db70a45b32292c0e9fbd4d56d3a8407",
+      "bytes": 109797,
+      "changed_in_repair": true
+    },
+    {
+      "path": "crates/hydrus-gui/src/options_external_calls.rs",
+      "source_commit": "1943b19d987771264a06558e57b4255679190de0",
+      "sha256": "aaf0f08bee33dbd41db2868980381e607bd8a1a84038f1d7c9598c4073ad93dd",
+      "bytes": 19443,
+      "changed_in_repair": false
+    },
+    {
+      "path": "crates/hydrus-gui/src/external_call_window.rs",
+      "source_commit": "1943b19d987771264a06558e57b4255679190de0",
+      "sha256": "08982225de04ed866a7b59a22d51033befaf28ed5c9ff075e1630b51e36c05d8",
+      "bytes": 37603,
+      "changed_in_repair": false
+    },
+    {
+      "path": "crates/hydrus-gui/ui/external_calls.slint",
+      "source_commit": "1943b19d987771264a06558e57b4255679190de0",
+      "sha256": "b1d0f41309d7e9926c5a8a705ce87364961a04b9e6accc787eb8cafa4c196858",
+      "bytes": 13241,
+      "changed_in_repair": false
+    },
+    {
+      "path": "crates/hydrus-gui/ui/options.slint",
+      "source_commit": "1943b19d987771264a06558e57b4255679190de0",
+      "sha256": "cd6bc428d6ad2a4a8d07556d05eb4e4421cae9fa72f344771877fd9aa1d3db93",
+      "bytes": 56606,
+      "changed_in_repair": false
+    },
+    {
+      "path": "crates/hydrus-gui/src/headless.rs",
+      "source_commit": "1943b19d987771264a06558e57b4255679190de0",
+      "sha256": "c366399b1f509ea4859dd2e566a6e6a2b73d86ee6581aa34434fc5a16fc4bef7",
+      "bytes": 5629,
+      "changed_in_repair": false
+    },
+    {
+      "path": "crates/hydrus-gui-model/src/external_calls.rs",
+      "source_commit": "1943b19d987771264a06558e57b4255679190de0",
+      "sha256": "038ec90a3f8b2eed25f7f1c8282be8b98d95a2bbd66cd460cc5e5ee348172f02",
+      "bytes": 8978,
+      "changed_in_repair": false
+    },
+    {
+      "path": "crates/hydrus-gui-model/tests/model/external_calls.rs",
+      "source_commit": "1943b19d987771264a06558e57b4255679190de0",
+      "sha256": "1867beb79add1b9b1d4ad29f595fae1f43fea24e18450c77d2596a60ed587af3",
+      "bytes": 18344,
+      "changed_in_repair": false
+    },
+    {
+      "path": "hydrus/client/gui/panels/options/ExternalProgramsPanel.py",
+      "source_commit": "1943b19d987771264a06558e57b4255679190de0",
+      "sha256": "59f2f9a236a0fd6e3ac8fd281afdf1578aabe6d02f8979768a2f6d1a550d8004",
+      "bytes": 61407,
+      "changed_in_repair": false
+    },
+    {
+      "path": "hydrus/client/gui/lists/ClientGUIListCtrl.py",
+      "source_commit": "1943b19d987771264a06558e57b4255679190de0",
+      "sha256": "9e06b9cd7c79572c8463299899dd3d23715bdc5d0f4d702eac2a4dbe33b2068d",
+      "bytes": 75758,
+      "changed_in_repair": false
+    },
+    {
+      "path": "oracle/record_external_calls.py",
+      "source_commit": "1943b19d987771264a06558e57b4255679190de0",
+      "sha256": "327193153b4aab12f2d371d20a8c4d970311664d7a0b42f0712fdd92fab68b6a",
+      "bytes": 14875,
+      "changed_in_repair": false
+    },
+    {
+      "path": "oracle/fixtures/external_calls.json",
+      "source_commit": "1943b19d987771264a06558e57b4255679190de0",
+      "sha256": "c1c9e3a02fdeafa9b662e6c162bd5aed605a325359d8dea7bf07ea2896aa56f4",
+      "bytes": 65217,
+      "changed_in_repair": false
+    },
+    {
+      "path": "oracle/fixtures/external_calls.png",
+      "source_commit": "1943b19d987771264a06558e57b4255679190de0",
+      "sha256": "2eda195f01254bf2de45455e5a4f3e1be181911317ae3af0dea390e03708a139",
+      "bytes": 138263,
+      "changed_in_repair": false
+    }
+  ],
+  "assertion_preservation": {
+    "all_initial_assertion_spans_preserved": true,
+    "initial_macros": 239,
+    "current_macros": 242,
+    "original_baseline_macros_preserved": 165,
+    "initial_tests": 9,
+    "current_tests": 9,
+    "all_initial_lines_preserved_except_equivalent_clone_from": true,
+    "property_forcing": false,
+    "answer_or_input_retry": false,
+    "warning_waiver": false,
+    "test_sha256": "ef44539c033f71a470076f1661d9328f1fcc841ad75683f2a31422833e014bc7"
+  },
+  "manifest_preservation": {
+    "selected_entries_only": [
+      "audit-options-external-programs-external-calls-delete",
+      "audit-options-external-programs-external-calls-duplicate"
+    ],
+    "unchanged_siblings": 18,
+    "all_status_behavior_reference_and_prior_anchors_unchanged": true,
+    "all_original_top_level_metadata_unchanged": true,
+    "banked_unchanged": 357,
+    "pending_unchanged": 18
+  },
+  "source_observations": [
+    "No concrete repaired-source blocker found. The four-file repair changes only tests and pending documentation/selected manifest evidence; production, Slint, model and reference inputs are unchanged.",
+    "All 239 initial assertions remain bytewise/in order, now 242 across the same nine tests. All initial lines remain ordered except the equivalent String clone assignment replaced by clone_from; all original 165 baseline assertions remain.",
+    "ask closes/hides the real question and clears its slot before notifying the answer closure. Declined Duplicate does not call changed(); the existing repeated 30 ms owner timer updates only child_open. Capturing the live warning ran that timer, while the immediate post-answer getter preceded its next refresh. This is an observation-readiness precondition, not evidence of persistent list corruption.",
+    "The repair first asserts actual question slot empty and question window hidden, then renders the retained list while child_open remains true with a two-second deadline and 5 ms polling. It preserves the original !child_open assertion and all recorded rows/selection/Store comparisons. No property is set and the answer is not repeated.",
+    "The clone_from change directly matches the denied assigning_clones suggestion and creates the same expected String content while preserving complete typed duplicate equality. No warning waiver or weakened comparison is introduced.",
+    "Pending GUI/DIFFERENCES and manifest preserve the failed initial run and five diagnostic frames. Two result frames were never reached; no execution/render credit is inferred. All 18 siblings, statuses, behavior/reference fields, original top-level metadata and prior implementation anchors remain unchanged. Current source/capture producers are separately pinned here.",
+    "The direct pending Delete/Duplicate successor guards, OS URL Pipeline fix, typed six-key preservation/reopen and saved Japanese consumer are unchanged from the independently reviewed initial implementation. All seven fresh result/prompt/list views are still mandatory."
+  ],
+  "expected_fresh_captures": [
+    {
+      "name": "external-calls-duplicate-selected.png",
+      "dimensions": [
+        1100,
+        800
+      ],
+      "state": "Ordinary synthetic duplicate, two selected rows, before Delete question.",
+      "test_symbol": "list_duplicate_defaults_delete_capture_and_options_persistence",
+      "producer_path": "crates/hydrus-gui/tests/gui/external_calls.rs",
+      "producer_line": 220,
+      "producer_line_sha256": "83acd13e17c1603b981c60b860bd1e13e88a3687d002219c5bb3315f8c97d7ce",
+      "source_commit": "1943b19d987771264a06558e57b4255679190de0",
+      "executed_or_inspected_for_this_source_review": false
+    },
+    {
+      "name": "external-calls-duplicate-warning.png",
+      "dimensions": [
+        900,
+        420
+      ],
+      "state": "Exact recorded 257-character executable import warning before decline. Supported resized question, not default geometry.",
+      "test_symbol": "duplicate_warning_decline_keeps_unsorted_unselected_prefix_accept_finishes_and_retired_question_cannot_append",
+      "producer_path": "crates/hydrus-gui/tests/gui/external_calls.rs",
+      "producer_line": 550,
+      "producer_line_sha256": "2b7055cd771d3f1332b1529b25aba2479aae3ef858e3110bb50cdb7bb3de39ac",
+      "source_commit": "1943b19d987771264a06558e57b4255679190de0",
+      "executed_or_inspected_for_this_source_review": false
+    },
+    {
+      "name": "external-calls-duplicate-declined-prefix.png",
+      "dimensions": [
+        1100,
+        800
+      ],
+      "state": "Recorded four rows after decline; appended valid prefix is unsorted/unselected, original three selected.",
+      "test_symbol": "duplicate_warning_decline_keeps_unsorted_unselected_prefix_accept_finishes_and_retired_question_cannot_append",
+      "producer_path": "crates/hydrus-gui/tests/gui/external_calls.rs",
+      "producer_line": 606,
+      "producer_line_sha256": "5ffc65cd5d8491d75e4739e7c635c67077547423178a2fe42ead331189330870",
+      "source_commit": "1943b19d987771264a06558e57b4255679190de0",
+      "executed_or_inspected_for_this_source_review": false
+    },
+    {
+      "name": "external-calls-duplicate-complete.png",
+      "dimensions": [
+        1100,
+        800
+      ],
+      "state": "Recorded six ordered selected originals/copies after acceptance, before Apply. Independently saved/reopened full Manager/row comparisons follow.",
+      "test_symbol": "duplicate_warning_decline_keeps_unsorted_unselected_prefix_accept_finishes_and_retired_question_cannot_append",
+      "producer_path": "crates/hydrus-gui/tests/gui/external_calls.rs",
+      "producer_line": 604,
+      "producer_line_sha256": "b2b0ff37794d06226879ed6e62709edf3ebf7870c6d7f3e35e1ddd0832807023",
+      "source_commit": "1943b19d987771264a06558e57b4255679190de0",
+      "executed_or_inspected_for_this_source_review": false
+    },
+    {
+      "name": "external-calls-delete-review.png",
+      "dimensions": [
+        520,
+        200
+      ],
+      "state": "Remove all selected? question before response; OS file/URL selected captured identities asserted.",
+      "test_symbol": "simple_delete_includes_os_launch_rows_but_cancel_and_closed_owner_do_not_change_saved_calls",
+      "producer_path": "crates/hydrus-gui/tests/gui/external_calls.rs",
+      "producer_line": 702,
+      "producer_line_sha256": "0906539cc2bdeea7c7317d8f43bba82255b7e15f1c837f9609886350482b4b1a",
+      "source_commit": "1943b19d987771264a06558e57b4255679190de0",
+      "executed_or_inspected_for_this_source_review": false
+    },
+    {
+      "name": "external-calls-delete-empty.png",
+      "dimensions": [
+        1100,
+        800
+      ],
+      "state": "Accepted removal of both OS call rows, zero-row Options draft before Apply.",
+      "test_symbol": "simple_delete_includes_os_launch_rows_but_cancel_and_closed_owner_do_not_change_saved_calls",
+      "producer_path": "crates/hydrus-gui/tests/gui/external_calls.rs",
+      "producer_line": 724,
+      "producer_line_sha256": "d7cfed7b2a3f5ce02c3648a5ae295dab8b030d56329c72777f417742a8b15e46",
+      "source_commit": "1943b19d987771264a06558e57b4255679190de0",
+      "executed_or_inspected_for_this_source_review": false
+    },
+    {
+      "name": "external-calls-reopened-saved.png",
+      "dimensions": [
+        1100,
+        800
+      ],
+      "state": "Actual persisted saved 日本 list reopened after exact Manager identity/Process equality assertions; captured before editor creation. Supporting Unicode persistence, not accepted-six-duplicate still.",
+      "test_symbol": "callable_command_child_apply_cancel_parent_staging_reopen_and_retired_owner",
+      "producer_path": "crates/hydrus-gui/tests/gui/external_calls.rs",
+      "producer_line": 185,
+      "producer_line_sha256": "cf6eb4b3118f2eb312947d5e26c0fb292873d54b0f680af8d112caa2aaf2415b",
+      "source_commit": "1943b19d987771264a06558e57b4255679190de0",
+      "executed_or_inspected_for_this_source_review": false
+    }
+  ],
+  "finite_limits": [
+    "Exactly the original registered-call Delete and Duplicate leaves. No Add Defaults, import/export, broader process/list/reopen parents, aliases or structural credit.",
+    "Qt questions use real handlers with scripted GetYesNo answers. The actual unchanged Qt PNG is a callable child, with no outer-list/question/warning render pair; no Qt pixel, dialog decoration, timing or placement parity is established.",
+    "Defining views are supported 1100 × 800 Options lists, 900 × 420 warning and 520 × 200 Delete question. Default-size/universal geometry and physical Delete/Duplicate button activation remain outside this callback-driven follow-up.",
+    "Retirement is scoped to parent Cancel and replacement owners. Automatic Main destruction, final Bound drop, arbitrary temporary hide/page switching and broad ownership guarantees are not claimed.",
+    "Synthetic process/size-warning cases and supported OS rows do not establish every imported call type/platform/rule combination. Legacy executable-manager migration, unsupported types, default-route regeneration, OS launches and full output remain outside scope. Separately banked routing/launch evidence receives no new credit.",
+    "Runtime and actual seven-image readability/state/glyph approval remain pending full exact-source Linux CI and fresh artifacts. Windows/macOS remain deferred."
+  ],
+  "failed_run_provenance": {
+    "source_commit": "625a2bdafc5b5820f4d9201f46640d7770fbecd7",
+    "run_id": 37590137304,
+    "strict_clippy": "failed assigning_clones",
+    "gui": "706 passed, one failed, zero ignored; Duplicate immediate display flag assertion at line 585.",
+    "available_defining_frames": 5,
+    "missing_defining_frames": [
+      "external-calls-duplicate-declined-prefix.png",
+      "external-calls-duplicate-complete.png"
+    ],
+    "diagnostic_only": true
+  },
+  "proof_hashes": {
+    "/workspace/validation-reviews/external-list2/source-review-2.json": "26a49e64b8cba384601744af3e8a6e055a6797c465377eb13312070e82b85ec5",
+    "/workspace/validation-reviews/external-list2/source-review-2.md": "55e550ae32d96c87f1cae36379d13131be3a5ef7b780fb2e3eacd7e611c3ff77",
+    "/workspace/validation-reviews/external-list2/source-review-preparation-2.json": "48770d3cb22afdbc0e9389da144a5bca655d2cc22acc23b020659f4e51dd0ed7",
+    "/workspace/validation-reviews/external-list2/diagnostic-render-review-2-625a2bdaf.json": "bac644431f8abb03278a6770199f98a68fbe3861fdd4a522679c5ee6f7dcf0a1",
+    "/workspace/validation-reviews/external-list2/diagnostic-render-review-2-625a2bdaf.md": "d3b749b485c9b881b11e2e6292f37d7e3a1863c66a0f29512eca99b8613759fd",
+    "/workspace/validation-reviews/external-list2/repair1/assertion-preservation-root.json": "616786a267c88b31750638c07b70899eca4a8339bfb8c5df2cfe8586fcc2006f",
+    "/workspace/validation-reviews/ci-625a2bdaf/failed-validation-outcome.json": "2fd6109a32df77bb82d94b08e82630b12a0d7a72db19af5cfec3ce685965622c"
+  },
+  "final_gates": [
+    "Completed green exact repaired-source required Linux jobs and selected tests/model replays.",
+    "Actual source/run/artifact/hash-bound inspection of all seven fresh defining PNGs, including both previously missing Duplicate results.",
+    "Finite scope/preservation review only; no parent/alias/default-route/launch or deferred-platform credit."
+  ],
+  "execution_note": "Read-only source/log/diagnostic image review and scratch writing only. No builds/Rust execution/mutations/product edits/push/canonical writes. Frozen baseline/initial source and diagnostic files unchanged; current native artifact remains pending."
+}

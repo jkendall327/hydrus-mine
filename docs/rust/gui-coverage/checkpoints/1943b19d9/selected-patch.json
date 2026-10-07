@@ -1,0 +1,331 @@
+{
+  "baseline_git_head": "1943b19d987771264a06558e57b4255679190de0",
+  "method": "Publish exactly two original leaves after exact-source full Linux CI and fresh independent behavioral/rendered review. Preserve prior357 IDs and assessments, native inventory and all unselected assessments except exact source anchor remaps and ancestor counts. Windows/macOS deferred; consumer and capture limits retained.",
+  "reference": {
+    "updates": [
+      {
+        "id": "audit-options-external-programs-external-calls-delete",
+        "status": "first_pass",
+        "assessment": "The actual Delete button captures selected call keys and asks the exact Remove all selected? question. Decline/close keep rows; acceptance deletes those keys including OS file/URL launch rows. Pending selection is blocked. Changes stay staged until Options Apply and persist/reopen; Cancel/retired answers cannot write. Actual Qt uses simple deletion without a protected-call branch.",
+        "evidence": [
+          {
+            "path": "crates/hydrus-gui/src/options_external_calls.rs",
+            "line": 180,
+            "anchor_git_head": "1943b19d987771264a06558e57b4255679190de0",
+            "line_sha256": "14857b5fa7ed28997f22d916dc00ee04274e1b935d9a856a8dbe04caf4ab24eb",
+            "symbol": "pub(crate) fn bind(",
+            "role": "scoped_implementation",
+            "description": "pub(crate) fn bind(",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui-model/src/external_calls.rs",
+            "line": 15,
+            "anchor_git_head": "1943b19d987771264a06558e57b4255679190de0",
+            "line_sha256": "d7b1a7498a62e4270a349e01ae898a245c4752efefce4ded5fbbf308310cf50b",
+            "symbol": "pub struct Table",
+            "role": "scoped_implementation",
+            "description": "pub struct Table",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-store/src/settings.rs",
+            "line": 1582,
+            "anchor_git_head": "1943b19d987771264a06558e57b4255679190de0",
+            "line_sha256": "0f65a24a2bccd352c747e31b168e1c65b4ff657ec06e971fded6a438ac102bdf",
+            "symbol": "impl Setting for hydrus_core::external_calls::Manager",
+            "role": "scoped_implementation",
+            "description": "impl Setting for hydrus_core::external_calls::Manager",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui-model/src/external_calls.rs",
+            "line": 114,
+            "anchor_git_head": "1943b19d987771264a06558e57b4255679190de0",
+            "line_sha256": "7823fbc3a66fed8b23952bf2b1909558177bd76f839a12c6246aae044eab812c",
+            "symbol": "pub fn delete(",
+            "role": "scoped_implementation",
+            "description": "pub fn delete(",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui/src/external_call_window.rs",
+            "line": 85,
+            "anchor_git_head": "1943b19d987771264a06558e57b4255679190de0",
+            "line_sha256": "e6fad24f417ed74a8a497a7d0dfda022b29744ed30ef423dc168635054b7573c",
+            "symbol": "pub(crate) fn ask(",
+            "role": "scoped_implementation",
+            "description": "pub(crate) fn ask(",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui/tests/gui/external_calls.rs",
+            "line": 203,
+            "anchor_git_head": "1943b19d987771264a06558e57b4255679190de0",
+            "line_sha256": "3f51a136199e98d6e14e0ac9d2abc8536dd7147840e4056ef3f32a1a191a8289",
+            "symbol": "fn list_duplicate_defaults_delete_capture_and_options_persistence()",
+            "role": "authored_behavioral_regression",
+            "description": "fn list_duplicate_defaults_delete_capture_and_options_persistence()",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui/tests/gui/external_calls.rs",
+            "line": 655,
+            "anchor_git_head": "1943b19d987771264a06558e57b4255679190de0",
+            "line_sha256": "bf8522755e0e20efd6fd05b95a0cbf41d1e8909c3e76dbf9b95a36fd60c3c0ed",
+            "symbol": "fn simple_delete_includes_os_launch_rows_but_cancel_and_closed_owner_do_not_change_saved_calls()",
+            "role": "authored_behavioral_regression",
+            "description": "fn simple_delete_includes_os_launch_rows_but_cancel_and_closed_owner_do_not_change_saved_calls()",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui/tests/gui/external_calls.rs",
+            "line": 75,
+            "anchor_git_head": "1943b19d987771264a06558e57b4255679190de0",
+            "line_sha256": "f286151225deec5c7e3132a85bb97fa903134ab106cb8ac0525b1559e4517f1f",
+            "symbol": "fn callable_command_child_apply_cancel_parent_staging_reopen_and_retired_owner()",
+            "role": "authored_behavioral_regression",
+            "description": "fn callable_command_child_apply_cancel_parent_staging_reopen_and_retired_owner()",
+            "executed_in_inventory": false
+          }
+        ],
+        "limitations": [
+          "Broad external-program/list/reopen, import/export and nested call/process families remain Partial. No parent completion, aliases or unsupported call types counted.",
+          "Legacy executable-manager import remains absent. Open Externally OS-default draft regeneration and per-file-type production routing now have their separate original-leaf evidence packet open-externally.json; these older claims still apply to the registered typed calls displayed by this owner.",
+          "Historical author metadata records no local Cargo builds/tests or mutation testing. Current exact-source Linux execution and fresh native rendered review are recorded separately in the accepted checkpoint.",
+          "The October 7 actual Qt replay matches selected Delete/Duplicate questions, outcomes, selection and identity properties without normalization. Full JSON differs only at generated callable keys (26 leaves plus two decoded export keys); interpreter matches and no temporary-path JSON field differs. Its unchanged callable-child PNG does not show the outer list or questions; scripted answers provide no matched Qt outer-dialog pixel/placement proof.",
+          "The authored defining native captures use supported 1100x800 Options lists, 900x420 long warning and 520x200 Delete question. Default-size/universal geometry and physical Delete/Duplicate button input are not established.",
+          "Retired pending Delete and Duplicate questions are checked after parent Cancel against live replacement questions and Options owners, with positive current answers and complete saved Manager/visible rows/selection/owner identity preservation. Automatic Main destruction, final Bound drop and broader ownership families remain outside this follow-up.",
+          "Windows/macOS remain deferred under the exact-source publication policy.",
+          "Initial full Linux run37590137304 failed strict assigning_clones lint and a new immediate child-open display assertion after the declined warning;706 GUI tests passed and one failed. All239 initial assertions remain in the repair, which verifies actual slot/visibility closure and waits for the existing30ms display timer, with no property forcing or input retry. Five diagnostic images grant no credit; the accepted checkpoint separately records all seven fresh repaired-source captures and reviews.",
+          "Exactly the original registered-call Delete and Duplicate leaves are approved. Add Defaults, import/export, broader process/list/reopen parents, aliases and structural completion receive no credit.",
+          "Actual Qt questions use real handlers with scripted GetYesNo answers. The unchanged Qt PNG is a callable child; no matched outer-list, Delete-question or Duplicate-warning image exists. No Qt pixel, dialog decoration, timing or placement parity is established.",
+          "Inspected views are supported 1100 × 800 Options lists, a 900 × 420 warning and a 520 × 200 Delete question. Names, types, selection and complete selected question text are readable, but native child buttons stretch vertically and blank areas differ. Default-size and universal dialog geometry are not established.",
+          "Long command cells elide in the native lists. Complete typed values and saved manager equality are asserted, not visible in full in those columns. Japanese 日本 is readable in the reopened saved-call frame; font metrics differ and universal glyph or framework pixel parity is not claimed.",
+          "Retained genuinely pending Delete and Duplicate questions are tested after parent Cancel against live replacement questions and Options owners. Full saved Manager, visible rows, selection/flags and slot identity/visibility remain unchanged under old callbacks, followed by positive current acceptance. Automatic Main destruction, final Bound drop, arbitrary temporary hide/page switching and broader ownership guarantees are not claimed.",
+          "Delete/Duplicate actions and question answers use existing callbacks. This follow-up does not establish physical Delete/Duplicate button input; no additional credit is assigned to previously banked command or launch routes.",
+          "Synthetic process and recorded size-warning cases plus supported OS rows do not establish every imported call type, platform or rule combination. Legacy executable-manager import, unsupported types, default-route regeneration, OS launch execution and full process output remain outside scope. Separately banked Open Externally evidence receives no new credit.",
+          "The actual Qt replay matches selected questions, outcomes, sorting, selection and identity properties without normalization. Full JSON remains unequal at 26 generated callable-key leaves plus two decoded export keys; no literal cross-run random-key equality is claimed.",
+          "Validation is Linux only; Windows and macOS remain deferred. The optional Qt API listener was unavailable while direct Qt/database recording succeeded. No API connectivity, network or OS launcher claim follows from these leaves.",
+          "Delete captures selected keys, declines without removing them, and accepts removal of the OS file and URL rows in the staged draft. Parent Apply persists the empty manager; parent Cancel and retired pending answers preserve the saved manager and a successor with a different captured selection.",
+          "The reopened saved 日本 PNG is supporting Unicode persistence and is not a six-duplicate reopened screenshot. The accepted six-call reopening is established by complete Manager and row-cell assertions."
+        ],
+        "remaining": [],
+        "native_source": {
+          "path": "crates/hydrus-gui/src/options_external_calls.rs",
+          "line": 180,
+          "anchor_git_head": "1943b19d987771264a06558e57b4255679190de0",
+          "line_sha256": "14857b5fa7ed28997f22d916dc00ee04274e1b935d9a856a8dbe04caf4ab24eb",
+          "symbol": "pub(crate) fn bind("
+        },
+        "reference_source": {
+          "path": "hydrus/client/gui/panels/options/ExternalProgramsPanel.py",
+          "line": 1345,
+          "anchor_git_head": "1943b19d987771264a06558e57b4255679190de0",
+          "line_sha256": "4a1319743b142e073789f46ec197ad263e0dee99d803da825c5929dfa27d06db",
+          "symbol": "ExternalProgramsPanel"
+        },
+        "implementation_validation": {
+          "source_commit": "1943b19d987771264a06558e57b4255679190de0",
+          "ci": "passed",
+          "tests_executed_at_checkpoint": true,
+          "native_render_review": "passed",
+          "manifest": "docs/rust/gui-coverage/parity/external-calls.json",
+          "review_required": false,
+          "run_url": "https://github.com/jkendall327/hydrus-mine/actions/runs/37592389894",
+          "validation_scope": "linux",
+          "required_platforms": [
+            "linux"
+          ],
+          "deferred_platforms": [
+            "windows",
+            "macos"
+          ],
+          "independent_review_evidence": {
+            "path": "docs/rust/gui-coverage/checkpoints/1943b19d9/final-review-2-1943b19d9.json",
+            "sha256": "a9aaa22e7a0a1579f1ed9838b98168f7d13f995bb22d88737b7a06fe726379b5"
+          }
+        }
+      },
+      {
+        "id": "audit-options-external-programs-external-calls-duplicate",
+        "status": "first_pass",
+        "assessment": "Duplicate snapshots selected calls in visible order, preserves typed rules/flags, regenerates keys and resolves exact nonduplicate names. Import-size warnings use recorded boundaries and Python list repr. Accepting the complete queue selects new copies alongside original selection and sorts. Declining a later warning aborts the remainder while retaining earlier appended, unsorted, unselected copies. Parent Cancel discards all staged copies; stale warning callbacks cannot append. Accepted Options Apply persists six independent identities in the native consumer.",
+        "evidence": [
+          {
+            "path": "crates/hydrus-gui/src/options_external_calls.rs",
+            "line": 180,
+            "anchor_git_head": "1943b19d987771264a06558e57b4255679190de0",
+            "line_sha256": "14857b5fa7ed28997f22d916dc00ee04274e1b935d9a856a8dbe04caf4ab24eb",
+            "symbol": "pub(crate) fn bind(",
+            "role": "scoped_implementation",
+            "description": "pub(crate) fn bind(",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui-model/src/external_calls.rs",
+            "line": 15,
+            "anchor_git_head": "1943b19d987771264a06558e57b4255679190de0",
+            "line_sha256": "d7b1a7498a62e4270a349e01ae898a245c4752efefce4ded5fbbf308310cf50b",
+            "symbol": "pub struct Table",
+            "role": "scoped_implementation",
+            "description": "pub struct Table",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-store/src/settings.rs",
+            "line": 1582,
+            "anchor_git_head": "1943b19d987771264a06558e57b4255679190de0",
+            "line_sha256": "0f65a24a2bccd352c747e31b168e1c65b4ff657ec06e971fded6a438ac102bdf",
+            "symbol": "impl Setting for hydrus_core::external_calls::Manager",
+            "role": "scoped_implementation",
+            "description": "impl Setting for hydrus_core::external_calls::Manager",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui/src/options_external_calls.rs",
+            "line": 117,
+            "anchor_git_head": "1943b19d987771264a06558e57b4255679190de0",
+            "line_sha256": "c1c62528a04c3d22b09876f528c905831d05509073233dbee9ead47e3677edce",
+            "symbol": "fn duplicate_next(",
+            "role": "scoped_implementation",
+            "description": "fn duplicate_next(",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui-model/src/external_calls.rs",
+            "line": 68,
+            "anchor_git_head": "1943b19d987771264a06558e57b4255679190de0",
+            "line_sha256": "d9275a2ed9cf5f5d515e249379a88c8ed53b18a3e4bad13de1af9b4bc1dc40e4",
+            "symbol": "pub fn append(",
+            "role": "scoped_implementation",
+            "description": "pub fn append(",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-core/src/external_calls.rs",
+            "line": 299,
+            "anchor_git_head": "1943b19d987771264a06558e57b4255679190de0",
+            "line_sha256": "c173cbe0d294f2ef4ff60a7626bd9c67648e915f7a0ac7e321298fd8c5db7e1d",
+            "symbol": "pub fn import_warning(",
+            "role": "scoped_implementation",
+            "description": "pub fn import_warning(",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui/tests/gui/external_calls.rs",
+            "line": 493,
+            "anchor_git_head": "1943b19d987771264a06558e57b4255679190de0",
+            "line_sha256": "f2a8022b035219746379858d6b8339a609aeb3012d220cd3b9a73f1e6dd75ad0",
+            "symbol": "fn duplicate_warning_decline_keeps_unsorted_unselected_prefix_accept_finishes_and_retired_question_cannot_append",
+            "role": "authored_behavioral_regression",
+            "description": "fn duplicate_warning_decline_keeps_unsorted_unselected_prefix_accept_finishes_and_retired_question_cannot_append",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui-model/tests/model/external_calls.rs",
+            "line": 314,
+            "anchor_git_head": "1943b19d987771264a06558e57b4255679190de0",
+            "line_sha256": "63dc46cc793ce00d89fc1fe55e0ec530137c206ddca6cb231fc1bd88213781b8",
+            "symbol": "fn duplicate_import_warnings_match_python_repr_and_all_size_boundaries()",
+            "role": "authored_behavioral_regression",
+            "description": "fn duplicate_import_warnings_match_python_repr_and_all_size_boundaries()",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui-model/tests/model/external_calls.rs",
+            "line": 137,
+            "anchor_git_head": "1943b19d987771264a06558e57b4255679190de0",
+            "line_sha256": "13c46a95f81cc816fedbcf12a24294a02dbea4ad2406e5ba96c50f78b3d88e27",
+            "symbol": "fn actual_qt_sort_tie_break_casefold_and_duplicate_selection_routes()",
+            "role": "authored_behavioral_regression",
+            "description": "fn actual_qt_sort_tie_break_casefold_and_duplicate_selection_routes()",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui/tests/gui/external_calls.rs",
+            "line": 75,
+            "anchor_git_head": "1943b19d987771264a06558e57b4255679190de0",
+            "line_sha256": "f286151225deec5c7e3132a85bb97fa903134ab106cb8ac0525b1559e4517f1f",
+            "symbol": "fn callable_command_child_apply_cancel_parent_staging_reopen_and_retired_owner()",
+            "role": "authored_behavioral_regression",
+            "description": "fn callable_command_child_apply_cancel_parent_staging_reopen_and_retired_owner()",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui/tests/gui/external_calls.rs",
+            "line": 203,
+            "anchor_git_head": "1943b19d987771264a06558e57b4255679190de0",
+            "line_sha256": "3f51a136199e98d6e14e0ac9d2abc8536dd7147840e4056ef3f32a1a191a8289",
+            "symbol": "fn list_duplicate_defaults_delete_capture_and_options_persistence()",
+            "role": "authored_behavioral_regression",
+            "description": "fn list_duplicate_defaults_delete_capture_and_options_persistence()",
+            "executed_in_inventory": false
+          }
+        ],
+        "limitations": [
+          "Broad external-program/list/reopen, import/export and nested call/process families remain Partial. No parent completion, aliases or unsupported call types counted.",
+          "Legacy executable-manager import remains absent. Open Externally OS-default draft regeneration and per-file-type production routing now have their separate original-leaf evidence packet open-externally.json; these older claims still apply to the registered typed calls displayed by this owner.",
+          "Historical author metadata records no local Cargo builds/tests or mutation testing. Current exact-source Linux execution and fresh native rendered review are recorded separately in the accepted checkpoint.",
+          "The October 7 actual Qt replay matches selected Delete/Duplicate questions, outcomes, selection and identity properties without normalization. Full JSON differs only at generated callable keys (26 leaves plus two decoded export keys); interpreter matches and no temporary-path JSON field differs. Its unchanged callable-child PNG does not show the outer list or questions; scripted answers provide no matched Qt outer-dialog pixel/placement proof.",
+          "The authored defining native captures use supported 1100x800 Options lists, 900x420 long warning and 520x200 Delete question. Default-size/universal geometry and physical Delete/Duplicate button input are not established.",
+          "Retired pending Delete and Duplicate questions are checked after parent Cancel against live replacement questions and Options owners, with positive current answers and complete saved Manager/visible rows/selection/owner identity preservation. Automatic Main destruction, final Bound drop and broader ownership families remain outside this follow-up.",
+          "Windows/macOS remain deferred under the exact-source publication policy.",
+          "Initial full Linux run37590137304 failed strict assigning_clones lint and a new immediate child-open display assertion after the declined warning;706 GUI tests passed and one failed. All239 initial assertions remain in the repair, which verifies actual slot/visibility closure and waits for the existing30ms display timer, with no property forcing or input retry. Five diagnostic images grant no credit; the accepted checkpoint separately records all seven fresh repaired-source captures and reviews.",
+          "Exactly the original registered-call Delete and Duplicate leaves are approved. Add Defaults, import/export, broader process/list/reopen parents, aliases and structural completion receive no credit.",
+          "Actual Qt questions use real handlers with scripted GetYesNo answers. The unchanged Qt PNG is a callable child; no matched outer-list, Delete-question or Duplicate-warning image exists. No Qt pixel, dialog decoration, timing or placement parity is established.",
+          "Inspected views are supported 1100 × 800 Options lists, a 900 × 420 warning and a 520 × 200 Delete question. Names, types, selection and complete selected question text are readable, but native child buttons stretch vertically and blank areas differ. Default-size and universal dialog geometry are not established.",
+          "Long command cells elide in the native lists. Complete typed values and saved manager equality are asserted, not visible in full in those columns. Japanese 日本 is readable in the reopened saved-call frame; font metrics differ and universal glyph or framework pixel parity is not claimed.",
+          "Retained genuinely pending Delete and Duplicate questions are tested after parent Cancel against live replacement questions and Options owners. Full saved Manager, visible rows, selection/flags and slot identity/visibility remain unchanged under old callbacks, followed by positive current acceptance. Automatic Main destruction, final Bound drop, arbitrary temporary hide/page switching and broader ownership guarantees are not claimed.",
+          "Delete/Duplicate actions and question answers use existing callbacks. This follow-up does not establish physical Delete/Duplicate button input; no additional credit is assigned to previously banked command or launch routes.",
+          "Synthetic process and recorded size-warning cases plus supported OS rows do not establish every imported call type, platform or rule combination. Legacy executable-manager import, unsupported types, default-route regeneration, OS launch execution and full process output remain outside scope. Separately banked Open Externally evidence receives no new credit.",
+          "The actual Qt replay matches selected questions, outcomes, sorting, selection and identity properties without normalization. Full JSON remains unequal at 26 generated callable-key leaves plus two decoded export keys; no literal cross-run random-key equality is claimed.",
+          "Validation is Linux only; Windows and macOS remain deferred. The optional Qt API listener was unavailable while direct Qt/database recording succeeded. No API connectivity, network or OS launcher claim follows from these leaves.",
+          "Duplicate retains typed fields, generates fresh unique keys and nonduplicate names, and processes the selected snapshot in visible order. Declining the later warning leaves the earlier unsorted, unselected prefix; accepting the complete queue selects and sorts all six rows. Exact saved/reopened six-key manager and complete row-cell equality are assertion-backed.",
+          "The reopened saved 日本 PNG is supporting Unicode persistence and is not a six-duplicate reopened screenshot. The accepted six-call reopening is established by complete Manager and row-cell assertions."
+        ],
+        "remaining": [],
+        "native_source": {
+          "path": "crates/hydrus-gui/src/options_external_calls.rs",
+          "line": 180,
+          "anchor_git_head": "1943b19d987771264a06558e57b4255679190de0",
+          "line_sha256": "14857b5fa7ed28997f22d916dc00ee04274e1b935d9a856a8dbe04caf4ab24eb",
+          "symbol": "pub(crate) fn bind("
+        },
+        "reference_source": {
+          "path": "hydrus/client/gui/panels/options/ExternalProgramsPanel.py",
+          "line": 1345,
+          "anchor_git_head": "1943b19d987771264a06558e57b4255679190de0",
+          "line_sha256": "4a1319743b142e073789f46ec197ad263e0dee99d803da825c5929dfa27d06db",
+          "symbol": "ExternalProgramsPanel"
+        },
+        "implementation_validation": {
+          "source_commit": "1943b19d987771264a06558e57b4255679190de0",
+          "ci": "passed",
+          "tests_executed_at_checkpoint": true,
+          "native_render_review": "passed",
+          "manifest": "docs/rust/gui-coverage/parity/external-calls.json",
+          "review_required": false,
+          "run_url": "https://github.com/jkendall327/hydrus-mine/actions/runs/37592389894",
+          "validation_scope": "linux",
+          "required_platforms": [
+            "linux"
+          ],
+          "deferred_platforms": [
+            "windows",
+            "macos"
+          ],
+          "independent_review_evidence": {
+            "path": "docs/rust/gui-coverage/checkpoints/1943b19d9/final-review-2-1943b19d9.json",
+            "sha256": "a9aaa22e7a0a1579f1ed9838b98168f7d13f995bb22d88737b7a06fe726379b5"
+          }
+        }
+      }
+    ],
+    "additions": []
+  },
+  "native": {
+    "updates": [],
+    "additions": []
+  }
+}

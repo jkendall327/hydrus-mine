@@ -1,0 +1,55 @@
+{
+  "base_commit": "fd3e855db1500c1473a6d920d9a47cfce83ec57f",
+  "agent_commit": "30b5ace45119124b1b3cce13c767aade5299b3ea",
+  "owned_file": "crates/hydrus-gui/tests/gui/external_calls.rs",
+  "base_source_sha256": "9ce637bda651b9d982d3d0759b1a37f14cc1327e80d56f94c6db8c3f162d3338",
+  "source_sha256": "5c0af3c972238652632ee1af3d875de083991bfdfddcd8f317f26578479127ba",
+  "selected_ids": [
+    "audit-options-external-programs-external-calls-delete",
+    "audit-options-external-programs-external-calls-duplicate"
+  ],
+  "approval": false,
+  "preservation": {
+    "original_assertion_macros": 165,
+    "current_assertion_macros": 239,
+    "all_original_spans_bytewise_preserved_in_order": true,
+    "original_tests": 9,
+    "current_tests": 9,
+    "original_test_symbols_in_order_unchanged": true,
+    "original_lines_removed": [
+      "    let _headless_windows = headless::init();",
+      "    let _headless_windows = headless::init();",
+      "    let _headless_windows = headless::init();"
+    ],
+    "only_original_changes": "Rename three unused collectors to windows so existing adapters can be retained; no original assertion or semantic line removed.",
+    "fixture_or_source_changes": false,
+    "diff_insertions": 368,
+    "diff_deletions": 3,
+    "test_fixture_correction": "Inserted explicit Pipeline::Url for existing OS URL synthetic callable; Callable::new otherwise defaults to File. Old assertions/lines remain, matching actual Qt metadata and preserving file-before-URL order. No committed fixture edits."
+  },
+  "expected_capture_names": [
+    "external-calls-duplicate-selected.png",
+    "external-calls-duplicate-warning.png",
+    "external-calls-duplicate-declined-prefix.png",
+    "external-calls-duplicate-complete.png",
+    "external-calls-delete-review.png",
+    "external-calls-delete-empty.png",
+    "external-calls-reopened-saved.png"
+  ],
+  "checks": {
+    "rustfmt": true,
+    "git_diff_check": true,
+    "local_builds": false,
+    "hosted_runtime": "pending",
+    "fresh_render_review": "pending"
+  },
+  "reference_proof": "/workspace/validation-reviews/external-list2/reference/reference-review-3.json",
+  "scope_caveats": [
+    "Explicit Options Cancel retirement and current successor only; no automatic Main/final Bound lifetime claim.",
+    "Callback-driven list actions, actual owned dialog/list captures; no physical action/OS window claim.",
+    "Reopened Unicode screenshot supports saved row readability; accepted six-call Manager/full rows separately revalidated on reopen.",
+    "No outer-list or question Qt PNG; actual finite recorded question/state comparisons only.",
+    "Linux CI and actual fresh seven-image review pending; no feature status or signoff changes."
+  ],
+  "worktree_status": ""
+}

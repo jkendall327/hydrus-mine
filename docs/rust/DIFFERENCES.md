@@ -2498,15 +2498,15 @@ Default OS launch calls, and reference column-state persistence is absent.
 Supported column sorting itself uses the reference casefolded full-tuple tie
 break and writes the sorted Options draft.
 
-The current two-leaf follow-up covers only the registered-call Delete and
+The validated two-leaf checkpoint covers only the registered-call Delete and
 Duplicate actions. The actual Qt replay reproduces the selected questions,
 ordered duplicate prefix/selection outcomes, key checks and reopened names;
 random generated identities prevent whole-JSON byte equality. The reference
 scripts question answers and its image depicts a callable child, so it supplies
-no outer-list/question pixel or placement comparison. Fresh native defining
-captures and replacement-owner checks still require exact-source full Linux
-validation and independent rendered review. No new sign-off is claimed; Add
-Defaults, broader parents, launching and deferred platforms remain separate.
+no outer-list/question pixel or placement comparison. Exact-source full Linux
+validation and independent review of all seven fresh defining frames passed.
+Add Defaults, broader parents, launching and deferred platforms remain separate.
+[Evidence](gui-coverage/checkpoints/1943b19d9/README.md).
 The first run also exposes a test synchronization error: after a declined warning,
 the owned question closes immediately while the existing 30 ms timer refreshes
 the button-disable flag. A bounded real-render wait preserves the original

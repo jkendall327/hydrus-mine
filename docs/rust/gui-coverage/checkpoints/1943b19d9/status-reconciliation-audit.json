@@ -1,0 +1,157 @@
+{
+  "source_commit": "1943b19d987771264a06558e57b4255679190de0",
+  "ci_evidence_sha256": "722868b069f06341ab8aa69e380f90597ce87109a2fa339e9c177da9fa0ab9fc",
+  "mapping_sha256": "932de9ed4b50a55620157e6f122ce5f848dd9f4410662ed83a3b2a1104d57a60",
+  "mapping_applied_after_gates": true,
+  "operations": [
+    {
+      "id": "audit-options-external-programs-external-calls-delete",
+      "field": "limitations",
+      "original_index": 2,
+      "operation": "replace_exact_list_item",
+      "before": "No local Cargo builds/tests or mutations were run. Authored model/native/store consumers and native PNG await hosted CI.",
+      "conditional_after": "Historical author metadata records no local Cargo builds/tests or mutation testing. Current exact-source Linux execution and fresh native rendered review are recorded separately in the accepted checkpoint.",
+      "reason": "Reconcile resolved validation-status wording only after actual gates; preserve historical no-local-execution provenance and deferred-platform limits."
+    },
+    {
+      "id": "audit-options-external-programs-external-calls-delete",
+      "field": "limitations",
+      "original_index": 4,
+      "operation": "replace_exact_list_item",
+      "before": "The authored defining native captures use supported 1100x800 Options lists, 900x420 long warning and 520x200 Delete question. Actual readability, Unicode glyphs and selected/empty states await fresh inspection. Default-size/universal geometry and physical Delete/Duplicate button input are not established.",
+      "conditional_after": "The authored defining native captures use supported 1100x800 Options lists, 900x420 long warning and 520x200 Delete question. Default-size/universal geometry and physical Delete/Duplicate button input are not established.",
+      "reason": "Reconcile resolved validation-status wording only after actual gates; preserve historical no-local-execution provenance and deferred-platform limits."
+    },
+    {
+      "id": "audit-options-external-programs-external-calls-delete",
+      "field": "limitations",
+      "original_index": 6,
+      "operation": "replace_exact_list_item",
+      "before": "Current two-leaf follow-up awaits exact-source full Linux execution and fresh independent rendered review. No new sign-off is granted; Windows/macOS remain deferred.",
+      "conditional_after": "Windows/macOS remain deferred under the exact-source publication policy.",
+      "reason": "Reconcile resolved validation-status wording only after actual gates; preserve historical no-local-execution provenance and deferred-platform limits."
+    },
+    {
+      "id": "audit-options-external-programs-external-calls-delete",
+      "field": "remaining",
+      "original_index": 0,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source hosted full Linux validation remains pending.",
+      "conditional_after": null,
+      "reason": "Remove only pending exact-source CI/fresh independent-root review status after real gates."
+    },
+    {
+      "id": "audit-options-external-programs-external-calls-delete",
+      "field": "remaining",
+      "original_index": 1,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source fresh native rendered/behavioral review and final assessment reconciliation remain pending.",
+      "conditional_after": null,
+      "reason": "Remove only pending exact-source CI/fresh independent-root review status after real gates."
+    },
+    {
+      "id": "audit-options-external-programs-external-calls-duplicate",
+      "field": "limitations",
+      "original_index": 2,
+      "operation": "replace_exact_list_item",
+      "before": "No local Cargo builds/tests or mutations were run. Authored model/native/store consumers and native PNG await hosted CI.",
+      "conditional_after": "Historical author metadata records no local Cargo builds/tests or mutation testing. Current exact-source Linux execution and fresh native rendered review are recorded separately in the accepted checkpoint.",
+      "reason": "Reconcile resolved validation-status wording only after actual gates; preserve historical no-local-execution provenance and deferred-platform limits."
+    },
+    {
+      "id": "audit-options-external-programs-external-calls-duplicate",
+      "field": "limitations",
+      "original_index": 4,
+      "operation": "replace_exact_list_item",
+      "before": "The authored defining native captures use supported 1100x800 Options lists, 900x420 long warning and 520x200 Delete question. Actual readability, Unicode glyphs and selected/empty states await fresh inspection. Default-size/universal geometry and physical Delete/Duplicate button input are not established.",
+      "conditional_after": "The authored defining native captures use supported 1100x800 Options lists, 900x420 long warning and 520x200 Delete question. Default-size/universal geometry and physical Delete/Duplicate button input are not established.",
+      "reason": "Reconcile resolved validation-status wording only after actual gates; preserve historical no-local-execution provenance and deferred-platform limits."
+    },
+    {
+      "id": "audit-options-external-programs-external-calls-duplicate",
+      "field": "limitations",
+      "original_index": 6,
+      "operation": "replace_exact_list_item",
+      "before": "Current two-leaf follow-up awaits exact-source full Linux execution and fresh independent rendered review. No new sign-off is granted; Windows/macOS remain deferred.",
+      "conditional_after": "Windows/macOS remain deferred under the exact-source publication policy.",
+      "reason": "Reconcile resolved validation-status wording only after actual gates; preserve historical no-local-execution provenance and deferred-platform limits."
+    },
+    {
+      "id": "audit-options-external-programs-external-calls-duplicate",
+      "field": "remaining",
+      "original_index": 0,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source hosted full Linux validation remains pending.",
+      "conditional_after": null,
+      "reason": "Remove only pending exact-source CI/fresh independent-root review status after real gates."
+    },
+    {
+      "id": "audit-options-external-programs-external-calls-duplicate",
+      "field": "remaining",
+      "original_index": 1,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source fresh native rendered/behavioral review and final assessment reconciliation remain pending.",
+      "conditional_after": null,
+      "reason": "Remove only pending exact-source CI/fresh independent-root review status after real gates."
+    },
+    {
+      "id": "audit-options-external-programs-external-calls-delete",
+      "field": "limitations",
+      "original_index": 7,
+      "operation": "replace_exact_list_item",
+      "before": "Initial full Linux run37590137304 failed strict assigning_clones lint and a new immediate child-open display assertion after the declined warning;706 GUI tests passed and one failed. All239 initial assertions remain in the repair, which verifies actual slot/visibility closure and waits for the existing30ms display timer, with no property forcing or input retry. Five diagnostic images grant no credit; all seven repaired-source captures remain required.",
+      "conditional_after": "Initial full Linux run37590137304 failed strict assigning_clones lint and a new immediate child-open display assertion after the declined warning;706 GUI tests passed and one failed. All239 initial assertions remain in the repair, which verifies actual slot/visibility closure and waits for the existing30ms display timer, with no property forcing or input retry. Five diagnostic images grant no credit; the accepted checkpoint separately records all seven fresh repaired-source captures and reviews.",
+      "reason": "After actual approval reconcile only the resolved fresh-capture preparation sentence; preserve failed-run counts, all239 assertion/timer repair history and zero diagnostic credit verbatim."
+    },
+    {
+      "id": "audit-options-external-programs-external-calls-duplicate",
+      "field": "limitations",
+      "original_index": 7,
+      "operation": "replace_exact_list_item",
+      "before": "Initial full Linux run37590137304 failed strict assigning_clones lint and a new immediate child-open display assertion after the declined warning;706 GUI tests passed and one failed. All239 initial assertions remain in the repair, which verifies actual slot/visibility closure and waits for the existing30ms display timer, with no property forcing or input retry. Five diagnostic images grant no credit; all seven repaired-source captures remain required.",
+      "conditional_after": "Initial full Linux run37590137304 failed strict assigning_clones lint and a new immediate child-open display assertion after the declined warning;706 GUI tests passed and one failed. All239 initial assertions remain in the repair, which verifies actual slot/visibility closure and waits for the existing30ms display timer, with no property forcing or input retry. Five diagnostic images grant no credit; the accepted checkpoint separately records all seven fresh repaired-source captures and reviews.",
+      "reason": "After actual approval reconcile only the resolved fresh-capture preparation sentence; preserve failed-run counts, all239 assertion/timer repair history and zero diagnostic credit verbatim."
+    }
+  ],
+  "added_review_scope_limits": {
+    "audit-options-external-programs-external-calls-delete": [
+      "Exactly the original registered-call Delete and Duplicate leaves are approved. Add Defaults, import/export, broader process/list/reopen parents, aliases and structural completion receive no credit.",
+      "Actual Qt questions use real handlers with scripted GetYesNo answers. The unchanged Qt PNG is a callable child; no matched outer-list, Delete-question or Duplicate-warning image exists. No Qt pixel, dialog decoration, timing or placement parity is established.",
+      "Inspected views are supported 1100 × 800 Options lists, a 900 × 420 warning and a 520 × 200 Delete question. Names, types, selection and complete selected question text are readable, but native child buttons stretch vertically and blank areas differ. Default-size and universal dialog geometry are not established.",
+      "Long command cells elide in the native lists. Complete typed values and saved manager equality are asserted, not visible in full in those columns. Japanese 日本 is readable in the reopened saved-call frame; font metrics differ and universal glyph or framework pixel parity is not claimed.",
+      "Retained genuinely pending Delete and Duplicate questions are tested after parent Cancel against live replacement questions and Options owners. Full saved Manager, visible rows, selection/flags and slot identity/visibility remain unchanged under old callbacks, followed by positive current acceptance. Automatic Main destruction, final Bound drop, arbitrary temporary hide/page switching and broader ownership guarantees are not claimed.",
+      "Delete/Duplicate actions and question answers use existing callbacks. This follow-up does not establish physical Delete/Duplicate button input; no additional credit is assigned to previously banked command or launch routes.",
+      "Synthetic process and recorded size-warning cases plus supported OS rows do not establish every imported call type, platform or rule combination. Legacy executable-manager import, unsupported types, default-route regeneration, OS launch execution and full process output remain outside scope. Separately banked Open Externally evidence receives no new credit.",
+      "The actual Qt replay matches selected questions, outcomes, sorting, selection and identity properties without normalization. Full JSON remains unequal at 26 generated callable-key leaves plus two decoded export keys; no literal cross-run random-key equality is claimed.",
+      "Validation is Linux only; Windows and macOS remain deferred. The optional Qt API listener was unavailable while direct Qt/database recording succeeded. No API connectivity, network or OS launcher claim follows from these leaves.",
+      "Delete captures selected keys, declines without removing them, and accepts removal of the OS file and URL rows in the staged draft. Parent Apply persists the empty manager; parent Cancel and retired pending answers preserve the saved manager and a successor with a different captured selection.",
+      "The reopened saved 日本 PNG is supporting Unicode persistence and is not a six-duplicate reopened screenshot. The accepted six-call reopening is established by complete Manager and row-cell assertions."
+    ],
+    "audit-options-external-programs-external-calls-duplicate": [
+      "Exactly the original registered-call Delete and Duplicate leaves are approved. Add Defaults, import/export, broader process/list/reopen parents, aliases and structural completion receive no credit.",
+      "Actual Qt questions use real handlers with scripted GetYesNo answers. The unchanged Qt PNG is a callable child; no matched outer-list, Delete-question or Duplicate-warning image exists. No Qt pixel, dialog decoration, timing or placement parity is established.",
+      "Inspected views are supported 1100 × 800 Options lists, a 900 × 420 warning and a 520 × 200 Delete question. Names, types, selection and complete selected question text are readable, but native child buttons stretch vertically and blank areas differ. Default-size and universal dialog geometry are not established.",
+      "Long command cells elide in the native lists. Complete typed values and saved manager equality are asserted, not visible in full in those columns. Japanese 日本 is readable in the reopened saved-call frame; font metrics differ and universal glyph or framework pixel parity is not claimed.",
+      "Retained genuinely pending Delete and Duplicate questions are tested after parent Cancel against live replacement questions and Options owners. Full saved Manager, visible rows, selection/flags and slot identity/visibility remain unchanged under old callbacks, followed by positive current acceptance. Automatic Main destruction, final Bound drop, arbitrary temporary hide/page switching and broader ownership guarantees are not claimed.",
+      "Delete/Duplicate actions and question answers use existing callbacks. This follow-up does not establish physical Delete/Duplicate button input; no additional credit is assigned to previously banked command or launch routes.",
+      "Synthetic process and recorded size-warning cases plus supported OS rows do not establish every imported call type, platform or rule combination. Legacy executable-manager import, unsupported types, default-route regeneration, OS launch execution and full process output remain outside scope. Separately banked Open Externally evidence receives no new credit.",
+      "The actual Qt replay matches selected questions, outcomes, sorting, selection and identity properties without normalization. Full JSON remains unequal at 26 generated callable-key leaves plus two decoded export keys; no literal cross-run random-key equality is claimed.",
+      "Validation is Linux only; Windows and macOS remain deferred. The optional Qt API listener was unavailable while direct Qt/database recording succeeded. No API connectivity, network or OS launcher claim follows from these leaves.",
+      "Duplicate retains typed fields, generates fresh unique keys and nonduplicate names, and processes the selected snapshot in visible order. Declining the later warning leaves the earlier unsorted, unselected prefix; accepting the complete queue selects and sorts all six rows. Exact saved/reopened six-key manager and complete row-cell equality are assertion-backed.",
+      "The reopened saved 日本 PNG is supporting Unicode persistence and is not a six-duplicate reopened screenshot. The accepted six-call reopening is established by complete Manager and row-cell assertions."
+    ]
+  },
+  "reviews": [
+    {
+      "path": "docs/rust/gui-coverage/checkpoints/1943b19d9/final-review-2-1943b19d9.json",
+      "sha256": "a9aaa22e7a0a1579f1ed9838b98168f7d13f995bb22d88737b7a06fe726379b5"
+    }
+  ],
+  "selected_ids": [
+    "audit-options-external-programs-external-calls-delete",
+    "audit-options-external-programs-external-calls-duplicate"
+  ],
+  "prior357_completion_ids_and_assessments_preserved": true,
+  "source_only_native_anchor_ids": [],
+  "final_patch_digest": "2f1ab69450543c821d7141fd75789dafcfb3cab68fe97629fd1a0c28e879b384"
+}

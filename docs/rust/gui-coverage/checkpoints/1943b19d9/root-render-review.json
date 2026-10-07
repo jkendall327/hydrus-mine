@@ -1,0 +1,72 @@
+{
+  "source_commit": "1943b19d987771264a06558e57b4255679190de0",
+  "run_id": 37592389894,
+  "artifact_id": 11470198333,
+  "native_zip_sha256": "414d56513717c328368da022070d864cd387596e416468b22ac43e9bf6eb248b",
+  "actually_viewed": [
+    {
+      "name": "external-calls-duplicate-declined-prefix.png",
+      "path": "/workspace/validation-reviews/ci-1943b19d9/native-renders/external-calls-duplicate-declined-prefix.png",
+      "sha256": "b5c60deca7afb2a07f629b055a3fafe692ab899ebc5d5085a442285a1458a29a",
+      "width": 1100,
+      "height": 800,
+      "observation": "Four rows: original a valid/b unusual/c tail selected, appended a valid (1) unselected at bottom. Readable names/type; long unusual command intentionally elided. Delete/Duplicate enabled; parent footer visible."
+    },
+    {
+      "name": "external-calls-duplicate-complete.png",
+      "path": "/workspace/validation-reviews/ci-1943b19d9/native-renders/external-calls-duplicate-complete.png",
+      "sha256": "1add568f1bd374ca8b6f36b861c16671438d808f9aaf811ad87cadd6db63c1a6",
+      "width": 1100,
+      "height": 800,
+      "observation": "Six sorted rows a valid/a valid (1)/b unusual/b unusual (1)/c tail/c tail (1), all blue selected. Names and types visible, long command cells intentionally elided. Relevant actions and parent Apply/Cancel readable."
+    },
+    {
+      "name": "external-calls-duplicate-selected.png",
+      "path": "/workspace/validation-reviews/ci-1943b19d9/native-renders/external-calls-duplicate-selected.png",
+      "sha256": "5e1b40800ef208c2c5a43db656fae351132a4cffd044559b7b6288e483821d6c",
+      "width": 1100,
+      "height": 800,
+      "observation": "Two synthetic-call original/copy rows visibly selected; readable names/types and enabled Delete/Duplicate. Long executable cell elided; footer visible."
+    },
+    {
+      "name": "external-calls-duplicate-warning.png",
+      "path": "/workspace/validation-reviews/ci-1943b19d9/native-renders/external-calls-duplicate-warning.png",
+      "sha256": "132fa0ee387e4f31319a27446d5583eefdab10545547474403da2183f1973323",
+      "width": 900,
+      "height": 420,
+      "observation": "Complete unusual-call prompt and257-character executable warning wrap inside900x420. Yes/No visible; tall resized buttons, not universal/default geometry."
+    },
+    {
+      "name": "external-calls-delete-review.png",
+      "path": "/workspace/validation-reviews/ci-1943b19d9/native-renders/external-calls-delete-review.png",
+      "sha256": "c9c1c984693cdcd64a30d96459fa89532a17f84f61adf8475866ddeab39fd8de",
+      "width": 520,
+      "height": 200,
+      "observation": "Exact Remove all selected? and Yes/No visible at520x200; tall resized buttons."
+    },
+    {
+      "name": "external-calls-delete-empty.png",
+      "path": "/workspace/validation-reviews/ci-1943b19d9/native-renders/external-calls-delete-empty.png",
+      "sha256": "82197b34a484eaabd01f21693f8617dc1b6dbef6f309b3840ed934f48a651cce",
+      "width": 1100,
+      "height": 800,
+      "observation": "Empty registered-call table after accepted captured OS-row deletion. Edit/Delete/Export/Duplicate disabled, other actions and Apply/Cancel readable."
+    },
+    {
+      "name": "external-calls-reopened-saved.png",
+      "path": "/workspace/validation-reviews/ci-1943b19d9/native-renders/external-calls-reopened-saved.png",
+      "sha256": "ea946568145aaee9fcda14c8c74e663c6720ad80266d8a9dd4fc8e1bceb0f45f",
+      "width": 1100,
+      "height": 800,
+      "observation": "Actual saved 日本 row visible with Japanese glyphs and unselected state. Command cell elided; supports persisted Unicode callable, not a six-duplicate reopened still."
+    }
+  ],
+  "independent_review_pending": false,
+  "root_visual_blockers": [],
+  "reference_observation": "Also actually viewed preserved actualQt callable child1050x760: edited 日本/token/15-second timeout visible; right testing pane cropped with horizontal scrollbar. It is not an outer Delete/Duplicate list or question pixel pair.",
+  "limits": [
+    "Seven fresh exact-source views inspected at supported sizes; no physical button, universal/default geometry, automatic Main/final Bound ownership or launch claims.",
+    "Failed625a five diagnostic images remain separate and earn no credit."
+  ],
+  "independent_review_sha256": "a9aaa22e7a0a1579f1ed9838b98168f7d13f995bb22d88737b7a06fe726379b5"
+}

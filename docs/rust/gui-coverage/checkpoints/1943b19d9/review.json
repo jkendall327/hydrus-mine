@@ -1,0 +1,39 @@
+{
+  "source_commit": "1943b19d987771264a06558e57b4255679190de0",
+  "reviewed_by": "Codex root with independent exact-source behavioral/rendered review2; separate source/preservation checks",
+  "patch_sha256": "2f1ab69450543c821d7141fd75789dafcfb3cab68fe97629fd1a0c28e879b384",
+  "reviewed_source_census_sha256": "b2e8b48ba6771715b3a6c2a6f856913612f118b792508bfe1de180cef27e65dd",
+  "selected_completion_ids": [
+    "audit-options-external-programs-external-calls-delete",
+    "audit-options-external-programs-external-calls-duplicate"
+  ],
+  "reviewed_assessment_ids": [
+    "audit-options-external-programs-external-calls-delete",
+    "audit-options-external-programs-external-calls-duplicate"
+  ],
+  "reviewed_native_ids": [],
+  "independent_reviews": [
+    {
+      "path": "docs/rust/gui-coverage/checkpoints/1943b19d9/final-review-2-1943b19d9.json",
+      "sha256": "a9aaa22e7a0a1579f1ed9838b98168f7d13f995bb22d88737b7a06fe726379b5"
+    }
+  ],
+  "validation_scope": "linux",
+  "required_platforms": [
+    "linux"
+  ],
+  "deferred_platforms": [
+    "windows",
+    "macos"
+  ],
+  "root_actual_native_inspection": [
+    "external-calls-duplicate-declined-prefix.png",
+    "external-calls-duplicate-complete.png",
+    "external-calls-duplicate-selected.png",
+    "external-calls-duplicate-warning.png",
+    "external-calls-delete-review.png",
+    "external-calls-delete-empty.png",
+    "external-calls-reopened-saved.png"
+  ],
+  "scope": "Only the selected registered-call Delete/Duplicate controls gain credit. No parent, alias, native hierarchy or deferred-platform credit. Browser verification and preservation audit required before canonical publication."
+}

@@ -1,0 +1,83 @@
+{
+  "source_commit": "1943b19d987771264a06558e57b4255679190de0",
+  "run_id": 37592389894,
+  "current_declaration_substitutions": [
+    {
+      "id": "audit-options-external-programs-external-calls-delete",
+      "role": "scoped_implementation",
+      "author_declared_commit": "0e9e877cbb8883aecb186da8497b7987e2bb0072",
+      "old_path": "crates/hydrus-store/src/settings.rs",
+      "old_line": 1277,
+      "old_symbol": "impl Setting for hydrus_core::external_calls::Manager",
+      "path": "crates/hydrus-store/src/settings.rs",
+      "line": 1582,
+      "text": "impl Setting for hydrus_core::external_calls::Manager {",
+      "line_sha256": "0f65a24a2bccd352c747e31b168e1c65b4ff657ec06e971fded6a438ac102bdf",
+      "source_commit": "1943b19d987771264a06558e57b4255679190de0",
+      "method": "Unique exact named authored declaration at immutable source; no nearest-line substitution.",
+      "scope_status_credit_change": false
+    },
+    {
+      "id": "audit-options-external-programs-external-calls-delete",
+      "role": "scoped_implementation",
+      "author_declared_commit": "0e9e877cbb8883aecb186da8497b7987e2bb0072",
+      "old_path": "crates/hydrus-gui/src/external_call_window.rs",
+      "old_line": 82,
+      "old_symbol": "pub(crate) fn ask(",
+      "path": "crates/hydrus-gui/src/external_call_window.rs",
+      "line": 85,
+      "text": "pub(crate) fn ask(",
+      "line_sha256": "e6fad24f417ed74a8a497a7d0dfda022b29744ed30ef423dc168635054b7573c",
+      "source_commit": "1943b19d987771264a06558e57b4255679190de0",
+      "method": "Unique exact named authored declaration at immutable source; no nearest-line substitution.",
+      "scope_status_credit_change": false
+    },
+    {
+      "id": "audit-options-external-programs-external-calls-delete",
+      "role": "authored_behavioral_regression",
+      "author_declared_commit": "30b5ace45119124b1b3cce13c767aade5299b3ea",
+      "old_path": "crates/hydrus-gui/tests/gui/external_calls.rs",
+      "old_line": 642,
+      "old_symbol": "fn simple_delete_includes_os_launch_rows_but_cancel_and_closed_owner_do_not_change_saved_calls()",
+      "path": "crates/hydrus-gui/tests/gui/external_calls.rs",
+      "line": 655,
+      "text": "fn simple_delete_includes_os_launch_rows_but_cancel_and_closed_owner_do_not_change_saved_calls() {",
+      "line_sha256": "bf8522755e0e20efd6fd05b95a0cbf41d1e8909c3e76dbf9b95a36fd60c3c0ed",
+      "source_commit": "1943b19d987771264a06558e57b4255679190de0",
+      "method": "Unique exact named authored declaration at immutable source; no nearest-line substitution.",
+      "scope_status_credit_change": false
+    },
+    {
+      "id": "audit-options-external-programs-external-calls-duplicate",
+      "role": "scoped_implementation",
+      "author_declared_commit": "0e9e877cbb8883aecb186da8497b7987e2bb0072",
+      "old_path": "crates/hydrus-store/src/settings.rs",
+      "old_line": 1277,
+      "old_symbol": "impl Setting for hydrus_core::external_calls::Manager",
+      "path": "crates/hydrus-store/src/settings.rs",
+      "line": 1582,
+      "text": "impl Setting for hydrus_core::external_calls::Manager {",
+      "line_sha256": "0f65a24a2bccd352c747e31b168e1c65b4ff657ec06e971fded6a438ac102bdf",
+      "source_commit": "1943b19d987771264a06558e57b4255679190de0",
+      "method": "Unique exact named authored declaration at immutable source; no nearest-line substitution.",
+      "scope_status_credit_change": false
+    },
+    {
+      "id": "audit-options-external-programs-external-calls-duplicate",
+      "role": "scoped_implementation",
+      "author_declared_commit": "0e9e877cbb8883aecb186da8497b7987e2bb0072",
+      "old_path": "crates/hydrus-core/src/external_calls.rs",
+      "old_line": 294,
+      "old_symbol": "pub fn import_warning(",
+      "path": "crates/hydrus-core/src/external_calls.rs",
+      "line": 299,
+      "text": "    pub fn import_warning(&self) -> Option<String> {",
+      "line_sha256": "c173cbe0d294f2ef4ff60a7626bd9c67648e915f7a0ac7e321298fd8c5db7e1d",
+      "source_commit": "1943b19d987771264a06558e57b4255679190de0",
+      "method": "Unique exact named authored declaration at immutable source; no nearest-line substitution.",
+      "scope_status_credit_change": false
+    }
+  ],
+  "scope_status_credit_change": false,
+  "approval": false
+}

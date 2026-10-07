@@ -1,0 +1,69 @@
+{
+  "source_commit": "1943b19d987771264a06558e57b4255679190de0",
+  "run_id": 37592389894,
+  "conclusion": "success",
+  "validation_scope": "linux",
+  "required_platforms": [
+    "linux"
+  ],
+  "deferred_platforms": [
+    "windows",
+    "macos"
+  ],
+  "gui_tests": {
+    "passed": 707,
+    "failed": 0,
+    "ignored": 0,
+    "seconds": 199.56
+  },
+  "media_tests": {
+    "passed": 67,
+    "failed": 0,
+    "ignored": 0,
+    "seconds": 1.01
+  },
+  "selected_tests_passed": [
+    "test external_calls::callable_command_child_apply_cancel_parent_staging_reopen_and_retired_owner ... ok",
+    "test external_calls::duplicate_warning_decline_keeps_unsorted_unselected_prefix_accept_finishes_and_retired_question_cannot_append ... ok",
+    "test external_calls::list_duplicate_defaults_delete_capture_and_options_persistence ... ok",
+    "test external_calls::simple_delete_includes_os_launch_rows_but_cancel_and_closed_owner_do_not_change_saved_calls ... ok"
+  ],
+  "prior_assertions_preserved": 165,
+  "current_assertions": 242,
+  "prior_tests": 9,
+  "current_tests": 9,
+  "timings": {
+    "clippy_seconds": 546.0,
+    "clippy_cargo_seconds": 545.0,
+    "test_compile_seconds": 612.0,
+    "test_step_seconds": 1057.0
+  },
+  "cache_observations": [
+    "2026-10-07T08:14:00.7786571Z Version: 20261002.596",
+    "2026-10-07T08:14:00.7794536Z Version: 20261004.327.1",
+    "2026-10-07T08:14:42.2837999Z Restored from cache key \"v0-rust-check-Linux-x64-ff0b8b70-0ea5e1be\" full match: true.",
+    "2026-10-07T08:14:44.3078546Z Workspace restore prefix: hydrus-ws-v1-check-Linux-X64-ca9bfc0c8b9baf8c381365db-",
+    "2026-10-07T08:14:44.6182219Z Cache not found for input keys: hydrus-ws-v1-check-Linux-X64-ca9bfc0c8b9baf8c381365db-1943b19d987771264a06558e57b4255679190de0-37592389894-1, hydrus-ws-v1-check-Linux-X64-ca9bfc0c8b9baf8c381365db-",
+    "2026-10-07T08:14:45.5462702Z No workspace library snapshot restored; dependency cache remains usable.",
+    "2026-10-07T08:42:24.5656458Z Workspace library snapshot candidate: 293 artifact files plus input ledger, 2200273639 bytes (limit 4294967296).",
+    "2026-10-07T08:42:30.4317342Z Cache saved with key: hydrus-ws-v1-check-Linux-X64-ca9bfc0c8b9baf8c381365db-1943b19d987771264a06558e57b4255679190de0-37592389894-1",
+    "2026-10-07T08:42:37.7216081Z Retained workspace snapshot bytes: 1034912780; budget: 3221225472."
+  ],
+  "native_artifact_id": 11470198333,
+  "native_zip_sha256": "414d56513717c328368da022070d864cd387596e416468b22ac43e9bf6eb248b",
+  "native_image_count": 352,
+  "limits": [
+    "Hosted observations, not controlled attribution or separate Slint generation/Rust/link timing.",
+    "GUI and media suites have no failed or ignored tests. Existing ignored tests in other workspace suites remain; no assertions or tests were weakened.",
+    "Exactly two registered-call Delete and Duplicate leaves; runtime result alone does not approve image readability or broaden feature scope."
+  ],
+  "evidence_sha256": {
+    "full-check.log": "52e2a3450a62524ff97a32c90167c007a353749ac2143bd8bad119f65ea25864",
+    "tests.log": "2db2b25ba38352575b64c146ef2787c7cbada56881549595e2e0487b5ec315b6",
+    "parity.log": "47aa445f6acd9ac1921bf7105d807776a64b5a3d1402569dbed288a6c80717a3",
+    "clippy.log": "5bb1a1cb12008af21cc0608dad63849ea3efeb82ac52addcaf48eaaf4ca3cb8c",
+    "maintenance.log": "a9333e5439d9d36e6c0183600c140439eb3e1a63b6aeeeb5c3ecd7b67779709c",
+    "ci-evidence.json": "722868b069f06341ab8aa69e380f90597ce87109a2fa339e9c177da9fa0ab9fc",
+    "native-render-manifest.json": "05e1e3c1906262f817ed7d18fcfd7c92efe1c763778592230ee4aa3f1a6152ab"
+  }
+}

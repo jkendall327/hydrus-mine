@@ -1,0 +1,78 @@
+﻿2026-10-07T08:09:30.3760324Z Current runner version: '2.337.0'
+2026-10-07T08:09:30.3786887Z ##[group]Runner Image Provisioner
+2026-10-07T08:09:30.3788466Z Hosted Compute Agent
+2026-10-07T08:09:30.3789548Z Version: 20260901.588
+2026-10-07T08:09:30.3790869Z Commit: f88ec8081b781fac6c440065ac7ff9e710ce3d0b
+2026-10-07T08:09:30.3792282Z Build Date: 2026-09-01T19:56:44Z
+2026-10-07T08:09:30.3793449Z Worker ID: {3e9f5a9a-7e83-4c14-b1ae-615f22f78f89}
+2026-10-07T08:09:30.3794783Z Azure Region: canadacentral
+2026-10-07T08:09:30.3796139Z ##[endgroup]
+2026-10-07T08:09:30.3798499Z ##[group]Operating System
+2026-10-07T08:09:30.3799513Z Ubuntu
+2026-10-07T08:09:30.3800314Z 24.04.5
+2026-10-07T08:09:30.3801244Z LTS
+2026-10-07T08:09:30.3801802Z ##[endgroup]
+2026-10-07T08:09:30.3802397Z ##[group]Runner Image
+2026-10-07T08:09:30.3803096Z Image: ubuntu-24.04
+2026-10-07T08:09:30.3803714Z Version: 20260927.320.1
+2026-10-07T08:09:30.3805015Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20260927.320/images/ubuntu/Ubuntu2404-Readme.md
+2026-10-07T08:09:30.3806972Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20260927.320
+2026-10-07T08:09:30.3808051Z ##[endgroup]
+2026-10-07T08:09:30.3809260Z ##[group]GITHUB_TOKEN Permissions
+2026-10-07T08:09:30.3811337Z Actions: write
+2026-10-07T08:09:30.3811996Z Contents: read
+2026-10-07T08:09:30.3812668Z Metadata: read
+2026-10-07T08:09:30.3813254Z ##[endgroup]
+2026-10-07T08:09:30.3815994Z Secret source: Actions
+2026-10-07T08:09:30.3817158Z Cache mode: write
+2026-10-07T08:09:30.3818463Z Prepare workflow directory
+2026-10-07T08:09:30.4385107Z Prepare all required actions
+2026-10-07T08:09:30.4455978Z Getting action download info
+2026-10-07T08:09:30.6694687Z Download action repository 'actions/github-script@v7' (SHA:f28e40c7f34bde8b3046d885e986cb6290c5673b)
+2026-10-07T08:09:31.0661928Z Complete job name: workspace-cache-maintenance
+2026-10-07T08:09:31.1471269Z ##[group]Run actions/github-script@v7
+2026-10-07T08:09:31.1472656Z with:
+2026-10-07T08:09:31.1479886Z   script: const refs = new Set(['refs/heads/master', 'refs/heads/codex/full-validation', 'refs/heads/codex/validation-runner']);
+const familyPattern = /^(hydrus-ws-v1-check-Linux-X64-)/;
+const budget = 3 * 1024 ** 3;
+const entries = [];
+for (let page = 1; ; page++) {
+  const {data} = await github.request('GET /repos/{owner}/{repo}/actions/caches', {
+    ...context.repo, page, per_page: 100
+  });
+  entries.push(...data.actions_caches.filter(cache => refs.has(cache.ref) && familyPattern.test(cache.key)));
+  if (data.actions_caches.length < 100) break;
+}
+entries.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+const counts = new Map();
+let bytes = 0;
+for (const cache of entries) {
+  const family = cache.ref + ':' + cache.key.match(familyPattern)[1];
+  const count = counts.get(family) || 0;
+  if (count < 2 && bytes + cache.size_in_bytes <= budget) {
+    counts.set(family, count + 1);
+    bytes += cache.size_in_bytes;
+    continue;
+  }
+  // Do not delete dependency caches, PR caches or unrelated branches.
+  await github.request('DELETE /repos/{owner}/{repo}/actions/caches/{cache_id}', {
+    ...context.repo, cache_id: cache.id
+  });
+  core.info(`Removed owned workspace snapshot ${cache.key} (${cache.size_in_bytes} bytes).`);
+}
+core.info(`Retained workspace snapshot bytes: ${bytes}; budget: ${budget}.`);
+
+2026-10-07T08:09:31.1490429Z   github-token: ***
+2026-10-07T08:09:31.1491009Z   debug: false
+2026-10-07T08:09:31.1491605Z   user-agent: actions/github-script
+2026-10-07T08:09:31.1492280Z   result-encoding: json
+2026-10-07T08:09:31.1492864Z   retries: 0
+2026-10-07T08:09:31.1493483Z   retry-exempt-status-codes: 400,401,403,404,422
+2026-10-07T08:09:31.1494468Z env:
+2026-10-07T08:09:31.1495038Z   CARGO_TERM_COLOR: always
+2026-10-07T08:09:31.1495849Z   RUSTFLAGS: -D warnings
+2026-10-07T08:09:31.1496458Z ##[endgroup]
+2026-10-07T08:09:31.6826563Z Removed owned workspace snapshot hydrus-ws-v1-check-Linux-X64-af4fa2e32ed1c3da4471dd09-3c17f2f4507670c3040f68fac020fa265451d50c-37580667106-1 (344975214 bytes).
+2026-10-07T08:09:31.6829034Z Retained workspace snapshot bytes: 1034912974; budget: 3221225472.
+2026-10-07T08:09:31.7027923Z Cleaning up orphan processes
+2026-10-07T08:09:31.7368581Z ##[warning]Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/github-script@v7. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/

@@ -458,3 +458,39 @@ not font-discovery output alone, supply the glyph/readability evidence.
 [Successful outcome](../checkpoints/6b5ca5ab4/validation-outcome.json) and
 [initial failed-run evidence](../checkpoints/6b5ca5ab4/failed-runs/3c17f2f45/failed-validation-outcome.json)
 are retained. No further optimization experiment was opened.
+
+## External-call list checkpoint
+
+Initial source `625a2bdaf`, run `37590137304`, restored 4,122 verified input
+mtimes and 293 workspace artifact files. Strict Clippy failed on one new test
+helper clone assignment after a 90-second step. Test compilation took 272s;
+the full test step took 777s. The GUI suite had 706 passes, one failure and
+zero ignored in 236.35s; all 67 media tests passed. The failing new assertion
+read a child-open display flag before the existing 30 ms refresh timer ran.
+This run earns no credit. Its five available defining images and raw logs
+are retained separately from the repaired-source evidence.
+
+Repaired source `1943b19d9`, run `37592389894`, preserves all 239 initial assertions
+and adds three actual closure/readiness checks. Strict Clippy took 545s
+(546s workflow step), test compilation 612s, and the full test step 1057s.
+All 707 GUI tests passed in 199.56s and all 67 media tests in 1.01s.
+The compiler logs report rebuilding the generated UI crate.
+
+The runner image changed from `20260927.320.1` to `20261004.327.1`.
+The conservative workspace compatibility prefix changed from
+`68e3726939ec9009de9276fa` to `ca9bfc0c8b9baf8c381365db`; the dependency cache
+hit, but no compatible workspace snapshot existed. This explains the workspace
+cache miss in the retained logs; it is not a controlled timing attribution.
+The run saved a new bounded snapshot for that image.
+
+The new snapshot contains 293 workspace artifact files plus the input ledger,
+totaling 2,200,273,639 bytes. Maintenance retained 1,034,912,780 compressed bytes, below the 3 GiB
+budget. Exact keys, runner versions and timestamps remain in the checkpoint's
+[raw log](../checkpoints/1943b19d9/full-check.log) and
+[outcome](../checkpoints/1943b19d9/validation-outcome.json).
+
+These are hosted observations, not controlled attribution or separate Slint,
+Rust and linker measurements. Existing libraries can be reused while integration
+test compilation/linking and full test execution still take time. No new
+optimization experiment was opened. [Checkpoint evidence](../checkpoints/1943b19d9/README.md)
+retains both attempts with no failed-run credit.

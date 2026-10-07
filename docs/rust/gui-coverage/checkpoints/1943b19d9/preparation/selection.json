@@ -1,0 +1,23 @@
+{
+  "source_commit": "1943b19d987771264a06558e57b4255679190de0",
+  "run_id": 37592389894,
+  "source_phase": "repaired source validation pending",
+  "selected_candidate_ids": [
+    "audit-options-external-programs-external-calls-delete",
+    "audit-options-external-programs-external-calls-duplicate"
+  ],
+  "selected_count": 2,
+  "prior_completed_count": 357,
+  "pending_count": 18,
+  "conditional_bank_if_all_gates_pass": 359,
+  "conditional_pending_after_bank": 16,
+  "conditional_goal_outside_ledger": 915,
+  "not_ready_by_preparation": true,
+  "approval": false,
+  "gates": [
+    "Exact source 1943b19d987771264a06558e57b4255679190de0, actual run 37592389894: full Linux strict fmt/Clippy/workspace tests/ratchet plus parity-models reference/backend success pending. Windows/macOS deferred under immutable source policy.",
+    "Seven fresh defining native captures; independent reviewer2 and root actual inspection/hash verification. Actual Qt callable child is historical support, not outer-list/question pixel or placement parity.",
+    "Root final patch/census review, staged prior357/unselected/native1799/frozen1812/allgoal1274 preservation and desktop/narrow browser required.",
+    "Only accepted publication may advance ledger to359, pending candidates to16 and outside-goal leaves to915. Preparation grants no approval."
+  ]
+}

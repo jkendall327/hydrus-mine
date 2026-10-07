@@ -3,16 +3,17 @@
 The pass started from merged source `3702cdbee99473cfd7af073aa044fe847f78f405`.
 The prior checkpoint validated `028fd72f` (240 original leaves).
 
-The latest checkpoint validates `6b5ca5ab4` and publishes **357 signed-off
-original leaves: 2 new in this batch, 117 across sixteen recent checkpoints,
-18 existing candidates still pending**. Full Linux validation passed, including
-all 707 GUI tests and 67 media tests. Exactly command parameter editing and
-full-template Copy/Paste received fresh independent behavioral and rendered
-review. Windows/macOS remain deferred.
-[Durable checkpoint evidence](../checkpoints/6b5ca5ab4/README.md) retains all eight
-defining live captures, logs, the actual Qt rerun and assertion/preservation proofs.
-The goal remains all individual feature leaves implemented and verified;
-numeric checkpoints and inventory first-pass assessments are not stopping
+The latest checkpoint validates `1943b19d9` and publishes **359 signed-off
+original leaves: 2 new in this batch, 119 since the prior 240 across seventeen
+recent checkpoints, 16 existing candidates still pending**. The 119 figure is
+cumulative checkpoint progress, not a count of new sign-offs in the last 24 hours.
+Full Linux validation passed, including all 707 GUI and 67 media tests.
+Exactly registered-call Delete and Duplicate received fresh independent
+behavioral and rendered review. Windows/macOS remain deferred.
+[Durable checkpoint evidence](../checkpoints/1943b19d9/README.md) retains seven fresh
+captures, five failed-run diagnostic captures, raw logs, actual Qt rerun and
+assertion/preservation proofs. The goal remains all individual leaves implemented
+and verified; numeric checkpoints and inventory assessments are not stopping
 criteria. Continue with the next bounded candidate batch after publication.
 The notes below preserve the chronological investigation and failed-run history.
 Source review of all 153 parity manifests is recorded in `review-1.md` through
@@ -22,7 +23,7 @@ previously validated IDs. Structural parents may retain a scoped assessment but
 receive no completed-leaf credit.
 The supplemental `demotions-render-evidence.json` defers seven further claims
 whose defining native behavior lacks assertions, initially leaving 135 candidates.
-One hundred and seventeen are now published; 18 remain unresolved. No pending candidate receives
+One hundred and nineteen are now published; 16 remain unresolved. No pending candidate receives
 completion credit. Favourites was withheld from the preceding batch because its
 capture disagreed with the selected service; actual dropdown input and fresh
 review resolved that blocker in the preceding checkpoint.
