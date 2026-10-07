@@ -7,17 +7,17 @@ partway, say exactly where.
 
 The owner's current goal (2026-10-06) is **all individual report feature leaves
 implemented, verified and published**, with Linux first. Numeric checkpoints are
-progress reports, not stopping targets. The latest checkpoint banks 339 original
-concrete feature completions, including 99 newly signed off across eight October 6
-Linux checkpoints with fresh rendered review. There are 36 existing candidates
-awaiting sign-off; the next bounded batch targets suggested-tags width/layout.
+progress reports, not stopping targets. The latest checkpoint banks 341 original
+concrete feature completions, including 101 newly signed off across nine October 6
+Linux checkpoints with fresh rendered review. There are 34 existing candidates
+awaiting sign-off; the next bounded batch targets namespace Add/Delete dialogs.
 Keep these counts separate from inventory assessments and historical first-pass
 claims. Validate and publish each small batch routinely, and reassess any batch
 that goes 24 hours without a checkpoint. Broad implementation must not rebuild
 an unvalidated backlog. Windows/macOS remain deferred; strict Linux linting,
 full tests, reference replays and rendered review remain required.
-The dedicated manual CI ref saved its first cache; later reuse is not yet measured.
-See [the checkpoint evidence](gui-coverage/checkpoints/05000f10e/README.md).
+The revised archived-evidence cache policy saved its first seed; reuse is not yet measured.
+See [the checkpoint evidence](gui-coverage/checkpoints/e886e68ed/README.md).
 
 The first parallel slate (2026-10-03) adds detailed embedded metadata,
 manual file export, local service review/management, tag sibling/parent
@@ -65,8 +65,8 @@ and all 121 exported native windows into nested work, including shared editors,
 all 38 reference option tabs and 19 system-predicate groups. It contains 1,812
 reference nodes and 1,799 native nodes, with per-node assessments, concrete
 remaining work and pinned source/evidence links. The frozen reference inventory
-now has 489 Missing, 388 Partial and 935 First pass entries; its status changes
-also include parent/alias assessments, which do not inflate the 334-item signed-off completion count.
+now has 482 Missing, 388 Partial and 942 First pass entries; its status changes
+also include parent/alias assessments, which do not inflate the 341-item signed-off completion count.
 Native first-pass claims cite scoped regression evidence; source-supported but
 unverified behavior is partial. These counts are not a whole-client completion
 percentage. Maintenance instructions and scope limits are in

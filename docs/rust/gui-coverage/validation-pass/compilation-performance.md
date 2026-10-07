@@ -295,3 +295,11 @@ covering publication additions/changes/deletions, retained-input invalidation,
 unsafe excluded paths and rejection of the old ledger version. Ledger version 2
 and the existing helper compatibility hash require one fresh cache seed.
 Hosted reuse and timing improvement from this correction are not yet established.
+
+The revised-policy run `37540746618` at `e886e68ed` passed. Dependency cache
+restored; workspace cache missed as expected for the new compatibility hash and
+saved a seed. Clippy compilation took 12m40s, test compilation 12m00s and all
+699 GUI tests passed in 189.38s. All 25 cache safety tests passed on hosted Linux.
+Maintenance retained 1,379,443,388 bytes under the 3 GiB cap. These are ordinary
+validation observations, not a controlled benchmark or proof of workspace reuse
+under the new policy. [Evidence](../checkpoints/e886e68ed/validation-outcome.json).

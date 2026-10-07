@@ -1,0 +1,111 @@
+{
+  "schema_version": 1,
+  "review_kind": "read_only_dirty_worktree_source_review",
+  "baseline_source_commit": "a95eeefd638eb806efc91bd81cdb30248b888b0f",
+  "branch": "codex/validate-suggested-layout",
+  "candidate_ids": [
+    "audit-options-tag-suggestions-suggested-tags-width-of-suggested-tags-columns",
+    "audit-options-tag-suggestions-suggested-tags-column-layout"
+  ],
+  "approval": false,
+  "source_approval": false,
+  "builds_tests_or_repository_edits_performed": false,
+  "reviewed_test_diff_sha256": "1000431dae5196d15502b980b153a663ba11efd31660262052d44cedd8195e9e",
+  "blocking_findings": [],
+  "actionable_findings": [],
+  "conclusion": "No concrete compile/API, ordering or assertion-preservation blocker identified in the current two-test-file snapshot. Source review alone does not validate execution or rendered acceptance; root may proceed to committed exact-source full Linux CI and fresh review.",
+  "checks": [
+    {
+      "area": "Existing production APIs and Rust types",
+      "result": "No concrete compile/API/lint blocker found by source inspection. Existing Rc/Cell measurement callback arguments match Options choice-state-measured(int,MenuChoiceFrame,int,string,bool); public setters/getters and headless render_snapshot/save_png exist. Existing Model imports cover row_data/iter. ServiceId and TagId use the same SQL parameter forms as production recent writes; intern_tag takes &Tag, TimestampMs::now().0 gives used_ms. New notebook Store::write closure captures no borrowed locals, avoiding the prior static-closure issue.",
+      "evidence": [
+        "crates/hydrus-gui/tests/gui/options_window.rs:277,281,310",
+        "crates/hydrus-gui/ui/options.slint:237,595,609",
+        "crates/hydrus-store/src/master.rs:196",
+        "crates/hydrus-store/src/schema.rs:521",
+        "crates/hydrus-gui-model/src/manage_tags.rs:712"
+      ]
+    },
+    {
+      "area": "Actual saved parent ComboBox state",
+      "result": "The capture follows real parent Apply, reopened Store saved-width240/columns/defaultrecent assertions, then real reopening of Options. Fresh row.kind5/index1/items side-by-side and 1ms real ComboBox observer are checked with positive frame/enabled/current selected caption. Bounded2s draw+10ms sleep loop drives timers without replacing captions/model; snapshot captures the same indexed freshly opened parent before another child is created. Observation is disabled before continuing all original child Cancel/stale Apply/service tests.",
+      "evidence": [
+        "crates/hydrus-gui/tests/gui/options_window.rs:245,264,274,277,297,300,310,320",
+        "crates/hydrus-gui/ui/options.slint:595-610",
+        "crates/hydrus-gui-model/src/options.rs:4704-4721"
+      ]
+    },
+    {
+      "area": "Real recent fixture and populated columns",
+      "result": "The seed asserts nonempty selected files and that parity:recent is absent on every selected file, then interns/persists actual recent_tags for my tags in the same Store writer. This is fixture input matching Qt push_recent_tags; the production reader/filter/publisher remain unchanged. Existing parity:present on all selected files stays filtered and most-used three rows/first parity:new2 checks remain. Both available row models are asserted populated before actual two-column render, with original exact width240 and selected-recent/columns checks retained. No related/lookup worker activation or manual row replacement.",
+      "evidence": [
+        "crates/hydrus-gui/tests/gui/manage_tags.rs:58,60,80,104,116,123,129,133",
+        "crates/hydrus-gui-model/src/tag_suggestions.rs:52,90",
+        "crates/hydrus-gui-model/src/manage_tags.rs:604-625",
+        "crates/hydrus-gui/src/manage_tags_window.rs:263-290",
+        "oracle/record_tag_suggestions.py:28-31,65-88"
+      ]
+    },
+    {
+      "area": "Original observer/Apply/retirement assertions",
+      "result": "The columns export occurs before original first click/activation. The repeated only-add, staged mapping, filtered removal, persisted broadcast,220ms wait+timer update, applied mappings, retired callback refusal and saved most-used length5 assertions are unmodified. No fixture changes current mappings or most-used list values. The recent seed remains useful after Apply because new2/present are now on all selected files and filtered while parity:recent is not.",
+      "evidence": [
+        "crates/hydrus-gui/tests/gui/manage_tags.rs:143-199",
+        "crates/hydrus-gui/src/manage_tags_window.rs:337,474,684-713",
+        "crates/hydrus-gui-model/src/manage_tags.rs:712-715"
+      ]
+    },
+    {
+      "area": "Fresh actual notebook owner and cleanup",
+      "result": "Only after all original retirement assertions does the new code assert slot empty, save columns=false while retaining width240/defaultrecent/recent availability, and assert the retained predecessor still has opening columns=true. Production menu action constructs a new owner from persisted settings because slot is empty. New actual owner asserts columnsfalse, exact width bits240, selected recent1, both pages enabled, most-used nonempty and recent parity:recent present; its last-created adapter is rendered before Cancel. Cancel must empty slot before main hide. Existing service-switch fallback test with recent=None remains unchanged.",
+      "evidence": [
+        "crates/hydrus-gui/tests/gui/manage_tags.rs:200-241,246",
+        "crates/hydrus-gui/src/manage_tags_window.rs:132-137,552-582",
+        "crates/hydrus-gui/src/lib.rs:1998-2029,2140-2175"
+      ]
+    },
+    {
+      "area": "Bounded scope and honest capture proof",
+      "result": "Exactly two existing GUI test files change; no production API/layout/source/canonical status expansion. The three images target reopened240/side-by-side Options, two populated columns and a fresh notebook recent page. Physical list width still has no dedicated measurement observer: saved240 property and intrinsic source constraints must not be described as measured rendered geometry. First-draw consumer captures and all checkbox/caption/list readability require actual fresh image inspection; no rendered approval is inferred from source.",
+      "evidence": [
+        "crates/hydrus-gui/ui/tag_suggestions.slint:23,31-49",
+        "crates/hydrus-gui/ui/list_table.slint:25-29",
+        "crates/hydrus-gui/tests/gui/manage_tags.rs:133,230"
+      ]
+    }
+  ],
+  "original_assertion_preservation": [
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-gui/tests/gui/options_window.rs",
+      "baseline_commit": "a95eeefd638eb806efc91bd81cdb30248b888b0f",
+      "baseline_sha256": "207963c5ddef75d954d72265c0fee853ccb9921a745021f2c9361c56360560dc",
+      "reviewed_worktree_sha256": "748e1b2a51a79baf279eb1f27bf239051fbaedc0d55f4921d65d73db8b0b3492",
+      "original_assertion_macro_count": 670,
+      "current_assertion_macro_count": 674,
+      "removed_original_lines": [],
+      "all_original_assertion_source_preserved": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-gui/tests/gui/manage_tags.rs",
+      "baseline_commit": "a95eeefd638eb806efc91bd81cdb30248b888b0f",
+      "baseline_sha256": "f9d8a74acddab7df47c7ea5b93c98cc9dd76d22691693ae1ff6fc856362409db",
+      "reviewed_worktree_sha256": "3f18b74b09995e0101360a793c2b7b3e791c907098b3881397794da64dbfcb92",
+      "original_assertion_macro_count": 47,
+      "current_assertion_macro_count": 63,
+      "removed_original_lines": [
+        "    let _headless_windows = headless::init();"
+      ],
+      "all_original_assertion_source_preserved": true
+    }
+  ],
+  "original_assertion_total": 717,
+  "current_assertion_total": 737,
+  "scope_caveats": [
+    "Only width and notebook/columns choice are in scope; no parent/alias/default-page/recent/related/lookup or most-used-editor completion credit.",
+    "Existing owners retain opening preferences and availability; persisted most-used broadcasts use200ms observer. All existing cancellation/stale-owner/persistence tests are preserved.",
+    "Native per-service editing differs from Qt inline editor; recent Clear/confirmation/read-time decay/settings editor remain outside this packet. Independently published unrelated leaves receive no additional credit here.",
+    "Qt columns PNG is postactivation and includes Clear; proposed native columns capture is preactivation, notebook has extra persisted broadcast row from retained assertions. Label these states honestly rather than alter fixture results for pixel resemblance.",
+    "Existing native CJK glyph rendering differs from Qt; fresh list/column/Options visual review must retain text/font/framework caveats and distinguish them from width routing.",
+    "No builds/lints/runtime or fresh PNG inspection performed for this dirty patch. Exact committed-source full Linux CI and independent actual fresh render inspection remain required; Windows/macOS deferred."
+  ]
+}

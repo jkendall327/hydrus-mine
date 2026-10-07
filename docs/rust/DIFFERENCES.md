@@ -3710,10 +3710,12 @@ review at `05000f10e` approve exactly these five scoped leaves: 339 signed off,
 and 699 passing GUI tests preserve these limitations; no broader renderer/fade,
 parent, alias or deferred-platform completion is claimed.
 
-The pending suggested-tags width/layout captures grant no recent, related, lookup
+The validated suggested-tags width/layout captures grant no recent, related, lookup
 or parent credit. Opening preferences remain owner-local; persisted most-used
 broadcasts retain the existing 200ms observer. Native frames differ from the Qt
 post-activation frame, its inline editing and Clear action. Current fixture CJK
 glyph rendering differs while Unicode row/draft data remains asserted. The saved
-width property is not a direct measured-geometry observation; fresh list bounds
-and readability still require rendered review.
+width property is not a direct measured-geometry observation. Fresh review at
+`e886e68ed` verifies readable list boundaries and layout; CJK glyph rendering
+remains different from Qt. Exactly these two leaves are published, bringing
+the total to 341 signed off with 34 existing candidates pending.

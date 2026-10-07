@@ -3,12 +3,12 @@
 The pass started from merged source `3702cdbee99473cfd7af073aa044fe847f78f405`.
 The prior checkpoint validated `028fd72f` (240 original leaves).
 
-The latest October 6 checkpoint validates `05000f10e` and publishes **339 signed-off
-original leaves: 5 new in this batch, 99 across today's eight checkpoints,
-36 candidates still pending**. Full Linux validation passed, including all 699
-native GUI tests, and the five selected leaves received fresh independent
+The latest October 6 checkpoint validates `e886e68ed` and publishes **341 signed-off
+original leaves: 2 new in this batch, 101 across nine October 6 checkpoints,
+34 candidates still pending**. Full Linux validation passed, including all 699
+native GUI tests, and the two selected leaves received fresh independent
 rendered/behavioral review. Windows/macOS remain deferred.
-[Durable checkpoint evidence](../checkpoints/05000f10e/README.md) retains the
+[Durable checkpoint evidence](../checkpoints/e886e68ed/README.md) retains the
 selected images, logs, hashes and review limits. The current goal is all individual
 feature leaves implemented and verified; historical numeric goals and inventory
 first-pass counts are not completion criteria. The notes below preserve the
@@ -20,7 +20,7 @@ previously validated IDs. Structural parents may retain a scoped assessment but
 receive no completed-leaf credit.
 The supplemental `demotions-render-evidence.json` defers seven further claims
 whose defining native behavior lacks assertions, initially leaving 135 candidates.
-Ninety-nine are now published; 36 remain unresolved. No pending candidate receives
+One hundred and one are now published; 34 remain unresolved. No pending candidate receives
 completion credit. Favourites was withheld from the preceding batch because its
 capture disagreed with the selected service; actual dropdown input and fresh
 review resolved that blocker in the preceding checkpoint.

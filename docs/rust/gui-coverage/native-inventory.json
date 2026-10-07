@@ -2,8 +2,8 @@
   "schema_version": 1,
   "title": "Rust GUI migration hierarchy: entrypoints, editors and expected controls",
   "repository": ".",
-  "generated_at_utc": "2026-10-06T22:07:21.572352+00:00",
-  "git_head": "05000f10eafc4211d6856549d0073edb90ba5811",
+  "generated_at_utc": "2026-10-06T23:56:22.060596+00:00",
+  "git_head": "e886e68ed9c49751617bcf28df50957d99e3c03e",
   "scope": "Main-menu entrypoints, all exported native Slint windows, popup/importer surfaces and source-backed nested editor/control families. Missing expected controls are anchored at implementation omissions or placeholders.",
   "caveats": [
     "Historical audit provenance is source inspection. Reviewed implementation changes passed hosted CI; per-node remaining boundaries still apply.",
@@ -162,8 +162,8 @@
       "line_count": 230
     },
     "crates/hydrus-gui/tests/gui/manage_tags.rs": {
-      "sha256": "f9d8a74acddab7df47c7ea5b93c98cc9dd76d22691693ae1ff6fc856362409db",
-      "line_count": 436
+      "sha256": "3f18b74b09995e0101360a793c2b7b3e791c907098b3881397794da64dbfcb92",
+      "line_count": 513
     },
     "hydrus/client/gui/metadata/ClientGUIMigrateTags.py": {
       "sha256": "2013021e9d1e20f85b1718875f831685034668a06c11364d335611a5a305f0de",
@@ -838,12 +838,12 @@
       "line_count": 1444
     },
     "docs/rust/GUI.md": {
-      "sha256": "fe4b6c4ed8c998009d7a78bf89f59354f66b136e8647f3d99bdc62a6da847168",
-      "line_count": 4584
+      "sha256": "cfda0344c1222e3c87357e0c2cd558795ed3f297e8962307fda741385b8bb0e2",
+      "line_count": 4592
     },
     "docs/rust/DIFFERENCES.md": {
-      "sha256": "7295eb6c22e0d5b6c3aa63d000d0afe60dbb26735bcdf8523d5ca935a49df453",
-      "line_count": 3707
+      "sha256": "33a5de7cee680a36e73594a3642d4bd6701c379397bcabb49ed25727d02bdb45",
+      "line_count": 3719
     },
     "crates/hydrus-gui/src/tag_display_window.rs": {
       "sha256": "eab85f057282336d2ae21ee9534cd1a53d3002db95871a14935af7c734488977",
@@ -1010,7 +1010,7 @@
       "line_count": 417
     },
     "docs/rust/ROADMAP.md": {
-      "sha256": "b2a790779dc79a385ace396fe2752d9f39daeb2e31d86f25d98ecded36ce1584",
+      "sha256": "2fc62f07b9da5aa6ed2aca89c8bacd7eeba54273588cd5cb97ba994ba3d5e3e1",
       "line_count": 429
     },
     "hydrus/client/gui/panels/options/FileSearchPanel.py": {
@@ -1222,8 +1222,8 @@
       "line_count": 3251
     },
     "crates/hydrus-gui/tests/gui/options_window.rs": {
-      "sha256": "207963c5ddef75d954d72265c0fee853ccb9921a745021f2c9361c56360560dc",
-      "line_count": 6310
+      "sha256": "748e1b2a51a79baf279eb1f27bf239051fbaedc0d55f4921d65d73db8b0b3492",
+      "line_count": 6353
     },
     "hydrus/client/gui/canvas/ClientGUICanvas.py": {
       "sha256": "cd8f2785f7c911c56cfdde97c3becf5b9209d2b4c1a63b78837a899b2d39baf3",
@@ -23656,7 +23656,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 1377,
+          "line": 1420,
           "role": "authored_behavioral_regression",
           "description": "Offer the options child editor for sorted regex/description CRUD, exact duplicate guard, advisory invalid fragments, extended selection and confirmed deletion. Child edits wait for options Apply; cancellation discards drafts. Saved native preferences override preserved reference YAML, including an empty list.",
           "executed_in_inventory": false,
@@ -27178,7 +27178,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 1143,
+          "line": 1186,
           "role": "authored_behavioral_regression",
           "description": "Editable remembered-panel switch is imported and persists through Apply; the next opening uses the last selected page when enabled, otherwise gui. Navigation remembers its page independently of canceled option drafts. Unknown panels fall back to gui. Search matches can navigate to the remembered page.",
           "executed_in_inventory": false,
@@ -30048,7 +30048,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 300,
+          "line": 343,
           "role": "existing_gui_regression",
           "description": "Exercises Cancel, Apply, reopening, invalid text, unchanged settings and tab-name consumer refresh.",
           "executed_in_inventory": false,
@@ -30099,7 +30099,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 300,
+          "line": 343,
           "role": "existing_gui_regression",
           "description": "Exercises Cancel, Apply, reopening, invalid text, unchanged settings and tab-name consumer refresh.",
           "executed_in_inventory": false,
@@ -30159,7 +30159,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 300,
+          "line": 343,
           "role": "existing_gui_regression",
           "description": "Exercises Cancel, Apply, reopening, invalid text, unchanged settings and tab-name consumer refresh.",
           "executed_in_inventory": false,
@@ -30240,7 +30240,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 300,
+          "line": 343,
           "role": "existing_gui_regression",
           "description": "Exercises Cancel, Apply, reopening, invalid text, unchanged settings and tab-name consumer refresh.",
           "executed_in_inventory": false,
@@ -30296,7 +30296,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 300,
+          "line": 343,
           "role": "existing_gui_regression",
           "description": "Exercises Cancel, Apply, reopening, invalid text, unchanged settings and tab-name consumer refresh.",
           "executed_in_inventory": false,
@@ -30565,7 +30565,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 300,
+          "line": 343,
           "role": "existing_gui_regression",
           "description": "Exercises Cancel, Apply, reopening, invalid text, unchanged settings and tab-name consumer refresh.",
           "executed_in_inventory": false,
@@ -30763,7 +30763,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 300,
+          "line": 343,
           "role": "existing_gui_regression",
           "description": "Exercises Cancel, Apply, reopening, invalid text, unchanged settings and tab-name consumer refresh.",
           "executed_in_inventory": false,
@@ -30847,7 +30847,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 300,
+          "line": 343,
           "role": "existing_gui_regression",
           "description": "Exercises Cancel, Apply, reopening, invalid text, unchanged settings and tab-name consumer refresh.",
           "executed_in_inventory": false,
@@ -30903,7 +30903,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 300,
+          "line": 343,
           "role": "existing_gui_regression",
           "description": "Exercises Cancel, Apply, reopening, invalid text, unchanged settings and tab-name consumer refresh.",
           "executed_in_inventory": false,
@@ -30959,7 +30959,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 300,
+          "line": 343,
           "role": "existing_gui_regression",
           "description": "Exercises Cancel, Apply, reopening, invalid text, unchanged settings and tab-name consumer refresh.",
           "executed_in_inventory": false,
@@ -31015,7 +31015,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 300,
+          "line": 343,
           "role": "existing_gui_regression",
           "description": "Exercises Cancel, Apply, reopening, invalid text, unchanged settings and tab-name consumer refresh.",
           "executed_in_inventory": false,
@@ -31095,7 +31095,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 300,
+          "line": 343,
           "role": "existing_gui_regression",
           "description": "Exercises Cancel, Apply, reopening, invalid text, unchanged settings and tab-name consumer refresh.",
           "executed_in_inventory": false,
@@ -31159,7 +31159,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 300,
+          "line": 343,
           "role": "existing_gui_regression",
           "description": "Exercises Cancel, Apply, reopening, invalid text, unchanged settings and tab-name consumer refresh.",
           "executed_in_inventory": false,
@@ -31215,7 +31215,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 300,
+          "line": 343,
           "role": "existing_gui_regression",
           "description": "Exercises Cancel, Apply, reopening, invalid text, unchanged settings and tab-name consumer refresh.",
           "executed_in_inventory": false,
@@ -31271,7 +31271,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 300,
+          "line": 343,
           "role": "existing_gui_regression",
           "description": "Exercises Cancel, Apply, reopening, invalid text, unchanged settings and tab-name consumer refresh.",
           "executed_in_inventory": false,
@@ -31356,7 +31356,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 300,
+          "line": 343,
           "role": "existing_gui_regression",
           "description": "Exercises Cancel, Apply, reopening, invalid text, unchanged settings and tab-name consumer refresh.",
           "executed_in_inventory": false,
@@ -31420,7 +31420,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 300,
+          "line": 343,
           "role": "existing_gui_regression",
           "description": "Exercises Cancel, Apply, reopening, invalid text, unchanged settings and tab-name consumer refresh.",
           "executed_in_inventory": false,
@@ -31476,7 +31476,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 300,
+          "line": 343,
           "role": "existing_gui_regression",
           "description": "Exercises Cancel, Apply, reopening, invalid text, unchanged settings and tab-name consumer refresh.",
           "executed_in_inventory": false,
@@ -31563,7 +31563,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 300,
+          "line": 343,
           "role": "existing_gui_regression",
           "description": "Exercises Cancel, Apply, reopening, invalid text, unchanged settings and tab-name consumer refresh.",
           "executed_in_inventory": false,
@@ -31619,7 +31619,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 300,
+          "line": 343,
           "role": "existing_gui_regression",
           "description": "Exercises Cancel, Apply, reopening, invalid text, unchanged settings and tab-name consumer refresh.",
           "executed_in_inventory": false,
@@ -31675,7 +31675,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 300,
+          "line": 343,
           "role": "existing_gui_regression",
           "description": "Exercises Cancel, Apply, reopening, invalid text, unchanged settings and tab-name consumer refresh.",
           "executed_in_inventory": false,
@@ -31762,7 +31762,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 300,
+          "line": 343,
           "role": "existing_gui_regression",
           "description": "Exercises Cancel, Apply, reopening, invalid text, unchanged settings and tab-name consumer refresh.",
           "executed_in_inventory": false,
@@ -31818,7 +31818,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 300,
+          "line": 343,
           "role": "existing_gui_regression",
           "description": "Exercises Cancel, Apply, reopening, invalid text, unchanged settings and tab-name consumer refresh.",
           "executed_in_inventory": false,
@@ -31874,7 +31874,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 300,
+          "line": 343,
           "role": "existing_gui_regression",
           "description": "Exercises Cancel, Apply, reopening, invalid text, unchanged settings and tab-name consumer refresh.",
           "executed_in_inventory": false,
@@ -31930,7 +31930,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 300,
+          "line": 343,
           "role": "existing_gui_regression",
           "description": "Exercises Cancel, Apply, reopening, invalid text, unchanged settings and tab-name consumer refresh.",
           "executed_in_inventory": false,
@@ -32181,7 +32181,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 300,
+          "line": 343,
           "role": "existing_gui_regression",
           "description": "Exercises Cancel, Apply, reopening, invalid text, unchanged settings and tab-name consumer refresh.",
           "executed_in_inventory": false,
@@ -32237,7 +32237,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 300,
+          "line": 343,
           "role": "existing_gui_regression",
           "description": "Exercises Cancel, Apply, reopening, invalid text, unchanged settings and tab-name consumer refresh.",
           "executed_in_inventory": false,
@@ -32293,7 +32293,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 300,
+          "line": 343,
           "role": "existing_gui_regression",
           "description": "Exercises Cancel, Apply, reopening, invalid text, unchanged settings and tab-name consumer refresh.",
           "executed_in_inventory": false,
@@ -32372,7 +32372,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 300,
+          "line": 343,
           "role": "existing_gui_regression",
           "description": "Exercises Cancel, Apply, reopening, invalid text, unchanged settings and tab-name consumer refresh.",
           "executed_in_inventory": false,
@@ -32456,7 +32456,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 300,
+          "line": 343,
           "role": "existing_gui_regression",
           "description": "Exercises Cancel, Apply, reopening, invalid text, unchanged settings and tab-name consumer refresh.",
           "executed_in_inventory": false,
@@ -32512,7 +32512,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 300,
+          "line": 343,
           "role": "existing_gui_regression",
           "description": "Exercises Cancel, Apply, reopening, invalid text, unchanged settings and tab-name consumer refresh.",
           "executed_in_inventory": false,
@@ -32596,7 +32596,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 300,
+          "line": 343,
           "role": "existing_gui_regression",
           "description": "Exercises Cancel, Apply, reopening, invalid text, unchanged settings and tab-name consumer refresh.",
           "executed_in_inventory": false,
@@ -32652,7 +32652,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 300,
+          "line": 343,
           "role": "existing_gui_regression",
           "description": "Exercises Cancel, Apply, reopening, invalid text, unchanged settings and tab-name consumer refresh.",
           "executed_in_inventory": false,
@@ -32708,7 +32708,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 300,
+          "line": 343,
           "role": "existing_gui_regression",
           "description": "Exercises Cancel, Apply, reopening, invalid text, unchanged settings and tab-name consumer refresh.",
           "executed_in_inventory": false,
@@ -32764,7 +32764,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 300,
+          "line": 343,
           "role": "existing_gui_regression",
           "description": "Exercises Cancel, Apply, reopening, invalid text, unchanged settings and tab-name consumer refresh.",
           "executed_in_inventory": false,
@@ -32820,7 +32820,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 300,
+          "line": 343,
           "role": "existing_gui_regression",
           "description": "Exercises Cancel, Apply, reopening, invalid text, unchanged settings and tab-name consumer refresh.",
           "executed_in_inventory": false,
@@ -32876,7 +32876,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 300,
+          "line": 343,
           "role": "existing_gui_regression",
           "description": "Exercises Cancel, Apply, reopening, invalid text, unchanged settings and tab-name consumer refresh.",
           "executed_in_inventory": false,
@@ -32932,7 +32932,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 300,
+          "line": 343,
           "role": "existing_gui_regression",
           "description": "Exercises Cancel, Apply, reopening, invalid text, unchanged settings and tab-name consumer refresh.",
           "executed_in_inventory": false,
@@ -32988,7 +32988,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 300,
+          "line": 343,
           "role": "existing_gui_regression",
           "description": "Exercises Cancel, Apply, reopening, invalid text, unchanged settings and tab-name consumer refresh.",
           "executed_in_inventory": false,
@@ -33044,7 +33044,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 300,
+          "line": 343,
           "role": "existing_gui_regression",
           "description": "Exercises Cancel, Apply, reopening, invalid text, unchanged settings and tab-name consumer refresh.",
           "executed_in_inventory": false,
@@ -33100,7 +33100,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 300,
+          "line": 343,
           "role": "existing_gui_regression",
           "description": "Exercises Cancel, Apply, reopening, invalid text, unchanged settings and tab-name consumer refresh.",
           "executed_in_inventory": false,
@@ -33156,7 +33156,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 300,
+          "line": 343,
           "role": "existing_gui_regression",
           "description": "Exercises Cancel, Apply, reopening, invalid text, unchanged settings and tab-name consumer refresh.",
           "executed_in_inventory": false,
@@ -33235,7 +33235,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 300,
+          "line": 343,
           "role": "existing_gui_regression",
           "description": "Exercises Cancel, Apply, reopening, invalid text, unchanged settings and tab-name consumer refresh.",
           "executed_in_inventory": false,
@@ -33291,7 +33291,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 300,
+          "line": 343,
           "role": "existing_gui_regression",
           "description": "Exercises Cancel, Apply, reopening, invalid text, unchanged settings and tab-name consumer refresh.",
           "executed_in_inventory": false,
@@ -33347,7 +33347,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 300,
+          "line": 343,
           "role": "existing_gui_regression",
           "description": "Exercises Cancel, Apply, reopening, invalid text, unchanged settings and tab-name consumer refresh.",
           "executed_in_inventory": false,
@@ -33403,7 +33403,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 300,
+          "line": 343,
           "role": "existing_gui_regression",
           "description": "Exercises Cancel, Apply, reopening, invalid text, unchanged settings and tab-name consumer refresh.",
           "executed_in_inventory": false,
@@ -33459,7 +33459,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 300,
+          "line": 343,
           "role": "existing_gui_regression",
           "description": "Exercises Cancel, Apply, reopening, invalid text, unchanged settings and tab-name consumer refresh.",
           "executed_in_inventory": false,
@@ -33544,7 +33544,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 300,
+          "line": 343,
           "role": "existing_gui_regression",
           "description": "Exercises Cancel, Apply, reopening, invalid text, unchanged settings and tab-name consumer refresh.",
           "executed_in_inventory": false,
@@ -33603,7 +33603,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 300,
+          "line": 343,
           "role": "existing_gui_regression",
           "description": "Exercises Cancel, Apply, reopening, invalid text, unchanged settings and tab-name consumer refresh.",
           "executed_in_inventory": false,
@@ -33662,7 +33662,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 300,
+          "line": 343,
           "role": "existing_gui_regression",
           "description": "Exercises Cancel, Apply, reopening, invalid text, unchanged settings and tab-name consumer refresh.",
           "executed_in_inventory": false,
@@ -33718,7 +33718,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 300,
+          "line": 343,
           "role": "existing_gui_regression",
           "description": "Exercises Cancel, Apply, reopening, invalid text, unchanged settings and tab-name consumer refresh.",
           "executed_in_inventory": false,
@@ -33777,7 +33777,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 300,
+          "line": 343,
           "role": "existing_gui_regression",
           "description": "Exercises Cancel, Apply, reopening, invalid text, unchanged settings and tab-name consumer refresh.",
           "executed_in_inventory": false,
@@ -33827,7 +33827,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 300,
+          "line": 343,
           "role": "existing_gui_regression",
           "description": "Exercises Cancel, Apply, reopening, invalid text, unchanged settings and tab-name consumer refresh.",
           "executed_in_inventory": false,
@@ -33883,7 +33883,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 300,
+          "line": 343,
           "role": "existing_gui_regression",
           "description": "Exercises Cancel, Apply, reopening, invalid text, unchanged settings and tab-name consumer refresh.",
           "executed_in_inventory": false,
@@ -33934,7 +33934,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 300,
+          "line": 343,
           "role": "existing_gui_regression",
           "description": "Exercises Cancel, Apply, reopening, invalid text, unchanged settings and tab-name consumer refresh.",
           "executed_in_inventory": false,
@@ -33990,7 +33990,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 300,
+          "line": 343,
           "role": "existing_gui_regression",
           "description": "Exercises Cancel, Apply, reopening, invalid text, unchanged settings and tab-name consumer refresh.",
           "executed_in_inventory": false,
@@ -34046,7 +34046,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 300,
+          "line": 343,
           "role": "existing_gui_regression",
           "description": "Exercises Cancel, Apply, reopening, invalid text, unchanged settings and tab-name consumer refresh.",
           "executed_in_inventory": false,
@@ -34102,7 +34102,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 300,
+          "line": 343,
           "role": "existing_gui_regression",
           "description": "Exercises Cancel, Apply, reopening, invalid text, unchanged settings and tab-name consumer refresh.",
           "executed_in_inventory": false,
@@ -34158,7 +34158,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 300,
+          "line": 343,
           "role": "existing_gui_regression",
           "description": "Exercises Cancel, Apply, reopening, invalid text, unchanged settings and tab-name consumer refresh.",
           "executed_in_inventory": false,
@@ -34242,7 +34242,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 300,
+          "line": 343,
           "role": "existing_gui_regression",
           "description": "Exercises Cancel, Apply, reopening, invalid text, unchanged settings and tab-name consumer refresh.",
           "executed_in_inventory": false,
@@ -34298,7 +34298,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 300,
+          "line": 343,
           "role": "existing_gui_regression",
           "description": "Exercises Cancel, Apply, reopening, invalid text, unchanged settings and tab-name consumer refresh.",
           "executed_in_inventory": false,
@@ -34354,7 +34354,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 300,
+          "line": 343,
           "role": "existing_gui_regression",
           "description": "Exercises Cancel, Apply, reopening, invalid text, unchanged settings and tab-name consumer refresh.",
           "executed_in_inventory": false,
@@ -34410,7 +34410,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 300,
+          "line": 343,
           "role": "existing_gui_regression",
           "description": "Exercises Cancel, Apply, reopening, invalid text, unchanged settings and tab-name consumer refresh.",
           "executed_in_inventory": false,
@@ -34466,7 +34466,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 300,
+          "line": 343,
           "role": "existing_gui_regression",
           "description": "Exercises Cancel, Apply, reopening, invalid text, unchanged settings and tab-name consumer refresh.",
           "executed_in_inventory": false,
@@ -34546,7 +34546,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 300,
+          "line": 343,
           "role": "existing_gui_regression",
           "description": "Exercises Cancel, Apply, reopening, invalid text, unchanged settings and tab-name consumer refresh.",
           "executed_in_inventory": false,
@@ -34602,7 +34602,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 300,
+          "line": 343,
           "role": "existing_gui_regression",
           "description": "Exercises Cancel, Apply, reopening, invalid text, unchanged settings and tab-name consumer refresh.",
           "executed_in_inventory": false,
@@ -34682,7 +34682,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 300,
+          "line": 343,
           "role": "existing_gui_regression",
           "description": "Exercises Cancel, Apply, reopening, invalid text, unchanged settings and tab-name consumer refresh.",
           "executed_in_inventory": false,
@@ -34766,7 +34766,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 300,
+          "line": 343,
           "role": "existing_gui_regression",
           "description": "Exercises Cancel, Apply, reopening, invalid text, unchanged settings and tab-name consumer refresh.",
           "executed_in_inventory": false,
@@ -34822,7 +34822,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 300,
+          "line": 343,
           "role": "existing_gui_regression",
           "description": "Exercises Cancel, Apply, reopening, invalid text, unchanged settings and tab-name consumer refresh.",
           "executed_in_inventory": false,
@@ -34878,7 +34878,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 300,
+          "line": 343,
           "role": "existing_gui_regression",
           "description": "Exercises Cancel, Apply, reopening, invalid text, unchanged settings and tab-name consumer refresh.",
           "executed_in_inventory": false,
@@ -34934,7 +34934,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 300,
+          "line": 343,
           "role": "existing_gui_regression",
           "description": "Exercises Cancel, Apply, reopening, invalid text, unchanged settings and tab-name consumer refresh.",
           "executed_in_inventory": false,
@@ -34990,7 +34990,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 300,
+          "line": 343,
           "role": "existing_gui_regression",
           "description": "Exercises Cancel, Apply, reopening, invalid text, unchanged settings and tab-name consumer refresh.",
           "executed_in_inventory": false,
@@ -35046,7 +35046,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 300,
+          "line": 343,
           "role": "existing_gui_regression",
           "description": "Exercises Cancel, Apply, reopening, invalid text, unchanged settings and tab-name consumer refresh.",
           "executed_in_inventory": false,
@@ -35125,7 +35125,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 300,
+          "line": 343,
           "role": "existing_gui_regression",
           "description": "Exercises Cancel, Apply, reopening, invalid text, unchanged settings and tab-name consumer refresh.",
           "executed_in_inventory": false,
@@ -35181,7 +35181,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 300,
+          "line": 343,
           "role": "existing_gui_regression",
           "description": "Exercises Cancel, Apply, reopening, invalid text, unchanged settings and tab-name consumer refresh.",
           "executed_in_inventory": false,
@@ -35261,7 +35261,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 300,
+          "line": 343,
           "role": "existing_gui_regression",
           "description": "Exercises Cancel, Apply, reopening, invalid text, unchanged settings and tab-name consumer refresh.",
           "executed_in_inventory": false,
@@ -35317,7 +35317,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 300,
+          "line": 343,
           "role": "existing_gui_regression",
           "description": "Exercises Cancel, Apply, reopening, invalid text, unchanged settings and tab-name consumer refresh.",
           "executed_in_inventory": false,
@@ -35401,7 +35401,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 300,
+          "line": 343,
           "role": "existing_gui_regression",
           "description": "Exercises Cancel, Apply, reopening, invalid text, unchanged settings and tab-name consumer refresh.",
           "executed_in_inventory": false,
@@ -35457,7 +35457,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 300,
+          "line": 343,
           "role": "existing_gui_regression",
           "description": "Exercises Cancel, Apply, reopening, invalid text, unchanged settings and tab-name consumer refresh.",
           "executed_in_inventory": false,
@@ -35541,7 +35541,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 300,
+          "line": 343,
           "role": "existing_gui_regression",
           "description": "Exercises Cancel, Apply, reopening, invalid text, unchanged settings and tab-name consumer refresh.",
           "executed_in_inventory": false,
@@ -35597,7 +35597,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 300,
+          "line": 343,
           "role": "existing_gui_regression",
           "description": "Exercises Cancel, Apply, reopening, invalid text, unchanged settings and tab-name consumer refresh.",
           "executed_in_inventory": false,
@@ -35661,7 +35661,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 300,
+          "line": 343,
           "role": "existing_gui_regression",
           "description": "Exercises Cancel, Apply, reopening, invalid text, unchanged settings and tab-name consumer refresh.",
           "executed_in_inventory": false,
@@ -35725,7 +35725,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 300,
+          "line": 343,
           "role": "existing_gui_regression",
           "description": "Exercises Cancel, Apply, reopening, invalid text, unchanged settings and tab-name consumer refresh.",
           "executed_in_inventory": false,
@@ -35804,7 +35804,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 300,
+          "line": 343,
           "role": "existing_gui_regression",
           "description": "Exercises Cancel, Apply, reopening, invalid text, unchanged settings and tab-name consumer refresh.",
           "executed_in_inventory": false,
@@ -35860,7 +35860,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 300,
+          "line": 343,
           "role": "existing_gui_regression",
           "description": "Exercises Cancel, Apply, reopening, invalid text, unchanged settings and tab-name consumer refresh.",
           "executed_in_inventory": false,
@@ -35916,7 +35916,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 300,
+          "line": 343,
           "role": "existing_gui_regression",
           "description": "Exercises Cancel, Apply, reopening, invalid text, unchanged settings and tab-name consumer refresh.",
           "executed_in_inventory": false,
@@ -36000,7 +36000,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 300,
+          "line": 343,
           "role": "existing_gui_regression",
           "description": "Exercises Cancel, Apply, reopening, invalid text, unchanged settings and tab-name consumer refresh.",
           "executed_in_inventory": false,
@@ -36056,7 +36056,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 300,
+          "line": 343,
           "role": "existing_gui_regression",
           "description": "Exercises Cancel, Apply, reopening, invalid text, unchanged settings and tab-name consumer refresh.",
           "executed_in_inventory": false,
@@ -36135,7 +36135,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 300,
+          "line": 343,
           "role": "existing_gui_regression",
           "description": "Exercises Cancel, Apply, reopening, invalid text, unchanged settings and tab-name consumer refresh.",
           "executed_in_inventory": false,
@@ -36191,7 +36191,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 300,
+          "line": 343,
           "role": "existing_gui_regression",
           "description": "Exercises Cancel, Apply, reopening, invalid text, unchanged settings and tab-name consumer refresh.",
           "executed_in_inventory": false,
@@ -36247,7 +36247,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 300,
+          "line": 343,
           "role": "existing_gui_regression",
           "description": "Exercises Cancel, Apply, reopening, invalid text, unchanged settings and tab-name consumer refresh.",
           "executed_in_inventory": false,
@@ -36303,7 +36303,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 300,
+          "line": 343,
           "role": "existing_gui_regression",
           "description": "Exercises Cancel, Apply, reopening, invalid text, unchanged settings and tab-name consumer refresh.",
           "executed_in_inventory": false,
@@ -36359,7 +36359,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 300,
+          "line": 343,
           "role": "existing_gui_regression",
           "description": "Exercises Cancel, Apply, reopening, invalid text, unchanged settings and tab-name consumer refresh.",
           "executed_in_inventory": false,
@@ -36415,7 +36415,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 300,
+          "line": 343,
           "role": "existing_gui_regression",
           "description": "Exercises Cancel, Apply, reopening, invalid text, unchanged settings and tab-name consumer refresh.",
           "executed_in_inventory": false,
@@ -36471,7 +36471,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 300,
+          "line": 343,
           "role": "existing_gui_regression",
           "description": "Exercises Cancel, Apply, reopening, invalid text, unchanged settings and tab-name consumer refresh.",
           "executed_in_inventory": false,
@@ -36550,7 +36550,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 300,
+          "line": 343,
           "role": "existing_gui_regression",
           "description": "Exercises Cancel, Apply, reopening, invalid text, unchanged settings and tab-name consumer refresh.",
           "executed_in_inventory": false,
@@ -36606,7 +36606,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 300,
+          "line": 343,
           "role": "existing_gui_regression",
           "description": "Exercises Cancel, Apply, reopening, invalid text, unchanged settings and tab-name consumer refresh.",
           "executed_in_inventory": false,
@@ -36662,7 +36662,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 300,
+          "line": 343,
           "role": "existing_gui_regression",
           "description": "Exercises Cancel, Apply, reopening, invalid text, unchanged settings and tab-name consumer refresh.",
           "executed_in_inventory": false,
@@ -36718,7 +36718,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 300,
+          "line": 343,
           "role": "existing_gui_regression",
           "description": "Exercises Cancel, Apply, reopening, invalid text, unchanged settings and tab-name consumer refresh.",
           "executed_in_inventory": false,
@@ -36774,7 +36774,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 300,
+          "line": 343,
           "role": "existing_gui_regression",
           "description": "Exercises Cancel, Apply, reopening, invalid text, unchanged settings and tab-name consumer refresh.",
           "executed_in_inventory": false,
@@ -36830,7 +36830,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 300,
+          "line": 343,
           "role": "existing_gui_regression",
           "description": "Exercises Cancel, Apply, reopening, invalid text, unchanged settings and tab-name consumer refresh.",
           "executed_in_inventory": false,
@@ -36886,7 +36886,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 300,
+          "line": 343,
           "role": "existing_gui_regression",
           "description": "Exercises Cancel, Apply, reopening, invalid text, unchanged settings and tab-name consumer refresh.",
           "executed_in_inventory": false,
@@ -36942,7 +36942,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 300,
+          "line": 343,
           "role": "existing_gui_regression",
           "description": "Exercises Cancel, Apply, reopening, invalid text, unchanged settings and tab-name consumer refresh.",
           "executed_in_inventory": false,
@@ -36998,7 +36998,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 300,
+          "line": 343,
           "role": "existing_gui_regression",
           "description": "Exercises Cancel, Apply, reopening, invalid text, unchanged settings and tab-name consumer refresh.",
           "executed_in_inventory": false,
@@ -37078,7 +37078,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 300,
+          "line": 343,
           "role": "existing_gui_regression",
           "description": "Exercises Cancel, Apply, reopening, invalid text, unchanged settings and tab-name consumer refresh.",
           "executed_in_inventory": false,
@@ -37134,7 +37134,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 300,
+          "line": 343,
           "role": "existing_gui_regression",
           "description": "Exercises Cancel, Apply, reopening, invalid text, unchanged settings and tab-name consumer refresh.",
           "executed_in_inventory": false,
@@ -37218,7 +37218,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 300,
+          "line": 343,
           "role": "existing_gui_regression",
           "description": "Exercises Cancel, Apply, reopening, invalid text, unchanged settings and tab-name consumer refresh.",
           "executed_in_inventory": false,
@@ -37274,7 +37274,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 300,
+          "line": 343,
           "role": "existing_gui_regression",
           "description": "Exercises Cancel, Apply, reopening, invalid text, unchanged settings and tab-name consumer refresh.",
           "executed_in_inventory": false,
@@ -37330,7 +37330,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 300,
+          "line": 343,
           "role": "existing_gui_regression",
           "description": "Exercises Cancel, Apply, reopening, invalid text, unchanged settings and tab-name consumer refresh.",
           "executed_in_inventory": false,
@@ -37386,7 +37386,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 300,
+          "line": 343,
           "role": "existing_gui_regression",
           "description": "Exercises Cancel, Apply, reopening, invalid text, unchanged settings and tab-name consumer refresh.",
           "executed_in_inventory": false,
@@ -37442,7 +37442,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 300,
+          "line": 343,
           "role": "existing_gui_regression",
           "description": "Exercises Cancel, Apply, reopening, invalid text, unchanged settings and tab-name consumer refresh.",
           "executed_in_inventory": false,
@@ -37524,7 +37524,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 300,
+          "line": 343,
           "role": "existing_gui_regression",
           "description": "Exercises Cancel, Apply, reopening, invalid text, unchanged settings and tab-name consumer refresh.",
           "executed_in_inventory": false,
@@ -37580,7 +37580,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 300,
+          "line": 343,
           "role": "existing_gui_regression",
           "description": "Exercises Cancel, Apply, reopening, invalid text, unchanged settings and tab-name consumer refresh.",
           "executed_in_inventory": false,
@@ -37636,7 +37636,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 300,
+          "line": 343,
           "role": "existing_gui_regression",
           "description": "Exercises Cancel, Apply, reopening, invalid text, unchanged settings and tab-name consumer refresh.",
           "executed_in_inventory": false,
@@ -37692,7 +37692,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 300,
+          "line": 343,
           "role": "existing_gui_regression",
           "description": "Exercises Cancel, Apply, reopening, invalid text, unchanged settings and tab-name consumer refresh.",
           "executed_in_inventory": false,
@@ -37776,7 +37776,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 300,
+          "line": 343,
           "role": "existing_gui_regression",
           "description": "Exercises Cancel, Apply, reopening, invalid text, unchanged settings and tab-name consumer refresh.",
           "executed_in_inventory": false,
@@ -37832,7 +37832,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 300,
+          "line": 343,
           "role": "existing_gui_regression",
           "description": "Exercises Cancel, Apply, reopening, invalid text, unchanged settings and tab-name consumer refresh.",
           "executed_in_inventory": false,
@@ -37888,7 +37888,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 300,
+          "line": 343,
           "role": "existing_gui_regression",
           "description": "Exercises Cancel, Apply, reopening, invalid text, unchanged settings and tab-name consumer refresh.",
           "executed_in_inventory": false,
@@ -37967,7 +37967,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 300,
+          "line": 343,
           "role": "existing_gui_regression",
           "description": "Exercises Cancel, Apply, reopening, invalid text, unchanged settings and tab-name consumer refresh.",
           "executed_in_inventory": false,
@@ -38023,7 +38023,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 300,
+          "line": 343,
           "role": "existing_gui_regression",
           "description": "Exercises Cancel, Apply, reopening, invalid text, unchanged settings and tab-name consumer refresh.",
           "executed_in_inventory": false,
@@ -38079,7 +38079,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 300,
+          "line": 343,
           "role": "existing_gui_regression",
           "description": "Exercises Cancel, Apply, reopening, invalid text, unchanged settings and tab-name consumer refresh.",
           "executed_in_inventory": false,
@@ -38158,7 +38158,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 300,
+          "line": 343,
           "role": "existing_gui_regression",
           "description": "Exercises Cancel, Apply, reopening, invalid text, unchanged settings and tab-name consumer refresh.",
           "executed_in_inventory": false,
@@ -38214,7 +38214,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 300,
+          "line": 343,
           "role": "existing_gui_regression",
           "description": "Exercises Cancel, Apply, reopening, invalid text, unchanged settings and tab-name consumer refresh.",
           "executed_in_inventory": false,
@@ -38270,7 +38270,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 300,
+          "line": 343,
           "role": "existing_gui_regression",
           "description": "Exercises Cancel, Apply, reopening, invalid text, unchanged settings and tab-name consumer refresh.",
           "executed_in_inventory": false,
@@ -38326,7 +38326,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 300,
+          "line": 343,
           "role": "existing_gui_regression",
           "description": "Exercises Cancel, Apply, reopening, invalid text, unchanged settings and tab-name consumer refresh.",
           "executed_in_inventory": false,
@@ -38382,7 +38382,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 300,
+          "line": 343,
           "role": "existing_gui_regression",
           "description": "Exercises Cancel, Apply, reopening, invalid text, unchanged settings and tab-name consumer refresh.",
           "executed_in_inventory": false,
@@ -38438,7 +38438,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 300,
+          "line": 343,
           "role": "existing_gui_regression",
           "description": "Exercises Cancel, Apply, reopening, invalid text, unchanged settings and tab-name consumer refresh.",
           "executed_in_inventory": false,
@@ -38494,7 +38494,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 300,
+          "line": 343,
           "role": "existing_gui_regression",
           "description": "Exercises Cancel, Apply, reopening, invalid text, unchanged settings and tab-name consumer refresh.",
           "executed_in_inventory": false,
@@ -38578,7 +38578,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 300,
+          "line": 343,
           "role": "existing_gui_regression",
           "description": "Exercises Cancel, Apply, reopening, invalid text, unchanged settings and tab-name consumer refresh.",
           "executed_in_inventory": false,
@@ -38634,7 +38634,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 300,
+          "line": 343,
           "role": "existing_gui_regression",
           "description": "Exercises Cancel, Apply, reopening, invalid text, unchanged settings and tab-name consumer refresh.",
           "executed_in_inventory": false,
@@ -38684,7 +38684,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 300,
+          "line": 343,
           "role": "existing_gui_regression",
           "description": "Exercises Cancel, Apply, reopening, invalid text, unchanged settings and tab-name consumer refresh.",
           "executed_in_inventory": false,
@@ -38740,7 +38740,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 300,
+          "line": 343,
           "role": "existing_gui_regression",
           "description": "Exercises Cancel, Apply, reopening, invalid text, unchanged settings and tab-name consumer refresh.",
           "executed_in_inventory": false,
@@ -38783,7 +38783,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 300,
+          "line": 343,
           "role": "existing_gui_regression",
           "description": "Exercises Cancel, Apply, reopening, invalid text, unchanged settings and tab-name consumer refresh.",
           "executed_in_inventory": false,
@@ -53117,7 +53117,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 4421,
+          "line": 4464,
           "line_sha256": "2c57841ceefddb78eaf1925a5835fcd8e7ee530afddbebd3518904bee0a33717",
           "role": "authored_behavioral_regression",
           "executed_in_inventory": false,
@@ -57700,7 +57700,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 4421,
+          "line": 4464,
           "line_sha256": "2c57841ceefddb78eaf1925a5835fcd8e7ee530afddbebd3518904bee0a33717",
           "role": "authored_behavioral_regression",
           "executed_in_inventory": false,
@@ -57825,7 +57825,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 1590,
+          "line": 1633,
           "role": "authored_behavioral_regression",
           "description": "Dynamic service dropdown offers all known tags then real tag services in reference order. It imports and edits SearchDefaults.tag_service. New search pages use the chosen service; a removed key falls back to all known tags in the consumer. Opening Options resolves removed keys to the first offered choice in a draft, Cancel discards that fallback and Apply persists it.",
           "executed_in_inventory": false,
@@ -57833,7 +57833,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 1647,
+          "line": 1690,
           "role": "authored_behavioral_regression",
           "description": "Dynamic service dropdown offers all known tags then real tag services in reference order. It imports and edits SearchDefaults.tag_service. New search pages use the chosen service; a removed key falls back to all known tags in the consumer. Opening Options resolves removed keys to the first offered choice in a draft, Cancel discards that fallback and Apply persists it.",
           "executed_in_inventory": false,
@@ -58067,7 +58067,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 1378,
+          "line": 1421,
           "role": "authored_behavioral_regression",
           "description": "Expose the regex favourites options page and its embedded editor route; child Apply updates the options draft, parent Apply persists and parent Cancel discards child drafts and closes stale handles. Counted separately from its concrete editor leaf.",
           "executed_in_inventory": false,
@@ -58376,7 +58376,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 1527,
+          "line": 1570,
           "role": "authored_behavioral_regression",
           "description": "fn tag_dialog_service_dropdown_tracks",
           "executed_in_inventory": false,
@@ -59730,7 +59730,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 5359,
+          "line": 5402,
           "line_sha256": "ec1530d67eec536a768a6951d207559fc7232a58ed12e160676180187e0b7858",
           "role": "authored_behavioral_regression",
           "executed_in_inventory": false,
@@ -59945,7 +59945,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 5359,
+          "line": 5402,
           "line_sha256": "ec1530d67eec536a768a6951d207559fc7232a58ed12e160676180187e0b7858",
           "role": "authored_behavioral_regression",
           "executed_in_inventory": false,
@@ -60221,7 +60221,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 5359,
+          "line": 5402,
           "line_sha256": "ec1530d67eec536a768a6951d207559fc7232a58ed12e160676180187e0b7858",
           "role": "authored_behavioral_regression",
           "executed_in_inventory": false,
@@ -60481,7 +60481,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 5359,
+          "line": 5402,
           "line_sha256": "ec1530d67eec536a768a6951d207559fc7232a58ed12e160676180187e0b7858",
           "role": "authored_behavioral_regression",
           "executed_in_inventory": false,
@@ -62860,7 +62860,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/manage_tags.rs",
-          "line": 357,
+          "line": 434,
           "role": "existing_assertions",
           "description": "Selected-files tag rows show mapping count when some but not all files contain it; all-files row omits suffix. Existing source only; not executed.",
           "executed_in_inventory": false,
@@ -62912,7 +62912,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/manage_tags.rs",
-          "line": 345,
+          "line": 422,
           "role": "existing_assertions",
           "description": "Apply persists added mapping and removes toggled existing mapping; prior assertion shows staging only. Source inspected, not executed.",
           "executed_in_inventory": false,
@@ -83941,7 +83941,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 1377,
+          "line": 1420,
           "role": "authored_behavioral_regression",
           "description": "Offer the options child editor for sorted regex/description CRUD, exact duplicate guard, advisory invalid fragments, extended selection and confirmed deletion. Child edits wait for options Apply; cancellation discards drafts. Saved native preferences override preserved reference YAML, including an empty list.",
           "executed_in_inventory": false,
@@ -84048,7 +84048,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 1377,
+          "line": 1420,
           "role": "authored_behavioral_regression",
           "description": "Offer the options child editor for sorted regex/description CRUD, exact duplicate guard, advisory invalid fragments, extended selection and confirmed deletion. Child edits wait for options Apply; cancellation discards drafts. Saved native preferences override preserved reference YAML, including an empty list.",
           "executed_in_inventory": false,
@@ -84133,7 +84133,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 1377,
+          "line": 1420,
           "role": "authored_behavioral_regression",
           "description": "Offer the options child editor for sorted regex/description CRUD, exact duplicate guard, advisory invalid fragments, extended selection and confirmed deletion. Child edits wait for options Apply; cancellation discards drafts. Saved native preferences override preserved reference YAML, including an empty list.",
           "executed_in_inventory": false,
@@ -84218,7 +84218,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 1377,
+          "line": 1420,
           "role": "authored_behavioral_regression",
           "description": "Offer the options child editor for sorted regex/description CRUD, exact duplicate guard, advisory invalid fragments, extended selection and confirmed deletion. Child edits wait for options Apply; cancellation discards drafts. Saved native preferences override preserved reference YAML, including an empty list.",
           "executed_in_inventory": false,
@@ -84303,7 +84303,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 1377,
+          "line": 1420,
           "role": "authored_behavioral_regression",
           "description": "Offer the options child editor for sorted regex/description CRUD, exact duplicate guard, advisory invalid fragments, extended selection and confirmed deletion. Child edits wait for options Apply; cancellation discards drafts. Saved native preferences override preserved reference YAML, including an empty list.",
           "executed_in_inventory": false,
@@ -84388,7 +84388,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 1377,
+          "line": 1420,
           "role": "authored_behavioral_regression",
           "description": "Offer the options child editor for sorted regex/description CRUD, exact duplicate guard, advisory invalid fragments, extended selection and confirmed deletion. Child edits wait for options Apply; cancellation discards drafts. Saved native preferences override preserved reference YAML, including an empty list.",
           "executed_in_inventory": false,
@@ -86847,7 +86847,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 4241,
+          "line": 4284,
           "symbol": "fn default_export_directory_browse_apply_cancel_and_manual_open_use_shared_preference(",
           "role": "authored_behavioral_regression",
           "executed_in_inventory": false,
@@ -87210,7 +87210,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 3507,
+          "line": 3550,
           "symbol": "passive_background_options_paint_independent_copies_behind_opaque_media",
           "role": "authored_behavioral_regression",
           "executed_in_inventory": false,
@@ -87378,7 +87378,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 3507,
+          "line": 3550,
           "symbol": "passive_background_options_paint_independent_copies_behind_opaque_media",
           "role": "authored_behavioral_regression",
           "executed_in_inventory": false,
@@ -87546,7 +87546,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 3507,
+          "line": 3550,
           "symbol": "passive_background_options_paint_independent_copies_behind_opaque_media",
           "role": "authored_behavioral_regression",
           "executed_in_inventory": false,
@@ -87714,7 +87714,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 3507,
+          "line": 3550,
           "symbol": "passive_background_options_paint_independent_copies_behind_opaque_media",
           "role": "authored_behavioral_regression",
           "executed_in_inventory": false,
@@ -87906,7 +87906,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 3219,
+          "line": 3262,
           "symbol": "closing_preferences_reach_frozen_page_selection_and_native_main_activation",
           "role": "authored_behavioral_regression",
           "executed_in_inventory": false,
@@ -87914,7 +87914,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 3422,
+          "line": 3465,
           "symbol": "cancelled_closing_options_and_stale_viewers_cannot_redirect_the_live_owner",
           "role": "authored_behavioral_regression",
           "executed_in_inventory": false,
@@ -88099,7 +88099,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 3219,
+          "line": 3262,
           "symbol": "closing_preferences_reach_frozen_page_selection_and_native_main_activation",
           "role": "authored_behavioral_regression",
           "executed_in_inventory": false,
@@ -88107,7 +88107,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 3422,
+          "line": 3465,
           "symbol": "cancelled_closing_options_and_stale_viewers_cannot_redirect_the_live_owner",
           "role": "authored_behavioral_regression",
           "executed_in_inventory": false,
@@ -88292,7 +88292,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 3219,
+          "line": 3262,
           "symbol": "closing_preferences_reach_frozen_page_selection_and_native_main_activation",
           "role": "authored_behavioral_regression",
           "executed_in_inventory": false,
@@ -88300,7 +88300,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 3422,
+          "line": 3465,
           "symbol": "cancelled_closing_options_and_stale_viewers_cannot_redirect_the_live_owner",
           "role": "authored_behavioral_regression",
           "executed_in_inventory": false,
@@ -88485,7 +88485,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 3219,
+          "line": 3262,
           "symbol": "closing_preferences_reach_frozen_page_selection_and_native_main_activation",
           "role": "authored_behavioral_regression",
           "executed_in_inventory": false,
@@ -88493,7 +88493,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 3422,
+          "line": 3465,
           "symbol": "cancelled_closing_options_and_stale_viewers_cannot_redirect_the_live_owner",
           "role": "authored_behavioral_regression",
           "executed_in_inventory": false,
@@ -88678,7 +88678,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 3769,
+          "line": 3812,
           "symbol": "cursor_timeout_reaches_native_motion_timer_focus_and_actual_popup_lifecycle",
           "role": "authored_behavioral_regression",
           "executed_in_inventory": false,
@@ -88831,7 +88831,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 2949,
+          "line": 2992,
           "symbol": "focus_options_reach_native_activity_and_actual_mouseover_gates",
           "role": "authored_behavioral_regression",
           "executed_in_inventory": false,
@@ -88984,7 +88984,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 2949,
+          "line": 2992,
           "symbol": "focus_options_reach_native_activity_and_actual_mouseover_gates",
           "role": "authored_behavioral_regression",
           "executed_in_inventory": false,
@@ -89113,7 +89113,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 2472,
+          "line": 2515,
           "symbol": "hover_options_apply_to_actual_mouseover_panels_and_passive_index_text",
           "role": "authored_behavioral_regression",
           "executed_in_inventory": false,
@@ -89242,7 +89242,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 2472,
+          "line": 2515,
           "symbol": "hover_options_apply_to_actual_mouseover_panels_and_passive_index_text",
           "role": "authored_behavioral_regression",
           "executed_in_inventory": false,
@@ -89371,7 +89371,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 2472,
+          "line": 2515,
           "symbol": "hover_options_apply_to_actual_mouseover_panels_and_passive_index_text",
           "role": "authored_behavioral_regression",
           "executed_in_inventory": false,
@@ -89500,7 +89500,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 2472,
+          "line": 2515,
           "symbol": "hover_options_apply_to_actual_mouseover_panels_and_passive_index_text",
           "role": "authored_behavioral_regression",
           "executed_in_inventory": false,
@@ -89621,7 +89621,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 2277,
+          "line": 2320,
           "symbol": "resize_and_seek_options_reach_the_native_viewer_geometry",
           "role": "authored_behavioral_regression",
           "executed_in_inventory": false,
@@ -89766,7 +89766,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 2128,
+          "line": 2171,
           "symbol": "canvas_options_apply_to_the_open_viewer_and_cancel_discards_the_draft",
           "role": "authored_behavioral_regression",
           "executed_in_inventory": false,
@@ -89895,7 +89895,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 2128,
+          "line": 2171,
           "symbol": "canvas_options_apply_to_the_open_viewer_and_cancel_discards_the_draft",
           "role": "authored_behavioral_regression",
           "executed_in_inventory": false,
@@ -90024,7 +90024,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 2277,
+          "line": 2320,
           "symbol": "resize_and_seek_options_reach_the_native_viewer_geometry",
           "role": "authored_behavioral_regression",
           "executed_in_inventory": false,
@@ -90153,7 +90153,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 2277,
+          "line": 2320,
           "symbol": "resize_and_seek_options_reach_the_native_viewer_geometry",
           "role": "authored_behavioral_regression",
           "executed_in_inventory": false,
@@ -90290,7 +90290,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 2277,
+          "line": 2320,
           "symbol": "resize_and_seek_options_reach_the_native_viewer_geometry",
           "role": "authored_behavioral_regression",
           "executed_in_inventory": false,
@@ -90437,7 +90437,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 2664,
+          "line": 2707,
           "symbol": "pointer_options_change_real_drag_acceptance_and_cursor_transitions",
           "role": "authored_behavioral_regression",
           "executed_in_inventory": false,
@@ -90568,7 +90568,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 2664,
+          "line": 2707,
           "symbol": "pointer_options_change_real_drag_acceptance_and_cursor_transitions",
           "role": "authored_behavioral_regression",
           "executed_in_inventory": false,
@@ -90721,7 +90721,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 4035,
+          "line": 4078,
           "symbol": "hover_zoom_and_loop_options_reach_owned_viewers_and_survive_cancel_and_reopen",
           "role": "authored_behavioral_regression",
           "executed_in_inventory": false,
@@ -90922,7 +90922,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 4035,
+          "line": 4078,
           "symbol": "hover_zoom_and_loop_options_reach_owned_viewers_and_survive_cancel_and_reopen",
           "role": "authored_behavioral_regression",
           "executed_in_inventory": false,
@@ -91525,7 +91525,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 1686,
+          "line": 1729,
           "symbol": "search_defaults_apply_to_new_pages_and_the_real_autocomplete",
           "role": "authored_behavioral_regression",
           "executed_in_inventory": false,
@@ -91644,7 +91644,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 1686,
+          "line": 1729,
           "symbol": "search_defaults_apply_to_new_pages_and_the_real_autocomplete",
           "role": "authored_behavioral_regression",
           "executed_in_inventory": false,
@@ -91779,7 +91779,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 1800,
+          "line": 1843,
           "symbol": "default_local_location_child_draft_drives_blank_pages_and_tag_fallback",
           "role": "authored_behavioral_regression",
           "executed_in_inventory": false,
@@ -91914,7 +91914,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 1918,
+          "line": 1961,
           "symbol": "read_list_sizes_and_float_policy_reach_rendered_new_pages",
           "role": "authored_behavioral_regression",
           "executed_in_inventory": false,
@@ -92049,7 +92049,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 1918,
+          "line": 1961,
           "symbol": "read_list_sizes_and_float_policy_reach_rendered_new_pages",
           "role": "authored_behavioral_regression",
           "executed_in_inventory": false,
@@ -92184,7 +92184,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 1918,
+          "line": 1961,
           "symbol": "read_list_sizes_and_float_policy_reach_rendered_new_pages",
           "role": "authored_behavioral_regression",
           "executed_in_inventory": false,
@@ -92303,7 +92303,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 2038,
+          "line": 2081,
           "symbol": "implicit_limit_options_reach_queries_and_limited_sort_refresh",
           "role": "authored_behavioral_regression",
           "executed_in_inventory": false,
@@ -92438,7 +92438,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 2038,
+          "line": 2081,
           "symbol": "implicit_limit_options_reach_queries_and_limited_sort_refresh",
           "role": "authored_behavioral_regression",
           "executed_in_inventory": false,
@@ -96435,7 +96435,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 3966,
+          "line": 4009,
           "authored_location": "crates/hydrus-gui/tests/gui/options_window.rs:3301",
           "role": "authored_behavioral_regression",
           "executed_in_inventory": false,
@@ -96618,7 +96618,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 3682,
+          "line": 3725,
           "authored_location": "crates/hydrus-gui/tests/gui/options_window.rs:3214",
           "role": "authored_behavioral_regression",
           "executed_in_inventory": false,
@@ -97914,7 +97914,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 2828,
+          "line": 2871,
           "symbol": "fn favourite_tags_child_replays_reference_and_waits_for_parent_apply",
           "role": "authored_behavioral_regression",
           "executed_in_inventory": false,
@@ -99727,7 +99727,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 2828,
+          "line": 2871,
           "symbol": "fn favourite_tags_child_replays_reference",
           "role": "authored_behavioral_regression",
           "executed_in_inventory": false,
@@ -113101,7 +113101,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 2828,
+          "line": 2871,
           "symbol": "fn favourite_tags_child_replays_reference",
           "role": "authored_behavioral_regression",
           "executed_in_inventory": false,
@@ -113180,7 +113180,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 2828,
+          "line": 2871,
           "symbol": "fn favourite_tags_child_replays_reference",
           "role": "authored_behavioral_regression",
           "executed_in_inventory": false,
@@ -113227,7 +113227,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 3966,
+          "line": 4009,
           "authored_location": "crates/hydrus-gui/tests/gui/options_window.rs:3301",
           "role": "authored_behavioral_regression",
           "executed_in_inventory": false,
@@ -113273,7 +113273,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 3682,
+          "line": 3725,
           "authored_location": "crates/hydrus-gui/tests/gui/options_window.rs:3214",
           "role": "authored_behavioral_regression",
           "executed_in_inventory": false,
@@ -115088,7 +115088,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 4421,
+          "line": 4464,
           "line_sha256": "2c57841ceefddb78eaf1925a5835fcd8e7ee530afddbebd3518904bee0a33717",
           "role": "authored_behavioral_regression",
           "executed_in_inventory": false,
@@ -115258,7 +115258,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 4421,
+          "line": 4464,
           "line_sha256": "2c57841ceefddb78eaf1925a5835fcd8e7ee530afddbebd3518904bee0a33717",
           "role": "authored_behavioral_regression",
           "executed_in_inventory": false,
@@ -115428,7 +115428,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 4421,
+          "line": 4464,
           "line_sha256": "2c57841ceefddb78eaf1925a5835fcd8e7ee530afddbebd3518904bee0a33717",
           "role": "authored_behavioral_regression",
           "executed_in_inventory": false,
@@ -115598,7 +115598,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 4421,
+          "line": 4464,
           "line_sha256": "2c57841ceefddb78eaf1925a5835fcd8e7ee530afddbebd3518904bee0a33717",
           "role": "authored_behavioral_regression",
           "executed_in_inventory": false,
@@ -115768,7 +115768,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 4421,
+          "line": 4464,
           "line_sha256": "2c57841ceefddb78eaf1925a5835fcd8e7ee530afddbebd3518904bee0a33717",
           "role": "authored_behavioral_regression",
           "executed_in_inventory": false,
@@ -115938,7 +115938,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 4421,
+          "line": 4464,
           "line_sha256": "2c57841ceefddb78eaf1925a5835fcd8e7ee530afddbebd3518904bee0a33717",
           "role": "authored_behavioral_regression",
           "executed_in_inventory": false,
@@ -116108,7 +116108,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 4421,
+          "line": 4464,
           "line_sha256": "2c57841ceefddb78eaf1925a5835fcd8e7ee530afddbebd3518904bee0a33717",
           "role": "authored_behavioral_regression",
           "executed_in_inventory": false,
@@ -116278,7 +116278,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 4421,
+          "line": 4464,
           "line_sha256": "2c57841ceefddb78eaf1925a5835fcd8e7ee530afddbebd3518904bee0a33717",
           "role": "authored_behavioral_regression",
           "executed_in_inventory": false,
@@ -116440,7 +116440,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 4421,
+          "line": 4464,
           "line_sha256": "2c57841ceefddb78eaf1925a5835fcd8e7ee530afddbebd3518904bee0a33717",
           "role": "authored_behavioral_regression",
           "executed_in_inventory": false,
@@ -116618,7 +116618,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 4421,
+          "line": 4464,
           "line_sha256": "2c57841ceefddb78eaf1925a5835fcd8e7ee530afddbebd3518904bee0a33717",
           "role": "authored_behavioral_regression",
           "executed_in_inventory": false,
@@ -116788,7 +116788,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 4421,
+          "line": 4464,
           "line_sha256": "2c57841ceefddb78eaf1925a5835fcd8e7ee530afddbebd3518904bee0a33717",
           "role": "authored_behavioral_regression",
           "executed_in_inventory": false,
@@ -116959,7 +116959,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 4421,
+          "line": 4464,
           "line_sha256": "2c57841ceefddb78eaf1925a5835fcd8e7ee530afddbebd3518904bee0a33717",
           "role": "authored_behavioral_regression",
           "executed_in_inventory": false,
@@ -117102,7 +117102,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 4954,
+          "line": 4997,
           "line_sha256": "1c50828d3ec9bba082751db03f75087bff3a47e1ceda7d6df31fa0c42790153b",
           "role": "authored_behavioral_regression",
           "executed_in_inventory": false,
@@ -117276,7 +117276,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 5063,
+          "line": 5106,
           "line_sha256": "71081f617493e2d07a273b9ba3dbea301042f59299eb5170ea0a343211ca79d3",
           "role": "authored_behavioral_regression",
           "executed_in_inventory": false,
@@ -117450,7 +117450,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 5063,
+          "line": 5106,
           "line_sha256": "71081f617493e2d07a273b9ba3dbea301042f59299eb5170ea0a343211ca79d3",
           "role": "authored_behavioral_regression",
           "executed_in_inventory": false,
@@ -117624,7 +117624,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 5063,
+          "line": 5106,
           "line_sha256": "71081f617493e2d07a273b9ba3dbea301042f59299eb5170ea0a343211ca79d3",
           "role": "authored_behavioral_regression",
           "executed_in_inventory": false,
@@ -117759,7 +117759,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 5063,
+          "line": 5106,
           "line_sha256": "71081f617493e2d07a273b9ba3dbea301042f59299eb5170ea0a343211ca79d3",
           "role": "authored_behavioral_regression",
           "executed_in_inventory": false,
@@ -117887,7 +117887,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 5063,
+          "line": 5106,
           "line_sha256": "71081f617493e2d07a273b9ba3dbea301042f59299eb5170ea0a343211ca79d3",
           "role": "authored_behavioral_regression",
           "executed_in_inventory": false,
@@ -118894,7 +118894,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 5359,
+          "line": 5402,
           "line_sha256": "ec1530d67eec536a768a6951d207559fc7232a58ed12e160676180187e0b7858",
           "role": "authored_behavioral_regression",
           "executed_in_inventory": false,
@@ -119172,7 +119172,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 5359,
+          "line": 5402,
           "line_sha256": "ec1530d67eec536a768a6951d207559fc7232a58ed12e160676180187e0b7858",
           "role": "authored_behavioral_regression",
           "executed_in_inventory": false,
@@ -119459,7 +119459,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 5359,
+          "line": 5402,
           "line_sha256": "ec1530d67eec536a768a6951d207559fc7232a58ed12e160676180187e0b7858",
           "role": "authored_behavioral_regression",
           "executed_in_inventory": false,
@@ -119703,7 +119703,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 4748,
+          "line": 4791,
           "line_sha256": "a4b3bb506d2735feb25bfb2dd81ace59e7d18933bcf0288571412e5f341b8ef5",
           "role": "authored_behavioral_regression",
           "executed_in_inventory": false,
@@ -119921,7 +119921,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 4748,
+          "line": 4791,
           "line_sha256": "a4b3bb506d2735feb25bfb2dd81ace59e7d18933bcf0288571412e5f341b8ef5",
           "role": "authored_behavioral_regression",
           "executed_in_inventory": false,
@@ -120139,7 +120139,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 4748,
+          "line": 4791,
           "line_sha256": "a4b3bb506d2735feb25bfb2dd81ace59e7d18933bcf0288571412e5f341b8ef5",
           "role": "authored_behavioral_regression",
           "executed_in_inventory": false,
@@ -120357,7 +120357,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 4748,
+          "line": 4791,
           "line_sha256": "a4b3bb506d2735feb25bfb2dd81ace59e7d18933bcf0288571412e5f341b8ef5",
           "role": "authored_behavioral_regression",
           "executed_in_inventory": false,
@@ -120535,7 +120535,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 4580,
+          "line": 4623,
           "line_sha256": "f72cfe0656252c81ded6ec0ef49da74086dca94c0a367e0cf0cbaad544673790",
           "role": "authored_behavioral_regression",
           "executed_in_inventory": false,
@@ -120705,7 +120705,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 4580,
+          "line": 4623,
           "line_sha256": "f72cfe0656252c81ded6ec0ef49da74086dca94c0a367e0cf0cbaad544673790",
           "role": "authored_behavioral_regression",
           "executed_in_inventory": false,
@@ -120872,7 +120872,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 4421,
+          "line": 4464,
           "line_sha256": "2c57841ceefddb78eaf1925a5835fcd8e7ee530afddbebd3518904bee0a33717",
           "role": "authored_behavioral_regression",
           "executed_in_inventory": false,
@@ -121059,7 +121059,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 4421,
+          "line": 4464,
           "line_sha256": "2c57841ceefddb78eaf1925a5835fcd8e7ee530afddbebd3518904bee0a33717",
           "role": "authored_behavioral_regression",
           "executed_in_inventory": false,
@@ -121198,7 +121198,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 4954,
+          "line": 4997,
           "line_sha256": "1c50828d3ec9bba082751db03f75087bff3a47e1ceda7d6df31fa0c42790153b",
           "role": "authored_behavioral_regression",
           "executed_in_inventory": false,
@@ -121366,7 +121366,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 5063,
+          "line": 5106,
           "line_sha256": "71081f617493e2d07a273b9ba3dbea301042f59299eb5170ea0a343211ca79d3",
           "role": "authored_behavioral_regression",
           "executed_in_inventory": false,
@@ -121568,7 +121568,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 5063,
+          "line": 5106,
           "line_sha256": "71081f617493e2d07a273b9ba3dbea301042f59299eb5170ea0a343211ca79d3",
           "role": "authored_behavioral_regression",
           "executed_in_inventory": false,
@@ -123500,7 +123500,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 4421,
+          "line": 4464,
           "line_sha256": "2c57841ceefddb78eaf1925a5835fcd8e7ee530afddbebd3518904bee0a33717",
           "role": "authored_behavioral_regression",
           "executed_in_inventory": false,
@@ -123557,7 +123557,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 4421,
+          "line": 4464,
           "line_sha256": "2c57841ceefddb78eaf1925a5835fcd8e7ee530afddbebd3518904bee0a33717",
           "role": "authored_behavioral_regression",
           "executed_in_inventory": false,
@@ -123614,7 +123614,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 4421,
+          "line": 4464,
           "line_sha256": "2c57841ceefddb78eaf1925a5835fcd8e7ee530afddbebd3518904bee0a33717",
           "role": "authored_behavioral_regression",
           "executed_in_inventory": false,
@@ -123671,7 +123671,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 4421,
+          "line": 4464,
           "line_sha256": "2c57841ceefddb78eaf1925a5835fcd8e7ee530afddbebd3518904bee0a33717",
           "role": "authored_behavioral_regression",
           "executed_in_inventory": false,
@@ -123728,7 +123728,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 4421,
+          "line": 4464,
           "line_sha256": "2c57841ceefddb78eaf1925a5835fcd8e7ee530afddbebd3518904bee0a33717",
           "role": "authored_behavioral_regression",
           "executed_in_inventory": false,
@@ -123785,7 +123785,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 4421,
+          "line": 4464,
           "line_sha256": "2c57841ceefddb78eaf1925a5835fcd8e7ee530afddbebd3518904bee0a33717",
           "role": "authored_behavioral_regression",
           "executed_in_inventory": false,
@@ -123843,7 +123843,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 5063,
+          "line": 5106,
           "line_sha256": "71081f617493e2d07a273b9ba3dbea301042f59299eb5170ea0a343211ca79d3",
           "role": "authored_behavioral_regression",
           "executed_in_inventory": false,
@@ -124039,7 +124039,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 5063,
+          "line": 5106,
           "line_sha256": "71081f617493e2d07a273b9ba3dbea301042f59299eb5170ea0a343211ca79d3",
           "role": "authored_behavioral_regression",
           "executed_in_inventory": false,
@@ -124157,7 +124157,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 5063,
+          "line": 5106,
           "line_sha256": "71081f617493e2d07a273b9ba3dbea301042f59299eb5170ea0a343211ca79d3",
           "role": "authored_behavioral_regression",
           "executed_in_inventory": false,
@@ -124229,7 +124229,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 5063,
+          "line": 5106,
           "line_sha256": "71081f617493e2d07a273b9ba3dbea301042f59299eb5170ea0a343211ca79d3",
           "role": "authored_behavioral_regression",
           "executed_in_inventory": false,
@@ -124296,7 +124296,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 5063,
+          "line": 5106,
           "line_sha256": "71081f617493e2d07a273b9ba3dbea301042f59299eb5170ea0a343211ca79d3",
           "role": "authored_behavioral_regression",
           "executed_in_inventory": false,
@@ -124363,7 +124363,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 5063,
+          "line": 5106,
           "line_sha256": "71081f617493e2d07a273b9ba3dbea301042f59299eb5170ea0a343211ca79d3",
           "role": "authored_behavioral_regression",
           "executed_in_inventory": false,
@@ -126187,7 +126187,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 5359,
+          "line": 5402,
           "line_sha256": "ec1530d67eec536a768a6951d207559fc7232a58ed12e160676180187e0b7858",
           "role": "authored_behavioral_regression",
           "executed_in_inventory": false,
@@ -126250,7 +126250,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 5359,
+          "line": 5402,
           "line_sha256": "ec1530d67eec536a768a6951d207559fc7232a58ed12e160676180187e0b7858",
           "role": "authored_behavioral_regression",
           "executed_in_inventory": false,
@@ -126308,7 +126308,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 5359,
+          "line": 5402,
           "line_sha256": "ec1530d67eec536a768a6951d207559fc7232a58ed12e160676180187e0b7858",
           "role": "authored_behavioral_regression",
           "executed_in_inventory": false,
@@ -126366,7 +126366,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 5359,
+          "line": 5402,
           "line_sha256": "ec1530d67eec536a768a6951d207559fc7232a58ed12e160676180187e0b7858",
           "role": "authored_behavioral_regression",
           "executed_in_inventory": false,
@@ -126424,7 +126424,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 5359,
+          "line": 5402,
           "line_sha256": "ec1530d67eec536a768a6951d207559fc7232a58ed12e160676180187e0b7858",
           "role": "authored_behavioral_regression",
           "executed_in_inventory": false,
@@ -126482,7 +126482,7 @@
         },
         {
           "path": "crates/hydrus-gui/tests/gui/options_window.rs",
-          "line": 5359,
+          "line": 5402,
           "line_sha256": "ec1530d67eec536a768a6951d207559fc7232a58ed12e160676180187e0b7858",
           "role": "authored_behavioral_regression",
           "executed_in_inventory": false,
@@ -130855,10 +130855,10 @@
   ],
   "snapshot_repository_url": "https://github.com/jkendall327/hydrus-mine",
   "source_anchor_audit": {
-    "git_head": "05000f10eafc4211d6856549d0073edb90ba5811",
+    "git_head": "e886e68ed9c49751617bcf28df50957d99e3c03e",
     "unique_anchors_checked": 4052,
     "method": "Git blob equality or uniquely unchanged line/context; line fingerprints verified",
-    "prior_git_head": "63f9e35abf1b1647e68ea4f1c850efee3ac8c365"
+    "prior_git_head": "05000f10eafc4211d6856549d0073edb90ba5811"
   },
   "aggregation_schema": "concrete_features_v2",
   "curation": {
@@ -130885,21 +130885,22 @@
       "docs/rust/gui-coverage/audit/anchor-remap-9bec3796-publication.json",
       "docs/rust/gui-coverage/audit/anchor-remap-c768fef4-publication.json",
       "docs/rust/gui-coverage/audit/anchor-remap-63f9e35a-publication.json",
-      "docs/rust/gui-coverage/audit/anchor-remap-05000f10-publication.json"
+      "docs/rust/gui-coverage/audit/anchor-remap-05000f10-publication.json",
+      "docs/rust/gui-coverage/audit/anchor-remap-e886e68e-publication.json"
     ],
     "status_assignment": "Curated per node; generator checks structure/provenance and does not assess runtime behavior.",
     "independent_review": "Depth checklist, repeated-label option contexts, advanced numeric limits and source-only first-pass evidence reviewed; corrected scopes are preserved in supplemental audit patches.",
     "baseline_method": "Reference/native source inspection with scoped existing recording and assertion review; no behavior tests executed by this inventory audit."
   },
   "window_depth_audit": {
-    "source_git_head": "05000f10eafc4211d6856549d0073edb90ba5811",
+    "source_git_head": "e886e68ed9c49751617bcf28df50957d99e3c03e",
     "exported_window_count": 121,
     "criterion": "Exported Slint Window component has a source-backed assessed occurrence with nested controls or canonical/shared navigation. Non-Window surfaces are separately curated."
   },
   "overnight_progress": {
     "goal": 80,
-    "milestone": 339,
-    "concrete_implementation_completions": 339,
+    "milestone": 341,
+    "concrete_implementation_completions": 341,
     "completed_feature_ids": [
       "audit-media-menu-database-clear-clear-all-file-viewing-statistics",
       "audit-media-menu-database-clear-cull-file-viewing-statistics-based-on-current-min-max-values",
@@ -131197,6 +131198,8 @@
       "audit-options-tag-presentation-tag-banners-on-media-viewer-top",
       "audit-options-tag-presentation-tag-banners-on-thumbnail-bottom-right",
       "audit-options-tag-presentation-tag-banners-on-thumbnail-top",
+      "audit-options-tag-suggestions-suggested-tags-column-layout",
+      "audit-options-tag-suggestions-suggested-tags-width-of-suggested-tags-columns",
       "audit-options-thumbnails-appearance-use-blurhash-missing-thumbnail-fallback",
       "audit-options-thumbnails-interaction-on-ctrl-selection-focus-thumbnails-in-the-preview-window",
       "audit-options-thumbnails-interaction-on-shift-selection-focus-thumbnails-in-the-preview-window",
@@ -131248,8 +131251,8 @@
     },
     "after": {
       "partial": 388,
-      "first_pass": 940,
-      "missing": 484
+      "first_pass": 942,
+      "missing": 482
     },
     "validation_summary": "Exact successful hosted Linux check and parity-models jobs. Windows and macOS validation is deferred under the exact-source owner policy. Source inspection and author reference-recording provenance are separate; no local Cargo or mutation testing by this tool.",
     "validation_scope": "linux",
@@ -131260,18 +131263,18 @@
       "windows",
       "macos"
     ],
-    "source_commit": "05000f10eafc4211d6856549d0073edb90ba5811",
+    "source_commit": "e886e68ed9c49751617bcf28df50957d99e3c03e",
     "ci_evidence": {
-      "head_sha": "05000f10eafc4211d6856549d0073edb90ba5811",
+      "head_sha": "e886e68ed9c49751617bcf28df50957d99e3c03e",
       "status": "completed",
       "conclusion": "success",
       "run_attempt": 1,
-      "created_at": "2026-10-06T19:48:18Z",
-      "run_started_at": "2026-10-06T19:48:18Z",
-      "updated_at": "2026-10-06T20:50:47Z",
-      "source_commit": "05000f10eafc4211d6856549d0073edb90ba5811",
-      "run_id": 37521631512,
-      "url": "https://github.com/jkendall327/hydrus-mine/actions/runs/37521631512",
+      "created_at": "2026-10-06T22:27:58Z",
+      "run_started_at": "2026-10-06T22:27:58Z",
+      "updated_at": "2026-10-06T23:01:47Z",
+      "source_commit": "e886e68ed9c49751617bcf28df50957d99e3c03e",
+      "run_id": 37540746618,
+      "url": "https://github.com/jkendall327/hydrus-mine/actions/runs/37540746618",
       "validation_scope": "linux",
       "required_platforms": [
         "linux"
@@ -131282,21 +131285,21 @@
       ],
       "jobs": [
         {
-          "id": 112468267274,
-          "run_id": 37521631512,
+          "id": 112532877849,
+          "run_id": 37540746618,
           "workflow_name": "rust",
           "head_branch": "codex/validation-runner",
-          "run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/runs/37521631512",
+          "run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/runs/37540746618",
           "run_attempt": 1,
-          "node_id": "CR_kwDOUzlbIs8AAAAaL6GRCg",
-          "head_sha": "05000f10eafc4211d6856549d0073edb90ba5811",
-          "url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/jobs/112468267274",
-          "html_url": "https://github.com/jkendall327/hydrus-mine/actions/runs/37521631512/job/112468267274",
+          "node_id": "CR_kwDOUzlbIs8AAAAaM3tyGQ",
+          "head_sha": "e886e68ed9c49751617bcf28df50957d99e3c03e",
+          "url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/jobs/112532877849",
+          "html_url": "https://github.com/jkendall327/hydrus-mine/actions/runs/37540746618/job/112532877849",
           "status": "completed",
           "conclusion": "success",
-          "created_at": "2026-10-06T19:48:20Z",
-          "started_at": "2026-10-06T19:48:22Z",
-          "completed_at": "2026-10-06T20:00:07Z",
+          "created_at": "2026-10-06T22:28:00Z",
+          "started_at": "2026-10-06T22:28:02Z",
+          "completed_at": "2026-10-06T22:32:13Z",
           "name": "parity-models",
           "steps": [
             {
@@ -131304,99 +131307,99 @@
               "status": "completed",
               "conclusion": "success",
               "number": 1,
-              "started_at": "2026-10-06T19:48:23Z",
-              "completed_at": "2026-10-06T19:48:24Z"
+              "started_at": "2026-10-06T22:28:02Z",
+              "completed_at": "2026-10-06T22:28:03Z"
             },
             {
               "name": "Run actions/checkout@v4",
               "status": "completed",
               "conclusion": "success",
               "number": 2,
-              "started_at": "2026-10-06T19:48:24Z",
-              "completed_at": "2026-10-06T19:48:35Z"
+              "started_at": "2026-10-06T22:28:04Z",
+              "completed_at": "2026-10-06T22:28:15Z"
             },
             {
               "name": "Run dtolnay/rust-toolchain@master",
               "status": "completed",
               "conclusion": "success",
               "number": 3,
-              "started_at": "2026-10-06T19:48:35Z",
-              "completed_at": "2026-10-06T19:48:44Z"
+              "started_at": "2026-10-06T22:28:15Z",
+              "completed_at": "2026-10-06T22:28:24Z"
             },
             {
               "name": "Run Swatinem/rust-cache@v2",
               "status": "completed",
               "conclusion": "success",
               "number": 4,
-              "started_at": "2026-10-06T19:48:44Z",
-              "completed_at": "2026-10-06T19:48:45Z"
+              "started_at": "2026-10-06T22:28:24Z",
+              "completed_at": "2026-10-06T22:28:34Z"
             },
             {
               "name": "install media tools",
               "status": "completed",
               "conclusion": "success",
               "number": 5,
-              "started_at": "2026-10-06T19:48:45Z",
-              "completed_at": "2026-10-06T19:49:05Z"
+              "started_at": "2026-10-06T22:28:34Z",
+              "completed_at": "2026-10-06T22:28:55Z"
             },
             {
               "name": "reference and backend tests",
               "status": "completed",
               "conclusion": "success",
               "number": 6,
-              "started_at": "2026-10-06T19:49:05Z",
-              "completed_at": "2026-10-06T19:59:53Z"
+              "started_at": "2026-10-06T22:28:55Z",
+              "completed_at": "2026-10-06T22:32:10Z"
             },
             {
               "name": "Post Run Swatinem/rust-cache@v2",
               "status": "completed",
               "conclusion": "success",
               "number": 11,
-              "started_at": "2026-10-06T19:59:53Z",
-              "completed_at": "2026-10-06T20:00:05Z"
+              "started_at": "2026-10-06T22:32:10Z",
+              "completed_at": "2026-10-06T22:32:11Z"
             },
             {
               "name": "Post Run actions/checkout@v4",
               "status": "completed",
               "conclusion": "success",
               "number": 12,
-              "started_at": "2026-10-06T20:00:05Z",
-              "completed_at": "2026-10-06T20:00:05Z"
+              "started_at": "2026-10-06T22:32:11Z",
+              "completed_at": "2026-10-06T22:32:11Z"
             },
             {
               "name": "Complete job",
               "status": "completed",
               "conclusion": "success",
               "number": 13,
-              "started_at": "2026-10-06T20:00:05Z",
-              "completed_at": "2026-10-06T20:00:05Z"
+              "started_at": "2026-10-06T22:32:11Z",
+              "completed_at": "2026-10-06T22:32:11Z"
             }
           ],
-          "check_run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/check-runs/112468267274",
+          "check_run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/check-runs/112532877849",
           "labels": [
             "ubuntu-latest"
           ],
-          "runner_id": 1000003483,
-          "runner_name": "GitHub Actions 1000003483",
+          "runner_id": 1000003491,
+          "runner_name": "GitHub Actions 1000003491",
           "runner_group_id": 0,
           "runner_group_name": "GitHub Actions"
         },
         {
-          "id": 112468267478,
-          "run_id": 37521631512,
+          "id": 112532878374,
+          "run_id": 37540746618,
           "workflow_name": "rust",
           "head_branch": "codex/validation-runner",
-          "run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/runs/37521631512",
+          "run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/runs/37540746618",
           "run_attempt": 1,
-          "node_id": "CR_kwDOUzlbIs8AAAAaL6GR1g",
-          "head_sha": "05000f10eafc4211d6856549d0073edb90ba5811",
-          "url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/jobs/112468267478",
-          "html_url": "https://github.com/jkendall327/hydrus-mine/actions/runs/37521631512/job/112468267478",
+          "node_id": "CR_kwDOUzlbIs8AAAAaM3t0Jg",
+          "head_sha": "e886e68ed9c49751617bcf28df50957d99e3c03e",
+          "url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/jobs/112532878374",
+          "html_url": "https://github.com/jkendall327/hydrus-mine/actions/runs/37540746618/job/112532878374",
           "status": "completed",
           "conclusion": "success",
-          "created_at": "2026-10-06T19:48:20Z",
-          "started_at": "2026-10-06T19:48:22Z",
-          "completed_at": "2026-10-06T20:50:39Z",
+          "created_at": "2026-10-06T22:28:00Z",
+          "started_at": "2026-10-06T22:28:02Z",
+          "completed_at": "2026-10-06T23:01:38Z",
           "name": "check",
           "steps": [
             {
@@ -131404,216 +131407,243 @@
               "status": "completed",
               "conclusion": "success",
               "number": 1,
-              "started_at": "2026-10-06T19:48:23Z",
-              "completed_at": "2026-10-06T19:48:25Z"
+              "started_at": "2026-10-06T22:28:03Z",
+              "completed_at": "2026-10-06T22:28:04Z"
             },
             {
               "name": "Run actions/checkout@v4",
               "status": "completed",
               "conclusion": "success",
               "number": 2,
-              "started_at": "2026-10-06T19:48:25Z",
-              "completed_at": "2026-10-06T19:48:36Z"
+              "started_at": "2026-10-06T22:28:04Z",
+              "completed_at": "2026-10-06T22:28:15Z"
             },
             {
               "name": "Run dtolnay/rust-toolchain@master",
               "status": "completed",
               "conclusion": "success",
               "number": 3,
-              "started_at": "2026-10-06T19:48:36Z",
-              "completed_at": "2026-10-06T19:48:45Z"
+              "started_at": "2026-10-06T22:28:15Z",
+              "completed_at": "2026-10-06T22:28:25Z"
             },
             {
               "name": "Run Swatinem/rust-cache@v2",
               "status": "completed",
               "conclusion": "success",
               "number": 4,
-              "started_at": "2026-10-06T19:48:45Z",
-              "completed_at": "2026-10-06T19:48:46Z"
+              "started_at": "2026-10-06T22:28:25Z",
+              "completed_at": "2026-10-06T22:28:41Z"
             },
             {
               "name": "workspace cache safety regressions",
               "status": "completed",
               "conclusion": "success",
               "number": 5,
-              "started_at": "2026-10-06T19:48:46Z",
-              "completed_at": "2026-10-06T19:48:47Z"
+              "started_at": "2026-10-06T22:28:41Z",
+              "completed_at": "2026-10-06T22:28:42Z"
             },
             {
               "name": "workspace artifact compatibility key",
               "status": "completed",
               "conclusion": "success",
               "number": 6,
-              "started_at": "2026-10-06T19:48:47Z",
-              "completed_at": "2026-10-06T19:48:47Z"
+              "started_at": "2026-10-06T22:28:42Z",
+              "completed_at": "2026-10-06T22:28:42Z"
             },
             {
               "name": "restore rolling workspace libraries",
               "status": "completed",
               "conclusion": "success",
               "number": 7,
-              "started_at": "2026-10-06T19:48:47Z",
-              "completed_at": "2026-10-06T19:48:47Z"
+              "started_at": "2026-10-06T22:28:42Z",
+              "completed_at": "2026-10-06T22:28:43Z"
             },
             {
               "name": "merge restored workspace libraries",
               "status": "completed",
               "conclusion": "success",
               "number": 8,
-              "started_at": "2026-10-06T19:48:47Z",
-              "completed_at": "2026-10-06T19:48:48Z"
+              "started_at": "2026-10-06T22:28:43Z",
+              "completed_at": "2026-10-06T22:28:44Z"
             },
             {
               "name": "fail closed on uncertain workspace restore",
               "status": "completed",
               "conclusion": "skipped",
               "number": 9,
-              "started_at": "2026-10-06T19:48:48Z",
-              "completed_at": "2026-10-06T19:48:48Z"
+              "started_at": "2026-10-06T22:28:44Z",
+              "completed_at": "2026-10-06T22:28:44Z"
             },
             {
               "name": "install media tools, and fontconfig for the GUI",
               "status": "completed",
               "conclusion": "success",
               "number": 10,
-              "started_at": "2026-10-06T19:48:48Z",
-              "completed_at": "2026-10-06T19:49:12Z"
+              "started_at": "2026-10-06T22:28:44Z",
+              "completed_at": "2026-10-06T22:29:07Z"
             },
             {
               "name": "fmt",
               "status": "completed",
               "conclusion": "success",
               "number": 11,
-              "started_at": "2026-10-06T19:49:12Z",
-              "completed_at": "2026-10-06T19:49:18Z"
+              "started_at": "2026-10-06T22:29:07Z",
+              "completed_at": "2026-10-06T22:29:12Z"
             },
             {
               "name": "GUI artifact runner tests",
               "status": "completed",
               "conclusion": "success",
               "number": 12,
-              "started_at": "2026-10-06T19:49:18Z",
-              "completed_at": "2026-10-06T19:49:18Z"
+              "started_at": "2026-10-06T22:29:12Z",
+              "completed_at": "2026-10-06T22:29:12Z"
             },
             {
               "name": "clippy",
               "status": "completed",
               "conclusion": "success",
               "number": 13,
-              "started_at": "2026-10-06T19:49:18Z",
-              "completed_at": "2026-10-06T20:16:58Z"
+              "started_at": "2026-10-06T22:29:12Z",
+              "completed_at": "2026-10-06T22:41:53Z"
             },
             {
               "name": "save immediate Clippy diagnostics",
               "status": "completed",
               "conclusion": "success",
               "number": 14,
-              "started_at": "2026-10-06T20:16:58Z",
-              "completed_at": "2026-10-06T20:16:59Z"
+              "started_at": "2026-10-06T22:41:53Z",
+              "completed_at": "2026-10-06T22:41:54Z"
             },
             {
               "name": "test",
               "status": "completed",
               "conclusion": "success",
               "number": 15,
-              "started_at": "2026-10-06T20:16:59Z",
-              "completed_at": "2026-10-06T20:49:44Z"
+              "started_at": "2026-10-06T22:41:54Z",
+              "completed_at": "2026-10-06T23:01:21Z"
             },
             {
               "name": "save immediate test diagnostics",
               "status": "completed",
               "conclusion": "success",
               "number": 16,
-              "started_at": "2026-10-06T20:49:44Z",
-              "completed_at": "2026-10-06T20:49:45Z"
+              "started_at": "2026-10-06T23:01:21Z",
+              "completed_at": "2026-10-06T23:01:22Z"
             },
             {
               "name": "parity ratchet",
               "status": "completed",
               "conclusion": "success",
               "number": 17,
-              "started_at": "2026-10-06T20:49:45Z",
-              "completed_at": "2026-10-06T20:50:08Z"
+              "started_at": "2026-10-06T23:01:22Z",
+              "completed_at": "2026-10-06T23:01:23Z"
             },
             {
               "name": "save native GUI renders",
               "status": "completed",
               "conclusion": "success",
               "number": 18,
-              "started_at": "2026-10-06T20:50:08Z",
-              "completed_at": "2026-10-06T20:50:10Z"
+              "started_at": "2026-10-06T23:01:23Z",
+              "completed_at": "2026-10-06T23:01:25Z"
             },
             {
               "name": "stage bounded workspace libraries",
               "status": "completed",
               "conclusion": "success",
               "number": 19,
-              "started_at": "2026-10-06T20:50:10Z",
-              "completed_at": "2026-10-06T20:50:15Z"
+              "started_at": "2026-10-06T23:01:25Z",
+              "completed_at": "2026-10-06T23:01:30Z"
             },
             {
               "name": "save rolling workspace libraries",
               "status": "completed",
               "conclusion": "success",
               "number": 20,
-              "started_at": "2026-10-06T20:50:15Z",
-              "completed_at": "2026-10-06T20:50:20Z"
+              "started_at": "2026-10-06T23:01:30Z",
+              "completed_at": "2026-10-06T23:01:36Z"
             },
             {
               "name": "Post Run Swatinem/rust-cache@v2",
               "status": "completed",
               "conclusion": "success",
               "number": 39,
-              "started_at": "2026-10-06T20:50:20Z",
-              "completed_at": "2026-10-06T20:50:36Z"
+              "started_at": "2026-10-06T23:01:36Z",
+              "completed_at": "2026-10-06T23:01:36Z"
             },
             {
               "name": "Post Run actions/checkout@v4",
               "status": "completed",
               "conclusion": "success",
               "number": 40,
-              "started_at": "2026-10-06T20:50:36Z",
-              "completed_at": "2026-10-06T20:50:36Z"
+              "started_at": "2026-10-06T23:01:36Z",
+              "completed_at": "2026-10-06T23:01:36Z"
             },
             {
               "name": "Complete job",
               "status": "completed",
               "conclusion": "success",
               "number": 41,
-              "started_at": "2026-10-06T20:50:36Z",
-              "completed_at": "2026-10-06T20:50:36Z"
+              "started_at": "2026-10-06T23:01:36Z",
+              "completed_at": "2026-10-06T23:01:36Z"
             }
           ],
-          "check_run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/check-runs/112468267478",
+          "check_run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/check-runs/112532878374",
           "labels": [
             "ubuntu-24.04"
           ],
-          "runner_id": 1000003484,
-          "runner_name": "GitHub Actions 1000003484",
+          "runner_id": 1000003492,
+          "runner_name": "GitHub Actions 1000003492",
           "runner_group_id": 0,
           "runner_group_name": "GitHub Actions"
         }
       ],
       "auxiliary_jobs": [
         {
-          "id": 112468269047,
-          "run_id": 37521631512,
+          "id": 112532879274,
+          "run_id": 37540746618,
           "workflow_name": "rust",
           "head_branch": "codex/validation-runner",
-          "run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/runs/37521631512",
+          "run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/runs/37540746618",
           "run_attempt": 1,
-          "node_id": "CR_kwDOUzlbIs8AAAAaL6GX9w",
-          "head_sha": "05000f10eafc4211d6856549d0073edb90ba5811",
-          "url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/jobs/112468269047",
-          "html_url": "https://github.com/jkendall327/hydrus-mine/actions/runs/37521631512/job/112468269047",
+          "node_id": "CR_kwDOUzlbIs8AAAAaM3t3qg",
+          "head_sha": "e886e68ed9c49751617bcf28df50957d99e3c03e",
+          "url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/jobs/112532879274",
+          "html_url": "https://github.com/jkendall327/hydrus-mine/actions/runs/37540746618/job/112532879274",
           "status": "completed",
           "conclusion": "skipped",
-          "created_at": "2026-10-06T19:48:20Z",
-          "started_at": "2026-10-06T19:48:20Z",
-          "completed_at": "2026-10-06T19:48:20Z",
+          "created_at": "2026-10-06T22:28:00Z",
+          "started_at": "2026-10-06T22:28:00Z",
+          "completed_at": "2026-10-06T22:28:00Z",
+          "name": "quick-check",
+          "steps": [],
+          "check_run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/check-runs/112532879274",
+          "labels": [
+            "ubuntu-24.04"
+          ],
+          "runner_id": null,
+          "runner_name": null,
+          "runner_group_id": null,
+          "runner_group_name": null
+        },
+        {
+          "id": 112532879783,
+          "run_id": 37540746618,
+          "workflow_name": "rust",
+          "head_branch": "codex/validation-runner",
+          "run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/runs/37540746618",
+          "run_attempt": 1,
+          "node_id": "CR_kwDOUzlbIs8AAAAaM3t5pw",
+          "head_sha": "e886e68ed9c49751617bcf28df50957d99e3c03e",
+          "url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/jobs/112532879783",
+          "html_url": "https://github.com/jkendall327/hydrus-mine/actions/runs/37540746618/job/112532879783",
+          "status": "completed",
+          "conclusion": "skipped",
+          "created_at": "2026-10-06T22:28:00Z",
+          "started_at": "2026-10-06T22:28:00Z",
+          "completed_at": "2026-10-06T22:28:00Z",
           "name": "other-platforms",
           "steps": [],
-          "check_run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/check-runs/112468269047",
+          "check_run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/check-runs/112532879783",
           "labels": [],
           "runner_id": null,
           "runner_name": null,
@@ -131626,48 +131656,21 @@
           ]
         },
         {
-          "id": 112468269432,
-          "run_id": 37521631512,
+          "id": 112544121806,
+          "run_id": 37540746618,
           "workflow_name": "rust",
           "head_branch": "codex/validation-runner",
-          "run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/runs/37521631512",
+          "run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/runs/37540746618",
           "run_attempt": 1,
-          "node_id": "CR_kwDOUzlbIs8AAAAaL6GZeA",
-          "head_sha": "05000f10eafc4211d6856549d0073edb90ba5811",
-          "url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/jobs/112468269432",
-          "html_url": "https://github.com/jkendall327/hydrus-mine/actions/runs/37521631512/job/112468269432",
-          "status": "completed",
-          "conclusion": "skipped",
-          "created_at": "2026-10-06T19:48:20Z",
-          "started_at": "2026-10-06T19:48:20Z",
-          "completed_at": "2026-10-06T19:48:20Z",
-          "name": "quick-check",
-          "steps": [],
-          "check_run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/check-runs/112468269432",
-          "labels": [
-            "ubuntu-24.04"
-          ],
-          "runner_id": null,
-          "runner_name": null,
-          "runner_group_id": null,
-          "runner_group_name": null
-        },
-        {
-          "id": 112494945285,
-          "run_id": 37521631512,
-          "workflow_name": "rust",
-          "head_branch": "codex/validation-runner",
-          "run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/runs/37521631512",
-          "run_attempt": 1,
-          "node_id": "CR_kwDOUzlbIs8AAAAaMTikBQ",
-          "head_sha": "05000f10eafc4211d6856549d0073edb90ba5811",
-          "url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/jobs/112494945285",
-          "html_url": "https://github.com/jkendall327/hydrus-mine/actions/runs/37521631512/job/112494945285",
+          "node_id": "CR_kwDOUzlbIs8AAAAaNCcDzg",
+          "head_sha": "e886e68ed9c49751617bcf28df50957d99e3c03e",
+          "url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/jobs/112544121806",
+          "html_url": "https://github.com/jkendall327/hydrus-mine/actions/runs/37540746618/job/112544121806",
           "status": "completed",
           "conclusion": "success",
-          "created_at": "2026-10-06T20:50:39Z",
-          "started_at": "2026-10-06T20:50:42Z",
-          "completed_at": "2026-10-06T20:50:46Z",
+          "created_at": "2026-10-06T23:01:38Z",
+          "started_at": "2026-10-06T23:01:42Z",
+          "completed_at": "2026-10-06T23:01:47Z",
           "name": "workspace-cache-maintenance",
           "steps": [
             {
@@ -131675,32 +131678,32 @@
               "status": "completed",
               "conclusion": "success",
               "number": 1,
-              "started_at": "2026-10-06T20:50:43Z",
-              "completed_at": "2026-10-06T20:50:43Z"
+              "started_at": "2026-10-06T23:01:43Z",
+              "completed_at": "2026-10-06T23:01:44Z"
             },
             {
               "name": "bound workspace cache snapshots",
               "status": "completed",
               "conclusion": "success",
               "number": 2,
-              "started_at": "2026-10-06T20:50:44Z",
-              "completed_at": "2026-10-06T20:50:44Z"
+              "started_at": "2026-10-06T23:01:44Z",
+              "completed_at": "2026-10-06T23:01:44Z"
             },
             {
               "name": "Complete job",
               "status": "completed",
               "conclusion": "success",
               "number": 3,
-              "started_at": "2026-10-06T20:50:44Z",
-              "completed_at": "2026-10-06T20:50:44Z"
+              "started_at": "2026-10-06T23:01:44Z",
+              "completed_at": "2026-10-06T23:01:44Z"
             }
           ],
-          "check_run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/check-runs/112494945285",
+          "check_run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/check-runs/112544121806",
           "labels": [
             "ubuntu-24.04"
           ],
-          "runner_id": 1000003488,
-          "runner_name": "GitHub Actions 1000003488",
+          "runner_id": 1000003495,
+          "runner_name": "GitHub Actions 1000003495",
           "runner_group_id": 0,
           "runner_group_name": "GitHub Actions"
         }
@@ -131712,26 +131715,26 @@
       },
       "publication_policy": {
         "path": ".github/publication-validation.json",
-        "source_commit": "05000f10eafc4211d6856549d0073edb90ba5811",
+        "source_commit": "e886e68ed9c49751617bcf28df50957d99e3c03e",
         "sha256": "49723bd5d6b786392a1368bb3da1406747a553ef31c9de2bdef92cea5d014c5f",
         "effective_date": "2026-10-06",
         "reason": "The owner uses Linux and prioritizes validated Linux delivery. macOS is low priority; Windows is deferred because its builds materially lengthen validation. Secondary-platform CI remains available by explicit opt-in."
       }
     },
-    "additional_concrete_implementation_completions": 5,
+    "additional_concrete_implementation_completions": 2,
     "counting_method": "Frozen 1,812 original IDs; explicit reviewed concrete implementation leaves only; parents, aliases, evidence-only changes and native IDs excluded."
   },
   "runtime_validation": {
-    "head_sha": "05000f10eafc4211d6856549d0073edb90ba5811",
+    "head_sha": "e886e68ed9c49751617bcf28df50957d99e3c03e",
     "status": "completed",
     "conclusion": "success",
     "run_attempt": 1,
-    "created_at": "2026-10-06T19:48:18Z",
-    "run_started_at": "2026-10-06T19:48:18Z",
-    "updated_at": "2026-10-06T20:50:47Z",
-    "source_commit": "05000f10eafc4211d6856549d0073edb90ba5811",
-    "run_id": 37521631512,
-    "url": "https://github.com/jkendall327/hydrus-mine/actions/runs/37521631512",
+    "created_at": "2026-10-06T22:27:58Z",
+    "run_started_at": "2026-10-06T22:27:58Z",
+    "updated_at": "2026-10-06T23:01:47Z",
+    "source_commit": "e886e68ed9c49751617bcf28df50957d99e3c03e",
+    "run_id": 37540746618,
+    "url": "https://github.com/jkendall327/hydrus-mine/actions/runs/37540746618",
     "validation_scope": "linux",
     "required_platforms": [
       "linux"
@@ -131742,21 +131745,21 @@
     ],
     "jobs": [
       {
-        "id": 112468267274,
-        "run_id": 37521631512,
+        "id": 112532877849,
+        "run_id": 37540746618,
         "workflow_name": "rust",
         "head_branch": "codex/validation-runner",
-        "run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/runs/37521631512",
+        "run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/runs/37540746618",
         "run_attempt": 1,
-        "node_id": "CR_kwDOUzlbIs8AAAAaL6GRCg",
-        "head_sha": "05000f10eafc4211d6856549d0073edb90ba5811",
-        "url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/jobs/112468267274",
-        "html_url": "https://github.com/jkendall327/hydrus-mine/actions/runs/37521631512/job/112468267274",
+        "node_id": "CR_kwDOUzlbIs8AAAAaM3tyGQ",
+        "head_sha": "e886e68ed9c49751617bcf28df50957d99e3c03e",
+        "url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/jobs/112532877849",
+        "html_url": "https://github.com/jkendall327/hydrus-mine/actions/runs/37540746618/job/112532877849",
         "status": "completed",
         "conclusion": "success",
-        "created_at": "2026-10-06T19:48:20Z",
-        "started_at": "2026-10-06T19:48:22Z",
-        "completed_at": "2026-10-06T20:00:07Z",
+        "created_at": "2026-10-06T22:28:00Z",
+        "started_at": "2026-10-06T22:28:02Z",
+        "completed_at": "2026-10-06T22:32:13Z",
         "name": "parity-models",
         "steps": [
           {
@@ -131764,99 +131767,99 @@
             "status": "completed",
             "conclusion": "success",
             "number": 1,
-            "started_at": "2026-10-06T19:48:23Z",
-            "completed_at": "2026-10-06T19:48:24Z"
+            "started_at": "2026-10-06T22:28:02Z",
+            "completed_at": "2026-10-06T22:28:03Z"
           },
           {
             "name": "Run actions/checkout@v4",
             "status": "completed",
             "conclusion": "success",
             "number": 2,
-            "started_at": "2026-10-06T19:48:24Z",
-            "completed_at": "2026-10-06T19:48:35Z"
+            "started_at": "2026-10-06T22:28:04Z",
+            "completed_at": "2026-10-06T22:28:15Z"
           },
           {
             "name": "Run dtolnay/rust-toolchain@master",
             "status": "completed",
             "conclusion": "success",
             "number": 3,
-            "started_at": "2026-10-06T19:48:35Z",
-            "completed_at": "2026-10-06T19:48:44Z"
+            "started_at": "2026-10-06T22:28:15Z",
+            "completed_at": "2026-10-06T22:28:24Z"
           },
           {
             "name": "Run Swatinem/rust-cache@v2",
             "status": "completed",
             "conclusion": "success",
             "number": 4,
-            "started_at": "2026-10-06T19:48:44Z",
-            "completed_at": "2026-10-06T19:48:45Z"
+            "started_at": "2026-10-06T22:28:24Z",
+            "completed_at": "2026-10-06T22:28:34Z"
           },
           {
             "name": "install media tools",
             "status": "completed",
             "conclusion": "success",
             "number": 5,
-            "started_at": "2026-10-06T19:48:45Z",
-            "completed_at": "2026-10-06T19:49:05Z"
+            "started_at": "2026-10-06T22:28:34Z",
+            "completed_at": "2026-10-06T22:28:55Z"
           },
           {
             "name": "reference and backend tests",
             "status": "completed",
             "conclusion": "success",
             "number": 6,
-            "started_at": "2026-10-06T19:49:05Z",
-            "completed_at": "2026-10-06T19:59:53Z"
+            "started_at": "2026-10-06T22:28:55Z",
+            "completed_at": "2026-10-06T22:32:10Z"
           },
           {
             "name": "Post Run Swatinem/rust-cache@v2",
             "status": "completed",
             "conclusion": "success",
             "number": 11,
-            "started_at": "2026-10-06T19:59:53Z",
-            "completed_at": "2026-10-06T20:00:05Z"
+            "started_at": "2026-10-06T22:32:10Z",
+            "completed_at": "2026-10-06T22:32:11Z"
           },
           {
             "name": "Post Run actions/checkout@v4",
             "status": "completed",
             "conclusion": "success",
             "number": 12,
-            "started_at": "2026-10-06T20:00:05Z",
-            "completed_at": "2026-10-06T20:00:05Z"
+            "started_at": "2026-10-06T22:32:11Z",
+            "completed_at": "2026-10-06T22:32:11Z"
           },
           {
             "name": "Complete job",
             "status": "completed",
             "conclusion": "success",
             "number": 13,
-            "started_at": "2026-10-06T20:00:05Z",
-            "completed_at": "2026-10-06T20:00:05Z"
+            "started_at": "2026-10-06T22:32:11Z",
+            "completed_at": "2026-10-06T22:32:11Z"
           }
         ],
-        "check_run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/check-runs/112468267274",
+        "check_run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/check-runs/112532877849",
         "labels": [
           "ubuntu-latest"
         ],
-        "runner_id": 1000003483,
-        "runner_name": "GitHub Actions 1000003483",
+        "runner_id": 1000003491,
+        "runner_name": "GitHub Actions 1000003491",
         "runner_group_id": 0,
         "runner_group_name": "GitHub Actions"
       },
       {
-        "id": 112468267478,
-        "run_id": 37521631512,
+        "id": 112532878374,
+        "run_id": 37540746618,
         "workflow_name": "rust",
         "head_branch": "codex/validation-runner",
-        "run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/runs/37521631512",
+        "run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/runs/37540746618",
         "run_attempt": 1,
-        "node_id": "CR_kwDOUzlbIs8AAAAaL6GR1g",
-        "head_sha": "05000f10eafc4211d6856549d0073edb90ba5811",
-        "url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/jobs/112468267478",
-        "html_url": "https://github.com/jkendall327/hydrus-mine/actions/runs/37521631512/job/112468267478",
+        "node_id": "CR_kwDOUzlbIs8AAAAaM3t0Jg",
+        "head_sha": "e886e68ed9c49751617bcf28df50957d99e3c03e",
+        "url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/jobs/112532878374",
+        "html_url": "https://github.com/jkendall327/hydrus-mine/actions/runs/37540746618/job/112532878374",
         "status": "completed",
         "conclusion": "success",
-        "created_at": "2026-10-06T19:48:20Z",
-        "started_at": "2026-10-06T19:48:22Z",
-        "completed_at": "2026-10-06T20:50:39Z",
+        "created_at": "2026-10-06T22:28:00Z",
+        "started_at": "2026-10-06T22:28:02Z",
+        "completed_at": "2026-10-06T23:01:38Z",
         "name": "check",
         "steps": [
           {
@@ -131864,216 +131867,243 @@
             "status": "completed",
             "conclusion": "success",
             "number": 1,
-            "started_at": "2026-10-06T19:48:23Z",
-            "completed_at": "2026-10-06T19:48:25Z"
+            "started_at": "2026-10-06T22:28:03Z",
+            "completed_at": "2026-10-06T22:28:04Z"
           },
           {
             "name": "Run actions/checkout@v4",
             "status": "completed",
             "conclusion": "success",
             "number": 2,
-            "started_at": "2026-10-06T19:48:25Z",
-            "completed_at": "2026-10-06T19:48:36Z"
+            "started_at": "2026-10-06T22:28:04Z",
+            "completed_at": "2026-10-06T22:28:15Z"
           },
           {
             "name": "Run dtolnay/rust-toolchain@master",
             "status": "completed",
             "conclusion": "success",
             "number": 3,
-            "started_at": "2026-10-06T19:48:36Z",
-            "completed_at": "2026-10-06T19:48:45Z"
+            "started_at": "2026-10-06T22:28:15Z",
+            "completed_at": "2026-10-06T22:28:25Z"
           },
           {
             "name": "Run Swatinem/rust-cache@v2",
             "status": "completed",
             "conclusion": "success",
             "number": 4,
-            "started_at": "2026-10-06T19:48:45Z",
-            "completed_at": "2026-10-06T19:48:46Z"
+            "started_at": "2026-10-06T22:28:25Z",
+            "completed_at": "2026-10-06T22:28:41Z"
           },
           {
             "name": "workspace cache safety regressions",
             "status": "completed",
             "conclusion": "success",
             "number": 5,
-            "started_at": "2026-10-06T19:48:46Z",
-            "completed_at": "2026-10-06T19:48:47Z"
+            "started_at": "2026-10-06T22:28:41Z",
+            "completed_at": "2026-10-06T22:28:42Z"
           },
           {
             "name": "workspace artifact compatibility key",
             "status": "completed",
             "conclusion": "success",
             "number": 6,
-            "started_at": "2026-10-06T19:48:47Z",
-            "completed_at": "2026-10-06T19:48:47Z"
+            "started_at": "2026-10-06T22:28:42Z",
+            "completed_at": "2026-10-06T22:28:42Z"
           },
           {
             "name": "restore rolling workspace libraries",
             "status": "completed",
             "conclusion": "success",
             "number": 7,
-            "started_at": "2026-10-06T19:48:47Z",
-            "completed_at": "2026-10-06T19:48:47Z"
+            "started_at": "2026-10-06T22:28:42Z",
+            "completed_at": "2026-10-06T22:28:43Z"
           },
           {
             "name": "merge restored workspace libraries",
             "status": "completed",
             "conclusion": "success",
             "number": 8,
-            "started_at": "2026-10-06T19:48:47Z",
-            "completed_at": "2026-10-06T19:48:48Z"
+            "started_at": "2026-10-06T22:28:43Z",
+            "completed_at": "2026-10-06T22:28:44Z"
           },
           {
             "name": "fail closed on uncertain workspace restore",
             "status": "completed",
             "conclusion": "skipped",
             "number": 9,
-            "started_at": "2026-10-06T19:48:48Z",
-            "completed_at": "2026-10-06T19:48:48Z"
+            "started_at": "2026-10-06T22:28:44Z",
+            "completed_at": "2026-10-06T22:28:44Z"
           },
           {
             "name": "install media tools, and fontconfig for the GUI",
             "status": "completed",
             "conclusion": "success",
             "number": 10,
-            "started_at": "2026-10-06T19:48:48Z",
-            "completed_at": "2026-10-06T19:49:12Z"
+            "started_at": "2026-10-06T22:28:44Z",
+            "completed_at": "2026-10-06T22:29:07Z"
           },
           {
             "name": "fmt",
             "status": "completed",
             "conclusion": "success",
             "number": 11,
-            "started_at": "2026-10-06T19:49:12Z",
-            "completed_at": "2026-10-06T19:49:18Z"
+            "started_at": "2026-10-06T22:29:07Z",
+            "completed_at": "2026-10-06T22:29:12Z"
           },
           {
             "name": "GUI artifact runner tests",
             "status": "completed",
             "conclusion": "success",
             "number": 12,
-            "started_at": "2026-10-06T19:49:18Z",
-            "completed_at": "2026-10-06T19:49:18Z"
+            "started_at": "2026-10-06T22:29:12Z",
+            "completed_at": "2026-10-06T22:29:12Z"
           },
           {
             "name": "clippy",
             "status": "completed",
             "conclusion": "success",
             "number": 13,
-            "started_at": "2026-10-06T19:49:18Z",
-            "completed_at": "2026-10-06T20:16:58Z"
+            "started_at": "2026-10-06T22:29:12Z",
+            "completed_at": "2026-10-06T22:41:53Z"
           },
           {
             "name": "save immediate Clippy diagnostics",
             "status": "completed",
             "conclusion": "success",
             "number": 14,
-            "started_at": "2026-10-06T20:16:58Z",
-            "completed_at": "2026-10-06T20:16:59Z"
+            "started_at": "2026-10-06T22:41:53Z",
+            "completed_at": "2026-10-06T22:41:54Z"
           },
           {
             "name": "test",
             "status": "completed",
             "conclusion": "success",
             "number": 15,
-            "started_at": "2026-10-06T20:16:59Z",
-            "completed_at": "2026-10-06T20:49:44Z"
+            "started_at": "2026-10-06T22:41:54Z",
+            "completed_at": "2026-10-06T23:01:21Z"
           },
           {
             "name": "save immediate test diagnostics",
             "status": "completed",
             "conclusion": "success",
             "number": 16,
-            "started_at": "2026-10-06T20:49:44Z",
-            "completed_at": "2026-10-06T20:49:45Z"
+            "started_at": "2026-10-06T23:01:21Z",
+            "completed_at": "2026-10-06T23:01:22Z"
           },
           {
             "name": "parity ratchet",
             "status": "completed",
             "conclusion": "success",
             "number": 17,
-            "started_at": "2026-10-06T20:49:45Z",
-            "completed_at": "2026-10-06T20:50:08Z"
+            "started_at": "2026-10-06T23:01:22Z",
+            "completed_at": "2026-10-06T23:01:23Z"
           },
           {
             "name": "save native GUI renders",
             "status": "completed",
             "conclusion": "success",
             "number": 18,
-            "started_at": "2026-10-06T20:50:08Z",
-            "completed_at": "2026-10-06T20:50:10Z"
+            "started_at": "2026-10-06T23:01:23Z",
+            "completed_at": "2026-10-06T23:01:25Z"
           },
           {
             "name": "stage bounded workspace libraries",
             "status": "completed",
             "conclusion": "success",
             "number": 19,
-            "started_at": "2026-10-06T20:50:10Z",
-            "completed_at": "2026-10-06T20:50:15Z"
+            "started_at": "2026-10-06T23:01:25Z",
+            "completed_at": "2026-10-06T23:01:30Z"
           },
           {
             "name": "save rolling workspace libraries",
             "status": "completed",
             "conclusion": "success",
             "number": 20,
-            "started_at": "2026-10-06T20:50:15Z",
-            "completed_at": "2026-10-06T20:50:20Z"
+            "started_at": "2026-10-06T23:01:30Z",
+            "completed_at": "2026-10-06T23:01:36Z"
           },
           {
             "name": "Post Run Swatinem/rust-cache@v2",
             "status": "completed",
             "conclusion": "success",
             "number": 39,
-            "started_at": "2026-10-06T20:50:20Z",
-            "completed_at": "2026-10-06T20:50:36Z"
+            "started_at": "2026-10-06T23:01:36Z",
+            "completed_at": "2026-10-06T23:01:36Z"
           },
           {
             "name": "Post Run actions/checkout@v4",
             "status": "completed",
             "conclusion": "success",
             "number": 40,
-            "started_at": "2026-10-06T20:50:36Z",
-            "completed_at": "2026-10-06T20:50:36Z"
+            "started_at": "2026-10-06T23:01:36Z",
+            "completed_at": "2026-10-06T23:01:36Z"
           },
           {
             "name": "Complete job",
             "status": "completed",
             "conclusion": "success",
             "number": 41,
-            "started_at": "2026-10-06T20:50:36Z",
-            "completed_at": "2026-10-06T20:50:36Z"
+            "started_at": "2026-10-06T23:01:36Z",
+            "completed_at": "2026-10-06T23:01:36Z"
           }
         ],
-        "check_run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/check-runs/112468267478",
+        "check_run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/check-runs/112532878374",
         "labels": [
           "ubuntu-24.04"
         ],
-        "runner_id": 1000003484,
-        "runner_name": "GitHub Actions 1000003484",
+        "runner_id": 1000003492,
+        "runner_name": "GitHub Actions 1000003492",
         "runner_group_id": 0,
         "runner_group_name": "GitHub Actions"
       }
     ],
     "auxiliary_jobs": [
       {
-        "id": 112468269047,
-        "run_id": 37521631512,
+        "id": 112532879274,
+        "run_id": 37540746618,
         "workflow_name": "rust",
         "head_branch": "codex/validation-runner",
-        "run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/runs/37521631512",
+        "run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/runs/37540746618",
         "run_attempt": 1,
-        "node_id": "CR_kwDOUzlbIs8AAAAaL6GX9w",
-        "head_sha": "05000f10eafc4211d6856549d0073edb90ba5811",
-        "url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/jobs/112468269047",
-        "html_url": "https://github.com/jkendall327/hydrus-mine/actions/runs/37521631512/job/112468269047",
+        "node_id": "CR_kwDOUzlbIs8AAAAaM3t3qg",
+        "head_sha": "e886e68ed9c49751617bcf28df50957d99e3c03e",
+        "url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/jobs/112532879274",
+        "html_url": "https://github.com/jkendall327/hydrus-mine/actions/runs/37540746618/job/112532879274",
         "status": "completed",
         "conclusion": "skipped",
-        "created_at": "2026-10-06T19:48:20Z",
-        "started_at": "2026-10-06T19:48:20Z",
-        "completed_at": "2026-10-06T19:48:20Z",
+        "created_at": "2026-10-06T22:28:00Z",
+        "started_at": "2026-10-06T22:28:00Z",
+        "completed_at": "2026-10-06T22:28:00Z",
+        "name": "quick-check",
+        "steps": [],
+        "check_run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/check-runs/112532879274",
+        "labels": [
+          "ubuntu-24.04"
+        ],
+        "runner_id": null,
+        "runner_name": null,
+        "runner_group_id": null,
+        "runner_group_name": null
+      },
+      {
+        "id": 112532879783,
+        "run_id": 37540746618,
+        "workflow_name": "rust",
+        "head_branch": "codex/validation-runner",
+        "run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/runs/37540746618",
+        "run_attempt": 1,
+        "node_id": "CR_kwDOUzlbIs8AAAAaM3t5pw",
+        "head_sha": "e886e68ed9c49751617bcf28df50957d99e3c03e",
+        "url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/jobs/112532879783",
+        "html_url": "https://github.com/jkendall327/hydrus-mine/actions/runs/37540746618/job/112532879783",
+        "status": "completed",
+        "conclusion": "skipped",
+        "created_at": "2026-10-06T22:28:00Z",
+        "started_at": "2026-10-06T22:28:00Z",
+        "completed_at": "2026-10-06T22:28:00Z",
         "name": "other-platforms",
         "steps": [],
-        "check_run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/check-runs/112468269047",
+        "check_run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/check-runs/112532879783",
         "labels": [],
         "runner_id": null,
         "runner_name": null,
@@ -132086,48 +132116,21 @@
         ]
       },
       {
-        "id": 112468269432,
-        "run_id": 37521631512,
+        "id": 112544121806,
+        "run_id": 37540746618,
         "workflow_name": "rust",
         "head_branch": "codex/validation-runner",
-        "run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/runs/37521631512",
+        "run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/runs/37540746618",
         "run_attempt": 1,
-        "node_id": "CR_kwDOUzlbIs8AAAAaL6GZeA",
-        "head_sha": "05000f10eafc4211d6856549d0073edb90ba5811",
-        "url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/jobs/112468269432",
-        "html_url": "https://github.com/jkendall327/hydrus-mine/actions/runs/37521631512/job/112468269432",
-        "status": "completed",
-        "conclusion": "skipped",
-        "created_at": "2026-10-06T19:48:20Z",
-        "started_at": "2026-10-06T19:48:20Z",
-        "completed_at": "2026-10-06T19:48:20Z",
-        "name": "quick-check",
-        "steps": [],
-        "check_run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/check-runs/112468269432",
-        "labels": [
-          "ubuntu-24.04"
-        ],
-        "runner_id": null,
-        "runner_name": null,
-        "runner_group_id": null,
-        "runner_group_name": null
-      },
-      {
-        "id": 112494945285,
-        "run_id": 37521631512,
-        "workflow_name": "rust",
-        "head_branch": "codex/validation-runner",
-        "run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/runs/37521631512",
-        "run_attempt": 1,
-        "node_id": "CR_kwDOUzlbIs8AAAAaMTikBQ",
-        "head_sha": "05000f10eafc4211d6856549d0073edb90ba5811",
-        "url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/jobs/112494945285",
-        "html_url": "https://github.com/jkendall327/hydrus-mine/actions/runs/37521631512/job/112494945285",
+        "node_id": "CR_kwDOUzlbIs8AAAAaNCcDzg",
+        "head_sha": "e886e68ed9c49751617bcf28df50957d99e3c03e",
+        "url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/jobs/112544121806",
+        "html_url": "https://github.com/jkendall327/hydrus-mine/actions/runs/37540746618/job/112544121806",
         "status": "completed",
         "conclusion": "success",
-        "created_at": "2026-10-06T20:50:39Z",
-        "started_at": "2026-10-06T20:50:42Z",
-        "completed_at": "2026-10-06T20:50:46Z",
+        "created_at": "2026-10-06T23:01:38Z",
+        "started_at": "2026-10-06T23:01:42Z",
+        "completed_at": "2026-10-06T23:01:47Z",
         "name": "workspace-cache-maintenance",
         "steps": [
           {
@@ -132135,32 +132138,32 @@
             "status": "completed",
             "conclusion": "success",
             "number": 1,
-            "started_at": "2026-10-06T20:50:43Z",
-            "completed_at": "2026-10-06T20:50:43Z"
+            "started_at": "2026-10-06T23:01:43Z",
+            "completed_at": "2026-10-06T23:01:44Z"
           },
           {
             "name": "bound workspace cache snapshots",
             "status": "completed",
             "conclusion": "success",
             "number": 2,
-            "started_at": "2026-10-06T20:50:44Z",
-            "completed_at": "2026-10-06T20:50:44Z"
+            "started_at": "2026-10-06T23:01:44Z",
+            "completed_at": "2026-10-06T23:01:44Z"
           },
           {
             "name": "Complete job",
             "status": "completed",
             "conclusion": "success",
             "number": 3,
-            "started_at": "2026-10-06T20:50:44Z",
-            "completed_at": "2026-10-06T20:50:44Z"
+            "started_at": "2026-10-06T23:01:44Z",
+            "completed_at": "2026-10-06T23:01:44Z"
           }
         ],
-        "check_run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/check-runs/112494945285",
+        "check_run_url": "https://api.github.com/repos/jkendall327/hydrus-mine/check-runs/112544121806",
         "labels": [
           "ubuntu-24.04"
         ],
-        "runner_id": 1000003488,
-        "runner_name": "GitHub Actions 1000003488",
+        "runner_id": 1000003495,
+        "runner_name": "GitHub Actions 1000003495",
         "runner_group_id": 0,
         "runner_group_name": "GitHub Actions"
       }
@@ -132172,7 +132175,7 @@
     },
     "publication_policy": {
       "path": ".github/publication-validation.json",
-      "source_commit": "05000f10eafc4211d6856549d0073edb90ba5811",
+      "source_commit": "e886e68ed9c49751617bcf28df50957d99e3c03e",
       "sha256": "49723bd5d6b786392a1368bb3da1406747a553ef31c9de2bdef92cea5d014c5f",
       "effective_date": "2026-10-06",
       "reason": "The owner uses Linux and prioritizes validated Linux delivery. macOS is low priority; Windows is deferred because its builds materially lengthen validation. Secondary-platform CI remains available by explicit opt-in."

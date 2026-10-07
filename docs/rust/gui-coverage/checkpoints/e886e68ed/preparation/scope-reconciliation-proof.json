@@ -1,0 +1,309 @@
+{
+  "source_commit": "e886e68ed9c49751617bcf28df50957d99e3c03e",
+  "run_id": 37540746618,
+  "ledger_sha256": "8c129179b1a1c7cd6528fdb89131b18ff8142f173560223b42cfb8039cc744c6",
+  "previous_completed_count": 339,
+  "selected_metadata_left_pending": true,
+  "related_scope_wording_correction": {
+    "completed_related_ids": [
+      "audit-options-nested-tag-suggestions-weights"
+    ],
+    "reason": "Blanket related panels/weights absence is historical author prose. Current packet claims neither related/lookup availability nor any extra completion; replace literal absence with scope exclusion only after actual gates.",
+    "exact_committed_completed_node": {
+      "id": "audit-options-nested-tag-suggestions-weights",
+      "parent_id": "audit-options-nested-tag-suggestions",
+      "label": "Add/edit namespace slice and 0..10000 search/result weight",
+      "kind": "control",
+      "status": "first_pass",
+      "native_source": {
+        "path": "crates/hydrus-gui-model/src/options.rs",
+        "line": 4733,
+        "line_sha256": "211a7f513505137b27ab344fc280b5786fca290ba2a5acd161d07bc301cb48e7",
+        "symbol": "Kind::RelatedWeights,"
+      },
+      "reference_source": {
+        "path": "hydrus/client/gui/panels/options/TagSuggestionsPanel.py",
+        "line": 327,
+        "line_sha256": "b3817699b30695118a4e8008ae8a0d9a3bbb679c17bd5857053c4e2abbb09b5d",
+        "symbol": "TagSuggestionsPanel._AddTagSliceWeight",
+        "declared_symbol": "_AddTagSliceWeight",
+        "source_review_scope": "Exact Python AST class/method/function identity; no old-offset inference.",
+        "source_review_method": "unique_python_ast_declaration"
+      },
+      "assessment": "Options > tag suggestions opens an explicit owner-held draft with independent ordered search/result namespace tables. Namespace then weight questions append one colon, reject empty/colon catch-alls and duplicate slices, preserve exact warnings, accept 0..10000, allow catch-all weight edits but protect them from deletion, retain selected row identity and enable Edit only for one row. Question/child/parent Cancel discards the corresponding edits; child Apply only stages; parent Apply atomically saves changed weights and preserves live unrelated related preferences. Reopen restores persisted tables. Saved weights reach an already-open local Manage Tags related list, where independent search/result weighting, binary64 truncation, sibling-ideal deduplication, storage/display and local/all-known distinctions match fresh bounded actual Qt cases. Activation only adds missing tags to the captured files. Namespace and numeric-weight headers use Python casefold/full-row tie-breaks in both directions, preserving stable equal keys and selected namespace identity. Each table retains independent selection and sort direction across the native view selector; Add replaces prior selection with the new namespace, matching Qt.",
+      "evidence": [
+        {
+          "path": "crates/hydrus-gui-model/src/options.rs",
+          "line": 4733,
+          "line_sha256": "211a7f513505137b27ab344fc280b5786fca290ba2a5acd161d07bc301cb48e7",
+          "symbol": "Kind::RelatedWeights,",
+          "role": "native_implementation",
+          "description": "docs/rust/gui-coverage/parity/related-tag-weights.json: declared native_implementation; supports the bounded assessment above, not whole-parent parity.",
+          "executed_in_inventory": false,
+          "execution_scope": "Source/recording provenance only; no new execution asserted."
+        },
+        {
+          "path": "crates/hydrus-gui-model/src/related_weights.rs",
+          "line": 56,
+          "line_sha256": "32ab538312eef473c572d6d5180fad1635a9a9fbe22765d953a05b666569f104",
+          "symbol": "pub fn namespace",
+          "role": "native_implementation",
+          "description": "docs/rust/gui-coverage/parity/related-tag-weights.json: declared native_implementation; supports the bounded assessment above, not whole-parent parity.",
+          "executed_in_inventory": false,
+          "execution_scope": "Source/recording provenance only; no new execution asserted."
+        },
+        {
+          "path": "crates/hydrus-gui/src/related_weights_window.rs",
+          "line": 26,
+          "line_sha256": "68af476d0f8d731be1cde11e1ed19d4d38eca62168ee48f35402ec02e8b22835",
+          "symbol": "pub fn open",
+          "role": "native_implementation",
+          "description": "docs/rust/gui-coverage/parity/related-tag-weights.json: declared native_implementation; supports the bounded assessment above, not whole-parent parity.",
+          "executed_in_inventory": false,
+          "execution_scope": "Source/recording provenance only; no new execution asserted."
+        },
+        {
+          "path": "crates/hydrus-gui/src/options_window.rs",
+          "line": 898,
+          "line_sha256": "e0769a561a1ce002dab136ce857586af3126c3ef3f59dd3a34a21481b86e419b",
+          "symbol": "window.on_related_weights_clicked",
+          "role": "native_implementation",
+          "description": "docs/rust/gui-coverage/parity/related-tag-weights.json: declared native_implementation; supports the bounded assessment above, not whole-parent parity.",
+          "executed_in_inventory": false,
+          "execution_scope": "Source/recording provenance only; no new execution asserted."
+        },
+        {
+          "path": "crates/hydrus-store/src/related_tags.rs",
+          "line": 170,
+          "line_sha256": "7a2d3eae7041479e803f4a403acf7de608d2962a5ec284b0abf73d89296fdbac",
+          "symbol": "pub fn query",
+          "role": "native_implementation",
+          "description": "docs/rust/gui-coverage/parity/related-tag-weights.json: declared native_implementation; supports the bounded assessment above, not whole-parent parity.",
+          "executed_in_inventory": false,
+          "execution_scope": "Source/recording provenance only; no new execution asserted."
+        },
+        {
+          "path": "crates/hydrus-gui/src/related_tags_worker.rs",
+          "line": 32,
+          "line_sha256": "db02955523adac806b17b470adf3a4665d76d25488e10a33371bc17372b37805",
+          "symbol": "pub(crate) fn new",
+          "role": "native_implementation",
+          "description": "docs/rust/gui-coverage/parity/related-tag-weights.json: declared native_implementation; supports the bounded assessment above, not whole-parent parity.",
+          "executed_in_inventory": false,
+          "execution_scope": "Source/recording provenance only; no new execution asserted."
+        },
+        {
+          "path": "crates/hydrus-legacy/src/objects/client_options.rs",
+          "line": 494,
+          "line_sha256": "c051efaa15b85bab36aefe3d4c5e8039a2ad2c3e8346a188de882b19767d6c65",
+          "symbol": "pub fn related_tag_weights",
+          "role": "native_implementation",
+          "description": "docs/rust/gui-coverage/parity/related-tag-weights.json: declared native_implementation; supports the bounded assessment above, not whole-parent parity.",
+          "executed_in_inventory": false,
+          "execution_scope": "Source/recording provenance only; no new execution asserted."
+        },
+        {
+          "path": "crates/hydrus-gui-model/src/related_weights.rs",
+          "line": 116,
+          "line_sha256": "220a76fc6c00974977093713b55b34a9a12bd3d8bb59c2dc566689ed3d51bd86",
+          "symbol": "pub fn sort_by",
+          "role": "native_implementation",
+          "description": "docs/rust/gui-coverage/parity/related-tag-weights.json: declared native_implementation; supports the bounded assessment above, not whole-parent parity.",
+          "executed_in_inventory": false,
+          "execution_scope": "Source/recording provenance only; no new execution asserted."
+        },
+        {
+          "path": "crates/hydrus-gui/src/related_weights_window.rs",
+          "line": 103,
+          "line_sha256": "c720cb9574bc26695055ba672954dc46f9cfa26d279c2e99db0ff1330ee28aac",
+          "symbol": "window.on_sort",
+          "role": "native_implementation",
+          "description": "docs/rust/gui-coverage/parity/related-tag-weights.json: declared native_implementation; supports the bounded assessment above, not whole-parent parity.",
+          "executed_in_inventory": false,
+          "execution_scope": "Source/recording provenance only; no new execution asserted."
+        },
+        {
+          "path": "hydrus/client/gui/panels/options/TagSuggestionsPanel.py",
+          "line": 327,
+          "line_sha256": "b3817699b30695118a4e8008ae8a0d9a3bbb679c17bd5857053c4e2abbb09b5d",
+          "symbol": "TagSuggestionsPanel._AddTagSliceWeight",
+          "declared_symbol": "_AddTagSliceWeight",
+          "source_review_scope": "Exact Python AST class/method/function identity; no old-offset inference.",
+          "source_review_method": "unique_python_ast_declaration",
+          "role": "reference_source",
+          "description": "docs/rust/gui-coverage/parity/related-tag-weights.json: declared reference_source; supports the bounded assessment above, not whole-parent parity.",
+          "executed_in_inventory": false,
+          "execution_scope": "Source/recording provenance only; no new execution asserted."
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/related_weights.rs",
+          "line": 6,
+          "line_sha256": "527ae8fa7f7a9d48c74800b32fd2b2c98951541f55c430546dcfc3160e7440b3",
+          "symbol": "fn namespace_questions",
+          "role": "authored_regression",
+          "description": "docs/rust/gui-coverage/parity/related-tag-weights.json: declared authored_regression; supports the bounded assessment above, not whole-parent parity.",
+          "executed_in_inventory": false,
+          "execution_scope": "Source/recording provenance only; no new execution asserted."
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/related_weights.rs",
+          "line": 73,
+          "line_sha256": "ec7aa348a1ff4f0446d6c9efe61652904ad93e73730521fa0f49a372bb3f2b9d",
+          "symbol": "fn search_and_result_weights",
+          "role": "authored_regression",
+          "description": "docs/rust/gui-coverage/parity/related-tag-weights.json: declared authored_regression; supports the bounded assessment above, not whole-parent parity.",
+          "executed_in_inventory": false,
+          "execution_scope": "Source/recording provenance only; no new execution asserted."
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/related_weights.rs",
+          "line": 114,
+          "line_sha256": "848fe6ac4fea7f863142c10419f2e25499cb424104cd533e65ce55c5d9fcdb9e",
+          "symbol": "fn real_service_mappings",
+          "role": "authored_regression",
+          "description": "docs/rust/gui-coverage/parity/related-tag-weights.json: declared authored_regression; supports the bounded assessment above, not whole-parent parity.",
+          "executed_in_inventory": false,
+          "execution_scope": "Source/recording provenance only; no new execution asserted."
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/related_weights.rs",
+          "line": 182,
+          "line_sha256": "5e6ba88789d5c18b2fc7f896004d8d09da4f9b897e0b33a5811bc9bc976e0aed",
+          "symbol": "fn options_acceptance",
+          "role": "authored_regression",
+          "description": "docs/rust/gui-coverage/parity/related-tag-weights.json: declared authored_regression; supports the bounded assessment above, not whole-parent parity.",
+          "executed_in_inventory": false,
+          "execution_scope": "Source/recording provenance only; no new execution asserted."
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/related_weights.rs",
+          "line": 221,
+          "line_sha256": "99d5c94da0952f8ded19fb817867f04190974aa4899af0b845db23ba42582ab0",
+          "symbol": "fn binary64_result_rounding",
+          "role": "authored_regression",
+          "description": "docs/rust/gui-coverage/parity/related-tag-weights.json: declared authored_regression; supports the bounded assessment above, not whole-parent parity.",
+          "executed_in_inventory": false,
+          "execution_scope": "Source/recording provenance only; no new execution asserted."
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/options_window.rs",
+          "line": 5964,
+          "line_sha256": "99772b714afc0404b7cbb9b79fe4f9a202f19038ada3734d735bf3b86e903967",
+          "symbol": "fn related_weight_drafts",
+          "role": "authored_regression",
+          "description": "docs/rust/gui-coverage/parity/related-tag-weights.json: declared authored_regression; supports the bounded assessment above, not whole-parent parity.",
+          "executed_in_inventory": false,
+          "execution_scope": "Source/recording provenance only; no new execution asserted."
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/related_weights.rs",
+          "line": 347,
+          "line_sha256": "df14be3cd7382d5468ff8d315e21ef62fd2ad7af237adae33f88741ba7d7885f",
+          "symbol": "fn folded_header_sorts_add_selection_and_independent_tables_match_actual_qt",
+          "role": "authored_regression",
+          "description": "docs/rust/gui-coverage/parity/related-tag-weights.json: declared authored_regression; supports the bounded assessment above, not whole-parent parity.",
+          "executed_in_inventory": false,
+          "execution_scope": "Source/recording provenance only; no new execution asserted."
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/related_weight_table.rs",
+          "line": 34,
+          "line_sha256": "1695b88c7de0d7c8a48a0151c491466f45b76f2ca970db66fc900229c8b63f37",
+          "symbol": "fn owned_weight_headers_and_table_switches_replay_qt_without_changing_cancelled_settings",
+          "role": "authored_regression",
+          "description": "docs/rust/gui-coverage/parity/related-tag-weights.json: declared authored_regression; supports the bounded assessment above, not whole-parent parity.",
+          "executed_in_inventory": false,
+          "execution_scope": "Source/recording provenance only; no new execution asserted."
+        },
+        {
+          "path": "oracle/record_related_tag_weights.py",
+          "line": 1,
+          "line_sha256": "381f9bfc69d49d39040a7d5fc3197ce385019a2ba2de649622f841a8c658ed37",
+          "role": "reference_recording",
+          "description": "docs/rust/gui-coverage/parity/related-tag-weights.json: declared reference_recording; supports the bounded assessment above, not whole-parent parity.",
+          "executed_in_inventory": false,
+          "execution_scope": "Source/recording provenance only; no new execution asserted."
+        },
+        {
+          "path": "oracle/fixtures/related_tag_weights.json",
+          "line": 1,
+          "line_sha256": "021fb596db81e6d02bf3d2586ee3981fe519f275c0ac9ca76bbcf2ebb4097d96",
+          "role": "reference_recording",
+          "description": "docs/rust/gui-coverage/parity/related-tag-weights.json: declared reference_recording; supports the bounded assessment above, not whole-parent parity.",
+          "executed_in_inventory": false,
+          "execution_scope": "Source/recording provenance only; no new execution asserted."
+        },
+        {
+          "path": "oracle/record_related_weight_table.py",
+          "line": 1,
+          "line_sha256": "381f9bfc69d49d39040a7d5fc3197ce385019a2ba2de649622f841a8c658ed37",
+          "role": "reference_recording",
+          "description": "docs/rust/gui-coverage/parity/related-tag-weights.json: declared reference_recording; supports the bounded assessment above, not whole-parent parity.",
+          "executed_in_inventory": false,
+          "execution_scope": "Source/recording provenance only; no new execution asserted."
+        },
+        {
+          "path": "oracle/fixtures/related_weight_table.json",
+          "line": 1,
+          "line_sha256": "021fb596db81e6d02bf3d2586ee3981fe519f275c0ac9ca76bbcf2ebb4097d96",
+          "role": "reference_recording",
+          "description": "docs/rust/gui-coverage/parity/related-tag-weights.json: declared reference_recording; supports the bounded assessment above, not whole-parent parity.",
+          "executed_in_inventory": false,
+          "execution_scope": "Source/recording provenance only; no new execution asserted."
+        }
+      ],
+      "limitations": [
+        "Namespace/weight questions use inline blocking panes in an Options-owned child rather than Qt modal child frames; warning text is shown inline. Deeper shared dialog/frame hierarchy is not claimed.",
+        "Manage Tags currently supports local tag services. Related query computes the full corpus; configurable quick/medium/thorough time budgets, Qt large-population sampling and selected-main-tag search/exclusion mode are not implemented.",
+        "Alternate tag-context service, repository Manage Tags and file-lookup script suggestions remain unavailable. Full shared suggested-tabs and default-page families remain Partial; this packet promotes no parent or alias.",
+        "Float results beyond recorded integer-truncation and bounded corpus cases, large-corpus top100 tie behavior, cross-status duplicate mappings and timed sampling remain unverified.",
+        "Qt displays search and result lists simultaneously; the native shared view selector preserves their separate selection/sort state. Column-width/reordering, cross-owner remembered header preference, and keyboard shift-anchor continuity through resort remain outside this bounded repair.",
+        "No committed QtPNG for this group; actual questions/warnings/rank/header traces in related_tag_weights.json/related_weight_table.json support semantic comparison. Native captures must be inspected for legibility.",
+        "Qt shows both tables; native uses a shared view selector preserving separate sort/selection. Native questions/warnings are blocking inline panes rather than Qt modal child frames.",
+        "Full-corpus local-service query lacks time budgets/Qt large-population sampling, selected-tag exclusion/search modes, repository/alternate service/file-lookup availability. Bounded corpus/binary64 truncation only; large top100 ties/cross-status duplicate maps remain unproved.",
+        "Native weight capture is staged Add probe10000 before child Apply; consumer capture is earlier initial ranked list1154/1154/707, not photographed reranking after save. Exact rerank4616/577/353 is a required test assertion.",
+        "Linux validation only; Windows/macOS deferred. Broader related-tag search controls, suggestion width/layout/default-page, parents and aliases remain outside this original weights leaf.",
+        "No committed Qt weights UI PNG exists: actual Qt namespace questions, sort/header traces and cosine/rank JSON fixtures support semantics; the two fresh native images were inspected for readable controls and visible ranks, without a claim of Qt/native pixel equality."
+      ],
+      "native_id_candidates": [
+        "audit.options.nested.tag-suggestions.weights"
+      ],
+      "descendant_count": 0,
+      "descendant_status_counts": {},
+      "unique_feature_descendant_count": 0,
+      "unique_reachable_feature_count_including_shared": 1,
+      "remaining": [],
+      "implementation_validation": {
+        "source_commit": "6b66240c16164a0021f0dd9e128995a25ed28c1d",
+        "ci": "passed",
+        "tests_executed_at_checkpoint": true,
+        "native_render_review": "passed",
+        "manifest": "docs/rust/gui-coverage/parity/related-tag-weights.json",
+        "review_required": false,
+        "run_url": "https://github.com/jkendall327/hydrus-mine/actions/runs/37438105898",
+        "validation_scope": "linux",
+        "required_platforms": [
+          "linux"
+        ],
+        "deferred_platforms": [
+          "windows",
+          "macos"
+        ],
+        "independent_review_evidence": {
+          "path": "docs/rust/gui-coverage/checkpoints/6b66240c1/final-review-2-6b66240c1.json",
+          "sha256": "7c4e0643526c0a8854528d1a4ec00b99c400022a95e295a94845703d504c170f"
+        },
+        "publication_policy": {
+          "path": ".github/publication-validation.json",
+          "source_commit": "6b66240c16164a0021f0dd9e128995a25ed28c1d",
+          "sha256": "49723bd5d6b786392a1368bb3da1406747a553ef31c9de2bdef92cea5d014c5f",
+          "effective_date": "2026-10-06",
+          "reason": "The owner uses Linux and prioritizes validated Linux delivery. macOS is low priority; Windows is deferred because its builds materially lengthen validation. Secondary-platform CI remains available by explicit opt-in."
+        }
+      }
+    },
+    "inventory_sha256": "1a6c12240660b9125bf583c4ae3071f8f426bbee46294fcfe3218a445c7edc80"
+  },
+  "width_claim_boundary": "Saved240opening preference and intrinsic width constraints, not observed physical list width. Assessment wording is retained authored prose; independent reviewer/root final caveat must preserve this distinction.",
+  "approval": false
+}
