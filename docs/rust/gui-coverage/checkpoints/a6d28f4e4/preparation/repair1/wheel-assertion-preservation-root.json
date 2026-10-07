@@ -1,0 +1,12 @@
+{
+  "failed_source": "8ada16c768f07d89c676b0ec09a6a56150f26ace",
+  "file": "crates/hydrus-gui/tests/gui/menu_choice_wheel.rs",
+  "before_assertions": 92,
+  "after_assertions": 92,
+  "all_behavior_tests_and_input_helpers_bytewise_unchanged": true,
+  "only_readiness_helper_changed": true,
+  "overall_timeout_seconds": 2,
+  "single_wheel_no_retry": true,
+  "scope_limit": "Fresh geometry after1101->1100 resize; exact missed-event cause and unresized recovery remain unproven.",
+  "sha256": "5e135151677af6b2a60fc7287ce61e5e81410d307235cf6f6eccbf8ef166f58b"
+}

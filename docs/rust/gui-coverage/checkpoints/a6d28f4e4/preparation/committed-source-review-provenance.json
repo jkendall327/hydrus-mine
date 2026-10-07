@@ -1,0 +1,115 @@
+{
+  "source_commit": "a6d28f4e498a3d7a8f00ad6a61da62166bc54383",
+  "run_id": 37613614274,
+  "assertion_preservation": {
+    "path": "/workspace/validation-reviews/mime-mappings3/assertion-preservation-3.json",
+    "sha256": "e09257713cd4ba7264f3db36f092d69bc1e08835b507aabb0398fad4d202fc80",
+    "proof": {
+      "base_commit": "da53daa67f7fb88870ae653f61def7cfbe514242",
+      "agent_commit": "5716f80e48946850dcfca10df89d833b6e5d3de9",
+      "source_only": true,
+      "approval": false,
+      "files": [
+        {
+          "path": "crates/hydrus-gui/tests/gui/open_externally.rs",
+          "baseline_sha256": "b5c735bf879e017c0aa621c27a9f4461b6f65ac646f43cd790e636bbf0b07cdb",
+          "source_sha256": "27fb251a2751a640ac129aa7416377a8f5a0518130c5bcad1320986e107bd0ea",
+          "entire_baseline_prefix_bytewise_preserved": true,
+          "original_assertions_preserved": true,
+          "assertions_before": 249,
+          "assertions_after": 358,
+          "tests_before": 6,
+          "tests_after": 7,
+          "inserted_lines": 576,
+          "removed_lines": 0
+        },
+        {
+          "path": "crates/hydrus-gui/src/options_open_externally.rs",
+          "baseline_sha256": "2625eee8d92548378ae1c5f5063b015d8f031b22f8fdf75dbb9d5b61340f33d1",
+          "source_sha256": "495188b9b4aeef69346263453192b79822a5ec8662e3fc425418aeff34ae47ed",
+          "scope": "Only outer file_action Delete prompt is fixed to Remove all selected?; captured MIME keys, guard, answer callback and nested count-based questions unchanged.",
+          "prefix_before_file_action_bytewise_preserved": true,
+          "inserted_lines": 1,
+          "removed_lines": 11
+        }
+      ],
+      "checks": [
+        "rustfmt --edition 2024 (owned two files)",
+        "git diff --check"
+      ],
+      "builds_tests_push_run": false,
+      "independent_source_review": "Root and review2 found no concrete source/API/sequencing blocker on these final bytes; exact CI/fresh renders are separate pending gates."
+    }
+  },
+  "source_review2": {
+    "path": "/workspace/validation-reviews/mime-mappings3/repair1/source-review-2.json",
+    "sha256": "580567f58c265e25ac1ba4d068cd2d1fceee7b2316b2c2949e1bdfa365adc1aa",
+    "source_only_approval": false
+  },
+  "repair_assertion_preservation": {
+    "schema_version": 1,
+    "failed_source_commit": "8ada16c768f07d89c676b0ec09a6a56150f26ace",
+    "repair_commit": "13cff28c2db3be013d7b7bcaf5b213a410c5d233",
+    "failed_run_id": 37609745626,
+    "test_file": "crates/hydrus-gui/tests/gui/open_externally.rs",
+    "failed_source_sha256": "27fb251a2751a640ac129aa7416377a8f5a0518130c5bcad1320986e107bd0ea",
+    "repair_source_sha256": "8852e3d6e25c73e9ace129e95bb977a51dedb921a5757ea30001c4322c788167",
+    "production_source_sha256": "495188b9b4aeef69346263453192b79822a5ec8662e3fc425418aeff34ae47ed",
+    "production_unchanged": true,
+    "banked_249_assertion_file_is_exact_prefix": true,
+    "failed_source_assertions": 358,
+    "repair_assertions": 360,
+    "original_assertions_preserved": true,
+    "tests_before": 7,
+    "tests_after": 7,
+    "removed_nonassert_lines": [
+      "        .unwrap();",
+      "    choose(bound, mime.mimetype());"
+    ],
+    "diff_insertions": 49,
+    "diff_deletions": 2,
+    "checks": [
+      "rustfmt completed",
+      "git diff --check passed",
+      "independent source review found no concrete blocker"
+    ],
+    "runtime_validation": "pending new exact-source hosted CI and fresh image review; no local build or execution",
+    "snapshot_directory": "/workspace/validation-reviews/mime-mappings3/repair1/failed-source-8ada16c76"
+  },
+  "wheel_assertion_preservation": {
+    "failed_source": "8ada16c768f07d89c676b0ec09a6a56150f26ace",
+    "file": "crates/hydrus-gui/tests/gui/menu_choice_wheel.rs",
+    "before_assertions": 92,
+    "after_assertions": 92,
+    "all_behavior_tests_and_input_helpers_bytewise_unchanged": true,
+    "only_readiness_helper_changed": true,
+    "overall_timeout_seconds": 2,
+    "single_wheel_no_retry": true,
+    "scope_limit": "Fresh geometry after1101->1100 resize; exact missed-event cause and unresized recovery remain unproven.",
+    "sha256": "5e135151677af6b2a60fc7287ce61e5e81410d307235cf6f6eccbf8ef166f58b"
+  },
+  "historical_failed_source": {
+    "source_commit": "8ada16c768f07d89c676b0ec09a6a56150f26ace",
+    "run_id": 37609745626,
+    "outcome_path": "/workspace/validation-reviews/ci-8ada16c76/failed-outcome.json",
+    "sha256": "b4f529a52f6a7ad205f5eaffad8444741560513766589213b79100f9fd9bfe1e",
+    "new_selected_captures": 0,
+    "completion_credit": 0
+  },
+  "historical_recording": {
+    "script": "oracle/record_open_externally.py",
+    "fixture": "oracle/fixtures/open_externally.json",
+    "screenshot": "oracle/fixtures/open_externally.png",
+    "commit": "140bb93bcddceb01a596849b2210a5e02aec9ff1",
+    "executed_at": "2026-10-05 05:38:07 UTC",
+    "result": "Actual v688 Qt temporary basic client; real Options panel, nested DialogEdit/call queue, UpdateOptions and re-open/washing. Scripted chooser/confirmation outcomes, actual duplicate filtering and explicit one-choice prompt flags; MIME tuple order, GeneralFile mixed-delete protection, queue Add/Edit/Cancel/Down/captured Delete. Actual GUI launch actions dispatch typed first call inputs, exact missing-call notice/no fallback and explicit-empty/default OS selection; Callable.Call captured inputs instead of launching processes/network. Synthetic example.com Unicode URLs; PNG executed and inspected."
+  },
+  "reference_inputs_unchanged_from_baseline": {
+    "oracle/record_open_externally.py": "35ef866834dd401e913c5a022b72c444bb0fedf309a8d715203c8d301f749bc2",
+    "oracle/fixtures/open_externally.json": "37b7f14e70fd811dd6e021968ab8ebb8123d235781aa91ea19102966b6f5c95f",
+    "oracle/fixtures/open_externally.png": "93e6891da43fa4d641c8bc80e7d711a3191a1aaad58b64fb5fe026ec071b8aec"
+  },
+  "bounded_outer_prompt_repair_no_Slint_generation_claim": true,
+  "builds": false,
+  "approval": false
+}

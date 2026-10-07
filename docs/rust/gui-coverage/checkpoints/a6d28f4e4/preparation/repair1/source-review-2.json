@@ -1,0 +1,123 @@
+{
+  "source_commit": "a6d28f4e498a3d7a8f00ad6a61da62166bc54383",
+  "implementation_commit": "13cff28c2db3be013d7b7bcaf5b213a410c5d233",
+  "failed_source_commit": "8ada16c768f07d89c676b0ec09a6a56150f26ace",
+  "failed_run_id": 37609745626,
+  "review_kind": "independent read-only combined repair source/reference/API/sequencing review",
+  "approval": false,
+  "source_only_conclusion": "No concrete source blocker; fresh exact-source full CI and six-image rendered review pending.",
+  "selected_ids": [
+    "audit-options-open-externally-single-file-calls-add",
+    "audit-options-open-externally-single-file-calls-edit",
+    "audit-options-open-externally-single-file-calls-delete"
+  ],
+  "changed_files": [
+    {
+      "path": "crates/hydrus-gui/tests/gui/menu_choice_wheel.rs",
+      "sha256": "5e135151677af6b2a60fc7287ce61e5e81410d307235cf6f6eccbf8ef166f58b"
+    },
+    {
+      "path": "crates/hydrus-gui/tests/gui/open_externally.rs",
+      "sha256": "8852e3d6e25c73e9ace129e95bb977a51dedb921a5757ea30001c4322c788167"
+    },
+    {
+      "path": "docs/rust/DIFFERENCES.md",
+      "sha256": "7ff084752ebd9f2636e81ec8ee9ba9547a6c08807bda62405a8b2f153578acd3"
+    },
+    {
+      "path": "docs/rust/GUI.md",
+      "sha256": "a19351aad7a866d62a248cb225479ab6bd6085cf83f377b845405923151db16c"
+    }
+  ],
+  "production_unchanged_from_failed_source": true,
+  "production_sha256": "495188b9b4aeef69346263453192b79822a5ec8662e3fc425418aeff34ae47ed",
+  "assertion_preservation": {
+    "mime_banked_prefix_exact": true,
+    "mime_original_assertions": 249,
+    "mime_failed_source_assertions": 358,
+    "mime_repair_assertions": 360,
+    "mime_tests": 7,
+    "all_failed_source_mime_assertions_retained": true,
+    "wheel_original_assertions": 92,
+    "wheel_repair_assertions": 92,
+    "wheel_tests": 6,
+    "wheel_full_test_and_input_tail_bytewise_preserved": true,
+    "wheel_helper_assertion_diagnostic_rewritten_with_same_deadline_condition": true,
+    "wheel_single_physical_input_and_exact_index2_unchanged": true
+  },
+  "source_anchors": [
+    {
+      "relativepath": "crates/hydrus-gui/tests/gui/menu_choice_wheel.rs",
+      "line": 19,
+      "symbol": "fn settled_options_frame(",
+      "text": "fn settled_options_frame(",
+      "line_sha256": "69b8ca8fef0d6482b026ccfde38926bbc53e214fe98a455106d5abf313c3369b",
+      "commit": "a6d28f4e498a3d7a8f00ad6a61da62166bc54383",
+      "file_sha256": "5e135151677af6b2a60fc7287ce61e5e81410d307235cf6f6eccbf8ef166f58b"
+    },
+    {
+      "relativepath": "crates/hydrus-gui/tests/gui/menu_choice_wheel.rs",
+      "line": 364,
+      "symbol": "fn options_staging_saved_policy_bubbling_and_retired_roots_are_owned(",
+      "text": "fn options_staging_saved_policy_bubbling_and_retired_roots_are_owned() {",
+      "line_sha256": "e9745f2b4aee4a2e605933d7a3fc8d9436eb9507a5dba6301f3610cb15a24587",
+      "commit": "a6d28f4e498a3d7a8f00ad6a61da62166bc54383",
+      "file_sha256": "5e135151677af6b2a60fc7287ce61e5e81410d307235cf6f6eccbf8ef166f58b"
+    },
+    {
+      "relativepath": "crates/hydrus-gui/tests/gui/open_externally.rs",
+      "line": 1808,
+      "symbol": "fn stage_mapping(",
+      "text": "fn stage_mapping(parent: &OptionsWindow, bound: &Bound, mime: Mime, names: &[&str]) {",
+      "line_sha256": "1d4b020116407f8bd127818ddb0eb4640190191e6fa23a743b9d8c4d169ba003",
+      "commit": "a6d28f4e498a3d7a8f00ad6a61da62166bc54383",
+      "file_sha256": "8852e3d6e25c73e9ace129e95bb977a51dedb921a5757ea30001c4322c788167"
+    },
+    {
+      "relativepath": "crates/hydrus-gui/tests/gui/open_externally.rs",
+      "line": 1730,
+      "symbol": "fn select_mapping(",
+      "text": "fn select_mapping(parent: &OptionsWindow, mime: Mime) {",
+      "line_sha256": "6681d3be58c429b6742166d3f1537838163224e07ace17a92a21342dafa3976e",
+      "commit": "a6d28f4e498a3d7a8f00ad6a61da62166bc54383",
+      "file_sha256": "8852e3d6e25c73e9ace129e95bb977a51dedb921a5757ea30001c4322c788167"
+    },
+    {
+      "relativepath": "crates/hydrus-gui/tests/gui/open_externally.rs",
+      "line": 2051,
+      "symbol": "fn outer_mime_mapping_reference_replay_saved_keys_delete_and_retired_children(",
+      "text": "fn outer_mime_mapping_reference_replay_saved_keys_delete_and_retired_children() {",
+      "line_sha256": "f0657a6c9b167b2b692b45d7d092487cd70eee0b05ecb0b514a07de94fda9750",
+      "commit": "a6d28f4e498a3d7a8f00ad6a61da62166bc54383",
+      "file_sha256": "8852e3d6e25c73e9ace129e95bb977a51dedb921a5757ea30001c4322c788167"
+    }
+  ],
+  "observations": [
+    "The failed MIME setup selected the first image/gif caption (animated code 3), then looked for static GIF code 68. The actual fixture has both captions; native selection uses the ordered typed MIME vector. This is a test setup error, not a demonstrated production defect.",
+    "The repaired helper asserts the full source-filtered remaining chooser labels, selects the fixture index for the exact requested MIME code, and asserts the resulting requested row. Existing human captions are unique in the fixture; visible names remain separate from final direct saved CallRef key proof. All 358 failed-source MIME assertions and the entire banked 249-assertion file prefix remain, with 360 assertions across seven tests.",
+    "The wheel helper removes only its observed target map entry, performs real 1101\u21921100 width transitions and requires newly emitted measurements, finite viewport containment, bit-stable observations and inactive animations. Total deadline remains two seconds; each stage has only a minimum two-millisecond observation delay.",
+    "The complete wheel file from fn wheel onward and its prefix before the readiness helper are bytewise unchanged. All 92 assertions remain; the only changed assertion span is the helper timeout diagnostic context, retaining its original two-second condition. The original hidden no-op, single enabled physical wheel and exact expected index 2 are unchanged. No pointer movement change, input retry, direct callback substitution or widget-state forcing was added.",
+    "The log proves a cached-observation readiness gap but not the precise missed-hit cause. This resized readiness test does not establish reliable unresized hide/show dispatch. No new menu-wheel completion or production correction is claimed.",
+    "The only documentation additions accurately retain failed run 37609745626, both test setup/readiness repairs, the unknown event-drop cause, unresized hide/show exclusion and pending fresh full Linux validation. No manifest, reference, product or Slint change occurs in this repair."
+  ],
+  "caveats": [
+    "Source-only independent review; current exact-source full Linux CI and actual six fresh MIME images remain pending. No runtime, render or completion approval.",
+    "Keep finite callback-driven MIME route scope, final direct saved opaque keys versus intermediate names distinction, historical Qt outer-only context and no matching nested child pixels.",
+    "No physical nested coordinates, universal geometry, general Main/final Bound teardown, inherited keyboard/column behavior, broad multi-selection, all-MIME exhaustion, deeper launch/platform, parent, alias or native hierarchy credit.",
+    "Frozen failed-source review and run evidence remain separate; this repair does not alter prior 365 banked completions or any canonical status."
+  ],
+  "proof_sha256": {
+    "/workspace/validation-reviews/mime-mappings3/repair1/assertion-preservation-3.json": "79a2667a20ce54b8975beeaba5d62851e1afca3112443274ec80ef085e0ce390",
+    "/workspace/validation-reviews/mime-mappings3/repair1/wheel-assertion-preservation-root.json": "d23b96a7ee3ed6aab131f7e44f7b460889c93493ec05c27d8ac4aca86ea68760",
+    "/workspace/validation-reviews/mime-mappings3/repair1/menu-choice-wheel-triage-2.json": "0524c308f669a481dbc9cbc08aa8ad74cbd76fa095a758f9334167f77619bbdd",
+    "/workspace/validation-reviews/mime-mappings3/repair1/menu-choice-wheel-triage-2.md": "0064c7bf60d582ae768bc7907b16aa8696bf520d9e76f8b9d1a7099c39fcd13c"
+  },
+  "old_source_review_frozen_sha256": {
+    "/workspace/validation-reviews/mime-mappings3/source-review-2.json": "26978e5f06afb881e0a9f7e41bfc2a6c342a67838ad431af13012c51e972bbb7",
+    "/workspace/validation-reviews/mime-mappings3/source-review-2.md": "5410ab23320aa02e1b1632cdad12d4ebc2cb3be5607f4da987ecdf5c48fac424"
+  },
+  "source_blockers": [],
+  "builds_run": false,
+  "native_images_viewed": [],
+  "canonical_edits": false
+}

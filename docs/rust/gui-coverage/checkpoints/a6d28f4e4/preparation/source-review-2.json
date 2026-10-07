@@ -1,0 +1,348 @@
+{
+  "baseline_commit": "da53daa67f7fb88870ae653f61def7cfbe514242",
+  "source_commit": "8ada16c768f07d89c676b0ec09a6a56150f26ace",
+  "implementation_commit": "5716f80e48946850dcfca10df89d833b6e5d3de9",
+  "reviewed_worktree": "/workspace/hydrus-mine",
+  "review_kind": "independent read-only source/reference/API/sequencing review",
+  "source_only_conclusion": "No concrete source blocker found; exact-source runtime and fresh render gates pending.",
+  "approval": false,
+  "selected_ids": [
+    "audit-options-open-externally-single-file-calls-add",
+    "audit-options-open-externally-single-file-calls-edit",
+    "audit-options-open-externally-single-file-calls-delete"
+  ],
+  "changed_files": [
+    {
+      "path": "crates/hydrus-gui/tests/gui/open_externally.rs",
+      "sha256": "27fb251a2751a640ac129aa7416377a8f5a0518130c5bcad1320986e107bd0ea",
+      "insertions": 576,
+      "deletions": 0
+    },
+    {
+      "path": "crates/hydrus-gui/src/options_open_externally.rs",
+      "sha256": "495188b9b4aeef69346263453192b79822a5ec8662e3fc425418aeff34ae47ed",
+      "insertions": 1,
+      "deletions": 11
+    }
+  ],
+  "assertion_preservation": {
+    "entire_original_file_prefix_exact": true,
+    "original_assertions": 249,
+    "current_assertions": 358,
+    "original_tests": 6,
+    "current_tests": 7,
+    "original_file_sha256": "b5c735bf879e017c0aa621c27a9f4461b6f65ac646f43cd790e636bbf0b07cdb"
+  },
+  "source_anchors": [
+    {
+      "relativepath": "crates/hydrus-gui/tests/gui/open_externally.rs",
+      "line": 1730,
+      "text": "fn select_mapping(parent: &OptionsWindow, mime: Mime) {",
+      "line_sha256": "6681d3be58c429b6742166d3f1537838163224e07ace17a92a21342dafa3976e",
+      "file_sha256": "27fb251a2751a640ac129aa7416377a8f5a0518130c5bcad1320986e107bd0ea",
+      "commit": "8ada16c768f07d89c676b0ec09a6a56150f26ace"
+    },
+    {
+      "relativepath": "crates/hydrus-gui/tests/gui/open_externally.rs",
+      "line": 1747,
+      "text": "fn assert_mime_chooser(",
+      "line_sha256": "014d0a45d20ecec0c4726ef3841adfb3e16385684e197a70669b29466ac51096",
+      "file_sha256": "27fb251a2751a640ac129aa7416377a8f5a0518130c5bcad1320986e107bd0ea",
+      "commit": "8ada16c768f07d89c676b0ec09a6a56150f26ace"
+    },
+    {
+      "relativepath": "crates/hydrus-gui/tests/gui/open_externally.rs",
+      "line": 1770,
+      "text": "fn mapping_refs(fixture: &Value, event: usize, before: &Routing) -> Routing {",
+      "line_sha256": "3c69fd41f0559afb366db4f92d43e8493abe56e9dbc195aa418fa263ba3dfefb",
+      "file_sha256": "27fb251a2751a640ac129aa7416377a8f5a0518130c5bcad1320986e107bd0ea",
+      "commit": "8ada16c768f07d89c676b0ec09a6a56150f26ace"
+    },
+    {
+      "relativepath": "crates/hydrus-gui/tests/gui/open_externally.rs",
+      "line": 1799,
+      "text": "fn stage_mapping(parent: &OptionsWindow, bound: &Bound, mime: Mime, names: &[&str]) {",
+      "line_sha256": "1d4b020116407f8bd127818ddb0eb4640190191e6fa23a743b9d8c4d169ba003",
+      "file_sha256": "27fb251a2751a640ac129aa7416377a8f5a0518130c5bcad1320986e107bd0ea",
+      "commit": "8ada16c768f07d89c676b0ec09a6a56150f26ace"
+    },
+    {
+      "relativepath": "crates/hydrus-gui/tests/gui/open_externally.rs",
+      "line": 1810,
+      "text": "fn pending_mime_mapping_retirement(ui: &MainWindow, bound: &Bound, store: &Store) {",
+      "line_sha256": "62ce2f94ca0a8726e8fa91f34c94aa089eee4b64a2bc88a88b699d79a313d03c",
+      "file_sha256": "27fb251a2751a640ac129aa7416377a8f5a0518130c5bcad1320986e107bd0ea",
+      "commit": "8ada16c768f07d89c676b0ec09a6a56150f26ace"
+    },
+    {
+      "relativepath": "crates/hydrus-gui/tests/gui/open_externally.rs",
+      "line": 2004,
+      "text": "fn outer_mime_mapping_reference_replay_saved_keys_delete_and_retired_children() {",
+      "line_sha256": "f0657a6c9b167b2b692b45d7d092487cd70eee0b05ecb0b514a07de94fda9750",
+      "file_sha256": "27fb251a2751a640ac129aa7416377a8f5a0518130c5bcad1320986e107bd0ea",
+      "commit": "8ada16c768f07d89c676b0ec09a6a56150f26ace"
+    },
+    {
+      "relativepath": "crates/hydrus-gui/src/options_open_externally.rs",
+      "line": 577,
+      "text": "    fn file_action(self: &Rc<Self>, action: &str) {",
+      "line_sha256": "50b78525b4171dde47a2f2826990faea5d6fe740fe99f6e16c926af736e3f828",
+      "file_sha256": "495188b9b4aeef69346263453192b79822a5ec8662e3fc425418aeff34ae47ed",
+      "commit": "8ada16c768f07d89c676b0ec09a6a56150f26ace"
+    },
+    {
+      "relativepath": "crates/hydrus-gui/src/options_open_externally.rs",
+      "line": 323,
+      "text": "    fn queue_action(",
+      "line_sha256": "d9f5bace01847d5ec10b4c91e4d6529aa3af335f242f27f8a495ca30986c0871",
+      "file_sha256": "495188b9b4aeef69346263453192b79822a5ec8662e3fc425418aeff34ae47ed",
+      "commit": "8ada16c768f07d89c676b0ec09a6a56150f26ace"
+    },
+    {
+      "relativepath": "crates/hydrus-gui/src/options_open_externally.rs",
+      "line": 169,
+      "text": "    fn parent_allowed(self: &Rc<Self>) -> Rc<dyn Fn() -> bool> {",
+      "line_sha256": "a49cab755d986a8ca8212a575fc5e6543f5c2d611ccaa2c3554594e8f7acbec6",
+      "file_sha256": "495188b9b4aeef69346263453192b79822a5ec8662e3fc425418aeff34ae47ed",
+      "commit": "8ada16c768f07d89c676b0ec09a6a56150f26ace"
+    },
+    {
+      "relativepath": "crates/hydrus-gui/src/options_open_externally.rs",
+      "line": 173,
+      "text": "    fn choice(",
+      "line_sha256": "0a2567b65097f47423eb75fb0430d504c4758e98d8033d0fc66fe93c2992ecf2",
+      "file_sha256": "495188b9b4aeef69346263453192b79822a5ec8662e3fc425418aeff34ae47ed",
+      "commit": "8ada16c768f07d89c676b0ec09a6a56150f26ace"
+    },
+    {
+      "relativepath": "crates/hydrus-gui/src/options_open_externally.rs",
+      "line": 243,
+      "text": "    fn question(",
+      "line_sha256": "45c48632925a716816d9b0e9b7dcef0f5031fd407d58afb6ad00db733cdfb7fa",
+      "file_sha256": "495188b9b4aeef69346263453192b79822a5ec8662e3fc425418aeff34ae47ed",
+      "commit": "8ada16c768f07d89c676b0ec09a6a56150f26ace"
+    }
+  ],
+  "reference_anchors": [
+    {
+      "relativepath": "hydrus/client/gui/panels/options/OpenExternallyPanel.py",
+      "line": 136,
+      "text": "        self._mime_launch_listctrl_panel.AddButton( 'add', self._AddMimeLaunch )",
+      "line_sha256": "33d400f47c1722939faeced0bae0d62a9c199ad4b61199286ae9472504e366ff",
+      "file_sha256": "1c0520b3ef61f2d8000dc6a245536fe270e7ea4242683445de5d40e8b92a2223",
+      "commit": "8ada16c768f07d89c676b0ec09a6a56150f26ace"
+    },
+    {
+      "relativepath": "hydrus/client/gui/panels/options/OpenExternallyPanel.py",
+      "line": 137,
+      "text": "        self._mime_launch_listctrl_panel.AddButton( 'edit', self._EditMimeLaunch, enabled_only_on_single_selection = True )",
+      "line_sha256": "4b2cd59cc7a50f3984e16aff56e49890163bcffc18c350faafec4bab0b315734",
+      "file_sha256": "1c0520b3ef61f2d8000dc6a245536fe270e7ea4242683445de5d40e8b92a2223",
+      "commit": "8ada16c768f07d89c676b0ec09a6a56150f26ace"
+    },
+    {
+      "relativepath": "hydrus/client/gui/panels/options/OpenExternallyPanel.py",
+      "line": 138,
+      "text": "        self._mime_launch_listctrl_panel.AddDeleteButton( enabled_check_func = self._GeneralFileIsNotSelected )",
+      "line_sha256": "33c75f2ff252d98a2e667cd42eb44350ae3abefb2cad4478690d5251c3e931ae",
+      "file_sha256": "1c0520b3ef61f2d8000dc6a245536fe270e7ea4242683445de5d40e8b92a2223",
+      "commit": "8ada16c768f07d89c676b0ec09a6a56150f26ace"
+    },
+    {
+      "relativepath": "hydrus/client/gui/panels/options/OpenExternallyPanel.py",
+      "line": 132,
+      "text": "        self._mime_launch_listctrl = ClientGUIListCtrl.BetterListCtrlTreeView( self._mime_launch_listctrl_panel, 12, model, activation_callback = self._EditMimeLaunch, use_simple_delete = True, can_delete_callback = self._GeneralFileIsNotSelected )",
+      "line_sha256": "9ec2a5c7bdfc020f0252e0d2f649f37ca46b1cd11493a4c0fe23013e225f981c",
+      "file_sha256": "1c0520b3ef61f2d8000dc6a245536fe270e7ea4242683445de5d40e8b92a2223",
+      "commit": "8ada16c768f07d89c676b0ec09a6a56150f26ace"
+    },
+    {
+      "relativepath": "hydrus/client/gui/panels/options/OpenExternallyPanel.py",
+      "line": 267,
+      "text": "    def _AddMimeLaunch( self ):",
+      "line_sha256": "4f4e5b1ad187bcb3d3d03f06848a37ca05f86253df0c0808843857acf29aa4b4",
+      "file_sha256": "1c0520b3ef61f2d8000dc6a245536fe270e7ea4242683445de5d40e8b92a2223",
+      "commit": "8ada16c768f07d89c676b0ec09a6a56150f26ace"
+    },
+    {
+      "relativepath": "hydrus/client/gui/panels/options/OpenExternallyPanel.py",
+      "line": 317,
+      "text": "    def _EditMimeLaunch( self ):",
+      "line_sha256": "ea2bdae897bc534db7d4005b7d29d416242dd13f17446da84028d9933b522b21",
+      "file_sha256": "1c0520b3ef61f2d8000dc6a245536fe270e7ea4242683445de5d40e8b92a2223",
+      "commit": "8ada16c768f07d89c676b0ec09a6a56150f26ace"
+    },
+    {
+      "relativepath": "hydrus/client/gui/panels/options/OpenExternallyPanel.py",
+      "line": 347,
+      "text": "    def _GeneralFileIsNotSelected( self ):",
+      "line_sha256": "ba98d1c7e5d562731690e805c2cf65e988db5a4ec9b8fc9adf261c653d138acb",
+      "file_sha256": "1c0520b3ef61f2d8000dc6a245536fe270e7ea4242683445de5d40e8b92a2223",
+      "commit": "8ada16c768f07d89c676b0ec09a6a56150f26ace"
+    },
+    {
+      "relativepath": "hydrus/client/gui/lists/ClientGUIListCtrl.py",
+      "line": 1375,
+      "text": "        result = ClientGUIDialogsQuick.GetYesNo( self, 'Remove all selected?' )",
+      "line_sha256": "d289ab4af0210a96b5907d763dce0eec5854f1bc28fa714718922b2f20f2fbad",
+      "file_sha256": "9e06b9cd7c79572c8463299899dd3d23715bdc5d0f4d702eac2a4dbe33b2068d",
+      "commit": "8ada16c768f07d89c676b0ec09a6a56150f26ace"
+    },
+    {
+      "relativepath": "oracle/record_open_externally.py",
+      "line": 88,
+      "text": "            edit_dialog(False,[3]);panel._AddMimeLaunch();events.append(dict(action='mime-add-cancel',rows=rows()))",
+      "line_sha256": "7d6a115c9a23133e2a3c30a7b07e6c87fd2a3a2bf023915dcbe4fb2e79a3aa81",
+      "file_sha256": "35ef866834dd401e913c5a022b72c444bb0fedf309a8d715203c8d301f749bc2",
+      "commit": "8ada16c768f07d89c676b0ec09a6a56150f26ace"
+    },
+    {
+      "relativepath": "oracle/record_open_externally.py",
+      "line": 100,
+      "text": "            panel._mime_launch_listctrl.ProcessDeleteAction();events.append(dict(action='mime-delete',rows=rows()))",
+      "line_sha256": "7f9af12f6553884eb2fa91400a4e0fe752d923712868d5666a223cb4c600f47f",
+      "file_sha256": "35ef866834dd401e913c5a022b72c444bb0fedf309a8d715203c8d301f749bc2",
+      "commit": "8ada16c768f07d89c676b0ec09a6a56150f26ace"
+    }
+  ],
+  "reference_anchor_correction": "Canonical Delete line 175 is unrelated explanatory prose. Exact action anchor is OpenExternallyPanel.py138; Add 136 and Edit 137 are correct, supported by table 132/simple-delete and ClientGUIListCtrl1375 prompt.",
+  "observations": [
+    "Only the outer file_action Delete question changes to Remove all selected?; the captured selected MIME vector, empty/GeneralFile guards and accepted-only staged deletion are unchanged. Nested queue_action remains count-based, matching its separate recording.",
+    "Choosers 4/6 full 73-label order, title and sort_tuples=false are compared. GeneralFile is already used; the later used-PNG exclusion is explicitly Qt-source-derived, not falsely attributed to choosers 4/6.",
+    "Add/Cancel/Apply and existing PNG Edit/Cancel/Apply replay complete events8\u201311 and nested titles/name vectors. Add selects the sorted PNG identity; standalone and mixed GeneralFile protection replay event 12 and source guard.",
+    "Outer question compares exact recorded notice 2, title and notice flags before capture. No preserves full visible draft/selection and Store; Yes removes PNG in event 13, remains staged and is discarded by parent Cancel.",
+    "The strengthened saved phase accepts actual Add One/Two\u2192Down and parent Apply, checking full event 9 Routing CallRefs and unchanged Manager. Reopened actual PNG Edit adds OS then Down; child Apply leaves Store at event 9 until parent Apply checks full event 11. Reopen and actual outer Delete then save exact event 13. There is no reseed or reconstruction of the final Edit through Add.",
+    "Expected keys decode all 64 hexadecimal characters into 32 bytes. Intermediate table and child assertions expose names and selected flags; they are not observations of opaque native keys. Direct typed Store/reopen assertions establish final keys separately.",
+    "Old genuinely pending outer Add chooser and PNG Delete question are retained through parent Cancel against current JPEG Add and GIF Delete successors. All old chosen/Yes/No/Cancel/force-close/root/close actions preserve current full visible draft, complete saved Routing/Manager and current slot identity/visibility. Hidden child/parent attempts are no-ops, show restores admission, current Apply is blocked while child open, and current positive actions still work.",
+    "Existing callbacks use weak State/window captures and once-only alive guards. Old cancellation makes later close callbacks no-ops before shared-slot removal; temporary RefCell guards do not survive callbacks. The production change adds no ownership, callback or borrowing behavior.",
+    "Each capture retains the adapter belonging to its actual live constructor. Existing bounded routing_capture advances real timers/animations and requires consecutive identical buffers; no property forcing or input retries were introduced."
+  ],
+  "caveats": [
+    "This is source-only review. Exact committed full Linux Clippy/tests/parity and actual six fresh rendered captures remain required; no runtime or rendered approval is granted.",
+    "Callbacks drive outer Add/Edit/Delete, nested actions and answers. No physical nested coordinates, full keyboard/column behavior, default/universal geometry or OS focus is established.",
+    "The MIME chooser has 73 model entries and a finite scrollable viewport; the screenshot cannot claim all entries are visible. The 520\u00d7440,580\u00d7340,520\u00d7200 and960\u00d7800 captures need fresh readability/Unicode/footer inspection.",
+    "Historical Qt PNG is later washed outer mapping context, not a matching new chooser/queue/question state. No nested pixel, placement, decoration or timing parity is claimed.",
+    "Ownership evidence is bounded to parent Cancel/replacement, genuine pending outer children, stale callbacks and temporary hide/show recovery. Automatic Main/final Bound destruction, broad page-switch ownership and generic owner guarantees are excluded.",
+    "Only the three outer MIME leaves are candidates. No parent, alias, native hierarchy, default route, launch platform, deeper call/process output, legacy import, whole-MIME exhaustion or additional consumer credit."
+  ],
+  "expected_fresh_captures": [
+    {
+      "file": "mime-add-chooser.png",
+      "dimensions": [
+        520,
+        440
+      ],
+      "producer": {
+        "relativepath": "crates/hydrus-gui/tests/gui/open_externally.rs",
+        "line": 2024,
+        "text": "        \"mime-add-chooser.png\",",
+        "line_sha256": "02623f4c84f445747cc138a299e3c33ba9a02e941f14eb2737f5e5ec6e710170",
+        "file_sha256": "27fb251a2751a640ac129aa7416377a8f5a0518130c5bcad1320986e107bd0ea",
+        "commit": "8ada16c768f07d89c676b0ec09a6a56150f26ace"
+      },
+      "fresh_viewed": false
+    },
+    {
+      "file": "mime-add-blank-calls.png",
+      "dimensions": [
+        580,
+        340
+      ],
+      "producer": {
+        "relativepath": "crates/hydrus-gui/tests/gui/open_externally.rs",
+        "line": 2048,
+        "text": "                \"mime-add-blank-calls.png\",",
+        "line_sha256": "7d9140981fbc1b8740de25caf7b0a0c7da1f6deb5f4fa07820e38da9349d5c84",
+        "file_sha256": "27fb251a2751a640ac129aa7416377a8f5a0518130c5bcad1320986e107bd0ea",
+        "commit": "8ada16c768f07d89c676b0ec09a6a56150f26ace"
+      },
+      "fresh_viewed": false
+    },
+    {
+      "file": "mime-edit-existing-calls.png",
+      "dimensions": [
+        580,
+        340
+      ],
+      "producer": {
+        "relativepath": "crates/hydrus-gui/tests/gui/open_externally.rs",
+        "line": 2110,
+        "text": "                \"mime-edit-existing-calls.png\",",
+        "line_sha256": "e258253ad5575de5aa69a482a997c9780920d78cb483a853254a07ea83ed4d68",
+        "file_sha256": "27fb251a2751a640ac129aa7416377a8f5a0518130c5bcad1320986e107bd0ea",
+        "commit": "8ada16c768f07d89c676b0ec09a6a56150f26ace"
+      },
+      "fresh_viewed": false
+    },
+    {
+      "file": "mime-mapping-reopened.png",
+      "dimensions": [
+        960,
+        800
+      ],
+      "producer": {
+        "relativepath": "crates/hydrus-gui/tests/gui/open_externally.rs",
+        "line": 2257,
+        "text": "        \"mime-mapping-reopened.png\",",
+        "line_sha256": "dfa73e3da26a46d8eefc8d910421064c4293d3770c665b2bcb74380279173a33",
+        "file_sha256": "27fb251a2751a640ac129aa7416377a8f5a0518130c5bcad1320986e107bd0ea",
+        "commit": "8ada16c768f07d89c676b0ec09a6a56150f26ace"
+      },
+      "fresh_viewed": false
+    },
+    {
+      "file": "mime-delete-question.png",
+      "dimensions": [
+        520,
+        200
+      ],
+      "producer": {
+        "relativepath": "crates/hydrus-gui/tests/gui/open_externally.rs",
+        "line": 2173,
+        "text": "        \"mime-delete-question.png\",",
+        "line_sha256": "2e10d851ab54c268806a6be998e5c9e8d1965a3fb7fef4eec0119ece8474ff61",
+        "file_sha256": "27fb251a2751a640ac129aa7416377a8f5a0518130c5bcad1320986e107bd0ea",
+        "commit": "8ada16c768f07d89c676b0ec09a6a56150f26ace"
+      },
+      "fresh_viewed": false
+    },
+    {
+      "file": "mime-delete-staged.png",
+      "dimensions": [
+        960,
+        800
+      ],
+      "producer": {
+        "relativepath": "crates/hydrus-gui/tests/gui/open_externally.rs",
+        "line": 2195,
+        "text": "        \"mime-delete-staged.png\",",
+        "line_sha256": "dcc5c359ce81f60ec62b70bf8409e9d41feaa320d91c7f55848f512f62e0695b",
+        "file_sha256": "27fb251a2751a640ac129aa7416377a8f5a0518130c5bcad1320986e107bd0ea",
+        "commit": "8ada16c768f07d89c676b0ec09a6a56150f26ace"
+      },
+      "fresh_viewed": false
+    }
+  ],
+  "source_blockers": [],
+  "builds_run": false,
+  "native_images_viewed": [],
+  "canonical_edits": false,
+  "integration_review_pending": false,
+  "integration_review": {
+    "source_bytes_identical_to_reviewed_agent": true,
+    "additional_changes": [
+      "docs/rust/GUI.md",
+      "docs/rust/DIFFERENCES.md"
+    ],
+    "documentation_scope": "Pending Linux execution and fresh independent render review, six defining captures, outer prompt fix only, no additional banked completion and all finite geometry/keyboard/owner/platform limits retained.",
+    "manifest_and_reference_inputs_unchanged": true,
+    "changed_files_exactly_four": true,
+    "documentation_sha256": {
+      "docs/rust/GUI.md": "46c3642944eb6a6f28c82a2f2a1247e5a97a5324a370db45e2164dccb8e0fb2b",
+      "docs/rust/DIFFERENCES.md": "db1b4c1e38bbfaee6d2be45e37ba084102be1c29853030932b4359620110ddca"
+    }
+  },
+  "proof_sha256": {
+    "assertion-preservation-3.json": "e09257713cd4ba7264f3db36f092d69bc1e08835b507aabb0398fad4d202fc80"
+  }
+}

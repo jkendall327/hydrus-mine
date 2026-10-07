@@ -3518,15 +3518,19 @@ The outer MIME mapping follow-up corrects its Delete question to the reference
 nested queue count-based questions. New bounded regressions cover Add/Edit
 cancellation, staged and saved mapping values, positive/declined deletion,
 reopening, and retained pending children against usable replacement owners.
-Six defining native captures and full Linux validation remain pending; no
-additional completion is banked by this source change.
+Six defining native captures passed full Linux run `37613614274` and fresh
+independent rendered review. Exactly MIME mapping Add/Edit/Delete are banked:
+368 signed off, 7 existing candidates pending. All 710 GUI and 67 media
+tests passed. [Evidence](gui-coverage/checkpoints/a6d28f4e4/README.md).
 
 The first follow-up run (`37609745626`) failed two GUI tests and granted no
 completion credit. The MIME replay now distinguishes the recorded animated
 and static GIF codes despite their identical chooser labels. The re-shown
 Options wheel regression requires fresh geometry callbacks after a real
 1101→1100 width transition before its single wheel input; its hidden-owner
-and exact selection assertions remain. Fresh full Linux validation is pending.
+and exact selection assertions remain. Repaired full Linux run `37613614274` passed;
+failed-run evidence is retained separately. This resized test does not establish
+unresized hide/show dispatch or the precise missed-event cause.
 
 The main thumbnail and viewer default-open actions read current saved routes.
 Specific filetype entries replace general-class entries, then “all files”;

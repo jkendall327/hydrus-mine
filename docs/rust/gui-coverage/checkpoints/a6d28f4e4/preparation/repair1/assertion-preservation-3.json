@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "failed_source_commit": "8ada16c768f07d89c676b0ec09a6a56150f26ace",
+  "repair_commit": "13cff28c2db3be013d7b7bcaf5b213a410c5d233",
+  "failed_run_id": 37609745626,
+  "test_file": "crates/hydrus-gui/tests/gui/open_externally.rs",
+  "failed_source_sha256": "27fb251a2751a640ac129aa7416377a8f5a0518130c5bcad1320986e107bd0ea",
+  "repair_source_sha256": "8852e3d6e25c73e9ace129e95bb977a51dedb921a5757ea30001c4322c788167",
+  "production_source_sha256": "495188b9b4aeef69346263453192b79822a5ec8662e3fc425418aeff34ae47ed",
+  "production_unchanged": true,
+  "banked_249_assertion_file_is_exact_prefix": true,
+  "failed_source_assertions": 358,
+  "repair_assertions": 360,
+  "original_assertions_preserved": true,
+  "tests_before": 7,
+  "tests_after": 7,
+  "removed_nonassert_lines": [
+    "        .unwrap();",
+    "    choose(bound, mime.mimetype());"
+  ],
+  "diff_insertions": 49,
+  "diff_deletions": 2,
+  "checks": [
+    "rustfmt completed",
+    "git diff --check passed",
+    "independent source review found no concrete blocker"
+  ],
+  "runtime_validation": "pending new exact-source hosted CI and fresh image review; no local build or execution",
+  "snapshot_directory": "/workspace/validation-reviews/mime-mappings3/repair1/failed-source-8ada16c76"
+}

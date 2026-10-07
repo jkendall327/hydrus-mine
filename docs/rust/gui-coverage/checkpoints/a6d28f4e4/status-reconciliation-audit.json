@@ -1,0 +1,117 @@
+{
+  "source_commit": "a6d28f4e498a3d7a8f00ad6a61da62166bc54383",
+  "ci_evidence_sha256": "1456077c4c24985b6f29f39e9e746658695bc404b06f06c7e0c02c8eb5f2c2f9",
+  "mapping_sha256": "413aa43315dfee681dfdd3a66a0d77a35d36ac02615af66af05252a88e87974e",
+  "mapping_applied_after_gates": true,
+  "operations": [
+    {
+      "id": "audit-options-open-externally-single-file-calls-add",
+      "field": "limitations",
+      "original_index": 3,
+      "operation": "replace_exact_list_item",
+      "before": "Authored model/store/native regressions and native PNG assertions await hosted CI. No local Cargo builds, Rust tests or mutation tests were run.",
+      "conditional_after": "Historical author metadata records authored regressions without local Cargo builds, Rust tests or mutation testing. Current exact-source Linux execution and fresh native rendered review are recorded separately in the accepted checkpoint.",
+      "reason": "Reconcile only now-resolved validation status after actual gates; retain historical authorship/no-local-build provenance."
+    },
+    {
+      "id": "audit-options-open-externally-single-file-calls-add",
+      "field": "remaining",
+      "original_index": 0,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source hosted full Linux validation remains pending.",
+      "conditional_after": null,
+      "reason": "Remove only pending exact-source validation/render preparation status after real gates."
+    },
+    {
+      "id": "audit-options-open-externally-single-file-calls-add",
+      "field": "remaining",
+      "original_index": 1,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source fresh native rendered/behavioral review and final assessment reconciliation remain pending.",
+      "conditional_after": null,
+      "reason": "Remove only pending exact-source validation/render preparation status after real gates."
+    },
+    {
+      "id": "audit-options-open-externally-single-file-calls-edit",
+      "field": "limitations",
+      "original_index": 3,
+      "operation": "replace_exact_list_item",
+      "before": "Authored model/store/native regressions and native PNG assertions await hosted CI. No local Cargo builds, Rust tests or mutation tests were run.",
+      "conditional_after": "Historical author metadata records authored regressions without local Cargo builds, Rust tests or mutation testing. Current exact-source Linux execution and fresh native rendered review are recorded separately in the accepted checkpoint.",
+      "reason": "Reconcile only now-resolved validation status after actual gates; retain historical authorship/no-local-build provenance."
+    },
+    {
+      "id": "audit-options-open-externally-single-file-calls-edit",
+      "field": "remaining",
+      "original_index": 0,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source hosted full Linux validation remains pending.",
+      "conditional_after": null,
+      "reason": "Remove only pending exact-source validation/render preparation status after real gates."
+    },
+    {
+      "id": "audit-options-open-externally-single-file-calls-edit",
+      "field": "remaining",
+      "original_index": 1,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source fresh native rendered/behavioral review and final assessment reconciliation remain pending.",
+      "conditional_after": null,
+      "reason": "Remove only pending exact-source validation/render preparation status after real gates."
+    },
+    {
+      "id": "audit-options-open-externally-single-file-calls-delete",
+      "field": "limitations",
+      "original_index": 3,
+      "operation": "replace_exact_list_item",
+      "before": "Authored model/store/native regressions and native PNG assertions await hosted CI. No local Cargo builds, Rust tests or mutation tests were run.",
+      "conditional_after": "Historical author metadata records authored regressions without local Cargo builds, Rust tests or mutation testing. Current exact-source Linux execution and fresh native rendered review are recorded separately in the accepted checkpoint.",
+      "reason": "Reconcile only now-resolved validation status after actual gates; retain historical authorship/no-local-build provenance."
+    },
+    {
+      "id": "audit-options-open-externally-single-file-calls-delete",
+      "field": "remaining",
+      "original_index": 0,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source hosted full Linux validation remains pending.",
+      "conditional_after": null,
+      "reason": "Remove only pending exact-source validation/render preparation status after real gates."
+    },
+    {
+      "id": "audit-options-open-externally-single-file-calls-delete",
+      "field": "remaining",
+      "original_index": 1,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source fresh native rendered/behavioral review and final assessment reconciliation remain pending.",
+      "conditional_after": null,
+      "reason": "Remove only pending exact-source validation/render preparation status after real gates."
+    }
+  ],
+  "added_review_scope_limits": {
+    "audit-options-open-externally-single-file-calls-add": [
+      "Fresh native text, Japanese glyphs, selection, empty/existing rows and footer controls are readable at the specified sizes. The chooser shows only its top scroll viewport, with the next row partially clipped; the full 73-item order is proved by assertions, not this PNG. Question buttons are tall. Universal/default-size geometry and font/framework pixel parity are not established.",
+      "Validation is Linux only; Windows and macOS remain deferred. Only the three outer MIME Add/Edit/Delete leaves qualify; separately banked nested File/URL/defaults controls, launch consumers, parents, aliases and native hierarchy receive no additional credit."
+    ],
+    "audit-options-open-externally-single-file-calls-edit": [
+      "Fresh native text, Japanese glyphs, selection, empty/existing rows and footer controls are readable at the specified sizes. The chooser shows only its top scroll viewport, with the next row partially clipped; the full 73-item order is proved by assertions, not this PNG. Question buttons are tall. Universal/default-size geometry and font/framework pixel parity are not established.",
+      "Validation is Linux only; Windows and macOS remain deferred. Only the three outer MIME Add/Edit/Delete leaves qualify; separately banked nested File/URL/defaults controls, launch consumers, parents, aliases and native hierarchy receive no additional credit."
+    ],
+    "audit-options-open-externally-single-file-calls-delete": [
+      "Fresh native text, Japanese glyphs, selection, empty/existing rows and footer controls are readable at the specified sizes. The chooser shows only its top scroll viewport, with the next row partially clipped; the full 73-item order is proved by assertions, not this PNG. Question buttons are tall. Universal/default-size geometry and font/framework pixel parity are not established.",
+      "Validation is Linux only; Windows and macOS remain deferred. Only the three outer MIME Add/Edit/Delete leaves qualify; separately banked nested File/URL/defaults controls, launch consumers, parents, aliases and native hierarchy receive no additional credit."
+    ]
+  },
+  "reviews": [
+    {
+      "path": "docs/rust/gui-coverage/checkpoints/a6d28f4e4/final-review-2-a6d28f4e4.json",
+      "sha256": "e63faf8490f9edb7c4ca79cb0b14532a1a4919f5e1578af864e8a3f1b31b40b2"
+    }
+  ],
+  "selected_ids": [
+    "audit-options-open-externally-single-file-calls-add",
+    "audit-options-open-externally-single-file-calls-edit",
+    "audit-options-open-externally-single-file-calls-delete"
+  ],
+  "prior365_completion_ids_and_assessments_preserved": true,
+  "source_only_native_anchor_ids": [],
+  "final_patch_digest": "07e23dbb639aebf99da9f52691d0d6633dcfeb7f83be5467222fefea15629814"
+}

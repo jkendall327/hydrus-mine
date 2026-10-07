@@ -1,0 +1,81 @@
+{
+  "source_commit": "a6d28f4e498a3d7a8f00ad6a61da62166bc54383",
+  "run_id": 37613614274,
+  "root_verified_audited_payloads": 85,
+  "relocated_audited_payloads": {
+    "source-census.json": "docs/rust/gui-coverage/checkpoints/a6d28f4e4/source-census.json",
+    "publication-summary.json": "docs/rust/gui-coverage/checkpoints/a6d28f4e4/publication-summary.json"
+  },
+  "supplemental_payloads": {
+    "docs/rust/gui-coverage/checkpoints/a6d28f4e4/artifact-11479379331.json": {
+      "sha256": "a403ae4bae159a4d356cd63b2edc7b55d55372caba4029a06413caace6e96169",
+      "bytes": 761
+    },
+    "docs/rust/gui-coverage/checkpoints/a6d28f4e4/artifact-11479274213.json": {
+      "sha256": "d4c137c09541ac882f0f4b8d1e7e406a9c17943c77fdfc20ec05b85f71337e77",
+      "bytes": 756
+    },
+    "docs/rust/gui-coverage/checkpoints/a6d28f4e4/artifact-11479486643.json": {
+      "sha256": "4094f7e7b712b61b98dfce8e5831a5646bb752fdbf627f85d3c59bb24b9ba460",
+      "bytes": 756
+    },
+    "docs/rust/gui-coverage/checkpoints/a6d28f4e4/run-latest.json": {
+      "sha256": "2f77d2c98fadbf01b1a11d9689be2287a786eaeb7a2a9ae433960d398fe3e2ff",
+      "bytes": 14157
+    },
+    "docs/rust/gui-coverage/checkpoints/a6d28f4e4/jobs-latest.json": {
+      "sha256": "b628d2043a38956d9435c546dea169cae01b80fcc64a70349563624e25588a89",
+      "bytes": 14557
+    },
+    "docs/rust/gui-coverage/checkpoints/a6d28f4e4/execution-inputs/artifact-binding-a6d28f4e4.json": {
+      "sha256": "3d7a59f2d501d583991221b2c714e1ce92e655167d3c5c68ccea4567589cf34e",
+      "bytes": 1336
+    },
+    "docs/rust/gui-coverage/checkpoints/a6d28f4e4/execution-inputs/finalize-mime-mappings3-a6d28f4e4.py": {
+      "sha256": "23d9ea2e215360b9cb0a5b16aae30935a5e0347fd79ee9aaf9f2b8d989142075",
+      "bytes": 5692
+    },
+    "docs/rust/gui-coverage/checkpoints/a6d28f4e4/execution-inputs/prepare-evidence-copy-a6d28f4e4.py": {
+      "sha256": "9df186889cbe7246d76dcd795aa5a0da03b2dcb2cba2ec2c1c6025d271364ecf",
+      "bytes": 34914
+    },
+    "docs/rust/gui-coverage/checkpoints/a6d28f4e4/execution-inputs/unbound/finalize-mime-mappings3-a6d28f4e4.py": {
+      "sha256": "461112e035f188be4fe646ddf15527c97cfea3a0d541cfea96aec0bec1d66cf6",
+      "bytes": 5183
+    },
+    "docs/rust/gui-coverage/checkpoints/a6d28f4e4/execution-inputs/unbound/prepare-evidence-copy-a6d28f4e4.py": {
+      "sha256": "f6d2e43a2d6de6fe8cf14c8947018faadba6eabb3d4c45d8749c22e840d22710",
+      "bytes": 34937
+    },
+    "docs/rust/gui-coverage/checkpoints/a6d28f4e4/preparation/repair1/wheel-routing-followup-3.json": {
+      "sha256": "1acb4dad8323c1fe00b76e08122ed3f946844e1bf71d58ae7bc2c84a11862ce1",
+      "bytes": 4131
+    },
+    "docs/rust/gui-coverage/checkpoints/a6d28f4e4/preparation/repair1/wheel-routing-followup-3.md": {
+      "sha256": "d76b2511d9583dc50a1f9ab5a2f15809b61c5acc18955eac78946d4fb72535de",
+      "bytes": 4444
+    },
+    "docs/rust/gui-coverage/checkpoints/a6d28f4e4/preparation/repair1/flickable-gesture-review-2.json": {
+      "sha256": "435a109ce12bfa67a737c5ecbc80c7b14564d1f3ca59f4351a185d6d410d2aa7",
+      "bytes": 6380
+    },
+    "docs/rust/gui-coverage/checkpoints/a6d28f4e4/preparation/repair1/flickable-gesture-review-2.md": {
+      "sha256": "448e8cb43021791957e8658fd1819c1c6ee55773be25dfd98cc9745dcf7fa650",
+      "bytes": 2079
+    }
+  },
+  "executed_finalizer_sha256": "23d9ea2e215360b9cb0a5b16aae30935a5e0347fd79ee9aaf9f2b8d989142075",
+  "executed_helper_sha256": "9df186889cbe7246d76dcd795aa5a0da03b2dcb2cba2ec2c1c6025d271364ecf",
+  "helper_check_only_passed": true,
+  "helper_copy_scratch_passed": true,
+  "browser_desktop_and_narrow_actually_viewed_by_root": true,
+  "browser_result": "passed;368 completion count distinct from reference first-pass inventory; readable responsive layout, no horizontal overflow",
+  "canonical_copy_completed": true,
+  "notes_update_pending": false,
+  "publication_commit_pending": true,
+  "notes_updater_sha256": "a962d8c9ad3e4c1d84daba7461894e2d8768653907a1c52d696f568b740329fa",
+  "goal_flags_updated_after_accepted_copy": true,
+  "goal_total_leaves": 1274,
+  "goal_signed_off": 368,
+  "goal_remaining": 906
+}

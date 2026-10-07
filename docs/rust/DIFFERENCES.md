@@ -2498,7 +2498,9 @@ The outer MIME mapping Delete prompt now follows Qt simple-delete wording,
 queue still uses its recorded count-based prompt. The bounded outer Add/Edit/
 Delete follow-up uses callbacks and explicit capture sizes; historical Qt
 images do not show matching chooser, blank-child or confirmation states.
-Full Linux execution and fresh independent rendered review remain pending.
+Full Linux run `37613614274` and fresh independent rendered review passed for
+exactly MIME mapping Add/Edit/Delete.
+[Evidence](gui-coverage/checkpoints/a6d28f4e4/README.md).
 No all-MIME exhaustion, universal geometry, inherited keyboard/column behavior,
 broader ownership, parent or deferred-platform completion is claimed.
 
@@ -2507,7 +2509,8 @@ re-shown Options wheel assertion. The test repairs select the intended recorded
 MIME code and replace cached geometry readiness with fresh callbacks through a
 small resize. The precise cause of the missed wheel remains unproven; the
 revised readiness test does not establish unresized hide/show reliability.
-All prior behavior assertions remain; a new full Linux run is required.
+All prior behavior assertions remain; repaired full Linux run `37613614274` passed.
+The failed source and diagnostic evidence remain separate and earn no credit.
 
 OS calls are regenerated only in the opened routing draft, then persisted on
 Apply, preserving registered-call-only transactions. Native regeneration assigns

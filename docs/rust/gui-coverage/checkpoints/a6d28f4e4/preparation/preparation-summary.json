@@ -1,0 +1,77 @@
+{
+  "source_commit": "a6d28f4e498a3d7a8f00ad6a61da62166bc54383",
+  "run_id": 37613614274,
+  "selected_count": 3,
+  "prior_completed_count": 365,
+  "conditional_bank_if_all_gates_pass": 368,
+  "conditional_pending_after_bank": 7,
+  "conditional_outside_goal_after_bank": 906,
+  "source_schema_preflight": "passed",
+  "unresolved_anchors": [],
+  "patch_digest": "096e4581aaab95a406169f9a7dc57c27b65744038bea04064a6c2d5a9bb292ea",
+  "source_census_digest": "6d2d015ca36ca32f0eca806a6b79508181cab0097a50390d1dc992d54ed9c2d1",
+  "conditional_status_operations": 9,
+  "expected_native_captures": 6,
+  "current_assertions": {
+    "open_externally": 360,
+    "menu_choice_wheel": 92
+  },
+  "native_artifact_id": null,
+  "native_zip_sha256": null,
+  "approval": false,
+  "builds": false,
+  "canonical_writes": false,
+  "input_hashes": {
+    "/workspace/validation-reviews/mime-mappings3/prep-a6d28f4e4/subset-preflight/subset-proposal-patch.json": "281ffb7dc93cab852de9bbb35de67af5675a2bc176f0dcee351041b148bf14b6",
+    "/workspace/validation-reviews/mime-mappings3/prep-a6d28f4e4/selection.json": "4badb3fce50bb586182576ef9747e2d39e9acdca399068650521911c3539ec07",
+    "/workspace/validation-reviews/mime-mappings3/prep-a6d28f4e4/conditional-status-map.json": "413aa43315dfee681dfdd3a66a0d77a35d36ac02615af66af05252a88e87974e",
+    "/workspace/validation-reviews/mime-mappings3/assertion-preservation-3.json": "e09257713cd4ba7264f3db36f092d69bc1e08835b507aabb0398fad4d202fc80",
+    "/workspace/validation-reviews/mime-mappings3/expected-captures-3.json": "970d7e50334a916e1c256644c2921a57059bf0a8a59eb50cc39bee3746e4fefa"
+  },
+  "committed_validation_pass_README_sha256": "b77589b76bc01c61640ac11e5e7aa4d73355ba200568158a3c43376f63b64f8d",
+  "scripts_syntax_checked_without_execution": [
+    "/workspace/validation-reviews/mime-mappings3/prep-a6d28f4e4/prepare-map-census.py",
+    "/workspace/validation-reviews/mime-mappings3/prep-a6d28f4e4/construct-subset.py",
+    "/workspace/validation-reviews/mime-mappings3/prep-a6d28f4e4/verify-preservation.py",
+    "/workspace/validation-reviews/mime-mappings3/prep-a6d28f4e4/prepare-source.py",
+    "/workspace/validation-reviews/mime-mappings3/prep-a6d28f4e4/update-publication-notes.py",
+    "/workspace/validation-reviews/mime-mappings3/prep-a6d28f4e4/prepare-evidence-copy-a6d28f4e4.py",
+    "/workspace/validation-reviews/finalize-mime-mappings3-a6d28f4e4.py"
+  ],
+  "notes_exact_before_strings_static_checked": [
+    {
+      "path": "docs/rust/GUI.md",
+      "exact_before_count": 1,
+      "before": "Six defining native captures and full Linux validation remain pending; no\nadditional completion is banked by this source change."
+    },
+    {
+      "path": "docs/rust/DIFFERENCES.md",
+      "exact_before_count": 1,
+      "before": "Full Linux execution and fresh independent rendered review remain pending."
+    },
+    {
+      "path": "docs/rust/GUI.md",
+      "exact_before_count": 1,
+      "before": "and exact selection assertions remain. Fresh full Linux validation is pending."
+    },
+    {
+      "path": "docs/rust/DIFFERENCES.md",
+      "exact_before_count": 1,
+      "before": "All prior behavior assertions remain; a new full Linux run is required."
+    },
+    {
+      "path": "docs/rust/ROADMAP.md",
+      "exact_before_count": 1,
+      "before": "now has 461 Missing, 385 Partial and 966 First pass entries; its status changes\nalso include parent/alias assessments, which do not inflate the 365-item signed-off completion count."
+    }
+  ],
+  "finalizer_executed": false,
+  "copy_helper_executed": false,
+  "wheel_triage_pending": true,
+  "artifact_placeholders_unbound": true,
+  "helper_sha256": "f6d2e43a2d6de6fe8cf14c8947018faadba6eabb3d4c45d8749c22e840d22710",
+  "finalizer_sha256": "461112e035f188be4fe646ddf15527c97cfea3a0d541cfea96aec0bec1d66cf6",
+  "notes_updater_sha256": "ec092ba02699663b1dc32c883e78e5feb26b3dcf051876e3df57fadd20de8fb0",
+  "failed_source_outcome_sha256": "b4f529a52f6a7ad205f5eaffad8444741560513766589213b79100f9fd9bfe1e",
+  "current_proposal_anchor_objects": 63
+}
