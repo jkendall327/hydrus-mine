@@ -1,0 +1,41 @@
+{
+  "source_commit": "1e2b2e25fd89b24253f4387f71115e675fdb657b",
+  "run_id": 37605060836,
+  "selected_count": 3,
+  "prior_completed_count": 362,
+  "conditional_bank_if_all_gates_pass": 365,
+  "conditional_pending_after_bank": 10,
+  "conditional_outside_goal_after_bank": 909,
+  "source_schema_preflight": "passed",
+  "unresolved_anchors": [],
+  "patch_digest": "f12aabba73d766302bb68ba1113c6e58a8f1a3fa6079b2359518dd676ccd35b5",
+  "source_census_digest": "4a1d810b4d2ac63930f13621fe322330eb32013cd792f1ba1cdc959ca1ded431",
+  "conditional_status_operations": 9,
+  "expected_native_captures": 6,
+  "current_assertions": {
+    "open_externally": 249
+  },
+  "native_artifact_id": null,
+  "native_zip_sha256": null,
+  "approval": false,
+  "builds": false,
+  "canonical_writes": false,
+  "input_hashes": {
+    "/workspace/validation-reviews/file-call-queue3/prep-1e2b2e25f/subset-preflight/subset-proposal-patch.json": "9ee32d9028bb9ea1d85af87520b9782625930764c52498f0e46d0c9e558bc5ba",
+    "/workspace/validation-reviews/file-call-queue3/prep-1e2b2e25f/selection.json": "ffd2c0566ae16c7c14af307a68ba7481605a9ede7159e039c95cf42dce5202bc",
+    "/workspace/validation-reviews/file-call-queue3/prep-1e2b2e25f/conditional-status-map.json": "3caab008580b46cb2fbc7bcae0fb7087898e05da1930c946eb7c7d055bbe0e49",
+    "/workspace/validation-reviews/file-call-queue3/assertion-preservation-3.json": "52abb93a1544cb6cef4e9426d9aa5806e278ba79e62b5a04cd7499888c43be88",
+    "/workspace/validation-reviews/file-call-queue3/expected-captures-3.json": "d1e384a1a26c5ed1e5aff0a1ed4494ad5f9fe970ba1a01b6721a6653983a2848",
+    "/workspace/validation-reviews/file-call-queue3/prep-1e2b2e25f/README.md": "e241f7f653b76ae1f650f36dffa007e1076e4c7d74130a95bc99504cbdb879ba",
+    "/workspace/validation-reviews/file-call-queue3/prep-1e2b2e25f/prepare-evidence-copy-1e2b2e25f.py": "930e13fcd3a6a13068d44806fa4bcef70e3c657cd33ed237770e9a244905485a",
+    "/workspace/validation-reviews/file-call-queue3/prep-1e2b2e25f/update-publication-notes.py": "a41c6b3f6c13a494ae783efccd9a6bf0bbf3e3e46a16676a627c95d1057e1d3e",
+    "/workspace/validation-reviews/finalize-file-call-queue3-1e2b2e25f.py": "7c2b25ce7a54e4fc3eace06d95c6a8c869bf47c136a0ac6d05c7459f375b5251",
+    "/workspace/validation-reviews/file-call-queue3/source-review-2.json": "f33461368f34f4ba4bb27321b123c052913716abf8238cedd2c6e90ec9ee300f",
+    "/workspace/validation-reviews/file-call-queue3/prep-1e2b2e25f/committed-source-review-provenance.json": "01a33641462bf9fa14bedf36799e029374d4c499999f206b66ff31a860fb3962",
+    "/workspace/validation-reviews/file-call-queue3/prep-1e2b2e25f/prior362-preservation-proof.json": "805779856f7c22956b7251942b94731cdef29a56a24f7c81aae16adfa8817cf7"
+  },
+  "committed_validation_pass_README_sha256": "e81080c2498d089cfc04db2a1c92a1da603f2847eca6ac2c6ec825fa00e5fdcd",
+  "exact_source_review2_sha256": "f33461368f34f4ba4bb27321b123c052913716abf8238cedd2c6e90ec9ee300f",
+  "scripts_syntax_checked": true,
+  "helper_finalizer_notes_executed": false
+}

@@ -1,0 +1,123 @@
+{
+  "source_commit": "1e2b2e25fd89b24253f4387f71115e675fdb657b",
+  "ci_evidence_sha256": "d5cd891a65035aa11816e99ceecd3c7c093fe717bbe93205d3358c531d8cf1ab",
+  "mapping_sha256": "3caab008580b46cb2fbc7bcae0fb7087898e05da1930c946eb7c7d055bbe0e49",
+  "mapping_applied_after_gates": true,
+  "operations": [
+    {
+      "id": "audit-options-nested-open-file-call-list-choose",
+      "field": "limitations",
+      "original_index": 3,
+      "operation": "replace_exact_list_item",
+      "before": "Authored model/store/native regressions and native PNG assertions await hosted CI. No local Cargo builds, Rust tests or mutation tests were run.",
+      "conditional_after": "Historical author metadata records authored regressions without local Cargo builds, Rust tests or mutation testing. Current exact-source Linux execution and fresh native rendered review are recorded separately in the accepted checkpoint.",
+      "reason": "Reconcile only now-resolved validation status after actual gates; retain historical authorship/no-local-build provenance."
+    },
+    {
+      "id": "audit-options-nested-open-file-call-list-choose",
+      "field": "remaining",
+      "original_index": 0,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source hosted full Linux validation remains pending.",
+      "conditional_after": null,
+      "reason": "Remove only pending exact-source validation/render preparation status after real gates."
+    },
+    {
+      "id": "audit-options-nested-open-file-call-list-choose",
+      "field": "remaining",
+      "original_index": 1,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source fresh native rendered/behavioral review and final assessment reconciliation remain pending.",
+      "conditional_after": null,
+      "reason": "Remove only pending exact-source validation/render preparation status after real gates."
+    },
+    {
+      "id": "audit-options-nested-open-file-call-list-add-edit",
+      "field": "limitations",
+      "original_index": 3,
+      "operation": "replace_exact_list_item",
+      "before": "Authored model/store/native regressions and native PNG assertions await hosted CI. No local Cargo builds, Rust tests or mutation tests were run.",
+      "conditional_after": "Historical author metadata records authored regressions without local Cargo builds, Rust tests or mutation testing. Current exact-source Linux execution and fresh native rendered review are recorded separately in the accepted checkpoint.",
+      "reason": "Reconcile only now-resolved validation status after actual gates; retain historical authorship/no-local-build provenance."
+    },
+    {
+      "id": "audit-options-nested-open-file-call-list-add-edit",
+      "field": "remaining",
+      "original_index": 0,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source hosted full Linux validation remains pending.",
+      "conditional_after": null,
+      "reason": "Remove only pending exact-source validation/render preparation status after real gates."
+    },
+    {
+      "id": "audit-options-nested-open-file-call-list-add-edit",
+      "field": "remaining",
+      "original_index": 1,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source fresh native rendered/behavioral review and final assessment reconciliation remain pending.",
+      "conditional_after": null,
+      "reason": "Remove only pending exact-source validation/render preparation status after real gates."
+    },
+    {
+      "id": "audit-options-nested-open-file-call-list-order",
+      "field": "limitations",
+      "original_index": 3,
+      "operation": "replace_exact_list_item",
+      "before": "Authored model/store/native regressions and native PNG assertions await hosted CI. No local Cargo builds, Rust tests or mutation tests were run.",
+      "conditional_after": "Historical author metadata records authored regressions without local Cargo builds, Rust tests or mutation testing. Current exact-source Linux execution and fresh native rendered review are recorded separately in the accepted checkpoint.",
+      "reason": "Reconcile only now-resolved validation status after actual gates; retain historical authorship/no-local-build provenance."
+    },
+    {
+      "id": "audit-options-nested-open-file-call-list-order",
+      "field": "remaining",
+      "original_index": 0,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source hosted full Linux validation remains pending.",
+      "conditional_after": null,
+      "reason": "Remove only pending exact-source validation/render preparation status after real gates."
+    },
+    {
+      "id": "audit-options-nested-open-file-call-list-order",
+      "field": "remaining",
+      "original_index": 1,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source fresh native rendered/behavioral review and final assessment reconciliation remain pending.",
+      "conditional_after": null,
+      "reason": "Remove only pending exact-source validation/render preparation status after real gates."
+    }
+  ],
+  "added_review_scope_limits": {
+    "audit-options-nested-open-file-call-list-choose": [
+      "Current nested entry, arrows and child responses are callback-driven. Six native captures use explicit queue 580 × 340, chooser 520 × 440 and notice 520 × 200 sizes; no physical nested-button coordinates, universal geometry or OS focus/modality are established.",
+      "Current fresh nested names, Japanese glyphs, selected highlights, arrows, explanatory text and footer controls are readable at the stated sizes. Choice/question buttons are tall and have generous blank areas. Universal/default-size geometry, OS dialog decoration and font/framework pixel parity are not established.",
+      "Validation is Linux only; Windows and macOS remain deferred. The selected cases use one selected row. Broader multi-selection, inherited keyboard controls and generic OS/process/platform behavior receive no new credit.",
+      "Only these three original nested File queue leaves qualify. Outer MIME mapping, URL/defaults siblings, broader parents, aliases and native hierarchy completion remain outside this approval."
+    ],
+    "audit-options-nested-open-file-call-list-add-edit": [
+      "Current nested entry, arrows and child responses are callback-driven. Six native captures use explicit queue 580 × 340, chooser 520 × 440 and notice 520 × 200 sizes; no physical nested-button coordinates, universal geometry or OS focus/modality are established.",
+      "Current fresh nested names, Japanese glyphs, selected highlights, arrows, explanatory text and footer controls are readable at the stated sizes. Choice/question buttons are tall and have generous blank areas. Universal/default-size geometry, OS dialog decoration and font/framework pixel parity are not established.",
+      "Validation is Linux only; Windows and macOS remain deferred. The selected cases use one selected row. Broader multi-selection, inherited keyboard controls and generic OS/process/platform behavior receive no new credit.",
+      "Only these three original nested File queue leaves qualify. Outer MIME mapping, URL/defaults siblings, broader parents, aliases and native hierarchy completion remain outside this approval."
+    ],
+    "audit-options-nested-open-file-call-list-order": [
+      "Current nested entry, arrows and child responses are callback-driven. Six native captures use explicit queue 580 × 340, chooser 520 × 440 and notice 520 × 200 sizes; no physical nested-button coordinates, universal geometry or OS focus/modality are established.",
+      "Current fresh nested names, Japanese glyphs, selected highlights, arrows, explanatory text and footer controls are readable at the stated sizes. Choice/question buttons are tall and have generous blank areas. Universal/default-size geometry, OS dialog decoration and font/framework pixel parity are not established.",
+      "Validation is Linux only; Windows and macOS remain deferred. The selected cases use one selected row. Broader multi-selection, inherited keyboard controls and generic OS/process/platform behavior receive no new credit.",
+      "Only these three original nested File queue leaves qualify. Outer MIME mapping, URL/defaults siblings, broader parents, aliases and native hierarchy completion remain outside this approval."
+    ]
+  },
+  "reviews": [
+    {
+      "path": "docs/rust/gui-coverage/checkpoints/1e2b2e25f/final-review-2-1e2b2e25f.json",
+      "sha256": "42ce013356aae6d261314a024faa5e00fb8370df2ceadcb392bdb9f084564f0d"
+    }
+  ],
+  "selected_ids": [
+    "audit-options-nested-open-file-call-list-choose",
+    "audit-options-nested-open-file-call-list-add-edit",
+    "audit-options-nested-open-file-call-list-order"
+  ],
+  "prior362_completion_ids_and_assessments_preserved": true,
+  "source_only_native_anchor_ids": [],
+  "final_patch_digest": "c25959265a4c0f41776e39277b06b2ba922b191808cf953ae1b5cfe3745b5b04"
+}

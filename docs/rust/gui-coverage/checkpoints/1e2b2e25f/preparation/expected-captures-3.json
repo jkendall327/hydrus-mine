@@ -1,0 +1,72 @@
+{
+  "base_commit": "18b3a665e6cb145c10efdc7d13c6da614308d926",
+  "source_sha256": "b5c735bf879e017c0aa621c27a9f4461b6f65ac646f43cd790e636bbf0b07cdb",
+  "agent_commit": "c5dbd8fdd003fbda2f082622004247aafde713a9",
+  "expected_filenames": [
+    "file-call-chooser-registered.png",
+    "file-call-queue-populated.png",
+    "file-call-edit-single-choice.png",
+    "file-call-remove-question.png",
+    "file-call-queue-reordered.png",
+    "file-call-exhausted-information.png"
+  ],
+  "captures": [
+    {
+      "filename": "file-call-chooser-registered.png",
+      "dimensions": [
+        520,
+        440
+      ],
+      "state": "Complete recorded three registered File choices; chooser index5.",
+      "adapter": "Retained immediately after this actual window construction; live window required; real timers/animations and identical rendered pixels must settle within two seconds."
+    },
+    {
+      "filename": "file-call-queue-populated.png",
+      "dimensions": [
+        580,
+        340
+      ],
+      "state": "Nested initial File one 日本/File two, first row selected; nested_checks0.",
+      "adapter": "Retained immediately after this actual window construction; live window required; real timers/animations and identical rendered pixels must settle within two seconds."
+    },
+    {
+      "filename": "file-call-edit-single-choice.png",
+      "dimensions": [
+        520,
+        440
+      ],
+      "state": "Explicit one remaining OS File choice for Edit; chooser9.",
+      "adapter": "Retained immediately after this actual window construction; live window required; real timers/animations and identical rendered pixels must settle within two seconds."
+    },
+    {
+      "filename": "file-call-remove-question.png",
+      "dimensions": [
+        520,
+        200
+      ],
+      "state": "Question Remove 1 selected? before No; notices4.",
+      "adapter": "Retained immediately after this actual window construction; live window required; real timers/animations and identical rendered pixels must settle within two seconds."
+    },
+    {
+      "filename": "file-call-queue-reordered.png",
+      "dimensions": [
+        580,
+        340
+      ],
+      "state": "File two then File one 日本, File one selected at index1; nested_checks4 after Up/Down round trip.",
+      "adapter": "Retained immediately after this actual window construction; live window required; real timers/animations and identical rendered pixels must settle within two seconds."
+    },
+    {
+      "filename": "file-call-exhausted-information.png",
+      "dimensions": [
+        520,
+        200
+      ],
+      "state": "Exact owned File exhausted Information; notices6, before dismissal.",
+      "adapter": "Retained immediately after this actual window construction; live window required; real timers/animations and identical rendered pixels must settle within two seconds."
+    }
+  ],
+  "matching_qt_child_pngs": false,
+  "fresh_capture_review_pending": true,
+  "approval": false
+}

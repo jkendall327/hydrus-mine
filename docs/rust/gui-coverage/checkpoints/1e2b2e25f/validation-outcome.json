@@ -1,0 +1,72 @@
+{
+  "source_commit": "1e2b2e25fd89b24253f4387f71115e675fdb657b",
+  "run_id": 37605060836,
+  "conclusion": "success",
+  "validation_scope": "linux",
+  "required_platforms": [
+    "linux"
+  ],
+  "deferred_platforms": [
+    "windows",
+    "macos"
+  ],
+  "gui_tests": {
+    "passed": 709,
+    "failed": 0,
+    "ignored": 0,
+    "seconds": 245.33
+  },
+  "media_tests": {
+    "passed": 67,
+    "failed": 0,
+    "ignored": 0,
+    "seconds": 1.01
+  },
+  "selected_tests_passed": [
+    "test open_externally::file_queue_replays_all_nested_reference_states_and_live_children ... ok",
+    "test open_externally::saved_registered_vectors_feed_actual_main_live_viewer_and_url_pipeline ... ok",
+    "test open_externally::shortcut_and_routing_children_exclude_each_other_and_cancel_staged_changes ... ok",
+    "test open_externally::options_routes_replay_qt_owned_choosers_cancel_order_apply_reopen_and_retirement ... ok"
+  ],
+  "assertion_preservation": {
+    "open_externally": {
+      "prior": 156,
+      "current": 249,
+      "prior_tests": 5,
+      "current_tests": 6
+    }
+  },
+  "timings": {
+    "clippy_seconds": 96.0,
+    "clippy_cargo_seconds": 96.0,
+    "test_compile_seconds": 292.0,
+    "test_step_seconds": 803.0
+  },
+  "cache_observations": [
+    "2026-10-07T10:05:30.2111940Z Version: 20260901.588",
+    "2026-10-07T10:05:30.2121800Z Version: 20260927.320.1",
+    "2026-10-07T10:06:08.8668158Z Restored from cache key \"v0-rust-check-Linux-x64-6601efbe-0ea5e1be\" full match: true.",
+    "2026-10-07T10:06:10.4418995Z Workspace restore prefix: hydrus-ws-v1-check-Linux-X64-68e3726939ec9009de9276fa-",
+    "2026-10-07T10:06:23.9650249Z Verified and restored 4123 tracked-input mtimes and 293 coherent workspace artifact files; Cargo freshness checks remain enabled.",
+    "2026-10-07T10:21:59.7662110Z Workspace library snapshot candidate: 293 artifact files plus input ledger, 2200273639 bytes (limit 4294967296).",
+    "2026-10-07T10:22:05.1880209Z Cache saved with key: hydrus-ws-v1-check-Linux-X64-68e3726939ec9009de9276fa-1e2b2e25fd89b24253f4387f71115e675fdb657b-37605060836-1",
+    "2026-10-07T10:22:12.3371384Z Retained workspace snapshot bytes: 1034913319; budget: 3221225472."
+  ],
+  "native_artifact_id": 11474608843,
+  "native_zip_sha256": "d67ba5a05704319e0766143f9c4a6b83ff2213b66b5e555a570748aac554fb22",
+  "native_image_count": 370,
+  "limits": [
+    "Hosted observations, not controlled attribution or separate Slint generation/Rust/link timing.",
+    "GUI and media suites have no failed or ignored tests. Existing ignored tests in other workspace suites remain; no assertions or tests were weakened.",
+    "Exactly three nested File chooser, Add/Edit and order leaves; runtime result alone does not approve image readability or broaden feature scope."
+  ],
+  "evidence_sha256": {
+    "full-check.log": "77b58ab37360461eebe427c021fde11b65b95633513c25b619d85624dc7d1ce7",
+    "tests.log": "4d196dab1f5204121d5e78bca2a327a0427f6dbc503d1706cbbf4edd2045e6f4",
+    "parity.log": "607752331fd512718e5a236214a2f83071da367c992f2001bf301d28f982e529",
+    "clippy.log": "fc078e01ced1d8ce5a9326604d2e089696607e3288b4bf3e2cc7ae56ee785e39",
+    "maintenance.log": "3971812f32a2a4fd67a12c0f6f7e1b3f8b6d6d062df4b533f0af55745fa0316f",
+    "ci-evidence.json": "d5cd891a65035aa11816e99ceecd3c7c093fe717bbe93205d3358c531d8cf1ab",
+    "native-render-manifest.json": "e17cb9679010b941bb6e5efa3f07baf03eb1dbd6e8f5819a74d25c07fad69b46"
+  }
+}

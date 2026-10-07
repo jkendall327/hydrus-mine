@@ -1,0 +1,116 @@
+{
+  "source_commit": "1e2b2e25fd89b24253f4387f71115e675fdb657b",
+  "run_id": 37605060836,
+  "selected_ids": [
+    "audit-options-nested-open-file-call-list-choose",
+    "audit-options-nested-open-file-call-list-add-edit",
+    "audit-options-nested-open-file-call-list-order"
+  ],
+  "expected_native_capture_names": [
+    "file-call-chooser-registered.png",
+    "file-call-queue-populated.png",
+    "file-call-edit-single-choice.png",
+    "file-call-remove-question.png",
+    "file-call-queue-reordered.png",
+    "file-call-exhausted-information.png"
+  ],
+  "captures": [
+    {
+      "filename": "file-call-chooser-registered.png",
+      "dimensions": [
+        520,
+        440
+      ],
+      "state": "Complete recorded three registered File choices; chooser index5.",
+      "adapter": "Retained immediately after this actual window construction; live window required; real timers/animations and identical rendered pixels must settle within two seconds.",
+      "name": "file-call-chooser-registered.png",
+      "producer_path": "crates/hydrus-gui/tests/gui/open_externally.rs",
+      "producer_line": 1527,
+      "producer_line_sha256": "7030dc076ff17d722eed1b51ab8da3e362ff96441441666e9244371b2ac0df21",
+      "source_commit": "1e2b2e25fd89b24253f4387f71115e675fdb657b"
+    },
+    {
+      "filename": "file-call-queue-populated.png",
+      "dimensions": [
+        580,
+        340
+      ],
+      "state": "Nested initial File one 日本/File two, first row selected; nested_checks0.",
+      "adapter": "Retained immediately after this actual window construction; live window required; real timers/animations and identical rendered pixels must settle within two seconds.",
+      "name": "file-call-queue-populated.png",
+      "producer_path": "crates/hydrus-gui/tests/gui/open_externally.rs",
+      "producer_line": 1541,
+      "producer_line_sha256": "12a245f207e1413d81802bcba6317ca2cdd3d80f7d1ff90213cca728beb5fcea",
+      "source_commit": "1e2b2e25fd89b24253f4387f71115e675fdb657b"
+    },
+    {
+      "filename": "file-call-edit-single-choice.png",
+      "dimensions": [
+        520,
+        440
+      ],
+      "state": "Explicit one remaining OS File choice for Edit; chooser9.",
+      "adapter": "Retained immediately after this actual window construction; live window required; real timers/animations and identical rendered pixels must settle within two seconds.",
+      "name": "file-call-edit-single-choice.png",
+      "producer_path": "crates/hydrus-gui/tests/gui/open_externally.rs",
+      "producer_line": 1556,
+      "producer_line_sha256": "8e45ec6b16830f78605b83ef028fe43ff9383601eaea7dfa81b1ca8b64ad7305",
+      "source_commit": "1e2b2e25fd89b24253f4387f71115e675fdb657b"
+    },
+    {
+      "filename": "file-call-remove-question.png",
+      "dimensions": [
+        520,
+        200
+      ],
+      "state": "Question Remove 1 selected? before No; notices4.",
+      "adapter": "Retained immediately after this actual window construction; live window required; real timers/animations and identical rendered pixels must settle within two seconds.",
+      "name": "file-call-remove-question.png",
+      "producer_path": "crates/hydrus-gui/tests/gui/open_externally.rs",
+      "producer_line": 1594,
+      "producer_line_sha256": "495dc4aed9b5637560c8fa14aa53b817ca0e86e313091a0e4a0c7a3ab4bdf320",
+      "source_commit": "1e2b2e25fd89b24253f4387f71115e675fdb657b"
+    },
+    {
+      "filename": "file-call-queue-reordered.png",
+      "dimensions": [
+        580,
+        340
+      ],
+      "state": "File two then File one 日本, File one selected at index1; nested_checks4 after Up/Down round trip.",
+      "adapter": "Retained immediately after this actual window construction; live window required; real timers/animations and identical rendered pixels must settle within two seconds.",
+      "name": "file-call-queue-reordered.png",
+      "producer_path": "crates/hydrus-gui/tests/gui/open_externally.rs",
+      "producer_line": 1579,
+      "producer_line_sha256": "5bd179abd31969eadfad41cf7160facfafeca81083ab224bcab1725114ead67f",
+      "source_commit": "1e2b2e25fd89b24253f4387f71115e675fdb657b"
+    },
+    {
+      "filename": "file-call-exhausted-information.png",
+      "dimensions": [
+        520,
+        200
+      ],
+      "state": "Exact owned File exhausted Information; notices6, before dismissal.",
+      "adapter": "Retained immediately after this actual window construction; live window required; real timers/animations and identical rendered pixels must settle within two seconds.",
+      "name": "file-call-exhausted-information.png",
+      "producer_path": "crates/hydrus-gui/tests/gui/open_externally.rs",
+      "producer_line": 1624,
+      "producer_line_sha256": "4067fc76795b708bde2d9fba7fa37e1e8f5d8448c586337ef98251a100594f2a",
+      "source_commit": "1e2b2e25fd89b24253f4387f71115e675fdb657b"
+    }
+  ],
+  "current_source_assertions": {
+    "open_externally": {
+      "prior": 156,
+      "current": 249,
+      "prior_tests": 5,
+      "current_tests": 6
+    },
+    "current_execution": false
+  },
+  "native_artifact_id": null,
+  "native_zip_sha256": null,
+  "native_render_review": "pending",
+  "approval": false
+}
