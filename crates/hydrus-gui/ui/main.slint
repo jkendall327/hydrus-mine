@@ -1300,6 +1300,10 @@ export component MainWindow inherits Window {
                 // Keep IDs in component scope so geometry is a live binding.
                 // A hidden search sidebar occupies no importer/note layout.
                 search-sidebar := VerticalBox {
+                    // Make the layout's default padding explicit: unbound side
+                    // getters otherwise return 0 even when layout uses padding.
+                    padding-left: self.padding;
+                    padding-right: self.padding;
                     visible: root.note == "" && !root.importing && !root.gallery-page && !root.watcher-page;
                     width: self.visible ? root.sidebar-requested-width : 0px;
                     min-height: 0px;

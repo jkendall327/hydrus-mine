@@ -527,8 +527,13 @@ fn owned_options_replay_cancel_save_reopen_and_real_keyboard_wheel_consumers() {
     let results_before = bound.current.borrow().borrow().results().to_vec();
     // After the original input replays, observe the ordinary wider sidebar
     // and restore the recorded narrow consumer for its defining capture.
+    // Resize first: the real layout-measured callback restores the saved 280px sidebar on
+    // a viewport change. Only after that settles stage the wider geometry.
+    let _ = settled_sidebar_buttons(&native, &ui, &sidebar_frames, 1100, 700, true);
+    assert_eq!(ui.get_sidebar_actual_width().to_bits(), 280.0_f32.to_bits());
     ui.set_sidebar_requested_width(400.0);
     let wide = settled_sidebar_buttons(&native, &ui, &sidebar_frames, 1100, 700, false);
+    assert_eq!(ui.get_sidebar_actual_width().to_bits(), 400.0_f32.to_bits());
     headless::save_png(
         &std::path::Path::new(env!("CARGO_TARGET_TMPDIR"))
             .join("thumbnail-navigation-sidebar-wide.png"),
@@ -539,6 +544,7 @@ fn owned_options_replay_cancel_save_reopen_and_real_keyboard_wheel_consumers() {
     .unwrap();
     ui.set_sidebar_requested_width(280.0);
     let _ = settled_sidebar_buttons(&native, &ui, &sidebar_frames, 700, 600, true);
+    assert_eq!(ui.get_sidebar_actual_width().to_bits(), 280.0_f32.to_bits());
     assert_eq!(
         store.read(hydrus_store::page_layout::load).unwrap(),
         layout_before
