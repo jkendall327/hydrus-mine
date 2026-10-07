@@ -1,0 +1,66 @@
+{
+  "source_commit": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+  "run_id": 37599290504,
+  "root_verified_audited_payloads": 80,
+  "relocated_audited_payloads": {
+    "source-census.json": "docs/rust/gui-coverage/checkpoints/791b72d19/source-census.json",
+    "publication-summary.json": "docs/rust/gui-coverage/checkpoints/791b72d19/publication-summary.json"
+  },
+  "supplemental_payloads": {
+    "docs/rust/gui-coverage/checkpoints/791b72d19/artifact-11473211098.json": {
+      "sha256": "78c602ac2ca9edbd7631a9317925b340891fd70c95757d8345f79a69ce94f211",
+      "bytes": 683
+    },
+    "docs/rust/gui-coverage/checkpoints/791b72d19/artifact-11472423097.json": {
+      "sha256": "75f632aa2c29cbe9cbd463b63e56bbf52f37950e2dc7e574543503ad41813d55",
+      "bytes": 678
+    },
+    "docs/rust/gui-coverage/checkpoints/791b72d19/artifact-11472410536.json": {
+      "sha256": "d9fa86b885f9d989bd509a3f00930907853786825e3491f77169ba0c0467cfd6",
+      "bytes": 678
+    },
+    "docs/rust/gui-coverage/checkpoints/791b72d19/run-latest.json": {
+      "sha256": "73d9c3fe874c5a7fcbee1c8f359273397cb5cd4ea13a7c76468ec1f12d0d8744",
+      "bytes": 14157
+    },
+    "docs/rust/gui-coverage/checkpoints/791b72d19/jobs-latest.json": {
+      "sha256": "f997734503c6f4878197acf9b04999df0c361ec3540cf11e858fa5cf4b9800ba",
+      "bytes": 14557
+    },
+    "docs/rust/gui-coverage/checkpoints/791b72d19/execution-inputs/artifact-binding.json": {
+      "sha256": "e5c85263dc357793cd5d1bf4b5bb998c0d4802c8d5574077b6a2936d11b5ac71",
+      "bytes": 862
+    },
+    "docs/rust/gui-coverage/checkpoints/791b72d19/execution-inputs/finalize-defaults-url3-791b72d19.py": {
+      "sha256": "35a0f5938970d61562736dd09b32032447fa8cbacbc3cb6817da9aa33e2269eb",
+      "bytes": 5604
+    },
+    "docs/rust/gui-coverage/checkpoints/791b72d19/execution-inputs/prepare-evidence-copy-791b72d19.py": {
+      "sha256": "e2f937defa75da4bdee62ad6221d01fc468d7d64e16162ad997d42c117007a81",
+      "bytes": 32162
+    },
+    "docs/rust/gui-coverage/checkpoints/791b72d19/execution-inputs/unbound/finalize-defaults-url3-791b72d19.py": {
+      "sha256": "f0a0b079021d4b4d3fe0a27c05c61d68714e538d313f318cb43bfa55ec1750f0",
+      "bytes": 5181
+    },
+    "docs/rust/gui-coverage/checkpoints/791b72d19/execution-inputs/unbound/prepare-evidence-copy-791b72d19.py": {
+      "sha256": "52e54aea6ecb302f68ca4d0666da356719538c2073719737051703e70922a24f",
+      "bytes": 32158
+    }
+  },
+  "executed_finalizer_sha256": "35a0f5938970d61562736dd09b32032447fa8cbacbc3cb6817da9aa33e2269eb",
+  "executed_helper_sha256": "e2f937defa75da4bdee62ad6221d01fc468d7d64e16162ad997d42c117007a81",
+  "helper_check_only_passed": true,
+  "helper_copy_scratch_passed": true,
+  "browser_desktop_and_narrow_actually_viewed_by_root": true,
+  "browser_result": "passed;362 completion count distinct from963 reference first-pass inventory; readable responsive layout, no horizontal overflow",
+  "canonical_copy_completed": true,
+  "notes_update_pending": false,
+  "publication_commit_pending": true,
+  "goal_flags_changed_only_for_selected_three": [
+    "audit-options-external-programs-external-calls-add-defaults",
+    "audit-options-open-externally-url-calls-add",
+    "audit-options-open-externally-url-calls-edit"
+  ],
+  "performance_observation_sha256": "b2db965bb9532633576e3a45618c2f485307a3dbea44bbbe741a347d71407103"
+}

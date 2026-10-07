@@ -1,0 +1,810 @@
+{
+  "source_commit": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+  "run_id": 37599290504,
+  "records": [
+    {
+      "id": "audit-options-external-programs-external-calls-add-defaults",
+      "role": "reference_source",
+      "author_anchor": {
+        "relativepath": "hydrus/client/gui/panels/options/ExternalProgramsPanel.py",
+        "line": 1345,
+        "symbol": "ExternalProgramsPanel"
+      },
+      "author_declared_commit": "9ac22c60851462185542749743d0c5dcdc989d52",
+      "path": "hydrus/client/gui/panels/options/ExternalProgramsPanel.py",
+      "line": 1345,
+      "text": "class ExternalProgramsPanel( ClientGUIOptionsPanelBase.OptionsPagePanel ):",
+      "line_sha256": "4a1319743b142e073789f46ec197ad263e0dee99d803da825c5929dfa27d06db",
+      "source_commit": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+      "method": "identical_git_blob",
+      "scope_status_credit_change": false
+    },
+    {
+      "id": "audit-options-external-programs-external-calls-add-defaults",
+      "role": "scoped_implementation",
+      "author_anchor": {
+        "relativepath": "crates/hydrus-gui/src/options_external_calls.rs",
+        "line": 180,
+        "commit": "0e9e877cbb8883aecb186da8497b7987e2bb0072",
+        "symbol": "pub(crate) fn bind("
+      },
+      "author_declared_commit": "0e9e877cbb8883aecb186da8497b7987e2bb0072",
+      "path": "crates/hydrus-gui/src/options_external_calls.rs",
+      "line": 180,
+      "text": "pub(crate) fn bind(",
+      "line_sha256": "14857b5fa7ed28997f22d916dc00ee04274e1b935d9a856a8dbe04caf4ab24eb",
+      "source_commit": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+      "method": "Unique exact authored declaration at immutable source; no nearest-line substitution.",
+      "scope_status_credit_change": false
+    },
+    {
+      "id": "audit-options-external-programs-external-calls-add-defaults",
+      "role": "scoped_implementation",
+      "author_anchor": {
+        "relativepath": "crates/hydrus-gui-model/src/external_calls.rs",
+        "line": 15,
+        "commit": "0e9e877cbb8883aecb186da8497b7987e2bb0072",
+        "symbol": "pub struct Table"
+      },
+      "author_declared_commit": "0e9e877cbb8883aecb186da8497b7987e2bb0072",
+      "path": "crates/hydrus-gui-model/src/external_calls.rs",
+      "line": 15,
+      "text": "pub struct Table {",
+      "line_sha256": "d7b1a7498a62e4270a349e01ae898a245c4752efefce4ded5fbbf308310cf50b",
+      "source_commit": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+      "method": "Unique exact authored declaration at immutable source; no nearest-line substitution.",
+      "scope_status_credit_change": false
+    },
+    {
+      "id": "audit-options-external-programs-external-calls-add-defaults",
+      "role": "scoped_implementation",
+      "author_anchor": {
+        "relativepath": "crates/hydrus-store/src/settings.rs",
+        "line": 1277,
+        "commit": "0e9e877cbb8883aecb186da8497b7987e2bb0072",
+        "symbol": "impl Setting for hydrus_core::external_calls::Manager"
+      },
+      "author_declared_commit": "0e9e877cbb8883aecb186da8497b7987e2bb0072",
+      "path": "crates/hydrus-store/src/settings.rs",
+      "line": 1582,
+      "text": "impl Setting for hydrus_core::external_calls::Manager {",
+      "line_sha256": "0f65a24a2bccd352c747e31b168e1c65b4ff657ec06e971fded6a438ac102bdf",
+      "source_commit": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+      "method": "Unique exact authored declaration at immutable source; no nearest-line substitution.",
+      "scope_status_credit_change": false
+    },
+    {
+      "id": "audit-options-external-programs-external-calls-add-defaults",
+      "role": "scoped_implementation",
+      "author_anchor": {
+        "relativepath": "crates/hydrus-gui/src/options_external_calls.rs",
+        "line": 19,
+        "commit": "0e9e877cbb8883aecb186da8497b7987e2bb0072",
+        "symbol": "fn defaults("
+      },
+      "author_declared_commit": "0e9e877cbb8883aecb186da8497b7987e2bb0072",
+      "path": "crates/hydrus-gui/src/options_external_calls.rs",
+      "line": 19,
+      "text": "fn defaults(",
+      "line_sha256": "21adffd3c1c09632313242ecc1b6378584da70a4d70f7ab92b4007c84515283b",
+      "source_commit": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+      "method": "Unique exact authored declaration at immutable source; no nearest-line substitution.",
+      "scope_status_credit_change": false
+    },
+    {
+      "id": "audit-options-external-programs-external-calls-add-defaults",
+      "role": "scoped_implementation",
+      "author_anchor": {
+        "relativepath": "crates/hydrus-gui/ui/external_calls.slint",
+        "line": 35,
+        "commit": "0e9e877cbb8883aecb186da8497b7987e2bb0072",
+        "symbol": "defaults-menu := ContextMenuArea"
+      },
+      "author_declared_commit": "0e9e877cbb8883aecb186da8497b7987e2bb0072",
+      "path": "crates/hydrus-gui/ui/external_calls.slint",
+      "line": 35,
+      "text": "            defaults-menu := ContextMenuArea {",
+      "line_sha256": "f92cb67ed709651748469e77daaf80409803ff91659708380d67b892f5f0172a",
+      "source_commit": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+      "method": "Unique exact authored declaration at immutable source; no nearest-line substitution.",
+      "scope_status_credit_change": false
+    },
+    {
+      "id": "audit-options-external-programs-external-calls-add-defaults",
+      "role": "scoped_implementation",
+      "author_anchor": {
+        "relativepath": "crates/hydrus-downloader-exchange/src/external_calls.rs",
+        "line": 258,
+        "commit": "0e9e877cbb8883aecb186da8497b7987e2bb0072",
+        "symbol": "pub fn defaults("
+      },
+      "author_declared_commit": "0e9e877cbb8883aecb186da8497b7987e2bb0072",
+      "path": "crates/hydrus-downloader-exchange/src/external_calls.rs",
+      "line": 258,
+      "text": "pub fn defaults(platform_only: bool) -> Result<Vec<Callable>> {",
+      "line_sha256": "ccd0f749de8d735965ae345720f72a805e48355af2a4c52484fc12614eb272c1",
+      "source_commit": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+      "method": "Unique exact authored declaration at immutable source; no nearest-line substitution.",
+      "scope_status_credit_change": false
+    },
+    {
+      "id": "audit-options-external-programs-external-calls-add-defaults",
+      "role": "authored_behavioral_regression",
+      "author_anchor": {
+        "relativepath": "crates/hydrus-gui/tests/gui/external_calls.rs",
+        "line": 179,
+        "commit": "0e9e877cbb8883aecb186da8497b7987e2bb0072",
+        "symbol": "fn list_duplicate_defaults_delete_capture_and_options_persistence()"
+      },
+      "author_declared_commit": "0e9e877cbb8883aecb186da8497b7987e2bb0072",
+      "path": "crates/hydrus-gui/tests/gui/external_calls.rs",
+      "line": 203,
+      "text": "fn list_duplicate_defaults_delete_capture_and_options_persistence() {",
+      "line_sha256": "3f51a136199e98d6e14e0ac9d2abc8536dd7147840e4056ef3f32a1a191a8289",
+      "source_commit": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+      "method": "Unique exact authored declaration at immutable source; no nearest-line substitution.",
+      "scope_status_credit_change": false
+    },
+    {
+      "id": "audit-options-external-programs-external-calls-add-defaults",
+      "role": "authored_behavioral_regression",
+      "author_anchor": {
+        "relativepath": "crates/hydrus-gui-model/tests/model/external_calls.rs",
+        "line": 260,
+        "commit": "0e9e877cbb8883aecb186da8497b7987e2bb0072",
+        "symbol": "fn actual_defaults_menu_routes_preserve_prior_selection_and_generate_unique_named_keys()"
+      },
+      "author_declared_commit": "0e9e877cbb8883aecb186da8497b7987e2bb0072",
+      "path": "crates/hydrus-gui-model/tests/model/external_calls.rs",
+      "line": 260,
+      "text": "fn actual_defaults_menu_routes_preserve_prior_selection_and_generate_unique_named_keys() {",
+      "line_sha256": "96c49e6996f6231274a312304edb2f880b9dc479d8c83af9704fca537f7f852e",
+      "source_commit": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+      "method": "Unique exact authored declaration at immutable source; no nearest-line substitution.",
+      "scope_status_credit_change": false
+    },
+    {
+      "id": "audit-options-external-programs-external-calls-add-defaults",
+      "role": "authored_behavioral_regression",
+      "author_anchor": {
+        "relativepath": "crates/hydrus-gui-model/tests/model/external_calls.rs",
+        "line": 137,
+        "commit": "0e9e877cbb8883aecb186da8497b7987e2bb0072",
+        "symbol": "fn actual_qt_sort_tie_break_casefold_and_duplicate_selection_routes()"
+      },
+      "author_declared_commit": "0e9e877cbb8883aecb186da8497b7987e2bb0072",
+      "path": "crates/hydrus-gui-model/tests/model/external_calls.rs",
+      "line": 137,
+      "text": "fn actual_qt_sort_tie_break_casefold_and_duplicate_selection_routes() {",
+      "line_sha256": "13c46a95f81cc816fedbcf12a24294a02dbea4ad2406e5ba96c50f78b3d88e27",
+      "source_commit": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+      "method": "Unique exact authored declaration at immutable source; no nearest-line substitution.",
+      "scope_status_credit_change": false
+    },
+    {
+      "id": "audit-options-external-programs-external-calls-add-defaults",
+      "role": "authored_current_physical_capture_successor_regression",
+      "author_anchor": {
+        "relativepath": "crates/hydrus-gui/tests/gui/external_calls.rs",
+        "line": 1728,
+        "commit": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+        "symbol": "fn defaults_physical_menu_exact_choices_saved_reopen_and_retired_selector_are_owned()"
+      },
+      "author_declared_commit": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+      "path": "crates/hydrus-gui/tests/gui/external_calls.rs",
+      "line": 1728,
+      "text": "fn defaults_physical_menu_exact_choices_saved_reopen_and_retired_selector_are_owned() {",
+      "line_sha256": "eeb0718da6bc151ec08a0f478130ea0ce988e9d279ea21631e971366a1c9dd79",
+      "source_commit": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+      "method": "Unique exact authored declaration at immutable source; no nearest-line substitution.",
+      "scope_status_credit_change": false
+    },
+    {
+      "id": "audit-options-open-externally-url-calls-add",
+      "role": "reference_source",
+      "author_anchor": {
+        "relativepath": "hydrus/client/gui/panels/options/OpenExternallyPanel.py",
+        "line": 116,
+        "symbol": "_AddLaunchURLIdAndName",
+        "line_sha256": "752834b5b48f83f8f76b3a04debfc66545b6965cf04a9a2209e1a10d46eb5b4a"
+      },
+      "author_declared_commit": "140bb93bcddceb01a596849b2210a5e02aec9ff1",
+      "path": "hydrus/client/gui/panels/options/OpenExternallyPanel.py",
+      "line": 116,
+      "text": "            self._AddLaunchURLIdAndName,",
+      "line_sha256": "752834b5b48f83f8f76b3a04debfc66545b6965cf04a9a2209e1a10d46eb5b4a",
+      "source_commit": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+      "method": "Explicit selected URL reference correction: canonical MIME registration136/137 replaced by manifest URL QueueListBox callback116/117. Exact immutable before/after line/text/hash proof; historical extracted path is absent at author commit, so no fictitious remap.",
+      "scope_status_credit_change": false
+    },
+    {
+      "id": "audit-options-open-externally-url-calls-add",
+      "role": "scoped_implementation",
+      "author_anchor": {
+        "relativepath": "crates/hydrus-gui/src/options_open_externally.rs",
+        "line": 325,
+        "symbol": "fn queue_action(",
+        "line_sha256": "d9f5bace01847d5ec10b4c91e4d6529aa3af335f242f27f8a495ca30986c0871",
+        "commit": "140bb93bcddceb01a596849b2210a5e02aec9ff1"
+      },
+      "author_declared_commit": "140bb93bcddceb01a596849b2210a5e02aec9ff1",
+      "path": "crates/hydrus-gui/src/options_open_externally.rs",
+      "line": 323,
+      "text": "    fn queue_action(",
+      "line_sha256": "d9f5bace01847d5ec10b4c91e4d6529aa3af335f242f27f8a495ca30986c0871",
+      "source_commit": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+      "method": "Unique exact authored declaration at immutable source; no nearest-line substitution.",
+      "scope_status_credit_change": false
+    },
+    {
+      "id": "audit-options-open-externally-url-calls-add",
+      "role": "scoped_implementation",
+      "author_anchor": {
+        "relativepath": "crates/hydrus-gui/src/options_open_externally.rs",
+        "line": 409,
+        "symbol": "fn open_files(",
+        "line_sha256": "3b73d34f22e301c5b2bb577675630701af714e6d5b7b7204fd63dacd76a44e8a",
+        "commit": "140bb93bcddceb01a596849b2210a5e02aec9ff1"
+      },
+      "author_declared_commit": "140bb93bcddceb01a596849b2210a5e02aec9ff1",
+      "path": "crates/hydrus-gui/src/options_open_externally.rs",
+      "line": 407,
+      "text": "    fn open_files(self: &Rc<Self>, mime: Mime, new: bool) -> Result<(), String> {",
+      "line_sha256": "3b73d34f22e301c5b2bb577675630701af714e6d5b7b7204fd63dacd76a44e8a",
+      "source_commit": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+      "method": "Unique exact authored declaration at immutable source; no nearest-line substitution.",
+      "scope_status_credit_change": false
+    },
+    {
+      "id": "audit-options-open-externally-url-calls-add",
+      "role": "scoped_implementation",
+      "author_anchor": {
+        "relativepath": "crates/hydrus-gui/src/options_open_externally.rs",
+        "line": 579,
+        "symbol": "fn file_action(",
+        "line_sha256": "50b78525b4171dde47a2f2826990faea5d6fe740fe99f6e16c926af736e3f828",
+        "commit": "140bb93bcddceb01a596849b2210a5e02aec9ff1"
+      },
+      "author_declared_commit": "140bb93bcddceb01a596849b2210a5e02aec9ff1",
+      "path": "crates/hydrus-gui/src/options_open_externally.rs",
+      "line": 577,
+      "text": "    fn file_action(self: &Rc<Self>, action: &str) {",
+      "line_sha256": "50b78525b4171dde47a2f2826990faea5d6fe740fe99f6e16c926af736e3f828",
+      "source_commit": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+      "method": "Unique exact authored declaration at immutable source; no nearest-line substitution.",
+      "scope_status_credit_change": false
+    },
+    {
+      "id": "audit-options-open-externally-url-calls-add",
+      "role": "scoped_implementation",
+      "author_anchor": {
+        "relativepath": "crates/hydrus-gui-model/src/open_externally.rs",
+        "line": 18,
+        "symbol": "pub fn choices(",
+        "line_sha256": "030779e364fb5a23a2c749621cf5c7f9462da0f27ddc98b2f81b9e3410a8d57d",
+        "commit": "140bb93bcddceb01a596849b2210a5e02aec9ff1"
+      },
+      "author_declared_commit": "140bb93bcddceb01a596849b2210a5e02aec9ff1",
+      "path": "crates/hydrus-gui-model/src/open_externally.rs",
+      "line": 18,
+      "text": "pub fn choices(manager: &Manager, pipeline: Pipeline, existing: &[CallRef]) -> Vec<CallRef> {",
+      "line_sha256": "030779e364fb5a23a2c749621cf5c7f9462da0f27ddc98b2f81b9e3410a8d57d",
+      "source_commit": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+      "method": "Unique exact authored declaration at immutable source; no nearest-line substitution.",
+      "scope_status_credit_change": false
+    },
+    {
+      "id": "audit-options-open-externally-url-calls-add",
+      "role": "scoped_implementation",
+      "author_anchor": {
+        "relativepath": "crates/hydrus-gui-model/src/open_externally.rs",
+        "line": 95,
+        "symbol": "pub fn move_selected(",
+        "line_sha256": "dd46b1b429757b7e3395f8546c11b2f048ebd277cfbabca84e2ed7e111ca48c2",
+        "commit": "140bb93bcddceb01a596849b2210a5e02aec9ff1"
+      },
+      "author_declared_commit": "140bb93bcddceb01a596849b2210a5e02aec9ff1",
+      "path": "crates/hydrus-gui-model/src/open_externally.rs",
+      "line": 95,
+      "text": "    pub fn move_selected(&mut self, down: bool) {",
+      "line_sha256": "dd46b1b429757b7e3395f8546c11b2f048ebd277cfbabca84e2ed7e111ca48c2",
+      "source_commit": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+      "method": "Unique exact authored declaration at immutable source; no nearest-line substitution.",
+      "scope_status_credit_change": false
+    },
+    {
+      "id": "audit-options-open-externally-url-calls-add",
+      "role": "scoped_implementation",
+      "author_anchor": {
+        "relativepath": "crates/hydrus-core/src/open_externally.rs",
+        "line": 82,
+        "symbol": "pub fn wash(&mut self",
+        "line_sha256": "13402a6dd7f2166db2935fc81d066fca54bd61c1100243aa75609339e084cce1",
+        "commit": "140bb93bcddceb01a596849b2210a5e02aec9ff1"
+      },
+      "author_declared_commit": "140bb93bcddceb01a596849b2210a5e02aec9ff1",
+      "path": "crates/hydrus-core/src/open_externally.rs",
+      "line": 82,
+      "text": "    pub fn wash(&mut self, manager: &mut Manager) {",
+      "line_sha256": "13402a6dd7f2166db2935fc81d066fca54bd61c1100243aa75609339e084cce1",
+      "source_commit": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+      "method": "Unique exact authored declaration at immutable source; no nearest-line substitution.",
+      "scope_status_credit_change": false
+    },
+    {
+      "id": "audit-options-open-externally-url-calls-add",
+      "role": "scoped_implementation",
+      "author_anchor": {
+        "relativepath": "crates/hydrus-gui/src/open_externally_launch.rs",
+        "line": 101,
+        "symbol": "pub fn file(",
+        "line_sha256": "4433c594bc6574ac282f2cdfd6bd118879a30d4aa31397ccc65436053d69557c",
+        "commit": "140bb93bcddceb01a596849b2210a5e02aec9ff1"
+      },
+      "author_declared_commit": "140bb93bcddceb01a596849b2210a5e02aec9ff1",
+      "path": "crates/hydrus-gui/src/open_externally_launch.rs",
+      "line": 101,
+      "text": "    pub fn file(&self, store: &Store, id: HashId) -> bool {",
+      "line_sha256": "4433c594bc6574ac282f2cdfd6bd118879a30d4aa31397ccc65436053d69557c",
+      "source_commit": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+      "method": "Unique exact authored declaration at immutable source; no nearest-line substitution.",
+      "scope_status_credit_change": false
+    },
+    {
+      "id": "audit-options-open-externally-url-calls-add",
+      "role": "scoped_implementation",
+      "author_anchor": {
+        "relativepath": "crates/hydrus-gui/src/lib.rs",
+        "line": 473,
+        "symbol": "window.invoke_retire_external_launches();",
+        "line_sha256": "7ffb048a3f9a373699af125185086d571626c4e82df894a22b09114d0cb661c9",
+        "commit": "140bb93bcddceb01a596849b2210a5e02aec9ff1"
+      },
+      "author_declared_commit": "140bb93bcddceb01a596849b2210a5e02aec9ff1",
+      "path": "crates/hydrus-gui/src/lib.rs",
+      "line": 586,
+      "text": "    window.invoke_retire_external_launches();",
+      "line_sha256": "7ffb048a3f9a373699af125185086d571626c4e82df894a22b09114d0cb661c9",
+      "source_commit": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+      "method": "Unique exact authored declaration at immutable source; no nearest-line substitution.",
+      "scope_status_credit_change": false
+    },
+    {
+      "id": "audit-options-open-externally-url-calls-add",
+      "role": "scoped_implementation",
+      "author_anchor": {
+        "relativepath": "crates/hydrus-store/src/settings.rs",
+        "line": 1448,
+        "symbol": "impl Setting for hydrus_core::open_externally::Routing",
+        "line_sha256": "32a53c74a236a79877d5f3631c840a16e0301822eb02f46286555eea8a7057ec",
+        "commit": "140bb93bcddceb01a596849b2210a5e02aec9ff1"
+      },
+      "author_declared_commit": "140bb93bcddceb01a596849b2210a5e02aec9ff1",
+      "path": "crates/hydrus-store/src/settings.rs",
+      "line": 1590,
+      "text": "impl Setting for hydrus_core::open_externally::Routing {",
+      "line_sha256": "32a53c74a236a79877d5f3631c840a16e0301822eb02f46286555eea8a7057ec",
+      "source_commit": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+      "method": "Unique exact authored declaration at immutable source; no nearest-line substitution.",
+      "scope_status_credit_change": false
+    },
+    {
+      "id": "audit-options-open-externally-url-calls-add",
+      "role": "authored_behavioral_regression",
+      "author_anchor": {
+        "relativepath": "crates/hydrus-gui-model/tests/model/open_externally.rs",
+        "line": 38,
+        "symbol": "fn actual_qt_registered_choices",
+        "line_sha256": "5287cd94749d27a4a6f67952826cf5aa960f429fbf31208ecfbeb6fe86d83212",
+        "commit": "140bb93bcddceb01a596849b2210a5e02aec9ff1"
+      },
+      "author_declared_commit": "140bb93bcddceb01a596849b2210a5e02aec9ff1",
+      "path": "crates/hydrus-gui-model/tests/model/open_externally.rs",
+      "line": 66,
+      "text": "fn actual_qt_registered_choices_queue_order_and_protected_mime_rows() {",
+      "line_sha256": "5287cd94749d27a4a6f67952826cf5aa960f429fbf31208ecfbeb6fe86d83212",
+      "source_commit": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+      "method": "Unique exact authored declaration at immutable source; no nearest-line substitution.",
+      "scope_status_credit_change": false
+    },
+    {
+      "id": "audit-options-open-externally-url-calls-add",
+      "role": "authored_behavioral_regression",
+      "author_anchor": {
+        "relativepath": "crates/hydrus-gui-model/tests/model/open_externally.rs",
+        "line": 101,
+        "symbol": "fn washing_renames",
+        "line_sha256": "21276bea1321b25e124015c16995df306da0c50d0c6c5d867d8ecb5db105fb39",
+        "commit": "140bb93bcddceb01a596849b2210a5e02aec9ff1"
+      },
+      "author_declared_commit": "140bb93bcddceb01a596849b2210a5e02aec9ff1",
+      "path": "crates/hydrus-gui-model/tests/model/open_externally.rs",
+      "line": 129,
+      "text": "fn washing_renames_deduplicates_removes_missing_without_name_remap_and_persists() {",
+      "line_sha256": "21276bea1321b25e124015c16995df306da0c50d0c6c5d867d8ecb5db105fb39",
+      "source_commit": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+      "method": "Unique exact authored declaration at immutable source; no nearest-line substitution.",
+      "scope_status_credit_change": false
+    },
+    {
+      "id": "audit-options-open-externally-url-calls-add",
+      "role": "authored_behavioral_regression",
+      "author_anchor": {
+        "relativepath": "crates/hydrus-gui-model/tests/model/open_externally.rs",
+        "line": 165,
+        "symbol": "fn configured_empty_specific",
+        "line_sha256": "ea1daa5e54015543032c40fd62278d7d0b2da5d67f0ea94c42b10534a6ecaca1",
+        "commit": "140bb93bcddceb01a596849b2210a5e02aec9ff1"
+      },
+      "author_declared_commit": "140bb93bcddceb01a596849b2210a5e02aec9ff1",
+      "path": "crates/hydrus-gui-model/tests/model/open_externally.rs",
+      "line": 193,
+      "text": "fn configured_empty_specific_and_missing_call_never_fall_through_custom_route() {",
+      "line_sha256": "ea1daa5e54015543032c40fd62278d7d0b2da5d67f0ea94c42b10534a6ecaca1",
+      "source_commit": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+      "method": "Unique exact authored declaration at immutable source; no nearest-line substitution.",
+      "scope_status_credit_change": false
+    },
+    {
+      "id": "audit-options-open-externally-url-calls-add",
+      "role": "authored_behavioral_regression",
+      "author_anchor": {
+        "relativepath": "crates/hydrus-gui/tests/gui/open_externally.rs",
+        "line": 149,
+        "symbol": "fn options_routes_replay",
+        "line_sha256": "8300f392e32636af54b2e93a688474aa6b132aa496e98bc8cdc2a7c51e117a84",
+        "commit": "140bb93bcddceb01a596849b2210a5e02aec9ff1"
+      },
+      "author_declared_commit": "140bb93bcddceb01a596849b2210a5e02aec9ff1",
+      "path": "crates/hydrus-gui/tests/gui/open_externally.rs",
+      "line": 528,
+      "text": "fn options_routes_replay_qt_owned_choosers_cancel_order_apply_reopen_and_retirement() {",
+      "line_sha256": "8300f392e32636af54b2e93a688474aa6b132aa496e98bc8cdc2a7c51e117a84",
+      "source_commit": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+      "method": "Unique exact authored declaration at immutable source; no nearest-line substitution.",
+      "scope_status_credit_change": false
+    },
+    {
+      "id": "audit-options-open-externally-url-calls-add",
+      "role": "authored_behavioral_regression",
+      "author_anchor": {
+        "relativepath": "crates/hydrus-gui/tests/gui/open_externally.rs",
+        "line": 377,
+        "symbol": "fn saved_routes_reach",
+        "line_sha256": "a51f51e5b0c3489bcf59abce9ebe265d2926054eade9b8a83479f8d8cf2407ab",
+        "commit": "140bb93bcddceb01a596849b2210a5e02aec9ff1"
+      },
+      "author_declared_commit": "140bb93bcddceb01a596849b2210a5e02aec9ff1",
+      "path": "crates/hydrus-gui/tests/gui/open_externally.rs",
+      "line": 840,
+      "text": "fn saved_routes_reach_main_and_live_viewer_os_fallback_and_missing_owned_notice() {",
+      "line_sha256": "a51f51e5b0c3489bcf59abce9ebe265d2926054eade9b8a83479f8d8cf2407ab",
+      "source_commit": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+      "method": "Unique exact authored declaration at immutable source; no nearest-line substitution.",
+      "scope_status_credit_change": false
+    },
+    {
+      "id": "audit-options-open-externally-url-calls-add",
+      "role": "authored_behavioral_regression",
+      "author_anchor": {
+        "relativepath": "crates/hydrus-gui/tests/gui/open_externally.rs",
+        "line": 527,
+        "symbol": "fn saved_registered_vectors",
+        "line_sha256": "3623f632cbd337dd0ee856cfaadf782a28a84deb5a67c6f005f6f3ff757664aa",
+        "commit": "140bb93bcddceb01a596849b2210a5e02aec9ff1"
+      },
+      "author_declared_commit": "140bb93bcddceb01a596849b2210a5e02aec9ff1",
+      "path": "crates/hydrus-gui/tests/gui/open_externally.rs",
+      "line": 1073,
+      "text": "fn saved_registered_vectors_feed_actual_main_live_viewer_and_url_pipeline() {",
+      "line_sha256": "3623f632cbd337dd0ee856cfaadf782a28a84deb5a67c6f005f6f3ff757664aa",
+      "source_commit": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+      "method": "Unique exact authored declaration at immutable source; no nearest-line substitution.",
+      "scope_status_credit_change": false
+    },
+    {
+      "id": "audit-options-open-externally-url-calls-edit",
+      "role": "reference_source",
+      "author_anchor": {
+        "relativepath": "hydrus/client/gui/panels/options/OpenExternallyPanel.py",
+        "line": 117,
+        "symbol": "_EditLaunchURLIdAndName",
+        "line_sha256": "64c6a4419106782c1ad34ffa24bcbe3b147b6e66df2863f8148234a47fc01761"
+      },
+      "author_declared_commit": "140bb93bcddceb01a596849b2210a5e02aec9ff1",
+      "path": "hydrus/client/gui/panels/options/OpenExternallyPanel.py",
+      "line": 117,
+      "text": "            self._EditLaunchURLIdAndName",
+      "line_sha256": "64c6a4419106782c1ad34ffa24bcbe3b147b6e66df2863f8148234a47fc01761",
+      "source_commit": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+      "method": "Explicit selected URL reference correction: canonical MIME registration136/137 replaced by manifest URL QueueListBox callback116/117. Exact immutable before/after line/text/hash proof; historical extracted path is absent at author commit, so no fictitious remap.",
+      "scope_status_credit_change": false
+    },
+    {
+      "id": "audit-options-open-externally-url-calls-edit",
+      "role": "scoped_implementation",
+      "author_anchor": {
+        "relativepath": "crates/hydrus-gui/src/options_open_externally.rs",
+        "line": 325,
+        "symbol": "fn queue_action(",
+        "line_sha256": "d9f5bace01847d5ec10b4c91e4d6529aa3af335f242f27f8a495ca30986c0871",
+        "commit": "140bb93bcddceb01a596849b2210a5e02aec9ff1"
+      },
+      "author_declared_commit": "140bb93bcddceb01a596849b2210a5e02aec9ff1",
+      "path": "crates/hydrus-gui/src/options_open_externally.rs",
+      "line": 323,
+      "text": "    fn queue_action(",
+      "line_sha256": "d9f5bace01847d5ec10b4c91e4d6529aa3af335f242f27f8a495ca30986c0871",
+      "source_commit": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+      "method": "Unique exact authored declaration at immutable source; no nearest-line substitution.",
+      "scope_status_credit_change": false
+    },
+    {
+      "id": "audit-options-open-externally-url-calls-edit",
+      "role": "scoped_implementation",
+      "author_anchor": {
+        "relativepath": "crates/hydrus-gui/src/options_open_externally.rs",
+        "line": 409,
+        "symbol": "fn open_files(",
+        "line_sha256": "3b73d34f22e301c5b2bb577675630701af714e6d5b7b7204fd63dacd76a44e8a",
+        "commit": "140bb93bcddceb01a596849b2210a5e02aec9ff1"
+      },
+      "author_declared_commit": "140bb93bcddceb01a596849b2210a5e02aec9ff1",
+      "path": "crates/hydrus-gui/src/options_open_externally.rs",
+      "line": 407,
+      "text": "    fn open_files(self: &Rc<Self>, mime: Mime, new: bool) -> Result<(), String> {",
+      "line_sha256": "3b73d34f22e301c5b2bb577675630701af714e6d5b7b7204fd63dacd76a44e8a",
+      "source_commit": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+      "method": "Unique exact authored declaration at immutable source; no nearest-line substitution.",
+      "scope_status_credit_change": false
+    },
+    {
+      "id": "audit-options-open-externally-url-calls-edit",
+      "role": "scoped_implementation",
+      "author_anchor": {
+        "relativepath": "crates/hydrus-gui/src/options_open_externally.rs",
+        "line": 579,
+        "symbol": "fn file_action(",
+        "line_sha256": "50b78525b4171dde47a2f2826990faea5d6fe740fe99f6e16c926af736e3f828",
+        "commit": "140bb93bcddceb01a596849b2210a5e02aec9ff1"
+      },
+      "author_declared_commit": "140bb93bcddceb01a596849b2210a5e02aec9ff1",
+      "path": "crates/hydrus-gui/src/options_open_externally.rs",
+      "line": 577,
+      "text": "    fn file_action(self: &Rc<Self>, action: &str) {",
+      "line_sha256": "50b78525b4171dde47a2f2826990faea5d6fe740fe99f6e16c926af736e3f828",
+      "source_commit": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+      "method": "Unique exact authored declaration at immutable source; no nearest-line substitution.",
+      "scope_status_credit_change": false
+    },
+    {
+      "id": "audit-options-open-externally-url-calls-edit",
+      "role": "scoped_implementation",
+      "author_anchor": {
+        "relativepath": "crates/hydrus-gui-model/src/open_externally.rs",
+        "line": 18,
+        "symbol": "pub fn choices(",
+        "line_sha256": "030779e364fb5a23a2c749621cf5c7f9462da0f27ddc98b2f81b9e3410a8d57d",
+        "commit": "140bb93bcddceb01a596849b2210a5e02aec9ff1"
+      },
+      "author_declared_commit": "140bb93bcddceb01a596849b2210a5e02aec9ff1",
+      "path": "crates/hydrus-gui-model/src/open_externally.rs",
+      "line": 18,
+      "text": "pub fn choices(manager: &Manager, pipeline: Pipeline, existing: &[CallRef]) -> Vec<CallRef> {",
+      "line_sha256": "030779e364fb5a23a2c749621cf5c7f9462da0f27ddc98b2f81b9e3410a8d57d",
+      "source_commit": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+      "method": "Unique exact authored declaration at immutable source; no nearest-line substitution.",
+      "scope_status_credit_change": false
+    },
+    {
+      "id": "audit-options-open-externally-url-calls-edit",
+      "role": "scoped_implementation",
+      "author_anchor": {
+        "relativepath": "crates/hydrus-gui-model/src/open_externally.rs",
+        "line": 95,
+        "symbol": "pub fn move_selected(",
+        "line_sha256": "dd46b1b429757b7e3395f8546c11b2f048ebd277cfbabca84e2ed7e111ca48c2",
+        "commit": "140bb93bcddceb01a596849b2210a5e02aec9ff1"
+      },
+      "author_declared_commit": "140bb93bcddceb01a596849b2210a5e02aec9ff1",
+      "path": "crates/hydrus-gui-model/src/open_externally.rs",
+      "line": 95,
+      "text": "    pub fn move_selected(&mut self, down: bool) {",
+      "line_sha256": "dd46b1b429757b7e3395f8546c11b2f048ebd277cfbabca84e2ed7e111ca48c2",
+      "source_commit": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+      "method": "Unique exact authored declaration at immutable source; no nearest-line substitution.",
+      "scope_status_credit_change": false
+    },
+    {
+      "id": "audit-options-open-externally-url-calls-edit",
+      "role": "scoped_implementation",
+      "author_anchor": {
+        "relativepath": "crates/hydrus-core/src/open_externally.rs",
+        "line": 82,
+        "symbol": "pub fn wash(&mut self",
+        "line_sha256": "13402a6dd7f2166db2935fc81d066fca54bd61c1100243aa75609339e084cce1",
+        "commit": "140bb93bcddceb01a596849b2210a5e02aec9ff1"
+      },
+      "author_declared_commit": "140bb93bcddceb01a596849b2210a5e02aec9ff1",
+      "path": "crates/hydrus-core/src/open_externally.rs",
+      "line": 82,
+      "text": "    pub fn wash(&mut self, manager: &mut Manager) {",
+      "line_sha256": "13402a6dd7f2166db2935fc81d066fca54bd61c1100243aa75609339e084cce1",
+      "source_commit": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+      "method": "Unique exact authored declaration at immutable source; no nearest-line substitution.",
+      "scope_status_credit_change": false
+    },
+    {
+      "id": "audit-options-open-externally-url-calls-edit",
+      "role": "scoped_implementation",
+      "author_anchor": {
+        "relativepath": "crates/hydrus-gui/src/open_externally_launch.rs",
+        "line": 101,
+        "symbol": "pub fn file(",
+        "line_sha256": "4433c594bc6574ac282f2cdfd6bd118879a30d4aa31397ccc65436053d69557c",
+        "commit": "140bb93bcddceb01a596849b2210a5e02aec9ff1"
+      },
+      "author_declared_commit": "140bb93bcddceb01a596849b2210a5e02aec9ff1",
+      "path": "crates/hydrus-gui/src/open_externally_launch.rs",
+      "line": 101,
+      "text": "    pub fn file(&self, store: &Store, id: HashId) -> bool {",
+      "line_sha256": "4433c594bc6574ac282f2cdfd6bd118879a30d4aa31397ccc65436053d69557c",
+      "source_commit": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+      "method": "Unique exact authored declaration at immutable source; no nearest-line substitution.",
+      "scope_status_credit_change": false
+    },
+    {
+      "id": "audit-options-open-externally-url-calls-edit",
+      "role": "scoped_implementation",
+      "author_anchor": {
+        "relativepath": "crates/hydrus-gui/src/lib.rs",
+        "line": 473,
+        "symbol": "window.invoke_retire_external_launches();",
+        "line_sha256": "7ffb048a3f9a373699af125185086d571626c4e82df894a22b09114d0cb661c9",
+        "commit": "140bb93bcddceb01a596849b2210a5e02aec9ff1"
+      },
+      "author_declared_commit": "140bb93bcddceb01a596849b2210a5e02aec9ff1",
+      "path": "crates/hydrus-gui/src/lib.rs",
+      "line": 586,
+      "text": "    window.invoke_retire_external_launches();",
+      "line_sha256": "7ffb048a3f9a373699af125185086d571626c4e82df894a22b09114d0cb661c9",
+      "source_commit": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+      "method": "Unique exact authored declaration at immutable source; no nearest-line substitution.",
+      "scope_status_credit_change": false
+    },
+    {
+      "id": "audit-options-open-externally-url-calls-edit",
+      "role": "scoped_implementation",
+      "author_anchor": {
+        "relativepath": "crates/hydrus-store/src/settings.rs",
+        "line": 1448,
+        "symbol": "impl Setting for hydrus_core::open_externally::Routing",
+        "line_sha256": "32a53c74a236a79877d5f3631c840a16e0301822eb02f46286555eea8a7057ec",
+        "commit": "140bb93bcddceb01a596849b2210a5e02aec9ff1"
+      },
+      "author_declared_commit": "140bb93bcddceb01a596849b2210a5e02aec9ff1",
+      "path": "crates/hydrus-store/src/settings.rs",
+      "line": 1590,
+      "text": "impl Setting for hydrus_core::open_externally::Routing {",
+      "line_sha256": "32a53c74a236a79877d5f3631c840a16e0301822eb02f46286555eea8a7057ec",
+      "source_commit": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+      "method": "Unique exact authored declaration at immutable source; no nearest-line substitution.",
+      "scope_status_credit_change": false
+    },
+    {
+      "id": "audit-options-open-externally-url-calls-edit",
+      "role": "authored_behavioral_regression",
+      "author_anchor": {
+        "relativepath": "crates/hydrus-gui-model/tests/model/open_externally.rs",
+        "line": 38,
+        "symbol": "fn actual_qt_registered_choices",
+        "line_sha256": "5287cd94749d27a4a6f67952826cf5aa960f429fbf31208ecfbeb6fe86d83212",
+        "commit": "140bb93bcddceb01a596849b2210a5e02aec9ff1"
+      },
+      "author_declared_commit": "140bb93bcddceb01a596849b2210a5e02aec9ff1",
+      "path": "crates/hydrus-gui-model/tests/model/open_externally.rs",
+      "line": 66,
+      "text": "fn actual_qt_registered_choices_queue_order_and_protected_mime_rows() {",
+      "line_sha256": "5287cd94749d27a4a6f67952826cf5aa960f429fbf31208ecfbeb6fe86d83212",
+      "source_commit": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+      "method": "Unique exact authored declaration at immutable source; no nearest-line substitution.",
+      "scope_status_credit_change": false
+    },
+    {
+      "id": "audit-options-open-externally-url-calls-edit",
+      "role": "authored_behavioral_regression",
+      "author_anchor": {
+        "relativepath": "crates/hydrus-gui-model/tests/model/open_externally.rs",
+        "line": 101,
+        "symbol": "fn washing_renames",
+        "line_sha256": "21276bea1321b25e124015c16995df306da0c50d0c6c5d867d8ecb5db105fb39",
+        "commit": "140bb93bcddceb01a596849b2210a5e02aec9ff1"
+      },
+      "author_declared_commit": "140bb93bcddceb01a596849b2210a5e02aec9ff1",
+      "path": "crates/hydrus-gui-model/tests/model/open_externally.rs",
+      "line": 129,
+      "text": "fn washing_renames_deduplicates_removes_missing_without_name_remap_and_persists() {",
+      "line_sha256": "21276bea1321b25e124015c16995df306da0c50d0c6c5d867d8ecb5db105fb39",
+      "source_commit": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+      "method": "Unique exact authored declaration at immutable source; no nearest-line substitution.",
+      "scope_status_credit_change": false
+    },
+    {
+      "id": "audit-options-open-externally-url-calls-edit",
+      "role": "authored_behavioral_regression",
+      "author_anchor": {
+        "relativepath": "crates/hydrus-gui-model/tests/model/open_externally.rs",
+        "line": 165,
+        "symbol": "fn configured_empty_specific",
+        "line_sha256": "ea1daa5e54015543032c40fd62278d7d0b2da5d67f0ea94c42b10534a6ecaca1",
+        "commit": "140bb93bcddceb01a596849b2210a5e02aec9ff1"
+      },
+      "author_declared_commit": "140bb93bcddceb01a596849b2210a5e02aec9ff1",
+      "path": "crates/hydrus-gui-model/tests/model/open_externally.rs",
+      "line": 193,
+      "text": "fn configured_empty_specific_and_missing_call_never_fall_through_custom_route() {",
+      "line_sha256": "ea1daa5e54015543032c40fd62278d7d0b2da5d67f0ea94c42b10534a6ecaca1",
+      "source_commit": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+      "method": "Unique exact authored declaration at immutable source; no nearest-line substitution.",
+      "scope_status_credit_change": false
+    },
+    {
+      "id": "audit-options-open-externally-url-calls-edit",
+      "role": "authored_behavioral_regression",
+      "author_anchor": {
+        "relativepath": "crates/hydrus-gui/tests/gui/open_externally.rs",
+        "line": 149,
+        "symbol": "fn options_routes_replay",
+        "line_sha256": "8300f392e32636af54b2e93a688474aa6b132aa496e98bc8cdc2a7c51e117a84",
+        "commit": "140bb93bcddceb01a596849b2210a5e02aec9ff1"
+      },
+      "author_declared_commit": "140bb93bcddceb01a596849b2210a5e02aec9ff1",
+      "path": "crates/hydrus-gui/tests/gui/open_externally.rs",
+      "line": 528,
+      "text": "fn options_routes_replay_qt_owned_choosers_cancel_order_apply_reopen_and_retirement() {",
+      "line_sha256": "8300f392e32636af54b2e93a688474aa6b132aa496e98bc8cdc2a7c51e117a84",
+      "source_commit": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+      "method": "Unique exact authored declaration at immutable source; no nearest-line substitution.",
+      "scope_status_credit_change": false
+    },
+    {
+      "id": "audit-options-open-externally-url-calls-edit",
+      "role": "authored_behavioral_regression",
+      "author_anchor": {
+        "relativepath": "crates/hydrus-gui/tests/gui/open_externally.rs",
+        "line": 377,
+        "symbol": "fn saved_routes_reach",
+        "line_sha256": "a51f51e5b0c3489bcf59abce9ebe265d2926054eade9b8a83479f8d8cf2407ab",
+        "commit": "140bb93bcddceb01a596849b2210a5e02aec9ff1"
+      },
+      "author_declared_commit": "140bb93bcddceb01a596849b2210a5e02aec9ff1",
+      "path": "crates/hydrus-gui/tests/gui/open_externally.rs",
+      "line": 840,
+      "text": "fn saved_routes_reach_main_and_live_viewer_os_fallback_and_missing_owned_notice() {",
+      "line_sha256": "a51f51e5b0c3489bcf59abce9ebe265d2926054eade9b8a83479f8d8cf2407ab",
+      "source_commit": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+      "method": "Unique exact authored declaration at immutable source; no nearest-line substitution.",
+      "scope_status_credit_change": false
+    },
+    {
+      "id": "audit-options-open-externally-url-calls-edit",
+      "role": "authored_behavioral_regression",
+      "author_anchor": {
+        "relativepath": "crates/hydrus-gui/tests/gui/open_externally.rs",
+        "line": 527,
+        "symbol": "fn saved_registered_vectors",
+        "line_sha256": "3623f632cbd337dd0ee856cfaadf782a28a84deb5a67c6f005f6f3ff757664aa",
+        "commit": "140bb93bcddceb01a596849b2210a5e02aec9ff1"
+      },
+      "author_declared_commit": "140bb93bcddceb01a596849b2210a5e02aec9ff1",
+      "path": "crates/hydrus-gui/tests/gui/open_externally.rs",
+      "line": 1073,
+      "text": "fn saved_registered_vectors_feed_actual_main_live_viewer_and_url_pipeline() {",
+      "line_sha256": "3623f632cbd337dd0ee856cfaadf782a28a84deb5a67c6f005f6f3ff757664aa",
+      "source_commit": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+      "method": "Unique exact authored declaration at immutable source; no nearest-line substitution.",
+      "scope_status_credit_change": false
+    }
+  ],
+  "approval": false
+}

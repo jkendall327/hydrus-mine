@@ -1,0 +1,28 @@
+# Add Defaults: finite pointer-route refinement
+
+This separate read-only note refines `next-defaults-preflight-3.md`; that initial preflight remains frozen (SHA-256 `2b48f695bda1bb811e61fd68ec58042f61e52a81ed30a345601478008e370541`). No test, Slint, production or canonical changes, builds or approvals. Current Delete/Duplicate repaired CI remains pending; implementation starts only after its banked checkpoint.
+
+## Actually viewed diagnostic frames
+
+I independently opened all three images with `view_image`, at actual **1100×800**. Provenance is diagnostic source `625a2bdafc5b5820f4d9201f46640d7770fbecd7`, run `37590137304`, artifact `11468462915`, ZIP SHA-256 `2e06c51d1ce0d51550e31d0dccce4de69c3902d814d01f3146eeaf5a34c14228`. Manifest `/workspace/validation-reviews/ci-625a2bdaf/native-render-manifest.json` SHA-256 `934158631776b1b8c8f067cdbd268dc583c6b7ae2c61901f1a421ca2d3dddfc3`. These images are retained failed-run diagnostic evidence, not fresh repaired-source runtime validation or signoff.
+
+- `/workspace/validation-reviews/ci-625a2bdaf/native-renders/external-calls-duplicate-selected.png` — SHA-256 `5e1b40800ef208c2c5a43db656fae351132a4cffd044559b7b6288e483821d6c`: two highlighted synthetic rows, all list action labels and enabled Add Defaults button readable.
+- `/workspace/validation-reviews/ci-625a2bdaf/native-renders/external-calls-delete-empty.png` — SHA-256 `82197b34a484eaabd01f21693f8617dc1b6dbef6f309b3840ed934f48a651cce`: zero-row list; Edit/Delete/Export/Duplicate disabled, Add Defaults readable and enabled.
+- `/workspace/validation-reviews/ci-625a2bdaf/native-renders/external-calls-reopened-saved.png` — SHA-256 `ea946568145aaee9fcda14c8c74e663c6720ad80266d8a9dd4fc8e1bceb0f45f`: actual saved 日本 row readable, no selection, Add Defaults readable and enabled.
+
+The Button occupies approximately **x=970–1067, y=425–455** in all three frames (visual bounds, not a measured widget property). Its center at **logical (1019, 440)** is well inside the visible button, away from the adjacent Duplicate button. The outer ContextMenuArea's source width is 140px; do not confuse that with the narrower actual painted Button. The differing sidebar list position does not move the content Button in these observed states.
+
+Current repaired source `1943b19d987771264a06558e57b4255679190de0` has byte-identical Slint files to 625a: `ui/options.slint` SHA-256 `cd6bc428d6ad2a4a8d07556d05eb4e4421cae9fa72f344771877fd9aa1d3db93`; `ui/external_calls.slint` SHA-256 `b1d0f41309d7e9926c5a8a705ce87364961a04b9e6accc787eb8cafa4c196858`. Thus these actual images provide a source-supported finite setup for the next test, while fresh interaction/render evidence is still required.
+
+## Recommended simpler option
+
+Use a documented **viewport-specific pointer test**, without introducing measurement hooks or Slint recompilation. At the normal external-programs page, render the actual owned Options adapter at 1100×800, require scale factor 1, empty search text/matches, content scroll at zero, no child slot and visible Options. Pump real timers/layout until inactive animations and consecutive settled frames, retaining the adapter index before later children. Dispatch Left move/press/release at logical `(1019, 440)`. This setup applies only to the inspected standard caption/font/layout and supported headless viewport; it asserts no general Button geometry, DPI portability or OS window behavior.
+
+Fail closed through **actual outcomes**, not a callback substituted for the pointer:
+
+1. Start with empty active-popup stack, then require exactly one active popup after the click and no question/editor/selector unexpectedly opened. Record adapter count: capture the actual popup composite using the established MinimalSoftwareWindow transport, or fail explicitly if transport changes; never export a closed Options frame as menu evidence. Fresh image inspection must show precisely `add them all` / `select from a list` in this order. The generated ContextMenuArea has no public row model; do not manufacture one solely for assertions.
+2. Escape must empty the stack without changing complete list cells/selection/flags, full saved Manager or child slots. This shows an actual popup lifecycle, not just an active-count getter.
+3. Reopen by the same pointer. In the pinned Slint two-item popup with initial highlight -1, Down/Return chooses row0; Down twice/Return chooses row1. Preserve the original direct-callback assertions. Require popup closure, a new owned question with exact platform prompt and both labels, and its exact slot identity/visibility. Wrong pointer location, neighboring control or reordered menu must fail these outcomes.
+4. Differentiate actual routes: “all” answer must add the complete requested defaults and selection directly with no selector; “some” answer must create the exact ordered 15-row all-platform selector, all initially false, and add only current accepted choices. Compare full draft cells/selection, factory/recorded values and full saved Manager; do not settle for subset/count-only checks. Add the already-planned retained-selector/current-successor checks and defining captures, preserving all 239 assertions/nine original tests.
+
+The existing six-capture plan remains useful; selector 600×550 and question 520×200 readability still require actual fresh inspection. Native selected-row highlighting represents the selector's booleans rather than Qt checkbox pixels. Actual Qt replay supports all/some/all-platform outcomes and custom labels, but has no matching outer menu/selector PNG. No broad geometry, pixel parity, Add/Edit/process/launcher, Main/final Bound, platform or structural-parent credit.

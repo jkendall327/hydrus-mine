@@ -3497,8 +3497,9 @@ registered-call equality, and fresh chooser/queue captures. Physical parent
 buttons are exercised only at 960×800, scale 1, with an unscrolled page;
 accepting the physically opened Edit child must replace rather than append.
 Retained Add/Edit answers are checked against live successor owners, including
-temporary hide/re-show and a positive current answer. These additions await
-full Linux validation and fresh rendered review; no new completion is banked.
+temporary hide/re-show and a positive current answer. Full Linux run `37599290504`
+and fresh independent rendered review passed for exactly URL Add/Edit.
+[Evidence](gui-coverage/checkpoints/791b72d19/README.md).
 
 The main thumbnail and viewer default-open actions read current saved routes.
 Specific filetype entries replace general-class entries, then “all files”;
@@ -3532,8 +3533,11 @@ A separate bounded Add Defaults follow-up exercises the real two-item menu at
 unchanged; the two menu choices lead to distinct all-defaults and explicit
 selection outcomes. The new proof checks all 15 recorded selector labels and
 initial states, full saved callable values with fresh keys, reopening, and a
-retired selector against a usable replacement. Six new native captures and the
-new focused test await full Linux validation and fresh rendered review.
+retired selector against a usable replacement. Full Linux run `37599290504` and
+independent review of six fresh defining frames passed for Add Defaults.
+Together with URL Add/Edit, this checkpoint publishes 362 signed off, with
+13 existing candidates pending; all 708 GUI and 67 media tests passed.
+[Evidence](gui-coverage/checkpoints/791b72d19/README.md).
 
 The validated follow-up selects only registered-call Delete and Duplicate.
 The October 7 actual Qt replay matches the six sort cases, duplicate selections,

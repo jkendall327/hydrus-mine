@@ -1,0 +1,48 @@
+{
+  "base_commit": "b52957c9f8843c4765acc81baa00c63cff63244e",
+  "agent_commit": "d6e4b4039e83017568d01cd1282aec121ae1765e",
+  "owned_file": "crates/hydrus-gui/tests/gui/external_calls.rs",
+  "base_source_sha256": "ef44539c033f71a470076f1661d9328f1fcc841ad75683f2a31422833e014bc7",
+  "source_sha256": "b3dea615fc217d7cac71ede35633d030eb3480bff6914f0f089a4f9eca3357f4",
+  "selected_id": "audit-options-external-programs-external-calls-add-defaults",
+  "approval": false,
+  "preservation": {
+    "original_file_bytes": 63444,
+    "entire_original_source_exact_bytewise_prefix": true,
+    "original_assertion_macros": 242,
+    "current_assertion_macros": 313,
+    "original_tests": 9,
+    "current_tests": 10,
+    "removed_lines": 0,
+    "original_tests_unchanged": true,
+    "recorded_queue_and_clipboard_replays_unchanged": true
+  },
+  "new_test_symbol": "defaults_physical_menu_exact_choices_saved_reopen_and_retired_selector_are_owned",
+  "new_test_line": 1728,
+  "checks": {
+    "rustfmt": true,
+    "git_diff_check": true,
+    "builds": false,
+    "hosted_runtime": "pending",
+    "actual_fresh_render_review": "pending"
+  },
+  "expected_new_capture_names": [
+    "external-defaults-menu.png",
+    "external-defaults-platform-question.png",
+    "external-defaults-selector-initial.png",
+    "external-defaults-selector-selected.png",
+    "external-defaults-all-draft.png",
+    "external-defaults-reopened-saved.png"
+  ],
+  "scope_caveats": [
+    "Finite supported1100x800 scale1 zero-scroll empty-search pointer; no generic geometry/DPI/OS claim.",
+    "Actual popup composite count and two route-distinguishing physical keyboard outcomes; fresh image checks labels/order.",
+    "Selector choices toggle through existing callbacks; no physical selector-button acceptance claim.",
+    "Selector booleans render via row highlight, not Qt checkboxes.",
+    "All16 result is scrollable; full rows/cells/selection asserted, not all16 simultaneous rendered rows.",
+    "No matching Qt outer popup/question/selector PNG; finite actual Qt fields and source only.",
+    "Narrow Options Cancel/retained selector/current successor and current child Cancel/native CloseRequested/Slots.cancel; no Main/final Bound lifetime expansion.",
+    "Linux required; Windows/macOS deferred; no parent/alias/launcher/import/export/platform signoff."
+  ],
+  "worktree_status": ""
+}

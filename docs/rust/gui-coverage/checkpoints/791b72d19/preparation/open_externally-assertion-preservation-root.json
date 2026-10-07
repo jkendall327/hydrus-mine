@@ -1,0 +1,13 @@
+{
+  "base_commit": "b52957c9f8843c4765acc81baa00c63cff63244e",
+  "file": "crates/hydrus-gui/tests/gui/open_externally.rs",
+  "base_sha256": "3de4e94c2abfe4ff0b8e4a0c0c9d471aefcbe5c7caf18dd69620cfef8d48ec79",
+  "current_sha256": "b8c2fba97967a94fb95480a86477744f0ed5b5d2504879dcfc063dc3d64ce35c",
+  "original_assertions": 107,
+  "current_assertions": 156,
+  "original_tests": 5,
+  "current_tests": 5,
+  "all_original_assertion_spans_preserved_bytewise_in_order": true,
+  "original_test_names_preserved": true,
+  "validation": "rustfmt and diff checks only; hosted tests and renders pending"
+}
