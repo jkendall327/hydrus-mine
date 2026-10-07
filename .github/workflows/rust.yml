@@ -70,7 +70,10 @@ jobs:
           cache-workspace-crates: true
       - name: install media tools and fontconfig
         run: |
-          sudo sed -i 's|azure.archive.ubuntu.com|archive.ubuntu.com|g' /etc/apt/sources.list.d/ubuntu.sources
+          sudo sed -i \
+            -e 's|azure\.archive\.ubuntu\.com|archive.ubuntu.com|g' \
+            -e 's|mirror+file:/etc/apt/apt-mirrors\.txt|http://archive.ubuntu.com/ubuntu|g' \
+            /etc/apt/sources.list.d/ubuntu.sources
           sudo apt-get -o Acquire::Retries=3 -o Acquire::http::Timeout=30 update
           sudo apt-get -o Acquire::Retries=3 -o Acquire::http::Timeout=30 install -y ffmpeg libfontconfig1-dev
       - name: fmt
@@ -150,8 +153,12 @@ jobs:
         # software-rendered evidence instead of relying on the runner's fonts.
         run: |
           # Azure's Ubuntu mirror stalled repeated full-validation downloads.
+          # Handle both direct URLs and the runner's mirror-list indirection.
           # Keep Ubuntu's signed packages, using the primary archive mirror.
-          sudo sed -i 's|azure.archive.ubuntu.com|archive.ubuntu.com|g' /etc/apt/sources.list.d/ubuntu.sources
+          sudo sed -i \
+            -e 's|azure\.archive\.ubuntu\.com|archive.ubuntu.com|g' \
+            -e 's|mirror+file:/etc/apt/apt-mirrors\.txt|http://archive.ubuntu.com/ubuntu|g' \
+            /etc/apt/sources.list.d/ubuntu.sources
           sudo apt-get -o Acquire::Retries=3 -o Acquire::http::Timeout=30 update
           sudo apt-get -o Acquire::Retries=3 -o Acquire::http::Timeout=30 install -y ffmpeg fontconfig libfontconfig1-dev fonts-noto-cjk
           fc-match ':lang=ja'
@@ -240,7 +247,10 @@ jobs:
           cache-workspace-crates: true
       - name: install media tools
         run: |
-          sudo sed -i 's|azure.archive.ubuntu.com|archive.ubuntu.com|g' /etc/apt/sources.list.d/ubuntu.sources
+          sudo sed -i \
+            -e 's|azure\.archive\.ubuntu\.com|archive.ubuntu.com|g' \
+            -e 's|mirror+file:/etc/apt/apt-mirrors\.txt|http://archive.ubuntu.com/ubuntu|g' \
+            /etc/apt/sources.list.d/ubuntu.sources
           sudo apt-get -o Acquire::Retries=3 -o Acquire::http::Timeout=30 update
           sudo apt-get -o Acquire::Retries=3 -o Acquire::http::Timeout=30 install -y ffmpeg
       - name: reference and backend tests
