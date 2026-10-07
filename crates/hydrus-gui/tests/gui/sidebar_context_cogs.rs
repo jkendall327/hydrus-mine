@@ -403,3 +403,335 @@ fn default_collect_cog_stages_cancels_reopens_and_rejects_retired_menu_actions()
     successor.invoke_cancel();
     assert_eq!(store.read(settings::get::<SortSettings>).unwrap(), before);
 }
+
+#[test]
+fn actual_tag_display_menu_changes_modes_captures_checks_and_rejects_retired_view_actions() {
+    use slint::platform::{Key, PointerEventButton, WindowEvent};
+    use std::rc::Rc;
+
+    fn key(
+        ui: &MainWindow,
+        drawn: &slint::platform::software_renderer::MinimalSoftwareWindow,
+        value: Key,
+    ) {
+        let text: slint::SharedString = value.into();
+        ui.window()
+            .dispatch_event(WindowEvent::KeyPressed { text: text.clone() });
+        ui.window()
+            .dispatch_event(WindowEvent::KeyReleased { text });
+        headless::render(drawn, 1060, 760);
+    }
+    fn cog_click(
+        ui: &MainWindow,
+        drawn: &slint::platform::software_renderer::MinimalSoftwareWindow,
+        button: PointerEventButton,
+    ) {
+        headless::render(drawn, 1060, 760);
+        assert!(ui.get_sort_cog_visible());
+        let frame = ui.get_sort_order_frame();
+        assert!(
+            [frame.x, frame.y, frame.w, frame.h]
+                .iter()
+                .all(|value| value.is_finite())
+                && frame.w > 0.0
+                && frame.h > 0.0
+        );
+        // main.slint places the fixed 30px cog after order-choice with 4px
+        // spacing. Use the actual adjacent control's exposed absolute frame.
+        let position =
+            slint::LogicalPosition::new(frame.x + frame.w + 4.0 + 15.0, frame.y + frame.h / 2.0);
+        assert!(position.x > 0.0 && position.x < 1060.0);
+        assert!(position.y > 0.0 && position.y < 760.0);
+        ui.window()
+            .dispatch_event(WindowEvent::PointerMoved { position });
+        ui.window()
+            .dispatch_event(WindowEvent::PointerPressed { position, button });
+        ui.window()
+            .dispatch_event(WindowEvent::PointerReleased { position, button });
+        headless::render(drawn, 1060, 760);
+    }
+    fn open_cog(
+        ui: &MainWindow,
+        drawn: &slint::platform::software_renderer::MinimalSoftwareWindow,
+    ) {
+        let inner = slint::private_unstable_api::re_exports::WindowInner::from_pub(ui.window());
+        assert!(inner.active_popups().is_empty());
+        let previous_ids: Vec<_> = ui.get_sort_cog_extra().iter().map(|item| item.id).collect();
+        cog_click(ui, drawn, PointerEventButton::Left);
+        assert_eq!(inner.active_popups().len(), 1, "actual sort cog root");
+        let fresh_ids: Vec<_> = ui.get_sort_cog_extra().iter().map(|item| item.id).collect();
+        assert_eq!(fresh_ids.len(), 3);
+        assert_ne!(
+            fresh_ids, previous_ids,
+            "real sort-button opening refreshes ids"
+        );
+    }
+    fn open_display(
+        ui: &MainWindow,
+        drawn: &slint::platform::software_renderer::MinimalSoftwareWindow,
+    ) {
+        open_cog(ui, drawn);
+        // The real root has tag service first and ADVANCED: tag display type
+        // second. PopupMenuImpl starts unhighlighted and skips separators.
+        key(ui, drawn, Key::DownArrow);
+        key(ui, drawn, Key::DownArrow);
+        key(ui, drawn, Key::RightArrow);
+        let inner = slint::private_unstable_api::re_exports::WindowInner::from_pub(ui.window());
+        assert_eq!(inner.active_popups().len(), 2, "actual display submenu");
+    }
+    fn close_display(
+        ui: &MainWindow,
+        drawn: &slint::platform::software_renderer::MinimalSoftwareWindow,
+    ) {
+        let inner = slint::private_unstable_api::re_exports::WindowInner::from_pub(ui.window());
+        assert_eq!(inner.active_popups().len(), 2);
+        key(ui, drawn, Key::Escape);
+        assert_eq!(inner.active_popups().len(), 1, "submenu Escape keeps root");
+        key(ui, drawn, Key::Escape);
+        assert!(inner.active_popups().is_empty());
+    }
+    fn capture(
+        ui: &MainWindow,
+        drawn: &slint::platform::software_renderer::MinimalSoftwareWindow,
+        windows: &headless::Windows,
+        adapter_count: usize,
+        popup_count: usize,
+        name: &str,
+    ) {
+        let inner = slint::private_unstable_api::re_exports::WindowInner::from_pub(ui.window());
+        assert_eq!(inner.active_popups().len(), popup_count);
+        // MinimalSoftwareWindow embeds real Slint popups in this composite.
+        // Fail if transport creates another adapter; never export a closed
+        // parent as if it were the defining root/submenu image.
+        assert_eq!(windows.count(), adapter_count);
+        let pixels = headless::render(drawn, 1060, 760);
+        assert_eq!(inner.active_popups().len(), popup_count);
+        headless::save_png(
+            &std::path::Path::new(env!("CARGO_TARGET_TMPDIR")).join(name),
+            &pixels,
+            1060,
+            760,
+        )
+        .unwrap();
+    }
+
+    let windows = headless::init();
+    let source = hydrus_testkit::legacy_fixture("basic");
+    let native = tempfile::tempdir().unwrap();
+    hydrus_store::import::import_legacy(
+        source.path(),
+        &native.path().join(hydrus_store::store::DB_FILE_NAME),
+    )
+    .unwrap();
+    let store = Store::open(native.path()).unwrap();
+    let fixture = hydrus_testkit::fixture_json("sidebar_sort_collect_cogs.json");
+    // One service exercises real widget activation for all three recorded
+    // modes. The original test still replays all 16 sort and 8 collect cases.
+    let cases: Vec<_> = [1, 3, 2]
+        .into_iter()
+        .map(|mode| {
+            fixture["sorts"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .find(|case| {
+                    case["kind"] == "namespaces"
+                        && case["service"] == "my tags"
+                        && case["sort"]["data"]["tag_display_type"] == mode
+                })
+                .unwrap()
+        })
+        .collect();
+    let files: Vec<HashId> = fixture["files"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|hash| {
+            store
+                .read(|conn| {
+                    hydrus_store::master::hash_id(conn, &hash.as_str().unwrap().parse().unwrap())
+                })
+                .unwrap()
+                .unwrap()
+        })
+        .collect();
+    let mut initial: SortSettings = store.read(settings::get).unwrap();
+    initial.fallback_sort = sort(&fixture["fallback"]);
+    initial.save_page_sort_on_change = false;
+    initial.default_collect = PageCollect::default();
+    initial.default_sort = sort(&cases[2]["sort"]);
+    let saved = initial.clone();
+    store
+        .write(move |tx| settings::set(tx.conn(), &saved))
+        .unwrap();
+    let mut page = SearchPage::restored(
+        store.clone(),
+        FileSearchContext {
+            location: LocationContext::single(ServiceKey::new(b"local files".to_vec())),
+            tags: context(&fixture["search_context"]),
+            ..FileSearchContext::default()
+        },
+        false,
+        None,
+        files,
+    );
+    page.lock_search();
+    assert_eq!(page.lock().is_some(), fixture["locked"].as_bool().unwrap());
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::single(page));
+    ui.show().unwrap();
+    let drawn = windows.get(0).unwrap();
+    let adapter_count = windows.count();
+    let caller = bound.current.borrow().clone();
+    let search = caller.borrow().tag_context().clone();
+    let original_collect = caller.borrow().collect().clone();
+    assert_eq!(caller.borrow().sort(), &initial.default_sort);
+    assert_eq!(search, context(&fixture["search_context"]));
+    let inner = slint::private_unstable_api::re_exports::WindowInner::from_pub(ui.window());
+    cog_click(&ui, &drawn, PointerEventButton::Right);
+    assert!(
+        inner.active_popups().is_empty(),
+        "Qt right-click opens no cog menu"
+    );
+    assert_eq!(caller.borrow().sort(), &initial.default_sort);
+    assert_eq!(caller.borrow().tag_context(), &search);
+    assert_eq!(caller.borrow().collect(), &original_collect);
+    assert_eq!(media(&store, &caller.borrow()), cases[2]["media"]);
+    assert_eq!(store.read(settings::get::<SortSettings>).unwrap(), initial);
+    open_cog(&ui, &drawn);
+    assert_eq!(
+        service_entries(&ui.get_sort_cog_services()),
+        cases[2]["menu"][0]["entries"]
+    );
+    assert_eq!(
+        json!(entries(&ui.get_sort_cog_extra())),
+        cases[2]["menu"][1]["entries"]
+    );
+    capture(
+        &ui,
+        &drawn,
+        &windows,
+        adapter_count,
+        1,
+        "sidebar-sort-cog-root.png",
+    );
+    key(&ui, &drawn, Key::Escape);
+    assert!(inner.active_popups().is_empty());
+
+    for (index, case) in cases.iter().enumerate() {
+        let expected = sort(&case["sort"]);
+        assert_ne!(
+            caller.borrow().sort().by,
+            expected.by,
+            "every real activation changes mode"
+        );
+        open_display(&ui, &drawn);
+        for _ in 0..=index {
+            key(&ui, &drawn, Key::DownArrow);
+        }
+        key(&ui, &drawn, Key::Return);
+        assert!(
+            inner.active_popups().is_empty(),
+            "actual activation closes the menu chain"
+        );
+        assert_eq!(caller.borrow().sort(), &expected);
+        assert_eq!(caller.borrow().tag_context(), &search);
+        assert_eq!(caller.borrow().collect(), &original_collect);
+        // The recorded fixture has the same order for these three display
+        // modes. This checks exact consumer routing, not differentiated filters.
+        assert_eq!(media(&store, &caller.borrow()), case["media"]);
+        assert_eq!(store.read(settings::get::<SortSettings>).unwrap(), initial);
+        open_display(&ui, &drawn);
+        assert_eq!(
+            service_entries(&ui.get_sort_cog_services()),
+            case["menu"][0]["entries"]
+        );
+        assert_eq!(
+            json!(entries(&ui.get_sort_cog_extra())),
+            case["menu"][1]["entries"]
+        );
+        capture(
+            &ui,
+            &drawn,
+            &windows,
+            adapter_count,
+            2,
+            &format!(
+                "sidebar-tag-display-{}.png",
+                case["sort"]["data"]["tag_display_type"].as_i64().unwrap()
+            ),
+        );
+        close_display(&ui, &drawn);
+        assert_eq!(store.read(settings::get::<SortSettings>).unwrap(), initial);
+    }
+
+    // View ids have the same per-opening and captured-page admission as service
+    // ids, but exercise those boundaries on the selected leaf itself.
+    open_display(&ui, &drawn);
+    let stale = extra_id(&ui.get_sort_cog_extra(), "display tags");
+    close_display(&ui, &drawn);
+    open_display(&ui, &drawn);
+    ui.invoke_context_cog_chosen(false, stale);
+    assert_eq!(caller.borrow().sort(), &sort(&cases[2]["sort"]));
+    assert_eq!(caller.borrow().tag_context(), &search);
+    assert_eq!(caller.borrow().collect(), &original_collect);
+    assert_eq!(store.read(settings::get::<SortSettings>).unwrap(), initial);
+    let hidden_action = extra_id(&ui.get_sort_cog_extra(), "display tags");
+    ui.hide().unwrap();
+    ui.invoke_context_cog_chosen(false, hidden_action);
+    assert_eq!(caller.borrow().sort(), &sort(&cases[2]["sort"]));
+    assert_eq!(caller.borrow().tag_context(), &search);
+    assert_eq!(caller.borrow().collect(), &original_collect);
+    assert_eq!(store.read(settings::get::<SortSettings>).unwrap(), initial);
+    ui.show().unwrap();
+    // This boundary tests hidden action admission, not automatic popup teardown.
+    // Clear any embedded popup retained across temporary hide before new input.
+    inner.close_all_popups();
+    open_display(&ui, &drawn);
+    let old_page_action = extra_id(&ui.get_sort_cog_extra(), "display tags");
+    bound.pages.borrow_mut().new_search_page();
+    ui.invoke_tab_chosen(0, 1);
+    let successor = bound.current.borrow().clone();
+    let successor_sort = successor.borrow().sort().clone();
+    let successor_search = successor.borrow().tag_context().clone();
+    let successor_collect = successor.borrow().collect().clone();
+    ui.invoke_context_cog_chosen(false, old_page_action);
+    assert_eq!(caller.borrow().sort(), &sort(&cases[2]["sort"]));
+    assert_eq!(caller.borrow().tag_context(), &search);
+    assert_eq!(caller.borrow().collect(), &original_collect);
+    assert_eq!(successor.borrow().sort(), &successor_sort);
+    assert_eq!(successor.borrow().tag_context(), &successor_search);
+    assert_eq!(successor.borrow().collect(), &successor_collect);
+    assert_eq!(store.read(settings::get::<SortSettings>).unwrap(), initial);
+    inner.close_all_popups();
+    ui.invoke_tab_chosen(0, 0);
+    assert!(Rc::ptr_eq(&bound.current.borrow(), &caller));
+
+    // One real View activation covers the true save-default policy as well.
+    let mut enabled = initial.clone();
+    enabled.save_page_sort_on_change = true;
+    let saved = enabled.clone();
+    store
+        .write(move |tx| settings::set(tx.conn(), &saved))
+        .unwrap();
+    open_display(&ui, &drawn);
+    key(&ui, &drawn, Key::DownArrow);
+    key(&ui, &drawn, Key::DownArrow);
+    key(&ui, &drawn, Key::Return);
+    assert!(inner.active_popups().is_empty());
+    let expected = sort(&cases[1]["sort"]);
+    assert_eq!(caller.borrow().sort(), &expected);
+    assert_eq!(caller.borrow().tag_context(), &search);
+    assert_eq!(caller.borrow().collect(), &original_collect);
+    assert_eq!(media(&store, &caller.borrow()), cases[1]["media"]);
+    enabled.default_sort = expected;
+    assert_eq!(store.read(settings::get::<SortSettings>).unwrap(), enabled);
+    let new_page = SearchPage::new(store.clone());
+    assert_eq!(new_page.sort(), &enabled.default_sort);
+    assert_eq!(new_page.collect(), &enabled.default_collect);
+    let saved = initial.clone();
+    store
+        .write(move |tx| settings::set(tx.conn(), &saved))
+        .unwrap();
+    assert_eq!(store.read(settings::get::<SortSettings>).unwrap(), initial);
+}

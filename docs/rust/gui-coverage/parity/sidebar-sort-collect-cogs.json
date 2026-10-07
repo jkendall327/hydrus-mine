@@ -83,7 +83,7 @@
           "path": "oracle/record_sidebar_sort_collect_cogs.py",
           "role": "executed_reference_recorder",
           "executed": true,
-          "description": "Executed actual Qt v688 via /workspace/parallel/with-oracle; final run 2026-10-05 01:22:46\u201301:22:50 UTC. Real fixed-hash locked Page sidebar QAction activations broadcast to its real media-results panel. Only PopupMenu presentation is observed for the real mouse-route record; no business handlers/media content/tag mappings replaced."
+          "description": "Executed actual Qt v688 via /workspace/parallel/with-oracle; final run 2026-10-05 01:22:46–01:22:50 UTC. Real fixed-hash locked Page sidebar QAction activations broadcast to its real media-results panel. Only PopupMenu presentation is observed for the real mouse-route record; no business handlers/media content/tag mappings replaced."
         },
         {
           "path": "oracle/fixtures/sidebar_sort_collect_cogs.json",
@@ -190,7 +190,7 @@
           "path": "oracle/record_sidebar_sort_collect_cogs.py",
           "role": "executed_reference_recorder",
           "executed": true,
-          "description": "Executed actual Qt v688 via /workspace/parallel/with-oracle; final run 2026-10-05 01:22:46\u201301:22:50 UTC. Real fixed-hash locked Page sidebar QAction activations broadcast to its real media-results panel. Only PopupMenu presentation is observed for the real mouse-route record; no business handlers/media content/tag mappings replaced."
+          "description": "Executed actual Qt v688 via /workspace/parallel/with-oracle; final run 2026-10-05 01:22:46–01:22:50 UTC. Real fixed-hash locked Page sidebar QAction activations broadcast to its real media-results panel. Only PopupMenu presentation is observed for the real mouse-route record; no business handlers/media content/tag mappings replaced."
         },
         {
           "path": "oracle/fixtures/sidebar_sort_collect_cogs.json",
@@ -290,6 +290,13 @@
           "line": 100,
           "symbol": "fn actual_sidebar_availability",
           "commit": "c774c0f5fcdae58b93a1818c47bd63fde944697e"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/sidebar_context_cogs.rs",
+          "line": 408,
+          "symbol": "fn actual_tag_display_menu_changes_modes_captures_checks_and_rejects_retired_view_actions() {",
+          "commit": "8daccca6beded7871c6849cd142926566f8f67ad",
+          "line_sha256": "e9640e8b52fdc5d9c91a6dc210d68a568c3a2b96fa64be55b6cf8b006b723860"
         }
       ],
       "evidence": [
@@ -297,7 +304,7 @@
           "path": "oracle/record_sidebar_sort_collect_cogs.py",
           "role": "executed_reference_recorder",
           "executed": true,
-          "description": "Executed actual Qt v688 via /workspace/parallel/with-oracle; final run 2026-10-05 01:22:46\u201301:22:50 UTC. Real fixed-hash locked Page sidebar QAction activations broadcast to its real media-results panel. Only PopupMenu presentation is observed for the real mouse-route record; no business handlers/media content/tag mappings replaced."
+          "description": "Executed actual Qt v688 via /workspace/parallel/with-oracle; final run 2026-10-05 01:22:46–01:22:50 UTC. Real fixed-hash locked Page sidebar QAction activations broadcast to its real media-results panel. Only PopupMenu presentation is observed for the real mouse-route record; no business handlers/media content/tag mappings replaced."
         },
         {
           "path": "oracle/fixtures/sidebar_sort_collect_cogs.json",
@@ -322,16 +329,50 @@
           "role": "authored_model_regression",
           "executed": false,
           "description": "Actual menu groups/separators/checks, availability, independent context metadata and canonical serialization; await hosted CI."
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/sidebar_context_cogs.rs",
+          "role": "authored_native_input_followup",
+          "executed": false,
+          "description": "Preserves the entire original file and its 25 assertions/two tests, adding one focused physical-input test (87 assertions total). Actual sort-cog right/left input, Down/Right/Return mode changes and four composite root/submenu exports; full contexts/media/save-off state, retained View-id admission and enabled save-default/new-page inheritance. Exact integrated-source full Linux execution and fresh independent image review remain pending."
         }
       ],
       "limitations": [
         "Broader search/sidebar and Options file-sort/collect parents remain Partial.",
         "Native grouped Slint popup replaces Qt widgets; automatic right-click opening is disabled because actual Qt cog buttons do not open on right-click.",
         "Repository metadata may appear among registered services; this slice implements no remote repository/network work.",
-        "Native/model Rust tests authored but not executed locally; hosted CI owns compilation/lint/test validation."
+        "Native/model Rust tests authored but not executed locally; hosted CI owns compilation/lint/test validation.",
+        "All twelve namespace fixture cases have identical media ordering across modes within each service; exact output replay does not discriminate display-filter effects.",
+        "Actual Qt menu PNGs are painted QMenu grabs with intercepted PopupMenu presentation; no displayed-popup placement, exact pixel parity or physical OS menu behavior claim.",
+        "The current follow-up targets only this tag-display action. Full Linux execution and fresh independent native render review remain pending; no new sign-off is granted."
       ],
       "eligible_concrete_first_pass_count": 1,
       "metric_exclusion": null
     }
-  ]
+  ],
+  "validation_followup": {
+    "baseline_publication": "7bf850103ff1d2d23fa5986372b6db6857b12c4b",
+    "implementation_commit": "8daccca6beded7871c6849cd142926566f8f67ad",
+    "selected_ids": [
+      "audit-options-search-sort-collect-tag-display"
+    ],
+    "published_signed_off": 354,
+    "existing_candidates_pending": 21,
+    "runtime_validation": "Pending exact integrated-source full Linux CI and fresh independent/root native capture review.",
+    "historical_metadata": "Original source_commit, validation and evidence entries retain author-time provenance; this follow-up does not rewrite them as current execution.",
+    "test_sha256": "9745a20ca9efd0e6e845e258d56f4348e1326a95c96ae08f081306b7a1370a11",
+    "reference_rerun": {
+      "completed_at_utc": "2026-10-07T04:52:53Z",
+      "actual_equals_fixture": true,
+      "all_nine_inputs_unchanged": true,
+      "provenance_sha256": "48eebbb19a95392d08cdbaf0ce16395cba6e523ea7429c2ba7cafd6316e5bc5b"
+    },
+    "expected_defining_images": [
+      "sidebar-sort-cog-root.png",
+      "sidebar-tag-display-1.png",
+      "sidebar-tag-display-3.png",
+      "sidebar-tag-display-2.png"
+    ],
+    "scope": "Exactly the sidebar namespace tag-display action; preserve existing tests and all prior 354 sign-offs. No service/collect/DefaultCollect/parent/alias/network/OS or Windows/macOS credit."
+  }
 }
