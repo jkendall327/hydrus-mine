@@ -1,0 +1,137 @@
+{
+  "source_commit": "170ab05251e79db77e0b97692f30d17843a3ca78",
+  "run_id": 37560085258,
+  "validation_scope": "linux",
+  "review_scope": "Read-only final narrative/count consistency against accepted independent review and exact-source logs; not a separate new rendered signoff.",
+  "result": "No unresolved concrete mismatch in current reviewed publication narrative/bookkeeping.",
+  "concrete_blockers": [],
+  "resolved_during_review": [
+    {
+      "path": "docs/rust/ROADMAP.md",
+      "original_issue": "Live latest summary still343/103/ten/32, predicate-next, old4b cache miss/checkpoint.",
+      "resolution": "Root refreshed346/106/eleven/29, radio-next,704/67, actual230-file restore/different-image limits and170ab checkpoint; re-read and confirmed."
+    }
+  ],
+  "counts": {
+    "implementation_signed_off": 346,
+    "new_this_batch": 3,
+    "new_since_240": 106,
+    "recent_checkpoints": "eleven (prior accepted ten plus this checkpoint)",
+    "pending_candidates": 29,
+    "goal_leaves": 1274,
+    "goal_unsigned": 928,
+    "historical_first_pass_leaves": 461,
+    "historical_first_pass_flags": 0,
+    "historical_verification_approvals": [],
+    "inventory_separate": {
+      "partial": 385,
+      "first_pass": 947,
+      "missing": 480
+    },
+    "new_flags": [
+      "audit-options-predicate-filesize-size",
+      "audit-options-predicate-hash-hash-clean",
+      "audit-options-predicate-hash-hash-hashes"
+    ],
+    "all_prior343_flags_preserved": true,
+    "all_goal_IDs_preserved": true
+  },
+  "evidence_checks": {
+    "accepted_independent_review_exactly3": true,
+    "gui_passed": 704,
+    "media_passed": 67,
+    "new_lifetime_tests_passed": 4,
+    "prior_assertions_preserved": 192,
+    "fresh_native_images_in_accepted_review": 4,
+    "Qt_reference_images_in_accepted_review": 3,
+    "root_browser_frames": "desktop and narrow (not re-viewed for this bookkeeping task)",
+    "gated_publication_payloads": 54,
+    "prior343_nonanchor_preservation": true,
+    "tests_log_and_root_render_review_retained": true,
+    "source_run_binding_exact": true
+  },
+  "finite_limits": "Qt successful lifetime reference is two nonmodal standalone QWidget.window() owner cascades, not client Main/nested exec/active warning teardown; failed nested-warning attempt unestablished and uncredited. Native hiding/callback retirement differs from Qt object deallocation; private notice component not directly exposed. TB/parser, hash tuple/set/raw order, inline forced question, icons/footer/geometry/chrome/focus/modality, generic active-edit/radio/parents/aliases and deferred Windows/macOS remain explicit.",
+  "cache_observations": {
+    "runner_image": "20260927.320.1",
+    "preceding_runner_image": "20261004.327.1",
+    "restored_from_failed_source": "80bcb531f",
+    "tracked_input_mtimes_restored": 4113,
+    "coherent_artifact_files_restored": 230,
+    "dependency_cache_hit": true,
+    "clippy_seconds": 348,
+    "test_compile_seconds": 397,
+    "full_test_step_seconds": 732,
+    "gui_seconds": 135.71,
+    "saved_artifact_files": 293,
+    "saved_uncompressed_bytes": 2200055047,
+    "maintenance_retained_compressed_bytes": 1379350054,
+    "limits": "Verified hosted reuse, not controlled speedup or Slint/Rust/link breakdown; prior failed-source cache restores confer no validation credit and Cargo freshness remains enabled."
+  },
+  "historical_sections": "Current summaries and the selected predicate preparation are updated; preceding checkpoint/failed-run sections retained.",
+  "reviewed_file_hashes": [
+    {
+      "path": "/workspace/hydrus-mine/docs/rust/ROADMAP.md",
+      "sha256": "01e6f2be844e67cf909fe102c2fc368a70d26fb4bc1ae0763dfacf910d0d2cd7"
+    },
+    {
+      "path": "/workspace/hydrus-mine/docs/rust/GUI.md",
+      "sha256": "40e2147ea3edd56922eb7f6a0e7336d2f4ffc50ad682ecbfc7ab94c638933357"
+    },
+    {
+      "path": "/workspace/hydrus-mine/docs/rust/DIFFERENCES.md",
+      "sha256": "b89d0e189b04cafea1556296a3cae820da14645515730cb7cf31dbf913bfb313"
+    },
+    {
+      "path": "/workspace/hydrus-mine/docs/rust/gui-coverage/validation-pass/README.md",
+      "sha256": "95f264b00d31808018ca8d42f200123fe599cab151c3ca0c464c95566e8c8fc4"
+    },
+    {
+      "path": "/workspace/hydrus-mine/docs/rust/gui-coverage/validation-pass/compilation-performance.md",
+      "sha256": "89d35e78028a6195123cef3bdd8a984b02ca21d3a82b319bba2bfadaa38209dc"
+    },
+    {
+      "path": "/workspace/hydrus-mine/docs/rust/gui-coverage/all-leaves-goal/README.md",
+      "sha256": "158970a8e6751afe6574599daad2caa23fe7b2edb0b49714aaae054fa8d77cdc"
+    },
+    {
+      "path": "/workspace/hydrus-mine/docs/rust/gui-coverage/all-leaves-goal/checklist.json",
+      "sha256": "5b633526e3212cd4c79a02ff576429e09c93281b8a853b897a08df4c9319ec6b"
+    },
+    {
+      "path": "/workspace/hydrus-mine/docs/rust/gui-coverage/checkpoints/170ab0525/README.md",
+      "sha256": "2ef912f4676464137035caa30b1ad140510b89e1e752dfd37d8e18d94808bb37"
+    }
+  ],
+  "evidence_hashes": [
+    {
+      "path": "/workspace/hydrus-mine/docs/rust/gui-coverage/checkpoints/170ab0525/validation-outcome.json",
+      "sha256": "08e66166ebb038e33a2342b7f24371c7554d6bbcedfa29c2eb06e47155e3e18e"
+    },
+    {
+      "path": "/workspace/hydrus-mine/docs/rust/gui-coverage/checkpoints/170ab0525/ci-evidence.json",
+      "sha256": "1b1800b5be7fe6bacf8ef7162bfa6a03d037b553e244e04384d34b4de04aeb66"
+    },
+    {
+      "path": "/workspace/hydrus-mine/docs/rust/gui-coverage/checkpoints/170ab0525/full-check.log",
+      "sha256": "66ee8e45a71898cdc5ce3434f187e3fb328924b65fde6b29a30dd29eb5341a2a"
+    },
+    {
+      "path": "/workspace/hydrus-mine/docs/rust/gui-coverage/checkpoints/170ab0525/tests.log",
+      "sha256": "c47d13f1cf03e25404f50e3d252d4266a5a7544ecc5d5f2a916bd8326eeb19df"
+    },
+    {
+      "path": "/workspace/hydrus-mine/docs/rust/gui-coverage/checkpoints/170ab0525/maintenance.log",
+      "sha256": "dfa740aa3137e0c29a830d778760388cff10f0ec61a853c4a01fd05e51d90b73"
+    },
+    {
+      "path": "/workspace/hydrus-mine/docs/rust/gui-coverage/checkpoints/170ab0525/final-review-2-170ab0525.json",
+      "sha256": "ca53d71182632871c0d6d9f94cd40cc2621dee1295feabed97f7a2d565f18260"
+    },
+    {
+      "path": "/workspace/hydrus-mine/docs/rust/gui-coverage/checkpoints/170ab0525/preservation-and-copy-audit.json",
+      "sha256": "565ab9fa881f8555518169013d229f02970d2cbf66e45e88f5ef7adfcafd41d6"
+    }
+  ],
+  "repository_edits": false,
+  "builds": false
+}

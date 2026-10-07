@@ -1,0 +1,61 @@
+{
+  "source_commit": "170ab05251e79db77e0b97692f30d17843a3ca78",
+  "run_id": 37560085258,
+  "conclusion": "success",
+  "validation_scope": "linux",
+  "required_platforms": [
+    "linux"
+  ],
+  "deferred_platforms": [
+    "windows",
+    "macos"
+  ],
+  "gui_tests": {
+    "passed": 704,
+    "failed": 0,
+    "ignored": 0,
+    "seconds": 135.71
+  },
+  "media_tests": {
+    "passed": 67,
+    "failed": 0,
+    "ignored": 0,
+    "seconds": 1.01
+  },
+  "new_lifetime_tests_passed": 4,
+  "prior_assertions_preserved": 192,
+  "timings": {
+    "clippy_seconds": 348.0,
+    "test_compile_seconds": 397,
+    "test_step_seconds": 732.0
+  },
+  "cache": {
+    "runner_image": "20260927.320.1",
+    "dependency_cache_hit": true,
+    "workspace_restored_from": "hydrus-ws-v1-check-Linux-X64-af4fa2e32ed1c3da4471dd09-80bcb531f7df156e448cc212254f941541101dc3-37550653294-1",
+    "restored_tracked_input_mtimes": 4113,
+    "restored_workspace_artifact_files": 230,
+    "cache_safety_tests_passed": 25,
+    "saved_artifact_files": 293,
+    "saved_uncompressed_bytes": 2200055047,
+    "maintenance_retained_bytes": 1379350054,
+    "budget_bytes": 3221225472
+  },
+  "native_artifact_id": 11456942888,
+  "native_zip_sha256": "8f974308acade8bd2a4694c396ab407f0829e6730732f8b42e013027bd59c8ff",
+  "native_image_count": 307,
+  "limits": [
+    "Hosted observations, not controlled attribution or Slint/Rust/link timing breakdown.",
+    "Runner image differs from preceding 4b5e7ae15 run; that run missed cache compatibility.",
+    "Clippy log still reports compiling hydrus-gui-ui; restored files do not prove all generated UI compilation was avoided."
+  ],
+  "evidence_sha256": {
+    "full-check.log": "66ee8e45a71898cdc5ce3434f187e3fb328924b65fde6b29a30dd29eb5341a2a",
+    "tests.log": "c47d13f1cf03e25404f50e3d252d4266a5a7544ecc5d5f2a916bd8326eeb19df",
+    "clippy.log": "ecfc0a8cefef21fb4be0799d2c73b56c8cff36f938d4b4cef5ac26059107db69",
+    "parity.log": "49a27483dbbcc1b4749da1dd2166801d998fcf417b92e156f46e147fcbbfea39",
+    "maintenance.log": "dfa740aa3137e0c29a830d778760388cff10f0ec61a853c4a01fd05e51d90b73",
+    "ci-evidence.json": "1b1800b5be7fe6bacf8ef7162bfa6a03d037b553e244e04384d34b4de04aeb66",
+    "native-render-manifest.json": "198bcda81f29a3d46a74f03affb8a8265770e29926b32a69c0fd7428c5d6ee13"
+  }
+}

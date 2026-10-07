@@ -1,0 +1,107 @@
+{
+  "source_commit": "170ab05251e79db77e0b97692f30d17843a3ca78",
+  "run_id": 37560085258,
+  "selected_ids": [
+    "audit-options-predicate-filesize-size",
+    "audit-options-predicate-hash-hash-hashes",
+    "audit-options-predicate-hash-hash-clean"
+  ],
+  "expected_native_capture_names": [
+    "filesize-predicate-native.png",
+    "hash-predicate-native.png",
+    "hash-predicate-cleanup-warning-native.png",
+    "hash-predicate-warning-native.png"
+  ],
+  "captures": [
+    {
+      "name": "filesize-predicate-native.png",
+      "producer": {
+        "path": "crates/hydrus-gui/tests/gui/filesize_predicate.rs",
+        "line": 70,
+        "line_sha256": "afcf604257a75d84b4a9b4f4c1893f7c069fd61a5a041a960e8c1317e84dcc53",
+        "anchor_git_head": "170ab05251e79db77e0b97692f30d17843a3ca78"
+      },
+      "dimensions": [
+        950,
+        400
+      ],
+      "state": "Actual size editor controls before physical key/query replay"
+    },
+    {
+      "name": "hash-predicate-native.png",
+      "producer": {
+        "path": "crates/hydrus-gui/tests/gui/hash_predicate.rs",
+        "line": 153,
+        "line_sha256": "e2211772cd3ebe0b5c612a73c66ddbf759bd7de63c2559d3fff8caf1fa607510",
+        "anchor_git_head": "170ab05251e79db77e0b97692f30d17843a3ca78"
+      },
+      "dimensions": [
+        1000,
+        500
+      ],
+      "state": "Actual multiline/type/cleanup controls before physical draft replay"
+    },
+    {
+      "name": "hash-predicate-cleanup-warning-native.png",
+      "producer": {
+        "path": "crates/hydrus-gui/tests/gui/hash_predicate.rs",
+        "line": 259,
+        "line_sha256": "98ff3e655825b83bffc09edf68afa5875605445a8fc2408af38833ca060a3e6b",
+        "anchor_git_head": "170ab05251e79db77e0b97692f30d17843a3ca78"
+      },
+      "dimensions": [
+        700,
+        560
+      ],
+      "state": "bad-lines-normal actual four-section cleanup Warning before acknowledgement, snapshot does not advance timers"
+    },
+    {
+      "name": "hash-predicate-warning-native.png",
+      "producer": {
+        "path": "crates/hydrus-gui/tests/gui/hash_predicate.rs",
+        "line": 323,
+        "line_sha256": "2966f458120331ebe6dd4cee208f00c637b4823baf0303bedc4ac2cbf9ad5020",
+        "anchor_git_head": "170ab05251e79db77e0b97692f30d17843a3ca78"
+      },
+      "dimensions": [
+        550,
+        330
+      ],
+      "state": "Invalid acceptance warning, separate owner/rebind boundary; supplemental for cleanup Qt comparison"
+    }
+  ],
+  "reference_images": [
+    {
+      "path": "/workspace/hydrus-mine/oracle/fixtures/filesize-predicate-qt.png",
+      "source_commit": "170ab05251e79db77e0b97692f30d17843a3ca78",
+      "sha256": "e8f4ba0ad1e8c20c5a37b191b3e22babefd06230cbc13dde5c383b3cda08c58d",
+      "recorded_reference_provenance": "Original source recording manifests preserved; hash extension/root successful recording bound by root-provenance.",
+      "actually_viewed_by_this_preparer": false
+    },
+    {
+      "path": "/workspace/hydrus-mine/oracle/fixtures/hash-predicate-qt.png",
+      "source_commit": "170ab05251e79db77e0b97692f30d17843a3ca78",
+      "sha256": "bc64cee3cdbf82b6080158ecf6e34a21b259a47e25952e1fafb46a35a389fce8",
+      "recorded_reference_provenance": "Original source recording manifests preserved; hash extension/root successful recording bound by root-provenance.",
+      "actually_viewed_by_this_preparer": false
+    },
+    {
+      "path": "/workspace/hydrus-mine/oracle/fixtures/hash-predicate-warning-qt.png",
+      "source_commit": "170ab05251e79db77e0b97692f30d17843a3ca78",
+      "sha256": "879881832707d5a9c4bec763913ade416e5781f9c3f686daa46dc828449137ab",
+      "recorded_reference_provenance": "Original source recording manifests preserved; hash extension/root successful recording bound by root-provenance.",
+      "actually_viewed_by_this_preparer": false
+    }
+  ],
+  "reference_root_provenance_path": "/workspace/validation-reviews/predicate3/reference/root-provenance.json",
+  "reference_root_provenance_sha256": "34c01a756124f4d48f0b907ee62bb359f5e7ec6dfab1e36133cb6020a42dc5df",
+  "root_reference_images_viewed": "Three supplied committed Qt images; actual reviewer/root native inspection pending",
+  "source_tests": "Four new tests/192 original assertion sequences preserved, separate lifetime support not global active-edit or radio credit.",
+  "lifetime_limits": [
+    "Actual Qt two shown nonmodal standalone QWidget parent cascades, not Main/nested exec/active warning destruction.",
+    "Native Main-death repeated50ms observation; final Bound drop synchronous; temporary hide/pending/declined exit survive; private warning component not separately retained."
+  ],
+  "native_artifact_id": null,
+  "native_render_review": "pending",
+  "approval": false
+}

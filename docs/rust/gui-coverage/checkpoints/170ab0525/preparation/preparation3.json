@@ -1,0 +1,42 @@
+{
+  "source_commit": "170ab05251e79db77e0b97692f30d17843a3ca78",
+  "run_id": 37560085258,
+  "baseline_source_commit": "1eace8c6ef5a1ed6a2367ad48bdbed28800f6484",
+  "claims": [
+    {
+      "id": "audit-options-predicate-filesize-size",
+      "manifest": "docs/rust/gui-coverage/parity/filesize-predicate.json",
+      "publication_preparation": "unresolved",
+      "reason": "Committed lifetime repair/consumer controls/recording and captures authored; exact-source full Linux and fresh review pending."
+    },
+    {
+      "id": "audit-options-predicate-hash-hash-hashes",
+      "manifest": "docs/rust/gui-coverage/parity/hash-predicate.json",
+      "publication_preparation": "unresolved",
+      "reason": "Committed lifetime repair/consumer controls/recording and captures authored; exact-source full Linux and fresh review pending."
+    },
+    {
+      "id": "audit-options-predicate-hash-hash-clean",
+      "manifest": "docs/rust/gui-coverage/parity/hash-predicate.json",
+      "publication_preparation": "unresolved",
+      "reason": "Committed lifetime repair/consumer controls/recording and captures authored; exact-source full Linux and fresh review pending."
+    }
+  ],
+  "next_bank_priority_ids": [
+    "audit-options-predicate-filesize-size",
+    "audit-options-predicate-hash-hash-hashes",
+    "audit-options-predicate-hash-hash-clean"
+  ],
+  "selected_ids": [
+    "audit-options-predicate-filesize-size",
+    "audit-options-predicate-hash-hash-hashes",
+    "audit-options-predicate-hash-hash-clean"
+  ],
+  "final_gates": [
+    "Exact source170ab05251e79db77e0b97692f30d17843a3ca78: full Linux strictcheck fmt/Clippy/tests/ratchet and parity-models green; run37560085258 pending. Windows/macOS deferred under exactsource policy.",
+    "Fresh exact-source four native captures with independent three-leaf source/behavior/Qt-render review and root actual inspection.",
+    "Root finalpatch+census digest review, immutable staged pipeline prior343/unselected/native1799 preservation and actual browser inspection.",
+    "Goal/checklist refresh from accepted canonical ledger AFTER publication, never planned3."
+  ],
+  "approval": false
+}

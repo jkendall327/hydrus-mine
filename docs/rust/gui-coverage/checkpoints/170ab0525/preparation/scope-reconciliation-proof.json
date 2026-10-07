@@ -1,0 +1,210 @@
+{
+  "source_commit": "170ab05251e79db77e0b97692f30d17843a3ca78",
+  "run_id": 37560085258,
+  "selected_ids": [
+    "audit-options-predicate-filesize-size",
+    "audit-options-predicate-hash-hash-hashes",
+    "audit-options-predicate-hash-hash-clean"
+  ],
+  "corrections": [
+    {
+      "id": "audit-options-predicate-filesize-size",
+      "manifest": "docs/rust/gui-coverage/parity/filesize-predicate.json",
+      "manifest_file_sha256": "1d832d19d3655de63c75ed4a21c6d93627f4bcaa8e238e31acbde17119e7d970",
+      "before_canonical_assessment": "filesize_panel constructs typed fields/conditional visibility; Panel::predicates reads them using the live service/URL-class context. Recorded default is system:filesize < 200KB. Existing regressions compare this panel's fields and 9 individual recorded changes, with documented widget/precision differences below.",
+      "pending_assessment": "File-size editor exposes five exclusive comparison radios (<,≈,=,≠,>) with clamped arrow navigation, Space and the default Enter path. Amount clamps to 0–1,048,576 and B/KB/MB/GB/TB remain separated binary units; selecting a unit does not convert the amount. Typed values reach the existing query executor with actual Qt hash outcomes for all operator/unit combinations and equality boundaries. Explicit supplied-value reconstruction preserves raw units in the model; native saved-default units persist/reopen and preserve unrelated default families. Cancel leaves the search unchanged. Hidden child/main or pending main questions refuse edits/acceptance; rebind and accepted exit cancel the owned main child, declined exit stays live, and a refused activation is consumed rather than resurrected later. Main-owned lifetime state retires the editor on actual Main-component destruction or final Bound-owner drop as well as rebind/accepted exit, hides owned notices and clears only its own slot. Nonfinal Bound clones, temporary Main hide and pending/declined exit retain the draft; retired/re-shown callbacks and Return cannot publish or change recents/defaults.",
+      "before_canonical_limitations": [
+        "TB is offered and rendered natively, although the reference cannot render it and neither text parser accepts TB."
+      ],
+      "pending_limitations": [
+        "Conditional source proposal only: hosted Rust/native tests, exact-source native screenshot and render review remain pending; no local Cargo/Rust build/test/mutation execution.",
+        "Generic active-predicate list editing remains a separate Partial action (audit-options-search-active-edit), excluded from this leaf. The new populated-existing-size lifetime test is a bounded safety check, not generic editing completion; native reopen uses saved typed defaults, while explicit reconstruction remains model-covered.",
+        "Separate global radio-Enter preference is outside this finite editor slice; the recorded true-default Enter path is supported.",
+        "Reference TB predicate ToString returns error:cannot render this predicate while its typed value/query remain valid; native renders TB explicitly. Existing free-text parser TB limitation stays documented.",
+        "All structural/shared predicate editor aliases and Options/filesize parents remain Partial and uncounted. Other predicate kinds retain their existing widgets, model and query semantics.",
+        "The new owner/lifetime assertions and matching cleanup-warning export await full exact-source Linux CI and fresh independent native render review; they add no completion credit yet.",
+        "Qt destruction recording covers two nonmodal standalone QWidget.window() parent cascades with retained wrappers and unchanged blank predicates. It does not destroy client Main, run nested exec() teardown or establish active nested-warning closure. Native notice closure is a separate safety boundary.",
+        "Native Main-death cleanup is observed through a repeated 50 ms timer with a bounded test deadline; final Bound-owner drop closes synchronously. Strong headless warning adapters/windows are retained in native notice tests; the private SessionDialog component is not separately exposed. OS chrome, modality, focus or destruction geometry equality is not claimed."
+      ],
+      "before_remaining_limitations": null,
+      "pending_remaining_limitations": null,
+      "warning_reconciliation": "Hash canonical inline-warning claim replaced by committed author actual owned notice behavior; forced cleanup question remains inline and true real scope limits remain.",
+      "historical_recording_provenance": {
+        "script": "oracle/record_filesize_predicate.py",
+        "fixture": "oracle/fixtures/filesize_predicate.json",
+        "screenshots": [
+          "oracle/fixtures/filesize-predicate-qt.png"
+        ],
+        "commit": "e30ef47d27e95b3f51ca981e0059b2ff53b9f455",
+        "executed": true,
+        "executed_utc": "2026-10-05T11:12:45Z",
+        "command": "/workspace/parallel/with-oracle /workspace/.cloud/hydrus/pyenv/bin/python oracle/record_filesize_predicate.py",
+        "result": "Real Qt offscreen copied basic client: 25 operator/unit queries plus five exact-known-size queries, four numeric bounds, four explicit supplied-value reopens, eight real key events and cancelled EditPredicatesPanel; actual Qt PNG individually inspected. Clean normal shutdown.",
+        "environment_notes": "Serialized oracle run; loopback client API startup only, no external or synthetic-network launches."
+      },
+      "current_reference_extension": {
+        "script": "oracle/record_hash_predicate.py",
+        "fixture": "oracle/fixtures/hash_predicate.json",
+        "fixture_section": "parent_destruction",
+        "executed": true,
+        "executed_utc": "2026-10-07T01:57:03Z",
+        "exit_code": 0,
+        "source_status": "Successfully rerun in root working tree; immutable integrated source pin pending. Historical reference_recording commit/provenance below is preserved.",
+        "script_sha256_at_preparation": "f48f77e9b6fff5a44fec35ebb9908fd552b9e49fbe09e98c0fd240d8aaa5edfa",
+        "fixture_sha256_at_preparation": "ea4363fff431e29739fd4ca1e9a12062e2c155ea3ea95e28249e40f0eefc7154",
+        "root_recorder_log_sha256": "8ef1c81e27650509de5598fd030e9bd8075b1f1b2e1ea013a1abf610ba6603c0",
+        "original_fixture_keys_value_identical": 10,
+        "result": "Two shown nonmodal actual DialogEdit/FleshOutPredicatePanel cascades under standalone QWidget.window() parents (filesize and hash). All five Python wrappers per case remain retained while owner.deleteLater plus bounded DeferredDelete/processEvents makes owner, launcher, dialog, panel and editor invalid and emits each destroyed signal. Original blank predicate values remain null and client Main survives. No Qt callback errors.",
+        "limits": [
+          "Standalone QWidget parent, not client Main destruction.",
+          "Nonmodal shown dialogs, not nested exec() teardown.",
+          "No active nested-warning destruction or production search publication recorded. Native cleanup-notice teardown is a separate safety regression; the failed nested-warning attempt earns no reference claim."
+        ]
+      },
+      "extension_current_blob_hashes": {
+        "oracle/record_hash_predicate.py": "f48f77e9b6fff5a44fec35ebb9908fd552b9e49fbe09e98c0fd240d8aaa5edfa",
+        "oracle/fixtures/hash_predicate.json": "ea4363fff431e29739fd4ca1e9a12062e2c155ea3ea95e28249e40f0eefc7154"
+      }
+    },
+    {
+      "id": "audit-options-predicate-hash-hash-hashes",
+      "manifest": "docs/rust/gui-coverage/parity/hash-predicate.json",
+      "manifest_file_sha256": "eb0d1378f195fde442d462ebca8376f67b5fca298739c9844be1fe709da7a11e",
+      "before_canonical_assessment": "Part of the Inclusive/exclusive multiline hash input and hash algorithm panel: Multiline cleaned/deduplicated hashes and hash type. Uses its native typed field/change path and contributes to the same Panel::predicates result; the recorded panel regression covers the represented default and available widget changes.",
+      "pending_assessment": "The actual typed hash input uses the reference multiline placeholder and vertical four-type radio group (SHA-256, MD5, SHA-1, SHA-512), alongside its existing is/is-not group. Arrow navigation clamps at edges and Space selects. Upper/lower case, allowed algorithm prefixes, 0x prefixes and duplicate newline-separated hashes reach the existing typed query consumer; inclusive/exclusive and empty sets have recorded live query outcomes. Invalid or wrong-type acceptance preserves the draft and presents the exact prefixed Qt OK warning in an owned notice. Live physical text remains synchronized after cleanup, including an empty result. Cancel publishes nothing; explicit typed reconstruction preserves algorithm/sign in the model, while typed custom defaults persist/reopen natively and keep other default families. Hidden, rebound and permanently closed owners cannot accept retained callbacks. Main-owned lifetime state retires the editor on actual Main-component destruction or final Bound-owner drop as well as rebind/accepted exit, hides owned notices and clears only its own slot. Nonfinal Bound clones, temporary Main hide and pending/declined exit retain the draft; retired/re-shown callbacks and Return cannot publish or change recents/defaults.",
+      "before_canonical_limitations": [
+        "Hash-cleanup warnings still display inline instead of in a separate Qt message dialog."
+      ],
+      "pending_limitations": [
+        "Conditional source proposal only; hosted Rust/native tests and exact-source native PNG review remain pending. No local Cargo/Rust build/test/mutation execution.",
+        "Existing forced cleanup exact You sure? yes/no question remains inline in its owner and freezes the draft; warning notices are separate owned windows. Native notice styling uses the existing Slint notice rather than Qt warning icon.",
+        "Native typed FileHashes are deterministic sets: explicit reconstruction sorts hash lines where Qt can retain tuple order. Algorithm, sign and query membership are preserved; raw cleanup preserves first valid occurrence order.",
+        "Generic active-predicate Edit remains a separate scope. Explicit supplied-input reconstruction is model-covered; native reopen uses the real saved typed custom default. Global Enter-on-radio preference remains excluded; the recorded true-default Enter path is supported.",
+        "No hash family, sign sibling, Options/predicate parent or shared/structural editor alias is promoted. Other predicate kinds retain their widgets and parser/query behavior.",
+        "The new owner/lifetime assertions and matching cleanup-warning export await full exact-source Linux CI and fresh independent native render review; they add no completion credit yet.",
+        "Qt destruction recording covers two nonmodal standalone QWidget.window() parent cascades with retained wrappers and unchanged blank predicates. It does not destroy client Main, run nested exec() teardown or establish active nested-warning closure. Native notice closure is a separate safety boundary.",
+        "Native Main-death cleanup is observed through a repeated 50 ms timer with a bounded test deadline; final Bound-owner drop closes synchronously. Strong headless warning adapters/windows are retained in native notice tests; the private SessionDialog component is not separately exposed. OS chrome, modality, focus or destruction geometry equality is not claimed."
+      ],
+      "before_remaining_limitations": [
+        "Hash-cleanup warnings still display inline instead of in a separate Qt message dialog."
+      ],
+      "pending_remaining_limitations": [
+        "Existing forced cleanup exact You sure? yes/no question remains inline in its owner and freezes the draft; warning notices are separate owned windows. Native notice styling uses the existing Slint notice rather than Qt warning icon.",
+        "Native typed FileHashes are deterministic sets: explicit reconstruction sorts hash lines where Qt can retain tuple order. Algorithm, sign and query membership are preserved; raw cleanup preserves first valid occurrence order.",
+        "Generic active-predicate Edit remains a separate scope. Explicit supplied-input reconstruction is model-covered; native reopen uses the real saved typed custom default. Global Enter-on-radio preference remains excluded; the recorded true-default Enter path is supported.",
+        "No hash family, sign sibling, Options/predicate parent or shared/structural editor alias is promoted. Other predicate kinds retain their widgets and parser/query behavior.",
+        "Qt destruction recording covers two nonmodal standalone QWidget.window() parent cascades with retained wrappers and unchanged blank predicates. It does not destroy client Main, run nested exec() teardown or establish active nested-warning closure. Native notice closure is a separate safety boundary.",
+        "Native Main-death cleanup is observed through a repeated 50 ms timer with a bounded test deadline; final Bound-owner drop closes synchronously. Strong headless warning adapters/windows are retained in native notice tests; the private SessionDialog component is not separately exposed. OS chrome, modality, focus or destruction geometry equality is not claimed."
+      ],
+      "warning_reconciliation": "Hash canonical inline-warning claim replaced by committed author actual owned notice behavior; forced cleanup question remains inline and true real scope limits remain.",
+      "historical_recording_provenance": {
+        "script": "oracle/record_hash_predicate.py",
+        "fixture": "oracle/fixtures/hash_predicate.json",
+        "screenshots": [
+          "oracle/fixtures/hash-predicate-qt.png",
+          "oracle/fixtures/hash-predicate-warning-qt.png"
+        ],
+        "commit": "b963ba72112eb8d65dda6eeb5c24c94513ce651d",
+        "executed": true,
+        "executed_utc": "2026-10-05T12:01:01Z",
+        "command": "/workspace/parallel/with-oracle /workspace/.cloud/hydrus/pyenv/bin/python oracle/record_hash_predicate.py",
+        "result": "Real Qt copied basic client: ten typed inclusive/exclusive/empty real file queries, twelve cleanup warning/confirmation paths, four explicit typed-value reopenings, seven physical radio key events, cancelled parent draft, two real per-panel OK validation warnings, and real modal Warning/OK transport. Both actual Qt PNGs individually inspected. Clean normal shutdown.",
+        "environment_notes": "Serialized offscreen Qt oracle; client API loopback startup only, no external requests."
+      },
+      "current_reference_extension": {
+        "script": "oracle/record_hash_predicate.py",
+        "fixture": "oracle/fixtures/hash_predicate.json",
+        "fixture_section": "parent_destruction",
+        "executed": true,
+        "executed_utc": "2026-10-07T01:57:03Z",
+        "exit_code": 0,
+        "source_status": "Successfully rerun in root working tree; immutable integrated source pin pending. Historical reference_recording commit/provenance below is preserved.",
+        "script_sha256_at_preparation": "f48f77e9b6fff5a44fec35ebb9908fd552b9e49fbe09e98c0fd240d8aaa5edfa",
+        "fixture_sha256_at_preparation": "ea4363fff431e29739fd4ca1e9a12062e2c155ea3ea95e28249e40f0eefc7154",
+        "root_recorder_log_sha256": "8ef1c81e27650509de5598fd030e9bd8075b1f1b2e1ea013a1abf610ba6603c0",
+        "original_fixture_keys_value_identical": 10,
+        "result": "Two shown nonmodal actual DialogEdit/FleshOutPredicatePanel cascades under standalone QWidget.window() parents (filesize and hash). All five Python wrappers per case remain retained while owner.deleteLater plus bounded DeferredDelete/processEvents makes owner, launcher, dialog, panel and editor invalid and emits each destroyed signal. Original blank predicate values remain null and client Main survives. No Qt callback errors.",
+        "limits": [
+          "Standalone QWidget parent, not client Main destruction.",
+          "Nonmodal shown dialogs, not nested exec() teardown.",
+          "No active nested-warning destruction or production search publication recorded. Native cleanup-notice teardown is a separate safety regression; the failed nested-warning attempt earns no reference claim."
+        ]
+      },
+      "extension_current_blob_hashes": {
+        "oracle/record_hash_predicate.py": "f48f77e9b6fff5a44fec35ebb9908fd552b9e49fbe09e98c0fd240d8aaa5edfa",
+        "oracle/fixtures/hash_predicate.json": "ea4363fff431e29739fd4ca1e9a12062e2c155ea3ea95e28249e40f0eefc7154"
+      }
+    },
+    {
+      "id": "audit-options-predicate-hash-hash-clean",
+      "manifest": "docs/rust/gui-coverage/parity/hash-predicate.json",
+      "manifest_file_sha256": "eb0d1378f195fde442d462ebca8376f67b5fca298739c9844be1fe709da7a11e",
+      "before_canonical_assessment": "Forced cleanup asks the exact reference question and supports yes/no and Escape, freezes the draft while pending, and ignores stale answers after closing. No retains text and algorithm; yes removes malformed lines and guesses the algorithm.",
+      "pending_assessment": "The two cleanup buttons are stacked below the multiline input. Normal cleanup uses all four types, removes duplicate valid hashes and guesses a single algorithm only on success; bad/mixed/empty input is left untouched with its exact owned warning. The notice blocks parent edits/acceptance, refuses hidden acknowledgement, and retires on parent Cancel/rebind/accepted exit. Existing forced cleanup asks exact You sure?, No preserves text/type, and Yes removes bad lines, rewrites lowercase deduplicated text (including all-bad to empty), guesses only when unique, and otherwise keeps the selected type. Real typed input is visibly replaced through a two-way TextEdit draft. Existing confirmation/error assertions remain with real notice acknowledgement before continuing. Main-owned lifetime state retires the editor on actual Main-component destruction or final Bound-owner drop as well as rebind/accepted exit, hides owned notices and clears only its own slot. Nonfinal Bound clones, temporary Main hide and pending/declined exit retain the draft; retired/re-shown callbacks and Return cannot publish or change recents/defaults.",
+      "before_canonical_limitations": [
+        "Hash-cleanup warnings still display inline instead of in a separate Qt message dialog."
+      ],
+      "pending_limitations": [
+        "Conditional source proposal only; hosted Rust/native tests and exact-source native PNG review remain pending. No local Cargo/Rust build/test/mutation execution.",
+        "Existing forced cleanup exact You sure? yes/no question remains inline in its owner and freezes the draft; warning notices are separate owned windows. Native notice styling uses the existing Slint notice rather than Qt warning icon.",
+        "Native typed FileHashes are deterministic sets: explicit reconstruction sorts hash lines where Qt can retain tuple order. Algorithm, sign and query membership are preserved; raw cleanup preserves first valid occurrence order.",
+        "Generic active-predicate Edit remains a separate scope. Explicit supplied-input reconstruction is model-covered; native reopen uses the real saved typed custom default. Global Enter-on-radio preference remains excluded; the recorded true-default Enter path is supported.",
+        "No hash family, sign sibling, Options/predicate parent or shared/structural editor alias is promoted. Other predicate kinds retain their widgets and parser/query behavior.",
+        "The new owner/lifetime assertions and matching cleanup-warning export await full exact-source Linux CI and fresh independent native render review; they add no completion credit yet.",
+        "Qt destruction recording covers two nonmodal standalone QWidget.window() parent cascades with retained wrappers and unchanged blank predicates. It does not destroy client Main, run nested exec() teardown or establish active nested-warning closure. Native notice closure is a separate safety boundary.",
+        "Native Main-death cleanup is observed through a repeated 50 ms timer with a bounded test deadline; final Bound-owner drop closes synchronously. Strong headless warning adapters/windows are retained in native notice tests; the private SessionDialog component is not separately exposed. OS chrome, modality, focus or destruction geometry equality is not claimed."
+      ],
+      "before_remaining_limitations": [
+        "Hash-cleanup warnings still display inline instead of in a separate Qt message dialog."
+      ],
+      "pending_remaining_limitations": [
+        "Existing forced cleanup exact You sure? yes/no question remains inline in its owner and freezes the draft; warning notices are separate owned windows. Native notice styling uses the existing Slint notice rather than Qt warning icon.",
+        "Native typed FileHashes are deterministic sets: explicit reconstruction sorts hash lines where Qt can retain tuple order. Algorithm, sign and query membership are preserved; raw cleanup preserves first valid occurrence order.",
+        "Generic active-predicate Edit remains a separate scope. Explicit supplied-input reconstruction is model-covered; native reopen uses the real saved typed custom default. Global Enter-on-radio preference remains excluded; the recorded true-default Enter path is supported.",
+        "No hash family, sign sibling, Options/predicate parent or shared/structural editor alias is promoted. Other predicate kinds retain their widgets and parser/query behavior.",
+        "Qt destruction recording covers two nonmodal standalone QWidget.window() parent cascades with retained wrappers and unchanged blank predicates. It does not destroy client Main, run nested exec() teardown or establish active nested-warning closure. Native notice closure is a separate safety boundary.",
+        "Native Main-death cleanup is observed through a repeated 50 ms timer with a bounded test deadline; final Bound-owner drop closes synchronously. Strong headless warning adapters/windows are retained in native notice tests; the private SessionDialog component is not separately exposed. OS chrome, modality, focus or destruction geometry equality is not claimed."
+      ],
+      "warning_reconciliation": "Hash canonical inline-warning claim replaced by committed author actual owned notice behavior; forced cleanup question remains inline and true real scope limits remain.",
+      "historical_recording_provenance": {
+        "script": "oracle/record_hash_predicate.py",
+        "fixture": "oracle/fixtures/hash_predicate.json",
+        "screenshots": [
+          "oracle/fixtures/hash-predicate-qt.png",
+          "oracle/fixtures/hash-predicate-warning-qt.png"
+        ],
+        "commit": "b963ba72112eb8d65dda6eeb5c24c94513ce651d",
+        "executed": true,
+        "executed_utc": "2026-10-05T12:01:01Z",
+        "command": "/workspace/parallel/with-oracle /workspace/.cloud/hydrus/pyenv/bin/python oracle/record_hash_predicate.py",
+        "result": "Real Qt copied basic client: ten typed inclusive/exclusive/empty real file queries, twelve cleanup warning/confirmation paths, four explicit typed-value reopenings, seven physical radio key events, cancelled parent draft, two real per-panel OK validation warnings, and real modal Warning/OK transport. Both actual Qt PNGs individually inspected. Clean normal shutdown.",
+        "environment_notes": "Serialized offscreen Qt oracle; client API loopback startup only, no external requests."
+      },
+      "current_reference_extension": {
+        "script": "oracle/record_hash_predicate.py",
+        "fixture": "oracle/fixtures/hash_predicate.json",
+        "fixture_section": "parent_destruction",
+        "executed": true,
+        "executed_utc": "2026-10-07T01:57:03Z",
+        "exit_code": 0,
+        "source_status": "Successfully rerun in root working tree; immutable integrated source pin pending. Historical reference_recording commit/provenance below is preserved.",
+        "script_sha256_at_preparation": "f48f77e9b6fff5a44fec35ebb9908fd552b9e49fbe09e98c0fd240d8aaa5edfa",
+        "fixture_sha256_at_preparation": "ea4363fff431e29739fd4ca1e9a12062e2c155ea3ea95e28249e40f0eefc7154",
+        "root_recorder_log_sha256": "8ef1c81e27650509de5598fd030e9bd8075b1f1b2e1ea013a1abf610ba6603c0",
+        "original_fixture_keys_value_identical": 10,
+        "result": "Two shown nonmodal actual DialogEdit/FleshOutPredicatePanel cascades under standalone QWidget.window() parents (filesize and hash). All five Python wrappers per case remain retained while owner.deleteLater plus bounded DeferredDelete/processEvents makes owner, launcher, dialog, panel and editor invalid and emits each destroyed signal. Original blank predicate values remain null and client Main survives. No Qt callback errors.",
+        "limits": [
+          "Standalone QWidget parent, not client Main destruction.",
+          "Nonmodal shown dialogs, not nested exec() teardown.",
+          "No active nested-warning destruction or production search publication recorded. Native cleanup-notice teardown is a separate safety regression; the failed nested-warning attempt earns no reference claim."
+        ]
+      },
+      "extension_current_blob_hashes": {
+        "oracle/record_hash_predicate.py": "f48f77e9b6fff5a44fec35ebb9908fd552b9e49fbe09e98c0fd240d8aaa5edfa",
+        "oracle/fixtures/hash_predicate.json": "ea4363fff431e29739fd4ca1e9a12062e2c155ea3ea95e28249e40f0eefc7154"
+      }
+    }
+  ],
+  "canonical_selected_warning_statement_source_reconciled": true,
+  "approval": false
+}

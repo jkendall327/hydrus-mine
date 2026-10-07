@@ -1,0 +1,17 @@
+{
+  "crates/hydrus-gui/tests/gui/active_predicates.rs": {
+    "prior_assertions": 107,
+    "current_assertions": 125,
+    "prior_preserved_in_order": true
+  },
+  "crates/hydrus-gui/tests/gui/filesize_predicate.rs": {
+    "prior_assertions": 33,
+    "current_assertions": 71,
+    "prior_preserved_in_order": true
+  },
+  "crates/hydrus-gui/tests/gui/hash_predicate.rs": {
+    "prior_assertions": 52,
+    "current_assertions": 83,
+    "prior_preserved_in_order": true
+  }
+}

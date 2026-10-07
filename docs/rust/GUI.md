@@ -918,14 +918,14 @@ bad or mixed input and opens an owned Warning/OK notice. That notice blocks
 editing and acceptance until acknowledged, and closes with its parent on Cancel,
 rebind or accepted client exit. The new Main-owned lifetime repair also closes
 it on actual Main-component destruction or final Bound-owner drop. The matching
-`hash-predicate-cleanup-warning-native.png` export is authored at the recorded
+`hash-predicate-cleanup-warning-native.png` export was inspected at the recorded
 four-section cleanup warning; `hash-predicate-warning-native.png` remains the
 separate invalid-acceptance notice. Forced cleanup keeps its existing "You sure?"
 yes/no draft question. Typed inclusive/exclusive queries, explicit reconstruction,
-Cancel, saved-default reopening and ownership boundaries have authored regressions
+Cancel, saved-default reopening and ownership boundaries have passing regressions
 against `oracle/record_hash_predicate.py` (actual Qt controls, warning PNG, ten
-file queries and twelve cleanup cases); hosted Rust execution and native rendered
-review remain pending. `system:rating` has a panel for each rating service (like or
+file queries and twelve cleanup cases). Exact-source Linux execution and fresh
+independent native rendered review passed at `170ab0525`. `system:rating` has a panel for each rating service (like or
 dislike, stars, counts) under the all/any/only panel, whose services are
 chosen in place (the reference's specifier button opens a dialog);
 "system:similar files" takes file hashes, or pixel and perceptual hashes
@@ -3109,13 +3109,13 @@ search unchanged. Hidden owners or a pending main question refuse edits/acceptan
 window or accepting client exit cancels its owned predicate child. A declined
 exit leaves it live. `filesize_predicate.json` records actual Qt controls,
 30 database-query outcomes, numeric bounds, explicit-value reopening, keys and
-Cancel. Authored model/native replays and the native screenshot await hosted
-execution; the actual Qt screenshot has been inspected.
+Cancel. Model/native replays and fresh native/Qt screenshot inspection passed
+at the Linux `170ab0525` checkpoint.
 
 The new filesize/hash lifetime owner checks actual Main-component destruction
 through a weak reference every 50 ms. Rebind, accepted exit or the final Bound
 owner also retires admission and closes the child; nonfinal Bound clones,
-temporary Main hide and pending/declined exit retain the draft. Four authored
+temporary Main hide and pending/declined exit retain the draft. Four passing
 native regressions keep Bound, child, pages and headless adapters alive to assert
 actual Main disappearance before automatic editor/notice closure. They
 also check stale re-show, callbacks/Return, unchanged predicates/recents/defaults
@@ -3128,9 +3128,10 @@ parents: all five wrappers remain retained while owner deletion destroys the
 owner, launcher, dialog, panel and editor. Original blank predicates are
 unchanged and client Main survives. This records neither client Main destruction
 nor nested exec/active-warning teardown; native cleanup-notice closure remains
-a separate safety test. Exactly filesize and both hash leaves are proposed;
-full exact-source Linux CI and fresh independent native image review are pending.
-The ledger remains 343 signed off with 32 candidates pending.
+a separate safety test. Exactly filesize and both hash leaves are now signed off
+after full Linux run `37560085258` and independent fresh native image review.
+All 704 GUI tests and 67 media tests passed; the ledger is 346 signed off with
+29 existing candidates pending. [Evidence](gui-coverage/checkpoints/170ab0525/README.md).
 
 Manage Tags now reads deleted mappings separately for each selected local tag
 service. The count measures tag–file mappings, hides at zero, and follows staged

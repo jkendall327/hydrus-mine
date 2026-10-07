@@ -1,0 +1,439 @@
+{
+  "schema_version": 1,
+  "review_kind": "read_only_integrated_worktree_source_safety",
+  "baseline_source_commit": "1eace8c6ef5a1ed6a2367ad48bdbed28800f6484",
+  "reviewed_source_commit": "170ab05251e79db77e0b97692f30d17843a3ca78",
+  "worktree": "/workspace/hydrus-mine",
+  "approval": false,
+  "source_approval": false,
+  "candidate_ids": [
+    "audit-options-predicate-filesize-size",
+    "audit-options-predicate-hash-hash-hashes",
+    "audit-options-predicate-hash-hash-clean"
+  ],
+  "blocking_findings": [],
+  "actionable_findings": [],
+  "conclusion": "No concrete source/API/ownership/borrow or assertion-preservation blocker found in the reviewed integration snapshot. Root may run full exact-source Linux validation; runtime/render/completion approval remains withheld.",
+  "checks": [
+    {
+      "area": "Permanent owner versus temporary restrictions",
+      "result": "MainOwner live state is shared only by Bound Rc<Owner>;50ms observer tests weak Main upgrade failure, not visibility/question/chooser state. Temporary hide or exit question therefore preserves draft. valid_callback separately prevents writes immediately when Main dies, before poll closure. Final Bound clone drop runs Owner::drop; nonfinal clones keep owner alive.",
+      "source": [
+        "predicate_editor_window.rs:26-109",
+        "lib.rs:298-299,441-442,603-609"
+      ]
+    },
+    {
+      "area": "Weak timer/callback ownership",
+      "result": "Timer callback, valid_callback and retire_callback each capture Weak<MainOwner>. Main parent is slint::Weak. No callback retains Rc<Owner>, so external window/collector callbacks cannot keep final Bound owner alive; no self-timer/slot/parent Rc cycle identified. MainOwner owns its slot, and existing child close holds weak slot/window. Timer stops once retirement begins.",
+      "source": [
+        "predicate_editor_window.rs:26-109,497-524",
+        "lib.rs:715-751,3361-3411"
+      ]
+    },
+    {
+      "area": "Borrow and reentrancy safety",
+      "result": "retire marks livefalse/stops timer and clones exact current child into local; RefCell borrow ends before invoke_cancel. Existing close marks closed once, hides child, checks exact window-slot identity with released read borrow before take, then cancels notices. Notices::cancel similarly clones close callback before invoking it. No RefCell borrow held across child/notice cancellation and no second retirement mutation identified.",
+      "source": [
+        "predicate_editor_window.rs:34-50,497-524",
+        "predicate_notice.rs:28-36,55-75"
+      ]
+    },
+    {
+      "area": "Main creation and existing-edit admission",
+      "result": "Main bind constructs owner and shares weak valid gate with new system launch + per-editor owner and active-predicate binder. Accepted exit and rebind invoke weak retire callback; bind retires old binding before successor setup. All active callback.get sites changed consistently to Fn invocation; one bind caller found. Existing selected-page/lock/visibility/question guards stay.",
+      "source": [
+        "lib.rs:584-610,1217-1232,1475-1549,3361-3411",
+        "active_predicates.rs:125-169,230-245,355-383"
+      ]
+    },
+    {
+      "area": "Stale callbacks and successor safety",
+      "result": "Old state holds its old slot, never successor slot; terminal livefalse + existing closed flag reject mutations/default/recent/query publication, even if retained component manually reshown. Existing close uses pointer identity before clearing slot; closed/notice alive flags are once-only. Rebind timer is stopped; weak expired old callback cannot retire new state.",
+      "source": [
+        "predicate_editor_window.rs:34-109,352-360,497-552",
+        "predicate_notice.rs:55-90",
+        "filesize_predicate.rs:372-485"
+      ]
+    },
+    {
+      "area": "Meaningful automatic destruction tests",
+      "result": "New-size and existing-size tests hide/drop only Main, assert WeakMain None, retain Bound/child/collector, pump real timers<=2s and require slotNone/childhidden. No child Cancel/hide or collector release precedes automatic closure. Existing-size test also preserves exact Vec<HashId> membership (page.files returns flattened IDs). Size clone test proves nonfinal Bound live/editable then final Bound terminal and successor accepted123KB. Hash loops Main death with Bound retained and final Bound drop with Main retained, requires BOTH editor/notice hidden and notice flags cleared. Retained stale actions and reopened Store defaults/recent remain unchanged.",
+      "source": [
+        "filesize_predicate.rs:305-485",
+        "active_predicates.rs:1139-1239",
+        "hash_predicate.rs:379-517",
+        "page.rs:2063-2066"
+      ]
+    },
+    {
+      "area": "Hide/question/decline recovery regressions",
+      "result": "Existing tests add150ms observer spans without weakening original guards: temporary hidden Main keeps child/draft, pending close keeps child +hash warning, decline preserves them, accepted exit retires them. Size remains editable after declined close, then accepted close blocks old reshown child. Original no-queued-hidden activation and retained rebind/successor tests stay intact.",
+      "source": [
+        "filesize_predicate.rs:184-301",
+        "hash_predicate.rs:347-376",
+        "active_predicates.rs:7-29"
+      ]
+    },
+    {
+      "area": "Original assertions and scope",
+      "result": "All192 original assertion macros across three changed GUI files remain;279 current. Only old removed line is a lifetime-gap comment now pointing to separate test. New cleanup warning export is700x560 and uses actual recorded bad-lines-normal notice, rather than old invalid-OK warning. No broad warning suppression, behavior threshold weakening or global-radio/active-edit completion claim follows.",
+      "source": [
+        "hash_predicate.rs:250-266",
+        "active_predicates.rs:285-290"
+      ]
+    }
+  ],
+  "reviewed_source_pins": [
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-gui/src/active_predicates.rs",
+      "base_commit": "1eace8c6ef5a1ed6a2367ad48bdbed28800f6484",
+      "baseline_sha256": "3a739bf9d81ca21cb6491fec5c7d10e64f288a18356c07c4bf27b991b1ce75e0",
+      "reviewed_worktree_sha256": "fceced2ab4ff1d20999dafeaf1c7311e3350496d54641594edd7bac6a6e3aaeb",
+      "unchanged_from_baseline": false,
+      "current_is_committed": true,
+      "source_commit": "170ab05251e79db77e0b97692f30d17843a3ca78"
+    },
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-gui/src/lib.rs",
+      "base_commit": "1eace8c6ef5a1ed6a2367ad48bdbed28800f6484",
+      "baseline_sha256": "92dc7d5b2a1a21900433b0d7cd07eb7d4608a62d643310a6d614a9bd181a3905",
+      "reviewed_worktree_sha256": "b71c9e66ab1f71337cb525b0363ae1e7eb1434a47d44f61bb313733195d4c67a",
+      "unchanged_from_baseline": false,
+      "current_is_committed": true,
+      "source_commit": "170ab05251e79db77e0b97692f30d17843a3ca78"
+    },
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-gui/src/predicate_editor_window.rs",
+      "base_commit": "1eace8c6ef5a1ed6a2367ad48bdbed28800f6484",
+      "baseline_sha256": "b5dfe1fb9178af9e1b781d5c5dfc1760bc70625dd5b277e0cb2376f9c2565029",
+      "reviewed_worktree_sha256": "c7d61453c0cd2907ac0cb697cda6b6ab3286871624bb7b41f6c674ad8f1fabf4",
+      "unchanged_from_baseline": false,
+      "current_is_committed": true,
+      "source_commit": "170ab05251e79db77e0b97692f30d17843a3ca78"
+    },
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-gui/tests/gui/active_predicates.rs",
+      "base_commit": "1eace8c6ef5a1ed6a2367ad48bdbed28800f6484",
+      "baseline_sha256": "cf465bd9fb0ae9f87a0b7be8ddab7fe39f0152217d3092b49539518caaa9cc53",
+      "reviewed_worktree_sha256": "4375011be4878c60d38e79787385e47f59ca371f5c603ce6596d996337fb0cc2",
+      "unchanged_from_baseline": false,
+      "current_is_committed": true,
+      "source_commit": "170ab05251e79db77e0b97692f30d17843a3ca78"
+    },
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-gui/tests/gui/filesize_predicate.rs",
+      "base_commit": "1eace8c6ef5a1ed6a2367ad48bdbed28800f6484",
+      "baseline_sha256": "5e7f0bcce9717e6c16f52c55df82122a6efb4cc1cc7bcbeaabc1572ab78fa502",
+      "reviewed_worktree_sha256": "daf7801120b9697eac6272fbe742216ede73ac609c1395af42fd93e694946fda",
+      "unchanged_from_baseline": false,
+      "current_is_committed": true,
+      "source_commit": "170ab05251e79db77e0b97692f30d17843a3ca78"
+    },
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-gui/tests/gui/hash_predicate.rs",
+      "base_commit": "1eace8c6ef5a1ed6a2367ad48bdbed28800f6484",
+      "baseline_sha256": "f75257a31a860b1852d923a29ccb6f4d92cb9ba169d14f529ac171594c6f2477",
+      "reviewed_worktree_sha256": "a8eb85734e522cbf8c7ff88d4e32549574a719391f39d824922afc9a32142825",
+      "unchanged_from_baseline": false,
+      "current_is_committed": true,
+      "source_commit": "170ab05251e79db77e0b97692f30d17843a3ca78"
+    },
+    {
+      "path": "/workspace/hydrus-mine/oracle/record_hash_predicate.py",
+      "base_commit": "1eace8c6ef5a1ed6a2367ad48bdbed28800f6484",
+      "baseline_sha256": "0c27173f69b32dff2e1ab3a8a9508971652186f1ffc020c6109f82d8cf592137",
+      "reviewed_worktree_sha256": "f48f77e9b6fff5a44fec35ebb9908fd552b9e49fbe09e98c0fd240d8aaa5edfa",
+      "unchanged_from_baseline": false,
+      "current_is_committed": true,
+      "source_commit": "170ab05251e79db77e0b97692f30d17843a3ca78"
+    },
+    {
+      "path": "/workspace/hydrus-mine/oracle/fixtures/hash_predicate.json",
+      "base_commit": "1eace8c6ef5a1ed6a2367ad48bdbed28800f6484",
+      "baseline_sha256": "28070b32dd3e0983f7e61a08936860e4f62484e7427e3ad470dee0051dddea9f",
+      "reviewed_worktree_sha256": "ea4363fff431e29739fd4ca1e9a12062e2c155ea3ea95e28249e40f0eefc7154",
+      "unchanged_from_baseline": false,
+      "current_is_committed": true,
+      "source_commit": "170ab05251e79db77e0b97692f30d17843a3ca78"
+    },
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-gui/src/predicate_notice.rs",
+      "base_commit": "1eace8c6ef5a1ed6a2367ad48bdbed28800f6484",
+      "baseline_sha256": "202b6615bfd3c6146837e3f421370a95c90ea6985d0ec2747e05b2102d57fb30",
+      "reviewed_worktree_sha256": "202b6615bfd3c6146837e3f421370a95c90ea6985d0ec2747e05b2102d57fb30",
+      "unchanged_from_baseline": true,
+      "current_is_committed": true,
+      "source_commit": "170ab05251e79db77e0b97692f30d17843a3ca78"
+    },
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-gui/src/page.rs",
+      "base_commit": "1eace8c6ef5a1ed6a2367ad48bdbed28800f6484",
+      "baseline_sha256": "8c968c29c99b14e862ee643d5aea5af5e78eadb8c532202fffc18084885b0c8d",
+      "reviewed_worktree_sha256": "8c968c29c99b14e862ee643d5aea5af5e78eadb8c532202fffc18084885b0c8d",
+      "unchanged_from_baseline": true,
+      "current_is_committed": true,
+      "source_commit": "170ab05251e79db77e0b97692f30d17843a3ca78"
+    },
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-gui/ui/predicate_editor.slint",
+      "base_commit": "1eace8c6ef5a1ed6a2367ad48bdbed28800f6484",
+      "baseline_sha256": "a3099a2be8aab1aa9347fa5cf666d89482206e8b0baf661f9e90d98547795c84",
+      "reviewed_worktree_sha256": "a3099a2be8aab1aa9347fa5cf666d89482206e8b0baf661f9e90d98547795c84",
+      "unchanged_from_baseline": true,
+      "current_is_committed": true,
+      "source_commit": "170ab05251e79db77e0b97692f30d17843a3ca78"
+    },
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-gui/ui/filesize_comparison.slint",
+      "base_commit": "1eace8c6ef5a1ed6a2367ad48bdbed28800f6484",
+      "baseline_sha256": "1a4f31dba3cd1ccb9b2fef7350960ce1125ef14974d392d19ba5e39a796a017d",
+      "reviewed_worktree_sha256": "1a4f31dba3cd1ccb9b2fef7350960ce1125ef14974d392d19ba5e39a796a017d",
+      "unchanged_from_baseline": true,
+      "current_is_committed": true,
+      "source_commit": "170ab05251e79db77e0b97692f30d17843a3ca78"
+    },
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-gui/ui/session_dialog.slint",
+      "base_commit": "1eace8c6ef5a1ed6a2367ad48bdbed28800f6484",
+      "baseline_sha256": "e0e95b66f749c57ecae8b74597345704e9e9a793304c2fa1807327673d011518",
+      "reviewed_worktree_sha256": "e0e95b66f749c57ecae8b74597345704e9e9a793304c2fa1807327673d011518",
+      "unchanged_from_baseline": true,
+      "current_is_committed": true,
+      "source_commit": "170ab05251e79db77e0b97692f30d17843a3ca78"
+    },
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-gui-model/tests/model/hash_predicate.rs",
+      "base_commit": "1eace8c6ef5a1ed6a2367ad48bdbed28800f6484",
+      "baseline_sha256": "7db76afc61f43099da05a648cab24064766db640d2204da0656ac891284b8e07",
+      "reviewed_worktree_sha256": "7db76afc61f43099da05a648cab24064766db640d2204da0656ac891284b8e07",
+      "unchanged_from_baseline": true,
+      "current_is_committed": true,
+      "source_commit": "170ab05251e79db77e0b97692f30d17843a3ca78"
+    },
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-gui-model/tests/model/filesize_predicate.rs",
+      "base_commit": "1eace8c6ef5a1ed6a2367ad48bdbed28800f6484",
+      "baseline_sha256": "948619cb65e7aa50326e1e1ce16ceaab1be789a2d80167331104114626c47a72",
+      "reviewed_worktree_sha256": "948619cb65e7aa50326e1e1ce16ceaab1be789a2d80167331104114626c47a72",
+      "unchanged_from_baseline": true,
+      "current_is_committed": true,
+      "source_commit": "170ab05251e79db77e0b97692f30d17843a3ca78"
+    },
+    {
+      "path": "/workspace/hydrus-mine/oracle/fixtures/filesize_predicate.json",
+      "base_commit": "1eace8c6ef5a1ed6a2367ad48bdbed28800f6484",
+      "baseline_sha256": "7c2102976f16a617ca331c533b50593d4353608ecbf2abe0f836e94dfb39bb25",
+      "reviewed_worktree_sha256": "7c2102976f16a617ca331c533b50593d4353608ecbf2abe0f836e94dfb39bb25",
+      "unchanged_from_baseline": true,
+      "current_is_committed": true,
+      "source_commit": "170ab05251e79db77e0b97692f30d17843a3ca78"
+    },
+    {
+      "path": "/workspace/hydrus-mine/hydrus/client/gui/search/ClientGUISearch.py",
+      "base_commit": "1eace8c6ef5a1ed6a2367ad48bdbed28800f6484",
+      "baseline_sha256": "3b415e0d9d3b5766d88ccaca8ad34bc392c6fd5aa02b7d53357a815fffec17ec",
+      "reviewed_worktree_sha256": "3b415e0d9d3b5766d88ccaca8ad34bc392c6fd5aa02b7d53357a815fffec17ec",
+      "unchanged_from_baseline": true,
+      "current_is_committed": true,
+      "source_commit": "170ab05251e79db77e0b97692f30d17843a3ca78"
+    },
+    {
+      "path": "/workspace/hydrus-mine/hydrus/client/gui/search/ClientGUIPredicatesSingle.py",
+      "base_commit": "1eace8c6ef5a1ed6a2367ad48bdbed28800f6484",
+      "baseline_sha256": "20e1a11417eb68f39ca7554172f89f1cf6ab15d47f9a9541403a280b3a87d42d",
+      "reviewed_worktree_sha256": "20e1a11417eb68f39ca7554172f89f1cf6ab15d47f9a9541403a280b3a87d42d",
+      "unchanged_from_baseline": true,
+      "current_is_committed": true,
+      "source_commit": "170ab05251e79db77e0b97692f30d17843a3ca78"
+    },
+    {
+      "path": "/workspace/hydrus-mine/hydrus/client/gui/ClientGUITopLevelWindows.py",
+      "base_commit": "1eace8c6ef5a1ed6a2367ad48bdbed28800f6484",
+      "baseline_sha256": "0a2d57fea294cfb8cd40472f6750a568052a88a1c2070ff804df7708f51deeb1",
+      "reviewed_worktree_sha256": "0a2d57fea294cfb8cd40472f6750a568052a88a1c2070ff804df7708f51deeb1",
+      "unchanged_from_baseline": true,
+      "current_is_committed": true,
+      "source_commit": "170ab05251e79db77e0b97692f30d17843a3ca78"
+    },
+    {
+      "path": "/workspace/hydrus-mine/hydrus/client/gui/QtPorting.py",
+      "base_commit": "1eace8c6ef5a1ed6a2367ad48bdbed28800f6484",
+      "baseline_sha256": "53839f3750a9f2799032701080a7a0cdd4e7b8dc98852754ec9ee32c10b08293",
+      "reviewed_worktree_sha256": "53839f3750a9f2799032701080a7a0cdd4e7b8dc98852754ec9ee32c10b08293",
+      "unchanged_from_baseline": true,
+      "current_is_committed": true,
+      "source_commit": "170ab05251e79db77e0b97692f30d17843a3ca78"
+    },
+    {
+      "path": "/workspace/hydrus-mine/hydrus/client/gui/ClientGUIDialogsMessage.py",
+      "base_commit": "1eace8c6ef5a1ed6a2367ad48bdbed28800f6484",
+      "baseline_sha256": "ac254942b26eb8103f3a427563ed39a5f1317213d3382ee50b2ff96d53aa8123",
+      "reviewed_worktree_sha256": "ac254942b26eb8103f3a427563ed39a5f1317213d3382ee50b2ff96d53aa8123",
+      "unchanged_from_baseline": true,
+      "current_is_committed": true,
+      "source_commit": "170ab05251e79db77e0b97692f30d17843a3ca78"
+    },
+    {
+      "path": "/workspace/hydrus-mine/oracle/fixtures/filesize-predicate-qt.png",
+      "base_commit": "1eace8c6ef5a1ed6a2367ad48bdbed28800f6484",
+      "baseline_sha256": "e8f4ba0ad1e8c20c5a37b191b3e22babefd06230cbc13dde5c383b3cda08c58d",
+      "reviewed_worktree_sha256": "e8f4ba0ad1e8c20c5a37b191b3e22babefd06230cbc13dde5c383b3cda08c58d",
+      "unchanged_from_baseline": true,
+      "current_is_committed": true,
+      "source_commit": "170ab05251e79db77e0b97692f30d17843a3ca78"
+    },
+    {
+      "path": "/workspace/hydrus-mine/oracle/fixtures/hash-predicate-qt.png",
+      "base_commit": "1eace8c6ef5a1ed6a2367ad48bdbed28800f6484",
+      "baseline_sha256": "bc64cee3cdbf82b6080158ecf6e34a21b259a47e25952e1fafb46a35a389fce8",
+      "reviewed_worktree_sha256": "bc64cee3cdbf82b6080158ecf6e34a21b259a47e25952e1fafb46a35a389fce8",
+      "unchanged_from_baseline": true,
+      "current_is_committed": true,
+      "source_commit": "170ab05251e79db77e0b97692f30d17843a3ca78"
+    },
+    {
+      "path": "/workspace/hydrus-mine/oracle/fixtures/hash-predicate-warning-qt.png",
+      "base_commit": "1eace8c6ef5a1ed6a2367ad48bdbed28800f6484",
+      "baseline_sha256": "879881832707d5a9c4bec763913ade416e5781f9c3f686daa46dc828449137ab",
+      "reviewed_worktree_sha256": "879881832707d5a9c4bec763913ade416e5781f9c3f686daa46dc828449137ab",
+      "unchanged_from_baseline": true,
+      "current_is_committed": true,
+      "source_commit": "170ab05251e79db77e0b97692f30d17843a3ca78"
+    }
+  ],
+  "reviewed_combined_diff_sha256": "14294874ea4652334bb94dc93541281ff4121569376e03f2a91f199725607f5d",
+  "assertion_preservation": [
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-gui/tests/gui/active_predicates.rs",
+      "baseline_assertion_macro_count": 107,
+      "current_assertion_macro_count": 125,
+      "all_original_assertion_lines_preserved": true,
+      "removed_original_lines": [
+        "    // Automatic child closure on parent destruction needs separate coverage."
+      ],
+      "baseline_sha256": "cf465bd9fb0ae9f87a0b7be8ddab7fe39f0152217d3092b49539518caaa9cc53",
+      "reviewed_worktree_sha256": "4375011be4878c60d38e79787385e47f59ca371f5c603ce6596d996337fb0cc2"
+    },
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-gui/tests/gui/filesize_predicate.rs",
+      "baseline_assertion_macro_count": 33,
+      "current_assertion_macro_count": 71,
+      "all_original_assertion_lines_preserved": true,
+      "removed_original_lines": [],
+      "baseline_sha256": "5e7f0bcce9717e6c16f52c55df82122a6efb4cc1cc7bcbeaabc1572ab78fa502",
+      "reviewed_worktree_sha256": "daf7801120b9697eac6272fbe742216ede73ac609c1395af42fd93e694946fda"
+    },
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-gui/tests/gui/hash_predicate.rs",
+      "baseline_assertion_macro_count": 52,
+      "current_assertion_macro_count": 83,
+      "all_original_assertion_lines_preserved": true,
+      "removed_original_lines": [],
+      "baseline_sha256": "f75257a31a860b1852d923a29ccb6f4d92cb9ba169d14f529ac171594c6f2477",
+      "reviewed_worktree_sha256": "a8eb85734e522cbf8c7ff88d4e32549574a719391f39d824922afc9a32142825"
+    }
+  ],
+  "original_assertion_total": 192,
+  "current_assertion_total": 279,
+  "new_test_declarations": [
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-gui/tests/gui/active_predicates.rs",
+      "line": 1140,
+      "declaration": "fn destroyed_main_automatically_closes_existing_size_before_retained_handles_release() {",
+      "line_sha256": "4cf9992b1f316d65b8f5125183fa8045152b2425537512c041cfe9774e354895",
+      "execution_claimed": false
+    },
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-gui/tests/gui/filesize_predicate.rs",
+      "line": 305,
+      "declaration": "fn destroyed_main_automatically_closes_new_size_while_bound_child_and_collector_survive() {",
+      "line_sha256": "ffbd8546e798d791216eb558a3ab1b73b9454005d0c23ef0f5d1e0164f5f8463",
+      "execution_claimed": false
+    },
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-gui/tests/gui/filesize_predicate.rs",
+      "line": 372,
+      "declaration": "fn only_final_bound_drop_retires_size_and_old_timers_cannot_retire_a_live_successor() {",
+      "line_sha256": "043b3e5fbb840d589246fffcf4a1f9eab5199105f4440d907095dc0d77de5f7e",
+      "execution_claimed": false
+    },
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-gui/tests/gui/hash_predicate.rs",
+      "line": 379,
+      "declaration": "fn main_death_and_final_bound_drop_automatically_close_recorded_cleanup_warning() {",
+      "line_sha256": "e726b38f643bc2a731981be7b563683e944c6bb711565a0390b4c67f8fe026ca",
+      "execution_claimed": false
+    }
+  ],
+  "reference_extension": {
+    "path": "/workspace/hydrus-mine/oracle/fixtures/hash_predicate.json",
+    "sha256": "ea4363fff431e29739fd4ca1e9a12062e2c155ea3ea95e28249e40f0eefc7154",
+    "all10_original_top_keys_value_identical": true,
+    "added_top_keys": [
+      "parent_destruction"
+    ],
+    "successful_nonmodal_kinds": [
+      "filesize",
+      "hash"
+    ],
+    "qt_callback_errors": [],
+    "scope": "Standalone QWidget.window() owner; shown nonmodal actual DialogEdit/FleshOutPredicatePanel; no Main destruction, nested warning destruction or production search publication.",
+    "root_adapted_recorder_log": "/workspace/validation-reviews/predicate3/reference/root-recorder.log",
+    "root_supplied_run": "Root reports actual adapted recorder successful01:57UTC; observed log ends clean shutdown and wrote hash_predicate.json. Reviewer did not execute recorder.",
+    "recorder_current_sha256": "f48f77e9b6fff5a44fec35ebb9908fd552b9e49fbe09e98c0fd240d8aaa5edfa",
+    "failed_nested_attempt_is_not_successful_proof": true
+  },
+  "reference_images_actually_viewed": [
+    {
+      "path": "/workspace/hydrus-mine/oracle/fixtures/filesize-predicate-qt.png",
+      "sha256": "e8f4ba0ad1e8c20c5a37b191b3e22babefd06230cbc13dde5c383b3cda08c58d",
+      "actually_viewed": true,
+      "role": "Existing reference controls/cleanup-warning context, not new native/runtime approval."
+    },
+    {
+      "path": "/workspace/hydrus-mine/oracle/fixtures/hash-predicate-qt.png",
+      "sha256": "bc64cee3cdbf82b6080158ecf6e34a21b259a47e25952e1fafb46a35a389fce8",
+      "actually_viewed": true,
+      "role": "Existing reference controls/cleanup-warning context, not new native/runtime approval."
+    },
+    {
+      "path": "/workspace/hydrus-mine/oracle/fixtures/hash-predicate-warning-qt.png",
+      "sha256": "879881832707d5a9c4bec763913ade416e5781f9c3f686daa46dc828449137ab",
+      "actually_viewed": true,
+      "role": "Existing reference controls/cleanup-warning context, not new native/runtime approval."
+    }
+  ],
+  "scope_caveats": [
+    "Only filesize-size and hash-hashes/hash-clean three concrete leaves. Generic active-predicate Edit, global radio-Enter preference, sign sibling/family, shared aliases and Options/predicate parents receive no completion credit.",
+    "Qt successful destruction recording covers shown nonmodal real DialogEdit/FleshOutPredicatePanel under independent standalone QWidget.window() owners; all retained wrappers become invalid after owner deleteLater/DeferredDelete drain. It does not show client Main destruction, active DialogEdit exec() teardown or search publication.",
+    "The historical nested static-warning deletion attempt aborted exit134/double-free; its cause is unestablished. It is neither expected behavior nor a successful destruction/parity proof. No further nested Qt experiments are required. Native cleanup-notice automatic closure is a separately scoped safety regression supported by successful editor ownership and original warning transport.",
+    "Native retirement hides child and permanently refuses callbacks while intentionally retained Slint components/adapters remain alive; this is not Qt invalid-wrapper/object-deallocation parity. Main is hidden only to release shown-platform retention before drop; child/notice are not manually hidden before automatic proof.",
+    "Owner checks poll50ms and require real event-loop pumping; they ignore temporary hide/question states. No arbitrary shared-editor owner family is newly completed.",
+    "Filesize TB typed/query support exists while Qt ToString cannot render TB; native paints TB. Existing free-text TB parser limitation remains. Saved native custom-default reopening differs from model-supplied Qt reconstruction.",
+    "Hash typed FileHashes use deterministic set order where Qt tuples can retain order; algorithm/sign/query membership and first valid occurrence raw cleanup order remain. Forced cleanup You sure? is inline; warnings use owned native notice without Qt icon.",
+    "Existing reference/control captures and source/test review do not validate future native frames, OS chrome/modality/focus, bitmap clipboard parity or broader runtime. Full exact committed-source strict Linux CI and actual fresh defining renders are mandatory; Windows/macOS deferred."
+  ],
+  "required_final_gates": [
+    "Exact170ab05251e79db77e0b97692f30d17843a3ca78 reviewed source/test/recorder bytes committed; bind new full Linux run, root owns builds.",
+    "Full strict warnings/fmt/Clippy/workspace tests/parity/ratchet green; all four new lifetime tests and old query/cleanup/defaults/radio/active-predicate regressions pass.",
+    "Actually inspect exact artifact files: filesize-predicate-native.png,hash-predicate-native.png,hash-predicate-warning-native.png and new hash-predicate-cleanup-warning-native.png; distinguish invalid OK vs four-section cleanup warning.",
+    "No three leaf completion until actual source/run/artifact/hash qualification, reference/current limitations and independent final image review."
+  ],
+  "builds_tests_or_recorder_execution_by_reviewer": false,
+  "repository_or_canonical_edits": false,
+  "provenance": [
+    {
+      "path": "/workspace/validation-reviews/predicate3/reference/README.md",
+      "sha256": "4b44e41be90ac3f5c6f3f219e9a598e2c1e014b95e83397d7bab84f1fc968fca"
+    },
+    {
+      "path": "/workspace/validation-reviews/predicate3/reference/root-recorder.log",
+      "sha256": "8ef1c81e27650509de5598fd030e9bd8075b1f1b2e1ea013a1abf610ba6603c0"
+    },
+    {
+      "path": "/workspace/validation-reviews/predicate3/preparation/selection-baseline-1eace8c6e.json",
+      "sha256": "19322270a3f17555186242d8c8874b418d93e397cc0fabcc48c88b4307c04258"
+    }
+  ]
+}
