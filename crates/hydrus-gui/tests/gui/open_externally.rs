@@ -1726,3 +1726,579 @@ fn move_saved_image_queue(
     reopened.invoke_cancel();
     assert_eq!(&routing_saved(store), expected);
 }
+
+fn select_mapping(parent: &OptionsWindow, mime: Mime) {
+    let index = parent
+        .get_routing_file_rows()
+        .iter()
+        .position(|row| row.cells.row_data(0).unwrap().as_str() == mime.human_name())
+        .unwrap();
+    parent.invoke_routing_file_clicked(i32::try_from(index).unwrap(), false, false);
+    assert_eq!(
+        parent
+            .get_routing_file_rows()
+            .iter()
+            .filter(|row| row.selected)
+            .map(|row| row.cells.row_data(0).unwrap().to_string())
+            .collect::<Vec<_>>(),
+        vec![mime.human_name()]
+    );
+}
+fn assert_mime_chooser(
+    child: &hydrus_gui::ExternalRoutingChoiceWindow,
+    fixture: &Value,
+    recorded: usize,
+) {
+    let reference = &fixture["chooser"][recorded];
+    assert_eq!(
+        child.get_window_title(),
+        reference["title"].as_str().unwrap()
+    );
+    assert_eq!(reference["kwargs"]["sort_tuples"], false);
+    assert_eq!(
+        choice_labels(child),
+        reference["choices"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|item| item["label"].as_str().unwrap().to_owned())
+            .collect::<Vec<_>>()
+    );
+    assert!(child.get_choice_description().is_empty());
+    assert!(child.window().is_visible());
+}
+fn mapping_refs(fixture: &Value, event: usize, before: &Routing) -> Routing {
+    let mut expected = before.clone();
+    expected.files = fixture["events"][event]["rows"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|row| {
+            let mime =
+                Mime::from_code(u8::try_from(row["mime"].as_u64().unwrap()).unwrap()).unwrap();
+            let refs = row["calls"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .map(|value| {
+                    let hex = value["key"].as_str().unwrap();
+                    assert_eq!(hex.len(), 64);
+                    CallRef {
+                        key: std::array::from_fn(|index| {
+                            u8::from_str_radix(&hex[index * 2..index * 2 + 2], 16).unwrap()
+                        }),
+                        name: value["name"].as_str().unwrap().to_owned(),
+                    }
+                })
+                .collect();
+            (mime, refs)
+        })
+        .collect();
+    expected
+}
+fn stage_mapping(parent: &OptionsWindow, bound: &Bound, mime: Mime, names: &[&str]) {
+    parent.invoke_routing_file_action("add".into());
+    choose(bound, mime.mimetype());
+    for name in names {
+        add_nested(bound, name);
+    }
+    files(bound).invoke_apply();
+    assert!(bound.options_open_externally.files.borrow().is_none());
+}
+// Outer MIME choices and captured-MIME questions use the same shared slots as
+// nested queues, but need their own pending-owner and positive-successor proof.
+fn pending_mime_mapping_retirement(ui: &MainWindow, bound: &Bound, store: &Store) {
+    use slint::platform::WindowEvent;
+    let persisted = routing_saved(store);
+    for action in ["add", "delete"] {
+        let old = open(ui, bound);
+        if action == "delete" {
+            stage_mapping(&old, bound, Mime::ImagePng, &["File one 日本"]);
+            select_mapping(&old, Mime::ImagePng);
+        }
+        old.invoke_routing_file_action(action.into());
+        let retired_choice = bound
+            .options_open_externally
+            .choice
+            .borrow()
+            .as_ref()
+            .map(slint::ComponentHandle::clone_strong);
+        let retired_question = bound
+            .options_open_externally
+            .question
+            .borrow()
+            .as_ref()
+            .map(slint::ComponentHandle::clone_strong);
+        assert_eq!(retired_choice.is_some(), action == "add");
+        assert_eq!(retired_question.is_some(), action == "delete");
+        assert!(old.get_routing_child_open());
+        if let Some(child) = &retired_choice {
+            assert!(child.window().is_visible());
+        }
+        if let Some(child) = &retired_question {
+            assert!(child.window().is_visible());
+        }
+        old.invoke_cancel();
+        assert!(!old.window().is_visible());
+        if let Some(child) = &retired_choice {
+            assert!(!child.window().is_visible());
+        }
+        if let Some(child) = &retired_question {
+            assert!(!child.window().is_visible());
+        }
+        assert!(!bound.options_open_externally.has_open());
+        assert_eq!(routing_saved(store), persisted);
+
+        let current = open(ui, bound);
+        if action == "delete" {
+            // A different captured MIME prevents an old PNG answer from being
+            // mistaken for the current successor's GIF deletion.
+            stage_mapping(&current, bound, Mime::ImageGif, &["File two"]);
+            select_mapping(&current, Mime::ImageGif);
+        }
+        current.invoke_routing_file_action(action.into());
+        let current_choice = bound
+            .options_open_externally
+            .choice
+            .borrow()
+            .as_ref()
+            .map(slint::ComponentHandle::clone_strong);
+        let current_question = bound
+            .options_open_externally
+            .question
+            .borrow()
+            .as_ref()
+            .map(slint::ComponentHandle::clone_strong);
+        assert_eq!(current_choice.is_some(), action == "add");
+        assert_eq!(current_question.is_some(), action == "delete");
+        assert!(bound.options_open_externally.files.borrow().is_none());
+        let draft = routing_draft(&current);
+        let labels = current_choice.as_ref().map(choice_labels);
+        if let Some(child) = &current_choice {
+            child.hide().unwrap();
+            child.invoke_chosen(0);
+            assert_eq!(routing_draft(&current), draft);
+            assert!(std::ptr::eq(choice(bound).window(), child.window()));
+            child.show().unwrap();
+            current.hide().unwrap();
+            child.invoke_chosen(0);
+            assert_eq!(routing_draft(&current), draft);
+            current.show().unwrap();
+        }
+        if let Some(child) = &current_question {
+            assert_eq!(child.get_message(), "Remove all selected?");
+            child.hide().unwrap();
+            child.invoke_answered(true);
+            assert_eq!(routing_draft(&current), draft);
+            assert!(std::ptr::eq(file_question(bound).window(), child.window()));
+            child.show().unwrap();
+            current.hide().unwrap();
+            child.invoke_answered(true);
+            assert_eq!(routing_draft(&current), draft);
+            current.show().unwrap();
+        }
+        current.invoke_apply();
+        assert_eq!(routing_draft(&current), draft);
+        for attempt in 0..4 {
+            match attempt {
+                0 => {
+                    if let Some(child) = &retired_choice {
+                        child.invoke_chosen(0);
+                    }
+                    if let Some(child) = &retired_question {
+                        child.invoke_answered(true);
+                    }
+                }
+                1 => {
+                    if let Some(child) = &retired_choice {
+                        child.invoke_cancel();
+                    }
+                    if let Some(child) = &retired_question {
+                        child.invoke_answered(false);
+                        child.invoke_cancelled();
+                        child.invoke_force_close();
+                    }
+                }
+                2 => {
+                    old.invoke_routing_file_clicked(0, false, false);
+                    old.invoke_routing_file_activated(0);
+                    for action in ["add", "edit", "delete"] {
+                        old.invoke_routing_file_action(action.into());
+                    }
+                    old.invoke_apply();
+                    old.invoke_cancel();
+                }
+                _ => {
+                    old.window().dispatch_event(WindowEvent::CloseRequested);
+                    if let Some(child) = &retired_choice {
+                        child.window().dispatch_event(WindowEvent::CloseRequested);
+                    }
+                    if let Some(child) = &retired_question {
+                        child.window().dispatch_event(WindowEvent::CloseRequested);
+                    }
+                }
+            }
+            assert_eq!(routing_saved(store), persisted);
+            assert_eq!(routing_draft(&current), draft);
+            assert!(current.window().is_visible());
+            assert!(std::ptr::eq(
+                bound.options.borrow().as_ref().unwrap().window(),
+                current.window()
+            ));
+            assert!(bound.options_open_externally.files.borrow().is_none());
+            if let Some(child) = &current_choice {
+                assert!(bound.options_open_externally.question.borrow().is_none());
+                assert!(child.window().is_visible());
+                assert!(std::ptr::eq(choice(bound).window(), child.window()));
+                assert_eq!(Some(choice_labels(child)), labels);
+                assert_eq!(child.get_window_title(), "which filetype?");
+                assert!(child.get_choice_description().is_empty());
+            }
+            if let Some(child) = &current_question {
+                assert!(bound.options_open_externally.choice.borrow().is_none());
+                assert!(child.window().is_visible());
+                assert!(std::ptr::eq(file_question(bound).window(), child.window()));
+                assert_eq!(child.get_message(), "Remove all selected?");
+                assert_eq!(child.get_window_title(), "Question");
+                assert!(!child.get_notice_only());
+            }
+        }
+        if let Some(child) = &current_choice {
+            choose(bound, "image/jpeg");
+            assert!(!child.window().is_visible());
+            let queue = files(bound);
+            assert_eq!(queue.get_window_title(), "edit calls");
+            assert!(nested_names(&queue).is_empty());
+            add_nested(bound, "File two");
+            queue.invoke_apply();
+            assert_eq!(
+                file_rows(&current),
+                json!([
+                    ["all files", "Default OS File Launch"],
+                    ["jpeg", "File two"]
+                ])
+            );
+        } else {
+            let child = current_question.as_ref().unwrap();
+            child.invoke_answered(true);
+            assert!(!child.window().is_visible());
+            assert_eq!(
+                file_rows(&current),
+                json!([["all files", "Default OS File Launch"]])
+            );
+            assert!(!current.get_routing_file_single() && !current.get_routing_file_delete());
+        }
+        assert!(!bound.options_open_externally.has_open());
+        assert!(!current.get_routing_child_open());
+        assert_eq!(
+            routing_saved(store),
+            persisted,
+            "current answers remain staged"
+        );
+        current.invoke_cancel();
+        assert_eq!(routing_saved(store), persisted);
+    }
+}
+
+#[test]
+fn outer_mime_mapping_reference_replay_saved_keys_delete_and_retired_children() {
+    let fixture = hydrus_testkit::fixture_json("open_externally.json");
+    let windows = headless::init();
+    let (_dirs, store) = super::subscriptions::store();
+    let manager = seed(&store);
+    let persisted = routing_saved(&store);
+    let ui = MainWindow::new().unwrap();
+    ui.show().unwrap();
+    let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+    pending_mime_mapping_retirement(&ui, &bound, &store);
+    let parent = open(&ui, &bound);
+    let parent_native = windows.get(windows.count() - 1).unwrap();
+    let initial = routing_draft(&parent);
+    parent.invoke_routing_file_action("add".into());
+    let cancelled = choice(&bound);
+    assert_mime_chooser(&cancelled, &fixture, 4);
+    let mime_native = windows.get(windows.count() - 1).unwrap();
+    routing_capture(
+        &mime_native,
+        cancelled.window(),
+        "mime-add-chooser.png",
+        (520, 440),
+    );
+    cancelled.invoke_cancel();
+    assert_eq!(routing_draft(&parent), initial);
+    assert_eq!(routing_saved(&store), persisted);
+    for accepted in [false, true] {
+        parent.invoke_routing_file_action("add".into());
+        assert_mime_chooser(&choice(&bound), &fixture, if accepted { 6 } else { 4 });
+        choose(&bound, "image/png");
+        let child = files(&bound);
+        let child_native = windows.get(windows.count() - 1).unwrap();
+        assert_eq!(
+            child.get_window_title(),
+            fixture["nested"][usize::from(accepted)]["title"]
+                .as_str()
+                .unwrap()
+        );
+        assert!(nested_names(&child).is_empty());
+        assert!(!child.get_selected() && !child.get_child_open());
+        if !accepted {
+            routing_capture(
+                &child_native,
+                child.window(),
+                "mime-add-blank-calls.png",
+                (580, 340),
+            );
+        }
+        add_nested(&bound, "File one 日本");
+        if accepted {
+            add_nested(&bound, "File two");
+            child.invoke_clicked(0, false, false);
+            child.invoke_action("down".into());
+        }
+        assert_eq!(
+            nested_names(&child),
+            fixture["nested"][usize::from(accepted)]["before"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .map(|value| value["name"].as_str().unwrap().to_owned())
+                .collect::<Vec<_>>()
+        );
+        if accepted {
+            child.invoke_apply();
+        } else {
+            child.invoke_cancel();
+        }
+        assert_eq!(
+            file_rows(&parent),
+            expected_files(&fixture, if accepted { 9 } else { 8 })
+        );
+        assert_eq!(routing_saved(&store), persisted);
+    }
+    assert_eq!(
+        parent
+            .get_routing_file_rows()
+            .iter()
+            .filter(|row| row.selected)
+            .map(|row| row.cells.row_data(0).unwrap().to_string())
+            .collect::<Vec<_>>(),
+        vec!["png"],
+        "Add selects the sorted MIME identity"
+    );
+    for accepted in [false, true] {
+        select_mapping(&parent, Mime::ImagePng);
+        parent.invoke_routing_file_action("edit".into());
+        let child = files(&bound);
+        let child_native = windows.get(windows.count() - 1).unwrap();
+        assert_eq!(
+            child.get_window_title(),
+            fixture["nested"][2 + usize::from(accepted)]["title"]
+                .as_str()
+                .unwrap()
+        );
+        assert_eq!(
+            nested_names(&child),
+            mapping_refs(&fixture, 9, &persisted.0).files[&Mime::ImagePng]
+                .iter()
+                .map(|value| value.name.clone())
+                .collect::<Vec<_>>()
+        );
+        if !accepted {
+            routing_capture(
+                &child_native,
+                child.window(),
+                "mime-edit-existing-calls.png",
+                (580, 340),
+            );
+        }
+        add_nested(&bound, "Default OS File Launch");
+        child.invoke_clicked(0, false, false);
+        child.invoke_action("down".into());
+        assert_eq!(
+            nested_names(&child),
+            fixture["nested"][2 + usize::from(accepted)]["before"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .map(|value| value["name"].as_str().unwrap().to_owned())
+                .collect::<Vec<_>>()
+        );
+        parent.invoke_apply();
+        assert!(std::ptr::eq(
+            bound.options.borrow().as_ref().unwrap().window(),
+            parent.window()
+        ));
+        if accepted {
+            child.invoke_apply();
+        } else {
+            child.invoke_cancel();
+        }
+        assert_eq!(
+            file_rows(&parent),
+            expected_files(&fixture, if accepted { 11 } else { 10 })
+        );
+        assert_eq!(routing_saved(&store), persisted);
+    }
+    select_mapping(&parent, Mime::GeneralFile);
+    assert_eq!(fixture["events"][12]["can_delete"], false);
+    assert!(!parent.get_routing_file_delete());
+    parent.invoke_routing_file_action("delete".into());
+    assert!(bound.options_open_externally.question.borrow().is_none());
+    assert_eq!(file_rows(&parent), expected_files(&fixture, 12));
+    let png = parent
+        .get_routing_file_rows()
+        .iter()
+        .position(|row| row.cells.row_data(0).unwrap() == "png")
+        .unwrap();
+    parent.invoke_routing_file_clicked(i32::try_from(png).unwrap(), true, false);
+    assert_eq!(fixture["multi_general_protected"], true);
+    assert!(!parent.get_routing_file_delete() && !parent.get_routing_file_single());
+    parent.invoke_routing_file_action("delete".into());
+    assert!(bound.options_open_externally.question.borrow().is_none());
+    assert_eq!(file_rows(&parent), expected_files(&fixture, 12));
+    select_mapping(&parent, Mime::ImagePng);
+    let selected = routing_draft(&parent);
+    parent.invoke_routing_file_action("delete".into());
+    let removal = file_question(&bound);
+    assert_eq!(removal.get_window_title(), "Question");
+    assert_eq!(
+        removal.get_message(),
+        fixture["notices"][2].as_str().unwrap()
+    );
+    assert!(!removal.get_notice_only());
+    let removal_native = windows.get(windows.count() - 1).unwrap();
+    routing_capture(
+        &removal_native,
+        removal.window(),
+        "mime-delete-question.png",
+        (520, 200),
+    );
+    removal.invoke_answered(false);
+    assert_eq!(
+        routing_draft(&parent),
+        selected,
+        "No preserves complete rows and selection"
+    );
+    assert_eq!(routing_saved(&store), persisted);
+    parent.invoke_routing_file_action("delete".into());
+    file_question(&bound).invoke_answered(true);
+    assert_eq!(file_rows(&parent), expected_files(&fixture, 13));
+    assert!(!parent.get_routing_file_single() && !parent.get_routing_file_delete());
+    assert_eq!(
+        routing_saved(&store),
+        persisted,
+        "outer deletion remains staged"
+    );
+    routing_capture(
+        &parent_native,
+        parent.window(),
+        "mime-delete-staged.png",
+        (960, 800),
+    );
+    parent.invoke_cancel();
+    assert_eq!(routing_saved(&store), persisted);
+
+    // Persist the actual Add route first, then reopen and persist an actual
+    // Edit. The full saved opaque keys must come from each accepted child,
+    // rather than rebuilding the final Edit vector through a second Add.
+    let parent = open(&ui, &bound);
+    let child = new_png_queue(&parent, &bound);
+    add_nested(&bound, "File one 日本");
+    add_nested(&bound, "File two");
+    child.invoke_clicked(0, false, false);
+    child.invoke_action("down".into());
+    child.invoke_apply();
+    assert_eq!(file_rows(&parent), expected_files(&fixture, 9));
+    assert_eq!(routing_saved(&store), persisted);
+    parent.invoke_apply();
+    let added = (mapping_refs(&fixture, 9, &persisted.0), manager.clone());
+    assert_eq!(
+        routing_saved(&store),
+        added,
+        "Add saves the complete recorded stable CallRefs"
+    );
+    let parent = open(&ui, &bound);
+    assert_eq!(file_rows(&parent), expected_files(&fixture, 9));
+    select_mapping(&parent, Mime::ImagePng);
+    parent.invoke_routing_file_action("edit".into());
+    let child = files(&bound);
+    assert_eq!(child.get_window_title(), "edit launch path");
+    assert_eq!(
+        nested_names(&child),
+        added.0.files[&Mime::ImagePng]
+            .iter()
+            .map(|value| value.name.clone())
+            .collect::<Vec<_>>()
+    );
+    add_nested(&bound, "Default OS File Launch");
+    child.invoke_clicked(0, false, false);
+    child.invoke_action("down".into());
+    child.invoke_apply();
+    assert_eq!(file_rows(&parent), expected_files(&fixture, 11));
+    assert_eq!(
+        routing_saved(&store),
+        added,
+        "Edit remains staged until Options Apply"
+    );
+    parent.invoke_apply();
+    let expected = (mapping_refs(&fixture, 11, &persisted.0), manager.clone());
+    assert_eq!(
+        routing_saved(&store),
+        expected,
+        "actual full stable CallRefs and Manager are persisted"
+    );
+    let reopened = open(&ui, &bound);
+    let reopened_native = windows.get(windows.count() - 1).unwrap();
+    assert_eq!(file_rows(&reopened), expected_files(&fixture, 11));
+    select_mapping(&reopened, Mime::ImagePng);
+    routing_capture(
+        &reopened_native,
+        reopened.window(),
+        "mime-mapping-reopened.png",
+        (960, 800),
+    );
+    let before_choice = routing_draft(&reopened);
+    reopened.invoke_routing_file_action("add".into());
+    let remaining = choice(&bound);
+    // Unlike recorded chooser4/6 (both precede PNG insertion), used-PNG
+    // exclusion here is grounded in Qt _AddMimeLaunch's source filtering.
+    assert_eq!(
+        choice_labels(&remaining),
+        fixture["mime_choices"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .filter(|value| value["mime"] != Mime::ImagePng.code())
+            .map(|value| value["label"].as_str().unwrap().to_owned())
+            .collect::<Vec<_>>()
+    );
+    remaining.invoke_cancel();
+    assert_eq!(routing_draft(&reopened), before_choice);
+    reopened.invoke_routing_file_action("edit".into());
+    let child = files(&bound);
+    assert_eq!(
+        nested_names(&child),
+        expected.0.files[&Mime::ImagePng]
+            .iter()
+            .map(|value| value.name.clone())
+            .collect::<Vec<_>>()
+    );
+    child.invoke_cancel();
+    assert_eq!(routing_saved(&store), expected);
+    reopened.invoke_routing_file_action("delete".into());
+    let removal = file_question(&bound);
+    assert_eq!(
+        removal.get_message(),
+        fixture["notices"][2].as_str().unwrap()
+    );
+    removal.invoke_answered(true);
+    assert_eq!(file_rows(&reopened), expected_files(&fixture, 13));
+    assert_eq!(routing_saved(&store), expected);
+    reopened.invoke_apply();
+    let deleted = (mapping_refs(&fixture, 13, &persisted.0), manager);
+    assert_eq!(routing_saved(&store), deleted);
+    let restored = open(&ui, &bound);
+    assert_eq!(file_rows(&restored), expected_files(&fixture, 13));
+    restored.invoke_cancel();
+    assert_eq!(routing_saved(&store), deleted);
+}
