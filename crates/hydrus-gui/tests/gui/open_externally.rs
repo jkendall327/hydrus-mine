@@ -1141,6 +1141,30 @@ fn saved_registered_vectors_feed_actual_main_live_viewer_and_url_pipeline() {
         jpeg.hash.to_hex(),
         jpeg.hash_id.0
     );
+    // Change the default through the UI, rather than merely consuming a
+    // directly seeded first call. File two is an OS launch; File one is the
+    // owned process below, so the observed routes cannot be confused.
+    let original_order = routing_saved(&store);
+    let mut reordered = original_order.clone();
+    reordered
+        .0
+        .files
+        .get_mut(&Mime::GeneralImage)
+        .unwrap()
+        .swap(0, 1);
+    move_saved_image_queue(&ui, &bound, &store, true, 0, &reordered);
+    assert!(!captured.exists());
+    ui.invoke_open_externally();
+    assert_eq!(launched.borrow().as_slice(), std::slice::from_ref(&path));
+    assert!(
+        !captured.exists(),
+        "the changed first call takes only the OS route"
+    );
+    // Clear only after proving the complete first phase's observation. Restore
+    // the process-backed first call through Up/Apply for all original checks.
+    launched.borrow_mut().clear();
+    move_saved_image_queue(&ui, &bound, &store, false, 1, &original_order);
+    assert_eq!(routing_saved(&store), original_order);
     ui.invoke_open_externally();
     await_output(&captured, &expected);
     assert!(launched.borrow().is_empty());
@@ -1169,4 +1193,536 @@ fn saved_registered_vectors_feed_actual_main_live_viewer_and_url_pipeline() {
     assert_eq!(launched.borrow().as_slice(), [path]);
     viewer.invoke_close_requested();
     hydrus_gui::set_launcher(|_| {});
+}
+
+fn nested_rows(window: &hydrus_gui::OpenFileCallsWindow) -> Value {
+    json!(
+        window
+            .get_rows()
+            .iter()
+            .map(|row| {
+                json!({
+                    "cells": row.cells.iter().map(|cell| cell.to_string()).collect::<Vec<_>>(),
+                    "selected": row.selected,
+                })
+            })
+            .collect::<Vec<_>>()
+    )
+}
+fn nested_draft(window: &hydrus_gui::OpenFileCallsWindow) -> Value {
+    json!({
+        "rows": nested_rows(window),
+        "selected": window.get_selected(),
+        "child_open": window.get_child_open(),
+        "title": window.get_window_title().to_string(),
+    })
+}
+fn nested_names(window: &hydrus_gui::OpenFileCallsWindow) -> Vec<String> {
+    window
+        .get_rows()
+        .iter()
+        .map(|row| {
+            assert_eq!(row.cells.row_count(), 1);
+            row.cells.row_data(0).unwrap().to_string()
+        })
+        .collect()
+}
+fn recorded_nested_refs(fixture: &Value, index: usize) -> Vec<CallRef> {
+    fixture["nested_checks"][index]["values"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|value| {
+            let hex = value["key"].as_str().unwrap();
+            assert_eq!(hex.len(), 64);
+            CallRef {
+                key: std::array::from_fn(|index| {
+                    u8::from_str_radix(&hex[index * 2..index * 2 + 2], 16).unwrap()
+                }),
+                name: value["name"].as_str().unwrap().to_owned(),
+            }
+        })
+        .collect()
+}
+fn assert_nested_recording(
+    window: &hydrus_gui::OpenFileCallsWindow,
+    fixture: &Value,
+    index: usize,
+    selected: &[usize],
+) {
+    let values = recorded_nested_refs(fixture, index);
+    assert_eq!(
+        nested_names(window),
+        values
+            .iter()
+            .map(|value| value.name.clone())
+            .collect::<Vec<_>>(),
+        "complete recorded nested state {}",
+        fixture["nested_checks"][index]["action"]
+    );
+    assert_eq!(
+        window
+            .get_rows()
+            .iter()
+            .enumerate()
+            .filter_map(|(index, row)| row.selected.then_some(index))
+            .collect::<Vec<_>>(),
+        selected
+    );
+    assert_eq!(window.get_selected(), !selected.is_empty());
+    assert!(!window.get_child_open());
+    assert!(window.window().is_visible());
+}
+fn file_question(bound: &Bound) -> hydrus_gui::SessionDialog {
+    bound
+        .options_open_externally
+        .question
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong()
+}
+fn new_png_queue(parent: &OptionsWindow, bound: &Bound) -> hydrus_gui::OpenFileCallsWindow {
+    parent.invoke_routing_file_action("add".into());
+    choose(bound, "image/png");
+    let child = files(bound);
+    assert_eq!(child.get_window_title(), "edit calls");
+    child
+}
+// These cases retain actual pending grandchildren, not merely callbacks after
+// a completed answer. All old owners stay strongly held while a successor works.
+fn pending_file_queue_retirement(ui: &MainWindow, bound: &Bound, store: &Store) {
+    use slint::platform::WindowEvent;
+    let persisted = routing_saved(store);
+    for action in ["edit", "delete"] {
+        let old = open(ui, bound);
+        let retired_files = new_png_queue(&old, bound);
+        add_nested(bound, "File one 日本");
+        retired_files.invoke_clicked(0, false, false);
+        retired_files.invoke_action(action.into());
+        let retired_choice = bound
+            .options_open_externally
+            .choice
+            .borrow()
+            .as_ref()
+            .map(slint::ComponentHandle::clone_strong);
+        let retired_question = bound
+            .options_open_externally
+            .question
+            .borrow()
+            .as_ref()
+            .map(slint::ComponentHandle::clone_strong);
+        assert!(retired_files.get_child_open());
+        assert_eq!(retired_choice.is_some(), action == "edit");
+        assert_eq!(retired_question.is_some(), action == "delete");
+        old.invoke_cancel();
+        assert!(!old.window().is_visible() && !retired_files.window().is_visible());
+        if let Some(child) = &retired_choice {
+            assert!(!child.window().is_visible());
+        }
+        if let Some(child) = &retired_question {
+            assert!(!child.window().is_visible());
+        }
+        assert!(!bound.options_open_externally.has_open());
+        assert_eq!(routing_saved(store), persisted);
+
+        let current = open(ui, bound);
+        let current_files = new_png_queue(&current, bound);
+        add_nested(bound, "File one 日本");
+        add_nested(bound, "File two");
+        current_files.invoke_clicked(1, false, false);
+        current_files.invoke_action(action.into());
+        let current_choice = bound
+            .options_open_externally
+            .choice
+            .borrow()
+            .as_ref()
+            .map(slint::ComponentHandle::clone_strong);
+        let current_question = bound
+            .options_open_externally
+            .question
+            .borrow()
+            .as_ref()
+            .map(slint::ComponentHandle::clone_strong);
+        assert_eq!(current_choice.is_some(), action == "edit");
+        assert_eq!(current_question.is_some(), action == "delete");
+        let parent_draft = routing_draft(&current);
+        let child_draft = nested_draft(&current_files);
+        assert!(current_files.get_child_open());
+        if let Some(child) = &current_choice {
+            assert_eq!(choice_labels(child), vec!["Default OS File Launch"]);
+            let before_labels = choice_labels(child);
+            child.hide().unwrap();
+            child.invoke_chosen(0);
+            assert_eq!(nested_draft(&current_files), child_draft);
+            assert!(std::ptr::eq(choice(bound).window(), child.window()));
+            child.show().unwrap();
+            current_files.hide().unwrap();
+            child.invoke_chosen(0);
+            current_files.invoke_action("down".into());
+            current_files.invoke_apply();
+            assert_eq!(nested_draft(&current_files), child_draft);
+            assert_eq!(choice_labels(child), before_labels);
+            current_files.show().unwrap();
+        }
+        if let Some(child) = &current_question {
+            assert_eq!(child.get_message(), "Remove 1 selected?");
+            child.hide().unwrap();
+            child.invoke_answered(true);
+            assert_eq!(nested_draft(&current_files), child_draft);
+            assert!(std::ptr::eq(file_question(bound).window(), child.window()));
+            child.show().unwrap();
+            current_files.hide().unwrap();
+            child.invoke_answered(true);
+            current_files.invoke_action("down".into());
+            current_files.invoke_apply();
+            assert_eq!(nested_draft(&current_files), child_draft);
+            current_files.show().unwrap();
+        }
+        assert_eq!(routing_draft(&current), parent_draft);
+        current_files.invoke_apply();
+        current.invoke_apply();
+        assert_eq!(routing_draft(&current), parent_draft);
+        assert_eq!(nested_draft(&current_files), child_draft);
+        for attempt in 0..5 {
+            match attempt {
+                0 => {
+                    if let Some(child) = &retired_choice {
+                        child.invoke_chosen(0);
+                    }
+                    if let Some(child) = &retired_question {
+                        child.invoke_answered(true);
+                    }
+                }
+                1 => {
+                    if let Some(child) = &retired_choice {
+                        child.invoke_cancel();
+                    }
+                    if let Some(child) = &retired_question {
+                        child.invoke_answered(false);
+                        child.invoke_cancelled();
+                        child.invoke_force_close();
+                    }
+                }
+                2 => {
+                    retired_files.invoke_clicked(0, false, false);
+                    retired_files.invoke_activated(0);
+                    for action in ["add", "edit", "delete", "up", "down"] {
+                        retired_files.invoke_action(action.into());
+                    }
+                    retired_files.invoke_apply();
+                }
+                3 => {
+                    retired_files.invoke_cancel();
+                    retired_files
+                        .window()
+                        .dispatch_event(WindowEvent::CloseRequested);
+                    if let Some(child) = &retired_choice {
+                        child.window().dispatch_event(WindowEvent::CloseRequested);
+                    }
+                    if let Some(child) = &retired_question {
+                        child.window().dispatch_event(WindowEvent::CloseRequested);
+                    }
+                }
+                _ => {
+                    old.invoke_routing_file_action("add".into());
+                    old.invoke_apply();
+                    old.invoke_cancel();
+                }
+            }
+            assert_eq!(routing_saved(store), persisted);
+            assert_eq!(routing_draft(&current), parent_draft);
+            assert_eq!(nested_draft(&current_files), child_draft);
+            assert!(current.window().is_visible() && current_files.window().is_visible());
+            assert!(std::ptr::eq(
+                bound.options.borrow().as_ref().unwrap().window(),
+                current.window()
+            ));
+            assert!(std::ptr::eq(files(bound).window(), current_files.window()));
+            if let Some(child) = &current_choice {
+                assert!(bound.options_open_externally.question.borrow().is_none());
+                assert!(child.window().is_visible());
+                assert!(std::ptr::eq(choice(bound).window(), child.window()));
+                assert_eq!(choice_labels(child), vec!["Default OS File Launch"]);
+                assert_eq!(child.get_window_title(), "select call to add");
+                assert_eq!(child.get_choice_description(), "Select this call.");
+            }
+            if let Some(child) = &current_question {
+                assert!(bound.options_open_externally.choice.borrow().is_none());
+                assert!(child.window().is_visible());
+                assert!(std::ptr::eq(file_question(bound).window(), child.window()));
+                assert_eq!(child.get_message(), "Remove 1 selected?");
+                assert_eq!(child.get_window_title(), "Question");
+                assert!(!child.get_notice_only());
+            }
+        }
+        let expected = if let Some(child) = &current_choice {
+            child.invoke_chosen(0);
+            assert!(!child.window().is_visible());
+            vec!["File one 日本", "Default OS File Launch"]
+        } else {
+            let child = current_question.as_ref().unwrap();
+            child.invoke_answered(true);
+            assert!(!child.window().is_visible());
+            vec!["File one 日本"]
+        };
+        assert_eq!(nested_names(&current_files), expected);
+        assert_eq!(
+            current_files
+                .get_rows()
+                .iter()
+                .enumerate()
+                .filter_map(|(index, row)| row.selected.then_some(index))
+                .collect::<Vec<_>>(),
+            if action == "edit" {
+                vec![1]
+            } else {
+                Vec::new()
+            },
+            "Edit keeps its row selected; captured deletion removes that identity"
+        );
+        assert!(!current_files.get_child_open());
+        assert!(bound.options_open_externally.choice.borrow().is_none());
+        assert!(bound.options_open_externally.question.borrow().is_none());
+        assert_eq!(
+            routing_saved(store),
+            persisted,
+            "current positive answer is staged only"
+        );
+        current_files.invoke_apply();
+        assert!(bound.options_open_externally.files.borrow().is_none());
+        assert_eq!(
+            file_rows(&current),
+            json!([
+                ["all files", "Default OS File Launch"],
+                ["png", expected.join(", ")]
+            ])
+        );
+        current.invoke_cancel();
+        assert_eq!(routing_saved(store), persisted);
+    }
+}
+
+#[test]
+fn file_queue_replays_all_nested_reference_states_and_live_children() {
+    let fixture = hydrus_testkit::fixture_json("open_externally.json");
+    let windows = headless::init();
+    let (_dirs, store) = super::subscriptions::store();
+    let manager = seed(&store);
+    let persisted = routing_saved(&store);
+    let ui = MainWindow::new().unwrap();
+    ui.show().unwrap();
+    let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+    pending_file_queue_retirement(&ui, &bound, &store);
+    let parent = open(&ui, &bound);
+    let child = new_png_queue(&parent, &bound);
+    let child_native = windows.get(windows.count() - 1).unwrap();
+    child.invoke_action("add".into());
+    let registered = choice(&bound);
+    assert_recorded_choice(&registered, &fixture, 5);
+    let registered_native = windows.get(windows.count() - 1).unwrap();
+    routing_capture(
+        &registered_native,
+        registered.window(),
+        "file-call-chooser-registered.png",
+        (520, 440),
+    );
+    choose(&bound, "File one 日本");
+    assert!(!child.get_selected(), "Add appends without selecting");
+    child.invoke_action("add".into());
+    assert_recorded_choice(&choice(&bound), &fixture, 8);
+    choose(&bound, "File two");
+    assert!(!child.get_selected());
+    child.invoke_clicked(0, false, false);
+    assert_nested_recording(&child, &fixture, 0, &[0]);
+    routing_capture(
+        &child_native,
+        child.window(),
+        "file-call-queue-populated.png",
+        (580, 340),
+    );
+    child.invoke_action("edit".into());
+    let cancelled = choice(&bound);
+    assert_recorded_choice(&cancelled, &fixture, 9);
+    cancelled.invoke_cancel();
+    assert_nested_recording(&child, &fixture, 1, &[0]);
+    child.invoke_action("edit".into());
+    let single = choice(&bound);
+    assert_recorded_choice(&single, &fixture, 9);
+    let single_native = windows.get(windows.count() - 1).unwrap();
+    routing_capture(
+        &single_native,
+        single.window(),
+        "file-call-edit-single-choice.png",
+        (520, 440),
+    );
+    choose(&bound, "Default OS File Launch");
+    assert_nested_recording(&child, &fixture, 2, &[0]);
+    child.invoke_action("edit".into());
+    assert_recorded_choice(&choice(&bound), &fixture, 13);
+    choose(&bound, "File one 日本");
+    assert_nested_recording(&child, &fixture, 3, &[0]);
+    child.invoke_action("down".into());
+    assert_nested_recording(&child, &fixture, 4, &[1]);
+    let down = nested_draft(&child);
+    child.invoke_action("up".into());
+    assert_nested_recording(&child, &fixture, 3, &[0]);
+    child.invoke_action("down".into());
+    assert_eq!(
+        nested_draft(&child),
+        down,
+        "both arrows retain selection and complete order"
+    );
+    routing_capture(
+        &child_native,
+        child.window(),
+        "file-call-queue-reordered.png",
+        (580, 340),
+    );
+    child.invoke_action("delete".into());
+    let removal = file_question(&bound);
+    assert_eq!(removal.get_window_title(), "Question");
+    assert_eq!(
+        removal.get_message(),
+        fixture["notices"][4].as_str().unwrap()
+    );
+    assert!(!removal.get_notice_only());
+    let removal_native = windows.get(windows.count() - 1).unwrap();
+    routing_capture(
+        &removal_native,
+        removal.window(),
+        "file-call-remove-question.png",
+        (520, 200),
+    );
+    removal.invoke_answered(false);
+    assert_nested_recording(&child, &fixture, 5, &[1]);
+    child.invoke_action("delete".into());
+    file_question(&bound).invoke_answered(true);
+    assert_nested_recording(&child, &fixture, 6, &[]);
+    child.invoke_action("add".into());
+    assert_recorded_choice(&choice(&bound), &fixture, 14);
+    choose(&bound, "File one 日本");
+    assert!(!child.get_selected());
+    child.invoke_action("add".into());
+    assert_recorded_choice(&choice(&bound), &fixture, 15);
+    choose(&bound, "Default OS File Launch");
+    assert!(!child.get_selected());
+    child.invoke_clicked(0, false, false);
+    child.invoke_action("edit".into());
+    let exhausted = file_question(&bound);
+    assert_eq!(exhausted.get_window_title(), "Information");
+    assert_eq!(
+        exhausted.get_message(),
+        fixture["notices"][6].as_str().unwrap()
+    );
+    assert!(exhausted.get_notice_only());
+    assert!(bound.options_open_externally.choice.borrow().is_none());
+    let exhausted_native = windows.get(windows.count() - 1).unwrap();
+    routing_capture(
+        &exhausted_native,
+        exhausted.window(),
+        "file-call-exhausted-information.png",
+        (520, 200),
+    );
+    exhausted.invoke_cancelled();
+    assert_nested_recording(&child, &fixture, 7, &[0]);
+    assert_eq!(
+        routing_saved(&store),
+        persisted,
+        "all eight reference states are still detached"
+    );
+    child.invoke_apply();
+    assert!(!child.window().is_visible());
+    assert_eq!(
+        file_rows(&parent),
+        json!([
+            ["all files", "Default OS File Launch"],
+            ["png", "File two, File one 日本, Default OS File Launch"]
+        ])
+    );
+    assert_eq!(routing_saved(&store), persisted);
+    parent.invoke_apply();
+    let mut expected = persisted.0.clone();
+    expected
+        .files
+        .insert(Mime::ImagePng, recorded_nested_refs(&fixture, 7));
+    assert_eq!(routing_saved(&store), (expected.clone(), manager.clone()));
+    let reopened = open(&ui, &bound);
+    reopened.invoke_routing_file_clicked(1, false, false);
+    reopened.invoke_routing_file_action("edit".into());
+    let restored = files(&bound);
+    assert_nested_recording(&restored, &fixture, 7, &[]);
+    assert_eq!(restored.get_window_title(), "edit launch path");
+    restored.invoke_cancel();
+    reopened.invoke_cancel();
+    assert_eq!(routing_saved(&store), (expected, manager));
+}
+
+// Save through the actual nested editor, then reopen before the real launcher
+// observes its first call. No settings reseed intervenes between these phases.
+#[cfg(unix)]
+fn move_saved_image_queue(
+    ui: &MainWindow,
+    bound: &Bound,
+    store: &Store,
+    down: bool,
+    selected: usize,
+    expected: &(Routing, Manager),
+) {
+    let before = routing_saved(store);
+    let parent = open(ui, bound);
+    let row = parent
+        .get_routing_file_rows()
+        .iter()
+        .position(|row| row.cells.row_data(0).unwrap().as_str() == Mime::GeneralImage.human_name())
+        .unwrap();
+    parent.invoke_routing_file_clicked(i32::try_from(row).unwrap(), false, false);
+    parent.invoke_routing_file_action("edit".into());
+    let child = files(bound);
+    assert_eq!(
+        nested_names(&child),
+        before.0.files[&Mime::GeneralImage]
+            .iter()
+            .map(|value| value.name.clone())
+            .collect::<Vec<_>>()
+    );
+    child.invoke_clicked(i32::try_from(selected).unwrap(), false, false);
+    child.invoke_action(if down { "down" } else { "up" }.into());
+    let names = expected.0.files[&Mime::GeneralImage]
+        .iter()
+        .map(|value| value.name.clone())
+        .collect::<Vec<_>>();
+    assert_eq!(nested_names(&child), names);
+    assert_eq!(
+        child.get_rows().iter().position(|row| row.selected),
+        Some(if down { selected + 1 } else { selected - 1 })
+    );
+    assert_eq!(routing_saved(store), before);
+    child.invoke_apply();
+    assert!(!child.window().is_visible());
+    assert_eq!(
+        routing_saved(store),
+        before,
+        "child Apply still stages the reordered queue"
+    );
+    parent.invoke_apply();
+    assert_eq!(
+        &routing_saved(store),
+        expected,
+        "full stable CallRefs and Manager are saved by Options"
+    );
+    let reopened = open(ui, bound);
+    let row = reopened
+        .get_routing_file_rows()
+        .iter()
+        .position(|row| row.cells.row_data(0).unwrap().as_str() == Mime::GeneralImage.human_name())
+        .unwrap();
+    reopened.invoke_routing_file_clicked(i32::try_from(row).unwrap(), false, false);
+    reopened.invoke_routing_file_action("edit".into());
+    let restored = files(bound);
+    assert_eq!(nested_names(&restored), names);
+    assert!(!restored.get_selected());
+    restored.invoke_cancel();
+    reopened.invoke_cancel();
+    assert_eq!(&routing_saved(store), expected);
 }
