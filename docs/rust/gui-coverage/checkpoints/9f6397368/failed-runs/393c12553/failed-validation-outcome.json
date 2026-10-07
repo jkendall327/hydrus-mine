@@ -1,0 +1,53 @@
+{
+  "source_commit": "393c125530d004153a92ed79e51da91539df8837",
+  "run_id": 37574215162,
+  "conclusion": "failure",
+  "validation_scope": "linux",
+  "gui_tests": {
+    "passed": 706,
+    "failed": 1,
+    "ignored": 0,
+    "seconds": 236.81
+  },
+  "media_tests": {
+    "passed": 67,
+    "failed": 0,
+    "ignored": 0,
+    "seconds": 1.01
+  },
+  "only_gui_failure": "sidebar_context_cogs::actual_tag_display_menu_changes_modes_captures_checks_and_rejects_retired_view_actions",
+  "failure_source_line": 599,
+  "diagnosis": "Restored page retained fixture input order; test expected recorded sorted order before invoking any sort. Fix initializes ordinary sort consumer and adds exact sorted baseline, preserving all previous assertions.",
+  "clippy": "success",
+  "parity_models": "success",
+  "timings": {
+    "clippy_cargo_seconds": 636,
+    "clippy_step_seconds": 637.0,
+    "test_compile_seconds": 749,
+    "test_step_seconds": 1258.0
+  },
+  "runner_image": "20260927.320.1",
+  "workspace_restore_prefix": "hydrus-ws-v1-check-Linux-X64-af4fa2e32ed1c3da4471dd09-",
+  "workspace_cache_restored": false,
+  "workspace_cache_saved": true,
+  "saved_artifact_files": 292,
+  "saved_uncompressed_bytes": 2200273303,
+  "maintenance_retained_bytes": 1379325087,
+  "maintenance_budget_bytes": 3221225472,
+  "native_artifact_id": 11462902617,
+  "native_zip_sha256": "5ba6e24f0068b07d71f8e626e3daaa66f89c016795962edd600b9924cd41bf8a",
+  "native_images": 333,
+  "required_new_images_present": [],
+  "new_signoffs": 0,
+  "evidence_sha256": {
+    "tests.log": "3be0c2ed236e868f7c75377b08bd2fffe5ac72b35886f336a541adfbcd2f4505",
+    "full-check.log": "8771b67c7bcd7d0b2312ee7eed79588dbbb7b1bc1f21a64db96664f7b183f203",
+    "clippy.log": "e3b63a1fe17afccc9546c7ed8d000554331fc3ef2d7f7b34f5e53a7d67b5568e",
+    "parity.log": "f211f7a4d2f22a1430736ab6269693252ded98ec76e39107c94d40e585a1430a",
+    "maintenance.log": "9caec17102e7c7c71c4c846a574942ba5cf0590b1fa75a7d7daa899aa86a5752",
+    "native-render-manifest.json": "311c6a32b7ee7f234843c06dbfc82888319045c61950b85775efb463774b4860",
+    "native-artifact.json": "c3fde652bb7a31f0f2ac0326c677fafb43a4b2931b60573bd1ecc1fd274c9ee6",
+    "test-artifact.json": "c5f05ce4ccd23ad0ecd9b0aae4c3183492558bfc56867d6261dbc5447a6ff7b9",
+    "clippy-artifact.json": "c5f1f8be73b505388e4450985709e8995173e5f8f45e72cc6a62605eacb74c97"
+  }
+}

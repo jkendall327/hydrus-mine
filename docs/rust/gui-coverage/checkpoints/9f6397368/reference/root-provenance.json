@@ -1,0 +1,107 @@
+{
+  "baseline_commit": "7bf850103ff1d2d23fa5986372b6db6857b12c4b",
+  "executed_at_utc": "2026-10-07T04:52:53Z",
+  "command": "source /workspace/.cloud/hydrus/activate.sh; timeout 180 /workspace/.cloud/hydrus/pyenv/bin/python oracle/record_sidebar_sort_collect_cogs.py --child /workspace/validation-reviews/sidebar-tag-display1/reference/sidebar_sort_collect_cogs.actual.json",
+  "exit_code": 0,
+  "actual_matches_fixture_value": true,
+  "inputs_unchanged": true,
+  "input_hashes": [
+    {
+      "path": "oracle/record_sidebar_sort_collect_cogs.py",
+      "sha256": "c05e045fc842b33817ea6a2a2bd3c69f1963c193af9568507acc0739bd82659b",
+      "bytes": 10098
+    },
+    {
+      "path": "oracle/fixtures/sidebar_sort_collect_cogs.json",
+      "sha256": "7e54f0bded51ebb12735db1b2ea6cfda48acda12b9f9c8fd2eb0731fcbbc0011",
+      "bytes": 106271
+    },
+    {
+      "path": "oracle/fixtures/sidebar_collect_cog.png",
+      "sha256": "5ab6817506291ea39a65d7d29eee386548ed82e930e6c35edbd0064d025e2b7d",
+      "bytes": 2207
+    },
+    {
+      "path": "oracle/fixtures/sidebar_collect_cog_0.png",
+      "sha256": "1d8f0db6410200a1f51e1c59a4b15b391ced8cba2ba2afa218943b2035efeb70",
+      "bytes": 3934
+    },
+    {
+      "path": "oracle/fixtures/sidebar_collect_cog_1.png",
+      "sha256": "8ff65ceb09a68083500bc1c00d867e6733c73b72a709dd027e43df96fa4f1a74",
+      "bytes": 2697
+    },
+    {
+      "path": "oracle/fixtures/sidebar_sort_cog.png",
+      "sha256": "22819b3cdcb8099e3cfd1b667f40d1c6a2a50e930416e39c72bea7cb9e610148",
+      "bytes": 3236
+    },
+    {
+      "path": "oracle/fixtures/sidebar_sort_cog_0.png",
+      "sha256": "1d8f0db6410200a1f51e1c59a4b15b391ced8cba2ba2afa218943b2035efeb70",
+      "bytes": 3934
+    },
+    {
+      "path": "oracle/fixtures/sidebar_sort_cog_1.png",
+      "sha256": "49b741758b61ba494c12a5e1892e8a4656d632fb6d36619dfc81af25fd7c1301",
+      "bytes": 4194
+    },
+    {
+      "path": "oracle/fixtures/sidebar_sort_collect_cogs.png",
+      "sha256": "16d2338b4785313fc32b390fb1142c3fd57672fac039982607bd9082998f991a",
+      "bytes": 163915
+    }
+  ],
+  "counts": {
+    "states": 3,
+    "sorts": 16,
+    "collects": 8,
+    "mouse": 4,
+    "options": 2
+  },
+  "mouse_routes": [
+    {
+      "role": "sort",
+      "button": "right",
+      "menus": 0
+    },
+    {
+      "role": "sort",
+      "button": "left",
+      "menus": 1
+    },
+    {
+      "role": "collect",
+      "button": "right",
+      "menus": 0
+    },
+    {
+      "role": "collect",
+      "button": "left",
+      "menus": 1
+    }
+  ],
+  "actually_viewed": [
+    {
+      "path": "oracle/fixtures/sidebar_sort_cog.png",
+      "sha256": "22819b3cdcb8099e3cfd1b667f40d1c6a2a50e930416e39c72bea7cb9e610148",
+      "observations": "Actual Qt painted root has tag service and ADVANCED: tag display type, both with submenu arrows and full readable labels."
+    },
+    {
+      "path": "oracle/fixtures/sidebar_sort_cog_1.png",
+      "sha256": "49b741758b61ba494c12a5e1892e8a4656d632fb6d36619dfc81af25fd7c1301",
+      "observations": "Actual Qt painted submenu shows display tags, multiple media view tags, single media view tags in order1/3/2; only single media checked; full labels readable."
+    }
+  ],
+  "evidence_sha256": {
+    "before-inputs.json": "b953d2d1520b1545a9fea16b780de4c556b470a7e50eb0a4435c30e72bc31971",
+    "sidebar_sort_collect_cogs.actual.json": "d35fb2ad1ec3b9bae261c016841871b37cf332287a9d5cc80e7d906a55bc1cb9",
+    "sidebar-sort-collect-cogs.log": "510798112237cd9efcfd1885d23dce15845709f6ae94b9da90b57f06b16aca56"
+  },
+  "limits": [
+    "PopupMenu presentation is intercepted; painted real QMenu grabs do not establish displayed popup placement or physical OS behavior.",
+    "All twelve namespace cases have identical output ordering across views within each service; this recording does not discriminate display-filter outputs.",
+    "Optional API listener denied on ::1/127.0.0.1:45901 by sandbox. Direct Qt/DB recording completed and normal shutdown occurred; no API connectivity claim.",
+    "Existing collect/default-collect cases are supporting preservation evidence; exactly one tag-display leaf targeted, no other sign-off."
+  ]
+}

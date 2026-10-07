@@ -1,0 +1,139 @@
+{
+  "review_type": "source-only; exact-source full Linux runtime and actual fresh images pending",
+  "baseline_source_commit": "7bf850103ff1d2d23fa5986372b6db6857b12c4b",
+  "implementation_commit": "8daccca6beded7871c6849cd142926566f8f67ad",
+  "source_commit": "393c125530d004153a92ed79e51da91539df8837",
+  "implementation_worktree": "/workspace/sidebar-tag-display-tests",
+  "reviewed_file": "crates/hydrus-gui/tests/gui/sidebar_context_cogs.rs",
+  "reviewed_file_sha256": "9745a20ca9efd0e6e845e258d56f4348e1326a95c96ae08f081306b7a1370a11",
+  "diff": "One appended focused test, 332 insertions and zero deletions; no product or Slint changes.",
+  "source_blockers": [],
+  "approval": false,
+  "assertion_preservation": {
+    "original_byte_prefix": 15749,
+    "original_file_prefix_preserved_exactly": true,
+    "original_assertion_macros": 25,
+    "new_assertion_macros": 62,
+    "current_assertion_macros": 87,
+    "original_tests": 2,
+    "current_tests": 3,
+    "all_16_sort_and_8_collect_cases_unchanged": true
+  },
+  "new_test": {
+    "name": "actual_tag_display_menu_changes_modes_captures_checks_and_rejects_retired_view_actions",
+    "source_line": 408,
+    "physical_transitions": [
+      2,
+      1,
+      3,
+      2
+    ],
+    "enabled_policy_transition": [
+      2,
+      3
+    ],
+    "root_capture_line": 616,
+    "submenu_capture_line": 660
+  },
+  "expected_native_captures": [
+    {
+      "name": "sidebar-sort-cog-root.png",
+      "dimensions": [
+        1060,
+        760
+      ]
+    },
+    {
+      "name": "sidebar-tag-display-1.png",
+      "dimensions": [
+        1060,
+        760
+      ]
+    },
+    {
+      "name": "sidebar-tag-display-3.png",
+      "dimensions": [
+        1060,
+        760
+      ]
+    },
+    {
+      "name": "sidebar-tag-display-2.png",
+      "dimensions": [
+        1060,
+        760
+      ]
+    }
+  ],
+  "source_evidence": [
+    "Measured finite positive sort-order frame plus source-derived adjacent 30px cog centre; physical right click leaves popup/state unchanged and left click refreshes three View IDs with one popup.",
+    "Actual root Down/Down/Right enters the second ADVANCED submenu; physical Down/Return changes a distinct typed mode, closes the chain, and reopening compares all service and View rows/checks before capture.",
+    "All full PageSort, independent search TagContext, PageCollect, exact media and save-off SortSettings comparisons remain; enabled policy saves the complete expected default and new-page inheritance while preserving fallback and collect settings.",
+    "Per-opening, hidden-owner and switched-page View admission checks preserve caller/successor contexts and defaults. Explicit close_all_popups is cleanup, not an assertion of automatic popup teardown.",
+    "Pinned Slint 1.18.1 menu source starts at highlight -1; Down advances, Right opens selected submenu, Return dispatches activation, and Escape closes the top popup. headless render uses actual composite with active-popup and unchanged adapter-count assertions."
+  ],
+  "limits": [
+    "Exactly one selected ADVANCED tag-display leaf; no service, collect, DefaultCollect, parent, alias, tag-display management or action-family credit.",
+    "Recorded modes 1/3/2 have identical ordering within every fixture service. Exact media comparisons prove recorded routing/preservation without discriminating filter-output evidence; production mode 2 \u2192 SingleMedia and mode 3 \u2192 SelectionList mapping is source-verified.",
+    "Actual menu composition, selected checks, full captions and clipping must be inspected in four fresh source-bound images after full Linux passes. Popup counts and transport assertions alone cannot establish readable pixels.",
+    "Qt uses real polished QMenu grabs with PopupMenu presentation intercepted; no displayed placement, exact pixel, OS-native menu introspection or window-manager parity.",
+    "Linux-only eventual validation; Windows/macOS deferred. Registered repository metadata does not grant network behavior. Optional Qt API listener was unavailable; direct Qt/DB work gives no API connectivity claim."
+  ],
+  "reference_provenance": {
+    "path": "/workspace/validation-reviews/sidebar-tag-display1/reference/root-provenance.json",
+    "sha256": "48eebbb19a95392d08cdbaf0ce16395cba6e523ea7429c2ba7cafd6316e5bc5b"
+  },
+  "status": "Exact integrated source review complete and frozen; full Linux runtime and four fresh native image review remain pending.",
+  "integration_pin_complete": true,
+  "source_pins": [
+    {
+      "path": "crates/hydrus-gui/tests/gui/sidebar_context_cogs.rs",
+      "source_commit": "393c125530d004153a92ed79e51da91539df8837",
+      "sha256": "9745a20ca9efd0e6e845e258d56f4348e1326a95c96ae08f081306b7a1370a11",
+      "committed_blob_and_worktree_match": true
+    },
+    {
+      "path": "docs/rust/GUI.md",
+      "source_commit": "393c125530d004153a92ed79e51da91539df8837",
+      "sha256": "544141a5e007040a0aaf4aeddc3a919e8c54204dd8fb298a8acc1416f5aaa3ec",
+      "committed_blob_and_worktree_match": true
+    },
+    {
+      "path": "docs/rust/DIFFERENCES.md",
+      "source_commit": "393c125530d004153a92ed79e51da91539df8837",
+      "sha256": "7840d26809aa143db3f4a66bbf1c614665d6907670026b848782e0308b20e15d",
+      "committed_blob_and_worktree_match": true
+    },
+    {
+      "path": "docs/rust/gui-coverage/parity/sidebar-sort-collect-cogs.json",
+      "source_commit": "393c125530d004153a92ed79e51da91539df8837",
+      "sha256": "7e177c34e4db540149a2e0f813ce54184df170dbc1fc1fc7a08cb08f47930696",
+      "committed_blob_and_worktree_match": true
+    }
+  ],
+  "integration_review": {
+    "historical_manifest_top_level_metadata_preserved": true,
+    "unselected_sibling_entries_byte_equivalent": true,
+    "historical_selected_evidence_preserved": true,
+    "original_selected_limit_strings_preserved": true,
+    "new_test_line_anchor_verified": true,
+    "published_signed_off": 354,
+    "pending_candidates": 21,
+    "selected_ids": [
+      "audit-options-search-sort-collect-tag-display"
+    ],
+    "new_capture_count": 4,
+    "documentation_and_followup_explicitly_pending": true,
+    "source_blockers": []
+  },
+  "proof_hashes": [
+    {
+      "path": "/workspace/validation-reviews/sidebar-tag-display1/assertion-preservation-root.json",
+      "sha256": "b3fc4edc3bae31f3d72a6737d244fe9cf66f74cf7edaa277782c36dae7cba7b3"
+    },
+    {
+      "path": "/workspace/validation-reviews/sidebar-tag-display1/assertion-preservation-3.json",
+      "sha256": "2ab02e4a91beb91170165edfe3b1a3469d30061d16a1f37da0c67709f613692e"
+    }
+  ]
+}

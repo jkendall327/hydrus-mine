@@ -1,0 +1,66 @@
+{
+  "schema_version": 1,
+  "source_commit": "9f6397368d2ecdfcb28e7c7159a8bf195e7d7012",
+  "run_id": 37577340514,
+  "state": "conditional_mapping_NOT_applied",
+  "selected_ids": [
+    "audit-options-search-sort-collect-tag-display"
+  ],
+  "input_patch": "/workspace/validation-reviews/sidebar-tag-display1/prep-9f6397368/subset-preflight/subset-proposal-patch.json",
+  "input_sha256": "83cfc657704373f0a7b40a255a10092fa5c3dbb806bda035da777bbe55332657",
+  "mandatory_preconditions": [
+    "Exact source 9f6397368d2ecdfcb28e7c7159a8bf195e7d7012, actual run 37577340514: full Linux strict fmt/Clippy/workspace tests/ratchet plus parity-models reference/backend success pending. Windows/macOS deferred under immutable publication policy.",
+    "Four fresh exact-source defining native popup images and final independent reviewer2/root actual inspection; source-only review or historical closed-page capture cannot substitute.",
+    "Root final patch/census digest review, staged preservation of prior354/unselected including two sibling menu entries/native1799/frozen1812/allgoal1274 and desktop/narrow browser.",
+    "After actual accepted publication only update goal/checklist from ledger; conditional355/20existing/919outside is not progress."
+  ],
+  "conditional_operations": [
+    {
+      "id": "audit-options-search-sort-collect-tag-display",
+      "field": "limitations",
+      "original_index": 3,
+      "operation": "replace_exact_list_item",
+      "before": "Native/model Rust tests authored but not executed locally; hosted CI owns compilation/lint/test validation.",
+      "conditional_after": "Historical author metadata records the original authored, no-local-execution provenance; current exact-source Linux validation is recorded separately.",
+      "reason": "Reconcile only pending author/execution wording, preserving original no-local-execution provenance as explicitly historical."
+    },
+    {
+      "id": "audit-options-search-sort-collect-tag-display",
+      "field": "limitations",
+      "original_index": 6,
+      "operation": "replace_exact_list_item",
+      "before": "The current follow-up targets only this tag-display action. Full Linux execution and fresh independent native render review remain pending; no new sign-off is granted.",
+      "conditional_after": "The current follow-up targets only this tag-display action.",
+      "reason": "Remove only conditional execution/render/sign-off status after actual root/final independent gates; retain exactly-one-leaf scope."
+    },
+    {
+      "id": "audit-options-search-sort-collect-tag-display",
+      "field": "limitations",
+      "original_index": 7,
+      "operation": "replace_exact_list_item",
+      "before": "The new physical-input regression is authored against the actual sort cog and embedded Slint popup: right-click no-op, real left opening with fresh IDs, Down/Right/Return changes from a different prior mode, all three reopened checks, Escape teardown, full independent contexts/media and disabled/enabled save-default/new-page inheritance. Retained View-id hidden/page-switch admission is tested; temporary hide requires explicit embedded-popup cleanup, so automatic hidden-popup retirement is not claimed. Exact-source execution and fresh rendered review remain pending.",
+      "conditional_after": "The new physical-input regression is authored against the actual sort cog and embedded Slint popup: right-click no-op, real left opening with fresh IDs, Down/Right/Return changes from a different prior mode, all three reopened checks, Escape teardown, full independent contexts/media and disabled/enabled save-default/new-page inheritance. Retained View-id hidden/page-switch admission is tested; temporary hide requires explicit embedded-popup cleanup, so automatic hidden-popup retirement is not claimed.",
+      "reason": "Remove only pending status. Preserve physical popup/activation/save-policy assertions and explicit hidden-admission versus automatic teardown boundary."
+    },
+    {
+      "id": "audit-options-search-sort-collect-tag-display",
+      "field": "remaining",
+      "original_index": 0,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source hosted full Linux validation remains pending.",
+      "conditional_after": null,
+      "reason": "Remove only pending exact-source CI or fresh independent/root review status after actual gates."
+    },
+    {
+      "id": "audit-options-search-sort-collect-tag-display",
+      "field": "remaining",
+      "original_index": 1,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source fresh native rendered/behavioral review and final assessment reconciliation remain pending.",
+      "conditional_after": null,
+      "reason": "Remove only pending exact-source CI or fresh independent/root review status after actual gates."
+    }
+  ],
+  "operation_contract": "Descending per-ID/field original_index; full original list-item equality. Two exact status removals and three real-scope/provenance-preserving replacements. No scalar assessment change or unsupported-feature/platform limit removal.",
+  "approval": false
+}

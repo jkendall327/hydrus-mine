@@ -1,0 +1,77 @@
+{
+  "source_commit": "9f6397368d2ecdfcb28e7c7159a8bf195e7d7012",
+  "ci_evidence_sha256": "2781fd3447c690fa8132709b6f007377d781efc0d6529c2b97d1c3aea1c0182f",
+  "mapping_sha256": "485680fc4547162b838a15592f10d21ffc94ebf86b009172bff3ee151134fe5f",
+  "mapping_applied_after_gates": true,
+  "operations": [
+    {
+      "id": "audit-options-search-sort-collect-tag-display",
+      "field": "limitations",
+      "original_index": 3,
+      "operation": "replace_exact_list_item",
+      "before": "Native/model Rust tests authored but not executed locally; hosted CI owns compilation/lint/test validation.",
+      "conditional_after": "Historical author metadata records the original authored, no-local-execution provenance; current exact-source Linux validation is recorded separately.",
+      "reason": "Reconcile only pending author/execution wording, preserving original no-local-execution provenance as explicitly historical."
+    },
+    {
+      "id": "audit-options-search-sort-collect-tag-display",
+      "field": "limitations",
+      "original_index": 6,
+      "operation": "replace_exact_list_item",
+      "before": "The current follow-up targets only this tag-display action. Full Linux execution and fresh independent native render review remain pending; no new sign-off is granted.",
+      "conditional_after": "The current follow-up targets only this tag-display action.",
+      "reason": "Remove only conditional execution/render/sign-off status after actual root/final independent gates; retain exactly-one-leaf scope."
+    },
+    {
+      "id": "audit-options-search-sort-collect-tag-display",
+      "field": "limitations",
+      "original_index": 7,
+      "operation": "replace_exact_list_item",
+      "before": "The new physical-input regression is authored against the actual sort cog and embedded Slint popup: right-click no-op, real left opening with fresh IDs, Down/Right/Return changes from a different prior mode, all three reopened checks, Escape teardown, full independent contexts/media and disabled/enabled save-default/new-page inheritance. Retained View-id hidden/page-switch admission is tested; temporary hide requires explicit embedded-popup cleanup, so automatic hidden-popup retirement is not claimed. Exact-source execution and fresh rendered review remain pending.",
+      "conditional_after": "The new physical-input regression is authored against the actual sort cog and embedded Slint popup: right-click no-op, real left opening with fresh IDs, Down/Right/Return changes from a different prior mode, all three reopened checks, Escape teardown, full independent contexts/media and disabled/enabled save-default/new-page inheritance. Retained View-id hidden/page-switch admission is tested; temporary hide requires explicit embedded-popup cleanup, so automatic hidden-popup retirement is not claimed.",
+      "reason": "Remove only pending status. Preserve physical popup/activation/save-policy assertions and explicit hidden-admission versus automatic teardown boundary."
+    },
+    {
+      "id": "audit-options-search-sort-collect-tag-display",
+      "field": "remaining",
+      "original_index": 0,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source hosted full Linux validation remains pending.",
+      "conditional_after": null,
+      "reason": "Remove only pending exact-source CI or fresh independent/root review status after actual gates."
+    },
+    {
+      "id": "audit-options-search-sort-collect-tag-display",
+      "field": "remaining",
+      "original_index": 1,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source fresh native rendered/behavioral review and final assessment reconciliation remain pending.",
+      "conditional_after": null,
+      "reason": "Remove only pending exact-source CI or fresh independent/root review status after actual gates."
+    }
+  ],
+  "added_review_scope_limits": {
+    "audit-options-search-sort-collect-tag-display": [
+      "Exactly the sidebar namespace-sort ADVANCED tag-display action is approved. No tag-service, collect, DefaultCollect, tag-display management, parent, alias or broader action-family completion receives credit.",
+      "All twelve namespace fixture cases have identical ordered media across modes 1/3/2 within each of four services. Exact media replay proves recorded routing and context preservation, not differentiated display-filter output. Production mode 2 maps to SingleMedia and mode 3 to SelectionList in source; no wider filter backend credit is claimed.",
+      "Physical input and four defining captures cover the my-tags service; the unchanged full sixteen-sort/eight-collect replay preserves all four services and existing contexts. The actual checked menu shows order 1/3/2, and both disabled and enabled save-default policies are assertion-backed.",
+      "Retained View IDs are rejected after a new opening, while the owner is hidden and after a page switch, preserving caller/successor contexts and defaults. The test explicitly clears embedded popups after hide/page switching as cleanup; automatic hidden-popup retirement and permanent retirement on arbitrary temporary hide are not claimed.",
+      "Qt references are real polished QMenu grabs obtained with PopupMenu presentation intercepted. They establish labels, order and check states, without displayed popup-placement, exact pixel, direct OS-native menu introspection or physical window-manager parity. Native fonts, row spacing, check glyphs and composite menu styling differ.",
+      "The root and three ADVANCED submenu states fit the inspected 1060 × 760 native viewport with full selected labels and checks. Underlying page/thumbnail/preview layout is supporting context and earns no additional credit; universal or narrow-viewport layout is not established.",
+      "The initial source 393c12553 failed because its restored input order was compared with a sorted reference baseline before a sort consumer ran. The repaired setup uses the ordinary sort consumer, adds an exact sorted-baseline assertion and preserves all 87 prior assertions. That failed run produced no defining captures and demonstrates no production right-click defect.",
+      "Validation is Linux only; Windows and macOS remain deferred. Registered repository metadata implies no network or repository work. The optional Qt API listener was unavailable; direct Qt/DB recording succeeded and supplies no API connectivity claim."
+    ]
+  },
+  "reviews": [
+    {
+      "path": "docs/rust/gui-coverage/checkpoints/9f6397368/final-review-2-9f6397368.json",
+      "sha256": "cc7485a6b882308f08d0fb41e72b6f966546fb6239764c93362c8ce374ce4373"
+    }
+  ],
+  "selected_ids": [
+    "audit-options-search-sort-collect-tag-display"
+  ],
+  "prior354_completion_ids_and_assessments_preserved": true,
+  "source_only_native_anchor_ids": [],
+  "final_patch_digest": "cd87101f5c7eff0f92a079c3f71f7326960de89e9c8111dee78c0eee11815709"
+}

@@ -1996,6 +1996,18 @@ concrete namespace advanced-display action; broader search/sidebar and Options
 sort/collect parents remain Partial. Repository metadata is offered by the menu
 without implementing remote repository work.
 
+The sidebar tag-display action is validated within this finite scope at
+`9f6397368`. All twelve namespace cases in the existing fixture yield
+the same media ordering across display modes within each service. The recording
+therefore proves those recorded results and context preservation, without
+discriminating the effects of display filters. The native consumer routes single
+media and multiple media modes to their respective stored filters. Actual Qt
+menu grabs are painted QMenu trees with intercepted popup presentation, so they
+do not establish displayed popup placement or physical OS menu behavior. Broader
+service/collect/Default Collect menus and sidebar parents gain no credit from
+this one-leaf follow-up. Full Linux and fresh independent native review passed.
+[Evidence](gui-coverage/checkpoints/9f6397368/README.md).
+
 Command-palette preferences and snapshot-based provider/queue models are now
 present, with fresh Qt recordings. The Options editor now stages and persists these
 settings and migrates legacy preferences. The native Ctrl+P window now queries
