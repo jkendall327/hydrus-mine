@@ -3518,6 +3518,18 @@ copies and aborts the remainder. Add Defaults exposes both “add them all” an
 “select from a list”, with the reference platform question and factory calls.
 Selected defaults gain fresh keys and names alongside the prior selection.
 
+The current bounded follow-up selects only registered-call Delete and Duplicate.
+The October 7 actual Qt replay matches the six sort cases, duplicate selections,
+both warning outcomes, both Delete outcomes, fresh-key checks and reopened names
+without normalizing those fields. Full raw JSON differs in generated callable
+keys; the recorded callable-child PNG is unchanged and does not show the outer
+list or confirmation questions. Native follow-up adds defining list/question
+captures and bounded retained-answer checks against a usable replacement owner.
+All 165 existing assertions across nine tests are retained; the file now has
+239 assertions. The authored OS URL fixture now sets its actual URL pipeline.
+Exact-source full Linux validation and fresh rendered review remain pending; the ledger stays at
+357 signed off with 18 existing candidates awaiting sign-off.
+
 The owned command child edits the first parameter in selection insertion order, keeps
 added rows unselected, captures delete selections, and reorders adjacent selected
 rows at either boundary. Its focused parameter list preserves range origins through select-all, Ctrl
