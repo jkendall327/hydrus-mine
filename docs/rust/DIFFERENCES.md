@@ -2502,6 +2502,13 @@ Full Linux execution and fresh independent rendered review remain pending.
 No all-MIME exhaustion, universal geometry, inherited keyboard/column behavior,
 broader ownership, parent or deferred-platform completion is claimed.
 
+Run `37609745626` failed the MIME replay's ambiguous GIF setup and an existing
+re-shown Options wheel assertion. The test repairs select the intended recorded
+MIME code and replace cached geometry readiness with fresh callbacks through a
+small resize. The precise cause of the missed wheel remains unproven; the
+revised readiness test does not establish unresized hide/show reliability.
+All prior behavior assertions remain; a new full Linux run is required.
+
 OS calls are regenerated only in the opened routing draft, then persisted on
 Apply, preserving registered-call-only transactions. Native regeneration assigns
 the correct single-file pipeline; the reference manager's missing-file-OS branch

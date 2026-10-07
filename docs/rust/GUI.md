@@ -3521,6 +3521,13 @@ reopening, and retained pending children against usable replacement owners.
 Six defining native captures and full Linux validation remain pending; no
 additional completion is banked by this source change.
 
+The first follow-up run (`37609745626`) failed two GUI tests and granted no
+completion credit. The MIME replay now distinguishes the recorded animated
+and static GIF codes despite their identical chooser labels. The re-shown
+Options wheel regression requires fresh geometry callbacks after a real
+1101→1100 width transition before its single wheel input; its hidden-owner
+and exact selection assertions remain. Fresh full Linux validation is pending.
+
 The main thumbnail and viewer default-open actions read current saved routes.
 Specific filetype entries replace general-class entries, then “all files”;
 an explicit empty specific entry uses the OS default. The first URL/file call
