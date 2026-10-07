@@ -3501,8 +3501,15 @@ synthetic dispatch. Both recorded old/default thumbnail menus expose this action
 no unsupported viewer action or broader media-context parent is claimed. Actual
 Qt recordings completed 2026-10-05 15:27:50–51. The copied fixture's sandbox-denied
 Client API listener logged a nonfatal startup warning; these GUI/SQLite recordings
-make no socket/API attestation. All new Rust/native regressions, including the
-question PNG, remain authored-only until hosted validation.
+make no socket/API attestation. Main now supplies the reference's clickable
+yes/no choices through its existing answer callback, retaining keyboard answers.
+The new pointer and key regression covers the captured record set, complete
+relevant table state, physical queue, hidden answer refusal and a held press
+after processed Escape retirement before a usable successor answer. It does not
+claim unobserved atomic replacement or generic question ownership parity. The
+reference image shows the menu, not a matched confirmation frame. The new
+controls and capture await exact-source full Linux execution and fresh rendered
+review; no selected completion is added by this source follow-up.
 
 ### Viewer image-prefetch controls (source proposal, runtime pending)
 
