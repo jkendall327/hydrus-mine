@@ -2207,8 +2207,9 @@ checkerboard/greenscreen rendering. The reference's ICC toggle, duplicate-filter
 checkerboard and pinned duplicates hover entry are not exposed in this browser
 menu. The Linux always-on-top warning label is also absent. Native OS frame/top
 requests use Slint's platform window properties; platform support can differ.
-The three topology controls are complete within this browser-viewer scope;
-broader hover/button/view-options families remain Partial. No deeper missing
+The three topology controls are implemented within this browser-viewer scope
+and await the current explicit validation checkpoint; broader hover/button/
+view-options families remain Partial. No deeper missing
 action is presented as a placeholder. Options edits preserve concurrently changed
 new-viewer defaults, and stale viewer/Options callbacks cannot save changes.
 
@@ -2218,6 +2219,15 @@ separators precede their destination section, matching all eight Qt combinations
 Slint's materialized native context-menu tree is internal: authored regressions
 check actual declaration order against recorded roots plus compiled menu data
 and real action consumers; they do not claim direct OS-menu introspection.
+
+The current follow-up targets only those three collapse preferences. It adds
+actual reopened checkbox and open-menu evidence while preserving the existing
+eight-combination, transaction, ordering and consumer assertions. The actual
+Qt rerun is unchanged. Its menu trees are recorded by intercepting `PopupMenu`;
+only the Options pane has a Qt image. Native popup images therefore cannot
+establish Qt popup pixel parity. Full Linux and fresh independent native review
+remain pending. The existing absent actions, Linux label and physical window-
+manager limits remain; no broader menu or action completion is claimed.
 
 
 Notebook alignment, gated tab hiding and middle elision have native consumers;
