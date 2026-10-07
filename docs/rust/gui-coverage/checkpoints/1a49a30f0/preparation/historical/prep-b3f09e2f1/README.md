@@ -1,0 +1,9 @@
+# Conditional thumbnail-navigation preparation
+
+Exact source `b3f09e2f1f4a721e05f6fe5f7f7f4a24a8fb1a83`; run 37632337153. This is source/schema preparation, not runtime validation or approval. Exactly three original preferences are selected; prior 370, all unselected nodes, native 1799, frozen 1812 and all goal 1274 remain preserved. Conditional acceptance would produce 373 signed, 2 existing candidates pending and 901 outside the goal ledger.
+
+Required fresh frames are `thumbnail-navigation.png` (700×600), `thumbnail-navigation-sidebar-wide.png` (1100×700), and the two actual saved-Options true/false frames (1000×900). Full captions, saved checkbox/40 or 1/rate 0.5 or 1.5 and supported narrow/wider geometry require actual root and independent reviewer2 image inspections. Responsive native stacking differs from Qt horizontal pairs. Broader/sidebar/preview/OS and algorithm limitations remain.
+
+The literal 12-operation status map may be applied only after exact-source full Linux check and parity-models are green and all four fresh frames pass independent/root inspection. Windows/macOS are deferred under exact-source policy. The helper and finalizer retain unbound artifact/archive/root-image gates; neither was executed. `update-publication-notes.py` requires accepted 373, copied evidence, final review, browser and actual test counts before any canonical write. Its seven source-exact text replacements are in `notes-exact-replacement-plan.json`; performance observations remain root-owned.
+
+The b3 source review and isolated needless-borrow finding are historical. A corrected source needs its own extraction, census, full CI and fresh artifact. Do not reuse old CI or infer an old hosted outcome from the isolated probe. The current selected limitation removes only a source-proven stale preview-focus absence, retaining separate sibling scope and the historical original manifest verbatim.

@@ -1,0 +1,25 @@
+{
+  "source_commit": "b3f09e2f1f4a721e05f6fe5f7f7f4a24a8fb1a83",
+  "base_commit": "2e4912e688110d7b3ed6aad07aed0e72835d65d0",
+  "gui_assertions_before": 17,
+  "gui_assertions_after": 48,
+  "gui_tests_before": 1,
+  "gui_tests_after": 1,
+  "all_original_gui_lines_in_order": true,
+  "model_unchanged": true,
+  "model_assertions": 19,
+  "model_tests": 3,
+  "files": {
+    "crates/hydrus-gui/tests/gui/thumbnail_navigation.rs": {
+      "sha256": "a937c54b6b48ad6213d9e546d0c807490982e7a650c850269ef6d2d82f135204"
+    },
+    "crates/hydrus-gui/ui/main.slint": {
+      "sha256": "c5d4028b418adb7b98e70b379fa464c4b0bcc8174695a0acb896ccbade769c9e"
+    },
+    "crates/hydrus-gui-model/tests/model/thumbnail_navigation.rs": {
+      "sha256": "f64e30cae3bf509d563273658c30e871d6affe03c17e699c14280fac02fe45d3"
+    }
+  },
+  "agent_proof_sha256": "c64cf046e10163d49e9df18f981fbed286bba3819dc8eaed8c060af26074933f",
+  "approval": false
+}

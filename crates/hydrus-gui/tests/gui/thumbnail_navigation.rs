@@ -20,6 +20,278 @@ fn options(ui: &MainWindow, bound: &hydrus_gui::Bound) -> OptionsWindow {
     window.invoke_page_chosen(page as i32);
     window
 }
+
+#[derive(Clone, Debug)]
+struct SidebarPair {
+    frames: [hydrus_gui::MenuChoiceFrame; 3],
+    preferred: [f32; 2],
+}
+type SidebarFrames = std::rc::Rc<std::cell::RefCell<[Option<SidebarPair>; 2]>>;
+fn observe_sidebar_buttons(ui: &MainWindow) -> SidebarFrames {
+    let frames = std::rc::Rc::new(std::cell::RefCell::new([None, None]));
+    ui.set_measure_sidebar_buttons(true);
+    ui.on_sidebar_buttons_measured({
+        let frames = frames.clone();
+        move |index, pair, first, second, first_width, second_width| {
+            frames.borrow_mut()[usize::try_from(index).unwrap()] = Some(SidebarPair {
+                frames: [pair, first, second],
+                preferred: [first_width, second_width],
+            });
+        }
+    });
+    frames
+}
+fn contained(frame: &hydrus_gui::MenuChoiceFrame, parent: &hydrus_gui::MenuChoiceFrame) -> bool {
+    frame.x >= parent.x
+        && frame.y >= parent.y
+        && frame.x + frame.w <= parent.x + parent.w
+        && frame.y + frame.h <= parent.y + parent.h
+}
+fn settled_sidebar_buttons(
+    native: &slint::platform::software_renderer::MinimalSoftwareWindow,
+    ui: &MainWindow,
+    observed: &SidebarFrames,
+    width: u32,
+    height: u32,
+    stacked: bool,
+) -> Vec<u8> {
+    use slint::platform::WindowAdapter as _;
+    use std::time::{Duration, Instant};
+    assert!(std::ptr::eq(native.window(), ui.window()));
+    assert!(ui.window().is_visible());
+    *observed.borrow_mut() = [None, None];
+    let started = Instant::now();
+    let mut settling_since = started;
+    let mut previous = None;
+    let mut scrolled = false;
+    let mut scroll_origin = None;
+    loop {
+        let pixels = headless::render(native, width, height);
+        let measured = observed.borrow().clone();
+        if let [Some(include), Some(domains)] = &measured {
+            let viewport = ui.get_sidebar_search_frame();
+            let bits = [include, domains].map(|pair| {
+                pair.frames
+                    .iter()
+                    .flat_map(|frame| [frame.x, frame.y, frame.w, frame.h])
+                    .chain(pair.preferred)
+                    .map(f32::to_bits)
+                    .collect::<Vec<_>>()
+            });
+            if settling_since.elapsed() >= Duration::from_millis(35)
+                && !ui.window().has_active_animations()
+                && previous
+                    .as_ref()
+                    .is_some_and(|(old, old_pixels)| *old == bits && *old_pixels == pixels)
+            {
+                let last = &domains.frames[2];
+                if !scrolled && last.y + last.h > viewport.y + viewport.h {
+                    let content_height = ui.get_sidebar_search_content_height();
+                    let offset = ui.get_sidebar_search_offset();
+                    assert!(
+                        content_height.is_finite() && content_height > viewport.h,
+                        "actual outer ScrollView must have a vertical extent: content={content_height}, viewport={viewport:?}"
+                    );
+                    assert!(offset.is_finite());
+                    // Use the measured left padding band, outside child
+                    // predicates/LineEdit/choice controls and the scrollbar.
+                    let position = slint::LogicalPosition::new(
+                        viewport.x + (include.frames[1].x - viewport.x) / 2.0,
+                        viewport.y + viewport.h / 2.0,
+                    );
+                    assert!(position.x > viewport.x && position.x < include.frames[1].x);
+                    assert!(position.y >= viewport.y && position.y < viewport.y + viewport.h);
+                    eprintln!(
+                        "actual sidebar wheel: position={position:?}, content={content_height}, offset={offset}, viewport={viewport:?}"
+                    );
+                    scroll_origin = Some((offset, include.frames[0].y));
+                    native.dispatch_event(WindowEvent::PointerMoved { position });
+                    native.dispatch_event(WindowEvent::PointerScrolled {
+                        position,
+                        delta_x: 0.0,
+                        delta_y: -(last.y + last.h - viewport.y - viewport.h + 8.0),
+                    });
+                    // Re-observe both actual button rows after the physical scroll.
+                    *observed.borrow_mut() = [None, None];
+                    scrolled = true;
+                    settling_since = Instant::now();
+                    previous = None;
+                    continue;
+                }
+                if let Some((old_offset, old_y)) = scroll_origin {
+                    assert!(
+                        ui.get_sidebar_search_offset() < old_offset,
+                        "one real outer-sidebar wheel must change the actual offset: before={old_offset}, after={}",
+                        ui.get_sidebar_search_offset()
+                    );
+                    assert!(
+                        include.frames[0].y < old_y,
+                        "the actual button row must translate with the scroll: before={old_y}, after={}",
+                        include.frames[0].y
+                    );
+                }
+                let sidebar = ui.get_sidebar_frame();
+                assert!(
+                    [viewport.x, viewport.y, viewport.w, viewport.h]
+                        .into_iter()
+                        .all(f32::is_finite)
+                );
+                assert!(viewport.w > 0.0 && viewport.h > 0.0 && contained(&viewport, &sidebar));
+                assert!(sidebar.x >= 0.0 && sidebar.y >= 0.0);
+                assert!(
+                    sidebar.x + sidebar.w <= width as f32 && sidebar.y + sidebar.h <= height as f32
+                );
+                for pair in [include, domains] {
+                    let [allocated, first, second] = &pair.frames;
+                    for frame in &pair.frames {
+                        assert!(
+                            [frame.x, frame.y, frame.w, frame.h]
+                                .into_iter()
+                                .all(f32::is_finite)
+                        );
+                        assert!(frame.w > 0.0 && frame.h > 0.0);
+                        assert!(
+                            contained(frame, &sidebar),
+                            "actual sidebar containment: {measured:?}; sidebar={sidebar:?}"
+                        );
+                    }
+                    assert!(contained(first, allocated) && contained(second, allocated));
+                    assert!(
+                        contained(first, &viewport) && contained(second, &viewport),
+                        "buttons must be visible in actual search viewport: {measured:?}; viewport={viewport:?}"
+                    );
+                    assert!(
+                        pair.preferred
+                            .into_iter()
+                            .all(|width| width.is_finite() && width > 0.0)
+                    );
+                    assert!(
+                        first.w >= pair.preferred[0] && second.w >= pair.preferred[1],
+                        "full intrinsic label allocation: {measured:?}"
+                    );
+                    if stacked {
+                        assert!(
+                            first.y + first.h < second.y,
+                            "narrow buttons must be strictly disjoint: {measured:?}"
+                        );
+                    } else {
+                        assert_eq!(first.y.to_bits(), second.y.to_bits());
+                        assert!(
+                            first.x + first.w < second.x,
+                            "wide buttons must remain paired: {measured:?}"
+                        );
+                    }
+                }
+                assert!(include.frames[0].y + include.frames[0].h < domains.frames[0].y);
+                eprintln!(
+                    "actual thumbnail-navigation sidebar {width}x{height}: {measured:?}; sidebar={sidebar:?}"
+                );
+                return pixels;
+            }
+            previous = Some((bits, pixels));
+        }
+        assert!(
+            started.elapsed() < Duration::from_secs(2),
+            "sidebar controls did not settle: {measured:?}; sidebar={:?}; animations={}",
+            ui.get_sidebar_frame(),
+            ui.window().has_active_animations()
+        );
+        std::thread::sleep(Duration::from_millis(1));
+    }
+}
+
+fn capture_saved_navigation_options(
+    windows: &headless::Windows,
+    options: &OptionsWindow,
+    labels: &[serde_json::Value],
+    expected_shift: bool,
+    filename: &str,
+) {
+    use slint::platform::WindowAdapter as _;
+    use std::time::{Duration, Instant};
+    let native = windows.get(windows.count() - 1).unwrap();
+    assert!(std::ptr::eq(native.window(), options.window()));
+    assert!(options.window().is_visible());
+    let check_index = row(options, labels[0].as_str().unwrap());
+    let number_index = row(options, labels[1].as_str().unwrap());
+    let check = std::rc::Rc::new(std::cell::RefCell::new(None));
+    let number = std::rc::Rc::new(std::cell::RefCell::new(None));
+    options.set_measure_check_states(true);
+    options.on_check_state_measured({
+        let check = check.clone();
+        move |index, frame, checked, enabled| {
+            if index == check_index {
+                *check.borrow_mut() = Some((frame, checked, enabled));
+            }
+        }
+    });
+    options.set_measure_speed_memory_layout(true);
+    options.on_speed_memory_geometry({
+        let number = number.clone();
+        move |index, kind, frame| {
+            if index == number_index && kind == "number" {
+                *number.borrow_mut() = Some(frame);
+            }
+        }
+    });
+    headless::render(&native, 1000, 900);
+    // The three interaction controls end the actual thumbnails section. Use
+    // ordinary ScrollView wheel input rather than changing content position.
+    native.dispatch_event(WindowEvent::PointerScrolled {
+        position: slint::LogicalPosition::new(700.0, 500.0),
+        delta_x: 0.0,
+        delta_y: -10000.0,
+    });
+    let started = Instant::now();
+    let mut previous = None;
+    loop {
+        let pixels = headless::render(&native, 1000, 900);
+        let actual_check = check.borrow().clone();
+        let actual_number = number.borrow().clone();
+        if let (Some((check, checked, enabled)), Some(number)) = (&actual_check, &actual_number) {
+            let bits =
+                [check, number].map(|frame| [frame.x, frame.y, frame.w, frame.h].map(f32::to_bits));
+            if started.elapsed() >= Duration::from_millis(35)
+                && !options.window().has_active_animations()
+                && previous
+                    .as_ref()
+                    .is_some_and(|(old, old_pixels)| *old == bits && *old_pixels == pixels)
+            {
+                for frame in [check, number] {
+                    assert!(
+                        [frame.x, frame.y, frame.w, frame.h]
+                            .into_iter()
+                            .all(f32::is_finite)
+                    );
+                    assert!(frame.x >= 200.0 && frame.y > 0.0 && frame.w > 0.0 && frame.h > 0.0);
+                    assert!(
+                        frame.x + frame.w <= 1000.0 && frame.y + frame.h < 850.0,
+                        "actual saved controls must fit above the footer: check={actual_check:?}, number={actual_number:?}"
+                    );
+                }
+                assert_eq!(*checked, expected_shift, "actual reopened CheckBox");
+                assert!(*enabled);
+                assert!(check.y + check.h < number.y);
+                headless::save_png(
+                    &std::path::Path::new(env!("CARGO_TARGET_TMPDIR")).join(filename),
+                    &pixels,
+                    1000,
+                    900,
+                )
+                .unwrap();
+                return;
+            }
+            previous = Some((bits, pixels));
+        }
+        assert!(
+            started.elapsed() < Duration::from_secs(2),
+            "saved Options controls did not settle: check={actual_check:?}, number={actual_number:?}, visible={}, animations={}",
+            options.window().is_visible(),
+            options.window().has_active_animations()
+        );
+        std::thread::sleep(Duration::from_millis(1));
+    }
+}
 fn row(w: &OptionsWindow, label: &str) -> i32 {
     w.get_rows()
         .iter()
@@ -161,6 +433,20 @@ fn owned_options_replay_cancel_save_reopen_and_real_keyboard_wheel_consumers() {
                 .text,
             event["reopened"]["rate"].as_str().unwrap()
         );
+        if event == &fixture["events"][0] || event == &fixture["events"][1] {
+            capture_saved_navigation_options(
+                &windows,
+                &reopened,
+                labels,
+                event["reopened"]["shift"].as_bool().unwrap(),
+                if event == &fixture["events"][0] {
+                    "thumbnail-navigation-options-saved-true.png"
+                } else {
+                    "thumbnail-navigation-options-saved-false.png"
+                },
+            );
+            assert_eq!(value(&store.read(settings::get).unwrap()), event["saved"]);
+        }
         reopened.invoke_cancel();
     }
     for case in fixture["selections"].as_array().unwrap() {
@@ -268,6 +554,35 @@ fn owned_options_replay_cancel_save_reopen_and_real_keyboard_wheel_consumers() {
             );
         }
     }
+    let sidebar_frames = observe_sidebar_buttons(&ui);
+    let layout_before = store.read(hydrus_store::page_layout::load).unwrap();
+    let results_before = bound.current.borrow().borrow().results().to_vec();
+    // After the original input replays, observe the ordinary wider sidebar
+    // and restore the recorded narrow consumer for its defining capture.
+    // Resize first: the real layout-measured callback restores the saved 280px sidebar on
+    // a viewport change. Only after that settles stage the wider geometry.
+    let _ = settled_sidebar_buttons(&native, &ui, &sidebar_frames, 1100, 700, true);
+    assert_eq!(ui.get_sidebar_actual_width().to_bits(), 280.0_f32.to_bits());
+    ui.set_sidebar_requested_width(400.0);
+    let wide = settled_sidebar_buttons(&native, &ui, &sidebar_frames, 1100, 700, false);
+    assert_eq!(ui.get_sidebar_actual_width().to_bits(), 400.0_f32.to_bits());
+    headless::save_png(
+        &std::path::Path::new(env!("CARGO_TARGET_TMPDIR"))
+            .join("thumbnail-navigation-sidebar-wide.png"),
+        &wide,
+        1100,
+        700,
+    )
+    .unwrap();
+    ui.set_sidebar_requested_width(280.0);
+    let _ = settled_sidebar_buttons(&native, &ui, &sidebar_frames, 700, 600, true);
+    assert_eq!(ui.get_sidebar_actual_width().to_bits(), 280.0_f32.to_bits());
+    assert_eq!(
+        store.read(hydrus_store::page_layout::load).unwrap(),
+        layout_before
+    );
+    assert_eq!(bound.current.borrow().borrow().results(), results_before);
+    assert_eq!(ui.get_grid_columns(), 2);
     let pixels = headless::render_snapshot(&native, 700, 600);
     headless::save_png(
         &std::path::Path::new(env!("CARGO_TARGET_TMPDIR")).join("thumbnail-navigation.png"),

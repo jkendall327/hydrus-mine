@@ -1,0 +1,11 @@
+# Failed narrow-sidebar diagnostic review
+
+Exact 9e4b3c592, run 37638222068, artifact 11492413115. Strict Clippy passed; GUI 710 passed and one new test failed. Approval is false. I actually viewed and hash-verified all three exported thumbnail-navigation frames: saved true 40/0.5 Options, saved false 1/1.5 Options and wide 400 sidebar. The full selected captions and values are readable; wide horizontal pairs fit. The narrow 700×600 capture was never produced.
+
+The retained strict viewport assertion correctly rejects lower buttons at y330/366 with viewport y50,height 280. Independent generated-source inspection confirms a stronger cause than an unproven missed hit: the explicit search-sidebar min-height: 0 contributes zero minimum to the enclosing vertical layout. Sidebar Flickable content height is the maximum of viewport height and that minimum, so its scroll range is zero even though children extend past 398. Slint refuses vertical scrolling when content height does not exceed visible height. A gutter input alone cannot correct this production extent defect.
+
+Restore cycle-free intrinsic content extent for the visible search sidebar, preserving explicit hidden zero allocation and unrelated sidebar branches. Inspect the generated hidden constraints as well as the visible extent. Keep every 51 current assertion and 17 original assertions, real thumbnail consumers, original dimensions and full label allocation. A source-derived exposed padding gutter and post-input observation baseline can strengthen the same single physical sidebar wheel. Require actual positive scroll translation plus final full containment; no scroll assignment, event retry, image widening or deadline inflation.
+
+The current viewport-center input may hit nested search content, but no recipient was logged. The known 800ms Flickable child-filter grouping is not a substitute diagnosis: zero extent alone explains refusal, and the filter has earlier-scroll and position conditions. Do not add delay as a replacement for the range repair.
+
+These views are failed-run diagnostics only. Fresh repaired full Linux and all four actual captures remain required. No builds, edits, recording or approvals occurred; frozen source reviews and prior failure evidence remain separate.

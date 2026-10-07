@@ -1,0 +1,582 @@
+{
+  "source_commit": "b3f09e2f1f4a721e05f6fe5f7f7f4a24a8fb1a83",
+  "claims": [
+    {
+      "id": "audit-options-thumbnails-interaction-when-shift-selecting-move-the-navigate-from-here-position-with-it",
+      "before_canonical_full_object": {
+        "id": "audit-options-thumbnails-interaction-when-shift-selecting-move-the-navigate-from-here-position-with-it",
+        "parent_id": "audit-options-thumbnails-interaction",
+        "label": "When shift-selecting, move the \"navigate from here\" position with it:",
+        "kind": "control",
+        "status": "missing",
+        "native_source": null,
+        "reference_source": {
+          "path": "hydrus/client/gui/panels/options/ThumbnailsPanel.py",
+          "line": 164,
+          "line_sha256": "e7e5029bef6a69bfb9fe20ad689962ecba633db09518482db7aa52793b4f08a4"
+        },
+        "assessment": "Reference editor/control 'When shift-selecting, move the \"navigate from here\" position with it:' is recorded on 'thumbnails' and defined by the referenced options panel. No corresponding editable row exists in native options::pages; this is a missing GUI editing path, even if a setting is imported or consumed elsewhere.",
+        "evidence": [
+          {
+            "path": "crates/hydrus-gui-model/src/options.rs",
+            "line": 1626,
+            "role": "source_inspection",
+            "description": "Inspected complete native options registry: the explicitly listed native getter/setter rows are offered.",
+            "executed_in_inventory": false,
+            "line_sha256": "9b25465690948e42af43c4a0260d2651e872520f0dcd383f3510ff0712f4a148"
+          },
+          {
+            "path": "oracle/record_options_dialog.py",
+            "line": 1,
+            "role": "existing_oracle_recorder",
+            "description": "Existing recorder traverses the real Qt options dialog, including these page/box/control labels.",
+            "executed_in_inventory": false,
+            "line_sha256": "381f9bfc69d49d39040a7d5fc3197ce385019a2ba2de649622f841a8c658ed37"
+          }
+        ],
+        "limitations": [
+          "Native options registry has no editable 'When shift-selecting, move the \"navigate from here\" position with it:' control in this page/box path."
+        ],
+        "descendant_count": 0,
+        "descendant_status_counts": {},
+        "unique_feature_descendant_count": 0,
+        "unique_reachable_feature_count_including_shared": 1,
+        "native_id_candidates": []
+      },
+      "historical_manifest_claim_verbatim": {
+        "reference_id": "audit-options-thumbnails-interaction-when-shift-selecting-move-the-navigate-from-here-position-with-it",
+        "before": "missing",
+        "proposedStatus": "first_pass",
+        "countAsCompletedLeaf": true,
+        "change_kind": "implementation",
+        "implementationCommit": "a074f4f87fcfb2fa67772e17cf81eb9550338fb7",
+        "exactBehavior": "Options > thumbnails > interaction stages the exact original controls, imports independent legacy keys, applies to live consumers, preserves saved values on Cancel and reopens persisted drafts. The independent saved last-hit option changes non-Shift movement-key starting priority after Shift selection. Actual recorded consecutive click/Shift/right/Shift/right histories preserve focused-versus-last-hit distinction, selected ranges and range shrinking. The original move_focus API retains default behavior; the actual SearchPage consumer reads the live setting.",
+        "limits": [
+          "Exactly these three original Missing leaves are proposed; no preview-focus preference is implemented or promoted. Broader Thumbnails/interaction families remain Partial.",
+          "The native regular grid has vertical reveal/wheel consumers. Horizontal scrolling, direct scrollbar wheel input and full graphics-view/masonry layouts remain outside this slice.",
+          "Winit normalizes a line tick to60px; the native consumer uses the recorded Qt default of3 wheel lines with a page cap. Physical-pixel smooth deltas use this scale; platform wheel-line settings and Qt fractional wheel accumulation are not ported.",
+          "Nonfinite/out-of-signed-int rates retain the prior native step without reproducing Qt conversion exceptions; raw accepted text remains saved. Invalid text silently keeps the prior saved string.",
+          "Native actual pointer/key/wheel replays and thumbnail-navigation.png are authored pending hosted CI. No local Cargo builds/tests, mutation runs, pushes or canonical inventory edits were performed."
+        ],
+        "sourceAnchors": [
+          {
+            "path": "crates/hydrus-store/src/settings.rs",
+            "line": 53,
+            "commit": "a074f4f87fcfb2fa67772e17cf81eb9550338fb7",
+            "kind": "source",
+            "symbol": "pub struct ThumbnailNavigation"
+          },
+          {
+            "path": "crates/hydrus-store/src/import/decode.rs",
+            "line": 1020,
+            "commit": "a074f4f87fcfb2fa67772e17cf81eb9550338fb7",
+            "kind": "source",
+            "symbol": "let mut navigation = crate::settings::ThumbnailNavigation"
+          },
+          {
+            "path": "crates/hydrus-gui-model/src/options.rs",
+            "line": 212,
+            "commit": "a074f4f87fcfb2fa67772e17cf81eb9550338fb7",
+            "kind": "source",
+            "symbol": "thumbnail_navigation: hydrus_store"
+          },
+          {
+            "path": "crates/hydrus-gui-model/src/options.rs",
+            "line": 3340,
+            "commit": "a074f4f87fcfb2fa67772e17cf81eb9550338fb7",
+            "kind": "source",
+            "symbol": "When shift-selecting, move the"
+          },
+          {
+            "path": "crates/hydrus-gui/src/lib.rs",
+            "line": 3408,
+            "commit": "a074f4f87fcfb2fa67772e17cf81eb9550338fb7",
+            "kind": "source",
+            "symbol": "thumbnail_navigation::bind"
+          },
+          {
+            "path": "crates/hydrus-gui-model/src/selection.rs",
+            "line": 179,
+            "commit": "a074f4f87fcfb2fa67772e17cf81eb9550338fb7",
+            "kind": "source",
+            "symbol": "pub fn move_focus_with_last_hit"
+          },
+          {
+            "path": "crates/hydrus-gui/src/page.rs",
+            "line": 2450,
+            "commit": "a074f4f87fcfb2fa67772e17cf81eb9550338fb7",
+            "kind": "source",
+            "symbol": "let navigation: hydrus_store::settings::ThumbnailNavigation"
+          }
+        ],
+        "testAnchors": [
+          {
+            "path": "crates/hydrus-gui-model/tests/model/thumbnail_navigation.rs",
+            "line": 15,
+            "commit": "a074f4f87fcfb2fa67772e17cf81eb9550338fb7",
+            "kind": "model_regression",
+            "symbol": "fn staged_exact_controls"
+          },
+          {
+            "path": "crates/hydrus-gui-model/tests/model/thumbnail_navigation.rs",
+            "line": 71,
+            "commit": "a074f4f87fcfb2fa67772e17cf81eb9550338fb7",
+            "kind": "model_regression",
+            "symbol": "fn optional_last_hit_origin"
+          },
+          {
+            "path": "crates/hydrus-gui-model/tests/model/thumbnail_navigation.rs",
+            "line": 105,
+            "commit": "a074f4f87fcfb2fa67772e17cf81eb9550338fb7",
+            "kind": "model_regression",
+            "symbol": "fn exact_visibility_boundaries"
+          },
+          {
+            "path": "crates/hydrus-gui/tests/gui/thumbnail_navigation.rs",
+            "line": 78,
+            "commit": "a074f4f87fcfb2fa67772e17cf81eb9550338fb7",
+            "kind": "gui_consumer_regression",
+            "symbol": "fn owned_options_replay"
+          }
+        ],
+        "referenceRecording": {
+          "recorder": {
+            "path": "oracle/record_thumbnail_navigation.py",
+            "line": 13,
+            "commit": "a074f4f87fcfb2fa67772e17cf81eb9550338fb7",
+            "kind": "reference_recorder",
+            "symbol": "def record("
+          },
+          "fixture": {
+            "path": "oracle/fixtures/thumbnail_navigation.json",
+            "line": 2,
+            "commit": "a074f4f87fcfb2fa67772e17cf81eb9550338fb7",
+            "kind": "reference_fixture",
+            "symbol": "\"keys\""
+          },
+          "executed": true,
+          "executedAt": "2026-10-05T01:12:05Z–2026-10-05T01:12:09Z",
+          "driver": "with-oracle; hydrus_driver.run_client(basic); actual GUIPages ThumbnailsPanel drafts, serialization/reopen, loaded GraphicsView thumbnail panel, application commands and QWheelEvents",
+          "seams": [
+            "MPV availability disabled only inside the private offscreen reference recorder to avoid fatal GPU-log/Qt initialization deadlock. Preview playback is outside this recording.",
+            "No reference thumbnail-selection, rate, scroll, Options or movement decision handler is replaced.",
+            "Child watchdog25s bounds unrelated reference startup deadlock; successful final run shut down normally."
+          ],
+          "inputsOutputs": [
+            "11 staged input triples including clamp0→1/100→99, malformed float preserving prior text, Unicode decimal digits, valid/invalid underscores, zero/negative andnan/inf raw strings.",
+            "Two last-hit preference states, each with click2/Shift6/right/Shift4/right: exact selected indices, focused index and last hit recorded.",
+            "12 visibility-neighbour probes at percent1/40/75/99: actual thumb top/span, viewport offset/height and resulting scrollbar value.",
+            "Eight rate resets and actual negative120 Qt angle-wheel events: 131×0.5→66,131×1.5→196, negative rate absolute66, zero0, nonfinite exceptions retain prior66; default3 lines and page cap recorded."
+          ]
+        }
+      },
+      "current_pending_assessment": "Options > thumbnails > interaction stages the exact original controls, imports independent legacy keys, applies to live consumers, preserves saved values on Cancel and reopens persisted drafts. The independent saved last-hit option changes non-Shift movement-key starting priority after Shift selection. Actual recorded consecutive click/Shift/right/Shift/right histories preserve focused-versus-last-hit distinction, selected ranges and range shrinking. The original move_focus API retains default behavior; the actual SearchPage consumer reads the live setting.",
+      "approval": false
+    },
+    {
+      "id": "audit-options-thumbnails-interaction-do-not-scroll-down-on-key-navigation-if-thumbnail-at-least-this-visible",
+      "before_canonical_full_object": {
+        "id": "audit-options-thumbnails-interaction-do-not-scroll-down-on-key-navigation-if-thumbnail-at-least-this-visible",
+        "parent_id": "audit-options-thumbnails-interaction",
+        "label": "Do not scroll down on key navigation if thumbnail at least this % visible:",
+        "kind": "control",
+        "status": "missing",
+        "native_source": null,
+        "reference_source": {
+          "path": "hydrus/client/gui/panels/options/ThumbnailsPanel.py",
+          "line": 165,
+          "line_sha256": "3e9e286652047edbd32d676cad931fe064d463a7b206c2a7b0b295a6f9e6508a"
+        },
+        "assessment": "Reference editor/control 'Do not scroll down on key navigation if thumbnail at least this % visible:' is recorded on 'thumbnails' and defined by the referenced options panel. No corresponding editable row exists in native options::pages; this is a missing GUI editing path, even if a setting is imported or consumed elsewhere.",
+        "evidence": [
+          {
+            "path": "crates/hydrus-gui-model/src/options.rs",
+            "line": 1626,
+            "role": "source_inspection",
+            "description": "Inspected complete native options registry: the explicitly listed native getter/setter rows are offered.",
+            "executed_in_inventory": false,
+            "line_sha256": "9b25465690948e42af43c4a0260d2651e872520f0dcd383f3510ff0712f4a148"
+          },
+          {
+            "path": "oracle/record_options_dialog.py",
+            "line": 1,
+            "role": "existing_oracle_recorder",
+            "description": "Existing recorder traverses the real Qt options dialog, including these page/box/control labels.",
+            "executed_in_inventory": false,
+            "line_sha256": "381f9bfc69d49d39040a7d5fc3197ce385019a2ba2de649622f841a8c658ed37"
+          }
+        ],
+        "limitations": [
+          "Native options registry has no editable 'Do not scroll down on key navigation if thumbnail at least this % visible:' control in this page/box path."
+        ],
+        "descendant_count": 0,
+        "descendant_status_counts": {},
+        "unique_feature_descendant_count": 0,
+        "unique_reachable_feature_count_including_shared": 1,
+        "native_id_candidates": []
+      },
+      "historical_manifest_claim_verbatim": {
+        "reference_id": "audit-options-thumbnails-interaction-do-not-scroll-down-on-key-navigation-if-thumbnail-at-least-this-visible",
+        "before": "missing",
+        "proposedStatus": "first_pass",
+        "countAsCompletedLeaf": true,
+        "change_kind": "implementation",
+        "implementationCommit": "a074f4f87fcfb2fa67772e17cf81eb9550338fb7",
+        "exactBehavior": "Options > thumbnails > interaction stages the exact original controls, imports independent legacy keys, applies to live consumers, preserves saved values on Cancel and reopens persisted drafts. The 1–99 spin box clamps as Qt, persists across reopen and reaches actual keyboard scroll-to callbacks. The regular grid chooses top/bottom point with the strict visibility comparison, includes thumbnail margin, Qt50px ensureVisible point margin and content-end clamp. Model replays exact threshold neighbours; native real Down-key checks partially visible target rows on both sides of the threshold.",
+        "limits": [
+          "Exactly these three original Missing leaves are proposed; no preview-focus preference is implemented or promoted. Broader Thumbnails/interaction families remain Partial.",
+          "The native regular grid has vertical reveal/wheel consumers. Horizontal scrolling, direct scrollbar wheel input and full graphics-view/masonry layouts remain outside this slice.",
+          "Winit normalizes a line tick to60px; the native consumer uses the recorded Qt default of3 wheel lines with a page cap. Physical-pixel smooth deltas use this scale; platform wheel-line settings and Qt fractional wheel accumulation are not ported.",
+          "Nonfinite/out-of-signed-int rates retain the prior native step without reproducing Qt conversion exceptions; raw accepted text remains saved. Invalid text silently keeps the prior saved string.",
+          "Native actual pointer/key/wheel replays and thumbnail-navigation.png are authored pending hosted CI. No local Cargo builds/tests, mutation runs, pushes or canonical inventory edits were performed."
+        ],
+        "sourceAnchors": [
+          {
+            "path": "crates/hydrus-store/src/settings.rs",
+            "line": 53,
+            "commit": "a074f4f87fcfb2fa67772e17cf81eb9550338fb7",
+            "kind": "source",
+            "symbol": "pub struct ThumbnailNavigation"
+          },
+          {
+            "path": "crates/hydrus-store/src/import/decode.rs",
+            "line": 1020,
+            "commit": "a074f4f87fcfb2fa67772e17cf81eb9550338fb7",
+            "kind": "source",
+            "symbol": "let mut navigation = crate::settings::ThumbnailNavigation"
+          },
+          {
+            "path": "crates/hydrus-gui-model/src/options.rs",
+            "line": 212,
+            "commit": "a074f4f87fcfb2fa67772e17cf81eb9550338fb7",
+            "kind": "source",
+            "symbol": "thumbnail_navigation: hydrus_store"
+          },
+          {
+            "path": "crates/hydrus-gui-model/src/options.rs",
+            "line": 3340,
+            "commit": "a074f4f87fcfb2fa67772e17cf81eb9550338fb7",
+            "kind": "source",
+            "symbol": "When shift-selecting, move the"
+          },
+          {
+            "path": "crates/hydrus-gui/src/lib.rs",
+            "line": 3408,
+            "commit": "a074f4f87fcfb2fa67772e17cf81eb9550338fb7",
+            "kind": "source",
+            "symbol": "thumbnail_navigation::bind"
+          },
+          {
+            "path": "crates/hydrus-gui-model/src/thumbnail_navigation.rs",
+            "line": 45,
+            "commit": "a074f4f87fcfb2fa67772e17cf81eb9550338fb7",
+            "kind": "source",
+            "symbol": "pub fn scroll_target"
+          },
+          {
+            "path": "crates/hydrus-gui/src/thumbnail_navigation.rs",
+            "line": 20,
+            "commit": "a074f4f87fcfb2fa67772e17cf81eb9550338fb7",
+            "kind": "source",
+            "symbol": "window.on_thumbnail_scroll_target"
+          },
+          {
+            "path": "crates/hydrus-gui/ui/main.slint",
+            "line": 258,
+            "commit": "a074f4f87fcfb2fa67772e17cf81eb9550338fb7",
+            "kind": "source",
+            "symbol": "root.content-y = -root.navigation-scroll"
+          }
+        ],
+        "testAnchors": [
+          {
+            "path": "crates/hydrus-gui-model/tests/model/thumbnail_navigation.rs",
+            "line": 15,
+            "commit": "a074f4f87fcfb2fa67772e17cf81eb9550338fb7",
+            "kind": "model_regression",
+            "symbol": "fn staged_exact_controls"
+          },
+          {
+            "path": "crates/hydrus-gui-model/tests/model/thumbnail_navigation.rs",
+            "line": 71,
+            "commit": "a074f4f87fcfb2fa67772e17cf81eb9550338fb7",
+            "kind": "model_regression",
+            "symbol": "fn optional_last_hit_origin"
+          },
+          {
+            "path": "crates/hydrus-gui-model/tests/model/thumbnail_navigation.rs",
+            "line": 105,
+            "commit": "a074f4f87fcfb2fa67772e17cf81eb9550338fb7",
+            "kind": "model_regression",
+            "symbol": "fn exact_visibility_boundaries"
+          },
+          {
+            "path": "crates/hydrus-gui/tests/gui/thumbnail_navigation.rs",
+            "line": 78,
+            "commit": "a074f4f87fcfb2fa67772e17cf81eb9550338fb7",
+            "kind": "gui_consumer_regression",
+            "symbol": "fn owned_options_replay"
+          }
+        ],
+        "referenceRecording": {
+          "recorder": {
+            "path": "oracle/record_thumbnail_navigation.py",
+            "line": 13,
+            "commit": "a074f4f87fcfb2fa67772e17cf81eb9550338fb7",
+            "kind": "reference_recorder",
+            "symbol": "def record("
+          },
+          "fixture": {
+            "path": "oracle/fixtures/thumbnail_navigation.json",
+            "line": 2,
+            "commit": "a074f4f87fcfb2fa67772e17cf81eb9550338fb7",
+            "kind": "reference_fixture",
+            "symbol": "\"keys\""
+          },
+          "executed": true,
+          "executedAt": "2026-10-05T01:12:05Z–2026-10-05T01:12:09Z",
+          "driver": "with-oracle; hydrus_driver.run_client(basic); actual GUIPages ThumbnailsPanel drafts, serialization/reopen, loaded GraphicsView thumbnail panel, application commands and QWheelEvents",
+          "seams": [
+            "MPV availability disabled only inside the private offscreen reference recorder to avoid fatal GPU-log/Qt initialization deadlock. Preview playback is outside this recording.",
+            "No reference thumbnail-selection, rate, scroll, Options or movement decision handler is replaced.",
+            "Child watchdog25s bounds unrelated reference startup deadlock; successful final run shut down normally."
+          ],
+          "inputsOutputs": [
+            "11 staged input triples including clamp0→1/100→99, malformed float preserving prior text, Unicode decimal digits, valid/invalid underscores, zero/negative andnan/inf raw strings.",
+            "Two last-hit preference states, each with click2/Shift6/right/Shift4/right: exact selected indices, focused index and last hit recorded.",
+            "12 visibility-neighbour probes at percent1/40/75/99: actual thumb top/span, viewport offset/height and resulting scrollbar value.",
+            "Eight rate resets and actual negative120 Qt angle-wheel events: 131×0.5→66,131×1.5→196, negative rate absolute66, zero0, nonfinite exceptions retain prior66; default3 lines and page cap recorded."
+          ]
+        }
+      },
+      "current_pending_assessment": "Options > thumbnails > interaction stages the exact original controls, imports independent legacy keys, applies to live consumers, preserves saved values on Cancel and reopens persisted drafts. The 1–99 spin box clamps as Qt, persists across reopen and reaches actual keyboard scroll-to callbacks. The regular grid chooses top/bottom point with the strict visibility comparison, includes thumbnail margin, Qt50px ensureVisible point margin and content-end clamp. Model replays exact threshold neighbours; native real Down-key checks partially visible target rows on both sides of the threshold.",
+      "approval": false
+    },
+    {
+      "id": "audit-options-thumbnails-interaction-experimental-scroll-thumbnails-at-this-rate-per-scroll-tick",
+      "before_canonical_full_object": {
+        "id": "audit-options-thumbnails-interaction-experimental-scroll-thumbnails-at-this-rate-per-scroll-tick",
+        "parent_id": "audit-options-thumbnails-interaction",
+        "label": "EXPERIMENTAL: Scroll thumbnails at this rate per scroll tick:",
+        "kind": "control",
+        "status": "missing",
+        "native_source": null,
+        "reference_source": {
+          "path": "hydrus/client/gui/panels/options/ThumbnailsPanel.py",
+          "line": 166,
+          "line_sha256": "5287205717371f3eb51f7f94376fbc0af37a0abe042fa9b8ee8319630b02a514"
+        },
+        "assessment": "Reference editor/control 'EXPERIMENTAL: Scroll thumbnails at this rate per scroll tick:' is recorded on 'thumbnails' and defined by the referenced options panel. No corresponding editable row exists in native options::pages; this is a missing GUI editing path, even if a setting is imported or consumed elsewhere.",
+        "evidence": [
+          {
+            "path": "crates/hydrus-gui-model/src/options.rs",
+            "line": 1626,
+            "role": "source_inspection",
+            "description": "Inspected complete native options registry: the explicitly listed native getter/setter rows are offered.",
+            "executed_in_inventory": false,
+            "line_sha256": "9b25465690948e42af43c4a0260d2651e872520f0dcd383f3510ff0712f4a148"
+          },
+          {
+            "path": "oracle/record_options_dialog.py",
+            "line": 1,
+            "role": "existing_oracle_recorder",
+            "description": "Existing recorder traverses the real Qt options dialog, including these page/box/control labels.",
+            "executed_in_inventory": false,
+            "line_sha256": "381f9bfc69d49d39040a7d5fc3197ce385019a2ba2de649622f841a8c658ed37"
+          }
+        ],
+        "limitations": [
+          "Native options registry has no editable 'EXPERIMENTAL: Scroll thumbnails at this rate per scroll tick:' control in this page/box path."
+        ],
+        "descendant_count": 0,
+        "descendant_status_counts": {},
+        "unique_feature_descendant_count": 0,
+        "unique_reachable_feature_count_including_shared": 1,
+        "native_id_candidates": []
+      },
+      "historical_manifest_claim_verbatim": {
+        "reference_id": "audit-options-thumbnails-interaction-experimental-scroll-thumbnails-at-this-rate-per-scroll-tick",
+        "before": "missing",
+        "proposedStatus": "first_pass",
+        "countAsCompletedLeaf": true,
+        "change_kind": "implementation",
+        "implementationCommit": "a074f4f87fcfb2fa67772e17cf81eb9550338fb7",
+        "exactBehavior": "Options > thumbnails > interaction stages the exact original controls, imports independent legacy keys, applies to live consumers, preserves saved values on Cancel and reopens persisted drafts. Raw rate text stages/persists/reopens and drives actual row TouchArea wheel events. Python-compatible decimal/underscore text is accepted; malformed text silently retains the saved value. Span×rate rounds ties-to-even, Qt takes absolute negative steps, zero stops movement, and native rate application retains the previous step for nonfinite/out-of-signed-int results. Default three-line wheel steps cap to one page without changing selection.",
+        "limits": [
+          "Exactly these three original Missing leaves are proposed; no preview-focus preference is implemented or promoted. Broader Thumbnails/interaction families remain Partial.",
+          "The native regular grid has vertical reveal/wheel consumers. Horizontal scrolling, direct scrollbar wheel input and full graphics-view/masonry layouts remain outside this slice.",
+          "Winit normalizes a line tick to60px; the native consumer uses the recorded Qt default of3 wheel lines with a page cap. Physical-pixel smooth deltas use this scale; platform wheel-line settings and Qt fractional wheel accumulation are not ported.",
+          "Nonfinite/out-of-signed-int rates retain the prior native step without reproducing Qt conversion exceptions; raw accepted text remains saved. Invalid text silently keeps the prior saved string.",
+          "Native actual pointer/key/wheel replays and thumbnail-navigation.png are authored pending hosted CI. No local Cargo builds/tests, mutation runs, pushes or canonical inventory edits were performed."
+        ],
+        "sourceAnchors": [
+          {
+            "path": "crates/hydrus-store/src/settings.rs",
+            "line": 53,
+            "commit": "a074f4f87fcfb2fa67772e17cf81eb9550338fb7",
+            "kind": "source",
+            "symbol": "pub struct ThumbnailNavigation"
+          },
+          {
+            "path": "crates/hydrus-store/src/import/decode.rs",
+            "line": 1020,
+            "commit": "a074f4f87fcfb2fa67772e17cf81eb9550338fb7",
+            "kind": "source",
+            "symbol": "let mut navigation = crate::settings::ThumbnailNavigation"
+          },
+          {
+            "path": "crates/hydrus-gui-model/src/options.rs",
+            "line": 212,
+            "commit": "a074f4f87fcfb2fa67772e17cf81eb9550338fb7",
+            "kind": "source",
+            "symbol": "thumbnail_navigation: hydrus_store"
+          },
+          {
+            "path": "crates/hydrus-gui-model/src/options.rs",
+            "line": 3340,
+            "commit": "a074f4f87fcfb2fa67772e17cf81eb9550338fb7",
+            "kind": "source",
+            "symbol": "When shift-selecting, move the"
+          },
+          {
+            "path": "crates/hydrus-gui/src/lib.rs",
+            "line": 3408,
+            "commit": "a074f4f87fcfb2fa67772e17cf81eb9550338fb7",
+            "kind": "source",
+            "symbol": "thumbnail_navigation::bind"
+          },
+          {
+            "path": "crates/hydrus-gui-model/src/thumbnail_navigation.rs",
+            "line": 5,
+            "commit": "a074f4f87fcfb2fa67772e17cf81eb9550338fb7",
+            "kind": "source",
+            "symbol": "pub fn parse_rate"
+          },
+          {
+            "path": "crates/hydrus-gui-model/src/thumbnail_navigation.rs",
+            "line": 31,
+            "commit": "a074f4f87fcfb2fa67772e17cf81eb9550338fb7",
+            "kind": "source",
+            "symbol": "pub fn single_step"
+          },
+          {
+            "path": "crates/hydrus-gui-model/src/thumbnail_navigation.rs",
+            "line": 70,
+            "commit": "a074f4f87fcfb2fa67772e17cf81eb9550338fb7",
+            "kind": "source",
+            "symbol": "pub fn wheel_target"
+          },
+          {
+            "path": "crates/hydrus-gui/src/thumbnail_navigation.rs",
+            "line": 10,
+            "commit": "a074f4f87fcfb2fa67772e17cf81eb9550338fb7",
+            "kind": "source",
+            "symbol": "pub(crate) fn show"
+          },
+          {
+            "path": "crates/hydrus-gui/ui/main.slint",
+            "line": 433,
+            "commit": "a074f4f87fcfb2fa67772e17cf81eb9550338fb7",
+            "kind": "source",
+            "symbol": "root.wheel-scroll(event.delta-y"
+          }
+        ],
+        "testAnchors": [
+          {
+            "path": "crates/hydrus-gui-model/tests/model/thumbnail_navigation.rs",
+            "line": 15,
+            "commit": "a074f4f87fcfb2fa67772e17cf81eb9550338fb7",
+            "kind": "model_regression",
+            "symbol": "fn staged_exact_controls"
+          },
+          {
+            "path": "crates/hydrus-gui-model/tests/model/thumbnail_navigation.rs",
+            "line": 71,
+            "commit": "a074f4f87fcfb2fa67772e17cf81eb9550338fb7",
+            "kind": "model_regression",
+            "symbol": "fn optional_last_hit_origin"
+          },
+          {
+            "path": "crates/hydrus-gui-model/tests/model/thumbnail_navigation.rs",
+            "line": 105,
+            "commit": "a074f4f87fcfb2fa67772e17cf81eb9550338fb7",
+            "kind": "model_regression",
+            "symbol": "fn exact_visibility_boundaries"
+          },
+          {
+            "path": "crates/hydrus-gui/tests/gui/thumbnail_navigation.rs",
+            "line": 78,
+            "commit": "a074f4f87fcfb2fa67772e17cf81eb9550338fb7",
+            "kind": "gui_consumer_regression",
+            "symbol": "fn owned_options_replay"
+          }
+        ],
+        "referenceRecording": {
+          "recorder": {
+            "path": "oracle/record_thumbnail_navigation.py",
+            "line": 13,
+            "commit": "a074f4f87fcfb2fa67772e17cf81eb9550338fb7",
+            "kind": "reference_recorder",
+            "symbol": "def record("
+          },
+          "fixture": {
+            "path": "oracle/fixtures/thumbnail_navigation.json",
+            "line": 2,
+            "commit": "a074f4f87fcfb2fa67772e17cf81eb9550338fb7",
+            "kind": "reference_fixture",
+            "symbol": "\"keys\""
+          },
+          "executed": true,
+          "executedAt": "2026-10-05T01:12:05Z–2026-10-05T01:12:09Z",
+          "driver": "with-oracle; hydrus_driver.run_client(basic); actual GUIPages ThumbnailsPanel drafts, serialization/reopen, loaded GraphicsView thumbnail panel, application commands and QWheelEvents",
+          "seams": [
+            "MPV availability disabled only inside the private offscreen reference recorder to avoid fatal GPU-log/Qt initialization deadlock. Preview playback is outside this recording.",
+            "No reference thumbnail-selection, rate, scroll, Options or movement decision handler is replaced.",
+            "Child watchdog25s bounds unrelated reference startup deadlock; successful final run shut down normally."
+          ],
+          "inputsOutputs": [
+            "11 staged input triples including clamp0→1/100→99, malformed float preserving prior text, Unicode decimal digits, valid/invalid underscores, zero/negative andnan/inf raw strings.",
+            "Two last-hit preference states, each with click2/Shift6/right/Shift4/right: exact selected indices, focused index and last hit recorded.",
+            "12 visibility-neighbour probes at percent1/40/75/99: actual thumb top/span, viewport offset/height and resulting scrollbar value.",
+            "Eight rate resets and actual negative120 Qt angle-wheel events: 131×0.5→66,131×1.5→196, negative rate absolute66, zero0, nonfinite exceptions retain prior66; default3 lines and page cap recorded."
+          ]
+        }
+      },
+      "current_pending_assessment": "Options > thumbnails > interaction stages the exact original controls, imports independent legacy keys, applies to live consumers, preserves saved values on Cancel and reopens persisted drafts. Raw rate text stages/persists/reopens and drives actual row TouchArea wheel events. Python-compatible decimal/underscore text is accepted; malformed text silently retains the saved value. Span×rate rounds ties-to-even, Qt takes absolute negative steps, zero stops movement, and native rate application retains the previous step for nonfinite/out-of-signed-int results. Default three-line wheel steps cap to one page without changing selection.",
+      "approval": false
+    }
+  ],
+  "approval": false,
+  "selected_preview_focus_absence_reconciliation": {
+    "historical_manifest_limit_verbatim": "Exactly these three original Missing leaves are proposed; no preview-focus preference is implemented or promoted. Broader Thumbnails/interaction families remain Partial.",
+    "current_selected_limit_before_gates": "Exactly these three original Missing leaves are proposed; preview-focus preferences are separate sibling scope and receive no completion credit here. Broader Thumbnails/interaction families remain Partial.",
+    "conditional_accepted_limit": "Exactly these three original Missing leaves are selected; preview-focus preferences are separate sibling scope and receive no completion credit here. Broader Thumbnails/interaction families remain Partial.",
+    "source_proof": [
+      {
+        "path": "crates/hydrus-gui-model/src/options.rs",
+        "line": 4834,
+        "anchor_git_head": "b3f09e2f1f4a721e05f6fe5f7f7f4a24a8fb1a83",
+        "text": "                            \"On ctrl-selection, focus thumbnails in the preview window: \",",
+        "line_sha256": "4565bcb18753a590f5e9c8d2039f738756ca003483bed031fd05b257f4c42760",
+        "method": "Exact unique authored control declaration/documentation; no nearest line substitution."
+      },
+      {
+        "path": "crates/hydrus-gui-model/src/options.rs",
+        "line": 4847,
+        "anchor_git_head": "b3f09e2f1f4a721e05f6fe5f7f7f4a24a8fb1a83",
+        "text": "                            \"On shift-selection, focus thumbnails in the preview window: \",",
+        "line_sha256": "5952e8bd6c13a04136beba5a30d816328e1987196dcb4d8198c528191e818dac",
+        "method": "Exact unique authored control declaration/documentation; no nearest line substitution."
+      },
+      {
+        "path": "docs/rust/GUI.md",
+        "line": 3421,
+        "anchor_git_head": "b3f09e2f1f4a721e05f6fe5f7f7f4a24a8fb1a83",
+        "text": "The four independent Ctrl/Shift preview-focus checkboxes are also staged here.",
+        "line_sha256": "0f10ed2970193c84be52db0e392808884bf1b09a00ab0d0b3f0768317b9dd6af",
+        "method": "Exact unique authored control declaration/documentation; no nearest line substitution."
+      }
+    ],
+    "scope": "Current sibling controls are implemented but independently assessed. Exactly selected3 only; no sibling status or credit update. Historical manifest and recording provenance retained verbatim."
+  }
+}

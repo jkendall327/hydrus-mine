@@ -1,0 +1,32 @@
+{
+  "source_commit": "1a49a30f058d47ea29cf6ea1f1dc919d14d9f243",
+  "base_commit": "2e4912e688110d7b3ed6aad07aed0e72835d65d0",
+  "gui_assertions_before": 17,
+  "gui_assertions_after": 57,
+  "gui_tests_before": 1,
+  "gui_tests_after": 1,
+  "all_original_gui_lines_in_order": true,
+  "previous51_assertions_preserved": true,
+  "model_unchanged": true,
+  "model_assertions": 19,
+  "model_tests": 3,
+  "files": {
+    "crates/hydrus-gui/ui/main.slint": {
+      "sha256": "e6d43cf6e76fe7a2619287924551381afe89bd5629db41d1523c251793825c7c"
+    },
+    "crates/hydrus-gui/tests/gui/thumbnail_navigation.rs": {
+      "sha256": "2e2b0f519060a720b2ab163e2c4e6560db45e2e039544066e4526509ac4c67de"
+    },
+    "docs/rust/GUI.md": {
+      "sha256": "8b2cec1fb4bd10951b819939c071d0dd8224ee2022e7b1f9b40c64d82065b03f"
+    },
+    "docs/rust/DIFFERENCES.md": {
+      "sha256": "00b61fed11fffc3ba5639c86670716c5be9623e677546fbe676a66d79d1b87d1"
+    },
+    "crates/hydrus-gui-model/tests/model/thumbnail_navigation.rs": {
+      "sha256": "f64e30cae3bf509d563273658c30e871d6affe03c17e699c14280fac02fe45d3"
+    }
+  },
+  "agent_proof_sha256": "df79214c42cf4979d6d4593d322c0c2f61a879fc737460eeac814744f367c492",
+  "approval": false
+}

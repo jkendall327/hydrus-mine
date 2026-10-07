@@ -1,0 +1,50 @@
+{
+  "source_commit": "1a49a30f058d47ea29cf6ea1f1dc919d14d9f243",
+  "run_id": 37644009033,
+  "source_review2_sha256": "d35d4c59d3d35a85a1e99baaf9e42a399ecb83f470108ad2ebb32c65947829b0",
+  "implementation_proof_sha256": "df79214c42cf4979d6d4593d322c0c2f61a879fc737460eeac814744f367c492",
+  "historical_reference_recording": {
+    "recorder": {
+      "path": "oracle/record_thumbnail_navigation.py",
+      "line": 13,
+      "commit": "a074f4f87fcfb2fa67772e17cf81eb9550338fb7",
+      "kind": "reference_recorder",
+      "symbol": "def record("
+    },
+    "fixture": {
+      "path": "oracle/fixtures/thumbnail_navigation.json",
+      "line": 2,
+      "commit": "a074f4f87fcfb2fa67772e17cf81eb9550338fb7",
+      "kind": "reference_fixture",
+      "symbol": "\"keys\""
+    },
+    "executed": true,
+    "executedAt": "2026-10-05T01:12:05Z–2026-10-05T01:12:09Z",
+    "driver": "with-oracle; hydrus_driver.run_client(basic); actual GUIPages ThumbnailsPanel drafts, serialization/reopen, loaded GraphicsView thumbnail panel, application commands and QWheelEvents",
+    "seams": [
+      "MPV availability disabled only inside the private offscreen reference recorder to avoid fatal GPU-log/Qt initialization deadlock. Preview playback is outside this recording.",
+      "No reference thumbnail-selection, rate, scroll, Options or movement decision handler is replaced.",
+      "Child watchdog25s bounds unrelated reference startup deadlock; successful final run shut down normally."
+    ],
+    "inputsOutputs": [
+      "11 staged input triples including clamp0→1/100→99, malformed float preserving prior text, Unicode decimal digits, valid/invalid underscores, zero/negative andnan/inf raw strings.",
+      "Two last-hit preference states, each with click2/Shift6/right/Shift4/right: exact selected indices, focused index and last hit recorded.",
+      "12 visibility-neighbour probes at percent1/40/75/99: actual thumb top/span, viewport offset/height and resulting scrollbar value.",
+      "Eight rate resets and actual negative120 Qt angle-wheel events: 131×0.5→66,131×1.5→196, negative rate absolute66, zero0, nonfinite exceptions retain prior66; default3 lines and page cap recorded."
+    ]
+  },
+  "generation_compiler_only": {
+    "source_commit": "1a49a30f058d47ea29cf6ea1f1dc919d14d9f243",
+    "ui_sha256": "e6d43cf6e76fe7a2619287924551381afe89bd5629db41d1523c251793825c7c",
+    "compiler": "cached Slint1.18.1 build-script generation only",
+    "exit_code": 0,
+    "warnings": false,
+    "log": "/workspace/validation-reviews/thumbnail-navigation3/repair2/slint-generation.log",
+    "log_sha256": "5fc0be6ff7a2e8caf5274fe853146326c224728d4cec71d4d77641654a74c43b",
+    "generated_source": "/workspace/validation-reviews/thumbnail-navigation3/repair2/slint-generation/main.rs",
+    "generated_source_sha256": "3eec31e0b2451655da01137072c330338108788f5b295030601cade5994b32fb",
+    "generated_constraint_snippet": "/workspace/validation-reviews/thumbnail-navigation3/repair2/generated-visible-hidden-minimum.txt",
+    "rust_compile_or_runtime": false
+  },
+  "approval": false
+}

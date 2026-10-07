@@ -2421,9 +2421,9 @@ children share selection/broadcast but retain their existing context-menu
 boundary. Manage Tags' independently owned suggestion/related workers are
 unchanged. Broader shared read/write autocomplete parents remain Partial.
 The three thumbnail-navigation preferences have real staged/imported/persisted
-controls and existing keyboard/wheel consumers. Preview-focus options remain
-Missing while their configurable focus policies are unported; the broader thumbnail family
-remains Partial. Default selection behavior and its range/ghost invariants use
+controls and existing keyboard/wheel consumers. The independently assessed
+preview-focus controls receive no additional credit in this batch; the broader
+thumbnail family remains Partial. Default selection behavior and its range/ghost invariants use
 the existing API; the optional last-hit origin is a separate live path.
 
 The native regular grid implements vertical reveal and wheel scrolling. It uses
@@ -2440,8 +2440,20 @@ The real Qt recorder disables MPV availability only in its private offscreen
 process, avoiding a fatal GPU-log callback that blocks initialization. Thumbnail
 selection, scroll, Options and rate decision handlers remain unchanged; preview
 playback is not recorded. Native real pointer/key/wheel replays and the
-`thumbnail-navigation.png` capture are authored for hosted CI. No local Cargo
-builds/tests or mutation runs were performed.
+`thumbnail-navigation.png` capture are authored for hosted CI. The current
+follow-up repairs overlapping narrow sidebar captions without changing the
+navigation algorithms or reducing the original assertions. Adaptive paired-button
+stacking is native accommodation: the Qt source has horizontal pairs, and the
+wider reference image does not establish matching narrow geometry.
+The visible search-content minimum now preserves intrinsic height so the existing
+ScrollView has a real scroll extent; hidden search content remains zero minimum.
+Actual wheel movement and strict viewport containment passed the repaired-source
+full Linux regression and fresh four-frame review.
+Actual saved Options captures and supported narrow/wider frame checks passed full Linux run
+`37644009033` and fresh independent review. No local Cargo builds/tests or
+mutation runs were performed. Exactly three navigation preference leaves receive
+credit; sidebar, preview-focus siblings and broader parents remain separately
+assessed. [Evidence](gui-coverage/checkpoints/1a49a30f0/README.md).
 
 The namespace-colour Add/Delete and OR-row namespace preferences now have staged
 Options controls and real list consumers. Rejected namespace input closes its

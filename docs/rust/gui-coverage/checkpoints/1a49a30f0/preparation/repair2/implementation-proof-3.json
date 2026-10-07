@@ -1,0 +1,32 @@
+{
+  "base_commit": "9e4b3c59215d017a0a0e0948898901121f0618f5",
+  "agent_commit": "1a49a30f058d47ea29cf6ea1f1dc919d14d9f243",
+  "failed_source_commit": "9e4b3c59215d017a0a0e0948898901121f0618f5",
+  "failed_run_id": 37638222068,
+  "failed_log": "/workspace/validation-reviews/ci-9e4b3c592/full-check.log",
+  "failed_log_sha256": "c96916f7c901ddd41605f8d4cf2789853fdae33d1072d766dbbf19d3ac2a1e53",
+  "source_files": {
+    "crates/hydrus-gui/ui/main.slint": "e6d43cf6e76fe7a2619287924551381afe89bd5629db41d1523c251793825c7c",
+    "crates/hydrus-gui/tests/gui/thumbnail_navigation.rs": "2e2b0f519060a720b2ab163e2c4e6560db45e2e039544066e4526509ac4c67de",
+    "docs/rust/GUI.md": "8b2cec1fb4bd10951b819939c071d0dd8224ee2022e7b1f9b40c64d82065b03f",
+    "docs/rust/DIFFERENCES.md": "00b61fed11fffc3ba5639c86670716c5be9623e677546fbe676a66d79d1b87d1"
+  },
+  "preservation": {
+    "all_51_previous_macros_bytewise_in_order": true,
+    "all_original_banked_lines_bytewise_in_order": true,
+    "all_original_17_macros": true,
+    "previous_assertions": 51,
+    "current_assertions": 57,
+    "tests_before": 1,
+    "tests_after": 1,
+    "original700x600_280_sidebar_two_columns_and_real_input_checks": "unchanged",
+    "no_assertion_removed_or_weakened": true
+  },
+  "checks": {
+    "rustfmt": "passed with pinned Rust1.94 rustfmt --edition2024 (workspace edition)",
+    "git_diff_check": "passed",
+    "Slint_generation": "passed exactUI, no warnings; source generation only"
+  },
+  "runtime_or_render_approval": false,
+  "wheel_target": "Measured exposed left padding-band x; actual viewport-center y, independent of initial button visibility"
+}

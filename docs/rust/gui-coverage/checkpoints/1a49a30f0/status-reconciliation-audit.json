@@ -1,0 +1,159 @@
+{
+  "source_commit": "1a49a30f058d47ea29cf6ea1f1dc919d14d9f243",
+  "ci_evidence_sha256": "9abac67e60414eb8092e737af4dbe0e17b2bd1f6ae24823e837b24c95f87b547",
+  "mapping_sha256": "031c099afe3e4dc07253f754d905a6c39f02a6d746732feeadf16e756ab69be1",
+  "mapping_applied_after_gates": true,
+  "operations": [
+    {
+      "id": "audit-options-thumbnails-interaction-when-shift-selecting-move-the-navigate-from-here-position-with-it",
+      "field": "limitations",
+      "original_index": 0,
+      "operation": "replace_exact_list_item",
+      "before": "Exactly these three original Missing leaves are proposed; preview-focus preferences are separate sibling scope and receive no completion credit here. Broader Thumbnails/interaction families remain Partial.",
+      "conditional_after": "Exactly these three original Missing leaves are selected; preview-focus preferences are separate sibling scope and receive no completion credit here. Broader Thumbnails/interaction families remain Partial.",
+      "reason": "Resolve only provisional selection phrasing; preserve exact preview-focus/parent exclusion."
+    },
+    {
+      "id": "audit-options-thumbnails-interaction-when-shift-selecting-move-the-navigate-from-here-position-with-it",
+      "field": "limitations",
+      "original_index": 4,
+      "operation": "replace_exact_list_item",
+      "before": "Native actual pointer/key/wheel replays and thumbnail-navigation.png are authored pending hosted CI. No local Cargo builds/tests, mutation runs, pushes or canonical inventory edits were performed.",
+      "conditional_after": "Historical author metadata records authored pointer/key/wheel replays without local Cargo builds/tests or mutation runs. Current exact-source Linux execution and fresh Main/saved-Options rendered review are recorded separately in the accepted checkpoint. Historical source and reference-recording provenance are retained.",
+      "reason": "Reconcile old author-pending validation only after actual gates; retain historical no-local-execution provenance."
+    },
+    {
+      "id": "audit-options-thumbnails-interaction-when-shift-selecting-move-the-navigate-from-here-position-with-it",
+      "field": "remaining",
+      "original_index": 0,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source full Linux validation remains pending.",
+      "conditional_after": null,
+      "reason": "Remove only current validation/render pending status after actual gates."
+    },
+    {
+      "id": "audit-options-thumbnails-interaction-when-shift-selecting-move-the-navigate-from-here-position-with-it",
+      "field": "remaining",
+      "original_index": 1,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source four defining fresh captures and independent rendered/behavioral review remain pending.",
+      "conditional_after": null,
+      "reason": "Remove only current validation/render pending status after actual gates."
+    },
+    {
+      "id": "audit-options-thumbnails-interaction-do-not-scroll-down-on-key-navigation-if-thumbnail-at-least-this-visible",
+      "field": "limitations",
+      "original_index": 0,
+      "operation": "replace_exact_list_item",
+      "before": "Exactly these three original Missing leaves are proposed; preview-focus preferences are separate sibling scope and receive no completion credit here. Broader Thumbnails/interaction families remain Partial.",
+      "conditional_after": "Exactly these three original Missing leaves are selected; preview-focus preferences are separate sibling scope and receive no completion credit here. Broader Thumbnails/interaction families remain Partial.",
+      "reason": "Resolve only provisional selection phrasing; preserve exact preview-focus/parent exclusion."
+    },
+    {
+      "id": "audit-options-thumbnails-interaction-do-not-scroll-down-on-key-navigation-if-thumbnail-at-least-this-visible",
+      "field": "limitations",
+      "original_index": 4,
+      "operation": "replace_exact_list_item",
+      "before": "Native actual pointer/key/wheel replays and thumbnail-navigation.png are authored pending hosted CI. No local Cargo builds/tests, mutation runs, pushes or canonical inventory edits were performed.",
+      "conditional_after": "Historical author metadata records authored pointer/key/wheel replays without local Cargo builds/tests or mutation runs. Current exact-source Linux execution and fresh Main/saved-Options rendered review are recorded separately in the accepted checkpoint. Historical source and reference-recording provenance are retained.",
+      "reason": "Reconcile old author-pending validation only after actual gates; retain historical no-local-execution provenance."
+    },
+    {
+      "id": "audit-options-thumbnails-interaction-do-not-scroll-down-on-key-navigation-if-thumbnail-at-least-this-visible",
+      "field": "remaining",
+      "original_index": 0,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source full Linux validation remains pending.",
+      "conditional_after": null,
+      "reason": "Remove only current validation/render pending status after actual gates."
+    },
+    {
+      "id": "audit-options-thumbnails-interaction-do-not-scroll-down-on-key-navigation-if-thumbnail-at-least-this-visible",
+      "field": "remaining",
+      "original_index": 1,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source four defining fresh captures and independent rendered/behavioral review remain pending.",
+      "conditional_after": null,
+      "reason": "Remove only current validation/render pending status after actual gates."
+    },
+    {
+      "id": "audit-options-thumbnails-interaction-experimental-scroll-thumbnails-at-this-rate-per-scroll-tick",
+      "field": "limitations",
+      "original_index": 0,
+      "operation": "replace_exact_list_item",
+      "before": "Exactly these three original Missing leaves are proposed; preview-focus preferences are separate sibling scope and receive no completion credit here. Broader Thumbnails/interaction families remain Partial.",
+      "conditional_after": "Exactly these three original Missing leaves are selected; preview-focus preferences are separate sibling scope and receive no completion credit here. Broader Thumbnails/interaction families remain Partial.",
+      "reason": "Resolve only provisional selection phrasing; preserve exact preview-focus/parent exclusion."
+    },
+    {
+      "id": "audit-options-thumbnails-interaction-experimental-scroll-thumbnails-at-this-rate-per-scroll-tick",
+      "field": "limitations",
+      "original_index": 4,
+      "operation": "replace_exact_list_item",
+      "before": "Native actual pointer/key/wheel replays and thumbnail-navigation.png are authored pending hosted CI. No local Cargo builds/tests, mutation runs, pushes or canonical inventory edits were performed.",
+      "conditional_after": "Historical author metadata records authored pointer/key/wheel replays without local Cargo builds/tests or mutation runs. Current exact-source Linux execution and fresh Main/saved-Options rendered review are recorded separately in the accepted checkpoint. Historical source and reference-recording provenance are retained.",
+      "reason": "Reconcile old author-pending validation only after actual gates; retain historical no-local-execution provenance."
+    },
+    {
+      "id": "audit-options-thumbnails-interaction-experimental-scroll-thumbnails-at-this-rate-per-scroll-tick",
+      "field": "remaining",
+      "original_index": 0,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source full Linux validation remains pending.",
+      "conditional_after": null,
+      "reason": "Remove only current validation/render pending status after actual gates."
+    },
+    {
+      "id": "audit-options-thumbnails-interaction-experimental-scroll-thumbnails-at-this-rate-per-scroll-tick",
+      "field": "remaining",
+      "original_index": 1,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source four defining fresh captures and independent rendered/behavioral review remain pending.",
+      "conditional_after": null,
+      "reason": "Remove only current validation/render pending status after actual gates."
+    }
+  ],
+  "added_review_scope_limits": {
+    "audit-options-thumbnails-interaction-when-shift-selecting-move-the-navigate-from-here-position-with-it": [
+      "Linux-only exact-source validation; Windows and macOS are deferred. Exactly these three navigation preferences qualify. No parent, alias, generic sidebar, preview-focus or broader thumbnail-family credit.",
+      "Native responsive stacking is a Slint accommodation. Qt uses horizontal paired controls; the inspected wider historical Qt image has different dimensions/location/query state. No matched narrow 700×600 or saved Options pixel parity is claimed.",
+      "Supported native geometry is Main 700×600/sidebar 280, Main 1100×700/sidebar 400 and Options 1000×900. Both Main exports are scrolled views that reveal the scoped controls; unscrolled top sort/collect visibility and arbitrary sidebar widths are not claimed.",
+      "The current 57-assertion GUI test preserves all preceding 51 and original 17 assertions; 19 model assertions across three tests are unchanged. Actual input, offset/row translation and strict viewport containment pass at this source. Earlier b3 and 9e failures and their incomplete captures remain historical diagnostics only.",
+      "Only the first two saved-control frames are measured. All three full labels, checkbox state, visibility 40 or 1 and raw rate 0.5 or 1.5 were independently verified in actual fresh pixels. Universal font, layout and OS input parity remain unclaimed.",
+      "Saved last-hit behavior is independent of preview-focus preferences. Real click/Shift/right/Shift/right histories and model replay preserve focused versus last-hit starting priority and selected range shrinking; no Preview playback evidence.",
+      "Reference recording uses a private real Qt ThumbnailsPanel draft, UpdateOptions and serialized reopen plus actual thumbnail decision/wheel handlers. The MPV availability seam is only for offscreen startup; no Preview playback or full Qt parent Options/disk-save workflow is established. Native Options edits are callback-driven; actual thumbnail pointer/key/wheel consumers and reopened visible states are verified."
+    ],
+    "audit-options-thumbnails-interaction-do-not-scroll-down-on-key-navigation-if-thumbnail-at-least-this-visible": [
+      "Linux-only exact-source validation; Windows and macOS are deferred. Exactly these three navigation preferences qualify. No parent, alias, generic sidebar, preview-focus or broader thumbnail-family credit.",
+      "Native responsive stacking is a Slint accommodation. Qt uses horizontal paired controls; the inspected wider historical Qt image has different dimensions/location/query state. No matched narrow 700×600 or saved Options pixel parity is claimed.",
+      "Supported native geometry is Main 700×600/sidebar 280, Main 1100×700/sidebar 400 and Options 1000×900. Both Main exports are scrolled views that reveal the scoped controls; unscrolled top sort/collect visibility and arbitrary sidebar widths are not claimed.",
+      "The current 57-assertion GUI test preserves all preceding 51 and original 17 assertions; 19 model assertions across three tests are unchanged. Actual input, offset/row translation and strict viewport containment pass at this source. Earlier b3 and 9e failures and their incomplete captures remain historical diagnostics only.",
+      "Only the first two saved-control frames are measured. All three full labels, checkbox state, visibility 40 or 1 and raw rate 0.5 or 1.5 were independently verified in actual fresh pixels. Universal font, layout and OS input parity remain unclaimed.",
+      "Physical Down-key reveal tests use the native source-derived target; separate model replay compares actual Qt recorded strict visibility boundaries and default point margins. Only the regular vertical grid is covered; horizontal/masonry/full graphics layouts and direct-scrollbar wheel routes are excluded.",
+      "Reference recording uses a private real Qt ThumbnailsPanel draft, UpdateOptions and serialized reopen plus actual thumbnail decision/wheel handlers. The MPV availability seam is only for offscreen startup; no Preview playback or full Qt parent Options/disk-save workflow is established. Native Options edits are callback-driven; actual thumbnail pointer/key/wheel consumers and reopened visible states are verified."
+    ],
+    "audit-options-thumbnails-interaction-experimental-scroll-thumbnails-at-this-rate-per-scroll-tick": [
+      "Linux-only exact-source validation; Windows and macOS are deferred. Exactly these three navigation preferences qualify. No parent, alias, generic sidebar, preview-focus or broader thumbnail-family credit.",
+      "Native responsive stacking is a Slint accommodation. Qt uses horizontal paired controls; the inspected wider historical Qt image has different dimensions/location/query state. No matched narrow 700×600 or saved Options pixel parity is claimed.",
+      "Supported native geometry is Main 700×600/sidebar 280, Main 1100×700/sidebar 400 and Options 1000×900. Both Main exports are scrolled views that reveal the scoped controls; unscrolled top sort/collect visibility and arbitrary sidebar widths are not claimed.",
+      "The current 57-assertion GUI test preserves all preceding 51 and original 17 assertions; 19 model assertions across three tests are unchanged. Actual input, offset/row translation and strict viewport containment pass at this source. Earlier b3 and 9e failures and their incomplete captures remain historical diagnostics only.",
+      "Only the first two saved-control frames are measured. All three full labels, checkbox state, visibility 40 or 1 and raw rate 0.5 or 1.5 were independently verified in actual fresh pixels. Universal font, layout and OS input parity remain unclaimed.",
+      "Winit uses 60px per line and the recorded Qt default of three wheel lines with a page cap. Qt platform wheel-line preferences and fractional wheel accumulation are excluded. Decimal/Unicode/underscore rate parsing, ties-to-even, absolute negative steps, zero and invalid text are covered; nonfinite/out-of-signed-int rates retain the prior native step instead of reproducing Qt conversion exceptions.",
+      "Reference recording uses a private real Qt ThumbnailsPanel draft, UpdateOptions and serialized reopen plus actual thumbnail decision/wheel handlers. The MPV availability seam is only for offscreen startup; no Preview playback or full Qt parent Options/disk-save workflow is established. Native Options edits are callback-driven; actual thumbnail pointer/key/wheel consumers and reopened visible states are verified."
+    ]
+  },
+  "reviews": [
+    {
+      "path": "docs/rust/gui-coverage/checkpoints/1a49a30f0/final-review-2-1a49a30f0.json",
+      "sha256": "0e2c7186e587969a2416014fc66c4012b31ec216e6df3921e552840d33b96b1b"
+    }
+  ],
+  "selected_ids": [
+    "audit-options-thumbnails-interaction-when-shift-selecting-move-the-navigate-from-here-position-with-it",
+    "audit-options-thumbnails-interaction-do-not-scroll-down-on-key-navigation-if-thumbnail-at-least-this-visible",
+    "audit-options-thumbnails-interaction-experimental-scroll-thumbnails-at-this-rate-per-scroll-tick"
+  ],
+  "prior370_completion_ids_and_assessments_preserved": true,
+  "source_only_native_anchor_ids": [],
+  "final_patch_digest": "533097cc3902ac2e0c41fe8f3e698a86c621e9c995847091c290582e53809f86"
+}

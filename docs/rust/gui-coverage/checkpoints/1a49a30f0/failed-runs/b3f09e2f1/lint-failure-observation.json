@@ -1,0 +1,16 @@
+{
+  "source_commit": "b3f09e2f1f4a721e05f6fe5f7f7f4a24a8fb1a83",
+  "run_id": 37632337153,
+  "check_job": 112829550271,
+  "run_completed": false,
+  "clippy": "failure",
+  "parity_models": "success",
+  "tests": "pending",
+  "clippy_artifact_id": 11486589326,
+  "clippy_zip_sha256": "ad174ae510dccb8c05b4dc97ef6223ee64bbc64abc439900b1d542f03da6ea7c",
+  "clippy_log_sha256": "9972c6cdea4b3e31fe55dc69b49b6d66a30574715dd98dcdb2d5cf5ee9bba1e9",
+  "diagnostic": "clippy::needless_borrow at tests/gui/thumbnail_navigation.rs:408; one redundant &labels borrow",
+  "repair_source": "6fc8f7106bb0085513628b274d42994c1f10832e",
+  "repair_exact_change": "&labels -> labels",
+  "credit_from_this_run": false
+}
