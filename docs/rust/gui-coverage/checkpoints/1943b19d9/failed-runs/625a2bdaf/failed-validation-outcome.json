@@ -1,0 +1,65 @@
+{
+  "source_commit": "625a2bdafc5b5820f4d9201f46640d7770fbecd7",
+  "run_id": 37590137304,
+  "conclusion": "failure",
+  "approval": false,
+  "signed_off_total_unchanged": 357,
+  "existing_candidates_pending_unchanged": 18,
+  "failed_steps": [
+    "clippy",
+    "test"
+  ],
+  "lint_diagnosis": "New test helper clone assignment violates denied assigning_clones; equivalent clone_from repair authored without waiver or assertion changes.",
+  "test_results": {
+    "gui": {
+      "result": "FAILED",
+      "passed": 706,
+      "failed": 1,
+      "ignored": 0,
+      "seconds": 236.35
+    },
+    "media": {
+      "result": "ok",
+      "passed": 67,
+      "failed": 0,
+      "ignored": 0,
+      "seconds": 1.02
+    }
+  },
+  "selected_test_lines": [
+    "test external_calls::duplicate_warning_decline_keeps_unsorted_unselected_prefix_accept_finishes_and_retired_question_cannot_append ... FAILED",
+    "test external_calls::actual_command_parameter_queue_buttons_keys_cancel_and_saved_argument_consumer ... ok",
+    "test external_calls::imported_reference_calls_review_cancel_and_saved_process_test_consumer ... ok",
+    "test external_calls::callable_command_child_apply_cancel_parent_staging_reopen_and_retired_owner ... ok",
+    "test external_calls::command_clipboard_exact_review_raw_rows_clean_copy_errors_and_owner_retirement ... ok",
+    "test external_calls::reopened_saved_process_uses_real_editor_inputs_and_owned_test_call_worker ... ok",
+    "test external_calls::list_duplicate_defaults_delete_capture_and_options_persistence ... ok",
+    "test external_calls::parameter_queue_reverse_edit_and_real_key_origin_histories_match_actual_qt ... ok",
+    "test external_calls::simple_delete_includes_os_launch_rows_but_cancel_and_closed_owner_do_not_change_saved_calls ... ok",
+    "test external_calls::actual_defaults_menu_routes_preserve_prior_selection_and_generate_unique_named_keys ... ok",
+    "test external_calls::actual_qt_sort_tie_break_casefold_and_duplicate_selection_routes ... ok",
+    "test external_calls::actual_reference_substitution_validation_and_argument_cleaning ... ok",
+    "test external_calls::cancelling_the_owner_terminates_and_reaps_its_started_direct_child ... ok",
+    "test external_calls::command_clipboard_review_and_cleaned_example_match_actual_qt ... ok",
+    "test external_calls::command_parameter_queue_selection_reorder_and_keyboard_match_actual_qt ... ok",
+    "test external_calls::command_queue_reverse_edit_and_keyboard_origins_match_actual_qt ... ok",
+    "test external_calls::duplicate_import_warnings_match_python_repr_and_all_size_boundaries ... ok",
+    "test external_calls::list_acceptance_retains_edit_key_and_selection_but_regenerates_import_and_duplicate_keys ... ok",
+    "test external_calls::saved_call_executes_owned_harmless_process_with_exact_single_argument_and_no_shell_interpretation ... ok"
+  ],
+  "limits": [
+    "Diagnostic run and its images earn no sign-off. Repaired source requires fresh full Linux and actual new image review."
+  ],
+  "native_artifact_id": 11468462915,
+  "native_zip_sha256": "2e06c51d1ce0d51550e31d0dccce4de69c3902d814d01f3146eeaf5a34c14228",
+  "native_image_count": 350,
+  "evidence_sha256": {
+    "clippy.log": "5da7e70b2bfeba29fb341159952799154999f2b2fd9e836f8f87e43043ec3f28",
+    "tests.log": "91d91cc17762a6eff49deef310047681974f6fde24b640c0a35d952a43840990",
+    "full-check.log": "9fe87e283f83bf1c79753480cf2c440b2af1c0678a61b65d8015adbbfaae6388",
+    "parity.log": "3fc4adadd6487ac2c5bc77ed6939971a778537ee8ada1813e5f61395c407e84d",
+    "native-render-manifest.json": "934158631776b1b8c8f067cdbd268dc583c6b7ae2c61901f1a421ca2d3dddfc3",
+    "run-latest.json": "b7c5077fdb1ec76de073f8df7858779b0e80f61dfda1b09ca0f60aea4ca6e0e0",
+    "jobs-latest.json": "56c07e3a019415677dbeb8ad786b195445b2313904bfdf03161856a6bd0fe5e8"
+  }
+}

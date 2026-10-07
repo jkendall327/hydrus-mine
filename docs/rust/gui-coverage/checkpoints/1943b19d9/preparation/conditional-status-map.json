@@ -1,0 +1,132 @@
+{
+  "schema_version": 1,
+  "source_commit": "1943b19d987771264a06558e57b4255679190de0",
+  "run_id": 37592389894,
+  "state": "conditional_mapping_NOT_applied",
+  "selected_ids": [
+    "audit-options-external-programs-external-calls-delete",
+    "audit-options-external-programs-external-calls-duplicate"
+  ],
+  "input_patch": "/workspace/validation-reviews/external-list2/prep-1943b19d9/subset-preflight/subset-proposal-patch.json",
+  "input_sha256": "719c0cae183d03956ce7fabaa07da5695c9de6de8965e6c4de96984dea098f7d",
+  "mandatory_preconditions": [
+    "Exact source 1943b19d987771264a06558e57b4255679190de0, actual run 37592389894: full Linux strict fmt/Clippy/workspace tests/ratchet plus parity-models reference/backend success pending. Windows/macOS deferred under immutable source policy.",
+    "Seven fresh defining native captures; independent reviewer2 and root actual inspection/hash verification. Actual Qt callable child is historical support, not outer-list/question pixel or placement parity.",
+    "Root final patch/census review, staged prior357/unselected/native1799/frozen1812/allgoal1274 preservation and desktop/narrow browser required.",
+    "Only accepted publication may advance ledger to359, pending candidates to16 and outside-goal leaves to915. Preparation grants no approval."
+  ],
+  "conditional_operations": [
+    {
+      "id": "audit-options-external-programs-external-calls-delete",
+      "field": "limitations",
+      "original_index": 2,
+      "operation": "replace_exact_list_item",
+      "before": "No local Cargo builds/tests or mutations were run. Authored model/native/store consumers and native PNG await hosted CI.",
+      "conditional_after": "Historical author metadata records no local Cargo builds/tests or mutation testing. Current exact-source Linux execution and fresh native rendered review are recorded separately in the accepted checkpoint.",
+      "reason": "Reconcile resolved validation-status wording only after actual gates; preserve historical no-local-execution provenance and deferred-platform limits."
+    },
+    {
+      "id": "audit-options-external-programs-external-calls-delete",
+      "field": "limitations",
+      "original_index": 4,
+      "operation": "replace_exact_list_item",
+      "before": "The authored defining native captures use supported 1100x800 Options lists, 900x420 long warning and 520x200 Delete question. Actual readability, Unicode glyphs and selected/empty states await fresh inspection. Default-size/universal geometry and physical Delete/Duplicate button input are not established.",
+      "conditional_after": "The authored defining native captures use supported 1100x800 Options lists, 900x420 long warning and 520x200 Delete question. Default-size/universal geometry and physical Delete/Duplicate button input are not established.",
+      "reason": "Reconcile resolved validation-status wording only after actual gates; preserve historical no-local-execution provenance and deferred-platform limits."
+    },
+    {
+      "id": "audit-options-external-programs-external-calls-delete",
+      "field": "limitations",
+      "original_index": 6,
+      "operation": "replace_exact_list_item",
+      "before": "Current two-leaf follow-up awaits exact-source full Linux execution and fresh independent rendered review. No new sign-off is granted; Windows/macOS remain deferred.",
+      "conditional_after": "Windows/macOS remain deferred under the exact-source publication policy.",
+      "reason": "Reconcile resolved validation-status wording only after actual gates; preserve historical no-local-execution provenance and deferred-platform limits."
+    },
+    {
+      "id": "audit-options-external-programs-external-calls-delete",
+      "field": "remaining",
+      "original_index": 0,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source hosted full Linux validation remains pending.",
+      "conditional_after": null,
+      "reason": "Remove only pending exact-source CI/fresh independent-root review status after real gates."
+    },
+    {
+      "id": "audit-options-external-programs-external-calls-delete",
+      "field": "remaining",
+      "original_index": 1,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source fresh native rendered/behavioral review and final assessment reconciliation remain pending.",
+      "conditional_after": null,
+      "reason": "Remove only pending exact-source CI/fresh independent-root review status after real gates."
+    },
+    {
+      "id": "audit-options-external-programs-external-calls-duplicate",
+      "field": "limitations",
+      "original_index": 2,
+      "operation": "replace_exact_list_item",
+      "before": "No local Cargo builds/tests or mutations were run. Authored model/native/store consumers and native PNG await hosted CI.",
+      "conditional_after": "Historical author metadata records no local Cargo builds/tests or mutation testing. Current exact-source Linux execution and fresh native rendered review are recorded separately in the accepted checkpoint.",
+      "reason": "Reconcile resolved validation-status wording only after actual gates; preserve historical no-local-execution provenance and deferred-platform limits."
+    },
+    {
+      "id": "audit-options-external-programs-external-calls-duplicate",
+      "field": "limitations",
+      "original_index": 4,
+      "operation": "replace_exact_list_item",
+      "before": "The authored defining native captures use supported 1100x800 Options lists, 900x420 long warning and 520x200 Delete question. Actual readability, Unicode glyphs and selected/empty states await fresh inspection. Default-size/universal geometry and physical Delete/Duplicate button input are not established.",
+      "conditional_after": "The authored defining native captures use supported 1100x800 Options lists, 900x420 long warning and 520x200 Delete question. Default-size/universal geometry and physical Delete/Duplicate button input are not established.",
+      "reason": "Reconcile resolved validation-status wording only after actual gates; preserve historical no-local-execution provenance and deferred-platform limits."
+    },
+    {
+      "id": "audit-options-external-programs-external-calls-duplicate",
+      "field": "limitations",
+      "original_index": 6,
+      "operation": "replace_exact_list_item",
+      "before": "Current two-leaf follow-up awaits exact-source full Linux execution and fresh independent rendered review. No new sign-off is granted; Windows/macOS remain deferred.",
+      "conditional_after": "Windows/macOS remain deferred under the exact-source publication policy.",
+      "reason": "Reconcile resolved validation-status wording only after actual gates; preserve historical no-local-execution provenance and deferred-platform limits."
+    },
+    {
+      "id": "audit-options-external-programs-external-calls-duplicate",
+      "field": "remaining",
+      "original_index": 0,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source hosted full Linux validation remains pending.",
+      "conditional_after": null,
+      "reason": "Remove only pending exact-source CI/fresh independent-root review status after real gates."
+    },
+    {
+      "id": "audit-options-external-programs-external-calls-duplicate",
+      "field": "remaining",
+      "original_index": 1,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source fresh native rendered/behavioral review and final assessment reconciliation remain pending.",
+      "conditional_after": null,
+      "reason": "Remove only pending exact-source CI/fresh independent-root review status after real gates."
+    },
+    {
+      "id": "audit-options-external-programs-external-calls-delete",
+      "field": "limitations",
+      "original_index": 7,
+      "operation": "replace_exact_list_item",
+      "before": "Initial full Linux run37590137304 failed strict assigning_clones lint and a new immediate child-open display assertion after the declined warning;706 GUI tests passed and one failed. All239 initial assertions remain in the repair, which verifies actual slot/visibility closure and waits for the existing30ms display timer, with no property forcing or input retry. Five diagnostic images grant no credit; all seven repaired-source captures remain required.",
+      "conditional_after": "Initial full Linux run37590137304 failed strict assigning_clones lint and a new immediate child-open display assertion after the declined warning;706 GUI tests passed and one failed. All239 initial assertions remain in the repair, which verifies actual slot/visibility closure and waits for the existing30ms display timer, with no property forcing or input retry. Five diagnostic images grant no credit; the accepted checkpoint separately records all seven fresh repaired-source captures and reviews.",
+      "reason": "After actual approval reconcile only the resolved fresh-capture preparation sentence; preserve failed-run counts, all239 assertion/timer repair history and zero diagnostic credit verbatim."
+    },
+    {
+      "id": "audit-options-external-programs-external-calls-duplicate",
+      "field": "limitations",
+      "original_index": 7,
+      "operation": "replace_exact_list_item",
+      "before": "Initial full Linux run37590137304 failed strict assigning_clones lint and a new immediate child-open display assertion after the declined warning;706 GUI tests passed and one failed. All239 initial assertions remain in the repair, which verifies actual slot/visibility closure and waits for the existing30ms display timer, with no property forcing or input retry. Five diagnostic images grant no credit; all seven repaired-source captures remain required.",
+      "conditional_after": "Initial full Linux run37590137304 failed strict assigning_clones lint and a new immediate child-open display assertion after the declined warning;706 GUI tests passed and one failed. All239 initial assertions remain in the repair, which verifies actual slot/visibility closure and waits for the existing30ms display timer, with no property forcing or input retry. Five diagnostic images grant no credit; the accepted checkpoint separately records all seven fresh repaired-source captures and reviews.",
+      "reason": "After actual approval reconcile only the resolved fresh-capture preparation sentence; preserve failed-run counts, all239 assertion/timer repair history and zero diagnostic credit verbatim."
+    }
+  ],
+  "operation_contract": "Descending per-ID/field original_index with full original equality: four pending removals and eight provenance/platform/readability/repair-status replacements. No assessment change or real limitation removal.",
+  "approval": false,
+  "history_before_refinement": "/workspace/validation-reviews/external-list2/prep-1943b19d9/history-before-status-refinement/conditional-status-map.json",
+  "history_before_refinement_sha256": "f01d21cd3a3bb844143ade57db57075ebbeb0360bdb71a23aee0d5fd8de3ce3a"
+}

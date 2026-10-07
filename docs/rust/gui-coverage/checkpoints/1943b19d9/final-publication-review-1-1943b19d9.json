@@ -1,0 +1,175 @@
+{
+  "review_type": "Bounded final publication narrative/count and copied evidence integrity review",
+  "source_commit": "1943b19d987771264a06558e57b4255679190de0",
+  "run_id": 37592389894,
+  "publication_working_tree_HEAD": "1943b19d987771264a06558e57b4255679190de0",
+  "selected_ids": [
+    "audit-options-external-programs-external-calls-delete",
+    "audit-options-external-programs-external-calls-duplicate"
+  ],
+  "publication_delta_review": "approved: no concrete blocker in the current source-only publication delta",
+  "approval_scope": "Narrative/counts/preservation/evidence bindings only. Existing root and independent review2 supply actual runtime and rendered approval; this reviewer did not rerun builds or inspect fresh images in this final audit.",
+  "blockers": [],
+  "counts": {
+    "signed_off": 359,
+    "new_in_batch": 2,
+    "prior_preserved": 357,
+    "existing_pending": 16,
+    "all_goal": 1274,
+    "outside_explicit_signoff": 915,
+    "cumulative_since_prior240": 119,
+    "recent_checkpoints": 17,
+    "new_last24h": "Not119; not recalculated by this bounded audit.",
+    "reference_nodes": 1812,
+    "native_nodes": 1799,
+    "reference_statuses": {
+      "missing": 467,
+      "partial": 385,
+      "first_pass": 960
+    }
+  },
+  "checks": {
+    "full_relevant_narrative_diffs_read": true,
+    "checkpoint_README_read": true,
+    "exact_two_selected_accepted": true,
+    "prior357_ledger_ids_preserved": true,
+    "allgoal1274_id_order_unchanged": true,
+    "only_two_goal_signed_flags_changed": true,
+    "allgoal_signed_flags_match359_ledger": true,
+    "selected_validation_metadata_exact_current_source_and_passed": true,
+    "selected_pending_status_reconciled_without_removing_failure_history": true,
+    "helper_audited_payload_files_rehashed": 102,
+    "copied_payload_hash_mismatches": [],
+    "supplemental_execution_provenance_hashes_match": true,
+    "relocated_root_summary_and_census_hashes_match": true,
+    "failed625a_five_diagnostic_vs_current_seven_fresh_PNGs_distinct": true,
+    "no_new_product_or_Slint_change_in_tracked_publication_diff": true
+  },
+  "runtime_evidence": {
+    "source_commit": "1943b19d987771264a06558e57b4255679190de0",
+    "run_id": 37592389894,
+    "conclusion": "success",
+    "validation_scope": "linux",
+    "required_platforms": [
+      "linux"
+    ],
+    "deferred_platforms": [
+      "windows",
+      "macos"
+    ],
+    "gui_tests": {
+      "passed": 707,
+      "failed": 0,
+      "ignored": 0,
+      "seconds": 199.56
+    },
+    "media_tests": {
+      "passed": 67,
+      "failed": 0,
+      "ignored": 0,
+      "seconds": 1.01
+    },
+    "selected_tests_passed": [
+      "test external_calls::callable_command_child_apply_cancel_parent_staging_reopen_and_retired_owner ... ok",
+      "test external_calls::duplicate_warning_decline_keeps_unsorted_unselected_prefix_accept_finishes_and_retired_question_cannot_append ... ok",
+      "test external_calls::list_duplicate_defaults_delete_capture_and_options_persistence ... ok",
+      "test external_calls::simple_delete_includes_os_launch_rows_but_cancel_and_closed_owner_do_not_change_saved_calls ... ok"
+    ],
+    "prior_assertions_preserved": 165,
+    "current_assertions": 242,
+    "prior_tests": 9,
+    "current_tests": 9,
+    "timings": {
+      "clippy_seconds": 546.0,
+      "clippy_cargo_seconds": 545.0,
+      "test_compile_seconds": 612.0,
+      "test_step_seconds": 1057.0
+    },
+    "cache_observations": [
+      "2026-10-07T08:14:00.7786571Z Version: 20261002.596",
+      "2026-10-07T08:14:00.7794536Z Version: 20261004.327.1",
+      "2026-10-07T08:14:42.2837999Z Restored from cache key \"v0-rust-check-Linux-x64-ff0b8b70-0ea5e1be\" full match: true.",
+      "2026-10-07T08:14:44.3078546Z Workspace restore prefix: hydrus-ws-v1-check-Linux-X64-ca9bfc0c8b9baf8c381365db-",
+      "2026-10-07T08:14:44.6182219Z Cache not found for input keys: hydrus-ws-v1-check-Linux-X64-ca9bfc0c8b9baf8c381365db-1943b19d987771264a06558e57b4255679190de0-37592389894-1, hydrus-ws-v1-check-Linux-X64-ca9bfc0c8b9baf8c381365db-",
+      "2026-10-07T08:14:45.5462702Z No workspace library snapshot restored; dependency cache remains usable.",
+      "2026-10-07T08:42:24.5656458Z Workspace library snapshot candidate: 293 artifact files plus input ledger, 2200273639 bytes (limit 4294967296).",
+      "2026-10-07T08:42:30.4317342Z Cache saved with key: hydrus-ws-v1-check-Linux-X64-ca9bfc0c8b9baf8c381365db-1943b19d987771264a06558e57b4255679190de0-37592389894-1",
+      "2026-10-07T08:42:37.7216081Z Retained workspace snapshot bytes: 1034912780; budget: 3221225472."
+    ],
+    "native_artifact_id": 11470198333,
+    "native_zip_sha256": "414d56513717c328368da022070d864cd387596e416468b22ac43e9bf6eb248b",
+    "native_image_count": 352,
+    "limits": [
+      "Hosted observations, not controlled attribution or separate Slint generation/Rust/link timing.",
+      "GUI and media suites have no failed or ignored tests. Existing ignored tests in other workspace suites remain; no assertions or tests were weakened.",
+      "Exactly two registered-call Delete and Duplicate leaves; runtime result alone does not approve image readability or broaden feature scope."
+    ],
+    "evidence_sha256": {
+      "full-check.log": "52e2a3450a62524ff97a32c90167c007a353749ac2143bd8bad119f65ea25864",
+      "tests.log": "2db2b25ba38352575b64c146ef2787c7cbada56881549595e2e0487b5ec315b6",
+      "parity.log": "47aa445f6acd9ac1921bf7105d807776a64b5a3d1402569dbed288a6c80717a3",
+      "clippy.log": "5bb1a1cb12008af21cc0608dad63849ea3efeb82ac52addcaf48eaaf4ca3cb8c",
+      "maintenance.log": "a9333e5439d9d36e6c0183600c140439eb3e1a63b6aeeeb5c3ecd7b67779709c",
+      "ci-evidence.json": "722868b069f06341ab8aa69e380f90597ce87109a2fa339e9c177da9fa0ab9fc",
+      "native-render-manifest.json": "05e1e3c1906262f817ed7d18fcfd7c92efe1c763778592230ee4aa3f1a6152ab"
+    }
+  },
+  "evidence_bindings": {
+    "final_review2_sha256": "a9aaa22e7a0a1579f1ed9838b98168f7d13f995bb22d88737b7a06fe726379b5",
+    "executed_helper_sha256": "7d911b4d49ee2ab637a1e55a15d1d8c8eff95819389a02339ac16128303f7e37",
+    "artifact_id": 11470198333,
+    "native_zip_sha256": "414d56513717c328368da022070d864cd387596e416468b22ac43e9bf6eb248b",
+    "fresh_images": [
+      "external-calls-delete-empty.png",
+      "external-calls-delete-review.png",
+      "external-calls-duplicate-complete.png",
+      "external-calls-duplicate-declined-prefix.png",
+      "external-calls-duplicate-selected.png",
+      "external-calls-duplicate-warning.png",
+      "external-calls-reopened-saved.png"
+    ],
+    "failed_images": [
+      "external-calls-delete-empty.png",
+      "external-calls-delete-review.png",
+      "external-calls-duplicate-selected.png",
+      "external-calls-duplicate-warning.png",
+      "external-calls-reopened-saved.png"
+    ],
+    "artifact_binding_record_is_historical": true,
+    "actual_later_execution_record_present": true
+  },
+  "performance_review": "545s Cargo Clippy / 546s workflow step, 612s test compilation, 1057s test step; 707 GUI tests passed in 199.56s and 67 media tests in 1.01s. ANSI-normalized Clippy log confirms generated UI rebuilt. Runner 20260927.320.1 to 20261004.327.1 and compatibility 68e to ca9 meant no compatible workspace snapshot while dependency cache hit. The saved snapshot has 293 artifact files plus an input ledger, totaling 2,200,273,639 payload bytes; retained 1,034,912,780 compressed bytes is below 3 GiB. Hosted observation only, not a controlled speedup or separate Slint/Rust/link measurement.",
+  "retained_limits": [
+    "Actual Qt callable-child PNG supports historical context only; no matching outer-list/question pixel or placement comparison.",
+    "Seven current frames cover supported sizes only; no physical button or universal/default geometry credit.",
+    "Reopened saved Japanese-call PNG is not a six-duplicate still; six-call reopening remains separately assertion-backed.",
+    "Automatic Main/final Bound teardown, Add Defaults, parent/alias/native hierarchy, OS launch/routing and Windows/macOS remain outside these two approvals.",
+    "Failed625a706GUI passes/one failure plus lint failure and five images remain diagnostic with zero credit. All239 first-run assertions and all165 published baseline assertions remain; current242/same9."
+  ],
+  "reviewed_file_sha256": {
+    "docs/rust/GUI.md": "33c2fc86db03c3b38a846dcac6491ac3f996c23f9c37c3df585d067e16645da1",
+    "docs/rust/DIFFERENCES.md": "9b7b243d9a1a1cb99500a73150de5a9ece084a986d0e981a1a4423c7597878f8",
+    "docs/rust/ROADMAP.md": "661ccd1e5800eed1ac734fe8a90d25587520fc5a4ef0629a67230bc60fcfab21",
+    "docs/rust/gui-coverage/validation-pass/README.md": "26e9f927d75836735a1b8e7fa87682dac2acc3e5162841187216f1371b0b6dbc",
+    "docs/rust/gui-coverage/validation-pass/compilation-performance.md": "4bb12922be7217d9be9068efec063f9effbe89ce2291af99325d5e193e0a123a",
+    "docs/rust/gui-coverage/all-leaves-goal/README.md": "995ac6944af62163146defdbec8dc203e775e0bd7fa942162d5fcf8546415860",
+    "docs/rust/gui-coverage/all-leaves-goal/checklist.json": "ca821fc10d74c19bf2018301fb5af0534227f9b8fcb6bb52081bbc94a4f52fa5",
+    "docs/rust/gui-coverage/overnight/progress.json": "6bfb0e5554f9e28550f64e8d2cea23aa973a50bc1e321f7e08cb0e07a48078f9",
+    "docs/rust/gui-coverage/reference-inventory.json": "1b02dda2c68d0443fd9e42fdd8fdf708d75e22388d15b4c3c8218ea97a87b5b7",
+    "docs/rust/gui-coverage/native-inventory.json": "42b7218fb759e56667281cfafadd1bd922fbde7859321a79464b90b268b7d571",
+    "docs/rust/gui-coverage/checkpoints/1943b19d9/README.md": "4a63fdddbf8f00755c8c25da79a53038cee7f18922d9078ba5bbd574e340bb3f",
+    "docs/rust/gui-coverage/checkpoints/1943b19d9/preservation-and-copy-audit.json": "21d366817860869f0a6e8f7974da06877f2c3e3b38a0e70d3bf9fdf278c05839",
+    "docs/rust/gui-coverage/checkpoints/1943b19d9/preparation/publication-execution.json": "b8919e1b076442e733c71b721b5165213442cdf24035b325ce3c68a733621305",
+    "docs/rust/gui-coverage/checkpoints/1943b19d9/preparation/artifact-binding.json": "c0c9d24f21f648280da14e0d375007574978e6f9b2a3738b2e538c5c33466d22",
+    "docs/rust/gui-coverage/checkpoints/1943b19d9/final-review-2-1943b19d9.json": "a9aaa22e7a0a1579f1ed9838b98168f7d13f995bb22d88737b7a06fe726379b5",
+    "docs/rust/gui-coverage/checkpoints/1943b19d9/validation-outcome.json": "787388faa320c809ed4dd062755a705a71ba34c4eabc2b75d2a976e5d4db613f",
+    "docs/rust/gui-coverage/checkpoints/1943b19d9/native-render-manifest.json": "05e1e3c1906262f817ed7d18fcfd7c92efe1c763778592230ee4aa3f1a6152ab",
+    "docs/rust/gui-coverage/checkpoints/1943b19d9/browser/browser-check.json": "24609d863e0edb1bc16679f5963040e72b4f4ec8326c1bffda0019834a73d15a",
+    "docs/rust/gui-coverage/checkpoints/1943b19d9/failed-runs/625a2bdaf/failed-validation-outcome.json": "2fd6109a32df77bb82d94b08e82630b12a0d7a72db19af5cfec3ce685965622c"
+  },
+  "canonical_writes": false,
+  "builds": false,
+  "new_runtime_or_render_approval_created": false,
+  "nonblocking_notes": [],
+  "resolved_nonblocking_precision": "Root clarified that the 2,200,273,639-byte snapshot payload includes 293 workspace artifact files plus the input ledger; current exact file hash refreshed. All other findings unchanged."
+}

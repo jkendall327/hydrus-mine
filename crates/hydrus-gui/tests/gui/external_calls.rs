@@ -161,6 +161,30 @@ fn callable_command_child_apply_cancel_parent_staging_reopen_and_retired_owner()
     child.invoke_apply();
     assert_eq!(saved(&store), persisted);
     let w = open(&ui, &bound);
+    let reopened_index = windows.count() - 1;
+    assert_eq!(
+        list_rows(&w)
+            .into_iter()
+            .map(|row| row.0)
+            .collect::<Vec<_>>(),
+        persisted
+            .calls
+            .iter()
+            .map(|call| vec![
+                call.name.clone(),
+                call.pipeline.label().to_owned(),
+                call.call.description(),
+            ])
+            .collect::<Vec<_>>()
+    );
+    assert_eq!(saved(&store), persisted);
+    list_capture(
+        &windows,
+        reopened_index,
+        w.window(),
+        "external-calls-reopened-saved.png",
+        (1100, 800),
+    );
     w.invoke_external_call_clicked(named(&w, "saved 日本"), false, false);
     w.invoke_external_call_action("edit".into());
     let child = call(&bound);
@@ -179,7 +203,7 @@ fn callable_command_child_apply_cancel_parent_staging_reopen_and_retired_owner()
 fn list_duplicate_defaults_delete_capture_and_options_persistence() {
     let (_dirs, store) = store();
     let original = seed(&store);
-    let _headless_windows = headless::init();
+    let windows = headless::init();
     let ui = MainWindow::new().unwrap();
     let bound = bind(&ui, Pages::open(store.clone()).unwrap());
     let w = open(&ui, &bound);
@@ -187,6 +211,15 @@ fn list_duplicate_defaults_delete_capture_and_options_persistence() {
     w.invoke_external_call_action("duplicate".into());
     assert_eq!(w.get_external_call_rows().row_count(), 2);
     assert!((0..2).all(|i| w.get_external_call_rows().row_data(i).unwrap().selected));
+    assert!(w.get_external_call_selected());
+    assert!(!w.get_external_call_child_open());
+    list_capture(
+        &windows,
+        windows.count() - 1,
+        w.window(),
+        "external-calls-duplicate-selected.png",
+        (1100, 800),
+    );
     w.invoke_external_call_action("delete".into());
     let q = bound
         .options_external_calls
@@ -480,7 +513,7 @@ fn duplicate_warning_decline_keeps_unsorted_unselected_prefix_accept_finishes_an
     store
         .write(move |ctx| hydrus_store::settings::set(ctx.conn(), &manager))
         .unwrap();
-    let _headless_windows = headless::init();
+    let windows = headless::init();
     let ui = MainWindow::new().unwrap();
     let bound = bind(&ui, Pages::open(store.clone()).unwrap());
     let oracle: serde_json::Value = serde_json::from_str(include_str!(
@@ -489,6 +522,7 @@ fn duplicate_warning_decline_keeps_unsorted_unselected_prefix_accept_finishes_an
     .unwrap();
     for (case, accept) in [false, true].into_iter().enumerate() {
         let w = open(&ui, &bound);
+        let list_index = windows.count() - 1;
         w.invoke_external_call_sort(0, true);
         w.invoke_external_call_clicked(0, false, false);
         w.invoke_external_call_clicked(2, false, true);
@@ -508,9 +542,31 @@ fn duplicate_warning_decline_keeps_unsorted_unselected_prefix_accept_finishes_an
         );
         assert_eq!(w.get_external_call_rows().row_count(), 4);
         assert!(!w.get_external_call_rows().row_data(3).unwrap().selected);
+        if !accept {
+            list_capture(
+                &windows,
+                windows.count() - 1,
+                q.window(),
+                "external-calls-duplicate-warning.png",
+                (900, 420),
+            );
+        }
         // The selected call snapshot cannot change while its warning is pending.
         w.invoke_external_call_clicked(0, false, false);
         q.invoke_answered(accept);
+        assert!(bound.options_external_calls.question.borrow().is_none());
+        assert!(!q.window().is_visible());
+        // The closed question's display flag follows the real 30 ms owner timer.
+        // Preserve the non-modal assertion below without forcing widget state.
+        let closed_at = std::time::Instant::now();
+        while w.get_external_call_child_open() {
+            headless::render(&windows.get(list_index).unwrap(), 1100, 800);
+            assert!(
+                closed_at.elapsed() < std::time::Duration::from_secs(2),
+                "closed duplicate warning did not release the list controls"
+            );
+            std::thread::sleep(std::time::Duration::from_millis(5));
+        }
         let names = (0..w.get_external_call_rows().row_count())
             .map(|i| {
                 w.get_external_call_rows()
@@ -538,6 +594,19 @@ fn duplicate_warning_decline_keeps_unsorted_unselected_prefix_accept_finishes_an
             oracle["duplicate_warnings"][case]["selected"]
         );
         assert_eq!(saved(&store), original);
+        assert!(w.get_external_call_selected());
+        assert!(!w.get_external_call_child_open());
+        list_capture(
+            &windows,
+            list_index,
+            w.window(),
+            if accept {
+                "external-calls-duplicate-complete.png"
+            } else {
+                "external-calls-duplicate-declined-prefix.png"
+            },
+            (1100, 800),
+        );
         if accept {
             w.invoke_apply();
             let saved = saved(&store);
@@ -551,10 +620,33 @@ fn duplicate_warning_decline_keeps_unsorted_unselected_prefix_accept_finishes_an
                     .len(),
                 6
             );
+            assert_duplicate_manager(&saved, &original);
+            let reopened = open(&ui, &bound);
+            assert_eq!(
+                store.read(hydrus_store::settings::get::<Manager>).unwrap(),
+                saved
+            );
+            assert_eq!(
+                list_rows(&reopened)
+                    .into_iter()
+                    .map(|row| row.0)
+                    .collect::<Vec<_>>(),
+                saved
+                    .calls
+                    .iter()
+                    .map(|call| vec![
+                        call.name.clone(),
+                        call.pipeline.label().to_owned(),
+                        call.call.description(),
+                    ])
+                    .collect::<Vec<_>>()
+            );
+            reopened.invoke_cancel();
         } else {
             w.invoke_cancel();
             q.invoke_answered(true);
             assert_eq!(saved(&store), original);
+            retired_duplicate_question_preserves_successor(&ui, &bound, &store, &original, &oracle);
         }
     }
 }
@@ -566,6 +658,7 @@ fn simple_delete_includes_os_launch_rows_but_cancel_and_closed_owner_do_not_chan
     file.call = ActualCall::DefaultFile;
     let mut url = Callable::new("OS URL");
     url.call = ActualCall::DefaultUrl;
+    url.pipeline = hydrus_core::external_calls::Pipeline::Url;
     let manager = Manager {
         calls: vec![file, url],
     };
@@ -573,10 +666,12 @@ fn simple_delete_includes_os_launch_rows_but_cancel_and_closed_owner_do_not_chan
     store
         .write(move |ctx| hydrus_store::settings::set(ctx.conn(), &manager))
         .unwrap();
-    let _headless_windows = headless::init();
+    let windows = headless::init();
     let ui = MainWindow::new().unwrap();
     let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+    retired_delete_question_preserves_successor(&ui, &bound, &store);
     let w = open(&ui, &bound);
+    let list_index = windows.count() - 1;
     w.invoke_external_call_clicked(0, false, false);
     w.invoke_external_call_clicked(1, false, true);
     w.invoke_external_call_action("delete".into());
@@ -588,6 +683,25 @@ fn simple_delete_includes_os_launch_rows_but_cancel_and_closed_owner_do_not_chan
         .unwrap()
         .clone_strong();
     assert_eq!(q.get_message(), "Remove all selected?");
+    assert_eq!(
+        list_rows(&w)
+            .into_iter()
+            .map(|row| row.0[0].clone())
+            .collect::<Vec<_>>(),
+        original
+            .calls
+            .iter()
+            .map(|call| call.name.clone())
+            .collect::<Vec<_>>()
+    );
+    assert!(w.get_external_call_rows().iter().all(|row| row.selected));
+    list_capture(
+        &windows,
+        windows.count() - 1,
+        q.window(),
+        "external-calls-delete-review.png",
+        (520, 200),
+    );
     q.invoke_answered(false);
     assert_eq!(w.get_external_call_rows().row_count(), 2);
     w.invoke_external_call_action("delete".into());
@@ -601,6 +715,15 @@ fn simple_delete_includes_os_launch_rows_but_cancel_and_closed_owner_do_not_chan
     q.invoke_answered(true);
     assert_eq!(w.get_external_call_rows().row_count(), 0);
     assert_eq!(saved(&store), original);
+    assert!(!w.get_external_call_selected());
+    assert!(!w.get_external_call_child_open());
+    list_capture(
+        &windows,
+        list_index,
+        w.window(),
+        "external-calls-delete-empty.png",
+        (1100, 800),
+    );
     w.invoke_apply();
     assert!(saved(&store).calls.is_empty());
     let w = open(&ui, &bound);
@@ -1344,4 +1467,259 @@ fn parameter_queue_reverse_edit_and_real_key_origin_histories_match_actual_qt() 
     }
     options.invoke_cancel();
     assert!(!bound.options_external_calls.has_open());
+}
+
+// Capture the owned adapter only after real timers and widget animations settle.
+// Larger supported views make the long import warning readable; this is not a
+// universal/default-size geometry assertion or a physical list-button test.
+fn list_capture(
+    windows: &headless::Windows,
+    index: usize,
+    window: &slint::Window,
+    name: &str,
+    size: (u32, u32),
+) {
+    use std::time::{Duration, Instant};
+    let adapter = windows.get(index).unwrap();
+    let started = Instant::now();
+    let mut previous = None;
+    let pixels = loop {
+        let pixels = headless::render(&adapter, size.0, size.1);
+        if started.elapsed() >= Duration::from_millis(35)
+            && !window.has_active_animations()
+            && previous.as_ref() == Some(&pixels)
+        {
+            break pixels;
+        }
+        assert!(
+            started.elapsed() < Duration::from_secs(2),
+            "{name}: live list/question did not settle; visible={}, animations={}",
+            window.is_visible(),
+            window.has_active_animations(),
+        );
+        previous = Some(pixels);
+        std::thread::sleep(Duration::from_millis(5));
+    };
+    assert!(
+        window.is_visible(),
+        "{name}: capture must be a live owned window"
+    );
+    headless::save_png(
+        &std::path::Path::new(env!("CARGO_TARGET_TMPDIR")).join(name),
+        &pixels,
+        size.0,
+        size.1,
+    )
+    .unwrap();
+}
+fn list_rows(w: &OptionsWindow) -> Vec<(Vec<String>, bool)> {
+    w.get_external_call_rows()
+        .iter()
+        .map(|row| {
+            (
+                row.cells.iter().map(|cell| cell.to_string()).collect(),
+                row.selected,
+            )
+        })
+        .collect()
+}
+fn assert_duplicate_manager(manager: &Manager, original: &Manager) {
+    for call in &original.calls {
+        assert_eq!(
+            manager
+                .calls
+                .iter()
+                .find(|candidate| candidate.key == call.key),
+            Some(call)
+        );
+        let duplicate = manager
+            .calls
+            .iter()
+            .find(|candidate| candidate.name == format!("{} (1)", call.name))
+            .unwrap();
+        assert!(
+            !original
+                .calls
+                .iter()
+                .any(|candidate| candidate.key == duplicate.key)
+        );
+        let mut expected = call.clone();
+        expected.key = duplicate.key;
+        expected.name.clone_from(&duplicate.name);
+        assert_eq!(duplicate, &expected);
+    }
+}
+fn retired_duplicate_question_preserves_successor(
+    ui: &MainWindow,
+    bound: &Bound,
+    store: &Store,
+    original: &Manager,
+    oracle: &serde_json::Value,
+) {
+    let retired_options = open(ui, bound);
+    retired_options.invoke_external_call_sort(0, true);
+    retired_options.invoke_external_call_clicked(0, false, false);
+    retired_options.invoke_external_call_clicked(2, false, true);
+    retired_options.invoke_external_call_action("duplicate".into());
+    let retired = question(bound);
+    assert_eq!(
+        retired.get_message().as_str(),
+        oracle["duplicate_warnings"][0]["questions"][0]["message"]
+            .as_str()
+            .unwrap()
+    );
+    retired_options.invoke_cancel();
+    assert!(bound.options_external_calls.question.borrow().is_none());
+    assert!(!retired.window().is_visible());
+    assert!(!retired_options.window().is_visible());
+
+    let successor = open(ui, bound);
+    successor.invoke_external_call_sort(0, true);
+    successor.invoke_external_call_clicked(0, false, false);
+    successor.invoke_external_call_clicked(2, false, true);
+    successor.invoke_external_call_action("duplicate".into());
+    let current = question(bound);
+    let rows = list_rows(&successor);
+    let flags = (
+        successor.get_external_call_selected(),
+        successor.get_external_call_single(),
+        successor.get_external_call_child_open(),
+        successor.get_external_call_sort_column(),
+        successor.get_external_call_ascending(),
+        successor.get_external_call_error(),
+    );
+    let message = current.get_message();
+    for answer in [true, false] {
+        retired.invoke_answered(answer);
+    }
+    retired.invoke_cancelled();
+    retired.invoke_force_close();
+    retired_options.invoke_external_call_action("duplicate".into());
+    retired_options.invoke_external_call_action("delete".into());
+    retired_options.invoke_apply();
+    retired_options.invoke_cancel();
+    assert_eq!(saved(store), *original);
+    assert_eq!(list_rows(&successor), rows);
+    assert_eq!(
+        (
+            successor.get_external_call_selected(),
+            successor.get_external_call_single(),
+            successor.get_external_call_child_open(),
+            successor.get_external_call_sort_column(),
+            successor.get_external_call_ascending(),
+            successor.get_external_call_error(),
+        ),
+        flags
+    );
+    assert_eq!(current.get_message(), message);
+    assert!(std::ptr::eq(question(bound).window(), current.window()));
+    assert!(std::ptr::eq(
+        bound.options.borrow().as_ref().unwrap().window(),
+        successor.window()
+    ));
+    assert!(current.window().is_visible());
+    assert!(successor.window().is_visible());
+    assert!(!retired.window().is_visible());
+    assert!(!retired_options.window().is_visible());
+    assert!(bound.options_external_calls.editor.borrow().is_none());
+    assert!(bound.options_external_calls.command.borrow().is_none());
+    assert!(bound.options_external_calls.defaults.borrow().is_none());
+    assert!(bound.options_external_calls.exchange.0.borrow().is_none());
+
+    // Only the current answer completes the remaining duplicate queue.
+    current.invoke_answered(true);
+    assert!(bound.options_external_calls.question.borrow().is_none());
+    assert!(!current.window().is_visible());
+    let complete = list_rows(&successor);
+    assert_eq!(
+        serde_json::to_value(complete.iter().map(|row| &row.0[0]).collect::<Vec<_>>()).unwrap(),
+        oracle["duplicate_warnings"][1]["names"]
+    );
+    assert!(complete.iter().all(|row| row.1));
+    assert_eq!(saved(store), *original);
+    successor.invoke_cancel();
+    assert!(bound.options.borrow().is_none());
+    assert!(!bound.options_external_calls.has_open());
+    assert_eq!(saved(store), *original);
+}
+
+fn retired_delete_question_preserves_successor(ui: &MainWindow, bound: &Bound, store: &Store) {
+    // Use the existing OS file/URL fixture; do not rewrite the Store.
+    let persisted = saved(store);
+    assert_eq!(persisted.calls.len(), 2);
+    let retired_options = open(ui, bound);
+    retired_options.invoke_external_call_clicked(0, false, false);
+    retired_options.invoke_external_call_action("delete".into());
+    let retired = question(bound);
+    assert_eq!(retired.get_message(), "Remove all selected?");
+    retired_options.invoke_cancel();
+    assert!(bound.options_external_calls.question.borrow().is_none());
+    assert!(!retired.window().is_visible());
+    assert!(!retired_options.window().is_visible());
+
+    let successor = open(ui, bound);
+    let last = successor.get_external_call_rows().row_count() - 1;
+    successor.invoke_external_call_clicked(i32::try_from(last).unwrap(), false, false);
+    successor.invoke_external_call_action("delete".into());
+    let current = question(bound);
+    let rows = list_rows(&successor);
+    assert_eq!(rows.len(), 2);
+    assert!(rows[last].1);
+    assert!(!rows[0].1);
+    let flags = list_flags(&successor);
+    let message = current.get_message();
+    retired.invoke_answered(true);
+    retired.invoke_answered(false);
+    retired.invoke_cancelled();
+    retired.invoke_force_close();
+    retired_options.invoke_external_call_action("delete".into());
+    retired_options.invoke_external_call_action("duplicate".into());
+    retired_options.invoke_apply();
+    retired_options.invoke_cancel();
+    assert_eq!(saved(store), persisted);
+    assert_eq!(list_rows(&successor), rows);
+    assert_eq!(list_flags(&successor), flags);
+    assert_eq!(current.get_message(), message);
+    assert!(std::ptr::eq(question(bound).window(), current.window()));
+    assert!(std::ptr::eq(
+        bound.options.borrow().as_ref().unwrap().window(),
+        successor.window()
+    ));
+    assert!(current.window().is_visible());
+    assert!(successor.window().is_visible());
+    assert!(!retired.window().is_visible());
+    assert!(!retired_options.window().is_visible());
+    assert!(bound.options_external_calls.editor.borrow().is_none());
+    assert!(bound.options_external_calls.command.borrow().is_none());
+    assert!(bound.options_external_calls.defaults.borrow().is_none());
+    assert!(bound.options_external_calls.exchange.0.borrow().is_none());
+
+    // Current Yes removes exactly its captured last row, never the old row0.
+    current.invoke_answered(true);
+    let expected = rows
+        .into_iter()
+        .enumerate()
+        .filter(|(i, _)| *i != last)
+        .map(|(_, row)| row)
+        .collect::<Vec<_>>();
+    assert_eq!(list_rows(&successor), expected);
+    assert!(!successor.get_external_call_selected());
+    assert!(bound.options_external_calls.question.borrow().is_none());
+    assert!(!current.window().is_visible());
+    assert!(successor.window().is_visible());
+    assert_eq!(saved(store), persisted);
+    successor.invoke_cancel();
+    assert!(bound.options.borrow().is_none());
+    assert!(!bound.options_external_calls.has_open());
+    assert_eq!(saved(store), persisted);
+}
+fn list_flags(w: &OptionsWindow) -> (bool, bool, bool, i32, bool, slint::SharedString) {
+    (
+        w.get_external_call_selected(),
+        w.get_external_call_single(),
+        w.get_external_call_child_open(),
+        w.get_external_call_sort_column(),
+        w.get_external_call_ascending(),
+        w.get_external_call_error(),
+    )
 }

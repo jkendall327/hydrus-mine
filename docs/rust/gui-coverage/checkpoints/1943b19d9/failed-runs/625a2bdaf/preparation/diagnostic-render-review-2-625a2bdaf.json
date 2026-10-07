@@ -1,0 +1,170 @@
+{
+  "review_type": "failed-run diagnostic image/source review; no final approval",
+  "source_commit": "625a2bdafc5b5820f4d9201f46640d7770fbecd7",
+  "run_id": 37590137304,
+  "artifact_id": 11468462915,
+  "native_zip_sha256": "2e06c51d1ce0d51550e31d0dccce4de69c3902d814d01f3146eeaf5a34c14228",
+  "validation_scope": "linux",
+  "approval": false,
+  "full_ci_success": false,
+  "claims": [
+    {
+      "id": "audit-options-external-programs-external-calls-delete",
+      "approval": false,
+      "reason": "Full exact-source run failed strict Clippy and a defining Duplicate GUI assertion; two required result exports are absent."
+    },
+    {
+      "id": "audit-options-external-programs-external-calls-duplicate",
+      "approval": false,
+      "reason": "Full exact-source run failed strict Clippy and a defining Duplicate GUI assertion; two required result exports are absent."
+    }
+  ],
+  "failed_gates": {
+    "clippy": "assigning_clones at external_calls.rs:1535, with no waiver; reviewed clone_from repair is separate new source.",
+    "gui_test": "external_calls::duplicate_warning_decline_keeps_unsorted_unselected_prefix_accept_finishes_and_retired_question_cannot_append",
+    "source_line": 585,
+    "assertion": "!w.get_external_call_child_open() immediately after declined question answer",
+    "gui_totals": {
+      "passed": 706,
+      "failed": 1,
+      "ignored": 0,
+      "seconds": 236.35
+    },
+    "media_totals": {
+      "passed": 67,
+      "failed": 0,
+      "ignored": 0,
+      "seconds": 1.02
+    },
+    "log": "/workspace/validation-reviews/ci-625a2bdaf/tests.log",
+    "failure_log_line": 1386
+  },
+  "images_actually_viewed": [
+    {
+      "name": "external-calls-duplicate-selected.png",
+      "path": "/workspace/validation-reviews/ci-625a2bdaf/native-renders/external-calls-duplicate-selected.png",
+      "source_commit": "625a2bdafc5b5820f4d9201f46640d7770fbecd7",
+      "run_id": 37590137304,
+      "artifact_id": 11468462915,
+      "sha256": "5e1b40800ef208c2c5a43db656fae351132a4cffd044559b7b6288e483821d6c",
+      "bytes": 64810,
+      "dimensions": [
+        1100,
+        800
+      ],
+      "actually_viewed": true,
+      "observation": "Both synthetic call/synthetic call (1) rows are selected, with readable File type and visible enabled-looking Delete/Duplicate controls. Long runner command descriptions elide horizontally; full values are assertion-backed, not fully readable in this column."
+    },
+    {
+      "name": "external-calls-duplicate-warning.png",
+      "path": "/workspace/validation-reviews/ci-625a2bdaf/native-renders/external-calls-duplicate-warning.png",
+      "source_commit": "625a2bdafc5b5820f4d9201f46640d7770fbecd7",
+      "run_id": 37590137304,
+      "artifact_id": 11468462915,
+      "sha256": "132fa0ee387e4f31319a27446d5583eefdab10545547474403da2183f1973323",
+      "bytes": 15634,
+      "dimensions": [
+        900,
+        420
+      ],
+      "actually_viewed": true,
+      "observation": "Complete import warning for b unusual is readable; over-256-character executable path wraps into three visible lines without clipping. Yes/No are visible but vertically stretched at this supported 900×420 view."
+    },
+    {
+      "name": "external-calls-delete-review.png",
+      "path": "/workspace/validation-reviews/ci-625a2bdaf/native-renders/external-calls-delete-review.png",
+      "source_commit": "625a2bdafc5b5820f4d9201f46640d7770fbecd7",
+      "run_id": 37590137304,
+      "artifact_id": 11468462915,
+      "sha256": "c9c1c984693cdcd64a30d96459fa89532a17f84f61adf8475866ddeab39fd8de",
+      "bytes": 4029,
+      "dimensions": [
+        520,
+        200
+      ],
+      "actually_viewed": true,
+      "observation": "Remove all selected? and yes/no are readable at 520×200. No matched Qt question PNG."
+    },
+    {
+      "name": "external-calls-delete-empty.png",
+      "path": "/workspace/validation-reviews/ci-625a2bdaf/native-renders/external-calls-delete-empty.png",
+      "source_commit": "625a2bdafc5b5820f4d9201f46640d7770fbecd7",
+      "run_id": 37590137304,
+      "artifact_id": 11468462915,
+      "sha256": "82197b34a484eaabd01f21693f8617dc1b6dbef6f309b3840ed934f48a651cce",
+      "bytes": 52854,
+      "dimensions": [
+        1100,
+        800
+      ],
+      "actually_viewed": true,
+      "observation": "Empty staged registered-call list is visible, with no selection and disabled-looking Edit/Delete/Export/Duplicate. Apply/Cancel remain visible; no saved-default or launch claim."
+    },
+    {
+      "name": "external-calls-reopened-saved.png",
+      "path": "/workspace/validation-reviews/ci-625a2bdaf/native-renders/external-calls-reopened-saved.png",
+      "source_commit": "625a2bdafc5b5820f4d9201f46640d7770fbecd7",
+      "run_id": 37590137304,
+      "artifact_id": 11468462915,
+      "sha256": "ea946568145aaee9fcda14c8c74e663c6720ad80266d8a9dd4fc8e1bceb0f45f",
+      "bytes": 58281,
+      "dimensions": [
+        1100,
+        800
+      ],
+      "actually_viewed": true,
+      "observation": "Saved 日本 row is visible/readable on actual reopen, with File type; long command description elides. No outer-list Qt image pair."
+    }
+  ],
+  "required_images_viewed": 5,
+  "missing_required_images": [
+    "external-calls-duplicate-declined-prefix.png",
+    "external-calls-duplicate-complete.png"
+  ],
+  "native_image_count": 350,
+  "native_manifest_sha256": "934158631776b1b8c8f067cdbd268dc583c6b7ae2c61901f1a421ca2d3dddfc3",
+  "source_diagnosis": [
+    "Committed source ask closes/hides and clears the actual question slot before invoking the answer closure. Declined Duplicate aborts without changed(); external-call child_open is refreshed by the existing repeated 30 ms owner timer.",
+    "The warning capture pumps actual timers while the question is open, so the flag becomes true. The immediate post-answer non-modal assertion reads stale display projection before the next timer despite actual closure. This is a missing observation-readiness precondition, not evidence of persistent deletion/duplicate corruption.",
+    "The reviewed bounded repair asserts slot-none and question-hidden, then pumps the retained list render until child_open is false within two seconds. It does not set a property, retry the answer, replace an assertion or change production. The assigning_clones repair uses equivalent String::clone_from. New exact-source full replay and all seven images are still required."
+  ],
+  "selected_visual_blockers": [],
+  "remaining_evidence_blockers": [
+    "The defining Duplicate test failed before declined-prefix/complete result exports. Neither branch result can be visually approved from the five available frames.",
+    "All seven fresh frames and green strict full exact-source CI are required after the bounded readiness/lint repair."
+  ],
+  "finite_limits": [
+    "Long command descriptions are intentionally elided by native list cells; exact stored typed data remains assertion-backed. No complete-column-command readability or universal/default-size geometry claim.",
+    "Supported large list/warning views and tall question buttons differ from Qt; actual Qt reference is the callable child, not outer list/questions. No paired pixel, decoration or placement parity.",
+    "No new parent/alias/default-route/OS launch/platform credit; callback-driven lifecycle coverage does not establish automatic Main/final Bound teardown."
+  ],
+  "passed_diagnostic_gui_tests": [
+    {
+      "test": "external_calls::callable_command_child_apply_cancel_parent_staging_reopen_and_retired_owner",
+      "log": "/workspace/validation-reviews/ci-625a2bdaf/tests.log",
+      "line": 758,
+      "scope": "Diagnostic only, not completion."
+    },
+    {
+      "test": "external_calls::list_duplicate_defaults_delete_capture_and_options_persistence",
+      "log": "/workspace/validation-reviews/ci-625a2bdaf/tests.log",
+      "line": 761,
+      "scope": "Diagnostic only, not completion."
+    },
+    {
+      "test": "external_calls::simple_delete_includes_os_launch_rows_but_cancel_and_closed_owner_do_not_change_saved_calls",
+      "log": "/workspace/validation-reviews/ci-625a2bdaf/tests.log",
+      "line": 767,
+      "scope": "Diagnostic only, not completion."
+    }
+  ],
+  "proof_hashes": {
+    "/workspace/validation-reviews/ci-625a2bdaf/native-render-manifest.json": "934158631776b1b8c8f067cdbd268dc583c6b7ae2c61901f1a421ca2d3dddfc3",
+    "/workspace/validation-reviews/ci-625a2bdaf/failed-validation-outcome.json": "2fd6109a32df77bb82d94b08e82630b12a0d7a72db19af5cfec3ce685965622c",
+    "/workspace/validation-reviews/ci-625a2bdaf/tests.log": "91d91cc17762a6eff49deef310047681974f6fde24b640c0a35d952a43840990",
+    "/workspace/validation-reviews/ci-625a2bdaf/clippy.log": "5da7e70b2bfeba29fb341159952799154999f2b2fd9e836f8f87e43043ec3f28",
+    "/workspace/validation-reviews/external-list2/source-review-2.json": "26a49e64b8cba384601744af3e8a6e055a6797c465377eb13312070e82b85ec5",
+    "/workspace/validation-reviews/external-list2/source-review-2.md": "55e550ae32d96c87f1cae36379d13131be3a5ef7b780fb2e3eacd7e611c3ff77"
+  },
+  "preservation_note": "Frozen 625a source/baseline reports unchanged; no final-review file or canonical approval created. Five native frames actually inspected; no claim to inspecting all 350 artifact images. Reference child image inspection is historical preparation evidence, not a new paired outer image."
+}

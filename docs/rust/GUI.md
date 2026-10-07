@@ -3518,6 +3518,28 @@ copies and aborts the remainder. Add Defaults exposes both “add them all” an
 “select from a list”, with the reference platform question and factory calls.
 Selected defaults gain fresh keys and names alongside the prior selection.
 
+The validated follow-up selects only registered-call Delete and Duplicate.
+The October 7 actual Qt replay matches the six sort cases, duplicate selections,
+both warning outcomes, both Delete outcomes, fresh-key checks and reopened names
+without normalizing those fields. Full raw JSON differs in generated callable
+keys; the recorded callable-child PNG is unchanged and does not show the outer
+list or confirmation questions. Native follow-up adds defining list/question
+captures and bounded retained-answer checks against a usable replacement owner.
+All 165 existing assertions across nine tests are retained; the file now has
+242 assertions. The authored OS URL fixture now sets its actual URL pipeline.
+Full Linux run `37592389894` and fresh independent rendered review passed:
+359 signed off, 16 existing candidates pending, all 707 GUI and 67 media
+tests passing. [Evidence](gui-coverage/checkpoints/1943b19d9/README.md).
+Initial run `37590137304` failed strict Clippy on a clone assignment and one new
+duplicate-warning assertion on the timer-refreshed child-open flag (706 GUI
+passes, one failure). The repair uses `clone_from`, verifies the actual question
+slot is empty and its window hidden, and waits up to two seconds for the existing
+30 ms display timer through real rendering. All 239 initial assertions remain.
+Five diagnostic images were inspected; two duplicate-result images were never
+reached. The failed run earns no credit. Root and independent review inspected
+all seven fresh repaired-source images; the supported-size and Qt comparison
+limits remain explicit.
+
 The owned command child edits the first parameter in selection insertion order, keeps
 added rows unselected, captures delete selections, and reorders adjacent selected
 rows at either boundary. Its focused parameter list preserves range origins through select-all, Ctrl

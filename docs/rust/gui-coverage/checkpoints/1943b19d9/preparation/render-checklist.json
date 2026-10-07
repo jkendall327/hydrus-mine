@@ -1,0 +1,141 @@
+{
+  "source_commit": "1943b19d987771264a06558e57b4255679190de0",
+  "run_id": 37592389894,
+  "selected_ids": [
+    "audit-options-external-programs-external-calls-delete",
+    "audit-options-external-programs-external-calls-duplicate"
+  ],
+  "expected_native_capture_names": [
+    "external-calls-duplicate-selected.png",
+    "external-calls-duplicate-warning.png",
+    "external-calls-duplicate-declined-prefix.png",
+    "external-calls-duplicate-complete.png",
+    "external-calls-delete-review.png",
+    "external-calls-delete-empty.png",
+    "external-calls-reopened-saved.png"
+  ],
+  "captures": [
+    {
+      "name": "external-calls-duplicate-selected.png",
+      "dimensions": [
+        1100,
+        800
+      ],
+      "state": "Ordinary synthetic duplicate, two selected rows, before Delete question.",
+      "test_symbol": "list_duplicate_defaults_delete_capture_and_options_persistence",
+      "producer_path": "crates/hydrus-gui/tests/gui/external_calls.rs",
+      "producer_line": 220,
+      "producer_line_sha256": "83acd13e17c1603b981c60b860bd1e13e88a3687d002219c5bb3315f8c97d7ce",
+      "source_commit": "1943b19d987771264a06558e57b4255679190de0",
+      "executed_or_inspected_for_this_source_review": false
+    },
+    {
+      "name": "external-calls-duplicate-warning.png",
+      "dimensions": [
+        900,
+        420
+      ],
+      "state": "Exact recorded 257-character executable import warning before decline. Supported resized question, not default geometry.",
+      "test_symbol": "duplicate_warning_decline_keeps_unsorted_unselected_prefix_accept_finishes_and_retired_question_cannot_append",
+      "producer_path": "crates/hydrus-gui/tests/gui/external_calls.rs",
+      "producer_line": 550,
+      "producer_line_sha256": "2b7055cd771d3f1332b1529b25aba2479aae3ef858e3110bb50cdb7bb3de39ac",
+      "source_commit": "1943b19d987771264a06558e57b4255679190de0",
+      "executed_or_inspected_for_this_source_review": false
+    },
+    {
+      "name": "external-calls-duplicate-declined-prefix.png",
+      "dimensions": [
+        1100,
+        800
+      ],
+      "state": "Recorded four rows after decline; appended valid prefix is unsorted/unselected, original three selected.",
+      "test_symbol": "duplicate_warning_decline_keeps_unsorted_unselected_prefix_accept_finishes_and_retired_question_cannot_append",
+      "producer_path": "crates/hydrus-gui/tests/gui/external_calls.rs",
+      "producer_line": 606,
+      "producer_line_sha256": "5ffc65cd5d8491d75e4739e7c635c67077547423178a2fe42ead331189330870",
+      "source_commit": "1943b19d987771264a06558e57b4255679190de0",
+      "executed_or_inspected_for_this_source_review": false
+    },
+    {
+      "name": "external-calls-duplicate-complete.png",
+      "dimensions": [
+        1100,
+        800
+      ],
+      "state": "Recorded six ordered selected originals/copies after acceptance, before Apply. Independently saved/reopened full Manager/row comparisons follow.",
+      "test_symbol": "duplicate_warning_decline_keeps_unsorted_unselected_prefix_accept_finishes_and_retired_question_cannot_append",
+      "producer_path": "crates/hydrus-gui/tests/gui/external_calls.rs",
+      "producer_line": 604,
+      "producer_line_sha256": "b2b0ff37794d06226879ed6e62709edf3ebf7870c6d7f3e35e1ddd0832807023",
+      "source_commit": "1943b19d987771264a06558e57b4255679190de0",
+      "executed_or_inspected_for_this_source_review": false
+    },
+    {
+      "name": "external-calls-delete-review.png",
+      "dimensions": [
+        520,
+        200
+      ],
+      "state": "Remove all selected? question before response; OS file/URL selected captured identities asserted.",
+      "test_symbol": "simple_delete_includes_os_launch_rows_but_cancel_and_closed_owner_do_not_change_saved_calls",
+      "producer_path": "crates/hydrus-gui/tests/gui/external_calls.rs",
+      "producer_line": 702,
+      "producer_line_sha256": "0906539cc2bdeea7c7317d8f43bba82255b7e15f1c837f9609886350482b4b1a",
+      "source_commit": "1943b19d987771264a06558e57b4255679190de0",
+      "executed_or_inspected_for_this_source_review": false
+    },
+    {
+      "name": "external-calls-delete-empty.png",
+      "dimensions": [
+        1100,
+        800
+      ],
+      "state": "Accepted removal of both OS call rows, zero-row Options draft before Apply.",
+      "test_symbol": "simple_delete_includes_os_launch_rows_but_cancel_and_closed_owner_do_not_change_saved_calls",
+      "producer_path": "crates/hydrus-gui/tests/gui/external_calls.rs",
+      "producer_line": 724,
+      "producer_line_sha256": "d7cfed7b2a3f5ce02c3648a5ae295dab8b030d56329c72777f417742a8b15e46",
+      "source_commit": "1943b19d987771264a06558e57b4255679190de0",
+      "executed_or_inspected_for_this_source_review": false
+    },
+    {
+      "name": "external-calls-reopened-saved.png",
+      "dimensions": [
+        1100,
+        800
+      ],
+      "state": "Actual persisted saved 日本 list reopened after exact Manager identity/Process equality assertions; captured before editor creation. Supporting Unicode persistence, not accepted-six-duplicate still.",
+      "test_symbol": "callable_command_child_apply_cancel_parent_staging_reopen_and_retired_owner",
+      "producer_path": "crates/hydrus-gui/tests/gui/external_calls.rs",
+      "producer_line": 185,
+      "producer_line_sha256": "cf6eb4b3118f2eb312947d5e26c0fb292873d54b0f680af8d112caa2aaf2415b",
+      "source_commit": "1943b19d987771264a06558e57b4255679190de0",
+      "executed_or_inspected_for_this_source_review": false
+    }
+  ],
+  "current_source_assertions": {
+    "GUI_original": 165,
+    "GUI_current": 242,
+    "original_tests": 9,
+    "current_tests": 9,
+    "current_execution": false
+  },
+  "actual_root_reference_rerun_provenance": "/workspace/validation-reviews/external-list2/reference/reference-review-3.json",
+  "actual_root_reference_rerun_provenance_sha256": "d866d2e2d59bc1150a5e7d436eff8a2ca331c60adc1f4434531d4527483932e0",
+  "reference_images": [
+    {
+      "path": "/workspace/hydrus-mine/oracle/fixtures/external_calls.png",
+      "source_commit": "1943b19d987771264a06558e57b4255679190de0",
+      "sha256": "2eda195f01254bf2de45455e5a4f3e1be181911317ae3af0dea390e03708a139",
+      "root_actually_viewed": true,
+      "viewed_by_this_preparer": false,
+      "scope": "Actual Qt callable child only; scripted outer questions. No paired Qt outer-list/question image, pixel/placement or OS parity claim."
+    }
+  ],
+  "historical_supplemental_capture": "Callable-child PNG and previous command captures do not replace seven current defining states. Saved/reopened native PNG supports persisted Unicode call, not six-copy still; six-copy reopening is assertion-backed.",
+  "native_artifact_id": null,
+  "native_zip_sha256": null,
+  "native_render_review": "pending",
+  "approval": false
+}

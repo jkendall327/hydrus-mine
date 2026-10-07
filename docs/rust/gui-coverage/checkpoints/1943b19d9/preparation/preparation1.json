@@ -1,0 +1,34 @@
+{
+  "source_commit": "1943b19d987771264a06558e57b4255679190de0",
+  "run_id": 37592389894,
+  "baseline_source_commit": "fd3e855db1500c1473a6d920d9a47cfce83ec57f",
+  "claims": [
+    {
+      "id": "audit-options-external-programs-external-calls-delete",
+      "manifest": "docs/rust/gui-coverage/parity/external-calls.json",
+      "publication_preparation": "unresolved",
+      "reason": "Existing registered-call Delete and Duplicate controls; test-only seven-capture and pending-question/successor regressions. Exact-source full Linux/fresh independent review pending."
+    },
+    {
+      "id": "audit-options-external-programs-external-calls-duplicate",
+      "manifest": "docs/rust/gui-coverage/parity/external-calls.json",
+      "publication_preparation": "unresolved",
+      "reason": "Existing registered-call Delete and Duplicate controls; test-only seven-capture and pending-question/successor regressions. Exact-source full Linux/fresh independent review pending."
+    }
+  ],
+  "next_bank_priority_ids": [
+    "audit-options-external-programs-external-calls-delete",
+    "audit-options-external-programs-external-calls-duplicate"
+  ],
+  "selected_ids": [
+    "audit-options-external-programs-external-calls-delete",
+    "audit-options-external-programs-external-calls-duplicate"
+  ],
+  "final_gates": [
+    "Exact source 1943b19d987771264a06558e57b4255679190de0, actual run 37592389894: full Linux strict fmt/Clippy/workspace tests/ratchet plus parity-models reference/backend success pending. Windows/macOS deferred under immutable source policy.",
+    "Seven fresh defining native captures; independent reviewer2 and root actual inspection/hash verification. Actual Qt callable child is historical support, not outer-list/question pixel or placement parity.",
+    "Root final patch/census review, staged prior357/unselected/native1799/frozen1812/allgoal1274 preservation and desktop/narrow browser required.",
+    "Only accepted publication may advance ledger to359, pending candidates to16 and outside-goal leaves to915. Preparation grants no approval."
+  ],
+  "approval": false
+}
