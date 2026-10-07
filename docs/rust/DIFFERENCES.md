@@ -3043,7 +3043,8 @@ sans-serif/system-UI text fallback chains, retaining their preceding fonts and
 implicit system tails. An emoji-only mapping was insufficient because these
 text chains reached the bitmap font first. Fontique repeats the retained prefix
 in its implicit tail for unsupported characters; repeated setup does not grow it.
-Explicitly requested bitmap fonts can still outrank the fallback. Emoji are
+Explicitly requested bitmap fonts or configured bitmap primaries can still
+outrank the fallback. Emoji are
 monochrome and need not match Qt's glyph
 shape or colour. The adapter uses Slint's internal font context, so runtime,
 build helper and core are pinned together at 1.18.1. A font-selection regression

@@ -14,7 +14,8 @@ before the platform's preferred emoji face in Slint's actual sans-serif/system-U
 fallback chains, retaining every preceding text fallback and the platform tail.
 Fontique appends that tail implicitly, so the retained prefix is searched twice
 for unsupported characters; repeated initialization does not grow it. Explicitly
-requested bitmap fonts can still outrank this fallback. Script mappings stay intact.
+requested bitmap fonts or configured bitmap primaries can still outrank this
+fallback. Script mappings stay intact.
 Emoji colour and shape need not match Qt or a platform colour-emoji font.
 
 The isolated adapter in `src/fonts.rs` uses the internal core font context;

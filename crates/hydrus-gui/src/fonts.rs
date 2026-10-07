@@ -42,8 +42,9 @@ pub fn install_emoji_fallback() -> Result<(), PlatformError> {
                 let boundary = platform_emoji
                     .and_then(|emoji| existing.iter().position(|id| *id == emoji))
                     .unwrap_or(existing.len());
-                // If the platform has no dedicated emoji face, keep its primary
-                // text face first so ASCII digits/punctuation retain their font.
+                // Preserve a configured primary even when it is also the emoji
+                // face. An explicitly preferred bitmap primary remains outside
+                // this fallback repair, just like a named bitmap font request.
                 let boundary = boundary.max(usize::from(!existing.is_empty()));
                 fonts.collection.set_generic_families(
                     generic,
