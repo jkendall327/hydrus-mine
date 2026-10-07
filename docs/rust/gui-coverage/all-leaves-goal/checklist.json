@@ -4,12 +4,12 @@
   "goal": "All individual feature leaves in the report implemented and explicitly verified.",
   "classification_audit_source": "05000f10eafc4211d6856549d0073edb90ba5811",
   "classification_audit": "audit-05000f10e.json",
-  "validated_implementation_source": "95bbbed2cdd5f254a71330a00a2eb15f24b771a8",
+  "validated_implementation_source": "1c2b1afaf0fff7bf7bc984d17c5623e9e70098a5",
   "distinct_terminal_leaves": 1274,
   "baseline_deficit_leaves": 813,
   "historical_first_pass_leaves": 461,
-  "explicit_implementation_signoffs": 369,
-  "remaining_without_explicit_signoff": 905,
+  "explicit_implementation_signoffs": 370,
+  "remaining_without_explicit_signoff": 904,
   "implementation_ledger": "../overnight/progress.json",
   "historical_verification_approvals": [],
   "leaves": [
@@ -91,7 +91,7 @@
     {
       "id": "audit-media-context-missing-clear-deleted",
       "baseline_status": "missing",
-      "signed_off_in_implementation_ledger": false
+      "signed_off_in_implementation_ledger": true
     },
     {
       "id": "audit-media-context-missing-duplicates",
@@ -6384,6 +6384,6 @@
       "signed_off_in_implementation_ledger": true
     }
   ],
-  "previous_checkpoint_commit": "dfce4078c277e932be874b32d882ef07e0f8b694",
-  "checkpoint_evidence": "../checkpoints/95bbbed2c/README.md"
+  "previous_checkpoint_commit": "74596132a9fff04b5d22e1a900bc4f3dc4bb7647",
+  "checkpoint_evidence": "../checkpoints/1c2b1afaf/README.md"
 }

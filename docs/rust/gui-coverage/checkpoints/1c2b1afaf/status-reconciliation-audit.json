@@ -1,0 +1,70 @@
+{
+  "source_commit": "1c2b1afaf0fff7bf7bc984d17c5623e9e70098a5",
+  "ci_evidence_sha256": "84d9ddfb62cf46be1524986fe4b9cc596116ee8a9d88e6ed0cdd32cea466554e",
+  "mapping_sha256": "3a23e17d3b807624ede13b8f1b78980adcf3138f56eee010176765dbb24c6d61",
+  "mapping_applied_after_gates": true,
+  "operations": [
+    {
+      "id": "audit-media-context-missing-clear-deleted",
+      "field": "assessment",
+      "operation": "replace_exact_field",
+      "before": "Selected old/default thumbnail menu offers exact singular/plural clear-deletion labels only when selected flattened files include physical local-storage deletion records. Real current selection at QAction dispatch captures eligible ordered identities before the exact question. Cancel writes nothing; accepted existing scoped writer commits64-record batches independently, preserves trash/re-added/unselected membership and physical queue, and reaches actual importer known_status. New deletions during confirmation remain outside the plan; later error preserves committed prefix and presents warning. Weak visible current main, active captured binding/page, advanced-child and permanent departure epoch guards reject stale menus/answers. Main now has readable Yes/No controls through the existing captured answer transport. Authored measured physical pointer and leaf-specific Return/Escape regressions preserve captured eligibility, full relevant deletion-table/queue state and processed Escape retirement before a usable successor; exact-source execution/render review remains pending.",
+      "conditional_after": "Selected old/default thumbnail menu offers exact singular/plural clear-deletion labels only when selected flattened files include physical local-storage deletion records. Real current selection at QAction dispatch captures eligible ordered identities before the exact question. Cancel writes nothing; accepted existing scoped writer commits64-record batches independently, preserves trash/re-added/unselected membership and physical queue, and reaches actual importer known_status. New deletions during confirmation remain outside the plan; later error preserves committed prefix and presents warning. Weak visible current main, active captured binding/page, advanced-child and permanent departure epoch guards reject stale menus/answers. Main now has readable Yes/No controls through the existing captured answer transport. Authored measured physical pointer and leaf-specific Return/Escape regressions preserve captured eligibility, full relevant deletion-table/queue state and processed Escape retirement before a usable successor.",
+      "reason": "Resolve only final current validation-pending suffix after actual gates; preserve exact finite behavior and processed retirement."
+    },
+    {
+      "id": "audit-media-context-missing-clear-deleted",
+      "field": "limitations",
+      "original_index": 7,
+      "operation": "replace_exact_list_item",
+      "before": "Exact-source hosted Rust/Clippy/model/native execution and one authored native question PNG generation/inspection remain pending. No local Cargo/Rust/mutation runs, reference source writes, canonical status changes or pushes.",
+      "conditional_after": "Historical author metadata records authored regressions without local Cargo/Rust or mutation runs. Current exact-source Linux execution and the fresh defining pointer question review are recorded separately in the accepted checkpoint. Historical source/recording provenance is retained.",
+      "reason": "Resolve authored validation status only; retain historical no-local-build provenance."
+    },
+    {
+      "id": "audit-media-context-missing-clear-deleted",
+      "field": "remaining",
+      "original_index": 0,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source full Linux validation remains pending.",
+      "conditional_after": null,
+      "reason": "Remove pending validation/render status only after actual full gates."
+    },
+    {
+      "id": "audit-media-context-missing-clear-deleted",
+      "field": "remaining",
+      "original_index": 1,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source defining pointer question and independent rendered/behavioral review remain pending.",
+      "conditional_after": null,
+      "reason": "Remove pending validation/render status only after actual full gates."
+    }
+  ],
+  "added_review_scope_limits": {
+    "audit-media-context-missing-clear-deleted": [
+      "Linux-only exact-source validation; Windows and macOS are deferred. Exactly one selected thumbnail context action is approved. The already implemented global all-files service clear(None) receives no duplicate credit; viewer, broader media/context parents and aliases are excluded.",
+      "Eligibility is physical local-storage deletion, with selected collections flattened and current selected media read at menu dispatch. The ordered eligible identities are captured before confirmation. Re-add during confirmation preserves current membership; newly deleted or newly selected files outside the captured plan remain untouched.",
+      "The existing scoped writer preserves trash/current membership and the durable deferred physical deletion queue. This action clears import-status deletion records and permits ordinary reimport; it does not physically delete files or cancel physical queue records.",
+      "Each batch of up to 64 commits independently. A later failing batch stops subsequent writes without rolling back committed prefixes. Native Store errors are shown as warnings; reference asynchronous content transport is made synchronous only in the copied fixture proof.",
+      "Tested hidden, retired/rebound, different-page and permanent tab-departure guards refuse stale menus/answers; an owned advanced-deletion child blocks dispatch and acceptance. These native ownership guards add protection beyond Qt modal input blocking and do not recapture file eligibility.",
+      "Real pointer Yes/No and leaf-specific Return/Escape tests preserve full relevant tables, physical queue and page state. The held-pointer proof requires actual Escape press/release to process retirement before a same-caption, different-file successor opens; it proves the tested processed-retirement route, not callback-only atomic replacement or generic question/pointer ownership parity.",
+      "Question pointer input uses actual finite, contained, disjoint button measurements and bounded real timer/render settling at 1100×700. Only the new question inputs are physical; menu opening and selection setup retain existing callback/model routes. The original immediate-render question export is supplemental.",
+      "The real Qt recording supplies menus, retained QAction dispatch, flattened collection handlers and content-update consumers. Synthetic hash/batch cases record 64-write transport and later-batch exceptions without asserting those synthetic hashes were persisted in the reference database.",
+      "The copied reference fixture logged a nonfatal sandbox-denied Client API listener; genuine GUI/SQLite actions and normal shutdown succeeded. No HTTP/socket/API transport proof is claimed.",
+      "The actual Qt PNG is a menu frame, not a paired confirmation image. Native prompt, hint and buttons are readable in the inspected frames, while unrelated background status prose is elided. Matching question pixels, modal hierarchy, fonts, universal geometry and OS placement are not claimed.",
+      "No local Cargo/Rust or mutation run was performed by this independent review. Historical source-only authored/pending provenance remains preserved; the current exact-source hosted full check, Clippy, reference/model tests and actual fresh render inspection resolve those gates for this selected leaf only."
+    ]
+  },
+  "reviews": [
+    {
+      "path": "docs/rust/gui-coverage/checkpoints/1c2b1afaf/final-review-2-1c2b1afaf.json",
+      "sha256": "df87ebde7147faeb9560c2a92881262494c44080eb4d2c5cd2caef437c68b78b"
+    }
+  ],
+  "selected_ids": [
+    "audit-media-context-missing-clear-deleted"
+  ],
+  "prior369_completion_ids_and_assessments_preserved": true,
+  "source_only_native_anchor_ids": [],
+  "final_patch_digest": "cf073ee12c3ca2f5169e098f429d9a2d017ee59d5d9d6e2fa0f6281dea8b732f"
+}

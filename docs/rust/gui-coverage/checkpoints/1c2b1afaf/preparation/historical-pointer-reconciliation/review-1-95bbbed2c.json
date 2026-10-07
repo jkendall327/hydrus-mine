@@ -1,0 +1,170 @@
+{
+  "scope": "Read-only bounded next-confirmation preflight; no approval, ledger credit, builds or current-rating preparation changes.",
+  "current_source": "95bbbed2cdd5f254a71330a00a2eb15f24b771a8",
+  "prior_completed_count": 368,
+  "exact_pending_ids": [
+    "audit-options-files-and-trash-confirm-sending-files-to-trash",
+    "audit-media-context-missing-clear-deleted"
+  ],
+  "already_banked_archive_policy_ids_excluded": [
+    "audit-options-files-and-trash-when-finishing-archive-delete-filtering-always-delete-from-all-possible-domains",
+    "audit-options-files-and-trash-when-finishing-archive-delete-filtering-delay-activation-of-multiple-deletion-choice-buttons"
+  ],
+  "already_banked_archive_inbox_confirmation_excluded": "audit-options-files-and-trash-confirm-sending-more-than-one-file-to-archive-or-inbox",
+  "current_rating_scope_unchanged": true,
+  "input_source_pins": {
+    "crates/hydrus-gui/tests/gui/selected_deletion_records.rs": {
+      "sha256": "0bd3e8ed35981386c17065c9cc2553f0515edbacc01f33d44e2805f85fd8fc0c",
+      "unchanged_from_a6d": true
+    },
+    "crates/hydrus-gui-model/tests/model/selected_deletion_records.rs": {
+      "sha256": "aef94776eb53708e99da8b8ca7ac5f2aed593ee25ee163cea2cd8f64f877045d",
+      "unchanged_from_a6d": true
+    },
+    "crates/hydrus-gui-model/src/selected_deletion_records.rs": {
+      "sha256": "f653a91f76a212f575a7787b4ac68a48080f5a816f8fe5b664988eebacbfa7a6",
+      "unchanged_from_a6d": true
+    },
+    "crates/hydrus-gui/src/lib.rs": {
+      "sha256": "b71c9e66ab1f71337cb525b0363ae1e7eb1434a47d44f61bb313733195d4c67a",
+      "unchanged_from_a6d": true
+    },
+    "crates/hydrus-gui-model/src/media_actions.rs": {
+      "sha256": "cdd63e07bc9b4020d252252256e40649943e9e6bbebfece04dc147469811ba7f",
+      "unchanged_from_a6d": true
+    },
+    "crates/hydrus-gui/tests/gui/media_actions.rs": {
+      "sha256": "e1dcdda7b7c7a15a8c514179ac9fc7fa67846b21637877ba61ab482140472432",
+      "unchanged_from_a6d": true
+    },
+    "crates/hydrus-gui/tests/gui/options_window.rs": {
+      "sha256": "17631a6fe07a2a92d2e5c8321620118cb87294537d3a0503ea58ab49a1ab7474",
+      "unchanged_from_a6d": true
+    },
+    "hydrus/client/gui/media/ClientGUIMediaModalActions.py": {
+      "sha256": "fb617394ea606a17e94eb2637e02482ee5a70b51ed7fc91c77201eb977f202ad",
+      "unchanged_from_a6d": true
+    }
+  },
+  "assertion_census": {
+    "crates/hydrus-gui/tests/gui/selected_deletion_records.rs": {
+      "assertion_macros": 44,
+      "test_functions": 3
+    },
+    "crates/hydrus-gui-model/tests/model/selected_deletion_records.rs": {
+      "assertion_macros": 11,
+      "test_functions": 2
+    },
+    "crates/hydrus-gui/tests/gui/media_actions.rs": {
+      "assertion_macros": 44,
+      "test_functions": 3
+    },
+    "crates/hydrus-gui/tests/gui/options_window.rs": {
+      "assertion_macros": 701,
+      "test_functions": 46
+    }
+  },
+  "actual_images_viewed": [
+    {
+      "path": "/workspace/validation-reviews/ci-a6d28f4e4/native-renders/selected_deletion_records_question.png",
+      "sha256": "9f0830c62e6c9b4bdddac9c89b51a4cd7641ef5de24cd4715d068b5077bb3e31",
+      "actually_viewed": true,
+      "current95bbb_fresh_approval": false
+    },
+    {
+      "path": "/workspace/hydrus-mine/oracle/fixtures/selected_deletion_records_qt.png",
+      "sha256": "65f9c016a796e8638dc08c4749f03074149998631b3fa2506e938e6e9b227693",
+      "actually_viewed": true,
+      "current95bbb_fresh_approval": false
+    },
+    {
+      "path": "/workspace/validation-reviews/ci-a6d28f4e4/native-renders/archive-delete-multiple-delayed.png",
+      "sha256": "1be37cceee1e5a340add7b87994d32bb602cc0efae320c436b041776cbfcd209",
+      "actually_viewed": true,
+      "current95bbb_fresh_approval": false
+    },
+    {
+      "path": "/workspace/hydrus-mine/oracle/fixtures/archive_delete_finish_qt.png",
+      "sha256": "43d6c852254c9d8e8374416d7fdb9f281187550bc5e367cf4e10d232f680a415",
+      "actually_viewed": true,
+      "current95bbb_fresh_approval": false
+    },
+    {
+      "path": "/workspace/hydrus-mine/oracle/fixtures/files_trash_options.png",
+      "sha256": "75e1c1eb438808ae284d7b6bbfed132ed7f3c8872b3804ee9f8ec7c1481964ba",
+      "actually_viewed": true,
+      "current95bbb_fresh_approval": false
+    },
+    {
+      "path": "/workspace/hydrus-mine/oracle/fixtures/files_trash_delete.png",
+      "sha256": "056bc339e01f008f60e3897afb9547392997ce81ce1b63ec366ae66ece13f99b",
+      "actually_viewed": true,
+      "current95bbb_fresh_approval": false
+    }
+  ],
+  "historical_native_identity": {
+    "source_commit": "a6d28f4e498a3d7a8f00ad6a61da62166bc54383",
+    "run_id": 37613614274,
+    "artifact_id": 11479379331,
+    "zip_sha256": "115771cde0ec9b950aeeaa6889a6377917291604eed77fcc837b6ff8686c17ca"
+  },
+  "historical_defining_pass_records": [
+    "test media_actions::confirmation_policy_matches_recorded_actionable_domains_and_counts ... ok",
+    "test options_window::files_trash_confirmations_are_staged_reopened_and_consumed ... ok",
+    "test selected_deletion_records::hidden_stale_page_rebound_and_accepted_exit_cannot_clear_captured_records ... ok",
+    "test selected_deletion_records::tab_roundtrip_permanently_invalidates_menu_and_answer_and_advanced_child_blocks_dispatch ... ok",
+    "test selected_deletion_records::actual_menu_and_answer_replay_clear_only_captured_records_and_enable_reimport ... ok",
+    "test selected_deletion_records::captured_clearable_records_match_actual_reference_changes_during_question ... ok",
+    "test selected_deletion_records::real_writer_later_batch_error_preserves_first_commit_and_remaining_records ... ok"
+  ],
+  "claims": [
+    {
+      "id": "audit-media-context-missing-clear-deleted",
+      "source_conclusion": "No new concrete source defect found within existing finite selected-records contract. Could be a separate evidence-only candidate at95bbb if its unchanged producer emits fresh image and actual full CI plus independent/root review qualify it. Not approved here.",
+      "source_evidence": [
+        "tests/gui/selected_deletion_records.rs:48 actual menu/action/answer replay, dispatch-time changed selection, accepted/Cancel/empty/readd/newdelete full Store state and untouched physical queue; producer145-153 emits1100x700 mixed question before answer.",
+        "tests/gui/selected_deletion_records.rs:205 hidden/page replacement/rebind/accepted exit/successor refusal with positive new binding.",
+        "tests/gui/selected_deletion_records.rs:279 real tab departure/return permanently invalidates menu and answer; advanced child admission and Store failure warning boundaries.",
+        "tests/model/selected_deletion_records.rs:9 fixture Store capture/consumer states;69 actual later-batch error preserves prior committed prefix."
+      ],
+      "actual_native_observation": "Readable centered exact Clear the deletion record for2 previously deleted files?. with enter:yes,escape:no hint; three selected files in Main footer and two clearable records in question are consistent with filtering. No visible yes/no buttons are claimed.",
+      "actual_Qt_observation": "Qt fixture is a real context-menu frame with clear deletion record for selected. It does not depict the confirmation or establish matched Main/Qt question pixels.",
+      "remaining_gates": [
+        "Current95bbb full Linux and exact selected tests green.",
+        "Fresh selected_deletion_records_question.png producer/hash/source and actual root+independent inspection; historicala6d image not substituted.",
+        "Exact current anchor/assessment/status reconciliation and selected-only staged preservation/browser review."
+      ],
+      "real_limits": [
+        "Only selected thumbnail context, no globalclear(None) or viewer/parent credit.",
+        "64-file transaction batches retain committed prefixes on later failure; no global rollback claim.",
+        "No physical deletion or queue cancellation; membership/trash untouched; no HTTP/network transport proof.",
+        "Owned modal Main Enter/Escape hint is visual only here; no new physical-key/OS-layout parity."
+      ]
+    },
+    {
+      "id": "audit-options-files-and-trash-confirm-sending-files-to-trash",
+      "source_conclusion": "Needs bounded next repair/evidence batch; cannot promote from existing95bbb source unchanged. Manifest intentionallyPartial and real reference confirmation-dependent undelete consumer remains absent.",
+      "defect_evidence": {
+        "reference_path": "hydrus/client/gui/media/ClientGUIMediaModalActions.py",
+        "reference_lines": [
+          1629,
+          1631,
+          1638
+        ],
+        "reference_behavior": "Single-service Undelete asks Undelete this file back toSERVICE? when confirm_trash true; false skips the question.",
+        "native_path": "crates/hydrus-gui/src/lib.rs",
+        "native_lines": [
+          2296,
+          2303,
+          7375,
+          7483
+        ],
+        "native_behavior": "Main and viewer undelete routes directly call media_actions::undelete with no confirmation policy/question."
+      },
+      "existing_supported_slice": "Saved default-true checkbox, Cancel/Apply/reopen/legacy import, deletion single-domain bypass versus physical/ambiguous questions are implemented and tested. These do not close the undelete consumer gap.",
+      "capture_gap": "No defining native Options checkbox+trash/undelete policy frames identified among current exports. Qt Options visibly shows checked Confirm sending files to trash; supplied files_trash_delete.png is a tiny icon strip, not a full question comparison. Already-banked archive filtering/service-trash frames cannot substitute.",
+      "recommended_small_batch": "Preserve existing assertions, implement exact captured owned undelete question for Main/viewer affected routes with false policy bypass, No/Yes and hidden/retired/successor/selection boundaries, then export actual checkbox and true-policy question at existing asserted states. Do not broaden simple-picker/global parents."
+    }
+  ],
+  "recommendation": "Keep rating1 publication unchanged. A later independent fresh review may justify adding only selected deletion records as an evidence-only leaf (two total with rating), but all three cannot qualify unchanged because trash-confirmation has a real defining undelete gap. No completion approved by this preflight."
+}

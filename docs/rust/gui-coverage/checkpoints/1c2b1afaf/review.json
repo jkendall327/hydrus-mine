@@ -1,0 +1,32 @@
+{
+  "source_commit": "1c2b1afaf0fff7bf7bc984d17c5623e9e70098a5",
+  "reviewed_by": "Codex root with independent exact-source behavioral/rendered review2; separate source/preservation checks",
+  "patch_sha256": "cf073ee12c3ca2f5169e098f429d9a2d017ee59d5d9d6e2fa0f6281dea8b732f",
+  "reviewed_source_census_sha256": "6e88ea992df96a251af793e85e8015171ec81ea007cb05adeb8131d9a78cb7b4",
+  "selected_completion_ids": [
+    "audit-media-context-missing-clear-deleted"
+  ],
+  "reviewed_assessment_ids": [
+    "audit-media-context-missing-clear-deleted"
+  ],
+  "reviewed_native_ids": [],
+  "independent_reviews": [
+    {
+      "path": "docs/rust/gui-coverage/checkpoints/1c2b1afaf/final-review-2-1c2b1afaf.json",
+      "sha256": "df87ebde7147faeb9560c2a92881262494c44080eb4d2c5cd2caef437c68b78b"
+    }
+  ],
+  "validation_scope": "linux",
+  "required_platforms": [
+    "linux"
+  ],
+  "deferred_platforms": [
+    "windows",
+    "macos"
+  ],
+  "root_actual_native_inspection": [
+    "selected-deletion-records-pointer-question.png",
+    "selected_deletion_records_question.png"
+  ],
+  "scope": "Only the selected selected thumbnail clear-deletion records gain credit. No parent, alias, native hierarchy or deferred-platform credit. Browser verification and preservation audit required before canonical publication."
+}

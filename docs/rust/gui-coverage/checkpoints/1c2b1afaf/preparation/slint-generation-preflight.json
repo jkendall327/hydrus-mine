@@ -1,0 +1,9 @@
+{
+  "ui_sha256": "63cff2b671bc09d8e77d325dbeaf53678dc0f48d82a400d9001da5bedf274f10",
+  "build_script_sha256": "b059457adb9b3d1eee0495a209c164f00759d38b55eb06bab648ca7d5ea51cea",
+  "exit_code": 0,
+  "generated_rust_sha256": "ac35a98dcde37350a53e60774ac69423ff2ad63c2b443db552ad7b6c96960b99",
+  "generated_rust_bytes": 87047386,
+  "log_sha256": "69c37e2a90aeee419a45b6219ac0fcd4e11eceb47fc0eac57c2c0771b58d8682",
+  "scope": "Cached Slint compiler-only source generation. No Cargo/Rust compilation, runtime, lint or rendered approval."
+}

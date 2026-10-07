@@ -1,0 +1,22 @@
+{
+  "source_commit": "1c2b1afaf0fff7bf7bc984d17c5623e9e70098a5",
+  "run_id": 37624387284,
+  "source_phase": "committed source validation pending",
+  "selected_candidate_ids": [
+    "audit-media-context-missing-clear-deleted"
+  ],
+  "selected_count": 1,
+  "prior_completed_count": 369,
+  "pending_count": 6,
+  "conditional_bank_if_all_gates_pass": 370,
+  "conditional_pending_after_bank": 5,
+  "conditional_goal_outside_ledger": 904,
+  "not_ready_by_preparation": true,
+  "approval": false,
+  "gates": [
+    "Exact source 1c2b1afaf0fff7bf7bc984d17c5623e9e70098a5, full Linux run 37624387284: strict check and parity-models pending; Windows/macOS deferred under exact-source policy.",
+    "One defining fresh pointer question PNG requires actual root and independent review2 inspection and exact hashes; old immediate-render question is supplemental only.",
+    "Prior369, all unselected/native1799/frozen1812/allgoal1274 preservation and desktop/narrow browser checks required.",
+    "Only accepted selected1 publication may reach370 signed,5 existing pending,904 outside goal; no parent/global-clear/viewer/generic-owner credit."
+  ]
+}

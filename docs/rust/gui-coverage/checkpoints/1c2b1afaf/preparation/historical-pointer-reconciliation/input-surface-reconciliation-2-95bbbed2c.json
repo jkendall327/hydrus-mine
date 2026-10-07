@@ -1,0 +1,111 @@
+{
+  "review_kind": "Input-surface reconciliation; separate read-only source review",
+  "source_commit": "95bbbed2cdd5f254a71330a00a2eb15f24b771a8",
+  "id": "audit-media-context-missing-clear-deleted",
+  "approval": false,
+  "recommendation": "Repair the missing pointer answer controls before selected completion. Current keyboard usability and callback/store proof do not close the reference Yes/No input surface. Rating publication is unaffected.",
+  "previous_preflight_correction": "The earlier no-source/frame-blocker statement was limited to callback/storage and readability, and its evidence-only readiness recommendation was incomplete. The prior explicit pointer-gap triage remains valid. Prior files stay unchanged as historical provenance; this reconciliation supersedes their readiness recommendation.",
+  "reference_evidence": [
+    {
+      "path": "hydrus/client/gui/media/ClientGUIMediaModalActions.py",
+      "line": 172,
+      "evidence": "ClearDeleteRecord asks ClientGUIDialogsQuick.GetYesNo before accepted scoped 64-record writes."
+    },
+    {
+      "path": "hydrus/client/gui/ClientGUIDialogsQuick.py",
+      "line": 168,
+      "evidence": "GetYesNo constructs a real custom question dialog with QuestionYesNoPanel, default yes/no labels and accepted/rejected results."
+    },
+    {
+      "path": "hydrus/client/gui/panels/ClientGUIScrolledPanelsButtonQuestions.py",
+      "line": 18,
+      "evidence": "Real Yes BetterButton calls parent done(Accepted); line23 No calls done(Rejected); line43 focuses Yes."
+    }
+  ],
+  "native_evidence": [
+    {
+      "path": "crates/hydrus-gui/ui/main.slint",
+      "line": 790,
+      "evidence": "Main outer FocusScope captures Return/Escape while a question is present, invokes answer(true/false) and consumes other keys. It is an actual keyboard route, not merely explanatory text."
+    },
+    {
+      "path": "crates/hydrus-gui/ui/main.slint",
+      "line": 2132,
+      "evidence": "Current question shade has an empty TouchArea and a fixed420x90 panel containing only prompt and Enter/Escape hint. No clickable answer control exists."
+    },
+    {
+      "path": "crates/hydrus-gui/src/lib.rs",
+      "line": 2332,
+      "evidence": "on_answer takes and clears pending question; only accepted answers perform Asked action. Selected-record Plan acceptance additionally checks current visible binding/page/epoch and owned modal admission."
+    },
+    {
+      "path": "crates/hydrus-gui/tests/gui/media_actions.rs",
+      "line": 209,
+      "evidence": "A real pointer focuses/selects grid; KeyPressed/Released Escape cancels Delete, then Return accepts Delete and verifies actual trash state. This supports shared Main keyboard usability but is not a new physical clear-record regression."
+    },
+    {
+      "path": "crates/hydrus-gui/tests/gui/selected_deletion_records.rs",
+      "line": 154,
+      "evidence": "Defining clear-record cases currently invoke answer callback directly. Store/owner regressions are meaningful but do not test physical answer controls or leaf-specific keys."
+    }
+  ],
+  "minimal_repair_recommendation": [
+    "Add readable Yes and No buttons inside the existing Main owned-question overlay, each using the existing root.answer(true/false) transport; preserve exact captured Plan and writer logic.",
+    "Give the question panel enough intrinsic height for prompt, hint and buttons rather than inserting controls into the existing fixed90px area. Preserve blocking shade and selected-message readability.",
+    "Use actual source-bound button geometry for physical tests; prefer existing observation mechanisms, with narrowly scoped read-only geometry only if needed. Do not guess screen coordinates, invoke clicked callbacks as pointer substitutes or set widget state.",
+    "Keep existing Return/Escape capture, accepted-only writes and all44GUI/11model assertions. Do not add new parent/alias/global/viewer completion or alter batch failure semantics."
+  ],
+  "meaningful_regression_plan": [
+    "At the real selected mixed question, click actual No with PointerPressed/Released: assert exact complete Store state and physical queue unchanged, question dismissed and no successor/selection mutation.",
+    "Open another real mixed question, capture eligibility, change selection while pending and click actual Yes: assert only the captured eligible records clear, newly selected or newly deleted records stay outside the plan, membership/trash/physical queue preserved and importer known_status reaches expected state.",
+    "Exercise real Enter/Escape after actual pointer focus on the Main grid (and a second meaningful focused child if feasible), verifying leaf-specific accept/cancel storage outcomes without callback substitution.",
+    "Retain all hidden/page/tab/rebind/accepted-exit/error/successor refusal checks. Add targeted pointer-answer retirement or hidden admission checks so new controls cannot bypass the existing scoped Plan guard; positive current successor must remain usable.",
+    "Save the exact owned question with visible readable Yes/No plus Enter/Escape; inspect fresh artifact at the supported viewport after full exact-source Linux CI. Qt source proves controls; existing Qt PNG is menu-only and cannot establish matching question pixels."
+  ],
+  "limits": [
+    "This is a demonstrated missing pointer response surface, not a broken writer or absence of keyboard usability.",
+    "Current keyboard proof is from the shared Main deletion route, not a direct physical-key clear-record test.",
+    "The missing Yes/No controls should not be dismissed as a capture artifact or removed from defining behavior to bank this leaf.",
+    "Reference/native modal hierarchy, OS placement and exact pixels remain finite style differences.",
+    "The separate confirm_trash-dependent Undelete consumer gap still requires its own repair; this recommendation does not expand rating or other selections."
+  ],
+  "provenance": [
+    {
+      "path": "/workspace/validation-reviews/next-confirmation-preflight/review-2-95bbbed2c.json",
+      "sha256": "d06947b15618a7a4c96c156f61a58d02ffd9b9645ddb140e9ae1a86f1f669ed7"
+    },
+    {
+      "path": "/workspace/validation-reviews/external-command2/next-batch-triage.md",
+      "sha256": "1110b60471617adb6de02884aea8fd497db95b30cc789cfede6689bcb3d0114f"
+    }
+  ],
+  "source_pins": [
+    {
+      "path": "crates/hydrus-gui/ui/main.slint",
+      "sha256": "5b115be2c3f81553f166fab91e93564031ef62f76aa239548f507a4cd606c5b0"
+    },
+    {
+      "path": "crates/hydrus-gui/src/lib.rs",
+      "sha256": "b71c9e66ab1f71337cb525b0363ae1e7eb1434a47d44f61bb313733195d4c67a"
+    },
+    {
+      "path": "crates/hydrus-gui/tests/gui/media_actions.rs",
+      "sha256": "e1dcdda7b7c7a15a8c514179ac9fc7fa67846b21637877ba61ab482140472432"
+    },
+    {
+      "path": "crates/hydrus-gui/tests/gui/selected_deletion_records.rs",
+      "sha256": "0bd3e8ed35981386c17065c9cc2553f0515edbacc01f33d44e2805f85fd8fc0c"
+    },
+    {
+      "path": "hydrus/client/gui/ClientGUIDialogsQuick.py",
+      "sha256": "0b8a62f0a6b5b9ceb472c06ab87b214790b685bf8f87bdea906bfd56b995524b"
+    },
+    {
+      "path": "hydrus/client/gui/panels/ClientGUIScrolledPanelsButtonQuestions.py",
+      "sha256": "f963c346f4a1a79817b22ec8e5f3fcf156833f2caa2d9c38dfcae82b03efa8da"
+    }
+  ],
+  "builds_run": false,
+  "product_edits": false,
+  "canonical_edits": false
+}

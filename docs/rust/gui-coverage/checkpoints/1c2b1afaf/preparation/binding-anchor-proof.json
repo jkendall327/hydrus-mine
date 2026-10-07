@@ -1,0 +1,12 @@
+{
+  "source_commit": "1c2b1afaf0fff7bf7bc984d17c5623e9e70098a5",
+  "selected_reference_corrections": [],
+  "reference_source": {
+    "path": "hydrus/client/gui/pages/ClientGUIMediaResultsPanelThumbnails.py",
+    "line": 1492,
+    "line_sha256": "7f8134bcf99752cc2a7e81de008a022f2175df4c8d664665d8559c1e08f8931b",
+    "anchor_git_head": "1c2b1afaf0fff7bf7bc984d17c5623e9e70098a5"
+  },
+  "scope_status_credit_change": false,
+  "approval": false
+}

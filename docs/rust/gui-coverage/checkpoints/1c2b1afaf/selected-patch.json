@@ -1,0 +1,578 @@
+{
+  "baseline_git_head": "1c2b1afaf0fff7bf7bc984d17c5623e9e70098a5",
+  "method": "Publish exactly one original leaf after exact-source full Linux CI and fresh independent behavioral/rendered review. Preserve prior 369 IDs and assessments, native inventory and all unselected assessments except exact source anchor remaps and ancestor counts. Windows/macOS deferred; consumer and capture limits retained.",
+  "reference": {
+    "updates": [
+      {
+        "id": "audit-media-context-missing-clear-deleted",
+        "status": "first_pass",
+        "assessment": "Selected old/default thumbnail menu offers exact singular/plural clear-deletion labels only when selected flattened files include physical local-storage deletion records. Real current selection at QAction dispatch captures eligible ordered identities before the exact question. Cancel writes nothing; accepted existing scoped writer commits64-record batches independently, preserves trash/re-added/unselected membership and physical queue, and reaches actual importer known_status. New deletions during confirmation remain outside the plan; later error preserves committed prefix and presents warning. Weak visible current main, active captured binding/page, advanced-child and permanent departure epoch guards reject stale menus/answers. Main now has readable Yes/No controls through the existing captured answer transport. Authored measured physical pointer and leaf-specific Return/Escape regressions preserve captured eligibility, full relevant deletion-table/queue state and processed Escape retirement before a usable successor.",
+        "evidence": [
+          {
+            "path": "crates/hydrus-gui-model/src/selected_deletion_records.rs",
+            "line": 7,
+            "anchor_git_head": "1c2b1afaf0fff7bf7bc984d17c5623e9e70098a5",
+            "line_sha256": "2eba2368b2f25b18aa18fe6eff51fce5bf3fc29eb18713ea3f3c9e14bd26737a",
+            "symbol": "pub struct Plan",
+            "role": "scoped_implementation",
+            "description": "pub struct Plan",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui-model/src/selected_deletion_records.rs",
+            "line": 14,
+            "anchor_git_head": "1c2b1afaf0fff7bf7bc984d17c5623e9e70098a5",
+            "line_sha256": "7c394225f1ef86261bca21158f95b30f2553ecdc204ae3e64cb89c0febbbea10",
+            "symbol": "pub fn capture(",
+            "role": "scoped_implementation",
+            "description": "pub fn capture(",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui-model/src/selected_deletion_records.rs",
+            "line": 29,
+            "anchor_git_head": "1c2b1afaf0fff7bf7bc984d17c5623e9e70098a5",
+            "line_sha256": "8f66f078ec5f671d32633bde554acb7d98a3a586cbc52f53cfd4550ed88231e3",
+            "symbol": "pub fn question(",
+            "role": "scoped_implementation",
+            "description": "pub fn question(",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui-model/src/selected_deletion_records.rs",
+            "line": 39,
+            "anchor_git_head": "1c2b1afaf0fff7bf7bc984d17c5623e9e70098a5",
+            "line_sha256": "9a6ec4aac6bf2b9b1818bb4e3f60828077cb31a9313ee352d135e34297f4ffc6",
+            "symbol": "pub fn apply(",
+            "role": "scoped_implementation",
+            "description": "pub fn apply(",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui-model/src/selected_deletion_records.rs",
+            "line": 40,
+            "anchor_git_head": "1c2b1afaf0fff7bf7bc984d17c5623e9e70098a5",
+            "line_sha256": "16636186b578b59080008012ea1714b86a9b95680d0ea14be003e9a799a30eeb",
+            "symbol": "for batch in self.files.chunks(64)",
+            "role": "scoped_implementation",
+            "description": "for batch in self.files.chunks(64)",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui/src/thumbnail_menu.rs",
+            "line": 62,
+            "anchor_git_head": "1c2b1afaf0fff7bf7bc984d17c5623e9e70098a5",
+            "line_sha256": "d5630e8dfe3a43a43ca879c650b5cc6edcf80e38640df79fa4fa5489066a3b94",
+            "symbol": "    ClearDeletionRecords,",
+            "role": "scoped_implementation",
+            "description": "    ClearDeletionRecords,",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui/src/thumbnail_menu.rs",
+            "line": 423,
+            "anchor_git_head": "1c2b1afaf0fff7bf7bc984d17c5623e9e70098a5",
+            "line_sha256": "4842713980f042b8bfc371cace24fffe9ebdc70dc6449e83ecdc13a2c4406316",
+            "symbol": "pub storage_deleted: bool,",
+            "role": "scoped_implementation",
+            "description": "pub storage_deleted: bool,",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui/src/thumbnail_menu.rs",
+            "line": 427,
+            "anchor_git_head": "1c2b1afaf0fff7bf7bc984d17c5623e9e70098a5",
+            "line_sha256": "99e88a292584f46dbcc234883eb009590f2450b0fbf75bb182db664cd354be1f",
+            "symbol": "pub fn facts(",
+            "role": "scoped_implementation",
+            "description": "pub fn facts(",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui/src/thumbnail_menu.rs",
+            "line": 1339,
+            "anchor_git_head": "1c2b1afaf0fff7bf7bc984d17c5623e9e70098a5",
+            "line_sha256": "8692bfe5c53bcbfa2c41994696bf50fb39083d5645dc2578fb6017e09657b997",
+            "symbol": "if chosen.iter().any(|file| file.storage_deleted)",
+            "role": "scoped_implementation",
+            "description": "if chosen.iter().any(|file| file.storage_deleted)",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui/src/thumbnail_menu.rs",
+            "line": 1940,
+            "anchor_git_head": "1c2b1afaf0fff7bf7bc984d17c5623e9e70098a5",
+            "line_sha256": "ba46be9e9b6f7c314801a12cb1472d153e2abb5c0be8f7b8dbc340e50864ea9a",
+            "symbol": "| Action::ClearDeletionRecords => &mut slots.trash,",
+            "role": "scoped_implementation",
+            "description": "| Action::ClearDeletionRecords => &mut slots.trash,",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui/src/lib.rs",
+            "line": 665,
+            "anchor_git_head": "1c2b1afaf0fff7bf7bc984d17c5623e9e70098a5",
+            "line_sha256": "5c6fc43184ae1e73bc4f30f0e787d3abb140772dd690c59f7c42c113dc960b3e",
+            "symbol": "let selected_delete_epoch = Rc::new(Cell::new(0u64));",
+            "role": "scoped_implementation",
+            "description": "let selected_delete_epoch = Rc::new(Cell::new(0u64));",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui/src/lib.rs",
+            "line": 4553,
+            "anchor_git_head": "1c2b1afaf0fff7bf7bc984d17c5623e9e70098a5",
+            "line_sha256": "bf628e98f431aa060e358cd43095b52b09ebefee6c8e0205f67e43aed7829fa6",
+            "symbol": "let selected_delete_menu_epoch = Rc::new(Cell::new(0u64));",
+            "role": "scoped_implementation",
+            "description": "let selected_delete_menu_epoch = Rc::new(Cell::new(0u64));",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui/src/lib.rs",
+            "line": 4684,
+            "anchor_git_head": "1c2b1afaf0fff7bf7bc984d17c5623e9e70098a5",
+            "line_sha256": "7c79e5c24261106428a350bcfeeb845013bb9882b3cd238c2bce9c45c33f713d",
+            "symbol": "let delete_files = Rc::downgrade(&delete_files);",
+            "role": "scoped_implementation",
+            "description": "let delete_files = Rc::downgrade(&delete_files);",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui/src/lib.rs",
+            "line": 4801,
+            "anchor_git_head": "1c2b1afaf0fff7bf7bc984d17c5623e9e70098a5",
+            "line_sha256": "be8dcf341e79268a384a095ea034ba28960d797839839272320de5e4c4a0c3fb",
+            "symbol": "|| selected_delete_menu_epoch.get() != selected_delete_epoch.get()",
+            "role": "scoped_implementation",
+            "description": "|| selected_delete_menu_epoch.get() != selected_delete_epoch.get()",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui/src/lib.rs",
+            "line": 4859,
+            "anchor_git_head": "1c2b1afaf0fff7bf7bc984d17c5623e9e70098a5",
+            "line_sha256": "3ccea0435927213add810c55413dcf85abaad2689d60dbd833afe974d7dbbb7e",
+            "symbol": "|| epoch != selected_delete_epoch.get()",
+            "role": "scoped_implementation",
+            "description": "|| epoch != selected_delete_epoch.get()",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui/src/lib.rs",
+            "line": 4830,
+            "anchor_git_head": "1c2b1afaf0fff7bf7bc984d17c5623e9e70098a5",
+            "line_sha256": "373fc90976966542abf1255e42cccd1d1cf8bad058e1abc322d1607ea2ec3a44",
+            "symbol": "let plan = match hydrus_gui_model::selected_deletion_records::Plan::capture(",
+            "role": "scoped_implementation",
+            "description": "let plan = match hydrus_gui_model::selected_deletion_records::Plan::capture(",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui/src/lib.rs",
+            "line": 4869,
+            "anchor_git_head": "1c2b1afaf0fff7bf7bc984d17c5623e9e70098a5",
+            "line_sha256": "9fa34935538a820caaa898cc50232e2039b802c0f541ce80e02c4977292c3fb4",
+            "symbol": "match plan.apply(&store)",
+            "role": "scoped_implementation",
+            "description": "match plan.apply(&store)",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui-model/tests/model/selected_deletion_records.rs",
+            "line": 9,
+            "anchor_git_head": "1c2b1afaf0fff7bf7bc984d17c5623e9e70098a5",
+            "line_sha256": "d96178f34106f4dd54420b091b6788c79b16ea8de6e4b0d05b56b81c41549a75",
+            "symbol": "fn captured_clearable_records_match_actual_reference_changes_during_question(",
+            "role": "scoped_implementation",
+            "description": "fn captured_clearable_records_match_actual_reference_changes_during_question(",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui-model/tests/model/selected_deletion_records.rs",
+            "line": 69,
+            "anchor_git_head": "1c2b1afaf0fff7bf7bc984d17c5623e9e70098a5",
+            "line_sha256": "f4f20d525d0aae96e54160c4e31d366dac63972e4d9cf4bfdae78dd67485572a",
+            "symbol": "fn real_writer_later_batch_error_preserves_first_commit_and_remaining_records(",
+            "role": "scoped_implementation",
+            "description": "fn real_writer_later_batch_error_preserves_first_commit_and_remaining_records(",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui-model/tests/support/selected_deletion_records_seed.rs",
+            "line": 41,
+            "anchor_git_head": "1c2b1afaf0fff7bf7bc984d17c5623e9e70098a5",
+            "line_sha256": "adba3b3ca6935d95774fa235a5dc56c5b12fb11ca0372478673025bd579bce2a",
+            "symbol": "pub fn reset(",
+            "role": "scoped_implementation",
+            "description": "pub fn reset(",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui-model/tests/support/selected_deletion_records_seed.rs",
+            "line": 65,
+            "anchor_git_head": "1c2b1afaf0fff7bf7bc984d17c5623e9e70098a5",
+            "line_sha256": "ce97ba60046689dcf3328a2ec86f986ebb26c86b4754e8f74d8fdc428a71e12e",
+            "symbol": "pub fn state(",
+            "role": "scoped_implementation",
+            "description": "pub fn state(",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui-model/tests/support/selected_deletion_records_seed.rs",
+            "line": 79,
+            "anchor_git_head": "1c2b1afaf0fff7bf7bc984d17c5623e9e70098a5",
+            "line_sha256": "1cad46f276b619c63e3996ba41dc0a0b11ad7a58ca7ca228a016b9092f1de3ba",
+            "symbol": "pub fn queue(",
+            "role": "scoped_implementation",
+            "description": "pub fn queue(",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui/tests/gui/selected_deletion_records.rs",
+            "line": 48,
+            "anchor_git_head": "1c2b1afaf0fff7bf7bc984d17c5623e9e70098a5",
+            "line_sha256": "dad3e7aad8fd76aa0bbbd711b3a321b280b16d05ea3eb9afbd668dcd9ae867ba",
+            "symbol": "fn actual_menu_and_answer_replay_clear_only_captured_records_and_enable_reimport(",
+            "role": "scoped_implementation",
+            "description": "fn actual_menu_and_answer_replay_clear_only_captured_records_and_enable_reimport(",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui/tests/gui/selected_deletion_records.rs",
+            "line": 205,
+            "anchor_git_head": "1c2b1afaf0fff7bf7bc984d17c5623e9e70098a5",
+            "line_sha256": "aefc5f46fb968ab7628ff68f0a51be353a1dbca643c32441e25114db5ea13b42",
+            "symbol": "fn hidden_stale_page_rebound_and_accepted_exit_cannot_clear_captured_records(",
+            "role": "scoped_implementation",
+            "description": "fn hidden_stale_page_rebound_and_accepted_exit_cannot_clear_captured_records(",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui/tests/gui/selected_deletion_records.rs",
+            "line": 279,
+            "anchor_git_head": "1c2b1afaf0fff7bf7bc984d17c5623e9e70098a5",
+            "line_sha256": "8f7e9867b91712a44fda6d856598e226c106ce232b38c50b3e97430d39628da9",
+            "symbol": "fn tab_roundtrip_permanently_invalidates_menu_and_answer_and_advanced_child_blocks_dispatch(",
+            "role": "scoped_implementation",
+            "description": "fn tab_roundtrip_permanently_invalidates_menu_and_answer_and_advanced_child_blocks_dispatch(",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui/tests/gui/selected_deletion_records.rs",
+            "line": 147,
+            "anchor_git_head": "1c2b1afaf0fff7bf7bc984d17c5623e9e70098a5",
+            "line_sha256": "604b37b997e672fe8d52c9d492ea46e4fa4f1a75033f4c17632b34f906a8eb67",
+            "symbol": "selected_deletion_records_question.png",
+            "role": "scoped_implementation",
+            "description": "selected_deletion_records_question.png",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-store/src/content/files.rs",
+            "line": 407,
+            "anchor_git_head": "1c2b1afaf0fff7bf7bc984d17c5623e9e70098a5",
+            "line_sha256": "0620d190f7c812ce11b8338772c13401aa121f0d1e4e649f18f57ec33a6b9a97",
+            "symbol": "pub fn clear_local_delete_records(",
+            "role": "scoped_implementation",
+            "description": "pub fn clear_local_delete_records(",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-store/src/content/files.rs",
+            "line": 450,
+            "anchor_git_head": "1c2b1afaf0fff7bf7bc984d17c5623e9e70098a5",
+            "line_sha256": "de7b05d44bd40c5a3710213c3f5fdd87b29e55bbaddb93c71e87a86ade03f973",
+            "symbol": "pub(crate) fn resync_combined_deleted(",
+            "role": "scoped_implementation",
+            "description": "pub(crate) fn resync_combined_deleted(",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-import/src/lib.rs",
+            "line": 128,
+            "anchor_git_head": "1c2b1afaf0fff7bf7bc984d17c5623e9e70098a5",
+            "line_sha256": "cf940e82ff47f40e6845dbdec90885d9996be6fb6613038423800cb35299ef8e",
+            "symbol": "pub fn known_status(",
+            "role": "scoped_implementation",
+            "description": "pub fn known_status(",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "oracle/record_selected_deletion_records.py",
+            "line": 15,
+            "anchor_git_head": "1c2b1afaf0fff7bf7bc984d17c5623e9e70098a5",
+            "line_sha256": "5d8f3da7e90a56971fc931a2718571d7065d1d7bdacdab73c7cc84b9f660e4bd",
+            "symbol": "def record(session):",
+            "role": "scoped_implementation",
+            "description": "def record(session):",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui/src/lib.rs",
+            "line": 896,
+            "anchor_git_head": "1c2b1afaf0fff7bf7bc984d17c5623e9e70098a5",
+            "line_sha256": "2bdf56a383e81bf4ecb957e12e448f2dc6f81064f35a59d438f0b150667964eb",
+            "symbol": "selected_delete_epoch.set(selected_delete_epoch.get().wrapping_add(1));",
+            "role": "scoped_implementation",
+            "description": "selected_delete_epoch.set(selected_delete_epoch.get().wrapping_add(1));",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui/src/lib.rs",
+            "line": 1040,
+            "anchor_git_head": "1c2b1afaf0fff7bf7bc984d17c5623e9e70098a5",
+            "line_sha256": "2bdf56a383e81bf4ecb957e12e448f2dc6f81064f35a59d438f0b150667964eb",
+            "symbol": "selected_delete_epoch.set(selected_delete_epoch.get().wrapping_add(1));",
+            "role": "scoped_implementation",
+            "description": "selected_delete_epoch.set(selected_delete_epoch.get().wrapping_add(1));",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "hydrus/client/gui/pages/ClientGUIMediaResultsPanelThumbnails.py",
+            "line": 3821,
+            "anchor_git_head": "1c2b1afaf0fff7bf7bc984d17c5623e9e70098a5",
+            "line_sha256": "fa4b4f80c3960cd5d19cab4d4f72186215bb724ea3094cdf005ccf66bed3d884",
+            "symbol": "self._ClearDeleteRecord )",
+            "role": "scoped_implementation",
+            "description": "self._ClearDeleteRecord )",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "hydrus/client/gui/pages/ClientGUIMediaResultsPanelThumbnails.py",
+            "line": 3393,
+            "anchor_git_head": "1c2b1afaf0fff7bf7bc984d17c5623e9e70098a5",
+            "line_sha256": "1e2bf799af2c69ede7b3648b83140b5963a0f38f893538301f30444766a3ea99",
+            "symbol": "selection_has_deletion_record = True",
+            "role": "scoped_implementation",
+            "description": "selection_has_deletion_record = True",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "hydrus/client/gui/pages/ClientGUIMediaResultsPanelThumbnails.py",
+            "line": 3459,
+            "anchor_git_head": "1c2b1afaf0fff7bf7bc984d17c5623e9e70098a5",
+            "line_sha256": "617dface7e37a8cf34d8e1e5275929f5467d64e99591007b15c54935638c536a",
+            "symbol": "clear_deletion_phrase = 'clear deletion record for selected'",
+            "role": "scoped_implementation",
+            "description": "clear_deletion_phrase = 'clear deletion record for selected'",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "hydrus/client/gui/pages/ClientGUIMediaResultsPanelThumbnails.py",
+            "line": 3482,
+            "anchor_git_head": "1c2b1afaf0fff7bf7bc984d17c5623e9e70098a5",
+            "line_sha256": "5523066612a6ffe17a243263030f43fcf75654dc746d31290ec51b3b0ce7341a",
+            "symbol": "clear_deletion_phrase = 'clear deletion record'",
+            "role": "scoped_implementation",
+            "description": "clear_deletion_phrase = 'clear deletion record'",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "hydrus/client/gui/pages/ClientGUIMediaResultsPanel.py",
+            "line": 2999,
+            "anchor_git_head": "1c2b1afaf0fff7bf7bc984d17c5623e9e70098a5",
+            "line_sha256": "54179f6c7d295bfdec73dd17b9c8b5451fcbc8bded0dd7b73825e523fa612d77",
+            "symbol": "def _ClearDeleteRecord(",
+            "role": "scoped_implementation",
+            "description": "def _ClearDeleteRecord(",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "hydrus/client/gui/pages/ClientGUIMediaResultsPanel.py",
+            "line": 3180,
+            "anchor_git_head": "1c2b1afaf0fff7bf7bc984d17c5623e9e70098a5",
+            "line_sha256": "04c99b014db6b700f9589bcfdceae1fabe3c755141e3ae4a4dc2417f36191e94",
+            "symbol": "def _GetNumSelected(",
+            "role": "scoped_implementation",
+            "description": "def _GetNumSelected(",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "hydrus/client/gui/pages/ClientGUIMediaResultsPanel.py",
+            "line": 3368,
+            "anchor_git_head": "1c2b1afaf0fff7bf7bc984d17c5623e9e70098a5",
+            "line_sha256": "bbe2ae768bc122771489a9438b831df4bc74517ae434c52307968d10ccdf43a7",
+            "symbol": "def _GetSelectedFlatMedia(",
+            "role": "scoped_implementation",
+            "description": "def _GetSelectedFlatMedia(",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "hydrus/client/gui/media/ClientGUIMediaModalActions.py",
+            "line": 163,
+            "anchor_git_head": "1c2b1afaf0fff7bf7bc984d17c5623e9e70098a5",
+            "line_sha256": "2950b5402acd5d4949135ae7ce89b2b7e9f67bde4f04cc804b3a64ef4adc5330",
+            "symbol": "def ClearDeleteRecord(",
+            "role": "scoped_implementation",
+            "description": "def ClearDeleteRecord(",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "hydrus/client/gui/media/ClientGUIMediaModalActions.py",
+            "line": 165,
+            "anchor_git_head": "1c2b1afaf0fff7bf7bc984d17c5623e9e70098a5",
+            "line_sha256": "cedd293732b185103d2ab90dd469429eac7fd0f41e22f48377e18c2370a57c53",
+            "symbol": "clearable_media = [ m for m in media if CC.HYDRUS_LOCAL_FILE_STORAGE_SERVICE_KEY",
+            "role": "scoped_implementation",
+            "description": "clearable_media = [ m for m in media if CC.HYDRUS_LOCAL_FILE_STORAGE_SERVICE_KEY",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "hydrus/client/gui/media/ClientGUIMediaModalActions.py",
+            "line": 172,
+            "anchor_git_head": "1c2b1afaf0fff7bf7bc984d17c5623e9e70098a5",
+            "line_sha256": "1a6d3cf1694d0692c51b871ddba281be1bc18763d9d0c82c9c4ff93ac1b70a72",
+            "symbol": "Clear the deletion record for {} previously deleted files?.",
+            "role": "scoped_implementation",
+            "description": "Clear the deletion record for {} previously deleted files?.",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "hydrus/client/gui/media/ClientGUIMediaModalActions.py",
+            "line": 176,
+            "anchor_git_head": "1c2b1afaf0fff7bf7bc984d17c5623e9e70098a5",
+            "line_sha256": "da7a3ff109c5da706ff193c7b11b91e876d370caf14908bf47da656a89c03e66",
+            "symbol": "for chunk_of_media in HydrusLists.SplitIteratorIntoChunks( clearable_media, 64 ):",
+            "role": "scoped_implementation",
+            "description": "for chunk_of_media in HydrusLists.SplitIteratorIntoChunks( clearable_media, 64 ):",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "hydrus/client/db/ClientDBFilesStorage.py",
+            "line": 430,
+            "anchor_git_head": "1c2b1afaf0fff7bf7bc984d17c5623e9e70098a5",
+            "line_sha256": "2b380f33ee279060d91f4ff54bb044100563b81fe843cbbd86f85c9f0e455c7a",
+            "symbol": "def ClearLocalDeleteRecord(",
+            "role": "scoped_implementation",
+            "description": "def ClearLocalDeleteRecord(",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui/ui/main.slint",
+            "line": 277,
+            "anchor_git_head": "1c2b1afaf0fff7bf7bc984d17c5623e9e70098a5",
+            "line_sha256": "aab0114fb7c5e1946d34147fada2589654a059ea87151fa4c5d90b1a8eef6888",
+            "symbol": "component MainQuestionPanel inherits Rectangle",
+            "role": "authored_behavioral_regression",
+            "description": "component MainQuestionPanel inherits Rectangle",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui/ui/main.slint",
+            "line": 308,
+            "anchor_git_head": "1c2b1afaf0fff7bf7bc984d17c5623e9e70098a5",
+            "line_sha256": "3f6437547b41d321fff93c225c87c9505800c0a1c2077628c5dd2fa0cb2526e6",
+            "symbol": "yes := Button { text: \"yes\"; clicked",
+            "role": "authored_behavioral_regression",
+            "description": "yes := Button { text: \"yes\"; clicked",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui/ui/main.slint",
+            "line": 309,
+            "anchor_git_head": "1c2b1afaf0fff7bf7bc984d17c5623e9e70098a5",
+            "line_sha256": "0f90583869a928defc2f0f0ff02ab287a4d7b513b2d32d5da9f30846a02b2332",
+            "symbol": "no := Button { text: \"no\"; clicked",
+            "role": "authored_behavioral_regression",
+            "description": "no := Button { text: \"no\"; clicked",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui/ui/main.slint",
+            "line": 281,
+            "anchor_git_head": "1c2b1afaf0fff7bf7bc984d17c5623e9e70098a5",
+            "line_sha256": "06831efefb7829098d5d0733a0705aa950cf8d1d30037d08c845f254427875da",
+            "symbol": "callback controls-measured(MenuChoiceFrame",
+            "role": "authored_behavioral_regression",
+            "description": "callback controls-measured(MenuChoiceFrame",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui/tests/gui/selected_deletion_records.rs",
+            "line": 540,
+            "anchor_git_head": "1c2b1afaf0fff7bf7bc984d17c5623e9e70098a5",
+            "line_sha256": "69c70d53ea98af7a3f2d61457537a4c9168a4a9e8285e541e50dbd07b8a793fe",
+            "symbol": "fn actual_question_buttons_keys_and_retired_press_clear_only_captured_records(",
+            "role": "authored_behavioral_regression",
+            "description": "fn actual_question_buttons_keys_and_retired_press_clear_only_captured_records(",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui/tests/gui/selected_deletion_records.rs",
+            "line": 608,
+            "anchor_git_head": "1c2b1afaf0fff7bf7bc984d17c5623e9e70098a5",
+            "line_sha256": "eb885612c1363247ea09e6ccffae3fb039d61bf688c165061f4ec07674b2f5d3",
+            "symbol": "\"selected-deletion-records-pointer-question.png\"",
+            "role": "authored_behavioral_regression",
+            "description": "\"selected-deletion-records-pointer-question.png\"",
+            "executed_in_inventory": false
+          }
+        ],
+        "limitations": [
+          "Exactly one selected thumbnail context action. Global all-files service clear(None) is already implemented and receives no duplicate credit. No viewer producer or broader media/context parent completion.",
+          "Native captured eligibility follows reference: physical local-storage deletion only; flattening/counting collections; current selected media read at menu dispatch; eligible IDs captured before confirmation. Re-add during confirmation keeps current membership, and newly deleted files outside the captured plan remain untouched.",
+          "Existing scoped writer preserves trash/current membership and the durable deferred physical deletion queue. This action never physically deletes files or cancels physical queue records. Clearing actual import-status deletion records permits ordinary reimport.",
+          "Each batch of up to64 independently commits; the first failing batch aborts subsequent writes without rolling back prior successful batches. The native owner presents Store errors as warnings; reference asynchronous content transport is made synchronous only in copied fixture proof.",
+          "Native retained hidden, retired/rebound or different-page callbacks are refused. Actual current-page departure permanently invalidates a menu/answer even after returning; an owned advanced deletion child blocks dispatch/accept. These native ownership boundaries are additional to ordinary Qt modal input blocking, not invented recapture of file eligibility.",
+          "Actual Qt copied basic DB records genuine menus, real retained QAction dispatch, real flattened collection handlers and six real content-update consumers. Synthetic media/hash batch cases capture64-write transport and later-batch exception without claiming those synthetic hashes were persisted in reference DB.",
+          "Copied fixture Client API socket listener emitted a nonfatal sandbox permission warning; real GUI/SQLite actions and normal shutdown succeeded. No HTTP socket/API transport evidence is claimed.",
+          "Historical author metadata records authored regressions without local Cargo/Rust or mutation runs. Current exact-source Linux execution and the fresh defining pointer question review are recorded separately in the accepted checkpoint. Historical source/recording provenance is retained.",
+          "New Main Yes/No controls preserve the existing captured Plan and writer. Real pointer/key regression covers finite measured controls, unchanged decline state, exact captured writes and hidden refusal. A held press is released only after actual Escape press/release retires old conditional controls before a successor opens; no unobserved same-turn atomic replacement or generic question-ownership parity is claimed.",
+          "The new 1100×700 pointer-question frame requires bounded actual timer/render settling and fresh inspection. The original immediate-render question export is supplemental only. Qt committed image shows menu context rather than a matching confirmation question; no paired question pixels, modal topology, universal geometry or OS claim.",
+          "Linux-only exact-source validation; Windows and macOS are deferred. Exactly one selected thumbnail context action is approved. The already implemented global all-files service clear(None) receives no duplicate credit; viewer, broader media/context parents and aliases are excluded.",
+          "Eligibility is physical local-storage deletion, with selected collections flattened and current selected media read at menu dispatch. The ordered eligible identities are captured before confirmation. Re-add during confirmation preserves current membership; newly deleted or newly selected files outside the captured plan remain untouched.",
+          "The existing scoped writer preserves trash/current membership and the durable deferred physical deletion queue. This action clears import-status deletion records and permits ordinary reimport; it does not physically delete files or cancel physical queue records.",
+          "Each batch of up to 64 commits independently. A later failing batch stops subsequent writes without rolling back committed prefixes. Native Store errors are shown as warnings; reference asynchronous content transport is made synchronous only in the copied fixture proof.",
+          "Tested hidden, retired/rebound, different-page and permanent tab-departure guards refuse stale menus/answers; an owned advanced-deletion child blocks dispatch and acceptance. These native ownership guards add protection beyond Qt modal input blocking and do not recapture file eligibility.",
+          "Real pointer Yes/No and leaf-specific Return/Escape tests preserve full relevant tables, physical queue and page state. The held-pointer proof requires actual Escape press/release to process retirement before a same-caption, different-file successor opens; it proves the tested processed-retirement route, not callback-only atomic replacement or generic question/pointer ownership parity.",
+          "Question pointer input uses actual finite, contained, disjoint button measurements and bounded real timer/render settling at 1100×700. Only the new question inputs are physical; menu opening and selection setup retain existing callback/model routes. The original immediate-render question export is supplemental.",
+          "The real Qt recording supplies menus, retained QAction dispatch, flattened collection handlers and content-update consumers. Synthetic hash/batch cases record 64-write transport and later-batch exceptions without asserting those synthetic hashes were persisted in the reference database.",
+          "The copied reference fixture logged a nonfatal sandbox-denied Client API listener; genuine GUI/SQLite actions and normal shutdown succeeded. No HTTP/socket/API transport proof is claimed.",
+          "The actual Qt PNG is a menu frame, not a paired confirmation image. Native prompt, hint and buttons are readable in the inspected frames, while unrelated background status prose is elided. Matching question pixels, modal hierarchy, fonts, universal geometry and OS placement are not claimed.",
+          "No local Cargo/Rust or mutation run was performed by this independent review. Historical source-only authored/pending provenance remains preserved; the current exact-source hosted full check, Clippy, reference/model tests and actual fresh render inspection resolve those gates for this selected leaf only."
+        ],
+        "remaining": [],
+        "native_source": {
+          "path": "crates/hydrus-gui-model/src/selected_deletion_records.rs",
+          "line": 14,
+          "anchor_git_head": "1c2b1afaf0fff7bf7bc984d17c5623e9e70098a5",
+          "line_sha256": "7c394225f1ef86261bca21158f95b30f2553ecdc204ae3e64cb89c0febbbea10",
+          "symbol": "pub fn capture("
+        },
+        "reference_source": {
+          "path": "hydrus/client/gui/pages/ClientGUIMediaResultsPanelThumbnails.py",
+          "line": 1492,
+          "line_sha256": "7f8134bcf99752cc2a7e81de008a022f2175df4c8d664665d8559c1e08f8931b",
+          "anchor_git_head": "1c2b1afaf0fff7bf7bc984d17c5623e9e70098a5"
+        },
+        "implementation_validation": {
+          "source_commit": "1c2b1afaf0fff7bf7bc984d17c5623e9e70098a5",
+          "ci": "passed",
+          "tests_executed_at_checkpoint": true,
+          "native_render_review": "passed",
+          "manifest": "docs/rust/gui-coverage/parity/selected-deletion-records.json",
+          "review_required": false,
+          "run_url": "https://github.com/jkendall327/hydrus-mine/actions/runs/37624387284",
+          "validation_scope": "linux",
+          "required_platforms": [
+            "linux"
+          ],
+          "deferred_platforms": [
+            "windows",
+            "macos"
+          ],
+          "independent_review_evidence": {
+            "path": "docs/rust/gui-coverage/checkpoints/1c2b1afaf/final-review-2-1c2b1afaf.json",
+            "sha256": "df87ebde7147faeb9560c2a92881262494c44080eb4d2c5cd2caef437c68b78b"
+          }
+        }
+      }
+    ],
+    "additions": []
+  },
+  "native": {
+    "updates": [],
+    "additions": []
+  }
+}

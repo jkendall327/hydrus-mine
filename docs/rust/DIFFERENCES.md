@@ -3508,8 +3508,9 @@ relevant table state, physical queue, hidden answer refusal and a held press
 after processed Escape retirement before a usable successor answer. It does not
 claim unobserved atomic replacement or generic question ownership parity. The
 reference image shows the menu, not a matched confirmation frame. The new
-controls and capture await exact-source full Linux execution and fresh rendered
-review; no selected completion is added by this source follow-up.
+controls and capture passed full Linux run `37624387284` and fresh independent
+rendered review. Only the selected thumbnail clear-deletion-record leaf gains
+credit. [Evidence](gui-coverage/checkpoints/1c2b1afaf/README.md).
 
 ### Viewer image-prefetch controls (source proposal, runtime pending)
 
