@@ -405,7 +405,7 @@ fn owned_options_replay_cancel_save_reopen_and_real_keyboard_wheel_consumers() {
             capture_saved_navigation_options(
                 &windows,
                 &reopened,
-                &labels,
+                labels,
                 event["reopened"]["shift"].as_bool().unwrap(),
                 if event == &fixture["events"][0] {
                     "thumbnail-navigation-options-saved-true.png"
