@@ -373,3 +373,362 @@ fn tab_roundtrip_permanently_invalidates_menu_and_answer_and_advanced_child_bloc
         })
         .unwrap();
 }
+
+// Relevant Store tables are captured in full, including identities/timestamps
+// and reasons, rather than only the importer status summary.
+fn deletion_record_tables(store: &Store) -> serde_json::Value {
+    store.read(|conn| {
+        let deleted = conn.prepare("SELECT service_id,hash_id,deleted_ms,original_added_ms FROM file_domain_deleted ORDER BY service_id,hash_id")?
+            .query_map([], |row| Ok((row.get::<_,i64>(0)?,row.get::<_,i64>(1)?,row.get::<_,Option<i64>>(2)?,row.get::<_,Option<i64>>(3)?)))?
+            .collect::<rusqlite::Result<Vec<_>>>()?;
+        let current = conn.prepare("SELECT service_id,hash_id,added_ms FROM file_domain_current ORDER BY service_id,hash_id")?
+            .query_map([], |row| Ok((row.get::<_,i64>(0)?,row.get::<_,i64>(1)?,row.get::<_,Option<i64>>(2)?)))?
+            .collect::<rusqlite::Result<Vec<_>>>()?;
+        let reasons = conn.prepare("SELECT hash_id,reason_id FROM file_deletion_reasons ORDER BY hash_id")?
+            .query_map([], |row| Ok((row.get::<_,i64>(0)?,row.get::<_,i64>(1)?)))?
+            .collect::<rusqlite::Result<Vec<_>>>()?;
+        Ok(serde_json::json!({"deleted":deleted,"current":current,"reasons":reasons}))
+    }).unwrap()
+}
+fn cleared_record_tables(
+    store: &Store,
+    mut before: serde_json::Value,
+    captured: &[HashId],
+) -> serde_json::Value {
+    let roles = hydrus_store::content::DomainRoles::new(&store.snapshot().services).unwrap();
+    let mut local = roles.local;
+    local.extend([roles.combined_local_media, roles.local_file_storage]);
+    let captured = captured
+        .iter()
+        .map(|file| i64::from(file.get()))
+        .collect::<Vec<_>>();
+    before["deleted"].as_array_mut().unwrap().retain(|row| {
+        !captured.contains(&row[1].as_i64().unwrap())
+            || !local
+                .iter()
+                .any(|service| i64::from(service.get()) == row[0].as_i64().unwrap())
+    });
+    before["reasons"]
+        .as_array_mut()
+        .unwrap()
+        .retain(|row| !captured.contains(&row[0].as_i64().unwrap()));
+    // This finite fixture has no remaining covered deletion for the captured
+    // files; the combined-deleted aggregate must remove only those identities.
+    assert!(before["deleted"].as_array().unwrap().iter().all(|row| {
+        !captured.contains(&row[1].as_i64().unwrap())
+            || !roles
+                .covered_by_combined_deleted
+                .iter()
+                .any(|service| i64::from(service.get()) == row[0].as_i64().unwrap())
+    }));
+    before["current"].as_array_mut().unwrap().retain(|row| {
+        row[0].as_i64().unwrap() != i64::from(roles.combined_deleted.get())
+            || !captured.contains(&row[1].as_i64().unwrap())
+    });
+    before
+}
+
+type QuestionFrames = std::rc::Rc<std::cell::RefCell<Option<[hydrus_gui::MenuChoiceFrame; 4]>>>;
+fn question_observer(ui: &MainWindow) -> QuestionFrames {
+    let frames = std::rc::Rc::new(std::cell::RefCell::new(None));
+    ui.set_measure_question_controls(true);
+    ui.on_question_controls_measured({
+        let frames = frames.clone();
+        move |panel, prompt, yes, no| {
+            *frames.borrow_mut() = Some([panel, prompt, yes, no]);
+        }
+    });
+    frames
+}
+fn settled_question(
+    native: &slint::platform::software_renderer::MinimalSoftwareWindow,
+    ui: &MainWindow,
+    frames: &QuestionFrames,
+) -> ([hydrus_gui::MenuChoiceFrame; 4], Vec<u8>) {
+    use slint::platform::WindowAdapter as _;
+    use std::time::{Duration, Instant};
+    assert!(std::ptr::eq(native.window(), ui.window()));
+    assert!(ui.window().is_visible());
+    assert!(!ui.get_question().is_empty());
+    // Require new real Timer measurements for this current question instance.
+    frames.borrow_mut().take();
+    let started = Instant::now();
+    let mut previous = None;
+    loop {
+        let pixels = headless::render(native, 1100, 700);
+        let measured = frames.borrow().clone();
+        if let Some(measured) = measured.as_ref() {
+            let bits = measured
+                .clone()
+                .map(|frame| [frame.x, frame.y, frame.w, frame.h].map(f32::to_bits));
+            if started.elapsed() >= Duration::from_millis(35)
+                && !ui.window().has_active_animations()
+                && previous.as_ref().is_some_and(|(old_frames, old_pixels)| {
+                    *old_frames == bits && *old_pixels == pixels
+                })
+            {
+                for frame in measured {
+                    assert!(
+                        [frame.x, frame.y, frame.w, frame.h]
+                            .into_iter()
+                            .all(f32::is_finite)
+                    );
+                    assert!(frame.x >= 0.0 && frame.y >= 0.0 && frame.w > 0.0 && frame.h > 0.0);
+                    assert!(frame.x + frame.w <= 1100.0 && frame.y + frame.h <= 700.0);
+                }
+                let [panel, prompt, yes, no] = measured;
+                for frame in [prompt, yes, no] {
+                    assert!(frame.x >= panel.x && frame.y >= panel.y);
+                    assert!(
+                        frame.x + frame.w <= panel.x + panel.w
+                            && frame.y + frame.h <= panel.y + panel.h
+                    );
+                }
+                assert!(prompt.y + prompt.h < yes.y && prompt.y + prompt.h < no.y);
+                assert!(
+                    yes.x + yes.w < no.x,
+                    "measured yes/no buttons must be disjoint"
+                );
+                eprintln!(
+                    "actual selected-record question controls: {measured:?}; question={}",
+                    ui.get_question()
+                );
+                return (measured.clone(), pixels);
+            }
+            previous = Some((bits, pixels));
+        }
+        assert!(
+            started.elapsed() < Duration::from_secs(2),
+            "question controls did not settle: measured={measured:?}, question={}, visible={}, animations={}",
+            ui.get_question(),
+            ui.window().is_visible(),
+            ui.window().has_active_animations()
+        );
+        std::thread::sleep(Duration::from_millis(1));
+    }
+}
+fn question_pointer(
+    native: &slint::platform::software_renderer::MinimalSoftwareWindow,
+    frame: &hydrus_gui::MenuChoiceFrame,
+    pressed: bool,
+) {
+    use slint::platform::{PointerEventButton, WindowEvent};
+    let position = slint::LogicalPosition::new(frame.x + frame.w / 2.0, frame.y + frame.h / 2.0);
+    if pressed {
+        native.dispatch_event(WindowEvent::PointerMoved { position });
+        native.dispatch_event(WindowEvent::PointerPressed {
+            position,
+            button: PointerEventButton::Left,
+        });
+    } else {
+        native.dispatch_event(WindowEvent::PointerReleased {
+            position,
+            button: PointerEventButton::Left,
+        });
+    }
+}
+fn question_key(
+    native: &slint::platform::software_renderer::MinimalSoftwareWindow,
+    key: slint::platform::Key,
+) {
+    let text: slint::SharedString = key.into();
+    native.dispatch_event(slint::platform::WindowEvent::KeyPressed { text: text.clone() });
+    native.dispatch_event(slint::platform::WindowEvent::KeyReleased { text });
+}
+
+#[test]
+fn actual_question_buttons_keys_and_retired_press_clear_only_captured_records() {
+    use slint::platform::{Key, PointerEventButton, WindowEvent};
+    let fixture = hydrus_testkit::fixture_json("selected_deletion_records.json");
+    let (_dirs, store) = seed::store();
+    let files = seed::files(&store);
+    let windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    ui.show().unwrap();
+    let bound = bind(&ui, Pages::single(page(store.clone(), &files)));
+    let native = windows.get(0).unwrap();
+    let frames = question_observer(&ui);
+    for route in ["pointer-no", "pointer-yes", "escape", "return"] {
+        seed::reset(&store, &files);
+        headless::render(&native, 1100, 700);
+        // Real grid input arms Main's enclosing key-capture path. Do not
+        // substitute invoke_answer for either physical keyboard outcome.
+        let position = slint::LogicalPosition::new(
+            ui.get_grid_origin_x() + ui.get_thumbnail_margin() + ui.get_thumbnail_width() / 2.0,
+            ui.get_grid_origin_y() + ui.get_thumbnail_margin() + ui.get_thumbnail_height() / 2.0,
+        );
+        native.dispatch_event(WindowEvent::PointerMoved { position });
+        native.dispatch_event(WindowEvent::PointerPressed {
+            position,
+            button: PointerEventButton::Left,
+        });
+        native.dispatch_event(WindowEvent::PointerReleased {
+            position,
+            button: PointerEventButton::Left,
+        });
+        assert_eq!(bound.current.borrow().borrow().selected_files().len(), 1);
+        let (_, id) = select(&ui, &bound, &files).unwrap();
+        ui.invoke_menu_chosen(id);
+        assert_eq!(
+            ui.get_question(),
+            fixture["actions"][3]["questions"][0]["message"]
+                .as_str()
+                .unwrap()
+        );
+        assert_eq!(Plan::capture(&store, &files).unwrap().files, files[..2]);
+        // A new deletion and selection after the question are not retargeted
+        // into the captured pair. The physical delete queue must stay intact.
+        let file = files[3];
+        store
+            .write_content(move |writer| {
+                writer.delete_files(writer.roles().combined_local_media, &[file], None)?;
+                writer.delete_files(writer.roles().local_file_storage, &[file], None)
+            })
+            .unwrap();
+        bound
+            .current
+            .borrow()
+            .borrow_mut()
+            .select_files(&files[3..]);
+        let selected = bound.current.borrow().borrow().selected_files();
+        let results = bound.current.borrow().borrow().results().to_vec();
+        let query = bound
+            .current
+            .borrow()
+            .borrow()
+            .favourite_to_save()
+            .unwrap()
+            .search;
+        let before = deletion_record_tables(&store);
+        let queue = seed::queue(&store);
+        let (measured, pixels) = settled_question(&native, &ui, &frames);
+        if route == "pointer-no" {
+            headless::save_png(
+                &Path::new(env!("CARGO_TARGET_TMPDIR"))
+                    .join("selected-deletion-records-pointer-question.png"),
+                &pixels,
+                1100,
+                700,
+            )
+            .unwrap();
+        }
+        match route {
+            "pointer-no" | "pointer-yes" => {
+                let frame = &measured[if route == "pointer-yes" { 2 } else { 3 }];
+                question_pointer(&native, frame, true);
+                question_pointer(&native, frame, false);
+            }
+            "escape" => question_key(&native, Key::Escape),
+            "return" => question_key(&native, Key::Return),
+            _ => unreachable!(),
+        }
+        assert!(
+            ui.get_question().is_empty(),
+            "physical {route} must answer the real question"
+        );
+        let accepted = route == "pointer-yes" || route == "return";
+        assert_eq!(
+            deletion_record_tables(&store),
+            if accepted {
+                cleared_record_tables(&store, before, &files[..2])
+            } else {
+                before
+            },
+            "{route}"
+        );
+        assert_eq!(
+            seed::state(&store, &files)["status"],
+            if accepted {
+                serde_json::json!([0, 0, 3, 3])
+            } else {
+                serde_json::json!([3, 3, 3, 3])
+            }
+        );
+        assert_eq!(seed::queue(&store), queue);
+        assert_eq!(bound.current.borrow().borrow().selected_files(), selected);
+        assert_eq!(bound.current.borrow().borrow().results(), results);
+        assert_eq!(
+            bound
+                .current
+                .borrow()
+                .borrow()
+                .favourite_to_save()
+                .unwrap()
+                .search,
+            query
+        );
+    }
+
+    seed::reset(&store, &files);
+    let (_, old_id) = select(&ui, &bound, &files[..1]).unwrap();
+    ui.invoke_menu_chosen(old_id);
+    let (old_frames, _) = settled_question(&native, &ui, &frames);
+    question_pointer(&native, &old_frames[2], true);
+    // Process actual Escape press/release, with no artificial empty-panel
+    // render. Its normal input turns retire the old conditional controls.
+    question_key(&native, Key::Escape);
+    assert!(ui.get_question().is_empty());
+    let before = deletion_record_tables(&store);
+    let queue = seed::queue(&store);
+    let old_selected = bound.current.borrow().borrow().selected_files();
+    let successor = bind(&ui, Pages::single(page(store.clone(), &files)));
+    let (_, id) = select(&ui, &successor, &files[1..2]).unwrap();
+    ui.invoke_menu_chosen(id);
+    let pending = ui.get_question();
+    assert_eq!(
+        pending,
+        Plan {
+            files: files[1..2].to_vec()
+        }
+        .question()
+    );
+    let selected = successor.current.borrow().borrow().selected_files();
+    let results = successor.current.borrow().borrow().results().to_vec();
+    let current = successor.current.borrow().clone();
+    let (fresh_frames, _) = settled_question(&native, &ui, &frames);
+    question_pointer(&native, &old_frames[2], false);
+    assert_eq!(
+        ui.get_question(),
+        pending,
+        "old held release cannot answer the successor question"
+    );
+    assert_eq!(deletion_record_tables(&store), before);
+    assert_eq!(seed::queue(&store), queue);
+    assert!(std::rc::Rc::ptr_eq(&successor.current.borrow(), &current));
+    assert_eq!(
+        successor.current.borrow().borrow().selected_files(),
+        selected
+    );
+    assert_eq!(successor.current.borrow().borrow().results(), results);
+    assert_eq!(
+        bound.current.borrow().borrow().selected_files(),
+        old_selected
+    );
+    assert!(ui.window().is_visible());
+    // A hidden actual button dispatch cannot run the captured Plan. Reopen a
+    // fresh pending question after the denied answer to demonstrate recovery.
+    ui.hide().unwrap();
+    question_pointer(&native, &fresh_frames[2], true);
+    question_pointer(&native, &fresh_frames[2], false);
+    assert_eq!(deletion_record_tables(&store), before);
+    assert_eq!(seed::queue(&store), queue);
+    ui.show().unwrap();
+    if !ui.get_question().is_empty() {
+        question_key(&native, Key::Escape);
+    }
+    let (_, id) = select(&ui, &successor, &files[1..2]).unwrap();
+    ui.invoke_menu_chosen(id);
+    let (fresh_frames, _) = settled_question(&native, &ui, &frames);
+    question_pointer(&native, &fresh_frames[2], true);
+    question_pointer(&native, &fresh_frames[2], false);
+    assert!(ui.get_question().is_empty());
+    assert_eq!(
+        deletion_record_tables(&store),
+        cleared_record_tables(&store, before, &files[1..2])
+    );
+    assert_eq!(
+        seed::state(&store, &files)["status"],
+        serde_json::json!([3, 0, 3, 2])
+    );
+    assert_eq!(seed::queue(&store), queue);
+}

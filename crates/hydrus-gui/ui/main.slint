@@ -272,6 +272,50 @@ component ThumbnailGrid inherits ListView {
     }
 }
 
+// Structurally present controls inside one conditional question instance.
+// Read-only observation never supplies widget geometry or changes admission.
+component MainQuestionPanel inherits Rectangle {
+    in property <string> message;
+    in property <bool> measure-controls: false;
+    callback answered(bool);
+    callback controls-measured(MenuChoiceFrame,MenuChoiceFrame,MenuChoiceFrame,MenuChoiceFrame);
+    out property <MenuChoiceFrame> panel-frame: {x:self.absolute-position.x,y:self.absolute-position.y,w:self.width,h:self.height};
+    out property <MenuChoiceFrame> message-frame: {x:prompt.absolute-position.x,y:prompt.absolute-position.y,w:prompt.width,h:prompt.height};
+    out property <MenuChoiceFrame> yes-frame: {x:yes.absolute-position.x,y:yes.absolute-position.y,w:yes.width,h:yes.height};
+    out property <MenuChoiceFrame> no-frame: {x:no.absolute-position.x,y:no.absolute-position.y,w:no.width,h:no.height};
+    width: 420px;
+    height: max(140px,content.preferred-height);
+    background: Theme.window;
+    border-radius: 6px;
+    content := VerticalLayout {
+        padding: 12px;
+        spacing: 8px;
+        prompt := Text {
+            text: root.message;
+            color: Theme.text;
+            wrap: word-wrap;
+            horizontal-alignment: center;
+        }
+        Text {
+            text: "enter: yes, escape: no";
+            color: Theme.text;
+            opacity: 0.7;
+            horizontal-alignment: center;
+        }
+        HorizontalLayout {
+            spacing: 8px;
+            Rectangle { horizontal-stretch: 1; }
+            yes := Button { text: "yes"; clicked => { root.answered(true); } }
+            no := Button { text: "no"; clicked => { root.answered(false); } }
+        }
+    }
+    Timer {
+        interval: 1ms;
+        running: root.measure-controls;
+        triggered => { root.controls-measured(root.panel-frame,root.message-frame,root.yes-frame,root.no-frame); }
+    }
+}
+
 export component MainWindow inherits Window {
     in property <string> layout-page-key;
     in property <int> layout-epoch;
@@ -670,6 +714,8 @@ export component MainWindow inherits Window {
     callback answer(bool);
     // a question to answer (a deletion): enter is yes, escape no
     in property <string> question;
+    in property <bool> measure-question-controls: false;
+    callback question-controls-measured(MenuChoiceFrame,MenuChoiceFrame,MenuChoiceFrame,MenuChoiceFrame);
     callback sort-chosen(int);
     callback order-chosen(int);
     out property <MenuChoiceFrame> sort-type-frame: type-choice.frame;
@@ -2132,26 +2178,13 @@ export component MainWindow inherits Window {
         if root.question != "": Rectangle {
             background: Theme.shade;
             TouchArea {}
-            Rectangle {
-                width: 420px;
-                height: 90px;
-                background: Theme.window;
-                border-radius: 6px;
-                VerticalLayout {
-                    padding: 12px;
-                    spacing: 8px;
-                    Text {
-                        text: root.question;
-                        wrap: word-wrap;
-                        horizontal-alignment: center;
-                    }
-                    Text {
-                        text: "enter: yes, escape: no";
-                        color: Theme.text;
-                        opacity: 0.7;
-                        horizontal-alignment: center;
-                    }
-                }
+            MainQuestionPanel {
+                x: (parent.width - self.width) / 2;
+                y: (parent.height - self.height) / 2;
+                message: root.question;
+                measure-controls: root.measure-question-controls;
+                answered(yes) => { root.answer(yes); }
+                controls-measured(p,t,y,n) => { root.question-controls-measured(p,t,y,n); }
             }
         }
         suggestions-overlay := ReadAutocomplete {
