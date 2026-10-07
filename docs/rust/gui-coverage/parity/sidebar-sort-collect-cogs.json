@@ -297,6 +297,12 @@
           "symbol": "fn actual_tag_display_menu_changes_modes_captures_checks_and_rejects_retired_view_actions() {",
           "commit": "8daccca6beded7871c6849cd142926566f8f67ad",
           "line_sha256": "e9640e8b52fdc5d9c91a6dc210d68a568c3a2b96fa64be55b6cf8b006b723860"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/sidebar_context_cogs.rs",
+          "line": 408,
+          "symbol": "fn actual_tag_display_menu_changes_modes_captures_checks_and_rejects_retired_view_actions() {",
+          "commit": "b51511a01221f04a8b88808c9e4c558d0b436fed"
         }
       ],
       "evidence": [
@@ -335,6 +341,12 @@
           "role": "authored_native_input_followup",
           "executed": false,
           "description": "Preserves the entire original file and its 25 assertions/two tests, adding one focused physical-input test (87 assertions total). Actual sort-cog right/left input, Down/Right/Return mode changes and four composite root/submenu exports; full contexts/media/save-off state, retained View-id admission and enabled save-default/new-page inheritance. Exact integrated-source full Linux execution and fresh independent image review remain pending."
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/sidebar_context_cogs.rs",
+          "role": "authored_native_setup_repair",
+          "executed": false,
+          "description": "Adds ordinary sort initialization and a full exact sorted baseline before pointer no-op, matching reference setup. All prior 87 assertions retained; 88 across three tests. Initial source 393c12553 failed only the new setup assertion; new exact-source runtime/render gates remain pending."
         }
       ],
       "limitations": [
@@ -374,5 +386,23 @@
       "sidebar-tag-display-2.png"
     ],
     "scope": "Exactly the sidebar namespace tag-display action; preserve existing tests and all prior 354 sign-offs. No service/collect/DefaultCollect/parent/alias/network/OS or Windows/macOS credit."
+  },
+  "validation_repair": {
+    "failed_source": "393c125530d004153a92ed79e51da91539df8837",
+    "failed_run": 37574215162,
+    "failed_gui_result": {
+      "passed": 706,
+      "failed": 1,
+      "ignored": 0
+    },
+    "failure": "The new test compared the restored incoming file order with already-sorted reference media before invoking a sort consumer.",
+    "repair_commit": "b51511a01221f04a8b88808c9e4c558d0b436fed",
+    "repair": "Initialize via the ordinary order callback and assert exact sorted baseline before right-click; retain every prior assertion.",
+    "all_87_assertions_preserved": true,
+    "current_assertions": 88,
+    "current_tests": 3,
+    "current_test_sha256": "24f5696162563ff2e95e13c543a3f49f61be345820683f9a4687a242b758f06a",
+    "runtime_validation": "Pending new exact-source full Linux and fresh four-image independent/root review.",
+    "historical_metadata": "The previous validation_followup and evidence entries describe the initial 87-assertion source; they remain historical provenance, not a successful current validation."
   }
 }

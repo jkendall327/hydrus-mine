@@ -582,11 +582,16 @@ fn actual_tag_display_menu_changes_modes_captures_checks_and_rejects_retired_vie
     ui.show().unwrap();
     let drawn = windows.get(0).unwrap();
     let adapter_count = windows.count();
+    // Restored pages retain their incoming file order until a real sort
+    // consumer runs. Match the recorder's SetSort before its mouse routes,
+    // using the same ordinary order callback as the existing replay test.
+    ui.invoke_order_chosen(0);
     let caller = bound.current.borrow().clone();
     let search = caller.borrow().tag_context().clone();
     let original_collect = caller.borrow().collect().clone();
     assert_eq!(caller.borrow().sort(), &initial.default_sort);
     assert_eq!(search, context(&fixture["search_context"]));
+    assert_eq!(media(&store, &caller.borrow()), cases[2]["media"]);
     let inner = slint::private_unstable_api::re_exports::WindowInner::from_pub(ui.window());
     cog_click(&ui, &drawn, PointerEventButton::Right);
     assert!(

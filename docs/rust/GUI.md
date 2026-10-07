@@ -3430,7 +3430,7 @@ ADVANCED tag-display choice. The October 7 actual Qt rerun matches all 16 sort
 cases, eight collect cases and left/right button routes without changing the
 recording or its images. Actual Qt menu grabs show the three display choices in
 order 1, 3, 2. The native follow-up preserves all 25 original assertions across
-two existing tests and adds a third focused test, bringing the file to 87
+two existing tests and adds a third focused test, bringing the file to 88
 assertions. Actual mouse/key routes exercise all three choices and produce four
 defining root/submenu captures. The test checks full contexts and saved settings
 against retained View actions, plus enabled save-default policy and new-page
@@ -3438,6 +3438,10 @@ inheritance. Manual popup cleanup around hide/page switch does not claim
 automatic popup teardown. Full Linux execution and fresh independent native
 rendered review remain pending; the banked ledger is 354 signed off with 21
 existing candidates awaiting sign-off.
+The first hosted run passed all 706 prior GUI tests but exposed an unsorted
+restoration baseline in the new test. Setup now invokes the ordinary sort
+consumer, as the reference does before its mouse routes, and adds an exact
+sorted-baseline assertion. Every previous assertion remains unchanged.
 
 
 Options > tag presentation now stages namespace-colour additions and confirmed
