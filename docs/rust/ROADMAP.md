@@ -7,24 +7,27 @@ partway, say exactly where.
 
 The owner's current goal (2026-10-06) is **all individual report feature leaves
 implemented, verified and published**, with Linux first. Numeric checkpoints are
-progress reports, not stopping targets. The latest checkpoint banks 373 original
-concrete feature completions, including 133 since the prior 240 across twenty-three
+progress reports, not stopping targets. The latest checkpoint banks 374 original
+concrete feature completions, including 134 since the prior 240 across twenty-four
 recent Linux checkpoints. This cumulative count is not a last-24-hour sign-off
-count. There are 2 existing candidates awaiting sign-off. Keep these counts
+count. There is 1 existing candidate awaiting sign-off. Keep these counts
 separate from inventory and historical first-pass assessments. Validate small
 batches routinely and reassess any batch that goes 24 hours without a checkpoint.
 Broad feature work must not rebuild an unvalidated backlog. Windows/macOS remain
 deferred; strict Linux linting, full tests, reference replay and rendered review
 remain required.
-The latest checkpoint validates three thumbnail-navigation preferences: Shift
-last-hit origin, keyboard visibility threshold and scroll rate. All 17 old GUI
-assertions and the original test remain; current coverage is 57 assertions in
-that same test. 19 model assertions in three tests remains unchanged. All 711 GUI and
-67 media tests passed. Four fresh frames show saved true/40/0.5 and
-false/1/1.5 Options plus supported narrow/wider Main paired captions. Native
-stacking is a framework accommodation; Qt uses horizontal pairs. No sidebar,
-preview-focus sibling, parent, universal geometry or OS-wheel credit is added.
-[Evidence](gui-coverage/checkpoints/1a49a30f0/README.md).
+The latest checkpoint validates Database's missing-archive-time repair. Wrapped
+explanations remain readable after resize and scroll in a constrained viewport.
+Cancellation before writing rolls back; a commit that wins the race still reports
+Done and refreshes media. The complete original GUI regression remains unchanged,
+and two new tests exercise actual dialog buttons, all three populations, scrolling
+and both cancellation orders. Strict Clippy and all 2,197 workspace tests passed,
+including 713 GUI and 67 media tests. Fresh reference replay and independent review
+of the native renders passed. Only this one leaf gains credit; native transaction
+and layout differences remain explicit. The OR connector's invisible emoji remains
+the existing candidate awaiting sign-off. The runner's indirect Ubuntu mirror list
+also needs a separate infrastructure correction.
+[Evidence](gui-coverage/checkpoints/2e2a24281/README.md).
 
 The first parallel slate (2026-10-03) adds detailed embedded metadata,
 manual file export, local service review/management, tag sibling/parent
@@ -72,8 +75,8 @@ and all 121 exported native windows into nested work, including shared editors,
 all 38 reference option tabs and 19 system-predicate groups. It contains 1,812
 reference nodes and 1,799 native nodes, with per-node assessments, concrete
 remaining work and pinned source/evidence links. The frozen reference inventory
-now has 453 Missing, 385 Partial and 974 First pass entries; its status changes
-also include parent/alias assessments, which do not inflate the 373-item signed-off completion count.
+now has 452 Missing, 385 Partial and 975 First pass entries; its status changes
+also include parent/alias assessments, which do not inflate the 374-item signed-off completion count.
 Native first-pass claims cite scoped regression evidence; source-supported but
 unverified behavior is partial. These counts are not a whole-client completion
 percentage. Maintenance instructions and scope limits are in

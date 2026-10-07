@@ -1,0 +1,10 @@
+{
+  "source_commit": "05419cf7d2953229a48343f2c53170cc63309297",
+  "run_id": 37668940066,
+  "conclusion": "failure",
+  "gui_passed": 712,
+  "gui_failed": 1,
+  "reason": "The new scroll regression incorrectly assumed overflow at440x480. Actual complete question fits readably.",
+  "repair": "Retain440x480 capture and every assertion; add440x360 viewport before overflow/wheel checks.",
+  "completion_credit": false
+}

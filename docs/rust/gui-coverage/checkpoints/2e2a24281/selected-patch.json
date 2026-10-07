@@ -1,0 +1,150 @@
+{
+  "baseline_git_head": "2e2a2428112bdeb17a9fb9642e7a43c2934d2325",
+  "method": "One original archive-repair action only; exact-source Linux CI, actual reference replay and independent behavioral/render review required before publication. Preserve prior 373 sign-offs and all unselected assessments.",
+  "reference": {
+    "updates": [
+      {
+        "id": "audit-media-menu-database-fix-missing-file-archived-times",
+        "status": "first_pass",
+        "assessment": "Database file-maintenance dispatch scans missing archive times globally across current local files, trash and former local deletion records. Exact recorded warning and legacy/import/both choices precede content-writer updates. Legacy arithmetic, exclusions, captured-candidate revalidation and durable reopening match the recorded scope. The native window wraps explanations into a scrolling viewport and physical dialog controls exercise each population. Repair cancellation waits for the worker outcome: cancellation before writing rolls back; a completed commit still reports Done and refreshes media. Declined, hidden and retired confirmations do not start repair.",
+        "evidence": [
+          {
+            "path": "crates/hydrus-store/src/archive_repair.rs",
+            "line": 49,
+            "line_sha256": "c8499c146c0ef99fcdfa911e17fe396def727a95c16c7745bf895f332cd7af06",
+            "anchor_git_head": "2e2a2428112bdeb17a9fb9642e7a43c2934d2325",
+            "symbol": "pub fn scan(",
+            "role": "scoped_implementation",
+            "description": "pub fn scan(",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-store/src/archive_repair.rs",
+            "line": 114,
+            "line_sha256": "51a7d29daf955a201fbe40f0d6c68fb1ee4194c81ddefa366f0be9419b7cce08",
+            "anchor_git_head": "2e2a2428112bdeb17a9fb9642e7a43c2934d2325",
+            "symbol": "pub fn apply(",
+            "role": "scoped_implementation",
+            "description": "pub fn apply(",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui/src/archive_repair_window.rs",
+            "line": 26,
+            "line_sha256": "68af476d0f8d731be1cde11e1ed19d4d38eca62168ee48f35402ec02e8b22835",
+            "anchor_git_head": "2e2a2428112bdeb17a9fb9642e7a43c2934d2325",
+            "symbol": "pub fn open(",
+            "role": "scoped_implementation",
+            "description": "pub fn open(",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui/ui/archive_repair.slint",
+            "line": 45,
+            "line_sha256": "117786a519eb608a60aa6ba29842f37a743b5e6936ab9796ca6fa28b61d4d77e",
+            "anchor_git_head": "2e2a2428112bdeb17a9fb9642e7a43c2934d2325",
+            "symbol": "question-scroll := ScrollView",
+            "role": "scoped_implementation",
+            "description": "question-scroll := ScrollView",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui-model/tests/model/archive_repair.rs",
+            "line": 60,
+            "line_sha256": "d129650a67faae29e15e66cd18f30b48741acd3a050b569dc97347d84d775262",
+            "anchor_git_head": "2e2a2428112bdeb17a9fb9642e7a43c2934d2325",
+            "symbol": "fn exact_global_scan_questions",
+            "role": "behavioral_regression",
+            "description": "fn exact_global_scan_questions",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui-model/tests/model/archive_repair.rs",
+            "line": 138,
+            "line_sha256": "49c3f108feca2a4dea72d1e0152717c29493bc44e136664e1e262e271f82ac4b",
+            "anchor_git_head": "2e2a2428112bdeb17a9fb9642e7a43c2934d2325",
+            "symbol": "fn captured_scan_preserves",
+            "role": "behavioral_regression",
+            "description": "fn captured_scan_preserves",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui/tests/gui/archive_repair.rs",
+            "line": 50,
+            "line_sha256": "68ff6ef8aa62d52b4a36db0169710d22bdfa8b139308a9bc00d5387efd8db1ab",
+            "anchor_git_head": "2e2a2428112bdeb17a9fb9642e7a43c2934d2325",
+            "symbol": "fn database_repair_has_owned",
+            "role": "behavioral_regression",
+            "description": "fn database_repair_has_owned",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui/tests/gui/archive_repair.rs",
+            "line": 339,
+            "line_sha256": "ad99f1d21bc3e68736a626eed40601c670b7cf249d406271ff528eb593777d69",
+            "anchor_git_head": "2e2a2428112bdeb17a9fb9642e7a43c2934d2325",
+            "symbol": "fn actual_archive_controls_wrap",
+            "role": "behavioral_regression",
+            "description": "fn actual_archive_controls_wrap",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui/tests/gui/archive_repair.rs",
+            "line": 498,
+            "line_sha256": "2bbcfa89817adf1b2390d5fc347e2b1432209fe8e70389b436c44ffeabefc27e",
+            "anchor_git_head": "2e2a2428112bdeb17a9fb9642e7a43c2934d2325",
+            "symbol": "fn cancel_after_commit",
+            "role": "behavioral_regression",
+            "description": "fn cancel_after_commit",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "oracle/record_archive_time_repair.py",
+            "line": 1,
+            "line_sha256": "381f9bfc69d49d39040a7d5fc3197ce385019a2ba2de649622f841a8c658ed37",
+            "anchor_git_head": "2e2a2428112bdeb17a9fb9642e7a43c2934d2325",
+            "role": "reference_recording",
+            "description": "Fresh real Qt/database replay reproduces the recorded questions and reopened archive timestamps.",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "oracle/fixtures/archive_time_repair.json",
+            "line": 1,
+            "line_sha256": "021fb596db81e6d02bf3d2586ee3981fe519f275c0ac9ca76bbcf2ebb4097d96",
+            "anchor_git_head": "2e2a2428112bdeb17a9fb9642e7a43c2934d2325",
+            "role": "reference_recording",
+            "description": "Fresh real Qt/database replay reproduces the recorded questions and reopened archive timestamps.",
+            "executed_in_inventory": false
+          }
+        ],
+        "limitations": [
+          "Native warning, choices and progress share one window rather than Qt dialogs and a job popup.",
+          "Native transaction cancellation rolls back its whole write; Qt can retain earlier completed batches. Closing after commit cannot undo it.",
+          "Candidate revalidation deliberately preserves intervening archive, inbox and timestamp edits.",
+          "Menu navigation, cancellation races and ownership checks dispatch callbacks. Warning, population-choice and completion buttons use observed physical pointer input at supported viewports.",
+          "Reference recording captures actual questions and outcomes, not matching Qt dialog pixels. Broader database/file-history parents receive no credit."
+        ],
+        "assessment_method": "Exact-source Linux validation, fresh reference replay and independent behavioral/render review; scoped checkpoint evidence distinguishes native layout and transaction differences.",
+        "implementation_validation": {
+          "source_commit": "2e2a2428112bdeb17a9fb9642e7a43c2934d2325",
+          "ci": "passed",
+          "tests_executed_at_checkpoint": true,
+          "native_render_review": "passed",
+          "manifest": "docs/rust/gui-coverage/parity/database-archive-times.json",
+          "run_url": "https://github.com/jkendall327/hydrus-mine/actions/runs/37682619326",
+          "validation_scope": "linux",
+          "required_platforms": [
+            "linux"
+          ],
+          "deferred_platforms": [
+            "windows",
+            "macos"
+          ]
+        }
+      }
+    ]
+  },
+  "native": {
+    "updates": []
+  }
+}

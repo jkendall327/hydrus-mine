@@ -1,0 +1,11 @@
+{
+  "source_commit": "05419cf7d2953229a48343f2c53170cc63309297",
+  "run_id": 37668940066,
+  "strict_clippy": "passed",
+  "gui_passed": 712,
+  "gui_failed": 1,
+  "failure": "New overflow assertion assumed question exceeded440x480 viewport; diagnostic capture shows full text correctly fits.",
+  "cancellation_regression": "passed",
+  "repair": "Retain fitting capture and all assertions; add440x360 viewport to exercise actual scrolling.",
+  "completion_credit": false
+}

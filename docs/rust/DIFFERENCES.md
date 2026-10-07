@@ -2312,6 +2312,11 @@ Read-only test observation uses a container around each normal Slint button,
 preserving the button's minimum/preferred size, stretch and focus behavior.
 The narrow 440×480 question fits without scrolling. A shorter 440×360 viewport
 tests actual overflow rather than requiring a scrollbar when none is needed.
+Full Linux run `37682619326`, fresh reference replay and independent rendered review
+passed for this one leaf. Menu, cancellation and ownership checks dispatch
+callbacks; warning, population and completion buttons use measured pointer input.
+The Qt recording proves questions and outcomes, not matching dialog pixels.
+[Evidence](gui-coverage/checkpoints/2e2a24281/README.md).
 
 
 Suggested tags have real local-service most-used and recent consumers, per-service

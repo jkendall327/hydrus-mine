@@ -1,0 +1,730 @@
+﻿2026-10-07T18:13:15.5293920Z Current runner version: '2.337.0'
+2026-10-07T18:13:15.5318907Z ##[group]Runner Image Provisioner
+2026-10-07T18:13:15.5319786Z Hosted Compute Agent
+2026-10-07T18:13:15.5320441Z Version: 20261002.596
+2026-10-07T18:13:15.5321088Z Commit: c3d12f3313a95f25162a1503be624f3b0617f8c0
+2026-10-07T18:13:15.5321837Z Build Date: 2026-10-02T22:28:27Z
+2026-10-07T18:13:15.5322613Z Worker ID: {4b8dfb20-0d05-4872-95a1-b137e9d65650}
+2026-10-07T18:13:15.5323322Z Region: southcentralus
+2026-10-07T18:13:15.5323945Z Cloud: Azure
+2026-10-07T18:13:15.5324480Z ##[endgroup]
+2026-10-07T18:13:15.5326189Z ##[group]Operating System
+2026-10-07T18:13:15.5326946Z Ubuntu
+2026-10-07T18:13:15.5327510Z 24.04.5
+2026-10-07T18:13:15.5328051Z LTS
+2026-10-07T18:13:15.5328585Z ##[endgroup]
+2026-10-07T18:13:15.5329134Z ##[group]Runner Image
+2026-10-07T18:13:15.5329834Z Image: ubuntu-24.04
+2026-10-07T18:13:15.5330401Z Version: 20261004.327.1
+2026-10-07T18:13:15.5331679Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20261004.327/images/ubuntu/Ubuntu2404-Readme.md
+2026-10-07T18:13:15.5333224Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20261004.327
+2026-10-07T18:13:15.5334359Z ##[endgroup]
+2026-10-07T18:13:15.5335689Z ##[group]GITHUB_TOKEN Permissions
+2026-10-07T18:13:15.5338161Z Contents: read
+2026-10-07T18:13:15.5338772Z Metadata: read
+2026-10-07T18:13:15.5339393Z Packages: read
+2026-10-07T18:13:15.5340007Z ##[endgroup]
+2026-10-07T18:13:15.5342079Z Secret source: Actions
+2026-10-07T18:13:15.5343183Z Cache mode: write
+2026-10-07T18:13:15.5344184Z Prepare workflow directory
+2026-10-07T18:13:15.5735156Z Prepare all required actions
+2026-10-07T18:13:15.5785145Z Getting action download info
+2026-10-07T18:13:15.8618132Z Download action repository 'actions/checkout@v4' (SHA:11d5960a326750d5838078e36cf38b85af677262)
+2026-10-07T18:13:15.9472708Z Download action repository 'dtolnay/rust-toolchain@master' (SHA:7e38f4b43b4db5c8dd498af069a4f6196df1d067)
+2026-10-07T18:13:16.1250966Z Download action repository 'Swatinem/rust-cache@v2' (SHA:6323deb102c322ba6fcbdcafc7e3dddab59af2b6)
+2026-10-07T18:13:16.7830524Z Download action repository 'actions/cache@v4' (SHA:0057852bfaa89a56745cba8c7296529d2fc39830)
+2026-10-07T18:13:16.9151297Z Download action repository 'actions/upload-artifact@v4' (SHA:ea165f8d65b6e75b540449e92b4886f43607fa02)
+2026-10-07T18:13:17.2371432Z Complete job name: check
+2026-10-07T18:13:17.3446563Z ##[group]Run actions/checkout@v4
+2026-10-07T18:13:17.3447927Z with:
+2026-10-07T18:13:17.3448787Z   repository: jkendall327/hydrus-mine
+2026-10-07T18:13:17.3457111Z   token: ***
+2026-10-07T18:13:17.3457937Z   ssh-strict: true
+2026-10-07T18:13:17.3458769Z   ssh-user: git
+2026-10-07T18:13:17.3459634Z   persist-credentials: true
+2026-10-07T18:13:17.3460563Z   clean: true
+2026-10-07T18:13:17.3461418Z   sparse-checkout-cone-mode: true
+2026-10-07T18:13:17.3462408Z   fetch-depth: 1
+2026-10-07T18:13:17.3463222Z   fetch-tags: false
+2026-10-07T18:13:17.3464076Z   show-progress: true
+2026-10-07T18:13:17.3464930Z   lfs: false
+2026-10-07T18:13:17.3465904Z   submodules: false
+2026-10-07T18:13:17.3466784Z   set-safe-directory: true
+2026-10-07T18:13:17.3467761Z   allow-unsafe-pr-checkout: false
+2026-10-07T18:13:17.3469044Z env:
+2026-10-07T18:13:17.3469842Z   CARGO_TERM_COLOR: always
+2026-10-07T18:13:17.3470783Z   RUSTFLAGS: -D warnings
+2026-10-07T18:13:17.3471675Z ##[endgroup]
+2026-10-07T18:13:17.4514074Z Syncing repository: jkendall327/hydrus-mine
+2026-10-07T18:13:17.4517658Z ##[group]Getting Git version info
+2026-10-07T18:13:17.4519234Z Working directory is '/home/runner/work/hydrus-mine/hydrus-mine'
+2026-10-07T18:13:17.4521636Z [command]/usr/bin/git version
+2026-10-07T18:13:17.4550679Z git version 2.55.0
+2026-10-07T18:13:17.4573796Z ##[endgroup]
+2026-10-07T18:13:17.4589692Z Temporarily overriding HOME='/home/runner/work/_temp/be478783-e7c2-4f0a-bf85-4f0afc08187f' before making global git config changes
+2026-10-07T18:13:17.4592536Z Adding repository directory to the temporary git global config as a safe directory
+2026-10-07T18:13:17.4596050Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/hydrus-mine/hydrus-mine
+2026-10-07T18:13:17.4642675Z Deleting the contents of '/home/runner/work/hydrus-mine/hydrus-mine'
+2026-10-07T18:13:17.4646649Z ##[group]Initializing the repository
+2026-10-07T18:13:17.4650616Z [command]/usr/bin/git init /home/runner/work/hydrus-mine/hydrus-mine
+2026-10-07T18:13:17.4784327Z hint: Using 'master' as the name for the initial branch. This default branch name
+2026-10-07T18:13:17.4787544Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+2026-10-07T18:13:17.4790095Z hint: to use in all of your new repositories, which will suppress this warning,
+2026-10-07T18:13:17.4791737Z hint: call:
+2026-10-07T18:13:17.4793115Z hint:
+2026-10-07T18:13:17.4794644Z hint: 	git config --global init.defaultBranch <name>
+2026-10-07T18:13:17.4796234Z hint:
+2026-10-07T18:13:17.4797722Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2026-10-07T18:13:17.4800443Z hint: 'development'. The just-created branch can be renamed via this command:
+2026-10-07T18:13:17.4802015Z hint:
+2026-10-07T18:13:17.4802947Z hint: 	git branch -m <name>
+2026-10-07T18:13:17.4804141Z hint:
+2026-10-07T18:13:17.4805448Z hint: Disable this message with "git config set advice.defaultBranchName false"
+2026-10-07T18:13:17.4807956Z Initialized empty Git repository in /home/runner/work/hydrus-mine/hydrus-mine/.git/
+2026-10-07T18:13:17.4811488Z [command]/usr/bin/git remote add origin https://github.com/jkendall327/hydrus-mine
+2026-10-07T18:13:17.4845864Z ##[endgroup]
+2026-10-07T18:13:17.4848268Z ##[group]Disabling automatic garbage collection
+2026-10-07T18:13:17.4850428Z [command]/usr/bin/git config --local gc.auto 0
+2026-10-07T18:13:17.4878929Z ##[endgroup]
+2026-10-07T18:13:17.4881039Z ##[group]Setting up auth
+2026-10-07T18:13:17.4883686Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-10-07T18:13:17.4914895Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-10-07T18:13:17.5247588Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-07T18:13:17.5278738Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-10-07T18:13:17.5494261Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-07T18:13:17.5526219Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-10-07T18:13:17.5766999Z [command]/usr/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
+2026-10-07T18:13:17.5808591Z ##[endgroup]
+2026-10-07T18:13:17.5811476Z ##[group]Fetching the repository
+2026-10-07T18:13:17.5819446Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +8fdb04d5a6c72075057401228679a94de6626795:refs/remotes/origin/codex/validation-runner
+2026-10-07T18:13:31.9326643Z From https://github.com/jkendall327/hydrus-mine
+2026-10-07T18:13:31.9327900Z  * [new ref]         8fdb04d5a6c72075057401228679a94de6626795 -> origin/codex/validation-runner
+2026-10-07T18:13:31.9331104Z ##[endgroup]
+2026-10-07T18:13:31.9332009Z ##[group]Determining the checkout info
+2026-10-07T18:13:31.9340470Z ##[endgroup]
+2026-10-07T18:13:31.9340927Z [command]/usr/bin/git sparse-checkout disable
+2026-10-07T18:13:31.9392215Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+2026-10-07T18:13:31.9419259Z ##[group]Checking out the ref
+2026-10-07T18:13:31.9425432Z [command]/usr/bin/git checkout --progress --force -B codex/validation-runner refs/remotes/origin/codex/validation-runner
+2026-10-07T18:13:32.9550749Z Updating files:  83% (4778/5744)
+2026-10-07T18:13:32.9614080Z Updating files:  84% (4825/5744)
+2026-10-07T18:13:32.9650195Z Updating files:  85% (4883/5744)
+2026-10-07T18:13:32.9769247Z Updating files:  86% (4940/5744)
+2026-10-07T18:13:32.9864093Z Updating files:  87% (4998/5744)
+2026-10-07T18:13:32.9904166Z Updating files:  88% (5055/5744)
+2026-10-07T18:13:32.9944910Z Updating files:  89% (5113/5744)
+2026-10-07T18:13:32.9985435Z Updating files:  90% (5170/5744)
+2026-10-07T18:13:33.0025090Z Updating files:  91% (5228/5744)
+2026-10-07T18:13:33.0065447Z Updating files:  92% (5285/5744)
+2026-10-07T18:13:33.0116356Z Updating files:  93% (5342/5744)
+2026-10-07T18:13:33.0396716Z Updating files:  94% (5400/5744)
+2026-10-07T18:13:33.0664568Z Updating files:  95% (5457/5744)
+2026-10-07T18:13:33.0710748Z Updating files:  96% (5515/5744)
+2026-10-07T18:13:33.0740874Z Updating files:  97% (5572/5744)
+2026-10-07T18:13:33.0767440Z Updating files:  98% (5630/5744)
+2026-10-07T18:13:33.0857787Z Updating files:  99% (5687/5744)
+2026-10-07T18:13:33.0858571Z Updating files: 100% (5744/5744)
+2026-10-07T18:13:33.0859209Z Updating files: 100% (5744/5744), done.
+2026-10-07T18:13:33.0923774Z Switched to a new branch 'codex/validation-runner'
+2026-10-07T18:13:33.0930052Z branch 'codex/validation-runner' set up to track 'origin/codex/validation-runner'.
+2026-10-07T18:13:33.0990858Z ##[endgroup]
+2026-10-07T18:13:33.1039768Z [command]/usr/bin/git log -1 --format=%H
+2026-10-07T18:13:33.1064815Z 8fdb04d5a6c72075057401228679a94de6626795
+2026-10-07T18:13:33.1415165Z ##[group]Run dtolnay/rust-toolchain@master
+2026-10-07T18:13:33.1415680Z with:
+2026-10-07T18:13:33.1415888Z   toolchain: 1.94
+2026-10-07T18:13:33.1416112Z   components: rustfmt, clippy
+2026-10-07T18:13:33.1416349Z env:
+2026-10-07T18:13:33.1416536Z   CARGO_TERM_COLOR: always
+2026-10-07T18:13:33.1416769Z   RUSTFLAGS: -D warnings
+2026-10-07T18:13:33.1416988Z ##[endgroup]
+2026-10-07T18:13:33.1480318Z ##[start-action display=Parse toolchain version;id=__dtolnay_rust-toolchain.parse]
+2026-10-07T18:13:33.1535410Z ##[group]Run if [[ -z $toolchain ]]; then
+2026-10-07T18:13:33.1536022Z [36;1mif [[ -z $toolchain ]]; then[0m
+2026-10-07T18:13:33.1536572Z [36;1m  # GitHub does not enforce `required: true` inputs itself. https://github.com/actions/runner/issues/1070[0m
+2026-10-07T18:13:33.1537134Z [36;1m  echo "'toolchain' is a required input" >&2[0m
+2026-10-07T18:13:33.1537429Z [36;1m  exit 1[0m
+2026-10-07T18:13:33.1537803Z [36;1melif [[ $toolchain =~ ^stable' '[0-9]+' '(year|month|week|day)s?' 'ago$ ]]; then[0m
+2026-10-07T18:13:33.1538227Z [36;1m  if [[ Linux == macOS ]]; then[0m
+2026-10-07T18:13:33.1538761Z [36;1m    echo "toolchain=1.$((($(date -v-$(sed 's/stable \([0-9]*\) \(.\).*/\1\2/' <<< $toolchain) +%s)/60/60/24-16569)/7/6))" >> $GITHUB_OUTPUT[0m
+2026-10-07T18:13:33.1539271Z [36;1m  else[0m
+2026-10-07T18:13:33.1539695Z [36;1m    echo "toolchain=1.$((($(date --date "${toolchain#stable }" +%s)/60/60/24-16569)/7/6))" >> $GITHUB_OUTPUT[0m
+2026-10-07T18:13:33.1540166Z [36;1m  fi[0m
+2026-10-07T18:13:33.1540476Z [36;1melif [[ $toolchain =~ ^stable' 'minus' '[0-9]+' 'releases?$ ]]; then[0m
+2026-10-07T18:13:33.1541022Z [36;1m  echo "toolchain=1.$((($(date +%s)/60/60/24-16569)/7/6-${toolchain//[^0-9]/}))" >> $GITHUB_OUTPUT[0m
+2026-10-07T18:13:33.1541488Z [36;1melif [[ $toolchain =~ ^1\.[0-9]+$ ]]; then[0m
+2026-10-07T18:13:33.1542013Z [36;1m  echo "toolchain=1.$((i=${toolchain#1.}, c=($(date +%s)/60/60/24-16569)/7/6, i+9*i*(10*i<=c)+90*i*(100*i<=c)))" >> $GITHUB_OUTPUT[0m
+2026-10-07T18:13:33.1542514Z [36;1melse[0m
+2026-10-07T18:13:33.1542761Z [36;1m  echo "toolchain=$toolchain" >> $GITHUB_OUTPUT[0m
+2026-10-07T18:13:33.1543058Z [36;1mfi[0m
+2026-10-07T18:13:33.1809164Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+2026-10-07T18:13:33.1809579Z env:
+2026-10-07T18:13:33.1809813Z   CARGO_TERM_COLOR: always
+2026-10-07T18:13:33.1810097Z   RUSTFLAGS: -D warnings
+2026-10-07T18:13:33.1810357Z   toolchain: 1.94
+2026-10-07T18:13:33.1810592Z ##[endgroup]
+2026-10-07T18:13:33.1964479Z ##[end-action id=__dtolnay_rust-toolchain.parse;outcome=success;conclusion=success;duration_ms=48]
+2026-10-07T18:13:33.1977212Z ##[start-action display=Construct rustup command line;id=__dtolnay_rust-toolchain.flags]
+2026-10-07T18:13:33.2007873Z ##[group]Run echo "targets=$(for t in ${targets//,/ }; do echo -n ' --target' $t; done)" >> $GITHUB_OUTPUT
+2026-10-07T18:13:33.2008525Z [36;1mecho "targets=$(for t in ${targets//,/ }; do echo -n ' --target' $t; done)" >> $GITHUB_OUTPUT[0m
+2026-10-07T18:13:33.2009164Z [36;1mecho "components=$(for c in ${components//,/ }; do echo -n ' --component' $c; done)" >> $GITHUB_OUTPUT[0m
+2026-10-07T18:13:33.2009648Z [36;1mecho "downgrade=" >> $GITHUB_OUTPUT[0m
+2026-10-07T18:13:33.2072050Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+2026-10-07T18:13:33.2072388Z env:
+2026-10-07T18:13:33.2072584Z   CARGO_TERM_COLOR: always
+2026-10-07T18:13:33.2072821Z   RUSTFLAGS: -D warnings
+2026-10-07T18:13:33.2073039Z   targets: 
+2026-10-07T18:13:33.2073236Z   components: rustfmt, clippy
+2026-10-07T18:13:33.2073483Z ##[endgroup]
+2026-10-07T18:13:33.2173432Z ##[end-action id=__dtolnay_rust-toolchain.flags;outcome=success;conclusion=success;duration_ms=19]
+2026-10-07T18:13:33.2175891Z ##[start-action display=Set $CARGO_HOME;id=__dtolnay_rust-toolchain.__run]
+2026-10-07T18:13:33.2198940Z ##[group]Run echo CARGO_HOME=${CARGO_HOME:-"$HOME/.cargo"} >> $GITHUB_ENV
+2026-10-07T18:13:33.2225647Z [36;1mecho CARGO_HOME=${CARGO_HOME:-"$HOME/.cargo"} >> $GITHUB_ENV[0m
+2026-10-07T18:13:33.2294630Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+2026-10-07T18:13:33.2295071Z env:
+2026-10-07T18:13:33.2295267Z   CARGO_TERM_COLOR: always
+2026-10-07T18:13:33.2295886Z   RUSTFLAGS: -D warnings
+2026-10-07T18:13:33.2296140Z ##[endgroup]
+2026-10-07T18:13:33.2388356Z ##[end-action id=__dtolnay_rust-toolchain.__run;outcome=success;conclusion=success;duration_ms=21]
+2026-10-07T18:13:33.2390528Z ##[start-action display=Install rustup if needed;id=__dtolnay_rust-toolchain.__run_2]
+2026-10-07T18:13:33.2417622Z ##[group]Run if ! command -v rustup &>/dev/null; then
+2026-10-07T18:13:33.2418004Z [36;1mif ! command -v rustup &>/dev/null; then[0m
+2026-10-07T18:13:33.2418752Z [36;1m  curl --proto '=https' --tlsv1.2 --retry 10 --retry-connrefused --location --silent --show-error --fail https://sh.rustup.rs | sh -s -- --default-toolchain none -y[0m
+2026-10-07T18:13:33.2419475Z [36;1m  echo "$CARGO_HOME/bin" >> $GITHUB_PATH[0m
+2026-10-07T18:13:33.2419754Z [36;1mfi[0m
+2026-10-07T18:13:33.2482188Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+2026-10-07T18:13:33.2482532Z env:
+2026-10-07T18:13:33.2482725Z   CARGO_TERM_COLOR: always
+2026-10-07T18:13:33.2482961Z   RUSTFLAGS: -D warnings
+2026-10-07T18:13:33.2483194Z   CARGO_HOME: /home/runner/.cargo
+2026-10-07T18:13:33.2483434Z ##[endgroup]
+2026-10-07T18:13:33.2571211Z ##[end-action id=__dtolnay_rust-toolchain.__run_2;outcome=success;conclusion=success;duration_ms=18]
+2026-10-07T18:13:33.2573395Z ##[start-action display=Install rustup if needed on windows;id=__dtolnay_rust-toolchain.__run_3]
+2026-10-07T18:13:33.2580276Z ##[end-action id=__dtolnay_rust-toolchain.__run_3;outcome=skipped;conclusion=skipped;duration_ms=0]
+2026-10-07T18:13:33.2591234Z ##[start-action display=rustup toolchain install 1.94;id=__dtolnay_rust-toolchain.__run_4]
+2026-10-07T18:13:33.2611867Z ##[group]Run log=$(mktemp)
+2026-10-07T18:13:33.2612222Z [36;1mlog=$(mktemp)[0m
+2026-10-07T18:13:33.2612453Z [36;1mtrap 'rm -f "$log"' EXIT[0m
+2026-10-07T18:13:33.2612732Z [36;1mfor attempt in 1 2 3 4 5; do[0m
+2026-10-07T18:13:33.2613376Z [36;1m  if rustup toolchain install 1.94 --component rustfmt --component clippy --profile minimal --no-self-update --force-non-host 2>&1 | tee "$log"; then[0m
+2026-10-07T18:13:33.2614022Z [36;1m    break[0m
+2026-10-07T18:13:33.2614217Z [36;1m  else[0m
+2026-10-07T18:13:33.2614409Z [36;1m    status=$?[0m
+2026-10-07T18:13:33.2614619Z [36;1m  fi[0m
+2026-10-07T18:13:33.2614910Z [36;1m  if [[ $attempt == 5 ]] || ! grep -Fq 'checksum failed for ' "$log" \[0m
+2026-10-07T18:13:33.2615933Z [36;1m      || ! grep -Fq 'this is likely due to an ongoing update of the official release server' "$log"; then[0m
+2026-10-07T18:13:33.2616414Z [36;1m    exit "$status"[0m
+2026-10-07T18:13:33.2616657Z [36;1m  fi[0m
+2026-10-07T18:13:33.2617006Z [36;1m  echo "Retrying rustup toolchain install in 30 seconds (retry $attempt of 4)" >&2[0m
+2026-10-07T18:13:33.2617450Z [36;1m  sleep 30[0m
+2026-10-07T18:13:33.2617652Z [36;1mdone[0m
+2026-10-07T18:13:33.2680121Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+2026-10-07T18:13:33.2680467Z env:
+2026-10-07T18:13:33.2680662Z   CARGO_TERM_COLOR: always
+2026-10-07T18:13:33.2680904Z   RUSTFLAGS: -D warnings
+2026-10-07T18:13:33.2681146Z   CARGO_HOME: /home/runner/.cargo
+2026-10-07T18:13:33.2681400Z   RUSTUP_PERMIT_COPY_RENAME: 1
+2026-10-07T18:13:33.2681628Z ##[endgroup]
+2026-10-07T18:13:33.3583329Z info: syncing channel updates for 1.94-x86_64-unknown-linux-gnu
+2026-10-07T18:13:33.6873854Z info: latest update on 2026-03-26 for version 1.94.1 (e408947bf 2026-03-25)
+2026-10-07T18:13:33.6874651Z info: downloading 5 components
+2026-10-07T18:13:41.5373457Z 
+2026-10-07T18:13:41.5443340Z   1.94-x86_64-unknown-linux-gnu installed - rustc 1.94.1 (e408947bf 2026-03-25)
+2026-10-07T18:13:41.5443852Z 
+2026-10-07T18:13:41.5514734Z ##[end-action id=__dtolnay_rust-toolchain.__run_4;outcome=success;conclusion=success;duration_ms=8292]
+2026-10-07T18:13:41.5520838Z ##[start-action display=rustup default 1.94;id=__dtolnay_rust-toolchain.__run_5]
+2026-10-07T18:13:41.5540030Z ##[group]Run rustup default 1.94 --force-non-host
+2026-10-07T18:13:41.5540401Z [36;1mrustup default 1.94 --force-non-host[0m
+2026-10-07T18:13:41.5600205Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+2026-10-07T18:13:41.5600551Z env:
+2026-10-07T18:13:41.5600743Z   CARGO_TERM_COLOR: always
+2026-10-07T18:13:41.5600981Z   RUSTFLAGS: -D warnings
+2026-10-07T18:13:41.5601216Z   CARGO_HOME: /home/runner/.cargo
+2026-10-07T18:13:41.5601456Z ##[endgroup]
+2026-10-07T18:13:41.5719533Z info: using existing install for 1.94-x86_64-unknown-linux-gnu
+2026-10-07T18:13:41.5725696Z info: default toolchain set to 1.94-x86_64-unknown-linux-gnu
+2026-10-07T18:13:41.5726031Z 
+2026-10-07T18:13:41.5792151Z   1.94-x86_64-unknown-linux-gnu unchanged - rustc 1.94.1 (e408947bf 2026-03-25)
+2026-10-07T18:13:41.5792722Z 
+2026-10-07T18:13:41.5793664Z info: note that the toolchain '1.94-x86_64-unknown-linux-gnu' is currently in use (overridden by '/home/runner/work/hydrus-mine/hydrus-mine/rust-toolchain.toml')
+2026-10-07T18:13:41.5808841Z ##[end-action id=__dtolnay_rust-toolchain.__run_5;outcome=success;conclusion=success;duration_ms=28]
+2026-10-07T18:13:41.5811221Z ##[start-action display=Create cachekey;id=__dtolnay_rust-toolchain.rustc-version]
+2026-10-07T18:13:41.5830881Z ##[group]Run DATE=$(rustc +1.94 --version --verbose | sed -ne 's/^commit-date: \(20[0-9][0-9]\)-\([01][0-9]\)-\([0-3][0-9]\)$/\1\2\3/p')
+2026-10-07T18:13:41.5831685Z [36;1mDATE=$(rustc +1.94 --version --verbose | sed -ne 's/^commit-date: \(20[0-9][0-9]\)-\([01][0-9]\)-\([0-3][0-9]\)$/\1\2\3/p')[0m
+2026-10-07T18:13:41.5832326Z [36;1mHASH=$(rustc +1.94 --version --verbose | sed -ne 's/^commit-hash: //p')[0m
+2026-10-07T18:13:41.5832828Z [36;1mecho "cachekey=$(echo $DATE$HASH | head -c12)" >> $GITHUB_OUTPUT[0m
+2026-10-07T18:13:41.5891735Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+2026-10-07T18:13:41.5892077Z env:
+2026-10-07T18:13:41.5892272Z   CARGO_TERM_COLOR: always
+2026-10-07T18:13:41.5892514Z   RUSTFLAGS: -D warnings
+2026-10-07T18:13:41.5892759Z   CARGO_HOME: /home/runner/.cargo
+2026-10-07T18:13:41.5892999Z ##[endgroup]
+2026-10-07T18:13:41.6224903Z ##[end-action id=__dtolnay_rust-toolchain.rustc-version;outcome=success;conclusion=success;duration_ms=41]
+2026-10-07T18:13:41.6227885Z ##[start-action display=Disable incremental compilation;id=__dtolnay_rust-toolchain.__run_6]
+2026-10-07T18:13:41.6245236Z ##[group]Run if [ -z "${CARGO_INCREMENTAL+set}" ]; then
+2026-10-07T18:13:41.6245945Z [36;1mif [ -z "${CARGO_INCREMENTAL+set}" ]; then[0m
+2026-10-07T18:13:41.6246453Z [36;1m  echo CARGO_INCREMENTAL=0 >> $GITHUB_ENV[0m
+2026-10-07T18:13:41.6246736Z [36;1mfi[0m
+2026-10-07T18:13:41.6306152Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+2026-10-07T18:13:41.6306504Z env:
+2026-10-07T18:13:41.6306703Z   CARGO_TERM_COLOR: always
+2026-10-07T18:13:41.6306946Z   RUSTFLAGS: -D warnings
+2026-10-07T18:13:41.6307191Z   CARGO_HOME: /home/runner/.cargo
+2026-10-07T18:13:41.6307452Z ##[endgroup]
+2026-10-07T18:13:41.6389368Z ##[end-action id=__dtolnay_rust-toolchain.__run_6;outcome=success;conclusion=success;duration_ms=16]
+2026-10-07T18:13:41.6391408Z ##[start-action display=Enable colors in Cargo output;id=__dtolnay_rust-toolchain.__run_7]
+2026-10-07T18:13:41.6408591Z ##[group]Run if [ -z "${CARGO_TERM_COLOR+set}" ]; then
+2026-10-07T18:13:41.6409003Z [36;1mif [ -z "${CARGO_TERM_COLOR+set}" ]; then[0m
+2026-10-07T18:13:41.6409362Z [36;1m  echo CARGO_TERM_COLOR=always >> $GITHUB_ENV[0m
+2026-10-07T18:13:41.6409676Z [36;1mfi[0m
+2026-10-07T18:13:41.6465094Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+2026-10-07T18:13:41.6465586Z env:
+2026-10-07T18:13:41.6465812Z   CARGO_TERM_COLOR: always
+2026-10-07T18:13:41.6466075Z   RUSTFLAGS: -D warnings
+2026-10-07T18:13:41.6466332Z   CARGO_HOME: /home/runner/.cargo
+2026-10-07T18:13:41.6466602Z   CARGO_INCREMENTAL: 0
+2026-10-07T18:13:41.6466834Z ##[endgroup]
+2026-10-07T18:13:41.6546579Z ##[end-action id=__dtolnay_rust-toolchain.__run_7;outcome=success;conclusion=success;duration_ms=15]
+2026-10-07T18:13:41.6548661Z ##[start-action display=Enable Cargo sparse registry;id=__dtolnay_rust-toolchain.__run_8]
+2026-10-07T18:13:41.6566704Z ##[group]Run # implemented in 1.66, stabilized in 1.68, made default in 1.70
+2026-10-07T18:13:41.6567226Z [36;1m# implemented in 1.66, stabilized in 1.68, made default in 1.70[0m
+2026-10-07T18:13:41.6567951Z [36;1mif [ -z "${CARGO_REGISTRIES_CRATES_IO_PROTOCOL+set}" -o -f "/home/runner/work/_temp"/.implicit_cargo_registries_crates_io_protocol ]; then[0m
+2026-10-07T18:13:41.6568688Z [36;1m  if rustc +1.94 --version --verbose | grep -q '^release: 1\.6[89]\.'; then[0m
+2026-10-07T18:13:41.6569257Z [36;1m    touch "/home/runner/work/_temp"/.implicit_cargo_registries_crates_io_protocol || true[0m
+2026-10-07T18:13:41.6569799Z [36;1m    echo CARGO_REGISTRIES_CRATES_IO_PROTOCOL=sparse >> $GITHUB_ENV[0m
+2026-10-07T18:13:41.6570286Z [36;1m  elif rustc +1.94 --version --verbose | grep -q '^release: 1\.6[67]\.'; then[0m
+2026-10-07T18:13:41.6570846Z [36;1m    touch "/home/runner/work/_temp"/.implicit_cargo_registries_crates_io_protocol || true[0m
+2026-10-07T18:13:41.6571365Z [36;1m    echo CARGO_REGISTRIES_CRATES_IO_PROTOCOL=git >> $GITHUB_ENV[0m
+2026-10-07T18:13:41.6571713Z [36;1m  fi[0m
+2026-10-07T18:13:41.6571906Z [36;1mfi[0m
+2026-10-07T18:13:41.6626569Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+2026-10-07T18:13:41.6626911Z env:
+2026-10-07T18:13:41.6627112Z   CARGO_TERM_COLOR: always
+2026-10-07T18:13:41.6627354Z   RUSTFLAGS: -D warnings
+2026-10-07T18:13:41.6627598Z   CARGO_HOME: /home/runner/.cargo
+2026-10-07T18:13:41.6627848Z   CARGO_INCREMENTAL: 0
+2026-10-07T18:13:41.6628057Z ##[endgroup]
+2026-10-07T18:13:41.6930583Z ##[end-action id=__dtolnay_rust-toolchain.__run_8;outcome=success;conclusion=success;duration_ms=38]
+2026-10-07T18:13:41.6932810Z ##[start-action display=Work around spurious network errors in curl 8.0;id=__dtolnay_rust-toolchain.__run_9]
+2026-10-07T18:13:41.6951344Z ##[group]Run # https://rust-lang.zulipchat.com/#narrow/stream/246057-t-cargo/topic/timeout.20investigation
+2026-10-07T18:13:41.6952153Z [36;1m# https://rust-lang.zulipchat.com/#narrow/stream/246057-t-cargo/topic/timeout.20investigation[0m
+2026-10-07T18:13:41.6952797Z [36;1mif rustc +1.94 --version --verbose | grep -q '^release: 1\.7[01]\.'; then[0m
+2026-10-07T18:13:41.6953281Z [36;1m  echo CARGO_HTTP_MULTIPLEXING=false >> $GITHUB_ENV[0m
+2026-10-07T18:13:41.6953629Z [36;1mfi[0m
+2026-10-07T18:13:41.7009694Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+2026-10-07T18:13:41.7010228Z env:
+2026-10-07T18:13:41.7010441Z   CARGO_TERM_COLOR: always
+2026-10-07T18:13:41.7010695Z   RUSTFLAGS: -D warnings
+2026-10-07T18:13:41.7010954Z   CARGO_HOME: /home/runner/.cargo
+2026-10-07T18:13:41.7011223Z   CARGO_INCREMENTAL: 0
+2026-10-07T18:13:41.7011457Z ##[endgroup]
+2026-10-07T18:13:41.7203985Z ##[end-action id=__dtolnay_rust-toolchain.__run_9;outcome=success;conclusion=success;duration_ms=27]
+2026-10-07T18:13:41.7208429Z ##[start-action display=rustc +1.94 --version --verbose;id=__dtolnay_rust-toolchain.__run_10]
+2026-10-07T18:13:41.7243388Z ##[group]Run rustc +1.94 --version --verbose
+2026-10-07T18:13:41.7243710Z [36;1mrustc +1.94 --version --verbose[0m
+2026-10-07T18:13:41.7299099Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+2026-10-07T18:13:41.7299440Z env:
+2026-10-07T18:13:41.7299633Z   CARGO_TERM_COLOR: always
+2026-10-07T18:13:41.7299866Z   RUSTFLAGS: -D warnings
+2026-10-07T18:13:41.7300101Z   CARGO_HOME: /home/runner/.cargo
+2026-10-07T18:13:41.7300363Z   CARGO_INCREMENTAL: 0
+2026-10-07T18:13:41.7300579Z ##[endgroup]
+2026-10-07T18:13:41.7472866Z rustc 1.94.1 (e408947bf 2026-03-25)
+2026-10-07T18:13:41.7473636Z binary: rustc
+2026-10-07T18:13:41.7474290Z commit-hash: e408947bfd200af42db322daf0fadfe7e26d3bd1
+2026-10-07T18:13:41.7474854Z commit-date: 2026-03-25
+2026-10-07T18:13:41.7475207Z host: x86_64-unknown-linux-gnu
+2026-10-07T18:13:41.7475714Z release: 1.94.1
+2026-10-07T18:13:41.7476051Z LLVM version: 21.1.8
+2026-10-07T18:13:41.7490097Z ##[end-action id=__dtolnay_rust-toolchain.__run_10;outcome=success;conclusion=success;duration_ms=26]
+2026-10-07T18:13:41.7603471Z ##[group]Run Swatinem/rust-cache@v2
+2026-10-07T18:13:41.7603758Z with:
+2026-10-07T18:13:41.7603968Z   cache-on-failure: true
+2026-10-07T18:13:41.7604211Z   cache-workspace-crates: false
+2026-10-07T18:13:41.7604459Z   prefix-key: v0-rust
+2026-10-07T18:13:41.7604681Z   add-job-id-key: true
+2026-10-07T18:13:41.7604923Z   add-rust-environment-hash-key: true
+2026-10-07T18:13:41.7605192Z   cache-targets: true
+2026-10-07T18:13:41.7605419Z   cache-all-crates: false
+2026-10-07T18:13:41.7605971Z   save-if: true
+2026-10-07T18:13:41.7606180Z   cache-provider: github
+2026-10-07T18:13:41.7606405Z   cache-bin: true
+2026-10-07T18:13:41.7606611Z   lookup-only: false
+2026-10-07T18:13:41.7606818Z   cmd-format: {0}
+2026-10-07T18:13:41.7607005Z env:
+2026-10-07T18:13:41.7607193Z   CARGO_TERM_COLOR: always
+2026-10-07T18:13:41.7607419Z   RUSTFLAGS: -D warnings
+2026-10-07T18:13:41.7607650Z   CARGO_HOME: /home/runner/.cargo
+2026-10-07T18:13:41.7607898Z   CARGO_INCREMENTAL: 0
+2026-10-07T18:13:41.7608136Z ##[endgroup]
+2026-10-07T18:13:43.1198919Z ##[group]Cache Configuration
+2026-10-07T18:13:43.1199427Z Cache Provider:
+2026-10-07T18:13:43.1201410Z     github
+2026-10-07T18:13:43.1201763Z Workspaces:
+2026-10-07T18:13:43.1202158Z     /home/runner/work/hydrus-mine/hydrus-mine
+2026-10-07T18:13:43.1202651Z Cache Paths:
+2026-10-07T18:13:43.1203011Z     /home/runner/.cargo/bin
+2026-10-07T18:13:43.1203434Z     /home/runner/.cargo/.crates.toml
+2026-10-07T18:13:43.1203946Z     /home/runner/.cargo/.crates2.json
+2026-10-07T18:13:43.1204387Z     /home/runner/.cargo/registry
+2026-10-07T18:13:43.1204798Z     /home/runner/.cargo/git
+2026-10-07T18:13:43.1205258Z     /home/runner/work/hydrus-mine/hydrus-mine/target
+2026-10-07T18:13:43.1206034Z Restore Key:
+2026-10-07T18:13:43.1206384Z     v0-rust-check-Linux-x64-ff0b8b70
+2026-10-07T18:13:43.1206810Z Cache Key:
+2026-10-07T18:13:43.1207186Z     v0-rust-check-Linux-x64-ff0b8b70-0ea5e1be
+2026-10-07T18:13:43.1207659Z .. Prefix:
+2026-10-07T18:13:43.1207998Z   - v0-rust-check-Linux-x64
+2026-10-07T18:13:43.1208428Z .. Environment considered:
+2026-10-07T18:13:43.1208814Z   - Rust Versions:
+2026-10-07T18:13:43.1209357Z     - 1.94.1 x86_64-unknown-linux-gnu e408947bfd200af42db322daf0fadfe7e26d3bd1
+2026-10-07T18:13:43.1210211Z     - 1.99.0 x86_64-unknown-linux-gnu b940084d7eb6a299eb4bfeb8e34901bc051e7ac4
+2026-10-07T18:13:43.1210836Z   - CARGO_HOME
+2026-10-07T18:13:43.1211168Z   - CARGO_INCREMENTAL
+2026-10-07T18:13:43.1211936Z   - CARGO_TERM_COLOR
+2026-10-07T18:13:43.1212312Z   - RUSTFLAGS
+2026-10-07T18:13:43.1212677Z .. Lockfiles considered:
+2026-10-07T18:13:43.1213216Z   - /home/runner/work/hydrus-mine/hydrus-mine/.cargo/config.toml
+2026-10-07T18:13:43.1213913Z   - /home/runner/work/hydrus-mine/hydrus-mine/Cargo.lock
+2026-10-07T18:13:43.1214634Z   - /home/runner/work/hydrus-mine/hydrus-mine/crates/hydrus-api/Cargo.toml
+2026-10-07T18:13:43.1215736Z   - /home/runner/work/hydrus-mine/hydrus-mine/crates/hydrus-cli/Cargo.toml
+2026-10-07T18:13:43.1216625Z   - /home/runner/work/hydrus-mine/hydrus-mine/crates/hydrus-core/Cargo.toml
+2026-10-07T18:13:43.1217512Z   - /home/runner/work/hydrus-mine/hydrus-mine/crates/hydrus-download/Cargo.toml
+2026-10-07T18:13:43.1218483Z   - /home/runner/work/hydrus-mine/hydrus-mine/crates/hydrus-downloader-exchange/Cargo.toml
+2026-10-07T18:13:43.1219488Z   - /home/runner/work/hydrus-mine/hydrus-mine/crates/hydrus-duplicates/Cargo.toml
+2026-10-07T18:13:43.1220424Z   - /home/runner/work/hydrus-mine/hydrus-mine/crates/hydrus-gui-model/Cargo.toml
+2026-10-07T18:13:43.1221340Z   - /home/runner/work/hydrus-mine/hydrus-mine/crates/hydrus-gui-ui/Cargo.toml
+2026-10-07T18:13:43.1222233Z   - /home/runner/work/hydrus-mine/hydrus-mine/crates/hydrus-gui/Cargo.toml
+2026-10-07T18:13:43.1226468Z   - /home/runner/work/hydrus-mine/hydrus-mine/crates/hydrus-import/Cargo.toml
+2026-10-07T18:13:43.1227372Z   - /home/runner/work/hydrus-mine/hydrus-mine/crates/hydrus-legacy/Cargo.toml
+2026-10-07T18:13:43.1228215Z   - /home/runner/work/hydrus-mine/hydrus-mine/crates/hydrus-media/Cargo.toml
+2026-10-07T18:13:43.1229384Z   - /home/runner/work/hydrus-mine/hydrus-mine/crates/hydrus-net/Cargo.toml
+2026-10-07T18:13:43.1230178Z   - /home/runner/work/hydrus-mine/hydrus-mine/crates/hydrus-parse/Cargo.toml
+2026-10-07T18:13:43.1230695Z   - /home/runner/work/hydrus-mine/hydrus-mine/crates/hydrus-search/Cargo.toml
+2026-10-07T18:13:43.1231204Z   - /home/runner/work/hydrus-mine/hydrus-mine/crates/hydrus-store/Cargo.toml
+2026-10-07T18:13:43.1231715Z   - /home/runner/work/hydrus-mine/hydrus-mine/crates/hydrus-testkit/Cargo.toml
+2026-10-07T18:13:43.1232183Z   - /home/runner/work/hydrus-mine/hydrus-mine/rust-toolchain.toml
+2026-10-07T18:13:43.1232593Z   - /home/runner/work/hydrus-mine/hydrus-mine/xtask/Cargo.toml
+2026-10-07T18:13:43.1234021Z ##[endgroup]
+2026-10-07T18:13:43.1234157Z 
+2026-10-07T18:13:43.1234245Z ... Restoring cache ...
+2026-10-07T18:13:43.3031367Z Cache hit for: v0-rust-check-Linux-x64-ff0b8b70-0ea5e1be
+2026-10-07T18:13:44.4466598Z Received 109051904 of 835142253 (13.1%), 104.0 MBs/sec
+2026-10-07T18:13:45.4498557Z Received 301989888 of 835142253 (36.2%), 143.6 MBs/sec
+2026-10-07T18:13:46.4515778Z Received 494927872 of 835142253 (59.3%), 157.0 MBs/sec
+2026-10-07T18:13:47.4521944Z Received 671088640 of 835142253 (80.4%), 159.6 MBs/sec
+2026-10-07T18:13:48.2744264Z Received 835142253 of 835142253 (100.0%), 164.9 MBs/sec
+2026-10-07T18:13:48.2745269Z Cache Size: ~796 MB (835142253 B)
+2026-10-07T18:13:48.2852970Z [command]/usr/bin/tar -xf /home/runner/work/_temp/2483b08b-ce89-441f-bd27-472df45e748f/cache.tzst -P -C /home/runner/work/hydrus-mine/hydrus-mine --use-compress-program unzstd
+2026-10-07T18:13:53.1290774Z Cache restored successfully
+2026-10-07T18:13:53.5312064Z Restored from cache key "v0-rust-check-Linux-x64-ff0b8b70-0ea5e1be" full match: true.
+2026-10-07T18:13:53.5770394Z ##[group]Run python -m unittest discover -s .github/scripts/tests -v
+2026-10-07T18:13:53.5770934Z [36;1mpython -m unittest discover -s .github/scripts/tests -v[0m
+2026-10-07T18:13:53.5832813Z shell: /usr/bin/bash -e {0}
+2026-10-07T18:13:53.5833079Z env:
+2026-10-07T18:13:53.5833287Z   CARGO_TERM_COLOR: always
+2026-10-07T18:13:53.5833539Z   RUSTFLAGS: -D warnings
+2026-10-07T18:13:53.5833788Z   CARGO_HOME: /home/runner/.cargo
+2026-10-07T18:13:53.5834057Z   CARGO_INCREMENTAL: 0
+2026-10-07T18:13:53.5834285Z   CACHE_ON_FAILURE: true
+2026-10-07T18:13:53.5834514Z ##[endgroup]
+2026-10-07T18:13:54.2606160Z test_added_deleted_build_or_neighbouring_docs_input_still_rejects_before_stamp (test_publication_input_ledger.PublicationInputs.test_added_deleted_build_or_neighbouring_docs_input_still_rejects_before_stamp) ... ok
+2026-10-07T18:13:54.2723765Z test_excluded_paths_still_reject_unsafe_index_entries_and_total_count (test_publication_input_ledger.PublicationInputs.test_excluded_paths_still_reject_unsafe_index_entries_and_total_count) ... ok
+2026-10-07T18:13:54.2833219Z test_previous_full_repository_ledger_version_is_not_accepted (test_publication_input_ledger.PublicationInputs.test_previous_full_repository_ledger_version_is_not_accepted) ... ok
+2026-10-07T18:13:54.3029681Z test_publication_add_change_delete_preserves_build_reuse_without_stamping_evidence (test_publication_input_ledger.PublicationInputs.test_publication_add_change_delete_preserves_build_reuse_without_stamping_evidence) ... ok
+2026-10-07T18:13:54.3230793Z test_added_or_deleted_inputs_reject (test_workspace_artifact_cache.RestoreSafety.test_added_or_deleted_inputs_reject) ... ok
+2026-10-07T18:13:54.3365007Z test_backdated_changed_input_rejected_before_any_stamp (test_workspace_artifact_cache.RestoreSafety.test_backdated_changed_input_rejected_before_any_stamp) ... ok
+2026-10-07T18:13:54.3560382Z test_baseline_write_failure_rolls_back_successful_restore_and_blocks (test_workspace_artifact_cache.RestoreSafety.test_baseline_write_failure_rolls_back_successful_restore_and_blocks) ... ok
+2026-10-07T18:13:54.4157966Z test_cargo_config_env_target_injections_rejected (test_workspace_artifact_cache.RestoreSafety.test_cargo_config_env_target_injections_rejected) ... ok
+2026-10-07T18:13:54.4310853Z test_changed_external_input_remains_newer_than_cached_artifacts (test_workspace_artifact_cache.RestoreSafety.test_changed_external_input_remains_newer_than_cached_artifacts) ... ok
+2026-10-07T18:13:54.4474637Z test_copy_failure_changes_no_source_mtime_and_purges_mixed_target (test_workspace_artifact_cache.RestoreSafety.test_copy_failure_changes_no_source_mtime_and_purges_mixed_target) ... ok
+2026-10-07T18:13:54.4776862Z test_environment_target_or_build_layout_rejected (test_workspace_artifact_cache.RestoreSafety.test_environment_target_or_build_layout_rejected) ... ok
+2026-10-07T18:13:54.4952240Z test_healthy_restore_copies_before_stamping_and_invalidates_test_bin_units (test_workspace_artifact_cache.RestoreSafety.test_healthy_restore_copies_before_stamping_and_invalidates_test_bin_units) ... ok
+2026-10-07T18:13:54.5155984Z test_missing_incompatible_or_failed_cache_extraction_is_normal_fallback (test_workspace_artifact_cache.RestoreSafety.test_missing_incompatible_or_failed_cache_extraction_is_normal_fallback) ... ok
+2026-10-07T18:13:54.5278714Z test_partial_snapshot_missing_artifact_rejected (test_workspace_artifact_cache.RestoreSafety.test_partial_snapshot_missing_artifact_rejected) ... ok
+2026-10-07T18:13:54.5463750Z test_partial_stamp_failure_restores_every_mtime_and_purges_target (test_workspace_artifact_cache.RestoreSafety.test_partial_stamp_failure_restores_every_mtime_and_purges_target) ... ok
+2026-10-07T18:13:54.6203797Z test_root_ancestor_default_and_explicit_home_cargo_layout_configs_rejected (test_workspace_artifact_cache.RestoreSafety.test_root_ancestor_default_and_explicit_home_cargo_layout_configs_rejected) ... ok
+2026-10-07T18:13:54.6282510Z test_safe_input_path_rejects_escape_and_windows_aliases (test_workspace_artifact_cache.RestoreSafety.test_safe_input_path_rejects_escape_and_windows_aliases) ... ok
+2026-10-07T18:13:54.6597256Z test_snapshot_inventory_size_count_traversal_and_duplicate_rejected (test_workspace_artifact_cache.RestoreSafety.test_snapshot_inventory_size_count_traversal_and_duplicate_rejected) ... ok
+2026-10-07T18:13:54.6717370Z test_snapshot_nonregular_file_rejected_without_opening (test_workspace_artifact_cache.RestoreSafety.test_snapshot_nonregular_file_rejected_without_opening) ... ok
+2026-10-07T18:13:54.6839789Z test_snapshot_symlink_rejected (test_workspace_artifact_cache.RestoreSafety.test_snapshot_symlink_rejected) ... ok
+2026-10-07T18:13:54.7180068Z test_target_debug_deps_build_and_deep_destination_symlinks_rejected (test_workspace_artifact_cache.RestoreSafety.test_target_debug_deps_build_and_deep_destination_symlinks_rejected) ... ok
+2026-10-07T18:13:54.7319562Z test_unrecoverable_rollback_never_claims_safe (test_workspace_artifact_cache.RestoreSafety.test_unrecoverable_rollback_never_claims_safe) ... ok
+2026-10-07T18:13:54.7450909Z test_unrecoverable_target_purge_never_claims_safe (test_workspace_artifact_cache.RestoreSafety.test_unrecoverable_target_purge_never_claims_safe) ... ok
+2026-10-07T18:13:54.7528636Z test_workflow_compile_gate_allows_disabled_key_failure_and_safe_miss (test_workspace_artifact_cache.RestoreSafety.test_workflow_compile_gate_allows_disabled_key_failure_and_safe_miss) ... ok
+2026-10-07T18:13:54.7605847Z test_workflow_fails_closed_and_gates_non_cancelled_compilation (test_workspace_artifact_cache.RestoreSafety.test_workflow_fails_closed_and_gates_non_cancelled_compilation) ... ok
+2026-10-07T18:13:54.7607327Z 
+2026-10-07T18:13:54.7607648Z ----------------------------------------------------------------------
+2026-10-07T18:13:54.7608379Z Ran 25 tests in 0.542s
+2026-10-07T18:13:54.7608666Z 
+2026-10-07T18:13:54.7608833Z OK
+2026-10-07T18:13:54.7784215Z ##[group]Run python .github/scripts/workspace_artifact_cache.py key
+2026-10-07T18:13:54.7784748Z [36;1mpython .github/scripts/workspace_artifact_cache.py key[0m
+2026-10-07T18:13:54.7844204Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+2026-10-07T18:13:54.7844555Z env:
+2026-10-07T18:13:54.7844750Z   CARGO_TERM_COLOR: always
+2026-10-07T18:13:54.7844992Z   RUSTFLAGS: -D warnings
+2026-10-07T18:13:54.7845232Z   CARGO_HOME: /home/runner/.cargo
+2026-10-07T18:13:54.7845624Z   CARGO_INCREMENTAL: 0
+2026-10-07T18:13:54.7845857Z   CACHE_ON_FAILURE: true
+2026-10-07T18:13:54.7846084Z ##[endgroup]
+2026-10-07T18:13:54.9438598Z Workspace restore prefix: hydrus-ws-v1-check-Linux-X64-41d404dfad11d493117152f4-
+2026-10-07T18:13:54.9576817Z ##[group]Run actions/cache/restore@v4
+2026-10-07T18:13:54.9577120Z with:
+2026-10-07T18:13:54.9577359Z   path: .ci-workspace-artifacts
+2026-10-07T18:13:54.9577928Z   key: hydrus-ws-v1-check-Linux-X64-41d404dfad11d493117152f4-8fdb04d5a6c72075057401228679a94de6626795-37665125076-1
+2026-10-07T18:13:54.9578615Z   restore-keys: hydrus-ws-v1-check-Linux-X64-41d404dfad11d493117152f4-
+2026-10-07T18:13:54.9579016Z   enableCrossOsArchive: false
+2026-10-07T18:13:54.9579274Z   fail-on-cache-miss: false
+2026-10-07T18:13:54.9579506Z   lookup-only: false
+2026-10-07T18:13:54.9579710Z env:
+2026-10-07T18:13:54.9579899Z   CARGO_TERM_COLOR: always
+2026-10-07T18:13:54.9580138Z   RUSTFLAGS: -D warnings
+2026-10-07T18:13:54.9580370Z   CARGO_HOME: /home/runner/.cargo
+2026-10-07T18:13:54.9580624Z   CARGO_INCREMENTAL: 0
+2026-10-07T18:13:54.9580839Z   CACHE_ON_FAILURE: true
+2026-10-07T18:13:54.9581060Z ##[endgroup]
+2026-10-07T18:13:55.0633790Z (node:2508) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-10-07T18:13:55.0634713Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-10-07T18:13:55.2143874Z Cache hit for restore-key: hydrus-ws-v1-check-Linux-X64-41d404dfad11d493117152f4-e4c2439eccc77508fd8446a5c8ee6dee040e6161-37662892605-1
+2026-10-07T18:13:55.2243069Z (node:2508) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+2026-10-07T18:13:56.3767782Z Received 88080384 of 112619481 (78.2%), 84.0 MBs/sec
+2026-10-07T18:13:56.5859847Z Received 112619481 of 112619481 (100.0%), 88.8 MBs/sec
+2026-10-07T18:13:56.5862598Z Cache Size: ~107 MB (112619481 B)
+2026-10-07T18:13:56.5929315Z [command]/usr/bin/tar -xf /home/runner/work/_temp/6a6e96c0-f361-46ed-bec0-439e52e16db6/cache.tzst -P -C /home/runner/work/hydrus-mine/hydrus-mine --use-compress-program unzstd
+2026-10-07T18:13:57.3260589Z Cache restored successfully
+2026-10-07T18:13:57.3396013Z Cache restored from key: hydrus-ws-v1-check-Linux-X64-41d404dfad11d493117152f4-e4c2439eccc77508fd8446a5c8ee6dee040e6161-37662892605-1
+2026-10-07T18:13:57.5216408Z ##[group]Run python .github/scripts/workspace_artifact_cache.py restore
+2026-10-07T18:13:57.5217297Z [36;1mpython .github/scripts/workspace_artifact_cache.py restore[0m
+2026-10-07T18:13:57.5297103Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+2026-10-07T18:13:57.5297689Z env:
+2026-10-07T18:13:57.5298030Z   CARGO_TERM_COLOR: always
+2026-10-07T18:13:57.5298455Z   RUSTFLAGS: -D warnings
+2026-10-07T18:13:57.5298862Z   CARGO_HOME: /home/runner/.cargo
+2026-10-07T18:13:57.5299275Z   CARGO_INCREMENTAL: 0
+2026-10-07T18:13:57.5299628Z   CACHE_ON_FAILURE: true
+2026-10-07T18:13:57.5300042Z   WORKSPACE_CACHE_RESTORE_OUTCOME: success
+2026-10-07T18:13:57.5300518Z ##[endgroup]
+2026-10-07T18:14:03.3479040Z Verified and restored 4134 tracked-input mtimes and 230 coherent workspace artifact files; Cargo freshness checks remain enabled.
+2026-10-07T18:14:03.3601600Z ##[group]Run sudo apt-get update
+2026-10-07T18:14:03.3602048Z [36;1msudo apt-get update[0m
+2026-10-07T18:14:03.3602666Z [36;1msudo apt-get install -y ffmpeg fontconfig libfontconfig1-dev fonts-noto-cjk[0m
+2026-10-07T18:14:03.3603224Z [36;1mfc-match ':lang=ja'[0m
+2026-10-07T18:14:03.3662996Z shell: /usr/bin/bash -e {0}
+2026-10-07T18:14:03.3663396Z env:
+2026-10-07T18:14:03.3663756Z   CARGO_TERM_COLOR: always
+2026-10-07T18:14:03.3664148Z   RUSTFLAGS: -D warnings
+2026-10-07T18:14:03.3664520Z   CARGO_HOME: /home/runner/.cargo
+2026-10-07T18:14:03.3664963Z   CARGO_INCREMENTAL: 0
+2026-10-07T18:14:03.3665265Z   CACHE_ON_FAILURE: true
+2026-10-07T18:14:03.3665922Z ##[endgroup]
+2026-10-07T18:14:03.4837376Z Get:1 file:/etc/apt/apt-mirrors.txt Mirrorlist [144 B]
+2026-10-07T18:14:03.5052460Z Get:6 https://packages.microsoft.com/ubuntu/24.04/prod noble InRelease [3600 B]
+2026-10-07T18:14:03.6250884Z Get:7 https://packages.microsoft.com/ubuntu/24.04/prod noble/main amd64 Packages [519 kB]
+2026-10-07T18:14:03.6469186Z Get:8 https://packages.microsoft.com/ubuntu/24.04/prod noble/main arm64 Packages [463 kB]
+2026-10-07T18:14:15.6694166Z Hit:2 http://azure.archive.ubuntu.com/ubuntu noble InRelease
+2026-10-07T18:14:15.6708414Z Get:3 http://azure.archive.ubuntu.com/ubuntu noble-updates InRelease [126 kB]
+2026-10-07T18:14:15.6775700Z Get:4 http://azure.archive.ubuntu.com/ubuntu noble-backports InRelease [126 kB]
+2026-10-07T18:14:15.6826874Z Get:5 http://azure.archive.ubuntu.com/ubuntu noble-security InRelease [126 kB]
+2026-10-07T18:14:15.7784225Z Get:9 http://azure.archive.ubuntu.com/ubuntu noble-updates/main amd64 Packages [1375 kB]
+2026-10-07T18:14:15.7888856Z Get:10 http://azure.archive.ubuntu.com/ubuntu noble-updates/main Translation-en [306 kB]
+2026-10-07T18:14:15.7915706Z Get:11 http://azure.archive.ubuntu.com/ubuntu noble-updates/universe amd64 Packages [1702 kB]
+2026-10-07T18:14:15.8027242Z Get:12 http://azure.archive.ubuntu.com/ubuntu noble-updates/universe Translation-en [341 kB]
+2026-10-07T18:14:15.8062875Z Get:13 http://azure.archive.ubuntu.com/ubuntu noble-updates/restricted amd64 Packages [1730 kB]
+2026-10-07T18:14:15.8192747Z Get:14 http://azure.archive.ubuntu.com/ubuntu noble-updates/restricted Translation-en [396 kB]
+2026-10-07T18:14:15.8224673Z Get:15 http://azure.archive.ubuntu.com/ubuntu noble-updates/multiverse Translation-en [13.3 kB]
+2026-10-07T18:14:15.8797456Z Get:16 http://azure.archive.ubuntu.com/ubuntu noble-security/main amd64 Packages [1073 kB]
+2026-10-07T18:14:15.8881544Z Get:17 http://azure.archive.ubuntu.com/ubuntu noble-security/main Translation-en [223 kB]
+2026-10-07T18:14:15.8904654Z Get:18 http://azure.archive.ubuntu.com/ubuntu noble-security/universe amd64 Packages [1218 kB]
+2026-10-07T18:14:15.9403121Z Get:19 http://azure.archive.ubuntu.com/ubuntu noble-security/universe Translation-en [245 kB]
+2026-10-07T18:14:15.9426795Z Get:20 http://azure.archive.ubuntu.com/ubuntu noble-security/multiverse Translation-en [11.6 kB]
+2026-10-07T18:14:20.5621497Z Fetched 9996 kB in 13s (762 kB/s)
+2026-10-07T18:14:21.3808389Z Reading package lists...
+2026-10-07T18:14:21.4113593Z Reading package lists...
+2026-10-07T18:14:21.5833672Z Building dependency tree...
+2026-10-07T18:14:21.5841128Z Reading state information...
+2026-10-07T18:14:21.7231311Z fontconfig is already the newest version (2.15.0-1.1ubuntu2).
+2026-10-07T18:14:21.7232030Z fontconfig set to manually installed.
+2026-10-07T18:14:21.7232596Z The following additional packages will be installed:
+2026-10-07T18:14:21.7233477Z   bzip2-doc i965-va-driver intel-media-va-driver libaacs0 libass9 libasyncns0
+2026-10-07T18:14:21.7234450Z   libavc1394-0 libavcodec60 libavdevice60 libavfilter9 libavformat60
+2026-10-07T18:14:21.7235329Z   libavutil58 libbdplus0 libblas3 libbluray2 libbrotli-dev libbs2b0 libbz2-dev
+2026-10-07T18:14:21.7236675Z   libcaca0 libcdio-cdda2t64 libcdio-paranoia2t64 libcdio19t64 libchromaprint1
+2026-10-07T18:14:21.7237504Z   libcjson1 libcodec2-1.2 libdav1d7 libdc1394-25 libdecor-0-0
+2026-10-07T18:14:21.7238867Z   libdecor-0-plugin-1-gtk libflac12t64 libflite1 libfontconfig-dev
+2026-10-07T18:14:21.7239745Z   libfreetype-dev libfreetype6 libgme0 libgsm1 libhwy1t64 libiec61883-0
+2026-10-07T18:14:21.7240644Z   libigdgmm12 libjack-jackd2-0 libjxl0.7 liblapack3 liblilv-0-0
+2026-10-07T18:14:21.7241428Z   libmbedcrypto7t64 libmp3lame0 libmpg123-0t64 libmysofa1 libopenal-data
+2026-10-07T18:14:21.7242490Z   libopenal1 libopenmpt0t64 libopus0 libplacebo338 libpng-dev libpng-tools
+2026-10-07T18:14:21.7243414Z   libpocketsphinx3 libpostproc57 libpulse0 librav1e0 libraw1394-11 librist4
+2026-10-07T18:14:21.7244364Z   librsvg2-2 librsvg2-common librubberband2 libsamplerate0 libsdl2-2.0-0
+2026-10-07T18:14:21.7245211Z   libserd-0-0 libshine3 libsndfile1 libsndio7.0 libsord-0-0 libsoxr0 libspeex1
+2026-10-07T18:14:21.7246235Z   libsphinxbase3t64 libsratom-0-0 libsrt1.5-gnutls libssh-gcrypt-4
+2026-10-07T18:14:21.7246969Z   libsvtav1enc1d1 libswresample4 libswscale7 libtheora0 libtwolame0
+2026-10-07T18:14:21.7247523Z   libudfread0 libunibreak5 libva-drm2 libva-x11-2 libva2 libvdpau1
+2026-10-07T18:14:21.7247995Z   libvidstab1.1 libvorbisenc2 libvpl2 libvpx9 libx264-164 libx265-199
+2026-10-07T18:14:21.7248475Z   libxcb-shape0 libxv1 libxvidcore4 libzimg2 libzix-0-0 libzvbi-common
+2026-10-07T18:14:21.7248951Z   libzvbi0t64 mesa-va-drivers mesa-vdpau-drivers ocl-icd-libopencl1
+2026-10-07T18:14:21.7249407Z   pocketsphinx-en-us uuid-dev va-driver-all vdpau-driver-all
+2026-10-07T18:14:21.7249993Z Suggested packages:
+2026-10-07T18:14:21.7250364Z   ffmpeg-doc fonts-noto-cjk-extra i965-va-driver-shaders libcuda1 libnvcuvid1
+2026-10-07T18:14:21.7250870Z   libnvidia-encode1 libbluray-bdj freetype2-doc jackd2 libportaudio2
+2026-10-07T18:14:21.7251367Z   opus-tools pulseaudio libraw1394-doc librsvg2-bin serdi sndiod sordi speex
+2026-10-07T18:14:21.7251770Z   opencl-icd libvdpau-va-gl1
+2026-10-07T18:14:21.8008695Z The following NEW packages will be installed:
+2026-10-07T18:14:21.8009987Z   bzip2-doc ffmpeg fonts-noto-cjk i965-va-driver intel-media-va-driver
+2026-10-07T18:14:21.8011101Z   libaacs0 libass9 libasyncns0 libavc1394-0 libavcodec60 libavdevice60
+2026-10-07T18:14:21.8012058Z   libavfilter9 libavformat60 libavutil58 libbdplus0 libblas3 libbluray2
+2026-10-07T18:14:21.8012664Z   libbrotli-dev libbs2b0 libbz2-dev libcaca0 libcdio-cdda2t64
+2026-10-07T18:14:21.8013213Z   libcdio-paranoia2t64 libcdio19t64 libchromaprint1 libcjson1 libcodec2-1.2
+2026-10-07T18:14:21.8013802Z   libdav1d7 libdc1394-25 libdecor-0-0 libdecor-0-plugin-1-gtk libflac12t64
+2026-10-07T18:14:21.8014710Z   libflite1 libfontconfig-dev libfontconfig1-dev libfreetype-dev libgme0
+2026-10-07T18:14:21.8015720Z   libgsm1 libhwy1t64 libiec61883-0 libigdgmm12 libjack-jackd2-0 libjxl0.7
+2026-10-07T18:14:21.8016281Z   liblapack3 liblilv-0-0 libmbedcrypto7t64 libmp3lame0 libmpg123-0t64
+2026-10-07T18:14:21.8016850Z   libmysofa1 libopenal-data libopenal1 libopenmpt0t64 libopus0 libplacebo338
+2026-10-07T18:14:21.8017590Z   libpng-dev libpng-tools libpocketsphinx3 libpostproc57 libpulse0 librav1e0
+2026-10-07T18:14:21.8018139Z   libraw1394-11 librist4 librsvg2-2 librsvg2-common librubberband2
+2026-10-07T18:14:21.8018988Z   libsamplerate0 libsdl2-2.0-0 libserd-0-0 libshine3 libsndfile1 libsndio7.0
+2026-10-07T18:14:21.8019751Z   libsord-0-0 libsoxr0 libspeex1 libsphinxbase3t64 libsratom-0-0
+2026-10-07T18:14:21.8020287Z   libsrt1.5-gnutls libssh-gcrypt-4 libsvtav1enc1d1 libswresample4 libswscale7
+2026-10-07T18:14:21.8020853Z   libtheora0 libtwolame0 libudfread0 libunibreak5 libva-drm2 libva-x11-2
+2026-10-07T18:14:21.8021385Z   libva2 libvdpau1 libvidstab1.1 libvorbisenc2 libvpl2 libvpx9 libx264-164
+2026-10-07T18:14:21.8021862Z   libx265-199 libxcb-shape0 libxv1 libxvidcore4 libzimg2 libzix-0-0
+2026-10-07T18:14:21.8022315Z   libzvbi-common libzvbi0t64 mesa-va-drivers mesa-vdpau-drivers
+2026-10-07T18:14:21.8022756Z   ocl-icd-libopencl1 pocketsphinx-en-us uuid-dev va-driver-all
+2026-10-07T18:14:21.8023101Z   vdpau-driver-all
+2026-10-07T18:14:21.8026746Z The following packages will be upgraded:
+2026-10-07T18:14:21.8032553Z   libfreetype6
+2026-10-07T18:14:21.8221155Z 1 upgraded, 109 newly installed, 0 to remove and 10 not upgraded.
+2026-10-07T18:14:21.8221648Z Need to get 158 MB of archives.
+2026-10-07T18:14:21.8222003Z After this operation, 326 MB of additional disk space will be used.
+2026-10-07T18:14:21.8222432Z Get:1 file:/etc/apt/apt-mirrors.txt Mirrorlist [144 B]
+2026-10-07T18:14:31.5265960Z Get:2 http://azure.archive.ubuntu.com/ubuntu noble-updates/main amd64 bzip2-doc all 1.0.8-5.1ubuntu0.1 [499 kB]
+2026-10-07T18:14:38.3375274Z Get:3 http://azure.archive.ubuntu.com/ubuntu noble-updates/universe amd64 libva2 amd64 2.20.0-2ubuntu0.2 [66.4 kB]
+2026-10-07T18:14:39.4810026Z Get:4 http://azure.archive.ubuntu.com/ubuntu noble-updates/universe amd64 libva-drm2 amd64 2.20.0-2ubuntu0.2 [7124 B]
+2026-10-07T18:14:39.8783038Z Get:5 http://azure.archive.ubuntu.com/ubuntu noble-updates/universe amd64 libva-x11-2 amd64 2.20.0-2ubuntu0.2 [12.0 kB]
+2026-10-07T18:14:40.3152837Z Get:6 http://azure.archive.ubuntu.com/ubuntu noble/main amd64 libvdpau1 amd64 1.5-2build1 [27.8 kB]
+2026-10-07T18:14:52.5294733Z Get:7 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libvpl2 amd64 2023.3.0-1build1 [99.8 kB]
+2026-10-07T18:14:54.1227340Z Get:8 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 ocl-icd-libopencl1 amd64 2.3.2-1build1 [38.5 kB]
+2026-10-07T18:14:54.9118749Z Get:9 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libavutil58 amd64 7:6.1.1-3ubuntu5 [401 kB]
+2026-10-07T18:15:00.2687644Z Get:10 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libcodec2-1.2 amd64 1.2.0-2build1 [8998 kB]
+2026-10-07T18:16:44.4590469Z Get:11 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libdav1d7 amd64 1.4.1-1build1 [604 kB]
+2026-10-07T18:16:52.7860648Z Get:12 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libgsm1 amd64 1.0.22-1build1 [27.8 kB]
+2026-10-07T18:16:53.3343620Z Get:13 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libhwy1t64 amd64 1.0.7-8.1build1 [584 kB]
+2026-10-07T18:16:59.9665246Z Get:14 http://azure.archive.ubuntu.com/ubuntu noble-updates/universe amd64 libjxl0.7 amd64 0.7.0-10.2ubuntu6.1 [1001 kB]
+2026-10-07T18:17:41.4390461Z Get:15 http://azure.archive.ubuntu.com/ubuntu noble/main amd64 libmp3lame0 amd64 3.100-6build1 [142 kB]
+2026-10-07T18:17:43.2596752Z Get:16 http://azure.archive.ubuntu.com/ubuntu noble/main amd64 libopus0 amd64 1.4-1build1 [208 kB]
+2026-10-07T18:17:45.7692000Z Get:17 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 librav1e0 amd64 0.7.1-2 [1022 kB]
+2026-10-07T18:17:59.7116033Z Get:18 http://azure.archive.ubuntu.com/ubuntu noble-updates/main amd64 librsvg2-2 amd64 2.58.0+dfsg-1ubuntu0.1 [2141 kB]
+2026-10-07T18:18:24.4696562Z Get:19 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libshine3 amd64 3.1.1-2build1 [23.2 kB]
+2026-10-07T18:18:25.2628886Z Get:20 http://azure.archive.ubuntu.com/ubuntu noble-updates/main amd64 libspeex1 amd64 1.2.1-2ubuntu2.24.04.1 [59.6 kB]
+2026-10-07T18:18:26.1816229Z Get:21 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libsvtav1enc1d1 amd64 1.7.0+dfsg-2build1 [2425 kB]
+2026-10-07T18:18:56.7620940Z Get:22 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libsoxr0 amd64 0.1.3-4build3 [80.0 kB]
+2026-10-07T18:18:57.9773812Z Get:23 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libswresample4 amd64 7:6.1.1-3ubuntu5 [63.8 kB]
+2026-10-07T18:18:58.9725911Z Get:24 http://azure.archive.ubuntu.com/ubuntu noble/main amd64 libtheora0 amd64 1.1.1+dfsg.1-16.1build3 [211 kB]
+2026-10-07T18:19:01.7952641Z Get:25 http://azure.archive.ubuntu.com/ubuntu noble/main amd64 libtwolame0 amd64 0.4.0-2build3 [52.3 kB]
+2026-10-07T18:19:02.6554677Z Get:26 http://azure.archive.ubuntu.com/ubuntu noble/main amd64 libvorbisenc2 amd64 1.3.7-1build3 [80.8 kB]
+2026-10-07T18:19:09.6936931Z Get:27 http://azure.archive.ubuntu.com/ubuntu noble-updates/main amd64 libvpx9 amd64 1.14.0-1ubuntu2.3 [1143 kB]
+2026-10-07T18:19:23.3509070Z Get:28 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libx264-164 amd64 2:0.164.3108+git31e19f9-1 [604 kB]
+2026-10-07T18:19:30.6341428Z Get:29 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libx265-199 amd64 3.5-2build1 [1226 kB]
+2026-10-07T18:19:49.5171071Z Get:30 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libxvidcore4 amd64 2:1.3.7-1build1 [219 kB]
+2026-10-07T18:19:52.4000177Z Get:31 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libzvbi-common all 0.2.42-2 [42.4 kB]
+2026-10-07T18:19:53.1288552Z Get:32 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libzvbi0t64 amd64 0.2.42-2 [261 kB]
+2026-10-07T18:19:56.4639292Z Get:33 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libavcodec60 amd64 7:6.1.1-3ubuntu5 [5851 kB]
+2026-10-07T18:21:10.9089462Z Get:34 http://azure.archive.ubuntu.com/ubuntu noble/main amd64 libraw1394-11 amd64 2.1.2-2build3 [26.2 kB]
+2026-10-07T18:21:11.6343966Z Get:35 http://azure.archive.ubuntu.com/ubuntu noble/main amd64 libavc1394-0 amd64 0.5.4-5build3 [15.4 kB]
+2026-10-07T18:21:12.2059862Z Get:36 http://azure.archive.ubuntu.com/ubuntu noble-updates/main amd64 libfreetype6 amd64 2.13.2+dfsg-1ubuntu0.2 [403 kB]
+2026-10-07T18:21:18.3458704Z Get:37 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libunibreak5 amd64 5.1-2build1 [25.0 kB]
+2026-10-07T18:21:19.0136344Z Get:38 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libass9 amd64 1:0.17.1-2build1 [104 kB]
+2026-10-07T18:21:20.7173785Z Get:39 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libudfread0 amd64 1.1.2-1build1 [19.0 kB]
+2026-10-07T18:21:21.2791977Z Get:40 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libbluray2 amd64 1:1.3.4-1build1 [159 kB]
+2026-10-07T18:21:23.8133876Z Get:41 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libchromaprint1 amd64 1.5.1-5 [30.5 kB]
+2026-10-07T18:21:24.5414955Z Get:42 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libgme0 amd64 0.6.3-7build1 [134 kB]
+2026-10-07T18:21:26.6747084Z Get:43 http://azure.archive.ubuntu.com/ubuntu noble-updates/main amd64 libmpg123-0t64 amd64 1.32.5-1ubuntu1.1 [169 kB]
+2026-10-07T18:21:29.4154127Z Get:44 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libopenmpt0t64 amd64 0.7.3-1.1build3 [647 kB]
+2026-10-07T18:21:38.7755861Z Get:45 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libcjson1 amd64 1.7.17-1 [24.8 kB]
+2026-10-07T18:21:39.4706196Z Get:46 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libmbedcrypto7t64 amd64 2.28.8-1 [209 kB]
+2026-10-07T18:21:42.7245956Z Get:47 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 librist4 amd64 0.2.10+dfsg-2 [74.9 kB]
+2026-10-07T18:21:44.0961420Z Get:48 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libsrt1.5-gnutls amd64 1.5.3-1build2 [316 kB]
+2026-10-07T18:21:48.5817665Z Get:49 http://azure.archive.ubuntu.com/ubuntu noble-updates/main amd64 libssh-gcrypt-4 amd64 0.10.6-2ubuntu0.5 [226 kB]
+2026-10-07T18:21:51.9087290Z Get:50 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libavformat60 amd64 7:6.1.1-3ubuntu5 [1153 kB]
+2026-10-07T18:22:08.7470292Z Get:51 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libbs2b0 amd64 3.1.0+dfsg-7build1 [10.6 kB]
+2026-10-07T18:22:09.5879656Z Get:52 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libflite1 amd64 2.2-6build3 [13.6 MB]
+2026-10-07T18:29:10.1400977Z Get:53 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libserd-0-0 amd64 0.32.2-1 [43.6 kB]
+2026-10-07T18:29:11.1554882Z Get:54 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libzix-0-0 amd64 0.4.2-2build1 [23.6 kB]
+2026-10-07T18:29:11.8424667Z Get:55 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libsord-0-0 amd64 0.16.16-2build1 [15.8 kB]
+2026-10-07T18:29:12.4082087Z Get:56 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libsratom-0-0 amd64 0.6.16-1build1 [17.3 kB]
+2026-10-07T18:29:13.1023505Z Get:57 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 liblilv-0-0 amd64 0.24.22-1build1 [41.0 kB]
+2026-10-07T18:29:14.1628756Z Get:58 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libmysofa1 amd64 1.3.2+dfsg-2ubuntu2 [1158 kB]
+2026-10-07T18:29:32.7266826Z Get:59 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libplacebo338 amd64 6.338.2-2build1 [2654 kB]
+2026-10-07T18:30:07.5532235Z Get:60 http://azure.archive.ubuntu.com/ubuntu noble-updates/main amd64 libblas3 amd64 3.12.0-3build1.1 [238 kB]
+2026-10-07T18:30:10.9420692Z Get:61 http://azure.archive.ubuntu.com/ubuntu noble-updates/main amd64 liblapack3 amd64 3.12.0-3build1.1 [2646 kB]
+2026-10-07T18:30:46.3184908Z Get:62 http://azure.archive.ubuntu.com/ubuntu noble/main amd64 libasyncns0 amd64 0.8-6build4 [11.3 kB]
+2026-10-07T18:30:46.7573235Z Get:63 http://azure.archive.ubuntu.com/ubuntu noble/main amd64 libflac12t64 amd64 1.4.3+ds-2.1ubuntu2 [197 kB]
+2026-10-07T18:30:49.7679371Z Get:64 http://azure.archive.ubuntu.com/ubuntu noble-updates/main amd64 libsndfile1 amd64 1.2.2-1ubuntu5.24.04.1 [209 kB]
+2026-10-07T18:30:52.8027273Z Get:65 http://azure.archive.ubuntu.com/ubuntu noble-updates/main amd64 libpulse0 amd64 1:16.1+dfsg1-2ubuntu10.1 [292 kB]
+2026-10-07T18:30:57.3669481Z Get:66 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libsphinxbase3t64 amd64 0.8+5prealpha+1-17build2 [126 kB]
+2026-10-07T18:30:59.2330289Z Get:67 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libpocketsphinx3 amd64 0.8.0+real5prealpha+1-15ubuntu5 [133 kB]
+2026-10-07T18:31:01.4146518Z Get:68 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libpostproc57 amd64 7:6.1.1-3ubuntu5 [49.9 kB]
+2026-10-07T18:31:02.4141771Z Get:69 http://azure.archive.ubuntu.com/ubuntu noble/main amd64 libsamplerate0 amd64 0.2.2-4build1 [1344 kB]
+2026-10-07T18:31:23.6391594Z Get:70 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 librubberband2 amd64 3.3.0+dfsg-2build1 [130 kB]
+2026-10-07T18:31:25.9459615Z Get:71 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libswscale7 amd64 7:6.1.1-3ubuntu5 [193 kB]
+2026-10-07T18:31:28.9113233Z Get:72 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libvidstab1.1 amd64 1.1.0-2build1 [38.5 kB]
+2026-10-07T18:31:29.6797048Z Get:73 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libzimg2 amd64 3.0.5+ds1-1build1 [254 kB]
+2026-10-07T18:31:33.6636865Z Get:74 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libavfilter9 amd64 7:6.1.1-3ubuntu5 [4235 kB]
+2026-10-07T18:32:32.9629151Z Get:75 http://azure.archive.ubuntu.com/ubuntu noble-updates/main amd64 libcaca0 amd64 0.99.beta20-4ubuntu0.2 [209 kB]
+2026-10-07T18:32:35.9393969Z Get:76 http://azure.archive.ubuntu.com/ubuntu noble-updates/main amd64 libcdio19t64 amd64 2.1.0-4.1ubuntu1.2 [62.4 kB]
+2026-10-07T18:32:37.0527131Z Get:77 http://azure.archive.ubuntu.com/ubuntu noble/main amd64 libcdio-cdda2t64 amd64 10.2+2.0.1-1.1build2 [16.5 kB]
+2026-10-07T18:32:37.6170114Z Get:78 http://azure.archive.ubuntu.com/ubuntu noble/main amd64 libcdio-paranoia2t64 amd64 10.2+2.0.1-1.1build2 [16.6 kB]
+2026-10-07T18:32:38.3147878Z Get:79 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libdc1394-25 amd64 2.2.6-4build1 [90.1 kB]
+2026-10-07T18:32:39.7279892Z Get:80 http://azure.archive.ubuntu.com/ubuntu noble/main amd64 libiec61883-0 amd64 1.2.0-6build1 [24.5 kB]
+2026-10-07T18:32:40.3728599Z Get:81 http://azure.archive.ubuntu.com/ubuntu noble/main amd64 libjack-jackd2-0 amd64 1.9.21~dfsg-3ubuntu3 [289 kB]
+2026-10-07T18:32:44.3995887Z Get:82 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libopenal-data all 1:1.23.1-4build1 [161 kB]
+2026-10-07T18:32:46.8083606Z Get:83 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libsndio7.0 amd64 1.9.0-0.3build3 [29.6 kB]
+2026-10-07T18:32:47.4905956Z Get:84 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libopenal1 amd64 1:1.23.1-4build1 [540 kB]
+2026-10-07T18:32:54.9691643Z Get:85 http://azure.archive.ubuntu.com/ubuntu noble/main amd64 libdecor-0-0 amd64 0.2.2-1build2 [16.5 kB]
+2026-10-07T18:32:55.6406064Z Get:86 http://azure.archive.ubuntu.com/ubuntu noble-updates/main amd64 libsdl2-2.0-0 amd64 2.30.0+dfsg-1ubuntu3.1 [686 kB]
+2026-10-07T18:33:05.2381513Z Get:87 http://azure.archive.ubuntu.com/ubuntu noble/main amd64 libxcb-shape0 amd64 1.15-1ubuntu2 [6100 B]
+2026-10-07T18:33:05.6248761Z Get:88 http://azure.archive.ubuntu.com/ubuntu noble/main amd64 libxv1 amd64 2:1.0.11-1.1build1 [10.7 kB]
+2026-10-07T18:33:06.0693639Z Get:89 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libavdevice60 amd64 7:6.1.1-3ubuntu5 [82.3 kB]
+2026-10-07T18:33:07.4875494Z Get:90 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 ffmpeg amd64 7:6.1.1-3ubuntu5 [1879 kB]
+2026-10-07T18:33:33.0352758Z Get:91 http://azure.archive.ubuntu.com/ubuntu noble/main amd64 fonts-noto-cjk all 1:20230817+repack1-3 [61.2 MB]
+2026-10-07T18:47:14.5904516Z ##[error]The operation was canceled.
+2026-10-07T18:47:14.6002701Z ##[group]Run actions/upload-artifact@v4
+2026-10-07T18:47:14.6003009Z with:
+2026-10-07T18:47:14.6003228Z   name: native-gui-renders-37665125076-1
+2026-10-07T18:47:14.6003515Z   path: target/tmp/*.png
+2026-10-07T18:47:14.6003763Z   if-no-files-found: ignore
+2026-10-07T18:47:14.6004004Z   retention-days: 3
+2026-10-07T18:47:14.6004232Z   compression-level: 6
+2026-10-07T18:47:14.6004458Z   overwrite: false
+2026-10-07T18:47:14.6004679Z   include-hidden-files: false
+2026-10-07T18:47:14.6004928Z env:
+2026-10-07T18:47:14.6005120Z   CARGO_TERM_COLOR: always
+2026-10-07T18:47:14.6005361Z   RUSTFLAGS: -D warnings
+2026-10-07T18:47:14.6005797Z   CARGO_HOME: /home/runner/.cargo
+2026-10-07T18:47:14.6006062Z   CARGO_INCREMENTAL: 0
+2026-10-07T18:47:14.6006302Z   CACHE_ON_FAILURE: true
+2026-10-07T18:47:14.6006531Z ##[endgroup]
+2026-10-07T18:47:14.7635074Z (node:3255) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-10-07T18:47:14.7636767Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-10-07T18:47:14.7682201Z No files were found with the provided path: target/tmp/*.png. No artifacts will be uploaded.
+2026-10-07T18:47:14.7855867Z Post job cleanup.
+2026-10-07T18:47:14.9199479Z Cache up-to-date.
+2026-10-07T18:47:14.9269935Z Post job cleanup.
+2026-10-07T18:47:15.0128985Z [command]/usr/bin/git version
+2026-10-07T18:47:15.0165852Z git version 2.55.0
+2026-10-07T18:47:15.0202504Z Temporarily overriding HOME='/home/runner/work/_temp/df5a8092-2109-4e42-b7fb-2f16a6bb3da1' before making global git config changes
+2026-10-07T18:47:15.0204033Z Adding repository directory to the temporary git global config as a safe directory
+2026-10-07T18:47:15.0207851Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/hydrus-mine/hydrus-mine
+2026-10-07T18:47:15.0242210Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-10-07T18:47:15.0274497Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-10-07T18:47:15.0537197Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-07T18:47:15.0561605Z http.https://github.com/.extraheader
+2026-10-07T18:47:15.0572813Z [command]/usr/bin/git config --local --unset-all http.https://github.com/.extraheader
+2026-10-07T18:47:15.0605166Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-10-07T18:47:15.0835870Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-07T18:47:15.0866479Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-10-07T18:47:15.1219910Z Cleaning up orphan processes
+2026-10-07T18:47:15.1518400Z ##[warning]Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/cache/restore@v4, actions/checkout@v4, actions/upload-artifact@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+
