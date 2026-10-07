@@ -3501,6 +3501,15 @@ temporary hide/re-show and a positive current answer. Full Linux run `3759929050
 and fresh independent rendered review passed for exactly URL Add/Edit.
 [Evidence](gui-coverage/checkpoints/791b72d19/README.md).
 
+A bounded nested File queue follow-up replays all eight recorded queue states,
+exact registered choices, explicit single-choice Edit, removal cancellation and
+exhausted Information. It checks full saved callable keys and order after both
+Apply steps and reopening. Actual Down/Up edits then change which first saved
+call the Main launch consumer uses, without reseeding settings. Retained and
+hidden child answers are checked against usable successor owners. Six new
+captures and the additional regressions await full Linux validation and fresh
+independent rendered review; no additional completion is banked yet.
+
 The main thumbnail and viewer default-open actions read current saved routes.
 Specific filetype entries replace general-class entries, then “all files”;
 an explicit empty specific entry uses the OS default. The first URL/file call

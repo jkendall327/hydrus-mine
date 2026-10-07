@@ -2481,6 +2481,16 @@ URL defining states passed, retaining full-state ownership/persistence assertion
 Other routing controls, broader parents and deferred platforms earn no credit
 from this follow-up.
 
+The nested File queue follow-up uses callback entry and answers. Its recorded
+queue states contain names and callable keys, but no selection flags; selection
+expectations come from recorder actions and queue behavior. Displayed names do
+not establish native keys: complete saved Routing and Manager comparisons and
+the post-Apply consumer provide that evidence. The six pending native captures
+use explicit queue/chooser/notice sizes; the historical Qt outer-panel image is
+not a matching nested child image. Full Linux and fresh rendered review remain
+pending. Outer MIME mapping controls, physical nested button coordinates,
+universal geometry and deferred platforms receive no completion credit.
+
 OS calls are regenerated only in the opened routing draft, then persisted on
 Apply, preserving registered-call-only transactions. Native regeneration assigns
 the correct single-file pipeline; the reference manager's missing-file-OS branch
