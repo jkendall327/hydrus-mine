@@ -3,16 +3,17 @@
 The pass started from merged source `3702cdbee99473cfd7af073aa044fe847f78f405`.
 The prior checkpoint validated `028fd72f` (240 original leaves).
 
-The latest checkpoint validates `170ab0525` and publishes **346 signed-off
-original leaves: 3 new in this batch, 106 across eleven recent checkpoints,
-29 candidates still pending**. Full Linux validation passed, including all 704
-native GUI tests and 67 media tests. Filesize and both hash leaves received
-fresh independent rendered/behavioral review. Windows/macOS remain deferred.
-[Durable checkpoint evidence](../checkpoints/170ab0525/README.md) retains the
-four selected native images, logs, hashes, exact reference recording and scope limits.
+The latest checkpoint validates `32d9dbb74` and publishes **347 signed-off
+original leaves: 1 new in this batch, 107 across twelve recent checkpoints,
+28 candidates still pending**. Full Linux validation passed, including all 705
+native GUI tests and 67 media tests. The radio Return preference received
+fresh independent rendered/behavioral review, including its actual unchecked
+saved/reopened Options row and consumer. Windows/macOS remain deferred.
+[Durable checkpoint evidence](../checkpoints/32d9dbb74/README.md) retains both
+native images, logs, hashes, the actual Qt rerun and finite scope limits.
 The current goal is all individual feature leaves implemented and verified;
 historical numeric goals and inventory first-pass counts are not completion
-criteria. The next bounded cohort is the single radio-Return preference leaf.
+criteria. The next bounded repair concerns the sort/group Options layout.
 The notes below preserve the chronological investigation and failed-run history.
 Source review of all 153 parity manifests is recorded in `review-1.md` through
 `review-6.md`; these reports describe the initial source, not later repairs.
@@ -21,7 +22,7 @@ previously validated IDs. Structural parents may retain a scoped assessment but
 receive no completed-leaf credit.
 The supplemental `demotions-render-evidence.json` defers seven further claims
 whose defining native behavior lacks assertions, initially leaving 135 candidates.
-One hundred and six are now published; 29 remain unresolved. No pending candidate receives
+One hundred and seven are now published; 28 remain unresolved. No pending candidate receives
 completion credit. Favourites was withheld from the preceding batch because its
 capture disagreed with the selected service; actual dropdown input and fresh
 review resolved that blocker in the preceding checkpoint.

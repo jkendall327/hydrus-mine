@@ -341,3 +341,24 @@ The run saved a fresh 293-file workspace snapshot (2,200,055,047 uncompressed
 bytes). Maintenance retained 1,379,350,054 compressed workspace-cache bytes,
 within the 3 GiB cap. [Exact logs and outcome](../checkpoints/170ab0525/validation-outcome.json)
 are retained. No additional optimization experiment was opened.
+
+## Radio checkpoint cache reuse
+
+Source `32d9dbb74`, full Linux run `37564321392`, restored the preceding
+`170ab0525` snapshot on the same `20260927.320.1` runner image. Verification
+accepted 4,122 tracked-input mtimes and 293 coherent artifact files. Dependency
+cache reuse and all 25 cache safety regressions passed. A fresh run-specific
+293-file snapshot was saved; maintenance retained 1,379,355,380 compressed bytes
+under the 3 GiB cap.
+
+Strict Clippy reported 1m30s (91s for the workflow step), versus the preceding
+348s step. Test compilation fell from 397s to 272s. Neither current log reports
+compiling `hydrus-gui-ui`. The source change here is test-only, unlike the prior
+production change, so these observations are not a controlled speedup claim.
+
+GUI runtime rose from 135.71s to 226.21s. The full test step consequently took
+766s versus 732s previously; compilation improvement did not shorten that step.
+All 705 GUI and 67 media tests passed. The logs do not isolate generation, Rust
+compilation and linking, or establish the cause of runtime variation.
+[Exact outcome and logs](../checkpoints/32d9dbb74/validation-outcome.json) are
+retained. No further optimization experiment was opened.

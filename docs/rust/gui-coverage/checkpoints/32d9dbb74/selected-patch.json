@@ -1,0 +1,752 @@
+{
+  "baseline_git_head": "32d9dbb74d0c6b55d6d402dc9e44c72ece4a3192",
+  "method": "Publish exactly one original leaf after exact-source full Linux CI and fresh independent behavioral/rendered review. Preserve prior346 IDs and assessments, native inventory and all unselected assessments except exact source anchor remaps and ancestor counts. Windows/macOS deferred; consumer and capture limits retained.",
+  "reference": {
+    "updates": [
+      {
+        "id": "audit-options-gui-misc-force-that-hitting-enter-return-on-radio-button-lists-triggers-a-dialog-ok",
+        "status": "first_pass",
+        "assessment": "Expose the exact GUI/misc checkbox immediately after ISO-time preference. Typed default true, actual saved ClientOptions decoding, native override wins and retained legacy fallback for old imported stores. Options edits stage independently; Cancel/hidden/stale Apply do not write, changed Apply persists and unchanged Apply preserves newer saved values and other GUI fields. Every current native radio group reads live saved policy per Return: filesize, hash sign/type and advanced deletion action/reason. True uses explicit OK; false delegates to the actual parent default/button bubble. All40 actual modal Linux Qt cases accept, for both Enter/Return and all initial/live combinations; false is not promised to suppress dialog acceptance. Multiline hash text retains newline consumption. Captured pane index is armed by the focused radio and cleared on page navigation. Delete Return no longer captures before children; Escape and custom reason LineEdit behavior remain. Closed/hidden/retired child or parent cannot apply through either route. Saved-disabled reopening has a dedicated asserted Options capture. A physical Return with an initially unarmed panel proves live disabled-policy default acceptance; after final binding retirement, retained armed Return cannot publish, change recents/defaults or disturb a live successor.",
+        "evidence": [
+          {
+            "path": "crates/hydrus-store/src/radio_return.rs",
+            "line": 15,
+            "anchor_git_head": "32d9dbb74d0c6b55d6d402dc9e44c72ece4a3192",
+            "line_sha256": "c8c0c07c7349a732c56e932a7a4e77f3828fec374bf012daf74d9ad186d71b2e",
+            "symbol": "pub struct RadioReturn",
+            "role": "scoped_implementation",
+            "description": "pub struct RadioReturn",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-store/src/radio_return.rs",
+            "line": 21,
+            "anchor_git_head": "32d9dbb74d0c6b55d6d402dc9e44c72ece4a3192",
+            "line_sha256": "f873899ba72f94636c5390ea53dd574a3f9e6488069c1e1ca73dbcbc9040df64",
+            "symbol": "force_dialog_ok: true",
+            "role": "scoped_implementation",
+            "description": "force_dialog_ok: true",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-store/src/radio_return.rs",
+            "line": 29,
+            "anchor_git_head": "32d9dbb74d0c6b55d6d402dc9e44c72ece4a3192",
+            "line_sha256": "45934f85d2ad25c5548d1765fc3941e10df4f692bfe052dd0d38c1c5b5fcd18b",
+            "symbol": "fn from_legacy",
+            "role": "scoped_implementation",
+            "description": "fn from_legacy",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-store/src/radio_return.rs",
+            "line": 33,
+            "anchor_git_head": "32d9dbb74d0c6b55d6d402dc9e44c72ece4a3192",
+            "line_sha256": "31feaea26f60aa281084fc26586b33d2cbf0a45ede47c623fd5ac9bebdcf664e",
+            "symbol": "force_enter_on_radio_buttons_to_do_dialog_ok",
+            "role": "scoped_implementation",
+            "description": "force_enter_on_radio_buttons_to_do_dialog_ok",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-store/src/radio_return.rs",
+            "line": 40,
+            "anchor_git_head": "32d9dbb74d0c6b55d6d402dc9e44c72ece4a3192",
+            "line_sha256": "cca9ca1a455617eb36d2f02eef681de2f56d8e13c9b704c4b978e0441af7f629",
+            "symbol": "pub fn load",
+            "role": "scoped_implementation",
+            "description": "pub fn load",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-store/src/radio_return.rs",
+            "line": 46,
+            "anchor_git_head": "32d9dbb74d0c6b55d6d402dc9e44c72ece4a3192",
+            "line_sha256": "91e2ae17c189e52d2b8a4505c98d0043c04eae1bbe6e5fd8e641ba65fef50cb0",
+            "symbol": "if native {",
+            "role": "scoped_implementation",
+            "description": "if native {",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-store/src/radio_return.rs",
+            "line": 64,
+            "anchor_git_head": "32d9dbb74d0c6b55d6d402dc9e44c72ece4a3192",
+            "line_sha256": "91225566727ceb48bc9d5521a164abd6c0f5feaa9bc9f4cea86f8bcefc6d3bbf",
+            "symbol": "fn actual_saved_false_legacy_fallback_native_override_and_durable_reopen",
+            "role": "scoped_implementation",
+            "description": "fn actual_saved_false_legacy_fallback_native_override_and_durable_reopen",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-store/src/import/decode.rs",
+            "line": 794,
+            "anchor_git_head": "32d9dbb74d0c6b55d6d402dc9e44c72ece4a3192",
+            "line_sha256": "2068141ad10f3f1db4932da5fc1012e059dab4743bdcb2c7f2410bfcae7b2412",
+            "symbol": "&crate::radio_return::RadioReturn::from_legacy(options)",
+            "role": "scoped_implementation",
+            "description": "&crate::radio_return::RadioReturn::from_legacy(options)",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui-model/src/options.rs",
+            "line": 324,
+            "anchor_git_head": "32d9dbb74d0c6b55d6d402dc9e44c72ece4a3192",
+            "line_sha256": "ed5786bcd6bc946fcdd505ed43809651c52857fcb4ce3e3eb318b047dc80f589",
+            "symbol": "radio_return: hydrus_store::radio_return",
+            "role": "scoped_implementation",
+            "description": "radio_return: hydrus_store::radio_return",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui-model/src/options.rs",
+            "line": 2603,
+            "anchor_git_head": "32d9dbb74d0c6b55d6d402dc9e44c72ece4a3192",
+            "line_sha256": "6dd91ac2c958ed231d910273aae81c4c6daead06fdf331cf3c1ee7205512c1f3",
+            "symbol": "Force that hitting Enter/Return on radio button lists",
+            "role": "scoped_implementation",
+            "description": "Force that hitting Enter/Return on radio button lists",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui-model/src/options.rs",
+            "line": 2604,
+            "anchor_git_head": "32d9dbb74d0c6b55d6d402dc9e44c72ece4a3192",
+            "line_sha256": "ec95b8251f2e0254a905c6d560c6eb336576b3c16f26785eb4e98ffb16edb6dd",
+            "symbol": "|s| s.radio_return.force_dialog_ok",
+            "role": "scoped_implementation",
+            "description": "|s| s.radio_return.force_dialog_ok",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui-model/src/options.rs",
+            "line": 266,
+            "anchor_git_head": "32d9dbb74d0c6b55d6d402dc9e44c72ece4a3192",
+            "line_sha256": "2fd452ecd5a70364c70543c6ccd1f3aa6796f57b4a6086bec3ee3cedd17e3784",
+            "symbol": "if $after.$field != $before.$field",
+            "role": "scoped_implementation",
+            "description": "if $after.$field != $before.$field",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui/ui/filesize_comparison.slint",
+            "line": 11,
+            "anchor_git_head": "32d9dbb74d0c6b55d6d402dc9e44c72ece4a3192",
+            "line_sha256": "9a27c4521b961c5b89bf2849aaea0a978e8e2a014a03fe6748f0a302823af1fb",
+            "symbol": "callback force-dialog-ok() -> bool",
+            "role": "scoped_implementation",
+            "description": "callback force-dialog-ok() -> bool",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui/ui/filesize_comparison.slint",
+            "line": 27,
+            "anchor_git_head": "32d9dbb74d0c6b55d6d402dc9e44c72ece4a3192",
+            "line_sha256": "fd7027aff03e8d92d113f2d097f29a5f3d6d8f3813c1e117e184f026cedad4a6",
+            "symbol": "if root.force-dialog-ok()",
+            "role": "scoped_implementation",
+            "description": "if root.force-dialog-ok()",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui/ui/filesize_comparison.slint",
+            "line": 28,
+            "anchor_git_head": "32d9dbb74d0c6b55d6d402dc9e44c72ece4a3192",
+            "line_sha256": "a0c74d9046b0712675551a74465eccd02689a7a6f1f277ee3856532c889160e4",
+            "symbol": "Unforced native radio handling",
+            "role": "scoped_implementation",
+            "description": "Unforced native radio handling",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui/ui/hash_choices.slint",
+            "line": 10,
+            "anchor_git_head": "32d9dbb74d0c6b55d6d402dc9e44c72ece4a3192",
+            "line_sha256": "9a27c4521b961c5b89bf2849aaea0a978e8e2a014a03fe6748f0a302823af1fb",
+            "symbol": "callback force-dialog-ok() -> bool",
+            "role": "scoped_implementation",
+            "description": "callback force-dialog-ok() -> bool",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui/ui/hash_choices.slint",
+            "line": 23,
+            "anchor_git_head": "32d9dbb74d0c6b55d6d402dc9e44c72ece4a3192",
+            "line_sha256": "fd7027aff03e8d92d113f2d097f29a5f3d6d8f3813c1e117e184f026cedad4a6",
+            "symbol": "if root.force-dialog-ok()",
+            "role": "scoped_implementation",
+            "description": "if root.force-dialog-ok()",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui/ui/hash_choices.slint",
+            "line": 24,
+            "anchor_git_head": "32d9dbb74d0c6b55d6d402dc9e44c72ece4a3192",
+            "line_sha256": "a0c74d9046b0712675551a74465eccd02689a7a6f1f277ee3856532c889160e4",
+            "symbol": "Unforced native radio handling",
+            "role": "scoped_implementation",
+            "description": "Unforced native radio handling",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui/ui/predicate_editor.slint",
+            "line": 243,
+            "anchor_git_head": "32d9dbb74d0c6b55d6d402dc9e44c72ece4a3192",
+            "line_sha256": "387f3e2af9345575349c1696d55c662624134034a22d484a089b780c5b57d4d1",
+            "symbol": "callback force-radio-ok(int) -> bool",
+            "role": "scoped_implementation",
+            "description": "callback force-radio-ok(int) -> bool",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui/ui/predicate_editor.slint",
+            "line": 244,
+            "anchor_git_head": "32d9dbb74d0c6b55d6d402dc9e44c72ece4a3192",
+            "line_sha256": "38f214c75cf5e0068cd4a6bac956f64789fe67aa5fa79a4122fb93ee03100be2",
+            "symbol": "in-out property <int> radio-default-panel",
+            "role": "scoped_implementation",
+            "description": "in-out property <int> radio-default-panel",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui/ui/predicate_editor.slint",
+            "line": 261,
+            "anchor_git_head": "32d9dbb74d0c6b55d6d402dc9e44c72ece4a3192",
+            "line_sha256": "1f94bf69fcef8e8d48d3687baa01763301fdab80f3ea3e4fae04dade340401c4",
+            "symbol": "event.text == Key.Return && root.radio-default-panel",
+            "role": "scoped_implementation",
+            "description": "event.text == Key.Return && root.radio-default-panel",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui/ui/predicate_editor.slint",
+            "line": 262,
+            "anchor_git_head": "32d9dbb74d0c6b55d6d402dc9e44c72ece4a3192",
+            "line_sha256": "b44ff941052fd354f20bcc04423b6e8965632f17ec63db0d54697b8cd73747ff",
+            "symbol": "root.ok(root.radio-default-panel)",
+            "role": "scoped_implementation",
+            "description": "root.ok(root.radio-default-panel)",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui/ui/predicate_editor.slint",
+            "line": 395,
+            "anchor_git_head": "32d9dbb74d0c6b55d6d402dc9e44c72ece4a3192",
+            "line_sha256": "431794479204647277cf8d42075f239afd1e8c124106255a719b12841fe21044",
+            "symbol": "text <=> root.hash-text",
+            "role": "scoped_implementation",
+            "description": "text <=> root.hash-text",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui/ui/predicate_editor.slint",
+            "line": 385,
+            "anchor_git_head": "32d9dbb74d0c6b55d6d402dc9e44c72ece4a3192",
+            "line_sha256": "832a81fcd2c7ecf57a96ca83f4b2e59d5e9c7f49d982475772e5f9d02bc77ecc",
+            "symbol": "force-dialog-ok => { root.force-radio-ok(p) }",
+            "role": "scoped_implementation",
+            "description": "force-dialog-ok => { root.force-radio-ok(p) }",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui/ui/predicate_editor.slint",
+            "line": 412,
+            "anchor_git_head": "32d9dbb74d0c6b55d6d402dc9e44c72ece4a3192",
+            "line_sha256": "832a81fcd2c7ecf57a96ca83f4b2e59d5e9c7f49d982475772e5f9d02bc77ecc",
+            "symbol": "force-dialog-ok => { root.force-radio-ok(p) }",
+            "role": "scoped_implementation",
+            "description": "force-dialog-ok => { root.force-radio-ok(p) }",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui/ui/predicate_editor.slint",
+            "line": 431,
+            "anchor_git_head": "32d9dbb74d0c6b55d6d402dc9e44c72ece4a3192",
+            "line_sha256": "0b9a51aa5eadadc29a145025f5c88e68791c0da82f2de63a5b311351abfa84fa",
+            "symbol": "force-radio-ok => { root.force-radio-ok(p) }",
+            "role": "scoped_implementation",
+            "description": "force-radio-ok => { root.force-radio-ok(p) }",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui/ui/predicate_editor.slint",
+            "line": 457,
+            "anchor_git_head": "32d9dbb74d0c6b55d6d402dc9e44c72ece4a3192",
+            "line_sha256": "0b9a51aa5eadadc29a145025f5c88e68791c0da82f2de63a5b311351abfa84fa",
+            "symbol": "force-radio-ok => { root.force-radio-ok(p) }",
+            "role": "scoped_implementation",
+            "description": "force-radio-ok => { root.force-radio-ok(p) }",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui/src/predicate_editor_window.rs",
+            "line": 384,
+            "anchor_git_head": "32d9dbb74d0c6b55d6d402dc9e44c72ece4a3192",
+            "line_sha256": "b1baa45544d28c489375f870afd7f540c8fb8570e0d6317b9d126b6519abe20a",
+            "symbol": "window.on_force_radio_ok",
+            "role": "scoped_implementation",
+            "description": "window.on_force_radio_ok",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui/src/predicate_editor_window.rs",
+            "line": 396,
+            "anchor_git_head": "32d9dbb74d0c6b55d6d402dc9e44c72ece4a3192",
+            "line_sha256": "7bc73309a5b080d48123c67bfe8d0bb8df423d7143fe8772fbf6c41468068b8e",
+            "symbol": "!window.window().is_visible()",
+            "role": "scoped_implementation",
+            "description": "!window.window().is_visible()",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui/src/predicate_editor_window.rs",
+            "line": 409,
+            "anchor_git_head": "32d9dbb74d0c6b55d6d402dc9e44c72ece4a3192",
+            "line_sha256": "5cfac0c32caa8059fa872f709cbd36e5ecd4c526c25166409136acecaef73268",
+            "symbol": "matches!(panel.kind, Kind::Size | Kind::Hash)",
+            "role": "scoped_implementation",
+            "description": "matches!(panel.kind, Kind::Size | Kind::Hash)",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui/src/predicate_editor_window.rs",
+            "line": 414,
+            "anchor_git_head": "32d9dbb74d0c6b55d6d402dc9e44c72ece4a3192",
+            "line_sha256": "e96c1414267588bc9781a3d82869523448604d86b659fd9efcdcf50715515013",
+            "symbol": "window.set_radio_default_panel(panel)",
+            "role": "scoped_implementation",
+            "description": "window.set_radio_default_panel(panel)",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui/src/predicate_editor_window.rs",
+            "line": 415,
+            "anchor_git_head": "32d9dbb74d0c6b55d6d402dc9e44c72ece4a3192",
+            "line_sha256": "f46606eebb5bfb083955c303e3695a0915fd85d4628c1110b79ad4a92aded51d",
+            "symbol": "match store.read(hydrus_store::radio_return::load)",
+            "role": "scoped_implementation",
+            "description": "match store.read(hydrus_store::radio_return::load)",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui/src/predicate_editor_window.rs",
+            "line": 444,
+            "anchor_git_head": "32d9dbb74d0c6b55d6d402dc9e44c72ece4a3192",
+            "line_sha256": "2f1783feb3b0cd5fe90d6ba4965a3070c6ad48643828f8c85efd7ca01da1800e",
+            "symbol": "window.set_radio_default_panel(-1)",
+            "role": "scoped_implementation",
+            "description": "window.set_radio_default_panel(-1)",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui/ui/delete_files.slint",
+            "line": 20,
+            "anchor_git_head": "32d9dbb74d0c6b55d6d402dc9e44c72ece4a3192",
+            "line_sha256": "7f2d7221dbc8f74744977cf43f1381ae39826de0e317346e476a773c5ed2ae1f",
+            "symbol": "if root.enabled && event.text == Key.Return",
+            "role": "scoped_implementation",
+            "description": "if root.enabled && event.text == Key.Return",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui/ui/delete_files.slint",
+            "line": 52,
+            "anchor_git_head": "32d9dbb74d0c6b55d6d402dc9e44c72ece4a3192",
+            "line_sha256": "f9ddb7cd48ef37408400fd90b9902629aed84470c8b6fbd054f1f83d33d15c50",
+            "symbol": "in-out property <int> radio-focus",
+            "role": "scoped_implementation",
+            "description": "in-out property <int> radio-focus",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui/ui/delete_files.slint",
+            "line": 58,
+            "anchor_git_head": "32d9dbb74d0c6b55d6d402dc9e44c72ece4a3192",
+            "line_sha256": "0064b6124896b57b094fc2f5c9b38d1657f206c544ecc4002da0ebb167feb54b",
+            "symbol": "capture-key-pressed(event)",
+            "role": "scoped_implementation",
+            "description": "capture-key-pressed(event)",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui/ui/delete_files.slint",
+            "line": 59,
+            "anchor_git_head": "32d9dbb74d0c6b55d6d402dc9e44c72ece4a3192",
+            "line_sha256": "fcca9d15395a1843ad53ed6f8c022ccfbc031f58ddfed19c0914fe9ef4059157",
+            "symbol": "if event.text == Key.Escape",
+            "role": "scoped_implementation",
+            "description": "if event.text == Key.Escape",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui/ui/delete_files.slint",
+            "line": 63,
+            "anchor_git_head": "32d9dbb74d0c6b55d6d402dc9e44c72ece4a3192",
+            "line_sha256": "ff439c93c0d25bfa68e84700c1273c8161c41ef5418e51e1a3670176be768617",
+            "symbol": "if event.text == Key.Return {root.accept-deletion()",
+            "role": "scoped_implementation",
+            "description": "if event.text == Key.Return {root.accept-deletion()",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui/ui/delete_files.slint",
+            "line": 94,
+            "anchor_git_head": "32d9dbb74d0c6b55d6d402dc9e44c72ece4a3192",
+            "line_sha256": "350dd2c4d28d13674fb6d8722e399416e559a87935af15d75580d46c858c3cc2",
+            "symbol": "accepted => {root.accept-deletion();}",
+            "role": "scoped_implementation",
+            "description": "accepted => {root.accept-deletion();}",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui/src/delete_files_window.rs",
+            "line": 223,
+            "anchor_git_head": "32d9dbb74d0c6b55d6d402dc9e44c72ece4a3192",
+            "line_sha256": "d002c48c693a794ffd67a26f7980f71746ba0f7c53e26ca44dcc95338659028b",
+            "symbol": "window.set_radio_focus",
+            "role": "scoped_implementation",
+            "description": "window.set_radio_focus",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui/src/delete_files_window.rs",
+            "line": 104,
+            "anchor_git_head": "32d9dbb74d0c6b55d6d402dc9e44c72ece4a3192",
+            "line_sha256": "d82f294b691849d6c614755b760d6106bb41ad320904b215d296b5618c3cdbf9",
+            "symbol": "let initial_radio =",
+            "role": "scoped_implementation",
+            "description": "let initial_radio =",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui/src/delete_files_window.rs",
+            "line": 123,
+            "anchor_git_head": "32d9dbb74d0c6b55d6d402dc9e44c72ece4a3192",
+            "line_sha256": "b1baa45544d28c489375f870afd7f540c8fb8570e0d6317b9d126b6519abe20a",
+            "symbol": "window.on_force_radio_ok",
+            "role": "scoped_implementation",
+            "description": "window.on_force_radio_ok",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui/src/delete_files_window.rs",
+            "line": 129,
+            "anchor_git_head": "32d9dbb74d0c6b55d6d402dc9e44c72ece4a3192",
+            "line_sha256": "fe2c542ae3bdafc91de7823140cb02a2ff672b72bc6466a6738a6cc58e94a38e",
+            "symbol": "!active.get() || !guard()",
+            "role": "scoped_implementation",
+            "description": "!active.get() || !guard()",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui/src/delete_files_window.rs",
+            "line": 133,
+            "anchor_git_head": "32d9dbb74d0c6b55d6d402dc9e44c72ece4a3192",
+            "line_sha256": "f46606eebb5bfb083955c303e3695a0915fd85d4628c1110b79ad4a92aded51d",
+            "symbol": "match store.read(hydrus_store::radio_return::load)",
+            "role": "scoped_implementation",
+            "description": "match store.read(hydrus_store::radio_return::load)",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui/src/delete_files_window.rs",
+            "line": 196,
+            "anchor_git_head": "32d9dbb74d0c6b55d6d402dc9e44c72ece4a3192",
+            "line_sha256": "aefa0abf36730866a38aa7d0e80ab98a151292873537d8fa8cbf61f1fbb66413",
+            "symbol": "if !window.window().is_visible()",
+            "role": "scoped_implementation",
+            "description": "if !window.window().is_visible()",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui-model/tests/model/radio_return.rs",
+            "line": 32,
+            "anchor_git_head": "32d9dbb74d0c6b55d6d402dc9e44c72ece4a3192",
+            "line_sha256": "00687cb1bbe169ecc38b26a346f506770e0de0fd07980981dc95dc875802065f",
+            "symbol": "fn cancelled_staging_changed_save_and_unchanged_concurrent_apply_match_actual_options",
+            "role": "scoped_implementation",
+            "description": "fn cancelled_staging_changed_save_and_unchanged_concurrent_apply_match_actual_options",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui/tests/gui/radio_return.rs",
+            "line": 86,
+            "anchor_git_head": "32d9dbb74d0c6b55d6d402dc9e44c72ece4a3192",
+            "line_sha256": "69b801861b1da3c0c1cd73de2011788124c4b20b82b58c2a7d038153c8c5d56d",
+            "symbol": "fn gui_options_cancel_hidden_stale_apply_save_reopen_and_live_existing_editor",
+            "role": "scoped_implementation",
+            "description": "fn gui_options_cancel_hidden_stale_apply_save_reopen_and_live_existing_editor",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui/tests/gui/radio_return.rs",
+            "line": 333,
+            "anchor_git_head": "32d9dbb74d0c6b55d6d402dc9e44c72ece4a3192",
+            "line_sha256": "f18550b906a63bbf913567d8d5bda8dd5925ba366db0edeede6c76078d021a9c",
+            "symbol": "fn all_recorded_filesize_hash_groups_accept_with_live_policy_and_preserve_multiline_consumption",
+            "role": "scoped_implementation",
+            "description": "fn all_recorded_filesize_hash_groups_accept_with_live_policy_and_preserve_multiline_consumption",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui/tests/gui/radio_return.rs",
+            "line": 494,
+            "anchor_git_head": "32d9dbb74d0c6b55d6d402dc9e44c72ece4a3192",
+            "line_sha256": "d1b9e44f6ee0803613a1f2f698ff46d5b6a2a36b2eefd676acc5b997f4159202",
+            "symbol": "fn actual_advanced_delete_action_reason_defaults_and_retained_owners_follow_live_policy",
+            "role": "scoped_implementation",
+            "description": "fn actual_advanced_delete_action_reason_defaults_and_retained_owners_follow_live_policy",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui/tests/gui/radio_return.rs",
+            "line": 473,
+            "anchor_git_head": "32d9dbb74d0c6b55d6d402dc9e44c72ece4a3192",
+            "line_sha256": "9af601f132383741e33f2c3af1d72e00748104700f29417a60826c604863243c",
+            "symbol": "hash_text().contains",
+            "role": "scoped_implementation",
+            "description": "hash_text().contains",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui/tests/gui/radio_return.rs",
+            "line": 597,
+            "anchor_git_head": "32d9dbb74d0c6b55d6d402dc9e44c72ece4a3192",
+            "line_sha256": "8371b126f08d3c5b1b1512572fc2028d62deb65763b4a8884dee384a22d33a02",
+            "symbol": "writer.add_files(domain",
+            "role": "scoped_implementation",
+            "description": "writer.add_files(domain",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "oracle/record_radio_return.py",
+            "line": 34,
+            "anchor_git_head": "32d9dbb74d0c6b55d6d402dc9e44c72ece4a3192",
+            "line_sha256": "2f0b92c1c1d98b00f05d9fd3bc62ad147e2973635fa962b2d91a930b9eeaa999",
+            "symbol": "class Observed(original)",
+            "role": "scoped_implementation",
+            "description": "class Observed(original)",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "oracle/record_radio_return.py",
+            "line": 93,
+            "anchor_git_head": "32d9dbb74d0c6b55d6d402dc9e44c72ece4a3192",
+            "line_sha256": "5793c0e2a4d39ebba8724d4e06d5003a63c989c806266c73bcbc87b8103e589c",
+            "symbol": "T.QTest.keyClick(button, key)",
+            "role": "scoped_implementation",
+            "description": "T.QTest.keyClick(button, key)",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "oracle/record_radio_return.py",
+            "line": 97,
+            "anchor_git_head": "32d9dbb74d0c6b55d6d402dc9e44c72ece4a3192",
+            "line_sha256": "026dc4bd8b916db1e068730a33ef13231a243b9128833d07173664f2e4e9d369",
+            "symbol": "result = dialog.exec()",
+            "role": "scoped_implementation",
+            "description": "result = dialog.exec()",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "oracle/record_radio_return.py",
+            "line": 62,
+            "anchor_git_head": "32d9dbb74d0c6b55d6d402dc9e44c72ece4a3192",
+            "line_sha256": "fac5e0e122ec7db94f2baa961d23df74ed2afac0f0418819d9a367f00faa9a98",
+            "symbol": "out['legacy'] = c.new_options.GetSerialisableTuple()",
+            "role": "scoped_implementation",
+            "description": "out['legacy'] = c.new_options.GetSerialisableTuple()",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui/tests/gui/radio_return.rs",
+            "line": 209,
+            "anchor_git_head": "32d9dbb74d0c6b55d6d402dc9e44c72ece4a3192",
+            "line_sha256": "4a8f620e4f38699f76d6d90be7f60a047d90444169e167a95b65c99543674914",
+            "symbol": "fn unforced_parent_default_accepts_live_but_final_bound_retirement_is_permanent",
+            "role": "scoped_implementation",
+            "description": "fn unforced_parent_default_accepts_live_but_final_bound_retirement_is_permanent",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui/tests/gui/radio_return.rs",
+            "line": 126,
+            "anchor_git_head": "32d9dbb74d0c6b55d6d402dc9e44c72ece4a3192",
+            "line_sha256": "35edcf25edf4339d415a246d064c969b49d4ab6fc328ebe99267e7b0b0f231d0",
+            "symbol": ".join(\"radio-return-options-false.png\")",
+            "role": "scoped_implementation",
+            "description": ".join(\"radio-return-options-false.png\")",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "hydrus/client/gui/widgets/ClientGUICommon.py",
+            "line": 864,
+            "anchor_git_head": "32d9dbb74d0c6b55d6d402dc9e44c72ece4a3192",
+            "line_sha256": "8b397c3e6e9646cef20cfab7cf62c030bf35d84bcea553615d4095b6b2a42ce8",
+            "symbol": "class EnterCatchingRadioButton",
+            "role": "actual_reference_source",
+            "description": "class EnterCatchingRadioButton",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "hydrus/client/gui/widgets/ClientGUICommon.py",
+            "line": 868,
+            "anchor_git_head": "32d9dbb74d0c6b55d6d402dc9e44c72ece4a3192",
+            "line_sha256": "1759006234d2c0411a5268eca8c5b75172464d344ac180c62cb8ded6d777562d",
+            "symbol": "CG.client_controller.new_options.GetBoolean( 'force_enter_on_radio_buttons_to_do_dialog_ok' )",
+            "role": "actual_reference_source",
+            "description": "CG.client_controller.new_options.GetBoolean( 'force_enter_on_radio_buttons_to_do_dialog_ok' )",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "hydrus/client/gui/widgets/ClientGUICommon.py",
+            "line": 874,
+            "anchor_git_head": "32d9dbb74d0c6b55d6d402dc9e44c72ece4a3192",
+            "line_sha256": "fbd79518fd340a84134713301e8ee63466ad2185cb6b3eda8b51b8c383bf283c",
+            "symbol": "super().keyPressEvent( event )",
+            "role": "actual_reference_source",
+            "description": "super().keyPressEvent( event )",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "hydrus/client/gui/panels/options/GUIPanel.py",
+            "line": 173,
+            "anchor_git_head": "32d9dbb74d0c6b55d6d402dc9e44c72ece4a3192",
+            "line_sha256": "c001eb1730d5902398601c6f568583c3306e5e38b6c48df940b5261dc3eeb559",
+            "symbol": "Force that hitting Enter/Return on radio button lists triggers a dialog ok:",
+            "role": "actual_reference_source",
+            "description": "Force that hitting Enter/Return on radio button lists triggers a dialog ok:",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "hydrus/client/gui/panels/options/GUIPanel.py",
+            "line": 384,
+            "anchor_git_head": "32d9dbb74d0c6b55d6d402dc9e44c72ece4a3192",
+            "line_sha256": "6399871024dc41ee2c5cd90089ee95be295256785614be8125f3d775f9444bc4",
+            "symbol": "self._new_options.SetBoolean( 'force_enter_on_radio_buttons_to_do_dialog_ok'",
+            "role": "actual_reference_source",
+            "description": "self._new_options.SetBoolean( 'force_enter_on_radio_buttons_to_do_dialog_ok'",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "hydrus/client/ClientOptions.py",
+            "line": 388,
+            "anchor_git_head": "32d9dbb74d0c6b55d6d402dc9e44c72ece4a3192",
+            "line_sha256": "c60863fe44ea9a06a534884787f34a7535fb6033ae34f596f47612b25bcf9c4f",
+            "symbol": "'force_enter_on_radio_buttons_to_do_dialog_ok' : True",
+            "role": "actual_reference_source",
+            "description": "'force_enter_on_radio_buttons_to_do_dialog_ok' : True",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-store/src/radio_return.rs",
+            "line": 64,
+            "anchor_git_head": "32d9dbb74d0c6b55d6d402dc9e44c72ece4a3192",
+            "line_sha256": "91225566727ceb48bc9d5521a164abd6c0f5feaa9bc9f4cea86f8bcefc6d3bbf",
+            "role": "authored_behavioral_regression",
+            "description": "radio_return::tests::actual_saved_false_legacy_fallback_native_override_and_durable_reopen",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui-model/tests/model/radio_return.rs",
+            "line": 32,
+            "anchor_git_head": "32d9dbb74d0c6b55d6d402dc9e44c72ece4a3192",
+            "line_sha256": "00687cb1bbe169ecc38b26a346f506770e0de0fd07980981dc95dc875802065f",
+            "role": "authored_behavioral_regression",
+            "description": "model/radio_return::cancelled_staging_changed_save_and_unchanged_concurrent_apply_match_actual_options",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui/tests/gui/radio_return.rs",
+            "line": 86,
+            "anchor_git_head": "32d9dbb74d0c6b55d6d402dc9e44c72ece4a3192",
+            "line_sha256": "69b801861b1da3c0c1cd73de2011788124c4b20b82b58c2a7d038153c8c5d56d",
+            "role": "authored_behavioral_regression",
+            "description": "gui/radio_return::gui_options_cancel_hidden_stale_apply_save_reopen_and_live_existing_editor",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui/tests/gui/radio_return.rs",
+            "line": 333,
+            "anchor_git_head": "32d9dbb74d0c6b55d6d402dc9e44c72ece4a3192",
+            "line_sha256": "f18550b906a63bbf913567d8d5bda8dd5925ba366db0edeede6c76078d021a9c",
+            "role": "authored_behavioral_regression",
+            "description": "gui/radio_return::all_recorded_filesize_hash_groups_accept_with_live_policy_and_preserve_multiline_consumption",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui/tests/gui/radio_return.rs",
+            "line": 494,
+            "anchor_git_head": "32d9dbb74d0c6b55d6d402dc9e44c72ece4a3192",
+            "line_sha256": "d1b9e44f6ee0803613a1f2f698ff46d5b6a2a36b2eefd676acc5b997f4159202",
+            "role": "authored_behavioral_regression",
+            "description": "gui/radio_return::actual_advanced_delete_action_reason_defaults_and_retained_owners_follow_live_policy",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui/tests/gui/radio_return.rs",
+            "line": 209,
+            "anchor_git_head": "32d9dbb74d0c6b55d6d402dc9e44c72ece4a3192",
+            "line_sha256": "4a8f620e4f38699f76d6d90be7f60a047d90444169e167a95b65c99543674914",
+            "role": "authored_behavioral_regression",
+            "description": "gui/radio_return::unforced_parent_default_accepts_live_but_final_bound_retirement_is_permanent",
+            "executed_in_inventory": false
+          }
+        ],
+        "limitations": [
+          "Actual Qt recording is Linux/offscreen. False delegates to the native parent/default path; other Qt/platform QRadioButton fallback behavior is not asserted. Native public key replay uses Slint Return token for the reference Enter/Return records; OS physical key translation is the existing backend.",
+          "Only every current implemented native radio list is included. Reference controls represented by other native widget types and absent widget/dialog families remain outside this finite checkbox claim.",
+          "No parent/alias/new ID promotion or MIME-mode evidence-only reassessment; existing filesize/hash predicate and deletion families receive no completion credit from these consumer regressions.",
+          "Shared Main-owned lifetime composition was banked separately at 844ab6d7b; this preference still preserves shared on_ok(panel) routing, per-key reads, question/notice guards and multiline consumption. The new false-policy safety test retains native components and proves terminal refusal, not Qt object deallocation or active nested modal teardown.",
+          "Qt consumer image is re-shown after acceptance; the native consumer frame uses pre-key pixels. No matching Qt Options PNG exists in this recorder; actual staging/reopen states are JSON-recorded. Native fonts, layout and Apply footer differ; no pixel or OS-key-translation equality is claimed.",
+          "Fresh980x850 savedfalse reopened Options label and actual unchecked drawing are validated; reference label/order/staged/reopened checkbox states come from actual QtJSON because this recorder has no matching QtOptionsPNG. Current surrounding Options rows receive no additional credit.",
+          "The new first physical Return begins with radio-default-panel=-1 after actual Down/Up focus proof and reads savedfalse through the radio. A separately live-prearmed old draft tests retained default0 after final Bound drop; old Return/Cancel preserve old page/recent/default snapshots and a live successor accepts123KB. This is finite default-route safety, not broader widget-owner parity.",
+          "Physical pointer-focused multiline hash TextEdit consumes Return as a newline under savedtrue in the existing regression. No new savedfalse multiline regression or absent widget-family coverage is asserted.",
+          "Current shared predicate lifetime composition is separately banked. Native finalBound retirement hides/refuses intentionally retained components; no object-deallocation, active nestedmodal destruction or additional genericactiveedit completion credit.",
+          "Validation is Linux only; Windows/macOS deferred. Exactly one preference leaf; no Options/GUI parent, aliases, newIDs, MIME evidence-only assessment, predicate/deletion or otherfamily credit."
+        ],
+        "remaining": [],
+        "native_source": {
+          "path": "crates/hydrus-gui-model/src/options.rs",
+          "line": 2603,
+          "anchor_git_head": "32d9dbb74d0c6b55d6d402dc9e44c72ece4a3192",
+          "line_sha256": "6dd91ac2c958ed231d910273aae81c4c6daead06fdf331cf3c1ee7205512c1f3",
+          "symbol": "Force that hitting Enter/Return on radio button lists"
+        },
+        "reference_source": {
+          "path": "hydrus/client/gui/panels/options/GUIPanel.py",
+          "line": 173,
+          "anchor_git_head": "32d9dbb74d0c6b55d6d402dc9e44c72ece4a3192",
+          "line_sha256": "c001eb1730d5902398601c6f568583c3306e5e38b6c48df940b5261dc3eeb559",
+          "symbol": "Force that hitting Enter/Return on radio button lists triggers a dialog ok:"
+        },
+        "implementation_validation": {
+          "source_commit": "32d9dbb74d0c6b55d6d402dc9e44c72ece4a3192",
+          "ci": "passed",
+          "tests_executed_at_checkpoint": true,
+          "native_render_review": "passed",
+          "manifest": "docs/rust/gui-coverage/parity/radio-return.json",
+          "review_required": false,
+          "run_url": "https://github.com/jkendall327/hydrus-mine/actions/runs/37564321392",
+          "validation_scope": "linux",
+          "required_platforms": [
+            "linux"
+          ],
+          "deferred_platforms": [
+            "windows",
+            "macos"
+          ],
+          "independent_review_evidence": {
+            "path": "docs/rust/gui-coverage/checkpoints/32d9dbb74/final-review-2-32d9dbb74.json",
+            "sha256": "298bfb27647ea0f98fb66dae968b3626a1fc540ee889a1fe60b499ed10845179"
+          }
+        }
+      }
+    ],
+    "additions": []
+  },
+  "native": {
+    "updates": [],
+    "additions": []
+  }
+}

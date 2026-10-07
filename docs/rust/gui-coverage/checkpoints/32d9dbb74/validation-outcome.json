@@ -1,0 +1,69 @@
+{
+  "source_commit": "32d9dbb74d0c6b55d6d402dc9e44c72ece4a3192",
+  "run_id": 37564321392,
+  "conclusion": "success",
+  "validation_scope": "linux",
+  "required_platforms": [
+    "linux"
+  ],
+  "deferred_platforms": [
+    "windows",
+    "macos"
+  ],
+  "gui_tests": {
+    "passed": 705,
+    "failed": 0,
+    "ignored": 0,
+    "seconds": 226.21
+  },
+  "media_tests": {
+    "passed": 67,
+    "failed": 0,
+    "ignored": 0,
+    "seconds": 1.01
+  },
+  "radio_tests_passed": [
+    "test radio_return::actual_advanced_delete_action_reason_defaults_and_retained_owners_follow_live_policy ... ok",
+    "test radio_return::gui_options_cancel_hidden_stale_apply_save_reopen_and_live_existing_editor ... ok",
+    "test radio_return::unforced_parent_default_accepts_live_but_final_bound_retirement_is_permanent ... ok",
+    "test radio_return::all_recorded_filesize_hash_groups_accept_with_live_policy_and_preserve_multiline_consumption ... ok",
+    "test radio_return::cancelled_staging_changed_save_and_unchanged_concurrent_apply_match_actual_options ... ok",
+    "test radio_return::tests::actual_saved_false_legacy_fallback_native_override_and_durable_reopen ... ok"
+  ],
+  "prior_assertions_preserved": 47,
+  "current_assertions": 84,
+  "timings": {
+    "clippy_seconds": 91.0,
+    "test_compile_seconds": 272,
+    "test_step_seconds": 766.0
+  },
+  "cache": {
+    "runner_image": "20260927.320.1",
+    "dependency_cache_hit": true,
+    "workspace_restored_from": "hydrus-ws-v1-check-Linux-X64-af4fa2e32ed1c3da4471dd09-170ab05251e79db77e0b97692f30d17843a3ca78-37560085258-1",
+    "restored_tracked_input_mtimes": 4122,
+    "restored_workspace_artifact_files": 293,
+    "cache_safety_tests_passed": 25,
+    "saved_artifact_files": 293,
+    "saved_uncompressed_bytes": 2200055047,
+    "maintenance_retained_bytes": 1379355380,
+    "budget_bytes": 3221225472
+  },
+  "native_artifact_id": 11458299394,
+  "native_zip_sha256": "84c576315fffe5ceb7a3d215e5cf0e006294b499d5527c7b03c7995f6d776324",
+  "native_image_count": 308,
+  "limits": [
+    "Hosted observations, not controlled attribution or Slint/Rust/link timing breakdown.",
+    "Same runner image as preceding predicate source; test-only change has different invalidation scope.",
+    "Clippy and test logs do not report compiling hydrus-gui-ui. Test compilation fell from397s to272s while GUI runtime increased from135.71s to226.21s; total test step did not improve."
+  ],
+  "evidence_sha256": {
+    "full-check.log": "de9a30486f74904abff266abf560d50a25e88aa15d00858eefeb8e1627508365",
+    "tests.log": "f3a61580eb10bc34ea80467e5da3869bb566ceaf5f4edc24c650b35e1f1cf189",
+    "clippy.log": "73ad2c4cabdf4ec01bea6c10d10705d89d68b4c6f43219bafa9e897181f0ad10",
+    "parity.log": "3cdae00e77efdf4e960595398ee91351f72d933ce1c74cb128f999ccef637722",
+    "maintenance.log": "1ccb371e350aae5357bbe3d8bc0a7d1fd2c2696d1dc8a1d95563eb13726b4039",
+    "ci-evidence.json": "97a4e6de70f04250eb5474bad377332f20efbf8171ccb1858d53b689f04f496f",
+    "native-render-manifest.json": "e585a145f51a997dfeb1f111b8a4299effa049adaec1c2b2882952f18893e57f"
+  }
+}

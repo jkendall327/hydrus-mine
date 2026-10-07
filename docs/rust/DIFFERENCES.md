@@ -3107,8 +3107,10 @@ Hash TextEdit consumes newline before the default route. Other Qt/platform widge
 fallback behavior is not asserted, nor are unrelated dialog families promoted.
 Actual reference recording and Store/model/native regressions are pinned. The
 October 7 rerun preserves all 40 recorded cases exactly; the new saved-disabled
-Options capture and retained unforced-default regression still await exact-source
-Linux execution and fresh independent rendered review. The Qt consumer image is
+Options capture and retained unforced-default regression passed exact-source
+Linux execution and fresh independent rendered review at `32d9dbb74`.
+[Evidence](gui-coverage/checkpoints/32d9dbb74/README.md) approves exactly this
+preference leaf. The Qt consumer image is
 re-shown after acceptance, while the native consumer image records pre-key pixels;
 neither proves key handling through pixels alone. No matching Qt Options PNG is
 recorded; its staged/reopened state is captured in JSON. Native lifetime refusal

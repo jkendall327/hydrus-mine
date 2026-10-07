@@ -3953,13 +3953,14 @@ Changing the saved value reaches already open dialogs. Options changes remain
 staged until Apply; Cancel discards them. Hash multiline text keeps its normal
 newline behavior. Hidden, cancelled or retired child/parent owners cannot apply
 through these key routes. Other widgets and dialog families receive no new claim.
-The pending one-leaf validation adds an actual saved-disabled, reopened Options
+The validated one-leaf checkpoint includes an actual saved-disabled, reopened Options
 capture and a physical Return test: disabled forcing still permits a live parent
 default, but a retained armed route cannot publish after final binding retirement
 or disturb its successor. All three original radio tests and 47 assertions remain.
 The real Qt recorder was rerun on October 7: all 40 cases match the committed
-fixture exactly. Full exact-source Linux execution and fresh native review remain
-pending; the published total remains 346 with 29 existing candidates pending.
+fixture exactly. Full Linux run `37564321392` and independent fresh native review
+passed, including all 705 GUI and 67 media tests. The published total is 347
+with 28 existing candidates pending. [Evidence](gui-coverage/checkpoints/32d9dbb74/README.md).
 
 Options > tag sort now includes the staged namespace grouping queue. Add and
 Edit open owned Enter Text children with the reference's `namespace` default,
