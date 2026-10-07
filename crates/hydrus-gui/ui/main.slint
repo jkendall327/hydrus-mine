@@ -370,6 +370,8 @@ export component MainWindow inherits Window {
     out property <length> sidebar-actual-width: sidebar-pane.width;
     out property <MenuChoiceFrame> sidebar-frame: {x:sidebar-pane.absolute-position.x,y:sidebar-pane.absolute-position.y,w:sidebar-pane.width,h:sidebar-pane.height};
     out property <MenuChoiceFrame> sidebar-search-frame: {x:sidebar-scroll.absolute-position.x,y:sidebar-scroll.absolute-position.y,w:sidebar-scroll.visible-width,h:sidebar-scroll.visible-height};
+    out property <length> sidebar-search-content-height: sidebar-scroll.content-height;
+    out property <length> sidebar-search-offset: sidebar-scroll.content-y;
     out property <length> preview-actual-height: preview-pane.height;
     out property <length> sidebar-handle-x: sidebar-handle.absolute-position.x;
     out property <length> sidebar-handle-y: sidebar-handle.absolute-position.y;
@@ -1306,7 +1308,10 @@ export component MainWindow inherits Window {
                     padding-right: self.padding;
                     visible: root.note == "" && !root.importing && !root.gallery-page && !root.watcher-page;
                     width: self.visible ? root.sidebar-requested-width : 0px;
-                    min-height: 0px;
+                    // ScrollView derives its extent from the child's minimum.
+                    // Visible content must retain its intrinsic allocation;
+                    // hidden search sidebars still contribute no minimum.
+                    min-height: self.visible ? self.preferred-height : 0px;
                     // A layout maximum must not depend on the containing
                     // window's height: that height consumes this layout info.
                     max-height: self.visible ? 100000px : 0px;

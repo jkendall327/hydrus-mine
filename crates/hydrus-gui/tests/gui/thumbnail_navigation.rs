@@ -61,8 +61,10 @@ fn settled_sidebar_buttons(
     assert!(ui.window().is_visible());
     *observed.borrow_mut() = [None, None];
     let started = Instant::now();
+    let mut settling_since = started;
     let mut previous = None;
     let mut scrolled = false;
+    let mut scroll_origin = None;
     loop {
         let pixels = headless::render(native, width, height);
         let measured = observed.borrow().clone();
@@ -76,7 +78,7 @@ fn settled_sidebar_buttons(
                     .map(f32::to_bits)
                     .collect::<Vec<_>>()
             });
-            if started.elapsed() >= Duration::from_millis(35)
+            if settling_since.elapsed() >= Duration::from_millis(35)
                 && !ui.window().has_active_animations()
                 && previous
                     .as_ref()
@@ -84,19 +86,49 @@ fn settled_sidebar_buttons(
             {
                 let last = &domains.frames[2];
                 if !scrolled && last.y + last.h > viewport.y + viewport.h {
+                    let content_height = ui.get_sidebar_search_content_height();
+                    let offset = ui.get_sidebar_search_offset();
+                    assert!(
+                        content_height.is_finite() && content_height > viewport.h,
+                        "actual outer ScrollView must have a vertical extent: content={content_height}, viewport={viewport:?}"
+                    );
+                    assert!(offset.is_finite());
+                    // Use the measured left padding band, outside child
+                    // predicates/LineEdit/choice controls and the scrollbar.
+                    let position = slint::LogicalPosition::new(
+                        viewport.x + (include.frames[1].x - viewport.x) / 2.0,
+                        viewport.y + viewport.h / 2.0,
+                    );
+                    assert!(position.x > viewport.x && position.x < include.frames[1].x);
+                    assert!(position.y >= viewport.y && position.y < viewport.y + viewport.h);
+                    eprintln!(
+                        "actual sidebar wheel: position={position:?}, content={content_height}, offset={offset}, viewport={viewport:?}"
+                    );
+                    scroll_origin = Some((offset, include.frames[0].y));
+                    native.dispatch_event(WindowEvent::PointerMoved { position });
                     native.dispatch_event(WindowEvent::PointerScrolled {
-                        position: slint::LogicalPosition::new(
-                            viewport.x + viewport.w / 2.0,
-                            viewport.y + viewport.h / 2.0,
-                        ),
+                        position,
                         delta_x: 0.0,
                         delta_y: -(last.y + last.h - viewport.y - viewport.h + 8.0),
                     });
                     // Re-observe both actual button rows after the physical scroll.
                     *observed.borrow_mut() = [None, None];
                     scrolled = true;
+                    settling_since = Instant::now();
                     previous = None;
                     continue;
+                }
+                if let Some((old_offset, old_y)) = scroll_origin {
+                    assert!(
+                        ui.get_sidebar_search_offset() < old_offset,
+                        "one real outer-sidebar wheel must change the actual offset: before={old_offset}, after={}",
+                        ui.get_sidebar_search_offset()
+                    );
+                    assert!(
+                        include.frames[0].y < old_y,
+                        "the actual button row must translate with the scroll: before={old_y}, after={}",
+                        include.frames[0].y
+                    );
                 }
                 let sidebar = ui.get_sidebar_frame();
                 assert!(

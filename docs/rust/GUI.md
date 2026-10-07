@@ -3414,7 +3414,11 @@ The current validation follow-up preserves the original 700×600 Main replay,
 280-pixel sidebar and two-column pointer targets. Paired search/domain controls
 retain their full captions and callbacks, using stacked placement when their
 preferred widths do not fit; this is a native layout accommodation. Bounded
-actual-frame checks cover the supported narrow and wider allocations. New
+actual-frame checks cover the supported narrow and wider allocations.
+The visible search content supplies its intrinsic height to the existing sidebar
+ScrollView, while hidden search content still contributes zero minimum height.
+The pending regression requires a real wheel to move the actual scroll offset
+and bring the scoped controls fully into that viewport. New
 captures retain the actual reopened Options windows for saved true/40/0.5 and
 false/1/1.5 settings. Exact-source full Linux execution and fresh independent
 rendered review remain pending; this source change adds no completion credit.

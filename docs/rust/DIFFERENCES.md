@@ -2444,8 +2444,11 @@ playback is not recorded. Native real pointer/key/wheel replays and the
 follow-up repairs overlapping narrow sidebar captions without changing the
 navigation algorithms or reducing the original assertions. Adaptive paired-button
 stacking is native accommodation: the Qt source has horizontal pairs, and the
-wider reference image does not establish matching narrow geometry. Actual saved
-Options captures and supported narrow/wider frame checks await exact-source full
+wider reference image does not establish matching narrow geometry.
+The visible search-content minimum now preserves intrinsic height so the existing
+ScrollView has a real scroll extent; hidden search content remains zero minimum.
+Actual wheel movement and viewport containment remain repaired-source CI gates.
+Actual saved Options captures and supported narrow/wider frame checks await exact-source full
 Linux execution and fresh independent review. No local Cargo builds/tests or
 mutation runs were performed, and no additional completion is yet claimed.
 
