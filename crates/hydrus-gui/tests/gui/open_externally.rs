@@ -125,6 +125,259 @@ fn urls(window: &OptionsWindow) -> Vec<String> {
         })
         .collect()
 }
+// The adapter is retained when its actual owner is constructed. Advance real
+// timers and animations; never force child flags or retry an input to get a hit.
+fn routing_pixels(
+    adapter: &slint::platform::software_renderer::MinimalSoftwareWindow,
+    window: &slint::Window,
+    size: (u32, u32),
+) -> Vec<u8> {
+    use std::time::{Duration, Instant};
+    let started = Instant::now();
+    let mut previous = None;
+    loop {
+        let pixels = headless::render(adapter, size.0, size.1);
+        if started.elapsed() >= Duration::from_millis(35)
+            && !window.has_active_animations()
+            && previous.as_ref() == Some(&pixels)
+        {
+            assert!(window.is_visible(), "capture the actual live routing owner");
+            return pixels;
+        }
+        assert!(
+            started.elapsed() < Duration::from_secs(2),
+            "routing render did not settle"
+        );
+        previous = Some(pixels);
+        std::thread::sleep(Duration::from_millis(5));
+    }
+}
+fn routing_capture(
+    adapter: &slint::platform::software_renderer::MinimalSoftwareWindow,
+    window: &slint::Window,
+    name: &str,
+    size: (u32, u32),
+) {
+    let pixels = routing_pixels(adapter, window, size);
+    headless::save_png(
+        &std::path::Path::new(env!("CARGO_TARGET_TMPDIR")).join(name),
+        &pixels,
+        size.0,
+        size.1,
+    )
+    .unwrap();
+}
+fn choice_labels(window: &hydrus_gui::ExternalRoutingChoiceWindow) -> Vec<String> {
+    window
+        .get_choices()
+        .iter()
+        .map(|label| label.to_string())
+        .collect()
+}
+fn assert_recorded_choice(
+    window: &hydrus_gui::ExternalRoutingChoiceWindow,
+    fixture: &Value,
+    index: usize,
+) {
+    let recorded = &fixture["chooser"][index];
+    assert!(window.window().is_visible());
+    assert_eq!(
+        window.get_window_title(),
+        recorded["title"].as_str().unwrap()
+    );
+    assert_eq!(
+        choice_labels(window),
+        recorded["choices"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|item| item["label"].as_str().unwrap().to_owned())
+            .collect::<Vec<_>>()
+    );
+    for item in recorded["choices"].as_array().unwrap() {
+        assert_eq!(
+            window.get_choice_description(),
+            item["tooltip"].as_str().unwrap()
+        );
+    }
+    assert_eq!(recorded["kwargs"]["allow_insta_one_item_select"], false);
+}
+fn routing_saved(store: &Store) -> (Routing, Manager) {
+    store
+        .read(|conn| {
+            Ok((
+                settings::get::<Routing>(conn)?,
+                settings::get::<Manager>(conn)?,
+            ))
+        })
+        .unwrap()
+}
+fn routing_draft(window: &OptionsWindow) -> Value {
+    let rows = |rows: slint::ModelRc<hydrus_gui::TableRow>| {
+        rows.iter()
+            .map(|row| {
+                json!({
+                    "cells": row.cells.iter().map(|cell| cell.to_string()).collect::<Vec<_>>(),
+                    "selected": row.selected,
+                })
+            })
+            .collect::<Vec<_>>()
+    };
+    json!({
+        "urls": rows(window.get_routing_url_rows()),
+        "files": rows(window.get_routing_file_rows()),
+        "url_selected": window.get_routing_url_selected(),
+        "file_single": window.get_routing_file_single(),
+        "file_delete": window.get_routing_file_delete(),
+        "child_open": window.get_routing_child_open(),
+        "prepared": window.get_routing_prepared(),
+        "error": window.get_routing_error().to_string(),
+        "page": window.get_page(),
+    })
+}
+// These coordinates are supported only at 960x800, scale 1, on the unscrolled
+// open-externally page. The new exact chooser must prove the physical hit.
+fn physical_url_choice(
+    window: &OptionsWindow,
+    adapter: &slint::platform::software_renderer::MinimalSoftwareWindow,
+    bound: &Bound,
+    edit: bool,
+) -> hydrus_gui::ExternalRoutingChoiceWindow {
+    use slint::platform::{PointerEventButton, WindowEvent};
+    assert!(!bound.options_open_externally.has_open());
+    routing_pixels(adapter, window.window(), (960, 800));
+    assert!(!window.get_routing_child_open());
+    assert_eq!(window.window().scale_factor().to_bits(), 1.0_f32.to_bits());
+    assert_eq!(
+        window.get_options_scroll_y().abs().to_bits(),
+        0.0_f32.to_bits()
+    );
+    assert!(window.get_search_text().is_empty());
+    assert_eq!(window.get_matches().row_count(), 0);
+    let position = slint::LogicalPosition::new(if edit { 767.0 } else { 400.0 }, 339.0);
+    window
+        .window()
+        .dispatch_event(WindowEvent::PointerMoved { position });
+    window.window().dispatch_event(WindowEvent::PointerPressed {
+        position,
+        button: PointerEventButton::Left,
+    });
+    window
+        .window()
+        .dispatch_event(WindowEvent::PointerReleased {
+            position,
+            button: PointerEventButton::Left,
+        });
+    assert!(bound.options_open_externally.question.borrow().is_none());
+    assert!(bound.options_open_externally.files.borrow().is_none());
+    let child = choice(bound);
+    assert!(
+        child.window().is_visible(),
+        "physical URL button must admit its chooser"
+    );
+    child
+}
+fn pending_url_chooser_retirement(ui: &MainWindow, bound: &Bound, store: &Store) {
+    let persisted = routing_saved(store);
+    for action in ["add", "edit"] {
+        let old = open(ui, bound);
+        if action == "edit" {
+            old.invoke_routing_url_action("add".into());
+            choose(bound, "alpha URL");
+        }
+        let selected = i32::from(action == "edit");
+        old.invoke_routing_url_clicked(selected, false, false);
+        old.invoke_routing_url_action(action.into());
+        let retired = choice(bound);
+        assert!(
+            retired.window().is_visible(),
+            "retire a genuinely pending chooser"
+        );
+        old.invoke_cancel();
+        assert!(!retired.window().is_visible());
+        assert!(bound.options_open_externally.choice.borrow().is_none());
+        let current = open(ui, bound);
+        if action == "edit" {
+            current.invoke_routing_url_action("add".into());
+            choose(bound, "alpha URL");
+        }
+        current.invoke_routing_url_clicked(selected, false, false);
+        current.invoke_routing_url_action(action.into());
+        let child = choice(bound);
+        let draft = routing_draft(&current);
+        let labels = choice_labels(&child);
+        assert_eq!(
+            labels,
+            if action == "edit" {
+                vec!["Default OS URL Launch"]
+            } else {
+                vec!["Default OS URL Launch", "alpha URL"]
+            }
+        );
+        let before_urls = urls(&current);
+        let before_files = file_rows(&current);
+        // Both forms of temporary invisibility reject chosen without retiring
+        // the current chooser. Re-show permits its later positive answer.
+        child.hide().unwrap();
+        child.invoke_chosen(0);
+        assert_eq!(routing_draft(&current), draft);
+        assert!(std::ptr::eq(choice(bound).window(), child.window()));
+        child.show().unwrap();
+        current.hide().unwrap();
+        child.invoke_chosen(0);
+        assert_eq!(routing_draft(&current), draft);
+        assert!(std::ptr::eq(choice(bound).window(), child.window()));
+        current.show().unwrap();
+        for attempt in 0..4 {
+            match attempt {
+                0 => retired.invoke_chosen(0),
+                1 => retired.invoke_cancel(),
+                2 => old.invoke_routing_url_action(action.into()),
+                _ => {
+                    old.invoke_apply();
+                    old.invoke_cancel();
+                }
+            }
+            assert_eq!(routing_draft(&current), draft);
+            assert_eq!(choice_labels(&child), labels);
+            assert_eq!(routing_saved(store), persisted);
+            assert!(current.window().is_visible() && child.window().is_visible());
+            assert!(std::ptr::eq(choice(bound).window(), child.window()));
+            assert!(std::ptr::eq(
+                bound.options.borrow().as_ref().unwrap().window(),
+                current.window()
+            ));
+            assert!(bound.options_open_externally.question.borrow().is_none());
+            assert!(bound.options_open_externally.files.borrow().is_none());
+        }
+        let mut expected_urls = before_urls;
+        if action == "add" {
+            expected_urls.push("Default OS URL Launch".into());
+        } else {
+            expected_urls[1] = "Default OS URL Launch".into();
+        }
+        child.invoke_chosen(0);
+        assert!(!child.window().is_visible());
+        assert!(bound.options_open_externally.choice.borrow().is_none());
+        assert_eq!(
+            urls(&current),
+            expected_urls,
+            "positive answer changes only this queue position"
+        );
+        assert_eq!(file_rows(&current), before_files);
+        assert_eq!(
+            routing_saved(store),
+            persisted,
+            "the accepted choice is still staged"
+        );
+        current.invoke_cancel();
+        assert_eq!(
+            routing_saved(store),
+            persisted,
+            "parent Cancel discards the current draft"
+        );
+    }
+}
 fn expected(fixture: &Value, event: usize) -> Vec<String> {
     fixture["events"][event]["urls"]
         .as_array()
@@ -278,6 +531,7 @@ fn options_routes_replay_qt_owned_choosers_cancel_order_apply_reopen_and_retirem
     let (_dirs, store) = super::subscriptions::store();
     let manager = seed(&store);
     let before = store.read(settings::get::<Routing>).unwrap();
+    let full_before = routing_saved(&store);
     let ui = MainWindow::new().unwrap();
     ui.show().unwrap();
     let bound = bind(&ui, Pages::open(store.clone()).unwrap());
@@ -285,6 +539,10 @@ fn options_routes_replay_qt_owned_choosers_cancel_order_apply_reopen_and_retirem
     let options_native = windows.get(windows.count() - 1).unwrap();
     assert_eq!(urls(&window), expected(&fixture, 0));
     assert_eq!(file_rows(&window), expected_files(&fixture, 0));
+    let physical = physical_url_choice(&window, &options_native, &bound, false);
+    assert_recorded_choice(&physical, &fixture, 0);
+    physical.invoke_cancel();
+    assert_eq!(routing_saved(&store), full_before);
     window.invoke_routing_url_action("add".into());
     let cancelled = choice(&bound);
     assert_eq!(
@@ -292,12 +550,29 @@ fn options_routes_replay_qt_owned_choosers_cancel_order_apply_reopen_and_retirem
         fixture["chooser"][0]["title"].as_str().unwrap()
     );
     assert_eq!(cancelled.get_choice_description(), "Select this call.");
+    assert_recorded_choice(&cancelled, &fixture, 0);
+    let cancelled_native = windows.get(windows.count() - 1).unwrap();
+    routing_capture(
+        &cancelled_native,
+        cancelled.window(),
+        "url-add-chooser.png",
+        (520, 440),
+    );
     cancelled.invoke_cancel();
     cancelled.invoke_chosen(0);
     assert_eq!(urls(&window), expected(&fixture, 1));
     for (name, event) in [("Zulu URL", 2), ("alpha URL", 3)] {
         window.invoke_routing_url_action("add".into());
+        let active = choice(&bound);
+        assert_recorded_choice(&active, &fixture, event - 1);
         if name == "alpha URL" {
+            let native = windows.get(windows.count() - 1).unwrap();
+            routing_capture(
+                &native,
+                active.window(),
+                "url-add-single-choice.png",
+                (520, 440),
+            );
             assert_eq!(
                 choice(&bound).get_choices().row_count(),
                 1,
@@ -308,6 +583,19 @@ fn options_routes_replay_qt_owned_choosers_cancel_order_apply_reopen_and_retirem
         assert_eq!(urls(&window), expected(&fixture, event));
     }
     assert!(!window.get_routing_url_selected());
+    assert!(
+        window
+            .get_routing_url_rows()
+            .iter()
+            .all(|row| !row.selected)
+    );
+    assert_eq!(routing_saved(&store), full_before);
+    routing_capture(
+        &options_native,
+        window.window(),
+        "url-add-draft.png",
+        (960, 800),
+    );
     window.invoke_routing_url_clicked(0, false, false);
     window.invoke_routing_url_action("down".into());
     assert_eq!(urls(&window), expected(&fixture, 4));
@@ -325,6 +613,13 @@ fn options_routes_replay_qt_owned_choosers_cancel_order_apply_reopen_and_retirem
         fixture["notices"][0].as_str().unwrap()
     );
     assert_eq!(notice.get_notice_ok_label(), "OK");
+    let notice_native = windows.get(windows.count() - 1).unwrap();
+    routing_capture(
+        &notice_native,
+        notice.window(),
+        "url-exhausted-information.png",
+        (520, 200),
+    );
     window.invoke_apply();
     assert!(bound.options.borrow().is_some());
     window.hide().unwrap();
@@ -347,7 +642,23 @@ fn options_routes_replay_qt_owned_choosers_cancel_order_apply_reopen_and_retirem
     question.invoke_answered(true);
     assert_eq!(urls(&window), expected(&fixture, 6));
     window.invoke_routing_url_clicked(0, false, false);
+    let physical = physical_url_choice(&window, &options_native, &bound, true);
+    assert_recorded_choice(&physical, &fixture, 3);
+    assert_eq!(urls(&window), expected(&fixture, 6));
+    // The duplicate callback is blocked by this live child. Accept the
+    // physically admitted child below: replacement, rather than append,
+    // distinguishes Edit from the adjacent Add button with identical choices.
     window.invoke_routing_url_action("edit".into());
+    let edited = choice(&bound);
+    assert!(std::ptr::eq(edited.window(), physical.window()));
+    assert_recorded_choice(&edited, &fixture, 3);
+    let edited_native = windows.get(windows.count() - 1).unwrap();
+    routing_capture(
+        &edited_native,
+        edited.window(),
+        "url-edit-single-choice.png",
+        (520, 440),
+    );
     choose(&bound, "Default OS URL Launch");
     assert_eq!(urls(&window), expected(&fixture, 7));
     // MIME chooser preserves the recorded groups+searchable order (not label sorting).
@@ -472,6 +783,7 @@ fn options_routes_replay_qt_owned_choosers_cancel_order_apply_reopen_and_retirem
     .unwrap();
     window.invoke_cancel();
     assert_eq!(store.read(settings::get::<Routing>).unwrap(), before);
+    assert_eq!(routing_saved(&store), full_before);
     let window = open(&ui, &bound);
     window.invoke_routing_url_clicked(0, false, false);
     window.invoke_routing_url_action("edit".into());
@@ -480,11 +792,35 @@ fn options_routes_replay_qt_owned_choosers_cancel_order_apply_reopen_and_retirem
     choose(&bound, "image/png");
     add_nested(&bound, "File one 日本");
     files(&bound).invoke_apply();
+    let staged_urls = urls(&window);
+    let staged_files = file_rows(&window);
+    assert_eq!(routing_saved(&store), full_before);
     window.invoke_apply();
     let saved = store.read(settings::get::<Routing>).unwrap();
     assert_eq!(saved.urls[0].key, manager.calls[0].key);
     assert_eq!(saved.files[&Mime::ImagePng][0].key, manager.calls[2].key);
+    let mut expected_saved = before.clone();
+    expected_saved.urls = vec![(&manager.calls[0]).into()];
+    expected_saved
+        .files
+        .insert(Mime::ImagePng, vec![(&manager.calls[2]).into()]);
+    assert_eq!(routing_saved(&store), (expected_saved, manager.clone()));
     let window = open(&ui, &bound);
+    let reopened_native = windows.get(windows.count() - 1).unwrap();
+    assert_eq!(urls(&window), staged_urls);
+    assert_eq!(file_rows(&window), staged_files);
+    assert!(
+        window
+            .get_routing_url_rows()
+            .iter()
+            .all(|row| !row.selected)
+    );
+    routing_capture(
+        &reopened_native,
+        window.window(),
+        "url-reopened-saved.png",
+        (960, 800),
+    );
     assert_eq!(urls(&window)[0], "Zulu URL");
     window.invoke_routing_url_action("add".into());
     let retired = choice(&bound);
@@ -497,6 +833,7 @@ fn options_routes_replay_qt_owned_choosers_cancel_order_apply_reopen_and_retirem
     assert!(bound.options_open_externally.choice.borrow().is_some());
     assert_eq!(urls(&successor)[0], "Zulu URL");
     successor.invoke_cancel();
+    pending_url_chooser_retirement(&ui, &bound, &store);
 }
 
 #[test]

@@ -1,0 +1,78 @@
+{
+  "source_commit": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+  "run_id": 37599290504,
+  "conclusion": "success",
+  "validation_scope": "linux",
+  "required_platforms": [
+    "linux"
+  ],
+  "deferred_platforms": [
+    "windows",
+    "macos"
+  ],
+  "gui_tests": {
+    "passed": 708,
+    "failed": 0,
+    "ignored": 0,
+    "seconds": 242.64
+  },
+  "media_tests": {
+    "passed": 67,
+    "failed": 0,
+    "ignored": 0,
+    "seconds": 1.01
+  },
+  "selected_tests_passed": [
+    "test external_calls::list_duplicate_defaults_delete_capture_and_options_persistence ... ok",
+    "test external_calls::defaults_physical_menu_exact_choices_saved_reopen_and_retired_selector_are_owned ... ok",
+    "test open_externally::options_routes_replay_qt_owned_choosers_cancel_order_apply_reopen_and_retirement ... ok",
+    "test open_externally::shortcut_and_routing_children_exclude_each_other_and_cancel_staged_changes ... ok"
+  ],
+  "assertion_preservation": {
+    "external_calls": {
+      "prior": 242,
+      "current": 313,
+      "prior_tests": 9,
+      "current_tests": 10
+    },
+    "open_externally": {
+      "prior": 107,
+      "current": 156,
+      "prior_tests": 5,
+      "current_tests": 5
+    }
+  },
+  "timings": {
+    "clippy_seconds": 90.0,
+    "clippy_cargo_seconds": 89.0,
+    "test_compile_seconds": 274.0,
+    "test_step_seconds": 785.0
+  },
+  "cache_observations": [
+    "2026-10-07T09:15:03.3125375Z Version: 20260901.588",
+    "2026-10-07T09:15:03.3135854Z Version: 20260927.320.1",
+    "2026-10-07T09:15:44.1065562Z Restored from cache key \"v0-rust-check-Linux-x64-6601efbe-0ea5e1be\" full match: true.",
+    "2026-10-07T09:15:45.4648302Z Workspace restore prefix: hydrus-ws-v1-check-Linux-X64-68e3726939ec9009de9276fa-",
+    "2026-10-07T09:16:00.6487352Z Verified and restored 4121 tracked-input mtimes and 293 coherent workspace artifact files; Cargo freshness checks remain enabled.",
+    "2026-10-07T09:31:21.7373001Z Workspace library snapshot candidate: 293 artifact files plus input ledger, 2200273639 bytes (limit 4294967296).",
+    "2026-10-07T09:31:41.9657546Z Cache saved with key: hydrus-ws-v1-check-Linux-X64-68e3726939ec9009de9276fa-791b72d194d93e637aeeb0a243c81a9981cf41aa-37599290504-1",
+    "2026-10-07T09:31:49.4013331Z Retained workspace snapshot bytes: 1034912967; budget: 3221225472."
+  ],
+  "native_artifact_id": 11473211098,
+  "native_zip_sha256": "80e29dc4dc75119bc1379b664b187fdbccc4cd5ef0a37d4ae0c5af0787453c22",
+  "native_image_count": 364,
+  "limits": [
+    "Hosted observations, not controlled attribution or separate Slint generation/Rust/link timing.",
+    "GUI and media suites have no failed or ignored tests. Existing ignored tests in other workspace suites remain; no assertions or tests were weakened.",
+    "Exactly three Add Defaults and URL Add/Edit leaves; runtime result alone does not approve image readability or broaden feature scope."
+  ],
+  "evidence_sha256": {
+    "full-check.log": "fee5ee4b76ffd950cff3e970686d8eed64c555548b074a0c5e88d6b1b64c155c",
+    "tests.log": "2fcb9afee1e569d65a112dd7bbe4c20bae7ffb922e9fe8584c9f313d7e331c40",
+    "parity.log": "5c93242a1b9cce69a624b963d920e7f3c4c3ddf6c9e3a078e10644e967a44fca",
+    "clippy.log": "51fa55c4fc03f92a0d55e9d0cfe2381a817cc84a5210e2572900d9e81daf0e24",
+    "maintenance.log": "472ed59a5f46a54f2635ce49f036a2a8dfde60d09a7fcdf109673fb622ee5351",
+    "ci-evidence.json": "e6b20c1b908ddb8f4c46f00f645039071f81632365bec34d63689b01f86d02af",
+    "native-render-manifest.json": "ab8390affcaeeb2f939db627d41545d078aa2a5b52faf315cba9ba224cb3a52e"
+  }
+}

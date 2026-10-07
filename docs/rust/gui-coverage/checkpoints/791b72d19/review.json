@@ -1,0 +1,46 @@
+{
+  "source_commit": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+  "reviewed_by": "Codex root with independent exact-source behavioral/rendered review2; separate source/preservation checks",
+  "patch_sha256": "1f97cf67c13811de004cc33c074403d6790a54fe1b552d70640c07b6e0ba3d56",
+  "reviewed_source_census_sha256": "c891fbb73552800c0a84065f604fd1986d5da5c29e32b00ce340c9026cc187fa",
+  "selected_completion_ids": [
+    "audit-options-external-programs-external-calls-add-defaults",
+    "audit-options-open-externally-url-calls-add",
+    "audit-options-open-externally-url-calls-edit"
+  ],
+  "reviewed_assessment_ids": [
+    "audit-options-external-programs-external-calls-add-defaults",
+    "audit-options-open-externally-url-calls-add",
+    "audit-options-open-externally-url-calls-edit"
+  ],
+  "reviewed_native_ids": [],
+  "independent_reviews": [
+    {
+      "path": "docs/rust/gui-coverage/checkpoints/791b72d19/final-review-2-791b72d19.json",
+      "sha256": "4babf95d4b3684b9842e0550500cbda06e385abe5a5605a71a7bacc44d7b7209"
+    }
+  ],
+  "validation_scope": "linux",
+  "required_platforms": [
+    "linux"
+  ],
+  "deferred_platforms": [
+    "windows",
+    "macos"
+  ],
+  "root_actual_native_inspection": [
+    "external-defaults-menu.png",
+    "external-defaults-platform-question.png",
+    "external-defaults-selector-initial.png",
+    "external-defaults-selector-selected.png",
+    "external-defaults-all-draft.png",
+    "external-defaults-reopened-saved.png",
+    "url-add-chooser.png",
+    "url-add-single-choice.png",
+    "url-edit-single-choice.png",
+    "url-exhausted-information.png",
+    "url-add-draft.png",
+    "url-reopened-saved.png"
+  ],
+  "scope": "Only the selected Add Defaults and URL Add/Edit controls gain credit. No parent, alias, native hierarchy or deferred-platform credit. Browser verification and preservation audit required before canonical publication."
+}

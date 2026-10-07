@@ -1,0 +1,104 @@
+{
+  "schema_version": 1,
+  "source_commit": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+  "run_id": 37599290504,
+  "state": "conditional_mapping_NOT_applied",
+  "selected_ids": [
+    "audit-options-external-programs-external-calls-add-defaults",
+    "audit-options-open-externally-url-calls-add",
+    "audit-options-open-externally-url-calls-edit"
+  ],
+  "input_patch": "/workspace/validation-reviews/defaults-url3/prep-791b72d19/subset-preflight/subset-proposal-patch.json",
+  "input_sha256": "b6a0eb712ca3bb3f2a5815c43af719d27a7d14dd810fb31a47493853e60eec5e",
+  "mandatory_preconditions": [
+    "Exact source 791b72d194d93e637aeeb0a243c81a9981cf41aa / run 37599290504: full strict Linux check and parity-models reference/backend pending; Windows/macOS deferred under immutable source policy.",
+    "All twelve defining current native captures require independent reviewer2 and root actual inspection/hash checks. Existing Qt PNGs are historical context, not matched popup/chooser/notice pixel or placement pairs.",
+    "Final patch/census review, actual staged prior 359, unselected, native 1799, frozen 1812 and all-goal 1274 preservation and actual desktop/narrow browser checks required.",
+    "Only accepted publication may reach 362 signed off, 13 existing candidates pending and 912 outside the unchanged 1274-leaf goal. Preparation grants no approval."
+  ],
+  "conditional_operations": [
+    {
+      "id": "audit-options-external-programs-external-calls-add-defaults",
+      "field": "limitations",
+      "original_index": 2,
+      "operation": "replace_exact_list_item",
+      "before": "No local Cargo builds/tests or mutations were run. Authored model/native/store consumers and native PNG await hosted CI.",
+      "conditional_after": "Historical author metadata records authored regressions without local Cargo builds, Rust tests or mutation testing. Current exact-source Linux execution and fresh native rendered review are recorded separately in the accepted checkpoint.",
+      "reason": "Reconcile only now-resolved validation status after actual gates; retain historical authorship/no-local-build provenance."
+    },
+    {
+      "id": "audit-options-external-programs-external-calls-add-defaults",
+      "field": "remaining",
+      "original_index": 0,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source hosted full Linux validation remains pending.",
+      "conditional_after": null,
+      "reason": "Remove only pending exact-source validation/render preparation status after real gates."
+    },
+    {
+      "id": "audit-options-external-programs-external-calls-add-defaults",
+      "field": "remaining",
+      "original_index": 1,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source fresh native rendered/behavioral review and final assessment reconciliation remain pending.",
+      "conditional_after": null,
+      "reason": "Remove only pending exact-source validation/render preparation status after real gates."
+    },
+    {
+      "id": "audit-options-open-externally-url-calls-add",
+      "field": "limitations",
+      "original_index": 3,
+      "operation": "replace_exact_list_item",
+      "before": "Authored model/store/native regressions and native PNG assertions await hosted CI. No local Cargo builds, Rust tests or mutation tests were run.",
+      "conditional_after": "Historical author metadata records authored regressions without local Cargo builds, Rust tests or mutation testing. Current exact-source Linux execution and fresh native rendered review are recorded separately in the accepted checkpoint.",
+      "reason": "Reconcile only now-resolved validation status after actual gates; retain historical authorship/no-local-build provenance."
+    },
+    {
+      "id": "audit-options-open-externally-url-calls-add",
+      "field": "remaining",
+      "original_index": 0,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source hosted full Linux validation remains pending.",
+      "conditional_after": null,
+      "reason": "Remove only pending exact-source validation/render preparation status after real gates."
+    },
+    {
+      "id": "audit-options-open-externally-url-calls-add",
+      "field": "remaining",
+      "original_index": 1,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source fresh native rendered/behavioral review and final assessment reconciliation remain pending.",
+      "conditional_after": null,
+      "reason": "Remove only pending exact-source validation/render preparation status after real gates."
+    },
+    {
+      "id": "audit-options-open-externally-url-calls-edit",
+      "field": "limitations",
+      "original_index": 3,
+      "operation": "replace_exact_list_item",
+      "before": "Authored model/store/native regressions and native PNG assertions await hosted CI. No local Cargo builds, Rust tests or mutation tests were run.",
+      "conditional_after": "Historical author metadata records authored regressions without local Cargo builds, Rust tests or mutation testing. Current exact-source Linux execution and fresh native rendered review are recorded separately in the accepted checkpoint.",
+      "reason": "Reconcile only now-resolved validation status after actual gates; retain historical authorship/no-local-build provenance."
+    },
+    {
+      "id": "audit-options-open-externally-url-calls-edit",
+      "field": "remaining",
+      "original_index": 0,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source hosted full Linux validation remains pending.",
+      "conditional_after": null,
+      "reason": "Remove only pending exact-source validation/render preparation status after real gates."
+    },
+    {
+      "id": "audit-options-open-externally-url-calls-edit",
+      "field": "remaining",
+      "original_index": 1,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source fresh native rendered/behavioral review and final assessment reconciliation remain pending.",
+      "conditional_after": null,
+      "reason": "Remove only pending exact-source validation/render preparation status after real gates."
+    }
+  ],
+  "operation_contract": "Full exact-before equality, descending index per ID/field: six pending removals and three historical provenance replacements. No assessment or true behavior limit removed.",
+  "approval": false
+}

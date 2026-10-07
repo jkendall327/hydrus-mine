@@ -494,3 +494,28 @@ Rust and linker measurements. Existing libraries can be reused while integration
 test compilation/linking and full test execution still take time. No new
 optimization experiment was opened. [Checkpoint evidence](../checkpoints/1943b19d9/README.md)
 retains both attempts with no failed-run credit.
+
+## Add Defaults and URL Add/Edit checkpoint
+
+Source `791b72d19`, run `37599290504`, used runner image `20260927.320.1`
+and workspace prefix `68e3726939ec9009de9276fa`. The dependency cache hit;
+4,121 verified tracked-input mtimes and 293 coherent workspace artifact files
+were restored. Neither Clippy nor test compilation reports rebuilding
+`hydrus-gui-ui`. This is actual workspace reuse for a test-only GUI change.
+
+Strict Clippy took 89s in Cargo (90s workflow step), test compilation/linking
+274s, and the complete test step 785s. All 708 GUI tests passed in 242.64s,
+and all 67 media tests passed in 1.01s. The prior image-miss run reported a
+546s Clippy step and 612s test build; these runs differ in runner image, cache
+availability and test workload, so their timings are not controlled attribution.
+Integration-test compilation/linking and full test execution remain material
+costs even when generated UI libraries are reused.
+
+The run saved a fresh SHA/run-specific cache key containing 293 workspace
+artifact files plus the input ledger, totaling 2,200,273,639 bytes. Maintenance
+retained 1,034,912,967 compressed bytes, below the 3 GiB budget. Exact restored
+and saved keys, image versions, timestamps and timings remain in the checkpoint's
+[raw log](../checkpoints/791b72d19/full-check.log) and
+[outcome](../checkpoints/791b72d19/validation-outcome.json).
+No separate Slint/Rust/link or peak-memory attribution is claimed for this
+validation observation, and no new optimization experiment was opened.

@@ -2473,6 +2473,14 @@ owned Information notices, while empty routes use the OS launcher. Specific empt
 filetype rows suppress inherited custom routes. Names wash only on parent Apply,
 with stable-key deduplication and no same-name remapping of deleted definitions.
 
+The current URL Add/Edit follow-up keeps its physical-button claim limited to
+an unscrolled 960×800 scale-1 native view. Chooser answers remain callback-driven;
+Qt's existing PNG depicts a later queue state and is not a paired chooser or
+notice image. Full Linux run `37599290504` and independent review of six fresh
+URL defining states passed, retaining full-state ownership/persistence assertions.
+Other routing controls, broader parents and deferred platforms earn no credit
+from this follow-up.
+
 OS calls are regenerated only in the opened routing draft, then persisted on
 Apply, preserving registered-call-only transactions. Native regeneration assigns
 the correct single-file pipeline; the reference manager's missing-file-OS branch
@@ -2497,6 +2505,14 @@ manager settings are not migrated, opening only the registered-call page does no
 Default OS launch calls, and reference column-state persistence is absent.
 Supported column sorting itself uses the reference casefolded full-tuple tie
 break and writes the sorted Options draft.
+
+The separate Add Defaults proof uses the actual native menu only at an
+unscrolled 1100×800 scale-1 view. Selector rows highlight selection rather than
+using Qt checkboxes; question answers and selector toggles remain callback-driven.
+The historical Qt callable-child image is not an outer menu/selector pixel
+comparison. Full Linux run `37599290504` and independent review of six fresh
+Add Defaults frames passed, retaining the full-state regressions.
+[Evidence](gui-coverage/checkpoints/791b72d19/README.md).
 
 The validated two-leaf checkpoint covers only the registered-call Delete and
 Duplicate actions. The actual Qt replay reproduces the selected questions,

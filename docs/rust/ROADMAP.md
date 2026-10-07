@@ -7,23 +7,23 @@ partway, say exactly where.
 
 The owner's current goal (2026-10-06) is **all individual report feature leaves
 implemented, verified and published**, with Linux first. Numeric checkpoints are
-progress reports, not stopping targets. The latest checkpoint banks 359 original
-concrete feature completions, including 119 since the prior 240 across seventeen
-recent Linux checkpoints with fresh rendered review. This cumulative figure is
-not a last-24-hour sign-off count. There are 16 existing candidates awaiting
-sign-off. Keep these counts separate from inventory and historical first-pass
-assessments. Validate each small batch routinely; reassess any batch that goes
-24 hours without a checkpoint. Broad feature work must not rebuild an unvalidated
-backlog. Windows/macOS remain deferred; strict Linux linting, full tests,
-reference replays and rendered review remain required.
-The latest checkpoint validates registered-call Delete and Duplicate through
-recorded list/question outcomes, seven fresh captures and retained pending-answer
-checks against usable replacement owners. All 165 original assertions and the
-same nine tests remain; the file now has 242 assertions, retaining all 239 from
-the first failed run. All 707 GUI and 67 media tests passed. Five earlier
-images remain diagnostic and earn no credit; supported capture sizes, scripted
-Qt questions and broader ownership/launch limits remain explicit.
-[Evidence](gui-coverage/checkpoints/1943b19d9/README.md).
+progress reports, not stopping targets. The latest checkpoint banks 362 original
+concrete feature completions, including 122 since the prior 240 across eighteen
+recent Linux checkpoints. This cumulative count is not a last-24-hour sign-off
+count. There are 13 existing candidates awaiting sign-off. Keep these counts
+separate from inventory and historical first-pass assessments. Validate small
+batches routinely and reassess any batch that goes 24 hours without a checkpoint.
+Broad feature work must not rebuild an unvalidated backlog. Windows/macOS remain
+deferred; strict Linux linting, full tests, reference replay and rendered review
+remain required.
+The latest checkpoint validates registered-call Add Defaults and URL Add/Edit.
+Twelve fresh defining frames supplement exact factory/choice/order/store replays,
+finite physical parent/menu admission and retained-owner checks. All 242 prior
+external-call and 107 routing assertions remain; current files have 313 assertions
+across ten tests and 156 across five respectively. All 708 GUI and 67 media
+tests passed. Supported dimensions, callback-driven child answers, absent matching
+Qt child/popup pixels and broader ownership/launch limits remain explicit.
+[Evidence](gui-coverage/checkpoints/791b72d19/README.md).
 
 The first parallel slate (2026-10-03) adds detailed embedded metadata,
 manual file export, local service review/management, tag sibling/parent
@@ -71,8 +71,8 @@ and all 121 exported native windows into nested work, including shared editors,
 all 38 reference option tabs and 19 system-predicate groups. It contains 1,812
 reference nodes and 1,799 native nodes, with per-node assessments, concrete
 remaining work and pinned source/evidence links. The frozen reference inventory
-now has 467 Missing, 385 Partial and 960 First pass entries; its status changes
-also include parent/alias assessments, which do not inflate the 359-item signed-off completion count.
+now has 464 Missing, 385 Partial and 963 First pass entries; its status changes
+also include parent/alias assessments, which do not inflate the 362-item signed-off completion count.
 Native first-pass claims cite scoped regression evidence; source-supported but
 unverified behavior is partial. These counts are not a whole-client completion
 percentage. Maintenance instructions and scope limits are in

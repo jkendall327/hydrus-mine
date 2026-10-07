@@ -1,0 +1,133 @@
+{
+  "source_commit": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+  "run_id": 37599290504,
+  "artifact_id": 11473211098,
+  "native_zip_sha256": "80e29dc4dc75119bc1379b664b187fdbccc4cd5ef0a37d4ae0c5af0787453c22",
+  "actually_viewed": [
+    {
+      "name": "external-defaults-menu.png",
+      "path": "/workspace/validation-reviews/ci-791b72d19/native-renders/external-defaults-menu.png",
+      "sha256": "f3baa5dc4c13a4092d67cf4068ba9a4dcdbf9ba45b5a60604d3394409d20018a",
+      "width": 1100,
+      "height": 800,
+      "observation": "Live two-item popup shows add them all and select from a list, both readable beside the actual Add Defaults button. Prior selection remains highlighted; footer visible. Popup fits the supported parent composite at its right edge."
+    },
+    {
+      "name": "external-defaults-platform-question.png",
+      "path": "/workspace/validation-reviews/ci-791b72d19/native-renders/external-defaults-platform-question.png",
+      "sha256": "f5faa3906ceed2166cd7ff2286dabfc21eac2481efb4ec1989c1517f61eb73c8",
+      "width": 520,
+      "height": 200,
+      "observation": "Complete Linux/everything prompt and both custom response labels readable at 520x200. Buttons expand vertically; no default or universal geometry claim."
+    },
+    {
+      "name": "external-defaults-selector-initial.png",
+      "path": "/workspace/validation-reviews/ci-791b72d19/native-renders/external-defaults-selector-initial.png",
+      "sha256": "674667f2aee627515399ab4e1eacea2d7132ad330569cb7d0332e27e51dd6b24",
+      "width": 600,
+      "height": 550,
+      "observation": "All fifteen default labels visible in order, including platform-specific variants; all rows unselected. Apply/Cancel fit. Native selection uses row highlighting rather than Qt checkboxes."
+    },
+    {
+      "name": "external-defaults-selector-selected.png",
+      "path": "/workspace/validation-reviews/ci-791b72d19/native-renders/external-defaults-selector-selected.png",
+      "sha256": "0d5e326ab7f8716e0f79ac743d55b770b5cdcb0b1e8c4023ace0cb68c87c6ac2",
+      "width": 600,
+      "height": 550,
+      "observation": "Only Default OS File Launch and Default OS URL Launch highlighted, corresponding to indices0/9. All fifteen labels and footer remain visible."
+    },
+    {
+      "name": "external-defaults-all-draft.png",
+      "path": "/workspace/validation-reviews/ci-791b72d19/native-renders/external-defaults-all-draft.png",
+      "sha256": "4d4fa2e9ed4fca5231ece5b1fd84d4660cd630c6bb7659447ce19811b7b3e282",
+      "width": 1100,
+      "height": 800,
+      "observation": "Selected scrollable all-default draft shows the upper nine of sixteen rows, including prior selection. Readable name/type/command columns and available controls; lower rows are outside the viewport. Full sixteen-row content/selection is independently asserted, not claimed visible simultaneously."
+    },
+    {
+      "name": "external-defaults-reopened-saved.png",
+      "path": "/workspace/validation-reviews/ci-791b72d19/native-renders/external-defaults-reopened-saved.png",
+      "sha256": "c35b59723275a071ba30b5c2cc8733ea4a1f73fff92ecb840e3aa44549ecb601",
+      "width": 1100,
+      "height": 800,
+      "observation": "Three actual saved/reopened rows: Default OS File Launch, prior selection, Default OS URL Launch. All unselected; full command/type text visible for these calls. Selection-dependent actions disabled, Add Defaults and footer readable."
+    },
+    {
+      "name": "url-add-chooser.png",
+      "path": "/workspace/validation-reviews/ci-791b72d19/native-renders/url-add-chooser.png",
+      "sha256": "74bf4c110eaecb87a998f1fcbfadafdbfa396cbe523793f1a29aa55f24ef3c15",
+      "width": 520,
+      "height": 440,
+      "observation": "Two readable buttons, Zulu URL then alpha URL, with Select this call. description and Cancel. Buttons expand to fill 520x440; no matching Qt chooser pixel claim."
+    },
+    {
+      "name": "url-add-single-choice.png",
+      "path": "/workspace/validation-reviews/ci-791b72d19/native-renders/url-add-single-choice.png",
+      "sha256": "2bb823e91a11e299d2af5a75858fa4fac946ff9d44ac50071ce9d51fb7a5c153",
+      "width": 520,
+      "height": 440,
+      "observation": "Explicit alpha URL single-choice button remains visible with description and Cancel; it is not auto-accepted. Large vertical button is readable."
+    },
+    {
+      "name": "url-edit-single-choice.png",
+      "path": "/workspace/validation-reviews/ci-791b72d19/native-renders/url-edit-single-choice.png",
+      "sha256": "df10f1c5a36bf0b6de21ec1db8423cb862f35fcd06e73a641d0a3020b6fbb64a",
+      "width": 520,
+      "height": 440,
+      "observation": "Explicit Default OS URL Launch choice, description and Cancel readable. Positive accepted physical-parent Edit outcome is replacement, separately asserted."
+    },
+    {
+      "name": "url-exhausted-information.png",
+      "path": "/workspace/validation-reviews/ci-791b72d19/native-renders/url-exhausted-information.png",
+      "sha256": "9019efe9b4063453d842e46b9d956a52c962a76527ccc7b0c4b237688a8a2d60",
+      "width": 520,
+      "height": 200,
+      "observation": "Complete exhausted URL notice wraps in two lines at 520x200 and OK is fully readable. Large empty area and tall OK button are retained native layout, not pixel parity."
+    },
+    {
+      "name": "url-add-draft.png",
+      "path": "/workspace/validation-reviews/ci-791b72d19/native-renders/url-add-draft.png",
+      "sha256": "e4714355a4de7c7c7048f69f04732d5a1820481bd19f6dc4606fbc377f531065",
+      "width": 960,
+      "height": 800,
+      "observation": "All three URL rows visible in order: Default OS URL Launch, Zulu URL, alpha URL. No selection; Edit/arrows disabled, Add enabled. File backstop and parent footer visible."
+    },
+    {
+      "name": "url-reopened-saved.png",
+      "path": "/workspace/validation-reviews/ci-791b72d19/native-renders/url-reopened-saved.png",
+      "sha256": "879bffa19c85d1998df27f5c3748a05fbae78a05669024fe465ed278a575cdc5",
+      "width": 960,
+      "height": 800,
+      "observation": "Actual saved/reopened Zulu URL alone, unselected. Supplemental saved PNG file route shows File one \u65e5\u672c with readable glyphs. Full Routing/Manager persistence separately asserted; no MIME leaf credit."
+    },
+    {
+      "name": "open-externally-routing.png",
+      "path": "/workspace/validation-reviews/ci-791b72d19/native-renders/open-externally-routing.png",
+      "sha256": "99f82dbb632e278add164da346a80be0fc98b1f3f5868841412a6f69d9fbdec9",
+      "width": 960,
+      "height": 800,
+      "observation": "Supplemental current replay context: selected Default OS URL Launch followed by alpha URL; selected all files and PNG routes below, including readable \u65e5\u672c. No extra nested/MIME/order credit."
+    }
+  ],
+  "independent_review_pending": false,
+  "root_visual_blockers": [],
+  "reference_images_actually_viewed": [
+    {
+      "path": "/workspace/hydrus-mine/oracle/fixtures/external_calls.png",
+      "sha256": "2eda195f01254bf2de45455e5a4f3e1be181911317ae3af0dea390e03708a139",
+      "actually_viewed": true,
+      "scope": "Actual historical Qt callable child only; right testing pane cropped/scrollable, no defaults popup or selector pair."
+    },
+    {
+      "path": "/workspace/hydrus-mine/oracle/fixtures/open_externally.png",
+      "sha256": "93e6891da43fa4d641c8bc80e7d711a3191a1aaad58b64fb5fe026ec071b8aec",
+      "actually_viewed": true,
+      "scope": "Historical Qt outer routing panel in later renamed/missing state; no matching native state or chooser/notice pair."
+    }
+  ],
+  "scope": "Exactly Add Defaults and URL Add/Edit; twelve defining images plus one supplemental current routing image. Physical parent/menu input only at tested finite views; child answers callback-driven. Full Linux success does not broaden scope.",
+  "independent_review": {
+    "path": "/workspace/validation-reviews/final-review-2-791b72d19.json",
+    "sha256": "4babf95d4b3684b9842e0550500cbda06e385abe5a5605a71a7bacc44d7b7209"
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "source_commit": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+  "run_id": 37599290504,
+  "source_phase": "repaired source validation pending",
+  "selected_candidate_ids": [
+    "audit-options-external-programs-external-calls-add-defaults",
+    "audit-options-open-externally-url-calls-add",
+    "audit-options-open-externally-url-calls-edit"
+  ],
+  "selected_count": 3,
+  "prior_completed_count": 359,
+  "pending_count": 16,
+  "conditional_bank_if_all_gates_pass": 362,
+  "conditional_pending_after_bank": 13,
+  "conditional_goal_outside_ledger": 912,
+  "not_ready_by_preparation": true,
+  "approval": false,
+  "gates": [
+    "Exact source 791b72d194d93e637aeeb0a243c81a9981cf41aa / run 37599290504: full strict Linux check and parity-models reference/backend pending; Windows/macOS deferred under immutable source policy.",
+    "All twelve defining current native captures require independent reviewer2 and root actual inspection/hash checks. Existing Qt PNGs are historical context, not matched popup/chooser/notice pixel or placement pairs.",
+    "Final patch/census review, actual staged prior 359, unselected, native 1799, frozen 1812 and all-goal 1274 preservation and actual desktop/narrow browser checks required.",
+    "Only accepted publication may reach 362 signed off, 13 existing candidates pending and 912 outside the unchanged 1274-leaf goal. Preparation grants no approval."
+  ]
+}

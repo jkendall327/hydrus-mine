@@ -1,0 +1,885 @@
+{
+  "source_commit": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+  "run_id": 37599290504,
+  "assertion_preservation": [
+    {
+      "path": "/workspace/validation-reviews/defaults-url3/external_calls-assertion-preservation-root.json",
+      "sha256": "54867a09528d0d4fca87c34f0179b28ab025a7614f3bf41476ddccd691e94532",
+      "proof": {
+        "base_commit": "b52957c9f8843c4765acc81baa00c63cff63244e",
+        "file": "crates/hydrus-gui/tests/gui/external_calls.rs",
+        "base_sha256": "ef44539c033f71a470076f1661d9328f1fcc841ad75683f2a31422833e014bc7",
+        "current_sha256": "b3dea615fc217d7cac71ede35633d030eb3480bff6914f0f089a4f9eca3357f4",
+        "original_assertions": 242,
+        "current_assertions": 313,
+        "original_tests": 9,
+        "current_tests": 10,
+        "all_original_assertion_spans_preserved_bytewise_in_order": true,
+        "original_test_names_preserved": true,
+        "validation": "rustfmt and diff checks only; hosted tests and renders pending"
+      }
+    },
+    {
+      "path": "/workspace/validation-reviews/defaults-url3/open_externally-assertion-preservation-root.json",
+      "sha256": "5fd8335f8046e8ea9ced34748d264dbdbd0f8774d0ffe70aaa6c20d701d9beab",
+      "proof": {
+        "base_commit": "b52957c9f8843c4765acc81baa00c63cff63244e",
+        "file": "crates/hydrus-gui/tests/gui/open_externally.rs",
+        "base_sha256": "3de4e94c2abfe4ff0b8e4a0c0c9d471aefcbe5c7caf18dd69620cfef8d48ec79",
+        "current_sha256": "b8c2fba97967a94fb95480a86477744f0ed5b5d2504879dcfc063dc3d64ce35c",
+        "original_assertions": 107,
+        "current_assertions": 156,
+        "original_tests": 5,
+        "current_tests": 5,
+        "all_original_assertion_spans_preserved_bytewise_in_order": true,
+        "original_test_names_preserved": true,
+        "validation": "rustfmt and diff checks only; hosted tests and renders pending"
+      }
+    }
+  ],
+  "source_reviews": [
+    {
+      "path": "/workspace/validation-reviews/defaults-url3/defaults-source-review-2.json",
+      "sha256": "fcc201473bc5e1090ce8a60fe028ad1903e791d1489216132c2ce24d8f62d8b6",
+      "declared_source_commit": null,
+      "current_input_hashes_exact_at_source": true,
+      "source_review": {
+        "review_type": "Independent Add Defaults source-only review",
+        "baseline_commit": "b52957c9f8843c4765acc81baa00c63cff63244e",
+        "agent_commit": "d6e4b4039e83017568d01cd1282aec121ae1765e",
+        "source_commit": null,
+        "reviewed_test_sha256": "b3dea615fc217d7cac71ede35633d030eb3480bff6914f0f089a4f9eca3357f4",
+        "integrated_source_pin_pending": true,
+        "selected_ids": [
+          "audit-options-external-programs-external-calls-add-defaults"
+        ],
+        "source_review_conclusion": "No concrete source blocker. Ready to integrate and pin final source, then full exact-source Linux validation and actual fresh image inspection.",
+        "source_blockers": [],
+        "approval": false,
+        "runtime_approval": false,
+        "rendered_approval": false,
+        "source_pins": [
+          {
+            "path": "crates/hydrus-gui/tests/gui/external_calls.rs",
+            "sha256": "b3dea615fc217d7cac71ede35633d030eb3480bff6914f0f089a4f9eca3357f4",
+            "bytes": 78934,
+            "unchanged_from_baseline": false,
+            "pin": "d6e4b4039e83017568d01cd1282aec121ae1765e"
+          },
+          {
+            "path": "crates/hydrus-gui/src/options_external_calls.rs",
+            "sha256": "aaf0f08bee33dbd41db2868980381e607bd8a1a84038f1d7c9598c4073ad93dd",
+            "bytes": 19443,
+            "unchanged_from_baseline": true,
+            "pin": "d6e4b4039e83017568d01cd1282aec121ae1765e"
+          },
+          {
+            "path": "crates/hydrus-gui/src/external_call_window.rs",
+            "sha256": "08982225de04ed866a7b59a22d51033befaf28ed5c9ff075e1630b51e36c05d8",
+            "bytes": 37603,
+            "unchanged_from_baseline": true,
+            "pin": "d6e4b4039e83017568d01cd1282aec121ae1765e"
+          },
+          {
+            "path": "crates/hydrus-gui/ui/external_calls.slint",
+            "sha256": "b1d0f41309d7e9926c5a8a705ce87364961a04b9e6accc787eb8cafa4c196858",
+            "bytes": 13241,
+            "unchanged_from_baseline": true,
+            "pin": "d6e4b4039e83017568d01cd1282aec121ae1765e"
+          },
+          {
+            "path": "crates/hydrus-gui/ui/options.slint",
+            "sha256": "cd6bc428d6ad2a4a8d07556d05eb4e4421cae9fa72f344771877fd9aa1d3db93",
+            "bytes": 56606,
+            "unchanged_from_baseline": true,
+            "pin": "d6e4b4039e83017568d01cd1282aec121ae1765e"
+          },
+          {
+            "path": "crates/hydrus-gui-model/src/external_calls.rs",
+            "sha256": "038ec90a3f8b2eed25f7f1c8282be8b98d95a2bbd66cd460cc5e5ee348172f02",
+            "bytes": 8978,
+            "unchanged_from_baseline": true,
+            "pin": "d6e4b4039e83017568d01cd1282aec121ae1765e"
+          },
+          {
+            "path": "crates/hydrus-gui-model/tests/model/external_calls.rs",
+            "sha256": "1867beb79add1b9b1d4ad29f595fae1f43fea24e18450c77d2596a60ed587af3",
+            "bytes": 18344,
+            "unchanged_from_baseline": true,
+            "pin": "d6e4b4039e83017568d01cd1282aec121ae1765e"
+          },
+          {
+            "path": "hydrus/client/gui/panels/options/ExternalProgramsPanel.py",
+            "sha256": "59f2f9a236a0fd6e3ac8fd281afdf1578aabe6d02f8979768a2f6d1a550d8004",
+            "bytes": 61407,
+            "unchanged_from_baseline": true,
+            "pin": "d6e4b4039e83017568d01cd1282aec121ae1765e"
+          },
+          {
+            "path": "hydrus/client/gui/lists/ClientGUIListCtrl.py",
+            "sha256": "9e06b9cd7c79572c8463299899dd3d23715bdc5d0f4d702eac2a4dbe33b2068d",
+            "bytes": 75758,
+            "unchanged_from_baseline": true,
+            "pin": "d6e4b4039e83017568d01cd1282aec121ae1765e"
+          },
+          {
+            "path": "oracle/record_external_calls.py",
+            "sha256": "327193153b4aab12f2d371d20a8c4d970311664d7a0b42f0712fdd92fab68b6a",
+            "bytes": 14875,
+            "unchanged_from_baseline": true,
+            "pin": "d6e4b4039e83017568d01cd1282aec121ae1765e"
+          },
+          {
+            "path": "oracle/fixtures/external_calls.json",
+            "sha256": "c1c9e3a02fdeafa9b662e6c162bd5aed605a325359d8dea7bf07ea2896aa56f4",
+            "bytes": 65217,
+            "unchanged_from_baseline": true,
+            "pin": "d6e4b4039e83017568d01cd1282aec121ae1765e"
+          },
+          {
+            "path": "oracle/fixtures/external_calls.png",
+            "sha256": "2eda195f01254bf2de45455e5a4f3e1be181911317ae3af0dea390e03708a139",
+            "bytes": 138263,
+            "unchanged_from_baseline": true,
+            "pin": "d6e4b4039e83017568d01cd1282aec121ae1765e"
+          },
+          {
+            "path": "docs/rust/gui-coverage/parity/external-calls.json",
+            "sha256": "5cf911f12d98ee4874796a5ecc4472296db70a45b32292c0e9fbd4d56d3a8407",
+            "bytes": 109797,
+            "unchanged_from_baseline": true,
+            "pin": "d6e4b4039e83017568d01cd1282aec121ae1765e"
+          }
+        ],
+        "assertion_preservation": {
+          "original_bytes": 63444,
+          "original_exact_prefix": true,
+          "original_macros": 242,
+          "current_macros": 313,
+          "original_tests": 9,
+          "current_tests": 10,
+          "all_original_test_symbols_ordered": true
+        },
+        "observations": [
+          "No concrete source blocker found. One appended focused test and helpers preserve the entire original 63,444-byte test file as an exact prefix: 242 baseline macros/nine tests remain, now 313 macros/ten tests. Production, Slint, models and reference inputs are unchanged.",
+          "The actual Add Defaults Button is physically pressed/released at (1019,440) only after real rendering settles at 1100 × 800, scale 1, zero content scroll and no search/matches. A prior empty popup stack must become exactly one popup without creating another native adapter; no callback fallback or pointer retry is used. Escape restores zero popups with complete rows/flags, saved Manager and child slots unchanged.",
+          "Physical popup Down/Return routes distinguish row 0 add-all from row 1 select-some by their actual results. The exact platform prompt and custom answer labels are compared against the Qt recording; all/everything adds the complete recorded sorted names/selection and selector/everything opens fifteen recorded ordered false choices. The actual menu text and ordering still need fresh image inspection.",
+          "The selector initial/selected states compare all fifteen labels and booleans, then only indices 0/9. Parent saved Manager remains unchanged until Options Apply. Persisted typed OS defaults preserve all fields except fresh keys, which are unique and differ from every original factory key; the prior call is unchanged. Complete reopened row cells and unselected booleans match the saved Manager.",
+          "The successor test retires a genuinely pending selector through parent Cancel, gives the new live selector an independently chosen row 1, then invokes old toggle/Apply/Cancel/native-close and old parent actions. Full current selector names/booleans, parent cells/flags, saved Manager, Options/default slot identity and window visibility remain unchanged. Positive current acceptance adds exactly xdg-open to the staged draft, followed by parent Cancel preserving Store.",
+          "Current Cancel, native CloseRequested and supported slot cancellation each discard newly selected row 14 without changing parent rows or Store and without closing the parent. Automatic Main destruction, final Bound drop or arbitrary hidden/page-switch admission are not tested here.",
+          "Captures retain actual owner adapters, advance real timers and render/animation state, require at least 35 ms and consecutive equal pixel buffers, and fail within two seconds. The reused helper asserts a visible window and never forces child flags or caption state.",
+          "Current Slint1.18 popup/key APIs match existing pinned usages. Short-lived RefCell reads, private active-popup access, WindowEvent key/close dispatch and factory vector removal are compatible with the current sources. No immediate type/lint/borrow blocker was found, but compilation/runtime success is not inferred from source review."
+        ],
+        "finite_limits": [
+          "Exactly audit-options-external-programs-external-calls-add-defaults. No Add/Edit/Delete/Duplicate/import/export, process/list/reopen parents, aliases, default-route launch integration or broader ownership credit follows.",
+          "Physical opening and popup keyboard selection are bounded to the measured 1100 × 800, scale 1, unscrolled/no-search Options page. Default/universal geometry, OS menu placement or physical selector toggles/Apply buttons are not established; selector/platform answers use callbacks.",
+          "Actual unchanged Qt default_routes and defaults_by_platform match without normalization. The recorder drives real handlers with scripted answers/selection. Its only PNG is a callable child, not a defaults popup/question/selector, so no paired Qt pixel, timing, dialog-decoration or placement parity is available.",
+          "Native selector rows use highlighted TableRow.selected values rather than Qt checkbox widgets. Exact boolean/choice behavior does not establish checkbox pixel parity. All fifteen rows, footer and selected highlights plus the long custom platform labels must be readable in the fresh captures.",
+          "Supported captures use 1100 × 800 parent/composite, 600 × 550 selector and 520 × 200 platform question. Long command columns may elide; full typed Store values are asserted independently. Geometry/font/framework differences must be retained after fresh review.",
+          "The new persisted choice pair contains OS File/URL defaults; the all-default draft compares complete rendered row cells, while prior factory/model/serialized tests provide separate process/platform evidence. No new execution of defaults, every typed process rule or OS launcher is claimed.",
+          "Retirement is scoped to parent Cancel against a live successor plus ordinary selector Cancel/native-close/slot cancellation. No automatic Main destruction, final Bound drop, temporary hide/page-switch or generic controller-lifetime guarantee is claimed.",
+          "Exact final integrated source, full strict Linux CI and all six source-bound fresh images remain required. Windows and macOS are deferred. This source-only review grants no feature/status or runtime/render approval."
+        ],
+        "expected_captures": [
+          {
+            "name": "external-defaults-menu.png",
+            "producer_path": "crates/hydrus-gui/tests/gui/external_calls.rs",
+            "producer_line": 1762,
+            "producer_line_sha256": "c1495938c3478ac6d71bee2321c8ca33e75e99f4f904b6ae378bde08d9bdd6e7",
+            "test_symbol": "defaults_physical_menu_exact_choices_saved_reopen_and_retired_selector_are_owned",
+            "dimensions": [
+              1100,
+              800
+            ],
+            "fresh_required": true,
+            "actually_viewed": false
+          },
+          {
+            "name": "external-defaults-platform-question.png",
+            "producer_path": "crates/hydrus-gui/tests/gui/external_calls.rs",
+            "producer_line": 1778,
+            "producer_line_sha256": "89866746d660b0533298c3b1025282e006d9d9071ab38bde399c239794a15f56",
+            "test_symbol": "defaults_physical_menu_exact_choices_saved_reopen_and_retired_selector_are_owned",
+            "dimensions": [
+              520,
+              200
+            ],
+            "fresh_required": true,
+            "actually_viewed": false
+          },
+          {
+            "name": "external-defaults-all-draft.png",
+            "producer_path": "crates/hydrus-gui/tests/gui/external_calls.rs",
+            "producer_line": 1790,
+            "producer_line_sha256": "470537615f9270c7960b50e4df55781632c05a8af3c3ba61ff74452205e8553d",
+            "test_symbol": "defaults_physical_menu_exact_choices_saved_reopen_and_retired_selector_are_owned",
+            "dimensions": [
+              1100,
+              800
+            ],
+            "fresh_required": true,
+            "actually_viewed": false
+          },
+          {
+            "name": "external-defaults-selector-initial.png",
+            "producer_path": "crates/hydrus-gui/tests/gui/external_calls.rs",
+            "producer_line": 1809,
+            "producer_line_sha256": "9dd0114c57703673a5f15ed2e0c4dd1543a8e228d865ab3afac9dce1c5b35642",
+            "test_symbol": "defaults_physical_menu_exact_choices_saved_reopen_and_retired_selector_are_owned",
+            "dimensions": [
+              600,
+              550
+            ],
+            "fresh_required": true,
+            "actually_viewed": false
+          },
+          {
+            "name": "external-defaults-selector-selected.png",
+            "producer_path": "crates/hydrus-gui/tests/gui/external_calls.rs",
+            "producer_line": 1820,
+            "producer_line_sha256": "9a200213a9a5f879b0e0b237a6a0152a9e9521d9ef0ae7abe59df1a0727e96d6",
+            "test_symbol": "defaults_physical_menu_exact_choices_saved_reopen_and_retired_selector_are_owned",
+            "dimensions": [
+              600,
+              550
+            ],
+            "fresh_required": true,
+            "actually_viewed": false
+          },
+          {
+            "name": "external-defaults-reopened-saved.png",
+            "producer_path": "crates/hydrus-gui/tests/gui/external_calls.rs",
+            "producer_line": 1874,
+            "producer_line_sha256": "5f913250b6e1b63bd40fe2aeb7a2e55fd467f7fcb910a69acf177f8f0db78c9e",
+            "test_symbol": "defaults_physical_menu_exact_choices_saved_reopen_and_retired_selector_are_owned",
+            "dimensions": [
+              1100,
+              800
+            ],
+            "fresh_required": true,
+            "actually_viewed": false
+          }
+        ],
+        "actual_reference_selected_fields_equal": [
+          "default_routes",
+          "defaults_by_platform"
+        ],
+        "historical_reference_source": "6b5ca5ab48238b19346e67938d8213a7a26303fb",
+        "historical_native_geometry_source": "1943b19d987771264a06558e57b4255679190de0",
+        "historical_native_geometry_image": "/workspace/validation-reviews/ci-1943b19d9/native-renders/external-calls-duplicate-selected.png",
+        "historical_native_geometry_image_sha256": "5e1b40800ef208c2c5a43db656fae351132a4cffd044559b7b6288e483821d6c",
+        "historical_native_geometry_actually_viewed": true,
+        "historical_native_scope": "Earlier 1943 Delete/Duplicate inspection establishes only source-identical Add Defaults button bounds for fixed coordinates; no Add Defaults render approval.",
+        "proof_hashes": [
+          {
+            "path": "/workspace/validation-reviews/external-defaults1/assertion-preservation-3.json",
+            "sha256": "116f60e4afe245f7569cb88273a9698b64f3ad723716ebab6ace352ed7bc04e9"
+          },
+          {
+            "path": "/workspace/validation-reviews/external-defaults1/expected-new-captures-3.json",
+            "sha256": "316414ff04a998f9a6a3061e6878317a4618ab48e5abd1477991eb17c9fd1677"
+          }
+        ],
+        "no_builds_or_canonical_edits": true
+      }
+    },
+    {
+      "path": "/workspace/validation-reviews/defaults-url3/url-source-review-2.json",
+      "sha256": "1ad1de2b05afb0e10d0ef262d091a184f13ae2e485a1fae6ae14500323ef1f4a",
+      "declared_source_commit": null,
+      "current_input_hashes_exact_at_source": true,
+      "source_review": {
+        "review_type": "Independent URL Add/Edit uncommitted source review only",
+        "baseline_commit": "b52957c9f8843c4765acc81baa00c63cff63244e",
+        "source_commit": null,
+        "reviewed_test_sha256": "b8c2fba97967a94fb95480a86477744f0ed5b5d2504879dcfc063dc3d64ce35c",
+        "integrated_source_pin_pending": true,
+        "selected_ids": [
+          "audit-options-open-externally-url-calls-add",
+          "audit-options-open-externally-url-calls-edit"
+        ],
+        "source_review_conclusion": "No concrete source blocker after the physical Edit route correction; ready to integrate and repin, then exact-source full CI/fresh rendered review.",
+        "source_blockers": [],
+        "runtime_approval": false,
+        "rendered_approval": false,
+        "approval": false,
+        "source_pins": [
+          {
+            "path": "crates/hydrus-gui/tests/gui/open_externally.rs",
+            "sha256": "b8c2fba97967a94fb95480a86477744f0ed5b5d2504879dcfc063dc3d64ce35c",
+            "bytes": 43867,
+            "unchanged_from_baseline": false,
+            "pin": "reviewed uncommitted worktree"
+          },
+          {
+            "path": "crates/hydrus-gui/src/options_open_externally.rs",
+            "sha256": "2625eee8d92548378ae1c5f5063b015d8f031b22f8fdf75dbb9d5b61340f33d1",
+            "bytes": 25630,
+            "unchanged_from_baseline": true,
+            "pin": "b52957c9f8843c4765acc81baa00c63cff63244e"
+          },
+          {
+            "path": "crates/hydrus-gui-model/src/open_externally.rs",
+            "sha256": "5169e2cf46994931415147c70740104cae20f67e2f49acf9dc2bd48136fb02b9",
+            "bytes": 10125,
+            "unchanged_from_baseline": true,
+            "pin": "b52957c9f8843c4765acc81baa00c63cff63244e"
+          },
+          {
+            "path": "crates/hydrus-gui/ui/open_externally.slint",
+            "sha256": "d87ecd0c356b2e7cc7d90b442e1f15bada574e3a0b929f6520ba58c39be2e674",
+            "bytes": 4540,
+            "unchanged_from_baseline": true,
+            "pin": "b52957c9f8843c4765acc81baa00c63cff63244e"
+          },
+          {
+            "path": "crates/hydrus-gui/ui/deletion_reasons.slint",
+            "sha256": "928e450202e777b3a24eae0470feb14fb843edc1d512acea4134050dfa808642",
+            "bytes": 1708,
+            "unchanged_from_baseline": true,
+            "pin": "b52957c9f8843c4765acc81baa00c63cff63244e"
+          },
+          {
+            "path": "crates/hydrus-gui/ui/options.slint",
+            "sha256": "cd6bc428d6ad2a4a8d07556d05eb4e4421cae9fa72f344771877fd9aa1d3db93",
+            "bytes": 56606,
+            "unchanged_from_baseline": true,
+            "pin": "b52957c9f8843c4765acc81baa00c63cff63244e"
+          },
+          {
+            "path": "crates/hydrus-gui-model/tests/model/open_externally.rs",
+            "sha256": "eb0afc3957441ea9e79b01fcc27fd9305aa698ba7395b5a892587ed7cbec2337",
+            "bytes": 8712,
+            "unchanged_from_baseline": true,
+            "pin": "b52957c9f8843c4765acc81baa00c63cff63244e"
+          },
+          {
+            "path": "hydrus/client/gui/panels/options/OpenExternallyPanel.py",
+            "sha256": "1c0520b3ef61f2d8000dc6a245536fe270e7ea4242683445de5d40e8b92a2223",
+            "bytes": 17329,
+            "unchanged_from_baseline": true,
+            "pin": "b52957c9f8843c4765acc81baa00c63cff63244e"
+          },
+          {
+            "path": "oracle/record_open_externally.py",
+            "sha256": "35ef866834dd401e913c5a022b72c444bb0fedf309a8d715203c8d301f749bc2",
+            "bytes": 12811,
+            "unchanged_from_baseline": true,
+            "pin": "b52957c9f8843c4765acc81baa00c63cff63244e"
+          },
+          {
+            "path": "oracle/fixtures/open_externally.json",
+            "sha256": "37b7f14e70fd811dd6e021968ab8ebb8123d235781aa91ea19102966b6f5c95f",
+            "bytes": 41807,
+            "unchanged_from_baseline": true,
+            "pin": "b52957c9f8843c4765acc81baa00c63cff63244e"
+          },
+          {
+            "path": "oracle/fixtures/open_externally.png",
+            "sha256": "93e6891da43fa4d641c8bc80e7d711a3191a1aaad58b64fb5fe026ec071b8aec",
+            "bytes": 90123,
+            "unchanged_from_baseline": true,
+            "pin": "b52957c9f8843c4765acc81baa00c63cff63244e"
+          },
+          {
+            "path": "docs/rust/gui-coverage/parity/open-externally.json",
+            "sha256": "20932740466dc6473472bdda5651a8c8d7b22f10feb23965e6fee6f75360549c",
+            "bytes": 63936,
+            "unchanged_from_baseline": true,
+            "pin": "b52957c9f8843c4765acc81baa00c63cff63244e"
+          }
+        ],
+        "assertion_preservation": {
+          "original_macros": 107,
+          "current_macros": 156,
+          "original_tests": 5,
+          "current_tests": 5,
+          "all_original_macro_spans_bytewise_ordered": true,
+          "all_original_file_lines_ordered": true,
+          "original_lines_removed": 0,
+          "test_symbols_unchanged": true
+        },
+        "observations": [
+          "No concrete source blocker remains in the reviewed URL test draft. The change is insertion-only in one GUI test file: all 107 baseline macro spans and every original file line remain bytewise/in order across the same five tests.",
+          "The physical route is narrowly 960 × 800, scale 1, on the freshly opened unscrolled routing page. Add at (400,339) and Edit at (767,339) are separated from the File buttons in the historical source-identical frame. Previously empty child slots and exact visible chooser contents establish admission; a wrong hit fails rather than falling back or retrying input.",
+          "The initial Edit draft canceled its physical chooser; Add and Edit have identical choices in that state, so cancellation did not independently prove the route. Root corrected this before source review completion: the physical child stays live, the preserved duplicate callback is blocked, pointer identity is checked, and the unchanged event7 replacement assertion distinguishes Edit from append.",
+          "Complete chooser titles, ordered labels and common description match recorded chooser 0–3, including the explicit single-choice cases and allow_insta_one_item_select=false. This checks native behavior against the reference recording; the flag itself is reference metadata rather than a native widget property.",
+          "Real retained adapters advance timers/rendering for at least 35 ms, require inactive animations and consecutive identical buffers, and fail at two seconds. Captures require a visible actual owner; no child flags, animation state or caption are forced.",
+          "Full saved Routing plus typed Manager equality is checked before staging, after Cancel and after Apply. The expected persisted URL key/name and PNG routing are compared completely, and reopened URL/File labels and unselected URL rows match the staged state. Existing washing, MIME, consumer and other-child assertions remain but receive no additional leaf credit.",
+          "Both Add and Edit retire a genuinely pending chooser through parent Cancel and compare a current successor against complete visible draft cells, selection/flags, full saved Routing/Manager, labels and current slot identities/visibility. Edit now stages two rows and positively replaces the second while preserving the first; Add positively appends. Temporary child/parent hide refuses chosen without taking the slot, then re-show permits current acceptance. Parent Cancel discards the successor draft.",
+          "The helper uses short-lived RefCell reads, existing generated Slint APIs, explicit pointer events and a full Store read closure compatible with current APIs. Source inspection found no immediate ownership, borrow, Rust API or strict-lint blocker; compilation is not inferred from this review."
+        ],
+        "finite_limits": [
+          "Only URL Add/Edit are reviewed here. The companion Add Defaults test is separate and has not been reviewed by this packet. No MIME/nested File/default route/launch/parent/alias completion credit follows.",
+          "Finite physical parent admission uses fixed coordinates only at 960 × 800, scale 1, with no content scroll/search. Physical chooser-button activation is not proved; chooser acceptance and cancellation use existing callbacks.",
+          "URL ownership coverage is limited to the tested parent Cancel/replacement and child/parent hide/re-show cases. Automatic Main destruction, final Bound drop, arbitrary page switching and broader ownership guarantees remain outside scope.",
+          "The existing Qt PNG shows a later renamed/missing/wrong-type state, not native event7 or the new choosers/notice. It supports outer-control context, not matched chooser pixels, placement, dialog decoration or framework typography.",
+          "Six new defining frames and the existing routing context still require fresh exact-source full Linux CI and actual independent visual inspection. Supported 520 × 440 choices, 520 × 200 Information and 960 × 800 parent views do not establish universal/default-size geometry.",
+          "No source execution, build, native fresh render approval or canonical status change was performed. Linux is the required eventual scope; Windows and macOS remain deferred."
+        ],
+        "expected_captures": [
+          {
+            "name": "url-add-chooser.png",
+            "producer_path": "crates/hydrus-gui/tests/gui/open_externally.rs",
+            "producer_line": 558,
+            "producer_line_sha256": "f818fb2323dcbb44a15ca3063bb70a0065b8b4cb21cb4d095d6587e10fc2f181",
+            "fresh_required": true,
+            "actually_viewed": false,
+            "new_in_batch": true,
+            "dimensions": [
+              520,
+              440
+            ]
+          },
+          {
+            "name": "url-add-single-choice.png",
+            "producer_path": "crates/hydrus-gui/tests/gui/open_externally.rs",
+            "producer_line": 573,
+            "producer_line_sha256": "88ec532b3000fe0adb53b2aeeaaae2bb34620978b2bed289b7de5ac47e1f1c0a",
+            "fresh_required": true,
+            "actually_viewed": false,
+            "new_in_batch": true,
+            "dimensions": [
+              520,
+              440
+            ]
+          },
+          {
+            "name": "url-add-draft.png",
+            "producer_path": "crates/hydrus-gui/tests/gui/open_externally.rs",
+            "producer_line": 596,
+            "producer_line_sha256": "6f023173ff15f50fffffd97d40eedc7a56b0022a3ab07e64ccfc579881e4472f",
+            "fresh_required": true,
+            "actually_viewed": false,
+            "new_in_batch": true,
+            "dimensions": [
+              960,
+              800
+            ]
+          },
+          {
+            "name": "url-exhausted-information.png",
+            "producer_path": "crates/hydrus-gui/tests/gui/open_externally.rs",
+            "producer_line": 620,
+            "producer_line_sha256": "54bf8b4482ed6a50e21e893beb3a61ce5f5bb363b99b72d03b5be1cff48ec14e",
+            "fresh_required": true,
+            "actually_viewed": false,
+            "new_in_batch": true,
+            "dimensions": [
+              520,
+              200
+            ]
+          },
+          {
+            "name": "url-edit-single-choice.png",
+            "producer_path": "crates/hydrus-gui/tests/gui/open_externally.rs",
+            "producer_line": 659,
+            "producer_line_sha256": "0a4735128db4a24369158960fd191d45fc6f04a9f5aa3b9ae8cd26333f48bfc3",
+            "fresh_required": true,
+            "actually_viewed": false,
+            "new_in_batch": true,
+            "dimensions": [
+              520,
+              440
+            ]
+          },
+          {
+            "name": "url-reopened-saved.png",
+            "producer_path": "crates/hydrus-gui/tests/gui/open_externally.rs",
+            "producer_line": 821,
+            "producer_line_sha256": "2acd6da389560d00fbab1e13395fdfda75000a1d8f43f41c86506ba23556f1df",
+            "fresh_required": true,
+            "actually_viewed": false,
+            "new_in_batch": true,
+            "dimensions": [
+              960,
+              800
+            ]
+          },
+          {
+            "name": "open-externally-routing.png",
+            "producer_path": "crates/hydrus-gui/tests/gui/open_externally.rs",
+            "producer_line": 778,
+            "producer_line_sha256": "f559c86ec2184ada4ca944502d227ee57847fe37cef6770722d2b4dc43f1b056",
+            "fresh_required": true,
+            "actually_viewed": false,
+            "new_in_batch": false,
+            "dimensions": [
+              960,
+              800
+            ]
+          }
+        ],
+        "historical_images_actually_viewed": [
+          {
+            "path": "/workspace/validation-reviews/ci-625a2bdaf/native-renders/open-externally-routing.png",
+            "sha256": "b1275d50ca0ee5fc529d38d59d91044fa7e0fb64a29964fec5e534f4a69248a4",
+            "actually_viewed": true,
+            "source_commit": "625a2bdafc5b5820f4d9201f46640d7770fbecd7",
+            "scope": "Historical geometry only; URL Add/Edit bounds support the narrowly fixed coordinates. Failed full run grants no current approval."
+          },
+          {
+            "path": "/workspace/hydrus-mine/oracle/fixtures/open_externally.png",
+            "sha256": "93e6891da43fa4d641c8bc80e7d711a3191a1aaad58b64fb5fe026ec071b8aec",
+            "actually_viewed": true,
+            "source_commit": "b52957c9f8843c4765acc81baa00c63cff63244e",
+            "scope": "Historical real Qt outer panel, later renamed/missing/wrong-type state; no current native or chooser pairing."
+          }
+        ],
+        "reviewed_correction": {
+          "issue": "Canceled physical Edit did not distinguish the adjacent Add route because both expose identical choices.",
+          "resolution": "Retain the physical child, preserve the blocked callback, assert slot identity and accept through existing exact replacement event.",
+          "production_defect": false
+        },
+        "no_builds_or_canonical_edits": true
+      }
+    }
+  ],
+  "historical_actual_defaults_reference": {
+    "path": "/workspace/validation-reviews/external-list2/reference/reference-review-3.json",
+    "sha256": "d866d2e2d59bc1150a5e7d436eff8a2ca331c60adc1f4434531d4527483932e0",
+    "historical_source_commit": "6b5ca5ab48238b19346e67938d8213a7a26303fb",
+    "selected_factory_routes_match": true,
+    "all_three_reference_input_bytes_unchanged": true,
+    "full_JSON_equal": false,
+    "variance": "Only 26 generated callable-key leaves plus two decoded-export keys, interpreter equal, no differing temporary-path JSON fields."
+  },
+  "implementation_is_test_only": true,
+  "no_Slint_source_change_or_generation_claim": true,
+  "tests_executed_by_this_preparer": false,
+  "images_viewed_by_this_preparer": false,
+  "approval": false,
+  "exact_integrated_source_review": {
+    "path": "/workspace/validation-reviews/defaults-url3/integrated-source-review-2.json",
+    "sha256": "d2a17447491a5ad7107f787740698c489fd389f62a8fa42aa478aa032f5ec3bd",
+    "review": {
+      "review_type": "Independent final integration-pin proof; source only",
+      "source_commit": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+      "baseline_commit": "b52957c9f8843c4765acc81baa00c63cff63244e",
+      "run_id": 37599290504,
+      "agent_defaults_commit": "d6e4b4039e83017568d01cd1282aec121ae1765e",
+      "integrated_source_pin_complete": true,
+      "source_review_conclusion": "Committed test bytes match the independently reviewed sources. The finite pending documentation delta is honest. No concrete source blocker found; exact-source runtime and fresh render gates remain pending.",
+      "selected_ids": [
+        "audit-options-external-programs-external-calls-add-defaults",
+        "audit-options-open-externally-url-calls-add",
+        "audit-options-open-externally-url-calls-edit"
+      ],
+      "source_blockers": [],
+      "approval": false,
+      "runtime_approval": false,
+      "rendered_approval": false,
+      "changed_files": [
+        "crates/hydrus-gui/tests/gui/external_calls.rs",
+        "crates/hydrus-gui/tests/gui/open_externally.rs",
+        "docs/rust/DIFFERENCES.md",
+        "docs/rust/GUI.md"
+      ],
+      "committed_source_pins": [
+        {
+          "path": "crates/hydrus-gui/tests/gui/open_externally.rs",
+          "source_commit": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+          "sha256": "b8c2fba97967a94fb95480a86477744f0ed5b5d2504879dcfc063dc3d64ce35c",
+          "bytes": 43867,
+          "matches_independently_reviewed_bytes": true
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/external_calls.rs",
+          "source_commit": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+          "sha256": "b3dea615fc217d7cac71ede35633d030eb3480bff6914f0f089a4f9eca3357f4",
+          "bytes": 78934,
+          "matches_independently_reviewed_bytes": true
+        },
+        {
+          "path": "docs/rust/DIFFERENCES.md",
+          "source_commit": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+          "sha256": "48679b2e660f822cd4c38d34b365ef719a982a2c8c3a3a87b93e6c0efd1a34c7",
+          "bytes": 268348,
+          "reviewed_pending_prose": true
+        },
+        {
+          "path": "docs/rust/GUI.md",
+          "source_commit": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+          "sha256": "0adfca7a8543ab786fce95d52e500fb76a79296fda063477de64a4e8c63ace39",
+          "bytes": 333628,
+          "reviewed_pending_prose": true
+        },
+        {
+          "path": "docs/rust/gui-coverage/parity/external-calls.json",
+          "source_commit": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+          "sha256": "5cf911f12d98ee4874796a5ecc4472296db70a45b32292c0e9fbd4d56d3a8407",
+          "bytes": 109797,
+          "manifest_byte_identical_to_published_baseline": true
+        },
+        {
+          "path": "docs/rust/gui-coverage/parity/open-externally.json",
+          "source_commit": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+          "sha256": "20932740466dc6473472bdda5651a8c8d7b22f10feb23965e6fee6f75360549c",
+          "bytes": 63936,
+          "manifest_byte_identical_to_published_baseline": true
+        }
+      ],
+      "assertion_preservation": [
+        {
+          "path": "crates/hydrus-gui/tests/gui/open_externally.rs",
+          "original_assertions": 107,
+          "current_assertions": 156,
+          "original_tests": 5,
+          "current_tests": 5,
+          "all_original_lines_in_order": true,
+          "original_exact_prefix": false
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/external_calls.rs",
+          "original_assertions": 242,
+          "current_assertions": 313,
+          "original_tests": 9,
+          "current_tests": 10,
+          "all_original_lines_in_order": true,
+          "original_exact_prefix": true
+        }
+      ],
+      "frozen_prior_source_review_hashes": {
+        "/workspace/validation-reviews/defaults-url3/defaults-source-review-2.json": "fcc201473bc5e1090ce8a60fe028ad1903e791d1489216132c2ce24d8f62d8b6",
+        "/workspace/validation-reviews/defaults-url3/defaults-source-review-2.md": "924b162e359e9db41c0c8b6c9137805863746a8839a3cb92902a94ecb8821d67",
+        "/workspace/validation-reviews/defaults-url3/url-source-review-2.json": "1ad1de2b05afb0e10d0ef262d091a184f13ae2e485a1fae6ae14500323ef1f4a",
+        "/workspace/validation-reviews/defaults-url3/url-source-review-2.md": "6a872040d10677f99b3653c38bd4b49d6cfa0d40b4cd8294fd93bbc0cba9cb95"
+      },
+      "root_preservation_proof_hashes": {
+        "/workspace/validation-reviews/defaults-url3/url-assertion-preservation-root.json": "f76bb537460bed33a735c54f4cc6a70ac3ee6e33fd78315f2d651a666a8ad53b",
+        "/workspace/validation-reviews/defaults-url3/open_externally-assertion-preservation-root.json": "5fd8335f8046e8ea9ced34748d264dbdbd0f8774d0ffe70aaa6c20d701d9beab",
+        "/workspace/validation-reviews/defaults-url3/external_calls-assertion-preservation-root.json": "54867a09528d0d4fca87c34f0179b28ab025a7614f3bf41476ddccd691e94532"
+      },
+      "new_defining_capture_count": 12,
+      "retained_existing_context_capture_count": 1,
+      "capture_source_pins": [
+        {
+          "name": "url-add-chooser.png",
+          "producer_path": "crates/hydrus-gui/tests/gui/open_externally.rs",
+          "producer_line": 558,
+          "producer_line_sha256": "f818fb2323dcbb44a15ca3063bb70a0065b8b4cb21cb4d095d6587e10fc2f181",
+          "fresh_required": true,
+          "actually_viewed": false,
+          "new_in_batch": true,
+          "dimensions": [
+            520,
+            440
+          ],
+          "source_commit": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+          "new_defining_capture": true,
+          "execution_pending": true
+        },
+        {
+          "name": "url-add-single-choice.png",
+          "producer_path": "crates/hydrus-gui/tests/gui/open_externally.rs",
+          "producer_line": 573,
+          "producer_line_sha256": "88ec532b3000fe0adb53b2aeeaaae2bb34620978b2bed289b7de5ac47e1f1c0a",
+          "fresh_required": true,
+          "actually_viewed": false,
+          "new_in_batch": true,
+          "dimensions": [
+            520,
+            440
+          ],
+          "source_commit": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+          "new_defining_capture": true,
+          "execution_pending": true
+        },
+        {
+          "name": "url-add-draft.png",
+          "producer_path": "crates/hydrus-gui/tests/gui/open_externally.rs",
+          "producer_line": 596,
+          "producer_line_sha256": "6f023173ff15f50fffffd97d40eedc7a56b0022a3ab07e64ccfc579881e4472f",
+          "fresh_required": true,
+          "actually_viewed": false,
+          "new_in_batch": true,
+          "dimensions": [
+            960,
+            800
+          ],
+          "source_commit": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+          "new_defining_capture": true,
+          "execution_pending": true
+        },
+        {
+          "name": "url-exhausted-information.png",
+          "producer_path": "crates/hydrus-gui/tests/gui/open_externally.rs",
+          "producer_line": 620,
+          "producer_line_sha256": "54bf8b4482ed6a50e21e893beb3a61ce5f5bb363b99b72d03b5be1cff48ec14e",
+          "fresh_required": true,
+          "actually_viewed": false,
+          "new_in_batch": true,
+          "dimensions": [
+            520,
+            200
+          ],
+          "source_commit": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+          "new_defining_capture": true,
+          "execution_pending": true
+        },
+        {
+          "name": "url-edit-single-choice.png",
+          "producer_path": "crates/hydrus-gui/tests/gui/open_externally.rs",
+          "producer_line": 659,
+          "producer_line_sha256": "0a4735128db4a24369158960fd191d45fc6f04a9f5aa3b9ae8cd26333f48bfc3",
+          "fresh_required": true,
+          "actually_viewed": false,
+          "new_in_batch": true,
+          "dimensions": [
+            520,
+            440
+          ],
+          "source_commit": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+          "new_defining_capture": true,
+          "execution_pending": true
+        },
+        {
+          "name": "url-reopened-saved.png",
+          "producer_path": "crates/hydrus-gui/tests/gui/open_externally.rs",
+          "producer_line": 821,
+          "producer_line_sha256": "2acd6da389560d00fbab1e13395fdfda75000a1d8f43f41c86506ba23556f1df",
+          "fresh_required": true,
+          "actually_viewed": false,
+          "new_in_batch": true,
+          "dimensions": [
+            960,
+            800
+          ],
+          "source_commit": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+          "new_defining_capture": true,
+          "execution_pending": true
+        },
+        {
+          "name": "open-externally-routing.png",
+          "producer_path": "crates/hydrus-gui/tests/gui/open_externally.rs",
+          "producer_line": 778,
+          "producer_line_sha256": "f559c86ec2184ada4ca944502d227ee57847fe37cef6770722d2b4dc43f1b056",
+          "fresh_required": true,
+          "actually_viewed": false,
+          "new_in_batch": false,
+          "dimensions": [
+            960,
+            800
+          ],
+          "source_commit": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+          "new_defining_capture": false,
+          "execution_pending": true
+        },
+        {
+          "name": "external-defaults-menu.png",
+          "producer_path": "crates/hydrus-gui/tests/gui/external_calls.rs",
+          "producer_line": 1762,
+          "producer_line_sha256": "c1495938c3478ac6d71bee2321c8ca33e75e99f4f904b6ae378bde08d9bdd6e7",
+          "test_symbol": "defaults_physical_menu_exact_choices_saved_reopen_and_retired_selector_are_owned",
+          "dimensions": [
+            1100,
+            800
+          ],
+          "fresh_required": true,
+          "actually_viewed": false,
+          "source_commit": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+          "new_defining_capture": true,
+          "execution_pending": true
+        },
+        {
+          "name": "external-defaults-platform-question.png",
+          "producer_path": "crates/hydrus-gui/tests/gui/external_calls.rs",
+          "producer_line": 1778,
+          "producer_line_sha256": "89866746d660b0533298c3b1025282e006d9d9071ab38bde399c239794a15f56",
+          "test_symbol": "defaults_physical_menu_exact_choices_saved_reopen_and_retired_selector_are_owned",
+          "dimensions": [
+            520,
+            200
+          ],
+          "fresh_required": true,
+          "actually_viewed": false,
+          "source_commit": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+          "new_defining_capture": true,
+          "execution_pending": true
+        },
+        {
+          "name": "external-defaults-all-draft.png",
+          "producer_path": "crates/hydrus-gui/tests/gui/external_calls.rs",
+          "producer_line": 1790,
+          "producer_line_sha256": "470537615f9270c7960b50e4df55781632c05a8af3c3ba61ff74452205e8553d",
+          "test_symbol": "defaults_physical_menu_exact_choices_saved_reopen_and_retired_selector_are_owned",
+          "dimensions": [
+            1100,
+            800
+          ],
+          "fresh_required": true,
+          "actually_viewed": false,
+          "source_commit": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+          "new_defining_capture": true,
+          "execution_pending": true
+        },
+        {
+          "name": "external-defaults-selector-initial.png",
+          "producer_path": "crates/hydrus-gui/tests/gui/external_calls.rs",
+          "producer_line": 1809,
+          "producer_line_sha256": "9dd0114c57703673a5f15ed2e0c4dd1543a8e228d865ab3afac9dce1c5b35642",
+          "test_symbol": "defaults_physical_menu_exact_choices_saved_reopen_and_retired_selector_are_owned",
+          "dimensions": [
+            600,
+            550
+          ],
+          "fresh_required": true,
+          "actually_viewed": false,
+          "source_commit": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+          "new_defining_capture": true,
+          "execution_pending": true
+        },
+        {
+          "name": "external-defaults-selector-selected.png",
+          "producer_path": "crates/hydrus-gui/tests/gui/external_calls.rs",
+          "producer_line": 1820,
+          "producer_line_sha256": "9a200213a9a5f879b0e0b237a6a0152a9e9521d9ef0ae7abe59df1a0727e96d6",
+          "test_symbol": "defaults_physical_menu_exact_choices_saved_reopen_and_retired_selector_are_owned",
+          "dimensions": [
+            600,
+            550
+          ],
+          "fresh_required": true,
+          "actually_viewed": false,
+          "source_commit": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+          "new_defining_capture": true,
+          "execution_pending": true
+        },
+        {
+          "name": "external-defaults-reopened-saved.png",
+          "producer_path": "crates/hydrus-gui/tests/gui/external_calls.rs",
+          "producer_line": 1874,
+          "producer_line_sha256": "5f913250b6e1b63bd40fe2aeb7a2e55fd467f7fcb910a69acf177f8f0db78c9e",
+          "test_symbol": "defaults_physical_menu_exact_choices_saved_reopen_and_retired_selector_are_owned",
+          "dimensions": [
+            1100,
+            800
+          ],
+          "fresh_required": true,
+          "actually_viewed": false,
+          "source_commit": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+          "new_defining_capture": true,
+          "execution_pending": true
+        }
+      ],
+      "documentation_review": [
+        "Both GUI follow-up paragraphs explicitly await full Linux validation and fresh rendered review; no completion is banked. Existing historical narrative remains.",
+        "URL finite physical scope is unscrolled 960 × 800, scale 1; accepting the physically opened Edit child proves replacement rather than append. Hide/re-show and successor ownership remain narrow.",
+        "Add Defaults finite physical scope is unscrolled 1100 × 800, scale 1, no search. Both popup choices, initial 15 selector labels/booleans, saved values and predecessor/successor proof are described as authored rather than executed.",
+        "DIFFERENCES preserves callback-driven child acceptance, native highlighted selector rows versus Qt checkboxes, no matching Qt chooser/notice/defaults surfaces, no parent/other-routing/deferred-platform credit."
+      ],
+      "preservation_scope": {
+        "canonical_manifests_unchanged": true,
+        "all_sibling_entries_unchanged": true,
+        "statuses_or_completion_counts_changed": false,
+        "production_or_slint_model_reference_inputs_changed": false,
+        "prior_packets_overwritten": false
+      },
+      "current_gates": [
+        "Run 37599290504 is pending in this source-only proof. Full strict Linux execution and maintenance must complete at exact 791b72 source.",
+        "Actually inspect all twelve new source-bound defining images after artifact verification; retain the previous finite physical/Qt/ownership/OS limits. Existing open-externally-routing.png remains additional context, not a new leaf.",
+        "No runtime or rendered approval follows from source-pin verification. Windows/macOS remain deferred."
+      ]
+    }
+  }
+}

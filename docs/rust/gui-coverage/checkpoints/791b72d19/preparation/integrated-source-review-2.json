@@ -1,0 +1,329 @@
+{
+  "review_type": "Independent final integration-pin proof; source only",
+  "source_commit": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+  "baseline_commit": "b52957c9f8843c4765acc81baa00c63cff63244e",
+  "run_id": 37599290504,
+  "agent_defaults_commit": "d6e4b4039e83017568d01cd1282aec121ae1765e",
+  "integrated_source_pin_complete": true,
+  "source_review_conclusion": "Committed test bytes match the independently reviewed sources. The finite pending documentation delta is honest. No concrete source blocker found; exact-source runtime and fresh render gates remain pending.",
+  "selected_ids": [
+    "audit-options-external-programs-external-calls-add-defaults",
+    "audit-options-open-externally-url-calls-add",
+    "audit-options-open-externally-url-calls-edit"
+  ],
+  "source_blockers": [],
+  "approval": false,
+  "runtime_approval": false,
+  "rendered_approval": false,
+  "changed_files": [
+    "crates/hydrus-gui/tests/gui/external_calls.rs",
+    "crates/hydrus-gui/tests/gui/open_externally.rs",
+    "docs/rust/DIFFERENCES.md",
+    "docs/rust/GUI.md"
+  ],
+  "committed_source_pins": [
+    {
+      "path": "crates/hydrus-gui/tests/gui/open_externally.rs",
+      "source_commit": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+      "sha256": "b8c2fba97967a94fb95480a86477744f0ed5b5d2504879dcfc063dc3d64ce35c",
+      "bytes": 43867,
+      "matches_independently_reviewed_bytes": true
+    },
+    {
+      "path": "crates/hydrus-gui/tests/gui/external_calls.rs",
+      "source_commit": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+      "sha256": "b3dea615fc217d7cac71ede35633d030eb3480bff6914f0f089a4f9eca3357f4",
+      "bytes": 78934,
+      "matches_independently_reviewed_bytes": true
+    },
+    {
+      "path": "docs/rust/DIFFERENCES.md",
+      "source_commit": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+      "sha256": "48679b2e660f822cd4c38d34b365ef719a982a2c8c3a3a87b93e6c0efd1a34c7",
+      "bytes": 268348,
+      "reviewed_pending_prose": true
+    },
+    {
+      "path": "docs/rust/GUI.md",
+      "source_commit": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+      "sha256": "0adfca7a8543ab786fce95d52e500fb76a79296fda063477de64a4e8c63ace39",
+      "bytes": 333628,
+      "reviewed_pending_prose": true
+    },
+    {
+      "path": "docs/rust/gui-coverage/parity/external-calls.json",
+      "source_commit": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+      "sha256": "5cf911f12d98ee4874796a5ecc4472296db70a45b32292c0e9fbd4d56d3a8407",
+      "bytes": 109797,
+      "manifest_byte_identical_to_published_baseline": true
+    },
+    {
+      "path": "docs/rust/gui-coverage/parity/open-externally.json",
+      "source_commit": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+      "sha256": "20932740466dc6473472bdda5651a8c8d7b22f10feb23965e6fee6f75360549c",
+      "bytes": 63936,
+      "manifest_byte_identical_to_published_baseline": true
+    }
+  ],
+  "assertion_preservation": [
+    {
+      "path": "crates/hydrus-gui/tests/gui/open_externally.rs",
+      "original_assertions": 107,
+      "current_assertions": 156,
+      "original_tests": 5,
+      "current_tests": 5,
+      "all_original_lines_in_order": true,
+      "original_exact_prefix": false
+    },
+    {
+      "path": "crates/hydrus-gui/tests/gui/external_calls.rs",
+      "original_assertions": 242,
+      "current_assertions": 313,
+      "original_tests": 9,
+      "current_tests": 10,
+      "all_original_lines_in_order": true,
+      "original_exact_prefix": true
+    }
+  ],
+  "frozen_prior_source_review_hashes": {
+    "/workspace/validation-reviews/defaults-url3/defaults-source-review-2.json": "fcc201473bc5e1090ce8a60fe028ad1903e791d1489216132c2ce24d8f62d8b6",
+    "/workspace/validation-reviews/defaults-url3/defaults-source-review-2.md": "924b162e359e9db41c0c8b6c9137805863746a8839a3cb92902a94ecb8821d67",
+    "/workspace/validation-reviews/defaults-url3/url-source-review-2.json": "1ad1de2b05afb0e10d0ef262d091a184f13ae2e485a1fae6ae14500323ef1f4a",
+    "/workspace/validation-reviews/defaults-url3/url-source-review-2.md": "6a872040d10677f99b3653c38bd4b49d6cfa0d40b4cd8294fd93bbc0cba9cb95"
+  },
+  "root_preservation_proof_hashes": {
+    "/workspace/validation-reviews/defaults-url3/url-assertion-preservation-root.json": "f76bb537460bed33a735c54f4cc6a70ac3ee6e33fd78315f2d651a666a8ad53b",
+    "/workspace/validation-reviews/defaults-url3/open_externally-assertion-preservation-root.json": "5fd8335f8046e8ea9ced34748d264dbdbd0f8774d0ffe70aaa6c20d701d9beab",
+    "/workspace/validation-reviews/defaults-url3/external_calls-assertion-preservation-root.json": "54867a09528d0d4fca87c34f0179b28ab025a7614f3bf41476ddccd691e94532"
+  },
+  "new_defining_capture_count": 12,
+  "retained_existing_context_capture_count": 1,
+  "capture_source_pins": [
+    {
+      "name": "url-add-chooser.png",
+      "producer_path": "crates/hydrus-gui/tests/gui/open_externally.rs",
+      "producer_line": 558,
+      "producer_line_sha256": "f818fb2323dcbb44a15ca3063bb70a0065b8b4cb21cb4d095d6587e10fc2f181",
+      "fresh_required": true,
+      "actually_viewed": false,
+      "new_in_batch": true,
+      "dimensions": [
+        520,
+        440
+      ],
+      "source_commit": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+      "new_defining_capture": true,
+      "execution_pending": true
+    },
+    {
+      "name": "url-add-single-choice.png",
+      "producer_path": "crates/hydrus-gui/tests/gui/open_externally.rs",
+      "producer_line": 573,
+      "producer_line_sha256": "88ec532b3000fe0adb53b2aeeaaae2bb34620978b2bed289b7de5ac47e1f1c0a",
+      "fresh_required": true,
+      "actually_viewed": false,
+      "new_in_batch": true,
+      "dimensions": [
+        520,
+        440
+      ],
+      "source_commit": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+      "new_defining_capture": true,
+      "execution_pending": true
+    },
+    {
+      "name": "url-add-draft.png",
+      "producer_path": "crates/hydrus-gui/tests/gui/open_externally.rs",
+      "producer_line": 596,
+      "producer_line_sha256": "6f023173ff15f50fffffd97d40eedc7a56b0022a3ab07e64ccfc579881e4472f",
+      "fresh_required": true,
+      "actually_viewed": false,
+      "new_in_batch": true,
+      "dimensions": [
+        960,
+        800
+      ],
+      "source_commit": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+      "new_defining_capture": true,
+      "execution_pending": true
+    },
+    {
+      "name": "url-exhausted-information.png",
+      "producer_path": "crates/hydrus-gui/tests/gui/open_externally.rs",
+      "producer_line": 620,
+      "producer_line_sha256": "54bf8b4482ed6a50e21e893beb3a61ce5f5bb363b99b72d03b5be1cff48ec14e",
+      "fresh_required": true,
+      "actually_viewed": false,
+      "new_in_batch": true,
+      "dimensions": [
+        520,
+        200
+      ],
+      "source_commit": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+      "new_defining_capture": true,
+      "execution_pending": true
+    },
+    {
+      "name": "url-edit-single-choice.png",
+      "producer_path": "crates/hydrus-gui/tests/gui/open_externally.rs",
+      "producer_line": 659,
+      "producer_line_sha256": "0a4735128db4a24369158960fd191d45fc6f04a9f5aa3b9ae8cd26333f48bfc3",
+      "fresh_required": true,
+      "actually_viewed": false,
+      "new_in_batch": true,
+      "dimensions": [
+        520,
+        440
+      ],
+      "source_commit": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+      "new_defining_capture": true,
+      "execution_pending": true
+    },
+    {
+      "name": "url-reopened-saved.png",
+      "producer_path": "crates/hydrus-gui/tests/gui/open_externally.rs",
+      "producer_line": 821,
+      "producer_line_sha256": "2acd6da389560d00fbab1e13395fdfda75000a1d8f43f41c86506ba23556f1df",
+      "fresh_required": true,
+      "actually_viewed": false,
+      "new_in_batch": true,
+      "dimensions": [
+        960,
+        800
+      ],
+      "source_commit": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+      "new_defining_capture": true,
+      "execution_pending": true
+    },
+    {
+      "name": "open-externally-routing.png",
+      "producer_path": "crates/hydrus-gui/tests/gui/open_externally.rs",
+      "producer_line": 778,
+      "producer_line_sha256": "f559c86ec2184ada4ca944502d227ee57847fe37cef6770722d2b4dc43f1b056",
+      "fresh_required": true,
+      "actually_viewed": false,
+      "new_in_batch": false,
+      "dimensions": [
+        960,
+        800
+      ],
+      "source_commit": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+      "new_defining_capture": false,
+      "execution_pending": true
+    },
+    {
+      "name": "external-defaults-menu.png",
+      "producer_path": "crates/hydrus-gui/tests/gui/external_calls.rs",
+      "producer_line": 1762,
+      "producer_line_sha256": "c1495938c3478ac6d71bee2321c8ca33e75e99f4f904b6ae378bde08d9bdd6e7",
+      "test_symbol": "defaults_physical_menu_exact_choices_saved_reopen_and_retired_selector_are_owned",
+      "dimensions": [
+        1100,
+        800
+      ],
+      "fresh_required": true,
+      "actually_viewed": false,
+      "source_commit": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+      "new_defining_capture": true,
+      "execution_pending": true
+    },
+    {
+      "name": "external-defaults-platform-question.png",
+      "producer_path": "crates/hydrus-gui/tests/gui/external_calls.rs",
+      "producer_line": 1778,
+      "producer_line_sha256": "89866746d660b0533298c3b1025282e006d9d9071ab38bde399c239794a15f56",
+      "test_symbol": "defaults_physical_menu_exact_choices_saved_reopen_and_retired_selector_are_owned",
+      "dimensions": [
+        520,
+        200
+      ],
+      "fresh_required": true,
+      "actually_viewed": false,
+      "source_commit": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+      "new_defining_capture": true,
+      "execution_pending": true
+    },
+    {
+      "name": "external-defaults-all-draft.png",
+      "producer_path": "crates/hydrus-gui/tests/gui/external_calls.rs",
+      "producer_line": 1790,
+      "producer_line_sha256": "470537615f9270c7960b50e4df55781632c05a8af3c3ba61ff74452205e8553d",
+      "test_symbol": "defaults_physical_menu_exact_choices_saved_reopen_and_retired_selector_are_owned",
+      "dimensions": [
+        1100,
+        800
+      ],
+      "fresh_required": true,
+      "actually_viewed": false,
+      "source_commit": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+      "new_defining_capture": true,
+      "execution_pending": true
+    },
+    {
+      "name": "external-defaults-selector-initial.png",
+      "producer_path": "crates/hydrus-gui/tests/gui/external_calls.rs",
+      "producer_line": 1809,
+      "producer_line_sha256": "9dd0114c57703673a5f15ed2e0c4dd1543a8e228d865ab3afac9dce1c5b35642",
+      "test_symbol": "defaults_physical_menu_exact_choices_saved_reopen_and_retired_selector_are_owned",
+      "dimensions": [
+        600,
+        550
+      ],
+      "fresh_required": true,
+      "actually_viewed": false,
+      "source_commit": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+      "new_defining_capture": true,
+      "execution_pending": true
+    },
+    {
+      "name": "external-defaults-selector-selected.png",
+      "producer_path": "crates/hydrus-gui/tests/gui/external_calls.rs",
+      "producer_line": 1820,
+      "producer_line_sha256": "9a200213a9a5f879b0e0b237a6a0152a9e9521d9ef0ae7abe59df1a0727e96d6",
+      "test_symbol": "defaults_physical_menu_exact_choices_saved_reopen_and_retired_selector_are_owned",
+      "dimensions": [
+        600,
+        550
+      ],
+      "fresh_required": true,
+      "actually_viewed": false,
+      "source_commit": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+      "new_defining_capture": true,
+      "execution_pending": true
+    },
+    {
+      "name": "external-defaults-reopened-saved.png",
+      "producer_path": "crates/hydrus-gui/tests/gui/external_calls.rs",
+      "producer_line": 1874,
+      "producer_line_sha256": "5f913250b6e1b63bd40fe2aeb7a2e55fd467f7fcb910a69acf177f8f0db78c9e",
+      "test_symbol": "defaults_physical_menu_exact_choices_saved_reopen_and_retired_selector_are_owned",
+      "dimensions": [
+        1100,
+        800
+      ],
+      "fresh_required": true,
+      "actually_viewed": false,
+      "source_commit": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+      "new_defining_capture": true,
+      "execution_pending": true
+    }
+  ],
+  "documentation_review": [
+    "Both GUI follow-up paragraphs explicitly await full Linux validation and fresh rendered review; no completion is banked. Existing historical narrative remains.",
+    "URL finite physical scope is unscrolled 960 × 800, scale 1; accepting the physically opened Edit child proves replacement rather than append. Hide/re-show and successor ownership remain narrow.",
+    "Add Defaults finite physical scope is unscrolled 1100 × 800, scale 1, no search. Both popup choices, initial 15 selector labels/booleans, saved values and predecessor/successor proof are described as authored rather than executed.",
+    "DIFFERENCES preserves callback-driven child acceptance, native highlighted selector rows versus Qt checkboxes, no matching Qt chooser/notice/defaults surfaces, no parent/other-routing/deferred-platform credit."
+  ],
+  "preservation_scope": {
+    "canonical_manifests_unchanged": true,
+    "all_sibling_entries_unchanged": true,
+    "statuses_or_completion_counts_changed": false,
+    "production_or_slint_model_reference_inputs_changed": false,
+    "prior_packets_overwritten": false
+  },
+  "current_gates": [
+    "Run 37599290504 is pending in this source-only proof. Full strict Linux execution and maintenance must complete at exact 791b72 source.",
+    "Actually inspect all twelve new source-bound defining images after artifact verification; retain the previous finite physical/Qt/ownership/OS limits. Existing open-externally-routing.png remains additional context, not a new leaf.",
+    "No runtime or rendered approval follows from source-pin verification. Windows/macOS remain deferred."
+  ]
+}

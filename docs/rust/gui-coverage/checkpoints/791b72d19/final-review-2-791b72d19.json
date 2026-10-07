@@ -1,0 +1,956 @@
+{
+  "source_commit": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+  "run_id": 37599290504,
+  "artifact_id": 11473211098,
+  "native_zip_sha256": "80e29dc4dc75119bc1379b664b187fdbccc4cd5ef0a37d4ae0c5af0787453c22",
+  "validation_scope": "linux",
+  "claims": [
+    {
+      "id": "audit-options-external-programs-external-calls-add-defaults",
+      "approval": true,
+      "caveats": [
+        "Broad external-program/list/reopen, import/export and nested call/process families remain Partial. No parent completion, aliases or unsupported call types counted.",
+        "Legacy executable-manager import remains absent. Open Externally OS-default draft regeneration and per-file-type production routing now have their separate original-leaf evidence packet open-externally.json; these older claims still apply to the registered typed calls displayed by this owner.",
+        "Historical author metadata records authored regressions without local Cargo builds, Rust tests or mutation testing. Current exact-source Linux execution and fresh native rendered review are recorded separately in the accepted checkpoint.",
+        "Native platform controls are authored for each hosted OS; reference Linux/Windows/macOS factories are recorded. No external browser or OS launcher is executed.",
+        "Current physical menu opening and keyboard route selection are limited to an unscrolled/no search at 1100 × 800, scale 1 Options state. Platform answers, selector toggles and acceptance use callbacks; no universal/default geometry, OS popup placement or physical selector-button acceptance is proved.",
+        "Native selector booleans use row highlighting rather than Qt checkbox widgets. The historical callable-child PNG is not a defaults menu/question/selector pixel pair. Long command cells may elide while full typed saved values are asserted independently.",
+        "Retirement covers parent Cancel with a live successor and ordinary selector Cancel/native close/slot cancellation, without automatic Main destruction, final Bound drop, temporary hide/page-switch or generic lifetime credit. New saved pair is OS File/URL; earlier factory/model/serialized process evidence is separate and no default/launcher execution is claimed.",
+        "Validation is Linux only; Windows and macOS remain deferred. Exactly these three original leaves qualify; no other parent, alias or native inventory completion receives credit.",
+        "Fresh supported child buttons stretch vertically and leave generous blank space. Choice labels, complete question/notice text and footer controls are readable, but universal/default-size geometry, OS focus/modality and font/framework pixel parity are not established.",
+        "The all-defaults draft has sixteen rows but its screenshot shows only the upper nine in the scrollable table. Complete order/selection comes from exact assertions; all fifteen selector labels fit in both selector captures. No screenshot of every all-default draft row or OS-launch execution is claimed.",
+        "Current saved pair contains OS File/URL defaults with fresh keys and complete typed equality; the prior call is unchanged. Previously recorded Linux/Windows/macOS factory data is reference evidence, while current native execution is Linux. Broader process/rule/platform consumers receive no new credit."
+      ],
+      "manifest": "docs/rust/gui-coverage/parity/external-calls.json",
+      "inspected_native_image_names": [
+        "external-defaults-menu.png",
+        "external-defaults-platform-question.png",
+        "external-defaults-all-draft.png",
+        "external-defaults-selector-initial.png",
+        "external-defaults-selector-selected.png",
+        "external-defaults-reopened-saved.png"
+      ],
+      "tests": [
+        "external_calls::defaults_physical_menu_exact_choices_saved_reopen_and_retired_selector_are_owned",
+        "external_calls::list_duplicate_defaults_delete_capture_and_options_persistence",
+        "external_calls::actual_defaults_menu_routes_preserve_prior_selection_and_generate_unique_named_keys",
+        "external_calls::actual_qt_sort_tie_break_casefold_and_duplicate_selection_routes"
+      ],
+      "source_reference_evidence": [
+        "Both physical menu keyboard routes and Escape pass; exact platform question/custom labels, complete recorded names/selection and all fifteen selector booleans are asserted. Retired selector callbacks preserve a live successor, followed by current positive Apply and Cancel/native-close/slot-cancel boundaries.",
+        "Exact saved/reopened full manager and all row cells pass, including fresh keys differing from every factory key. Fresh images show readable menu/question, all fifteen selector rows, only indices 0/9 selected, and reopened unselected three-row result."
+      ]
+    },
+    {
+      "id": "audit-options-open-externally-url-calls-add",
+      "approval": true,
+      "caveats": [
+        "Broader original page/list parents remain Partial; no parent promotion. Qt decoration, column sorting/persistence and inherited queue keyboard controls are not claimed.",
+        "Legacy executable-manager/routing import, deeper per-call media/URL menus and full process output/error presentation remain Partial. OS file default regeneration uses the correct File pipeline; the reference missing-file-OS branch generates the URL pipeline.",
+        "Native asynchronous registered-process submission pauses the viewer on submission rather than after bounded execution completion; submitted external programs retain their lifetime after owner close.",
+        "Historical author metadata records authored regressions without local Cargo builds, Rust tests or mutation testing. Current exact-source Linux execution and fresh native rendered review are recorded separately in the accepted checkpoint.",
+        "Current physical parent Add/Edit admission is limited to an unscrolled/no search at 960 × 800, scale 1 Options state. Physical chooser acceptance is not proved; chosen/Cancel responses use callbacks. No universal/default geometry or automatic OS focus/modality is claimed.",
+        "URL ownership coverage is limited to tested parent Cancel/replacement and child/parent hide/re-show with positive current actions. Automatic Main destruction, final Bound drop, arbitrary page changes and general ownership guarantees remain outside scope.",
+        "The historical Qt PNG is a later renamed/missing/wrong-type queue state; it supports outer-control context, not current chooser/notice or native event 7 pixel/placement/decoration parity. No MIME/nested File/default routing/launcher/parent/alias/native or deferred-platform completion credit follows from these two actions.",
+        "Validation is Linux only; Windows and macOS remain deferred. Exactly these three original leaves qualify; no other parent, alias or native inventory completion receives credit.",
+        "Fresh supported child buttons stretch vertically and leave generous blank space. Choice labels, complete question/notice text and footer controls are readable, but universal/default-size geometry, OS focus/modality and font/framework pixel parity are not established.",
+        "Physical Add admission uses (400,339) and Edit uses (767,339) only at the asserted 960 × 800 scale-1 zero-scroll/no-search state. The Edit child remains live through acceptance; exact queue replacement distinguishes it from an accidental Add hit. Chooser responses remain callback-driven.",
+        "Add appends unselected, while Edit preserves the selected queue position. Full saved Routing plus typed Manager equality, reopened rows and current successor actions are asserted. The stronger Edit successor changes the second of two rows while preserving the first; no broader routing/launch credit follows."
+      ],
+      "manifest": "docs/rust/gui-coverage/parity/open-externally.json",
+      "inspected_native_image_names": [
+        "url-add-chooser.png",
+        "url-add-single-choice.png",
+        "url-add-draft.png",
+        "url-exhausted-information.png",
+        "url-edit-single-choice.png",
+        "url-reopened-saved.png"
+      ],
+      "tests": [
+        "open_externally::options_routes_replay_qt_owned_choosers_cancel_order_apply_reopen_and_retirement",
+        "open_externally::shortcut_and_routing_children_exclude_each_other_and_cancel_staged_changes",
+        "open_externally::actual_qt_registered_choices_queue_order_and_protected_mime_rows",
+        "open_externally::washing_renames_deduplicates_removes_missing_without_name_remap_and_persists"
+      ],
+      "source_reference_evidence": [
+        "The defining exact Qt event replay, full saved Routing/Manager comparisons and choices 0–3 labels/order/description pass, including explicit single remaining choices and the exhausted notice. Physical Edit acceptance proves replacement rather than append.",
+        "Genuinely pending retired Add/Edit choosers cannot change full live successor drafts, labels, settings or slot identities; child/parent hide rejects answers and re-show permits current acceptance. Fresh chooser/notice/draft/reopened frames are readable."
+      ]
+    },
+    {
+      "id": "audit-options-open-externally-url-calls-edit",
+      "approval": true,
+      "caveats": [
+        "Broader original page/list parents remain Partial; no parent promotion. Qt decoration, column sorting/persistence and inherited queue keyboard controls are not claimed.",
+        "Legacy executable-manager/routing import, deeper per-call media/URL menus and full process output/error presentation remain Partial. OS file default regeneration uses the correct File pipeline; the reference missing-file-OS branch generates the URL pipeline.",
+        "Native asynchronous registered-process submission pauses the viewer on submission rather than after bounded execution completion; submitted external programs retain their lifetime after owner close.",
+        "Historical author metadata records authored regressions without local Cargo builds, Rust tests or mutation testing. Current exact-source Linux execution and fresh native rendered review are recorded separately in the accepted checkpoint.",
+        "Current physical parent Add/Edit admission is limited to an unscrolled/no search at 960 × 800, scale 1 Options state. Physical chooser acceptance is not proved; chosen/Cancel responses use callbacks. No universal/default geometry or automatic OS focus/modality is claimed.",
+        "URL ownership coverage is limited to tested parent Cancel/replacement and child/parent hide/re-show with positive current actions. Automatic Main destruction, final Bound drop, arbitrary page changes and general ownership guarantees remain outside scope.",
+        "The historical Qt PNG is a later renamed/missing/wrong-type queue state; it supports outer-control context, not current chooser/notice or native event 7 pixel/placement/decoration parity. No MIME/nested File/default routing/launcher/parent/alias/native or deferred-platform completion credit follows from these two actions.",
+        "Validation is Linux only; Windows and macOS remain deferred. Exactly these three original leaves qualify; no other parent, alias or native inventory completion receives credit.",
+        "Fresh supported child buttons stretch vertically and leave generous blank space. Choice labels, complete question/notice text and footer controls are readable, but universal/default-size geometry, OS focus/modality and font/framework pixel parity are not established.",
+        "Physical Add admission uses (400,339) and Edit uses (767,339) only at the asserted 960 × 800 scale-1 zero-scroll/no-search state. The Edit child remains live through acceptance; exact queue replacement distinguishes it from an accidental Add hit. Chooser responses remain callback-driven.",
+        "Add appends unselected, while Edit preserves the selected queue position. Full saved Routing plus typed Manager equality, reopened rows and current successor actions are asserted. The stronger Edit successor changes the second of two rows while preserving the first; no broader routing/launch credit follows."
+      ],
+      "manifest": "docs/rust/gui-coverage/parity/open-externally.json",
+      "inspected_native_image_names": [
+        "url-add-chooser.png",
+        "url-add-single-choice.png",
+        "url-add-draft.png",
+        "url-exhausted-information.png",
+        "url-edit-single-choice.png",
+        "url-reopened-saved.png"
+      ],
+      "tests": [
+        "open_externally::options_routes_replay_qt_owned_choosers_cancel_order_apply_reopen_and_retirement",
+        "open_externally::shortcut_and_routing_children_exclude_each_other_and_cancel_staged_changes",
+        "open_externally::actual_qt_registered_choices_queue_order_and_protected_mime_rows",
+        "open_externally::washing_renames_deduplicates_removes_missing_without_name_remap_and_persists"
+      ],
+      "source_reference_evidence": [
+        "The defining exact Qt event replay, full saved Routing/Manager comparisons and choices 0–3 labels/order/description pass, including explicit single remaining choices and the exhausted notice. Physical Edit acceptance proves replacement rather than append.",
+        "Genuinely pending retired Add/Edit choosers cannot change full live successor drafts, labels, settings or slot identities; child/parent hide rejects answers and re-show permits current acceptance. Fresh chooser/notice/draft/reopened frames are readable."
+      ]
+    }
+  ],
+  "selected_count": 3,
+  "approval_scope": "Independent finite approval of exactly Add Defaults and URL Add/Edit. Canonical publication and ledger updates remain root-owned.",
+  "required_jobs": [
+    {
+      "name": "parity-models",
+      "id": 112719459312,
+      "conclusion": "success"
+    },
+    {
+      "name": "check",
+      "id": 112719459548,
+      "conclusion": "success"
+    },
+    {
+      "name": "workspace-cache-maintenance",
+      "id": 112725832948,
+      "conclusion": "success"
+    }
+  ],
+  "full_test_summary": {
+    "gui": {
+      "passed": 708,
+      "failed": 0,
+      "ignored": 0,
+      "seconds": 242.64
+    },
+    "media": {
+      "passed": 67,
+      "failed": 0,
+      "ignored": 0,
+      "seconds": 1.01
+    },
+    "strict_fmt_clippy_and_parity_ratchet": "passed",
+    "reference_backend": "passed",
+    "deferred_platforms": [
+      "windows",
+      "macos"
+    ]
+  },
+  "native_manifest_path": "/workspace/validation-reviews/ci-791b72d19/native-render-manifest.json",
+  "native_manifest_sha256": "ab8390affcaeeb2f939db627d41545d078aa2a5b52faf315cba9ba224cb3a52e",
+  "native_image_count": 364,
+  "images_actually_viewed": [
+    {
+      "name": "external-defaults-menu.png",
+      "path": "/workspace/validation-reviews/ci-791b72d19/native-renders/external-defaults-menu.png",
+      "source_commit": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+      "run_id": 37599290504,
+      "artifact_id": 11473211098,
+      "sha256": "f3baa5dc4c13a4092d67cf4068ba9a4dcdbf9ba45b5a60604d3394409d20018a",
+      "bytes": 59003,
+      "dimensions": [
+        1100,
+        800
+      ],
+      "actually_viewed": true,
+      "required": true,
+      "observation": "Actual parent composite shows the open two-item menu in order: add them all, select from a list. Both labels are readable and the menu fits the supported viewport.",
+      "producer": {
+        "producer_path": "crates/hydrus-gui/tests/gui/external_calls.rs",
+        "producer_line": 1762,
+        "producer_line_sha256": "c1495938c3478ac6d71bee2321c8ca33e75e99f4f904b6ae378bde08d9bdd6e7"
+      }
+    },
+    {
+      "name": "external-defaults-platform-question.png",
+      "path": "/workspace/validation-reviews/ci-791b72d19/native-renders/external-defaults-platform-question.png",
+      "source_commit": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+      "run_id": 37599290504,
+      "artifact_id": 11473211098,
+      "sha256": "f5faa3906ceed2166cd7ff2286dabfc21eac2481efb4ec1989c1517f61eb73c8",
+      "bytes": 8416,
+      "dimensions": [
+        520,
+        200
+      ],
+      "actually_viewed": true,
+      "required": true,
+      "observation": "The complete Linux platform/everything prompt and both custom labels are readable. Native answer buttons are tall, with generous blank space.",
+      "producer": {
+        "producer_path": "crates/hydrus-gui/tests/gui/external_calls.rs",
+        "producer_line": 1778,
+        "producer_line_sha256": "89866746d660b0533298c3b1025282e006d9d9071ab38bde399c239794a15f56"
+      }
+    },
+    {
+      "name": "external-defaults-all-draft.png",
+      "path": "/workspace/validation-reviews/ci-791b72d19/native-renders/external-defaults-all-draft.png",
+      "source_commit": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+      "run_id": 37599290504,
+      "artifact_id": 11473211098,
+      "sha256": "4d4fa2e9ed4fca5231ece5b1fd84d4660cd630c6bb7659447ce19811b7b3e282",
+      "bytes": 97754,
+      "dimensions": [
+        1100,
+        800
+      ],
+      "actually_viewed": true,
+      "required": true,
+      "observation": "The internally scrollable all-default draft shows its first nine of sixteen rows, including selected prior selection and added File defaults. The remaining rows are below the list viewport; complete order/selection is assertion-backed.",
+      "producer": {
+        "producer_path": "crates/hydrus-gui/tests/gui/external_calls.rs",
+        "producer_line": 1790,
+        "producer_line_sha256": "470537615f9270c7960b50e4df55781632c05a8af3c3ba61ff74452205e8553d"
+      }
+    },
+    {
+      "name": "external-defaults-selector-initial.png",
+      "path": "/workspace/validation-reviews/ci-791b72d19/native-renders/external-defaults-selector-initial.png",
+      "source_commit": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+      "run_id": 37599290504,
+      "artifact_id": 11473211098,
+      "sha256": "674667f2aee627515399ab4e1eacea2d7132ad330569cb7d0332e27e51dd6b24",
+      "bytes": 32632,
+      "dimensions": [
+        600,
+        550
+      ],
+      "actually_viewed": true,
+      "required": true,
+      "observation": "All fifteen factory labels fit in their exact recorded order; no rows are highlighted. Apply/Cancel are visible and readable.",
+      "producer": {
+        "producer_path": "crates/hydrus-gui/tests/gui/external_calls.rs",
+        "producer_line": 1809,
+        "producer_line_sha256": "9dd0114c57703673a5f15ed2e0c4dd1543a8e228d865ab3afac9dce1c5b35642"
+      }
+    },
+    {
+      "name": "external-defaults-selector-selected.png",
+      "path": "/workspace/validation-reviews/ci-791b72d19/native-renders/external-defaults-selector-selected.png",
+      "source_commit": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+      "run_id": 37599290504,
+      "artifact_id": 11473211098,
+      "sha256": "0d5e326ab7f8716e0f79ac743d55b770b5cdcb0b1e8c4023ace0cb68c87c6ac2",
+      "bytes": 33356,
+      "dimensions": [
+        600,
+        550
+      ],
+      "actually_viewed": true,
+      "required": true,
+      "observation": "All fifteen labels remain readable. Only Default OS File Launch and Default OS URL Launch (indices 0/9) are highlighted; Apply/Cancel remain visible.",
+      "producer": {
+        "producer_path": "crates/hydrus-gui/tests/gui/external_calls.rs",
+        "producer_line": 1820,
+        "producer_line_sha256": "9a200213a9a5f879b0e0b237a6a0152a9e9521d9ef0ae7abe59df1a0727e96d6"
+      }
+    },
+    {
+      "name": "external-defaults-reopened-saved.png",
+      "path": "/workspace/validation-reviews/ci-791b72d19/native-renders/external-defaults-reopened-saved.png",
+      "source_commit": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+      "run_id": 37599290504,
+      "artifact_id": 11473211098,
+      "sha256": "c35b59723275a071ba30b5c2cc8733ea4a1f73fff92ecb840e3aa44549ecb601",
+      "bytes": 64334,
+      "dimensions": [
+        1100,
+        800
+      ],
+      "actually_viewed": true,
+      "required": true,
+      "observation": "Three persisted rows are visible and unselected: Default OS File Launch, prior selection, Default OS URL Launch. Names, types and command descriptions are readable.",
+      "producer": {
+        "producer_path": "crates/hydrus-gui/tests/gui/external_calls.rs",
+        "producer_line": 1874,
+        "producer_line_sha256": "5f913250b6e1b63bd40fe2aeb7a2e55fd467f7fcb910a69acf177f8f0db78c9e"
+      }
+    },
+    {
+      "name": "url-add-chooser.png",
+      "path": "/workspace/validation-reviews/ci-791b72d19/native-renders/url-add-chooser.png",
+      "source_commit": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+      "run_id": 37599290504,
+      "artifact_id": 11473211098,
+      "sha256": "74bf4c110eaecb87a998f1fcbfadafdbfa396cbe523793f1a29aa55f24ef3c15",
+      "bytes": 6458,
+      "dimensions": [
+        520,
+        440
+      ],
+      "actually_viewed": true,
+      "required": true,
+      "observation": "Zulu URL then alpha URL appear as two explicit, tall native choice buttons; Select this call. and Cancel are readable.",
+      "producer": {
+        "producer_path": "crates/hydrus-gui/tests/gui/open_externally.rs",
+        "producer_line": 558,
+        "producer_line_sha256": "f818fb2323dcbb44a15ca3063bb70a0065b8b4cb21cb4d095d6587e10fc2f181"
+      }
+    },
+    {
+      "name": "url-add-single-choice.png",
+      "path": "/workspace/validation-reviews/ci-791b72d19/native-renders/url-add-single-choice.png",
+      "source_commit": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+      "run_id": 37599290504,
+      "artifact_id": 11473211098,
+      "sha256": "2bb823e91a11e299d2af5a75858fa4fac946ff9d44ac50071ce9d51fb7a5c153",
+      "bytes": 5533,
+      "dimensions": [
+        520,
+        440
+      ],
+      "actually_viewed": true,
+      "required": true,
+      "observation": "The single alpha URL choice remains an explicit visible chooser, with description and Cancel. Its native button fills the available upper area.",
+      "producer": {
+        "producer_path": "crates/hydrus-gui/tests/gui/open_externally.rs",
+        "producer_line": 573,
+        "producer_line_sha256": "88ec532b3000fe0adb53b2aeeaaae2bb34620978b2bed289b7de5ac47e1f1c0a"
+      }
+    },
+    {
+      "name": "url-add-draft.png",
+      "path": "/workspace/validation-reviews/ci-791b72d19/native-renders/url-add-draft.png",
+      "source_commit": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+      "run_id": 37599290504,
+      "artifact_id": 11473211098,
+      "sha256": "e4714355a4de7c7c7048f69f04732d5a1820481bd19f6dc4606fbc377f531065",
+      "bytes": 74515,
+      "dimensions": [
+        960,
+        800
+      ],
+      "actually_viewed": true,
+      "required": true,
+      "observation": "Default OS URL Launch, Zulu URL, alpha URL are visibly in queue order with no selection. Parent URL/File captions and controls are readable; Edit is disabled.",
+      "producer": {
+        "producer_path": "crates/hydrus-gui/tests/gui/open_externally.rs",
+        "producer_line": 596,
+        "producer_line_sha256": "6f023173ff15f50fffffd97d40eedc7a56b0022a3ab07e64ccfc579881e4472f"
+      }
+    },
+    {
+      "name": "url-exhausted-information.png",
+      "path": "/workspace/validation-reviews/ci-791b72d19/native-renders/url-exhausted-information.png",
+      "source_commit": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+      "run_id": 37599290504,
+      "artifact_id": 11473211098,
+      "sha256": "9019efe9b4063453d842e46b9d956a52c962a76527ccc7b0c4b237688a8a2d60",
+      "bytes": 8473,
+      "dimensions": [
+        520,
+        200
+      ],
+      "actually_viewed": true,
+      "required": true,
+      "observation": "The full exhausted send single URL notice wraps into two readable lines; OK is visible in a tall native button.",
+      "producer": {
+        "producer_path": "crates/hydrus-gui/tests/gui/open_externally.rs",
+        "producer_line": 620,
+        "producer_line_sha256": "54bf8b4482ed6a50e21e893beb3a61ce5f5bb363b99b72d03b5be1cff48ec14e"
+      }
+    },
+    {
+      "name": "url-edit-single-choice.png",
+      "path": "/workspace/validation-reviews/ci-791b72d19/native-renders/url-edit-single-choice.png",
+      "source_commit": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+      "run_id": 37599290504,
+      "artifact_id": 11473211098,
+      "sha256": "df10f1c5a36bf0b6de21ec1db8423cb862f35fcd06e73a641d0a3020b6fbb64a",
+      "bytes": 6440,
+      "dimensions": [
+        520,
+        440
+      ],
+      "actually_viewed": true,
+      "required": true,
+      "observation": "The single Default OS URL Launch choice, description and Cancel are readable. This is the actual physically admitted Edit child used by the replacement assertion.",
+      "producer": {
+        "producer_path": "crates/hydrus-gui/tests/gui/open_externally.rs",
+        "producer_line": 659,
+        "producer_line_sha256": "0a4735128db4a24369158960fd191d45fc6f04a9f5aa3b9ae8cd26333f48bfc3"
+      }
+    },
+    {
+      "name": "url-reopened-saved.png",
+      "path": "/workspace/validation-reviews/ci-791b72d19/native-renders/url-reopened-saved.png",
+      "source_commit": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+      "run_id": 37599290504,
+      "artifact_id": 11473211098,
+      "sha256": "879bffa19c85d1998df27f5c3748a05fbae78a05669024fe465ed278a575cdc5",
+      "bytes": 74149,
+      "dimensions": [
+        960,
+        800
+      ],
+      "actually_viewed": true,
+      "required": true,
+      "observation": "The reopened URL queue shows unselected Zulu URL. Supporting File rows show all files/Default OS File Launch and png/File one 日本. Parent controls and Unicode are readable.",
+      "producer": {
+        "producer_path": "crates/hydrus-gui/tests/gui/open_externally.rs",
+        "producer_line": 821,
+        "producer_line_sha256": "2acd6da389560d00fbab1e13395fdfda75000a1d8f43f41c86506ba23556f1df"
+      }
+    },
+    {
+      "name": "open-externally-routing.png",
+      "path": "/workspace/validation-reviews/ci-791b72d19/native-renders/open-externally-routing.png",
+      "source_commit": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+      "run_id": 37599290504,
+      "artifact_id": 11473211098,
+      "sha256": "99f82dbb632e278add164da346a80be0fc98b1f3f5868841412a6f69d9fbdec9",
+      "bytes": 78864,
+      "dimensions": [
+        960,
+        800
+      ],
+      "actually_viewed": true,
+      "required": false,
+      "observation": "Fresh supplemental context shows selected Default OS URL Launch followed by alpha URL, with readable File one 日本 and other File summaries. It supports the existing result context, without new MIME/default-launch credit.",
+      "producer": {
+        "producer_path": "crates/hydrus-gui/tests/gui/open_externally.rs",
+        "producer_line": 778,
+        "producer_line_sha256": "f559c86ec2184ada4ca944502d227ee57847fe37cef6770722d2b4dc43f1b056"
+      }
+    }
+  ],
+  "required_images_viewed": 12,
+  "supplemental_images_viewed": 1,
+  "reference_images_actually_viewed": [
+    {
+      "path": "/workspace/hydrus-mine/oracle/fixtures/external_calls.png",
+      "sha256": "2eda195f01254bf2de45455e5a4f3e1be181911317ae3af0dea390e03708a139",
+      "unchanged_committed_source": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+      "actually_viewed": true,
+      "scope": "Historical actual Qt callable child only; no Defaults menu/question/selector image. Right-hand testing prose is clipped, and this is supporting context rather than a paired surface."
+    },
+    {
+      "path": "/workspace/hydrus-mine/oracle/fixtures/open_externally.png",
+      "sha256": "93e6891da43fa4d641c8bc80e7d711a3191a1aaad58b64fb5fe026ec071b8aec",
+      "unchanged_committed_source": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+      "actually_viewed": true,
+      "scope": "Historical actual Qt outer panel with renamed/missing/wrong-type rows, not current native event 7 or chooser/notice state. No matched pixel or placement pair."
+    }
+  ],
+  "exact_passing_test_proof": [
+    {
+      "test": "external_calls::defaults_physical_menu_exact_choices_saved_reopen_and_retired_selector_are_owned",
+      "source_path": "crates/hydrus-gui/tests/gui/external_calls.rs",
+      "source_line": 1728,
+      "source_commit": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+      "run_id": 37599290504,
+      "log": "/workspace/validation-reviews/ci-791b72d19/tests.log",
+      "log_line": 793,
+      "result": "passed"
+    },
+    {
+      "test": "external_calls::list_duplicate_defaults_delete_capture_and_options_persistence",
+      "source_path": "crates/hydrus-gui/tests/gui/external_calls.rs",
+      "source_line": 203,
+      "source_commit": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+      "run_id": 37599290504,
+      "log": "/workspace/validation-reviews/ci-791b72d19/tests.log",
+      "log_line": 759,
+      "result": "passed"
+    },
+    {
+      "test": "open_externally::options_routes_replay_qt_owned_choosers_cancel_order_apply_reopen_and_retirement",
+      "source_path": "crates/hydrus-gui/tests/gui/open_externally.rs",
+      "source_line": 528,
+      "source_commit": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+      "run_id": 37599290504,
+      "log": "/workspace/validation-reviews/ci-791b72d19/tests.log",
+      "log_line": 1000,
+      "result": "passed"
+    },
+    {
+      "test": "open_externally::shortcut_and_routing_children_exclude_each_other_and_cancel_staged_changes",
+      "source_path": "crates/hydrus-gui/tests/gui/open_externally.rs",
+      "source_line": 427,
+      "source_commit": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+      "run_id": 37599290504,
+      "log": "/workspace/validation-reviews/ci-791b72d19/tests.log",
+      "log_line": 1002,
+      "result": "passed"
+    },
+    {
+      "test": "external_calls::actual_defaults_menu_routes_preserve_prior_selection_and_generate_unique_named_keys",
+      "source_path": "crates/hydrus-gui-model/tests/model/external_calls.rs",
+      "source_line": 260,
+      "source_commit": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+      "run_id": 37599290504,
+      "log": "/workspace/validation-reviews/ci-791b72d19/tests.log",
+      "log_line": 1527,
+      "result": "passed"
+    },
+    {
+      "test": "external_calls::actual_defaults_menu_routes_preserve_prior_selection_and_generate_unique_named_keys",
+      "source_path": "crates/hydrus-gui-model/tests/model/external_calls.rs",
+      "source_line": 260,
+      "source_commit": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+      "run_id": 37599290504,
+      "log": "/workspace/validation-reviews/ci-791b72d19/parity.log",
+      "log_line": 1535,
+      "result": "passed"
+    },
+    {
+      "test": "external_calls::actual_qt_sort_tie_break_casefold_and_duplicate_selection_routes",
+      "source_path": "crates/hydrus-gui-model/tests/model/external_calls.rs",
+      "source_line": 137,
+      "source_commit": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+      "run_id": 37599290504,
+      "log": "/workspace/validation-reviews/ci-791b72d19/tests.log",
+      "log_line": 1528,
+      "result": "passed"
+    },
+    {
+      "test": "external_calls::actual_qt_sort_tie_break_casefold_and_duplicate_selection_routes",
+      "source_path": "crates/hydrus-gui-model/tests/model/external_calls.rs",
+      "source_line": 137,
+      "source_commit": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+      "run_id": 37599290504,
+      "log": "/workspace/validation-reviews/ci-791b72d19/parity.log",
+      "log_line": 1536,
+      "result": "passed"
+    },
+    {
+      "test": "open_externally::actual_qt_registered_choices_queue_order_and_protected_mime_rows",
+      "source_path": "crates/hydrus-gui-model/tests/model/open_externally.rs",
+      "source_line": 66,
+      "source_commit": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+      "run_id": 37599290504,
+      "log": "/workspace/validation-reviews/ci-791b72d19/tests.log",
+      "log_line": 1695,
+      "result": "passed"
+    },
+    {
+      "test": "open_externally::actual_qt_registered_choices_queue_order_and_protected_mime_rows",
+      "source_path": "crates/hydrus-gui-model/tests/model/open_externally.rs",
+      "source_line": 66,
+      "source_commit": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+      "run_id": 37599290504,
+      "log": "/workspace/validation-reviews/ci-791b72d19/parity.log",
+      "log_line": 1703,
+      "result": "passed"
+    },
+    {
+      "test": "open_externally::washing_renames_deduplicates_removes_missing_without_name_remap_and_persists",
+      "source_path": "crates/hydrus-gui-model/tests/model/open_externally.rs",
+      "source_line": 129,
+      "source_commit": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+      "run_id": 37599290504,
+      "log": "/workspace/validation-reviews/ci-791b72d19/tests.log",
+      "log_line": 1699,
+      "result": "passed"
+    },
+    {
+      "test": "open_externally::washing_renames_deduplicates_removes_missing_without_name_remap_and_persists",
+      "source_path": "crates/hydrus-gui-model/tests/model/open_externally.rs",
+      "source_line": 129,
+      "source_commit": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+      "run_id": 37599290504,
+      "log": "/workspace/validation-reviews/ci-791b72d19/parity.log",
+      "log_line": 1706,
+      "result": "passed"
+    }
+  ],
+  "source_pins": [
+    {
+      "path": "crates/hydrus-gui/tests/gui/open_externally.rs",
+      "source_commit": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+      "sha256": "b8c2fba97967a94fb95480a86477744f0ed5b5d2504879dcfc063dc3d64ce35c",
+      "bytes": 43867,
+      "matches_independently_reviewed_bytes": true
+    },
+    {
+      "path": "crates/hydrus-gui/tests/gui/external_calls.rs",
+      "source_commit": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+      "sha256": "b3dea615fc217d7cac71ede35633d030eb3480bff6914f0f089a4f9eca3357f4",
+      "bytes": 78934,
+      "matches_independently_reviewed_bytes": true
+    },
+    {
+      "path": "docs/rust/DIFFERENCES.md",
+      "source_commit": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+      "sha256": "48679b2e660f822cd4c38d34b365ef719a982a2c8c3a3a87b93e6c0efd1a34c7",
+      "bytes": 268348,
+      "reviewed_pending_prose": true
+    },
+    {
+      "path": "docs/rust/GUI.md",
+      "source_commit": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+      "sha256": "0adfca7a8543ab786fce95d52e500fb76a79296fda063477de64a4e8c63ace39",
+      "bytes": 333628,
+      "reviewed_pending_prose": true
+    },
+    {
+      "path": "docs/rust/gui-coverage/parity/external-calls.json",
+      "source_commit": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+      "sha256": "5cf911f12d98ee4874796a5ecc4472296db70a45b32292c0e9fbd4d56d3a8407",
+      "bytes": 109797,
+      "manifest_byte_identical_to_published_baseline": true
+    },
+    {
+      "path": "docs/rust/gui-coverage/parity/open-externally.json",
+      "source_commit": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+      "sha256": "20932740466dc6473472bdda5651a8c8d7b22f10feb23965e6fee6f75360549c",
+      "bytes": 63936,
+      "manifest_byte_identical_to_published_baseline": true
+    }
+  ],
+  "current_proposal_source_anchors_verified": [
+    {
+      "path": "crates/hydrus-gui/src/options_external_calls.rs",
+      "line": 180,
+      "anchor_git_head": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+      "line_sha256": "14857b5fa7ed28997f22d916dc00ee04274e1b935d9a856a8dbe04caf4ab24eb"
+    },
+    {
+      "path": "crates/hydrus-gui-model/src/external_calls.rs",
+      "line": 15,
+      "anchor_git_head": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+      "line_sha256": "d7b1a7498a62e4270a349e01ae898a245c4752efefce4ded5fbbf308310cf50b"
+    },
+    {
+      "path": "crates/hydrus-store/src/settings.rs",
+      "line": 1582,
+      "anchor_git_head": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+      "line_sha256": "0f65a24a2bccd352c747e31b168e1c65b4ff657ec06e971fded6a438ac102bdf"
+    },
+    {
+      "path": "crates/hydrus-gui/src/options_external_calls.rs",
+      "line": 19,
+      "anchor_git_head": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+      "line_sha256": "21adffd3c1c09632313242ecc1b6378584da70a4d70f7ab92b4007c84515283b"
+    },
+    {
+      "path": "crates/hydrus-gui/ui/external_calls.slint",
+      "line": 35,
+      "anchor_git_head": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+      "line_sha256": "f92cb67ed709651748469e77daaf80409803ff91659708380d67b892f5f0172a"
+    },
+    {
+      "path": "crates/hydrus-downloader-exchange/src/external_calls.rs",
+      "line": 258,
+      "anchor_git_head": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+      "line_sha256": "ccd0f749de8d735965ae345720f72a805e48355af2a4c52484fc12614eb272c1"
+    },
+    {
+      "path": "crates/hydrus-gui/tests/gui/external_calls.rs",
+      "line": 203,
+      "anchor_git_head": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+      "line_sha256": "3f51a136199e98d6e14e0ac9d2abc8536dd7147840e4056ef3f32a1a191a8289"
+    },
+    {
+      "path": "crates/hydrus-gui-model/tests/model/external_calls.rs",
+      "line": 260,
+      "anchor_git_head": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+      "line_sha256": "96c49e6996f6231274a312304edb2f880b9dc479d8c83af9704fca537f7f852e"
+    },
+    {
+      "path": "crates/hydrus-gui-model/tests/model/external_calls.rs",
+      "line": 137,
+      "anchor_git_head": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+      "line_sha256": "13c46a95f81cc816fedbcf12a24294a02dbea4ad2406e5ba96c50f78b3d88e27"
+    },
+    {
+      "path": "crates/hydrus-gui/tests/gui/external_calls.rs",
+      "line": 1728,
+      "anchor_git_head": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+      "line_sha256": "eeb0718da6bc151ec08a0f478130ea0ce988e9d279ea21631e971366a1c9dd79"
+    },
+    {
+      "path": "crates/hydrus-gui/src/options_external_calls.rs",
+      "line": 180,
+      "anchor_git_head": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+      "line_sha256": "14857b5fa7ed28997f22d916dc00ee04274e1b935d9a856a8dbe04caf4ab24eb"
+    },
+    {
+      "path": "hydrus/client/gui/panels/options/ExternalProgramsPanel.py",
+      "line": 1345,
+      "anchor_git_head": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+      "line_sha256": "4a1319743b142e073789f46ec197ad263e0dee99d803da825c5929dfa27d06db"
+    },
+    {
+      "path": "crates/hydrus-gui/src/options_open_externally.rs",
+      "line": 323,
+      "anchor_git_head": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+      "line_sha256": "d9f5bace01847d5ec10b4c91e4d6529aa3af335f242f27f8a495ca30986c0871"
+    },
+    {
+      "path": "crates/hydrus-gui/src/options_open_externally.rs",
+      "line": 407,
+      "anchor_git_head": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+      "line_sha256": "3b73d34f22e301c5b2bb577675630701af714e6d5b7b7204fd63dacd76a44e8a"
+    },
+    {
+      "path": "crates/hydrus-gui/src/options_open_externally.rs",
+      "line": 577,
+      "anchor_git_head": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+      "line_sha256": "50b78525b4171dde47a2f2826990faea5d6fe740fe99f6e16c926af736e3f828"
+    },
+    {
+      "path": "crates/hydrus-gui-model/src/open_externally.rs",
+      "line": 18,
+      "anchor_git_head": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+      "line_sha256": "030779e364fb5a23a2c749621cf5c7f9462da0f27ddc98b2f81b9e3410a8d57d"
+    },
+    {
+      "path": "crates/hydrus-gui-model/src/open_externally.rs",
+      "line": 95,
+      "anchor_git_head": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+      "line_sha256": "dd46b1b429757b7e3395f8546c11b2f048ebd277cfbabca84e2ed7e111ca48c2"
+    },
+    {
+      "path": "crates/hydrus-core/src/open_externally.rs",
+      "line": 82,
+      "anchor_git_head": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+      "line_sha256": "13402a6dd7f2166db2935fc81d066fca54bd61c1100243aa75609339e084cce1"
+    },
+    {
+      "path": "crates/hydrus-gui/src/open_externally_launch.rs",
+      "line": 101,
+      "anchor_git_head": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+      "line_sha256": "4433c594bc6574ac282f2cdfd6bd118879a30d4aa31397ccc65436053d69557c"
+    },
+    {
+      "path": "crates/hydrus-gui/src/lib.rs",
+      "line": 586,
+      "anchor_git_head": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+      "line_sha256": "7ffb048a3f9a373699af125185086d571626c4e82df894a22b09114d0cb661c9"
+    },
+    {
+      "path": "crates/hydrus-store/src/settings.rs",
+      "line": 1590,
+      "anchor_git_head": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+      "line_sha256": "32a53c74a236a79877d5f3631c840a16e0301822eb02f46286555eea8a7057ec"
+    },
+    {
+      "path": "crates/hydrus-gui-model/tests/model/open_externally.rs",
+      "line": 66,
+      "anchor_git_head": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+      "line_sha256": "5287cd94749d27a4a6f67952826cf5aa960f429fbf31208ecfbeb6fe86d83212"
+    },
+    {
+      "path": "crates/hydrus-gui-model/tests/model/open_externally.rs",
+      "line": 129,
+      "anchor_git_head": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+      "line_sha256": "21276bea1321b25e124015c16995df306da0c50d0c6c5d867d8ecb5db105fb39"
+    },
+    {
+      "path": "crates/hydrus-gui-model/tests/model/open_externally.rs",
+      "line": 193,
+      "anchor_git_head": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+      "line_sha256": "ea1daa5e54015543032c40fd62278d7d0b2da5d67f0ea94c42b10534a6ecaca1"
+    },
+    {
+      "path": "crates/hydrus-gui/tests/gui/open_externally.rs",
+      "line": 528,
+      "anchor_git_head": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+      "line_sha256": "8300f392e32636af54b2e93a688474aa6b132aa496e98bc8cdc2a7c51e117a84"
+    },
+    {
+      "path": "crates/hydrus-gui/tests/gui/open_externally.rs",
+      "line": 840,
+      "anchor_git_head": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+      "line_sha256": "a51f51e5b0c3489bcf59abce9ebe265d2926054eade9b8a83479f8d8cf2407ab"
+    },
+    {
+      "path": "crates/hydrus-gui/tests/gui/open_externally.rs",
+      "line": 1073,
+      "anchor_git_head": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+      "line_sha256": "3623f632cbd337dd0ee856cfaadf782a28a84deb5a67c6f005f6f3ff757664aa"
+    },
+    {
+      "path": "crates/hydrus-gui/src/options_open_externally.rs",
+      "line": 323,
+      "anchor_git_head": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+      "line_sha256": "d9f5bace01847d5ec10b4c91e4d6529aa3af335f242f27f8a495ca30986c0871"
+    },
+    {
+      "path": "hydrus/client/gui/panels/options/OpenExternallyPanel.py",
+      "line": 116,
+      "anchor_git_head": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+      "line_sha256": "752834b5b48f83f8f76b3a04debfc66545b6965cf04a9a2209e1a10d46eb5b4a"
+    },
+    {
+      "path": "crates/hydrus-gui/src/options_open_externally.rs",
+      "line": 323,
+      "anchor_git_head": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+      "line_sha256": "d9f5bace01847d5ec10b4c91e4d6529aa3af335f242f27f8a495ca30986c0871"
+    },
+    {
+      "path": "crates/hydrus-gui/src/options_open_externally.rs",
+      "line": 407,
+      "anchor_git_head": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+      "line_sha256": "3b73d34f22e301c5b2bb577675630701af714e6d5b7b7204fd63dacd76a44e8a"
+    },
+    {
+      "path": "crates/hydrus-gui/src/options_open_externally.rs",
+      "line": 577,
+      "anchor_git_head": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+      "line_sha256": "50b78525b4171dde47a2f2826990faea5d6fe740fe99f6e16c926af736e3f828"
+    },
+    {
+      "path": "crates/hydrus-gui-model/src/open_externally.rs",
+      "line": 18,
+      "anchor_git_head": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+      "line_sha256": "030779e364fb5a23a2c749621cf5c7f9462da0f27ddc98b2f81b9e3410a8d57d"
+    },
+    {
+      "path": "crates/hydrus-gui-model/src/open_externally.rs",
+      "line": 95,
+      "anchor_git_head": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+      "line_sha256": "dd46b1b429757b7e3395f8546c11b2f048ebd277cfbabca84e2ed7e111ca48c2"
+    },
+    {
+      "path": "crates/hydrus-core/src/open_externally.rs",
+      "line": 82,
+      "anchor_git_head": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+      "line_sha256": "13402a6dd7f2166db2935fc81d066fca54bd61c1100243aa75609339e084cce1"
+    },
+    {
+      "path": "crates/hydrus-gui/src/open_externally_launch.rs",
+      "line": 101,
+      "anchor_git_head": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+      "line_sha256": "4433c594bc6574ac282f2cdfd6bd118879a30d4aa31397ccc65436053d69557c"
+    },
+    {
+      "path": "crates/hydrus-gui/src/lib.rs",
+      "line": 586,
+      "anchor_git_head": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+      "line_sha256": "7ffb048a3f9a373699af125185086d571626c4e82df894a22b09114d0cb661c9"
+    },
+    {
+      "path": "crates/hydrus-store/src/settings.rs",
+      "line": 1590,
+      "anchor_git_head": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+      "line_sha256": "32a53c74a236a79877d5f3631c840a16e0301822eb02f46286555eea8a7057ec"
+    },
+    {
+      "path": "crates/hydrus-gui-model/tests/model/open_externally.rs",
+      "line": 66,
+      "anchor_git_head": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+      "line_sha256": "5287cd94749d27a4a6f67952826cf5aa960f429fbf31208ecfbeb6fe86d83212"
+    },
+    {
+      "path": "crates/hydrus-gui-model/tests/model/open_externally.rs",
+      "line": 129,
+      "anchor_git_head": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+      "line_sha256": "21276bea1321b25e124015c16995df306da0c50d0c6c5d867d8ecb5db105fb39"
+    },
+    {
+      "path": "crates/hydrus-gui-model/tests/model/open_externally.rs",
+      "line": 193,
+      "anchor_git_head": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+      "line_sha256": "ea1daa5e54015543032c40fd62278d7d0b2da5d67f0ea94c42b10534a6ecaca1"
+    },
+    {
+      "path": "crates/hydrus-gui/tests/gui/open_externally.rs",
+      "line": 528,
+      "anchor_git_head": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+      "line_sha256": "8300f392e32636af54b2e93a688474aa6b132aa496e98bc8cdc2a7c51e117a84"
+    },
+    {
+      "path": "crates/hydrus-gui/tests/gui/open_externally.rs",
+      "line": 840,
+      "anchor_git_head": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+      "line_sha256": "a51f51e5b0c3489bcf59abce9ebe265d2926054eade9b8a83479f8d8cf2407ab"
+    },
+    {
+      "path": "crates/hydrus-gui/tests/gui/open_externally.rs",
+      "line": 1073,
+      "anchor_git_head": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+      "line_sha256": "3623f632cbd337dd0ee856cfaadf782a28a84deb5a67c6f005f6f3ff757664aa"
+    },
+    {
+      "path": "crates/hydrus-gui/src/options_open_externally.rs",
+      "line": 323,
+      "anchor_git_head": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+      "line_sha256": "d9f5bace01847d5ec10b4c91e4d6529aa3af335f242f27f8a495ca30986c0871"
+    },
+    {
+      "path": "hydrus/client/gui/panels/options/OpenExternallyPanel.py",
+      "line": 117,
+      "anchor_git_head": "791b72d194d93e637aeeb0a243c81a9981cf41aa",
+      "line_sha256": "64c6a4419106782c1ad34ffa24bcbe3b147b6e66df2863f8148234a47fc01761"
+    }
+  ],
+  "assertion_preservation": [
+    {
+      "path": "crates/hydrus-gui/tests/gui/open_externally.rs",
+      "original_assertions": 107,
+      "current_assertions": 156,
+      "original_tests": 5,
+      "current_tests": 5,
+      "all_original_lines_in_order": true,
+      "original_exact_prefix": false
+    },
+    {
+      "path": "crates/hydrus-gui/tests/gui/external_calls.rs",
+      "original_assertions": 242,
+      "current_assertions": 313,
+      "original_tests": 9,
+      "current_tests": 10,
+      "all_original_lines_in_order": true,
+      "original_exact_prefix": true
+    }
+  ],
+  "source_blockers": [],
+  "proof_hashes": {
+    "/workspace/validation-reviews/defaults-url3/integrated-source-review-2.json": "d2a17447491a5ad7107f787740698c489fd389f62a8fa42aa478aa032f5ec3bd",
+    "/workspace/validation-reviews/defaults-url3/defaults-source-review-2.json": "fcc201473bc5e1090ce8a60fe028ad1903e791d1489216132c2ce24d8f62d8b6",
+    "/workspace/validation-reviews/defaults-url3/defaults-source-review-2.md": "924b162e359e9db41c0c8b6c9137805863746a8839a3cb92902a94ecb8821d67",
+    "/workspace/validation-reviews/defaults-url3/url-source-review-2.json": "1ad1de2b05afb0e10d0ef262d091a184f13ae2e485a1fae6ae14500323ef1f4a",
+    "/workspace/validation-reviews/defaults-url3/url-source-review-2.md": "6a872040d10677f99b3653c38bd4b49d6cfa0d40b4cd8294fd93bbc0cba9cb95",
+    "/workspace/validation-reviews/defaults-url3/external_calls-assertion-preservation-root.json": "54867a09528d0d4fca87c34f0179b28ab025a7614f3bf41476ddccd691e94532",
+    "/workspace/validation-reviews/defaults-url3/open_externally-assertion-preservation-root.json": "5fd8335f8046e8ea9ced34748d264dbdbd0f8774d0ffe70aaa6c20d701d9beab",
+    "/workspace/validation-reviews/external-list2/reference/reference-review-3.json": "d866d2e2d59bc1150a5e7d436eff8a2ca331c60adc1f4434531d4527483932e0",
+    "/workspace/validation-reviews/external-list2/reference/external_calls.actual.json": "d8539d1252fc5efd9ae25867c56d654ba429b56aba0c14e49c703b4d06af921a",
+    "/workspace/validation-reviews/defaults-url3/prep-791b72d19/selection.json": "fa7144d57e6b9c18aad13b3b5ed7f50dc48da045540b490caf65005569ce95b9",
+    "/workspace/validation-reviews/defaults-url3/prep-791b72d19/render-checklist.json": "a88a9ec486eed4ce980f4b4d84c5143bac8dc172bebde74a7b2b3e0182c1b5cb",
+    "/workspace/validation-reviews/defaults-url3/prep-791b72d19/conditional-status-map.json": "0aa7c76d0e976291fc8d2001c02e0af3b6f8002e0ab6307a08cd2f70fd10192f",
+    "/workspace/validation-reviews/defaults-url3/prep-791b72d19/subset-preflight/subset-proposal-patch.json": "b6a0eb712ca3bb3f2a5815c43af719d27a7d14dd810fb31a47493853e60eec5e",
+    "/workspace/validation-reviews/defaults-url3/prep-791b72d19/subset-preflight/subset-source-preflight.json": "15ad7df995f202b3de787146888c04969cccb6494d3742b017ea7eea37dd6ce0",
+    "/workspace/validation-reviews/ci-791b72d19/ci-evidence.json": "e6b20c1b908ddb8f4c46f00f645039071f81632365bec34d63689b01f86d02af",
+    "/workspace/validation-reviews/ci-791b72d19/validation-outcome.json": "6a1581bb9d907bb8efb301e2aa9a0917762f5362b2752cfbc9b98ca9d71d5d53",
+    "/workspace/validation-reviews/ci-791b72d19/tests.log": "2fcb9afee1e569d65a112dd7bbe4c20bae7ffb922e9fe8584c9f313d7e331c40",
+    "/workspace/validation-reviews/ci-791b72d19/full-check.log": "fee5ee4b76ffd950cff3e970686d8eed64c555548b074a0c5e88d6b1b64c155c",
+    "/workspace/validation-reviews/ci-791b72d19/clippy.log": "51fa55c4fc03f92a0d55e9d0cfe2381a817cc84a5210e2572900d9e81daf0e24",
+    "/workspace/validation-reviews/ci-791b72d19/parity.log": "5c93242a1b9cce69a624b963d920e7f3c4c3ddf6c9e3a078e10644e967a44fca",
+    "/workspace/validation-reviews/ci-791b72d19/maintenance.log": "472ed59a5f46a54f2635ce49f036a2a8dfde60d09a7fcdf109673fb622ee5351"
+  },
+  "scope_and_preservation": {
+    "prior_banked": 359,
+    "pending_before_publication": 16,
+    "conditional_bank_if_root_publishes": 362,
+    "conditional_pending_after_root_publication": 13,
+    "unselected_promotions": false,
+    "native_or_inherited_source_updates": false,
+    "canonical_edits_by_this_reviewer": false,
+    "frozen_source_packets_unchanged": true
+  },
+  "provenance": {
+    "source_only_observations": "Frozen source-only packets retain their earlier pending gates. Exact 791b72 completed execution and this fresh final review resolve those gates without changing historical files.",
+    "reference": "Unchanged actual Qt fixtures and real recorder sources support finite behavior. Historical external-call replay at 6b5 source has default_routes/defaults_by_platform exactly equal without normalization; full JSON differs at generated keys. URL fixture drives actual recorded chooser/events; its PNG is a later queue state.",
+    "archive_verification": "Root supplied API/hash-verified, safely extracted artifact; this reviewer independently verified all thirteen inspected PNG byte/hash/dimension bindings and exact-source producer anchors.",
+    "all_archive_images_inspected": false
+  }
+}
