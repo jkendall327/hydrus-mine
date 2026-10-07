@@ -1,0 +1,44 @@
+{
+  "source_commit": "d8fd318334cadd944024846f49a4c48932c692e9",
+  "command": "source /workspace/.cloud/hydrus/activate.sh; timeout 180 /workspace/.cloud/hydrus/pyenv/bin/python oracle/record_viewer_eye_menu.py --child /workspace/validation-reviews/viewer-eye3/reference/viewer_eye_menu.actual.json",
+  "execution": "Actual Qt v688 offscreen, direct Qt/DB recorder; exit0 and normal shutdown at2026-10-07 04:17:04UTC",
+  "fixture_value_equality": true,
+  "recorded_combinations": 8,
+  "recorded_window_action_transitions": 5,
+  "input_files_unchanged": [
+    {
+      "path": "oracle/record_viewer_eye_menu.py",
+      "sha256": "2e9cedd4e5c760efad72e86c4b5fc9760123b2bf228bb356c852eb17d43b04c6",
+      "bytes": 5797
+    },
+    {
+      "path": "oracle/fixtures/viewer_eye_menu.json",
+      "sha256": "a1ff91dcffcd8c807898949a1d39acd63725a79ca51f855f051f7fb23f7b80ad",
+      "bytes": 24191
+    },
+    {
+      "path": "oracle/fixtures/viewer_eye_menu.png",
+      "sha256": "cabb5f629a70e54073d7cb618d3b5695ac4aa4c6e451916a00e7604aa589ef55",
+      "bytes": 130226
+    }
+  ],
+  "actual_json": {
+    "path": "/workspace/validation-reviews/viewer-eye3/reference/viewer_eye_menu.actual.json",
+    "sha256": "47a785aace0388e05c601e13cbb6e054775af02c15439065f1ee37bc4dbb1b33"
+  },
+  "log": {
+    "path": "/workspace/validation-reviews/viewer-eye3/reference/viewer-eye-menu.log",
+    "sha256": "588633674e0262f25cb68999b9829741e28f49d63ea885376fdcb2201f8bd1ab"
+  },
+  "root_actually_viewed_reference": {
+    "path": "/workspace/hydrus-mine/oracle/fixtures/viewer_eye_menu.png",
+    "sha256": "cabb5f629a70e54073d7cb618d3b5695ac4aa4c6e451916a00e7604aa589ef55",
+    "observations": "Actual980x1100 Qt MediaViewerHoversPanel. All three full collapse captions and checked controls are readable in top hover button/menu controls section. Other background, hover and preview groups visible. This is an Options pane, not an open eye menu."
+  },
+  "limits": [
+    "Recorder substitutes PopupMenu to record the actual generated QAction trees for all eight combinations on one browser viewer; no actual displayed Qt popup image is available.",
+    "Five existing window-action transitions are supporting recorded behavior, not new action-leaf or physical OS window-manager credit.",
+    "The optional client API listener could not bind loopback45901 under the sandbox; direct Qt/DB work completed normally with full fixture equality. No API connectivity validation claimed.",
+    "Qt offscreen plugin limitations and styling differ from native Slint; no pixel/OS input parity claimed."
+  ]
+}

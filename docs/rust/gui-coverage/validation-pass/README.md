@@ -3,17 +3,17 @@
 The pass started from merged source `3702cdbee99473cfd7af073aa044fe847f78f405`.
 The prior checkpoint validated `028fd72f` (240 original leaves).
 
-The latest checkpoint validates `7c74c6171` and publishes **351 signed-off
-original leaves: 4 new in this batch, 111 across thirteen recent checkpoints,
-24 candidates still pending**. Full Linux validation passed, including all 706
-native GUI tests and 67 media tests. Exactly two Manage Tags default-sort controls
-and namespace-grouping Add/Edit received fresh independent behavioral/rendered
-review. Windows/macOS remain deferred.
-[Durable checkpoint evidence](../checkpoints/7c74c6171/README.md) retains the
-defining native images, actual geometry/scrolling tests, logs and Qt reruns.
-The current goal is all individual feature leaves implemented and verified;
-historical numeric goals and inventory first-pass counts are not completion
-criteria. The next bounded cohort is the three viewer-eye menu candidates.
+The latest checkpoint validates `a7ca8166f` and publishes **354 signed-off
+original leaves: 3 new in this batch, 114 across fourteen recent checkpoints,
+21 existing candidates still pending**. Full Linux validation passed, including
+all 706 GUI tests and 67 media tests. Exactly the browser-viewer Window,
+Hovers and Rendering collapse preferences received fresh independent behavioral
+and rendered review. Windows/macOS remain deferred.
+[Durable checkpoint evidence](../checkpoints/a7ca8166f/README.md) retains actual
+open-menu and reopened Options images, logs, Qt rerun and preservation proofs.
+The goal remains all individual feature leaves implemented and verified; numeric
+checkpoints and inventory first-pass assessments are not stopping criteria.
+The next bounded candidate is the sidebar cog tag-display control.
 The notes below preserve the chronological investigation and failed-run history.
 Source review of all 153 parity manifests is recorded in `review-1.md` through
 `review-6.md`; these reports describe the initial source, not later repairs.
@@ -22,7 +22,7 @@ previously validated IDs. Structural parents may retain a scoped assessment but
 receive no completed-leaf credit.
 The supplemental `demotions-render-evidence.json` defers seven further claims
 whose defining native behavior lacks assertions, initially leaving 135 candidates.
-One hundred and eleven are now published; 24 remain unresolved. No pending candidate receives
+One hundred and fourteen are now published; 21 remain unresolved. No pending candidate receives
 completion credit. Favourites was withheld from the preceding batch because its
 capture disagreed with the selected service; actual dropdown input and fresh
 review resolved that blocker in the preceding checkpoint.

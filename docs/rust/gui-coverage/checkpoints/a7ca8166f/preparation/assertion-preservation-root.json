@@ -1,0 +1,12 @@
+{
+  "baseline": "d8fd318334cadd944024846f49a4c48932c692e9",
+  "agent_commit": "77544195290bad41e7838659e4f28c36feb5d23d",
+  "file": "crates/hydrus-gui/tests/gui/options_window.rs",
+  "every_original_line_preserved_in_order": true,
+  "integrated_bytes_equal_agent": true,
+  "sha256": "17631a6fe07a2a92d2e5c8321620118cb87294537d3a0503ea58ab49a1ab7474",
+  "prior_assertions": 22,
+  "current_assertions": 49,
+  "prior_tests": 2,
+  "current_tests": 2
+}

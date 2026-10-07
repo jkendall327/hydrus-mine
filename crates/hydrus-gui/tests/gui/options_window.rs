@@ -5723,6 +5723,13 @@ fn eye_menu_collapse_options_stage_reopen_and_rebuild_the_existing_browser_viewe
         ViewerHoverSettings,
     };
     use serde_json::json;
+    use slint::platform::{Key, PointerEventButton, WindowEvent};
+    use std::{
+        cell::RefCell,
+        collections::BTreeMap,
+        rc::Rc,
+        time::{Duration, Instant},
+    };
 
     fn flags(menu: &hydrus_gui::ViewerEyeMenu) -> serde_json::Value {
         json!([
@@ -5733,6 +5740,191 @@ fn eye_menu_collapse_options_stage_reopen_and_rebuild_the_existing_browser_viewe
     }
     fn labels(rows: &slint::ModelRc<hydrus_gui::MenuRow>) -> Vec<String> {
         rows.iter().map(|row| row.label.to_string()).collect()
+    }
+    fn supported_checks(menu: &hydrus_gui::ViewerEyeMenu) -> serde_json::Value {
+        let mut checks = Vec::new();
+        for rows in [
+            &menu.window.g1,
+            &menu.window.g2,
+            &menu.hovers.g1,
+            &menu.hovers.g2,
+            &menu.rendering.g1,
+            &menu.rendering.g2,
+        ] {
+            for item in rows.iter() {
+                assert!(item.checkable, "the supported eye actions are checkable");
+                checks.push(json!({"check": item.label.as_str(), "checked": item.checked}));
+            }
+        }
+        json!(checks)
+    }
+    fn reference_checks(entries: &[serde_json::Value]) -> Vec<serde_json::Value> {
+        let mut checks = Vec::new();
+        for entry in entries {
+            if let Some(children) = entry["entries"].as_array() {
+                checks.extend(reference_checks(children));
+            } else if let Some(label) = entry["check"].as_str()
+                && !matches!(
+                    label,
+                    "apply image ICC Profile colour adjustments"
+                        | "draw transparency as checkerboard in media viewer (duplicate filter)"
+                        | "pin the duplicates hover window so it is always visible"
+                )
+            {
+                // Omit only the explicitly unsupported browser actions. Compare
+                // every remaining recorded label/check, not a native-selected subset.
+                checks.push(entry.clone());
+            }
+        }
+        checks
+    }
+    fn open_eye(
+        viewer: &hydrus_gui::MediaViewerWindow,
+        drawn: &slint::platform::software_renderer::MinimalSoftwareWindow,
+    ) {
+        headless::render(drawn, 1000, 750);
+        viewer.window().dispatch_event(WindowEvent::PointerMoved {
+            position: slint::LogicalPosition::new(500.0, 8.0),
+        });
+        headless::render(drawn, 1000, 750);
+        assert!(viewer.get_info_showing(), "the actual top hover is visible");
+        let inner = slint::private_unstable_api::re_exports::WindowInner::from_pub(viewer.window());
+        assert!(inner.active_popups().is_empty());
+        // viewer.slint places the 24px eye immediately before the 24px close
+        // button: .8 * 1000 - 4px padding - 24px close - 2px gap - 12px.
+        // The pointer route must also refresh stale eye flags below; merely
+        // opening the adjacent keyboard menu cannot satisfy those assertions.
+        let position = slint::LogicalPosition::new(758.0, 16.0);
+        viewer
+            .window()
+            .dispatch_event(WindowEvent::PointerMoved { position });
+        viewer.window().dispatch_event(WindowEvent::PointerPressed {
+            position,
+            button: PointerEventButton::Left,
+        });
+        viewer
+            .window()
+            .dispatch_event(WindowEvent::PointerReleased {
+                position,
+                button: PointerEventButton::Left,
+            });
+        headless::render(drawn, 1000, 750);
+        assert_eq!(inner.active_popups().len(), 1, "actual eye root popup");
+    }
+    fn menu_key(
+        viewer: &hydrus_gui::MediaViewerWindow,
+        drawn: &slint::platform::software_renderer::MinimalSoftwareWindow,
+        key: Key,
+    ) {
+        let text: slint::SharedString = key.into();
+        viewer
+            .window()
+            .dispatch_event(WindowEvent::KeyPressed { text: text.clone() });
+        viewer
+            .window()
+            .dispatch_event(WindowEvent::KeyReleased { text });
+        headless::render(drawn, 1000, 750);
+    }
+    fn capture_popup(
+        viewer: &hydrus_gui::MediaViewerWindow,
+        drawn: &slint::platform::software_renderer::MinimalSoftwareWindow,
+        windows: &headless::Windows,
+        adapters_before: usize,
+        popup_count: usize,
+        name: &str,
+    ) {
+        let inner = slint::private_unstable_api::re_exports::WindowInner::from_pub(viewer.window());
+        assert_eq!(inner.active_popups().len(), popup_count);
+        // MinimalSoftwareWindow has no native child-window adapter: Slint
+        // renders these real root/submenu popups into the viewer composite.
+        // If transport changes, fail instead of exporting a closed parent.
+        assert_eq!(windows.count(), adapters_before);
+        let pixels = headless::render(drawn, 1000, 750);
+        assert_eq!(inner.active_popups().len(), popup_count);
+        headless::save_png(
+            &std::path::Path::new(env!("CARGO_TARGET_TMPDIR")).join(name),
+            &pixels,
+            1000,
+            750,
+        )
+        .unwrap();
+    }
+    fn observe_reopened_checks(
+        options: &OptionsWindow,
+        drawn: &slint::platform::software_renderer::MinimalSoftwareWindow,
+        fixture: &serde_json::Value,
+        event: &serde_json::Value,
+        topology: &str,
+    ) {
+        let expected: Vec<_> = fixture["labels"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .zip(event["reopened"].as_array().unwrap())
+            .map(|(label, value)| {
+                (
+                    row(options, label.as_str().unwrap()).0,
+                    value.as_bool().unwrap(),
+                )
+            })
+            .collect();
+        assert_eq!(expected.len(), 3, "the three independent collapse controls");
+        let states = Rc::new(RefCell::new(BTreeMap::new()));
+        options.on_check_state_measured({
+            let states = states.clone();
+            move |index, frame, checked, enabled| {
+                states.borrow_mut().insert(index, (frame, checked, enabled));
+            }
+        });
+        headless::render(drawn, 1000, 850);
+        options.set_measure_check_states(true);
+        let deadline = Instant::now() + Duration::from_secs(2);
+        loop {
+            headless::render(drawn, 1000, 850);
+            if expected.iter().all(|(index, checked)| {
+                states
+                    .borrow()
+                    .get(index)
+                    .is_some_and(|(_, actual, enabled)| actual == checked && *enabled)
+            }) {
+                break;
+            }
+            assert!(
+                Instant::now() < deadline,
+                "reopened collapse CheckBoxes {topology}"
+            );
+            std::thread::sleep(Duration::from_millis(2));
+        }
+        let mut previous_bottom = 0.0;
+        for (index, checked) in expected {
+            let (frame, actual, enabled) = states.borrow().get(&index).unwrap().clone();
+            assert_eq!((actual, enabled), (checked, true));
+            assert!(
+                [frame.x, frame.y, frame.w, frame.h]
+                    .iter()
+                    .all(|value| value.is_finite())
+                    && frame.w > 0.0
+                    && frame.h > 0.0
+                    && frame.x > 0.0
+                    && frame.x + frame.w < 1000.0
+                    && frame.y > previous_bottom
+                    && frame.y + frame.h < 850.0,
+                "actual collapse CheckBox must be visible and disjoint: {frame:?}"
+            );
+            previous_bottom = frame.y + frame.h;
+        }
+        options.set_measure_check_states(false);
+        if matches!(topology, "000" | "101" | "111") {
+            let pixels = headless::render(drawn, 1000, 850);
+            headless::save_png(
+                &std::path::Path::new(env!("CARGO_TARGET_TMPDIR"))
+                    .join(format!("viewer-eye-menu-options-{topology}.png")),
+                &pixels,
+                1000,
+                850,
+            )
+            .unwrap();
+        }
     }
 
     let fixture = hydrus_testkit::fixture_json("viewer_eye_menu.json");
@@ -5819,6 +6011,98 @@ fn eye_menu_collapse_options_stage_reopen_and_rebuild_the_existing_browser_viewe
             );
         }
         options.invoke_apply();
+        let topology: String = event["stored"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|value| if value.as_bool().unwrap() { '1' } else { '0' })
+            .collect();
+        // No direct eye request has followed this Apply. Its cached flags still
+        // belong to the previous recorded combination until the real eye click.
+        assert_eq!(
+            flags(&viewer.get_eye_menu()),
+            json!([
+                before.collapse_window,
+                before.collapse_hovers,
+                before.collapse_rendering
+            ])
+        );
+        assert_ne!(flags(&viewer.get_eye_menu()), event["stored"]);
+        let stored_before_popup = store
+            .read(hydrus_gui_model::options::Settings::load)
+            .unwrap();
+        let adapters_before = windows.count();
+        open_eye(&viewer, &drawn);
+        assert_eq!(flags(&viewer.get_eye_menu()), event["stored"]);
+        assert_eq!(
+            supported_checks(&viewer.get_eye_menu()),
+            json!(reference_checks(event["menu"].as_array().unwrap()))
+        );
+        capture_popup(
+            &viewer,
+            &drawn,
+            &windows,
+            adapters_before,
+            1,
+            &format!("viewer-eye-menu-{topology}.png"),
+        );
+        menu_key(&viewer, &drawn, Key::Escape);
+        let inner = slint::private_unstable_api::re_exports::WindowInner::from_pub(viewer.window());
+        assert!(
+            inner.active_popups().is_empty(),
+            "Escape closed the actual root"
+        );
+        if topology == "111" {
+            for (index, name) in ["window", "hovers", "rendering"].iter().enumerate() {
+                open_eye(&viewer, &drawn);
+                // Slint's real PopupMenuImpl starts with no highlighted entry;
+                // all-collapsed roots contain exactly these three submenu rows.
+                for _ in 0..=index {
+                    menu_key(&viewer, &drawn, Key::DownArrow);
+                }
+                menu_key(&viewer, &drawn, Key::RightArrow);
+                capture_popup(
+                    &viewer,
+                    &drawn,
+                    &windows,
+                    adapters_before,
+                    2,
+                    &format!("viewer-eye-menu-{name}-expanded.png"),
+                );
+                menu_key(&viewer, &drawn, Key::Escape);
+                assert_eq!(
+                    inner.active_popups().len(),
+                    1,
+                    "submenu Escape preserves root"
+                );
+                menu_key(&viewer, &drawn, Key::Escape);
+                assert!(inner.active_popups().is_empty());
+            }
+        }
+        let saved: ViewerEyeMenuSettings = store.read(settings::get).unwrap();
+        assert_eq!(
+            json!([
+                saved.collapse_window,
+                saved.collapse_hovers,
+                saved.collapse_rendering
+            ]),
+            event["stored"],
+            "popup navigation never saves a preference"
+        );
+        assert_eq!(
+            store
+                .read(hydrus_gui_model::options::Settings::load)
+                .unwrap(),
+            stored_before_popup,
+            "opening, submenu navigation and Escape preserve all saved options"
+        );
+        assert!(
+            bound
+                .viewer
+                .borrow()
+                .as_ref()
+                .is_some_and(|current| { std::ptr::eq(current.window(), viewer.window()) })
+        );
         viewer.invoke_eye_menu_requested();
         let menu = viewer.get_eye_menu();
         assert_eq!(flags(&menu), event["stored"]);
@@ -5860,6 +6144,8 @@ fn eye_menu_collapse_options_stage_reopen_and_rebuild_the_existing_browser_viewe
                 value.as_bool().unwrap()
             );
         }
+        let options_drawn = windows.get(windows.count() - 1).unwrap();
+        observe_reopened_checks(&reopened, &options_drawn, &fixture, event, &topology);
         reopened.invoke_cancel();
     }
     // Both nested and flat routes retain real native/setting consumers.
@@ -5946,6 +6232,41 @@ fn eye_menu_collapse_options_stage_reopen_and_rebuild_the_existing_browser_viewe
     assert!(reopened.get_viewer_window_frameless());
     reopened.invoke_eye_menu_requested();
     assert!(!reopened.get_eye_menu().collapse_window);
+    let successor_menu = reopened.get_eye_menu();
+    let successor_state = (
+        reopened.get_viewer_window_top(),
+        reopened.get_viewer_top_while_playing(),
+        reopened.get_viewer_window_frameless(),
+    );
+    let successor_saved: ViewerEyeMenuSettings = store.read(settings::get).unwrap();
+    viewer.invoke_eye_menu_requested();
+    viewer.invoke_eye_menu_chosen(5);
+    viewer.invoke_close_requested();
+    assert_eq!(
+        store.read(settings::get::<ViewerEyeMenuSettings>).unwrap(),
+        successor_saved
+    );
+    assert_eq!(flags(&reopened.get_eye_menu()), flags(&successor_menu));
+    assert_eq!(
+        supported_checks(&reopened.get_eye_menu()),
+        supported_checks(&successor_menu)
+    );
+    assert_eq!(
+        (
+            reopened.get_viewer_window_top(),
+            reopened.get_viewer_top_while_playing(),
+            reopened.get_viewer_window_frameless()
+        ),
+        successor_state
+    );
+    assert!(reopened.window().is_visible());
+    assert!(
+        bound
+            .viewer
+            .borrow()
+            .as_ref()
+            .is_some_and(|current| { std::ptr::eq(current.window(), reopened.window()) })
+    );
     reopened.invoke_close_requested();
 }
 

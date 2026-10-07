@@ -1,0 +1,124 @@
+{
+  "schema_version": 1,
+  "source_commit": "a7ca8166f7779876f7d8167c5db50addef12cbc6",
+  "run_id": 37571489508,
+  "review_scope": "Canonical publication delta, narrative/count/evidence consistency and preservation only; existing feature approvals supplied by root and reviewer2.",
+  "publication_delta_review": "approved_no_blockers",
+  "feature_reapproval_created": false,
+  "images_newly_viewed_by_this_reviewer": false,
+  "builds": false,
+  "canonical_writes": false,
+  "selected_ids": [
+    "audit-options-media-viewer-hovers-top-hover-button-menu-controls-collapse-hovers-submenu-in-view-options-eye-menu",
+    "audit-options-media-viewer-hovers-top-hover-button-menu-controls-collapse-rendering-submenu-in-view-options-eye-menu",
+    "audit-options-media-viewer-hovers-top-hover-button-menu-controls-collapse-window-submenu-in-view-options-eye-menu"
+  ],
+  "counts": {
+    "prior_signed": 351,
+    "current_signed": 354,
+    "added": 3,
+    "recent_over240": 114,
+    "recent_checkpoints": 14,
+    "existing_pending": 21,
+    "allgoal": 1274,
+    "outside_ledger": 920,
+    "reference_nodes": 1812,
+    "native_nodes": 1799,
+    "reference_status_counts": {
+      "partial": 385,
+      "first_pass": 955,
+      "missing": 472
+    }
+  },
+  "preservation": {
+    "canonical_node_objects_equal_exact_source_publication_pipeline": true,
+    "selected_passed_metadata_normalized_using_exact_source_publication_policy": true,
+    "prior351_and_all_unselected_nonanchor_fields_preserved": true,
+    "native1799_nonanchor_objects_preserved": true,
+    "goal1274_ordered_ids_and_non_signoff_fields_preserved": true,
+    "goal_flags_match_actual354_signed_ledger": true,
+    "only_three_eligible_promotions": true,
+    "no_product_source_changes_in_publication": true,
+    "copied_payload_fingerprints_verified": 61,
+    "durable_executed_helper_sha256": "4488a46f9ae5b3a2c4313b229671e32e42f27e2a62e74e5974f1d6af05af8ffd"
+  },
+  "evidence": {
+    "patch_digest": "8a1b0126a6599a78dbb6aef27f71150928e0b98cc0295443edc0e40e7c80b027",
+    "final_independent_review_sha256": "f129eb690c820f6c054519ef3b17352cb86cbabe2f80b3511e85922744538628",
+    "native_artifact_id": 11461122175,
+    "native_archive_sha256": "a495981813bad3f6d14db1bb913b2c96c8e3daa98e11af915d7d6c177436d89a",
+    "required_captures": 14,
+    "required_capture_hashes_verified": true,
+    "root_record_covers_all14_actually_viewed": true,
+    "browser_pass_and_canonical_html_hash_verified": true,
+    "gui_passed": 706,
+    "media_passed": 67,
+    "prior_gui_assertions": 22,
+    "current_gui_assertions": 49,
+    "prior_gui_tests": 2,
+    "current_gui_tests": 2
+  },
+  "timings": {
+    "clippy_seconds": 71.0,
+    "clippy_cargo_seconds": 70.0,
+    "test_compile_seconds": 219.0,
+    "test_step_seconds": 640.0
+  },
+  "gui_runtime_seconds": 189.02,
+  "media_runtime_seconds": 1.01,
+  "cache": {
+    "runner_image": "20261004.327.1",
+    "dependency_cache_hit": true,
+    "restored_tracked_input_mtimes": 4122,
+    "restored_workspace_artifact_files": 293,
+    "saved_artifact_files": 293,
+    "saved_uncompressed_bytes": 2200273639,
+    "maintenance_retained_bytes": 1379437839,
+    "budget_bytes": 3221225472,
+    "controlled_speedup_or_separate_generation_Rust_link_attribution": false
+  },
+  "scope_limits_retained": [
+    "Expanded submenus overlap their root at the right edge; readable contents do not prove simultaneous parent highlighting or universal/narrow popup placement.",
+    "Qt PNG is Options only; intercepted actual QAction trees do not supply displayed Qt popup pixel parity.",
+    "Seventeen supported check rows; ICC-profile/duplicate-filter checkerboard/pinned duplicates-hover and Linux warning label remain absent.",
+    "Headless popup/property dispatch does not establish OS-native menu introspection, physical window-manager behavior or universal physical key translation.",
+    "Unrelated lower Options sections are outside the native viewport; broader layout/font/framework parity is excluded.",
+    "Only three controls receive credit; no broader parent, alias, action or owner-family credit.",
+    "Linux only; Windows/macOS deferred; optional API listener sandbox denial earns no connectivity claim."
+  ],
+  "reviewed_document_hashes": [
+    {
+      "path": "/workspace/hydrus-mine/docs/rust/ROADMAP.md",
+      "sha256": "eff83d012e424a1ab9f4871497a04f46a4d9e7bf75cf643d92a7c2431b25a307"
+    },
+    {
+      "path": "/workspace/hydrus-mine/docs/rust/GUI.md",
+      "sha256": "92705831a4e02664fa90d1a5e602c05d4770c799588a5d90144876d764905e9d"
+    },
+    {
+      "path": "/workspace/hydrus-mine/docs/rust/DIFFERENCES.md",
+      "sha256": "498c2968b7b4fbdf127ed153658b96199c7c032c5b46488c20d1c975ed11563c"
+    },
+    {
+      "path": "/workspace/hydrus-mine/docs/rust/gui-coverage/validation-pass/README.md",
+      "sha256": "c270513184110f64d6b64d0202414bd496357f2b1736e2db10d192eb89065d29"
+    },
+    {
+      "path": "/workspace/hydrus-mine/docs/rust/gui-coverage/validation-pass/compilation-performance.md",
+      "sha256": "48edb5e40341dd24e096b41dddc9358697c4b9a098d9291891ebc81ef4798673"
+    },
+    {
+      "path": "/workspace/hydrus-mine/docs/rust/gui-coverage/all-leaves-goal/README.md",
+      "sha256": "4c2758e53300d74f45b6d5cb8667bb517ca9dacefa410148e68db11824f10656"
+    },
+    {
+      "path": "/workspace/hydrus-mine/docs/rust/gui-coverage/all-leaves-goal/checklist.json",
+      "sha256": "6bb3e5af8c4e92e87e9af751c4e0981e89e04d602c3d9c340523c02ca03a5759"
+    },
+    {
+      "path": "/workspace/hydrus-mine/docs/rust/gui-coverage/checkpoints/a7ca8166f/README.md",
+      "sha256": "ff2ba27f7367909e316cd24922715321c8dfe0b5b9434fbe1d6f4bc55e1ee49c"
+    }
+  ],
+  "blockers": []
+}

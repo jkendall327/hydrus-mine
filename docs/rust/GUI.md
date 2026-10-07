@@ -3236,6 +3236,17 @@ Menu callbacks belong to their viewer slot and retire on close. The eight actual
 Qt combinations are recorded in `oracle/fixtures/viewer_eye_menu.json`; authored
 model/native/store regressions cover staging, reopening and real consumers.
 
+The validated three-leaf follow-up adds evidence from the actual
+reopened checkbox controls and physically opened viewer menus. It retains all
+22 original GUI assertions and adds 27 assertions, eight open-menu root captures,
+three expanded submenus and three reopened Options states. The October 7
+Qt rerun reproduced all eight menu trees and five supporting window-action
+transitions without changing the fixture. Its image shows the Options pane,
+not a displayed Qt menu. Full Linux run `37571489508` and fresh independent native rendered review
+passed, including all 706 GUI and 67 media tests. The published ledger is
+354 signed off with 21 existing candidates pending.
+[Evidence](gui-coverage/checkpoints/a7ca8166f/README.md).
+
 Numerical rating examples accept left-button dragging and clicks on either
 fraction label through the same whole-widget control as their star graphics.
 Dragging outside keeps the last valid sample; an outside press clears it. Hover

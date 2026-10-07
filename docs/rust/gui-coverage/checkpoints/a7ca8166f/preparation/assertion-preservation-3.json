@@ -1,0 +1,60 @@
+{
+  "base_source_commit": "d8fd318334cadd944024846f49a4c48932c692e9",
+  "worktree": "/workspace/viewer-eye-tests",
+  "owned_files": [
+    "crates/hydrus-gui/tests/gui/options_window.rs"
+  ],
+  "source_file_sha256": "17631a6fe07a2a92d2e5c8321620118cb87294537d3a0503ea58ab49a1ab7474",
+  "change_kind": "insertion-only GUI test assertions and actual widget/popup captures",
+  "every_original_file_line_preserved_in_order": true,
+  "original_tests_retained": 2,
+  "new_tests": 0,
+  "assertion_preservation": [
+    {
+      "test": "eye_menu_collapse_options_stage_reopen_and_rebuild_the_existing_browser_viewer",
+      "original_assert_macro_count": 20,
+      "current_assert_macro_count": 47,
+      "every_original_assertion_preserved_bytewise_in_order": true,
+      "original_body_lines_preserved_in_order": true
+    },
+    {
+      "test": "eye_menu_mixed_root_boundaries_match_the_recorded_menu_and_real_declaration_order",
+      "original_assert_macro_count": 2,
+      "current_assert_macro_count": 2,
+      "every_original_assertion_preserved_bytewise_in_order": true,
+      "original_body_lines_preserved_in_order": true
+    }
+  ],
+  "new_capture_count": 14,
+  "new_capture_list_path": "/workspace/validation-reviews/viewer-eye3/expected-new-captures-3.json",
+  "new_capture_list_sha256": "575808af1d232d6cafcb0bc2b937dcf92e6c865179376a286339c605f9516cb9",
+  "old_capture": "viewer-eye-menu.png retained unchanged save site; closed viewer supplemental only",
+  "cheap_checks": [
+    "rustfmt --edition2024 --check assigned test file: passed",
+    "git diff --check: passed",
+    "all original file lines and22 original assertion macros bytewise/in-order: passed"
+  ],
+  "runtime_validation": "Not run locally; exact-source hosted strict Clippy/full Linux and fresh actual render inspection required.",
+  "product_changes": false,
+  "slint_changes": false,
+  "new_source_files": false,
+  "scope": [
+    "Exactly three saved collapse preference leaves; no parent/alias/action credit",
+    "All8 real Qt combinations and existing direct group/order/model/store checks retained",
+    "Existing actual CheckBox observer with fresh state/positive finite disjoint viewport-contained fields,1000x850",
+    "Actual left eye click after Apply and before original direct request must refresh old->newflags; real Slint popup1 and Escape0",
+    "Full17 supported checked rows independently compared to actualQt fixture; exclude only3 explicitly unsupported actions",
+    "Headless popup composite captures require unchanged adapter count and exact active popup count; root8 and expanded3 via real Down/Right/Escape",
+    "Full saved Settings preserved through menu navigation; successor Store/menu/window props/slot unchanged by old requested/chosen/Close callbacks"
+  ],
+  "limitations": [
+    "Available Qt PNG is Options only; substituted PopupMenu records actual trees, not displayed Qt popup pixels",
+    "Fresh captions, checked appearance, menu roots/submenu readability, containment and actual popup composite must be independently inspected after hosted pass",
+    "No direct OS menu-tree/window-manager credit; headless embedded-popup transport only",
+    "ICC/duplicate-filter checkerboard/pinned-hover/Linux warning omission preserved; structural broader families Partial",
+    "Linux publication only; Windows/macOS deferred"
+  ],
+  "agent_commit": "77544195290bad41e7838659e4f28c36feb5d23d",
+  "git_diff_numstat": "321 insertions;0 deletions;one owned test file",
+  "worktree_clean_after_commit": true
+}

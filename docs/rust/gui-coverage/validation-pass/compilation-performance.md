@@ -381,3 +381,22 @@ cache miss. These observations cannot attribute the slower build solely to the
 Slint edit or separate generation, Rust compilation and linking.
 [Exact outcome and logs](../checkpoints/7c74c6171/validation-outcome.json) are
 retained. No further optimization experiment was opened.
+
+## Viewer-eye checkpoint cache reuse
+
+Source `a7ca8166f`, full Linux run `37571489508`, reused the
+`20261004.327.1` runner image and restored 4,122 verified tracked-input mtimes
+and 293 coherent workspace artifacts under compatibility prefix
+`d375ff77746ca54e3a64f5c5`. The dependency cache also hit.
+
+Strict Clippy reported 70s (71s workflow step), test compilation 219s, and the
+full test step 640s, compared with 585s/586s, 692s and 1,196s in the preceding
+workspace-cache-miss run. All 706 GUI tests passed in 189.02s and all 67 media
+tests in 1.01s. This test-only change did not compile `hydrus-gui-ui` in the
+Clippy log. These are hosted observations, not a controlled benchmark or a
+breakdown separating Slint generation, Rust compilation and linking.
+
+A fresh run-specific snapshot saved 293 files and 2,200,273,639 uncompressed
+bytes. Maintenance retained 1,379,437,839 compressed bytes under the 3 GiB
+budget. [Exact outcome and logs](../checkpoints/a7ca8166f/validation-outcome.json)
+are retained. No further optimization experiment was opened.

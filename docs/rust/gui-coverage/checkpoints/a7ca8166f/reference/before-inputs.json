@@ -1,0 +1,20 @@
+{
+  "source_commit": "d8fd318334cadd944024846f49a4c48932c692e9",
+  "files": [
+    {
+      "path": "oracle/record_viewer_eye_menu.py",
+      "sha256": "2e9cedd4e5c760efad72e86c4b5fc9760123b2bf228bb356c852eb17d43b04c6",
+      "bytes": 5797
+    },
+    {
+      "path": "oracle/fixtures/viewer_eye_menu.json",
+      "sha256": "a1ff91dcffcd8c807898949a1d39acd63725a79ca51f855f051f7fb23f7b80ad",
+      "bytes": 24191
+    },
+    {
+      "path": "oracle/fixtures/viewer_eye_menu.png",
+      "sha256": "cabb5f629a70e54073d7cb618d3b5695ac4aa4c6e451916a00e7604aa589ef55",
+      "bytes": 130226
+    }
+  ]
+}

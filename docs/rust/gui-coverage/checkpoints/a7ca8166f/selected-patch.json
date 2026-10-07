@@ -1,0 +1,427 @@
+{
+  "baseline_git_head": "a7ca8166f7779876f7d8167c5db50addef12cbc6",
+  "method": "Publish exactly three original leaves after exact-source full Linux CI and fresh independent behavioral/rendered review. Preserve prior351 IDs and assessments, native inventory and all unselected assessments except exact source anchor remaps and ancestor counts. Windows/macOS deferred; consumer and capture limits retained.",
+  "reference": {
+    "updates": [
+      {
+        "id": "audit-options-media-viewer-hovers-top-hover-button-menu-controls-collapse-window-submenu-in-view-options-eye-menu",
+        "status": "first_pass",
+        "assessment": "The exact reference Collapse window checkbox stages independently in Options > media viewer hovers > top hover button/menu controls. Checked groups the supported browser-viewer window rows under a named submenu; unchecked flattens those same actionable rows into the eye menu. Cancel/retired Apply discard edits, accepted values persist/reopen, and the next eye-menu opening in the same already-open viewer reads current settings. Other groups and live new-viewer defaults remain unchanged. The validation follow-up observes actual reopened checkbox states and geometry, then opens the real eye menu with pointer input after saved preferences change. It retains all eight recorded combinations and existing consumer/order assertions, adds actual popup captures and Escape dismissal, and checks retained predecessor callbacks after a successor occupies the viewer slot.",
+        "evidence": [
+          {
+            "path": "crates/hydrus-gui-model/src/options.rs",
+            "line": 3898,
+            "anchor_git_head": "a7ca8166f7779876f7d8167c5db50addef12cbc6",
+            "line_sha256": "8007434e52da812e434fe5b204d43c304b0e3a5ace748df3872fc88ac680b51d",
+            "symbol": "Collapse \\\"window\\\" submenu",
+            "role": "scoped_implementation",
+            "description": "Collapse \\\"window\\\" submenu",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui/src/viewer_eye_menu.rs",
+            "line": 140,
+            "anchor_git_head": "a7ca8166f7779876f7d8167c5db50addef12cbc6",
+            "line_sha256": "14857b5fa7ed28997f22d916dc00ee04274e1b935d9a856a8dbe04caf4ab24eb",
+            "symbol": "pub(crate) fn bind(",
+            "role": "scoped_implementation",
+            "description": "pub(crate) fn bind(",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui/ui/viewer_eye_menu.slint",
+            "line": 7,
+            "anchor_git_head": "a7ca8166f7779876f7d8167c5db50addef12cbc6",
+            "line_sha256": "1c34411dc2890ee59dbadd11266fb6363b9dfdde323fd26d18939b15aaca1366",
+            "symbol": "export component ViewerEyeButton",
+            "role": "scoped_implementation",
+            "description": "export component ViewerEyeButton",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-store/src/settings.rs",
+            "line": 1272,
+            "anchor_git_head": "a7ca8166f7779876f7d8167c5db50addef12cbc6",
+            "line_sha256": "8912ac06e40657158ba040df4f1a9d95bf18a748735e4bf49385393580cc34da",
+            "symbol": "pub struct ViewerEyeMenuSettings",
+            "role": "scoped_implementation",
+            "description": "pub struct ViewerEyeMenuSettings",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui-model/tests/model/options_dialog.rs",
+            "line": 2073,
+            "anchor_git_head": "a7ca8166f7779876f7d8167c5db50addef12cbc6",
+            "line_sha256": "aced692e211ac07fcab24633a3a8d7092f8e4e9aca45ccd3249aff5afaf7e4d6",
+            "symbol": "fn eye_menu_preferences_follow_all_reference_combinations_without_saving_detached_edits()",
+            "role": "authored_behavioral_regression",
+            "description": "fn eye_menu_preferences_follow_all_reference_combinations_without_saving_detached_edits()",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui/tests/gui/options_window.rs",
+            "line": 5720,
+            "anchor_git_head": "a7ca8166f7779876f7d8167c5db50addef12cbc6",
+            "line_sha256": "bd441d25bf6cb03c865bed1d1fd0841cefc4c53409ecda8c8b8e8c8a8c374d5c",
+            "symbol": "fn eye_menu_collapse_options_stage_reopen_and_rebuild_the_existing_browser_viewer()",
+            "role": "authored_behavioral_regression",
+            "description": "fn eye_menu_collapse_options_stage_reopen_and_rebuild_the_existing_browser_viewer()",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-store/src/import/decode.rs",
+            "line": 4982,
+            "anchor_git_head": "a7ca8166f7779876f7d8167c5db50addef12cbc6",
+            "line_sha256": "41be6d96c0f0904e4fc16a8056010786c7cdcd10f1b474abf9a7bdc9592cc682",
+            "symbol": "fn browser_eye_menu_preferences_migrate_independently()",
+            "role": "authored_behavioral_regression",
+            "description": "fn browser_eye_menu_preferences_migrate_independently()",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui/tests/gui/options_window.rs",
+            "line": 6274,
+            "anchor_git_head": "a7ca8166f7779876f7d8167c5db50addef12cbc6",
+            "line_sha256": "fb2573dbcc1809b70af3b93a1f413c9022a1bb4c8069100c11dcce317b912254",
+            "symbol": "fn eye_menu_mixed_root_boundaries_match_the_recorded_menu_and_real_declaration_order()",
+            "role": "authored_behavioral_regression",
+            "description": "fn eye_menu_mixed_root_boundaries_match_the_recorded_menu_and_real_declaration_order()",
+            "executed_in_inventory": false
+          }
+        ],
+        "limitations": [
+          "Scope is the browser media viewer's real eye-menu topology. The deeper ICC toggle, duplicate-filter checkerboard and pinned duplicates-hover actions are absent; Linux warning label and platform-specific OS window behavior differ. Broader hover/button/view-options parents remain Partial; no deeper action or parent completion claimed.",
+          "Native window requests use real Slint always-on-top/no-frame properties, and while-playing follows existing player/animation state. Headless regressions verify property dispatch, persisted defaults and actual hover/transparency consumers; no physical window-manager behavior claim.",
+          "Actual Qt recording captures eight combinations, control save/reopen, and discarded MediaViewerHoversPanel edits on one open browser viewer. Historical author metadata records the original no-local-Cargo/no-mutation provenance; current exact-source validation is recorded separately.",
+          "Slint ContextMenuArea materializes its native menu tree internally. Root separator/order validation checks the actual consumer declarations and all eight recorded Qt roots; native regressions retain real compiled row/flag bindings and action/store consumers. This does not claim direct OS-menu tree introspection or physical OS window-manager behavior.",
+          "The current Qt rerun reproduces all eight menu trees and five supporting window-action transitions. Its image shows the Options pane; PopupMenu is intercepted to record the real QAction trees, so there is no displayed Qt popup image for pixel comparison.",
+          "Current native additions assert real three-checkbox checked/enabled and finite visible disjoint geometry, pointer-opened stale-flag refresh, all eight supported menu/check combinations, actual composite root/submenu popup and Escape boundaries, unchanged Store/same owner, and retained old viewer versus successor isolation. No broader action or owner-family completion credit.",
+          "Only the three collapse preferences on the supported browser viewer are approved. No parent, alias, deeper action or other viewer family receives completion credit.",
+          "The native browser menu still omits ICC-profile application, duplicate-filter checkerboard, pinned duplicates hover and the Linux warning label. The full comparison covers the remaining 17 supported check rows and retains the recorded root-boundary limits.",
+          "The Qt recorder intercepts PopupMenu to record all eight actual QAction trees. Its only image is the Options pane, so no displayed Qt popup pixel parity is claimed. Five recorded window-action transitions are supporting behavior, not additional action-leaf credit.",
+          "Actual pointer input, fresh menu flags, root/submenu keyboard navigation, Escape dismissal, reopened CheckBox states and retained predecessor/successor isolation passed at this exact source. The headless embedded popup transport does not establish direct OS-native menu introspection, OS always-on-top/frame behavior or universal physical key translation.",
+          "At the right edge, expanded submenus overlap the root menu: the window submenu covers it entirely and the hover/rendering submenus cover part of it. Submenu contents are readable; identity is supported by the actual keyboard route and matching rows, rather than simultaneous visible parent highlighting. No universal popup-placement or narrow-viewport claim is made.",
+          "Native Options uses its page sidebar, larger spacing and Apply/Cancel footer, while Qt records a standalone pane. All selected captions and 000/101/111 controls are visible, but unrelated lower Options sections lie below the native viewport. Fonts, spacing and framework styling differ; broader Options layout parity is outside scope.",
+          "Validation is Linux only. Windows and macOS remain deferred. The optional Qt API listener was unavailable; direct Qt/DB recording succeeded and supplies no API connectivity claim."
+        ],
+        "remaining": [],
+        "native_source": {
+          "path": "crates/hydrus-gui-model/src/options.rs",
+          "line": 3898,
+          "anchor_git_head": "a7ca8166f7779876f7d8167c5db50addef12cbc6",
+          "line_sha256": "8007434e52da812e434fe5b204d43c304b0e3a5ace748df3872fc88ac680b51d",
+          "symbol": "Collapse \\\"window\\\" submenu"
+        },
+        "reference_source": {
+          "path": "hydrus/client/gui/panels/options/MediaViewerHoversPanel.py",
+          "line": 178,
+          "anchor_git_head": "a7ca8166f7779876f7d8167c5db50addef12cbc6",
+          "line_sha256": "98f9565b4736a79122b2abf2054e06d66beca2d668c1517d891ebf4b9fab07d5",
+          "symbol": "Collapse \"window\" submenu checkbox"
+        },
+        "implementation_validation": {
+          "source_commit": "a7ca8166f7779876f7d8167c5db50addef12cbc6",
+          "ci": "passed",
+          "tests_executed_at_checkpoint": true,
+          "native_render_review": "passed",
+          "manifest": "docs/rust/gui-coverage/parity/viewer-eye-menu.json",
+          "review_required": false,
+          "run_url": "https://github.com/jkendall327/hydrus-mine/actions/runs/37571489508",
+          "validation_scope": "linux",
+          "required_platforms": [
+            "linux"
+          ],
+          "deferred_platforms": [
+            "windows",
+            "macos"
+          ],
+          "independent_review_evidence": {
+            "path": "docs/rust/gui-coverage/checkpoints/a7ca8166f/final-review-2-a7ca8166f.json",
+            "sha256": "f129eb690c820f6c054519ef3b17352cb86cbabe2f80b3511e85922744538628"
+          }
+        }
+      },
+      {
+        "id": "audit-options-media-viewer-hovers-top-hover-button-menu-controls-collapse-hovers-submenu-in-view-options-eye-menu",
+        "status": "first_pass",
+        "assessment": "The exact reference Collapse hovers checkbox stages independently in Options > media viewer hovers > top hover button/menu controls. Checked groups the supported browser-viewer hovers rows under a named submenu; unchecked flattens those same actionable rows into the eye menu. Cancel/retired Apply discard edits, accepted values persist/reopen, and the next eye-menu opening in the same already-open viewer reads current settings. Other groups and live new-viewer defaults remain unchanged. The validation follow-up observes actual reopened checkbox states and geometry, then opens the real eye menu with pointer input after saved preferences change. It retains all eight recorded combinations and existing consumer/order assertions, adds actual popup captures and Escape dismissal, and checks retained predecessor callbacks after a successor occupies the viewer slot.",
+        "evidence": [
+          {
+            "path": "crates/hydrus-gui-model/src/options.rs",
+            "line": 3903,
+            "anchor_git_head": "a7ca8166f7779876f7d8167c5db50addef12cbc6",
+            "line_sha256": "8a6a32cf5fd0a0c7e8a9032bac4498ce15fac71113f5f0801c634aac84af11ac",
+            "symbol": "Collapse \\\"hovers\\\" submenu",
+            "role": "scoped_implementation",
+            "description": "Collapse \\\"hovers\\\" submenu",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui/src/viewer_eye_menu.rs",
+            "line": 140,
+            "anchor_git_head": "a7ca8166f7779876f7d8167c5db50addef12cbc6",
+            "line_sha256": "14857b5fa7ed28997f22d916dc00ee04274e1b935d9a856a8dbe04caf4ab24eb",
+            "symbol": "pub(crate) fn bind(",
+            "role": "scoped_implementation",
+            "description": "pub(crate) fn bind(",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui/ui/viewer_eye_menu.slint",
+            "line": 7,
+            "anchor_git_head": "a7ca8166f7779876f7d8167c5db50addef12cbc6",
+            "line_sha256": "1c34411dc2890ee59dbadd11266fb6363b9dfdde323fd26d18939b15aaca1366",
+            "symbol": "export component ViewerEyeButton",
+            "role": "scoped_implementation",
+            "description": "export component ViewerEyeButton",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-store/src/settings.rs",
+            "line": 1272,
+            "anchor_git_head": "a7ca8166f7779876f7d8167c5db50addef12cbc6",
+            "line_sha256": "8912ac06e40657158ba040df4f1a9d95bf18a748735e4bf49385393580cc34da",
+            "symbol": "pub struct ViewerEyeMenuSettings",
+            "role": "scoped_implementation",
+            "description": "pub struct ViewerEyeMenuSettings",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui-model/tests/model/options_dialog.rs",
+            "line": 2073,
+            "anchor_git_head": "a7ca8166f7779876f7d8167c5db50addef12cbc6",
+            "line_sha256": "aced692e211ac07fcab24633a3a8d7092f8e4e9aca45ccd3249aff5afaf7e4d6",
+            "symbol": "fn eye_menu_preferences_follow_all_reference_combinations_without_saving_detached_edits()",
+            "role": "authored_behavioral_regression",
+            "description": "fn eye_menu_preferences_follow_all_reference_combinations_without_saving_detached_edits()",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui/tests/gui/options_window.rs",
+            "line": 5720,
+            "anchor_git_head": "a7ca8166f7779876f7d8167c5db50addef12cbc6",
+            "line_sha256": "bd441d25bf6cb03c865bed1d1fd0841cefc4c53409ecda8c8b8e8c8a8c374d5c",
+            "symbol": "fn eye_menu_collapse_options_stage_reopen_and_rebuild_the_existing_browser_viewer()",
+            "role": "authored_behavioral_regression",
+            "description": "fn eye_menu_collapse_options_stage_reopen_and_rebuild_the_existing_browser_viewer()",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-store/src/import/decode.rs",
+            "line": 4982,
+            "anchor_git_head": "a7ca8166f7779876f7d8167c5db50addef12cbc6",
+            "line_sha256": "41be6d96c0f0904e4fc16a8056010786c7cdcd10f1b474abf9a7bdc9592cc682",
+            "symbol": "fn browser_eye_menu_preferences_migrate_independently()",
+            "role": "authored_behavioral_regression",
+            "description": "fn browser_eye_menu_preferences_migrate_independently()",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui/tests/gui/options_window.rs",
+            "line": 6274,
+            "anchor_git_head": "a7ca8166f7779876f7d8167c5db50addef12cbc6",
+            "line_sha256": "fb2573dbcc1809b70af3b93a1f413c9022a1bb4c8069100c11dcce317b912254",
+            "symbol": "fn eye_menu_mixed_root_boundaries_match_the_recorded_menu_and_real_declaration_order()",
+            "role": "authored_behavioral_regression",
+            "description": "fn eye_menu_mixed_root_boundaries_match_the_recorded_menu_and_real_declaration_order()",
+            "executed_in_inventory": false
+          }
+        ],
+        "limitations": [
+          "Scope is the browser media viewer's real eye-menu topology. The deeper ICC toggle, duplicate-filter checkerboard and pinned duplicates-hover actions are absent; Linux warning label and platform-specific OS window behavior differ. Broader hover/button/view-options parents remain Partial; no deeper action or parent completion claimed.",
+          "Native window requests use real Slint always-on-top/no-frame properties, and while-playing follows existing player/animation state. Headless regressions verify property dispatch, persisted defaults and actual hover/transparency consumers; no physical window-manager behavior claim.",
+          "Actual Qt recording captures eight combinations, control save/reopen, and discarded MediaViewerHoversPanel edits on one open browser viewer. Historical author metadata records the original no-local-Cargo/no-mutation provenance; current exact-source validation is recorded separately.",
+          "Slint ContextMenuArea materializes its native menu tree internally. Root separator/order validation checks the actual consumer declarations and all eight recorded Qt roots; native regressions retain real compiled row/flag bindings and action/store consumers. This does not claim direct OS-menu tree introspection or physical OS window-manager behavior.",
+          "The current Qt rerun reproduces all eight menu trees and five supporting window-action transitions. Its image shows the Options pane; PopupMenu is intercepted to record the real QAction trees, so there is no displayed Qt popup image for pixel comparison.",
+          "Current native additions assert real three-checkbox checked/enabled and finite visible disjoint geometry, pointer-opened stale-flag refresh, all eight supported menu/check combinations, actual composite root/submenu popup and Escape boundaries, unchanged Store/same owner, and retained old viewer versus successor isolation. No broader action or owner-family completion credit.",
+          "Only the three collapse preferences on the supported browser viewer are approved. No parent, alias, deeper action or other viewer family receives completion credit.",
+          "The native browser menu still omits ICC-profile application, duplicate-filter checkerboard, pinned duplicates hover and the Linux warning label. The full comparison covers the remaining 17 supported check rows and retains the recorded root-boundary limits.",
+          "The Qt recorder intercepts PopupMenu to record all eight actual QAction trees. Its only image is the Options pane, so no displayed Qt popup pixel parity is claimed. Five recorded window-action transitions are supporting behavior, not additional action-leaf credit.",
+          "Actual pointer input, fresh menu flags, root/submenu keyboard navigation, Escape dismissal, reopened CheckBox states and retained predecessor/successor isolation passed at this exact source. The headless embedded popup transport does not establish direct OS-native menu introspection, OS always-on-top/frame behavior or universal physical key translation.",
+          "At the right edge, expanded submenus overlap the root menu: the window submenu covers it entirely and the hover/rendering submenus cover part of it. Submenu contents are readable; identity is supported by the actual keyboard route and matching rows, rather than simultaneous visible parent highlighting. No universal popup-placement or narrow-viewport claim is made.",
+          "Native Options uses its page sidebar, larger spacing and Apply/Cancel footer, while Qt records a standalone pane. All selected captions and 000/101/111 controls are visible, but unrelated lower Options sections lie below the native viewport. Fonts, spacing and framework styling differ; broader Options layout parity is outside scope.",
+          "Validation is Linux only. Windows and macOS remain deferred. The optional Qt API listener was unavailable; direct Qt/DB recording succeeded and supplies no API connectivity claim."
+        ],
+        "remaining": [],
+        "native_source": {
+          "path": "crates/hydrus-gui-model/src/options.rs",
+          "line": 3903,
+          "anchor_git_head": "a7ca8166f7779876f7d8167c5db50addef12cbc6",
+          "line_sha256": "8a6a32cf5fd0a0c7e8a9032bac4498ce15fac71113f5f0801c634aac84af11ac",
+          "symbol": "Collapse \\\"hovers\\\" submenu"
+        },
+        "reference_source": {
+          "path": "hydrus/client/gui/panels/options/MediaViewerHoversPanel.py",
+          "line": 179,
+          "anchor_git_head": "a7ca8166f7779876f7d8167c5db50addef12cbc6",
+          "line_sha256": "7c5eaf0469f9712ba6a3aa00eb29ee1490b07a680cfd18e84b8c67eca390ca76",
+          "symbol": "Collapse \"hovers\" submenu checkbox"
+        },
+        "implementation_validation": {
+          "source_commit": "a7ca8166f7779876f7d8167c5db50addef12cbc6",
+          "ci": "passed",
+          "tests_executed_at_checkpoint": true,
+          "native_render_review": "passed",
+          "manifest": "docs/rust/gui-coverage/parity/viewer-eye-menu.json",
+          "review_required": false,
+          "run_url": "https://github.com/jkendall327/hydrus-mine/actions/runs/37571489508",
+          "validation_scope": "linux",
+          "required_platforms": [
+            "linux"
+          ],
+          "deferred_platforms": [
+            "windows",
+            "macos"
+          ],
+          "independent_review_evidence": {
+            "path": "docs/rust/gui-coverage/checkpoints/a7ca8166f/final-review-2-a7ca8166f.json",
+            "sha256": "f129eb690c820f6c054519ef3b17352cb86cbabe2f80b3511e85922744538628"
+          }
+        }
+      },
+      {
+        "id": "audit-options-media-viewer-hovers-top-hover-button-menu-controls-collapse-rendering-submenu-in-view-options-eye-menu",
+        "status": "first_pass",
+        "assessment": "The exact reference Collapse rendering checkbox stages independently in Options > media viewer hovers > top hover button/menu controls. Checked groups the supported browser-viewer rendering rows under a named submenu; unchecked flattens those same actionable rows into the eye menu. Cancel/retired Apply discard edits, accepted values persist/reopen, and the next eye-menu opening in the same already-open viewer reads current settings. Other groups and live new-viewer defaults remain unchanged. The validation follow-up observes actual reopened checkbox states and geometry, then opens the real eye menu with pointer input after saved preferences change. It retains all eight recorded combinations and existing consumer/order assertions, adds actual popup captures and Escape dismissal, and checks retained predecessor callbacks after a successor occupies the viewer slot.",
+        "evidence": [
+          {
+            "path": "crates/hydrus-gui-model/src/options.rs",
+            "line": 3908,
+            "anchor_git_head": "a7ca8166f7779876f7d8167c5db50addef12cbc6",
+            "line_sha256": "3668cae462efa4aa44ecc096f054b7ca694f1fdeb3b910cb4ee5a20bb7896478",
+            "symbol": "Collapse \\\"rendering\\\" submenu",
+            "role": "scoped_implementation",
+            "description": "Collapse \\\"rendering\\\" submenu",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui/src/viewer_eye_menu.rs",
+            "line": 140,
+            "anchor_git_head": "a7ca8166f7779876f7d8167c5db50addef12cbc6",
+            "line_sha256": "14857b5fa7ed28997f22d916dc00ee04274e1b935d9a856a8dbe04caf4ab24eb",
+            "symbol": "pub(crate) fn bind(",
+            "role": "scoped_implementation",
+            "description": "pub(crate) fn bind(",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui/ui/viewer_eye_menu.slint",
+            "line": 7,
+            "anchor_git_head": "a7ca8166f7779876f7d8167c5db50addef12cbc6",
+            "line_sha256": "1c34411dc2890ee59dbadd11266fb6363b9dfdde323fd26d18939b15aaca1366",
+            "symbol": "export component ViewerEyeButton",
+            "role": "scoped_implementation",
+            "description": "export component ViewerEyeButton",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-store/src/settings.rs",
+            "line": 1272,
+            "anchor_git_head": "a7ca8166f7779876f7d8167c5db50addef12cbc6",
+            "line_sha256": "8912ac06e40657158ba040df4f1a9d95bf18a748735e4bf49385393580cc34da",
+            "symbol": "pub struct ViewerEyeMenuSettings",
+            "role": "scoped_implementation",
+            "description": "pub struct ViewerEyeMenuSettings",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui-model/tests/model/options_dialog.rs",
+            "line": 2073,
+            "anchor_git_head": "a7ca8166f7779876f7d8167c5db50addef12cbc6",
+            "line_sha256": "aced692e211ac07fcab24633a3a8d7092f8e4e9aca45ccd3249aff5afaf7e4d6",
+            "symbol": "fn eye_menu_preferences_follow_all_reference_combinations_without_saving_detached_edits()",
+            "role": "authored_behavioral_regression",
+            "description": "fn eye_menu_preferences_follow_all_reference_combinations_without_saving_detached_edits()",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui/tests/gui/options_window.rs",
+            "line": 5720,
+            "anchor_git_head": "a7ca8166f7779876f7d8167c5db50addef12cbc6",
+            "line_sha256": "bd441d25bf6cb03c865bed1d1fd0841cefc4c53409ecda8c8b8e8c8a8c374d5c",
+            "symbol": "fn eye_menu_collapse_options_stage_reopen_and_rebuild_the_existing_browser_viewer()",
+            "role": "authored_behavioral_regression",
+            "description": "fn eye_menu_collapse_options_stage_reopen_and_rebuild_the_existing_browser_viewer()",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-store/src/import/decode.rs",
+            "line": 4982,
+            "anchor_git_head": "a7ca8166f7779876f7d8167c5db50addef12cbc6",
+            "line_sha256": "41be6d96c0f0904e4fc16a8056010786c7cdcd10f1b474abf9a7bdc9592cc682",
+            "symbol": "fn browser_eye_menu_preferences_migrate_independently()",
+            "role": "authored_behavioral_regression",
+            "description": "fn browser_eye_menu_preferences_migrate_independently()",
+            "executed_in_inventory": false
+          },
+          {
+            "path": "crates/hydrus-gui/tests/gui/options_window.rs",
+            "line": 6274,
+            "anchor_git_head": "a7ca8166f7779876f7d8167c5db50addef12cbc6",
+            "line_sha256": "fb2573dbcc1809b70af3b93a1f413c9022a1bb4c8069100c11dcce317b912254",
+            "symbol": "fn eye_menu_mixed_root_boundaries_match_the_recorded_menu_and_real_declaration_order()",
+            "role": "authored_behavioral_regression",
+            "description": "fn eye_menu_mixed_root_boundaries_match_the_recorded_menu_and_real_declaration_order()",
+            "executed_in_inventory": false
+          }
+        ],
+        "limitations": [
+          "Scope is the browser media viewer's real eye-menu topology. The deeper ICC toggle, duplicate-filter checkerboard and pinned duplicates-hover actions are absent; Linux warning label and platform-specific OS window behavior differ. Broader hover/button/view-options parents remain Partial; no deeper action or parent completion claimed.",
+          "Native window requests use real Slint always-on-top/no-frame properties, and while-playing follows existing player/animation state. Headless regressions verify property dispatch, persisted defaults and actual hover/transparency consumers; no physical window-manager behavior claim.",
+          "Actual Qt recording captures eight combinations, control save/reopen, and discarded MediaViewerHoversPanel edits on one open browser viewer. Historical author metadata records the original no-local-Cargo/no-mutation provenance; current exact-source validation is recorded separately.",
+          "Slint ContextMenuArea materializes its native menu tree internally. Root separator/order validation checks the actual consumer declarations and all eight recorded Qt roots; native regressions retain real compiled row/flag bindings and action/store consumers. This does not claim direct OS-menu tree introspection or physical OS window-manager behavior.",
+          "The current Qt rerun reproduces all eight menu trees and five supporting window-action transitions. Its image shows the Options pane; PopupMenu is intercepted to record the real QAction trees, so there is no displayed Qt popup image for pixel comparison.",
+          "Current native additions assert real three-checkbox checked/enabled and finite visible disjoint geometry, pointer-opened stale-flag refresh, all eight supported menu/check combinations, actual composite root/submenu popup and Escape boundaries, unchanged Store/same owner, and retained old viewer versus successor isolation. No broader action or owner-family completion credit.",
+          "Only the three collapse preferences on the supported browser viewer are approved. No parent, alias, deeper action or other viewer family receives completion credit.",
+          "The native browser menu still omits ICC-profile application, duplicate-filter checkerboard, pinned duplicates hover and the Linux warning label. The full comparison covers the remaining 17 supported check rows and retains the recorded root-boundary limits.",
+          "The Qt recorder intercepts PopupMenu to record all eight actual QAction trees. Its only image is the Options pane, so no displayed Qt popup pixel parity is claimed. Five recorded window-action transitions are supporting behavior, not additional action-leaf credit.",
+          "Actual pointer input, fresh menu flags, root/submenu keyboard navigation, Escape dismissal, reopened CheckBox states and retained predecessor/successor isolation passed at this exact source. The headless embedded popup transport does not establish direct OS-native menu introspection, OS always-on-top/frame behavior or universal physical key translation.",
+          "At the right edge, expanded submenus overlap the root menu: the window submenu covers it entirely and the hover/rendering submenus cover part of it. Submenu contents are readable; identity is supported by the actual keyboard route and matching rows, rather than simultaneous visible parent highlighting. No universal popup-placement or narrow-viewport claim is made.",
+          "Native Options uses its page sidebar, larger spacing and Apply/Cancel footer, while Qt records a standalone pane. All selected captions and 000/101/111 controls are visible, but unrelated lower Options sections lie below the native viewport. Fonts, spacing and framework styling differ; broader Options layout parity is outside scope.",
+          "Validation is Linux only. Windows and macOS remain deferred. The optional Qt API listener was unavailable; direct Qt/DB recording succeeded and supplies no API connectivity claim."
+        ],
+        "remaining": [],
+        "native_source": {
+          "path": "crates/hydrus-gui-model/src/options.rs",
+          "line": 3908,
+          "anchor_git_head": "a7ca8166f7779876f7d8167c5db50addef12cbc6",
+          "line_sha256": "3668cae462efa4aa44ecc096f054b7ca694f1fdeb3b910cb4ee5a20bb7896478",
+          "symbol": "Collapse \\\"rendering\\\" submenu"
+        },
+        "reference_source": {
+          "path": "hydrus/client/gui/panels/options/MediaViewerHoversPanel.py",
+          "line": 180,
+          "anchor_git_head": "a7ca8166f7779876f7d8167c5db50addef12cbc6",
+          "line_sha256": "2f1a8dd8c705bd4c644fa3b519f87ca494941e6c3f97a955d665dbd42efeb7b9",
+          "symbol": "Collapse \"rendering\" submenu checkbox"
+        },
+        "implementation_validation": {
+          "source_commit": "a7ca8166f7779876f7d8167c5db50addef12cbc6",
+          "ci": "passed",
+          "tests_executed_at_checkpoint": true,
+          "native_render_review": "passed",
+          "manifest": "docs/rust/gui-coverage/parity/viewer-eye-menu.json",
+          "review_required": false,
+          "run_url": "https://github.com/jkendall327/hydrus-mine/actions/runs/37571489508",
+          "validation_scope": "linux",
+          "required_platforms": [
+            "linux"
+          ],
+          "deferred_platforms": [
+            "windows",
+            "macos"
+          ],
+          "independent_review_evidence": {
+            "path": "docs/rust/gui-coverage/checkpoints/a7ca8166f/final-review-2-a7ca8166f.json",
+            "sha256": "f129eb690c820f6c054519ef3b17352cb86cbabe2f80b3511e85922744538628"
+          }
+        }
+      }
+    ],
+    "additions": []
+  },
+  "native": {
+    "updates": [],
+    "additions": []
+  }
+}

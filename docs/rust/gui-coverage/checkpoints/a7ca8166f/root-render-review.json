@@ -1,0 +1,100 @@
+{
+  "source_commit": "a7ca8166f7779876f7d8167c5db50addef12cbc6",
+  "run_id": 37571489508,
+  "artifact_id": 11461122175,
+  "native_zip_sha256": "a495981813bad3f6d14db1bb913b2c96c8e3daa98e11af915d7d6c177436d89a",
+  "actually_viewed": [
+    {
+      "name": "viewer-eye-menu-000.png",
+      "bytes": 101285,
+      "sha256": "77863eadac907b9e09963e219d4b2845ca6f99afc44c281f195ff8e1572b326a",
+      "observations": "Actual root state 000: window/hovers/rendering groups are collapsed exactly where bit is 1; flat supported labels/checks and separators readable. Popup contained at right edge."
+    },
+    {
+      "name": "viewer-eye-menu-001.png",
+      "bytes": 95499,
+      "sha256": "7c53aa69d09dba912cb1932d3324444586605fb3f0b8a77652a9480e5a70a162",
+      "observations": "Actual root state 001: window/hovers/rendering groups are collapsed exactly where bit is 1; flat supported labels/checks and separators readable. Popup contained at right edge."
+    },
+    {
+      "name": "viewer-eye-menu-010.png",
+      "bytes": 80832,
+      "sha256": "7e8e386bcb63b5c159e88ec38583db5dc71f5c22b409956a2ec910219de968fa",
+      "observations": "Actual root state 010: window/hovers/rendering groups are collapsed exactly where bit is 1; flat supported labels/checks and separators readable. Popup contained at right edge."
+    },
+    {
+      "name": "viewer-eye-menu-011.png",
+      "bytes": 78126,
+      "sha256": "f5c5ddd3e39d49491e00d43ee16e8d92b620998a10de01428df032179563a351",
+      "observations": "Actual root state 011: window/hovers/rendering groups are collapsed exactly where bit is 1; flat supported labels/checks and separators readable. Popup contained at right edge."
+    },
+    {
+      "name": "viewer-eye-menu-100.png",
+      "bytes": 88293,
+      "sha256": "6a1de31a341fb16d0c446deec0347e428472e578dc757d70611b05458cb73c83",
+      "observations": "Actual root state 100: window/hovers/rendering groups are collapsed exactly where bit is 1; flat supported labels/checks and separators readable. Popup contained at right edge."
+    },
+    {
+      "name": "viewer-eye-menu-101.png",
+      "bytes": 83816,
+      "sha256": "fe97c0aaf0de172e63f8e53ebe4e02115dc906e9da3e662d0dfb7998036ca854",
+      "observations": "Actual root state 101: window/hovers/rendering groups are collapsed exactly where bit is 1; flat supported labels/checks and separators readable. Popup contained at right edge."
+    },
+    {
+      "name": "viewer-eye-menu-110.png",
+      "bytes": 76687,
+      "sha256": "cb1ef4650a6bbab5893465c5843315cd9031849abf54b084549b1b07fc1ab74d",
+      "observations": "Actual root state 110: window/hovers/rendering groups are collapsed exactly where bit is 1; flat supported labels/checks and separators readable. Popup contained at right edge."
+    },
+    {
+      "name": "viewer-eye-menu-111.png",
+      "bytes": 71324,
+      "sha256": "3540065642a40f231aa923131a44a99e95b832b20223ce4bf158c71ab40babed",
+      "observations": "Actual root state 111: window/hovers/rendering groups are collapsed exactly where bit is 1; flat supported labels/checks and separators readable. Popup contained at right edge."
+    },
+    {
+      "name": "viewer-eye-menu-window-expanded.png",
+      "bytes": 82210,
+      "sha256": "703f4bba48c01a6ff7935aa0a08c7bd27aecd0abec778167c0988aafdc787ca6",
+      "observations": "Six window rows readable and unchecked; separator divides current-window/default actions. Right-edge submenu fully occludes parent."
+    },
+    {
+      "name": "viewer-eye-menu-hovers-expanded.png",
+      "bytes": 85425,
+      "sha256": "713481b5163e0e8fc7433766da69633c6fba86b2a92a73b253f4139db66e5907",
+      "observations": "Nine hover rows readable and checked, with correct group separator. Submenu partially occludes parent."
+    },
+    {
+      "name": "viewer-eye-menu-rendering-expanded.png",
+      "bytes": 76818,
+      "sha256": "5cd34cbebc717aea38a9a4add2190018281c03d83d6ae59164a6c04617cccd0c",
+      "observations": "Two rendering rows readable and unchecked. Submenu partially occludes parent."
+    },
+    {
+      "name": "viewer-eye-menu-options-000.png",
+      "bytes": 109295,
+      "sha256": "40feb35452d409ef4fece528f1aa2d28c09837813784a7d379e508e9ff00a55f",
+      "observations": "Actual reopened Options state 000; all three selected captions readable, checked values match, rows separate and Apply/Cancel visible. Lower unrelated content outside viewport."
+    },
+    {
+      "name": "viewer-eye-menu-options-101.png",
+      "bytes": 109516,
+      "sha256": "2cc2dc0d353fb1ded601059c9ba2790f68ca2dcceed311f424fe40b97e002e99",
+      "observations": "Actual reopened Options state 101; all three selected captions readable, checked values match, rows separate and Apply/Cancel visible. Lower unrelated content outside viewport."
+    },
+    {
+      "name": "viewer-eye-menu-options-111.png",
+      "bytes": 109578,
+      "sha256": "a6b0f4250e7ed4f55ca39e9e0ff3af80db6f74b98475b0d27a03cd6f9a9e99d3",
+      "observations": "Actual reopened Options state 111; all three selected captions readable, checked values match, rows separate and Apply/Cancel visible. Lower unrelated content outside viewport."
+    }
+  ],
+  "independent_review_pending": false,
+  "independent_review_sha256": "f129eb690c820f6c054519ef3b17352cb86cbabe2f80b3511e85922744538628",
+  "reference_provenance_sha256": "502c9392ca87fd31257da000f73da0ef1b80f478c216b821da7d4495413d94c7",
+  "limits": [
+    "No displayed Qt popup pixels or pixel-parity claim.",
+    "Expanded native menus overlap parent; simultaneous parent highlighting is not established.",
+    "No physical OS window-manager, Windows/macOS, missing browser actions or broader parent completion credit."
+  ]
+}
