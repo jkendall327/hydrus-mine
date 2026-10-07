@@ -1261,6 +1261,26 @@ fn parameter_queue_reverse_edit_and_real_key_origin_histories_match_actual_qt() 
                 "edit_selection_first" => {
                     if history["name"] == "reverse_edit" {
                         assert!(w.window().is_visible());
+                        assert!(w.get_selected());
+                        assert!(!w.get_child_open());
+                        // Child closure and selection update the actual
+                        // controls; let their enabled/color animations finish.
+                        let started = std::time::Instant::now();
+                        loop {
+                            headless::render(&native, 760, 590);
+                            if started.elapsed() >= std::time::Duration::from_millis(35)
+                                && !w.window().has_active_animations()
+                            {
+                                break;
+                            }
+                            assert!(
+                                started.elapsed() < std::time::Duration::from_secs(2),
+                                "selected command controls must settle before capture"
+                            );
+                            std::thread::sleep(std::time::Duration::from_millis(5));
+                        }
+                        assert!(w.get_selected());
+                        assert!(!w.get_child_open());
                         command_capture(
                             &windows,
                             command_index,

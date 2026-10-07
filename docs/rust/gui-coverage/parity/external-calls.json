@@ -1007,14 +1007,14 @@
         {
           "relativepath": "crates/hydrus-gui/tests/gui/external_calls.rs",
           "line": 718,
-          "commit": "1bacf7112b4da9804f9ac109bd1900b45f0e4e61",
+          "commit": "7bef4e93a81ef515839c7ccebcdd11b51d781ee5",
           "symbol": "fn actual_command_parameter_queue_buttons_keys_cancel_and_saved_argument_consumer()",
           "line_sha256": "b54ad406fdb3c0e52dbd0c53ed6905b74429af8a4df11f4f5c3099379d5f202a"
         },
         {
           "relativepath": "crates/hydrus-gui/tests/gui/external_calls.rs",
           "line": 943,
-          "commit": "1bacf7112b4da9804f9ac109bd1900b45f0e4e61",
+          "commit": "7bef4e93a81ef515839c7ccebcdd11b51d781ee5",
           "symbol": "fn command_clipboard_exact_review_raw_rows_clean_copy_errors_and_owner_retirement()",
           "line_sha256": "4262623f2fa224b644db81e130ee6738d9003ec6b26cb07f1c6b5d9ff82d553e"
         },
@@ -1039,7 +1039,7 @@
         {
           "relativepath": "crates/hydrus-gui/tests/gui/external_calls.rs",
           "line": 1211,
-          "commit": "1bacf7112b4da9804f9ac109bd1900b45f0e4e61",
+          "commit": "7bef4e93a81ef515839c7ccebcdd11b51d781ee5",
           "symbol": "fn parameter_queue_reverse_edit_and_real_key_origin_histories_match_actual_qt()",
           "line_sha256": "0fc5254c398a424c716fe3443da506ff5b7c66c1056f8a0f80ae3232b3da7fd6"
         }
@@ -1059,7 +1059,8 @@
         "Authored native keyboard/owner/store regressions and native command PNG await hosted CI; no local Cargo/tests or mutation testing were run.",
         "The actual Qt recorder scripts dialog answers and clipboard transport; its one command-panel PNG does not provide paired input/review/error/feedback images. No Qt dialog pixel, placement or notification-timing parity is claimed.",
         "Defining captures use supported resized views: 760x590 command/review/feedback, 760x640 long parameter input, and 520x200 Delete/Error. Default-size and universal geometry, physical Copy/Paste pointer input, automatic Main destruction and final Bound-drop behavior are not established.",
-        "Current two-leaf follow-up awaits exact-source full Linux execution and fresh independent native rendered review; no new sign-off is granted. Windows/macOS remain deferred."
+        "Current two-leaf follow-up awaits exact-source full Linux execution and fresh independent native rendered review; no new sign-off is granted. Windows/macOS remain deferred.",
+        "Initial source3c17f2f45/run37580667106 passed the three command tests but failed an existing Options wheel hide/show assertion; its diagnostic selected frame looked disabled and CJK glyphs were absent. The original failure, images and source reviews are retained; they grant no completion. Readiness/font repairs await new exact-source validation and fresh inspection."
       ],
       "evidence": [
         {
@@ -1067,6 +1068,12 @@
           "role": "authored_native_render_and_successor_followup",
           "executed": false,
           "description": "Preserves all 115 original assertions and nine tests; now 160 macros including timed painted-feedback witnesses, exact Add prompt/default/placeholder and eight live defining exports. Extends parent-Cancel retirement to clipboard/full Manager/successor draft/selection/four owner slot identities/visibility, followed by positive current acceptance and normal Cancel. Exact integrated-source full Linux validation and fresh independent images remain pending."
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/external_calls.rs",
+          "role": "authored_capture_readiness_repair",
+          "executed": false,
+          "description": "Preserves all 160 initial assertions; now165 across the same9tests. Selected command capture asserts selected/non-modal state and waits for real animations to settle. Separate existing wheel regression retains all87assertions, adds geometry/animation/visibility/policy readiness before exactly one wheel event and keeps exact expected2. Hosted CJK fonts address diagnostic missing Japanese glyphs; full rerun/fresh review pending."
         }
       ]
     },
@@ -1125,14 +1132,14 @@
         {
           "relativepath": "crates/hydrus-gui/tests/gui/external_calls.rs",
           "line": 718,
-          "commit": "1bacf7112b4da9804f9ac109bd1900b45f0e4e61",
+          "commit": "7bef4e93a81ef515839c7ccebcdd11b51d781ee5",
           "symbol": "fn actual_command_parameter_queue_buttons_keys_cancel_and_saved_argument_consumer()",
           "line_sha256": "b54ad406fdb3c0e52dbd0c53ed6905b74429af8a4df11f4f5c3099379d5f202a"
         },
         {
           "relativepath": "crates/hydrus-gui/tests/gui/external_calls.rs",
           "line": 943,
-          "commit": "1bacf7112b4da9804f9ac109bd1900b45f0e4e61",
+          "commit": "7bef4e93a81ef515839c7ccebcdd11b51d781ee5",
           "symbol": "fn command_clipboard_exact_review_raw_rows_clean_copy_errors_and_owner_retirement()",
           "line_sha256": "4262623f2fa224b644db81e130ee6738d9003ec6b26cb07f1c6b5d9ff82d553e"
         },
@@ -1157,7 +1164,7 @@
         {
           "relativepath": "crates/hydrus-gui/tests/gui/external_calls.rs",
           "line": 1211,
-          "commit": "1bacf7112b4da9804f9ac109bd1900b45f0e4e61",
+          "commit": "7bef4e93a81ef515839c7ccebcdd11b51d781ee5",
           "symbol": "fn parameter_queue_reverse_edit_and_real_key_origin_histories_match_actual_qt()",
           "line_sha256": "0fc5254c398a424c716fe3443da506ff5b7c66c1056f8a0f80ae3232b3da7fd6"
         }
@@ -1177,7 +1184,8 @@
         "Authored native keyboard/owner/store regressions and native command PNG await hosted CI; no local Cargo/tests or mutation testing were run.",
         "The actual Qt recorder scripts dialog answers and clipboard transport; its one command-panel PNG does not provide paired input/review/error/feedback images. No Qt dialog pixel, placement or notification-timing parity is claimed.",
         "Defining captures use supported resized views: 760x590 command/review/feedback, 760x640 long parameter input, and 520x200 Delete/Error. Default-size and universal geometry, physical Copy/Paste pointer input, automatic Main destruction and final Bound-drop behavior are not established.",
-        "Current two-leaf follow-up awaits exact-source full Linux execution and fresh independent native rendered review; no new sign-off is granted. Windows/macOS remain deferred."
+        "Current two-leaf follow-up awaits exact-source full Linux execution and fresh independent native rendered review; no new sign-off is granted. Windows/macOS remain deferred.",
+        "Initial source3c17f2f45/run37580667106 passed the three command tests but failed an existing Options wheel hide/show assertion; its diagnostic selected frame looked disabled and CJK glyphs were absent. The original failure, images and source reviews are retained; they grant no completion. Readiness/font repairs await new exact-source validation and fresh inspection."
       ],
       "evidence": [
         {
@@ -1185,6 +1193,12 @@
           "role": "authored_native_render_and_successor_followup",
           "executed": false,
           "description": "Preserves all 115 original assertions and nine tests; now 160 macros including timed painted-feedback witnesses, exact Add prompt/default/placeholder and eight live defining exports. Extends parent-Cancel retirement to clipboard/full Manager/successor draft/selection/four owner slot identities/visibility, followed by positive current acceptance and normal Cancel. Exact integrated-source full Linux validation and fresh independent images remain pending."
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/external_calls.rs",
+          "role": "authored_capture_readiness_repair",
+          "executed": false,
+          "description": "Preserves all 160 initial assertions; now165 across the same9tests. Selected command capture asserts selected/non-modal state and waits for real animations to settle. Separate existing wheel regression retains all87assertions, adds geometry/animation/visibility/policy readiness before exactly one wheel event and keeps exact expected2. Hosted CJK fonts address diagnostic missing Japanese glyphs; full rerun/fresh review pending."
         }
       ]
     },
@@ -1543,5 +1557,24 @@
       "external-command-clipboard-error.png"
     ],
     "scope": "Exactly command parameter editing and full-template Copy/Paste; prior355 and all unselected assessments preserved. No broader command/process/list parents, aliases, launch/output or deferred-platform credit."
+  },
+  "validation_repair": {
+    "failed_source": "3c17f2f4507670c3040f68fac020fa265451d50c",
+    "failed_run": 37580667106,
+    "implementation_commit": "7bef4e93a81ef515839c7ccebcdd11b51d781ee5",
+    "previous_command_assertions": 160,
+    "current_command_assertions": 165,
+    "command_tests": 9,
+    "previous_wheel_assertions": 87,
+    "current_wheel_assertions": 92,
+    "wheel_tests": 6,
+    "all_previous_lines_preserved": true,
+    "failed_expected_index_preserved": 2,
+    "one_physical_wheel_event": true,
+    "diagnosis": "Old wheel test reused a pre-hide frame, rendered while hidden, then dispatched immediately aftershow before ensuring1ms geometry-observer/animation readiness. Exact failed runtime hit path was not logged; no persistent policy defect is inferred. Selected command capture also needed settled enabled-state presentation.",
+    "hosted_font_change": "Install fontconfig and fonts-noto-cjk in required Linux GUI job and log fc-match :lang=ja; unchanged Unicode fixtures/assertions and fresh rendered review must verify glyph availability.",
+    "current_test_sha256": "9ce637bda651b9d982d3d0759b1a37f14cc1327e80d56f94c6db8c3f162d3338",
+    "preservation_proof_sha256": "3b9b637c051d806b1bb8268205d8828e18722024b129a81843d3d69a09fc959b",
+    "runtime_validation": "Pending exact repaired-source full Linux and all eight fresh defining captures; no new signoff."
   }
 }

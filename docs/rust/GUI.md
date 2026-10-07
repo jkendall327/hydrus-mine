@@ -3537,10 +3537,17 @@ with unchanged recorder, fixture and command-panel PNG. The reference scripts
 dialog answers and clipboard transport; its PNG does not capture Qt input/review
 children or timed feedback for visual comparison. The follow-up adds eight live captures and retained successor checks while
 preserving all 115 original assertions across nine tests; the file now contains
-160 assertions. Existing queue, clipboard and saved Unicode/token-consumer
+165 assertions. Existing queue, clipboard and saved Unicode/token-consumer
 checks remain intact. Full Linux validation and fresh
 independent rendered review remain pending; the ledger stays at 355 signed off
 with 20 existing candidates awaiting sign-off.
+The first full run passed all three command tests but failed an existing Options
+wheel test after hide/show. The repair waits for stable measured geometry and
+finished animations before its one wheel event, retaining the exact expected
+selection and hidden-window refusal assertions. Selected command capture now
+also asserts readiness and waits for animations. The hosted GUI job installs
+CJK fonts because the diagnostic frames omitted Japanese glyphs; fresh images
+must verify that correction. Neither the failed run nor its images earns credit.
 
 Supported process calls expose enabled input rules, tokens and the existing
 string-processor child, an ordered command-argument editor, timeout/flags and

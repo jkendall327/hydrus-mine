@@ -2522,6 +2522,12 @@ plus retained callbacks against a replacement editor. Broader command/process
 parents, executable picker/PATH/launch breadth, output presentation and Qt
 PageUp/PageDown/type-ahead/scroll-to-current remain outside the pair. Full Linux
 and fresh independent rendered review are pending; no new sign-off is claimed.
+The first follow-up run passed the command tests but failed an existing
+hide/show wheel assertion. That test now waits for measured, stable geometry
+and inactive animations without weakening its expected result. Diagnostic images
+also showed disabled-looking selected controls and missing CJK glyphs; readiness
+assertions/settling and hosted CJK fonts are added, with fresh review still
+required. The evidence does not establish a persistent product failure.
 Viewer drag anchoring uses the existing winit window's cursor-position API.
 Physical cursor warping depends on the platform/window manager, as Qt's cursor
 warping does. Headless native replays assert actual pointer-to-media movement,

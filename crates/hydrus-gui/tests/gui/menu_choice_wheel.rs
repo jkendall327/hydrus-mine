@@ -16,6 +16,52 @@ fn settle_at(
         headless::render(native, width, height);
     }
 }
+fn settled_options_frame(
+    native: &slint::platform::software_renderer::MinimalSoftwareWindow,
+    options: &OptionsWindow,
+    frames: &RefCell<std::collections::BTreeMap<(i32, i32), hydrus_gui::MenuChoiceFrame>>,
+    row: i32,
+) -> hydrus_gui::MenuChoiceFrame {
+    use std::time::{Duration, Instant};
+    let started = Instant::now();
+    let mut previous = None;
+    loop {
+        headless::render(native, 1100, 800);
+        let measured = frames.borrow().get(&(row, 0)).cloned();
+        if let Some(frame) = measured.as_ref() {
+            let values = [frame.x, frame.y, frame.w, frame.h];
+            let bits = values.map(f32::to_bits);
+            if values.into_iter().all(f32::is_finite)
+                && frame.w > 0.0
+                && frame.h > 0.0
+                && frame.x >= 0.0
+                && frame.y >= 0.0
+                && frame.x + frame.w <= 1100.0
+                && frame.y + frame.h <= 800.0
+            {
+                // Measurements arrive on a real 1 ms Timer. Allow it to run
+                // after layout, then require an unchanged second observation.
+                if started.elapsed() >= Duration::from_millis(2)
+                    && previous == Some(bits)
+                    && !options.window().has_active_animations()
+                {
+                    return frame.clone();
+                }
+                previous = Some(bits);
+            } else {
+                previous = None;
+            }
+        }
+        assert!(
+            started.elapsed() < Duration::from_secs(2),
+            "Options choice row {row} did not settle in the viewport: frame={measured:?}, visible={}, animations={}, scroll_y={}",
+            options.window().is_visible(),
+            options.window().has_active_animations(),
+            options.get_options_scroll_y(),
+        );
+        std::thread::sleep(Duration::from_millis(1));
+    }
+}
 fn wheel(
     native: &slint::platform::software_renderer::MinimalSoftwareWindow,
     frame: &hydrus_gui::MenuChoiceFrame,
@@ -445,6 +491,40 @@ fn options_staging_saved_policy_bubbling_and_retired_roots_are_owned() {
         original
     );
     options.show().unwrap();
+    assert!(options.window().is_visible());
+    assert!(
+        store
+            .read(hydrus_store::menu_choice_wheel::load)
+            .unwrap()
+            .enabled
+    );
+    assert!(
+        options
+            .global::<hydrus_gui::MenuChoicePolicy<'_>>()
+            .invoke_owner_valid()
+    );
+    assert!(
+        options
+            .global::<hydrus_gui::MenuChoicePolicy<'_>>()
+            .invoke_allowed()
+    );
+    let frame = settled_options_frame(&native, &options, &frames, row);
+    eprintln!(
+        "re-shown Options physical wheel: frame={frame:?}, visible={}, scroll_y={}, before_index={}, count={}",
+        options.window().is_visible(),
+        options.get_options_scroll_y(),
+        options
+            .get_rows()
+            .row_data(usize::try_from(row).unwrap())
+            .unwrap()
+            .index,
+        options
+            .get_rows()
+            .row_data(usize::try_from(row).unwrap())
+            .unwrap()
+            .items
+            .row_count(),
+    );
     wheel(&native, &frame, 0.0, 120.0);
     assert_eq!(
         options
