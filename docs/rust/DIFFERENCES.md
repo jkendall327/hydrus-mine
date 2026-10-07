@@ -3038,11 +3038,17 @@ The OR editor regression adds settled reopened ASCII/fox frames and physical
 Select All/Copy with a clipboard sentinel at one supported 900×900 viewport.
 The Linux system selects bitmap-only Noto Color Emoji, while Slint 1.18.1's
 software renderer requests outlines. Startup now prepends bundled SIL-licensed
-Noto Emoji outlines to the emoji fallback chain, retaining existing emoji and
-ordinary Latin/CJK fallbacks. Emoji are monochrome and need not match Qt's glyph
+Noto Emoji outlines before the platform's preferred emoji face in the actual
+sans-serif/system-UI text fallback chains, retaining their preceding fonts and
+implicit system tails. An emoji-only mapping was insufficient because these
+text chains reached the bitmap font first. Fontique repeats the retained prefix
+in its implicit tail for unsupported characters; repeated setup does not grow it.
+Explicitly requested bitmap fonts can still outrank the fallback. Emoji are
+monochrome and need not match Qt's glyph
 shape or colour. The adapter uses Slint's internal font context, so runtime,
 build helper and core are pinned together at 1.18.1. A font-selection regression
-checks the actual fox font and unchanged ordinary/script fallback lists; the
+checks the actual text-control chain's fox font, unchanged representative
+Latin/CJK/symbol glyph choices and unchanged script fallback lists; the
 real reopened field must paint ink before selection. The fresh Qt replay remains
 byte-identical. Exact-source Linux execution and fresh frame review remain gates
 for this single control, with no parent credit or custom OR renderer activation.

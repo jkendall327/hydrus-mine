@@ -15,15 +15,10 @@ impl Platform for NoWindows {
 }
 
 fn ordinary_fallbacks(fonts: &mut FontContext) -> Vec<Vec<FamilyId>> {
-    let mut families: Vec<_> = [
-        GenericFamily::SansSerif,
-        GenericFamily::Serif,
-        GenericFamily::Monospace,
-        GenericFamily::SystemUi,
-    ]
-    .into_iter()
-    .map(|generic| fonts.collection.generic_families(generic).collect())
-    .collect();
+    let mut families: Vec<_> = [GenericFamily::Serif, GenericFamily::Monospace]
+        .into_iter()
+        .map(|generic| fonts.collection.generic_families(generic).collect())
+        .collect();
     for (script, language) in [(*b"Hani", "ja"), (*b"Hani", "zh-CN"), (*b"Hang", "ko")] {
         families.push(
             fonts
@@ -35,6 +30,26 @@ fn ordinary_fallbacks(fonts: &mut FontContext) -> Vec<Vec<FamilyId>> {
     families
 }
 
+fn default_glyphs(fonts: &mut FontContext, text: &str) -> Vec<(FamilyId, u32, u32)> {
+    text.chars()
+        .map(|character| {
+            let inner = &mut fonts.inner;
+            let mut query = inner.collection.query(&mut inner.source_cache);
+            query.set_families([GenericFamily::SansSerif, GenericFamily::SystemUi]);
+            let mut selected = None;
+            query.matches_with(|font| {
+                if let Some(glyph) = font.charmap().and_then(|map| map.map(character)) {
+                    selected = Some((font.family.0, font.index, glyph));
+                    QueryStatus::Stop
+                } else {
+                    QueryStatus::Continue
+                }
+            });
+            selected.unwrap_or_else(|| panic!("no platform font for {character}"))
+        })
+        .collect()
+}
+
 #[test]
 fn outline_fox_is_selected_without_replacing_platform_text_fallbacks() {
     // A fresh thread also proves that this adapter cannot silently select a backend.
@@ -44,7 +59,7 @@ fn outline_fox_is_selected_without_replacing_platform_text_fallbacks() {
             Err(PlatformError::NoPlatform)
         ));
         slint::platform::set_platform(Box::new(NoWindows)).unwrap();
-        let (ordinary, prior_emoji) = i_slint_core::with_global_context(
+        let (ordinary, prior_emoji, text_glyphs) = i_slint_core::with_global_context(
             || Err(PlatformError::NoPlatform),
             |context| {
                 let mut fonts = context.font_context().borrow_mut();
@@ -54,12 +69,14 @@ fn outline_fox_is_selected_without_replacing_platform_text_fallbacks() {
                         .collection
                         .generic_families(GenericFamily::Emoji)
                         .collect::<Vec<_>>(),
+                    default_glyphs(&mut fonts, "AZaz019#* éøßΩЖ→日本語中文한글"),
                 )
             },
         )
         .unwrap();
 
         // Both first installation and repeated embedding/headless setup retain order.
+        let mut previous_text_chains = None;
         for _ in 0..2 {
             hydrus_gui::fonts::install_emoji_fallback().unwrap();
             i_slint_core::with_global_context(
@@ -67,6 +84,19 @@ fn outline_fox_is_selected_without_replacing_platform_text_fallbacks() {
                 |context| {
                     let mut fonts = context.font_context().borrow_mut();
                     assert_eq!(ordinary_fallbacks(&mut fonts), ordinary);
+                    assert_eq!(
+                        default_glyphs(&mut fonts, "AZaz019#* éøßΩЖ→日本語中文한글"),
+                        text_glyphs
+                    );
+                    let text_chains: Vec<Vec<_>> =
+                        [GenericFamily::SansSerif, GenericFamily::SystemUi]
+                            .into_iter()
+                            .map(|generic| fonts.collection.generic_families(generic).collect())
+                            .collect();
+                    if let Some(prior) = &previous_text_chains {
+                        assert_eq!(&text_chains, prior);
+                    }
+                    previous_text_chains = Some(text_chains);
                     let outline = fonts.collection.family_id("Noto Emoji").unwrap();
                     let expected: Vec<_> = std::iter::once(outline)
                         .chain(prior_emoji.iter().copied().filter(|id| *id != outline))
@@ -80,7 +110,7 @@ fn outline_fox_is_selected_without_replacing_platform_text_fallbacks() {
                     );
                     let inner = &mut fonts.inner;
                     let mut query = inner.collection.query(&mut inner.source_cache);
-                    query.set_families([GenericFamily::Emoji]);
+                    query.set_families([GenericFamily::SansSerif, GenericFamily::SystemUi]);
                     let mut found = false;
                     query.matches_with(|font| {
                         if let Some(glyph) = font.charmap().and_then(|map| map.map('🦊')) {
