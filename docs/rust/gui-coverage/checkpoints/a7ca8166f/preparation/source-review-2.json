@@ -1,0 +1,104 @@
+{
+  "review_type": "Exact integrated source-only review; full exact-source Linux runtime and actual fresh renders pending",
+  "baseline_source_commit": "d8fd318334cadd944024846f49a4c48932c692e9",
+  "implementation_worktree": "/workspace/viewer-eye-tests",
+  "implementation_commit": "77544195290bad41e7838659e4f28c36feb5d23d",
+  "reviewed_file": "crates/hydrus-gui/tests/gui/options_window.rs",
+  "reviewed_file_sha256": "17631a6fe07a2a92d2e5c8321620118cb87294537d3a0503ea58ab49a1ab7474",
+  "diff_numstat": "321\t0\tcrates/hydrus-gui/tests/gui/options_window.rs",
+  "assertion_macros": {
+    "eye_menu_collapse_options_stage_reopen_and_rebuild_the_existing_browser_viewer": {
+      "baseline": 20,
+      "current": 47
+    },
+    "eye_menu_mixed_root_boundaries_match_the_recorded_menu_and_real_declaration_order": {
+      "baseline": 2,
+      "current": 2
+    }
+  },
+  "source_blockers": [],
+  "approval": false,
+  "expected_new_captures": [
+    "viewer-eye-menu-000.png",
+    "viewer-eye-menu-001.png",
+    "viewer-eye-menu-010.png",
+    "viewer-eye-menu-011.png",
+    "viewer-eye-menu-100.png",
+    "viewer-eye-menu-101.png",
+    "viewer-eye-menu-110.png",
+    "viewer-eye-menu-111.png",
+    "viewer-eye-menu-window-expanded.png",
+    "viewer-eye-menu-hovers-expanded.png",
+    "viewer-eye-menu-rendering-expanded.png",
+    "viewer-eye-menu-options-000.png",
+    "viewer-eye-menu-options-101.png",
+    "viewer-eye-menu-options-111.png"
+  ],
+  "historical_context_capture": "viewer-eye-menu.png",
+  "limitations": [
+    "Fixed eye coordinates are source-derived for exactly 1000 \u00d7 750 and must succeed under actual CI before approval.",
+    "Active popup counts and unchanged adapter count support the intended composite transport; actual exported pixels and submenu identity/readability must still be inspected.",
+    "The Qt PNG is an Options pane; the eight menu trees are real QAction data captured through a substituted PopupMenu, with no displayed Qt popup pixels.",
+    "Only three browser-viewer collapse preferences; no parent, alias, deeper action, unsupported ICC/duplicate-checkerboard/pinned-hover, physical OS window-manager or deferred Windows/macOS credit."
+  ],
+  "source_commit": "a7ca8166f7779876f7d8167c5db50addef12cbc6",
+  "integration_pin_complete": true,
+  "integration_review": {
+    "changed_files": [
+      "crates/hydrus-gui/tests/gui/options_window.rs",
+      "docs/rust/GUI.md",
+      "docs/rust/DIFFERENCES.md",
+      "docs/rust/gui-coverage/parity/viewer-eye-menu.json"
+    ],
+    "implementation_bytes_match_agent_commit": true,
+    "historical_manifest_top_level_metadata_preserved": true,
+    "all_original_limit_strings_preserved": true,
+    "exact_selected_three_only": true,
+    "followup_state": "authored_physical_input_and_capture_checks_full_Linux_and_fresh_native_review_pending",
+    "published_signed_off_total": 351,
+    "existing_candidates_pending": 24,
+    "selected_cohort_size": 3,
+    "expected_new_captures": 14,
+    "source_blockers": []
+  },
+  "source_pins": [
+    {
+      "path": "crates/hydrus-gui/tests/gui/options_window.rs",
+      "source_commit": "a7ca8166f7779876f7d8167c5db50addef12cbc6",
+      "sha256": "17631a6fe07a2a92d2e5c8321620118cb87294537d3a0503ea58ab49a1ab7474",
+      "committed_blob_and_worktree_match": true
+    },
+    {
+      "path": "docs/rust/GUI.md",
+      "source_commit": "a7ca8166f7779876f7d8167c5db50addef12cbc6",
+      "sha256": "a54dae7f40f0be5778f6e7e20a311d240c7c28fcf6d08fc66644a357d99bfb9a",
+      "committed_blob_and_worktree_match": true
+    },
+    {
+      "path": "docs/rust/DIFFERENCES.md",
+      "source_commit": "a7ca8166f7779876f7d8167c5db50addef12cbc6",
+      "sha256": "f67462d948c73cfac2a0c18d45c2769626d20f68623c5e3359fef4260a68e8a3",
+      "committed_blob_and_worktree_match": true
+    },
+    {
+      "path": "docs/rust/gui-coverage/parity/viewer-eye-menu.json",
+      "source_commit": "a7ca8166f7779876f7d8167c5db50addef12cbc6",
+      "sha256": "a9f992f92ad9940fabdeda7aca53000a216a611cac22a4a5fb11e1612051762f",
+      "committed_blob_and_worktree_match": true
+    }
+  ],
+  "proof_hashes": [
+    {
+      "path": "/workspace/validation-reviews/viewer-eye3/assertion-preservation-3.json",
+      "sha256": "5b7e3a0d323932f55e099c133ca3304d3d41bc6686976b5e14560b33e47da43a"
+    },
+    {
+      "path": "/workspace/validation-reviews/viewer-eye3/assertion-preservation-root.json",
+      "sha256": "817a8af61416616b0367a8723c0cc928cefc8a397ecfb3a38db36c03292c0399"
+    },
+    {
+      "path": "/workspace/validation-reviews/viewer-eye3/reference/root-provenance.json",
+      "sha256": "502c9392ca87fd31257da000f73da0ef1b80f478c216b821da7d4495413d94c7"
+    }
+  ]
+}

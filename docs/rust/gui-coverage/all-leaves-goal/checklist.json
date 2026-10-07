@@ -4,12 +4,12 @@
   "goal": "All individual feature leaves in the report implemented and explicitly verified.",
   "classification_audit_source": "05000f10eafc4211d6856549d0073edb90ba5811",
   "classification_audit": "audit-05000f10e.json",
-  "validated_implementation_source": "7c74c617165a22814a8d0202008794b2beb53de0",
+  "validated_implementation_source": "a7ca8166f7779876f7d8167c5db50addef12cbc6",
   "distinct_terminal_leaves": 1274,
   "baseline_deficit_leaves": 813,
   "historical_first_pass_leaves": 461,
-  "explicit_implementation_signoffs": 351,
-  "remaining_without_explicit_signoff": 923,
+  "explicit_implementation_signoffs": 354,
+  "remaining_without_explicit_signoff": 920,
   "implementation_ledger": "../overnight/progress.json",
   "historical_verification_approvals": [],
   "leaves": [
@@ -3691,17 +3691,17 @@
     {
       "id": "audit-options-media-viewer-hovers-top-hover-button-menu-controls-collapse-hovers-submenu-in-view-options-eye-menu",
       "baseline_status": "missing",
-      "signed_off_in_implementation_ledger": false
+      "signed_off_in_implementation_ledger": true
     },
     {
       "id": "audit-options-media-viewer-hovers-top-hover-button-menu-controls-collapse-rendering-submenu-in-view-options-eye-menu",
       "baseline_status": "missing",
-      "signed_off_in_implementation_ledger": false
+      "signed_off_in_implementation_ledger": true
     },
     {
       "id": "audit-options-media-viewer-hovers-top-hover-button-menu-controls-collapse-window-submenu-in-view-options-eye-menu",
       "baseline_status": "missing",
-      "signed_off_in_implementation_ledger": false
+      "signed_off_in_implementation_ledger": true
     },
     {
       "id": "audit-options-media-viewer-hovers-top-hover-button-menu-controls-zoom-switch-button-switches-between",
@@ -6384,6 +6384,6 @@
       "signed_off_in_implementation_ledger": true
     }
   ],
-  "previous_checkpoint_commit": "b5b079a332ad6036bfa016e3f213a04db009eaf0",
-  "checkpoint_evidence": "../checkpoints/7c74c6171/README.md"
+  "previous_checkpoint_commit": "d8fd318334cadd944024846f49a4c48932c692e9",
+  "checkpoint_evidence": "../checkpoints/a7ca8166f/README.md"
 }

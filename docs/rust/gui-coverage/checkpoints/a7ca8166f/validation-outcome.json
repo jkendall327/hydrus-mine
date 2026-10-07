@@ -1,0 +1,68 @@
+{
+  "source_commit": "a7ca8166f7779876f7d8167c5db50addef12cbc6",
+  "run_id": 37571489508,
+  "conclusion": "success",
+  "validation_scope": "linux",
+  "required_platforms": [
+    "linux"
+  ],
+  "deferred_platforms": [
+    "windows",
+    "macos"
+  ],
+  "gui_tests": {
+    "passed": 706,
+    "failed": 0,
+    "ignored": 0,
+    "seconds": 189.02
+  },
+  "media_tests": {
+    "passed": 67,
+    "failed": 0,
+    "ignored": 0,
+    "seconds": 1.01
+  },
+  "selected_tests_passed": [
+    "test options_window::eye_menu_mixed_root_boundaries_match_the_recorded_menu_and_real_declaration_order ... ok",
+    "test options_window::eye_menu_collapse_options_stage_reopen_and_rebuild_the_existing_browser_viewer ... ok",
+    "test options_dialog::eye_menu_preferences_follow_all_reference_combinations_without_saving_detached_edits ... ok",
+    "test import::decode::tests::browser_eye_menu_preferences_migrate_independently ... ok"
+  ],
+  "prior_assertions_preserved": 22,
+  "current_assertions": 49,
+  "prior_tests": 2,
+  "current_tests": 2,
+  "timings": {
+    "clippy_seconds": 71.0,
+    "clippy_cargo_seconds": 70.0,
+    "test_compile_seconds": 219.0,
+    "test_step_seconds": 640.0
+  },
+  "cache_observations": [
+    "2026-10-07T04:26:51.8809963Z Version: 20261002.596",
+    "2026-10-07T04:26:51.8818279Z Version: 20261004.327.1",
+    "2026-10-07T04:27:29.3427470Z Restored from cache key \"v0-rust-check-Linux-x64-ff0b8b70-0ea5e1be\" full match: true.",
+    "2026-10-07T04:27:31.3249285Z Workspace restore prefix: hydrus-ws-v1-check-Linux-X64-d375ff77746ca54e3a64f5c5-",
+    "2026-10-07T04:27:53.6483258Z Verified and restored 4122 tracked-input mtimes and 293 coherent workspace artifact files; Cargo freshness checks remain enabled.",
+    "2026-10-07T04:40:24.2321788Z Workspace library snapshot candidate: 293 artifact files plus input ledger, 2200273639 bytes (limit 4294967296).",
+    "2026-10-07T04:40:49.1598019Z Cache saved with key: hydrus-ws-v1-check-Linux-X64-d375ff77746ca54e3a64f5c5-a7ca8166f7779876f7d8167c5db50addef12cbc6-37571489508-1",
+    "2026-10-07T04:40:56.7900437Z Retained workspace snapshot bytes: 1379437839; budget: 3221225472."
+  ],
+  "native_artifact_id": 11461122175,
+  "native_zip_sha256": "a495981813bad3f6d14db1bb913b2c96c8e3daa98e11af915d7d6c177436d89a",
+  "native_image_count": 333,
+  "limits": [
+    "Hosted observations, not controlled attribution or separate Slint generation/Rust/link timing.",
+    "GUI and media suites have no failed or ignored tests. Existing ignored tests in other workspace suites remain; no assertions or tests were weakened.",
+    "Exactly three browser-viewer collapse preferences; runtime result alone does not approve image readability or broaden feature scope."
+  ],
+  "evidence_sha256": {
+    "full-check.log": "b6fe2f8a6ead79c371c354e31d7d196b763e0ec3f25b230fce50853d34943e80",
+    "tests.log": "f69ad29460ae6460844fa2e64a339ca8f926bdc7e3a2b49d6e2a5f146e21c3fa",
+    "parity.log": "d491456d300504ca25c6aa1c16484769eb0a0a016675e2e111179f3ea01abf84",
+    "clippy.log": "1b3226d1c75f95d177c0908ae9b12943a8bee0cbd9f13da686ee9404cc9b42e4",
+    "maintenance.log": "04d155a90adb1e23064b2ba1002bfc7c5a13589699a89d9639e9913ddd29fa34",
+    "ci-evidence.json": "52eb607c0b6b8ddca8bd9c384cb51864ef49a4abee29562be77e16d1116dbd65",
+    "native-render-manifest.json": "62367f37770894907a76d9b91465274fe1a1220232ac43d295cfb3a6f0856369"
+  }
+}
