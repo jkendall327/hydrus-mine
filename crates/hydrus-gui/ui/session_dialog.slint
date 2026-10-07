@@ -107,21 +107,24 @@ export component SessionDialog inherits Window {
                         Button { text: root.notice-ok-label; clicked => { root.cancelled(); } }
                     }
                 }
-                if root.asking-name: name-apply := Button {
-                    enabled: !root.child-open;
-                    text: root.name-ok-label;
+                if root.asking-name: HorizontalLayout {
+                    spacing: 0px;
+                    name-apply := Button {
+                        enabled: !root.child-open;
+                        text: root.name-ok-label;
+                        clicked => {
+                            if root.reject-blank-submission && root.text == "" {
+                                root.blank-submitted();
+                            } else {
+                                root.name-entered(root.text);
+                            }
+                        }
+                    }
                     Timer {
                         interval: 1ms;
                         running: root.measure-name-apply;
                         triggered => {
                             root.name-apply-measured({x:name-apply.absolute-position.x,y:name-apply.absolute-position.y,w:name-apply.width,h:name-apply.height});
-                        }
-                    }
-                    clicked => {
-                        if root.reject-blank-submission && root.text == "" {
-                            root.blank-submitted();
-                        } else {
-                            root.name-entered(root.text);
                         }
                     }
                 }
