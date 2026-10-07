@@ -1,0 +1,69 @@
+{
+  "source_commit": "9f6397368d2ecdfcb28e7c7159a8bf195e7d7012",
+  "run_id": 37577340514,
+  "conclusion": "success",
+  "validation_scope": "linux",
+  "required_platforms": [
+    "linux"
+  ],
+  "deferred_platforms": [
+    "windows",
+    "macos"
+  ],
+  "gui_tests": {
+    "passed": 707,
+    "failed": 0,
+    "ignored": 0,
+    "seconds": 218.91
+  },
+  "media_tests": {
+    "passed": 67,
+    "failed": 0,
+    "ignored": 0,
+    "seconds": 1.01
+  },
+  "selected_tests_passed": [
+    "test sidebar_context_cogs::default_collect_cog_stages_cancels_reopens_and_rejects_retired_menu_actions ... ok",
+    "test sidebar_context_cogs::sidebar_actions_replay_all_service_display_and_unmatched_media_outputs ... ok",
+    "test sidebar_context_cogs::actual_tag_display_menu_changes_modes_captures_checks_and_rejects_retired_view_actions ... ok",
+    "test sort_cog::actual_sidebar_availability_and_independent_collect_service_checks ... ok",
+    "test sort_cog::menus_replay_service_order_separators_views_checks_and_full_context_preservation ... ok"
+  ],
+  "prior_assertions_preserved": 25,
+  "current_assertions": 88,
+  "prior_tests": 2,
+  "current_tests": 3,
+  "timings": {
+    "clippy_seconds": 77.0,
+    "clippy_cargo_seconds": 76.0,
+    "test_compile_seconds": 235.0,
+    "test_step_seconds": 743.0
+  },
+  "cache_observations": [
+    "2026-10-07T05:38:50.3966940Z Version: 20261002.596",
+    "2026-10-07T05:38:50.3974932Z Version: 20261004.327.1",
+    "2026-10-07T05:39:34.2572660Z Restored from cache key \"v0-rust-check-Linux-x64-ff0b8b70-0ea5e1be\" full match: true.",
+    "2026-10-07T05:39:35.5831528Z Workspace restore prefix: hydrus-ws-v1-check-Linux-X64-d375ff77746ca54e3a64f5c5-",
+    "2026-10-07T05:39:58.3560492Z Verified and restored 4122 tracked-input mtimes and 293 coherent workspace artifact files; Cargo freshness checks remain enabled.",
+    "2026-10-07T05:54:32.3013295Z Workspace library snapshot candidate: 293 artifact files plus input ledger, 2200273639 bytes (limit 4294967296).",
+    "2026-10-07T05:54:37.8647135Z Cache saved with key: hydrus-ws-v1-check-Linux-X64-d375ff77746ca54e3a64f5c5-9f6397368d2ecdfcb28e7c7159a8bf195e7d7012-37577340514-1",
+    "2026-10-07T05:54:45.5425181Z Retained workspace snapshot bytes: 1379324373; budget: 3221225472."
+  ],
+  "native_artifact_id": 11463522766,
+  "native_zip_sha256": "360f56c144c9bf368156d51e32592767d1e01fe23fab7149654206cb3f329f2d",
+  "native_image_count": 337,
+  "limits": [
+    "Hosted observations, not controlled attribution or separate Slint generation/Rust/link timing.",
+    "GUI and media suites have no failed or ignored tests. Existing ignored tests in other workspace suites remain; no assertions or tests were weakened.",
+    "Exactly one sidebar namespace tag-display action; runtime result alone does not approve image readability or broaden feature scope."
+  ],
+  "evidence_sha256": {
+    "full-check.log": "d15c75307ed60fe8af968b3e5f07c89b25c1f3f34c484d85cb5264845899f0ee",
+    "tests.log": "4e5a59d34fd8b9efb0e6ce784acd4590ae9fbd60c384b7ede2a051172533ecc0",
+    "parity.log": "c12a71cc6c1321b4f1b86a19fd29f18c200e2d4cb68f470d6f539f70e8097f84",
+    "clippy.log": "570562cdfa918c15a90358e0a5acd076d381c78421663a7fa891b49dded1c90c",
+    "maintenance.log": "c10f7fb26d42c726ca7798a38f3615ea7253dc0e98fa56d13d22bdd14e6b2d29",
+    "ci-evidence.json": "2781fd3447c690fa8132709b6f007377d781efc0d6529c2b97d1c3aea1c0182f",
+    "native-render-manifest.json": "903650fed81ac0fee825b1463057bf9a8208a90d50846921cba93b4de34254be"
+  }
+}

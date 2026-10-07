@@ -3425,7 +3425,7 @@ Options uses the same service choices, staged until Apply, preserved after
 reopening, and discarded by Cancel. Both controls preserve the full tag-context
 metadata independently from the page’s search context.
 
-The current validation follow-up targets only the sidebar namespace-sort
+The validated follow-up covers only the sidebar namespace-sort
 ADVANCED tag-display choice. The October 7 actual Qt rerun matches all 16 sort
 cases, eight collect cases and left/right button routes without changing the
 recording or its images. Actual Qt menu grabs show the three display choices in
@@ -3435,9 +3435,10 @@ assertions. Actual mouse/key routes exercise all three choices and produce four
 defining root/submenu captures. The test checks full contexts and saved settings
 against retained View actions, plus enabled save-default policy and new-page
 inheritance. Manual popup cleanup around hide/page switch does not claim
-automatic popup teardown. Full Linux execution and fresh independent native
-rendered review remain pending; the banked ledger is 354 signed off with 21
-existing candidates awaiting sign-off.
+automatic popup teardown. Full Linux run `37577340514` and fresh independent
+native rendered review passed, including all 707 GUI and 67 media tests.
+The banked ledger is 355 signed off with 20 existing candidates pending.
+[Evidence](gui-coverage/checkpoints/9f6397368/README.md).
 The first hosted run passed all 706 prior GUI tests but exposed an unsorted
 restoration baseline in the new test. Setup now invokes the ordinary sort
 consumer, as the reference does before its mouse routes, and adds an exact

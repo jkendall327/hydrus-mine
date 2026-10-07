@@ -400,3 +400,31 @@ A fresh run-specific snapshot saved 293 files and 2,200,273,639 uncompressed
 bytes. Maintenance retained 1,379,437,839 compressed bytes under the 3 GiB
 budget. [Exact outcome and logs](../checkpoints/a7ca8166f/validation-outcome.json)
 are retained. No further optimization experiment was opened.
+
+## Sidebar tag-display checkpoint and cache compatibility
+
+The initial test-only source `393c12553`, full Linux run `37574215162`,
+ran on image `20260927.320.1`. Dependency reuse succeeded, but no workspace
+snapshot matched prefix `af4fa2e32ed1c3da4471dd09`; the generated UI rebuilt.
+Clippy took 636s (637s workflow step), test compilation 749s and the full test
+step 1,258s. The 706 existing GUI tests passed; the new test failed due to an
+unsorted setup baseline. This run earns no completion credit. Its logs and
+assertion-preserving repair diagnosis remain in the checkpoint's failed-run
+and preparation evidence.
+
+Repaired source `9f6397368`, full Linux run `37577340514`, ran on image
+`20261004.327.1` and restored 4,122 verified input mtimes and 293 coherent
+workspace artifacts under prefix `d375ff77746ca54e3a64f5c5`. Clippy took 76s
+(77s workflow step), test compilation 235s and the full test step 743s. The
+Clippy log does not compile `hydrus-gui-ui`. All 707 GUI tests passed in
+218.91s and all 67 media tests in 1.01s. These are hosted observations across
+different runner images/cache compatibility states, not controlled speedup
+attribution or separate generation/Rust/link measurements.
+
+The successful run saved a fresh run-specific snapshot of 293 files,
+2,200,273,639 uncompressed bytes. Maintenance retained 1,379,324,373 compressed
+workspace-cache bytes under the 3 GiB cap. Existing bounds can evict a snapshot
+needed by a subsequently assigned runner image; no claim of universal cache
+hits is made. [Successful outcome and logs](../checkpoints/9f6397368/validation-outcome.json)
+and [failed-run evidence](../checkpoints/9f6397368/failed-runs/393c12553/failed-validation-outcome.json)
+are retained. No further optimization experiment was opened.

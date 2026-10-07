@@ -1,0 +1,24 @@
+{
+  "source_commit": "9f6397368d2ecdfcb28e7c7159a8bf195e7d7012",
+  "run_id": 37577340514,
+  "current_declaration_substitutions": [
+    {
+      "id": "audit-options-search-sort-collect-tag-display",
+      "role": "scoped_implementation",
+      "author_declared_commit": "c774c0f5fcdae58b93a1818c47bd63fde944697e",
+      "old_path": "crates/hydrus-gui/src/page.rs",
+      "old_line": 1970,
+      "old_symbol": "pub fn apply_sort_cog",
+      "old_line_sha256": null,
+      "path": "crates/hydrus-gui/src/page.rs",
+      "line": 2157,
+      "text": "    pub fn apply_sort_cog(&mut self, action: &hydrus_gui_model::sort_cog::Action) -> bool {",
+      "line_sha256": "58a8575a5a6068566ae50254216a4f7e1dbb9160be3c2a561892a041b72edf2e",
+      "source_commit": "9f6397368d2ecdfcb28e7c7159a8bf195e7d7012",
+      "method": "Explicit unique same named declaration in committed source; historical symbol/line/commit retained separately. No nearest-line inference.",
+      "scope_status_credit_change": false
+    }
+  ],
+  "scope_status_credit_change": false,
+  "approval": false
+}

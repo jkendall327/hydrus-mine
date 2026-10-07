@@ -1,0 +1,65 @@
+{
+  "base_source_commit": "7bf850103ff1d2d23fa5986372b6db6857b12c4b",
+  "worktree": "/workspace/sidebar-tag-display-tests",
+  "branch": "codex/sidebar-tag-display-tests",
+  "owned_file": "crates/hydrus-gui/tests/gui/sidebar_context_cogs.rs",
+  "owned_file_sha256": "9745a20ca9efd0e6e845e258d56f4348e1326a95c96ae08f081306b7a1370a11",
+  "baseline_bytes": 15749,
+  "baseline_entire_file_preserved_as_exact_prefix": true,
+  "every_original_line_and_assertion_preserved_bytewise": true,
+  "original_assertion_macros": 25,
+  "current_assertion_macros": 87,
+  "new_assertion_macros": 62,
+  "original_tests": 2,
+  "current_tests": 3,
+  "new_test": "sidebar_context_cogs::actual_tag_display_menu_changes_modes_captures_checks_and_rejects_retired_view_actions",
+  "original_tests_unchanged": [
+    "sidebar_actions_replay_all_service_display_and_unmatched_media_outputs",
+    "default_collect_cog_stages_cancels_reopens_and_rejects_retired_menu_actions"
+  ],
+  "original_replay_preserved": {
+    "sort_cases": 16,
+    "collect_cases": 8,
+    "assertions": "Complete original context, menu ordering/checks, media, store, Cancel/reopen/stale service/page assertions unchanged"
+  },
+  "diff": "332 inserted lines;0 deleted;one owned file",
+  "captures": [
+    "sidebar-sort-cog-root.png",
+    "sidebar-tag-display-1.png",
+    "sidebar-tag-display-3.png",
+    "sidebar-tag-display-2.png"
+  ],
+  "capture_list_path": "/workspace/validation-reviews/sidebar-tag-display1/expected-new-captures-3.json",
+  "capture_list_sha256": "d7f33970684be3d33c58adac7563def39e2256b088c528ff69c75347a11794eb",
+  "capture_size": [
+    1060,
+    760
+  ],
+  "capture_transport": "Actual MainWindow software-rendered embedded Slint popup composite. Each capture requires exact active root/submenu count1/2 before and after render plus unchanged adapter count.",
+  "source_checks": [
+    "rustfmt --edition2024 --check:passed",
+    "git diff --check:passed",
+    "Exact original15749byte prefix/25assertion preservation:passed",
+    "Independent review2/root found no concrete source/API blocker"
+  ],
+  "runtime_validation": "Not performed locally; root exact-source full Linux strictlint/workspace tests and fresh independent actual images required.",
+  "scope": [
+    "Exactly audit-options-search-sort-collect-tag-display; no parent/alias/DefaultCollect extra credit",
+    "Actual right/left pointer uses rendered exposed sort_order_frame and source-defined adjacent30px cog/4px gap; measured finite positive frame and viewport bounds",
+    "Real opening must create root1 and refresh3 View ids; all service and View check models equal recorded state",
+    "Real Down twice/Right enters ADVANCED submenu2; actual Down/Return mode changes2\u21921\u21923\u21922; complete PageSort/searchTagContext/PageCollect and exact fixture media stay correct",
+    "Actual reopened selected check captures for1/3/2; physical Escape2\u21921\u21920; all off-policy saved SortSettings unchanged",
+    "View-id stale opening, hidden Main and switched-page action attempts preserve old/successor contexts and all saved settings",
+    "One actual2\u21923 View activation with save-page-sort-on-change true proves entire saved SortSettings and new-page sort/collect inheritance; restore initial saved settings afterward"
+  ],
+  "limits": [
+    "No product/Slint/source-file/docs/status changes; no builds, mutation tests or push",
+    "Modes1/3/2 have indistinguishable within-service media order in the actual fixture; this proves recorded routing/preservation, not discriminating filter/backend parity",
+    "Qt popup grabs paint genuine menus but substituted PopupMenu does not record OS display placement; no exact pixel/OS menu/window-manager parity claim",
+    "Source geometry and software popup/readability still need exact hosted runtime/fresh image validation",
+    "close_all_popups only explicit cleanup around temporary hide/page-switch; no new automatic-teardown claim",
+    "Windows/macOS deferred; eventual publication Linux only"
+  ],
+  "agent_commit": "8daccca6beded7871c6849cd142926566f8f67ad",
+  "worktree_clean_after_commit": true
+}

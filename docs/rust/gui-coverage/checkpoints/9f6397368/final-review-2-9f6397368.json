@@ -1,0 +1,584 @@
+{
+  "source_commit": "9f6397368d2ecdfcb28e7c7159a8bf195e7d7012",
+  "run_id": 37577340514,
+  "artifact_id": 11463522766,
+  "native_zip_sha256": "360f56c144c9bf368156d51e32592767d1e01fe23fab7149654206cb3f329f2d",
+  "validation_scope": "linux",
+  "claims": [
+    {
+      "id": "audit-options-search-sort-collect-tag-display",
+      "approval": true,
+      "caveats": [
+        "Exactly the sidebar namespace-sort ADVANCED tag-display action is approved. No tag-service, collect, DefaultCollect, tag-display management, parent, alias or broader action-family completion receives credit.",
+        "All twelve namespace fixture cases have identical ordered media across modes 1/3/2 within each of four services. Exact media replay proves recorded routing and context preservation, not differentiated display-filter output. Production mode 2 maps to SingleMedia and mode 3 to SelectionList in source; no wider filter backend credit is claimed.",
+        "Physical input and four defining captures cover the my-tags service; the unchanged full sixteen-sort/eight-collect replay preserves all four services and existing contexts. The actual checked menu shows order 1/3/2, and both disabled and enabled save-default policies are assertion-backed.",
+        "Retained View IDs are rejected after a new opening, while the owner is hidden and after a page switch, preserving caller/successor contexts and defaults. The test explicitly clears embedded popups after hide/page switching as cleanup; automatic hidden-popup retirement and permanent retirement on arbitrary temporary hide are not claimed.",
+        "Qt references are real polished QMenu grabs obtained with PopupMenu presentation intercepted. They establish labels, order and check states, without displayed popup-placement, exact pixel, direct OS-native menu introspection or physical window-manager parity. Native fonts, row spacing, check glyphs and composite menu styling differ.",
+        "The root and three ADVANCED submenu states fit the inspected 1060 \u00d7 760 native viewport with full selected labels and checks. Underlying page/thumbnail/preview layout is supporting context and earns no additional credit; universal or narrow-viewport layout is not established.",
+        "The initial source 393c12553 failed because its restored input order was compared with a sorted reference baseline before a sort consumer ran. The repaired setup uses the ordinary sort consumer, adds an exact sorted-baseline assertion and preserves all 87 prior assertions. That failed run produced no defining captures and demonstrates no production right-click defect.",
+        "Validation is Linux only; Windows and macOS remain deferred. Registered repository metadata implies no network or repository work. The optional Qt API listener was unavailable; direct Qt/DB recording succeeded and supplies no API connectivity claim."
+      ],
+      "manifest": "docs/rust/gui-coverage/parity/sidebar-sort-collect-cogs.json",
+      "inspected_native_image_names": [
+        "sidebar-sort-cog-root.png",
+        "sidebar-tag-display-1.png",
+        "sidebar-tag-display-3.png",
+        "sidebar-tag-display-2.png"
+      ],
+      "tests": [
+        "sidebar_context_cogs::sidebar_actions_replay_all_service_display_and_unmatched_media_outputs",
+        "sidebar_context_cogs::default_collect_cog_stages_cancels_reopens_and_rejects_retired_menu_actions",
+        "sidebar_context_cogs::actual_tag_display_menu_changes_modes_captures_checks_and_rejects_retired_view_actions",
+        "sort_cog::menus_replay_service_order_separators_views_checks_and_full_context_preservation",
+        "sort_cog::actual_sidebar_availability_and_independent_collect_service_checks"
+      ],
+      "source_reference_evidence": [
+        "The actual Qt namespace submenu and typed native View actions use labels/codes in order 1/3/2, preserve the namespace list and independent sort/search/collect contexts, and reach the real page resort consumer.",
+        "Current full Linux execution passes all three GUI tests and both model regressions. Real right-click refusal, left opening with fresh IDs, Down/Right/Return transitions 2\u21921\u21923\u21922, live reopened checks, Escape dismissal, saved settings and enabled-policy 2\u21923/new-page inheritance are verified.",
+        "All 25 original GUI assertions/two tests and complete published original file prefix remain. The initial follow-up 87 assertions and all lines remain; repaired current source has 88 macros across 3 tests. Fresh four-image inspection resolves the runtime/render gate without widening scope."
+      ]
+    }
+  ],
+  "selected_count": 1,
+  "approval_scope": "Only the selected ADVANCED tag-display leaf; finite source/render/reference limits retained.",
+  "required_jobs": [
+    {
+      "name": "parity-models",
+      "id": 112649081736,
+      "conclusion": "success"
+    },
+    {
+      "name": "check",
+      "id": 112649081975,
+      "conclusion": "success"
+    }
+  ],
+  "full_test_summary": {
+    "gui": {
+      "passed": 707,
+      "failed": 0,
+      "ignored": 0,
+      "seconds": 218.91,
+      "log": "/workspace/validation-reviews/ci-9f6397368/tests.log",
+      "line": 1382
+    },
+    "media": {
+      "passed": 67,
+      "failed": 0,
+      "ignored": 0,
+      "seconds": 1.01,
+      "log": "/workspace/validation-reviews/ci-9f6397368/tests.log",
+      "line": 2289
+    },
+    "strict_clippy": "passed exact-source check step with warnings denied",
+    "fmt": "passed exact-source check step",
+    "parity_models": "passed required exact-source job",
+    "ratchet": "passed exact-source check step",
+    "cache_maintenance": {
+      "passed": true,
+      "job_id": 112653174677
+    },
+    "test_compile": {
+      "duration": "3m55s",
+      "log": "/workspace/validation-reviews/ci-9f6397368/tests.log",
+      "line": 18
+    },
+    "selected_and_preserved_distinct_tests": 5
+  },
+  "native_manifest_path": "/workspace/validation-reviews/ci-9f6397368/native-render-manifest.json",
+  "native_manifest_sha256": "903650fed81ac0fee825b1463057bf9a8208a90d50846921cba93b4de34254be",
+  "native_image_count": 337,
+  "images_actually_viewed": [
+    {
+      "name": "sidebar-sort-cog-root.png",
+      "path": "/workspace/validation-reviews/ci-9f6397368/native-renders/sidebar-sort-cog-root.png",
+      "source_commit": "9f6397368d2ecdfcb28e7c7159a8bf195e7d7012",
+      "run_id": 37577340514,
+      "artifact_id": 11463522766,
+      "sha256": "40a4a21f5d4b1fb1e15d3191f83558ed89818cbff1c8dc37f78af4bc2d2eed05",
+      "bytes": 260591,
+      "dimensions": [
+        1060,
+        760
+      ],
+      "actually_viewed": true,
+      "supplemental": false,
+      "observation": "Actual sort-cog root contains tag service followed by ADVANCED: tag display type, both with visible submenu arrows and full readable captions. The menu fits the 1060 \u00d7 760 image. The locked 30-file page and closed collect cog are supporting context.",
+      "producer": {
+        "path": "crates/hydrus-gui/tests/gui/sidebar_context_cogs.rs",
+        "line": 621,
+        "text": "        \"sidebar-sort-cog-root.png\",",
+        "anchor_git_head": "9f6397368d2ecdfcb28e7c7159a8bf195e7d7012",
+        "line_sha256": "1e7315fa883b3196945c84d28a6d326d3753d007ddba07f0de8591f2fdfece86"
+      },
+      "state_and_dynamic_path_proof": "Initial saved namespace mode 2 on my tags; actual sort-button left opens one fresh root; full services and ordered extra checks equal recorded case 2, actual composite capture with unchanged adapter count."
+    },
+    {
+      "name": "sidebar-tag-display-1.png",
+      "path": "/workspace/validation-reviews/ci-9f6397368/native-renders/sidebar-tag-display-1.png",
+      "source_commit": "9f6397368d2ecdfcb28e7c7159a8bf195e7d7012",
+      "run_id": 37577340514,
+      "artifact_id": 11463522766,
+      "sha256": "8aa254b6b61ec12d81710b643587aa34460ebbfbe19552d8f84b6a35863000cd",
+      "bytes": 247986,
+      "dimensions": [
+        1060,
+        760
+      ],
+      "actually_viewed": true,
+      "supplemental": false,
+      "observation": "Actual ADVANCED submenu is open beside the visibly highlighted root row. All three full labels appear in reference order 1/3/2; only display tags is checked. Root and submenu fit the image, with readable text and check glyphs. The underlying thumbnail order is unchanged across these recorded modes.",
+      "producer": {
+        "path": "crates/hydrus-gui/tests/gui/sidebar_context_cogs.rs",
+        "line": 665,
+        "text": "                \"sidebar-tag-display-{}.png\",",
+        "anchor_git_head": "9f6397368d2ecdfcb28e7c7159a8bf195e7d7012",
+        "line_sha256": "57bc24974c4411ae5cefbe03e93eebb4908fbcd576fcdeba579abdd9a51d0008"
+      },
+      "state_and_dynamic_path_proof": "Explicit recorded my-tags case loop modes 1/3/2. Actual Down/Right opens ADVANCED submenu, Down/Return changes from a different previous mode; full PageSort/search/collect/media and saved-off equality; reopening verifies exact live check rows before capture with two active popups and unchanged adapter count."
+    },
+    {
+      "name": "sidebar-tag-display-3.png",
+      "path": "/workspace/validation-reviews/ci-9f6397368/native-renders/sidebar-tag-display-3.png",
+      "source_commit": "9f6397368d2ecdfcb28e7c7159a8bf195e7d7012",
+      "run_id": 37577340514,
+      "artifact_id": 11463522766,
+      "sha256": "d2e6cd6060f7070f05053ec3b2d74cd728f10b2ce1a998b20db9af23c017d29f",
+      "bytes": 247986,
+      "dimensions": [
+        1060,
+        760
+      ],
+      "actually_viewed": true,
+      "supplemental": false,
+      "observation": "Actual ADVANCED submenu is open beside the visibly highlighted root row. All three full labels appear in reference order 1/3/2; only multiple media view tags is checked. Root and submenu fit the image, with readable text and check glyphs. The underlying thumbnail order is unchanged across these recorded modes.",
+      "producer": {
+        "path": "crates/hydrus-gui/tests/gui/sidebar_context_cogs.rs",
+        "line": 665,
+        "text": "                \"sidebar-tag-display-{}.png\",",
+        "anchor_git_head": "9f6397368d2ecdfcb28e7c7159a8bf195e7d7012",
+        "line_sha256": "57bc24974c4411ae5cefbe03e93eebb4908fbcd576fcdeba579abdd9a51d0008"
+      },
+      "state_and_dynamic_path_proof": "Explicit recorded my-tags case loop modes 1/3/2. Actual Down/Right opens ADVANCED submenu, Down/Return changes from a different previous mode; full PageSort/search/collect/media and saved-off equality; reopening verifies exact live check rows before capture with two active popups and unchanged adapter count."
+    },
+    {
+      "name": "sidebar-tag-display-2.png",
+      "path": "/workspace/validation-reviews/ci-9f6397368/native-renders/sidebar-tag-display-2.png",
+      "source_commit": "9f6397368d2ecdfcb28e7c7159a8bf195e7d7012",
+      "run_id": 37577340514,
+      "artifact_id": 11463522766,
+      "sha256": "719c8e4be24c02ca1a7f6d69653aa448bf63a6b4c3bd2ca960a5457d27b6ae8c",
+      "bytes": 247984,
+      "dimensions": [
+        1060,
+        760
+      ],
+      "actually_viewed": true,
+      "supplemental": false,
+      "observation": "Actual ADVANCED submenu is open beside the visibly highlighted root row. All three full labels appear in reference order 1/3/2; only single media view tags is checked. Root and submenu fit the image, with readable text and check glyphs. The underlying thumbnail order is unchanged across these recorded modes.",
+      "producer": {
+        "path": "crates/hydrus-gui/tests/gui/sidebar_context_cogs.rs",
+        "line": 665,
+        "text": "                \"sidebar-tag-display-{}.png\",",
+        "anchor_git_head": "9f6397368d2ecdfcb28e7c7159a8bf195e7d7012",
+        "line_sha256": "57bc24974c4411ae5cefbe03e93eebb4908fbcd576fcdeba579abdd9a51d0008"
+      },
+      "state_and_dynamic_path_proof": "Explicit recorded my-tags case loop modes 1/3/2. Actual Down/Right opens ADVANCED submenu, Down/Return changes from a different previous mode; full PageSort/search/collect/media and saved-off equality; reopening verifies exact live check rows before capture with two active popups and unchanged adapter count."
+    }
+  ],
+  "required_images_viewed": 4,
+  "supplemental_images_viewed": 0,
+  "reference_images_actually_viewed": [
+    {
+      "path": "/workspace/hydrus-mine/oracle/fixtures/sidebar_sort_cog.png",
+      "source_commit": "9f6397368d2ecdfcb28e7c7159a8bf195e7d7012",
+      "sha256": "22819b3cdcb8099e3cfd1b667f40d1c6a2a50e930416e39c72bea7cb9e610148",
+      "dimensions": [
+        222,
+        44
+      ],
+      "actually_viewed": true,
+      "observation": "Real painted Qt root: tag service and ADVANCED with submenu arrows, both full labels readable."
+    },
+    {
+      "path": "/workspace/hydrus-mine/oracle/fixtures/sidebar_sort_cog_1.png",
+      "source_commit": "9f6397368d2ecdfcb28e7c7159a8bf195e7d7012",
+      "sha256": "49b741758b61ba494c12a5e1892e8a4656d632fb6d36619dfc81af25fd7c1301",
+      "dimensions": [
+        187,
+        66
+      ],
+      "actually_viewed": true,
+      "observation": "Real painted Qt ADVANCED submenu: display/multiple-media/single-media labels in order 1/3/2, only single media checked. Native mode2 matches this state; modes1/3 are independently recorded and physically selected states."
+    }
+  ],
+  "exact_passing_test_proof": [
+    {
+      "test": "sidebar_context_cogs::sidebar_actions_replay_all_service_display_and_unmatched_media_outputs",
+      "source": "crates/hydrus-gui/tests/gui/sidebar_context_cogs.rs",
+      "source_line": 142,
+      "source_commit": "9f6397368d2ecdfcb28e7c7159a8bf195e7d7012",
+      "run_id": 37577340514,
+      "passing_records": [
+        {
+          "log": "/workspace/validation-reviews/ci-9f6397368/tests.log",
+          "line": 1231,
+          "text": "test sidebar_context_cogs::sidebar_actions_replay_all_service_display_and_unmatched_media_outputs ... ok"
+        },
+        {
+          "log": "/workspace/validation-reviews/ci-9f6397368/full-check.log",
+          "line": 2496,
+          "text": "2026-10-07T05:50:55.3906774Z test sidebar_context_cogs::sidebar_actions_replay_all_service_display_and_unmatched_media_outputs ... ok"
+        }
+      ]
+    },
+    {
+      "test": "sidebar_context_cogs::default_collect_cog_stages_cancels_reopens_and_rejects_retired_menu_actions",
+      "source": "crates/hydrus-gui/tests/gui/sidebar_context_cogs.rs",
+      "source_line": 321,
+      "source_commit": "9f6397368d2ecdfcb28e7c7159a8bf195e7d7012",
+      "run_id": 37577340514,
+      "passing_records": [
+        {
+          "log": "/workspace/validation-reviews/ci-9f6397368/tests.log",
+          "line": 1228,
+          "text": "test sidebar_context_cogs::default_collect_cog_stages_cancels_reopens_and_rejects_retired_menu_actions ... ok"
+        },
+        {
+          "log": "/workspace/validation-reviews/ci-9f6397368/full-check.log",
+          "line": 2493,
+          "text": "2026-10-07T05:50:54.6610169Z test sidebar_context_cogs::default_collect_cog_stages_cancels_reopens_and_rejects_retired_menu_actions ... ok"
+        }
+      ]
+    },
+    {
+      "test": "sidebar_context_cogs::actual_tag_display_menu_changes_modes_captures_checks_and_rejects_retired_view_actions",
+      "source": "crates/hydrus-gui/tests/gui/sidebar_context_cogs.rs",
+      "source_line": 408,
+      "source_commit": "9f6397368d2ecdfcb28e7c7159a8bf195e7d7012",
+      "run_id": 37577340514,
+      "passing_records": [
+        {
+          "log": "/workspace/validation-reviews/ci-9f6397368/tests.log",
+          "line": 1250,
+          "text": "test sidebar_context_cogs::actual_tag_display_menu_changes_modes_captures_checks_and_rejects_retired_view_actions ... ok"
+        },
+        {
+          "log": "/workspace/validation-reviews/ci-9f6397368/full-check.log",
+          "line": 2515,
+          "text": "2026-10-07T05:51:03.3396345Z test sidebar_context_cogs::actual_tag_display_menu_changes_modes_captures_checks_and_rejects_retired_view_actions ... ok"
+        }
+      ]
+    },
+    {
+      "test": "sort_cog::menus_replay_service_order_separators_views_checks_and_full_context_preservation",
+      "source": "crates/hydrus-gui-model/tests/model/sort_cog.rs",
+      "source_line": 42,
+      "source_commit": "9f6397368d2ecdfcb28e7c7159a8bf195e7d7012",
+      "run_id": 37577340514,
+      "passing_records": [
+        {
+          "log": "/workspace/validation-reviews/ci-9f6397368/tests.log",
+          "line": 1841,
+          "text": "test sort_cog::menus_replay_service_order_separators_views_checks_and_full_context_preservation ... ok"
+        },
+        {
+          "log": "/workspace/validation-reviews/ci-9f6397368/parity.log",
+          "line": 1853,
+          "text": "2026-10-07T05:42:27.6473771Z test sort_cog::menus_replay_service_order_separators_views_checks_and_full_context_preservation ... ok"
+        },
+        {
+          "log": "/workspace/validation-reviews/ci-9f6397368/full-check.log",
+          "line": 3106,
+          "text": "2026-10-07T05:52:34.4356139Z test sort_cog::menus_replay_service_order_separators_views_checks_and_full_context_preservation ... ok"
+        }
+      ]
+    },
+    {
+      "test": "sort_cog::actual_sidebar_availability_and_independent_collect_service_checks",
+      "source": "crates/hydrus-gui-model/tests/model/sort_cog.rs",
+      "source_line": 100,
+      "source_commit": "9f6397368d2ecdfcb28e7c7159a8bf195e7d7012",
+      "run_id": 37577340514,
+      "passing_records": [
+        {
+          "log": "/workspace/validation-reviews/ci-9f6397368/tests.log",
+          "line": 1837,
+          "text": "test sort_cog::actual_sidebar_availability_and_independent_collect_service_checks ... ok"
+        },
+        {
+          "log": "/workspace/validation-reviews/ci-9f6397368/parity.log",
+          "line": 1850,
+          "text": "2026-10-07T05:42:27.6071503Z test sort_cog::actual_sidebar_availability_and_independent_collect_service_checks ... ok"
+        },
+        {
+          "log": "/workspace/validation-reviews/ci-9f6397368/full-check.log",
+          "line": 3102,
+          "text": "2026-10-07T05:52:34.3599363Z test sort_cog::actual_sidebar_availability_and_independent_collect_service_checks ... ok"
+        }
+      ]
+    }
+  ],
+  "source_pins": [
+    {
+      "path": "crates/hydrus-gui/tests/gui/sidebar_context_cogs.rs",
+      "source_commit": "9f6397368d2ecdfcb28e7c7159a8bf195e7d7012",
+      "sha256": "24f5696162563ff2e95e13c543a3f49f61be345820683f9a4687a242b758f06a",
+      "committed_blob_and_worktree_match": true
+    },
+    {
+      "path": "crates/hydrus-gui/src/sidebar_context_cog.rs",
+      "source_commit": "9f6397368d2ecdfcb28e7c7159a8bf195e7d7012",
+      "sha256": "0bcbad8f88564c2c65ef322c819f7e4162de43609765454f825ef60a78ca0419",
+      "committed_blob_and_worktree_match": true
+    },
+    {
+      "path": "crates/hydrus-gui/src/page.rs",
+      "source_commit": "9f6397368d2ecdfcb28e7c7159a8bf195e7d7012",
+      "sha256": "8c968c29c99b14e862ee643d5aea5af5e78eadb8c532202fffc18084885b0c8d",
+      "committed_blob_and_worktree_match": true
+    },
+    {
+      "path": "crates/hydrus-gui/src/lib.rs",
+      "source_commit": "9f6397368d2ecdfcb28e7c7159a8bf195e7d7012",
+      "sha256": "b71c9e66ab1f71337cb525b0363ae1e7eb1434a47d44f61bb313733195d4c67a",
+      "committed_blob_and_worktree_match": true
+    },
+    {
+      "path": "crates/hydrus-gui/src/headless.rs",
+      "source_commit": "9f6397368d2ecdfcb28e7c7159a8bf195e7d7012",
+      "sha256": "c366399b1f509ea4859dd2e566a6e6a2b73d86ee6581aa34434fc5a16fc4bef7",
+      "committed_blob_and_worktree_match": true
+    },
+    {
+      "path": "crates/hydrus-gui/ui/main.slint",
+      "source_commit": "9f6397368d2ecdfcb28e7c7159a8bf195e7d7012",
+      "sha256": "5b115be2c3f81553f166fab91e93564031ef62f76aa239548f507a4cd606c5b0",
+      "committed_blob_and_worktree_match": true
+    },
+    {
+      "path": "crates/hydrus-gui/ui/sort_collect_cog.slint",
+      "source_commit": "9f6397368d2ecdfcb28e7c7159a8bf195e7d7012",
+      "sha256": "8653e8e55f17c6dfa8db1e07ae6edb13e44787bafe7a4963274d0077c8da1fde",
+      "committed_blob_and_worktree_match": true
+    },
+    {
+      "path": "crates/hydrus-gui-model/src/sort_cog.rs",
+      "source_commit": "9f6397368d2ecdfcb28e7c7159a8bf195e7d7012",
+      "sha256": "2fd7635f0a49636997f090c37d64373c518c370b40376ceec8ef028c0bd606b1",
+      "committed_blob_and_worktree_match": true
+    },
+    {
+      "path": "crates/hydrus-gui-model/tests/model/sort_cog.rs",
+      "source_commit": "9f6397368d2ecdfcb28e7c7159a8bf195e7d7012",
+      "sha256": "f93f34b7d85fa64569a7f1ec0e29b06d261d25b52424b1e75628f3aa12d3bf1c",
+      "committed_blob_and_worktree_match": true
+    },
+    {
+      "path": "crates/hydrus-search/src/exec/page_sort.rs",
+      "source_commit": "9f6397368d2ecdfcb28e7c7159a8bf195e7d7012",
+      "sha256": "e381fa738be533730a53ecf6d6f7e2fe19d8dc07a2979b252014bcd32501cb22",
+      "committed_blob_and_worktree_match": true
+    },
+    {
+      "path": "hydrus/client/gui/pages/ClientGUIMediaResultsPanelSortCollect.py",
+      "source_commit": "9f6397368d2ecdfcb28e7c7159a8bf195e7d7012",
+      "sha256": "acdd67978206521417a82b43ffb8413d7b7f84a98f994180a429ab917afd9b73",
+      "committed_blob_and_worktree_match": true
+    },
+    {
+      "path": "hydrus/client/media/ClientMediaSort.py",
+      "source_commit": "9f6397368d2ecdfcb28e7c7159a8bf195e7d7012",
+      "sha256": "c08682e5514e3e4f9f986302672c8b66f020652b08406e8c96003a116ac13fcf",
+      "committed_blob_and_worktree_match": true
+    },
+    {
+      "path": "hydrus/client/metadata/ClientTags.py",
+      "source_commit": "9f6397368d2ecdfcb28e7c7159a8bf195e7d7012",
+      "sha256": "c4e6aedefc269c6b77ba950754fbf7c9c198f1dcade6a29d310b7530181e4bf8",
+      "committed_blob_and_worktree_match": true
+    },
+    {
+      "path": "oracle/record_sidebar_sort_collect_cogs.py",
+      "source_commit": "9f6397368d2ecdfcb28e7c7159a8bf195e7d7012",
+      "sha256": "c05e045fc842b33817ea6a2a2bd3c69f1963c193af9568507acc0739bd82659b",
+      "committed_blob_and_worktree_match": true
+    },
+    {
+      "path": "oracle/fixtures/sidebar_sort_collect_cogs.json",
+      "source_commit": "9f6397368d2ecdfcb28e7c7159a8bf195e7d7012",
+      "sha256": "7e54f0bded51ebb12735db1b2ea6cfda48acda12b9f9c8fd2eb0731fcbbc0011",
+      "committed_blob_and_worktree_match": true
+    },
+    {
+      "path": "oracle/fixtures/sidebar_sort_cog.png",
+      "source_commit": "9f6397368d2ecdfcb28e7c7159a8bf195e7d7012",
+      "sha256": "22819b3cdcb8099e3cfd1b667f40d1c6a2a50e930416e39c72bea7cb9e610148",
+      "committed_blob_and_worktree_match": true
+    },
+    {
+      "path": "oracle/fixtures/sidebar_sort_cog_1.png",
+      "source_commit": "9f6397368d2ecdfcb28e7c7159a8bf195e7d7012",
+      "sha256": "49b741758b61ba494c12a5e1892e8a4656d632fb6d36619dfc81af25fd7c1301",
+      "committed_blob_and_worktree_match": true
+    },
+    {
+      "path": "docs/rust/GUI.md",
+      "source_commit": "9f6397368d2ecdfcb28e7c7159a8bf195e7d7012",
+      "sha256": "0ca396e8e6fc811546a650430aa1dd9f9d7338de6eb278921236aa75aef3dbf1",
+      "committed_blob_and_worktree_match": true
+    },
+    {
+      "path": "docs/rust/DIFFERENCES.md",
+      "source_commit": "9f6397368d2ecdfcb28e7c7159a8bf195e7d7012",
+      "sha256": "7840d26809aa143db3f4a66bbf1c614665d6907670026b848782e0308b20e15d",
+      "committed_blob_and_worktree_match": true
+    },
+    {
+      "path": "docs/rust/gui-coverage/parity/sidebar-sort-collect-cogs.json",
+      "source_commit": "9f6397368d2ecdfcb28e7c7159a8bf195e7d7012",
+      "sha256": "b1bba6f29028641aa816d4fb44e59cd4634fa1a1c00f51ae4726dac3c67fb868",
+      "committed_blob_and_worktree_match": true
+    },
+    {
+      "path": ".github/workflows/rust.yml",
+      "source_commit": "9f6397368d2ecdfcb28e7c7159a8bf195e7d7012",
+      "sha256": "79fdf111717ddc84bdf965b4d6d7e627a7bc6c7d1e96824189951da3fec7ecd8",
+      "committed_blob_and_worktree_match": true
+    },
+    {
+      "path": ".github/publication-validation.json",
+      "source_commit": "9f6397368d2ecdfcb28e7c7159a8bf195e7d7012",
+      "sha256": "49723bd5d6b786392a1368bb3da1406747a553ef31c9de2bdef92cea5d014c5f",
+      "committed_blob_and_worktree_match": true
+    }
+  ],
+  "assertion_preservation": {
+    "initial": {
+      "baseline_commit": "7bf850103ff1d2d23fa5986372b6db6857b12c4b",
+      "implementation_commit": "8daccca6beded7871c6849cd142926566f8f67ad",
+      "path": "crates/hydrus-gui/tests/gui/sidebar_context_cogs.rs",
+      "original_sha256": "c87a95f06cf5da552d93e9c9374d60c260242f6447423e1fb5b3480f0ee095b1",
+      "current_sha256": "9745a20ca9efd0e6e845e258d56f4348e1326a95c96ae08f081306b7a1370a11",
+      "original_bytes": 15749,
+      "entire_original_prefix_preserved": true,
+      "original_assertions": 25,
+      "current_assertions": 87,
+      "original_tests": 2,
+      "current_tests": 3,
+      "root_matches_isolated_commit": true
+    },
+    "repair": {
+      "previous_source": "393c125530d004153a92ed79e51da91539df8837",
+      "repair_commit": "b51511a01221f04a8b88808c9e4c558d0b436fed",
+      "previous_test_sha256": "9745a20ca9efd0e6e845e258d56f4348e1326a95c96ae08f081306b7a1370a11",
+      "current_test_sha256": "24f5696162563ff2e95e13c543a3f49f61be345820683f9a4687a242b758f06a",
+      "all_previous_lines_preserved_in_order": true,
+      "all_87_previous_assertions_preserved": true,
+      "current_assertions": 88,
+      "current_tests": 3,
+      "original_banked_prefix_preserved": true
+    }
+  },
+  "original_assertion_total": 25,
+  "current_assertion_total": 88,
+  "original_test_total": 2,
+  "current_test_total": 3,
+  "source_blockers": [],
+  "proof_hashes": [
+    {
+      "path": "/workspace/validation-reviews/ci-9f6397368/ci-evidence.json",
+      "sha256": "2781fd3447c690fa8132709b6f007377d781efc0d6529c2b97d1c3aea1c0182f"
+    },
+    {
+      "path": "/workspace/validation-reviews/ci-9f6397368/tests.log",
+      "sha256": "4e5a59d34fd8b9efb0e6ce784acd4590ae9fbd60c384b7ede2a051172533ecc0"
+    },
+    {
+      "path": "/workspace/validation-reviews/ci-9f6397368/full-check.log",
+      "sha256": "d15c75307ed60fe8af968b3e5f07c89b25c1f3f34c484d85cb5264845899f0ee"
+    },
+    {
+      "path": "/workspace/validation-reviews/ci-9f6397368/parity.log",
+      "sha256": "c12a71cc6c1321b4f1b86a19fd29f18c200e2d4cb68f470d6f539f70e8097f84"
+    },
+    {
+      "path": "/workspace/validation-reviews/ci-9f6397368/clippy.log",
+      "sha256": "570562cdfa918c15a90358e0a5acd076d381c78421663a7fa891b49dded1c90c"
+    },
+    {
+      "path": "/workspace/validation-reviews/ci-9f6397368/maintenance.log",
+      "sha256": "c10f7fb26d42c726ca7798a38f3615ea7253dc0e98fa56d13d22bdd14e6b2d29"
+    },
+    {
+      "path": "/workspace/validation-reviews/sidebar-tag-display1/source-review-2.json",
+      "sha256": "624a1bf9848aa2f71fca86b580887b68862a678dc44c2528d65229e2465f7357"
+    },
+    {
+      "path": "/workspace/validation-reviews/sidebar-tag-display1/source-review-2.md",
+      "sha256": "701e764ab3b634df0fc5493e2f8babbd58663401c393ef8effb1a300d47a9a63"
+    },
+    {
+      "path": "/workspace/validation-reviews/sidebar-tag-display1/repair1/source-review-2.json",
+      "sha256": "e29dc0ca11d6b992d1ae68e4df0669fee30df94eb5dfbe412fc4a4a7c955f6b8"
+    },
+    {
+      "path": "/workspace/validation-reviews/sidebar-tag-display1/repair1/source-review-2.md",
+      "sha256": "9895dded596144ebe5d486616ed7fb80e6d398b5591d6c1b716e619e62ccc3c1"
+    },
+    {
+      "path": "/workspace/validation-reviews/sidebar-tag-display1/assertion-preservation-root.json",
+      "sha256": "b3fc4edc3bae31f3d72a6737d244fe9cf66f74cf7edaa277782c36dae7cba7b3"
+    },
+    {
+      "path": "/workspace/validation-reviews/sidebar-tag-display1/assertion-preservation-3.json",
+      "sha256": "2ab02e4a91beb91170165edfe3b1a3469d30061d16a1f37da0c67709f613692e"
+    },
+    {
+      "path": "/workspace/validation-reviews/sidebar-tag-display1/repair1/assertion-preservation-root.json",
+      "sha256": "14cb4f2791fe5f7534f8a17db0dd40855e79c9d18ecd9e2579bd5237e3b4fb39"
+    },
+    {
+      "path": "/workspace/validation-reviews/sidebar-tag-display1/repair1/diagnosis-and-preservation-3.json",
+      "sha256": "869cd41e098f6cc03e5e84e147e5c9def483cdcf23407f98ab27642b46cb4228"
+    },
+    {
+      "path": "/workspace/validation-reviews/sidebar-tag-display1/reference/root-provenance.json",
+      "sha256": "48eebbb19a95392d08cdbaf0ce16395cba6e523ea7429c2ba7cafd6316e5bc5b"
+    },
+    {
+      "path": "/workspace/validation-reviews/sidebar-tag-display1/reference/sidebar_sort_collect_cogs.actual.json",
+      "sha256": "d35fb2ad1ec3b9bae261c016841871b37cf332287a9d5cc80e7d906a55bc1cb9"
+    },
+    {
+      "path": "/workspace/validation-reviews/sidebar-tag-display1/prep-9f6397368/render-checklist.json",
+      "sha256": "fb6f96efba034bb14df96587bb8da58a46f73eaa0ca6ac36b4e67baee125da3a"
+    },
+    {
+      "path": "/workspace/validation-reviews/sidebar-tag-display1/prep-9f6397368/selection.json",
+      "sha256": "6840523f61a6f2897806fb86dbb53114ed60387a941750390eedb9ab4ecc910e"
+    }
+  ],
+  "scope_and_preservation": [
+    "Exactly the sidebar namespace-sort ADVANCED tag-display action is approved. No tag-service, collect, DefaultCollect, tag-display management, parent, alias or broader action-family completion receives credit.",
+    "All twelve namespace fixture cases have identical ordered media across modes 1/3/2 within each of four services. Exact media replay proves recorded routing and context preservation, not differentiated display-filter output. Production mode 2 maps to SingleMedia and mode 3 to SelectionList in source; no wider filter backend credit is claimed.",
+    "Physical input and four defining captures cover the my-tags service; the unchanged full sixteen-sort/eight-collect replay preserves all four services and existing contexts. The actual checked menu shows order 1/3/2, and both disabled and enabled save-default policies are assertion-backed.",
+    "Retained View IDs are rejected after a new opening, while the owner is hidden and after a page switch, preserving caller/successor contexts and defaults. The test explicitly clears embedded popups after hide/page switching as cleanup; automatic hidden-popup retirement and permanent retirement on arbitrary temporary hide are not claimed.",
+    "Qt references are real polished QMenu grabs obtained with PopupMenu presentation intercepted. They establish labels, order and check states, without displayed popup-placement, exact pixel, direct OS-native menu introspection or physical window-manager parity. Native fonts, row spacing, check glyphs and composite menu styling differ.",
+    "The root and three ADVANCED submenu states fit the inspected 1060 \u00d7 760 native viewport with full selected labels and checks. Underlying page/thumbnail/preview layout is supporting context and earns no additional credit; universal or narrow-viewport layout is not established.",
+    "The initial source 393c12553 failed because its restored input order was compared with a sorted reference baseline before a sort consumer ran. The repaired setup uses the ordinary sort consumer, adds an exact sorted-baseline assertion and preserves all 87 prior assertions. That failed run produced no defining captures and demonstrates no production right-click defect.",
+    "Validation is Linux only; Windows and macOS remain deferred. Registered repository metadata implies no network or repository work. The optional Qt API listener was unavailable; direct Qt/DB recording succeeded and supplies no API connectivity claim."
+  ],
+  "provenance": {
+    "published_baseline": "7bf850103ff1d2d23fa5986372b6db6857b12c4b",
+    "initial_implementation_commit": "8daccca6beded7871c6849cd142926566f8f67ad",
+    "repair_commit": "b51511a01221f04a8b88808c9e4c558d0b436fed",
+    "failed_source": "393c125530d004153a92ed79e51da91539df8837",
+    "failed_run_id": 37574215162,
+    "failed_defining_capture_count": 0,
+    "historical_source_packets": "Frozen initial 393c12553 and repair1 source-only reports remain unchanged; their pending runtime/render gates are historical and superseded by this completed exact-source review.",
+    "reference": "Actual Qt baseline rerun equals the committed full fixture; all nine inputs unchanged. Both defining painted QMenu images were actually opened during this final review.",
+    "zip_validation": "Root supplied a verified extracted artifact with ZIP binding; this review independently computes all selected per-image hashes/bytes/dimensions and verifies committed producer text/line hashes.",
+    "actual_viewing": "All four listed fresh native frames plus both defining Qt grabs were opened with view_image; historical/closed page renders do not substitute for required captures."
+  }
+}
