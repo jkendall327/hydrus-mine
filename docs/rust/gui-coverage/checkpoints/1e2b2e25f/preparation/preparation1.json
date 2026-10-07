@@ -1,0 +1,42 @@
+{
+  "source_commit": "1e2b2e25fd89b24253f4387f71115e675fdb657b",
+  "run_id": 37605060836,
+  "baseline_source_commit": "18b3a665e6cb145c10efdc7d13c6da614308d926",
+  "claims": [
+    {
+      "id": "audit-options-nested-open-file-call-list-choose",
+      "manifest": "docs/rust/gui-coverage/parity/open-externally.json",
+      "publication_preparation": "unresolved",
+      "reason": "Exact committed callback replay, saved-key/order consumer and six captures authored; full Linux and actual fresh review pending."
+    },
+    {
+      "id": "audit-options-nested-open-file-call-list-add-edit",
+      "manifest": "docs/rust/gui-coverage/parity/open-externally.json",
+      "publication_preparation": "unresolved",
+      "reason": "Exact committed callback replay, saved-key/order consumer and six captures authored; full Linux and actual fresh review pending."
+    },
+    {
+      "id": "audit-options-nested-open-file-call-list-order",
+      "manifest": "docs/rust/gui-coverage/parity/open-externally.json",
+      "publication_preparation": "unresolved",
+      "reason": "Exact committed callback replay, saved-key/order consumer and six captures authored; full Linux and actual fresh review pending."
+    }
+  ],
+  "next_bank_priority_ids": [
+    "audit-options-nested-open-file-call-list-choose",
+    "audit-options-nested-open-file-call-list-add-edit",
+    "audit-options-nested-open-file-call-list-order"
+  ],
+  "selected_ids": [
+    "audit-options-nested-open-file-call-list-choose",
+    "audit-options-nested-open-file-call-list-add-edit",
+    "audit-options-nested-open-file-call-list-order"
+  ],
+  "final_gates": [
+    "Exact source 1e2b2e25fd89b24253f4387f71115e675fdb657b: required strict Linux check and parity-models reference/backend pending. Run 37605060836 is dispatched; outcome pending. Windows/macOS deferred under exact-source policy.",
+    "Six defining fresh File queue captures require root and independent reviewer2 actual inspection and exact fingerprints. Historical outer Qt PNG is context, not paired nested pixels.",
+    "Actual staged prior362/unselected/native1799/frozen1812/allgoal1274 preservation plus desktop/narrow browser checks required.",
+    "Only accepted publication may reach365 signed off,10 existing pending and909 outside the unchanged1274 goal. Preparation creates no approval."
+  ],
+  "approval": false
+}

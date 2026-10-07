@@ -1,22 +1,5 @@
 {
-  "head_sha": "1e2b2e25fd89b24253f4387f71115e675fdb657b",
-  "status": "completed",
-  "conclusion": "success",
-  "run_attempt": 1,
-  "created_at": "2026-10-07T10:05:25Z",
-  "run_started_at": "2026-10-07T10:05:25Z",
-  "updated_at": "2026-10-07T10:22:15Z",
-  "source_commit": "1e2b2e25fd89b24253f4387f71115e675fdb657b",
-  "run_id": 37605060836,
-  "url": "https://github.com/jkendall327/hydrus-mine/actions/runs/37605060836",
-  "validation_scope": "linux",
-  "required_platforms": [
-    "linux"
-  ],
-  "deferred_platforms": [
-    "windows",
-    "macos"
-  ],
+  "total_count": 5,
   "jobs": [
     {
       "id": 112738412097,
@@ -329,9 +312,7 @@
       "runner_name": "GitHub Actions 1000003573",
       "runner_group_id": 0,
       "runner_group_name": "GitHub Actions"
-    }
-  ],
-  "auxiliary_jobs": [
+    },
     {
       "id": 112738413689,
       "run_id": 37605060836,
@@ -382,12 +363,7 @@
       "runner_id": null,
       "runner_name": null,
       "runner_group_id": null,
-      "runner_group_name": null,
-      "validation_role": "deferred_platform",
-      "deferred_platforms": [
-        "windows",
-        "macos"
-      ]
+      "runner_group_name": null
     },
     {
       "id": 112744556523,
@@ -441,17 +417,5 @@
       "runner_group_id": 0,
       "runner_group_name": "GitHub Actions"
     }
-  ],
-  "workflow_at_source": {
-    "path": ".github/workflows/rust.yml",
-    "sha256": "45ffa19990d8616269f56dc909b5feb078e8830ee657a4dc484dd6f1489281e7",
-    "extra_required_steps": {}
-  },
-  "publication_policy": {
-    "path": ".github/publication-validation.json",
-    "source_commit": "1e2b2e25fd89b24253f4387f71115e675fdb657b",
-    "sha256": "49723bd5d6b786392a1368bb3da1406747a553ef31c9de2bdef92cea5d014c5f",
-    "effective_date": "2026-10-06",
-    "reason": "The owner uses Linux and prioritizes validated Linux delivery. macOS is low priority; Windows is deferred because its builds materially lengthen validation. Secondary-platform CI remains available by explicit opt-in."
-  }
+  ]
 }

@@ -1,0 +1,916 @@
+{
+  "source_commit": "1e2b2e25fd89b24253f4387f71115e675fdb657b",
+  "run_id": 37605060836,
+  "records": [
+    {
+      "id": "audit-options-nested-open-file-call-list-choose",
+      "role": "reference_source",
+      "historical_anchor": {
+        "relativepath": "hydrus/client/gui/panels/options/OpenExternallyPanel.py",
+        "line": 60,
+        "symbol": "_GetRemainingAvailableChoicesTuples",
+        "line_sha256": "8a09909045512e3d20b2e00ca36b997c1e52995435d7769c58e3c97a25869bbb"
+      },
+      "source_commit": "1e2b2e25fd89b24253f4387f71115e675fdb657b",
+      "path": "hydrus/client/gui/panels/options/OpenExternallyPanel.py",
+      "line": 60,
+      "text": "    def _GetRemainingAvailableChoicesTuples( self ):",
+      "line_sha256": "8a09909045512e3d20b2e00ca36b997c1e52995435d7769c58e3c97a25869bbb",
+      "method": "identical_git_blob"
+    },
+    {
+      "id": "audit-options-nested-open-file-call-list-choose",
+      "role": "scoped_implementation",
+      "historical_anchor": {
+        "relativepath": "crates/hydrus-gui/src/options_open_externally.rs",
+        "line": 325,
+        "symbol": "fn queue_action(",
+        "line_sha256": "d9f5bace01847d5ec10b4c91e4d6529aa3af335f242f27f8a495ca30986c0871",
+        "commit": "140bb93bcddceb01a596849b2210a5e02aec9ff1"
+      },
+      "source_commit": "1e2b2e25fd89b24253f4387f71115e675fdb657b",
+      "path": "crates/hydrus-gui/src/options_open_externally.rs",
+      "line": 323,
+      "text": "    fn queue_action(",
+      "line_sha256": "d9f5bace01847d5ec10b4c91e4d6529aa3af335f242f27f8a495ca30986c0871",
+      "method": "Unique exact authored declaration, no nearest-line substitution."
+    },
+    {
+      "id": "audit-options-nested-open-file-call-list-choose",
+      "role": "scoped_implementation",
+      "historical_anchor": {
+        "relativepath": "crates/hydrus-gui/src/options_open_externally.rs",
+        "line": 409,
+        "symbol": "fn open_files(",
+        "line_sha256": "3b73d34f22e301c5b2bb577675630701af714e6d5b7b7204fd63dacd76a44e8a",
+        "commit": "140bb93bcddceb01a596849b2210a5e02aec9ff1"
+      },
+      "source_commit": "1e2b2e25fd89b24253f4387f71115e675fdb657b",
+      "path": "crates/hydrus-gui/src/options_open_externally.rs",
+      "line": 407,
+      "text": "    fn open_files(self: &Rc<Self>, mime: Mime, new: bool) -> Result<(), String> {",
+      "line_sha256": "3b73d34f22e301c5b2bb577675630701af714e6d5b7b7204fd63dacd76a44e8a",
+      "method": "Unique exact authored declaration, no nearest-line substitution."
+    },
+    {
+      "id": "audit-options-nested-open-file-call-list-choose",
+      "role": "scoped_implementation",
+      "historical_anchor": {
+        "relativepath": "crates/hydrus-gui/src/options_open_externally.rs",
+        "line": 579,
+        "symbol": "fn file_action(",
+        "line_sha256": "50b78525b4171dde47a2f2826990faea5d6fe740fe99f6e16c926af736e3f828",
+        "commit": "140bb93bcddceb01a596849b2210a5e02aec9ff1"
+      },
+      "source_commit": "1e2b2e25fd89b24253f4387f71115e675fdb657b",
+      "path": "crates/hydrus-gui/src/options_open_externally.rs",
+      "line": 577,
+      "text": "    fn file_action(self: &Rc<Self>, action: &str) {",
+      "line_sha256": "50b78525b4171dde47a2f2826990faea5d6fe740fe99f6e16c926af736e3f828",
+      "method": "Unique exact authored declaration, no nearest-line substitution."
+    },
+    {
+      "id": "audit-options-nested-open-file-call-list-choose",
+      "role": "scoped_implementation",
+      "historical_anchor": {
+        "relativepath": "crates/hydrus-gui-model/src/open_externally.rs",
+        "line": 18,
+        "symbol": "pub fn choices(",
+        "line_sha256": "030779e364fb5a23a2c749621cf5c7f9462da0f27ddc98b2f81b9e3410a8d57d",
+        "commit": "140bb93bcddceb01a596849b2210a5e02aec9ff1"
+      },
+      "source_commit": "1e2b2e25fd89b24253f4387f71115e675fdb657b",
+      "path": "crates/hydrus-gui-model/src/open_externally.rs",
+      "line": 18,
+      "text": "pub fn choices(manager: &Manager, pipeline: Pipeline, existing: &[CallRef]) -> Vec<CallRef> {",
+      "line_sha256": "030779e364fb5a23a2c749621cf5c7f9462da0f27ddc98b2f81b9e3410a8d57d",
+      "method": "Unique exact authored declaration, no nearest-line substitution."
+    },
+    {
+      "id": "audit-options-nested-open-file-call-list-choose",
+      "role": "scoped_implementation",
+      "historical_anchor": {
+        "relativepath": "crates/hydrus-gui-model/src/open_externally.rs",
+        "line": 95,
+        "symbol": "pub fn move_selected(",
+        "line_sha256": "dd46b1b429757b7e3395f8546c11b2f048ebd277cfbabca84e2ed7e111ca48c2",
+        "commit": "140bb93bcddceb01a596849b2210a5e02aec9ff1"
+      },
+      "source_commit": "1e2b2e25fd89b24253f4387f71115e675fdb657b",
+      "path": "crates/hydrus-gui-model/src/open_externally.rs",
+      "line": 95,
+      "text": "    pub fn move_selected(&mut self, down: bool) {",
+      "line_sha256": "dd46b1b429757b7e3395f8546c11b2f048ebd277cfbabca84e2ed7e111ca48c2",
+      "method": "Unique exact authored declaration, no nearest-line substitution."
+    },
+    {
+      "id": "audit-options-nested-open-file-call-list-choose",
+      "role": "scoped_implementation",
+      "historical_anchor": {
+        "relativepath": "crates/hydrus-core/src/open_externally.rs",
+        "line": 82,
+        "symbol": "pub fn wash(&mut self",
+        "line_sha256": "13402a6dd7f2166db2935fc81d066fca54bd61c1100243aa75609339e084cce1",
+        "commit": "140bb93bcddceb01a596849b2210a5e02aec9ff1"
+      },
+      "source_commit": "1e2b2e25fd89b24253f4387f71115e675fdb657b",
+      "path": "crates/hydrus-core/src/open_externally.rs",
+      "line": 82,
+      "text": "    pub fn wash(&mut self, manager: &mut Manager) {",
+      "line_sha256": "13402a6dd7f2166db2935fc81d066fca54bd61c1100243aa75609339e084cce1",
+      "method": "Unique exact authored declaration, no nearest-line substitution."
+    },
+    {
+      "id": "audit-options-nested-open-file-call-list-choose",
+      "role": "scoped_implementation",
+      "historical_anchor": {
+        "relativepath": "crates/hydrus-gui/src/open_externally_launch.rs",
+        "line": 101,
+        "symbol": "pub fn file(",
+        "line_sha256": "4433c594bc6574ac282f2cdfd6bd118879a30d4aa31397ccc65436053d69557c",
+        "commit": "140bb93bcddceb01a596849b2210a5e02aec9ff1"
+      },
+      "source_commit": "1e2b2e25fd89b24253f4387f71115e675fdb657b",
+      "path": "crates/hydrus-gui/src/open_externally_launch.rs",
+      "line": 101,
+      "text": "    pub fn file(&self, store: &Store, id: HashId) -> bool {",
+      "line_sha256": "4433c594bc6574ac282f2cdfd6bd118879a30d4aa31397ccc65436053d69557c",
+      "method": "Unique exact authored declaration, no nearest-line substitution."
+    },
+    {
+      "id": "audit-options-nested-open-file-call-list-choose",
+      "role": "scoped_implementation",
+      "historical_anchor": {
+        "relativepath": "crates/hydrus-gui/src/lib.rs",
+        "line": 473,
+        "symbol": "window.invoke_retire_external_launches();",
+        "line_sha256": "7ffb048a3f9a373699af125185086d571626c4e82df894a22b09114d0cb661c9",
+        "commit": "140bb93bcddceb01a596849b2210a5e02aec9ff1"
+      },
+      "source_commit": "1e2b2e25fd89b24253f4387f71115e675fdb657b",
+      "path": "crates/hydrus-gui/src/lib.rs",
+      "line": 586,
+      "text": "    window.invoke_retire_external_launches();",
+      "line_sha256": "7ffb048a3f9a373699af125185086d571626c4e82df894a22b09114d0cb661c9",
+      "method": "Unique exact authored declaration, no nearest-line substitution."
+    },
+    {
+      "id": "audit-options-nested-open-file-call-list-choose",
+      "role": "scoped_implementation",
+      "historical_anchor": {
+        "relativepath": "crates/hydrus-store/src/settings.rs",
+        "line": 1448,
+        "symbol": "impl Setting for hydrus_core::open_externally::Routing",
+        "line_sha256": "32a53c74a236a79877d5f3631c840a16e0301822eb02f46286555eea8a7057ec",
+        "commit": "140bb93bcddceb01a596849b2210a5e02aec9ff1"
+      },
+      "source_commit": "1e2b2e25fd89b24253f4387f71115e675fdb657b",
+      "path": "crates/hydrus-store/src/settings.rs",
+      "line": 1590,
+      "text": "impl Setting for hydrus_core::open_externally::Routing {",
+      "line_sha256": "32a53c74a236a79877d5f3631c840a16e0301822eb02f46286555eea8a7057ec",
+      "method": "Unique exact authored declaration, no nearest-line substitution."
+    },
+    {
+      "id": "audit-options-nested-open-file-call-list-choose",
+      "role": "authored_behavioral_regression",
+      "historical_anchor": {
+        "relativepath": "crates/hydrus-gui-model/tests/model/open_externally.rs",
+        "line": 38,
+        "symbol": "fn actual_qt_registered_choices",
+        "line_sha256": "5287cd94749d27a4a6f67952826cf5aa960f429fbf31208ecfbeb6fe86d83212",
+        "commit": "140bb93bcddceb01a596849b2210a5e02aec9ff1"
+      },
+      "source_commit": "1e2b2e25fd89b24253f4387f71115e675fdb657b",
+      "path": "crates/hydrus-gui-model/tests/model/open_externally.rs",
+      "line": 66,
+      "text": "fn actual_qt_registered_choices_queue_order_and_protected_mime_rows() {",
+      "line_sha256": "5287cd94749d27a4a6f67952826cf5aa960f429fbf31208ecfbeb6fe86d83212",
+      "method": "Unique exact authored declaration, no nearest-line substitution."
+    },
+    {
+      "id": "audit-options-nested-open-file-call-list-choose",
+      "role": "authored_behavioral_regression",
+      "historical_anchor": {
+        "relativepath": "crates/hydrus-gui-model/tests/model/open_externally.rs",
+        "line": 101,
+        "symbol": "fn washing_renames",
+        "line_sha256": "21276bea1321b25e124015c16995df306da0c50d0c6c5d867d8ecb5db105fb39",
+        "commit": "140bb93bcddceb01a596849b2210a5e02aec9ff1"
+      },
+      "source_commit": "1e2b2e25fd89b24253f4387f71115e675fdb657b",
+      "path": "crates/hydrus-gui-model/tests/model/open_externally.rs",
+      "line": 129,
+      "text": "fn washing_renames_deduplicates_removes_missing_without_name_remap_and_persists() {",
+      "line_sha256": "21276bea1321b25e124015c16995df306da0c50d0c6c5d867d8ecb5db105fb39",
+      "method": "Unique exact authored declaration, no nearest-line substitution."
+    },
+    {
+      "id": "audit-options-nested-open-file-call-list-choose",
+      "role": "authored_behavioral_regression",
+      "historical_anchor": {
+        "relativepath": "crates/hydrus-gui-model/tests/model/open_externally.rs",
+        "line": 165,
+        "symbol": "fn configured_empty_specific",
+        "line_sha256": "ea1daa5e54015543032c40fd62278d7d0b2da5d67f0ea94c42b10534a6ecaca1",
+        "commit": "140bb93bcddceb01a596849b2210a5e02aec9ff1"
+      },
+      "source_commit": "1e2b2e25fd89b24253f4387f71115e675fdb657b",
+      "path": "crates/hydrus-gui-model/tests/model/open_externally.rs",
+      "line": 193,
+      "text": "fn configured_empty_specific_and_missing_call_never_fall_through_custom_route() {",
+      "line_sha256": "ea1daa5e54015543032c40fd62278d7d0b2da5d67f0ea94c42b10534a6ecaca1",
+      "method": "Unique exact authored declaration, no nearest-line substitution."
+    },
+    {
+      "id": "audit-options-nested-open-file-call-list-choose",
+      "role": "authored_behavioral_regression",
+      "historical_anchor": {
+        "relativepath": "crates/hydrus-gui/tests/gui/open_externally.rs",
+        "line": 149,
+        "symbol": "fn options_routes_replay",
+        "line_sha256": "8300f392e32636af54b2e93a688474aa6b132aa496e98bc8cdc2a7c51e117a84",
+        "commit": "140bb93bcddceb01a596849b2210a5e02aec9ff1"
+      },
+      "source_commit": "1e2b2e25fd89b24253f4387f71115e675fdb657b",
+      "path": "crates/hydrus-gui/tests/gui/open_externally.rs",
+      "line": 528,
+      "text": "fn options_routes_replay_qt_owned_choosers_cancel_order_apply_reopen_and_retirement() {",
+      "line_sha256": "8300f392e32636af54b2e93a688474aa6b132aa496e98bc8cdc2a7c51e117a84",
+      "method": "Unique exact authored declaration, no nearest-line substitution."
+    },
+    {
+      "id": "audit-options-nested-open-file-call-list-choose",
+      "role": "authored_behavioral_regression",
+      "historical_anchor": {
+        "relativepath": "crates/hydrus-gui/tests/gui/open_externally.rs",
+        "line": 377,
+        "symbol": "fn saved_routes_reach",
+        "line_sha256": "a51f51e5b0c3489bcf59abce9ebe265d2926054eade9b8a83479f8d8cf2407ab",
+        "commit": "140bb93bcddceb01a596849b2210a5e02aec9ff1"
+      },
+      "source_commit": "1e2b2e25fd89b24253f4387f71115e675fdb657b",
+      "path": "crates/hydrus-gui/tests/gui/open_externally.rs",
+      "line": 840,
+      "text": "fn saved_routes_reach_main_and_live_viewer_os_fallback_and_missing_owned_notice() {",
+      "line_sha256": "a51f51e5b0c3489bcf59abce9ebe265d2926054eade9b8a83479f8d8cf2407ab",
+      "method": "Unique exact authored declaration, no nearest-line substitution."
+    },
+    {
+      "id": "audit-options-nested-open-file-call-list-choose",
+      "role": "authored_behavioral_regression",
+      "historical_anchor": {
+        "relativepath": "crates/hydrus-gui/tests/gui/open_externally.rs",
+        "line": 527,
+        "symbol": "fn saved_registered_vectors",
+        "line_sha256": "3623f632cbd337dd0ee856cfaadf782a28a84deb5a67c6f005f6f3ff757664aa",
+        "commit": "140bb93bcddceb01a596849b2210a5e02aec9ff1"
+      },
+      "source_commit": "1e2b2e25fd89b24253f4387f71115e675fdb657b",
+      "path": "crates/hydrus-gui/tests/gui/open_externally.rs",
+      "line": 1073,
+      "text": "fn saved_registered_vectors_feed_actual_main_live_viewer_and_url_pipeline() {",
+      "line_sha256": "3623f632cbd337dd0ee856cfaadf782a28a84deb5a67c6f005f6f3ff757664aa",
+      "method": "Unique exact authored declaration, no nearest-line substitution."
+    },
+    {
+      "id": "audit-options-nested-open-file-call-list-choose",
+      "role": "authored_current_nested_queue_regression",
+      "historical_anchor": {
+        "relativepath": "crates/hydrus-gui/tests/gui/open_externally.rs",
+        "line": 1,
+        "symbol": "fn file_queue_replays_all_nested_reference_states_and_live_children()",
+        "commit": "1e2b2e25fd89b24253f4387f71115e675fdb657b"
+      },
+      "source_commit": "1e2b2e25fd89b24253f4387f71115e675fdb657b",
+      "path": "crates/hydrus-gui/tests/gui/open_externally.rs",
+      "line": 1507,
+      "text": "fn file_queue_replays_all_nested_reference_states_and_live_children() {",
+      "line_sha256": "44798055da888ca6254123e09fbc058cd05acd482e2448c027d0be53ac4fcafb",
+      "method": "Unique exact authored declaration, no nearest-line substitution."
+    },
+    {
+      "id": "audit-options-nested-open-file-call-list-choose",
+      "role": "authored_current_nested_queue_regression",
+      "historical_anchor": {
+        "relativepath": "crates/hydrus-gui/tests/gui/open_externally.rs",
+        "line": 1,
+        "symbol": "fn pending_file_queue_retirement(",
+        "commit": "1e2b2e25fd89b24253f4387f71115e675fdb657b"
+      },
+      "source_commit": "1e2b2e25fd89b24253f4387f71115e675fdb657b",
+      "path": "crates/hydrus-gui/tests/gui/open_externally.rs",
+      "line": 1294,
+      "text": "fn pending_file_queue_retirement(ui: &MainWindow, bound: &Bound, store: &Store) {",
+      "line_sha256": "f0dc443057dab5863df59d72875859bcbcdeae60fc7c6c233073136930e21887",
+      "method": "Unique exact authored declaration, no nearest-line substitution."
+    },
+    {
+      "id": "audit-options-nested-open-file-call-list-add-edit",
+      "role": "reference_source",
+      "historical_anchor": {
+        "relativepath": "hydrus/client/gui/panels/options/OpenExternallyPanel.py",
+        "line": 37,
+        "symbol": "_EditIdAndName",
+        "line_sha256": "a0d08fade43f9b51255b386f98d09fc609c0c1d9fef028ed25bc800df2beaac3"
+      },
+      "source_commit": "1e2b2e25fd89b24253f4387f71115e675fdb657b",
+      "path": "hydrus/client/gui/panels/options/OpenExternallyPanel.py",
+      "line": 79,
+      "text": "    def _AddIdAndName( self ):",
+      "line_sha256": "78405eac585de760f0fab44980e36889892871d45dda4cfecc5607132a3478e1",
+      "method": "identical_git_blob"
+    },
+    {
+      "id": "audit-options-nested-open-file-call-list-add-edit",
+      "role": "scoped_implementation",
+      "historical_anchor": {
+        "relativepath": "crates/hydrus-gui/src/options_open_externally.rs",
+        "line": 325,
+        "symbol": "fn queue_action(",
+        "line_sha256": "d9f5bace01847d5ec10b4c91e4d6529aa3af335f242f27f8a495ca30986c0871",
+        "commit": "140bb93bcddceb01a596849b2210a5e02aec9ff1"
+      },
+      "source_commit": "1e2b2e25fd89b24253f4387f71115e675fdb657b",
+      "path": "crates/hydrus-gui/src/options_open_externally.rs",
+      "line": 323,
+      "text": "    fn queue_action(",
+      "line_sha256": "d9f5bace01847d5ec10b4c91e4d6529aa3af335f242f27f8a495ca30986c0871",
+      "method": "Unique exact authored declaration, no nearest-line substitution."
+    },
+    {
+      "id": "audit-options-nested-open-file-call-list-add-edit",
+      "role": "scoped_implementation",
+      "historical_anchor": {
+        "relativepath": "crates/hydrus-gui/src/options_open_externally.rs",
+        "line": 409,
+        "symbol": "fn open_files(",
+        "line_sha256": "3b73d34f22e301c5b2bb577675630701af714e6d5b7b7204fd63dacd76a44e8a",
+        "commit": "140bb93bcddceb01a596849b2210a5e02aec9ff1"
+      },
+      "source_commit": "1e2b2e25fd89b24253f4387f71115e675fdb657b",
+      "path": "crates/hydrus-gui/src/options_open_externally.rs",
+      "line": 407,
+      "text": "    fn open_files(self: &Rc<Self>, mime: Mime, new: bool) -> Result<(), String> {",
+      "line_sha256": "3b73d34f22e301c5b2bb577675630701af714e6d5b7b7204fd63dacd76a44e8a",
+      "method": "Unique exact authored declaration, no nearest-line substitution."
+    },
+    {
+      "id": "audit-options-nested-open-file-call-list-add-edit",
+      "role": "scoped_implementation",
+      "historical_anchor": {
+        "relativepath": "crates/hydrus-gui/src/options_open_externally.rs",
+        "line": 579,
+        "symbol": "fn file_action(",
+        "line_sha256": "50b78525b4171dde47a2f2826990faea5d6fe740fe99f6e16c926af736e3f828",
+        "commit": "140bb93bcddceb01a596849b2210a5e02aec9ff1"
+      },
+      "source_commit": "1e2b2e25fd89b24253f4387f71115e675fdb657b",
+      "path": "crates/hydrus-gui/src/options_open_externally.rs",
+      "line": 577,
+      "text": "    fn file_action(self: &Rc<Self>, action: &str) {",
+      "line_sha256": "50b78525b4171dde47a2f2826990faea5d6fe740fe99f6e16c926af736e3f828",
+      "method": "Unique exact authored declaration, no nearest-line substitution."
+    },
+    {
+      "id": "audit-options-nested-open-file-call-list-add-edit",
+      "role": "scoped_implementation",
+      "historical_anchor": {
+        "relativepath": "crates/hydrus-gui-model/src/open_externally.rs",
+        "line": 18,
+        "symbol": "pub fn choices(",
+        "line_sha256": "030779e364fb5a23a2c749621cf5c7f9462da0f27ddc98b2f81b9e3410a8d57d",
+        "commit": "140bb93bcddceb01a596849b2210a5e02aec9ff1"
+      },
+      "source_commit": "1e2b2e25fd89b24253f4387f71115e675fdb657b",
+      "path": "crates/hydrus-gui-model/src/open_externally.rs",
+      "line": 18,
+      "text": "pub fn choices(manager: &Manager, pipeline: Pipeline, existing: &[CallRef]) -> Vec<CallRef> {",
+      "line_sha256": "030779e364fb5a23a2c749621cf5c7f9462da0f27ddc98b2f81b9e3410a8d57d",
+      "method": "Unique exact authored declaration, no nearest-line substitution."
+    },
+    {
+      "id": "audit-options-nested-open-file-call-list-add-edit",
+      "role": "scoped_implementation",
+      "historical_anchor": {
+        "relativepath": "crates/hydrus-gui-model/src/open_externally.rs",
+        "line": 95,
+        "symbol": "pub fn move_selected(",
+        "line_sha256": "dd46b1b429757b7e3395f8546c11b2f048ebd277cfbabca84e2ed7e111ca48c2",
+        "commit": "140bb93bcddceb01a596849b2210a5e02aec9ff1"
+      },
+      "source_commit": "1e2b2e25fd89b24253f4387f71115e675fdb657b",
+      "path": "crates/hydrus-gui-model/src/open_externally.rs",
+      "line": 95,
+      "text": "    pub fn move_selected(&mut self, down: bool) {",
+      "line_sha256": "dd46b1b429757b7e3395f8546c11b2f048ebd277cfbabca84e2ed7e111ca48c2",
+      "method": "Unique exact authored declaration, no nearest-line substitution."
+    },
+    {
+      "id": "audit-options-nested-open-file-call-list-add-edit",
+      "role": "scoped_implementation",
+      "historical_anchor": {
+        "relativepath": "crates/hydrus-core/src/open_externally.rs",
+        "line": 82,
+        "symbol": "pub fn wash(&mut self",
+        "line_sha256": "13402a6dd7f2166db2935fc81d066fca54bd61c1100243aa75609339e084cce1",
+        "commit": "140bb93bcddceb01a596849b2210a5e02aec9ff1"
+      },
+      "source_commit": "1e2b2e25fd89b24253f4387f71115e675fdb657b",
+      "path": "crates/hydrus-core/src/open_externally.rs",
+      "line": 82,
+      "text": "    pub fn wash(&mut self, manager: &mut Manager) {",
+      "line_sha256": "13402a6dd7f2166db2935fc81d066fca54bd61c1100243aa75609339e084cce1",
+      "method": "Unique exact authored declaration, no nearest-line substitution."
+    },
+    {
+      "id": "audit-options-nested-open-file-call-list-add-edit",
+      "role": "scoped_implementation",
+      "historical_anchor": {
+        "relativepath": "crates/hydrus-gui/src/open_externally_launch.rs",
+        "line": 101,
+        "symbol": "pub fn file(",
+        "line_sha256": "4433c594bc6574ac282f2cdfd6bd118879a30d4aa31397ccc65436053d69557c",
+        "commit": "140bb93bcddceb01a596849b2210a5e02aec9ff1"
+      },
+      "source_commit": "1e2b2e25fd89b24253f4387f71115e675fdb657b",
+      "path": "crates/hydrus-gui/src/open_externally_launch.rs",
+      "line": 101,
+      "text": "    pub fn file(&self, store: &Store, id: HashId) -> bool {",
+      "line_sha256": "4433c594bc6574ac282f2cdfd6bd118879a30d4aa31397ccc65436053d69557c",
+      "method": "Unique exact authored declaration, no nearest-line substitution."
+    },
+    {
+      "id": "audit-options-nested-open-file-call-list-add-edit",
+      "role": "scoped_implementation",
+      "historical_anchor": {
+        "relativepath": "crates/hydrus-gui/src/lib.rs",
+        "line": 473,
+        "symbol": "window.invoke_retire_external_launches();",
+        "line_sha256": "7ffb048a3f9a373699af125185086d571626c4e82df894a22b09114d0cb661c9",
+        "commit": "140bb93bcddceb01a596849b2210a5e02aec9ff1"
+      },
+      "source_commit": "1e2b2e25fd89b24253f4387f71115e675fdb657b",
+      "path": "crates/hydrus-gui/src/lib.rs",
+      "line": 586,
+      "text": "    window.invoke_retire_external_launches();",
+      "line_sha256": "7ffb048a3f9a373699af125185086d571626c4e82df894a22b09114d0cb661c9",
+      "method": "Unique exact authored declaration, no nearest-line substitution."
+    },
+    {
+      "id": "audit-options-nested-open-file-call-list-add-edit",
+      "role": "scoped_implementation",
+      "historical_anchor": {
+        "relativepath": "crates/hydrus-store/src/settings.rs",
+        "line": 1448,
+        "symbol": "impl Setting for hydrus_core::open_externally::Routing",
+        "line_sha256": "32a53c74a236a79877d5f3631c840a16e0301822eb02f46286555eea8a7057ec",
+        "commit": "140bb93bcddceb01a596849b2210a5e02aec9ff1"
+      },
+      "source_commit": "1e2b2e25fd89b24253f4387f71115e675fdb657b",
+      "path": "crates/hydrus-store/src/settings.rs",
+      "line": 1590,
+      "text": "impl Setting for hydrus_core::open_externally::Routing {",
+      "line_sha256": "32a53c74a236a79877d5f3631c840a16e0301822eb02f46286555eea8a7057ec",
+      "method": "Unique exact authored declaration, no nearest-line substitution."
+    },
+    {
+      "id": "audit-options-nested-open-file-call-list-add-edit",
+      "role": "authored_behavioral_regression",
+      "historical_anchor": {
+        "relativepath": "crates/hydrus-gui-model/tests/model/open_externally.rs",
+        "line": 38,
+        "symbol": "fn actual_qt_registered_choices",
+        "line_sha256": "5287cd94749d27a4a6f67952826cf5aa960f429fbf31208ecfbeb6fe86d83212",
+        "commit": "140bb93bcddceb01a596849b2210a5e02aec9ff1"
+      },
+      "source_commit": "1e2b2e25fd89b24253f4387f71115e675fdb657b",
+      "path": "crates/hydrus-gui-model/tests/model/open_externally.rs",
+      "line": 66,
+      "text": "fn actual_qt_registered_choices_queue_order_and_protected_mime_rows() {",
+      "line_sha256": "5287cd94749d27a4a6f67952826cf5aa960f429fbf31208ecfbeb6fe86d83212",
+      "method": "Unique exact authored declaration, no nearest-line substitution."
+    },
+    {
+      "id": "audit-options-nested-open-file-call-list-add-edit",
+      "role": "authored_behavioral_regression",
+      "historical_anchor": {
+        "relativepath": "crates/hydrus-gui-model/tests/model/open_externally.rs",
+        "line": 101,
+        "symbol": "fn washing_renames",
+        "line_sha256": "21276bea1321b25e124015c16995df306da0c50d0c6c5d867d8ecb5db105fb39",
+        "commit": "140bb93bcddceb01a596849b2210a5e02aec9ff1"
+      },
+      "source_commit": "1e2b2e25fd89b24253f4387f71115e675fdb657b",
+      "path": "crates/hydrus-gui-model/tests/model/open_externally.rs",
+      "line": 129,
+      "text": "fn washing_renames_deduplicates_removes_missing_without_name_remap_and_persists() {",
+      "line_sha256": "21276bea1321b25e124015c16995df306da0c50d0c6c5d867d8ecb5db105fb39",
+      "method": "Unique exact authored declaration, no nearest-line substitution."
+    },
+    {
+      "id": "audit-options-nested-open-file-call-list-add-edit",
+      "role": "authored_behavioral_regression",
+      "historical_anchor": {
+        "relativepath": "crates/hydrus-gui-model/tests/model/open_externally.rs",
+        "line": 165,
+        "symbol": "fn configured_empty_specific",
+        "line_sha256": "ea1daa5e54015543032c40fd62278d7d0b2da5d67f0ea94c42b10534a6ecaca1",
+        "commit": "140bb93bcddceb01a596849b2210a5e02aec9ff1"
+      },
+      "source_commit": "1e2b2e25fd89b24253f4387f71115e675fdb657b",
+      "path": "crates/hydrus-gui-model/tests/model/open_externally.rs",
+      "line": 193,
+      "text": "fn configured_empty_specific_and_missing_call_never_fall_through_custom_route() {",
+      "line_sha256": "ea1daa5e54015543032c40fd62278d7d0b2da5d67f0ea94c42b10534a6ecaca1",
+      "method": "Unique exact authored declaration, no nearest-line substitution."
+    },
+    {
+      "id": "audit-options-nested-open-file-call-list-add-edit",
+      "role": "authored_behavioral_regression",
+      "historical_anchor": {
+        "relativepath": "crates/hydrus-gui/tests/gui/open_externally.rs",
+        "line": 149,
+        "symbol": "fn options_routes_replay",
+        "line_sha256": "8300f392e32636af54b2e93a688474aa6b132aa496e98bc8cdc2a7c51e117a84",
+        "commit": "140bb93bcddceb01a596849b2210a5e02aec9ff1"
+      },
+      "source_commit": "1e2b2e25fd89b24253f4387f71115e675fdb657b",
+      "path": "crates/hydrus-gui/tests/gui/open_externally.rs",
+      "line": 528,
+      "text": "fn options_routes_replay_qt_owned_choosers_cancel_order_apply_reopen_and_retirement() {",
+      "line_sha256": "8300f392e32636af54b2e93a688474aa6b132aa496e98bc8cdc2a7c51e117a84",
+      "method": "Unique exact authored declaration, no nearest-line substitution."
+    },
+    {
+      "id": "audit-options-nested-open-file-call-list-add-edit",
+      "role": "authored_behavioral_regression",
+      "historical_anchor": {
+        "relativepath": "crates/hydrus-gui/tests/gui/open_externally.rs",
+        "line": 377,
+        "symbol": "fn saved_routes_reach",
+        "line_sha256": "a51f51e5b0c3489bcf59abce9ebe265d2926054eade9b8a83479f8d8cf2407ab",
+        "commit": "140bb93bcddceb01a596849b2210a5e02aec9ff1"
+      },
+      "source_commit": "1e2b2e25fd89b24253f4387f71115e675fdb657b",
+      "path": "crates/hydrus-gui/tests/gui/open_externally.rs",
+      "line": 840,
+      "text": "fn saved_routes_reach_main_and_live_viewer_os_fallback_and_missing_owned_notice() {",
+      "line_sha256": "a51f51e5b0c3489bcf59abce9ebe265d2926054eade9b8a83479f8d8cf2407ab",
+      "method": "Unique exact authored declaration, no nearest-line substitution."
+    },
+    {
+      "id": "audit-options-nested-open-file-call-list-add-edit",
+      "role": "authored_behavioral_regression",
+      "historical_anchor": {
+        "relativepath": "crates/hydrus-gui/tests/gui/open_externally.rs",
+        "line": 527,
+        "symbol": "fn saved_registered_vectors",
+        "line_sha256": "3623f632cbd337dd0ee856cfaadf782a28a84deb5a67c6f005f6f3ff757664aa",
+        "commit": "140bb93bcddceb01a596849b2210a5e02aec9ff1"
+      },
+      "source_commit": "1e2b2e25fd89b24253f4387f71115e675fdb657b",
+      "path": "crates/hydrus-gui/tests/gui/open_externally.rs",
+      "line": 1073,
+      "text": "fn saved_registered_vectors_feed_actual_main_live_viewer_and_url_pipeline() {",
+      "line_sha256": "3623f632cbd337dd0ee856cfaadf782a28a84deb5a67c6f005f6f3ff757664aa",
+      "method": "Unique exact authored declaration, no nearest-line substitution."
+    },
+    {
+      "id": "audit-options-nested-open-file-call-list-add-edit",
+      "role": "authored_current_nested_queue_regression",
+      "historical_anchor": {
+        "relativepath": "crates/hydrus-gui/tests/gui/open_externally.rs",
+        "line": 1,
+        "symbol": "fn file_queue_replays_all_nested_reference_states_and_live_children()",
+        "commit": "1e2b2e25fd89b24253f4387f71115e675fdb657b"
+      },
+      "source_commit": "1e2b2e25fd89b24253f4387f71115e675fdb657b",
+      "path": "crates/hydrus-gui/tests/gui/open_externally.rs",
+      "line": 1507,
+      "text": "fn file_queue_replays_all_nested_reference_states_and_live_children() {",
+      "line_sha256": "44798055da888ca6254123e09fbc058cd05acd482e2448c027d0be53ac4fcafb",
+      "method": "Unique exact authored declaration, no nearest-line substitution."
+    },
+    {
+      "id": "audit-options-nested-open-file-call-list-add-edit",
+      "role": "authored_current_nested_queue_regression",
+      "historical_anchor": {
+        "relativepath": "crates/hydrus-gui/tests/gui/open_externally.rs",
+        "line": 1,
+        "symbol": "fn pending_file_queue_retirement(",
+        "commit": "1e2b2e25fd89b24253f4387f71115e675fdb657b"
+      },
+      "source_commit": "1e2b2e25fd89b24253f4387f71115e675fdb657b",
+      "path": "crates/hydrus-gui/tests/gui/open_externally.rs",
+      "line": 1294,
+      "text": "fn pending_file_queue_retirement(ui: &MainWindow, bound: &Bound, store: &Store) {",
+      "line_sha256": "f0dc443057dab5863df59d72875859bcbcdeae60fc7c6c233073136930e21887",
+      "method": "Unique exact authored declaration, no nearest-line substitution."
+    },
+    {
+      "id": "audit-options-nested-open-file-call-list-order",
+      "role": "reference_source",
+      "historical_anchor": {
+        "relativepath": "hydrus/client/gui/panels/options/OpenExternallyPanel.py",
+        "line": 24,
+        "symbol": "class EditOpenFileIdsAndNamesPanel",
+        "line_sha256": "5de42e151ea1fa607eb40bde3782eecd2cec1a13e761044c213a24df2a60a1b4"
+      },
+      "source_commit": "1e2b2e25fd89b24253f4387f71115e675fdb657b",
+      "path": "hydrus/client/gui/panels/options/OpenExternallyPanel.py",
+      "line": 32,
+      "text": "        self._ids_and_names = ClientGUIListBoxes.QueueListBox(",
+      "line_sha256": "c1894b78a8f3418200af5310e952d181c5a4ce0731343f60f48055668dd2ef06",
+      "method": "identical_git_blob"
+    },
+    {
+      "id": "audit-options-nested-open-file-call-list-order",
+      "role": "scoped_implementation",
+      "historical_anchor": {
+        "relativepath": "crates/hydrus-gui/src/options_open_externally.rs",
+        "line": 325,
+        "symbol": "fn queue_action(",
+        "line_sha256": "d9f5bace01847d5ec10b4c91e4d6529aa3af335f242f27f8a495ca30986c0871",
+        "commit": "140bb93bcddceb01a596849b2210a5e02aec9ff1"
+      },
+      "source_commit": "1e2b2e25fd89b24253f4387f71115e675fdb657b",
+      "path": "crates/hydrus-gui/src/options_open_externally.rs",
+      "line": 323,
+      "text": "    fn queue_action(",
+      "line_sha256": "d9f5bace01847d5ec10b4c91e4d6529aa3af335f242f27f8a495ca30986c0871",
+      "method": "Unique exact authored declaration, no nearest-line substitution."
+    },
+    {
+      "id": "audit-options-nested-open-file-call-list-order",
+      "role": "scoped_implementation",
+      "historical_anchor": {
+        "relativepath": "crates/hydrus-gui/src/options_open_externally.rs",
+        "line": 409,
+        "symbol": "fn open_files(",
+        "line_sha256": "3b73d34f22e301c5b2bb577675630701af714e6d5b7b7204fd63dacd76a44e8a",
+        "commit": "140bb93bcddceb01a596849b2210a5e02aec9ff1"
+      },
+      "source_commit": "1e2b2e25fd89b24253f4387f71115e675fdb657b",
+      "path": "crates/hydrus-gui/src/options_open_externally.rs",
+      "line": 407,
+      "text": "    fn open_files(self: &Rc<Self>, mime: Mime, new: bool) -> Result<(), String> {",
+      "line_sha256": "3b73d34f22e301c5b2bb577675630701af714e6d5b7b7204fd63dacd76a44e8a",
+      "method": "Unique exact authored declaration, no nearest-line substitution."
+    },
+    {
+      "id": "audit-options-nested-open-file-call-list-order",
+      "role": "scoped_implementation",
+      "historical_anchor": {
+        "relativepath": "crates/hydrus-gui/src/options_open_externally.rs",
+        "line": 579,
+        "symbol": "fn file_action(",
+        "line_sha256": "50b78525b4171dde47a2f2826990faea5d6fe740fe99f6e16c926af736e3f828",
+        "commit": "140bb93bcddceb01a596849b2210a5e02aec9ff1"
+      },
+      "source_commit": "1e2b2e25fd89b24253f4387f71115e675fdb657b",
+      "path": "crates/hydrus-gui/src/options_open_externally.rs",
+      "line": 577,
+      "text": "    fn file_action(self: &Rc<Self>, action: &str) {",
+      "line_sha256": "50b78525b4171dde47a2f2826990faea5d6fe740fe99f6e16c926af736e3f828",
+      "method": "Unique exact authored declaration, no nearest-line substitution."
+    },
+    {
+      "id": "audit-options-nested-open-file-call-list-order",
+      "role": "scoped_implementation",
+      "historical_anchor": {
+        "relativepath": "crates/hydrus-gui-model/src/open_externally.rs",
+        "line": 18,
+        "symbol": "pub fn choices(",
+        "line_sha256": "030779e364fb5a23a2c749621cf5c7f9462da0f27ddc98b2f81b9e3410a8d57d",
+        "commit": "140bb93bcddceb01a596849b2210a5e02aec9ff1"
+      },
+      "source_commit": "1e2b2e25fd89b24253f4387f71115e675fdb657b",
+      "path": "crates/hydrus-gui-model/src/open_externally.rs",
+      "line": 18,
+      "text": "pub fn choices(manager: &Manager, pipeline: Pipeline, existing: &[CallRef]) -> Vec<CallRef> {",
+      "line_sha256": "030779e364fb5a23a2c749621cf5c7f9462da0f27ddc98b2f81b9e3410a8d57d",
+      "method": "Unique exact authored declaration, no nearest-line substitution."
+    },
+    {
+      "id": "audit-options-nested-open-file-call-list-order",
+      "role": "scoped_implementation",
+      "historical_anchor": {
+        "relativepath": "crates/hydrus-gui-model/src/open_externally.rs",
+        "line": 95,
+        "symbol": "pub fn move_selected(",
+        "line_sha256": "dd46b1b429757b7e3395f8546c11b2f048ebd277cfbabca84e2ed7e111ca48c2",
+        "commit": "140bb93bcddceb01a596849b2210a5e02aec9ff1"
+      },
+      "source_commit": "1e2b2e25fd89b24253f4387f71115e675fdb657b",
+      "path": "crates/hydrus-gui-model/src/open_externally.rs",
+      "line": 95,
+      "text": "    pub fn move_selected(&mut self, down: bool) {",
+      "line_sha256": "dd46b1b429757b7e3395f8546c11b2f048ebd277cfbabca84e2ed7e111ca48c2",
+      "method": "Unique exact authored declaration, no nearest-line substitution."
+    },
+    {
+      "id": "audit-options-nested-open-file-call-list-order",
+      "role": "scoped_implementation",
+      "historical_anchor": {
+        "relativepath": "crates/hydrus-core/src/open_externally.rs",
+        "line": 82,
+        "symbol": "pub fn wash(&mut self",
+        "line_sha256": "13402a6dd7f2166db2935fc81d066fca54bd61c1100243aa75609339e084cce1",
+        "commit": "140bb93bcddceb01a596849b2210a5e02aec9ff1"
+      },
+      "source_commit": "1e2b2e25fd89b24253f4387f71115e675fdb657b",
+      "path": "crates/hydrus-core/src/open_externally.rs",
+      "line": 82,
+      "text": "    pub fn wash(&mut self, manager: &mut Manager) {",
+      "line_sha256": "13402a6dd7f2166db2935fc81d066fca54bd61c1100243aa75609339e084cce1",
+      "method": "Unique exact authored declaration, no nearest-line substitution."
+    },
+    {
+      "id": "audit-options-nested-open-file-call-list-order",
+      "role": "scoped_implementation",
+      "historical_anchor": {
+        "relativepath": "crates/hydrus-gui/src/open_externally_launch.rs",
+        "line": 101,
+        "symbol": "pub fn file(",
+        "line_sha256": "4433c594bc6574ac282f2cdfd6bd118879a30d4aa31397ccc65436053d69557c",
+        "commit": "140bb93bcddceb01a596849b2210a5e02aec9ff1"
+      },
+      "source_commit": "1e2b2e25fd89b24253f4387f71115e675fdb657b",
+      "path": "crates/hydrus-gui/src/open_externally_launch.rs",
+      "line": 101,
+      "text": "    pub fn file(&self, store: &Store, id: HashId) -> bool {",
+      "line_sha256": "4433c594bc6574ac282f2cdfd6bd118879a30d4aa31397ccc65436053d69557c",
+      "method": "Unique exact authored declaration, no nearest-line substitution."
+    },
+    {
+      "id": "audit-options-nested-open-file-call-list-order",
+      "role": "scoped_implementation",
+      "historical_anchor": {
+        "relativepath": "crates/hydrus-gui/src/lib.rs",
+        "line": 473,
+        "symbol": "window.invoke_retire_external_launches();",
+        "line_sha256": "7ffb048a3f9a373699af125185086d571626c4e82df894a22b09114d0cb661c9",
+        "commit": "140bb93bcddceb01a596849b2210a5e02aec9ff1"
+      },
+      "source_commit": "1e2b2e25fd89b24253f4387f71115e675fdb657b",
+      "path": "crates/hydrus-gui/src/lib.rs",
+      "line": 586,
+      "text": "    window.invoke_retire_external_launches();",
+      "line_sha256": "7ffb048a3f9a373699af125185086d571626c4e82df894a22b09114d0cb661c9",
+      "method": "Unique exact authored declaration, no nearest-line substitution."
+    },
+    {
+      "id": "audit-options-nested-open-file-call-list-order",
+      "role": "scoped_implementation",
+      "historical_anchor": {
+        "relativepath": "crates/hydrus-store/src/settings.rs",
+        "line": 1448,
+        "symbol": "impl Setting for hydrus_core::open_externally::Routing",
+        "line_sha256": "32a53c74a236a79877d5f3631c840a16e0301822eb02f46286555eea8a7057ec",
+        "commit": "140bb93bcddceb01a596849b2210a5e02aec9ff1"
+      },
+      "source_commit": "1e2b2e25fd89b24253f4387f71115e675fdb657b",
+      "path": "crates/hydrus-store/src/settings.rs",
+      "line": 1590,
+      "text": "impl Setting for hydrus_core::open_externally::Routing {",
+      "line_sha256": "32a53c74a236a79877d5f3631c840a16e0301822eb02f46286555eea8a7057ec",
+      "method": "Unique exact authored declaration, no nearest-line substitution."
+    },
+    {
+      "id": "audit-options-nested-open-file-call-list-order",
+      "role": "authored_behavioral_regression",
+      "historical_anchor": {
+        "relativepath": "crates/hydrus-gui-model/tests/model/open_externally.rs",
+        "line": 38,
+        "symbol": "fn actual_qt_registered_choices",
+        "line_sha256": "5287cd94749d27a4a6f67952826cf5aa960f429fbf31208ecfbeb6fe86d83212",
+        "commit": "140bb93bcddceb01a596849b2210a5e02aec9ff1"
+      },
+      "source_commit": "1e2b2e25fd89b24253f4387f71115e675fdb657b",
+      "path": "crates/hydrus-gui-model/tests/model/open_externally.rs",
+      "line": 66,
+      "text": "fn actual_qt_registered_choices_queue_order_and_protected_mime_rows() {",
+      "line_sha256": "5287cd94749d27a4a6f67952826cf5aa960f429fbf31208ecfbeb6fe86d83212",
+      "method": "Unique exact authored declaration, no nearest-line substitution."
+    },
+    {
+      "id": "audit-options-nested-open-file-call-list-order",
+      "role": "authored_behavioral_regression",
+      "historical_anchor": {
+        "relativepath": "crates/hydrus-gui-model/tests/model/open_externally.rs",
+        "line": 101,
+        "symbol": "fn washing_renames",
+        "line_sha256": "21276bea1321b25e124015c16995df306da0c50d0c6c5d867d8ecb5db105fb39",
+        "commit": "140bb93bcddceb01a596849b2210a5e02aec9ff1"
+      },
+      "source_commit": "1e2b2e25fd89b24253f4387f71115e675fdb657b",
+      "path": "crates/hydrus-gui-model/tests/model/open_externally.rs",
+      "line": 129,
+      "text": "fn washing_renames_deduplicates_removes_missing_without_name_remap_and_persists() {",
+      "line_sha256": "21276bea1321b25e124015c16995df306da0c50d0c6c5d867d8ecb5db105fb39",
+      "method": "Unique exact authored declaration, no nearest-line substitution."
+    },
+    {
+      "id": "audit-options-nested-open-file-call-list-order",
+      "role": "authored_behavioral_regression",
+      "historical_anchor": {
+        "relativepath": "crates/hydrus-gui-model/tests/model/open_externally.rs",
+        "line": 165,
+        "symbol": "fn configured_empty_specific",
+        "line_sha256": "ea1daa5e54015543032c40fd62278d7d0b2da5d67f0ea94c42b10534a6ecaca1",
+        "commit": "140bb93bcddceb01a596849b2210a5e02aec9ff1"
+      },
+      "source_commit": "1e2b2e25fd89b24253f4387f71115e675fdb657b",
+      "path": "crates/hydrus-gui-model/tests/model/open_externally.rs",
+      "line": 193,
+      "text": "fn configured_empty_specific_and_missing_call_never_fall_through_custom_route() {",
+      "line_sha256": "ea1daa5e54015543032c40fd62278d7d0b2da5d67f0ea94c42b10534a6ecaca1",
+      "method": "Unique exact authored declaration, no nearest-line substitution."
+    },
+    {
+      "id": "audit-options-nested-open-file-call-list-order",
+      "role": "authored_behavioral_regression",
+      "historical_anchor": {
+        "relativepath": "crates/hydrus-gui/tests/gui/open_externally.rs",
+        "line": 149,
+        "symbol": "fn options_routes_replay",
+        "line_sha256": "8300f392e32636af54b2e93a688474aa6b132aa496e98bc8cdc2a7c51e117a84",
+        "commit": "140bb93bcddceb01a596849b2210a5e02aec9ff1"
+      },
+      "source_commit": "1e2b2e25fd89b24253f4387f71115e675fdb657b",
+      "path": "crates/hydrus-gui/tests/gui/open_externally.rs",
+      "line": 528,
+      "text": "fn options_routes_replay_qt_owned_choosers_cancel_order_apply_reopen_and_retirement() {",
+      "line_sha256": "8300f392e32636af54b2e93a688474aa6b132aa496e98bc8cdc2a7c51e117a84",
+      "method": "Unique exact authored declaration, no nearest-line substitution."
+    },
+    {
+      "id": "audit-options-nested-open-file-call-list-order",
+      "role": "authored_behavioral_regression",
+      "historical_anchor": {
+        "relativepath": "crates/hydrus-gui/tests/gui/open_externally.rs",
+        "line": 377,
+        "symbol": "fn saved_routes_reach",
+        "line_sha256": "a51f51e5b0c3489bcf59abce9ebe265d2926054eade9b8a83479f8d8cf2407ab",
+        "commit": "140bb93bcddceb01a596849b2210a5e02aec9ff1"
+      },
+      "source_commit": "1e2b2e25fd89b24253f4387f71115e675fdb657b",
+      "path": "crates/hydrus-gui/tests/gui/open_externally.rs",
+      "line": 840,
+      "text": "fn saved_routes_reach_main_and_live_viewer_os_fallback_and_missing_owned_notice() {",
+      "line_sha256": "a51f51e5b0c3489bcf59abce9ebe265d2926054eade9b8a83479f8d8cf2407ab",
+      "method": "Unique exact authored declaration, no nearest-line substitution."
+    },
+    {
+      "id": "audit-options-nested-open-file-call-list-order",
+      "role": "authored_behavioral_regression",
+      "historical_anchor": {
+        "relativepath": "crates/hydrus-gui/tests/gui/open_externally.rs",
+        "line": 527,
+        "symbol": "fn saved_registered_vectors",
+        "line_sha256": "3623f632cbd337dd0ee856cfaadf782a28a84deb5a67c6f005f6f3ff757664aa",
+        "commit": "140bb93bcddceb01a596849b2210a5e02aec9ff1"
+      },
+      "source_commit": "1e2b2e25fd89b24253f4387f71115e675fdb657b",
+      "path": "crates/hydrus-gui/tests/gui/open_externally.rs",
+      "line": 1073,
+      "text": "fn saved_registered_vectors_feed_actual_main_live_viewer_and_url_pipeline() {",
+      "line_sha256": "3623f632cbd337dd0ee856cfaadf782a28a84deb5a67c6f005f6f3ff757664aa",
+      "method": "Unique exact authored declaration, no nearest-line substitution."
+    },
+    {
+      "id": "audit-options-nested-open-file-call-list-order",
+      "role": "authored_current_nested_queue_regression",
+      "historical_anchor": {
+        "relativepath": "crates/hydrus-gui/tests/gui/open_externally.rs",
+        "line": 1,
+        "symbol": "fn file_queue_replays_all_nested_reference_states_and_live_children()",
+        "commit": "1e2b2e25fd89b24253f4387f71115e675fdb657b"
+      },
+      "source_commit": "1e2b2e25fd89b24253f4387f71115e675fdb657b",
+      "path": "crates/hydrus-gui/tests/gui/open_externally.rs",
+      "line": 1507,
+      "text": "fn file_queue_replays_all_nested_reference_states_and_live_children() {",
+      "line_sha256": "44798055da888ca6254123e09fbc058cd05acd482e2448c027d0be53ac4fcafb",
+      "method": "Unique exact authored declaration, no nearest-line substitution."
+    },
+    {
+      "id": "audit-options-nested-open-file-call-list-order",
+      "role": "authored_current_nested_queue_regression",
+      "historical_anchor": {
+        "relativepath": "crates/hydrus-gui/tests/gui/open_externally.rs",
+        "line": 1,
+        "symbol": "fn pending_file_queue_retirement(",
+        "commit": "1e2b2e25fd89b24253f4387f71115e675fdb657b"
+      },
+      "source_commit": "1e2b2e25fd89b24253f4387f71115e675fdb657b",
+      "path": "crates/hydrus-gui/tests/gui/open_externally.rs",
+      "line": 1294,
+      "text": "fn pending_file_queue_retirement(ui: &MainWindow, bound: &Bound, store: &Store) {",
+      "line_sha256": "f0dc443057dab5863df59d72875859bcbcdeae60fc7c6c233073136930e21887",
+      "method": "Unique exact authored declaration, no nearest-line substitution."
+    }
+  ],
+  "approval": false
+}

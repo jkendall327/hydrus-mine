@@ -1,0 +1,40 @@
+{
+  "source_commit": "1e2b2e25fd89b24253f4387f71115e675fdb657b",
+  "reviewed_by": "Codex root with independent exact-source behavioral/rendered review2; separate source/preservation checks",
+  "patch_sha256": "c25959265a4c0f41776e39277b06b2ba922b191808cf953ae1b5cfe3745b5b04",
+  "reviewed_source_census_sha256": "4a1d810b4d2ac63930f13621fe322330eb32013cd792f1ba1cdc959ca1ded431",
+  "selected_completion_ids": [
+    "audit-options-nested-open-file-call-list-choose",
+    "audit-options-nested-open-file-call-list-add-edit",
+    "audit-options-nested-open-file-call-list-order"
+  ],
+  "reviewed_assessment_ids": [
+    "audit-options-nested-open-file-call-list-choose",
+    "audit-options-nested-open-file-call-list-add-edit",
+    "audit-options-nested-open-file-call-list-order"
+  ],
+  "reviewed_native_ids": [],
+  "independent_reviews": [
+    {
+      "path": "docs/rust/gui-coverage/checkpoints/1e2b2e25f/final-review-2-1e2b2e25f.json",
+      "sha256": "42ce013356aae6d261314a024faa5e00fb8370df2ceadcb392bdb9f084564f0d"
+    }
+  ],
+  "validation_scope": "linux",
+  "required_platforms": [
+    "linux"
+  ],
+  "deferred_platforms": [
+    "windows",
+    "macos"
+  ],
+  "root_actual_native_inspection": [
+    "/workspace/validation-reviews/ci-1e2b2e25f/native-renders/file-call-chooser-registered.png",
+    "/workspace/validation-reviews/ci-1e2b2e25f/native-renders/file-call-queue-populated.png",
+    "/workspace/validation-reviews/ci-1e2b2e25f/native-renders/file-call-edit-single-choice.png",
+    "/workspace/validation-reviews/ci-1e2b2e25f/native-renders/file-call-remove-question.png",
+    "/workspace/validation-reviews/ci-1e2b2e25f/native-renders/file-call-queue-reordered.png",
+    "/workspace/validation-reviews/ci-1e2b2e25f/native-renders/file-call-exhausted-information.png"
+  ],
+  "scope": "Only the selected nested File Choose, Add/Edit and Order controls gain credit. No parent, alias, native hierarchy or deferred-platform credit. Browser verification and preservation audit required before canonical publication."
+}

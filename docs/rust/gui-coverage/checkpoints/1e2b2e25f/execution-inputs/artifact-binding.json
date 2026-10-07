@@ -1,0 +1,24 @@
+{
+  "source_commit": "1e2b2e25fd89b24253f4387f71115e675fdb657b",
+  "run_id": 37605060836,
+  "artifact_id": 11474608843,
+  "native_zip_sha256": "d67ba5a05704319e0766143f9c4a6b83ff2213b66b5e555a570748aac554fb22",
+  "root_actually_viewed_images": [
+    "file-call-chooser-registered.png",
+    "file-call-queue-populated.png",
+    "file-call-edit-single-choice.png",
+    "file-call-remove-question.png",
+    "file-call-queue-reordered.png",
+    "file-call-exhausted-information.png"
+  ],
+  "final_independent_review_pending": false,
+  "bound_inputs": {
+    "/workspace/validation-reviews/finalize-file-call-queue3-1e2b2e25f.py": "e622cb8b1564622aa0d7b107990f4b96098e3ffcfc912c8caaf9af4e3485f940",
+    "/workspace/validation-reviews/file-call-queue3/prep-1e2b2e25f/prepare-evidence-copy-1e2b2e25f.py": "c555cce3e2e34405cb66f9acaf2388a2aaf8dd7ed2f22cda7935e9211c0798cf"
+  },
+  "unbound_inputs": {
+    "/workspace/validation-reviews/file-call-queue3/unbound-execution-inputs/finalize-file-call-queue3-1e2b2e25f.py": "7c2b25ce7a54e4fc3eace06d95c6a8c869bf47c136a0ac6d05c7459f375b5251",
+    "/workspace/validation-reviews/file-call-queue3/unbound-execution-inputs/prepare-evidence-copy-1e2b2e25f.py": "930e13fcd3a6a13068d44806fa4bcef70e3c657cd33ed237770e9a244905485a"
+  },
+  "final_independent_review_sha256": "42ce013356aae6d261314a024faa5e00fb8370df2ceadcb392bdb9f084564f0d"
+}
