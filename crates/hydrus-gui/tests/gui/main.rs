@@ -255,6 +255,7 @@ mod database_locations_menu;
 mod database_menu_jobs;
 mod database_orphan_files;
 mod database_toggles;
+mod dateparser_preview;
 mod duplicate_hover_pin;
 mod duplicates_lane_page;
 mod file_log_actions;

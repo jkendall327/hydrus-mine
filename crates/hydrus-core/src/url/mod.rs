@@ -10,6 +10,7 @@
 //! any URL.
 
 pub mod class;
+mod date_parse;
 pub mod functions;
 pub mod gug;
 pub mod psl;

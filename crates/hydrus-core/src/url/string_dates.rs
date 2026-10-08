@@ -267,76 +267,7 @@ pub(super) fn parse(text: &str) -> Result<String, String> {
 }
 
 fn parse_at(text: &str, now: &Zoned) -> Result<i64, String> {
-    let text = text.trim();
-    let lower = text.to_ascii_lowercase();
-    let failure = || "Sorry, could not parse that date!".to_owned();
-    let relative = match lower.as_str() {
-        "now" | "today" => Some(now.clone()),
-        "yesterday" => Some(now.checked_sub(Span::new().days(1)).map_err(err)?),
-        "tomorrow" => Some(now.checked_add(Span::new().days(1)).map_err(err)?),
-        _ => None,
-    };
-    if let Some(relative) = relative {
-        return Ok(relative.timestamp().as_second());
-    }
-    let words: Vec<_> = lower.split_whitespace().collect();
-    if let [count, unit, "ago"] = words.as_slice() {
-        let count: i64 = count.parse().map_err(|_| failure())?;
-        let span = match unit.trim_end_matches('s') {
-            "second" => Span::new().seconds(count),
-            "minute" => Span::new().minutes(count),
-            "hour" => Span::new().hours(count),
-            "day" => Span::new().days(count),
-            "week" => Span::new().weeks(count),
-            "month" => Span::new().months(count),
-            "year" => Span::new().years(count),
-            _ => return Err(failure()),
-        };
-        return now
-            .checked_sub(span)
-            .map(|dt| dt.timestamp().as_second())
-            .map_err(err);
-    }
-    if let Ok(timestamp) = text.parse::<Timestamp>() {
-        return Ok(timestamp.as_second());
-    }
-    // dateparser's English fallback and dateutil cover these common downloader
-    // forms. A supplied offset takes precedence over the user's local timezone.
-    for phrase in [
-        "%Y-%m-%dT%H:%M:%S.%f%z",
-        "%Y-%m-%dT%H:%M:%S%z",
-        "%Y-%m-%d %H:%M:%S%z",
-        "%Y-%m-%d %H:%M:%S %z",
-        "%Y-%m-%dT%H:%M:%S.%f",
-        "%Y-%m-%dT%H:%M:%S",
-        "%Y-%m-%d %H:%M:%S",
-        "%Y-%m-%d %H:%M",
-        "%Y-%m-%d",
-        "%m/%d/%Y %I:%M:%S%p",
-        "%m/%d/%Y %I:%M%p",
-        "%m/%d/%Y",
-        "%d %B %Y %H:%M:%S",
-        "%d %B %Y",
-        "%d %b %Y",
-        "%B %d, %Y %I:%M %p",
-        "%B %d, %Y",
-        "%b %d, %Y",
-        "%a, %d %b %Y %H:%M:%S %z",
-    ] {
-        if let Ok((dt, offset)) = datetime(text, phrase, now.time_zone()) {
-            return match offset {
-                Some(offset) => offset
-                    .to_timestamp(dt)
-                    .map(Timestamp::as_second)
-                    .map_err(err),
-                None => dt
-                    .to_zoned(now.time_zone().clone())
-                    .map(|dt| dt.timestamp().as_second())
-                    .map_err(err),
-            };
-        }
-    }
-    Err(failure())
+    super::date_parse::parse_at(text, now)
 }
 
 #[cfg(test)]
@@ -407,6 +338,50 @@ mod tests {
                 assert_eq!(actual.unwrap(), expected, "{case}");
             }
         }
+    }
+
+    /// The forms the port doesn't read the way `dateparser` does (other
+    /// languages, fuzzy text, odd inputs it takes for dates); see
+    /// DIFFERENCES.md. Anything else in the corpus must match.
+    const KNOWN_GAPS: &[&str] = &[
+        // ISO week dates, and dateparser's odd reading of "-1" and "1 2 3"
+        "2024-W09-4",
+        "-1",
+        // other languages
+        "hier",
+        "il y a 3 jours",
+        "4 mars 2020",
+        "4. März 2020",
+        "4 de marzo de 2020",
+        "2020年3月4日",
+        "4 марта 2020",
+        "vor 2 Stunden",
+        "hace 2 horas",
+        "1 2 3",
+    ];
+
+    // leaf: audit-network-conversion-dateparser
+    #[test]
+    fn the_easy_parser_matches_the_recorded_dateparser_corpus() {
+        let fixture: serde_json::Value = serde_json::from_str(include_str!(
+            "../../../../oracle/fixtures/dateparser_corpus.json"
+        ))
+        .unwrap();
+        let now: Zoned = "2026-10-04T12:30:00+00:00[UTC]".parse().unwrap();
+        let mut gaps = Vec::new();
+        for case in fixture["cases"].as_array().unwrap() {
+            let text = case["text"].as_str().unwrap();
+            let actual = parse_at(text, &now);
+            let matches = if case["error"] == true {
+                actual.is_err()
+            } else {
+                actual.as_ref().map(ToString::to_string).ok().as_deref() == case["result"].as_str()
+            };
+            if !matches {
+                gaps.push(text.to_owned());
+            }
+        }
+        assert_eq!(gaps, KNOWN_GAPS, "the corpus' failures");
     }
 
     #[test]
