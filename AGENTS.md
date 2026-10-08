@@ -161,6 +161,11 @@ macOS run only when dispatched by hand with `secondary_platforms`.
 - **Timers in GUI tests**: state updated by a Slint `Timer` (refresh ticks,
   delayed enables) is not there until the timer runs; spin the event loop
   until it is, rather than asserting immediately.
+- **Worker threads report back through state polled by a Slint `Timer`**
+  (an atomic flag, or a mutex-guarded mailbox), never
+  `slint::invoke_from_event_loop`: Slint keeps one process-wide event-loop
+  proxy, so the headless test platform cannot deliver those calls and the
+  result is untestable.
 - **Time**: anything that shows "5 minutes ago" takes `now` as an argument, so
   tests and recordings can hold it still.
 - **The reference client runs its own worker threads.** In recorders, pause the
