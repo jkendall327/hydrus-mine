@@ -72,6 +72,12 @@ pub const STRINGS: &[(&str, Option<&str>)] = &[
     ("curl_cffi_definition", None),
     ("discord_dnd_filename_pattern", Some("{hash}")),
     ("mpv_preferred_audio_device", None),
+    // (`options_ratings_panel_template_service_key`, a key as hex: the
+    // reference's rating preview service, "ratings preview object service")
+    (
+        "options_ratings_panel_template_service_key",
+        Some("726174696e67732070726576696577206f626a6563742073657276696365"),
+    ),
     ("qt_media_player_preferred_audio_device_id_hex", None),
     ("qt_style_name", None),
     ("qt_stylesheet_name", None),

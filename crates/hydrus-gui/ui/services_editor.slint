@@ -5,8 +5,9 @@ import { Theme } from "theme.slint";
 export struct ServiceRatingExampleRow { label: string, graphic: RatingRow, icon-size: length, incdec-height: length, outline: length, counter-width: length, fraction: string, fraction-placement: int }
 export struct ServiceColourRow { label: string, border: string, fill: string }
 // One hit area includes the fraction, stars and trailing widget space, as Qt.
-component RatingSampleControl inherits HorizontalBox {
+export component RatingSampleControl inherits HorizontalBox {
     in property <ServiceRatingExampleRow> sample;
+    in property <length> label-width: 155px;
     in property <bool> interactive: true;
     callback pointer(bool,float,float,float,bool);
     callback counter-edit();
@@ -17,7 +18,7 @@ component RatingSampleControl inherits HorizontalBox {
     out property <length> fraction-x: fraction.absolute-position.x;
     out property <length> fraction-y: fraction.absolute-position.y;
     in-out property <bool> left-dragging;
-    Text { text: root.sample.label; color: Theme.text; min-width: 155px; }
+    Text { text: root.sample.label; color: Theme.text; min-width: root.label-width; }
     Rectangle {
         horizontal-stretch: 1;
         height: max(16px, (root.sample.graphic.kind == 2 ? root.sample.incdec-height : root.sample.icon-size) + 4px);

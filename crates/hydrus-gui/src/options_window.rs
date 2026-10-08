@@ -253,6 +253,24 @@ fn option_row(row: &Row<'_>, store: &Store, sessions: &[(Option<String>, String)
                         .position(|(key, _)| key == service)
                         .map_or(-1, |index| int(index as i64));
                 }
+                (Kind::RatingStyle, Value::TagService(service)) => {
+                    let choices = crate::options::rating_style_choices(store);
+                    out.kind = 15;
+                    out.items = ModelRc::new(VecModel::from(
+                        choices
+                            .iter()
+                            .map(|(_, name)| SharedString::from(name.as_str()))
+                            .collect::<Vec<_>>(),
+                    ));
+                    // (a template that is none of them shows the first)
+                    out.index = choices
+                        .iter()
+                        .position(|(key, _)| key == service)
+                        .map_or(0, |index| int(index as i64));
+                }
+                (Kind::RatingExamples(_), _) => {
+                    out.kind = 39;
+                }
                 (Kind::Choice(items), Value::Choice(i)) => {
                     out.kind = 5;
                     let items: Vec<SharedString> = items.iter().map(|&s| s.into()).collect();
@@ -656,7 +674,9 @@ pub(crate) fn open(
     });
     // (the rows are made anew only as the page changes: an edit leaves its
     // control as the user left it)
+    let rating_examples = Rc::new(crate::options_rating_examples::RatingExamples::default());
     let show_page = {
+        let rating_examples = rating_examples.clone();
         let show_routing = routing_table.show.clone();
         let show_external = external_table.show.clone();
         let show_tag_namespace_order = tag_namespace_order.show.clone();
@@ -671,7 +691,7 @@ pub(crate) fn open(
             cog_target.borrow_mut().take();
             let Some(window) = weak.upgrade() else { return };
             let state = editor.borrow();
-            let rows: Vec<OptionRow> = state
+            let mut rows: Vec<OptionRow> = state
                 .rows()
                 .iter()
                 .enumerate()
@@ -680,6 +700,7 @@ pub(crate) fn open(
                     ..option_row(row, &store, &session_choices)
                 })
                 .collect();
+            rating_examples.fill(&mut rows, &state, &store);
             window.set_page(int(state.page() as i64));
             window.set_rows(ModelRc::new(VecModel::from(rows)));
             refresh_image_cache_rows(&window, &state);
@@ -1291,11 +1312,46 @@ pub(crate) fn open(
     window.on_text_edited({
         let editor = editor.clone();
         let active = active.clone();
+        let rating_examples = rating_examples.clone();
+        let store = store.clone();
         let weak = window.as_weak();
         move |i, text| {
-            if active.get() && weak.upgrade().is_some_and(|w| w.window().is_visible()) {
+            if active.get()
+                && let Some(window) = weak.upgrade().filter(|w| w.window().is_visible())
+            {
                 editor.borrow_mut().text(at(i), &text);
+                rating_examples.refresh(&window, &editor.borrow(), &store);
             }
+        }
+    });
+    window.on_rating_example_pointer({
+        let editor = editor.clone();
+        let active = active.clone();
+        let rating_examples = rating_examples.clone();
+        let store = store.clone();
+        let weak = window.as_weak();
+        move |i, which, right, x, width, icon, drag| {
+            let Some(window) = weak
+                .upgrade()
+                .filter(|w| active.get() && w.window().is_visible())
+            else {
+                return;
+            };
+            let context = match editor.borrow().rows().get(at(i)) {
+                Some(Row::Opt { option, .. }) => match option.kind {
+                    Kind::RatingExamples(context) => context,
+                    _ => return,
+                },
+                _ => return,
+            };
+            rating_examples.pointer(
+                context,
+                which,
+                right,
+                (f64::from(x), f64::from(width), f64::from(icon)),
+                drag,
+            );
+            rating_examples.refresh(&window, &editor.borrow(), &store);
         }
     });
     window.on_background_path_pick({
@@ -1412,6 +1468,7 @@ pub(crate) fn open(
         }
     });
     window.on_choice_chosen({
+        let rating_examples = rating_examples.clone();
         let image_controls_blocked = image_controls_blocked.clone();
         let session_choices=session_choices.clone();
         let active=active.clone();let gui_colours_open=gui_colour_list.has_open.clone();
@@ -1430,6 +1487,11 @@ pub(crate) fn open(
             let mut editor = editor.borrow_mut();
             if matches!(editor.rows().get(at(i)),Some(Row::Opt {option,..}) if matches!(option.kind,Kind::SavedSession)) {
                 if let Some((name,_))=session_choices.get(at(index)) {editor.saved_session(at(i),name.clone());}
+                return;
+            }
+            if matches!(editor.rows().get(at(i)),Some(Row::Opt {option,..}) if matches!(option.kind,Kind::RatingStyle)) {
+                if let Some((service,_))=crate::options::rating_style_choices(&store).get(at(index)) {editor.tag_service(at(i),service.clone());}
+                if let Some(window) = weak.upgrade() { rating_examples.refresh(&window, &editor, &store); }
                 return;
             }
             let combined = match editor.rows().get(at(i)) {

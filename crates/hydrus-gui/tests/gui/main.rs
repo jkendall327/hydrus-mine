@@ -270,6 +270,7 @@ mod options_gui_kept;
 mod options_gui_misc;
 mod options_gui_pages;
 mod options_gui_ratings;
+mod options_gui_ratings_examples;
 mod options_gui_shortcuts;
 mod options_gui_suggestions;
 mod options_gui_support;

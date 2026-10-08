@@ -4938,3 +4938,14 @@ visible" (on by default) keeps the comparison panel beside the canvas; off, the
 canvas fills the window and the panel pops in over its right edge when the
 mouse goes there and stays while the mouse is over it. It follows the option
 while the filter is open. Proven by `duplicate_hover_pin.rs`.
+
+**Ratings page examples.** The page opens with the reference's "choose rating
+service style to display for examples" box: a dropdown of the like/dislike and
+numerical services ("Select rating service for styling numerical stars"). Each
+size box ends with "... size examples (click to test)": a row of stars, in the
+chosen service's shape and colours (a numerical service's whole style, a
+like/dislike service's shape and colours on five stars), and an inc/dec
+rectangle, drawn at the whole pixels typed in that box above them. Clicking or
+dragging the stars rates the example (the fraction beside them shows it), right
+click clears; the rectangle counts up on a click and down on a right click.
+The samples are never kept. Proven by `options_gui_ratings_examples.rs`.

@@ -3799,6 +3799,10 @@ change nothing). They are marked out of scope in `docs/rust/tracking/`.
   favourite file lookup script choice and the second recent count (there are
   no quick dialogs or lookup scripts). The style page isn't offered: Slint has
   no Qt styles or stylesheets.
+- The ratings page's style choice is kept when the options are applied (the
+  reference keeps it the moment it is chosen, even if the dialog is
+  cancelled), and the example inc/dec rectangle has no middle-click counter
+  entry. Choosing another style restarts the samples.
 - The mpv.conf chosen in the mpv box goes over the database's `mpv.conf` on
   OK, as the reference's does. mpv reads it when a player is made, so a
   running player keeps its old one (the reference reloads it in place).

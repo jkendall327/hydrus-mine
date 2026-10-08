@@ -61,6 +61,7 @@ const WIDGETS: &[&str] = &[
     "FilePickerCtrl",
     "BetterCheckBoxList",
     "NoneableTimeDeltaWidget",
+    "RatingNumericalExample",
 ];
 
 fn is_control(item: &Json) -> bool {
@@ -405,6 +406,20 @@ fn compare(kind: &Kind, value: &Value, theirs: &Json, store: &Store) -> Option<S
             let label =
                 hydrus_gui_model::domains::location_label(&store.snapshot().services, location);
             (theirs["button"] != label).then(|| format!("location {label:?}"))
+        }
+        (Kind::RatingStyle, Value::TagService(key)) => {
+            let choices = hydrus_gui_model::options::rating_style_choices(store);
+            let names: Vec<&str> = choices.iter().map(|(_, name)| name.as_str()).collect();
+            // (a template that isn't any of them shows the first)
+            let shown = choices
+                .iter()
+                .find(|(service, _)| service == key)
+                .map_or_else(|| names.first().copied(), |(_, name)| Some(name.as_str()));
+            (theirs["items"] != serde_json::json!(names) || theirs["choice"].as_str() != shown)
+                .then(|| format!("rating style {shown:?} of {names:?}"))
+        }
+        (Kind::RatingExamples(_), Value::Text(_)) => {
+            (theirs["widget"] != "RatingNumericalExample").then(|| "rating examples".to_owned())
         }
         // (the button; its checker options are checker_options' test's)
         (Kind::Checker, Value::Checker(_)) => {

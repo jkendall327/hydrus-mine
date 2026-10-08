@@ -604,6 +604,13 @@ pub enum Kind {
     TagService {
         combined: bool,
     },
+    /// The like/dislike and numerical rating services, one of which styles
+    /// the ratings page's example stars.
+    RatingStyle,
+    /// The ratings page's example stars and inc/dec rectangles for one of its
+    /// boxes (0 media viewer, 1 preview window, 2 thumbnails, 3 dialogs), to
+    /// click; shown, never edited.
+    RatingExamples(usize),
 }
 
 /// A tag sort's types, as the reference's control names them
@@ -867,6 +874,31 @@ pub fn tag_service_choices(
         );
     }
     choices
+}
+
+/// The services that can style the ratings page's examples (like/dislike
+/// ones, then numerical), in the store's order.
+pub fn rating_style_choices(store: &hydrus_store::Store) -> Vec<(hydrus_core::ServiceKey, String)> {
+    use hydrus_core::service::ServiceType;
+    let snapshot = store.snapshot();
+    [
+        ServiceType::LocalRatingLike,
+        ServiceType::LocalRatingNumerical,
+    ]
+    .into_iter()
+    .flat_map(|kind| snapshot.services.of_type(kind).collect::<Vec<_>>())
+    .map(|service| (service.key.clone(), service.name.clone()))
+    .collect()
+}
+
+/// The page's four example controls, with the labels the reference gives them.
+fn rating_examples(label: &'static str, context: usize) -> Item {
+    opt(
+        label,
+        Kind::RatingExamples(context),
+        Rc::new(|_| Value::Text(String::new())),
+        Rc::new(|_, _| Ok(())),
+    )
 }
 
 fn tag_service(
@@ -4048,6 +4080,33 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
             "ratings",
             vec![
                 boxed(
+                    "choose rating service style to display for examples",
+                    vec![opt(
+                        "Select rating service for styling numerical stars:",
+                        Kind::RatingStyle,
+                        Rc::new(|s| {
+                            Value::TagService(hydrus_core::ServiceKey::new(
+                                hex::decode(
+                                    s.reference_options
+                                        .string("options_ratings_panel_template_service_key")
+                                        .unwrap_or_default(),
+                                )
+                                .unwrap_or_default(),
+                            ))
+                        }),
+                        Rc::new(|s, v| match v {
+                            Value::TagService(service) => {
+                                s.reference_options.set_string(
+                                    "options_ratings_panel_template_service_key",
+                                    Some(service.to_hex()),
+                                );
+                                Ok(())
+                            }
+                            _ => Err(wrong("rating style")),
+                        }),
+                    )],
+                ),
+                boxed(
                     "media viewer",
                     vec![
                         float(
@@ -4062,6 +4121,7 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                             |s| s.media_viewer.rating_incdec_height,
                             |s, v| s.media_viewer.rating_incdec_height = v,
                         ),
+                        rating_examples("Media viewer size examples (click to test):", 0),
                     ],
                 ),
                 boxed(
@@ -4079,6 +4139,7 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                             |s| s.rating_context_sizes.preview_incdec_height,
                             |s, v| s.rating_context_sizes.preview_incdec_height = v,
                         ),
+                        rating_examples("Preview window size examples (click to test):", 1),
                     ],
                 ),
                 boxed(
@@ -4106,6 +4167,7 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                             |s| s.thumbnail_ratings.numerical_collapsed,
                             |s, v| s.thumbnail_ratings.numerical_collapsed = v,
                         ),
+                        rating_examples("Thumbnail size examples (click to test):", 2),
                     ],
                 ),
                 boxed(
@@ -4123,6 +4185,7 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                             |s| s.rating_context_sizes.dialog_incdec_height,
                             |s, v| s.rating_context_sizes.dialog_incdec_height = v,
                         ),
+                        rating_examples("Dialog size examples (click to test):", 3),
                     ],
                 ),
             ],
@@ -5625,7 +5688,10 @@ impl Editor {
             return;
         }
         if let Some(index) = self.option_at(row)
-            && matches!(self.kind(index), Kind::TagService { .. })
+            && matches!(
+                self.kind(index),
+                Kind::TagService { .. } | Kind::RatingStyle
+            )
         {
             self.values[self.page][index] = Value::TagService(service);
         }

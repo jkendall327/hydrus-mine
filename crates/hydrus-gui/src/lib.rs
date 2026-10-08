@@ -115,6 +115,7 @@ pub mod options_media_views;
 pub mod options_namespace_colours;
 pub mod options_open_externally;
 mod options_palette;
+mod options_rating_examples;
 pub mod options_tag_namespace_order;
 mod options_window;
 mod orphan_files_window;
