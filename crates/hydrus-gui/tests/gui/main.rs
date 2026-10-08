@@ -23,6 +23,7 @@ mod downloader_definitions_list;
 mod downloader_lists;
 mod downloader_update_times;
 mod duplicate_colours;
+mod auto_resolution_comparator_editors;
 mod duplicate_filter;
 mod duplicate_filter_canvas;
 mod duplicates_count;

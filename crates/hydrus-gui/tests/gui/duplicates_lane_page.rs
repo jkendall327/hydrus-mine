@@ -472,7 +472,7 @@ fn preview_pair_lists_offer_show_selected_pairs_in_a_new_page() {
     let _ = store;
 }
 
-fn rule_window(bound: &Bound) -> hydrus_gui::AutoResolutionRuleWindow {
+pub(crate) fn rule_window(bound: &Bound) -> hydrus_gui::AutoResolutionRuleWindow {
     bound
         .auto_resolution
         .rule
@@ -482,7 +482,7 @@ fn rule_window(bound: &Bound) -> hydrus_gui::AutoResolutionRuleWindow {
         .clone_strong()
 }
 
-fn newest_comparator(bound: &Bound) -> hydrus_gui::ComparatorWindow {
+pub(crate) fn newest_comparator(bound: &Bound) -> hydrus_gui::ComparatorWindow {
     bound
         .auto_resolution
         .comparators
@@ -492,7 +492,7 @@ fn newest_comparator(bound: &Bound) -> hydrus_gui::ComparatorWindow {
         .expect("a comparator editor is open")
 }
 
-fn kind_index(window: &hydrus_gui::AutoResolutionRuleWindow, name: &str) -> i32 {
+pub(crate) fn kind_index(window: &hydrus_gui::AutoResolutionRuleWindow, name: &str) -> i32 {
     window
         .get_comparator_kinds()
         .iter()
@@ -500,7 +500,7 @@ fn kind_index(window: &hydrus_gui::AutoResolutionRuleWindow, name: &str) -> i32 
         .unwrap_or_else(|| panic!("no comparator kind {name:?}")) as i32
 }
 
-fn list_of(bound: &Bound) -> hydrus_gui::AutoResolutionRulesWindow {
+pub(crate) fn list_of(bound: &Bound) -> hydrus_gui::AutoResolutionRulesWindow {
     bound
         .auto_resolution
         .list
@@ -697,7 +697,7 @@ fn edited_comparators_are_accepted_and_persisted_with_their_summaries() {
     assert_eq!(relative.get_property(), width as i32);
 }
 
-fn kind_index_sub(window: &hydrus_gui::ComparatorWindow, name: &str) -> i32 {
+pub(crate) fn kind_index_sub(window: &hydrus_gui::ComparatorWindow, name: &str) -> i32 {
     window
         .get_sub_kinds()
         .iter()
