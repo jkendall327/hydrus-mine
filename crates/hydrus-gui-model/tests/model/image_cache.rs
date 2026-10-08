@@ -7,6 +7,8 @@ use hydrus_store::{
 };
 use std::{cell::Cell, rc::Rc, time::Duration};
 
+// leaf: audit-options-speed-and-memory-image-cache-maximum-image-size-in-of-cache-that-can-be-cached
+// leaf: audit-options-speed-and-memory-image-cache-memory-reserved-for-image-cache
 #[test]
 fn actual_pending_rgb_rgba_touch_admission_soft_overflow_policy_and_expiry() {
     let fixture = hydrus_testkit::fixture_json("image_cache.json");
@@ -138,6 +140,8 @@ fn actual_legacy_native_wins_changed_fields_and_raw_control_values_survive_reope
     assert!(store.read(image_cache::load).is_err());
 }
 
+// leaf: audit-options-speed-and-memory-image-cache-maximum-image-size-in-of-cache-that-can-be-cached
+// leaf: audit-options-speed-and-memory-image-cache-memory-reserved-for-image-cache
 #[test]
 fn actual_byte_timeout_and_percentage_controls_match_the_recording() {
     let fixture = hydrus_testkit::fixture_json("image_cache.json");
@@ -190,6 +194,8 @@ fn actual_byte_timeout_and_percentage_controls_match_the_recording() {
     assert_eq!(fixture["raw"]["edited_minimum"], 300);
 }
 
+// leaf: audit-options-speed-and-memory-image-cache-maximum-image-size-in-of-cache-that-can-be-cached
+// leaf: audit-options-speed-and-memory-image-cache-memory-reserved-for-image-cache
 #[test]
 fn untouched_normalized_controls_preserve_concurrent_fields_but_explicit_edits_win() {
     use hydrus_gui_model::options::{self, Settings};

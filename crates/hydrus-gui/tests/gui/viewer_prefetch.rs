@@ -69,6 +69,7 @@ fn import(store: &Arc<Store>, name: &str) -> HashId {
         .unwrap()
         .unwrap()
 }
+// leaf: audit-options-speed-and-memory-image-prefetch-num-next-to-prefetch-in-media-viewer
 #[test]
 fn options_cancel_hidden_modal_save_reopen_and_live_hidden_viewer_warming_leave_current_pixels_unchanged()
  {
@@ -249,6 +250,7 @@ fn saved_policy_unchanged(store: &Store, stale: &OptionsWindow) {
     stale.invoke_apply();
     assert_eq!(store.read(viewer_prefetch::load).unwrap(), before);
 }
+// leaf: audit-options-speed-and-memory-image-prefetch-num-next-to-prefetch-in-media-viewer
 #[test]
 fn archive_delete_uses_saved_neighbour_counts_and_retains_current_media_after_warm_readiness() {
     let dir = tempfile::tempdir().unwrap();

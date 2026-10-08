@@ -2039,6 +2039,10 @@ fn tab_popup_bulk_close_cancellation_and_acceptance_are_wired() {
     .unwrap();
 }
 
+// leaf: audit-options-gui-pages-page-tab-names-also-automatically-prompt-when-sending-some-pages-to-one
+// leaf: audit-options-tabs-context-action-2235-this-page
+// leaf: audit-options-tabs-context-action-2239-pages-from-here-to-the-right
+// leaf: audit-options-tabs-context-action-2240-pages-to-the-right
 #[test]
 fn send_down_and_rename_prompts_match_reference_including_cancellation() {
     fn tree(pages: &[Page]) -> serde_json::Value {
@@ -2161,6 +2165,7 @@ fn send_down_and_rename_prompts_match_reference_including_cancellation() {
     }
 }
 
+// leaf: audit-options-tabs-context-action-2199-rename-page
 #[test]
 fn rename_tab_uses_frozen_key_and_cancellation_preserves_name() {
     let _windows = headless::init();
@@ -2234,6 +2239,9 @@ fn rename_tab_uses_frozen_key_and_cancellation_preserves_name() {
     }
 }
 
+// leaf: audit-options-tabs-context-action-2235-this-page
+// leaf: audit-options-tabs-context-action-2239-pages-from-here-to-the-right
+// leaf: audit-options-tabs-context-action-2240-pages-to-the-right
 #[test]
 fn send_down_keeps_nested_selection_and_open_search_objects() {
     use hydrus_gui::tab_context::Send;
@@ -2481,6 +2489,9 @@ fn harvest_tree(store: &Store, rows: &[Page]) -> serde_json::Value {
     )
 }
 
+// leaf: audit-options-tabs-context-action-2223-this-page
+// leaf: audit-options-tabs-context-action-2227-pages-from-here-to-the-right
+// leaf: audit-options-tabs-context-action-2228-pages-to-the-right
 #[test]
 fn duplicate_and_collapse_menus_replay_real_ordered_media_and_cancellation() {
     fn choose(ui: &MainWindow, pane: i32, label: &str) {
@@ -2605,6 +2616,9 @@ fn duplicate_and_collapse_menus_replay_real_ordered_media_and_cancellation() {
     }
 }
 
+// leaf: audit-options-tabs-context-action-2223-this-page
+// leaf: audit-options-tabs-context-action-2227-pages-from-here-to-the-right
+// leaf: audit-options-tabs-context-action-2228-pages-to-the-right
 #[test]
 fn collapse_empty_nested_notebook_has_no_hash_lock_and_one_replacement() {
     use hydrus_gui::tab_context::Send;
@@ -2639,6 +2653,7 @@ fn collapse_empty_nested_notebook_has_no_hash_lock_and_one_replacement() {
     assert_eq!(Pages::open(store).unwrap().shown().key, pages.shown().key);
 }
 
+// leaf: audit-options-gui-pages-page-tab-names-automatically-prompt-to-rename-new-page-of-pages-after-creation
 #[test]
 fn chooser_new_notebook_name_preference_matches_reference_and_persists() {
     use hydrus_store::settings::NotebookCreationSettings;

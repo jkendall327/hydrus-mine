@@ -58,6 +58,7 @@ fn labels(rows: &Value) -> Vec<String> {
         .collect()
 }
 
+// leaf: audit-options-tag-presentation-other-rendering-sibling-connecting-string
 #[test]
 fn persisted_custom_empty_and_unicode_connectors_render_without_changing_tags() {
     let recorded = hydrus_testkit::fixture_json("sibling_connector.json");

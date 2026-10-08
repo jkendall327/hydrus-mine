@@ -43,6 +43,8 @@ fn cells(w: &FileLogWindow) -> Vec<String> {
         .map(|v| v.to_string())
         .collect()
 }
+// leaf: audit-options-gui-misc-experimental-bytes-strings-1kb-pseudo-significant-figures
+// leaf: audit-options-gui-misc-prefer-iso-time-2018-03-01-12-40-23-to-5-days-ago
 #[test]
 fn staged_controls_reopen_and_reach_real_log_rows_and_page_size_status() {
     let (_dirs, store) = crate::subscriptions::store();

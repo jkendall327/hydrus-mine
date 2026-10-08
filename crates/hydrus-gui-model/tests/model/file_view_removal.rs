@@ -62,6 +62,8 @@ fn restore(store: &Store, files: &[HashId], two: bool) {
         })
         .unwrap();
 }
+// leaf: audit-options-files-and-trash-even-skipped-files
+// leaf: audit-options-files-and-trash-remove-files-from-view-when-they-are-archive-delete-filtered
 #[test]
 fn actual_qt_media_list_trash_move_and_physical_pruning_matrix() {
     let fixture = hydrus_testkit::fixture_json("files_view_removal.json");

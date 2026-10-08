@@ -44,6 +44,7 @@ fn key(window: &slint::Window, text: slint::SharedString) {
     window.dispatch_event(WindowEvent::KeyPressed { text: text.clone() });
     window.dispatch_event(WindowEvent::KeyReleased { text });
 }
+// leaf: audit-options-predicate-hash-hash-hashes
 #[test]
 fn all_types_signs_and_empty_hashes_publish_the_recorded_queries() {
     let (guards, store) = store();
@@ -131,6 +132,7 @@ fn all_types_signs_and_empty_hashes_publish_the_recorded_queries() {
     assert_eq!(store.read(settings::get::<CustomDefaults>).unwrap(), saved);
     assert!(bound.current.borrow().borrow().predicates().is_empty());
 }
+// leaf: audit-options-predicate-hash-hash-clean
 #[test]
 fn cleanup_replaces_real_typed_text_and_owns_warning_acknowledgement() {
     let (_guards, store) = store();

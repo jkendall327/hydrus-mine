@@ -32,6 +32,7 @@ fn store() -> (tempfile::TempDir, Arc<Store>, LoginManager) {
         .unwrap();
     (dir, store, manager)
 }
+// leaf: login-credentials
 #[test]
 fn credential_entry_masks_password_and_replays_reference_invalid_confirmation() {
     let (_dir, _store, manager) = store();
@@ -362,6 +363,7 @@ fn script_step_content_preview_apply_and_parent_cancel_are_owned_and_restricted(
     assert_eq!(store.read(hydrus_store::logins::load).unwrap(), saved);
 }
 
+// leaf: login-credentials
 #[test]
 fn domain_menu_credentials_stage_activation_and_persist_only_at_parent_apply() {
     let (_dir, store, original) = store();
@@ -465,6 +467,7 @@ fn assert_review(window: &hydrus_gui::LoginTestResultWindow, state: &serde_json:
     assert_eq!(window.get_cookies(), state["cookies"].as_str().unwrap());
     assert_eq!(window.get_result(), state["result"].as_str().unwrap());
 }
+// leaf: login-test-results
 #[test]
 fn result_review_replays_real_qt_fields_unicode_preview_full_copy_and_stale_close() {
     let rendered = headless::init();
@@ -623,6 +626,7 @@ fn until_login(mut ready: impl FnMut() -> bool) {
         std::thread::sleep(Duration::from_millis(10));
     }
 }
+// leaf: login-test-results
 #[test]
 fn script_editor_runs_real_http_with_fresh_cookies_and_reviews_without_saving() {
     let site = LoginSite::start();

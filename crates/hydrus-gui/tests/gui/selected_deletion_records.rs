@@ -44,6 +44,7 @@ fn select(ui: &MainWindow, bound: &Bound, files: &[HashId]) -> Option<(String, i
         .map(|row| (row.label.to_string(), row.id))
 }
 
+// leaf: audit-media-context-missing-clear-deleted
 #[test]
 fn actual_menu_and_answer_replay_clear_only_captured_records_and_enable_reimport() {
     let fixture = hydrus_testkit::fixture_json("selected_deletion_records.json");
@@ -201,6 +202,7 @@ fn actual_menu_and_answer_replay_clear_only_captured_records_and_enable_reimport
     );
 }
 
+// leaf: audit-media-context-missing-clear-deleted
 #[test]
 fn hidden_stale_page_rebound_and_accepted_exit_cannot_clear_captured_records() {
     let (_dirs, store) = seed::store();
@@ -275,6 +277,7 @@ fn hidden_stale_page_rebound_and_accepted_exit_cannot_clear_captured_records() {
     );
 }
 
+// leaf: audit-media-context-missing-clear-deleted
 #[test]
 fn tab_roundtrip_permanently_invalidates_menu_and_answer_and_advanced_child_blocks_dispatch() {
     let (_dirs, store) = seed::store();
@@ -536,6 +539,7 @@ fn question_key(
     native.dispatch_event(slint::platform::WindowEvent::KeyReleased { text });
 }
 
+// leaf: audit-media-context-missing-clear-deleted
 #[test]
 fn actual_question_buttons_keys_and_retired_press_clear_only_captured_records() {
     use slint::platform::{Key, PointerEventButton, WindowEvent};

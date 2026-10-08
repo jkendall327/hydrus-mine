@@ -3,6 +3,8 @@ use hydrus_core::HashId;
 use hydrus_gui_model::thumbnail_cache::{Cache, combined, separated};
 use hydrus_store::settings::ThumbnailCacheSettings;
 use std::time::Duration;
+// leaf: audit-options-help-debug-action-clear-thumbnail-cache
+// leaf: audit-options-speed-and-memory-thumbnail-cache-thumbnail-cache-timeout
 #[test]
 fn byte_lru_soft_overflow_timeout_touch_policy_and_clear_match_actual_reference() {
     let fixture = hydrus_testkit::fixture_json("thumbnail_cache.json");
@@ -63,6 +65,7 @@ fn byte_lru_soft_overflow_timeout_touch_policy_and_clear_match_actual_reference(
         assert_eq!(cache.policy().bytes, event["limit"].as_u64().unwrap());
     }
 }
+// leaf: audit-options-speed-and-memory-thumbnail-cache-thumbnail-cache-timeout
 #[test]
 fn byte_amount_unit_decomposition_matches_real_qt_controls() {
     let fixture = hydrus_testkit::fixture_json("thumbnail_cache.json");
@@ -81,6 +84,7 @@ fn byte_amount_unit_decomposition_matches_real_qt_controls() {
     assert_eq!(combined(1_048_577, 0), 1_048_576);
 }
 
+// leaf: audit-options-speed-and-memory-thumbnail-cache-thumbnail-cache-timeout
 #[test]
 fn independent_options_edits_merge_with_a_newer_saved_timeout() {
     let legacy = hydrus_testkit::legacy_fixture("basic");
@@ -119,6 +123,7 @@ fn independent_options_edits_merge_with_a_newer_saved_timeout() {
     );
 }
 
+// leaf: audit-options-speed-and-memory-thumbnail-cache-thumbnail-cache-timeout
 #[test]
 fn raw_timeout_is_preserved_until_its_minute_fields_are_edited() {
     let fixture = hydrus_testkit::fixture_json("thumbnail_cache.json");

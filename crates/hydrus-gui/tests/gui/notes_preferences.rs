@@ -93,6 +93,9 @@ fn cancel(window: &ManageNotesWindow) {
     }
 }
 
+// leaf: audit-media-notes-missing-cog
+// leaf: audit-options-notes-start-editing-notes-with-the-text-cursor-at-the-end-of-the-document
+// leaf: audit-options-notes-when-middle-clicking-a-note-hover-only-copy-the-text
 #[test]
 fn options_cog_cursor_copy_and_live_hover_replay_with_owned_cancel_and_reopen() {
     let fixture = hydrus_testkit::fixture_json("notes_preferences.json");

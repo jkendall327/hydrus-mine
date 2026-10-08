@@ -492,6 +492,7 @@ fn reopened_saved_process_uses_real_editor_inputs_and_owned_test_call_worker() {
     assert_eq!(saved(&store), before);
 }
 
+// leaf: audit-options-external-programs-external-calls-duplicate
 #[test]
 fn duplicate_warning_decline_keeps_unsorted_unselected_prefix_accept_finishes_and_retired_question_cannot_append()
  {
@@ -840,6 +841,7 @@ fn command_key(
         }
     }
 }
+// leaf: audit-options-nested-external-call-command-arguments
 #[test]
 fn actual_command_parameter_queue_buttons_keys_cancel_and_saved_argument_consumer() {
     use slint::platform::{Key, PointerEventButton, WindowEvent};
@@ -1065,6 +1067,7 @@ fn actual_command_parameter_queue_buttons_keys_cancel_and_saved_argument_consume
     assert!(!bound.options_external_calls.has_open());
 }
 
+// leaf: audit-options-nested-external-call-command-copy
 #[test]
 fn command_clipboard_exact_review_raw_rows_clean_copy_errors_and_owner_retirement() {
     hydrus_gui::set_clipper(|clip| {
@@ -1727,6 +1730,7 @@ fn list_flags(w: &OptionsWindow) -> (bool, bool, bool, i32, bool, slint::SharedS
     )
 }
 
+// leaf: audit-options-external-programs-external-calls-add-defaults
 #[test]
 fn defaults_physical_menu_exact_choices_saved_reopen_and_retired_selector_are_owned() {
     let oracle = hydrus_testkit::fixture_json("external_calls.json");

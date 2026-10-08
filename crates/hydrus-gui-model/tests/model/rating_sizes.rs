@@ -12,6 +12,8 @@ fn values(sizes: &RatingContextSizes) -> serde_json::Value {
     ])
 }
 
+// leaf: audit-options-ratings-dialogs-dialogs-inc-dec-rating-height
+// leaf: audit-options-ratings-dialogs-dialogs-like-dislike-and-numerical-rating-icon-size
 #[test]
 fn four_sizes_replay_qt_ranges_fractional_values_cancel_and_reopen() {
     let fixture = hydrus_testkit::fixture_json("rating_context_sizes.json");

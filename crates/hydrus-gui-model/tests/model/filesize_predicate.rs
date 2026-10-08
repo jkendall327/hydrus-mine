@@ -41,6 +41,7 @@ fn predicate(raw: &Value) -> Predicate {
         unit,
     })
 }
+// leaf: audit-options-predicate-filesize-size
 #[test]
 fn choices_bounds_and_explicit_reopening_match_qt() {
     let fixture = hydrus_testkit::fixture_json("filesize_predicate.json");

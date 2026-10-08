@@ -52,6 +52,9 @@ fn edit(window: &OptionsWindow, fixture: &Value, input: &Value) {
         }
     }
 }
+// leaf: audit-options-duplicates-colours-background-light-dark-switch-intensity-for-a
+// leaf: audit-options-duplicates-colours-background-light-dark-switch-intensity-for-b
+// leaf: audit-options-duplicates-colours-draw-image-transparency-as-checkerboard-in-the-duplicate-filter
 #[test]
 fn options_replay_cancel_retired_apply_bounds_and_persisted_reopen() {
     let fixture = hydrus_testkit::fixture_json("duplicate_colours.json");

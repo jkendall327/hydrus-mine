@@ -47,6 +47,7 @@ fn row(window: &OptionsWindow, label: &str) -> i32 {
     .unwrap()
 }
 
+// leaf: audit-options-gui-sessions-sessions-if-last-session-above-autosave-it-how-often-minutes
 #[test]
 fn applied_idle_and_period_controls_drive_real_archives_with_unchanged_suppression() {
     const PERIOD: &str = "If 'last session' above, autosave it how often (minutes)?";

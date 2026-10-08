@@ -94,6 +94,11 @@ fn row_json(row: &Suggestion) -> Value {
     json!({"text":[row.primary,row.secondary],"toggled":row.checked.unwrap_or(false),"close":row.action!=Some(Action::Calculator)})
 }
 
+// leaf: audit-options-command-palette-command-palette-include-page-of-pages-page-results
+// leaf: audit-options-command-palette-command-palette-max-favourite-searches-to-show
+// leaf: audit-options-command-palette-command-palette-max-page-history-to-show
+// leaf: audit-options-command-palette-command-palette-max-page-results-to-show
+// leaf: audit-options-command-palette-command-palette-start-searching-when-this-many-characters-have-been-typed
 #[test]
 fn providers_match_real_qt_order_limits_and_thresholds() {
     let oracle = fixture();
@@ -142,6 +147,7 @@ fn providers_match_real_qt_order_limits_and_thresholds() {
     );
 }
 
+// leaf: audit-options-command-palette-command-palette-search-provider-order-add
 #[test]
 fn defaults_and_provider_queue_match_the_qt_options_editor() {
     let oracle = fixture();
@@ -362,6 +368,7 @@ fn calculator_matches_qt_precedence_integer_types_errors_and_special_values() {
     assert!(palette::query(Provider::Calculator, "2+2", &removed, &Snapshot::default()).is_empty());
 }
 
+// leaf: audit-options-command-palette-command-palette-start-searching-when-this-many-characters-have-been-typed
 #[test]
 fn unicode_casefold_expands_before_provider_and_menu_thresholds() {
     let name = "Unicode Straße ffi ff";

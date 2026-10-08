@@ -253,6 +253,8 @@ fn reference_database_pair_filters_and_destinations() {
     }
 }
 
+// leaf: migration-archive-destination
+// leaf: migration-archive-source
 #[test]
 fn archive_inspection_choices_cancellation_and_count_summaries_match_qt() {
     let recording = hydrus_testkit::fixture_json("tag_archives.json");
@@ -352,6 +354,7 @@ fn archive_inspection_choices_cancellation_and_count_summaries_match_qt() {
     );
 }
 
+// leaf: audit-media-migration-pause
 #[test]
 fn migration_popup_speed_and_phase_text_replay_actual_qt_outputs() {
     use hydrus_store::tag_migration::{Event, Progress};

@@ -16,6 +16,7 @@ fn rows(editor: &namespace_colours::Editor) -> Value {
             .collect::<Vec<_>>()
     )
 }
+// leaf: audit-options-tag-presentation-other-rendering-namespace-for-the-or-top-row
 #[test]
 fn qt_namespace_add_normalization_protected_mixed_delete_and_options_cancel_reopen() {
     let fixture = hydrus_testkit::fixture_json("namespace_colour_controls.json");

@@ -63,6 +63,7 @@ const PATH: &str =
     "EXPERIMENTAL: Image path for thumbnail panel background image (set blank to clear):";
 
 // leaf: audit-options-thumbnails-new-rendering-tech-use-the-new-thumbnail-rendering-tech-only-applies-to-new-pages
+// leaf: audit-options-thumbnails-media-background-experimental-image-path-for-thumbnail-panel-background-image-set-blank-to-clear
 #[test]
 fn staged_browse_cancel_apply_new_page_policy_and_permanent_owner_retirement() {
     let (dirs, store) = store();
@@ -161,6 +162,7 @@ fn staged_browse_cancel_apply_new_page_policy_and_permanent_owner_retirement() {
     hydrus_gui::set_picker(|_, _| Vec::new());
 }
 
+// leaf: audit-options-thumbnails-appearance-use-blurhash-missing-thumbnail-fallback
 #[test]
 fn blurhash_real_metadata_default_invalid_disable_and_owned_cache_policy() {
     let (dirs, store) = store();
@@ -465,6 +467,7 @@ fn whole_cell_snapshots_exact_default_threshold_interruptions_and_cached_revisit
     assert_eq!(thumbnail.fade_opacity, 1.0);
 }
 
+// leaf: audit-options-thumbnails-media-background-experimental-image-path-for-thumbnail-panel-background-image-set-blank-to-clear
 #[test]
 fn unscaled_background_clips_oversized_pixels_and_stays_fixed_on_scroll_and_clear() {
     let (dirs, store) = store();
@@ -543,6 +546,7 @@ fn unscaled_background_clips_oversized_pixels_and_stays_fixed_on_scroll_and_clea
     assert_eq!(ui.get_thumbnail_background().size().width, 0);
 }
 
+// leaf: audit-options-thumbnails-media-background-experimental-image-path-for-thumbnail-panel-background-image-set-blank-to-clear
 #[test]
 fn exit_cancel_preserves_nonempty_background_and_accepted_exit_permanently_clears_it() {
     let (dirs, store) = store();
@@ -797,6 +801,7 @@ fn browse_uses_typed_draft_seed_and_hidden_appearance_controls_cannot_stage() {
     assert_eq!(store.read(settings::get::<Preferences>).unwrap(), before);
 }
 
+// leaf: audit-options-thumbnails-media-background-experimental-image-path-for-thumbnail-panel-background-image-set-blank-to-clear
 #[test]
 fn default_new_page_small_nonuniform_background_has_exact_unscaled_extent_on_resize() {
     let (dirs, store) = store();
@@ -856,6 +861,7 @@ fn default_new_page_small_nonuniform_background_has_exact_unscaled_extent_on_res
     }
 }
 
+// leaf: audit-options-thumbnails-media-background-experimental-image-path-for-thumbnail-panel-background-image-set-blank-to-clear
 #[test]
 fn qt_marker_background_has_exact_extent_in_old_and_default_new_owners() {
     let (dirs, store) = store();

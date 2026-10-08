@@ -50,6 +50,8 @@ fn rows(model: &ManageTags) -> Value {
     fixture::canonical(json!(rows))
 }
 
+// leaf: audit-options-tag-editing-tag-dialogs-show-parent-info-by-default-on-edit-write-taglists
+// leaf: audit-options-tag-editing-tag-dialogs-show-sibling-info-by-default-on-edit-write-taglists
 #[test]
 fn options_defaults_stage_cancel_apply_and_preserve_autocomplete_preferences() {
     let recorded = hydrus_testkit::fixture_json("tag_dialog_preferences.json");
@@ -111,6 +113,10 @@ fn options_defaults_stage_cancel_apply_and_preserve_autocomplete_preferences() {
     );
 }
 
+// leaf: audit-options-tag-editing-tag-dialogs-show-parent-info-by-default-on-edit-write-taglists
+// leaf: audit-options-tag-editing-tag-dialogs-show-parents-expanded-by-default-on-edit-write-taglists
+// leaf: audit-options-tag-editing-tag-dialogs-show-sibling-info-by-default-on-edit-write-taglists
+// leaf: audit-options-tag-editing-tag-dialogs-use-listbook-instead-of-tabbed-notebook-for-tag-service-panels
 #[test]
 fn storage_rows_and_service_topologies_replay_all_reference_combinations() {
     let recorded = hydrus_testkit::fixture_json("tag_dialog_preferences.json");

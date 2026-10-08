@@ -84,6 +84,8 @@ pub(crate) fn render_settled(
     }
 }
 
+// leaf: audit-options-popup-notifications-popup-window-toaster-approximate-max-width-of-popup-messages-in-characters
+// leaf: audit-options-popup-notifications-popup-window-toaster-bugfix-force-this-width-as-the-fixed-width-for-all-popup-messages
 #[test]
 fn options_cancel_apply_successor_stale_callbacks_and_real_popup_geometry() {
     let legacy = hydrus_testkit::legacy_fixture("basic");

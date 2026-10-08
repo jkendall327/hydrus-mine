@@ -4,6 +4,7 @@ use hydrus_downloader_exchange::import_options;
 use hydrus_gui_model::subscriptions_dialog::{ImportOptionsPaste, Subscriptions};
 use serde_json::json;
 
+// leaf: subscriptions-copy-options
 #[test]
 fn subscription_paste_modes_and_clear_match_recorded_reference_outputs() {
     let fixture = hydrus_testkit::fixture_json("subscription_import_options.json");

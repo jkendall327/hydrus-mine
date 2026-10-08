@@ -394,6 +394,7 @@ fn staged_rating_config_applies_and_cancel_writes_nothing() {
     manage.invoke_cancel_clicked();
 }
 
+// leaf: audit-media-services-missing-rating-preview
 #[test]
 fn live_rating_examples_stage_only_configuration_and_retire_cancelled_owners() {
     use hydrus_core::{media_viewer::MediaViewerSettings, thumbnail::ThumbnailRatingSettings};

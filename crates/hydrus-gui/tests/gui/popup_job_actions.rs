@@ -19,6 +19,8 @@ fn current(store: &hydrus_store::Store) -> popups::Job {
         .next()
         .unwrap()
 }
+// leaf: audit-options-popups-callable
+// leaf: audit-options-popups-clipboard
 #[test]
 fn clipboard_and_repeatable_current_callable_reach_real_native_controls_and_store_effects() {
     let (_directories, store) = crate::subscriptions::store();

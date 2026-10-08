@@ -44,6 +44,9 @@ fn labels(ui: &MainWindow) -> Vec<String> {
         .collect()
 }
 
+// leaf: audit-options-gui-pages-opening-and-closing-in-new-page-chooser-show-combined-local-file-domains-if-appropriate
+// leaf: audit-options-gui-pages-opening-and-closing-in-new-page-chooser-show-hydrus-local-file-storage
+// leaf: audit-options-gui-pages-opening-and-closing-put-it-at-the-top
 #[test]
 fn checkbox_drafts_cancel_apply_reopen_and_choose_exact_reference_locations() {
     let windows = headless::init();

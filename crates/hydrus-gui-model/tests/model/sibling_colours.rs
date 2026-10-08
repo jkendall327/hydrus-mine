@@ -79,6 +79,7 @@ fn compare(
         }
     }
 }
+// leaf: audit-options-tag-presentation-other-rendering-namespace-for-the-colour-of-the-sibling-connecting-string
 #[test]
 fn qt_sibling_colours_stage_cancel_apply_reopen_and_all_live_model_runs() {
     let recorded = hydrus_testkit::fixture_json("sibling_colours.json");
@@ -187,6 +188,7 @@ fn qt_sibling_colours_stage_cancel_apply_reopen_and_all_live_model_runs() {
     }
 }
 
+// leaf: audit-options-tag-presentation-other-rendering-namespace-for-the-colour-of-the-sibling-connecting-string
 #[test]
 fn qt_collapsed_parent_suffix_keeps_its_own_fade_and_ideal_trailing_colour() {
     let recorded = hydrus_testkit::fixture_json("sibling_colours.json");

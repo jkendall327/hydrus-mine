@@ -849,6 +849,7 @@ fn configure_error_limit(s: &Setup, threshold: Option<u64>) {
     s.downloader.reload_settings().unwrap();
 }
 
+// leaf: audit-options-downloading-subscriptions-if-a-subscription-has-this-many-failed-file-imports-stop-and-continue-later
 #[tokio::test(flavor = "multi_thread")]
 async fn handled_http_and_missing_file_failures_do_not_spend_the_outer_error_budget() {
     let s = setup().await;
@@ -918,6 +919,7 @@ fn fail_query_tag_writes(s: &Setup) {
     }).unwrap();
 }
 
+// leaf: audit-options-downloading-subscriptions-if-a-subscription-has-this-many-failed-file-imports-stop-and-continue-later
 #[tokio::test(flavor = "multi_thread")]
 async fn escaped_query_tag_errors_count_across_queries_delay_persist_and_reset_next_run() {
     let s = setup().await;
@@ -1127,6 +1129,7 @@ async fn wait_runner(mut ready: impl FnMut() -> bool) {
     .expect("subscription runner did not reach the expected state");
 }
 
+// leaf: audit-options-downloading-subscriptions-maximum-number-of-subscriptions-that-can-sync-simultaneously
 #[tokio::test(flavor = "multi_thread")]
 async fn subscription_runner_bounds_real_http_overlap_and_reloads_live_limit() {
     use hydrus_download::subscriptions::SubscriptionRunner;

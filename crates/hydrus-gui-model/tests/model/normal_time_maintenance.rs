@@ -26,6 +26,7 @@ fn editor(store: &Store) -> (Editor, [usize; 2]) {
     });
     (draft, rows)
 }
+// leaf: audit-options-files-and-trash-allow-deferred-file-deletes-during-normal-time
 #[test]
 fn recorded_flags_cancel_apply_reopen_and_live_peer_preservation() {
     let fixture = hydrus_testkit::fixture_json("normal_time_maintenance.json");

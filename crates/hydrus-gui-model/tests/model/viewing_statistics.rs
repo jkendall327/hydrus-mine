@@ -11,6 +11,8 @@ fn row(editor: &Editor, label: &str) -> usize {
         .unwrap()
 }
 
+// leaf: audit-options-file-viewing-statistics-show-viewing-stats-on-media-right-click-menus
+// leaf: audit-options-file-viewing-statistics-which-views-to-show
 #[test]
 fn viewing_menu_controls_match_qt_and_preserve_the_parent_draft() {
     let oracle = hydrus_testkit::fixture_json("viewing_statistics_options.json");
@@ -79,6 +81,7 @@ fn viewing_menu_controls_match_qt_and_preserve_the_parent_draft() {
     );
 }
 
+// leaf: audit-options-file-viewing-statistics-min-time-to-view-on-preview-viewer-to-count-as-a-view
 #[test]
 fn preview_timed_policy_matches_actual_manager_and_keeps_its_own_canvas_category() {
     use hydrus_gui_model::viewing_statistics::{Completed, completed};
@@ -123,6 +126,7 @@ fn preview_timed_policy_matches_actual_manager_and_keeps_its_own_canvas_category
     }
 }
 
+// leaf: audit-options-file-viewing-statistics-min-time-to-view-on-preview-viewer-to-count-as-a-view
 #[test]
 fn preview_options_replay_actual_none_bounds_conversion_and_cancelled_parent() {
     let fixture = hydrus_testkit::fixture_json("preview_viewing_intervals.json");
@@ -190,6 +194,9 @@ fn preview_options_replay_actual_none_bounds_conversion_and_cancelled_parent() {
     );
 }
 
+// leaf: audit-options-file-viewing-statistics-enable-file-viewing-statistics-tracking-in-the-archive-delete-filter
+// leaf: audit-options-file-viewing-statistics-enable-file-viewing-statistics-tracking-in-the-duplicate-filter
+// leaf: audit-options-file-viewing-statistics-min-time-to-view-on-media-viewer-to-count-as-a-view
 #[test]
 fn completed_view_policy_matches_real_manager_caps_minima_durations_and_filter_switches() {
     use hydrus_gui_model::viewing_statistics::{Completed, completed};
@@ -236,6 +243,7 @@ fn completed_view_policy_matches_real_manager_caps_minima_durations_and_filter_s
     }
 }
 
+// leaf: audit-options-file-viewing-statistics-enable-file-viewing-statistics-tracking-in-the-archive-delete-filter
 #[test]
 fn tracker_counts_once_on_change_or_close_reads_live_policy_and_preserves_latest_start() {
     use hydrus_gui_model::viewing_statistics::Tracker;
@@ -332,6 +340,7 @@ fn tracker_counts_once_on_change_or_close_reads_live_policy_and_preserves_latest
     assert_eq!(stats().views, 3, "policy is read when interval finishes");
 }
 
+// leaf: audit-options-file-viewing-statistics-min-time-to-view-on-media-viewer-to-count-as-a-view
 #[test]
 #[allow(clippy::float_cmp)] // exact recorded control minima
 fn timing_controls_replay_qt_bounds_none_and_millisecond_conversion() {

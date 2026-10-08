@@ -544,6 +544,7 @@ fn clear_and_load_replaces_the_pages_with_a_session() {
     assert!(!bound.pages.borrow_mut().unclose());
 }
 
+// leaf: audit-network-pause-boot
 #[test]
 fn boot_pause_menu_saves_preference_and_preserves_live_resume() {
     use hydrus_store::settings::{self, AdvancedMode, NetworkBootPause, Pauses};

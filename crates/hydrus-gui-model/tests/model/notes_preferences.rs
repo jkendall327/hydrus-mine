@@ -16,6 +16,8 @@ fn values(preferences: &NotePreferences) -> Value {
     ])
 }
 
+// leaf: audit-options-notes-start-editing-notes-with-the-text-cursor-at-the-end-of-the-document
+// leaf: audit-options-notes-when-middle-clicking-a-note-hover-only-copy-the-text
 #[test]
 fn actual_cog_copy_variants_and_options_persistence_replay() {
     let fixture = hydrus_testkit::fixture_json("notes_preferences.json");

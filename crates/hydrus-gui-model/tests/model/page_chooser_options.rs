@@ -6,6 +6,9 @@ use hydrus_store::{
     settings::{self, PageChooserSettings},
 };
 
+// leaf: audit-options-gui-pages-opening-and-closing-in-new-page-chooser-show-combined-local-file-domains-if-appropriate
+// leaf: audit-options-gui-pages-opening-and-closing-in-new-page-chooser-show-hydrus-local-file-storage
+// leaf: audit-options-gui-pages-opening-and-closing-put-it-at-the-top
 #[test]
 fn all_flag_combinations_replay_real_service_order_layout_and_choices() {
     let fixture = hydrus_testkit::fixture_json("page_chooser_options.json");
@@ -85,6 +88,7 @@ fn all_flag_combinations_replay_real_service_order_layout_and_choices() {
     }
 }
 
+// leaf: audit-options-gui-pages-opening-and-closing-put-it-at-the-top
 #[test]
 fn legacy_checkbox_defaults_are_imported_and_top_choices_remain_independent() {
     let fixture = hydrus_testkit::fixture_json("page_chooser_options.json");

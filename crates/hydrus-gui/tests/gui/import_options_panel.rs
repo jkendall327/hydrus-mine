@@ -69,6 +69,17 @@ fn synthetic_classes() -> Vec<UrlClass> {
     .collect()
 }
 
+// leaf: audit-options-import-options-default-import-options-clear
+// leaf: audit-options-import-options-default-import-options-edit
+// leaf: audit-options-import-options-default-import-options-reset-to-defaults
+// leaf: audit-options-import-options-default-import-options-show-stack
+// leaf: audit-options-import-options-favourites-profiles-add
+// leaf: audit-options-import-options-favourites-profiles-edit
+// leaf: audit-options-import-options-help-for-this-panel
+// leaf: audit-options-import-options-keep-this-panel-simple
+// leaf: audit-options-import-options-url-class-import-options-clear
+// leaf: audit-options-import-options-url-class-import-options-edit
+// leaf: audit-options-import-options-url-class-import-options-show-stack
 #[test]
 fn options_drafts_replay_clear_reset_simple_mode_and_cancel_without_store_changes() {
     let (_dirs, store) = crate::subscriptions::store();
@@ -263,6 +274,17 @@ fn options_drafts_replay_clear_reset_simple_mode_and_cancel_without_store_change
     options.invoke_cancel();
 }
 
+// leaf: audit-options-import-options-default-import-options-clear
+// leaf: audit-options-import-options-default-import-options-edit
+// leaf: audit-options-import-options-default-import-options-reset-to-defaults
+// leaf: audit-options-import-options-default-import-options-show-stack
+// leaf: audit-options-import-options-favourites-profiles-add
+// leaf: audit-options-import-options-favourites-profiles-edit
+// leaf: audit-options-import-options-help-for-this-panel
+// leaf: audit-options-import-options-keep-this-panel-simple
+// leaf: audit-options-import-options-url-class-import-options-clear
+// leaf: audit-options-import-options-url-class-import-options-edit
+// leaf: audit-options-import-options-url-class-import-options-show-stack
 #[test]
 fn applied_defaults_url_overrides_profiles_and_simple_preference_reach_consumers() {
     let (_dirs, store) = crate::subscriptions::store();

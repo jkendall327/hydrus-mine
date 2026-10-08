@@ -68,6 +68,10 @@ fn assert_controls(w: &OptionsWindow, fixture: &serde_json::Value, values: &serd
         }
     }
 }
+// leaf: audit-options-speed-and-memory-download-pages-update-experimental-gallery-importer-magic-update-time-denominator
+// leaf: audit-options-speed-and-memory-download-pages-update-experimental-minimum-gallery-importer-update-time
+// leaf: audit-options-speed-and-memory-download-pages-update-experimental-minimum-watcher-importer-update-time
+// leaf: audit-options-speed-and-memory-download-pages-update-experimental-watcher-importer-magic-update-time-denominator
 #[test]
 fn real_options_constructor_cancel_normalization_save_reopen_and_retained_cancel() {
     let fixture = hydrus_testkit::fixture_json("downloader_update_times.json");
@@ -587,10 +591,18 @@ fn scheduler(watcher: bool) {
         "accepted close remains terminal after retained re-show"
     );
 }
+// leaf: audit-options-speed-and-memory-download-pages-update-experimental-gallery-importer-magic-update-time-denominator
+// leaf: audit-options-speed-and-memory-download-pages-update-experimental-minimum-gallery-importer-update-time
+// leaf: audit-options-speed-and-memory-download-pages-update-experimental-minimum-watcher-importer-update-time
+// leaf: audit-options-speed-and-memory-download-pages-update-experimental-watcher-importer-magic-update-time-denominator
 #[test]
 fn gallery_owned_timer_reads_rows_at_deadline_keeps_live_details_and_retires() {
     scheduler(false);
 }
+// leaf: audit-options-speed-and-memory-download-pages-update-experimental-gallery-importer-magic-update-time-denominator
+// leaf: audit-options-speed-and-memory-download-pages-update-experimental-minimum-gallery-importer-update-time
+// leaf: audit-options-speed-and-memory-download-pages-update-experimental-minimum-watcher-importer-update-time
+// leaf: audit-options-speed-and-memory-download-pages-update-experimental-watcher-importer-magic-update-time-denominator
 #[test]
 fn watcher_owned_timer_reads_rows_at_deadline_keeps_live_details_and_retires() {
     scheduler(true);

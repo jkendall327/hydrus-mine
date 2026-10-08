@@ -79,6 +79,8 @@ fn open_filter(ui: &MainWindow, bound: &hydrus_gui::Bound) -> hydrus_gui::Archiv
         .unwrap()
         .clone_strong()
 }
+// leaf: audit-options-files-and-trash-when-finishing-archive-delete-filtering-always-delete-from-all-possible-domains
+// leaf: audit-options-files-and-trash-when-finishing-archive-delete-filtering-delay-activation-of-multiple-deletion-choice-buttons
 #[test]
 fn actual_multiple_choices_refuse_early_commit_then_delete_only_selected_domain() {
     let (_dir, store, files, ids) = setup();
@@ -174,6 +176,8 @@ fn actual_multiple_choices_refuse_early_commit_then_delete_only_selected_domain(
     );
     filter.hide().unwrap();
 }
+// leaf: audit-options-files-and-trash-when-finishing-archive-delete-filtering-always-delete-from-all-possible-domains
+// leaf: audit-options-files-and-trash-when-finishing-archive-delete-filtering-delay-activation-of-multiple-deletion-choice-buttons
 #[test]
 fn saved_all_domains_single_choice_and_forget_question_are_owned_across_rebind() {
     let (_dir, store, files, ids) = setup();
@@ -313,6 +317,8 @@ fn retained_finish_cannot_write_after_its_main_owner_is_dropped() {
     assert!(bound.archive_delete.borrow().is_none());
 }
 
+// leaf: audit-options-files-and-trash-when-finishing-archive-delete-filtering-always-delete-from-all-possible-domains
+// leaf: audit-options-files-and-trash-when-finishing-archive-delete-filtering-delay-activation-of-multiple-deletion-choice-buttons
 #[test]
 fn staged_options_cancel_save_hidden_callbacks_and_reopen_reach_next_finish() {
     let (dir, store, _files, _ids) = setup();

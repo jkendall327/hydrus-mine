@@ -6,6 +6,7 @@ use hydrus_store::settings;
 
 const LABEL: &str = "Max number of thumbnails to compute tags for when none are selected: ";
 
+// leaf: audit-options-tag-presentation-selection-tags-max-number-of-thumbnails-to-compute-tags-for-when-none-are-selected
 #[test]
 fn recorded_bounds_none_zero_cancel_and_saved_preferences() {
     let recorded = hydrus_testkit::fixture_json("unselected_tag_cap.json");

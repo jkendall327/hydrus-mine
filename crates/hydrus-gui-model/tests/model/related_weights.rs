@@ -2,6 +2,7 @@ use hydrus_gui_model::related_weights::{DUPLICATE, Editor, RESERVED};
 use hydrus_store::related_tags::{Query, Weights, rank};
 use std::collections::{BTreeMap, BTreeSet};
 
+// leaf: audit-options-nested-tag-suggestions-weights
 #[test]
 fn namespace_questions_and_detached_tables_match_actual_qt() {
     let f = hydrus_testkit::fixture_json("related_tag_weights.json");
@@ -69,6 +70,7 @@ fn namespace_questions_and_detached_tables_match_actual_qt() {
     }
 }
 
+// leaf: audit-options-nested-tag-suggestions-weights
 #[test]
 fn search_and_result_weights_change_actual_qt_cosine_ranking_separately() {
     let f = hydrus_testkit::fixture_json("related_tag_weights.json");

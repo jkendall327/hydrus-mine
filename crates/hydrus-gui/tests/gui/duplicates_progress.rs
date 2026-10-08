@@ -75,6 +75,7 @@ fn matches(ui: &MainWindow, row: &serde_json::Value) {
         (data.searched_fraction - gauge[0] as f32 / gauge[1].max(1) as f32).abs() < f32::EPSILON
     );
 }
+// leaf: audit-options-duplicates-duplicates-filter-page-hide-the-x-done-notification-on-preparation-tab-when-99-searched
 #[test]
 fn actual_checkbox_relabels_visible_preparation_without_changing_work_and_future_pages_reopen_policy()
  {

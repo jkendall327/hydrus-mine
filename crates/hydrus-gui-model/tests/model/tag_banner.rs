@@ -7,6 +7,12 @@ use hydrus_gui_model::tag_banner::Editor;
 fn value(json: &serde_json::Value) -> TagSummaryGenerator {
     serde_json::from_value(json.clone()).unwrap()
 }
+// leaf: audit-options-nested-tag-banner-appearance
+// leaf: audit-options-nested-tag-banner-namespaces
+// leaf: audit-options-nested-tag-banner-preview
+// leaf: audit-options-tag-presentation-tag-banners-on-media-viewer-top
+// leaf: audit-options-tag-presentation-tag-banners-on-thumbnail-bottom-right
+// leaf: audit-options-tag-presentation-tag-banners-on-thumbnail-top
 #[test]
 fn detached_banner_drafts_match_actual_qt_queue_and_live_preview() {
     let fixture = hydrus_testkit::fixture_json("tag_banner_editors.json");
@@ -101,6 +107,10 @@ fn detached_banner_drafts_match_actual_qt_queue_and_live_preview() {
     }
 }
 
+// leaf: audit-options-nested-tag-banner-appearance
+// leaf: audit-options-tag-presentation-tag-banners-on-media-viewer-top
+// leaf: audit-options-tag-presentation-tag-banners-on-thumbnail-bottom-right
+// leaf: audit-options-tag-presentation-tag-banners-on-thumbnail-top
 #[test]
 fn option_banner_children_stage_by_original_target_and_save_only_with_parent() {
     use hydrus_gui_model::{options, tag_banner::Target};
@@ -145,6 +155,9 @@ fn option_banner_children_stage_by_original_target_and_save_only_with_parent() {
     );
 }
 
+// leaf: audit-options-nested-tag-banner-appearance
+// leaf: audit-options-nested-tag-banner-namespaces
+// leaf: audit-options-nested-tag-banner-preview
 #[test]
 fn unicode_decimal_chunk_order_and_live_preview_match_actual_qt() {
     let fixture = hydrus_testkit::fixture_json("tag_banner_sort_boundaries.json");

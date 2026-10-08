@@ -56,6 +56,7 @@ fn favourite_window_stages_advisory_invalid_rows_and_cancels_retained_handles() 
     assert!(!regex_favourites_window::has_open(&slot));
 }
 
+// leaf: audit-network-matcher-favourites
 #[test]
 fn matcher_favourites_manager_saves_global_choices_and_parent_cancel_closes_it() {
     let (_dirs, store) = store();
@@ -265,6 +266,7 @@ fn failed_last_conversion_write_keeps_the_child_and_parent_draft_open() {
     );
 }
 
+// leaf: audit-network-matcher-favourites
 #[test]
 fn matcher_favourite_popup_copies_refreshes_and_owns_persisted_management() {
     use hydrus_gui::{Clip, StringStepWindow, string_processor_window};

@@ -22,6 +22,7 @@ fn manager(fixture: &Value) -> hydrus_parse::login::LoginManager {
 fn rows(editor: &CredentialsEditor) -> Value {
     json!(editor.rows().into_iter().map(|row| json!({"name":row.definition.name,"value":row.value,"hidden":row.definition.kind==CredentialKind::Hidden,"label":row.label,"valid":row.valid})).collect::<Vec<_>>())
 }
+// leaf: login-credentials
 #[test]
 fn credentials_match_reference_display_order_status_and_confirmation() {
     let fixture = hydrus_testkit::fixture_json("login_editors.json");
@@ -195,6 +196,7 @@ fn login_step_content_replays_reference_unique_import_cancel_sort_and_request_cl
     assert_eq!(editor.value().content_parsers[0].name, "renamed response");
 }
 
+// leaf: login-credentials
 #[test]
 fn domain_credentials_replay_reference_validity_activation_cancel_and_delay_reset() {
     use hydrus_gui_model::login_workflows::DomainsEditor;

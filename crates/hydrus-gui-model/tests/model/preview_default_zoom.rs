@@ -41,6 +41,7 @@ fn row(editor: &Editor) -> usize {
         .position(|r| matches!(r,Row::Opt{option,..}if option.label==LABEL))
         .unwrap()
 }
+// leaf: audit-options-media-playback-zoom-and-position-preview-viewer-default-zoom
 #[test]
 fn actual_qt_choices_staged_cancel_save_reopen_and_independent_viewer_policy() {
     let qt = hydrus_testkit::fixture_json("preview_default_zoom.json");
@@ -134,6 +135,7 @@ fn actual_qt_choices_staged_cancel_save_reopen_and_independent_viewer_policy() {
         "untouched preview choice preserves concurrent change"
     );
 }
+// leaf: audit-options-media-playback-zoom-and-position-preview-viewer-default-zoom
 #[test]
 fn exact_real_preview_geometry_uses_preview_rules_and_keeps_full_viewer_zooms() {
     let qt = hydrus_testkit::fixture_json("preview_default_zoom.json");

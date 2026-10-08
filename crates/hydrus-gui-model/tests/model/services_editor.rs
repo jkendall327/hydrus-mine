@@ -611,6 +611,7 @@ fn rating_examples_replay_qt_samples_live_configuration_and_no_saved_values() {
     assert!(Example::new(&ServiceKind::LocalTags).is_none());
 }
 
+// leaf: audit-media-services-missing-rating-preview
 #[test]
 fn numerical_example_one_star_retains_live_conversion_but_saves_normalized_scale() {
     use hydrus_gui_model::rating_example::Example;
@@ -649,6 +650,7 @@ fn numerical_example_one_star_retains_live_conversion_but_saves_normalized_scale
     assert_eq!(recorded["original_unchanged"], true);
 }
 
+// leaf: audit-media-services-missing-rating-preview
 #[test]
 fn rating_example_whole_widget_pointer_routes_replay_qt() {
     use hydrus_gui_model::rating_example::{Example, Sample};

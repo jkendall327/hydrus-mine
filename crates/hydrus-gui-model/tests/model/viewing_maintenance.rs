@@ -30,6 +30,8 @@ fn state(store: &Store) -> Value {
         Ok(json!(rows))
     }).unwrap()
 }
+// leaf: audit-media-menu-database-clear-clear-all-file-viewing-statistics
+// leaf: audit-media-menu-database-clear-cull-file-viewing-statistics-based-on-current-min-max-values
 #[test]
 fn reference_clear_cull_questions_rules_errors_and_real_reopened_media_match() {
     let fixture = hydrus_testkit::fixture_json("viewing_maintenance.json");

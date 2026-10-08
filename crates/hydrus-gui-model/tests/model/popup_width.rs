@@ -25,6 +25,8 @@ fn editor(s: Settings) -> Editor {
     e
 }
 
+// leaf: audit-options-popup-notifications-popup-window-toaster-approximate-max-width-of-popup-messages-in-characters
+// leaf: audit-options-popup-notifications-popup-window-toaster-bugfix-force-this-width-as-the-fixed-width-for-all-popup-messages
 #[test]
 fn qt_bounds_staging_cancel_loaded_normalisation_and_durable_reopen() {
     let f = hydrus_testkit::fixture_json("popup_width.json");
@@ -89,6 +91,7 @@ fn qt_bounds_staging_cancel_loaded_normalisation_and_durable_reopen() {
     assert_eq!(reopened.read(Settings::load).unwrap(), before);
 }
 
+// leaf: audit-options-popup-notifications-popup-window-toaster-approximate-max-width-of-popup-messages-in-characters
 #[test]
 fn legacy_raw_integers_and_independent_edited_fields_are_preserved() {
     use std::collections::BTreeMap;

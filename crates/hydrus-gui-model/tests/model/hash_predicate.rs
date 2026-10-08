@@ -71,6 +71,8 @@ fn snapshot(panel: &hydrus_gui_model::predicate_editors::Panel, raw: &Value, con
         );
     }
 }
+// leaf: audit-options-predicate-hash-hash-clean
+// leaf: audit-options-predicate-hash-hash-hashes
 #[test]
 fn cleanup_and_explicit_values_match_real_qt() {
     let fixture = hydrus_testkit::fixture_json("hash_predicate.json");

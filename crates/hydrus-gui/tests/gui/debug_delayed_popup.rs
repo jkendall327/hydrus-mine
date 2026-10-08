@@ -45,6 +45,7 @@ fn launch(ui: &MainWindow) {
     choose(ui, 2, "make a popup in five seconds");
 }
 
+// leaf: audit-options-help-debug-action-make-a-popup-in-five-seconds
 #[test]
 fn actual_menu_overlapping_deadlines_hidden_progress_store_reopen_and_rendered_cards() {
     let fixture = hydrus_testkit::fixture_json("debug_delayed_popup.json");

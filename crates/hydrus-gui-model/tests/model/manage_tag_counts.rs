@@ -3,6 +3,7 @@
 pub(super) mod fixture;
 use hydrus_gui_model::manage_tags::ManageTags;
 
+// leaf: audit-media-tags-missing-deleted
 #[test]
 fn deleted_counts_status_rows_and_global_toggle_replay_apply_cancel_and_reopen() {
     let recorded = hydrus_testkit::fixture_json("manage_tag_counts_incremental.json");

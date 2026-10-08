@@ -17,6 +17,7 @@ fn editor(store: &Store) -> (Editor, usize) {
         .unwrap();
     (edit, row)
 }
+// leaf: audit-options-media-playback-system-apply-image-icc-profile-colour-adjustments
 #[test]
 fn qt_icc_checkbox_cancel_saved_reopen_preserves_concurrent_viewer_rules() {
     let fixture = hydrus_testkit::fixture_json("image_decoder_policies.json");

@@ -30,6 +30,8 @@ fn preferences(store: &Store, prefs: DeletionPreferences) {
         .unwrap();
 }
 
+// leaf: audit-options-files-and-trash-advanced-file-deletion-and-custom-reasons-remember-the-last-reason
+// leaf: audit-options-files-and-trash-advanced-file-deletion-and-custom-reasons-use-the-advanced-file-deletion-dialog
 #[test]
 fn advanced_reasons_match_actual_qt_defaults_existing_and_remembered_selection() {
     let recording = hydrus_testkit::fixture_json("files_trash.json");
@@ -119,6 +121,8 @@ fn advanced_reasons_match_actual_qt_defaults_existing_and_remembered_selection()
     }
 }
 
+// leaf: audit-options-files-and-trash-advanced-file-deletion-and-custom-reasons-remember-the-last-reason
+// leaf: audit-options-files-and-trash-advanced-file-deletion-and-custom-reasons-use-the-advanced-file-deletion-dialog
 #[test]
 fn clean_delete_preserves_locked_files_and_remembered_fields_merge_with_options() {
     let (_dir, store) = store();
@@ -199,6 +203,7 @@ fn clean_delete_preserves_locked_files_and_remembered_fields_merge_with_options(
     );
 }
 
+// leaf: audit-options-files-and-trash-advanced-file-deletion-and-custom-reasons-add
 #[test]
 fn reason_queue_matches_recorded_cancel_empty_duplicate_movement_and_delete() {
     let recording = hydrus_testkit::fixture_json("files_trash.json");
@@ -303,6 +308,8 @@ fn physical_only_dialog_remembers_builtin_and_custom_service_keys_like_qt() {
     }
 }
 
+// leaf: audit-options-files-and-trash-advanced-file-deletion-and-custom-reasons-remember-the-last-reason
+// leaf: audit-options-files-and-trash-advanced-file-deletion-and-custom-reasons-use-the-advanced-file-deletion-dialog
 #[test]
 fn mixed_existing_reasons_match_qt_preserve_each_file_and_do_not_replace_last_reason() {
     let (_dir, store) = store();

@@ -537,6 +537,7 @@ fn editor_controls_change_matching_normalisation_and_validate_pagination() {
     );
 }
 
+// leaf: url-preview
 #[test]
 fn domain_mode_and_independent_tester_replay_reference_and_preserve_disabled_values() {
     use definitions::{DefinitionEditor, EditValue};
@@ -612,6 +613,7 @@ fn domain_mode_and_independent_tester_replay_reference_and_preserve_disabled_val
     assert!(editor.validate().is_err());
 }
 
+// leaf: url-preview
 #[test]
 fn selectable_preview_values_use_recorded_api_referral_and_gallery_consumers() {
     let fixture = hydrus_testkit::fixture_json("url_domain_preview.json");

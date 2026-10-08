@@ -46,6 +46,7 @@ fn wait_phase(window: &ArchiveRepairWindow, phase: i32) {
     }
     assert_eq!(window.get_phase(), phase, "{}", window.get_status());
 }
+// leaf: audit-media-menu-database-fix-missing-file-archived-times
 #[test]
 fn database_repair_has_owned_scan_population_questions_and_updates_real_media_on_reopen() {
     let windows = headless::init();
@@ -335,6 +336,7 @@ fn click(
     });
 }
 
+// leaf: audit-media-menu-database-fix-missing-file-archived-times
 #[test]
 fn actual_archive_controls_wrap_scroll_and_apply_each_recorded_population() {
     use slint::platform::WindowEvent;
@@ -494,6 +496,7 @@ fn actual_archive_controls_wrap_scroll_and_apply_each_recorded_population() {
     }
 }
 
+// leaf: audit-media-menu-database-fix-missing-file-archived-times
 #[test]
 fn cancel_after_commit_reports_success_and_refreshes_while_cancel_before_write_rolls_back() {
     let _windows = headless::init();

@@ -338,6 +338,9 @@ fn header_case_groups_delete_exact_rows_and_reject_concurrent_variant_insertions
     assert_eq!(headers[0].value, "resolved");
 }
 
+// leaf: cookies-clipboard
+// leaf: cookies-export
+// leaf: cookies-file
 #[test]
 fn cookie_exchange_replays_reference_fields_questions_and_collisions() {
     let f: serde_json::Value = serde_json::from_str(include_str!(
@@ -438,6 +441,7 @@ fn cookie_exchange_replays_reference_fields_questions_and_collisions() {
     assert!(!reloaded.cookies.iter().any(|c| c.name == "other"));
 }
 
+// leaf: cookies-file
 #[test]
 fn malformed_cookie_batches_never_partially_change_the_draft_and_browser_routes_silos() {
     let dir = tempfile::tempdir().unwrap();

@@ -351,6 +351,9 @@ fn click(
         });
     }
 }
+// leaf: audit-options-thumbnails-interaction-do-not-scroll-down-on-key-navigation-if-thumbnail-at-least-this-visible
+// leaf: audit-options-thumbnails-interaction-experimental-scroll-thumbnails-at-this-rate-per-scroll-tick
+// leaf: audit-options-thumbnails-interaction-when-shift-selecting-move-the-navigate-from-here-position-with-it
 #[test]
 fn owned_options_replay_cancel_save_reopen_and_real_keyboard_wheel_consumers() {
     let fixture = hydrus_testkit::fixture_json("thumbnail_navigation.json");

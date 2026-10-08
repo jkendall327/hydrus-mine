@@ -63,6 +63,7 @@ fn opened_viewer(client: &Client) -> ((f32, f32), bool, bool) {
 
 // leaf: audit-options-nested-frame-location-remember
 // leaf: audit-options-nested-frame-location-state
+// leaf: audit-options-gui-frame-locations-flip-remember-size
 #[test]
 fn the_frame_editor_s_switches_decide_how_the_media_viewer_next_opens() {
     let client = Client::basic();

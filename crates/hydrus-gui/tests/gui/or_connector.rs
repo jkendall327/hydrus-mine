@@ -125,6 +125,7 @@ fn open(ui: &MainWindow, bound: &hydrus_gui::Bound) -> (OptionsWindow, i32) {
         .unwrap();
     (window, i32::try_from(row).unwrap())
 }
+// leaf: audit-options-tag-presentation-other-rendering-or-connecting-string-on-one-line
 #[test]
 fn actual_options_raw_connector_preserves_live_or_label_colour_query_and_retired_owner() {
     let fixture = hydrus_testkit::fixture_json("or_connector.json");

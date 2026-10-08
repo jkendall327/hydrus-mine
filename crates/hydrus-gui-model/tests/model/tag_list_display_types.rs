@@ -29,6 +29,8 @@ fn editor(store: &hydrus_store::Store) -> (Editor, [usize; 2]) {
 fn values(settings: &TagPresentation) -> serde_json::Value {
     json!({"sidebar":settings.sidebar_display_type.code(),"viewer":settings.viewer_display_type.code()})
 }
+// leaf: audit-options-tag-presentation-default-taglist-display-type-advanced-tag-display-type-for-new-media-viewer-taglists
+// leaf: audit-options-tag-presentation-default-taglist-display-type-advanced-tag-display-type-for-new-page-sidebar-taglists
 #[test]
 fn exact_choices_stage_cancel_apply_reopen_and_preserve_old_payload_defaults() {
     let recorded = hydrus_testkit::fixture_json("tag_list_display_types.json");

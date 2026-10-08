@@ -19,6 +19,8 @@ fn row(editor: &Editor, label: &str) -> usize {
         .position(|row| matches!(row, Row::Opt { option, .. } if option.label.trim() == label))
         .unwrap()
 }
+// leaf: audit-options-thumbnails-appearance-use-blurhash-missing-thumbnail-fallback
+// leaf: audit-options-thumbnails-media-background-experimental-image-path-for-thumbnail-panel-background-image-set-blank-to-clear
 #[test]
 fn actual_defaults_cancel_raw_paths_reopen_and_current_field_merge() {
     let fixture = hydrus_testkit::fixture_json("thumbnail_appearance.json");

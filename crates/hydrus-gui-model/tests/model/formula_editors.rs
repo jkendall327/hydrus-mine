@@ -10,6 +10,7 @@ use serde_json::{Value, json};
 fn fixture() -> Vec<Value> {
     serde_json::from_value(hydrus_testkit::fixture_json("formula_editors.json")).unwrap()
 }
+// leaf: formula-fetch
 #[test]
 fn fetched_documents_replay_reference_success_error_and_cancellation_context() {
     use hydrus_gui_model::formula_editors::FetchedDocument;
@@ -384,6 +385,8 @@ fn formula_editor_bulk_name_conflicts_match_reference() {
     );
 }
 
+// leaf: formula-context
+// leaf: formula-static
 #[test]
 fn scalar_formula_controls_match_reference() {
     let cases: Vec<Value> = serde_json::from_value(hydrus_testkit::fixture_json(

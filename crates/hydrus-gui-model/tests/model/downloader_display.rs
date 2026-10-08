@@ -50,6 +50,8 @@ fn definitions() -> (Downloaders, UrlClassSettings) {
 fn rows(d: &Draft) -> serde_json::Value {
     serde_json::json!({"gugs":d.gugs.iter().map(|r|r.cells(false)).collect::<Vec<_>>(),"classes":d.classes.iter().map(|r|r.cells(true)).collect::<Vec<_>>()})
 }
+// leaf: audit-network-display-gugs
+// leaf: audit-network-display-url-classes
 #[test]
 fn replay_actual_tri_state_questions_and_rows() {
     let f = hydrus_testkit::fixture_json("downloader_display.json");
@@ -78,6 +80,8 @@ fn replay_actual_tri_state_questions_and_rows() {
         "Show \"alpha\" in the main selector list?"
     );
 }
+// leaf: audit-network-display-unmatched
+// leaf: audit-network-display-url-classes
 #[test]
 fn displayed_url_labels_filters_order_and_cap_replay_reference() {
     let f = hydrus_testkit::fixture_json("downloader_display.json");

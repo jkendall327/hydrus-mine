@@ -149,6 +149,9 @@ fn actual_defaults_disabled_values_cancel_reopen_and_edited_field_merge() {
     legacy.apply_legacy(&decoded.booleans);
     assert_eq!(flags(&legacy), serde_json::json!([true, true, true, true]));
 }
+// leaf: audit-options-thumbnails-interaction-on-ctrl-selection-focus-thumbnails-in-the-preview-window
+// leaf: audit-options-thumbnails-interaction-on-shift-selection-focus-thumbnails-in-the-preview-window
+// leaf: audit-options-thumbnails-interaction-only-on-files-with-no-duration-2
 #[test]
 fn all_qt_modifier_ranges_focus_anchor_ghost_and_keyboard_publications() {
     let fixture = hydrus_testkit::fixture_json("thumbnail_preview_selection.json");
@@ -199,6 +202,8 @@ fn all_qt_modifier_ranges_focus_anchor_ghost_and_keyboard_publications() {
         }
     }
 }
+// leaf: audit-options-thumbnails-interaction-only-on-files-with-no-duration
+// leaf: audit-options-thumbnails-interaction-only-on-files-with-no-duration-2
 #[test]
 fn exact_singleton_zero_and_collection_aggregate_duration_eligibility() {
     let prefs = Preferences {

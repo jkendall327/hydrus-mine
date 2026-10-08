@@ -20,6 +20,10 @@ fn preferences(value: &serde_json::Value) -> Preferences {
         watcher_denominator: value[3].as_i64().unwrap(),
     }
 }
+// leaf: audit-options-speed-and-memory-download-pages-update-experimental-gallery-importer-magic-update-time-denominator
+// leaf: audit-options-speed-and-memory-download-pages-update-experimental-minimum-gallery-importer-update-time
+// leaf: audit-options-speed-and-memory-download-pages-update-experimental-minimum-watcher-importer-update-time
+// leaf: audit-options-speed-and-memory-download-pages-update-experimental-watcher-importer-magic-update-time-denominator
 #[test]
 fn exact_constructor_fields_unchanged_apply_cancel_legacy_and_concurrent_field_merge() {
     let fixture = hydrus_testkit::fixture_json("downloader_update_times.json");
@@ -125,6 +129,10 @@ fn exact_constructor_fields_unchanged_apply_cancel_legacy_and_concurrent_field_m
         Preferences::default()
     );
 }
+// leaf: audit-options-speed-and-memory-download-pages-update-experimental-gallery-importer-magic-update-time-denominator
+// leaf: audit-options-speed-and-memory-download-pages-update-experimental-minimum-gallery-importer-update-time
+// leaf: audit-options-speed-and-memory-download-pages-update-experimental-minimum-watcher-importer-update-time
+// leaf: audit-options-speed-and-memory-download-pages-update-experimental-watcher-importer-magic-update-time-denominator
 #[test]
 fn strict_deadlines_ratios_minimum_fallback_saved_changes_and_forcing_match_qt() {
     let fixture = hydrus_testkit::fixture_json("downloader_update_times.json");

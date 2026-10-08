@@ -105,6 +105,8 @@ fn kind(case: &Value) -> TransferKind {
         _ => TransferKind::Merge,
     }
 }
+// leaf: audit-options-files-and-trash-confirm-when-copying-files-across-local-file-domains
+// leaf: audit-options-files-and-trash-confirm-when-moving-files-across-local-file-domains
 #[test]
 fn actual_qt_options_defaults_drafts_and_field_scoped_save() {
     let fixture = hydrus_testkit::fixture_json("local_transfer_confirmations.json");
@@ -179,6 +181,8 @@ fn actual_qt_options_defaults_drafts_and_field_scoped_save() {
         }
     );
 }
+// leaf: audit-options-files-and-trash-confirm-when-copying-files-across-local-file-domains
+// leaf: audit-options-files-and-trash-confirm-when-moving-files-across-local-file-domains
 #[test]
 fn recorded_copy_strict_and_merge_questions_drive_real_memberships() {
     let fixture = hydrus_testkit::fixture_json("local_transfer_confirmations.json");
@@ -255,6 +259,8 @@ fn recorded_copy_strict_and_merge_questions_drive_real_memberships() {
         }
     }
 }
+// leaf: audit-options-files-and-trash-confirm-when-copying-files-across-local-file-domains
+// leaf: audit-options-files-and-trash-confirm-when-moving-files-across-local-file-domains
 #[test]
 fn deleted_destination_restores_timestamp_and_stale_source_cannot_move() {
     let fixture = hydrus_testkit::fixture_json("local_transfer_confirmations.json");
@@ -305,6 +311,8 @@ fn deleted_destination_restores_timestamp_and_stale_source_cannot_move() {
     );
 }
 
+// leaf: audit-options-files-and-trash-confirm-when-copying-files-across-local-file-domains
+// leaf: audit-options-files-and-trash-confirm-when-moving-files-across-local-file-domains
 #[test]
 fn stale_destination_membership_and_reused_service_id_never_retarget_a_question() {
     let fixture = hydrus_testkit::fixture_json("local_transfer_confirmations.json");

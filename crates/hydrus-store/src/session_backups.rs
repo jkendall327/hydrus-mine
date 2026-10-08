@@ -301,6 +301,7 @@ mod tests {
         }
     }
 
+    // leaf: audit-options-gui-sessions-sessions-if-last-session-above-autosave-it-how-often-minutes
     #[test]
     fn automatic_last_session_hash_replays_real_unchanged_suppression_and_history() {
         let conn = connection();
@@ -351,6 +352,7 @@ mod tests {
         );
     }
 
+    // leaf: audit-options-gui-sessions-sessions-number-of-session-backups-to-keep
     #[test]
     fn rolling_timestamps_match_the_reference_including_clock_reversal() {
         let conn = connection();

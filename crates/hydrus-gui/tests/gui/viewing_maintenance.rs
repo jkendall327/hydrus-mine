@@ -53,6 +53,8 @@ fn dispatch(ui: &MainWindow, cull: bool) {
     ui.invoke_menu_line_clicked(1, i32::try_from(line).unwrap(), 0.0, 0.0, 0.0);
 }
 
+// leaf: audit-media-menu-database-clear-clear-all-file-viewing-statistics
+// leaf: audit-media-menu-database-clear-cull-file-viewing-statistics-based-on-current-min-max-values
 #[test]
 fn real_menu_clear_and_cull_read_live_rules_preserve_declines_and_reopen() {
     let windows = headless::init();

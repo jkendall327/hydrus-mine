@@ -66,6 +66,9 @@ fn insertion_option(
     (options, i32::try_from(row).unwrap())
 }
 
+// leaf: audit-options-tabs-context-action-2164-new-page
+// leaf: audit-options-tabs-context-action-2168-new-page-here
+// leaf: audit-options-gui-pages-opening-and-closing-put-new-page-tabs-on
 #[test]
 fn popup_new_page_and_here_replay_real_reference_order_selection_and_cancellation() {
     let _windows = headless::init();
@@ -145,6 +148,8 @@ fn popup_new_page_and_here_replay_real_reference_order_selection_and_cancellatio
     }
 }
 
+// leaf: audit-options-tabs-context-action-2164-new-page
+// leaf: audit-options-tabs-context-action-2168-new-page-here
 #[test]
 fn nested_chooser_freezes_parent_and_anchor_and_cancel_clears_pending_position() {
     let _windows = headless::init();
@@ -228,6 +233,7 @@ fn nested_chooser_freezes_parent_and_anchor_and_cancel_clears_pending_position()
     );
 }
 
+// leaf: audit-options-tabs-context-action-2164-new-page
 #[test]
 fn insertion_option_imports_rejects_invalid_cancels_and_changes_real_chooser_consumer() {
     use hydrus_store::settings::{self, PageInsertion};

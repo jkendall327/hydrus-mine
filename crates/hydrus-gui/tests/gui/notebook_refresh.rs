@@ -64,6 +64,7 @@ fn choose(ui: &MainWindow, label: &str) {
     ui.invoke_menu_line_clicked(0, i32::try_from(index).unwrap(), 200.0, 100.0, 10.0);
 }
 
+// leaf: audit-options-tabs-context-action-2253-refresh-all-this-page-s-pages
 #[test]
 fn notebook_refresh_resumes_initialized_descendants_and_preserves_background_selection() {
     let _windows = headless::init();
@@ -154,6 +155,7 @@ fn notebook_refresh_resumes_initialized_descendants_and_preserves_background_sel
     assert_eq!(locked.borrow().files(), files);
 }
 
+// leaf: audit-options-tabs-context-action-2052-page-weight-information-advanced
 #[test]
 fn advanced_weight_counts_repeated_media_and_both_seed_logs_and_copies_exact_label() {
     use hydrus_core::{

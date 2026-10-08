@@ -21,6 +21,8 @@ fn row(e: &Editor, label: &str) -> usize {
         .position(|r| matches!(r,Row::Opt{option,..} if option.label==label))
         .unwrap()
 }
+// leaf: audit-options-gui-misc-experimental-bytes-strings-1kb-pseudo-significant-figures
+// leaf: audit-options-gui-misc-prefer-iso-time-2018-03-01-12-40-23-to-5-days-ago
 #[test]
 fn staged_bounds_cancel_save_reopen_and_real_log_columns_match_qt() {
     let fixture = hydrus_testkit::fixture_json("gui_format.json");
@@ -135,6 +137,8 @@ fn staged_bounds_cancel_save_reopen_and_real_log_columns_match_qt() {
     assert_eq!(value(&before.gui_formatting), fixture["cancel_after"]);
 }
 
+// leaf: audit-options-gui-misc-experimental-bytes-strings-1kb-pseudo-significant-figures
+// leaf: audit-options-gui-misc-prefer-iso-time-2018-03-01-12-40-23-to-5-days-ago
 #[test]
 fn recorded_current_local_offsets_and_ancient_boundaries_match_python() {
     let fixture = hydrus_testkit::fixture_json("gui_format.json");
@@ -163,6 +167,7 @@ fn recorded_current_local_offsets_and_ancient_boundaries_match_python() {
     }
 }
 
+// leaf: audit-options-gui-misc-experimental-bytes-strings-1kb-pseudo-significant-figures
 #[test]
 fn precision_reaches_existing_import_png_network_and_service_displays() {
     use hydrus_core::bandwidth::{BandwidthType, Rule, Tracker};
@@ -273,6 +278,7 @@ fn precision_reaches_existing_import_png_network_and_service_displays() {
     }
 }
 
+// leaf: audit-options-gui-misc-experimental-bytes-strings-1kb-pseudo-significant-figures
 #[test]
 fn recorded_summaries_previews_expiry_and_scheduling_variants_reach_existing_models() {
     use hydrus_core::import_options::{FileFilteringOptions, ImportOptionsSlice};
