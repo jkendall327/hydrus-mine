@@ -606,7 +606,10 @@ fn the_filter_prefetches_the_pair_shown_and_the_edited_number_of_pairs_after_it(
             .iter()
             .position(|r| r.label == PAIRS)
             .unwrap() as i32;
-        assert_eq!(options.get_rows().row_data(row as usize).unwrap().maximum, 25);
+        assert_eq!(
+            options.get_rows().row_data(row as usize).unwrap().maximum,
+            25
+        );
         options.invoke_number_edited(row, pairs as i32);
         options.invoke_apply();
         assert_eq!(

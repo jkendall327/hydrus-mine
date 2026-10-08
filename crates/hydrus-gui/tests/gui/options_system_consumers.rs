@@ -1455,7 +1455,10 @@ fn idle_and_cpu_busy_options_decide_whether_background_work_may_run() {
     );
     options.invoke_cancel();
     let at = minute(6);
-    assert!(!idle_state::is_idle(&dir, at), "busy again, at 59% on 1 core");
+    assert!(
+        !idle_state::is_idle(&dir, at),
+        "busy again, at 59% on 1 core"
+    );
 
     // Switching the idle option off stops idle work whatever the CPU does.
     let options = client.options("maintenance and processing");
@@ -1495,7 +1498,8 @@ impl Client {
         self.restart();
         self.store
             .write(move |ctx| {
-                ctx.conn().execute_batch("DROP TABLE IF EXISTS sqlite_stat1")?;
+                ctx.conn()
+                    .execute_batch("DROP TABLE IF EXISTS sqlite_stat1")?;
                 hydrus_store::settings::set(
                     ctx.conn(),
                     &hydrus_store::settings::ShutdownWork {
@@ -1555,7 +1559,10 @@ fn run_jobs_on_shutdown_decides_what_the_exit_does() {
     assert!(hydrus_gui::client_exit::maintenance_question().is_none());
     assert!(!client.ui.window().is_visible(), "exited");
     assert!(!analysed(&client), "no work was done");
-    assert!(shutdown_settings(&client).last_done < seconds_now() - 900_000, "untouched");
+    assert!(
+        shutdown_settings(&client).last_done < seconds_now() - 900_000,
+        "untouched"
+    );
 
     // run if needed: the work is done without asking.
     client.exit_after(1_000_000, |o| choose_shutdown(o, 1));
@@ -1641,7 +1648,10 @@ fn the_edited_shutdown_minutes_are_in_the_question() {
     let mut client = client();
     let options = client.options("maintenance and processing");
     let (_, row) = shutdown_row(&options, MINUTES);
-    assert_eq!((row.kind, row.minimum, row.maximum, row.number), (2, 1, 1440, 5));
+    assert_eq!(
+        (row.kind, row.minimum, row.maximum, row.number),
+        (2, 1, 1440, 5)
+    );
     assert!(row.enabled);
     // no use unless jobs are run on shutdown
     choose_shutdown(&options, 0);

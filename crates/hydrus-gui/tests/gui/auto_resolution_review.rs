@@ -495,7 +495,11 @@ fn approving_and_denying_show_their_progress_on_the_button_and_in_a_popup() {
         .unwrap();
 
     for (approve, button, title) in [
-        (true, "approving: 0/1", "approving auto-resolution decisions"),
+        (
+            true,
+            "approving: 0/1",
+            "approving auto-resolution decisions",
+        ),
         (false, "denying: 0/1", "denying auto-resolution decisions"),
     ] {
         assert_eq!(action_title(approve), title);
@@ -523,7 +527,13 @@ fn approving_and_denying_show_their_progress_on_the_button_and_in_a_popup() {
         } else {
             (window.get_deny_text(), window.get_approve_text())
         };
-        assert_eq!((button_text.as_str(), other_text.as_str()), (if approve { "approve" } else { "deny" }, if approve { "deny" } else { "approve" }));
+        assert_eq!(
+            (button_text.as_str(), other_text.as_str()),
+            (
+                if approve { "approve" } else { "deny" },
+                if approve { "deny" } else { "approve" }
+            )
+        );
         if approve {
             window.invoke_approve();
         } else {
@@ -541,13 +551,20 @@ fn approving_and_denying_show_their_progress_on_the_button_and_in_a_popup() {
             if text == button {
                 break;
             }
-            assert!(std::time::Instant::now() < deadline, "no progress: {text:?}");
+            assert!(
+                std::time::Instant::now() < deadline,
+                "no progress: {text:?}"
+            );
             std::thread::sleep(std::time::Duration::from_millis(20));
         }
         assert!(window.get_working());
         // (the other button keeps its label, and a second decision is ignored)
         assert_eq!(
-            if approve { window.get_deny_text() } else { window.get_approve_text() },
+            if approve {
+                window.get_deny_text()
+            } else {
+                window.get_approve_text()
+            },
             if approve { "deny" } else { "approve" }
         );
         release_tx.send(()).unwrap();
@@ -557,13 +574,19 @@ fn approving_and_denying_show_their_progress_on_the_button_and_in_a_popup() {
         let deadline = std::time::Instant::now() + std::time::Duration::from_secs(20);
         loop {
             slint::platform::update_timers_and_animations();
-            if !window.get_working() && window.get_approve_text() == "approve" && window.get_deny_text() == "deny" {
+            if !window.get_working()
+                && window.get_approve_text() == "approve"
+                && window.get_deny_text() == "deny"
+            {
                 break;
             }
             assert!(std::time::Instant::now() < deadline, "never finished");
             std::thread::sleep(std::time::Duration::from_millis(10));
         }
-        assert!(popups_now(&opened.store).is_empty(), "the popup is dismissed once done");
+        assert!(
+            popups_now(&opened.store).is_empty(),
+            "the popup is dismissed once done"
+        );
         // (a dismissed popup is forgotten, so what was written is read from
         // the trigger's log)
         let jobs: Vec<popups::Job> = opened

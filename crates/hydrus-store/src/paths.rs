@@ -76,11 +76,8 @@ pub fn delete_or_recycle(path: impl AsRef<Path>, recycle: bool) -> io::Result<()
 #[cfg(all(unix, not(target_os = "macos")))]
 pub fn recycle_bin_holds(original: impl AsRef<Path>) -> bool {
     let original = original.as_ref();
-    ::trash::os_limited::list().is_ok_and(|items| {
-        items
-            .iter()
-            .any(|item| item.original_path() == original)
-    })
+    ::trash::os_limited::list()
+        .is_ok_and(|items| items.iter().any(|item| item.original_path() == original))
 }
 
 /// Empty the OS's recycle bin of the file deleted from `original`, after a test.

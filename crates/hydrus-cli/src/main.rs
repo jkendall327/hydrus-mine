@@ -1172,11 +1172,17 @@ mod tests {
         // idle time only: normal use holds (and the next pass is soon)
         set(true, false);
         gui_is_idle(&store, false);
-        assert_eq!(block_on(similar_files_step(&store)), Duration::from_secs(10));
+        assert_eq!(
+            block_on(similar_files_step(&store)),
+            Duration::from_secs(10)
+        );
         assert_eq!(waiting(&store), 1, "held: nothing was searched");
         // a daemon with no GUI is never idle either
         std::fs::remove_file(dir.path().join("client_idle_state")).unwrap();
-        assert_eq!(block_on(similar_files_step(&store)), Duration::from_secs(10));
+        assert_eq!(
+            block_on(similar_files_step(&store)),
+            Duration::from_secs(10)
+        );
         assert_eq!(waiting(&store), 1);
         // the GUI goes idle: it works
         gui_is_idle(&store, true);
@@ -1186,14 +1192,19 @@ mod tests {
         // normal time only: idle holds, normal use works
         store
             .write(|ctx| {
-                ctx.conn()
-                    .execute("UPDATE similar_search_status SET searched_distance = NULL", [])?;
+                ctx.conn().execute(
+                    "UPDATE similar_search_status SET searched_distance = NULL",
+                    [],
+                )?;
                 Ok(())
             })
             .unwrap();
         set(false, true);
         gui_is_idle(&store, true);
-        assert_eq!(block_on(similar_files_step(&store)), Duration::from_secs(10));
+        assert_eq!(
+            block_on(similar_files_step(&store)),
+            Duration::from_secs(10)
+        );
         assert_eq!(waiting(&store), 1, "held: idle, and only normal time is on");
         gui_is_idle(&store, false);
         block_on(similar_files_step(&store));

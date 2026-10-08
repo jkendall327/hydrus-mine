@@ -556,7 +556,10 @@ fn deleting_selected_profiles_asks_as_the_reference_does_and_cancel_keeps_them()
     page(&options);
     let window = panel::last_opened().unwrap();
     let profiles = |window: &ImportOptionsPanelWindow| -> Vec<String> {
-        rows(window, 2).into_iter().map(|row| row[0].clone()).collect()
+        rows(window, 2)
+            .into_iter()
+            .map(|row| row[0].clone())
+            .collect()
     };
     let before = profiles(&window);
     for _ in 0..2 {
