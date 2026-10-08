@@ -21,6 +21,7 @@ fn wait(window: &FileHistoryWindow) {
     assert!(!window.get_loading());
     assert!(window.get_chart_visible(), "{}", window.get_status());
 }
+// leaf: audit-media-database-history-series, audit-media-database-history-axes, audit-media-database-history-search
 #[test]
 fn history_frame_consumes_times_filters_and_ranges_without_touching_main_query_or_retired_owner() {
     let recorded = hydrus_testkit::fixture_json("file_history.json");

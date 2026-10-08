@@ -532,10 +532,11 @@
    "path": "Database > db maintenance > review deferred delete table data",
    "workstream": "database",
    "state": "missing",
-   "priority": "normal",
+   "priority": "out-of-scope",
    "reference": null,
    "native": null,
    "notes": [
+    "Not applicable (2026-10-08): the native store has no counterpart of this reference cache/table (ARCHITECTURE.md ADR-1); the menu entry asks the reference question and reports a clean run. See DIFFERENCES.md, Database menu.",
     "Reference table-name/row-count queue provides refresh and work-hard state; native deferred-delete review is todo with no command."
    ]
   },
@@ -814,10 +815,11 @@
    "path": "Database > check and repair",
    "workstream": "database",
    "state": "missing",
-   "priority": "normal",
+   "priority": "out-of-scope",
    "reference": null,
    "native": null,
    "notes": [
+    "Not applicable (2026-10-08): the native store has no counterpart of this reference cache/table (ARCHITECTURE.md ADR-1); the menu entry asks the reference question and reports a clean run. See DIFFERENCES.md, Database menu.",
     "Reference database menu entry is present. The native menu presents this reference branch through todo()/no command; no native dialog/action is reachable here. Backend maintenance or CLI facilities do not establish GUI coverage.",
     "The native menu presents this reference branch through todo()/no command; no native dialog/action is reachable here. Backend maintenance or CLI facilities do not establish GUI coverage."
    ]
@@ -828,10 +830,11 @@
    "path": "Database > check and repair",
    "workstream": "database",
    "state": "missing",
-   "priority": "normal",
+   "priority": "out-of-scope",
    "reference": null,
    "native": null,
    "notes": [
+    "Not applicable (2026-10-08): the native store has no counterpart of this reference cache/table (ARCHITECTURE.md ADR-1); the menu entry asks the reference question and reports a clean run. See DIFFERENCES.md, Database menu.",
     "Reference database menu entry is present. The native menu presents this reference branch through todo()/no command; no native dialog/action is reachable here. Backend maintenance or CLI facilities do not establish GUI coverage.",
     "The native menu presents this reference branch through todo()/no command; no native dialog/action is reachable here. Backend maintenance or CLI facilities do not establish GUI coverage."
    ]
@@ -906,10 +909,11 @@
    "path": "Database > db maintenance",
    "workstream": "database",
    "state": "missing",
-   "priority": "normal",
+   "priority": "out-of-scope",
    "reference": null,
    "native": null,
    "notes": [
+    "Not applicable (2026-10-08): the native store has no counterpart of this reference cache/table (ARCHITECTURE.md ADR-1); the menu entry asks the reference question and reports a clean run. See DIFFERENCES.md, Database menu.",
     "Reference database menu entry is present. The native menu presents this reference branch through todo()/no command; no native dialog/action is reachable here. Backend maintenance or CLI facilities do not establish GUI coverage.",
     "The native menu presents this reference branch through todo()/no command; no native dialog/action is reachable here. Backend maintenance or CLI facilities do not establish GUI coverage."
    ]
@@ -994,10 +998,11 @@
    "path": "Database > regenerate",
    "workstream": "database",
    "state": "missing",
-   "priority": "normal",
+   "priority": "out-of-scope",
    "reference": null,
    "native": null,
    "notes": [
+    "Not applicable (2026-10-08): the native store has no counterpart of this reference cache/table (ARCHITECTURE.md ADR-1); the menu entry asks the reference question and reports a clean run. See DIFFERENCES.md, Database menu.",
     "Reference database menu entry is present. The native menu presents this reference branch through todo()/no command; no native dialog/action is reachable here. Backend maintenance or CLI facilities do not establish GUI coverage.",
     "The native menu presents this reference branch through todo()/no command; no native dialog/action is reachable here. Backend maintenance or CLI facilities do not establish GUI coverage."
    ]
@@ -1008,10 +1013,11 @@
    "path": "Database > regenerate",
    "workstream": "database",
    "state": "missing",
-   "priority": "normal",
+   "priority": "out-of-scope",
    "reference": null,
    "native": null,
    "notes": [
+    "Not applicable (2026-10-08): the native store has no counterpart of this reference cache/table (ARCHITECTURE.md ADR-1); the menu entry asks the reference question and reports a clean run. See DIFFERENCES.md, Database menu.",
     "Reference database menu entry is present. The native menu presents this reference branch through todo()/no command; no native dialog/action is reachable here. Backend maintenance or CLI facilities do not establish GUI coverage.",
     "The native menu presents this reference branch through todo()/no command; no native dialog/action is reachable here. Backend maintenance or CLI facilities do not establish GUI coverage."
    ]
@@ -1022,10 +1028,11 @@
    "path": "Database > regenerate",
    "workstream": "database",
    "state": "missing",
-   "priority": "normal",
+   "priority": "out-of-scope",
    "reference": null,
    "native": null,
    "notes": [
+    "Not applicable (2026-10-08): the native store has no counterpart of this reference cache/table (ARCHITECTURE.md ADR-1); the menu entry asks the reference question and reports a clean run. See DIFFERENCES.md, Database menu.",
     "Reference database menu entry is present. The native menu presents this reference branch through todo()/no command; no native dialog/action is reachable here. Backend maintenance or CLI facilities do not establish GUI coverage.",
     "The native menu presents this reference branch through todo()/no command; no native dialog/action is reachable here. Backend maintenance or CLI facilities do not establish GUI coverage."
    ]
@@ -1036,10 +1043,11 @@
    "path": "Database > regenerate",
    "workstream": "database",
    "state": "missing",
-   "priority": "normal",
+   "priority": "out-of-scope",
    "reference": null,
    "native": null,
    "notes": [
+    "Not applicable (2026-10-08): the native store has no counterpart of this reference cache/table (ARCHITECTURE.md ADR-1); the menu entry asks the reference question and reports a clean run. See DIFFERENCES.md, Database menu.",
     "Reference database menu entry is present. The native menu presents this reference branch through todo()/no command; no native dialog/action is reachable here. Backend maintenance or CLI facilities do not establish GUI coverage.",
     "The native menu presents this reference branch through todo()/no command; no native dialog/action is reachable here. Backend maintenance or CLI facilities do not establish GUI coverage."
    ]
@@ -1050,10 +1058,11 @@
    "path": "Database > regenerate",
    "workstream": "database",
    "state": "missing",
-   "priority": "normal",
+   "priority": "out-of-scope",
    "reference": null,
    "native": null,
    "notes": [
+    "Not applicable (2026-10-08): the native store has no counterpart of this reference cache/table (ARCHITECTURE.md ADR-1); the menu entry asks the reference question and reports a clean run. See DIFFERENCES.md, Database menu.",
     "Reference database menu entry is present. The native menu presents this reference branch through todo()/no command; no native dialog/action is reachable here. Backend maintenance or CLI facilities do not establish GUI coverage.",
     "The native menu presents this reference branch through todo()/no command; no native dialog/action is reachable here. Backend maintenance or CLI facilities do not establish GUI coverage."
    ]
@@ -1064,10 +1073,11 @@
    "path": "Database > regenerate",
    "workstream": "database",
    "state": "missing",
-   "priority": "normal",
+   "priority": "out-of-scope",
    "reference": null,
    "native": null,
    "notes": [
+    "Not applicable (2026-10-08): the native store has no counterpart of this reference cache/table (ARCHITECTURE.md ADR-1); the menu entry asks the reference question and reports a clean run. See DIFFERENCES.md, Database menu.",
     "Reference database menu entry is present. The native menu presents this reference branch through todo()/no command; no native dialog/action is reachable here. Backend maintenance or CLI facilities do not establish GUI coverage.",
     "The native menu presents this reference branch through todo()/no command; no native dialog/action is reachable here. Backend maintenance or CLI facilities do not establish GUI coverage."
    ]
@@ -1078,10 +1088,11 @@
    "path": "Database > regenerate",
    "workstream": "database",
    "state": "missing",
-   "priority": "normal",
+   "priority": "out-of-scope",
    "reference": null,
    "native": null,
    "notes": [
+    "Not applicable (2026-10-08): the native store has no counterpart of this reference cache/table (ARCHITECTURE.md ADR-1); the menu entry asks the reference question and reports a clean run. See DIFFERENCES.md, Database menu.",
     "Reference database menu entry is present. The native menu presents this reference branch through todo()/no command; no native dialog/action is reachable here. Backend maintenance or CLI facilities do not establish GUI coverage.",
     "The native menu presents this reference branch through todo()/no command; no native dialog/action is reachable here. Backend maintenance or CLI facilities do not establish GUI coverage."
    ]
@@ -1092,10 +1103,11 @@
    "path": "Database > regenerate",
    "workstream": "database",
    "state": "missing",
-   "priority": "normal",
+   "priority": "out-of-scope",
    "reference": null,
    "native": null,
    "notes": [
+    "Not applicable (2026-10-08): the native store has no counterpart of this reference cache/table (ARCHITECTURE.md ADR-1); the menu entry asks the reference question and reports a clean run. See DIFFERENCES.md, Database menu.",
     "Reference database menu entry is present. The native menu presents this reference branch through todo()/no command; no native dialog/action is reachable here. Backend maintenance or CLI facilities do not establish GUI coverage.",
     "The native menu presents this reference branch through todo()/no command; no native dialog/action is reachable here. Backend maintenance or CLI facilities do not establish GUI coverage."
    ]
@@ -1106,10 +1118,11 @@
    "path": "Database > regenerate",
    "workstream": "database",
    "state": "missing",
-   "priority": "normal",
+   "priority": "out-of-scope",
    "reference": null,
    "native": null,
    "notes": [
+    "Not applicable (2026-10-08): the native store has no counterpart of this reference cache/table (ARCHITECTURE.md ADR-1); the menu entry asks the reference question and reports a clean run. See DIFFERENCES.md, Database menu.",
     "Reference database menu entry is present. The native menu presents this reference branch through todo()/no command; no native dialog/action is reachable here. Backend maintenance or CLI facilities do not establish GUI coverage.",
     "The native menu presents this reference branch through todo()/no command; no native dialog/action is reachable here. Backend maintenance or CLI facilities do not establish GUI coverage."
    ]
@@ -1190,10 +1203,11 @@
    "path": "Database > regenerate",
    "workstream": "database",
    "state": "missing",
-   "priority": "normal",
+   "priority": "out-of-scope",
    "reference": null,
    "native": null,
    "notes": [
+    "Not applicable (2026-10-08): the native store has no counterpart of this reference cache/table (ARCHITECTURE.md ADR-1); the menu entry asks the reference question and reports a clean run. See DIFFERENCES.md, Database menu.",
     "Reference database menu entry is present. The native menu presents this reference branch through todo()/no command; no native dialog/action is reachable here. Backend maintenance or CLI facilities do not establish GUI coverage.",
     "The native menu presents this reference branch through todo()/no command; no native dialog/action is reachable here. Backend maintenance or CLI facilities do not establish GUI coverage."
    ]
@@ -1218,10 +1232,11 @@
    "path": "Database > db maintenance",
    "workstream": "database",
    "state": "missing",
-   "priority": "normal",
+   "priority": "out-of-scope",
    "reference": null,
    "native": null,
    "notes": [
+    "Not applicable (2026-10-08): the native store has no counterpart of this reference cache/table (ARCHITECTURE.md ADR-1); the menu entry asks the reference question and reports a clean run. See DIFFERENCES.md, Database menu.",
     "Reference database menu entry is present. The native menu presents this reference branch through todo()/no command; no native dialog/action is reachable here. Backend maintenance or CLI facilities do not establish GUI coverage.",
     "The native menu presents this reference branch through todo()/no command; no native dialog/action is reachable here. Backend maintenance or CLI facilities do not establish GUI coverage."
    ]
@@ -1232,10 +1247,11 @@
    "path": "Database > db maintenance",
    "workstream": "database",
    "state": "missing",
-   "priority": "normal",
+   "priority": "out-of-scope",
    "reference": null,
    "native": null,
    "notes": [
+    "Not applicable (2026-10-08): the native store has no counterpart of this reference cache/table (ARCHITECTURE.md ADR-1); the menu entry asks the reference question and reports a clean run. See DIFFERENCES.md, Database menu.",
     "Reference database menu entry is present. The native menu presents this reference branch through todo()/no command; no native dialog/action is reachable here. Backend maintenance or CLI facilities do not establish GUI coverage.",
     "The native menu presents this reference branch through todo()/no command; no native dialog/action is reachable here. Backend maintenance or CLI facilities do not establish GUI coverage."
    ]

@@ -18,6 +18,16 @@ fn now() -> i64 {
     hydrus_core::TimestampMs::now().millis() / 1000
 }
 
+/// The question now shown, if any (for tests of the entry).
+pub fn chooser() -> Option<crate::ChoiceButtonsWindow> {
+    use slint::ComponentHandle as _;
+    CHOOSER.with(|c| {
+        c.borrow()
+            .as_ref()
+            .map(crate::ChoiceButtonsWindow::clone_strong)
+    })
+}
+
 /// Ask, then (moving somewhere chosen, or deleting) start.
 pub(crate) fn open(store: &Arc<Store>) {
     let store = store.clone();

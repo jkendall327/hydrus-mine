@@ -3721,6 +3721,17 @@ manual save-last-session action and wider debug GUI/style families remain unclai
 - The jobs show their result popups but no step-by-step progress text, and
   can't be cancelled once started.
 
+These Database menu entries have no native counterpart, because the native
+store keeps none of the reference caches or tables they rebuild (ADR-1 in
+`ARCHITECTURE.md`): regenerate > total pending count, service info numbers,
+local hashes cache, local tags cache, similar files search tree, the three tag
+display mappings cache entries, tag siblings and tag parents lookup caches;
+check and repair > repopulate truncated mappings tables and resync combined
+deleted files; clear orphan hashed serialisables; review deferred delete table
+data; and the two "work deferred delete jobs" switches. Each asks the
+reference's question and reports a clean run (the switches are saved but
+change nothing). They are marked out of scope in `docs/rust/tracking/`.
+
 ## How boned am I?
 
 - The search panel is a domain list and a typed tag/system predicate box (as in

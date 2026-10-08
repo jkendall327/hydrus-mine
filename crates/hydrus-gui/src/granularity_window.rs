@@ -25,6 +25,22 @@ pub(crate) struct Slot {
 
 pub(crate) type Slots = Rc<RefCell<Slot>>;
 
+thread_local! {
+    // (the window and question most recently opened, for tests to drive)
+    static OPENED: RefCell<slint::Weak<GranularityWindow>> = RefCell::new(slint::Weak::default());
+    static QUESTION: RefCell<slint::Weak<crate::ChoiceButtonsWindow>> = RefCell::new(slint::Weak::default());
+}
+
+/// The granularity window most recently opened, while it exists.
+pub fn opened() -> Option<GranularityWindow> {
+    OPENED.with(|w| w.borrow().upgrade())
+}
+
+/// The question most recently asked, while it exists.
+pub fn question() -> Option<crate::ChoiceButtonsWindow> {
+    QUESTION.with(|w| w.borrow().upgrade())
+}
+
 fn now() -> i64 {
     hydrus_core::TimestampMs::now().millis() / 1000
 }
@@ -71,6 +87,7 @@ pub(crate) fn open(store: &Arc<Store>, slots: &Slots, changed: &Rc<dyn Fn()>) {
         }
     });
     if window.show().is_ok() {
+        OPENED.with(|w| *w.borrow_mut() = window.as_weak());
         slots.borrow_mut().window = Some(window);
     }
 }
@@ -91,6 +108,9 @@ fn ask(slots: &Slots, title: &str, message: &str, yes: &str, no: &str, then: Box
         },
     );
     if let Ok(window) = asked {
+        if let Some(window) = &window {
+            QUESTION.with(|w| *w.borrow_mut() = window.as_weak());
+        }
         slots.borrow_mut().question = window;
     }
 }

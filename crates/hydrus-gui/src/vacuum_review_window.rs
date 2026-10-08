@@ -396,6 +396,7 @@ mod tests {
         vacuum::data(store).unwrap()[0].last_vacuumed_ms
     }
 
+    // leaf: audit-media-database-maintenance-vacuum-run
     #[test]
     fn visible_pending_eligible_confirmation_declines_and_runs_real_vacuum_once() {
         let windows = crate::headless::init();

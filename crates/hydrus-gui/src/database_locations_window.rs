@@ -29,6 +29,28 @@ pub(crate) struct Slot {
 
 pub(crate) type Slots = Rc<RefCell<Slot>>;
 
+thread_local! {
+    // (the windows most recently opened, for tests to drive)
+    static OPENED: RefCell<slint::Weak<DatabaseLocationsWindow>> = RefCell::new(slint::Weak::default());
+    static MAX_SIZE: RefCell<slint::Weak<LocationMaxSizeWindow>> = RefCell::new(slint::Weak::default());
+    static RUNTIME: RefCell<slint::Weak<crate::ChoiceButtonsWindow>> = RefCell::new(slint::Weak::default());
+}
+
+/// The locations window most recently opened, while it exists.
+pub fn opened() -> Option<DatabaseLocationsWindow> {
+    OPENED.with(|w| w.borrow().upgrade())
+}
+
+/// The maximum-size editor most recently opened, while it exists.
+pub fn max_size_window() -> Option<LocationMaxSizeWindow> {
+    MAX_SIZE.with(|w| w.borrow().upgrade())
+}
+
+/// The "how long to run" question most recently asked, while it exists.
+pub fn runtime_question() -> Option<crate::ChoiceButtonsWindow> {
+    RUNTIME.with(|w| w.borrow().upgrade())
+}
+
 struct State {
     store: Arc<Store>,
     ask: crate::menu_bar::Ask,
@@ -240,6 +262,7 @@ pub(crate) fn open(
     });
     show(&window, &state.borrow());
     window.show()?;
+    OPENED.with(|w| *w.borrow_mut() = window.as_weak());
     slots.borrow_mut().window = Some(window);
     Ok(())
 }
@@ -362,6 +385,7 @@ fn act(state: &Rc<RefCell<State>>, refresh: &Rc<dyn Fn()>, slots: &Slots, action
                 }
             });
             if window.show().is_ok() {
+                MAX_SIZE.with(|w| *w.borrow_mut() = window.as_weak());
                 slots.borrow_mut().max_size = Some(window);
             }
         }
@@ -496,6 +520,9 @@ fn rebalance(state: &Rc<RefCell<State>>, refresh: &Rc<dyn Fn()>, slots: &Slots) 
         },
     );
     if let Ok(chooser) = chooser {
+        if let Some(chooser) = &chooser {
+            RUNTIME.with(|w| *w.borrow_mut() = chooser.as_weak());
+        }
         slots.borrow_mut().runtime = chooser;
     }
 }

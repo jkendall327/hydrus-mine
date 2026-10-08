@@ -29,6 +29,7 @@ fn retained_attempt(window: &SessionDialog) {
     window.invoke_name_entered("replacement".into());
 }
 
+// leaf: audit-media-database-clear-password
 #[test]
 fn actual_password_dialogs_persist_the_six_recorded_outcomes() {
     let _windows = headless::init();

@@ -14,10 +14,17 @@ use hydrus_store::Store;
 use hydrus_store::popups::{self, Job};
 
 use crate::ChoiceButtonsWindow;
+use slint::ComponentHandle as _;
 
 thread_local! {
     /// The message shown, kept open until answered.
     static MESSAGE: RefCell<Option<ChoiceButtonsWindow>> = const { RefCell::new(None) };
+}
+
+/// The message window now shown, if any (for tests of the actions that say
+/// something and wait for "ok").
+pub fn message_window() -> Option<ChoiceButtonsWindow> {
+    MESSAGE.with(|m| m.borrow().as_ref().map(ChoiceButtonsWindow::clone_strong))
 }
 
 /// What the actions work with.
