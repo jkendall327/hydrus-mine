@@ -176,6 +176,8 @@ fn mixed_registered_login_package_reviews_png_selects_dependencies_and_reopens_s
         1
     );
 }
+// leaf: audit-network-exchange-input
+// leaf: audit-network-exchange-review
 #[test]
 fn package_reviews_real_png_cancel_and_invalid_input_before_atomic_apply() {
     let rendered = headless::init();
@@ -349,6 +351,7 @@ fn formula_buttons_keep_imported_auxiliary_through_child_apply() {
     assert_eq!(encoded[2][3], "native edited");
 }
 
+// leaf: audit-network-exchange-export
 #[test]
 fn export_text_is_selectable_read_only_and_png_accepts_a_bare_relative_path() {
     let _headless_windows = headless::init();

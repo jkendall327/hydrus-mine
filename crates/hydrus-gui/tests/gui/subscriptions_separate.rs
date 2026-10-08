@@ -29,6 +29,7 @@ fn select(dialog: &SubscriptionsWindow, name: &str) {
     dialog.invoke_row_clicked(i32::try_from(r).unwrap(), false, false);
 }
 
+// leaf: subscriptions-separate
 #[test]
 fn some_queries_are_separated_and_written_on_apply() {
     let (_dirs, store) = store();

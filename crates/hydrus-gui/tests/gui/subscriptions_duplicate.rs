@@ -10,6 +10,7 @@ use hydrus_store::subscriptions;
 
 use crate::subscriptions::{asked, now, open_dialog, rows, store};
 
+// leaf: audit-network-subs-duplicate-delete
 #[test]
 fn a_duplicate_is_written_with_its_file_logs() {
     let (_dirs, store) = store();

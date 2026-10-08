@@ -61,6 +61,7 @@ fn queued(store: &Store, queue: i64) -> i64 {
         .unwrap()
 }
 
+// leaf: audit-network-clipboard-monitor
 #[test]
 fn changes_route_to_open_importers_without_switching_pages() {
     let (_dirs, store) = store();

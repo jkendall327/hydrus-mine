@@ -231,3 +231,7 @@ mod radio_return;
 mod viewer_prefetch;
 mod client_api_permissions;
 mod tags_sync_menu;
+mod network_bandwidth_actions;
+mod subscriptions_overwrite_checker;
+mod file_log_actions;
+mod network_pause_menu;

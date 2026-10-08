@@ -49,6 +49,7 @@ fn recorded_content_kinds_and_runtime_previews() {
         }
     }
 }
+// leaf: parser-context
 #[test]
 fn test_context_rejects_invalid_duplicate_and_reserved_variables() {
     for (index, variables) in [
@@ -66,6 +67,7 @@ fn test_context_rejects_invalid_duplicate_and_reserved_variables() {
     assert_eq!(context.values()["token"], "a=b");
     assert_eq!(context.values()["post_index"], "12");
 }
+// leaf: content-notes
 #[test]
 fn content_change_keeps_unsupported_formula_and_note_newlines() {
     let mut parser = editors::new_content();
@@ -127,6 +129,7 @@ fn native_parser_save_preserves_other_settings_and_rejects_stale_edits() {
     assert!(later.put(Some("removed-key"), editors::new_page()).is_err());
 }
 
+// leaf: content-tags
 #[test]
 fn any_namespace_toggle_retains_the_disabled_namespace() {
     let mut parser = editors::new_content();

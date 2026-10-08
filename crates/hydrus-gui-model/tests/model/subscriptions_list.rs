@@ -170,6 +170,9 @@ pub(crate) fn dialog_subscription(
     )
 }
 
+// leaf: subscriptions-check
+// leaf: audit-network-subs-select
+// leaf: subscriptions-pause
 #[test]
 fn the_dialogs_buttons_act_as_the_references() {
     let recorded = hydrus_testkit::fixture_json("subscriptions_list.json");

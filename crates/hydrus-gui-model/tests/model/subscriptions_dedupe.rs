@@ -151,6 +151,7 @@ fn check(ours: &Question, theirs: &Json, at: &str) -> Answer {
     }
 }
 
+// leaf: subscriptions-dedupe
 #[test]
 fn deduplicate_asks_and_dedupes_as_the_reference() {
     let recorded = hydrus_testkit::fixture_json("subscriptions_dedupe.json");

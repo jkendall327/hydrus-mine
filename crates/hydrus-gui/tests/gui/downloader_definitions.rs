@@ -54,6 +54,7 @@ fn screenshot(
     }
 }
 
+// leaf: audit-network-definitions-url-check
 #[test]
 fn class_rules_apply_snapshot_roundtrip_and_cancel_safety() {
     let fixture = hydrus_testkit::fixture_json("downloader_definitions.json");
@@ -207,6 +208,8 @@ fn class_rules_apply_snapshot_roundtrip_and_cancel_safety() {
     );
 }
 
+// leaf: gug-members
+// leaf: audit-network-gugs-test
 #[test]
 fn single_nested_generators_roundtrip_delete_and_cancel() {
     let dir = tempfile::tempdir().unwrap();

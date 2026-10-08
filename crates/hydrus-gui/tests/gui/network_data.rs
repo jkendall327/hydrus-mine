@@ -30,6 +30,8 @@ fn capture(windows: &headless::Windows, index: usize, name: &str, width: u32, he
     headless::save_png(&directory.join(name), &pixels, width, height).unwrap();
 }
 
+// leaf: audit-network-bandwidth-domain
+// leaf: audit-network-rules-commit
 #[test]
 fn bandwidth_rules_cancel_apply_reopen_and_render() {
     let headless = headless::init();
@@ -161,6 +163,11 @@ fn bandwidth_rules_cancel_apply_reopen_and_render() {
     reopened.invoke_close_clicked();
 }
 
+// leaf: audit-network-jobs-cancel
+// leaf: network-job-actions
+// leaf: audit-network-jobs-refresh
+// leaf: audit-network-jobs-expiry
+// leaf: audit-network-jobs-override
 #[test]
 fn jobs_live_progress_commands_and_offline_expiry() {
     let headless = headless::init();
@@ -421,6 +428,10 @@ fn bandwidth_filters_chart_multiselect_delete_cancel_live_reset_and_saved_age() 
     reopened.invoke_close_clicked();
 }
 
+// leaf: audit-network-bandwidth-rows
+// leaf: audit-network-bandwidth-history
+// leaf: audit-network-bandwidth-defaults
+// leaf: audit-network-bandwidth-detail
 #[test]
 fn bandwidth_history_columns_sort_detail_and_default_kind_routing() {
     use hydrus_core::bandwidth::{Rule, Rules};

@@ -111,6 +111,7 @@ fn edit(editor: &mut Editor, edit: &Json) {
     }
 }
 
+// leaf: audit-network-checker-presets
 #[test]
 fn the_reasonable_defaults_are_the_references() {
     let recorded = recorded();
@@ -246,6 +247,8 @@ fn the_editor_opens_as_the_references() {
     }
 }
 
+// leaf: audit-network-checker-mode
+// leaf: audit-network-checker-velocity
 #[test]
 fn edits_change_the_editor_as_the_references() {
     let recorded = recorded();
@@ -260,6 +263,7 @@ fn edits_change_the_editor_as_the_references() {
     }
 }
 
+// leaf: audit-network-checker-confirm
 #[test]
 fn ok_asks_as_the_references_does() {
     let recorded = recorded();
@@ -286,6 +290,7 @@ fn ok_asks_as_the_references_does() {
 /// "ok" raises a time below its least value to it (as the reference's
 /// does when the focus leaves it), then never slower than to never faster
 /// than.
+// leaf: audit-network-checker-confirm
 #[test]
 fn ok_raises_times_below_their_least() {
     let mut editor = Editor::new(&checker::PRESETS[0].1, false);

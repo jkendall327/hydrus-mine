@@ -681,6 +681,7 @@ fn sorted_parser_rows_and_sparse_link_rows_select_the_visible_definition() {
     );
 }
 
+// leaf: content-tags
 #[test]
 fn namespace_control_is_disabled_without_losing_its_saved_text() {
     let (_dir, store, slots) = setup();

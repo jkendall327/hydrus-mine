@@ -304,6 +304,7 @@ pub(crate) fn asked(dialog: &SubscriptionsWindow) -> (String, String, Vec<String
     )
 }
 
+// leaf: audit-network-subs-duplicate-delete
 #[test]
 fn the_dialog_lists_the_subscriptions_and_changes_them_on_apply() {
     let (_dirs, store) = store();
@@ -862,6 +863,9 @@ fn closing_subscription_merge_owner_discards_pending_and_completed_drafts() {
     }
 }
 
+// leaf: audit-network-subs-lowercase
+// leaf: subscriptions-separate
+// leaf: subscriptions-reset
 #[test]
 fn merging_separating_and_resetting_are_written_on_apply() {
     let (_dirs, store) = store();
@@ -980,6 +984,8 @@ fn merging_separating_and_resetting_are_written_on_apply() {
     );
 }
 
+// leaf: subscription-add
+// leaf: audit-network-subs-overwrite-downloader
 #[test]
 fn add_uses_a_separate_gallery_list_then_the_editor() {
     use hydrus_core::url::{AnyGug, Gug, Gugs};
@@ -1725,6 +1731,9 @@ fn actual_subscription_list_transport_choices_dispatch_frozen_packages_and_guard
     drop(windows);
 }
 
+// leaf: subscriptions-reset
+// leaf: subscriptions-retry-failed
+// leaf: subscriptions-retry-ignored
 #[test]
 fn subscription_reset_and_retries_refresh_persisted_export_caches_and_forget_file_hashes() {
     use hydrus_downloader_exchange::subscriptions as exchange;

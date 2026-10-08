@@ -232,6 +232,7 @@ fn mixed_login_cancel_malformed_and_stale_scripts_never_partially_save_downloade
         1
     );
 }
+// leaf: audit-network-exchange-commit
 #[test]
 fn reference_duplicate_rules_remap_nested_members_and_keep_auxiliary_context() {
     let fixture = hydrus_testkit::fixture_json("downloader_interchange.json");
@@ -292,6 +293,7 @@ fn reference_duplicate_rules_remap_nested_members_and_keep_auxiliary_context() {
     assert!(text.contains("native edited content"));
     assert!(text.contains("native edited page"));
 }
+// leaf: audit-network-exchange-commit
 #[test]
 fn package_invalid_and_cancelled_staging_do_not_mutate_store_and_stale_apply_rolls_back() {
     let dir = tempfile::tempdir().unwrap();

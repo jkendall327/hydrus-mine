@@ -7,6 +7,7 @@ use hydrus_legacy::serialisable::SerialisableObject;
 use hydrus_store::settings::ClipboardUrls;
 use serde_json::{Value, json};
 
+// leaf: audit-network-clipboard-monitor
 #[test]
 fn changed_text_switches_and_url_policy_match_the_reference() {
     let fixture = hydrus_testkit::fixture_json("clipboard_urls.json");

@@ -18,6 +18,7 @@ fn screenshot(rendered: &headless::Windows, index: usize, name: &str, width: u32
     )
     .unwrap();
 }
+// leaf: audit-network-cookies-identity
 #[test]
 fn browse_create_edit_cancel_apply_and_clear() {
     let dir = tempfile::tempdir().unwrap();
@@ -126,6 +127,7 @@ fn browse_create_edit_cancel_apply_and_clear() {
     edit.invoke_apply_clicked();
     assert!(store.read(network::sessions).unwrap().is_empty());
 }
+// leaf: audit-network-headers-fields
 #[test]
 fn headers_validate_duplicate_delete_cancel_reopen_and_persist() {
     let dir = tempfile::tempdir().unwrap();
