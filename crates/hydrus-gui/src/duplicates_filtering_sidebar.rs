@@ -47,6 +47,7 @@ fn strings(items: impl IntoIterator<Item = String>) -> ModelRc<SharedString> {
 /// counting the page's search, the search it counts and the timer that
 /// shows how far it has got.
 struct Count {
+    store: Arc<hydrus_store::Store>,
     handle: Handle<PairRow>,
     search: Arc<Mutex<DuplicatesSearch>>,
     _timer: Timer,
@@ -77,6 +78,13 @@ fn model_options(options: PotentialPairsCountOptions) -> counting::Options {
 fn ensure_count(window: &MainWindow, page: &SearchPage, d: &hydrus_core::pages::DuplicatesPage) {
     COUNT.with(|count| {
         let mut count = count.borrow_mut();
+        // (a count of another store's pairs is dropped)
+        if count
+            .as_ref()
+            .is_some_and(|active| !Arc::ptr_eq(&active.store, page.store()))
+        {
+            *count = None;
+        }
         if let Some(active) = count.as_ref() {
             let mut counted = active.search.lock().unwrap_or_else(PoisonError::into_inner);
             if *counted != d.search {
@@ -120,6 +128,7 @@ fn ensure_count(window: &MainWindow, page: &SearchPage, d: &hydrus_core::pages::
             });
         });
         *count = Some(Count {
+            store: page.store().clone(),
             handle,
             search,
             _timer: timer,

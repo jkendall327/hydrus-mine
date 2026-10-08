@@ -1876,9 +1876,9 @@
    ],
    "recheck": {
     "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "The model test replays oracle/fixtures/merge_options_editor.json (add_rating/edit_rating/delete_ratings, rating rows, choices, resulting value) against MergeOptionsEditor, and rating merge semantics are replayed in duplicate_merges.json, but no GUI test touches the rating list at all (crates/hydrus-gui/tests/gui/merge_options.rs has no rating add/edit/delete/double-click); the window's rating wiring (merge_options_window.rs ~285-465) is unproven. Tracker note about 'old URL-sync assertion' is stale. Tests: crates/hydrus-gui-model/tests/model/merge_options_editor.rs:179 the_editor_edits_merge_options_as_the_reference_does; crates/hydrus-api/tests/duplicate_merges.rs (merge semantics vs duplicate_merges.json)"
+    "class": "sound",
+    "by": "issue 88 session",
+    "note": "Sound: tests/gui/merge_options.rs the_ratings_list_adds_edits_and_deletes_as_the_references_does replays every rating step of oracle/fixtures/merge_options_editor.json (the client-started 'better' and 'alternates' cases) through the window: add (the service question, and the action question for 'this is better'), cancel, edit by double-click with the action question, and delete with its 'Remove all selected?' question; the questions' choices and the rows after each step are the reference's. The model test replays the same steps, and the merge semantics are in duplicate_merges.json."
    }
   },
   {

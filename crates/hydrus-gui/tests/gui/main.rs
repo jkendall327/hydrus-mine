@@ -25,6 +25,7 @@ mod downloader_update_times;
 mod duplicate_colours;
 mod auto_resolution_comparator_editors;
 mod duplicate_filter;
+mod duplicates_search_settings;
 mod duplicate_filter_canvas;
 mod duplicates_count;
 mod duplicates_daemon;
