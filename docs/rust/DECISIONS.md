@@ -59,6 +59,25 @@ record of what was decided, and why the roadmap looks the way it does.
   editors, the simple downloader, dragging files out) waits until these
   are done.
 
+## Decided (2026-10-08)
+
+- **Verification is a fast local loop, CI on every push, and an honest test
+  tag per leaf**, replacing the per-leaf ledger and publication checkpoints
+  (history: `docs/rust/history/2026-10-08-workplan.md`). A leaf is done when a
+  test tagged with its ID passes on `master` (`docs/rust/tracking/README.md`).
+- **Linux only** for now; Windows and macOS CI run by hand.
+- **Remaining work lives in GitHub issues**, one PR per issue with one
+  independent review, merged to `master` when green. No long-lived
+  integration branches.
+- **Tests replay recordings of the reference** wherever behaviour is more than
+  strings; `scripts/setup-oracle.sh` makes the reference runnable anywhere.
+- **The generated UI crate stays whole for now.** Splitting it by window group
+  would cut a `.slint` rebuild from ~7 minutes to ~1-2, at the cost of a day or
+  more of churn (shared structs and five Slint globals used across groups).
+  Agents in separate containers removed the queueing that made rebuilds
+  hurt; issues #86 and #91 log rebuild time to decide whether the split is
+  still worth it.
+
 ## Roadmap that follows
 
 1. **Client API parity**, with Hydrus Companion's request patterns checked
