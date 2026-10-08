@@ -103,9 +103,10 @@ record of what was decided, and why the roadmap looks the way it does.
   The reference's "datestring to timestamp (easy)" and its other `ParseDate`
   callers use the optional `dateparser` library when installed and fall back
   to `dateutil` otherwise. hydrus-rs matches the `dateutil` fallback, recorded
-  from the reference with `dateparser` disabled: no non-English, fuzzy or
-  relative ("2 hours ago") dates in that step; the advanced strptime step
-  covers explicit formats.
+  from the reference with `dateparser` disabled, plus English relative dates
+  ("now", "yesterday", "2 hours ago", "in 3 days") as `dateparser` parses
+  them. Non-English and fuzzy free-text dates are not parsed; the advanced
+  strptime step covers explicit formats.
 
 ## Roadmap that follows
 
