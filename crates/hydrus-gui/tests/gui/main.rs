@@ -161,6 +161,7 @@ mod tag_migration;
 
 mod regex_favourites;
 mod regex_options_editor;
+mod sidecar_node_window;
 mod tag_filter_favourites;
 
 mod downloader_display;

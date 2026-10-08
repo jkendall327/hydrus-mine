@@ -22910,9 +22910,9 @@
    ],
    "recheck": {
     "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Recorded forced_name steps are replayed on ExporterEditor only. No GUI test sets this control through the sidecar node window (crates/hydrus-gui/src/sidecars_window.rs reads it into the editor at ~337-354, untested), so only the model replay of the recording covers it. Nothing drives the checkbox enabling the name input or the name being kept in the applied exporter through the window. Tests: crates/hydrus-gui-model/tests/model/sidecar_editors.rs:226-300 the_sidecar_editors_show_and_edit_as_the_reference_does (replays oracle/fixtures/sidecar_editors.json against ImporterEditor/ExporterEditor); GUI :249 only asserts node.get_show_forced() after switching to notes"
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "gui/sidecar_node_window.rs the_sidecar_node_window_works_as_the_references_does opens the real sidecar node window for every recorded importer and exporter case, sets its controls and answers its type and service questions as the recording did, compares what it shows at every step and (second window per step) what apply gives as text and object, or its error, against sidecar_editors.json. Covers the forced-name checkbox and name. The JSON object-name list (the 'nested' step) is driven by its own test."
    }
   },
   {
@@ -22930,8 +22930,8 @@
    "recheck": {
     "date": "2026-10-08",
     "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Recorded service/tags-display states are replayed on ExporterEditor/service_choices only. No GUI test sets this control through the sidecar node window (crates/hydrus-gui/src/sidecars_window.rs reads it into the editor at ~337-354, untested), so only the model replay of the recording covers it. The note's claim that the destination warns when its tag service has disappeared is not in the recording nor in any test I found. Tests: crates/hydrus-gui-model/tests/model/sidecar_editors.rs:226-300 the_sidecar_editors_show_and_edit_as_the_reference_does (replays oracle/fixtures/sidecar_editors.json against ImporterEditor/ExporterEditor)"
+    "by": "phase 2 session",
+    "note": "gui/sidecar_node_window.rs the_sidecar_node_window_works_as_the_references_does opens the real sidecar node window for every recorded importer and exporter case, sets its controls and answers its type and service questions as the recording did, compares what it shows at every step and (second window per step) what apply gives as text and object, or its error, against sidecar_editors.json. Now covers the exporter's service choice. Still weak: the note's claim that the destination warns when its tag service has disappeared is neither in the recording nor in a test that compares it."
    }
   },
   {
@@ -22948,9 +22948,9 @@
    ],
    "recheck": {
     "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Recorded timestamp type/file-service/deleted-service/canvas/domain conditional boxes are compared via boxes_json on the model only. No GUI test sets this control through the sidecar node window (crates/hydrus-gui/src/sidecars_window.rs reads it into the editor at ~337-354, untested), so only the model replay of the recording covers it. Tests: crates/hydrus-gui-model/tests/model/sidecar_editors.rs:226-300 the_sidecar_editors_show_and_edit_as_the_reference_does (replays oracle/fixtures/sidecar_editors.json against ImporterEditor/ExporterEditor)"
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "gui/sidecar_node_window.rs the_sidecar_node_window_works_as_the_references_does opens the real sidecar node window for every recorded importer and exporter case, sets its controls and answers its type and service questions as the recording did, compares what it shows at every step and (second window per step) what apply gives as text and object, or its error, against sidecar_editors.json. Covers the timestamp type and its file-service, deleted-service, canvas and domain details."
    }
   },
   {
@@ -23030,9 +23030,9 @@
    ],
    "recheck": {
     "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Recorded importer service and stored/display states replayed on ImporterEditor only. No GUI test sets this control through the sidecar node window (crates/hydrus-gui/src/sidecars_window.rs reads it into the editor at ~337-354, untested), so only the model replay of the recording covers it. Tests: crates/hydrus-gui-model/tests/model/sidecar_editors.rs:226-300 the_sidecar_editors_show_and_edit_as_the_reference_does (replays oracle/fixtures/sidecar_editors.json against ImporterEditor/ExporterEditor)"
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "gui/sidecar_node_window.rs the_sidecar_node_window_works_as_the_references_does opens the real sidecar node window for every recorded importer and exporter case, sets its controls and answers its type and service questions as the recording did, compares what it shows at every step and (second window per step) what apply gives as text and object, or its error, against sidecar_editors.json. Covers the importer's service choice (auto-picked or asked) and stored/display tags."
    }
   },
   {
@@ -23049,9 +23049,9 @@
    ],
    "recheck": {
     "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Recorded timestamp detail boxes replayed on ImporterEditor only. No GUI test sets this control through the sidecar node window (crates/hydrus-gui/src/sidecars_window.rs reads it into the editor at ~337-354, untested), so only the model replay of the recording covers it. Tests: crates/hydrus-gui-model/tests/model/sidecar_editors.rs:226-300 the_sidecar_editors_show_and_edit_as_the_reference_does (replays oracle/fixtures/sidecar_editors.json against ImporterEditor/ExporterEditor)"
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "gui/sidecar_node_window.rs the_sidecar_node_window_works_as_the_references_does opens the real sidecar node window for every recorded importer and exporter case, sets its controls and answers its type and service questions as the recording did, compares what it shows at every step and (second window per step) what apply gives as text and object, or its error, against sidecar_editors.json. Covers the importer's timestamp type and its detail boxes."
    }
   },
   {
@@ -24402,9 +24402,9 @@
    ],
    "recheck": {
     "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Only the model replay of recorded separator choices (newline, four pipes, custom text) exists. No GUI test sets the separator control (sidecars_window.rs:279-281) or checks its custom text field; the GUI test only sees the default newline saved. Window wiring of the separator is untested. Tests: crates/hydrus-gui-model/tests/model/sidecar_editors.rs:236 the_sidecar_editors_show_and_edit_as_the_reference_does (separator steps)"
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "gui/sidecar_node_window.rs the_sidecar_node_window_works_as_the_references_does opens the real sidecar node window for every recorded importer and exporter case, sets its controls and answers its type and service questions as the recording did, compares what it shows at every step and (second window per step) what apply gives as text and object, or its error, against sidecar_editors.json. Covers the separator choice (newline, four pipes, custom) and its custom text; whether the custom box is enabled is the window's own layout and is not read back."
    }
   },
   {
