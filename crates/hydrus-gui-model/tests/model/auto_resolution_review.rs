@@ -163,7 +163,8 @@ fn approving_and_denying_report_progress_as_the_reference_s() {
     assert_eq!(action_title(true), "approving auto-resolution decisions");
 }
 
-// leaf: audit-media-review-progress
+// (not tagged audit-media-review-progress: this drives the model function, not
+// the sidebar's approve/deny buttons; see docs/rust/notes/impl-small-areas.md)
 #[test]
 fn approving_and_denying_run_through_a_popup_job_that_shows_progress_and_goes_when_done() {
     use hydrus_gui_model::auto_resolution_review::{POPUP_AFTER, action_pairs_after};

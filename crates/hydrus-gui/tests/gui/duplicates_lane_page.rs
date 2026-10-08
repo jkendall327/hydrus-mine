@@ -1142,7 +1142,9 @@ fn a_metadata_conditional_comparators_target_and_predicate_lines_are_persisted()
     assert_eq!(c.get_predicates().lines().count(), 2);
 }
 
-// leaf: audit-media-preparation-scheduling, audit-media-rule-sidebar-scheduling
+// (not tagged audit-media-preparation-scheduling / audit-media-rule-sidebar-scheduling:
+// this replays the daemon's decision, not the daemon; see the review in
+// docs/rust/notes/impl-small-areas.md)
 #[test]
 fn the_idle_and_normal_time_switches_gate_the_search_and_the_rules_by_the_published_idle_state() {
     use hydrus_store::duplicates::auto::AutoResolutionSettings;
