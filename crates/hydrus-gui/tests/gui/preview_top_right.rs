@@ -171,9 +171,8 @@ fn the_top_right_hover_draws_in_the_background_and_pops_in_as_the_options_say() 
         .into_iter()
         .find(|c| matches!(c.kind, hydrus_gui_model::ratings::Kind::Like { .. }))
         .expect("a like/dislike service");
-    let before = match like.kind {
-        hydrus_gui_model::ratings::Kind::Like { state, .. } => state,
-        _ => unreachable!(),
+    let hydrus_gui_model::ratings::Kind::Like { state: before, .. } = like.kind else {
+        unreachable!()
     };
     let like_row = i32::try_from(
         ui.get_preview_ratings()
@@ -187,9 +186,8 @@ fn the_top_right_hover_draws_in_the_background_and_pops_in_as_the_options_say() 
         .into_iter()
         .find(|c| c.service == like.service)
         .unwrap();
-    let after = match after.kind {
-        hydrus_gui_model::ratings::Kind::Like { state, .. } => state,
-        _ => unreachable!(),
+    let hydrus_gui_model::ratings::Kind::Like { state: after, .. } = after.kind else {
+        unreachable!()
     };
     assert_ne!(before, after, "the click set the like");
 

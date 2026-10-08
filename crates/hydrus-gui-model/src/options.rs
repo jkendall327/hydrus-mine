@@ -54,6 +54,7 @@ fn normalise_idle_timeout(seconds: Option<u64>) -> Option<u64> {
 #[derive(Debug, Clone, Default, PartialEq, Eq)]
 pub struct MpvConfPath(pub String);
 
+#[allow(clippy::unnecessary_wraps)] // (a loader returns a Result)
 fn no_mpv_conf(_: &Connection) -> hydrus_store::Result<MpvConfPath> {
     Ok(MpvConfPath::default())
 }
