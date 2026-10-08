@@ -45,8 +45,12 @@ impl CpuBusy {
     /// Sample now; `None` when the system's per-core times can't be read
     /// (only Linux's `/proc/stat` is read), or on the first sample.
     pub fn sample(&mut self, percent: u32, count: u32) -> Option<bool> {
-        let now = per_core_times()?;
-        let last = self.last.replace(now.clone())?;
+        self.sample_times(&per_core_times()?, percent, count)
+    }
+
+    /// [`Self::sample`] with the cores' (busy, total) times given.
+    pub fn sample_times(&mut self, now: &[(u64, u64)], percent: u32, count: u32) -> Option<bool> {
+        let last = self.last.replace(now.to_owned())?;
         let busy = now
             .iter()
             .zip(&last)
@@ -94,6 +98,29 @@ mod tests {
         assert!(!is_idle(dir.path(), 999));
         publish(dir.path(), false, 2_000).unwrap();
         assert!(!is_idle(dir.path(), 2_000));
+    }
+
+    #[test]
+    fn busy_needs_this_many_cores_above_this_percentage() {
+        // two cores: 60% and 20% busy over the interval
+        let first = vec![(0, 0), (0, 0)];
+        let second = vec![(60, 100), (20, 100)];
+        let mut cpu = CpuBusy::default();
+        assert_eq!(cpu.sample_times(&first, 50, 1), None, "first sample");
+        assert_eq!(cpu.sample_times(&second, 50, 1), Some(true));
+        let mut cpu = CpuBusy::default();
+        cpu.sample_times(&first, 50, 1);
+        assert_eq!(cpu.sample_times(&second, 50, 2), Some(false));
+        let mut cpu = CpuBusy::default();
+        cpu.sample_times(&first, 5, 2);
+        assert_eq!(cpu.sample_times(&second, 5, 2), Some(true));
+        let mut cpu = CpuBusy::default();
+        cpu.sample_times(&first, 60, 1);
+        assert_eq!(
+            cpu.sample_times(&second, 60, 1),
+            Some(false),
+            "strictly above"
+        );
     }
 
     #[test]

@@ -307,6 +307,16 @@ impl Monitor {
     pub(crate) fn attach_force_idle(&self, state: Weak<crate::force_idle::State>) {
         *self.0.force_idle.borrow_mut() = Some(state);
     }
+    /// Whether idle mode is being forced from the debug menu (the reference's
+    /// `SystemBusy` then answers not busy).
+    pub fn forced_idle(&self) -> bool {
+        self.0
+            .force_idle
+            .borrow()
+            .as_ref()
+            .and_then(Weak::upgrade)
+            .is_some_and(|state| state.idle_override() == Some(true))
+    }
     pub fn idle_at(&self, now_ms: i64) -> bool {
         if let Some(source) = self.0.force_idle.borrow().as_ref() {
             let Some(state) = source.upgrade() else {

@@ -4994,3 +4994,13 @@ The samples are never kept. The chosen service is kept the moment it is chosen,
 cancelled dialog or not, and a later choice changes only the stars' shape and
 colours, as the reference's `SetServiceTemplate` does. Proven by
 `options_gui_ratings_examples.rs`.
+
+### Options > maintenance and processing > idle: CPU busy
+
+Background work (trash and deferred deletes in the client, and what the daemon
+reads from the published idle state) now runs only when the client is idle
+and the system is not busy, as the reference's `GoodTimeToStartBackgroundWork`
+does. The system counts as busy when at least "% on N cores" cores ran above
+"Consider the system busy if CPU usage is above" over the last minute;
+"ignore cpu usage" turns the check off, and forced idle mode never reads busy.
+The status bar still says "idle" and shows "CPU busy".

@@ -164,36 +164,47 @@ impl Control {
     /// Publish the idle state for the daemon (on change, else every five
     /// seconds) and show it, with the CPU-busy check, in the status bar.
     fn publish_idle(&self, window: &MainWindow, store: &Store, now_ms: i64) {
+        self.check_busy(store, now_ms);
         let idle = self.0.monitor.idle_at(now_ms);
+        // Background work wants idle and a system that is not busy
+        // (`GoodTimeToStartBackgroundWork`).
+        let work_idle = idle && !self.0.busy.get();
         let due = self
             .0
             .published
             .get()
-            .is_none_or(|(was, at)| was != idle || now_ms - at >= 5_000);
+            .is_none_or(|(was, at)| was != work_idle || now_ms - at >= 5_000);
         if due {
-            if let Err(error) = hydrus_store::idle_state::publish(store.dir(), idle, now_ms) {
+            if let Err(error) = hydrus_store::idle_state::publish(store.dir(), work_idle, now_ms) {
                 eprintln!("could not publish the idle state: {error}");
             }
-            self.0.published.set(Some((idle, now_ms)));
-        }
-        if now_ms.saturating_sub(self.0.cpu_at.get()) >= 60_000 {
-            self.0.cpu_at.set(now_ms);
-            let config: hydrus_store::settings::GuiIdleSettings =
-                store.read(hydrus_store::settings::get).unwrap_or_default();
-            let busy = match config.busy_cpu_count {
-                None => false,
-                Some(count) => self
-                    .0
-                    .cpu
-                    .borrow_mut()
-                    .sample(config.busy_cpu_percent, count)
-                    .unwrap_or(self.0.busy.get()),
-            };
-            self.0.busy.set(busy);
+            self.0.published.set(Some((work_idle, now_ms)));
         }
         let (idle_text, busy_text) = hydrus_gui_model::status::activity(idle, self.0.busy.get());
         window.set_status_idle(idle_text.into());
         window.set_status_busy(busy_text.into());
+    }
+    /// The CPU-busy check (`SystemBusy`), once a minute: busy when at least the
+    /// saved number of cores ran above the saved percentage; never while idle
+    /// mode is forced, and never when the core count is none.
+    fn check_busy(&self, store: &Store, now_ms: i64) {
+        if now_ms.saturating_sub(self.0.cpu_at.get()) < 60_000 {
+            return;
+        }
+        self.0.cpu_at.set(now_ms);
+        let config: hydrus_store::settings::GuiIdleSettings =
+            store.read(hydrus_store::settings::get).unwrap_or_default();
+        let busy = match config.busy_cpu_count {
+            _ if self.0.monitor.forced_idle() => false,
+            None => false,
+            Some(count) => self
+                .0
+                .cpu
+                .borrow_mut()
+                .sample(config.busy_cpu_percent, count)
+                .unwrap_or(self.0.busy.get()),
+        };
+        self.0.busy.set(busy);
     }
     /// Sample current saved settings and live idle state immediately before each
     /// admission. Already admitted passes retain their policy until completion.
@@ -251,7 +262,7 @@ impl Control {
                 continue;
             }
             // Qt checks this only at entry, not between file/thumbnail pairs.
-            let idle = self.0.monitor.idle_at(now_ms);
+            let idle = self.0.monitor.idle_at(now_ms) && !self.0.busy.get();
             let gates = store.read(maintenance_gates::load)?;
             self.0.deadlines[index(worker)].set(now_ms.saturating_add(period(worker)));
             if !gates.allows(worker, idle) {

@@ -1334,3 +1334,99 @@ fn the_tracking_option_decides_whether_viewing_a_file_is_recorded() {
     view(start + 20_000);
     assert_eq!(views().0, on.0 + 1);
 }
+
+const IDLE_ENABLED: &str =
+    "Run maintenance jobs when the client is idle and the system is not otherwise busy: ";
+const CPU_PERCENT: &str = "Consider the system busy if CPU usage is above: ";
+const CPU_CORES: &str = "% on ";
+
+/// Spin every core for a moment, so the next CPU sample reads busy.
+fn spin(for_ms: u64) -> Vec<std::thread::JoinHandle<()>> {
+    let end = std::time::Instant::now() + std::time::Duration::from_millis(for_ms);
+    let cores = std::thread::available_parallelism().map_or(2, usize::from);
+    (0..cores)
+        .map(|_| {
+            std::thread::spawn(move || {
+                while std::time::Instant::now() < end {
+                    std::hint::black_box(0u64.wrapping_add(1));
+                }
+            })
+        })
+        .collect()
+}
+
+// leaf: audit-options-maintenance-and-processing-when-to-run-high-cpu-jobs-idle-run-maintenance-jobs-when-the-client-is-idle-and-the-system-is-not-otherwise-busy
+// leaf: audit-options-maintenance-and-processing-when-to-run-high-cpu-jobs-idle-consider-the-system-busy-if-cpu-usage-is-above
+// leaf: audit-options-maintenance-and-processing-when-to-run-high-cpu-jobs-idle-on
+#[test]
+fn idle_and_cpu_busy_options_decide_whether_background_work_may_run() {
+    use hydrus_store::idle_state;
+    let client = client();
+    let options = client.options("maintenance and processing");
+    // The reference's controls and limits.
+    let (_, percent) = row_in(&options, "idle", CPU_PERCENT);
+    assert_eq!((percent.kind, percent.minimum, percent.maximum), (2, 5, 99));
+    let (_, cores) = row_in(&options, "idle", CPU_CORES);
+    assert_eq!(
+        (
+            cores.kind,
+            cores.none_phrase.as_str(),
+            cores.minimum,
+            cores.maximum
+        ),
+        (3, "ignore cpu usage", 1, 64)
+    );
+    // Idle on, no activity timeouts, busy at 5% on one core.
+    let (at, _) = row_in(&options, "idle", IDLE_ENABLED);
+    options.invoke_check_toggled(at, true);
+    for label in [
+        "Permit idle mode if no general browsing activity has occurred in the past: ",
+        "Permit idle mode if your mouse cursor has not been moved in the past: ",
+        "Permit idle mode if no Client API requests in the past: ",
+    ] {
+        let (i, _) = row_in(&options, "idle", label);
+        options.invoke_none_toggled(i, true);
+    }
+    let (i, _) = row_in(&options, "idle", CPU_PERCENT);
+    options.invoke_number_edited(i, 5);
+    let (i, _) = row_in(&options, "idle", CPU_CORES);
+    options.invoke_number_edited(i, 1);
+    options.invoke_none_toggled(i, false);
+    options.invoke_apply();
+    let saved: hydrus_store::settings::GuiIdleSettings = client.get();
+    assert!(saved.enabled);
+    assert_eq!((saved.busy_cpu_percent, saved.busy_cpu_count), (5, Some(1)));
+
+    // The runtime's first sample has nothing to compare with; the next, after
+    // a busy minute, reads every core above 5%, so work is not idle.
+    let dir = client.store.dir().to_owned();
+    let base = hydrus_core::TimestampMs::now().0 + 10_000_000;
+    client.bound.maintenance.poll_at(base).unwrap();
+    assert!(idle_state::is_idle(&dir, base));
+    let spinners = spin(600);
+    std::thread::sleep(std::time::Duration::from_millis(100));
+    client.bound.maintenance.poll_at(base + 60_000).unwrap();
+    for spinner in spinners {
+        spinner.join().unwrap();
+    }
+    assert!(!idle_state::is_idle(&dir, base + 60_000), "busy system");
+    assert_eq!(client.ui.get_status_busy(), "CPU busy");
+    assert_eq!(client.ui.get_status_idle(), "idle", "still idle, but busy");
+
+    // "ignore cpu usage" clears it at the next check.
+    let options = client.options("maintenance and processing");
+    let (i, _) = row_in(&options, "idle", CPU_CORES);
+    options.invoke_none_toggled(i, true);
+    options.invoke_apply();
+    client.bound.maintenance.poll_at(base + 120_000).unwrap();
+    assert!(idle_state::is_idle(&dir, base + 120_000));
+    assert_eq!(client.ui.get_status_busy(), "");
+
+    // Switching the idle option off stops idle work whatever the CPU does.
+    let options = client.options("maintenance and processing");
+    let (i, _) = row_in(&options, "idle", IDLE_ENABLED);
+    options.invoke_check_toggled(i, false);
+    options.invoke_apply();
+    client.bound.maintenance.poll_at(base + 130_000).unwrap();
+    assert!(!idle_state::is_idle(&dir, base + 130_000));
+}

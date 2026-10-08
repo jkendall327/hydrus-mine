@@ -49,3 +49,37 @@ Most of the feature already existed; the leaves were stale "missing".
 - A pre-existing geometry test (`defaults_physical_menu...`) hard-codes the
   Add Defaults button position, so adding text above the table breaks it with
   no hint why; a probe screenshot was the quickest way to see the shift.
+
+## Final section: idle detection (follow-up task)
+
+Finished since the last section:
+- Merged the base branch (one conflict, in `external_calls_editor.rs`; took the
+  coordinator's Clippy fix).
+- CPU busy now gates background work: `maintenance_runtime.rs` publishes
+  `idle && !busy` to the daemon's idle state and gates trash/deferred workers on
+  it (the reference's `GoodTimeToStartBackgroundWork`); forced idle never reads
+  busy. Before, the busy flag only drew the status-bar text.
+- `CpuBusy::sample_times` (testable core of the sampler) with a unit test of
+  the percent/count thresholds.
+- Test `options_system_consumers::idle_and_cpu_busy_options_decide_whether_background_work_may_run`
+  (Options window to published idle state, with spinning threads for a real busy
+  sample) tags three leaves: run-maintenance-jobs-when-idle, CPU-usage percent,
+  CPU cores. Tagged the existing idle_timeout_options test for the mouse leaf.
+- Found already wired but untagged: shutdown jobs (action, once-per, max minutes
+  are all read by `shutdown_work::decide`/`run`, with model tests); not tagged
+  here because I did not write a test that drives them from the Options window.
+
+Started and dropped: nothing left on the branch.
+
+Remains (size estimate):
+- Shutdown leaves (3): test driving the Options rows into the exit flow, about
+  one slice (small).
+- System sleep wait "include the file system" (1): the net engine has a
+  just-woke delay; nothing reads `file_system_waits_on_wakeup` yet (small to
+  medium).
+- Drag-and-drop export options (4), image tile cache and video buffer sizes (4),
+  duplicate-filter prefetch (1), system tray (6): not started; tray and drag-out
+  need Slint/winit support (large); cache sizes need a real consumer (unknown).
+- The percent leaf is proven by the saved value reaching the sampler and a unit
+  test of the threshold, not by a negative end-to-end run (CPU load in a shared
+  test binary is not deterministic).
