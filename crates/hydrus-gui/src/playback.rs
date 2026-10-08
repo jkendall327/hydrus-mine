@@ -33,6 +33,30 @@ pub(crate) struct Playback {
 /// 10 milliseconds or so, a little more).
 const RESTARTED_MS: f64 = 250.0;
 
+/// Whether the file at `path` (named by its hash) has sound; one that isn't
+/// known counts as having some.
+fn has_audio(store: &hydrus_store::Store, path: &Path) -> bool {
+    let Some(hash) = path
+        .file_stem()
+        .and_then(|stem| stem.to_str())
+        .and_then(|stem| stem.parse::<hydrus_core::Sha256>().ok())
+    else {
+        return true;
+    };
+    store
+        .read(|conn| {
+            let Some(id) = hydrus_store::master::hash_id(conn, &hash)? else {
+                return Ok(true);
+            };
+            Ok(hydrus_store::media::load_basic(conn, &[id])?
+                .into_iter()
+                .next()
+                .and_then(|media| media.info)
+                .is_none_or(|info| info.has_audio))
+        })
+        .unwrap_or(true)
+}
+
 impl Playback {
     pub fn new(conf: PathBuf) -> Rc<Self> {
         Rc::new(Self {
@@ -103,10 +127,13 @@ impl Playback {
                     )
                     .unwrap_or_default()
             });
-            if let Err(e) = player.set_playback_options(
-                options.boolean("mpv_loop_playlist_instead_of_file"),
-                options.string("mpv_preferred_audio_device").as_deref(),
-            ) {
+            let plan = hydrus_gui_model::mpv_options::Plan::for_file(
+                &options,
+                self.store
+                    .as_ref()
+                    .is_none_or(|store| has_audio(store, path)),
+            );
+            if let Err(e) = player.set_playback_options(&plan) {
                 eprintln!("could not set mpv's options: {e}");
             }
             if let Err(e) = player.load(path) {

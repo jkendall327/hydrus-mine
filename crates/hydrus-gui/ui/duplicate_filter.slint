@@ -23,6 +23,80 @@ component Choice inherits Button {
     width: 100%;
 }
 
+// the reference's duplicates hover: the pair's comparison statements, their
+// score, and the buttons that decide it
+component DuplicatePanel inherits Rectangle {
+    in property <[Statement]> statements;
+    in property <string> score-text;
+    in property <int> score;
+    in property <bool> reviewing;
+    callback decide(string);
+    width: 330px;
+                background: Theme.window;
+                VerticalLayout {
+                    padding: 8px;
+                    spacing: 4px;
+                    for statement in root.statements: Text {
+                        text: statement.text;
+                        wrap: word-wrap;
+                        color: statement.score > 0 ? Theme.good : statement.score < 0 ? Theme.bad : Theme.text;
+                    }
+                    Text {
+                        text: root.score-text;
+                        font-weight: 700;
+                        color: root.score > 0 ? Theme.good : root.score < 0 ? Theme.bad : Theme.text;
+                    }
+                    Rectangle {
+                        height: 8px;
+                    }
+                    if root.reviewing: Text {
+                        text: "auto-resolution";
+                        font-weight: 700;
+                    }
+                    if root.reviewing: Choice {
+                        text: "approve";
+                        clicked => { root.decide("approve"); }
+                    }
+                    if root.reviewing: Choice {
+                        text: "deny";
+                        clicked => { root.decide("deny"); }
+                    }
+                    Choice {
+                        text: "this is better, and delete the other";
+                        clicked => { root.decide("better-delete"); }
+                    }
+                    Choice {
+                        text: "this is better, but keep both";
+                        clicked => { root.decide("better-keep"); }
+                    }
+                    Choice {
+                        text: "they are the same quality";
+                        clicked => { root.decide("same"); }
+                    }
+                    Choice {
+                        text: "they are related alternates";
+                        clicked => { root.decide("alternates"); }
+                    }
+                    Choice {
+                        text: "they are not related";
+                        clicked => { root.decide("false-positive"); }
+                    }
+                    Choice {
+                        text: "custom action";
+                        clicked => { root.decide("custom"); }
+                    }
+                    Choice {
+                        text: "skip";
+                        clicked => { root.decide("skip"); }
+                    }
+                    Choice {
+                        text: "go back";
+                        clicked => { root.decide("back"); }
+                    }
+                    Rectangle {}
+                }
+}
+
 export component DuplicateFilterWindow inherits Window {
     title: "duplicate filter";
     preferred-width: 1200px;
@@ -30,6 +104,10 @@ export component DuplicateFilterWindow inherits Window {
     in property <brush> canvas-background: #ffffff;
     background: root.canvas-background;
     in property <int> transparency-mode;
+    // the duplicates hover is pinned (always visible) or pops in on mouseover
+    in property <bool> hover-pinned: true;
+    out property <bool> hover-popped: !root.hover-pinned && ((pointer.has-hover && pointer.mouse-x >= area.width - 330px) || popped-touch.has-hover);
+    out property <length> hover-x: popped-touch.absolute-position.x;
 
     in property <image> media;
     // e.g. "File One - 3/100 - 2 decisions"
@@ -206,71 +284,30 @@ export component DuplicateFilterWindow inherits Window {
                 }
             }
 
-            Rectangle {
-                width: 330px;
-                background: Theme.window;
-                VerticalLayout {
-                    padding: 8px;
-                    spacing: 4px;
-                    for statement in root.statements: Text {
-                        text: statement.text;
-                        wrap: word-wrap;
-                        color: statement.score > 0 ? Theme.good : statement.score < 0 ? Theme.bad : Theme.text;
-                    }
-                    Text {
-                        text: root.score-text;
-                        font-weight: 700;
-                        color: root.score > 0 ? Theme.good : root.score < 0 ? Theme.bad : Theme.text;
-                    }
-                    Rectangle {
-                        height: 8px;
-                    }
-                    if root.reviewing: Text {
-                        text: "auto-resolution";
-                        font-weight: 700;
-                    }
-                    if root.reviewing: Choice {
-                        text: "approve";
-                        clicked => { root.decide("approve"); }
-                    }
-                    if root.reviewing: Choice {
-                        text: "deny";
-                        clicked => { root.decide("deny"); }
-                    }
-                    Choice {
-                        text: "this is better, and delete the other";
-                        clicked => { root.decide("better-delete"); }
-                    }
-                    Choice {
-                        text: "this is better, but keep both";
-                        clicked => { root.decide("better-keep"); }
-                    }
-                    Choice {
-                        text: "they are the same quality";
-                        clicked => { root.decide("same"); }
-                    }
-                    Choice {
-                        text: "they are related alternates";
-                        clicked => { root.decide("alternates"); }
-                    }
-                    Choice {
-                        text: "they are not related";
-                        clicked => { root.decide("false-positive"); }
-                    }
-                    Choice {
-                        text: "custom action";
-                        clicked => { root.decide("custom"); }
-                    }
-                    Choice {
-                        text: "skip";
-                        clicked => { root.decide("skip"); }
-                    }
-                    Choice {
-                        text: "go back";
-                        clicked => { root.decide("back"); }
-                    }
-                    Rectangle {}
-                }
+            if root.hover-pinned: DuplicatePanel {
+                statements: root.statements;
+                score-text: root.score-text;
+                score: root.score;
+                reviewing: root.reviewing;
+                decide(choice) => { root.decide(choice); }
+            }
+        }
+
+        // unpinned, the hover pops in over the canvas' right edge on mouseover
+        popped-touch := TouchArea {
+            x: root.width - 330px;
+            y: 0;
+            width: 330px;
+            height: root.height;
+            visible: root.hover-popped;
+            DuplicatePanel {
+                width: parent.width;
+                height: parent.height;
+                statements: root.statements;
+                score-text: root.score-text;
+                score: root.score;
+                reviewing: root.reviewing;
+                decide(choice) => { root.decide(choice); }
             }
         }
 

@@ -198,3 +198,64 @@ fn broadcast_keeps_selected_tag_identity_but_switching_services_retires_selectio
     );
     assert!(list.selected().is_empty());
 }
+
+#[test]
+fn the_recent_tab_s_count_is_the_noneable_the_reference_recorded() {
+    use hydrus_gui_model::options::{Kind, Row};
+    let recorded = hydrus_testkit::fixture_json("options_dialog.json");
+    let page = recorded["pages"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|page| page["page"] == "tag suggestions")
+        .unwrap();
+    let tabs = &page["items"][0]["items"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|item| item.get("tabs").is_some())
+        .unwrap()["tabs"];
+    let recent = tabs
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|tab| tab["tab"] == "recent")
+        .unwrap();
+    // (the first is the count; the second is for quick entry dialogs, which
+    // hydrus-rs has no equivalent of)
+    let theirs = &recent["items"][1];
+    let (_dirs, store) = super::options_dialog::fixture_store(&recorded);
+    let mut editor = Editor::new(store.read(Settings::load).unwrap());
+    let at = editor
+        .page_names()
+        .iter()
+        .position(|name| *name == "tag suggestions")
+        .unwrap();
+    editor.show_page(at);
+    let ours = editor
+        .rows()
+        .into_iter()
+        .find_map(|row| match row {
+            Row::Opt { option, .. } if option.label == "number of recent tags to show: " => {
+                Some(option.kind.clone())
+            }
+            _ => None,
+        })
+        .unwrap();
+    let Kind::Noneable {
+        none_phrase,
+        default,
+        min,
+        max,
+        ..
+    } = ours
+    else {
+        panic!("{ours:?}");
+    };
+    assert_eq!(theirs["none_phrase"], none_phrase);
+    assert_eq!(theirs["noneable"], default);
+    assert_eq!(
+        (theirs["min"].as_i64(), theirs["max"].as_i64()),
+        (Some(min), Some(max))
+    );
+}

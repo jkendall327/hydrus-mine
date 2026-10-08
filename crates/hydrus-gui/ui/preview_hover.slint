@@ -1,0 +1,79 @@
+// The preview window's top-right hover (the reference's
+// `CanvasHoverFrameTopRight` on the preview canvas): a file's ratings,
+// inbox/trash icons, locations and URLs. It is drawn in the preview's
+// background (`draw_top_right_hover_in_preview_window_background`) and, when
+// the mouse is over it, pops in with live rating controls
+// (`preview_window_hover_top_right_shows_popup`).
+import { RatingRow, RatingGraphic } from "viewer.slint";
+import { Theme } from "theme.slint";
+
+export component PreviewTopRight inherits TouchArea {
+    in property <[RatingRow]> ratings;
+    in property <length> rating-size: 12px;
+    in property <length> incdec-height: 12px;
+    in property <length> outline: 1px;
+    in property <[string]> lines;
+    in property <bool> inbox;
+    in property <bool> trashed;
+    in property <bool> draw-background;
+    in property <bool> pop-in;
+    callback rating-clicked(int, bool, float);
+    // the pop-in hover is up while the mouse is over the corner
+    out property <bool> popped: root.pop-in && root.has-hover;
+    out property <bool> drawn: root.draw-background || root.popped;
+    width: frame.preferred-width;
+    height: frame.preferred-height;
+    mouse-cursor: MouseCursor.default;
+
+    frame := Rectangle {
+        background: root.popped ? #202020e8 : transparent;
+        VerticalLayout {
+            padding: 6px;
+            spacing: 4px;
+            alignment: start;
+            for row[i] in root.ratings: HorizontalLayout {
+                alignment: end;
+                Rectangle {
+                    width: row.kind == 2 ? root.incdec-height * 2 : row.shapes.length * (root.rating-size + row.pad) - row.pad;
+                    height: row.kind == 2 ? root.incdec-height : root.rating-size;
+                    opacity: root.drawn ? 1 : 0;
+                    RatingGraphic {
+                        rating: row;
+                        icon-size: root.rating-size;
+                        incdec-height: root.incdec-height;
+                        outline: root.outline;
+                    }
+                    TouchArea {
+                        enabled: root.popped;
+                        pointer-event(event) => {
+                            if (event.kind == PointerEventKind.down) {
+                                if (event.button == PointerEventButton.left) {
+                                    root.rating-clicked(i, true, self.mouse-x / self.width);
+                                } else if (event.button == PointerEventButton.right) {
+                                    root.rating-clicked(i, false, 0);
+                                }
+                            }
+                        }
+                        moved => {
+                            if (row.kind == 1 && self.pressed) {
+                                root.rating-clicked(i, true, self.mouse-x / self.width);
+                            }
+                        }
+                    }
+                }
+            }
+            if root.inbox || root.trashed: HorizontalLayout {
+                alignment: end;
+                opacity: root.drawn ? 1 : 0;
+                if root.trashed: Image { width: 16px; height: 16px; source: @image-url("../../../static/trash.png"); }
+                if root.inbox: Image { width: 16px; height: 16px; source: @image-url("../../../static/inbox.png"); }
+            }
+            for line in root.lines: Text {
+                text: line;
+                color: Theme.colour(11, #f0f0f0);
+                horizontal-alignment: right;
+                opacity: root.drawn ? 1 : 0;
+            }
+        }
+    }
+}

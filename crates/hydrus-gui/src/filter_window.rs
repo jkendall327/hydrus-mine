@@ -391,6 +391,16 @@ fn after(window: &DuplicateFilterWindow, state: &mut State, step: anyhow::Result
     show(window, state);
 }
 
+/// Whether the duplicates hover is always visible, rather than popping in on
+/// mouseover (`hover_window_duplicates_always_on_top`, which the reference
+/// reads each time it decides to show the hover).
+fn hover_pinned(store: &Store) -> bool {
+    store
+        .read(hydrus_store::settings::get::<hydrus_store::reference_options::ReferenceOptions>)
+        .unwrap_or_default()
+        .boolean("hover_window_duplicates_always_on_top")
+}
+
 /// Open the filter's window on `model`, whose first batch is loaded with
 /// `step`; `slot` holds the window while it is open.
 pub(crate) fn open_filter(
@@ -410,6 +420,7 @@ pub(crate) fn open_filter_with_cache(
 ) -> Result<DuplicateFilterWindow, slint::PlatformError> {
     let window = DuplicateFilterWindow::new()?;
     window.set_reviewing(model.reviewing());
+    window.set_hover_pinned(hover_pinned(model.store()));
     let owns_cache = cache.is_none();
     let image_cache =
         cache.unwrap_or_else(|| crate::image_cache::Handle::standalone(model.store()));
@@ -570,6 +581,7 @@ pub(crate) fn open_filter_with_cache(
                 return;
             }
             refresh_colours(&window, &state.borrow());
+            window.set_hover_pinned(hover_pinned(state.borrow().model.store()));
             {
                 let mut state = state.borrow_mut();
                 if !state.viewing_stats.active() {

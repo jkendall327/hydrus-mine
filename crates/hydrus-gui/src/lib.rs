@@ -115,6 +115,7 @@ pub mod options_media_views;
 pub mod options_namespace_colours;
 pub mod options_open_externally;
 mod options_palette;
+mod options_rating_examples;
 pub mod options_tag_namespace_order;
 mod options_window;
 mod orphan_files_window;
@@ -576,6 +577,7 @@ fn lay_out_thumbnails(window: &MainWindow, store: &hydrus_store::Store, rows: &T
 
 /// Show `pages` in `window`, and let the window change them.
 pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
+    windows::register_main(window);
     about_window::note_boot();
     window
         .global::<TagTextHistory<'_>>()
