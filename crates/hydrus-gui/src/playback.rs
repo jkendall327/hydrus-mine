@@ -19,6 +19,9 @@ pub(crate) struct Playback {
     frames: slint::Timer,
     /// The volume and mute to play at.
     audio: Cell<(u8, bool)>,
+    /// The file it was last asked to play, whether or not libmpv is there
+    /// to play it (what tests without libmpv look at).
+    target: RefCell<Option<PathBuf>>,
     /// Whether the file stops at its end rather than play again
     /// (`StopForSlideshow`).
     stop_at_end: Cell<bool>,
@@ -66,6 +69,7 @@ impl Playback {
             player: RefCell::new(None),
             frames: slint::Timer::default(),
             audio: Cell::new((100, false)),
+            target: RefCell::new(None),
             stop_at_end: Cell::new(false),
             restarts: Cell::new(0),
             last_position: Cell::new(None),
@@ -92,8 +96,13 @@ impl Playback {
         self.stop_at_end.set(false);
         self.restarts.set(0);
         self.last_position.set(None);
+        *self.target.borrow_mut() = path.map(Path::to_path_buf);
         let Some(path) = path.filter(|_| mpv::available()) else {
+            // (without libmpv nothing plays, but what it was asked to play
+            // stays known)
+            let target = self.target.borrow().clone();
             self.stop();
+            *self.target.borrow_mut() = target;
             return;
         };
         let always_loop = self.store.as_ref().is_none_or(|store| {
@@ -205,6 +214,7 @@ impl Playback {
 
     /// Stop playing (the player is kept for the next file).
     pub fn stop(&self) {
+        *self.target.borrow_mut() = None;
         self.frames.stop();
         if let Some(player) = self.player.borrow().as_ref() {
             let _ = player.stop();
@@ -254,6 +264,16 @@ impl Playback {
         {
             eprintln!("could not step a frame: {e}");
         }
+    }
+
+    /// The file it was last asked to play, if it was not stopped since.
+    pub fn target(&self) -> Option<PathBuf> {
+        self.target.borrow().clone()
+    }
+
+    /// The volume and mute it plays at.
+    pub fn audio(&self) -> (u8, bool) {
+        self.audio.get()
     }
 
     /// Play at `volume` (0 to 100), muted or not, from now on.

@@ -127,6 +127,26 @@ impl Flag {
     pub fn flip(self) -> bool {
         !self.cell().fetch_xor(true, Ordering::Relaxed)
     }
+
+    /// What its menu entry does (`ClientGUI._SwitchBoolean`): the same as
+    /// [`Self::flip`], except that the two network report entries share
+    /// `network_report_mode`, the plain one clearing silent and the silent
+    /// one setting it.
+    pub fn switch(self) {
+        match self {
+            Flag::NetworkReport => {
+                Flag::NetworkReport.flip();
+                Flag::NetworkReportSilent.set(false);
+            }
+            Flag::NetworkReportSilent => {
+                Flag::NetworkReport.flip();
+                Flag::NetworkReportSilent.set(true);
+            }
+            _ => {
+                self.flip();
+            }
+        }
+    }
 }
 
 type Sink = Box<dyn Fn(&str) + Send + Sync>;

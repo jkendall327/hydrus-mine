@@ -905,15 +905,40 @@ deleted sidecars by `crates/hydrus-download/tests/local_import.rs`.
   presents component menus in a compact popup palette rather than nested
   submenus. Help links remain absent. Favourite phrase and description are edited
   together in a row form, where the reference uses sequential dialogs.
+  A converter step added or edited from the processor takes the processor's
+  example text as its own example when applied (the window is given it);
+  the reference's keeps the converter's own example.
 - **The string converter editor** persists the last accepted conversion
   in its owning store and reads preserved reference options until a native edit.
   Store-less embedded API callers retain the previous in-memory fallback. Conversion regex fields have component/replacement group
   controls; their help and favourites menus remain absent. Its date phrase link
   is shown as text. Date conversions execute and update live previews. Advanced parsing
   uses Jiff's diagnostic reasons rather than Python's; English directives and
-  common ISO/English automatic dates are supported. The easy parser supports
-  relative English units (seconds through years), now/today/yesterday/tomorrow,
-  but not dateparser's full multilingual and fuzzy grammar. Locale-dependent
+  common ISO/English automatic dates are supported. By the owner's decision,
+  the easy parser ("datestring to timestamp (easy)") matches a hydrus install
+  **without the `dateparser` library**, where `ClientTime.ParseDate` is
+  `dateutil.parser.parse`, plus the English relative expressions `dateparser`
+  reads. Non-English text, fuzzy text, Unix timestamps and words such as
+  "noon" are not parsed (use the advanced strptime step). It reads: ISO 8601,
+  RFC 2822 and HTTP dates, numeric dates (month first, day first when only
+  that is valid; two-digit years within fifty years of now), month names,
+  ordinals and weekdays (moving the date forward to the weekday), 12- and
+  24-hour times, `UTC`, `GMT` and `Z` (other zone names such as `EST` are
+  ignored, and `UTC+9` reads as POSIX does, west of UTC), filling a missing
+  part from the clock as dateutil does; and relative expressions (`now`,
+  `yesterday`, `2d ago`, `a day ago`, `two hours ago`, `1 year, 2 months ago`,
+  `in 3 weeks`, `last week`, `yesterday at 5pm`) with dateparser's month and
+  year arithmetic. A corpus of 247 forms recorded from the reference
+  (`oracle/record_dateparser_corpus.py`: relative forms with dateparser,
+  the rest with it disabled) all match, dateutil's odd readings of digit-only strings
+  included (`010203`, `-1`, `120`, `1 2 3`). The other callers of the
+  conversion follow a dateparser-less install too: a `Retry-After` date is read
+  by it (between a minute and a day), and `Last-Modified` is read only in the
+  fixed `Thu, 20 May 2010 07:00:23 GMT` form (taken as local time, as the
+  reference does). The Client API/search `system:time` predicates already use
+  the reference's dateparser-less grammar; the date editor's pasted text reads
+  only plain forms and does not fall back to the easy parser as the reference
+  does. Locale-dependent
   date phrases use English/C forms. Advanced parsing validates Python's
   six-digit microsecond limit, ignores recognised UTC/GMT/system timezone names
   as Python does, and rejects year zero and non-Python directives. Jiff's
@@ -967,21 +992,36 @@ deleted sidecars by `crates/hydrus-download/tests/local_import.rs`.
   buttons (the rule's own comparator list does), and its custom
   merge options are edited in their own window (the reference embeds
   the editor). A relative comparator's time delta and range are
-  in milliseconds, where the reference has a time widget.
+  in milliseconds, where the reference has a time widget. The rules and
+  comparator lists import one png or json at a time (the reference's picker
+  takes several), and a file that can't be read says "Problem importing!"
+  with the reason as the reference does, though not its separate text for a
+  payload that decodes but can't be understood (whose `{path}` the reference
+  never fills in). A hydrus-rs rules png given to the comparator list is a read error there, where the reference would warn which object types it refused.
 - **The file log window** can't yet import new sources, export them to
   a png, search for the selected URLs, or do its advanced entries (these
   are greyed out); its "additional urls" don't show the URL a URL class
   would actually fetch or refer from; trying a previously deleted file
   again doesn't offer to clear its deletion record.
-- **The import options editor** keeps typed-line fields for the tag filtering
-  whitelist and additional tags, with a detached shared write-tag autocomplete
-  editor for both lists. The reference embeds its tag inputs. Note names remain
+- **The import options editor** keeps a typed-line field for the tag filtering
+  whitelist, with a detached shared write-tag autocomplete editor for it and
+  for each service's additional tags (the reference embeds its tag inputs in
+  a dialog, and this one lacks the tag list's multiple-selection and
+  maintenance right-click menus). Each tag service's cog menu is a set of check boxes in the
+  box rather than a menu. Note names remain
   typed lines, and note renames use "parser name -> saved name" rather than the
   reference's two-column list.
   The tags page's "set a filter for already-exist test" isn't there.
-  Locations take one destination (the reference's takes several), and
-  presentation's location is all my files or all local files. It has no
-  copy, paste or favourites buttons, and always lists kinds as the
+  The shared location button's flags for local-only, combined-local-only and
+  no-multiple choices exist in the model and are replayed against the
+  reference's button, but no window uses them yet.
+  The destination and presentation location buttons are drop-downs of the
+  reference's menu, its "multiple/deleted locations" row opening the list
+  window, with a label beside them saying what is chosen (the reference has
+  one button whose popup menu has check marks). The list of kinds' summary of a
+  presentation location that is neither all my files nor all local files says
+  "in another location" where the reference names the domains.
+  It always lists kinds as the
   reference's "simple mode" does (hydrus-rs has no option for it yet).
 - **The merge options editor** asks its select dialogs as a row of
   buttons (no service or action preselected), and edits the note merge
@@ -1313,7 +1353,9 @@ The access-key window opens separately from service review; the reference
 embeds its list within that panel. "add from api request" opens the
 reference's waiting window and takes the first request the running daemon
 records (the daemon, not the GUI, serves the API, so the request travels
-through the store, polled twice a second); `hydrus api-keys listen` remains
+through the store, polled twice a second; registration is a ten-second lease
+that timer renews, so a crash closes it within seconds instead of leaving it
+open; the renewal rides the UI timer, so a UI thread blocked for over ten seconds lets it lapse); `hydrus api-keys listen` remains
 for a store without a GUI. Key-change
 questions use an inline edit panel and generated-key button. Listener changes
 may take up to one second; current requests drain for at most ten seconds
@@ -2157,7 +2199,7 @@ preview minimum/maximum fields, with the same cap-before-minimum and duration-ti
 policy. Successful raster presentation accepts the original request timestamp;
 unrenderable files and loading placeholders are rejected rather than counted as
 views. Qt accepts media before its player/decoder renders. The native canvas does
-not yet reproduce preview audio/video playback, embed/external buttons, interactive zoom/pan,
+not yet reproduce preview embed/external buttons, interactive zoom/pan,
 hovers or rating controls. These broader preview parents remain Partial. Owned
 page/request generations retire late decoded frames and rebound-window callbacks;
 hidden/cleared media and accepted client close finish once. Actual Qt boundary
@@ -3857,8 +3899,7 @@ change nothing). They are marked out of scope in `docs/rust/tracking/`.
 ## Options kept but not used
 
 - These Options rows are kept and edited, as the reference keeps them, but
-  nothing in hydrus-rs reads them yet: the preview window's own volume (the
-  preview shows a still or poster and plays nothing), the REQUESTS_CA_BUNDLE
+  nothing in hydrus-rs reads them yet: the REQUESTS_CA_BUNDLE
   switch (hydrus-rs uses its own TLS roots), drag-and-drop export (no files
   can be dragged out yet), the Qt-only gui misc and frame switches, the
   integer locale switch, the hide-page signal, the URL drop page switch, mpv's
@@ -3891,10 +3932,9 @@ change nothing). They are marked out of scope in `docs/rust/tracking/`.
   text. A numerical rating is as wide as its stars: the reference's fraction
   text beside them is not drawn there. URLs can't be clicked there,
   and the cog menu of the reference's hover does not exist.
-- The duplicates filter's hover is a fixed panel beside the canvas while
-  pinned (the reference floats it over the canvas); unpinned it pops in over
-  the canvas' right edge. There is no cog menu to flip the pin from the
-  hover itself.
+- The duplicates filter's hover floats over the canvas' right edge, always
+  while pinned and on mouseover otherwise, as the reference's does. There is
+  no cog menu to flip the pin from the hover itself.
 - Frame locations: a child window opens at its parent's top-left (less the
   padding), centred on it, or where the mouse is, and grows toward the main
   window by its gravity, as `SetInitialTLWSizeAndPosition` does, taking the
@@ -4318,3 +4358,32 @@ directory.
   menus, selection, undo history) were not re-verified here.
 
 - **Out-of-range numbers in the services editor.** The Client API port, a numerical rating's star count and its icon padding refuse out-of-range values with an error on Apply; the reference's spin boxes clamp them as they are typed.
+
+## Preview sound
+
+- The preview plays through the media viewer's player (`mpv.rs`), so it needs
+  libmpv; without it the preview keeps showing the still, as the viewer does.
+  The tests run without libmpv: the preview's player records what it was asked
+  to play and the volume and mute it was given, and the tests check those
+  (which kinds play, which volume applies under each setting, the control, the
+  Options row). **Only verified with libmpv, by hand and not in CI:** that
+  sound actually comes out, that video frames replace the still in the pane,
+  and that a file starting paused (`preview_start_paused`) is paused (the
+  decision is made, but nothing observes the pause without mpv).
+- A kind whose preview starts behind an embed button (`preview_start_with_embed`)
+  plays nothing, since hydrus-rs has no embed button yet; the reference plays
+  it after a click.
+- The reference's preview control is a pop-up window that appears when the
+  pointer is on the global mute button; here it is drawn in the pane, at the
+  bottom right of the media, and opens in the same way. Its look (icons are
+  text speaker glyphs) is not the reference's.
+- The preview's player is one per window, not one per page: switching pages
+  starts the new page's file afresh, rather than keeping each page's player.
+- The preview starts playing only once its still has decoded and been accepted,
+  so a file whose still cannot be decoded is not played; the reference sends
+  the file to mpv whatever its thumbnail or still does.
+- The preview's right-click volume menu (`AddAudioVolumeMenu`: global, preview
+  and per-player mute) is not ported, and the control's tooltips ("Global
+  mute/unmute", "Mute/unmute: preview") are missing.
+- A change to the preview's show action while a file plays restarts it within
+  a quarter of a second, not at once.

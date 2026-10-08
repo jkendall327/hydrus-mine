@@ -469,8 +469,23 @@ fn add_from_api_request_waits_for_a_tool_s_request_and_edits_what_it_asked_for()
     keys.invoke_add_from_api_clicked();
     let waiting = api::last_request_opened().expect("the waiting window opens");
     assert_eq!(waiting.get_text(), "waiting for request…");
-    assert!(registration(&store).open_until_ms.is_some());
     assert!(keys.get_editing(), "the list waits");
+    // registration is a short lease the window's timer renews, not a fixed
+    // hour: a crash leaves it open for seconds
+    let now = || hydrus_core::time::TimestampMs::now().millis();
+    let until = registration(&store).open_until_ms.unwrap();
+    assert!(until <= now() + 10_000, "{until}");
+    store
+        .write(|ctx| {
+            let mut registration: Registration = hydrus_store::settings::get(ctx.conn())?;
+            registration.open_until_ms =
+                Some(hydrus_core::time::TimestampMs::now().millis() + 1_000);
+            hydrus_store::settings::set(ctx.conn(), &registration)
+        })
+        .unwrap();
+    spin_until("the lease was not renewed", || {
+        registration(&store).open_until_ms.unwrap() > now() + 4_000
+    });
 
     // closing it stops taking requests
     waiting.invoke_cancel_clicked();

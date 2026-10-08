@@ -614,6 +614,11 @@ fn open_set(
             if window.get_remove_question() {
                 return;
             }
+            // `GetValue` vetoes a custom set named after a built-in one.
+            if matches!(target, Target::Custom(_)) && sets::is_reserved(window.get_set_name().as_str()) {
+                window.set_error(sets::RESERVED_NAME_VETO.into());
+                return;
+            }
             let bindings = draft.borrow().clone();
             for (index, binding) in bindings.iter().enumerate() {
                 if let Some(previous) = bindings[..index].iter().find(|b| b.gesture == binding.gesture) {

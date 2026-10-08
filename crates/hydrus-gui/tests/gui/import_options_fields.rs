@@ -232,12 +232,18 @@ fn prefetch_checks_fetch_flags_and_the_dispositive_interlock_reach_the_importers
     assert!(!prefetch.url_check_looks_for_neighbour_spam);
 }
 
-// (audit-network-options-present stays untagged: only two of the reference's
-// presentation locations are offered)
+// leaf: audit-network-options-present
 #[test]
 fn presentation_status_inbox_and_location_gates_reach_the_importers_options() {
     let _windows = headless::init();
     let s = setup();
+    // ("hydrus local file storage", which includes the trash, is for
+    // advanced mode)
+    s.store
+        .write(|ctx| {
+            hydrus_store::settings::set(ctx.conn(), &hydrus_store::settings::AdvancedMode(true))
+        })
+        .unwrap();
     let editor = s.editor();
     custom(&editor, PRESENTATION);
     // status: all files, new files, do not show anything
@@ -246,8 +252,13 @@ fn presentation_status_inbox_and_location_gates_reach_the_importers_options() {
     // "or in inbox" is only offered with "new files"
     assert_eq!(editor.get_inbox_choices().row_count(), 3);
     editor.set_inbox_index(2);
-    editor.set_location_index(1);
     editor.invoke_changed();
+    let storage = editor
+        .get_location_choices()
+        .iter()
+        .position(|c| c == "hydrus local file storage")
+        .unwrap();
+    editor.invoke_location_picked("presentation".into(), i32::try_from(storage).unwrap());
     editor.invoke_apply();
     let presentation = s.saved().presentation.expect("custom presentation");
     assert_eq!(presentation.status, PresentationStatus::NewOnly);

@@ -887,20 +887,39 @@ pub fn presented_files_as(
     let ids = crate::master::hash_ids(conn, &hashes)?;
     let all: Vec<HashId> = ids.values().copied().collect();
     let inbox = crate::media::inboxed(conn, &all)?;
-    let mut located = std::collections::HashSet::new();
-    for key in &options.location {
+    // (`filter_hashes`: files current in a current domain or deleted from a
+    // deleted one, unless the location is all known files, which doesn't
+    // filter)
+    let all_known = options.location.iter().any(|k| {
+        hex::decode(k).is_ok_and(|k| k == hydrus_core::service::builtin_keys::COMBINED_FILE)
+    });
+    let mut located: std::collections::HashSet<HashId> = if all_known {
+        all.iter().copied().collect()
+    } else {
+        std::collections::HashSet::new()
+    };
+    let service_of = |key: &str| -> Result<Option<hydrus_core::ServiceId>> {
         let Ok(key) = hex::decode(key) else {
-            continue;
+            return Ok(None);
         };
-        let service: Option<hydrus_core::ServiceId> = conn
+        Ok(conn
             .query_row(
                 "SELECT service_id FROM services WHERE service_key = ?",
                 [key],
                 |r| r.get(0),
             )
-            .optional()?;
-        if let Some(service) = service {
-            located.extend(crate::media::current_in(conn, service, &all)?);
+            .optional()?)
+    };
+    if !all_known {
+        for key in &options.location {
+            if let Some(service) = service_of(key)? {
+                located.extend(crate::media::current_in(conn, service, &all)?);
+            }
+        }
+        for key in &options.deleted_location {
+            if let Some(service) = service_of(key)? {
+                located.extend(crate::media::deleted_from(conn, &all, service)?);
+            }
         }
     }
     let mut seen = std::collections::HashSet::new();
@@ -1651,6 +1670,76 @@ mod tests {
             update_file_seed(&conn, seed).unwrap();
         }
         assert_eq!(presented_files(&conn, q).unwrap(), [ids[1], ids[0]]);
+    }
+
+    /// "Show files" filters the presented files by the presentation
+    /// location: files current in a current domain or deleted from a deleted
+    /// one, and all known files doesn't filter (`filter_hashes`).
+    #[test]
+    fn presented_files_follow_the_presentation_location() {
+        use hydrus_core::import_options::PresentationOptions;
+        use hydrus_core::service::builtin_keys;
+        let conn = conn();
+        let q = create_queue(
+            &conn,
+            QueueKind::Urls,
+            "q",
+            None,
+            &ImportOptionsSlice::default(),
+            0,
+        )
+        .unwrap();
+        let hash = |n: u8| hydrus_core::Sha256::from_slice(&[n; 32]).unwrap();
+        let ids: Vec<HashId> = (1..=3)
+            .map(|n| crate::master::intern_hash(&conn, &hash(n)).unwrap())
+            .collect();
+        let urls = [
+            "https://a.example/1",
+            "https://a.example/2",
+            "https://a.example/3",
+        ];
+        let seeds: Vec<NewFileSeed> = urls.iter().map(|u| seed(u)).collect();
+        add_file_seeds(&conn, q, &seeds, false, 0).unwrap();
+        for (seed, n) in file_seeds(&conn, q).unwrap().iter_mut().zip(1..) {
+            seed.status = SeedStatus::SuccessfulAndNew;
+            seed.meta.set_hash("sha256", hash(n).to_hex());
+            update_file_seed(&conn, seed).unwrap();
+        }
+        let service = |name: &str, key: &[u8]| -> i64 {
+            conn.execute(
+                "INSERT INTO services (service_key, service_type, name, config) VALUES (?, 2, ?, '{}')",
+                rusqlite::params![key, name],
+            )
+            .unwrap();
+            conn.last_insert_rowid()
+        };
+        let mine = service("mine", b"mine");
+        let art = service("art", b"art");
+        // the first file is in mine, the second was deleted from art, the
+        // third is nowhere
+        conn.execute(
+            "INSERT INTO file_domain_current (service_id, hash_id, added_ms) VALUES (?, ?, 0)",
+            rusqlite::params![mine, ids[0]],
+        )
+        .unwrap();
+        conn.execute(
+            "INSERT INTO file_domain_deleted (service_id, hash_id, deleted_ms, original_added_ms) VALUES (?, ?, 0, 0)",
+            rusqlite::params![art, ids[1]],
+        )
+        .unwrap();
+        let presenting = |current: &[&[u8]], deleted: &[&[u8]]| {
+            let options = PresentationOptions {
+                location: current.iter().map(hex::encode).collect(),
+                deleted_location: deleted.iter().map(hex::encode).collect(),
+                ..PresentationOptions::default()
+            };
+            presented_files_as(&conn, q, Some(&options)).unwrap()
+        };
+        assert_eq!(presenting(&[b"mine"], &[]), [ids[0]]);
+        assert_eq!(presenting(&[b"mine"], &[b"art"]), [ids[0], ids[1]]);
+        assert_eq!(presenting(&[], &[b"art"]), [ids[1]]);
+        assert_eq!(presenting(&[b"art"], &[]), Vec::<HashId>::new());
+        assert_eq!(presenting(&[builtin_keys::COMBINED_FILE], &[]), ids);
     }
 
     #[test]

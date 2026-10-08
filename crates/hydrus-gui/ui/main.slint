@@ -34,6 +34,7 @@ import { DuplicatesData, DuplicatesFiltering, DuplicatesSidebar } from "duplicat
 export { DuplicatesData, DuplicatesFiltering }
 import { RatingRow, RatingShape } from "viewer.slint";
 import { PreviewRatingRow, PreviewTopRight } from "preview_hover.slint";
+import { PreviewVolume } from "preview_volume.slint";
 export { PreviewRatingRow }
 export { DownloadLine, GalleryData, WatcherData, JobCogMenu }
 export { NetworkErrorWindow } from "importing.slint";
@@ -414,6 +415,17 @@ export component MainWindow inherits Window {
     out property <length> preview-hover-width: preview-top-right.width;
     out property <length> preview-hover-height: preview-top-right.height;
     callback preview-rating-clicked(int, bool, float);
+    // the preview's volume control, for a file it plays that has sound
+    in property <bool> preview-volume-shown;
+    in property <int> preview-volume;
+    in property <bool> preview-global-muted;
+    in property <bool> preview-muted;
+    out property <bool> preview-volume-open: preview-volume-box.open;
+    out property <length> preview-volume-x: preview-volume-box.absolute-position.x;
+    out property <length> preview-volume-y: preview-volume-box.absolute-position.y;
+    callback preview-volume-changed(int);
+    callback preview-flip-global-mute();
+    callback preview-flip-mute();
     in-out property <bool> preview-splitter-hidden;
     callback preview-retired();
     callback preview-presentation-changed();
@@ -1595,6 +1607,18 @@ export component MainWindow inherits Window {
                             draw-background: root.preview-draw-top-right;
                             pop-in: root.preview-pop-in;
                             rating-clicked(row, left, proportion) => { root.preview-rating-clicked(row, left, proportion); }
+                        }
+                        // (above the top-right hover, which an open control overlaps)
+                        preview-volume-box := PreviewVolume {
+                            visible: root.preview-volume-shown && root.preview-has-media;
+                            x: min(parent.width, root.preview-media-x + root.preview-media-width) - self.width;
+                            y: min(parent.height, root.preview-media-y + root.preview-media-height) - self.height;
+                            volume: root.preview-volume;
+                            global-muted: root.preview-global-muted;
+                            preview-muted: root.preview-muted;
+                            volume-changed(v) => { root.preview-volume-changed(v); }
+                            flip-global-mute => { root.preview-flip-global-mute(); }
+                            flip-preview-mute => { root.preview-flip-mute(); }
                         }
                     }
                 }
