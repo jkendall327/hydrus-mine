@@ -613,6 +613,13 @@ fn preview(w: &ExternalCallWindow, state: &State) {
     );
 }
 fn show(w: &ExternalCallWindow, state: &State) {
+    let pipeline = if w.get_pipeline() == 1 {
+        Pipeline::Url
+    } else {
+        Pipeline::File
+    };
+    w.set_pipeline_description(pipeline.description().into());
+    w.set_default_launch_description(pipeline.default_launch_description().into());
     w.set_command_template(
         format!(
             "{} {}",
@@ -917,7 +924,7 @@ pub fn open(
         move || {
             if blocked() { return; }
             let paths = std::env::var_os("PATH").map(|p| std::env::split_paths(&p).map(|p| p.to_string_lossy().into_owned()).collect::<Vec<_>>().join("\n")).unwrap_or_default();
-            let message = format!("As hydrus sees it, your PATH is as follows. Any executable you specify with just a name, rather than a full path, needs to exist in one of these locations.\n\n{paths}");
+            let message = format!("As hydrus sees it, your PATH is as follows. Any executable you specify with just a name, rather than a full path, needs to exist in one of these locations. You should be very very careful in ever editing your PATH. Ask a chatbot if you need to learn more. Recall that if you ever do change it, you need to restart hydrus (in a new terminal if needed) to see the changes here.\n\n{paths}");
             if let Ok(q) = ask(&question, &active, message, Rc::new(|_| {})) {
                 q.set_yes_label("ok".into()); q.set_no_label("close".into());
             } else if let Some(w) = weak.upgrade() { w.set_test_status("Could not show PATH.".into()); }

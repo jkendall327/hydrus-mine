@@ -18,6 +18,40 @@ impl Pipeline {
             Self::Url => "send single URL",
         }
     }
+    /// The reference's job summary, with its available and expected parameters.
+    pub fn description(self) -> String {
+        let summary = match self {
+            Self::File => "This tells the client how to open a file in another program.",
+            Self::Url => "This tells the client how to open a URL in another program.",
+        };
+        let inputs = self
+            .parameters()
+            .iter()
+            .map(|p| p.label())
+            .collect::<Vec<_>>()
+            .join(", ");
+        format!(
+            "Summary: {summary}\n\nAvailable input parameters: {inputs}\n\nExpected output parameters: none"
+        )
+    }
+    /// What the default OS launch call does, as the reference words it.
+    pub fn default_launch_description(self) -> String {
+        match self {
+            Self::File => {
+                let how = if cfg!(windows) {
+                    "For Windows, this is a hardcoded system call."
+                } else if cfg!(target_os = "macos") {
+                    "For macOS, this is \"open %path%\"."
+                } else {
+                    "For Linux, this is \"xdg-open %path%\"."
+                };
+                format!(
+                    "This will try to launch the file using your OS's default file handler.\n\n{how}"
+                )
+            }
+            Self::Url => "This will try to launch the URL using a library that attempts to figure out your OS's default URL handler. It may lose the \"#anchor\" fragment on the end of an URL.".into(),
+        }
+    }
     /// Parameters the selected job can supply.
     pub fn parameters(self) -> &'static [Parameter] {
         match self {

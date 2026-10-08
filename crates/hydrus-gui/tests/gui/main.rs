@@ -196,6 +196,7 @@ mod preview_default_zoom;
 mod related_weight_table;
 
 mod external_calls;
+mod external_calls_editor;
 mod open_externally;
 mod viewer_drag;
 mod window_rescue;

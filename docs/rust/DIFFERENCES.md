@@ -4036,3 +4036,14 @@ status line ("That location does not seem to exist!") where the reference shows 
 critical dialog; File > minimise to system tray is absent (there is no tray
 icon); File > open > installation directory opens the Rust executable's
 directory.
+
+## Options > external programs
+
+- The job list has "send single file" and "send single URL" only; the
+  reference's "send multiple files" job (parameters file paths / file URIs) is
+  not ported.
+- The timeout is one seconds box (1 to 3,600,000) with the "this can live for a
+  very long time" checkbox; the reference uses a minutes-and-seconds widget.
+- The reference's tooltips on the warning, timeout, hide terminal and text
+  controls are not shown (Slint has no tooltips here).
+- The help menu button is a "help ▾" button with one entry, not the help icon.
