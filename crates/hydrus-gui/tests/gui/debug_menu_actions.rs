@@ -527,3 +527,48 @@ fn crash_logging_writes_panics_to_a_log_until_turned_off() {
     let text = std::fs::read_to_string(&logs_now[0]).unwrap();
     assert!(!text.contains("after"), "turned off, no more is logged");
 }
+
+// leaf: audit-options-help-debug-action-scan-file-storage-folders
+#[test]
+fn scan_file_storage_folders_asks_for_a_directory_and_says_what_it_found() {
+    let d = start();
+    let dir = tempfile::tempdir().unwrap();
+    let granularity = d.store.snapshot().storage.granularity();
+    assert!(granularity == 2 || granularity == 3);
+    for prefix in ["fa0", "fa1", "fa2"] {
+        let mut path = dir.path().join(prefix);
+        if granularity == 3 {
+            path = path.join(format!("{prefix}0"));
+        }
+        std::fs::create_dir_all(path).unwrap();
+    }
+    let asked = std::rc::Rc::new(std::cell::RefCell::new(Vec::new()));
+    hydrus_gui::set_picker({
+        let asked = asked.clone();
+        let path = dir.path().to_owned();
+        move |kind, title| {
+            asked.borrow_mut().push((kind, title.to_owned()));
+            vec![path.clone()]
+        }
+    });
+    d.click(&["data actions", "scan file storage folders"]);
+    assert_eq!(
+        *asked.borrow(),
+        [(hydrus_gui::Pick::Folder, "Select directory".to_owned())]
+    );
+    let text = d
+        .jobs()
+        .iter()
+        .filter_map(|j| j.status_text_1.clone())
+        .find(|t| t.starts_with("It found "))
+        .expect("the result popup");
+    assert!(
+        text.starts_with("It found 3 subfolders and took "),
+        "{text}"
+    );
+    // cancelling the picker does nothing more
+    hydrus_gui::set_picker(|_, _| Vec::new());
+    let before = d.jobs().len();
+    d.click(&["data actions", "scan file storage folders"]);
+    assert_eq!(d.jobs().len(), before);
+}

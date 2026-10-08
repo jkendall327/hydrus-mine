@@ -256,6 +256,19 @@ pub(crate) fn run(context: &Context, action: Action) {
             let _ = slint::quit_event_loop();
         }
         Action::ClearRenderingCaches => (context.clear_caches)(),
+        Action::ScanStorage => {
+            let Some(path) = crate::pick(crate::Pick::Folder, "Select directory")
+                .into_iter()
+                .next()
+            else {
+                return;
+            };
+            let granularity = store.snapshot().storage.granularity();
+            let started = std::time::Instant::now();
+            let found = model::presumptive_subfolders(&path, granularity).map(|f| f.len());
+            let text = model::scan_text(&found, started.elapsed().as_secs_f64());
+            post(&store, vec![Job::text(text, now())]);
+        }
         Action::FlipCrashLogging => flip_crash_logging(store.dir()),
     }
 }

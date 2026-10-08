@@ -114,6 +114,7 @@ fn kept(entries: &[Value]) -> Vec<Value> {
                     &[
                         "flush log",
                         "force database commit",
+                        "scan file storage folders",
                         "show env",
                         "---",
                         "simulate program exit signal",

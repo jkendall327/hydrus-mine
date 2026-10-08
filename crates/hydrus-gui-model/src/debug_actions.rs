@@ -129,4 +129,69 @@ pub enum Action {
     ClearRenderingCaches,
     /// debug modes > "use faulthandler to log crashes"
     FlipCrashLogging,
+    /// data actions > "scan file storage folders"
+    ScanStorage,
+}
+
+/// The subfolders a directory seems to hold as file storage of this
+/// `granularity` (2: `fxx`/`txx` directly beneath it; 3: one level down), or
+/// why the scan gave up: it is meant to be quick whatever the directory is
+/// shaped like (`TryToGetPresumptiveSubfolderPathsBeneathLocation`).
+pub fn presumptive_subfolders(
+    path: &std::path::Path,
+    granularity: usize,
+) -> Result<std::collections::BTreeSet<std::path::PathBuf>, String> {
+    let mut found = std::collections::BTreeSet::new();
+    let mut deeper = Vec::new();
+    let (mut files, mut dirs) = (0, 0);
+    for entry in std::fs::read_dir(path).map_err(|e| e.to_string())? {
+        let entry = entry.map_err(|e| e.to_string())?;
+        if entry.file_type().is_ok_and(|t| t.is_dir()) {
+            dirs += 1;
+            if dirs > 600 {
+                return Err("Too many subdirs!".into());
+            }
+            if granularity == 2 {
+                found.insert(entry.path());
+            } else if granularity == 3 {
+                deeper.push(entry.path());
+            }
+        } else {
+            files += 1;
+            if files > 16 {
+                return Err("Too many files!".into());
+            }
+        }
+    }
+    for dir in deeper {
+        let (mut files, mut dirs) = (0, 0);
+        for entry in std::fs::read_dir(dir).map_err(|e| e.to_string())? {
+            let entry = entry.map_err(|e| e.to_string())?;
+            if entry.file_type().is_ok_and(|t| t.is_dir()) {
+                dirs += 1;
+                if dirs > 20 {
+                    return Err("Too many subdirs!".into());
+                }
+                found.insert(entry.path());
+            } else {
+                files += 1;
+                if files > 16 {
+                    return Err("Too many files!".into());
+                }
+            }
+        }
+    }
+    Ok(found)
+}
+
+/// What "scan file storage folders" says when it is done.
+pub fn scan_text(found: &Result<usize, String>, seconds: f64) -> String {
+    match found {
+        Ok(count) => format!(
+            "It found {} subfolders and took {}",
+            hydrus_core::numbers::human_int(*count as u64),
+            hydrus_core::time::pretty_time_delta_f64(seconds)
+        ),
+        Err(why) => format!("It cancelled: {why}"),
+    }
 }

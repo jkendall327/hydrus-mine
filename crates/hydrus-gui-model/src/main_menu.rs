@@ -1483,6 +1483,7 @@ fn help_menu(facts: &Facts) -> Entry {
                         vec![
                             item("flush log", debug(DebugAction::FlushLog)),
                             item("force database commit", debug(DebugAction::ForceCommit)),
+                            item("scan file storage folders", debug(DebugAction::ScanStorage)),
                             item("show env", debug(DebugAction::ShowEnv)),
                             SEP,
                             item("simulate program exit signal", debug(DebugAction::Exit)),
