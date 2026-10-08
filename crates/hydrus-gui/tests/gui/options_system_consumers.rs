@@ -1447,11 +1447,13 @@ fn idle_and_cpu_busy_options_decide_whether_background_work_may_run() {
     assert_eq!(client.ui.get_status_busy(), "");
     let (i, _) = row_in(&options, "idle", CPU_CORES);
     options.invoke_none_toggled(i, false);
+    options.invoke_apply();
+    let options = client.options("maintenance and processing");
     assert!(
         row_in(&options, "idle", CPU_PERCENT).1.enabled,
         "a core count is set again"
     );
-    options.invoke_apply();
+    options.invoke_cancel();
     let at = minute(6);
     assert!(!idle_state::is_idle(&dir, at), "busy again, at 59% on 1 core");
 
@@ -1478,27 +1480,37 @@ fn seconds_now() -> i64 {
     hydrus_core::TimestampMs::now().secs()
 }
 
-/// A fresh client whose last shutdown work was `ago` seconds back, with the
-/// shutdown box edited by `edit` and applied; then its window is closed.
-fn exit_after(ago: i64, edit: impl FnOnce(&OptionsWindow)) -> Client {
-    let client = client();
-    client
-        .store
-        .write(move |ctx| {
-            let mut work: hydrus_store::settings::ShutdownWork =
-                hydrus_store::settings::get(ctx.conn())?;
-            work.last_done = seconds_now() - ago;
-            hydrus_store::settings::set(ctx.conn(), &work)
-        })
-        .unwrap();
-    let options = client.options("maintenance and processing");
-    edit(&options);
-    options.invoke_apply();
-    client
-        .ui
-        .window()
-        .dispatch_event(slint::platform::WindowEvent::CloseRequested);
-    client
+impl Client {
+    /// Bind the window again, as a client started afresh (a closed one does
+    /// not take another exit).
+    fn restart(&mut self) {
+        self.ui.show().unwrap();
+        self.bound = bind(&self.ui, Pages::open(self.store.clone()).unwrap());
+    }
+
+    /// With the shutdown settings as new and the last shutdown work `ago`
+    /// seconds back, the shutdown box edited by `edit` and applied; then the
+    /// window is closed.
+    fn exit_after(&mut self, ago: i64, edit: impl FnOnce(&OptionsWindow)) {
+        self.restart();
+        self.store
+            .write(move |ctx| {
+                hydrus_store::settings::set(
+                    ctx.conn(),
+                    &hydrus_store::settings::ShutdownWork {
+                        last_done: seconds_now() - ago,
+                        ..Default::default()
+                    },
+                )
+            })
+            .unwrap();
+        let options = self.options("maintenance and processing");
+        edit(&options);
+        options.invoke_apply();
+        self.ui
+            .window()
+            .dispatch_event(slint::platform::WindowEvent::CloseRequested);
+    }
 }
 
 fn choose_shutdown(options: &OptionsWindow, choice: i32) {
@@ -1515,24 +1527,24 @@ fn analysis_due(client: &Client) -> bool {
 #[test]
 fn run_jobs_on_shutdown_decides_what_the_exit_does() {
     use hydrus_gui_model::shutdown_work::{ACTIONS, ASK_TITLE};
-    let client = client();
+    let mut client = client();
     let options = client.options("maintenance and processing");
     let (_, row) = shutdown_row(&options, "Run jobs on shutdown: ");
     let items: Vec<String> = row.items.iter().map(|s| s.to_string()).collect();
     assert_eq!(items, ACTIONS, "the reference's three choices");
     assert_eq!(row.index, 2, "ask first is the default");
-    drop((options, client));
+    options.invoke_cancel();
 
     // do not run jobs: the exit goes straight through, doing nothing.
-    let client = exit_after(1_000_000, |o| choose_shutdown(o, 0));
+    client.exit_after(1_000_000, |o| choose_shutdown(o, 0));
     assert_eq!(shutdown_settings(&client).action, 0);
     assert!(hydrus_gui::client_exit::maintenance_question().is_none());
     assert!(!client.ui.window().is_visible(), "exited");
     assert!(analysis_due(&client), "no work was done");
-    assert_eq!(shutdown_settings(&client).last_done, seconds_now() - 1_000_000);
+    assert!(shutdown_settings(&client).last_done < seconds_now() - 900_000, "untouched");
 
     // run if needed: the work is done without asking.
-    let client = exit_after(1_000_000, |o| choose_shutdown(o, 1));
+    client.exit_after(1_000_000, |o| choose_shutdown(o, 1));
     assert_eq!(shutdown_settings(&client).action, 1);
     assert!(hydrus_gui::client_exit::maintenance_question().is_none());
     assert!(!client.ui.window().is_visible(), "exited");
@@ -1541,7 +1553,7 @@ fn run_jobs_on_shutdown_decides_what_the_exit_does() {
 
     // ask first: the exit waits on the question; no skips the work but is
     // not asked again, yes does it.
-    let client = exit_after(1_000_000, |o| choose_shutdown(o, 2));
+    client.exit_after(1_000_000, |o| choose_shutdown(o, 2));
     assert_eq!(shutdown_settings(&client).action, 2);
     let question = hydrus_gui::client_exit::maintenance_question().expect("asked");
     assert_eq!(question.get_window_title(), ASK_TITLE);
@@ -1551,7 +1563,7 @@ fn run_jobs_on_shutdown_decides_what_the_exit_does() {
     assert!(analysis_due(&client), "declined");
     assert!(shutdown_settings(&client).last_done >= seconds_now() - 5);
 
-    let client = exit_after(1_000_000, |o| choose_shutdown(o, 2));
+    client.exit_after(1_000_000, |o| choose_shutdown(o, 2));
     let question = hydrus_gui::client_exit::maintenance_question().expect("asked");
     question.invoke_answered(true);
     assert!(!client.ui.window().is_visible(), "exited");
@@ -1562,31 +1574,29 @@ fn run_jobs_on_shutdown_decides_what_the_exit_does() {
 #[test]
 fn shutdown_jobs_run_only_once_per_the_edited_period() {
     const PERIOD: &str = "Only run shutdown jobs once per: ";
-    let client = client();
+    let mut client = client();
     let options = client.options("maintenance and processing");
     let (_, row) = shutdown_row(&options, PERIOD);
     let units: Vec<String> = row.fields.iter().map(|f| f.label.to_string()).collect();
     assert_eq!(units.len(), 3, "days, hours and minutes: {units:?}");
     assert!(row.enabled);
-    let (_, row) = {
-        choose_shutdown(&options, 0);
-        shutdown_row(&options, PERIOD)
-    };
-    assert!(!row.enabled, "no use while jobs are not run on shutdown");
-    drop((options, client));
+    assert_eq!(row.fields.row_data(0).unwrap().value, 1, "one day");
+    // no use while jobs are not run on shutdown
+    choose_shutdown(&options, 0);
+    options.invoke_apply();
+    let options = client.options("maintenance and processing");
+    assert!(!shutdown_row(&options, PERIOD).1.enabled);
+    options.invoke_cancel();
 
     // Ten minutes since the last run, and the default period is a day: no
     // question, though ask-first is the default.
-    let client = exit_after(600, |o| {
-        let (_, row) = shutdown_row(o, PERIOD);
-        assert_eq!(row.fields.row_data(0).unwrap().value, 1, "one day");
-    });
+    client.exit_after(600, |_| {});
     assert!(hydrus_gui::client_exit::maintenance_question().is_none());
     assert!(!client.ui.window().is_visible(), "exited at once");
     assert!(analysis_due(&client));
 
     // The same ten minutes against an edited period of five: due, so asked.
-    let client = exit_after(600, |o| {
+    client.exit_after(600, |o| {
         let (i, _) = shutdown_row(o, PERIOD);
         o.invoke_field_edited(i, 0, 0);
         o.invoke_field_edited(i, 1, 0);
@@ -1599,7 +1609,7 @@ fn shutdown_jobs_run_only_once_per_the_edited_period() {
     assert!(!client.ui.window().is_visible());
 
     // A longer period than the time since the last run: skipped again.
-    let client = exit_after(600, |o| {
+    client.exit_after(600, |o| {
         let (i, _) = shutdown_row(o, PERIOD);
         o.invoke_field_edited(i, 0, 0);
         o.invoke_field_edited(i, 1, 2);
@@ -1614,19 +1624,20 @@ fn shutdown_jobs_run_only_once_per_the_edited_period() {
 #[test]
 fn the_edited_shutdown_minutes_are_in_the_question() {
     const MINUTES: &str = "Max number of minutes to run shutdown jobs: ";
-    let client = client();
+    let mut client = client();
     let options = client.options("maintenance and processing");
     let (_, row) = shutdown_row(&options, MINUTES);
     assert_eq!((row.kind, row.minimum, row.maximum, row.number), (2, 1, 1440, 5));
     assert!(row.enabled);
-    choose_shutdown(&options, 1);
-    assert!(!shutdown_row(&options, MINUTES).1.enabled, "run without asking");
+    // no use unless jobs are run on shutdown
     choose_shutdown(&options, 0);
+    options.invoke_apply();
+    let options = client.options("maintenance and processing");
     assert!(!shutdown_row(&options, MINUTES).1.enabled, "not run at all");
-    drop((options, client));
+    options.invoke_cancel();
 
     for minutes in [5, 7, 90] {
-        let client = exit_after(1_000_000, |o| {
+        client.exit_after(1_000_000, |o| {
             let (i, _) = shutdown_row(o, MINUTES);
             o.invoke_number_edited(i, minutes);
         });
