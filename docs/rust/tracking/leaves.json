@@ -4223,9 +4223,9 @@
    ],
    "recheck": {
     "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Coordinator override (rubric): the model test replays the recording well, but no GUI test drives the window for this leaf; add a window-level drive. Recording includes encode/decode (base64, hex, base64url, url percent, html entities, unicode escape) and regex substitution with the ok-question for a no-group regex; replayed step by step incl. editor state and results. Window glue is not asserted by a GUI test of its own, but it is thin; no regex-error case beyond the recorded one. Tests: crates/hydrus-gui-model/tests/model/string_converter_editor.rs:174-186 the_string_converter_editor_works_as_the_references_does (replays oracle/fixtures/string_converter_editor.json, Qt recording)"
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "gui/string_converter_window.rs drives the real conversion window for the recorded encode/decode (base64, hex, base64url, url, html entities, unicode escape) and regex substitution conversions with their ok question answered yes and no, against string_converter_editor.json. Random-append results are only length-checked."
    }
   },
   {
@@ -4242,9 +4242,9 @@
    ],
    "recheck": {
     "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Coordinator override (rubric): the model test replays the recording well, but no GUI test drives the window for this leaf; add a window-level drive. Recording covers prepend, remove begin/end, take end/start, reverse, integer addition, hash sha1 and append random (structural length check), edited and added; the editor value and result are compared with the recording. Append text and some keep variants only implied. Window glue untested by GUI. Tests: crates/hydrus-gui-model/tests/model/string_converter_editor.rs:174-186 the_string_converter_editor_works_as_the_references_does (replays oracle/fixtures/string_converter_editor.json, Qt recording)"
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "gui/string_converter_window.rs drives the real conversion window for every recorded ordinary conversion (prepend, remove, take, reverse, add, hash, append random) through its controls, comparing what it opens with, shows after each edit, its ok question and the result with string_converter_editor.json. Random-append results are only length-checked."
    }
   },
   {
@@ -4261,9 +4261,9 @@
    ],
    "recheck": {
     "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Coordinator override (rubric): the model test replays the recording well, but no GUI test drives the window for this leaf; add a window-level drive. Numbered rows, per-row converted example, selection, up/down, delete question and add/edit/cancel replayed from the Qt recording; parent draft-only behaviour is covered by formula_editors.rs:725 lifecycle GUI test. Tests: crates/hydrus-gui-model/tests/model/string_converter_editor.rs:174-186 the_string_converter_editor_works_as_the_references_does (replays oracle/fixtures/string_converter_editor.json, Qt recording)"
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "gui/string_converter_window.rs the_string_converter_window_works_as_the_references_does drives the real converter window (rows clicked, example typed, add/edit opening the conversion window, delete question, up/down) and compares rows, selection and move gating at every step with string_converter_editor.json, and the converter apply gives with the recording's last value."
    }
   },
   {
@@ -5314,9 +5314,9 @@
    ],
    "recheck": {
     "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Coordinator override (rubric): the model test replays the recording well, but no GUI test drives the window for this leaf; add a window-level drive. Replays Qt recording of type switching, shown rows, fixed/regex/flexible/min/max, example test text and ok/veto; regex-error wording loosened. Window glue not GUI-tested. Tests: crates/hydrus-gui-model/tests/model/string_match_editor.rs:74 the_string_match_editor_works_as_the_references_does (string_match_editor.json)"
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "gui/string_match_window.rs the_string_match_window_works_as_the_references_does opens the real match window (open_match), sets its controls as the recording did and compares all 42 recorded states (type, shown rows, fixed/regex/character set/min/max/example, test text and validity) and, by a second window to each step, what apply gives or the veto, against string_match_editor.json. The regex-error wording stays loosened (Python's words)."
    }
   },
   {
@@ -5683,9 +5683,9 @@
    ],
    "recheck": {
     "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Coordinator override (rubric): the model test replays the recording well, but no GUI test drives the window for this leaf; add a window-level drive. Qt recording replayed: add/edit/delete/up/down, selection, step editor given/returned values. Window glue is thin and lifecycle-tested in formula_editors.rs:725. Tests: crates/hydrus-gui-model/tests/model/string_processor_editor.rs:204 the_string_processor_editor_works_as_the_references_does (string_processor_editor.json)"
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "Sound except converter-step example text (a converter applied from the processor takes the processor's example: DIFFERENCES.md). gui/string_processor_window.rs the_string_processor_window_works_as_the_references_does drives the real processor window (rows, add question and its choices, step windows, delete question, up/down) and compares rows and selection at every step with string_processor_editor.json, and the processor apply gives with the last value (converter steps' example text aside, DIFFERENCES.md). Child acceptance is exercised only for splitter, joiner, slicer and sorter steps; match, tag-filter and converter steps are stood in for."
    }
   },
   {
@@ -5702,9 +5702,9 @@
    ],
    "recheck": {
     "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Coordinator override (rubric): the model test replays the recording well, but no GUI test drives the window for this leaf; add a window-level drive. Processed strings, starting-string tabs and example propagation to child step editors are compared with the recording at every step. Uses the real StringProcessor. Tests: crates/hydrus-gui-model/tests/model/string_processor_editor.rs:205 (same test)"
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "gui/string_processor_window.rs compares the processed strings, the example and the starting-string tabs the real processor window shows with string_processor_editor.json at every step of all five recorded cases."
    }
   },
   {
@@ -24433,9 +24433,9 @@
    ],
    "recheck": {
     "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Model replay of recorded joiner states (delimiter, tuple size, summary, results) is good, but no GUI test edits a joiner's fields: sidecars.rs only adds a default joiner and applies it. The window's joiner/tuple-size wiring (string_processor_window.rs, string_processor.slint) is untested. Same single test is tagged on four step leaves. Tests: crates/hydrus-gui-model/tests/model/string_processor_editor.rs:210 the_string_processor_editor_works_as_the_references_does (joiner step states)"
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "gui/string_processor_window.rs sets a joiner step window's delimiter and tuple size as the recording did and compares the shown summary, texts, results and invalid flag with string_processor_editor.json."
    }
   },
   {
@@ -24453,9 +24453,9 @@
    ],
    "recheck": {
     "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Model replay of recorded slicer states exists, but no GUI test opens or edits a slicer step at all, so the window's single/range select and bound fields are untested. Tests: crates/hydrus-gui-model/tests/model/string_processor_editor.rs:210 the_string_processor_editor_works_as_the_references_does (slicer step states)"
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "gui/string_processor_window.rs sets a slicer step window's single/range choice and bounds as the recording did and compares the shown summary, texts and results with string_processor_editor.json."
    }
   },
   {
@@ -24474,8 +24474,8 @@
    "recheck": {
     "date": "2026-10-08",
     "class": "sound",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Recorded sorter states (type, asc, regex, results) replayed through SorterEditor; the GUI test opens the sorter step from the real processor window, flips to descending and checks the sorted tab and the saved step. Sort type and regex fields are not driven through the window. Tests: crates/hydrus-gui-model/tests/model/string_processor_editor.rs:210 the_string_processor_editor_works_as_the_references_does (sorter states); crates/hydrus-gui/tests/gui/sidecars.rs:439 a_routers_processing_is_edited_in_the_string_processor_editor"
+    "by": "phase 2 session",
+    "note": "gui/string_processor_window.rs sets a sorter step window's type, direction and regex as the recording did and compares the shown texts and results with string_processor_editor.json; the model replay stays as the fast check."
    }
   },
   {
@@ -24494,8 +24494,8 @@
    "recheck": {
     "date": "2026-10-08",
     "class": "sound",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Recorded splitter states (separator, max_splits, results, invalid escapes) replayed through SplitterEditor; the GUI test adds a splitter via the real window, checks its example/results, the 'Sorry, you have to have a value in the separator field!' veto and the resulting step row. The max_splits field is not driven through the window. Tests: crates/hydrus-gui-model/tests/model/string_processor_editor.rs:210 the_string_processor_editor_works_as_the_references_does (splitter states); crates/hydrus-gui/tests/gui/sidecars.rs:439 a_routers_processing_is_edited_in_the_string_processor_editor"
+    "by": "phase 2 session",
+    "note": "gui/string_processor_window.rs sets a splitter step window's separator and max splits as the recording did and compares the shown example, results and invalid flag, and the separator veto, with string_processor_editor.json."
    }
   },
   {

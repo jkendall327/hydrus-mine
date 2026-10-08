@@ -161,6 +161,9 @@ mod tag_migration;
 
 mod regex_favourites;
 mod regex_options_editor;
+mod string_converter_window;
+mod string_match_window;
+mod string_processor_window;
 mod tag_filter_favourites;
 
 mod downloader_display;

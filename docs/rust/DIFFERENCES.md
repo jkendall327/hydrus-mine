@@ -905,6 +905,9 @@ deleted sidecars by `crates/hydrus-download/tests/local_import.rs`.
   presents component menus in a compact popup palette rather than nested
   submenus. Help links remain absent. Favourite phrase and description are edited
   together in a row form, where the reference uses sequential dialogs.
+  A converter step added or edited from the processor takes the processor's
+  example text as its own example when applied (the window is given it);
+  the reference's keeps the converter's own example.
 - **The string converter editor** persists the last accepted conversion
   in its owning store and reads preserved reference options until a native edit.
   Store-less embedded API callers retain the previous in-memory fallback. Conversion regex fields have component/replacement group
