@@ -91,8 +91,10 @@ record of what was decided, and why the roadmap looks the way it does.
 - **The About box lists hydrus-rs's own components** (platform, SQLite,
   optional libraries such as ffmpeg and mpv) as the equivalent of the
   reference's Python/Qt/numpy lines.
-- **System tray: deferred.** Slint 1.18 can draw one (the `system-tray`
-  feature, a pure-Rust D-Bus stack on Linux, not Qt); revisit later (#94).
+- **System tray: wanted**, through Slint 1.18's own `SystemTrayIcon` (the
+  `system-tray` feature: a pure-Rust D-Bus StatusNotifierItem on Linux, not
+  Qt). Minimise-to-tray cannot detect minimising on Wayland; that part is
+  X11-only.
 - **Merging:** the coordinating agent may merge a PR once CI is green and its
   independent review's findings are addressed.
 
