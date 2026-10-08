@@ -165,3 +165,72 @@ fn ratings_are_set_copied_pasted_and_applied_as_the_reference_does() {
         assert_eq!(rated.get(&counter), Some(&Rating::IncDec(count)));
     }
 }
+
+// leaf: audit-media-ratings-missing-count
+#[test]
+fn an_inc_dec_ratings_middle_click_types_its_count_in_an_edit_value_dialog() {
+    let legacy = hydrus_testkit::legacy_fixture("basic");
+    let native = tempfile::tempdir().unwrap();
+    import_legacy(
+        legacy.path(),
+        &native.path().join(hydrus_store::store::DB_FILE_NAME),
+    )
+    .unwrap();
+    let store: Arc<Store> = Store::open(native.path()).unwrap();
+    let _windows = headless::init();
+    let services = store.snapshot().services.clone();
+    let counter = services.by_name("counter").unwrap().id;
+    let ui = MainWindow::new().unwrap();
+    ui.show().unwrap();
+    let bound = bind(&ui, Pages::single(SearchPage::new(store.clone())));
+    ui.invoke_search_edited("system:everything".into());
+    ui.invoke_search_accepted();
+    let a = bound.current.borrow().borrow().results()[0];
+    store
+        .write_content(move |w| w.set_incdec(counter, &[a], 3))
+        .unwrap();
+    ui.invoke_thumbnail_clicked(0, false, false);
+    let dialog = open(&ui, &bound, 0);
+    let names = names(&dialog);
+    let row = names.iter().position(|n| n == "counter").unwrap();
+    let text = |i: usize| dialog.get_ratings().row_data(i).unwrap().text.to_string();
+
+    // a like or numerical row has no typed count
+    dialog.invoke_rating_middle(0);
+    assert!(bound.rating_count_editor.borrow().is_none());
+
+    // the counter's middle click opens "edit value" at its count; cancel keeps it
+    dialog.invoke_rating_middle(row as i32);
+    let edit = bound
+        .rating_count_editor
+        .borrow()
+        .as_ref()
+        .map(ComponentHandle::clone_strong)
+        .expect("opens");
+    assert_eq!(edit.get_value(), 3);
+    assert_eq!((edit.get_minimum(), edit.get_maximum()), (0, 1_000_000));
+    assert_eq!(edit.get_window_title(), "edit value");
+    edit.set_value(99);
+    edit.invoke_cancel();
+    assert_eq!(text(row), "3");
+
+    // applying sets it, and the dialog's apply writes it
+    dialog.invoke_rating_middle(row as i32);
+    let edit = bound
+        .rating_count_editor
+        .borrow()
+        .as_ref()
+        .map(ComponentHandle::clone_strong)
+        .expect("opens");
+    assert_eq!(edit.get_value(), 3);
+    edit.set_value(250);
+    edit.invoke_apply();
+    assert_eq!(text(row), "250");
+    assert_eq!(
+        ratings(&store, a).get(&counter),
+        Some(&Rating::IncDec(3)),
+        "not yet"
+    );
+    dialog.invoke_apply();
+    assert_eq!(ratings(&store, a).get(&counter), Some(&Rating::IncDec(250)));
+}

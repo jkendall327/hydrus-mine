@@ -28,7 +28,7 @@ mod backfill;
 mod decode;
 
 pub use backfill::fill_downloader_page_state;
-pub use decode::auto_resolution_rule;
+pub use decode::{auto_resolution_comparator, auto_resolution_rule};
 
 pub use decode::decode_input;
 pub use decode::stored_duplicates_page;

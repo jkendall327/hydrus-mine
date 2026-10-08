@@ -929,8 +929,9 @@ deleted sidecars by `crates/hydrus-download/tests/local_import.rs`.
   a line each (as the Client API reads them), where the reference has
   search autocompletes and a live count of pairs; its location button
   opens the "multiple/deleted locations" list straight away (the
-  reference's offers a menu of single domains first). It has
-  no import/export/duplicate of rules or comparators, and its custom
+  reference's offers a menu of single domains first). The
+  comparators nested in an OR or AND comparator have no export/import/duplicate
+  buttons (the rule's own comparator list does), and its custom
   merge options are edited in their own window (the reference embeds
   the editor). A relative comparator's time delta and range are
   in milliseconds, where the reference has a time widget.
@@ -1272,8 +1273,11 @@ endpoint authenticates its cached admin key while the native store is paused.
 The detached GUI model saves a whole key edit only on Apply and rejects stale
 concurrent editor state; Qt service review applies list actions immediately.
 The access-key window opens separately from service review; the reference
-embeds its list within that panel. API-request registration still uses
-`hydrus api-keys listen` rather than the Qt capture-request dialog. Key-change
+embeds its list within that panel. "add from api request" opens the
+reference's waiting window and takes the first request the running daemon
+records (the daemon, not the GUI, serves the API, so the request travels
+through the store, polled twice a second); `hydrus api-keys listen` remains
+for a store without a GUI. Key-change
 questions use an inline edit panel and generated-key button. Listener changes
 may take up to one second; current requests drain for at most ten seconds
 before restart. HTTP logs omit query strings and credentials. HTTPS is refused
@@ -1304,6 +1308,13 @@ Full preserved credentials are loaded without discarding fields; independent
 script/domain Apply preserves concurrent edits to the other half of preferences.
 
 ## Network session and HTTP-header management
+
+The session browser's "create new" offers the reference's two types (web domain,
+hydrus service). The service choice lists the repositories by name; a hydrus
+service session is keyed by the service key's hex, as the existing ones are. With
+no repository the context is the kind's default, as an empty choice makes in
+the reference. Qt names the service wherever it lists a network context
+("hydrus service: <name>"); native lists the key's hex.
 
 Cookie and HTTP-header editing uses detached native drafts with Apply/Cancel;
 Qt cookie-list actions take effect immediately, while its header list is staged.
@@ -3781,9 +3792,12 @@ change nothing). They are marked out of scope in `docs/rust/tracking/`.
 ## Auto-resolution rule export and import
 
 - Rules export as hydrus-rs JSON, not the reference's serialised form, so
-  the reference can't import them; hydrus-rs imports both. Comparator lists
-  don't have their own export/import buttons, and an image on the clipboard
-  isn't read (use "from png files").
+  the reference can't import them; hydrus-rs imports both. A rule's comparator
+  list exports a comparator to the clipboard or a png, imports from the
+  clipboard or pngs (hydrus-rs JSON or the reference's serialised comparator,
+  alone or in a list) and duplicates one; the lists inside OR/AND comparators
+  don't have those buttons. An image on the clipboard isn't read (use "from
+  png files").
 
 ## Options kept but not used
 

@@ -48,7 +48,7 @@ pub mod downloader_display_window;
 pub mod downloader_interchange_window;
 pub mod downloader_update_times;
 mod drops;
-mod duplicates_filtering_sidebar;
+pub mod duplicates_filtering_sidebar;
 mod duplicates_sidebar;
 mod edit_subscription_window;
 mod embedded_metadata_window;
@@ -325,6 +325,8 @@ pub struct Bound {
     pub manage_notes: Rc<RefCell<Option<ManageNotesWindow>>>,
     /// The manage ratings dialog while one is open.
     pub manage_ratings: Rc<RefCell<Option<ManageRatingsWindow>>>,
+    /// The "edit value" dialog an inc/dec rating's middle click opens.
+    pub rating_count_editor: Rc<RefCell<Option<EditValueWindow>>>,
     /// The manage times dialog while one is open, and the date-time
     /// editor it opens.
     pub manage_times: Rc<RefCell<Option<ManageTimesWindow>>>,
@@ -2060,10 +2062,18 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
     });
     // a thumbnail's or the viewer's "manage > ratings"
     let manage_ratings: Rc<RefCell<Option<ManageRatingsWindow>>> = Rc::default();
+    let rating_count_editor: Rc<RefCell<Option<EditValueWindow>>> = Rc::default();
     let open_manage_ratings: OpenOnFiles = Rc::new({
         let manage_ratings = manage_ratings.clone();
+        let rating_count_editor = rating_count_editor.clone();
         move |store: Arc<hydrus_store::Store>, files: Vec<HashId>, applied: Rc<dyn Fn()>| {
-            match manage_ratings_window::open(&store, files, &manage_ratings, applied) {
+            match manage_ratings_window::open(
+                &store,
+                files,
+                &manage_ratings,
+                &rating_count_editor,
+                applied,
+            ) {
                 Ok(window) => *manage_ratings.borrow_mut() = Some(window),
                 Err(e) => eprintln!("could not open manage ratings: {e}"),
             }
@@ -5320,6 +5330,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         tag_migration,
         manage_notes,
         manage_ratings,
+        rating_count_editor,
         manage_times,
         datetime_editor,
         force_filetype,

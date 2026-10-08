@@ -17,6 +17,7 @@ export component ClientApiKeysWindow inherits Window {
     callback row-clicked(int,bool,bool);
     callback sort(int,bool);
     callback add-clicked();
+    callback add-from-api-clicked();
     callback edit-clicked();
     callback duplicate-clicked();
     callback delete-clicked();
@@ -36,6 +37,7 @@ export component ClientApiKeysWindow inherits Window {
         }
         HorizontalBox {
             Button { text: "add manually"; enabled: root.question == "" && !root.editing; clicked => { root.add-clicked(); } }
+            Button { text: "add from api request"; enabled: root.question == "" && !root.editing; clicked => { root.add-from-api-clicked(); } }
             Button { text: "edit"; enabled: root.can-edit && root.question == "" && !root.editing; clicked => { root.edit-clicked(); } }
             Button { text: "duplicate"; enabled: root.can-delete && root.question == "" && !root.editing; clicked => { root.duplicate-clicked(); } }
             Button { text: "delete"; enabled: root.can-delete && root.question == "" && !root.editing; clicked => { root.delete-clicked(); } }
@@ -43,7 +45,7 @@ export component ClientApiKeysWindow inherits Window {
             Button { text: "open client api base url"; clicked => { root.open-base-url(); } }
             Button { text: "copy api access key"; enabled: root.can-edit; clicked => { root.copy-key(); } }
         }
-        Text { text: "Changes are saved when you apply. API request registration is available through hydrus api-keys listen."; color: Theme.muted; wrap: word-wrap; }
+        Text { text: "Changes are saved when you apply."; color: Theme.muted; wrap: word-wrap; }
         Text { text: root.error; color: Theme.error; wrap: word-wrap; }
         if root.question != "": VerticalBox {
             Text { text: root.question; color: Theme.text; wrap: word-wrap; }
@@ -109,5 +111,16 @@ export component EditApiPermissionsWindow inherits Window {
             Button { text: "apply"; enabled: !root.filtering && !root.changing-key; clicked => { root.apply-clicked(); } }
             Button { text: "cancel"; clicked => { root.cancel-clicked(); } }
         }
+    }
+}
+
+// "waiting for API access permissions request" (`CaptureAPIAccessPermissionsRequestPanel`)
+export component ApiRequestWindow inherits Window {
+    title: "waiting for API access permissions request"; width: 480px; height: 140px; background: Theme.window;
+    in property <string> text: "waiting for request…";
+    callback cancel-clicked();
+    VerticalBox { padding: 16px; spacing: 12px;
+        Text { text: root.text; color: Theme.text; wrap: word-wrap; vertical-stretch: 1; }
+        HorizontalBox { Rectangle { horizontal-stretch: 1; } Button { text: "close"; clicked => { root.cancel-clicked(); } } }
     }
 }

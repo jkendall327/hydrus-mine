@@ -101,3 +101,30 @@ fn each_pause_item_flips_only_its_own_switch_and_shows_it_ticked() {
         );
     }
 }
+
+// leaf: audit-network-pause-nudge
+#[test]
+fn nudge_subscriptions_awake_is_advanced_and_leaves_a_nudge_for_the_daemon() {
+    use hydrus_store::queues;
+    let dir = tempfile::tempdir().unwrap();
+    let store = Store::open(dir.path()).unwrap();
+    let _windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let _bound = bind(&ui, Pages::open(store.clone()).unwrap());
+    let nudge = "nudge subscriptions awake";
+    // (not offered outside advanced mode)
+    open_pause_submenu(&ui);
+    assert!(!lines(&ui).iter().any(|(l, _)| l == nudge));
+    ui.invoke_menu_dismissed();
+    store
+        .write(|ctx| settings::set(ctx.conn(), &settings::AdvancedMode(true)))
+        .unwrap();
+    open_pause_submenu(&ui);
+    assert!(lines(&ui).iter().any(|(l, _)| l == nudge));
+    assert!(!store.read(queues::any_nudged).unwrap());
+    choose(&ui, nudge);
+    // the daemon (the subscription runner's owner) finds exactly this nudge
+    assert!(store.read(queues::any_nudged).unwrap());
+    let taken = store.write(|ctx| queues::take_nudges(ctx.conn())).unwrap();
+    assert_eq!(taken, [queues::SUBSCRIPTIONS_NUDGE]);
+}

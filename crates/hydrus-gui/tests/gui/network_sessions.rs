@@ -834,3 +834,68 @@ fn automatic_header_answers_reach_an_existing_engine_request() {
     monitor.close();
     server.join().unwrap();
 }
+// leaf: session-create
+#[test]
+fn a_new_session_can_be_a_web_domain_or_a_hydrus_service_as_the_reference_s_editor_offers() {
+    let dir = tempfile::tempdir().unwrap();
+    let store = Store::open(dir.path()).unwrap();
+    let key = hydrus_core::ServiceKey::new(vec![62; 16]);
+    let service_key = key.clone();
+    store
+        .write_and_refresh(move |ctx| {
+            hydrus_store::services::insert(
+                ctx.conn(),
+                &service_key,
+                "session repository",
+                &hydrus_store::services::ServiceKind::TagRepository(
+                    hydrus_store::services::RepositoryConfig::default(),
+                ),
+            )?;
+            Ok(())
+        })
+        .unwrap();
+    let _rendered = headless::init();
+    let slots = Slots::default();
+    let browser = windows::open(&store, &slots, false).unwrap();
+    browser.invoke_add_clicked();
+    let edit = windows::last_edit_opened().unwrap();
+    // web domain first, with the reference's note; the service choice lists
+    // the repositories
+    assert_eq!(edit.get_window_title(), "enter new network context");
+    assert_eq!(edit.get_context_type(), 0);
+    assert_eq!(
+        edit.get_type_info(),
+        "Network traffic going to or from a web domain (or a subdomain)."
+    );
+    assert_eq!(edit.get_service_names().row_count(), 1);
+    assert_eq!(
+        edit.get_service_names().row_data(0).unwrap(),
+        "session repository"
+    );
+    // a hydrus service: the note changes, and the domain is not read
+    edit.set_context_type(1);
+    edit.invoke_type_changed();
+    assert_eq!(
+        edit.get_type_info(),
+        "Network traffic going to or from a hydrus service."
+    );
+    edit.set_domain("not a domain!!".into());
+    edit.invoke_apply_clicked();
+    assert_eq!(edit.get_error(), "");
+    let sessions = store.read(network::sessions).unwrap();
+    assert_eq!(sessions.len(), 1);
+    assert_eq!(sessions[0].kind, hydrus_core::network::CONTEXT_HYDRUS);
+    assert_eq!(sessions[0].data, key.to_hex());
+    assert!(browser.get_show_empty());
+    assert_eq!(browser.get_rows().row_count(), 1);
+    // a domain still has to be one
+    browser.invoke_add_clicked();
+    let edit = windows::last_edit_opened().unwrap();
+    edit.set_domain("not a domain!!".into());
+    edit.invoke_apply_clicked();
+    assert_ne!(edit.get_error(), "");
+    assert_eq!(store.read(network::sessions).unwrap().len(), 1);
+    edit.set_domain("Example.com".into());
+    edit.invoke_apply_clicked();
+    assert_eq!(store.read(network::sessions).unwrap().len(), 2);
+}

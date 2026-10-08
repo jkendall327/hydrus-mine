@@ -1,6 +1,7 @@
 //! Native access-key review and detached permission editors, owned by service review.
 use crate::{
-    ApiPermissionRow, ClientApiKeysWindow, EditApiPermissionsWindow, TableColumn, TableRow,
+    ApiPermissionRow, ApiRequestWindow, ClientApiKeysWindow, EditApiPermissionsWindow, TableColumn,
+    TableRow,
 };
 use hydrus_core::ServiceKey;
 use hydrus_gui_model::client_api_admin::{self as model, Editor};
@@ -21,7 +22,21 @@ use std::{
 pub struct Slots {
     pub keys: Rc<RefCell<Option<ClientApiKeysWindow>>>,
     pub edit: Rc<RefCell<Option<EditApiPermissionsWindow>>>,
+    /// "waiting for API access permissions request", while it is open.
+    pub request: Rc<RefCell<Option<Waiting>>>,
     pub filter: crate::tag_filter_window::Slot,
+}
+
+/// The window waiting for a tool to ask for an access key, and the timer
+/// that looks for its request.
+pub struct Waiting {
+    window: ApiRequestWindow,
+    _timer: slint::Timer,
+}
+impl std::fmt::Debug for Waiting {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.debug_struct("Waiting").finish_non_exhaustive()
+    }
 }
 impl std::fmt::Debug for Slots {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
@@ -31,6 +46,26 @@ impl std::fmt::Debug for Slots {
 thread_local! {
     static LAST: RefCell<Option<slint::Weak<ClientApiKeysWindow>>> = const { RefCell::new(None) };
     static LAST_EDIT: RefCell<Option<slint::Weak<EditApiPermissionsWindow>>> = const { RefCell::new(None) };
+    static LAST_REQUEST: RefCell<Option<slint::Weak<ApiRequestWindow>>> = const { RefCell::new(None) };
+}
+/// The window waiting for an API permissions request, for interaction tests.
+pub fn last_request_opened() -> Option<ApiRequestWindow> {
+    LAST_REQUEST
+        .with(|s| s.borrow().as_ref().and_then(slint::Weak::upgrade))
+        .filter(|w| w.window().is_visible())
+}
+
+/// Stop taking requests (the reference's `api_request_dialog_open = False`).
+fn close_registration(store: &Store) {
+    if let Err(e) = store.write(|ctx| {
+        let mut registration: hydrus_store::api_permissions::Registration =
+            hydrus_store::settings::get(ctx.conn())?;
+        registration.open_until_ms = None;
+        registration.requests.clear();
+        hydrus_store::settings::set(ctx.conn(), &registration)
+    }) {
+        eprintln!("could not stop taking API permission requests: {e}");
+    }
 }
 /// Current keys window, exposed for interaction tests.
 pub fn last_opened() -> Option<ClientApiKeysWindow> {
@@ -375,6 +410,7 @@ pub fn open(
         let slots = slots.clone();
         let weak = window.as_weak();
         let active = active.clone();
+        let store = store.clone();
         move || {
             if !active.replace(false) {
                 return;
@@ -386,6 +422,11 @@ pub fn open(
                 .map(ComponentHandle::clone_strong);
             if let Some(edit) = edit {
                 edit.invoke_cancel_clicked();
+            }
+            let waiting = slots.request.borrow_mut().take();
+            if let Some(waiting) = waiting {
+                close_registration(&store);
+                let _ = waiting.window.hide();
             }
             if let Some(w) = weak.upgrade() {
                 let _ = w.hide();
@@ -429,7 +470,7 @@ pub fn open(
         let weak = window.as_weak();
         let active = active.clone();
         let store = store.clone();
-        move |adding: bool| {
+        move |adding: bool, preset: Option<AccessPermissions>| {
             if !active.get() {
                 return;
             }
@@ -440,13 +481,13 @@ pub fn open(
             let (token, key) = if adding {
                 (
                     None,
-                    AccessPermissions {
+                    preset.unwrap_or_else(|| AccessPermissions {
                         access_key: rand::random::<[u8; 32]>().to_vec(),
                         name: "new api permissions".into(),
                         permits_everything: true,
                         basic: std::collections::BTreeSet::default(),
                         search_filter: hydrus_core::TagFilter::default(),
-                    },
+                    }),
                 )
             } else {
                 let Some(row) = editor.borrow().selected().cloned() else {
@@ -485,9 +526,137 @@ pub fn open(
     });
     window.on_add_clicked({
         let open_edit = open_edit.clone();
-        move || open_edit(true)
+        move || open_edit(true, None)
     });
-    window.on_edit_clicked(move || open_edit(false));
+    // "add > from api request": wait for a tool to ask (`_AddFromAPI`), then
+    // edit what it asked for
+    window.on_add_from_api_clicked({
+        let open_edit = open_edit.clone();
+        let weak = window.as_weak();
+        let store = store.clone();
+        let slots = slots.clone();
+        let active = active.clone();
+        let service_key = service_key.clone();
+        move || {
+            if !active.get() {
+                return;
+            }
+            let Some(w) = weak.upgrade() else { return };
+            if w.get_editing() || !w.get_question().is_empty() {
+                return;
+            }
+            let port = store
+                .snapshot()
+                .services
+                .by_key(&service_key)
+                .ok()
+                .and_then(|s| match &s.kind {
+                    ServiceKind::ClientApi(c) => c.port,
+                    _ => None,
+                });
+            if port.is_none() {
+                w.set_error(
+                    "The service is not running, so you cannot add new access via the API!".into(),
+                );
+                return;
+            }
+            let Ok(waiting) = ApiRequestWindow::new() else {
+                return;
+            };
+            let until = hydrus_core::time::TimestampMs::now().millis() + 3_600_000;
+            if let Err(e) = store.write(move |ctx| {
+                let mut registration: hydrus_store::api_permissions::Registration =
+                    hydrus_store::settings::get(ctx.conn())?;
+                registration.open_until_ms = Some(until);
+                registration.requests.clear();
+                hydrus_store::settings::set(ctx.conn(), &registration)
+            }) {
+                w.set_error(e.to_string().into());
+                return;
+            }
+            let finish = Rc::new({
+                let slot = Rc::downgrade(&slots.request);
+                let weak = weak.clone();
+                let store = store.clone();
+                move || {
+                    close_registration(&store);
+                    if let Some(slot) = slot.upgrade() {
+                        let waiting = slot.borrow_mut().take();
+                        if let Some(waiting) = waiting {
+                            let _ = waiting.window.hide();
+                        }
+                    }
+                    if let Some(w) = weak.upgrade() {
+                        w.set_editing(false);
+                    }
+                }
+            });
+            waiting.on_cancel_clicked({
+                let finish = finish.clone();
+                move || finish()
+            });
+            waiting.window().on_close_requested({
+                let finish = finish.clone();
+                move || {
+                    finish();
+                    slint::CloseRequestResponse::HideWindow
+                }
+            });
+            let timer = slint::Timer::default();
+            timer.start(
+                slint::TimerMode::Repeated,
+                std::time::Duration::from_millis(500),
+                {
+                    let store = store.clone();
+                    let finish = finish.clone();
+                    let open_edit = open_edit.clone();
+                    let slot = Rc::downgrade(&slots.request);
+                    move || {
+                        let Ok(registration) = store.read(
+                            hydrus_store::settings::get::<
+                                hydrus_store::api_permissions::Registration,
+                            >,
+                        ) else {
+                            return;
+                        };
+                        let Some((key, name, everything, basic)) =
+                            registration.requests.first().cloned()
+                        else {
+                            return;
+                        };
+                        let Ok(access_key) = hex::decode(&key) else {
+                            return;
+                        };
+                        // (the reference stops listening on the first request)
+                        finish();
+                        if slot.upgrade().is_none() {
+                            return;
+                        }
+                        crate::debug_actions::message("Information", "Got request!");
+                        open_edit(
+                            true,
+                            Some(AccessPermissions {
+                                access_key,
+                                name,
+                                permits_everything: everything,
+                                basic: basic.into_iter().collect(),
+                                search_filter: hydrus_core::TagFilter::default(),
+                            }),
+                        );
+                    }
+                },
+            );
+            if waiting.show().is_ok() {
+                LAST_REQUEST.with(|s| *s.borrow_mut() = Some(waiting.as_weak()));
+                w.set_editing(true);
+                *slots.request.borrow_mut() = Some(Waiting {
+                    window: waiting,
+                    _timer: timer,
+                });
+            }
+        }
+    });
+    window.on_edit_clicked(move || open_edit(false, None));
     window.on_duplicate_clicked({
         let weak = window.as_weak();
         let editor = editor.clone();

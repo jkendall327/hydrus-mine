@@ -197,6 +197,13 @@ impl AutoResolutionRule {
     }
 }
 
+impl Comparator {
+    /// Read a stored comparator (any of the reference's `PairComparator`s).
+    pub fn from_object(object: &SerialisableObject) -> DecodeResult<Self> {
+        comparator(object)
+    }
+}
+
 impl PotentialsSearch {
     /// Read a `PotentialDuplicatesSearchContext`.
     pub fn from_object(object: &SerialisableObject) -> DecodeResult<Self> {

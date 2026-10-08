@@ -350,12 +350,28 @@ impl Draft {
         Ok(())
     }
 
-    /// The reference warns when a single generator is used by a nested one.
-    pub fn delete_question(&self) -> String {
+    /// The questions the reference's delete asks, in order: "Remove all
+    /// selected?", then for each selected generator that is a member of a
+    /// nested generator, a warning naming those (`_DeleteGUG`). Declining
+    /// one of the warnings stops the deletion there; the generators before
+    /// it have already gone.
+    pub fn delete_questions(&self) -> Vec<String> {
+        let mut questions = vec![REMOVE.to_owned()];
+        questions.extend(self.delete_plan().into_iter().filter_map(|(_, q)| q));
+        questions
+    }
+
+    /// The selected generators in order (their keys), with the warning each
+    /// one asks before it is deleted, when nested generators use it. Empty
+    /// for URL classes, which are deleted without further questions.
+    pub fn delete_plan(&self) -> Vec<(String, Option<String>)> {
+        if self.kind == Kind::Classes {
+            return Vec::new();
+        }
         let selected = self.selection.in_order(&self.order());
-        let mut message = REMOVE.to_owned();
-        if self.kind == Kind::Generators {
-            for i in selected {
+        selected
+            .into_iter()
+            .map(|i| {
                 let g = &self.downloaders.gugs.gugs[i];
                 let mut affected: Vec<&str> = self
                     .downloaders
@@ -370,12 +386,20 @@ impl Draft {
                     })
                     .collect();
                 affected.sort_unstable();
-                if !affected.is_empty() {
-                    message.push_str(&format!("\n\nThe GUG \"{}\" is in the NGUGs:\n\n{}\n\nDeleting this GUG will ultimately remove it from those NGUGs--are you sure that is ok?", g.name(), affected.join("\n")));
-                }
-            }
-        }
-        message
+                let question = (!affected.is_empty()).then(|| {
+                    format!("The GUG \"{}\" is in the NGUGs:\n\n{}\n\nDeleting this GUG will ultimately remove it from those NGUGs--are you sure that is ok?", g.name(), affected.join("\n"))
+                });
+                (g.key().to_owned(), question)
+            })
+            .collect()
+    }
+
+    /// Delete one generator by key (nested generators that list it keep the
+    /// dangling member until their editor or Apply repairs it).
+    pub fn delete_key(&mut self, key: &str) {
+        self.downloaders.gugs.gugs.retain(|g| g.key() != key);
+        self.downloaders.gugs.keys_to_display.retain(|k| k != key);
+        self.selection = ListSelection::default();
     }
 
     /// Remove the selected items after confirmation; nested dangling references
