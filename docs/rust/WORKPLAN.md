@@ -39,7 +39,7 @@ The 2026-10-08 review found:
 
 ## Phase 2: exercise it
 
-- [ ] 2.1 Implement one leaf end to end with the new loop; record timings and
+- [x] 2.1 Implement one leaf end to end with the new loop; record timings and
       friction here.
 - [ ] 2.2 Experiment: split the generated UI into several crates. Measure build
       time and peak memory for a cold build and a one-window `.slint` edit.
@@ -87,3 +87,20 @@ The 2026-10-08 review found:
   artifacts (737 MB rlib each) from experiments. Parallel worktrees need care:
   share one target dir (`CARGO_TARGET_DIR`); Cargo's lock then also serializes
   builds, which keeps memory safe.
+- **The generated UI crate is no longer a workspace member**
+  (`generated/hydrus-gui-ui`, `exclude = ["generated"]`). As a member it was
+  compiled through Clippy's driver, which spent 33+ min of CPU on it; a cold
+  `dev.sh lint` went from >35 min to **5.6 min**. Two traps on the way: the
+  `"*"` dev override then optimised it at opt-level 2 (OOM; pinned 0), and
+  Cargo strips debuginfo when a build's root has none, so the solo build and
+  the in-graph build were different units (pinned `strip = false`; verified
+  `Fresh`).
+- 2.2 split experiment, measured without committing: generating each of the
+  121 windows alone sums to 196 MB (shared components duplicate); six area
+  groups (MainWindow, Options, four bins of dialogs) total 99.5 MB, largest
+  20.5 MB (vs 87 MB in one crate). Expected: `.slint` rebuild ~7 min -> ~1.5-2
+  min, peak memory ~14 GB -> ~3.5 GB. Cost: 24 Slint structs are shared across
+  groups (`TableRow` in 51 Rust files; 67 files touch a shared type), so each
+  group crate would have its own copies and Rust needs conversions or a
+  per-group import change. **Deferred** until the parallel trial shows whether
+  `.slint` rebuilds actually block agents.
