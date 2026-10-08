@@ -363,6 +363,8 @@ pub struct Facts {
     pub darkmode: bool,
     /// Current unpersisted main-binding debug idle override.
     pub force_idle: bool,
+    /// Whether panics and crashes are being logged to a file.
+    pub crash_logging: bool,
     /// The debug switches that are on.
     pub debug_flags: Vec<hydrus_core::debug_flags::Flag>,
     pub advanced: bool,
@@ -1400,11 +1402,19 @@ fn help_menu(facts: &Facts) -> Entry {
                 vec![
                     menu(
                         "debug modes",
-                        vec![check(
-                            "force idle mode",
-                            Some(Command::DebugForceIdleMode),
-                            facts.force_idle,
-                        )],
+                        vec![
+                            check(
+                                "force idle mode",
+                                Some(Command::DebugForceIdleMode),
+                                facts.force_idle,
+                            ),
+                            SEP,
+                            check(
+                                "use faulthandler to log crashes",
+                                Some(debug(DebugAction::FlipCrashLogging)),
+                                facts.crash_logging,
+                            ),
+                        ],
                     ),
                     menu(
                         "profiling",

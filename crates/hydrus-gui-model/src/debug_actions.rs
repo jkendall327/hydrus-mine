@@ -127,4 +127,6 @@ pub enum Action {
     /// "simulate program exit signal"
     Exit,
     ClearRenderingCaches,
+    /// debug modes > "use faulthandler to log crashes"
+    FlipCrashLogging,
 }

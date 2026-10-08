@@ -328,6 +328,11 @@ fn capture() -> std::sync::Arc<Mutex<Vec<String>>> {
 impl Debug {
     /// Whether `help > debug > report modes > label` shows checked.
     fn report_mode_checked(&self, label: &str) -> bool {
+        self.checked_in("report modes", label)
+    }
+
+    /// Whether `help > debug > submenu > label` shows checked.
+    fn checked_in(&self, submenu: &str, label: &str) -> bool {
         let help = self
             .ui
             .get_menu_titles()
@@ -335,7 +340,7 @@ impl Debug {
             .position(|row| row.label == "help")
             .unwrap();
         self.ui.invoke_menu_title_pressed(help as i32, 20.0, 22.0);
-        for (pane, name) in ["debug", "report modes"].iter().enumerate() {
+        for (pane, name) in ["debug", submenu].iter().enumerate() {
             let rows = self.ui.get_menu_panes().row_data(pane).unwrap().lines;
             let row = rows.iter().position(|row| row.label == *name).unwrap();
             self.ui
@@ -482,4 +487,43 @@ fn daemon_report_mode_says_when_a_maintenance_daemon_does_a_job() {
     );
     d.click(&["report modes", "daemon report mode"]);
     debug_flags::set_sink(None);
+}
+
+// leaf: audit-options-help-debug-action-use-faulthandler-to-log-crashes
+#[test]
+fn crash_logging_writes_panics_to_a_log_until_turned_off() {
+    let _one = ONE_AT_A_TIME
+        .lock()
+        .unwrap_or_else(std::sync::PoisonError::into_inner);
+    let d = start();
+    let logs = || -> Vec<std::path::PathBuf> {
+        std::fs::read_dir(d.store.dir())
+            .unwrap()
+            .filter_map(Result::ok)
+            .map(|e| e.path())
+            .filter(|p| {
+                p.file_name()
+                    .is_some_and(|n| n.to_string_lossy().starts_with("client crash - "))
+            })
+            .collect()
+    };
+    let panic_on_a_thread = |what: &'static str| {
+        let _ = std::thread::spawn(move || panic!("{what}")).join();
+    };
+    assert!(!d.checked_in("debug modes", "use faulthandler to log crashes"));
+    panic_on_a_thread("before");
+    assert!(logs().is_empty());
+    d.click(&["debug modes", "use faulthandler to log crashes"]);
+    assert!(d.checked_in("debug modes", "use faulthandler to log crashes"));
+    assert!(hydrus_gui::crash_logging());
+    panic_on_a_thread("a test panic while logging");
+    let logs_now = logs();
+    assert_eq!(logs_now.len(), 1);
+    let text = std::fs::read_to_string(&logs_now[0]).unwrap();
+    assert!(text.contains("a test panic while logging"), "{text}");
+    d.click(&["debug modes", "use faulthandler to log crashes"]);
+    assert!(!d.checked_in("debug modes", "use faulthandler to log crashes"));
+    panic_on_a_thread("after");
+    let text = std::fs::read_to_string(&logs_now[0]).unwrap();
+    assert!(!text.contains("after"), "turned off, no more is logged");
 }

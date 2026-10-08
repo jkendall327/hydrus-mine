@@ -36,7 +36,7 @@ pub mod daemon;
 mod database_backup_window;
 pub mod database_locations_window;
 mod debug_actions;
-pub use debug_actions::{debug_printed, exit_requested, message_window};
+pub use debug_actions::{crash_logging, debug_printed, exit_requested, message_window};
 pub use orphan_files_window::chooser as orphan_files_chooser;
 pub mod debug_fetch;
 pub mod debug_long_popup;

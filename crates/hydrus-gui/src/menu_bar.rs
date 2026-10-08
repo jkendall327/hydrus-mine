@@ -137,6 +137,7 @@ pub(crate) fn facts(pages: &RefCell<Pages>, weigh: bool) -> Facts {
 fn owned_facts(hooks: &Hooks, weigh: bool) -> Facts {
     let mut facts = facts(&hooks.pages, weigh);
     facts.force_idle = hooks.force_idle.enabled();
+    facts.crash_logging = crate::debug_actions::crash_logging();
     facts.debug_flags = hydrus_core::debug_flags::Flag::ALL
         .into_iter()
         .filter(|flag| flag.is_on())

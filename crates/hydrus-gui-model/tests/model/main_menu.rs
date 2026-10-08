@@ -71,7 +71,10 @@ fn kept(entries: &[Value]) -> Vec<Value> {
                     .to_owned()
             };
             let keep: [(&str, &[&str]); 7] = [
-                ("debug modes", &["force idle mode"]),
+                (
+                    "debug modes",
+                    &["force idle mode", "---", "use faulthandler to log crashes"],
+                ),
                 ("profiling", &["what is this?"]),
                 (
                     "report modes",

@@ -78,6 +78,55 @@ pub(crate) fn install_report_sink(store: &std::sync::Arc<Store>) {
     }));
 }
 
+static CRASH_LOGGING: AtomicBool = AtomicBool::new(false);
+
+/// Whether "use faulthandler to log crashes" is on.
+pub fn crash_logging() -> bool {
+    CRASH_LOGGING.load(Ordering::SeqCst)
+}
+
+/// "use faulthandler to log crashes" (`FlipCrashReporting`): while on, each
+/// panic is written, with a backtrace, to a "client crash" log in the
+/// database directory; turning it off puts the earlier panic hook back.
+fn flip_crash_logging(dir: &std::path::Path) {
+    static EARLIER: Mutex<Option<Box<dyn Fn(&std::panic::PanicHookInfo<'_>) + Send + Sync>>> =
+        Mutex::new(None);
+    if CRASH_LOGGING.fetch_xor(true, Ordering::SeqCst) {
+        let earlier = EARLIER
+            .lock()
+            .unwrap_or_else(std::sync::PoisonError::into_inner)
+            .take();
+        if let Some(earlier) = earlier {
+            std::panic::set_hook(earlier);
+        }
+        return;
+    }
+    let path = dir.join(format!("client crash - {}.log", now() as i64));
+    let earlier = std::panic::take_hook();
+    // (the earlier hook is kept to be put back, and called meanwhile)
+    let earlier = std::sync::Arc::new(earlier);
+    *EARLIER
+        .lock()
+        .unwrap_or_else(std::sync::PoisonError::into_inner) = Some(Box::new({
+        let earlier = earlier.clone();
+        move |info| earlier(info)
+    }));
+    std::panic::set_hook(Box::new(move |info| {
+        if let Ok(mut file) = std::fs::OpenOptions::new()
+            .create(true)
+            .append(true)
+            .open(&path)
+        {
+            let _ = writeln!(
+                file,
+                "{info}\n{}\n",
+                std::backtrace::Backtrace::force_capture()
+            );
+        }
+        earlier(info);
+    }));
+}
+
 /// What the actions work with.
 pub(crate) struct Context {
     pub pages: Rc<RefCell<crate::Pages>>,
@@ -207,5 +256,6 @@ pub(crate) fn run(context: &Context, action: Action) {
             let _ = slint::quit_event_loop();
         }
         Action::ClearRenderingCaches => (context.clear_caches)(),
+        Action::FlipCrashLogging => flip_crash_logging(store.dir()),
     }
 }
