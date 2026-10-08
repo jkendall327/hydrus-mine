@@ -1235,6 +1235,67 @@ fn options_remember_navigation_and_apply_search_placement() {
     assert_eq!(preferences.last_panel, "audio");
 }
 
+// The options window's opening page and search-bar placement, put through the
+// reference's three recorded cases (options_preferences.json `cases`): the
+// saved choices seeded, the window opened, a page visited, the window closed
+// and opened again; the placement drop-down shows the recorded index and the
+// window the recorded side.
+#[test]
+fn options_open_and_place_the_search_bar_as_the_reference_did() {
+    use hydrus_store::settings::OptionsPreferences;
+    let recorded = hydrus_testkit::fixture_json("options_preferences.json");
+    let _windows = headless::init();
+    for (n, case) in recorded["cases"].as_array().unwrap().iter().enumerate() {
+        let (_dirs, store) = store();
+        let top = case["top"].as_bool().unwrap();
+        let seeded = OptionsPreferences {
+            remember_panel: case["remember"].as_bool().unwrap(),
+            last_panel: case["last"].as_str().unwrap().to_owned(),
+            search_at_top: top,
+        };
+        store
+            .write(move |ctx| hydrus_store::settings::set(ctx.conn(), &seeded))
+            .unwrap();
+        let ui = MainWindow::new().unwrap();
+        let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+        open(&ui);
+        let window = bound.options.borrow().as_ref().unwrap().clone_strong();
+        let context = format!("case {n}: {case}");
+        assert_eq!(
+            page_names(&window)[window.get_page() as usize],
+            case["opened"].as_str().unwrap(),
+            "{context}"
+        );
+        assert_eq!(window.get_search_at_top(), top, "{context}");
+        // (the placement drop-down, on the gui page, shows the recorded index)
+        show_page(&window, "gui");
+        let (_, placement) = row(&window, "Put the options search bar at the: ");
+        assert_eq!(
+            i64::from(placement.index),
+            case["search_index"].as_i64().unwrap(),
+            "{context}"
+        );
+        show_page(&window, "audio");
+        window.invoke_cancel();
+        let kept = store
+            .read(hydrus_store::settings::get::<OptionsPreferences>)
+            .unwrap();
+        assert_eq!(
+            kept.last_panel,
+            case["remembered_after_page_change"].as_str().unwrap(),
+            "{context}"
+        );
+        open(&ui);
+        let window = bound.options.borrow().as_ref().unwrap().clone_strong();
+        assert_eq!(
+            page_names(&window)[window.get_page() as usize],
+            case["reopened"].as_str().unwrap(),
+            "{context}"
+        );
+        window.invoke_cancel();
+    }
+}
+
 // leaf: audit-options-gui-main-window-confirm-client-exit
 #[test]
 fn gui_identity_and_exit_confirmation_reach_the_main_window() {

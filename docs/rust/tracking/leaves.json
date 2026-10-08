@@ -9763,8 +9763,8 @@
    "recheck": {
     "date": "2026-10-08",
     "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "The row and Apply drive only the search-at-top property (true by recording for case 0, false typed after Apply). Recorded search_index per case is never compared, and the actual top/bottom placement of the field and suggestions is not asserted; the model test only searches suggestions. Tests: crates/hydrus-gui/tests/gui/options_window.rs:1194 options_remember_navigation_and_apply_search_placement; crates/hydrus-gui-model/tests/model/options_dialog.rs:724"
+    "by": "phase 2 session",
+    "note": "gui/options_window.rs options_open_and_place_the_search_bar_as_the_reference_did replays the three cases of options_preferences.json (saved remember/last page/side seeded, opened page, placement drop-down index, last panel kept, reopened page) through the real options window. Still weak: the actual top/bottom position of the search field and its suggestions is a Slint layout and is not read back."
    }
   },
   {
@@ -22385,9 +22385,9 @@
    ],
    "recheck": {
     "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Options choice is driven/persisted (items 'notebook'/'side-by-side' vs recording) and ManageTags sets the suggested-columns property, but nothing checks the actual notebook-vs-columns arrangement: tests assert the Slint property and save a PNG that is not compared. tag_suggestions.json 'labels'/'selected' per layout are never replayed (model test only round-trips layout/default). Tests: crates/hydrus-gui/tests/gui/manage_tags.rs:34 most_used_panels_filter_only_add_broadcast_and_retire_closed_consumers; crates/hydrus-gui/tests/gui/options_window.rs:63 most_used_child_stages_each_service_cancels_descendants_and_persists_options; crates/hydrus-gui-model/tests/model/tag_suggestions.rs:23"
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "gui/manage_tags.rs the_suggested_tags_layout_and_page_follow_the_reference_s_cases seeds each of the eight cases of tag_suggestions.json (layout columns or notebook, default page, width), opens the real manage-tags window and compares the layout flag the panels are drawn from, the width, and for notebooks the selected page with the recording. The Slint arrangement itself is read through that flag, not by pixels."
    }
   },
   {
