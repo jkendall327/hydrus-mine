@@ -4175,9 +4175,9 @@ directory.
 - "What would you like to do?" is the shared native question overlay with the two
   choices as its buttons (the reference's local services never offer more); the
   per-choice tooltips are computed (and tested) but not shown.
-- Selecting listed tags selects one row at a time of the expanded list; selecting a
-  parent row selects its logical tag only for activation, not for remove or copy
-  (they use the tags of the non-parent rows).
+- Clicking an expanded parent row selects that row, but remove and copy use only
+  the selected tag rows, not the parent rows; activating a parent row enters its
+  originating tag, as the reference does.
 - The viewer's Manage tags is its own window, not a frame belonging to the viewer;
   it is closed when its own "close" is pressed rather than with the viewer. If a
   Manage tags window opened from a page is already open, F3 in the viewer shows that
