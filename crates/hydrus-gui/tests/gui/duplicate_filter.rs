@@ -110,6 +110,7 @@ fn skip_to_the_end(filter: &mut DuplicateFilter) -> Step {
     }
 }
 
+// leaf: audit-media-filter-commit, audit-media-filter-back
 #[test]
 fn decisions_wait_for_the_end_of_the_batch_and_can_be_undone() {
     let (_dir, store) = store_with_pairs();
@@ -214,6 +215,7 @@ fn small_batches_commit_themselves_until_no_pairs_are_left() {
     assert!(decided > 0);
 }
 
+// leaf: audit-media-filter-back
 #[test]
 fn group_mode_keeps_to_one_group() {
     let (_dir, store) = store_with_pairs();
@@ -224,6 +226,7 @@ fn group_mode_keeps_to_one_group() {
     assert_eq!(filter.new_group().unwrap(), Step::Showing);
 }
 
+// leaf: audit-media-filter-compare, audit-media-filter-commit
 #[test]
 fn the_filter_opens_from_a_duplicates_page_and_compares_the_pair() {
     use hydrus_core::duplicates::DuplicatesSearch;

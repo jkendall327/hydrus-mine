@@ -176,6 +176,7 @@ fn sorted_value(value: &Value) -> Value {
     value
 }
 
+// leaf: audit-media-merge-ratings, audit-media-merge-sync, audit-media-merge-tags, audit-media-merge-note-settings
 #[test]
 fn the_editor_edits_merge_options_as_the_reference_does() {
     let recorded = hydrus_testkit::fixture_json("merge_options_editor.json");

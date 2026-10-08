@@ -56,7 +56,9 @@ lint() {
   if [ ${#crates[@]} -eq 0 ]; then
     mapfile -t crates < <(changed_crates)
   fi
-  cargo fmt --all
+  # (in a lane, the checkout is shared: format only what the integrator
+  # commits, never other agents' files; elsewhere, format everything)
+  if [ -z "${DEV_LANE:-}" ]; then cargo fmt --all; fi
   if [ ${#crates[@]} -eq 0 ]; then
     echo "lint: no changed crates"
     return

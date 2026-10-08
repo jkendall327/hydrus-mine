@@ -31,6 +31,7 @@ fn rows(ui: &MainWindow) -> Vec<Vec<String>> {
         .collect()
 }
 
+// leaf: audit-media-preparation-distance, audit-media-preparation-reset
 #[test]
 fn the_sidebar_tabs_show_and_change_the_search_and_the_rules() {
     let windows = headless::init();

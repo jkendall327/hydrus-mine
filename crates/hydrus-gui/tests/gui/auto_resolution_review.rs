@@ -21,7 +21,7 @@ use hydrus_store::sessions::{self, LAST_SESSION};
 use serde_json::Value;
 
 /// The rows a tab lists: each pair's files and the text's first line.
-fn listed(
+pub(crate) fn listed(
     store: &Store,
     rule: i64,
     tab: &str,
@@ -73,7 +73,7 @@ fn texts(window: &AutoResolutionReviewWindow) -> Vec<String> {
 }
 
 /// The window opened on the rule named, by double-clicking it.
-fn review(ui: &MainWindow, bound: &Bound, name: &str) -> AutoResolutionReviewWindow {
+pub(crate) fn review(ui: &MainWindow, bound: &Bound, name: &str) -> AutoResolutionReviewWindow {
     let listed = ui.get_duplicates_rules();
     let row = (0..listed.row_count())
         .position(|r| listed.row_data(r).unwrap().cells.row_data(0).unwrap() == name)
@@ -109,16 +109,16 @@ fn trashed(store: &Store, hexes: &[String], ids: &HashMap<String, HashId>) -> Ve
 
 /// The reference's run's database, opened with a duplicates page, and each
 /// file's hash in hex, and back.
-struct Opened {
-    _dir: tempfile::TempDir,
-    store: Arc<Store>,
-    ui: MainWindow,
-    bound: Bound,
-    hex: HashMap<HashId, String>,
-    ids: HashMap<String, HashId>,
+pub(crate) struct Opened {
+    pub(crate) _dir: tempfile::TempDir,
+    pub(crate) store: Arc<Store>,
+    pub(crate) ui: MainWindow,
+    pub(crate) bound: Bound,
+    pub(crate) hex: HashMap<HashId, String>,
+    pub(crate) ids: HashMap<String, HashId>,
 }
 
-fn opened() -> Opened {
+pub(crate) fn opened() -> Opened {
     let legacy = hydrus_testkit::legacy_fixture("auto_resolution");
     let dir = tempfile::tempdir().unwrap();
     hydrus_store::import::import_legacy(
@@ -172,6 +172,7 @@ fn opened() -> Opened {
     }
 }
 
+// leaf: audit-media-review-history
 #[test]
 fn pairs_are_approved_denied_and_undone_as_the_reference_does() {
     let recorded = hydrus_testkit::fixture_json("auto_resolution_review.json");
@@ -419,7 +420,7 @@ fn a_pending_pair_is_approved_in_the_duplicate_filter() {
 }
 
 /// Let an approval or denial at work finish and reach the window.
-fn settle(window: &hydrus_gui::AutoResolutionReviewWindow) {
+pub(crate) fn settle(window: &hydrus_gui::AutoResolutionReviewWindow) {
     let deadline = std::time::Instant::now() + std::time::Duration::from_secs(20);
     loop {
         slint::platform::update_timers_and_animations();

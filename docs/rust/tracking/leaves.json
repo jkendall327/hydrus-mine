@@ -1926,10 +1926,11 @@
    "path": "Pages > Duplicates processing page > Similar-files preparation controls",
    "workstream": "duplicates",
    "state": "missing",
-   "priority": "normal",
+   "priority": "out-of-scope",
    "reference": null,
    "native": null,
    "notes": [
+    "Not applicable (2026-10-08): the native store keeps no similar-files tree or duplicate count cache (ADR-1); the cog asks the reference question and does nothing. See DIFFERENCES.md.",
     "Reference preparation cog recomputes maintenance count cache; native preparation can refresh displayed counts but has no count-regeneration action."
    ]
   },
@@ -1978,10 +1979,11 @@
    "path": "Pages > Duplicates processing page > Similar-files preparation controls",
    "workstream": "duplicates",
    "state": "missing",
-   "priority": "normal",
+   "priority": "out-of-scope",
    "reference": null,
    "native": null,
    "notes": [
+    "Not applicable (2026-10-08): the native store keeps no similar-files tree or duplicate count cache (ADR-1); the cog asks the reference question and does nothing. See DIFFERENCES.md.",
     "Native preparation action match has distance/work-hard/schedule/delete but no tree-regeneration command. The Database regenerate-tree menu is also disabled."
    ]
   },

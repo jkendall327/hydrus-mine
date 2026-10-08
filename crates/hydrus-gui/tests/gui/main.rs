@@ -255,3 +255,4 @@ mod search_pages_menu;
 mod subscriptions_overwrite_checker;
 mod tag_filter_removal;
 mod viewer_prefetch;
+mod duplicates_lane_page;

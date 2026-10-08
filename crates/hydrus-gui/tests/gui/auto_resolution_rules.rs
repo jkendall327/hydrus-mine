@@ -38,6 +38,7 @@ fn strings(model: &slint::ModelRc<slint::SharedString>) -> Vec<String> {
         .collect()
 }
 
+// leaf: audit-media-comparator-or
 #[test]
 fn rules_are_added_edited_deleted_and_written() {
     let windows = headless::init();
