@@ -91,6 +91,17 @@ fn shown(window: &SidecarNodeWindow, destination: bool) -> Value {
         } else {
             Value::Null
         };
+        state["nested"] = if window.get_show_nested() {
+            json!(
+                window
+                    .get_nested_rows()
+                    .iter()
+                    .map(|r| r.cells.row_data(0).unwrap().to_string())
+                    .collect::<Vec<_>>()
+            )
+        } else {
+            Value::Null
+        };
         state["forced_name"] = if window.get_show_forced() {
             if window.get_forced_on() {
                 json!(window.get_forced_name().to_string())
@@ -290,6 +301,13 @@ fn the_sidecar_node_window_works_as_the_references_does() {
             }
             let theirs = &states[upto]["state"];
             let ours = shown(&window, destination);
+            // (the same boxes are shown as the reference's, bar its final value)
+            let mut theirs_keys: Vec<&String> = theirs.as_object().unwrap().keys().collect();
+            theirs_keys.retain(|k| *k != "value");
+            theirs_keys.sort();
+            let mut ours_keys: Vec<&String> = ours.as_object().unwrap().keys().collect();
+            ours_keys.sort();
+            assert_eq!(ours_keys, theirs_keys, "{at_state}");
             for key in ours.as_object().unwrap().keys() {
                 let mut ours_key = ours[key].clone();
                 let mut theirs_key = theirs[key].clone();
@@ -353,4 +371,43 @@ fn the_sidecar_node_window_works_as_the_references_does() {
         }
     }
     assert_eq!(checked, 35, "every recorded source and destination state");
+}
+
+// leaf: audit-shared-sidecar-destination-tags
+#[test]
+fn a_destination_whose_tag_service_is_gone_warns_as_the_reference_does() {
+    let legacy = hydrus_testkit::legacy_fixture("basic");
+    let dir = tempfile::tempdir().unwrap();
+    hydrus_store::import::import_legacy(
+        legacy.path(),
+        &dir.path().join(hydrus_store::store::DB_FILE_NAME),
+    )
+    .unwrap();
+    let store = Store::open(dir.path()).unwrap();
+    let _windows = headless::init();
+    // hydrus/client/gui/metadata/ClientGUIMetadataMigrationExporters.py: the warning
+    // shown when the exporter's tag service is not one the client has
+    let warning = "Hey, the tag service for your exporter does not seem to exist! Maybe it was deleted. Please select a new one that does.";
+    let gone = hydrus_parse::sidecar::Exporter::MediaTags {
+        service_key: hex::encode([0x5e; 32]),
+    };
+    let slots = sidecars_window::Slots::default();
+    let (window, _) = open(
+        &store,
+        &slots,
+        Context::Export,
+        &sidecars_window::Node::Destination(gone),
+    );
+    assert!(window.get_asking());
+    assert_eq!(window.get_asking_message(), warning);
+    window.invoke_cancel();
+    // a service the client has is not warned about
+    let (window, _) = open(
+        &store,
+        &slots,
+        Context::Export,
+        &sidecars_window::Node::Destination(editors::new_exporter(Kind::MediaTags)),
+    );
+    assert!(!window.get_asking());
+    window.invoke_cancel();
 }

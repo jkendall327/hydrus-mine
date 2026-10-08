@@ -22929,9 +22929,9 @@
    ],
    "recheck": {
     "date": "2026-10-08",
-    "class": "weak",
+    "class": "sound",
     "by": "phase 2 session",
-    "note": "gui/sidecar_node_window.rs the_sidecar_node_window_works_as_the_references_does opens the real sidecar node window for every recorded importer and exporter case, sets its controls and answers its type and service questions as the recording did, compares what it shows at every step and (second window per step) what apply gives as text and object, or its error, against sidecar_editors.json. Now covers the exporter's service choice. Still weak: the note's claim that the destination warns when its tag service has disappeared is neither in the recording nor in a test that compares it."
+    "note": "gui/sidecar_node_window.rs the_sidecar_node_window_works_as_the_references_does opens the real sidecar node window for every recorded importer and exporter case, sets its controls and answers its type and service questions as the recording did, compares what it shows at every step (the same boxes as the reference's) and (second window per step) what apply gives as text and object, or its error, against sidecar_editors.json. Covers the exporter's service choice; a_destination_whose_tag_service_is_gone_warns_as_the_reference_does opens a destination whose tag service the client lacks and checks the warning, word for word from ClientGUIMetadataMigrationExporters.py (a Python literal; not recorded)."
    }
   },
   {
@@ -23032,7 +23032,7 @@
     "date": "2026-10-08",
     "class": "sound",
     "by": "phase 2 session",
-    "note": "gui/sidecar_node_window.rs the_sidecar_node_window_works_as_the_references_does opens the real sidecar node window for every recorded importer and exporter case, sets its controls and answers its type and service questions as the recording did, compares what it shows at every step and (second window per step) what apply gives as text and object, or its error, against sidecar_editors.json. Covers the importer's service choice (auto-picked or asked) and stored/display tags."
+    "note": "gui/sidecar_node_window.rs the_sidecar_node_window_works_as_the_references_does opens the real sidecar node window for every recorded importer and exporter case, sets its controls and answers its type and service questions as the recording did, compares what it shows at every step and (second window per step) what apply gives as text and object, or its error, against sidecar_editors.json. Covers the importer's service choice (auto-picked or asked) and stored/display tags.The destination's warning for a vanished tag service belongs to audit-shared-sidecar-destination-tags, not this source leaf."
    }
   },
   {
@@ -24402,9 +24402,9 @@
    ],
    "recheck": {
     "date": "2026-10-08",
-    "class": "sound",
+    "class": "weak",
     "by": "phase 2 session",
-    "note": "gui/sidecar_node_window.rs the_sidecar_node_window_works_as_the_references_does opens the real sidecar node window for every recorded importer and exporter case, sets its controls and answers its type and service questions as the recording did, compares what it shows at every step and (second window per step) what apply gives as text and object, or its error, against sidecar_editors.json. Covers the separator choice (newline, four pipes, custom) and its custom text; whether the custom box is enabled is the window's own layout and is not read back."
+    "note": "gui/sidecar_node_window.rs the_sidecar_node_window_works_as_the_references_does opens the real sidecar node window for every recorded importer and exporter case, sets its controls and answers its type and service questions as the recording did, compares what it shows at every step (the same boxes as the reference's) and (second window per step) what apply gives as text and object, or its error, against sidecar_editors.json. Covers the separator choice (newline, four pipes, custom) and its custom text. Weak: whether the custom-text box is enabled (recorded custom_enabled) is the window's own layout and is not readable from a test."
    }
   },
   {
