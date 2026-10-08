@@ -39,6 +39,15 @@ export component ManageTagsWindow inherits Window {
     out property <float> service-content-offset: services.content-offset;
     in-out property <int> service-index;
     in property <[ListText]> tags;
+    in property <[bool]> tag-selected;
+    in property <string> remove-button-text: "remove all/selected tags";
+    in property <string> notice;
+    callback tag-clicked(int,bool,bool);
+    callback remove-pressed();
+    callback copy-pressed();
+    callback cog-pressed(length,length);
+    callback delete-pressed();
+    callback activate-selected();
     in property <int> sort-type;
     in property <int> sort-order;
     in property <int> sort-group;
@@ -135,18 +144,39 @@ export component ManageTagsWindow inherits Window {
                     border-color: Theme.border;
                     background: Theme.tags-background;
                     vertical-stretch: 1;
-                    ListView {
-                        for tag[i] in root.tags: Rectangle {
-                            height: 20px;
-                            background: pick.has-hover ? Theme.hover : transparent;
-                            PaintedTagText { x:4px;item:tag;width:parent.width - 8px;height:parent.height; }
-                            pick := TouchArea {
-                                double-clicked => { root.tag-activated(i); }
+                    list-focus := FocusScope {
+                        key-pressed(event) => {
+                            if event.text == Key.Delete { root.delete-pressed(); return accept; }
+                            if event.text == Key.Return { root.activate-selected(); return accept; }
+                            reject
+                        }
+                        ListView {
+                            for tag[i] in root.tags: Rectangle {
+                                height: 20px;
+                                background: (i < root.tag-selected.length && root.tag-selected[i]) ? Theme.highlight : (pick.has-hover ? Theme.hover : transparent);
+                                PaintedTagText { x:4px;item:tag;width:parent.width - 8px;height:parent.height; }
+                                pick := TouchArea {
+                                    pointer-event(event) => {
+                                        if event.button == PointerEventButton.left && event.kind == PointerEventKind.down {
+                                            list-focus.focus();
+                                            root.tag-clicked(i, event.modifiers.control, event.modifiers.shift);
+                                        }
+                                    }
+                                    double-clicked => { root.tag-activated(i); }
+                                }
                             }
                         }
                     }
                 }
-                if root.incremental-available: Button { text: "± Incremental Tagging"; enabled: root.question == ""; clicked => { root.incremental-tags(); } }
+                HorizontalLayout {
+                    alignment: end;
+                    spacing: 6px;
+                    Button { text: root.remove-button-text; enabled: root.question == ""; clicked => { root.remove-pressed(); } }
+                    Button { text: "copy"; enabled: root.question == ""; clicked => { root.copy-pressed(); } }
+                    if root.incremental-available: Button { text: "±"; enabled: root.question == ""; clicked => { root.incremental-tags(); } }
+                    cog := Button { text: "⚙"; enabled: root.question == ""; clicked => { root.cog-pressed(self.absolute-position.x, self.absolute-position.y + self.height); } }
+                }
+                if root.notice != "": Text { text: root.notice; color: Theme.text; horizontal-alignment: right; }
                 if root.deleted-count-visible: HorizontalLayout {
                     alignment: end;
                     spacing: 6px;

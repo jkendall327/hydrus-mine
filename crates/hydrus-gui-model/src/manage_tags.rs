@@ -13,6 +13,9 @@ use hydrus_store::content::MappingAction;
 
 use crate::write_autocomplete::WriteAutocomplete;
 
+mod entry;
+pub use entry::{Entered, Prompt, Removal};
+
 /// A rendered row retains its logical tag even when displaying an implied parent.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct TagRow {
@@ -38,6 +41,8 @@ pub struct ManageTags {
     /// to the files lacking it, or removed from them all.
     staged: Vec<BTreeMap<String, BTreeMap<HashId, bool>>>,
     input: WriteAutocomplete,
+    /// The listed rows selected (by row), for removing and copying.
+    tag_selection: crate::list_selection::ListSelection<usize>,
     dialog_preferences: hydrus_store::tag_editing::TagEditingSettings,
     suggestion_preferences: hydrus_store::settings::TagSuggestionSettings,
 }
@@ -131,6 +136,7 @@ impl ManageTags {
             stored,
             deleted,
             input,
+            tag_selection: Default::default(),
             dialog_preferences: preference,
             suggestion_preferences,
         })
@@ -538,10 +544,11 @@ impl ManageTags {
         out
     }
 
-    /// Enter a tag, as typed: added to the files that lack it, or, if
-    /// they all have it, removed from them all. Errs on what isn't a tag.
+    /// Enter a tag, as typed, with the cog at its default: added to the
+    /// files that lack it. Errs on what isn't a tag. (`add_tags` and
+    /// `enter_tags` take the cog and the questions into account.)
     pub fn enter(&mut self, typed: &str) -> Result<(), String> {
-        self.stage_tag(typed)?;
+        self.add_tags(&[typed.to_owned()], true)?;
         self.input.clear();
         Ok(())
     }
@@ -637,14 +644,10 @@ impl ManageTags {
         )
     }
 
-    /// Suggestion activation only adds missing mappings, even for a stale selection.
-    pub fn add_side_suggestions(&mut self, tags: &[String]) {
-        for tag in tags.iter().filter_map(|tag| Tag::new(tag)) {
-            for file in self.files.clone() {
-                self.stage_mapping(tag.as_str(), file, true);
-            }
-        }
-        self.input.set_context_tags(self.tags().into_keys());
+    /// A suggested tag activated: entered as typed entry is (the reference
+    /// calls `AddTags` for the side panels too).
+    pub fn add_side_suggestions(&mut self, tags: &[String]) -> Result<Entered, String> {
+        self.add_tags(tags, false)
     }
     fn stage_tag(&mut self, typed: &str) -> Result<(), String> {
         let tag = Tag::new(typed).ok_or_else(|| format!("\"{typed}\" is not a valid tag"))?;
@@ -657,12 +660,13 @@ impl ManageTags {
         Ok(())
     }
 
-    /// A listed tag double-clicked: entered again (removed, if all the
-    /// files have it).
-    pub fn toggle_row(&mut self, index: usize) {
-        if let Some((tag, _)) = self.rows().get(index).cloned() {
-            let _ = self.enter(&tag);
-        }
+    /// A listed tag double-clicked: entered again, which may remove it (or
+    /// ask, if only some of the files have it).
+    pub fn activate_row(&mut self, index: usize) -> Result<Entered, String> {
+        let Some(row) = self.display_rows().get(index).cloned() else {
+            return Ok(Entered::Done);
+        };
+        self.enter_tags(&[row.tag], false, false)
     }
 
     pub fn has_changes(&self) -> bool {
@@ -738,17 +742,21 @@ impl ManageTags {
     pub fn move_highlight(&mut self, by: isize) {
         self.input.move_highlight(by);
     }
-    pub fn enter_input(&mut self) -> Result<(), String> {
-        for tag in self.input.chosen_tags(None) {
-            self.enter(&tag)?;
+    pub fn enter_input(&mut self) -> Result<Entered, String> {
+        let tags = self.input.chosen_tags(None);
+        let entered = self.add_tags(&tags, false)?;
+        if !tags.is_empty() {
+            self.input.clear();
         }
-        Ok(())
+        Ok(entered)
     }
-    pub fn choose_suggestion(&mut self, index: usize) -> Result<(), String> {
-        for tag in self.input.chosen_tags(Some(index)) {
-            self.enter(&tag)?;
+    pub fn choose_suggestion(&mut self, index: usize) -> Result<Entered, String> {
+        let tags = self.input.chosen_tags(Some(index));
+        let entered = self.add_tags(&tags, false)?;
+        if !tags.is_empty() {
+            self.input.clear();
         }
-        Ok(())
+        Ok(entered)
     }
     pub fn fetch(&mut self) {
         self.input.fetch();

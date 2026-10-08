@@ -19,8 +19,31 @@ pub enum Decoration {
     Expanded,
     Siblings,
 }
+/// A setting of the Manage Tags cog menu (written when chosen).
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum CogSetting {
+    AllowRemoveOnInput(bool),
+    ConfirmRemove(bool),
+    SelectFirstWithCount(bool),
+}
+impl CogSetting {
+    pub fn persist(self, store: &Store) -> hydrus_store::Result<()> {
+        store.write_and_refresh(move |ctx| {
+            let mut options: hydrus_store::tag_editing::TagEditingSettings =
+                settings::get(ctx.conn())?;
+            match self {
+                Self::AllowRemoveOnInput(v) => options.allow_remove_on_input = v,
+                Self::ConfirmRemove(v) => options.confirm_remove = v,
+                Self::SelectFirstWithCount(v) => options.select_first_with_count = v,
+            }
+            settings::set(ctx.conn(), &options)
+        })
+    }
+}
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum Action {
+    Cog(CogSetting),
+    MigrateTags,
     Copy(String),
     Regenerate {
         tags: Vec<String>,

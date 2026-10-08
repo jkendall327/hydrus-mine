@@ -46,7 +46,9 @@ fn most_used_panels_filter_only_add_broadcast_and_retire_closed_consumers() {
         .position(|s| s == "my tags")
         .unwrap();
     model.choose_service(mine).unwrap();
-    model.add_side_suggestions(&["parity:present".into()]);
+    model
+        .add_side_suggestions(&["parity:present".into()])
+        .unwrap();
     model.apply().unwrap();
     let key = store
         .snapshot()
@@ -381,26 +383,39 @@ fn tags_are_added_and_removed_as_the_reference_does() {
         .find(|&&f| f != tagged && !tags_of(&store, f, "my tags").contains(&its_tag))
         .unwrap();
 
+    // (typed entry removes a tag the files all have only when the cog's
+    // "allow remove/petition result on tag input" is on)
+    store
+        .write(|ctx| {
+            let mut o: hydrus_store::tag_editing::TagEditingSettings =
+                hydrus_store::settings::get(ctx.conn())?;
+            o.allow_remove_on_input = true;
+            hydrus_store::settings::set(ctx.conn(), &o)
+        })
+        .unwrap();
     let mut manage = ManageTags::new(store.clone(), vec![tagged]).unwrap();
+    let enter = |m: &mut ManageTags, typed: &str| {
+        m.add_tags(&[typed.to_owned()], false).map(|_| ())
+    };
     let names = manage.service_names();
     let mine = names.iter().position(|n| n == "my tags").unwrap();
     manage.choose_service(mine).unwrap();
     let listed = |m: &ManageTags| -> Vec<String> { m.rows().into_iter().map(|(t, _)| t).collect() };
     assert!(listed(&manage).contains(&its_tag));
     // entered, a new tag is added; entered again, it isn't
-    manage.enter("  Brand New ").unwrap();
+    enter(&mut manage, "  Brand New ").unwrap();
     assert!(listed(&manage).contains(&"brand new".to_owned()));
-    manage.enter("brand new").unwrap();
+    enter(&mut manage, "brand new").unwrap();
     assert!(!listed(&manage).contains(&"brand new".to_owned()));
     assert!(
         manage.has_changes(),
         "adding then removing creates a deleted mapping, as the reference does"
     );
     // an existing tag is removed
-    manage.enter(&its_tag).unwrap();
+    enter(&mut manage, &its_tag).unwrap();
     assert!(!listed(&manage).contains(&its_tag));
-    manage.enter("brand new").unwrap();
-    assert!(manage.enter("").is_err(), "not a tag");
+    enter(&mut manage, "brand new").unwrap();
+    assert!(enter(&mut manage, "").is_err(), "not a tag");
     // suggestions are what was typed, then the service's tags
     manage.set_text("blu");
     assert_eq!(manage.suggestions()[0].0, "blu");
@@ -415,7 +430,7 @@ fn tags_are_added_and_removed_as_the_reference_does() {
     let second = manage.suggestions()[1].0.clone();
     manage.enter_input().unwrap();
     assert!(listed(&manage).contains(&second));
-    manage.enter(&second).unwrap();
+    enter(&mut manage, &second).unwrap();
     // nothing changes until applied
     assert!(tags_of(&store, tagged, "my tags").contains(&its_tag));
     manage.apply().unwrap();
