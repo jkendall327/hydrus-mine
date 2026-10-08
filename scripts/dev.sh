@@ -21,11 +21,16 @@
 # hydrus-workspace-hack crate makes that solo build resolve the same features
 # as the full graph, so the artifact is reused.
 #
-# Environment: DEV_JOBS (default 4) is the Cargo job count.
+# Environment: DEV_JOBS (default 4) is the Cargo job count. DEV_LANE names a
+# GUI test lane (crates/hydrus-gui/tests/lane_<name>.rs) for `gui` and `lint`
+# to use instead of the shared `gui` test binary (see AGENTS.md, "Several
+# agents at once").
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
 jobs=${DEV_JOBS:-4}
+gui_test=${DEV_LANE:+lane_$DEV_LANE}
+gui_test=${gui_test:-gui}
 cargo_() { cargo "$1" --locked -j "$jobs" "${@:2}"; }
 
 slint_check() {
@@ -56,9 +61,16 @@ lint() {
     echo "lint: no changed crates"
     return
   fi
-  local args=()
-  for c in "${crates[@]}"; do args+=(-p "$c"); done
-  cargo_ clippy "${args[@]}" --all-targets -- -D warnings
+  local args=() gui=0
+  for c in "${crates[@]}"; do
+    if [ "$c" = hydrus-gui ] && [ -n "${DEV_LANE:-}" ]; then gui=1; else args+=(-p "$c"); fi
+  done
+  if [ ${#args[@]} -gt 0 ]; then cargo_ clippy "${args[@]}" --all-targets -- -D warnings; fi
+  # (in a lane, lint hydrus-gui's library and only that lane's tests, so other
+  # agents' unfinished lanes cannot fail this)
+  if [ $gui = 1 ]; then
+    cargo_ clippy -p hydrus-gui --lib --bins --test "$gui_test" -- -D warnings
+  fi
 }
 
 case "${1:-}" in
@@ -68,9 +80,9 @@ case "${1:-}" in
     shift
     build_ui
     if [ $# -eq 0 ]; then
-      cargo_ test -p hydrus-gui --test gui
+      cargo_ test -p hydrus-gui --test "$gui_test"
     else
-      for f in "$@"; do cargo_ test -p hydrus-gui --test gui -- "$f"; done
+      for f in "$@"; do cargo_ test -p hydrus-gui --test "$gui_test" -- "$f"; done
     fi
     ;;
   model)

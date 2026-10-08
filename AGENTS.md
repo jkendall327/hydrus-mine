@@ -127,6 +127,24 @@ macOS run only when dispatched by hand with `secondary_platforms`.
   `docs/rust/GUI.md`, `docs/rust/DIFFERENCES.md`. Keep edits there to a line
   or a paragraph (a module line, one callback's wiring) so merges stay easy;
   put the bulk of a feature in its own files.
+- **Agents sharing one checkout use GUI test lanes.** All GUI tests are one
+  test binary, so one agent's half-written test would stop every agent's
+  build. Each agent instead puts its new test modules in
+  `crates/hydrus-gui/tests/gui/<file>.rs` as usual but does *not* add them to
+  `tests/gui/main.rs`; it lists them in its own lane,
+  `crates/hydrus-gui/tests/lane_<workstream>.rs` (gitignored), which Cargo
+  builds as a separate test target:
+
+  ```rust
+  #[path = "gui/common/mod.rs"]
+  mod common;
+  #[path = "gui/my_new_tests.rs"]
+  mod my_new_tests;
+  ```
+
+  and runs `DEV_LANE=<workstream> scripts/dev.sh gui <filter>` (and the same
+  for `lint`). The coordinating agent moves lane modules into
+  `tests/gui/main.rs` when it commits. In a checkout of your own, skip lanes.
 - **Memory:** only one generated-UI build fits on a 16 GB machine at a time.
   Agents sharing a machine should share one `target/` directory (Cargo's lock
   serializes builds) or stagger `.slint` changes. Model-crate work needs no

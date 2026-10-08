@@ -91,3 +91,6 @@ shell.nix
 
 # agent worktrees
 /.claude/worktrees/
+
+# Per-agent GUI test lanes: local scaffolding in shared checkouts (AGENTS.md)
+crates/hydrus-gui/tests/lane_*.rs

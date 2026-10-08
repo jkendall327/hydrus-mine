@@ -25,9 +25,14 @@ leaves.
      `docs/rust/GUI.md` / `DIFFERENCES.md`.
    - **Not implemented and large:** skip it; report it.
 4. Prefer one test per leaf or a small group of related leaves. Put new GUI
-   tests in a new file `crates/hydrus-gui/tests/gui/<area>_<topic>.rs` (add a
-   `mod` line to `tests/gui/main.rs`) and model tests similarly under
-   `crates/hydrus-gui-model/tests/model/`.
+   tests in a new file `crates/hydrus-gui/tests/gui/<area>_<topic>.rs`. In a
+   shared checkout, do not add it to `tests/gui/main.rs`: add it to your lane
+   (`crates/hydrus-gui/tests/lane_<workstream>.rs`, see AGENTS.md, "Several
+   agents at once") and run with `DEV_LANE=<workstream> scripts/dev.sh gui
+   <filter>`. Model tests go under `crates/hydrus-gui-model/tests/model/`
+   (that binary builds in seconds; keep it compiling).
+   Edits to *existing* GUI test files must be tags or small and compile-safe:
+   they are in the shared binary.
 
 Tag honestly. A tag says "this test proves this leaf behaves as the reference
 does". Do not tag on string-only tests when the leaf is an action; do not tag
@@ -35,14 +40,15 @@ a parent feature because one child works.
 
 ## The loop
 
-- `scripts/dev.sh gui <module>::` builds and runs GUI tests matching a filter
-  (seconds after the first build). `scripts/dev.sh model <filter>` for model
+- `DEV_LANE=<workstream> scripts/dev.sh gui <module>::` builds and runs your
+  lane's GUI tests matching a filter (seconds after the first build); without
+  `DEV_LANE` it runs the shared `gui` binary (existing tests). `scripts/dev.sh model <filter>` for model
   tests. `scripts/dev.sh slint` after any `.slint` edit.
 - Avoid `.slint` edits when you can: each one rebuilds the 87 MB generated UI
   crate (~7 min, ~14 GB of memory). If you must, make all of them at once,
   check with `scripts/dev.sh slint`, then build.
-- Run `scripts/dev.sh lint hydrus-gui hydrus-gui-model` (or the crates you
-  touched) before reporting.
+- Run `DEV_LANE=<workstream> scripts/dev.sh lint hydrus-gui hydrus-gui-model`
+  (or the crates you touched) before reporting.
 
 ## Sharing a checkout with other agents
 
