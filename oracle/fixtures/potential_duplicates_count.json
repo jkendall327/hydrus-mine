@@ -19,6 +19,11 @@
    "n": 5000,
    "mult": 7,
    "modulus": 13
+  },
+  "rare": {
+   "n": 30000,
+   "rare_every": 3000,
+   "far": 9
   }
  },
  "defaults": {
@@ -2084,6 +2089,339 @@
      "matches": 1924,
      "searched": 5000,
      "in_space": 5000,
+     "distance": 4,
+     "distance_enabled": true,
+     "second_search_shown": false,
+     "signals": {
+      "restarted": 0,
+      "has_pairs": 0,
+      "no_pairs": 0,
+      "changed": 0
+     },
+     "step": {
+      "do": "block"
+     },
+     "released": false
+    }
+   ],
+   "cog_menu": [
+    {
+     "title": "start new potential duplicate pair search panels paused",
+     "description": "If you use a lot of these and the CPU lag on reviewing each new panel is annoying, try initialising them to paused.",
+     "option": "potential_duplicate_pairs_search_starts_paused"
+    },
+    {
+     "separator": true
+    },
+    {
+     "title": "optimisation: try to state an estimate of final count rather than counting everything",
+     "description": "You can choose to have this panel produce an exact count every time, or stop early and estimate.",
+     "option": "potential_duplicate_pairs_search_context_panel_stops_to_estimate"
+    },
+    {
+     "title": "optimisation: allow single slow search optimisation when seeing low hit-rate",
+     "description": "If the incremental search is getting a very low hit-rate (like 5 out of 750,000 pairs), it is usually faster for the database to just run the file searches and then cross-reference.\n\nIn complicated edge cases, this optimisation has very bad performance, so if you see a block or two of work and then your search halts for 30+ seconds, you can turn it off here.",
+     "option": "potential_duplicate_pairs_search_can_do_file_search_based_optimisation"
+    }
+   ]
+  },
+  {
+   "name": "low_hit_rate_searches_the_rest_at_once",
+   "space": "rare",
+   "block_size": 4000,
+   "options": {},
+   "steps": [
+    {
+     "label": "initialising…",
+     "has_tooltip": true,
+     "paused": false,
+     "matches": 0,
+     "searched": 0,
+     "in_space": 0,
+     "distance": 4,
+     "distance_enabled": true,
+     "second_search_shown": false,
+     "signals": {
+      "restarted": 0,
+      "has_pairs": 0,
+      "no_pairs": 0,
+      "changed": 0
+     },
+     "step": {
+      "do": "show"
+     },
+     "released": null
+    },
+    {
+     "label": "initialising…",
+     "has_tooltip": true,
+     "paused": false,
+     "matches": 0,
+     "searched": 0,
+     "in_space": 30000,
+     "distance": 4,
+     "distance_enabled": true,
+     "second_search_shown": false,
+     "signals": {
+      "restarted": 1,
+      "has_pairs": 0,
+      "no_pairs": 0,
+      "changed": 0
+     },
+     "step": {
+      "do": "space"
+     },
+     "released": true
+    },
+    {
+     "label": "4,000/30,000 pairs searched; 2 match…",
+     "has_tooltip": true,
+     "paused": false,
+     "matches": 2,
+     "searched": 4000,
+     "in_space": 30000,
+     "distance": 4,
+     "distance_enabled": true,
+     "second_search_shown": false,
+     "signals": {
+      "restarted": 0,
+      "has_pairs": 1,
+      "no_pairs": 0,
+      "changed": 0
+     },
+     "step": {
+      "do": "block"
+     },
+     "released": true
+    },
+    {
+     "label": "30,000 pairs searched; 10 match",
+     "has_tooltip": true,
+     "paused": false,
+     "matches": 10,
+     "searched": 30000,
+     "in_space": 30000,
+     "distance": 4,
+     "distance_enabled": true,
+     "second_search_shown": false,
+     "signals": {
+      "restarted": 0,
+      "has_pairs": 0,
+      "no_pairs": 0,
+      "changed": 0
+     },
+     "step": {
+      "do": "block"
+     },
+     "released": true
+    },
+    {
+     "label": "30,000 pairs searched; 10 match",
+     "has_tooltip": true,
+     "paused": false,
+     "matches": 10,
+     "searched": 30000,
+     "in_space": 30000,
+     "distance": 4,
+     "distance_enabled": true,
+     "second_search_shown": false,
+     "signals": {
+      "restarted": 0,
+      "has_pairs": 0,
+      "no_pairs": 0,
+      "changed": 0
+     },
+     "step": {
+      "do": "block"
+     },
+     "released": false
+    }
+   ],
+   "cog_menu": [
+    {
+     "title": "start new potential duplicate pair search panels paused",
+     "description": "If you use a lot of these and the CPU lag on reviewing each new panel is annoying, try initialising them to paused.",
+     "option": "potential_duplicate_pairs_search_starts_paused"
+    },
+    {
+     "separator": true
+    },
+    {
+     "title": "optimisation: try to state an estimate of final count rather than counting everything",
+     "description": "You can choose to have this panel produce an exact count every time, or stop early and estimate.",
+     "option": "potential_duplicate_pairs_search_context_panel_stops_to_estimate"
+    },
+    {
+     "title": "optimisation: allow single slow search optimisation when seeing low hit-rate",
+     "description": "If the incremental search is getting a very low hit-rate (like 5 out of 750,000 pairs), it is usually faster for the database to just run the file searches and then cross-reference.\n\nIn complicated edge cases, this optimisation has very bad performance, so if you see a block or two of work and then your search halts for 30+ seconds, you can turn it off here.",
+     "option": "potential_duplicate_pairs_search_can_do_file_search_based_optimisation"
+    }
+   ]
+  },
+  {
+   "name": "low_hit_rate_optimisation_off",
+   "space": "rare",
+   "block_size": 4000,
+   "options": {
+    "file_search_optimisation": false
+   },
+   "steps": [
+    {
+     "label": "initialising…",
+     "has_tooltip": true,
+     "paused": false,
+     "matches": 0,
+     "searched": 0,
+     "in_space": 0,
+     "distance": 4,
+     "distance_enabled": true,
+     "second_search_shown": false,
+     "signals": {
+      "restarted": 0,
+      "has_pairs": 0,
+      "no_pairs": 0,
+      "changed": 0
+     },
+     "step": {
+      "do": "show"
+     },
+     "released": null
+    },
+    {
+     "label": "initialising…",
+     "has_tooltip": true,
+     "paused": false,
+     "matches": 0,
+     "searched": 0,
+     "in_space": 30000,
+     "distance": 4,
+     "distance_enabled": true,
+     "second_search_shown": false,
+     "signals": {
+      "restarted": 1,
+      "has_pairs": 0,
+      "no_pairs": 0,
+      "changed": 0
+     },
+     "step": {
+      "do": "space"
+     },
+     "released": true
+    },
+    {
+     "label": "4,000/30,000 pairs searched; 2 match…",
+     "has_tooltip": true,
+     "paused": false,
+     "matches": 2,
+     "searched": 4000,
+     "in_space": 30000,
+     "distance": 4,
+     "distance_enabled": true,
+     "second_search_shown": false,
+     "signals": {
+      "restarted": 0,
+      "has_pairs": 1,
+      "no_pairs": 0,
+      "changed": 0
+     },
+     "step": {
+      "do": "block"
+     },
+     "released": true
+    },
+    {
+     "label": "8,400/30,000 pairs searched; 3 match…",
+     "has_tooltip": true,
+     "paused": false,
+     "matches": 3,
+     "searched": 8400,
+     "in_space": 30000,
+     "distance": 4,
+     "distance_enabled": true,
+     "second_search_shown": false,
+     "signals": {
+      "restarted": 0,
+      "has_pairs": 0,
+      "no_pairs": 0,
+      "changed": 0
+     },
+     "step": {
+      "do": "block"
+     },
+     "released": true
+    },
+    {
+     "label": "13,240/30,000 pairs searched; 5 match…",
+     "has_tooltip": true,
+     "paused": false,
+     "matches": 5,
+     "searched": 13240,
+     "in_space": 30000,
+     "distance": 4,
+     "distance_enabled": true,
+     "second_search_shown": false,
+     "signals": {
+      "restarted": 0,
+      "has_pairs": 0,
+      "no_pairs": 0,
+      "changed": 0
+     },
+     "step": {
+      "do": "block"
+     },
+     "released": true
+    },
+    {
+     "label": "13,240/30,000 pairs searched; 5 match…",
+     "has_tooltip": true,
+     "paused": false,
+     "matches": 5,
+     "searched": 13240,
+     "in_space": 30000,
+     "distance": 4,
+     "distance_enabled": true,
+     "second_search_shown": false,
+     "signals": {
+      "restarted": 0,
+      "has_pairs": 0,
+      "no_pairs": 0,
+      "changed": 0
+     },
+     "step": {
+      "do": "cog",
+      "value": "file_search_optimisation"
+     },
+     "released": null,
+     "option": true
+    },
+    {
+     "label": "30,000 pairs searched; 10 match",
+     "has_tooltip": true,
+     "paused": false,
+     "matches": 10,
+     "searched": 30000,
+     "in_space": 30000,
+     "distance": 4,
+     "distance_enabled": true,
+     "second_search_shown": false,
+     "signals": {
+      "restarted": 0,
+      "has_pairs": 0,
+      "no_pairs": 0,
+      "changed": 0
+     },
+     "step": {
+      "do": "block"
+     },
+     "released": true
+    },
+    {
+     "label": "30,000 pairs searched; 10 match",
+     "has_tooltip": true,
+     "paused": false,
+     "matches": 10,
+     "searched": 30000,
+     "in_space": 30000,
      "distance": 4,
      "distance_enabled": true,
      "second_search_shown": false,

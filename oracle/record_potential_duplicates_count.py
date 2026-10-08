@@ -23,7 +23,8 @@ The database is replaced where it would be slow or random:
   `PotentialDuplicatePairsFragmentarySearch`, and a pair is a hit if its
   distance is within the search's maximum distance (it keeps the real
   search's bookkeeping: `AddHits`, `PopBlock`, the relative-error
-  arithmetic);
+  arithmetic), and it makes the database's choice to search all that is
+  left at once when the hit rate is low (`DoingFileBasedSearchIsOK`);
 * the block size guideline is set per scenario and blocks are released one
   at a time, so every label can be recorded between two blocks.
 
@@ -51,12 +52,15 @@ sys.path.insert( 0, HERE )
 
 OUT = os.path.join( HERE, 'fixtures', 'potential_duplicates_count.json' )
 
-# a space is `n` pairs; pair `i` is ( 2i, 2i + 1, ( i * mult ) % modulus )
+# a space is `n` pairs; pair `i` is ( 2i, 2i + 1, ( i * mult ) % modulus ), or
+# for a rare space distance 0 if `i` is a multiple of `rare_every`, else `far`
 SPACES = {
     'none' : { 'n' : 0, 'mult' : 1, 'modulus' : 1 },
     'small' : { 'n' : 30, 'mult' : 7, 'modulus' : 13 },
     'large' : { 'n' : 30000, 'mult' : 7, 'modulus' : 13 },
     'tail' : { 'n' : 5000, 'mult' : 7, 'modulus' : 13 },
+    # one pair in 3,000 is at distance 0, the rest at 9
+    'rare' : { 'n' : 30000, 'rare_every' : 3000, 'far' : 9 },
 }
 
 SETTLE = 0.5
@@ -173,6 +177,23 @@ SCENARIOS = [
         { 'do' : 'block' },
         { 'do' : 'block' },
     ] ),
+    ( 'low_hit_rate_searches_the_rest_at_once', 'rare', 4000, {}, [
+        { 'do' : 'show' },
+        { 'do' : 'space' },
+        { 'do' : 'block' },
+        { 'do' : 'block' },
+        { 'do' : 'block' },
+    ] ),
+    ( 'low_hit_rate_optimisation_off', 'rare', 4000, { 'file_search_optimisation' : False }, [
+        { 'do' : 'show' },
+        { 'do' : 'space' },
+        { 'do' : 'block' },
+        { 'do' : 'block' },
+        { 'do' : 'block' },
+        { 'do' : 'cog', 'value' : 'file_search_optimisation' },
+        { 'do' : 'block' },
+        { 'do' : 'block' },
+    ] ),
     ( 'cog_items', 'small', 10, {}, [
         { 'do' : 'show' },
         { 'do' : 'space' },
@@ -185,6 +206,10 @@ SCENARIOS = [
 
 
 def space_rows( space ):
+
+    if 'rare_every' in space:
+
+        return [ ( 2 * i, 2 * i + 1, 0 if i % space[ 'rare_every' ] == 0 else space[ 'far' ] ) for i in range( space[ 'n' ] ) ]
 
     return [ ( 2 * i, 2 * i + 1, ( i * space[ 'mult' ] ) % space[ 'modulus' ] ) for i in range( space[ 'n' ] ) ]
 
@@ -331,7 +356,11 @@ def record( session ):
 
                         gate[ 'waiting' ] -= 1
 
-                    block = search.PopBlock().GetRows()
+                    # the database's choice between searching on a block of the
+                    # space and searching the files once for all that is left
+                    file_based = search.DoingFileBasedSearchIsOK() and search.ThisAppearsToHaveAHitRateLowerThan( 0.01 ) and max( search.EstimatedNumHits(), 1 ) * 500 < search.EstimatedNumRowsStillToSearch()
+
+                    block = search.PopRemaining() if file_based else search.PopBlock().GetRows()
 
                     context = search.GetPotentialDuplicatesSearchContext()
 
