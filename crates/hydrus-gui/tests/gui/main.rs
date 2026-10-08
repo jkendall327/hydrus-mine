@@ -118,6 +118,7 @@ mod subscriptions;
 mod subscriptions_dedupe;
 mod subscriptions_duplicate;
 mod subscriptions_separate;
+mod system_tray;
 mod thumbnail_appearance;
 mod thumbnail_cache;
 mod thumbnail_icons;

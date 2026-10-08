@@ -35,7 +35,7 @@ hydrus-testkit = { path = "crates/hydrus-testkit" }
 
 # external
 # The emoji fallback adapter uses Slint's internal font context; upgrade these together.
-slint = { version = "=1.18.1", default-features = false, features = ["std", "compat-1-2", "backend-winit", "renderer-software", "unstable-winit-030"] }
+slint = { version = "=1.18.1", default-features = false, features = ["std", "compat-1-2", "backend-winit", "renderer-software", "unstable-winit-030", "system-tray"] }
 slint-build = "=1.18.1"
 i-slint-core = { version = "=1.18.1", default-features = false, features = ["std", "shared-parley"] }
 anyhow = "1"

@@ -174,7 +174,8 @@ impl Client {
         // as it closes, as the reference keeps it
         let store = bound.pages.borrow().store().clone();
         hydrus_gui::windows::place_named_geometry(window.window(), &store, "main_gui");
-        window.show()?;
+        // (or hidden in the system tray, as the options say)
+        bound.tray.start(&window)?;
         Ok(Self {
             _window: window,
             bound,
