@@ -81,7 +81,8 @@ record of what was decided, and why the roadmap looks the way it does.
 - **Out of scope (2026-10-08, #95)**, each recorded on its leaf in
   `docs/rust/tracking/leaves.json` (priority `out-of-scope`, first note says
   why; undo by setting it back to `normal`): background sibling/parent loading
-  (`siblings-async`, `parents-async`), the background display-sync manager,
+  (`siblings-async`, `parents-async`), the background display-sync manager and
+  its two Tags > sync idle/normal-time switches,
   repository tabs in Manage Tags, "prefer system FFMPEG", the self-sizing
   viewer's rescue padding, locale integer rendering, the three image
   tile-cache settings, the toaster's mouse-on-another-display freeze, two Qt
