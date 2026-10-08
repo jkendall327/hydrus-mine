@@ -76,7 +76,14 @@ fn a_relative_comparator_of_each_operator_family_reads_as_the_references() {
     // (the property, the operator, the multiplier, the delta and the range,
     // for the comparators of the reference's "more comparators" rule)
     let cases: [(&str, Comparable, NumberOp, &str, i32, i32); 6] = [
-        ("A has \"system:ratio\" wider than B", Comparable::Ratio, NumberOp::Greater, "1", 0, 0),
+        (
+            "A has \"system:ratio\" wider than B",
+            Comparable::Ratio,
+            NumberOp::Greater,
+            "1",
+            0,
+            0,
+        ),
         (
             "A has \"system:ratio\" taller than or exactly 1.25x B",
             Comparable::Ratio,
@@ -222,7 +229,10 @@ fn and_and_or_groups_are_built_edited_and_nested_to_read_as_the_references() {
     );
     child.invoke_apply();
     and.invoke_apply();
-    or.set_sub_kind(kind_index_sub(&or, "A has clearly better jpeg quality than B"));
+    or.set_sub_kind(kind_index_sub(
+        &or,
+        "A has clearly better jpeg quality than B",
+    ));
     or.invoke_sub_add();
     assert_eq!(or.get_summary(), theirs);
     // the group, opened again from the list, shows what it was made of

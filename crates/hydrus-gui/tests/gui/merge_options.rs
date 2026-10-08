@@ -375,7 +375,12 @@ fn the_ratings_list_adds_edits_and_deletes_as_the_references_does() {
                 })
                 .collect()
         };
-        assert_eq!(cells(&editor.get_rating_rows()), rows(first), "{}", case["decision"]);
+        assert_eq!(
+            cells(&editor.get_rating_rows()),
+            rows(first),
+            "{}",
+            case["decision"]
+        );
         for state in case["states"].as_array().unwrap() {
             let Some(step) = state["step"].as_array() else {
                 continue;
@@ -419,7 +424,11 @@ fn the_ratings_list_adds_edits_and_deletes_as_the_references_does() {
                     if let Some(service) = step[1].as_str() {
                         choose(&editor, service);
                         if let Some(second) = said.get(1) {
-                            ask(&editor, second["select"].as_str().unwrap(), &second["choices"]);
+                            ask(
+                                &editor,
+                                second["select"].as_str().unwrap(),
+                                &second["choices"],
+                            );
                             choose(&editor, step[2].as_str().unwrap());
                         }
                     } else {
@@ -429,7 +438,11 @@ fn the_ratings_list_adds_edits_and_deletes_as_the_references_does() {
                 "edit_rating" => {
                     let row = row_of(&editor, step[1].as_str().unwrap());
                     editor.invoke_row_activated(1, row);
-                    ask(&editor, said[0]["select"].as_str().unwrap(), &said[0]["choices"]);
+                    ask(
+                        &editor,
+                        said[0]["select"].as_str().unwrap(),
+                        &said[0]["choices"],
+                    );
                     choose(&editor, step[2].as_str().unwrap());
                 }
                 _ => {
@@ -438,12 +451,20 @@ fn the_ratings_list_adds_edits_and_deletes_as_the_references_does() {
                         editor.invoke_row_clicked(1, row, true, false);
                     }
                     editor.invoke_list_button(1, "delete".into());
-                    assert_eq!(editor.get_asking_message(), said[0]["asked"].as_str().unwrap(), "{at}");
+                    assert_eq!(
+                        editor.get_asking_message(),
+                        said[0]["asked"].as_str().unwrap(),
+                        "{at}"
+                    );
                     editor.invoke_chosen(0);
                 }
             }
             assert!(!editor.get_asking(), "{at}");
-            assert_eq!(cells(&editor.get_rating_rows()), rows(&state["state"]["rating_rows"]), "{at}");
+            assert_eq!(
+                cells(&editor.get_rating_rows()),
+                rows(&state["state"]["rating_rows"]),
+                "{at}"
+            );
             played += 1;
         }
         editor.invoke_apply();

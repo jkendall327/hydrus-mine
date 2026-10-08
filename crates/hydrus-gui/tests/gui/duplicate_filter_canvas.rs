@@ -38,7 +38,9 @@ fn replay(scenario: &Value) {
     let name = scenario["name"].as_str().unwrap();
     let options = &scenario["options"];
     let settings = DuplicateFilterSettings {
-        max_batch_size: options["duplicate_filter_max_batch_size"].as_u64().unwrap_or(100) as u32,
+        max_batch_size: options["duplicate_filter_max_batch_size"]
+            .as_u64()
+            .unwrap_or(100) as u32,
         auto_commit_batch_size: options
             .get("duplicate_filter_auto_commit_batch_size")
             .and_then(Value::as_u64)
@@ -58,7 +60,11 @@ fn replay(scenario: &Value) {
         .clone_strong();
 
     let start = &scenario["start"];
-    assert_eq!(window.get_index_text(), start["index"].as_str().unwrap(), "{name}");
+    assert_eq!(
+        window.get_index_text(),
+        start["index"].as_str().unwrap(),
+        "{name}"
+    );
     assert_eq!(
         pair_now(&o).unwrap().to_vec(),
         [
@@ -71,7 +77,12 @@ fn replay(scenario: &Value) {
         .as_array()
         .unwrap()
         .iter()
-        .map(|p| [p[0].as_str().unwrap().to_owned(), p[1].as_str().unwrap().to_owned()])
+        .map(|p| {
+            [
+                p[0].as_str().unwrap().to_owned(),
+                p[1].as_str().unwrap().to_owned(),
+            ]
+        })
         .collect();
     assert_eq!(batch.len() as u64, start["num_pairs"].as_u64().unwrap());
 
@@ -179,15 +190,23 @@ fn replay(scenario: &Value) {
             .into_iter()
             .map(|(q, b, p)| (q, b.into_iter().collect(), p))
             .collect();
-        assert_eq!(ours.len(), recorded_asked.len(), "{what}: {ours:?} vs {recorded_asked:?}");
+        assert_eq!(
+            ours.len(),
+            recorded_asked.len(),
+            "{what}: {ours:?} vs {recorded_asked:?}"
+        );
         for (ours, theirs) in ours.iter().zip(&recorded_asked) {
             assert_eq!(ours.0, theirs.0, "{what}: question");
-            if !theirs.1.is_empty() {
+            if theirs.1.is_empty() {
+                // a yes/no question, answered yes
+                assert_eq!(
+                    ours.1,
+                    BTreeSet::from(["yes".to_owned(), "no".to_owned()]),
+                    "{what}"
+                );
+            } else {
                 assert_eq!(ours.1, theirs.1, "{what}: buttons");
                 assert_eq!(ours.2, theirs.2, "{what}: pressed");
-            } else {
-                // a yes/no question, answered yes
-                assert_eq!(ours.1, BTreeSet::from(["yes".to_owned(), "no".to_owned()]), "{what}");
             }
         }
 
@@ -202,9 +221,16 @@ fn replay(scenario: &Value) {
             assert_eq!(open, after["open"].as_bool().unwrap(), "{what}: open");
         }
         if open {
-            assert_eq!(window.get_index_text(), after["index"].as_str().unwrap(), "{what}");
+            assert_eq!(
+                window.get_index_text(),
+                after["index"].as_str().unwrap(),
+                "{what}"
+            );
             let shown = after["shown"].as_str().map(|shown| {
-                [shown.to_owned(), after["other"].as_str().unwrap().to_owned()]
+                [
+                    shown.to_owned(),
+                    after["other"].as_str().unwrap().to_owned(),
+                ]
             });
             assert_eq!(pair_now(&o), shown, "{what}: pair");
         }
@@ -261,10 +287,26 @@ fn replay(scenario: &Value) {
                 .map(|h| h.as_str().unwrap().to_owned())
                 .collect()
         };
-        assert_eq!(hex_of(&o, ours.king), theirs["king"].as_str().unwrap(), "{name}: king of {hash}");
-        assert_eq!(set(&ours.potentials), hashes("0"), "{name}: potentials of {hash}");
-        assert_eq!(set(&ours.false_positives), hashes("1"), "{name}: false positives of {hash}");
-        assert_eq!(set(&ours.alternates), hashes("3"), "{name}: alternates of {hash}");
+        assert_eq!(
+            hex_of(&o, ours.king),
+            theirs["king"].as_str().unwrap(),
+            "{name}: king of {hash}"
+        );
+        assert_eq!(
+            set(&ours.potentials),
+            hashes("0"),
+            "{name}: potentials of {hash}"
+        );
+        assert_eq!(
+            set(&ours.false_positives),
+            hashes("1"),
+            "{name}: false positives of {hash}"
+        );
+        assert_eq!(
+            set(&ours.alternates),
+            hashes("3"),
+            "{name}: alternates of {hash}"
+        );
         let members: BTreeSet<String> = set(&ours.duplicates);
         assert_eq!(members, hashes("8"), "{name}: members of {hash}");
     }
