@@ -35,7 +35,11 @@ time.
 The main window opens
 where and as big as hydrus had it (maximised, by hydrus's default) and
 keeps its size and place as it closes, as hydrus's frame locations do
-(less hydrus's fitting of a window to its screen). Its windows
+(`SaveTLWSizeAndPosition`, over the displays winit lists: nothing while it is
+minimised or hidden; its place only once checked by the off-screen rescue;
+and, maximised or fullscreen, its earlier size and place kept, the place
+moved to the same spot on the new display if the window was carried to
+another). Its windows
 follow the system's light or dark mode (hydrus's own colour options aren't
 carried over yet). Each notebook
 on the way to the page shown has a row of tabs, and a notebook opens on its
@@ -84,6 +88,22 @@ in a new page
 it while it runs; a right click dismisses one that is done, and the line
 under them counts them, with "dismiss all" (those done) and an arrow to
 hide or show them. They update four times a second.
+A long job can be published as modal (`src/popup_modal.rs`,
+`hydrus-gui-model/src/popup_modal.rs`; Help > debug > "make a modal popup in
+five seconds"), as the reference's `AddModalMessage`: it is kept out of the
+popups and thrown up in a dialog of its own, titled with the job's title
+("important job" without one), with the job's texts, gauges, download and
+pause and stop buttons, and a close button only if the job can be cancelled.
+It waits (one retried at a time) while the main window is minimised or not
+the active one, or another modal is up. Closing a running job asks "Cancel/stop
+job?" (yes cancels it); closing one that cannot be cancelled says so and the
+dialog stays; a job that finishes closes its dialog by itself. Either way the
+job is then released to the popups. A job already done goes straight to the
+popups. A popup's download keeps its control, blank, for ten seconds after
+the download goes, as the reference's does. The popups freeze while the main
+window is minimised (if that option is on) or hidden, and focus is no
+condition (`oracle/record_popup_freeze.py`, `record_popup_modal.py`,
+`record_popup_network_job.py`).
 Options > popup notifications stages the approximate maximum width (16–256
 characters, default 56) and the force-fixed-width switch (default off). Apply
 persists both. Each card captures these settings when it first enters the oldest
@@ -530,8 +550,10 @@ Help > about opens the about window (`ui/about.slint`,
 `src/about_window.rs`, `hydrus-gui-model/src/about.rs`), as the
 reference's "about hydrus": the name, version and site link over the
 "Description" (platform, ffmpeg and SQLite versions, boot time,
-directories and database settings), "Optional Libraries", "Credits" and
-"License" tabs, in the reference's forms
+directories, locale and database settings), "Optional Libraries" (what
+hydrus-rs can do without or with built in, a line each in the reference's
+forms: "ffmpeg: yes", "mpv: not available", "PDF: yes (native)"), "Credits"
+and "License" tabs, in the reference's forms
 (`oracle/record_about_window.py`).
 
 File > options opens the options window (`hydrus-gui-model/src/options.rs`), as the

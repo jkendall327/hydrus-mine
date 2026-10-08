@@ -136,7 +136,7 @@ fn update(context: &Rc<Context>) {
     }
 }
 
-/// Back up to `dest` on a worker: a cancellable "backing up db" popup with
+/// Back up to `dest` on a worker: a cancellable, modal "backing up db" job with
 /// its progress, finished "backup complete!", and the time kept.
 #[allow(clippy::cast_precision_loss)] // (seconds)
 fn start(store: &Arc<Store>, dest: std::path::PathBuf) {
@@ -145,6 +145,8 @@ fn start(store: &Arc<Store>, dest: std::path::PathBuf) {
         let mut job = Job::new(false, true, now() as f64);
         job.status_title = Some(model::POPUP_TITLE.into());
         job.status_text_1 = Some("closing db".into());
+        // (`pub( 'modal_message' )`: in a dialog of its own while it runs)
+        job.held_by_modal = true;
         let key = job.key;
         let at = now();
         if store

@@ -24,6 +24,7 @@ fn editor(store: &Store) -> (Editor, usize) {
         .unwrap();
     (e, row)
 }
+// leaf: audit-options-popups-freeze
 #[test]
 fn real_qt_hidden_and_minimized_states_do_not_use_focus_and_unknown_is_explicit() {
     let fixture = hydrus_testkit::fixture_json("popup_freeze.json");

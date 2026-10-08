@@ -77,6 +77,8 @@ pub mod page_layout;
 pub mod page_tree;
 pub mod png_export;
 pub mod popup_freeze;
+pub mod popup_modal;
+pub mod popup_network_job;
 pub mod predicate_editors;
 pub mod predicate_history;
 pub mod preview_zoom;
@@ -168,6 +170,7 @@ pub mod search_or;
 
 pub mod frame_locations;
 pub mod frame_placement;
+pub mod frame_save;
 pub mod incremental_tagging;
 pub mod mpv_options;
 pub mod tag_banner;

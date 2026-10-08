@@ -340,15 +340,94 @@ fn native_screens(window: &slint::Window) -> Option<Vec<Screen>> {
     })
 }
 
-/// Save only the closing owner's current geometry, preserving other frames.
+/// Save only the closing owner's current geometry, preserving other frames:
+/// `SaveTLWSizeAndPosition` over the displays winit can see.
 pub fn save_named(window: &slint::Window, store: &Store, name: &str) {
+    let screens = native_screens(window).unwrap_or_default();
+    let window_screen = native_window_screen(window, &screens);
+    save_named_on(window, store, name, &screens, window_screen);
+}
+
+/// [`save_named`] over the given displays (the window being on the
+/// `window_screen`th), for a platform without a monitor list.
+pub fn save_named_on(
+    window: &slint::Window,
+    store: &Store,
+    name: &str,
+    screens: &[Screen],
+    window_screen: Option<usize>,
+) {
     let state = state(window);
     let name = name.to_owned();
+    let screens = screens.to_vec();
+    let minimised = crate::popup_freeze::minimized(window) == Some(true);
+    let visible = window.is_visible();
     if let Err(error) = store.write(move |ctx| {
-        hydrus_gui_model::frame_locations::save_window_state(ctx.conn(), &name, state)
+        hydrus_gui_model::frame_locations::save_window_state_on(
+            ctx.conn(),
+            &name,
+            state,
+            &hydrus_gui_model::frame_locations::Display {
+                minimised,
+                visible,
+                screens: &screens,
+                window_screen,
+            },
+        )
     }) {
         eprintln!("could not keep the window's size and place: {error}");
     }
+}
+
+/// The display the window is on (`tlw.screen()`): the one winit calls its
+/// current monitor, found among `screens` by its place.
+#[allow(clippy::cast_possible_truncation)]
+fn native_window_screen(window: &slint::Window, screens: &[Screen]) -> Option<usize> {
+    let scale = f64::from(window.scale_factor());
+    let at = window.with_winit_window(|native| {
+        let monitor = native.current_monitor()?;
+        let position = monitor.position();
+        Some((
+            (f64::from(position.x) / scale).round() as i64,
+            (f64::from(position.y) / scale).round() as i64,
+        ))
+    })??;
+    screens
+        .iter()
+        .position(|screen| (screen.geometry.x, screen.geometry.y) == at)
+}
+
+/// Keep a window's geometry as it moves, resizes and maximises, not only as
+/// it closes: the reference's frames save a moment after the last change
+/// (`FrameThatResizes`' timers). Looks every quarter second; a change that
+/// has held for a look is saved.
+pub fn autosave(
+    window: slint::Weak<impl slint::ComponentHandle + 'static>,
+    store: std::sync::Arc<Store>,
+    name: &'static str,
+) -> std::rc::Rc<slint::Timer> {
+    let timer = std::rc::Rc::new(slint::Timer::default());
+    let last = std::cell::Cell::new(window.upgrade().map(|window| state(window.window())));
+    let dirty = std::cell::Cell::new(false);
+    timer.start(
+        slint::TimerMode::Repeated,
+        std::time::Duration::from_millis(250),
+        move || {
+            let Some(window) = window.upgrade() else {
+                return;
+            };
+            let now = state(window.window());
+            if last.get().is_none() {
+                last.set(Some(now));
+            } else if last.get() != Some(now) {
+                last.set(Some(now));
+                dirty.set(true);
+            } else if dirty.replace(false) {
+                save_named(window.window(), &store, name);
+            }
+        },
+    );
+    timer
 }
 
 /// A window's size and place now, and whether it is maximised or

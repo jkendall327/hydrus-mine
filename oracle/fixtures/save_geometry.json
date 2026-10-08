@@ -1,0 +1,1514 @@
+{
+ "key": "manage_options_dialog",
+ "padding": 40,
+ "fuzzy_relocate": true,
+ "topology": [
+  {
+   "geometry": [
+    0,
+    0,
+    800,
+    600
+   ],
+   "available": [
+    0,
+    24,
+    800,
+    576
+   ]
+  },
+  {
+   "geometry": [
+    -1000,
+    100,
+    800,
+    600
+   ],
+   "available": [
+    -1000,
+    124,
+    800,
+    576
+   ]
+  }
+ ],
+ "columns": [
+  "remember_size",
+  "remember_position",
+  "last_size",
+  "last_position",
+  "default_gravity",
+  "default_position",
+  "maximised",
+  "fullscreen"
+ ],
+ "cases": [
+  {
+   "label": "windowed on the first screen",
+   "before": [
+    true,
+    true,
+    [
+     800,
+     600
+    ],
+    [
+     20,
+     20
+    ],
+    [
+     -1,
+     -1
+    ],
+    "topleft",
+    false,
+    false
+   ],
+   "window": {
+    "position": [
+     100,
+     120
+    ],
+    "size": [
+     640,
+     480
+    ],
+    "screen": 0,
+    "minimised": false,
+    "visible": true,
+    "maximised": false,
+    "fullscreen": false
+   },
+   "disabled_position_test": false,
+   "after": [
+    true,
+    true,
+    [
+     640,
+     480
+    ],
+    [
+     100,
+     120
+    ],
+    [
+     -1,
+     -1
+    ],
+    "topleft",
+    false,
+    false
+   ]
+  },
+  {
+   "label": "windowed, remembers nothing",
+   "before": [
+    false,
+    false,
+    [
+     800,
+     600
+    ],
+    [
+     20,
+     20
+    ],
+    [
+     -1,
+     -1
+    ],
+    "topleft",
+    false,
+    false
+   ],
+   "window": {
+    "position": [
+     100,
+     120
+    ],
+    "size": [
+     640,
+     480
+    ],
+    "screen": 0,
+    "minimised": false,
+    "visible": true,
+    "maximised": false,
+    "fullscreen": false
+   },
+   "disabled_position_test": false,
+   "after": [
+    false,
+    false,
+    [
+     800,
+     600
+    ],
+    [
+     20,
+     20
+    ],
+    [
+     -1,
+     -1
+    ],
+    "topleft",
+    false,
+    false
+   ]
+  },
+  {
+   "label": "windowed, remembers size only",
+   "before": [
+    true,
+    false,
+    [
+     800,
+     600
+    ],
+    [
+     20,
+     20
+    ],
+    [
+     -1,
+     -1
+    ],
+    "topleft",
+    false,
+    false
+   ],
+   "window": {
+    "position": [
+     100,
+     120
+    ],
+    "size": [
+     640,
+     480
+    ],
+    "screen": 0,
+    "minimised": false,
+    "visible": true,
+    "maximised": false,
+    "fullscreen": false
+   },
+   "disabled_position_test": false,
+   "after": [
+    true,
+    false,
+    [
+     640,
+     480
+    ],
+    [
+     20,
+     20
+    ],
+    [
+     -1,
+     -1
+    ],
+    "topleft",
+    false,
+    false
+   ]
+  },
+  {
+   "label": "windowed, remembers position only",
+   "before": [
+    false,
+    true,
+    [
+     800,
+     600
+    ],
+    [
+     20,
+     20
+    ],
+    [
+     -1,
+     -1
+    ],
+    "topleft",
+    false,
+    false
+   ],
+   "window": {
+    "position": [
+     100,
+     120
+    ],
+    "size": [
+     640,
+     480
+    ],
+    "screen": 0,
+    "minimised": false,
+    "visible": true,
+    "maximised": false,
+    "fullscreen": false
+   },
+   "disabled_position_test": false,
+   "after": [
+    false,
+    true,
+    [
+     800,
+     600
+    ],
+    [
+     100,
+     120
+    ],
+    [
+     -1,
+     -1
+    ],
+    "topleft",
+    false,
+    false
+   ]
+  },
+  {
+   "label": "windowed, no earlier size or place",
+   "before": [
+    true,
+    true,
+    null,
+    null,
+    [
+     -1,
+     -1
+    ],
+    "topleft",
+    false,
+    false
+   ],
+   "window": {
+    "position": [
+     100,
+     120
+    ],
+    "size": [
+     640,
+     480
+    ],
+    "screen": 0,
+    "minimised": false,
+    "visible": true,
+    "maximised": false,
+    "fullscreen": false
+   },
+   "disabled_position_test": false,
+   "after": [
+    true,
+    true,
+    [
+     640,
+     480
+    ],
+    [
+     100,
+     120
+    ],
+    [
+     -1,
+     -1
+    ],
+    "topleft",
+    false,
+    false
+   ]
+  },
+  {
+   "label": "windowed on the second screen",
+   "before": [
+    true,
+    true,
+    [
+     800,
+     600
+    ],
+    [
+     20,
+     20
+    ],
+    [
+     -1,
+     -1
+    ],
+    "topleft",
+    false,
+    false
+   ],
+   "window": {
+    "position": [
+     -900,
+     150
+    ],
+    "size": [
+     640,
+     480
+    ],
+    "screen": 1,
+    "minimised": false,
+    "visible": true,
+    "maximised": false,
+    "fullscreen": false
+   },
+   "disabled_position_test": false,
+   "after": [
+    true,
+    true,
+    [
+     640,
+     480
+    ],
+    [
+     -900,
+     150
+    ],
+    [
+     -1,
+     -1
+    ],
+    "topleft",
+    false,
+    false
+   ]
+  },
+  {
+   "label": "was maximised, now windowed",
+   "before": [
+    true,
+    true,
+    [
+     800,
+     600
+    ],
+    [
+     20,
+     20
+    ],
+    [
+     -1,
+     -1
+    ],
+    "topleft",
+    true,
+    false
+   ],
+   "window": {
+    "position": [
+     100,
+     120
+    ],
+    "size": [
+     640,
+     480
+    ],
+    "screen": 0,
+    "minimised": false,
+    "visible": true,
+    "maximised": false,
+    "fullscreen": false
+   },
+   "disabled_position_test": false,
+   "after": [
+    true,
+    true,
+    [
+     640,
+     480
+    ],
+    [
+     100,
+     120
+    ],
+    [
+     -1,
+     -1
+    ],
+    "topleft",
+    false,
+    false
+   ]
+  },
+  {
+   "label": "was maximised, now windowed, remembers no size",
+   "before": [
+    false,
+    true,
+    [
+     800,
+     600
+    ],
+    [
+     20,
+     20
+    ],
+    [
+     -1,
+     -1
+    ],
+    "topleft",
+    true,
+    false
+   ],
+   "window": {
+    "position": [
+     100,
+     120
+    ],
+    "size": [
+     640,
+     480
+    ],
+    "screen": 0,
+    "minimised": false,
+    "visible": true,
+    "maximised": false,
+    "fullscreen": false
+   },
+   "disabled_position_test": false,
+   "after": [
+    false,
+    true,
+    [
+     800,
+     600
+    ],
+    [
+     20,
+     20
+    ],
+    [
+     -1,
+     -1
+    ],
+    "topleft",
+    true,
+    false
+   ]
+  },
+  {
+   "label": "off-screen, rescued onto a corner",
+   "before": [
+    true,
+    true,
+    [
+     800,
+     600
+    ],
+    [
+     20,
+     20
+    ],
+    [
+     -1,
+     -1
+    ],
+    "topleft",
+    false,
+    false
+   ],
+   "window": {
+    "position": [
+     -5000,
+     -5000
+    ],
+    "size": [
+     640,
+     480
+    ],
+    "screen": 0,
+    "minimised": false,
+    "visible": true,
+    "maximised": false,
+    "fullscreen": false
+   },
+   "disabled_position_test": false,
+   "after": [
+    true,
+    true,
+    [
+     640,
+     480
+    ],
+    [
+     40,
+     64
+    ],
+    [
+     -1,
+     -1
+    ],
+    "topleft",
+    false,
+    false
+   ]
+  },
+  {
+   "label": "off-screen, rescued onto the first screen",
+   "before": [
+    true,
+    true,
+    [
+     800,
+     600
+    ],
+    [
+     20,
+     20
+    ],
+    [
+     -1,
+     -1
+    ],
+    "topleft",
+    false,
+    false
+   ],
+   "window": {
+    "position": [
+     -5000,
+     -5000
+    ],
+    "size": [
+     100,
+     100
+    ],
+    "screen": 0,
+    "minimised": false,
+    "visible": true,
+    "maximised": false,
+    "fullscreen": false
+   },
+   "disabled_position_test": false,
+   "after": [
+    true,
+    true,
+    [
+     100,
+     100
+    ],
+    [
+     40,
+     64
+    ],
+    [
+     -1,
+     -1
+    ],
+    "topleft",
+    false,
+    false
+   ]
+  },
+  {
+   "label": "partly off the top left, kept",
+   "before": [
+    true,
+    true,
+    [
+     800,
+     600
+    ],
+    [
+     20,
+     20
+    ],
+    [
+     -1,
+     -1
+    ],
+    "topleft",
+    false,
+    false
+   ],
+   "window": {
+    "position": [
+     -30,
+     -30
+    ],
+    "size": [
+     640,
+     480
+    ],
+    "screen": 0,
+    "minimised": false,
+    "visible": true,
+    "maximised": false,
+    "fullscreen": false
+   },
+   "disabled_position_test": false,
+   "after": [
+    true,
+    true,
+    [
+     640,
+     480
+    ],
+    [
+     -30,
+     -30
+    ],
+    [
+     -1,
+     -1
+    ],
+    "topleft",
+    false,
+    false
+   ]
+  },
+  {
+   "label": "off-screen with the position test disabled",
+   "before": [
+    true,
+    true,
+    [
+     800,
+     600
+    ],
+    [
+     20,
+     20
+    ],
+    [
+     -1,
+     -1
+    ],
+    "topleft",
+    false,
+    false
+   ],
+   "window": {
+    "position": [
+     -5000,
+     -5000
+    ],
+    "size": [
+     640,
+     480
+    ],
+    "screen": 0,
+    "minimised": false,
+    "visible": true,
+    "maximised": false,
+    "fullscreen": false
+   },
+   "disabled_position_test": true,
+   "after": [
+    true,
+    true,
+    [
+     640,
+     480
+    ],
+    [
+     -5000,
+     -5000
+    ],
+    [
+     -1,
+     -1
+    ],
+    "topleft",
+    false,
+    false
+   ]
+  },
+  {
+   "label": "minimised: not saved",
+   "before": [
+    true,
+    true,
+    [
+     800,
+     600
+    ],
+    [
+     20,
+     20
+    ],
+    [
+     -1,
+     -1
+    ],
+    "topleft",
+    false,
+    false
+   ],
+   "window": {
+    "position": [
+     100,
+     120
+    ],
+    "size": [
+     640,
+     480
+    ],
+    "screen": 0,
+    "minimised": true,
+    "visible": true,
+    "maximised": false,
+    "fullscreen": false
+   },
+   "disabled_position_test": false,
+   "after": [
+    true,
+    true,
+    [
+     800,
+     600
+    ],
+    [
+     20,
+     20
+    ],
+    [
+     -1,
+     -1
+    ],
+    "topleft",
+    false,
+    false
+   ]
+  },
+  {
+   "label": "hidden: not saved",
+   "before": [
+    true,
+    true,
+    [
+     800,
+     600
+    ],
+    [
+     20,
+     20
+    ],
+    [
+     -1,
+     -1
+    ],
+    "topleft",
+    false,
+    false
+   ],
+   "window": {
+    "position": [
+     100,
+     120
+    ],
+    "size": [
+     640,
+     480
+    ],
+    "screen": 0,
+    "minimised": false,
+    "visible": false,
+    "maximised": false,
+    "fullscreen": false
+   },
+   "disabled_position_test": false,
+   "after": [
+    true,
+    true,
+    [
+     800,
+     600
+    ],
+    [
+     20,
+     20
+    ],
+    [
+     -1,
+     -1
+    ],
+    "topleft",
+    false,
+    false
+   ]
+  },
+  {
+   "label": "maximised on the screen it was on",
+   "before": [
+    true,
+    true,
+    [
+     800,
+     600
+    ],
+    [
+     20,
+     20
+    ],
+    [
+     -1,
+     -1
+    ],
+    "topleft",
+    false,
+    false
+   ],
+   "window": {
+    "position": [
+     0,
+     0
+    ],
+    "size": [
+     800,
+     600
+    ],
+    "screen": 0,
+    "minimised": false,
+    "visible": true,
+    "maximised": true,
+    "fullscreen": false
+   },
+   "disabled_position_test": false,
+   "after": [
+    true,
+    true,
+    [
+     800,
+     600
+    ],
+    [
+     20,
+     20
+    ],
+    [
+     -1,
+     -1
+    ],
+    "topleft",
+    true,
+    false
+   ]
+  },
+  {
+   "label": "maximised with no earlier place",
+   "before": [
+    true,
+    true,
+    [
+     800,
+     600
+    ],
+    null,
+    [
+     -1,
+     -1
+    ],
+    "topleft",
+    false,
+    false
+   ],
+   "window": {
+    "position": [
+     0,
+     0
+    ],
+    "size": [
+     800,
+     600
+    ],
+    "screen": 0,
+    "minimised": false,
+    "visible": true,
+    "maximised": true,
+    "fullscreen": false
+   },
+   "disabled_position_test": false,
+   "after": [
+    true,
+    true,
+    [
+     800,
+     600
+    ],
+    [
+     0,
+     0
+    ],
+    [
+     -1,
+     -1
+    ],
+    "topleft",
+    true,
+    false
+   ]
+  },
+  {
+   "label": "maximised with no earlier place or size",
+   "before": [
+    true,
+    true,
+    null,
+    null,
+    [
+     -1,
+     -1
+    ],
+    "topleft",
+    false,
+    false
+   ],
+   "window": {
+    "position": [
+     0,
+     0
+    ],
+    "size": [
+     800,
+     600
+    ],
+    "screen": 0,
+    "minimised": false,
+    "visible": true,
+    "maximised": true,
+    "fullscreen": false
+   },
+   "disabled_position_test": false,
+   "after": [
+    true,
+    true,
+    [
+     800,
+     600
+    ],
+    [
+     0,
+     0
+    ],
+    [
+     -1,
+     -1
+    ],
+    "topleft",
+    true,
+    false
+   ]
+  },
+  {
+   "label": "fullscreen on the screen it was on",
+   "before": [
+    true,
+    true,
+    [
+     800,
+     600
+    ],
+    [
+     20,
+     20
+    ],
+    [
+     -1,
+     -1
+    ],
+    "topleft",
+    false,
+    false
+   ],
+   "window": {
+    "position": [
+     0,
+     0
+    ],
+    "size": [
+     800,
+     600
+    ],
+    "screen": 0,
+    "minimised": false,
+    "visible": true,
+    "maximised": false,
+    "fullscreen": true
+   },
+   "disabled_position_test": false,
+   "after": [
+    true,
+    true,
+    [
+     800,
+     600
+    ],
+    [
+     20,
+     20
+    ],
+    [
+     -1,
+     -1
+    ],
+    "topleft",
+    false,
+    true
+   ]
+  },
+  {
+   "label": "maximised, remembers no position",
+   "before": [
+    true,
+    false,
+    [
+     800,
+     600
+    ],
+    [
+     20,
+     20
+    ],
+    [
+     -1,
+     -1
+    ],
+    "topleft",
+    false,
+    false
+   ],
+   "window": {
+    "position": [
+     0,
+     0
+    ],
+    "size": [
+     800,
+     600
+    ],
+    "screen": 0,
+    "minimised": false,
+    "visible": true,
+    "maximised": true,
+    "fullscreen": false
+   },
+   "disabled_position_test": false,
+   "after": [
+    true,
+    false,
+    [
+     800,
+     600
+    ],
+    [
+     20,
+     20
+    ],
+    [
+     -1,
+     -1
+    ],
+    "topleft",
+    true,
+    false
+   ]
+  },
+  {
+   "label": "maximised, remembers no size",
+   "before": [
+    false,
+    true,
+    [
+     800,
+     600
+    ],
+    [
+     20,
+     20
+    ],
+    [
+     -1,
+     -1
+    ],
+    "topleft",
+    false,
+    false
+   ],
+   "window": {
+    "position": [
+     0,
+     0
+    ],
+    "size": [
+     800,
+     600
+    ],
+    "screen": 0,
+    "minimised": false,
+    "visible": true,
+    "maximised": true,
+    "fullscreen": false
+   },
+   "disabled_position_test": false,
+   "after": [
+    false,
+    true,
+    [
+     800,
+     600
+    ],
+    [
+     0,
+     0
+    ],
+    [
+     -1,
+     -1
+    ],
+    "topleft",
+    false,
+    false
+   ]
+  },
+  {
+   "label": "maximised after moving to the second screen",
+   "before": [
+    true,
+    true,
+    [
+     800,
+     600
+    ],
+    [
+     100,
+     150
+    ],
+    [
+     -1,
+     -1
+    ],
+    "topleft",
+    false,
+    false
+   ],
+   "window": {
+    "position": [
+     -1000,
+     100
+    ],
+    "size": [
+     800,
+     600
+    ],
+    "screen": 1,
+    "minimised": false,
+    "visible": true,
+    "maximised": true,
+    "fullscreen": false
+   },
+   "disabled_position_test": false,
+   "after": [
+    true,
+    true,
+    [
+     800,
+     600
+    ],
+    [
+     -980,
+     120
+    ],
+    [
+     -1,
+     -1
+    ],
+    "topleft",
+    true,
+    false
+   ]
+  },
+  {
+   "label": "maximised on the second screen, its place fits there",
+   "before": [
+    true,
+    true,
+    [
+     300,
+     200
+    ],
+    [
+     100,
+     150
+    ],
+    [
+     -1,
+     -1
+    ],
+    "topleft",
+    false,
+    false
+   ],
+   "window": {
+    "position": [
+     -1000,
+     100
+    ],
+    "size": [
+     800,
+     600
+    ],
+    "screen": 1,
+    "minimised": false,
+    "visible": true,
+    "maximised": true,
+    "fullscreen": false
+   },
+   "disabled_position_test": false,
+   "after": [
+    true,
+    true,
+    [
+     300,
+     200
+    ],
+    [
+     -900,
+     250
+    ],
+    [
+     -1,
+     -1
+    ],
+    "topleft",
+    true,
+    false
+   ]
+  },
+  {
+   "label": "maximised on the second screen, its place cannot fit there",
+   "before": [
+    true,
+    true,
+    [
+     300,
+     200
+    ],
+    [
+     700,
+     500
+    ],
+    [
+     -1,
+     -1
+    ],
+    "topleft",
+    false,
+    false
+   ],
+   "window": {
+    "position": [
+     -1000,
+     100
+    ],
+    "size": [
+     800,
+     600
+    ],
+    "screen": 1,
+    "minimised": false,
+    "visible": true,
+    "maximised": true,
+    "fullscreen": false
+   },
+   "disabled_position_test": false,
+   "after": [
+    true,
+    true,
+    [
+     300,
+     200
+    ],
+    [
+     -980,
+     120
+    ],
+    [
+     -1,
+     -1
+    ],
+    "topleft",
+    true,
+    false
+   ]
+  },
+  {
+   "label": "maximised, earlier place on no screen",
+   "before": [
+    true,
+    true,
+    [
+     800,
+     600
+    ],
+    [
+     5000,
+     5000
+    ],
+    [
+     -1,
+     -1
+    ],
+    "topleft",
+    false,
+    false
+   ],
+   "window": {
+    "position": [
+     -1000,
+     100
+    ],
+    "size": [
+     800,
+     600
+    ],
+    "screen": 1,
+    "minimised": false,
+    "visible": true,
+    "maximised": true,
+    "fullscreen": false
+   },
+   "disabled_position_test": false,
+   "after": [
+    true,
+    true,
+    [
+     800,
+     600
+    ],
+    [
+     -980,
+     120
+    ],
+    [
+     -1,
+     -1
+    ],
+    "topleft",
+    true,
+    false
+   ]
+  },
+  {
+   "label": "fullscreen after moving to the second screen",
+   "before": [
+    true,
+    true,
+    [
+     300,
+     200
+    ],
+    [
+     100,
+     150
+    ],
+    [
+     -1,
+     -1
+    ],
+    "topleft",
+    false,
+    false
+   ],
+   "window": {
+    "position": [
+     -1000,
+     100
+    ],
+    "size": [
+     800,
+     600
+    ],
+    "screen": 1,
+    "minimised": false,
+    "visible": true,
+    "maximised": false,
+    "fullscreen": true
+   },
+   "disabled_position_test": false,
+   "after": [
+    true,
+    true,
+    [
+     300,
+     200
+    ],
+    [
+     -900,
+     250
+    ],
+    [
+     -1,
+     -1
+    ],
+    "topleft",
+    false,
+    true
+   ]
+  },
+  {
+   "label": "maximised and screenless",
+   "before": [
+    true,
+    true,
+    [
+     800,
+     600
+    ],
+    [
+     100,
+     150
+    ],
+    [
+     -1,
+     -1
+    ],
+    "topleft",
+    false,
+    false
+   ],
+   "window": {
+    "position": [
+     0,
+     0
+    ],
+    "size": [
+     800,
+     600
+    ],
+    "screen": null,
+    "minimised": false,
+    "visible": true,
+    "maximised": true,
+    "fullscreen": false
+   },
+   "disabled_position_test": false,
+   "after": [
+    true,
+    true,
+    [
+     800,
+     600
+    ],
+    [
+     100,
+     150
+    ],
+    [
+     -1,
+     -1
+    ],
+    "topleft",
+    true,
+    false
+   ]
+  }
+ ]
+}
