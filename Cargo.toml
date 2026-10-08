@@ -151,6 +151,9 @@ debug = false
 # nothing: any .slint edit regenerates the whole file.
 debug = false
 incremental = false
+# (it is not a workspace member, so the `"*"` override below would otherwise
+# optimise it, which runs out of memory)
+opt-level = 0
 
 [profile.dev.package.hydrus-media]
 # Likewise our own pixel work: visual-duplicates tests filter 2048x2048
