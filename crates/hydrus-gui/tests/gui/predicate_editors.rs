@@ -1425,7 +1425,7 @@ fn dimensions_presets_pointer_acceptance_reaches_page_and_persistent_recent_hist
     for case in cases.iter().filter(|case| !case["label"].is_null()) {
         let (dirs, store) = store();
         store
-            .write(|c| hydrus_store::settings::set(c, &RecentPredicates::default()))
+            .write(|c| hydrus_store::settings::set(c.conn(), &RecentPredicates::default()))
             .unwrap();
         let ui = MainWindow::new().unwrap();
         ui.show().unwrap();
@@ -1561,7 +1561,7 @@ fn dimensions_presets_cancel_hidden_and_retired_callbacks_do_not_change_owner() 
         .unwrap();
     let (_dirs, store) = store();
     store
-        .write(|c| hydrus_store::settings::set(c, &RecentPredicates::default()))
+        .write(|c| hydrus_store::settings::set(c.conn(), &RecentPredicates::default()))
         .unwrap();
     let _windows = headless::init();
     let ui = MainWindow::new().unwrap();
