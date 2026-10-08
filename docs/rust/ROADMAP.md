@@ -1,271 +1,34 @@
 # Roadmap
 
-What is being worked on in hydrus-rs, what comes next, and what is half
-done. Keep it current: when you finish something here, take it out (the
-commit, `GUI.md` and `DIFFERENCES.md` say what was done); when you stop
-partway, say exactly where.
+What is being worked on in hydrus-rs and what comes next. Keep it short and
+current; history lives in git.
 
-The owner's current goal (2026-10-06) is **all individual report feature leaves
-implemented, verified and published**, with Linux first. Numeric checkpoints are
-progress reports, not stopping targets. The latest checkpoint banks 376 original
-concrete implementation completions plus nine separately verified historical
-first-pass leaves: 385 verified original goal leaves in total. This cumulative
-count is not a last-24-hour sign-off count. No candidate from the current batch
-remains awaiting sign-off; 889 of the 1,274 goal leaves remain unverified.
-Keep these counts separate
-from inventory and historical first-pass assessments. Validate small batches
-routinely and reassess any batch that goes 24 hours without a checkpoint.
-Broad feature work must not rebuild an unvalidated backlog. Windows/macOS remain
-deferred; strict Linux linting, full tests, reference replay and rendered review
-remain required.
-The latest checkpoint verifies all nine dimensions presets through actual Qt
-acceptance and native pointer activation, page/recent updates, durable history
-and ownership guards. Strict Clippy and all 2,203 workspace tests passed,
-including 717 GUI and 67 media tests. Independent render review and preservation
-checks passed. Inventory statuses and all 376 implementation approvals remain
-unchanged. [Evidence](gui-coverage/checkpoints/dimensions-e00ddab70/README.md).
-The next coherent verification batch has 38 related preset candidates; these
-remain planning candidates without completion credit.
+## Now
 
-The preceding checkpoint validates manual export's successful-prefix cleanup after
-copy or sidecar failure, cancellation before deletion, and 64-file cleanup
-transactions. Strict Clippy and all 2,201 workspace tests passed, including
-715 GUI and 67 media tests. Six fresh Qt cases, actual native normal/failure
-frames, independent review and report browser checks passed. Exactly the original
-export-worker leaf gains credit; its parent remains Partial. Native inline error
-presentation and Qt's modal acknowledgement pause remain explicitly different.
-[Evidence](gui-coverage/checkpoints/da6fb4d35/README.md).
+- **Goal:** every feature of the reference client's GUI, ported and tested
+  against reference recordings, Linux first (Windows/macOS deferred; CI can
+  still run them by hand).
+- **Work tracking:** `docs/rust/tracking/` holds the remaining work, grouped
+  into workstreams that can run in parallel. A leaf is done when a test tagged
+  with its ID passes on master; the tracker counts that from the tests. See
+  `docs/rust/tracking/README.md`.
+- **Process:** `AGENTS.md`. The local loop is `scripts/dev.sh`; CI checks
+  every push. There is no per-feature publication step.
+- **Workflow overhaul in progress:** `docs/rust/WORKPLAN.md` (2026-10-08).
 
-The first parallel slate (2026-10-03) adds detailed embedded metadata,
-manual file export, local service review/management, tag sibling/parent
-editors, HTML/JSON formula editors, and URL class/single/nested gallery
-generator editors. Their behavior and recorded evidence are described in
-`GUI.md`; remaining differences are in `DIFFERENCES.md`. The metadata
-handover patch has been applied and removed. Store snapshot revisions also
-propagate service, URL-class and tag-graph edits to a running daemon.
-Service deletion also refreshes open viewer and locked-selection tags.
+## Before 2026-10-08
 
-The second parallel slate (2026-10-03) adds Client API key administration and
-supported server settings; tag display/search and relationship application
-configuration; and page/content parser editors with URL-class links. It uses
-three feature worktrees with staged integration and batched GUI validation.
-Reference recordings, behavioral regressions and independent review replace
-mutation runs at the owner's request. This slate was reviewed and merged.
+Until 2026-10-08 completed leaves were signed off one checkpoint at a time
+with evidence packets under `docs/rust/gui-coverage/` (removed; see git history
+up to commit `89a7c2a0c`). That ledger reached 376 implementation sign-offs plus
+nine historical re-verifications. Its leaf IDs carry over into the new tracker.
 
-The third parallel slate (2026-10-04) adds bandwidth usage/rules and live network
-jobs, cookie/session and HTTP-header management, clipboard URL monitoring,
-service-to-service tag migration, and reference-compatible downloader definition
-text/PNG import/export. The subscription Add flow now uses a separate gallery
-list followed by the editor. Definitions come from saved configuration; new
-recordings use synthetic domains. See the area sections in `GUI.md` and
-`DIFFERENCES.md` for coverage and remaining first-pass limitations.
+## Older per-area notes
 
-The continuous overnight run (2026-10-04) implements 240 distinct original
-reference leaves: 222 formerly Missing and 18 formerly Partial. It adds
-notebook/tab operations and independent named-session snapshots; live search,
-viewer, tag and import Options consumers; autocomplete preferences; namespace
-sort schemes and independent primary/fallback tag-service cog menus; network
-job controls and URL/domain/parser workflows; subsidiary/content parser editing;
-login credential/result editors; subscription concurrency and failure-stop
-handling; and a configured default export destination. The two sorting cog menu
-nodes are assessed separately and excluded from the concrete leaf count.
-The next 51 validated leaves add palette, filename tagging, migration, viewing
-statistics, Files/Trash, OR controls, Manage Tags, frame reset/flip, tag banners
-and local-service actions. Source `028fd72f` passed all four hosted CI jobs;
-455 native GUI integration tests passed on Linux, macOS and Windows.
-Exact accounting and validation are in [the overnight report](notes/overnight_gui_burndown.md)
-and [the frozen-baseline ledger](gui-coverage/overnight/progress.json). Remaining
-boundaries stay explicit in the map and `DIFFERENCES.md`.
+These were written during the first week and may be partly stale; check the
+code and `GUI.md` before relying on them.
 
-The [GUI migration map](gui-progress.html) expands selected reference features
-and all 121 exported native windows into nested work, including shared editors,
-all 38 reference option tabs and 19 system-predicate groups. It contains 1,812
-reference nodes and 1,799 native nodes, with per-node assessments, concrete
-remaining work and pinned source/evidence links. The frozen reference inventory
-now has 451 Missing, 384 Partial and 977 First pass entries; its status changes
-also include parent/alias assessments, which do not inflate the 376-item signed-off completion count.
-Native first-pass claims cite scoped regression evidence; source-supported but
-unverified behavior is partial. These counts are not a whole-client completion
-percentage. Maintenance instructions and scope limits are in
-[gui-coverage/README.md](gui-coverage/README.md).
-
-The earlier continuous source slate proposed 134 further original leaves over
-that validated 240 checkpoint: 53 on `codex/parity-more-controls`, five more
-on the dependent `codex/parity-next-details` branch, and 13 more on
-`codex/parity-preview-and-launching`, plus nine on
-`codex/parity-popup-and-file-views`, and 12 more on
-`codex/parity-cache-and-favourites`, and seven more on
-`codex/parity-tag-sort-and-refresh`, and one on
-`codex/parity-image-and-window-controls`, and seven on
-`codex/parity-appearance-and-file-menu`, and four on
-`codex/parity-preview-and-filter-controls`, and three on
-`codex/parity-predicate-and-job-controls`, and four on
-`codex/parity-deletion-and-dialog-controls`, and five on
-`codex/parity-maintenance-and-menu-controls`, and three on
-`codex/parity-cache-and-runtime-controls`, and one on
-`codex/parity-ffmpeg-timeout`, and five more on
-`codex/parity-prefetch-and-selected-records`. These add clearing captured selected
-deletion records in durable 64-record batches, the three saved viewer-prefetch
-count/budget controls reaching owned real image consumers, and the Help debug
-GET action with ordinary network policy and byte-save/text-copy response choices.
-The same integration adds compatible-subset sidecar-router imports from ordered
-PNG selections and actual current-session snapshot/reconstruction, contributing
-two more original implementation proposals. Session reload resets current tabs
-and thumbnail selection as the recorded reference does, while retaining old Undo
-pages. Scheduled file-maintenance review adds a substantive Partial improvement
-with zero completion credit; batch-refresh and independent-process lock boundaries
-remain explicit. The complete continuation contains 63 Partial improvements.
-Current-image asynchronous rendering, other cache families and the embedded
-network widget remain Partial. The latest integration consolidates work after
-the separately validating preview/launching checkpoint, preserving authored
-branches and evidence tags while avoiding redundant hosted runs for every
-intermediate draft. Windows cleanup now retains explicit stack-scoped collectors;
-the watcher replay waits for final persisted state. Newer hosted compile/lint
-diagnostics have narrow ownership/import/concrete-default repairs. All of this
-remains proposed until exact-source CI and native render review pass.
-The saved FFmpeg timeout now reaches importer and
-maintenance work, About, clipboard image import, import review, duplicate
-auto-resolution, parser fetching and folder-sidecar sampling through weak Store
-readers. Each process captures its deadline once, matching the reference's
-three-second polling boundary; explicit fixed and streaming APIs retain their
-existing deadlines. Independent review closed four omitted consumer paths.
-Hosted Rust and native verification remains pending. The three image-cache controls now
-reach shared pending/full-resolution renderers in preview, viewer, archive/delete
-and duplicate-filter consumers. Budget admission uses the reference RGB estimate;
-loaded footprints update on access, timeout is strict, and cache eviction preserves
-current displayed images and viewing intervals. Live policy, implicit normalization
-merges and owned-child edit guards are independently reviewed. The represented
-viewer-prefetch controls now have scoped proposals; tile, video, delay controls
-and whole-cache families remain Partial. Runtime force-idle and hidden/native
-minimized toaster freezing are further Partial improvements with zero completion
-credit; missing worker-wake/CPU behavior, Wayland minimized state and other-monitor
-freezing remain explicit. The five preceding proposals add the two real
-normal-time maintenance gates, two owned five-second debug actions (popup and
-new search page), and the default-off Client API cookie/header notification
-control. Automatic workers run outside the UI and retire when the final binding
-clone closes; existing delayed actions deliver while Main is hidden and preserve
-open page-chooser destinations. Real authenticated cookie/header routes publish
-reference-matching finished jobs through the existing toaster. Actual Qt traces,
-independent source review and authored hosted regressions cover these bounded
-scopes. The represented menu-choice wheel preference and active-predicate
-copy/open routes are additional Partial improvements with zero completion credit.
-Random hidden-order restoration remains unimplemented. The four preceding proposals add the
-captured physical deletion delay, live radio Enter/Return preference, and raw
-namespace grouping Add/Edit controls. Physical deletion commits each pair before
-waiting outside the writer; shutdown wakes the owned worker and restored-file
-queue cleanup skips unnecessary waits. Radio keys re-read the saved policy;
-unforced keys reach the parent default button, matching recorded Linux behavior.
-Namespace children preserve raw blanks, case, whitespace and duplicates, while
-field-scoped saves preserve concurrent presentation changes. The three preceding
-proposals add the
-reference multiline hash/type controls, owned cleanup warnings and text repaint,
-and the real two-job long-text popup producer. Active predicates now support
-populated system editing, selection, inversion and captured search commands,
-plus simple text editing, atomic mixed-dialog Apply/Cancel, OR reopening and
-start-OR replacement. Hidden-parent child cancellation restores the parent's
-controls; retired descendants release their owned state. Mixed OR and inherited
-menu branches keep that original action Partial with zero completion credit.
-The four earlier preview/filter proposals cover the
-independent preview default zoom, file-size comparison/value/unit editor, and
-both archive/delete finish policies. Saved choices reach actual preview geometry,
-typed searches, selectable deletion domains and an owned 1.2-second button delay.
-Repeated F12 preserves the existing filter and pending decisions; a retained
-finish cannot write after its main window is destroyed. Hosted validation and
-exact-source native render review remain pending for these proposals.
-Native WebP/ugoira readers now consume the animation start percentage and the
-reference previous-widget frame count. Apply preserves the actual integer chosen
-in the spinbox, including its floating-point reopening quirks. Unsupported
-animation backends and imported indices keep this original leaf Partial with zero
-completion credit.
-The 71-control branch adds two preview viewing-time
-controls, two saved formatting controls with backend consumers, one keyboard
-capture control, and eight ordered Open Externally routing controls. It includes tab
-appearance/drag, notebook tree, notes, rating sizes, archive repair, duplicate
-colours, tag suggestions/weights, autocomplete panes, sidebar cogs, thumbnail
-navigation, namespace colour actions, external-call list and command controls,
-sibling connector colours, browsing/API idle timeouts, viewer
-drag/hover-wheel preferences, staged subscription merging, registered login
-scripts in mixed downloader packages, all five importing work-slot limits,
-local-domain copy/move confirmations, the per-service already-exists tag filter,
-and global viewing-statistics clear/cull actions. The nine further controls add saved popup width/fixed-width policies;
-producer-owned clipboard, callable and yes/no job actions; and the four
-Files/Trash view-removal policies with captured-page consumers. The next 12 add three
-thumbnail-cache memory/timeout/debug controls with byte-accounted owned consumers;
-five sidebar splitter and Pages-menu controls with page-local geometry and accepted-exit
-saving; and four Ctrl/Shift preview-focus preferences with duration-aware selection.
-The next seven add the separate search/viewer Manage Tags opening sorts, the raw
-OR connecting-string editor, and the four
-experimental gallery/watcher list update intervals and denominators. Accepted preview
-images and intervals now survive per-page return under global hide, with a bounded
-frame cache and owned retry paths. That hide preference remains Partial because
-first-raster admission, reconstruction and terminal cleanup still differ from Qt. Regex favourite selection
-now uses the reference read-only chooser; that original leaf was already completed
-and receives no additional completion credit. Historical subscription
-seed-cache compatibility, direct ordered subscription imports and login editor
-controls are further parent/Partial improvements with zero leaf credit.
-These remain proposals while exact hosted CI
-runs and rendered review are pending. Window rescue remains a Partial
-improvement with zero completion credit; GUI formatting now has two conditional
-original control proposals after its backend waits and diagnostics were ported. Owned asynchronous
-metadata filesystem jobs also retain their two original Partial assessments,
-and mouse idle tracking remains Partial because it observes application windows.
-Broader external
-call/editor boundaries also remain Partial. Inspect the current branch with
-`python3 scripts/gui_burndown.py --commit HEAD`; proposal counts are historical
-and must not replace the latest validated ledger above. The embedded-ICC leaf adds the saved policy with real importer, preview,
-viewer and maintenance consumers. The viewer tag-list now opens owned search
-pages and requests main-window activation on supported native platforms; that
-activation remains Partial because Wayland activation is unresolved. Application
-name raw-empty acceptance and field-specific merging refine its existing Partial
-assessment without earning another completion. Truncated-image loading remains
-Missing, with no inert checkbox or credit. The File menu's quick-export directory
-action now re-reads the saved destination, resolves configured portable paths
-without creating them, and creates only the unset home-directory fallback.
-Reference recordings cover errors, Cancel, Apply and reopening; native validation
-remains pending. This branch also adds the preparation-progress suppression
-checkbox, three legacy colour/darkmode controls, blurhash thumbnail recovery and
-the viewport background image. The fade and renderer-choice controls retain
-Partial assessments because software compositing differs from Qt. These seven
-newest concrete leaves are proposed, with no validated ledger promotion. New work and diagnostics continue
-while hosted validation runs, as authorized by the owner.
-
-The next breadth work, in the owner's existing order:
-
-1. **Network management**: remaining scheduling, complete login execution and
-   broader editor boundaries listed in the map. Monthly usage/history controls,
-   cookie exchange, header questions, runtime job controls and URL/domain/parser
-   editors are implemented within their assessed scopes. Remote repositories,
-   IPFS and account administration remain outside the owner's priorities.
-2. **Tags**: sibling/parent sync, migration archives/hash conversion and pair
-   mapping-count filters. Native service-to-service mappings/siblings/parents
-   migration is implemented. Write-autocomplete and presentation preferences
-   now reach their consumers, while full relationship autocomplete,
-   asynchronous loading and repository permission/reason suggestions remain
-   Partial or Missing as recorded.
-3. **Downloader definitions**: complete login-script management/execution and
-   serialized subscription exchange, file-based test-data fetching and remaining
-   formula-specific boundaries. Native page/content/subsidiary parser editors,
-   URL-class parser links and definition text/PNG interchange are implemented.
-   All six native formula kinds have editors; URL fetching and multiple-example
-   selection reach shared children. Credential/result and partial login-script
-   editors are present; their remaining scope is recorded per node.
-
-Then the gaps listed under "Later", and the half-done items below. The third
-parallel slate and its Windows portability follow-up were reviewed and merged.
-The owner has authorized continuous work rather than fixed slates. Use concrete
-leaves and their remaining boundaries in the GUI map to choose independent work;
-exclude parent groups, aliases and evidence-only reassessments from implementation
-completion goals.
-
-The October 6 delivery policy supersedes the earlier implementation-throughput
-policy described in this history. Do not defer full validation until project
-end. Current repair work is consolidated in PR #59, with full Linux validation
-at source `7c3c1aac5` and a published 319-item ledger. Automatic quick CI gives
-early diagnostics; dispatch the full Linux gate routinely for publication.
-Secondary platforms remain opt-in under `.github/publication-validation.json`.
-The broader implementation history above is not additional signed-off credit.
-
-## 1. Manage subscriptions (network > subscriptions…)
+### 1. Manage subscriptions (network > subscriptions…)
 
 **Done**:
 
@@ -313,7 +76,7 @@ The broader implementation history above is not additional signed-off credit.
    serialised subscription form written, not just read. This is separate
    from the implemented import-options clipboard container.
 
-## 2. Manage import folders / export folders
+### 2. Manage import folders / export folders
 
 **Done**: file > import/export folders > "manage import folders…" and
 "manage export folders…" (`ui/folders.slint`, `src/folders_window.rs`,
@@ -349,7 +112,7 @@ tested in `tests/model/folders.rs` and `tests/gui/folders.rs`.
   multiple-example controls now use the shared editor. **Next**: the router
   editor's testing panel and file-based test-data fetching.
 
-## 3. The duplicates page: preparation and auto-resolution tabs
+### 3. The duplicates page: preparation and auto-resolution tabs
 
 **Done**: the sidebar's three tabs (`ui/duplicates_page.slint`,
 `src/duplicates_sidebar.rs`, `hydrus-gui-model`'s `duplicates_page`):
@@ -387,11 +150,11 @@ auto-resolution's rules list, pause/play and resets. Recorded by
 - The filtering tab's search editor (`EditPotentialDuplicatesSearch
   ContextPanel`) and its "quick and dirty processing" box.
 
-## 4. Downloader pages: leftovers
+### 4. Downloader pages: leftovers
 
 - See `DIFFERENCES.md`, "Pages".
 
-## 5. The import options editor
+### 5. The import options editor
 
 **Done**: the editor for an importer's own options (`ui/import_options.slint`,
 `src/import_options_window.rs`, `hydrus-gui-model`'s `import_options_editor`),
@@ -411,7 +174,7 @@ write-tag autocomplete editor; child cancellation preserves the parent draft.
   import-options boundaries are listed in `DIFFERENCES.md`.
 - The editor's copy and paste and favourites buttons.
 
-## Later
+### Later
 
 - **Menu bar.**
   - Menu entries' descriptions in the status bar.
