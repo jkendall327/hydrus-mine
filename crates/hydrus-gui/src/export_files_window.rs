@@ -396,7 +396,7 @@ pub fn open(
         move || {
             if let (Some(w), Some(p)) = (
                 weak.upgrade(),
-                crate::pick(crate::Pick::Folder, "Select an export folder.").first(),
+                crate::pick(crate::Pick::Folder, "Select directory").first(),
             ) {
                 w.set_destination(p.to_string_lossy().into_owned().into());
                 refresh();
@@ -407,11 +407,15 @@ pub fn open(
         let weak = window.as_weak();
         move || {
             if let Some(w) = weak.upgrade() {
+                // (as the reference's: nothing for an empty location, and
+                // anything that exists is launched)
                 let path = w.get_destination();
-                if std::path::Path::new(path.as_str()).is_dir() {
-                    crate::launch(&path);
-                } else {
-                    w.set_status("That location does not seem to exist!".into());
+                if !path.is_empty() {
+                    if std::path::Path::new(path.as_str()).exists() {
+                        crate::launch(&path);
+                    } else {
+                        w.set_status("That location does not seem to exist!".into());
+                    }
                 }
             }
         }

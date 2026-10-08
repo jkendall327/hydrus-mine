@@ -111,7 +111,9 @@ as Qt's do; a press anywhere else closes them. What works so far:
 
 - file: pausing import and export folders, checking an import folder or
   running an export folder now, opening the installation and database
-  directories, the options, and exit;
+  directories, the options, and exit, restart and exit/force maintenance
+  (declining a restart leaves the next window close a plain exit, as the
+  reference's per-request flag does; there is no minimise to system tray);
 - undo: the pages closed in the last hour, latest first, to reopen any of
   them, or forget them all (asking first); searching additions and removals,
   latest first, to toggle a historical predicate on the visible media page,
@@ -1160,7 +1162,10 @@ thumbnails or the viewer's file (`ui/export_files.slint`,
 `src/export_files_window.rs`, `hydrus-gui-model::export_files`). It previews
 number, filetype and destination using the export folders' filename machinery,
 adds ` (1)` suffixes for selected files whose names collide, remembers the
-export phrase, and removes selected rows after asking. New panels open at the
+export phrase, and removes selected rows after asking. Its browse button asks
+for a "Select directory" folder, as the reference's directory picker does, and
+"open location" does nothing for an empty destination and launches any existing
+path (one that is gone says so in the status line, not in a dialog). New panels open at the
 **exporting > export folder > Default export directory** option. Its path and
 browse control wait for options Apply; Cancel discards them. Empty or whitespace
 uses `hydrus_export` in the home directory, and a one-off manual destination does

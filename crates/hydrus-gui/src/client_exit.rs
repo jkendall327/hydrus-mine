@@ -210,18 +210,17 @@ fn bind_with_timeout(
 ) {
     // Rebinding permanently retires the former maintenance child and its timer.
     retire_maintenance_question();
-    let close: Rc<dyn Fn()> = Rc::new({
+    let close: Rc<dyn Fn(ExitMode)> = Rc::new({
         let weak = window.as_weak();
         let store = store.clone();
         let active = active.clone();
-        move || {
+        move |mode: ExitMode| {
             let Some(window) = weak
                 .upgrade()
                 .filter(|window| active.get() && window.window().is_visible())
             else {
                 return;
             };
-            let mode = MODE.with(|m| m.replace(ExitMode::Exit));
             let weak = window.as_weak();
             let finished = finished.clone();
             let store_after = store.clone();
@@ -266,9 +265,13 @@ fn bind_with_timeout(
             let confirm = store
                 .read(hydrus_store::settings::get::<hydrus_store::settings::GuiSettings>)
                 .is_ok_and(|settings| settings.confirm_exit);
-            let question = MODE.with(Cell::get).question();
+            // (this request's way of exiting, spent now: backing out of a
+            // restart leaves the next close a plain exit)
+            let mode = MODE.with(|m| m.replace(ExitMode::Exit));
+            let question = mode.question();
             if confirm {
-                ask(question.into(), close.clone());
+                let close = close.clone();
+                ask(question.into(), Rc::new(move || close(mode)));
                 timer.start(slint::TimerMode::SingleShot, timeout, {
                     let weak = weak.clone();
                     let active = active.clone();
@@ -283,7 +286,7 @@ fn bind_with_timeout(
                     }
                 });
             } else {
-                close();
+                close(mode);
             }
             slint::CloseRequestResponse::KeepWindowShown
         }

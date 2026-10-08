@@ -76,6 +76,9 @@ fn rows(window: &ReviewImportsWindow) -> Vec<Vec<String>> {
         .collect()
 }
 
+// leaf: audit-options-menu-menu-file-import-files
+// leaf: audit-network-import-queue
+// leaf: audit-network-import-paths
 #[test]
 fn files_given_are_reviewed_then_imported() {
     let (_dirs, store) = store();
@@ -333,6 +336,7 @@ fn sidecar_rows(dialog: &hydrus_gui::FilenameTaggingWindow) -> Vec<(String, Stri
         .collect()
 }
 
+// leaf: audit-network-tagging-sidecars
 #[test]
 fn files_are_imported_with_the_sidecars_tab_routers() {
     let (_dirs, store) = store();
@@ -431,6 +435,7 @@ fn files_are_imported_with_the_sidecars_tab_routers() {
 
 /// "add files" and "add folder" ask the system's pickers (here, a stand-in
 /// that says what was asked) and parse what they give.
+// leaf: audit-network-import-paths
 #[test]
 fn files_and_folders_picked_are_reviewed() {
     let (_dirs, store) = store();

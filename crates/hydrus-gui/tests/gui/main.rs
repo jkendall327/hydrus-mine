@@ -256,3 +256,7 @@ mod subscriptions_overwrite_checker;
 mod tag_filter_removal;
 mod viewer_prefetch;
 mod duplicates_lane_page;
+mod files_io_file_menu;
+mod files_io_import_review;
+mod files_io_export_files;
+mod files_io_folder_editors;

@@ -4030,3 +4030,9 @@ independent review at `4b5e7ae15` approve exactly Add/Delete: 343 signed off,
 font metrics and warning icons; automatic OS focus/modality and destruction
 closure for every shown child are not established. Continued typing explicitly
 clicks the retained LineEdit after acknowledgement.
+
+Manual export's "open location" reports a missing destination in the window's
+status line ("That location does not seem to exist!") where the reference shows a
+critical dialog; File > minimise to system tray is absent (there is no tray
+icon); File > open > installation directory opens the Rust executable's
+directory.
