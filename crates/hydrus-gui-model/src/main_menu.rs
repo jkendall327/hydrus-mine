@@ -118,6 +118,8 @@ impl Pause {
 /// What an entry does.
 #[derive(Debug, Clone, PartialEq)]
 pub enum Command {
+    /// File > minimise to system tray.
+    MinimiseToTray,
     Darkmode,
     /// Resize/show/save the live page sidebar and preview.
     Sidebar(crate::page_layout::Action),
@@ -368,6 +370,8 @@ pub struct Facts {
     /// The debug switches that are on.
     pub debug_flags: Vec<hydrus_core::debug_flags::Flag>,
     pub advanced: bool,
+    /// Whether the desktop has a system tray to hide to.
+    pub tray_available: bool,
     pub folders: FolderSettings,
     /// The import and export folders' names.
     pub import_folders: Vec<String>,
@@ -662,31 +666,39 @@ fn file_menu(facts: &Facts) -> Entry {
         item(dots("manage import folders"), Command::ManageImportFolders),
         item(dots("manage export folders"), Command::ManageExportFolders),
     ]);
-    // (no system tray to minimise to; and "restart" is offered, as hydrus
-    // does when it isn't a frozen Linux build)
-    menu(
-        "&file",
-        vec![
-            item(dots("import files"), Command::ImportFiles),
+    // ("restart" is offered, as hydrus does when it isn't a frozen Linux
+    // build)
+    let mut file_end = Vec::new();
+    if crate::system_tray::file_entry_visible(facts.tray_available, cfg!(windows), facts.advanced) {
+        file_end.extend([
+            item(crate::system_tray::FILE_ENTRY, Command::MinimiseToTray),
             SEP,
-            menu("import/export folders", folders),
-            SEP,
-            menu(
-                "open",
-                vec![
-                    item("installation directory", Command::OpenInstallDirectory),
-                    item("database directory", Command::OpenDatabaseDirectory),
-                    item("quick export directory", Command::OpenQuickExportDirectory),
-                ],
-            ),
-            SEP,
-            item(dots("options"), Command::Options),
-            SEP,
-            item("restart", Command::Restart),
-            item("exit/force maintenance", Command::ExitForceMaintenance),
-            item("exit", Command::Exit),
-        ],
-    )
+        ]);
+    }
+    file_end.extend([
+        item("restart", Command::Restart),
+        item("exit/force maintenance", Command::ExitForceMaintenance),
+        item("exit", Command::Exit),
+    ]);
+    let mut file = vec![
+        item(dots("import files"), Command::ImportFiles),
+        SEP,
+        menu("import/export folders", folders),
+        SEP,
+        menu(
+            "open",
+            vec![
+                item("installation directory", Command::OpenInstallDirectory),
+                item("database directory", Command::OpenDatabaseDirectory),
+                item("quick export directory", Command::OpenQuickExportDirectory),
+            ],
+        ),
+        SEP,
+        item(dots("options"), Command::Options),
+        SEP,
+    ];
+    file.extend(file_end);
+    menu("&file", file)
 }
 
 /// `_InitialiseMenuInfoUndo`: closed pages and the independent search

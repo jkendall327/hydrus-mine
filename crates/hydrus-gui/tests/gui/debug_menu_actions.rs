@@ -153,25 +153,38 @@ fn modal_popups_arrive_after_five_seconds_counting_down_and_only_one_can_be_canc
         "make a non-cancellable modal popup in five seconds",
     ]);
     assert!(
-        d.jobs().is_empty(),
+        d.jobs().is_empty() && d.bound.popup_modal.dialog().is_none(),
         "nothing before the five seconds are up"
     );
     let started = std::time::Instant::now();
-    while d.jobs().len() < 2 {
+    // the cancellable one is in a dialog of its own; the other, done from
+    // the start as the reference's is, goes to the popups
+    while d.bound.popup_modal.dialog().is_none() || d.jobs().is_empty() {
         assert!(
             started.elapsed() < Duration::from_secs(15),
             "modal popups arrive"
         );
-        std::thread::sleep(Duration::from_millis(50));
+        slint::platform::update_timers_and_animations();
+        std::thread::sleep(Duration::from_millis(20));
     }
     assert!(started.elapsed() >= Duration::from_secs(5));
-    let jobs = d.jobs();
-    assert!(
-        jobs.iter()
-            .all(|j| { j.status_title.as_deref() == Some(model::MODAL_TITLE) && !j.pausable })
+    let released = d.jobs();
+    assert_eq!(released.len(), 1);
+    assert_eq!(
+        released[0].status_title.as_deref(),
+        Some(model::MODAL_TITLE)
     );
-    assert_eq!(jobs.iter().filter(|j| j.cancellable).count(), 1);
-    let text = jobs.iter().find_map(|j| j.status_text_1.clone()).unwrap();
+    assert!(!released[0].cancellable && !released[0].pausable);
+    let dialog = d.bound.popup_modal.dialog().unwrap();
+    assert_eq!(dialog.get_window_title(), model::MODAL_TITLE);
+    assert!(!dialog.get_hide_close_button(), "it can be cancelled");
+    let held = d
+        .store
+        .read(|c| popups::held(c, hydrus_core::TimestampMs::now().0 / 1000))
+        .unwrap();
+    assert_eq!(held.len(), 1);
+    assert!(held[0].cancellable && !held[0].pausable);
+    let text = held[0].status_text_1.clone().unwrap();
     assert!(text.starts_with("Will auto-dismiss in "), "{text}");
 }
 

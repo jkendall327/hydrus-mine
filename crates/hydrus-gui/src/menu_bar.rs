@@ -20,6 +20,7 @@ type ShownLines = Rc<RefCell<Vec<(Vec<MenuLine>, ModelRc<MenuLine>)>>>;
 
 /// What the menu bar works with.
 pub(crate) struct Hooks {
+    pub tray: Rc<crate::system_tray::Controller>,
     pub debug_long_popup: crate::debug_long_popup::Control,
     pub debug_session_reload: crate::debug_session_reload::Control,
     pub debug_fetch: crate::debug_fetch::Control,
@@ -137,6 +138,7 @@ pub(crate) fn facts(pages: &RefCell<Pages>, weigh: bool) -> Facts {
 fn owned_facts(hooks: &Hooks, weigh: bool) -> Facts {
     let mut facts = facts(&hooks.pages, weigh);
     facts.force_idle = hooks.force_idle.enabled();
+    facts.tray_available = hooks.tray.available();
     facts.crash_logging = crate::debug_actions::crash_logging();
     facts.debug_flags = hydrus_core::debug_flags::Flag::ALL
         .into_iter()
@@ -626,6 +628,8 @@ fn run(window: &MainWindow, hooks: &Hooks, command: Command) {
             if let Err(e) = done {
                 eprintln!("could not pause: {e}");
             }
+            // (the tray icon's tooltip says what is paused)
+            hooks.tray.refresh();
         }
         Command::CheckImportFolder(name) => {
             if let Err(e) = hydrus_gui_model::folder_runs::check_import_folders(&store, name) {
@@ -647,6 +651,7 @@ fn run(window: &MainWindow, hooks: &Hooks, command: Command) {
         },
         Command::OpenDatabaseDirectory => crate::launch(&store.dir().to_string_lossy()),
         Command::OpenQuickExportDirectory => hooks.quick_export_directory.open(),
+        Command::MinimiseToTray => hooks.tray.hide_to_tray(),
         Command::Exit | Command::Restart | Command::ExitForceMaintenance => {
             crate::client_exit::set_mode(match command {
                 Command::Restart => hydrus_gui_model::shutdown_work::ExitMode::Restart,

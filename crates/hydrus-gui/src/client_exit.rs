@@ -17,6 +17,13 @@ use hydrus_gui_model::shutdown_work::{self, Decision, ExitMode};
 const QUESTION: &str = ExitMode::Exit.question();
 
 thread_local! {
+    /// Whether the next close request was made by the client itself (File >
+    /// exit, restart), not by the window's own close button.
+    static EXPLICIT: Cell<bool> = const { Cell::new(false) };
+    /// Asked of a close button's request first: true if it was dealt with
+    /// (hidden to the system tray), so the client does not exit.
+    static INTERCEPT: std::cell::RefCell<Option<Rc<dyn Fn() -> bool>>> =
+        const { std::cell::RefCell::new(None) };
     /// How the next close exits (File > restart, exit/force maintenance).
     static MODE: Cell<ExitMode> = const { Cell::new(ExitMode::Exit) };
     /// The "Maintenance is due" question, kept while shown.
@@ -30,6 +37,12 @@ pub static RESTART: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBoo
 /// Make the next close request exit this way (reset if it is backed out of).
 pub fn set_mode(mode: ExitMode) {
     MODE.with(|m| m.set(mode));
+    EXPLICIT.with(|e| e.set(true));
+}
+
+/// Let `intercept` deal with the window's own close requests first.
+pub(crate) fn intercept_close(intercept: Rc<dyn Fn() -> bool>) {
+    INTERCEPT.with(|i| *i.borrow_mut() = Some(intercept));
 }
 
 /// The "Maintenance is due" question while it is shown, for tests that answer it.
@@ -266,11 +279,21 @@ fn bind_with_timeout(
         let timer = timer.clone();
         let weak = window.as_weak();
         move || {
+            // (this request's own marks, spent whatever becomes of it: a
+            // vetoed request must not leave them for the next close button)
+            let explicit = EXPLICIT.with(|e| e.replace(false));
             if !active.get()
                 || !weak
                     .upgrade()
                     .is_some_and(|window| window.window().is_visible())
             {
+                MODE.with(|m| m.set(ExitMode::Exit));
+                return slint::CloseRequestResponse::KeepWindowShown;
+            }
+            // (the window's close button hides to the system tray when told
+            // to; File > exit does not)
+            let intercept = INTERCEPT.with(|i| i.borrow().clone());
+            if !explicit && intercept.is_some_and(|intercept| intercept()) {
                 return slint::CloseRequestResponse::KeepWindowShown;
             }
             let confirm = store

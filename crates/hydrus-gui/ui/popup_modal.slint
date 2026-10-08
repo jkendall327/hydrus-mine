@@ -1,0 +1,73 @@
+// A modal popup (`src/popup_modal.rs`): the reference's
+// `PopupMessageDialogPanel` in its dialog. The job's popup (title, texts,
+// gauges, download, pause and stop), and under it a close button, unless
+// the job can't be cancelled.
+
+import { Button, ProgressIndicator } from "std-widgets.slint";
+import { Theme } from "theme.slint";
+import { DownloadControl } from "importing.slint";
+import { PopupData } from "popups.slint";
+
+export component PopupModalWindow inherits Window {
+    in property <string> window-title: "important job";
+    title: root.window-title;
+    in property <PopupData> popup;
+    in property <bool> hide-close-button;
+    callback close-clicked();
+    callback pause-play();
+    callback cancel();
+    preferred-width: 440px;
+    min-width: 320px;
+    background: Theme.window;
+    VerticalLayout {
+        padding: 10px;
+        spacing: 6px;
+        if root.popup.title != "": Text {
+            text: root.popup.title;
+            font-weight: 700;
+            horizontal-alignment: center;
+            wrap: word-wrap;
+            color: Theme.text;
+        }
+        if root.popup.text-1 != "": Text {
+            text: root.popup.text-1;
+            wrap: word-wrap;
+            color: Theme.text;
+        }
+        if root.popup.has-gauge-1: ProgressIndicator {
+            progress: root.popup.gauge-1;
+            indeterminate: root.popup.gauge-1-going;
+        }
+        if root.popup.text-2 != "": Text {
+            text: root.popup.text-2;
+            wrap: word-wrap;
+            color: Theme.text;
+        }
+        if root.popup.has-gauge-2: ProgressIndicator {
+            progress: root.popup.gauge-2;
+            indeterminate: root.popup.gauge-2-going;
+        }
+        if root.popup.has-download: DownloadControl {
+            line: root.popup.download;
+        }
+        if root.popup.pausable || root.popup.cancellable: HorizontalLayout {
+            alignment: end;
+            spacing: 2px;
+            if root.popup.pausable: Button {
+                icon: root.popup.paused ? @image-url("../../../static/play.png") : @image-url("../../../static/pause.png");
+                clicked => { root.pause-play(); }
+            }
+            if root.popup.cancellable: Button {
+                icon: @image-url("../../../static/stop.png");
+                clicked => { root.cancel(); }
+            }
+        }
+        if !root.hide-close-button: HorizontalLayout {
+            alignment: center;
+            Button {
+                text: "close";
+                clicked => { root.close-clicked(); }
+            }
+        }
+    }
+}

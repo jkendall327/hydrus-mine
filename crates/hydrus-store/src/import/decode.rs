@@ -265,6 +265,12 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
         {
             tag_editing.remember_service = value;
         }
+        if let Some(&value) = options.booleans.get("allow_remove_on_manage_tags_input") {
+            tag_editing.allow_remove_on_input = value;
+        }
+        if let Some(&value) = options.booleans.get("yes_no_on_remove_on_manage_tags") {
+            tag_editing.confirm_remove = value;
+        }
         if let Some(&value) = options.booleans.get("ac_select_first_with_count") {
             tag_editing.select_first_with_count = value;
         }

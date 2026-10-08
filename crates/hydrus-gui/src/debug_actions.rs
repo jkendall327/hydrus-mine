@@ -1,5 +1,5 @@
 //! Help > debug's actions (hydrus-gui-model's `debug_actions`): messages,
-//! popups, the delayed "modal" popup (an ordinary popup here, counting
+//! popups, the delayed modal popup (in its dialog, counting
 //! down), saving the last session, the database checkpoint, the
 //! environment dump, clearing the rendering caches and leaving the event
 //! loop at once.
@@ -181,6 +181,8 @@ fn modal(store: &Store, cancellable: bool) {
     std::thread::sleep(Duration::from_secs(5));
     let mut job = Job::new(false, cancellable, now());
     job.status_title = Some(model::MODAL_TITLE.into());
+    // (`pub( 'modal_message' )`: held for its dialog)
+    job.held_by_modal = true;
     let key = job.key;
     post(store, vec![job]);
     for i in 0..10 {

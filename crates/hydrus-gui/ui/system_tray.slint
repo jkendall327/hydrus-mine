@@ -1,0 +1,78 @@
+// The system tray icon and its menu, as the reference's ClientSystemTrayIcon
+// has them. Rust decides when it exists and what the entries do; this only
+// shows the state it is given.
+
+export component HydrusTray inherits SystemTrayIcon {
+    // whether the main window is shown (the first entry says which it does)
+    in property <bool> ui-shown: true;
+    in-out property <bool> network-paused;
+    in-out property <bool> subscriptions-paused;
+    in-out property <bool> minimise-to-tray;
+    in-out property <bool> close-to-tray;
+    in-out property <bool> start-in-tray;
+    // (the base element's own `tooltip`, `title`, `visible` and `clicked`
+    // are not reachable from Rust, so these stand for them)
+    in property <string> tooltip-text;
+    out property <bool> icon-shown: root.visible;
+
+    // a click on the icon
+    callback activated();
+    callback flip-show-hide();
+    callback pause-network();
+    callback pause-subscriptions();
+    // "minimise", "close" or "start": the reference's three option entries
+    callback flip-option(string);
+    callback exit-client();
+
+    icon: @image-url("../../../static/hydrus_non-transparent.png");
+    tooltip: root.tooltip-text;
+    title: root.tooltip-text;
+    clicked => { root.activated(); }
+
+    Menu {
+        MenuItem {
+            title: root.ui-shown ? "hide to system tray" : "show";
+            activated => { root.flip-show-hide(); }
+        }
+        MenuSeparator {}
+        MenuItem {
+            title: "pause network traffic";
+            checkable: true;
+            checked <=> root.network-paused;
+            activated => { root.pause-network(); }
+        }
+        MenuItem {
+            title: "pause subscriptions";
+            checkable: true;
+            checked <=> root.subscriptions-paused;
+            activated => { root.pause-subscriptions(); }
+        }
+        MenuSeparator {}
+        Menu {
+            title: "options";
+            MenuItem {
+                title: "minimise client to system tray";
+                checkable: true;
+                checked <=> root.minimise-to-tray;
+                activated => { root.flip-option("minimise"); }
+            }
+            MenuItem {
+                title: "close client to system tray";
+                checkable: true;
+                checked <=> root.close-to-tray;
+                activated => { root.flip-option("close"); }
+            }
+            MenuItem {
+                title: "start client in system tray";
+                checkable: true;
+                checked <=> root.start-in-tray;
+                activated => { root.flip-option("start"); }
+            }
+        }
+        MenuSeparator {}
+        MenuItem {
+            title: "exit";
+            activated => { root.exit-client(); }
+        }
+    }
+}

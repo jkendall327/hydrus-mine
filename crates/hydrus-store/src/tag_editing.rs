@@ -15,6 +15,11 @@ pub struct TagEditingSettings {
     pub tag_list_expand_parents: bool,
     pub tag_list_show_siblings: bool,
     pub select_first_with_count: bool,
+    /// The Manage Tags cog's "allow remove/petition result on tag input for
+    /// already existing tag" (off by default: typed entry only adds).
+    pub allow_remove_on_input: bool,
+    /// The cog's "confirm remove/petition tags on explicit delete actions".
+    pub confirm_remove: bool,
     pub skip_multiline_paste_confirmation: bool,
     pub autocomplete_list_height: u32,
     pub autocomplete_show_parents: bool,
@@ -32,6 +37,8 @@ impl Default for TagEditingSettings {
             tag_list_expand_parents: true,
             tag_list_show_siblings: true,
             select_first_with_count: false,
+            allow_remove_on_input: false,
+            confirm_remove: true,
             skip_multiline_paste_confirmation: false,
             autocomplete_list_height: 11,
             autocomplete_show_parents: true,
@@ -128,6 +135,8 @@ mod tests {
         assert!(old.tag_list_expand_parents);
         assert!(old.tag_list_show_siblings);
         assert!(!old.select_first_with_count);
+        assert!(!old.allow_remove_on_input);
+        assert!(old.confirm_remove);
         assert!(!old.skip_multiline_paste_confirmation);
         assert!(old.autocomplete_show_parents);
         assert!(old.autocomplete_expand_parents);

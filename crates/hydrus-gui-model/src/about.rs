@@ -21,6 +21,16 @@ pub struct Facts {
     /// ffmpeg's version, if it runs.
     pub ffmpeg: Option<String>,
     pub sqlite: String,
+    /// How it was built and run ("from a release build").
+    pub running_as: String,
+    /// The locale (`en_US`).
+    pub locale: String,
+    /// `SQLITE_TMPDIR`, if set.
+    pub sqlite_temp_dir: Option<String>,
+    /// Whether the database keeps its temporary files in memory.
+    pub temp_in_memory: bool,
+    /// The optional parts, in the reference's order and groups.
+    pub libraries: Vec<Vec<Library>>,
     /// When hydrus-rs started, and now (milliseconds).
     pub boot_ms: i64,
     pub now_ms: i64,
@@ -30,6 +40,25 @@ pub struct Facts {
     pub cache_mb: i64,
     pub journal_mode: String,
     pub synchronous: i64,
+}
+
+/// An optional library or program, and whether it is there
+/// (`render_availability_line`).
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct Library {
+    pub name: String,
+    pub state: Availability,
+}
+
+/// How a library is there.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum Availability {
+    /// "yes", with how if it matters ("native", "via plugin").
+    Yes(Option<String>),
+    /// "not available".
+    Missing,
+    /// It is there but would not load: "no - error".
+    Broken,
 }
 
 /// The window's texts.
@@ -49,13 +78,31 @@ fn pretty_time_ms(ms: i64) -> String {
     format!("{seconds}.{:03}", ms.rem_euclid(1000))
 }
 
-/// `render_availability_line`.
-fn availability(name: &str, ok: bool) -> String {
-    if ok {
-        format!("{name}: yes")
-    } else {
-        format!("{name}: not available")
+/// `render_availability_line`, with the `(native)` or `(via plugin)` the
+/// image formats add.
+pub fn availability_line(library: &Library) -> String {
+    let name = &library.name;
+    match &library.state {
+        Availability::Yes(None) => format!("{name}: yes"),
+        Availability::Yes(Some(how)) => format!("{name}: yes ({how})"),
+        Availability::Missing => format!("{name}: not available"),
+        Availability::Broken => format!("{name}: no - error"),
     }
+}
+
+/// The libraries tab: each group's lines, the groups apart by a blank line.
+pub fn libraries_text(groups: &[Vec<Library>]) -> String {
+    groups
+        .iter()
+        .map(|group| {
+            group
+                .iter()
+                .map(availability_line)
+                .collect::<Vec<_>>()
+                .join("\n")
+        })
+        .collect::<Vec<_>>()
+        .join("\n\n")
 }
 
 /// The about window's texts, with the license's text if there is one.
@@ -68,7 +115,10 @@ pub fn about_with_format(
     formatting: &GuiFormatting,
 ) -> About {
     let mut lines = vec![
-        format!("running on {} {}", facts.arch, facts.os),
+        format!(
+            "running on {} {} {}",
+            facts.arch, facts.os, facts.running_as
+        ),
         format!("FFMPEG: {}", facts.ffmpeg.as_deref().unwrap_or("unknown")),
         format!("sqlite: {}", facts.sqlite),
         String::new(),
@@ -86,15 +136,33 @@ pub fn about_with_format(
     lines.push(format!("install dir: {}", facts.install_dir));
     lines.push(format!("db dir: {}", facts.db_dir));
     lines.push(format!("temp dir: {}", facts.temp_dir));
+    if let Some(sqlite_temp) = facts
+        .sqlite_temp_dir
+        .as_ref()
+        .filter(|dir| **dir != facts.temp_dir)
+    {
+        lines.push(format!(
+            "sqlite temp dir (from SQLITE_TMPDIR env): {sqlite_temp}"
+        ));
+    }
+    lines.push(format!("locale: {}", facts.locale));
     lines.push(String::new());
     lines.push(format!("db cache size per file: {}MB", facts.cache_mb));
     lines.push(format!("db journal mode: {}", facts.journal_mode));
     lines.push(format!("db synchronous mode: {}", facts.synchronous));
+    lines.push(format!(
+        "db using memory for temp?: {}",
+        if facts.temp_in_memory {
+            "True"
+        } else {
+            "False"
+        }
+    ));
     let description = format!(
         "This is the media management application of the hydrus software suite, ported to Rust.\n\n{}",
         lines.join("\n")
     );
-    let libraries = availability("ffmpeg", facts.ffmpeg.is_some());
+    let libraries = libraries_text(&facts.libraries);
     let credits = "Created by Anonymous\n\nhydrus-rs: a port of it to Rust".to_owned();
     let license = license.map_or_else(|| "no license file found!".to_owned(), str::to_owned);
     About {

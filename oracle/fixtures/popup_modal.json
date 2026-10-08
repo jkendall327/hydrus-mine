@@ -1,0 +1,342 @@
+{
+ "cancel_question": "Cancel/stop job?",
+ "cases": [
+  {
+   "label": "active, cancellable job with a title",
+   "dialogs": [
+    {
+     "title": "a long job",
+     "hide_buttons": false,
+     "panel_type": "PopupMessageDialogPanel"
+    }
+   ],
+   "pubs": [
+    "pause_all_media"
+   ],
+   "events": [],
+   "pending": 0,
+   "job": {
+    "cancelled": false,
+    "done": false,
+    "dismissed": false
+   }
+  },
+  {
+   "label": "active, job with no title",
+   "dialogs": [
+    {
+     "title": "important job",
+     "hide_buttons": false,
+     "panel_type": "PopupMessageDialogPanel"
+    }
+   ],
+   "pubs": [
+    "pause_all_media"
+   ],
+   "events": [],
+   "pending": 0,
+   "job": {
+    "cancelled": false,
+    "done": false,
+    "dismissed": false
+   }
+  },
+  {
+   "label": "active, pausable job that cannot be cancelled",
+   "dialogs": [
+    {
+     "title": "a long job",
+     "hide_buttons": true,
+     "panel_type": "PopupMessageDialogPanel"
+    }
+   ],
+   "pubs": [
+    "pause_all_media"
+   ],
+   "events": [],
+   "pending": 0,
+   "job": {
+    "cancelled": false,
+    "done": false,
+    "dismissed": false
+   }
+  },
+  {
+   "label": "active, job that is neither (done from the start)",
+   "dialogs": [],
+   "pubs": [
+    "message"
+   ],
+   "events": [],
+   "pending": 0,
+   "job": {
+    "cancelled": false,
+    "done": true,
+    "dismissed": false
+   }
+  },
+  {
+   "label": "job already done goes to the popups",
+   "dialogs": [],
+   "pubs": [
+    "message"
+   ],
+   "events": [],
+   "pending": 0,
+   "job": {
+    "cancelled": false,
+    "done": true,
+    "dismissed": false
+   }
+  },
+  {
+   "label": "dismissed job is dropped",
+   "dialogs": [],
+   "pubs": [],
+   "events": [],
+   "pending": 0,
+   "job": {
+    "cancelled": false,
+    "done": true,
+    "dismissed": true
+   }
+  },
+  {
+   "label": "main window minimised: pending",
+   "dialogs": [],
+   "pubs": [],
+   "events": [],
+   "pending": 1,
+   "job": {
+    "cancelled": false,
+    "done": false,
+    "dismissed": false
+   }
+  },
+  {
+   "label": "hidden to the tray: pending",
+   "dialogs": [],
+   "pubs": [],
+   "events": [],
+   "pending": 1,
+   "job": {
+    "cancelled": false,
+    "done": false,
+    "dismissed": false
+   }
+  },
+  {
+   "label": "another dialog open: pending",
+   "dialogs": [],
+   "pubs": [],
+   "events": [],
+   "pending": 1,
+   "job": {
+    "cancelled": false,
+    "done": false,
+    "dismissed": false
+   }
+  },
+  {
+   "label": "main window not active: pending",
+   "dialogs": [],
+   "pubs": [],
+   "events": [],
+   "pending": 1,
+   "job": {
+    "cancelled": false,
+    "done": false,
+    "dismissed": false
+   }
+  },
+  {
+   "label": "pending jobs are retried one per page update",
+   "pending_at_start": 2,
+   "pending_after_one": 1,
+   "pending_after_two": 0,
+   "dialogs": [],
+   "pubs": [
+    "modal_message",
+    "modal_message"
+   ]
+  },
+  {
+   "label": "close a running cancellable job, answer yes",
+   "dialogs": [
+    {
+     "title": "a long job",
+     "hide_buttons": false,
+     "panel_type": "PopupMessageDialogPanel"
+    }
+   ],
+   "pubs": [
+    "pause_all_media",
+    "message"
+   ],
+   "events": [
+    {
+     "event": "asked",
+     "text": "Cancel/stop job?"
+    },
+    {
+     "event": "close_attempt",
+     "allowed": true
+    }
+   ],
+   "pending": 0,
+   "job": {
+    "cancelled": true,
+    "done": true,
+    "dismissed": false
+   }
+  },
+  {
+   "label": "close a running cancellable job, answer no",
+   "dialogs": [
+    {
+     "title": "a long job",
+     "hide_buttons": false,
+     "panel_type": "PopupMessageDialogPanel"
+    }
+   ],
+   "pubs": [
+    "pause_all_media"
+   ],
+   "events": [
+    {
+     "event": "asked",
+     "text": "Cancel/stop job?"
+    },
+    {
+     "event": "close_attempt",
+     "allowed": false
+    }
+   ],
+   "pending": 0,
+   "job": {
+    "cancelled": false,
+    "done": false,
+    "dismissed": false
+   }
+  },
+  {
+   "label": "close a running job that cannot be cancelled",
+   "dialogs": [
+    {
+     "title": "a long job",
+     "hide_buttons": true,
+     "panel_type": "PopupMessageDialogPanel"
+    }
+   ],
+   "pubs": [
+    "pause_all_media"
+   ],
+   "events": [
+    {
+     "event": "warned",
+     "text": "Unfortunately, this job cannot be cancelled. If it really is taking too long, please kill the client through task manager."
+    },
+    {
+     "event": "close_attempt",
+     "allowed": false
+    }
+   ],
+   "pending": 0,
+   "job": {
+    "cancelled": false,
+    "done": false,
+    "dismissed": false
+   }
+  },
+  {
+   "label": "the dialog closes itself when the job finishes",
+   "dialogs": [
+    {
+     "title": "a long job",
+     "hide_buttons": false,
+     "panel_type": "PopupMessageDialogPanel"
+    }
+   ],
+   "pubs": [
+    "pause_all_media",
+    "message"
+   ],
+   "events": [
+    {
+     "event": "updated",
+     "text": "half way",
+     "emitted_ok": false
+    },
+    {
+     "event": "job_finished",
+     "ok_signal_emitted": true
+    },
+    {
+     "event": "close_attempt",
+     "allowed": true
+    }
+   ],
+   "pending": 0,
+   "job": {
+    "cancelled": false,
+    "done": true,
+    "dismissed": false
+   }
+  },
+  {
+   "label": "no ok signal while a question is open",
+   "dialogs": [
+    {
+     "title": "important job",
+     "hide_buttons": false,
+     "panel_type": "PopupMessageDialogPanel"
+    }
+   ],
+   "pubs": [
+    "pause_all_media"
+   ],
+   "events": [
+    {
+     "event": "finished_while_asking",
+     "ok_signal_emitted": false
+    }
+   ],
+   "pending": 0,
+   "job": {
+    "cancelled": false,
+    "done": true,
+    "dismissed": false
+   }
+  },
+  {
+   "label": "other windows hidden, main kept",
+   "hide_main_gui": false,
+   "hidden_during": {
+    "main": false,
+    "extra": true
+   },
+   "restored_after": {
+    "main": true,
+    "extra": true
+   },
+   "pubs": [
+    "message"
+   ]
+  },
+  {
+   "label": "main window hidden too",
+   "hide_main_gui": true,
+   "hidden_during": {
+    "main": true,
+    "extra": true
+   },
+   "restored_after": {
+    "main": true,
+    "extra": true
+   },
+   "pubs": [
+    "message"
+   ]
+  }
+ ]
+}

@@ -6362,7 +6362,7 @@ fn related_weight_drafts_cancel_reopen_and_re_rank_an_already_open_service_panel
             .position(|n| n == "second tags")
             .unwrap();
         model.choose_service(i).unwrap();
-        model.add_side_suggestions(&[tag.into()]);
+        model.add_side_suggestions(&[tag.into()]).unwrap();
         model.apply().unwrap();
     }
     let weights = Weights {

@@ -47,6 +47,47 @@ Leaves signed off under the retired per-leaf ledger (378 still untagged,
 state `carried`) count as done without a tag, but nobody has checked them
 against this standard; #97 does. Tag their tests when you touch them.
 
+## Rechecking done leaves (#97)
+
+A done leaf can carry a `recheck` record: `{"date": "YYYY-MM-DD", "class":
+..., "by": "<who or which agent>", "note": "..."}`. `scripts/track.py recheck`
+summarises them per workstream; `scripts/track.py recheck <workstream>` lists
+the done leaves not yet rechecked; `track.py check` rejects malformed
+records. A record says what the tests prove as of its date; phase 2 of #97
+fixes the non-sound ones and updates the record.
+
+Classes, decided after the pilot on `options-media` (2026-10-08):
+
+| Class | When |
+|---|---|
+| `sound` | The test drives the real thing (the window, menu or Options row through the GUI, or the real worker/consumer), its expected values come from a recording of the reference (or the behaviour is only strings or defaults checked against the reference), it covers everything the leaf names, and for a setting the code that reads it is exercised. |
+| `source-restated` | As sound, but the expected values are literals restated from the Python source, or computed by the same native function under test, where a recording would be possible. |
+| `weak` | A stand-in is tested instead of the real thing; part of the leaf is not covered; or a setting only round-trips while what reads it is untested or absent. |
+| `no-test` | A carried leaf with no test found. |
+| `wrong` | The test or the native code visibly contradicts the reference. |
+
+Rules for the cases the pilot found ambiguous:
+
+- **GUI test with typed values, model test with the recording.** Sound only
+  if the GUI test drives the real path *and* a separate test replays the
+  recording against the same function the window calls, for the same
+  behaviour. If the recording is replayed against a different function, or
+  for different cases than the leaf names, it is `source-restated`.
+- **A decision function standing in for the window or daemon** (a test that
+  calls `Slideshow::due`, `Zoom::new` or a `pace()` instead of driving the
+  viewer, the window or the loop) is `weak`, whatever it compares against
+  (as `AGENTS.md` says for tags).
+- **Presence instead of content.** A test that checks only that something is
+  painted, shown or changed, where the leaf names what is shown, is `weak`.
+- **Expected values from the native function under test**, with no recording
+  of that function anywhere, are `source-restated` (the check is circular).
+- **Stale notes.** When a leaf's notes are false (often "no editable row
+  exists"), say so in the recheck note.
+
+Judge blind: an agent rechecking a leaf must not see another agent's
+verdict for it (the pilot's second-stage reviewers, shown the first stage's
+verdicts, agreed with all 82).
+
 ## States
 
 | State | Meaning | What to do |

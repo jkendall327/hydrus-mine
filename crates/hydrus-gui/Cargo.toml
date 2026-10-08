@@ -43,6 +43,11 @@ slint.workspace = true
 i-slint-core.workspace = true
 hydrus-workspace-hack = { version = "0.1", path = "../hydrus-workspace-hack" }
 
+# whether a StatusNotifierWatcher is on the session bus, that is a tray to
+# show an icon in (Slint's tray, through ksni, already brings zbus)
+[target.'cfg(all(unix, not(target_vendor = "apple"), not(target_os = "android")))'.dependencies]
+zbus = { version = "5", default-features = false, features = ["async-io", "blocking-api"] }
+
 [dev-dependencies]
 hydrus-api.workspace = true
 axum.workspace = true

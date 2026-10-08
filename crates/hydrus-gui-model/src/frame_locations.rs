@@ -150,12 +150,39 @@ pub fn normalised(mut frame: FrameLocation) -> FrameLocation {
     frame
 }
 
+/// What the saving window and its displays look like, if they can be seen
+/// (see [`crate::frame_save`]); with no displays the window's place is kept
+/// as it is.
+#[derive(Debug, Clone, Copy)]
+pub struct Display<'a> {
+    pub minimised: bool,
+    pub visible: bool,
+    pub screens: &'a [crate::window_rescue::Screen],
+    pub window_screen: Option<usize>,
+}
+
 /// Merge one live owner's geometry with the latest settings inside its writer
 /// transaction. A viewer closes without saving when its preference is disabled.
 pub fn save_window_state(
     conn: &rusqlite::Connection,
     name: &str,
     state: WindowState,
+) -> hydrus_store::Result<()> {
+    let display = Display {
+        minimised: false,
+        visible: true,
+        screens: &[],
+        window_screen: None,
+    };
+    save_window_state_on(conn, name, state, &display)
+}
+
+/// [`save_window_state`], as `SaveTLWSizeAndPosition` over the displays.
+pub fn save_window_state_on(
+    conn: &rusqlite::Connection,
+    name: &str,
+    state: WindowState,
+    display: &Display<'_>,
 ) -> hydrus_store::Result<()> {
     let mut settings: WindowSettings = hydrus_store::settings::get(conn)?;
     if name == "media_viewer" && !settings.save_media_viewer_on_close {
@@ -164,7 +191,26 @@ pub fn save_window_state(
     let Some(frame) = settings.frame(name) else {
         return Ok(());
     };
-    let saved = frame.saved(state);
+    let saved = if display.screens.is_empty() {
+        if display.minimised || !display.visible {
+            return Ok(());
+        }
+        frame.saved(state)
+    } else {
+        let rescue: hydrus_store::settings::WindowRescueSettings =
+            hydrus_store::settings::get(conn)?;
+        crate::frame_save::saved(
+            frame,
+            state,
+            &crate::frame_save::Surroundings {
+                minimised: display.minimised,
+                visible: display.visible,
+                screens: display.screens,
+                window_screen: display.window_screen,
+                rescue: &rescue,
+            },
+        )
+    };
     if saved != *frame {
         settings.set_frame(name, saved);
         hydrus_store::settings::set(conn, &settings)?;

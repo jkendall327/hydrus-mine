@@ -35,7 +35,11 @@ time.
 The main window opens
 where and as big as hydrus had it (maximised, by hydrus's default) and
 keeps its size and place as it closes, as hydrus's frame locations do
-(less hydrus's fitting of a window to its screen). Its windows
+(`SaveTLWSizeAndPosition`, over the displays winit lists: nothing while it is
+minimised or hidden; its place only once checked by the off-screen rescue;
+and, maximised or fullscreen, its earlier size and place kept, the place
+moved to the same spot on the new display if the window was carried to
+another). Its windows
 follow the system's light or dark mode (hydrus's own colour options aren't
 carried over yet). Each notebook
 on the way to the page shown has a row of tabs, and a notebook opens on its
@@ -84,6 +88,22 @@ in a new page
 it while it runs; a right click dismisses one that is done, and the line
 under them counts them, with "dismiss all" (those done) and an arrow to
 hide or show them. They update four times a second.
+A long job can be published as modal (`src/popup_modal.rs`,
+`hydrus-gui-model/src/popup_modal.rs`; Help > debug > "make a modal popup in
+five seconds"), as the reference's `AddModalMessage`: it is kept out of the
+popups and thrown up in a dialog of its own, titled with the job's title
+("important job" without one), with the job's texts, gauges, download and
+pause and stop buttons, and a close button only if the job can be cancelled.
+It waits (one retried at a time) while the main window is minimised or not
+the active one, or another modal is up. Closing a running job asks "Cancel/stop
+job?" (yes cancels it); closing one that cannot be cancelled says so and the
+dialog stays; a job that finishes closes its dialog by itself. Either way the
+job is then released to the popups. A job already done goes straight to the
+popups. A popup's download keeps its control, blank, for ten seconds after
+the download goes, as the reference's does. The popups freeze while the main
+window is minimised (if that option is on) or hidden, and focus is no
+condition (`oracle/record_popup_freeze.py`, `record_popup_modal.py`,
+`record_popup_network_job.py`).
 Options > popup notifications stages the approximate maximum width (16–256
 characters, default 56) and the force-fixed-width switch (default off). Apply
 persists both. Each card captures these settings when it first enters the oldest
@@ -113,7 +133,8 @@ as Qt's do; a press anywhere else closes them. What works so far:
   running an export folder now, opening the installation and database
   directories, the options, and exit, restart and exit/force maintenance
   (declining a restart leaves the next window close a plain exit, as the
-  reference's per-request flag does; there is no minimise to system tray);
+  reference's per-request flag does), and minimise to system tray where the
+  desktop has a tray (see the system tray section);
 - undo: the pages closed in the last hour, latest first, to reopen any of
   them, or forget them all (asking first); searching additions and removals,
   latest first, to toggle a historical predicate on the visible media page,
@@ -530,8 +551,10 @@ Help > about opens the about window (`ui/about.slint`,
 `src/about_window.rs`, `hydrus-gui-model/src/about.rs`), as the
 reference's "about hydrus": the name, version and site link over the
 "Description" (platform, ffmpeg and SQLite versions, boot time,
-directories and database settings), "Optional Libraries", "Credits" and
-"License" tabs, in the reference's forms
+directories, locale and database settings), "Optional Libraries" (what
+hydrus-rs can do without or with built in, a line each in the reference's
+forms: "ffmpeg: yes", "mpv: not available", "PDF: yes (native)"), "Credits"
+and "License" tabs, in the reference's forms
 (`oracle/record_about_window.py`).
 
 File > options opens the options window (`hydrus-gui-model/src/options.rs`), as the
@@ -3842,7 +3865,7 @@ page switch; media playback's mpv and QtMediaPlayer boxes and system's system
 FFMPEG, truncated images and PIL switches; hovers' pinned duplicates hover and
 the "preview window hovers" box; popups' other-display freeze; speed and
 memory's "image tile cache" and "video buffer" boxes; system sleep's file system
-wait; the "system tray" page; and tag editing's petition reason count. An
+wait; and tag editing's petition reason count. An
 imported client brings its values. mpv plays through the preferred audio
 device, and loops the playlist rather than the file when asked.
 
@@ -5011,3 +5034,78 @@ Options > files and trash > "TEST: Import local files directly from source, do
 not copy to temp dir beforehand" is read by local imports and import folders:
 off (the default), each file is copied to a temporary path and imported from
 there; on, it is imported from where it is.
+
+## System tray
+
+Slint's own `SystemTrayIcon` (on Linux a StatusNotifierItem on the session bus,
+no Qt) shows hydrus's icon. A tray is there when a StatusNotifierWatcher owns
+its name on the session bus (the reference's `SystemTrayAvailable`); without
+one, none of the following happens and the options below do nothing, as in the
+reference.
+
+- Options > system tray: "Always show the hydrus system tray icon" makes the
+  icon exist (made and removed as Options is applied). It also exists whenever
+  the client is hidden to it, and goes with the client on exit.
+- Its tooltip is the application display name, with " - network traffic
+  paused" and " - subscriptions paused" after it. Its menu is the reference's:
+  hide to system tray / show, pause network traffic and pause subscriptions
+  (ticks), an options submenu of "minimise client", "close client" and "start
+  client in system tray" (ticks that flip those options), and exit. A click
+  shows a hidden window; on a window in front it minimises it, or hides it
+  when minimise-to-tray is on; on a window behind others it brings it forward.
+- "Close the main window to system tray": the window's close button hides the
+  window (a moment after the icon is up) instead of asking to exit. File >
+  exit, restart and the icon's exit entry still exit (asking as ever). If the
+  tray goes away while the client is hidden to it, the window comes back.
+- "Start the client minimised to system tray": the client starts with its
+  window hidden, and the icon showing.
+- "Minimise the main window to system tray": minimising the window hides it
+  to the icon, and showing it again brings back the state it had before the
+  minimise (maximised, say). The window is looked at four times a second while
+  the option and a tray are there.
+- File > minimise to system tray ("Hide the client to an icon on your system
+  tray."), after options…, is shown with a tray in advanced mode (always, on
+  Windows).
+
+The rules are recorded from the reference's own client (`oracle/record_system_tray.py`,
+`oracle/fixtures/system_tray.json`) and checked case by case in
+`hydrus-gui-model/tests/model/system_tray.rs`; `tests/gui/system_tray.rs`
+drives the real main window and Options window against a recording tray.
+
+### Manage tags: entering, removing, the cog, and the viewer's dialog
+
+Typed and suggested tags are only added, as the reference's default has it:
+entering a tag every file already has does nothing. The cog (⚙) beside the tag
+list holds the reference's switches: "allow remove/petition result on tag input
+for already existing tag" (off; on, entering a tag all the files have removes it),
+"confirm remove/petition tags on explicit delete actions" (on) and "select the
+first tag result with actual count" (the same setting as the options page), then
+"migrate tags for these files". Entering a tag only some of the files have (by
+typing with the first switch on, or by double-clicking it in the list) asks
+"What would you like to do?" with the reference's two buttons, `add "x" for 1
+files` and `delete "x" for 2 files` (several tags: `add 2 tags`, `delete 2 tags`);
+closing the question does nothing.
+
+Clicking a listed tag selects it (ctrl and shift extend the selection). "remove all/selected
+tags" removes the selected tags, or every tag if none is selected, and, unless the
+confirmation is off, first asks "Are you sure you want to remove these tags:" with
+the tags (up to nine, each cut at 64 characters) or "Are you sure you want to
+remove these 12 tags?". Delete on the focused list does the same for the selected
+tags; Enter on it enters them again. "copy" puts the selected tags (or all) on the
+clipboard, one per line in natural order, and says "Copied 3 tags!" under the buttons.
+The recent-tags panel has the reference's "clear" button ("Clear recent tags?").
+Activating a suggested tag only ever adds it, whatever the cog says.
+
+With the input empty, Left and Right change the autocomplete's tab and, if its list is
+empty too, Up and Down change the service tab (all wrapping), as the reference's
+`tags_autocomplete` shortcuts do.
+
+Opened from the media viewer (F3 there), the dialog is the reference's
+immediate-commit one: every change is written as it is made (the viewer's tag display
+and the page update at once), there is only a "close" button, the dialog is about the
+file the viewer shows and follows it as the viewer moves, and PageUp / PageDown in an
+empty input move the viewer to the previous / next file. A question still open
+when the viewer moves on is dropped, so it can never be answered for the wrong file.
+Proven by replays of `oracle/fixtures/manage_tags_cog.json` (`manage_tags_cog.rs`),
+`manage_tags_viewer.json` (`manage_tags_viewer.rs`, through real key events and the
+viewer's own navigation) and `manage_tags_keys.json` (the empty-input conditions).
