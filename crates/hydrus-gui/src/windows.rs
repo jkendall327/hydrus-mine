@@ -23,6 +23,9 @@ pub fn keep(store: &Store, settings: WindowSettings) {
 }
 
 thread_local! {
+    /// Where the pointer last was over any of our windows, in desktop
+    /// coordinates (winit cannot read it from outside them).
+    static POINTER: std::cell::Cell<Option<(i32, i32)>> = const { std::cell::Cell::new(None) };
     static MAIN: std::cell::RefCell<Option<slint::Weak<crate::MainWindow>>> =
         const { std::cell::RefCell::new(None) };
 }
@@ -46,12 +49,38 @@ fn surroundings(is_main: bool) -> Surroundings {
     let position = main.window().position().to_logical(scale);
     let size = main.window().size().to_logical(scale);
     #[allow(clippy::cast_possible_truncation)]
-    let frame = PlacementRect {
+    let mut frame = PlacementRect {
         x: position.x.round() as i32,
         y: position.y.round() as i32,
         width: size.width.round() as i32,
         height: size.height.round() as i32,
     };
+    // `frameGeometry()`: the window with its title bar and borders, where
+    // winit can say what they are
+    let mut frame_padding = (0, 0);
+    #[allow(clippy::cast_possible_truncation)]
+    if let Some((outer, inner, at)) = main.window().with_winit_window(|native| {
+        let scale = native.scale_factor();
+        (
+            native.outer_size().to_logical::<f64>(scale),
+            native.inner_size().to_logical::<f64>(scale),
+            native
+                .outer_position()
+                .ok()
+                .map(|at| at.to_logical::<f64>(scale)),
+        )
+    }) {
+        frame.width = outer.width.round() as i32;
+        frame.height = outer.height.round() as i32;
+        if let Some(at) = at {
+            frame.x = at.x.round() as i32;
+            frame.y = at.y.round() as i32;
+        }
+        frame_padding = (
+            (outer.width - inner.width).round() as i32,
+            (outer.height - inner.height).round() as i32,
+        );
+    }
     let display = native_screens(main.window()).and_then(|screens| {
         let centre = (i64::from(frame.center().0), i64::from(frame.center().1));
         screens
@@ -73,7 +102,8 @@ fn surroundings(is_main: bool) -> Surroundings {
             fullscreen: main.window().is_fullscreen(),
         }),
         display,
-        mouse: None,
+        mouse: POINTER.with(std::cell::Cell::get),
+        frame_padding,
     }
 }
 
@@ -154,6 +184,7 @@ pub(crate) fn watch_named_events(
     });
     let mut events = NamedEvents { opening, next };
     window.on_winit_window_event(move |window, event| {
+        remember_pointer(window, event);
         if events
             .opening
             .as_ref()
@@ -170,6 +201,27 @@ pub(crate) fn watch_named_events(
             (events.next)(window, event)
         }
     });
+}
+
+/// Note where the pointer is, from a cursor move over one of our windows.
+#[allow(clippy::cast_possible_truncation)]
+fn remember_pointer(window: &slint::Window, event: &WindowEvent) {
+    let WindowEvent::CursorMoved { position, .. } = event else {
+        return;
+    };
+    let at = window.with_winit_window(|native| {
+        let scale = native.scale_factor();
+        let origin = native.inner_position().ok()?;
+        let origin = origin.to_logical::<f64>(scale);
+        let position = position.to_logical::<f64>(scale);
+        Some((
+            (origin.x + position.x).round() as i32,
+            (origin.y + position.y).round() as i32,
+        ))
+    });
+    if let Some(Some(at)) = at {
+        POINTER.with(|pointer| pointer.set(Some(at)));
+    }
 }
 
 struct NamedEvents<F> {

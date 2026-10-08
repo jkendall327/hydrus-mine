@@ -65,8 +65,8 @@ struct Built {
     counters: Example,
 }
 
-/// The examples' samples, made when the page first shows them and again if
-/// another service is chosen to style them.
+/// The examples' samples, made when the page first shows them; choosing another
+/// service to style them changes only their colours and shape.
 #[derive(Default)]
 pub(crate) struct RatingExamples(RefCell<Option<Built>>);
 
@@ -109,12 +109,20 @@ impl RatingExamples {
 
     fn rebuild(&self, editor: &Editor, store: &Store) {
         let key = Self::style_of(editor).unwrap_or_else(|| ServiceKey::new(Vec::new()));
-        if self
-            .0
-            .borrow()
-            .as_ref()
-            .is_some_and(|built| built.template == key)
-        {
+        let mut built = self.0.borrow_mut();
+        if let Some(existing) = built.as_mut() {
+            if existing.template == key {
+                return;
+            }
+            // `SetServiceTemplate` clones only the colours and the shape of
+            // the service chosen; the stars' count and the rest stay as the
+            // template the panel opened with made them.
+            if let ServiceKind::RatingNumerical(config) = &mut existing.numerical {
+                let chosen = template(store, &key);
+                config.display.colours = chosen.display.colours;
+                config.appearance = chosen.appearance;
+            }
+            existing.template = key;
             return;
         }
         let numerical = ServiceKind::RatingNumerical(template(store, &key));
@@ -123,7 +131,7 @@ impl RatingExamples {
         else {
             return;
         };
-        *self.0.borrow_mut() = Some(Built {
+        *built = Some(Built {
             template: key,
             numerical,
             incdec,

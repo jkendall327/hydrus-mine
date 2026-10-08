@@ -37,6 +37,7 @@ fn around() -> Surroundings {
             height: 1080,
         }),
         mouse: Some((700, 500)),
+        frame_padding: (0, 0),
     }
 }
 
@@ -118,4 +119,25 @@ fn a_remembered_size_and_place_beat_the_defaults_and_each_default_position_is_th
     f.last_position = None;
     f.default_position = "topleft".into();
     assert_eq!(initial(&f, (300, 200), &around()).size, (952, 752));
+}
+
+// leaf: audit-options-nested-frame-location-gravity
+#[test]
+fn the_frame_padding_comes_off_the_parent_and_display_sizes_but_not_a_fullscreen_parent() {
+    let mut padded = around();
+    // a 2-pixel border and 28-pixel title bar
+    padded.frame_padding = (4, 32);
+    // `parent_frame_size - frame_padding`, less 24 either side
+    assert_eq!(safe_size((300, 200), (1, 1), &padded), (948, 720));
+    padded.parent.as_mut().unwrap().fullscreen = true;
+    assert_eq!(safe_size((300, 200), (1, 1), &padded), (952, 752));
+    // the display's size loses the padding too
+    padded.parent = None;
+    padded.display = Some(Rect {
+        x: 0,
+        y: 0,
+        width: 800,
+        height: 600,
+    });
+    assert_eq!(safe_size((900, 700), (-1, -1), &padded), (748, 520));
 }

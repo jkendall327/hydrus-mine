@@ -7,11 +7,70 @@
 import { RatingRow, RatingGraphic } from "viewer.slint";
 import { Theme } from "theme.slint";
 
+// One rating as the corner draws it, at the sizes of the background draw
+// (`_DrawTopRight`: the settings rounded) and of the popped-in hover
+// (`GetIconSize`/`GetIncDecSize`: the settings truncated).
+export struct PreviewRatingRow {
+    graphic: RatingRow,
+    width: length,
+    height: length,
+    popup-width: length,
+    popup-height: length,
+    icon: length,
+    popup-icon: length,
+    incdec: length,
+    popup-incdec: length,
+    outline: length,
+    popup-outline: length,
+}
+
+// (a slot of its row: it takes room only if it is of the `only` kind, and
+// leaves `gap` after it)
+component PreviewRating inherits Rectangle {
+    in property <PreviewRatingRow> rating;
+    in property <int> only;
+    in property <length> gap: 0px;
+    in property <bool> popped;
+    in property <bool> drawn;
+    callback clicked(bool, float);
+    callback dragged(float);
+    width: root.rating.graphic.kind != root.only ? 0px : (root.popped ? root.rating.popup-width : root.rating.width) + root.gap;
+    height: root.rating.graphic.kind != root.only ? 0px : (root.popped ? root.rating.popup-height : root.rating.height);
+    visible: root.rating.graphic.kind == root.only;
+    opacity: root.drawn ? 1 : 0;
+    RatingGraphic {
+        rating: root.rating.graphic;
+        icon-size: root.popped ? root.rating.popup-icon : root.rating.icon;
+        incdec-height: root.popped ? root.rating.popup-incdec : root.rating.incdec;
+        outline: root.popped ? root.rating.popup-outline : root.rating.outline;
+        x: 0px;
+        width: root.popped ? root.rating.popup-width : root.rating.width;
+        height: root.height;
+    }
+    TouchArea {
+        enabled: root.popped;
+        width: parent.width - root.gap;
+        pointer-event(event) => {
+            if (event.kind == PointerEventKind.down) {
+                if (event.button == PointerEventButton.left) {
+                    root.clicked(true, self.mouse-x / self.width);
+                } else if (event.button == PointerEventButton.right) {
+                    root.clicked(false, 0);
+                }
+            }
+        }
+        moved => {
+            if (root.rating.graphic.kind == 1 && self.pressed) {
+                root.clicked(true, self.mouse-x / self.width);
+            }
+        }
+    }
+}
+
 export component PreviewTopRight inherits TouchArea {
-    in property <[RatingRow]> ratings;
-    in property <length> rating-size: 12px;
-    in property <length> incdec-height: 12px;
-    in property <length> outline: 1px;
+    in property <[PreviewRatingRow]> ratings;
+    in property <bool> has-likes;
+    in property <bool> has-incdecs;
     in property <[string]> lines;
     in property <bool> inbox;
     in property <bool> trashed;
@@ -21,6 +80,10 @@ export component PreviewTopRight inherits TouchArea {
     // the pop-in hover is up while the mouse is over the corner
     out property <bool> popped: root.pop-in && root.has-hover;
     out property <bool> drawn: root.draw-background || root.popped;
+    // what is drawn: the likes' row, and the inc/dec row
+    out property <length> likes-width: likes.preferred-width;
+    out property <length> incdecs-width: incdecs.preferred-width;
+    out property <length> incdecs-height: incdecs.preferred-height - (root.has-incdecs ? 4px : 0px);
     width: frame.preferred-width;
     height: frame.preferred-height;
     mouse-cursor: MouseCursor.default;
@@ -29,37 +92,37 @@ export component PreviewTopRight inherits TouchArea {
         background: root.popped ? #202020e8 : transparent;
         VerticalLayout {
             padding: 6px;
-            spacing: 4px;
+            spacing: 0px;
             alignment: start;
-            for row[i] in root.ratings: HorizontalLayout {
+            // likes along one row, then each numerical on its own, then the
+            // inc/decs along one row, as `_DrawTopRight` lays them out
+            likes := HorizontalLayout {
+                padding-bottom: root.has-likes ? 4px : 0px;
                 alignment: end;
-                Rectangle {
-                    width: row.kind == 2 ? root.incdec-height * 2 : row.shapes.length * (root.rating-size + row.pad) - row.pad;
-                    height: row.kind == 2 ? root.incdec-height : root.rating-size;
-                    opacity: root.drawn ? 1 : 0;
-                    RatingGraphic {
-                        rating: row;
-                        icon-size: root.rating-size;
-                        incdec-height: root.incdec-height;
-                        outline: root.outline;
-                    }
-                    TouchArea {
-                        enabled: root.popped;
-                        pointer-event(event) => {
-                            if (event.kind == PointerEventKind.down) {
-                                if (event.button == PointerEventButton.left) {
-                                    root.rating-clicked(i, true, self.mouse-x / self.width);
-                                } else if (event.button == PointerEventButton.right) {
-                                    root.rating-clicked(i, false, 0);
-                                }
-                            }
-                        }
-                        moved => {
-                            if (row.kind == 1 && self.pressed) {
-                                root.rating-clicked(i, true, self.mouse-x / self.width);
-                            }
-                        }
-                    }
+                for row[i] in root.ratings: PreviewRating {
+                    only: 0; gap: 2px;
+                    rating: row; popped: root.popped; drawn: root.drawn;
+                    clicked(left, proportion) => { root.rating-clicked(i, left, proportion); }
+                }
+            }
+            for row[i] in root.ratings: HorizontalLayout {
+                visible: row.graphic.kind == 1;
+                height: row.graphic.kind == 1 ? self.preferred-height : 0px;
+                padding-bottom: row.graphic.kind == 1 ? 4px : 0px;
+                alignment: end;
+                PreviewRating {
+                    only: 1;
+                    rating: row; popped: root.popped; drawn: root.drawn;
+                    clicked(left, proportion) => { root.rating-clicked(i, left, proportion); }
+                }
+            }
+            incdecs := HorizontalLayout {
+                padding-bottom: root.has-incdecs ? 4px : 0px;
+                alignment: end;
+                for row[i] in root.ratings: PreviewRating {
+                    only: 2; gap: 1px;
+                    rating: row; popped: root.popped; drawn: root.drawn;
+                    clicked(left, proportion) => { root.rating-clicked(i, left, proportion); }
                 }
             }
             if root.inbox || root.trashed: HorizontalLayout {

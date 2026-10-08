@@ -44,6 +44,9 @@ pub struct Surroundings {
     pub display: Option<Rect>,
     /// The mouse, in desktop coordinates.
     pub mouse: Option<(i32, i32)>,
+    /// What a window's frame (its title bar and borders) adds to its size,
+    /// as `frameGeometry().size() - size()`.
+    pub frame_padding: (i32, i32),
 }
 
 /// The size and place a window opens at.
@@ -54,13 +57,23 @@ pub struct Placement {
     pub position: Option<(i32, i32)>,
 }
 
-/// `GetSafeSize`: the size hint, or the parent's available size (less the
-/// child padding on both sides) where the gravity is not -1, kept inside the
+/// `GetSafeSize`: the size hint, or the parent's available size (its frame less
+/// the frame padding, and the child padding on both sides) where the gravity is not -1, kept inside the
 /// display.
 pub fn safe_size(hint: (i32, i32), gravity: (i32, i32), around: &Surroundings) -> (i32, i32) {
     let (mut width, mut height) = hint;
+    let (pad_width, pad_height) = around.frame_padding;
     if let Some(parent) = around.parent {
-        let (parent_width, parent_height) = (parent.frame.width, parent.frame.height);
+        // (a fullscreen parent has no frame to take from its size)
+        let (taken_width, taken_height) = if parent.fullscreen {
+            (0, 0)
+        } else {
+            (pad_width, pad_height)
+        };
+        let (parent_width, parent_height) = (
+            parent.frame.width - taken_width,
+            parent.frame.height - taken_height,
+        );
         if gravity.0 != -1 {
             let max = parent_width - 2 * CHILD_POSITION_PADDING;
             width = (f64::from(gravity.0) * f64::from(max)) as i32;
@@ -71,8 +84,8 @@ pub fn safe_size(hint: (i32, i32), gravity: (i32, i32), around: &Surroundings) -
         }
     }
     if let Some(display) = around.display {
-        width = width.min(display.width - 2 * CHILD_POSITION_PADDING);
-        height = height.min(display.height - 2 * CHILD_POSITION_PADDING);
+        width = width.min(display.width - pad_width - 2 * CHILD_POSITION_PADDING);
+        height = height.min(display.height - pad_height - 2 * CHILD_POSITION_PADDING);
     }
     (width, height)
 }

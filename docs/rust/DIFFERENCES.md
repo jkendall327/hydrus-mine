@@ -3825,15 +3825,17 @@ change nothing). They are marked out of scope in `docs/rust/tracking/`.
   favourite file lookup script choice and the second recent count (there are
   no quick dialogs or lookup scripts). The style page isn't offered: Slint has
   no Qt styles or stylesheets.
-- The ratings page's style choice is kept when the options are applied (the
-  reference keeps it the moment it is chosen, even if the dialog is
-  cancelled), and the example inc/dec rectangle has no middle-click counter
-  entry. Choosing another style restarts the samples.
+- The ratings page's example inc/dec rectangle has no middle-click counter
+  entry.
 - The mpv.conf chosen in the mpv box goes over the database's `mpv.conf` on
   OK, as the reference's does. mpv reads it when a player is made, so a
   running player keeps its old one (the reference reloads it in place).
-- The preview window's top-right hover shows a file's ratings, its inbox and
-  trash icons, locations and URL names as text. URLs can't be clicked there,
+- The preview window's top-right hover shows a file's ratings (likes along one
+  row, each numerical on its own, inc/decs along one row; background drawing
+  rounds the sizes, the popped-in hover cuts them off, as the reference's
+  two code paths do), its inbox and trash icons, locations and URL names as
+  text. A numerical rating is as wide as its stars: the reference's fraction
+  text beside them is not drawn there. URLs can't be clicked there,
   and the cog menu of the reference's hover does not exist.
 - The duplicates filter's hover is a fixed panel beside the canvas while
   pinned (the reference floats it over the canvas); unpinned it pops in over
@@ -3841,11 +3843,13 @@ change nothing). They are marked out of scope in `docs/rust/tracking/`.
   hover itself.
 - Frame locations: a child window opens at its parent's top-left (less the
   padding), centred on it, or where the mouse is, and grows toward the main
-  window by its gravity, as `SetInitialTLWSizeAndPosition` does. Winit cannot
-  read the pointer outside the application's windows, so "mouse" opens the
-  window centred on the main window. The frame padding of the title bar is not
-  known, so the parent's available size is its whole frame. Only the main
-  window, the media viewer and the Options window consult their frames.
+  window by its gravity, as `SetInitialTLWSizeAndPosition` does, taking the
+  main window's title bar and borders off its size where winit reports them.
+  Winit cannot read the pointer outside the application's windows, so "mouse"
+  uses where the pointer last was over one of hydrus-rs's windows, else the
+  centre of the main window. Only the main window, the media viewer and the
+  Options window consult their frames. The Options window is placed before it
+  shows, and again once shown when its own size was needed to grow from.
 
 ## Review vacuum data
 

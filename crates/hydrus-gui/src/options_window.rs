@@ -1490,7 +1490,20 @@ pub(crate) fn open(
                 return;
             }
             if matches!(editor.rows().get(at(i)),Some(Row::Opt {option,..}) if matches!(option.kind,Kind::RatingStyle)) {
-                if let Some((service,_))=crate::options::rating_style_choices(&store).get(at(index)) {editor.tag_service(at(i),service.clone());}
+                if let Some((service,_))=crate::options::rating_style_choices(&store).get(at(index)) {
+                    editor.tag_service(at(i),service.clone());
+                    // (the reference keeps the template the moment it is chosen,
+                    // dialog cancelled or not)
+                    let hex = service.to_hex();
+                    if let Err(e) = store.write(move |ctx| {
+                        let mut options: hydrus_store::reference_options::ReferenceOptions =
+                            hydrus_store::settings::get(ctx.conn())?;
+                        options.set_string("options_ratings_panel_template_service_key", Some(hex));
+                        hydrus_store::settings::set(ctx.conn(), &options)
+                    }) {
+                        eprintln!("could not keep the rating style: {e}");
+                    }
+                }
                 if let Some(window) = weak.upgrade() { rating_examples.refresh(&window, &editor, &store); }
                 return;
             }
@@ -1849,8 +1862,11 @@ pub(crate) fn open(
             slint::CloseRequestResponse::HideWindow
         }
     });
-    window.show().map_err(|e| e.to_string())?;
-    // (placed once shown, when the size it needs is known to grow from)
+    // placed before it shows where its frame says enough to, then again once
+    // shown if it needed its own size to grow from (the same place twice
+    // moves nothing)
     crate::windows::place_named(window.window(), store, "manage_options_dialog");
+    window.show().map_err(|e| e.to_string())?;
+    crate::windows::place_named_geometry(window.window(), store, "manage_options_dialog");
     Ok(window)
 }
