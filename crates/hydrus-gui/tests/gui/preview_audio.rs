@@ -45,6 +45,9 @@ struct Preview {
 impl Preview {
     fn new() -> Self {
         let client = Client::basic();
+        // (a real mpv, where libmpv is installed, must not open a sound
+        // device: the store's mpv.conf is loaded by every player)
+        std::fs::write(client.store.dir().join("mpv.conf"), "ao=null\n").unwrap();
         client.ui.invoke_search_edited("system:everything".into());
         client.ui.invoke_search_accepted();
         for _ in 0..3 {
@@ -338,6 +341,29 @@ fn the_previews_volume_control_opens_under_the_pointer_and_moves_the_volume() {
     assert_eq!(p.settings().preview_volume, 100);
     assert_eq!(p.settings().global_volume, 70);
     assert_eq!(ui.get_preview_volume(), 100);
+    // the row under the track is the preview's own mute
+    let click = |y: f32| {
+        for event in [
+            WindowEvent::PointerMoved {
+                position: at(x + 12.0, y),
+            },
+            WindowEvent::PointerPressed {
+                position: at(x + 12.0, y),
+                button: PointerEventButton::Left,
+            },
+            WindowEvent::PointerReleased {
+                position: at(x + 12.0, y),
+                button: PointerEventButton::Left,
+            },
+        ] {
+            ui.window().dispatch_event(event);
+        }
+    };
+    assert!(!p.settings().preview_mute);
+    click(top + 10.0 + 100.0 + 10.0 + 10.0);
+    assert!(p.settings().preview_mute);
+    assert!(ui.get_preview_muted());
+    assert!(!p.settings().global_mute);
     // its bottom row is the global mute
     let bottom = top + 10.0 + 100.0 + 10.0 + 20.0 + 10.0;
     ui.window().dispatch_event(WindowEvent::PointerMoved {

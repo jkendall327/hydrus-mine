@@ -4308,3 +4308,11 @@ directory.
   text speaker glyphs) is not the reference's.
 - The preview's player is one per window, not one per page: switching pages
   starts the new page's file afresh, rather than keeping each page's player.
+- The preview starts playing only once its still has decoded and been accepted,
+  so a file whose still cannot be decoded is not played; the reference sends
+  the file to mpv whatever its thumbnail or still does.
+- The preview's right-click volume menu (`AddAudioVolumeMenu`: global, preview
+  and per-player mute) is not ported, and the control's tooltips ("Global
+  mute/unmute", "Mute/unmute: preview") are missing.
+- A change to the preview's show action while a file plays restarts it within
+  a quarter of a second, not at once.

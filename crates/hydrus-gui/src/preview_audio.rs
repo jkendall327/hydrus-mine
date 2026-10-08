@@ -10,7 +10,7 @@
 //! absent the decisions are still made (the player's `target` and `audio`
 //! show them) and the pane keeps its still.
 
-use std::cell::Cell;
+use std::cell::{Cell, RefCell};
 use std::rc::Rc;
 use std::sync::Arc;
 use std::time::{Duration, Instant};
@@ -32,6 +32,10 @@ pub(crate) struct PreviewAudio {
     store: Arc<Store>,
     playback: Rc<Playback>,
     playing: Cell<Option<HashId>>,
+    /// The file `sync` was last given, whether or not it plays.
+    seen: Cell<Option<HashId>>,
+    /// What the player was last started on: the path, and paused or not.
+    started: RefCell<Option<(std::path::PathBuf, bool)>>,
     /// Whether a frame of the video has come to replace the still.
     has_frame: Rc<Cell<bool>>,
     checked: Cell<Option<Instant>>,
@@ -66,6 +70,8 @@ impl PreviewAudio {
             playback: Playback::for_store(store.clone()),
             store,
             playing: Cell::new(None),
+            seen: Cell::new(None),
+            started: RefCell::new(None),
             has_frame: Rc::default(),
             checked: Cell::new(None),
         }
@@ -80,52 +86,58 @@ impl PreviewAudio {
         self.has_frame.get()
     }
 
-    /// Play `file` (the preview's accepted file), or stop on `None`.
+    /// Play `file` (the preview's accepted file), or stop on `None`. What
+    /// plays (the path and whether it starts paused) is looked up again when
+    /// the file changes and every [`AUDIO_CHECK`], so a changed show action
+    /// restarts the file and a refresh costs no store read in between.
     pub fn sync(&self, window: &MainWindow, file: Option<HashId>) {
-        let file = file.filter(|&file| playable(&self.store, file).is_some());
-        if self.playing.get() != file {
-            self.playing.set(file);
-            self.has_frame.set(false);
-            self.checked.set(None);
-            match file.and_then(|file| Some((file, playable(&self.store, file)?))) {
-                Some((_, (path, paused))) => {
-                    let (volume, mute) = audio::preview_sound(&self.store);
-                    self.playback.set_audio(volume, mute);
-                    let (size, frame, has_frame) =
-                        (window.as_weak(), window.as_weak(), self.has_frame.clone());
-                    self.playback.play(
-                        Some(&path),
-                        move || {
-                            let window = size.upgrade()?;
-                            let (w, h) = (
-                                window.get_preview_media_width(),
-                                window.get_preview_media_height(),
-                            );
-                            let scale = window.window().scale_factor();
-                            (w >= 1.0 && h >= 1.0)
-                                .then_some(((w * scale) as u32, (h * scale) as u32))
-                        },
-                        move |image| {
-                            if let Some(window) = frame.upgrade() {
-                                has_frame.set(true);
-                                window.set_preview_media(image);
-                            }
-                        },
-                    );
-                    self.playback.set_paused(paused);
-                }
-                None => self.playback.stop(),
-            }
-        }
         let now = Instant::now();
-        if self
+        let due = self
             .checked
             .get()
-            .is_none_or(|at| now.duration_since(at) >= AUDIO_CHECK)
-        {
+            .is_none_or(|at| now.duration_since(at) >= AUDIO_CHECK);
+        let changed = self.seen.replace(file) != file;
+        if changed || due {
+            let wanted = file.and_then(|file| playable(&self.store, file));
+            if changed || *self.started.borrow() != wanted {
+                self.playing.set(file.filter(|_| wanted.is_some()));
+                self.has_frame.set(false);
+                self.started.borrow_mut().clone_from(&wanted);
+                match wanted {
+                    Some((path, paused)) => self.start(window, &path, paused),
+                    None => self.playback.stop(),
+                }
+            }
+        }
+        if changed || due {
             self.checked.set(Some(now));
             self.show_audio(window);
         }
+    }
+
+    fn start(&self, window: &MainWindow, path: &std::path::Path, paused: bool) {
+        let (volume, mute) = audio::preview_sound(&self.store);
+        self.playback.set_audio(volume, mute);
+        let (size, frame, has_frame) = (window.as_weak(), window.as_weak(), self.has_frame.clone());
+        self.playback.play(
+            Some(path),
+            move || {
+                let window = size.upgrade()?;
+                let (w, h) = (
+                    window.get_preview_media_width(),
+                    window.get_preview_media_height(),
+                );
+                let scale = window.window().scale_factor();
+                (w >= 1.0 && h >= 1.0).then_some(((w * scale) as u32, (h * scale) as u32))
+            },
+            move |image| {
+                if let Some(window) = frame.upgrade() {
+                    has_frame.set(true);
+                    window.set_preview_media(image);
+                }
+            },
+        );
+        self.playback.set_paused(paused);
     }
 
     /// The volume and mutes, as kept, on the player and the control.
@@ -152,6 +164,8 @@ impl PreviewAudio {
 
     pub fn close(&self) {
         self.playing.set(None);
+        self.seen.set(None);
+        *self.started.borrow_mut() = None;
         self.has_frame.set(false);
         self.playback.close();
     }

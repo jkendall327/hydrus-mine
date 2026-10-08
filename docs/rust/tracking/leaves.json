@@ -6269,7 +6269,7 @@
    "reference": null,
    "native": null,
    "notes": [
-    "Truth pass (2026-10-08): partial, medium. Decide whether preview playback is in scope. Missing: Preview audio playback, preview volume/mute settings and control; or decide the preview stays silent. Evidence: options.rs:1714-1718 row, unread; AudioSettings has no preview volume; the reference preview does play audio",
+    "Truth pass (2026-10-08): partial, medium. The owner decided preview playback is in scope (2026-10-08, issue #104): the preview plays the file's audio and video at its own volume or the global one, with the reference's volume control. Missing then: preview audio playback, preview volume/mute settings and control (since added; see docs/rust/DIFFERENCES.md, Preview sound, for what only libmpv verifies).",
     "Reference editor/control 'The preview window has its own volume:' is recorded on 'audio' and defined by the referenced options panel. No corresponding editable row exists in native options::pages; this is a missing GUI editing path, even if a setting is imported or consumed elsewhere.",
     "Native options registry has no editable 'The preview window has its own volume:' control in this page/box path."
    ]
