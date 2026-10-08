@@ -363,6 +363,26 @@ impl Default for SimilarFilesSettings {
     }
 }
 
+impl SimilarFilesSettings {
+    /// The search's pace now: whether it may work in idle or normal time,
+    /// and its packet and rest there.
+    pub fn pace(&self, idle: bool) -> crate::idle_state::Pace {
+        crate::idle_state::Pace::choose(
+            idle,
+            (
+                self.during_active,
+                self.work_time_ms_active,
+                self.rest_percentage_active,
+            ),
+            (
+                self.during_idle,
+                self.work_time_ms_idle,
+                self.rest_percentage_idle,
+            ),
+        )
+    }
+}
+
 /// Forget every potential pair (and the auto-resolution rules' records of
 /// them), and search every file again (`DeletePotentialDuplicatePairs`, the
 /// duplicates page's "delete all potential duplicate pairs and

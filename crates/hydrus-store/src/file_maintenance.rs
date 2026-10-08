@@ -283,6 +283,18 @@ impl Default for FileMaintenanceSettings {
     }
 }
 
+impl FileMaintenanceSettings {
+    /// Whether file maintenance may run now, in idle or normal time, and
+    /// its throttle there: that many big jobs' worth every that many seconds.
+    pub fn allowance(&self, idle: bool) -> (bool, u64, u64) {
+        if idle {
+            (self.during_idle, self.idle_files, self.idle_seconds)
+        } else {
+            (self.during_active, self.active_files, self.active_seconds)
+        }
+    }
+}
+
 impl crate::settings::Setting for FileMaintenanceSettings {
     const KEY: &'static str = "file_maintenance";
 }

@@ -550,18 +550,14 @@ fn run_server(dir: &Path, port: Option<u16>, bind: Option<IpAddr>, attached: boo
         // in: packets of work and rests, by the GUI's idle state
         let searcher = store.clone();
         tokio::spawn(async move {
-            use hydrus_store::idle_state::{Pace, is_idle};
+            use hydrus_store::idle_state::is_idle;
             use hydrus_store::similar::SimilarFilesSettings;
             loop {
                 let store = searcher.clone();
                 let settings: SimilarFilesSettings =
                     store.read(hydrus_store::settings::get).unwrap_or_default();
                 let idle = is_idle(store.dir(), hydrus_core::time::TimestampMs::now().millis());
-                let mut pace = Pace::choose(
-                    idle,
-                    (settings.during_active, settings.work_time_ms_active, settings.rest_percentage_active),
-                    (settings.during_idle, settings.work_time_ms_idle, settings.rest_percentage_idle),
-                );
+                let mut pace = settings.pace(idle);
                 pace.allowed |= settings.work_hard;
                 if !pace.allowed {
                     tokio::time::sleep(Duration::from_secs(10)).await;
@@ -614,11 +610,7 @@ fn run_server(dir: &Path, port: Option<u16>, bind: Option<IpAddr>, attached: boo
                     maintainer.dir(),
                     hydrus_core::time::TimestampMs::now().millis(),
                 );
-                let (allowed, files, seconds) = if idle {
-                    (settings.during_idle, settings.idle_files, settings.idle_seconds)
-                } else {
-                    (settings.during_active, settings.active_files, settings.active_seconds)
-                };
+                let (allowed, files, seconds) = settings.allowance(idle);
                 if !allowed {
                     tokio::time::sleep(Duration::from_secs(60)).await;
                     continue;
@@ -672,14 +664,10 @@ fn run_server(dir: &Path, port: Option<u16>, bind: Option<IpAddr>, attached: boo
                         continue;
                     }
                 };
-                let pace = hydrus_store::idle_state::Pace::choose(
-                    hydrus_store::idle_state::is_idle(
-                        store.dir(),
-                        hydrus_core::time::TimestampMs::now().millis(),
-                    ),
-                    (settings.during_active, settings.work_time_ms_active, settings.rest_percentage_active),
-                    (settings.during_idle, settings.work_time_ms_idle, settings.rest_percentage_idle),
-                );
+                let pace = settings.pace(hydrus_store::idle_state::is_idle(
+                    store.dir(),
+                    hydrus_core::time::TimestampMs::now().millis(),
+                ));
                 if !pace.allowed {
                     tokio::time::sleep(Duration::from_secs(10)).await;
                     continue;

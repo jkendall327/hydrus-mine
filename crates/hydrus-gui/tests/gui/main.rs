@@ -240,3 +240,4 @@ mod tag_filter_removal;
 mod viewer_prefetch;
 mod search_pages_favourites;
 mod search_pages_menu;
+mod options_system_consumers;
