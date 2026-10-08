@@ -2,7 +2,9 @@
 //! in the real menu and its effect read back where the reference puts it
 //! (`ClientGUI._DebugMake*`, `HydrusData.DebugPrint`,
 //! `ClientController.ForceDatabaseCommit`, `HydrusEnvironment.DumpEnv`).
-use hydrus_gui::{Bound, MainWindow, Pages, bind, debug_printed, exit_requested, headless, message_window};
+use hydrus_gui::{
+    Bound, MainWindow, Pages, bind, debug_printed, exit_requested, headless, message_window,
+};
 use hydrus_gui_model::debug_actions as model;
 use hydrus_store::{Store, popups, sessions};
 use slint::{ComponentHandle as _, Model as _};
@@ -110,7 +112,11 @@ fn make_some_popups_throws_the_reference_s_varied_popups_then_three_delayed_ones
     for i in 1..=6 {
         assert!(texts.contains(&format!("This is a test popup message -- {i}")));
     }
-    assert!(texts.iter().any(|t| t.starts_with("This is a very long message:")));
+    assert!(
+        texts
+            .iter()
+            .any(|t| t.starts_with("This is a very long message:"))
+    );
     assert!(at_once.iter().any(|j| j.had_error
         && j.status_title.as_deref() == Some("DataMissing")
         && j.traceback.is_some()));
@@ -119,7 +125,10 @@ fn make_some_popups_throws_the_reference_s_varied_popups_then_three_delayed_ones
     // three more arrive half a second apart
     let started = std::time::Instant::now();
     while d.jobs().len() < before + 3 {
-        assert!(started.elapsed() < Duration::from_secs(10), "delayed popups arrive");
+        assert!(
+            started.elapsed() < Duration::from_secs(10),
+            "delayed popups arrive"
+        );
         slint::platform::update_timers_and_animations();
         std::thread::sleep(Duration::from_millis(10));
     }
@@ -139,24 +148,30 @@ fn make_some_popups_throws_the_reference_s_varied_popups_then_three_delayed_ones
 fn modal_popups_arrive_after_five_seconds_counting_down_and_only_one_can_be_cancelled() {
     let d = start();
     d.click(&["gui actions", "make a modal popup in five seconds"]);
-    d.click(&["gui actions", "make a non-cancellable modal popup in five seconds"]);
-    assert!(d.jobs().is_empty(), "nothing before the five seconds are up");
+    d.click(&[
+        "gui actions",
+        "make a non-cancellable modal popup in five seconds",
+    ]);
+    assert!(
+        d.jobs().is_empty(),
+        "nothing before the five seconds are up"
+    );
     let started = std::time::Instant::now();
     while d.jobs().len() < 2 {
-        assert!(started.elapsed() < Duration::from_secs(15), "modal popups arrive");
+        assert!(
+            started.elapsed() < Duration::from_secs(15),
+            "modal popups arrive"
+        );
         std::thread::sleep(Duration::from_millis(50));
     }
     assert!(started.elapsed() >= Duration::from_secs(5));
     let jobs = d.jobs();
-    assert!(jobs.iter().all(|j| {
-        j.status_title.as_deref() == Some(model::MODAL_TITLE) && !j.pausable
-    }));
+    assert!(
+        jobs.iter()
+            .all(|j| { j.status_title.as_deref() == Some(model::MODAL_TITLE) && !j.pausable })
+    );
     assert_eq!(jobs.iter().filter(|j| j.cancellable).count(), 1);
-    let text = jobs
-        .iter()
-        .filter_map(|j| j.status_text_1.clone())
-        .next()
-        .unwrap();
+    let text = jobs.iter().find_map(|j| j.status_text_1.clone()).unwrap();
     assert!(text.starts_with("Will auto-dismiss in "), "{text}");
 }
 
@@ -228,8 +243,6 @@ fn force_database_commit_puts_everything_in_the_database_file() {
 #[test]
 fn show_env_prints_and_pops_up_the_environment() {
     let d = start();
-    // SAFETY: the other tests in this binary do not read this variable.
-    unsafe { std::env::set_var("HYDRUS_DEBUG_PROBE", "probe value") };
     d.click(&["data actions", "show env"]);
     let jobs = d.jobs();
     let text = jobs
@@ -237,7 +250,11 @@ fn show_env_prints_and_pops_up_the_environment() {
         .filter_map(|j| j.status_text_1.clone())
         .find(|t| t.starts_with("Full environment:\n"))
         .expect("the environment popup");
-    assert!(text.contains("\nHYDRUS_DEBUG_PROBE: probe value"));
+    assert!(text.starts_with("Full environment:\n"));
+    let (name, value) = std::env::vars()
+        .find(|(k, v)| !k.contains("PATH") && !k.contains("DIRS") && !v.contains('\n'))
+        .expect("some plain variable");
+    assert!(text.contains(&format!("\n{name}: {value}")));
     assert!(text.contains("\nPATH:\n    "), "PATH is one entry per line");
     assert!(debug_printed().contains(&text));
 }
@@ -254,12 +271,28 @@ fn simulate_program_exit_signal_stops_the_event_loop() {
 // leaf: audit-options-help-debug-action-clear-all-rendering-caches
 #[test]
 fn clear_all_rendering_caches_empties_the_thumbnail_and_image_caches() {
-    let d = start();
-    for i in 0..d.bound.rows.row_count().min(5) {
-        d.bound.rows.row_data(i).unwrap();
+    let (dirs, store) = super::subscriptions::store();
+    let windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(
+        &ui,
+        Pages::single(super::common::all_local_page(store.clone())),
+    );
+    ui.show().unwrap();
+    ui.invoke_search_edited("system:everything".into());
+    ui.invoke_search_accepted();
+    for i in 0..bound.rows.row_count().min(5) {
+        bound.rows.row_data(i).unwrap();
     }
-    d.bound.rows.wait();
-    assert!(d.bound.rows.cached_bytes() > 0);
+    bound.rows.wait();
+    assert!(bound.rows.cached_bytes() > 0);
+    let d = Debug {
+        _dirs: dirs,
+        store,
+        ui,
+        bound,
+        _windows: windows,
+    };
     d.click(&["memory actions", "clear all rendering caches"]);
     assert_eq!(d.bound.rows.cached_bytes(), 0);
     assert!(d.bound.image_cache.keys().is_empty());
@@ -276,7 +309,7 @@ fn review_current_network_jobs_opens_the_jobs_review() {
 
 // --- the report modes ---
 
-use hydrus_core::debug_flags::{self, Flag};
+use hydrus_core::debug_flags;
 use std::sync::Mutex;
 
 /// The flags and the sink are process-wide: one of these tests at a time.
@@ -320,7 +353,9 @@ impl Debug {
 // leaf: audit-options-help-debug-action-idle-report-mode
 #[test]
 fn idle_report_mode_says_why_the_client_is_not_idle() {
-    let _one = ONE_AT_A_TIME.lock().unwrap_or_else(|e| e.into_inner());
+    let _one = ONE_AT_A_TIME
+        .lock()
+        .unwrap_or_else(std::sync::PoisonError::into_inner);
     let d = start();
     let seen = capture();
     let now = hydrus_core::TimestampMs::now().0;
@@ -350,22 +385,24 @@ fn idle_report_mode_says_why_the_client_is_not_idle() {
 // leaf: audit-options-help-debug-action-shortcut-report-mode
 #[test]
 fn shortcut_report_mode_says_what_a_shortcut_matched() {
-    let _one = ONE_AT_A_TIME.lock().unwrap_or_else(|e| e.into_inner());
+    let _one = ONE_AT_A_TIME
+        .lock()
+        .unwrap_or_else(std::sync::PoisonError::into_inner);
     let d = start();
     let seen = capture();
     d.click(&["report modes", "shortcut report mode"]);
     assert!(d.report_mode_checked("shortcut report mode"));
+    assert!(!d.ui.invoke_shortcut_key("j".into(), 0));
     // ctrl+t is "new page" in the main gui set
     assert!(d.ui.invoke_shortcut_key("t".into(), 1));
-    assert!(!d.ui.invoke_shortcut_key("j".into(), 0));
     let seen_now = seen.lock().unwrap().clone();
     assert_eq!(seen_now.len(), 2, "{seen_now:?}");
+    assert_eq!(seen_now[0], "Shortcut \"j\" did not match any command.");
     assert!(
-        seen_now[0].starts_with("Shortcut \"ctrl+t\" matched on \"main_gui\" set to "),
+        seen_now[1].starts_with("Shortcut \"ctrl+t\" matched on \"main_gui\" set to "),
         "{}",
-        seen_now[0]
+        seen_now[1]
     );
-    assert_eq!(seen_now[1], "Shortcut \"j\" did not match any command.");
     d.click(&["report modes", "shortcut report mode"]);
     debug_flags::set_sink(None);
 }

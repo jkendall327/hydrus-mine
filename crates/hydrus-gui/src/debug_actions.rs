@@ -181,12 +181,8 @@ pub(crate) fn run(context: &Context, action: Action) {
             debug_print(model::FLUSH_LOG);
         }
         Action::ForceCommit => {
-            let done = store.write(|ctx| {
-                ctx.conn()
-                    .execute_batch("PRAGMA wal_checkpoint(PASSIVE);")
-                    .map_err(Into::into)
-            });
-            if let Err(e) = done {
+            // (pausing moves the whole write-ahead log into the database file)
+            if let Err(e) = store.pause() {
                 eprintln!("could not commit the database: {e}");
             }
         }

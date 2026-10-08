@@ -70,9 +70,17 @@ fn kept(entries: &[Value]) -> Vec<Value> {
                     .unwrap_or_default()
                     .to_owned()
             };
-            let keep: [(&str, &[&str]); 6] = [
+            let keep: [(&str, &[&str]); 7] = [
                 ("debug modes", &["force idle mode"]),
                 ("profiling", &["what is this?"]),
+                (
+                    "report modes",
+                    &[
+                        "idle report mode",
+                        "shortcut report mode",
+                        "subprocess report mode",
+                    ],
+                ),
                 (
                     "gui actions",
                     &[

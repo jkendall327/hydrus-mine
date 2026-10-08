@@ -19,7 +19,9 @@ fn capture() -> Arc<Mutex<Vec<String>>> {
 
 #[test]
 fn a_switch_flips_and_only_reports_while_on() {
-    let _one = ONE_AT_A_TIME.lock().unwrap_or_else(|e| e.into_inner());
+    let _one = ONE_AT_A_TIME
+        .lock()
+        .unwrap_or_else(std::sync::PoisonError::into_inner);
     let seen = capture();
     assert!(!Flag::IdleReport.is_on(), "off at boot");
     debug_flags::report(Flag::IdleReport, || "not shown".into());
@@ -34,7 +36,9 @@ fn a_switch_flips_and_only_reports_while_on() {
 // leaf: audit-options-help-debug-action-subprocess-report-mode
 #[test]
 fn subprocess_report_mode_reports_the_call_before_it_is_made() {
-    let _one = ONE_AT_A_TIME.lock().unwrap_or_else(|e| e.into_inner());
+    let _one = ONE_AT_A_TIME
+        .lock()
+        .unwrap_or_else(std::sync::PoisonError::into_inner);
     let seen = capture();
     let process = Process {
         executable: "true".into(),
@@ -43,7 +47,10 @@ fn subprocess_report_mode_reports_the_call_before_it_is_made() {
     };
     let call = ActualCall::Process(process);
     test_call(&call, &Inputs::new()).unwrap();
-    assert!(seen.lock().unwrap().is_empty(), "silent while the mode is off");
+    assert!(
+        seen.lock().unwrap().is_empty(),
+        "silent while the mode is off"
+    );
     Flag::SubprocessReport.set(true);
     test_call(&call, &Inputs::new()).unwrap();
     Flag::SubprocessReport.set(false);

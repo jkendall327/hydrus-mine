@@ -313,14 +313,17 @@ impl Monitor {
                 return false;
             };
             if let Some(idle) = state.idle_override() {
-                hydrus_core::debug_flags::report(hydrus_core::debug_flags::Flag::IdleReport, || {
-                    if idle {
-                        "IDLE MODE - Forced via debug menu"
-                    } else {
-                        "IDLE MODE - Blocked: Program shutting down."
-                    }
-                    .to_owned()
-                });
+                hydrus_core::debug_flags::report(
+                    hydrus_core::debug_flags::Flag::IdleReport,
+                    || {
+                        if idle {
+                            "IDLE MODE - Forced via debug menu"
+                        } else {
+                            "IDLE MODE - Blocked: Program shutting down."
+                        }
+                        .to_owned()
+                    },
+                );
                 return idle;
             }
         }

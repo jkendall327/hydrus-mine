@@ -94,7 +94,11 @@ impl Flag {
 
     /// The "report modes" submenu's switches, in the reference's order. Only
     /// switches something in hydrus-rs reads are offered.
-    pub const REPORT_MODES: [Flag; 3] = [Flag::IdleReport, Flag::ShortcutReport, Flag::SubprocessReport];
+    pub const REPORT_MODES: [Flag; 3] = [
+        Flag::IdleReport,
+        Flag::ShortcutReport,
+        Flag::SubprocessReport,
+    ];
 
     fn cell(self) -> &'static AtomicBool {
         static CELLS: [AtomicBool; 23] = [const { AtomicBool::new(false) }; 23];

@@ -114,7 +114,9 @@ fn report(set: &str, gesture: &Gesture, command: Option<i32>) {
         let shortcut = gesture.text(false);
         match command {
             Some(command) => {
-                format!("Shortcut \"{shortcut}\" matched on \"{set}\" set to \"{command}\" command.")
+                format!(
+                    "Shortcut \"{shortcut}\" matched on \"{set}\" set to \"{command}\" command."
+                )
             }
             None => format!("Shortcut \"{shortcut}\" did not match any command."),
         }
