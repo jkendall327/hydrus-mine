@@ -201,3 +201,14 @@ real harm is agents queuing on one machine's Cargo lock. Separate cloud
 sessions (own 16 GB, own target dir) remove that queue with no code churn, so
 try those first for the implementation phase; revisit the split only if one
 agent's own rebuilds dominate its time.
+
+### Round 4 (implementation phase begins)
+
+- Triage: 44 platform-only leaves moved out of scope (see tracking README).
+  Real backlog now ~170 in-scope leaves (+77 low-priority debug).
+- Local agent: `shell` (verification + small fixes).
+- Remote sessions trial (own machine, own branch, may edit `.slint`):
+  `claude/impl-external-callables` (session_01LXA7NvYQ1tHMwseLtHHb9x) and
+  `claude/impl-help-debug` (session_01SRhsQFQojn7WDE3krZbZzi). Each writes a
+  report to `docs/rust/notes/impl-*.md` with build/rebuild/loop timings. I
+  merge their branches after review.
