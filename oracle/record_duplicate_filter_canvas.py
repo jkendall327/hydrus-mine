@@ -161,7 +161,13 @@ def record( session ):
 
         everything.Sort( factory._duplicate_pair_sort_type, factory._duplicate_pair_sort_asc )
 
-        for row in list( everything.IterateRows() )[ : factory._no_more_than ]:
+        # (the canvas sorts the batch again, which flips ties once more: give it
+        # the chosen pairs in the order it began with)
+        chosen = list( everything.IterateRows() )[ : factory._no_more_than ]
+
+        chosen.sort( key = lambda row: ( hash_ids[ row[ 0 ].GetHash() ], hash_ids[ row[ 1 ].GetHash() ] ) )
+
+        for row in chosen:
 
             factory._fetched_media_result_pairs_and_distances.AppendRow( row )
 
