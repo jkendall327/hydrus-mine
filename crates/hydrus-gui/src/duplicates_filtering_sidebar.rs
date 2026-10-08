@@ -14,6 +14,12 @@ use slint::{ComponentHandle as _, ModelRc, SharedString, VecModel};
 use crate::page::SearchPage;
 use crate::{DuplicatesFiltering, MainWindow, SessionDialog};
 
+/// The "Are you sure?" question a set button last asked, while it is open
+/// (for interaction tests).
+pub fn question_opened() -> Option<SessionDialog> {
+    QUESTION.with(|q| q.borrow().as_ref().map(|d| d.clone_strong()))
+}
+
 fn strings(items: impl IntoIterator<Item = String>) -> ModelRc<SharedString> {
     ModelRc::new(VecModel::from(
         items

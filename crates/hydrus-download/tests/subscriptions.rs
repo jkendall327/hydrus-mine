@@ -1251,3 +1251,42 @@ async fn subscription_runner_cancels_selected_peer_and_joins_all_on_shutdown() {
     *s.site.hold.lock() = None;
     held.notify_waiters();
 }
+
+// leaf: audit-network-pause-nudge
+#[tokio::test(flavor = "multi_thread")]
+async fn the_clients_nudge_subscriptions_awake_is_consumed_and_wakes_the_runner() {
+    use hydrus_download::QueueRunner;
+    use hydrus_download::subscriptions::SubscriptionRunner;
+    use hydrus_store::queues;
+    let s = setup().await;
+    let ids = runner_subscriptions(&s);
+    let held = Arc::new(tokio::sync::Notify::new());
+    *s.site.hold.lock() = Some(Arc::clone(&held));
+    runner_limit(&s, 1);
+    let runner = SubscriptionRunner::new(Arc::clone(&s.downloader));
+    runner.start();
+    wait_runner(|| s.site.hits.lock().contains_key("search/sub_1/1")).await;
+    assert_eq!(runner.status().active.len(), 1);
+    // the daemon's queue runner, with nothing waiting for it
+    let queue_runner = QueueRunner::new(Arc::clone(&s.downloader), 60);
+    assert!(!queue_runner.take_nudges(Some(&runner)).unwrap());
+    // the client's menu entry writes the nudge; room for another sub is made
+    runner_limit(&s, 2);
+    s.store
+        .write(|ctx| queues::nudge(ctx.conn(), queues::SUBSCRIPTIONS_NUDGE))
+        .unwrap();
+    assert!(s.store.read(queues::any_nudged).unwrap());
+    assert!(queue_runner.take_nudges(Some(&runner)).unwrap());
+    // taken, and the runner looked again at once
+    assert!(!s.store.read(queues::any_nudged).unwrap());
+    wait_runner(|| s.site.hits.lock().contains_key("search/sub_2/1")).await;
+    assert_eq!(runner.status().active.len(), 2);
+    assert_eq!(runner.status().active[0].0, ids[0]);
+    *s.site.hold.lock() = None;
+    held.notify_waiters();
+    wait_runner(|| runner.status().active.is_empty()).await;
+    runner.shutdown();
+    tokio::time::timeout(std::time::Duration::from_secs(15), runner.wait_stopped())
+        .await
+        .unwrap();
+}

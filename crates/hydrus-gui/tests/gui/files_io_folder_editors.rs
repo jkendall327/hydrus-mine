@@ -415,3 +415,69 @@ fn an_export_folders_type_symlinks_and_trash_choices_reach_its_worker() {
         "cancelled"
     );
 }
+
+// leaf: audit-network-import-folder-filetypes
+#[test]
+fn an_import_folders_allowed_filetypes_decide_which_files_its_worker_imports() {
+    let (_dirs, store) = fixture_store("import_folder");
+    let _windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+    let watched = tempfile::tempdir().unwrap();
+    place(watched.path(), "a.png", 1_000_000);
+    place(watched.path(), "b p12.jpg", 1_000_000);
+
+    let (list, edit) = edit_first(&ui, &bound);
+    edit.set_path(watched.path().to_string_lossy().into_owned().into());
+    edit.set_check_regularly(false);
+    edit.set_paused(false);
+    edit.set_check_now(true);
+    // leave the source files where they are
+    for row in 0..4 {
+        edit.invoke_action_chosen(row, 1);
+    }
+    // the file filtering import options: custom, with png unticked
+    edit.invoke_edit_import_options();
+    let editor = bound
+        .folders
+        .import_options
+        .borrow()
+        .as_ref()
+        .expect("it opens")
+        .clone_strong();
+    editor.invoke_kind_clicked(0);
+    editor.set_custom_index(1);
+    editor.invoke_changed();
+    editor.invoke_filetype_expanded(0, true);
+    let rows = editor.get_filetype_rows();
+    let png = (0..rows.row_count())
+        .map(|i| rows.row_data(i).unwrap())
+        .find(|r| r.text == "png" && r.option >= 0)
+        .expect("png is among the image group's filetypes");
+    assert!(png.ticked);
+    editor.invoke_filetype_ticked(png.group, png.option, false);
+    let rows = editor.get_filetype_rows();
+    let after = (0..rows.row_count())
+        .map(|i| rows.row_data(i).unwrap())
+        .filter(|r| r.option >= 0)
+        .map(|r| (r.text.to_string(), r.ticked))
+        .collect::<Vec<_>>();
+    assert!(after.contains(&("png".to_owned(), false)));
+    assert!(after.contains(&("jpeg".to_owned(), true)));
+    editor.invoke_apply();
+    edit.invoke_apply();
+    assert!(
+        bound.folders.import_edit.borrow().is_none(),
+        "{}",
+        edit.get_asking_message()
+    );
+    list.invoke_apply();
+
+    // the worker imports the jpeg and leaves the png out
+    let worker = downloader(&store);
+    let run = worker.work_on_import_folder(saved(&store).id()).unwrap();
+    assert_eq!(run.error, None);
+    assert!(run.checked);
+    assert_eq!(run.new_files, 2, "both are found by the check");
+    assert_eq!(run.imported, 1, "only the allowed filetype comes in");
+}
