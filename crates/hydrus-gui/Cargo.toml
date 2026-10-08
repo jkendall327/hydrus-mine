@@ -41,6 +41,7 @@ rfd = { version = "0.17", default-features = false, features = ["xdg-portal"] }
 tempfile.workspace = true
 slint.workspace = true
 i-slint-core.workspace = true
+hydrus-workspace-hack = { version = "0.1", path = "../hydrus-workspace-hack" }
 
 [dev-dependencies]
 hydrus-api.workspace = true

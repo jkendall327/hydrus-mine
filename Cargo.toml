@@ -1,7 +1,13 @@
 [workspace]
 resolver = "3"
-members = ["crates/*", "xtask"]
+members = ["crates/*", "crates/hydrus-workspace-hack", "xtask"]
 default-members = ["crates/*"]
+# The generated Slint UI (generated/hydrus-gui-ui) is a path dependency of
+# hydrus-gui but not a member: members are compiled through Clippy's driver,
+# which spends over half an hour on its 87 MB of generated code (a plain
+# type-check takes ~5 min). As a non-member it is always compiled by plain
+# rustc and never linted.
+exclude = ["generated"]
 
 [workspace.package]
 version = "0.1.0"
@@ -14,7 +20,7 @@ repository = "https://github.com/jkendall327/hydrus-mine"
 # internal
 hydrus-core = { path = "crates/hydrus-core" }
 hydrus-gui-model = { path = "crates/hydrus-gui-model" }
-hydrus-gui-ui = { path = "crates/hydrus-gui-ui" }
+hydrus-gui-ui = { path = "generated/hydrus-gui-ui" }
 hydrus-legacy = { path = "crates/hydrus-legacy" }
 hydrus-parse = { path = "crates/hydrus-parse" }
 hydrus-store = { path = "crates/hydrus-store" }
@@ -137,6 +143,14 @@ debug = "line-tables-only"
 # touch real images and databases, so optimise deps even in dev builds.
 opt-level = 2
 debug = false
+
+[profile.dev.package.hydrus-gui-ui]
+# The generated Slint UI is ~87 MB of Rust in one crate. With line tables or
+# incremental state, rustc exceeds ~14 GB compiling it and a 16 GB machine
+# kills it; without them it peaks at ~13 GB. Incremental compilation also gains
+# nothing: any .slint edit regenerates the whole file.
+debug = false
+incremental = false
 
 [profile.dev.package.hydrus-media]
 # Likewise our own pixel work: visual-duplicates tests filter 2048x2048

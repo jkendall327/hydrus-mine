@@ -22,6 +22,7 @@ futures-util = { version = "0.3", default-features = false }
 encoding_rs = "0.8"
 chardetng = "1"
 httpdate = "1"
+hydrus-workspace-hack = { version = "0.1", path = "../hydrus-workspace-hack" }
 
 [dev-dependencies]
 hydrus-legacy.workspace = true

@@ -28,6 +28,7 @@ tracing.workspace = true
 tracing-subscriber.workspace = true
 hex.workspace = true
 rand.workspace = true
+hydrus-workspace-hack = { version = "0.1", path = "../hydrus-workspace-hack" }
 
 [dev-dependencies]
 serde_json.workspace = true

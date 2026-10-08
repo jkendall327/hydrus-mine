@@ -1,0 +1,18 @@
+[package]
+name = "slint-check"
+description = "Compiles hydrus-gui's .slint files without building Rust: a seconds-fast UI check."
+version = "0.1.0"
+edition = "2024"
+publish = false
+
+# Deliberately outside the main workspace: workspace Clippy and tests need not
+# build the Slint compiler a second time.
+[workspace]
+
+[dependencies]
+# keep in step with the workspace's slint-build pin
+slint-build = "=1.18.1"
+
+[profile.dev.package."*"]
+# an unoptimised Slint compiler takes ~30 s; optimised, a few seconds
+opt-level = 2

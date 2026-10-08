@@ -15,5 +15,5 @@ fn main() {
     let manifest = std::path::PathBuf::from(
         std::env::var_os("CARGO_MANIFEST_DIR").expect("Cargo sets the manifest directory"),
     );
-    slint_build::compile(manifest.join("../hydrus-gui/ui/main.slint")).expect("the UI compiles");
+    slint_build::compile(manifest.join("../../crates/hydrus-gui/ui/main.slint")).expect("the UI compiles");
 }

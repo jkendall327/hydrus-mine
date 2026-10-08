@@ -15,6 +15,7 @@ serde.workspace = true
 serde_json.workspace = true
 regex.workspace = true
 base64.workspace = true
+hydrus-workspace-hack = { version = "0.1", path = "../hydrus-workspace-hack" }
 
 [dev-dependencies]
 serde_json.workspace = true

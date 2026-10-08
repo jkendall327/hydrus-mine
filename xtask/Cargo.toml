@@ -11,6 +11,7 @@ clap.workspace = true
 serde.workspace = true
 serde_json.workspace = true
 toml.workspace = true
+hydrus-workspace-hack = { version = "0.1", path = "../crates/hydrus-workspace-hack" }
 
 
 [lints]

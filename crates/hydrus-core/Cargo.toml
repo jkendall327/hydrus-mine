@@ -24,6 +24,7 @@ rand.workspace = true
 jiff.workspace = true
 # HTML5 named character references, for `html.unescape`
 web_atoms = "0.2.6"
+hydrus-workspace-hack = { version = "0.1", path = "../hydrus-workspace-hack" }
 
 [dev-dependencies]
 proptest.workspace = true

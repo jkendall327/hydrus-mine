@@ -13,6 +13,7 @@ flate2.workspace = true
 serde_json = { workspace = true, features = ["float_roundtrip"] }
 tar.workspace = true
 tempfile.workspace = true
+hydrus-workspace-hack = { version = "0.1", path = "../hydrus-workspace-hack" }
 
 [lints]
 workspace = true

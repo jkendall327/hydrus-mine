@@ -16,6 +16,7 @@ tracing.workspace = true
 tempfile.workspace = true
 fs4.workspace = true
 jiff.workspace = true
+hydrus-workspace-hack = { version = "0.1", path = "../hydrus-workspace-hack" }
 
 [dev-dependencies]
 hydrus-testkit.workspace = true

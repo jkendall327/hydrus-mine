@@ -17,6 +17,7 @@ thiserror.workspace = true
 hex.workspace = true
 flate2.workspace = true
 png.workspace = true
+hydrus-workspace-hack = { version = "0.1", path = "../hydrus-workspace-hack" }
 
 [dev-dependencies]
 hydrus-testkit.workspace = true

@@ -14,6 +14,7 @@ rusqlite.workspace = true
 serde_json.workspace = true
 thiserror.workspace = true
 yaml-rust2.workspace = true
+hydrus-workspace-hack = { version = "0.1", path = "../hydrus-workspace-hack" }
 
 [dev-dependencies]
 hydrus-testkit.workspace = true

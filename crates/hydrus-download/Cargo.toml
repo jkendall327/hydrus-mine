@@ -24,6 +24,7 @@ hex.workspace = true
 tempfile.workspace = true
 rand.workspace = true
 rusqlite.workspace = true
+hydrus-workspace-hack = { version = "0.1", path = "../hydrus-workspace-hack" }
 
 [dev-dependencies]
 hydrus-downloader-exchange = { path = "../hydrus-downloader-exchange" }

@@ -29,6 +29,7 @@ num-bigint = "0.4"
 num-traits = "0.2"
 libm = "0.2"
 rand.workspace = true
+hydrus-workspace-hack = { version = "0.1", path = "../hydrus-workspace-hack" }
 
 [dev-dependencies]
 hydrus-testkit.workspace = true

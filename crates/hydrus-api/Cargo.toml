@@ -37,6 +37,7 @@ rand.workspace = true
 rusqlite.workspace = true
 
 tempfile.workspace = true
+hydrus-workspace-hack = { version = "0.1", path = "../hydrus-workspace-hack" }
 
 [dev-dependencies]
 png.workspace = true

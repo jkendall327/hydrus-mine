@@ -1,0 +1,23 @@
+[package]
+name = "hydrus-gui-ui"
+description = "The generated Slint UI for the hydrus-rs desktop client."
+# Not a workspace member (see the root Cargo.toml), so nothing is inherited;
+# keep these in step with the workspace.
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.89"
+license = "WTFPL"
+publish = false
+
+[lib]
+test = false
+bench = false
+doctest = false
+
+[dependencies]
+# keep in step with the workspace's slint pin and features
+slint = { version = "=1.18.1", default-features = false, features = ["std", "compat-1-2", "backend-winit", "renderer-software", "unstable-winit-030"] }
+hydrus-workspace-hack = { version = "0.1", path = "../../crates/hydrus-workspace-hack" }
+
+[build-dependencies]
+slint-build = "=1.18.1"
