@@ -4316,3 +4316,5 @@ directory.
   keys were the one concrete reference behaviour found missing and are now done,
   but no test covers what those leaves name as a whole, and their long notes (context
   menus, selection, undo history) were not re-verified here.
+
+- **Out-of-range numbers in the services editor.** The Client API port, a numerical rating's star count and its icon padding refuse out-of-range values with an error on Apply; the reference's spin boxes clamp them as they are typed.

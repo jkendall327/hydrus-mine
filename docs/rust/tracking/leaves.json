@@ -2570,7 +2570,7 @@
     "date": "2026-10-08",
     "class": "sound",
     "by": "phase 2 session",
-    "note": "cancellation_nested_ownership_permissions_and_key_validation (client_api_admin.rs) now compares the permission-list/check-all/filter-button enabled states in the full, search and none states with client_api_admin.json (full_enabled, search_enabled, none_enabled)."
+    "note": "cancellation_nested_ownership_permissions_and_key_validation (client_api_admin.rs) now compares the permission-list/check-all/filter-button enabled states in the full, search and none states with client_api_admin.json (full_enabled, search_enabled, none_enabled). The tracker note about missing filter favourites is stale (favourites code exists in tag_filter_window)."
    }
   },
   {
@@ -3086,7 +3086,7 @@
     "date": "2026-10-08",
     "class": "sound",
     "by": "phase 2 session",
-    "note": "staged_rating_config_applies_and_cancel_writes_nothing and numerical_rating_star_and_padding_ranges_replay_the_recorded_spin_boxes (gui/services_editor.rs) take the star (1-20) and padding (-64..64) ranges from services.json numerical_ranges and drive values just outside and on the edges through the add dialog; one-star normalisation replays rating_preview_one_star.json. The fraction setting has no recorded range."
+    "note": "staged_rating_config_applies_and_cancel_writes_nothing and numerical_rating_star_and_padding_ranges_replay_the_recorded_spin_boxes (gui/services_editor.rs) take the star (1-20) and padding (-64..64) ranges from services.json numerical_ranges and drive values just outside and on the edges through the add dialog; one-star normalisation replays rating_preview_one_star.json. The fraction setting is a three-item choice (do not / show on left / show on right) in the reference, not a number, so it has no range to record."
    }
   },
   {
@@ -9252,7 +9252,7 @@
     "date": "2026-10-08",
     "class": "sound",
     "by": "phase 2 session",
-    "note": "hydrus-store maintenance.rs tests captured_wait_follows_committed_pairs... and missing_file_still_waits... now take their waits and the successor pass's delay from physical_delete_delay.json passes (change_during_wait, missing), alongside the recorded options replay."
+    "note": "hydrus-store maintenance.rs tests captured_wait_follows_committed_pairs... and missing_file_still_waits... now take their waits and, for the successor pass, the delay the recorded first pass left saved (the recording has no wait of its own for it) (change_during_wait, missing), alongside the recorded options replay."
    }
   },
   {

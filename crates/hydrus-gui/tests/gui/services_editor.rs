@@ -1202,6 +1202,7 @@ fn rating_preview_samples(edit: &hydrus_gui::EditServiceWindow) -> serde_json::V
     )
 }
 
+// leaf: audit-media-service-numerical
 // A numerical rating's star count and icon padding run over the ranges of the
 // reference's spin boxes (recorded `numerical_ranges`): values outside are
 // refused by the add dialog, values on the edges are staged.

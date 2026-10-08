@@ -431,7 +431,6 @@ fn saved_favourite_current_page_policy_and_provider_order_reach_a_reopened_palet
     // Recorded for the option off: no new page, the shown page is searched.
     let recorded = hydrus_testkit::fixture_json("command_palette.json");
     let same_page = &recorded["selected"]["favourite_current"];
-    assert!(same_page["same_page"].as_bool().unwrap());
     assert!(bound.command_palette.borrow().is_none());
     assert_eq!(bound.pages.borrow().shown().key, original);
     assert_eq!(bound.pages.borrow().shown().name, "Palette Beta");

@@ -244,6 +244,8 @@ fn applied_controls_reopen_and_drive_history_and_search_focus() {
         options.invoke_check_toggled(row(&options, FOCUS), step["enabled"].as_bool().unwrap());
         options.invoke_apply();
         let requests = ui.get_search_focus_requests();
+        // (the session's second page, index 1, is the search page; the focus
+        // request is made when it is switched to)
         ui.invoke_tab_chosen(0, i32::from(n % 2 == 1));
         headless::render(&windows.get(0).unwrap(), 1100, 700);
         assert_eq!(

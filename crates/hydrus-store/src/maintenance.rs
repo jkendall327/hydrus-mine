@@ -419,6 +419,8 @@ mod tests {
         );
         assert_eq!(
             waits,
+            // (the delay the recorded first pass left saved is what the second pass
+            // is recorded as waiting: the recording has no wait of its own for it)
             [recorded_saved_after("change_during_wait")],
             "successor pass captures edited policy and still waits after its last pair"
         );
