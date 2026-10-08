@@ -935,7 +935,11 @@ impl Gate {
 
     fn release_waiting(&self, kind: Option<Waiting>, seconds: f64) -> bool {
         let mut state = self.state.lock().unwrap_or_else(PoisonError::into_inner);
-        if state.waiting.is_none() || (kind.is_some() && state.waiting != kind) {
+        // (one already let through is not yet taken: nothing else waits)
+        if state.waiting.is_none()
+            || state.permit.is_some()
+            || (kind.is_some() && state.waiting != kind)
+        {
             return false;
         }
         state.permit = Some(seconds);
