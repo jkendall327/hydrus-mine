@@ -49,3 +49,8 @@ checkout to itself. Measured with `date -u` as the work went.
 - **Build-wait time** (blocked on Cargo with nothing else useful to do): about 34 of the first 58 minutes, roughly 60%: slint-check build 3 m 41, first model build 3 m 41, GUI test builds about 5 min in all, Clippy about 6 min, pre-push about 14 min, and the unmasked end of UI rebuild #1 about 1.5 min. UI build #0 (12 m 49) and most of rebuild #1 overlapped with reading, recording and writing code, so they cost little.
 - **UI rebuilds:** 1 after the initial cold build (6 m 20, for one new window).
 - **If a `.slint` edit rebuilt only the affected window (about 1/6 of the crate):** rebuild #1 would have taken about 1 minute, saving about 5 minutes of machine time but only about 1.5 minutes of my waiting, since I used the rest. The larger gain would have been iteration: I tried no layout change after the first render of the dialog because each would have cost 6 minutes; at 1 minute I would have made two or three. Faster rebuilds would not have touched the other build waits (dependencies, Clippy, the full GUI suite), which were most of the waiting; those need the lint and test runs to be narrower, not the UI crate split.
+
+## After the review
+
+- 17:36-17:46: merged master (which carried #86's `.slint` changes and the export-folders test fix) into the branch; the UI crate had to be rebuilt to check the merge, so the first `dev.sh gui` took **10 m 24 s** (UI rebuild #2, cause: master's `.slint` changes, not mine). My modal, geometry, backup and About tests pass on the merge.
+- The pull_request run of `c49d377` had its `test` job stuck at "install media tools and fonts" for over 20 minutes; the push run failed on the export-folders test race fixed by #105.
