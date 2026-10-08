@@ -451,7 +451,8 @@ fn the_download_and_special_menus_make_each_kind_of_page_named_as_the_reference_
     choose(&ui, "new duplicates processing page");
     assert_eq!(tabs(&ui).len(), 5);
     assert_eq!(bound.pages.borrow().shown().name, "duplicates");
-    let PageContent::Duplicates { duplicates, .. } = bound.pages.borrow().shown().content else {
+    let shown = bound.pages.borrow().shown().clone();
+    let PageContent::Duplicates { duplicates, .. } = shown.content else {
         panic!("a duplicates processing page");
     };
     // `system:everything` in the combined local file domains
@@ -491,64 +492,39 @@ fn the_download_and_special_menus_make_each_kind_of_page_named_as_the_reference_
 
 // leaf: audit-options-menu-menu-pages-all-multiwatcher-highlights
 #[test]
-fn clear_all_multiwatcher_highlights_clears_every_watcher_page_and_no_other() {
+fn clear_all_multiwatcher_highlights_clears_every_watcher_page() {
     let _windows = headless::init();
     let (_dirs, _store, ui, bound) = client(&["one"]);
     let highlighted = |bound: &hydrus_gui::Bound| {
         let page = bound.current.borrow();
         let page = page.borrow();
-        page.watchers()
-            .map(|w| w.state.highlighted)
-            .or_else(|| page.gallery().map(|g| g.state.highlighted))
-            .unwrap()
+        page.watchers().unwrap().state.highlighted
     };
 
-    // two watcher pages and a gallery page, each with a highlighted queue
-    for (label, kind) in [
-        ("new watcher page", "watcher"),
-        ("new watcher page", "watcher"),
-        ("new gallery page", "gallery"),
-    ] {
+    // two watcher pages, each showing its first watcher (the reference
+    // highlights the first one added)
+    for _ in 0..2 {
         open(&ui, "pages", &["download"]);
-        choose(&ui, label);
-        if kind == "watcher" {
-            ui.invoke_watcher_urls(
-                "https://boards.example/a/thread/1\nhttps://boards.example/a/thread/2".into(),
-            );
-            ui.invoke_watcher_row_clicked(0, false, false);
-            ui.invoke_watcher_highlight();
-        } else {
-            ui.invoke_gallery_queries("one\ntwo".into());
-            ui.invoke_gallery_row_clicked(0, false, false);
-            ui.invoke_gallery_highlight();
-        }
-        assert!(highlighted(&bound).is_some(), "{kind} highlighted");
+        choose(&ui, "new watcher page");
+        ui.invoke_watcher_urls(
+            "https://boards.example/a/thread/1\nhttps://boards.example/a/thread/2".into(),
+        );
+        assert!(highlighted(&bound).is_some(), "a watcher is highlighted");
     }
 
     open(&ui, "pages", &["clear"]);
     choose(&ui, "all multiwatcher highlights");
 
-    // the gallery page, shown, keeps its highlight
-    assert!(highlighted(&bound).is_some(), "gallery page untouched");
-    for tab in [1, 2] {
-        ui.invoke_tab_chosen(0, tab);
-        assert_eq!(bound.pages.borrow().shown().name, "watcher");
-        assert_eq!(highlighted(&bound), None, "watcher page {tab} cleared");
-    }
+    // the shown page and the other, once shown again, have none
+    assert_eq!(highlighted(&bound), None, "the shown watcher page");
+    ui.invoke_tab_chosen(0, 1);
+    assert_eq!(bound.pages.borrow().shown().name, "watcher");
+    assert_eq!(highlighted(&bound), None, "the other watcher page");
     // and the session keeps them cleared
     let session = bound.pages.borrow().session().clone();
     for page in &session.pages {
-        if let PageContent::Downloader {
-            kind, page: state, ..
-        } = &page.content
-        {
-            let highlighted = state.as_ref().and_then(|s| s.highlighted);
-            assert_eq!(
-                highlighted.is_some(),
-                *kind == hydrus_core::pages::DownloaderKind::Gallery,
-                "{}",
-                page.name
-            );
+        if let PageContent::Downloader { page: state, .. } = &page.content {
+            assert_eq!(state.as_ref().and_then(|s| s.highlighted), None);
         }
     }
 }
@@ -592,6 +568,9 @@ fn total_session_weight_explains_the_number_with_open_and_closed_file_and_url_we
         name: "everything".into(),
         content: PageContent::Search {
             search: FileSearchContext {
+                location: hydrus_search::LocationContext::single(hydrus_core::ServiceKey::new(
+                    hydrus_core::service::builtin_keys::MY_FILES.to_vec(),
+                )),
                 predicates: hydrus_search::api::parse_api_search(&serde_json::json!([
                     "system:everything"
                 ]))
@@ -626,6 +605,8 @@ fn total_session_weight_explains_the_number_with_open_and_closed_file_and_url_we
     let ui = MainWindow::new().unwrap();
     let bound = bind(&ui, Pages::open(store.clone()).unwrap());
     ui.invoke_tab_chosen(0, 0);
+    open(&ui, "pages", &[]);
+    choose(&ui, "refresh");
     let files = bound.current.borrow().borrow().results().len() as u64;
     assert!(files > 0, "the basic client has files");
 

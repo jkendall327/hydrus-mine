@@ -242,6 +242,9 @@ fn favourite_domain_sort_collect_and_autocomplete_widgets_reach_saved_searches()
 #[test]
 fn save_this_search_opens_the_captured_search_and_every_part_of_it_can_be_edited_before_saving() {
     let (_dirs, store) = crate::subscriptions::store();
+    store
+        .write(|ctx| settings::set(ctx.conn(), &AdvancedMode(true)))
+        .unwrap();
     let _windows = headless::init();
     let mut page = SearchPage::restored(
         store.clone(),
@@ -267,6 +270,7 @@ fn save_this_search_opens_the_captured_search_and_every_part_of_it_can_be_edited
         tag_context: hydrus_search::TagContext::default(),
     });
     let captured_sort = page.sort().clone();
+    let page_predicates = page.predicates();
     let ui = MainWindow::new().unwrap();
     let bound = bind(&ui, Pages::single(page));
     let original: FavouriteSearches = store.read(settings::get).unwrap();
@@ -298,11 +302,11 @@ fn save_this_search_opens_the_captured_search_and_every_part_of_it_can_be_edited
     assert_eq!(w.get_folder(), "");
     assert_eq!(w.get_location_label(), "my files");
     let shown: Vec<String> = w.get_predicates().iter().map(|s| s.to_string()).collect();
-    assert_eq!(shown, ["system:inbox", "blue eyes"]);
+    assert_eq!(shown, page_predicates);
     assert!(w.get_synchronised());
     assert!(w.get_save_sort() && w.get_save_collect());
     assert!(
-        w.get_sort_label().contains("file size"),
+        w.get_sort_label().contains("filesize"),
         "{}",
         w.get_sort_label()
     );

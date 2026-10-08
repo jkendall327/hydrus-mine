@@ -1145,6 +1145,7 @@ fn more_suggestions_than_fit_scroll_rather_than_spill_over() {
     assert!(first_again.iter().all(|y| (top - 2..bottom).contains(y)));
 }
 
+// leaf: audit-options-predicate-custom-defaults
 #[test]
 fn predicate_star_save_and_reset_survive_cancel_and_reach_future_searches() {
     use hydrus_gui::predicate_editors::defaults::CustomDefaults;
@@ -1418,6 +1419,7 @@ fn regex_star_save_is_immediate_but_acceptance_checks_and_viewtime_keeps_millise
     );
 }
 
+// leaf: audit-options-predicate-custom-defaults
 #[test]
 fn imported_predicate_defaults_reach_panels_and_reset_never_resurrects_legacy_values() {
     use hydrus_gui::predicate_editors::defaults::CustomDefaults;
