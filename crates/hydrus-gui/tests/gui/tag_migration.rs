@@ -610,12 +610,8 @@ fn the_windows_selectors_offer_the_reference_s_actions_for_each_choice() {
             _ => 2,
         });
         window.invoke_choices_changed();
+        // (the recorder's order: source, then its status, then the destination)
         window.set_source(if case["source"] == "local" {
-            local
-        } else {
-            remote
-        });
-        window.set_destination(if case["destination"] == "local" {
             local
         } else {
             remote
@@ -631,6 +627,12 @@ fn the_windows_selectors_offer_the_reference_s_actions_for_each_choice() {
             .position(|s| s == case["status"].as_str().unwrap())
             .unwrap_or_else(|| panic!("{statuses:?} for {case}"));
         window.set_status(i32::try_from(status).unwrap());
+        window.invoke_choices_changed();
+        window.set_destination(if case["destination"] == "local" {
+            local
+        } else {
+            remote
+        });
         window.invoke_choices_changed();
         let actions: Vec<String> = window.get_actions().iter().map(|a| a.to_string()).collect();
         let expected: Vec<&str> = case["actions"]
@@ -749,44 +751,55 @@ fn the_window_migrates_pairs_between_services_as_the_reference_did() {
         assert!(window.get_error().is_empty(), "{}", window.get_error());
         let service = store.snapshot().services.by_key(&destination).unwrap().id;
         let (table, left, right) = tag_relations::columns(kind);
-        let pairs = store
-            .read(|conn| {
-                let ids = conn
-                    .prepare(&format!(
-                        "SELECT {left},{right} FROM {table} WHERE service_id=? AND status=0"
-                    ))?
-                    .query_map([service], |r| {
-                        Ok((
-                            r.get::<_, hydrus_core::TagId>(0)?,
-                            r.get::<_, hydrus_core::TagId>(1)?,
-                        ))
-                    })?
-                    .collect::<rusqlite::Result<Vec<_>>>()?;
-                let mut pairs = ids
-                    .into_iter()
-                    .map(|(a, b)| {
-                        Ok(vec![
-                            hydrus_store::master::tag(conn, a)?
-                                .unwrap()
-                                .as_str()
-                                .to_owned(),
-                            hydrus_store::master::tag(conn, b)?
-                                .unwrap()
-                                .as_str()
-                                .to_owned(),
-                        ])
-                    })
-                    .collect::<hydrus_store::Result<Vec<_>>>()?;
-                pairs.sort();
-                Ok(pairs)
-            })
-            .unwrap();
-        assert_eq!(
-            serde_json::to_value(pairs).unwrap(),
-            case["destination"]["0"],
-            "{}",
-            case["kind"]
-        );
+        let pairs_with = |status: u32| {
+            store
+                .read(|conn| {
+                    let ids = conn
+                        .prepare(&format!(
+                            "SELECT {left},{right} FROM {table} WHERE service_id=? AND status=?"
+                        ))?
+                        .query_map(rusqlite::params![service, status], |r| {
+                            Ok((
+                                r.get::<_, hydrus_core::TagId>(0)?,
+                                r.get::<_, hydrus_core::TagId>(1)?,
+                            ))
+                        })?
+                        .collect::<rusqlite::Result<Vec<_>>>()?;
+                    let mut pairs = ids
+                        .into_iter()
+                        .map(|(a, b)| {
+                            Ok(vec![
+                                hydrus_store::master::tag(conn, a)?
+                                    .unwrap()
+                                    .as_str()
+                                    .to_owned(),
+                                hydrus_store::master::tag(conn, b)?
+                                    .unwrap()
+                                    .as_str()
+                                    .to_owned(),
+                            ])
+                        })
+                        .collect::<hydrus_store::Result<Vec<_>>>()?;
+                    pairs.sort();
+                    Ok(pairs)
+                })
+                .unwrap()
+        };
+        let kind_name = &case["kind"];
+        // every status the reference recorded: current, then the rest (all empty)
+        for status in 0..4_u32 {
+            assert_eq!(
+                serde_json::to_value(pairs_with(status)).unwrap(),
+                case["destination"][status.to_string()],
+                "{kind_name} status {status}"
+            );
+        }
+        // the rows the reference's source (with the left filter) offered all arrived
+        let arrived = pairs_with(0);
+        for row in case["source"].as_array().unwrap() {
+            let row: Vec<String> = serde_json::from_value(row.clone()).unwrap();
+            assert!(arrived.contains(&row), "{kind_name}: {row:?}");
+        }
         window.invoke_close_clicked();
     }
 }

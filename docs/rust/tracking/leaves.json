@@ -2009,7 +2009,7 @@
     "date": "2026-10-08",
     "class": "sound",
     "by": "phase 2 session",
-    "note": "gui/tag_migration.rs the_window_migrates_pairs_between_services_as_the_reference_did opens the real migration window on the recorded source, chooses the destination and content, blacklists 'excluded:' in the left filter through the real filter window, confirms, waits for the real worker, and compares the pairs that reach the destination with tag_migration.json `pairs` (tag siblings and tag parents)."
+    "note": "gui/tag_migration.rs the_window_migrates_pairs_between_services_as_the_reference_did opens the real migration window on the recorded source, chooses the destination and content, blacklists 'excluded:' in the left filter through the real filter window, confirms, waits for the real worker, and compares all four recorded destination statuses (current, and the empty rest) of tag_migration.json `pairs` for tag siblings and tag parents, and that every row the reference's filtered source offered arrived. The recorded pairs do not exercise the min/max pair-count gates."
    }
   },
   {
@@ -2049,7 +2049,7 @@
     "date": "2026-10-08",
     "class": "sound",
     "by": "phase 2 session",
-    "note": "gui/tag_migration.rs the_window_migrates_pairs_between_services_as_the_reference_did opens the real migration window on the recorded source, chooses the destination and content, blacklists 'excluded:' in the left filter through the real filter window, confirms, waits for the real worker, and compares the pairs that reach the destination with tag_migration.json `pairs` (tag siblings and tag parents)."
+    "note": "gui/tag_migration.rs the_window_migrates_pairs_between_services_as_the_reference_did opens the real migration window on the recorded source, chooses the destination and content, blacklists 'excluded:' in the left filter through the real filter window, confirms, waits for the real worker, and compares all four recorded destination statuses (current, and the empty rest) of tag_migration.json `pairs` for tag siblings and tag parents, and that every row the reference's filtered source offered arrived. The recorded pairs do not exercise the min/max pair-count gates."
    }
   },
   {
@@ -22387,7 +22387,7 @@
     "date": "2026-10-08",
     "class": "sound",
     "by": "phase 2 session",
-    "note": "gui/manage_tags.rs the_suggested_tags_layout_and_page_follow_the_reference_s_cases seeds each of the eight cases of tag_suggestions.json (layout columns or notebook, default page, width), opens the real manage-tags window and compares the layout flag the panels are drawn from, the width, and for notebooks the selected page with the recording. The Slint arrangement itself is read through that flag, not by pixels."
+    "note": "gui/options_window.rs the_suggested_tags_layout_chosen_in_options_reaches_manage_tags_as_the_reference_s_cases chooses the width, 'Column layout:' and 'Default notebook page:' in the real Options window for each of the eight cases of tag_suggestions.json, applies, opens the real manage-tags window and compares the layout flag its panels are drawn from, the width, which panels exist (from the recorded labels) and, for notebooks, the selected page; side-by-side cases have none selected. The Slint arrangement itself is read through the flag, not by pixels."
    }
   },
   {
@@ -24271,7 +24271,7 @@
     "date": "2026-10-08",
     "class": "sound",
     "by": "phase 2 session",
-    "note": "gui/tag_migration.rs the_windows_selectors_offer_the_reference_s_actions_for_each_choice drives the real migration window's content, source, destination and status selectors for all 36 cases of tag_migration.json `matrix` and compares the offered actions (changing the content first, which resets the services as the reference does); the model replays stay as the fast check, and reference_database_pending_outcomes replays the recorded pending outcomes through the real store migration."
+    "note": "gui/tag_migration.rs the_windows_selectors_offer_the_reference_s_actions_for_each_choice drives the real migration window's content, source, status and destination selectors in the recorder's order for all 36 cases of tag_migration.json `matrix` and compares the offered actions (changing the content first, which resets the services as the reference does). The window test proves only the offered actions: the recorded pending outcomes are replayed at model level by reference_database_pending_outcomes through tag_migration::run, the same function the window's Go path calls."
    }
   },
   {
