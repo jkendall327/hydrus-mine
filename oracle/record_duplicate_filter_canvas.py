@@ -157,6 +157,11 @@ def record( session ):
 
     ClientPotentialDuplicatesPairFactory.PotentialDuplicatePairFactoryDBMixed.DoSearchWork = do_search_work
 
+    # (the space is searched in its order, so ties in the sort fall the same way each time)
+    from hydrus.core import HydrusLists
+
+    HydrusLists.RandomiseListByChunks = lambda items, chunk: list( items )
+
     asked = []
     answers = []
 
