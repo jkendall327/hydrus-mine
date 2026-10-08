@@ -309,7 +309,6 @@ fn availability_test_is_a_which_call_with_the_reference_messages() {
 
 /// Reference export text with the generated keys blanked, for comparison.
 fn without_keys(value: &serde_json::Value) -> serde_json::Value {
-    let mut value = value.clone();
     fn walk(v: &mut serde_json::Value) {
         if let serde_json::Value::Array(a) = v {
             // [serialisable type, version, [name, key, ...]]: the key is a 64 hex string.
@@ -324,6 +323,7 @@ fn without_keys(value: &serde_json::Value) -> serde_json::Value {
             }
         }
     }
+    let mut value = value.clone();
     walk(&mut value);
     value
 }

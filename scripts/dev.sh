@@ -43,7 +43,14 @@ gui_test=${gui_test:-gui}
 cargo_() { cargo "$1" --locked -j "$jobs" "${@:2}"; }
 
 slint_check() {
-  cargo run -q --manifest-path tools/slint-check/Cargo.toml --target-dir target/tools
+  # (the built checker runs directly: `cargo run` would wait for Cargo's lock
+  # while another build, such as the first UI build, holds it)
+  local bin=target/tools/debug/slint-check
+  if [ -x "$bin" ] && [ -z "$(find tools/slint-check -newer "$bin" -type f -print -quit)" ]; then
+    "$bin"
+  else
+    cargo run -q --manifest-path tools/slint-check/Cargo.toml --target-dir target/tools
+  fi
 }
 
 build_ui() {
