@@ -221,6 +221,11 @@ fn history_entries(seeds: &[FileSeed]) -> Vec<FileLogEntry<'_>> {
         .collect()
 }
 
+/// Python's `str(bool)`, which the reference's reports print.
+fn py_bool(value: bool) -> &'static str {
+    if value { "True" } else { "False" }
+}
+
 fn human_name(sub: &Subscription, query: &SubscriptionQuery) -> String {
     let name = query.state.human_name();
     if name == sub.name {
@@ -320,6 +325,19 @@ impl Downloader {
                 continue;
             }
             let file_work = self.has_file_work(q.queue_id)?;
+            hydrus_core::debug_flags::report(
+                hydrus_core::debug_flags::Flag::SubscriptionReport,
+                || {
+                    format!(
+                        "Query \"{}\" IsSyncDue test. Paused/dead status is {}/{}, check time due is {}, and check_now is {}.",
+                        human_name(sub, q),
+                        py_bool(q.state.paused),
+                        py_bool(q.state.dead),
+                        py_bool(now() >= q.state.next_check_time),
+                        py_bool(q.state.check_now),
+                    )
+                },
+            );
             if q.state.dead && !file_work {
                 continue;
             }

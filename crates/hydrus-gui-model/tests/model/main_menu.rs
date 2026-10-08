@@ -83,6 +83,7 @@ fn kept(entries: &[Value]) -> Vec<Value> {
                         "network report mode (silent)",
                         "shortcut report mode",
                         "subprocess report mode",
+                        "subscription report mode",
                     ],
                 ),
                 (
