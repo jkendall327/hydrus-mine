@@ -43,6 +43,13 @@ pub struct ManageTags {
     input: WriteAutocomplete,
     /// The listed rows selected (by row), for removing and copying.
     tag_selection: crate::list_selection::ListSelection<usize>,
+    /// Launched from the media viewer (the reference's `immediate_commit`):
+    /// every change is written as it is made, and the dialog follows the
+    /// file the viewer shows.
+    immediate: bool,
+    /// An immediate change was written since last asked.
+    committed: bool,
+    last_error: Option<String>,
     dialog_preferences: hydrus_store::tag_editing::TagEditingSettings,
     suggestion_preferences: hydrus_store::settings::TagSuggestionSettings,
 }
@@ -137,9 +144,28 @@ impl ManageTags {
             deleted,
             input,
             tag_selection: Default::default(),
+            immediate: false,
+            committed: false,
+            last_error: None,
             dialog_preferences: preference,
             suggestion_preferences,
         })
+    }
+
+    /// Launched from the media viewer on its current file: changes are
+    /// written as they are made (the reference's `immediate_commit`).
+    pub fn new_viewer(store: Arc<Store>, file: HashId) -> Option<Self> {
+        let mut model = Self::new_at(
+            store,
+            vec![file],
+            hydrus_store::manage_tags_sort::Context::MediaViewer,
+        )?;
+        model.immediate = true;
+        Some(model)
+    }
+
+    pub fn is_immediate(&self) -> bool {
+        self.immediate
     }
 
     /// File domain of the page/viewer that launched this editor.
@@ -644,10 +670,10 @@ impl ManageTags {
         )
     }
 
-    /// A suggested tag activated: entered as typed entry is (the reference
-    /// calls `AddTags` for the side panels too).
+    /// A suggested tag activated: only added, whatever the cog says (the
+    /// side panels pass `only_add = True`).
     pub fn add_side_suggestions(&mut self, tags: &[String]) -> Result<Entered, String> {
-        self.add_tags(tags, false)
+        self.add_tags(tags, true)
     }
     fn stage_tag(&mut self, typed: &str) -> Result<(), String> {
         let tag = Tag::new(typed).ok_or_else(|| format!("\"{typed}\" is not a valid tag"))?;
@@ -792,7 +818,7 @@ impl ManageTags {
             }
         }
         self.input.set_context_tags(self.tags().into_keys());
-        Ok(())
+        self.commit_if_immediate()
     }
 }
 

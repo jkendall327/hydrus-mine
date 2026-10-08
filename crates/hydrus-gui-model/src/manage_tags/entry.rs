@@ -182,6 +182,49 @@ impl ManageTags {
         }
         self.input.set_context_tags(self.tags().into_keys());
         self.select_tags(&selected);
+        if let Err(e) = self.commit_if_immediate() {
+            self.last_error = Some(e);
+        }
+    }
+
+    /// In the viewer's dialog, write what was just staged (the reference
+    /// commits each change at once there).
+    pub(super) fn commit_if_immediate(&mut self) -> Result<(), String> {
+        if !self.immediate || !self.has_changes() {
+            return Ok(());
+        }
+        self.apply().map_err(|e| e.to_string())?;
+        for staged in &mut self.staged {
+            staged.clear();
+        }
+        self.refresh_stored();
+        self.committed = true;
+        self.input.set_context_tags(self.tags().into_keys());
+        Ok(())
+    }
+
+    /// Whether a change was written since last asked (and forget it).
+    pub fn take_committed(&mut self) -> bool {
+        std::mem::take(&mut self.committed)
+    }
+
+    /// An error from an immediate write, once.
+    pub fn take_error(&mut self) -> Option<String> {
+        self.last_error.take()
+    }
+
+    /// The viewer shows another file: this dialog is now about that one.
+    pub fn set_file(&mut self, file: HashId) {
+        if self.files == [file] {
+            return;
+        }
+        self.files = vec![file];
+        for staged in &mut self.staged {
+            staged.clear();
+        }
+        self.tag_selection = Default::default();
+        self.refresh_stored();
+        self.input.set_context_tags(self.tags().into_keys());
     }
 
     /// Remove tags (the remove button, the delete key): confirmed first
@@ -296,6 +339,19 @@ impl ManageTags {
             }
         }
         out
+    }
+
+    /// "Clear recent tags?" answered yes: the service's recent tags are
+    /// forgotten (the reference pushes `None` to `push_recent_tags`).
+    pub fn clear_recent_tags(&self) -> Result<(), String> {
+        let service = self.services[self.service].0;
+        self.store
+            .write(move |ctx| {
+                ctx.conn()
+                    .execute("DELETE FROM recent_tags WHERE service_id = ?", [service])?;
+                Ok(())
+            })
+            .map_err(|e| e.to_string())
     }
 
     /// The tags selected in the list.

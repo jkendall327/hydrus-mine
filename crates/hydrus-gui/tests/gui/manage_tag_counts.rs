@@ -28,6 +28,17 @@ fn snapshot(window: &ManageTagsWindow) -> Value {
     window.invoke_service_chosen(i32::try_from(mine).unwrap());
     json!({"show_deleted":window.get_show_deleted(),"services":services})
 }
+/// The remove button on one selected tag, confirmed (the reference's `RemoveTags`).
+fn remove(window: &ManageTagsWindow, tag: &str) {
+    let row = window
+        .get_tags()
+        .iter()
+        .position(|row| row.text.starts_with(tag))
+        .unwrap();
+    window.invoke_tag_clicked(i32::try_from(row).unwrap(), false, false);
+    window.invoke_remove_pressed();
+    window.invoke_tag_menu_answered(true);
+}
 fn enter(window: &ManageTagsWindow, tag: &str) {
     window.invoke_text_edited(tag.into());
     window.invoke_entered();
@@ -89,7 +100,7 @@ fn thumbnail_dialog_replays_deleted_counts_and_retained_callbacks_cannot_mutate_
     );
     assert_eq!(snapshot(&window), states[1]["state"]);
     assert_eq!(snapshot(&other), states[1]["other_open_owner"]);
-    enter(&window, "checkpoint:live");
+    remove(&window, "checkpoint:live");
     assert_eq!(snapshot(&window), states[2]["state"]);
     enter(&window, "checkpoint:old");
     assert_eq!(snapshot(&window), states[3]["state"]);
@@ -127,7 +138,7 @@ fn thumbnail_dialog_replays_deleted_counts_and_retained_callbacks_cannot_mutate_
     );
     assert!(bound.manage_tags.borrow().is_some());
     enter(&reopened, "checkpoint:old");
-    enter(&reopened, "checkpoint:live");
+    remove(&reopened, "checkpoint:live");
     reopened.invoke_apply();
     assert!(bound.manage_tags.borrow().is_none());
     ui.invoke_manage_tags_selected();

@@ -484,9 +484,18 @@ fn tags_are_added_and_removed_as_the_reference_does() {
         .map(slint::ComponentHandle::clone_strong)
         .expect("manage tags opened");
     assert_eq!(window.get_window_title(), "manage tags");
+    // (the viewer's dialog writes at once; this test is about the page's, which waits)
+    assert!(window.get_immediate());
+    window.invoke_cancel();
     ui.invoke_select_all();
     ui.invoke_manage_tags_selected();
-    assert_eq!(window.get_window_title(), "manage tags");
+    let window = bound
+        .manage_tags
+        .borrow()
+        .as_ref()
+        .map(slint::ComponentHandle::clone_strong)
+        .expect("manage tags opened for the selection");
+    assert!(!window.get_immediate());
     let services = window.get_service_names();
     let mine = (0..services.row_count())
         .position(|i| services.row_data(i).unwrap() == "my tags")
@@ -497,18 +506,17 @@ fn tags_are_added_and_removed_as_the_reference_does() {
     let rows: Vec<String> = (0..window.get_tags().row_count())
         .map(|i| window.get_tags().row_data(i).unwrap().text.to_string())
         .collect();
-    assert!(rows.contains(&"from the window (1)".to_owned()), "{rows:?}");
+    assert!(
+        rows.iter().any(|r| r.starts_with("from the window (")),
+        "{rows:?}"
+    );
     assert!(!tags_of(&store, tagged, "my tags").contains("from the window"));
     window.invoke_text_edited("".into());
     window.invoke_entered();
     assert!(bound.manage_tags.borrow().is_none(), "applied and closed");
     assert!(tags_of(&store, tagged, "my tags").contains("from the window"));
-    let hover: Vec<String> = (0..viewer.get_tags().row_count())
-        .map(|i| viewer.get_tags().row_data(i).unwrap().text.to_string())
-        .collect();
-    assert!(hover.contains(&"from the window".to_owned()), "{hover:?}");
     // escape forgets
-    viewer.invoke_manage_tags();
+    ui.invoke_manage_tags_selected();
     let window = bound
         .manage_tags
         .borrow()

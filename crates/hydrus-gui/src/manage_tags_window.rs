@@ -8,8 +8,19 @@ use slint::{ComponentHandle as _, ModelRc, SharedString, VecModel};
 use crate::manage_tags::ManageTags;
 use crate::{ListText, ManageTagsWindow};
 
+/// The media viewer a Manage Tags window opened from it follows
+/// (the reference's `canvas_key`): the viewer calls `follow` with each file it
+/// shows, and `step` moves it to the next (`true`) or previous file.
+#[derive(Clone)]
+pub(crate) struct ViewerLink {
+    pub follow: Rc<RefCell<Option<Rc<dyn Fn(hydrus_core::HashId)>>>>,
+    pub step: Rc<dyn Fn(bool)>,
+}
+
 /// What the window waits on the user for.
 enum Pending {
+    /// "Clear recent tags?"
+    ClearRecent,
     Paste(Vec<String>),
     /// "What would you like to do?" (some of the files have the tag).
     Choose(hydrus_gui_model::manage_tags::Prompt),
@@ -58,8 +69,10 @@ pub(crate) fn open(
     slot: &Rc<RefCell<Option<ManageTagsWindow>>>,
     incremental_slot: &crate::incremental_tagging_window::Slot,
     applied: Rc<dyn Fn()>,
+    link: Option<ViewerLink>,
 ) -> Result<ManageTagsWindow, slint::PlatformError> {
     let window = ManageTagsWindow::new()?;
+    window.set_immediate(model.is_immediate());
     window
         .global::<crate::TagTextHistory<'_>>()
         .on_record(crate::write_tag_history::record);
@@ -80,12 +93,25 @@ pub(crate) fn open(
     let incremental_open = Rc::new(Cell::new(false));
     let model = Rc::new(RefCell::new(model));
     let refresh = {
+        let applied = applied.clone();
         let model = model.clone();
         let weak = window.as_weak();
         move || {
             let Some(window) = weak.upgrade() else {
                 return;
             };
+            // (the viewer's dialog writes each change at once: tell the
+            // viewer and the page, as an apply does)
+            let (committed, error) = {
+                let mut model = model.borrow_mut();
+                (model.take_committed(), model.take_error())
+            };
+            if let Some(error) = error {
+                window.set_error(format!("could not write the change: {error}").into());
+            }
+            if committed {
+                applied();
+            }
             let model = model.borrow();
             let (file, tags) = model.write_input().domain_labels();
             window.set_file_label(file.into());
@@ -617,9 +643,13 @@ pub(crate) fn open(
         let colour_updates = colour_updates.clone();
         let side_timer = side_timer.clone();
         let related_worker = related_worker.clone();
+        let link = link.clone();
         move || {
             if !active.replace(false) {
                 return;
+            }
+            if let Some(link) = &link {
+                link.follow.borrow_mut().take();
             }
             incremental_open.set(false);
             crate::incremental_tagging_window::cancel(&incremental_slot);
@@ -751,6 +781,11 @@ pub(crate) fn open(
                 || pending.borrow().is_some()
                 || tag_menu.busy()
             {
+                return;
+            }
+            // (the viewer's dialog has written every change already)
+            if model.borrow().is_immediate() {
+                close();
                 return;
             }
             if let Err(e) = model.borrow().apply() {
@@ -1325,7 +1360,7 @@ pub(crate) fn open(
                 let mut waiting = pending.borrow_mut();
                 if matches!(
                     waiting.as_ref(),
-                    Some(Pending::Choose(_) | Pending::Remove(_))
+                    Some(Pending::Choose(_) | Pending::Remove(_) | Pending::ClearRecent)
                 ) {
                     waiting.take()
                 } else {
@@ -1353,6 +1388,7 @@ pub(crate) fn open(
                     Ok(())
                 }
                 Pending::Remove(tags) if yes => model.borrow_mut().confirm_removal(&tags),
+                Pending::ClearRecent if yes => model.borrow().clear_recent_tags(),
                 _ => Ok(()),
             };
             if let (Some(w), Err(e)) = (weak.upgrade(), result) {
@@ -1370,7 +1406,7 @@ pub(crate) fn open(
                 let mut waiting = pending.borrow_mut();
                 if matches!(
                     waiting.as_ref(),
-                    Some(Pending::Choose(_) | Pending::Remove(_))
+                    Some(Pending::Choose(_) | Pending::Remove(_) | Pending::ClearRecent)
                 ) {
                     waiting.take()
                 } else {
@@ -1384,6 +1420,75 @@ pub(crate) fn open(
                 w.set_tag_menu_question_title("".into());
                 w.set_tag_menu_yes_label("yes".into());
                 w.set_tag_menu_no_label("no".into());
+            }
+        }
+    });
+    if let Some(link) = link {
+        let follower: Rc<dyn Fn(hydrus_core::HashId)> = Rc::new({
+            let model = model.clone();
+            let refresh = refresh.clone();
+            let active = active.clone();
+            let results = related_results.clone();
+            let last = related_request.clone();
+            let weak = window.as_weak();
+            move |file| {
+                if !active.get() {
+                    return;
+                }
+                model.borrow_mut().set_file(file);
+                results.borrow_mut().clear();
+                last.borrow_mut().take();
+                if let Some(w) = weak.upgrade() {
+                    w.set_related_status("ready".into());
+                    w.set_error("".into());
+                }
+                refresh();
+            }
+        });
+        *link.follow.borrow_mut() = Some(follower);
+        window.on_show_next({
+            let step = link.step.clone();
+            let active = active.clone();
+            let pending = pending_paste.clone();
+            let tag_menu = tag_menu.clone();
+            move || {
+                if active.get() && pending.borrow().is_none() && !tag_menu.busy() {
+                    step(true);
+                }
+            }
+        });
+        window.on_show_previous({
+            let step = link.step.clone();
+            let active = active.clone();
+            let pending = pending_paste.clone();
+            let tag_menu = tag_menu.clone();
+            move || {
+                if active.get() && pending.borrow().is_none() && !tag_menu.busy() {
+                    step(false);
+                }
+            }
+        });
+    }
+    window.on_clear_recent({
+        let weak = window.as_weak();
+        let active = active.clone();
+        let incremental_open = incremental_open.clone();
+        let pending = pending_paste.clone();
+        let tag_menu = tag_menu.clone();
+        move || {
+            if !active.get()
+                || incremental_open.get()
+                || pending.borrow().is_some()
+                || tag_menu.busy()
+            {
+                return;
+            }
+            if let Some(w) = weak.upgrade() {
+                w.set_tag_menu_question_title("".into());
+                w.set_tag_menu_question("Clear recent tags?".into());
+                w.set_tag_menu_yes_label("yes".into());
+                w.set_tag_menu_no_label("no".into());
+                *pending.borrow_mut() = Some(Pending::ClearRecent);
             }
         }
     });

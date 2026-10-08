@@ -7,7 +7,7 @@ use hydrus_store::{Store, content::MappingAction};
 use serde_json::Value;
 use std::sync::Arc;
 
-fn seed(recorded: &Value) -> (tempfile::TempDir, Arc<Store>, Vec<HashId>) {
+pub(super) fn seed(recorded: &Value) -> (tempfile::TempDir, Arc<Store>, Vec<HashId>) {
     let legacy = hydrus_testkit::legacy_fixture("basic");
     let directory = tempfile::tempdir().unwrap();
     hydrus_store::import::import_legacy(

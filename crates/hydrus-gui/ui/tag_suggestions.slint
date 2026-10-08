@@ -20,6 +20,7 @@ export component TagSuggestionPanels inherits Rectangle {
     callback selected-page(int);
     callback clicked(int,int,bool,bool);
     callback activated(int,int);
+    callback clear-recent();
     min-width: root.column-width * (root.columns ? (root.most-used-enabled ? 1 : 0) + (root.recent-enabled ? 1 : 0) + (root.related-enabled ? 1 : 0) : 1);
     horizontal-stretch: 0;
     VerticalLayout {
@@ -43,10 +44,14 @@ export component TagSuggestionPanels inherits Rectangle {
                 ComboBox {model:["siblings/parents","storage tags"];current-index:root.related-display?0:1;selected(_)=>{root.related-display=self.current-index==0;root.related-search();}}
                 ListTable { background:Theme.tags-background;columns:[{title:"related",width:root.column-width,stretch:true}];rows:root.related;vertical-stretch:1;row-clicked(i,c,s)=>{root.clicked(2,i,c,s);}row-activated(i)=>{root.activated(2,i);}}
             }
-            if root.recent-enabled && (root.columns || root.selected==1): ListTable { background:Theme.tags-background;
-                columns:[{title:"recent",width:root.column-width,stretch:true}]; rows:root.recent; vertical-stretch:1;
-                row-clicked(i,c,s)=>{root.clicked(1,i,c,s);}
-                row-activated(i)=>{root.activated(1,i);}
+            if root.recent-enabled && (root.columns || root.selected==1): VerticalLayout {
+                spacing:4px;
+                Button { text:"clear"; enabled:root.enabled; clicked=>{root.clear-recent();} }
+                ListTable { background:Theme.tags-background;
+                    columns:[{title:"recent",width:root.column-width,stretch:true}]; rows:root.recent; vertical-stretch:1;
+                    row-clicked(i,c,s)=>{root.clicked(1,i,c,s);}
+                    row-activated(i)=>{root.activated(1,i);}
+                }
             }
         }
     }

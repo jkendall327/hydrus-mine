@@ -19,6 +19,10 @@ struct Opened {
 
 /// Every file of the fixture has `cog:all`; the first alone has `cog:some`.
 fn open() -> Opened {
+    open_with(|_| {})
+}
+
+fn open_with(before: impl FnOnce(&hydrus_store::Store)) -> Opened {
     let (dirs, store) = crate::subscriptions::store();
     let _windows = headless::init();
     let mut page = hydrus_gui::SearchPage::new(store.clone());
@@ -36,6 +40,7 @@ fn open() -> Opened {
             Ok(())
         })
         .unwrap();
+    before(&store);
     let ui = MainWindow::new().unwrap();
     ui.show().unwrap();
     let bound = bind(&ui, Pages::open(store.clone()).unwrap());
@@ -209,4 +214,46 @@ fn copy_button_copies_selected_or_all_tags_with_the_reference_notice() {
         m.get_notice().starts_with("Copied ") && m.get_notice().ends_with(" tags!"),
         "nothing selected copies all of them"
     );
+}
+
+#[test]
+fn recent_panel_clear_button_asks_then_forgets_the_services_recent_tags() {
+    let o = open_with(|store| {
+        let service = store.snapshot().services.by_name("my tags").unwrap().id;
+        store
+            .write(move |ctx| {
+                hydrus_store::settings::set(
+                    ctx.conn(),
+                    &hydrus_store::settings::TagSuggestionSettings::default(),
+                )?;
+                let tag = hydrus_store::master::intern_tag(
+                    ctx.conn(),
+                    &Tag::new("recent:one").unwrap(),
+                )?;
+                ctx.conn().execute(
+                    "INSERT INTO recent_tags(service_id,tag_id,used_ms) VALUES(?,?,?)",
+                    rusqlite::params![service, tag, hydrus_core::time::TimestampMs::now().0],
+                )?;
+                Ok(())
+            })
+            .unwrap();
+    });
+    let service = o.store.snapshot().services.by_name("my tags").unwrap().id;
+    let m = &o.manage;
+    assert!(m.get_recent_tags_enabled());
+    let recent = || m.get_recent_tag_rows().iter().map(|r| r.cells.row_data(0).unwrap().to_string()).collect::<Vec<_>>();
+    assert_eq!(recent(), ["recent:one"]);
+    // (the reference: GetYesNo( 'Clear recent tags?' ))
+    m.invoke_clear_recent();
+    assert_eq!(m.get_tag_menu_question().as_str(), "Clear recent tags?");
+    m.invoke_tag_menu_answered(false);
+    assert_eq!(recent(), ["recent:one"]);
+    m.invoke_clear_recent();
+    m.invoke_tag_menu_answered(true);
+    assert!(recent().is_empty());
+    let left: i64 = o
+        .store
+        .read(|c| Ok(c.query_row("SELECT COUNT(*) FROM recent_tags WHERE service_id = ?", [service], |r| r.get(0))?))
+        .unwrap();
+    assert_eq!(left, 0);
 }

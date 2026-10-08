@@ -48,6 +48,12 @@ export component ManageTagsWindow inherits Window {
     callback cog-pressed(length,length);
     callback delete-pressed();
     callback activate-selected();
+    // launched from the media viewer: changes are written at once, the
+    // dialog follows the viewer's file, and there is only "close"
+    in property <bool> immediate;
+    callback show-next();
+    callback show-previous();
+    callback clear-recent();
     in property <int> sort-type;
     in property <int> sort-order;
     in property <int> sort-group;
@@ -118,6 +124,10 @@ export component ManageTagsWindow inherits Window {
     FocusScope {
         enabled: !root.incremental-open;
         capture-key-pressed(event) => {
+            if (root.immediate && root.text == "" && root.suggestions.length == 0 && root.question == "" && root.tag-menu-question == "" && root.tag-menu-panes.length == 0) {
+                if (event.text == Key.PageDown) { root.show-next(); return accept; }
+                if (event.text == Key.PageUp) { root.show-previous(); return accept; }
+            }
             if (event.text == Key.Escape) {
                 if root.tag-menu-panes.length > 0 || root.tag-menu-question != "" { root.tag-menu-dismissed(); } else if !input.escape-results() { root.cancel(); }
                 return accept;
@@ -219,14 +229,17 @@ export component ManageTagsWindow inherits Window {
                 HorizontalLayout {
                     spacing: 6px;
                     alignment: end;
-                    Button {text: "migrate tags…"; clicked => {root.migrate-tags();}}
-                    Button {
+                    if !root.immediate: Button {
                         enabled: root.question == "";
                         text: "apply";
                         clicked => { root.apply(); }
                     }
-                    Button {
+                    if !root.immediate: Button {
                         text: "cancel";
+                        clicked => { root.cancel(); }
+                    }
+                    if root.immediate: Button {
+                        text: "close";
                         clicked => { root.cancel(); }
                     }
                 }
@@ -240,6 +253,7 @@ export component ManageTagsWindow inherits Window {
                 selected-page(i)=>{root.suggested-page=i;}
                 clicked(p,i,c,s)=>{root.side-clicked(p,i,c,s);}
                 activated(p,i)=>{root.side-activated(p,i);}
+                clear-recent=>{root.clear-recent();}
                 enabled:root.question=="";
               }
             }
