@@ -1,9 +1,12 @@
 //! A duplicates page's filtering tab (hydrus-gui-model's
 //! `duplicates_filtering`): editing the page's pair search and filter sort,
-//! counting its pairs off the UI thread, showing a random potential group in
+//! counting its pairs off the UI thread a block at a time (play/pause,
+//! refresh and the cog), showing a random potential group in
 //! the page, and setting the shown files' relationship after asking.
 use std::cell::RefCell;
 use std::rc::Rc;
+use std::sync::{Arc, Mutex, PoisonError};
+use std::time::Duration;
 
 use hydrus_gui_model::duplicates_filtering::{
     self as model, GROUP_MODES, KINDS, PIXEL, SET_BUTTONS, SORTS, Which,
