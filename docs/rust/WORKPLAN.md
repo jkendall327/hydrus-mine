@@ -186,3 +186,18 @@ shared Cargo lock. Design that avoids most of the Rust churn:
   after round 2's reports; agents launched before saw the old script), the
   120 s tool timeout, needing `#[path]` re-declarations of helper modules
   (`subscriptions`, `duplicate_filter`) in lanes.
+
+### UI split: deferred again (2026-10-08, after round 3)
+
+Closer reading: besides the 24 shared structs (solvable by the build-script
+rewrite), the 5 Slint globals (`Theme`, `TagTextHistory`, `Palette`,
+`TabNames`, `MenuChoicePolicy`) are used at ~61 Rust sites, several inside
+shared helpers that serve windows of every group (`gui_colours::bind` takes a
+`Theme`). After a split each group has its own distinct global types and Slint
+offers no trait over them, so every such helper needs macro-generated
+per-group versions; `main.slint`'s window re-exports would also move. That is
+the "day of churn" risk. The `.slint` rebuild cost is per machine, and its
+real harm is agents queuing on one machine's Cargo lock. Separate cloud
+sessions (own 16 GB, own target dir) remove that queue with no code churn, so
+try those first for the implementation phase; revisit the split only if one
+agent's own rebuilds dominate its time.
