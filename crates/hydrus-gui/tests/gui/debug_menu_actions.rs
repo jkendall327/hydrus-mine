@@ -406,6 +406,16 @@ fn network_report_mode_entries_share_the_mode_as_the_reference_does() {
     let _one = ONE_AT_A_TIME
         .lock()
         .unwrap_or_else(std::sync::PoisonError::into_inner);
+    // the flags are process-wide: put them back even if an assertion fails
+    struct Reset;
+    impl Drop for Reset {
+        fn drop(&mut self) {
+            debug_flags::Flag::NetworkReport.set(false);
+            debug_flags::Flag::NetworkReportSilent.set(false);
+            debug_flags::set_sink(None);
+        }
+    }
+    let _reset = Reset;
     let d = start();
     let seen = capture();
     let plain = "network report mode";
@@ -415,7 +425,8 @@ fn network_report_mode_entries_share_the_mode_as_the_reference_does() {
     assert_eq!(state(&d), (false, false));
 
     // the silent entry turns the mode on and sets silent: nothing reaches
-    // the popups (it goes to the console)
+    // the popup sink (that it goes to the console instead is not observed:
+    // the console is not injectable)
     d.click(&["report modes", silent]);
     assert_eq!(state(&d), (true, true));
     report();
@@ -441,11 +452,11 @@ fn network_report_mode_entries_share_the_mode_as_the_reference_does() {
     report();
     assert!(seen.lock().unwrap().is_empty());
 
-    // clean up: silent again turns the mode on; plain turns it off
+    // the plain entry turns the mode on (clearing silent), and again off
     d.click(&["report modes", plain]);
+    assert_eq!(state(&d), (true, false));
     d.click(&["report modes", plain]);
     assert_eq!(state(&d), (false, false));
-    debug_flags::set_sink(None);
 }
 
 // leaf: audit-options-help-debug-action-shortcut-report-mode

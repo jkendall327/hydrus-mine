@@ -1362,6 +1362,7 @@ fn rules_and_comparators_are_exported_imported_and_duplicated_whole() {
     assert_eq!(count(), start + 2);
 }
 
+// The pngs carry hydrus-rs JSON (DIFFERENCES.md): no reference png is replayed.
 // leaf: audit-media-rules-exchange
 #[test]
 fn rules_and_comparators_go_out_and_come_in_as_pngs() {
@@ -1424,7 +1425,7 @@ fn rules_and_comparators_go_out_and_come_in_as_pngs() {
     let rules_png = temp.path().join("rule.png");
     export(&rules_png);
     assert!(rules_png.exists());
-    *picked.borrow_mut() = vec![rules_png.clone()];
+    *picked.borrow_mut() = vec![rules_png];
     list.invoke_exchange(5);
     let after = names(&list);
     assert_eq!(after.len(), 2);
@@ -1440,7 +1441,15 @@ fn rules_and_comparators_go_out_and_come_in_as_pngs() {
     *picked.borrow_mut() = vec![bad];
     list.invoke_exchange(5);
     assert_eq!(names(&list).len(), 2);
-    assert_eq!(said().0, "Problem importing!");
+    let (title, message) = said();
+    assert_eq!(title, "Problem importing!");
+    assert!(!message.is_empty());
+    assert_eq!(
+        message,
+        hydrus_downloader_exchange::text_png::decode(b"not a png")
+            .unwrap_err()
+            .to_string()
+    );
 
     // comparators of a rule
     list.invoke_row_clicked(0, false, false);
@@ -1467,9 +1476,4 @@ fn rules_and_comparators_go_out_and_come_in_as_pngs() {
         "the whole comparator comes back"
     );
     assert_eq!(said().1, "1 objects added!");
-    // a rules png is no comparator: refused in the file wording, adding nothing
-    *picked.borrow_mut() = vec![rules_png];
-    rule.invoke_comparator_exchange(3);
-    assert_eq!(count(), start + 1);
-    assert_eq!(said().0, "Problem importing!");
 }

@@ -1314,7 +1314,7 @@ reference's waiting window and takes the first request the running daemon
 records (the daemon, not the GUI, serves the API, so the request travels
 through the store, polled twice a second; registration is a ten-second lease
 that timer renews, so a crash closes it within seconds instead of leaving it
-open); `hydrus api-keys listen` remains
+open; the renewal rides the UI timer, so a UI thread blocked for over ten seconds lets it lapse); `hydrus api-keys listen` remains
 for a store without a GUI. Key-change
 questions use an inline edit panel and generated-key button. Listener changes
 may take up to one second; current requests drain for at most ten seconds
