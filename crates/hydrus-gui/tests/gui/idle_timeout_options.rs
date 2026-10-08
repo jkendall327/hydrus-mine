@@ -46,6 +46,7 @@ fn set(window: &OptionsWindow, values: [Option<i32>; 3]) {
         }
     }
 }
+// leaf: audit-options-maintenance-and-processing-when-to-run-high-cpu-jobs-idle-permit-idle-mode-if-your-mouse-cursor-has-not-been-moved-in-the-past
 #[test]
 fn staged_timeouts_change_live_browsing_mouse_api_and_autosave_gates_only_after_apply() {
     let (dirs, store) = crate::subscriptions::store();

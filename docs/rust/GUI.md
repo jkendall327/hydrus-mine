@@ -4990,3 +4990,13 @@ rectangle, drawn at the whole pixels typed in that box above them. Clicking or
 dragging the stars rates the example (the fraction beside them shows it), right
 click clears; the rectangle counts up on a click and down on a right click.
 The samples are never kept. Proven by `options_gui_ratings_examples.rs`.
+
+### Options > maintenance and processing > idle: CPU busy
+
+Background work (trash and deferred deletes in the client, and what the daemon
+reads from the published idle state) now runs only when the client is idle
+and the system is not busy, as the reference's `GoodTimeToStartBackgroundWork`
+does. The system counts as busy when at least "% on N cores" cores ran above
+"Consider the system busy if CPU usage is above" over the last minute;
+"ignore cpu usage" turns the check off, and forced idle mode never reads busy.
+The status bar still says "idle" and shows "CPU busy".

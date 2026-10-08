@@ -4153,3 +4153,7 @@ directory.
 - The reference's tooltips on the warning, timeout, hide terminal and text
   controls are not shown (Slint has no tooltips here).
 - The help menu button is a "help ▾" button with one entry, not the help icon.
+
+- The CPU-busy check reads per-core times from `/proc/stat`, so it exists on
+  Linux only; elsewhere the system never reads busy. The reference's
+  just-woke-from-sleep condition is not part of the idle gate here.
