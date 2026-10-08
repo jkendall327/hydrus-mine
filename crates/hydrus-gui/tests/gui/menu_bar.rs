@@ -90,6 +90,7 @@ fn tabs(ui: &MainWindow) -> Vec<String> {
         .collect()
 }
 
+// leaf: audit-options-menu-menu-pages-pages-open
 #[test]
 fn the_bar_s_menus_open_and_do_what_they_say() {
     let (_dirs, store) = store();
@@ -376,6 +377,12 @@ fn the_pointer_opens_menus_and_chooses_from_them() {
 /// pages, with their own keys), asks before overwriting an existing one
 /// ("no, choose another name" asks again); a session's own entry asks
 /// whether to overwrite it, and yes saves the pages as they are now.
+// leaf: audit-options-session-name
+// leaf: audit-options-session-overwrite
+// leaf: audit-options-session-cancel
+// leaf: audit-options-session-persist
+// leaf: audit-options-menu-menu-pages-sessions-save-saved-session
+// leaf: audit-options-menu-menu-pages-as-new-session
 #[test]
 fn sessions_are_saved_from_the_pages_menu() {
     use hydrus_gui::session_saving::{NAME_MESSAGE, RESERVED_WARNING};
@@ -498,6 +505,7 @@ fn sessions_are_saved_from_the_pages_menu() {
 
 /// pages > sessions > "clear and load" > a session: asked first, then the
 /// pages are closed for good and the session's pages are at the top.
+// leaf: audit-options-menu-menu-pages-sessions-clear-and-load-saved-session
 #[test]
 fn clear_and_load_replaces_the_pages_with_a_session() {
     use hydrus_gui::session_saving::clear_and_load_question;

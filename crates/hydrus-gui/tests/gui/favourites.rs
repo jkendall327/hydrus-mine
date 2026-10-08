@@ -12,6 +12,7 @@ use hydrus_gui::{MainWindow, Pages, SearchPage, bind, headless};
 use hydrus_store::Store;
 use hydrus_store::import::import_legacy;
 
+// leaf: audit-options-search-star-load
 #[test]
 fn a_favourite_search_loads_into_the_page() {
     let legacy = hydrus_testkit::legacy_fixture("basic");
@@ -103,6 +104,7 @@ fn pane_lines(ui: &MainWindow, pane: usize) -> Vec<String> {
         .collect()
 }
 
+// leaf: audit-options-search-star-load
 #[test]
 fn a_favourite_s_collect_collects_the_page() {
     use hydrus_core::pages::PageCollect;
@@ -364,6 +366,7 @@ fn the_star_button_s_menu_is_the_reference_s() {
     );
 }
 
+// leaf: audit-options-favourites-list-rows
 #[test]
 fn the_manage_dialog_lists_them_as_the_reference_s() {
     let (_dirs, store) = store();
@@ -464,6 +467,7 @@ fn searches_are_saved_and_added_as_the_reference_saves_and_adds_them() {
     }
 }
 
+// leaf: audit-options-favourites-edit-overwrite
 #[test]
 fn the_edit_dialog_asks_before_overwriting_as_the_reference_s() {
     let (_dirs, store) = store();
@@ -503,6 +507,8 @@ fn the_edit_dialog_asks_before_overwriting_as_the_reference_s() {
     }
 }
 
+// leaf: audit-options-favourites-edit-name
+// leaf: audit-options-favourites-edit-save-sort
 #[test]
 fn the_edit_dialog_gives_back_what_the_reference_s_does() {
     let (_dirs, store) = store();
@@ -528,6 +534,11 @@ fn the_edit_dialog_gives_back_what_the_reference_s_does() {
     }
 }
 
+// leaf: audit-options-search-star-manage
+// leaf: audit-options-favourites-list-apply
+// leaf: audit-options-favourites-list-delete
+// leaf: audit-options-favourites-list-rows
+// leaf: audit-options-favourites-edit-overwrite
 #[test]
 fn the_dialogs_save_edit_and_delete_searches() {
     let (_dirs, store) = store();

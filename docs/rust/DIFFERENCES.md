@@ -463,6 +463,12 @@ search.
   from the row pressed, as a plain drag does; the reference's adds the
   range to what was selected (or takes it away).
 
+
+The search-undo entries (additions, removals, clear search history) act as the
+reference's do but show no status-bar tooltips. After "Clear History" the
+pages > history menu shows only that entry, without the reference's leading
+separator.
+
 ## The media viewer (`hydrus-gui`)
 
 - **The top hover frame's drag button shows the file in your file

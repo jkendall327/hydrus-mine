@@ -44,6 +44,9 @@ fn searching(ui: &MainWindow) {
     hover(ui, "searching");
 }
 
+// leaf: audit-options-search-undo-clear-search-history
+// leaf: audit-options-search-undo-undo-predicate-additions
+// leaf: audit-options-search-undo-undo-predicate-removals
 #[test]
 fn recorded_global_history_reaches_visible_locked_restored_and_empty_pages() {
     let legacy = hydrus_testkit::legacy_fixture("basic");

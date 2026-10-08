@@ -124,6 +124,44 @@ fn the_empty_search_box_offers_the_reference_s_system_predicates() {
     );
 }
 
+// leaf: audit-options-predicate-duration-presets-system-framerate-30fps-1fps
+// leaf: audit-options-predicate-duration-presets-system-framerate-60fps-1fps
+// leaf: audit-options-predicate-duration-presets-system-has-duration
+// leaf: audit-options-predicate-duration-presets-system-no-duration
+// leaf: audit-options-predicate-file-relationships-presets-system-is-not-the-best-quality-file-of-its-duplicate-group
+// leaf: audit-options-predicate-file-relationships-presets-system-is-the-best-quality-file-of-its-duplicate-group
+// leaf: audit-options-predicate-limit-presets-system-limit-is-1-024
+// leaf: audit-options-predicate-limit-presets-system-limit-is-256
+// leaf: audit-options-predicate-limit-presets-system-limit-is-64
+// leaf: audit-options-predicate-notes-presets-system-has-notes
+// leaf: audit-options-predicate-notes-presets-system-no-notes
+// leaf: audit-options-predicate-number-of-tags-presets-system-has-tags
+// leaf: audit-options-predicate-number-of-tags-presets-system-untagged
+// leaf: audit-options-predicate-time-import-presets-system-import-time-since-1-day-ago
+// leaf: audit-options-predicate-time-import-presets-system-import-time-since-1-month-ago
+// leaf: audit-options-predicate-time-import-presets-system-import-time-since-7-days-ago
+// leaf: audit-options-predicate-urls-number-of-urls-presets-system-has-urls
+// leaf: audit-options-predicate-urls-number-of-urls-presets-system-no-urls
+// leaf: audit-options-predicate-file-properties-presets-system-has-audio
+// leaf: audit-options-predicate-file-properties-presets-system-no-audio
+// leaf: audit-options-predicate-file-properties-presets-system-has-duration
+// leaf: audit-options-predicate-file-properties-presets-system-no-duration
+// leaf: audit-options-predicate-file-properties-presets-system-has-exif
+// leaf: audit-options-predicate-file-properties-presets-system-no-exif
+// leaf: audit-options-predicate-file-properties-presets-system-has-forced-filetype
+// leaf: audit-options-predicate-file-properties-presets-system-no-forced-filetype
+// leaf: audit-options-predicate-file-properties-presets-system-has-human-readable-metadata
+// leaf: audit-options-predicate-file-properties-presets-system-no-human-readable-metadata
+// leaf: audit-options-predicate-file-properties-presets-system-has-icc-profile
+// leaf: audit-options-predicate-file-properties-presets-system-no-icc-profile
+// leaf: audit-options-predicate-file-properties-presets-system-has-iptc
+// leaf: audit-options-predicate-file-properties-presets-system-no-iptc
+// leaf: audit-options-predicate-file-properties-presets-system-has-software-source-metadata
+// leaf: audit-options-predicate-file-properties-presets-system-no-software-source-metadata
+// leaf: audit-options-predicate-file-properties-presets-system-has-transparency
+// leaf: audit-options-predicate-file-properties-presets-system-no-transparency
+// leaf: audit-options-predicate-file-properties-presets-system-has-xmp
+// leaf: audit-options-predicate-file-properties-presets-system-no-xmp
 #[test]
 fn each_editor_is_the_reference_s() {
     let (_dirs, store) = store();
@@ -442,6 +480,65 @@ fn numbers_match(panel: &Panel, widgets: &[Json], what: &str) {
     assert_eq!(ours, theirs, "{what}");
 }
 
+// leaf: audit-options-predicate-dimensions-width-operator
+// leaf: audit-options-predicate-dimensions-width-value
+// leaf: audit-options-predicate-dimensions-height-operator
+// leaf: audit-options-predicate-dimensions-height-value
+// leaf: audit-options-predicate-dimensions-ratio-operator
+// leaf: audit-options-predicate-dimensions-ratio-ratio
+// leaf: audit-options-predicate-dimensions-numpixels-operator
+// leaf: audit-options-predicate-dimensions-numpixels-value
+// leaf: audit-options-predicate-duration-duration-operator
+// leaf: audit-options-predicate-duration-duration-value
+// leaf: audit-options-predicate-duration-numframes-operator
+// leaf: audit-options-predicate-duration-numframes-value
+// leaf: audit-options-predicate-duration-framerate-operator
+// leaf: audit-options-predicate-duration-framerate-value
+// leaf: audit-options-predicate-file-relationships-duplicaterelationships
+// leaf: audit-options-predicate-file-service-fileservice-service
+// leaf: audit-options-predicate-file-service-fileservice-state
+// leaf: audit-options-predicate-file-viewing-statistics-fileviewingstatsviews-test
+// leaf: audit-options-predicate-file-viewing-statistics-fileviewingstatsviews-canvas
+// leaf: audit-options-predicate-filetype-mime-mode
+// leaf: audit-options-predicate-limit-limit
+// leaf: audit-options-predicate-notes-hasnotename
+// leaf: audit-options-predicate-notes-numnotes-operator
+// leaf: audit-options-predicate-notes-numnotes-value
+// leaf: audit-options-predicate-number-of-tags-numtags-test
+// leaf: audit-options-predicate-number-of-tags-numtags-scope
+// leaf: audit-options-predicate-number-of-words-numwords-operator
+// leaf: audit-options-predicate-number-of-words-numwords-value
+// leaf: audit-options-predicate-similar-files-files-similartofiles-distance
+// leaf: audit-options-predicate-tag-as-number-tagasnumber-test
+// leaf: audit-options-predicate-tag-as-number-tagasnumber-scope
+// leaf: audit-options-predicate-time-archived-archiveddelta-operator
+// leaf: audit-options-predicate-time-archived-archiveddelta-delta
+// leaf: audit-options-predicate-time-import-agedelta-operator
+// leaf: audit-options-predicate-time-import-agedelta-delta
+// leaf: audit-options-predicate-time-last-viewed-lastvieweddelta-operator
+// leaf: audit-options-predicate-time-last-viewed-lastvieweddelta-delta
+// leaf: audit-options-predicate-time-modified-modifieddelta-operator
+// leaf: audit-options-predicate-time-modified-modifieddelta-delta
+// leaf: audit-options-predicate-urls-known-urls-knownurlsexacturl-has
+// leaf: audit-options-predicate-urls-known-urls-knownurlsdomain-has
+// leaf: audit-options-predicate-urls-known-urls-knownurlsregex-has
+// leaf: audit-options-predicate-urls-known-urls-knownurlsexacturl-rule
+// leaf: audit-options-predicate-urls-known-urls-knownurlsdomain-rule
+// leaf: audit-options-predicate-urls-known-urls-knownurlsregex-rule
+// leaf: audit-options-predicate-urls-number-of-urls-numurls-operator
+// leaf: audit-options-predicate-urls-number-of-urls-numurls-value
+// leaf: audit-options-predicate-time-archived-archiveddate-operator
+// leaf: audit-options-predicate-time-import-agedate-operator
+// leaf: audit-options-predicate-time-last-viewed-lastvieweddate-operator
+// leaf: audit-options-predicate-time-modified-modifieddate-operator
+// leaf: audit-options-predicate-rating-ratingadvanced-state
+// leaf: audit-options-predicate-rating-ratingincdec-state
+// leaf: audit-options-predicate-rating-ratinglike-state
+// leaf: audit-options-predicate-rating-ratingnumerical-state
+// leaf: audit-options-predicate-file-viewing-statistics-fileviewingstatsviewtime-canvas
+// leaf: audit-options-predicate-similar-files-data-similartodata-distance
+// leaf: audit-options-predicate-tag-advanced-tagadvanced-test
+// leaf: audit-options-predicate-tag-advanced-tagadvanced-scope
 #[test]
 fn each_change_to_a_panel_makes_what_the_reference_s_makes() {
     let (_dirs, store) = store();
@@ -449,6 +546,7 @@ fn each_change_to_a_panel_makes_what_the_reference_s_makes() {
     let context = context(&store, &recorded);
     let text = text_context(&store);
     let mut checked = 0;
+    let mut skipped: Vec<String> = Vec::new();
     for editor in recorded["editors"].as_array().unwrap() {
         let blank = Blank::from_text(editor["text"].as_str().unwrap()).unwrap();
         let ours = Editor::new(blank, &context);
@@ -469,6 +567,7 @@ fn each_change_to_a_panel_makes_what_the_reference_s_makes() {
                         // a widget of the reference's we don't have (tag
                         // advanced's autocomplete) changes nothing
                         assert_eq!(expected, at_first.clone().ok(), "{class} {change_made}");
+                        skipped.push(format!("{class} {widget}"));
                         continue;
                     }
                     let made = changed.predicates(&context).map(|p| texts(&p, &text));
@@ -496,11 +595,18 @@ fn each_change_to_a_panel_makes_what_the_reference_s_makes() {
         }
     }
     assert!(checked > 150, "{checked}");
+    // only the reference's tag autocomplete has no counterpart here
+    assert_eq!(skipped, ["PanelPredicateSystemTagAdvanced 7"]);
 }
 
 /// Several fields set in turn make what the reference's make: the number of
 /// tags swapped for a namespace's own predicate, typed dates and times,
 /// tags cleaned, and the amounts either side of "≈".
+// leaf: audit-options-predicate-similar-files-files-similartofiles-hashes
+// leaf: audit-options-predicate-similar-files-data-similartodata-hashes
+// leaf: audit-options-predicate-time-import-agedate-date-time
+// leaf: audit-options-predicate-time-last-viewed-lastvieweddate-date-time
+// leaf: audit-options-predicate-rating-ratingadvanced-service
 #[test]
 fn panels_set_in_several_ways_make_what_the_reference_s_make() {
     let (_dirs, store) = store();

@@ -26,6 +26,7 @@ fn store() -> ([tempfile::TempDir; 2], Arc<Store>) {
 
 /// In the window: what an editor adds is kept, shown the next time it
 /// opens, added again from there, and forgotten from there.
+// leaf: audit-options-predicate-recents
 #[test]
 fn the_editor_window_keeps_and_shows_recent_predicates() {
     let (_dirs, store) = store();

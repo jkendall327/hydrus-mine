@@ -169,6 +169,8 @@ fn pages_collect_as_the_reference_s_pages_collect() {
     assert_eq!(checked, 640);
 }
 
+// leaf: audit-options-search-sort-collect-unmatched
+// leaf: audit-options-search-sort-collect-namespaces
 #[test]
 fn the_collect_control_collects_the_page() {
     let fixture = fixture();

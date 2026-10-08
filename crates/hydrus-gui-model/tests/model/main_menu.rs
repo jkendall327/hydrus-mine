@@ -260,3 +260,40 @@ fn repositories_add_their_pages_and_pending_menu() {
     let facts = facts(&store, &recorded);
     compare_bar(&menubar(&facts), &recorded["repositories"], "repositories");
 }
+
+/// Before any page has been shown the history menu is the reference's single
+/// plain label (`AppendMenuLabel( ..., 'no tab history', ..., no_copy = True )`);
+/// once there is a history it is replaced by the entries and "Clear History".
+// leaf: audit-options-menu-menu-pages-no-tab-history
+#[test]
+fn the_history_menu_is_a_plain_label_until_there_is_a_history() {
+    let recorded = hydrus_testkit::fixture_json("main_menu.json");
+    let (_dir, store) = migrated("basic");
+    let mut facts = facts(&store, &recorded);
+    let history = |facts: &Facts| -> Vec<Entry> {
+        let bar = menubar(facts);
+        let Entry::Menu { entries, .. } = &bar[2] else {
+            panic!("the pages menu");
+        };
+        entries
+            .iter()
+            .find_map(|e| match e {
+                Entry::Menu {
+                    label, entries: h, ..
+                } if label == "history" => Some(h.clone()),
+                _ => None,
+            })
+            .expect("a history menu")
+    };
+    facts.history = None;
+    let none = history(&facts);
+    assert_eq!(none.len(), 1);
+    assert!(matches!(
+        &none[0],
+        Entry::Item { label, command: None, .. } if label == "no tab history"
+    ));
+    facts.history = Some(Vec::new());
+    let entries = history(&facts);
+    let labels: Vec<&str> = entries.iter().map(Entry::label).collect();
+    assert_eq!(labels, ["", "Clear History"]);
+}

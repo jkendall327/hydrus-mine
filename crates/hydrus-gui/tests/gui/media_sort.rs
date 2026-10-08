@@ -89,6 +89,7 @@ fn the_sort_options_come_across_from_hydrus() {
     assert_eq!(page.sort().clone(), sorts.default_sort);
 }
 
+// leaf: audit-options-search-sort-collect-type
 #[test]
 fn pages_sort_as_the_reference_s_pages_sort() {
     let recorded = hydrus_testkit::fixture_json("media_sort.json");
@@ -149,6 +150,7 @@ fn pages_sort_as_the_reference_s_pages_sort() {
     assert_eq!(checked, 136);
 }
 
+// leaf: audit-options-search-sort-collect-type
 #[test]
 fn the_sort_control_offers_namespace_and_rating_sorts() {
     use hydrus_gui::{MainWindow, Pages, bind, headless};
