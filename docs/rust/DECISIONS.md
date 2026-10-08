@@ -78,6 +78,24 @@ record of what was decided, and why the roadmap looks the way it does.
   hurt; issues #86 and #91 log rebuild time to decide whether the split is
   still worth it.
 
+- **Out of scope (2026-10-08, #95)**, each recorded on its leaf in
+  `docs/rust/tracking/leaves.json` (priority `out-of-scope`, first note says
+  why; undo by setting it back to `normal`): background sibling/parent loading
+  (`siblings-async`, `parents-async`), the background display-sync manager,
+  repository tabs in Manage Tags, "prefer system FFMPEG", the self-sizing
+  viewer's rescue padding, locale integer rendering, the three image
+  tile-cache settings, the toaster's mouse-on-another-display freeze, two Qt
+  window-state tray workarounds, and three Help > debug entries for the
+  Python thread pool and Qt canvas tiles. `scripts/track.py` stops counting
+  them.
+- **The About box lists hydrus-rs's own components** (platform, SQLite,
+  optional libraries such as ffmpeg and mpv) as the equivalent of the
+  reference's Python/Qt/numpy lines.
+- **System tray: deferred.** Slint 1.18 can draw one (the `system-tray`
+  feature, a pure-Rust D-Bus stack on Linux, not Qt); revisit later (#94).
+- **Merging:** the coordinating agent may merge a PR once CI is green and its
+  independent review's findings are addressed.
+
 ## Roadmap that follows
 
 1. **Client API parity**, with Hydrus Companion's request patterns checked
