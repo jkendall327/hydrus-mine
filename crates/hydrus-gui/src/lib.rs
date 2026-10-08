@@ -26,6 +26,8 @@ mod archive_delete_window;
 pub mod archive_repair_window;
 mod auto_resolution_preview_window;
 mod auto_resolution_review_window;
+#[doc(hidden)]
+pub use auto_resolution_review_window::set_popup_delay;
 mod auto_resolution_rules_window;
 mod autocomplete_tabs;
 mod checker_options_window;

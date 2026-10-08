@@ -509,3 +509,67 @@ fn dropped_binding_retires_retained_control_and_wakes_its_real_held_wait() {
     assert!(!next.maintenance.running(Worker::Trash));
     assert!(!next.maintenance.running(Worker::Deferred));
 }
+
+// leaf: audit-options-files-and-trash-when-physically-deleting-files-or-folders-send-them-to-the-os-s-recycle-bin
+#[cfg(all(unix, not(target_os = "macos")))]
+#[test]
+fn the_recycle_bin_option_decides_whether_physical_deletes_go_to_the_os_bin() {
+    const RECYCLE: &str =
+        "When physically deleting files or folders, send them to the OS's recycle bin: ";
+    let (_dirs, store, files) = owned();
+    let _windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::single(SearchPage::new(store.clone())));
+    ui.show().unwrap();
+    let recycle = || {
+        store
+            .read(settings::get::<settings::FolderSettings>)
+            .unwrap()
+            .delete_to_recycle_bin
+    };
+    let set_recycle = |on: bool| {
+        let (w, rows) = open(&ui, &bound);
+        let at = i32::try_from(
+            w.get_rows()
+                .iter()
+                .position(|row| row.label == RECYCLE)
+                .unwrap(),
+        )
+        .unwrap();
+        let shown = w.get_rows().row_data(at as usize).unwrap();
+        assert_eq!(shown.kind, 1);
+        assert_eq!(shown.checked, recycle(), "shows what is saved");
+        w.invoke_check_toggled(at, on);
+        // (and the deferred deletes may run in normal time)
+        w.invoke_check_toggled(rows[1], true);
+        w.invoke_apply();
+        assert_eq!(recycle(), on);
+    };
+    let delete = |file: usize, now: i64| {
+        queue(&store, files[file].0);
+        let now = now.max(bound.maintenance.deadline(Worker::Deferred));
+        bound.session_autosave.user_at(now);
+        bound.maintenance.poll_at(now).unwrap();
+        wait(|| {
+            bound.maintenance.poll_at(now).unwrap();
+            !files[file].1.exists()
+        });
+    };
+    assert!(!recycle(), "(this store starts with it off)");
+    let now = bound.maintenance.started_ms() + 30_000;
+
+    // off: the file is gone for good
+    set_recycle(false);
+    delete(0, now);
+    assert!(!hydrus_store::paths::recycle_bin_holds(&files[0].1));
+
+    // on: it is in the OS's recycle bin
+    set_recycle(true);
+    delete(1, now + 120_000);
+    assert!(
+        hydrus_store::paths::recycle_bin_holds(&files[1].1),
+        "{} is in the bin",
+        files[1].1.display()
+    );
+    hydrus_store::paths::purge_from_recycle_bin(&files[1].1);
+}

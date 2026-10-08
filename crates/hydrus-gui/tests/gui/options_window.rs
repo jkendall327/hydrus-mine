@@ -6677,3 +6677,76 @@ fn related_weight_drafts_cancel_reopen_and_re_rank_an_already_open_service_panel
     options.invoke_cancel();
     assert!(bound.options_suggested_tags_slot.weights.borrow().is_none());
 }
+
+// leaf: audit-options-menu-menu-file-options
+#[test]
+fn file_options_is_where_the_reference_has_it_and_opens_its_options_window_once() {
+    let recorded = hydrus_testkit::fixture_json("options_dialog.json");
+    let menu = hydrus_testkit::fixture_json("main_menu.json");
+    let (_dirs, store) = store();
+    let windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+
+    // the file menu, entry for entry as the reference's
+    // (a separator, a submenu, a tick box or an entry)
+    ui.invoke_menu_title_pressed(0, 20.0, 22.0);
+    let lines = ui.get_menu_panes().row_data(0).unwrap().lines;
+    let ours: Vec<(i32, String)> = (0..lines.row_count())
+        .map(|i| lines.row_data(i).unwrap())
+        .map(|line| (line.kind, line.label.to_string()))
+        .collect();
+    let theirs: Vec<(i32, String)> = menu["default"][0]["entries"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|entry| match entry {
+            serde_json::Value::String(s) if s == "---" => (2, String::new()),
+            serde_json::Value::String(s) => (0, s.clone()),
+            entry => (3, entry["menu"].as_str().unwrap().to_owned()),
+        })
+        .collect();
+    let at = theirs
+        .iter()
+        .position(|(_, label)| label == "options\u{2026}")
+        .unwrap();
+    assert_eq!(
+        ours.iter()
+            .map(|(kind, label)| (*kind, label.as_str()))
+            .skip(at.saturating_sub(2))
+            .take(5)
+            .collect::<Vec<_>>(),
+        theirs[at.saturating_sub(2)..(at + 3).min(theirs.len())]
+            .iter()
+            .map(|(kind, label)| (*kind, label.as_str()))
+            .collect::<Vec<_>>(),
+        "options\u{2026} sits between the same entries"
+    );
+    let line = at as i32;
+    assert_eq!(ours[at].1, "options\u{2026}");
+
+    // choosing it opens the options window on the page the reference opens
+    // on, with the pages the reference lists (but for the Qt style page)
+    assert!(bound.options.borrow().is_none());
+    ui.invoke_menu_line_clicked(0, line, 0.0, 0.0, 0.0);
+    let options = bound.options.borrow().as_ref().unwrap().clone_strong();
+    let pages: Vec<String> = recorded["pages"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|page| page["page"].as_str().unwrap().to_owned())
+        .filter(|page| page != "style")
+        .collect();
+    assert_eq!(page_names(&options), pages);
+    assert_eq!(
+        page_names(&options)[options.get_page() as usize],
+        recorded["opens_on"].as_str().unwrap()
+    );
+    // and asking again brings the same window, not a second
+    let count = windows.count();
+    open(&ui);
+    assert_eq!(windows.count(), count);
+    assert!(bound.options.borrow().is_some());
+    options.invoke_cancel();
+    assert!(bound.options.borrow().is_none());
+}

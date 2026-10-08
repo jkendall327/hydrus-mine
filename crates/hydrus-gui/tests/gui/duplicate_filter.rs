@@ -519,3 +519,132 @@ fn viewing_statistics_switch_controls_actual_pair_navigation_and_cancelled_close
     live.invoke_close_requested();
     assert_eq!(views(), 2);
 }
+
+// leaf: audit-options-speed-and-memory-image-prefetch-num-pairs-to-prefetch-in-duplicate-filter
+#[test]
+fn the_filter_prefetches_the_pair_shown_and_the_edited_number_of_pairs_after_it() {
+    use hydrus_core::duplicates::DuplicatesSearch;
+    use hydrus_core::pages::{DuplicatesPage, Page, PageContent, PageKey, Session};
+    use hydrus_core::{HashId, Mime};
+    use hydrus_gui::{MainWindow, Pages, bind, headless};
+    use hydrus_store::sessions::{self, LAST_SESSION};
+    use slint::{ComponentHandle as _, Model as _};
+    use std::collections::BTreeSet;
+
+    const PAIRS: &str = "Num pairs to prefetch in Duplicate Filter:";
+    let _windows = headless::init();
+    let (_dir, store) = store_with_pairs();
+    let (_, key) = my_files(&store);
+    let search = FileSearchContext {
+        location: LocationContext::single(key),
+        ..FileSearchContext::default()
+    };
+    let duplicates = DuplicatesPage::new(DuplicatesSearch {
+        search_1: search.clone(),
+        search_2: search,
+        kind: PairSearchKind::OneFileMatchesOneSearch,
+        pixel_duplicates: PixelDuplicates::Allowed,
+        max_hamming_distance: 4,
+    });
+    let session = Session {
+        name: LAST_SESSION.into(),
+        pages: vec![Page {
+            key: PageKey::random(),
+            name: "duplicates".into(),
+            content: PageContent::Duplicates {
+                duplicates: duplicates.clone(),
+                sort: None,
+            },
+        }],
+    };
+    store
+        .write(move |ctx| sessions::save(ctx.conn(), &session, 0))
+        .unwrap();
+    // The batch the page's filter works through, and which of its files are
+    // static images (the ones warmed).
+    let mut batch = DuplicateFilter::for_page(Arc::clone(&store), &duplicates).unwrap();
+    assert_eq!(batch.load_batch().unwrap(), Step::Showing);
+    let images = |files: Vec<HashId>| -> BTreeSet<HashId> {
+        let loaded = store
+            .read(|conn| hydrus_store::media::load_basic(conn, &files))
+            .unwrap();
+        loaded
+            .iter()
+            .filter(|f| {
+                f.info
+                    .as_ref()
+                    .is_some_and(|i| i.mime.general_class() == Some(Mime::GeneralImage))
+            })
+            .map(|f| f.hash_id)
+            .collect()
+    };
+    // The reference warms the pair shown and the next N pairs after it.
+    let wanted = |pairs: usize| images(batch.upcoming(pairs));
+    assert!(
+        wanted(0).len() < wanted(1).len() && wanted(1).len() < wanted(3).len(),
+        "the fixture has distinct images in the next pairs: {:?}",
+        [wanted(0).len(), wanted(1).len(), wanted(3).len()]
+    );
+
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::open(Arc::clone(&store)).unwrap());
+    // (increasing, as the cache keeps what it has warmed)
+    for pairs in [0, 1, 3, 6] {
+        ui.invoke_menu_title_pressed(0, 20.0, 22.0);
+        let lines = ui.get_menu_panes().row_data(0).unwrap().lines;
+        let at = (0..lines.row_count())
+            .position(|i| lines.row_data(i).unwrap().label == "options\u{2026}")
+            .unwrap();
+        ui.invoke_menu_line_clicked(0, at as i32, 0.0, 0.0, 0.0);
+        let options = bound.options.borrow().as_ref().unwrap().clone_strong();
+        let page = (0..options.get_pages().row_count())
+            .position(|i| options.get_pages().row_data(i).unwrap().text == "speed and memory")
+            .unwrap();
+        options.invoke_page_chosen(page as i32);
+        let row = options
+            .get_rows()
+            .iter()
+            .position(|r| r.label == PAIRS)
+            .unwrap() as i32;
+        assert_eq!(options.get_rows().row_data(row as usize).unwrap().maximum, 25);
+        options.invoke_number_edited(row, pairs as i32);
+        options.invoke_apply();
+        assert_eq!(
+            store
+                .read(hydrus_store::viewer_prefetch::load)
+                .unwrap()
+                .duplicate_pairs,
+            pairs as u64
+        );
+        options.invoke_cancel();
+
+        ui.invoke_launch_filter();
+        let filter = bound.filter.borrow().as_ref().unwrap().clone_strong();
+        let expected = wanted(pairs as usize);
+        let deadline = std::time::Instant::now() + std::time::Duration::from_secs(60);
+        let cache = bound.image_cache.clone();
+        loop {
+            slint::platform::update_timers_and_animations();
+            let warmed: BTreeSet<HashId> = cache.keys().into_iter().collect();
+            if warmed == expected {
+                break;
+            }
+            assert!(
+                std::time::Instant::now() < deadline,
+                "{pairs} pairs: warmed {} files, wanted {}",
+                warmed.len(),
+                expected.len()
+            );
+            std::thread::sleep(std::time::Duration::from_millis(20));
+        }
+        // and no more arrives
+        for _ in 0..10 {
+            slint::platform::update_timers_and_animations();
+            std::thread::sleep(std::time::Duration::from_millis(30));
+        }
+        let warmed: BTreeSet<HashId> = cache.keys().into_iter().collect();
+        assert_eq!(warmed, expected, "{pairs} pairs");
+        filter.invoke_close_requested();
+        assert!(bound.filter.borrow().is_none());
+    }
+}

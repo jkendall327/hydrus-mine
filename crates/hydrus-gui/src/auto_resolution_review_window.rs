@@ -40,6 +40,20 @@ enum Asking {
     UndoDenied(Vec<GroupPair>),
 }
 
+thread_local! {
+    /// How long approving or denying works before its popup shows.
+    static POPUP_AFTER: std::cell::Cell<std::time::Duration> =
+        const { std::cell::Cell::new(crate::auto_resolution_review::POPUP_AFTER) };
+}
+
+/// Make the popups of approvals and denials started from now on (on this
+/// thread) show after `after`, so tests need not wait the reference's four
+/// seconds.
+#[doc(hidden)]
+pub fn set_popup_delay(after: std::time::Duration) {
+    POPUP_AFTER.with(|delay| delay.set(after));
+}
+
 struct State {
     store: Arc<Store>,
     rule_id: i64,
@@ -191,13 +205,16 @@ impl State {
         let thread_error = error.clone();
         let (store, rule_id) = (self.store.clone(), self.rule_id);
         let (thread_status, thread_done) = (status.clone(), done.clone());
+        let popup_after = POPUP_AFTER.with(std::cell::Cell::get);
         std::thread::spawn(move || {
-            if let Err(e) = crate::auto_resolution_review::action_pairs(
+            if let Err(e) = crate::auto_resolution_review::action_pairs_after(
                 &store,
                 rule_id,
                 &pairs,
                 approve,
                 &thread_status,
+                popup_after,
+                &|_| {},
             ) {
                 *thread_error
                     .lock()
