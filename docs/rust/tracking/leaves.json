@@ -2150,9 +2150,9 @@
    ],
    "recheck": {
     "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Model test replays the recorded manage_notes.json 'urls' step (one case: 3 URLs, clipboard text and 'Copied 3 URLs!') against NotesEditor::copy_urls, but no GUI test in gui/manage_notes.rs drives the window's copy-URLs button (on_copy_urls in manage_notes_window.rs), so it is a model-only replay. Tracker note about a 'selection prompt when more than one note' is stale/false: the reference (ClientGUIScrolledPanelsEdit.py:1110) copies only the current note's URLs. Tests: crates/hydrus-gui-model/tests/model/manage_notes.rs:63 notes_dialog_steps_as_the_reference"
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "gui/manage_notes_replay.rs the_manage_notes_window_follows_the_reference_s_steps opens the real manage-notes dialog from the thumbnail menu on files seeded with the recorded notes, drives the recorded type/add/rename/delete/copy/copy-URLs steps, and compares tabs, current tab and text, what it said and the clipboard with manage_notes.json (the pasting case is not replayed in the window; the dialog opens on its first tab and the test selects the recorded one). The notice for a note with no URLs is neither recorded nor tested."
    }
   },
   {
@@ -3449,8 +3449,8 @@
    "recheck": {
     "date": "2026-10-08",
     "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Model-only: calls TagDisplayEditor::set_rule against 3 of the 4 recorded autocomplete steps; the recorded namespace_enabled (control enabled state) is not checked, and no GUI test drives the interlocking checkboxes in the window. Tests: crates/hydrus-gui-model/tests/model/tag_display.rs:10 staged_interlocks_match_reference"
+    "by": "phase 2 session",
+    "note": "gui/tag_display_replay.rs the_autocomplete_boxes_interlock_as_the_reference_s_do opens the real display/search window and compares the interlocked boxes, fetch-all, fetch-automatically and threshold with tag_display.json's autocomplete_steps (the manual-fetch step asserts only that fetching automatically is off: the window keeps its last threshold number). The test calls invoke_rule_changed and set_fetch_automatically/invoke_options_changed directly, bypassing the checkbox toggle wiring in the .slint file. Still weak: the recorded namespace_enabled (whether the boxes are enabled) is not readable from the window."
    }
   },
   {

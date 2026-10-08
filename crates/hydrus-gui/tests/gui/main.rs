@@ -150,6 +150,7 @@ mod client_api_admin;
 mod client_api_permissions;
 mod parser_editors;
 mod tag_display;
+mod tag_display_replay;
 mod tags_sync_menu;
 
 mod network_sessions;
@@ -159,6 +160,7 @@ mod network_data;
 mod downloader_interchange;
 mod tag_migration;
 
+mod manage_notes_replay;
 mod regex_favourites;
 mod regex_options_editor;
 mod string_converter_window;
