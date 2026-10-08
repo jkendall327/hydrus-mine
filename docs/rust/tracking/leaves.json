@@ -23881,10 +23881,11 @@
    "path": "Reusable editors > Specific/default import options container editor > External programs on imported files",
    "workstream": "editors",
    "state": "missing",
-   "priority": "normal",
+   "priority": "low",
    "reference": "hydrus/client/gui/importing/ClientGUIImportOptionsPanels.py:37",
    "native": "crates/hydrus-gui-model/src/import_options_editor.rs:56",
    "notes": [
+    "Low priority by the owner's decision of 2026-10-08: running an external program on imported files is a feature the owner does not use; kept in scope, done last.",
     "Truth pass (2026-10-08): missing, large. Only an opaque pass-through exists. Missing: Typed entry model, add/edit/delete list, the when-to-run chooser, the program choices, and execution after import. Evidence: hydrus-core/src/import_options.rs:430-436 (opaque stored string); import_options_window.rs:201-204 '(not editable here yet)'",
     "External program data can survive migration, but the native editor cannot author commands and the worker does not execute them."
    ]
