@@ -1,14 +1,15 @@
 name: rust
 
-# Every push and pull request runs the whole Linux check, GUI included. Lint and
-# tests are separate jobs so they run side by side. Windows and macOS are
-# deferred (owner, 2026-10-06) and run only when dispatched by hand.
+# Every push and pull request that changes code runs the whole Linux check, GUI
+# included. Lint and tests are separate jobs so they run side by side. Windows
+# and macOS are deferred (owner, 2026-10-06) and run only when dispatched by
+# hand. Changes to the tracker and the scripts alone run tracker.yml instead.
 on:
   push:
     branches: [master, 'claude/**', 'codex/**']
-    paths: ['crates/**', 'generated/**', 'tools/**', 'scripts/**', 'docs/rust/tracking/**', 'xtask/**', 'oracle/**', 'parity/**', 'Cargo.toml', 'Cargo.lock', 'rust-toolchain.toml', '.config/**', '.github/workflows/rust.yml']
+    paths: ['crates/**', 'generated/**', 'tools/**', 'xtask/**', 'oracle/**', 'parity/**', 'Cargo.toml', 'Cargo.lock', 'rust-toolchain.toml', '.config/**', '.github/workflows/rust.yml']
   pull_request:
-    paths: ['crates/**', 'generated/**', 'tools/**', 'scripts/**', 'docs/rust/tracking/**', 'xtask/**', 'oracle/**', 'parity/**', 'Cargo.toml', 'Cargo.lock', 'rust-toolchain.toml', '.config/**', '.github/workflows/rust.yml']
+    paths: ['crates/**', 'generated/**', 'tools/**', 'xtask/**', 'oracle/**', 'parity/**', 'Cargo.toml', 'Cargo.lock', 'rust-toolchain.toml', '.config/**', '.github/workflows/rust.yml']
   workflow_dispatch:
     inputs:
       secondary_platforms:
