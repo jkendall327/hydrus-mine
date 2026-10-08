@@ -99,7 +99,14 @@ fn input_rules_enable_token_and_string_processor_reach_the_saved_call() {
     child.invoke_rule_token(0, "%path%".into());
     // A string processor sits between the input and its token.
     child.invoke_rule_process(0);
-    assert!(bound.options_external_calls.strings.processor.borrow().is_some());
+    assert!(
+        bound
+            .options_external_calls
+            .strings
+            .processor
+            .borrow()
+            .is_some()
+    );
     let editor = bound
         .options_external_calls
         .strings
@@ -109,16 +116,26 @@ fn input_rules_enable_token_and_string_processor_reach_the_saved_call() {
         .unwrap()
         .clone_strong();
     editor.invoke_cancel();
-    assert!(bound.options_external_calls.strings.processor.borrow().is_none());
+    assert!(
+        bound
+            .options_external_calls
+            .strings
+            .processor
+            .borrow()
+            .is_none()
+    );
     // The saved call carries each rule's token and processor.
     let mut seeded = saved(&store);
     let ActualCall::Process(p) = &mut seeded.calls[0].call else {
         unreachable!()
     };
-    p.rules[0].processor.steps.push(ProcessingStep::Convert(StringConverter {
-        conversions: vec![Conversion::Prepend("pre-".into())],
-        ..StringConverter::default()
-    }));
+    p.rules[0]
+        .processor
+        .steps
+        .push(ProcessingStep::Convert(StringConverter {
+            conversions: vec![Conversion::Prepend("pre-".into())],
+            ..StringConverter::default()
+        }));
     p.rules[0].token = "%path%".into();
     let with_processor = seeded.clone();
     child.invoke_cancel();
@@ -132,9 +149,16 @@ fn input_rules_enable_token_and_string_processor_reach_the_saved_call() {
     w.invoke_external_call_clicked(named(&w, "synthetic call"), false, false);
     w.invoke_external_call_action("edit".into());
     let child = call(&bound);
-    assert_eq!(child.get_rules().row_data(0).unwrap().summary, "some conversion");
+    assert_eq!(
+        child.get_rules().row_data(0).unwrap().summary,
+        "some conversion"
+    );
     child.invoke_test_input(0, "x.png".into());
-    assert!(child.get_preview().ends_with("pre-x.png"), "{}", child.get_preview());
+    assert!(
+        child.get_preview().ends_with("pre-x.png"),
+        "{}",
+        child.get_preview()
+    );
     child.invoke_rule_enabled(0, false);
     child.invoke_rule_enabled(3, true);
     child.invoke_rule_token(3, "%path%".into());
@@ -205,7 +229,13 @@ fn executable_path_checks_and_show_path_help_match_the_reference() {
     q.invoke_answered(true);
     // The command window asks about an empty path, then about a path `which` cannot find.
     child.invoke_command_edit();
-    let command = bound.options_external_calls.command.borrow().as_ref().unwrap().clone_strong();
+    let command = bound
+        .options_external_calls
+        .command
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
     command.set_executable("".into());
     command.invoke_apply();
     assert_eq!(
@@ -226,10 +256,20 @@ fn executable_path_checks_and_show_path_help_match_the_reference() {
     );
     question(&bound).invoke_answered(true);
     assert!(bound.options_external_calls.command.borrow().is_none());
-    assert!(child.get_command_template().starts_with("no-such-program-anywhere "));
+    assert!(
+        child
+            .get_command_template()
+            .starts_with("no-such-program-anywhere ")
+    );
     // Typing a bare name that is on the PATH asks nothing.
     child.invoke_command_edit();
-    let command = bound.options_external_calls.command.borrow().as_ref().unwrap().clone_strong();
+    let command = bound
+        .options_external_calls
+        .command
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
     command.set_executable("sh".into());
     command.invoke_apply();
     assert!(bound.options_external_calls.command.borrow().is_none());
@@ -249,7 +289,13 @@ fn availability_test_is_a_which_call_with_the_reference_messages() {
     wait(&child);
     assert_eq!(child.get_test_status(), "Availability test worked!");
     child.invoke_command_edit();
-    let command = bound.options_external_calls.command.borrow().as_ref().unwrap().clone_strong();
+    let command = bound
+        .options_external_calls
+        .command
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
     command.set_executable("no-such-program-anywhere".into());
     command.invoke_apply();
     question(&bound).invoke_answered(true);
@@ -294,7 +340,14 @@ fn add_creates_a_new_call_and_export_writes_the_selected_calls_as_the_reference_
     // Export is off with nothing selected, then follows the selection.
     assert!(!w.get_external_call_selected());
     w.invoke_external_call_action("import".into());
-    let exchange = bound.options_external_calls.exchange.0.borrow().as_ref().unwrap().clone_strong();
+    let exchange = bound
+        .options_external_calls
+        .exchange
+        .0
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
     let reference = hydrus_testkit::fixture_json("external_calls.json");
     exchange.set_text(reference["export"].as_str().unwrap().into());
     exchange.invoke_action("review".into());
@@ -305,7 +358,14 @@ fn add_creates_a_new_call_and_export_writes_the_selected_calls_as_the_reference_
     // Imported calls arrive selected, as in the reference.
     assert!(w.get_external_call_selected());
     w.invoke_external_call_action("export".into());
-    let exchange = bound.options_external_calls.exchange.0.borrow().as_ref().unwrap().clone_strong();
+    let exchange = bound
+        .options_external_calls
+        .exchange
+        .0
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
     let exported: serde_json::Value = serde_json::from_str(exchange.get_text().as_str()).unwrap();
     let expected: serde_json::Value =
         serde_json::from_str(reference["export"].as_str().unwrap()).unwrap();
@@ -318,6 +378,13 @@ fn add_creates_a_new_call_and_export_writes_the_selected_calls_as_the_reference_
     assert_eq!(child.get_name(), "new call");
     child.set_name("brand new".into());
     child.invoke_apply();
+    // The fresh call has no executable yet, so the reference asks first.
+    assert!(
+        question(&bound)
+            .get_message()
+            .starts_with("Hey, it looks like something is not quite right here.")
+    );
+    question(&bound).invoke_answered(true);
     assert_eq!(w.get_external_call_rows().row_count(), 3);
     w.invoke_apply();
     assert!(saved(&store).calls.iter().any(|c| c.name == "brand new"));
