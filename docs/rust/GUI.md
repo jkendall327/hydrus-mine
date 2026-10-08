@@ -340,12 +340,39 @@ prefetch (with its rule that the two checks can't both be dispositive),
 file filtering's allowed filetypes (ticked in the reference's tree of
 filetypes by group, a group's box ticking all of its) and its switches
 and size and resolution limits, tag
-filtering's blacklist and whitelist, locations' destination and
+filtering's blacklist and whitelist, locations' destinations and
 switches, tags (per tag service: getting tags, additional tags, and the
 cog menu's switches; a warning if it gets no tags) and notes are edited
 there. "apply" gives the dialog the
 importer's options. As `oracle/record_import_options_editor.py` recorded
 the reference's.
+
+The locations page's "destination file service(s)" and the presentation
+page's location are the reference's file domain button
+(`LocationSearchContextButton`) under the flags its callers set
+(`hydrus-gui-model/src/domains.rs` `Flags`; recorded in
+`oracle/record_location_selector_flags.py`): the destination offers only the
+domains files can be imported to (the local file domains) and
+"multiple/deleted locations"; the presentation location offers everything,
+including all known files, and in advanced mode "deleted from" boxes. Choosing
+several domains opens the shared "edit multiple location" list; while it is
+open the editor can't be applied; none ticked shows "THIS WILL NOT IMPORT
+ANYWHERE!" and an importer with no destination halts. A caller that isn't a
+downloader (a local import, an import folder, the Client API) doesn't show
+the URL checkboxes; the "even for 'already in db' files" box needs
+auto-archive. The presentation page's status ("all files", "new files", "do
+not show anything"), its inbox choices ("or in inbox" only for new files, and
+becoming "inbox or archive" when the status leaves "new files") and the
+greying of the inbox and location for "do not show anything" are the
+reference panel's. "Show files" on an importer filters by the location: files
+current in a current domain or deleted from a deleted one, and all known files
+doesn't filter.
+
+Each tag service's box has one "N additional tags" button (thousands
+separated, as the reference words it: "1 additional tags"), which opens the
+tag entry dialog on the service's tags with the reference's message; accepting
+replaces the tags, cancelling keeps them. The whitelist dialog says what the
+reference's does. As `oracle/record_additional_tags_button.py` recorded.
 
 The tag filtering blacklist and each tag service's "get tags" filter
 are buttons saying what the filter does ("blacklisting on goblin, orc",

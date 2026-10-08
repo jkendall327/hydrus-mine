@@ -971,15 +971,22 @@ deleted sidecars by `crates/hydrus-download/tests/local_import.rs`.
   are greyed out); its "additional urls" don't show the URL a URL class
   would actually fetch or refer from; trying a previously deleted file
   again doesn't offer to clear its deletion record.
-- **The import options editor** keeps typed-line fields for the tag filtering
-  whitelist and additional tags, with a detached shared write-tag autocomplete
-  editor for both lists. The reference embeds its tag inputs. Note names remain
+- **The import options editor** keeps a typed-line field for the tag filtering
+  whitelist, with a detached shared write-tag autocomplete editor for it and
+  for each service's additional tags (the reference embeds its tag inputs in
+  a dialog, and this one lacks the tag list's multiple-selection and
+  maintenance right-click menus). Each tag service's cog menu is a set of check boxes in the
+  box rather than a menu. Note names remain
   typed lines, and note renames use "parser name -> saved name" rather than the
   reference's two-column list.
   The tags page's "set a filter for already-exist test" isn't there.
-  Locations take one destination (the reference's takes several), and
-  presentation's location is all my files or all local files. It has no
-  copy, paste or favourites buttons, and always lists kinds as the
+  The destination and presentation location buttons are drop-downs of the
+  reference's menu, its "multiple/deleted locations" row opening the list
+  window, with a label beside them saying what is chosen (the reference has
+  one button whose popup menu has check marks). The list of kinds' summary of a
+  presentation location that is neither all my files nor all local files says
+  "in another location" where the reference names the domains.
+  It always lists kinds as the
   reference's "simple mode" does (hydrus-rs has no option for it yet).
 - **The merge options editor** asks its select dialogs as a row of
   buttons (no service or action preselected), and edits the note merge

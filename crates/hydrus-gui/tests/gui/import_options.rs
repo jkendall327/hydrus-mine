@@ -307,7 +307,11 @@ fn a_gallery_pages_import_options_are_edited_for_its_new_searches() {
     let mine = (0..services.row_count())
         .position(|i| services.row_data(i).unwrap().name == "my tags")
         .unwrap();
-    editor.invoke_tag_service_text(i32::try_from(mine).unwrap(), "zebra\napple".into());
+    crate::import_locations::set_additional_tags(
+        &editor,
+        i32::try_from(mine).unwrap(),
+        &["zebra", "apple"],
+    );
     assert!(
         labels(&editor)[4].contains("my tags[adding \"apple, zebra\"]"),
         "{:?}",

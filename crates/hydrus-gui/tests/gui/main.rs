@@ -263,6 +263,8 @@ mod files_io_file_menu;
 mod files_io_folder_editors;
 mod files_io_import_review;
 mod formula_exchange;
+mod import_additional_tags;
+mod import_locations;
 mod import_options_fields;
 mod media_file_actions;
 mod media_ratings_counter;

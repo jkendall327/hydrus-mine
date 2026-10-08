@@ -50,6 +50,11 @@ impl LocationContext {
         &self.deleted
     }
 
+    /// Nowhere at all (`IsEmpty`).
+    pub fn is_empty(&self) -> bool {
+        self.current.is_empty() && self.deleted.is_empty()
+    }
+
     pub fn is_all_known_files(&self) -> bool {
         self.current
             .iter()
