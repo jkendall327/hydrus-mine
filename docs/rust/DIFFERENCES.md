@@ -374,7 +374,23 @@ search.
   (`pub( 'pause_all_media' )`), and the variant that hides the other windows
   (the file migration dialogs, which hydrus-rs does not have in this form)
   isn't there. Waiting jobs are retried oldest first; the reference's
-  set has no order.
+  set has no order. Only one real job is published modal so far, the
+  database backup (the reference's `_Backup`); the reference's other
+  `modal_message` jobs (the cache regenerations, orphan file records and
+  so on) are not ported as modal where hydrus-rs has an equivalent, and the
+  recorded hide-the-main-GUI case is not replayed by any test. The
+  `audit-options-popups-modal` tag is for the dialog's lifecycle, proved with
+  the debug job and the backup.
+- **The popup freeze's mouse-on-another-monitor condition**
+  (`freeze_message_manager_when_mouse_on_other_monitor`) is not
+  implemented (it needs a global cursor position: #94). Minimised and
+  hidden freezing are (`audit-options-popups-freeze`).
+- **Two About leaves need an owner decision** (`audit-options-about-description`
+  and `audit-options-about-libraries`, untagged): they are named for Python,
+  Qt and numpy facts hydrus-rs cannot report. The tests show the reference's
+  recorded tab rendered by hydrus-rs's formatter and hydrus-rs's own lines
+  as a subset of the reference's labels; they do not show equivalence.
+  Proposed: out of scope, or accept hydrus-rs's own list as the equivalent.
 - **The options window has only the options hydrus-rs honours** (so far
   those on twenty-five pages; the others, and pages with none, aren't there:
   on the connection page, the CA bundle and curl_cffi test; on the
@@ -2226,6 +2242,12 @@ maximised/fullscreen for the main window, media viewer and Options window. Exist
 and parent/centre positioning now reach those owners too (see "Options kept but
 not used"); pointer positioning remains incomplete; the
 broader frame/table/editor coverage remains Partial.
+`audit-options-geometry` is untagged. What is proved: saving, as the
+reference's `SaveTLWSizeAndPosition` (`tests/model/frame_save.rs`, 26
+recorded cases), for the main window (`shell_geometry.rs`). Not proved:
+restoring stale or off-screen geometry on open (the opening rescue is
+tested under the frame-locations leaves), and saving for any other frame or
+dialog, which hydrus-rs does not do.
 A closing window saves as `SaveTLWSizeAndPosition` does (see GUI.md), but
 only the main window and the media viewer save: the main window as it closes
 and again a quarter second to half a second after it moves, resizes or
@@ -3943,8 +3965,8 @@ change nothing). They are marked out of scope in `docs/rust/tracking/`.
   back into the client (user call test, auto-account creation, gap
   downloader) and its network-job popup, and the test job's subjob doesn't
   start pulsing after two seconds.
-- The "modal" popups are ordinary popups: hydrus-rs has no modal popup
-  dialog.
+- The "modal" popups open a dialog of their own (see "A modal popup's
+  dialog" above); the debug action's cancellable one counts down in it.
 - "reset multi-column list settings to default" asks, then has nothing to
   reset: hydrus-rs doesn't save list column widths.
 - "force database commit" checkpoints SQLite's write-ahead log (hydrus-rs
@@ -4004,7 +4026,8 @@ change nothing). They are marked out of scope in `docs/rust/tracking/`.
 - A backup holds hydrus-rs's one database file and the media directory
   (`client_files` there), not the reference's four .db files. The backup
   works with the database live (SQLite's online backup) rather than closing
-  it, and shows its progress in an ordinary popup, not a modal one.
+  it, and shows its progress in the modal dialog the reference does
+  (published modal, so it opens its dialog unless it finishes first).
 - "Simple" means the media is in one location, which may be outside the
   database directory (an imported client's); the reference requires its
   default `client_files`.

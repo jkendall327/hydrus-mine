@@ -48,7 +48,6 @@ fn screens(recorded: &Value) -> Vec<Screen> {
         .collect()
 }
 
-// leaf: audit-options-geometry
 #[test]
 fn a_closing_window_is_saved_as_the_references_saves_it() {
     let recorded = hydrus_testkit::fixture_json("save_geometry.json");

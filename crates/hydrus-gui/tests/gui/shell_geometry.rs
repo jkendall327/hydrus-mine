@@ -47,7 +47,6 @@ fn main_gui(client: &Client) -> FrameLocation {
     client.setting::<WindowSettings>().main_gui
 }
 
-// leaf: audit-options-geometry
 #[test]
 fn the_main_window_saves_what_the_reference_saves_and_not_while_minimised_or_hidden() {
     let client = Client::basic();
@@ -110,7 +109,6 @@ fn the_main_window_saves_what_the_reference_saves_and_not_while_minimised_or_hid
     assert_eq!(saved.last_position, Some(state(window).position));
 }
 
-// leaf: audit-options-geometry
 #[test]
 fn the_main_window_keeps_its_geometry_a_moment_after_it_changes_not_only_on_close() {
     let client = Client::basic();

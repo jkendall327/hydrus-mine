@@ -19,8 +19,9 @@ checkout to itself. Measured with `date -u` as the work went.
 | 15:44:38-15:49:37 | First strict Clippy run (`dev.sh lint`): **4 m 58 s** (then 30-40 s). One lint finding fixed. |
 | 15:51:37 | Code committed. |
 | 15:51:37-16:06:36 | `scripts/dev.sh pre-push`: **14 m 58 s** (lint, slint check, tests of changed crates; the GUI binary alone 288 s for 967 tests). Result: 966 pass, the known `emoji_fonts::outline_fox_is_selected_without_replacing_platform_text_fallbacks` fails on this container's fonts. |
-| PR_OPENED | PR opened. |
-| CI_GREEN | CI green. |
+| 16:09:40 | PR #99 opened (branch pushed 16:09:25). |
+| 16:26:55 | CI green on the branch push (17 m 27 s). The PR's own run of the same commit: see the PR. |
+| 16:46 | Independent review: changes requested (tags too wide). Untagged geometry and the two About leaves, wired the database backup as a real modal job, fixed docs; GUI test relink after the backup edit **3 m 44 s** (the one over 2 minutes). |
 
 ## Other time lost
 
@@ -44,4 +45,7 @@ checkout to itself. Measured with `date -u` as the work went.
 
 ## Summary
 
-SUMMARY_PLACEHOLDER
+- **Total wall time:** 15:11 to 16:09 (58 min) to the PR, about 1 h 45 min with the review round.
+- **Build-wait time** (blocked on Cargo with nothing else useful to do): about 34 of the first 58 minutes, roughly 60%: slint-check build 3 m 41, first model build 3 m 41, GUI test builds about 5 min in all, Clippy about 6 min, pre-push about 14 min, and the unmasked end of UI rebuild #1 about 1.5 min. UI build #0 (12 m 49) and most of rebuild #1 overlapped with reading, recording and writing code, so they cost little.
+- **UI rebuilds:** 1 after the initial cold build (6 m 20, for one new window).
+- **If a `.slint` edit rebuilt only the affected window (about 1/6 of the crate):** rebuild #1 would have taken about 1 minute, saving about 5 minutes of machine time but only about 1.5 minutes of my waiting, since I used the rest. The larger gain would have been iteration: I tried no layout change after the first render of the dialog because each would have cost 6 minutes; at 1 minute I would have made two or three. Faster rebuilds would not have touched the other build waits (dependencies, Clippy, the full GUI suite), which were most of the waiting; those need the lint and test runs to be narrower, not the UI crate split.
