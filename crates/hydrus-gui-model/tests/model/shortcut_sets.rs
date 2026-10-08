@@ -5,7 +5,7 @@ use std::collections::BTreeSet;
 
 use hydrus_core::shortcuts::{Gesture, Settings, default_sets};
 use hydrus_gui_model::shortcut_sets::{
-    RESERVED, Restore, SORTED, command_text, custom_rows, delete_custom, description,
+    RESERVED, Restore, SORTED, command_text, custom_rows, delete_custom, description, is_reserved,
     non_dupe_name, pretty_name, reserved_rows, restore, restore_question, save_custom,
 };
 use serde_json::Value;
@@ -113,19 +113,14 @@ fn custom_sets_are_named_apart_deleted_and_defaults_restored() {
         ),
         "new shortcuts (1)"
     );
-    // a custom set can't take a built-in name
-    assert_eq!(
-        save_custom(&mut settings, None, "main_gui", Vec::new()),
-        "main_gui (1)"
-    );
+    // a custom set can't take a built-in name: the editor vetoes it
+    assert!(is_reserved("main_gui"));
+    assert!(!is_reserved("new shortcuts"));
     let names: Vec<String> = custom_rows(&settings).into_iter().map(|r| r.name).collect();
-    assert_eq!(
-        names,
-        ["main_gui (1)", "new shortcuts", "new shortcuts (1)"]
-    );
+    assert_eq!(names, ["new shortcuts", "new shortcuts (1)"]);
     delete_custom(&mut settings, &["new shortcuts".into(), "main_gui".into()]);
     assert!(settings.sets.contains_key("main_gui"));
-    assert_eq!(custom_rows(&settings).len(), 2);
+    assert_eq!(custom_rows(&settings).len(), 1);
 
     settings.sets.get_mut("thumbnails").unwrap().clear();
     assert!(

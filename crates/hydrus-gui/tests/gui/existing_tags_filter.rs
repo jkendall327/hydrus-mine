@@ -35,17 +35,13 @@ fn existing_tag_filter_dialog_stages_enables_persists_and_retires_with_its_impor
     )
     .unwrap();
     owner.invoke_tag_service_toggled(mine, "get-tags".into(), true);
-    owner.invoke_tag_service_text(
-        mine,
-        fixture["additional"]
-            .as_array()
-            .unwrap()
-            .iter()
-            .map(|tag| tag.as_str().unwrap())
-            .collect::<Vec<_>>()
-            .join("\n")
-            .into(),
-    );
+    let additional: Vec<&str> = fixture["additional"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|tag| tag.as_str().unwrap())
+        .collect();
+    crate::import_locations::set_additional_tags(&owner, mine, &additional);
     owner.invoke_edit_existing_tags_filter(mine);
     let cancelled = hydrus_gui::tag_filter_window::last_opened().unwrap();
     assert_eq!(

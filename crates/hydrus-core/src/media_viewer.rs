@@ -249,10 +249,11 @@ impl Default for InfoLineSettings {
     }
 }
 
-/// Sound (the reference's audio options, less the preview's, which
-/// hydrus-rs has no preview for): the global volume and mute, and the
-/// media viewer's own. The viewer plays at its own volume only if it
-/// uses it, and is muted if either mute is on.
+/// Sound (the reference's audio options): the global volume and mute, and
+/// the media viewer's and the preview's own. Each plays at its own volume
+/// only if it uses it (the viewer's choice is kept here; the preview's,
+/// `preview_uses_its_own_audio_volume`, is a reference option the Options
+/// window edits), and is muted if either its mute or the global one is on.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(default)]
 pub struct AudioSettings {
@@ -266,6 +267,10 @@ pub struct AudioSettings {
     pub viewer_mute: bool,
     /// `media_viewer_uses_its_own_audio_volume`.
     pub viewer_uses_its_own_volume: bool,
+    /// `preview_audio_volume`.
+    pub preview_volume: u8,
+    /// `preview_audio_mute`.
+    pub preview_mute: bool,
 }
 
 impl Default for AudioSettings {
@@ -276,11 +281,39 @@ impl Default for AudioSettings {
             viewer_volume: 70,
             viewer_mute: false,
             viewer_uses_its_own_volume: false,
+            preview_volume: 70,
+            preview_mute: false,
         }
     }
 }
 
 impl AudioSettings {
+    /// The preview's volume (`GetCorrectCurrentVolume`), its own if
+    /// `preview_uses_its_own_audio_volume` is on.
+    pub fn current_preview_volume(&self, uses_its_own: bool) -> u8 {
+        if uses_its_own {
+            self.preview_volume
+        } else {
+            self.global_volume
+        }
+    }
+
+    /// Whether the preview is muted (`GetCorrectCurrentMute`).
+    pub fn preview_muted(&self) -> bool {
+        self.preview_mute || self.global_mute
+    }
+
+    /// Set the volume the preview's slider moves: the preview's own if it
+    /// uses it, else the global one.
+    pub fn set_preview_volume(&mut self, uses_its_own: bool, volume: u8) {
+        let volume = volume.min(100);
+        if uses_its_own {
+            self.preview_volume = volume;
+        } else {
+            self.global_volume = volume;
+        }
+    }
+
     /// The media viewer's volume (`GetCorrectCurrentVolume`).
     pub fn current_viewer_volume(&self) -> u8 {
         if self.viewer_uses_its_own_volume {

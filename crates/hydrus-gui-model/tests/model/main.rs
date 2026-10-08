@@ -226,4 +226,5 @@ mod popup_modal;
 mod popup_network_job;
 mod system_tray;
 
+mod preview_audio;
 mod viewer_prefetch;

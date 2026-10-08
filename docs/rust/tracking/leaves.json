@@ -2150,9 +2150,9 @@
    ],
    "recheck": {
     "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Model test replays the recorded manage_notes.json 'urls' step (one case: 3 URLs, clipboard text and 'Copied 3 URLs!') against NotesEditor::copy_urls, but no GUI test in gui/manage_notes.rs drives the window's copy-URLs button (on_copy_urls in manage_notes_window.rs), so it is a model-only replay. Tracker note about a 'selection prompt when more than one note' is stale/false: the reference (ClientGUIScrolledPanelsEdit.py:1110) copies only the current note's URLs. Tests: crates/hydrus-gui-model/tests/model/manage_notes.rs:63 notes_dialog_steps_as_the_reference"
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "gui/manage_notes_replay.rs the_manage_notes_window_follows_the_reference_s_steps opens the real manage-notes dialog from the thumbnail menu on files seeded with the recorded notes, drives the recorded type/add/rename/delete/copy/copy-URLs steps, and compares tabs, current tab and text, what it said and the clipboard with manage_notes.json (the pasting case is not replayed in the window; the dialog opens on its first tab and the test selects the recorded one). The notice for a note with no URLs is neither recorded nor tested."
    }
   },
   {
@@ -3010,7 +3010,7 @@
     "date": "2026-10-08",
     "class": "weak",
     "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Import of the reference's serialised rules/comparators is checked against the reference's stored JSON and the GUI drives clipboard export/import/duplicate for rules and comparators, but export writes hydrus-rs JSON, not the reference's serialised form (DIFFERENCES.md 'Auto-resolution rule export and import'), so the reference could not read it and the export half is not compared with the reference; png paths and OR/AND inner lists untested. Tracker notes saying there is no interchange are stale. Tests: crates/hydrus-gui-model/tests/model/auto_resolution_exchange.rs (the_reference_s_serialised_rules_import, comparators_export_and_import_alone_in_lists_and_from_the_reference:55); crates/hydrus-gui/tests/gui/duplicates_lane_page.rs:1264 rules_and_comparators_are_exported_imported_and_duplicated_whole"
+    "note": "Import of the reference's serialised rules/comparators is checked against the reference's stored JSON and the GUI drives clipboard export/import/duplicate for rules and comparators, but export writes hydrus-rs JSON, not the reference's serialised form (DIFFERENCES.md 'Auto-resolution rule export and import'), so the reference could not read it and the export half is not compared with the reference; png paths and OR/AND inner lists untested. Tracker notes saying there is no interchange are stale. Tests: crates/hydrus-gui-model/tests/model/auto_resolution_exchange.rs (the_reference_s_serialised_rules_import, comparators_export_and_import_alone_in_lists_and_from_the_reference:55); crates/hydrus-gui/tests/gui/duplicates_lane_page.rs:1264 rules_and_comparators_are_exported_imported_and_duplicated_whole Update: crates/hydrus-gui/tests/gui/duplicates_lane_page.rs rules_and_comparators_go_out_and_come_in_as_pngs round-trips pngs, but they carry hydrus-rs JSON; no reference png is replayed."
    }
   },
   {
@@ -3449,8 +3449,8 @@
    "recheck": {
     "date": "2026-10-08",
     "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Model-only: calls TagDisplayEditor::set_rule against 3 of the 4 recorded autocomplete steps; the recorded namespace_enabled (control enabled state) is not checked, and no GUI test drives the interlocking checkboxes in the window. Tests: crates/hydrus-gui-model/tests/model/tag_display.rs:10 staged_interlocks_match_reference"
+    "by": "phase 2 session",
+    "note": "gui/tag_display_replay.rs the_autocomplete_boxes_interlock_as_the_reference_s_do opens the real display/search window and compares the interlocked boxes, fetch-all, fetch-automatically and threshold with tag_display.json's autocomplete_steps (the manual-fetch step asserts only that fetching automatically is off: the window keeps its last threshold number). The test calls invoke_rule_changed and set_fetch_automatically/invoke_options_changed directly, bypassing the checkbox toggle wiring in the .slint file. Still weak: the recorded namespace_enabled (whether the boxes are enabled) is not readable from the window."
    }
   },
   {
@@ -4206,9 +4206,7 @@
    "reference": "hydrus/client/gui/ClientGUIStringPanels.py:675",
    "native": null,
    "notes": [
-    "Truth pass (2026-10-08): partial, large. Record a corpus of common forms, prove those, document the rest as a difference. Missing: No recording of the reference's dateparser outputs; the multilingual/fuzzy grammar is not ported (full parity impractical). Evidence: hydrus-core/src/url/string_dates.rs:~260-340; DIFFERENCES.md ~885",
-    "Execute and preview common ISO/English dates, numeric US dates, RFC dates with offsets and relative English second-through-year expressions, now/today/yesterday/tomorrow. Preserve reference code14/null interchange.",
-    "Full dateparser multilingual/fuzzy grammar is not implemented. This entry remains partial and is not counted as completed."
+    "Updated for #89 (2026-10-08, owner decision): the easy conversion matches a dateparser-less reference (dateutil) plus dateparser's English relative dates, replayed against oracle/fixtures/dateparser_corpus.json (247 forms, none unmatched) in string_dates.rs and through the conversion editor's preview in dateparser_preview.rs. Non-English, fuzzy and Unix-timestamp text is not parsed, as without dateparser (DIFFERENCES.md)."
    ]
   },
   {
@@ -4225,9 +4223,9 @@
    ],
    "recheck": {
     "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Coordinator override (rubric): the model test replays the recording well, but no GUI test drives the window for this leaf; add a window-level drive. Recording includes encode/decode (base64, hex, base64url, url percent, html entities, unicode escape) and regex substitution with the ok-question for a no-group regex; replayed step by step incl. editor state and results. Window glue is not asserted by a GUI test of its own, but it is thin; no regex-error case beyond the recorded one. Tests: crates/hydrus-gui-model/tests/model/string_converter_editor.rs:174-186 the_string_converter_editor_works_as_the_references_does (replays oracle/fixtures/string_converter_editor.json, Qt recording)"
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "gui/string_converter_window.rs drives the real conversion window for the recorded encode/decode (base64, hex, base64url, url, html entities, unicode escape) and regex substitution conversions with their ok question answered yes and no, against string_converter_editor.json. Random-append results are only length-checked."
    }
   },
   {
@@ -4244,9 +4242,9 @@
    ],
    "recheck": {
     "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Coordinator override (rubric): the model test replays the recording well, but no GUI test drives the window for this leaf; add a window-level drive. Recording covers prepend, remove begin/end, take end/start, reverse, integer addition, hash sha1 and append random (structural length check), edited and added; the editor value and result are compared with the recording. Append text and some keep variants only implied. Window glue untested by GUI. Tests: crates/hydrus-gui-model/tests/model/string_converter_editor.rs:174-186 the_string_converter_editor_works_as_the_references_does (replays oracle/fixtures/string_converter_editor.json, Qt recording)"
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "gui/string_converter_window.rs drives the real conversion window for every recorded ordinary conversion (prepend, remove, take, reverse, add, hash, append random) through its controls, comparing what it opens with, shows after each edit, its ok question and the result with string_converter_editor.json. Random-append results are only length-checked."
    }
   },
   {
@@ -4263,9 +4261,9 @@
    ],
    "recheck": {
     "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Coordinator override (rubric): the model test replays the recording well, but no GUI test drives the window for this leaf; add a window-level drive. Numbered rows, per-row converted example, selection, up/down, delete question and add/edit/cancel replayed from the Qt recording; parent draft-only behaviour is covered by formula_editors.rs:725 lifecycle GUI test. Tests: crates/hydrus-gui-model/tests/model/string_converter_editor.rs:174-186 the_string_converter_editor_works_as_the_references_does (replays oracle/fixtures/string_converter_editor.json, Qt recording)"
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "gui/string_converter_window.rs the_string_converter_window_works_as_the_references_does drives the real converter window (rows clicked, example typed, add/edit opening the conversion window, delete question, up/down) and compares rows, selection and move gating at every step with string_converter_editor.json, and the converter apply gives with the recording's last value."
    }
   },
   {
@@ -5316,9 +5314,9 @@
    ],
    "recheck": {
     "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Coordinator override (rubric): the model test replays the recording well, but no GUI test drives the window for this leaf; add a window-level drive. Replays Qt recording of type switching, shown rows, fixed/regex/flexible/min/max, example test text and ok/veto; regex-error wording loosened. Window glue not GUI-tested. Tests: crates/hydrus-gui-model/tests/model/string_match_editor.rs:74 the_string_match_editor_works_as_the_references_does (string_match_editor.json)"
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "gui/string_match_window.rs the_string_match_window_works_as_the_references_does opens the real match window (open_match), sets its controls as the recording did and compares all 42 recorded states (type, shown rows, fixed/regex/character set/min/max/example, test text and validity) and, by a second window to each step, what apply gives or the veto, against string_match_editor.json. The regex-error wording stays loosened (Python's words)."
    }
   },
   {
@@ -5331,9 +5329,7 @@
    "reference": "hydrus/client/gui/importing/ClientGUIImportOptionsPanels.py:988",
    "native": null,
    "notes": [
-    "Truth pass (2026-10-08): partial, small. Wired and the child tested; needs a parent-driven test and the child's menus. Missing: No parent-driven test of the 'N additional tags' button, label and overwrite check; child lacks multi-select/maintenance menus. The leaf's 'parse threshold' is a stale label (no such reference control). Evidence: import_options_window.rs:362-367, 818-845, 884, 987; child tested in write_autocomplete.rs:180",
-    "Per-service import additional tags open a detached write-tag child using that service; whitelist uses all known tags. Typed entry toggles, paste only adds, duplicate pastes retain existing tags. Accepted lists update only the captured parent draft field; cancelling child or owner discards edits, native child close unlocks parent, pending child blocks parent Apply. Shared favourites/children tabs now use the configured count service for favourites decorators and descendant/display-count ordering for children; selected tags are excluded and applied limit/show-all feeds existing inputs. Shared right-click native menus now copy raw tags/subtags/underscores/counts/parents/all rows, toggle per-widget/per-tab decorations, manage favourites and per-service most-used with exact removal questions and reread concurrent writes, and launch raw child predicates through a weak main-window hook. Pending menus block owner editing/Apply and owner close invalidates questions/callbacks. Menus now query all real service display graphs for grouped siblings/ideal/parent/child entries and open owned relationship editors seeded on every service tab; owner close cancels child. Relationship dialogs consume configured default/remember preferences and preserve staged cancellation separately from immediate service memory. Per-widget file/tag-domain buttons now have checked menus and exact all-known interlocks, preserve independent service drafts, feed real query/count/decorator/children consumers and use an owned staged multiple/deleted selector; cancelling does not write options or damage input domains.",
-    "Maintenance/admin actions and multiple-tag selection menus remain outstanding. Native tab dropdown/layout differs from Qt; multiple/deleted selector exposes existing native advanced domain ticks to preserve combined-domain choices. Existing parent leaf remains partial."
+    "Updated for #89 (2026-10-08): the editor has the reference's single 'N additional tags' button, its dialog message and accept/cancel, and the overwrite check, driven from the editor and replayed against oracle/fixtures/additional_tags_button.json (import_additional_tags.rs). The 'parse threshold' in the label is stale (no such reference control). Remaining: the tag entry dialog lacks multiple-selection and maintenance right-click menus (DIFFERENCES.md); the cog menu is check boxes."
    ]
   },
   {
@@ -5403,8 +5399,7 @@
    "reference": "hydrus/client/gui/importing/ClientGUIImportOptionsPanels.py:838",
    "native": "crates/hydrus-gui/src/import_options_window.rs:210",
    "notes": [
-    "Truth pass (2026-10-08): partial, small. Status/inbox gates work and are tested; location needs the shared selector. Missing: Presentation location is a 2-item combo, not the shared location selector (multiple/deleted contexts); no recording replay. Evidence: import_options_window.rs:44-48, 209-233, 396-406; test import_options_fields.rs:237 (untagged, no recording)",
-    "Supported presentation status/inbox/location fields return to the owner; not all Qt locations can be authored."
+    "Updated for #89 (2026-10-08): the presentation location is the unrestricted shared selector (menu, list with deleted-from boxes in advanced mode) and the status/inbox choices and greying replay oracle/fixtures/location_selector_flags.json; 'show files' filters by current and deleted domains (queues.rs). Remaining: the kinds-list summary names no domain for other locations (DIFFERENCES.md)."
    ]
   },
   {
@@ -5688,9 +5683,9 @@
    ],
    "recheck": {
     "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Coordinator override (rubric): the model test replays the recording well, but no GUI test drives the window for this leaf; add a window-level drive. Qt recording replayed: add/edit/delete/up/down, selection, step editor given/returned values. Window glue is thin and lifecycle-tested in formula_editors.rs:725. Tests: crates/hydrus-gui-model/tests/model/string_processor_editor.rs:204 the_string_processor_editor_works_as_the_references_does (string_processor_editor.json)"
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "Sound except converter-step example text (a converter applied from the processor takes the processor's example: DIFFERENCES.md). gui/string_processor_window.rs the_string_processor_window_works_as_the_references_does drives the real processor window (rows, add question and its choices, step windows, delete question, up/down) and compares rows and selection at every step with string_processor_editor.json, and the processor apply gives with the last value (converter steps' example text aside, DIFFERENCES.md). Child acceptance is exercised only for splitter, joiner, slicer and sorter steps; match, tag-filter and converter steps are stood in for."
    }
   },
   {
@@ -5707,9 +5702,9 @@
    ],
    "recheck": {
     "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Coordinator override (rubric): the model test replays the recording well, but no GUI test drives the window for this leaf; add a window-level drive. Processed strings, starting-string tabs and example propagation to child step editors are compared with the recording at every step. Uses the real StringProcessor. Tests: crates/hydrus-gui-model/tests/model/string_processor_editor.rs:205 (same test)"
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "gui/string_processor_window.rs compares the processed strings, the example and the starting-string tabs the real processor window shows with string_processor_editor.json at every step of all five recorded cases."
    }
   },
   {
@@ -6019,9 +6014,9 @@
    ],
    "recheck": {
     "date": "2026-10-08",
-    "class": "wrong",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "The native example path contradicts the reference: reference _PathChanged lists up to HOW_MANY_EXAMPLE_OBJECTS_TO_USE entries and keeps only files whose mime is in HC.ALLOWED_MIMES (else example_path is None), while native takes the first sorted regular file of any kind (a sidecar .txt would be chosen), and the test relies on that with a 1-byte 'pic 1.jpg' the reference would reject. The shown example tags 'filename:pic 1, imported' are a typed literal; no recording of the options panel's example output. Tests: crates/hydrus-gui/tests/gui/folders.rs:303 an_import_folders_filename_tagging_is_added_edited_and_deleted; crates/hydrus-gui/src/folders_window.rs:678 example_path"
+    "class": "source-restated",
+    "by": "fix session",
+    "note": "Expected values are restated from the Python source (veto string, importable-mime filter, _SwitchBoolean), not recorded. The import folder editor's example path now keeps the first of the first 25 directory entries that is a file with an allowed mime by content (_PathChanged), as the reference does; the window test has a text file and a one-byte .jpg passed over for a real png. Test: crates/hydrus-gui/tests/gui/folders.rs an_import_folders_filename_tagging_is_added_edited_and_deleted"
    }
   },
   {
@@ -6272,7 +6267,7 @@
    "reference": null,
    "native": null,
    "notes": [
-    "Truth pass (2026-10-08): partial, medium. Decide whether preview playback is in scope. Missing: Preview audio playback, preview volume/mute settings and control; or decide the preview stays silent. Evidence: options.rs:1714-1718 row, unread; AudioSettings has no preview volume; the reference preview does play audio",
+    "Truth pass (2026-10-08): partial, medium. The owner decided preview playback is in scope (2026-10-08, issue #104): the preview plays the file's audio and video at its own volume or the global one, with the reference's volume control. Missing then: preview audio playback, preview volume/mute settings and control (since added; see docs/rust/DIFFERENCES.md, Preview sound, for what only libmpv verifies).",
     "Reference editor/control 'The preview window has its own volume:' is recorded on 'audio' and defined by the referenced options panel. No corresponding editable row exists in native options::pages; this is a missing GUI editing path, even if a setting is imported or consumed elsewhere.",
     "Native options registry has no editable 'The preview window has its own volume:' control in this page/box path."
    ]
@@ -11225,9 +11220,9 @@
    ],
    "recheck": {
     "date": "2026-10-08",
-    "class": "wrong",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Reference ClientGUI._SwitchBoolean: the silent entry flips network_report_mode AND sets silent=True (prints to console), and the plain entry clears silent. Native flips only its own flag and report_network needs NetworkReport on, so clicking 'silent' alone reports nothing, and network-then-silent leaves reporting on where the reference turns it off. The test sets both flags directly, bypassing the menu, and only asserts that nothing reaches the sink (not that it goes to the console). Tests: crates/hydrus-net/tests/debug_reports.rs:15 (same test); native menu: crates/hydrus-gui/src/menu_bar.rs:799 Command::DebugFlag flip()"
+    "class": "source-restated",
+    "by": "fix session",
+    "note": "Expected values are restated from the Python source (veto string, importable-mime filter, _SwitchBoolean), not recorded. The two network report entries now share the mode as ClientGUI._SwitchBoolean does (silent turns it on and sets silent, the plain entry flips it and clears silent), driven through the real help > debug > report modes menu, with the consumer (report_network) checked for the sink. Test: crates/hydrus-gui/tests/gui/debug_menu_actions.rs network_report_mode_entries_share_the_mode_as_the_reference_does The console half of silent mode is not observed (only that nothing reaches the popup sink)."
    }
   },
   {
@@ -16741,9 +16736,9 @@
    ],
    "recheck": {
     "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Replays system_predicate_editors.json (height operator changes, strings exactly) but directly on the model Panel, never through the editor window; the only window-driven dimensions test (the_editor_window_adds_what_it_makes_to_the_search) covers the width panel's '≈'. The recording is thorough, so only a GUI test of this panel is missing. Tests: crates/hydrus-gui/tests/gui/predicate_editors.rs:485-490 each_change_to_a_panel_makes_what_the_reference_s_makes"
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "crates/hydrus-gui/tests/gui/predicate_editors.rs each_change_in_the_window_makes_what_the_reference_s_makes and panels_set_in_several_ways_in_the_window_make_what_the_reference_s_make (every recorded change and scenario put to the real editor window through its field callbacks and \"ok\", result read from the page's search or the window's error), against oracle/fixtures/system_predicate_editors.json; the model tests stay as the fast check of Panel. Dates start at the real day, read as the recorded day."
    }
   },
   {
@@ -16760,9 +16755,9 @@
    ],
    "recheck": {
     "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Replays system_predicate_editors.json (height value changes, strings exactly) but directly on the model Panel, never through the editor window; the only window-driven dimensions test (the_editor_window_adds_what_it_makes_to_the_search) covers the width panel's '≈'. The recording is thorough, so only a GUI test of this panel is missing. Tests: crates/hydrus-gui/tests/gui/predicate_editors.rs:485-490 each_change_to_a_panel_makes_what_the_reference_s_makes"
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "crates/hydrus-gui/tests/gui/predicate_editors.rs each_change_in_the_window_makes_what_the_reference_s_makes and panels_set_in_several_ways_in_the_window_make_what_the_reference_s_make (every recorded change and scenario put to the real editor window through its field callbacks and \"ok\", result read from the page's search or the window's error), against oracle/fixtures/system_predicate_editors.json; the model tests stay as the fast check of Panel. Dates start at the real day, read as the recorded day."
    }
   },
   {
@@ -16779,9 +16774,9 @@
    ],
    "recheck": {
     "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Replays system_predicate_editors.json (number-of-pixels operator changes, strings exactly) but directly on the model Panel, never through the editor window; the only window-driven dimensions test (the_editor_window_adds_what_it_makes_to_the_search) covers the width panel's '≈'. The recording is thorough, so only a GUI test of this panel is missing. Tests: crates/hydrus-gui/tests/gui/predicate_editors.rs:485-490 each_change_to_a_panel_makes_what_the_reference_s_makes"
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "crates/hydrus-gui/tests/gui/predicate_editors.rs each_change_in_the_window_makes_what_the_reference_s_makes and panels_set_in_several_ways_in_the_window_make_what_the_reference_s_make (every recorded change and scenario put to the real editor window through its field callbacks and \"ok\", result read from the page's search or the window's error), against oracle/fixtures/system_predicate_editors.json; the model tests stay as the fast check of Panel. Dates start at the real day, read as the recorded day."
    }
   },
   {
@@ -16798,9 +16793,9 @@
    ],
    "recheck": {
     "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Replays system_predicate_editors.json (number-of-pixels value/unit changes, strings exactly) but directly on the model Panel, never through the editor window; the only window-driven dimensions test (the_editor_window_adds_what_it_makes_to_the_search) covers the width panel's '≈'. The recording is thorough, so only a GUI test of this panel is missing. Tests: crates/hydrus-gui/tests/gui/predicate_editors.rs:485-490 each_change_to_a_panel_makes_what_the_reference_s_makes"
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "crates/hydrus-gui/tests/gui/predicate_editors.rs each_change_in_the_window_makes_what_the_reference_s_makes and panels_set_in_several_ways_in_the_window_make_what_the_reference_s_make (every recorded change and scenario put to the real editor window through its field callbacks and \"ok\", result read from the page's search or the window's error), against oracle/fixtures/system_predicate_editors.json; the model tests stay as the fast check of Panel. Dates start at the real day, read as the recorded day."
    }
   },
   {
@@ -16988,9 +16983,9 @@
    ],
    "recheck": {
     "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Recording replay is sound against Panel::predicates (operators, tolerance, values/units recorded), but no GUI test drives this panel in the editor window (the window test only drives the width panel); model-only recording replay is weak per the rubric. Tests: crates/hydrus-gui/tests/gui/predicate_editors.rs:542 each_change_to_a_panel_makes_what_the_reference_s_makes (replays oracle/fixtures/system_predicate_editors.json changes against Panel); "
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "crates/hydrus-gui/tests/gui/predicate_editors.rs each_change_in_the_window_makes_what_the_reference_s_makes and panels_set_in_several_ways_in_the_window_make_what_the_reference_s_make (every recorded change and scenario put to the real editor window through its field callbacks and \"ok\", result read from the page's search or the window's error), against oracle/fixtures/system_predicate_editors.json; the model tests stay as the fast check of Panel. Dates start at the real day, read as the recorded day."
    }
   },
   {
@@ -17007,9 +17002,9 @@
    ],
    "recheck": {
     "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Recording replay is sound against Panel::predicates (operators, tolerance, values/units recorded), but no GUI test drives this panel in the editor window (the window test only drives the width panel); model-only recording replay is weak per the rubric. Tests: crates/hydrus-gui/tests/gui/predicate_editors.rs:542 each_change_to_a_panel_makes_what_the_reference_s_makes (replays oracle/fixtures/system_predicate_editors.json changes against Panel); "
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "crates/hydrus-gui/tests/gui/predicate_editors.rs each_change_in_the_window_makes_what_the_reference_s_makes and panels_set_in_several_ways_in_the_window_make_what_the_reference_s_make (every recorded change and scenario put to the real editor window through its field callbacks and \"ok\", result read from the page's search or the window's error), against oracle/fixtures/system_predicate_editors.json; the model tests stay as the fast check of Panel. Dates start at the real day, read as the recorded day."
    }
   },
   {
@@ -17064,9 +17059,9 @@
    ],
    "recheck": {
     "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Recording replay is sound against Panel::predicates (operators, tolerance, values/units recorded), but no GUI test drives this panel in the editor window (the window test only drives the width panel); model-only recording replay is weak per the rubric. Tests: crates/hydrus-gui/tests/gui/predicate_editors.rs:542 each_change_to_a_panel_makes_what_the_reference_s_makes (replays oracle/fixtures/system_predicate_editors.json changes against Panel); "
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "crates/hydrus-gui/tests/gui/predicate_editors.rs each_change_in_the_window_makes_what_the_reference_s_makes and panels_set_in_several_ways_in_the_window_make_what_the_reference_s_make (every recorded change and scenario put to the real editor window through its field callbacks and \"ok\", result read from the page's search or the window's error), against oracle/fixtures/system_predicate_editors.json; the model tests stay as the fast check of Panel. Dates start at the real day, read as the recorded day."
    }
   },
   {
@@ -17083,9 +17078,9 @@
    ],
    "recheck": {
     "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Recording replay is sound against Panel::predicates (operators, tolerance, values/units recorded), but no GUI test drives this panel in the editor window (the window test only drives the width panel); model-only recording replay is weak per the rubric. Tests: crates/hydrus-gui/tests/gui/predicate_editors.rs:542 each_change_to_a_panel_makes_what_the_reference_s_makes (replays oracle/fixtures/system_predicate_editors.json changes against Panel); "
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "crates/hydrus-gui/tests/gui/predicate_editors.rs each_change_in_the_window_makes_what_the_reference_s_makes and panels_set_in_several_ways_in_the_window_make_what_the_reference_s_make (every recorded change and scenario put to the real editor window through its field callbacks and \"ok\", result read from the page's search or the window's error), against oracle/fixtures/system_predicate_editors.json; the model tests stay as the fast check of Panel. Dates start at the real day, read as the recorded day."
    }
   },
   {
@@ -17102,9 +17097,9 @@
    ],
    "recheck": {
     "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Recording replay is sound against Panel::predicates (operators, tolerance, values/units recorded), but no GUI test drives this panel in the editor window (the window test only drives the width panel); model-only recording replay is weak per the rubric. Tests: crates/hydrus-gui/tests/gui/predicate_editors.rs:542 each_change_to_a_panel_makes_what_the_reference_s_makes (replays oracle/fixtures/system_predicate_editors.json changes against Panel); "
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "crates/hydrus-gui/tests/gui/predicate_editors.rs each_change_in_the_window_makes_what_the_reference_s_makes and panels_set_in_several_ways_in_the_window_make_what_the_reference_s_make (every recorded change and scenario put to the real editor window through its field callbacks and \"ok\", result read from the page's search or the window's error), against oracle/fixtures/system_predicate_editors.json; the model tests stay as the fast check of Panel. Dates start at the real day, read as the recorded day."
    }
   },
   {
@@ -17121,9 +17116,9 @@
    ],
    "recheck": {
     "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Recording replay is sound against Panel::predicates (operators, tolerance, values/units recorded), but no GUI test drives this panel in the editor window (the window test only drives the width panel); model-only recording replay is weak per the rubric. Tests: crates/hydrus-gui/tests/gui/predicate_editors.rs:542 each_change_to_a_panel_makes_what_the_reference_s_makes (replays oracle/fixtures/system_predicate_editors.json changes against Panel); "
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "crates/hydrus-gui/tests/gui/predicate_editors.rs each_change_in_the_window_makes_what_the_reference_s_makes and panels_set_in_several_ways_in_the_window_make_what_the_reference_s_make (every recorded change and scenario put to the real editor window through its field callbacks and \"ok\", result read from the page's search or the window's error), against oracle/fixtures/system_predicate_editors.json; the model tests stay as the fast check of Panel. Dates start at the real day, read as the recorded day."
    }
   },
   {
@@ -17140,9 +17135,9 @@
    ],
    "recheck": {
     "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Recording replay is sound against Panel::predicates (operators, tolerance, values/units recorded), but no GUI test drives this panel in the editor window (the window test only drives the width panel); model-only recording replay is weak per the rubric. Tests: crates/hydrus-gui/tests/gui/predicate_editors.rs:542 each_change_to_a_panel_makes_what_the_reference_s_makes (replays oracle/fixtures/system_predicate_editors.json changes against Panel); "
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "crates/hydrus-gui/tests/gui/predicate_editors.rs each_change_in_the_window_makes_what_the_reference_s_makes and panels_set_in_several_ways_in_the_window_make_what_the_reference_s_make (every recorded change and scenario put to the real editor window through its field callbacks and \"ok\", result read from the page's search or the window's error), against oracle/fixtures/system_predicate_editors.json; the model tests stay as the fast check of Panel. Dates start at the real day, read as the recorded day."
    }
   },
   {
@@ -17159,9 +17154,9 @@
    ],
    "recheck": {
     "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Recording replay is sound against Panel::predicates (operators, tolerance, values/units recorded), but no GUI test drives this panel in the editor window (the window test only drives the width panel); model-only recording replay is weak per the rubric. Tests: crates/hydrus-gui/tests/gui/predicate_editors.rs:542 each_change_to_a_panel_makes_what_the_reference_s_makes (replays oracle/fixtures/system_predicate_editors.json changes against Panel); "
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "crates/hydrus-gui/tests/gui/predicate_editors.rs each_change_in_the_window_makes_what_the_reference_s_makes and panels_set_in_several_ways_in_the_window_make_what_the_reference_s_make (every recorded change and scenario put to the real editor window through its field callbacks and \"ok\", result read from the page's search or the window's error), against oracle/fixtures/system_predicate_editors.json; the model tests stay as the fast check of Panel. Dates start at the real day, read as the recorded day."
    }
   },
   {
@@ -17178,9 +17173,9 @@
    ],
    "recheck": {
     "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Only checks that Editor::new builds a button with the recorded label and predicate text; no test presses this button in the editor window and sees the predicate reach the search (the window button test, :670, clicks only system:limit; the dimensions preset pointer test covers only system:dimensions). Presence of the button model, not the preset acting. Tests: crates/hydrus-gui/tests/gui/predicate_editors.rs:165 each_editor_is_the_reference_s (Editor::new buttons vs recording)"
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "crates/hydrus-gui/tests/gui/predicate_editors.rs the_windows_ready_made_buttons_add_what_the_reference_s_do (opens the real editor window for every recorded page, compares the buttons shown with the recorded labels, clicks each and compares what lands in the search), against oracle/fixtures/system_predicate_editors.json; the model tests stay as the fast check of Panel. Dates start at the real day, read as the recorded day."
    }
   },
   {
@@ -17197,9 +17192,9 @@
    ],
    "recheck": {
     "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Only checks that Editor::new builds a button with the recorded label and predicate text; no test presses this button in the editor window and sees the predicate reach the search (the window button test, :670, clicks only system:limit; the dimensions preset pointer test covers only system:dimensions). Presence of the button model, not the preset acting. Tests: crates/hydrus-gui/tests/gui/predicate_editors.rs:165 each_editor_is_the_reference_s (Editor::new buttons vs recording)"
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "crates/hydrus-gui/tests/gui/predicate_editors.rs the_windows_ready_made_buttons_add_what_the_reference_s_do (opens the real editor window for every recorded page, compares the buttons shown with the recorded labels, clicks each and compares what lands in the search), against oracle/fixtures/system_predicate_editors.json; the model tests stay as the fast check of Panel. Dates start at the real day, read as the recorded day."
    }
   },
   {
@@ -17216,9 +17211,9 @@
    ],
    "recheck": {
     "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Only checks that Editor::new builds a button with the recorded label and predicate text; no test presses this button in the editor window and sees the predicate reach the search (the window button test, :670, clicks only system:limit; the dimensions preset pointer test covers only system:dimensions). Presence of the button model, not the preset acting. Tests: crates/hydrus-gui/tests/gui/predicate_editors.rs:165 each_editor_is_the_reference_s (Editor::new buttons vs recording)"
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "crates/hydrus-gui/tests/gui/predicate_editors.rs the_windows_ready_made_buttons_add_what_the_reference_s_do (opens the real editor window for every recorded page, compares the buttons shown with the recorded labels, clicks each and compares what lands in the search), against oracle/fixtures/system_predicate_editors.json; the model tests stay as the fast check of Panel. Dates start at the real day, read as the recorded day."
    }
   },
   {
@@ -17235,9 +17230,9 @@
    ],
    "recheck": {
     "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Only checks that Editor::new builds a button with the recorded label and predicate text; no test presses this button in the editor window and sees the predicate reach the search (the window button test, :670, clicks only system:limit; the dimensions preset pointer test covers only system:dimensions). Presence of the button model, not the preset acting. Tests: crates/hydrus-gui/tests/gui/predicate_editors.rs:165 each_editor_is_the_reference_s (Editor::new buttons vs recording)"
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "crates/hydrus-gui/tests/gui/predicate_editors.rs the_windows_ready_made_buttons_add_what_the_reference_s_do (opens the real editor window for every recorded page, compares the buttons shown with the recorded labels, clicks each and compares what lands in the search), against oracle/fixtures/system_predicate_editors.json; the model tests stay as the fast check of Panel. Dates start at the real day, read as the recorded day."
    }
   },
   {
@@ -17254,9 +17249,9 @@
    ],
    "recheck": {
     "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Only checks that Editor::new builds a button with the recorded label and predicate text; no test presses this button in the editor window and sees the predicate reach the search (the window button test, :670, clicks only system:limit; the dimensions preset pointer test covers only system:dimensions). Presence of the button model, not the preset acting. Tests: crates/hydrus-gui/tests/gui/predicate_editors.rs:165 each_editor_is_the_reference_s (Editor::new buttons vs recording)"
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "crates/hydrus-gui/tests/gui/predicate_editors.rs the_windows_ready_made_buttons_add_what_the_reference_s_do (opens the real editor window for every recorded page, compares the buttons shown with the recorded labels, clicks each and compares what lands in the search), against oracle/fixtures/system_predicate_editors.json; the model tests stay as the fast check of Panel. Dates start at the real day, read as the recorded day."
    }
   },
   {
@@ -17273,9 +17268,9 @@
    ],
    "recheck": {
     "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Only checks that Editor::new builds a button with the recorded label and predicate text; no test presses this button in the editor window and sees the predicate reach the search (the window button test, :670, clicks only system:limit; the dimensions preset pointer test covers only system:dimensions). Presence of the button model, not the preset acting. Tests: crates/hydrus-gui/tests/gui/predicate_editors.rs:165 each_editor_is_the_reference_s (Editor::new buttons vs recording)"
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "crates/hydrus-gui/tests/gui/predicate_editors.rs the_windows_ready_made_buttons_add_what_the_reference_s_do (opens the real editor window for every recorded page, compares the buttons shown with the recorded labels, clicks each and compares what lands in the search), against oracle/fixtures/system_predicate_editors.json; the model tests stay as the fast check of Panel. Dates start at the real day, read as the recorded day."
    }
   },
   {
@@ -17292,9 +17287,9 @@
    ],
    "recheck": {
     "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Only checks that Editor::new builds a button with the recorded label and predicate text; no test presses this button in the editor window and sees the predicate reach the search (the window button test, :670, clicks only system:limit; the dimensions preset pointer test covers only system:dimensions). Presence of the button model, not the preset acting. Tests: crates/hydrus-gui/tests/gui/predicate_editors.rs:165 each_editor_is_the_reference_s (Editor::new buttons vs recording)"
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "crates/hydrus-gui/tests/gui/predicate_editors.rs the_windows_ready_made_buttons_add_what_the_reference_s_do (opens the real editor window for every recorded page, compares the buttons shown with the recorded labels, clicks each and compares what lands in the search), against oracle/fixtures/system_predicate_editors.json; the model tests stay as the fast check of Panel. Dates start at the real day, read as the recorded day."
    }
   },
   {
@@ -17311,9 +17306,9 @@
    ],
    "recheck": {
     "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Only checks that Editor::new builds a button with the recorded label and predicate text; no test presses this button in the editor window and sees the predicate reach the search (the window button test, :670, clicks only system:limit; the dimensions preset pointer test covers only system:dimensions). Presence of the button model, not the preset acting. Tests: crates/hydrus-gui/tests/gui/predicate_editors.rs:165 each_editor_is_the_reference_s (Editor::new buttons vs recording)"
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "crates/hydrus-gui/tests/gui/predicate_editors.rs the_windows_ready_made_buttons_add_what_the_reference_s_do (opens the real editor window for every recorded page, compares the buttons shown with the recorded labels, clicks each and compares what lands in the search), against oracle/fixtures/system_predicate_editors.json; the model tests stay as the fast check of Panel. Dates start at the real day, read as the recorded day."
    }
   },
   {
@@ -17330,9 +17325,9 @@
    ],
    "recheck": {
     "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Only checks that Editor::new builds a button with the recorded label and predicate text; no test presses this button in the editor window and sees the predicate reach the search (the window button test, :670, clicks only system:limit; the dimensions preset pointer test covers only system:dimensions). Presence of the button model, not the preset acting. Tests: crates/hydrus-gui/tests/gui/predicate_editors.rs:165 each_editor_is_the_reference_s (Editor::new buttons vs recording)"
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "crates/hydrus-gui/tests/gui/predicate_editors.rs the_windows_ready_made_buttons_add_what_the_reference_s_do (opens the real editor window for every recorded page, compares the buttons shown with the recorded labels, clicks each and compares what lands in the search), against oracle/fixtures/system_predicate_editors.json; the model tests stay as the fast check of Panel. Dates start at the real day, read as the recorded day."
    }
   },
   {
@@ -17349,9 +17344,9 @@
    ],
    "recheck": {
     "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Only checks that Editor::new builds a button with the recorded label and predicate text; no test presses this button in the editor window and sees the predicate reach the search (the window button test, :670, clicks only system:limit; the dimensions preset pointer test covers only system:dimensions). Presence of the button model, not the preset acting. Tests: crates/hydrus-gui/tests/gui/predicate_editors.rs:165 each_editor_is_the_reference_s (Editor::new buttons vs recording)"
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "crates/hydrus-gui/tests/gui/predicate_editors.rs the_windows_ready_made_buttons_add_what_the_reference_s_do (opens the real editor window for every recorded page, compares the buttons shown with the recorded labels, clicks each and compares what lands in the search), against oracle/fixtures/system_predicate_editors.json; the model tests stay as the fast check of Panel. Dates start at the real day, read as the recorded day."
    }
   },
   {
@@ -17368,9 +17363,9 @@
    ],
    "recheck": {
     "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Only checks that Editor::new builds a button with the recorded label and predicate text; no test presses this button in the editor window and sees the predicate reach the search (the window button test, :670, clicks only system:limit; the dimensions preset pointer test covers only system:dimensions). Presence of the button model, not the preset acting. Tests: crates/hydrus-gui/tests/gui/predicate_editors.rs:165 each_editor_is_the_reference_s (Editor::new buttons vs recording)"
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "crates/hydrus-gui/tests/gui/predicate_editors.rs the_windows_ready_made_buttons_add_what_the_reference_s_do (opens the real editor window for every recorded page, compares the buttons shown with the recorded labels, clicks each and compares what lands in the search), against oracle/fixtures/system_predicate_editors.json; the model tests stay as the fast check of Panel. Dates start at the real day, read as the recorded day."
    }
   },
   {
@@ -17387,9 +17382,9 @@
    ],
    "recheck": {
     "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Only checks that Editor::new builds a button with the recorded label and predicate text; no test presses this button in the editor window and sees the predicate reach the search (the window button test, :670, clicks only system:limit; the dimensions preset pointer test covers only system:dimensions). Presence of the button model, not the preset acting. Tests: crates/hydrus-gui/tests/gui/predicate_editors.rs:165 each_editor_is_the_reference_s (Editor::new buttons vs recording)"
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "crates/hydrus-gui/tests/gui/predicate_editors.rs the_windows_ready_made_buttons_add_what_the_reference_s_do (opens the real editor window for every recorded page, compares the buttons shown with the recorded labels, clicks each and compares what lands in the search), against oracle/fixtures/system_predicate_editors.json; the model tests stay as the fast check of Panel. Dates start at the real day, read as the recorded day."
    }
   },
   {
@@ -17406,9 +17401,9 @@
    ],
    "recheck": {
     "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Only checks that Editor::new builds a button with the recorded label and predicate text; no test presses this button in the editor window and sees the predicate reach the search (the window button test, :670, clicks only system:limit; the dimensions preset pointer test covers only system:dimensions). Presence of the button model, not the preset acting. Tests: crates/hydrus-gui/tests/gui/predicate_editors.rs:165 each_editor_is_the_reference_s (Editor::new buttons vs recording)"
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "crates/hydrus-gui/tests/gui/predicate_editors.rs the_windows_ready_made_buttons_add_what_the_reference_s_do (opens the real editor window for every recorded page, compares the buttons shown with the recorded labels, clicks each and compares what lands in the search), against oracle/fixtures/system_predicate_editors.json; the model tests stay as the fast check of Panel. Dates start at the real day, read as the recorded day."
    }
   },
   {
@@ -17425,9 +17420,9 @@
    ],
    "recheck": {
     "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Only checks that Editor::new builds a button with the recorded label and predicate text; no test presses this button in the editor window and sees the predicate reach the search (the window button test, :670, clicks only system:limit; the dimensions preset pointer test covers only system:dimensions). Presence of the button model, not the preset acting. Tests: crates/hydrus-gui/tests/gui/predicate_editors.rs:165 each_editor_is_the_reference_s (Editor::new buttons vs recording)"
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "crates/hydrus-gui/tests/gui/predicate_editors.rs the_windows_ready_made_buttons_add_what_the_reference_s_do (opens the real editor window for every recorded page, compares the buttons shown with the recorded labels, clicks each and compares what lands in the search), against oracle/fixtures/system_predicate_editors.json; the model tests stay as the fast check of Panel. Dates start at the real day, read as the recorded day."
    }
   },
   {
@@ -17444,9 +17439,9 @@
    ],
    "recheck": {
     "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Only checks that Editor::new builds a button with the recorded label and predicate text; no test presses this button in the editor window and sees the predicate reach the search (the window button test, :670, clicks only system:limit; the dimensions preset pointer test covers only system:dimensions). Presence of the button model, not the preset acting. Tests: crates/hydrus-gui/tests/gui/predicate_editors.rs:165 each_editor_is_the_reference_s (Editor::new buttons vs recording)"
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "crates/hydrus-gui/tests/gui/predicate_editors.rs the_windows_ready_made_buttons_add_what_the_reference_s_do (opens the real editor window for every recorded page, compares the buttons shown with the recorded labels, clicks each and compares what lands in the search), against oracle/fixtures/system_predicate_editors.json; the model tests stay as the fast check of Panel. Dates start at the real day, read as the recorded day."
    }
   },
   {
@@ -17463,9 +17458,9 @@
    ],
    "recheck": {
     "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Only checks that Editor::new builds a button with the recorded label and predicate text; no test presses this button in the editor window and sees the predicate reach the search (the window button test, :670, clicks only system:limit; the dimensions preset pointer test covers only system:dimensions). Presence of the button model, not the preset acting. Tests: crates/hydrus-gui/tests/gui/predicate_editors.rs:165 each_editor_is_the_reference_s (Editor::new buttons vs recording)"
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "crates/hydrus-gui/tests/gui/predicate_editors.rs the_windows_ready_made_buttons_add_what_the_reference_s_do (opens the real editor window for every recorded page, compares the buttons shown with the recorded labels, clicks each and compares what lands in the search), against oracle/fixtures/system_predicate_editors.json; the model tests stay as the fast check of Panel. Dates start at the real day, read as the recorded day."
    }
   },
   {
@@ -17482,9 +17477,9 @@
    ],
    "recheck": {
     "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Only checks that Editor::new builds a button with the recorded label and predicate text; no test presses this button in the editor window and sees the predicate reach the search (the window button test, :670, clicks only system:limit; the dimensions preset pointer test covers only system:dimensions). Presence of the button model, not the preset acting. Tests: crates/hydrus-gui/tests/gui/predicate_editors.rs:165 each_editor_is_the_reference_s (Editor::new buttons vs recording)"
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "crates/hydrus-gui/tests/gui/predicate_editors.rs the_windows_ready_made_buttons_add_what_the_reference_s_do (opens the real editor window for every recorded page, compares the buttons shown with the recorded labels, clicks each and compares what lands in the search), against oracle/fixtures/system_predicate_editors.json; the model tests stay as the fast check of Panel. Dates start at the real day, read as the recorded day."
    }
   },
   {
@@ -17501,9 +17496,9 @@
    ],
    "recheck": {
     "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Only checks that Editor::new builds a button with the recorded label and predicate text; no test presses this button in the editor window and sees the predicate reach the search (the window button test, :670, clicks only system:limit; the dimensions preset pointer test covers only system:dimensions). Presence of the button model, not the preset acting. Tests: crates/hydrus-gui/tests/gui/predicate_editors.rs:165 each_editor_is_the_reference_s (Editor::new buttons vs recording)"
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "crates/hydrus-gui/tests/gui/predicate_editors.rs the_windows_ready_made_buttons_add_what_the_reference_s_do (opens the real editor window for every recorded page, compares the buttons shown with the recorded labels, clicks each and compares what lands in the search), against oracle/fixtures/system_predicate_editors.json; the model tests stay as the fast check of Panel. Dates start at the real day, read as the recorded day."
    }
   },
   {
@@ -17520,9 +17515,9 @@
    ],
    "recheck": {
     "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Coordinator override for consistency with the other predicate-editor batches: the preset's label and predicate are compared with the recording at Editor level, but its button is never clicked in the window (only limit 64 is). Preset button label and predicate are compared with the recorded system_predicate_editors.json against the same Editor::new data the window uses; the window click path (invoke_button_clicked) is driven by a GUI test generically (only the system:limit is 64 button is clicked). Tag honest enough. Button is not itself clicked in a window test, but the click path is generic. Tests: crates/hydrus-gui/tests/gui/predicate_editors.rs:131-164 each_editor_is_the_reference_s; :670 the_editor_window_adds_what_it_makes_to_the_search"
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "crates/hydrus-gui/tests/gui/predicate_editors.rs the_windows_ready_made_buttons_add_what_the_reference_s_do (opens the real editor window for every recorded page, compares the buttons shown with the recorded labels, clicks each and compares what lands in the search), against oracle/fixtures/system_predicate_editors.json; the model tests stay as the fast check of Panel. Dates start at the real day, read as the recorded day."
    }
   },
   {
@@ -17539,9 +17534,9 @@
    ],
    "recheck": {
     "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Coordinator override for consistency with the other predicate-editor batches: the preset's label and predicate are compared with the recording at Editor level, but its button is never clicked in the window (only limit 64 is). Preset button label and predicate are compared with the recorded system_predicate_editors.json against the same Editor::new data the window uses; the window click path (invoke_button_clicked) is driven by a GUI test generically (only the system:limit is 64 button is clicked). Tag honest enough. Button is not itself clicked in a window test, but the click path is generic. Tests: crates/hydrus-gui/tests/gui/predicate_editors.rs:131-164 each_editor_is_the_reference_s; :670 the_editor_window_adds_what_it_makes_to_the_search"
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "crates/hydrus-gui/tests/gui/predicate_editors.rs the_windows_ready_made_buttons_add_what_the_reference_s_do (opens the real editor window for every recorded page, compares the buttons shown with the recorded labels, clicks each and compares what lands in the search), against oracle/fixtures/system_predicate_editors.json; the model tests stay as the fast check of Panel. Dates start at the real day, read as the recorded day."
    }
   },
   {
@@ -17558,9 +17553,9 @@
    ],
    "recheck": {
     "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Coordinator override for consistency with the other predicate-editor batches: the preset's label and predicate are compared with the recording at Editor level, but its button is never clicked in the window (only limit 64 is). Preset button label and predicate are compared with the recorded system_predicate_editors.json against the same Editor::new data the window uses; the window click path (invoke_button_clicked) is driven by a GUI test generically (only the system:limit is 64 button is clicked). Tag honest enough. Button is not itself clicked in a window test, but the click path is generic. Tests: crates/hydrus-gui/tests/gui/predicate_editors.rs:131-164 each_editor_is_the_reference_s; :670 the_editor_window_adds_what_it_makes_to_the_search"
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "crates/hydrus-gui/tests/gui/predicate_editors.rs the_windows_ready_made_buttons_add_what_the_reference_s_do (opens the real editor window for every recorded page, compares the buttons shown with the recorded labels, clicks each and compares what lands in the search), against oracle/fixtures/system_predicate_editors.json; the model tests stay as the fast check of Panel. Dates start at the real day, read as the recorded day."
    }
   },
   {
@@ -17577,9 +17572,9 @@
    ],
    "recheck": {
     "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Coordinator override for consistency with the other predicate-editor batches: the preset's label and predicate are compared with the recording at Editor level, but its button is never clicked in the window (only limit 64 is). Preset button label and predicate are compared with the recorded system_predicate_editors.json against the same Editor::new data the window uses; the window click path (invoke_button_clicked) is driven by a GUI test generically (only the system:limit is 64 button is clicked). Tag honest enough. Button is not itself clicked in a window test, but the click path is generic. Tests: crates/hydrus-gui/tests/gui/predicate_editors.rs:131-164 each_editor_is_the_reference_s; :670 the_editor_window_adds_what_it_makes_to_the_search"
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "crates/hydrus-gui/tests/gui/predicate_editors.rs the_windows_ready_made_buttons_add_what_the_reference_s_do (opens the real editor window for every recorded page, compares the buttons shown with the recorded labels, clicks each and compares what lands in the search), against oracle/fixtures/system_predicate_editors.json; the model tests stay as the fast check of Panel. Dates start at the real day, read as the recorded day."
    }
   },
   {
@@ -17596,9 +17591,9 @@
    ],
    "recheck": {
     "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Coordinator override for consistency with the other predicate-editor batches: the preset's label and predicate are compared with the recording at Editor level, but its button is never clicked in the window (only limit 64 is). Preset button label and predicate are compared with the recorded system_predicate_editors.json against the same Editor::new data the window uses; the window click path (invoke_button_clicked) is driven by a GUI test generically (only the system:limit is 64 button is clicked). Tag honest enough. Button is not itself clicked in a window test, but the click path is generic. Tests: crates/hydrus-gui/tests/gui/predicate_editors.rs:131-164 each_editor_is_the_reference_s; :670 the_editor_window_adds_what_it_makes_to_the_search"
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "crates/hydrus-gui/tests/gui/predicate_editors.rs the_windows_ready_made_buttons_add_what_the_reference_s_do (opens the real editor window for every recorded page, compares the buttons shown with the recorded labels, clicks each and compares what lands in the search), against oracle/fixtures/system_predicate_editors.json; the model tests stay as the fast check of Panel. Dates start at the real day, read as the recorded day."
    }
   },
   {
@@ -17615,9 +17610,9 @@
    ],
    "recheck": {
     "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Coordinator override for consistency with the other predicate-editor batches: the preset's label and predicate are compared with the recording at Editor level, but its button is never clicked in the window (only limit 64 is). Preset button label and predicate are compared with the recorded system_predicate_editors.json against the same Editor::new data the window uses; the window click path (invoke_button_clicked) is driven by a GUI test generically (only the system:limit is 64 button is clicked). Tag honest enough. Button is not itself clicked in a window test, but the click path is generic. Tests: crates/hydrus-gui/tests/gui/predicate_editors.rs:131-164 each_editor_is_the_reference_s; :670 the_editor_window_adds_what_it_makes_to_the_search"
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "crates/hydrus-gui/tests/gui/predicate_editors.rs the_windows_ready_made_buttons_add_what_the_reference_s_do (opens the real editor window for every recorded page, compares the buttons shown with the recorded labels, clicks each and compares what lands in the search), against oracle/fixtures/system_predicate_editors.json; the model tests stay as the fast check of Panel. Dates start at the real day, read as the recorded day."
    }
   },
   {
@@ -17634,9 +17629,9 @@
    ],
    "recheck": {
     "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Replays recorded widget changes against Panel::predicates (model-level; the file is in the GUI test dir but never opens the editor window for PanelPredicateSystemDuplicateRelationships). No GUI test drives this panel through the window, so only the Panel stand-in is proven. Tests: crates/hydrus-gui/tests/gui/predicate_editors.rs:542 each_change_to_a_panel_makes_what_the_reference_s_makes"
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "crates/hydrus-gui/tests/gui/predicate_editors.rs each_change_in_the_window_makes_what_the_reference_s_makes and panels_set_in_several_ways_in_the_window_make_what_the_reference_s_make (every recorded change and scenario put to the real editor window through its field callbacks and \"ok\", result read from the page's search or the window's error), against oracle/fixtures/system_predicate_editors.json; the model tests stay as the fast check of Panel. Dates start at the real day, read as the recorded day."
    }
   },
   {
@@ -17653,9 +17648,9 @@
    ],
    "recheck": {
     "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Coordinator override for consistency with the other predicate-editor batches: the preset's label and predicate are compared with the recording at Editor level, but its button is never clicked in the window (only limit 64 is). Preset button label and predicate are compared with the recorded system_predicate_editors.json against the same Editor::new data the window uses; the window click path (invoke_button_clicked) is driven by a GUI test generically (only the system:limit is 64 button is clicked). Tag honest enough. Tests: crates/hydrus-gui/tests/gui/predicate_editors.rs:131-164 each_editor_is_the_reference_s; :670 the_editor_window_adds_what_it_makes_to_the_search"
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "crates/hydrus-gui/tests/gui/predicate_editors.rs the_windows_ready_made_buttons_add_what_the_reference_s_do (opens the real editor window for every recorded page, compares the buttons shown with the recorded labels, clicks each and compares what lands in the search), against oracle/fixtures/system_predicate_editors.json; the model tests stay as the fast check of Panel. Dates start at the real day, read as the recorded day."
    }
   },
   {
@@ -17672,9 +17667,9 @@
    ],
    "recheck": {
     "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Coordinator override for consistency with the other predicate-editor batches: the preset's label and predicate are compared with the recording at Editor level, but its button is never clicked in the window (only limit 64 is). Preset button label and predicate are compared with the recorded system_predicate_editors.json against the same Editor::new data the window uses; the window click path (invoke_button_clicked) is driven by a GUI test generically (only the system:limit is 64 button is clicked). Tag honest enough. Tests: crates/hydrus-gui/tests/gui/predicate_editors.rs:131-164 each_editor_is_the_reference_s; :670 the_editor_window_adds_what_it_makes_to_the_search"
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "crates/hydrus-gui/tests/gui/predicate_editors.rs the_windows_ready_made_buttons_add_what_the_reference_s_do (opens the real editor window for every recorded page, compares the buttons shown with the recorded labels, clicks each and compares what lands in the search), against oracle/fixtures/system_predicate_editors.json; the model tests stay as the fast check of Panel. Dates start at the real day, read as the recorded day."
    }
   },
   {
@@ -17691,9 +17686,9 @@
    ],
    "recheck": {
     "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Replays recorded widget changes against Panel::predicates (model-level; the file is in the GUI test dir but never opens the editor window for PanelPredicateSystemFileService). No GUI test drives this panel through the window, so only the Panel stand-in is proven. The service list comes from the basic fixture registry via Context::new, not a live window chooser. Tests: crates/hydrus-gui/tests/gui/predicate_editors.rs:542 each_change_to_a_panel_makes_what_the_reference_s_makes"
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "crates/hydrus-gui/tests/gui/predicate_editors.rs each_change_in_the_window_makes_what_the_reference_s_makes and panels_set_in_several_ways_in_the_window_make_what_the_reference_s_make (every recorded change and scenario put to the real editor window through its field callbacks and \"ok\", result read from the page's search or the window's error), against oracle/fixtures/system_predicate_editors.json; the model tests stay as the fast check of Panel. Dates start at the real day, read as the recorded day."
    }
   },
   {
@@ -17710,9 +17705,9 @@
    ],
    "recheck": {
     "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Replays recorded widget changes against Panel::predicates (model-level; the file is in the GUI test dir but never opens the editor window for PanelPredicateSystemFileService). No GUI test drives this panel through the window, so only the Panel stand-in is proven. Tests: crates/hydrus-gui/tests/gui/predicate_editors.rs:542 each_change_to_a_panel_makes_what_the_reference_s_makes"
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "crates/hydrus-gui/tests/gui/predicate_editors.rs each_change_in_the_window_makes_what_the_reference_s_makes and panels_set_in_several_ways_in_the_window_make_what_the_reference_s_make (every recorded change and scenario put to the real editor window through its field callbacks and \"ok\", result read from the page's search or the window's error), against oracle/fixtures/system_predicate_editors.json; the model tests stay as the fast check of Panel. Dates start at the real day, read as the recorded day."
    }
   },
   {
@@ -17729,9 +17724,9 @@
    ],
    "recheck": {
     "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Replays recorded widget changes against Panel::predicates (model-level; the file is in the GUI test dir but never opens the editor window for PanelPredicateSystemFileViewingStatsViews). No GUI test drives this panel through the window, so only the Panel stand-in is proven. Tests: crates/hydrus-gui/tests/gui/predicate_editors.rs:542 each_change_to_a_panel_makes_what_the_reference_s_makes"
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "crates/hydrus-gui/tests/gui/predicate_editors.rs each_change_in_the_window_makes_what_the_reference_s_makes and panels_set_in_several_ways_in_the_window_make_what_the_reference_s_make (every recorded change and scenario put to the real editor window through its field callbacks and \"ok\", result read from the page's search or the window's error), against oracle/fixtures/system_predicate_editors.json; the model tests stay as the fast check of Panel. Dates start at the real day, read as the recorded day."
    }
   },
   {
@@ -17748,9 +17743,9 @@
    ],
    "recheck": {
     "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Replays recorded widget changes against Panel::predicates (model-level; the file is in the GUI test dir but never opens the editor window for PanelPredicateSystemFileViewingStatsViews). No GUI test drives this panel through the window, so only the Panel stand-in is proven. Tests: crates/hydrus-gui/tests/gui/predicate_editors.rs:542 each_change_to_a_panel_makes_what_the_reference_s_makes"
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "crates/hydrus-gui/tests/gui/predicate_editors.rs each_change_in_the_window_makes_what_the_reference_s_makes and panels_set_in_several_ways_in_the_window_make_what_the_reference_s_make (every recorded change and scenario put to the real editor window through its field callbacks and \"ok\", result read from the page's search or the window's error), against oracle/fixtures/system_predicate_editors.json; the model tests stay as the fast check of Panel. Dates start at the real day, read as the recorded day."
    }
   },
   {
@@ -17768,9 +17763,9 @@
    ],
    "recheck": {
     "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Replays recorded widget changes against Panel::predicates (model-level; the file is in the GUI test dir but never opens the editor window for PanelPredicateSystemFileViewingStatsViewtime). No GUI test drives this panel through the window, so only the Panel stand-in is proven. The milliseconds GUI test (:760) does tick media only, so other canvases are model-only. Tests: crates/hydrus-gui/tests/gui/predicate_editors.rs:542 each_change_to_a_panel_makes_what_the_reference_s_makes"
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "crates/hydrus-gui/tests/gui/predicate_editors.rs each_change_in_the_window_makes_what_the_reference_s_makes and panels_set_in_several_ways_in_the_window_make_what_the_reference_s_make (every recorded change and scenario put to the real editor window through its field callbacks and \"ok\", result read from the page's search or the window's error), against oracle/fixtures/system_predicate_editors.json; the model tests stay as the fast check of Panel. Dates start at the real day, read as the recorded day."
    }
   },
   {
@@ -17833,9 +17828,9 @@
    ],
    "recheck": {
     "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Replays recorded widget changes against Panel::predicates (model-level; the file is in the GUI test dir but never opens the editor window for PanelPredicateSystemMime). No GUI test drives this panel through the window, so only the Panel stand-in is proven. The window filetype test (:845) ticks the tree but never flips is/is-not. Tests: crates/hydrus-gui/tests/gui/predicate_editors.rs:542 each_change_to_a_panel_makes_what_the_reference_s_makes"
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "crates/hydrus-gui/tests/gui/predicate_editors.rs each_change_in_the_window_makes_what_the_reference_s_makes and panels_set_in_several_ways_in_the_window_make_what_the_reference_s_make (every recorded change and scenario put to the real editor window through its field callbacks and \"ok\", result read from the page's search or the window's error), against oracle/fixtures/system_predicate_editors.json; the model tests stay as the fast check of Panel. Dates start at the real day, read as the recorded day."
    }
   },
   {
@@ -17919,9 +17914,9 @@
    ],
    "recheck": {
     "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Replays recorded widget changes against Panel::predicates (model-level; the file is in the GUI test dir but never opens the editor window for PanelPredicateSystemLimit). No GUI test drives this panel through the window, so only the Panel stand-in is proven. Tests: crates/hydrus-gui/tests/gui/predicate_editors.rs:542 each_change_to_a_panel_makes_what_the_reference_s_makes"
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "crates/hydrus-gui/tests/gui/predicate_editors.rs each_change_in_the_window_makes_what_the_reference_s_makes and panels_set_in_several_ways_in_the_window_make_what_the_reference_s_make (every recorded change and scenario put to the real editor window through its field callbacks and \"ok\", result read from the page's search or the window's error), against oracle/fixtures/system_predicate_editors.json; the model tests stay as the fast check of Panel. Dates start at the real day, read as the recorded day."
    }
   },
   {
@@ -17938,9 +17933,9 @@
    ],
    "recheck": {
     "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Coordinator override for consistency with the other predicate-editor batches: the preset's label and predicate are compared with the recording at Editor level, but its button is never clicked in the window (only limit 64 is). Preset button label and predicate are compared with the recorded system_predicate_editors.json against the same Editor::new data the window uses; the window click path (invoke_button_clicked) is driven by a GUI test generically (only the system:limit is 64 button is clicked). Tag honest enough. Tests: crates/hydrus-gui/tests/gui/predicate_editors.rs:131-164 each_editor_is_the_reference_s; :670 the_editor_window_adds_what_it_makes_to_the_search"
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "crates/hydrus-gui/tests/gui/predicate_editors.rs the_windows_ready_made_buttons_add_what_the_reference_s_do (opens the real editor window for every recorded page, compares the buttons shown with the recorded labels, clicks each and compares what lands in the search), against oracle/fixtures/system_predicate_editors.json; the model tests stay as the fast check of Panel. Dates start at the real day, read as the recorded day."
    }
   },
   {
@@ -17957,9 +17952,9 @@
    ],
    "recheck": {
     "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Coordinator override for consistency with the other predicate-editor batches: the preset's label and predicate are compared with the recording at Editor level, but its button is never clicked in the window (only limit 64 is). Preset button label and predicate are compared with the recorded system_predicate_editors.json against the same Editor::new data the window uses; the window click path (invoke_button_clicked) is driven by a GUI test generically (only the system:limit is 64 button is clicked). Tag honest enough. Tests: crates/hydrus-gui/tests/gui/predicate_editors.rs:131-164 each_editor_is_the_reference_s; :670 the_editor_window_adds_what_it_makes_to_the_search"
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "crates/hydrus-gui/tests/gui/predicate_editors.rs the_windows_ready_made_buttons_add_what_the_reference_s_do (opens the real editor window for every recorded page, compares the buttons shown with the recorded labels, clicks each and compares what lands in the search), against oracle/fixtures/system_predicate_editors.json; the model tests stay as the fast check of Panel. Dates start at the real day, read as the recorded day."
    }
   },
   {
@@ -17976,9 +17971,9 @@
    ],
    "recheck": {
     "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Coordinator override for consistency with the other predicate-editor batches: the preset's label and predicate are compared with the recording at Editor level, but its button is never clicked in the window (only limit 64 is). Preset button label and predicate are compared with the recorded system_predicate_editors.json against the same Editor::new data the window uses; the window click path (invoke_button_clicked) is driven by a GUI test generically (only the system:limit is 64 button is clicked). Tag honest enough. Tests: crates/hydrus-gui/tests/gui/predicate_editors.rs:131-164 each_editor_is_the_reference_s; :670 the_editor_window_adds_what_it_makes_to_the_search"
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "crates/hydrus-gui/tests/gui/predicate_editors.rs the_windows_ready_made_buttons_add_what_the_reference_s_do (opens the real editor window for every recorded page, compares the buttons shown with the recorded labels, clicks each and compares what lands in the search), against oracle/fixtures/system_predicate_editors.json; the model tests stay as the fast check of Panel. Dates start at the real day, read as the recorded day."
    }
   },
   {
@@ -17995,9 +17990,9 @@
    ],
    "recheck": {
     "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Replays recorded widget changes against Panel::predicates (model-level; the file is in the GUI test dir but never opens the editor window for PanelPredicateSystemHasNoteName). No GUI test drives this panel through the window, so only the Panel stand-in is proven. Tests: crates/hydrus-gui/tests/gui/predicate_editors.rs:542 each_change_to_a_panel_makes_what_the_reference_s_makes"
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "crates/hydrus-gui/tests/gui/predicate_editors.rs each_change_in_the_window_makes_what_the_reference_s_makes and panels_set_in_several_ways_in_the_window_make_what_the_reference_s_make (every recorded change and scenario put to the real editor window through its field callbacks and \"ok\", result read from the page's search or the window's error), against oracle/fixtures/system_predicate_editors.json; the model tests stay as the fast check of Panel. Dates start at the real day, read as the recorded day."
    }
   },
   {
@@ -18014,9 +18009,9 @@
    ],
    "recheck": {
     "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Replays recorded widget changes against Panel::predicates (model-level; the file is in the GUI test dir but never opens the editor window for PanelPredicateSystemNumNotes). No GUI test drives this panel through the window, so only the Panel stand-in is proven. Tests: crates/hydrus-gui/tests/gui/predicate_editors.rs:542 each_change_to_a_panel_makes_what_the_reference_s_makes"
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "crates/hydrus-gui/tests/gui/predicate_editors.rs each_change_in_the_window_makes_what_the_reference_s_makes and panels_set_in_several_ways_in_the_window_make_what_the_reference_s_make (every recorded change and scenario put to the real editor window through its field callbacks and \"ok\", result read from the page's search or the window's error), against oracle/fixtures/system_predicate_editors.json; the model tests stay as the fast check of Panel. Dates start at the real day, read as the recorded day."
    }
   },
   {
@@ -18033,9 +18028,9 @@
    ],
    "recheck": {
     "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Replays recorded widget changes against Panel::predicates (model-level; the file is in the GUI test dir but never opens the editor window for PanelPredicateSystemNumNotes). No GUI test drives this panel through the window, so only the Panel stand-in is proven. Tests: crates/hydrus-gui/tests/gui/predicate_editors.rs:542 each_change_to_a_panel_makes_what_the_reference_s_makes"
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "crates/hydrus-gui/tests/gui/predicate_editors.rs each_change_in_the_window_makes_what_the_reference_s_makes and panels_set_in_several_ways_in_the_window_make_what_the_reference_s_make (every recorded change and scenario put to the real editor window through its field callbacks and \"ok\", result read from the page's search or the window's error), against oracle/fixtures/system_predicate_editors.json; the model tests stay as the fast check of Panel. Dates start at the real day, read as the recorded day."
    }
   },
   {
@@ -18052,9 +18047,9 @@
    ],
    "recheck": {
     "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Coordinator override for consistency with the other predicate-editor batches: the preset's label and predicate are compared with the recording at Editor level, but its button is never clicked in the window (only limit 64 is). Preset button label and predicate are compared with the recorded system_predicate_editors.json against the same Editor::new data the window uses; the window click path (invoke_button_clicked) is driven by a GUI test generically (only the system:limit is 64 button is clicked). Tag honest enough. Tests: crates/hydrus-gui/tests/gui/predicate_editors.rs:131-164 each_editor_is_the_reference_s; :670 the_editor_window_adds_what_it_makes_to_the_search"
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "crates/hydrus-gui/tests/gui/predicate_editors.rs the_windows_ready_made_buttons_add_what_the_reference_s_do (opens the real editor window for every recorded page, compares the buttons shown with the recorded labels, clicks each and compares what lands in the search), against oracle/fixtures/system_predicate_editors.json; the model tests stay as the fast check of Panel. Dates start at the real day, read as the recorded day."
    }
   },
   {
@@ -18071,9 +18066,9 @@
    ],
    "recheck": {
     "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Compares the Editor's button labels and predicate texts to the recording, but never clicks this preset in the window; only 'system:limit is 64' is clicked via invoke_button_clicked (:670). Model-level replay with no GUI test driving the button, so weak. Tests: crates/hydrus-gui/tests/gui/predicate_editors.rs:165 each_editor_is_the_reference_s (tag :137-139)"
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "crates/hydrus-gui/tests/gui/predicate_editors.rs the_windows_ready_made_buttons_add_what_the_reference_s_do (opens the real editor window for every recorded page, compares the buttons shown with the recorded labels, clicks each and compares what lands in the search), against oracle/fixtures/system_predicate_editors.json; the model tests stay as the fast check of Panel. Dates start at the real day, read as the recorded day."
    }
   },
   {
@@ -18090,9 +18085,9 @@
    ],
    "recheck": {
     "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Panel-level replay of oracle/fixtures/system_predicate_editors.json (each_change_to_a_panel_makes_what_the_reference_s_makes, :542, plus scenarios :610) calls Panel::set_*/predicates directly; the editor window (invoke_number_edited/chose/ok) is never driven for this panel, only for a few others in the_editor_window_adds_what_it_makes_to_the_search (:670) and the_editor_window_shows_what_trees_and_buttons_change (:844). Recorded changes for this panel's fields compare predicate text with the reference's, but only through Panel. Tests: crates/hydrus-gui/tests/gui/predicate_editors.rs:542 each_change_to_a_panel_makes_what_the_reference_s_makes"
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "crates/hydrus-gui/tests/gui/predicate_editors.rs each_change_in_the_window_makes_what_the_reference_s_makes and panels_set_in_several_ways_in_the_window_make_what_the_reference_s_make (every recorded change and scenario put to the real editor window through its field callbacks and \"ok\", result read from the page's search or the window's error), against oracle/fixtures/system_predicate_editors.json; the model tests stay as the fast check of Panel. Dates start at the real day, read as the recorded day."
    }
   },
   {
@@ -18109,9 +18104,9 @@
    ],
    "recheck": {
     "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Panel-level replay of oracle/fixtures/system_predicate_editors.json (each_change_to_a_panel_makes_what_the_reference_s_makes, :542, plus scenarios :610) calls Panel::set_*/predicates directly; the editor window (invoke_number_edited/chose/ok) is never driven for this panel, only for a few others in the_editor_window_adds_what_it_makes_to_the_search (:670) and the_editor_window_shows_what_trees_and_buttons_change (:844). Recorded changes for this panel's fields compare predicate text with the reference's, but only through Panel. Tests: crates/hydrus-gui/tests/gui/predicate_editors.rs:542 each_change_to_a_panel_makes_what_the_reference_s_makes"
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "crates/hydrus-gui/tests/gui/predicate_editors.rs each_change_in_the_window_makes_what_the_reference_s_makes and panels_set_in_several_ways_in_the_window_make_what_the_reference_s_make (every recorded change and scenario put to the real editor window through its field callbacks and \"ok\", result read from the page's search or the window's error), against oracle/fixtures/system_predicate_editors.json; the model tests stay as the fast check of Panel. Dates start at the real day, read as the recorded day."
    }
   },
   {
@@ -18128,9 +18123,9 @@
    ],
    "recheck": {
     "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Compares the Editor's button labels and predicate texts to the recording, but never clicks this preset in the window; only 'system:limit is 64' is clicked via invoke_button_clicked (:670). Model-level replay with no GUI test driving the button, so weak. Tests: crates/hydrus-gui/tests/gui/predicate_editors.rs:165 each_editor_is_the_reference_s (tag :137-139)"
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "crates/hydrus-gui/tests/gui/predicate_editors.rs the_windows_ready_made_buttons_add_what_the_reference_s_do (opens the real editor window for every recorded page, compares the buttons shown with the recorded labels, clicks each and compares what lands in the search), against oracle/fixtures/system_predicate_editors.json; the model tests stay as the fast check of Panel. Dates start at the real day, read as the recorded day."
    }
   },
   {
@@ -18147,9 +18142,9 @@
    ],
    "recheck": {
     "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Compares the Editor's button labels and predicate texts to the recording, but never clicks this preset in the window; only 'system:limit is 64' is clicked via invoke_button_clicked (:670). Model-level replay with no GUI test driving the button, so weak. Tests: crates/hydrus-gui/tests/gui/predicate_editors.rs:165 each_editor_is_the_reference_s (tag :137-139)"
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "crates/hydrus-gui/tests/gui/predicate_editors.rs the_windows_ready_made_buttons_add_what_the_reference_s_do (opens the real editor window for every recorded page, compares the buttons shown with the recorded labels, clicks each and compares what lands in the search), against oracle/fixtures/system_predicate_editors.json; the model tests stay as the fast check of Panel. Dates start at the real day, read as the recorded day."
    }
   },
   {
@@ -18166,9 +18161,9 @@
    ],
    "recheck": {
     "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Panel-level replay of oracle/fixtures/system_predicate_editors.json (each_change_to_a_panel_makes_what_the_reference_s_makes, :542, plus scenarios :610) calls Panel::set_*/predicates directly; the editor window (invoke_number_edited/chose/ok) is never driven for this panel, only for a few others in the_editor_window_adds_what_it_makes_to_the_search (:670) and the_editor_window_shows_what_trees_and_buttons_change (:844). Recorded changes for this panel's fields compare predicate text with the reference's, but only through Panel. Tests: crates/hydrus-gui/tests/gui/predicate_editors.rs:542 each_change_to_a_panel_makes_what_the_reference_s_makes"
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "crates/hydrus-gui/tests/gui/predicate_editors.rs each_change_in_the_window_makes_what_the_reference_s_makes and panels_set_in_several_ways_in_the_window_make_what_the_reference_s_make (every recorded change and scenario put to the real editor window through its field callbacks and \"ok\", result read from the page's search or the window's error), against oracle/fixtures/system_predicate_editors.json; the model tests stay as the fast check of Panel. Dates start at the real day, read as the recorded day."
    }
   },
   {
@@ -18185,9 +18180,9 @@
    ],
    "recheck": {
     "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Panel-level replay of oracle/fixtures/system_predicate_editors.json (each_change_to_a_panel_makes_what_the_reference_s_makes, :542, plus scenarios :610) calls Panel::set_*/predicates directly; the editor window (invoke_number_edited/chose/ok) is never driven for this panel, only for a few others in the_editor_window_adds_what_it_makes_to_the_search (:670) and the_editor_window_shows_what_trees_and_buttons_change (:844). Recorded changes for this panel's fields compare predicate text with the reference's, but only through Panel. Tests: crates/hydrus-gui/tests/gui/predicate_editors.rs:542 each_change_to_a_panel_makes_what_the_reference_s_makes"
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "crates/hydrus-gui/tests/gui/predicate_editors.rs each_change_in_the_window_makes_what_the_reference_s_makes and panels_set_in_several_ways_in_the_window_make_what_the_reference_s_make (every recorded change and scenario put to the real editor window through its field callbacks and \"ok\", result read from the page's search or the window's error), against oracle/fixtures/system_predicate_editors.json; the model tests stay as the fast check of Panel. Dates start at the real day, read as the recorded day."
    }
   },
   {
@@ -18205,9 +18200,9 @@
    ],
    "recheck": {
     "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Panel-level replay of oracle/fixtures/system_predicate_editors.json (each_change_to_a_panel_makes_what_the_reference_s_makes, :542, plus scenarios :610) calls Panel::set_*/predicates directly; the editor window (invoke_number_edited/chose/ok) is never driven for this panel, only for a few others in the_editor_window_adds_what_it_makes_to_the_search (:670) and the_editor_window_shows_what_trees_and_buttons_change (:844). Recorded scenarios for service/type ticks (services, types [7,6]) are replayed, so values come from the reference, but only through Panel, and ticks are a native check list. Tests: crates/hydrus-gui/tests/gui/predicate_editors.rs:610 panels_set_in_several_ways_make_what_the_reference_s_make; :844 (like chosen only)"
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "crates/hydrus-gui/tests/gui/predicate_editors.rs each_change_in_the_window_makes_what_the_reference_s_makes and panels_set_in_several_ways_in_the_window_make_what_the_reference_s_make (every recorded change and scenario put to the real editor window through its field callbacks and \"ok\", result read from the page's search or the window's error), against oracle/fixtures/system_predicate_editors.json; the model tests stay as the fast check of Panel. Dates start at the real day, read as the recorded day."
    }
   },
   {
@@ -18225,9 +18220,9 @@
    ],
    "recheck": {
     "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Panel-level replay of oracle/fixtures/system_predicate_editors.json (each_change_to_a_panel_makes_what_the_reference_s_makes, :542, plus scenarios :610) calls Panel::set_*/predicates directly; the editor window (invoke_number_edited/chose/ok) is never driven for this panel, only for a few others in the_editor_window_adds_what_it_makes_to_the_search (:670) and the_editor_window_shows_what_trees_and_buttons_change (:844). The window only sets 'like' on the favourites panel once with a typed expected string, not for this panel's states. Tests: crates/hydrus-gui/tests/gui/predicate_editors.rs:542 each_change_to_a_panel_makes_what_the_reference_s_makes; :610 scenarios; :844 (rating like chosen via window)"
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "crates/hydrus-gui/tests/gui/predicate_editors.rs each_change_in_the_window_makes_what_the_reference_s_makes and panels_set_in_several_ways_in_the_window_make_what_the_reference_s_make (every recorded change and scenario put to the real editor window through its field callbacks and \"ok\", result read from the page's search or the window's error), against oracle/fixtures/system_predicate_editors.json; the model tests stay as the fast check of Panel. Dates start at the real day, read as the recorded day."
    }
   },
   {
@@ -18265,9 +18260,9 @@
    ],
    "recheck": {
     "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Panel-level replay of oracle/fixtures/system_predicate_editors.json (each_change_to_a_panel_makes_what_the_reference_s_makes, :542, plus scenarios :610) calls Panel::set_*/predicates directly; the editor window (invoke_number_edited/chose/ok) is never driven for this panel, only for a few others in the_editor_window_adds_what_it_makes_to_the_search (:670) and the_editor_window_shows_what_trees_and_buttons_change (:844). The window only sets 'like' on the favourites panel once with a typed expected string, not for this panel's states. Tests: crates/hydrus-gui/tests/gui/predicate_editors.rs:542 each_change_to_a_panel_makes_what_the_reference_s_makes; :610 scenarios; :844 (rating like chosen via window)"
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "crates/hydrus-gui/tests/gui/predicate_editors.rs each_change_in_the_window_makes_what_the_reference_s_makes and panels_set_in_several_ways_in_the_window_make_what_the_reference_s_make (every recorded change and scenario put to the real editor window through its field callbacks and \"ok\", result read from the page's search or the window's error), against oracle/fixtures/system_predicate_editors.json; the model tests stay as the fast check of Panel. Dates start at the real day, read as the recorded day."
    }
   },
   {
@@ -18305,9 +18300,9 @@
    ],
    "recheck": {
     "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Panel-level replay of oracle/fixtures/system_predicate_editors.json (each_change_to_a_panel_makes_what_the_reference_s_makes, :542, plus scenarios :610) calls Panel::set_*/predicates directly; the editor window (invoke_number_edited/chose/ok) is never driven for this panel, only for a few others in the_editor_window_adds_what_it_makes_to_the_search (:670) and the_editor_window_shows_what_trees_and_buttons_change (:844). The window only sets 'like' on the favourites panel once with a typed expected string, not for this panel's states. Tests: crates/hydrus-gui/tests/gui/predicate_editors.rs:542 each_change_to_a_panel_makes_what_the_reference_s_makes; :610 scenarios; :844 (rating like chosen via window)"
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "crates/hydrus-gui/tests/gui/predicate_editors.rs each_change_in_the_window_makes_what_the_reference_s_makes and panels_set_in_several_ways_in_the_window_make_what_the_reference_s_make (every recorded change and scenario put to the real editor window through its field callbacks and \"ok\", result read from the page's search or the window's error), against oracle/fixtures/system_predicate_editors.json; the model tests stay as the fast check of Panel. Dates start at the real day, read as the recorded day."
    }
   },
   {
@@ -18345,9 +18340,9 @@
    ],
    "recheck": {
     "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Panel-level replay of oracle/fixtures/system_predicate_editors.json (each_change_to_a_panel_makes_what_the_reference_s_makes, :542, plus scenarios :610) calls Panel::set_*/predicates directly; the editor window (invoke_number_edited/chose/ok) is never driven for this panel, only for a few others in the_editor_window_adds_what_it_makes_to_the_search (:670) and the_editor_window_shows_what_trees_and_buttons_change (:844). The window only sets 'like' on the favourites panel once with a typed expected string, not for this panel's states. Tests: crates/hydrus-gui/tests/gui/predicate_editors.rs:542 each_change_to_a_panel_makes_what_the_reference_s_makes; :610 scenarios; :844 (rating like chosen via window)"
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "crates/hydrus-gui/tests/gui/predicate_editors.rs each_change_in_the_window_makes_what_the_reference_s_makes and panels_set_in_several_ways_in_the_window_make_what_the_reference_s_make (every recorded change and scenario put to the real editor window through its field callbacks and \"ok\", result read from the page's search or the window's error), against oracle/fixtures/system_predicate_editors.json; the model tests stay as the fast check of Panel. Dates start at the real day, read as the recorded day."
    }
   },
   {
@@ -18385,9 +18380,9 @@
    ],
    "recheck": {
     "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Panel-level replay of oracle/fixtures/system_predicate_editors.json (each_change_to_a_panel_makes_what_the_reference_s_makes, :542, plus scenarios :610) calls Panel::set_*/predicates directly; the editor window (invoke_number_edited/chose/ok) is never driven for this panel, only for a few others in the_editor_window_adds_what_it_makes_to_the_search (:670) and the_editor_window_shows_what_trees_and_buttons_change (:844). Recorded distance changes only through Panel. Tests: crates/hydrus-gui/tests/gui/predicate_editors.rs:542 each_change_to_a_panel_makes_what_the_reference_s_makes; :610 scenarios"
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "crates/hydrus-gui/tests/gui/predicate_editors.rs each_change_in_the_window_makes_what_the_reference_s_makes and panels_set_in_several_ways_in_the_window_make_what_the_reference_s_make (every recorded change and scenario put to the real editor window through its field callbacks and \"ok\", result read from the page's search or the window's error), against oracle/fixtures/system_predicate_editors.json; the model tests stay as the fast check of Panel. Dates start at the real day, read as the recorded day."
    }
   },
   {
@@ -18405,9 +18400,9 @@
    ],
    "recheck": {
     "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Panel-level replay of oracle/fixtures/system_predicate_editors.json (each_change_to_a_panel_makes_what_the_reference_s_makes, :542, plus scenarios :610) calls Panel::set_*/predicates directly; the editor window (invoke_number_edited/chose/ok) is never driven for this panel, only for a few others in the_editor_window_adds_what_it_makes_to_the_search (:670) and the_editor_window_shows_what_trees_and_buttons_change (:844). Recorded scenarios cover valid hash / wrong-length hash lines and the error text, but via Panel only; the window tests cover paste and clear, not hash validation. Clipboard bitmap paste is not recorded. Tests: crates/hydrus-gui/tests/gui/predicate_editors.rs:610 panels_set_in_several_ways (similar files scenarios); :1954 paste_image_...; :844 clear button"
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "crates/hydrus-gui/tests/gui/predicate_editors.rs each_change_in_the_window_makes_what_the_reference_s_makes and panels_set_in_several_ways_in_the_window_make_what_the_reference_s_make (every recorded change and scenario put to the real editor window through its field callbacks and \"ok\", result read from the page's search or the window's error), against oracle/fixtures/system_predicate_editors.json; the model tests stay as the fast check of Panel. Dates start at the real day, read as the recorded day."
    }
   },
   {
@@ -18439,9 +18434,9 @@
    ],
    "recheck": {
     "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Panel-level replay of oracle/fixtures/system_predicate_editors.json (each_change_to_a_panel_makes_what_the_reference_s_makes, :542, plus scenarios :610) calls Panel::set_*/predicates directly; the editor window (invoke_number_edited/chose/ok) is never driven for this panel, only for a few others in the_editor_window_adds_what_it_makes_to_the_search (:670) and the_editor_window_shows_what_trees_and_buttons_change (:844). Recorded distance changes only through Panel. Tests: crates/hydrus-gui/tests/gui/predicate_editors.rs:542 each_change_to_a_panel_makes_what_the_reference_s_makes; :610 scenarios"
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "crates/hydrus-gui/tests/gui/predicate_editors.rs each_change_in_the_window_makes_what_the_reference_s_makes and panels_set_in_several_ways_in_the_window_make_what_the_reference_s_make (every recorded change and scenario put to the real editor window through its field callbacks and \"ok\", result read from the page's search or the window's error), against oracle/fixtures/system_predicate_editors.json; the model tests stay as the fast check of Panel. Dates start at the real day, read as the recorded day."
    }
   },
   {
@@ -18458,9 +18453,9 @@
    ],
    "recheck": {
     "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Panel-level replay of oracle/fixtures/system_predicate_editors.json (each_change_to_a_panel_makes_what_the_reference_s_makes, :542, plus scenarios :610) calls Panel::set_*/predicates directly; the editor window (invoke_number_edited/chose/ok) is never driven for this panel, only for a few others in the_editor_window_adds_what_it_makes_to_the_search (:670) and the_editor_window_shows_what_trees_and_buttons_change (:844). Recorded scenarios cover valid hash / wrong-length hash lines and the error text, but via Panel only; the window tests cover paste and clear, not hash validation. Clipboard bitmap paste is not recorded. Tests: crates/hydrus-gui/tests/gui/predicate_editors.rs:610 panels_set_in_several_ways (similar files scenarios); :1954 paste_image_...; :844 clear button"
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "crates/hydrus-gui/tests/gui/predicate_editors.rs each_change_in_the_window_makes_what_the_reference_s_makes and panels_set_in_several_ways_in_the_window_make_what_the_reference_s_make (every recorded change and scenario put to the real editor window through its field callbacks and \"ok\", result read from the page's search or the window's error), against oracle/fixtures/system_predicate_editors.json; the model tests stay as the fast check of Panel. Dates start at the real day, read as the recorded day."
    }
   },
   {
@@ -18478,9 +18473,9 @@
    ],
    "recheck": {
     "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Panel-level replay of oracle/fixtures/system_predicate_editors.json (each_change_to_a_panel_makes_what_the_reference_s_makes, :542, plus scenarios :610) calls Panel::set_*/predicates directly; the editor window (invoke_number_edited/chose/ok) is never driven for this panel, only for a few others in the_editor_window_adds_what_it_makes_to_the_search (:670) and the_editor_window_shows_what_trees_and_buttons_change (:844). Also the reference's tag autocomplete widget (widget 7) is skipped and asserted as the only unrepresented widget, so part of the panel is absent (tracker note correct). Tests: crates/hydrus-gui/tests/gui/predicate_editors.rs:542 each_change_to_a_panel...; :610 scenarios (my tags, ' Blue Eyes ', series:metroid, current/pending/deleted ticks)"
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "crates/hydrus-gui/tests/gui/predicate_editors.rs each_change_in_the_window_makes_what_the_reference_s_makes and panels_set_in_several_ways_in_the_window_make_what_the_reference_s_make (every recorded change and scenario put to the real editor window through its field callbacks and \"ok\", result read from the page's search or the window's error), against oracle/fixtures/system_predicate_editors.json; the model tests stay as the fast check of Panel. Dates start at the real day, read as the recorded day. The reference's tag autocomplete widget (widget 7) has no counterpart and is skipped, in the model and window tests alike."
    }
   },
   {
@@ -18498,9 +18493,9 @@
    ],
    "recheck": {
     "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Panel-level replay of oracle/fixtures/system_predicate_editors.json (each_change_to_a_panel_makes_what_the_reference_s_makes, :542, plus scenarios :610) calls Panel::set_*/predicates directly; the editor window (invoke_number_edited/chose/ok) is never driven for this panel, only for a few others in the_editor_window_adds_what_it_makes_to_the_search (:670) and the_editor_window_shows_what_trees_and_buttons_change (:844). Also the reference's tag autocomplete widget (widget 7) is skipped and asserted as the only unrepresented widget, so part of the panel is absent (tracker note correct). Tests: crates/hydrus-gui/tests/gui/predicate_editors.rs:542 each_change_to_a_panel...; :610 scenarios (my tags, ' Blue Eyes ', series:metroid, current/pending/deleted ticks)"
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "crates/hydrus-gui/tests/gui/predicate_editors.rs each_change_in_the_window_makes_what_the_reference_s_makes and panels_set_in_several_ways_in_the_window_make_what_the_reference_s_make (every recorded change and scenario put to the real editor window through its field callbacks and \"ok\", result read from the page's search or the window's error), against oracle/fixtures/system_predicate_editors.json; the model tests stay as the fast check of Panel. Dates start at the real day, read as the recorded day. The reference's tag autocomplete widget (widget 7) has no counterpart and is skipped, in the model and window tests alike."
    }
   },
   {
@@ -18517,9 +18512,9 @@
    ],
    "recheck": {
     "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Panel-level replay of oracle/fixtures/system_predicate_editors.json (each_change_to_a_panel_makes_what_the_reference_s_makes, :542, plus scenarios :610) calls Panel::set_*/predicates directly; the editor window (invoke_number_edited/chose/ok) is never driven for this panel, only for a few others in the_editor_window_adds_what_it_makes_to_the_search (:670) and the_editor_window_shows_what_trees_and_buttons_change (:844). Recorded changes for this panel's fields compare predicate text with the reference's, but only through Panel. Tests: crates/hydrus-gui/tests/gui/predicate_editors.rs:542 each_change_to_a_panel_makes_what_the_reference_s_makes"
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "crates/hydrus-gui/tests/gui/predicate_editors.rs each_change_in_the_window_makes_what_the_reference_s_makes and panels_set_in_several_ways_in_the_window_make_what_the_reference_s_make (every recorded change and scenario put to the real editor window through its field callbacks and \"ok\", result read from the page's search or the window's error), against oracle/fixtures/system_predicate_editors.json; the model tests stay as the fast check of Panel. Dates start at the real day, read as the recorded day."
    }
   },
   {
@@ -18536,9 +18531,9 @@
    ],
    "recheck": {
     "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Panel-level replay of oracle/fixtures/system_predicate_editors.json (each_change_to_a_panel_makes_what_the_reference_s_makes, :542, plus scenarios :610) calls Panel::set_*/predicates directly; the editor window (invoke_number_edited/chose/ok) is never driven for this panel, only for a few others in the_editor_window_adds_what_it_makes_to_the_search (:670) and the_editor_window_shows_what_trees_and_buttons_change (:844). Recorded changes for this panel's fields compare predicate text with the reference's, but only through Panel. Tests: crates/hydrus-gui/tests/gui/predicate_editors.rs:542 each_change_to_a_panel_makes_what_the_reference_s_makes"
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "crates/hydrus-gui/tests/gui/predicate_editors.rs each_change_in_the_window_makes_what_the_reference_s_makes and panels_set_in_several_ways_in_the_window_make_what_the_reference_s_make (every recorded change and scenario put to the real editor window through its field callbacks and \"ok\", result read from the page's search or the window's error), against oracle/fixtures/system_predicate_editors.json; the model tests stay as the fast check of Panel. Dates start at the real day, read as the recorded day."
    }
   },
   {
@@ -18576,9 +18571,9 @@
    ],
    "recheck": {
     "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Panel-level replay of oracle/fixtures/system_predicate_editors.json (each_change_to_a_panel_makes_what_the_reference_s_makes, :542, plus scenarios :610) calls Panel::set_*/predicates directly; the editor window (invoke_number_edited/chose/ok) is never driven for this panel, only for a few others in the_editor_window_adds_what_it_makes_to_the_search (:670) and the_editor_window_shows_what_trees_and_buttons_change (:844). Operator radio changes replayed from the recording through Panel only. Tests: crates/hydrus-gui/tests/gui/predicate_editors.rs:542 each_change_to_a_panel...; :1889 archived_and_modified_date_panels..."
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "crates/hydrus-gui/tests/gui/predicate_editors.rs each_change_in_the_window_makes_what_the_reference_s_makes and panels_set_in_several_ways_in_the_window_make_what_the_reference_s_make (every recorded change and scenario put to the real editor window through its field callbacks and \"ok\", result read from the page's search or the window's error), against oracle/fixtures/system_predicate_editors.json; the model tests stay as the fast check of Panel. Dates start at the real day, read as the recorded day."
    }
   },
   {
@@ -18595,9 +18590,9 @@
    ],
    "recheck": {
     "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Panel-level replay of oracle/fixtures/system_predicate_editors.json (each_change_to_a_panel_makes_what_the_reference_s_makes, :542, plus scenarios :610) calls Panel::set_*/predicates directly; the editor window (invoke_number_edited/chose/ok) is never driven for this panel, only for a few others in the_editor_window_adds_what_it_makes_to_the_search (:670) and the_editor_window_shows_what_trees_and_buttons_change (:844). Recorded changes for this panel's fields compare predicate text with the reference's, but only through Panel. Tests: crates/hydrus-gui/tests/gui/predicate_editors.rs:542 each_change_to_a_panel_makes_what_the_reference_s_makes"
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "crates/hydrus-gui/tests/gui/predicate_editors.rs each_change_in_the_window_makes_what_the_reference_s_makes and panels_set_in_several_ways_in_the_window_make_what_the_reference_s_make (every recorded change and scenario put to the real editor window through its field callbacks and \"ok\", result read from the page's search or the window's error), against oracle/fixtures/system_predicate_editors.json; the model tests stay as the fast check of Panel. Dates start at the real day, read as the recorded day."
    }
   },
   {
@@ -18614,9 +18609,9 @@
    ],
    "recheck": {
     "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Panel-level replay of oracle/fixtures/system_predicate_editors.json (each_change_to_a_panel_makes_what_the_reference_s_makes, :542, plus scenarios :610) calls Panel::set_*/predicates directly; the editor window (invoke_number_edited/chose/ok) is never driven for this panel, only for a few others in the_editor_window_adds_what_it_makes_to_the_search (:670) and the_editor_window_shows_what_trees_and_buttons_change (:844). Recorded changes for this panel's fields compare predicate text with the reference's, but only through Panel. Tests: crates/hydrus-gui/tests/gui/predicate_editors.rs:542 each_change_to_a_panel_makes_what_the_reference_s_makes"
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "crates/hydrus-gui/tests/gui/predicate_editors.rs each_change_in_the_window_makes_what_the_reference_s_makes and panels_set_in_several_ways_in_the_window_make_what_the_reference_s_make (every recorded change and scenario put to the real editor window through its field callbacks and \"ok\", result read from the page's search or the window's error), against oracle/fixtures/system_predicate_editors.json; the model tests stay as the fast check of Panel. Dates start at the real day, read as the recorded day."
    }
   },
   {
@@ -18635,8 +18630,8 @@
    "recheck": {
     "date": "2026-10-08",
     "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Replays the recorded date+time scenario against Panel::predicates only; the window test covers just a bad date refusal on the import page; typed date/time fields replace the calendar/time widgets (a documented difference). Tests: crates/hydrus-gui/tests/gui/predicate_editors.rs:607-608 panels_set_in_several_ways_make_what_the_reference_s_make"
+    "by": "phase 2 session",
+    "note": "The recorded date+time scenario now goes through the real editor window (panels_set_in_several_ways_in_the_window...). Still weak: typed date and time text fields replace the reference's calendar and time widgets, a documented difference, so the widgets themselves are not driven."
    }
   },
   {
@@ -18654,9 +18649,9 @@
    ],
    "recheck": {
     "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Recorded operator/operator changes (before/since/the day of/month either side) replay against Panel::predicates with expected text from the recording, but no test drives the time panel through the window. Tests: crates/hydrus-gui/tests/gui/predicate_editors.rs:516-521,531-533 each_change_to_a_panel_makes_what_the_reference_s_makes"
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "crates/hydrus-gui/tests/gui/predicate_editors.rs each_change_in_the_window_makes_what_the_reference_s_makes and panels_set_in_several_ways_in_the_window_make_what_the_reference_s_make (every recorded change and scenario put to the real editor window through its field callbacks and \"ok\", result read from the page's search or the window's error), against oracle/fixtures/system_predicate_editors.json; the model tests stay as the fast check of Panel. Dates start at the real day, read as the recorded day."
    }
   },
   {
@@ -18673,9 +18668,9 @@
    ],
    "recheck": {
     "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Recorded operator/delta changes (before, around, years/months/days/hours) replay against Panel::predicates with expected text from the recording, but no test drives the time panel through the window. Tests: crates/hydrus-gui/tests/gui/predicate_editors.rs:516-521,531-533 each_change_to_a_panel_makes_what_the_reference_s_makes"
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "crates/hydrus-gui/tests/gui/predicate_editors.rs each_change_in_the_window_makes_what_the_reference_s_makes and panels_set_in_several_ways_in_the_window_make_what_the_reference_s_make (every recorded change and scenario put to the real editor window through its field callbacks and \"ok\", result read from the page's search or the window's error), against oracle/fixtures/system_predicate_editors.json; the model tests stay as the fast check of Panel. Dates start at the real day, read as the recorded day."
    }
   },
   {
@@ -18692,9 +18687,9 @@
    ],
    "recheck": {
     "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Recorded operator/delta changes (before, around, years/months/days/hours) replay against Panel::predicates with expected text from the recording, but no test drives the time panel through the window. Tests: crates/hydrus-gui/tests/gui/predicate_editors.rs:516-521,531-533 each_change_to_a_panel_makes_what_the_reference_s_makes"
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "crates/hydrus-gui/tests/gui/predicate_editors.rs each_change_in_the_window_makes_what_the_reference_s_makes and panels_set_in_several_ways_in_the_window_make_what_the_reference_s_make (every recorded change and scenario put to the real editor window through its field callbacks and \"ok\", result read from the page's search or the window's error), against oracle/fixtures/system_predicate_editors.json; the model tests stay as the fast check of Panel. Dates start at the real day, read as the recorded day."
    }
   },
   {
@@ -18711,9 +18706,9 @@
    ],
    "recheck": {
     "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Compares each preset button label and predicate text with the system_predicate_editors.json recording, but at Editor/Page model level; no test clicks these buttons in the window (the only button click driven is system:limit and others), so the window path stands unproven for this leaf. Tests: crates/hydrus-gui/tests/gui/predicate_editors.rs:140-144 each_editor_is_the_reference_s"
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "crates/hydrus-gui/tests/gui/predicate_editors.rs the_windows_ready_made_buttons_add_what_the_reference_s_do (opens the real editor window for every recorded page, compares the buttons shown with the recorded labels, clicks each and compares what lands in the search), against oracle/fixtures/system_predicate_editors.json; the model tests stay as the fast check of Panel. Dates start at the real day, read as the recorded day."
    }
   },
   {
@@ -18730,9 +18725,9 @@
    ],
    "recheck": {
     "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Compares each preset button label and predicate text with the system_predicate_editors.json recording, but at Editor/Page model level; no test clicks these buttons in the window (the only button click driven is system:limit and others), so the window path stands unproven for this leaf. Tests: crates/hydrus-gui/tests/gui/predicate_editors.rs:140-144 each_editor_is_the_reference_s"
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "crates/hydrus-gui/tests/gui/predicate_editors.rs the_windows_ready_made_buttons_add_what_the_reference_s_do (opens the real editor window for every recorded page, compares the buttons shown with the recorded labels, clicks each and compares what lands in the search), against oracle/fixtures/system_predicate_editors.json; the model tests stay as the fast check of Panel. Dates start at the real day, read as the recorded day."
    }
   },
   {
@@ -18749,9 +18744,9 @@
    ],
    "recheck": {
     "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Compares each preset button label and predicate text with the system_predicate_editors.json recording, but at Editor/Page model level; no test clicks these buttons in the window (the only button click driven is system:limit and others), so the window path stands unproven for this leaf. Tests: crates/hydrus-gui/tests/gui/predicate_editors.rs:140-144 each_editor_is_the_reference_s"
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "crates/hydrus-gui/tests/gui/predicate_editors.rs the_windows_ready_made_buttons_add_what_the_reference_s_do (opens the real editor window for every recorded page, compares the buttons shown with the recorded labels, clicks each and compares what lands in the search), against oracle/fixtures/system_predicate_editors.json; the model tests stay as the fast check of Panel. Dates start at the real day, read as the recorded day."
    }
   },
   {
@@ -18770,8 +18765,8 @@
    "recheck": {
     "date": "2026-10-08",
     "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Replays the recorded date+time scenario against Panel::predicates only; the window test covers just a bad date refusal on the import page; typed date/time fields replace the calendar/time widgets (a documented difference). Tests: crates/hydrus-gui/tests/gui/predicate_editors.rs:607-608 panels_set_in_several_ways_make_what_the_reference_s_make"
+    "by": "phase 2 session",
+    "note": "The recorded date+time scenario now goes through the real editor window (panels_set_in_several_ways_in_the_window...). Still weak: typed date and time text fields replace the reference's calendar and time widgets, a documented difference, so the widgets themselves are not driven."
    }
   },
   {
@@ -18789,9 +18784,9 @@
    ],
    "recheck": {
     "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Recorded operator/operator changes (before/since/the day of/month either side) replay against Panel::predicates with expected text from the recording, but no test drives the time panel through the window. Tests: crates/hydrus-gui/tests/gui/predicate_editors.rs:516-521,531-533 each_change_to_a_panel_makes_what_the_reference_s_makes"
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "crates/hydrus-gui/tests/gui/predicate_editors.rs each_change_in_the_window_makes_what_the_reference_s_makes and panels_set_in_several_ways_in_the_window_make_what_the_reference_s_make (every recorded change and scenario put to the real editor window through its field callbacks and \"ok\", result read from the page's search or the window's error), against oracle/fixtures/system_predicate_editors.json; the model tests stay as the fast check of Panel. Dates start at the real day, read as the recorded day."
    }
   },
   {
@@ -18808,9 +18803,9 @@
    ],
    "recheck": {
     "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Recorded operator/delta changes (before, around, years/months/days/hours) replay against Panel::predicates with expected text from the recording, but no test drives the time panel through the window. Tests: crates/hydrus-gui/tests/gui/predicate_editors.rs:516-521,531-533 each_change_to_a_panel_makes_what_the_reference_s_makes"
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "crates/hydrus-gui/tests/gui/predicate_editors.rs each_change_in_the_window_makes_what_the_reference_s_makes and panels_set_in_several_ways_in_the_window_make_what_the_reference_s_make (every recorded change and scenario put to the real editor window through its field callbacks and \"ok\", result read from the page's search or the window's error), against oracle/fixtures/system_predicate_editors.json; the model tests stay as the fast check of Panel. Dates start at the real day, read as the recorded day."
    }
   },
   {
@@ -18827,9 +18822,9 @@
    ],
    "recheck": {
     "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Recorded operator/delta changes (before, around, years/months/days/hours) replay against Panel::predicates with expected text from the recording, but no test drives the time panel through the window. Tests: crates/hydrus-gui/tests/gui/predicate_editors.rs:516-521,531-533 each_change_to_a_panel_makes_what_the_reference_s_makes"
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "crates/hydrus-gui/tests/gui/predicate_editors.rs each_change_in_the_window_makes_what_the_reference_s_makes and panels_set_in_several_ways_in_the_window_make_what_the_reference_s_make (every recorded change and scenario put to the real editor window through its field callbacks and \"ok\", result read from the page's search or the window's error), against oracle/fixtures/system_predicate_editors.json; the model tests stay as the fast check of Panel. Dates start at the real day, read as the recorded day."
    }
   },
   {
@@ -18867,9 +18862,9 @@
    ],
    "recheck": {
     "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Recorded operator/operator changes (before/since/the day of/month either side) replay against Panel::predicates with expected text from the recording, but no test drives the time panel through the window. Tests: crates/hydrus-gui/tests/gui/predicate_editors.rs:516-521,531-533 each_change_to_a_panel_makes_what_the_reference_s_makes"
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "crates/hydrus-gui/tests/gui/predicate_editors.rs each_change_in_the_window_makes_what_the_reference_s_makes and panels_set_in_several_ways_in_the_window_make_what_the_reference_s_make (every recorded change and scenario put to the real editor window through its field callbacks and \"ok\", result read from the page's search or the window's error), against oracle/fixtures/system_predicate_editors.json; the model tests stay as the fast check of Panel. Dates start at the real day, read as the recorded day."
    }
   },
   {
@@ -18886,9 +18881,9 @@
    ],
    "recheck": {
     "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Recorded operator/delta changes (before, around, years/months/days/hours) replay against Panel::predicates with expected text from the recording, but no test drives the time panel through the window. Tests: crates/hydrus-gui/tests/gui/predicate_editors.rs:516-521,531-533 each_change_to_a_panel_makes_what_the_reference_s_makes"
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "crates/hydrus-gui/tests/gui/predicate_editors.rs each_change_in_the_window_makes_what_the_reference_s_makes and panels_set_in_several_ways_in_the_window_make_what_the_reference_s_make (every recorded change and scenario put to the real editor window through its field callbacks and \"ok\", result read from the page's search or the window's error), against oracle/fixtures/system_predicate_editors.json; the model tests stay as the fast check of Panel. Dates start at the real day, read as the recorded day."
    }
   },
   {
@@ -18905,9 +18900,9 @@
    ],
    "recheck": {
     "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Recorded operator/delta changes (before, around, years/months/days/hours) replay against Panel::predicates with expected text from the recording, but no test drives the time panel through the window. Tests: crates/hydrus-gui/tests/gui/predicate_editors.rs:516-521,531-533 each_change_to_a_panel_makes_what_the_reference_s_makes"
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "crates/hydrus-gui/tests/gui/predicate_editors.rs each_change_in_the_window_makes_what_the_reference_s_makes and panels_set_in_several_ways_in_the_window_make_what_the_reference_s_make (every recorded change and scenario put to the real editor window through its field callbacks and \"ok\", result read from the page's search or the window's error), against oracle/fixtures/system_predicate_editors.json; the model tests stay as the fast check of Panel. Dates start at the real day, read as the recorded day."
    }
   },
   {
@@ -18924,9 +18919,9 @@
    ],
    "recheck": {
     "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Replays the recorded has/does-not-have change against Panel::predicates, expected text from the recording; but only the Panel model is driven, no window test for the system:urls known-url panels except the class panel. Tests: crates/hydrus-gui/tests/gui/predicate_editors.rs:523 each_change_to_a_panel_makes_what_the_reference_s_makes (recording system_predicate_editors.json)"
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "crates/hydrus-gui/tests/gui/predicate_editors.rs each_change_in_the_window_makes_what_the_reference_s_makes and panels_set_in_several_ways_in_the_window_make_what_the_reference_s_make (every recorded change and scenario put to the real editor window through its field callbacks and \"ok\", result read from the page's search or the window's error), against oracle/fixtures/system_predicate_editors.json; the model tests stay as the fast check of Panel. Dates start at the real day, read as the recorded day."
    }
   },
   {
@@ -18944,8 +18939,8 @@
    "recheck": {
     "date": "2026-10-08",
     "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Recorded text change (\"abc\") replays against Panel::predicates only (no window); the reference CheckValid veto (regex compile, \"Cannot compile that regex\") is tested in a model test from a different recording, not in the window, and exact/domain rule validation is not recorded. Tests: crates/hydrus-gui/tests/gui/predicate_editors.rs:526 each_change_to_a_panel_makes_what_the_reference_s_makes; crates/hydrus-gui-model/src/predicate_editors/defaults.rs:~515 (regex veto)"
+    "by": "phase 2 session",
+    "note": "The recorded text change ('abc') goes through the real editor window, but exact/domain validation is not recorded, so no window test drives any veto for this panel (the regex panel's veto is driven for the regex leaf)."
    }
   },
   {
@@ -18962,9 +18957,9 @@
    ],
    "recheck": {
     "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Replays the recorded has/does-not-have change against Panel::predicates, expected text from the recording; but only the Panel model is driven, no window test for the system:urls known-url panels except the class panel. Tests: crates/hydrus-gui/tests/gui/predicate_editors.rs:523 each_change_to_a_panel_makes_what_the_reference_s_makes (recording system_predicate_editors.json)"
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "crates/hydrus-gui/tests/gui/predicate_editors.rs each_change_in_the_window_makes_what_the_reference_s_makes and panels_set_in_several_ways_in_the_window_make_what_the_reference_s_make (every recorded change and scenario put to the real editor window through its field callbacks and \"ok\", result read from the page's search or the window's error), against oracle/fixtures/system_predicate_editors.json; the model tests stay as the fast check of Panel. Dates start at the real day, read as the recorded day."
    }
   },
   {
@@ -18982,8 +18977,8 @@
    "recheck": {
     "date": "2026-10-08",
     "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Recorded text change (\"abc\") replays against Panel::predicates only (no window); the reference CheckValid veto (regex compile, \"Cannot compile that regex\") is tested in a model test from a different recording, not in the window, and exact/domain rule validation is not recorded. Tests: crates/hydrus-gui/tests/gui/predicate_editors.rs:526 each_change_to_a_panel_makes_what_the_reference_s_makes; crates/hydrus-gui-model/src/predicate_editors/defaults.rs:~515 (regex veto)"
+    "by": "phase 2 session",
+    "note": "The recorded text change ('abc') goes through the real editor window, but exact/domain validation is not recorded, so no window test drives any veto for this panel (the regex panel's veto is driven for the regex leaf)."
    }
   },
   {
@@ -19000,9 +18995,9 @@
    ],
    "recheck": {
     "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Replays the recorded has/does-not-have change against Panel::predicates, expected text from the recording; but only the Panel model is driven, no window test for the system:urls known-url panels except the class panel. Tests: crates/hydrus-gui/tests/gui/predicate_editors.rs:523 each_change_to_a_panel_makes_what_the_reference_s_makes (recording system_predicate_editors.json)"
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "crates/hydrus-gui/tests/gui/predicate_editors.rs each_change_in_the_window_makes_what_the_reference_s_makes and panels_set_in_several_ways_in_the_window_make_what_the_reference_s_make (every recorded change and scenario put to the real editor window through its field callbacks and \"ok\", result read from the page's search or the window's error), against oracle/fixtures/system_predicate_editors.json; the model tests stay as the fast check of Panel. Dates start at the real day, read as the recorded day."
    }
   },
   {
@@ -19019,9 +19014,9 @@
    ],
    "recheck": {
     "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Recorded text change (\"abc\") replays against Panel::predicates only (no window); the reference CheckValid veto (regex compile, \"Cannot compile that regex\") is tested in a model test from a different recording, not in the window, and exact/domain rule validation is not recorded. Tests: crates/hydrus-gui/tests/gui/predicate_editors.rs:526 each_change_to_a_panel_makes_what_the_reference_s_makes; crates/hydrus-gui-model/src/predicate_editors/defaults.rs:~515 (regex veto)"
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "gui/predicate_editors.rs: the recorded text change ('abc') goes through the real editor window (each_change_in_the_window...), and the_windows_known_url_regex_panel_refuses_a_regex_that_will_not_compile types the recording's bad regex ('[') into the window, presses ok, and checks the editor stays open with nothing searched and the 'Cannot compile that regex' refusal (predicate_custom_defaults.json invalid_regex; the reason is Python's words in the reference, native words here)."
    }
   },
   {
@@ -19076,9 +19071,9 @@
    ],
    "recheck": {
     "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Operator and value changes (including the <=0 -> system:no urls collapse) replay recorded predicates against Panel::predicates, but no window-level test drives the number-of-urls panel. Tests: crates/hydrus-gui/tests/gui/predicate_editors.rs:528 each_change_to_a_panel_makes_what_the_reference_s_makes"
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "crates/hydrus-gui/tests/gui/predicate_editors.rs each_change_in_the_window_makes_what_the_reference_s_makes and panels_set_in_several_ways_in_the_window_make_what_the_reference_s_make (every recorded change and scenario put to the real editor window through its field callbacks and \"ok\", result read from the page's search or the window's error), against oracle/fixtures/system_predicate_editors.json; the model tests stay as the fast check of Panel. Dates start at the real day, read as the recorded day."
    }
   },
   {
@@ -19095,9 +19090,9 @@
    ],
    "recheck": {
     "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Operator and value changes (including the <=0 -> system:no urls collapse) replay recorded predicates against Panel::predicates, but no window-level test drives the number-of-urls panel. Tests: crates/hydrus-gui/tests/gui/predicate_editors.rs:528 each_change_to_a_panel_makes_what_the_reference_s_makes"
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "crates/hydrus-gui/tests/gui/predicate_editors.rs each_change_in_the_window_makes_what_the_reference_s_makes and panels_set_in_several_ways_in_the_window_make_what_the_reference_s_make (every recorded change and scenario put to the real editor window through its field callbacks and \"ok\", result read from the page's search or the window's error), against oracle/fixtures/system_predicate_editors.json; the model tests stay as the fast check of Panel. Dates start at the real day, read as the recorded day."
    }
   },
   {
@@ -19114,9 +19109,9 @@
    ],
    "recheck": {
     "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Compares each preset button label and predicate text with the system_predicate_editors.json recording, but at Editor/Page model level; no test clicks these buttons in the window (the only button click driven is system:limit and others), so the window path stands unproven for this leaf. Tests: crates/hydrus-gui/tests/gui/predicate_editors.rs:140-144 each_editor_is_the_reference_s"
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "crates/hydrus-gui/tests/gui/predicate_editors.rs the_windows_ready_made_buttons_add_what_the_reference_s_do (opens the real editor window for every recorded page, compares the buttons shown with the recorded labels, clicks each and compares what lands in the search), against oracle/fixtures/system_predicate_editors.json; the model tests stay as the fast check of Panel. Dates start at the real day, read as the recorded day."
    }
   },
   {
@@ -19133,9 +19128,9 @@
    ],
    "recheck": {
     "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Compares each preset button label and predicate text with the system_predicate_editors.json recording, but at Editor/Page model level; no test clicks these buttons in the window (the only button click driven is system:limit and others), so the window path stands unproven for this leaf. Tests: crates/hydrus-gui/tests/gui/predicate_editors.rs:140-144 each_editor_is_the_reference_s"
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "crates/hydrus-gui/tests/gui/predicate_editors.rs the_windows_ready_made_buttons_add_what_the_reference_s_do (opens the real editor window for every recorded page, compares the buttons shown with the recorded labels, clicks each and compares what lands in the search), against oracle/fixtures/system_predicate_editors.json; the model tests stay as the fast check of Panel. Dates start at the real day, read as the recorded day."
    }
   },
   {
@@ -19900,9 +19895,9 @@
    ],
    "recheck": {
     "date": "2026-10-08",
-    "class": "wrong",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Stale note: the add button exists. But the test asserts a custom set named 'main_gui' is silently renamed 'main_gui (1)'; the reference EditShortcutSetPanel.GetValue raises VetoException 'That name is reserved--please pick another!' and keeps the dialog open (grep finds no such veto in the native code). Everything else (new shortcuts default, cancel, GetNonDupeName rename, save only on Options OK) matches the source. Tests: crates/hydrus-gui/tests/gui/options_shortcut_sets.rs:89 custom_sets_are_added_edited_renamed_deleted_and_saved_only_by_options_ok; crates/hydrus-gui-model/tests/model/shortcut_sets.rs:96"
+    "class": "source-restated",
+    "by": "fix session",
+    "note": "Expected values are restated from the Python source (veto string, importable-mime filter, _SwitchBoolean), not recorded. A custom set named after a built-in one is refused with the reference's 'That name is reserved--please pick another!' and the editor stays open (GetValue's VetoException); the window test drives add, the veto (also on rename), cancel and Options OK. Tests: crates/hydrus-gui/tests/gui/options_shortcut_sets.rs custom_sets_are_added_edited_renamed_deleted_and_saved_only_by_options_ok; crates/hydrus-gui-model/tests/model/shortcut_sets.rs"
    }
   },
   {
@@ -22851,9 +22846,7 @@
    "reference": null,
    "native": null,
    "notes": [
-    "Truth pass (2026-10-08): partial, small. Deleted ticks and all-known replay the reference; the caller flag matrix is missing. Missing: The selector's caller flags (only-importable, no-combined, local-only) are not modelled; import-options callers don't use the selector. Evidence: domains.rs:122, 206; search_domains.rs:149 replays oracle/fixtures/search_domains.json (tagged for sibling leaves)",
-    "Ordinary mode obeys AdvancedMode while autocomplete invokes the shared selector with advanced choices enabled to retain all-known/combined/deleted contexts.",
-    "Qt caller flags can restrict importable/local/combined domains independently; native ordinary/autocomplete entrypoints expose two modes rather than the complete flag matrix."
+    "Updated for #89 (2026-10-08): deleted ticks and all-known replay search_domains.json; the caller flags (importable, local-only, combined-local-only, no multiple, all-known) are modelled in domains::Flags and replayed against the real button in location_selector_flags.json. Only the importable and unrestricted flags have a GUI caller (the import options editor, tested through its window); the other flags are model-only (DIFFERENCES.md)."
    ]
   },
   {
@@ -23927,9 +23920,7 @@
    "reference": "hydrus/client/gui/importing/ClientGUIImportOptionsPanels.py:324",
    "native": "crates/hydrus-gui-model/src/import_options_editor.rs:53",
    "notes": [
-    "Truth pass (2026-10-08): partial, medium. Flags and a single destination write through; the rest and all tests are missing. Missing: Multi-destination selection (reference LocationSearchContextButton restricted to importable domains), the empty-destination warning, hiding URL checkboxes for non-downloader callers, the archive interlock, and any test. Evidence: import_options_window.rs:322-336, 456-470; import_options.slint:103-105, 349-359",
-    "Destination selection and automatic archive update the locations slice; only one native file-service destination is editable.",
-    "Missing clipboard/favourites and narrower native location/field widgets do not imply whole Qt editor parity."
+    "Updated for #89 (2026-10-08): the destination is the shared file domain button restricted to importable domains (several domains through the shared list, the empty-destination warning, URL boxes only for downloader callers, the archive interlock), proved against oracle/fixtures/location_selector_flags.json by import_locations.rs and import_options_panel.rs (every Options caller), with hydrus-import/tests/destinations.rs as the consumer. Remaining: the reference's popup menu is a drop-down plus label here (DIFFERENCES.md)."
    ]
   },
   {
@@ -24442,9 +24433,9 @@
    ],
    "recheck": {
     "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Model replay of recorded joiner states (delimiter, tuple size, summary, results) is good, but no GUI test edits a joiner's fields: sidecars.rs only adds a default joiner and applies it. The window's joiner/tuple-size wiring (string_processor_window.rs, string_processor.slint) is untested. Same single test is tagged on four step leaves. Tests: crates/hydrus-gui-model/tests/model/string_processor_editor.rs:210 the_string_processor_editor_works_as_the_references_does (joiner step states)"
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "gui/string_processor_window.rs sets a joiner step window's delimiter and tuple size as the recording did and compares the shown summary, texts, results and invalid flag with string_processor_editor.json."
    }
   },
   {
@@ -24462,9 +24453,9 @@
    ],
    "recheck": {
     "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Model replay of recorded slicer states exists, but no GUI test opens or edits a slicer step at all, so the window's single/range select and bound fields are untested. Tests: crates/hydrus-gui-model/tests/model/string_processor_editor.rs:210 the_string_processor_editor_works_as_the_references_does (slicer step states)"
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "gui/string_processor_window.rs sets a slicer step window's single/range choice and bounds as the recording did and compares the shown summary, texts and results with string_processor_editor.json."
    }
   },
   {
@@ -24483,8 +24474,8 @@
    "recheck": {
     "date": "2026-10-08",
     "class": "sound",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Recorded sorter states (type, asc, regex, results) replayed through SorterEditor; the GUI test opens the sorter step from the real processor window, flips to descending and checks the sorted tab and the saved step. Sort type and regex fields are not driven through the window. Tests: crates/hydrus-gui-model/tests/model/string_processor_editor.rs:210 the_string_processor_editor_works_as_the_references_does (sorter states); crates/hydrus-gui/tests/gui/sidecars.rs:439 a_routers_processing_is_edited_in_the_string_processor_editor"
+    "by": "phase 2 session",
+    "note": "gui/string_processor_window.rs sets a sorter step window's type, direction and regex as the recording did and compares the shown texts and results with string_processor_editor.json; the model replay stays as the fast check."
    }
   },
   {
@@ -24503,8 +24494,8 @@
    "recheck": {
     "date": "2026-10-08",
     "class": "sound",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Recorded splitter states (separator, max_splits, results, invalid escapes) replayed through SplitterEditor; the GUI test adds a splitter via the real window, checks its example/results, the 'Sorry, you have to have a value in the separator field!' veto and the resulting step row. The max_splits field is not driven through the window. Tests: crates/hydrus-gui-model/tests/model/string_processor_editor.rs:210 the_string_processor_editor_works_as_the_references_does (splitter states); crates/hydrus-gui/tests/gui/sidecars.rs:439 a_routers_processing_is_edited_in_the_string_processor_editor"
+    "by": "phase 2 session",
+    "note": "gui/string_processor_window.rs sets a splitter step window's separator and max splits as the recording did and compares the shown example, results and invalid flag, and the separator veto, with string_processor_editor.json."
    }
   },
   {

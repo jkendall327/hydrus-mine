@@ -1855,7 +1855,7 @@ fn json_object_names_use_staged_text_children_and_saved_router_worker() {
 
 // leaf: audit-shared-sidecar-export
 #[test]
-fn the_router_list_exports_its_selected_routers_duplicates_and_reads_its_own_export_back() {
+fn the_router_list_exports_its_selected_routers_and_duplicates_them() {
     use hydrus_downloader_exchange::routers as exchange;
     use hydrus_gui::{Clip, sidecars_window};
     use hydrus_gui_model::sidecar_editors::Context;
@@ -1936,4 +1936,9 @@ fn the_router_list_exports_its_selected_routers_duplicates_and_reads_its_own_exp
         rows.row_data(0).unwrap().cells.row_data(0),
         rows.row_data(n).unwrap().cells.row_data(0)
     );
+    // the original stays selected and the copy joins it; nothing else is
+    let selected: Vec<usize> = (0..rows.row_count())
+        .filter(|i| rows.row_data(*i).unwrap().selected)
+        .collect();
+    assert_eq!(selected, [0, n]);
 }

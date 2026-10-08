@@ -340,12 +340,39 @@ prefetch (with its rule that the two checks can't both be dispositive),
 file filtering's allowed filetypes (ticked in the reference's tree of
 filetypes by group, a group's box ticking all of its) and its switches
 and size and resolution limits, tag
-filtering's blacklist and whitelist, locations' destination and
+filtering's blacklist and whitelist, locations' destinations and
 switches, tags (per tag service: getting tags, additional tags, and the
 cog menu's switches; a warning if it gets no tags) and notes are edited
 there. "apply" gives the dialog the
 importer's options. As `oracle/record_import_options_editor.py` recorded
 the reference's.
+
+The locations page's "destination file service(s)" and the presentation
+page's location are the reference's file domain button
+(`LocationSearchContextButton`) under the flags its callers set
+(`hydrus-gui-model/src/domains.rs` `Flags`; recorded in
+`oracle/record_location_selector_flags.py`): the destination offers only the
+domains files can be imported to (the local file domains) and
+"multiple/deleted locations"; the presentation location offers everything,
+including all known files, and in advanced mode "deleted from" boxes. Choosing
+several domains opens the shared "edit multiple location" list; while it is
+open the editor can't be applied; none ticked shows "THIS WILL NOT IMPORT
+ANYWHERE!" and an importer with no destination halts. A caller that isn't a
+downloader (a local import, an import folder, the Client API) doesn't show
+the URL checkboxes; the "even for 'already in db' files" box needs
+auto-archive. The presentation page's status ("all files", "new files", "do
+not show anything"), its inbox choices ("or in inbox" only for new files, and
+becoming "inbox or archive" when the status leaves "new files") and the
+greying of the inbox and location for "do not show anything" are the
+reference panel's. "Show files" on an importer filters by the location: files
+current in a current domain or deleted from a deleted one, and all known files
+doesn't filter.
+
+Each tag service's box has one "N additional tags" button (thousands
+separated, as the reference words it: "1 additional tags"), which opens the
+tag entry dialog on the service's tags with the reference's message; accepting
+replaces the tags, cancelling keeps them. The whitelist dialog says what the
+reference's does. As `oracle/record_additional_tags_button.py` recorded.
 
 The tag filtering blacklist and each tag service's "get tags" filter
 are buttons saying what the filter does ("blacklisting on goblin, orc",
@@ -800,8 +827,8 @@ An import folder's dialog lists the tag services it tags files for by
 their paths, with "edit" and "delete" for each and "add" for another
 (refused, with the reference's warning, for one it has). "add" and
 "edit" open that dialog's boxes on one service's options alone ("edit
-filename tagging options"), with an example path from the folder and
-the tags it would get.
+filename tagging options"), with an example path from the folder (the first of its first 25 entries that
+is a file of an importable type, by content) and the tags it would get.
 
 A gallery downloader page is the reference's too. Its "gallery
 downloader" box says how its searches stand ("2 queries - 4/6", and
@@ -1912,7 +1939,8 @@ Service review now opens a native Client API access-key list with the reference
 columns, extended selection, sorting, add/edit/duplicate/delete, copy-key and
 local base-URL opening, and "add from api request": a window waits for a tool
 to ask for access (refused with the reference's words if the service isn't
-running), and the first request opens the permissions editor with what the
+running; registration stays open only while the window does, as a short lease
+its timer renews), and the first request opens the permissions editor with what the
 tool asked for and the key it was given. Permission editors expose all 14 basic permissions,
 full access, the reusable permitted-search-tags filter and explicit key rotation
 with validation/collision refusal. List and nested edits remain detached until
@@ -3011,8 +3039,7 @@ retains only the latest queued target. A held obsolete decode therefore permits
 one successor to display; idle workers retain no Store, and close discards queued
 work and retires running replies. Actual Qt Options, manager and CanvasPanel transitions are
 recorded in `preview_viewing_intervals.json`; native model/display/store regressions
-are authored for hosted CI. Preview playback, audio, zoom and hover/rating controls
-remain Partial.
+are authored for hosted CI. Preview zoom and hover/rating controls remain Partial.
 
 Search-page autocomplete now shares results, favourites and children tabs in
 both its embedded and floating layouts. Favourites show the full saved list;
@@ -3904,7 +3931,9 @@ client lacks is restored after saying so, one it has asks "Are you certain you
 want to restore the defaults for "…"? Any custom shortcuts you have set will be
 wiped." "custom user sets" explains that they are advanced, and adds ("new
 shortcuts"), edits, renames and deletes ("Remove all selected?") custom sets;
-names are made unique as "name (1)", "name (2)". A "help" button shows the
+names are made unique as "name (1)", "name (2)", and a custom set cannot take a
+built-in set's name ("That name is reserved--please pick another!", and the
+editor stays open). A "help" button shows the
 reference's help. A new client starts with the reference's eleven default sets
 (107 shortcuts); a command with data (a seek's distance, a thumbnail focus
 move) is listed with the reference's text.
@@ -4709,7 +4738,9 @@ mode" (the maintenance daemons starting a pass), "file import report mode"
 caught as shortcuts), "idle report mode" (why the client is not idle: not
 on for 120s, normal idle work disabled, last user, mouse or Client API
 action, or forced from the debug menu), "network report mode" and its
-"(silent)" twin (redirects and errors; silent goes to the console only),
+"(silent)" twin (redirects and errors; silent goes to the console only; the
+two entries share the one mode, as the reference's do: silent turns it on and
+sets silent, the plain entry flips it and clears silent),
 "shortcut report mode" (what a shortcut matched, or that it matched
 nothing), "similar files metadata generation report mode" (each stage of
 making a perceptual hash), "subprocess report mode" (each external
@@ -5110,3 +5141,27 @@ when the viewer moves on is dropped, so it can never be answered for the wrong f
 Proven by replays of `oracle/fixtures/manage_tags_cog.json` (`manage_tags_cog.rs`),
 `manage_tags_viewer.json` (`manage_tags_viewer.rs`, through real key events and the
 viewer's own navigation) and `manage_tags_keys.json` (the empty-input conditions).
+
+### Preview sound
+
+The preview pane plays the file it shows, as the reference's preview canvas
+does: a video, audio file or animation whose kind the view options show in
+mpv (`preview_show_action`, mpv by default for video, audio and GIF/APNG) and
+that does not start behind an embed button plays in the media viewer's
+player, from the start, looping, and starts paused if the view says so. A
+still, or a kind shown some other way, plays nothing, and moving on stops it.
+It plays at the volume and mute the reference picks (`ClientGUIMediaVolume`):
+the preview's own volume (`preview_audio_volume`, imported from a v688
+install with `preview_audio_mute`) if **File > Options > audio > The preview
+window has its own volume** is on (it is, by default), else the global
+volume; it is muted if either its own mute or the global mute is on. ctrl+g,
+the Options window and the control all take effect on the playing file.
+
+A file with sound has the reference's volume control at the bottom right of
+the preview: the global mute button, and with the pointer on it the volume
+slider (moving the preview's own volume or the global one, whichever applies)
+and the preview's own mute button. `oracle/record_preview_audio.py` records
+the reference's choice of volume and mute for every combination of the
+option, the three volumes and the three mutes, what the real preview control
+moves and flips, and the kinds the preview plays; they are replayed in
+`tests/model/preview_audio.rs` and `tests/gui/preview_audio.rs`.

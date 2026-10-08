@@ -2291,16 +2291,15 @@ fn retry_after_seconds(value: &str) -> Option<u64> {
     if let Some(seconds) = hydrus_core::numbers::py_int(value) {
         return u64::try_from(seconds).ok();
     }
-    let when = httpdate::parse_http_date(value.trim()).ok()?;
-    let when = when.duration_since(UNIX_EPOCH).ok()?.as_secs() as i64;
+    // (`ClientTime.ParseDate`, which a reference without dateparser does with dateutil)
+    let when = hydrus_core::url::parse_timestamp(value).ok()?;
     Some((when - now()).clamp(60, 86400) as u64)
 }
 
-/// A `Last-Modified` time, if it parses and is not absurdly early.
+/// A `Last-Modified` time, if it parses and is not absurdly early (as a
+/// reference without dateparser reads it).
 fn parse_last_modified(value: &str) -> Option<i64> {
-    let when = httpdate::parse_http_date(value.trim()).ok()?;
-    let when = when.duration_since(UNIX_EPOCH).ok()?.as_secs() as i64;
-    (when > 86400 * 7).then_some(when)
+    hydrus_core::url::parse_last_modified(value)
 }
 
 #[cfg(test)]

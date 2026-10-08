@@ -16,6 +16,23 @@ pub const IMPORT_LABELS: [&str; 3] = [
 ];
 pub const PROBLEM_TITLE: &str = "Problem loading!";
 
+/// The png picker's title (`_ImportFromPNG`).
+pub const PNG_PICKER_TITLE: &str = "select the png or pngs with the encoded data";
+
+/// The title and message for an import that could not be read: from a file
+/// (`_ImportJSONs`, `_ImportPNGs`: "Problem importing!") or from the
+/// clipboard (`_ImportFromClipboard`).
+pub fn import_failure(from_file: bool, error: &str) -> (&'static str, String) {
+    if from_file {
+        ("Problem importing!", error.to_owned())
+    } else {
+        (
+            PROBLEM_TITLE,
+            format!("I could not understand what was in the clipboard: {error}"),
+        )
+    }
+}
+
 /// The key hydrus-rs exports rules under.
 const NATIVE_KEY: &str = "hydrus_rs_duplicates_auto_resolution_rules";
 
@@ -111,7 +128,7 @@ pub fn import_comparators_text(
 }
 
 /// The serialised types of the reference's pair comparators.
-const COMPARATOR_TYPES: [u16; 7] = [130, 131, 137, 138, 140, 141, 152];
+pub const COMPARATOR_TYPES: [u16; 7] = [130, 131, 137, 138, 140, 141, 152];
 
 fn take_comparators(
     object: &hydrus_legacy::serialisable::SerialisableObject,

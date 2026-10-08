@@ -1,0 +1,130 @@
+{
+ "dialogs": [
+  {
+   "additional_tags": [
+    "zebra",
+    "apple",
+    "series:thing"
+   ],
+   "case": "accept with tags",
+   "dialog": {
+    "display_type": 0,
+    "message": "Any tags you enter here will be applied to every file that passes through this import context.",
+    "service": "my tags",
+    "tags": [
+     "start tag"
+    ]
+   },
+   "label": "3 additional tags"
+  },
+  {
+   "additional_tags": [],
+   "case": "accept with none",
+   "dialog": {
+    "display_type": 0,
+    "message": "Any tags you enter here will be applied to every file that passes through this import context.",
+    "service": "my tags",
+    "tags": [
+     "start tag"
+    ]
+   },
+   "label": "0 additional tags"
+  },
+  {
+   "additional_tags": [
+    "start tag"
+   ],
+   "case": "cancel",
+   "dialog": {
+    "display_type": 0,
+    "message": "Any tags you enter here will be applied to every file that passes through this import context.",
+    "service": "my tags",
+    "tags": [
+     "start tag"
+    ]
+   },
+   "label": "1 additional tags"
+  }
+ ],
+ "labels": [
+  {
+   "count": 0,
+   "label": "0 additional tags"
+  },
+  {
+   "count": 1,
+   "label": "1 additional tags"
+  },
+  {
+   "count": 2,
+   "label": "2 additional tags"
+  },
+  {
+   "count": 1234,
+   "label": "1,234 additional tags"
+  }
+ ],
+ "menu": {
+  "downloader": [
+   {
+    "checked": true,
+    "title": "apply tags to new files"
+   },
+   {
+    "checked": true,
+    "title": "apply tags to files already in inbox"
+   },
+   {
+    "checked": true,
+    "title": "apply tags to files already in archive"
+   },
+   "separator",
+   {
+    "checked": false,
+    "title": "parsed tags overwrite previously deleted tags"
+   },
+   {
+    "checked": false,
+    "title": "additional tags overwrite previously deleted tags"
+   },
+   "separator",
+   {
+    "checked": false,
+    "title": "only add tags that already exist"
+   },
+   {
+    "checked": null,
+    "title": "set a filter for already-exist test"
+   }
+  ],
+  "flipped_overwrite": true,
+  "not downloader": [
+   {
+    "checked": true,
+    "title": "apply tags to new files"
+   },
+   {
+    "checked": true,
+    "title": "apply tags to files already in inbox"
+   },
+   {
+    "checked": true,
+    "title": "apply tags to files already in archive"
+   },
+   "separator",
+   {
+    "checked": false,
+    "title": "additional tags overwrite previously deleted tags"
+   },
+   "separator",
+   {
+    "checked": false,
+    "title": "only add tags that already exist"
+   },
+   {
+    "checked": null,
+    "title": "set a filter for already-exist test"
+   }
+  ]
+ }
+}
