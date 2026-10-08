@@ -53,7 +53,6 @@ fn entries(recorded: &Json) -> Vec<String> {
 // A button's menu and its "multiple/deleted locations" list for every flag
 // combination its callers use, through the function the editor's buttons
 // draw their menus with.
-// leaf: audit-shared-location-deleted
 #[test]
 fn the_buttons_menu_and_list_follow_their_callers_flags_as_the_reference_does() {
     let (_dirs, store) = crate::subscriptions::store();

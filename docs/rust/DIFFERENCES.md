@@ -925,10 +925,10 @@ deleted sidecars by `crates/hydrus-download/tests/local_import.rs`.
   part from the clock as dateutil does; and relative expressions (`now`,
   `yesterday`, `2d ago`, `a day ago`, `two hours ago`, `1 year, 2 months ago`,
   `in 3 weeks`, `last week`, `yesterday at 5pm`) with dateparser's month and
-  year arithmetic. A corpus of 222 forms recorded from the reference
+  year arithmetic. A corpus of 247 forms recorded from the reference
   (`oracle/record_dateparser_corpus.py`: relative forms with dateparser,
-  the rest with it disabled) all match except dateutil's odd readings of four
-  non-dates (`010203`, `-1`, `120`, `1 2 3`). The other callers of the
+  the rest with it disabled) all match, dateutil's odd readings of digit-only strings
+  included (`010203`, `-1`, `120`, `1 2 3`). The other callers of the
   conversion follow a dateparser-less install too: a `Retry-After` date is read
   by it (between a minute and a day), and `Last-Modified` is read only in the
   fixed `Thu, 20 May 2010 07:00:23 GMT` form (taken as local time, as the
@@ -1004,6 +1004,9 @@ deleted sidecars by `crates/hydrus-download/tests/local_import.rs`.
   typed lines, and note renames use "parser name -> saved name" rather than the
   reference's two-column list.
   The tags page's "set a filter for already-exist test" isn't there.
+  The shared location button's flags for local-only, combined-local-only and
+  no-multiple choices exist in the model and are replayed against the
+  reference's button, but no window uses them yet.
   The destination and presentation location buttons are drop-downs of the
   reference's menu, its "multiple/deleted locations" row opening the list
   window, with a label beside them saying what is chosen (the reference has

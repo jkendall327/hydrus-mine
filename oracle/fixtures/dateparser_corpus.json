@@ -374,6 +374,181 @@
    "error": false
   },
   {
+   "group": "numeric",
+   "text": "1",
+   "mode": "dateutil",
+   "result": "1790812800",
+   "error": false
+  },
+  {
+   "group": "numeric",
+   "text": "12",
+   "mode": "dateutil",
+   "result": "1791763200",
+   "error": false
+  },
+  {
+   "group": "numeric",
+   "text": "31",
+   "mode": "dateutil",
+   "result": "1793404800",
+   "error": false
+  },
+  {
+   "group": "numeric",
+   "text": "32",
+   "mode": "dateutil",
+   "result": "1980460800",
+   "error": false
+  },
+  {
+   "group": "numeric",
+   "text": "99",
+   "mode": "dateutil",
+   "result": "938995200",
+   "error": false
+  },
+  {
+   "group": "numeric",
+   "text": "100",
+   "mode": "dateutil",
+   "result": "-58987612800",
+   "error": false
+  },
+  {
+   "group": "numeric",
+   "text": "1234",
+   "mode": "dateutil",
+   "result": "-23202028800",
+   "error": false
+  },
+  {
+   "group": "numeric",
+   "text": "12345",
+   "mode": "dateutil",
+   "result": "ERROR: Could not apply \"datestring to timestamp: automatic\" to string \"12345\": Sorry, could not parse that date!",
+   "error": true
+  },
+  {
+   "group": "numeric",
+   "text": "123456",
+   "mode": "dateutil",
+   "result": "ERROR: Could not apply \"datestring to timestamp: automatic\" to string \"123456\": Sorry, could not parse that date!",
+   "error": true
+  },
+  {
+   "group": "numeric",
+   "text": "991231",
+   "mode": "dateutil",
+   "result": "946598400",
+   "error": false
+  },
+  {
+   "group": "numeric",
+   "text": "011203",
+   "mode": "dateutil",
+   "result": "1042329600",
+   "error": false
+  },
+  {
+   "group": "numeric",
+   "text": "1 2",
+   "mode": "dateutil",
+   "result": "1767312000",
+   "error": false
+  },
+  {
+   "group": "numeric",
+   "text": "12 13 14",
+   "mode": "dateutil",
+   "result": "1418428800",
+   "error": false
+  },
+  {
+   "group": "numeric",
+   "text": "1 2 3 4",
+   "mode": "dateutil",
+   "result": "ERROR: Could not apply \"datestring to timestamp: automatic\" to string \"1 2 3 4\": Sorry, could not parse that date!",
+   "error": true
+  },
+  {
+   "group": "numeric",
+   "text": "-12",
+   "mode": "dateutil",
+   "result": "1791763200",
+   "error": false
+  },
+  {
+   "group": "numeric",
+   "text": "-123",
+   "mode": "dateutil",
+   "result": "-58261852800",
+   "error": false
+  },
+  {
+   "group": "numeric",
+   "text": "-2024",
+   "mode": "dateutil",
+   "result": "1728000000",
+   "error": false
+  },
+  {
+   "group": "numeric",
+   "text": "5-6",
+   "mode": "dateutil",
+   "result": "1778025600",
+   "error": false
+  },
+  {
+   "group": "numeric",
+   "text": "1/2",
+   "mode": "dateutil",
+   "result": "1767312000",
+   "error": false
+  },
+  {
+   "group": "numeric",
+   "text": "31 12 99",
+   "mode": "dateutil",
+   "result": "946598400",
+   "error": false
+  },
+  {
+   "group": "numeric",
+   "text": "1 13 3",
+   "mode": "dateutil",
+   "result": "1042416000",
+   "error": false
+  },
+  {
+   "group": "numeric",
+   "text": "1 99 1",
+   "mode": "dateutil",
+   "result": "ERROR: Could not apply \"datestring to timestamp: automatic\" to string \"1 99 1\": Sorry, could not parse that date!",
+   "error": true
+  },
+  {
+   "group": "numeric",
+   "text": "2 30 3",
+   "mode": "dateutil",
+   "result": "ERROR: Could not apply \"datestring to timestamp: automatic\" to string \"2 30 3\": Sorry, could not parse that date!",
+   "error": true
+  },
+  {
+   "group": "numeric",
+   "text": "0",
+   "mode": "dateutil",
+   "result": "ERROR: Could not apply \"datestring to timestamp: automatic\" to string \"0\": Sorry, could not parse that date!",
+   "error": true
+  },
+  {
+   "group": "numeric",
+   "text": "000",
+   "mode": "dateutil",
+   "result": "ERROR: Could not apply \"datestring to timestamp: automatic\" to string \"000\": Sorry, could not parse that date!",
+   "error": true
+  },
+  {
    "group": "month_names",
    "text": "4 March 2020",
    "mode": "dateutil",

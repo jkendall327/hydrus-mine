@@ -442,49 +442,87 @@ fn take_date(tokens: &[Token], now: &DateTime) -> Result<Option<Date>, ()> {
         let day = day.min(i64::from(first.days_in_month()));
         return make(year, month, day).map(Some);
     }
-    // numbers with separators, or a run of digits
-    let numbers: Vec<i64> = tokens.iter().filter_map(|t| value(t)).collect();
-    let widths: Vec<usize> = tokens.iter().filter_map(|t| digits(t)).collect();
-    let separators = tokens.iter().filter(|t| matches!(t, Token::Sym(_))).count();
+    // numbers: a run of digits, or two or three separated by -, / or . or space
+    let mut tokens = tokens;
+    // (a leading "-" is skipped, as dateutil skips it)
+    if matches!(tokens.as_slice(), [Token::Sym('-'), Token::Num(_)]) {
+        tokens.remove(0);
+    }
     if tokens.iter().any(|t| matches!(t, Token::Word(_))) {
         return Err(());
     }
-    if let (&[run], 0) = (widths.as_slice(), separators) {
-        return match run {
-            8 => {
-                let n = numbers[0];
-                make(n / 10_000, n / 100 % 100, n % 100).map(Some)
+    if !tokens.iter().all(|t| match t {
+        Token::Sym(c) => matches!(c, '-' | '/' | '.'),
+        _ => true,
+    }) {
+        return Err(());
+    }
+    let mut numbers: Vec<i64> = tokens.iter().filter_map(|t| value(t)).collect();
+    let mut widths: Vec<usize> = tokens.iter().filter_map(|t| digits(t)).collect();
+    let separators = tokens.len() - numbers.len();
+    if let &[n] = numbers.as_slice()
+        && separators == 0
+    {
+        let width = widths[0];
+        return match width {
+            1 | 2 if (1..=31).contains(&n) => {
+                make(i64::from(now.year()), i64::from(now.month()), n).map(Some)
             }
-            4 => make(numbers[0], i64::from(now.month()), i64::from(now.day())).map(Some),
+            1 | 2 if n > 31 => make(
+                i64::from(year_of(n, 2, now.year()).ok_or(())?),
+                i64::from(now.month()),
+                i64::from(now.day()),
+            )
+            .map(Some),
+            3 | 4 if n > 0 => make(n, i64::from(now.month()), i64::from(now.day())).map(Some),
+            // YYMMDD reads as three two-digit numbers
+            6 => {
+                numbers = vec![n / 10_000, n / 100 % 100, n % 100];
+                widths = vec![2, 2, 2];
+                ymd(&numbers, &widths, now, &make)
+            }
+            8 => make(n / 10_000, n / 100 % 100, n % 100).map(Some),
             _ => Err(()),
         };
     }
-    if separators != widths.len().saturating_sub(1)
-        || !tokens.iter().all(|t| match t {
-            Token::Sym(c) => matches!(c, '-' | '/' | '.'),
-            _ => true,
-        })
-    {
+    if separators != 0 && separators != widths.len().saturating_sub(1) {
         return Err(());
     }
-    match (numbers.as_slice(), widths.as_slice()) {
-        // year first: 2024-02-29, 2024/02/29, 2024-02
-        ([y, m, d], [4, 1..=2, 1..=2]) => make(*y, *m, *d).map(Some),
-        ([y, m], [4, 1..=2]) => {
-            let first = make(*y, *m, 1)?;
-            make(
-                *y,
-                *m,
-                i64::from(now.day()).min(i64::from(first.days_in_month())),
-            )
-            .map(Some)
+    ymd(&numbers, &widths, now, &make)
+}
+
+/// Two or three numbers as a date, by dateutil's rules without a month name:
+/// a first number over 31 (or four digits) is the year, over 12 the day.
+fn ymd(
+    numbers: &[i64],
+    widths: &[usize],
+    now: &DateTime,
+    make: &dyn Fn(i64, i64, i64) -> Result<Date, ()>,
+) -> Result<Option<Date>, ()> {
+    let year = |n: i64, width: usize| -> Result<i64, ()> {
+        Ok(i64::from(year_of(n, width, now.year()).ok_or(())?))
+    };
+    let clamp_day = |y: i64, m: i64| -> Result<i64, ()> {
+        let first = make(y, m, 1)?;
+        Ok(i64::from(now.day()).min(i64::from(first.days_in_month())))
+    };
+    match (numbers, widths) {
+        ([a, b, c], [wa, 1..=2, wc]) if matches!(wc, 1 | 2 | 4) && matches!(wa, 1 | 2 | 4) => {
+            if *wa == 4 || *a > 31 {
+                make(year(*a, *wa)?, *b, *c).map(Some)
+            } else if *a > 12 {
+                make(year(*c, *wc)?, *b, *a).map(Some)
+            } else {
+                make(year(*c, *wc)?, *a, *b).map(Some)
+            }
         }
-        // month first, or day first when that is the only valid reading
-        ([a, b, c], [1..=2, 1..=2, w @ (1 | 2 | 4)]) => {
-            let year = i64::from(year_of(*c, *w, now.year()).ok_or(())?);
-            make(year, *a, *b)
-                .or_else(|()| make(year, *b, *a))
-                .map(Some)
+        ([a, b], [wa, 1..=2]) => {
+            if *wa == 4 || *a > 31 {
+                let y = year(*a, *wa)?;
+                make(y, *b, clamp_day(y, *b)?).map(Some)
+            } else {
+                make(i64::from(now.year()), *a, *b).map(Some)
+            }
         }
         _ => Err(()),
     }

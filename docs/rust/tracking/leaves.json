@@ -4206,9 +4206,7 @@
    "reference": "hydrus/client/gui/ClientGUIStringPanels.py:675",
    "native": null,
    "notes": [
-    "Truth pass (2026-10-08): partial, large. Record a corpus of common forms, prove those, document the rest as a difference. Missing: No recording of the reference's dateparser outputs; the multilingual/fuzzy grammar is not ported (full parity impractical). Evidence: hydrus-core/src/url/string_dates.rs:~260-340; DIFFERENCES.md ~885",
-    "Execute and preview common ISO/English dates, numeric US dates, RFC dates with offsets and relative English second-through-year expressions, now/today/yesterday/tomorrow. Preserve reference code14/null interchange.",
-    "Full dateparser multilingual/fuzzy grammar is not implemented. This entry remains partial and is not counted as completed."
+    "Updated for #89 (2026-10-08, owner decision): the easy conversion matches a dateparser-less reference (dateutil) plus dateparser's English relative dates, replayed against oracle/fixtures/dateparser_corpus.json (247 forms, none unmatched) in string_dates.rs and through the conversion editor's preview in dateparser_preview.rs. Non-English, fuzzy and Unix-timestamp text is not parsed, as without dateparser (DIFFERENCES.md)."
    ]
   },
   {
@@ -5331,9 +5329,7 @@
    "reference": "hydrus/client/gui/importing/ClientGUIImportOptionsPanels.py:988",
    "native": null,
    "notes": [
-    "Truth pass (2026-10-08): partial, small. Wired and the child tested; needs a parent-driven test and the child's menus. Missing: No parent-driven test of the 'N additional tags' button, label and overwrite check; child lacks multi-select/maintenance menus. The leaf's 'parse threshold' is a stale label (no such reference control). Evidence: import_options_window.rs:362-367, 818-845, 884, 987; child tested in write_autocomplete.rs:180",
-    "Per-service import additional tags open a detached write-tag child using that service; whitelist uses all known tags. Typed entry toggles, paste only adds, duplicate pastes retain existing tags. Accepted lists update only the captured parent draft field; cancelling child or owner discards edits, native child close unlocks parent, pending child blocks parent Apply. Shared favourites/children tabs now use the configured count service for favourites decorators and descendant/display-count ordering for children; selected tags are excluded and applied limit/show-all feeds existing inputs. Shared right-click native menus now copy raw tags/subtags/underscores/counts/parents/all rows, toggle per-widget/per-tab decorations, manage favourites and per-service most-used with exact removal questions and reread concurrent writes, and launch raw child predicates through a weak main-window hook. Pending menus block owner editing/Apply and owner close invalidates questions/callbacks. Menus now query all real service display graphs for grouped siblings/ideal/parent/child entries and open owned relationship editors seeded on every service tab; owner close cancels child. Relationship dialogs consume configured default/remember preferences and preserve staged cancellation separately from immediate service memory. Per-widget file/tag-domain buttons now have checked menus and exact all-known interlocks, preserve independent service drafts, feed real query/count/decorator/children consumers and use an owned staged multiple/deleted selector; cancelling does not write options or damage input domains.",
-    "Maintenance/admin actions and multiple-tag selection menus remain outstanding. Native tab dropdown/layout differs from Qt; multiple/deleted selector exposes existing native advanced domain ticks to preserve combined-domain choices. Existing parent leaf remains partial."
+    "Updated for #89 (2026-10-08): the editor has the reference's single 'N additional tags' button, its dialog message and accept/cancel, and the overwrite check, driven from the editor and replayed against oracle/fixtures/additional_tags_button.json (import_additional_tags.rs). The 'parse threshold' in the label is stale (no such reference control). Remaining: the tag entry dialog lacks multiple-selection and maintenance right-click menus (DIFFERENCES.md); the cog menu is check boxes."
    ]
   },
   {
@@ -5403,8 +5399,7 @@
    "reference": "hydrus/client/gui/importing/ClientGUIImportOptionsPanels.py:838",
    "native": "crates/hydrus-gui/src/import_options_window.rs:210",
    "notes": [
-    "Truth pass (2026-10-08): partial, small. Status/inbox gates work and are tested; location needs the shared selector. Missing: Presentation location is a 2-item combo, not the shared location selector (multiple/deleted contexts); no recording replay. Evidence: import_options_window.rs:44-48, 209-233, 396-406; test import_options_fields.rs:237 (untagged, no recording)",
-    "Supported presentation status/inbox/location fields return to the owner; not all Qt locations can be authored."
+    "Updated for #89 (2026-10-08): the presentation location is the unrestricted shared selector (menu, list with deleted-from boxes in advanced mode) and the status/inbox choices and greying replay oracle/fixtures/location_selector_flags.json; 'show files' filters by current and deleted domains (queues.rs). Remaining: the kinds-list summary names no domain for other locations (DIFFERENCES.md)."
    ]
   },
   {
@@ -22851,9 +22846,7 @@
    "reference": null,
    "native": null,
    "notes": [
-    "Truth pass (2026-10-08): partial, small. Deleted ticks and all-known replay the reference; the caller flag matrix is missing. Missing: The selector's caller flags (only-importable, no-combined, local-only) are not modelled; import-options callers don't use the selector. Evidence: domains.rs:122, 206; search_domains.rs:149 replays oracle/fixtures/search_domains.json (tagged for sibling leaves)",
-    "Ordinary mode obeys AdvancedMode while autocomplete invokes the shared selector with advanced choices enabled to retain all-known/combined/deleted contexts.",
-    "Qt caller flags can restrict importable/local/combined domains independently; native ordinary/autocomplete entrypoints expose two modes rather than the complete flag matrix."
+    "Updated for #89 (2026-10-08): deleted ticks and all-known replay search_domains.json; the caller flags (importable, local-only, combined-local-only, no multiple, all-known) are modelled in domains::Flags and replayed against the real button in location_selector_flags.json. Only the importable and unrestricted flags have a GUI caller (the import options editor, tested through its window); the other flags are model-only (DIFFERENCES.md)."
    ]
   },
   {
@@ -23927,9 +23920,7 @@
    "reference": "hydrus/client/gui/importing/ClientGUIImportOptionsPanels.py:324",
    "native": "crates/hydrus-gui-model/src/import_options_editor.rs:53",
    "notes": [
-    "Truth pass (2026-10-08): partial, medium. Flags and a single destination write through; the rest and all tests are missing. Missing: Multi-destination selection (reference LocationSearchContextButton restricted to importable domains), the empty-destination warning, hiding URL checkboxes for non-downloader callers, the archive interlock, and any test. Evidence: import_options_window.rs:322-336, 456-470; import_options.slint:103-105, 349-359",
-    "Destination selection and automatic archive update the locations slice; only one native file-service destination is editable.",
-    "Missing clipboard/favourites and narrower native location/field widgets do not imply whole Qt editor parity."
+    "Updated for #89 (2026-10-08): the destination is the shared file domain button restricted to importable domains (several domains through the shared list, the empty-destination warning, URL boxes only for downloader callers, the archive interlock), proved against oracle/fixtures/location_selector_flags.json by import_locations.rs and import_options_panel.rs (every Options caller), with hydrus-import/tests/destinations.rs as the consumer. Remaining: the reference's popup menu is a drop-down plus label here (DIFFERENCES.md)."
    ]
   },
   {

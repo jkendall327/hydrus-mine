@@ -358,11 +358,6 @@ mod tests {
         }
     }
 
-    /// The forms the port doesn't read as the reference does: dateutil's odd
-    /// readings of strings that aren't dates (see DIFFERENCES.md). Anything
-    /// else in the corpus must match.
-    const KNOWN_GAPS: &[&str] = &["010203", "-1", "1 2 3", "120"];
-
     // leaf: audit-network-conversion-dateparser
     #[test]
     fn the_easy_parser_matches_the_recorded_dateparser_corpus() {
@@ -384,7 +379,7 @@ mod tests {
                 gaps.push(text.to_owned());
             }
         }
-        assert_eq!(gaps, KNOWN_GAPS, "the corpus' failures");
+        assert!(gaps.is_empty(), "the corpus' failures: {gaps:?}");
     }
 
     /// `Last-Modified` as the reference reads it without dateparser (the
