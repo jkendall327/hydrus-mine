@@ -278,21 +278,45 @@ impl State {
     }
 }
 
-/// The file whose path the clipboard holds: its pixel and perceptual
-/// hashes, as the reference's "Paste image!" takes them.
+/// What the reference's "Paste image!" takes (`_Paste`): the clipboard's
+/// bitmap if it holds one, else the first file path it holds, else its text
+/// as a path; the pixel and perceptual hashes of that image.
 fn pasted_hashes(
     store: &Arc<Store>,
 ) -> Result<(hydrus_core::Sha256, Vec<hydrus_core::PerceptualHash>), String> {
-    let text = arboard::Clipboard::new()
-        .and_then(|mut c| c.get_text())
-        .map_err(|_| "Did not see an image bitmap or a file path in the clipboard!".to_owned())?;
-    let path = std::path::PathBuf::from(text.trim());
+    let tools = hydrus_import::FileImporter::new(store.clone(), hydrus_media::MediaTools::new());
+    if let Some(image) = crate::clipboard_image() {
+        // (the same hashes as a file of those pixels has: write it as one)
+        let dir = tempfile::tempdir().map_err(|e| format!("Sorry, seemed to be a problem: {e}"))?;
+        let path = dir.path().join("pasted.png");
+        write_png(&path, &image).map_err(|e| format!("Sorry, seemed to be a problem: {e}"))?;
+        return tools.tools().similar_search_hashes(&path);
+    }
+    let path = if let Some(path) = crate::clipboard_paths().into_iter().next() {
+        path
+    } else {
+        let text = crate::clipboard_text().ok().flatten().ok_or_else(|| {
+            "Did not see an image bitmap or a file path in the clipboard!".to_owned()
+        })?;
+        std::path::PathBuf::from(text.trim())
+    };
     if !path.is_file() {
         return Err("Sorry, that clipboard text did not look like a valid file path!".into());
     }
-    hydrus_import::FileImporter::new(store.clone(), hydrus_media::MediaTools::new())
-        .tools()
-        .similar_search_hashes(&path)
+    tools.tools().similar_search_hashes(&path)
+}
+
+fn write_png(path: &std::path::Path, image: &crate::ClipboardImage) -> Result<(), String> {
+    let width = u32::try_from(image.width).map_err(|e| e.to_string())?;
+    let height = u32::try_from(image.height).map_err(|e| e.to_string())?;
+    let file = std::fs::File::create(path).map_err(|e| e.to_string())?;
+    let mut encoder = png::Encoder::new(std::io::BufWriter::new(file), width, height);
+    encoder.set_color(png::ColorType::Rgba);
+    encoder.set_depth(png::BitDepth::Eight);
+    let mut writer = encoder.write_header().map_err(|e| e.to_string())?;
+    writer
+        .write_image_data(&image.rgba)
+        .map_err(|e| e.to_string())
 }
 
 /// The recent predicates kept in `store`.

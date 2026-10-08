@@ -34,7 +34,7 @@ serde_json.workspace = true
 png.workspace = true
 hex.workspace = true
 rand.workspace = true
-arboard = { version = "3", default-features = false }
+arboard = { version = "3", default-features = false, features = ["image-data"] }
 # the system's file and folder pickers (on Linux, the desktop portal)
 fs4.workspace = true
 rfd = { version = "0.17", default-features = false, features = ["xdg-portal"] }
