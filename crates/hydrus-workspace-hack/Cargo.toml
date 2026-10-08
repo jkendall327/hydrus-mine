@@ -53,7 +53,6 @@ percent-encoding = { version = "2" }
 phf = { version = "0.13", features = ["macros"] }
 portable-atomic = { version = "1", features = ["critical-section"] }
 potential_utf = { version = "0.1", default-features = false, features = ["alloc", "zerovec"] }
-read-fonts = { version = "0.41", default-features = false, features = ["experimental_font_api", "std"] }
 regex-automata = { version = "0.4", default-features = false, features = ["dfa-build", "dfa-onepass", "hybrid", "meta", "nfa", "perf", "std", "unicode"] }
 regex-syntax = { version = "0.8" }
 resvg = { version = "0.48" }
@@ -76,7 +75,6 @@ toml_parser = { version = "1" }
 toml_writer = { version = "1" }
 tracing = { version = "0.1", features = ["log"] }
 tracing-core = { version = "0.1" }
-url = { version = "2" }
 usvg = { version = "0.48", default-features = false, features = ["memmap-fonts", "svgz", "system-fonts", "text"] }
 web_atoms = { version = "0.2", default-features = false, features = ["serde"] }
 winnow = { version = "1" }
@@ -117,7 +115,6 @@ once_cell = { version = "1", features = ["critical-section"] }
 percent-encoding = { version = "2" }
 portable-atomic = { version = "1", features = ["critical-section"] }
 potential_utf = { version = "0.1", default-features = false, features = ["alloc", "zerovec"] }
-read-fonts = { version = "0.41", default-features = false, features = ["experimental_font_api", "std"] }
 resvg = { version = "0.48" }
 serde_core = { version = "1", features = ["alloc"] }
 serde_json = { version = "1", features = ["float_roundtrip", "preserve_order", "raw_value"] }
@@ -133,7 +130,6 @@ tinystr = { version = "0.8", default-features = false, features = ["alloc", "zer
 toml_datetime = { version = "1", features = ["serde"] }
 toml_parser = { version = "1" }
 toml_writer = { version = "1" }
-url = { version = "2" }
 usvg = { version = "0.48", default-features = false, features = ["memmap-fonts", "svgz", "system-fonts", "text"] }
 winnow = { version = "1" }
 writeable = { version = "0.6", default-features = false, features = ["alloc"] }
@@ -145,17 +141,14 @@ zerovec = { version = "0.11", default-features = false, features = ["alloc", "de
 [target.x86_64-unknown-linux-gnu.dependencies]
 bitflags = { version = "2", default-features = false, features = ["std"] }
 chrono = { version = "0.4", default-features = false, features = ["clock", "wasmbind"] }
-crossbeam-utils = { version = "0.8" }
 fontique = { version = "0.11", features = ["fontconfig-dlopen"] }
 futures-channel = { version = "0.3", features = ["sink"] }
 futures-io = { version = "0.3" }
-futures-sink = { version = "0.3" }
 futures-util = { version = "0.3", default-features = false, features = ["async-await-macro", "channel", "io", "sink"] }
 getrandom-468e82937335b1c9 = { package = "getrandom", version = "0.3", default-features = false, features = ["std"] }
 getrandom-9fbad63c4bcf4a8f = { package = "getrandom", version = "0.4", default-features = false, features = ["std", "sys_rng"] }
 hyper = { version = "1", features = ["client", "http1", "http2", "server"] }
 hyper-util = { version = "0.1", features = ["client-legacy", "client-proxy", "http1", "http2", "server", "service"] }
-indexmap = { version = "2" }
 linux-raw-sys = { version = "0.12", default-features = false, features = ["auxvec", "elf", "errno", "general", "if_ether", "ioctl", "net", "netlink", "no_std", "prctl", "system", "xdp"] }
 proc-macro2 = { version = "1" }
 quote = { version = "1" }
@@ -171,9 +164,7 @@ yeslogic-fontconfig-sys = { version = "6", default-features = false, features = 
 [target.x86_64-unknown-linux-gnu.build-dependencies]
 bitflags = { version = "2", default-features = false, features = ["std"] }
 cc = { version = "1", default-features = false, features = ["parallel"] }
-crossbeam-utils = { version = "0.8" }
 fontique = { version = "0.11", features = ["fontconfig-dlopen"] }
-indexmap = { version = "2" }
 proc-macro2 = { version = "1" }
 quote = { version = "1" }
 serde = { version = "1", features = ["alloc", "derive"] }
@@ -183,18 +174,13 @@ yeslogic-fontconfig-sys = { version = "6", default-features = false, features = 
 [target.aarch64-apple-darwin.dependencies]
 bitflags = { version = "2", default-features = false, features = ["serde", "std"] }
 block2 = { version = "0.6" }
-crossbeam-utils = { version = "0.8" }
 errno = { version = "0.3" }
 getrandom-9fbad63c4bcf4a8f = { package = "getrandom", version = "0.4", default-features = false, features = ["std", "sys_rng"] }
 hyper = { version = "1", features = ["client", "http1", "http2", "server"] }
 hyper-util = { version = "0.1", features = ["client-legacy", "client-proxy", "http1", "http2", "server", "service"] }
 objc2 = { version = "0.6", features = ["relax-sign-encoding"] }
-objc2-app-kit = { version = "0.3", default-features = false, features = ["NSAlert", "NSAppearance", "NSApplication", "NSButton", "NSCell", "NSColor", "NSControl", "NSEvent", "NSImage", "NSMenu", "NSMenuItem", "NSOpenPanel", "NSPanel", "NSPasteboard", "NSPasteboardItem", "NSResponder", "NSRunningApplication", "NSSavePanel", "NSStatusBar", "NSStatusBarButton", "NSStatusItem", "NSView", "NSWindow", "NSWorkspace", "block2", "objc2-core-foundation", "objc2-core-graphics", "objc2-quartz-core", "std"] }
 objc2-core-foundation = { version = "0.3", default-features = false, features = ["CFArray", "CFAttributedString", "CFBase", "CFCGTypes", "CFCalendar", "CFCharacterSet", "CFData", "CFDate", "CFDictionary", "CFError", "CFFileSecurity", "CFLocale", "CFMachPort", "CFMessagePort", "CFNumber", "CFRunLoop", "CFSet", "CFStream", "CFString", "CFURL", "CFUserNotification", "objc2", "std"] }
-objc2-core-graphics = { version = "0.3", default-features = false, features = ["CGColor", "CGColorSpace", "CGContext", "CGDataProvider", "CGDirectDisplay", "CGEventTypes", "CGFont", "CGImage", "CGPath", "objc2", "std"] }
 objc2-foundation = { version = "0.3", default-features = false, features = ["NSAppleEventDescriptor", "NSArray", "NSAttributedString", "NSBundle", "NSCoder", "NSData", "NSDate", "NSDictionary", "NSEnumerator", "NSError", "NSException", "NSFileManager", "NSFileWrapper", "NSFormatter", "NSGeometry", "NSItemProvider", "NSKeyValueObserving", "NSLocale", "NSNotification", "NSNull", "NSObjCRuntime", "NSObject", "NSOperation", "NSPathUtilities", "NSRange", "NSRunLoop", "NSSet", "NSString", "NSThread", "NSURL", "NSUndoManager", "NSUserActivity", "NSUserDefaults", "NSValue", "NSZone", "block2", "objc2-core-foundation", "std"] }
-objc2-quartz-core = { version = "0.3", default-features = false, features = ["CADisplayLink", "CALayer", "CAMediaTiming", "CAMediaTimingFunction", "CAOpenGLLayer", "CATransaction", "objc2-core-foundation", "std"] }
-slab = { version = "0.4" }
 sync_wrapper = { version = "1", default-features = false, features = ["futures"] }
 tower = { version = "0.5", default-features = false, features = ["log", "make", "retry", "timeout"] }
 
@@ -202,19 +188,16 @@ tower = { version = "0.5", default-features = false, features = ["log", "make", 
 bitflags = { version = "2", default-features = false, features = ["serde", "std"] }
 block2 = { version = "0.6" }
 cc = { version = "1", default-features = false, features = ["parallel"] }
-crossbeam-utils = { version = "0.8" }
 objc2 = { version = "0.6", features = ["relax-sign-encoding"] }
 objc2-core-foundation = { version = "0.3", default-features = false, features = ["CFArray", "CFAttributedString", "CFBase", "CFCGTypes", "CFCalendar", "CFCharacterSet", "CFData", "CFDate", "CFDictionary", "CFError", "CFFileSecurity", "CFLocale", "CFMachPort", "CFMessagePort", "CFNumber", "CFRunLoop", "CFSet", "CFStream", "CFString", "CFURL", "CFUserNotification", "objc2", "std"] }
 objc2-foundation = { version = "0.3", default-features = false, features = ["NSAppleEventDescriptor", "NSArray", "NSAttributedString", "NSBundle", "NSCoder", "NSData", "NSDate", "NSDictionary", "NSEnumerator", "NSError", "NSException", "NSFileManager", "NSFileWrapper", "NSFormatter", "NSGeometry", "NSItemProvider", "NSKeyValueObserving", "NSLocale", "NSNotification", "NSNull", "NSObjCRuntime", "NSObject", "NSOperation", "NSPathUtilities", "NSRange", "NSRunLoop", "NSSet", "NSString", "NSThread", "NSURL", "NSUndoManager", "NSUserActivity", "NSUserDefaults", "NSValue", "NSZone", "block2", "objc2-core-foundation", "std"] }
 
 [target.x86_64-pc-windows-msvc.dependencies]
 bitflags = { version = "2", default-features = false, features = ["serde"] }
-crossbeam-utils = { version = "0.8" }
 getrandom-9fbad63c4bcf4a8f = { package = "getrandom", version = "0.4", default-features = false, features = ["std", "sys_rng"] }
 hyper = { version = "1", features = ["client", "http1", "http2", "server"] }
 hyper-util = { version = "0.1", features = ["client-legacy", "client-proxy", "http1", "http2", "server", "service"] }
 scopeguard = { version = "1" }
-slab = { version = "0.4" }
 sync_wrapper = { version = "1", default-features = false, features = ["futures"] }
 tower = { version = "0.5", default-features = false, features = ["log", "make", "retry", "timeout"] }
 windows = { version = "0.62", features = ["Win32_Graphics_DirectWrite", "Win32_Graphics_Dwm", "Win32_Graphics_Gdi", "Win32_Storage_EnhancedStorage", "Win32_System_Com_StructuredStorage", "Win32_System_LibraryLoader", "Win32_System_SystemServices", "Win32_System_Variant", "Win32_UI_HiDpi", "Win32_UI_Shell_PropertiesSystem", "Win32_UI_WindowsAndMessaging"] }
@@ -225,7 +208,6 @@ windows-sys-d4189bed749088b6 = { package = "windows-sys", version = "0.61", feat
 [target.x86_64-pc-windows-msvc.build-dependencies]
 bitflags = { version = "2", default-features = false, features = ["serde"] }
 cc = { version = "1", default-features = false, features = ["parallel"] }
-crossbeam-utils = { version = "0.8" }
 getrandom-9fbad63c4bcf4a8f = { package = "getrandom", version = "0.4", default-features = false, features = ["std", "sys_rng"] }
 windows = { version = "0.62", features = ["Win32_Graphics_DirectWrite", "Win32_Graphics_Dwm", "Win32_Graphics_Gdi", "Win32_Storage_EnhancedStorage", "Win32_System_Com_StructuredStorage", "Win32_System_LibraryLoader", "Win32_System_SystemServices", "Win32_System_Variant", "Win32_UI_HiDpi", "Win32_UI_Shell_PropertiesSystem", "Win32_UI_WindowsAndMessaging"] }
 windows-core = { version = "0.62" }

@@ -17,7 +17,7 @@ use hydrus_store::sessions::{self, LAST_SESSION};
 use crate::duplicate_filter::{my_files, store_with_pairs};
 
 pub(crate) struct Opened {
-    pub windows: headless::Windows,
+    pub _windows: headless::Windows,
     pub _dir: tempfile::TempDir,
     pub store: Arc<Store>,
     pub ui: MainWindow,
@@ -56,7 +56,7 @@ pub(crate) fn opened() -> Opened {
     let ui = MainWindow::new().unwrap();
     let bound = bind(&ui, Pages::open(Arc::clone(&store)).unwrap());
     Opened {
-        windows,
+        _windows: windows,
         _dir: dir,
         store,
         ui,

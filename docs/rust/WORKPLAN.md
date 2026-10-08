@@ -174,3 +174,15 @@ shared Cargo lock. Design that avoids most of the Rust churn:
   `-j2` to stay under 16 GB on a cold build.
 - Measure: cold build, one-dialog edit, MainWindow edit, peak memory. Keep
   only if the edit loop is at least 3x faster.
+- **Round 3** (4 agents, 15-26 min each): duplicates 29 (+2 out of scope),
+  files-io 28, media 33, options-media 33. **First real bug found** (files-io):
+  declining File > restart left the next plain close restarting; fixed. Also
+  two small reference-parity fixes in manual export. CI's round-2 run: all
+  Linux tests passed (incl. emoji_fonts); lint failed only on a stale
+  workspace-hack (the UI crate left the members, so hakari dropped deps);
+  regenerated, and the solo UI build is still reused (0 feature differences).
+- Done after round 3: see `scripts/track.py` (about 930 of 1,274).
+- Every agent still hits: `dev.sh lint` formatting in lanes (fixed in dev.sh
+  after round 2's reports; agents launched before saw the old script), the
+  120 s tool timeout, needing `#[path]` re-declarations of helper modules
+  (`subscriptions`, `duplicate_filter`) in lanes.

@@ -10,8 +10,8 @@ use hydrus_store::import::import_legacy;
 use slint::{ComponentHandle as _, Model as _};
 
 pub struct Fixture {
-    pub dir_: tempfile::TempDir,
-    pub legacy_: Box<dyn std::any::Any>,
+    pub _dir: tempfile::TempDir,
+    pub _legacy: Box<dyn std::any::Any>,
     pub windows_: headless::Windows,
     pub store: Arc<Store>,
     pub ui: MainWindow,
@@ -46,8 +46,8 @@ pub fn start_in(windows: &headless::Windows) -> Fixture {
     ui.invoke_search_edited("system:everything".into());
     ui.invoke_search_accepted();
     Fixture {
-        legacy_: legacy,
-        dir_: dir,
+        _legacy: legacy,
+        _dir: dir,
         windows_: windows,
         store,
         ui,
@@ -138,8 +138,8 @@ pub fn start_local() -> Fixture {
     ui.invoke_search_edited("system:everything".into());
     ui.invoke_search_accepted();
     Fixture {
-        legacy_: legacy,
-        dir_: dir,
+        _legacy: legacy,
+        _dir: dir,
         windows_: windows,
         store,
         ui,
