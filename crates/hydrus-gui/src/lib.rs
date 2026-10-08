@@ -6075,7 +6075,7 @@ pub(crate) fn clipboard_text() -> Result<Option<String>, String> {
 }
 
 /// A bitmap on the clipboard: RGBA, row by row.
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct ClipboardImage {
     pub width: usize,
     pub height: usize,
