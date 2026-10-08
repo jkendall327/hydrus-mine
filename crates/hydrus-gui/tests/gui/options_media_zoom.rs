@@ -110,9 +110,17 @@ fn the_default_zoom_and_the_zoom_steps_are_the_viewer_s() {
     );
     options.hide().unwrap();
 
-    choose(&client, "Media Viewer default zoom:", "100% zoom", "zoom and position");
+    choose(
+        &client,
+        "Media Viewer default zoom:",
+        "100% zoom",
+        "zoom and position",
+    );
     let saved: hydrus_core::media_viewer::MediaViewerSettings = client.setting();
-    assert_eq!(saved.default_zoom_type, hydrus_core::media_viewer::ZoomType::Full);
+    assert_eq!(
+        saved.default_zoom_type,
+        hydrus_core::media_viewer::ZoomType::Full
+    );
     let (viewer, _) = small_jpeg_viewer(&client);
     assert_eq!(rect(&viewer).2, w, "opens at 100%");
     assert_eq!(rect(&viewer).3, h);
@@ -148,7 +156,12 @@ fn the_default_zoom_and_the_zoom_steps_are_the_viewer_s() {
 fn zooming_keeps_the_centerpoint_the_option_names() {
     const LABEL: &str = "Centerpoint for media zooming:";
     let client = Media::basic();
-    choose(&client, "Media Viewer default zoom:", "100% zoom", "zoom and position");
+    choose(
+        &client,
+        "Media Viewer default zoom:",
+        "100% zoom",
+        "zoom and position",
+    );
     let centre = |r: (f32, f32, f32, f32)| (r.0 + r.2 / 2.0, r.1 + r.3 / 2.0);
     // (whole pixels: a half may round either way)
     let near = |a: (f32, f32), b: (f32, f32)| (a.0 - b.0).abs() <= 1.0 && (a.1 - b.1).abs() <= 1.0;
@@ -178,7 +191,10 @@ fn zooming_keeps_the_centerpoint_the_option_names() {
     let (before, after) = zoom_in(&viewer);
     assert!(after.2 > before.2);
     assert!(near(centre(before), (CANVAS.0 / 2.0, CANVAS.1 / 2.0)));
-    assert!(near(centre(after), centre(before)), "the viewer's centre stays");
+    assert!(
+        near(centre(after), centre(before)),
+        "the viewer's centre stays"
+    );
     viewer.invoke_close_requested();
 
     // about the media's top left, that corner stays where it was
@@ -186,7 +202,11 @@ fn zooming_keeps_the_centerpoint_the_option_names() {
     let (viewer, _) = small_jpeg_viewer(&client);
     let (before, after) = zoom_in(&viewer);
     assert!(after.2 > before.2);
-    assert_eq!((after.0, after.1), (before.0, before.1), "{before:?} {after:?}");
+    assert_eq!(
+        (after.0, after.1),
+        (before.0, before.1),
+        "{before:?} {after:?}"
+    );
     viewer.invoke_close_requested();
 
     // about the media's centre, that stays
