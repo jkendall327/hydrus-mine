@@ -109,6 +109,15 @@ record of what was decided, and why the roadmap looks the way it does.
   the rest of `dateparser`: non-English and fuzzy free-text dates are not
   parsed, and the advanced strptime step covers explicit formats.
 
+- **Deferred, low priority (2026-10-08)**, each noted on its leaf: drag-out
+  of files and its three exporting options (wanted, but it needs
+  hand-written X11/Wayland drag sources); saved size and position for the
+  remaining ~25 windows; idle from mouse movement outside hydrus-rs windows
+  (later through the platform's idle time, not cursor polling); custom SVG
+  rating stars; clipboard-bitmap and PNG drag-and-drop downloader exchange.
+  Reading old saved-object versions stays in scope: importing an existing
+  hydrus install must be easy.
+
 ## Roadmap that follows
 
 1. **Client API parity**, with Hydrus Companion's request patterns checked

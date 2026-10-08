@@ -3114,10 +3114,11 @@
    "path": "Services > Manage local services > Local service editor > Rating colors/shapes/stars/zero/fraction settings",
    "workstream": "tags-services",
    "state": "partial",
-   "priority": "normal",
+   "priority": "low",
    "reference": null,
    "native": null,
    "notes": [
+    "Deferred (owner, 2026-10-08): custom SVG star shapes.",
     "Truth pass (2026-10-08): partial, small. Shapes and live preview done and recorded; SVG appearance not faithful. Missing: SVG choice is a free-text name and is not rendered (shape_path maps Svg to the default star); reference offers a list of installed SVG icons. Evidence: services_editor_window.rs:118-145, 319-370; recorded preview tests services_editor.rs:505,617,655",
     "Native shape selector/named SVG field sets rating appearance and preserves existing SVG configuration.",
     "No live rating-settings preview; rendering has existing named-SVG limits."
@@ -3820,10 +3821,11 @@
    "path": "Media files, metadata and viewing > Media Viewer",
    "workstream": "media",
    "state": "missing",
-   "priority": "normal",
+   "priority": "low",
    "reference": null,
    "native": null,
    "notes": [
+    "Deferred (owner, 2026-10-08): drag-out is wanted but dropped for now; it needs hand-written X11/Wayland drag sources.",
     "Truth pass (2026-10-08): missing, large. Genuinely platform work. Missing: Hand-written XDND source (X11, x11rb) and wl_data_device start_drag (Wayland), via the raw window handle; not headlessly testable. Evidence: #26; no drag-source API in winit 0.30.13 or Slint 1.18.1",
     "Native drag callback opens a file-browser path rather than constructing a reference MIME/URL drag object; drag-out remains missing.",
     "Native hover drag position opens the file browser; Slint cannot initiate the reference external file drag."
@@ -4536,6 +4538,7 @@
    "reference": "hydrus/client/gui/parsing/ClientGUIParsing.py:44",
    "native": "crates/hydrus-gui/src/downloader_interchange_window.rs:707",
    "notes": [
+    "Owner (2026-10-08): clipboard-bitmap and PNG drag-and-drop exchange is wanted but low priority; the other gaps here keep their priority.",
     "Truth pass (2026-10-08): partial, medium. Login scripts now work; domain metadata, bitmap and drop remain. Missing: Domain metadata packages, clipboard bitmap as PNG, PNG drag/drop into the window. Evidence: downloader_interchange_window.rs:707, 531; login scripts work (downloader_interchange.rs:24 vs mixed_login_packages.json)",
     "Native package workflow supports URL classes/GUGs/pages only; bitmap/drop and login/domain packages have no native path."
    ]
@@ -7727,10 +7730,11 @@
    "path": "File > Options window > exporting > drag and drop",
    "workstream": "options-system",
    "state": "partial",
-   "priority": "normal",
+   "priority": "low",
    "reference": null,
    "native": null,
    "notes": [
+    "Deferred (owner, 2026-10-08): drag-out is wanted but dropped for now; it needs hand-written X11/Wayland drag sources.",
     "Truth pass (2026-10-08): partial, large. Waits on drag-out. Missing: Drag-out (see viewer drag); a row test of the interlock. Evidence: options.rs:2177-2182 row with interlock, unread",
     "Reference editor/control 'BUGFIX: Set drag-and-drops to have a \"move\" flag:' is recorded on 'exporting' and defined by the referenced options panel. No corresponding editable row exists in native options::pages; this is a missing GUI editing path, even if a setting is imported or consumed elsewhere.",
     "Native options registry has no editable 'BUGFIX: Set drag-and-drops to have a \"move\" flag:' control in this page/box path."
@@ -7742,10 +7746,11 @@
    "path": "File > Options window > exporting > drag and drop",
    "workstream": "options-system",
    "state": "partial",
-   "priority": "normal",
+   "priority": "low",
    "reference": null,
    "native": null,
    "notes": [
+    "Deferred (owner, 2026-10-08): drag-out is wanted but dropped for now; it needs hand-written X11/Wayland drag sources.",
     "Truth pass (2026-10-08): partial, large. Waits on drag-out. Missing: Drag-out; the temp-copy and limits could be built and unit-tested now. Evidence: options.rs:2171-2175 row, unread",
     "Reference editor/control 'Copy files to temp folder for drag-and-drop (works for <=50, <200MB file DnDs--fixes Discord!):' is recorded on 'exporting' and defined by the referenced options panel. No corresponding editable row exists in native options::pages; this is a missing GUI editing path, even if a setting is imported or consumed elsewhere.",
     "Native options registry has no editable 'Copy files to temp folder for drag-and-drop (works for <=50, <200MB file DnDs--fixes Discord!):' control in this page/box path."
@@ -7757,10 +7762,11 @@
    "path": "File > Options window > exporting > drag and drop",
    "workstream": "options-system",
    "state": "partial",
-   "priority": "normal",
+   "priority": "low",
    "reference": null,
    "native": null,
    "notes": [
+    "Deferred (owner, 2026-10-08): drag-out is wanted but dropped for now; it needs hand-written X11/Wayland drag sources.",
     "Truth pass (2026-10-08): partial, medium. Waits on drag-out. Missing: Drag-out; the pattern can reuse the export filename code. Evidence: options.rs:2183-2187 row, unread",
     "Reference editor/control 'Drag-and-drop export filename pattern:' is recorded on 'exporting' and defined by the referenced options panel. No corresponding editable row exists in native options::pages; this is a missing GUI editing path, even if a setting is imported or consumed elsewhere.",
     "Native options registry has no editable 'Drag-and-drop export filename pattern:' control in this page/box path."
@@ -9341,10 +9347,11 @@
    "path": "File > Options window > gui > frame locations > Remembered/default frame locations table",
    "workstream": "options-gui",
    "state": "partial",
-   "priority": "normal",
+   "priority": "low",
    "reference": null,
    "native": null,
    "notes": [
+    "Deferred (owner, 2026-10-08): the remaining ~25 windows' saved size and position.",
     "Truth pass (2026-10-08): partial, medium. Table and editor done and recorded; only 3 of ~28 frames use the saved size/position. Missing: ~25 other named frames never consult their frame location; no absolute desktop position adapter or screen fitting. Evidence: windows.rs:115-160 place_named, used by main_gui, manage_options_dialog, media_viewer only",
     "The live owned geometry child edits both remember flags, noneable dimensions/coordinates with exact bounds and retained values, x/y gravity, default position, maximised/fullscreen. Child Apply replaces only the parent draft; child Cancel discards; parent Cancel force-closes/inactivates; child blocks parent Apply. Parent Apply persists/reopens and reaches existing supported placement. Gravity/default-position and other named-owner consumers remain unfinished, so editor stays Partial.",
     "Placement consumers use remembered size/position and maximised/fullscreen for main_gui, media_viewer and manage_options_dialog. Other named owners, default gravity/parent-cursor positioning, screen fitting and offscreen rescue remain parent limitations; no parent or geometry-editor completion claimed.",
@@ -10383,10 +10390,11 @@
    "path": "File > Options window > gui sessions > sessions",
    "workstream": "options-gui",
    "state": "partial",
-   "priority": "normal",
+   "priority": "low",
    "reference": null,
    "native": null,
    "notes": [
+    "Deferred (owner, 2026-10-08): idle from mouse movement outside hydrus-rs windows; a later fix should use the platform's idle time (X11 XScreenSaver, Wayland ext-idle-notify) rather than the reference's cursor polling.",
     "Truth pass (2026-10-08): partial, medium. All but out-of-window mouse movement built and tested; consider documenting the difference and tagging. Missing: Mouse movement outside hydrus-rs windows does not reset mouse idle (needs a global cursor query; X11 only, not Wayland). Evidence: tests/gui/session_autosave.rs:51,148,212,274",
     "Consume the applied idle-only checkbox on the historical autosave timer; active sessions retry after 60 seconds. Reference boot guard and independent user/mouse/API timeouts are driven by input across all native auxiliary/main windows and atomic timestamp-only IPC from every recognized API request before authentication or busy refusal. Rejected and read-only API requests also postpone idle saves.",
     "The reference polls global OS cursor position; mouse movement outside native application windows does not yet reset native mouse idle. The leaf remains partial and is not counted as completed."
@@ -24588,6 +24596,7 @@
    "reference": "hydrus/client/gui/ClientGUISubscriptions.py:2463",
    "native": null,
    "notes": [
+    "Owner (2026-10-08): clipboard-bitmap and PNG drag-and-drop exchange is wanted but low priority; the other gaps here keep their priority.",
     "Truth pass (2026-10-08): partial, medium. Modern and legacy exchange recorded and tested; specific gaps remain. Missing: Old seed-cache versions 1-7, clipboard bitmap and drag/drop, per-object selection, cache-header gaps. Evidence: extensively recorded and tested (subscriptions.rs:1219-2049; record_subscription_exchange.py etc.)",
     "Manage subscriptions exposes serialized import/export of modern reference container90 objects through an owned child. Settings, complete query states, cached velocity/example-seed headers and both file/gallery histories survive JSON/PNG exchange, staged import and Apply/reopen. Casefold name collisions use (1) suffixes and every imported query gets a fresh history identity. JSON file export asks the original existing-path overwrite question; rejecting or closing the owner preserves the existing file. Format-specific multi-file JSON/PNG imports validate before staging, cancellation leaves the saved store unchanged, and stale callbacks cannot append or overwrite. Export reads current native queues plus draft reset/retry commands and preserves copied header metadata. Incomplete objects now ask the exact reference missing query log data title, message and import/back-out choices before they enter the draft; accepting persists empty logs and rejecting or cancelling continues remaining objects in list order. Apply is blocked while the question remains unanswered. Modern clipboard/JSON/PNG menu choices now dispatch their actual transport action. Legacy subscription type3 versions1–10 and legacy query1–3 import with full embedded histories, historical checker/limit defaults and fresh identity handling; obsolete gallery identifiers become the original paused unknown downloader. Actual Qt direct conversion and list exports constrain full upgraded payloads, apart from generated random identities. Fresh history names invalidate velocity/status according to SetQueryLogContainerName while retaining example/cached-count fields. Actual Reset/RetryFailed/RetryIgnored exports now refresh file-count/example caches without changing velocity or gallery examples. Retried files lose hashes exactly as SetStatus(UNKNOWN) does, in both detached exports and the real Apply transaction; reopening exports those persisted caches.",
     "Historical file seed-cache type8 versions1–7 remain unsupported and fail explicitly; current cache8 with seed versions handled by the legacy decoder is supported.",
