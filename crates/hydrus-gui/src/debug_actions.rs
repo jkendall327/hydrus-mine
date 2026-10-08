@@ -6,6 +6,8 @@
 use std::cell::RefCell;
 use std::io::Write as _;
 use std::rc::Rc;
+use std::sync::Mutex;
+use std::sync::atomic::{AtomicBool, Ordering};
 use std::time::{Duration, SystemTime, UNIX_EPOCH};
 
 use hydrus_core::Sha256;
@@ -25,6 +27,104 @@ thread_local! {
 /// something and wait for "ok").
 pub fn message_window() -> Option<ChoiceButtonsWindow> {
     MESSAGE.with(|m| m.borrow().as_ref().map(ChoiceButtonsWindow::clone_strong))
+}
+
+/// Set by "simulate program exit signal", once the event loop is told to stop.
+static EXIT_REQUESTED: AtomicBool = AtomicBool::new(false);
+
+/// Whether "simulate program exit signal" has run in this process.
+pub fn exit_requested() -> bool {
+    EXIT_REQUESTED.load(Ordering::SeqCst)
+}
+
+/// What `HydrusData.DebugPrint` was given, oldest first: the debug actions
+/// print to the console and keep the lines, for the tests.
+static PRINTED: Mutex<Vec<String>> = Mutex::new(Vec::new());
+
+/// The lines the debug actions have printed so far.
+pub fn debug_printed() -> Vec<String> {
+    PRINTED
+        .lock()
+        .unwrap_or_else(std::sync::PoisonError::into_inner)
+        .clone()
+}
+
+/// `HydrusData.DebugPrint`: a line on the console, flushed at once.
+fn debug_print(line: &str) {
+    eprintln!("{line}");
+    let _ = std::io::stderr().flush();
+    PRINTED
+        .lock()
+        .unwrap_or_else(std::sync::PoisonError::into_inner)
+        .push(line.to_owned());
+}
+
+/// Send the report modes' messages to the console and a popup in `store`
+/// (`HydrusData.ShowText`), unless something already receives them.
+pub(crate) fn install_report_sink(store: &std::sync::Arc<Store>) {
+    // (a report can be made from inside a database job, so the popup is
+    // written by a thread of its own rather than waited for)
+    let (lines, queue) = std::sync::mpsc::channel::<String>();
+    let store = std::sync::Arc::downgrade(store);
+    std::thread::spawn(move || {
+        for text in queue {
+            let Some(store) = store.upgrade() else { break };
+            post(&store, vec![Job::text(text, now())]);
+        }
+    });
+    hydrus_core::debug_flags::set_sink_if_none(Box::new(move |text| {
+        debug_print(text);
+        let _ = lines.send(text.to_owned());
+    }));
+}
+
+static CRASH_LOGGING: AtomicBool = AtomicBool::new(false);
+
+/// Whether "use faulthandler to log crashes" is on.
+pub fn crash_logging() -> bool {
+    CRASH_LOGGING.load(Ordering::SeqCst)
+}
+
+/// "use faulthandler to log crashes" (`FlipCrashReporting`): while on, each
+/// panic is written, with a backtrace, to a "client crash" log in the
+/// database directory; turning it off puts the earlier panic hook back.
+fn flip_crash_logging(dir: &std::path::Path) {
+    type Hook = Box<dyn Fn(&std::panic::PanicHookInfo<'_>) + Send + Sync>;
+    static EARLIER: Mutex<Option<Hook>> = Mutex::new(None);
+    if CRASH_LOGGING.fetch_xor(true, Ordering::SeqCst) {
+        let earlier = EARLIER
+            .lock()
+            .unwrap_or_else(std::sync::PoisonError::into_inner)
+            .take();
+        if let Some(earlier) = earlier {
+            std::panic::set_hook(earlier);
+        }
+        return;
+    }
+    let path = dir.join(format!("client crash - {}.log", now() as i64));
+    let earlier = std::panic::take_hook();
+    // (the earlier hook is kept to be put back, and called meanwhile)
+    let earlier = std::sync::Arc::new(earlier);
+    *EARLIER
+        .lock()
+        .unwrap_or_else(std::sync::PoisonError::into_inner) = Some(Box::new({
+        let earlier = earlier.clone();
+        move |info| earlier(info)
+    }));
+    std::panic::set_hook(Box::new(move |info| {
+        if let Ok(mut file) = std::fs::OpenOptions::new()
+            .create(true)
+            .append(true)
+            .open(&path)
+        {
+            let _ = writeln!(
+                file,
+                "{info}\n{}\n",
+                std::backtrace::Backtrace::force_capture()
+            );
+        }
+        earlier(info);
+    }));
 }
 
 /// What the actions work with.
@@ -137,28 +237,38 @@ pub(crate) fn run(context: &Context, action: Action) {
             }
         }
         Action::FlushLog => {
-            eprintln!("{}", model::FLUSH_LOG);
-            let _ = std::io::stderr().flush();
+            debug_print(model::FLUSH_LOG);
         }
         Action::ForceCommit => {
-            let done = store.write(|ctx| {
-                ctx.conn()
-                    .execute_batch("PRAGMA wal_checkpoint(PASSIVE);")
-                    .map_err(Into::into)
-            });
-            if let Err(e) = done {
+            // (pausing moves the whole write-ahead log into the database file)
+            if let Err(e) = store.pause() {
                 eprintln!("could not commit the database: {e}");
             }
         }
         Action::ShowEnv => {
             let separator = if cfg!(windows) { ';' } else { ':' };
             let text = model::env_text(std::env::vars(), separator);
-            eprintln!("{text}");
+            debug_print(&text);
             post(&store, vec![Job::text(text, now())]);
         }
         Action::Exit => {
+            EXIT_REQUESTED.store(true, Ordering::SeqCst);
             let _ = slint::quit_event_loop();
         }
         Action::ClearRenderingCaches => (context.clear_caches)(),
+        Action::ScanStorage => {
+            let Some(path) = crate::pick(crate::Pick::Folder, "Select directory")
+                .into_iter()
+                .next()
+            else {
+                return;
+            };
+            let granularity = store.snapshot().storage.granularity();
+            let started = std::time::Instant::now();
+            let found = model::presumptive_subfolders(&path, granularity).map(|f| f.len());
+            let text = model::scan_text(&found, started.elapsed().as_secs_f64());
+            post(&store, vec![Job::text(text, now())]);
+        }
+        Action::FlipCrashLogging => flip_crash_logging(store.dir()),
     }
 }

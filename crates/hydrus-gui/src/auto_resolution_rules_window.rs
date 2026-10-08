@@ -913,6 +913,93 @@ fn open_rule(
             show_rule(&window, &state, false);
         }
     });
+    // the list's export (0 clipboard, 1 png), import (2 clipboard, 3 pngs)
+    // and duplicate (4), as `AddImportExportButtons` gives the reference's
+    window.on_comparator_exchange({
+        let weak = window.as_weak();
+        let state = state.clone();
+        let store = store.clone();
+        let slots = slots.clone();
+        move |mode| {
+            use hydrus_gui_model::auto_resolution_exchange as ex;
+            let Some(window) = weak.upgrade() else {
+                return;
+            };
+            let selected = {
+                let state = state.borrow();
+                state
+                    .selected
+                    .and_then(|i| state.rule.comparators.get(i).cloned())
+            };
+            let add = |comparators: Vec<Comparator>, say: bool| {
+                let n = comparators.len();
+                {
+                    let mut state = state.borrow_mut();
+                    state.errors.clear();
+                    state.rule.comparators.extend(comparators);
+                    state.selected = state.rule.comparators.len().checked_sub(1);
+                    show_rule(&window, &state, false);
+                }
+                if say && n > 0 {
+                    crate::debug_actions::message("Information", &ex::added(n));
+                }
+            };
+            let load = |text: &str| match ex::import_comparators_text(text, &scales(&store)) {
+                Ok(imported) => {
+                    if !imported.refused.is_empty() {
+                        crate::debug_actions::message(
+                            "Warning",
+                            &ex::refused_message_for(&imported.refused, ex::COMPARATOR_TYPE),
+                        );
+                    }
+                    add(imported.comparators, true);
+                }
+                Err(e) => crate::debug_actions::message(
+                    ex::PROBLEM_TITLE,
+                    &format!("I could not understand what was in the clipboard: {e}"),
+                ),
+            };
+            match mode {
+                0 => {
+                    if let Some(c) = selected {
+                        crate::copy_to_clipboard(&ex::export_comparators_text(&[c]));
+                    }
+                }
+                1 => {
+                    if let Some(c) = selected
+                        && let Err(e) = crate::png_export_window::open(
+                            &slots.png,
+                            &store,
+                            ex::export_comparators_text(&[c]),
+                            Rc::new(|| {}),
+                        )
+                    {
+                        crate::debug_actions::message(ex::PROBLEM_TITLE, &e);
+                    }
+                }
+                2 => match crate::clipboard_text() {
+                    Ok(Some(text)) => load(&text),
+                    Ok(None) => {}
+                    Err(e) => crate::debug_actions::message(
+                        ex::PROBLEM_TITLE,
+                        &format!("Problem loading from clipboard: {e}"),
+                    ),
+                },
+                3 => match crate::png_export_window::import_text_with_title("select the png files")
+                {
+                    Ok(Some(text)) => load(&text),
+                    Ok(None) => {}
+                    Err(e) => crate::debug_actions::message(ex::PROBLEM_TITLE, &e),
+                },
+                4 => {
+                    if let Some(c) = selected {
+                        add(vec![c], false);
+                    }
+                }
+                _ => {}
+            }
+        }
+    });
     // the preview: the rule as edited, or why it can't be had
     let preview =
         crate::auto_resolution_preview_window::Preview::new(store, slots.preview_filter.clone());

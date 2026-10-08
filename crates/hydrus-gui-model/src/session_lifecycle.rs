@@ -69,6 +69,36 @@ impl Idle {
     pub fn api(&mut self, now_ms: i64) {
         self.api = now_ms;
     }
+    /// Why the client is not idle, in the order `ClientController.CurrentlyIdle`
+    /// reports them in idle report mode (empty when it is idle).
+    pub fn blocked_reasons(&self, now_ms: i64, settings: &GuiIdleSettings) -> Vec<String> {
+        let mut reasons = Vec::new();
+        if now_ms <= self.boot.saturating_add(120_000) {
+            reasons.push("IDLE MODE - Blocked: Program has not been on for 120s yet.".to_owned());
+            return reasons;
+        }
+        if !settings.enabled {
+            reasons.push("IDLE MODE - Blocked: Options have disabled normal idle work.".to_owned());
+            return reasons;
+        }
+        let now = now_ms / 1_000;
+        for (what, at, seconds) in [
+            ("Last user action was", self.user, settings.user_seconds),
+            ("Last mouse move was", self.mouse, settings.mouse_seconds),
+            ("Last Client API action was", self.api, settings.api_seconds),
+        ] {
+            if let Some(seconds) = seconds {
+                let limit = i64::try_from(seconds.saturating_mul(1_000)).unwrap_or(i64::MAX);
+                if now_ms <= at.saturating_add(limit) {
+                    reasons.push(format!(
+                        "IDLE MODE - Blocked: {what} {}.",
+                        hydrus_core::time::timestamp_to_pretty_time_delta(at / 1_000, now, " ago")
+                    ));
+                }
+            }
+        }
+        reasons
+    }
     pub fn eligible(&self, now_ms: i64, settings: &GuiIdleSettings) -> bool {
         fn passed(now: i64, at: i64, seconds: Option<u64>) -> bool {
             seconds.is_none_or(|seconds| {

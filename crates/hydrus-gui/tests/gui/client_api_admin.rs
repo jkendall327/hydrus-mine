@@ -357,3 +357,121 @@ fn supported_service_listener_fields_stage_cancel_and_persist() {
         original.external_host_override
     );
 }
+
+fn spin_until(what: &str, mut ready: impl FnMut() -> bool) {
+    let until = std::time::Instant::now() + std::time::Duration::from_secs(10);
+    while !ready() {
+        assert!(std::time::Instant::now() < until, "{what}");
+        std::thread::sleep(std::time::Duration::from_millis(10));
+        slint::platform::update_timers_and_animations();
+    }
+}
+
+fn ask_as_a_tool(store: &Store, key: &[u8; 32], name: &str) {
+    use api_permissions::{Permission, Registration};
+    let request = (
+        hex::encode(key),
+        name.to_owned(),
+        false,
+        vec![Permission::AddUrls, Permission::SearchFiles],
+    );
+    // (what `/request_new_permissions` records while a window is waiting)
+    store
+        .write(move |ctx| {
+            let mut registration: Registration = hydrus_store::settings::get(ctx.conn())?;
+            assert!(registration.open_until_ms.is_some());
+            registration.requests.push(request);
+            hydrus_store::settings::set(ctx.conn(), &registration)
+        })
+        .unwrap();
+}
+
+// leaf: audit-media-services-missing-api-capture
+#[test]
+fn add_from_api_request_waits_for_a_tool_s_request_and_edits_what_it_asked_for() {
+    use api_permissions::{Permission, Registration};
+    let dir = tempfile::tempdir().unwrap();
+    let store = Store::open(dir.path()).unwrap();
+    let _windows = headless::init();
+    let registration =
+        |store: &Store| -> Registration { store.read(hydrus_store::settings::get).unwrap() };
+
+    // a service that isn't running can't take requests
+    let parent = review(&store);
+    let keys = api::last_opened().unwrap();
+    keys.invoke_add_from_api_clicked();
+    assert_eq!(
+        keys.get_error(),
+        "The service is not running, so you cannot add new access via the API!"
+    );
+    assert!(api::last_request_opened().is_none());
+    assert_eq!(registration(&store).open_until_ms, None);
+    keys.invoke_cancel_clicked();
+    drop(parent);
+
+    // running: a window waits, taking requests
+    let id = store.snapshot().services.by_name("client api").unwrap().id;
+    store
+        .write_and_refresh(move |ctx| {
+            hydrus_store::services::update_config(
+                ctx.conn(),
+                id,
+                &ServiceKind::ClientApi(ServerConfig {
+                    port: Some(45869),
+                    ..ServerConfig::default()
+                }),
+            )
+        })
+        .unwrap();
+    let parent = review(&store);
+    let keys = api::last_opened().unwrap();
+    keys.invoke_add_from_api_clicked();
+    let waiting = api::last_request_opened().expect("the waiting window opens");
+    assert_eq!(waiting.get_text(), "waiting for request…");
+    assert!(registration(&store).open_until_ms.is_some());
+    assert!(keys.get_editing(), "the list waits");
+
+    // closing it stops taking requests
+    waiting.invoke_cancel_clicked();
+    assert!(api::last_request_opened().is_none());
+    assert_eq!(registration(&store), Registration::default());
+    assert!(!keys.get_editing());
+
+    // a tool asks while it waits: the request is shown as the permissions
+    // editor, with the key the tool was given
+    keys.invoke_add_from_api_clicked();
+    assert!(api::last_request_opened().is_some());
+    let key = [7u8; 32];
+    ask_as_a_tool(&store, &key, "my tool");
+    spin_until("the request was not picked up", || {
+        api::last_edit_opened().is_some()
+    });
+    assert!(api::last_request_opened().is_none());
+    assert_eq!(registration(&store), Registration::default());
+    let edit = api::last_edit_opened().unwrap();
+    assert_eq!(edit.get_name(), "my tool");
+    assert!(!edit.get_permits_everything());
+    edit.invoke_apply_clicked();
+    assert_eq!(keys.get_rows().row_count(), 1);
+    assert_eq!(name(&keys, 0), "my tool");
+    keys.invoke_apply_clicked();
+    let stored = store.read(api_permissions::stored_keys).unwrap();
+    assert_eq!(stored.len(), 1);
+    assert_eq!(stored[0].access_key, key.to_vec());
+    assert!(!stored[0].permits_everything);
+    assert_eq!(
+        stored[0].basic.iter().copied().collect::<Vec<_>>(),
+        [Permission::AddUrls, Permission::SearchFiles]
+    );
+
+    // closing the key list while waiting stops it too
+    drop(parent);
+    let parent = review(&store);
+    let keys = api::last_opened().unwrap();
+    keys.invoke_add_from_api_clicked();
+    assert!(registration(&store).open_until_ms.is_some());
+    keys.invoke_cancel_clicked();
+    assert!(api::last_request_opened().is_none());
+    assert_eq!(registration(&store), Registration::default());
+    drop(parent);
+}

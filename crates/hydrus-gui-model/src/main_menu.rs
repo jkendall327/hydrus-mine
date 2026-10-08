@@ -281,6 +281,8 @@ pub enum Command {
     DebugFetchUrl,
     /// Override the current owned live idle decision until toggled or retired.
     DebugForceIdleMode,
+    /// Help > debug's runtime switches (`HG.x = not HG.x`).
+    DebugFlag(hydrus_core::debug_flags::Flag),
     /// Publish the actual delayed message after five seconds.
     DebugDelayedTextPopup,
     Debug(crate::debug_actions::Action),
@@ -361,6 +363,10 @@ pub struct Facts {
     pub darkmode: bool,
     /// Current unpersisted main-binding debug idle override.
     pub force_idle: bool,
+    /// Whether panics and crashes are being logged to a file.
+    pub crash_logging: bool,
+    /// The debug switches that are on.
+    pub debug_flags: Vec<hydrus_core::debug_flags::Flag>,
     pub advanced: bool,
     pub folders: FolderSettings,
     /// The import and export folders' names.
@@ -1396,19 +1402,49 @@ fn help_menu(facts: &Facts) -> Entry {
                 vec![
                     menu(
                         "debug modes",
-                        vec![check(
-                            "force idle mode",
-                            Some(Command::DebugForceIdleMode),
-                            facts.force_idle,
-                        )],
+                        vec![
+                            check(
+                                "force idle mode",
+                                Some(Command::DebugForceIdleMode),
+                                facts.force_idle,
+                            ),
+                            SEP,
+                            check(
+                                "use faulthandler to log crashes",
+                                Some(debug(DebugAction::FlipCrashLogging)),
+                                facts.crash_logging,
+                            ),
+                        ],
                     ),
                     menu(
                         "profiling",
                         vec![item("what is this?", debug(DebugAction::ProfileInfo))],
                     ),
                     menu(
+                        "report modes",
+                        hydrus_core::debug_flags::Flag::REPORT_MODES
+                            .iter()
+                            .map(|flag| {
+                                check(
+                                    flag.label(),
+                                    Some(Command::DebugFlag(*flag)),
+                                    facts.debug_flags.contains(flag),
+                                )
+                            })
+                            .collect(),
+                    ),
+                    menu(
                         "gui actions",
                         vec![
+                            check(
+                                "autocomplete delay mode",
+                                Some(Command::DebugFlag(
+                                    hydrus_core::debug_flags::Flag::AutocompleteDelay,
+                                )),
+                                facts
+                                    .debug_flags
+                                    .contains(&hydrus_core::debug_flags::Flag::AutocompleteDelay),
+                            ),
                             item(
                                 "close and reload current gui session",
                                 Command::DebugReloadSession,
@@ -1447,6 +1483,7 @@ fn help_menu(facts: &Facts) -> Entry {
                         vec![
                             item("flush log", debug(DebugAction::FlushLog)),
                             item("force database commit", debug(DebugAction::ForceCommit)),
+                            item("scan file storage folders", debug(DebugAction::ScanStorage)),
                             item("show env", debug(DebugAction::ShowEnv)),
                             SEP,
                             item("simulate program exit signal", debug(DebugAction::Exit)),

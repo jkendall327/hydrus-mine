@@ -855,6 +855,33 @@ fn edit_value(
     } else {
         window.set_domain("example.com".into());
     }
+    // a new session's context may be a hydrus service (a repository) too
+    let services: Rc<Vec<(String, String)>> = Rc::new(
+        store
+            .snapshot()
+            .services
+            .all()
+            .filter(|s| s.service_type().is_repository())
+            .map(|s| (s.key.to_hex(), s.name.clone()))
+            .collect(),
+    );
+    if window.get_session_only() {
+        window.set_service_names(ModelRc::new(VecModel::from(
+            services
+                .iter()
+                .map(|(_, name)| SharedString::from(name.as_str()))
+                .collect::<Vec<_>>(),
+        )));
+        window.set_type_info(model::context_type_info(0).into());
+        window.on_type_changed({
+            let weak = window.as_weak();
+            move || {
+                if let Some(w) = weak.upgrade() {
+                    w.set_type_info(model::context_type_info(w.get_context_type()).into());
+                }
+            }
+        });
+    }
     parent.set_editing(true);
     let active = Rc::new(Cell::new(true));
     let close = Rc::new({
@@ -916,14 +943,26 @@ fn edit_value(
                 let mut st = state.borrow_mut();
                 match &mut st.data {
                     Data::Sessions(_) => {
-                        let domain = w.get_domain().trim().to_ascii_lowercase();
-                        model::validate_context_domain(&domain)?;
+                        let context = if w.get_context_type() == 1 {
+                            // (no repository to choose: the kind's default, as the
+                            // reference's empty choice makes)
+                            let key = usize::try_from(w.get_service_index())
+                                .ok()
+                                .and_then(|i| services.get(i))
+                                .map(|(key, _)| key.clone())
+                                .unwrap_or_default();
+                            NetworkContext {
+                                kind: hydrus_core::network::CONTEXT_HYDRUS,
+                                data: key,
+                            }
+                        } else {
+                            let domain = w.get_domain().trim().to_ascii_lowercase();
+                            model::validate_context_domain(&domain)?;
+                            NetworkContext::domain(domain)
+                        };
                         store
                             .write(move |ctx| {
-                                let session = network::session_for(
-                                    ctx.conn(),
-                                    &NetworkContext::domain(domain),
-                                )?;
+                                let session = network::session_for(ctx.conn(), &context)?;
                                 network::create_session(ctx.conn(), &session)
                             })
                             .map_err(|e| e.to_string())?;

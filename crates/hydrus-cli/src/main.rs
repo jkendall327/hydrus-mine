@@ -792,38 +792,12 @@ fn run_server(dir: &Path, port: Option<u16>, bind: Option<IpAddr>, attached: boo
         // queues another process (the desktop client) made or changed, as
         // it nudges them: looked at every second
         if let Some(downloads) = state.downloads.clone() {
-            let store = store.clone();
             let subscriptions = state.subscriptions.clone();
             tokio::spawn(async move {
                 loop {
                     tokio::time::sleep(Duration::from_secs(1)).await;
-                    let nudged = store.read(hydrus_store::queues::any_nudged);
-                    if !matches!(nudged, Ok(true)) {
-                        continue;
-                    }
-                    // downloads a page's cancel button stopped, then the queues
-                    match store.write(|ctx| hydrus_store::live::take_cancels(ctx.conn())) {
-                        Ok(cancels) => {
-                            for (queue, kind) in cancels {
-                                downloads.cancel(queue, kind);
-                            }
-                        }
-                        Err(e) => tracing::error!(error = %e, "reading cancelled downloads failed"),
-                    }
-                    match store.write(|ctx| hydrus_store::queues::take_nudges(ctx.conn())) {
-                        Ok(queues) => {
-                            for queue in queues {
-                                // (the client's "nudge subscriptions awake")
-                                if queue == hydrus_store::queues::SUBSCRIPTIONS_NUDGE {
-                                    if let Some(subscriptions) = &subscriptions {
-                                        subscriptions.wake();
-                                    }
-                                    continue;
-                                }
-                                downloads.nudged(queue);
-                            }
-                        }
-                        Err(e) => tracing::error!(error = %e, "reading nudged queues failed"),
+                    if let Err(e) = downloads.take_nudges(subscriptions.as_ref()) {
+                        tracing::error!(error = %e, "acting on nudged queues failed");
                     }
                 }
             });

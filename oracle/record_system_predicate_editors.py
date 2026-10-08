@@ -715,6 +715,11 @@ def record( session ):
         scenario( 'system:similar files', 0, 0, [ ( 3, '0f0f0f0f0f0f0f0f' ), ( 4, 6 ) ] ),
         scenario( 'system:similar files', 0, 0, [ ( 2, '03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b' ), ( 3, '0f0f0f0f0f0f0f0f\nabcdef0123456789' ) ] ),
         scenario( 'system:file viewing statistics', 0, 1, [ ( 1, None ), ( 5, 2 ), ( 7, 3 ), ( 9, 4 ), ( 11, 5 ), ( 13, 6 ) ] ),
+        # the modified and archived pages' absolute dates, as import and last viewed above
+        scenario( 'system:time', 1, 1, [ ( 1, None ), ( 4, '2011-06-04' ), ( 5, '13:05' ) ] ),
+        scenario( 'system:time', 1, 1, [ ( 3, None ), ( 4, '1999-12-31' ) ] ),
+        scenario( 'system:time', 3, 1, [ ( 1, None ), ( 4, '2011-06-04' ), ( 5, '13:05' ) ] ),
+        scenario( 'system:time', 3, 1, [ ( 3, None ), ( 4, '1999-12-31' ) ] ),
     ]
 
     for p in offered:

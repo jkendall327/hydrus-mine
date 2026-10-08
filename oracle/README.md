@@ -15,11 +15,15 @@ scripted inputs; the reference business handlers run unchanged.
 
 ## Setup
 
+`scripts/setup-oracle.sh` does all of this (about 3 minutes in a fresh cloud
+container; libmpv is needed because the client imports `mpv` at start). By
+hand:
+
 ```sh
 python3 -m venv ~/pyenv
 ~/pyenv/bin/pip install -r oracle/requirements.txt
 # the reference client needs these at runtime, even headless:
-sudo apt-get install -y libegl1 libgl1 libxkbcommon0 libfontconfig1 libdbus-1-3 ffmpeg
+sudo apt-get install -y libegl1 libgl1 libxkbcommon0 libfontconfig1 libdbus-1-3 ffmpeg libmpv2
 export QT_QPA_PLATFORM=offscreen
 ```
 

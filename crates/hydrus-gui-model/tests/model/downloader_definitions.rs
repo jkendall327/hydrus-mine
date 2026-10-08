@@ -112,7 +112,7 @@ fn reference_rows_previews_and_vetoes_are_replayed() {
         .iter()
         .map(|v| v.as_str().unwrap())
         .collect::<Vec<_>>();
-    assert_eq!(actions.delete_question(), questions.join("\n\n"));
+    assert_eq!(actions.delete_questions(), questions);
     actions.delete_selected();
     assert_eq!(
         json!(
@@ -303,7 +303,7 @@ fn generator_copies_nested_repair_and_delete_are_staged() {
     };
     assert_eq!(n.gugs.len(), 1, "missing members repaired on editor Apply");
     draft.selection.select_only(Some(0));
-    assert!(draft.delete_question().contains("combined search"));
+    assert!(draft.delete_questions()[1].contains("combined search"));
     draft.delete_selected();
     assert!(
         !draft

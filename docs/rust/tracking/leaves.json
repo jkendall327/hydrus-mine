@@ -7583,10 +7583,11 @@
    "path": "Help > debug > debug modes",
    "workstream": "help-debug",
    "state": "missing",
-   "priority": "low",
+   "priority": "out-of-scope",
    "reference": null,
    "native": null,
    "notes": [
+    "Not applicable (2026-10-08, help-debug session report): depends only on Qt widgets, stylesheets, icons or mpv widgets of the reference toolkit. See docs/rust/notes/impl-help-debug.md.",
     "Reference debug action wires 'allow crashy files in mpv' to the client diagnostics callback at this AppendMenu entry. The native Help/Command registry exposes no equivalent diagnostics action.",
     "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools."
    ]
@@ -7597,10 +7598,11 @@
    "path": "Help > debug > debug modes",
    "workstream": "help-debug",
    "state": "missing",
-   "priority": "low",
+   "priority": "out-of-scope",
    "reference": null,
    "native": null,
    "notes": [
+    "Not applicable (2026-10-08, help-debug session report): depends only on Qt widgets, stylesheets, icons or mpv widgets of the reference toolkit. See docs/rust/notes/impl-help-debug.md.",
     "Reference debug action wires 'allow crashy files in mpv (and silence errors)' to the client diagnostics callback at this AppendMenu entry. The native Help/Command registry exposes no equivalent diagnostics action.",
     "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools."
    ]
@@ -7611,10 +7613,11 @@
    "path": "Help > debug > debug modes",
    "workstream": "help-debug",
    "state": "missing",
-   "priority": "low",
+   "priority": "out-of-scope",
    "reference": null,
    "native": null,
    "notes": [
+    "Not applicable (2026-10-08, help-debug session report): depends only on Qt widgets, stylesheets, icons or mpv widgets of the reference toolkit. See docs/rust/notes/impl-help-debug.md.",
     "Reference debug action wires 'allow crashy files in mpv (and silence errors) (PERSISTENT)' to the client diagnostics callback at this AppendMenu entry. The native Help/Command registry exposes no equivalent diagnostics action.",
     "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools."
    ]
@@ -7773,10 +7776,11 @@
    "path": "Help > debug > tests, do not touch",
    "workstream": "help-debug",
    "state": "missing",
-   "priority": "low",
+   "priority": "out-of-scope",
    "reference": null,
    "native": null,
    "notes": [
+    "Not applicable (2026-10-08, help-debug session report): depends only on process-kill and crash tests with no native handler to exercise, or fake data for a petition panel hydrus-rs does not have. See docs/rust/notes/impl-help-debug.md.",
     "Reference debug action wires 'do self-sigterm' to the client diagnostics callback at this AppendMenu entry. The native Help/Command registry exposes no equivalent diagnostics action.",
     "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools."
    ]
@@ -7787,10 +7791,11 @@
    "path": "Help > debug > tests, do not touch",
    "workstream": "help-debug",
    "state": "missing",
-   "priority": "low",
+   "priority": "out-of-scope",
    "reference": null,
    "native": null,
    "notes": [
+    "Not applicable (2026-10-08, help-debug session report): depends only on process-kill and crash tests with no native handler to exercise, or fake data for a petition panel hydrus-rs does not have. See docs/rust/notes/impl-help-debug.md.",
     "Reference debug action wires 'do self-sigterm (fake)' to the client diagnostics callback at this AppendMenu entry. The native Help/Command registry exposes no equivalent diagnostics action.",
     "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools."
    ]
@@ -7801,10 +7806,11 @@
    "path": "Help > debug > tests, do not touch",
    "workstream": "help-debug",
    "state": "missing",
-   "priority": "low",
+   "priority": "out-of-scope",
    "reference": null,
    "native": null,
    "notes": [
+    "Not applicable (2026-10-08, help-debug session report): depends only on process-kill and crash tests with no native handler to exercise, or fake data for a petition panel hydrus-rs does not have. See docs/rust/notes/impl-help-debug.md.",
     "Reference debug action wires 'fake petition mode' to the client diagnostics callback at this AppendMenu entry. The native Help/Command registry exposes no equivalent diagnostics action.",
     "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools."
    ]
@@ -7889,10 +7895,11 @@
    "path": "Help > debug > gui actions",
    "workstream": "help-debug",
    "state": "missing",
-   "priority": "low",
+   "priority": "out-of-scope",
    "reference": null,
    "native": null,
    "notes": [
+    "Not applicable (2026-10-08, help-debug session report): depends only on Qt widgets, stylesheets, icons or mpv widgets of the reference toolkit. See docs/rust/notes/impl-help-debug.md.",
     "Reference debug action wires 'force a main gui layout now' to the client diagnostics callback at this AppendMenu entry. The native Help/Command registry exposes no equivalent diagnostics action.",
     "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools."
    ]
@@ -7931,10 +7938,11 @@
    "path": "Help > debug > report modes",
    "workstream": "help-debug",
    "state": "missing",
-   "priority": "low",
+   "priority": "out-of-scope",
    "reference": null,
    "native": null,
    "notes": [
+    "Not applicable (2026-10-08, help-debug session report): depends only on Qt widgets, stylesheets, icons or mpv widgets of the reference toolkit. See docs/rust/notes/impl-help-debug.md.",
     "Reference debug action wires 'graphics view thumbnail update report mode' to the client diagnostics callback at this AppendMenu entry. The native Help/Command registry exposes no equivalent diagnostics action.",
     "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools."
    ]
@@ -7987,10 +7995,11 @@
    "path": "Help > debug > tests, do not touch",
    "workstream": "help-debug",
    "state": "missing",
-   "priority": "low",
+   "priority": "out-of-scope",
    "reference": null,
    "native": null,
    "notes": [
+    "Not applicable (2026-10-08, help-debug session report): depends only on process-kill and crash tests with no native handler to exercise, or fake data for a petition panel hydrus-rs does not have. See docs/rust/notes/impl-help-debug.md.",
     "Reference debug action wires 'induce a program crash' to the client diagnostics callback at this AppendMenu entry. The native Help/Command registry exposes no equivalent diagnostics action.",
     "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools."
    ]
@@ -8001,10 +8010,11 @@
    "path": "Help > debug > gui actions",
    "workstream": "help-debug",
    "state": "missing",
-   "priority": "low",
+   "priority": "out-of-scope",
    "reference": null,
    "native": null,
    "notes": [
+    "Not applicable (2026-10-08, help-debug session report): depends only on Qt widgets, stylesheets, icons or mpv widgets of the reference toolkit. See docs/rust/notes/impl-help-debug.md.",
     "Reference debug action wires 'isolate existing mpv widgets' to the client diagnostics callback at this AppendMenu entry. The native Help/Command registry exposes no equivalent diagnostics action.",
     "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools."
    ]
@@ -8015,10 +8025,11 @@
    "path": "Help > debug > gui actions",
    "workstream": "help-debug",
    "state": "missing",
-   "priority": "low",
+   "priority": "out-of-scope",
    "reference": null,
    "native": null,
    "notes": [
+    "Not applicable (2026-10-08, help-debug session report): depends only on Qt widgets, stylesheets, icons or mpv widgets of the reference toolkit. See docs/rust/notes/impl-help-debug.md.",
     "Reference debug action wires 'macos anti-flicker test' to the client diagnostics callback at this AppendMenu entry. The native Help/Command registry exposes no equivalent diagnostics action.",
     "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools."
    ]
@@ -8092,10 +8103,11 @@
    "path": "Help > debug > gui actions",
    "workstream": "help-debug",
    "state": "missing",
-   "priority": "low",
+   "priority": "out-of-scope",
    "reference": null,
    "native": null,
    "notes": [
+    "Not applicable (2026-10-08, help-debug session report): depends only on Qt widgets, stylesheets, icons or mpv widgets of the reference toolkit. See docs/rust/notes/impl-help-debug.md.",
     "Reference debug action wires 'make a parentless text ctrl dialog' to the client diagnostics callback at this AppendMenu entry. The native Help/Command registry exposes no equivalent diagnostics action.",
     "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools."
    ]
@@ -8166,10 +8178,11 @@
    "path": "Help > debug > report modes",
    "workstream": "help-debug",
    "state": "missing",
-   "priority": "low",
+   "priority": "out-of-scope",
    "reference": null,
    "native": null,
    "notes": [
+    "Not applicable (2026-10-08, help-debug session report): depends only on Qt widgets, stylesheets, icons or mpv widgets of the reference toolkit. See docs/rust/notes/impl-help-debug.md.",
     "Reference debug action wires 'mpv report mode' to the client diagnostics callback at this AppendMenu entry. The native Help/Command registry exposes no equivalent diagnostics action.",
     "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools."
    ]
@@ -8292,10 +8305,11 @@
    "path": "Help > debug > report modes",
    "workstream": "help-debug",
    "state": "missing",
-   "priority": "low",
+   "priority": "out-of-scope",
    "reference": null,
    "native": null,
    "notes": [
+    "Not applicable (2026-10-08, help-debug session report): depends only on Python runtime internals (threads, scheduler, pubsub, pympler memory accounting). See docs/rust/notes/impl-help-debug.md.",
     "Reference debug action wires 'pubsub report mode' to the client diagnostics callback at this AppendMenu entry. The native Help/Command registry exposes no equivalent diagnostics action.",
     "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools."
    ]
@@ -8320,10 +8334,11 @@
    "path": "Help > debug > gui actions",
    "workstream": "help-debug",
    "state": "missing",
-   "priority": "low",
+   "priority": "out-of-scope",
    "reference": null,
    "native": null,
    "notes": [
+    "Not applicable (2026-10-08, help-debug session report): depends only on Qt widgets, stylesheets, icons or mpv widgets of the reference toolkit. See docs/rust/notes/impl-help-debug.md.",
     "Reference debug action wires 'refresh pages menu in five seconds' to the client diagnostics callback at this AppendMenu entry. The native Help/Command registry exposes no equivalent diagnostics action.",
     "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools."
    ]
@@ -8334,10 +8349,11 @@
    "path": "Help > debug > gui actions",
    "workstream": "help-debug",
    "state": "missing",
-   "priority": "low",
+   "priority": "out-of-scope",
    "reference": null,
    "native": null,
    "notes": [
+    "Not applicable (2026-10-08, help-debug session report): depends only on Qt widgets, stylesheets, icons or mpv widgets of the reference toolkit. See docs/rust/notes/impl-help-debug.md.",
     "Reference debug action wires 'reload current qss stylesheet' to the client diagnostics callback at this AppendMenu entry. The native Help/Command registry exposes no equivalent diagnostics action.",
     "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools."
    ]
@@ -8348,10 +8364,11 @@
    "path": "Help > debug > gui actions",
    "workstream": "help-debug",
    "state": "missing",
-   "priority": "low",
+   "priority": "out-of-scope",
    "reference": null,
    "native": null,
    "notes": [
+    "Not applicable (2026-10-08, help-debug session report): depends only on Qt widgets, stylesheets, icons or mpv widgets of the reference toolkit. See docs/rust/notes/impl-help-debug.md.",
     "Reference debug action wires 'reload icon cache' to the client diagnostics callback at this AppendMenu entry. The native Help/Command registry exposes no equivalent diagnostics action.",
     "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools."
    ]
@@ -8390,10 +8407,11 @@
    "path": "Help > debug > data actions",
    "workstream": "help-debug",
    "state": "missing",
-   "priority": "low",
+   "priority": "out-of-scope",
    "reference": null,
    "native": null,
    "notes": [
+    "Not applicable (2026-10-08, help-debug session report): depends only on Python runtime internals (threads, scheduler, pubsub, pympler memory accounting). See docs/rust/notes/impl-help-debug.md.",
     "Reference debug action wires 'review threads' to the client diagnostics callback at this AppendMenu entry. The native Help/Command registry exposes no equivalent diagnostics action.",
     "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools."
    ]
@@ -8432,10 +8450,11 @@
    "path": "Help > debug > tests, do not touch",
    "workstream": "help-debug",
    "state": "missing",
-   "priority": "low",
+   "priority": "out-of-scope",
    "reference": null,
    "native": null,
    "notes": [
+    "Not applicable (2026-10-08, help-debug session report): depends only on the reference's Python test harness. See docs/rust/notes/impl-help-debug.md.",
     "Reference debug action wires 'run the client api test' to the client diagnostics callback at this AppendMenu entry. The native Help/Command registry exposes no equivalent diagnostics action.",
     "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools."
    ]
@@ -8446,10 +8465,11 @@
    "path": "Help > debug > tests, do not touch",
    "workstream": "help-debug",
    "state": "missing",
-   "priority": "low",
+   "priority": "out-of-scope",
    "reference": null,
    "native": null,
    "notes": [
+    "Not applicable (2026-10-08, help-debug session report): depends only on the reference's Python test harness. See docs/rust/notes/impl-help-debug.md.",
     "Reference debug action wires 'run the server test on fresh server' to the client diagnostics callback at this AppendMenu entry. The native Help/Command registry exposes no equivalent diagnostics action.",
     "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools."
    ]
@@ -8460,10 +8480,11 @@
    "path": "Help > debug > tests, do not touch",
    "workstream": "help-debug",
    "state": "missing",
-   "priority": "low",
+   "priority": "out-of-scope",
    "reference": null,
    "native": null,
    "notes": [
+    "Not applicable (2026-10-08, help-debug session report): depends only on the reference's Python test harness. See docs/rust/notes/impl-help-debug.md.",
     "Reference debug action wires 'run the ui test' to the client diagnostics callback at this AppendMenu entry. The native Help/Command registry exposes no equivalent diagnostics action.",
     "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools."
    ]
@@ -8474,10 +8495,11 @@
    "path": "Help > debug > tests, do not touch",
    "workstream": "help-debug",
    "state": "missing",
-   "priority": "low",
+   "priority": "out-of-scope",
    "reference": null,
    "native": null,
    "notes": [
+    "Not applicable (2026-10-08, help-debug session report): depends only on the reference's Python test harness. See docs/rust/notes/impl-help-debug.md.",
     "Reference debug action wires 'run the visual duplicates tuning suite' to the client diagnostics callback at this AppendMenu entry. The native Help/Command registry exposes no equivalent diagnostics action.",
     "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools."
    ]
@@ -8488,10 +8510,11 @@
    "path": "Help > debug > tests, do not touch",
    "workstream": "help-debug",
    "state": "missing",
-   "priority": "low",
+   "priority": "out-of-scope",
    "reference": null,
    "native": null,
    "notes": [
+    "Not applicable (2026-10-08, help-debug session report): depends only on the reference's Python test harness. See docs/rust/notes/impl-help-debug.md.",
     "Reference debug action wires 'run the visual duplicates tuning suite (alpha)' to the client diagnostics callback at this AppendMenu entry. The native Help/Command registry exposes no equivalent diagnostics action.",
     "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools."
    ]
@@ -8558,10 +8581,11 @@
    "path": "Help > debug > data actions",
    "workstream": "help-debug",
    "state": "missing",
-   "priority": "low",
+   "priority": "out-of-scope",
    "reference": null,
    "native": null,
    "notes": [
+    "Not applicable (2026-10-08, help-debug session report): depends only on Python runtime internals (threads, scheduler, pubsub, pympler memory accounting). See docs/rust/notes/impl-help-debug.md.",
     "Reference debug action wires 'show scheduled jobs' to the client diagnostics callback at this AppendMenu entry. The native Help/Command registry exposes no equivalent diagnostics action.",
     "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools."
    ]
@@ -8670,10 +8694,11 @@
    "path": "Help > debug > debug modes",
    "workstream": "help-debug",
    "state": "missing",
-   "priority": "low",
+   "priority": "out-of-scope",
    "reference": null,
    "native": null,
    "notes": [
+    "Not applicable (2026-10-08, help-debug session report): depends only on Qt widgets, stylesheets, icons or mpv widgets of the reference toolkit. See docs/rust/notes/impl-help-debug.md.",
     "Reference debug action wires 'thumbnail debug mode' to the client diagnostics callback at this AppendMenu entry. The native Help/Command registry exposes no equivalent diagnostics action.",
     "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools."
    ]
@@ -8698,10 +8723,11 @@
    "path": "Help > debug > memory actions",
    "workstream": "help-debug",
    "state": "missing",
-   "priority": "low",
+   "priority": "out-of-scope",
    "reference": null,
    "native": null,
    "notes": [
+    "Not applicable (2026-10-08, help-debug session report): depends only on Python runtime internals (threads, scheduler, pubsub, pympler memory accounting). See docs/rust/notes/impl-help-debug.md.",
     "Reference debug action wires 'WARNING, MEGA-LAGGY: print memory-use snapshot diff' to the client diagnostics callback at this AppendMenu entry. The native Help/Command registry exposes no equivalent diagnostics action.",
     "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools."
    ]
@@ -8712,10 +8738,11 @@
    "path": "Help > debug > memory actions",
    "workstream": "help-debug",
    "state": "missing",
-   "priority": "low",
+   "priority": "out-of-scope",
    "reference": null,
    "native": null,
    "notes": [
+    "Not applicable (2026-10-08, help-debug session report): depends only on Python runtime internals (threads, scheduler, pubsub, pympler memory accounting). See docs/rust/notes/impl-help-debug.md.",
     "Reference debug action wires 'WARNING, MEGA-LAGGY: print memory-use summary' to the client diagnostics callback at this AppendMenu entry. The native Help/Command registry exposes no equivalent diagnostics action.",
     "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools."
    ]
@@ -8726,10 +8753,11 @@
    "path": "Help > debug > memory actions",
    "workstream": "help-debug",
    "state": "missing",
-   "priority": "low",
+   "priority": "out-of-scope",
    "reference": null,
    "native": null,
    "notes": [
+    "Not applicable (2026-10-08, help-debug session report): depends only on Python runtime internals (threads, scheduler, pubsub, pympler memory accounting). See docs/rust/notes/impl-help-debug.md.",
     "Reference debug action wires 'WARNING, MEGA-LAGGY: take memory-use snapshot' to the client diagnostics callback at this AppendMenu entry. The native Help/Command registry exposes no equivalent diagnostics action.",
     "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools."
    ]

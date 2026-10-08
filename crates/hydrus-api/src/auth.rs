@@ -12,7 +12,6 @@ use std::time::{Duration, Instant};
 use axum::http::HeaderMap;
 use parking_lot::RwLock;
 use rusqlite::Connection;
-use serde::{Deserialize, Serialize};
 
 use hydrus_core::HashId;
 
@@ -96,21 +95,7 @@ pub struct AccessRegistry {
 /// The refusal of an access key that isn't known.
 pub const UNKNOWN_KEY: &str = "Did not find an entry for that access key!";
 
-/// Access keys asked for through `/request_new_permissions`, while
-/// `hydrus api-keys <store> listen` (standing in for the reference's
-/// registration dialog) is running.
-#[derive(Debug, Clone, Default, PartialEq, Eq, Serialize, Deserialize)]
-pub struct Registration {
-    /// Requests are accepted until then (ms since the epoch).
-    pub open_until_ms: Option<i64>,
-    /// Keys asked for and not yet accepted or refused: access key (hex),
-    /// name, everything, basic permissions.
-    pub requests: Vec<(String, String, bool, Vec<Permission>)>,
-}
-
-impl hydrus_store::settings::Setting for Registration {
-    const KEY: &'static str = "api_registration";
-}
+pub use hydrus_store::api_permissions::Registration;
 
 impl AccessRegistry {
     /// Re-read the access keys (another process may have changed them),

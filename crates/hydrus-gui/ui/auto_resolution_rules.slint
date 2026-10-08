@@ -53,10 +53,14 @@ export component ComparatorList inherits VerticalLayout {
     in property <int> selected: -1;
     in property <[string]> kinds;
     in-out property <int> kind;
+    // export (0 to clipboard, 1 to png), import (2 from clipboard, 3 from
+    // pngs) and duplicate (4), for the lists that offer them
+    in property <bool> exchanging: false;
     callback clicked(int);
     callback add();
     callback edit();
     callback delete();
+    callback exchange(int);
     spacing: 4px;
     Rectangle {
         min-height: 140px;
@@ -108,6 +112,17 @@ export component ComparatorList inherits VerticalLayout {
             text: "delete";
             enabled: root.selected >= 0;
             clicked => { root.delete(); }
+        }
+    }
+    if root.exchanging: HorizontalLayout {
+        spacing: 4px;
+        alignment: end;
+        SubscriptionExchangeButton { label: "export"; choices: ["to clipboard", "to png"]; available: root.selected >= 0; selected(mode) => { root.exchange(mode); } }
+        SubscriptionExchangeButton { label: "import"; choices: ["from clipboard", "from pngs"]; available: true; selected(mode) => { root.exchange(mode + 2); } }
+        Button {
+            text: "duplicate";
+            enabled: root.selected >= 0;
+            clicked => { root.exchange(4); }
         }
     }
 }
@@ -285,6 +300,7 @@ export component AutoResolutionRuleWindow inherits Window {
     callback comparator-add();
     callback comparator-edit();
     callback comparator-delete();
+    callback comparator-exchange(int);
     // the preview: shown (the rule as edited, searched and tested as it
     // has changed), fetched again, tested again, its sample's size changed
     in property <string> preview-search-label;
@@ -460,6 +476,8 @@ export component AutoResolutionRuleWindow inherits Window {
                 add => { root.comparator-add(); }
                 edit => { root.comparator-edit(); }
                 delete => { root.comparator-delete(); }
+                exchanging: true;
+                exchange(mode) => { root.comparator-exchange(mode); }
             }
         }
         if root.tab == 2: VerticalLayout {

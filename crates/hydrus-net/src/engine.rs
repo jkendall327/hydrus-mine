@@ -1287,6 +1287,13 @@ impl NetEngine {
         }
         let _registered = RegisteredJob { engine: self, id };
         let result = self.fetch_inner(request, job).await;
+        if let Ok(response) = &result
+            && response.url != request.url
+        {
+            hydrus_core::debug_flags::report_network(|| {
+                format!("Network Jobs Redirect: {} -> {}", request.url, response.url)
+            });
+        }
         if let Err(e) = &result
             && e.is_infrastructure()
         {
@@ -1304,6 +1311,9 @@ impl NetEngine {
                 Some(body) if !body.is_empty() => body,
                 _ => error.to_string(),
             };
+            hydrus_core::debug_flags::report_network(|| {
+                format!("Network error should follow:\n{error}\n{text}")
+            });
             let text = if text.chars().count() > 1024 {
                 tracing::debug!(error_text = %text.chars().take(512 * 1024).collect::<String>(), "server error detail");
                 format!(

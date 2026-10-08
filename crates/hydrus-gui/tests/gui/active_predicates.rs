@@ -90,6 +90,7 @@ fn editor(ui: &MainWindow, bound: &hydrus_gui::Bound) -> hydrus_gui::PredicateEd
         .unwrap()
         .clone_strong()
 }
+// leaf: audit-options-search-active-edit
 #[test]
 fn actual_existing_size_cancel_unchanged_and_edit_reach_reference_query_counts() {
     let (_dir, store) = setup();
@@ -186,6 +187,7 @@ fn actual_existing_size_cancel_unchanged_and_edit_reach_reference_query_counts()
     );
     assert!(bound.predicate_editor.borrow().is_none());
 }
+// leaf: audit-options-search-active-edit
 #[test]
 fn captured_menu_and_populated_child_cannot_edit_hidden_replaced_rebound_or_dropped_owners() {
     let (_dir, store) = setup();
@@ -907,6 +909,7 @@ fn capture_routes(
     ui.invoke_active_predicate_menu_opened(selected_rows[0]);
 }
 
+// leaf: audit-options-search-active-edit
 #[test]
 fn real_inherited_menus_publish_exact_qt_clipboard_text_and_open_owned_pages() {
     use hydrus_core::pages::PageContent;

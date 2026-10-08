@@ -212,8 +212,11 @@ search.
   remove/invert/OR merge or dissolve/namespace commands reach the query. Populated
   OR controls embedded in a mixed edit, inherited sibling/parent editors and
   their asynchronous relationship information, favourite/most-used tags and
-  maintenance branches remain missing, so the original action earns no completion
-  credit. Inherited copy/open transports now work, including collapsed OR copying
+  maintenance branches remain missing. The edit/invert leaf
+  (`audit-options-search-active-edit`) is tagged for what the recordings
+  cover: the populated editors, invert, OR, and the copy/open commands; the
+  sibling/parent entries the active list inherits from the tag list are
+  tracked with the tag-relationship windows. Inherited copy/open transports now work, including collapsed OR copying
   and real AND/OR/per-predicate/duplicate-filter pages. Per-predicate pages open
   in native list order; Qt iterates its selected-term set. Qt’s active-list file
   selection handler is an inherited no-op, distinct from its media-list handler.
@@ -272,14 +275,23 @@ search.
   styling uses the existing Slint notice rather than Qt's warning icon. Hash
   source regressions and PNG captures are authored; hosted execution/rendered
   inspection are pending.
-  "Paste image!" takes a file's path from the clipboard, not image data.
+  "Paste image!" takes a file's path from the clipboard, not image data
+  (reading a bitmap needs `arboard`'s `image-data` feature and so the `image`
+  crate; the leaf `...similartodata-paste` stays open for that).
+  The archived and modified date panels are checked, with the import and
+  last-viewed ones, against the shared base class's recorded scenarios; the
+  recorder ran import and last-viewed only, so the other two replay the same
+  steps with their own time kind.
   A recent predicate is forgotten with a "forget" button where the
   reference has a trash icon. The star menu now saves/resets typed defaults
   immediately, surviving owner Cancel and keeping current fields unchanged on
   reset. Star Save can retain an invalid regex, as the reference's Save path
   bypasses its separate acceptance check; OK still reports the invalid regex.
   Its date/relative, views/viewtime, URL-type and cross-service rating
-  comparability follows the actual reference. Per-service rating panels preserve
+  comparability follows the actual reference. The like, numerical and inc/dec
+  rating panels are built per rating service, with the service's name as a
+  label and no selector, as the reference builds them (only the advanced panel
+  has a service chooser). Per-service rating panels preserve
   the reference's omission of custom-default initialization; advanced rating uses
   it. Legacy defaults are imported into the same canonical typed store setting;
   unreadable future records stay lossless in imported options and inactive in
@@ -917,8 +929,9 @@ deleted sidecars by `crates/hydrus-download/tests/local_import.rs`.
   a line each (as the Client API reads them), where the reference has
   search autocompletes and a live count of pairs; its location button
   opens the "multiple/deleted locations" list straight away (the
-  reference's offers a menu of single domains first). It has
-  no import/export/duplicate of rules or comparators, and its custom
+  reference's offers a menu of single domains first). The
+  comparators nested in an OR or AND comparator have no export/import/duplicate
+  buttons (the rule's own comparator list does), and its custom
   merge options are edited in their own window (the reference embeds
   the editor). A relative comparator's time delta and range are
   in milliseconds, where the reference has a time widget.
@@ -1260,8 +1273,11 @@ endpoint authenticates its cached admin key while the native store is paused.
 The detached GUI model saves a whole key edit only on Apply and rejects stale
 concurrent editor state; Qt service review applies list actions immediately.
 The access-key window opens separately from service review; the reference
-embeds its list within that panel. API-request registration still uses
-`hydrus api-keys listen` rather than the Qt capture-request dialog. Key-change
+embeds its list within that panel. "add from api request" opens the
+reference's waiting window and takes the first request the running daemon
+records (the daemon, not the GUI, serves the API, so the request travels
+through the store, polled twice a second); `hydrus api-keys listen` remains
+for a store without a GUI. Key-change
 questions use an inline edit panel and generated-key button. Listener changes
 may take up to one second; current requests drain for at most ten seconds
 before restart. HTTP logs omit query strings and credentials. HTTPS is refused
@@ -1292,6 +1308,13 @@ Full preserved credentials are loaded without discarding fields; independent
 script/domain Apply preserves concurrent edits to the other half of preferences.
 
 ## Network session and HTTP-header management
+
+The session browser's "create new" offers the reference's two types (web domain,
+hydrus service). The service choice lists the repositories by name; a hydrus
+service session is keyed by the service key's hex, as the existing ones are. With
+no repository the context is the kind's default, as an empty choice makes in
+the reference. Qt names the service wherever it lists a network context
+("hydrus service: <name>"); native lists the key's hex.
 
 Cookie and HTTP-header editing uses detached native drafts with Apply/Cancel;
 Qt cookie-list actions take effect immediately, while its header list is staged.
@@ -3770,9 +3793,12 @@ change nothing). They are marked out of scope in `docs/rust/tracking/`.
 ## Auto-resolution rule export and import
 
 - Rules export as hydrus-rs JSON, not the reference's serialised form, so
-  the reference can't import them; hydrus-rs imports both. Comparator lists
-  don't have their own export/import buttons, and an image on the clipboard
-  isn't read (use "from png files").
+  the reference can't import them; hydrus-rs imports both. A rule's comparator
+  list exports a comparator to the clipboard or a png, imports from the
+  clipboard or pngs (hydrus-rs JSON or the reference's serialised comparator,
+  alone or in a list) and duplicates one; the lists inside OR/AND comparators
+  don't have those buttons. An image on the clipboard isn't read (use "from
+  png files").
 
 ## Options kept but not used
 
@@ -3898,6 +3924,45 @@ change nothing). They are marked out of scope in `docs/rust/tracking/`.
 - "force database commit" checkpoints SQLite's write-ahead log (hydrus-rs
   commits each write as it happens); "flush log" writes its line to
   standard error.
+- Report modes are offered only where something in hydrus-rs can report:
+  blurhash, cache, daemon, file, file import, gui, idle, network (and
+  silent), shortcut, similar files metadata generation, subprocess and
+  subscription. Missing: callto, canvas tile borders, db, file sort,
+  graphics view thumbnail update, hover window, media load, mpv, potential
+  duplicates, pubsub and shutdown report modes, and "fake petition mode"
+  (there is nothing in hydrus-rs for them to report on or change, or the
+  place that would report isn't built).
+- The reports use the reference's wording where hydrus-rs does the same
+  step. Some differ: the subprocess report shows the argument list rather
+  than Python's keyword arguments and doesn't dump the environment; file
+  report mode shows the hash as hex and the mime by name; cache report mode
+  names the cache "thumbnail" or "image" and shows a numeric file id; gui
+  report mode reports only key and mouse events turned into shortcuts; the
+  daemon names are the reference's job names for the two maintenance daemons
+  that exist; network report mode has redirects and errors but not the
+  request and response headers.
+- "use faulthandler to log crashes" logs Rust panics (with a backtrace),
+  not Python's fatal-signal tracebacks; a segfault inside a native library
+  isn't logged.
+- "autocomplete delay mode" delays the tag autocomplete search only, not the
+  media predicates lookup the reference also delays.
+- Not offered: profile modes (client api, db, threads, ui) and query planner
+  mode (they need hooks in every database connection and request path);
+  "thumbnail debug mode" (it lightens alternate canvas pages of Qt's
+  thumbnail painting); the mpv "allow crashy files" modes (they switch
+  Python mpv wrapper crash handling); "simulate a wake from sleep" (the GUI
+  keeps no shared network engine to wake); run fast/slow memory
+  maintenance (the caches here maintain themselves on every receive and
+  refresh); "force a main gui layout now", "refresh pages menu in five
+  seconds", "reload current qss stylesheet", "reload icon cache",
+  "isolate existing mpv widgets", "make a parentless text ctrl dialog" and
+  "macos anti-flicker test" (Qt widget, stylesheet, mpv widget or macOS
+  internals); "review threads" and "show scheduled jobs" (Python threads
+  and scheduler); the pympler memory-use entries; "publish some sub files
+  in five seconds", "subscription manager snapshot", "what is this
+  object?"; and the tests, do not touch: the ui, client api, server and
+  visual duplicates test suites (they drive the Python test harness),
+  both self-sigterms and "induce a program crash".
 
 ## Thumbnail manage > file relationships
 

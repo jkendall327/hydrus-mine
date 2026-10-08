@@ -1847,3 +1847,88 @@ fn json_object_names_use_staged_text_children_and_saved_router_worker() {
         plan.routers
     );
 }
+
+// leaf: audit-shared-sidecar-export
+#[test]
+fn the_router_list_exports_its_selected_routers_duplicates_and_reads_its_own_export_back() {
+    use hydrus_downloader_exchange::routers as exchange;
+    use hydrus_gui::{Clip, sidecars_window};
+    use hydrus_gui_model::sidecar_editors::Context;
+    use std::{cell::RefCell, rc::Rc};
+
+    let (_dirs, store) = store();
+    let _windows = headless::init();
+    let copied: Rc<RefCell<Vec<String>>> = Rc::default();
+    hydrus_gui::set_clipper({
+        let copied = copied.clone();
+        move |clip| {
+            if let Clip::Text(text) = clip {
+                copied.borrow_mut().push(text.clone());
+            }
+        }
+    });
+    // routers the reference itself wrote (its own import fixture's)
+    let reference = hydrus_testkit::fixture_json("router_import.json");
+    let case = reference["cases"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|c| {
+            c["context"] == "import"
+                && c["text"].is_array()
+                && !c["added"].as_array().unwrap().is_empty()
+        })
+        .expect("a case that adds routers");
+    let routers = exchange::inspect_text(&case["text"].to_string())
+        .unwrap()
+        .routers;
+    assert!(!routers.is_empty());
+    let n = routers.len();
+    let slots = sidecars_window::Slots::default();
+    let queue = sidecars_window::open_routers(
+        &store,
+        Context::Import,
+        routers.clone(),
+        &slots,
+        Rc::new(|_| {}),
+    )
+    .unwrap();
+    *slots.routers.borrow_mut() = Some(queue.clone_strong());
+    assert_eq!(queue.get_rows().row_count(), n);
+
+    // nothing selected: nothing to export
+    assert!(!queue.get_any_selected());
+    queue.invoke_exchange(false);
+    assert!(slots.exchange.0.borrow().is_none());
+
+    // select the first and export: the reference's text for it, copyable
+    queue.invoke_row_clicked(0, false, false);
+    queue.invoke_exchange(false);
+    let child = slots
+        .exchange
+        .0
+        .borrow()
+        .as_ref()
+        .expect("opens")
+        .clone_strong();
+    assert!(!child.get_router_import());
+    let exported = exchange::decode_text(child.get_text().as_str()).unwrap();
+    assert_eq!(
+        exchange::tuple(&exported[0]).unwrap(),
+        exchange::tuple(&routers[0]).unwrap()
+    );
+    assert_eq!(exported.len(), 1);
+    child.invoke_action("copy".into());
+    assert_eq!(copied.borrow().last().unwrap(), child.get_text().as_str());
+    child.invoke_action("cancel".into());
+    assert!(slots.exchange.0.borrow().is_none());
+
+    // duplicate puts a whole copy after the list and selects both
+    queue.invoke_duplicate();
+    assert_eq!(queue.get_rows().row_count(), n + 1);
+    let rows = queue.get_rows();
+    assert_eq!(
+        rows.row_data(0).unwrap().cells.row_data(0),
+        rows.row_data(n).unwrap().cells.row_data(0)
+    );
+}

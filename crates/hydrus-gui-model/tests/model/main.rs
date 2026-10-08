@@ -18,6 +18,7 @@ mod database_locations;
 mod database_maintenance;
 mod datetime_editor;
 mod debug_actions;
+mod debug_flags;
 mod delete_files;
 mod downloader_definitions;
 mod downloader_update_times;

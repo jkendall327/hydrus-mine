@@ -255,6 +255,20 @@ pub fn action_pairs(
     approve: bool,
     status: &std::sync::Mutex<String>,
 ) -> hydrus_store::Result<()> {
+    action_pairs_after(store, rule_id, pairs, approve, status, POPUP_AFTER, &|_| {})
+}
+
+/// [`action_pairs`] with the wait before its popup shows chosen, and told
+/// of each popup text written (and `""` once it is finished and dismissed).
+pub fn action_pairs_after(
+    store: &hydrus_store::Store,
+    rule_id: i64,
+    pairs: &[(hydrus_core::HashId, hydrus_core::HashId)],
+    approve: bool,
+    status: &std::sync::Mutex<String>,
+    popup_after: std::time::Duration,
+    popup_written: &dyn Fn(&str),
+) -> hydrus_store::Result<()> {
     use hydrus_store::popups;
     let started = std::time::Instant::now();
     let now = || hydrus_core::TimestampMs::now().millis() / 1000;
@@ -267,7 +281,7 @@ pub fn action_pairs(
                 .lock()
                 .unwrap_or_else(std::sync::PoisonError::into_inner),
         );
-        if popup.is_none() && started.elapsed() >= POPUP_AFTER {
+        if popup.is_none() && started.elapsed() >= popup_after {
             #[allow(clippy::cast_precision_loss)] // (seconds)
             let job = popups::Job::text(action_title(approve), now() as f64);
             popup = Some(job.key);
@@ -276,6 +290,7 @@ pub fn action_pairs(
         }
         if let Some(key) = popup {
             let at = now();
+            popup_written(&text);
             store.write(move |ctx| {
                 popups::update(ctx.conn(), &key, at, |job| job.status_text_1 = Some(text))
                     .map(|_| ())
@@ -296,6 +311,7 @@ pub fn action_pairs(
         store.write(move |ctx| {
             popups::update(ctx.conn(), &key, at, |job| job.finish_and_dismiss(None, at)).map(|_| ())
         })?;
+        popup_written("");
     }
     result
 }
