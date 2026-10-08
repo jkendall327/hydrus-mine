@@ -5037,7 +5037,8 @@ Opened from the media viewer (F3 there), the dialog is the reference's
 immediate-commit one: every change is written as it is made (the viewer's tag display
 and the page update at once), there is only a "close" button, the dialog is about the
 file the viewer shows and follows it as the viewer moves, and PageUp / PageDown in an
-empty input move the viewer to the previous / next file. Proven by
-`manage_tags_cog.rs`, `manage_tags_viewer.rs` and `manage_tags_keys` replays of
-`oracle/fixtures/manage_tags_cog.json`, `manage_tags_viewer.json` and
-`manage_tags_keys.json`.
+empty input move the viewer to the previous / next file. A question still open
+when the viewer moves on is dropped, so it can never be answered for the wrong file.
+Proven by replays of `oracle/fixtures/manage_tags_cog.json` (`manage_tags_cog.rs`),
+`manage_tags_viewer.json` (`manage_tags_viewer.rs`, through real key events and the
+viewer's own navigation) and `manage_tags_keys.json` (the empty-input conditions).

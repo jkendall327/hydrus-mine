@@ -138,8 +138,5 @@ fn viewer_dialog_commits_each_change_and_follows_the_file_shown() {
     model.set_file(files[2]);
     check(&model, &store, "follows_to_third", &[]);
     model.set_file(files[0]);
-    assert_eq!(
-        rows(&model),
-        json!(["v:a (1)", "v:new (1)", "v:shared (1)"])
-    );
+    assert_eq!(rows(&model), step("typed_add_commits_at_once")["rows"]);
 }

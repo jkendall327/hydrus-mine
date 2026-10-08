@@ -1434,9 +1434,22 @@ pub(crate) fn open(
             let results = related_results.clone();
             let last = related_request.clone();
             let weak = window.as_weak();
+            let pending = pending_paste.clone();
+            let tag_menu = tag_menu.clone();
             move |file| {
                 if !active.get() {
                     return;
+                }
+                // a question about the file left behind must not be answered
+                // for the new one (the answer would write at once)
+                pending.borrow_mut().take();
+                tag_menu.close();
+                if let Some(w) = weak.upgrade() {
+                    w.set_question("".into());
+                    w.set_tag_menu_question("".into());
+                    w.set_tag_menu_question_title("".into());
+                    w.set_tag_menu_yes_label("yes".into());
+                    w.set_tag_menu_no_label("no".into());
                 }
                 model.borrow_mut().set_file(file);
                 results.borrow_mut().clear();

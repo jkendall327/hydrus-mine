@@ -29,6 +29,8 @@ pub struct Prompt {
     /// The buttons' tooltips: what it does, then the files each tag affects.
     pub tooltips: Vec<String>,
     options: Vec<(Verb, BTreeSet<String>)>,
+    /// The files it was asked about: an answer for other files is dropped.
+    files: Vec<HashId>,
 }
 
 /// An entry that is done, or waits on the user's choice.
@@ -160,6 +162,7 @@ impl ManageTags {
                     choices: texts,
                     tooltips,
                     options,
+                    files: self.files.clone(),
                 }))
             }
         }
@@ -167,6 +170,9 @@ impl ManageTags {
 
     /// The user chose button `index` of `prompt`, or closed it (`None`).
     pub fn answer_prompt(&mut self, prompt: &Prompt, index: Option<usize>) {
+        if prompt.files != self.files {
+            return;
+        }
         if let Some((verb, tags)) = index.and_then(|i| prompt.options.get(i)) {
             self.carry_out(*verb, tags.iter().cloned());
         }
