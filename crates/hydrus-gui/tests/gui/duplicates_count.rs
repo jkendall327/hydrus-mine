@@ -33,9 +33,16 @@ fn spin_until(what: &str, mut ready: impl FnMut() -> bool) {
 
 /// Wait for the count line to be `expected`.
 fn await_count(ui: &MainWindow, expected: &str) {
-    spin_until(&format!("the count never said {expected:?}"), || {
-        count_of(ui) == expected
-    });
+    let until = Instant::now() + Duration::from_secs(20);
+    while count_of(ui) != expected {
+        assert!(
+            Instant::now() < until,
+            "the count never said {expected:?}; it says {:?}",
+            count_of(ui)
+        );
+        std::thread::sleep(Duration::from_millis(10));
+        slint::platform::update_timers_and_animations();
+    }
 }
 
 /// Let the waiting fetch or block through, once one waits.
