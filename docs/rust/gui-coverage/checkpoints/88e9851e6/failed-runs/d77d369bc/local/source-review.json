@@ -1,1 +1,0 @@
-{"reviewer":"/root/archive_review","source":"d77d369bc","result":"pass","findings":[],"scope":"font registration precedence, idempotence, fallback preservation, desktop/headless startup, regressions, pins, license/provenance","remaining_gates":["exact-source hosted Linux validation","fresh native rendered review"]}

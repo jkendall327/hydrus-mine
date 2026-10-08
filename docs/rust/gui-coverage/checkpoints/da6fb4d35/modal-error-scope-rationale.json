@@ -1,7 +1,0 @@
-{
-  "decision": "explicit_native_difference_accepted",
-  "reference": "ClientGUIExport._DoExport calls ShowCritical in worker before cleanup; ClientGUIDialogsMessage routes to blocking Qt dialog.",
-  "rationale": "User confirmed trash before work. Native already has inline error reporting; reproducing modal acknowledgement is a separate interaction policy, not needed to establish bounded worker successful-prefix persistence. Must disclose different cancellation opportunity/timing rather than claim identical failure lifecycle.",
-  "parent_correction": "Parent remains Partial and unselected. Existing limitation also bundled older no-pattern/no-sidebar assertions that conflict with separately assessed children; replacement refers those scopes back to their own assessments without promoting or revalidating them. All other inventory nodes must remain preserved.",
-  "runtime_signoff": false
-}

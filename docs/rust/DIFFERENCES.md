@@ -242,7 +242,7 @@ search.
   existing overlap in editable width/height unit text is not promoted by preset
   verification. Full Linux execution and independent native render review passed
   for exactly nine historical leaves, with zero additional implementation credit.
-  [Evidence](gui-coverage/checkpoints/dimensions-e00ddab70/README.md).
+  Evidence (checkpoint `dimensions-e00ddab70`, in git history before 2026-10-08).
 
 - **System predicate editors type dates** ("2011-06-04", and "13:05") where
   the reference's have a calendar and a time box. Viewing-time predicates
@@ -1130,7 +1130,7 @@ run before copying. Native cleanup errors retain the original export error and
 the count of earlier committed trash batches, rather than leaving an unhandled
 worker exception. Exact-source Linux validation and independent rendered review
 passed at `da6fb4d35` (2,201 tests, including 715 GUI and 67 media tests).
-[Evidence](gui-coverage/checkpoints/da6fb4d35/README.md). Qt pauses its worker on
+Evidence (checkpoint `da6fb4d35`, in git history before 2026-10-08). Qt pauses its worker on
 critical-error acknowledgement before cleanup and can observe cancellation during
 that pause. Native displays errors inline and can immediately begin already-confirmed
 cleanup; the recorder intercepts the dialog and does not prove timing parity.
@@ -2031,7 +2031,7 @@ menu grabs are painted QMenu trees with intercepted popup presentation, so they
 do not establish displayed popup placement or physical OS menu behavior. Broader
 service/collect/Default Collect menus and sidebar parents gain no credit from
 this one-leaf follow-up. Full Linux and fresh independent native review passed.
-[Evidence](gui-coverage/checkpoints/9f6397368/README.md).
+Evidence (checkpoint `9f6397368`, in git history before 2026-10-08).
 
 Command-palette preferences and snapshot-based provider/queue models are now
 present, with fresh Qt recordings. The Options editor now stages and persists these
@@ -2262,7 +2262,7 @@ eight-combination, transaction, ordering and consumer assertions. The actual
 Qt rerun is unchanged. Its menu trees are recorded by intercepting `PopupMenu`;
 only the Options pane has a Qt image. Native popup images therefore cannot
 establish Qt popup pixel parity. Full Linux and fresh independent native review
-passed at `a7ca8166f`. [Evidence](gui-coverage/checkpoints/a7ca8166f/README.md).
+passed at `a7ca8166f`. Evidence (checkpoint `a7ca8166f`, in git history before 2026-10-08).
 Expanded native submenus overlap their parent at the right edge; their contents
 remain readable, but the stills do not establish simultaneous parent
 highlighting or universal popup placement.
@@ -2305,7 +2305,7 @@ for like, numerical and counter services, plus the inline counter input. The
 earlier 640×900 export showed only the first example. New captures scroll the
 actual owned editor at 640×1000. Full Linux run `37618131717` and fresh
 independent rendered review passed for this one leaf.
-[Evidence](gui-coverage/checkpoints/95bbbed2c/README.md). Native examples retain the tested saved 20/15/12/12 icon sizes rather
+Evidence (checkpoint `95bbbed2c`, in git history before 2026-10-08). Native examples retain the tested saved 20/15/12/12 icon sizes rather
 than the Qt recorder's default sizing. Preview Window is an example label,
 not evidence of a live Preview canvas. Captures retain the existing native
 action sequence: the first like sample is selected and the first counter is 1;
@@ -2341,7 +2341,7 @@ Full Linux run `37682619326`, fresh reference replay and independent rendered re
 passed for this one leaf. Menu, cancellation and ownership checks dispatch
 callbacks; warning, population and completion buttons use measured pointer input.
 The Qt recording proves questions and outcomes, not matching dialog pixels.
-[Evidence](gui-coverage/checkpoints/2e2a24281/README.md).
+Evidence (checkpoint `2e2a24281`, in git history before 2026-10-08).
 
 
 Suggested tags have real local-service most-used and recent consumers, per-service
@@ -2495,7 +2495,7 @@ Actual saved Options captures and supported narrow/wider frame checks passed ful
 `37644009033` and fresh independent review. No local Cargo builds/tests or
 mutation runs were performed. Exactly three navigation preference leaves receive
 credit; sidebar, preview-focus siblings and broader parents remain separately
-assessed. [Evidence](gui-coverage/checkpoints/1a49a30f0/README.md).
+assessed. Evidence (checkpoint `1a49a30f0`, in git history before 2026-10-08).
 
 The namespace-colour Add/Delete and OR-row namespace preferences now have staged
 Options controls and real list consumers. Rejected namespace input closes its
@@ -2556,7 +2556,7 @@ the post-Apply consumer provide that evidence. Six fresh native captures
 use explicit queue/chooser/notice sizes; the historical Qt outer-panel image is
 not a matching nested child image. Full Linux run `37605060836` and fresh independent
 rendered review passed for exactly three nested File controls.
-[Evidence](gui-coverage/checkpoints/1e2b2e25f/README.md).
+Evidence (checkpoint `1e2b2e25f`, in git history before 2026-10-08).
 Outer MIME mapping controls, physical nested button coordinates,
 universal geometry and deferred platforms receive no completion credit.
 
@@ -2567,7 +2567,7 @@ Delete follow-up uses callbacks and explicit capture sizes; historical Qt
 images do not show matching chooser, blank-child or confirmation states.
 Full Linux run `37613614274` and fresh independent rendered review passed for
 exactly MIME mapping Add/Edit/Delete.
-[Evidence](gui-coverage/checkpoints/a6d28f4e4/README.md).
+Evidence (checkpoint `a6d28f4e4`, in git history before 2026-10-08).
 No all-MIME exhaustion, universal geometry, inherited keyboard/column behavior,
 broader ownership, parent or deferred-platform completion is claimed.
 
@@ -2610,7 +2610,7 @@ using Qt checkboxes; question answers and selector toggles remain callback-drive
 The historical Qt callable-child image is not an outer menu/selector pixel
 comparison. Full Linux run `37599290504` and independent review of six fresh
 Add Defaults frames passed, retaining the full-state regressions.
-[Evidence](gui-coverage/checkpoints/791b72d19/README.md).
+Evidence (checkpoint `791b72d19`, in git history before 2026-10-08).
 
 The validated two-leaf checkpoint covers only the registered-call Delete and
 Duplicate actions. The actual Qt replay reproduces the selected questions,
@@ -2620,7 +2620,7 @@ scripts question answers and its image depicts a callable child, so it supplies
 no outer-list/question pixel or placement comparison. Exact-source full Linux
 validation and independent review of all seven fresh defining frames passed.
 Add Defaults, broader parents, launching and deferred platforms remain separate.
-[Evidence](gui-coverage/checkpoints/1943b19d9/README.md).
+Evidence (checkpoint `1943b19d9`, in git history before 2026-10-08).
 The first run also exposes a test synchronization error: after a declined warning,
 the owned question closes immediately while the existing 30 ms timer refreshes
 the button-disable flag. A bounded real-render wait preserves the original
@@ -2651,7 +2651,7 @@ plus retained callbacks against a replacement editor. Broader command/process
 parents, executable picker/PATH/launch breadth, output presentation and Qt
 PageUp/PageDown/type-ahead/scroll-to-current remain outside the pair. Full Linux
 and fresh independent rendered review passed.
-[Evidence](gui-coverage/checkpoints/6b5ca5ab4/README.md).
+Evidence (checkpoint `6b5ca5ab4`, in git history before 2026-10-08).
 
 The first follow-up run passed the command tests but failed an existing
 hide/show wheel assertion. That test now waits for measured, stable geometry
@@ -3017,7 +3017,7 @@ parent images show initial defaults while saved native captures show applied
 values. Separate consumer captures have recorded behavior support but no matching
 Qt consumer PNG. The actual Qt rerun is unchanged; full exact-source Linux and
 fresh independent native review passed for exactly the four selected leaves.
-[Evidence](gui-coverage/checkpoints/7c74c6171/README.md).
+Evidence (checkpoint `7c74c6171`, in git history before 2026-10-08).
 At 900px, some namespace-grouping explanatory prose clips horizontally; the
 selected captions, dropdowns and scrolled queue controls remain readable. The
 internal queue viewport shows only part of the stored raw list at once; complete
@@ -3082,7 +3082,7 @@ failed full run and blank field remain diagnostic history. The local cached-libr
 probe is separate from current application validation. Exactly one original leaf
 is published, bringing the ledger to 375 with no existing candidate pending;
 there is no parent credit or custom OR renderer activation. Windows/macOS remain
-deferred. [Evidence](gui-coverage/checkpoints/88e9851e6/README.md).
+deferred. Evidence (checkpoint `88e9851e6`, in git history before 2026-10-08).
 
 Default and registered single-file launch dispatch now reads current Store
 file-domain membership explicitly. The lightweight basic metadata reader leaves
@@ -3245,7 +3245,7 @@ limits above remain. Only filesize and both hash leaves are signed off; generic
 active editing, radio preferences, predicate parents/aliases and deferred
 Windows/macOS receive no credit. Full exact-source Linux validation and fresh
 independent render review passed: 346 signed off, 29 candidates pending.
-[Evidence](gui-coverage/checkpoints/170ab0525/README.md) preserves the standalone
+Evidence (checkpoint `170ab0525`, in git history before 2026-10-08) preserves the standalone
 Qt lifetime scope and failed nested-warning experiment without claiming parity.
 
 The two archive/delete finish policies now reach selectable deletion scopes and
@@ -3324,7 +3324,7 @@ Actual reference recording and Store/model/native regressions are pinned. The
 October 7 rerun preserves all 40 recorded cases exactly; the new saved-disabled
 Options capture and retained unforced-default regression passed exact-source
 Linux execution and fresh independent rendered review at `32d9dbb74`.
-[Evidence](gui-coverage/checkpoints/32d9dbb74/README.md) approves exactly this
+Evidence (checkpoint `32d9dbb74`, in git history before 2026-10-08) approves exactly this
 preference leaf. The Qt consumer image is
 re-shown after acceptance, while the native consumer image records pre-key pixels;
 neither proves key handling through pixels alone. No matching Qt Options PNG is
@@ -3589,7 +3589,7 @@ claim unobserved atomic replacement or generic question ownership parity. The
 reference image shows the menu, not a matched confirmation frame. The new
 controls and capture passed full Linux run `37624387284` and fresh independent
 rendered review. Only the selected thumbnail clear-deletion-record leaf gains
-credit. [Evidence](gui-coverage/checkpoints/1c2b1afaf/README.md).
+credit. Evidence (checkpoint `1c2b1afaf`, in git history before 2026-10-08).
 
 ### Viewer image-prefetch controls (source proposal, runtime pending)
 
@@ -3912,7 +3912,7 @@ controls publish their initial measured geometry as well as later changes.
 These repairs passed full Linux replay at `56b93ae49` (696 GUI tests).
 Completion credit remains limited to the 94 independently reviewed original
 leaves banked across seven checkpoints, with the latest
-[334-item checkpoint](gui-coverage/checkpoints/63f9e35ab/README.md);
+334-item checkpoint (checkpoint `63f9e35ab`, in git history before 2026-10-08);
 other repaired behavior retains its scoped assessment.
 
 Speed and Memory helper overlap and favourites capture setup are repaired and

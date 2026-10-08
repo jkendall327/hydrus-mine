@@ -1,8 +1,0 @@
-{
-  "schema_version": 1,
-  "publication_scope": "linux",
-  "required_platforms": ["linux"],
-  "deferred_platforms": ["windows", "macos"],
-  "effective_date": "2026-10-06",
-  "reason": "The owner uses Linux and prioritizes validated Linux delivery. macOS is low priority; Windows is deferred because its builds materially lengthen validation. Secondary-platform CI remains available by explicit opt-in."
-}

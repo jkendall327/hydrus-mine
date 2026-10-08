@@ -1,9 +1,0 @@
-{
-  "source_commit": "9f6397368d2ecdfcb28e7c7159a8bf195e7d7012",
-  "actually_viewed": [
-    "report-desktop.png",
-    "report-narrow.png"
-  ],
-  "observations": "355 signed off clearly separate from inventory counts. Selected namespace tag-display detail and limits readable; narrow layout wraps without horizontal overflow.",
-  "browser_check_sha256": "af085d518a60063b6d44f7fa7418a7e77f04696cc4791af30ad595d3b4707112"
-}

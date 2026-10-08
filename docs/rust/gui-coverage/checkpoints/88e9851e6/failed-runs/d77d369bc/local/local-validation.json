@@ -1,7 +1,0 @@
-{
-  "preserved_all_prior_native_assertions": true,
-  "reference_replay_byte_identical": true,
-  "font_sha256": "de6c18832938afc99caf132b39d6a30a19bac7f2e812e28db2535b4608d27551",
-  "local_adapter_test": "passed: compiled actual new adapter + test against cached exact Slint 1.18.1 libraries; not full current application validation",
-  "baseline_fox_ink": 0
-}

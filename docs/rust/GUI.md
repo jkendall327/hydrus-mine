@@ -916,7 +916,7 @@ nine presets, persistence after reopening the store, supported normal/narrow
 layouts and hidden/retired-owner guards. Exact-source full Linux validation and
 independent native image review passed: these nine historical first-pass leaves
 now have explicit verification, separate from implementation credit. The
-[checkpoint](gui-coverage/checkpoints/dimensions-e00ddab70/README.md) retains
+checkpoint (checkpoint `dimensions-e00ddab70`, in git history before 2026-10-08) retains
 the reference, native tests, captures and scope limitations.
 
 The hash editor now presents vertical is/is-not and SHA-256/MD5/SHA-1/
@@ -1185,7 +1185,7 @@ Native replay and fresh normal/failure renders passed exact-source Linux validat
 at `da6fb4d35`: 2,201 workspace tests, including 715 GUI and 67 media tests,
 plus strict Clippy and independent review. Only the worker leaf gains credit,
 bringing the ledger to 376 with no existing candidate awaiting sign-off.
-[Evidence](gui-coverage/checkpoints/da6fb4d35/README.md).
+Evidence (checkpoint `da6fb4d35`, in git history before 2026-10-08).
 The read-only "files' tags" sidebar shows actual display tags for selected
 files, falling back to all kept files, with current, pending and petitioned
 counts. Local tag/subtag/count sorting preserves selected tags and remembers
@@ -3152,7 +3152,7 @@ nor nested exec/active-warning teardown; native cleanup-notice closure remains
 a separate safety test. Exactly filesize and both hash leaves are now signed off
 after full Linux run `37560085258` and independent fresh native image review.
 All 704 GUI tests and 67 media tests passed; the ledger is 346 signed off with
-29 existing candidates pending. [Evidence](gui-coverage/checkpoints/170ab0525/README.md).
+29 existing candidates pending. Evidence (checkpoint `170ab0525`, in git history before 2026-10-08).
 
 Manage Tags now reads deleted mappings separately for each selected local tag
 service. The count measures tag–file mappings, hides at zero, and follows staged
@@ -3252,7 +3252,7 @@ the existing configuration, persistence, owner and pointer assertions remain.
 Full Linux run `37618131717` and fresh independent inspection of all four
 frames passed. Exactly the live rating examples leaf is banked: 369 signed off,
 6 existing candidates pending. All 710 GUI and 67 media tests passed.
-[Evidence](gui-coverage/checkpoints/95bbbed2c/README.md).
+Evidence (checkpoint `95bbbed2c`, in git history before 2026-10-08).
 
 
 The browser viewer's eye button now opens view options. The three Media Viewer
@@ -3275,7 +3275,7 @@ transitions without changing the fixture. Its image shows the Options pane,
 not a displayed Qt menu. Full Linux run `37571489508` and fresh independent native rendered review
 passed, including all 706 GUI and 67 media tests. The published ledger is
 354 signed off with 21 existing candidates pending.
-[Evidence](gui-coverage/checkpoints/a7ca8166f/README.md).
+Evidence (checkpoint `a7ca8166f`, in git history before 2026-10-08).
 
 Numerical rating examples accept left-button dragging and clicks on either
 fraction label through the same whole-widget control as their star graphics.
@@ -3338,7 +3338,7 @@ while cancellation before the write reports Cancelled with no timestamp changes.
 Fresh reference replay, physical-control and rendering regressions cover this
 bounded repair. Full Linux run `37682619326` and independent rendered review passed,
 including all 713 GUI and 67 media tests.
-[Evidence](gui-coverage/checkpoints/2e2a24281/README.md).
+Evidence (checkpoint `2e2a24281`, in git history before 2026-10-08).
 The control observer wraps ordinary buttons and preserves their intrinsic sizing
 and keyboard focus; it is disabled outside regression captures.
 The 440×480 population question fits completely; a separate 440×360 capture
@@ -3459,7 +3459,7 @@ false/1/1.5 settings. Full Linux run `37644009033` and fresh independent
 inspection of all four frames passed for exactly three thumbnail-navigation
 preferences: 373 signed, 2 existing candidates pending. All 711 GUI and
 67 media tests passed. No sidebar/preview/sibling credit is added.
-[Evidence](gui-coverage/checkpoints/1a49a30f0/README.md).
+Evidence (checkpoint `1a49a30f0`, in git history before 2026-10-08).
 The four independent Ctrl/Shift preview-focus checkboxes are also staged here.
 The no-duration child is enabled by its own parent and preserves its checked value
 while disabled. Shift focus on all files disables the existing ghost-navigation
@@ -3497,7 +3497,7 @@ inheritance. Manual popup cleanup around hide/page switch does not claim
 automatic popup teardown. Full Linux run `37577340514` and fresh independent
 native rendered review passed, including all 707 GUI and 67 media tests.
 The banked ledger is 355 signed off with 20 existing candidates pending.
-[Evidence](gui-coverage/checkpoints/9f6397368/README.md).
+Evidence (checkpoint `9f6397368`, in git history before 2026-10-08).
 The first hosted run passed all 706 prior GUI tests but exposed an unsorted
 restoration baseline in the new test. Setup now invokes the ordinary sort
 consumer, as the reference does before its mouse routes, and adds an exact
@@ -3558,7 +3558,7 @@ accepting the physically opened Edit child must replace rather than append.
 Retained Add/Edit answers are checked against live successor owners, including
 temporary hide/re-show and a positive current answer. Full Linux run `37599290504`
 and fresh independent rendered review passed for exactly URL Add/Edit.
-[Evidence](gui-coverage/checkpoints/791b72d19/README.md).
+Evidence (checkpoint `791b72d19`, in git history before 2026-10-08).
 
 A bounded nested File queue follow-up replays all eight recorded queue states,
 exact registered choices, explicit single-choice Edit, removal cancellation and
@@ -3570,7 +3570,7 @@ captures and the additional regressions passed full Linux run `37605060836` and
 fresh independent rendered review. Exactly nested File Choose, Add/Edit and
 Order are banked: 365 signed off, 10 existing candidates pending. All 709 GUI
 and 67 media tests passed.
-[Evidence](gui-coverage/checkpoints/1e2b2e25f/README.md).
+Evidence (checkpoint `1e2b2e25f`, in git history before 2026-10-08).
 
 The outer MIME mapping follow-up corrects its Delete question to the reference
 “Remove all selected?” while preserving the protected all-files backstop and
@@ -3580,7 +3580,7 @@ reopening, and retained pending children against usable replacement owners.
 Six defining native captures passed full Linux run `37613614274` and fresh
 independent rendered review. Exactly MIME mapping Add/Edit/Delete are banked:
 368 signed off, 7 existing candidates pending. All 710 GUI and 67 media
-tests passed. [Evidence](gui-coverage/checkpoints/a6d28f4e4/README.md).
+tests passed. Evidence (checkpoint `a6d28f4e4`, in git history before 2026-10-08).
 
 The first follow-up run (`37609745626`) failed two GUI tests and granted no
 completion credit. The MIME replay now distinguishes the recorded animated
@@ -3627,7 +3627,7 @@ retired selector against a usable replacement. Full Linux run `37599290504` and
 independent review of six fresh defining frames passed for Add Defaults.
 Together with URL Add/Edit, this checkpoint publishes 362 signed off, with
 13 existing candidates pending; all 708 GUI and 67 media tests passed.
-[Evidence](gui-coverage/checkpoints/791b72d19/README.md).
+Evidence (checkpoint `791b72d19`, in git history before 2026-10-08).
 
 The validated follow-up selects only registered-call Delete and Duplicate.
 The October 7 actual Qt replay matches the six sort cases, duplicate selections,
@@ -3640,7 +3640,7 @@ All 165 existing assertions across nine tests are retained; the file now has
 242 assertions. The authored OS URL fixture now sets its actual URL pipeline.
 Full Linux run `37592389894` and fresh independent rendered review passed:
 359 signed off, 16 existing candidates pending, all 707 GUI and 67 media
-tests passing. [Evidence](gui-coverage/checkpoints/1943b19d9/README.md).
+tests passing. Evidence (checkpoint `1943b19d9`, in git history before 2026-10-08).
 Initial run `37590137304` failed strict Clippy on a clone assignment and one new
 duplicate-warning assertion on the timer-refreshed child-open flag (706 GUI
 passes, one failure). The repair uses `clone_from`, verifies the actual question
@@ -3675,7 +3675,7 @@ preserving all 115 original assertions across nine tests; the file now contains
 checks remain intact. Full Linux run `37583224181` and fresh independent
 rendered review passed, including all 707 GUI and 67 media tests. The ledger
 now has 357 signed off and 18 existing candidates pending.
-[Evidence](gui-coverage/checkpoints/6b5ca5ab4/README.md).
+Evidence (checkpoint `6b5ca5ab4`, in git history before 2026-10-08).
 The first full run passed all three command tests but failed an existing Options
 wheel test after hide/show. The repair waits for stable measured geometry and
 finished animations before its one wheel event, retaining the exact expected
@@ -3965,7 +3965,7 @@ captures cover both Manage Tags consumers and the namespace Add/Edit children.
 The October 7 Qt rerun preserves all 72 sort combinations and both lifetimes;
 exact-source Linux run `37567007002` and fresh independent native review passed,
 including all 706 GUI and 67 media tests. The published ledger is 351 signed off
-with 24 existing candidates pending. [Evidence](gui-coverage/checkpoints/7c74c6171/README.md).
+with 24 existing candidates pending. Evidence (checkpoint `7c74c6171`, in git history before 2026-10-08).
 
 Speed and Memory > download pages update now stages the four experimental gallery
 and watcher list-update controls: seconds/milliseconds with a 250 ms minimum and
@@ -4005,7 +4005,7 @@ review pass: 2,198 workspace tests, including 714 GUI and 67 media tests. The
 actual fox field paints visibly; its ASCII counterpart and three ordinary text
 frames are unchanged. This signs off only the original editor leaf, bringing the
 ledger to 375 with no existing candidate pending.
-[Evidence](gui-coverage/checkpoints/88e9851e6/README.md).
+Evidence (checkpoint `88e9851e6`, in git history before 2026-10-08).
 
 Delayed deletion consumers keep a weak identity for their originating page.
 Replacing a session releases that page even when its viewer stays open. A live
@@ -4172,7 +4172,7 @@ or disturb its successor. All three original radio tests and 47 assertions remai
 The real Qt recorder was rerun on October 7: all 40 cases match the committed
 fixture exactly. Full Linux run `37564321392` and independent fresh native review
 passed, including all 705 GUI and 67 media tests. The published total is 347
-with 28 existing candidates pending. [Evidence](gui-coverage/checkpoints/32d9dbb74/README.md).
+with 28 existing candidates pending. Evidence (checkpoint `32d9dbb74`, in git history before 2026-10-08).
 
 Options > tag sort now includes the staged namespace grouping queue. Add and
 Edit open owned Enter Text children with the reference's `namespace` default,
@@ -4383,7 +4383,7 @@ unobserved same-turn replacement guarantee. Full Linux run `37624387284`
 and fresh independent inspection of the measured pointer-question controls
 passed. Exactly this selected thumbnail action gains sign-off: 370 signed,
 5 existing candidates pending. All 711 GUI and 67 media tests passed.
-[Evidence](gui-coverage/checkpoints/1c2b1afaf/README.md).
+Evidence (checkpoint `1c2b1afaf`, in git history before 2026-10-08).
 
 Options → speed and memory now stages the per-viewer image-cache percentage
 (default 25%, 10–50%), previous/next image-prefetch counts (defaults 2/3,
@@ -4791,7 +4791,7 @@ controls publish their initial measured geometry as well as later changes.
 These repairs passed full Linux replay at `56b93ae49` (696 GUI tests).
 Completion credit remains limited to the 94 independently reviewed original
 leaves banked across seven checkpoints, with the latest
-[334-item checkpoint](gui-coverage/checkpoints/63f9e35ab/README.md);
+334-item checkpoint (checkpoint `63f9e35ab`, in git history before 2026-10-08);
 other repaired behavior retains its scoped assessment.
 
 The two Speed and Memory cache-percentage helpers now have their own wrapped

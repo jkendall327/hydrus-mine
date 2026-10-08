@@ -1,9 +1,0 @@
-{
-  "source_commit": "7c74c617165a22814a8d0202008794b2beb53de0",
-  "run_id": 37567007002,
-  "artifact_id": 11459759822,
-  "native_zip_sha256": "71d73ee380cc3c85dff32e0d2c0ac56594d73129efaa4eb2c5ddfe0d231b512f",
-  "prepared_helper_sha256": "c27004f09f9ca4ea6ce60c13d1c19267eeed1184df2c633c0b662d3f367da95b",
-  "executed_helper_sha256": "4f10ad553ac1d43bc78be1eba38e5f8329698e854bbeae3672604d9c144ca10d",
-  "changes": "Bind only actual retrieved artifact ID/archive SHA256 after full green CI; all helper gates unchanged. Finalizer binds actual artifact and14root-viewed image names; not executed until independent approvals."
-}

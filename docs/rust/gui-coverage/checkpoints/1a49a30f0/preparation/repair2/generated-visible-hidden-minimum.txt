@@ -1,8 +1,0 @@
-sp :: set_property_binding_erased ((InnerMainWindow :: FIELD_OFFSETS . r#root_5346_search_sidebar_5404_min_height ()) . apply_pin (_self) , & self_rc , move | _self , _ : & () | (sp :: LogicalLength :: new (if (InnerMainWindow :: FIELD_OFFSETS . r#root_5346_search_sidebar_5404_visible ()) . apply_pin (_self) . get () {
-                     (((InnerMainWindow :: FIELD_OFFSETS . r#root_5346_search_sidebar_5404_layoutinfo_v ()) . apply_pin (_self) . get ()) . r#preferred) as _ }
-                 else {
-                     0f64 }
-                 as sp :: Coord)) as _) ;
-                 }
-             {
-                 sp :: set_property_binding_erased ((InnerMainWindow :: FIELD_OFFSETS . r#root_5346_search_sidebar_5404_visible ()) . apply_pin (_self) , & self_rc , move | _self , _ : & () | ((((((((((((((InnerMainWindow :: FIELD_OFFSETS . r#root_5346_note ()) . apply_pin (_self) . get ())) == ((sp :: SharedString :: from ("")))))) && ((! (InnerMainWindow :: FIELD_OFFSETS . r#root_5346_importing ()) . apply_pin (_self) . get ()))))) && ((! (InnerMainWindow :: FIELD_OFFSETS . r#root_5346_gallery_page ()) . apply_pin (_self) . get ())))

@@ -1,8 +1,0 @@
-{
-  "source_commit": "e4c2439eccc77508fd8446a5c8ee6dee040e6161",
-  "run_id": 37662892605,
-  "conclusion": "failure",
-  "reason": "Slint Button cannot contain Timer child; both native lint and test compilation failed before GUI execution.",
-  "completion_credit": false,
-  "repair": "Rectangle wrapper with real Button child preserving intrinsic sizing, stretch and focus; local Slint generation passes."
-}

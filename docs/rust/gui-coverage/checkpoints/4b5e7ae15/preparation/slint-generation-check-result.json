@@ -1,9 +1,0 @@
-{
-  "kind": "cached Slint 1.18.1 compiler generation only; no Rust compilation or runtime tests",
-  "exit_code": 0,
-  "elapsed_seconds": 8.059107234992553,
-  "child_maxrss_kib": 1326364,
-  "checked_ui_sha256": "e0e95b66f749c57ecae8b74597345704e9e9a793304c2fa1807327673d011518",
-  "base_source": "80bcb531f7df156e448cc212254f941541101dc3",
-  "only_dirty_source": "crates/hydrus-gui/ui/session_dialog.slint"
-}
