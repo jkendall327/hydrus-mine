@@ -1510,13 +1510,6 @@ fn pending_file_queue_retirement(ui: &MainWindow, bound: &Bound, store: &Store) 
     }
 }
 
-// leaf: audit-options-nested-open-file-call-list-add-edit
-// leaf: audit-options-nested-open-file-call-list-choose
-// leaf: audit-options-open-externally-single-file-calls-add
-// leaf: audit-options-open-externally-single-file-calls-delete
-// leaf: audit-options-open-externally-single-file-calls-edit
-// leaf: audit-options-open-externally-url-calls-add
-// leaf: audit-options-open-externally-url-calls-edit
 #[test]
 fn file_queue_replays_all_nested_reference_states_and_live_children() {
     let fixture = hydrus_testkit::fixture_json("open_externally.json");
@@ -2061,13 +2054,6 @@ fn pending_mime_mapping_retirement(ui: &MainWindow, bound: &Bound, store: &Store
     }
 }
 
-// leaf: audit-options-nested-open-file-call-list-add-edit
-// leaf: audit-options-nested-open-file-call-list-choose
-// leaf: audit-options-open-externally-single-file-calls-add
-// leaf: audit-options-open-externally-single-file-calls-delete
-// leaf: audit-options-open-externally-single-file-calls-edit
-// leaf: audit-options-open-externally-url-calls-add
-// leaf: audit-options-open-externally-url-calls-edit
 #[test]
 fn outer_mime_mapping_reference_replay_saved_keys_delete_and_retired_children() {
     let fixture = hydrus_testkit::fixture_json("open_externally.json");

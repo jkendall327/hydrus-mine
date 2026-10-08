@@ -129,7 +129,6 @@ fn the_file_log_is_the_references() {
     assert_eq!(tree(&row_menu(&[&path], &paths)), row_menus[2]["menu"]);
 }
 
-// leaf: audit-network-file-log-clipboard-import
 #[test]
 fn clipboard_source_batches_match_actual_reference_imports() {
     let fixture = hydrus_testkit::fixture_json("file_log_exchange.json");
@@ -175,7 +174,6 @@ fn selected_urls_are_one_exact_match_or_container() {
     );
 }
 
-// leaf: audit-network-file-log-png
 #[test]
 fn source_png_carriers_import_actual_qt_exports_and_render_custom_headers() {
     use hydrus_gui_model::png_export;
@@ -273,7 +271,6 @@ fn advanced_seed(index: usize) -> FileSeed {
     }
 }
 
-// leaf: audit-network-file-log-advanced
 #[test]
 fn selected_import_objects_match_full_reference_clipboard_bytes() {
     let fixture = hydrus_testkit::fixture_json("file_log_advanced.json");
@@ -287,7 +284,6 @@ fn selected_import_objects_match_full_reference_clipboard_bytes() {
     );
 }
 
-// leaf: audit-network-file-log-advanced
 #[test]
 fn renormalisation_collapses_later_duplicates_and_preserves_first_progress_and_metadata() {
     use hydrus_core::url::strings::{StringMatch, StringProcessor};

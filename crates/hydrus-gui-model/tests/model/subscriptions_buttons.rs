@@ -18,7 +18,6 @@ use hydrus_store::queues::StatusCounts;
 
 use crate::subscriptions_list::{checker, status};
 
-// leaf: subscriptions-merge
 #[test]
 fn batch_merge_reserves_names_after_absorption_and_keeps_successor_edits() {
     use hydrus_gui_model::subscriptions_dialog::Merge;

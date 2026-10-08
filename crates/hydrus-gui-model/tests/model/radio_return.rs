@@ -28,7 +28,6 @@ fn draft(store: &Store) -> (Editor, usize) {
     assert_eq!(row, iso + 1, "recorded GUI/misc checkbox order");
     (editor, row)
 }
-// leaf: audit-options-gui-misc-force-that-hitting-enter-return-on-radio-button-lists-triggers-a-dialog-ok
 #[test]
 fn cancelled_staging_changed_save_and_unchanged_concurrent_apply_match_actual_options() {
     let fixture = hydrus_testkit::fixture_json("radio_return.json");

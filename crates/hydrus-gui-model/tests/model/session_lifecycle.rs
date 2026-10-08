@@ -2,7 +2,6 @@
 use hydrus_gui_model::session_lifecycle::{Action, Autosave, Idle};
 use hydrus_store::settings::{GuiIdleSettings, GuiSessionSettings};
 
-// leaf: audit-options-gui-sessions-sessions-if-last-session-above-autosave-it-how-often-minutes
 #[test]
 fn autosave_replays_idle_retries_period_changes_and_stopping_for_other_startup() {
     let fixture = hydrus_testkit::fixture_json("session_autosave.json");

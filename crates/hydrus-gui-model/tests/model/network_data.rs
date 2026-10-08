@@ -164,8 +164,6 @@ fn fresh_live_usage_wins_until_the_daemon_heartbeat_expires() {
     );
 }
 
-// leaf: bandwidth-delete-history
-// leaf: bandwidth-month-chart
 #[test]
 fn reference_bandwidth_age_rule_filters_months_and_history_deletion() {
     use hydrus_store::bandwidth::{self, HistoryResets};

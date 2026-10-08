@@ -14,8 +14,6 @@ fn pair(value: &serde_json::Value) -> (i32, i32) {
         i32::try_from(value[1].as_i64().unwrap()).unwrap(),
     )
 }
-// leaf: audit-options-media-viewer-mouse-behaviour-anchor-mouse-cursor-during-media-viewer-drags
-// leaf: audit-options-media-viewer-mouse-behaviour-if-set-to-anchor-drags-undo-on-apparent-touchscreen-drag
 #[test]
 fn anchored_and_touch_overridden_drags_replay_actual_qt_threshold_and_warps() {
     let fixture = hydrus_testkit::fixture_json("viewer_anchor_options.json");

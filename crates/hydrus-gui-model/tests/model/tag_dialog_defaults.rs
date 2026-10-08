@@ -38,8 +38,6 @@ fn set(store: &Store, remember: bool, name: &str) {
         .unwrap();
 }
 
-// leaf: audit-options-tag-editing-tag-dialogs-default-tag-service-in-tag-dialogs
-// leaf: audit-options-tag-editing-tag-dialogs-remember-last-used-default-tag-service-in-manage-tag-dialogs
 #[test]
 fn tag_service_defaults_and_immediate_memory_replay_reference_dialogs() {
     let f = hydrus_testkit::fixture_json("tag_dialog_defaults.json");

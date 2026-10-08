@@ -62,13 +62,6 @@ fn refs(queue: &Queue) -> Value {
     )
 }
 
-// leaf: audit-options-nested-open-file-call-list-add-edit
-// leaf: audit-options-nested-open-file-call-list-choose
-// leaf: audit-options-open-externally-single-file-calls-add
-// leaf: audit-options-open-externally-single-file-calls-delete
-// leaf: audit-options-open-externally-single-file-calls-edit
-// leaf: audit-options-open-externally-url-calls-add
-// leaf: audit-options-open-externally-url-calls-edit
 #[test]
 fn actual_qt_registered_choices_queue_order_and_protected_mime_rows() {
     let fixture = hydrus_testkit::fixture_json("open_externally.json");

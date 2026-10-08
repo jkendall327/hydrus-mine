@@ -490,7 +490,6 @@ fn check_exporter(
     }
 }
 
-// leaf: sidecar-test
 #[test]
 fn recorded_router_tables_and_child_strings_use_real_sidecars_and_read_only_media() {
     let directory = tempfile::tempdir().unwrap();

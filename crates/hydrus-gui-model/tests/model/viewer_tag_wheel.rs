@@ -8,7 +8,6 @@ use hydrus_store::{
     settings::{self, TagWheelPropagation, ViewerTagScrollSettings},
 };
 const LABEL: &str = "Allow a mouse wheel scroll over the taglist to propagate to the main canvas:";
-// leaf: audit-options-media-viewer-hovers-hover-windows-allow-a-mouse-wheel-scroll-over-the-taglist-to-propagate-to-the-main-canvas
 #[test]
 fn parent_wheel_gates_replay_actual_qt_boundaries_and_directions() {
     let fixture = hydrus_testkit::fixture_json("viewer_tag_wheel.json");
@@ -53,7 +52,6 @@ fn parent_wheel_gates_replay_actual_qt_boundaries_and_directions() {
     gate.media_changed(1250.001);
     assert_eq!(gate.parent_direction, 0, "reference 250-second reset");
 }
-// leaf: audit-options-media-viewer-hovers-hover-windows-allow-a-mouse-wheel-scroll-over-the-taglist-to-propagate-to-the-main-canvas
 #[test]
 fn four_policy_choices_stage_cancel_save_and_reopen_with_reference_labels() {
     let fixture = hydrus_testkit::fixture_json("viewer_tag_wheel.json");

@@ -1,6 +1,5 @@
 use hydrus_gui_model::viewer_cursor::CursorWait;
 
-// leaf: audit-options-media-viewer-mouse-behaviour-time-until-mouse-cursor-autohides-on-media-viewer
 #[test]
 fn actual_cursor_checks_match_reference_clock_focus_menu_and_motion() {
     let fixture = hydrus_testkit::fixture_json("viewer_cursor_options.json");

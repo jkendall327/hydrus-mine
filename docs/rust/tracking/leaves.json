@@ -6380,9 +6380,9 @@
    ],
    "recheck": {
     "date": "2026-10-08",
-    "class": "sound",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Recording event 0 (off: 3 rows, notebook excluded, children kept with parent name) and event 10 (on: 4 rows) replayed through palette::query, the function the window runs; Options checkbox staged/applied/reopened in GUI test and label/default checked against options_dialog.json. Activation of a notebook row (focus its remembered sub-page) is not tested. Tests: crates/hydrus-gui-model/tests/model/command_palette.rs:98 providers_match_real_qt_order_limits_and_thresholds (event 0 vs 10); crates/hydrus-gui/tests/gui/options_window.rs:4469 command_palette_options_stage_queue_changes_and_persist_only_on_apply"
+    "class": "weak",
+    "by": "phase 2 session",
+    "note": "Untagged until activating a notebook row (focus its remembered sub-page) is tested. Recording event 0 (off: 3 rows, notebook excluded, children kept with parent name) and event 10 (on: 4 rows) replayed through palette::query, the function the window runs; Options checkbox staged/applied/reopened in GUI test and label/default checked against options_dialog.json. Activation of a notebook row (focus its remembered sub-page) is not tested. Tests: crates/hydrus-gui-model/tests/model/command_palette.rs:98 providers_match_real_qt_order_limits_and_thresholds (event 0 vs 10); crates/hydrus-gui/tests/gui/options_window.rs:4469 command_palette_options_stage_queue_changes_and_persist_only_on_apply"
    }
   },
   {

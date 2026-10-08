@@ -516,7 +516,6 @@ fn symlinks_existing_links_and_hardlinks_preserve_source_content() {
     assert!(progress.error.unwrap().contains("outside"));
 }
 
-// leaf: audit-network-export-folder-examples
 #[test]
 fn shared_pattern_menu_copies_recorded_phrases_including_its_heading() {
     let reference = hydrus_testkit::fixture_json("export_pattern_shortcuts.json");

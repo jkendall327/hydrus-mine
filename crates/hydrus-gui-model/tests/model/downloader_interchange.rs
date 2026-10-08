@@ -60,7 +60,6 @@ fn recorded_login_manager() -> hydrus_parse::login::LoginManager {
     }
 }
 
-// leaf: exchange-login
 #[test]
 fn mixed_login_import_replays_qt_duplicates_links_and_saved_consumer_without_exporting_credentials()
 {
@@ -177,7 +176,6 @@ fn mixed_login_import_replays_qt_duplicates_links_and_saved_consumer_without_exp
     assert!(review.added.is_empty());
 }
 
-// leaf: exchange-login
 #[test]
 fn mixed_login_cancel_malformed_and_stale_scripts_never_partially_save_downloaders() {
     let dir = tempfile::tempdir().unwrap();

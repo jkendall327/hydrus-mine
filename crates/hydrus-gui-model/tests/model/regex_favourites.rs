@@ -11,7 +11,6 @@ fn check(editor: &Editor, state: &Value) {
     assert_eq!(json!(editor.selected()), state["selected"]);
 }
 
-// leaf: audit-options-regex-favourites-regular-expression-favourites-editor
 #[test]
 fn favourite_rows_and_input_boundaries_match_real_qt() {
     let fixture = hydrus_testkit::fixture_json("regex_favourites.json");
@@ -117,7 +116,6 @@ fn regex_clipboard_components_match_real_qt() {
     assert!(regex_tools(3).is_empty());
 }
 
-// leaf: audit-network-matcher-favourites
 #[test]
 fn matcher_favourite_menu_matches_actual_qt_actions_and_copy_payloads() {
     use hydrus_gui_model::{

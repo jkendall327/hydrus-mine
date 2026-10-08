@@ -14,7 +14,6 @@ use serde_json::{Value, json};
 
 const LABEL: &str = "Sibling connecting string: ";
 
-// leaf: audit-options-tag-presentation-other-rendering-sibling-connecting-string
 #[test]
 fn connector_options_replay_stage_cancel_apply_and_live_consumers() {
     let recorded = hydrus_testkit::fixture_json("sibling_connector.json");

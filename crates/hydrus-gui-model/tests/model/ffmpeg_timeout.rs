@@ -30,7 +30,6 @@ fn apply(editor: &Editor, store: &Store) {
     let before = before.clone();
     store.write(move |c| after.save(c.conn(), &before)).unwrap();
 }
-// leaf: audit-options-media-playback-system-ffmpeg-call-timeout
 #[test]
 fn qt_options_cancel_bounds_reopen_and_concurrent_changes() {
     let fixture = hydrus_testkit::fixture_json("ffmpeg_timeout.json");
@@ -116,7 +115,6 @@ fn qt_options_cancel_bounds_reopen_and_concurrent_changes() {
 }
 
 #[cfg(unix)]
-// leaf: audit-options-media-playback-system-ffmpeg-call-timeout
 #[test]
 fn already_open_import_review_uses_live_store_deadline_for_real_metadata_detection() {
     use hydrus_gui_model::local_import::{Parse, Review};

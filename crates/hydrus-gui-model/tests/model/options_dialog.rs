@@ -537,9 +537,6 @@ fn page_problems(page: &Page, items: &Json, settings: &Settings, store: &Store) 
     problems
 }
 
-// leaf: audit-options-command-palette-command-palette-max-favourite-searches-to-show
-// leaf: audit-options-command-palette-command-palette-max-page-history-to-show
-// leaf: audit-options-command-palette-command-palette-max-page-results-to-show
 #[test]
 fn the_options_pages_are_the_references() {
     let recorded = hydrus_testkit::fixture_json("options_dialog.json");
@@ -724,7 +721,6 @@ fn advanced_network_ranges_and_clamps_match_the_reference() {
     }
 }
 
-// leaf: audit-options-gui-misc-remember-last-open-options-panel-in-this-window
 #[test]
 fn remembered_options_pages_and_auxiliary_search_match_the_reference() {
     use hydrus_gui_model::options::{Editor, Row};
@@ -786,7 +782,6 @@ fn remembered_options_pages_and_auxiliary_search_match_the_reference() {
     }
 }
 
-// leaf: audit-options-gui-main-window-confirm-client-exit
 #[test]
 fn application_names_and_exit_switch_apply_as_the_reference_does() {
     let recorded = hydrus_testkit::fixture_json("gui_settings.json");
@@ -863,7 +858,6 @@ fn session_backup_count_matches_recorded_control_and_clamps() {
     }
 }
 
-// leaf: audit-options-gui-pages-page-tab-names-automatically-prompt-to-rename-new-page-of-pages-after-creation
 #[test]
 fn reopening_numeric_options_clamps_saved_advanced_values() {
     use hydrus_gui_model::options::{applied, values};
@@ -1338,7 +1332,6 @@ fn file_search_limit_controls_stage_and_clamp_reference_values() {
     assert_eq!(store.read(Settings::load).unwrap(), settings);
 }
 
-// leaf: audit-options-media-viewer-animation-audio-seek-bar-seek-bar-height
 #[test]
 fn viewer_canvas_controls_match_reference_and_stage_bounded_values() {
     use hydrus_gui_model::options::{Editor, Row as EditorRow};
@@ -1592,7 +1585,6 @@ fn viewer_pointer_controls_stage_the_reference_drag_preferences() {
     );
 }
 
-// leaf: audit-options-media-viewer-animation-audio-seek-bar-seek-bar-full-height-pop-in-requires-window-focus
 #[test]
 fn viewer_focus_controls_stage_independent_reference_policies() {
     use hydrus_gui_model::options::{Editor, Row as EditorRow};
@@ -1977,7 +1969,6 @@ fn subscription_concurrency_replays_recorded_clamps_and_committed_parent_states(
     }
 }
 
-// leaf: audit-options-media-viewer-hovers-top-hover-button-menu-controls-zoom-switch-button-switches-between
 #[test]
 fn zoom_switch_and_animation_loop_controls_match_reference_and_stage_changes() {
     use hydrus_gui_model::options::{Editor, Row as EditorRow};
@@ -2046,7 +2037,6 @@ fn zoom_switch_and_animation_loop_controls_match_reference_and_stage_changes() {
     assert!(!saved.always_loop);
 }
 
-// leaf: audit-options-exporting-export-folder-default-export-directory
 #[test]
 fn export_default_directory_matches_recorded_blank_literal_and_portable_paths() {
     let reference = hydrus_testkit::fixture_json("export_default_directory.json");

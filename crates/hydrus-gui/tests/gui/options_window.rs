@@ -4506,7 +4506,6 @@ fn default_export_directory_browse_apply_cancel_and_manual_open_use_shared_prefe
     export.invoke_dismissed();
 }
 
-// leaf: audit-options-command-palette-command-palette-include-page-of-pages-page-results
 // leaf: audit-options-command-palette-command-palette-max-favourite-searches-to-show
 // leaf: audit-options-command-palette-command-palette-max-page-history-to-show
 // leaf: audit-options-command-palette-command-palette-max-page-results-to-show

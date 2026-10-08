@@ -49,6 +49,8 @@ fn values(sizes: &RatingContextSizes) -> serde_json::Value {
 // (the preview-window rating sizes are tagged on preview_top_right.rs, where
 // the preview pane draws the ratings at them; this test covers the dialog sizes
 // and the service editor's examples)
+// leaf: audit-options-ratings-dialogs-dialogs-inc-dec-rating-height
+// leaf: audit-options-ratings-dialogs-dialogs-like-dislike-and-numerical-rating-icon-size
 #[test]
 fn sizes_replay_owned_options_and_reach_dialog_and_service_examples_after_reopen() {
     let fixture = hydrus_testkit::fixture_json("rating_context_sizes.json");

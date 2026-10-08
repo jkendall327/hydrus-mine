@@ -359,7 +359,6 @@ fn the_lists_name_what_they_add_and_edit_uniquely() {
     assert_eq!(list.into_items().len(), 2);
 }
 
-// leaf: audit-network-export-folder-examples
 #[test]
 fn export_folder_examples_use_recorded_queries_limits_and_media_contexts() {
     use hydrus_gui_model::{folders::export_test_examples, sidecar_editors};

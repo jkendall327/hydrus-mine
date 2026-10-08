@@ -9,7 +9,6 @@ use hydrus_store::{
     settings::{self, PageNavigationSettings},
 };
 
-// leaf: audit-options-gui-pages-navigation-and-drag-and-drop-maximum-entries-to-show-in-page-navigation-history
 #[test]
 fn history_limit_replays_actual_menu_without_discarding_backing_history() {
     let fixture = hydrus_testkit::fixture_json("page_navigation_options.json");
@@ -49,7 +48,6 @@ fn history_limit_replays_actual_menu_without_discarding_backing_history() {
     }
 }
 
-// leaf: audit-options-gui-pages-navigation-and-drag-and-drop-maximum-entries-to-show-in-page-navigation-history
 #[test]
 fn imported_defaults_and_options_limits_replay_reference_spinbox_clamping() {
     let fixture = hydrus_testkit::fixture_json("page_navigation_options.json");

@@ -27,7 +27,6 @@ fn estimate(name: &str) -> u64 {
 fn loaded(name: &str) -> u64 {
     if name == "b" { 40 } else { estimate(name) }
 }
-// leaf: audit-options-speed-and-memory-image-prefetch-num-next-to-prefetch-in-media-viewer
 #[test]
 fn all_actual_circular_next_first_neighbour_orders_and_controls() {
     let fixture = hydrus_testkit::fixture_json("viewer_prefetch.json");

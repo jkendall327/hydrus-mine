@@ -85,8 +85,6 @@ pub(super) fn seeded(fixture: &Value) -> (tempfile::TempDir, Arc<Store>) {
     (dir, store)
 }
 
-// leaf: audit-options-tag-editing-tag-edit-autocomplete-by-default-select-the-first-tag-result-with-actual-count-in-write-autocomplete
-// leaf: audit-options-tag-editing-tag-edit-autocomplete-show-parents-expanded-by-default-on-edit-write-autocomplete-taglists
 #[test]
 fn exact_rows_counts_domains_decorations_and_first_selection_match_reference() {
     let fixture = hydrus_testkit::fixture_json("write_tag_autocomplete.json");
@@ -175,7 +173,6 @@ fn exact_rows_counts_domains_decorations_and_first_selection_match_reference() {
     assert_eq!(input.rows().iter().filter(|r| !r.parent_row).count(), 3);
 }
 
-// leaf: audit-options-tag-editing-tag-edit-autocomplete-when-pasting-multiline-content-into-a-write-autocomplete-skip-the-yes-no-check
 #[test]
 fn paste_questions_skip_and_add_only_staging_follow_reference() {
     let fixture = hydrus_testkit::fixture_json("write_tag_autocomplete.json");
@@ -239,8 +236,6 @@ fn paste_questions_skip_and_add_only_staging_follow_reference() {
     );
 }
 
-// leaf: audit-options-tag-editing-tag-edit-autocomplete-by-default-select-the-first-tag-result-with-actual-count-in-write-autocomplete
-// leaf: audit-options-tag-editing-tag-edit-autocomplete-show-parents-expanded-by-default-on-edit-write-autocomplete-taglists
 #[test]
 fn six_write_options_replay_recorded_defaults_and_stay_staged_until_apply() {
     use hydrus_gui_model::options::{Editor, Row, Settings, Value};
@@ -379,7 +374,6 @@ fn detached_import_tag_lists_replay_reference_and_never_mutate_caller() {
     }
 }
 
-// leaf: audit-options-tag-autocomplete-tabs-children-tags-how-many-tags-to-show-in-the-children-tab
 #[test]
 fn favourite_and_count_ordered_children_tabs_replay_reference_caps_and_context() {
     use hydrus_gui_model::write_autocomplete::Tab;
@@ -468,7 +462,6 @@ fn favourite_and_count_ordered_children_tabs_replay_reference_caps_and_context()
     }
 }
 
-// leaf: audit-options-tag-autocomplete-tabs-children-tags-how-many-tags-to-show-in-the-children-tab
 #[test]
 fn children_limit_option_matches_reference_and_persists_only_accepted_drafts() {
     use hydrus_gui_model::options::{Editor, Row, Settings, Value};
@@ -942,7 +935,6 @@ fn write_domain_menus_and_interlocks_replay_reference_without_persisting_options
     assert!(reopened.rows().iter().all(|row| !row.counted));
 }
 
-// leaf: audit-options-tag-autocomplete-tabs-favourite-tags-favourite-tag-list-editor
 #[test]
 fn favourite_options_replay_add_only_choices_and_parent_transaction() {
     use hydrus_gui_model::{
@@ -1483,7 +1475,6 @@ fn check_recorded_keyboard(input: &mut WriteAutocomplete, fixture: &Value) {
     assert_eq!(input.copy_selection(false), None);
 }
 
-// leaf: audit-options-tag-autocomplete-tabs-children-tags-how-many-tags-to-show-in-the-children-tab
 #[test]
 fn read_favourite_and_children_tabs_replay_real_qt_lists_and_context_changes() {
     use hydrus_gui_model::write_autocomplete::Tab;

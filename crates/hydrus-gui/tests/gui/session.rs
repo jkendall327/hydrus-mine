@@ -2239,9 +2239,6 @@ fn rename_tab_uses_frozen_key_and_cancellation_preserves_name() {
     }
 }
 
-// leaf: audit-options-tabs-context-action-2235-this-page
-// leaf: audit-options-tabs-context-action-2239-pages-from-here-to-the-right
-// leaf: audit-options-tabs-context-action-2240-pages-to-the-right
 #[test]
 fn send_down_keeps_nested_selection_and_open_search_objects() {
     use hydrus_gui::tab_context::Send;

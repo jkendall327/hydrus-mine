@@ -1,7 +1,6 @@
 #[path = "../support/notebook_tree.rs"]
 mod support;
 use hydrus_gui_model::page_tree::Tree;
-// leaf: audit-options-gui-pages-navigation-and-drag-and-drop-experimental-show-tab-tree-view
 #[test]
 fn cursor_expansion_and_activation_replay_actual_frame_tree() {
     let fixture = hydrus_testkit::fixture_json("notebook_tree.json");

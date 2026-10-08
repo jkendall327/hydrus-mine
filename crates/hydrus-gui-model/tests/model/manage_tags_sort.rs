@@ -103,8 +103,6 @@ fn editor(settings: Settings) -> Editor {
     editor.show_page(page);
     editor
 }
-// leaf: audit-options-tag-sort-tag-sort-default-tag-sort-in-media-viewer-manage-tags-dialogs
-// leaf: audit-options-tag-sort-tag-sort-default-tag-sort-in-search-page-manage-tags-dialogs
 #[test]
 fn independent_defaults_stage_cancel_apply_reopen_and_merge_only_changed_context() {
     let recorded = hydrus_testkit::fixture_json("manage_tags_sort.json");
@@ -168,8 +166,6 @@ fn independent_defaults_stage_cancel_apply_reopen_and_merge_only_changed_context
         recorded["options"]["remembered_orders"][1]
     );
 }
-// leaf: audit-options-tag-sort-tag-sort-default-tag-sort-in-media-viewer-manage-tags-dialogs
-// leaf: audit-options-tag-sort-tag-sort-default-tag-sort-in-search-page-manage-tags-dialogs
 #[test]
 fn both_contexts_replay_all_real_sort_types_orders_siblings_and_groupings() {
     let recorded = hydrus_testkit::fixture_json("manage_tags_sort.json");
@@ -195,8 +191,6 @@ fn both_contexts_replay_all_real_sort_types_orders_siblings_and_groupings() {
         );
     }
 }
-// leaf: audit-options-tag-sort-tag-sort-default-tag-sort-in-media-viewer-manage-tags-dialogs
-// leaf: audit-options-tag-sort-tag-sort-default-tag-sort-in-search-page-manage-tags-dialogs
 #[test]
 fn open_service_tabs_keep_local_sort_after_options_change_and_new_dialog_reads_default() {
     let recorded = hydrus_testkit::fixture_json("manage_tags_sort.json");

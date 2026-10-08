@@ -63,17 +63,6 @@ fn select(editor: &mut Editor, list: List, names: &serde_json::Value) {
     }
 }
 
-// leaf: audit-options-import-options-default-import-options-clear
-// leaf: audit-options-import-options-default-import-options-edit
-// leaf: audit-options-import-options-default-import-options-reset-to-defaults
-// leaf: audit-options-import-options-default-import-options-show-stack
-// leaf: audit-options-import-options-favourites-profiles-add
-// leaf: audit-options-import-options-favourites-profiles-edit
-// leaf: audit-options-import-options-help-for-this-panel
-// leaf: audit-options-import-options-keep-this-panel-simple
-// leaf: audit-options-import-options-url-class-import-options-clear
-// leaf: audit-options-import-options-url-class-import-options-edit
-// leaf: audit-options-import-options-url-class-import-options-show-stack
 #[test]
 fn three_lists_and_staged_actions_replay_the_reference() {
     let fixture = hydrus_testkit::fixture_json("import_options_panel.json");
@@ -216,17 +205,6 @@ fn three_lists_and_staged_actions_replay_the_reference() {
     );
 }
 
-// leaf: audit-options-import-options-default-import-options-clear
-// leaf: audit-options-import-options-default-import-options-edit
-// leaf: audit-options-import-options-default-import-options-reset-to-defaults
-// leaf: audit-options-import-options-default-import-options-show-stack
-// leaf: audit-options-import-options-favourites-profiles-add
-// leaf: audit-options-import-options-favourites-profiles-edit
-// leaf: audit-options-import-options-help-for-this-panel
-// leaf: audit-options-import-options-keep-this-panel-simple
-// leaf: audit-options-import-options-url-class-import-options-clear
-// leaf: audit-options-import-options-url-class-import-options-edit
-// leaf: audit-options-import-options-url-class-import-options-show-stack
 #[test]
 fn sorted_selection_frozen_clear_and_profile_identity_are_independent() {
     let original = value();

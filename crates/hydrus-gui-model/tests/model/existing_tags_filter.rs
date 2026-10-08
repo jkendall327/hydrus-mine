@@ -5,7 +5,6 @@ use hydrus_core::import_options::{
 use hydrus_core::tag_filter::{FilterRule, TagFilter};
 use hydrus_gui_model::import_options_editor::{Editor, Kind, TagFilterTarget};
 
-// leaf: import-existing-tags-filter
 #[test]
 fn existing_filter_acceptance_enables_only_the_captured_service_and_round_trips() {
     let fixture = hydrus_testkit::fixture_json("existing_tags_filter.json");

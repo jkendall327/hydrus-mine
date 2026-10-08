@@ -30,7 +30,6 @@ fn editor(store: &Store) -> (Editor, usize) {
     let row=editor.rows().iter().position(|r|matches!(r,Row::Opt{option,..}if option.label=="OR connecting string (on one line): ")).unwrap();
     (editor, row)
 }
-// leaf: audit-options-tag-presentation-other-rendering-or-connecting-string-on-one-line
 #[test]
 fn qt_raw_blank_newline_cancel_reopen_and_live_namespace_changes_remain_isolated() {
     let fixture = hydrus_testkit::fixture_json("or_connector.json");

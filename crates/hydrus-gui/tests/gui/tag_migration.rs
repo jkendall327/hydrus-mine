@@ -475,7 +475,6 @@ fn cancellation_allows_immediate_popup_dismissal_then_publishes_cleanup() {
     window.invoke_close_clicked();
 }
 
-// leaf: audit-media-migration-pause
 #[test]
 fn completed_popup_remains_visible_until_past_its_three_second_deadline() {
     let (_dirs, store) = crate::subscriptions::store();

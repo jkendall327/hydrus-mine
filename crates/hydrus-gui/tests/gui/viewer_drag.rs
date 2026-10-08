@@ -39,6 +39,7 @@ fn row(options: &OptionsWindow, label: &str) -> i32 {
     .unwrap()
 }
 // leaf: audit-options-media-viewer-mouse-behaviour-if-set-to-anchor-drags-undo-on-apparent-touchscreen-drag
+// leaf: audit-options-media-viewer-mouse-behaviour-anchor-mouse-cursor-during-media-viewer-drags
 #[test]
 fn actual_pointer_drags_replay_qt_and_options_refresh_cancel_and_reopen() {
     let fixture = hydrus_testkit::fixture_json("viewer_anchor_options.json");

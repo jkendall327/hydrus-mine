@@ -13,7 +13,6 @@ fn bits(fixture: &serde_json::Value, flags: u64) -> u8 {
             }
         })
 }
-// leaf: audit-options-nested-shortcuts-command-keyboard
 #[test]
 fn actual_qt_keyboard_and_mouse_controls_replay_exact_values_text_and_modes() {
     let f = hydrus_testkit::fixture_json("shortcut_capture.json");

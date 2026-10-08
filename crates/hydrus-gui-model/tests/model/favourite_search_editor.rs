@@ -56,9 +56,6 @@ fn snapshot(store: &Store, edit: &Edit, action: &str) -> Value {
     json!({"action":action,"location":{"current":current,"deleted":deleted},"tags":{"service":name(&edit.search.tags.service),"current":edit.search.tags.include_current,"pending":edit.search.tags.include_pending},"sort":sort,"collect":{"namespaces":edit.collect.namespaces,"ratings":edit.collect.ratings.iter().map(name).collect::<Vec<_>>(),"unmatched":edit.collect.collect_unmatched,"service":name(&edit.collect.tag_context.service)},"predicates":predicates})
 }
 
-// leaf: audit-options-favourite-edit-collect
-// leaf: audit-options-favourite-edit-domains
-// leaf: audit-options-favourite-edit-sort
 #[test]
 fn favourite_controls_replay_reference_domain_sort_collect_and_predicate_values() {
     let legacy = hydrus_testkit::legacy_fixture("basic");

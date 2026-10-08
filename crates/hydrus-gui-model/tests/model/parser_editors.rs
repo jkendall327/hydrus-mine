@@ -209,7 +209,6 @@ fn changed_links_revalidate_current_class_capability_and_rollback_atomically() {
     }
 }
 
-// leaf: subsidiary-create
 #[test]
 fn recorded_recursive_subsidiaries_preserve_context_documents_and_runtime_outputs() {
     let cases = hydrus_testkit::fixture_json("parser_children.json");
@@ -288,7 +287,6 @@ fn recorded_recursive_subsidiaries_preserve_context_documents_and_runtime_output
     }
 }
 
-// leaf: audit-network-parser-auto-links
 #[test]
 fn recorded_subsidiary_queue_import_and_duplicate_preserve_keys_and_select_new_rows() {
     let reference = hydrus_testkit::fixture_json("subsidiary_exchange.json");
@@ -487,7 +485,6 @@ fn per_class_parser_choices_replay_matching_groups_and_validate_stable_keys() {
     assert_eq!(draft.classes.parser_links, vec![(class_key, None)]);
 }
 
-// leaf: content-time
 #[test]
 fn timestamp_editor_normalises_recorded_source_choice_and_preserves_converted_metadata() {
     let reference = hydrus_testkit::fixture_json("content_time.json");

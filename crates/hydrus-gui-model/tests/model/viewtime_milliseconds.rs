@@ -45,7 +45,6 @@ fn seeded(fixture: &Value) -> (tempfile::TempDir, Arc<Store>) {
     (dir, store)
 }
 
-// leaf: audit-options-predicate-file-viewing-statistics-fileviewingstatsviewtime-test
 #[test]
 fn editor_and_imported_predicates_match_reference_millisecond_queries() {
     let fixture = hydrus_testkit::fixture_json("viewtime_milliseconds.json");

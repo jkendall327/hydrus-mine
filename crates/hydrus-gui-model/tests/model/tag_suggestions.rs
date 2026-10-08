@@ -19,7 +19,6 @@ fn control(editor: &Editor, label: &str) -> usize {
         .unwrap()
 }
 
-// leaf: audit-options-nested-tag-suggestions-favourites
 #[test]
 fn layout_and_default_choices_replay_all_recorded_available_pages_without_eager_writes() {
     let f = hydrus_testkit::fixture_json("tag_suggestions.json");
