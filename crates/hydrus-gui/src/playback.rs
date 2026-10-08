@@ -98,7 +98,11 @@ impl Playback {
         self.last_position.set(None);
         *self.target.borrow_mut() = path.map(Path::to_path_buf);
         let Some(path) = path.filter(|_| mpv::available()) else {
+            // (without libmpv nothing plays, but what it was asked to play
+            // stays known)
+            let target = self.target.borrow().clone();
             self.stop();
+            *self.target.borrow_mut() = target;
             return;
         };
         let always_loop = self.store.as_ref().is_none_or(|store| {
