@@ -20,6 +20,8 @@ fn update(service: ServiceId, pair: &Pair, action: RelationAction) -> RelationUp
     }
 }
 
+// leaf: audit-media-parents-pairs,audit-media-siblings-pairs,audit-media-parents-workspace,audit-media-siblings-workspace
+// leaf: audit-media-parents-reasons,audit-media-siblings-reasons
 #[test]
 fn reference_rows_questions_conflicts_and_loops() {
     let fixture = hydrus_testkit::fixture_json("tag_relationships.json");
@@ -162,6 +164,7 @@ fn reference_rows_questions_conflicts_and_loops() {
     }
 }
 
+// leaf: audit-media-parents-workspace,audit-media-parents-exchange
 #[test]
 fn per_service_inputs_cancel_import_and_selection() {
     let dir = tempfile::tempdir().unwrap();
@@ -320,6 +323,7 @@ fn apply_republishes_graphs_and_counts_atomically_and_rolls_back_errors() {
     assert_eq!(count(ids.2), 1);
 }
 
+// leaf: audit-media-parents-reasons,audit-media-siblings-reasons
 #[test]
 fn repository_changes_keep_reasons_and_rescinds_across_reopen() {
     let dir = tempfile::tempdir().unwrap();
@@ -422,6 +426,7 @@ fn changes_refresh_other_services_applying_the_source() {
     assert_eq!(store.snapshot().display.get(display).ideal(a), a);
 }
 
+// leaf: audit-media-parents-pairs,audit-media-siblings-pairs,audit-media-parents-exchange
 #[test]
 fn invalid_batch_graphs_are_reported_and_leave_valid_relationships_untouched() {
     let dir = tempfile::tempdir().unwrap();

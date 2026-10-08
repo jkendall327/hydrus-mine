@@ -9,6 +9,7 @@ fn undelete_trash(
     writer.undelete_trash()
 }
 
+// leaf: audit-media-services-identity
 #[test]
 fn services_menu_opens_review_and_refreshes() {
     let (_dirs, store) = crate::subscriptions::store();

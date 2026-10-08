@@ -7,6 +7,7 @@ use hydrus_store::display::{RelationKind, load_application};
 use hydrus_store::tag_display::{TagDisplayFilters, TagView};
 use hydrus_store::{Store, settings};
 
+// leaf: audit-media-tag-display-namespace
 #[test]
 fn staged_interlocks_match_reference() {
     let fixture = hydrus_testkit::fixture_json("tag_display.json");
@@ -188,6 +189,7 @@ fn queues_disable_reorder_reopen_counts_daemon_and_clear_filter() {
     assert!(!editor.add_source(false, hydrus_core::ServiceKey::new(vec![235; 16])));
 }
 
+// leaf: audit-media-tag-display-threshold
 #[test]
 fn widget_options_gate_gui_queries_only() {
     use hydrus_store::autocomplete::{AutocompleteInput, AutocompleteRules};
@@ -223,6 +225,7 @@ fn widget_options_gate_gui_queries_only() {
     assert_eq!(input.tag_query(&rules).unwrap().text, "ab*");
 }
 
+// leaf: audit-media-tag-display-write-domain
 #[test]
 fn write_autocomplete_uses_override_or_launcher_domain_and_rejects_tag_locations() {
     use hydrus_core::search::context::LocationContext;

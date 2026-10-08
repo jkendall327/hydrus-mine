@@ -216,3 +216,5 @@ mod menu_choice_wheel;
 mod popup_freeze;
 
 mod viewer_prefetch;
+mod tag_application_queues;
+mod tag_relationships_default;

@@ -107,6 +107,7 @@ fn service_review_opens_migration_with_reference_questions_and_renders() {
     window.invoke_close_clicked();
     review.invoke_close_clicked();
 }
+// leaf: migration-location
 #[test]
 fn manage_tags_launches_selected_scope_and_refreshes_after_background_delete() {
     let (_dirs, store) = crate::subscriptions::store();

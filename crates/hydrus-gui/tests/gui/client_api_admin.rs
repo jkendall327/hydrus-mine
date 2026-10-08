@@ -47,6 +47,7 @@ fn screenshot(windows: &headless::Windows, index: usize, filename: &str, width: 
     )
     .unwrap();
 }
+// leaf: audit-media-permissions-filter, audit-media-permissions-key
 #[test]
 fn cancellation_nested_ownership_permissions_and_key_validation() {
     let dir = tempfile::tempdir().unwrap();
@@ -121,6 +122,7 @@ fn cancellation_nested_ownership_permissions_and_key_validation() {
     assert!(!stored[0].search_filter.tag_ok("other", false));
     parent.invoke_close_clicked();
 }
+// leaf: audit-media-api-apply, audit-media-api-copy, audit-media-api-key-list, audit-media-permissions-key
 #[test]
 fn sorted_selection_crud_copy_base_url_persistence_and_stale_apply() {
     let dir = tempfile::tempdir().unwrap();
@@ -276,6 +278,7 @@ fn sorted_selection_crud_copy_base_url_persistence_and_stale_apply() {
     );
     parent.invoke_close_clicked();
 }
+// leaf: audit-media-service-api-listener
 #[test]
 fn supported_service_listener_fields_stage_cancel_and_persist() {
     let dir = tempfile::tempdir().unwrap();

@@ -7,6 +7,7 @@ use hydrus_gui::{MainWindow, Pages, SearchPage, bind, headless};
 use hydrus_store::Store;
 use slint::{ComponentHandle as _, Model as _};
 
+// leaf: audit-media-siblings-exchange,audit-media-siblings-workspace
 #[test]
 fn dialogs_stage_cancel_apply_questions_and_update_display() {
     // Open through the tags menu, using its public click callbacks.

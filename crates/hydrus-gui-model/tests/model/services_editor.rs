@@ -24,6 +24,7 @@ fn registry(store: &Store) -> Vec<services::Service> {
         .map(|s| (**s).clone())
         .collect()
 }
+// leaf: audit-media-services-delete
 #[test]
 fn reference_rows_guards_and_defaults() {
     let recorded = hydrus_testkit::fixture_json("services.json");
@@ -141,6 +142,7 @@ fn reference_rows_guards_and_defaults() {
         }
     }
 }
+// leaf: audit-media-services-apply, audit-media-service-name
 #[test]
 fn cancel_name_collision_and_apply_publish_snapshot() {
     let (_dir, store) = store();
@@ -415,6 +417,7 @@ fn nonempty_domain_race_rejects_and_rolls_back_all_edits() {
     );
 }
 
+// leaf: audit-media-service-numerical
 #[test]
 fn numerical_settings_normalize_as_reference() {
     let recorded = hydrus_testkit::fixture_json("services.json");

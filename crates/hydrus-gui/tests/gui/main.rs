@@ -229,3 +229,5 @@ mod ffmpeg_timeout;
 mod radio_return;
 
 mod viewer_prefetch;
+mod client_api_permissions;
+mod tags_sync_menu;

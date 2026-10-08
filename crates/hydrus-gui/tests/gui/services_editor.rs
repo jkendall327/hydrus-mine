@@ -158,6 +158,7 @@ fn open(ui: &MainWindow) {
     assert!(lines.row_data(index).unwrap().usable);
     ui.invoke_menu_line_clicked(0, i32::try_from(index).unwrap(), 0.0, 0.0, 0.0);
 }
+// leaf: audit-media-services-add, audit-media-services-delete, audit-media-service-name, audit-media-service-rating-colours, audit-media-service-numerical, audit-media-services-apply
 #[test]
 fn staged_rating_config_applies_and_cancel_writes_nothing() {
     let (_dirs, store) = crate::subscriptions::store();

@@ -5,6 +5,7 @@ use hydrus_store::{
     Store,
     services::{self, RepositoryConfig, ServiceKind},
 };
+// leaf: migration-mappings,audit-media-migration-confirm
 #[test]
 fn reference_choices_and_second_confirmation() {
     let fixture = hydrus_testkit::fixture_json("tag_migration.json");
@@ -69,6 +70,7 @@ fn reference_choices_and_second_confirmation() {
     assert_eq!(model.status, Status::Current);
     assert!(model.actions().contains(&model.action));
 }
+// leaf: migration-mappings,audit-media-migration-confirm,migration-location
 #[test]
 fn reference_database_pending_outcomes() {
     let fixture = hydrus_testkit::fixture_json("tag_migration.json");
@@ -148,6 +150,7 @@ fn reference_database_pending_outcomes() {
     }
 }
 
+// leaf: audit-media-migration-parents,audit-media-migration-siblings
 #[test]
 fn reference_database_pair_filters_and_destinations() {
     let fixture = hydrus_testkit::fixture_json("tag_migration.json");
@@ -411,6 +414,7 @@ fn migration_popup_speed_and_phase_text_replay_actual_qt_outputs() {
     );
 }
 
+// leaf: audit-media-migration-parents,audit-media-migration-siblings,audit-media-migration-confirm
 #[test]
 fn pair_summary_replays_equal_asymmetric_and_equal_text_distinct_filters() {
     let recording = hydrus_testkit::fixture_json("tag_migration_filter_summaries.json");
