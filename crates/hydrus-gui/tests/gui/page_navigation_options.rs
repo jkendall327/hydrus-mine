@@ -235,6 +235,23 @@ fn applied_controls_reopen_and_drive_history_and_search_focus() {
     reopened.invoke_apply();
     ui.invoke_tab_chosen(0, 1);
     assert_eq!(ui.get_search_focus_requests(), before + 2);
+    // The reference's search page, recorded switching to it with the option
+    // off, on, then off again (`focus`): its autocomplete input is focused
+    // once, only while the option is on.
+    let fixture = hydrus_testkit::fixture_json("page_navigation_options.json");
+    for (n, step) in fixture["focus"].as_array().unwrap().iter().enumerate() {
+        let options = open(&ui, &bound);
+        options.invoke_check_toggled(row(&options, FOCUS), step["enabled"].as_bool().unwrap());
+        options.invoke_apply();
+        let requests = ui.get_search_focus_requests();
+        ui.invoke_tab_chosen(0, i32::from(n % 2 == 1));
+        headless::render(&windows.get(0).unwrap(), 1100, 700);
+        assert_eq!(
+            usize::try_from(ui.get_search_focus_requests() - requests).unwrap(),
+            step["calls"].as_array().unwrap().len(),
+            "step {n}"
+        );
+    }
 }
 
 #[test]

@@ -25,6 +25,27 @@ fn until(mut condition: impl FnMut() -> bool) {
         std::thread::sleep(std::time::Duration::from_millis(10));
     }
 }
+/// `[kind, seconds, amount]` triples as the reference recorder wrote them.
+fn rule_triples(rules: &[Rule]) -> serde_json::Value {
+    let mut triples = rules
+        .iter()
+        .map(|r| (r.kind as i64, r.time_delta, r.max_allowed))
+        .collect::<Vec<_>>();
+    triples.sort_unstable();
+    serde_json::json!(triples)
+}
+fn global_rules(store: &Store) -> serde_json::Value {
+    let settings = store.read(settings::get::<BandwidthSettings>).unwrap();
+    rule_triples(
+        settings
+            .rules
+            .iter()
+            .find(|(c, _)| c == &NetworkContext::global())
+            .unwrap()
+            .1
+            .rules(),
+    )
+}
 fn snapshot() -> Snapshot {
     Snapshot {
         epoch: "test daemon".into(),
@@ -75,6 +96,31 @@ fn page_cog_rules_cancel_apply_and_error_owner_boundary() {
     assert_eq!(queue, 1);
     store
         .write(|ctx| settings::set(ctx.conn(), &snapshot()))
+        .unwrap();
+    // The reference recording (oracle/record_network_job_control.py) opens
+    // "edit bandwidth rules" on a global context holding one request rule.
+    let recorded = hydrus_testkit::fixture_json("network_job_control.json");
+    let [cancelled, accepted] = &recorded["rules"].as_array().unwrap()[..] else {
+        panic!("one cancelled and one accepted edit are recorded")
+    };
+    let seeded = cancelled["before"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|r| {
+            Rule::new(
+                BandwidthType::from_code(r[0].as_i64().unwrap()).unwrap(),
+                r[1].as_u64(),
+                r[2].as_u64().unwrap(),
+            )
+        })
+        .collect::<Vec<_>>();
+    store
+        .write(move |ctx| {
+            let mut current = settings::get::<BandwidthSettings>(ctx.conn())?;
+            current.rules = vec![(NetworkContext::global(), Rules::new(seeded))];
+            settings::set(ctx.conn(), &current)
+        })
         .unwrap();
     let window = MainWindow::new().unwrap();
     let page = hydrus_gui::SearchPage::url_downloader(store.clone(), queue, None, vec![]);
@@ -143,6 +189,7 @@ fn page_cog_rules_cancel_apply_and_error_owner_boundary() {
     window.invoke_control_action(false, 100);
     until(|| network_data_window::last_rules().is_some_and(|w| w.window().is_visible()));
     let edit = network_data_window::last_rules().unwrap();
+    assert_eq!(edit.get_window_title(), cancelled["title"].as_str().unwrap());
     edit.set_amount("0".into());
     edit.invoke_add_rule();
     assert!(edit.get_error().contains("positive"));
@@ -152,6 +199,7 @@ fn page_cog_rules_cancel_apply_and_error_owner_boundary() {
     edit.set_seconds("60".into());
     edit.invoke_add_rule();
     edit.invoke_cancel_clicked();
+    assert_eq!(global_rules(&store), cancelled["saved"]);
     assert_eq!(
         store.read(settings::get::<BandwidthSettings>).unwrap(),
         before
@@ -172,6 +220,7 @@ fn page_cog_rules_cancel_apply_and_error_owner_boundary() {
     edit.invoke_add_rule();
     edit.invoke_apply_clicked();
     until(|| !edit.window().is_visible());
+    assert_eq!(global_rules(&store), accepted["saved"]);
     let after = store.read(settings::get::<BandwidthSettings>).unwrap();
     assert!(
         after
@@ -211,11 +260,11 @@ fn page_cog_rules_cancel_apply_and_error_owner_boundary() {
     until(|| window.get_file_cog().has_error);
     window.invoke_control_action(false, 8);
     let error = gui::last_error().unwrap();
-    assert_eq!(error.get_error_text(), "synthetic failure\nserver detail");
+    assert_eq!(error.get_error_text(), recorded["messages"][0][1].as_str().unwrap());
     window.invoke_control_action(false, 9);
     assert_eq!(
         copies.borrow().last().unwrap(),
-        &Clip::Text(error.get_error_text().to_string())
+        &Clip::Text(recorded["clipboard"][0][2].as_str().unwrap().to_string())
     );
     let width = 660;
     let height = 370;
