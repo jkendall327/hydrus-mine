@@ -57,11 +57,11 @@ COMMANDS = {
 # moment), and `answers`, the buttons pressed in turn on the dialogs it opens.
 # `cycle` steps repeat the commands in turn for as long as the canvas shows
 # a pair, until it asks.
-AUTO_COMMIT_OFF = { 'duplicate_filter_auto_commit_batch_size' : None }
+AUTO_COMMIT_OFF = { 'duplicate_filter_auto_commit_batch_size' : None, 'duplicate_filter_max_batch_size' : 6 }
 
 SCENARIOS = [
     ( 'every_decision_then_commit', AUTO_COMMIT_OFF, [
-        { 'cycle' : [ 'better_delete_other', 'better_keep_both', 'same', 'alternates', 'false_positive' ], 'answers' : [ 'commit and continue' ] },
+        { 'cycle' : [ 'better_delete_other', 'better_keep_both', 'same', 'alternates', 'false_positive' ], 'answers' : [ 'commit and continue' ], 'stop_after_answers' : True },
     ] ),
     ( 'back_undoes_decisions_and_the_batch_end_can_go_back', AUTO_COMMIT_OFF, [
         'same',
@@ -74,7 +74,7 @@ SCENARIOS = [
         'skip',
         'back',
         'false_positive',
-        { 'cycle' : [ 'skip' ], 'answers' : [ 'go back', 'commit and continue' ] },
+        { 'cycle' : [ 'false_positive' ], 'answers' : [ 'go back', 'commit and continue' ], 'stop_after_answers' : True },
     ] ),
     ( 'closing_with_decisions_pending', AUTO_COMMIT_OFF, [
         'alternates',
@@ -88,11 +88,11 @@ SCENARIOS = [
         'false_positive',
         { 'do' : 'close', 'answers' : [ 'commit' ] },
     ] ),
-    ( 'a_small_batch_is_committed_without_asking', { 'duplicate_filter_auto_commit_batch_size' : 1 }, [
-        { 'cycle' : [ 'alternates', 'skip' ], 'answers' : [ 'commit and continue', 'commit and continue', 'commit and continue' ] },
+    ( 'a_small_batch_is_committed_without_asking', { 'duplicate_filter_auto_commit_batch_size' : 1, 'duplicate_filter_max_batch_size' : 6 }, [
+        { 'cycle' : [ 'alternates', 'skip' ], 'answers' : [ 'commit and continue' ], 'stop_after_answers' : True },
     ] ),
     ( 'files_merged_or_deleted_skip_their_other_pairs', AUTO_COMMIT_OFF, [
-        { 'cycle' : [ 'better_delete_other' ], 'answers' : [ 'commit and continue' ] },
+        { 'cycle' : [ 'better_delete_other' ], 'answers' : [ 'commit and continue' ], 'stop_after_answers' : True },
     ] ),
 ]
 
@@ -216,7 +216,13 @@ def record( session ):
 
         for ( key, value ) in options.items():
 
-            new_options.SetNoneableInteger( key, value )
+            if key == 'duplicate_filter_max_batch_size':
+
+                new_options.SetInteger( key, value )
+
+            else:
+
+                new_options.SetNoneableInteger( key, value )
 
         context = ClientPotentialDuplicatesSearchContext.PotentialDuplicatesSearchContext()
         context.SetMaxHammingDistance( 4 )
@@ -356,14 +362,14 @@ def record( session ):
 
                         break
 
-                    # (the batch's last pair asks: only then are the answers given)
-                    last = current[ 'pair_index' ] >= current[ 'num_pairs' ] - 1
+                    observed = run_step( step[ 'cycle' ][ i % len( step[ 'cycle' ] ) ], list( step_answers ) )
 
-                    observed = run_step( step[ 'cycle' ][ i % len( step[ 'cycle' ] ) ], step_answers if last else [] )
+                    # (only a dialog uses an answer: the batch's end)
+                    step_answers = step_answers[ len( [ a for a in scenario[ 'steps' ][ -1 ][ 'asked' ] if 'pressed' in a ] ) : ]
 
-                    if last and len( step_answers ) > 0:
+                    if len( step_answers ) == 0 and step.get( 'stop_after_answers' ):
 
-                        step_answers = step_answers[ len( [ a for a in scenario[ 'steps' ][ -1 ][ 'asked' ] if 'pressed' in a ] ) : ]
+                        break
 
                     if not observed[ 'open' ]:
 
@@ -383,7 +389,7 @@ def record( session ):
 
             relationships = controller.Read( 'file_relationships_for_api', location, [ bytes.fromhex( h ) for h in hashes ] )
 
-            scenario[ 'relationships' ] = { h.hex() : r for ( h, r ) in relationships.items() }
+            scenario[ 'relationships' ] = { ( h.hex() if isinstance( h, bytes ) else h ) : r for ( h, r ) in relationships.items() }
 
         scenario[ 'unused_answers' ] = list( answers )
 
