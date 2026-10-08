@@ -83,6 +83,7 @@ fn kept(entries: &[Value]) -> Vec<Value> {
                         "idle report mode",
                         "network report mode",
                         "network report mode (silent)",
+                        "similar files metadata generation report mode",
                         "shortcut report mode",
                         "subprocess report mode",
                         "subscription report mode",

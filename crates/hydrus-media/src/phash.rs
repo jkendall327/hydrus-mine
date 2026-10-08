@@ -121,13 +121,33 @@ fn dct_8x8(pixels: &[u8]) -> [[f64; 8]; 8] {
 
 /// The 64-bit perceptual hash of a decoded image.
 pub fn perceptual_hash(image: &Raster) -> PerceptualHash {
+    use hydrus_core::debug_flags::{Flag, report};
+    let say = |text: &dyn Fn() -> String| {
+        report(Flag::SimilarFilesMetadataGenerationReport, || {
+            format!("phash generation: {}", text())
+        });
+    };
+    say(&|| {
+        format!(
+            "image shape: ({}, {}, {})",
+            image.height(),
+            image.width(),
+            image.channels()
+        )
+    });
     let grey = greyscale(image);
+    say(&|| format!("grey image shape: ({}, {})", image.height(), image.width()));
     let tiny = cv::resize(&grey, 32, 32, Interpolation::Area);
+    say(&|| "tiny image shape: (32, 32)".to_owned());
+    say(&|| "tiny float image shape: (32, 32)".to_owned());
+    say(&|| "generating dct".to_owned());
     let dct = dct_8x8(tiny.data());
     let flat: Vec<f64> = dct.iter().flatten().copied().collect();
     let mut rest: Vec<f64> = flat[1..].to_vec();
     rest.sort_by(f64::total_cmp);
     let median = rest[rest.len() / 2];
+    say(&|| format!("median: {median:?}"));
+    say(&|| "collapsing bytes".to_owned());
     let mut bytes = [0u8; 8];
     for (i, row) in dct.iter().enumerate() {
         for (j, v) in row.iter().enumerate() {
@@ -136,6 +156,12 @@ pub fn perceptual_hash(image: &Raster) -> PerceptualHash {
             }
         }
     }
+    say(&|| {
+        format!(
+            "perceptual_hash: {}",
+            bytes.iter().map(|b| format!("{b:02x}")).collect::<String>()
+        )
+    });
     PerceptualHash(bytes)
 }
 
