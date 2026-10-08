@@ -15,7 +15,7 @@ export component ExternalCallsTable inherits Rectangle {
     callback action(string);
     min-height:350px;
     help := PopupWindow {
-        x:self.absolute-position.x;y:self.absolute-position.y;width:300px;height:40px;
+        width:300px;height:40px;
         Rectangle { background:#f0f0f0;border-width:1px;border-color:#888;
             Button{text:"open the external programs help";clicked=>{help.close();root.action("help");}} }
     }
