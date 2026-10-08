@@ -210,6 +210,7 @@ fn class_rules_apply_snapshot_roundtrip_and_cancel_safety() {
 
 // leaf: gug-members
 // leaf: audit-network-gugs-test
+// leaf: audit-network-gugs-delete-dependencies
 #[test]
 fn single_nested_generators_roundtrip_delete_and_cancel() {
     let dir = tempfile::tempdir().unwrap();
@@ -278,10 +279,18 @@ fn single_nested_generators_roundtrip_delete_and_cancel() {
     let list = windows::open(&store, &slots, false).unwrap();
     list.invoke_row_clicked(0, false, false);
     list.invoke_action("delete".into());
+    assert_eq!(list.get_question(), "Remove all selected?");
+    list.invoke_answered(true);
+    // (the reference then asks about the nested generator that uses it)
     assert!(list.get_question().contains("combined search"));
+    assert!(list.get_question().starts_with("The GUG \""));
+    list.invoke_answered(false);
+    assert_eq!(list.get_rows().row_count(), 2, "declined: it stays");
+    list.invoke_action("delete".into());
     list.invoke_answered(false);
     assert_eq!(list.get_rows().row_count(), 2);
     list.invoke_action("delete".into());
+    list.invoke_answered(true);
     list.invoke_answered(true);
     assert_eq!(list.get_rows().row_count(), 1);
     list.invoke_action("cancel".into());
@@ -290,6 +299,7 @@ fn single_nested_generators_roundtrip_delete_and_cancel() {
     let list = windows::open(&store, &slots, false).unwrap();
     list.invoke_row_clicked(0, false, false);
     list.invoke_action("delete".into());
+    list.invoke_answered(true);
     list.invoke_answered(true);
     list.invoke_action("apply".into());
     let after: Downloaders = store.read(settings::get).unwrap();

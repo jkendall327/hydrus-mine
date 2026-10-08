@@ -1141,3 +1141,221 @@ fn a_metadata_conditional_comparators_target_and_predicate_lines_are_persisted()
     assert_eq!(c.get_looking(), 1);
     assert_eq!(c.get_predicates().lines().count(), 2);
 }
+
+// leaf: audit-media-preparation-scheduling, audit-media-rule-sidebar-scheduling
+#[test]
+fn the_idle_and_normal_time_switches_gate_the_search_and_the_rules_by_the_published_idle_state() {
+    use hydrus_store::duplicates::auto::AutoResolutionSettings;
+    use hydrus_store::idle_state;
+    use hydrus_store::similar::SimilarFilesSettings;
+    let Opened {
+        _dir,
+        _windows,
+        store,
+        ui,
+        bound,
+    } = opened();
+    let _keep = &bound;
+    let now = 1_000_000;
+    // the daemon's decision: the stored switches, by the state the GUI published
+    let allowed = |idle_published: bool| -> [bool; 2] {
+        idle_state::publish(store.dir(), idle_published, now).unwrap();
+        let idle = idle_state::is_idle(store.dir(), now);
+        assert_eq!(idle, idle_published);
+        let similar: SimilarFilesSettings = store.read(hydrus_store::settings::get).unwrap();
+        let auto: AutoResolutionSettings = store.read(hydrus_store::settings::get).unwrap();
+        // (the daemon also lets "work hard" through, off here)
+        [similar.pace(idle).allowed, auto.pace(idle).allowed]
+    };
+    assert_eq!([allowed(true), allowed(false)], [[true; 2], [true; 2]]);
+
+    // idle only: the sidebar's normal-time switches off
+    ui.invoke_duplicates_action("search during active".into(), 0, false, false);
+    ui.invoke_duplicates_action("rules during active".into(), 0, false, false);
+    let data = ui.get_duplicates();
+    assert!(!data.search_during_active && !data.rules_during_active);
+    assert!(data.search_during_idle && data.rules_during_idle);
+    assert_eq!([allowed(true), allowed(false)], [[true; 2], [false; 2]]);
+
+    // normal time only
+    ui.invoke_duplicates_action("search during active".into(), 0, false, false);
+    ui.invoke_duplicates_action("rules during active".into(), 0, false, false);
+    ui.invoke_duplicates_action("search during idle".into(), 0, false, false);
+    ui.invoke_duplicates_action("rules during idle".into(), 0, false, false);
+    assert_eq!([allowed(true), allowed(false)], [[false; 2], [true; 2]]);
+
+    // each independent of the other
+    ui.invoke_duplicates_action("rules during idle".into(), 0, false, false);
+    assert_eq!([allowed(true), allowed(false)], [[false, true], [true; 2]]);
+
+    // a stale published state reads as not idle
+    idle_state::publish(store.dir(), true, now).unwrap();
+    assert!(!idle_state::is_idle(
+        store.dir(),
+        now + idle_state::FRESH_MS + 1
+    ));
+}
+
+// leaf: audit-media-filter-sidebar-random
+#[test]
+fn show_random_group_and_quick_buttons_set_the_shown_files_and_show_another_group() {
+    use hydrus_gui::duplicates_filtering_sidebar::question_opened;
+    use hydrus_gui_model::duplicates_filtering::{self as model, SET_BUTTONS};
+    let Opened {
+        store, ui, bound, ..
+    } = opened();
+    let _keep = &bound;
+    let shown = || bound.current.borrow().borrow().results().to_vec();
+    let before = potential_pairs(&store);
+    assert!(before > 0);
+    assert!(shown().is_empty());
+
+    // the reference's three buttons, worded as hers
+    let f = ui.get_duplicates_filtering();
+    assert_eq!(
+        f.set_buttons
+            .iter()
+            .map(|s| s.to_string())
+            .collect::<Vec<_>>(),
+        [
+            "set current media as duplicates of the same quality",
+            "set current media as all related alternates",
+            "set current media as not related/false positive",
+        ]
+    );
+    // before any are shown, a set button has nothing to do and asks nothing
+    ui.invoke_duplicates_filtering_action("set".into(), 0);
+    assert!(question_opened().is_none());
+
+    // "show some random potential duplicates": one group of files, in the page
+    ui.invoke_duplicates_filtering_action("random".into(), 0);
+    let group = shown();
+    assert!(group.len() >= 2, "a group of related potentials: {group:?}");
+
+    // a set button asks first; no changes nothing
+    ui.invoke_duplicates_filtering_action("set".into(), 2);
+    let question = question_opened().expect("it asks");
+    assert_eq!(question.get_window_title(), "Are you sure?");
+    let pairs = model::pairs(&group, SET_BUTTONS[2].1).len();
+    let advanced = false;
+    let (message, yes, no) = model::question(SET_BUTTONS[2].1, advanced, group.len(), pairs);
+    assert_eq!(question.get_message(), message);
+    assert_eq!(
+        (
+            question.get_yes_label().to_string(),
+            question.get_no_label().to_string()
+        ),
+        (yes.to_string(), no.to_string())
+    );
+    question.invoke_cancelled();
+    assert_eq!(potential_pairs(&store), before);
+    assert_eq!(shown(), group);
+
+    // yes sets them (false positives, here) and shows another random group
+    ui.invoke_duplicates_filtering_action("set".into(), 2);
+    question_opened().unwrap().invoke_answered(true);
+    assert!(potential_pairs(&store) < before, "the pairs were resolved");
+    let next = shown();
+    assert_ne!(next, group, "another group is shown");
+}
+
+// leaf: audit-media-rules-exchange
+#[test]
+fn rules_and_comparators_are_exported_imported_and_duplicated_whole() {
+    use std::cell::RefCell;
+    use std::rc::Rc;
+    let Opened { ui, bound, .. } = opened();
+    let copied: Rc<RefCell<Vec<String>>> = Rc::default();
+    hydrus_gui::set_clipper({
+        let copied = copied.clone();
+        move |clip| {
+            if let hydrus_gui::Clip::Text(text) = clip {
+                copied.borrow_mut().push(text.clone());
+            }
+        }
+    });
+    let pasted: Rc<RefCell<String>> = Rc::default();
+    hydrus_gui::set_paster({
+        let pasted = pasted.clone();
+        move || pasted.borrow().clone()
+    });
+    ui.invoke_duplicates_action("edit rules".into(), 0, false, false);
+    let list = bound
+        .auto_resolution
+        .list
+        .borrow()
+        .as_ref()
+        .expect("it opens")
+        .clone_strong();
+    let names = |list: &hydrus_gui::AutoResolutionRulesWindow| -> Vec<String> {
+        let rows = list.get_rows();
+        (0..rows.row_count())
+            .map(|r| {
+                rows.row_data(r)
+                    .unwrap()
+                    .cells
+                    .row_data(0)
+                    .unwrap()
+                    .to_string()
+            })
+            .collect()
+    };
+    list.invoke_add_suggested();
+    list.invoke_suggested_chosen(0);
+    assert_eq!(names(&list).len(), 1);
+    let first = names(&list)[0].clone();
+
+    // export to the clipboard, then import it: a second, whole copy
+    list.invoke_row_clicked(0, false, false);
+    list.invoke_exchange(0);
+    let text = copied.borrow().last().cloned().expect("on the clipboard");
+    *pasted.borrow_mut() = text;
+    list.invoke_exchange(3);
+    let after = names(&list);
+    assert_eq!(after.len(), 2);
+    assert_ne!(
+        after[0], after[1],
+        "named apart from the rule already there"
+    );
+    assert!(after[1].to_lowercase().starts_with(&first.to_lowercase()));
+    // duplicate: another
+    list.invoke_row_clicked(0, false, false);
+    list.invoke_exchange(6);
+    assert_eq!(names(&list).len(), 3);
+    // something that is not a rule is refused and adds nothing
+    *pasted.borrow_mut() = "not a rule".into();
+    list.invoke_exchange(3);
+    assert_eq!(names(&list).len(), 3);
+
+    // the comparators of a rule: export, import, duplicate
+    list.invoke_row_clicked(0, false, false);
+    list.invoke_edit();
+    let rule = bound
+        .auto_resolution
+        .rule
+        .borrow()
+        .as_ref()
+        .expect("the rule editor opens")
+        .clone_strong();
+    let count = || rule.get_comparators().row_count();
+    let start = count();
+    assert!(start >= 1);
+    rule.invoke_comparator_clicked(0);
+    rule.invoke_comparator_exchange(4);
+    assert_eq!(count(), start + 1);
+    assert_eq!(
+        rule.get_comparators().row_data(0),
+        rule.get_comparators().row_data(start),
+        "the whole comparator is copied"
+    );
+    rule.invoke_comparator_clicked(0);
+    rule.invoke_comparator_exchange(0);
+    let text = copied.borrow().last().cloned().unwrap();
+    assert!(text.contains("comparators"));
+    *pasted.borrow_mut() = text.clone();
+    rule.invoke_comparator_exchange(2);
+    assert_eq!(count(), start + 2);
+    *pasted.borrow_mut() = "nonsense".into();
+    rule.invoke_comparator_exchange(2);
+    assert_eq!(count(), start + 2);
+}

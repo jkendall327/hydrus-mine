@@ -1565,7 +1565,8 @@ lists of comparators, each edited in an editor of its own) and the
 action (which, deleting A or B, and default or custom merge options,
 starting from the client's for the action and edited in the merge options
 editor).
-"apply" refuses a "better" rule whose comparators can't tell A from B,
+A rule's comparator list can export one to the clipboard or a png, import from
+the clipboard or pngs, and duplicate. "apply" refuses a "better" rule whose comparators can't tell A from B,
 with the reference's words. Its "preview" tab searches the rule as
 edited for a sample of its pairs ("only sample this many", or all) and
 tests each, off the UI thread: "47 pairs searched; 10 matched", the
@@ -1647,7 +1648,9 @@ with add/edit/duplicate/delete, template and replacement controls, search term
 separator, initial/example searches, raw/request URL previews and matched
 classes. Nested generators select existing single generators; missing members
 are reported in the list and repaired on Apply, as in the reference. Deleting
-a generator used by a nested one asks before removing it. Parser and URL link
+generators asks "Remove all selected?", then, for each one a nested generator
+uses, the reference's warning naming those (a "no" stops there, the ones
+before it already gone). Parser and URL link
 settings are preserved when saving these lists.
 
 Recorded by `oracle/record_downloader_definitions.py`; replayed by model and
@@ -1884,7 +1887,10 @@ so a concurrent class edit cannot install a link on a file or redirect source.
 
 Service review now opens a native Client API access-key list with the reference
 columns, extended selection, sorting, add/edit/duplicate/delete, copy-key and
-local base-URL opening. Permission editors expose all 14 basic permissions,
+local base-URL opening, and "add from api request": a window waits for a tool
+to ask for access (refused with the reference's words if the service isn't
+running), and the first request opens the permissions editor with what the
+tool asked for and the key it was given. Permission editors expose all 14 basic permissions,
 full access, the reusable permitted-search-tags filter and explicit key rotation
 with validation/collision refusal. List and nested edits remain detached until
 Apply; Cancel and closing service review cancel their descendants. Real Qt
@@ -1947,7 +1953,10 @@ delete. Their editor asks domain, access and description in the reference order.
 
 Network > data > review session cookies browses persisted domain and imported
 service sessions, with a text filter, show-empty toggle, cookie count and latest
-expiry. Create new establishes a domain silo; review opens its cookie list.
+expiry. Create new asks for the context's type as the reference's editor does (web
+domain, or hydrus service with the repositories to choose from, each with the
+reference's one-line note) and establishes that session; review opens its cookie
+list.
 Clear asks the reference's deletion question and removes the selected sessions.
 The cookie window stages add/edit/delete until Apply, including domain/path/name
 changes, session or UTC expiry, a time delta from now, and HTTPS-only cookies.

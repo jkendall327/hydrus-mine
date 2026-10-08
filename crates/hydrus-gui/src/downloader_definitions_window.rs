@@ -119,6 +119,33 @@ fn show_list(window: &DownloaderDefinitionsWindow, draft: &Draft) {
 enum Pending {
     Cancel,
     Delete(Kind, Vec<usize>),
+    /// Deleting generators one by one, as the reference does: the plan
+    /// (each key, and the question it asks first, if any) and the step
+    /// waiting on its answer.
+    DeleteStep(Vec<(String, Option<String>)>, usize),
+}
+
+/// Delete the generators of `plan` from `at` on: each goes at once unless
+/// nested generators use it, when the reference's warning is asked first and
+/// a "no" stops the rest.
+fn delete_from(
+    draft: &Rc<RefCell<Draft>>,
+    pending: &Rc<RefCell<Option<Pending>>>,
+    window: &slint::Weak<DownloaderDefinitionsWindow>,
+    plan: &[(String, Option<String>)],
+    mut at: usize,
+) {
+    while let Some((key, question)) = plan.get(at) {
+        if let Some(question) = question {
+            *pending.borrow_mut() = Some(Pending::DeleteStep(plan.to_vec(), at));
+            if let Some(w) = window.upgrade() {
+                w.set_question(question.as_str().into());
+            }
+            return;
+        }
+        draft.borrow_mut().delete_key(key);
+        at += 1;
+    }
 }
 
 /// Open URL classes (`classes=true`) or single/nested GUGs from native settings.
@@ -261,6 +288,7 @@ pub fn open(
         }
     });
     window.on_answered({
+        let draft_rc = draft.clone();
         let draft = draft.clone();
         let refresh = refresh.clone();
         let close = close.clone();
@@ -279,9 +307,25 @@ pub fn open(
                         let shown_kind = draft.kind;
                         draft.kind = kind;
                         draft.selection.select_many(&items);
-                        draft.delete_selected();
-                        draft.kind = shown_kind;
-                        drop(draft);
+                        if kind == Kind::Classes {
+                            draft.delete_selected();
+                            draft.kind = shown_kind;
+                            drop(draft);
+                            refresh();
+                        } else {
+                            let plan = draft.delete_plan();
+                            draft.kind = shown_kind;
+                            drop(draft);
+                            delete_from(&draft_rc, &pending, &weak, &plan, 0);
+                            refresh();
+                        }
+                    }
+                    Some(Pending::DeleteStep(plan, at)) => {
+                        // yes: this one goes, and the next is asked about
+                        if let Some((key, _)) = plan.get(at) {
+                            draft.borrow_mut().delete_key(key);
+                        }
+                        delete_from(&draft_rc, &pending, &weak, &plan, at + 1);
                         refresh();
                     }
                     None => (),
@@ -328,7 +372,7 @@ pub fn open(
                             draft.kind,
                             draft.selection.in_order(&draft.order()),
                         ));
-                        w.set_question(draft.delete_question().into());
+                        w.set_question(draft.delete_questions()[0].as_str().into());
                     }
                 }
                 "import" | "export" => {

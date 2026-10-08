@@ -58,11 +58,21 @@ export component EditNetworkValueWindow inherits Window {
     in-out property <string> name; in-out property <string> value; in-out property <string> domain; in-out property <string> path;
     in-out property <string> expires; in-out property <string> expiry-delta: "2592000"; in-out property <string> reason;
     in-out property <int> approval; in property <string> error;
+    // (a new session's context: a web domain or a hydrus service, as the
+    // reference's context editor limits it)
+    in-out property <int> context-type; in property <string> type-info;
+    in property <[string]> service-names; in-out property <int> service-index;
+    callback type-changed();
     callback delta-clicked(); callback apply-clicked(); callback cancel-clicked();
     VerticalBox { padding: 16px; spacing: 8px;
+        if root.session-only: VerticalBox {
+            ComboBox { model: ["web domain", "hydrus service"]; current-index <=> root.context-type; selected => { root.type-changed(); } }
+            Text { text: root.type-info; color: Theme.text; wrap: word-wrap; }
+            ComboBox { model: root.service-names; current-index <=> root.service-index; enabled: root.context-type == 1; }
+        }
         if !root.cookie && !root.session-only: CheckBox { text: "global context"; checked <=> root.global; }
         HorizontalBox { Text { text: root.cookie ? "domain" : "web domain"; color: Theme.text; width: 140px; }
-            LineEdit { text <=> root.domain; enabled: !root.global; placeholder-text: "example.com"; } }
+            LineEdit { text <=> root.domain; enabled: !root.global && (!root.session-only || root.context-type == 0); placeholder-text: "example.com"; } }
         if !root.session-only: VerticalBox {
             HorizontalBox { Text { text: root.cookie ? "name" : "header key"; color: Theme.text; width: 140px; } LineEdit { text <=> root.name; } }
             HorizontalBox { Text { text: root.cookie ? "value" : "header value"; color: Theme.text; width: 140px; } LineEdit { text <=> root.value; } }

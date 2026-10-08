@@ -225,3 +225,19 @@ pub fn apply(
         Ok(())
     })
 }
+
+/// Access keys asked for through `/request_new_permissions`, while
+/// `hydrus api-keys <store> listen` (standing in for the reference's
+/// registration dialog) is running.
+#[derive(Debug, Clone, Default, PartialEq, Eq, Serialize, Deserialize)]
+pub struct Registration {
+    /// Requests are accepted until then (ms since the epoch).
+    pub open_until_ms: Option<i64>,
+    /// Keys asked for and not yet accepted or refused: access key (hex),
+    /// name, everything, basic permissions.
+    pub requests: Vec<(String, String, bool, Vec<Permission>)>,
+}
+
+impl crate::settings::Setting for Registration {
+    const KEY: &'static str = "api_registration";
+}
