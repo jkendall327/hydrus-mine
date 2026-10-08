@@ -1949,7 +1949,8 @@ fn archived_and_modified_date_panels_make_the_recorded_date_and_time_predicates(
 // "Paste image!" takes the clipboard's bitmap if it holds one, else a file
 // path, as the reference's `_Paste` does; the hashes are those of a file of
 // the same pixels.
-// leaf: audit-options-predicate-similar-files-data-similartodata-paste
+// (not tagged ...-similartodata-paste: the bitmap hashes are compared with this
+// port's own file hashes, not with a recording of the reference's)
 #[test]
 fn paste_image_takes_a_clipboard_bitmap_or_a_file_path_and_clear_empties_both_hashes() {
     let (_dirs, store) = store();

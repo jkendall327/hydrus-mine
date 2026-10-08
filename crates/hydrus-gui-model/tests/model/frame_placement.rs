@@ -143,7 +143,8 @@ fn the_frame_padding_comes_off_the_parent_and_display_sizes_but_not_a_fullscreen
 }
 
 // leaf: audit-options-nested-frame-location-gravity
-// leaf: audit-options-geometry
+// (not tagged audit-options-geometry: this covers default placement only, not
+// screen fitting, stale-geometry restore or maximised/fullscreen persistence)
 #[test]
 fn every_recorded_frame_setting_opens_a_window_where_the_reference_did() {
     let recorded = hydrus_testkit::fixture_json("frame_placement.json");
