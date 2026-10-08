@@ -128,6 +128,7 @@ pub mod png_export_window;
 mod popup_freeze;
 mod popup_job_actions;
 mod popup_menu;
+pub mod popup_modal;
 mod popups;
 pub mod predicate_editor_window;
 mod predicate_notice;
@@ -462,6 +463,9 @@ pub struct Bound {
     _menu_titles: Rc<slint::Timer>,
     /// Shows the popup messages (held likewise).
     _popups: Rc<popups::Binding>,
+    /// Modal popups: held jobs and the dialog for one.
+    pub popup_modal: Rc<popup_modal::Controller>,
+    _geometry_autosave: Rc<slint::Timer>,
     /// Automatic recognised URL imports while this desktop window is bound.
     pub clipboard_monitor: clipboard_monitor::Monitor,
     /// Historical autosaves, with real input activity and a bounded timer.
@@ -3336,6 +3340,9 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             }
         },
     );
+    let popup_modal = popup_modal::Controller::bind(window, pages.borrow().store().clone());
+    let geometry_autosave =
+        windows::autosave(window.as_weak(), pages.borrow().store().clone(), "main_gui");
     // popup messages, the daemon's and the Client API's
     let popup_timer = Rc::new(popups::bind(
         window,
@@ -5404,6 +5411,8 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         _thumbnails: thumbnails,
         _menu_titles: menu_titles,
         _popups: popup_timer,
+        popup_modal,
+        _geometry_autosave: geometry_autosave,
         clipboard_monitor,
         _header_approval: header_approval,
     }

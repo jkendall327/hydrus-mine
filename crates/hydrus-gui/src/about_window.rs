@@ -6,7 +6,7 @@ use std::sync::OnceLock;
 
 use slint::{ComponentHandle as _, ModelRc, SharedString, VecModel};
 
-use hydrus_gui_model::about::{Facts, about_with_format};
+use hydrus_gui_model::about::{Availability, Facts, Library, about_with_format};
 use hydrus_store::Store;
 
 use crate::AboutWindow;
@@ -39,6 +39,50 @@ fn ffmpeg_version(store: &Store) -> Option<String> {
         .flatten()
 }
 
+fn library(name: &str, state: Availability) -> Library {
+    Library {
+        name: name.to_owned(),
+        state,
+    }
+}
+
+/// The optional parts and whether they are there: what the reference checks
+/// of its Python modules, for what hydrus-rs does without or with built in.
+fn libraries(ffmpeg: bool) -> Vec<Vec<Library>> {
+    let native = || Availability::Yes(Some("native".to_owned()));
+    vec![
+        vec![library("PDF", native()), library("SVG", native())],
+        vec![library("mpv", Availability::Missing)],
+        vec![
+            library(
+                "ffmpeg",
+                if ffmpeg {
+                    Availability::Yes(None)
+                } else {
+                    Availability::Missing
+                },
+            ),
+            library("lz4", native()),
+            library("olefile", native()),
+            library("HEIF", Availability::Missing),
+            library("AVIF", Availability::Missing),
+            library("JpegXL", Availability::Missing),
+        ],
+    ]
+}
+
+/// The locale from the environment (`en_US` of `en_US.UTF-8`).
+fn locale() -> String {
+    ["LC_ALL", "LC_MESSAGES", "LANG"]
+        .iter()
+        .filter_map(|name| std::env::var(name).ok())
+        .find(|value| !value.is_empty())
+        .map_or_else(
+            || "C".to_owned(),
+            |value| value.split(['.', '@']).next().unwrap_or("C").to_owned(),
+        )
+}
+
 /// What the window says, from this process and its store.
 pub fn facts(store: &Store) -> Facts {
     let pragmas = store.read(|conn| {
@@ -46,10 +90,12 @@ pub fn facts(store: &Store) -> Facts {
         let journal: String = conn.query_row("PRAGMA journal_mode", [], |r| r.get(0))?;
         let synchronous: i64 = conn.query_row("PRAGMA synchronous", [], |r| r.get(0))?;
         let cache: i64 = conn.query_row("PRAGMA cache_size", [], |r| r.get(0))?;
-        Ok((sqlite, journal, synchronous, cache))
+        let temp_store: i64 = conn.query_row("PRAGMA temp_store", [], |r| r.get(0))?;
+        Ok((sqlite, journal, synchronous, cache, temp_store))
     });
-    let (sqlite, journal_mode, synchronous, cache) =
-        pragmas.unwrap_or_else(|_| (String::new(), String::new(), 0, 0));
+    let (sqlite, journal_mode, synchronous, cache, temp_store) =
+        pragmas.unwrap_or_else(|_| (String::new(), String::new(), 0, 0, 0));
+    let ffmpeg = ffmpeg_version(store);
     // (a negative cache size is in KiB)
     let cache_mb = if cache < 0 { -cache / 1024 } else { cache };
     let os = match std::env::consts::OS {
@@ -62,8 +108,19 @@ pub fn facts(store: &Store) -> Facts {
         version: env!("CARGO_PKG_VERSION").to_owned(),
         arch: std::env::consts::ARCH.to_owned(),
         os,
-        ffmpeg: ffmpeg_version(store),
+        libraries: libraries(ffmpeg.is_some()),
+        ffmpeg,
         sqlite,
+        running_as: if cfg!(debug_assertions) {
+            "from a debug build"
+        } else {
+            "from a release build"
+        }
+        .to_owned(),
+        locale: locale(),
+        sqlite_temp_dir: std::env::var("SQLITE_TMPDIR").ok(),
+        // (2 is MEMORY)
+        temp_in_memory: temp_store == 2,
         boot_ms: *BOOT_MS.get_or_init(now_ms),
         now_ms: now_ms(),
         install_dir: std::env::current_exe()

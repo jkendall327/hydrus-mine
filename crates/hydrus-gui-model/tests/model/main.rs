@@ -42,6 +42,7 @@ mod force_filetype;
 mod force_idle;
 mod formula_editors;
 mod frame_placement;
+mod frame_save;
 mod hash_predicate;
 mod how_boned;
 mod image_cache;
@@ -219,5 +220,7 @@ mod tag_namespace_order;
 mod media_view_options;
 mod menu_choice_wheel;
 mod popup_freeze;
+mod popup_modal;
+mod popup_network_job;
 
 mod viewer_prefetch;

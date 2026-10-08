@@ -163,7 +163,7 @@ fn now() -> i64 {
     hydrus_core::time::TimestampMs::now().millis() / 1000
 }
 
-fn data(
+pub(crate) fn data(
     view: &PopupView,
     width: &hydrus_store::popup_width::PopupWidth,
     gui_owner: &[u8; 32],
@@ -312,6 +312,9 @@ pub(crate) fn bind(window: &crate::MainWindow, hooks: Hooks) -> Binding {
         }
     });
     let policies = Rc::new(RefCell::new(std::collections::HashMap::new()));
+    let controls: Rc<
+        RefCell<std::collections::HashMap<[u8; 32], hydrus_gui_model::popup_network_job::Control>>,
+    > = Rc::default();
     // (those shown, to act on by their place)
     let shown: Rc<RefCell<Vec<PopupView>>> = Rc::default();
     let store = move |hooks: &Hooks| hooks.pages.borrow().store().clone();
@@ -320,6 +323,7 @@ pub(crate) fn bind(window: &crate::MainWindow, hooks: Hooks) -> Binding {
         let hooks = hooks.clone();
         let shown = shown.clone();
         let policies = policies.clone();
+        let controls = controls.clone();
         let weak = window.as_weak();
         Rc::new(move || {
             if !active.get() {
@@ -337,7 +341,16 @@ pub(crate) fn bind(window: &crate::MainWindow, hooks: Hooks) -> Binding {
                 }
             };
             let formatting = hydrus_gui_model::gui_format::preferences(&store(&hooks));
-            let (views, summary) = self::shown_with_figures(&jobs, formatting.figures);
+            let (mut views, summary) = self::shown_with_figures(&jobs, formatting.figures);
+            // the network job control lingers, blank, after its job
+            let mut controls = controls.borrow_mut();
+            controls.retain(|key, _| views.iter().any(|view| &view.key == key));
+            for view in &mut views {
+                view.download = controls
+                    .entry(view.key)
+                    .or_default()
+                    .update(view.download.take(), now());
+            }
             let preferences = store(&hooks)
                 .read(hydrus_store::settings::get::<hydrus_store::popup_width::PopupWidth>)
                 .unwrap_or_default();

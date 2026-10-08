@@ -22,3 +22,11 @@ pub(crate) fn can_alter(window: &slint::Window, store: &hydrus_store::Store) -> 
 pub(crate) fn accepts_input(window: &slint::Window) -> bool {
     window.is_visible() && minimized(window) != Some(true)
 }
+
+/// Whether the window is the one in use (`TLWOrChildIsActive`). A platform
+/// that can't say (software-backed windows) is taken to be in use.
+pub(crate) fn active(window: &slint::Window) -> bool {
+    window
+        .with_winit_window(slint::winit_030::winit::window::Window::has_focus)
+        .unwrap_or(true)
+}
