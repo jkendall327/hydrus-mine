@@ -1,17 +1,20 @@
-//! The "datestring to timestamp (easy)" conversion's English grammar: the
-//! forms of `dateparser.parse` (which the reference uses) that downloaders
-//! and people meet, proved against a corpus recorded from the reference
-//! (`oracle/record_dateparser_corpus.py`).
+//! The "datestring to timestamp (easy)" conversion's English grammar. By the
+//! owner's decision (2026-10-08) it matches a reference install without the
+//! `dateparser` library, where `ClientTime.ParseDate` is `dateutil.parser.parse`,
+//! plus the English relative expressions `dateparser` reads. Proved against a
+//! corpus recorded from the reference (`oracle/record_dateparser_corpus.py`).
 //!
-//! Handled: ISO 8601 dates and times with `T`, fractions, `Z` and offsets;
-//! numeric dates (month first, day first when the month would be invalid,
-//! two-digit years); month names with ordinals and weekdays; 12- and 24-hour
-//! times, noon and midnight; time zone names and offsets; relative
-//! expressions ("2 hours ago", "in 3 weeks", "a day ago", "last week",
-//! "yesterday at 5pm"); and ten- and thirteen-digit Unix timestamps. Missing
-//! parts come from the clock `now`, as `dateparser`'s relative base does.
-//! Other languages, fuzzy text and the rest of the grammar are not ported
-//! (DIFFERENCES.md).
+//! The dateutil part: ISO 8601 dates and times with `T`, fractions, `Z` and
+//! offsets; RFC 2822 and HTTP dates; numeric dates (month first, day first when
+//! the month would be invalid, two-digit years within fifty years of now);
+//! month names, ordinals and weekdays; 12- and 24-hour times; UTC, GMT and Z
+//! (other zone names are ignored, `UTC+9` reads as POSIX does, west of UTC).
+//! Missing parts come from `now`, as dateutil's default does. No Unix
+//! timestamps, "noon", or other languages.
+//!
+//! The relative part (dateparser's): "now", "yesterday", "2 hours ago", "in 3
+//! weeks", "a day ago", "last week", "yesterday at 5pm", with the units
+//! abbreviated or in words.
 
 use jiff::{
     Span, Timestamp, Zoned,
@@ -47,7 +50,13 @@ fn tokens(text: &str) -> Vec<Token> {
                 chars[start..i].iter().collect::<String>().to_lowercase(),
             ));
         } else {
-            if !c.is_whitespace() && c != ',' {
+            let fraction_comma = c == ','
+                && i > 0
+                && chars[i - 1].is_ascii_digit()
+                && chars.get(i + 1).is_some_and(char::is_ascii_digit);
+            if fraction_comma {
+                out.push(Token::Sym('.'));
+            } else if !c.is_whitespace() && c != ',' {
                 out.push(Token::Sym(c));
             }
             i += 1;
@@ -103,28 +112,10 @@ fn weekday_of(word: &str) -> Option<usize> {
         .position(|d| *d == word || (word.len() == 3 && d.starts_with(word)))
 }
 
-/// Seconds east of UTC for a zone name (the common ones).
+/// Seconds east of UTC for a zone name. Like `dateutil`, only UTC, GMT and
+/// "Z" are known; other names (EST, CEST) are ignored.
 fn zone_offset(word: &str) -> Option<i32> {
-    let hours = match word {
-        "z" | "utc" | "gmt" | "ut" | "wet" => 0,
-        "hst" => -10,
-        "akst" => -9,
-        "pst" | "akdt" => -8,
-        "mst" | "pdt" => -7,
-        "cst" | "mdt" => -6,
-        "est" | "cdt" => -5,
-        "edt" => -4,
-        "cet" | "bst" | "west" => 1,
-        "cest" | "eet" => 2,
-        "eest" | "msk" => 3,
-        "jst" | "kst" => 9,
-        "aest" => 10,
-        "aedt" => 11,
-        "nzst" => 12,
-        "nzdt" => 13,
-        _ => return None,
-    };
-    Some(hours * 3600)
+    matches!(word, "z" | "utc" | "gmt" | "ut").then_some(0)
 }
 
 fn number_word(word: &str) -> Option<i64> {
@@ -204,7 +195,7 @@ fn word(token: Option<&Token>) -> Option<&str> {
 }
 
 /// Take the clock time and zone out of `tokens`.
-fn take_clock(tokens: &mut Vec<Token>) -> Result<Clock, ()> {
+fn take_clock(tokens: &mut Vec<Token>, day_words: bool) -> Result<Clock, ()> {
     let mut clock = Clock::default();
     // where the time was, which is where an offset after it begins
     let mut time_at = None;
@@ -270,9 +261,23 @@ fn take_clock(tokens: &mut Vec<Token>) -> Result<Clock, ()> {
             time_at = Some(i);
             continue;
         }
+        // 17h
+        if let (Some(h), Some("h")) = (num(tokens.get(i)), word(tokens.get(i + 1)))
+            && clock.time.is_none()
+            && h < 24
+        {
+            clock.time =
+                Some(Time::new(i8::try_from(h).map_err(|_| ())?, 0, 0, 0).map_err(|_| ())?);
+            tokens.drain(i..i + 2);
+            time_at = Some(i);
+            continue;
+        }
         i += 1;
     }
     for (name, hour) in [("noon", 12), ("midnight", 0)] {
+        if !day_words {
+            break;
+        }
         if let Some(at) = tokens.iter().position(|t| *t == Token::Word(name.into())) {
             clock.time = Some(Time::new(hour, 0, 0, 0).map_err(|_| ())?);
             tokens.remove(at);
@@ -295,7 +300,8 @@ fn take_clock(tokens: &mut Vec<Token>) -> Result<Clock, ()> {
             {
                 let (hours, minutes, used) = offset_digits(tokens, end + 1, n)?;
                 let seconds = hours * 3600 + minutes * 60;
-                offset = if *sign == '-' { -seconds } else { seconds };
+                // (as dateutil reads a POSIX-style "UTC+9": west of UTC)
+                offset = if *sign == '-' { seconds } else { -seconds };
                 end += 1 + used;
             }
             clock.offset = Some(offset);
@@ -346,9 +352,18 @@ fn offset_digits(tokens: &[Token], at: usize, n: i64) -> Result<(i32, i32, usize
     ))
 }
 
-fn year_of(n: i64, digits: usize) -> Option<i16> {
+/// A year from its digits; two digits are the year within fifty years of
+/// `now`'s (dateutil's rule).
+fn year_of(n: i64, digits: usize, now_year: i16) -> Option<i16> {
     let year = if digits <= 2 {
-        if n < 69 { 2000 + n } else { 1900 + n }
+        let now_year = i64::from(now_year);
+        let mut year = now_year / 100 * 100 + n;
+        if year >= now_year + 50 {
+            year -= 100;
+        } else if year < now_year - 50 {
+            year += 100;
+        }
+        year
     } else {
         n
     };
@@ -362,7 +377,7 @@ fn take_date(tokens: &[Token], now: &DateTime) -> Result<Option<Date>, ()> {
     let tokens: Vec<&Token> = tokens
         .iter()
         .filter(|t| {
-            !matches!(t, Token::Word(w) if matches!(w.as_str(), "of" | "at" | "on" | "the")
+            !matches!(t, Token::Word(w) if matches!(w.as_str(), "of" | "at" | "on" | "and" | "ad")
                 || weekday_of(w).is_some()
                 || matches!(w.as_str(), "st" | "nd" | "rd" | "th"))
         })
@@ -415,7 +430,7 @@ fn take_date(tokens: &[Token], now: &DateTime) -> Result<Option<Date>, ()> {
             } else if day.is_none() && (1..=31).contains(&n) {
                 day = Some(n);
             } else if year.is_none() && d == 2 {
-                year = Some(i64::from(year_of(n, 2).ok_or(())?));
+                year = Some(i64::from(year_of(n, 2, now.year()).ok_or(())?));
             } else {
                 return Err(());
             }
@@ -466,7 +481,7 @@ fn take_date(tokens: &[Token], now: &DateTime) -> Result<Option<Date>, ()> {
         }
         // month first, or day first when that is the only valid reading
         ([a, b, c], [1..=2, 1..=2, w @ (1 | 2 | 4)]) => {
-            let year = i64::from(year_of(*c, *w).ok_or(())?);
+            let year = i64::from(year_of(*c, *w, now.year()).ok_or(())?);
             make(year, *a, *b)
                 .or_else(|()| make(year, *b, *a))
                 .map(Some)
@@ -547,6 +562,23 @@ pub(super) fn parse_at(text: &str, now: &Zoned) -> Result<i64, String> {
     inner(text.trim(), now).map_err(|()| failure())
 }
 
+/// `text` without a trailing upper-case time zone name that dateutil doesn't
+/// know (EST, CEST, JST), which it ignores once there is a time.
+fn strip_unknown_zone(text: &str) -> String {
+    let trimmed = text.trim_end();
+    if let Some((rest, last)) = trimmed.rsplit_once(char::is_whitespace)
+        && (2..=5).contains(&last.len())
+        && last.chars().all(|c| c.is_ascii_uppercase())
+        && !matches!(last, "AM" | "PM" | "UTC" | "GMT" | "UT" | "AD")
+        && (rest.contains(':')
+            || rest.to_ascii_lowercase().contains("am")
+            || rest.to_ascii_lowercase().contains("pm"))
+    {
+        return rest.to_owned();
+    }
+    trimmed.to_owned()
+}
+
 fn inner(text: &str, now: &Zoned) -> Result<i64, ()> {
     let civil_now = now.datetime();
     let resolve = |dt: DateTime, offset: Option<i32>| -> Result<i64, ()> {
@@ -562,17 +594,8 @@ fn inner(text: &str, now: &Zoned) -> Result<i64, ()> {
                 .map_err(|_| ()),
         }
     };
-    // a Unix timestamp: ten digits of seconds, or thirteen of milliseconds
-    let (whole, fraction) = text.split_once('.').unwrap_or((text, ""));
-    if !whole.is_empty()
-        && whole.chars().all(|c| c.is_ascii_digit())
-        && fraction.chars().all(|c| c.is_ascii_digit())
-        && matches!(whole.len(), 10 | 13)
-    {
-        let n: i64 = whole.parse().map_err(|_| ())?;
-        return Ok(if whole.len() == 13 { n / 1000 } else { n });
-    }
-    let mut parts = tokens(text);
+    let stripped = strip_unknown_zone(text);
+    let mut parts = tokens(&stripped);
     if parts.is_empty() {
         return Err(());
     }
@@ -610,7 +633,7 @@ fn inner(text: &str, now: &Zoned) -> Result<i64, ()> {
     });
     if let Some(day) = day_word {
         parts.retain(|t| !matches!(t, Token::Word(w) if *w == day || w == "at"));
-        let clock = take_clock(&mut parts)?;
+        let clock = take_clock(&mut parts, true)?;
         if !parts.is_empty() {
             return Err(());
         }
@@ -631,25 +654,24 @@ fn inner(text: &str, now: &Zoned) -> Result<i64, ()> {
     if let Some(dt) = relative(&parts, &civil_now)? {
         return resolve(dt, None);
     }
-    // a weekday alone: the latest one on or before today
-    if let [Token::Word(w)] = parts.as_slice()
-        && let Some(day) = weekday_of(w)
-    {
-        let today =
-            usize::try_from(civil_now.date().weekday().to_monday_zero_offset()).map_err(|_| ())?;
-        let back = (today + 7 - day) % 7;
-        let date = civil_now
-            .date()
-            .checked_sub(Span::new().days(i64::try_from(back).map_err(|_| ())?))
-            .map_err(|_| ())?;
-        return resolve(date.to_datetime(Time::midnight()), None);
-    }
-    let clock = take_clock(&mut parts)?;
+    let clock = take_clock(&mut parts, false)?;
+    let weekday = parts.iter().find_map(|t| match t {
+        Token::Word(w) => weekday_of(w),
+        _ => None,
+    });
     let date = take_date(&parts, &civil_now)?;
-    if date.is_none() && clock.time.is_none() {
+    if date.is_none() && clock.time.is_none() && weekday.is_none() {
         return Err(());
     }
-    let date = date.unwrap_or_else(|| civil_now.date());
+    let mut date = date.unwrap_or_else(|| civil_now.date());
+    // a weekday moves the date forward to it
+    if let Some(day) = weekday {
+        let have = usize::try_from(date.weekday().to_monday_zero_offset()).map_err(|_| ())?;
+        let forward = (day + 7 - have) % 7;
+        date = date
+            .checked_add(Span::new().days(i64::try_from(forward).map_err(|_| ())?))
+            .map_err(|_| ())?;
+    }
     let time = clock.time.unwrap_or_else(Time::midnight);
     resolve(date.to_datetime(time), clock.offset)
 }

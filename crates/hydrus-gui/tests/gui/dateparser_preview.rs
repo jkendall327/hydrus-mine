@@ -1,7 +1,7 @@
 //! The string conversion editor's "datestring to timestamp (easy)" step: its
 //! preview of the example, driven through the processor, converter and
 //! conversion windows as a user opens them, against the reference's real
-//! `dateparser` outputs (`oracle/record_dateparser_corpus.py`). The preview
+//! easy-conversion outputs (a dateparser-less install, plus English relative dates) (`oracle/record_dateparser_corpus.py`). The preview
 //! is of forms that name their own time zone, so that it doesn't depend on
 //! the machine's clock or zone; the rest of the corpus is replayed against
 //! the parser itself in hydrus-core (`string_dates.rs`).
@@ -85,7 +85,9 @@ fn the_easy_date_conversions_preview_is_dateparsers_for_the_recorded_forms() {
         ]
         .iter()
         .any(|z| text.ends_with(z));
-        zone || case["group"] == "timestamps" || case["group"] == "junk" || text == "02/30/2024"
+        zone || case["group"] == "junk"
+            || case["group"] == "other_languages"
+            || text == "02/30/2024"
     };
     let mut checked = 0;
     for case in recorded["cases"].as_array().unwrap() {
@@ -93,9 +95,9 @@ fn the_easy_date_conversions_preview_is_dateparsers_for_the_recorded_forms() {
             continue;
         }
         let text = case["text"].as_str().unwrap();
-        // (dateparser's odd readings and other languages are listed in the
-        // parser's own test)
-        if matches!(text, "-1" | "1 2 3") {
+        // (dateutil's odd readings of non-dates are listed in the parser's own
+        // test)
+        if matches!(text, "-1" | "1 2 3" | "120" | "010203") {
             continue;
         }
         let (example, result) = preview(&store, text);

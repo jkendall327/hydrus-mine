@@ -1,12 +1,19 @@
 #!/usr/bin/env python3
 """Record the reference's "datestring to timestamp (easy)" on a corpus of the
-date forms downloaders and users meet.
+date forms downloaders, HTTP headers and people meet.
 
-The easy conversion is `ClientTime.ParseDate`, which is `dateparser.parse`
-(then its English fallback). This runs the real conversion on each string at
-a fixed UTC clock (dateparser's `RELATIVE_BASE` is held at 2026-10-04
-12:30:00 and the process runs in UTC) and records the timestamp or the
-error. Forms are grouped so the port's coverage can be stated by group.
+The easy conversion is `ClientTime.ParseDate`: `dateparser.parse` when the
+library is installed, else `dateutil.parser.parse` (then with `ignoretz`).
+By the owner's decision (2026-10-08) hydrus-rs matches a dateparser-less
+install, plus English relative dates as dateparser reads them. So:
+
+* the `relative` group (now, yesterday, "2 hours ago", "in 3 weeks", ...) is
+  recorded with dateparser, its `RELATIVE_BASE` held at 2026-10-04 12:30:00;
+* every other group is recorded with `ClientTime.DATEPARSER_OK = False`, so the
+  dateutil path runs, with dateutil's `default` held at that day's midnight
+  (what it fills missing parts from) and the process in UTC.
+
+Each case records the mode, the timestamp or the error.
 
 Usage: ~/pyenv/bin/python oracle/record_dateparser_corpus.py
        (writes fixtures/dateparser_corpus.json)
@@ -33,6 +40,17 @@ def fixed_parse(text, **kwargs):
 
 
 ClientTime.dateparser.parse = fixed_parse
+
+import dateutil.parser
+original_dateutil = dateutil.parser.parse
+
+
+def fixed_dateutil(text, *args, **kwargs):
+    kwargs.setdefault('default', NOW.replace(hour=0, minute=0, second=0, microsecond=0))
+    return original_dateutil(text, *args, **kwargs)
+
+
+ClientTime.dateutil.parser.parse = fixed_dateutil
 
 GROUPS = {
     'iso': [
@@ -88,9 +106,34 @@ GROUPS = {
     ],
 }
 
+EXTRA = {
+    'iso': ['2024-02-29T10:20:30+0200', '2024-02-29T10:20:30 +02:00', '2024-02-29 10:20:30.5', '2024-02-29 10:20:30,5',
+            '2024-02-29T25:00:00', '2024-02-30', '2024-W09-4', '2024-060'],
+    'http': [
+        'Thu, 20 May 2010 07:00:23 GMT', 'Wed, 21 Oct 2015 07:28:00 GMT', 'Sun, 06 Nov 1994 08:49:37 GMT',
+        'Sunday, 06-Nov-94 08:49:37 GMT', 'Sun Nov  6 08:49:37 1994', 'Fri, 31 Dec 1999 23:59:59 +0000',
+        'Tue, 15 Nov 1994 08:12:31 -0800', '120', 'Mon, 01 Jan 2024 00:00:00 UTC',
+    ],
+    'month_names': ['4 Mar 20', 'March 4, 20', 'Dec 25', '25 December', 'Fri Jan 5 2024 10:00:00 GMT+0100',
+                    'January 12, 2012 10:00 PM EST', '1970-01-02 00:00:00 UTC'],
+    'numeric': ['1/2/2023 13:45:00', '2023-1-2', '12.31.1999', '31/12/1999', '010203', '1999'],
+    'times': ['5pm', '5 pm', '17h', '10:20:30.123'],
+    'relative': ['1 day 2 hours ago', '2 days, 3 hours ago', '1 hour 30 minutes ago', '90 minutes ago', 'in 1 day 2 hours',
+                 'in 2 weeks', 'in 1 month', 'in 1 year', '2 months ago', '11 months ago', '13 months ago',
+                 '1 month 1 day ago', '29 days ago', '365 days ago', '0 seconds ago', '1 min ago'],
+}
+for group, extra in EXTRA.items():
+    GROUPS.setdefault(group, [])
+    GROUPS[group] += [t for t in extra if t not in GROUPS[group]]
+
+# the relative forms (and the day words) go through dateparser; the rest do not
+DAY_WORDS = {'now', 'today', 'yesterday', 'tomorrow'}
+
 out = []
 for group, texts in GROUPS.items():
     for text in texts:
+        use_dateparser = group == 'relative' or text in DAY_WORDS
+        ClientTime.DATEPARSER_OK = use_dateparser
         converter = ClientStrings.StringConverter(conversions=[(14, None)])
         try:
             result = converter.Convert(text)
@@ -98,10 +141,30 @@ for group, texts in GROUPS.items():
         except Exception as exc:
             result = str(exc)
             error = True
-        out.append({'group': group, 'text': text, 'result': result, 'error': error})
+        out.append({'group': group, 'text': text, 'mode': 'dateparser' if use_dateparser else 'dateutil',
+                    'result': result, 'error': error})
+ClientTime.DATEPARSER_OK = True
+
+# `Last-Modified` without dateparser (ClientNetworkingJobs._GenerateModifiedDate):
+# the fixed strptime form, "GMT" dropped, the rest read as local time
+from hydrus.core import HydrusTime
+
+last_modified = []
+for text in ['Thu, 20 May 2010 07:00:23 GMT', 'Wed, 21 Oct 2015 07:28:00 GMT', 'Thu, 01 Jan 1970 00:00:00 GMT',
+             'Fri, 02 Jan 1970 00:00:00 GMT', 'Thu, 08 Jan 1970 00:00:01 GMT', 'Sunday, 06-Nov-94 08:49:37 GMT',
+             'Sun Nov  6 08:49:37 1994', '2010-05-20T07:00:23Z', 'Thu, 20 May 2010 07:00:23 +0200', 'garbage',
+             'Thu, 20 May 2010 07:00:23']:
+    try:
+        string = text[:-4] if text.endswith(' GMT') else text
+        dt = datetime.datetime.strptime(string, '%a, %d %b %Y %H:%M:%S')
+        stamp = HydrusTime.DateTimeToTimestamp(dt)
+        result = stamp if ClientTime.TimestampIsSensible(stamp) else None
+    except Exception:
+        result = None
+    last_modified.append({'text': text, 'result': result})
 
 path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'fixtures', 'dateparser_corpus.json')
 with open(path, 'w') as f:
-    json.dump({'now': NOW.isoformat(), 'timezone': 'UTC', 'cases': out}, f, indent=1, ensure_ascii=False)
+    json.dump({'now': NOW.isoformat(), 'timezone': 'UTC', 'cases': out, 'last_modified': last_modified}, f, indent=1, ensure_ascii=False)
     f.write('\n')
 print(f'wrote {path}: {len(out)} cases, {sum(1 for c in out if c["error"])} errors')

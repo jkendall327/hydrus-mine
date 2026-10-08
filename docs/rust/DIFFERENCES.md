@@ -911,23 +911,31 @@ deleted sidecars by `crates/hydrus-download/tests/local_import.rs`.
   controls; their help and favourites menus remain absent. Its date phrase link
   is shown as text. Date conversions execute and update live previews. Advanced parsing
   uses Jiff's diagnostic reasons rather than Python's; English directives and
-  common ISO/English automatic dates are supported. The easy parser
-  (`dateparser.parse`) reads, in English: ISO 8601 with `T`, fractions, `Z` and
-  offsets; numeric dates month first (day first when only that is valid) with
-  two-digit years; month names, ordinals and weekdays; 12- and 24-hour times,
-  noon and midnight; the common time zone abbreviations and `UTC+9` offsets;
-  relative expressions in seconds through years, abbreviated or in words (`2d
-  ago`, `a day ago`, `two hours ago`, `in 3 weeks`, `1 year, 2 months ago`,
-  `last week`, `yesterday at 5pm`); and ten- and thirteen-digit Unix timestamps;
-  and it fills a missing day, month or year from the clock as the reference's
-  relative base does. A corpus of 173 forms recorded from the reference
-  (`oracle/record_dateparser_corpus.py`) all match except these, which are not
-  ported: other languages (`hier`, `il y a 3 jours`, `4 mars 2020`, `2020年3月4日`),
-  ISO week dates (`2024-W09-4`), and dateparser's odd readings of non-dates
-  (`-1`, `1 2 3`). The rest of dateparser's grammar (fuzzy text, its other
-  languages and calendars, most zone names, its date-order and
-  prefer-dates settings) is not ported: where it rejects text the port does
-  too, and where it accepts a form outside the corpus the port may not.
+  common ISO/English automatic dates are supported. By the owner's decision,
+  the easy parser ("datestring to timestamp (easy)") matches a hydrus install
+  **without the `dateparser` library**, where `ClientTime.ParseDate` is
+  `dateutil.parser.parse`, plus the English relative expressions `dateparser`
+  reads. Non-English text, fuzzy text, Unix timestamps and words such as
+  "noon" are not parsed (use the advanced strptime step). It reads: ISO 8601,
+  RFC 2822 and HTTP dates, numeric dates (month first, day first when only
+  that is valid; two-digit years within fifty years of now), month names,
+  ordinals and weekdays (moving the date forward to the weekday), 12- and
+  24-hour times, `UTC`, `GMT` and `Z` (other zone names such as `EST` are
+  ignored, and `UTC+9` reads as POSIX does, west of UTC), filling a missing
+  part from the clock as dateutil does; and relative expressions (`now`,
+  `yesterday`, `2d ago`, `a day ago`, `two hours ago`, `1 year, 2 months ago`,
+  `in 3 weeks`, `last week`, `yesterday at 5pm`) with dateparser's month and
+  year arithmetic. A corpus of 222 forms recorded from the reference
+  (`oracle/record_dateparser_corpus.py`: relative forms with dateparser,
+  the rest with it disabled) all match except dateutil's odd readings of four
+  non-dates (`010203`, `-1`, `120`, `1 2 3`). The other callers of the
+  conversion follow a dateparser-less install too: a `Retry-After` date is read
+  by it (between a minute and a day), and `Last-Modified` is read only in the
+  fixed `Thu, 20 May 2010 07:00:23 GMT` form (taken as local time, as the
+  reference does). The Client API/search `system:time` predicates already use
+  the reference's dateparser-less grammar; the date editor's pasted text reads
+  only plain forms and does not fall back to the easy parser as the reference
+  does. Locale-dependent
   date phrases use English/C forms. Advanced parsing validates Python's
   six-digit microsecond limit, ignores recognised UTC/GMT/system timezone names
   as Python does, and rejects year zero and non-Python directives. Jiff's

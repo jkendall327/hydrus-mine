@@ -24,4 +24,5 @@ pub use class::{DomainMask, UrlClass, UrlClassError, UrlParameter, UrlType};
 pub use functions::{UrlError, ensure_url_is_encoded, search_urls, url_domain};
 pub use gug::{AnyGug, Gug, GugError, GugOptions, Gugs, NestedGug};
 pub use registry::{ParseCapability, UrlClassSettings, UrlClasses};
+pub use string_dates::{parse_last_modified, parse_timestamp};
 pub use strings::{StringConverter, StringMatch, StringProcessor};
