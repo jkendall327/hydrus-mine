@@ -4664,6 +4664,16 @@ Options Apply waits for its open media editor. Cancelled or replaced children,
 and children whose Options owner is hidden, cannot stage an edit or open a
 successor from a retained callback.
 
+## Duplicate filter canvas against the reference
+
+The duplicate filter window's decision buttons, skip, back, switching file,
+the batch-end question ("commit N decisions and continue?", skipped when the
+batch is small enough and nothing was skipped by hand) and the close question
+("commit N decisions?" with commit, forget and back to filtering; forget asks
+"Quit filtering now and forget your work?" first) go as the reference's canvas
+does in six recorded scenarios, which the window replays pair by pair
+(`oracle/record_duplicate_filter_canvas.py`, `tests/gui/duplicate_filter_canvas.rs`).
+
 ## Duplicates page filtering
 
 A duplicates page's filtering tab now edits its potential pair search as the

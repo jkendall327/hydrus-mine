@@ -979,9 +979,9 @@
    ],
    "recheck": {
     "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Skip, back and group-mode SkippedGroup are tested on the DuplicateFilter model, not through the window's back/skip controls (only the group question is seen through the window in another test). Question texts are source-derived, no recording of the canvas; native back deliberately differs from the reference (documented). Missing: the window's back path. Tests: crates/hydrus-gui/tests/gui/duplicate_filter.rs:113 decisions_wait_for_the_end_of_the_batch_and_can_be_undone; :218 group_mode_keeps_to_one_group; crates/hydrus-gui/tests/gui/duplicates_lane_page.rs:190 (group-mode question via window)"
+    "class": "sound",
+    "by": "issue 88 session",
+    "note": "Sound: tests/gui/duplicate_filter_canvas.rs the_filter_window_goes_through_the_references_batches_as_it_does replays six scenarios of oracle/fixtures/duplicate_filter_canvas.json (the reference's real CanvasFilterDuplicates on the auto-resolution database, driven with its application commands, each on a fresh database) through the native filter window: back (several times in a row, and to undo a decision), skip, switching to the other file, going back from the batch-end question, and the close question's 'back to filtering' are driven through the window and the pair shown and the top bar's text are the reference's after each. The replay found the missing 'Quit filtering now and forget your work?' question, now asked. Group mode's skipped-group question is not covered here."
    }
   },
   {
@@ -998,9 +998,9 @@
    ],
    "recheck": {
     "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "The batch-end 'commit N decisions and continue?' prompt, commit and its writes are tested on the DuplicateFilter model, not the window. The window test drives close with a pending decision, then back and forget, but never the commit answer, and asserts nothing was kept after forget. Strings match the Python source but there is no canvas recording; the commit writer is checked elsewhere (duplicate_merges recording in hydrus-api). Tests: crates/hydrus-gui/tests/gui/duplicate_filter.rs:113 decisions_wait_for_the_end_of_the_batch_and_can_be_undone; :229 the_filter_opens_from_a_duplicates_page_and_compares_the_pair"
+    "class": "sound",
+    "by": "issue 88 session",
+    "note": "Sound: tests/gui/duplicate_filter_canvas.rs the_filter_window_goes_through_the_references_batches_as_it_does replays six scenarios of oracle/fixtures/duplicate_filter_canvas.json (the reference's real CanvasFilterDuplicates on the auto-resolution database, driven with its application commands, each on a fresh database) through the native filter window: 'commit N decisions and continue?' with its two buttons, the batch committed without asking when it is within duplicate_filter_auto_commit_batch_size and nothing was skipped by hand, the next batch after a commit, and closing with decisions pending (commit, forget with its second question, back to filtering) are pressed through the window; what each commit wrote is compared through the relationships and deletions it left."
    }
   },
   {
@@ -1037,9 +1037,9 @@
    ],
    "recheck": {
     "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Calls DuplicateFilter::decide with each Decision constant, not the window's buttons or keys, then commit_pending and checks the relationships in the store; no reference recording for the filter's decisions (the merge writer recording is elsewhere). The window is driven for better-delete only once in another test. Missing: the five window actions. Tests: crates/hydrus-gui/tests/gui/duplicates_lane_page.rs:259 each_filter_decision_writes_its_relationship_when_committed"
+    "class": "sound",
+    "by": "issue 88 session",
+    "note": "Sound for the five buttons: tests/gui/duplicate_filter_canvas.rs the_filter_window_goes_through_the_references_batches_as_it_does replays six scenarios of oracle/fixtures/duplicate_filter_canvas.json (the reference's real CanvasFilterDuplicates on the auto-resolution database, driven with its application commands, each on a fresh database) through the native filter window: better (delete the other, keep both), same, alternates and not related are pressed through the window and the pair shown, top bar text, files merged or deleted skipping their other pairs, the files left in my files and every relationship after the commits are the reference's. Not covered: the custom action, the delete command, approve/deny of a review, group mode."
    }
   },
   {

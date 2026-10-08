@@ -534,6 +534,15 @@ reference's (`oracle/dump_comparison_statements.py`).
   reference searches the potential pairs in throttled fragments, re-reads
   the whole search space after every commit, and commits four decisions per
   round trip; that is most of why it is slow.
+- **A mixed batch is the first pairs by the sort.** The reference fetches a
+  random sample of the matching pairs (as many as the batch size) and sorts
+  those; hydrus-rs takes the pairs that come first by the chosen sort, so a
+  batch is the same whenever it is fetched. Pairs the sort cannot tell apart
+  (equal file sizes) come in the order of their files' ids; the reference
+  keeps whatever order its database gave them. The recording
+  (`oracle/record_duplicate_filter_canvas.py`) is made with the reference's
+  batch chosen this way, and replayed through the window
+  (`tests/gui/duplicate_filter_canvas.rs`).
 - **Going back undoes exactly what the decision did.** The reference, going
   back, forgets that the first file was to be merged or deleted twice (a
   typo for the second file), so a later pair with the second file can still
