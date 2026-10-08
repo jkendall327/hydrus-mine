@@ -357,12 +357,24 @@ search.
 - **The about window describes hydrus-rs**: its name, its own version
   beside the hydrus version it ports ("v0.1.0, porting hydrus v688, using
   network version 20"), and, on its description tab, the reference's
-  lines that mean something for it (the platform, ffmpeg and SQLite
-  versions, the boot time, the directories, and the store's cache size,
-  journal and synchronous modes, as SQLite reports them); Python's
-  libraries, Qt, the locale, the commit period and temp-in-memory lines
-  aren't there, and the optional libraries tab lists ffmpeg alone. The
-  boot time is in UTC, and there is no hydrus icon over the name.
+  lines that mean something for it (the platform and how it was built,
+  ffmpeg and SQLite versions, the boot time, the directories, the locale,
+  and the store's cache size, journal and synchronous modes and whether
+  its temporary files are in memory, as SQLite reports them); the Python,
+  OpenCV, openssl, numpy, Pillow and Qt version lines and the transaction
+  commit period (every write commits) aren't there, and the optional
+  libraries tab lists hydrus-rs's own optional parts (ffmpeg, mpv,
+  PDF, SVG, lz4, olefile, HEIF, AVIF and Jpeg-XL, which it has no decoder
+  for) rather than Python modules. The boot time is in UTC, and there is
+  no hydrus icon over the name.
+- **A modal popup's dialog doesn't block the main window**, and "active"
+  means the main window has the focus (a modal waits while another window of
+  hydrus-rs is the focused one, and does not know of other dialogs, only
+  its own). It does not pause playing media as it opens
+  (`pub( 'pause_all_media' )`), and the variant that hides the other windows
+  (the file migration dialogs, which hydrus-rs does not have in this form)
+  isn't there. Waiting jobs are retried oldest first; the reference's
+  set has no order.
 - **The options window has only the options hydrus-rs honours** (so far
   those on twenty-five pages; the others, and pages with none, aren't there:
   on the connection page, the CA bundle and curl_cffi test; on the
@@ -767,8 +779,9 @@ deleted sidecars by `crates/hydrus-download/tests/local_import.rs`.
   works, its messages, and the new files it publishes to a popup button
   are shown as the reference shows them (and the messages logged). In its
   popup, the download it is doing has no stop button of its own (the
-  popup's cancel stops the subscription where the reference's would), and
-  goes when the download ends rather than ten seconds later.
+  popup's cancel stops the subscription where the reference's would; its
+  stop button is off where the reference's is on while it runs, and it has
+  no cog or error menu there).
 - **Subscription changes made from the command line reach a running
   `hydrus serve` within five minutes.**
 - **Full subscription exchange transport** supports modern reference container 90
@@ -2211,8 +2224,19 @@ Frame locations: the complete imported table and geometry editor persist all
 fields, but placement consumers currently use remembered size/position and
 maximised/fullscreen for the main window, media viewer and Options window. Existing named dialog owners also use their wired frame keys. Default gravity
 and parent/centre positioning now reach those owners too (see "Options kept but
-not used"); pointer positioning and screen fitting remain incomplete; the
+not used"); pointer positioning remains incomplete; the
 broader frame/table/editor coverage remains Partial.
+A closing window saves as `SaveTLWSizeAndPosition` does (see GUI.md), but
+only the main window and the media viewer save: the main window as it closes
+and again a quarter second to half a second after it moves, resizes or
+maximises (the reference's frames use a tenth of a second); the viewer, and
+the reference's dialogs and other frames, only as they close or not at all.
+A window's frame position is its outer
+position as winit reports it, which a Wayland compositor does not tell, and
+the display it is on is winit's current monitor; with no monitor list
+(software-backed windows) the earlier size and place rule is used alone.
+The minimum size the reference sets on an opening window (the smaller of
+240 and its size) isn't set.
 The real Options lifecycle does not retain incidental resize/move geometry on
 Cancel/X or unchanged Apply: the accepted-dialog geometry save occurs before
 the GUI page commits its captured frame table. Native retains the same final

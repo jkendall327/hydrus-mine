@@ -118,6 +118,19 @@ fn a_modal_job_has_a_dialog_asks_before_cancelling_and_is_released_to_the_popups
     assert_eq!(popup.text_1, "working");
     assert!(popup.has_gauge_1 && (popup.gauge_1 - 0.25).abs() < 1e-6);
     assert!(popup.cancellable);
+    // (drawn, for the reviewer: the last window made is the dialog)
+    let last = (0..200)
+        .take_while(|&n| m._windows.get(n).is_some())
+        .last()
+        .unwrap();
+    let pixels = headless::render(&m._windows.get(last).unwrap(), 440, 200);
+    headless::save_png(
+        &std::path::Path::new(env!("CARGO_TARGET_TMPDIR")).join("popup-modal.png"),
+        &pixels,
+        440,
+        200,
+    )
+    .unwrap();
     assert!(
         m.stacked().is_empty() && m.ui.get_popups().row_count() == 0,
         "not in the popups while its dialog is up"
