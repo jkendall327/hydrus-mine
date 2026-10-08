@@ -22,6 +22,11 @@ thread_local! {
     static CHOOSER: RefCell<Option<ChoiceButtonsWindow>> = const { RefCell::new(None) };
 }
 
+/// The yes/no question being asked, if one is open (tests answer it).
+pub fn question() -> Option<SessionDialog> {
+    QUESTION.with(|q| q.borrow().as_ref().map(ComponentHandle::clone_strong))
+}
+
 /// Ask yes/no, then `yes`.
 fn ask(message: &str, yes: impl Fn() + 'static) {
     let Ok(window) = SessionDialog::new() else {
