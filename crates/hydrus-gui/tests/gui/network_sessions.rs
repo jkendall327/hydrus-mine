@@ -899,3 +899,24 @@ fn a_new_session_can_be_a_web_domain_or_a_hydrus_service_as_the_reference_s_edit
     edit.invoke_apply_clicked();
     assert_eq!(store.read(network::sessions).unwrap().len(), 2);
 }
+// leaf: session-create
+#[test]
+fn a_hydrus_service_session_needs_a_service_to_choose() {
+    let dir = tempfile::tempdir().unwrap();
+    let store = Store::open(dir.path()).unwrap();
+    let _rendered = headless::init();
+    let slots = Slots::default();
+    let browser = windows::open(&store, &slots, false).unwrap();
+    browser.invoke_add_clicked();
+    let edit = windows::last_edit_opened().unwrap();
+    assert_eq!(edit.get_service_names().row_count(), 0);
+    edit.set_context_type(1);
+    edit.invoke_type_changed();
+    edit.invoke_apply_clicked();
+    assert_eq!(
+        edit.get_error(),
+        "Choose a hydrus service for this context."
+    );
+    assert!(store.read(network::sessions).unwrap().is_empty());
+    assert!(edit.window().is_visible(), "still open");
+}
