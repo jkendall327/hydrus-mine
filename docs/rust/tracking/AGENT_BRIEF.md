@@ -50,6 +50,12 @@ a parent feature because one child works.
 - Run `DEV_LANE=<workstream> scripts/dev.sh lint hydrus-gui hydrus-gui-model`
   (or the crates you touched) before reporting.
 
+- Give `scripts/dev.sh` commands a long timeout (10 minutes) or run them in
+  the background: while another agent holds Cargo's lock (or rebuilds the UI
+  crate), a run can wait several minutes before it starts.
+- Format only your own files (`rustfmt --edition 2024 <file>`); `cargo fmt`
+  rewrites other agents' files too.
+
 ## Sharing a checkout with other agents
 
 Several agents may work in the same checkout at once, on different

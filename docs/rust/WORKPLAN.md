@@ -119,3 +119,17 @@ The 2026-10-08 review found:
   `slint::invoke_from_event_loop` cannot be tested headless (Slint has one
   process-wide event-loop proxy). Converted that window to a timer-polled
   mailbox (the codebase's usual pattern); rule added to AGENTS.md.
+- **Round 1 result:** tags-services 60, network 63, editors 27 newly tagged
+  (agents ran 16-23 min each); 385 -> 535 done. No product bugs found; nearly
+  all work was finding or writing the test that proves existing code. Agents
+  themselves flagged partial tags; I untagged two (commit-pending permission,
+  options presentation) and documented one wording difference. Full model
+  suite 532/532, GUI 735/736 locally (emoji_fonts depends on system fonts;
+  passes in CI).
+- Friction reported: the 120 s tool timeout on `dev.sh` while the cargo lock
+  is held (use longer timeouts / background); `cargo fmt -p` formats whole
+  crate (other agents' files); cross-agent compile breaks (lanes fix).
+- Integration recipe that worked: verify "tag-only" files with
+  `git diff -U0 | grep -v '^+// leaf:'`, run the agent's new tests, stage only
+  that agent's `mod` lines with `git update-index --cacheinfo` (append to the
+  HEAD version), commit per agent.
