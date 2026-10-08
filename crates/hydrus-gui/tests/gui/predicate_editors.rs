@@ -1456,6 +1456,9 @@ fn dimensions_presets_pointer_acceptance_reaches_page_and_persistent_recent_hist
             }
         });
         let native = windows.get(windows.count() - 1).unwrap();
+        // Changed-only geometry observers must see a real resize even if the
+        // initial native opening size already equals a measured viewport.
+        drop(headless::render(&native, 1040, 740));
         for (width, height, suffix) in [(1020, 720, "normal"), (760, 900, "narrow")] {
             let pixels = headless::render(&native, width, height);
             assert_eq!(geometry.borrow().len(), 9);
