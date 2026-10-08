@@ -399,3 +399,274 @@ fn the_undo_menu_undoes_and_redoes_the_last_content_change() {
     open(&ui, "undo", &[]);
     assert_eq!(labels(&ui, 0)[0], "undo archive 2 files");
 }
+
+fn downloader_kind(bound: &hydrus_gui::Bound) -> Option<hydrus_core::pages::DownloaderKind> {
+    match bound.pages.borrow().shown().content {
+        PageContent::Downloader { kind, .. } => Some(kind),
+        _ => None,
+    }
+}
+
+// leaf: audit-options-menu-menu-pages-new-gallery-page
+// leaf: audit-options-menu-menu-pages-new-simple-downloader-page
+// leaf: audit-options-menu-menu-pages-new-watcher-page
+// leaf: audit-options-menu-menu-pages-new-duplicates-processing-page
+#[test]
+fn the_download_and_special_menus_make_each_kind_of_page_named_as_the_reference_names_it() {
+    use hydrus_core::pages::DownloaderKind;
+    let _windows = headless::init();
+    let (_dirs, store, ui, bound) = client(&["one"]);
+
+    // (the names are `CreatePageManager*`'s defaults)
+    for (menu, label, name, kind) in [
+        (
+            "download",
+            "new gallery page",
+            "gallery",
+            DownloaderKind::Gallery,
+        ),
+        (
+            "download",
+            "new simple downloader page",
+            "simple downloader",
+            DownloaderKind::Simple,
+        ),
+        (
+            "download",
+            "new watcher page",
+            "watcher",
+            DownloaderKind::Watchers,
+        ),
+    ] {
+        let before = tabs(&ui).len();
+        open(&ui, "pages", &[menu]);
+        choose(&ui, label);
+        assert_eq!(tabs(&ui).len(), before + 1, "{label}");
+        assert_eq!(tabs(&ui).last().unwrap(), name, "{label}");
+        assert_eq!(bound.pages.borrow().shown().name, name, "{label}: shown");
+        assert_eq!(downloader_kind(&bound), Some(kind), "{label}");
+    }
+
+    open(&ui, "pages", &["special"]);
+    choose(&ui, "new duplicates processing page");
+    assert_eq!(tabs(&ui).len(), 5);
+    assert_eq!(bound.pages.borrow().shown().name, "duplicates");
+    let PageContent::Duplicates { duplicates, .. } = bound.pages.borrow().shown().content else {
+        panic!("a duplicates processing page");
+    };
+    // `system:everything` in the combined local file domains
+    assert_eq!(
+        duplicates.search.search_1.location,
+        hydrus_search::LocationContext::single(hydrus_core::ServiceKey::new(
+            hydrus_core::service::builtin_keys::COMBINED_LOCAL_FILE_DOMAINS.to_vec()
+        ))
+    );
+    assert_eq!(
+        duplicates.search.search_1.predicates,
+        [hydrus_search::Predicate::System(
+            hydrus_search::SystemPredicate::Everything
+        )]
+    );
+
+    // the pages are kept with the session
+    bound.pages.borrow_mut().sync(50).unwrap();
+    let reopened = Pages::open(store).unwrap();
+    let names: Vec<String> = reopened
+        .session()
+        .pages
+        .iter()
+        .map(|p| p.name.clone())
+        .collect();
+    assert_eq!(
+        names,
+        [
+            "one",
+            "gallery",
+            "simple downloader",
+            "watcher",
+            "duplicates"
+        ]
+    );
+}
+
+// leaf: audit-options-menu-menu-pages-all-multiwatcher-highlights
+#[test]
+fn clear_all_multiwatcher_highlights_clears_every_watcher_page_and_no_other() {
+    let _windows = headless::init();
+    let (_dirs, _store, ui, bound) = client(&["one"]);
+    let highlighted = |bound: &hydrus_gui::Bound| {
+        let page = bound.current.borrow();
+        let page = page.borrow();
+        page.watchers()
+            .map(|w| w.state.highlighted)
+            .or_else(|| page.gallery().map(|g| g.state.highlighted))
+            .unwrap()
+    };
+
+    // two watcher pages and a gallery page, each with a highlighted queue
+    for (label, kind) in [
+        ("new watcher page", "watcher"),
+        ("new watcher page", "watcher"),
+        ("new gallery page", "gallery"),
+    ] {
+        open(&ui, "pages", &["download"]);
+        choose(&ui, label);
+        if kind == "watcher" {
+            ui.invoke_watcher_urls(
+                "https://boards.example/a/thread/1\nhttps://boards.example/a/thread/2".into(),
+            );
+            ui.invoke_watcher_row_clicked(0, false, false);
+            ui.invoke_watcher_highlight();
+        } else {
+            ui.invoke_gallery_queries("one\ntwo".into());
+            ui.invoke_gallery_row_clicked(0, false, false);
+            ui.invoke_gallery_highlight();
+        }
+        assert!(highlighted(&bound).is_some(), "{kind} highlighted");
+    }
+
+    open(&ui, "pages", &["clear"]);
+    choose(&ui, "all multiwatcher highlights");
+
+    // the gallery page, shown, keeps its highlight
+    assert!(highlighted(&bound).is_some(), "gallery page untouched");
+    for tab in [1, 2] {
+        ui.invoke_tab_chosen(0, tab);
+        assert_eq!(bound.pages.borrow().shown().name, "watcher");
+        assert_eq!(highlighted(&bound), None, "watcher page {tab} cleared");
+    }
+    // and the session keeps them cleared
+    let session = bound.pages.borrow().session().clone();
+    for page in &session.pages {
+        if let PageContent::Downloader {
+            kind, page: state, ..
+        } = &page.content
+        {
+            let highlighted = state.as_ref().and_then(|s| s.highlighted);
+            assert_eq!(
+                highlighted.is_some(),
+                *kind == hydrus_core::pages::DownloaderKind::Gallery,
+                "{}",
+                page.name
+            );
+        }
+    }
+}
+
+// leaf: audit-options-weight-detail
+#[test]
+fn total_session_weight_explains_the_number_with_open_and_closed_file_and_url_weights() {
+    use hydrus_core::import_options::ImportOptionsSlice;
+    use hydrus_core::pages::{DownloaderKind, DownloaderPageState};
+    use hydrus_store::queues::{self, FileSeedMeta, NewFileSeed, QueueKind, SeedType};
+    let _windows = headless::init();
+    let (_dirs, store) = store();
+    let downloader_key = PageKey::random();
+    let queue = store
+        .write(move |ctx| {
+            let queue = queues::create_queue(
+                ctx.conn(),
+                QueueKind::Urls,
+                "weighted importer",
+                Some(&downloader_key.0),
+                &ImportOptionsSlice::default(),
+                1,
+            )?;
+            queues::set_paused(ctx.conn(), queue, Some(true), Some(true))?;
+            let seeds: Vec<_> = (0..3)
+                .map(|i| NewFileSeed {
+                    seed_type: SeedType::Url,
+                    data: format!("https://files.example/{i}.jpg"),
+                    data_for_comparison: format!("https://files.example/{i}.jpg"),
+                    source_time: None,
+                    referral_url: None,
+                    meta: FileSeedMeta::default(),
+                })
+                .collect();
+            queues::add_file_seeds(ctx.conn(), queue, &seeds, false, 1)?;
+            Ok(queue)
+        })
+        .unwrap();
+    let everything = Page {
+        key: PageKey::random(),
+        name: "everything".into(),
+        content: PageContent::Search {
+            search: FileSearchContext {
+                predicates: hydrus_search::api::parse_api_search(&serde_json::json!([
+                    "system:everything"
+                ]))
+                .unwrap(),
+                ..FileSearchContext::default()
+            },
+            synchronised: true,
+            sort: None,
+            lock: None,
+            collect: None,
+        },
+    };
+    let session = Session {
+        name: sessions::LAST_SESSION.into(),
+        pages: vec![
+            everything,
+            Page {
+                key: downloader_key,
+                name: "importer".into(),
+                content: PageContent::Downloader {
+                    kind: DownloaderKind::Urls,
+                    queues: vec![queue],
+                    sort: None,
+                    page: Some(Box::new(DownloaderPageState::default())),
+                },
+            },
+        ],
+    };
+    store
+        .write(move |ctx| sessions::save(ctx.conn(), &session, 1))
+        .unwrap();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+    ui.invoke_tab_chosen(0, 0);
+    let files = bound.current.borrow().borrow().results().len() as u64;
+    assert!(files > 0, "the basic client has files");
+
+    let human = hydrus_core::numbers::human_int;
+    let ask = |ui: &MainWindow, total: u64| {
+        open(ui, "pages", &["weight"]);
+        choose(ui, &format!("total session weight: {}", human(total)));
+        let window = hydrus_gui::message_window().expect("the report is shown");
+        let text = window.get_message().to_string();
+        window.invoke_cancelled();
+        text
+    };
+
+    // two open pages: the files and the three URLs at twenty each
+    let text = ask(&ui, files + 60);
+    assert_eq!(
+        text,
+        format!(
+            "Session weight is a simple representation of your pages combined memory and CPU load. A file counts as 1, and a URL counts as 20.\n\nTry to keep the total below 10 million! It is also generally better to spread it around--have five download pages each of 500k weight rather than one page with 2.5M.\n\nYour 2 open pages' total is: {}\n\nSpecifically, your file weight is {} and URL weight is 60.\n\nFor extra info, your 0 closed pages (in the undo list) have total weight 0, being file weight 0 and URL weight 0.",
+            human(files + 60),
+            human(files)
+        )
+    );
+
+    // closing the search page moves its weight to the undo list
+    ui.invoke_tab_chosen(0, 0);
+    ui.invoke_close_page();
+    let text = ask(&ui, 60);
+    assert!(
+        text.contains("Your 1 open pages' total is: 60\n\n"),
+        "{text}"
+    );
+    assert!(
+        text.contains("your file weight is 0 and URL weight is 60."),
+        "{text}"
+    );
+    assert!(
+        text.ends_with(&format!(
+            "your 1 closed pages (in the undo list) have total weight {0}, being file weight {0} and URL weight 0.",
+            human(files)
+        )),
+        "{text}"
+    );
+}

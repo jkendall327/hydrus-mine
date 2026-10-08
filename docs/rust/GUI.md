@@ -4670,7 +4670,9 @@ program exit signal" (leaves the event loop at once); and memory actions >
 Pages > weight > "total session weight: N" now explains the number as the
 reference does: the open pages' count and total, their file and URL weights
 (a file 1, a URL 20), and the closed pages' (in the undo list) total, file
-and URL weights. `tests/model/session_weight.rs` checks the wording.
+and URL weights. `tests/model/session_weight.rs` checks the wording, and
+`tests/gui/search_pages_menu.rs` drives the menu: the message counts the open
+pages' files and URLs, and a closed page's files move to the undo-list part.
 
 ## Thumbnail manage > file relationships
 

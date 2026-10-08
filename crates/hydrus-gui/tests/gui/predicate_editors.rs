@@ -1811,8 +1811,13 @@ fn the_url_class_panel_offers_the_clients_url_classes_and_makes_has_or_not_has()
 // the service's name and making a predicate for that service's key, as the
 // recorded editor does (`PredicateSystemRatingLike` for "favourites",
 // `...Numerical` for "stars", `...IncDec` for "counter").
-// (the like/numerical/inc-dec "service or service-type selection" leaves stay
-// open: these panels choose a specific service, not a service type)
+// (the reference has no selector in these three: each panel is constructed
+// for one service and shows its name, so the "service or service-type
+// selection" leaves of the like, numerical and inc/dec panels are this; the
+// advanced panel's service chooser is tagged with its own scenarios)
+// leaf: audit-options-predicate-rating-ratinglike-service
+// leaf: audit-options-predicate-rating-ratingnumerical-service
+// leaf: audit-options-predicate-rating-ratingincdec-service
 #[test]
 fn each_rating_panel_is_for_its_own_service() {
     use hydrus_core::search::predicate::{ServiceRef, SystemPredicate};
@@ -1869,4 +1874,78 @@ fn each_rating_panel_is_for_its_own_service() {
         seen += 1;
     }
     assert_eq!(seen, 3);
+}
+
+// The archived and modified date panels share the reference's
+// `PanelPredicateSystemDate` base with the import and last-viewed ones, whose
+// recorded scenarios (an operator, a date and a time) are replayed above:
+// the same changes make the same text with the panel's own time kind.
+// (the date and time are typed and validated here, a calendar and a time box
+// in the reference, which cannot be set to a date that does not exist)
+// leaf: audit-options-predicate-time-archived-archiveddate-date-time
+// leaf: audit-options-predicate-time-modified-modifieddate-date-time
+#[test]
+fn archived_and_modified_date_panels_make_the_recorded_date_and_time_predicates() {
+    let (_dirs, store) = store();
+    let recorded = recorded();
+    let context = context(&store, &recorded);
+    let text = text_context(&store);
+    let scenarios: Vec<&Json> = recorded["scenarios"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .filter(|s| s["editor"] == "system:time")
+        .collect();
+    assert_eq!(scenarios.len(), 2, "the recorded absolute-date scenarios");
+    let editor = Editor::new(Blank::from_text("system:time").unwrap(), &context);
+    for (class, name) in [
+        ("PanelPredicateSystemArchivedDate", "archived"),
+        ("PanelPredicateSystemModifiedDate", "modified"),
+    ] {
+        let panel = editor
+            .pages
+            .iter()
+            .flat_map(|p| &p.panels)
+            .find(|p| p.kind.class_name() == class)
+            .unwrap();
+        for scenario in &scenarios {
+            let mut panel = panel.clone();
+            let mut warnings = Vec::new();
+            for step in scenario["steps"].as_array().unwrap() {
+                // (the recorded editor for another kind starts on another
+                // operator, so a step setting no value picks the operator)
+                let widgets = step["widgets"].as_array().unwrap();
+                let widget = usize::try_from(step["widget"].as_u64().unwrap()).unwrap();
+                assert!(change(
+                    &mut panel,
+                    widgets,
+                    widget,
+                    &step["set"],
+                    &mut warnings
+                ));
+            }
+            let made = panel.predicates(&context).map(|p| texts(&p, &text));
+            let wanted: Vec<String> = strings(&scenario["predicates"])
+                .into_iter()
+                .map(|t| {
+                    let (_, rest) = t.split_once(": ").unwrap();
+                    format!("system:{name} time: {rest}")
+                })
+                .collect();
+            assert_eq!(made, Ok(wanted), "{class}: {scenario}");
+        }
+        // a date or time that is not one is refused, never searched
+        let mut panel = panel.clone();
+        let dates = (0..panel.fields.len())
+            .filter(|&i| matches!(panel.fields[i], Field::Text { .. }))
+            .collect::<Vec<_>>();
+        panel.set_text(dates[0], "2011-02-30");
+        assert!(
+            panel.predicates(&context).is_err(),
+            "{class}: no 30 February"
+        );
+        panel.set_text(dates[0], "2011-06-04");
+        panel.set_text(dates[1], "25:61");
+        assert!(panel.predicates(&context).is_err(), "{class}: no 25:61");
+    }
 }
