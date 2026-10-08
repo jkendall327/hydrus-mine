@@ -33,9 +33,11 @@ ORDER = {"missing": 0, "partial": 1, "implemented": 2}
 # A done leaf's  record (issue 97): {"date", "class", "by", "note"}.
 # sound: the test drives the behaviour and compares with the reference;
 # source-restated: it does, against values restated from the Python source;
+# likely-good: source-restated, but the leaf is only static text (owner,
+# 2026-10-08: no recording needed; bugs there are low priority);
 # weak: a stand-in, part of the leaf, or a setting whose consumer is untested;
 # no-test: a carried leaf with no test found; wrong: contradicts the reference.
-RECHECK = ("sound", "source-restated", "weak", "no-test", "wrong")
+RECHECK = ("sound", "likely-good", "source-restated", "weak", "no-test", "wrong")
 
 
 def load():
