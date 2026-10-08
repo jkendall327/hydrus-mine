@@ -464,12 +464,14 @@ impl ClientOptions {
         out
     }
 
-    /// The volumes and mutes (`global_audio_*`, `media_viewer_audio_*`).
+    /// The volumes and mutes (`global_audio_*`, `media_viewer_audio_*`,
+    /// `preview_audio_*`).
     pub fn audio_settings(&self) -> AudioSettings {
         let mut out = AudioSettings::default();
         for (key, field) in [
             ("global_audio_mute", &mut out.global_mute),
             ("media_viewer_audio_mute", &mut out.viewer_mute),
+            ("preview_audio_mute", &mut out.preview_mute),
             (
                 "media_viewer_uses_its_own_audio_volume",
                 &mut out.viewer_uses_its_own_volume,
@@ -482,6 +484,7 @@ impl ClientOptions {
         for (key, field) in [
             ("global_audio_volume", &mut out.global_volume),
             ("media_viewer_audio_volume", &mut out.viewer_volume),
+            ("preview_audio_volume", &mut out.preview_volume),
         ] {
             if let Some(&value) = self.integers.get(key) {
                 *field = u8::try_from(value.clamp(0, 100)).unwrap_or(*field);
@@ -1092,6 +1095,8 @@ mod tests {
         options
             .integers
             .insert("media_viewer_audio_volume".into(), 150);
+        options.integers.insert("preview_audio_volume".into(), 20);
+        options.booleans.insert("preview_audio_mute".into(), true);
         assert_eq!(
             options.audio_settings(),
             AudioSettings {
@@ -1100,6 +1105,8 @@ mod tests {
                 viewer_volume: 100,
                 viewer_mute: false,
                 viewer_uses_its_own_volume: true,
+                preview_volume: 20,
+                preview_mute: true,
             }
         );
     }

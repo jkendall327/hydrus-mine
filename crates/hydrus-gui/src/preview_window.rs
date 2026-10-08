@@ -3,7 +3,7 @@
 //! Page/request identities retire late decodes and window close is terminal.
 use crate::{MainWindow, thumbnails::Pixels};
 use hydrus_core::{CanvasType, HashId, TimestampMs, pages::PageKey};
-use hydrus_gui_model::viewing_statistics::Tracker;
+use hydrus_gui_model::{audio, viewing_statistics::Tracker};
 use hydrus_store::Store;
 use slint::{ComponentHandle as _, Model as _, Timer, TimerMode};
 use std::{
@@ -261,6 +261,7 @@ struct State {
     clock: RefCell<Clock>,
     decoder: RefCell<Option<Decoder>>,
     image_cache: crate::image_cache::Handle,
+    audio: crate::preview_audio::PreviewAudio,
     normalise_icc: Cell<bool>,
     canvases: RefCell<HashMap<PageKey, Rc<Canvas>>>,
     current: RefCell<Option<Rc<Canvas>>>,
@@ -321,7 +322,9 @@ impl State {
             let touched = self.touch.get().wrapping_add(1);
             self.touch.set(touched);
             frame.touched = touched;
-            window.set_preview_media(frame.image.clone());
+            if !self.audio.showing_frames() {
+                window.set_preview_media(frame.image.clone());
+            }
             window.set_preview_has_media(true);
             let viewport = (
                 window.get_sidebar_actual_width().round() as u32,
@@ -383,6 +386,15 @@ impl State {
                 .filter(|_| canvas.frame.borrow().is_some()),
         );
         self.trim_frames();
+        // (what it shows plays, if the reference's preview would play it)
+        self.audio.sync(
+            window,
+            canvas.accepted.get().filter(|_| {
+                window.window().is_visible()
+                    && !window.get_preview_splitter_hidden()
+                    && canvas.frame.borrow().is_some()
+            }),
+        );
     }
     /// The top-right hover: the file's ratings (at the preview window's
     /// icon sizes), inbox and trash icons, locations and URLs, drawn in the
@@ -765,6 +777,7 @@ impl State {
             canvas.clear(now);
             canvas.observed.set(None);
             Self::blank(&window);
+            self.audio.sync(&window, None);
             return;
         }
         let hidden = window.get_preview_splitter_hidden();
@@ -827,6 +840,7 @@ impl State {
             return;
         }
         self.timer.stop();
+        self.audio.close();
         self.workers.borrow_mut().take();
         for canvas in self.canvases.borrow_mut().drain().map(|(_, canvas)| canvas) {
             canvas.close(self.time());
@@ -872,12 +886,13 @@ impl Monitor {
             overlay: RefCell::default(),
             force_overlay: Cell::new(false),
             window: window.as_weak(),
-            store,
+            store: store.clone(),
             source,
             owner_valid,
             clock: RefCell::new(Rc::new(|| TimestampMs::now().0)),
             decoder: RefCell::new(None),
             image_cache,
+            audio: crate::preview_audio::PreviewAudio::new(store),
             normalise_icc: Cell::new(policy.normalise_icc),
             canvases: RefCell::new(HashMap::new()),
             current: RefCell::new(None),
@@ -899,6 +914,43 @@ impl Monitor {
             move |row, left, proportion| {
                 if let Some(state) = state.upgrade() {
                     state.rating_clicked(row, left, proportion);
+                }
+            }
+        });
+        window.on_preview_volume_changed({
+            let state = Rc::downgrade(&state);
+            move |volume| {
+                if let Some(state) = state.upgrade()
+                    && let Some(window) = state.window.upgrade()
+                {
+                    let volume = u8::try_from(volume.clamp(0, 100)).unwrap_or(0);
+                    state.audio.changed(&window, |store| {
+                        audio::set_preview_volume(store, volume);
+                    });
+                }
+            }
+        });
+        window.on_preview_flip_global_mute({
+            let state = Rc::downgrade(&state);
+            move || {
+                if let Some(state) = state.upgrade()
+                    && let Some(window) = state.window.upgrade()
+                {
+                    state.audio.changed(&window, |store| {
+                        audio::flip_global_mute(store);
+                    });
+                }
+            }
+        });
+        window.on_preview_flip_mute({
+            let state = Rc::downgrade(&state);
+            move || {
+                if let Some(state) = state.upgrade()
+                    && let Some(window) = state.window.upgrade()
+                {
+                    state.audio.changed(&window, |store| {
+                        audio::flip_preview_mute(store);
+                    });
                 }
             }
         });
@@ -957,6 +1009,12 @@ impl Monitor {
         if self.0.alive.get() {
             *self.0.decoder.borrow_mut() = Some(decoder);
         }
+    }
+    /// What the preview's player was last asked to play, and at what volume
+    /// and mute (where libmpv is absent, what it would play).
+    pub fn playing(&self) -> (Option<std::path::PathBuf>, (u8, bool)) {
+        let playback = self.0.audio.playback();
+        (playback.target(), playback.audio())
     }
     /// Finish the displayed interval once after an accepted client close.
     pub fn close(&self) {

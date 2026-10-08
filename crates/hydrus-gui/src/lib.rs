@@ -134,6 +134,7 @@ pub mod popup_modal;
 mod popups;
 pub mod predicate_editor_window;
 mod predicate_notice;
+mod preview_audio;
 pub mod preview_window;
 pub mod regex_favourites_window;
 mod related_tags_worker;
