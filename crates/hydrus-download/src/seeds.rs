@@ -530,8 +530,22 @@ impl Downloader {
         path: &std::path::Path,
         options: &FullImportOptions,
     ) -> Result<(), Stop> {
+        self.import_file_with(seed, path, options, true)
+    }
+
+    /// [`Self::import_file`], copying the file to a temporary path first or
+    /// not (`copy_import_files_to_temp_dir`).
+    pub(crate) fn import_file_with(
+        &self,
+        seed: &mut FileSeed,
+        path: &std::path::Path,
+        options: &FullImportOptions,
+        copy_first: bool,
+    ) -> Result<(), Stop> {
         let file_options = FileImportOptions::from_full(options, &self.store.snapshot().services);
-        let result = self.importer.import_path(path, &file_options)?;
+        let result = self
+            .importer
+            .import_path_with(path, &file_options, copy_first)?;
         if let Some(message) = result.raised {
             // the reference's import raised, before the seed took the hash
             return Err(if result.status == hydrus_import::ImportStatus::Vetoed {

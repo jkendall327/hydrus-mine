@@ -52,9 +52,9 @@ fn grant_only(
         .unwrap()
 }
 
-// (commit-pending is not tagged: the checkbox works, but committing pending
-// content to a repository is not implemented)
-// leaf: audit-media-permission-add-notes, audit-media-permission-edit-ratings, audit-media-permission-manage-file-relationships, audit-media-permission-add-tags, audit-media-permission-edit-times, audit-media-permission-add-files, audit-media-permission-add-urls, audit-media-permission-manage-headers, audit-media-permission-manage-database, audit-media-permission-manage-pages, audit-media-permission-manage-popups, audit-media-permission-search-files, audit-media-permission-see-local-paths
+// (commit-pending is tagged for its editor checkbox only: committing pending
+// content to a repository is not implemented, see DIFFERENCES.md)
+// leaf: audit-media-permission-commit-pending, audit-media-permission-add-notes, audit-media-permission-edit-ratings, audit-media-permission-manage-file-relationships, audit-media-permission-add-tags, audit-media-permission-edit-times, audit-media-permission-add-files, audit-media-permission-add-urls, audit-media-permission-manage-headers, audit-media-permission-manage-database, audit-media-permission-manage-pages, audit-media-permission-manage-popups, audit-media-permission-search-files, audit-media-permission-see-local-paths
 #[test]
 fn each_permission_checkbox_has_the_reference_label_and_serializes_alone() {
     let recorded = hydrus_testkit::fixture_json("client_api_admin.json");

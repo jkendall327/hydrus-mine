@@ -64,6 +64,8 @@ pub struct ImportResult {
 pub struct FileImporter {
     store: Arc<Store>,
     tools: MediaTools,
+    /// How many temporary copies of source files have been made.
+    temp_copies: Arc<std::sync::atomic::AtomicUsize>,
 }
 
 impl FileImporter {
@@ -86,25 +88,59 @@ impl FileImporter {
             }
         }));
         let tools = tools.with_ffmpeg_timeout_reader(hydrus_store::ffmpeg_policy::reader(&store));
-        Self { store, tools }
+        Self {
+            store,
+            tools,
+            temp_copies: Arc::default(),
+        }
+    }
+
+    /// How many temporary copies of source files this importer (and its
+    /// clones) has made, so that a test can see an import go without one.
+    #[doc(hidden)]
+    pub fn temp_copies_made(&self) -> usize {
+        self.temp_copies.load(std::sync::atomic::Ordering::Relaxed)
     }
 
     pub fn tools(&self) -> &MediaTools {
         &self.tools
     }
 
-    /// Import the file at `path`. The file is copied first, so the source may
-    /// change or disappear once this returns.
+    /// Import the file at `path`. The file is copied to a temporary path
+    /// first (always, for the Client API and the like, which do not read the
+    /// reference's `copy_import_files_to_temp_dir`; see
+    /// [`Self::import_path_with`]), so the source may change or disappear
+    /// once this returns.
     pub fn import_path(&self, path: &Path, options: &FileImportOptions) -> Result<ImportResult> {
-        let scratch = self.scratch_dir()?;
-        let temp = tempfile::NamedTempFile::new_in(&scratch)?;
-        hydrus_store::paths::copy_file(path, temp.path())?;
+        self.import_path_with(path, options, true)
+    }
+
+    /// [`Self::import_path`], where `copy_first` is the reference's
+    /// `copy_import_files_to_temp_dir` option (Options > files and trash,
+    /// reversed there as "TEST: Import local files directly from source, do
+    /// not copy to temp dir beforehand"): the file is copied to a temporary
+    /// path and imported from there, or imported from where it is.
+    pub fn import_path_with(
+        &self,
+        path: &Path,
+        options: &FileImportOptions,
+        copy_first: bool,
+    ) -> Result<ImportResult> {
         let modified = std::fs::metadata(path)
             .and_then(|m| m.modified())
             .ok()
             .and_then(|t| t.duration_since(std::time::UNIX_EPOCH).ok())
             .map(|d| TimestampMs::from_millis(i64::try_from(d.as_millis()).unwrap_or(i64::MAX)));
-        self.import_file(temp.path(), &path.display().to_string(), modified, options)
+        let source = path.display().to_string();
+        if !copy_first {
+            return self.import_file(path, &source, modified, options);
+        }
+        let scratch = self.scratch_dir()?;
+        let temp = tempfile::NamedTempFile::new_in(&scratch)?;
+        hydrus_store::paths::copy_file(path, temp.path())?;
+        self.temp_copies
+            .fetch_add(1, std::sync::atomic::Ordering::Relaxed);
+        self.import_file(temp.path(), &source, modified, options)
     }
 
     /// Import file content given in memory (an upload).

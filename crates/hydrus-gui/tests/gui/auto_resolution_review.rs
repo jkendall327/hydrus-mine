@@ -460,3 +460,171 @@ fn a_failed_denial_keeps_pending_pairs_and_reports_the_error() {
     assert!(window.get_label().contains("injected denial failure"));
     window.invoke_close_window();
 }
+
+// leaf: audit-media-review-progress
+#[test]
+fn approving_and_denying_show_their_progress_on_the_button_and_in_a_popup() {
+    use hydrus_gui_model::auto_resolution_review::action_title;
+    use hydrus_store::popups;
+    let recorded = hydrus_testkit::fixture_json("auto_resolution_review.json");
+    let _windows = headless::init();
+    // (the reference publishes the popup after four seconds)
+    hydrus_gui::set_popup_delay(std::time::Duration::ZERO);
+    let opened = opened();
+    let name = recorded["reviewed"].as_str().unwrap();
+    let window = review(&opened.ui, &opened.bound, name);
+    assert_eq!(window.get_label(), "Found 2 pairs.");
+    let now = || hydrus_core::TimestampMs::now().millis() / 1000;
+    let popups_now = |store: &Store| store.read(|c| popups::all(c, now())).unwrap();
+    assert!(popups_now(&opened.store).is_empty());
+    opened
+        .store
+        .write(|ctx| {
+            ctx.conn().execute_batch(
+                "CREATE TABLE popup_log (job TEXT);
+                 CREATE TRIGGER popup_added AFTER INSERT ON popups
+                   BEGIN INSERT INTO popup_log VALUES (NEW.job); END;
+                 CREATE TRIGGER popup_changed AFTER UPDATE ON popups
+                   BEGIN INSERT INTO popup_log VALUES (NEW.job); END;
+                 CREATE TABLE popup_gone (job TEXT);
+                 CREATE TRIGGER popup_removed AFTER DELETE ON popups
+                   BEGIN INSERT INTO popup_gone VALUES (OLD.job); END;",
+            )?;
+            Ok(())
+        })
+        .unwrap();
+
+    for (approve, button, title) in [
+        (
+            true,
+            "approving: 0/1",
+            "approving auto-resolution decisions",
+        ),
+        (false, "denying: 0/1", "denying auto-resolution decisions"),
+    ] {
+        assert_eq!(action_title(approve), title);
+        // Hold the store's writer, so that the decision is at work, not done.
+        let (held_tx, held_rx) = std::sync::mpsc::channel();
+        let (release_tx, release_rx) = std::sync::mpsc::channel::<()>();
+        let holder = {
+            let store = opened.store.clone();
+            std::thread::spawn(move || {
+                store
+                    .write(move |_| {
+                        held_tx.send(()).unwrap();
+                        release_rx.recv().unwrap();
+                        Ok(())
+                    })
+                    .unwrap();
+            })
+        };
+        held_rx.recv().unwrap();
+
+        window.invoke_tab_chosen(0);
+        window.invoke_row_clicked(0, false, false);
+        let (button_text, other_text) = if approve {
+            (window.get_approve_text(), window.get_deny_text())
+        } else {
+            (window.get_deny_text(), window.get_approve_text())
+        };
+        assert_eq!(
+            (button_text.as_str(), other_text.as_str()),
+            (
+                if approve { "approve" } else { "deny" },
+                if approve { "deny" } else { "approve" }
+            )
+        );
+        if approve {
+            window.invoke_approve();
+        } else {
+            window.invoke_deny();
+        }
+        // The button shows the progress while the work waits on the store.
+        let deadline = std::time::Instant::now() + std::time::Duration::from_secs(20);
+        loop {
+            slint::platform::update_timers_and_animations();
+            let text = if approve {
+                window.get_approve_text()
+            } else {
+                window.get_deny_text()
+            };
+            if text == button {
+                break;
+            }
+            assert!(
+                std::time::Instant::now() < deadline,
+                "no progress: {text:?}"
+            );
+            std::thread::sleep(std::time::Duration::from_millis(20));
+        }
+        assert!(window.get_working());
+        // (the other button keeps its label, and a second decision is ignored)
+        assert_eq!(
+            if approve {
+                window.get_deny_text()
+            } else {
+                window.get_approve_text()
+            },
+            if approve { "deny" } else { "approve" }
+        );
+        release_tx.send(()).unwrap();
+        holder.join().unwrap();
+        // The popup is published with the progress, then finished and
+        // dismissed when the decisions are done.
+        let deadline = std::time::Instant::now() + std::time::Duration::from_secs(20);
+        loop {
+            slint::platform::update_timers_and_animations();
+            if !window.get_working()
+                && window.get_approve_text() == "approve"
+                && window.get_deny_text() == "deny"
+            {
+                break;
+            }
+            assert!(std::time::Instant::now() < deadline, "never finished");
+            std::thread::sleep(std::time::Duration::from_millis(10));
+        }
+        assert!(
+            popups_now(&opened.store).is_empty(),
+            "the popup is dismissed once done"
+        );
+        // (a dismissed popup is forgotten, so what was written is read from
+        // the trigger's log)
+        let jobs: Vec<popups::Job> = opened
+            .store
+            .read(|c| {
+                let mut stmt = c.prepare("SELECT job FROM popup_log ORDER BY rowid")?;
+                let rows = stmt
+                    .query_map([], |r| r.get::<_, String>(0))?
+                    .collect::<rusqlite::Result<Vec<_>>>()?;
+                Ok(rows
+                    .iter()
+                    .map(|j| serde_json::from_str(j).unwrap())
+                    .collect())
+            })
+            .unwrap();
+        let ours: Vec<&popups::Job> = jobs
+            .iter()
+            .filter(|job| job.status_text_1.as_deref() == Some(button))
+            .collect();
+        assert!(!ours.is_empty(), "the popup showed {button:?}: {jobs:?}");
+        let last = jobs.last().unwrap();
+        assert_eq!(last.status_text_1.as_deref(), Some(button));
+        assert!(!last.cancellable, "no cancel, as the reference");
+        // finished and dismissed: the store forgets a dismissed popup
+        let gone: i64 = opened
+            .store
+            .read(|c| Ok(c.query_row("SELECT count(*) FROM popup_gone", [], |r| r.get(0))?))
+            .unwrap();
+        assert_eq!(gone, 1, "the popup was dismissed");
+        opened
+            .store
+            .write(|ctx| {
+                ctx.conn()
+                    .execute_batch("DELETE FROM popup_log; DELETE FROM popup_gone;")?;
+                Ok(())
+            })
+            .unwrap();
+    }
+    assert_eq!(window.get_label(), "Found 0 pairs.");
+    window.invoke_close_window();
+}
