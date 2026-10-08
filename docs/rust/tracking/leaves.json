@@ -1803,10 +1803,11 @@
    "path": "Tags > sync",
    "workstream": "tags-services",
    "state": "missing",
-   "priority": "normal",
+   "priority": "out-of-scope",
    "reference": null,
    "native": null,
    "notes": [
+    "Out of scope by the owner's decision of 2026-10-08 (#95, with tag-display-sync): the switch schedules the reference's background sibling/parent display sync, which exists for PTR-scale relationship sets; hydrus-rs recomputes display at once, so there is no queued work to schedule. To bring it back, set priority to normal and remove this note.",
     "This entry is todo()/a checkbox without a command in tags_menu; no native main-menu workflow runs it."
    ],
    "recheck": {
@@ -1822,10 +1823,11 @@
    "path": "Tags > sync",
    "workstream": "tags-services",
    "state": "missing",
-   "priority": "normal",
+   "priority": "out-of-scope",
    "reference": null,
    "native": null,
    "notes": [
+    "Out of scope by the owner's decision of 2026-10-08 (#95, with tag-display-sync): the switch schedules the reference's background sibling/parent display sync, which exists for PTR-scale relationship sets; hydrus-rs recomputes display at once, so there is no queued work to schedule. To bring it back, set priority to normal and remove this note.",
     "This entry is todo()/a checkbox without a command in tags_menu; no native main-menu workflow runs it."
    ],
    "recheck": {
