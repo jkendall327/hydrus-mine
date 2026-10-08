@@ -294,6 +294,7 @@ pub use hydrus_gui_model::{
     subscriptions_dedupe, subscriptions_dialog, subscriptions_list, tab_context, tag_filter_editor,
     tag_relationships, thumbnail_icons, thumbnail_ratings, times_editor, urls_editor,
 };
+pub use filter_window::shown_pair;
 pub use page::SearchPage;
 pub use pages::{Pages, Tabs};
 pub use unlock::unlock_window;

@@ -116,6 +116,7 @@ def record( session ):
 
     from qtpy import QtWidgets as QW
 
+    from hydrus.client import ClientGlobals as CG
     from hydrus.client import ClientApplicationCommand as CAC
     from hydrus.client import ClientConstants as CC
     from hydrus.client import ClientLocation
@@ -127,6 +128,34 @@ def record( session ):
     from hydrus.client.gui import ClientGUITopLevelWindowsPanels
     from hydrus.client.gui.canvas import ClientGUICanvasDuplicates
     from hydrus.client.gui.canvas import ClientGUICanvasFrame
+
+    # The mixed batch is a random sample of the matching pairs, sorted. A
+    # sample cannot be replayed, so the batch is the first pairs by the sort
+    # (which is what hydrus-rs fetches; docs/rust/DIFFERENCES.md): the same
+    # search and sort, all the matching pairs, then the first `no_more_than`.
+    def do_search_work( factory, *args ):
+
+        search = factory._potential_duplicate_pairs_fragmentary_search
+
+        rows = []
+
+        while not search.SearchDone():
+
+            found = CG.client_controller.Read( 'potential_duplicate_media_result_pairs_and_distances_fragmentary', search, no_more_than = 10 ** 9 )
+
+            rows.extend( list( found.IterateRows() ) )
+
+        everything = ClientPotentialDuplicatesSearchContext.PotentialDuplicateMediaResultPairsAndDistances( rows )
+
+        everything.Sort( factory._duplicate_pair_sort_type, factory._duplicate_pair_sort_asc )
+
+        for row in list( everything.IterateRows() )[ : factory._no_more_than ]:
+
+            factory._fetched_media_result_pairs_and_distances.AppendRow( row )
+
+        return True
+
+    ClientPotentialDuplicatesPairFactory.PotentialDuplicatePairFactoryDBMixed.DoSearchWork = do_search_work
 
     asked = []
     answers = []

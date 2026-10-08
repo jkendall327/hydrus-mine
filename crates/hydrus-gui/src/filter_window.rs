@@ -205,6 +205,17 @@ fn refresh_colours(window: &DuplicateFilterWindow, state: &State) {
     ));
 }
 
+thread_local! {
+    // the pair the filter shows (the file shown, the other), for tests
+    static SHOWN: std::cell::Cell<Option<(hydrus_core::HashId, hydrus_core::HashId)>> =
+        const { std::cell::Cell::new(None) };
+}
+
+/// The pair the duplicate filter last showed (the file shown, the other).
+pub fn shown_pair() -> Option<(hydrus_core::HashId, hydrus_core::HashId)> {
+    SHOWN.with(std::cell::Cell::get)
+}
+
 /// Show the state in the window.
 fn show(window: &DuplicateFilterWindow, state: &mut State) {
     if !state.viewing_stats.active() {
@@ -214,6 +225,7 @@ fn show(window: &DuplicateFilterWindow, state: &mut State) {
     state
         .viewing_stats
         .show(state.model.current().map(|(shown, _)| shown));
+    SHOWN.with(|s| s.set(state.model.current()));
     let Some((shown, other)) = state.model.current() else {
         state.shown = None;
         state.playback.stop();
