@@ -455,7 +455,8 @@ fn the_duplicate_filter_prefetches_as_many_pairs_as_the_options_row_says() {
         );
 
         // the filter shows its pair and decodes ahead that many more
-        let batch = super::duplicate_filter::filter(&store, false);
+        let mut batch = super::duplicate_filter::filter(&store, false);
+        batch.load_batch().unwrap();
         let expected: std::collections::HashSet<_> =
             batch.upcoming(pairs as usize).into_iter().collect();
         assert!(

@@ -544,7 +544,7 @@ fn approving_and_denying_show_their_progress_on_the_button_and_in_a_popup_after_
     assert_eq!(window.get_deny_text(), "deny");
     release();
     settle(&window);
-    assert_eq!(window.get_label(), "Found 1 pairs.");
+    assert_eq!(window.get_label(), "1 pairs remaining.");
     assert!(popup_states(&o.store).is_empty());
 
     // denying the other, with the popup due at once: its title, its
@@ -561,7 +561,7 @@ fn approving_and_denying_show_their_progress_on_the_button_and_in_a_popup_after_
     release();
     settle(&window);
     set_popup_after(None);
-    assert_eq!(window.get_label(), "Found 0 pairs.");
+    assert_eq!(window.get_label(), "0 pairs remaining.");
     let states = popup_states(&o.store);
     assert_eq!(states.len(), 4, "{states:?}");
     assert!(states[0].starts_with("added ") && states[0].contains("denying auto-resolution decisions"));
