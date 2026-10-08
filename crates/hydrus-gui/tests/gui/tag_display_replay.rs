@@ -81,8 +81,14 @@ fn the_autocomplete_boxes_interlock_as_the_reference_s_do() {
             v[9].as_bool().unwrap(),
             "{context}"
         );
-        if let Some(threshold) = v[10].as_i64() {
-            assert_eq!(i64::from(window.get_threshold()), threshold, "{context}");
+        match v[10].as_i64() {
+            Some(threshold) => {
+                assert_eq!(i64::from(window.get_threshold()), threshold, "{context}");
+            }
+            // fetching by hand, the character threshold means nothing (the
+            // reference's is None); the window keeps its last number but
+            // fetching automatically is off
+            None => assert!(!window.get_fetch_automatically(), "{context}"),
         }
     }
     window.invoke_cancel();

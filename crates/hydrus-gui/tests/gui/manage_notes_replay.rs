@@ -163,8 +163,12 @@ fn the_manage_notes_window_follows_the_reference_s_steps() {
                 "urls" => dialog.invoke_copy_urls(),
                 other => panic!("{other}"),
             }
-            if let Some(notified) = said.iter().find_map(|s| s.get("notified")) {
-                assert_eq!(dialog.get_notice(), notified.as_str().unwrap(), "{at}");
+            match said.iter().find_map(|s| s.get("notified")) {
+                Some(notified) => {
+                    assert_eq!(dialog.get_notice(), notified.as_str().unwrap(), "{at}");
+                }
+                // (a step the reference said nothing for leaves no notice)
+                None => assert_eq!(dialog.get_notice(), "", "{at}"),
             }
             let copied: Vec<String> = copies.borrow()[before..]
                 .iter()
