@@ -464,6 +464,26 @@ fn visible_files(
         .collect())
 }
 
+/// Every potential pair in a file domain (the reference's
+/// `GetPotentialDuplicateIdPairsAndDistances`): the space a search counts
+/// through a block at a time.
+pub fn pair_space(
+    conn: &Connection,
+    snapshot: &Snapshot,
+    scope: &FileScope,
+) -> Result<Vec<PairRow>> {
+    pairs_in_scope(conn, snapshot, scope)
+}
+
+/// How many of `rows` (pairs of the search's space) the search finds.
+pub fn count_matching(
+    conn: &Connection,
+    search: &PotentialsSearch<'_>,
+    rows: &[PairRow],
+) -> Result<usize> {
+    Ok(matching(conn, search, rows)?.len())
+}
+
 /// The potential pairs a search finds.
 pub fn potential_pairs(
     conn: &Connection,

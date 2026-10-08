@@ -20,9 +20,41 @@ use hydrus_search::{
     search_files,
 };
 use hydrus_store::Snapshot;
+use hydrus_store::duplicates::cache::PairRow;
 use hydrus_store::duplicates::{
-    FileFilter, FileScope, PairSearchKind, PixelDuplicates, PotentialsSearch,
+    FileFilter, FileScope, PairSearchKind, PixelDuplicates, PotentialsSearch, count_matching,
+    pair_space,
 };
+
+/// A potential-duplicates search with its file searches already run, to
+/// count a space of pairs a block at a time (the reference's fragmentary
+/// search).
+#[derive(Debug, Clone)]
+pub struct PreparedQuery {
+    scope: FileScope,
+    kind: PairSearchKind,
+    pixel_duplicates: PixelDuplicates,
+    max_hamming_distance: u32,
+    one: Option<HashSet<HashId>>,
+    two: Option<HashSet<HashId>>,
+}
+
+impl PreparedQuery {
+    /// How many of `rows` the search finds.
+    pub fn count_matching(&self, conn: &Connection, rows: &[PairRow]) -> hydrus_store::Result<usize> {
+        let one = self.one.as_ref().map(in_set);
+        let two = self.two.as_ref().map(in_set);
+        let search = PotentialsSearch {
+            scope: self.scope.clone(),
+            kind: self.kind,
+            pixel_duplicates: self.pixel_duplicates,
+            max_hamming_distance: self.max_hamming_distance,
+            search_1: one.as_ref().map(|f| f as &FileFilter<'_>),
+            search_2: two.as_ref().map(|f| f as &FileFilter<'_>),
+        };
+        count_matching(conn, &search, rows)
+    }
+}
 
 /// A potential-duplicates search.
 #[derive(Debug, Clone)]
@@ -90,6 +122,41 @@ impl PotentialsQuery {
             search_1: search.search_1.clone(),
             search_2: search.search_2.clone(),
         })
+    }
+
+    /// Every potential pair in the search's file domain.
+    pub fn space(
+        &self,
+        conn: &Connection,
+        snapshot: &Snapshot,
+    ) -> hydrus_store::Result<Vec<PairRow>> {
+        pair_space(conn, snapshot, &self.scope)
+    }
+
+    /// Run the file searches once, for [`PreparedQuery::count_matching`]; a
+    /// file search that fails is the inner error.
+    pub fn prepare(
+        &self,
+        conn: &Connection,
+        snapshot: &Snapshot,
+    ) -> hydrus_store::Result<Result<PreparedQuery, SearchError>> {
+        let searched = run(&self.search_1, conn, snapshot).and_then(|one| {
+            let two = match self.kind {
+                PairSearchKind::BothFilesMatchDifferentSearches => {
+                    run(&self.search_2, conn, snapshot)?
+                }
+                _ => None,
+            };
+            Ok((one, two))
+        });
+        Ok(searched.map(|(one, two)| PreparedQuery {
+            scope: self.scope.clone(),
+            kind: self.kind,
+            pixel_duplicates: self.pixel_duplicates,
+            max_hamming_distance: self.max_hamming_distance,
+            one,
+            two,
+        }))
     }
 
     /// How many potential pairs it finds; `None` if a file search fails.

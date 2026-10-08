@@ -40,7 +40,7 @@
    "steps": [
     {
      "label": "initialising…",
-     "has_tooltip": true,
+     "tooltip": "initialising…",
      "paused": false,
      "matches": 0,
      "searched": 0,
@@ -61,7 +61,7 @@
     },
     {
      "label": "initialising…",
-     "has_tooltip": true,
+     "tooltip": "initialising…",
      "paused": false,
      "matches": 0,
      "searched": 0,
@@ -82,7 +82,7 @@
     },
     {
      "label": "10/30 pairs searched; 5 match…",
-     "has_tooltip": true,
+     "tooltip": "The number on the left is how many pairs are in the system; on the right is how\nmany match your current search.\n\nA system:everything search in \"combined local file domains\" at a distance of 8+\nshould find ~100%. Do not worry if there are a couple of loose pairs you cannot\nfind--they are probably in the trash, waiting to be deleted.",
      "paused": false,
      "matches": 5,
      "searched": 10,
@@ -103,7 +103,7 @@
     },
     {
      "label": "21/30 pairs searched; 9 match…",
-     "has_tooltip": true,
+     "tooltip": "The number on the left is how many pairs are in the system; on the right is how\nmany match your current search.\n\nA system:everything search in \"combined local file domains\" at a distance of 8+\nshould find ~100%. Do not worry if there are a couple of loose pairs you cannot\nfind--they are probably in the trash, waiting to be deleted.",
      "paused": false,
      "matches": 9,
      "searched": 21,
@@ -124,7 +124,7 @@
     },
     {
      "label": "30 pairs searched; 12 match",
-     "has_tooltip": true,
+     "tooltip": "The number on the left is how many pairs are in the system; on the right is how\nmany match your current search.\n\nA system:everything search in \"combined local file domains\" at a distance of 8+\nshould find ~100%. Do not worry if there are a couple of loose pairs you cannot\nfind--they are probably in the trash, waiting to be deleted.",
      "paused": false,
      "matches": 12,
      "searched": 30,
@@ -173,7 +173,7 @@
    "steps": [
     {
      "label": "initialising…",
-     "has_tooltip": true,
+     "tooltip": "initialising…",
      "paused": false,
      "matches": 0,
      "searched": 0,
@@ -194,7 +194,7 @@
     },
     {
      "label": "no potential pairs in this file domain!",
-     "has_tooltip": true,
+     "tooltip": "no potential pairs in this file domain!",
      "paused": false,
      "matches": 0,
      "searched": 0,
@@ -215,7 +215,7 @@
     },
     {
      "label": "initialising…",
-     "has_tooltip": true,
+     "tooltip": "initialising…",
      "paused": false,
      "matches": 0,
      "searched": 0,
@@ -236,7 +236,7 @@
     },
     {
      "label": "no potential pairs in this file domain!",
-     "has_tooltip": true,
+     "tooltip": "no potential pairs in this file domain!",
      "paused": false,
      "matches": 0,
      "searched": 0,
@@ -285,7 +285,7 @@
    "steps": [
     {
      "label": "initialising…",
-     "has_tooltip": true,
+     "tooltip": "initialising…",
      "paused": false,
      "matches": 0,
      "searched": 0,
@@ -306,7 +306,7 @@
     },
     {
      "label": "initialising…",
-     "has_tooltip": true,
+     "tooltip": "initialising…",
      "paused": false,
      "matches": 0,
      "searched": 0,
@@ -327,7 +327,7 @@
     },
     {
      "label": "10/30 pairs searched; 5 match…",
-     "has_tooltip": true,
+     "tooltip": "The number on the left is how many pairs are in the system; on the right is how\nmany match your current search.\n\nA system:everything search in \"combined local file domains\" at a distance of 8+\nshould find ~100%. Do not worry if there are a couple of loose pairs you cannot\nfind--they are probably in the trash, waiting to be deleted.",
      "paused": false,
      "matches": 5,
      "searched": 10,
@@ -348,7 +348,7 @@
     },
     {
      "label": "10/30 pairs searched; 5 match…",
-     "has_tooltip": true,
+     "tooltip": "The number on the left is how many pairs are in the system; on the right is how\nmany match your current search.\n\nA system:everything search in \"combined local file domains\" at a distance of 8+\nshould find ~100%. Do not worry if there are a couple of loose pairs you cannot\nfind--they are probably in the trash, waiting to be deleted.",
      "paused": true,
      "matches": 5,
      "searched": 10,
@@ -369,7 +369,7 @@
     },
     {
      "label": "21/30 pairs searched; 9 match…",
-     "has_tooltip": true,
+     "tooltip": "The number on the left is how many pairs are in the system; on the right is how\nmany match your current search.\n\nA system:everything search in \"combined local file domains\" at a distance of 8+\nshould find ~100%. Do not worry if there are a couple of loose pairs you cannot\nfind--they are probably in the trash, waiting to be deleted.",
      "paused": true,
      "matches": 9,
      "searched": 21,
@@ -390,7 +390,7 @@
     },
     {
      "label": "21/30 pairs searched; 9 match…",
-     "has_tooltip": true,
+     "tooltip": "The number on the left is how many pairs are in the system; on the right is how\nmany match your current search.\n\nA system:everything search in \"combined local file domains\" at a distance of 8+\nshould find ~100%. Do not worry if there are a couple of loose pairs you cannot\nfind--they are probably in the trash, waiting to be deleted.",
      "paused": false,
      "matches": 9,
      "searched": 21,
@@ -411,7 +411,7 @@
     },
     {
      "label": "30 pairs searched; 12 match",
-     "has_tooltip": true,
+     "tooltip": "The number on the left is how many pairs are in the system; on the right is how\nmany match your current search.\n\nA system:everything search in \"combined local file domains\" at a distance of 8+\nshould find ~100%. Do not worry if there are a couple of loose pairs you cannot\nfind--they are probably in the trash, waiting to be deleted.",
      "paused": false,
      "matches": 12,
      "searched": 30,
@@ -432,7 +432,7 @@
     },
     {
      "label": "30 pairs searched; 12 match",
-     "has_tooltip": true,
+     "tooltip": "The number on the left is how many pairs are in the system; on the right is how\nmany match your current search.\n\nA system:everything search in \"combined local file domains\" at a distance of 8+\nshould find ~100%. Do not worry if there are a couple of loose pairs you cannot\nfind--they are probably in the trash, waiting to be deleted.",
      "paused": true,
      "matches": 12,
      "searched": 30,
@@ -453,7 +453,7 @@
     },
     {
      "label": "initialising…",
-     "has_tooltip": true,
+     "tooltip": "initialising…",
      "paused": true,
      "matches": 0,
      "searched": 0,
@@ -474,7 +474,7 @@
     },
     {
      "label": "0/30 pairs searched; 0 match…",
-     "has_tooltip": true,
+     "tooltip": "The number on the left is how many pairs are in the system; on the right is how\nmany match your current search.\n\nA system:everything search in \"combined local file domains\" at a distance of 8+\nshould find ~100%. Do not worry if there are a couple of loose pairs you cannot\nfind--they are probably in the trash, waiting to be deleted.",
      "paused": true,
      "matches": 0,
      "searched": 0,
@@ -495,7 +495,7 @@
     },
     {
      "label": "0/30 pairs searched; 0 match…",
-     "has_tooltip": true,
+     "tooltip": "The number on the left is how many pairs are in the system; on the right is how\nmany match your current search.\n\nA system:everything search in \"combined local file domains\" at a distance of 8+\nshould find ~100%. Do not worry if there are a couple of loose pairs you cannot\nfind--they are probably in the trash, waiting to be deleted.",
      "paused": true,
      "matches": 0,
      "searched": 0,
@@ -516,7 +516,7 @@
     },
     {
      "label": "0/30 pairs searched; 0 match…",
-     "has_tooltip": true,
+     "tooltip": "The number on the left is how many pairs are in the system; on the right is how\nmany match your current search.\n\nA system:everything search in \"combined local file domains\" at a distance of 8+\nshould find ~100%. Do not worry if there are a couple of loose pairs you cannot\nfind--they are probably in the trash, waiting to be deleted.",
      "paused": false,
      "matches": 0,
      "searched": 0,
@@ -537,7 +537,7 @@
     },
     {
      "label": "10/30 pairs searched; 5 match…",
-     "has_tooltip": true,
+     "tooltip": "The number on the left is how many pairs are in the system; on the right is how\nmany match your current search.\n\nA system:everything search in \"combined local file domains\" at a distance of 8+\nshould find ~100%. Do not worry if there are a couple of loose pairs you cannot\nfind--they are probably in the trash, waiting to be deleted.",
      "paused": false,
      "matches": 5,
      "searched": 10,
@@ -558,7 +558,7 @@
     },
     {
      "label": "21/30 pairs searched; 9 match…",
-     "has_tooltip": true,
+     "tooltip": "The number on the left is how many pairs are in the system; on the right is how\nmany match your current search.\n\nA system:everything search in \"combined local file domains\" at a distance of 8+\nshould find ~100%. Do not worry if there are a couple of loose pairs you cannot\nfind--they are probably in the trash, waiting to be deleted.",
      "paused": false,
      "matches": 9,
      "searched": 21,
@@ -579,7 +579,7 @@
     },
     {
      "label": "30 pairs searched; 12 match",
-     "has_tooltip": true,
+     "tooltip": "The number on the left is how many pairs are in the system; on the right is how\nmany match your current search.\n\nA system:everything search in \"combined local file domains\" at a distance of 8+\nshould find ~100%. Do not worry if there are a couple of loose pairs you cannot\nfind--they are probably in the trash, waiting to be deleted.",
      "paused": false,
      "matches": 12,
      "searched": 30,
@@ -600,7 +600,7 @@
     },
     {
      "label": "30 pairs searched; 12 match",
-     "has_tooltip": true,
+     "tooltip": "The number on the left is how many pairs are in the system; on the right is how\nmany match your current search.\n\nA system:everything search in \"combined local file domains\" at a distance of 8+\nshould find ~100%. Do not worry if there are a couple of loose pairs you cannot\nfind--they are probably in the trash, waiting to be deleted.",
      "paused": true,
      "matches": 12,
      "searched": 30,
@@ -621,7 +621,7 @@
     },
     {
      "label": "30 pairs searched; 12 match",
-     "has_tooltip": true,
+     "tooltip": "The number on the left is how many pairs are in the system; on the right is how\nmany match your current search.\n\nA system:everything search in \"combined local file domains\" at a distance of 8+\nshould find ~100%. Do not worry if there are a couple of loose pairs you cannot\nfind--they are probably in the trash, waiting to be deleted.",
      "paused": false,
      "matches": 12,
      "searched": 30,
@@ -642,7 +642,7 @@
     },
     {
      "label": "initialising…",
-     "has_tooltip": true,
+     "tooltip": "initialising…",
      "paused": false,
      "matches": 0,
      "searched": 0,
@@ -663,7 +663,7 @@
     },
     {
      "label": "initialising…",
-     "has_tooltip": true,
+     "tooltip": "initialising…",
      "paused": false,
      "matches": 0,
      "searched": 0,
@@ -712,7 +712,7 @@
    "steps": [
     {
      "label": "initialising…",
-     "has_tooltip": true,
+     "tooltip": "initialising…",
      "paused": false,
      "matches": 0,
      "searched": 0,
@@ -733,7 +733,7 @@
     },
     {
      "label": "initialising…",
-     "has_tooltip": true,
+     "tooltip": "initialising…",
      "paused": false,
      "matches": 0,
      "searched": 0,
@@ -754,7 +754,7 @@
     },
     {
      "label": "10/30 pairs searched; 5 match…",
-     "has_tooltip": true,
+     "tooltip": "The number on the left is how many pairs are in the system; on the right is how\nmany match your current search.\n\nA system:everything search in \"combined local file domains\" at a distance of 8+\nshould find ~100%. Do not worry if there are a couple of loose pairs you cannot\nfind--they are probably in the trash, waiting to be deleted.",
      "paused": false,
      "matches": 5,
      "searched": 10,
@@ -775,7 +775,7 @@
     },
     {
      "label": "10/30 pairs searched; 5 match…",
-     "has_tooltip": true,
+     "tooltip": "The number on the left is how many pairs are in the system; on the right is how\nmany match your current search.\n\nA system:everything search in \"combined local file domains\" at a distance of 8+\nshould find ~100%. Do not worry if there are a couple of loose pairs you cannot\nfind--they are probably in the trash, waiting to be deleted.",
      "paused": false,
      "matches": 0,
      "searched": 0,
@@ -797,7 +797,7 @@
     },
     {
      "label": "10/30 pairs searched; 3 match…",
-     "has_tooltip": true,
+     "tooltip": "The number on the left is how many pairs are in the system; on the right is how\nmany match your current search.\n\nA system:everything search in \"combined local file domains\" at a distance of 8+\nshould find ~100%. Do not worry if there are a couple of loose pairs you cannot\nfind--they are probably in the trash, waiting to be deleted.",
      "paused": false,
      "matches": 3,
      "searched": 10,
@@ -818,7 +818,7 @@
     },
     {
      "label": "10/30 pairs searched; 3 match…",
-     "has_tooltip": true,
+     "tooltip": "The number on the left is how many pairs are in the system; on the right is how\nmany match your current search.\n\nA system:everything search in \"combined local file domains\" at a distance of 8+\nshould find ~100%. Do not worry if there are a couple of loose pairs you cannot\nfind--they are probably in the trash, waiting to be deleted.",
      "paused": false,
      "matches": 0,
      "searched": 0,
@@ -840,7 +840,7 @@
     },
     {
      "label": "10/30 pairs searched; 10 match…",
-     "has_tooltip": true,
+     "tooltip": "The number on the left is how many pairs are in the system; on the right is how\nmany match your current search.\n\nA system:everything search in \"combined local file domains\" at a distance of 8+\nshould find ~100%. Do not worry if there are a couple of loose pairs you cannot\nfind--they are probably in the trash, waiting to be deleted.",
      "paused": false,
      "matches": 10,
      "searched": 10,
@@ -861,7 +861,7 @@
     },
     {
      "label": "21/30 pairs searched; 21 match…",
-     "has_tooltip": true,
+     "tooltip": "The number on the left is how many pairs are in the system; on the right is how\nmany match your current search.\n\nA system:everything search in \"combined local file domains\" at a distance of 8+\nshould find ~100%. Do not worry if there are a couple of loose pairs you cannot\nfind--they are probably in the trash, waiting to be deleted.",
      "paused": false,
      "matches": 21,
      "searched": 21,
@@ -882,7 +882,7 @@
     },
     {
      "label": "30 pairs searched; 30 match",
-     "has_tooltip": true,
+     "tooltip": "The number on the left is how many pairs are in the system; on the right is how\nmany match your current search.\n\nA system:everything search in \"combined local file domains\" at a distance of 8+\nshould find ~100%. Do not worry if there are a couple of loose pairs you cannot\nfind--they are probably in the trash, waiting to be deleted.",
      "paused": false,
      "matches": 30,
      "searched": 30,
@@ -903,7 +903,7 @@
     },
     {
      "label": "30 pairs searched; 30 match",
-     "has_tooltip": true,
+     "tooltip": "The number on the left is how many pairs are in the system; on the right is how\nmany match your current search.\n\nA system:everything search in \"combined local file domains\" at a distance of 8+\nshould find ~100%. Do not worry if there are a couple of loose pairs you cannot\nfind--they are probably in the trash, waiting to be deleted.",
      "paused": false,
      "matches": 0,
      "searched": 0,
@@ -925,7 +925,7 @@
     },
     {
      "label": "10/30 pairs searched; 10 match…",
-     "has_tooltip": true,
+     "tooltip": "The number on the left is how many pairs are in the system; on the right is how\nmany match your current search.\n\nA system:everything search in \"combined local file domains\" at a distance of 8+\nshould find ~100%. Do not worry if there are a couple of loose pairs you cannot\nfind--they are probably in the trash, waiting to be deleted.",
      "paused": false,
      "matches": 10,
      "searched": 10,
@@ -946,7 +946,7 @@
     },
     {
      "label": "10/30 pairs searched; 10 match…",
-     "has_tooltip": true,
+     "tooltip": "The number on the left is how many pairs are in the system; on the right is how\nmany match your current search.\n\nA system:everything search in \"combined local file domains\" at a distance of 8+\nshould find ~100%. Do not worry if there are a couple of loose pairs you cannot\nfind--they are probably in the trash, waiting to be deleted.",
      "paused": false,
      "matches": 0,
      "searched": 0,
@@ -968,7 +968,7 @@
     },
     {
      "label": "10/30 pairs searched; 10 match…",
-     "has_tooltip": true,
+     "tooltip": "The number on the left is how many pairs are in the system; on the right is how\nmany match your current search.\n\nA system:everything search in \"combined local file domains\" at a distance of 8+\nshould find ~100%. Do not worry if there are a couple of loose pairs you cannot\nfind--they are probably in the trash, waiting to be deleted.",
      "paused": false,
      "matches": 10,
      "searched": 10,
@@ -989,7 +989,7 @@
     },
     {
      "label": "10/30 pairs searched; 10 match…",
-     "has_tooltip": true,
+     "tooltip": "The number on the left is how many pairs are in the system; on the right is how\nmany match your current search.\n\nA system:everything search in \"combined local file domains\" at a distance of 8+\nshould find ~100%. Do not worry if there are a couple of loose pairs you cannot\nfind--they are probably in the trash, waiting to be deleted.",
      "paused": false,
      "matches": 0,
      "searched": 0,
@@ -1011,7 +1011,7 @@
     },
     {
      "label": "10/30 pairs searched; 10 match…",
-     "has_tooltip": true,
+     "tooltip": "The number on the left is how many pairs are in the system; on the right is how\nmany match your current search.\n\nA system:everything search in \"combined local file domains\" at a distance of 8+\nshould find ~100%. Do not worry if there are a couple of loose pairs you cannot\nfind--they are probably in the trash, waiting to be deleted.",
      "paused": false,
      "matches": 10,
      "searched": 10,
@@ -1032,7 +1032,7 @@
     },
     {
      "label": "10/30 pairs searched; 10 match…",
-     "has_tooltip": true,
+     "tooltip": "The number on the left is how many pairs are in the system; on the right is how\nmany match your current search.\n\nA system:everything search in \"combined local file domains\" at a distance of 8+\nshould find ~100%. Do not worry if there are a couple of loose pairs you cannot\nfind--they are probably in the trash, waiting to be deleted.",
      "paused": false,
      "matches": 0,
      "searched": 0,
@@ -1054,7 +1054,7 @@
     },
     {
      "label": "10/30 pairs searched; 10 match…",
-     "has_tooltip": true,
+     "tooltip": "The number on the left is how many pairs are in the system; on the right is how\nmany match your current search.\n\nA system:everything search in \"combined local file domains\" at a distance of 8+\nshould find ~100%. Do not worry if there are a couple of loose pairs you cannot\nfind--they are probably in the trash, waiting to be deleted.",
      "paused": false,
      "matches": 10,
      "searched": 10,
@@ -1105,7 +1105,7 @@
    "steps": [
     {
      "label": "initialising…",
-     "has_tooltip": true,
+     "tooltip": "initialising…",
      "paused": true,
      "matches": 0,
      "searched": 0,
@@ -1126,7 +1126,7 @@
     },
     {
      "label": "0/30 pairs searched; 0 match…",
-     "has_tooltip": true,
+     "tooltip": "The number on the left is how many pairs are in the system; on the right is how\nmany match your current search.\n\nA system:everything search in \"combined local file domains\" at a distance of 8+\nshould find ~100%. Do not worry if there are a couple of loose pairs you cannot\nfind--they are probably in the trash, waiting to be deleted.",
      "paused": true,
      "matches": 0,
      "searched": 0,
@@ -1147,7 +1147,7 @@
     },
     {
      "label": "0/30 pairs searched; 0 match…",
-     "has_tooltip": true,
+     "tooltip": "The number on the left is how many pairs are in the system; on the right is how\nmany match your current search.\n\nA system:everything search in \"combined local file domains\" at a distance of 8+\nshould find ~100%. Do not worry if there are a couple of loose pairs you cannot\nfind--they are probably in the trash, waiting to be deleted.",
      "paused": true,
      "matches": 0,
      "searched": 0,
@@ -1168,7 +1168,7 @@
     },
     {
      "label": "0/30 pairs searched; 0 match…",
-     "has_tooltip": true,
+     "tooltip": "The number on the left is how many pairs are in the system; on the right is how\nmany match your current search.\n\nA system:everything search in \"combined local file domains\" at a distance of 8+\nshould find ~100%. Do not worry if there are a couple of loose pairs you cannot\nfind--they are probably in the trash, waiting to be deleted.",
      "paused": false,
      "matches": 0,
      "searched": 0,
@@ -1189,7 +1189,7 @@
     },
     {
      "label": "10/30 pairs searched; 5 match…",
-     "has_tooltip": true,
+     "tooltip": "The number on the left is how many pairs are in the system; on the right is how\nmany match your current search.\n\nA system:everything search in \"combined local file domains\" at a distance of 8+\nshould find ~100%. Do not worry if there are a couple of loose pairs you cannot\nfind--they are probably in the trash, waiting to be deleted.",
      "paused": false,
      "matches": 5,
      "searched": 10,
@@ -1210,7 +1210,7 @@
     },
     {
      "label": "21/30 pairs searched; 9 match…",
-     "has_tooltip": true,
+     "tooltip": "The number on the left is how many pairs are in the system; on the right is how\nmany match your current search.\n\nA system:everything search in \"combined local file domains\" at a distance of 8+\nshould find ~100%. Do not worry if there are a couple of loose pairs you cannot\nfind--they are probably in the trash, waiting to be deleted.",
      "paused": false,
      "matches": 9,
      "searched": 21,
@@ -1231,7 +1231,7 @@
     },
     {
      "label": "30 pairs searched; 12 match",
-     "has_tooltip": true,
+     "tooltip": "The number on the left is how many pairs are in the system; on the right is how\nmany match your current search.\n\nA system:everything search in \"combined local file domains\" at a distance of 8+\nshould find ~100%. Do not worry if there are a couple of loose pairs you cannot\nfind--they are probably in the trash, waiting to be deleted.",
      "paused": false,
      "matches": 12,
      "searched": 30,
@@ -1280,7 +1280,7 @@
    "steps": [
     {
      "label": "initialising…",
-     "has_tooltip": true,
+     "tooltip": "initialising…",
      "paused": false,
      "matches": 0,
      "searched": 0,
@@ -1301,7 +1301,7 @@
     },
     {
      "label": "initialising…",
-     "has_tooltip": true,
+     "tooltip": "initialising…",
      "paused": false,
      "matches": 0,
      "searched": 0,
@@ -1322,7 +1322,7 @@
     },
     {
      "label": "4,000/30,000 pairs searched; 1,540 match…",
-     "has_tooltip": true,
+     "tooltip": "The number on the left is how many pairs are in the system; on the right is how\nmany match your current search.\n\nA system:everything search in \"combined local file domains\" at a distance of 8+\nshould find ~100%. Do not worry if there are a couple of loose pairs you cannot\nfind--they are probably in the trash, waiting to be deleted.",
      "paused": false,
      "matches": 1540,
      "searched": 4000,
@@ -1343,7 +1343,7 @@
     },
     {
      "label": "30,000 pairs; ~11,000 match",
-     "has_tooltip": true,
+     "tooltip": "The number on the left is how many pairs are in the system; on the right is how\nmany match your current search.\n\nA system:everything search in \"combined local file domains\" at a distance of 8+\nshould find ~100%. Do not worry if there are a couple of loose pairs you cannot\nfind--they are probably in the trash, waiting to be deleted.",
      "paused": false,
      "matches": 3231,
      "searched": 8400,
@@ -1364,7 +1364,7 @@
     },
     {
      "label": "30,000 pairs; ~11,000 match",
-     "has_tooltip": true,
+     "tooltip": "The number on the left is how many pairs are in the system; on the right is how\nmany match your current search.\n\nA system:everything search in \"combined local file domains\" at a distance of 8+\nshould find ~100%. Do not worry if there are a couple of loose pairs you cannot\nfind--they are probably in the trash, waiting to be deleted.",
      "paused": false,
      "matches": 3231,
      "searched": 8400,
@@ -1385,7 +1385,7 @@
     },
     {
      "label": "30,000 pairs; ~11,000 match",
-     "has_tooltip": true,
+     "tooltip": "The number on the left is how many pairs are in the system; on the right is how\nmany match your current search.\n\nA system:everything search in \"combined local file domains\" at a distance of 8+\nshould find ~100%. Do not worry if there are a couple of loose pairs you cannot\nfind--they are probably in the trash, waiting to be deleted.",
      "paused": false,
      "matches": 3231,
      "searched": 8400,
@@ -1406,7 +1406,7 @@
     },
     {
      "label": "30,000 pairs; ~11,000 match",
-     "has_tooltip": true,
+     "tooltip": "The number on the left is how many pairs are in the system; on the right is how\nmany match your current search.\n\nA system:everything search in \"combined local file domains\" at a distance of 8+\nshould find ~100%. Do not worry if there are a couple of loose pairs you cannot\nfind--they are probably in the trash, waiting to be deleted.",
      "paused": false,
      "matches": 3231,
      "searched": 8400,
@@ -1427,7 +1427,7 @@
     },
     {
      "label": "30,000 pairs; ~11,000 match",
-     "has_tooltip": true,
+     "tooltip": "The number on the left is how many pairs are in the system; on the right is how\nmany match your current search.\n\nA system:everything search in \"combined local file domains\" at a distance of 8+\nshould find ~100%. Do not worry if there are a couple of loose pairs you cannot\nfind--they are probably in the trash, waiting to be deleted.",
      "paused": false,
      "matches": 3231,
      "searched": 8400,
@@ -1448,7 +1448,7 @@
     },
     {
      "label": "30,000 pairs; ~11,000 match",
-     "has_tooltip": true,
+     "tooltip": "The number on the left is how many pairs are in the system; on the right is how\nmany match your current search.\n\nA system:everything search in \"combined local file domains\" at a distance of 8+\nshould find ~100%. Do not worry if there are a couple of loose pairs you cannot\nfind--they are probably in the trash, waiting to be deleted.",
      "paused": false,
      "matches": 3231,
      "searched": 8400,
@@ -1469,7 +1469,7 @@
     },
     {
      "label": "30,000 pairs; ~11,000 match",
-     "has_tooltip": true,
+     "tooltip": "The number on the left is how many pairs are in the system; on the right is how\nmany match your current search.\n\nA system:everything search in \"combined local file domains\" at a distance of 8+\nshould find ~100%. Do not worry if there are a couple of loose pairs you cannot\nfind--they are probably in the trash, waiting to be deleted.",
      "paused": false,
      "matches": 3231,
      "searched": 8400,
@@ -1492,7 +1492,7 @@
     },
     {
      "label": "13,240/30,000 pairs searched; 5,093 match…",
-     "has_tooltip": true,
+     "tooltip": "The number on the left is how many pairs are in the system; on the right is how\nmany match your current search.\n\nA system:everything search in \"combined local file domains\" at a distance of 8+\nshould find ~100%. Do not worry if there are a couple of loose pairs you cannot\nfind--they are probably in the trash, waiting to be deleted.",
      "paused": false,
      "matches": 5093,
      "searched": 13240,
@@ -1513,7 +1513,7 @@
     },
     {
      "label": "18,564/30,000 pairs searched; 7,140 match…",
-     "has_tooltip": true,
+     "tooltip": "The number on the left is how many pairs are in the system; on the right is how\nmany match your current search.\n\nA system:everything search in \"combined local file domains\" at a distance of 8+\nshould find ~100%. Do not worry if there are a couple of loose pairs you cannot\nfind--they are probably in the trash, waiting to be deleted.",
      "paused": false,
      "matches": 7140,
      "searched": 18564,
@@ -1534,7 +1534,7 @@
     },
     {
      "label": "18,564/30,000 pairs searched; 7,140 match…",
-     "has_tooltip": true,
+     "tooltip": "The number on the left is how many pairs are in the system; on the right is how\nmany match your current search.\n\nA system:everything search in \"combined local file domains\" at a distance of 8+\nshould find ~100%. Do not worry if there are a couple of loose pairs you cannot\nfind--they are probably in the trash, waiting to be deleted.",
      "paused": false,
      "matches": 7140,
      "searched": 18564,
@@ -1557,7 +1557,7 @@
     },
     {
      "label": "30,000 pairs; ~11,000 match",
-     "has_tooltip": true,
+     "tooltip": "The number on the left is how many pairs are in the system; on the right is how\nmany match your current search.\n\nA system:everything search in \"combined local file domains\" at a distance of 8+\nshould find ~100%. Do not worry if there are a couple of loose pairs you cannot\nfind--they are probably in the trash, waiting to be deleted.",
      "paused": false,
      "matches": 9393,
      "searched": 24420,
@@ -1578,7 +1578,7 @@
     },
     {
      "label": "30,000 pairs; ~11,000 match",
-     "has_tooltip": true,
+     "tooltip": "The number on the left is how many pairs are in the system; on the right is how\nmany match your current search.\n\nA system:everything search in \"combined local file domains\" at a distance of 8+\nshould find ~100%. Do not worry if there are a couple of loose pairs you cannot\nfind--they are probably in the trash, waiting to be deleted.",
      "paused": false,
      "matches": 9393,
      "searched": 24420,
@@ -1599,7 +1599,7 @@
     },
     {
      "label": "30,000 pairs; ~11,000 match",
-     "has_tooltip": true,
+     "tooltip": "The number on the left is how many pairs are in the system; on the right is how\nmany match your current search.\n\nA system:everything search in \"combined local file domains\" at a distance of 8+\nshould find ~100%. Do not worry if there are a couple of loose pairs you cannot\nfind--they are probably in the trash, waiting to be deleted.",
      "paused": false,
      "matches": 9393,
      "searched": 24420,
@@ -1620,7 +1620,7 @@
     },
     {
      "label": "30,000 pairs; ~11,000 match",
-     "has_tooltip": true,
+     "tooltip": "The number on the left is how many pairs are in the system; on the right is how\nmany match your current search.\n\nA system:everything search in \"combined local file domains\" at a distance of 8+\nshould find ~100%. Do not worry if there are a couple of loose pairs you cannot\nfind--they are probably in the trash, waiting to be deleted.",
      "paused": false,
      "matches": 9393,
      "searched": 24420,
@@ -1671,7 +1671,7 @@
    "steps": [
     {
      "label": "initialising…",
-     "has_tooltip": true,
+     "tooltip": "initialising…",
      "paused": false,
      "matches": 0,
      "searched": 0,
@@ -1692,7 +1692,7 @@
     },
     {
      "label": "initialising…",
-     "has_tooltip": true,
+     "tooltip": "initialising…",
      "paused": false,
      "matches": 0,
      "searched": 0,
@@ -1713,7 +1713,7 @@
     },
     {
      "label": "1,000/5,000 pairs searched; 385 match…",
-     "has_tooltip": true,
+     "tooltip": "The number on the left is how many pairs are in the system; on the right is how\nmany match your current search.\n\nA system:everything search in \"combined local file domains\" at a distance of 8+\nshould find ~100%. Do not worry if there are a couple of loose pairs you cannot\nfind--they are probably in the trash, waiting to be deleted.",
      "paused": false,
      "matches": 385,
      "searched": 1000,
@@ -1734,7 +1734,7 @@
     },
     {
      "label": "2,100/5,000 pairs searched; 809 match…",
-     "has_tooltip": true,
+     "tooltip": "The number on the left is how many pairs are in the system; on the right is how\nmany match your current search.\n\nA system:everything search in \"combined local file domains\" at a distance of 8+\nshould find ~100%. Do not worry if there are a couple of loose pairs you cannot\nfind--they are probably in the trash, waiting to be deleted.",
      "paused": false,
      "matches": 809,
      "searched": 2100,
@@ -1755,7 +1755,7 @@
     },
     {
      "label": "3,310/5,000 pairs searched; 1,274 match…",
-     "has_tooltip": true,
+     "tooltip": "The number on the left is how many pairs are in the system; on the right is how\nmany match your current search.\n\nA system:everything search in \"combined local file domains\" at a distance of 8+\nshould find ~100%. Do not worry if there are a couple of loose pairs you cannot\nfind--they are probably in the trash, waiting to be deleted.",
      "paused": false,
      "matches": 1274,
      "searched": 3310,
@@ -1776,7 +1776,7 @@
     },
     {
      "label": "4,641/5,000 pairs searched; 1,785 match…",
-     "has_tooltip": true,
+     "tooltip": "The number on the left is how many pairs are in the system; on the right is how\nmany match your current search.\n\nA system:everything search in \"combined local file domains\" at a distance of 8+\nshould find ~100%. Do not worry if there are a couple of loose pairs you cannot\nfind--they are probably in the trash, waiting to be deleted.",
      "paused": false,
      "matches": 1785,
      "searched": 4641,
@@ -1797,7 +1797,7 @@
     },
     {
      "label": "4,641/5,000 pairs searched; 1,785 match…",
-     "has_tooltip": true,
+     "tooltip": "The number on the left is how many pairs are in the system; on the right is how\nmany match your current search.\n\nA system:everything search in \"combined local file domains\" at a distance of 8+\nshould find ~100%. Do not worry if there are a couple of loose pairs you cannot\nfind--they are probably in the trash, waiting to be deleted.",
      "paused": false,
      "matches": 1785,
      "searched": 4641,
@@ -1820,7 +1820,7 @@
     },
     {
      "label": "5,000 pairs searched; 1,924 match",
-     "has_tooltip": true,
+     "tooltip": "The number on the left is how many pairs are in the system; on the right is how\nmany match your current search.\n\nA system:everything search in \"combined local file domains\" at a distance of 8+\nshould find ~100%. Do not worry if there are a couple of loose pairs you cannot\nfind--they are probably in the trash, waiting to be deleted.",
      "paused": false,
      "matches": 1924,
      "searched": 5000,
@@ -1871,7 +1871,7 @@
    "steps": [
     {
      "label": "initialising…",
-     "has_tooltip": true,
+     "tooltip": "initialising…",
      "paused": false,
      "matches": 0,
      "searched": 0,
@@ -1892,7 +1892,7 @@
     },
     {
      "label": "initialising…",
-     "has_tooltip": true,
+     "tooltip": "initialising…",
      "paused": false,
      "matches": 0,
      "searched": 0,
@@ -1913,7 +1913,7 @@
     },
     {
      "label": "1,000/5,000 pairs searched; 385 match…",
-     "has_tooltip": true,
+     "tooltip": "The number on the left is how many pairs are in the system; on the right is how\nmany match your current search.\n\nA system:everything search in \"combined local file domains\" at a distance of 8+\nshould find ~100%. Do not worry if there are a couple of loose pairs you cannot\nfind--they are probably in the trash, waiting to be deleted.",
      "paused": false,
      "matches": 385,
      "searched": 1000,
@@ -1934,7 +1934,7 @@
     },
     {
      "label": "2,100/5,000 pairs searched; 809 match…",
-     "has_tooltip": true,
+     "tooltip": "The number on the left is how many pairs are in the system; on the right is how\nmany match your current search.\n\nA system:everything search in \"combined local file domains\" at a distance of 8+\nshould find ~100%. Do not worry if there are a couple of loose pairs you cannot\nfind--they are probably in the trash, waiting to be deleted.",
      "paused": false,
      "matches": 809,
      "searched": 2100,
@@ -1955,7 +1955,7 @@
     },
     {
      "label": "3,310/5,000 pairs searched; 1,274 match…",
-     "has_tooltip": true,
+     "tooltip": "The number on the left is how many pairs are in the system; on the right is how\nmany match your current search.\n\nA system:everything search in \"combined local file domains\" at a distance of 8+\nshould find ~100%. Do not worry if there are a couple of loose pairs you cannot\nfind--they are probably in the trash, waiting to be deleted.",
      "paused": false,
      "matches": 1274,
      "searched": 3310,
@@ -1977,7 +1977,7 @@
     },
     {
      "label": "3,915/5,000 pairs searched; 1,506 match…",
-     "has_tooltip": true,
+     "tooltip": "The number on the left is how many pairs are in the system; on the right is how\nmany match your current search.\n\nA system:everything search in \"combined local file domains\" at a distance of 8+\nshould find ~100%. Do not worry if there are a couple of loose pairs you cannot\nfind--they are probably in the trash, waiting to be deleted.",
      "paused": false,
      "matches": 1506,
      "searched": 3915,
@@ -1998,7 +1998,7 @@
     },
     {
      "label": "4,580/5,000 pairs searched; 1,762 match…",
-     "has_tooltip": true,
+     "tooltip": "The number on the left is how many pairs are in the system; on the right is how\nmany match your current search.\n\nA system:everything search in \"combined local file domains\" at a distance of 8+\nshould find ~100%. Do not worry if there are a couple of loose pairs you cannot\nfind--they are probably in the trash, waiting to be deleted.",
      "paused": false,
      "matches": 1762,
      "searched": 4580,
@@ -2020,7 +2020,7 @@
     },
     {
      "label": "4,912/5,000 pairs searched; 1,890 match…",
-     "has_tooltip": true,
+     "tooltip": "The number on the left is how many pairs are in the system; on the right is how\nmany match your current search.\n\nA system:everything search in \"combined local file domains\" at a distance of 8+\nshould find ~100%. Do not worry if there are a couple of loose pairs you cannot\nfind--they are probably in the trash, waiting to be deleted.",
      "paused": false,
      "matches": 1890,
      "searched": 4912,
@@ -2042,7 +2042,7 @@
     },
     {
      "label": "5,000 pairs searched; 1,924 match",
-     "has_tooltip": true,
+     "tooltip": "The number on the left is how many pairs are in the system; on the right is how\nmany match your current search.\n\nA system:everything search in \"combined local file domains\" at a distance of 8+\nshould find ~100%. Do not worry if there are a couple of loose pairs you cannot\nfind--they are probably in the trash, waiting to be deleted.",
      "paused": false,
      "matches": 1924,
      "searched": 5000,
@@ -2063,7 +2063,7 @@
     },
     {
      "label": "5,000 pairs searched; 1,924 match",
-     "has_tooltip": true,
+     "tooltip": "The number on the left is how many pairs are in the system; on the right is how\nmany match your current search.\n\nA system:everything search in \"combined local file domains\" at a distance of 8+\nshould find ~100%. Do not worry if there are a couple of loose pairs you cannot\nfind--they are probably in the trash, waiting to be deleted.",
      "paused": false,
      "matches": 1924,
      "searched": 5000,
@@ -2084,7 +2084,7 @@
     },
     {
      "label": "5,000 pairs searched; 1,924 match",
-     "has_tooltip": true,
+     "tooltip": "The number on the left is how many pairs are in the system; on the right is how\nmany match your current search.\n\nA system:everything search in \"combined local file domains\" at a distance of 8+\nshould find ~100%. Do not worry if there are a couple of loose pairs you cannot\nfind--they are probably in the trash, waiting to be deleted.",
      "paused": false,
      "matches": 1924,
      "searched": 5000,
@@ -2133,7 +2133,7 @@
    "steps": [
     {
      "label": "initialising…",
-     "has_tooltip": true,
+     "tooltip": "initialising…",
      "paused": false,
      "matches": 0,
      "searched": 0,
@@ -2154,7 +2154,7 @@
     },
     {
      "label": "initialising…",
-     "has_tooltip": true,
+     "tooltip": "initialising…",
      "paused": false,
      "matches": 0,
      "searched": 0,
@@ -2175,7 +2175,7 @@
     },
     {
      "label": "4,000/30,000 pairs searched; 2 match…",
-     "has_tooltip": true,
+     "tooltip": "The number on the left is how many pairs are in the system; on the right is how\nmany match your current search.\n\nA system:everything search in \"combined local file domains\" at a distance of 8+\nshould find ~100%. Do not worry if there are a couple of loose pairs you cannot\nfind--they are probably in the trash, waiting to be deleted.",
      "paused": false,
      "matches": 2,
      "searched": 4000,
@@ -2196,7 +2196,7 @@
     },
     {
      "label": "30,000 pairs searched; 10 match",
-     "has_tooltip": true,
+     "tooltip": "The number on the left is how many pairs are in the system; on the right is how\nmany match your current search.\n\nA system:everything search in \"combined local file domains\" at a distance of 8+\nshould find ~100%. Do not worry if there are a couple of loose pairs you cannot\nfind--they are probably in the trash, waiting to be deleted.",
      "paused": false,
      "matches": 10,
      "searched": 30000,
@@ -2217,7 +2217,7 @@
     },
     {
      "label": "30,000 pairs searched; 10 match",
-     "has_tooltip": true,
+     "tooltip": "The number on the left is how many pairs are in the system; on the right is how\nmany match your current search.\n\nA system:everything search in \"combined local file domains\" at a distance of 8+\nshould find ~100%. Do not worry if there are a couple of loose pairs you cannot\nfind--they are probably in the trash, waiting to be deleted.",
      "paused": false,
      "matches": 10,
      "searched": 30000,
@@ -2268,7 +2268,7 @@
    "steps": [
     {
      "label": "initialising…",
-     "has_tooltip": true,
+     "tooltip": "initialising…",
      "paused": false,
      "matches": 0,
      "searched": 0,
@@ -2289,7 +2289,7 @@
     },
     {
      "label": "initialising…",
-     "has_tooltip": true,
+     "tooltip": "initialising…",
      "paused": false,
      "matches": 0,
      "searched": 0,
@@ -2310,7 +2310,7 @@
     },
     {
      "label": "4,000/30,000 pairs searched; 2 match…",
-     "has_tooltip": true,
+     "tooltip": "The number on the left is how many pairs are in the system; on the right is how\nmany match your current search.\n\nA system:everything search in \"combined local file domains\" at a distance of 8+\nshould find ~100%. Do not worry if there are a couple of loose pairs you cannot\nfind--they are probably in the trash, waiting to be deleted.",
      "paused": false,
      "matches": 2,
      "searched": 4000,
@@ -2331,7 +2331,7 @@
     },
     {
      "label": "8,400/30,000 pairs searched; 3 match…",
-     "has_tooltip": true,
+     "tooltip": "The number on the left is how many pairs are in the system; on the right is how\nmany match your current search.\n\nA system:everything search in \"combined local file domains\" at a distance of 8+\nshould find ~100%. Do not worry if there are a couple of loose pairs you cannot\nfind--they are probably in the trash, waiting to be deleted.",
      "paused": false,
      "matches": 3,
      "searched": 8400,
@@ -2352,7 +2352,7 @@
     },
     {
      "label": "13,240/30,000 pairs searched; 5 match…",
-     "has_tooltip": true,
+     "tooltip": "The number on the left is how many pairs are in the system; on the right is how\nmany match your current search.\n\nA system:everything search in \"combined local file domains\" at a distance of 8+\nshould find ~100%. Do not worry if there are a couple of loose pairs you cannot\nfind--they are probably in the trash, waiting to be deleted.",
      "paused": false,
      "matches": 5,
      "searched": 13240,
@@ -2373,7 +2373,7 @@
     },
     {
      "label": "13,240/30,000 pairs searched; 5 match…",
-     "has_tooltip": true,
+     "tooltip": "The number on the left is how many pairs are in the system; on the right is how\nmany match your current search.\n\nA system:everything search in \"combined local file domains\" at a distance of 8+\nshould find ~100%. Do not worry if there are a couple of loose pairs you cannot\nfind--they are probably in the trash, waiting to be deleted.",
      "paused": false,
      "matches": 5,
      "searched": 13240,
@@ -2396,7 +2396,7 @@
     },
     {
      "label": "30,000 pairs searched; 10 match",
-     "has_tooltip": true,
+     "tooltip": "The number on the left is how many pairs are in the system; on the right is how\nmany match your current search.\n\nA system:everything search in \"combined local file domains\" at a distance of 8+\nshould find ~100%. Do not worry if there are a couple of loose pairs you cannot\nfind--they are probably in the trash, waiting to be deleted.",
      "paused": false,
      "matches": 10,
      "searched": 30000,
@@ -2417,7 +2417,7 @@
     },
     {
      "label": "30,000 pairs searched; 10 match",
-     "has_tooltip": true,
+     "tooltip": "The number on the left is how many pairs are in the system; on the right is how\nmany match your current search.\n\nA system:everything search in \"combined local file domains\" at a distance of 8+\nshould find ~100%. Do not worry if there are a couple of loose pairs you cannot\nfind--they are probably in the trash, waiting to be deleted.",
      "paused": false,
      "matches": 10,
      "searched": 30000,
@@ -2466,7 +2466,7 @@
    "steps": [
     {
      "label": "initialising…",
-     "has_tooltip": true,
+     "tooltip": "initialising…",
      "paused": false,
      "matches": 0,
      "searched": 0,
@@ -2487,7 +2487,7 @@
     },
     {
      "label": "initialising…",
-     "has_tooltip": true,
+     "tooltip": "initialising…",
      "paused": false,
      "matches": 0,
      "searched": 0,
@@ -2508,7 +2508,7 @@
     },
     {
      "label": "initialising…",
-     "has_tooltip": true,
+     "tooltip": "initialising…",
      "paused": false,
      "matches": 0,
      "searched": 0,
@@ -2531,7 +2531,7 @@
     },
     {
      "label": "initialising…",
-     "has_tooltip": true,
+     "tooltip": "initialising…",
      "paused": false,
      "matches": 0,
      "searched": 0,
@@ -2554,7 +2554,7 @@
     },
     {
      "label": "initialising…",
-     "has_tooltip": true,
+     "tooltip": "initialising…",
      "paused": false,
      "matches": 0,
      "searched": 0,
@@ -2577,7 +2577,7 @@
     },
     {
      "label": "initialising…",
-     "has_tooltip": true,
+     "tooltip": "initialising…",
      "paused": false,
      "matches": 0,
      "searched": 0,

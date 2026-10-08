@@ -415,7 +415,7 @@ def record( session ):
 
                 return {
                     'label' : panel._num_potential_duplicate_pairs_label.text(),
-                    'has_tooltip' : panel._num_potential_duplicate_pairs_label.toolTip() != '',
+                    'tooltip' : panel._num_potential_duplicate_pairs_label.toolTip(),
                     'paused' : panel._count_paused,
                     'matches' : panel._num_potential_duplicate_pairs,
                     'searched' : search.NumPairsSearched(),

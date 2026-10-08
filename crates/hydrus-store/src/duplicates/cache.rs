@@ -19,7 +19,7 @@ use crate::error::Result;
 
 /// A potential pair, by its groups and their kings.
 #[derive(Debug, Clone, Copy)]
-pub(crate) struct PairRow {
+pub struct PairRow {
     pub groups: (i64, i64),
     pub smaller_king: HashId,
     pub larger_king: HashId,
