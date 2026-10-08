@@ -246,6 +246,17 @@ fn each_editor_is_the_reference_s() {
     }
 }
 
+/// What was done to a field, for a window to be driven the same way.
+enum Act {
+    Choose(usize, usize),
+    Tick(usize, usize, bool),
+    Number(usize, i64),
+    Text(usize, String),
+    Tree(usize, usize, Option<usize>, bool),
+    Press(usize),
+    Answer(bool),
+}
+
 /// Change our panel as the recording changed the reference's widget
 /// `widget`: a radio button or drop-down by the choice offering the same
 /// options, a number or text by its place among those shown. `false` if
@@ -256,6 +267,7 @@ fn change(
     widget: usize,
     set: &Json,
     warnings: &mut Vec<String>,
+    act: &mut dyn FnMut(Act),
 ) -> bool {
     let fact = &widgets[widget];
     let kind = fact["kind"].as_str().unwrap();
@@ -299,6 +311,7 @@ fn change(
             let wanted = set.as_str().or(fact["text"].as_str()).unwrap();
             let option = options.iter().position(|o| o == wanted).unwrap();
             panel.choose(i, option);
+            act(Act::Choose(i, option));
             true
         }
         "number" => {
@@ -306,6 +319,7 @@ fn change(
                 return false;
             };
             panel.set_number(i, set.as_i64().unwrap());
+            act(Act::Number(i, set.as_i64().unwrap()));
             true
         }
         "text" => {
@@ -313,6 +327,7 @@ fn change(
                 return false;
             };
             panel.set_text(i, set.as_str().unwrap());
+            act(Act::Text(i, set.as_str().unwrap().to_owned()));
             true
         }
         // (a calendar and a time box in the reference; typed here)
@@ -321,6 +336,7 @@ fn change(
                 return false;
             };
             panel.set_text(i, set.as_str().unwrap());
+            act(Act::Text(i, set.as_str().unwrap().to_owned()));
             true
         }
         "ticks" => {
@@ -338,6 +354,7 @@ fn change(
                 _ => unreachable!(),
             };
             panel.tick(i, option, on);
+            act(Act::Tick(i, option, on));
             true
         }
         "tree" => {
@@ -361,6 +378,7 @@ fn change(
                 None => !groups[g].ticked.iter().all(|t| *t),
             };
             panel.tick_tree(i, g, option, on);
+            act(Act::Tree(i, g, option, on));
             true
         }
         // (the reference's like/dislike and star controls, drop-downs here)
@@ -375,6 +393,7 @@ fn change(
                 _ => unreachable!(),
             };
             panel.choose(i, option);
+            act(Act::Choose(i, option));
             true
         }
         "stars" => {
@@ -389,6 +408,7 @@ fn change(
                 _ => unreachable!(),
             };
             panel.choose(i, option);
+            act(Act::Choose(i, option));
             true
         }
         // (the reference's service specifier button, its choices in place)
@@ -402,6 +422,7 @@ fn change(
             let mode = modes[before("services")];
             if let Some(types) = set.get("types") {
                 panel.choose(mode, 0);
+                act(Act::Choose(mode, 0));
                 let wanted: Vec<&str> = types
                     .as_array()
                     .unwrap()
@@ -416,17 +437,22 @@ fn change(
                     unreachable!()
                 };
                 for (o, option) in options.iter().enumerate() {
-                    panel.tick(mode + 1, o, wanted.contains(&option.as_str()));
+                    let on = wanted.contains(&option.as_str());
+                    panel.tick(mode + 1, o, on);
+                    act(Act::Tick(mode + 1, o, on));
                 }
             } else {
                 panel.choose(mode, 1);
+                act(Act::Choose(mode, 1));
                 let wanted = strings(&set["services"]);
                 let Field::Ticks { options, .. } = panel.fields[mode + 2].clone() else {
                     unreachable!()
                 };
                 for (o, option) in options.iter().enumerate() {
                     let name = option.split_once(": ").unwrap().1;
-                    panel.tick(mode + 2, o, wanted.iter().any(|w| w == name));
+                    let on = wanted.iter().any(|w| w == name);
+                    panel.tick(mode + 2, o, on);
+                    act(Act::Tick(mode + 2, o, on));
                 }
             }
             true
@@ -439,8 +465,10 @@ fn change(
                 .position(|f| matches!(f, Field::Button(label) if label == text))
                 .unwrap();
             let pressed = panel.press(i);
+            act(Act::Press(i));
             let pressed = if matches!(pressed, Pressed::Confirm(_)) {
                 // The original recording answers the cleanup question yes.
+                act(Act::Answer(true));
                 panel.press_confirmed(i)
             } else {
                 pressed
@@ -563,7 +591,14 @@ fn each_change_to_a_panel_makes_what_the_reference_s_makes() {
                         .as_array()
                         .map(|_| strings(&change_made["predicates"]));
                     let mut changed = panel.clone();
-                    if !change(&mut changed, widgets, widget, set, &mut Vec::new()) {
+                    if !change(
+                        &mut changed,
+                        widgets,
+                        widget,
+                        set,
+                        &mut Vec::new(),
+                        &mut |_| {},
+                    ) {
                         // a widget of the reference's we don't have (tag
                         // advanced's autocomplete) changes nothing
                         assert_eq!(expected, at_first.clone().ok(), "{class} {change_made}");
@@ -625,7 +660,14 @@ fn panels_set_in_several_ways_make_what_the_reference_s_make() {
             let widget = usize::try_from(step["widget"].as_u64().unwrap()).unwrap();
             numbers_match(&panel, widgets, &scenario.to_string());
             assert!(
-                change(&mut panel, widgets, widget, &step["set"], &mut warnings),
+                change(
+                    &mut panel,
+                    widgets,
+                    widget,
+                    &step["set"],
+                    &mut warnings,
+                    &mut |_| {}
+                ),
                 "{scenario}"
             );
         }
@@ -1920,7 +1962,8 @@ fn archived_and_modified_date_panels_make_the_recorded_date_and_time_predicates(
                     widgets,
                     widget,
                     &step["set"],
-                    &mut warnings
+                    &mut warnings,
+                    &mut |_| {}
                 ));
             }
             let made = panel.predicates(&context).map(|p| texts(&p, &text));
@@ -2184,4 +2227,496 @@ fn paste_image_makes_the_hashes_the_reference_recorded_and_warns_as_it_did() {
     assert_eq!(replayed, recorded["cases"].as_array().unwrap().len() - 1);
     hydrus_gui::clear_clipboard_reader();
     hydrus_gui::set_clipboard_image_reader(|| None);
+}
+
+// ---- through the window ----------------------------------------------
+//
+// The same recorded cases, put to the real editor window as a user would:
+// the field callbacks the window's controls fire, then "ok" (or a
+// ready-made button), and what lands in the page's search read off the
+// page. The model tests above stay as the fast check of `Panel`.
+
+/// An editor window open on a fresh search page.
+struct Opened {
+    ui: MainWindow,
+    bound: hydrus_gui::Bound,
+    window: hydrus_gui::PredicateEditorWindow,
+}
+
+fn open_editor(store: &Arc<Store>, editor: &str, page: usize) -> Opened {
+    let ui = MainWindow::new().unwrap();
+    ui.show().unwrap();
+    let bound = bind(&ui, Pages::single(SearchPage::new(store.clone())));
+    ui.invoke_search_edited("".into());
+    ui.invoke_suggestion_chosen(suggestion(&ui, editor));
+    let window = bound
+        .predicate_editor
+        .borrow()
+        .as_ref()
+        .unwrap_or_else(|| panic!("no editor for {editor}"))
+        .clone_strong();
+    window.invoke_page_chosen(i32::try_from(page).unwrap());
+    Opened { ui, bound, window }
+}
+
+/// The reference's recording was made today; the editors' dates start at
+/// today, so read the recorded day as the real one. (The window reads the
+/// clock when it opens and this reads it after: across midnight they can
+/// differ, and the test then fails rather than passing wrongly.)
+fn as_today(recorded: &Json, text: &str) -> String {
+    let now = hydrus_search::Clock::system().today().to_string();
+    text.replace(recorded["today"].as_str().unwrap(), &now[..10])
+}
+
+/// What a panel made in the window: the predicates added to the search, or
+/// what the window said instead; and what it warned on the way.
+#[derive(Debug, PartialEq)]
+struct Made {
+    predicates: Result<Vec<String>, String>,
+    warnings: Vec<String>,
+}
+
+fn dismiss_notice(windows: &headless::Windows, window: &hydrus_gui::PredicateEditorWindow) {
+    windows
+        .get(windows.count() - 1)
+        .unwrap()
+        .window()
+        .dispatch_event(slint::platform::WindowEvent::KeyPressed {
+            text: slint::platform::Key::Return.into(),
+        });
+    assert!(!window.get_notice_open());
+}
+
+/// Do `steps` to panel `panel` of page `page` of `editor`'s window, as the
+/// user would, then press its "ok".
+type Steps<'a> = &'a mut dyn FnMut(&mut dyn FnMut(Act));
+
+fn make_in_window(
+    windows: &headless::Windows,
+    store: &Arc<Store>,
+    editor: &str,
+    page: usize,
+    panel: usize,
+    steps: Steps<'_>,
+) -> Made {
+    let Opened { ui, bound, window } = open_editor(store, editor, page);
+    let p = i32::try_from(panel).unwrap();
+    let at = |n: usize| i32::try_from(n).unwrap();
+    let mut warnings = Vec::new();
+    let mut act = |act: Act| match act {
+        Act::Choose(f, o) => window.invoke_chose(p, at(f), at(o)),
+        Act::Tick(f, o, on) => window.invoke_ticked(p, at(f), at(o), on),
+        Act::Number(f, v) => window.invoke_number_edited(p, at(f), i32::try_from(v).unwrap()),
+        Act::Text(f, t) => window.invoke_text_edited(p, at(f), t.into()),
+        Act::Tree(f, g, o, on) => {
+            window.invoke_tree_ticked(p, at(f), at(g), o.map_or(-1, at), on);
+        }
+        Act::Answer(yes) => window.invoke_answer(yes),
+        Act::Press(f) => {
+            window.invoke_pressed(p, at(f));
+            if window.get_notice_open() {
+                warnings.push(window.get_notice_message().to_string());
+                dismiss_notice(windows, &window);
+            } else if window.get_question().is_empty() && !window.get_error().is_empty() {
+                warnings.push(window.get_error().to_string());
+            }
+        }
+    };
+    steps(&mut act);
+    window.invoke_ok(p);
+    let predicates = if bound.predicate_editor.borrow().is_none() {
+        Ok(shown_predicates(&ui))
+    } else if window.get_notice_open() {
+        let said = window.get_notice_message().to_string();
+        dismiss_notice(windows, &window);
+        Err(said
+            .strip_prefix("Sorry, predicate was not valid: ")
+            .unwrap_or(&said)
+            .to_owned())
+    } else {
+        Err(window.get_error().to_string())
+    };
+    if bound.predicate_editor.borrow().is_some() {
+        window.invoke_cancel();
+    }
+    Made {
+        predicates,
+        warnings,
+    }
+}
+// leaf: audit-options-predicate-duration-presets-system-framerate-30fps-1fps
+// leaf: audit-options-predicate-duration-presets-system-framerate-60fps-1fps
+// leaf: audit-options-predicate-duration-presets-system-has-duration
+// leaf: audit-options-predicate-duration-presets-system-no-duration
+// leaf: audit-options-predicate-file-relationships-presets-system-is-not-the-best-quality-file-of-its-duplicate-group
+// leaf: audit-options-predicate-file-relationships-presets-system-is-the-best-quality-file-of-its-duplicate-group
+// leaf: audit-options-predicate-limit-presets-system-limit-is-1-024
+// leaf: audit-options-predicate-limit-presets-system-limit-is-256
+// leaf: audit-options-predicate-limit-presets-system-limit-is-64
+// leaf: audit-options-predicate-notes-presets-system-has-notes
+// leaf: audit-options-predicate-notes-presets-system-no-notes
+// leaf: audit-options-predicate-number-of-tags-presets-system-has-tags
+// leaf: audit-options-predicate-number-of-tags-presets-system-untagged
+// leaf: audit-options-predicate-time-import-presets-system-import-time-since-1-day-ago
+// leaf: audit-options-predicate-time-import-presets-system-import-time-since-1-month-ago
+// leaf: audit-options-predicate-time-import-presets-system-import-time-since-7-days-ago
+// leaf: audit-options-predicate-urls-number-of-urls-presets-system-has-urls
+// leaf: audit-options-predicate-urls-number-of-urls-presets-system-no-urls
+// leaf: audit-options-predicate-file-properties-presets-system-has-audio
+// leaf: audit-options-predicate-file-properties-presets-system-no-audio
+// leaf: audit-options-predicate-file-properties-presets-system-has-duration
+// leaf: audit-options-predicate-file-properties-presets-system-no-duration
+// leaf: audit-options-predicate-file-properties-presets-system-has-exif
+// leaf: audit-options-predicate-file-properties-presets-system-no-exif
+// leaf: audit-options-predicate-file-properties-presets-system-has-forced-filetype
+// leaf: audit-options-predicate-file-properties-presets-system-no-forced-filetype
+// leaf: audit-options-predicate-file-properties-presets-system-has-human-readable-metadata
+// leaf: audit-options-predicate-file-properties-presets-system-no-human-readable-metadata
+// leaf: audit-options-predicate-file-properties-presets-system-has-icc-profile
+// leaf: audit-options-predicate-file-properties-presets-system-no-icc-profile
+// leaf: audit-options-predicate-file-properties-presets-system-has-iptc
+// leaf: audit-options-predicate-file-properties-presets-system-no-iptc
+// leaf: audit-options-predicate-file-properties-presets-system-has-software-source-metadata
+// leaf: audit-options-predicate-file-properties-presets-system-no-software-source-metadata
+// leaf: audit-options-predicate-file-properties-presets-system-has-transparency
+// leaf: audit-options-predicate-file-properties-presets-system-no-transparency
+// leaf: audit-options-predicate-file-properties-presets-system-has-xmp
+// leaf: audit-options-predicate-file-properties-presets-system-no-xmp
+#[test]
+fn the_windows_ready_made_buttons_add_what_the_reference_s_do() {
+    let (_dirs, store) = store();
+    let recorded = recorded();
+    let _windows = headless::init();
+    let mut clicked = 0;
+    for editor in recorded["editors"].as_array().unwrap() {
+        let name = editor["text"].as_str().unwrap();
+        for (page, theirs) in editor["pages"].as_array().unwrap().iter().enumerate() {
+            let buttons = theirs["buttons"].as_array().unwrap();
+            let labels: Vec<String> = buttons
+                .iter()
+                .map(|b| b["label"].as_str().unwrap().to_owned())
+                .collect();
+            let shown = open_editor(&store, name, page);
+            let ours: Vec<String> = shown
+                .window
+                .get_buttons()
+                .iter()
+                .map(|b: slint::SharedString| b.to_string())
+                .collect();
+            assert_eq!(ours, labels, "{name} page {page}");
+            for (i, button) in buttons.iter().enumerate() {
+                let Opened { ui, bound, window } = open_editor(&store, name, page);
+                window.invoke_button_clicked(i32::try_from(i).unwrap());
+                assert!(bound.predicate_editor.borrow().is_none(), "{name} {i}");
+                // (the search lists its predicates in its own order)
+                let mut ours = shown_predicates(&ui);
+                ours.sort();
+                let mut theirs = strings(&button["predicates"])
+                    .iter()
+                    .map(|p| as_today(&recorded, p))
+                    .collect::<Vec<_>>();
+                theirs.sort();
+                assert_eq!(ours, theirs, "{name} {}", button["label"]);
+                clicked += 1;
+            }
+        }
+    }
+    assert_eq!(clicked, 47, "every button the reference has");
+}
+
+// the window's panels, first as they open: what "ok" makes of each before
+// anything is changed (or why it can't)
+#[test]
+fn each_panel_in_the_window_makes_at_first_what_the_reference_s_makes() {
+    let (_dirs, store) = store();
+    let recorded = recorded();
+    let windows = headless::init();
+    let mut made = 0;
+    for editor in recorded["editors"].as_array().unwrap() {
+        let name = editor["text"].as_str().unwrap();
+        for (page, theirs) in editor["pages"].as_array().unwrap().iter().enumerate() {
+            for (panel, theirs) in theirs["panels"].as_array().unwrap().iter().enumerate() {
+                let class = theirs["class"].as_str().unwrap();
+                let got = make_in_window(&windows, &store, name, page, panel, &mut |_| {});
+                match theirs["predicates"].as_array() {
+                    Some(_) => assert_eq!(
+                        got.predicates,
+                        Ok(strings(&theirs["predicates"])
+                            .iter()
+                            .map(|p| as_today(&recorded, p))
+                            .collect()),
+                        "{name} {class}"
+                    ),
+                    None => assert!(got.predicates.is_err(), "{name} {class}"),
+                }
+                made += 1;
+            }
+        }
+    }
+    assert_eq!(made, 40, "every panel the reference has");
+}
+
+// every recorded change to a panel's widget, done in the window
+// leaf: audit-options-predicate-dimensions-width-operator
+// leaf: audit-options-predicate-dimensions-width-value
+// leaf: audit-options-predicate-dimensions-height-operator
+// leaf: audit-options-predicate-dimensions-height-value
+// leaf: audit-options-predicate-dimensions-ratio-operator
+// leaf: audit-options-predicate-dimensions-ratio-ratio
+// leaf: audit-options-predicate-dimensions-numpixels-operator
+// leaf: audit-options-predicate-dimensions-numpixels-value
+// leaf: audit-options-predicate-duration-duration-operator
+// leaf: audit-options-predicate-duration-duration-value
+// leaf: audit-options-predicate-duration-numframes-operator
+// leaf: audit-options-predicate-duration-numframes-value
+// leaf: audit-options-predicate-duration-framerate-operator
+// leaf: audit-options-predicate-duration-framerate-value
+// leaf: audit-options-predicate-file-relationships-duplicaterelationships
+// leaf: audit-options-predicate-file-service-fileservice-service
+// leaf: audit-options-predicate-file-service-fileservice-state
+// leaf: audit-options-predicate-file-viewing-statistics-fileviewingstatsviews-test
+// leaf: audit-options-predicate-file-viewing-statistics-fileviewingstatsviews-canvas
+// leaf: audit-options-predicate-filetype-mime-mode
+// leaf: audit-options-predicate-limit-limit
+// leaf: audit-options-predicate-notes-hasnotename
+// leaf: audit-options-predicate-notes-numnotes-operator
+// leaf: audit-options-predicate-notes-numnotes-value
+// leaf: audit-options-predicate-number-of-tags-numtags-test
+// leaf: audit-options-predicate-number-of-tags-numtags-scope
+// leaf: audit-options-predicate-number-of-words-numwords-operator
+// leaf: audit-options-predicate-number-of-words-numwords-value
+// leaf: audit-options-predicate-similar-files-files-similartofiles-distance
+// leaf: audit-options-predicate-tag-as-number-tagasnumber-test
+// leaf: audit-options-predicate-tag-as-number-tagasnumber-scope
+// leaf: audit-options-predicate-time-archived-archiveddelta-operator
+// leaf: audit-options-predicate-time-archived-archiveddelta-delta
+// leaf: audit-options-predicate-time-import-agedelta-operator
+// leaf: audit-options-predicate-time-import-agedelta-delta
+// leaf: audit-options-predicate-time-last-viewed-lastvieweddelta-operator
+// leaf: audit-options-predicate-time-last-viewed-lastvieweddelta-delta
+// leaf: audit-options-predicate-time-modified-modifieddelta-operator
+// leaf: audit-options-predicate-time-modified-modifieddelta-delta
+// leaf: audit-options-predicate-urls-known-urls-knownurlsexacturl-has
+// leaf: audit-options-predicate-urls-known-urls-knownurlsdomain-has
+// leaf: audit-options-predicate-urls-known-urls-knownurlsregex-has
+// leaf: audit-options-predicate-urls-known-urls-knownurlsexacturl-rule
+// leaf: audit-options-predicate-urls-known-urls-knownurlsdomain-rule
+// leaf: audit-options-predicate-urls-known-urls-knownurlsregex-rule
+// leaf: audit-options-predicate-urls-number-of-urls-numurls-operator
+// leaf: audit-options-predicate-urls-number-of-urls-numurls-value
+// leaf: audit-options-predicate-time-archived-archiveddate-operator
+// leaf: audit-options-predicate-time-import-agedate-operator
+// leaf: audit-options-predicate-time-last-viewed-lastvieweddate-operator
+// leaf: audit-options-predicate-time-modified-modifieddate-operator
+// leaf: audit-options-predicate-rating-ratingadvanced-state
+// leaf: audit-options-predicate-rating-ratingincdec-state
+// leaf: audit-options-predicate-rating-ratinglike-state
+// leaf: audit-options-predicate-rating-ratingnumerical-state
+// leaf: audit-options-predicate-file-viewing-statistics-fileviewingstatsviewtime-canvas
+// leaf: audit-options-predicate-similar-files-data-similartodata-distance
+// leaf: audit-options-predicate-tag-advanced-tagadvanced-test
+// leaf: audit-options-predicate-tag-advanced-tagadvanced-scope
+#[test]
+fn each_change_in_the_window_makes_what_the_reference_s_makes() {
+    let (_dirs, store) = store();
+    let recorded = recorded();
+    let windows = headless::init();
+    let context = context(&store, &recorded);
+    let mut checked = 0;
+    let mut skipped: Vec<String> = Vec::new();
+    for editor in recorded["editors"].as_array().unwrap() {
+        let name = editor["text"].as_str().unwrap();
+        let blank = Blank::from_text(name).unwrap();
+        let ours = Editor::new(blank, &context);
+        for (page, theirs) in editor["pages"].as_array().unwrap().iter().enumerate() {
+            for (panel, theirs) in theirs["panels"].as_array().unwrap().iter().enumerate() {
+                let class = theirs["class"].as_str().unwrap();
+                let widgets = theirs["widgets"].as_array().unwrap();
+                for change_made in theirs["changes"].as_array().unwrap() {
+                    let widget = usize::try_from(change_made["widget"].as_u64().unwrap()).unwrap();
+                    let set = &change_made["set"];
+                    let mut mirror = ours.pages[page].panels[panel].clone();
+                    // (a widget of the reference's we don't have changes nothing)
+                    if !change(
+                        &mut mirror,
+                        widgets,
+                        widget,
+                        set,
+                        &mut Vec::new(),
+                        &mut |_| {},
+                    ) {
+                        skipped.push(format!("{class} {widget}"));
+                        continue;
+                    }
+                    let got = make_in_window(&windows, &store, name, page, panel, &mut |act| {
+                        let mut panel = ours.pages[page].panels[panel].clone();
+                        change(&mut panel, widgets, widget, set, &mut Vec::new(), act);
+                    });
+                    let expected = change_made["predicates"]
+                        .as_array()
+                        .map(|_| strings(&change_made["predicates"]));
+                    // (the reference offers terabytes, but can't write them)
+                    // (the reference offers terabytes but writes "200TB" in a form neither
+                    // parser takes; the native editor makes "system:filesize < 200TB":
+                    // docs/rust/DIFFERENCES.md, the filesize predicate)
+                    if set == "TB" {
+                        assert_eq!(
+                            got.predicates,
+                            Ok(vec!["system:filesize < 200TB".to_owned()])
+                        );
+                        checked += 1;
+                        continue;
+                    }
+                    match expected {
+                        Some(expected) => assert_eq!(
+                            got.predicates,
+                            Ok(expected
+                                .iter()
+                                .map(|p| {
+                                    if set
+                                        .to_string()
+                                        .contains(&recorded["today"].as_str().unwrap()[..4])
+                                    {
+                                        p.clone()
+                                    } else {
+                                        as_today(&recorded, p)
+                                    }
+                                })
+                                .collect()),
+                            "{name} {class} {widget} {set}"
+                        ),
+                        None => assert!(got.predicates.is_err(), "{name} {class} {widget} {set}"),
+                    }
+                    checked += 1;
+                }
+            }
+        }
+    }
+    // only the reference's tag autocomplete widget has no counterpart here
+    assert_eq!(skipped, ["PanelPredicateSystemTagAdvanced 7"]);
+    assert!(checked > 150, "{checked}");
+}
+
+// several fields set in turn, in the window
+// leaf: audit-options-predicate-similar-files-files-similartofiles-hashes
+// leaf: audit-options-predicate-similar-files-data-similartodata-hashes
+// leaf: audit-options-predicate-time-import-agedate-date-time
+// leaf: audit-options-predicate-time-last-viewed-lastvieweddate-date-time
+// leaf: audit-options-predicate-rating-ratingadvanced-service
+#[test]
+fn panels_set_in_several_ways_in_the_window_make_what_the_reference_s_make() {
+    let (_dirs, store) = store();
+    let recorded = recorded();
+    let windows = headless::init();
+    let context = context(&store, &recorded);
+    for scenario in recorded["scenarios"].as_array().unwrap() {
+        let name = scenario["editor"].as_str().unwrap();
+        let page = usize::try_from(scenario["page"].as_u64().unwrap()).unwrap();
+        let panel = usize::try_from(scenario["panel"].as_u64().unwrap()).unwrap();
+        let editor = Editor::new(Blank::from_text(name).unwrap(), &context);
+        let got = make_in_window(&windows, &store, name, page, panel, &mut |act| {
+            let mut mirror = editor.pages[page].panels[panel].clone();
+            for step in scenario["steps"].as_array().unwrap() {
+                let widgets = step["widgets"].as_array().unwrap();
+                let widget = usize::try_from(step["widget"].as_u64().unwrap()).unwrap();
+                assert!(
+                    change(
+                        &mut mirror,
+                        widgets,
+                        widget,
+                        &step["set"],
+                        &mut Vec::new(),
+                        &mut *act
+                    ),
+                    "{scenario}"
+                );
+            }
+        });
+        let steps = scenario["steps"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|s| format!("{} {}", s["widget"], s["set"]))
+            .collect::<Vec<_>>()
+            .join(", ");
+        let typed_date = scenario["steps"]
+            .to_string()
+            .contains(&recorded["today"].as_str().unwrap()[..4]);
+        match scenario["predicates"].as_array() {
+            Some(_) => assert_eq!(
+                got.predicates,
+                Ok(strings(&scenario["predicates"])
+                    .iter()
+                    .map(|p| if typed_date {
+                        p.clone()
+                    } else {
+                        as_today(&recorded, p)
+                    })
+                    .collect()),
+                "{name}: {steps}"
+            ),
+            None => assert_eq!(
+                got.predicates,
+                Err(scenario["error"].as_str().unwrap().to_owned()),
+                "{name}: {steps}"
+            ),
+        }
+        assert_eq!(
+            got.warnings,
+            strings(&scenario["warnings"]),
+            "{name}: {steps}"
+        );
+    }
+}
+
+// leaf: audit-options-predicate-urls-known-urls-knownurlsregex-rule
+#[test]
+fn the_windows_known_url_regex_panel_refuses_a_regex_that_will_not_compile() {
+    let (_dirs, store) = store();
+    let recorded = recorded();
+    let custom = hydrus_testkit::fixture_json("predicate_custom_defaults.json");
+    let veto = custom["invalid_regex"]["accept_validation_error"]
+        .as_str()
+        .unwrap();
+    let _windows = headless::init();
+    let context = context(&store, &recorded);
+    let editor = Editor::new(Blank::from_text("system:urls").unwrap(), &context);
+    let (page, panel) = editor
+        .pages
+        .iter()
+        .enumerate()
+        .find_map(|(page, p)| {
+            p.panels
+                .iter()
+                .position(|panel| panel.kind.class_name() == "PanelPredicateSystemKnownURLsRegex")
+                .map(|panel| (page, panel))
+        })
+        .unwrap();
+    let field = editor.pages[page].panels[panel]
+        .fields
+        .iter()
+        .position(|f| matches!(f, Field::Text { .. }))
+        .unwrap();
+    // the recording's own bad regex, typed into the window and "ok"ed
+    let Opened { ui, bound, window } = open_editor(&store, "system:urls", page);
+    let at = |n: usize| i32::try_from(n).unwrap();
+    window.invoke_text_edited(at(panel), at(field), "[".into());
+    window.invoke_ok(at(panel));
+    assert!(
+        bound.predicate_editor.borrow().is_some(),
+        "the editor stays open"
+    );
+    assert!(shown_predicates(&ui).is_empty(), "nothing is searched");
+    // (the reference's reason is Python's words; the refusal is its own)
+    assert!(
+        window.get_error().starts_with("Cannot compile that regex"),
+        "{}",
+        window.get_error()
+    );
+    assert!(veto.starts_with("Cannot compile that regex"));
+    // and a regex that compiles is searched
+    window.invoke_text_edited(at(panel), at(field), "abc".into());
+    window.invoke_ok(at(panel));
+    assert!(bound.predicate_editor.borrow().is_none());
+    assert_eq!(shown_predicates(&ui), ["system:has url matching regex abc"]);
 }
