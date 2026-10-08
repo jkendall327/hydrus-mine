@@ -70,12 +70,34 @@ fn kept(entries: &[Value]) -> Vec<Value> {
                     .unwrap_or_default()
                     .to_owned()
             };
-            let keep: [(&str, &[&str]); 6] = [
-                ("debug modes", &["force idle mode"]),
+            let keep: [(&str, &[&str]); 7] = [
+                (
+                    "debug modes",
+                    &["force idle mode", "---", "use faulthandler to log crashes"],
+                ),
                 ("profiling", &["what is this?"]),
+                (
+                    "report modes",
+                    &[
+                        "blurhash mode",
+                        "cache report mode",
+                        "daemon report mode",
+                        "file report mode",
+                        "file import report mode",
+                        "gui report mode",
+                        "idle report mode",
+                        "network report mode",
+                        "network report mode (silent)",
+                        "similar files metadata generation report mode",
+                        "shortcut report mode",
+                        "subprocess report mode",
+                        "subscription report mode",
+                    ],
+                ),
                 (
                     "gui actions",
                     &[
+                        "autocomplete delay mode",
                         "close and reload current gui session",
                         "make a long text popup",
                         "make a modal popup in five seconds",
@@ -93,6 +115,7 @@ fn kept(entries: &[Value]) -> Vec<Value> {
                     &[
                         "flush log",
                         "force database commit",
+                        "scan file storage folders",
                         "show env",
                         "---",
                         "simulate program exit signal",

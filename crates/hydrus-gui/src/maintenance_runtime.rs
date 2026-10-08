@@ -257,6 +257,13 @@ impl Control {
             if !gates.allows(worker, idle) {
                 continue;
             }
+            hydrus_core::debug_flags::report(hydrus_core::debug_flags::Flag::DaemonReport, || {
+                let name = match worker {
+                    Worker::Trash => "maintain_trash",
+                    Worker::Deferred => "deferred_physical_deletes",
+                };
+                format!("{name} doing a job.")
+            });
             let store = store.clone();
             let cancellation = self.0.control.clone();
             let (result, receiver) = mpsc::sync_channel(1);

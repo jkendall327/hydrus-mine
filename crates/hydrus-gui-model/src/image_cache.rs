@@ -28,7 +28,8 @@ impl<T> Cache<T> {
             lru: Lru::new(ThumbnailCacheSettings {
                 bytes: policy.bytes,
                 timeout: policy.timeout,
-            }),
+            })
+            .named("image"),
             policy,
         }
     }

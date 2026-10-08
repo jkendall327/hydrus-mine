@@ -313,6 +313,17 @@ impl Monitor {
                 return false;
             };
             if let Some(idle) = state.idle_override() {
+                hydrus_core::debug_flags::report(
+                    hydrus_core::debug_flags::Flag::IdleReport,
+                    || {
+                        if idle {
+                            "IDLE MODE - Forced via debug menu"
+                        } else {
+                            "IDLE MODE - Blocked: Program shutting down."
+                        }
+                        .to_owned()
+                    },
+                );
                 return idle;
             }
         }
@@ -330,7 +341,16 @@ impl Monitor {
             self.0.api_seen.set(at);
             self.api_at(at);
         }
-        self.0.idle.borrow().eligible(now_ms, &config)
+        let idle = self.0.idle.borrow();
+        for reason in hydrus_core::debug_flags::Flag::IdleReport
+            .is_on()
+            .then(|| idle.blocked_reasons(now_ms, &config))
+            .into_iter()
+            .flatten()
+        {
+            hydrus_core::debug_flags::report(hydrus_core::debug_flags::Flag::IdleReport, || reason);
+        }
+        idle.eligible(now_ms, &config)
     }
 
     /// Check the live session's computed weight and publish its one-boot warning.

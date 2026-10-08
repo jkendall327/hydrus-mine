@@ -131,6 +131,9 @@ impl FileStorage {
 
     /// The path of a media file.
     pub fn file_path(&self, hash: &Sha256, mime: Mime) -> Option<PathBuf> {
+        hydrus_core::debug_flags::report(hydrus_core::debug_flags::Flag::FileReport, || {
+            format!("File path request: ('{}', {mime:?})", hash.to_hex())
+        });
         Some(self.dir_for('f', hash)?.join(format!(
             "{}{}",
             hash.to_hex(),
@@ -140,6 +143,9 @@ impl FileStorage {
 
     /// The path of a thumbnail.
     pub fn thumbnail_path(&self, hash: &Sha256) -> Option<PathBuf> {
+        hydrus_core::debug_flags::report(hydrus_core::debug_flags::Flag::FileReport, || {
+            format!("Thumbnail path request: ('{}')", hash.to_hex())
+        });
         Some(
             self.dir_for('t', hash)?
                 .join(format!("{}.thumbnail", hash.to_hex())),

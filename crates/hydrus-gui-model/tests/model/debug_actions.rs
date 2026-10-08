@@ -64,3 +64,38 @@ fn modal_countdown_and_env_dump_read_as_the_reference_s() {
         "Full environment:\nHOME: /home/x\nPATH:\n    /bin\n    /usr/bin\nXDG_DATA_DIRS: /a"
     );
 }
+
+// leaf: audit-options-help-debug-action-scan-file-storage-folders
+#[test]
+fn scan_file_storage_folders_finds_the_prefix_folders_or_gives_up_quickly() {
+    use hydrus_gui_model::debug_actions::{presumptive_subfolders, scan_text};
+    let dir = tempfile::tempdir().unwrap();
+    for prefix in ["fa0", "fa1", "t00"] {
+        std::fs::create_dir_all(dir.path().join(prefix)).unwrap();
+    }
+    std::fs::write(dir.path().join("client.db"), b"").unwrap();
+    // granularity 2: the directories directly beneath
+    let found = presumptive_subfolders(dir.path(), 2).unwrap();
+    assert_eq!(found.len(), 3);
+    // granularity 3: the directories one level down
+    std::fs::create_dir_all(dir.path().join("fa0").join("fa00")).unwrap();
+    std::fs::create_dir_all(dir.path().join("fa0").join("fa01")).unwrap();
+    assert_eq!(presumptive_subfolders(dir.path(), 3).unwrap().len(), 2);
+    // too many files at the top level
+    for i in 0..17 {
+        std::fs::write(dir.path().join(format!("file {i}")), b"").unwrap();
+    }
+    assert_eq!(
+        presumptive_subfolders(dir.path(), 2).unwrap_err(),
+        "Too many files!"
+    );
+    // and the text it says
+    assert_eq!(
+        scan_text(&Err("Too many files!".into()), 0.5),
+        "It cancelled: Too many files!"
+    );
+    assert_eq!(
+        scan_text(&Ok(1234), 0.5),
+        "It found 1,234 subfolders and took 500 milliseconds"
+    );
+}

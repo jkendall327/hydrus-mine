@@ -232,6 +232,7 @@ mod debug_delayed_pages;
 mod debug_delayed_popup;
 mod debug_fetch;
 mod debug_long_popup;
+mod debug_menu_actions;
 mod debug_session_reload;
 mod duplicates_progress;
 mod quick_export_directory;

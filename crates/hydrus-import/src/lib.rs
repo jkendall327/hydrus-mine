@@ -104,7 +104,7 @@ impl FileImporter {
             .ok()
             .and_then(|t| t.duration_since(std::time::UNIX_EPOCH).ok())
             .map(|d| TimestampMs::from_millis(i64::try_from(d.as_millis()).unwrap_or(i64::MAX)));
-        self.import_file(temp.path(), modified, options)
+        self.import_file(temp.path(), &path.display().to_string(), modified, options)
     }
 
     /// Import file content given in memory (an upload).
@@ -112,7 +112,7 @@ impl FileImporter {
         let scratch = self.scratch_dir()?;
         let temp = tempfile::NamedTempFile::new_in(&scratch)?;
         std::fs::write(temp.path(), bytes)?;
-        self.import_file(temp.path(), None, options)
+        self.import_file(temp.path(), "an uploaded file", None, options)
     }
 
     /// Where temporary copies go: inside the store, so they are on the same
@@ -169,12 +169,26 @@ impl FileImporter {
     fn import_file(
         &self,
         temp: &Path,
+        source: &str,
         modified: Option<TimestampMs>,
         options: &FileImportOptions,
     ) -> Result<ImportResult> {
+        use hydrus_core::debug_flags::{Flag, report};
+        report(Flag::FileImportReport, || {
+            format!(
+                "File import job created:\nSource: {source}\nRaw import path: {}.",
+                temp.display()
+            )
+        });
+        report(Flag::FileImportReport, || {
+            "File import job starting work.".to_owned()
+        });
         let hash = hydrus_media::hash_file(temp)
             .map_err(|e| std::io::Error::other(e.to_string()))?
             .sha256;
+        report(Flag::FileImportReport, || {
+            format!("File import job hash: {hash}")
+        });
         let (pre, _) = self.known_status(&hash, "file recognised: ")?;
         let should_import = match pre.status {
             ImportStatus::Unknown => true,
@@ -189,6 +203,9 @@ impl FileImporter {
         if result.status == ImportStatus::SuccessfulButRedundant {
             self.update_already_in_db(&hash, options)?;
         }
+        report(Flag::FileImportReport, || {
+            "File import job is done, now publishing content updates".to_owned()
+        });
         Ok(result)
     }
 

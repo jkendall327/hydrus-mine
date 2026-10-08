@@ -137,6 +137,11 @@ pub(crate) fn facts(pages: &RefCell<Pages>, weigh: bool) -> Facts {
 fn owned_facts(hooks: &Hooks, weigh: bool) -> Facts {
     let mut facts = facts(&hooks.pages, weigh);
     facts.force_idle = hooks.force_idle.enabled();
+    facts.crash_logging = crate::debug_actions::crash_logging();
+    facts.debug_flags = hydrus_core::debug_flags::Flag::ALL
+        .into_iter()
+        .filter(|flag| flag.is_on())
+        .collect();
     facts
 }
 
@@ -789,6 +794,9 @@ fn run(window: &MainWindow, hooks: &Hooks, command: Command) {
         Command::DebugLongTextPopup => hooks.debug_long_popup.start(),
         Command::DebugForceIdleMode => {
             hooks.force_idle.toggle();
+        }
+        Command::DebugFlag(flag) => {
+            flag.flip();
         }
         Command::DebugDelayedTextPopup => hooks.debug_long_popup.start_delayed_popup(),
         Command::DebugDelayedNewPage(location) => {

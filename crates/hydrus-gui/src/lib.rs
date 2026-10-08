@@ -36,7 +36,7 @@ pub mod daemon;
 mod database_backup_window;
 pub mod database_locations_window;
 mod debug_actions;
-pub use debug_actions::message_window;
+pub use debug_actions::{crash_logging, debug_printed, exit_requested, message_window};
 pub use orphan_files_window::chooser as orphan_files_chooser;
 pub mod debug_fetch;
 pub mod debug_long_popup;
@@ -2960,6 +2960,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                 Rc::new(move |action| database_backup_window::run(&context, action))
             },
             debug: {
+                debug_actions::install_report_sink(pages.borrow().store());
                 let context = debug_actions::Context {
                     pages: pages.clone(),
                     ask: {
