@@ -1356,7 +1356,8 @@ fn spin(for_ms: u64) -> Vec<std::thread::JoinHandle<()>> {
 }
 
 // leaf: audit-options-maintenance-and-processing-when-to-run-high-cpu-jobs-idle-run-maintenance-jobs-when-the-client-is-idle-and-the-system-is-not-otherwise-busy
-// leaf: audit-options-maintenance-and-processing-when-to-run-high-cpu-jobs-idle-consider-the-system-busy-if-cpu-usage-is-above
+// (not tagged ...-idle-consider-the-system-busy-if-cpu-usage-is-above: nothing
+// here shows a higher percent staying not busy; the threshold is only unit-tested)
 // leaf: audit-options-maintenance-and-processing-when-to-run-high-cpu-jobs-idle-on
 #[test]
 fn idle_and_cpu_busy_options_decide_whether_background_work_may_run() {
