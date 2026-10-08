@@ -248,7 +248,6 @@ fn replay_case(fixture: &str, c: usize) {
         let action = step["do"].as_array().unwrap();
         let said = step["said"].as_array().unwrap();
         let opened = step["opened"].as_array().unwrap();
-        let now = converter(&step["state"]["value"]);
         match action[0].as_str().unwrap() {
             "click" => window.invoke_row_clicked(
                 i32::try_from(action[1].as_u64().unwrap()).unwrap(),
@@ -313,6 +312,10 @@ fn replay_case(fixture: &str, c: usize) {
                 }
                 if !ok {
                     // cancelled: the conversion window closes without giving anything
+                    // (opened and cancelled without edits records no "ok" at all)
+                    if action[1].is_object() {
+                        assert_eq!(record["ok"], json!(false), "{context}");
+                    }
                     conversion.invoke_cancel();
                 }
                 assert!(slots.conversion.borrow().is_none(), "{context}");
@@ -342,7 +345,6 @@ fn replay_case(fixture: &str, c: usize) {
             other => panic!("{other}"),
         }
         check_rows(&window, &step["state"], &context);
-        let _ = now;
     }
     // "apply" gives the converter the recording ended with
     window.invoke_apply();

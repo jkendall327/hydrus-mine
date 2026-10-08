@@ -4227,7 +4227,7 @@
     "date": "2026-10-08",
     "class": "sound",
     "by": "phase 2 session",
-    "note": "gui/string_converter_window.rs drives the real conversion window for the recorded encode/decode (base64, hex, base64url, url, html entities, unicode escape) and regex substitution conversions with their ok question answered yes and no, against string_converter_editor.json and string_date_editor.json."
+    "note": "gui/string_converter_window.rs drives the real conversion window for the recorded encode/decode (base64, hex, base64url, url, html entities, unicode escape) and regex substitution conversions with their ok question answered yes and no, against string_converter_editor.json. Random-append results are only length-checked."
    }
   },
   {
@@ -4246,7 +4246,7 @@
     "date": "2026-10-08",
     "class": "sound",
     "by": "phase 2 session",
-    "note": "gui/string_converter_window.rs drives the real conversion window for every recorded ordinary conversion (prepend, remove, take, reverse, add, hash, append random) through its controls, comparing what it opens with, shows after each edit, its ok question and the result with string_converter_editor.json."
+    "note": "gui/string_converter_window.rs drives the real conversion window for every recorded ordinary conversion (prepend, remove, take, reverse, add, hash, append random) through its controls, comparing what it opens with, shows after each edit, its ok question and the result with string_converter_editor.json. Random-append results are only length-checked."
    }
   },
   {
@@ -5690,7 +5690,7 @@
     "date": "2026-10-08",
     "class": "sound",
     "by": "phase 2 session",
-    "note": "gui/string_processor_window.rs the_string_processor_window_works_as_the_references_does drives the real processor window (rows, add question and its choices, step windows, delete question, up/down) and compares rows and selection at every step with string_processor_editor.json, and the processor apply gives with the last value (converter steps' example text aside, DIFFERENCES.md)."
+    "note": "Sound except converter-step example text (a converter applied from the processor takes the processor's example: DIFFERENCES.md). gui/string_processor_window.rs the_string_processor_window_works_as_the_references_does drives the real processor window (rows, add question and its choices, step windows, delete question, up/down) and compares rows and selection at every step with string_processor_editor.json, and the processor apply gives with the last value (converter steps' example text aside, DIFFERENCES.md). Child acceptance is exercised only for splitter, joiner, slicer and sorter steps; match, tag-filter and converter steps are stood in for."
    }
   },
   {
@@ -24483,8 +24483,8 @@
    "recheck": {
     "date": "2026-10-08",
     "class": "sound",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Recorded sorter states (type, asc, regex, results) replayed through SorterEditor; the GUI test opens the sorter step from the real processor window, flips to descending and checks the sorted tab and the saved step. Sort type and regex fields are not driven through the window. Tests: crates/hydrus-gui-model/tests/model/string_processor_editor.rs:210 the_string_processor_editor_works_as_the_references_does (sorter states); crates/hydrus-gui/tests/gui/sidecars.rs:439 a_routers_processing_is_edited_in_the_string_processor_editor"
+    "by": "phase 2 session",
+    "note": "gui/string_processor_window.rs sets a sorter step window's type, direction and regex as the recording did and compares the shown texts and results with string_processor_editor.json; the model replay stays as the fast check."
    }
   },
   {
@@ -24503,8 +24503,8 @@
    "recheck": {
     "date": "2026-10-08",
     "class": "sound",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Recorded splitter states (separator, max_splits, results, invalid escapes) replayed through SplitterEditor; the GUI test adds a splitter via the real window, checks its example/results, the 'Sorry, you have to have a value in the separator field!' veto and the resulting step row. The max_splits field is not driven through the window. Tests: crates/hydrus-gui-model/tests/model/string_processor_editor.rs:210 the_string_processor_editor_works_as_the_references_does (splitter states); crates/hydrus-gui/tests/gui/sidecars.rs:439 a_routers_processing_is_edited_in_the_string_processor_editor"
+    "by": "phase 2 session",
+    "note": "gui/string_processor_window.rs sets a splitter step window's separator and max splits as the recording did and compares the shown example, results and invalid flag, and the separator veto, with string_processor_editor.json."
    }
   },
   {
