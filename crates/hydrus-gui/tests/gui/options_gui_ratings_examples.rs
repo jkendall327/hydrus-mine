@@ -77,16 +77,13 @@ fn the_chosen_service_styles_the_example_stars_and_the_typed_sizes_size_them() {
         ),
         favourites
     );
-    // choose the numerical service
+    // choose the numerical service: only its shape and colours are taken, the
+    // stars' count staying as the opening template made it
     options.invoke_choice_chosen(style_row, 1);
     let second = star(&options);
-    assert_eq!(
-        (
-            second.graphic.shape.to_string(),
-            second.graphic.shapes.row_count()
-        ),
-        stars
-    );
+    assert_eq!(second.graphic.shape.to_string(), stars.0);
+    assert_eq!(second.graphic.shapes.row_count(), favourites.1);
+    assert_ne!(second.graphic.shape.to_string(), favourites.0);
 
     // sizes: the typed whole pixels, in their own box only
     let (size_row, _) = row(&options, MEDIA_SIZE);
@@ -140,26 +137,20 @@ fn the_chosen_service_styles_the_example_stars_and_the_typed_sizes_size_them() {
     assert_eq!(row(&options, MEDIA_EXAMPLES).1.incdec.graphic.text, "1");
     assert_eq!(row(&options, PREVIEW_EXAMPLES).1.incdec.graphic.text, "0");
 
-    // nothing of the style is kept until OK
+    // the style is kept the moment it is chosen, cancelled dialog or not
     options.invoke_cancel();
     let kept = |client: &Client| {
         client
             .setting::<ReferenceOptions>()
             .string("options_ratings_panel_template_service_key")
     };
-    let default = kept(&client);
     let (stars_key, _) = rating_style_choices(&client.store)
         .into_iter()
         .find(|(_, name)| name == "stars")
         .unwrap();
-    assert_ne!(default.as_deref(), Some(stars_key.to_hex().as_str()));
-
-    // on OK it is, and the page opens on it again; the samples are not
-    let options = client.open_options();
-    show_page(&options, "ratings");
-    options.invoke_choice_chosen(row(&options, STYLE).0, 1);
-    options.invoke_apply();
     assert_eq!(kept(&client).as_deref(), Some(stars_key.to_hex().as_str()));
+
+    // reopened, the page opens on it, and its stars are the service's own
     let options = client.open_options();
     show_page(&options, "ratings");
     assert_eq!(row(&options, STYLE).1.index, 1);
@@ -171,6 +162,7 @@ fn the_chosen_service_styles_the_example_stars_and_the_typed_sizes_size_them() {
         ),
         stars
     );
+    // (and the samples are not kept)
     assert_eq!(row(&options, MEDIA_EXAMPLES).1.incdec.graphic.text, "0");
 
     // (a picture of the page, for review)
