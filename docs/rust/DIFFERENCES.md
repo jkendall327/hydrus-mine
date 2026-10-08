@@ -972,7 +972,7 @@ deleted sidecars by `crates/hydrus-download/tests/local_import.rs`.
   takes several), and a file that can't be read says "Problem importing!"
   with the reason as the reference does, though not its separate text for a
   payload that decodes but can't be understood (whose `{path}` the reference
-  never fills in).
+  never fills in). A hydrus-rs rules png given to the comparator list is a read error there, where the reference would warn which object types it refused.
 - **The file log window** can't yet import new sources, export them to
   a png, search for the selected URLs, or do its advanced entries (these
   are greyed out); its "additional urls" don't show the URL a URL class
