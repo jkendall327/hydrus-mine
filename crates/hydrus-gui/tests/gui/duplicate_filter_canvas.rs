@@ -75,6 +75,24 @@ fn replay(scenario: &Value) {
         .collect();
     assert_eq!(batch.len() as u64, start["num_pairs"].as_u64().unwrap());
 
+    let my_files = o
+        .store
+        .snapshot()
+        .services
+        .builtin(builtin_keys::MY_FILES)
+        .unwrap()
+        .id;
+    let batch_files: Vec<HashId> = batch.iter().flatten().map(|h| o.ids[h]).collect();
+    let in_my_files = |o: &Opened| -> BTreeSet<String> {
+        o.store
+            .read(|c| hydrus_store::media::current_in(c, my_files, &batch_files))
+            .unwrap()
+            .into_iter()
+            .map(|h| hex_of(o, h))
+            .collect()
+    };
+    let before_files = in_my_files(&o);
+
     for step in scenario["steps"].as_array().unwrap() {
         let what = format!("{name}: {} {}", step["do"], step["answers"]);
         let mut pressed: Vec<String> = Vec::new();
@@ -191,6 +209,18 @@ fn replay(scenario: &Value) {
             assert_eq!(pair_now(&o), shown, "{what}: pair");
         }
     }
+
+    // the files the commits deleted left my files, the others stayed
+    let deleted: BTreeSet<String> = scenario["steps"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .flat_map(|st| st["writes"].as_array().unwrap())
+        .flat_map(|w| w["deleted"].as_array().unwrap())
+        .map(|h| h.as_str().unwrap().to_owned())
+        .collect();
+    let expected: BTreeSet<String> = before_files.difference(&deleted).cloned().collect();
+    assert_eq!(in_my_files(&o), expected, "{name}: files left in my files");
 
     // what the commits left in the database
     let Some(relationships) = scenario.get("relationships") else {
