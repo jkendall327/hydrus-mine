@@ -1,6 +1,6 @@
 # The reference's manage subscriptions dialog
 
-Notes on the reference's code for porting (ROADMAP.md, item 1).
+Notes on the reference's code for porting (the old roadmap's item 1, now `docs/rust/history/roadmap-before-2026-10-08.md`).
 `oracle/record_subscriptions_list.py` records part of this. Record the
 rest before porting it. Quoted strings are verbatim. Paths are under
 `hydrus/`.
