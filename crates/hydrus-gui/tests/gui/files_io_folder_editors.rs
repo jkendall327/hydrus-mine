@@ -291,7 +291,7 @@ fn an_export_folders_search_phrase_schedule_and_overwrites_are_what_its_worker_d
 
     // the worker runs it: only pngs, named by file id; the run spends the
     // run-now flag and the one-time overwrite
-    let runs = hydrus_download::export::work_export_folders(&store).unwrap();
+    let runs = crate::common::export_folders_until_done(&store);
     assert_eq!(runs.len(), 1, "{runs:?}");
     assert_eq!(runs[0].1.error, None);
     let pngs = exported(dest.path());
@@ -322,7 +322,7 @@ fn an_export_folders_search_phrase_schedule_and_overwrites_are_what_its_worker_d
     edit.invoke_apply();
     list.invoke_apply();
     assert_eq!(stored_export(&store, "mine").search.predicates.len(), 1);
-    let runs = hydrus_download::export::work_export_folders(&store).unwrap();
+    let runs = crate::common::export_folders_until_done(&store);
     assert_eq!(runs.len(), 1);
     let everything = exported(dest.path());
     assert!(everything.len() > pngs.len(), "{everything:?} vs {pngs:?}");
@@ -371,7 +371,7 @@ fn an_export_folders_type_symlinks_and_trash_choices_reach_its_worker() {
     );
     assert!(folder.export_symlinks && !folder.delete_from_client_after_export);
 
-    let runs = hydrus_download::export::work_export_folders(&store).unwrap();
+    let runs = crate::common::export_folders_until_done(&store);
     assert_eq!(runs.len(), 1);
     assert_eq!(runs[0].1.error, None);
     let names = exported(dest.path());

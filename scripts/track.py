@@ -6,7 +6,11 @@
                                           the next leaves to work on (missing and
                                           partial first, then implemented-but-untagged)
     scripts/track.py show LEAF_ID         one leaf in full
-    scripts/track.py check                fail on tags naming unknown leaf IDs (CI)
+    scripts/track.py check                fail on tags naming unknown leaf IDs, or
+                                          on a malformed recheck record (CI)
+    scripts/track.py recheck [WORKSTREAM] the recheck (#97): done leaves per
+                                          workstream by recheck class; with a
+                                          workstream, the done leaves not yet rechecked
 
 A leaf is *done* when a test carries the comment `// leaf: <id>` (several IDs
 may be separated by commas or spaces), or when it was signed off under the
@@ -26,6 +30,12 @@ ROOT = Path(__file__).resolve().parent.parent
 LEAVES = ROOT / "docs/rust/tracking/leaves.json"
 TAG = re.compile(r"//\s*leaf:\s*(.+)$")
 ORDER = {"missing": 0, "partial": 1, "implemented": 2}
+# A done leaf's  record (issue 97): {"date", "class", "by", "note"}.
+# sound: the test drives the behaviour and compares with the reference;
+# source-restated: it does, against values restated from the Python source;
+# weak: a stand-in, part of the leaf, or a setting whose consumer is untested;
+# no-test: a carried leaf with no test found; wrong: contradicts the reference.
+RECHECK = ("sound", "source-restated", "weak", "no-test", "wrong")
 
 
 def load():
@@ -72,6 +82,29 @@ def summary(leaves, tagged):
     print(f"\n{tagged_count} leaves tagged in tests; "
           f"{sum(1 for l in leaves if l['state'] == 'carried' and l['id'] not in tagged)} carried over untagged.")
     print("implemented = written before 2026-10-08 but no tagged test yet: find or write the test, then tag it.")
+    done = [l for l in leaves if l["priority"] != "out-of-scope" and status(l, tagged) == "done"]
+    rechecked = Counter(l["recheck"]["class"] for l in done if l.get("recheck"))
+    print(f"recheck (#97): {sum(rechecked.values())} of {len(done)} done leaves rechecked"
+          + "".join(f", {rechecked[c]} {c}" for c in RECHECK if rechecked[c]) + ".")
+
+
+def recheck(leaves, tagged, workstream):
+    done = [l for l in leaves if l["priority"] != "out-of-scope" and status(l, tagged) == "done"]
+    if workstream:
+        todo = [l for l in done if l["workstream"] == workstream and not l.get("recheck")]
+        if not any(l["workstream"] == workstream for l in leaves):
+            sys.exit(f"no workstream {workstream}")
+        for leaf in sorted(todo, key=lambda l: l["id"]):
+            print(f"{leaf['id']}\t{'tagged' if leaf['id'] in tagged else 'carried'}")
+        print(f"({len(todo)} done leaves in {workstream} not yet rechecked)", file=sys.stderr)
+        return
+    by = defaultdict(Counter)
+    for leaf in done:
+        by[leaf["workstream"]][leaf["recheck"]["class"] if leaf.get("recheck") else "not yet"] += 1
+    cols = ["not yet", *RECHECK]
+    print(f"{'workstream':16s}" + "".join(f"{c:>16s}" for c in cols))
+    for ws in sorted(by):
+        print(f"{ws:16s}" + "".join(f"{by[ws][c]:16d}" for c in cols))
 
 
 def show(leaf, tagged):
@@ -81,6 +114,9 @@ def show(leaf, tagged):
         print(f"  reference: {leaf['reference']}")
     if leaf.get("native"):
         print(f"  native:    {leaf['native']}")
+    if leaf.get("recheck"):
+        r = leaf["recheck"]
+        print(f"  recheck:   {r['class']} ({r['date']}, {r['by']}): {r.get('note', '')}")
     for where in tagged.get(leaf["id"], []):
         print(f"  tagged:    {where}")
     for note in leaf.get("notes", []):
@@ -99,6 +135,8 @@ def main():
     sh = sub.add_parser("show")
     sh.add_argument("leaf")
     sub.add_parser("check")
+    rc = sub.add_parser("recheck")
+    rc.add_argument("workstream", nargs="?")
     args = ap.parse_args()
 
     leaves = load()
@@ -109,7 +147,21 @@ def main():
         unknown = {t: w for t, w in tagged.items() if t not in ids}
         for t, where in sorted(unknown.items()):
             print(f"unknown leaf id {t!r} at {', '.join(where)}", file=sys.stderr)
-        sys.exit(1 if unknown else 0)
+        bad = [
+            leaf["id"] for leaf in leaves
+            if leaf.get("recheck") is not None and (
+                not isinstance(leaf["recheck"], dict)
+                or leaf["recheck"].get("class") not in RECHECK
+                or not re.fullmatch(r"\d{4}-\d{2}-\d{2}", str(leaf["recheck"].get("date", "")))
+                or not leaf["recheck"].get("by")
+            )
+        ]
+        for leaf_id in bad:
+            print(f"malformed recheck record on {leaf_id!r}", file=sys.stderr)
+        sys.exit(1 if unknown or bad else 0)
+    if args.cmd == "recheck":
+        recheck(leaves, tagged, args.workstream)
+        return
     if args.cmd == "show":
         match = [leaf for leaf in leaves if leaf["id"] == args.leaf]
         if not match:

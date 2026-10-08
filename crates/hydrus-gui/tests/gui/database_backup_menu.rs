@@ -22,7 +22,7 @@ struct Rig {
     _dir: tempfile::TempDir,
     store: std::sync::Arc<Store>,
     ui: MainWindow,
-    _bound: Bound,
+    bound: Bound,
     _windows: headless::Windows,
     /// What the folder picker answers next, and what it was asked.
     next: Rc<RefCell<Vec<PathBuf>>>,
@@ -48,7 +48,7 @@ fn rig() -> Rig {
         _dir: dir,
         store,
         ui,
-        _bound: bound,
+        bound,
         _windows: windows,
         next,
         asked,
@@ -241,9 +241,31 @@ fn updating_the_backup_asks_backs_up_with_a_popup_and_the_menu_remembers() {
     assert!(std::fs::read_dir(dest.path()).unwrap().next().is_none());
     assert_eq!(rig.settings().last_backup, None);
 
-    // accepting makes it, with the popup, and remembers when
+    // accepting makes it, as a modal job (the reference publishes
+    // `modal_message`): held out of the popups for its dialog, and released
+    // to them when done
+    rig.bound.popup_modal.set_active(Some(false));
     rig.click("update database backup\u{2026}");
     rig.answer(true);
+    let deadline = Instant::now() + Duration::from_secs(10);
+    let held = loop {
+        let held = rig
+            .store
+            .read(|c| hydrus_store::popups::held(c, hydrus_core::TimestampMs::now().0 / 1000))
+            .unwrap();
+        if let Some(job) = held.into_iter().next() {
+            break job;
+        }
+        assert!(Instant::now() < deadline, "the backup was never held");
+    };
+    assert_eq!(held.status_title.as_deref(), Some(model::POPUP_TITLE));
+    assert!(held.cancellable);
+    assert!(
+        !shown(&rig.store)
+            .iter()
+            .any(|(title, _)| title.as_deref() == Some(model::POPUP_TITLE))
+    );
+    rig.bound.popup_modal.set_active(Some(true));
     wait_popup(&rig.store, model::COMPLETE);
     assert!(
         dest.path()

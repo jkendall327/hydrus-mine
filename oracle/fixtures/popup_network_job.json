@@ -1,0 +1,142 @@
+[
+ {
+  "label": "popup with no network job",
+  "has_job": false,
+  "shown": false,
+  "left": "",
+  "right": "",
+  "right_shown": true,
+  "gauge": [
+   0,
+   1
+  ],
+  "gauge_maximum": 1,
+  "gauge_qt_value": 0,
+  "stop_enabled": false
+ },
+ {
+  "label": "job with no engine yet",
+  "has_job": true,
+  "shown": true,
+  "left": "",
+  "right": "",
+  "right_shown": true,
+  "gauge": [
+   0,
+   1
+  ],
+  "gauge_maximum": 1,
+  "gauge_qt_value": 0,
+  "stop_enabled": false
+ },
+ {
+  "label": "connecting, nothing read",
+  "has_job": true,
+  "shown": true,
+  "left": "connecting...",
+  "right": "",
+  "right_shown": true,
+  "gauge": [
+   0,
+   1
+  ],
+  "gauge_maximum": 1,
+  "gauge_qt_value": 0,
+  "stop_enabled": true
+ },
+ {
+  "label": "downloading with a known size",
+  "has_job": true,
+  "shown": true,
+  "left": "downloading",
+  "right": "488 KB/1.91 MB 12.1 KB/s",
+  "right_shown": true,
+  "gauge": [
+   500000,
+   2000000
+  ],
+  "gauge_maximum": 1000,
+  "gauge_qt_value": 250,
+  "stop_enabled": true
+ },
+ {
+  "label": "downloading a small file",
+  "has_job": true,
+  "shown": true,
+  "left": "downloading",
+  "right": "400B/800B 100B/s",
+  "right_shown": true,
+  "gauge": [
+   400,
+   800
+  ],
+  "gauge_maximum": 800,
+  "gauge_qt_value": 400,
+  "stop_enabled": true
+ },
+ {
+  "label": "downloading with no known size",
+  "has_job": true,
+  "shown": true,
+  "left": "downloading",
+  "right": "2.93 KB 2 KB/s",
+  "right_shown": true,
+  "gauge": [
+   3000,
+   1
+  ],
+  "gauge_maximum": 1,
+  "gauge_qt_value": 0,
+  "stop_enabled": true
+ },
+ {
+  "label": "a quick download",
+  "has_job": true,
+  "shown": true,
+  "left": "done!",
+  "right": "4 KB",
+  "right_shown": true,
+  "gauge": [
+   4096,
+   4096
+  ],
+  "gauge_maximum": 1000,
+  "gauge_qt_value": 1000,
+  "stop_enabled": false
+ },
+ {
+  "label": "a failed download",
+  "has_job": true,
+  "shown": true,
+  "left": "ERROR: 404",
+  "right": "4 KB",
+  "right_shown": true,
+  "gauge": [
+   1500,
+   9000
+  ],
+  "gauge_maximum": 1000,
+  "gauge_qt_value": 166,
+  "stop_enabled": false
+ },
+ {
+  "label": "the job goes: cleared at once, still shown",
+  "has_job": false,
+  "shown": true,
+  "left": "",
+  "right": "",
+  "gauge": [
+   0,
+   1
+  ],
+  "stop_enabled": false
+ },
+ {
+  "label": "nine seconds on: still shown",
+  "shown": true
+ },
+ {
+  "label": "eleven seconds on: hidden",
+  "shown": false
+ }
+]

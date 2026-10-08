@@ -56,6 +56,11 @@ pub struct Job {
     pub user_callable_label: Option<String>,
     #[serde(default)]
     pub action_owner: Option<[u8; 32]>,
+    /// Published as a modal message (`modal_message`): kept out of the popups
+    /// until its dialog releases it (the reference's `AddMessage` waits for
+    /// that `pub`).
+    #[serde(default)]
+    pub held_by_modal: bool,
 }
 
 impl Job {
@@ -87,6 +92,7 @@ impl Job {
             popup_yes_no_question: None,
             user_callable_label: None,
             action_owner: None,
+            held_by_modal: false,
         }
     }
 
@@ -201,8 +207,25 @@ fn put(conn: &Connection, job: &Job) -> Result<()> {
     Ok(())
 }
 
-/// Every popup not dismissed by `now`, oldest first.
+/// Every popup not dismissed by `now`, oldest first, except those a modal
+/// dialog still holds.
 pub fn all(conn: &Connection, now: i64) -> Result<Vec<Job>> {
+    Ok(all_including_held(conn, now)?
+        .into_iter()
+        .filter(|job| !job.held_by_modal)
+        .collect())
+}
+
+/// The popups published as modal messages and not yet released to the
+/// popups, oldest first.
+pub fn held(conn: &Connection, now: i64) -> Result<Vec<Job>> {
+    Ok(all_including_held(conn, now)?
+        .into_iter()
+        .filter(|job| job.held_by_modal)
+        .collect())
+}
+
+fn all_including_held(conn: &Connection, now: i64) -> Result<Vec<Job>> {
     let mut stmt = conn.prepare_cached("SELECT job FROM popups ORDER BY seq")?;
     let rows = stmt.query_map([], |r| r.get::<_, String>(0))?;
     let mut out = Vec::new();
@@ -281,7 +304,7 @@ pub fn clear_dismissed(conn: &Connection, now: i64) -> Result<()> {
 /// work they were showing has stopped (the reference's popups go with the
 /// client). Messages and finished work stay to be read.
 pub fn forget_unfinished(conn: &Connection, now: i64) -> Result<()> {
-    for mut job in all(conn, now)? {
+    for mut job in all_including_held(conn, now)? {
         if !job.done {
             conn.prepare_cached("DELETE FROM popups WHERE key = ?1")?
                 .execute([job.key.as_slice()])?;

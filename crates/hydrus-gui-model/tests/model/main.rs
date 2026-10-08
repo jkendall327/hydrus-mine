@@ -42,6 +42,7 @@ mod force_filetype;
 mod force_idle;
 mod formula_editors;
 mod frame_placement;
+mod frame_save;
 mod hash_predicate;
 mod how_boned;
 mod image_cache;
@@ -162,7 +163,9 @@ mod search_or;
 mod system_or_activation;
 
 mod manage_tag_counts;
+mod manage_tags_cog;
 mod manage_tags_sort;
+mod manage_tags_viewer;
 
 mod frame_locations;
 mod incremental_tagging;
@@ -220,5 +223,7 @@ mod media_view_options;
 mod menu_choice_wheel;
 mod popup_freeze;
 mod system_tray;
+mod popup_modal;
+mod popup_network_job;
 
 mod viewer_prefetch;

@@ -165,7 +165,20 @@ fn storage_rows_and_service_topologies_replay_all_reference_combinations() {
         .iter()
         .position(|row| row.tag == logical_tag && row.parent_row)
         .unwrap();
-    draft.toggle_row(parent);
+    // (the reference asked what to do: some of the files had the tag)
+    let hydrus_gui_model::manage_tags::Entered::Ask(prompt) = draft.activate_row(parent).unwrap()
+    else {
+        panic!("some of the files have the tag, so the reference asks");
+    };
+    let asked = &activation["asked"][0];
+    assert_eq!(json!(prompt.message), asked["message"]);
+    assert_eq!(json!(prompt.choices), asked["choices"]);
+    let chosen = prompt
+        .choices
+        .iter()
+        .position(|c| json!(c) == asked["chosen"])
+        .unwrap();
+    draft.answer_prompt(&prompt, Some(chosen));
     assert!(draft.has_changes());
     assert_eq!(
         rows(&ManageTags::new(store.clone(), files.clone()).unwrap()),

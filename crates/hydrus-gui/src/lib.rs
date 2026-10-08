@@ -128,6 +128,7 @@ pub mod png_export_window;
 mod popup_freeze;
 mod popup_job_actions;
 mod popup_menu;
+pub mod popup_modal;
 mod popups;
 pub mod predicate_editor_window;
 mod predicate_notice;
@@ -466,6 +467,9 @@ pub struct Bound {
     _menu_titles: Rc<slint::Timer>,
     /// Shows the popup messages (held likewise).
     _popups: Rc<popups::Binding>,
+    /// Modal popups: held jobs and the dialog for one.
+    pub popup_modal: Rc<popup_modal::Controller>,
+    _geometry_autosave: Rc<slint::Timer>,
     /// Automatic recognised URL imports while this desktop window is bound.
     pub clipboard_monitor: clipboard_monitor::Monitor,
     /// Historical autosaves, with real input activity and a bounded timer.
@@ -2022,7 +2026,8 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         move |store: Arc<hydrus_store::Store>,
               files: Vec<HashId>,
               applied: Rc<dyn Fn()>,
-              context: hydrus_store::manage_tags_sort::Context| {
+              context: hydrus_store::manage_tags_sort::Context,
+              link: Option<manage_tags_window::ViewerLink>| {
             if !binding_active.get() {
                 return;
             }
@@ -2030,11 +2035,15 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                 let _ = window.show();
                 return;
             }
-            let Some(mut model) = manage_tags::ManageTags::new_at(store, files, context) else {
+            let model = match (&link, files.first()) {
+                (Some(_), Some(&file)) => manage_tags::ManageTags::new_viewer(store, file),
+                _ => manage_tags::ManageTags::new_at(store, files, context),
+            };
+            let Some(mut model) = model else {
                 return;
             };
             model.set_location(page().borrow().location().clone());
-            match manage_tags_window::open(model, &manage_tags, &incremental_tags, applied) {
+            match manage_tags_window::open(model, &manage_tags, &incremental_tags, applied, link) {
                 Ok(window) => *manage_tags.borrow_mut() = Some(window),
                 Err(e) => eprintln!("could not open manage tags: {e}"),
             }
@@ -2042,12 +2051,13 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
     };
     let open_manage_tags_viewer = {
         let open = open_manage_tags.clone();
-        move |store, files, applied| {
+        move |store, files, applied, link| {
             open(
                 store,
                 files,
                 applied,
                 hydrus_store::manage_tags_sort::Context::MediaViewer,
+                link,
             );
         }
     };
@@ -2198,6 +2208,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                 files,
                 tags_changed.clone(),
                 hydrus_store::manage_tags_sort::Context::SearchPage,
+                None,
             );
             if let Some(window) = manage_tags.borrow().as_ref() {
                 window.set_window_title(title.into());
@@ -3346,6 +3357,9 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             }
         },
     );
+    let popup_modal = popup_modal::Controller::bind(window, pages.borrow().store().clone());
+    let geometry_autosave =
+        windows::autosave(window.as_weak(), pages.borrow().store().clone(), "main_gui");
     // popup messages, the daemon's and the Client API's
     let popup_timer = Rc::new(popups::bind(
         window,
@@ -5417,6 +5431,8 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         _thumbnails: thumbnails,
         _menu_titles: menu_titles,
         _popups: popup_timer,
+        popup_modal,
+        _geometry_autosave: geometry_autosave,
         clipboard_monitor,
         _header_approval: header_approval,
     }
@@ -6274,7 +6290,14 @@ impl Asked {
 }
 
 /// Opens manage tags on files, calling the hook given once applied.
-type OpenManageTags = Rc<dyn Fn(Arc<hydrus_store::Store>, Vec<HashId>, Rc<dyn Fn()>)>;
+type OpenManageTags = Rc<
+    dyn Fn(
+        Arc<hydrus_store::Store>,
+        Vec<HashId>,
+        Rc<dyn Fn()>,
+        Option<manage_tags_window::ViewerLink>,
+    ),
+>;
 
 /// Opens manage notes on a file, calling the hook given once applied.
 type OpenManageNotes = Rc<dyn Fn(Arc<hydrus_store::Store>, HashId, Rc<dyn Fn()>)>;
@@ -6664,7 +6687,10 @@ fn open_viewer(
     let presenting = Rc::new(std::cell::Cell::new(slideshow::Shown::Still));
     viewer_tag_wheel::bind(&window, &viewing_stats, model.borrow().store());
     let last_tag_file = Rc::new(std::cell::Cell::new(None));
+    // the Manage Tags window opened from here follows the file shown
+    let tags_follow: manage_tags_window::Follow = Rc::default();
     let show = {
+        let tags_follow = tags_follow.clone();
         let warm = warm.clone();
         let warm_valid = warm_valid.clone();
         let last_tag_file = last_tag_file.clone();
@@ -6695,6 +6721,10 @@ fn open_viewer(
             window.set_caption(model.caption().into());
             if last_tag_file.replace(Some(model.current())) != Some(model.current()) {
                 window.invoke_tag_media_changed();
+                let follower = tags_follow.borrow().clone();
+                if let Some(follower) = follower {
+                    follower(model.current());
+                }
             }
             viewer_tag_search::refresh(&window, &model);
             // (for a file that plays, its thumbnail until the first frame)
@@ -7297,6 +7327,7 @@ fn open_viewer(
     // manage a file's tags; once applied, the hover frame's and the page's
     // are shown again
     let manage_tags_of: Rc<dyn Fn(HashId)> = Rc::new({
+        let tags_follow = tags_follow.clone();
         let model = model.clone();
         let canvas = viewing_stats.clone();
         let weak = window.as_weak();
@@ -7312,6 +7343,21 @@ fn open_viewer(
             let store = model.borrow().store().clone();
             let show = show.clone();
             let tags_changed = tags_changed.clone();
+            let link = manage_tags_window::ViewerLink {
+                follow: tags_follow.clone(),
+                step: Rc::new({
+                    let weak = weak.clone();
+                    move |next| {
+                        if let Some(viewer) = weak.upgrade() {
+                            if next {
+                                viewer.invoke_next();
+                            } else {
+                                viewer.invoke_previous();
+                            }
+                        }
+                    }
+                }),
+            };
             manage_tags(
                 store,
                 vec![file],
@@ -7319,6 +7365,7 @@ fn open_viewer(
                     show();
                     tags_changed();
                 }),
+                Some(link),
             );
         }
     });

@@ -357,12 +357,40 @@ search.
 - **The about window describes hydrus-rs**: its name, its own version
   beside the hydrus version it ports ("v0.1.0, porting hydrus v688, using
   network version 20"), and, on its description tab, the reference's
-  lines that mean something for it (the platform, ffmpeg and SQLite
-  versions, the boot time, the directories, and the store's cache size,
-  journal and synchronous modes, as SQLite reports them); Python's
-  libraries, Qt, the locale, the commit period and temp-in-memory lines
-  aren't there, and the optional libraries tab lists ffmpeg alone. The
-  boot time is in UTC, and there is no hydrus icon over the name.
+  lines that mean something for it (the platform and how it was built,
+  ffmpeg and SQLite versions, the boot time, the directories, the locale,
+  and the store's cache size, journal and synchronous modes and whether
+  its temporary files are in memory, as SQLite reports them); the Python,
+  OpenCV, openssl, numpy, Pillow and Qt version lines and the transaction
+  commit period (every write commits) aren't there, and the optional
+  libraries tab lists hydrus-rs's own optional parts (ffmpeg, mpv,
+  PDF, SVG, lz4, olefile, HEIF, AVIF and Jpeg-XL, which it has no decoder
+  for) rather than Python modules. The boot time is in UTC, and there is
+  no hydrus icon over the name.
+- **A modal popup's dialog doesn't block the main window**, and "active"
+  means the main window has the focus (a modal waits while another window of
+  hydrus-rs is the focused one, and does not know of other dialogs, only
+  its own). It does not pause playing media as it opens
+  (`pub( 'pause_all_media' )`), and the variant that hides the other windows
+  (the file migration dialogs, which hydrus-rs does not have in this form)
+  isn't there. Waiting jobs are retried oldest first; the reference's
+  set has no order. Only one real job is published modal so far, the
+  database backup (the reference's `_Backup`); the reference's other
+  `modal_message` jobs (the cache regenerations, orphan file records and
+  so on) are not ported as modal where hydrus-rs has an equivalent, and the
+  recorded hide-the-main-GUI case is not replayed by any test. The
+  `audit-options-popups-modal` tag is for the dialog's lifecycle, proved with
+  the debug job and the backup.
+- **The popup freeze's mouse-on-another-monitor condition**
+  (`freeze_message_manager_when_mouse_on_other_monitor`) is not
+  implemented (it needs a global cursor position: #94). Minimised and
+  hidden freezing are (`audit-options-popups-freeze`).
+- **The About description and optional libraries list hydrus-rs's own
+  components**, by the owner's decision (2026-10-08), not Python, Qt or
+  numpy: `audit-options-about-description` and
+  `audit-options-about-libraries` are tagged on that footing. The tests show
+  the reference's recorded tab rendered by hydrus-rs's formatter and
+  hydrus-rs's own lines as a subset of the reference's labels.
 - **The options window has only the options hydrus-rs honours** (so far
   those on twenty-five pages; the others, and pages with none, aren't there:
   on the connection page, the CA bundle and curl_cffi test; on the
@@ -767,8 +795,9 @@ deleted sidecars by `crates/hydrus-download/tests/local_import.rs`.
   works, its messages, and the new files it publishes to a popup button
   are shown as the reference shows them (and the messages logged). In its
   popup, the download it is doing has no stop button of its own (the
-  popup's cancel stops the subscription where the reference's would), and
-  goes when the download ends rather than ten seconds later.
+  popup's cancel stops the subscription where the reference's would; its
+  stop button is off where the reference's is on while it runs, and it has
+  no cog or error menu there).
 - **Subscription changes made from the command line reach a running
   `hydrus serve` within five minutes.**
 - **Full subscription exchange transport** supports modern reference container 90
@@ -2211,8 +2240,25 @@ Frame locations: the complete imported table and geometry editor persist all
 fields, but placement consumers currently use remembered size/position and
 maximised/fullscreen for the main window, media viewer and Options window. Existing named dialog owners also use their wired frame keys. Default gravity
 and parent/centre positioning now reach those owners too (see "Options kept but
-not used"); pointer positioning and screen fitting remain incomplete; the
+not used"); pointer positioning remains incomplete; the
 broader frame/table/editor coverage remains Partial.
+`audit-options-geometry` is untagged. What is proved: saving, as the
+reference's `SaveTLWSizeAndPosition` (`tests/model/frame_save.rs`, 26
+recorded cases), for the main window (`shell_geometry.rs`). Not proved:
+restoring stale or off-screen geometry on open (the opening rescue is
+tested under the frame-locations leaves), and saving for any other frame or
+dialog, which hydrus-rs does not do.
+A closing window saves as `SaveTLWSizeAndPosition` does (see GUI.md), but
+only the main window and the media viewer save: the main window as it closes
+and again a quarter second to half a second after it moves, resizes or
+maximises (the reference's frames use a tenth of a second); the viewer, and
+the reference's dialogs and other frames, only as they close or not at all.
+A window's frame position is its outer
+position as winit reports it, which a Wayland compositor does not tell, and
+the display it is on is winit's current monitor; with no monitor list
+(software-backed windows) the earlier size and place rule is used alone.
+The minimum size the reference sets on an opening window (the smaller of
+240 and its size) isn't set.
 The real Options lifecycle does not retain incidental resize/move geometry on
 Cancel/X or unchanged Apply: the accepted-dialog geometry save occurs before
 the GUI page commits its captured frame table. Native retains the same final
@@ -3919,8 +3965,8 @@ change nothing). They are marked out of scope in `docs/rust/tracking/`.
   back into the client (user call test, auto-account creation, gap
   downloader) and its network-job popup, and the test job's subjob doesn't
   start pulsing after two seconds.
-- The "modal" popups are ordinary popups: hydrus-rs has no modal popup
-  dialog.
+- The "modal" popups open a dialog of their own (see "A modal popup's
+  dialog" above); the debug action's cancellable one counts down in it.
 - "reset multi-column list settings to default" asks, then has nothing to
   reset: hydrus-rs doesn't save list column widths.
 - "force database commit" checkpoints SQLite's write-ahead log (hydrus-rs
@@ -3980,7 +4026,8 @@ change nothing). They are marked out of scope in `docs/rust/tracking/`.
 - A backup holds hydrus-rs's one database file and the media directory
   (`client_files` there), not the reference's four .db files. The backup
   works with the database live (SQLite's online backup) rather than closing
-  it, and shows its progress in an ordinary popup, not a modal one.
+  it, and shows its progress in the modal dialog the reference does
+  (published modal, so it opens its dialog unless it finishes first).
 - "Simple" means the media is in one location, which may be outside the
   database directory (an imported client's); the reference requires its
   default `client_files`.
@@ -4197,3 +4244,34 @@ directory.
 - The tray menu's entries are checked against the recording for their words
   only (the headless platform has no menu to open), and Slint cannot show the
   reference's tooltips on them.
+
+## Manage tags: cog, removal, viewer dialog (issue 86)
+
+- The cog lacks the reference's moderator item ("modify users who added the
+  selected tags"): it exists only for tag repositories, which are out of scope.
+  Its menu is the shared native popup, the same one the write autocomplete uses.
+- The cog, copy and incremental buttons are text ("⚙", "copy", "±") rather than icons;
+  "Copied 3 tags!" is a line of text under the buttons, not a micro-notification on
+  the copy button.
+- "What would you like to do?" is the shared native question overlay with the two
+  choices as its buttons (the reference's local services never offer more); the
+  per-choice tooltips are computed (and tested) but not shown.
+- Clicking an expanded parent row selects that row, but remove and copy use only
+  the selected tag rows, not the parent rows; activating a parent row enters its
+  originating tag, as the reference does.
+- The viewer's Manage tags is its own window, not a frame belonging to the viewer;
+  it is closed when its own "close" is pressed rather than with the viewer. If a
+  Manage tags window opened from a page is already open, F3 in the viewer shows that
+  one (which does not follow the viewer).
+- Suggested tags: the file-lookup-script panel is not ported (the legacy
+  parsing scripts it runs are not in hydrus-rs), and `show_file_lookup_script_tags`
+  stays an option nothing reads. The related panel has one search, not the
+  quick/medium/thorough buttons and their time budgets, and does not yet search
+  from the selected tags when some are selected (the reference then searches those
+  alone and excludes the others). `audit-media-tags-missing-suggestions` and
+  `audit-options-nested-tag-suggestions-tabs` are therefore not tagged.
+- The write-autocomplete leaves (`audit-media-tags-autocomplete`,
+  `siblings-autocomplete`, `parents-autocomplete`) stay untagged: the empty-input
+  keys were the one concrete reference behaviour found missing and are now done,
+  but no test covers what those leaves name as a whole, and their long notes (context
+  menus, selection, undo history) were not re-verified here.
