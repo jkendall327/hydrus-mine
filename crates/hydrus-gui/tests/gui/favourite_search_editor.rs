@@ -237,3 +237,120 @@ fn favourite_domain_sort_collect_and_autocomplete_widgets_reach_saved_searches()
         saved
     );
 }
+
+// leaf: audit-options-search-star-save
+#[test]
+fn save_this_search_opens_the_captured_search_and_every_part_of_it_can_be_edited_before_saving() {
+    let (_dirs, store) = crate::subscriptions::store();
+    store
+        .write(|ctx| settings::set(ctx.conn(), &AdvancedMode(true)))
+        .unwrap();
+    let _windows = headless::init();
+    let mut page = SearchPage::restored(
+        store.clone(),
+        hydrus_search::FileSearchContext {
+            location: hydrus_search::LocationContext::single(ServiceKey::new(
+                hydrus_core::service::builtin_keys::MY_FILES.to_vec(),
+            )),
+            tags: hydrus_search::TagContext::default(),
+            predicates: Vec::new(),
+        },
+        true,
+        None,
+        Vec::new(),
+    );
+    page.add_predicate("system:inbox");
+    page.add_predicate("blue eyes");
+    page.set_sort_by(hydrus_search::SortBy::FileSize);
+    page.set_sort_order(hydrus_search::SortOrder::Ascending);
+    page.set_collect(PageCollect {
+        namespaces: vec!["creator".into()],
+        ratings: Vec::new(),
+        collect_unmatched: false,
+        tag_context: hydrus_search::TagContext::default(),
+    });
+    let captured_sort = page.sort().clone();
+    let page_predicates = page.predicates();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::single(page));
+    let original: FavouriteSearches = store.read(settings::get).unwrap();
+
+    // the star menu's "save this search" opens the manager and an edit
+    // dialog on the page's search, "new favourite search", in no folder
+    ui.invoke_favourites_menu_requested(0.0, 0.0);
+    let panes = ui.get_menu_panes();
+    let lines = panes.row_data(0).unwrap().lines;
+    let save = (0..lines.row_count())
+        .find(|&i| lines.row_data(i).unwrap().label == "save this search")
+        .unwrap();
+    ui.invoke_menu_line_clicked(0, i32::try_from(save).unwrap(), 0.0, 0.0, 0.0);
+    let manager = bound
+        .favourites
+        .list
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
+    let w = bound
+        .favourites
+        .edit
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
+    assert_eq!(w.get_name(), "new favourite search");
+    assert_eq!(w.get_folder(), "");
+    assert_eq!(w.get_location_label(), "my files");
+    let shown: Vec<String> = w.get_predicates().iter().map(|s| s.to_string()).collect();
+    assert_eq!(shown, page_predicates);
+    assert!(w.get_synchronised());
+    assert!(w.get_save_sort() && w.get_save_collect());
+    assert!(
+        w.get_sort_label().contains("filesize"),
+        "{}",
+        w.get_sort_label()
+    );
+    assert!(
+        w.get_collect_label().contains("creator"),
+        "{}",
+        w.get_collect_label()
+    );
+
+    // each captured part can be edited: name, domain, sort and collect
+    w.set_name("captured and changed".into());
+    w.invoke_location_chosen(index(&w.get_location_choices(), "all known files"));
+    w.invoke_sort_chosen(index(&w.get_sort_choices(), "dimensions: width"));
+    let choices = w.get_collect_choices();
+    let creator = (0..choices.row_count())
+        .find(|&i| choices.row_data(i).unwrap().label == "creator")
+        .unwrap();
+    w.invoke_collect_ticked(i32::try_from(creator).unwrap(), false);
+    w.invoke_apply();
+    assert_eq!(
+        store.read(settings::get::<FavouriteSearches>).unwrap(),
+        original,
+        "the manager owns persistence"
+    );
+    manager.invoke_apply();
+    let saved: FavouriteSearches = store.read(settings::get).unwrap();
+    let favourite = saved
+        .0
+        .iter()
+        .find(|s| s.name == "captured and changed")
+        .unwrap();
+    assert_eq!(favourite.folder, None);
+    assert!(favourite.synchronised);
+    assert_eq!(favourite.search.predicates.len(), 2);
+    assert_ne!(
+        favourite.search.location,
+        hydrus_search::LocationContext::single(ServiceKey::new(
+            hydrus_core::service::builtin_keys::MY_FILES.to_vec()
+        ))
+    );
+    assert_ne!(
+        favourite.sort.as_ref().unwrap().by,
+        captured_sort.by,
+        "the sort was edited"
+    );
+    assert!(favourite.collect.as_ref().unwrap().namespaces.is_empty());
+}

@@ -212,8 +212,11 @@ search.
   remove/invert/OR merge or dissolve/namespace commands reach the query. Populated
   OR controls embedded in a mixed edit, inherited sibling/parent editors and
   their asynchronous relationship information, favourite/most-used tags and
-  maintenance branches remain missing, so the original action earns no completion
-  credit. Inherited copy/open transports now work, including collapsed OR copying
+  maintenance branches remain missing. The edit/invert leaf
+  (`audit-options-search-active-edit`) is tagged for what the recordings
+  cover: the populated editors, invert, OR, and the copy/open commands; the
+  sibling/parent entries the active list inherits from the tag list are
+  tracked with the tag-relationship windows. Inherited copy/open transports now work, including collapsed OR copying
   and real AND/OR/per-predicate/duplicate-filter pages. Per-predicate pages open
   in native list order; Qt iterates its selected-term set. Qt’s active-list file
   selection handler is an inherited no-op, distinct from its media-list handler.
@@ -272,14 +275,23 @@ search.
   styling uses the existing Slint notice rather than Qt's warning icon. Hash
   source regressions and PNG captures are authored; hosted execution/rendered
   inspection are pending.
-  "Paste image!" takes a file's path from the clipboard, not image data.
+  "Paste image!" takes a file's path from the clipboard, not image data
+  (reading a bitmap needs `arboard`'s `image-data` feature and so the `image`
+  crate; the leaf `...similartodata-paste` stays open for that).
+  The archived and modified date panels are checked, with the import and
+  last-viewed ones, against the shared base class's recorded scenarios; the
+  recorder ran import and last-viewed only, so the other two replay the same
+  steps with their own time kind.
   A recent predicate is forgotten with a "forget" button where the
   reference has a trash icon. The star menu now saves/resets typed defaults
   immediately, surviving owner Cancel and keeping current fields unchanged on
   reset. Star Save can retain an invalid regex, as the reference's Save path
   bypasses its separate acceptance check; OK still reports the invalid regex.
   Its date/relative, views/viewtime, URL-type and cross-service rating
-  comparability follows the actual reference. Per-service rating panels preserve
+  comparability follows the actual reference. The like, numerical and inc/dec
+  rating panels are built per rating service, with the service's name as a
+  label and no selector, as the reference builds them (only the advanced panel
+  has a service chooser). Per-service rating panels preserve
   the reference's omission of custom-default initialization; advanced rating uses
   it. Legacy defaults are imported into the same canonical typed store setting;
   unreadable future records stay lossless in imported options and inactive in
