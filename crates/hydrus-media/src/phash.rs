@@ -156,12 +156,7 @@ pub fn perceptual_hash(image: &Raster) -> PerceptualHash {
             }
         }
     }
-    say(&|| {
-        format!(
-            "perceptual_hash: {}",
-            bytes.iter().map(|b| format!("{b:02x}")).collect::<String>()
-        )
-    });
+    say(&|| format!("perceptual_hash: {}", hex::encode(bytes)));
     PerceptualHash(bytes)
 }
 

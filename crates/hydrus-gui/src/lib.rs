@@ -2960,7 +2960,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                 Rc::new(move |action| database_backup_window::run(&context, action))
             },
             debug: {
-                debug_actions::install_report_sink(pages.borrow().store().clone());
+                debug_actions::install_report_sink(pages.borrow().store());
                 let context = debug_actions::Context {
                     pages: pages.clone(),
                     ask: {

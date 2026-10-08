@@ -13,7 +13,7 @@ fn phash_generation_report_mode_reports_each_stage() {
     let seen = Arc::new(Mutex::new(Vec::<String>::new()));
     let sink = seen.clone();
     debug_flags::set_sink(Some(Box::new(move |t| {
-        sink.lock().unwrap().push(t.to_owned())
+        sink.lock().unwrap().push(t.to_owned());
     })));
     let image = Raster::new(40, 30, 3, vec![120; 40 * 30 * 3]).unwrap();
     let silent = perceptual_hash(&image);

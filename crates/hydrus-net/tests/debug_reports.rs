@@ -18,7 +18,7 @@ async fn network_report_mode_reports_redirects_and_errors_unless_silent() {
     let seen = Arc::new(Mutex::new(Vec::<String>::new()));
     let sink = seen.clone();
     debug_flags::set_sink(Some(Box::new(move |t| {
-        sink.lock().unwrap().push(t.to_owned())
+        sink.lock().unwrap().push(t.to_owned());
     })));
     let app = Router::new()
         .route("/ok", get(|| async { "fine" }))

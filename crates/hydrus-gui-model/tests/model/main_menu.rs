@@ -79,6 +79,7 @@ fn kept(entries: &[Value]) -> Vec<Value> {
                         "blurhash mode",
                         "cache report mode",
                         "daemon report mode",
+                        "file report mode",
                         "file import report mode",
                         "idle report mode",
                         "network report mode",

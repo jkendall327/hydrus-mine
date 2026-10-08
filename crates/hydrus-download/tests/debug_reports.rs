@@ -19,7 +19,7 @@ fn subscription_report_mode_says_why_each_query_is_or_is_not_due() {
     let seen = Arc::new(Mutex::new(Vec::<String>::new()));
     let sink = seen.clone();
     debug_flags::set_sink(Some(Box::new(move |t| {
-        sink.lock().unwrap().push(t.to_owned())
+        sink.lock().unwrap().push(t.to_owned());
     })));
     let dir = tempfile::tempdir().unwrap();
     let store = Store::open(dir.path()).unwrap();

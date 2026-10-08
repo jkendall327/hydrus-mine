@@ -66,15 +66,12 @@ impl<T> Cache<T> {
         {
             self.bytes -= entry.bytes;
             hydrus_core::debug_flags::report(hydrus_core::debug_flags::Flag::CacheReport, || {
+                let size = hydrus_core::numbers::human_bytes(entry.bytes);
+                let current = hydrus_core::numbers::human_bytes(self.bytes);
+                let limit = hydrus_core::numbers::human_bytes(self.policy.bytes);
                 format!(
-                    "Cache \"{}\" removing oldest item \"{id:?}\", size \"{}\". Current size {}.",
-                    self.name,
-                    hydrus_core::numbers::human_bytes(entry.bytes),
-                    format!(
-                        "{}/{}",
-                        hydrus_core::numbers::human_bytes(self.bytes),
-                        hydrus_core::numbers::human_bytes(self.policy.bytes)
-                    )
+                    "Cache \"{}\" removing oldest item \"{id:?}\", size \"{size}\". Current size {current}/{limit}.",
+                    self.name
                 )
             });
         }

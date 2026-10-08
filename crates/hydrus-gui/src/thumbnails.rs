@@ -368,12 +368,9 @@ mod tests {
         let loader = ThumbnailLoader::new(&store, 1);
         let load = || {
             loader.request(id, 1.0, 0);
-            let (_, _, _, pixels) = loop {
-                if let Some(done) = loader.receive_timeout(Duration::from_secs(10)) {
-                    break done;
-                }
-                panic!("no thumbnail");
-            };
+            let (_, _, _, pixels) = loader
+                .receive_timeout(Duration::from_secs(10))
+                .expect("a thumbnail");
             pixels
                 .unwrap()
                 .image()
