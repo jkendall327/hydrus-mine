@@ -117,12 +117,30 @@ fn custom_sets_are_added_edited_renamed_deleted_and_saved_only_by_options_ok() {
         custom(&parent),
         [pair("rating keys", "2"), pair("rating keys (1)", "0")]
     );
-    // a custom set cannot take a built-in name
-    add_custom(&parent, "main_gui", &["e"]);
+    // a custom set cannot take a built-in name: the editor refuses with the
+    // reference's veto and stays open until another name is chosen
+    parent.invoke_shortcut_set_action("add".into());
+    let window = hydrus_gui::shortcut_windows::last_set().unwrap();
+    window.set_set_name("main_gui".into());
+    add_key(&window, "e");
+    window.invoke_apply();
+    assert_eq!(window.get_error(), sets::RESERVED_NAME_VETO);
+    assert_eq!(
+        sets::RESERVED_NAME_VETO,
+        "That name is reserved--please pick another!"
+    );
+    assert!(parent.get_shortcuts_child_open());
+    assert_eq!(
+        custom(&parent),
+        [pair("rating keys", "2"), pair("rating keys (1)", "0")]
+    );
+    window.set_set_name("other keys".into());
+    window.invoke_apply();
+    assert!(!parent.get_shortcuts_child_open());
     assert_eq!(
         custom(&parent),
         [
-            pair("main_gui (1)", "1"),
+            pair("other keys", "1"),
             pair("rating keys", "2"),
             pair("rating keys (1)", "0")
         ]
@@ -141,7 +159,12 @@ fn custom_sets_are_added_edited_renamed_deleted_and_saved_only_by_options_ok() {
     let window = hydrus_gui::shortcut_windows::last_set().unwrap();
     assert_eq!(window.get_set_name(), "rating keys");
     assert_eq!(window.get_rows().row_count(), 2);
-    window.set_set_name("main_gui (1)".into());
+    // renaming onto a built-in name is vetoed here too
+    window.set_set_name("media".into());
+    window.invoke_apply();
+    assert_eq!(window.get_error(), sets::RESERVED_NAME_VETO);
+    assert!(parent.get_shortcuts_child_open());
+    window.set_set_name("rating keys (1)".into());
     window.invoke_selected_row(0);
     window.invoke_action("remove".into());
     assert!(window.get_remove_question());
@@ -150,17 +173,17 @@ fn custom_sets_are_added_edited_renamed_deleted_and_saved_only_by_options_ok() {
     assert_eq!(
         custom(&parent),
         [
-            pair("main_gui (1)", "1"),
-            pair("main_gui (1) (1)", "1"),
-            pair("rating keys (1)", "0")
+            pair("other keys", "1"),
+            pair("rating keys (1)", "0"),
+            pair("rating keys (1) (1)", "1")
         ]
     );
     // activating a row (double-click) edits it too; own name stays
-    parent.invoke_shortcut_set_activated(true, 2);
+    parent.invoke_shortcut_set_activated(true, 1);
     let window = hydrus_gui::shortcut_windows::last_set().unwrap();
     assert_eq!(window.get_set_name(), "rating keys (1)");
     window.invoke_apply();
-    assert_eq!(custom(&parent)[2], pair("rating keys (1)", "0"));
+    assert_eq!(custom(&parent)[1], pair("rating keys (1)", "0"));
 
     // delete: asks, and a "no" keeps them; ctrl-click selects more than one
     parent.invoke_shortcut_set_clicked(true, 0, false, false);
@@ -174,7 +197,7 @@ fn custom_sets_are_added_edited_renamed_deleted_and_saved_only_by_options_ok() {
     assert_eq!(custom(&parent).len(), 3);
     parent.invoke_shortcut_set_action("delete".into());
     chooser().invoke_chosen(0);
-    assert_eq!(custom(&parent), [pair("main_gui (1) (1)", "1")]);
+    assert_eq!(custom(&parent), [pair("rating keys (1)", "0")]);
     assert!(!parent.get_shortcut_custom_selected());
 
     // Cancel discards everything; OK saves it

@@ -11,6 +11,15 @@ use hydrus_store::{import_folders, settings};
 
 use crate::subscriptions::store;
 
+/// A 1x1 png: an importable file by content.
+const PNG: &[u8] = &[
+    0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, 0x00, 0x00, 0x00, 0x0d, 0x49, 0x48, 0x44, 0x52,
+    0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x01, 0x08, 0x02, 0x00, 0x00, 0x00, 0x90, 0x77, 0x53,
+    0xde, 0x00, 0x00, 0x00, 0x0c, 0x49, 0x44, 0x41, 0x54, 0x78, 0x9c, 0x63, 0xf8, 0xcf, 0xc0, 0x00,
+    0x00, 0x03, 0x01, 0x01, 0x00, 0xc9, 0xfe, 0x92, 0xef, 0x00, 0x00, 0x00, 0x00, 0x49, 0x45, 0x4e,
+    0x44, 0xae, 0x42, 0x60, 0x82,
+];
+
 /// file > import/export folders > `label`.
 pub(crate) fn open(ui: &MainWindow, label: &str) {
     let titles = ui.get_menu_titles();
@@ -308,8 +317,12 @@ fn an_import_folders_filename_tagging_is_added_edited_and_deleted() {
     let ui = MainWindow::new().unwrap();
     let bound = bind(&ui, Pages::open(store.clone()).unwrap());
     let watched = tempfile::tempdir().unwrap();
-    let example = watched.path().join("pic 1.jpg");
-    std::fs::write(&example, b"x").unwrap();
+    // the example is the first importable file by content (`_PathChanged`):
+    // a text file and a one-byte ".jpg" are passed over
+    std::fs::write(watched.path().join("notes.txt"), b"a sidecar").unwrap();
+    std::fs::write(watched.path().join("bad.jpg"), b"x").unwrap();
+    let example = watched.path().join("pic 1.png");
+    std::fs::write(&example, PNG).unwrap();
     open(&ui, "manage import folders\u{2026}");
     let list = import_list(&bound);
     list.invoke_add();

@@ -1,0 +1,81 @@
+// The preview's volume control (the reference's `VolumeControl` on the
+// preview canvas, `ClientGUIMediaControls`): at the media's bottom right,
+// the global mute; with the pointer on it, above it the volume
+// (`VolumeSlider`, the preview's own or the global one) and the preview's
+// own mute (`AudioMuteButton`). Shown for a file the preview plays that
+// has sound.
+export component PreviewVolume inherits Rectangle {
+    // the volume the slider moves, 0 to 100
+    in property <int> volume;
+    in property <bool> global-muted;
+    in property <bool> preview-muted;
+    out property <bool> open: area.has-hover || area.pressed;
+    callback volume-changed(int);
+    callback flip-global-mute();
+    callback flip-preview-mute();
+    property <length> line: 20px;
+    property <length> track-top: 10px;
+    property <length> track: 100px;
+    // the track and the preview's mute, above the global mute
+    property <length> popup: self.track + 2 * self.track-top + self.line;
+    width: 24px;
+    height: self.open ? self.popup + self.line : self.line;
+    background: #303030;
+    border-width: 1px;
+    border-color: #606060;
+    pure function volume-at(y: length) -> int {
+        clamp(round((1 - (y - root.track-top) / root.track) * 100), 0, 100)
+    }
+    if root.open: Rectangle {
+        x: (root.width - self.width) / 2;
+        y: root.track-top;
+        width: 4px;
+        height: root.track;
+        background: #606060;
+    }
+    if root.open: Rectangle {
+        x: 4px;
+        y: root.track-top + root.track * (1 - root.volume / 100) - 3px;
+        width: root.width - 8px;
+        height: 6px;
+        background: #b0b0b0;
+    }
+    if root.open: Text {
+        y: root.popup - root.line;
+        width: root.width;
+        height: root.line;
+        horizontal-alignment: center;
+        vertical-alignment: center;
+        text: root.preview-muted ? "🔇" : "🔊";
+        color: #f0f0f0;
+        font-size: 11px;
+    }
+    Text {
+        y: root.height - root.line;
+        width: root.width;
+        height: root.line;
+        horizontal-alignment: center;
+        vertical-alignment: center;
+        text: root.global-muted ? "🔇" : "🔊";
+        color: #f0f0f0;
+        font-size: 11px;
+    }
+    area := TouchArea {
+        pointer-event(event) => {
+            if (event.button == PointerEventButton.left && event.kind == PointerEventKind.down) {
+                if (self.mouse-y >= root.height - root.line) {
+                    root.flip-global-mute();
+                } else if (root.open && self.mouse-y >= root.popup - root.line) {
+                    root.flip-preview-mute();
+                } else if (root.open) {
+                    root.volume-changed(root.volume-at(self.mouse-y));
+                }
+            }
+        }
+        moved => {
+            if (self.pressed && root.open && self.pressed-y < root.popup - root.line) {
+                root.volume-changed(root.volume-at(self.mouse-y));
+            }
+        }
+    }
+}

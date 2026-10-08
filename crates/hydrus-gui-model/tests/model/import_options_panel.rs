@@ -63,6 +63,7 @@ fn select(editor: &mut Editor, list: List, names: &serde_json::Value) {
     }
 }
 
+// leaf: audit-options-import-options-favourites-profiles-delete
 #[test]
 fn three_lists_and_staged_actions_replay_the_reference() {
     let fixture = hydrus_testkit::fixture_json("import_options_panel.json");
