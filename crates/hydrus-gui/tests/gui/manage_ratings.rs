@@ -49,6 +49,7 @@ fn open(ui: &MainWindow, bound: &Bound, index: i32) -> ManageRatingsWindow {
         .expect("the dialog opens")
 }
 
+// leaf: audit-media-ratings-like, audit-media-ratings-numerical, audit-media-ratings-clipboard
 #[test]
 fn ratings_are_set_copied_pasted_and_applied_as_the_reference_does() {
     let legacy = hydrus_testkit::legacy_fixture("basic");

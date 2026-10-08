@@ -12,6 +12,7 @@ fn strings(value: &Value) -> Vec<String> {
     serde_json::from_value(value.clone()).unwrap()
 }
 
+// leaf: audit-media-urls-edit, audit-media-urls-clipboard
 #[test]
 fn the_manage_urls_dialog_works_as_the_references_does() {
     let recorded = hydrus_testkit::fixture_json("manage_urls.json");

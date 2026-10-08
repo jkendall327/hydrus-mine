@@ -118,6 +118,7 @@ fn check_rows(window: &EmbeddedMetadataWindow, sample: &str) {
     );
 }
 
+// leaf: audit-media-metadata-basics, audit-media-metadata-exif, audit-media-metadata-text
 #[test]
 #[allow(clippy::too_many_lines)]
 fn metadata_opens_from_thumbnails_and_viewer_and_copies_raw_values() {

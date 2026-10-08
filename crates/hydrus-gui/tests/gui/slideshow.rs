@@ -46,6 +46,7 @@ fn files_with_durations_bend_the_period_as_the_reference_s() {
     assert!(bent > 300, "{bent}");
 }
 
+// leaf: audit-media-viewer-slideshow
 #[test]
 fn the_slideshow_menu_is_the_reference_s() {
     let fixture = hydrus_testkit::fixture_json("slideshow.json");
@@ -105,6 +106,7 @@ fn slideshow_rows(menu: &hydrus_gui::ThumbnailMenu) -> Vec<(String, i32, bool)> 
         .collect()
 }
 
+// leaf: audit-media-viewer-slideshow
 #[test]
 fn a_slideshow_runs_in_the_viewer_from_its_menu() {
     use std::time::{Duration, Instant};

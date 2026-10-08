@@ -60,6 +60,7 @@ fn check(editor: &NotesEditor, state: &Value, at: &str) {
     );
 }
 
+// leaf: audit-media-notes-clipboard, audit-media-notes-urls, audit-media-notes-tabs
 #[test]
 fn notes_dialog_steps_as_the_reference() {
     let recorded = hydrus_testkit::fixture_json("manage_notes.json");

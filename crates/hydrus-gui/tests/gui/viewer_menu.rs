@@ -130,6 +130,7 @@ fn rows(menu: &hydrus_gui::ThumbnailMenu) -> Vec<(String, i32)> {
     out
 }
 
+// leaf: audit-media-viewer-audio
 #[test]
 fn a_right_click_shows_the_viewer_s_menu_and_its_entries_act() {
     use std::cell::RefCell;

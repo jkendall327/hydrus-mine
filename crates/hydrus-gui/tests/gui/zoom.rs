@@ -213,6 +213,7 @@ fn rect(viewer: &MediaViewerWindow) -> (f32, f32, f32, f32) {
     )
 }
 
+// leaf: audit-media-viewer-zoom
 #[test]
 fn the_viewer_and_the_archive_delete_filter_zoom_and_pan() {
     let legacy = hydrus_testkit::legacy_fixture("basic");
@@ -447,6 +448,7 @@ fn the_viewer_and_the_archive_delete_filter_zoom_and_pan() {
     assert!(bound.archive_delete.borrow().is_none());
 }
 
+// leaf: audit-media-viewer-zoom
 #[test]
 fn zooming_to_max_is_as_the_reference_s() {
     // (`ZoomMax`: the largest step, 2000%; a still may be up to 32000

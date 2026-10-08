@@ -260,3 +260,8 @@ mod files_io_file_menu;
 mod files_io_import_review;
 mod files_io_export_files;
 mod files_io_folder_editors;
+mod media_support;
+mod media_selection_menu;
+mod media_file_actions;
+mod media_viewer_navigation;
+mod media_ratings_counter;

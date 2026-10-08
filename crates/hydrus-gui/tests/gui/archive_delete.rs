@@ -26,6 +26,7 @@ fn state(store: &Store, id: HashId) -> (bool, bool, Option<String>) {
     )
 }
 
+// leaf: audit-media-archive-decision, audit-media-archive-close
 #[test]
 fn the_archive_delete_filter_keeps_and_deletes() {
     let legacy = hydrus_testkit::legacy_fixture("basic");

@@ -40,6 +40,7 @@ fn state(editor: &RatingsEditor) -> Value {
     json!(rows)
 }
 
+// leaf: audit-media-ratings-like, audit-media-ratings-numerical, audit-media-ratings-clipboard
 #[test]
 fn the_manage_ratings_dialog_works_as_the_references_does() {
     let recorded = hydrus_testkit::fixture_json("manage_ratings.json");

@@ -193,6 +193,7 @@ fn staged_options_apply_cancel_reopen_and_retired_successor_callbacks() {
             .confirm
     );
 }
+// leaf: audit-media-context-missing-move
 #[test]
 fn native_transfer_yes_no_cancel_and_stale_window_cannot_write() {
     let fixture = hydrus_testkit::fixture_json("local_transfer_confirmations.json");
@@ -327,6 +328,7 @@ fn find(rows: &slint::ModelRc<hydrus_gui::MenuRow>, prefix: &str) -> i32 {
         .unwrap()
         .id
 }
+// leaf: audit-media-context-missing-move
 #[test]
 fn actual_thumbnail_transfer_menu_captures_selection_and_checks_parent_identity() {
     let fixture = hydrus_testkit::fixture_json("local_transfer_confirmations.json");

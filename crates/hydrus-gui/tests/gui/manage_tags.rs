@@ -352,6 +352,7 @@ fn switching_from_empty_service_restores_the_only_suggestion_page() {
     ui.hide().unwrap();
 }
 
+// leaf: audit-media-tags-toggle, audit-media-tags-service
 #[test]
 fn tags_are_added_and_removed_as_the_reference_does() {
     let legacy = hydrus_testkit::legacy_fixture("basic");

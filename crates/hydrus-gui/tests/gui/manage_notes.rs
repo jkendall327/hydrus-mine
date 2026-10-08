@@ -58,6 +58,7 @@ fn type_note(dialog: &ManageNotesWindow, text: &str) {
     dialog.invoke_text_edited();
 }
 
+// leaf: audit-media-notes-tabs, audit-media-notes-cancel
 #[test]
 fn notes_are_added_edited_and_deleted_as_the_reference_does() {
     let legacy = hydrus_testkit::legacy_fixture("basic");

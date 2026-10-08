@@ -56,6 +56,7 @@ fn asked(question: &str, yes: &str, no: &str) -> Value {
     json!({ "asked": question, "yes": yes, "no": no })
 }
 
+// leaf: audit-media-times-main, audit-media-times-domain, audit-media-times-services, audit-media-times-clipboard
 #[test]
 fn the_manage_times_dialog_works_as_the_references_does() {
     let recorded = hydrus_testkit::fixture_json("manage_times.json");

@@ -68,6 +68,7 @@ fn enter(dialog: &ManageUrlsWindow, text: &str) {
     dialog.invoke_entered();
 }
 
+// leaf: audit-media-urls-edit, audit-media-urls-clipboard
 #[test]
 fn urls_are_added_removed_and_edited_as_the_reference_does() {
     let legacy = hydrus_testkit::legacy_fixture("basic");

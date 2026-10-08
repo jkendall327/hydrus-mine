@@ -31,6 +31,7 @@ fn hash_of(name: &str) -> hydrus_core::Sha256 {
         .unwrap()
 }
 
+// leaf: audit-media-viewer-audio
 #[test]
 fn the_viewer_s_volume_control() {
     let legacy = hydrus_testkit::legacy_fixture("basic");
