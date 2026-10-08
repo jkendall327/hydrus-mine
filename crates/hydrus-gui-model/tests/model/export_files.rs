@@ -217,7 +217,7 @@ fn copies_overwrite_existing_files_and_route_metadata() {
 }
 
 #[test]
-fn cancellation_and_missing_sources_never_trash_partial_exports() {
+fn cancellation_suppresses_trash_but_missing_sources_trash_successful_prefix() {
     let (_dirs, store, files) = setup();
     let work = tempfile::tempdir().unwrap();
     let mut p = plan(&store, &files, work.path(), "{#}");
@@ -249,12 +249,103 @@ fn cancellation_and_missing_sources_never_trash_partial_exports() {
     let progress = export_files::run(&store, &p, &AtomicBool::new(false), |_| {});
     assert_eq!(progress.completed, 1);
     assert!(progress.error.unwrap().contains("actually missing"));
-    assert_eq!(progress.trashed, 0);
-    assert!(files.iter().all(|&f| current(&store, f)));
+    assert_eq!(progress.trashed, 1);
+    assert!(!current(&store, files[0]));
+    assert!(files[1..].iter().all(|&f| current(&store, f)));
 }
 
 #[test]
-fn sidecar_failure_blocks_trash_even_after_copy_and_success_trashes() {
+fn export_failure_and_cancellation_match_reference_durable_membership() {
+    let recorded = hydrus_testkit::fixture_json("export_failure_prefix.json");
+    for case in recorded.as_array().unwrap() {
+        let (_dirs, store, files) = setup();
+        let work = tempfile::tempdir().unwrap();
+        let mut p = plan(&store, &files, work.path(), "{#}");
+        p.trash = true;
+        let name = case["case"].as_str().unwrap();
+        store
+            .write(|tx| {
+                hydrus_store::settings::set(
+                    tx.conn(),
+                    &hydrus_store::delete_lock::DeleteLock {
+                        archived: true,
+                        ..Default::default()
+                    },
+                )
+            })
+            .unwrap();
+        if matches!(name, "fail_first" | "fail_second") {
+            let index = usize::from(name == "fail_second");
+            std::fs::remove_file(source(&store, files[index])).unwrap();
+        }
+        if name == "sidecar_second" {
+            for &file in &files {
+                store
+                    .write_content(move |w| w.set_note(file, "test", "recorded note"))
+                    .unwrap();
+            }
+            let naming = naming();
+            std::fs::create_dir(naming.path(p.rows[1].destination.to_str().unwrap(), "txt"))
+                .unwrap();
+            p.routers.push(Router {
+                importers: vec![Importer {
+                    source: Source::MediaNotes,
+                    processor: StringProcessor::default(),
+                }],
+                processor: StringProcessor::default(),
+                exporter: Exporter::Txt {
+                    naming,
+                    separator: "\n".into(),
+                },
+            });
+        }
+        let cancel = AtomicBool::new(false);
+        let progress = export_files::run(&store, &p, &cancel, |progress| {
+            if (name == "cancel_after_first" && progress.completed == 1)
+                || (name == "cancel_after_last" && progress.completed == files.len())
+            {
+                cancel.store(true, Ordering::Release);
+            }
+        });
+        assert_eq!(
+            progress.completed,
+            case["copied"].as_array().unwrap().len(),
+            "{name}"
+        );
+        assert_eq!(
+            progress.cancelled,
+            case["cancelled"].as_bool().unwrap(),
+            "{name}"
+        );
+        assert_eq!(progress.finished, case["done"].as_bool().unwrap(), "{name}");
+        assert_eq!(
+            usize::from(progress.error.is_some()),
+            usize::try_from(case["error_count"].as_u64().unwrap()).unwrap(),
+            "{name}"
+        );
+        let expected = case["durable_trashed"].as_array().unwrap();
+        assert_eq!(
+            progress.trashed,
+            expected.iter().filter(|v| v.as_bool().unwrap()).count()
+        );
+        // Reopen an independent Store so this asserts committed state rather
+        // than a GUI cache or the worker's optimistic completion count.
+        let reopened = Store::open(store.dir()).unwrap();
+        for (&file, trashed) in files.iter().zip(expected) {
+            assert_eq!(
+                !current(&reopened, file),
+                trashed.as_bool().unwrap(),
+                "{name}: {file:?}"
+            );
+        }
+        for filename in case["copied"].as_array().unwrap() {
+            assert!(work.path().join(filename.as_str().unwrap()).is_file());
+        }
+    }
+}
+
+#[test]
+fn sidecar_failure_prevents_copy_and_trash_and_success_trashes() {
     let (_dirs, store, files) = setup();
     let work = tempfile::tempdir().unwrap();
     let mut p = plan(&store, &files[..1], work.path(), "{#}");
@@ -287,6 +378,7 @@ fn sidecar_failure_blocks_trash_even_after_copy_and_success_trashes() {
     assert_eq!(progress.trashed, 0);
     assert!(current(&store, files[0]));
     assert!(source(&store, files[0]).is_file());
+    assert!(!p.rows[0].destination.exists());
     std::fs::remove_dir(sidecar).unwrap();
     let progress = export_files::run(&store, &p, &AtomicBool::new(false), |_| {});
     assert_eq!(progress.error, None);
@@ -301,6 +393,51 @@ fn sidecar_failure_blocks_trash_even_after_copy_and_success_trashes() {
     );
     assert!(!current(&store, files[0]));
     assert!(source(&store, files[0]).is_file());
+}
+
+#[test]
+fn later_trash_transaction_failure_retains_export_error_and_committed_prefix() {
+    let (_dirs, store, original) = setup();
+    let template = original[0];
+    let bytes = std::fs::read(source(&store, template)).unwrap();
+    let local = store.snapshot().services.by_name("my files").unwrap().id;
+    let files = store.write_content(move |writer| {
+        let mut files = Vec::new();
+        for i in 1..=66 {
+            let hash: hydrus_core::Sha256 = format!("{i:064x}").parse().unwrap();
+            let id = hydrus_store::master::intern_hash(writer.conn(), &hash)?;
+            writer.conn().execute("INSERT INTO files(hash_id,size,mime) SELECT ?1,size,mime FROM files WHERE hash_id=?2", rusqlite::params![id, template])?;
+            files.push(id);
+        }
+        let rows: Vec<_> = files.iter().map(|&file| (file, Some(1_700_000_000_000))).collect();
+        writer.add_files(local, &rows)?;
+        Ok(files)
+    }).unwrap();
+    for &file in &files[..65] {
+        let path = source(&store, file);
+        std::fs::create_dir_all(path.parent().unwrap()).unwrap();
+        std::fs::write(path, &bytes).unwrap();
+    }
+    let failure = files[64];
+    store.write(move |tx| {
+        tx.conn().execute_batch(&format!("CREATE TRIGGER fail_second_export_trash BEFORE DELETE ON file_domain_current WHEN OLD.hash_id={} AND OLD.service_id={} BEGIN SELECT RAISE(ABORT,'scripted later trash failure'); END;", failure.get(), local.get()))?;
+        Ok(())
+    }).unwrap();
+    let work = tempfile::tempdir().unwrap();
+    let mut p = plan(&store, &files, work.path(), "{#}");
+    p.trash = true;
+    let result = export_files::run(&store, &p, &AtomicBool::new(false), |_| {});
+    assert_eq!(result.completed, 65);
+    assert_eq!(result.trashed, 64);
+    assert!(result.finished);
+    let error = result.error.unwrap();
+    assert!(error.contains("export file #66"));
+    assert!(error.contains("actually missing"));
+    assert!(error.contains("scripted later trash failure"));
+    let reopened = Store::open(store.dir()).unwrap();
+    assert!(files[..64].iter().all(|&file| !current(&reopened, file)));
+    assert!(files[64..].iter().all(|&file| current(&reopened, file)));
+    assert_eq!(std::fs::read_dir(work.path()).unwrap().count(), 65);
 }
 
 #[cfg(unix)]

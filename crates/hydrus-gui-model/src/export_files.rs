@@ -239,7 +239,7 @@ pub struct Progress {
     pub cancelled: bool,
     /// The first export failure.
     pub error: Option<String>,
-    /// Files sent to the client trash after complete success.
+    /// Successfully exported files submitted to the client trash.
     pub trashed: usize,
 }
 
@@ -360,6 +360,12 @@ fn export_one(store: &Store, plan: &Plan, row: &Row) -> Result<(), String> {
             copy_atomically(&sidecar, &sidecar)?;
         }
     }
+    hydrus_download::export::route_sidecars(
+        store,
+        row.file,
+        &destination.to_string_lossy(),
+        &plan.routers,
+    )?;
     if plan.symlinks && !plan.trash {
         #[cfg(unix)]
         std::os::unix::fs::symlink(&source, &destination).map_err(|e| e.to_string())?;
@@ -368,16 +374,13 @@ fn export_one(store: &Store, plan: &Plan, row: &Row) -> Result<(), String> {
     } else {
         copy_atomically(&source, &destination)?;
     }
-    hydrus_download::export::route_sidecars(
-        store,
-        row.file,
-        &destination.to_string_lossy(),
-        &plan.routers,
-    )
+    Ok(())
 }
 
 /// Execute on a background thread, reporting after each file. Cancellation
 /// stops between files; an in-flight copy completes before cancellation returns.
+/// An export failure still permits trashing its successful prefix, as the
+/// reference does. Cancellation before the deletion phase suppresses all trashing.
 pub fn run(
     store: &Store,
     plan: &Plan,
@@ -404,22 +407,31 @@ pub fn run(
         report(progress.clone());
     }
     progress.cancelled |= cancel.load(Ordering::Acquire);
-    if plan.trash
-        && !progress.cancelled
-        && progress.error.is_none()
-        && progress.completed == progress.total
-    {
-        let files: Vec<_> = plan.rows.iter().map(|r| r.file).collect();
+    if plan.trash && !progress.cancelled {
         let reason = format!(
             "Deleted after manual export to \"{}\".",
             plan.directory.display()
         );
-        match store.write_content(move |w| {
-            let domain = w.roles().combined_local_media;
-            w.delete_files(domain, &files, Some(&reason))
-        }) {
-            Ok(()) => progress.trashed = progress.completed,
-            Err(e) => progress.error = Some(e.to_string()),
+        // Only complete file-and-sidecar exports enter this prefix. Commit in
+        // the reference's bounded chunks; cancellation is sampled before this
+        // phase, not between already-authorised deletion transactions.
+        for chunk in plan.rows[..progress.completed].chunks(64) {
+            let files: Vec<_> = chunk.iter().map(|r| r.file).collect();
+            let reason = reason.clone();
+            match store.write_content(move |w| {
+                let domain = w.roles().combined_local_media;
+                w.delete_files(domain, &files, Some(&reason))
+            }) {
+                Ok(()) => progress.trashed += chunk.len(),
+                Err(e) => {
+                    let message = format!("Could not trash exported files: {e}");
+                    progress.error = Some(match progress.error.take() {
+                        Some(export_error) => format!("{export_error}\n\n{message}"),
+                        None => message,
+                    });
+                    break;
+                }
+            }
         }
     }
     progress.finished = true;

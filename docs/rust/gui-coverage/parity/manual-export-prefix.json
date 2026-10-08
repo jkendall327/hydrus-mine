@@ -1,0 +1,41 @@
+{
+  "schema_version": 1,
+  "task": "Manual export successful-prefix cleanup",
+  "baseline": "4356918f41d2cb2b0159eb8c466d987de9fa9339",
+  "implementation_base": "839770fd94adffffe5c3160f895b22c92b692022",
+  "claims": [
+    {
+      "reference_id": "audit-network-export-worker",
+      "before": "partial",
+      "proposedStatus": "first_pass",
+      "countAsCompletedLeaf": true,
+      "change_kind": "implementation",
+      "exactBehavior": "Manual export copies atomically, routes sidecars before each copy, reports progress, samples cancellation between files and before trashing, and trashes only complete file-and-sidecar predecessors after a failure. Trash commits in64-record batches. Cancellation including after final copy suppresses all deletion. Cleanup failure preserves prior committed count and original export error; owner refreshes while retaining failure details.",
+      "limits": [
+        "Only this original worker leaf is proposed. Manual-export parent and filename/tag-sidebar gaps remain separately assessed.",
+        "Native source/path/symlink safety checks run before sidecar writes and are stricter than Qt. Existing atomic-copy/hardlink protection remains.",
+        "Native failed or cancelled Export-and-close stays open for review; Qt closes after completion. This owner policy does not claim identical window lifecycle.",
+        "Six real Qt cases and post-shutdown SQLite reads passed. Native tests and full Linux validation/rendered review remain pending; no completion credit yet."
+      ],
+      "sourceAnchors": [
+        {
+          "path": "crates/hydrus-gui-model/src/export_files.rs",
+          "symbol": "pub fn run"
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/export_files.rs",
+          "symbol": "export_failure_and_cancellation_match_reference_durable_membership"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/export_files.rs",
+          "symbol": "failed_export_trashes_only_completed_prefix_and_refreshes_owner"
+        }
+      ],
+      "reference_evidence": [
+        "oracle/record_export_failure_prefix.py",
+        "oracle/fixtures/export_failure_prefix.json",
+        "oracle/fixtures/export_failure_prefix.png"
+      ]
+    }
+  ]
+}

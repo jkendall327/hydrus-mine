@@ -1,0 +1,28 @@
+{
+  "source_commit": "da6fb4d3588c514e5cfe28869589379c2cbaaf89",
+  "reviewer": "root",
+  "result": "passed",
+  "workspace_tests": {
+    "source_commit": "da6fb4d3588c514e5cfe28869589379c2cbaaf89",
+    "passed": 2201,
+    "failed": 0,
+    "ignored": 3,
+    "gui_passed": 715,
+    "media_passed": 67
+  },
+  "directly_inspected_native_frames": [
+    "export_failure_prefix.png",
+    "export_files.png"
+  ],
+  "directly_inspected_reference_frame": "oracle/fixtures/export_failure_prefix.png",
+  "findings": [
+    "Failure frame retains all three planned rows and displays the complete missing-file #2 diagnostic with wrapped text.",
+    "Trash checkbox remains enabled/checked, symlink control disabled; close and export controls are visible, cancel export disabled after completion.",
+    "Ordinary export frame retains its list, filename controls, sidecars and usable bottom buttons.",
+    "Reference image is a post-failure panel, not an error-dialog render; native inline reporting/acknowledgement timing remains explicitly different."
+  ],
+  "native_sha256": {
+    "export_failure_prefix.png": "f498497b89fcf988f68eed25f135d0f8ef3591a5fb4a01ab1f4bed195c2b0116",
+    "export_files.png": "7688df0348fc17cb4c332afcd2948634145138427a282696d96a0e232d42f925"
+  }
+}

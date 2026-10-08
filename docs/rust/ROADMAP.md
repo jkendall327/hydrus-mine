@@ -7,26 +7,24 @@ partway, say exactly where.
 
 The owner's current goal (2026-10-06) is **all individual report feature leaves
 implemented, verified and published**, with Linux first. Numeric checkpoints are
-progress reports, not stopping targets. The latest checkpoint banks 375 original
-concrete feature completions, including 135 since the prior 240 across twenty-five
+progress reports, not stopping targets. The latest checkpoint banks 376 original
+concrete feature completions, including 136 since the prior 240 across twenty-six
 recent Linux checkpoints. This cumulative count is not a last-24-hour sign-off
-count. No existing candidate remains awaiting sign-off; 899 of the 1,274 goal
+count. No existing candidate remains awaiting sign-off; 898 of the 1,274 goal
 leaves remain outside the explicit completion ledger. Keep these counts separate
 from inventory and historical first-pass assessments. Validate small batches
 routinely and reassess any batch that goes 24 hours without a checkpoint.
 Broad feature work must not rebuild an unvalidated backlog. Windows/macOS remain
 deferred; strict Linux linting, full tests, reference replay and rendered review
 remain required.
-The latest checkpoint validates the OR connecting-string editor, including the
-previously blank saved fox. Startup now supplies monochrome outlines in the
-actual text-control fallback chain while preserving preceding platform fonts.
-Raw saved text, Cancel/reopen, legacy import, ownership and existing literal OR
-consumers retain their behavior. Strict Clippy and all 2,198 workspace tests
-passed, including 714 GUI and 67 media tests. Fresh Qt replay, six native frames
-and independent review passed. The ASCII frame and three ordinary Latin/CJK/editor
-frames are unchanged; the fox changes only within its field. Only this original
-editor leaf gains credit; broader OR layout/rendering remains separately assessed.
-[Evidence](gui-coverage/checkpoints/88e9851e6/README.md).
+The latest checkpoint validates manual export's successful-prefix cleanup after
+copy or sidecar failure, cancellation before deletion, and 64-file cleanup
+transactions. Strict Clippy and all 2,201 workspace tests passed, including
+715 GUI and 67 media tests. Six fresh Qt cases, actual native normal/failure
+frames, independent review and report browser checks passed. Exactly the original
+export-worker leaf gains credit; its parent remains Partial. Native inline error
+presentation and Qt's modal acknowledgement pause remain explicitly different.
+[Evidence](gui-coverage/checkpoints/da6fb4d35/README.md).
 
 The first parallel slate (2026-10-03) adds detailed embedded metadata,
 manual file export, local service review/management, tag sibling/parent
@@ -74,8 +72,8 @@ and all 121 exported native windows into nested work, including shared editors,
 all 38 reference option tabs and 19 system-predicate groups. It contains 1,812
 reference nodes and 1,799 native nodes, with per-node assessments, concrete
 remaining work and pinned source/evidence links. The frozen reference inventory
-now has 451 Missing, 385 Partial and 976 First pass entries; its status changes
-also include parent/alias assessments, which do not inflate the 375-item signed-off completion count.
+now has 451 Missing, 384 Partial and 977 First pass entries; its status changes
+also include parent/alias assessments, which do not inflate the 376-item signed-off completion count.
 Native first-pass claims cite scoped regression evidence; source-supported but
 unverified behavior is partial. These counts are not a whole-client completion
 percentage. Maintenance instructions and scope limits are in

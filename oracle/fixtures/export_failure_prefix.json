@@ -1,0 +1,229 @@
+[
+  {
+    "case": "success",
+    "ids": [
+      1,
+      8,
+      3
+    ],
+    "copied": [
+      "1.png",
+      "2.png",
+      "3.flac"
+    ],
+    "trashed": [
+      true,
+      true,
+      true
+    ],
+    "cancelled": false,
+    "done": true,
+    "questions": [
+      "THE FILES WILL BE SENT TO THE TRASH IN THE CLIENT AFTERWARDS"
+    ],
+    "error_count": 0,
+    "error_titles": [],
+    "deletions": [
+      {
+        "count": 3,
+        "reason": "Deleted after manual export to \"<destination>\"."
+      }
+    ],
+    "archived": [
+      true,
+      true,
+      true
+    ],
+    "durable_trashed": [
+      true,
+      true,
+      true
+    ]
+  },
+  {
+    "case": "fail_first",
+    "ids": [
+      1,
+      8,
+      3
+    ],
+    "copied": [],
+    "trashed": [
+      false,
+      false,
+      false
+    ],
+    "cancelled": false,
+    "done": true,
+    "questions": [
+      "THE FILES WILL BE SENT TO THE TRASH IN THE CLIENT AFTERWARDS"
+    ],
+    "error_count": 1,
+    "error_titles": [
+      "Problem during file export!"
+    ],
+    "deletions": [],
+    "archived": [
+      true,
+      true,
+      true
+    ],
+    "durable_trashed": [
+      false,
+      false,
+      false
+    ]
+  },
+  {
+    "case": "fail_second",
+    "ids": [
+      1,
+      8,
+      3
+    ],
+    "copied": [
+      "1.png"
+    ],
+    "trashed": [
+      true,
+      false,
+      false
+    ],
+    "cancelled": false,
+    "done": true,
+    "questions": [
+      "THE FILES WILL BE SENT TO THE TRASH IN THE CLIENT AFTERWARDS"
+    ],
+    "error_count": 1,
+    "error_titles": [
+      "Problem during file export!"
+    ],
+    "deletions": [
+      {
+        "count": 1,
+        "reason": "Deleted after manual export to \"<destination>\"."
+      }
+    ],
+    "archived": [
+      true,
+      true,
+      true
+    ],
+    "durable_trashed": [
+      true,
+      false,
+      false
+    ]
+  },
+  {
+    "case": "sidecar_second",
+    "ids": [
+      1,
+      8,
+      3
+    ],
+    "copied": [
+      "1.png"
+    ],
+    "trashed": [
+      true,
+      false,
+      false
+    ],
+    "cancelled": false,
+    "done": true,
+    "questions": [
+      "THE FILES WILL BE SENT TO THE TRASH IN THE CLIENT AFTERWARDS"
+    ],
+    "error_count": 1,
+    "error_titles": [
+      "Problem during file export!"
+    ],
+    "deletions": [
+      {
+        "count": 1,
+        "reason": "Deleted after manual export to \"<destination>\"."
+      }
+    ],
+    "archived": [
+      true,
+      true,
+      true
+    ],
+    "durable_trashed": [
+      true,
+      false,
+      false
+    ]
+  },
+  {
+    "case": "cancel_after_first",
+    "ids": [
+      1,
+      8,
+      3
+    ],
+    "copied": [
+      "1.png"
+    ],
+    "trashed": [
+      false,
+      false,
+      false
+    ],
+    "cancelled": true,
+    "done": true,
+    "questions": [
+      "THE FILES WILL BE SENT TO THE TRASH IN THE CLIENT AFTERWARDS"
+    ],
+    "error_count": 0,
+    "error_titles": [],
+    "deletions": [],
+    "archived": [
+      true,
+      true,
+      true
+    ],
+    "durable_trashed": [
+      false,
+      false,
+      false
+    ]
+  },
+  {
+    "case": "cancel_after_last",
+    "ids": [
+      1,
+      8,
+      3
+    ],
+    "copied": [
+      "1.png",
+      "2.png",
+      "3.flac"
+    ],
+    "trashed": [
+      false,
+      false,
+      false
+    ],
+    "cancelled": true,
+    "done": true,
+    "questions": [
+      "THE FILES WILL BE SENT TO THE TRASH IN THE CLIENT AFTERWARDS"
+    ],
+    "error_count": 0,
+    "error_titles": [],
+    "deletions": [],
+    "archived": [
+      true,
+      true,
+      true
+    ],
+    "durable_trashed": [
+      false,
+      false,
+      false
+    ]
+  }
+]

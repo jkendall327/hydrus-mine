@@ -1109,8 +1109,18 @@ trash/export-and-close confirmations match `oracle/fixtures/export_files.json`,
 as do filenames and copied bytes from the real reference export worker.
 Windows also accepts a forward slash at the final folder/filename split, using
 the reference's Windows filename sanitization for the preceding directories.
-For data safety, a failed or cancelled run never trashes any source files;
-the reference can trash the successfully copied prefix after an error. Paths
+After a failed export, confirmed trashing now moves the fully exported prefix
+to trash, matching the reference. Cancellation before deletion suppresses all
+trashing, even after the last copy; deletion commits in batches of 64. Sidecars
+run before copying. Native cleanup errors retain the original export error and
+the count of earlier committed trash batches, rather than leaving an unhandled
+worker exception. Exact-source Linux validation and independent rendered review
+passed at `da6fb4d35` (2,201 tests, including 715 GUI and 67 media tests).
+[Evidence](gui-coverage/checkpoints/da6fb4d35/README.md). Qt pauses its worker on
+critical-error acknowledgement before cleanup and can observe cancellation during
+that pause. Native displays errors inline and can immediately begin already-confirmed
+cleanup; the recorder intercepts the dialog and does not prove timing parity.
+Native source/path preflight precedes sidecars and is stricter than Qt. Paths
 are checked by components and canonical subfolders, and existing symlinks,
 exports into managed file storage and overwriting a source pathname are
 rejected. Copies replace destinations atomically through a sibling temporary file;
@@ -1123,8 +1133,9 @@ copy/search/relationship/favourite menus and owner cancellation. Its generic
 maintenance → regenerate tag display action, advanced experimental display-type
 switch and full keyboard navigation remain unported. Native shortcut menus do
 not reproduce Qt's bold heading or action hover tooltips.
-"Export and close" closes the review window (the reference's quit-afterwards
-flag also closes its review frame, not the whole client). Cancellation completes
+Successful "Export and close" closes the review window. Native failure or
+cancellation retains it for review; Qt closes its review frame after worker
+completion (not the whole client). Cancellation completes
 an in-flight copy before stopping between files. Progress is in the review
 window rather than a separate popup job. Removing rows refreshes filenames
 immediately; the reference retains cached paths until the phrase or directory

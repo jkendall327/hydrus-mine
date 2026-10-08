@@ -1,0 +1,14 @@
+{
+  "reviewer": "root",
+  "source_commit": "da6fb4d3588c514e5cfe28869589379c2cbaaf89",
+  "passed": true,
+  "directly_inspected": [
+    "report-desktop.png",
+    "report-narrow.png"
+  ],
+  "observations": [
+    "376 sign-offs and selected export worker visible.",
+    "Assessment, explicit limitations and anchors readable at both widths.",
+    "No horizontal overflow, page errors or external requests."
+  ]
+}
