@@ -24,7 +24,7 @@ struct Modal {
     store: Arc<Store>,
     ui: MainWindow,
     bound: Bound,
-    _windows: headless::Windows,
+    windows: headless::Windows,
 }
 
 fn start() -> Modal {
@@ -38,7 +38,7 @@ fn start() -> Modal {
         store,
         ui,
         bound,
-        _windows: windows,
+        windows,
     }
 }
 
@@ -120,10 +120,10 @@ fn a_modal_job_has_a_dialog_asks_before_cancelling_and_is_released_to_the_popups
     assert!(popup.cancellable);
     // (drawn, for the reviewer: the last window made is the dialog)
     let last = (0..200)
-        .take_while(|&n| m._windows.get(n).is_some())
+        .take_while(|&n| m.windows.get(n).is_some())
         .last()
         .unwrap();
-    let pixels = headless::render(&m._windows.get(last).unwrap(), 440, 200);
+    let pixels = headless::render(&m.windows.get(last).unwrap(), 440, 200);
     headless::save_png(
         &std::path::Path::new(env!("CARGO_TARGET_TMPDIR")).join("popup-modal.png"),
         &pixels,
