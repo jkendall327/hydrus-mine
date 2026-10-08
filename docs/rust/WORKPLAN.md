@@ -149,3 +149,28 @@ The 2026-10-08 review found:
   media, shell), ~85 partial, ~240 missing (77 debug). The verification sweep
   is nearly exhausted; next is real implementation, where `.slint` edits (and
   so the UI split) start to matter.
+
+### UI split: design (to try after round 3, with the machine to itself)
+
+The verification sweep is nearly done; implementation needs `.slint` edits,
+and today each one is a ~7 min, ~14 GB rebuild that blocks every agent on the
+shared Cargo lock. Design that avoids most of the Rust churn:
+
+- `generated/hydrus-gui-ui-shared`: compiles an entry exporting every Slint
+  `struct`/`enum` that more than one group uses (24 today), so they are
+  defined once.
+- `generated/hydrus-gui-ui-<group>` (main, options, and ~4 area groups):
+  each compiles its group's entry file; its build script then replaces each
+  shared struct's generated definition (always the two-line form
+  `# [derive (...)] pub struct r#Name { ... }`, no trait impls) with
+  `pub use hydrus_gui_ui_shared::r#Name;`, so `TableRow` etc. are one type
+  everywhere. Window types are unique to their group.
+- `generated/hydrus-gui-ui` stays the facade hydrus-gui depends on:
+  `pub use` of every group. Globals (`Theme`, `MenuChoicePolicy`) exist per
+  group; the facade re-exports main's explicitly, and the ~15 Rust sites that
+  use a global on another group's window name that group's path.
+- Expected: largest crate 20.5 MB (from 87); a dialog `.slint` edit rebuilds
+  one group (~1.5-2 min, ~3.5 GB) plus hydrus-gui; parallel group builds need
+  `-j2` to stay under 16 GB on a cold build.
+- Measure: cold build, one-dialog edit, MainWindow edit, peak memory. Keep
+  only if the edit loop is at least 3x faster.
