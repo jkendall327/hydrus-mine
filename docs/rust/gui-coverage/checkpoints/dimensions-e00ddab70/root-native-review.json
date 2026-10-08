@@ -1,0 +1,30 @@
+{
+  "source_commit": "e00ddab707e031bb3a8feaa619dbe18c26a3a6fa",
+  "ci_run_id": 37723417979,
+  "reviewed_by": "root direct image inspection",
+  "decision": "approved for nine preset controls only",
+  "images": [
+    {
+      "path": "native/dimensions-presets-normal.png",
+      "sha256": "58783f1f6c54494347df7e69622e0f7d22924ecafe675e1bdbf73784e7add033"
+    },
+    {
+      "path": "native/dimensions-presets-narrow.png",
+      "sha256": "a5f63f755f5fd2924e8c2f394dbd7a813f76fe890007d28a5b581f49e33398a0"
+    },
+    {
+      "path": "native/dimensions-presets-accepted.png",
+      "sha256": "5db681e3d6df239d1e29d675f8f83db29f1a5854469a68057aa6f08733bc407a"
+    }
+  ],
+  "observations": [
+    "All nine preset labels and controls are visible without clipping at1020x720 and760x900.",
+    "1080p accepted owner visibly contains system:height=1080 and system:width=1920; no claim of search-result execution or ordering parity.",
+    "Editable dimension field layout is outside this checkpoint; unit text has a minor existing overlap in both native captures and is not promoted by preset verification."
+  ],
+  "reference_image": {
+    "path": "oracle/fixtures/dimensions_presets.png",
+    "sha256": "b51083ea8b2b5f84f2a3e22f8435a0d5b64aadcdb2fa9e64de08eb057d069c21",
+    "observations": "Actual Qt dimensions dialog displays the same nine preset labels. Native uses its own editable-field layout; this checkpoint compares preset controls and accepted values, not pixel equality."
+  }
+}

@@ -496,6 +496,8 @@ def load_and_validate():
         for field in ("proposals", "proposal_count", "status_mismatches"):
             if mapping.get(field) != refreshed["reference"]["native_mapping_proposal"][field]:
                 raise ValueError(f"Stale candidate mapping {field}")
+    import gui_verify
+    gui_verify.check_working(snapshots["reference"])
     return snapshots, reports
 
 

@@ -1,0 +1,827 @@
+{
+  "scope": "Exact-source hosted Linux workspace test log",
+  "passed": 2203,
+  "failed": 0,
+  "ignored": 3,
+  "suites": [
+    {
+      "target": "Running unittests src/lib.rs (target/debug/deps/hydrus_api-6491b1f57d45a925)",
+      "result": "ok",
+      "passed": 3,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "Running tests/activity.rs (target/debug/deps/activity-2f74d8120c007233)",
+      "result": "ok",
+      "passed": 1,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "Running tests/add_url.rs (target/debug/deps/add_url-800f2cc699b68c2e)",
+      "result": "ok",
+      "passed": 2,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "Running tests/api_keys.rs (target/debug/deps/api_keys-c8c57f21b27246c2)",
+      "result": "ok",
+      "passed": 3,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "Running tests/api_update_toasts.rs (target/debug/deps/api_update_toasts-1d9eefaa53d2faf3)",
+      "result": "ok",
+      "passed": 1,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "Running tests/client_options.rs (target/debug/deps/client_options-c69f4b43ba8bb0f1)",
+      "result": "ok",
+      "passed": 1,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "Running tests/conformance.rs (target/debug/deps/conformance-a2b837da22ab61d4)",
+      "result": "ok",
+      "passed": 1,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "Running tests/delete_lock.rs (target/debug/deps/delete_lock-2462647e8c2c977b)",
+      "result": "ok",
+      "passed": 1,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "Running tests/duplicate_merges.rs (target/debug/deps/duplicate_merges-4f5fdee61013e70b)",
+      "result": "ok",
+      "passed": 1,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "Running tests/oracle_downloads.rs (target/debug/deps/oracle_downloads-786afc00e03b0f69)",
+      "result": "ok",
+      "passed": 1,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "Running tests/pages.rs (target/debug/deps/pages-7cfa37476cea956a)",
+      "result": "ok",
+      "passed": 7,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "Running tests/popup_actions.rs (target/debug/deps/popup_actions-bddb1ddce4b64b4e)",
+      "result": "ok",
+      "passed": 1,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "Running tests/rating_svg.rs (target/debug/deps/rating_svg-1a12785f54287bc2)",
+      "result": "ok",
+      "passed": 1,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "Running tests/render.rs (target/debug/deps/render-8d1e46a3c050b8c1)",
+      "result": "ok",
+      "passed": 2,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "Running tests/url_class_search.rs (target/debug/deps/url_class_search-a64e57bd728760e3)",
+      "result": "ok",
+      "passed": 1,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "Running unittests src/main.rs (target/debug/deps/hydrus-a98ffeefb679781a)",
+      "result": "ok",
+      "passed": 7,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "Running tests/serve.rs (target/debug/deps/serve-76e300e8fadb762b)",
+      "result": "ok",
+      "passed": 10,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "Running unittests src/lib.rs (target/debug/deps/hydrus_core-f9d70ba98334c7ca)",
+      "result": "ok",
+      "passed": 89,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "Running tests/bandwidth.rs (target/debug/deps/bandwidth-3c01215f483d22ff)",
+      "result": "ok",
+      "passed": 2,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "Running tests/string_steps.rs (target/debug/deps/string_steps-dc4bf33c1d3cd7c7)",
+      "result": "ok",
+      "passed": 1,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "Running tests/tab_names.rs (target/debug/deps/tab_names-756fb4aab8a976f6)",
+      "result": "ok",
+      "passed": 2,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "Running tests/tag_rendering.rs (target/debug/deps/tag_rendering-0820c890978258d1)",
+      "result": "ok",
+      "passed": 1,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "Running tests/watcher_checker.rs (target/debug/deps/watcher_checker-d834b887e760c8d7)",
+      "result": "ok",
+      "passed": 2,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "Running unittests src/lib.rs (target/debug/deps/hydrus_download-719e6038deb07182)",
+      "result": "ok",
+      "passed": 16,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "Running tests/export_folder.rs (target/debug/deps/export_folder-fd9119514f499d37)",
+      "result": "ok",
+      "passed": 1,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "Running tests/folder_activity.rs (target/debug/deps/folder_activity-1953ae6de1ce1590)",
+      "result": "ok",
+      "passed": 2,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "Running tests/import_folder.rs (target/debug/deps/import_folder-9facbabf5cc68cea)",
+      "result": "ok",
+      "passed": 1,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "Running tests/local_import.rs (target/debug/deps/local_import-562283ad56ca1cb7)",
+      "result": "ok",
+      "passed": 2,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "Running tests/simple_downloader.rs (target/debug/deps/simple_downloader-b96d8144d503307d)",
+      "result": "ok",
+      "passed": 1,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "Running tests/subscriptions.rs (target/debug/deps/subscriptions-add8ba1c743d82c6)",
+      "result": "ok",
+      "passed": 11,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "Running tests/url_queue.rs (target/debug/deps/url_queue-4cfc93f519303c85)",
+      "result": "ok",
+      "passed": 11,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "Running tests/watchers.rs (target/debug/deps/watchers-4e881ee2f9ba51c0)",
+      "result": "ok",
+      "passed": 2,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "Running unittests src/lib.rs (target/debug/deps/hydrus_downloader_exchange-387aa4339aba58a5)",
+      "result": "ok",
+      "passed": 0,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "Running tests/external_calls.rs (target/debug/deps/external_calls-db71cefa47fd1380)",
+      "result": "ok",
+      "passed": 2,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "Running tests/import_options.rs (target/debug/deps/import_options-7b4903190ee4496d)",
+      "result": "ok",
+      "passed": 2,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "Running tests/interchange.rs (target/debug/deps/interchange-7c501c96060a5a65)",
+      "result": "ok",
+      "passed": 12,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "Running tests/logins.rs (target/debug/deps/logins-6694205e2d660d71)",
+      "result": "ok",
+      "passed": 3,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "Running tests/routers.rs (target/debug/deps/routers-02bff1b84c1c63a6)",
+      "result": "ok",
+      "passed": 3,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "Running tests/seed_caches.rs (target/debug/deps/seed_caches-26026f4ceba054aa)",
+      "result": "ok",
+      "passed": 2,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "Running tests/subscription_import.rs (target/debug/deps/subscription_import-b92417f73e019e86)",
+      "result": "ok",
+      "passed": 2,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "Running tests/subscriptions.rs (target/debug/deps/subscriptions-fbd358f0c7160a5e)",
+      "result": "ok",
+      "passed": 4,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "Running tests/subsidiaries.rs (target/debug/deps/subsidiaries-4904721ab2dda0e0)",
+      "result": "ok",
+      "passed": 2,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "Running unittests src/lib.rs (target/debug/deps/hydrus_duplicates-f806fe1a8c0b0c26)",
+      "result": "ok",
+      "passed": 1,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "Running tests/comparison_statements.rs (target/debug/deps/comparison_statements-97492e819404a905)",
+      "result": "ok",
+      "passed": 2,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "Running tests/reference_run.rs (target/debug/deps/reference_run-2694956df5c27669)",
+      "result": "ok",
+      "passed": 2,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "Running unittests src/lib.rs (target/debug/deps/hydrus_gui-0025b7611761cf6d)",
+      "result": "ok",
+      "passed": 1,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "Running unittests src/lib.rs (target/debug/deps/hydrus_gui-0025b7611761cf6d)",
+      "result": "ok",
+      "passed": 1,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "Running unittests src/lib.rs (target/debug/deps/hydrus_gui-0025b7611761cf6d)",
+      "result": "ok",
+      "passed": 91,
+      "failed": 0,
+      "ignored": 1
+    },
+    {
+      "target": "Running unittests src/main.rs (target/debug/deps/hydrus_gui-10ce3c4385604c0e)",
+      "result": "ok",
+      "passed": 2,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "Running tests/gui/main.rs (target/debug/deps/gui-4e017c3e58e508a5)",
+      "result": "ok",
+      "passed": 717,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "Running unittests src/lib.rs (target/debug/deps/hydrus_gui_model-853ad77814c06543)",
+      "result": "ok",
+      "passed": 39,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "Running tests/model/main.rs (target/debug/deps/model-6a4c3e05d83a2a67)",
+      "result": "ok",
+      "passed": 527,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "Running unittests src/lib.rs (target/debug/deps/hydrus_import-d090caef246773ad)",
+      "result": "ok",
+      "passed": 6,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "Running tests/file_handling.rs (target/debug/deps/file_handling-7eb5c45ea94205cc)",
+      "result": "ok",
+      "passed": 1,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "Running tests/file_maintenance.rs (target/debug/deps/file_maintenance-fa0e8559b51601c5)",
+      "result": "ok",
+      "passed": 8,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "Running tests/image_colour.rs (target/debug/deps/image_colour-3b8cb4b2bc6c4399)",
+      "result": "ok",
+      "passed": 1,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "Running tests/import.rs (target/debug/deps/import-c37cbe5109d20abc)",
+      "result": "ok",
+      "passed": 9,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "Running tests/similar_files.rs (target/debug/deps/similar_files-3598e24401ada691)",
+      "result": "ok",
+      "passed": 1,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "Running unittests src/lib.rs (target/debug/deps/hydrus_legacy-3094baf4d54f7dda)",
+      "result": "ok",
+      "passed": 34,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "Running tests/access.rs (target/debug/deps/access-8dbfbdc473eae410)",
+      "result": "ok",
+      "passed": 8,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "Running tests/auto_resolution.rs (target/debug/deps/auto_resolution-7b722590bb8b71d5)",
+      "result": "ok",
+      "passed": 1,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "Running tests/bandwidth.rs (target/debug/deps/bandwidth-13b58b6b9408de48)",
+      "result": "ok",
+      "passed": 2,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "Running tests/formulas.rs (target/debug/deps/formulas-6d44362f3445da09)",
+      "result": "ok",
+      "passed": 1,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "Running tests/gugs.rs (target/debug/deps/gugs-0aaf82d014fdd778)",
+      "result": "ok",
+      "passed": 2,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "Running tests/gui_sessions.rs (target/debug/deps/gui_sessions-975eb3a820520409)",
+      "result": "ok",
+      "passed": 3,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "Running tests/import_options.rs (target/debug/deps/import_options-823e9a18be0817ef)",
+      "result": "ok",
+      "passed": 2,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "Running tests/objects.rs (target/debug/deps/objects-b86663f18a77dfb8)",
+      "result": "ok",
+      "passed": 12,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "Running tests/page_parsers.rs (target/debug/deps/page_parsers-24972a684f8db59c)",
+      "result": "ok",
+      "passed": 1,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "Running tests/sidecars.rs (target/debug/deps/sidecars-5313fe583a99ada0)",
+      "result": "ok",
+      "passed": 1,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "Running tests/simple_formulae.rs (target/debug/deps/simple_formulae-8fe6d9976863d4a6)",
+      "result": "ok",
+      "passed": 1,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "Running tests/string_descriptions.rs (target/debug/deps/string_descriptions-2b362e35aedc630e)",
+      "result": "ok",
+      "passed": 1,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "Running tests/string_processing.rs (target/debug/deps/string_processing-7f68fa1fe2c0c89a)",
+      "result": "ok",
+      "passed": 1,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "Running tests/subscriptions.rs (target/debug/deps/subscriptions-eecf7b77363a3730)",
+      "result": "ok",
+      "passed": 5,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "Running tests/tables.rs (target/debug/deps/tables-d235914d50c28085)",
+      "result": "ok",
+      "passed": 3,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "Running tests/tag_summaries.rs (target/debug/deps/tag_summaries-f6e6b3107c951fc5)",
+      "result": "ok",
+      "passed": 1,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "Running tests/url_classes.rs (target/debug/deps/url_classes-2e42857e5ccd2d16)",
+      "result": "ok",
+      "passed": 1,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "Running tests/viewer_zoom.rs (target/debug/deps/viewer_zoom-8e001f565af33c3e)",
+      "result": "ok",
+      "passed": 2,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "Running unittests src/lib.rs (target/debug/deps/hydrus_media-bd3fce438491f1bd)",
+      "result": "ok",
+      "passed": 67,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "Running tests/embedded_metadata.rs (target/debug/deps/embedded_metadata-d24c5ee0af276b87)",
+      "result": "ok",
+      "passed": 3,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "Running tests/file_handling.rs (target/debug/deps/file_handling-36d98b51feac7ea0)",
+      "result": "ok",
+      "passed": 1,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "Running tests/image_colour.rs (target/debug/deps/image_colour-c47c41cb418f0502)",
+      "result": "ok",
+      "passed": 3,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "Running tests/metadata_flags.rs (target/debug/deps/metadata_flags-8d5dd8dbc41d1ac4)",
+      "result": "ok",
+      "passed": 1,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "Running tests/reference_parity.rs (target/debug/deps/reference_parity-f134eba7808c4061)",
+      "result": "ok",
+      "passed": 3,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "Running tests/visual_data.rs (target/debug/deps/visual_data-30bd27312fe64de6)",
+      "result": "ok",
+      "passed": 6,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "Running unittests src/lib.rs (target/debug/deps/hydrus_net-31aa30c7a8a47120)",
+      "result": "ok",
+      "passed": 14,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "Running tests/engine.rs (target/debug/deps/engine-4c413740794f1a1e)",
+      "result": "ok",
+      "passed": 25,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "Running tests/login.rs (target/debug/deps/login-9fe43b6f2745fbae)",
+      "result": "ok",
+      "passed": 14,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "Running unittests src/lib.rs (target/debug/deps/hydrus_parse-ce28cf332abaefc7)",
+      "result": "ok",
+      "passed": 6,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "Running unittests src/lib.rs (target/debug/deps/hydrus_search-bb7040635a246e1a)",
+      "result": "ok",
+      "passed": 57,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "Running tests/file_search_options.rs (target/debug/deps/file_search_options-7dfbab109fee8dc2)",
+      "result": "ok",
+      "passed": 2,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "Running tests/media_tests.rs (target/debug/deps/media_tests-12a3071611c745b2)",
+      "result": "ok",
+      "passed": 2,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "Running tests/predicate_entry.rs (target/debug/deps/predicate_entry-625643ad65e60ad2)",
+      "result": "ok",
+      "passed": 3,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "Running tests/predicate_text.rs (target/debug/deps/predicate_text-bd1a1afbf4841553)",
+      "result": "ok",
+      "passed": 3,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "Running tests/reference_parity.rs (target/debug/deps/reference_parity-370682ac60228639)",
+      "result": "ok",
+      "passed": 3,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "Running tests/robustness.rs (target/debug/deps/robustness-3ee94afd225f06ab)",
+      "result": "ok",
+      "passed": 4,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "Running unittests src/lib.rs (target/debug/deps/hydrus_store-90aa2f83d0721915)",
+      "result": "ok",
+      "passed": 250,
+      "failed": 0,
+      "ignored": 2
+    },
+    {
+      "target": "Running tests/import_status.rs (target/debug/deps/import_status-30c9defafff09d5d)",
+      "result": "ok",
+      "passed": 3,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "Running tests/metadata_jobs.rs (target/debug/deps/metadata_jobs-38d1cc1e4ad14953)",
+      "result": "ok",
+      "passed": 1,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "Running tests/tag_migration.rs (target/debug/deps/tag_migration-ea2504f2d53ddb7c)",
+      "result": "ok",
+      "passed": 15,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "Running unittests src/lib.rs (target/debug/deps/hydrus_testkit-d4be0a6c0204d9c1)",
+      "result": "ok",
+      "passed": 1,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "Running unittests src/lib.rs (target/debug/deps/hydrus_testkit-d4be0a6c0204d9c1)",
+      "result": "ok",
+      "passed": 3,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "Running unittests src/main.rs (target/debug/deps/xtask-3d9b93e5759a9504)",
+      "result": "ok",
+      "passed": 0,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "Doc-tests hydrus_api",
+      "result": "ok",
+      "passed": 0,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "Doc-tests hydrus_core",
+      "result": "ok",
+      "passed": 0,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "Doc-tests hydrus_download",
+      "result": "ok",
+      "passed": 0,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "Doc-tests hydrus_downloader_exchange",
+      "result": "ok",
+      "passed": 0,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "Doc-tests hydrus_duplicates",
+      "result": "ok",
+      "passed": 0,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "Doc-tests hydrus_gui",
+      "result": "ok",
+      "passed": 0,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "Doc-tests hydrus_gui_model",
+      "result": "ok",
+      "passed": 0,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "Doc-tests hydrus_import",
+      "result": "ok",
+      "passed": 0,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "Doc-tests hydrus_legacy",
+      "result": "ok",
+      "passed": 1,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "Doc-tests hydrus_media",
+      "result": "ok",
+      "passed": 1,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "Doc-tests hydrus_net",
+      "result": "ok",
+      "passed": 0,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "Doc-tests hydrus_parse",
+      "result": "ok",
+      "passed": 0,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "Doc-tests hydrus_search",
+      "result": "ok",
+      "passed": 0,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "Doc-tests hydrus_store",
+      "result": "ok",
+      "passed": 0,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "Doc-tests hydrus_testkit",
+      "result": "ok",
+      "passed": 0,
+      "failed": 0,
+      "ignored": 0
+    }
+  ]
+}

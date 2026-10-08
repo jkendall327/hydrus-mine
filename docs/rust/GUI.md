@@ -909,7 +909,17 @@ reference's tree of filetypes by group (a group's tick box ticking all of
 it); "system:hash" reads hashes one to a line as the reference does
 (a type and colon, or "0x", before each allowed), saying which lines
 aren't hashes or that the hash type looks wrong, with its two clean-up
-buttons. The hash editor now presents vertical is/is-not and SHA-256/MD5/SHA-1/
+buttons. The nine dimensions presets now have a focused real Qt acceptance recording
+(`oracle/record_dimensions_presets.py`), including resolution predicate order,
+recent-history updates and cancellation. Native pointer-driven tests exercise all
+nine presets, persistence after reopening the store, supported normal/narrow
+layouts and hidden/retired-owner guards. Exact-source full Linux validation and
+independent native image review passed: these nine historical first-pass leaves
+now have explicit verification, separate from implementation credit. The
+[checkpoint](gui-coverage/checkpoints/dimensions-e00ddab70/README.md) retains
+the reference, native tests, captures and scope limitations.
+
+The hash editor now presents vertical is/is-not and SHA-256/MD5/SHA-1/
 SHA-512 radio groups around the multiline input, with both cleanup buttons
 stacked underneath. Arrow keys stop at each group's edges, Space selects, and
 Enter accepts using the existing default radio-key convention. Cleanup replaces

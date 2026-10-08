@@ -337,3 +337,14 @@ behavior. Real PIL initialization uses the existing image_cache PNG corpus;
 only renderer CallToThread is held to expose pending work. Detached cache clocks
 and suppressed automatic finished-image event delivery make explicit passes
 replayable without editing the reference or changing decoder policy.
+
+### Dimensions preset acceptance
+
+`QT_QPA_PLATFORM=offscreen python oracle/record_dimensions_presets.py` boots a
+fresh private basic fixture and activates all nine dimensions preset buttons in
+the actual `FleshOutPredicates` modal consumer. It records ordered accepted
+predicates, live recent-history updates, cancellation and an actual dialog PNG in
+`fixtures/dimensions_presets.*`. It uses real Button.click signals, without
+replacing reference behavior; it does not claim physical-pointer input or
+post-restart Qt history persistence. Native tests add actual pointer replay and
+reopened-store persistence.

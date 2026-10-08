@@ -1412,3 +1412,203 @@ fn imported_predicate_defaults_reach_panels_and_reset_never_resurrects_legacy_va
         Predicate::System(hydrus_search::SystemPredicate::Limit(_))
     )));
 }
+
+#[test]
+fn dimensions_presets_pointer_acceptance_reaches_page_and_persistent_recent_history() {
+    use hydrus_core::search::recent::RecentPredicates;
+    use slint::platform::{PointerEventButton, WindowEvent};
+    use std::{cell::RefCell, collections::BTreeMap, rc::Rc};
+    let fixture = hydrus_testkit::fixture_json("dimensions_presets.json");
+    let windows = headless::init();
+    let cases = fixture["cases"].as_array().unwrap();
+    assert_eq!(cases.len(), 10);
+    for case in cases.iter().filter(|case| !case["label"].is_null()) {
+        let (dirs, store) = store();
+        store
+            .write(|c| hydrus_store::settings::set(c.conn(), &RecentPredicates::default()))
+            .unwrap();
+        let ui = MainWindow::new().unwrap();
+        ui.show().unwrap();
+        let main_native = windows.get(windows.count() - 1).unwrap();
+        let bound = bind(&ui, Pages::single(SearchPage::new(store.clone())));
+        ui.invoke_search_edited("".into());
+        ui.invoke_suggestion_chosen(suggestion(&ui, "system:dimensions"));
+        let window = bound
+            .predicate_editor
+            .borrow()
+            .as_ref()
+            .unwrap()
+            .clone_strong();
+        let labels: Vec<String> = window.get_buttons().iter().map(|s| s.to_string()).collect();
+        assert_eq!(labels, strings(&case["observed_labels"]));
+        let index = i32::try_from(
+            labels
+                .iter()
+                .position(|s| s == case["label"].as_str().unwrap())
+                .unwrap(),
+        )
+        .unwrap();
+        let geometry = Rc::new(RefCell::new(BTreeMap::new()));
+        window.on_preset_placed({
+            let geometry = geometry.clone();
+            move |i, x, y, w, h| {
+                geometry.borrow_mut().insert(i, (x, y, w, h));
+            }
+        });
+        let native = windows.get(windows.count() - 1).unwrap();
+        // Changed-only geometry observers must see a real resize even if the
+        // initial native opening size already equals a measured viewport.
+        drop(headless::render(&native, 1040, 740));
+        for (width, height, suffix) in [(1020, 720, "normal"), (760, 900, "narrow")] {
+            let pixels = headless::render(&native, width, height);
+            assert_eq!(geometry.borrow().len(), 9);
+            for (x, y, w, h) in geometry.borrow().values() {
+                assert!(*x >= 0.0 && *y >= 0.0 && *w > 50.0 && *h > 10.0);
+                assert!(*x + *w <= f32::from(u16::try_from(width).unwrap()) + 1.0);
+                assert!(*y + *h <= f32::from(u16::try_from(height).unwrap()) + 1.0);
+            }
+            if index == 0 {
+                headless::save_png(
+                    &std::path::Path::new(env!("CARGO_TARGET_TMPDIR"))
+                        .join(format!("dimensions-presets-{suffix}.png")),
+                    &pixels,
+                    width,
+                    height,
+                )
+                .unwrap();
+            }
+        }
+        let (x, y, w, h) = geometry.borrow()[&index];
+        let position = slint::LogicalPosition::new(x + w / 2.0, y + h / 2.0);
+        window.window().dispatch_event(WindowEvent::PointerPressed {
+            position,
+            button: PointerEventButton::Left,
+        });
+        window
+            .window()
+            .dispatch_event(WindowEvent::PointerReleased {
+                position,
+                button: PointerEventButton::Left,
+            });
+        assert!(
+            bound.predicate_editor.borrow().is_none(),
+            "{} did not accept",
+            case["label"]
+        );
+        let mut expected = strings(&case["predicates"]);
+        expected.sort();
+        let mut shown = shown_predicates(&ui);
+        shown.sort();
+        assert_eq!(shown, expected);
+        if case["label"] == "1080p" {
+            let pixels = headless::render(&main_native, 1020, 720);
+            headless::save_png(
+                &std::path::Path::new(env!("CARGO_TARGET_TMPDIR"))
+                    .join("dimensions-presets-accepted.png"),
+                &pixels,
+                1020,
+                720,
+            )
+            .unwrap();
+        }
+        let recent: RecentPredicates = store.read(hydrus_store::settings::get).unwrap();
+        let mut saved = texts(
+            &recent
+                .by_type
+                .values()
+                .flatten()
+                .cloned()
+                .map(Predicate::System)
+                .collect::<Vec<_>>(),
+            &text_context(&store),
+        );
+        saved.sort();
+        let mut reference_recent = strings(&case["recent"]);
+        reference_recent.sort();
+        assert_eq!(saved, reference_recent);
+        // A retained, even forcibly shown, retired editor cannot accept twice.
+        window.show().unwrap();
+        window.invoke_button_clicked((index + 1) % 9);
+        assert_eq!(
+            store
+                .read(hydrus_store::settings::get::<RecentPredicates>)
+                .unwrap(),
+            recent
+        );
+        assert_eq!(shown_predicates(&ui).len(), expected.len());
+        window.hide().unwrap();
+        drop(window);
+        drop(bound);
+        ui.hide().unwrap();
+        drop(ui);
+        drop(store);
+        let reopened = Store::open(dirs[1].path()).unwrap();
+        assert_eq!(
+            reopened
+                .read(hydrus_store::settings::get::<RecentPredicates>)
+                .unwrap(),
+            recent
+        );
+    }
+}
+
+#[test]
+fn dimensions_presets_cancel_hidden_and_retired_callbacks_do_not_change_owner() {
+    use hydrus_core::search::recent::RecentPredicates;
+    let fixture = hydrus_testkit::fixture_json("dimensions_presets.json");
+    let cancelled = fixture["cases"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|c| c["label"].is_null())
+        .unwrap();
+    let (_dirs, store) = store();
+    store
+        .write(|c| hydrus_store::settings::set(c.conn(), &RecentPredicates::default()))
+        .unwrap();
+    let _windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    ui.show().unwrap();
+    let bound = bind(&ui, Pages::single(SearchPage::new(store.clone())));
+    ui.invoke_search_edited("".into());
+    ui.invoke_suggestion_chosen(suggestion(&ui, "system:dimensions"));
+    let old = bound
+        .predicate_editor
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
+    old.hide().unwrap();
+    old.invoke_button_clicked(0);
+    assert_eq!(shown_predicates(&ui), strings(&cancelled["predicates"]));
+    assert_eq!(
+        store
+            .read(hydrus_store::settings::get::<RecentPredicates>)
+            .unwrap(),
+        RecentPredicates::default()
+    );
+    old.show().unwrap();
+    old.invoke_cancel();
+    assert!(bound.predicate_editor.borrow().is_none());
+    ui.invoke_suggestion_chosen(suggestion(&ui, "system:dimensions"));
+    let successor = bound
+        .predicate_editor
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
+    old.show().unwrap();
+    old.invoke_button_clicked(6);
+    old.hide().unwrap();
+    assert!(successor.window().is_visible());
+    assert_eq!(shown_predicates(&ui), strings(&cancelled["predicates"]));
+    assert!(strings(&cancelled["recent"]).is_empty());
+    assert_eq!(
+        store
+            .read(hydrus_store::settings::get::<RecentPredicates>)
+            .unwrap(),
+        RecentPredicates::default()
+    );
+    successor.invoke_cancel();
+    ui.hide().unwrap();
+}

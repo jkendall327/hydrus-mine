@@ -230,6 +230,20 @@ search.
   names casefolded as lowercase (Python's casefold differs for a few letters,
   such as "ß", which we fold to "ss" as it does).
 
+- **Dimensions preset verification** separately tracks nine historical first-pass
+  controls. The new Qt recording activates actual buttons through the real modal
+  consumer, records ordered outputs/live recent history and cancellation, and
+  captures the dialog. Qt activation is a control signal, not physical pointer
+  input. Native regressions use measured pointer targets and check durable recent
+  history, cancellation and retired-owner guards. Page/history comparisons prove
+  membership, not ordering parity. Guard tests invoke callbacks; only preset
+  activation dispatches physical pointer events. Editable dimension operators,
+  tolerance/operand fields and broader layout remain outside this slice; the
+  existing overlap in editable width/height unit text is not promoted by preset
+  verification. Full Linux execution and independent native render review passed
+  for exactly nine historical leaves, with zero additional implementation credit.
+  [Evidence](gui-coverage/checkpoints/dimensions-e00ddab70/README.md).
+
 - **System predicate editors type dates** ("2011-06-04", and "13:05") where
   the reference's have a calendar and a time box. Viewing-time predicates
   now preserve the millisecond fields through creation, reference import,

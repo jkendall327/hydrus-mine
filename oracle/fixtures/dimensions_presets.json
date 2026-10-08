@@ -1,0 +1,406 @@
+{
+  "scope": "Actual Qt button activation and real FleshOutPredicates acceptance, cancellation and live recent-history consumer.",
+  "cases": [
+    {
+      "label": "system:ratio = 16:9",
+      "predicates": [
+        "system:ratio = 16:9"
+      ],
+      "serialised": [
+        [
+          14,
+          8,
+          [
+            15,
+            [
+              "=",
+              16,
+              9
+            ],
+            true
+          ]
+        ]
+      ],
+      "recent": [
+        "system:ratio = 16:9"
+      ],
+      "observed_labels": [
+        "system:ratio = 16:9",
+        "system:ratio = 9:16",
+        "system:ratio = 4:3",
+        "system:ratio is square",
+        "system:ratio is portrait",
+        "system:ratio is landscape",
+        "1080p",
+        "720p",
+        "4k"
+      ]
+    },
+    {
+      "label": "system:ratio = 9:16",
+      "predicates": [
+        "system:ratio = 9:16"
+      ],
+      "serialised": [
+        [
+          14,
+          8,
+          [
+            15,
+            [
+              "=",
+              9,
+              16
+            ],
+            true
+          ]
+        ]
+      ],
+      "recent": [
+        "system:ratio = 9:16"
+      ],
+      "observed_labels": [
+        "system:ratio = 16:9",
+        "system:ratio = 9:16",
+        "system:ratio = 4:3",
+        "system:ratio is square",
+        "system:ratio is portrait",
+        "system:ratio is landscape",
+        "1080p",
+        "720p",
+        "4k"
+      ]
+    },
+    {
+      "label": "system:ratio = 4:3",
+      "predicates": [
+        "system:ratio = 4:3"
+      ],
+      "serialised": [
+        [
+          14,
+          8,
+          [
+            15,
+            [
+              "=",
+              4,
+              3
+            ],
+            true
+          ]
+        ]
+      ],
+      "recent": [
+        "system:ratio = 4:3"
+      ],
+      "observed_labels": [
+        "system:ratio = 16:9",
+        "system:ratio = 9:16",
+        "system:ratio = 4:3",
+        "system:ratio is square",
+        "system:ratio is portrait",
+        "system:ratio is landscape",
+        "1080p",
+        "720p",
+        "4k"
+      ]
+    },
+    {
+      "label": "system:ratio is square",
+      "predicates": [
+        "system:ratio is square"
+      ],
+      "serialised": [
+        [
+          14,
+          8,
+          [
+            15,
+            [
+              "=",
+              1,
+              1
+            ],
+            true
+          ]
+        ]
+      ],
+      "recent": [
+        "system:ratio is square"
+      ],
+      "observed_labels": [
+        "system:ratio = 16:9",
+        "system:ratio = 9:16",
+        "system:ratio = 4:3",
+        "system:ratio is square",
+        "system:ratio is portrait",
+        "system:ratio is landscape",
+        "1080p",
+        "720p",
+        "4k"
+      ]
+    },
+    {
+      "label": "system:ratio is portrait",
+      "predicates": [
+        "system:ratio is portrait"
+      ],
+      "serialised": [
+        [
+          14,
+          8,
+          [
+            15,
+            [
+              "taller than",
+              1,
+              1
+            ],
+            true
+          ]
+        ]
+      ],
+      "recent": [
+        "system:ratio is portrait"
+      ],
+      "observed_labels": [
+        "system:ratio = 16:9",
+        "system:ratio = 9:16",
+        "system:ratio = 4:3",
+        "system:ratio is square",
+        "system:ratio is portrait",
+        "system:ratio is landscape",
+        "1080p",
+        "720p",
+        "4k"
+      ]
+    },
+    {
+      "label": "system:ratio is landscape",
+      "predicates": [
+        "system:ratio is landscape"
+      ],
+      "serialised": [
+        [
+          14,
+          8,
+          [
+            15,
+            [
+              "wider than",
+              1,
+              1
+            ],
+            true
+          ]
+        ]
+      ],
+      "recent": [
+        "system:ratio is landscape"
+      ],
+      "observed_labels": [
+        "system:ratio = 16:9",
+        "system:ratio = 9:16",
+        "system:ratio = 4:3",
+        "system:ratio is square",
+        "system:ratio is portrait",
+        "system:ratio is landscape",
+        "1080p",
+        "720p",
+        "4k"
+      ]
+    },
+    {
+      "label": "1080p",
+      "predicates": [
+        "system:width = 1,920",
+        "system:height = 1,080"
+      ],
+      "serialised": [
+        [
+          14,
+          8,
+          [
+            13,
+            [
+              93,
+              2,
+              [
+                2,
+                1920,
+                null
+              ]
+            ],
+            true
+          ]
+        ],
+        [
+          14,
+          8,
+          [
+            14,
+            [
+              93,
+              2,
+              [
+                2,
+                1080,
+                null
+              ]
+            ],
+            true
+          ]
+        ]
+      ],
+      "recent": [
+        "system:width = 1,920",
+        "system:height = 1,080"
+      ],
+      "observed_labels": [
+        "system:ratio = 16:9",
+        "system:ratio = 9:16",
+        "system:ratio = 4:3",
+        "system:ratio is square",
+        "system:ratio is portrait",
+        "system:ratio is landscape",
+        "1080p",
+        "720p",
+        "4k"
+      ]
+    },
+    {
+      "label": "720p",
+      "predicates": [
+        "system:width = 1,280",
+        "system:height = 720"
+      ],
+      "serialised": [
+        [
+          14,
+          8,
+          [
+            13,
+            [
+              93,
+              2,
+              [
+                2,
+                1280,
+                null
+              ]
+            ],
+            true
+          ]
+        ],
+        [
+          14,
+          8,
+          [
+            14,
+            [
+              93,
+              2,
+              [
+                2,
+                720,
+                null
+              ]
+            ],
+            true
+          ]
+        ]
+      ],
+      "recent": [
+        "system:width = 1,280",
+        "system:height = 720"
+      ],
+      "observed_labels": [
+        "system:ratio = 16:9",
+        "system:ratio = 9:16",
+        "system:ratio = 4:3",
+        "system:ratio is square",
+        "system:ratio is portrait",
+        "system:ratio is landscape",
+        "1080p",
+        "720p",
+        "4k"
+      ]
+    },
+    {
+      "label": "4k",
+      "predicates": [
+        "system:width = 3,840",
+        "system:height = 2,160"
+      ],
+      "serialised": [
+        [
+          14,
+          8,
+          [
+            13,
+            [
+              93,
+              2,
+              [
+                2,
+                3840,
+                null
+              ]
+            ],
+            true
+          ]
+        ],
+        [
+          14,
+          8,
+          [
+            14,
+            [
+              93,
+              2,
+              [
+                2,
+                2160,
+                null
+              ]
+            ],
+            true
+          ]
+        ]
+      ],
+      "recent": [
+        "system:width = 3,840",
+        "system:height = 2,160"
+      ],
+      "observed_labels": [
+        "system:ratio = 16:9",
+        "system:ratio = 9:16",
+        "system:ratio = 4:3",
+        "system:ratio is square",
+        "system:ratio is portrait",
+        "system:ratio is landscape",
+        "1080p",
+        "720p",
+        "4k"
+      ]
+    },
+    {
+      "label": null,
+      "predicates": [],
+      "serialised": [],
+      "recent": [],
+      "observed_labels": [
+        "system:ratio = 16:9",
+        "system:ratio = 9:16",
+        "system:ratio = 4:3",
+        "system:ratio is square",
+        "system:ratio is portrait",
+        "system:ratio is landscape",
+        "1080p",
+        "720p",
+        "4k"
+      ]
+    }
+  ]
+}

@@ -495,6 +495,10 @@ def publish(commit, output, patch, review, ci):
     cv.refresh_mappings(replay)
     for name in ('reference', 'native'):
         require({n['id']: n for n in replay[name]['nodes']} == {n['id']: n for n in snapshots[name]['nodes']}, f'{name}: cumulative patch replay differs')
+    import gui_verify
+    verification = gui_verify.inherited(commit, progress, review)
+    if verification is not None:
+        snapshots['reference']['goal_verification'] = verification
     cv.DATA = Template(commit)
     html = cv.render(snapshots)
     audit_report = {'source_commit': commit, 'frozen_source_commit': FROZEN, 'patches': patch_report,
@@ -511,6 +515,8 @@ def publish(commit, output, patch, review, ci):
                      'reference_statuses': progress['after'], 'native_entries': len(snapshots['native']['nodes']),
                      'exported_windows': source['exported_window_count'], 'ci_url': ci['url'],
                      'scope': 'Staged outside canonical files; root reviews/copies, updates narrative documents, browser-checks and commits publication.'}})
+    if verification is not None:
+        files[gui_verify.CHECKLIST] = gui_verify.checklist(commit, progress, verification)
     write_outputs(output, files)
     return files['publication-summary.json']
 
