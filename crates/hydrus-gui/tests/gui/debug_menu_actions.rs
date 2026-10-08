@@ -400,6 +400,16 @@ fn idle_report_mode_says_why_the_client_is_not_idle() {
     debug_flags::set_sink(None);
 }
 
+/// Puts the network report flags and the sink back when dropped.
+struct Reset;
+impl Drop for Reset {
+    fn drop(&mut self) {
+        debug_flags::Flag::NetworkReport.set(false);
+        debug_flags::Flag::NetworkReportSilent.set(false);
+        debug_flags::set_sink(None);
+    }
+}
+
 // leaf: audit-options-help-debug-action-network-report-mode-silent
 #[test]
 fn network_report_mode_entries_share_the_mode_as_the_reference_does() {
@@ -407,14 +417,6 @@ fn network_report_mode_entries_share_the_mode_as_the_reference_does() {
         .lock()
         .unwrap_or_else(std::sync::PoisonError::into_inner);
     // the flags are process-wide: put them back even if an assertion fails
-    struct Reset;
-    impl Drop for Reset {
-        fn drop(&mut self) {
-            debug_flags::Flag::NetworkReport.set(false);
-            debug_flags::Flag::NetworkReportSilent.set(false);
-            debug_flags::set_sink(None);
-        }
-    }
     let _reset = Reset;
     let d = start();
     let seen = capture();
