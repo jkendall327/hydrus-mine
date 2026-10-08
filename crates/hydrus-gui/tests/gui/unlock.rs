@@ -9,6 +9,8 @@ use slint::ComponentHandle as _;
 use hydrus_core::lock::LockPassword;
 use hydrus_gui::{headless, unlock_window};
 
+// leaf: audit-options-unlock-password
+// leaf: audit-options-unlock-cancel
 #[test]
 fn only_the_password_unlocks_the_client() {
     let windows = headless::init();

@@ -414,6 +414,7 @@ fn expected(bound: &hydrus_gui::Bound, step: &serde_json::Value) {
 }
 // leaf: audit-options-gui-pages-navigation-and-drag-and-drop-navigate-tabs-during-drag-and-drop
 // leaf: audit-options-gui-pages-navigation-and-drag-and-drop-with-shift-held-down-2
+// leaf: audit-options-tabs-drag
 #[test]
 fn real_pointer_drag_replays_shift_chase_hover_transfer_disable_and_cancel_with_ordered_media() {
     use hydrus_gui_model::tab_drag::Edge;
