@@ -911,9 +911,31 @@ deleted sidecars by `crates/hydrus-download/tests/local_import.rs`.
   controls; their help and favourites menus remain absent. Its date phrase link
   is shown as text. Date conversions execute and update live previews. Advanced parsing
   uses Jiff's diagnostic reasons rather than Python's; English directives and
-  common ISO/English automatic dates are supported. The easy parser supports
-  relative English units (seconds through years), now/today/yesterday/tomorrow,
-  but not dateparser's full multilingual and fuzzy grammar. Locale-dependent
+  common ISO/English automatic dates are supported. By the owner's decision,
+  the easy parser ("datestring to timestamp (easy)") matches a hydrus install
+  **without the `dateparser` library**, where `ClientTime.ParseDate` is
+  `dateutil.parser.parse`, plus the English relative expressions `dateparser`
+  reads. Non-English text, fuzzy text, Unix timestamps and words such as
+  "noon" are not parsed (use the advanced strptime step). It reads: ISO 8601,
+  RFC 2822 and HTTP dates, numeric dates (month first, day first when only
+  that is valid; two-digit years within fifty years of now), month names,
+  ordinals and weekdays (moving the date forward to the weekday), 12- and
+  24-hour times, `UTC`, `GMT` and `Z` (other zone names such as `EST` are
+  ignored, and `UTC+9` reads as POSIX does, west of UTC), filling a missing
+  part from the clock as dateutil does; and relative expressions (`now`,
+  `yesterday`, `2d ago`, `a day ago`, `two hours ago`, `1 year, 2 months ago`,
+  `in 3 weeks`, `last week`, `yesterday at 5pm`) with dateparser's month and
+  year arithmetic. A corpus of 247 forms recorded from the reference
+  (`oracle/record_dateparser_corpus.py`: relative forms with dateparser,
+  the rest with it disabled) all match, dateutil's odd readings of digit-only strings
+  included (`010203`, `-1`, `120`, `1 2 3`). The other callers of the
+  conversion follow a dateparser-less install too: a `Retry-After` date is read
+  by it (between a minute and a day), and `Last-Modified` is read only in the
+  fixed `Thu, 20 May 2010 07:00:23 GMT` form (taken as local time, as the
+  reference does). The Client API/search `system:time` predicates already use
+  the reference's dateparser-less grammar; the date editor's pasted text reads
+  only plain forms and does not fall back to the easy parser as the reference
+  does. Locale-dependent
   date phrases use English/C forms. Advanced parsing validates Python's
   six-digit microsecond limit, ignores recognised UTC/GMT/system timezone names
   as Python does, and rejects year zero and non-Python directives. Jiff's
@@ -973,15 +995,25 @@ deleted sidecars by `crates/hydrus-download/tests/local_import.rs`.
   are greyed out); its "additional urls" don't show the URL a URL class
   would actually fetch or refer from; trying a previously deleted file
   again doesn't offer to clear its deletion record.
-- **The import options editor** keeps typed-line fields for the tag filtering
-  whitelist and additional tags, with a detached shared write-tag autocomplete
-  editor for both lists. The reference embeds its tag inputs. Note names remain
+- **The import options editor** keeps a typed-line field for the tag filtering
+  whitelist, with a detached shared write-tag autocomplete editor for it and
+  for each service's additional tags (the reference embeds its tag inputs in
+  a dialog, and this one lacks the tag list's multiple-selection and
+  maintenance right-click menus). Each tag service's cog menu is a set of check boxes in the
+  box rather than a menu. Note names remain
   typed lines, and note renames use "parser name -> saved name" rather than the
   reference's two-column list.
   The tags page's "set a filter for already-exist test" isn't there.
-  Locations take one destination (the reference's takes several), and
-  presentation's location is all my files or all local files. It has no
-  copy, paste or favourites buttons, and always lists kinds as the
+  The shared location button's flags for local-only, combined-local-only and
+  no-multiple choices exist in the model and are replayed against the
+  reference's button, but no window uses them yet.
+  The destination and presentation location buttons are drop-downs of the
+  reference's menu, its "multiple/deleted locations" row opening the list
+  window, with a label beside them saying what is chosen (the reference has
+  one button whose popup menu has check marks). The list of kinds' summary of a
+  presentation location that is neither all my files nor all local files says
+  "in another location" where the reference names the domains.
+  It always lists kinds as the
   reference's "simple mode" does (hydrus-rs has no option for it yet).
 - **The merge options editor** asks its select dialogs as a row of
   buttons (no service or action preselected), and edits the note merge

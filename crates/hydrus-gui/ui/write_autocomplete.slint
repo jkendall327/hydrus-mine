@@ -215,6 +215,8 @@ export component WriteTagsWindow inherits Window {
     in property <int> list-height: 11;
     in property <string> question;
     in property <string> error;
+    // a line of explanation above the tags (the reference's dialog `message`)
+    in property <string> message;
     out property <length> results-x: input.results-x;
     out property <length> results-y: input.results-y;
     out property <length> results-width: input.results-width;
@@ -252,6 +254,7 @@ export component WriteTagsWindow inherits Window {
         VerticalLayout {
             padding: 10px;
             spacing: 6px;
+            if root.message != "": Text { text: root.message; color: Theme.text; wrap: word-wrap; }
             ListView {
                 vertical-stretch: 1;
                 for tag[i] in root.tags: Rectangle {
