@@ -1361,3 +1361,115 @@ fn rules_and_comparators_are_exported_imported_and_duplicated_whole() {
     rule.invoke_comparator_exchange(2);
     assert_eq!(count(), start + 2);
 }
+
+// leaf: audit-media-rules-exchange
+#[test]
+fn rules_and_comparators_go_out_and_come_in_as_pngs() {
+    use std::cell::RefCell;
+    use std::rc::Rc;
+    let Opened { ui, bound, .. } = opened();
+    let temp = tempfile::tempdir().unwrap();
+    let picked: Rc<RefCell<Vec<std::path::PathBuf>>> = Rc::default();
+    hydrus_gui::set_picker({
+        let picked = picked.clone();
+        move |_, _| picked.borrow().clone()
+    });
+    let names = |list: &hydrus_gui::AutoResolutionRulesWindow| -> Vec<String> {
+        let rows = list.get_rows();
+        (0..rows.row_count())
+            .map(|r| {
+                rows.row_data(r)
+                    .unwrap()
+                    .cells
+                    .row_data(0)
+                    .unwrap()
+                    .to_string()
+            })
+            .collect()
+    };
+    let export = |path: &std::path::Path| {
+        let window = hydrus_gui::png_export_window::last().expect("the png export opens");
+        window.set_path(path.to_string_lossy().as_ref().into());
+        window.set_png_title("rules".into());
+        window.invoke_action("update".into());
+        window.invoke_action("export".into());
+        assert!(window.get_done(), "{}", window.get_error());
+        window.invoke_action("close".into());
+    };
+    let said = || {
+        let window = hydrus_gui::message_window().expect("a message is shown");
+        let said = (
+            window.get_window_title().to_string(),
+            window.get_message().to_string(),
+        );
+        window.invoke_cancelled();
+        said
+    };
+
+    ui.invoke_duplicates_action("edit rules".into(), 0, false, false);
+    let list = bound
+        .auto_resolution
+        .list
+        .borrow()
+        .as_ref()
+        .expect("it opens")
+        .clone_strong();
+    list.invoke_add_suggested();
+    list.invoke_suggested_chosen(0);
+    let first = names(&list)[0].clone();
+
+    // rules: export the selected one to a png, import it again
+    list.invoke_row_clicked(0, false, false);
+    list.invoke_exchange(2);
+    let rules_png = temp.path().join("rule.png");
+    export(&rules_png);
+    assert!(rules_png.exists());
+    *picked.borrow_mut() = vec![rules_png.clone()];
+    list.invoke_exchange(5);
+    let after = names(&list);
+    assert_eq!(after.len(), 2);
+    assert_ne!(
+        after[0], after[1],
+        "named apart from the rule already there"
+    );
+    assert!(after[1].to_lowercase().starts_with(&first.to_lowercase()));
+    assert_eq!(said(), ("Information".into(), "1 objects added!".into()));
+    // a png that carries no payload: the file wording, not the clipboard's
+    let bad = temp.path().join("bad.png");
+    std::fs::write(&bad, b"not a png").unwrap();
+    *picked.borrow_mut() = vec![bad];
+    list.invoke_exchange(5);
+    assert_eq!(names(&list).len(), 2);
+    assert_eq!(said().0, "Problem importing!");
+
+    // comparators of a rule
+    list.invoke_row_clicked(0, false, false);
+    list.invoke_edit();
+    let rule = bound
+        .auto_resolution
+        .rule
+        .borrow()
+        .as_ref()
+        .expect("the rule editor opens")
+        .clone_strong();
+    let count = || rule.get_comparators().row_count();
+    let start = count();
+    rule.invoke_comparator_clicked(0);
+    rule.invoke_comparator_exchange(1);
+    let comparator_png = temp.path().join("comparator.png");
+    export(&comparator_png);
+    *picked.borrow_mut() = vec![comparator_png];
+    rule.invoke_comparator_exchange(3);
+    assert_eq!(count(), start + 1);
+    assert_eq!(
+        rule.get_comparators().row_data(0),
+        rule.get_comparators().row_data(start),
+        "the whole comparator comes back"
+    );
+    assert_eq!(said().1, "1 objects added!");
+    // a rules png is no comparator: refused in the file wording, adding nothing
+    *picked.borrow_mut() = vec![rules_png];
+    rule.invoke_comparator_exchange(3);
+    assert_eq!(count(), start + 1);
+    assert_eq!(said().0, "Problem importing!");
+}

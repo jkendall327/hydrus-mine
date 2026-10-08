@@ -300,7 +300,7 @@ fn the_filter_opens_from_a_duplicates_page_and_compares_the_pair() {
     let shots = std::path::Path::new(env!("CARGO_TARGET_TMPDIR"));
     headless::save_png(&shots.join("duplicate_filter.png"), &pixels, 1200, 800).unwrap();
 
-    // the file is fitted to its area, beside the comparison; z switches
+    // the file is fitted to its area (the comparison floats over it); z switches
     // to 100% and back, and shift and the arrows pan
     let rect = |f: &hydrus_gui::DuplicateFilterWindow| {
         (
@@ -311,7 +311,7 @@ fn the_filter_opens_from_a_duplicates_page_and_compares_the_pair() {
         )
     };
     let (area_width, area_height) = (filter.get_canvas_width(), filter.get_canvas_height());
-    assert!(area_width < 1200.0 && (area_height - 800.0).abs() < 0.5);
+    assert!((area_width - 1200.0).abs() < 0.5 && (area_height - 800.0).abs() < 0.5);
     let fitted = rect(&filter);
     assert!(
         (fitted.2 - area_width).abs() <= 1.0 || (fitted.3 - area_height).abs() <= 1.0,

@@ -965,7 +965,12 @@ deleted sidecars by `crates/hydrus-download/tests/local_import.rs`.
   buttons (the rule's own comparator list does), and its custom
   merge options are edited in their own window (the reference embeds
   the editor). A relative comparator's time delta and range are
-  in milliseconds, where the reference has a time widget.
+  in milliseconds, where the reference has a time widget. The rules and
+  comparator lists import one png or json at a time (the reference's picker
+  takes several), and a file that can't be read says "Problem importing!"
+  with the reason as the reference does, though not its separate text for a
+  payload that decodes but can't be understood (whose `{path}` the reference
+  never fills in).
 - **The file log window** can't yet import new sources, export them to
   a png, search for the selected URLs, or do its advanced entries (these
   are greyed out); its "additional urls" don't show the URL a URL class
@@ -1307,7 +1312,9 @@ The access-key window opens separately from service review; the reference
 embeds its list within that panel. "add from api request" opens the
 reference's waiting window and takes the first request the running daemon
 records (the daemon, not the GUI, serves the API, so the request travels
-through the store, polled twice a second); `hydrus api-keys listen` remains
+through the store, polled twice a second; registration is a ten-second lease
+that timer renews, so a crash closes it within seconds instead of leaving it
+open); `hydrus api-keys listen` remains
 for a store without a GUI. Key-change
 questions use an inline edit panel and generated-key button. Listener changes
 may take up to one second; current requests drain for at most ten seconds
@@ -3885,10 +3892,9 @@ change nothing). They are marked out of scope in `docs/rust/tracking/`.
   text. A numerical rating is as wide as its stars: the reference's fraction
   text beside them is not drawn there. URLs can't be clicked there,
   and the cog menu of the reference's hover does not exist.
-- The duplicates filter's hover is a fixed panel beside the canvas while
-  pinned (the reference floats it over the canvas); unpinned it pops in over
-  the canvas' right edge. There is no cog menu to flip the pin from the
-  hover itself.
+- The duplicates filter's hover floats over the canvas' right edge, always
+  while pinned and on mouseover otherwise, as the reference's does. There is
+  no cog menu to flip the pin from the hover itself.
 - Frame locations: a child window opens at its parent's top-left (less the
   padding), centred on it, or where the mouse is, and grows toward the main
   window by its gravity, as `SetInitialTLWSizeAndPosition` does, taking the

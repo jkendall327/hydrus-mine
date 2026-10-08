@@ -800,8 +800,8 @@ An import folder's dialog lists the tag services it tags files for by
 their paths, with "edit" and "delete" for each and "add" for another
 (refused, with the reference's warning, for one it has). "add" and
 "edit" open that dialog's boxes on one service's options alone ("edit
-filename tagging options"), with an example path from the folder and
-the tags it would get.
+filename tagging options"), with an example path from the folder (the first of its first 25 entries that
+is a file of an importable type, by content) and the tags it would get.
 
 A gallery downloader page is the reference's too. Its "gallery
 downloader" box says how its searches stand ("2 queries - 4/6", and
@@ -1912,7 +1912,8 @@ Service review now opens a native Client API access-key list with the reference
 columns, extended selection, sorting, add/edit/duplicate/delete, copy-key and
 local base-URL opening, and "add from api request": a window waits for a tool
 to ask for access (refused with the reference's words if the service isn't
-running), and the first request opens the permissions editor with what the
+running; registration stays open only while the window does, as a short lease
+its timer renews), and the first request opens the permissions editor with what the
 tool asked for and the key it was given. Permission editors expose all 14 basic permissions,
 full access, the reusable permitted-search-tags filter and explicit key rotation
 with validation/collision refusal. List and nested edits remain detached until
@@ -3904,7 +3905,9 @@ client lacks is restored after saying so, one it has asks "Are you certain you
 want to restore the defaults for "…"? Any custom shortcuts you have set will be
 wiped." "custom user sets" explains that they are advanced, and adds ("new
 shortcuts"), edits, renames and deletes ("Remove all selected?") custom sets;
-names are made unique as "name (1)", "name (2)". A "help" button shows the
+names are made unique as "name (1)", "name (2)", and a custom set cannot take a
+built-in set's name ("That name is reserved--please pick another!", and the
+editor stays open). A "help" button shows the
 reference's help. A new client starts with the reference's eleven default sets
 (107 shortcuts); a command with data (a seek's distance, a thumbnail focus
 move) is listed with the reference's text.
@@ -4709,7 +4712,9 @@ mode" (the maintenance daemons starting a pass), "file import report mode"
 caught as shortcuts), "idle report mode" (why the client is not idle: not
 on for 120s, normal idle work disabled, last user, mouse or Client API
 action, or forced from the debug menu), "network report mode" and its
-"(silent)" twin (redirects and errors; silent goes to the console only),
+"(silent)" twin (redirects and errors; silent goes to the console only; the
+two entries share the one mode, as the reference's do: silent turns it on and
+sets silent, the plain entry flips it and clears silent),
 "shortcut report mode" (what a shortcut matched, or that it matched
 nothing), "similar files metadata generation report mode" (each stage of
 making a perceptual hash), "subprocess report mode" (each external

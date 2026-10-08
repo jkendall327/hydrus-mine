@@ -673,18 +673,29 @@ fn show_filename_tagging(window: &ImportFolderWindow, store: &Store, folder: &Im
     window.set_tagging_choices(strings(services.into_iter().map(|(_, n)| n).collect()));
 }
 
-/// The first file in a folder, for an example path (the reference's
-/// sidecar test context's first example file).
+/// How many directory entries the sidecar test context looks at
+/// (`HOW_MANY_EXAMPLE_OBJECTS_TO_USE`).
+const EXAMPLE_ENTRIES: usize = 25;
+
+/// The example file for a folder: the first of its first few entries that is
+/// a file of an importable type by content (`_PathChanged`), as the sidecar
+/// test context's first example file.
 fn example_path(folder: &str) -> String {
-    let mut files: Vec<String> = std::fs::read_dir(folder)
+    let tools = hydrus_media::MediaTools::new();
+    std::fs::read_dir(folder)
         .into_iter()
         .flatten()
+        .take(EXAMPLE_ENTRIES)
         .flatten()
-        .filter(|e| e.path().is_file())
-        .map(|e| e.path().to_string_lossy().into_owned())
-        .collect();
-    files.sort();
-    files.into_iter().next().unwrap_or_default()
+        .map(|e| e.path())
+        .filter(|p| p.is_file())
+        .find(|p| {
+            tools
+                .detect_mime(p)
+                .is_ok_and(hydrus_media::mimes::is_allowed)
+        })
+        .map(|p| p.to_string_lossy().into_owned())
+        .unwrap_or_default()
 }
 
 fn seed_counts(seeds: &[queues::FileSeed]) -> queues::StatusCounts {

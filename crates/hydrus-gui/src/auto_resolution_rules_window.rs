@@ -944,7 +944,10 @@ fn open_rule(
                     crate::debug_actions::message("Information", &ex::added(n));
                 }
             };
-            let load = |text: &str| match ex::import_comparators_text(text, &scales(&store)) {
+            let load = |text: &str, from_file: bool| match ex::import_comparators_text(
+                text,
+                &scales(&store),
+            ) {
                 Ok(imported) => {
                     if !imported.refused.is_empty() {
                         crate::debug_actions::message(
@@ -954,10 +957,7 @@ fn open_rule(
                     }
                     add(imported.comparators, true);
                 }
-                Err(e) => crate::debug_actions::message(
-                    ex::PROBLEM_TITLE,
-                    &format!("I could not understand what was in the clipboard: {e}"),
-                ),
+                Err(e) => import_failed(from_file, &e),
             };
             match mode {
                 0 => {
@@ -978,18 +978,17 @@ fn open_rule(
                     }
                 }
                 2 => match crate::clipboard_text() {
-                    Ok(Some(text)) => load(&text),
+                    Ok(Some(text)) => load(&text, false),
                     Ok(None) => {}
                     Err(e) => crate::debug_actions::message(
                         ex::PROBLEM_TITLE,
                         &format!("Problem loading from clipboard: {e}"),
                     ),
                 },
-                3 => match crate::png_export_window::import_text_with_title("select the png files")
-                {
-                    Ok(Some(text)) => load(&text),
+                3 => match crate::png_export_window::import_text_with_title(ex::PNG_PICKER_TITLE) {
+                    Ok(Some(text)) => load(&text, true),
                     Ok(None) => {}
-                    Err(e) => crate::debug_actions::message(ex::PROBLEM_TITLE, &e),
+                    Err(e) => import_failed(true, &e),
                 },
                 4 => {
                     if let Some(c) = selected {
@@ -1494,6 +1493,14 @@ fn scales(store: &Store) -> impl Fn(&hydrus_core::ServiceKey) -> Option<(u64, bo
     }
 }
 
+/// Say why an import could not be read, in the wording of the source: files
+/// (`_ImportJSONs`, `_ImportPNGs`) or the clipboard.
+fn import_failed(from_file: bool, error: &str) {
+    let (title, message) =
+        hydrus_gui_model::auto_resolution_exchange::import_failure(from_file, error);
+    crate::debug_actions::message(title, &message);
+}
+
 /// The list's export (0-2), import (3-5) and duplicate (6) buttons.
 fn exchange(store: &Arc<Store>, slots: &Slots, state: &Rc<RefCell<ListState>>, mode: i32) {
     use hydrus_gui_model::auto_resolution_exchange as ex;
@@ -1520,17 +1527,14 @@ fn exchange(store: &Arc<Store>, slots: &Slots, state: &Rc<RefCell<ListState>>, m
             crate::debug_actions::message("Information", &ex::added(n));
         }
     };
-    let load = |text: &str| match ex::import_text(text, &scales(store)) {
+    let load = |text: &str, from_file: bool| match ex::import_text(text, &scales(store)) {
         Ok(imported) => {
             if !imported.refused.is_empty() {
                 crate::debug_actions::message("Warning", &ex::refused_message(&imported.refused));
             }
             add(imported.rules, true);
         }
-        Err(e) => crate::debug_actions::message(
-            ex::PROBLEM_TITLE,
-            &format!("I could not understand what was in the clipboard: {e}"),
-        ),
+        Err(e) => import_failed(from_file, &e),
     };
     match mode {
         0 if !selected.is_empty() => crate::copy_to_clipboard(&ex::export_text(&selected)),
@@ -1552,7 +1556,7 @@ fn exchange(store: &Arc<Store>, slots: &Slots, state: &Rc<RefCell<ListState>>, m
             }
         }
         3 => match crate::clipboard_text() {
-            Ok(Some(text)) => load(&text),
+            Ok(Some(text)) => load(&text, false),
             Ok(None) => {}
             Err(e) => crate::debug_actions::message(
                 ex::PROBLEM_TITLE,
@@ -1562,7 +1566,7 @@ fn exchange(store: &Arc<Store>, slots: &Slots, state: &Rc<RefCell<ListState>>, m
         4 => {
             for path in crate::pick_exchange_files("select the json files", "json") {
                 match std::fs::read_to_string(&path) {
-                    Ok(text) => load(&text),
+                    Ok(text) => load(&text, true),
                     Err(e) => {
                         crate::debug_actions::message(ex::PROBLEM_TITLE, &e.to_string());
                         break;
@@ -1570,10 +1574,10 @@ fn exchange(store: &Arc<Store>, slots: &Slots, state: &Rc<RefCell<ListState>>, m
                 }
             }
         }
-        5 => match crate::png_export_window::import_text_with_title("select the png files") {
-            Ok(Some(text)) => load(&text),
+        5 => match crate::png_export_window::import_text_with_title(ex::PNG_PICKER_TITLE) {
+            Ok(Some(text)) => load(&text, true),
             Ok(None) => {}
-            Err(e) => crate::debug_actions::message(ex::PROBLEM_TITLE, &e),
+            Err(e) => import_failed(true, &e),
         },
         6 => add(selected, false),
         _ => {}
