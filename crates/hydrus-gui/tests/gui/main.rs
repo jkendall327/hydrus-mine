@@ -40,6 +40,7 @@ mod force_filetype;
 mod force_idle;
 mod formula_editors;
 mod hash_predicate;
+mod how_boned_window;
 mod import_files;
 mod import_folder_log;
 mod import_options;

@@ -18,6 +18,16 @@ use crate::{BonesRow, HowBonedWindow};
 
 pub type Slot = Rc<RefCell<Option<HowBonedWindow>>>;
 
+thread_local! {
+    // (the window most recently opened, for tests to drive)
+    static OPENED: RefCell<slint::Weak<HowBonedWindow>> = RefCell::new(slint::Weak::default());
+}
+
+/// The window most recently opened by `open`, while it exists.
+pub fn opened() -> Option<HowBonedWindow> {
+    OPENED.with(|w| w.borrow().upgrade())
+}
+
 fn strings(items: impl IntoIterator<Item = String>) -> ModelRc<SharedString> {
     ModelRc::new(VecModel::from(
         items
@@ -27,11 +37,23 @@ fn strings(items: impl IntoIterator<Item = String>) -> ModelRc<SharedString> {
     ))
 }
 
+/// A finished search: its generation, its statistics (or error), and the search.
+type Finished = (
+    u64,
+    Result<hydrus_store::stats::BonedStats, String>,
+    FileSearchContext,
+);
+
 struct State {
     search: RefCell<FileSearchContext>,
     /// Bumped by each search and by stop: an older result is dropped.
     generation: Arc<std::sync::atomic::AtomicU64>,
     loading: Cell<bool>,
+    /// Where the worker leaves its result, for `poll` to pick up on the UI
+    /// thread (a timer rather than `invoke_from_event_loop`, which headless
+    /// tests cannot deliver).
+    mailbox: Arc<std::sync::Mutex<Option<Finished>>>,
+    poll: slint::Timer,
 }
 
 fn show(
@@ -117,6 +139,8 @@ pub fn open(store: &Arc<Store>, slot: &Slot) -> Result<(), String> {
         }),
         generation: Arc::default(),
         loading: Cell::new(false),
+        mailbox: Arc::default(),
+        poll: slint::Timer::default(),
     });
     let refresh = Rc::new({
         let state = state.clone();
@@ -144,12 +168,31 @@ pub fn open(store: &Arc<Store>, slot: &Slot) -> Result<(), String> {
             let search = state.search.borrow().clone();
             let store = store.clone();
             let weak = weak.clone();
+            let mailbox = state.mailbox.clone();
             std::thread::spawn(move || {
-                let result = model::boned(&store, &search);
-                let _ = slint::invoke_from_event_loop(move || {
+                let result = model::boned(&store, &search).map_err(|e| e.to_string());
+                if let Ok(mut slot) = mailbox.lock() {
+                    *slot = Some((generation, result, search));
+                }
+            });
+            let owner = Rc::downgrade(&state);
+            state.poll.start(
+                slint::TimerMode::Repeated,
+                std::time::Duration::from_millis(20),
+                move || {
+                    let Some(state) = owner.upgrade() else {
+                        return;
+                    };
+                    let finished = state.mailbox.lock().ok().and_then(|mut slot| slot.take());
+                    let Some((generation, result, search)) = finished else {
+                        return;
+                    };
                     if counter.load(std::sync::atomic::Ordering::SeqCst) != generation {
+                        // (a newer search's result is still to come)
                         return;
                     }
+                    // (stopped, not dropped, inside its own callback)
+                    state.poll.stop();
                     let Some(window) = weak.upgrade() else {
                         return;
                     };
@@ -159,10 +202,10 @@ pub fn open(store: &Arc<Store>, slot: &Slot) -> Result<(), String> {
                             window.set_loading_text("".into());
                             show(&window, &stats, &search);
                         }
-                        Err(error) => window.set_loading_text(error.to_string().into()),
+                        Err(error) => window.set_loading_text(error.into()),
                     }
-                });
-            });
+                },
+            );
         }
     });
     window.on_refresh({
@@ -176,6 +219,7 @@ pub fn open(store: &Arc<Store>, slot: &Slot) -> Result<(), String> {
             state
                 .generation
                 .fetch_add(1, std::sync::atomic::Ordering::SeqCst);
+            state.poll.stop();
             if let Some(window) = weak.upgrade() {
                 window.set_loading(false);
                 window.set_loading_text("cancelled!".into());
@@ -239,11 +283,13 @@ pub fn open(store: &Arc<Store>, slot: &Slot) -> Result<(), String> {
             state
                 .generation
                 .fetch_add(1, std::sync::atomic::Ordering::SeqCst);
+            state.poll.stop();
             slint::CloseRequestResponse::HideWindow
         }
     });
     window.show().map_err(|e| e.to_string())?;
     refresh();
+    OPENED.with(|w| *w.borrow_mut() = window.as_weak());
     *slot.borrow_mut() = Some(window);
     Ok(())
 }
