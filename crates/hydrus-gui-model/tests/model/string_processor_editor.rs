@@ -201,6 +201,13 @@ fn check(editor: &ProcessorEditor, state: &Value, context: &str) {
     assert_eq!(editor.value(), processor(&state["value"]), "{context}");
 }
 
+// leaf: audit-network-processor-order
+// leaf: audit-network-processor-results
+// leaf: string-joiner
+// leaf: string-slicer
+// leaf: string-sorter
+// leaf: string-splitter
+// leaf: string-conversion-tests
 #[test]
 fn the_string_processor_editor_works_as_the_references_does() {
     let recorded = hydrus_testkit::fixture_json("string_processor_editor.json");

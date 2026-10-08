@@ -54,6 +54,9 @@ fn check_simple(ours: &SimpleView, theirs: &Value, at: &str) {
     );
 }
 
+// leaf: audit-shared-tag-whitelist
+// leaf: audit-shared-tag-blacklist
+// leaf: audit-shared-tag-advanced
 #[test]
 fn the_editor_shows_and_edits_a_filter_as_the_reference_does() {
     let recorded = hydrus_testkit::fixture_json("tag_filter_editor.json");
@@ -165,4 +168,42 @@ fn the_editor_shows_and_edits_a_filter_as_the_reference_does() {
             );
         }
     }
+}
+
+// leaf: audit-shared-tag-testing
+#[test]
+fn a_blacklist_test_blocks_a_tag_when_a_sibling_is_blocked_as_the_reference_does() {
+    // The reference tests each tag with its siblings, unnamespaced rules
+    // matching namespaced tags (`ClientGUITagFilter._UpdateTest`).
+    let mut editor = TagFilterEditor::new(&TagFilter::new(), true, &[String::new()]);
+    editor.add_simple_blacklist(&["bad".to_owned()]);
+    let siblings = |tags: &[String]| -> Vec<Vec<String>> {
+        tags.iter()
+            .map(|t| match t.as_str() {
+                "nice" => vec!["nice".to_owned(), "bad".to_owned()],
+                other => vec![other.to_owned()],
+            })
+            .collect()
+    };
+    assert_eq!(
+        editor.test("fine", &siblings),
+        ("tag passes!".to_owned(), Some(true))
+    );
+    assert_eq!(
+        editor.test("nice", &siblings),
+        ("tag blocked!".to_owned(), Some(false))
+    );
+    assert_eq!(
+        editor.test("series:bad", &siblings),
+        ("tag blocked!".to_owned(), Some(false)),
+        "an unnamespaced rule matches a namespaced tag in a blacklist test"
+    );
+    assert_eq!(
+        editor.test("fine\nnice", &siblings),
+        ("1 pass, 1 blocked!".to_owned(), Some(false))
+    );
+    assert_eq!(
+        editor.test("nice\nseries:bad", &siblings),
+        ("all blocked!".to_owned(), Some(false))
+    );
 }

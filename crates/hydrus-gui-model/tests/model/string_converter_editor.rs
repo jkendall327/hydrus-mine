@@ -171,6 +171,9 @@ fn check(editor: &ConverterEditor, state: &Value, context: &str) {
     assert_eq!(editor.can_move_down(), state["can_down"], "{context}");
 }
 
+// leaf: audit-network-converter-sequence
+// leaf: audit-network-conversion-ordinary
+// leaf: audit-network-conversion-encoding
 #[test]
 fn the_string_converter_editor_works_as_the_references_does() {
     replay("string_converter_editor.json");

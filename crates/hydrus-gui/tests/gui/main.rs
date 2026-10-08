@@ -130,8 +130,10 @@ mod tag_relationships;
 mod services_editor;
 
 mod client_api_admin;
+mod client_api_permissions;
 mod parser_editors;
 mod tag_display;
+mod tags_sync_menu;
 
 mod network_sessions;
 
@@ -228,10 +230,11 @@ mod archive_delete_policies;
 mod ffmpeg_timeout;
 mod radio_return;
 
-mod viewer_prefetch;
-mod client_api_permissions;
-mod tags_sync_menu;
-mod network_bandwidth_actions;
-mod subscriptions_overwrite_checker;
 mod file_log_actions;
+mod formula_exchange;
+mod import_options_fields;
+mod network_bandwidth_actions;
 mod network_pause_menu;
+mod subscriptions_overwrite_checker;
+mod tag_filter_removal;
+mod viewer_prefetch;

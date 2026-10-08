@@ -54,6 +54,8 @@ fn fetched_documents_replay_reference_success_error_and_cancellation_context() {
         assert_eq!(test.context["token"], "preserved");
     }
 }
+// leaf: formula-html-rule
+// leaf: formula-json-rule
 #[test]
 fn formula_editor_controls_and_parses_match_reference() {
     for case in fixture() {

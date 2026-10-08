@@ -718,6 +718,7 @@ fn tag_menu_launches_native_search_and_duplicate_pages_with_recorded_predicates(
     ));
 }
 
+// leaf: audit-shared-location-apply
 #[test]
 fn write_domain_buttons_query_counts_and_own_cancelled_location_child() {
     let (_dirs, store) = crate::subscriptions::store();

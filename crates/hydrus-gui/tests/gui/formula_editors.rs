@@ -139,6 +139,7 @@ fn formula_fetch_decodes_real_documents_updates_preview_and_discards_closed_owne
     assert!(!w.get_fetching() || !w.window().is_visible());
     reopened.invoke_cancel();
 }
+// leaf: formula-html-rule
 #[test]
 fn formula_editors_html_rules_validation_processing_and_screenshot() {
     let (_dirs, store) = store();

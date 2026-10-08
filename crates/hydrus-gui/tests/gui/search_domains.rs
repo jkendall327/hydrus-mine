@@ -143,6 +143,8 @@ fn named(store: &Store, name: &str) -> ServiceKey {
 /// of mixed domains and what the list keeps of ticked sets, against the
 /// reference's (`oracle/record_search_domains.py`), with advanced mode
 /// off and on.
+// leaf: audit-shared-location-current
+// leaf: audit-shared-location-normalize
 #[test]
 fn the_domain_buttons_are_the_references() {
     let (_dirs, store) = store();

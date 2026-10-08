@@ -14,6 +14,12 @@ fn choices(w: &TagFilterWindow) -> Vec<String> {
         .collect()
 }
 
+// leaf: audit-shared-tag-apply
+// leaf: audit-shared-tag-favourite-save
+// leaf: audit-shared-tag-favourite-load
+// leaf: audit-shared-tag-favourite-delete
+// leaf: audit-shared-tag-favourite-export
+// leaf: audit-shared-tag-favourite-import
 #[test]
 fn shared_favourites_exchange_and_cancel_preserve_the_owner_and_persist_on_reopen() {
     let fixture = hydrus_testkit::fixture_json("tag_filter_favourites.json");
@@ -173,6 +179,8 @@ fn shared_favourites_exchange_and_cancel_preserve_the_owner_and_persist_on_reope
     assert_eq!(applied.borrow().len(), 1);
 }
 
+// leaf: audit-shared-tag-paste
+// leaf: audit-shared-tag-extra-panels
 #[test]
 fn blacklist_extra_panels_and_all_four_paste_controls_follow_the_recording() {
     let fixture = hydrus_testkit::fixture_json("tag_filter_favourites.json");

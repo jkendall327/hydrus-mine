@@ -110,7 +110,9 @@ mod services_editor;
 
 mod parser_editors;
 mod parser_test_data;
+mod tag_application_queues;
 mod tag_display;
+mod tag_relationships_default;
 
 mod client_api_admin;
 
@@ -216,5 +218,3 @@ mod menu_choice_wheel;
 mod popup_freeze;
 
 mod viewer_prefetch;
-mod tag_application_queues;
-mod tag_relationships_default;

@@ -8,6 +8,7 @@ use slint::{ComponentHandle as _, Model as _};
 
 use hydrus_core::import_options::PresentationStatus;
 
+// leaf: import-paste
 #[test]
 fn shared_overwrite_drafts_close_cleanly_and_clipboard_reaches_real_importer() {
     use hydrus_core::import_options::CallerType;
@@ -102,6 +103,18 @@ fn shared_overwrite_drafts_close_cleanly_and_clipboard_reaches_real_importer() {
         .as_ref()
         .unwrap()
         .clone_strong();
+    // Copy puts the container being edited on the clipboard as the reference's
+    // serialised text, to be pasted back as it is.
+    let copied = Rc::new(RefCell::new(Vec::<hydrus_gui::Clip>::new()));
+    hydrus_gui::set_clipper({
+        let copied = copied.clone();
+        move |clip| copied.borrow_mut().push(clip.clone())
+    });
+    editor.invoke_copy_options();
+    let hydrus_gui::Clip::Text(copied_text) = copied.borrow()[0].clone() else {
+        panic!("copied as text")
+    };
+    assert_eq!(import_options::decode_text(&copied_text).unwrap(), incoming);
     hydrus_gui::set_paster(|| "[26, 3, []]".into());
     editor.invoke_paste_options(0);
     assert!(
@@ -506,6 +519,7 @@ fn a_url_downloaders_import_options_are_edited() {
     assert!(options.presentation.is_some());
 }
 
+// leaf: import-favourites
 #[test]
 fn favourites_popup_replays_real_dialogs_persists_and_invalidates_children() {
     use hydrus_core::import_options::{CallerType, ImportOptionsManager, ImportOptionsSlice};

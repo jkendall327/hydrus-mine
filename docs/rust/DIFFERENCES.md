@@ -1467,6 +1467,12 @@ the native default local search domain (my files). The broader reference default
 local-location preference is still deferred. An accepted collapse freezes the media shown when its confirmation
 opened; if its source keys have left their shared notebook, it does nothing.
 
+A formula editor's import of something that is not one parsing formula (a
+page parser, or a package of two definitions) shows "Import one parsing formula
+into this editor." where the reference says "That was not a formula--it was a:
+<type>". Importing a formula from a clipboard bitmap is not supported; PNG
+files and text are.
+
 ## Downloader and URL display
 
 The native display editor uses a tab selector and an inline yes/no/cancel question

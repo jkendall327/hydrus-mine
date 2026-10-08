@@ -223,6 +223,15 @@ fn service_said(choices: &[(String, hydrus_core::ServiceKey)]) -> Value {
     }
 }
 
+// leaf: audit-shared-sidecar-source-types
+// leaf: audit-shared-sidecar-destination-types
+// leaf: audit-shared-sidecar-destination-note
+// leaf: audit-shared-sidecar-destination-timestamp
+// leaf: audit-shared-sidecar-source-timestamp
+// leaf: sidecar-details
+// leaf: sidecar-txt-separator
+// leaf: audit-shared-sidecar-source-tags
+// leaf: audit-shared-sidecar-destination-tags
 #[test]
 fn the_sidecar_editors_show_and_edit_as_the_reference_does() {
     let recorded = hydrus_testkit::fixture_json("sidecar_editors.json");
