@@ -477,6 +477,22 @@ fn approving_and_denying_show_their_progress_on_the_button_and_in_a_popup() {
     let now = || hydrus_core::TimestampMs::now().millis() / 1000;
     let popups_now = |store: &Store| store.read(|c| popups::all(c, now())).unwrap();
     assert!(popups_now(&opened.store).is_empty());
+    opened
+        .store
+        .write(|ctx| {
+            ctx.conn().execute_batch(
+                "CREATE TABLE popup_log (job TEXT);
+                 CREATE TRIGGER popup_added AFTER INSERT ON popups
+                   BEGIN INSERT INTO popup_log VALUES (NEW.job); END;
+                 CREATE TRIGGER popup_changed AFTER UPDATE ON popups
+                   BEGIN INSERT INTO popup_log VALUES (NEW.job); END;
+                 CREATE TABLE popup_gone (job TEXT);
+                 CREATE TRIGGER popup_removed AFTER DELETE ON popups
+                   BEGIN INSERT INTO popup_gone VALUES (OLD.job); END;",
+            )?;
+            Ok(())
+        })
+        .unwrap();
 
     for (approve, button, title) in [
         (true, "approving: 0/1", "approving auto-resolution decisions"),
@@ -548,10 +564,12 @@ fn approving_and_denying_show_their_progress_on_the_button_and_in_a_popup() {
             std::thread::sleep(std::time::Duration::from_millis(10));
         }
         assert!(popups_now(&opened.store).is_empty(), "the popup is dismissed once done");
+        // (a dismissed popup is forgotten, so what was written is read from
+        // the trigger's log)
         let jobs: Vec<popups::Job> = opened
             .store
             .read(|c| {
-                let mut stmt = c.prepare("SELECT job FROM popups ORDER BY seq")?;
+                let mut stmt = c.prepare("SELECT job FROM popup_log ORDER BY rowid")?;
                 let rows = stmt
                     .query_map([], |r| r.get::<_, String>(0))?
                     .collect::<rusqlite::Result<Vec<_>>>()?;
@@ -561,9 +579,28 @@ fn approving_and_denying_show_their_progress_on_the_button_and_in_a_popup() {
                     .collect())
             })
             .unwrap();
-        let job = jobs.last().expect("the popup job was added");
-        assert_eq!(job.status_text_1.as_deref(), Some(button));
-        assert!(job.done && job.dismissed && !job.cancellable, "no cancel, as the reference");
+        let ours: Vec<&popups::Job> = jobs
+            .iter()
+            .filter(|job| job.status_text_1.as_deref() == Some(button))
+            .collect();
+        assert!(!ours.is_empty(), "the popup showed {button:?}: {jobs:?}");
+        let last = jobs.last().unwrap();
+        assert_eq!(last.status_text_1.as_deref(), Some(button));
+        assert!(!last.cancellable, "no cancel, as the reference");
+        // finished and dismissed: the store forgets a dismissed popup
+        let gone: i64 = opened
+            .store
+            .read(|c| Ok(c.query_row("SELECT count(*) FROM popup_gone", [], |r| r.get(0))?))
+            .unwrap();
+        assert_eq!(gone, 1, "the popup was dismissed");
+        opened
+            .store
+            .write(|ctx| {
+                ctx.conn()
+                    .execute_batch("DELETE FROM popup_log; DELETE FROM popup_gone;")?;
+                Ok(())
+            })
+            .unwrap();
     }
     assert_eq!(window.get_label(), "Found 0 pairs.");
     window.invoke_close_window();

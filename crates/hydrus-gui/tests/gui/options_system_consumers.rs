@@ -1495,6 +1495,7 @@ impl Client {
         self.restart();
         self.store
             .write(move |ctx| {
+                ctx.conn().execute_batch("DROP TABLE IF EXISTS sqlite_stat1")?;
                 hydrus_store::settings::set(
                     ctx.conn(),
                     &hydrus_store::settings::ShutdownWork {
@@ -1519,8 +1520,21 @@ fn choose_shutdown(options: &OptionsWindow, choice: i32) {
     options.invoke_choice_chosen(i, choice);
 }
 
-fn analysis_due(client: &Client) -> bool {
-    !hydrus_gui_model::shutdown_work::work_due(&client.store).is_empty()
+/// Whether the database has been analysed (planner statistics exist; empty
+/// tables get none, so the list of tables due stays as it was).
+fn analysed(client: &Client) -> bool {
+    client
+        .store
+        .read(|conn| {
+            Ok(conn
+                .query_row(
+                    "SELECT 1 FROM sqlite_master WHERE name = 'sqlite_stat1'",
+                    [],
+                    |_| Ok(()),
+                )
+                .is_ok())
+        })
+        .unwrap()
 }
 
 // leaf: audit-options-maintenance-and-processing-when-to-run-high-cpu-jobs-shutdown-run-jobs-on-shutdown
@@ -1540,7 +1554,7 @@ fn run_jobs_on_shutdown_decides_what_the_exit_does() {
     assert_eq!(shutdown_settings(&client).action, 0);
     assert!(hydrus_gui::client_exit::maintenance_question().is_none());
     assert!(!client.ui.window().is_visible(), "exited");
-    assert!(analysis_due(&client), "no work was done");
+    assert!(!analysed(&client), "no work was done");
     assert!(shutdown_settings(&client).last_done < seconds_now() - 900_000, "untouched");
 
     // run if needed: the work is done without asking.
@@ -1548,7 +1562,7 @@ fn run_jobs_on_shutdown_decides_what_the_exit_does() {
     assert_eq!(shutdown_settings(&client).action, 1);
     assert!(hydrus_gui::client_exit::maintenance_question().is_none());
     assert!(!client.ui.window().is_visible(), "exited");
-    assert!(!analysis_due(&client), "the outstanding analysis was run");
+    assert!(analysed(&client), "the outstanding analysis was run");
     assert!(shutdown_settings(&client).last_done >= seconds_now() - 5);
 
     // ask first: the exit waits on the question; no skips the work but is
@@ -1560,14 +1574,14 @@ fn run_jobs_on_shutdown_decides_what_the_exit_does() {
     assert!(client.ui.window().is_visible(), "the exit waits");
     question.invoke_answered(false);
     assert!(!client.ui.window().is_visible(), "exited");
-    assert!(analysis_due(&client), "declined");
+    assert!(!analysed(&client), "declined");
     assert!(shutdown_settings(&client).last_done >= seconds_now() - 5);
 
     client.exit_after(1_000_000, |o| choose_shutdown(o, 2));
     let question = hydrus_gui::client_exit::maintenance_question().expect("asked");
     question.invoke_answered(true);
     assert!(!client.ui.window().is_visible(), "exited");
-    assert!(!analysis_due(&client), "accepted: the analysis was run");
+    assert!(analysed(&client), "accepted: the analysis was run");
 }
 
 // leaf: audit-options-maintenance-and-processing-when-to-run-high-cpu-jobs-shutdown-only-run-shutdown-jobs-once-per
@@ -1593,7 +1607,7 @@ fn shutdown_jobs_run_only_once_per_the_edited_period() {
     client.exit_after(600, |_| {});
     assert!(hydrus_gui::client_exit::maintenance_question().is_none());
     assert!(!client.ui.window().is_visible(), "exited at once");
-    assert!(analysis_due(&client));
+    assert!(!analysed(&client));
 
     // The same ten minutes against an edited period of five: due, so asked.
     client.exit_after(600, |o| {

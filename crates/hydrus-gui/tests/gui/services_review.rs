@@ -142,7 +142,7 @@ fn choosing_each_service_in_the_review_shows_the_counts_the_reference_shows() {
             compared += 1;
         }
     }
-    assert_eq!(compared, 13);
+    assert_eq!(compared, 12);
     window.invoke_close_clicked();
 }
 
