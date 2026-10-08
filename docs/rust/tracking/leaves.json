@@ -11135,9 +11135,9 @@
    ],
    "recheck": {
     "date": "2026-10-08",
-    "class": "source-restated",
+    "class": "likely-good",
     "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Real menu click and real message window; title 'Warning' matches ShowWarning. Expected text is only a starts_with literal of the Python string (the rest is the native const MESSAGE_BOX_TEXT, never compared in full); no recording. Tracker note is stale. Tests: crates/hydrus-gui/tests/gui/debug_menu_actions.rs:90 make_a_qmessagebox_shows_the_test_warning"
+    "note": "Reclassified likely-good (owner's static-text rule): a fixed title and message shown through the real menu, checked by prefix against the Python literal. Real menu click and real message window; title 'Warning' matches ShowWarning. Expected text is only a starts_with literal of the Python string (the rest is the native const MESSAGE_BOX_TEXT, never compared in full); no recording. Tracker note is stale. Tests: crates/hydrus-gui/tests/gui/debug_menu_actions.rs:90 make_a_qmessagebox_shows_the_test_warning"
    }
   },
   {
@@ -11871,9 +11871,9 @@
    ],
    "recheck": {
     "date": "2026-10-08",
-    "class": "source-restated",
+    "class": "likely-good",
     "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Real menu click, title 'Information' and dismissal checked. Body is compared with the native const PROFILE_MESSAGE (circular) plus a starts_with literal; the model test only checks its ending. The const does equal the Python string, but no test compares the full text to the reference. Tests: crates/hydrus-gui/tests/gui/debug_menu_actions.rs:79 profiling_what_is_this_shows_the_profile_information"
+    "note": "Reclassified likely-good (owner's static-text rule): a fixed title and message shown through the real menu, checked by prefix against the Python literal. Real menu click, title 'Information' and dismissal checked. Body is compared with the native const PROFILE_MESSAGE (circular) plus a starts_with literal; the model test only checks its ending. The const does equal the Python string, but no test compares the full text to the reference. Tests: crates/hydrus-gui/tests/gui/debug_menu_actions.rs:79 profiling_what_is_this_shows_the_profile_information"
    }
   },
   {
