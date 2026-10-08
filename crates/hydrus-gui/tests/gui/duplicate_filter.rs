@@ -55,7 +55,7 @@ pub(crate) fn my_files(store: &Store) -> (ServiceId, hydrus_core::ServiceKey) {
     (service.id, service.key.clone())
 }
 
-fn filter(store: &Arc<Store>, group_mode: bool) -> DuplicateFilter {
+pub(crate) fn filter(store: &Arc<Store>, group_mode: bool) -> DuplicateFilter {
     let (id, key) = my_files(store);
     let search = FileSearchContext {
         location: LocationContext::single(key),

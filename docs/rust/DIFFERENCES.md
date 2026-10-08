@@ -3953,8 +3953,18 @@ change nothing). They are marked out of scope in `docs/rust/tracking/`.
 ## Duplicates page filtering
 
 - The pair searches are typed predicates (as in file history), not read
-  autocompletes, and keep the page's file domain; there is no count pause,
-  estimate or optimisation cog: counts are exact and run once per change.
+  autocompletes, and keep the page's file domain.
+- The pair count is the reference's fragmentary count (play/pause, refresh,
+  restart on change, the estimate stop, the starts-paused option, the cog's
+  three items, blocks sized by the time they take), with these differences:
+  the count line's tooltip text is not shown (Slint has none); the file
+  searches are run once for each search and the blocks are filtered in memory,
+  so the low hit-rate optimisation only decides to search all that is left at
+  once, which is what it does in the reference; pairs the filter or "set"
+  buttons change while the count runs are not subtracted from it (the
+  reference's `NotifyPotentialDuplicatePairsUpdate`), so the count is of the
+  pairs as fetched until it is refreshed or restarted; the rule editor's
+  search fields have no counter.
 - Setting the shown files' relationship applies each pair once with the default
   merge options; the reference runs its merges twice so content propagates
   between all files.

@@ -460,3 +460,112 @@ fn a_failed_denial_keeps_pending_pairs_and_reports_the_error() {
     assert!(window.get_label().contains("injected denial failure"));
     window.invoke_close_window();
 }
+
+/// Keep the store's writer busy until the returned function is called, so
+/// that a worker's next write waits.
+fn hold_writer(store: &Arc<Store>) -> impl FnOnce() {
+    let (held_tx, held_rx) = std::sync::mpsc::channel();
+    let (go_tx, go_rx) = std::sync::mpsc::channel::<()>();
+    let store = Arc::clone(store);
+    let holder = std::thread::spawn(move || {
+        store
+            .write(move |_| {
+                held_tx.send(()).unwrap();
+                let _ = go_rx.recv();
+                Ok(())
+            })
+            .unwrap();
+    });
+    held_rx
+        .recv_timeout(std::time::Duration::from_secs(10))
+        .expect("the writer was taken");
+    move || {
+        go_tx.send(()).unwrap();
+        holder.join().unwrap();
+    }
+}
+
+fn spin_timers_until(what: &str, mut ready: impl FnMut() -> bool) {
+    let deadline = std::time::Instant::now() + std::time::Duration::from_secs(20);
+    while !ready() {
+        assert!(std::time::Instant::now() < deadline, "{what}");
+        slint::platform::update_timers_and_animations();
+        std::thread::sleep(std::time::Duration::from_millis(20));
+    }
+}
+
+/// Every state a popup passed through, as the store held it.
+fn popup_states(store: &Store) -> Vec<String> {
+    store
+        .read(|c| {
+            Ok(c.prepare("SELECT what || ' ' || job FROM popup_log ORDER BY rowid")?
+                .query_map([], |r| r.get::<_, String>(0))?
+                .collect::<rusqlite::Result<Vec<_>>>()?)
+        })
+        .unwrap()
+}
+
+// leaf: audit-media-review-progress
+#[test]
+fn approving_and_denying_show_their_progress_on_the_button_and_in_a_popup_after_a_delay() {
+    use hydrus_gui_model::auto_resolution_review::{POPUP_AFTER, set_popup_after};
+    let recorded = hydrus_testkit::fixture_json("auto_resolution_review.json");
+    let _windows = headless::init();
+    let o = opened();
+    let name = recorded["reviewed"].as_str().unwrap();
+    let window = review(&o.ui, &o.bound, name);
+    assert_eq!(window.get_label(), "Found 2 pairs.");
+    assert_eq!(POPUP_AFTER, std::time::Duration::from_secs(4));
+    o.store
+        .write(|ctx| {
+            ctx.conn().execute_batch(
+                "CREATE TABLE popup_log (what TEXT, job TEXT);
+                 CREATE TRIGGER popup_added AFTER INSERT ON popups
+                   BEGIN INSERT INTO popup_log VALUES ('added', NEW.job); END;
+                 CREATE TRIGGER popup_changed AFTER UPDATE ON popups
+                   BEGIN INSERT INTO popup_log VALUES ('changed', NEW.job); END;
+                 CREATE TRIGGER popup_removed AFTER DELETE ON popups
+                   BEGIN INSERT INTO popup_log VALUES ('removed', OLD.job); END;",
+            )?;
+            Ok(())
+        })
+        .unwrap();
+
+    // approving the first pair: the button counts it while the work is held
+    // up, and a quick job (four seconds are not up) makes no popup
+    window.invoke_row_clicked(0, false, false);
+    assert_eq!(window.get_approve_text(), "approve");
+    let release = hold_writer(&o.store);
+    window.invoke_approve();
+    spin_timers_until("the button never showed the progress", || {
+        window.get_approve_text() == "approving: 0/1"
+    });
+    assert!(window.get_working());
+    assert_eq!(window.get_deny_text(), "deny");
+    release();
+    settle(&window);
+    assert_eq!(window.get_label(), "Found 1 pairs.");
+    assert!(popup_states(&o.store).is_empty());
+
+    // denying the other, with the popup due at once: its title, its
+    // progress, then it is finished and dismissed
+    set_popup_after(Some(std::time::Duration::ZERO));
+    window.invoke_row_clicked(0, false, false);
+    let release = hold_writer(&o.store);
+    window.invoke_deny();
+    spin_timers_until("the button never showed the progress", || {
+        window.get_deny_text() == "denying: 0/1"
+    });
+    assert!(window.get_working());
+    assert_eq!(window.get_approve_text(), "approve");
+    release();
+    settle(&window);
+    set_popup_after(None);
+    assert_eq!(window.get_label(), "Found 0 pairs.");
+    let states = popup_states(&o.store);
+    assert_eq!(states.len(), 4, "{states:?}");
+    assert!(states[0].starts_with("added ") && states[0].contains("denying auto-resolution decisions"));
+    assert!(states[1].starts_with("changed ") && states[1].contains("denying: 0/1"));
+    assert!(states[2].starts_with("changed ") && states[2].contains("\"dismissed\":true"));
+    assert!(states[3].starts_with("removed "));
+}

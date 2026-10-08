@@ -8,8 +8,15 @@ use std::rc::Rc;
 use hydrus_gui_model::duplicates_filtering::{
     self as model, GROUP_MODES, KINDS, PIXEL, SET_BUTTONS, SORTS, Which,
 };
+use hydrus_core::duplicates::DuplicatesSearch;
+use hydrus_gui_model::duplicates_count::{
+    self as counting, BLOCK_GUIDELINE, COG_FILE_SEARCH_OPTIMISATION, COG_STARTS_PAUSED,
+    COG_STOPS_TO_ESTIMATE, Gate, Handle, StoreSource,
+};
 use hydrus_search::{TextContext, predicate_text};
-use slint::{ComponentHandle as _, ModelRc, SharedString, VecModel};
+use hydrus_store::duplicates::cache::PairRow;
+use hydrus_store::settings::{self, PotentialPairsCountOptions};
+use slint::{ComponentHandle as _, ModelRc, SharedString, VecModel, Timer, TimerMode};
 
 use crate::page::SearchPage;
 use crate::{DuplicatesFiltering, MainWindow, SessionDialog};
@@ -33,10 +40,90 @@ fn strings(items: impl IntoIterator<Item = String>) -> ModelRc<SharedString> {
     ))
 }
 
+/// The page's pair count while the duplicates page is shown: the worker
+/// counting the page's search, the search it counts and the timer that
+/// shows how far it has got.
+struct Count {
+    handle: Handle<PairRow>,
+    search: Arc<Mutex<DuplicatesSearch>>,
+    _timer: Timer,
+}
+
 thread_local! {
-    // (the latest count line, and the question asked, kept while shown)
-    static COUNT: RefCell<String> = const { RefCell::new(String::new()) };
+    // (the page's count, and the question asked, kept while shown)
+    static COUNT: RefCell<Option<Count>> = const { RefCell::new(None) };
     static QUESTION: RefCell<Option<SessionDialog>> = const { RefCell::new(None) };
+}
+
+/// The count's cog options as stored.
+fn count_options(page: &SearchPage) -> PotentialPairsCountOptions {
+    page.store()
+        .read(settings::get::<PotentialPairsCountOptions>)
+        .unwrap_or_default()
+}
+
+fn model_options(options: PotentialPairsCountOptions) -> counting::Options {
+    counting::Options {
+        stops_to_estimate: options.stops_to_estimate,
+        file_search_optimisation: options.file_search_optimisation,
+    }
+}
+
+/// The count of the page's search: started when the page is first shown,
+/// and counting afresh when the search it counts is not the page's.
+fn ensure_count(window: &MainWindow, page: &SearchPage, d: &hydrus_core::pages::DuplicatesPage) {
+    COUNT.with(|count| {
+        let mut count = count.borrow_mut();
+        if let Some(active) = count.as_ref() {
+            let mut counted = active
+                .search
+                .lock()
+                .unwrap_or_else(PoisonError::into_inner);
+            if *counted != d.search {
+                let domain_changed = counted.search_1.location != d.search.search_1.location;
+                *counted = d.search.clone();
+                drop(counted);
+                active.handle.search_changed(domain_changed);
+            }
+            return;
+        }
+        let options = count_options(page);
+        let search = Arc::new(Mutex::new(d.search.clone()));
+        let gate = Gate::here();
+        let handle = Handle::start(
+            gate.as_ref().map_or(BLOCK_GUIDELINE, |g| g.guideline()),
+            options.starts_paused,
+            true,
+            model_options(options),
+            StoreSource::new(page.store().clone(), Arc::clone(&search)),
+            gate,
+        );
+        let weak = window.as_weak();
+        let timer = Timer::default();
+        timer.start(TimerMode::Repeated, Duration::from_millis(50), move || {
+            let Some(window) = weak.upgrade() else {
+                return;
+            };
+            COUNT.with(|count| {
+                let count = count.borrow();
+                let Some(active) = count.as_ref() else {
+                    return;
+                };
+                let shot = active.handle.snapshot();
+                let mut filtering = window.get_duplicates_filtering();
+                if filtering.count != shot.label.as_str() || filtering.count_paused != shot.paused {
+                    filtering.count = shot.label.into();
+                    filtering.count_paused = shot.paused;
+                    window.set_duplicates_filtering(filtering);
+                }
+            });
+        });
+        *count = Some(Count {
+            handle,
+            search,
+            _timer: timer,
+        });
+    });
 }
 
 fn index<T: PartialEq>(items: &[(T, &str)], value: &T) -> i32 {
@@ -52,6 +139,15 @@ pub(crate) fn show(window: &MainWindow, page: &SearchPage) {
     let Some(d) = page.duplicates() else {
         return;
     };
+    ensure_count(window, page, d);
+    let (label, paused) = COUNT.with(|count| {
+        count
+            .borrow()
+            .as_ref()
+            .map(|c| c.handle.snapshot())
+            .map_or((String::new(), false), |s| (s.label, s.paused))
+    });
+    let options = count_options(page);
     let text = |p: &hydrus_search::Predicate| predicate_text(p, &TextContext::default());
     let directions = model::directions(d.order);
     window.set_duplicates_filtering(DuplicatesFiltering {
@@ -64,7 +160,18 @@ pub(crate) fn show(window: &MainWindow, page: &SearchPage) {
         distance_enabled: model::distance_enabled(d),
         pixels: strings(PIXEL.iter().map(|(_, s)| (*s).to_owned())),
         pixel: index(&PIXEL, &d.search.pixel_duplicates),
-        count: COUNT.with(|c| c.borrow().clone()).into(),
+        count: label.into(),
+        count_paused: paused,
+        count_cog: strings([
+            COG_STARTS_PAUSED.0.to_owned(),
+            COG_STOPS_TO_ESTIMATE.0.to_owned(),
+            COG_FILE_SEARCH_OPTIMISATION.0.to_owned(),
+        ]),
+        count_ticks: ModelRc::new(VecModel::from(vec![
+            options.starts_paused,
+            options.stops_to_estimate,
+            options.file_search_optimisation,
+        ])),
         sorts: strings(SORTS.iter().map(|(_, s)| (*s).to_owned())),
         sort: index(&SORTS, &d.order),
         directions: strings(directions.iter().map(|(s, _)| (*s).to_owned())),
@@ -79,28 +186,12 @@ pub(crate) fn show(window: &MainWindow, page: &SearchPage) {
     });
 }
 
-/// Count the page's pairs off the UI thread, showing the line when done.
-fn recount(window: &MainWindow, page: &SearchPage) {
-    let Some(d) = page.duplicates().cloned() else {
-        return;
-    };
-    COUNT.with(|c| *c.borrow_mut() = "initialising\u{2026}".into());
-    let store = page.store().clone();
-    let weak = window.as_weak();
-    let _ = std::thread::Builder::new()
-        .name("duplicates-count".into())
-        .spawn(move || {
-            let line = match model::count(&store, &d) {
-                Ok((total, matching)) => model::count_text(total, matching),
-                Err(error) => error.to_string(),
-            };
-            let _ = weak.upgrade_in_event_loop(move |window| {
-                COUNT.with(|c| c.borrow_mut().clone_from(&line));
-                let mut filtering = window.get_duplicates_filtering();
-                filtering.count = line.into();
-                window.set_duplicates_filtering(filtering);
-            });
-        });
+fn with_count(f: impl FnOnce(&Count)) {
+    COUNT.with(|count| {
+        if let Some(active) = count.borrow().as_ref() {
+            f(active);
+        }
+    });
 }
 
 pub(crate) fn bind(
@@ -116,7 +207,6 @@ pub(crate) fn bind(
         };
         let page = page();
         let index = usize::try_from(n).ok();
-        let mut search_changed = false;
         {
             let mut p = page.borrow_mut();
             let Some(d) = p.duplicates_mut() else {
@@ -126,18 +216,15 @@ pub(crate) fn bind(
                 "kind" => {
                     if let Some((kind, _)) = index.and_then(|i| KINDS.get(i)) {
                         d.search.kind = *kind;
-                        search_changed = true;
                     }
                 }
                 "pixel" => {
                     if let Some((pixel, _)) = index.and_then(|i| PIXEL.get(i)) {
                         d.search.pixel_duplicates = *pixel;
-                        search_changed = true;
                     }
                 }
                 "distance" => {
                     d.search.max_hamming_distance = u32::try_from(n.clamp(0, 64)).unwrap_or(0);
-                    search_changed = true;
                 }
                 "sort" => {
                     // (every non-random sort offers both directions, so the
@@ -164,7 +251,6 @@ pub(crate) fn bind(
                         } else {
                             window.set_duplicates_filter_input_2(SharedString::new());
                         }
-                        search_changed = true;
                     }
                 }
                 "remove 1" | "remove 2" => {
@@ -174,14 +260,29 @@ pub(crate) fn bind(
                         Which::Second
                     };
                     if let Some(i) = index {
-                        search_changed = model::remove_predicate(d, which, i).is_some();
+                        let _ = model::remove_predicate(d, which, i);
                     }
                 }
                 _ => {}
             }
         }
         match what.as_str() {
-            "refresh count" => recount(&window, &page.borrow()),
+            "pause count" => with_count(|c| c.handle.pause_play()),
+            "refresh count" => with_count(|c| c.handle.refresh()),
+            "count option" => {
+                let store = page.borrow().store().clone();
+                let mut options = count_options(&page.borrow());
+                match index {
+                    Some(0) => options.starts_paused = !options.starts_paused,
+                    Some(1) => options.stops_to_estimate = !options.stops_to_estimate,
+                    Some(2) => options.file_search_optimisation = !options.file_search_optimisation,
+                    _ => {}
+                }
+                if let Err(error) = store.write(move |ctx| settings::set(ctx.conn(), &options)) {
+                    eprintln!("could not save the count's options: {error}");
+                }
+                with_count(|c| c.handle.set_options(model_options(options)));
+            }
             "random" => {
                 let p = page.borrow();
                 let Some(d) = p.duplicates().cloned() else {
@@ -261,9 +362,7 @@ pub(crate) fn bind(
             }
             _ => {}
         }
-        if search_changed {
-            recount(&window, &page.borrow());
-        }
+        // (a changed search is seen by `show`, which counts it afresh)
         show(&window, &page.borrow());
     });
 }

@@ -26,8 +26,14 @@ pub(crate) struct Opened {
 
 /// A store with potential pairs and a saved session of one duplicates page.
 pub(crate) fn opened() -> Opened {
+    opened_with(|_| {})
+}
+
+/// [`opened`], with the store prepared before the window is made.
+pub(crate) fn opened_with(prepare: impl FnOnce(&Store)) -> Opened {
     let windows = headless::init();
     let (dir, store) = store_with_pairs();
+    prepare(&store);
     let (_, key) = my_files(&store);
     let search = FileSearchContext {
         location: LocationContext::single(key),

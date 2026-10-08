@@ -550,44 +550,28 @@ fn run_server(dir: &Path, port: Option<u16>, bind: Option<IpAddr>, attached: boo
         // in: packets of work and rests, by the GUI's idle state
         let searcher = store.clone();
         tokio::spawn(async move {
-            use hydrus_store::idle_state::is_idle;
-            use hydrus_store::similar::SimilarFilesSettings;
+            use hydrus_duplicates::daemon::{Turn, similar_files_turn};
             loop {
                 let store = searcher.clone();
-                let settings: SimilarFilesSettings =
-                    store.read(hydrus_store::settings::get).unwrap_or_default();
-                let idle = is_idle(store.dir(), hydrus_core::time::TimestampMs::now().millis());
-                let mut pace = settings.pace(idle);
-                pace.allowed |= settings.work_hard;
-                if !pace.allowed {
-                    tokio::time::sleep(Duration::from_secs(10)).await;
-                    continue;
-                }
-                let started = std::time::Instant::now();
-                let work = pace.work;
-                let done = tokio::task::spawn_blocking(move || {
-                    let mut total = 0;
-                    loop {
-                        let n = hydrus_store::similar::run_search(&store, 16)?;
-                        total += n;
-                        if n == 0 || started.elapsed() >= work {
-                            return Ok::<_, hydrus_store::StoreError>((total, n > 0));
+                let now = hydrus_core::time::TimestampMs::now().millis();
+                let tick = tokio::task::spawn_blocking(move || similar_files_turn(&store, now))
+                    .await;
+                let rest = match tick {
+                    Ok(tick) => {
+                        match &tick.turn {
+                            Turn::Worked(searched) if searched.files > 0 => {
+                                tracing::debug!(files = searched.files, "searched for similar files");
+                            }
+                            Turn::Failed(e) => {
+                                tracing::error!(error = %e, "the similar-files search failed");
+                            }
+                            _ => {}
                         }
+                        tick.rest
                     }
-                })
-                .await;
-                match done {
-                    Ok(Ok((n, more))) if n > 0 => {
-                        tracing::debug!(files = n, "searched for similar files");
-                        let rest = if more { pace.rest(started.elapsed()) } else { Duration::from_secs(30) };
-                        tokio::time::sleep(rest.max(Duration::from_millis(100))).await;
-                    }
-                    Ok(Err(e)) => {
-                        tracing::error!(error = %e, "the similar-files search failed");
-                        tokio::time::sleep(Duration::from_secs(600)).await;
-                    }
-                    _ => tokio::time::sleep(Duration::from_secs(30)).await,
-                }
+                    Err(_) => Duration::from_secs(30),
+                };
+                tokio::time::sleep(rest).await;
             }
         });
         // file maintenance, as the reference's manager does while active (a
@@ -648,61 +632,39 @@ fn run_server(dir: &Path, port: Option<u16>, bind: Option<IpAddr>, attached: boo
                 }
             }
         });
-        // duplicates auto-resolution: bursts of work with rests between, as
-        // the reference's manager does (it counts us as always active)
+        // duplicates auto-resolution: bursts of work with rests between, by
+        // the GUI's idle state
         let resolver = store.clone();
         tokio::spawn(async move {
+            use hydrus_duplicates::daemon::{Turn, auto_resolution_turn};
             loop {
                 let store = resolver.clone();
-                let settings: hydrus_store::duplicates::auto::AutoResolutionSettings = match store
-                    .read(hydrus_store::settings::get)
-                {
-                    Ok(s) => s,
-                    Err(e) => {
-                        tracing::error!(error = %e, "reading the auto-resolution settings failed");
-                        tokio::time::sleep(Duration::from_secs(600)).await;
-                        continue;
-                    }
-                };
-                let pace = settings.pace(hydrus_store::idle_state::is_idle(
-                    store.dir(),
-                    hydrus_core::time::TimestampMs::now().millis(),
-                ));
-                if !pace.allowed {
-                    tokio::time::sleep(Duration::from_secs(10)).await;
-                    continue;
-                }
-                let budget = pace.work;
-                let started = std::time::Instant::now();
-                let done = tokio::task::spawn_blocking(move || {
-                    hydrus_duplicates::work_rules(
+                let now = hydrus_core::time::TimestampMs::now().millis();
+                let tick = tokio::task::spawn_blocking(move || {
+                    auto_resolution_turn(
                         &store,
-                        budget,
+                        now,
                         &mut hydrus_duplicates::Shuffle,
                         &hydrus_search::Clock::system(),
                     )
                 })
                 .await;
-                let rest = match done {
-                    Ok(Ok(done)) if done.more_to_do => {
-                        tracing::debug!(?done, "auto-resolution worked");
-                        pace.rest(started.elapsed())
-                    }
-                    Ok(Ok(done)) => {
-                        if done != hydrus_duplicates::WorkDone::default() {
-                            tracing::debug!(?done, "auto-resolution worked");
+                let rest = match tick {
+                    Ok(tick) => {
+                        match &tick.turn {
+                            Turn::Worked(done) if *done != hydrus_duplicates::WorkDone::default() => {
+                                tracing::debug!(?done, "auto-resolution worked");
+                            }
+                            Turn::Failed(e) => {
+                                tracing::error!(error = %e, "duplicates auto-resolution failed");
+                            }
+                            _ => {}
                         }
-                        // the reference rests ten minutes unless woken by
-                        // new pairs; checking every minute stands in for that
-                        Duration::from_secs(60)
-                    }
-                    Ok(Err(e)) => {
-                        tracing::error!(error = %e, "duplicates auto-resolution failed");
-                        Duration::from_secs(600)
+                        tick.rest
                     }
                     Err(_) => Duration::from_secs(600),
                 };
-                tokio::time::sleep(rest.max(Duration::from_millis(100))).await;
+                tokio::time::sleep(rest).await;
             }
         });
         // import folders, each checked when due
