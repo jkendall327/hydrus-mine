@@ -5004,3 +5004,10 @@ does. The system counts as busy when at least "% on N cores" cores ran above
 "Consider the system busy if CPU usage is above" over the last minute;
 "ignore cpu usage" turns the check off, and forced idle mode never reads busy.
 The status bar still says "idle" and shows "CPU busy".
+
+## Files and trash: local import copying
+
+Options > files and trash > "TEST: Import local files directly from source, do
+not copy to temp dir beforehand" is read by local imports and import folders:
+off (the default), each file is copied to a temporary path and imported from
+there; on, it is imported from where it is.

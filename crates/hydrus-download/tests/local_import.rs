@@ -527,7 +527,7 @@ async fn a_local_import_copies_to_a_temp_path_first_unless_the_option_says_not_t
     // imported all the same: the file is in the database, from where it was
     for (queue, path) in [(first, &one), (second, &two)] {
         let seed = &store.read(|conn| queues::file_seeds(conn, queue)).unwrap()[0];
-        assert_eq!(seed.status, SeedStatus::Successful, "{}", seed.note);
+        assert!(seed.status.is_successful(), "{}", seed.note);
         assert!(path.exists(), "the source is left where it was");
     }
     // and a repeat of the first file, with the option back on, copies again
