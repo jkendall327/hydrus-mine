@@ -1,0 +1,65 @@
+{
+  "total_count": 3,
+  "artifacts": [
+    {
+      "id": 11527510055,
+      "node_id": "MDg6QXJ0aWZhY3QxMTUyNzUxMDA1NQ==",
+      "name": "clippy-diagnostics-37723417979-1",
+      "size_in_bytes": 468,
+      "url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/artifacts/11527510055",
+      "archive_download_url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/artifacts/11527510055/zip",
+      "expired": false,
+      "digest": "sha256:1011e91dc3adfcdecdc1b463fd0fcd9353e61fe9864ecdc1c3db118cfaef52a1",
+      "created_at": "2026-10-08T03:38:27Z",
+      "updated_at": "2026-10-08T03:38:27Z",
+      "expires_at": "2026-10-11T03:38:27Z",
+      "workflow_run": {
+        "id": 37723417979,
+        "repository_id": 1396267810,
+        "head_repository_id": 1396267810,
+        "head_branch": "codex/validation-runner",
+        "head_sha": "e00ddab707e031bb3a8feaa619dbe18c26a3a6fa"
+      }
+    },
+    {
+      "id": 11527306549,
+      "node_id": "MDg6QXJ0aWZhY3QxMTUyNzMwNjU0OQ==",
+      "name": "test-diagnostics-37723417979-1",
+      "size_in_bytes": 52992,
+      "url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/artifacts/11527306549",
+      "archive_download_url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/artifacts/11527306549/zip",
+      "expired": false,
+      "digest": "sha256:e98aaa172620ca9d648c94cbd45a729a7f8017287915bbb5df85c9c9a9dff1c3",
+      "created_at": "2026-10-08T03:51:37Z",
+      "updated_at": "2026-10-08T03:51:37Z",
+      "expires_at": "2026-10-11T03:51:37Z",
+      "workflow_run": {
+        "id": 37723417979,
+        "repository_id": 1396267810,
+        "head_repository_id": 1396267810,
+        "head_branch": "codex/validation-runner",
+        "head_sha": "e00ddab707e031bb3a8feaa619dbe18c26a3a6fa"
+      }
+    },
+    {
+      "id": 11527081917,
+      "node_id": "MDg6QXJ0aWZhY3QxMTUyNzA4MTkxNw==",
+      "name": "native-gui-renders-37723417979-1",
+      "size_in_bytes": 23114416,
+      "url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/artifacts/11527081917",
+      "archive_download_url": "https://api.github.com/repos/jkendall327/hydrus-mine/actions/artifacts/11527081917/zip",
+      "expired": false,
+      "digest": "sha256:7734ecf8fd91014f47352294cc6cf16ae4f882a93b02d99ecaf319c3108a15c6",
+      "created_at": "2026-10-08T03:51:40Z",
+      "updated_at": "2026-10-08T03:51:40Z",
+      "expires_at": "2026-10-11T03:51:39Z",
+      "workflow_run": {
+        "id": 37723417979,
+        "repository_id": 1396267810,
+        "head_repository_id": 1396267810,
+        "head_branch": "codex/validation-runner",
+        "head_sha": "e00ddab707e031bb3a8feaa619dbe18c26a3a6fa"
+      }
+    }
+  ]
+}

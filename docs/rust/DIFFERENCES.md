@@ -238,9 +238,11 @@ search.
   history, cancellation and retired-owner guards. Page/history comparisons prove
   membership, not ordering parity. Guard tests invoke callbacks; only preset
   activation dispatches physical pointer events. Editable dimension operators,
-  tolerance/operand fields and broader layout remain outside this slice. Full
-  Linux execution and independent native render review are pending; no additional
-  implementation or verification sign-off is claimed yet.
+  tolerance/operand fields and broader layout remain outside this slice; the
+  existing overlap in editable width/height unit text is not promoted by preset
+  verification. Full Linux execution and independent native render review passed
+  for exactly nine historical leaves, with zero additional implementation credit.
+  [Evidence](gui-coverage/checkpoints/dimensions-e00ddab70/README.md).
 
 - **System predicate editors type dates** ("2011-06-04", and "13:05") where
   the reference's have a calendar and a time box. Viewing-time predicates

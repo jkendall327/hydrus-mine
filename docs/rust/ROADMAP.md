@@ -8,16 +8,26 @@ partway, say exactly where.
 The owner's current goal (2026-10-06) is **all individual report feature leaves
 implemented, verified and published**, with Linux first. Numeric checkpoints are
 progress reports, not stopping targets. The latest checkpoint banks 376 original
-concrete feature completions, including 136 since the prior 240 across twenty-six
-recent Linux checkpoints. This cumulative count is not a last-24-hour sign-off
-count. No existing candidate remains awaiting sign-off; 898 of the 1,274 goal
-leaves remain outside the explicit completion ledger. Keep these counts separate
+concrete implementation completions plus nine separately verified historical
+first-pass leaves: 385 verified original goal leaves in total. This cumulative
+count is not a last-24-hour sign-off count. No candidate from the current batch
+remains awaiting sign-off; 889 of the 1,274 goal leaves remain unverified.
+Keep these counts separate
 from inventory and historical first-pass assessments. Validate small batches
 routinely and reassess any batch that goes 24 hours without a checkpoint.
 Broad feature work must not rebuild an unvalidated backlog. Windows/macOS remain
 deferred; strict Linux linting, full tests, reference replay and rendered review
 remain required.
-The latest checkpoint validates manual export's successful-prefix cleanup after
+The latest checkpoint verifies all nine dimensions presets through actual Qt
+acceptance and native pointer activation, page/recent updates, durable history
+and ownership guards. Strict Clippy and all 2,203 workspace tests passed,
+including 717 GUI and 67 media tests. Independent render review and preservation
+checks passed. Inventory statuses and all 376 implementation approvals remain
+unchanged. [Evidence](gui-coverage/checkpoints/dimensions-e00ddab70/README.md).
+The next coherent verification batch has 38 related preset candidates; these
+remain planning candidates without completion credit.
+
+The preceding checkpoint validates manual export's successful-prefix cleanup after
 copy or sidecar failure, cancellation before deletion, and 64-file cleanup
 transactions. Strict Clippy and all 2,201 workspace tests passed, including
 715 GUI and 67 media tests. Six fresh Qt cases, actual native normal/failure

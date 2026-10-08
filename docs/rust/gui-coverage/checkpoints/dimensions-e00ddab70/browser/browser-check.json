@@ -1,0 +1,20 @@
+{
+  "html_sha256": "d63aaad051684d45c46680a2ada3d5167d834aaf2685d94ee93b6c958d78a82b",
+  "verified_goal_leaves": 385,
+  "implementation_completions": 376,
+  "historical_verifications": 9,
+  "viewports": [
+    [
+      1365,
+      900
+    ],
+    [
+      390,
+      844
+    ]
+  ],
+  "selected_leaf": "audit-options-predicate-dimensions-presets-1080p",
+  "page_errors": [],
+  "external_requests": [],
+  "passed": true
+}

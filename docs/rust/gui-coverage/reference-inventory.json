@@ -175832,8 +175832,8 @@
   "goal_verification": {
     "original_goal_leaves": 1274,
     "implementation_completions": 376,
-    "historical_verifications": 0,
-    "verified_goal_leaves": 376,
+    "historical_verifications": 9,
+    "verified_goal_leaves": 385,
     "verified_feature_ids": [
       "audit-media-context-missing-clear-deleted",
       "audit-media-menu-database-clear-clear-all-file-viewing-statistics",
@@ -176066,6 +176066,15 @@
       "audit-options-popups-callable",
       "audit-options-popups-clipboard",
       "audit-options-popups-yes-no",
+      "audit-options-predicate-dimensions-presets-1080p",
+      "audit-options-predicate-dimensions-presets-4k",
+      "audit-options-predicate-dimensions-presets-720p",
+      "audit-options-predicate-dimensions-presets-system-ratio-16-9",
+      "audit-options-predicate-dimensions-presets-system-ratio-4-3",
+      "audit-options-predicate-dimensions-presets-system-ratio-9-16",
+      "audit-options-predicate-dimensions-presets-system-ratio-is-landscape",
+      "audit-options-predicate-dimensions-presets-system-ratio-is-portrait",
+      "audit-options-predicate-dimensions-presets-system-ratio-is-square",
       "audit-options-predicate-file-viewing-statistics-fileviewingstatsviewtime-test",
       "audit-options-predicate-filesize-size",
       "audit-options-predicate-filetype-mime-tree",
@@ -176212,7 +176221,179 @@
       "url-links-parser",
       "url-preview"
     ],
-    "historical_feature_ids": [],
-    "batches": []
+    "historical_feature_ids": [
+      "audit-options-predicate-dimensions-presets-1080p",
+      "audit-options-predicate-dimensions-presets-4k",
+      "audit-options-predicate-dimensions-presets-720p",
+      "audit-options-predicate-dimensions-presets-system-ratio-16-9",
+      "audit-options-predicate-dimensions-presets-system-ratio-4-3",
+      "audit-options-predicate-dimensions-presets-system-ratio-9-16",
+      "audit-options-predicate-dimensions-presets-system-ratio-is-landscape",
+      "audit-options-predicate-dimensions-presets-system-ratio-is-portrait",
+      "audit-options-predicate-dimensions-presets-system-ratio-is-square"
+    ],
+    "batches": [
+      {
+        "source_commit": "e00ddab707e031bb3a8feaa619dbe18c26a3a6fa",
+        "ci_url": "https://github.com/jkendall327/hydrus-mine/actions/runs/37723417979",
+        "completed_at_utc": "2026-10-08T03:53:40.367057+00:00",
+        "leaves": [
+          {
+            "id": "audit-options-predicate-dimensions-presets-1080p",
+            "behavior": "The 1080p preset accepts system:width = 1,920, system:height = 1,080, closes the owned editor, updates the page and persists recent history. Cancelled, hidden or retired owners cannot change the search or recent history.",
+            "limitations": [
+              "Historical first-pass original preset only; no new implementation credit, parent/alias/native-ID credit or promotion of editable dimension fields.",
+              "Qt uses actual Button.click control signals and live recent history; native preset activation dispatches physical pointer events and tests durable store reopening.",
+              "Page/recent comparisons establish membership and values, not ordering parity. Cancellation, hidden and retired-owner checks invoke callbacks.",
+              "Normal/narrow captures support preset controls only; broader editable-panel layout and its operators/tolerances remain separately assessed.",
+              "Linux validation only; Windows and macOS deferred under source policy."
+            ],
+            "evidence_ids": [
+              "qt-acceptance",
+              "native-interaction",
+              "render-normal",
+              "render-narrow",
+              "render-accepted"
+            ]
+          },
+          {
+            "id": "audit-options-predicate-dimensions-presets-4k",
+            "behavior": "The 4k preset accepts system:width = 3,840, system:height = 2,160, closes the owned editor, updates the page and persists recent history. Cancelled, hidden or retired owners cannot change the search or recent history.",
+            "limitations": [
+              "Historical first-pass original preset only; no new implementation credit, parent/alias/native-ID credit or promotion of editable dimension fields.",
+              "Qt uses actual Button.click control signals and live recent history; native preset activation dispatches physical pointer events and tests durable store reopening.",
+              "Page/recent comparisons establish membership and values, not ordering parity. Cancellation, hidden and retired-owner checks invoke callbacks.",
+              "Normal/narrow captures support preset controls only; broader editable-panel layout and its operators/tolerances remain separately assessed.",
+              "Linux validation only; Windows and macOS deferred under source policy."
+            ],
+            "evidence_ids": [
+              "qt-acceptance",
+              "native-interaction",
+              "render-normal",
+              "render-narrow"
+            ]
+          },
+          {
+            "id": "audit-options-predicate-dimensions-presets-720p",
+            "behavior": "The 720p preset accepts system:width = 1,280, system:height = 720, closes the owned editor, updates the page and persists recent history. Cancelled, hidden or retired owners cannot change the search or recent history.",
+            "limitations": [
+              "Historical first-pass original preset only; no new implementation credit, parent/alias/native-ID credit or promotion of editable dimension fields.",
+              "Qt uses actual Button.click control signals and live recent history; native preset activation dispatches physical pointer events and tests durable store reopening.",
+              "Page/recent comparisons establish membership and values, not ordering parity. Cancellation, hidden and retired-owner checks invoke callbacks.",
+              "Normal/narrow captures support preset controls only; broader editable-panel layout and its operators/tolerances remain separately assessed.",
+              "Linux validation only; Windows and macOS deferred under source policy."
+            ],
+            "evidence_ids": [
+              "qt-acceptance",
+              "native-interaction",
+              "render-normal",
+              "render-narrow"
+            ]
+          },
+          {
+            "id": "audit-options-predicate-dimensions-presets-system-ratio-16-9",
+            "behavior": "The system:ratio = 16:9 preset accepts system:ratio = 16:9, closes the owned editor, updates the page and persists recent history. Cancelled, hidden or retired owners cannot change the search or recent history.",
+            "limitations": [
+              "Historical first-pass original preset only; no new implementation credit, parent/alias/native-ID credit or promotion of editable dimension fields.",
+              "Qt uses actual Button.click control signals and live recent history; native preset activation dispatches physical pointer events and tests durable store reopening.",
+              "Page/recent comparisons establish membership and values, not ordering parity. Cancellation, hidden and retired-owner checks invoke callbacks.",
+              "Normal/narrow captures support preset controls only; broader editable-panel layout and its operators/tolerances remain separately assessed.",
+              "Linux validation only; Windows and macOS deferred under source policy."
+            ],
+            "evidence_ids": [
+              "qt-acceptance",
+              "native-interaction",
+              "render-normal",
+              "render-narrow"
+            ]
+          },
+          {
+            "id": "audit-options-predicate-dimensions-presets-system-ratio-4-3",
+            "behavior": "The system:ratio = 4:3 preset accepts system:ratio = 4:3, closes the owned editor, updates the page and persists recent history. Cancelled, hidden or retired owners cannot change the search or recent history.",
+            "limitations": [
+              "Historical first-pass original preset only; no new implementation credit, parent/alias/native-ID credit or promotion of editable dimension fields.",
+              "Qt uses actual Button.click control signals and live recent history; native preset activation dispatches physical pointer events and tests durable store reopening.",
+              "Page/recent comparisons establish membership and values, not ordering parity. Cancellation, hidden and retired-owner checks invoke callbacks.",
+              "Normal/narrow captures support preset controls only; broader editable-panel layout and its operators/tolerances remain separately assessed.",
+              "Linux validation only; Windows and macOS deferred under source policy."
+            ],
+            "evidence_ids": [
+              "qt-acceptance",
+              "native-interaction",
+              "render-normal",
+              "render-narrow"
+            ]
+          },
+          {
+            "id": "audit-options-predicate-dimensions-presets-system-ratio-9-16",
+            "behavior": "The system:ratio = 9:16 preset accepts system:ratio = 9:16, closes the owned editor, updates the page and persists recent history. Cancelled, hidden or retired owners cannot change the search or recent history.",
+            "limitations": [
+              "Historical first-pass original preset only; no new implementation credit, parent/alias/native-ID credit or promotion of editable dimension fields.",
+              "Qt uses actual Button.click control signals and live recent history; native preset activation dispatches physical pointer events and tests durable store reopening.",
+              "Page/recent comparisons establish membership and values, not ordering parity. Cancellation, hidden and retired-owner checks invoke callbacks.",
+              "Normal/narrow captures support preset controls only; broader editable-panel layout and its operators/tolerances remain separately assessed.",
+              "Linux validation only; Windows and macOS deferred under source policy."
+            ],
+            "evidence_ids": [
+              "qt-acceptance",
+              "native-interaction",
+              "render-normal",
+              "render-narrow"
+            ]
+          },
+          {
+            "id": "audit-options-predicate-dimensions-presets-system-ratio-is-landscape",
+            "behavior": "The system:ratio is landscape preset accepts system:ratio is landscape, closes the owned editor, updates the page and persists recent history. Cancelled, hidden or retired owners cannot change the search or recent history.",
+            "limitations": [
+              "Historical first-pass original preset only; no new implementation credit, parent/alias/native-ID credit or promotion of editable dimension fields.",
+              "Qt uses actual Button.click control signals and live recent history; native preset activation dispatches physical pointer events and tests durable store reopening.",
+              "Page/recent comparisons establish membership and values, not ordering parity. Cancellation, hidden and retired-owner checks invoke callbacks.",
+              "Normal/narrow captures support preset controls only; broader editable-panel layout and its operators/tolerances remain separately assessed.",
+              "Linux validation only; Windows and macOS deferred under source policy."
+            ],
+            "evidence_ids": [
+              "qt-acceptance",
+              "native-interaction",
+              "render-normal",
+              "render-narrow"
+            ]
+          },
+          {
+            "id": "audit-options-predicate-dimensions-presets-system-ratio-is-portrait",
+            "behavior": "The system:ratio is portrait preset accepts system:ratio is portrait, closes the owned editor, updates the page and persists recent history. Cancelled, hidden or retired owners cannot change the search or recent history.",
+            "limitations": [
+              "Historical first-pass original preset only; no new implementation credit, parent/alias/native-ID credit or promotion of editable dimension fields.",
+              "Qt uses actual Button.click control signals and live recent history; native preset activation dispatches physical pointer events and tests durable store reopening.",
+              "Page/recent comparisons establish membership and values, not ordering parity. Cancellation, hidden and retired-owner checks invoke callbacks.",
+              "Normal/narrow captures support preset controls only; broader editable-panel layout and its operators/tolerances remain separately assessed.",
+              "Linux validation only; Windows and macOS deferred under source policy."
+            ],
+            "evidence_ids": [
+              "qt-acceptance",
+              "native-interaction",
+              "render-normal",
+              "render-narrow"
+            ]
+          },
+          {
+            "id": "audit-options-predicate-dimensions-presets-system-ratio-is-square",
+            "behavior": "The system:ratio is square preset accepts system:ratio is square, closes the owned editor, updates the page and persists recent history. Cancelled, hidden or retired owners cannot change the search or recent history.",
+            "limitations": [
+              "Historical first-pass original preset only; no new implementation credit, parent/alias/native-ID credit or promotion of editable dimension fields.",
+              "Qt uses actual Button.click control signals and live recent history; native preset activation dispatches physical pointer events and tests durable store reopening.",
+              "Page/recent comparisons establish membership and values, not ordering parity. Cancellation, hidden and retired-owner checks invoke callbacks.",
+              "Normal/narrow captures support preset controls only; broader editable-panel layout and its operators/tolerances remain separately assessed.",
+              "Linux validation only; Windows and macOS deferred under source policy."
+            ],
+            "evidence_ids": [
+              "qt-acceptance",
+              "native-interaction",
+              "render-normal",
+              "render-narrow"
+            ]
+          }
+        ]
+      }
+    ]
   }
 }

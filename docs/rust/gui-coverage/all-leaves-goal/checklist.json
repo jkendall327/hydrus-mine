@@ -9,9 +9,19 @@
   "baseline_deficit_leaves": 813,
   "historical_first_pass_leaves": 461,
   "explicit_implementation_signoffs": 376,
-  "remaining_without_explicit_signoff": 898,
+  "remaining_without_explicit_signoff": 889,
   "implementation_ledger": "../overnight/progress.json",
-  "historical_verification_approvals": [],
+  "historical_verification_approvals": [
+    "audit-options-predicate-dimensions-presets-1080p",
+    "audit-options-predicate-dimensions-presets-4k",
+    "audit-options-predicate-dimensions-presets-720p",
+    "audit-options-predicate-dimensions-presets-system-ratio-16-9",
+    "audit-options-predicate-dimensions-presets-system-ratio-4-3",
+    "audit-options-predicate-dimensions-presets-system-ratio-9-16",
+    "audit-options-predicate-dimensions-presets-system-ratio-is-landscape",
+    "audit-options-predicate-dimensions-presets-system-ratio-is-portrait",
+    "audit-options-predicate-dimensions-presets-system-ratio-is-square"
+  ],
   "leaves": [
     {
       "id": "audit-media-api-apply",
@@ -5225,55 +5235,55 @@
       "id": "audit-options-predicate-dimensions-presets-1080p",
       "baseline_status": "first_pass",
       "signed_off_in_implementation_ledger": false,
-      "explicitly_verified_historical_leaf": false
+      "explicitly_verified_historical_leaf": true
     },
     {
       "id": "audit-options-predicate-dimensions-presets-4k",
       "baseline_status": "first_pass",
       "signed_off_in_implementation_ledger": false,
-      "explicitly_verified_historical_leaf": false
+      "explicitly_verified_historical_leaf": true
     },
     {
       "id": "audit-options-predicate-dimensions-presets-720p",
       "baseline_status": "first_pass",
       "signed_off_in_implementation_ledger": false,
-      "explicitly_verified_historical_leaf": false
+      "explicitly_verified_historical_leaf": true
     },
     {
       "id": "audit-options-predicate-dimensions-presets-system-ratio-16-9",
       "baseline_status": "first_pass",
       "signed_off_in_implementation_ledger": false,
-      "explicitly_verified_historical_leaf": false
+      "explicitly_verified_historical_leaf": true
     },
     {
       "id": "audit-options-predicate-dimensions-presets-system-ratio-4-3",
       "baseline_status": "first_pass",
       "signed_off_in_implementation_ledger": false,
-      "explicitly_verified_historical_leaf": false
+      "explicitly_verified_historical_leaf": true
     },
     {
       "id": "audit-options-predicate-dimensions-presets-system-ratio-9-16",
       "baseline_status": "first_pass",
       "signed_off_in_implementation_ledger": false,
-      "explicitly_verified_historical_leaf": false
+      "explicitly_verified_historical_leaf": true
     },
     {
       "id": "audit-options-predicate-dimensions-presets-system-ratio-is-landscape",
       "baseline_status": "first_pass",
       "signed_off_in_implementation_ledger": false,
-      "explicitly_verified_historical_leaf": false
+      "explicitly_verified_historical_leaf": true
     },
     {
       "id": "audit-options-predicate-dimensions-presets-system-ratio-is-portrait",
       "baseline_status": "first_pass",
       "signed_off_in_implementation_ledger": false,
-      "explicitly_verified_historical_leaf": false
+      "explicitly_verified_historical_leaf": true
     },
     {
       "id": "audit-options-predicate-dimensions-presets-system-ratio-is-square",
       "baseline_status": "first_pass",
       "signed_off_in_implementation_ledger": false,
-      "explicitly_verified_historical_leaf": false
+      "explicitly_verified_historical_leaf": true
     },
     {
       "id": "audit-options-predicate-dimensions-ratio-operator",
@@ -7660,6 +7670,6 @@
   ],
   "previous_checkpoint_commit": "2e4912e688110d7b3ed6aad07aed0e72835d65d0",
   "checkpoint_evidence": "../checkpoints/1a49a30f0/README.md",
-  "explicit_historical_verifications": 0,
-  "verified_goal_leaves": 376
+  "explicit_historical_verifications": 9,
+  "verified_goal_leaves": 385
 }

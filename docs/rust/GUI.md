@@ -914,8 +914,10 @@ buttons. The nine dimensions presets now have a focused real Qt acceptance recor
 recent-history updates and cancellation. Native pointer-driven tests exercise all
 nine presets, persistence after reopening the store, supported normal/narrow
 layouts and hidden/retired-owner guards. Exact-source full Linux validation and
-independent native image review remain pending; these historical first-pass
-leaves gain no new implementation credit.
+independent native image review passed: these nine historical first-pass leaves
+now have explicit verification, separate from implementation credit. The
+[checkpoint](gui-coverage/checkpoints/dimensions-e00ddab70/README.md) retains
+the reference, native tests, captures and scope limitations.
 
 The hash editor now presents vertical is/is-not and SHA-256/MD5/SHA-1/
 SHA-512 radio groups around the multiline input, with both cleanup buttons
