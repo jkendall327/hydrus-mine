@@ -1291,10 +1291,11 @@
    "path": "Services > pause",
    "workstream": "tags-services",
    "state": "missing",
-   "priority": "normal",
+   "priority": "out-of-scope",
    "reference": null,
    "native": null,
    "notes": [
+    "Out of scope: remote repositories are outside the owner's priorities (ROADMAP). (triaged 2026-10-08)",
     "services_menu exposes no command for repository pause or repository update import; remote server synchronization/administration is not implemented."
    ]
   },
@@ -1304,10 +1305,11 @@
    "path": "Services > advanced",
    "workstream": "tags-services",
    "state": "missing",
-   "priority": "normal",
+   "priority": "out-of-scope",
    "reference": null,
    "native": null,
    "notes": [
+    "Out of scope: remote repositories are outside the owner's priorities (ROADMAP). (triaged 2026-10-08)",
     "services_menu exposes no command for repository pause or repository update import; remote server synchronization/administration is not implemented."
    ]
   },
@@ -4496,10 +4498,11 @@
    "path": "Help",
    "workstream": "shell",
    "state": "missing",
-   "priority": "normal",
+   "priority": "out-of-scope",
    "reference": null,
    "native": null,
    "notes": [
+    "Not applicable: a setting of the reference's Qt toolkit or its platform workarounds; hydrus-rs uses Slint. (triaged 2026-10-08)",
     "Reference opens Qt framework information. The native Slint application has no Qt information window; its own runtime/library facts are in About.",
     "No native action/editor path for this reference workflow."
    ]
@@ -4784,10 +4787,11 @@
    "path": "File > Options window > connection > general",
    "workstream": "options-system",
    "state": "missing",
-   "priority": "normal",
+   "priority": "out-of-scope",
    "reference": null,
    "native": null,
    "notes": [
+    "Not applicable: a setting of the reference's Python libraries (PIL, requests, curl_cffi). (triaged 2026-10-08)",
     "Reference editor/control 'DEBUG: set the REQUESTS_CA_BUNDLE env to certifi cacert.pem on program start:' is recorded on 'connection' and defined by the referenced options panel. No corresponding editable row exists in native options::pages; this is a missing GUI editing path, even if a setting is imported or consumed elsewhere.",
     "Native options registry has no editable 'DEBUG: set the REQUESTS_CA_BUNDLE env to certifi cacert.pem on program start:' control in this page/box path."
    ]
@@ -4896,10 +4900,11 @@
    "path": "File > Options window > connection > general",
    "workstream": "options-system",
    "state": "missing",
-   "priority": "normal",
+   "priority": "out-of-scope",
    "reference": null,
    "native": null,
    "notes": [
+    "Not applicable: a setting of the reference's Python libraries (PIL, requests, curl_cffi). (triaged 2026-10-08)",
     "Reference editor/control 'TEST: run the curl_cffi test with this browser definition:' is recorded on 'connection' and defined by the referenced options panel. No corresponding editable row exists in native options::pages; this is a missing GUI editing path, even if a setting is imported or consumed elsewhere.",
     "Native options registry has no editable 'TEST: run the curl_cffi test with this browser definition:' control in this page/box path."
    ]
@@ -6914,10 +6919,11 @@
    "path": "File > Options window > gui > misc",
    "workstream": "options-gui",
    "state": "missing",
-   "priority": "normal",
+   "priority": "out-of-scope",
    "reference": null,
    "native": null,
    "notes": [
+    "Not applicable: a setting of the reference's Qt toolkit or its platform workarounds; hydrus-rs uses Slint. (triaged 2026-10-08)",
     "Reference editor/control 'ANTI-CRASH BUGFIX: Use Qt file/directory selection dialogs, rather than OS native:' is recorded on 'gui' and defined by the referenced options panel. No corresponding editable row exists in native options::pages; this is a missing GUI editing path, even if a setting is imported or consumed elsewhere.",
     "Native options registry has no editable 'ANTI-CRASH BUGFIX: Use Qt file/directory selection dialogs, rather than OS native:' control in this page/box path."
    ]
@@ -6928,10 +6934,11 @@
    "path": "File > Options window > gui > misc",
    "workstream": "options-gui",
    "state": "missing",
-   "priority": "normal",
+   "priority": "out-of-scope",
    "reference": null,
    "native": null,
    "notes": [
+    "Not applicable: a setting of the reference's Qt toolkit or its platform workarounds; hydrus-rs uses Slint. (triaged 2026-10-08)",
     "Reference editor/control 'BUGFIX: If on macOS, show dialog menus in a debug menu:' is recorded on 'gui' and defined by the referenced options panel. No corresponding editable row exists in native options::pages; this is a missing GUI editing path, even if a setting is imported or consumed elsewhere.",
     "Native options registry has no editable 'BUGFIX: If on macOS, show dialog menus in a debug menu:' control in this page/box path."
    ]
@@ -6942,10 +6949,11 @@
    "path": "File > Options window > gui > misc",
    "workstream": "options-gui",
    "state": "missing",
-   "priority": "normal",
+   "priority": "out-of-scope",
    "reference": null,
    "native": null,
    "notes": [
+    "Not applicable: a setting of the reference's Qt toolkit or its platform workarounds; hydrus-rs uses Slint. (triaged 2026-10-08)",
     "Reference editor/control 'BUGFIX: Set child windows as non-tool flagged:' is recorded on 'gui' and defined by the referenced options panel. No corresponding editable row exists in native options::pages; this is a missing GUI editing path, even if a setting is imported or consumed elsewhere.",
     "Native options registry has no editable 'BUGFIX: Set child windows as non-tool flagged:' control in this page/box path."
    ]
@@ -7058,10 +7066,11 @@
    "path": "File > Options window > gui > misc",
    "workstream": "options-gui",
    "state": "missing",
-   "priority": "normal",
+   "priority": "out-of-scope",
    "reference": null,
    "native": null,
    "notes": [
+    "Not applicable: a setting of the reference's Qt toolkit or its platform workarounds; hydrus-rs uses Slint. (triaged 2026-10-08)",
     "Reference editor/control 'Use Native MenuBar (if available):' is recorded on 'gui' and defined by the referenced options panel. No corresponding editable row exists in native options::pages; this is a missing GUI editing path, even if a setting is imported or consumed elsewhere.",
     "Native options registry has no editable 'Use Native MenuBar (if available):' control in this page/box path."
    ]
@@ -7252,10 +7261,11 @@
    "path": "File > Options window > gui pages > opening and closing",
    "workstream": "options-gui",
    "state": "missing",
-   "priority": "normal",
+   "priority": "out-of-scope",
    "reference": null,
    "native": null,
    "notes": [
+    "Not applicable: a setting of the reference's Qt toolkit or its platform workarounds; hydrus-rs uses Slint. (triaged 2026-10-08)",
     "Reference editor/control 'BUGFIX: Force 'hide page' signal when creating a new page:' is recorded on 'gui pages' and defined by the referenced options panel. No corresponding editable row exists in native options::pages; this is a missing GUI editing path, even if a setting is imported or consumed elsewhere.",
     "Native options registry has no editable 'BUGFIX: Force 'hide page' signal when creating a new page:' control in this page/box path."
    ]
@@ -9038,10 +9048,11 @@
    "path": "File > Options window > maintenance and processing > deferred table delete",
    "workstream": "options-system",
    "state": "missing",
-   "priority": "normal",
+   "priority": "out-of-scope",
    "reference": null,
    "native": null,
    "notes": [
+    "Not applicable: the native store has no deferred table deletes (ADR-1). (triaged 2026-10-08)",
     "Reference editor/control '\"Idle\" ideal work packet time:' is recorded on 'maintenance and processing' and defined by the referenced options panel. No corresponding editable row exists in native options::pages; this is a missing GUI editing path, even if a setting is imported or consumed elsewhere.",
     "Native options registry has no editable '\"Idle\" ideal work packet time:' control in this page/box path."
    ]
@@ -9052,10 +9063,11 @@
    "path": "File > Options window > maintenance and processing > deferred table delete",
    "workstream": "options-system",
    "state": "missing",
-   "priority": "normal",
+   "priority": "out-of-scope",
    "reference": null,
    "native": null,
    "notes": [
+    "Not applicable: the native store has no deferred table deletes (ADR-1). (triaged 2026-10-08)",
     "Reference editor/control '\"Idle\" rest time percentage:' is recorded on 'maintenance and processing' and defined by the referenced options panel. No corresponding editable row exists in native options::pages; this is a missing GUI editing path, even if a setting is imported or consumed elsewhere.",
     "Native options registry has no editable '\"Idle\" rest time percentage:' control in this page/box path."
    ]
@@ -9066,10 +9078,11 @@
    "path": "File > Options window > maintenance and processing > deferred table delete",
    "workstream": "options-system",
    "state": "missing",
-   "priority": "normal",
+   "priority": "out-of-scope",
    "reference": null,
    "native": null,
    "notes": [
+    "Not applicable: the native store has no deferred table deletes (ADR-1). (triaged 2026-10-08)",
     "Reference editor/control '\"Normal\" ideal work packet time:' is recorded on 'maintenance and processing' and defined by the referenced options panel. No corresponding editable row exists in native options::pages; this is a missing GUI editing path, even if a setting is imported or consumed elsewhere.",
     "Native options registry has no editable '\"Normal\" ideal work packet time:' control in this page/box path."
    ]
@@ -9080,10 +9093,11 @@
    "path": "File > Options window > maintenance and processing > deferred table delete",
    "workstream": "options-system",
    "state": "missing",
-   "priority": "normal",
+   "priority": "out-of-scope",
    "reference": null,
    "native": null,
    "notes": [
+    "Not applicable: the native store has no deferred table deletes (ADR-1). (triaged 2026-10-08)",
     "Reference editor/control '\"Normal\" rest time percentage:' is recorded on 'maintenance and processing' and defined by the referenced options panel. No corresponding editable row exists in native options::pages; this is a missing GUI editing path, even if a setting is imported or consumed elsewhere.",
     "Native options registry has no editable '\"Normal\" rest time percentage:' control in this page/box path."
    ]
@@ -9094,10 +9108,11 @@
    "path": "File > Options window > maintenance and processing > deferred table delete",
    "workstream": "options-system",
    "state": "missing",
-   "priority": "normal",
+   "priority": "out-of-scope",
    "reference": null,
    "native": null,
    "notes": [
+    "Not applicable: the native store has no deferred table deletes (ADR-1). (triaged 2026-10-08)",
     "Reference editor/control '\"Work hard\" ideal work packet time:' is recorded on 'maintenance and processing' and defined by the referenced options panel. No corresponding editable row exists in native options::pages; this is a missing GUI editing path, even if a setting is imported or consumed elsewhere.",
     "Native options registry has no editable '\"Work hard\" ideal work packet time:' control in this page/box path."
    ]
@@ -9108,10 +9123,11 @@
    "path": "File > Options window > maintenance and processing > deferred table delete",
    "workstream": "options-system",
    "state": "missing",
-   "priority": "normal",
+   "priority": "out-of-scope",
    "reference": null,
    "native": null,
    "notes": [
+    "Not applicable: the native store has no deferred table deletes (ADR-1). (triaged 2026-10-08)",
     "Reference editor/control '\"Work hard\" rest time percentage:' is recorded on 'maintenance and processing' and defined by the referenced options panel. No corresponding editable row exists in native options::pages; this is a missing GUI editing path, even if a setting is imported or consumed elsewhere.",
     "Native options registry has no editable '\"Work hard\" rest time percentage:' control in this page/box path."
    ]
@@ -9346,10 +9362,11 @@
    "path": "File > Options window > maintenance and processing > repository processing",
    "workstream": "options-system",
    "state": "missing",
-   "priority": "normal",
+   "priority": "out-of-scope",
    "reference": null,
    "native": null,
    "notes": [
+    "Out of scope: remote repositories are outside the owner's priorities (ROADMAP). (triaged 2026-10-08)",
     "Reference editor/control '\"Idle\" ideal work packet time:' is recorded on 'maintenance and processing' and defined by the referenced options panel. No corresponding editable row exists in native options::pages; this is a missing GUI editing path, even if a setting is imported or consumed elsewhere.",
     "Native options registry has no editable '\"Idle\" ideal work packet time:' control in this page/box path."
    ]
@@ -9360,10 +9377,11 @@
    "path": "File > Options window > maintenance and processing > repository processing",
    "workstream": "options-system",
    "state": "missing",
-   "priority": "normal",
+   "priority": "out-of-scope",
    "reference": null,
    "native": null,
    "notes": [
+    "Out of scope: remote repositories are outside the owner's priorities (ROADMAP). (triaged 2026-10-08)",
     "Reference editor/control '\"Idle\" rest time percentage:' is recorded on 'maintenance and processing' and defined by the referenced options panel. No corresponding editable row exists in native options::pages; this is a missing GUI editing path, even if a setting is imported or consumed elsewhere.",
     "Native options registry has no editable '\"Idle\" rest time percentage:' control in this page/box path."
    ]
@@ -9374,10 +9392,11 @@
    "path": "File > Options window > maintenance and processing > repository processing",
    "workstream": "options-system",
    "state": "missing",
-   "priority": "normal",
+   "priority": "out-of-scope",
    "reference": null,
    "native": null,
    "notes": [
+    "Out of scope: remote repositories are outside the owner's priorities (ROADMAP). (triaged 2026-10-08)",
     "Reference editor/control '\"Normal\" ideal work packet time:' is recorded on 'maintenance and processing' and defined by the referenced options panel. No corresponding editable row exists in native options::pages; this is a missing GUI editing path, even if a setting is imported or consumed elsewhere.",
     "Native options registry has no editable '\"Normal\" ideal work packet time:' control in this page/box path."
    ]
@@ -9388,10 +9407,11 @@
    "path": "File > Options window > maintenance and processing > repository processing",
    "workstream": "options-system",
    "state": "missing",
-   "priority": "normal",
+   "priority": "out-of-scope",
    "reference": null,
    "native": null,
    "notes": [
+    "Out of scope: remote repositories are outside the owner's priorities (ROADMAP). (triaged 2026-10-08)",
     "Reference editor/control '\"Normal\" rest time percentage:' is recorded on 'maintenance and processing' and defined by the referenced options panel. No corresponding editable row exists in native options::pages; this is a missing GUI editing path, even if a setting is imported or consumed elsewhere.",
     "Native options registry has no editable '\"Normal\" rest time percentage:' control in this page/box path."
    ]
@@ -9402,10 +9422,11 @@
    "path": "File > Options window > maintenance and processing > repository processing",
    "workstream": "options-system",
    "state": "missing",
-   "priority": "normal",
+   "priority": "out-of-scope",
    "reference": null,
    "native": null,
    "notes": [
+    "Out of scope: remote repositories are outside the owner's priorities (ROADMAP). (triaged 2026-10-08)",
     "Reference editor/control '\"Very idle\" ideal work packet time:' is recorded on 'maintenance and processing' and defined by the referenced options panel. No corresponding editable row exists in native options::pages; this is a missing GUI editing path, even if a setting is imported or consumed elsewhere.",
     "Native options registry has no editable '\"Very idle\" ideal work packet time:' control in this page/box path."
    ]
@@ -9416,10 +9437,11 @@
    "path": "File > Options window > maintenance and processing > repository processing",
    "workstream": "options-system",
    "state": "missing",
-   "priority": "normal",
+   "priority": "out-of-scope",
    "reference": null,
    "native": null,
    "notes": [
+    "Out of scope: remote repositories are outside the owner's priorities (ROADMAP). (triaged 2026-10-08)",
     "Reference editor/control '\"Very idle\" rest time percentage:' is recorded on 'maintenance and processing' and defined by the referenced options panel. No corresponding editable row exists in native options::pages; this is a missing GUI editing path, even if a setting is imported or consumed elsewhere.",
     "Native options registry has no editable '\"Very idle\" rest time percentage:' control in this page/box path."
    ]
@@ -9430,10 +9452,11 @@
    "path": "File > Options window > maintenance and processing > sibling/parent sync processing",
    "workstream": "options-system",
    "state": "missing",
-   "priority": "normal",
+   "priority": "out-of-scope",
    "reference": null,
    "native": null,
    "notes": [
+    "Not applicable: hydrus-rs applies siblings and parents as it writes, so there is no background sync to pace (DIFFERENCES.md, Tags > sync). (triaged 2026-10-08)",
     "Reference editor/control 'Do work in \"idle\" time:' is recorded on 'maintenance and processing' and defined by the referenced options panel. No corresponding editable row exists in native options::pages; this is a missing GUI editing path, even if a setting is imported or consumed elsewhere.",
     "Native options registry has no editable 'Do work in \"idle\" time:' control in this page/box path."
    ]
@@ -9444,10 +9467,11 @@
    "path": "File > Options window > maintenance and processing > sibling/parent sync processing",
    "workstream": "options-system",
    "state": "missing",
-   "priority": "normal",
+   "priority": "out-of-scope",
    "reference": null,
    "native": null,
    "notes": [
+    "Not applicable: hydrus-rs applies siblings and parents as it writes, so there is no background sync to pace (DIFFERENCES.md, Tags > sync). (triaged 2026-10-08)",
     "Reference editor/control 'Do work in \"normal\" time:' is recorded on 'maintenance and processing' and defined by the referenced options panel. No corresponding editable row exists in native options::pages; this is a missing GUI editing path, even if a setting is imported or consumed elsewhere.",
     "Native options registry has no editable 'Do work in \"normal\" time:' control in this page/box path."
    ]
@@ -9458,10 +9482,11 @@
    "path": "File > Options window > maintenance and processing > sibling/parent sync processing",
    "workstream": "options-system",
    "state": "missing",
-   "priority": "normal",
+   "priority": "out-of-scope",
    "reference": null,
    "native": null,
    "notes": [
+    "Not applicable: hydrus-rs applies siblings and parents as it writes, so there is no background sync to pace (DIFFERENCES.md, Tags > sync). (triaged 2026-10-08)",
     "Reference editor/control '\"Idle\" ideal work packet time:' is recorded on 'maintenance and processing' and defined by the referenced options panel. No corresponding editable row exists in native options::pages; this is a missing GUI editing path, even if a setting is imported or consumed elsewhere.",
     "Native options registry has no editable '\"Idle\" ideal work packet time:' control in this page/box path."
    ]
@@ -9472,10 +9497,11 @@
    "path": "File > Options window > maintenance and processing > sibling/parent sync processing",
    "workstream": "options-system",
    "state": "missing",
-   "priority": "normal",
+   "priority": "out-of-scope",
    "reference": null,
    "native": null,
    "notes": [
+    "Not applicable: hydrus-rs applies siblings and parents as it writes, so there is no background sync to pace (DIFFERENCES.md, Tags > sync). (triaged 2026-10-08)",
     "Reference editor/control '\"Idle\" rest time percentage:' is recorded on 'maintenance and processing' and defined by the referenced options panel. No corresponding editable row exists in native options::pages; this is a missing GUI editing path, even if a setting is imported or consumed elsewhere.",
     "Native options registry has no editable '\"Idle\" rest time percentage:' control in this page/box path."
    ]
@@ -9486,10 +9512,11 @@
    "path": "File > Options window > maintenance and processing > sibling/parent sync processing",
    "workstream": "options-system",
    "state": "missing",
-   "priority": "normal",
+   "priority": "out-of-scope",
    "reference": null,
    "native": null,
    "notes": [
+    "Not applicable: hydrus-rs applies siblings and parents as it writes, so there is no background sync to pace (DIFFERENCES.md, Tags > sync). (triaged 2026-10-08)",
     "Reference editor/control '\"Normal\" ideal work packet time:' is recorded on 'maintenance and processing' and defined by the referenced options panel. No corresponding editable row exists in native options::pages; this is a missing GUI editing path, even if a setting is imported or consumed elsewhere.",
     "Native options registry has no editable '\"Normal\" ideal work packet time:' control in this page/box path."
    ]
@@ -9500,10 +9527,11 @@
    "path": "File > Options window > maintenance and processing > sibling/parent sync processing",
    "workstream": "options-system",
    "state": "missing",
-   "priority": "normal",
+   "priority": "out-of-scope",
    "reference": null,
    "native": null,
    "notes": [
+    "Not applicable: hydrus-rs applies siblings and parents as it writes, so there is no background sync to pace (DIFFERENCES.md, Tags > sync). (triaged 2026-10-08)",
     "Reference editor/control '\"Normal\" rest time percentage:' is recorded on 'maintenance and processing' and defined by the referenced options panel. No corresponding editable row exists in native options::pages; this is a missing GUI editing path, even if a setting is imported or consumed elsewhere.",
     "Native options registry has no editable '\"Normal\" rest time percentage:' control in this page/box path."
    ]
@@ -9514,10 +9542,11 @@
    "path": "File > Options window > maintenance and processing > sibling/parent sync processing",
    "workstream": "options-system",
    "state": "missing",
-   "priority": "normal",
+   "priority": "out-of-scope",
    "reference": null,
    "native": null,
    "notes": [
+    "Not applicable: hydrus-rs applies siblings and parents as it writes, so there is no background sync to pace (DIFFERENCES.md, Tags > sync). (triaged 2026-10-08)",
     "Reference editor/control '\"Work hard\" ideal work packet time:' is recorded on 'maintenance and processing' and defined by the referenced options panel. No corresponding editable row exists in native options::pages; this is a missing GUI editing path, even if a setting is imported or consumed elsewhere.",
     "Native options registry has no editable '\"Work hard\" ideal work packet time:' control in this page/box path."
    ]
@@ -9528,10 +9557,11 @@
    "path": "File > Options window > maintenance and processing > sibling/parent sync processing",
    "workstream": "options-system",
    "state": "missing",
-   "priority": "normal",
+   "priority": "out-of-scope",
    "reference": null,
    "native": null,
    "notes": [
+    "Not applicable: hydrus-rs applies siblings and parents as it writes, so there is no background sync to pace (DIFFERENCES.md, Tags > sync). (triaged 2026-10-08)",
     "Reference editor/control '\"Work hard\" rest time percentage:' is recorded on 'maintenance and processing' and defined by the referenced options panel. No corresponding editable row exists in native options::pages; this is a missing GUI editing path, even if a setting is imported or consumed elsewhere.",
     "Native options registry has no editable '\"Work hard\" rest time percentage:' control in this page/box path."
    ]
@@ -9690,10 +9720,11 @@
    "path": "File > Options window > media playback > mpv",
    "workstream": "options-media",
    "state": "missing",
-   "priority": "normal",
+   "priority": "out-of-scope",
    "reference": null,
    "native": null,
    "notes": [
+    "Not applicable: a debug/test switch for the reference's Qt-embedded mpv player workarounds. (triaged 2026-10-08)",
     "Reference editor/control 'DEBUG: Set null audio device on silent media:' is recorded on 'media playback' and defined by the referenced options panel. No corresponding editable row exists in native options::pages; this is a missing GUI editing path, even if a setting is imported or consumed elsewhere.",
     "Native options registry has no editable 'DEBUG: Set null audio device on silent media:' control in this page/box path."
    ]
@@ -9704,10 +9735,11 @@
    "path": "File > Options window > media playback > mpv",
    "workstream": "options-media",
    "state": "missing",
-   "priority": "normal",
+   "priority": "out-of-scope",
    "reference": null,
    "native": null,
    "notes": [
+    "Not applicable: a debug/test switch for the reference's Qt-embedded mpv player workarounds. (triaged 2026-10-08)",
     "Reference editor/control 'DEBUG: Use legacy mpv communication method:' is recorded on 'media playback' and defined by the referenced options panel. No corresponding editable row exists in native options::pages; this is a missing GUI editing path, even if a setting is imported or consumed elsewhere.",
     "Native options registry has no editable 'DEBUG: Use legacy mpv communication method:' control in this page/box path."
    ]
@@ -9732,10 +9764,11 @@
    "path": "File > Options window > media playback > mpv",
    "workstream": "options-media",
    "state": "missing",
-   "priority": "normal",
+   "priority": "out-of-scope",
    "reference": null,
    "native": null,
    "notes": [
+    "Not applicable: a debug/test switch for the reference's Qt-embedded mpv player workarounds. (triaged 2026-10-08)",
     "Reference editor/control 'LINUX DEBUG: Do not allow combined setGeometry on mpv window:' is recorded on 'media playback' and defined by the referenced options panel. No corresponding editable row exists in native options::pages; this is a missing GUI editing path, even if a setting is imported or consumed elsewhere.",
     "Native options registry has no editable 'LINUX DEBUG: Do not allow combined setGeometry on mpv window:' control in this page/box path."
    ]
@@ -9774,10 +9807,11 @@
    "path": "File > Options window > media playback > mpv",
    "workstream": "options-media",
    "state": "missing",
-   "priority": "normal",
+   "priority": "out-of-scope",
    "reference": null,
    "native": null,
    "notes": [
+    "Not applicable: a debug/test switch for the reference's Qt-embedded mpv player workarounds. (triaged 2026-10-08)",
     "Reference editor/control 'TEST: Destroy/recreate mpv players instead of recycling them:' is recorded on 'media playback' and defined by the referenced options panel. No corresponding editable row exists in native options::pages; this is a missing GUI editing path, even if a setting is imported or consumed elsewhere.",
     "Native options registry has no editable 'TEST: Destroy/recreate mpv players instead of recycling them:' control in this page/box path."
    ]
@@ -9788,10 +9822,11 @@
    "path": "File > Options window > media playback > mpv",
    "workstream": "options-media",
    "state": "missing",
-   "priority": "normal",
+   "priority": "out-of-scope",
    "reference": null,
    "native": null,
    "notes": [
+    "Not applicable: a debug/test switch for the reference's Qt-embedded mpv player workarounds. (triaged 2026-10-08)",
     "Reference editor/control 'TEST: Use the same mpv player through media transitions:' is recorded on 'media playback' and defined by the referenced options panel. No corresponding editable row exists in native options::pages; this is a missing GUI editing path, even if a setting is imported or consumed elsewhere.",
     "Native options registry has no editable 'TEST: Use the same mpv player through media transitions:' control in this page/box path."
    ]
@@ -9844,10 +9879,11 @@
    "path": "File > Options window > media playback > QtMediaPlayer",
    "workstream": "options-media",
    "state": "missing",
-   "priority": "normal",
+   "priority": "out-of-scope",
    "reference": null,
    "native": null,
    "notes": [
+    "Not applicable: QtMediaPlayer is one of the reference's Qt video backends; hydrus-rs does not have it. (triaged 2026-10-08)",
     "Reference editor/control 'DEBUG: Set null audio device on silent media:' is recorded on 'media playback' and defined by the referenced options panel. No corresponding editable row exists in native options::pages; this is a missing GUI editing path, even if a setting is imported or consumed elsewhere.",
     "Native options registry has no editable 'DEBUG: Set null audio device on silent media:' control in this page/box path."
    ]
@@ -9858,10 +9894,11 @@
    "path": "File > Options window > media playback > QtMediaPlayer",
    "workstream": "options-media",
    "state": "missing",
-   "priority": "normal",
+   "priority": "out-of-scope",
    "reference": null,
    "native": null,
    "notes": [
+    "Not applicable: QtMediaPlayer is one of the reference's Qt video backends; hydrus-rs does not have it. (triaged 2026-10-08)",
     "Reference editor/control 'DEBUG: Use the same QtMediaPlayer through media transitions:' is recorded on 'media playback' and defined by the referenced options panel. No corresponding editable row exists in native options::pages; this is a missing GUI editing path, even if a setting is imported or consumed elsewhere.",
     "Native options registry has no editable 'DEBUG: Use the same QtMediaPlayer through media transitions:' control in this page/box path."
    ]
@@ -9872,10 +9909,11 @@
    "path": "File > Options window > media playback > QtMediaPlayer",
    "workstream": "options-media",
    "state": "missing",
-   "priority": "normal",
+   "priority": "out-of-scope",
    "reference": null,
    "native": null,
    "notes": [
+    "Not applicable: QtMediaPlayer is one of the reference's Qt video backends; hydrus-rs does not have it. (triaged 2026-10-08)",
     "Reference editor/control 'fetch and initialise Qt audio devices' is recorded on 'media playback' and defined by the referenced options panel. No corresponding editable row exists in native options::pages; this is a missing GUI editing path, even if a setting is imported or consumed elsewhere.",
     "Native options registry has no editable 'fetch and initialise Qt audio devices' control in this page/box path."
    ]
@@ -9886,10 +9924,11 @@
    "path": "File > Options window > media playback > QtMediaPlayer",
    "workstream": "options-media",
    "state": "missing",
-   "priority": "normal",
+   "priority": "out-of-scope",
    "reference": null,
    "native": null,
    "notes": [
+    "Not applicable: QtMediaPlayer is one of the reference's Qt video backends; hydrus-rs does not have it. (triaged 2026-10-08)",
     "Reference editor/control 'Preferred audio output device:' is recorded on 'media playback' and defined by the referenced options panel. No corresponding editable row exists in native options::pages; this is a missing GUI editing path, even if a setting is imported or consumed elsewhere.",
     "Native options registry has no editable 'Preferred audio output device:' control in this page/box path."
    ]
@@ -9900,10 +9939,11 @@
    "path": "File > Options window > media playback > QtMediaPlayer",
    "workstream": "options-media",
    "state": "missing",
-   "priority": "normal",
+   "priority": "out-of-scope",
    "reference": null,
    "native": null,
    "notes": [
+    "Not applicable: QtMediaPlayer is one of the reference's Qt video backends; hydrus-rs does not have it. (triaged 2026-10-08)",
     "Reference editor/control 'TEST: Use OpenGL Window in QtMediaPlayer:' is recorded on 'media playback' and defined by the referenced options panel. No corresponding editable row exists in native options::pages; this is a missing GUI editing path, even if a setting is imported or consumed elsewhere.",
     "Native options registry has no editable 'TEST: Use OpenGL Window in QtMediaPlayer:' control in this page/box path."
    ]
@@ -9914,10 +9954,11 @@
    "path": "File > Options window > media playback > system",
    "workstream": "options-media",
    "state": "missing",
-   "priority": "normal",
+   "priority": "out-of-scope",
    "reference": null,
    "native": null,
    "notes": [
+    "Not applicable: a setting of the reference's Python libraries (PIL, requests, curl_cffi). (triaged 2026-10-08)",
     "Reference editor/control 'Allow loading of truncated images:' is recorded on 'media playback' and defined by the referenced options panel. No corresponding editable row exists in native options::pages; this is a missing GUI editing path, even if a setting is imported or consumed elsewhere.",
     "Native options registry has no editable 'Allow loading of truncated images:' control in this page/box path."
    ]
@@ -9964,10 +10005,11 @@
    "path": "File > Options window > media playback > system",
    "workstream": "options-media",
    "state": "missing",
-   "priority": "normal",
+   "priority": "out-of-scope",
    "reference": null,
    "native": null,
    "notes": [
+    "Not applicable: a setting of the reference's Python libraries (PIL, requests, curl_cffi). (triaged 2026-10-08)",
     "Reference editor/control 'Load images with PIL:' is recorded on 'media playback' and defined by the referenced options panel. No corresponding editable row exists in native options::pages; this is a missing GUI editing path, even if a setting is imported or consumed elsewhere.",
     "Native options registry has no editable 'Load images with PIL:' control in this page/box path."
    ]
@@ -14928,10 +14970,11 @@
    "path": "File > Options window > style",
    "workstream": "options-gui",
    "state": "missing",
-   "priority": "normal",
+   "priority": "out-of-scope",
    "reference": null,
    "native": null,
    "notes": [
+    "Not applicable: a setting of the reference's Qt toolkit or its platform workarounds; hydrus-rs uses Slint. (triaged 2026-10-08)",
     "Reference editor/control 'Qt style:' is recorded on 'style' and defined by the referenced options panel. No corresponding editable row exists in native options::pages; this is a missing GUI editing path, even if a setting is imported or consumed elsewhere.",
     "Native options registry has no editable 'Qt style:' control in this page/box path."
    ]
@@ -14942,10 +14985,11 @@
    "path": "File > Options window > style",
    "workstream": "options-gui",
    "state": "missing",
-   "priority": "normal",
+   "priority": "out-of-scope",
    "reference": null,
    "native": null,
    "notes": [
+    "Not applicable: a setting of the reference's Qt toolkit or its platform workarounds; hydrus-rs uses Slint. (triaged 2026-10-08)",
     "Reference editor/control 'Qt stylesheet:' is recorded on 'style' and defined by the referenced options panel. No corresponding editable row exists in native options::pages; this is a missing GUI editing path, even if a setting is imported or consumed elsewhere.",
     "Native options registry has no editable 'Qt stylesheet:' control in this page/box path."
    ]
