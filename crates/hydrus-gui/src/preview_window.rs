@@ -181,9 +181,9 @@ impl Canvas {
         }
     }
 }
-/// `GetIncDecSize`'s width: twice the height, widened for a number of more
-/// than three digits, whole pixels.
-fn incdec_width(height: f64, value: i64) -> f64 {
+/// `GetIncDecSize`: twice the height, widened for a number of more than
+/// three digits, as a whole-pixel `QSize` (width, height).
+fn incdec_size(height: f64, value: i64) -> (f64, f64) {
     let mut width = height * 2.0;
     if value > 0 {
         let digits = value.to_string().len() as f64;
@@ -191,7 +191,7 @@ fn incdec_width(height: f64, value: i64) -> f64 {
             width += (height - 1.0) * (digits - (2.0 + digits / 3.0));
         }
     }
-    width.trunc()
+    (width.trunc(), height.trunc())
 }
 
 /// One rating as the corner draws it in the background (the sizes rounded,
@@ -214,12 +214,11 @@ fn rating_at_sizes(
     let stars = graphic.shapes.row_count() as f64;
     let pad = f64::from(graphic.pad);
     let (width, height, popup_width, popup_height) = match &control.kind {
-        Kind::IncDec { value } => (
-            incdec_width(incdec, *value),
-            incdec,
-            incdec_width(popup_incdec, *value),
-            popup_incdec,
-        ),
+        Kind::IncDec { value } => {
+            let (width, height) = incdec_size(incdec, *value);
+            let (popup_width, popup_height) = incdec_size(popup_incdec, *value);
+            (width, height, popup_width, popup_height)
+        }
         Kind::Numerical { .. } => (
             stars * (icon + pad) - pad,
             icon,
@@ -1035,8 +1034,8 @@ mod worker_tests {
             let height = row[0].as_f64().unwrap();
             let number = row[1].as_i64();
             assert_eq!(
-                incdec_width(height, number.unwrap_or(0)),
-                row[2].as_f64().unwrap(),
+                incdec_size(height, number.unwrap_or(0)),
+                (row[2].as_f64().unwrap(), row[3].as_f64().unwrap()),
                 "{row}"
             );
         }

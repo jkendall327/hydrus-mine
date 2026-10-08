@@ -3010,7 +3010,7 @@
     "date": "2026-10-08",
     "class": "weak",
     "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Import of the reference's serialised rules/comparators is checked against the reference's stored JSON and the GUI drives clipboard export/import/duplicate for rules and comparators, but export writes hydrus-rs JSON, not the reference's serialised form (DIFFERENCES.md 'Auto-resolution rule export and import'), so the reference could not read it and the export half is not compared with the reference; png paths and OR/AND inner lists untested. Tracker notes saying there is no interchange are stale. Tests: crates/hydrus-gui-model/tests/model/auto_resolution_exchange.rs (the_reference_s_serialised_rules_import, comparators_export_and_import_alone_in_lists_and_from_the_reference:55); crates/hydrus-gui/tests/gui/duplicates_lane_page.rs:1264 rules_and_comparators_are_exported_imported_and_duplicated_whole"
+    "note": "Import of the reference's serialised rules/comparators is checked against the reference's stored JSON and the GUI drives clipboard export/import/duplicate for rules and comparators, but export writes hydrus-rs JSON, not the reference's serialised form (DIFFERENCES.md 'Auto-resolution rule export and import'), so the reference could not read it and the export half is not compared with the reference; png paths and OR/AND inner lists untested. Tracker notes saying there is no interchange are stale. Tests: crates/hydrus-gui-model/tests/model/auto_resolution_exchange.rs (the_reference_s_serialised_rules_import, comparators_export_and_import_alone_in_lists_and_from_the_reference:55); crates/hydrus-gui/tests/gui/duplicates_lane_page.rs:1264 rules_and_comparators_are_exported_imported_and_duplicated_whole Update: crates/hydrus-gui/tests/gui/duplicates_lane_page.rs rules_and_comparators_go_out_and_come_in_as_pngs round-trips pngs, but they carry hydrus-rs JSON; no reference png is replayed."
    }
   },
   {
@@ -6014,9 +6014,9 @@
    ],
    "recheck": {
     "date": "2026-10-08",
-    "class": "wrong",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "The native example path contradicts the reference: reference _PathChanged lists up to HOW_MANY_EXAMPLE_OBJECTS_TO_USE entries and keeps only files whose mime is in HC.ALLOWED_MIMES (else example_path is None), while native takes the first sorted regular file of any kind (a sidecar .txt would be chosen), and the test relies on that with a 1-byte 'pic 1.jpg' the reference would reject. The shown example tags 'filename:pic 1, imported' are a typed literal; no recording of the options panel's example output. Tests: crates/hydrus-gui/tests/gui/folders.rs:303 an_import_folders_filename_tagging_is_added_edited_and_deleted; crates/hydrus-gui/src/folders_window.rs:678 example_path"
+    "class": "source-restated",
+    "by": "fix session",
+    "note": "Expected values are restated from the Python source (veto string, importable-mime filter, _SwitchBoolean), not recorded. The import folder editor's example path now keeps the first of the first 25 directory entries that is a file with an allowed mime by content (_PathChanged), as the reference does; the window test has a text file and a one-byte .jpg passed over for a real png. Test: crates/hydrus-gui/tests/gui/folders.rs an_import_folders_filename_tagging_is_added_edited_and_deleted"
    }
   },
   {
@@ -11220,9 +11220,9 @@
    ],
    "recheck": {
     "date": "2026-10-08",
-    "class": "wrong",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Reference ClientGUI._SwitchBoolean: the silent entry flips network_report_mode AND sets silent=True (prints to console), and the plain entry clears silent. Native flips only its own flag and report_network needs NetworkReport on, so clicking 'silent' alone reports nothing, and network-then-silent leaves reporting on where the reference turns it off. The test sets both flags directly, bypassing the menu, and only asserts that nothing reaches the sink (not that it goes to the console). Tests: crates/hydrus-net/tests/debug_reports.rs:15 (same test); native menu: crates/hydrus-gui/src/menu_bar.rs:799 Command::DebugFlag flip()"
+    "class": "source-restated",
+    "by": "fix session",
+    "note": "Expected values are restated from the Python source (veto string, importable-mime filter, _SwitchBoolean), not recorded. The two network report entries now share the mode as ClientGUI._SwitchBoolean does (silent turns it on and sets silent, the plain entry flips it and clears silent), driven through the real help > debug > report modes menu, with the consumer (report_network) checked for the sink. Test: crates/hydrus-gui/tests/gui/debug_menu_actions.rs network_report_mode_entries_share_the_mode_as_the_reference_does The console half of silent mode is not observed (only that nothing reaches the popup sink)."
    }
   },
   {
@@ -19895,9 +19895,9 @@
    ],
    "recheck": {
     "date": "2026-10-08",
-    "class": "wrong",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Stale note: the add button exists. But the test asserts a custom set named 'main_gui' is silently renamed 'main_gui (1)'; the reference EditShortcutSetPanel.GetValue raises VetoException 'That name is reserved--please pick another!' and keeps the dialog open (grep finds no such veto in the native code). Everything else (new shortcuts default, cancel, GetNonDupeName rename, save only on Options OK) matches the source. Tests: crates/hydrus-gui/tests/gui/options_shortcut_sets.rs:89 custom_sets_are_added_edited_renamed_deleted_and_saved_only_by_options_ok; crates/hydrus-gui-model/tests/model/shortcut_sets.rs:96"
+    "class": "source-restated",
+    "by": "fix session",
+    "note": "Expected values are restated from the Python source (veto string, importable-mime filter, _SwitchBoolean), not recorded. A custom set named after a built-in one is refused with the reference's 'That name is reserved--please pick another!' and the editor stays open (GetValue's VetoException); the window test drives add, the veto (also on rename), cancel and Options OK. Tests: crates/hydrus-gui/tests/gui/options_shortcut_sets.rs custom_sets_are_added_edited_renamed_deleted_and_saved_only_by_options_ok; crates/hydrus-gui-model/tests/model/shortcut_sets.rs"
    }
   },
   {

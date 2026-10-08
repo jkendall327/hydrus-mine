@@ -283,23 +283,16 @@ export component DuplicateFilterWindow inherits Window {
                     }
                 }
             }
-
-            if root.hover-pinned: DuplicatePanel {
-                statements: root.statements;
-                score-text: root.score-text;
-                score: root.score;
-                reviewing: root.reviewing;
-                decide(choice) => { root.decide(choice); }
-            }
         }
 
-        // unpinned, the hover pops in over the canvas' right edge on mouseover
+        // the hover floats over the canvas' right edge: always while pinned,
+        // on mouseover otherwise
         popped-touch := TouchArea {
             x: root.width - 330px;
             y: 0;
             width: 330px;
             height: root.height;
-            visible: root.hover-popped;
+            visible: root.hover-pinned || root.hover-popped;
             DuplicatePanel {
                 width: parent.width;
                 height: parent.height;

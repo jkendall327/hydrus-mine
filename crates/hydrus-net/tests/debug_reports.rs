@@ -12,7 +12,6 @@ use hydrus_net::{Job, NetEngine, NetOptions, Request};
 use hydrus_store::Store;
 
 // leaf: audit-options-help-debug-action-network-report-mode
-// leaf: audit-options-help-debug-action-network-report-mode-silent
 #[tokio::test]
 async fn network_report_mode_reports_redirects_and_errors_unless_silent() {
     let seen = Arc::new(Mutex::new(Vec::<String>::new()));
