@@ -1,34 +1,25 @@
 name: rust
 
+# Every push and pull request runs the whole Linux check, GUI included. Lint and
+# tests are separate jobs so they run side by side. Windows and macOS are
+# deferred (owner, 2026-10-06) and run only when dispatched by hand.
 on:
   push:
-    branches: [master, 'claude/**', 'codex/**', '!codex/validation-runner']
-    paths: ['crates/**', 'xtask/**', 'oracle/**', 'parity/**', 'Cargo.toml', 'Cargo.lock', 'rust-toolchain.toml', '.github/workflows/rust.yml', 'scripts/gui*.py', 'scripts/test_gui*.py', 'docs/rust/gui-coverage/**', '.github/publication-validation.json', '.github/scripts/**']
+    branches: [master, 'claude/**', 'codex/**']
+    paths: ['crates/**', 'generated/**', 'tools/**', 'scripts/**', 'docs/rust/tracking/**', 'xtask/**', 'oracle/**', 'parity/**', 'Cargo.toml', 'Cargo.lock', 'rust-toolchain.toml', '.config/**', '.github/workflows/rust.yml']
   pull_request:
-    paths: ['crates/**', 'xtask/**', 'oracle/**', 'parity/**', 'Cargo.toml', 'Cargo.lock', 'rust-toolchain.toml', '.github/workflows/rust.yml', 'scripts/gui*.py', 'scripts/test_gui*.py', 'docs/rust/gui-coverage/**', '.github/publication-validation.json', '.github/scripts/**']
-  # (from the Actions tab)
+    paths: ['crates/**', 'generated/**', 'tools/**', 'scripts/**', 'docs/rust/tracking/**', 'xtask/**', 'oracle/**', 'parity/**', 'Cargo.toml', 'Cargo.lock', 'rust-toolchain.toml', '.config/**', '.github/workflows/rust.yml']
   workflow_dispatch:
     inputs:
-      full_validation:
-        description: Run full Linux workspace validation for publication
-        type: boolean
-        required: false
-        default: false
       secondary_platforms:
-        description: Also validate Windows and macOS (requires full_validation)
-        type: boolean
-        required: false
-        default: false
-      workspace_cache:
-        description: Opt in to the Linux workspace-cache pilot (requires full_validation)
+        description: Also build and test on Windows and macOS
         type: boolean
         required: false
         default: false
 
 concurrency:
-  # Keep one current Linux run per branch. An optional secondary-platform run
-  # has its own group so it cannot hold up or cancel Linux checkpoint delivery.
-  group: rust-${{ github.ref }}-${{ github.event_name == 'workflow_dispatch' && inputs.secondary_platforms && 'secondary' || 'linux' }}
+  # One current run per ref; a new push cancels the superseded one.
+  group: rust-${{ github.ref }}
   cancel-in-progress: true
 
 env:
@@ -36,28 +27,25 @@ env:
   RUSTFLAGS: -D warnings
 
 jobs:
-  publication-safety:
+  slint:
+    # The .slint files alone, in seconds: fails fast on UI syntax/type errors.
     runs-on: ubuntu-24.04
-    timeout-minutes: 10
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@master
         with:
-          # Publication tests verify immutable historical checkpoints with Git.
-          fetch-depth: 0
-      - name: publication safety regressions
-        run: python3 -m unittest discover -s scripts -p test_gui_publish.py -v
-      - name: coverage report consistency
-        run: python3 scripts/gui_coverage.py --check
+          toolchain: '1.94'
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: tools/slint-check -> ../../target/tools
+          save-if: ${{ github.ref == 'refs/heads/master' }}
+      - name: slint check
+        run: cargo run -q --manifest-path tools/slint-check/Cargo.toml --target-dir target/tools
 
-  quick-check:
-    # Implementation mode: one current Linux lane, with no native GUI binaries,
-    # native GUI suite, platform matrix, render review or parity audit.
-    if: (github.event_name != 'workflow_dispatch' || !inputs.full_validation) && (github.event_name != 'push' || (github.ref != 'refs/heads/codex/overnight-gui-burndown' && !startsWith(github.ref, 'refs/heads/codex/parity-')))
+  lint:
     runs-on: ubuntu-24.04
-    timeout-minutes: 30
-    env:
-      # Bound memory while checking the non-native implementation targets.
-      CARGO_BUILD_JOBS: 1
+    timeout-minutes: 60
     steps:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@master
@@ -66,202 +54,64 @@ jobs:
           components: rustfmt, clippy
       - uses: Swatinem/rust-cache@v2
         with:
-          cache-on-failure: true
           cache-workspace-crates: true
-      - name: install media tools and fontconfig
-        run: |
-          sudo sed -i \
-            -e 's|azure\.archive\.ubuntu\.com|archive.ubuntu.com|g' \
-            -e 's|mirror+file:/etc/apt/apt-mirrors\.txt|http://archive.ubuntu.com/ubuntu|g' \
-            /etc/apt/sources.list.d/ubuntu.sources
-          sudo apt-get -o Acquire::Retries=3 -o Acquire::http::Timeout=30 update
-          sudo apt-get -o Acquire::Retries=3 -o Acquire::http::Timeout=30 install -y ffmpeg libfontconfig1-dev
+          save-if: ${{ github.ref == 'refs/heads/master' }}
+      - name: install fontconfig
+        run: sudo apt-get -o Acquire::Retries=3 update && sudo apt-get -o Acquire::Retries=3 install -y libfontconfig1-dev
       - name: fmt
         run: cargo fmt --all --check
-      - name: strict Clippy and type checking
-        run: |
-          set -o pipefail
-          # Generated native GUI metadata exceeded the cheap local budget
-          # (over 12 minutes and about 9 GiB). The manual full lane checks it.
-          cargo clippy --workspace --exclude hydrus-gui --exclude hydrus-gui-ui --all-targets --locked --keep-going -- -D warnings 2>&1 | tee /tmp/hydrus-quick-clippy.log
-      - name: GUI artifact runner tests
-        run: python3 -m unittest discover -s scripts -p test_gui_test_artifact.py
-      - name: workspace cache safety regressions
-        run: python3 -m unittest discover -s .github/scripts/tests -v
-      - name: save cheap compiler diagnostics
-        if: ${{ failure() }}
-        continue-on-error: true
-        uses: actions/upload-artifact@v4
+      - name: leaf tags name known leaves
+        run: python3 scripts/track.py check
+      - uses: taiki-e/install-action@v2
         with:
-          name: quick-clippy-${{ github.run_id }}-${{ github.run_attempt }}
-          path: /tmp/hydrus-quick-clippy.log
-          if-no-files-found: ignore
-          retention-days: 3
-      - name: fast core and GUI-model tests
+          tool: cargo-hakari@0.9.39
+      - name: workspace-hack is current
         run: |
-          cargo test -p hydrus-core --lib --locked
-          cargo test -p hydrus-gui-model --test model --locked
-
-  check:
-    # Full validation is run routinely for each publication batch.
-    if: github.event_name == 'workflow_dispatch' && inputs.full_validation
-    runs-on: ubuntu-24.04
-    steps:
-      - uses: actions/checkout@v4
-      - uses: dtolnay/rust-toolchain@master
-        with:
-          toolchain: '1.94'
-          components: rustfmt, clippy
-      # Keep the stable dependency cache and its lockfile fallback independent.
-      - uses: Swatinem/rust-cache@v2
-        with:
-          cache-on-failure: true
-          cache-workspace-crates: ${{ !inputs.workspace_cache }}
-      - name: workspace cache safety regressions
-        run: python -m unittest discover -s .github/scripts/tests -v
-      - name: workspace artifact compatibility key
-        id: workspace-key
-        if: inputs.workspace_cache
-        continue-on-error: true
-        shell: bash
-        run: python .github/scripts/workspace_artifact_cache.py key
-      - name: restore rolling workspace libraries
-        id: workspace-cache
-        if: inputs.workspace_cache && steps.workspace-key.outcome == 'success'
-        continue-on-error: true
-        uses: actions/cache/restore@v4
-        with:
-          path: .ci-workspace-artifacts
-          key: ${{ steps.workspace-key.outputs.key }}
-          restore-keys: ${{ steps.workspace-key.outputs.restore-key }}
-      - name: merge restored workspace libraries
-        id: workspace-merge
-        if: inputs.workspace_cache && steps.workspace-key.outcome == 'success'
-        continue-on-error: true
-        shell: bash
-        env:
-          WORKSPACE_CACHE_RESTORE_OUTCOME: ${{ steps.workspace-cache.outcome }}
-        run: python .github/scripts/workspace_artifact_cache.py restore
-      - name: fail closed on uncertain workspace restore
-        if: ${{ !cancelled() && inputs.workspace_cache && steps.workspace-key.outcome == 'success' && steps.workspace-merge.outputs.safe != 'true' }}
-        shell: bash
-        run: |
-          echo "Workspace restore was not proven safe; compilation is blocked."
-          exit 1
-      - name: install media tools, and fontconfig for the GUI
-        # Native fixtures include Japanese parameters; preserve their glyphs in
-        # software-rendered evidence instead of relying on the runner's fonts.
-        run: |
-          # Azure's Ubuntu mirror stalled repeated full-validation downloads.
-          # Handle both direct URLs and the runner's mirror-list indirection.
-          # Keep Ubuntu's signed packages, using the primary archive mirror.
-          sudo sed -i \
-            -e 's|azure\.archive\.ubuntu\.com|archive.ubuntu.com|g' \
-            -e 's|mirror+file:/etc/apt/apt-mirrors\.txt|http://archive.ubuntu.com/ubuntu|g' \
-            /etc/apt/sources.list.d/ubuntu.sources
-          sudo apt-get -o Acquire::Retries=3 -o Acquire::http::Timeout=30 update
-          sudo apt-get -o Acquire::Retries=3 -o Acquire::http::Timeout=30 install -y ffmpeg fontconfig libfontconfig1-dev fonts-noto-cjk
-          fc-match ':lang=ja'
-      - name: fmt
-        run: cargo fmt --all --check
-      - name: GUI artifact runner tests
-        run: python3 -m unittest discover -s scripts -p test_gui_test_artifact.py
+          cargo hakari generate --diff
+          cargo hakari manage-deps --dry-run
       - name: clippy
-        # Type-check and lint every target before test code generation.
-        if: ${{ !cancelled() && (steps.workspace-key.outcome != 'success' || steps.workspace-merge.outputs.safe == 'true') }}
-        env:
-          # Keep generated GUI library and test metadata from competing for memory.
-          CARGO_BUILD_JOBS: 1
-        run: |
-          set -o pipefail
-          cargo clippy --workspace --all-targets --locked --keep-going 2>&1 | tee /tmp/hydrus-clippy.log
-      - name: save immediate Clippy diagnostics
-        if: ${{ !cancelled() }}
-        continue-on-error: true
-        uses: actions/upload-artifact@v4
-        with:
-          name: clippy-diagnostics-${{ github.run_id }}-${{ github.run_attempt }}
-          path: /tmp/hydrus-clippy.log
-          if-no-files-found: ignore
-          retention-days: 3
-      - name: test
-        # Keep behavioral feedback flowing even when a lint needs repair.
-        # The job still fails if formatting or strict Clippy fails.
-        if: ${{ !cancelled() && (steps.workspace-key.outcome != 'success' || steps.workspace-merge.outputs.safe == 'true') }}
-        # Slint's GUI library and test target together exceeded 16 GiB locally.
-        env:
-          CARGO_BUILD_JOBS: 1
-          HYDRUS_INTERCHANGE_SCREENSHOTS: ${{ github.workspace }}/target/tmp
-        run: |
-          set -o pipefail
-          mkdir -p target/tmp
-          cargo test --workspace --locked --no-fail-fast 2>&1 | tee /tmp/hydrus-tests.log
-      - name: save immediate test diagnostics
-        if: ${{ !cancelled() }}
-        continue-on-error: true
-        uses: actions/upload-artifact@v4
-        with:
-          name: test-diagnostics-${{ github.run_id }}-${{ github.run_attempt }}
-          path: /tmp/hydrus-tests.log
-          if-no-files-found: ignore
-          retention-days: 3
+        # (the generated UI crate is not a workspace member, so is not linted)
+        run: cargo clippy --workspace --all-targets --locked -- -D warnings
       - name: parity ratchet
         run: cargo xtask ratchet --check
-      - name: save native GUI renders
+
+  test:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 75
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: '1.94'
+      - uses: Swatinem/rust-cache@v2
+        with:
+          cache-workspace-crates: true
+          save-if: ${{ github.ref == 'refs/heads/master' }}
+      - name: install media tools and fonts
+        run: |
+          sudo apt-get -o Acquire::Retries=3 update
+          sudo apt-get -o Acquire::Retries=3 install -y ffmpeg fontconfig libfontconfig1-dev fonts-noto-cjk
+      - name: build the generated UI on its own
+        # ~13 GB peak; built alone so it never overlaps the GUI crate (see scripts/dev.sh).
+        run: cargo build -p hydrus-gui-ui --locked
+      - name: test
+        env:
+          HYDRUS_INTERCHANGE_SCREENSHOTS: ${{ github.workspace }}/target/tmp
+        run: |
+          mkdir -p target/tmp
+          cargo test --workspace --locked --no-fail-fast
+      - name: save GUI renders
         if: ${{ always() }}
         continue-on-error: true
         uses: actions/upload-artifact@v4
         with:
-          name: native-gui-renders-${{ github.run_id }}-${{ github.run_attempt }}
+          name: gui-renders-${{ github.run_id }}-${{ github.run_attempt }}
           path: target/tmp/*.png
           if-no-files-found: ignore
-          retention-days: 3
-      # Preserve completed library work even if a later diagnostic/test fails.
-      - name: stage bounded workspace libraries
-        id: workspace-stage
-        if: ${{ !cancelled() && inputs.workspace_cache && steps.workspace-key.outcome == 'success' && steps.workspace-merge.outputs.safe == 'true' && github.event_name == 'workflow_dispatch' && github.repository == 'jkendall327/hydrus-mine' && (github.ref == 'refs/heads/master' || github.ref == 'refs/heads/codex/full-validation' || github.ref == 'refs/heads/codex/validation-runner') }}
-        continue-on-error: true
-        shell: bash
-        run: python .github/scripts/workspace_artifact_cache.py stage
-      - name: save rolling workspace libraries
-        if: ${{ !cancelled() && steps.workspace-stage.outputs.save == 'true' && github.event_name == 'workflow_dispatch' && github.repository == 'jkendall327/hydrus-mine' && (github.ref == 'refs/heads/master' || github.ref == 'refs/heads/codex/full-validation' || github.ref == 'refs/heads/codex/validation-runner') }}
-        continue-on-error: true
-        uses: actions/cache/save@v4
-        with:
-          path: .ci-workspace-artifacts
-          key: ${{ steps.workspace-key.outputs.key }}
+          retention-days: 30
 
-  # Keep exact-reference backend/model replays moving when GUI compilation
-  # needs a repair. This lane is only for the owner's continuing parity work.
-  parity-models:
-    if: github.event_name == 'workflow_dispatch' && inputs.full_validation
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: dtolnay/rust-toolchain@master
-        with:
-          toolchain: '1.94'
-      - uses: Swatinem/rust-cache@v2
-        with:
-          cache-on-failure: true
-          cache-workspace-crates: true
-      - name: install media tools
-        run: |
-          sudo sed -i \
-            -e 's|azure\.archive\.ubuntu\.com|archive.ubuntu.com|g' \
-            -e 's|mirror+file:/etc/apt/apt-mirrors\.txt|http://archive.ubuntu.com/ubuntu|g' \
-            /etc/apt/sources.list.d/ubuntu.sources
-          sudo apt-get -o Acquire::Retries=3 -o Acquire::http::Timeout=30 update
-          sudo apt-get -o Acquire::Retries=3 -o Acquire::http::Timeout=30 install -y ffmpeg
-      - name: reference and backend tests
-        env:
-          CARGO_BUILD_JOBS: 2
-        run: cargo test -p hydrus-core -p hydrus-download -p hydrus-downloader-exchange -p hydrus-gui-model -p hydrus-net -p hydrus-search -p hydrus-store --locked --no-fail-fast
-
-  # The owner prioritizes Linux checkpoints. Keep secondary platform coverage
-  # available explicitly without blocking routine Linux delivery.
   other-platforms:
-    if: github.event_name == 'workflow_dispatch' && inputs.full_validation && inputs.secondary_platforms
+    if: github.event_name == 'workflow_dispatch' && inputs.secondary_platforms
     strategy:
       fail-fast: false
       matrix:
@@ -274,9 +124,6 @@ jobs:
           toolchain: '1.94'
       - uses: Swatinem/rust-cache@v2
         with:
-          # their cold builds are long: keep what a failed run built
-          cache-on-failure: true
-          # Retain unchanged GUI libraries across integration-test-only repairs.
           cache-workspace-crates: true
       - name: install ffmpeg (Windows)
         if: runner.os == 'Windows'
@@ -284,78 +131,7 @@ jobs:
       - name: install ffmpeg (macOS)
         if: runner.os == 'macOS'
         run: brew install ffmpeg
-      - name: build
-        env:
-          CARGO_BUILD_JOBS: 1
-        shell: bash
-        run: |
-          if [ "$RUNNER_OS" = "Windows" ]; then
-            python scripts/gui_test_artifact.py build --source-sha "$GITHUB_SHA"
-          else
-            cargo build --workspace --all-targets --locked --keep-going
-          fi
-      - name: Windows headless owner lifetime replay
-        if: runner.os == 'Windows'
-        timeout-minutes: 5
-        env:
-          CARGO_BUILD_JOBS: 1
-        run: |
-          python scripts/gui_test_artifact.py replay --source-sha "$env:GITHUB_SHA"
-      - name: save Windows owner replay evidence
-        if: ${{ always() && runner.os == 'Windows' }}
-        continue-on-error: true
-        uses: actions/upload-artifact@v4
-        with:
-          name: windows-owner-replay-${{ github.run_id }}-${{ github.run_attempt }}
-          path: target/ci/windows-*
-          if-no-files-found: ignore
-          retention-days: 3
+      - name: build the generated UI on its own
+        run: cargo build -p hydrus-gui-ui --locked
       - name: test
-        env:
-          CARGO_BUILD_JOBS: 1
         run: cargo test --workspace --locked --no-fail-fast
-
-  workspace-cache-maintenance:
-    # Cache housekeeping runs only after this run's full lanes finish.
-    if: ${{ always() && !cancelled() && inputs.full_validation && inputs.workspace_cache && github.event_name == 'workflow_dispatch' && github.repository == 'jkendall327/hydrus-mine' && (github.ref == 'refs/heads/master' || github.ref == 'refs/heads/codex/full-validation' || github.ref == 'refs/heads/codex/validation-runner') }}
-    needs: [check, parity-models, other-platforms]
-    runs-on: ubuntu-24.04
-    timeout-minutes: 3
-    continue-on-error: true
-    permissions:
-      contents: read
-      actions: write
-    steps:
-      - name: bound workspace cache snapshots
-        uses: actions/github-script@v7
-        with:
-          script: |
-            const refs = new Set(['refs/heads/master', 'refs/heads/codex/full-validation', 'refs/heads/codex/validation-runner']);
-            const familyPattern = /^(hydrus-ws-v1-check-Linux-X64-)/;
-            const budget = 3 * 1024 ** 3;
-            const entries = [];
-            for (let page = 1; ; page++) {
-              const {data} = await github.request('GET /repos/{owner}/{repo}/actions/caches', {
-                ...context.repo, page, per_page: 100
-              });
-              entries.push(...data.actions_caches.filter(cache => refs.has(cache.ref) && familyPattern.test(cache.key)));
-              if (data.actions_caches.length < 100) break;
-            }
-            entries.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
-            const counts = new Map();
-            let bytes = 0;
-            for (const cache of entries) {
-              const family = cache.ref + ':' + cache.key.match(familyPattern)[1];
-              const count = counts.get(family) || 0;
-              if (count < 2 && bytes + cache.size_in_bytes <= budget) {
-                counts.set(family, count + 1);
-                bytes += cache.size_in_bytes;
-                continue;
-              }
-              // Do not delete dependency caches, PR caches or unrelated branches.
-              await github.request('DELETE /repos/{owner}/{repo}/actions/caches/{cache_id}', {
-                ...context.repo, cache_id: cache.id
-              });
-              core.info(`Removed owned workspace snapshot ${cache.key} (${cache.size_in_bytes} bytes).`);
-            }
-            core.info(`Retained workspace snapshot bytes: ${bytes}; budget: ${budget}.`);
