@@ -1202,3 +1202,88 @@ fn rating_preview_samples(edit: &hydrus_gui::EditServiceWindow) -> serde_json::V
             .collect::<Vec<_>>()
     )
 }
+
+// leaf: audit-media-service-numerical
+// A numerical rating's star count and icon padding run over the ranges of the
+// reference's spin boxes (recorded `numerical_ranges`): values outside are
+// refused by the add dialog, values on the edges are staged.
+#[test]
+fn numerical_rating_star_and_padding_ranges_replay_the_recorded_spin_boxes() {
+    let ranges = hydrus_testkit::fixture_json("services.json")["numerical_ranges"].clone();
+    let range = |name: &str| {
+        (
+            i32::try_from(ranges[name][0].as_i64().unwrap()).unwrap(),
+            i32::try_from(ranges[name][1].as_i64().unwrap()).unwrap(),
+        )
+    };
+    let ((stars_min, stars_max), (pad_min, pad_max)) = (range("stars"), range("padding"));
+    let (_dirs, store) = crate::subscriptions::store();
+    let _windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+    open(&ui);
+    let manage = bound
+        .services_editor
+        .manage
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
+    let edit = || {
+        manage.invoke_add_clicked(3);
+        let edit = bound
+            .services_editor
+            .edit
+            .borrow()
+            .as_ref()
+            .unwrap()
+            .clone_strong();
+        assert!(edit.get_numerical());
+        edit
+    };
+    for (n, (stars, padding, accepted)) in [
+        (stars_min - 1, 0, false),
+        (stars_max + 1, 0, false),
+        (3, pad_min - 1, false),
+        (3, pad_max + 1, false),
+        (stars_min, 0, true),
+        (stars_max, pad_max, true),
+        (3, pad_min, true),
+    ]
+    .into_iter()
+    .enumerate()
+    {
+        let edit = edit();
+        edit.set_service_name(format!("range {n}").into());
+        edit.set_stars(stars);
+        edit.set_icon_padding(padding);
+        edit.invoke_apply_clicked();
+        assert_eq!(
+            bound.services_editor.edit.borrow().is_none(),
+            accepted,
+            "stars {stars}, padding {padding}: {}",
+            edit.get_error()
+        );
+        if !accepted {
+            assert!(!edit.get_error().is_empty());
+            edit.invoke_cancel_clicked();
+        }
+    }
+    manage.invoke_apply_clicked();
+    let snapshot = store.snapshot();
+    for (name, stars, padding) in [
+        ("range 4", stars_min, 0),
+        ("range 5", stars_max, pad_max),
+        ("range 6", 3, pad_min),
+    ] {
+        let service = snapshot.services.by_name(name).unwrap();
+        let hydrus_store::services::ServiceKind::RatingNumerical(config) = &service.kind else {
+            panic!("numerical rating expected")
+        };
+        assert_eq!(i32::try_from(config.num_stars).unwrap(), stars);
+        assert_eq!(config.custom_pad, padding);
+    }
+    for refused in ["range 0", "range 1", "range 2", "range 3"] {
+        assert!(snapshot.services.by_name(refused).is_none());
+    }
+}

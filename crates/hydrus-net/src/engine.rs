@@ -2542,12 +2542,34 @@ mod reload_tests {
 
     #[test]
     fn automatic_control_override_has_strict_five_second_boundary_and_sticks() {
+        // Recorded from the reference's NetworkJobControl
+        // (oracle/record_network_job_control.py): a job that obeys bandwidth
+        // rules still does at created + 5 s, not after, and "override
+        // bandwidth rules for this job" stops it obeying.
+        let recorded = hydrus_testkit::fixture_json("network_job_control.json");
+        // (Only offsets from the creation time matter; arming reads the real clock.)
+        let created = now();
+        let obeys = |name: &str| recorded["actions"][name].as_bool().unwrap();
         let job = Job::new();
-        job.auto_override_at.store(105, Ordering::Relaxed);
-        assert!(!job.bandwidth_overridden(105));
-        assert!(job.bandwidth_overridden(106));
-        job.auto_override_at.store(0, Ordering::Relaxed);
-        assert!(job.bandwidth_overridden(107));
+        job.state.lock().created = created;
+        job.auto_override_bandwidth(true);
+        assert_eq!(
+            !job.bandwidth_overridden(created + 5),
+            obeys("auto_at_five")
+        );
+        assert_eq!(
+            !job.bandwidth_overridden(created + 6),
+            obeys("auto_after_five")
+        );
+        // Turning the policy off later leaves the override in place.
+        job.auto_override_bandwidth(false);
+        assert!(job.bandwidth_overridden(created + 7));
+        let manual = Job::new();
+        manual.override_bandwidth();
+        assert_eq!(
+            !manual.bandwidth_overridden(created),
+            obeys("obeys_after_override")
+        );
     }
 
     #[test]
@@ -2626,38 +2648,49 @@ mod reload_tests {
 
     #[test]
     fn sleep_detection_obeys_threshold_delay_and_disabled_pending_wait() {
-        // Controller.SleepCheck cases recorded in system_sleep_options.json.
+        // Replays Controller.SleepCheck as recorded in system_sleep_options.json
+        // (oracle/record_system_sleep_options.py): the check runs at `T` with
+        // its last check `gap_ms` earlier, then every 15 s through the delay
+        // and once more just after it.
+        let recorded = hydrus_testkit::fixture_json("system_sleep_options.json");
         let (_dir, _store, engine) = engine();
-        let now = 1_700_000_000_000;
-        for delay in [0, 15, 60] {
+        let t = 1_700_000_000_000_i64;
+        let set = |enabled: bool, delay: u64| {
             let mut options = engine.options();
+            options.detect_sleep = enabled;
             options.wake_delay = delay;
             engine.set_options(options).unwrap();
-            *engine.wake.lock() = (None, None);
-            engine.sleep_check_at(now - 60_000);
-            engine.sleep_check_at(now);
-            assert_eq!(
-                engine.wake.lock().1,
-                None,
-                "exactly one minute is not sleep"
-            );
-            engine.sleep_check_at(now + 61_000);
-            let deadline = now + 61_000 + (delay * 1000) as i64;
-            assert_eq!(engine.wake.lock().1, Some(deadline));
-            if delay == 60 {
-                engine.sleep_check_at(deadline - 1000);
+        };
+        for case in recorded["cases"].as_array().unwrap() {
+            let delay = case["delay"].as_u64().unwrap();
+            let gap = case["gap_ms"].as_i64().unwrap();
+            set(case["enabled"].as_bool().unwrap(), delay);
+            *engine.wake.lock() = (Some(t - gap), None);
+            engine.sleep_check_at(t);
+            let (last, awake_at) = *engine.wake.lock();
+            assert_eq!(awake_at.is_some(), case["detected"], "{case}");
+            assert_eq!(awake_at.unwrap_or(0), case["deadline_ms"], "{case}");
+            assert_eq!(last == Some(t), case["last_check_touched"], "{case}");
+            let delay_ms = i64::try_from(delay * 1000).unwrap();
+            for elapsed in (15_000..=delay_ms).step_by(15_000) {
+                engine.sleep_check_at(t + elapsed);
             }
-            engine.sleep_check_at(deadline + 1);
-            assert_eq!(engine.wake.lock().1, None);
+            engine.sleep_check_at(t + delay_ms + 1);
+            assert_eq!(
+                engine.wake.lock().1.is_some(),
+                case["after_delay"],
+                "{case}"
+            );
         }
-        engine.sleep_check_at(now + 200_000);
-        assert!(engine.wake.lock().1.is_some());
-        let last = engine.wake.lock().0;
-        let mut options = engine.options();
-        options.detect_sleep = false;
-        engine.set_options(options).unwrap();
-        engine.sleep_check_at(now + 200_001);
-        assert_eq!(*engine.wake.lock(), (last, None));
+        // A wait still pending when the option is turned off ends at the next check.
+        let pending = &recorded["disabled_pending"];
+        set(true, 60);
+        *engine.wake.lock() = (Some(t - 61_000), None);
+        engine.sleep_check_at(t);
+        assert_eq!(engine.wake.lock().1.is_some(), pending["before"]);
+        set(false, 60);
+        engine.sleep_check_at(t);
+        assert_eq!(engine.wake.lock().1.is_some(), pending["after"]);
     }
 
     #[test]

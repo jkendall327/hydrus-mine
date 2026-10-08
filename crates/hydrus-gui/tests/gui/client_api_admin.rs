@@ -37,6 +37,16 @@ fn name(keys: &hydrus_gui::ClientApiKeysWindow, row: usize) -> String {
         .unwrap()
         .to_string()
 }
+/// The three enabled flags the reference recorder reads off its editor
+/// (`oracle/record_client_api_admin.py`): the permission list, "check all" and
+/// the tag-filter button.
+fn enabled_states(edit: &hydrus_gui::EditApiPermissionsWindow) -> serde_json::Value {
+    serde_json::json!({
+        "basic": !edit.get_permits_everything(),
+        "all": edit.get_can_check_all(),
+        "filter": edit.get_can_filter(),
+    })
+}
 fn screenshot(windows: &headless::Windows, index: usize, filename: &str, width: u32, height: u32) {
     let pixels = headless::render(&windows.get(index).unwrap(), width, height);
     headless::save_png(
@@ -59,14 +69,17 @@ fn cancellation_nested_ownership_permissions_and_key_validation() {
     keys.invoke_add_clicked();
     let edit = api::last_edit_opened().unwrap();
     let permission_index = windows.count() - 1;
-    assert!(edit.get_permits_everything());
-    assert!(!edit.get_can_filter());
+    let recorded = hydrus_testkit::fixture_json("client_api_admin.json");
+    assert_eq!(enabled_states(&edit), recorded["full_enabled"]);
     assert_eq!(edit.get_permissions().row_count(), 14);
     edit.set_permits_everything(false);
     edit.invoke_full_toggled();
     assert!(edit.get_can_check_all());
     edit.invoke_permission_toggled(3, true);
-    assert!(edit.get_can_filter());
+    assert_eq!(enabled_states(&edit), recorded["search_enabled"]);
+    edit.invoke_permission_toggled(3, false);
+    assert_eq!(enabled_states(&edit), recorded["none_enabled"]);
+    edit.invoke_permission_toggled(3, true);
     edit.invoke_edit_filter();
     let filter = hydrus_gui::tag_filter_window::last_opened().unwrap();
     assert!(edit.get_filtering());
@@ -327,11 +340,39 @@ fn supported_service_listener_fields_stage_cancel_and_persist() {
         store.snapshot().services.get(id).unwrap().kind,
         ServiceKind::ClientApi(original.clone())
     );
+    // The reference's service editor (recorded `server` block): the port
+    // spin box runs `port_range`, and the service dictionary has exactly the
+    // fields `ServerConfig` has, with these defaults.
+    let recorded = hydrus_testkit::fixture_json("client_api_admin.json");
+    let fields = recorded["server"]["fields"].as_object().unwrap();
+    let native = serde_json::to_value(ServerConfig::default()).unwrap();
+    assert_eq!(native.as_object().unwrap().len(), fields.len());
+    for (name, value) in fields {
+        if name != "port" {
+            assert_eq!(&native[name], value, "{name}");
+        }
+    }
+    let min = recorded["server"]["port_range"][0].as_i64().unwrap();
+    let max = recorded["server"]["port_range"][1].as_i64().unwrap();
+    for outside in [min - 1, max + 1] {
+        let (manage, edit) = open();
+        edit.set_api_running(true);
+        edit.set_api_port(i32::try_from(outside).unwrap());
+        edit.invoke_apply_clicked();
+        assert!(!edit.get_error().is_empty(), "port {outside}");
+        edit.invoke_cancel_clicked();
+        manage.invoke_cancel_clicked();
+    }
+    for inside in [min, max] {
+        let (manage, edit) = open();
+        edit.set_api_running(true);
+        edit.set_api_port(i32::try_from(inside).unwrap());
+        edit.invoke_apply_clicked();
+        assert!(edit.get_error().is_empty(), "port {inside}");
+        manage.invoke_cancel_clicked();
+    }
     let (manage, edit) = open();
     edit.set_api_running(true);
-    edit.set_api_port(0);
-    edit.invoke_apply_clicked();
-    assert!(!edit.get_error().is_empty());
     edit.set_api_port(12345);
     edit.set_api_cors(true);
     edit.set_api_logs(true);

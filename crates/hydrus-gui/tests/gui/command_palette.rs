@@ -152,9 +152,19 @@ fn ctrl_p_async_palette_launches_real_pages_favourites_and_main_menu_actions() {
     palette.invoke_query_edited("Palette Folder".into());
     wait(&palette, "Favourite Alpha");
     let before = bound.pages.borrow().page_count();
-    activate(&palette, "Favourite Alpha");
-    assert_eq!(bound.pages.borrow().page_count(), before + 1);
-    assert_eq!(bound.pages.borrow().shown().name, "Favourite Alpha");
+    // What the reference's palette did on activating a favourite with the
+    // "open in a new page" option on (oracle/fixtures/command_palette.json).
+    let recorded = hydrus_testkit::fixture_json("command_palette.json");
+    let new_page = &recorded["selected"]["favourite"];
+    activate(&palette, new_page["name"].as_str().unwrap());
+    assert_eq!(
+        bound.pages.borrow().page_count(),
+        before + usize::try_from(new_page["new_pages"].as_u64().unwrap()).unwrap()
+    );
+    assert_eq!(
+        bound.pages.borrow().shown().name,
+        new_page["name"].as_str().unwrap()
+    );
     assert_eq!(
         bound
             .current
@@ -422,10 +432,16 @@ fn saved_favourite_current_page_policy_and_provider_order_reach_a_reopened_palet
     assert_eq!(rows.row_data(0).unwrap().primary, "Favourite Searches");
     assert_eq!(names(&window), ["Favourite Beta", "Palette Alpha"]);
     activate(&window, "Favourite Beta");
+    // Recorded for the option off: no new page, the shown page is searched.
+    let recorded = hydrus_testkit::fixture_json("command_palette.json");
+    let same_page = &recorded["selected"]["favourite_current"];
     assert!(bound.command_palette.borrow().is_none());
     assert_eq!(bound.pages.borrow().shown().key, original);
     assert_eq!(bound.pages.borrow().shown().name, "Palette Beta");
-    assert_eq!(bound.pages.borrow().page_count(), count);
+    assert_eq!(
+        bound.pages.borrow().page_count(),
+        count + usize::try_from(same_page["new_pages"].as_u64().unwrap()).unwrap()
+    );
     assert_eq!(
         bound
             .current
