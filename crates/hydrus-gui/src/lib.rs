@@ -157,6 +157,7 @@ pub mod string_processor_window;
 mod subscription_import;
 mod subscription_quality_control;
 mod subscriptions_window;
+pub mod system_tray;
 mod tab_context_window;
 mod tab_drag;
 mod tab_presentation;
@@ -302,6 +303,9 @@ pub use viewer::MediaViewer;
 /// and the media viewer while one is open.
 #[derive(Clone)]
 pub struct Bound {
+    /// The system tray icon and what the window's close, minimise and start
+    /// do with it.
+    pub tray: Rc<system_tray::Controller>,
     /// Decoded image policy shared by this binding's actual still-image consumers.
     pub image_cache: image_cache::Control,
     _image_cache_owner: Rc<image_cache::Owner>,
@@ -2531,7 +2535,9 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         binding_active.clone(),
     );
     let palette_dispatcher: command_palette_window::MainDispatcher = Rc::default();
+    let tray = system_tray::Controller::new(pages.borrow().store().clone(), window);
     let open_options: Rc<dyn Fn()> = {
+        let tray = tray.clone();
         let image_cache = image_cache.clone();
         let binding_active = binding_active.clone();
         let pages = pages.clone();
@@ -2562,7 +2568,10 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                 let rows = rows.clone();
                 let weak = weak.clone();
                 let store = store.clone();
+                let tray = tray.clone();
                 move || {
+                    // (the tray icon exists, or not, as the options now say)
+                    tray.refresh();
                     image_cache.refresh();
                     rows.set_cache_policy(
                         store.read(hydrus_store::settings::get).unwrap_or_default(),
@@ -2606,6 +2615,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
     let menu_titles_shown = menu_bar::bind(
         window,
         menu_bar::Hooks {
+            tray: tray.clone(),
             debug_long_popup: debug_long_popup.clone(),
             debug_session_reload: debug_session_reload.clone(),
             debug_fetch: debug_fetch.clone(),
@@ -3405,7 +3415,9 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             let image_cache = image_cache.clone();
             let database_maintenance = database_maintenance.clone();
             let vacuum_review = vacuum_review.clone();
+            let tray = tray.clone();
             move || {
+                tray.retire();
                 sidebar_layout.accepted_exit();
                 binding_active.set(false);
                 maintenance.retire();
@@ -5320,6 +5332,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
     let debug_long_popup_owner = Rc::new(debug_long_popup.owner());
     let force_idle_owner = Rc::new(force_idle.owner());
     Bound {
+        tray,
         _vacuum_review_owner: Rc::new(vacuum_review_window::Owner::new(&vacuum_review)),
         _file_maintenance_owner: file_maintenance
             .as_ref()

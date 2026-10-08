@@ -224,5 +224,6 @@ mod menu_choice_wheel;
 mod popup_freeze;
 mod popup_modal;
 mod popup_network_job;
+mod system_tray;
 
 mod viewer_prefetch;

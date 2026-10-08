@@ -111,6 +111,7 @@ pub mod subscription_quality;
 pub mod subscriptions_dedupe;
 pub mod subscriptions_dialog;
 pub mod subscriptions_list;
+pub mod system_tray;
 pub mod tab_context;
 pub mod tab_drag;
 pub mod tag_filter_editor;

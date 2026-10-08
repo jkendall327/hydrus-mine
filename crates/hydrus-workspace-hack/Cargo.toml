@@ -144,7 +144,7 @@ chrono = { version = "0.4", default-features = false, features = ["clock", "wasm
 fontique = { version = "0.11", features = ["fontconfig-dlopen"] }
 futures-channel = { version = "0.3", features = ["sink"] }
 futures-io = { version = "0.3" }
-futures-util = { version = "0.3", default-features = false, features = ["async-await-macro", "channel", "io", "sink"] }
+futures-util = { version = "0.3", features = ["channel", "io", "sink"] }
 getrandom-468e82937335b1c9 = { package = "getrandom", version = "0.3", default-features = false, features = ["std"] }
 getrandom-9fbad63c4bcf4a8f = { package = "getrandom", version = "0.4", default-features = false, features = ["std", "sys_rng"] }
 hyper = { version = "1", features = ["client", "http1", "http2", "server"] }

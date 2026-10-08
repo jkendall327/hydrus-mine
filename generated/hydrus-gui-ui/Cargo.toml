@@ -16,7 +16,7 @@ doctest = false
 
 [dependencies]
 # keep in step with the workspace's slint pin and features
-slint = { version = "=1.18.1", default-features = false, features = ["std", "compat-1-2", "backend-winit", "renderer-software", "unstable-winit-030"] }
+slint = { version = "=1.18.1", default-features = false, features = ["std", "compat-1-2", "backend-winit", "renderer-software", "unstable-winit-030", "system-tray"] }
 hydrus-workspace-hack = { version = "0.1", path = "../../crates/hydrus-workspace-hack" }
 
 [build-dependencies]

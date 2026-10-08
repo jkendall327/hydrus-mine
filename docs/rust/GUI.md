@@ -133,7 +133,8 @@ as Qt's do; a press anywhere else closes them. What works so far:
   running an export folder now, opening the installation and database
   directories, the options, and exit, restart and exit/force maintenance
   (declining a restart leaves the next window close a plain exit, as the
-  reference's per-request flag does; there is no minimise to system tray);
+  reference's per-request flag does), and minimise to system tray where the
+  desktop has a tray (see the system tray section);
 - undo: the pages closed in the last hour, latest first, to reopen any of
   them, or forget them all (asking first); searching additions and removals,
   latest first, to toggle a historical predicate on the visible media page,
@@ -3864,7 +3865,7 @@ page switch; media playback's mpv and QtMediaPlayer boxes and system's system
 FFMPEG, truncated images and PIL switches; hovers' pinned duplicates hover and
 the "preview window hovers" box; popups' other-display freeze; speed and
 memory's "image tile cache" and "video buffer" boxes; system sleep's file system
-wait; the "system tray" page; and tag editing's petition reason count. An
+wait; and tag editing's petition reason count. An
 imported client brings its values. mpv plays through the preferred audio
 device, and loops the playlist rather than the file when asked.
 
@@ -5026,6 +5027,43 @@ does. The system counts as busy when at least "% on N cores" cores ran above
 "Consider the system busy if CPU usage is above" over the last minute;
 "ignore cpu usage" turns the check off, and forced idle mode never reads busy.
 The status bar still says "idle" and shows "CPU busy".
+
+## System tray
+
+Slint's own `SystemTrayIcon` (on Linux a StatusNotifierItem on the session bus,
+no Qt) shows hydrus's icon. A tray is there when a StatusNotifierWatcher owns
+its name on the session bus (the reference's `SystemTrayAvailable`); without
+one, none of the following happens and the options below do nothing, as in the
+reference.
+
+- Options > system tray: "Always show the hydrus system tray icon" makes the
+  icon exist (made and removed as Options is applied). It also exists whenever
+  the client is hidden to it, and goes with the client on exit.
+- Its tooltip is the application display name, with " - network traffic
+  paused" and " - subscriptions paused" after it. Its menu is the reference's:
+  hide to system tray / show, pause network traffic and pause subscriptions
+  (ticks), an options submenu of "minimise client", "close client" and "start
+  client in system tray" (ticks that flip those options), and exit. A click
+  shows a hidden window; on a window in front it minimises it, or hides it
+  when minimise-to-tray is on; on a window behind others it brings it forward.
+- "Close the main window to system tray": the window's close button hides the
+  window (a moment after the icon is up) instead of asking to exit. File >
+  exit, restart and the icon's exit entry still exit (asking as ever). If the
+  tray goes away while the client is hidden to it, the window comes back.
+- "Start the client minimised to system tray": the client starts with its
+  window hidden, and the icon showing.
+- "Minimise the main window to system tray": minimising the window hides it
+  to the icon, and showing it again brings back the state it had before the
+  minimise (maximised, say). The window is looked at four times a second while
+  the option and a tray are there.
+- File > minimise to system tray ("Hide the client to an icon on your system
+  tray."), after options…, is shown with a tray in advanced mode (always, on
+  Windows).
+
+The rules are recorded from the reference's own client (`oracle/record_system_tray.py`,
+`oracle/fixtures/system_tray.json`) and checked case by case in
+`hydrus-gui-model/tests/model/system_tray.rs`; `tests/gui/system_tray.rs`
+drives the real main window and Options window against a recording tray.
 
 ### Manage tags: entering, removing, the cog, and the viewer's dialog
 

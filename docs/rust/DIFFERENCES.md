@@ -3863,7 +3863,7 @@ change nothing). They are marked out of scope in `docs/rust/tracking/`.
   another display), the self-sizing media viewer rescue padding (there is no
   self-sizing viewer), the image tile cache and video buffer (hydrus-rs
   renders whole images and leaves video to mpv), the file system wake wait,
-  the system tray page (there is no tray icon), the petition reason count
+  the petition reason count
   (there are no tag repositories to petition), the related-tag search
   durations (hydrus-rs ranks exactly rather than within time slices) and the
   file lookup scripts switch (there are no file lookup scripts).
@@ -4192,8 +4192,7 @@ clicks the retained LineEdit after acknowledgement.
 
 Manual export's "open location" reports a missing destination in the window's
 status line ("That location does not seem to exist!") where the reference shows a
-critical dialog; File > minimise to system tray is absent (there is no tray
-icon); File > open > installation directory opens the Rust executable's
+critical dialog; File > open > installation directory opens the Rust executable's
 directory.
 
 ## Options > external programs
@@ -4210,6 +4209,54 @@ directory.
 - The CPU-busy check reads per-core times from `/proc/stat`, so it exists on
   Linux only; elsewhere the system never reads busy. The reference's
   just-woke-from-sleep condition is not part of the idle gate here.
+
+## System tray
+
+- **Minimise to tray is unproven against a real window system, and Wayland
+  cannot do it.** Winit has no minimise event, so the main window is looked at
+  four times a second (only while the option and a tray are there) and hidden
+  to the tray when it is found minimised. Winit answers `is_minimized` on X11,
+  Windows and macOS; on **Wayland it does not** (`None`), so there minimising
+  just minimises, whatever the option says, while closing, starting hidden,
+  the icon's click and File > minimise to system tray work. The test of that
+  leaf drives Slint's own minimised state in the headless platform, never
+  winit's `is_minimized`, and nothing has been run against a real X11 window
+  manager, so the leaf is **not tagged**. The reference's two "BUGFIX"
+  switches (minimise-hide using event-deferred state-prep, with post-show
+  state restoration) work around Qt's own window state events and have no
+  counterpart; the window is restored from the minimise before it is hidden,
+  which is the reference's default path.
+- **The window goes a third of a second after the icon appears.** Slint's
+  event loop ends when its last visible window or tray icon goes, and a tray
+  icon only holds the loop a turn after it is made, so hiding to the tray
+  shows the icon first, hides the window 300 ms later, and does not hide it
+  at all if the icon could not be made. This has been checked only as an
+  order of events against a recording tray; no real tray host (the container
+  has no session bus) has been seen to keep the loop alive.
+- **Whether there is a tray** is looked for on a thread of its own (a
+  StatusNotifierWatcher on the session bus), at the first need, waited for at
+  most half a second, and again every five seconds. A tray that appears later
+  is noticed within that; one that goes away while the client is hidden to it
+  brings the window back within a quarter of a second of the next look.
+- **Only the main window is hidden.** The reference hides every top-level
+  window (and, when a dialog is open, brings the dialog forward instead of
+  hiding). hydrus-rs's other windows are separate Slint windows with no list
+  to hide them from, so they stay where they are.
+- **The icon's exit entry shows the window first**, so that the exit
+  confirmation and shutdown work have a window to run in; the reference asks
+  with the main window still hidden.
+- **The icon is Slint's**: a StatusNotifierItem, so its look, and whether a
+  left click or a menu is offered, follow the desktop's tray host. The
+  reference's middle click (flip show/hide) is not delivered by Slint; the
+  menu's first entry does it. The icon is `static/hydrus_non-transparent.png`,
+  the reference's. Menu checks are Slint's `checked`, kept by the client (the
+  reference regenerates its menu).
+- **"Is there a tray?"** is whether a StatusNotifierWatcher is on the session
+  bus (see above). A watcher that does not
+  actually show icons still counts as a tray.
+- The tray menu's entries are checked against the recording for their words
+  only (the headless platform has no menu to open), and Slint cannot show the
+  reference's tooltips on them.
 
 ## Manage tags: cog, removal, viewer dialog (issue 86)
 
