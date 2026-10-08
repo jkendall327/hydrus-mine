@@ -104,3 +104,18 @@ The 2026-10-08 review found:
   group crate would have its own copies and Rust needs conversions or a
   per-group import change. **Deferred** until the parallel trial shows whether
   `.slint` rebuilds actually block agents.
+
+### Parallel trial, round 1 (3 Sonnet agents, shared checkout)
+
+- Workstreams: `network`, `editors`, `tags-services`; plus me on `database`.
+- **Hazard seen within minutes:** all GUI tests are one test binary, so one
+  agent's half-written test file stops every agent's GUI build (and Clippy).
+  Seen twice (missing `ComponentHandle` import for `clone_strong`). Fix for
+  round 2: give each agent its own test target (a `[[test]]` harness that
+  `#[path]`-includes the common module and the agent's new modules), merged
+  into `tests/gui/main.rs` at integration. Edits to existing test files stay
+  tag-only or quick.
+- Found while doing `database > how boned am I?`: windows whose worker uses
+  `slint::invoke_from_event_loop` cannot be tested headless (Slint has one
+  process-wide event-loop proxy). Converted that window to a timer-polled
+  mailbox (the codebase's usual pattern); rule added to AGENTS.md.
