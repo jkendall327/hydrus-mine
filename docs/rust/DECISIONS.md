@@ -99,6 +99,16 @@ record of what was decided, and why the roadmap looks the way it does.
 - **Merging:** the coordinating agent may merge a PR once CI is green and its
   independent review's findings are addressed.
 
+- **Date parsing matches a hydrus install without `dateparser`** (2026-10-08).
+  The reference's "datestring to timestamp (easy)" and its other `ParseDate`
+  callers use the optional `dateparser` library when installed and fall back
+  to `dateutil` otherwise. hydrus-rs is a superset of the `dateutil`
+  fallback (recorded from the reference with `dateparser` disabled) that adds
+  English relative dates ("now", "yesterday", "2 hours ago", "in 3 days"),
+  giving the same result `dateparser` would for those. It does not take on
+  the rest of `dateparser`: non-English and fuzzy free-text dates are not
+  parsed, and the advanced strptime step covers explicit formats.
+
 ## Roadmap that follows
 
 1. **Client API parity**, with Hydrus Companion's request patterns checked
