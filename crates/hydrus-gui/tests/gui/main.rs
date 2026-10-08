@@ -163,6 +163,7 @@ mod tag_migration;
 mod manage_notes_replay;
 mod regex_favourites;
 mod regex_options_editor;
+mod sidecar_node_window;
 mod string_converter_window;
 mod string_match_window;
 mod string_processor_window;
