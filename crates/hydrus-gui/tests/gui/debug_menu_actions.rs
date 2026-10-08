@@ -406,3 +406,80 @@ fn shortcut_report_mode_says_what_a_shortcut_matched() {
     d.click(&["report modes", "shortcut report mode"]);
     debug_flags::set_sink(None);
 }
+
+// leaf: audit-options-help-debug-action-daemon-report-mode
+#[test]
+fn daemon_report_mode_says_when_a_maintenance_daemon_does_a_job() {
+    use hydrus_gui::SearchPage;
+    use hydrus_store::maintenance_gates::Worker;
+    use hydrus_store::settings::{self, GuiIdleSettings};
+
+    let _one = ONE_AT_A_TIME
+        .lock()
+        .unwrap_or_else(std::sync::PoisonError::into_inner);
+    let seen = capture();
+    let (dirs, store, files) = super::normal_time_maintenance::owned();
+    let windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(
+        &ui,
+        Pages::single(SearchPage::fixed(
+            store.clone(),
+            "maintenance fixture",
+            None,
+            files.iter().map(|(id, _)| *id).collect(),
+        )),
+    );
+    ui.show().unwrap();
+    super::normal_time_maintenance::queue(&store, files[0].0);
+    let first = bound.maintenance.started_ms() + 30_000;
+    bound.session_autosave.user_at(first);
+    bound.maintenance.poll_at(first).unwrap();
+    store
+        .write(|ctx| {
+            settings::set(
+                ctx.conn(),
+                &GuiIdleSettings {
+                    enabled: true,
+                    user_seconds: None,
+                    mouse_seconds: None,
+                    api_seconds: None,
+                    busy_cpu_percent: 50,
+                    busy_cpu_count: None,
+                },
+            )
+        })
+        .unwrap();
+    let d = Debug {
+        _dirs: dirs,
+        store,
+        ui,
+        bound,
+        _windows: windows,
+    };
+    assert!(!d.report_mode_checked("daemon report mode"));
+    d.click(&["report modes", "daemon report mode"]);
+    assert!(d.report_mode_checked("daemon report mode"));
+    let at = d
+        .bound
+        .maintenance
+        .deadline(Worker::Trash)
+        .max(d.bound.maintenance.deadline(Worker::Deferred));
+    d.bound.maintenance.poll_at(at).unwrap();
+    super::normal_time_maintenance::wait(|| {
+        d.bound.maintenance.poll_at(at).unwrap();
+        let stats = d.bound.maintenance.statistics();
+        stats.trash_passes == 1 && stats.deferred_passes == 1
+    });
+    let mut said = seen.lock().unwrap().clone();
+    said.sort();
+    assert_eq!(
+        said,
+        [
+            "deferred_physical_deletes doing a job.",
+            "maintain_trash doing a job."
+        ]
+    );
+    d.click(&["report modes", "daemon report mode"]);
+    debug_flags::set_sink(None);
+}

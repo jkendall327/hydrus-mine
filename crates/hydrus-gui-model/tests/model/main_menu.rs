@@ -77,6 +77,7 @@ fn kept(entries: &[Value]) -> Vec<Value> {
                     "report modes",
                     &[
                         "cache report mode",
+                        "daemon report mode",
                         "file import report mode",
                         "idle report mode",
                         "network report mode",
