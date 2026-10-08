@@ -26,7 +26,6 @@ export component ExternalCallsTable inherits Rectangle {
             help-button := Button{text:"help  ▾";clicked=>{help.show();}}
         }
         Text { text:"This system is under active development.\n\nHere we can teach your client about other programs it can call to complete jobs. You set them up here, and they will appear as options in appropriate places around the client. Each job has a certain type, starting with simple things like \"open file in external program\", and, as I write the pipelines for them, we will eventually get tasks like \"download URL\" and \"suggest tags\". Depending on the job type, it will have certain call parameters (e.g. a local media file path) that hydrus can pass on to the external program (e.g. an AI model for tagging). In future, there will also be response parameters (e.g. a list of tags) that hydrus will then ingest.";wrap:word-wrap; }
-        Text { text:"external calls";font-weight:700; }
         Text { horizontal-alignment:center;color:#c00000;text:"IF YOU IMPORT A CALL HERE THAT SOMEONE ELSE MADE, MAKE SURE YOU INSPECT IT BEFORE HOOKING IT UP TO ANYTHING. LOOK AT THE PARAMETERS.\n\nUSE YOUR BRAIN. DO NOT CALL THINGS BLINDLY.";wrap:word-wrap; }
         ListTable {
             rows:root.rows;sort-column:root.sort-column;ascending:root.ascending;

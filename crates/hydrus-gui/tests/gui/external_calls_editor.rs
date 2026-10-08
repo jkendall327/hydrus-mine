@@ -5,7 +5,7 @@ use super::external_calls::{call, named, open, question, saved, seed, store};
 use hydrus_core::external_calls::{ActualCall, Parameter, Pipeline};
 use hydrus_core::url::strings::{Conversion, ProcessingStep, StringConverter};
 use hydrus_gui::{MainWindow, Pages, bind, headless};
-use slint::Model as _;
+use slint::{ComponentHandle as _, Model as _};
 use std::{cell::RefCell, rc::Rc};
 
 fn edit_seeded(
@@ -100,14 +100,15 @@ fn input_rules_enable_token_and_string_processor_reach_the_saved_call() {
     // A string processor sits between the input and its token.
     child.invoke_rule_process(0);
     assert!(bound.options_external_calls.strings.processor.borrow().is_some());
-    bound
+    let editor = bound
         .options_external_calls
         .strings
         .processor
         .borrow()
         .as_ref()
         .unwrap()
-        .invoke_cancel();
+        .clone_strong();
+    editor.invoke_cancel();
     assert!(bound.options_external_calls.strings.processor.borrow().is_none());
     // The saved call carries each rule's token and processor.
     let mut seeded = saved(&store);
@@ -298,11 +299,10 @@ fn add_creates_a_new_call_and_export_writes_the_selected_calls_as_the_reference_
     exchange.set_text(reference["export"].as_str().unwrap().into());
     exchange.invoke_action("review".into());
     exchange.invoke_action("accept".into());
+    bound.options_external_calls.exchange.cancel();
     let rows = w.get_external_call_rows().row_count();
     assert_eq!(rows, 2);
-    for i in 0..i32::try_from(rows).unwrap() {
-        w.invoke_external_call_clicked(i, true, false);
-    }
+    // Imported calls arrive selected, as in the reference.
     assert!(w.get_external_call_selected());
     w.invoke_external_call_action("export".into());
     let exchange = bound.options_external_calls.exchange.0.borrow().as_ref().unwrap().clone_strong();

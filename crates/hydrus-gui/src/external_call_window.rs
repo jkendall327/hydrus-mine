@@ -870,13 +870,15 @@ pub fn open(
                     refresh();
                 }
             });
-            let _ = crate::string_processor_window::open(
+            if let Ok(editor) = crate::string_processor_window::open(
                 &store,
                 &processor,
                 vec![input],
                 &strings,
                 applied,
-            );
+            ) {
+                *strings.processor.borrow_mut() = Some(editor);
+            }
         }
     });
     w.on_command_edit({
