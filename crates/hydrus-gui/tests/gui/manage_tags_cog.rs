@@ -184,13 +184,18 @@ fn cog_menu_toggles_are_written_and_the_confirmation_obeys_them() {
         titles
     );
     // "select the first tag result with actual count" is the options' own setting
-    let at = labels.iter().position(|l| l.starts_with("select the first")).unwrap();
+    let at = labels
+        .iter()
+        .position(|l| l.starts_with("select the first"))
+        .unwrap();
     m.invoke_tag_menu_clicked(0, i32::try_from(at).unwrap(), 0.0, 0.0, 0.0);
     let saved: hydrus_store::tag_editing::TagEditingSettings =
         o.store.read(hydrus_store::settings::get).unwrap();
     assert_eq!(
         saved.select_first_with_count,
-        !recorded["defaults"]["ac_select_first_with_count"].as_bool().unwrap()
+        !recorded["defaults"]["ac_select_first_with_count"]
+            .as_bool()
+            .unwrap()
     );
     m.invoke_cog_pressed(0.0, 0.0);
     // "confirm remove/petition tags…" is on by default: turn it off
@@ -335,15 +340,24 @@ fn empty_input_keys_move_the_autocomplete_and_service_tabs_as_the_reference_does
     m.invoke_focus_input();
     assert!(m.get_input_focused(), "the input has the keyboard");
     let services = i32::try_from(m.get_service_names().row_count()).unwrap();
-    assert_eq!(services, recorded["info"]["services"].as_array().unwrap().len() as i32);
+    assert_eq!(
+        services,
+        recorded["info"]["services"].as_array().unwrap().len() as i32
+    );
     // an empty input: Left / Right wrap through the three tabs
     assert_eq!(m.get_autocomplete_tab(), 0);
     press(m, Key::LeftArrow);
-    assert_eq!(i64::from(m.get_autocomplete_tab()), recorded_move("", false, "tab_left").0.rem_euclid(3));
+    assert_eq!(
+        i64::from(m.get_autocomplete_tab()),
+        recorded_move("", false, "tab_left").0.rem_euclid(3)
+    );
     press(m, Key::RightArrow);
     assert_eq!(m.get_autocomplete_tab(), 0);
     press(m, Key::RightArrow);
-    assert_eq!(i64::from(m.get_autocomplete_tab()), recorded_move("", false, "tab_right").0.rem_euclid(3));
+    assert_eq!(
+        i64::from(m.get_autocomplete_tab()),
+        recorded_move("", false, "tab_right").0.rem_euclid(3)
+    );
     press(m, Key::LeftArrow);
     assert_eq!(m.get_autocomplete_tab(), 0);
     // Up / Down wrap through the service tabs while the list is empty
@@ -351,14 +365,18 @@ fn empty_input_keys_move_the_autocomplete_and_service_tabs_as_the_reference_does
     press(m, Key::DownArrow);
     assert_eq!(
         i64::from((m.get_service_index() - start).rem_euclid(services)),
-        recorded_move("", false, "page_right").1.rem_euclid(i64::from(services))
+        recorded_move("", false, "page_right")
+            .1
+            .rem_euclid(i64::from(services))
     );
     press(m, Key::UpArrow);
     assert_eq!(m.get_service_index(), start);
     press(m, Key::UpArrow);
     assert_eq!(
         i64::from((m.get_service_index() - start).rem_euclid(services)),
-        recorded_move("", false, "page_left").1.rem_euclid(i64::from(services))
+        recorded_move("", false, "page_left")
+            .1
+            .rem_euclid(i64::from(services))
     );
     // typed text: the keys belong to the text
     m.invoke_service_chosen(start);
