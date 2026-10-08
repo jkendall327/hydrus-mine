@@ -385,12 +385,12 @@ search.
   (`freeze_message_manager_when_mouse_on_other_monitor`) is not
   implemented (it needs a global cursor position: #94). Minimised and
   hidden freezing are (`audit-options-popups-freeze`).
-- **Two About leaves need an owner decision** (`audit-options-about-description`
-  and `audit-options-about-libraries`, untagged): they are named for Python,
-  Qt and numpy facts hydrus-rs cannot report. The tests show the reference's
-  recorded tab rendered by hydrus-rs's formatter and hydrus-rs's own lines
-  as a subset of the reference's labels; they do not show equivalence.
-  Proposed: out of scope, or accept hydrus-rs's own list as the equivalent.
+- **The About description and optional libraries list hydrus-rs's own
+  components**, by the owner's decision (2026-10-08), not Python, Qt or
+  numpy: `audit-options-about-description` and
+  `audit-options-about-libraries` are tagged on that footing. The tests show
+  the reference's recorded tab rendered by hydrus-rs's formatter and
+  hydrus-rs's own lines as a subset of the reference's labels.
 - **The options window has only the options hydrus-rs honours** (so far
   those on twenty-five pages; the others, and pages with none, aren't there:
   on the connection page, the CA bundle and curl_cffi test; on the

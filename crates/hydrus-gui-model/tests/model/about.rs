@@ -125,6 +125,7 @@ fn recorded_libraries(text: &str) -> Vec<Vec<Library>> {
     groups
 }
 
+// leaf: audit-options-about-libraries
 #[test]
 fn the_optional_libraries_tab_renders_availability_as_the_references_does() {
     let recorded = hydrus_testkit::fixture_json("about_window.json");
@@ -168,6 +169,7 @@ fn the_optional_libraries_tab_renders_availability_as_the_references_does() {
     assert_eq!(ours.tabs[1].1, theirs);
 }
 
+// leaf: audit-options-about-description
 #[test]
 fn the_description_has_the_references_lines_in_its_order_and_forms() {
     let recorded = hydrus_testkit::fixture_json("about_window.json");
