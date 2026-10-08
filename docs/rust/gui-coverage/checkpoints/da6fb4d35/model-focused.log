@@ -1,0 +1,120 @@
+   Compiling turbojpeg-sys v1.2.0
+   Compiling skrifa v0.42.1
+   Compiling vello_common v0.0.8
+   Compiling httparse v1.10.1
+   Compiling skrifa v0.44.0
+   Compiling harfrust v0.12.0
+   Compiling roaring v0.11.3
+   Compiling arc-swap v1.9.2
+   Compiling crossbeam-channel v0.5.17
+   Compiling svgtypes v0.16.1
+   Compiling fs4 v0.13.1
+   Compiling futures-channel v0.3.34
+   Compiling simplecss v0.2.2
+   Compiling roxmltree v0.21.1
+   Compiling thiserror-impl v1.0.69
+   Compiling foreign-types-macros v0.2.4
+   Compiling time-core v0.1.9
+   Compiling unicode-vo v0.1.0
+   Compiling xmlwriter v0.1.0
+   Compiling deranged v0.5.8
+   Compiling compression-core v0.4.33
+   Compiling unicode-script v0.5.8
+   Compiling pico-args v0.5.0
+   Compiling num-conv v0.2.2
+   Compiling powerfmt v0.2.0
+   Compiling imagesize v0.15.0
+   Compiling crc-catalog v2.5.0
+   Compiling color_quant v1.1.0
+   Compiling unicode-bidi v0.3.18
+   Compiling foreign-types-shared v0.3.1
+   Compiling data-url v0.3.2
+   Compiling foreign-types v0.5.0
+   Compiling thiserror v1.0.69
+   Compiling usvg v0.48.1
+   Compiling gif v0.14.2
+   Compiling crc v3.4.0
+   Compiling time v0.3.55
+   Compiling compression-codecs v0.4.44
+   Compiling hyper v1.11.1
+   Compiling hydrus-store v0.1.0 (/workspace/hydrus-mine/crates/hydrus-store)
+   Compiling vello_cpu v0.0.8
+   Compiling hayro-interpret v0.7.0
+   Compiling half v2.7.1
+   Compiling idna v1.1.0
+   Compiling lcms2-sys v4.0.7
+   Compiling image-webp v0.2.4
+   Compiling image v0.25.10
+   Compiling tiny-skia v0.12.0
+   Compiling form_urlencoded v1.2.2
+   Compiling pic-scale v0.7.12
+   Compiling encoding_rs v0.8.42
+   Compiling sync_wrapper v1.0.2
+   Compiling rgb v0.8.53
+   Compiling quick-xml v0.42.0
+   Compiling fax v0.2.7
+   Compiling uuid v1.26.1
+   Compiling web-time v1.1.0
+   Compiling gcd v2.3.0
+   Compiling openssl-probe v0.2.1
+   Compiling typed-path v0.12.3
+   Compiling ipnet v2.12.2
+   Compiling tower-layer v0.3.3
+   Compiling tower v0.5.3
+   Compiling hyper-util v0.1.21
+   Compiling zip v8.6.0
+   Compiling rustls-native-certs v0.8.4
+   Compiling turbojpeg v1.5.1
+   Compiling cfb v0.15.0
+   Compiling tiff v0.11.3
+   Compiling plist v1.10.1
+   Compiling resvg v0.48.1
+   Compiling hayro v0.7.1
+   Compiling url v2.5.8
+   Compiling lcms2 v6.2.0
+   Compiling async-compression v0.4.49
+   Compiling lzma-rs v0.3.0
+   Compiling tokio-rustls v0.26.6
+   Compiling http-body-util v0.1.5
+   Compiling qoi v0.4.1
+   Compiling core_detect v1.0.0
+   Compiling multiversion_no_op v1.0.0
+   Compiling simdutf8 v0.1.5
+   Compiling lz4_flex v0.14.0
+   Compiling hydrus-media v0.1.0 (/workspace/hydrus-mine/crates/hydrus-media)
+   Compiling hyper-rustls v0.27.10
+   Compiling tower-http v0.6.11
+   Compiling rustls-platform-verifier v0.7.1
+   Compiling reqwest v0.13.5
+   Compiling chardetng v1.0.0
+   Compiling hydrus-search v0.1.0 (/workspace/hydrus-mine/crates/hydrus-search)
+   Compiling httpdate v1.0.3
+   Compiling libm v0.2.16
+   Compiling hydrus-net v0.1.0 (/workspace/hydrus-mine/crates/hydrus-net)
+   Compiling hydrus-import v0.1.0 (/workspace/hydrus-mine/crates/hydrus-import)
+   Compiling xattr v1.6.1
+   Compiling num-integer v0.1.47
+   Compiling filetime v0.2.29
+   Compiling tar v0.4.46
+   Compiling num-bigint v0.4.8
+   Compiling hydrus-download v0.1.0 (/workspace/hydrus-mine/crates/hydrus-download)
+   Compiling hydrus-duplicates v0.1.0 (/workspace/hydrus-mine/crates/hydrus-duplicates)
+   Compiling hydrus-downloader-exchange v0.1.0 (/workspace/hydrus-mine/crates/hydrus-downloader-exchange)
+   Compiling hydrus-testkit v0.1.0 (/workspace/hydrus-mine/crates/hydrus-testkit)
+   Compiling hydrus-gui-model v0.1.0 (/workspace/hydrus-mine/crates/hydrus-gui-model)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 6m 14s
+     Running tests/model/main.rs (target/debug/deps/model-a2ab7f6741c396df)
+
+running 9 tests
+test export_files::copies_overwrite_existing_files_and_route_metadata ... ok
+test export_files::cancellation_suppresses_trash_but_missing_sources_trash_successful_prefix ... ok
+test export_files::preview_and_confirmations_match_reference_panel ... ok
+test export_files::shared_pattern_menu_copies_recorded_phrases_including_its_heading ... ok
+test export_files::selected_export_tags_counts_sort_selection_and_copy_match_actual_panel ... ok
+test export_files::symlinks_existing_links_and_hardlinks_preserve_source_content ... ok
+test export_files::sidecar_failure_prevents_copy_and_trash_and_success_trashes ... ok
+test export_files::later_trash_transaction_failure_retains_export_error_and_committed_prefix ... ok
+test export_files::export_failure_and_cancellation_match_reference_durable_membership ... ok
+
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 518 filtered out; finished in 1.60s
+

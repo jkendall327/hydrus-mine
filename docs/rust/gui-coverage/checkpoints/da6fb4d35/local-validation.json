@@ -1,0 +1,21 @@
+{
+  "source_commit": "da6fb4d3588c514e5cfe28869589379c2cbaaf89",
+  "focused_export_tests": {
+    "passed": 9,
+    "failed": 0,
+    "log": "model-focused.log"
+  },
+  "publication_helper_tests": {
+    "passed": 15,
+    "failed": 0,
+    "log": "publication-safety-local.log"
+  },
+  "hosted_clippy": {
+    "passed": true,
+    "run_id": 37712768495,
+    "artifact_id": 11522891389,
+    "log": "clippy.log"
+  },
+  "full_native_gate": "passed; see ci-evidence.json and test-summary.json",
+  "source_review": "passed; final runtime/render review pending"
+}

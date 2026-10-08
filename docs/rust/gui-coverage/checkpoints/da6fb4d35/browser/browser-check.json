@@ -1,0 +1,21 @@
+{
+  "html_sha256": "98aae1d2b77ec887d4cfed13930c94f7b50f24cc1e4f1b4c10b8d8f903d3a4b9",
+  "signed_off": 376,
+  "reference_count": 1812,
+  "native_count": 1799,
+  "selected_leaf": "audit-network-export-worker",
+  "viewports": [
+    [
+      1365,
+      900
+    ],
+    [
+      390,
+      844
+    ]
+  ],
+  "page_errors": [],
+  "requests": [],
+  "delivery": "Exact staged HTML loaded offline using set_content; source links not followed.",
+  "passed": true
+}

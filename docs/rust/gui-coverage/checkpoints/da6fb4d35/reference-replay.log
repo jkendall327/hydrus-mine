@@ -1,0 +1,592 @@
+v688, 2026-10-08 01:21:43: hydrus client started
+v688, 2026-10-08 01:21:43: booting controller…
+v688, 2026-10-08 01:21:43: This plugin does not support propagateSizeHints()
+v688, 2026-10-08 01:21:43: This plugin does not support raise()
+v688, 2026-10-08 01:21:43: booting db…
+v688, 2026-10-08 01:21:43: checking database
+v688, 2026-10-08 01:21:44: initialising managers
+v688, 2026-10-08 01:21:44: booting gui…
+v688, 2026-10-08 01:21:45: starting services…
+v688, 2026-10-08 01:21:45: Could not bind to IPv6:
+v688, 2026-10-08 01:21:45: Couldn't listen on ::1:45901: [Errno 1] Operation not permitted.
+v688, 2026-10-08 01:21:45: Could not start "client api":
+v688, 2026-10-08 01:21:45: 
+================ Exception ================
+CannotListenError: Couldn't listen on 127.0.0.1:45901: [Errno 1] Operation not permitted.
+================ Traceback ================
+Traceback (most recent call last):
+  File "/workspace/reference-pyenv/lib/python3.12/site-packages/twisted/internet/tcp.py", line 1356, in startListening
+    skt = self.createInternetSocket()
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/reference-pyenv/lib/python3.12/site-packages/twisted/internet/tcp.py", line 1341, in createInternetSocket
+    s = base.BasePort.createInternetSocket(self)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/reference-pyenv/lib/python3.12/site-packages/twisted/internet/base.py", line 1327, in createInternetSocket
+    s = socket.socket(self.addressFamily, self.socketType)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/socket.py", line 233, in __init__
+    _socket.socket.__init__(self, family, type, proto, fileno)
+PermissionError: [Errno 1] Operation not permitted
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/hydrus-mine/hydrus/client/ClientController.py", line 2277, in StartServices
+    ipv4_port = reactor.listenTCP( port, http_factory, interface = ipv4_interface )
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/reference-pyenv/lib/python3.12/site-packages/twisted/internet/posixbase.py", line 366, in listenTCP
+    p.startListening()
+  File "/workspace/reference-pyenv/lib/python3.12/site-packages/twisted/internet/tcp.py", line 1363, in startListening
+    raise CannotListenError(self.interface, self.port, le)
+twisted.internet.error.CannotListenError: Couldn't listen on 127.0.0.1:45901: [Errno 1] Operation not permitted.
+================== Stack ==================
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/threading.py", line 1032, in _bootstrap
+    self._bootstrap_inner()
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/threading.py", line 1075, in _bootstrap_inner
+    self.run()
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/threading.py", line 1012, in run
+    self._target(*self._args, **self._kwargs)
+  File "/workspace/reference-pyenv/lib/python3.12/site-packages/twisted/internet/base.py", line 686, in run
+    self.mainLoop()
+  File "/workspace/reference-pyenv/lib/python3.12/site-packages/twisted/internet/base.py", line 694, in mainLoop
+    self.runUntilCurrent()
+  File "/workspace/reference-pyenv/lib/python3.12/site-packages/twisted/internet/base.py", line 1053, in runUntilCurrent
+    f(*a, **kw)
+  File "/workspace/reference-pyenv/lib/python3.12/site-packages/twisted/internet/threads.py", line 140, in _callFromThread
+    result = defer.maybeDeferred(f, *a, **kw)
+  File "/workspace/reference-pyenv/lib/python3.12/site-packages/twisted/internet/defer.py", line 205, in maybeDeferred
+    result = f(*args, **kwargs)
+  File "/workspace/hydrus-mine/hydrus/client/ClientController.py", line 2343, in TWISTEDDoIt
+    StartServices()
+  File "/workspace/hydrus-mine/hydrus/client/ClientController.py", line 2302, in StartServices
+    HydrusData.ShowException( e )
+  File "/workspace/hydrus-mine/hydrus/client/ClientData.py", line 134, in ShowExceptionClient
+    ShowExceptionTupleClient( etype, value, tb, do_wait = do_wait )
+  File "/workspace/hydrus-mine/hydrus/client/ClientData.py", line 144, in ShowExceptionTupleClient
+    HydrusData.PrintExceptionTuple( etype, value, tb, do_wait = False )
+  File "/workspace/hydrus-mine/hydrus/core/HydrusData.py", line 369, in PrintExceptionTuple
+    message = ConvertExceptionTupleToNiceTrace( etype, value, tb )
+  File "/workspace/hydrus-mine/hydrus/core/HydrusData.py", line 328, in ConvertExceptionTupleToNiceTrace
+    stack_list = traceback.format_stack()
+=================== End ===================
+v688, 2026-10-08 01:21:46: This plugin does not support raise()
+v688, 2026-10-08 01:21:46: services started
+v688, 2026-10-08 01:21:47: doing fast shutdown…
+v688, 2026-10-08 01:21:47: shutting down controller…
+v688, 2026-10-08 01:21:47: hydrus client shut down
+v688, 2026-10-08 01:21:49: hydrus client started
+v688, 2026-10-08 01:21:49: booting controller…
+v688, 2026-10-08 01:21:49: This plugin does not support propagateSizeHints()
+v688, 2026-10-08 01:21:49: This plugin does not support raise()
+v688, 2026-10-08 01:21:49: booting db…
+v688, 2026-10-08 01:21:49: checking database
+v688, 2026-10-08 01:21:50: initialising managers
+v688, 2026-10-08 01:21:50: booting gui…
+v688, 2026-10-08 01:21:50: starting services…
+v688, 2026-10-08 01:21:50: Could not bind to IPv6:
+v688, 2026-10-08 01:21:50: Couldn't listen on ::1:45901: [Errno 1] Operation not permitted.
+v688, 2026-10-08 01:21:50: Could not start "client api":
+v688, 2026-10-08 01:21:51: 
+================ Exception ================
+CannotListenError: Couldn't listen on 127.0.0.1:45901: [Errno 1] Operation not permitted.
+================ Traceback ================
+Traceback (most recent call last):
+  File "/workspace/reference-pyenv/lib/python3.12/site-packages/twisted/internet/tcp.py", line 1356, in startListening
+    skt = self.createInternetSocket()
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/reference-pyenv/lib/python3.12/site-packages/twisted/internet/tcp.py", line 1341, in createInternetSocket
+    s = base.BasePort.createInternetSocket(self)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/reference-pyenv/lib/python3.12/site-packages/twisted/internet/base.py", line 1327, in createInternetSocket
+    s = socket.socket(self.addressFamily, self.socketType)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/socket.py", line 233, in __init__
+    _socket.socket.__init__(self, family, type, proto, fileno)
+PermissionError: [Errno 1] Operation not permitted
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/hydrus-mine/hydrus/client/ClientController.py", line 2277, in StartServices
+    ipv4_port = reactor.listenTCP( port, http_factory, interface = ipv4_interface )
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/reference-pyenv/lib/python3.12/site-packages/twisted/internet/posixbase.py", line 366, in listenTCP
+    p.startListening()
+  File "/workspace/reference-pyenv/lib/python3.12/site-packages/twisted/internet/tcp.py", line 1363, in startListening
+    raise CannotListenError(self.interface, self.port, le)
+twisted.internet.error.CannotListenError: Couldn't listen on 127.0.0.1:45901: [Errno 1] Operation not permitted.
+================== Stack ==================
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/threading.py", line 1032, in _bootstrap
+    self._bootstrap_inner()
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/threading.py", line 1075, in _bootstrap_inner
+    self.run()
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/threading.py", line 1012, in run
+    self._target(*self._args, **self._kwargs)
+  File "/workspace/reference-pyenv/lib/python3.12/site-packages/twisted/internet/base.py", line 686, in run
+    self.mainLoop()
+  File "/workspace/reference-pyenv/lib/python3.12/site-packages/twisted/internet/base.py", line 694, in mainLoop
+    self.runUntilCurrent()
+  File "/workspace/reference-pyenv/lib/python3.12/site-packages/twisted/internet/base.py", line 1053, in runUntilCurrent
+    f(*a, **kw)
+  File "/workspace/reference-pyenv/lib/python3.12/site-packages/twisted/internet/threads.py", line 140, in _callFromThread
+    result = defer.maybeDeferred(f, *a, **kw)
+  File "/workspace/reference-pyenv/lib/python3.12/site-packages/twisted/internet/defer.py", line 205, in maybeDeferred
+    result = f(*args, **kwargs)
+  File "/workspace/hydrus-mine/hydrus/client/ClientController.py", line 2343, in TWISTEDDoIt
+    StartServices()
+  File "/workspace/hydrus-mine/hydrus/client/ClientController.py", line 2302, in StartServices
+    HydrusData.ShowException( e )
+  File "/workspace/hydrus-mine/hydrus/client/ClientData.py", line 134, in ShowExceptionClient
+    ShowExceptionTupleClient( etype, value, tb, do_wait = do_wait )
+  File "/workspace/hydrus-mine/hydrus/client/ClientData.py", line 144, in ShowExceptionTupleClient
+    HydrusData.PrintExceptionTuple( etype, value, tb, do_wait = False )
+  File "/workspace/hydrus-mine/hydrus/core/HydrusData.py", line 369, in PrintExceptionTuple
+    message = ConvertExceptionTupleToNiceTrace( etype, value, tb )
+  File "/workspace/hydrus-mine/hydrus/core/HydrusData.py", line 328, in ConvertExceptionTupleToNiceTrace
+    stack_list = traceback.format_stack()
+=================== End ===================
+v688, 2026-10-08 01:21:51: This plugin does not support raise()
+v688, 2026-10-08 01:21:51: 
+================ Exception ================
+Exception: When trying to export 03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b, I discovered that it was actually missing from your client! The export job should stop now. You should go to _database->file maintenance_ and set up a scan for missing files!
+================ Traceback ================
+Traceback (most recent call last):
+  File "/workspace/hydrus-mine/hydrus/client/files/ClientFilesManager.py", line 1366, in GetFilePath
+    ( actual_path, old_mime ) = self._LookForFilePath( hash )
+                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/hydrus-mine/hydrus/client/files/ClientFilesManager.py", line 838, in _LookForFilePath
+    raise HydrusExceptions.FileMissingException( 'File for ' + hash.hex() + ' not found!' )
+hydrus.core.HydrusExceptions.FileMissingException: File for 03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b not found!
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/hydrus-mine/hydrus/client/gui/exporting/ClientGUIExport.py", line 945, in do_it
+    source_path = client_files_manager.GetFilePath( hash, mime )
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/hydrus-mine/hydrus/client/files/ClientFilesManager.py", line 1370, in GetFilePath
+    raise HydrusExceptions.FileMissingException( 'No file found at path {}!'.format( path ) )
+hydrus.core.HydrusExceptions.FileMissingException: No file found at path /tmp/hydrus_record_2em020m9/db/client_files/f03/03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b.png!
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/hydrus-mine/hydrus/client/gui/exporting/ClientGUIExport.py", line 949, in do_it
+    raise Exception( f'When trying to export {hash.hex()}, I discovered that it was actually missing from your client! The export job should stop now. You should go to _database->file maintenance_ and set up a scan for missing files!' )
+Exception: When trying to export 03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b, I discovered that it was actually missing from your client! The export job should stop now. You should go to _database->file maintenance_ and set up a scan for missing files!
+================== Stack ==================
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/threading.py", line 1032, in _bootstrap
+    self._bootstrap_inner()
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/threading.py", line 1075, in _bootstrap_inner
+    self.run()
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/threading.py", line 1012, in run
+    self._target(*self._args, **self._kwargs)
+  File "/workspace/hydrus-mine/oracle/hydrus_driver.py", line 343, in work
+    outcome[ 'result' ] = hook( session )
+  File "/workspace/hydrus-mine/oracle/record_export_failure_prefix.py", line 140, in <lambda>
+    result = hydrus_driver.run_client(database, lambda session: record(session, case))
+  File "/workspace/hydrus-mine/oracle/record_export_failure_prefix.py", line 115, in record
+    fn(*args, **kwargs)
+  File "/workspace/hydrus-mine/hydrus/client/gui/exporting/ClientGUIExport.py", line 982, in do_it
+    HydrusData.PrintException( e, do_wait = False )
+  File "/workspace/hydrus-mine/hydrus/core/HydrusData.py", line 359, in PrintException
+    PrintExceptionTuple( etype, value, tb, do_wait = do_wait )
+  File "/workspace/hydrus-mine/hydrus/core/HydrusData.py", line 369, in PrintExceptionTuple
+    message = ConvertExceptionTupleToNiceTrace( etype, value, tb )
+  File "/workspace/hydrus-mine/hydrus/core/HydrusData.py", line 328, in ConvertExceptionTupleToNiceTrace
+    stack_list = traceback.format_stack()
+=================== End ===================
+v688, 2026-10-08 01:21:52: services started
+v688, 2026-10-08 01:21:52: doing fast shutdown…
+v688, 2026-10-08 01:21:52: shutting down controller…
+v688, 2026-10-08 01:21:52: hydrus client shut down
+v688, 2026-10-08 01:21:55: hydrus client started
+v688, 2026-10-08 01:21:55: booting controller…
+v688, 2026-10-08 01:21:55: This plugin does not support propagateSizeHints()
+v688, 2026-10-08 01:21:55: This plugin does not support raise()
+v688, 2026-10-08 01:21:55: booting db…
+v688, 2026-10-08 01:21:55: checking database
+v688, 2026-10-08 01:21:55: initialising managers
+v688, 2026-10-08 01:21:55: booting gui…
+v688, 2026-10-08 01:21:57: starting services…
+v688, 2026-10-08 01:21:57: Could not bind to IPv6:
+v688, 2026-10-08 01:21:57: Couldn't listen on ::1:45901: [Errno 1] Operation not permitted.
+v688, 2026-10-08 01:21:57: Could not start "client api":
+v688, 2026-10-08 01:21:57: 
+================ Exception ================
+CannotListenError: Couldn't listen on 127.0.0.1:45901: [Errno 1] Operation not permitted.
+================ Traceback ================
+Traceback (most recent call last):
+  File "/workspace/reference-pyenv/lib/python3.12/site-packages/twisted/internet/tcp.py", line 1356, in startListening
+    skt = self.createInternetSocket()
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/reference-pyenv/lib/python3.12/site-packages/twisted/internet/tcp.py", line 1341, in createInternetSocket
+    s = base.BasePort.createInternetSocket(self)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/reference-pyenv/lib/python3.12/site-packages/twisted/internet/base.py", line 1327, in createInternetSocket
+    s = socket.socket(self.addressFamily, self.socketType)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/socket.py", line 233, in __init__
+    _socket.socket.__init__(self, family, type, proto, fileno)
+PermissionError: [Errno 1] Operation not permitted
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/hydrus-mine/hydrus/client/ClientController.py", line 2277, in StartServices
+    ipv4_port = reactor.listenTCP( port, http_factory, interface = ipv4_interface )
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/reference-pyenv/lib/python3.12/site-packages/twisted/internet/posixbase.py", line 366, in listenTCP
+    p.startListening()
+  File "/workspace/reference-pyenv/lib/python3.12/site-packages/twisted/internet/tcp.py", line 1363, in startListening
+    raise CannotListenError(self.interface, self.port, le)
+twisted.internet.error.CannotListenError: Couldn't listen on 127.0.0.1:45901: [Errno 1] Operation not permitted.
+================== Stack ==================
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/threading.py", line 1032, in _bootstrap
+    self._bootstrap_inner()
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/threading.py", line 1075, in _bootstrap_inner
+    self.run()
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/threading.py", line 1012, in run
+    self._target(*self._args, **self._kwargs)
+  File "/workspace/reference-pyenv/lib/python3.12/site-packages/twisted/internet/base.py", line 686, in run
+    self.mainLoop()
+  File "/workspace/reference-pyenv/lib/python3.12/site-packages/twisted/internet/base.py", line 694, in mainLoop
+    self.runUntilCurrent()
+  File "/workspace/reference-pyenv/lib/python3.12/site-packages/twisted/internet/base.py", line 1053, in runUntilCurrent
+    f(*a, **kw)
+  File "/workspace/reference-pyenv/lib/python3.12/site-packages/twisted/internet/threads.py", line 140, in _callFromThread
+    result = defer.maybeDeferred(f, *a, **kw)
+  File "/workspace/reference-pyenv/lib/python3.12/site-packages/twisted/internet/defer.py", line 205, in maybeDeferred
+    result = f(*args, **kwargs)
+  File "/workspace/hydrus-mine/hydrus/client/ClientController.py", line 2343, in TWISTEDDoIt
+    StartServices()
+  File "/workspace/hydrus-mine/hydrus/client/ClientController.py", line 2302, in StartServices
+    HydrusData.ShowException( e )
+  File "/workspace/hydrus-mine/hydrus/client/ClientData.py", line 134, in ShowExceptionClient
+    ShowExceptionTupleClient( etype, value, tb, do_wait = do_wait )
+  File "/workspace/hydrus-mine/hydrus/client/ClientData.py", line 144, in ShowExceptionTupleClient
+    HydrusData.PrintExceptionTuple( etype, value, tb, do_wait = False )
+  File "/workspace/hydrus-mine/hydrus/core/HydrusData.py", line 369, in PrintExceptionTuple
+    message = ConvertExceptionTupleToNiceTrace( etype, value, tb )
+  File "/workspace/hydrus-mine/hydrus/core/HydrusData.py", line 328, in ConvertExceptionTupleToNiceTrace
+    stack_list = traceback.format_stack()
+=================== End ===================
+v688, 2026-10-08 01:21:58: This plugin does not support raise()
+v688, 2026-10-08 01:21:58: 
+================ Exception ================
+Exception: When trying to export c94cd34198a91b08beb2301c71e7db54598f2d654939cb0c66fcfa4aab6d15ce, I discovered that it was actually missing from your client! The export job should stop now. You should go to _database->file maintenance_ and set up a scan for missing files!
+================ Traceback ================
+Traceback (most recent call last):
+  File "/workspace/hydrus-mine/hydrus/client/files/ClientFilesManager.py", line 1366, in GetFilePath
+    ( actual_path, old_mime ) = self._LookForFilePath( hash )
+                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/hydrus-mine/hydrus/client/files/ClientFilesManager.py", line 838, in _LookForFilePath
+    raise HydrusExceptions.FileMissingException( 'File for ' + hash.hex() + ' not found!' )
+hydrus.core.HydrusExceptions.FileMissingException: File for c94cd34198a91b08beb2301c71e7db54598f2d654939cb0c66fcfa4aab6d15ce not found!
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/hydrus-mine/hydrus/client/gui/exporting/ClientGUIExport.py", line 945, in do_it
+    source_path = client_files_manager.GetFilePath( hash, mime )
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/hydrus-mine/hydrus/client/files/ClientFilesManager.py", line 1370, in GetFilePath
+    raise HydrusExceptions.FileMissingException( 'No file found at path {}!'.format( path ) )
+hydrus.core.HydrusExceptions.FileMissingException: No file found at path /tmp/hydrus_record_wjqcq6ut/db/client_files/fc9/c94cd34198a91b08beb2301c71e7db54598f2d654939cb0c66fcfa4aab6d15ce.png!
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/hydrus-mine/hydrus/client/gui/exporting/ClientGUIExport.py", line 949, in do_it
+    raise Exception( f'When trying to export {hash.hex()}, I discovered that it was actually missing from your client! The export job should stop now. You should go to _database->file maintenance_ and set up a scan for missing files!' )
+Exception: When trying to export c94cd34198a91b08beb2301c71e7db54598f2d654939cb0c66fcfa4aab6d15ce, I discovered that it was actually missing from your client! The export job should stop now. You should go to _database->file maintenance_ and set up a scan for missing files!
+================== Stack ==================
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/threading.py", line 1032, in _bootstrap
+    self._bootstrap_inner()
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/threading.py", line 1075, in _bootstrap_inner
+    self.run()
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/threading.py", line 1012, in run
+    self._target(*self._args, **self._kwargs)
+  File "/workspace/hydrus-mine/oracle/hydrus_driver.py", line 343, in work
+    outcome[ 'result' ] = hook( session )
+  File "/workspace/hydrus-mine/oracle/record_export_failure_prefix.py", line 140, in <lambda>
+    result = hydrus_driver.run_client(database, lambda session: record(session, case))
+  File "/workspace/hydrus-mine/oracle/record_export_failure_prefix.py", line 115, in record
+    fn(*args, **kwargs)
+  File "/workspace/hydrus-mine/hydrus/client/gui/exporting/ClientGUIExport.py", line 982, in do_it
+    HydrusData.PrintException( e, do_wait = False )
+  File "/workspace/hydrus-mine/hydrus/core/HydrusData.py", line 359, in PrintException
+    PrintExceptionTuple( etype, value, tb, do_wait = do_wait )
+  File "/workspace/hydrus-mine/hydrus/core/HydrusData.py", line 369, in PrintExceptionTuple
+    message = ConvertExceptionTupleToNiceTrace( etype, value, tb )
+  File "/workspace/hydrus-mine/hydrus/core/HydrusData.py", line 328, in ConvertExceptionTupleToNiceTrace
+    stack_list = traceback.format_stack()
+=================== End ===================
+v688, 2026-10-08 01:21:58: services started
+v688, 2026-10-08 01:21:59: doing fast shutdown…
+v688, 2026-10-08 01:21:59: shutting down controller…
+v688, 2026-10-08 01:21:59: hydrus client shut down
+v688, 2026-10-08 01:22:02: hydrus client started
+v688, 2026-10-08 01:22:02: booting controller…
+v688, 2026-10-08 01:22:03: This plugin does not support propagateSizeHints()
+v688, 2026-10-08 01:22:03: This plugin does not support raise()
+v688, 2026-10-08 01:22:03: booting db…
+v688, 2026-10-08 01:22:03: checking database
+v688, 2026-10-08 01:22:03: initialising managers
+v688, 2026-10-08 01:22:03: booting gui…
+v688, 2026-10-08 01:22:04: starting services…
+v688, 2026-10-08 01:22:04: Could not bind to IPv6:
+v688, 2026-10-08 01:22:04: Couldn't listen on ::1:45901: [Errno 1] Operation not permitted.
+v688, 2026-10-08 01:22:04: Could not start "client api":
+v688, 2026-10-08 01:22:04: 
+================ Exception ================
+CannotListenError: Couldn't listen on 127.0.0.1:45901: [Errno 1] Operation not permitted.
+================ Traceback ================
+Traceback (most recent call last):
+  File "/workspace/reference-pyenv/lib/python3.12/site-packages/twisted/internet/tcp.py", line 1356, in startListening
+    skt = self.createInternetSocket()
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/reference-pyenv/lib/python3.12/site-packages/twisted/internet/tcp.py", line 1341, in createInternetSocket
+    s = base.BasePort.createInternetSocket(self)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/reference-pyenv/lib/python3.12/site-packages/twisted/internet/base.py", line 1327, in createInternetSocket
+    s = socket.socket(self.addressFamily, self.socketType)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/socket.py", line 233, in __init__
+    _socket.socket.__init__(self, family, type, proto, fileno)
+PermissionError: [Errno 1] Operation not permitted
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/hydrus-mine/hydrus/client/ClientController.py", line 2277, in StartServices
+    ipv4_port = reactor.listenTCP( port, http_factory, interface = ipv4_interface )
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/reference-pyenv/lib/python3.12/site-packages/twisted/internet/posixbase.py", line 366, in listenTCP
+    p.startListening()
+  File "/workspace/reference-pyenv/lib/python3.12/site-packages/twisted/internet/tcp.py", line 1363, in startListening
+    raise CannotListenError(self.interface, self.port, le)
+twisted.internet.error.CannotListenError: Couldn't listen on 127.0.0.1:45901: [Errno 1] Operation not permitted.
+================== Stack ==================
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/threading.py", line 1032, in _bootstrap
+    self._bootstrap_inner()
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/threading.py", line 1075, in _bootstrap_inner
+    self.run()
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/threading.py", line 1012, in run
+    self._target(*self._args, **self._kwargs)
+  File "/workspace/reference-pyenv/lib/python3.12/site-packages/twisted/internet/base.py", line 686, in run
+    self.mainLoop()
+  File "/workspace/reference-pyenv/lib/python3.12/site-packages/twisted/internet/base.py", line 694, in mainLoop
+    self.runUntilCurrent()
+  File "/workspace/reference-pyenv/lib/python3.12/site-packages/twisted/internet/base.py", line 1053, in runUntilCurrent
+    f(*a, **kw)
+  File "/workspace/reference-pyenv/lib/python3.12/site-packages/twisted/internet/threads.py", line 140, in _callFromThread
+    result = defer.maybeDeferred(f, *a, **kw)
+  File "/workspace/reference-pyenv/lib/python3.12/site-packages/twisted/internet/defer.py", line 205, in maybeDeferred
+    result = f(*args, **kwargs)
+  File "/workspace/hydrus-mine/hydrus/client/ClientController.py", line 2343, in TWISTEDDoIt
+    StartServices()
+  File "/workspace/hydrus-mine/hydrus/client/ClientController.py", line 2302, in StartServices
+    HydrusData.ShowException( e )
+  File "/workspace/hydrus-mine/hydrus/client/ClientData.py", line 134, in ShowExceptionClient
+    ShowExceptionTupleClient( etype, value, tb, do_wait = do_wait )
+  File "/workspace/hydrus-mine/hydrus/client/ClientData.py", line 144, in ShowExceptionTupleClient
+    HydrusData.PrintExceptionTuple( etype, value, tb, do_wait = False )
+  File "/workspace/hydrus-mine/hydrus/core/HydrusData.py", line 369, in PrintExceptionTuple
+    message = ConvertExceptionTupleToNiceTrace( etype, value, tb )
+  File "/workspace/hydrus-mine/hydrus/core/HydrusData.py", line 328, in ConvertExceptionTupleToNiceTrace
+    stack_list = traceback.format_stack()
+=================== End ===================
+v688, 2026-10-08 01:22:05: This plugin does not support raise()
+v688, 2026-10-08 01:22:05: 
+================ Exception ================
+IsADirectoryError: [Errno 21] Is a directory: '/tmp/export-prefix-3bome6t8/2.png.txt'
+================ Traceback ================
+Traceback (most recent call last):
+  File "/workspace/hydrus-mine/hydrus/client/gui/exporting/ClientGUIExport.py", line 940, in do_it
+    metadata_router.Work( media.GetMediaResult(), dest_path )
+  File "/workspace/hydrus-mine/hydrus/client/metadata/ClientMetadataMigration.py", line 233, in Work
+    self._exporter.Export( file_path, rows )
+  File "/workspace/hydrus-mine/hydrus/client/metadata/ClientMetadataMigrationExporters.py", line 690, in Export
+    with open( path, 'w', encoding = 'utf-8' ) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+IsADirectoryError: [Errno 21] Is a directory: '/tmp/export-prefix-3bome6t8/2.png.txt'
+================== Stack ==================
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/threading.py", line 1032, in _bootstrap
+    self._bootstrap_inner()
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/threading.py", line 1075, in _bootstrap_inner
+    self.run()
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/threading.py", line 1012, in run
+    self._target(*self._args, **self._kwargs)
+  File "/workspace/hydrus-mine/oracle/hydrus_driver.py", line 343, in work
+    outcome[ 'result' ] = hook( session )
+  File "/workspace/hydrus-mine/oracle/record_export_failure_prefix.py", line 140, in <lambda>
+    result = hydrus_driver.run_client(database, lambda session: record(session, case))
+  File "/workspace/hydrus-mine/oracle/record_export_failure_prefix.py", line 115, in record
+    fn(*args, **kwargs)
+  File "/workspace/hydrus-mine/hydrus/client/gui/exporting/ClientGUIExport.py", line 982, in do_it
+    HydrusData.PrintException( e, do_wait = False )
+  File "/workspace/hydrus-mine/hydrus/core/HydrusData.py", line 359, in PrintException
+    PrintExceptionTuple( etype, value, tb, do_wait = do_wait )
+  File "/workspace/hydrus-mine/hydrus/core/HydrusData.py", line 369, in PrintExceptionTuple
+    message = ConvertExceptionTupleToNiceTrace( etype, value, tb )
+  File "/workspace/hydrus-mine/hydrus/core/HydrusData.py", line 328, in ConvertExceptionTupleToNiceTrace
+    stack_list = traceback.format_stack()
+=================== End ===================
+v688, 2026-10-08 01:22:05: services started
+v688, 2026-10-08 01:22:06: doing fast shutdown…
+v688, 2026-10-08 01:22:06: shutting down controller…
+v688, 2026-10-08 01:22:06: hydrus client shut down
+v688, 2026-10-08 01:22:09: hydrus client started
+v688, 2026-10-08 01:22:09: booting controller…
+v688, 2026-10-08 01:22:09: This plugin does not support propagateSizeHints()
+v688, 2026-10-08 01:22:09: This plugin does not support raise()
+v688, 2026-10-08 01:22:09: booting db…
+v688, 2026-10-08 01:22:09: checking database
+v688, 2026-10-08 01:22:10: initialising managers
+v688, 2026-10-08 01:22:10: booting gui…
+v688, 2026-10-08 01:22:10: starting services…
+v688, 2026-10-08 01:22:11: Could not bind to IPv6:
+v688, 2026-10-08 01:22:11: Couldn't listen on ::1:45901: [Errno 1] Operation not permitted.
+v688, 2026-10-08 01:22:11: Could not start "client api":
+v688, 2026-10-08 01:22:11: 
+================ Exception ================
+CannotListenError: Couldn't listen on 127.0.0.1:45901: [Errno 1] Operation not permitted.
+================ Traceback ================
+Traceback (most recent call last):
+  File "/workspace/reference-pyenv/lib/python3.12/site-packages/twisted/internet/tcp.py", line 1356, in startListening
+    skt = self.createInternetSocket()
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/reference-pyenv/lib/python3.12/site-packages/twisted/internet/tcp.py", line 1341, in createInternetSocket
+    s = base.BasePort.createInternetSocket(self)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/reference-pyenv/lib/python3.12/site-packages/twisted/internet/base.py", line 1327, in createInternetSocket
+    s = socket.socket(self.addressFamily, self.socketType)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/socket.py", line 233, in __init__
+    _socket.socket.__init__(self, family, type, proto, fileno)
+PermissionError: [Errno 1] Operation not permitted
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/hydrus-mine/hydrus/client/ClientController.py", line 2277, in StartServices
+    ipv4_port = reactor.listenTCP( port, http_factory, interface = ipv4_interface )
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/reference-pyenv/lib/python3.12/site-packages/twisted/internet/posixbase.py", line 366, in listenTCP
+    p.startListening()
+  File "/workspace/reference-pyenv/lib/python3.12/site-packages/twisted/internet/tcp.py", line 1363, in startListening
+    raise CannotListenError(self.interface, self.port, le)
+twisted.internet.error.CannotListenError: Couldn't listen on 127.0.0.1:45901: [Errno 1] Operation not permitted.
+================== Stack ==================
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/threading.py", line 1032, in _bootstrap
+    self._bootstrap_inner()
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/threading.py", line 1075, in _bootstrap_inner
+    self.run()
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/threading.py", line 1012, in run
+    self._target(*self._args, **self._kwargs)
+  File "/workspace/reference-pyenv/lib/python3.12/site-packages/twisted/internet/base.py", line 686, in run
+    self.mainLoop()
+  File "/workspace/reference-pyenv/lib/python3.12/site-packages/twisted/internet/base.py", line 694, in mainLoop
+    self.runUntilCurrent()
+  File "/workspace/reference-pyenv/lib/python3.12/site-packages/twisted/internet/base.py", line 1053, in runUntilCurrent
+    f(*a, **kw)
+  File "/workspace/reference-pyenv/lib/python3.12/site-packages/twisted/internet/threads.py", line 140, in _callFromThread
+    result = defer.maybeDeferred(f, *a, **kw)
+  File "/workspace/reference-pyenv/lib/python3.12/site-packages/twisted/internet/defer.py", line 205, in maybeDeferred
+    result = f(*args, **kwargs)
+  File "/workspace/hydrus-mine/hydrus/client/ClientController.py", line 2343, in TWISTEDDoIt
+    StartServices()
+  File "/workspace/hydrus-mine/hydrus/client/ClientController.py", line 2302, in StartServices
+    HydrusData.ShowException( e )
+  File "/workspace/hydrus-mine/hydrus/client/ClientData.py", line 134, in ShowExceptionClient
+    ShowExceptionTupleClient( etype, value, tb, do_wait = do_wait )
+  File "/workspace/hydrus-mine/hydrus/client/ClientData.py", line 144, in ShowExceptionTupleClient
+    HydrusData.PrintExceptionTuple( etype, value, tb, do_wait = False )
+  File "/workspace/hydrus-mine/hydrus/core/HydrusData.py", line 369, in PrintExceptionTuple
+    message = ConvertExceptionTupleToNiceTrace( etype, value, tb )
+  File "/workspace/hydrus-mine/hydrus/core/HydrusData.py", line 328, in ConvertExceptionTupleToNiceTrace
+    stack_list = traceback.format_stack()
+=================== End ===================
+v688, 2026-10-08 01:22:12: This plugin does not support raise()
+v688, 2026-10-08 01:22:12: services started
+v688, 2026-10-08 01:22:13: doing fast shutdown…
+v688, 2026-10-08 01:22:13: shutting down controller…
+v688, 2026-10-08 01:22:13: hydrus client shut down
+v688, 2026-10-08 01:22:16: hydrus client started
+v688, 2026-10-08 01:22:16: booting controller…
+v688, 2026-10-08 01:22:16: This plugin does not support propagateSizeHints()
+v688, 2026-10-08 01:22:16: This plugin does not support raise()
+v688, 2026-10-08 01:22:16: booting db…
+v688, 2026-10-08 01:22:16: checking database
+v688, 2026-10-08 01:22:17: initialising managers
+v688, 2026-10-08 01:22:17: booting gui…
+v688, 2026-10-08 01:22:18: starting services…
+v688, 2026-10-08 01:22:18: Could not bind to IPv6:
+v688, 2026-10-08 01:22:18: Couldn't listen on ::1:45901: [Errno 1] Operation not permitted.
+v688, 2026-10-08 01:22:18: Could not start "client api":
+v688, 2026-10-08 01:22:18: 
+================ Exception ================
+CannotListenError: Couldn't listen on 127.0.0.1:45901: [Errno 1] Operation not permitted.
+================ Traceback ================
+Traceback (most recent call last):
+  File "/workspace/reference-pyenv/lib/python3.12/site-packages/twisted/internet/tcp.py", line 1356, in startListening
+    skt = self.createInternetSocket()
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/reference-pyenv/lib/python3.12/site-packages/twisted/internet/tcp.py", line 1341, in createInternetSocket
+    s = base.BasePort.createInternetSocket(self)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/reference-pyenv/lib/python3.12/site-packages/twisted/internet/base.py", line 1327, in createInternetSocket
+    s = socket.socket(self.addressFamily, self.socketType)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/socket.py", line 233, in __init__
+    _socket.socket.__init__(self, family, type, proto, fileno)
+PermissionError: [Errno 1] Operation not permitted
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/hydrus-mine/hydrus/client/ClientController.py", line 2277, in StartServices
+    ipv4_port = reactor.listenTCP( port, http_factory, interface = ipv4_interface )
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/reference-pyenv/lib/python3.12/site-packages/twisted/internet/posixbase.py", line 366, in listenTCP
+    p.startListening()
+  File "/workspace/reference-pyenv/lib/python3.12/site-packages/twisted/internet/tcp.py", line 1363, in startListening
+    raise CannotListenError(self.interface, self.port, le)
+twisted.internet.error.CannotListenError: Couldn't listen on 127.0.0.1:45901: [Errno 1] Operation not permitted.
+================== Stack ==================
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/threading.py", line 1032, in _bootstrap
+    self._bootstrap_inner()
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/threading.py", line 1075, in _bootstrap_inner
+    self.run()
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/threading.py", line 1012, in run
+    self._target(*self._args, **self._kwargs)
+  File "/workspace/reference-pyenv/lib/python3.12/site-packages/twisted/internet/base.py", line 686, in run
+    self.mainLoop()
+  File "/workspace/reference-pyenv/lib/python3.12/site-packages/twisted/internet/base.py", line 694, in mainLoop
+    self.runUntilCurrent()
+  File "/workspace/reference-pyenv/lib/python3.12/site-packages/twisted/internet/base.py", line 1053, in runUntilCurrent
+    f(*a, **kw)
+  File "/workspace/reference-pyenv/lib/python3.12/site-packages/twisted/internet/threads.py", line 140, in _callFromThread
+    result = defer.maybeDeferred(f, *a, **kw)
+  File "/workspace/reference-pyenv/lib/python3.12/site-packages/twisted/internet/defer.py", line 205, in maybeDeferred
+    result = f(*args, **kwargs)
+  File "/workspace/hydrus-mine/hydrus/client/ClientController.py", line 2343, in TWISTEDDoIt
+    StartServices()
+  File "/workspace/hydrus-mine/hydrus/client/ClientController.py", line 2302, in StartServices
+    HydrusData.ShowException( e )
+  File "/workspace/hydrus-mine/hydrus/client/ClientData.py", line 134, in ShowExceptionClient
+    ShowExceptionTupleClient( etype, value, tb, do_wait = do_wait )
+  File "/workspace/hydrus-mine/hydrus/client/ClientData.py", line 144, in ShowExceptionTupleClient
+    HydrusData.PrintExceptionTuple( etype, value, tb, do_wait = False )
+  File "/workspace/hydrus-mine/hydrus/core/HydrusData.py", line 369, in PrintExceptionTuple
+    message = ConvertExceptionTupleToNiceTrace( etype, value, tb )
+  File "/workspace/hydrus-mine/hydrus/core/HydrusData.py", line 328, in ConvertExceptionTupleToNiceTrace
+    stack_list = traceback.format_stack()
+=================== End ===================
+v688, 2026-10-08 01:22:19: This plugin does not support raise()
+v688, 2026-10-08 01:22:19: services started
+v688, 2026-10-08 01:22:20: doing fast shutdown…
+v688, 2026-10-08 01:22:20: shutting down controller…
+v688, 2026-10-08 01:22:20: hydrus client shut down
+wrote export_failure_prefix.json

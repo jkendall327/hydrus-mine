@@ -1171,7 +1171,11 @@ that phase keeps every source, including cancellation after the last copy.
 The failed-file message remains visible and completed trash changes refresh
 the owner. `oracle/record_export_failure_prefix.py` records actual Qt copies,
 sidecar/missing-file failures, cancellation and committed trash membership.
-Native replay and the failure-window render await this slice's Linux validation.
+Native replay and fresh normal/failure renders passed exact-source Linux validation
+at `da6fb4d35`: 2,201 workspace tests, including 715 GUI and 67 media tests,
+plus strict Clippy and independent review. Only the worker leaf gains credit,
+bringing the ledger to 376 with no existing candidate awaiting sign-off.
+[Evidence](gui-coverage/checkpoints/da6fb4d35/README.md).
 The read-only "files' tags" sidebar shows actual display tags for selected
 files, falling back to all kept files, with current, pending and petitioned
 counts. Local tag/subtag/count sorting preserves selected tags and remembers
