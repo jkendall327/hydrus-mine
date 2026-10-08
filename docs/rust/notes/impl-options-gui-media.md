@@ -73,3 +73,36 @@ no libmpv), so nothing here was recorded. Tests replay the reference's source
   platform, so one-axis gravity can only be tested through `windows::placement`.
 - `emoji_fonts::outline_fox_is_selected_without_replacing_platform_text_fallbacks`
   fails in this sandbox (font environment); it doesn't touch anything changed here.
+
+## Final section (after the coordinator's change of plan)
+
+Finished since the last section:
+- Review findings 1-4 on the first batch (style key kept at once and shape/colours
+  only; background vs popped-in preview sizes, inc/dec width and draw order with
+  tests on the drawn rows; `has_audio` test; frame padding, pointer position,
+  fullscreen parent and placing the Options window before it shows).
+- Merged `origin/claude/pensive-darwin-kvjhpq` and ran `scripts/setup-oracle.sh`.
+  With the reference now runnable, two source-read tests became recordings:
+  `oracle/record_frame_placement.py` -> `fixtures/frame_placement.json` (11 frame
+  settings; the Rust formulae match all of them on the first run, which also
+  tags `audit-options-geometry` with the gravity leaf) and
+  `oracle/dump_incdec_sizes.py` -> `fixtures/incdec_sizes.json` (replaces the
+  hand-worked inc/dec width test).
+
+Started and dropped (nothing half-built is on the branch):
+- Application display name on secondary windows: Slint windows own their title
+  properties and there is no central hook (winit's window attributes hook runs
+  before the title is known). Not started in code.
+- The ratings-example template behaviour and preview hover sizes beyond the
+  inc/dec width were not re-recorded (the reference needs a controller to read
+  its options; ~half a day).
+
+Remains, with rough sizes:
+- `audit-options-gui-frame-locations-edit`: other dialogs consulting their frames
+  (~12 windows, one line each plus save on close; about a day).
+- `audit-options-options-search`: descriptive labels and widget texts (a day).
+- Tag suggestion tabs remainder: no consumer can exist for file lookup scripts or
+  quick-dialog counts; related durations need a time-sliced search (a day).
+- `shell` workstream (popups modal/download/freeze, status activity, about
+  libraries) and `audit-options-menu-menu-file-options`,
+  `audit-network-export-examples`: not started (several days).
