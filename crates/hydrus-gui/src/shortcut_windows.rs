@@ -22,6 +22,7 @@ use std::{
 thread_local! {
     static LAST_SET:RefCell<Option<slint::Weak<ShortcutSetWindow>>>=const {RefCell::new(None)};
     static LAST_COMMAND:RefCell<Option<slint::Weak<ShortcutCommandWindow>>>=const {RefCell::new(None)};
+    static LAST_CHOOSER:RefCell<Option<slint::Weak<crate::ChoiceButtonsWindow>>>=const {RefCell::new(None)};
     static WHEEL:RefCell<Wheel>=RefCell::new(Wheel::default());
 }
 pub fn last_set() -> Option<ShortcutSetWindow> {
@@ -29,6 +30,10 @@ pub fn last_set() -> Option<ShortcutSetWindow> {
 }
 pub fn last_command() -> Option<ShortcutCommandWindow> {
     LAST_COMMAND.with(|s| s.borrow().as_ref().and_then(slint::Weak::upgrade))
+}
+/// The question or message the set lists last asked.
+pub fn last_chooser() -> Option<crate::ChoiceButtonsWindow> {
+    LAST_CHOOSER.with(|s| s.borrow().as_ref().and_then(slint::Weak::upgrade))
 }
 struct Owned<T> {
     window: T,
@@ -391,6 +396,9 @@ fn ask(
         Ok(window) => {
             slots.asking.set(window.is_some());
             // (the answered chooser is kept until the next replaces it)
+            if let Some(window) = &window {
+                LAST_CHOOSER.with(|last| *last.borrow_mut() = Some(window.as_weak()));
+            }
             if window.is_some() {
                 *slots.chooser.borrow_mut() = window;
             }

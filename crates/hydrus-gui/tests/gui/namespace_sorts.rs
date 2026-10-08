@@ -72,6 +72,7 @@ fn add(window: &NamespaceSortsWindow, text: &str) {
     window.invoke_text_entered();
 }
 
+// leaf: audit-options-nested-namespace-sort-parse
 #[test]
 fn queue_replays_real_questions_selection_cancel_and_parent_apply_isolation() {
     let windows = headless::init();

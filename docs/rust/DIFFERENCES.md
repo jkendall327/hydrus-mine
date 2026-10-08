@@ -2882,6 +2882,16 @@ than a shortcuts dialog of its own. A custom set can't take a built-in set's nam
 keeps custom names apart from each other). "restore defaults" chooses from
 buttons rather than a list, and the help shows in a message window.
 
+Options > shortcuts' custom-set add/edit/delete, "restore defaults" and the
+command editor's mouse capture (press/release, double-click, vertical wheel,
+every button) are replayed against the reference's recordings in
+`tests/gui/options_shortcut_sets.rs`. "delete" with no custom set selected
+does nothing here, where the reference still asks "Remove all selected?".
+Four options the client keeps but does not consume (the Qt locale for
+integers, the media viewer rescue padding, the toaster's other-display freeze,
+the recent petition reasons count) are real, staged controls whose values
+round-trip (`tests/gui/options_gui_kept.rs`); nothing native reads them yet.
+
 Shortcut capture now has an owned Options > set > command path and persisted
 keyboard consumers in the main GUI and media viewer. The two capture policies
 migrate from typed legacy booleans. Legacy shortcut sets remain retained as raw
