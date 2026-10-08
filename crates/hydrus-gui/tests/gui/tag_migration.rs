@@ -542,3 +542,251 @@ fn progress_popup_renders_the_recorded_paused_state() {
     .unwrap();
     popup.hide().unwrap();
 }
+
+// leaf: migration-mappings
+// The migration window's choices (source, destination, content, status) put
+// through its selectors, as a user would, against the actions the reference's
+// window offered for each (tag_migration.json `matrix`).
+#[test]
+fn the_windows_selectors_offer_the_reference_s_actions_for_each_choice() {
+    use hydrus_core::ServiceKey;
+    use hydrus_store::services::{self, RepositoryConfig, ServiceKind};
+    let (_dirs, store) = crate::subscriptions::store();
+    let repo = ServiceKey::new(vec![123; 16]);
+    store
+        .write_and_refresh({
+            let repo = repo.clone();
+            move |ctx| {
+                services::insert(
+                    ctx.conn(),
+                    &repo,
+                    "repo",
+                    &ServiceKind::TagRepository(RepositoryConfig::default()),
+                )
+                .map(|_| ())
+            }
+        })
+        .unwrap();
+    let _windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(
+        &ui,
+        Pages::single(hydrus_gui::SearchPage::new(store.clone())),
+    );
+    let title = ui
+        .get_menu_titles()
+        .iter()
+        .position(|t| t.label == "tags")
+        .unwrap();
+    ui.invoke_menu_title_pressed(i32::try_from(title).unwrap(), 0.0, 22.0);
+    let pane = ui.get_menu_panes().row_data(0).unwrap();
+    let row = pane
+        .lines
+        .iter()
+        .position(|r| r.label == "migrate…")
+        .unwrap();
+    ui.invoke_menu_line_clicked(0, i32::try_from(row).unwrap(), 0.0, 0.0, 0.0);
+    let window = bound
+        .tag_migration
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
+    let names: Vec<String> = window
+        .get_services()
+        .iter()
+        .map(|s| s.to_string())
+        .collect();
+    let local = i32::try_from(names.iter().position(|n| n == "my tags").unwrap()).unwrap();
+    let remote = i32::try_from(names.iter().position(|n| n == "repo").unwrap()).unwrap();
+    let recorded = hydrus_testkit::fixture_json("tag_migration.json");
+    let mut checked = 0;
+    for case in recorded["matrix"].as_array().unwrap() {
+        // (changing the content resets source and destination to the default
+        // service, as the reference's does: choose it first)
+        window.set_content(match case["content"].as_str().unwrap() {
+            "tag mappings" => 0,
+            "tag siblings" => 1,
+            _ => 2,
+        });
+        window.invoke_choices_changed();
+        window.set_source(if case["source"] == "local" {
+            local
+        } else {
+            remote
+        });
+        window.set_destination(if case["destination"] == "local" {
+            local
+        } else {
+            remote
+        });
+        window.invoke_choices_changed();
+        let statuses: Vec<String> = window
+            .get_statuses()
+            .iter()
+            .map(|s| s.to_string())
+            .collect();
+        let status = statuses
+            .iter()
+            .position(|s| s == case["status"].as_str().unwrap())
+            .unwrap_or_else(|| panic!("{statuses:?} for {case}"));
+        window.set_status(i32::try_from(status).unwrap());
+        window.invoke_choices_changed();
+        let actions: Vec<String> = window.get_actions().iter().map(|a| a.to_string()).collect();
+        let expected: Vec<&str> = case["actions"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|a| a.as_str().unwrap())
+            .collect();
+        assert_eq!(actions, expected, "{case}");
+        checked += 1;
+    }
+    assert_eq!(checked, recorded["matrix"].as_array().unwrap().len());
+    window.invoke_close_clicked();
+}
+
+// leaf: audit-media-migration-parents
+// leaf: audit-media-migration-siblings
+// The migration window run for tag siblings and parents between real services
+// (the reference's pairs from tag_migration.json): the source's pairs seeded,
+// the destination and content chosen in the window, "excluded:" blacklisted in
+// the left filter, "go" confirmed; the pairs that reach the destination are the
+// recording's.
+#[test]
+fn the_window_migrates_pairs_between_services_as_the_reference_did() {
+    use hydrus_core::ServiceKey;
+    use hydrus_store::content::tag_relations::{self, RelationAction, RelationUpdate};
+    use hydrus_store::display::RelationKind;
+    let recorded = hydrus_testkit::fixture_json("tag_migration.json");
+    let _windows = headless::init();
+    for case in recorded["pairs"].as_array().unwrap() {
+        let legacy = hydrus_testkit::legacy_fixture("repositories");
+        let dir = tempfile::tempdir().unwrap();
+        hydrus_store::import::import_legacy(
+            legacy.path(),
+            &dir.path().join(hydrus_store::store::DB_FILE_NAME),
+        )
+        .unwrap();
+        let store = hydrus_store::Store::open(dir.path()).unwrap();
+        let source =
+            ServiceKey::from_hex(recorded["source_service_key"].as_str().unwrap()).unwrap();
+        let destination =
+            ServiceKey::from_hex(recorded["pair_destination_service_key"].as_str().unwrap())
+                .unwrap();
+        let siblings = case["kind"] == "tag siblings";
+        let kind = if siblings {
+            RelationKind::Siblings
+        } else {
+            RelationKind::Parents
+        };
+        let source_id = store.snapshot().services.by_key(&source).unwrap().id;
+        let updates = case["initial"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|p| RelationUpdate {
+                service: source_id,
+                left: hydrus_core::Tag::new(p[0].as_str().unwrap()).unwrap(),
+                right: hydrus_core::Tag::new(p[1].as_str().unwrap()).unwrap(),
+                action: RelationAction::Add,
+            })
+            .collect();
+        tag_relations::apply(&store, kind, updates).unwrap();
+        let slot = tag_migration_window::Slot::default();
+        let window =
+            tag_migration_window::open(&store, &source, vec![], &slot, std::rc::Rc::new(|| {}))
+                .unwrap();
+        let destination_name = store
+            .snapshot()
+            .services
+            .by_key(&destination)
+            .unwrap()
+            .name
+            .clone();
+        let source_name = store
+            .snapshot()
+            .services
+            .by_key(&source)
+            .unwrap()
+            .name
+            .clone();
+        let position = |name: &str| {
+            window
+                .get_services()
+                .iter()
+                .position(|s| s == name)
+                .unwrap()
+        };
+        let (source_at, at) = (position(&source_name), position(&destination_name));
+        // (changing the content resets the services to the default one: first)
+        window.set_content(if siblings { 1 } else { 2 });
+        window.invoke_choices_changed();
+        window.set_source(i32::try_from(source_at).unwrap());
+        window.set_destination(i32::try_from(at).unwrap());
+        window.invoke_choices_changed();
+        let add = window
+            .get_actions()
+            .iter()
+            .position(|a| a == "add")
+            .unwrap();
+        window.set_action(i32::try_from(add).unwrap());
+        window.invoke_choices_changed();
+        window.invoke_edit_filter(false);
+        let filter = hydrus_gui::tag_filter_window::last_opened().unwrap();
+        filter.invoke_typed(1, "excluded:".into());
+        filter.invoke_apply();
+        window.invoke_go();
+        while !window.get_question().is_empty() {
+            window.invoke_answer(true);
+        }
+        let deadline = std::time::Instant::now() + std::time::Duration::from_secs(15);
+        while window.get_running() && std::time::Instant::now() < deadline {
+            std::thread::sleep(std::time::Duration::from_millis(50));
+            slint::platform::update_timers_and_animations();
+        }
+        assert!(!window.get_running());
+        assert!(window.get_error().is_empty(), "{}", window.get_error());
+        let service = store.snapshot().services.by_key(&destination).unwrap().id;
+        let (table, left, right) = tag_relations::columns(kind);
+        let pairs = store
+            .read(|conn| {
+                let ids = conn
+                    .prepare(&format!(
+                        "SELECT {left},{right} FROM {table} WHERE service_id=? AND status=0"
+                    ))?
+                    .query_map([service], |r| {
+                        Ok((
+                            r.get::<_, hydrus_core::TagId>(0)?,
+                            r.get::<_, hydrus_core::TagId>(1)?,
+                        ))
+                    })?
+                    .collect::<rusqlite::Result<Vec<_>>>()?;
+                let mut pairs = ids
+                    .into_iter()
+                    .map(|(a, b)| {
+                        Ok(vec![
+                            hydrus_store::master::tag(conn, a)?
+                                .unwrap()
+                                .as_str()
+                                .to_owned(),
+                            hydrus_store::master::tag(conn, b)?
+                                .unwrap()
+                                .as_str()
+                                .to_owned(),
+                        ])
+                    })
+                    .collect::<hydrus_store::Result<Vec<_>>>()?;
+                pairs.sort();
+                Ok(pairs)
+            })
+            .unwrap();
+        assert_eq!(
+            serde_json::to_value(pairs).unwrap(),
+            case["destination"]["0"],
+            "{}",
+            case["kind"]
+        );
+        window.invoke_close_clicked();
+    }
+}

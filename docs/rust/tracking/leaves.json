@@ -2007,9 +2007,9 @@
    ],
    "recheck": {
     "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Recording-based model tests run the real store migration for parent pairs with filters and compare destination pairs, plus confirmation text; no GUI test drives the window with parents/siblings content between services, so only model plus worker are covered. Pair mapping-count gates absent as noted. Tests: crates/hydrus-gui-model/tests/model/tag_migration.rs:153 reference_database_pair_filters_and_destinations, :417"
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "gui/tag_migration.rs the_window_migrates_pairs_between_services_as_the_reference_did opens the real migration window on the recorded source, chooses the destination and content, blacklists 'excluded:' in the left filter through the real filter window, confirms, waits for the real worker, and compares the pairs that reach the destination with tag_migration.json `pairs` (tag siblings and tag parents)."
    }
   },
   {
@@ -2047,9 +2047,9 @@
    ],
    "recheck": {
     "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Same as parents: recording replay of the store worker and confirmation summary for sibling pairs, but no GUI test drives the migration window for sibling content. Pair mapping-count gates absent. Tests: crates/hydrus-gui-model/tests/model/tag_migration.rs:153, :417"
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "gui/tag_migration.rs the_window_migrates_pairs_between_services_as_the_reference_did opens the real migration window on the recorded source, chooses the destination and content, blacklists 'excluded:' in the left filter through the real filter window, confirms, waits for the real worker, and compares the pairs that reach the destination with tag_migration.json `pairs` (tag siblings and tag parents)."
    }
   },
   {
@@ -24269,9 +24269,9 @@
    ],
    "recheck": {
     "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Model-only replay of the recorded choice matrix and pending outcomes; the GUI tests never change source/destination/status/content selectors (only checks the first action is 'delete' and the confirmation texts), so the window's normalization is untested. Tests: crates/hydrus-gui-model/tests/model/tag_migration.rs:8 reference_choices_and_second_confirmation; :73 reference_database_pending_outcomes"
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "gui/tag_migration.rs the_windows_selectors_offer_the_reference_s_actions_for_each_choice drives the real migration window's content, source, destination and status selectors for all 36 cases of tag_migration.json `matrix` and compares the offered actions (changing the content first, which resets the services as the reference does); the model replays stay as the fast check, and reference_database_pending_outcomes replays the recorded pending outcomes through the real store migration."
    }
   },
   {
