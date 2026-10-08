@@ -292,7 +292,14 @@ def record( session ):
 
         return out
 
+    sizes = {}
+
     def batch():
+
+        for ( a, b ) in state[ 'canvas' ]._batch_of_pairs_to_process:
+
+            sizes[ a.GetHash().hex() ] = a.GetSize()
+            sizes[ b.GetHash().hex() ] = b.GetSize()
 
         return [ [ a.GetHash().hex(), b.GetHash().hex() ] for ( a, b ) in state[ 'canvas' ]._batch_of_pairs_to_process ]
 
@@ -335,6 +342,8 @@ def record( session ):
         qt( make, options )
 
         first = wait_for_pair()
+
+        sizes.clear()
 
         scenario = { 'name' : name, 'options' : options, 'batch' : batch() if first[ 'open' ] else [], 'start' : first, 'steps' : [] }
 
@@ -412,7 +421,7 @@ def record( session ):
 
         hashes = sorted( { h for pair in scenario[ 'batch' ] for h in pair } )
 
-        scenario[ 'sizes' ] = { h : controller.Read( 'media_results', [ bytes.fromhex( h ) ] )[ 0 ].GetSize() for h in hashes }
+        scenario[ 'sizes' ] = sizes
 
         if len( hashes ) > 0:
 
