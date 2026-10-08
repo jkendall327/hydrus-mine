@@ -154,3 +154,67 @@ fn a_file_is_forced_to_another_filetype_and_back() {
     assert!(path(Mime::ImageJpeg).is_file());
     assert!(!path(Mime::ImagePng).is_file());
 }
+
+// leaf: audit-media-force-rename
+#[test]
+fn a_forced_file_is_renamed_or_when_the_media_is_shared_copied_with_its_old_copy_queued_for_cleanup()
+ {
+    use hydrus_store::file_maintenance::{self, JobType};
+    let legacy = hydrus_testkit::legacy_fixture("basic");
+    let native = tempfile::tempdir().unwrap();
+    import_legacy(
+        legacy.path(),
+        &native.path().join(hydrus_store::store::DB_FILE_NAME),
+    )
+    .unwrap();
+    let store: Arc<Store> = Store::open(native.path()).unwrap();
+    // (media shared with another install, as an in-place import leaves it,
+    // is copied and never moved)
+    let shared = legacy.path().to_path_buf();
+    store
+        .write(move |ctx| {
+            hydrus_store::settings::set(
+                ctx.conn(),
+                &hydrus_store::transfer::MediaOwnership {
+                    shared_with: Some(shared),
+                },
+            )
+        })
+        .unwrap();
+    let _windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    ui.show().unwrap();
+    let bound = bind(&ui, Pages::single(SearchPage::new(store.clone())));
+    ui.invoke_search_edited("system:everything".into());
+    ui.invoke_search_accepted();
+    let results = bound.current.borrow().borrow().results().to_vec();
+    let index = results
+        .iter()
+        .position(|&f| info(&store, f).0.mime == Mime::ImageJpeg)
+        .unwrap();
+    let file = results[index];
+    let (_, hash) = info(&store, file);
+    let path = |mime: Mime| store.snapshot().storage.file_path(&hash, mime).unwrap();
+    let jobs = |store: &Store| {
+        store
+            .read(move |c| file_maintenance::jobs_for(c, file))
+            .unwrap()
+    };
+    assert!(!jobs(&store).contains(&JobType::DeleteNeighbourDupes));
+    let index = i32::try_from(index).unwrap();
+    ui.invoke_thumbnail_clicked(index, false, false);
+    let dialog = open(&ui, &bound, index);
+    dialog.set_chosen(0);
+    dialog.invoke_apply();
+    wait_for_file_work(&bound);
+    let (forced, _) = info(&store, file);
+    assert_eq!(
+        (forced.mime, forced.original_mime),
+        (Mime::ImagePng, Some(Mime::ImageJpeg))
+    );
+    // the new extension exists and the shared original was left in place
+    assert!(path(Mime::ImagePng).is_file());
+    assert!(path(Mime::ImageJpeg).is_file());
+    // and the extra copy is queued for the "delete neighbour dupes" job
+    assert!(jobs(&store).contains(&JobType::DeleteNeighbourDupes));
+}

@@ -102,6 +102,7 @@ pub(crate) fn open(
     store: &Arc<Store>,
     files: Vec<HashId>,
     slot: &Rc<RefCell<Option<ManageRatingsWindow>>>,
+    editing: &Rc<RefCell<Option<crate::EditValueWindow>>>,
     applied: Rc<dyn Fn()>,
 ) -> Result<ManageRatingsWindow, String> {
     let services = store.snapshot().services.clone();
@@ -169,7 +170,7 @@ pub(crate) fn open(
         }
     });
     // an inc/dec control's middle click: "edit value", its count typed
-    let editing: Rc<RefCell<Option<crate::EditValueWindow>>> = Rc::default();
+    let editing = editing.clone();
     window.on_rating_middle({
         let state = state.clone();
         let refresh = refresh.clone();

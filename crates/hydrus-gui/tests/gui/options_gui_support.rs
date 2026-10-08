@@ -14,7 +14,7 @@ pub struct Client {
     pub store: Arc<Store>,
     pub ui: MainWindow,
     pub bound: Bound,
-    _windows: headless::Windows,
+    collector: headless::Windows,
     _dirs: Vec<tempfile::TempDir>,
 }
 
@@ -46,7 +46,7 @@ impl Client {
             store,
             ui,
             bound,
-            _windows: windows,
+            collector: windows,
             _dirs: dirs,
         }
     }
@@ -66,6 +66,16 @@ impl Client {
             .as_ref()
             .expect("the options window")
             .clone_strong()
+    }
+
+    /// Every window made so far, for rendering and pointer events.
+    pub fn windows(&self) -> &headless::Windows {
+        &self.collector
+    }
+
+    /// The main window's headless window, for rendering and pointer events.
+    pub fn native(&self) -> std::rc::Rc<slint::platform::software_renderer::MinimalSoftwareWindow> {
+        self.collector.get(0).expect("the main window")
     }
 
     /// A saved setting, as the consumers read it.

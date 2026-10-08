@@ -236,6 +236,7 @@ fn formula_editors_html_rules_validation_processing_and_screenshot() {
     assert_eq!(content, HtmlContent::Attribute("href".into()));
     assert!(slots.formula.borrow().is_none());
 }
+// leaf: audit-network-simple-formula-actions
 #[test]
 fn formula_editors_simple_downloader_list_saves_cancel_and_unique_names() {
     let (_dirs, store) = store();

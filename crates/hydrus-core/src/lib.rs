@@ -7,6 +7,7 @@
 pub mod bandwidth;
 pub mod casefold;
 pub mod content;
+pub mod debug_flags;
 pub mod duplicates;
 pub mod gallery;
 pub mod hash;

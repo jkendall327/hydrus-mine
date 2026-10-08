@@ -61,6 +61,7 @@ const WIDGETS: &[&str] = &[
     "FilePickerCtrl",
     "BetterCheckBoxList",
     "NoneableTimeDeltaWidget",
+    "RatingNumericalExample",
 ];
 
 fn is_control(item: &Json) -> bool {
@@ -91,6 +92,19 @@ fn recorded_rows(items: &[Json], boxes: &[String], out: &mut Vec<Row>) {
                 &inner,
                 out,
             );
+        } else if let Some(tabs) = item.get("tabs").and_then(Json::as_array) {
+            // (a notebook's pages are boxes of ours, titled as its tabs)
+            for tab in tabs {
+                let mut inner = boxes.to_vec();
+                inner.push(tab["tab"].as_str().unwrap_or_default().to_owned());
+                recorded_rows(
+                    tab.get("items")
+                        .and_then(Json::as_array)
+                        .map_or(&[][..], |v| v),
+                    &inner,
+                    out,
+                );
+            }
         } else if let Some(label) = item.get("label").and_then(Json::as_str) {
             if let Some(next) = items.get(i)
                 && is_control(next)
@@ -123,7 +137,7 @@ fn recorded_rows(items: &[Json], boxes: &[String], out: &mut Vec<Row>) {
 fn our_rows<'a>(items: &'a [Item], boxes: &[String], out: &mut Vec<(Vec<String>, &'a Item)>) {
     for item in items {
         match item {
-            Item::Box(title, items) => {
+            Item::Box(title, items) | Item::Tab(title, items) => {
                 let mut inner = boxes.to_vec();
                 inner.push((*title).to_owned());
                 our_rows(items, &inner, out);
@@ -393,6 +407,20 @@ fn compare(kind: &Kind, value: &Value, theirs: &Json, store: &Store) -> Option<S
                 hydrus_gui_model::domains::location_label(&store.snapshot().services, location);
             (theirs["button"] != label).then(|| format!("location {label:?}"))
         }
+        (Kind::RatingStyle, Value::TagService(key)) => {
+            let choices = hydrus_gui_model::options::rating_style_choices(store);
+            let names: Vec<&str> = choices.iter().map(|(_, name)| name.as_str()).collect();
+            // (a template that isn't any of them shows the first)
+            let shown = choices
+                .iter()
+                .find(|(service, _)| service == key)
+                .map_or_else(|| names.first().copied(), |(_, name)| Some(name.as_str()));
+            (theirs["items"] != serde_json::json!(names) || theirs["choice"].as_str() != shown)
+                .then(|| format!("rating style {shown:?} of {names:?}"))
+        }
+        (Kind::RatingExamples(_), Value::Text(_)) => {
+            (theirs["widget"] != "RatingNumericalExample").then(|| "rating examples".to_owned())
+        }
         // (the button; its checker options are checker_options' test's)
         (Kind::Checker, Value::Checker(_)) => {
             (theirs["button"] != "checker options").then(|| "checker options".to_owned())
@@ -474,6 +502,11 @@ fn page_problems(page: &Page, items: &Json, settings: &Settings, store: &Store) 
                 | Kind::TagBanner(_)
                 | Kind::ProviderOrder
         ) {
+            continue;
+        }
+        // A noneable spin box that carries its own message has no label
+        // row to match: recorded and compared on its own below.
+        if option.label == "number of recent tags to show: " {
             continue;
         }
         let found = rows

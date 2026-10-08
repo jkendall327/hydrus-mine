@@ -2166,6 +2166,14 @@ fn predicates(
         .collect()
 }
 
+/// A reference comparator, as a native one.
+pub fn auto_resolution_comparator(
+    c: &legacy::auto_resolution::Comparator,
+    scales: &dyn Fn(&ServiceKey) -> Option<StarScale>,
+) -> std::result::Result<crate::duplicates::auto::Comparator, String> {
+    comparator(c, scales)
+}
+
 fn comparator(
     c: &legacy::auto_resolution::Comparator,
     scales: &dyn Fn(&ServiceKey) -> Option<StarScale>,

@@ -162,3 +162,104 @@ fn approving_and_denying_report_progress_as_the_reference_s() {
     assert_eq!(action_progress(false, 0, 1_500), "denying: 0/1,500");
     assert_eq!(action_title(true), "approving auto-resolution decisions");
 }
+
+// leaf: audit-media-review-progress
+#[test]
+fn approving_and_denying_run_through_a_popup_job_that_shows_progress_and_goes_when_done() {
+    use hydrus_gui_model::auto_resolution_review::{POPUP_AFTER, action_pairs_after};
+    use std::cell::RefCell;
+    use std::sync::Mutex;
+    use std::time::Duration;
+
+    // the reference waits four seconds before its popup shows
+    assert_eq!(POPUP_AFTER, Duration::from_secs(4));
+    let recorded = hydrus_testkit::fixture_json("auto_resolution_review.json");
+    let reviewed = recorded["reviewed"].as_str().unwrap();
+    for approve in [true, false] {
+        let (_dir, store, _hex) = store();
+        let rules = store.read(auto::rules).unwrap();
+        let id = rules.iter().find(|(_, r)| r.name == reviewed).unwrap().0;
+        let pairs: Vec<_> = store
+            .read(|c| auto::pending_pairs(c, id, None))
+            .unwrap()
+            .into_iter()
+            .map(|(_, a, b)| (a, b))
+            .collect();
+        assert_eq!(pairs.len(), 2);
+        let status = Mutex::new(String::new());
+        let seen: RefCell<Vec<(String, Vec<Option<String>>)>> = RefCell::default();
+        let now = hydrus_core::TimestampMs::now().millis() / 1000;
+        // (with the wait made nothing: before the work starts, the popup is
+        // there with the reference's title; at the end, it is gone)
+        action_pairs_after(
+            &store,
+            id,
+            &pairs,
+            approve,
+            &status,
+            Duration::ZERO,
+            &|text| {
+                let jobs = store.read(|c| hydrus_store::popups::all(c, now)).unwrap();
+                seen.borrow_mut().push((
+                    text.to_owned(),
+                    jobs.iter().map(|j| j.status_text_1.clone()).collect(),
+                ));
+            },
+        )
+        .unwrap();
+        let title = if approve {
+            "approving auto-resolution decisions"
+        } else {
+            "denying auto-resolution decisions"
+        };
+        let progress = if approve {
+            "approving: 0/2"
+        } else {
+            "denying: 0/2"
+        };
+        assert_eq!(
+            *seen.borrow(),
+            [
+                (progress.to_owned(), vec![Some(title.to_owned())]),
+                (String::new(), vec![]),
+            ]
+        );
+        assert_eq!(*status.lock().unwrap(), progress);
+        assert!(
+            store
+                .read(|c| hydrus_store::popups::all(c, now))
+                .unwrap()
+                .is_empty(),
+            "finished and dismissed"
+        );
+        // and the pairs were decided
+        assert!(
+            store
+                .read(|c| auto::pending_pairs(c, id, None))
+                .unwrap()
+                .is_empty()
+        );
+    }
+    // no popup before the wait is up: a quick job leaves none behind
+    let (_dir, store, _hex) = store();
+    let rules = store.read(auto::rules).unwrap();
+    let id = rules.iter().find(|(_, r)| r.name == reviewed).unwrap().0;
+    let pairs: Vec<_> = store
+        .read(|c| auto::pending_pairs(c, id, None))
+        .unwrap()
+        .into_iter()
+        .map(|(_, a, b)| (a, b))
+        .collect();
+    let touched = RefCell::new(0);
+    action_pairs_after(
+        &store,
+        id,
+        &pairs,
+        true,
+        &Mutex::new(String::new()),
+        Duration::from_secs(3600),
+        &|_| *touched.borrow_mut() += 1,
+    )
+    .unwrap();
+    assert_eq!(*touched.borrow(), 0);
+}

@@ -36,7 +36,7 @@ pub mod daemon;
 mod database_backup_window;
 pub mod database_locations_window;
 mod debug_actions;
-pub use debug_actions::message_window;
+pub use debug_actions::{crash_logging, debug_printed, exit_requested, message_window};
 pub use orphan_files_window::chooser as orphan_files_chooser;
 pub mod debug_fetch;
 pub mod debug_long_popup;
@@ -48,7 +48,7 @@ pub mod downloader_display_window;
 pub mod downloader_interchange_window;
 pub mod downloader_update_times;
 mod drops;
-mod duplicates_filtering_sidebar;
+pub mod duplicates_filtering_sidebar;
 mod duplicates_sidebar;
 mod edit_subscription_window;
 mod embedded_metadata_window;
@@ -115,6 +115,7 @@ pub mod options_media_views;
 pub mod options_namespace_colours;
 pub mod options_open_externally;
 mod options_palette;
+mod options_rating_examples;
 pub mod options_tag_namespace_order;
 mod options_window;
 mod orphan_files_window;
@@ -325,6 +326,8 @@ pub struct Bound {
     pub manage_notes: Rc<RefCell<Option<ManageNotesWindow>>>,
     /// The manage ratings dialog while one is open.
     pub manage_ratings: Rc<RefCell<Option<ManageRatingsWindow>>>,
+    /// The "edit value" dialog an inc/dec rating's middle click opens.
+    pub rating_count_editor: Rc<RefCell<Option<EditValueWindow>>>,
     /// The manage times dialog while one is open, and the date-time
     /// editor it opens.
     pub manage_times: Rc<RefCell<Option<ManageTimesWindow>>>,
@@ -574,6 +577,7 @@ fn lay_out_thumbnails(window: &MainWindow, store: &hydrus_store::Store, rows: &T
 
 /// Show `pages` in `window`, and let the window change them.
 pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
+    windows::register_main(window);
     about_window::note_boot();
     window
         .global::<TagTextHistory<'_>>()
@@ -2060,10 +2064,18 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
     });
     // a thumbnail's or the viewer's "manage > ratings"
     let manage_ratings: Rc<RefCell<Option<ManageRatingsWindow>>> = Rc::default();
+    let rating_count_editor: Rc<RefCell<Option<EditValueWindow>>> = Rc::default();
     let open_manage_ratings: OpenOnFiles = Rc::new({
         let manage_ratings = manage_ratings.clone();
+        let rating_count_editor = rating_count_editor.clone();
         move |store: Arc<hydrus_store::Store>, files: Vec<HashId>, applied: Rc<dyn Fn()>| {
-            match manage_ratings_window::open(&store, files, &manage_ratings, applied) {
+            match manage_ratings_window::open(
+                &store,
+                files,
+                &manage_ratings,
+                &rating_count_editor,
+                applied,
+            ) {
                 Ok(window) => *manage_ratings.borrow_mut() = Some(window),
                 Err(e) => eprintln!("could not open manage ratings: {e}"),
             }
@@ -2960,6 +2972,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                 Rc::new(move |action| database_backup_window::run(&context, action))
             },
             debug: {
+                debug_actions::install_report_sink(pages.borrow().store());
                 let context = debug_actions::Context {
                     pages: pages.clone(),
                     ask: {
@@ -5319,6 +5332,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         tag_migration,
         manage_notes,
         manage_ratings,
+        rating_count_editor,
         manage_times,
         datetime_editor,
         force_filetype,

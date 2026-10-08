@@ -31,7 +31,8 @@ import { MenuBarRow, MenuLine, MenuPane, MenuPanes, MenuTitle } from "main_menu.
 import { PopupBounds, PopupData, PopupStack } from "popups.slint";
 import { DuplicatesData, DuplicatesFiltering, DuplicatesSidebar } from "duplicates_page.slint";
 export { DuplicatesData, DuplicatesFiltering }
-import { RatingShape } from "viewer.slint";
+import { RatingRow, RatingShape } from "viewer.slint";
+import { PreviewTopRight } from "preview_hover.slint";
 export { DownloadLine, GalleryData, WatcherData, JobCogMenu }
 export { NetworkErrorWindow } from "importing.slint";
 export { MenuLine, MenuPane, MenuTitle, PopupData }
@@ -392,6 +393,22 @@ export component MainWindow inherits Window {
     in property <length> preview-media-height;
     in property <bool> preview-has-media;
     in property <bool> preview-loading;
+    // the file's ratings and locations, in the preview's top-right corner
+    in property <[RatingRow]> preview-ratings;
+    in property <length> preview-rating-size: 12px;
+    in property <length> preview-incdec-height: 12px;
+    in property <length> preview-rating-outline: 1px;
+    in property <[string]> preview-lines;
+    in property <bool> preview-inbox;
+    in property <bool> preview-trashed;
+    in property <bool> preview-draw-top-right: true;
+    in property <bool> preview-pop-in: true;
+    out property <bool> preview-hover-popped: preview-top-right.popped;
+    out property <length> preview-hover-x: preview-top-right.absolute-position.x;
+    out property <length> preview-hover-y: preview-top-right.absolute-position.y;
+    out property <length> preview-hover-width: preview-top-right.width;
+    out property <length> preview-hover-height: preview-top-right.height;
+    callback preview-rating-clicked(int, bool, float);
     in-out property <bool> preview-splitter-hidden;
     callback preview-retired();
     callback preview-presentation-changed();
@@ -1560,6 +1577,21 @@ export component MainWindow inherits Window {
                         clip: true;
                         Image { x:root.preview-media-x;y:root.preview-media-y;width:root.preview-media-width;height:root.preview-media-height;source:root.preview-media;image-fit:fill; }
                         if !root.preview-has-media: Text { text: root.preview-loading ? "loading preview" : "no preview available"; color: Theme.text; horizontal-alignment: center; vertical-alignment: center; }
+                        preview-top-right := PreviewTopRight {
+                            x: parent.width - self.width;
+                            y: 0;
+                            visible: root.preview-has-media;
+                            ratings: root.preview-ratings;
+                            rating-size: root.preview-rating-size;
+                            incdec-height: root.preview-incdec-height;
+                            outline: root.preview-rating-outline;
+                            lines: root.preview-lines;
+                            inbox: root.preview-inbox;
+                            trashed: root.preview-trashed;
+                            draw-background: root.preview-draw-top-right;
+                            pop-in: root.preview-pop-in;
+                            rating-clicked(row, left, proportion) => { root.preview-rating-clicked(row, left, proportion); }
+                        }
                     }
                 }
                     }
@@ -2318,7 +2350,7 @@ export component MainWindow inherits Window {
 }
 
 export { ParserListWindow, ParserEditWindow, ParserPickerWindow } from "parser_editors.slint";
-export { ClientApiKeysWindow, EditApiPermissionsWindow, ApiPermissionRow } from "client_api_admin.slint";
+export { ClientApiKeysWindow, EditApiPermissionsWindow, ApiPermissionRow, ApiRequestWindow } from "client_api_admin.slint";
 
 export { NetworkDataWindow, EditNetworkValueWindow, CookieImportWindow, HeaderApprovalWindow } from "network_sessions.slint";
 

@@ -58,7 +58,14 @@ workstreams seldom touch the same files.
 | `shell` | notebook tabs, popups, startup password, window geometry, status bar, Help menu | `lib.rs`, `pages.rs`, `popups.rs`, `notebook*` |
 
 Priorities: `low` (Help > debug) is skipped by `track.py next` unless `--all`;
-`out-of-scope` (remote repositories, IPFS, the PTR) is not counted.
+`out-of-scope` is not counted. Each out-of-scope leaf's first note says why:
+remote repositories, IPFS and the PTR (owner's priorities); Database entries
+for caches the native store does not keep (ADR-1); and, triaged on
+2026-10-08, settings that exist only because of the reference's platform
+(Qt toolkit and QtMediaPlayer settings, Python library switches, debug
+switches for the Qt-embedded mpv player) or of machinery hydrus-rs does not
+have (deferred table deletes, background sibling/parent sync). Undo a triage
+by setting the priority back to `normal` and removing that note.
 
 ## Editing leaves.json
 

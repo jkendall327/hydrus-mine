@@ -3,6 +3,9 @@
 //! the frame saved from them.
 
 use hydrus_core::windows::{FrameLocation, WindowSettings, WindowState};
+use hydrus_gui_model::frame_placement::{
+    self, Parent, Placement, Rect as PlacementRect, Surroundings,
+};
 use hydrus_gui_model::window_rescue::{self, Point, Rect, Screen};
 use hydrus_store::{Store, settings::WindowRescueSettings};
 use slint::winit_030::{EventResult, WinitWindowAccessor as _, winit::event::WindowEvent};
@@ -19,20 +22,92 @@ pub fn keep(store: &Store, settings: WindowSettings) {
     }
 }
 
-/// Size and place a window about to open as its frame says
-/// (`SetInitialTLWSizeAndPosition`, less its fitting to the screen): its
-/// last size and place where it remembers them, then maximised, then
-/// fullscreen (never on macOS, as the reference).
-pub fn place(window: &slint::Window, frame: &FrameLocation) {
-    if frame.remember_size
-        && let Some((width, height)) = frame.last_size
-    {
-        #[allow(clippy::cast_precision_loss)]
-        window.set_size(slint::LogicalSize::new(width as f32, height as f32));
+thread_local! {
+    static MAIN: std::cell::RefCell<Option<slint::Weak<crate::MainWindow>>> =
+        const { std::cell::RefCell::new(None) };
+}
+
+/// Note the main window, the parent that child windows open relative to.
+pub(crate) fn register_main(window: &crate::MainWindow) {
+    use slint::ComponentHandle as _;
+    MAIN.with(|main| *main.borrow_mut() = Some(window.as_weak()));
+}
+
+/// What a window opening now can see of the main window and its display.
+fn surroundings(is_main: bool) -> Surroundings {
+    use slint::ComponentHandle as _;
+    let main = MAIN
+        .with(|main| main.borrow().clone())
+        .and_then(|main| main.upgrade());
+    let Some(main) = main.filter(|main| main.window().is_visible()) else {
+        return Surroundings::default();
+    };
+    let scale = main.window().scale_factor();
+    let position = main.window().position().to_logical(scale);
+    let size = main.window().size().to_logical(scale);
+    #[allow(clippy::cast_possible_truncation)]
+    let frame = PlacementRect {
+        x: position.x.round() as i32,
+        y: position.y.round() as i32,
+        width: size.width.round() as i32,
+        height: size.height.round() as i32,
+    };
+    let display = native_screens(main.window()).and_then(|screens| {
+        let centre = (i64::from(frame.center().0), i64::from(frame.center().1));
+        screens
+            .iter()
+            .find(|screen| screen.geometry.contains(centre))
+            .or(screens.first())
+            .and_then(|screen| {
+                Some(PlacementRect {
+                    x: i32::try_from(screen.geometry.x).ok()?,
+                    y: i32::try_from(screen.geometry.y).ok()?,
+                    width: i32::try_from(screen.geometry.width).ok()?,
+                    height: i32::try_from(screen.geometry.height).ok()?,
+                })
+            })
+    });
+    Surroundings {
+        parent: (!is_main).then_some(Parent {
+            frame,
+            fullscreen: main.window().is_fullscreen(),
+        }),
+        display,
+        mouse: None,
     }
-    if frame.remember_position
-        && let Some((x, y)) = frame.last_position
-    {
+}
+
+/// Where a window about to open goes, from its frame
+/// (`SetInitialTLWSizeAndPosition`, less its off-screen rescue): its last
+/// size and place where it remembers them, otherwise its size grown by its
+/// default gravity toward the main window and its place by its default
+/// position.
+pub fn placement(window: &slint::Window, frame: &FrameLocation, is_main: bool) -> Placement {
+    let scale = window.scale_factor();
+    let hint = window.size().to_logical(scale);
+    #[allow(clippy::cast_possible_truncation)]
+    let hint = (hint.width.round() as i32, hint.height.round() as i32);
+    frame_placement::initial(frame, hint, &surroundings(is_main))
+}
+
+/// Size and place a window about to open as its frame says: its place and
+/// size by [`placement`], then maximised, then fullscreen (never on macOS,
+/// as the reference).
+pub fn place(window: &slint::Window, frame: &FrameLocation) {
+    place_as(window, frame, false);
+}
+
+fn place_as(window: &slint::Window, frame: &FrameLocation, is_main: bool) {
+    let target = placement(window, frame, is_main);
+    // (a window with no size yet keeps the one its toolkit gave it)
+    if target.size.0 > 0 && target.size.1 > 0 {
+        #[allow(clippy::cast_precision_loss)]
+        window.set_size(slint::LogicalSize::new(
+            target.size.0 as f32,
+            target.size.1 as f32,
+        ));
+    }
+    if let Some((x, y)) = target.position {
         #[allow(clippy::cast_precision_loss)]
         window.set_position(slint::LogicalPosition::new(x as f32, y as f32));
     }
@@ -53,7 +128,7 @@ pub fn place_named(window: &slint::Window, store: &Store, name: &str) {
 /// Placement for an owner whose combined event filter is already installed.
 pub fn place_named_geometry(window: &slint::Window, store: &Store, name: &str) {
     if let Some(frame) = settings(store).frame(name) {
-        place(window, frame);
+        place_as(window, frame, name == "main_gui");
     }
 }
 

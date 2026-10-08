@@ -61,6 +61,11 @@ thread_local! {
     static PICKER: RefCell<Option<crate::GuiColourPickerWindow>> = const { RefCell::new(None) };
 }
 
+/// The colour picker the edit button last opened, if still shown.
+pub fn last_picker() -> Option<crate::GuiColourPickerWindow> {
+    PICKER.with(|p| p.borrow().as_ref().map(ComponentHandle::clone_strong))
+}
+
 /// Recolour the queued entries one after another (`_EditNamespaceColour`);
 /// a cancelled picker keeps an entry's colour.
 fn edit_next(

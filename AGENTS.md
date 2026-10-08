@@ -33,7 +33,9 @@ ceremony.
 2. **Read the reference.** `grep -rn` in `hydrus/` (GUI code in
    `hydrus/client/gui/`). Note every string the user sees, every question
    asked, and what each button does.
-3. **Record it** when behaviour is non-trivial: a recorder in `oracle/` drives
+3. **Record it** when behaviour is non-trivial (`scripts/setup-oracle.sh`
+   installs the reference's environment in ~3 minutes, also in a cloud
+   session): a recorder in `oracle/` drives
    the real reference client and writes a fixture to `oracle/fixtures/`. Copy a
    recent one (`oracle/record_downloader_lists.py`,
    `oracle/record_subscriptions_list.py`, `oracle/record_sessions_menu.py`):

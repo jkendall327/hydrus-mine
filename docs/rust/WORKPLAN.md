@@ -186,3 +186,77 @@ shared Cargo lock. Design that avoids most of the Rust churn:
   after round 2's reports; agents launched before saw the old script), the
   120 s tool timeout, needing `#[path]` re-declarations of helper modules
   (`subscriptions`, `duplicate_filter`) in lanes.
+
+### UI split: deferred again (2026-10-08, after round 3)
+
+Closer reading: besides the 24 shared structs (solvable by the build-script
+rewrite), the 5 Slint globals (`Theme`, `TagTextHistory`, `Palette`,
+`TabNames`, `MenuChoicePolicy`) are used at ~61 Rust sites, several inside
+shared helpers that serve windows of every group (`gui_colours::bind` takes a
+`Theme`). After a split each group has its own distinct global types and Slint
+offers no trait over them, so every such helper needs macro-generated
+per-group versions; `main.slint`'s window re-exports would also move. That is
+the "day of churn" risk. The `.slint` rebuild cost is per machine, and its
+real harm is agents queuing on one machine's Cargo lock. Separate cloud
+sessions (own 16 GB, own target dir) remove that queue with no code churn, so
+try those first for the implementation phase; revisit the split only if one
+agent's own rebuilds dominate its time.
+
+### Round 4 (implementation phase begins)
+
+- Triage: 44 platform-only leaves moved out of scope (see tracking README).
+  Real backlog now ~170 in-scope leaves (+77 low-priority debug).
+- Local agent: `shell` (verification + small fixes).
+- Remote sessions trial (own machine, own branch, may edit `.slint`):
+  `claude/impl-external-callables` (session_01LXA7NvYQ1tHMwseLtHHb9x) and
+  `claude/impl-help-debug` (session_01SRhsQFQojn7WDE3krZbZzi). Each writes a
+  report to `docs/rust/notes/impl-*.md` with build/rebuild/loop timings. I
+  merge their branches after review.
+
+### Round 5 (remote sessions only, 2026-10-08 11:30 UTC)
+
+- Merged `claude/impl-external-callables` (16 tests; one Clippy fix on top:
+  its pre-push lint had not finished before the push). Its session moved on to
+  the options-system remainder (idle detection, shutdown jobs, sleep wait).
+- Remote trial verdict so far: own machine, ~23 min first build, ~7 min UI
+  rebuild, 20-40 s loop; no lock contention. Scaled out to every remaining
+  workstream, one session each, all from this branch:
+  `claude/impl-search-pages` (session_01375RaYXk3CVBxKmkALxCWo),
+  `claude/impl-options-gui-media` (session_01Hh9F3nMmGfr29cvixaf766),
+  `claude/impl-small-areas` (session_015Mj34GrH4eN9XPCcZsX11Q), plus
+  help-debug and external-callables (options-system) still running.
+  Prompt template: implement, not just test; untagged when nothing reads a
+  setting; report to `docs/rust/notes/impl-<branch>.md`.
+- Merge plan: one branch at a time into this branch, rebuild UI, run the
+  branch's tests + `dev.sh lint`, push; expect `GUI.md`/`DIFFERENCES.md` and
+  `tests/gui/main.rs` conflicts (keep both sides).
+- 12:00 UTC: merged `claude/impl-help-debug` (30 leaves tagged, report in
+  `docs/rust/notes/impl-help-debug.md`; first build 19 min, no `.slint`
+  edits). Its tests, `dev.sh lint`, fmt and track check pass here. 28 debug
+  leaves that exist only for Qt/Python/the reference's harness moved out of
+  scope. Tracker: 1,039 done, 48 partial, 87 missing, 97 out of scope.
+- 13:45 UTC: merged `claude/impl-search-pages` (14 leaves, tests only: the
+  states were stale), `claude/impl-small-areas` (14 leaves, 4 real features)
+  and `claude/impl-options-gui-media` (10 leaves; frame gravity, preview hover,
+  duplicate hover pin, mpv plan, ratings examples). All model tests and 957/958
+  GUI tests pass here (emoji_fonts: this container's fonts; passes in CI).
+  Tracker: 1,078 done; ~80 normal-priority leaves left plus 19 debug.
+- **Independent review per batch works**: three Sonnet reviewers (read-only,
+  2-3 min each) found real problems the sessions' own checks missed: a
+  ratings-example template that contradicts the reference (saved at once,
+  only colours/shape cloned), int-vs-round icon sizes, an empty-data session,
+  a registration window left open for an hour, tests replaying a decision
+  function instead of the daemon, and two date panels proved with borrowed,
+  string-rewritten scenarios. Findings go back to the owning session as its
+  next first task. Keep this step. Tell reviewers: `git show`/`git diff` only,
+  never `git checkout` (one detached HEAD in the shared checkout).
+- **The reference can be recorded in cloud containers after all**:
+  `scripts/setup-oracle.sh` (pip + libEGL + libmpv, ~3 min) and recorders run
+  (13 s for the date-time editor, byte-identical fixture). Sessions had been
+  testing against the reference's source instead. The archived/modified date
+  leaves are now proved against new recordings.
+- Next: the four running sessions (options-system; manage-tags cluster +
+  review fixes; editors/network + similar-files paste; shell + options
+  partials + review fixes). Platform-limited leaves to decide with the owner:
+  system tray (`audit-options-file-tray`), drag out of the viewer, tag
+  tooltips, "mouse on another display" freeze.

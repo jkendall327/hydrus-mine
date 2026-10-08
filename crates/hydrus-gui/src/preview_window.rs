@@ -181,7 +181,17 @@ impl Canvas {
         }
     }
 }
+/// The top-right hover's contents for the file shown, kept so the rating
+/// controls a click lands on are the ones drawn.
+#[derive(Default)]
+struct Overlay {
+    file: Option<HashId>,
+    controls: Vec<hydrus_gui_model::ratings::Control>,
+    checked: Option<std::time::Instant>,
+}
 struct State {
+    overlay: RefCell<Overlay>,
+    force_overlay: Cell<bool>,
     window: slint::Weak<MainWindow>,
     store: Arc<Store>,
     source: Source,
@@ -202,6 +212,10 @@ impl State {
         (self.clock.borrow())()
     }
     fn blank(window: &MainWindow) {
+        window.set_preview_ratings(slint::ModelRc::default());
+        window.set_preview_lines(slint::ModelRc::default());
+        window.set_preview_inbox(false);
+        window.set_preview_trashed(false);
         window.set_preview_media(slint::Image::default());
         window.set_preview_has_media(false);
         window.set_preview_loading(false);
@@ -299,7 +313,111 @@ impl State {
             window.set_preview_media_height(0.0);
         }
         window.set_preview_loading(canvas.pending.borrow().is_some());
+        self.update_overlay(
+            window,
+            canvas
+                .accepted
+                .get()
+                .filter(|_| canvas.frame.borrow().is_some()),
+        );
         self.trim_frames();
+    }
+    /// The top-right hover: the file's ratings (at the preview window's
+    /// icon sizes), inbox and trash icons, locations and URLs, drawn in the
+    /// background or popped in on mouseover as the options say
+    /// (`CanvasPanel._DrawTopRight`, `CanvasHoverFrameTopRight`).
+    fn update_overlay(&self, window: &MainWindow, file: Option<HashId>) {
+        let forced = self.force_overlay.replace(false);
+        let now = std::time::Instant::now();
+        let due = {
+            let overlay = self.overlay.borrow();
+            forced
+                || overlay.file != file
+                || overlay
+                    .checked
+                    .is_none_or(|at| now.duration_since(at) >= Duration::from_millis(250))
+        };
+        if !due {
+            return;
+        }
+        let options: hydrus_store::reference_options::ReferenceOptions = self
+            .store
+            .read(hydrus_store::settings::get)
+            .unwrap_or_default();
+        let sizes: hydrus_store::settings::RatingContextSizes = self
+            .store
+            .read(hydrus_store::settings::get)
+            .unwrap_or_default();
+        window.set_preview_draw_top_right(
+            options.boolean("draw_top_right_hover_in_preview_window_background"),
+        );
+        window.set_preview_pop_in(options.boolean("preview_window_hover_top_right_shows_popup"));
+        window.set_preview_rating_size(sizes.preview_icon_size.round_ties_even() as f32);
+        window.set_preview_incdec_height(sizes.preview_incdec_height.round_ties_even() as f32);
+        window.set_preview_rating_outline(hydrus_gui_model::ratings::outline_width(
+            sizes.preview_icon_size.round_ties_even(),
+        ) as f32);
+        let mut overlay = self.overlay.borrow_mut();
+        overlay.file = file;
+        overlay.checked = Some(now);
+        let Some(file) = file else {
+            overlay.controls.clear();
+            window.set_preview_ratings(slint::ModelRc::default());
+            window.set_preview_lines(slint::ModelRc::default());
+            window.set_preview_inbox(false);
+            window.set_preview_trashed(false);
+            return;
+        };
+        let controls = hydrus_gui_model::ratings::controls(&self.store, file);
+        window.set_preview_ratings(slint::ModelRc::new(slint::VecModel::from(
+            controls.iter().map(crate::rating_row).collect::<Vec<_>>(),
+        )));
+        overlay.controls = controls;
+        let shown = crate::viewer::shown(&self.store, file);
+        window.set_preview_inbox(shown.inbox);
+        window.set_preview_trashed(shown.trashed);
+        let mut lines: Vec<slint::SharedString> = shown
+            .locations
+            .into_iter()
+            .map(slint::SharedString::from)
+            .collect();
+        if let Ok(links) = crate::downloader_display_window::file_links(&self.store, file) {
+            lines.extend(
+                links
+                    .into_iter()
+                    .map(|(label, _)| slint::SharedString::from(label)),
+            );
+        }
+        window.set_preview_lines(slint::ModelRc::new(slint::VecModel::from(lines)));
+    }
+    /// A rating clicked in the hover: set it as the viewer's hover does.
+    fn rating_clicked(&self, row: i32, left: bool, proportion: f32) {
+        let (file, control) = {
+            let overlay = self.overlay.borrow();
+            let Some(file) = overlay.file else { return };
+            let Some(control) = usize::try_from(row)
+                .ok()
+                .and_then(|row| overlay.controls.get(row).cloned())
+            else {
+                return;
+            };
+            (file, control)
+        };
+        let done = if left {
+            hydrus_gui_model::ratings::left_click(
+                &self.store,
+                file,
+                &control,
+                f64::from(proportion),
+            )
+        } else {
+            hydrus_gui_model::ratings::right_click(&self.store, file, &control)
+        };
+        if let Err(error) = done {
+            eprintln!("could not set the rating: {error}");
+        }
+        self.force_overlay.set(true);
+        self.refresh();
     }
     fn submit(&self, canvas: &Canvas, file: HashId, restore: bool) {
         let generation = rand::random();
@@ -682,6 +800,8 @@ impl Monitor {
             .read(hydrus_store::image_colour::load)
             .unwrap_or_default();
         let state = Rc::new(State {
+            overlay: RefCell::default(),
+            force_overlay: Cell::new(false),
             window: window.as_weak(),
             store,
             source,
@@ -702,6 +822,14 @@ impl Monitor {
             move || {
                 if let Some(state) = state.upgrade() {
                     state.close();
+                }
+            }
+        });
+        window.on_preview_rating_clicked({
+            let state = Rc::downgrade(&state);
+            move |row, left, proportion| {
+                if let Some(state) = state.upgrade() {
+                    state.rating_clicked(row, left, proportion);
                 }
             }
         });
@@ -727,6 +855,7 @@ impl Monitor {
     }
     /// Refresh this visible canvas after a real page/selection/presentation change.
     pub fn refresh(&self) {
+        self.0.force_overlay.set(true);
         self.0.refresh();
     }
     /// Accepted media belongs to the shown live page, independently of focus.

@@ -29,12 +29,28 @@ set -euo pipefail
 cd "$(dirname "$0")/.."
 
 jobs=${DEV_JOBS:-4}
+
+# Incremental state under target/debug/incremental grows by gigabytes a day
+# and a full disk makes unrelated tests fail strangely (SQLite cannot open
+# its database). Below 5 GB free, drop it; the next build is slower, not wrong.
+free_gb=$(df -BG --output=avail . | tail -1 | tr -dc '0-9')
+if [ "${free_gb:-99}" -lt 5 ] && [ -d target/debug/incremental ]; then
+  echo "dev.sh: only ${free_gb} GB free; removing target/debug/incremental" >&2
+  rm -rf target/debug/incremental
+fi
 gui_test=${DEV_LANE:+lane_$DEV_LANE}
 gui_test=${gui_test:-gui}
 cargo_() { cargo "$1" --locked -j "$jobs" "${@:2}"; }
 
 slint_check() {
-  cargo run -q --manifest-path tools/slint-check/Cargo.toml --target-dir target/tools
+  # (the built checker runs directly: `cargo run` would wait for Cargo's lock
+  # while another build, such as the first UI build, holds it)
+  local bin=target/tools/debug/slint-check
+  if [ -x "$bin" ] && [ -z "$(find tools/slint-check -newer "$bin" -type f -print -quit)" ]; then
+    "$bin"
+  else
+    cargo run -q --manifest-path tools/slint-check/Cargo.toml --target-dir target/tools
+  fi
 }
 
 build_ui() {

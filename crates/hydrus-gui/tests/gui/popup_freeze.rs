@@ -75,6 +75,7 @@ fn open(ui: &MainWindow, bound: &hydrus_gui::Bound) -> (OptionsWindow, i32) {
         .unwrap();
     (window, i32::try_from(row).unwrap())
 }
+// leaf: audit-options-popup-notifications-popup-window-toaster-freeze-the-popup-toaster-when-the-main-gui-is-minimised
 #[test]
 fn queued_jobs_expire_and_change_under_frozen_cards_then_restore_and_live_false_resume() {
     let dir = tempfile::tempdir().unwrap();

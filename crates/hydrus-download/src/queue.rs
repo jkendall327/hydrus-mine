@@ -291,6 +291,43 @@ impl QueueRunner {
             .unwrap_or_default()
     }
 
+    /// Act on what another process (the desktop client) asked of the queues:
+    /// downloads its pages cancelled are stopped, nudged queues looked at
+    /// now, and the "nudge subscriptions awake" menu entry wakes the
+    /// subscription runner. Whether there was anything to do.
+    pub fn take_nudges(
+        self: &Arc<Self>,
+        subscriptions: Option<&Arc<crate::subscriptions::SubscriptionRunner>>,
+    ) -> Result<bool, String> {
+        let store = &self.downloader.store;
+        if !store
+            .read(hydrus_store::queues::any_nudged)
+            .map_err(|e| e.to_string())?
+        {
+            return Ok(false);
+        }
+        // downloads a page's cancel button stopped, then the queues
+        let cancels = store
+            .write(|ctx| hydrus_store::live::take_cancels(ctx.conn()))
+            .map_err(|e| format!("reading cancelled downloads failed: {e}"))?;
+        for (queue, kind) in cancels {
+            self.cancel(queue, kind);
+        }
+        let nudged = store
+            .write(|ctx| hydrus_store::queues::take_nudges(ctx.conn()))
+            .map_err(|e| format!("reading nudged queues failed: {e}"))?;
+        for queue in nudged {
+            if queue == hydrus_store::queues::SUBSCRIPTIONS_NUDGE {
+                if let Some(subscriptions) = subscriptions {
+                    subscriptions.wake();
+                }
+                continue;
+            }
+            self.nudged(queue);
+        }
+        Ok(true)
+    }
+
     /// Stop a queue's current download of this kind, as its page's cancel
     /// button does.
     pub fn cancel(&self, queue: i64, kind: JobKind) {

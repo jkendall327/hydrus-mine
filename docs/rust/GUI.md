@@ -1565,7 +1565,8 @@ lists of comparators, each edited in an editor of its own) and the
 action (which, deleting A or B, and default or custom merge options,
 starting from the client's for the action and edited in the merge options
 editor).
-"apply" refuses a "better" rule whose comparators can't tell A from B,
+A rule's comparator list can export one to the clipboard or a png, import from
+the clipboard or pngs, and duplicate. "apply" refuses a "better" rule whose comparators can't tell A from B,
 with the reference's words. Its "preview" tab searches the rule as
 edited for a sample of its pairs ("only sample this many", or all) and
 tests each, off the UI thread: "47 pairs searched; 10 matched", the
@@ -1647,7 +1648,9 @@ with add/edit/duplicate/delete, template and replacement controls, search term
 separator, initial/example searches, raw/request URL previews and matched
 classes. Nested generators select existing single generators; missing members
 are reported in the list and repaired on Apply, as in the reference. Deleting
-a generator used by a nested one asks before removing it. Parser and URL link
+generators asks "Remove all selected?", then, for each one a nested generator
+uses, the reference's warning naming those (a "no" stops there, the ones
+before it already gone). Parser and URL link
 settings are preserved when saving these lists.
 
 Recorded by `oracle/record_downloader_definitions.py`; replayed by model and
@@ -1884,7 +1887,10 @@ so a concurrent class edit cannot install a link on a file or redirect source.
 
 Service review now opens a native Client API access-key list with the reference
 columns, extended selection, sorting, add/edit/duplicate/delete, copy-key and
-local base-URL opening. Permission editors expose all 14 basic permissions,
+local base-URL opening, and "add from api request": a window waits for a tool
+to ask for access (refused with the reference's words if the service isn't
+running), and the first request opens the permissions editor with what the
+tool asked for and the key it was given. Permission editors expose all 14 basic permissions,
 full access, the reusable permitted-search-tags filter and explicit key rotation
 with validation/collision refusal. List and nested edits remain detached until
 Apply; Cancel and closing service review cancel their descendants. Real Qt
@@ -1947,7 +1953,10 @@ delete. Their editor asks domain, access and description in the reference order.
 
 Network > data > review session cookies browses persisted domain and imported
 service sessions, with a text filter, show-empty toggle, cookie count and latest
-expiry. Create new establishes a domain silo; review opens its cookie list.
+expiry. Create new asks for the context's type as the reference's editor does (web
+domain, or hydrus service with the repositories to choose from, each with the
+reference's one-line note) and establishes that session; review opens its cookie
+list.
 Clear asks the reference's deletion question and removes the selected sessions.
 The cookie window stages add/edit/delete until Apply, including domain/path/name
 changes, session or UTC expiry, a time delta from now, and HTTPS-only cookies.
@@ -4665,12 +4674,44 @@ program exit signal" (leaves the event loop at once); and memory actions >
 `tests/model/debug_actions.rs` checks the texts and popups;
 `tests/model/main_menu.rs` the menu against the recording.
 
+Help > debug > report modes offers the reference's checked switches, off at
+every start and shared by the whole client; each reports through a popup and
+a console line, in the reference's words where it has them:
+"blurhash mode" (thumbnails are drawn from their blurhash, if the fallback
+option allows it, never from the stored thumbnail), "cache report mode" (each
+eviction from the image and thumbnail caches, with sizes), "daemon report
+mode" (the maintenance daemons starting a pass), "file import report mode"
+(an import job's creation, start, hash and completion), "file report mode"
+(file and thumbnail path requests), "gui report mode" (key and mouse events
+caught as shortcuts), "idle report mode" (why the client is not idle: not
+on for 120s, normal idle work disabled, last user, mouse or Client API
+action, or forced from the debug menu), "network report mode" and its
+"(silent)" twin (redirects and errors; silent goes to the console only),
+"shortcut report mode" (what a shortcut matched, or that it matched
+nothing), "similar files metadata generation report mode" (each stage of
+making a perceptual hash), "subprocess report mode" (each external
+program's arguments before it starts) and "subscription report mode" (each
+query's sync-due test).
+
+Also in Help > debug: gui actions > "autocomplete delay mode" (every tag
+autocomplete search takes three more seconds), data actions > "scan file
+storage folders" (pick a directory; it says how many storage subfolders it
+found and how long it took, or why it gave up), and debug modes > "use
+faulthandler to log crashes" (while on, each panic is written with a
+backtrace to a "client crash" log in the database directory).
+`tests/gui/debug_menu_actions.rs` clicks each debug entry in the real menu
+and reads the effect back; `tests/model/debug_flags.rs` and the
+`debug_*` tests of hydrus-import, hydrus-net, hydrus-download, hydrus-media
+and hydrus-store cover the reports their crates make.
+
 ## Pages > weight report
 
 Pages > weight > "total session weight: N" now explains the number as the
 reference does: the open pages' count and total, their file and URL weights
 (a file 1, a URL 20), and the closed pages' (in the undo list) total, file
-and URL weights. `tests/model/session_weight.rs` checks the wording.
+and URL weights. `tests/model/session_weight.rs` checks the wording, and
+`tests/gui/search_pages_menu.rs` drives the menu: the message counts the open
+pages' files and URLs, and a closed page's files move to the undo-list part.
 
 ## Thumbnail manage > file relationships
 
@@ -4892,3 +4933,60 @@ PATH entries. Per-input enable flags, tokens, string processors, the timeout /
 "this can live for a very long time" marker, hide terminal and text flags, the
 executable questions (empty path, `which` failure) and both tests are proven in
 `tests/gui/external_calls_editor.rs`.
+
+### Options: frame gravity and position, the preview hover, tag suggestion tabs, mpv, the pinned duplicates hover
+
+**Frame locations.** A window with no remembered size or place opens as the
+reference's `SetInitialTLWSizeAndPosition` says: its default gravity grows each
+axis toward the main window (the main window's size less 24 pixels either
+side; "expand width as much as needed" keeps the window's own size) and the
+display limits it; its default position puts it at the main window's top-left
+plus the padding (slid back up and left if it would leave the display),
+centred on the main window, or at the mouse. Remembered sizes and places still
+come first. The main window, the media viewer and the Options window consult
+their frames; the Options window is placed once shown, when its own size is
+known. Proven by `tests/model/frame_placement.rs` (the formulae worked from the
+reference's source) and `options_gui_frames.rs` (editing the Options window's
+own frame through the frames editor).
+
+**Preview window.** The preview pane draws the file's ratings at the sizes
+from Options > ratings > preview window (rounded, as the reference's
+`round( GetFloat(...) )`), its inbox/trash icons, locations and URL names in its
+top-right corner when "Draw ratings and locations (top-right) in preview window
+background" is on. With "Pop-in this hover on mouseover" on, the mouse over the
+corner raises the same box with live rating controls (click or drag to set, right
+click to clear). Proven by `tests/gui/preview_top_right.rs`.
+
+**Tag suggestions.** The page now has the reference's four notebook pages as
+titled groups: most used (the per-service lists), related ("Show related tags",
+the three search durations, the concurrence threshold and the weight tables),
+file lookup scripts (the switch) and recent (the count, or "do not show").
+"Show related tags", the concurrence threshold and the recent count change
+the Manage Tags window's panels; the durations and file lookup switch are kept
+only (see DIFFERENCES.md). Proven by `options_gui_suggestions.rs`.
+
+**mpv.** "Set a new mpv.conf on dialog ok?" copies the chosen file over the
+database's `mpv.conf` when Options is OKed (never kept, and a path that isn't a
+file does nothing). The preferred audio device, "Loop Playlist instead of Loop
+File" and "Set null audio device on silent media" decide the commands a player
+is sent as each file loads (`mpv_options::Plan`); a file without sound plays on
+the `null` device when asked. Proven by `options_media_mpv.rs` and
+`tests/model/mpv_options.rs`; libmpv is not available to the tests, so what is
+driven is the plan the player executes, not mpv.
+
+**Duplicates filter hover.** "Pin the duplicates ... hover window so it is always
+visible" (on by default) keeps the comparison panel beside the canvas; off, the
+canvas fills the window and the panel pops in over its right edge when the
+mouse goes there and stays while the mouse is over it. It follows the option
+while the filter is open. Proven by `duplicate_hover_pin.rs`.
+
+**Ratings page examples.** The page opens with the reference's "choose rating
+service style to display for examples" box: a dropdown of the like/dislike and
+numerical services ("Select rating service for styling numerical stars"). Each
+size box ends with "... size examples (click to test)": a row of stars, in the
+chosen service's shape and colours (a numerical service's whole style, a
+like/dislike service's shape and colours on five stars), and an inc/dec
+rectangle, drawn at the whole pixels typed in that box above them. Clicking or
+dragging the stars rates the example (the fraction beside them shows it), right
+click clears; the rectangle counts up on a click and down on a right click.
+The samples are never kept. Proven by `options_gui_ratings_examples.rs`.

@@ -535,6 +535,7 @@ fn the_edit_dialog_gives_back_what_the_reference_s_does() {
 }
 
 // leaf: audit-options-search-star-manage
+// leaf: audit-options-favourites-edit-predicates
 // leaf: audit-options-favourites-list-apply
 // leaf: audit-options-favourites-list-delete
 // leaf: audit-options-favourites-list-rows

@@ -34,3 +34,67 @@ fn the_reference_s_serialised_rules_import() {
     assert!(other.rules.is_empty());
     assert!(refused_message(&other.refused).ends_with("DuplicatesAutoResolutionRule"));
 }
+
+fn first_comparators(value: &serde_json::Value, out: &mut Vec<serde_json::Value>) {
+    if let Some(array) = value.as_array() {
+        if array.len() >= 2
+            && array[0]
+                .as_u64()
+                .is_some_and(|t| [130, 131, 137, 138, 140, 141, 152].contains(&t))
+            && array[1].is_u64()
+        {
+            out.push(value.clone());
+            return;
+        }
+        for item in array {
+            first_comparators(item, out);
+        }
+    }
+}
+
+// leaf: audit-media-rules-exchange
+#[test]
+fn comparators_export_and_import_alone_in_lists_and_from_the_reference() {
+    use hydrus_gui_model::auto_resolution_exchange::{
+        COMPARATOR_TYPE, export_comparators_text, import_comparators_text, refused_message_for,
+    };
+    let rules = suggested_rules();
+    let comparators: Vec<_> = rules.iter().flat_map(|r| r.comparators.clone()).collect();
+    assert!(comparators.len() >= 2);
+    let text = export_comparators_text(&comparators[..2]);
+    let back = import_comparators_text(&text, &|_| None).unwrap();
+    assert_eq!(back.comparators, comparators[..2]);
+    assert!(import_comparators_text("nonsense", &|_| None).is_err());
+    // the reference's own comparators, singly and in a list
+    let stored: Vec<serde_json::Value> = serde_json::from_str(include_str!(
+        "../../../hydrus-store/src/duplicates/suggested_rules.json"
+    ))
+    .unwrap();
+    let mut objects = Vec::new();
+    for rule in &stored {
+        first_comparators(rule, &mut objects);
+    }
+    assert!(!objects.is_empty());
+    let one = import_comparators_text(&objects[0].to_string(), &|_| None).unwrap();
+    assert_eq!(one.comparators.len(), 1);
+    assert!(one.refused.is_empty());
+    let list = serde_json::json!([
+        26,
+        3,
+        objects
+            .iter()
+            .map(|o| serde_json::json!([2, o]))
+            .collect::<Vec<_>>()
+    ]);
+    let all = import_comparators_text(&list.to_string(), &|_| None).unwrap();
+    assert_eq!(all.comparators.len(), objects.len());
+    // rules are not comparators: refused, with the reference's wording
+    let rule = import_comparators_text(&stored[0].to_string(), &|_| None).unwrap();
+    assert!(rule.comparators.is_empty());
+    assert_eq!(
+        refused_message_for(&rule.refused, COMPARATOR_TYPE),
+        format!(
+            "The imported objects included these types:\n\nserialisable type 128\n\nWhereas this control only allows:\n\nPairComparator"
+        )
+    );
+}
