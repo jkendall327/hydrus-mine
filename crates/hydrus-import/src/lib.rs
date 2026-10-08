@@ -106,8 +106,11 @@ impl FileImporter {
         &self.tools
     }
 
-    /// Import the file at `path`. The file is copied first, so the source may
-    /// change or disappear once this returns.
+    /// Import the file at `path`. The file is copied to a temporary path
+    /// first (always, for the Client API and the like, which do not read the
+    /// reference's `copy_import_files_to_temp_dir`; see
+    /// [`Self::import_path_with`]), so the source may change or disappear
+    /// once this returns.
     pub fn import_path(&self, path: &Path, options: &FileImportOptions) -> Result<ImportResult> {
         self.import_path_with(path, options, true)
     }

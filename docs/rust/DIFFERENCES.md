@@ -4225,7 +4225,12 @@ directory.
 - **Import local files directly from source** now works: with the option off a
   local import reads the file where it is; with it on (the default) it is
   copied to a temporary path first, as the reference does. The reference's
-  "copying file to temp location" status text is not shown.
+  "copying file to temp location" status text is not shown. The copy goes in
+  the database folder's `tmp` (on the same disk as the database, removed after
+  the import), not the system temp directory the reference uses, so it does not
+  move files off slow source storage onto the system partition. Only local
+  imports and import folders read the option; the Client API's add file by path
+  and the other import paths always copy, as the reference's do.
 - **Approve/deny progress** has no cancel, as in the reference. Its popup
   appears once four seconds have passed at the start of a chunk of four pairs;
   the reference publishes it after four seconds regardless.

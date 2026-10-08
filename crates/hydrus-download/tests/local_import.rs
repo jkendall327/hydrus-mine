@@ -508,6 +508,8 @@ async fn a_local_import_copies_to_a_temp_path_first_unless_the_option_says_not_t
     worker.start_all().unwrap();
     wait_until_done(&store, first).await;
     assert_eq!(probe.temp_copies_made(), 1);
+    let leftovers = |dir: &Path| std::fs::read_dir(dir.join("tmp")).map_or(0, Iterator::count);
+    assert_eq!(leftovers(dir.path()), 0, "the temp copy is gone afterwards");
     let copied = hash_of(first);
 
     // "import local files directly from source": the same file, no copy

@@ -516,7 +516,30 @@ fn dropped_binding_retires_retained_control_and_wakes_its_real_held_wait() {
 fn the_recycle_bin_option_decides_whether_physical_deletes_go_to_the_os_bin() {
     const RECYCLE: &str =
         "When physically deleting files or folders, send them to the OS's recycle bin: ";
-    let (_dirs, store, files) = owned();
+    /// Empties the OS bin of what the test sent there, however it ends.
+    struct Purge(Vec<std::path::PathBuf>);
+    impl Drop for Purge {
+        fn drop(&mut self) {
+            for path in &self.0 {
+                hydrus_store::paths::purge_from_recycle_bin(path);
+            }
+        }
+    }
+    let (dirs, store, files) = owned();
+    // Where the OS has no usable bin for this disk, a recycled file is just
+    // deleted (as `delete_or_recycle` falls back to), and the test cannot tell.
+    let probe = dirs[1].path().join("recycle-probe");
+    std::fs::write(&probe, b"probe").unwrap();
+    let _purge = Purge(
+        std::iter::once(probe.clone())
+            .chain(files.iter().map(|(_, path)| path.clone()))
+            .collect(),
+    );
+    hydrus_store::paths::delete_or_recycle(&probe, true).unwrap();
+    if !hydrus_store::paths::recycle_bin_holds(&probe) {
+        eprintln!("the OS has no usable recycle bin here; skipped");
+        return;
+    }
     let _windows = headless::init();
     let ui = MainWindow::new().unwrap();
     let bound = bind(&ui, Pages::single(SearchPage::new(store.clone())));
@@ -571,5 +594,4 @@ fn the_recycle_bin_option_decides_whether_physical_deletes_go_to_the_os_bin() {
         "{} is in the bin",
         files[1].1.display()
     );
-    hydrus_store::paths::purge_from_recycle_bin(&files[1].1);
 }
