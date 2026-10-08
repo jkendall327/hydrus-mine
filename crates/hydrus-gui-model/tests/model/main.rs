@@ -162,7 +162,9 @@ mod search_or;
 mod system_or_activation;
 
 mod manage_tag_counts;
+mod manage_tags_cog;
 mod manage_tags_sort;
+mod manage_tags_viewer;
 
 mod frame_locations;
 mod incremental_tagging;

@@ -4163,3 +4163,34 @@ directory.
 - The CPU-busy check reads per-core times from `/proc/stat`, so it exists on
   Linux only; elsewhere the system never reads busy. The reference's
   just-woke-from-sleep condition is not part of the idle gate here.
+
+## Manage tags: cog, removal, viewer dialog (issue 86)
+
+- The cog lacks the reference's moderator item ("modify users who added the
+  selected tags"): it exists only for tag repositories, which are out of scope.
+  Its menu is the shared native popup, the same one the write autocomplete uses.
+- The cog, copy and incremental buttons are text ("⚙", "copy", "±") rather than icons;
+  "Copied 3 tags!" is a line of text under the buttons, not a micro-notification on
+  the copy button.
+- "What would you like to do?" is the shared native question overlay with the two
+  choices as its buttons (the reference's local services never offer more); the
+  per-choice tooltips are computed (and tested) but not shown.
+- Clicking an expanded parent row selects that row, but remove and copy use only
+  the selected tag rows, not the parent rows; activating a parent row enters its
+  originating tag, as the reference does.
+- The viewer's Manage tags is its own window, not a frame belonging to the viewer;
+  it is closed when its own "close" is pressed rather than with the viewer. If a
+  Manage tags window opened from a page is already open, F3 in the viewer shows that
+  one (which does not follow the viewer).
+- Suggested tags: the file-lookup-script panel is not ported (the legacy
+  parsing scripts it runs are not in hydrus-rs), and `show_file_lookup_script_tags`
+  stays an option nothing reads. The related panel has one search, not the
+  quick/medium/thorough buttons and their time budgets, and does not yet search
+  from the selected tags when some are selected (the reference then searches those
+  alone and excludes the others). `audit-media-tags-missing-suggestions` and
+  `audit-options-nested-tag-suggestions-tabs` are therefore not tagged.
+- The write-autocomplete leaves (`audit-media-tags-autocomplete`,
+  `siblings-autocomplete`, `parents-autocomplete`) stay untagged: the empty-input
+  keys were the one concrete reference behaviour found missing and are now done,
+  but no test covers what those leaves name as a whole, and their long notes (context
+  menus, selection, undo history) were not re-verified here.

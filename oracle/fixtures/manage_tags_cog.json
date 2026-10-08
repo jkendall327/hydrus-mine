@@ -1,0 +1,2298 @@
+{
+  "files": [
+    "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+    "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61",
+    "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147"
+  ],
+  "corpus": [
+    [
+      "cog:all",
+      [
+        0,
+        1,
+        2
+      ]
+    ],
+    [
+      "cog:some",
+      [
+        0,
+        1
+      ]
+    ],
+    [
+      "cog:one",
+      [
+        0
+      ]
+    ],
+    [
+      "cog:b10",
+      [
+        2
+      ]
+    ],
+    [
+      "cog:a2",
+      [
+        2
+      ]
+    ],
+    [
+      "bulk:01",
+      [
+        0
+      ]
+    ],
+    [
+      "bulk:02",
+      [
+        0
+      ]
+    ],
+    [
+      "bulk:03",
+      [
+        0
+      ]
+    ],
+    [
+      "bulk:04",
+      [
+        0
+      ]
+    ],
+    [
+      "bulk:05",
+      [
+        0
+      ]
+    ],
+    [
+      "bulk:06",
+      [
+        0
+      ]
+    ],
+    [
+      "bulk:07",
+      [
+        0
+      ]
+    ],
+    [
+      "bulk:08",
+      [
+        0
+      ]
+    ],
+    [
+      "bulk:09",
+      [
+        0
+      ]
+    ],
+    [
+      "bulk:10",
+      [
+        0
+      ]
+    ],
+    [
+      "bulk:11",
+      [
+        0
+      ]
+    ],
+    [
+      "bulk:12",
+      [
+        0
+      ]
+    ]
+  ],
+  "defaults": {
+    "allow_remove_on_manage_tags_input": false,
+    "yes_no_on_remove_on_manage_tags": true,
+    "ac_select_first_with_count": false
+  },
+  "cog_menu": [
+    {
+      "kind": "MenuTemplateItemCheck",
+      "title": "allow remove/petition result on tag input for already existing tag",
+      "description": "If checked, inputting a tag that already exists will try to remove it."
+    },
+    {
+      "kind": "MenuTemplateItemCheck",
+      "title": "confirm remove/petition tags on explicit delete actions",
+      "description": "If checked, clicking the remove/petition tags button (or hitting the deleted key on the list) will first confirm the action with a yes/no dialog."
+    },
+    {
+      "kind": "MenuTemplateItemCheck",
+      "title": "select the first tag result with actual count",
+      "description": "If checked, when results come in, the typed entry, if it has no count, will be skipped."
+    },
+    {
+      "kind": "MenuTemplateItemSeparator",
+      "title": "separator",
+      "description": "separator"
+    },
+    {
+      "kind": "MenuTemplateItemCall",
+      "title": "migrate tags for these files",
+      "description": "Migrate the tags for the files used to launch this manage tags panel."
+    }
+  ],
+  "remove_button_text": "remove all/selected tags",
+  "cases": [
+    {
+      "name": "add_everywhere",
+      "calls": [
+        {
+          "method": "AddTags",
+          "args": [
+            [
+              "cog:all"
+            ]
+          ],
+          "kwargs": {}
+        }
+      ],
+      "allow_remove": false,
+      "confirm": true,
+      "answer_yes": true,
+      "choice_index": null,
+      "selected": [],
+      "asked": [],
+      "choices_asked": [],
+      "staged": [],
+      "clipboard": [],
+      "notices": []
+    },
+    {
+      "name": "add_none_have",
+      "calls": [
+        {
+          "method": "AddTags",
+          "args": [
+            [
+              "cog:b99"
+            ]
+          ],
+          "kwargs": {}
+        }
+      ],
+      "allow_remove": false,
+      "confirm": true,
+      "answer_yes": true,
+      "choice_index": null,
+      "selected": [],
+      "asked": [],
+      "choices_asked": [],
+      "staged": [
+        {
+          "action": "add",
+          "tag": "cog:b99",
+          "files": [
+            0,
+            1,
+            2
+          ]
+        }
+      ],
+      "clipboard": [],
+      "notices": []
+    },
+    {
+      "name": "add_some_have_first",
+      "calls": [
+        {
+          "method": "AddTags",
+          "args": [
+            [
+              "cog:some"
+            ]
+          ],
+          "kwargs": {}
+        }
+      ],
+      "allow_remove": false,
+      "confirm": true,
+      "answer_yes": true,
+      "choice_index": 0,
+      "selected": [],
+      "asked": [],
+      "choices_asked": [],
+      "staged": [
+        {
+          "action": "add",
+          "tag": "cog:some",
+          "files": [
+            2
+          ]
+        }
+      ],
+      "clipboard": [],
+      "notices": []
+    },
+    {
+      "name": "add_some_have_second",
+      "calls": [
+        {
+          "method": "AddTags",
+          "args": [
+            [
+              "cog:some"
+            ]
+          ],
+          "kwargs": {}
+        }
+      ],
+      "allow_remove": false,
+      "confirm": true,
+      "answer_yes": true,
+      "choice_index": 1,
+      "selected": [],
+      "asked": [],
+      "choices_asked": [],
+      "staged": [
+        {
+          "action": "add",
+          "tag": "cog:some",
+          "files": [
+            2
+          ]
+        }
+      ],
+      "clipboard": [],
+      "notices": []
+    },
+    {
+      "name": "add_some_have_cancel",
+      "calls": [
+        {
+          "method": "AddTags",
+          "args": [
+            [
+              "cog:some"
+            ]
+          ],
+          "kwargs": {}
+        }
+      ],
+      "allow_remove": false,
+      "confirm": true,
+      "answer_yes": true,
+      "choice_index": null,
+      "selected": [],
+      "asked": [],
+      "choices_asked": [],
+      "staged": [
+        {
+          "action": "add",
+          "tag": "cog:some",
+          "files": [
+            2
+          ]
+        }
+      ],
+      "clipboard": [],
+      "notices": []
+    },
+    {
+      "name": "add_many",
+      "calls": [
+        {
+          "method": "AddTags",
+          "args": [
+            [
+              "cog:all",
+              "cog:b99",
+              "cog:some"
+            ]
+          ],
+          "kwargs": {}
+        }
+      ],
+      "allow_remove": false,
+      "confirm": true,
+      "answer_yes": true,
+      "choice_index": 0,
+      "selected": [],
+      "asked": [],
+      "choices_asked": [],
+      "staged": [
+        {
+          "action": "add",
+          "tag": "cog:b99",
+          "files": [
+            0,
+            1,
+            2
+          ]
+        },
+        {
+          "action": "add",
+          "tag": "cog:some",
+          "files": [
+            2
+          ]
+        }
+      ],
+      "clipboard": [],
+      "notices": []
+    },
+    {
+      "name": "add_many_second",
+      "calls": [
+        {
+          "method": "AddTags",
+          "args": [
+            [
+              "cog:all",
+              "cog:b99",
+              "cog:some"
+            ]
+          ],
+          "kwargs": {}
+        }
+      ],
+      "allow_remove": false,
+      "confirm": true,
+      "answer_yes": true,
+      "choice_index": 1,
+      "selected": [],
+      "asked": [],
+      "choices_asked": [],
+      "staged": [
+        {
+          "action": "add",
+          "tag": "cog:b99",
+          "files": [
+            0,
+            1,
+            2
+          ]
+        },
+        {
+          "action": "add",
+          "tag": "cog:some",
+          "files": [
+            2
+          ]
+        }
+      ],
+      "clipboard": [],
+      "notices": []
+    },
+    {
+      "name": "add_many_third",
+      "calls": [
+        {
+          "method": "AddTags",
+          "args": [
+            [
+              "cog:all",
+              "cog:b99",
+              "cog:some"
+            ]
+          ],
+          "kwargs": {}
+        }
+      ],
+      "allow_remove": false,
+      "confirm": true,
+      "answer_yes": true,
+      "choice_index": 2,
+      "selected": [],
+      "asked": [],
+      "choices_asked": [],
+      "staged": [
+        {
+          "action": "add",
+          "tag": "cog:b99",
+          "files": [
+            0,
+            1,
+            2
+          ]
+        },
+        {
+          "action": "add",
+          "tag": "cog:some",
+          "files": [
+            2
+          ]
+        }
+      ],
+      "clipboard": [],
+      "notices": []
+    },
+    {
+      "name": "add_only_add_flag",
+      "calls": [
+        {
+          "method": "AddTags",
+          "args": [
+            [
+              "cog:some"
+            ]
+          ],
+          "kwargs": {
+            "only_add": true
+          }
+        }
+      ],
+      "allow_remove": false,
+      "confirm": true,
+      "answer_yes": true,
+      "choice_index": 1,
+      "selected": [],
+      "asked": [],
+      "choices_asked": [],
+      "staged": [
+        {
+          "action": "add",
+          "tag": "cog:some",
+          "files": [
+            2
+          ]
+        }
+      ],
+      "clipboard": [],
+      "notices": []
+    },
+    {
+      "name": "add_everywhere",
+      "calls": [
+        {
+          "method": "AddTags",
+          "args": [
+            [
+              "cog:all"
+            ]
+          ],
+          "kwargs": {}
+        }
+      ],
+      "allow_remove": true,
+      "confirm": true,
+      "answer_yes": true,
+      "choice_index": null,
+      "selected": [],
+      "asked": [],
+      "choices_asked": [],
+      "staged": [
+        {
+          "action": "delete",
+          "tag": "cog:all",
+          "files": [
+            0,
+            1,
+            2
+          ]
+        }
+      ],
+      "clipboard": [],
+      "notices": []
+    },
+    {
+      "name": "add_none_have",
+      "calls": [
+        {
+          "method": "AddTags",
+          "args": [
+            [
+              "cog:b99"
+            ]
+          ],
+          "kwargs": {}
+        }
+      ],
+      "allow_remove": true,
+      "confirm": true,
+      "answer_yes": true,
+      "choice_index": null,
+      "selected": [],
+      "asked": [],
+      "choices_asked": [],
+      "staged": [
+        {
+          "action": "add",
+          "tag": "cog:b99",
+          "files": [
+            0,
+            1,
+            2
+          ]
+        }
+      ],
+      "clipboard": [],
+      "notices": []
+    },
+    {
+      "name": "add_some_have_first",
+      "calls": [
+        {
+          "method": "AddTags",
+          "args": [
+            [
+              "cog:some"
+            ]
+          ],
+          "kwargs": {}
+        }
+      ],
+      "allow_remove": true,
+      "confirm": true,
+      "answer_yes": true,
+      "choice_index": 0,
+      "selected": [],
+      "asked": [],
+      "choices_asked": [
+        {
+          "title": "What would you like to do?",
+          "message": "Of the 3 files being managed, some have that tag, but not all of them do, so there are different things you can do.",
+          "choices": [
+            {
+              "text": "add \"cog:some\" for 1 files",
+              "tooltip": "this adds the tags to this local tag domain\ncog:some - 1 files"
+            },
+            {
+              "text": "delete \"cog:some\" for 2 files",
+              "tooltip": "this deletes the tags from this local tag domain\ncog:some - 2 files"
+            }
+          ]
+        }
+      ],
+      "staged": [
+        {
+          "action": "add",
+          "tag": "cog:some",
+          "files": [
+            2
+          ]
+        }
+      ],
+      "clipboard": [],
+      "notices": []
+    },
+    {
+      "name": "add_some_have_second",
+      "calls": [
+        {
+          "method": "AddTags",
+          "args": [
+            [
+              "cog:some"
+            ]
+          ],
+          "kwargs": {}
+        }
+      ],
+      "allow_remove": true,
+      "confirm": true,
+      "answer_yes": true,
+      "choice_index": 1,
+      "selected": [],
+      "asked": [],
+      "choices_asked": [
+        {
+          "title": "What would you like to do?",
+          "message": "Of the 3 files being managed, some have that tag, but not all of them do, so there are different things you can do.",
+          "choices": [
+            {
+              "text": "add \"cog:some\" for 1 files",
+              "tooltip": "this adds the tags to this local tag domain\ncog:some - 1 files"
+            },
+            {
+              "text": "delete \"cog:some\" for 2 files",
+              "tooltip": "this deletes the tags from this local tag domain\ncog:some - 2 files"
+            }
+          ]
+        }
+      ],
+      "staged": [
+        {
+          "action": "delete",
+          "tag": "cog:some",
+          "files": [
+            0,
+            1
+          ]
+        }
+      ],
+      "clipboard": [],
+      "notices": []
+    },
+    {
+      "name": "add_some_have_cancel",
+      "calls": [
+        {
+          "method": "AddTags",
+          "args": [
+            [
+              "cog:some"
+            ]
+          ],
+          "kwargs": {}
+        }
+      ],
+      "allow_remove": true,
+      "confirm": true,
+      "answer_yes": true,
+      "choice_index": null,
+      "selected": [],
+      "asked": [],
+      "choices_asked": [
+        {
+          "title": "What would you like to do?",
+          "message": "Of the 3 files being managed, some have that tag, but not all of them do, so there are different things you can do.",
+          "choices": [
+            {
+              "text": "add \"cog:some\" for 1 files",
+              "tooltip": "this adds the tags to this local tag domain\ncog:some - 1 files"
+            },
+            {
+              "text": "delete \"cog:some\" for 2 files",
+              "tooltip": "this deletes the tags from this local tag domain\ncog:some - 2 files"
+            }
+          ]
+        }
+      ],
+      "staged": [],
+      "clipboard": [],
+      "notices": []
+    },
+    {
+      "name": "add_many",
+      "calls": [
+        {
+          "method": "AddTags",
+          "args": [
+            [
+              "cog:all",
+              "cog:b99",
+              "cog:some"
+            ]
+          ],
+          "kwargs": {}
+        }
+      ],
+      "allow_remove": true,
+      "confirm": true,
+      "answer_yes": true,
+      "choice_index": 0,
+      "selected": [],
+      "asked": [],
+      "choices_asked": [
+        {
+          "title": "What would you like to do?",
+          "message": "The files have some of those tags, but not all, so there are different things you can do.",
+          "choices": [
+            {
+              "text": "add 2 tags",
+              "tooltip": "this adds the tags to this local tag domain\ncog:b99 - 3 files\ncog:some - 1 files"
+            },
+            {
+              "text": "delete 2 tags",
+              "tooltip": "this deletes the tags from this local tag domain\ncog:some - 2 files\ncog:all - 3 files"
+            }
+          ]
+        }
+      ],
+      "staged": [
+        {
+          "action": "add",
+          "tag": "cog:b99",
+          "files": [
+            0,
+            1,
+            2
+          ]
+        },
+        {
+          "action": "add",
+          "tag": "cog:some",
+          "files": [
+            2
+          ]
+        }
+      ],
+      "clipboard": [],
+      "notices": []
+    },
+    {
+      "name": "add_many_second",
+      "calls": [
+        {
+          "method": "AddTags",
+          "args": [
+            [
+              "cog:all",
+              "cog:b99",
+              "cog:some"
+            ]
+          ],
+          "kwargs": {}
+        }
+      ],
+      "allow_remove": true,
+      "confirm": true,
+      "answer_yes": true,
+      "choice_index": 1,
+      "selected": [],
+      "asked": [],
+      "choices_asked": [
+        {
+          "title": "What would you like to do?",
+          "message": "The files have some of those tags, but not all, so there are different things you can do.",
+          "choices": [
+            {
+              "text": "add 2 tags",
+              "tooltip": "this adds the tags to this local tag domain\ncog:b99 - 3 files\ncog:some - 1 files"
+            },
+            {
+              "text": "delete 2 tags",
+              "tooltip": "this deletes the tags from this local tag domain\ncog:some - 2 files\ncog:all - 3 files"
+            }
+          ]
+        }
+      ],
+      "staged": [
+        {
+          "action": "delete",
+          "tag": "cog:all",
+          "files": [
+            0,
+            1,
+            2
+          ]
+        },
+        {
+          "action": "delete",
+          "tag": "cog:some",
+          "files": [
+            0,
+            1
+          ]
+        }
+      ],
+      "clipboard": [],
+      "notices": []
+    },
+    {
+      "name": "add_many_third",
+      "calls": [
+        {
+          "method": "AddTags",
+          "args": [
+            [
+              "cog:all",
+              "cog:b99",
+              "cog:some"
+            ]
+          ],
+          "kwargs": {}
+        }
+      ],
+      "allow_remove": true,
+      "confirm": true,
+      "answer_yes": true,
+      "choice_index": 2,
+      "selected": [],
+      "asked": [],
+      "choices_asked": [
+        {
+          "title": "What would you like to do?",
+          "message": "The files have some of those tags, but not all, so there are different things you can do.",
+          "choices": [
+            {
+              "text": "add 2 tags",
+              "tooltip": "this adds the tags to this local tag domain\ncog:b99 - 3 files\ncog:some - 1 files"
+            },
+            {
+              "text": "delete 2 tags",
+              "tooltip": "this deletes the tags from this local tag domain\ncog:some - 2 files\ncog:all - 3 files"
+            }
+          ]
+        }
+      ],
+      "staged": [],
+      "clipboard": [],
+      "notices": []
+    },
+    {
+      "name": "add_only_add_flag",
+      "calls": [
+        {
+          "method": "AddTags",
+          "args": [
+            [
+              "cog:some"
+            ]
+          ],
+          "kwargs": {
+            "only_add": true
+          }
+        }
+      ],
+      "allow_remove": true,
+      "confirm": true,
+      "answer_yes": true,
+      "choice_index": 1,
+      "selected": [],
+      "asked": [],
+      "choices_asked": [],
+      "staged": [
+        {
+          "action": "add",
+          "tag": "cog:some",
+          "files": [
+            2
+          ]
+        }
+      ],
+      "clipboard": [],
+      "notices": []
+    },
+    {
+      "name": "list_activate_all_have",
+      "calls": [
+        {
+          "method": "EnterTags",
+          "args": [
+            [
+              "cog:all"
+            ]
+          ],
+          "kwargs": {}
+        }
+      ],
+      "allow_remove": false,
+      "confirm": true,
+      "answer_yes": true,
+      "choice_index": null,
+      "selected": [],
+      "asked": [],
+      "choices_asked": [],
+      "staged": [
+        {
+          "action": "delete",
+          "tag": "cog:all",
+          "files": [
+            0,
+            1,
+            2
+          ]
+        }
+      ],
+      "clipboard": [],
+      "notices": []
+    },
+    {
+      "name": "list_activate_some_have",
+      "calls": [
+        {
+          "method": "EnterTags",
+          "args": [
+            [
+              "cog:some"
+            ]
+          ],
+          "kwargs": {}
+        }
+      ],
+      "allow_remove": false,
+      "confirm": true,
+      "answer_yes": true,
+      "choice_index": 1,
+      "selected": [],
+      "asked": [],
+      "choices_asked": [
+        {
+          "title": "What would you like to do?",
+          "message": "Of the 3 files being managed, some have that tag, but not all of them do, so there are different things you can do.",
+          "choices": [
+            {
+              "text": "add \"cog:some\" for 1 files",
+              "tooltip": "this adds the tags to this local tag domain\ncog:some - 1 files"
+            },
+            {
+              "text": "delete \"cog:some\" for 2 files",
+              "tooltip": "this deletes the tags from this local tag domain\ncog:some - 2 files"
+            }
+          ]
+        }
+      ],
+      "staged": [
+        {
+          "action": "delete",
+          "tag": "cog:some",
+          "files": [
+            0,
+            1
+          ]
+        }
+      ],
+      "clipboard": [],
+      "notices": []
+    },
+    {
+      "name": "list_activate_one_file",
+      "calls": [
+        {
+          "method": "EnterTags",
+          "args": [
+            [
+              "cog:one"
+            ]
+          ],
+          "kwargs": {}
+        }
+      ],
+      "allow_remove": false,
+      "confirm": true,
+      "answer_yes": true,
+      "choice_index": 1,
+      "selected": [],
+      "asked": [],
+      "choices_asked": [
+        {
+          "title": "What would you like to do?",
+          "message": "Of the 3 files being managed, some have that tag, but not all of them do, so there are different things you can do.",
+          "choices": [
+            {
+              "text": "add \"cog:one\" for 2 files",
+              "tooltip": "this adds the tags to this local tag domain\ncog:one - 2 files"
+            },
+            {
+              "text": "delete \"cog:one\" for 1 files",
+              "tooltip": "this deletes the tags from this local tag domain\ncog:one - 1 files"
+            }
+          ]
+        }
+      ],
+      "staged": [
+        {
+          "action": "delete",
+          "tag": "cog:one",
+          "files": [
+            0
+          ]
+        }
+      ],
+      "clipboard": [],
+      "notices": []
+    },
+    {
+      "name": "remove_one",
+      "calls": [
+        {
+          "method": "RemoveTags",
+          "args": [
+            [
+              "cog:all"
+            ]
+          ],
+          "kwargs": {}
+        }
+      ],
+      "allow_remove": false,
+      "confirm": true,
+      "answer_yes": true,
+      "choice_index": null,
+      "selected": [],
+      "asked": [
+        "Are you sure you want to remove these tags:\n\ncog:all"
+      ],
+      "choices_asked": [],
+      "staged": [
+        {
+          "action": "delete",
+          "tag": "cog:all",
+          "files": [
+            0,
+            1,
+            2
+          ]
+        }
+      ],
+      "clipboard": [],
+      "notices": []
+    },
+    {
+      "name": "remove_one_declined",
+      "calls": [
+        {
+          "method": "RemoveTags",
+          "args": [
+            [
+              "cog:all"
+            ]
+          ],
+          "kwargs": {}
+        }
+      ],
+      "allow_remove": false,
+      "confirm": true,
+      "answer_yes": false,
+      "choice_index": null,
+      "selected": [],
+      "asked": [
+        "Are you sure you want to remove these tags:\n\ncog:all"
+      ],
+      "choices_asked": [],
+      "staged": [],
+      "clipboard": [],
+      "notices": []
+    },
+    {
+      "name": "remove_three",
+      "calls": [
+        {
+          "method": "RemoveTags",
+          "args": [
+            [
+              "cog:all",
+              "cog:some",
+              "cog:one"
+            ]
+          ],
+          "kwargs": {}
+        }
+      ],
+      "allow_remove": false,
+      "confirm": true,
+      "answer_yes": true,
+      "choice_index": null,
+      "selected": [],
+      "asked": [
+        "Are you sure you want to remove these tags:\n\ncog:all\ncog:some\ncog:one"
+      ],
+      "choices_asked": [],
+      "staged": [
+        {
+          "action": "delete",
+          "tag": "cog:all",
+          "files": [
+            0,
+            1,
+            2
+          ]
+        },
+        {
+          "action": "delete",
+          "tag": "cog:one",
+          "files": [
+            0
+          ]
+        },
+        {
+          "action": "delete",
+          "tag": "cog:some",
+          "files": [
+            0,
+            1
+          ]
+        }
+      ],
+      "clipboard": [],
+      "notices": []
+    },
+    {
+      "name": "remove_twelve",
+      "calls": [
+        {
+          "method": "RemoveTags",
+          "args": [
+            [
+              "bulk:01",
+              "bulk:02",
+              "bulk:03",
+              "bulk:04",
+              "bulk:05",
+              "bulk:06",
+              "bulk:07",
+              "bulk:08",
+              "bulk:09",
+              "bulk:10",
+              "bulk:11",
+              "bulk:12"
+            ]
+          ],
+          "kwargs": {}
+        }
+      ],
+      "allow_remove": false,
+      "confirm": true,
+      "answer_yes": true,
+      "choice_index": null,
+      "selected": [],
+      "asked": [
+        "Are you sure you want to remove these 12 tags?"
+      ],
+      "choices_asked": [],
+      "staged": [
+        {
+          "action": "delete",
+          "tag": "bulk:01",
+          "files": [
+            0
+          ]
+        },
+        {
+          "action": "delete",
+          "tag": "bulk:02",
+          "files": [
+            0
+          ]
+        },
+        {
+          "action": "delete",
+          "tag": "bulk:03",
+          "files": [
+            0
+          ]
+        },
+        {
+          "action": "delete",
+          "tag": "bulk:04",
+          "files": [
+            0
+          ]
+        },
+        {
+          "action": "delete",
+          "tag": "bulk:05",
+          "files": [
+            0
+          ]
+        },
+        {
+          "action": "delete",
+          "tag": "bulk:06",
+          "files": [
+            0
+          ]
+        },
+        {
+          "action": "delete",
+          "tag": "bulk:07",
+          "files": [
+            0
+          ]
+        },
+        {
+          "action": "delete",
+          "tag": "bulk:08",
+          "files": [
+            0
+          ]
+        },
+        {
+          "action": "delete",
+          "tag": "bulk:09",
+          "files": [
+            0
+          ]
+        },
+        {
+          "action": "delete",
+          "tag": "bulk:10",
+          "files": [
+            0
+          ]
+        },
+        {
+          "action": "delete",
+          "tag": "bulk:11",
+          "files": [
+            0
+          ]
+        },
+        {
+          "action": "delete",
+          "tag": "bulk:12",
+          "files": [
+            0
+          ]
+        }
+      ],
+      "clipboard": [],
+      "notices": []
+    },
+    {
+      "name": "remove_nine",
+      "calls": [
+        {
+          "method": "RemoveTags",
+          "args": [
+            [
+              "bulk:01",
+              "bulk:02",
+              "bulk:03",
+              "bulk:04",
+              "bulk:05",
+              "bulk:06",
+              "bulk:07",
+              "bulk:08",
+              "bulk:09"
+            ]
+          ],
+          "kwargs": {}
+        }
+      ],
+      "allow_remove": false,
+      "confirm": true,
+      "answer_yes": true,
+      "choice_index": null,
+      "selected": [],
+      "asked": [
+        "Are you sure you want to remove these tags:\n\nbulk:01\nbulk:02\nbulk:03\nbulk:04\nbulk:05\nbulk:06\nbulk:07\nbulk:08\nbulk:09"
+      ],
+      "choices_asked": [],
+      "staged": [
+        {
+          "action": "delete",
+          "tag": "bulk:01",
+          "files": [
+            0
+          ]
+        },
+        {
+          "action": "delete",
+          "tag": "bulk:02",
+          "files": [
+            0
+          ]
+        },
+        {
+          "action": "delete",
+          "tag": "bulk:03",
+          "files": [
+            0
+          ]
+        },
+        {
+          "action": "delete",
+          "tag": "bulk:04",
+          "files": [
+            0
+          ]
+        },
+        {
+          "action": "delete",
+          "tag": "bulk:05",
+          "files": [
+            0
+          ]
+        },
+        {
+          "action": "delete",
+          "tag": "bulk:06",
+          "files": [
+            0
+          ]
+        },
+        {
+          "action": "delete",
+          "tag": "bulk:07",
+          "files": [
+            0
+          ]
+        },
+        {
+          "action": "delete",
+          "tag": "bulk:08",
+          "files": [
+            0
+          ]
+        },
+        {
+          "action": "delete",
+          "tag": "bulk:09",
+          "files": [
+            0
+          ]
+        }
+      ],
+      "clipboard": [],
+      "notices": []
+    },
+    {
+      "name": "remove_ten",
+      "calls": [
+        {
+          "method": "RemoveTags",
+          "args": [
+            [
+              "bulk:01",
+              "bulk:02",
+              "bulk:03",
+              "bulk:04",
+              "bulk:05",
+              "bulk:06",
+              "bulk:07",
+              "bulk:08",
+              "bulk:09",
+              "bulk:10"
+            ]
+          ],
+          "kwargs": {}
+        }
+      ],
+      "allow_remove": false,
+      "confirm": true,
+      "answer_yes": true,
+      "choice_index": null,
+      "selected": [],
+      "asked": [
+        "Are you sure you want to remove these 10 tags?"
+      ],
+      "choices_asked": [],
+      "staged": [
+        {
+          "action": "delete",
+          "tag": "bulk:01",
+          "files": [
+            0
+          ]
+        },
+        {
+          "action": "delete",
+          "tag": "bulk:02",
+          "files": [
+            0
+          ]
+        },
+        {
+          "action": "delete",
+          "tag": "bulk:03",
+          "files": [
+            0
+          ]
+        },
+        {
+          "action": "delete",
+          "tag": "bulk:04",
+          "files": [
+            0
+          ]
+        },
+        {
+          "action": "delete",
+          "tag": "bulk:05",
+          "files": [
+            0
+          ]
+        },
+        {
+          "action": "delete",
+          "tag": "bulk:06",
+          "files": [
+            0
+          ]
+        },
+        {
+          "action": "delete",
+          "tag": "bulk:07",
+          "files": [
+            0
+          ]
+        },
+        {
+          "action": "delete",
+          "tag": "bulk:08",
+          "files": [
+            0
+          ]
+        },
+        {
+          "action": "delete",
+          "tag": "bulk:09",
+          "files": [
+            0
+          ]
+        },
+        {
+          "action": "delete",
+          "tag": "bulk:10",
+          "files": [
+            0
+          ]
+        }
+      ],
+      "clipboard": [],
+      "notices": []
+    },
+    {
+      "name": "remove_long",
+      "calls": [
+        {
+          "method": "RemoveTags",
+          "args": [
+            [
+              "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+            ]
+          ],
+          "kwargs": {}
+        }
+      ],
+      "allow_remove": false,
+      "confirm": true,
+      "answer_yes": true,
+      "choice_index": null,
+      "selected": [],
+      "asked": [
+        "Are you sure you want to remove these tags:\n\nxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx…"
+      ],
+      "choices_asked": [],
+      "staged": [],
+      "clipboard": [],
+      "notices": []
+    },
+    {
+      "name": "remove_empty",
+      "calls": [
+        {
+          "method": "RemoveTags",
+          "args": [
+            []
+          ],
+          "kwargs": {}
+        }
+      ],
+      "allow_remove": false,
+      "confirm": true,
+      "answer_yes": true,
+      "choice_index": null,
+      "selected": [],
+      "asked": [],
+      "choices_asked": [],
+      "staged": [],
+      "clipboard": [],
+      "notices": []
+    },
+    {
+      "name": "remove_one",
+      "calls": [
+        {
+          "method": "RemoveTags",
+          "args": [
+            [
+              "cog:all"
+            ]
+          ],
+          "kwargs": {}
+        }
+      ],
+      "allow_remove": false,
+      "confirm": false,
+      "answer_yes": true,
+      "choice_index": null,
+      "selected": [],
+      "asked": [],
+      "choices_asked": [],
+      "staged": [
+        {
+          "action": "delete",
+          "tag": "cog:all",
+          "files": [
+            0,
+            1,
+            2
+          ]
+        }
+      ],
+      "clipboard": [],
+      "notices": []
+    },
+    {
+      "name": "remove_one_declined",
+      "calls": [
+        {
+          "method": "RemoveTags",
+          "args": [
+            [
+              "cog:all"
+            ]
+          ],
+          "kwargs": {}
+        }
+      ],
+      "allow_remove": false,
+      "confirm": false,
+      "answer_yes": false,
+      "choice_index": null,
+      "selected": [],
+      "asked": [],
+      "choices_asked": [],
+      "staged": [
+        {
+          "action": "delete",
+          "tag": "cog:all",
+          "files": [
+            0,
+            1,
+            2
+          ]
+        }
+      ],
+      "clipboard": [],
+      "notices": []
+    },
+    {
+      "name": "remove_three",
+      "calls": [
+        {
+          "method": "RemoveTags",
+          "args": [
+            [
+              "cog:all",
+              "cog:some",
+              "cog:one"
+            ]
+          ],
+          "kwargs": {}
+        }
+      ],
+      "allow_remove": false,
+      "confirm": false,
+      "answer_yes": true,
+      "choice_index": null,
+      "selected": [],
+      "asked": [],
+      "choices_asked": [],
+      "staged": [
+        {
+          "action": "delete",
+          "tag": "cog:all",
+          "files": [
+            0,
+            1,
+            2
+          ]
+        },
+        {
+          "action": "delete",
+          "tag": "cog:one",
+          "files": [
+            0
+          ]
+        },
+        {
+          "action": "delete",
+          "tag": "cog:some",
+          "files": [
+            0,
+            1
+          ]
+        }
+      ],
+      "clipboard": [],
+      "notices": []
+    },
+    {
+      "name": "remove_twelve",
+      "calls": [
+        {
+          "method": "RemoveTags",
+          "args": [
+            [
+              "bulk:01",
+              "bulk:02",
+              "bulk:03",
+              "bulk:04",
+              "bulk:05",
+              "bulk:06",
+              "bulk:07",
+              "bulk:08",
+              "bulk:09",
+              "bulk:10",
+              "bulk:11",
+              "bulk:12"
+            ]
+          ],
+          "kwargs": {}
+        }
+      ],
+      "allow_remove": false,
+      "confirm": false,
+      "answer_yes": true,
+      "choice_index": null,
+      "selected": [],
+      "asked": [],
+      "choices_asked": [],
+      "staged": [
+        {
+          "action": "delete",
+          "tag": "bulk:01",
+          "files": [
+            0
+          ]
+        },
+        {
+          "action": "delete",
+          "tag": "bulk:02",
+          "files": [
+            0
+          ]
+        },
+        {
+          "action": "delete",
+          "tag": "bulk:03",
+          "files": [
+            0
+          ]
+        },
+        {
+          "action": "delete",
+          "tag": "bulk:04",
+          "files": [
+            0
+          ]
+        },
+        {
+          "action": "delete",
+          "tag": "bulk:05",
+          "files": [
+            0
+          ]
+        },
+        {
+          "action": "delete",
+          "tag": "bulk:06",
+          "files": [
+            0
+          ]
+        },
+        {
+          "action": "delete",
+          "tag": "bulk:07",
+          "files": [
+            0
+          ]
+        },
+        {
+          "action": "delete",
+          "tag": "bulk:08",
+          "files": [
+            0
+          ]
+        },
+        {
+          "action": "delete",
+          "tag": "bulk:09",
+          "files": [
+            0
+          ]
+        },
+        {
+          "action": "delete",
+          "tag": "bulk:10",
+          "files": [
+            0
+          ]
+        },
+        {
+          "action": "delete",
+          "tag": "bulk:11",
+          "files": [
+            0
+          ]
+        },
+        {
+          "action": "delete",
+          "tag": "bulk:12",
+          "files": [
+            0
+          ]
+        }
+      ],
+      "clipboard": [],
+      "notices": []
+    },
+    {
+      "name": "remove_nine",
+      "calls": [
+        {
+          "method": "RemoveTags",
+          "args": [
+            [
+              "bulk:01",
+              "bulk:02",
+              "bulk:03",
+              "bulk:04",
+              "bulk:05",
+              "bulk:06",
+              "bulk:07",
+              "bulk:08",
+              "bulk:09"
+            ]
+          ],
+          "kwargs": {}
+        }
+      ],
+      "allow_remove": false,
+      "confirm": false,
+      "answer_yes": true,
+      "choice_index": null,
+      "selected": [],
+      "asked": [],
+      "choices_asked": [],
+      "staged": [
+        {
+          "action": "delete",
+          "tag": "bulk:01",
+          "files": [
+            0
+          ]
+        },
+        {
+          "action": "delete",
+          "tag": "bulk:02",
+          "files": [
+            0
+          ]
+        },
+        {
+          "action": "delete",
+          "tag": "bulk:03",
+          "files": [
+            0
+          ]
+        },
+        {
+          "action": "delete",
+          "tag": "bulk:04",
+          "files": [
+            0
+          ]
+        },
+        {
+          "action": "delete",
+          "tag": "bulk:05",
+          "files": [
+            0
+          ]
+        },
+        {
+          "action": "delete",
+          "tag": "bulk:06",
+          "files": [
+            0
+          ]
+        },
+        {
+          "action": "delete",
+          "tag": "bulk:07",
+          "files": [
+            0
+          ]
+        },
+        {
+          "action": "delete",
+          "tag": "bulk:08",
+          "files": [
+            0
+          ]
+        },
+        {
+          "action": "delete",
+          "tag": "bulk:09",
+          "files": [
+            0
+          ]
+        }
+      ],
+      "clipboard": [],
+      "notices": []
+    },
+    {
+      "name": "remove_ten",
+      "calls": [
+        {
+          "method": "RemoveTags",
+          "args": [
+            [
+              "bulk:01",
+              "bulk:02",
+              "bulk:03",
+              "bulk:04",
+              "bulk:05",
+              "bulk:06",
+              "bulk:07",
+              "bulk:08",
+              "bulk:09",
+              "bulk:10"
+            ]
+          ],
+          "kwargs": {}
+        }
+      ],
+      "allow_remove": false,
+      "confirm": false,
+      "answer_yes": true,
+      "choice_index": null,
+      "selected": [],
+      "asked": [],
+      "choices_asked": [],
+      "staged": [
+        {
+          "action": "delete",
+          "tag": "bulk:01",
+          "files": [
+            0
+          ]
+        },
+        {
+          "action": "delete",
+          "tag": "bulk:02",
+          "files": [
+            0
+          ]
+        },
+        {
+          "action": "delete",
+          "tag": "bulk:03",
+          "files": [
+            0
+          ]
+        },
+        {
+          "action": "delete",
+          "tag": "bulk:04",
+          "files": [
+            0
+          ]
+        },
+        {
+          "action": "delete",
+          "tag": "bulk:05",
+          "files": [
+            0
+          ]
+        },
+        {
+          "action": "delete",
+          "tag": "bulk:06",
+          "files": [
+            0
+          ]
+        },
+        {
+          "action": "delete",
+          "tag": "bulk:07",
+          "files": [
+            0
+          ]
+        },
+        {
+          "action": "delete",
+          "tag": "bulk:08",
+          "files": [
+            0
+          ]
+        },
+        {
+          "action": "delete",
+          "tag": "bulk:09",
+          "files": [
+            0
+          ]
+        },
+        {
+          "action": "delete",
+          "tag": "bulk:10",
+          "files": [
+            0
+          ]
+        }
+      ],
+      "clipboard": [],
+      "notices": []
+    },
+    {
+      "name": "remove_long",
+      "calls": [
+        {
+          "method": "RemoveTags",
+          "args": [
+            [
+              "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+            ]
+          ],
+          "kwargs": {}
+        }
+      ],
+      "allow_remove": false,
+      "confirm": false,
+      "answer_yes": true,
+      "choice_index": null,
+      "selected": [],
+      "asked": [],
+      "choices_asked": [],
+      "staged": [],
+      "clipboard": [],
+      "notices": []
+    },
+    {
+      "name": "remove_empty",
+      "calls": [
+        {
+          "method": "RemoveTags",
+          "args": [
+            []
+          ],
+          "kwargs": {}
+        }
+      ],
+      "allow_remove": false,
+      "confirm": false,
+      "answer_yes": true,
+      "choice_index": null,
+      "selected": [],
+      "asked": [],
+      "choices_asked": [],
+      "staged": [],
+      "clipboard": [],
+      "notices": []
+    },
+    {
+      "name": "remove_button_all",
+      "calls": [
+        {
+          "method": "_RemoveTagsButton",
+          "args": [],
+          "kwargs": {}
+        }
+      ],
+      "allow_remove": false,
+      "confirm": true,
+      "answer_yes": true,
+      "choice_index": null,
+      "selected": [],
+      "asked": [
+        "Are you sure you want to remove these 22 tags?"
+      ],
+      "choices_asked": [],
+      "staged": [
+        {
+          "action": "delete",
+          "tag": "bulk:01",
+          "files": [
+            0
+          ]
+        },
+        {
+          "action": "delete",
+          "tag": "bulk:02",
+          "files": [
+            0
+          ]
+        },
+        {
+          "action": "delete",
+          "tag": "bulk:03",
+          "files": [
+            0
+          ]
+        },
+        {
+          "action": "delete",
+          "tag": "bulk:04",
+          "files": [
+            0
+          ]
+        },
+        {
+          "action": "delete",
+          "tag": "bulk:05",
+          "files": [
+            0
+          ]
+        },
+        {
+          "action": "delete",
+          "tag": "bulk:06",
+          "files": [
+            0
+          ]
+        },
+        {
+          "action": "delete",
+          "tag": "bulk:07",
+          "files": [
+            0
+          ]
+        },
+        {
+          "action": "delete",
+          "tag": "bulk:08",
+          "files": [
+            0
+          ]
+        },
+        {
+          "action": "delete",
+          "tag": "bulk:09",
+          "files": [
+            0
+          ]
+        },
+        {
+          "action": "delete",
+          "tag": "bulk:10",
+          "files": [
+            0
+          ]
+        },
+        {
+          "action": "delete",
+          "tag": "bulk:11",
+          "files": [
+            0
+          ]
+        },
+        {
+          "action": "delete",
+          "tag": "bulk:12",
+          "files": [
+            0
+          ]
+        },
+        {
+          "action": "delete",
+          "tag": "cog:a2",
+          "files": [
+            2
+          ]
+        },
+        {
+          "action": "delete",
+          "tag": "cog:all",
+          "files": [
+            0,
+            1,
+            2
+          ]
+        },
+        {
+          "action": "delete",
+          "tag": "cog:b10",
+          "files": [
+            2
+          ]
+        },
+        {
+          "action": "delete",
+          "tag": "cog:one",
+          "files": [
+            0
+          ]
+        },
+        {
+          "action": "delete",
+          "tag": "cog:some",
+          "files": [
+            0,
+            1
+          ]
+        },
+        {
+          "action": "delete",
+          "tag": "creator:anonymous artist",
+          "files": [
+            2
+          ]
+        },
+        {
+          "action": "delete",
+          "tag": "meta:lowres",
+          "files": [
+            2
+          ]
+        },
+        {
+          "action": "delete",
+          "tag": "page:3",
+          "files": [
+            2
+          ]
+        },
+        {
+          "action": "delete",
+          "tag": "safe",
+          "files": [
+            0,
+            1
+          ]
+        },
+        {
+          "action": "delete",
+          "tag": "samus",
+          "files": [
+            1
+          ]
+        }
+      ],
+      "clipboard": [],
+      "notices": []
+    },
+    {
+      "name": "remove_button_selected",
+      "calls": [
+        {
+          "method": "_RemoveTagsButton",
+          "args": [],
+          "kwargs": {}
+        }
+      ],
+      "allow_remove": false,
+      "confirm": true,
+      "answer_yes": true,
+      "choice_index": null,
+      "selected": [
+        "cog:some",
+        "bulk:03"
+      ],
+      "asked": [
+        "Are you sure you want to remove these tags:\n\nbulk:03\ncog:some"
+      ],
+      "choices_asked": [],
+      "staged": [
+        {
+          "action": "delete",
+          "tag": "bulk:03",
+          "files": [
+            0
+          ]
+        },
+        {
+          "action": "delete",
+          "tag": "cog:some",
+          "files": [
+            0,
+            1
+          ]
+        }
+      ],
+      "clipboard": [],
+      "notices": []
+    },
+    {
+      "name": "remove_button_selected_declined",
+      "calls": [
+        {
+          "method": "_RemoveTagsButton",
+          "args": [],
+          "kwargs": {}
+        }
+      ],
+      "allow_remove": false,
+      "confirm": true,
+      "answer_yes": false,
+      "choice_index": null,
+      "selected": [
+        "cog:some"
+      ],
+      "asked": [
+        "Are you sure you want to remove these tags:\n\ncog:some"
+      ],
+      "choices_asked": [],
+      "staged": [],
+      "clipboard": [],
+      "notices": []
+    },
+    {
+      "name": "remove_button_selected_unconfirmed",
+      "calls": [
+        {
+          "method": "_RemoveTagsButton",
+          "args": [],
+          "kwargs": {}
+        }
+      ],
+      "allow_remove": false,
+      "confirm": false,
+      "answer_yes": true,
+      "choice_index": null,
+      "selected": [
+        "cog:some"
+      ],
+      "asked": [],
+      "choices_asked": [],
+      "staged": [
+        {
+          "action": "delete",
+          "tag": "cog:some",
+          "files": [
+            0,
+            1
+          ]
+        }
+      ],
+      "clipboard": [],
+      "notices": []
+    },
+    {
+      "name": "copy_all",
+      "calls": [
+        {
+          "method": "_Copy",
+          "args": [],
+          "kwargs": {}
+        }
+      ],
+      "allow_remove": false,
+      "confirm": true,
+      "answer_yes": true,
+      "choice_index": null,
+      "selected": [],
+      "asked": [],
+      "choices_asked": [],
+      "staged": [],
+      "clipboard": [
+        [
+          "text",
+          "bulk:01\nbulk:02\nbulk:03\nbulk:04\nbulk:05\nbulk:06\nbulk:07\nbulk:08\nbulk:09\nbulk:10\nbulk:11\nbulk:12\ncog:a2\ncog:all\ncog:b10\ncog:one\ncog:some\ncreator:anonymous artist\nmeta:lowres\npage:3\nsafe\nsamus"
+        ]
+      ],
+      "notices": [
+        "Copied 22 tags!"
+      ]
+    },
+    {
+      "name": "copy_selected",
+      "calls": [
+        {
+          "method": "_Copy",
+          "args": [],
+          "kwargs": {}
+        }
+      ],
+      "allow_remove": false,
+      "confirm": true,
+      "answer_yes": true,
+      "choice_index": null,
+      "selected": [
+        "cog:some",
+        "cog:b10",
+        "cog:a2"
+      ],
+      "asked": [],
+      "choices_asked": [],
+      "staged": [],
+      "clipboard": [
+        [
+          "text",
+          "cog:a2\ncog:b10\ncog:some"
+        ]
+      ],
+      "notices": [
+        "Copied 3 tags!"
+      ]
+    }
+  ]
+}

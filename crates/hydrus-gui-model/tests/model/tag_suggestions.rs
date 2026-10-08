@@ -133,7 +133,9 @@ fn most_used_options_merge_per_service_and_reach_filtered_add_only_media() {
         .position(|s| s == "my tags")
         .unwrap();
     model.choose_service(index).unwrap();
-    model.add_side_suggestions(&["parity:present".into()]);
+    model
+        .add_side_suggestions(&["parity:present".into()])
+        .unwrap();
     model.apply().unwrap();
     assert_eq!(
         serde_json::json!(model.side_suggestions(false)),
@@ -141,8 +143,8 @@ fn most_used_options_merge_per_service_and_reach_filtered_add_only_media() {
     );
     let activated: Vec<String> =
         serde_json::from_value(f["cases"][0]["activated"][0]["tags"].clone()).unwrap();
-    model.add_side_suggestions(&activated);
-    model.add_side_suggestions(&activated);
+    model.add_side_suggestions(&activated).unwrap();
+    model.add_side_suggestions(&activated).unwrap();
     assert!(
         !model.side_suggestions(false).contains(&activated[0]),
         "repeated suggestion activation never removes an existing tag"
