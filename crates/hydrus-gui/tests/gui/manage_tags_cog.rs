@@ -183,6 +183,16 @@ fn cog_menu_toggles_are_written_and_the_confirmation_obeys_them() {
             .collect::<Vec<_>>(),
         titles
     );
+    // "select the first tag result with actual count" is the options' own setting
+    let at = labels.iter().position(|l| l.starts_with("select the first")).unwrap();
+    m.invoke_tag_menu_clicked(0, i32::try_from(at).unwrap(), 0.0, 0.0, 0.0);
+    let saved: hydrus_store::tag_editing::TagEditingSettings =
+        o.store.read(hydrus_store::settings::get).unwrap();
+    assert_eq!(
+        saved.select_first_with_count,
+        !recorded["defaults"]["ac_select_first_with_count"].as_bool().unwrap()
+    );
+    m.invoke_cog_pressed(0.0, 0.0);
     // "confirm remove/petition tags…" is on by default: turn it off
     let at = labels
         .iter()
@@ -289,4 +299,81 @@ fn recent_panel_clear_button_asks_then_forgets_the_services_recent_tags() {
         })
         .unwrap();
     assert_eq!(left, 0);
+}
+
+fn press(window: &ManageTagsWindow, key: slint::platform::Key) {
+    let text: slint::SharedString = key.into();
+    window
+        .window()
+        .dispatch_event(slint::platform::WindowEvent::KeyPressed { text: text.clone() });
+    window
+        .window()
+        .dispatch_event(slint::platform::WindowEvent::KeyReleased { text });
+}
+
+#[test]
+fn empty_input_keys_move_the_autocomplete_and_service_tabs_as_the_reference_does() {
+    use slint::platform::Key;
+    let recorded = hydrus_testkit::fixture_json("manage_tags_keys.json");
+    let results = recorded["results"].as_array().unwrap();
+    let recorded_move = |input: &str, filled: bool, command: &str| -> (i64, i64) {
+        let r = results
+            .iter()
+            .find(|r| r["input"] == input && r["list_filled"] == filled && r["command"] == command)
+            .unwrap();
+        (
+            r["tab"][1].as_i64().unwrap() - r["tab"][0].as_i64().unwrap(),
+            r["service_page"][1].as_i64().unwrap() - r["service_page"][0].as_i64().unwrap(),
+        )
+    };
+    let o = open();
+    let m = &o.manage;
+    assert_eq!(
+        usize::try_from(recorded["info"]["num_tabs"].as_i64().unwrap()).unwrap(),
+        3
+    );
+    m.invoke_focus_input();
+    assert!(m.get_input_focused(), "the input has the keyboard");
+    let services = i32::try_from(m.get_service_names().row_count()).unwrap();
+    assert_eq!(services, recorded["info"]["services"].as_array().unwrap().len() as i32);
+    // an empty input: Left / Right wrap through the three tabs
+    assert_eq!(m.get_autocomplete_tab(), 0);
+    press(m, Key::LeftArrow);
+    assert_eq!(i64::from(m.get_autocomplete_tab()), recorded_move("", false, "tab_left").0.rem_euclid(3));
+    press(m, Key::RightArrow);
+    assert_eq!(m.get_autocomplete_tab(), 0);
+    press(m, Key::RightArrow);
+    assert_eq!(i64::from(m.get_autocomplete_tab()), recorded_move("", false, "tab_right").0.rem_euclid(3));
+    press(m, Key::LeftArrow);
+    assert_eq!(m.get_autocomplete_tab(), 0);
+    // Up / Down wrap through the service tabs while the list is empty
+    let start = m.get_service_index();
+    press(m, Key::DownArrow);
+    assert_eq!(
+        i64::from((m.get_service_index() - start).rem_euclid(services)),
+        recorded_move("", false, "page_right").1.rem_euclid(i64::from(services))
+    );
+    press(m, Key::UpArrow);
+    assert_eq!(m.get_service_index(), start);
+    press(m, Key::UpArrow);
+    assert_eq!(
+        i64::from((m.get_service_index() - start).rem_euclid(services)),
+        recorded_move("", false, "page_left").1.rem_euclid(i64::from(services))
+    );
+    // typed text: the keys belong to the text
+    m.invoke_service_chosen(start);
+    m.set_text("blu".into());
+    m.invoke_text_edited("blu".into());
+    let index = m.get_service_index();
+    press(m, Key::RightArrow);
+    press(m, Key::DownArrow);
+    assert_eq!(m.get_autocomplete_tab(), 0);
+    assert_eq!(m.get_service_index(), index);
+    assert!(
+        results
+            .iter()
+            .filter(|r| r["input"] == "blu")
+            .all(|r| r["matched"] == false),
+        "the reference ignores them there too"
+    );
 }

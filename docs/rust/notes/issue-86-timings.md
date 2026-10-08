@@ -14,3 +14,4 @@ All times UTC, 2026-10-08. Machine: 4 cores, 15 GB RAM, ~30 GB free disk at star
 | 15:41 | First `dev.sh gui manage_tags` after the UI build: ~2 min (compile + link of the GUI test binary). Reruns after Rust edits: ~40 s. |
 | 15:44–15:50 | Third UI rebuild: **5 min 45 s**. `.slint` change: manage_tags.slint (immediate mode, close button, PageUp/Down) and tag_suggestions.slint (recent "clear" button). Writing Rust meanwhile; no Cargo allowed in parallel. |
 | 15:58 | Full GUI suite (966 tests) after the viewer slice: **4 min 27 s** run (plus compile). Only the known `emoji_fonts` test failed. Started first strict-Clippy run (`dev.sh lint`, all three changed crates). |
+| 16:16–16:22 | Fourth UI rebuild: **5 min 20 s** (manage_tags.slint: empty-input Left/Right/Up/Down). Strict Clippy on the three changed crates: 4.5 min cold, ~1 min incremental. |
