@@ -572,3 +572,29 @@ fn scan_file_storage_folders_asks_for_a_directory_and_says_what_it_found() {
     d.click(&["data actions", "scan file storage folders"]);
     assert_eq!(d.jobs().len(), before);
 }
+
+// leaf: audit-options-help-debug-action-gui-report-mode
+#[test]
+fn gui_report_mode_says_which_key_events_it_caught() {
+    let _one = ONE_AT_A_TIME
+        .lock()
+        .unwrap_or_else(std::sync::PoisonError::into_inner);
+    let d = start();
+    let seen = capture();
+    assert!(!d.report_mode_checked("gui report mode"));
+    d.ui.invoke_shortcut_key("j".into(), 0);
+    assert!(seen.lock().unwrap().is_empty(), "silent while off");
+    d.click(&["report modes", "gui report mode"]);
+    assert!(d.report_mode_checked("gui report mode"));
+    d.ui.invoke_shortcut_key("j".into(), 0);
+    d.ui.invoke_shortcut_key("t".into(), 1);
+    assert_eq!(
+        *seen.lock().unwrap(),
+        [
+            "key event caught: Shortcut: j",
+            "key event caught: Shortcut: ctrl+t"
+        ]
+    );
+    d.click(&["report modes", "gui report mode"]);
+    debug_flags::set_sink(None);
+}

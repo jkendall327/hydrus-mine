@@ -4666,17 +4666,34 @@ program exit signal" (leaves the event loop at once); and memory actions >
 `tests/model/main_menu.rs` the menu against the recording.
 
 Help > debug > report modes offers the reference's checked switches, off at
-every start and shared by the whole client: "idle report mode" makes a popup
-(and a console line) each time the idle decision is asked, saying why the
-client is not idle ("Program has not been on for 120s yet", "Options have
-disabled normal idle work", "Last user action was ... ago", the mouse and
-Client API versions) or that idle mode is forced from the debug menu;
-"shortcut report mode" says what each main-window or media-viewer key
-shortcut matched (or that it matched no command); "subprocess report mode"
-reports each external program's argument list before it is started.
+every start and shared by the whole client; each reports through a popup and
+a console line, in the reference's words where it has them:
+"blurhash mode" (thumbnails are drawn from their blurhash, if the fallback
+option allows it, never from the stored thumbnail), "cache report mode" (each
+eviction from the image and thumbnail caches, with sizes), "daemon report
+mode" (the maintenance daemons starting a pass), "file import report mode"
+(an import job's creation, start, hash and completion), "file report mode"
+(file and thumbnail path requests), "gui report mode" (key and mouse events
+caught as shortcuts), "idle report mode" (why the client is not idle: not
+on for 120s, normal idle work disabled, last user, mouse or Client API
+action, or forced from the debug menu), "network report mode" and its
+"(silent)" twin (redirects and errors; silent goes to the console only),
+"shortcut report mode" (what a shortcut matched, or that it matched
+nothing), "similar files metadata generation report mode" (each stage of
+making a perceptual hash), "subprocess report mode" (each external
+program's arguments before it starts) and "subscription report mode" (each
+query's sync-due test).
+
+Also in Help > debug: gui actions > "autocomplete delay mode" (every tag
+autocomplete search takes three more seconds), data actions > "scan file
+storage folders" (pick a directory; it says how many storage subfolders it
+found and how long it took, or why it gave up), and debug modes > "use
+faulthandler to log crashes" (while on, each panic is written with a
+backtrace to a "client crash" log in the database directory).
 `tests/gui/debug_menu_actions.rs` clicks each debug entry in the real menu
-and reads the effect back; `tests/model/debug_flags.rs` covers the switch
-and the subprocess report.
+and reads the effect back; `tests/model/debug_flags.rs` and the
+`debug_*` tests of hydrus-import, hydrus-net, hydrus-download, hydrus-media
+and hydrus-store cover the reports their crates make.
 
 ## Pages > weight report
 

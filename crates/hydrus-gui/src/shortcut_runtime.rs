@@ -100,13 +100,23 @@ impl Route {
             .take()
             .or_else(|| crate::shortcut_input::slint_key(text, bits));
         let (kind, key, bits) = input?;
-        Gesture::keyboard(kind, key, bits, merge)
+        let gesture = Gesture::keyboard(kind, key, bits, merge)?;
+        caught("key", &gesture);
+        Some(gesture)
     }
     fn mouse(&self, key: u32, press: u8, bits: u8) -> Option<Gesture> {
         let mut state = self.0.borrow_mut();
         let (key, press) = state.mouse.take().unwrap_or((Some(key), press));
-        Some(Gesture::new(1, key?, press, bits | (state.input.bits & 16)))
+        let gesture = Gesture::new(1, key?, press, bits | (state.input.bits & 16));
+        caught("mouse", &gesture);
+        Some(gesture)
     }
+}
+/// GUI report mode (`ClientGUIShortcuts`): a key or mouse event became a shortcut.
+fn caught(kind: &str, gesture: &Gesture) {
+    hydrus_core::debug_flags::report(hydrus_core::debug_flags::Flag::GuiReport, || {
+        format!("{kind} event caught: Shortcut: {}", gesture.text(false))
+    });
 }
 /// Shortcut report mode (`ClientGUIShortcuts`): what a gesture matched.
 fn report(set: &str, gesture: &Gesture, command: Option<i32>) {

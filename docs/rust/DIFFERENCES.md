@@ -3854,13 +3854,44 @@ change nothing). They are marked out of scope in `docs/rust/tracking/`.
   commits each write as it happens); "flush log" writes its line to
   standard error.
 - Report modes are offered only where something in hydrus-rs can report:
-  idle, shortcut and subprocess. The rest (blurhash, cache, callto, canvas
-  tile borders, daemon, db, file, file import, file sort, graphics view,
-  gui, hover window, media load, mpv, network, potential duplicates,
-  pubsub, similar files, shutdown, subscription) are missing. The idle and
-  shortcut reports use the reference's wording; the subprocess report shows
-  the argument list, not Python's keyword arguments, and does not dump the
-  environment.
+  blurhash, cache, daemon, file, file import, gui, idle, network (and
+  silent), shortcut, similar files metadata generation, subprocess and
+  subscription. Missing: callto, canvas tile borders, db, file sort,
+  graphics view thumbnail update, hover window, media load, mpv, potential
+  duplicates, pubsub and shutdown report modes, and "fake petition mode"
+  (there is nothing in hydrus-rs for them to report on or change, or the
+  place that would report isn't built).
+- The reports use the reference's wording where hydrus-rs does the same
+  step. Some differ: the subprocess report shows the argument list rather
+  than Python's keyword arguments and doesn't dump the environment; file
+  report mode shows the hash as hex and the mime by name; cache report mode
+  names the cache "thumbnail" or "image" and shows a numeric file id; gui
+  report mode reports only key and mouse events turned into shortcuts; the
+  daemon names are the reference's job names for the two maintenance daemons
+  that exist; network report mode has redirects and errors but not the
+  request and response headers.
+- "use faulthandler to log crashes" logs Rust panics (with a backtrace),
+  not Python's fatal-signal tracebacks; a segfault inside a native library
+  isn't logged.
+- "autocomplete delay mode" delays the tag autocomplete search only, not the
+  media predicates lookup the reference also delays.
+- Not offered: profile modes (client api, db, threads, ui) and query planner
+  mode (they need hooks in every database connection and request path);
+  "thumbnail debug mode" (it lightens alternate canvas pages of Qt's
+  thumbnail painting); the mpv "allow crashy files" modes (they switch
+  Python mpv wrapper crash handling); "simulate a wake from sleep" (the GUI
+  keeps no shared network engine to wake); run fast/slow memory
+  maintenance (the caches here maintain themselves on every receive and
+  refresh); "force a main gui layout now", "refresh pages menu in five
+  seconds", "reload current qss stylesheet", "reload icon cache",
+  "isolate existing mpv widgets", "make a parentless text ctrl dialog" and
+  "macos anti-flicker test" (Qt widget, stylesheet, mpv widget or macOS
+  internals); "review threads" and "show scheduled jobs" (Python threads
+  and scheduler); the pympler memory-use entries; "publish some sub files
+  in five seconds", "subscription manager snapshot", "what is this
+  object?"; and the tests, do not touch: the ui, client api, server and
+  visual duplicates test suites (they drive the Python test harness),
+  both self-sigterms and "induce a program crash".
 
 ## Thumbnail manage > file relationships
 
