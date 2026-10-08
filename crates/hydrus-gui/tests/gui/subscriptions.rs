@@ -15,6 +15,7 @@ use hydrus_store::import::import_legacy;
 use hydrus_store::queues::{self, FileSeedMeta, NewFileSeed, SeedStatus, SeedType};
 use hydrus_store::subscriptions;
 
+// leaf: subscriptions-copy-options
 #[test]
 fn favourites_load_selected_subscriptions_and_custom_overwrite_obeys_owner_lifetime() {
     use hydrus_core::import_options::ImportOptionsManager;
@@ -145,6 +146,7 @@ fn favourites_load_selected_subscriptions_and_custom_overwrite_obeys_owner_lifet
     );
 }
 
+// leaf: subscriptions-copy-options
 #[test]
 fn subscription_option_clipboard_edits_stay_staged_and_closed_owners_cannot_apply() {
     let (_dirs, store) = store();
@@ -632,6 +634,7 @@ fn seed_merge_case(store: &Store, case: &serde_json::Value, now: i64) {
         .unwrap();
 }
 
+// leaf: subscriptions-merge
 #[test]
 fn subscription_merge_stages_all_groups_and_preserves_query_histories() {
     let recording = hydrus_testkit::fixture_json("subscription_merge.json");
@@ -813,6 +816,7 @@ fn subscription_merge_stages_all_groups_and_preserves_query_histories() {
     }
 }
 
+// leaf: subscriptions-merge
 #[test]
 fn closing_subscription_merge_owner_discards_pending_and_completed_drafts() {
     let recording = hydrus_testkit::fixture_json("subscription_merge.json");

@@ -44,6 +44,7 @@ fn enter(window: &ManageTagsWindow, tag: &str) {
     window.invoke_entered();
 }
 
+// leaf: audit-media-tags-missing-deleted
 #[test]
 fn thumbnail_dialog_replays_deleted_counts_and_retained_callbacks_cannot_mutate_reopened_owner() {
     let recorded = hydrus_testkit::fixture_json("manage_tag_counts_incremental.json");

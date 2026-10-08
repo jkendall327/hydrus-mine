@@ -40,6 +40,9 @@ fn seed_corpus(store: &hydrus_store::Store, corpus: Value) {
         .unwrap();
 }
 
+// leaf: audit-options-search-or-cancel
+// leaf: audit-options-search-or-create
+// leaf: audit-options-search-or-rewind
 #[test]
 fn native_or_keys_replay_drafts_and_commit_real_query_without_saving_cancelled_terms() {
     let fixture: Value = hydrus_testkit::fixture_json("read_or.json");
@@ -178,6 +181,9 @@ fn native_or_keys_replay_drafts_and_commit_real_query_without_saving_cancelled_t
     assert!(!ui.invoke_search_or_escape());
 }
 
+// leaf: audit-options-search-or-advanced
+// leaf: audit-options-search-or-cancel
+// leaf: audit-options-search-or-create
 #[test]
 fn actual_basic_and_advanced_children_apply_cancel_reopen_and_reject_stale_owners() {
     let fixture: Value = hydrus_testkit::fixture_json("read_or_editors.json");

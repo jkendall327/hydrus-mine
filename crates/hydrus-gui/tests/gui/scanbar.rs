@@ -237,6 +237,8 @@ fn a_file_that_plays_seeks_by_its_bar_and_by_key() {
     video.invoke_close_requested();
 }
 
+// leaf: audit-options-media-viewer-animation-audio-seek-bar-seek-bar-height
+// leaf: audit-options-media-viewer-animation-audio-seek-bar-seek-bar-nub-width
 #[test]
 fn configured_nub_width_seeks_the_recorded_animation_frames() {
     let fixture = hydrus_testkit::fixture_json("viewer_canvas_options.json");

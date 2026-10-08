@@ -42,6 +42,7 @@ fn inboxed(fixture: &Fixture, files: &[HashId]) -> Vec<HashId> {
 }
 
 // leaf: audit-media-context-lifecycle
+// leaf: audit-options-files-and-trash-confirm-sending-more-than-one-file-to-archive-or-inbox
 #[test]
 fn archive_inbox_delete_undelete_and_physical_delete_from_the_menu() {
     let fixture = start_local();

@@ -82,6 +82,7 @@ fn options(ui: &MainWindow, bound: &Bound) -> (OptionsWindow, i32) {
     (w, row as i32)
 }
 
+// leaf: audit-options-gui-misc-force-that-hitting-enter-return-on-radio-button-lists-triggers-a-dialog-ok
 #[test]
 fn gui_options_cancel_hidden_stale_apply_save_reopen_and_live_existing_editor() {
     let fixture = hydrus_testkit::fixture_json("radio_return.json");
@@ -205,6 +206,7 @@ fn gui_options_cancel_hidden_stale_apply_save_reopen_and_live_existing_editor() 
     ui.hide().unwrap();
 }
 
+// leaf: audit-options-gui-misc-force-that-hitting-enter-return-on-radio-button-lists-triggers-a-dialog-ok
 #[test]
 fn unforced_parent_default_accepts_live_but_final_bound_retirement_is_permanent() {
     let (_dirs, store) = super::subscriptions::store();
@@ -329,6 +331,7 @@ fn unforced_parent_default_accepts_live_but_final_bound_retirement_is_permanent(
     ui.hide().unwrap();
 }
 
+// leaf: audit-options-gui-misc-force-that-hitting-enter-return-on-radio-button-lists-triggers-a-dialog-ok
 #[test]
 fn all_recorded_filesize_hash_groups_accept_with_live_policy_and_preserve_multiline_consumption() {
     let fixture = hydrus_testkit::fixture_json("radio_return.json");
@@ -490,6 +493,7 @@ fn current(store: &Store, file: HashId, domain: hydrus_core::ServiceId) -> bool 
         })
         .unwrap()
 }
+// leaf: audit-options-gui-misc-force-that-hitting-enter-return-on-radio-button-lists-triggers-a-dialog-ok
 #[test]
 fn actual_advanced_delete_action_reason_defaults_and_retained_owners_follow_live_policy() {
     let fixture = hydrus_testkit::fixture_json("radio_return.json");

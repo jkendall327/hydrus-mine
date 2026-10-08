@@ -151,6 +151,8 @@ fn bitmap(bound: &Bound) -> Option<hydrus_gui::Thumbnail> {
         .flat_map(|row| row.thumbnails.iter().collect::<Vec<_>>())
         .find(|thumb| thumb.image.size().width > 0)
 }
+// leaf: audit-options-help-debug-action-clear-thumbnail-cache
+// leaf: audit-options-speed-and-memory-thumbnail-cache-thumbnail-cache-timeout
 #[test]
 fn staged_exact_byte_units_timeout_policy_clear_reopen_and_incarnation_retirement() {
     let fixture = hydrus_testkit::fixture_json("thumbnail_cache.json");

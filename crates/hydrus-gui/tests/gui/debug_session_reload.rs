@@ -152,6 +152,7 @@ fn no_slots(store: &Store) {
     assert_eq!(store.read(|conn| Ok(conn.query_row("SELECT COUNT(*) FROM session_snapshots WHERE name LIKE 'temp_session_slot_for_reload_%'", [], |row| row.get::<_, i64>(0))?)).unwrap(), 0);
 }
 
+// leaf: audit-options-help-debug-action-close-and-reload-current-gui-session
 #[test]
 fn actual_menu_snapshot_restores_order_resets_selection_and_keeps_closed_originals() {
     let fixture = hydrus_testkit::fixture_json("debug_session_reload.json");

@@ -331,6 +331,8 @@ fn apply_cancel_reopen_and_four_sides_preserve_real_nested_selection_and_full_na
     assert_eq!(reopened.shown().key, key);
 }
 
+// leaf: audit-options-gui-pages-navigation-and-drag-and-drop-experimental-hide-main-page-navigation-tabs
+// leaf: audit-options-gui-pages-navigation-and-drag-and-drop-experimental-show-tab-tree-view
 #[test]
 fn recorded_hide_gate_retains_live_hierarchy_access_and_elision_changes_actual_paint() {
     let windows = headless::init();

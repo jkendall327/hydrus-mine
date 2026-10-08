@@ -77,6 +77,8 @@ fn settle(ui: &MainWindow, bound: &Bound) {
     }
     assert!(ui.get_preview_has_media());
 }
+// leaf: audit-options-speed-and-memory-image-cache-maximum-image-size-in-of-cache-that-can-be-cached
+// leaf: audit-options-speed-and-memory-image-cache-memory-reserved-for-image-cache
 #[test]
 fn real_saved_policy_preserves_current_media_and_intervals_then_retires_final_bound_owner() {
     let (_dirs, store) = crate::subscriptions::store();

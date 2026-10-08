@@ -343,6 +343,7 @@ async fn pausing_all_paged_importers_holds_watcher_checks_until_resumed() {
     );
 }
 
+// leaf: audit-options-importing-work-slots-number-of-watcher-page-checkers-that-can-run-at-the-same-time
 #[tokio::test(flavor = "multi_thread")]
 async fn watcher_checks_share_their_own_live_capacity_and_owner_close_releases_it() {
     use hydrus_store::settings::{self, ImportWorkSlots};

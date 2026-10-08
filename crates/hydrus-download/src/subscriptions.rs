@@ -1308,6 +1308,7 @@ impl SubscriptionRunner {
 mod tests {
     use super::*;
 
+    // leaf: audit-options-downloading-subscriptions-maximum-number-of-subscriptions-that-can-sync-simultaneously
     #[test]
     fn manager_admission_replays_reference_due_pause_live_limits_and_single_flight() {
         let recording = hydrus_testkit::fixture_json("subscription_concurrency.json");
@@ -1502,6 +1503,7 @@ mod tests {
         assert_eq!(pick(false), ["sub 1".to_owned()].into());
     }
 
+    // leaf: audit-options-downloading-subscriptions-if-a-subscription-has-this-many-failed-file-imports-stop-and-continue-later
     #[test]
     fn outer_typed_exception_budget_replays_recorded_classes_and_reset() {
         let recording = hydrus_testkit::fixture_json("subscription_failure_limit.json");

@@ -71,6 +71,9 @@ fn rgb(colour: slint::Color) -> [u8; 3] {
     [colour.red(), colour.green(), colour.blue()]
 }
 
+// leaf: audit-options-tag-presentation-namespace-colours-add
+// leaf: audit-options-tag-presentation-namespace-colours-delete
+// leaf: audit-options-tag-presentation-other-rendering-namespace-for-the-or-top-row
 #[test]
 fn actual_namespace_questions_cancel_retired_owners_reopen_and_live_colours_replay_qt() {
     let fixture = hydrus_testkit::fixture_json("namespace_colour_controls.json");
@@ -580,6 +583,7 @@ fn actual_namespace_questions_cancel_retired_owners_reopen_and_live_colours_repl
     );
 }
 
+// leaf: audit-options-tag-presentation-namespace-colours-add
 #[test]
 fn blank_native_add_apply_and_return_keep_entry_until_acknowledgement_and_parent_cancel() {
     use slint::platform::{PointerEventButton, WindowAdapter as _};

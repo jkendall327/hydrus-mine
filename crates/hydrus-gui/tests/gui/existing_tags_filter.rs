@@ -3,6 +3,7 @@ use hydrus_gui::{MainWindow, Pages, bind, headless};
 use hydrus_store::queues;
 use slint::{ComponentHandle as _, Model as _};
 
+// leaf: import-existing-tags-filter
 #[test]
 fn existing_tag_filter_dialog_stages_enables_persists_and_retires_with_its_importer_owner() {
     let fixture = hydrus_testkit::fixture_json("existing_tags_filter.json");

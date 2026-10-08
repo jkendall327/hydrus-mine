@@ -107,6 +107,7 @@ fn choices(window: &hydrus_gui::GallerySourceWindow) -> Vec<String> {
         .collect()
 }
 
+// leaf: audit-options-downloading-gallery-downloader-default-download-source
 #[test]
 fn actual_widget_replays_reference_groups_cancels_and_empty_warnings() {
     let (_dirs, store, f) = store();
@@ -187,6 +188,7 @@ fn actual_widget_replays_reference_groups_cancels_and_empty_warnings() {
     }
 }
 
+// leaf: audit-options-downloading-gallery-downloader-default-download-source
 #[test]
 fn options_source_child_is_staged_cancel_safe_and_reaches_page_and_subscription() {
     let (_dirs, store, f) = store();

@@ -77,6 +77,7 @@ impl Drop for Permit {
 #[cfg(test)]
 mod tests {
     use super::*;
+    // leaf: audit-options-importing-work-slots-number-of-gallery-downloader-file-queues-that-can-import-at-the-same-time
     #[test]
     fn capacities_keep_running_counts_across_reference_lower_raise_and_release() {
         let fixture = hydrus_testkit::fixture_json("import_work_slots.json");

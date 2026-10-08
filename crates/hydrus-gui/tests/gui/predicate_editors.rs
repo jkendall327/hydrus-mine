@@ -798,6 +798,7 @@ fn the_editor_window_adds_what_it_makes_to_the_search() {
     );
 }
 
+// leaf: audit-options-predicate-file-viewing-statistics-fileviewingstatsviewtime-test
 #[test]
 fn native_viewtime_milliseconds_survive_accept_recent_reopen_and_cancel() {
     use hydrus_core::search::{predicate::ViewingStat, recent::RecentPredicates};
@@ -883,6 +884,8 @@ fn native_viewtime_milliseconds_survive_accept_recent_reopen_and_cancel() {
     assert_eq!(shown_predicates(&ui).len(), 2);
 }
 
+// leaf: audit-options-predicate-filetype-mime-tree
+// leaf: audit-options-predicate-hash-hash-clean
 #[test]
 fn the_editor_window_shows_what_trees_and_buttons_change() {
     let boundaries = hydrus_testkit::fixture_json("predicate_boundaries.json");
@@ -1563,6 +1566,15 @@ fn imported_predicate_defaults_reach_panels_and_reset_never_resurrects_legacy_va
     )));
 }
 
+// leaf: audit-options-predicate-dimensions-presets-1080p
+// leaf: audit-options-predicate-dimensions-presets-4k
+// leaf: audit-options-predicate-dimensions-presets-720p
+// leaf: audit-options-predicate-dimensions-presets-system-ratio-16-9
+// leaf: audit-options-predicate-dimensions-presets-system-ratio-4-3
+// leaf: audit-options-predicate-dimensions-presets-system-ratio-9-16
+// leaf: audit-options-predicate-dimensions-presets-system-ratio-is-landscape
+// leaf: audit-options-predicate-dimensions-presets-system-ratio-is-portrait
+// leaf: audit-options-predicate-dimensions-presets-system-ratio-is-square
 #[test]
 fn dimensions_presets_pointer_acceptance_reaches_page_and_persistent_recent_history() {
     use hydrus_core::search::recent::RecentPredicates;

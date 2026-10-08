@@ -188,6 +188,7 @@ fn clipboard_import(log: &FileLogWindow) {
     choose(log, 1, "from clipboard");
 }
 
+// leaf: audit-network-file-log-clipboard-import
 #[test]
 fn clipboard_import_persists_deduplicates_and_handles_empty_or_missing_text() {
     let (_dirs, store) = store();
@@ -371,6 +372,7 @@ fn png_export(log: &FileLogWindow) {
     choose(log, 1, "to png");
 }
 
+// leaf: audit-network-file-log-png
 #[test]
 fn source_png_dialogs_cancel_validate_import_export_and_close_with_the_log() {
     let (_dirs, store) = store();
@@ -457,6 +459,7 @@ fn source_png_dialogs_cancel_validate_import_export_and_close_with_the_log() {
     assert!(!stale.exists());
 }
 
+// leaf: audit-network-file-log-advanced
 #[test]
 fn advanced_object_export_and_renormalisation_confirm_before_collapsing_later_duplicates() {
     use hydrus_core::url::strings::{StringMatch, StringProcessor};

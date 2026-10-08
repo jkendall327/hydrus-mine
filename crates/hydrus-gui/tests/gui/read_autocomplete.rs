@@ -106,6 +106,8 @@ fn options_cap(ui: &MainWindow, bound: &hydrus_gui::Bound, cap: i32, apply: bool
     options.invoke_number_edited(i32::try_from(row).unwrap(), cap + 1); // Retired controls do not alter saved values.
     options.invoke_apply();
 }
+// leaf: audit-options-search-tag-tabs-children
+// leaf: audit-options-search-tag-tabs-favourites
 #[test]
 fn real_page_tabs_apply_caps_keep_zero_count_descendants_and_restore_context() {
     let fixture = hydrus_testkit::fixture_json("read_tag_tabs.json");

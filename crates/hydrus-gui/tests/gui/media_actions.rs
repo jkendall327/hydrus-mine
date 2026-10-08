@@ -236,6 +236,7 @@ fn the_viewer_s_shortcuts_archive_inbox_and_delete() {
     assert_eq!(page.borrow().results().len(), before - 1);
 }
 
+// leaf: audit-options-files-and-trash-confirm-sending-more-than-one-file-to-archive-or-inbox
 #[test]
 fn confirmation_policy_matches_recorded_actionable_domains_and_counts() {
     use hydrus_store::settings::DeletionPreferences;
@@ -305,6 +306,8 @@ fn confirmation_policy_matches_recorded_actionable_domains_and_counts() {
     }
 }
 
+// leaf: audit-options-files-and-trash-advanced-file-deletion-and-custom-reasons-remember-the-last-reason
+// leaf: audit-options-files-and-trash-advanced-file-deletion-and-custom-reasons-use-the-advanced-file-deletion-dialog
 #[test]
 fn closing_viewer_discards_advanced_deletion_and_reopening_recalls_applied_choice() {
     use hydrus_gui::delete_files_window;

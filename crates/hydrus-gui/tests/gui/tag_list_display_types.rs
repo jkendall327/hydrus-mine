@@ -119,6 +119,8 @@ fn configure(store: &Store, recorded: &Value) {
         })
         .unwrap();
 }
+// leaf: audit-options-tag-presentation-default-taglist-display-type-advanced-tag-display-type-for-new-media-viewer-taglists
+// leaf: audit-options-tag-presentation-default-taglist-display-type-advanced-tag-display-type-for-new-page-sidebar-taglists
 #[test]
 fn options_apply_cancel_new_sidebar_and_viewer_replay_raw_display_and_filters() {
     let recorded = hydrus_testkit::fixture_json("tag_list_display_types.json");
@@ -249,6 +251,8 @@ fn options_apply_cancel_new_sidebar_and_viewer_replay_raw_display_and_filters() 
     }
 }
 
+// leaf: audit-options-tag-presentation-default-taglist-display-type-advanced-tag-display-type-for-new-media-viewer-taglists
+// leaf: audit-options-tag-presentation-default-taglist-display-type-advanced-tag-display-type-for-new-page-sidebar-taglists
 #[test]
 fn sidebar_and_viewer_opening_modes_are_independent_after_gui_apply() {
     let recorded = hydrus_testkit::fixture_json("tag_list_display_types.json");

@@ -485,6 +485,7 @@ fn zooming_to_max_is_as_the_reference_s() {
     );
 }
 
+// leaf: audit-options-media-playback-zoom-and-position-re-center-media-on-window-resize
 #[test]
 fn resizing_preserves_or_recenters_the_recorded_zoom_and_pan() {
     let fixture = hydrus_testkit::fixture_json("viewer_canvas_options.json");

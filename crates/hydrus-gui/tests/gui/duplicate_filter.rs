@@ -420,6 +420,7 @@ fn duplicates_pages_kept_by_an_earlier_import_still_open() {
     }
 }
 
+// leaf: audit-options-file-viewing-statistics-enable-file-viewing-statistics-tracking-in-the-duplicate-filter
 #[test]
 fn viewing_statistics_switch_controls_actual_pair_navigation_and_cancelled_close() {
     use hydrus_core::duplicates::DuplicatesSearch;

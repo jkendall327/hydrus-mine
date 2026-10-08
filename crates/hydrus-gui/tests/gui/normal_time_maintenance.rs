@@ -120,6 +120,7 @@ pub(super) fn queue(store: &Store, id: HashId) {
         })
         .unwrap();
 }
+// leaf: audit-options-files-and-trash-allow-deferred-file-deletes-during-normal-time
 #[test]
 fn staged_controls_cancel_reopen_hidden_retired_and_peer_merge() {
     let fixture = hydrus_testkit::fixture_json("normal_time_maintenance.json");
@@ -214,6 +215,7 @@ fn staged_controls_cancel_reopen_hidden_retired_and_peer_merge() {
     .unwrap();
     w.invoke_cancel();
 }
+// leaf: audit-options-files-and-trash-allow-deferred-file-deletes-during-normal-time
 #[test]
 fn unchecked_normal_flags_block_real_workers_but_current_live_idle_admits_both() {
     let (_dirs, store, files) = owned();
@@ -295,6 +297,7 @@ fn unchecked_normal_flags_block_real_workers_but_current_live_idle_admits_both()
     });
     assert!(files[2].1.exists());
 }
+// leaf: audit-options-files-and-trash-allow-deferred-file-deletes-during-normal-time
 #[test]
 fn normal_time_apply_reaches_waiting_consumer_and_terminal_owner_wakes_without_successor() {
     let (_dirs, store, files) = owned();
@@ -380,6 +383,7 @@ fn normal_time_apply_reaches_waiting_consumer_and_terminal_owner_wakes_without_s
     assert!(files[2].1.exists());
 }
 
+// leaf: audit-options-files-and-trash-allow-deferred-file-deletes-during-normal-time
 #[test]
 fn rebind_wakes_previous_pass_and_preserves_queued_pair_for_current_owner() {
     let (_dirs, store, files) = owned();
@@ -435,6 +439,7 @@ fn rebind_wakes_previous_pass_and_preserves_queued_pair_for_current_owner() {
     assert!(files[3].1.exists());
 }
 
+// leaf: audit-options-files-and-trash-allow-deferred-file-deletes-during-normal-time
 #[test]
 fn dropped_binding_retires_retained_control_and_wakes_its_real_held_wait() {
     let (_dirs, store, files) = owned();

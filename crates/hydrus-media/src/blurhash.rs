@@ -216,6 +216,7 @@ pub fn decode_blurhash(code: &str, width: u32, height: u32) -> crate::error::Res
 mod tests {
     use super::*;
 
+    // leaf: audit-options-thumbnails-appearance-use-blurhash-missing-thumbnail-fallback
     #[test]
     fn recovery_pixels_and_invalid_inputs_match_actual_reference_decoder() {
         let fixture = hydrus_testkit::fixture_json("thumbnail_appearance.json");

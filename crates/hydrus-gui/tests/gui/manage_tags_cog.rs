@@ -160,6 +160,7 @@ fn remove_button_confirms_as_the_reference_does_and_stages_the_removal() {
 }
 
 // leaf: audit-media-tags-missing-cog
+// leaf: audit-options-tag-editing-tag-edit-autocomplete-by-default-select-the-first-tag-result-with-actual-count-in-write-autocomplete
 #[test]
 fn cog_menu_toggles_are_written_and_the_confirmation_obeys_them() {
     let recorded = hydrus_testkit::fixture_json("manage_tags_cog.json");

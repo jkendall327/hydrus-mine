@@ -1017,6 +1017,7 @@ fn formula_results(formula: &hydrus_gui::FormulaWindow) -> Vec<String> {
         .collect()
 }
 
+// leaf: parser-multiple
 #[test]
 fn multiple_examples_restore_sources_and_propagate_converted_selected_child_data() {
     use hydrus_core::url::strings::{Conversion, StringConverter};
@@ -1131,6 +1132,7 @@ fn recursive_child(slots: &Slots) -> (Slots, ParserEditWindow) {
     (owned, window)
 }
 
+// leaf: subsidiary-create
 #[test]
 fn recursive_subsidiary_creation_is_staged_and_owner_cancels_descendants() {
     let rendered = headless::init();
@@ -1221,6 +1223,7 @@ fn recursive_subsidiary_creation_is_staged_and_owner_cancels_descendants() {
     assert_eq!(definitions(&store), saved);
 }
 
+// leaf: subsidiary-create
 #[test]
 fn subsidiary_edits_preserve_nested_page_identity_and_cancel_metadata_without_prompt() {
     let _headless_windows = headless::init();
@@ -1656,6 +1659,7 @@ fn subsidiary_export_uses_owned_reference_png_parameters_and_discards_stale_expo
 }
 
 // leaf: url-links-api
+// leaf: audit-network-parser-auto-links
 #[test]
 fn links_auto_fill_and_api_review_reproduce_reference_and_preserve_installed_consumers() {
     fn rows(model: &slint::ModelRc<hydrus_gui::TableRow>) -> serde_json::Value {
@@ -1800,6 +1804,7 @@ fn links_auto_fill_and_api_review_reproduce_reference_and_preserve_installed_con
     }
 }
 
+// leaf: url-links-parser
 #[test]
 fn owned_parser_picker_and_clear_questions_replay_reference_and_reach_live_resolver() {
     use hydrus_legacy::{
@@ -2004,6 +2009,7 @@ fn owned_parser_picker_and_clear_questions_replay_reference_and_reach_live_resol
     slots.cancel();
 }
 
+// leaf: content-time
 #[test]
 fn timestamp_content_has_only_source_choice_and_persists_real_parsed_metadata() {
     use hydrus_gui_model::formula_editors::FormulaTestData;

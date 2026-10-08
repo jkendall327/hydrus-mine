@@ -274,6 +274,7 @@ fn maximum_documented_definition_count_roundtrips_and_the_next_one_is_rejected()
     assert!(decode_text(&oversized.to_string()).is_err());
 }
 
+// leaf: audit-network-conversion-date-fields
 #[test]
 fn date_conversions_keep_reference_codes_through_definition_exchange() {
     let converter = json!([

@@ -157,6 +157,8 @@ fn choose_service(window: &hydrus_gui::ServicesReviewWindow, name: &str) -> i32 
     index
 }
 
+// leaf: audit-media-services-missing-ratings
+// leaf: audit-media-services-missing-trash
 #[test]
 fn local_bulk_review_replays_confirmations_store_changes_and_reopens() {
     use hydrus_core::{ServiceType, Sha256};
@@ -460,6 +462,7 @@ fn deleted_record_state(
     serde_json::json!(statuses)
 }
 
+// leaf: audit-media-services-missing-deleted
 #[test]
 fn deleted_record_review_needs_both_answers_and_reopens_with_import_consumer_changed() {
     use hydrus_core::{ServiceType, Sha256};

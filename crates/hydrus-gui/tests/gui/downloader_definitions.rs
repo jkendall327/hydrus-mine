@@ -578,6 +578,8 @@ fn lifecycle_native_fields_disable_typing_until_child_closes() {
     editor.hide().unwrap();
 }
 
+// leaf: url-domain
+// leaf: url-preview
 #[test]
 fn domain_mask_modes_tester_and_selectable_previews_apply_cancel_and_reopen() {
     use hydrus_gui_model::downloader_definitions as definitions;
@@ -800,6 +802,7 @@ fn domain_mask_modes_tester_and_selectable_previews_apply_cancel_and_reopen() {
     }
 }
 
+// leaf: url-domain
 #[test]
 fn full_domain_mask_owned_entries_questions_and_favourites_reach_persisted_consumers() {
     fn rows(model: &slint::ModelRc<hydrus_gui::TableRow>) -> serde_json::Value {

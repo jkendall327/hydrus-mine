@@ -185,6 +185,7 @@ fn ctrl_p_async_palette_launches_real_pages_favourites_and_main_menu_actions() {
 }
 use hydrus_store::Store;
 
+// leaf: audit-options-command-palette-command-palette-search-provider-order-add
 #[test]
 fn palette_reopen_rejects_stale_callbacks_and_removed_providers_do_not_return() {
     let directory = tempfile::tempdir().unwrap();
@@ -324,6 +325,7 @@ fn media_provider_uses_the_actual_thumbnail_dispatcher_and_rejects_a_changed_pag
     );
 }
 
+// leaf: audit-options-command-palette-command-palette-start-searching-when-this-many-characters-have-been-typed
 #[test]
 fn asynchronous_calculator_ignores_page_threshold_and_activation_keeps_owner_open() {
     let directory = tempfile::tempdir().unwrap();
@@ -366,6 +368,8 @@ fn asynchronous_calculator_ignores_page_threshold_and_activation_keeps_owner_ope
     assert!(bound.command_palette.borrow().is_none());
 }
 
+// leaf: audit-options-command-palette-command-palette-max-favourite-searches-to-show
+// leaf: audit-options-command-palette-command-palette-max-page-results-to-show
 #[test]
 fn saved_favourite_current_page_policy_and_provider_order_reach_a_reopened_palette() {
     let directory = tempfile::tempdir().unwrap();

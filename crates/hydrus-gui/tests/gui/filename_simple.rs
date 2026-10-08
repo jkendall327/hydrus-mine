@@ -40,6 +40,7 @@ fn child(window: &FilenameTaggingWindow, single: bool) -> hydrus_gui::WriteTagsW
     write_tag_window::last_opened().unwrap()
 }
 
+// leaf: audit-network-tagging-simple
 #[test]
 fn real_simple_actions_replay_selection_paste_and_removal_then_reach_manual_import_seeds() {
     let windows = headless::init();

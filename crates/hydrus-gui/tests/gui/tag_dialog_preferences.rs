@@ -105,6 +105,10 @@ fn choose_add(window: &hydrus_gui::ManageTagsWindow, asked: &serde_json::Value) 
     window.invoke_tag_menu_answered(true);
 }
 
+// leaf: audit-options-tag-editing-tag-dialogs-show-parent-info-by-default-on-edit-write-taglists
+// leaf: audit-options-tag-editing-tag-dialogs-show-parents-expanded-by-default-on-edit-write-taglists
+// leaf: audit-options-tag-editing-tag-dialogs-show-sibling-info-by-default-on-edit-write-taglists
+// leaf: audit-options-tag-editing-tag-dialogs-use-listbook-instead-of-tabbed-notebook-for-tag-service-panels
 #[test]
 fn options_apply_cancel_reopen_and_rendered_tag_service_topologies() {
     let recorded = hydrus_testkit::fixture_json("tag_dialog_preferences.json");

@@ -119,6 +119,8 @@ fn edit(window: &OptionsWindow, index: usize, value: &Value) {
     window.invoke_tag_sort_chosen(row, 2, value["group_by"].as_i64().unwrap() as i32);
     window.invoke_tag_sort_chosen(row, 3, i32::from(value["use_siblings"] != true));
 }
+// leaf: audit-options-tag-sort-tag-sort-default-tag-sort-in-media-viewer-manage-tags-dialogs
+// leaf: audit-options-tag-sort-tag-sort-default-tag-sort-in-search-page-manage-tags-dialogs
 #[test]
 fn native_options_stage_cancel_save_reopen_and_reject_retired_sender() {
     let recorded = hydrus_testkit::fixture_json("manage_tags_sort.json");
@@ -408,6 +410,8 @@ fn actual_sort_stacks_fit_their_rows_and_scroll_without_overlap_at_both_viewport
     ui.hide().unwrap();
 }
 
+// leaf: audit-options-tag-sort-tag-sort-default-tag-sort-in-media-viewer-manage-tags-dialogs
+// leaf: audit-options-tag-sort-tag-sort-default-tag-sort-in-search-page-manage-tags-dialogs
 #[test]
 fn main_selection_and_viewer_current_file_use_distinct_defaults_and_live_dialog_keeps_its_sort() {
     let recorded = hydrus_testkit::fixture_json("manage_tags_sort.json");

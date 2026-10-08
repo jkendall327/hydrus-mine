@@ -5858,6 +5858,7 @@ mod tests {
 
     /// The legacy YAML preference is a portable path, independent of the
     /// filename/character-limit serialisable options.
+    // leaf: audit-options-exporting-export-folder-default-export-directory
     #[test]
     fn export_default_directory_import_resolves_recorded_portable_paths() {
         let source = hydrus_testkit::legacy_fixture("basic");

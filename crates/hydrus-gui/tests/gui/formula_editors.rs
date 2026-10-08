@@ -23,6 +23,7 @@ fn labels(rows: &slint::ModelRc<hydrus_gui::TableRow>) -> Vec<String> {
         })
         .collect()
 }
+// leaf: formula-fetch
 #[test]
 fn formula_fetch_decodes_real_documents_updates_preview_and_discards_closed_owner_results() {
     use crate::parser_editors::{TestDocuments, until_fetch};
@@ -820,6 +821,8 @@ fn lifecycle_string_editors_cancel_descendants_and_reopen() {
     assert!(!slots.has_open());
 }
 
+// leaf: formula-context
+// leaf: formula-static
 #[test]
 fn scalar_formula_controls_preview_processing_cancel_and_save() {
     let (_dirs, store) = store();

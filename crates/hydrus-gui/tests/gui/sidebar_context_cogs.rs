@@ -138,6 +138,7 @@ fn collect_row(window: &OptionsWindow) -> i32 {
     .unwrap()
 }
 
+// leaf: audit-options-search-sort-collect-tag-display
 #[test]
 fn sidebar_actions_replay_all_service_display_and_unmatched_media_outputs() {
     let windows = headless::init();

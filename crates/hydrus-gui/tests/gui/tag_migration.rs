@@ -163,6 +163,7 @@ fn manage_tags_launches_selected_scope_and_refreshes_after_background_delete() {
     manage.invoke_cancel();
 }
 
+// leaf: audit-media-migration-pause
 #[test]
 fn closing_settings_retains_the_published_job_until_completion() {
     let (_dirs, store) = crate::subscriptions::store();
@@ -299,6 +300,8 @@ fn an_open_filter_child_cannot_broaden_a_confirmed_delete() {
     window.invoke_close_clicked();
 }
 
+// leaf: migration-archive-destination
+// leaf: migration-archive-source
 #[test]
 fn archive_controls_inspect_reject_wrong_pair_types_and_freeze_confirmed_paths() {
     let dir = tempfile::tempdir().unwrap();
@@ -413,6 +416,7 @@ fn archive_controls_inspect_reject_wrong_pair_types_and_freeze_confirmed_paths()
     window.invoke_close_clicked();
 }
 
+// leaf: audit-media-migration-pause
 #[test]
 fn cancellation_allows_immediate_popup_dismissal_then_publishes_cleanup() {
     let (_dirs, store) = crate::subscriptions::store();
@@ -507,6 +511,7 @@ fn completed_popup_remains_visible_until_past_its_three_second_deadline() {
     window.invoke_close_clicked();
 }
 
+// leaf: audit-media-migration-pause
 #[test]
 fn progress_popup_renders_the_recorded_paused_state() {
     let windows = headless::init();

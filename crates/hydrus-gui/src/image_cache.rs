@@ -749,6 +749,8 @@ mod tests {
         assert_eq!(warm.channels(), 4);
         assert!(!cache.contains(HashId(1)));
     }
+    // leaf: audit-options-speed-and-memory-image-cache-maximum-image-size-in-of-cache-that-can-be-cached
+    // leaf: audit-options-speed-and-memory-image-cache-memory-reserved-for-image-cache
     #[test]
     fn actual_qt_pending_estimate_uses_full_unknown_resolution_fallback() {
         let fixture = hydrus_testkit::fixture_json("image_cache.json");

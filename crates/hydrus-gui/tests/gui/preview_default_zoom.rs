@@ -106,6 +106,7 @@ fn select(ui: &MainWindow, bound: &hydrus_gui::Bound) {
     ui.invoke_thumbnail_clicked(0, false, false);
     bound.preview.refresh();
 }
+// leaf: audit-options-media-playback-zoom-and-position-preview-viewer-default-zoom
 #[test]
 fn real_options_cancel_reopen_six_modes_paint_clipped_geometry_and_preserve_current_on_save() {
     let qt = hydrus_testkit::fixture_json("preview_default_zoom.json");

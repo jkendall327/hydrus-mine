@@ -236,6 +236,7 @@ fn assert_picker_controls_visible(
         }
     }
 }
+// leaf: audit-options-colours-current-colourset
 #[test]
 fn real_options_stage_all_roles_cancel_hidden_inputs_and_retire_owned_picker() {
     let qt = hydrus_testkit::fixture_json("gui_coloursets.json");
@@ -426,6 +427,7 @@ fn real_options_stage_all_roles_cancel_hidden_inputs_and_retire_owned_picker() {
         "picker refresh must not retain its own owner"
     );
 }
+// leaf: audit-options-menu-menu-help-darkmode
 #[test]
 fn help_warning_hidden_acknowledgement_toggle_rebind_and_final_bound_drop_are_owned() {
     let qt = hydrus_testkit::fixture_json("gui_coloursets.json");

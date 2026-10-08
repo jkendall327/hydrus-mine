@@ -71,6 +71,8 @@ fn choose(ui: &MainWindow, pane: i32, label: &str) {
     ui.invoke_menu_line_clicked(pane, index as i32, 200.0, 100.0, 10.0);
 }
 
+// leaf: audit-options-tabs-context-action-2287-non-reserved-session-name
+// leaf: audit-options-tabs-context-action-2290-create-a-new-session
 #[test]
 fn clicked_notebook_saving_replays_names_overwrite_invalid_and_cancellation() {
     let _windows = headless::init();
@@ -240,6 +242,7 @@ fn clicked_notebook_saving_replays_names_overwrite_invalid_and_cancellation() {
     assert_eq!(reopened.session().pages, previous);
 }
 
+// leaf: audit-options-tabs-context-action-2287-non-reserved-session-name
 #[test]
 fn notebook_session_copies_preserve_media_and_independent_importer_state() {
     use hydrus_gui::page_chooser::NewPage;

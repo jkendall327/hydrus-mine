@@ -74,6 +74,7 @@ fn unpause(store: &Store) {
         .unwrap();
 }
 
+// leaf: audit-options-help-debug-action-fetch-a-url
 #[test]
 fn actual_menu_binary_save_decoded_clipboard_forget_cookie_headers_and_dismiss_deadline() {
     let fixture = hydrus_testkit::fixture_json("debug_fetch_url.json");

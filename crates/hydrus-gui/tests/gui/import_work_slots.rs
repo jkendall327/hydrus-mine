@@ -45,6 +45,10 @@ fn edit(window: &OptionsWindow, event: &Value) {
         );
     }
 }
+// leaf: audit-options-importing-work-slots-number-of-gallery-downloader-file-queues-that-can-import-at-the-same-time
+// leaf: audit-options-importing-work-slots-number-of-gallery-downloader-searches-that-can-run-at-the-same-time
+// leaf: audit-options-importing-work-slots-number-of-watcher-page-checkers-that-can-run-at-the-same-time
+// leaf: audit-options-importing-work-slots-number-of-watcher-page-file-queues-that-can-run-at-the-same-time
 #[test]
 fn actual_importing_controls_cancel_apply_reopen_and_ignore_retired_edits() {
     let fixture = hydrus_testkit::fixture_json("import_work_slots.json");

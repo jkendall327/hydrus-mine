@@ -61,6 +61,7 @@ fn tabs(ui: &MainWindow) -> Vec<String> {
         .collect()
 }
 
+// leaf: audit-options-nested-tag-suggestions-favourites
 #[test]
 fn most_used_child_stages_each_service_cancels_descendants_and_persists_options() {
     let (_dirs, store) = store();
@@ -1187,6 +1188,7 @@ fn the_checker_options_buttons_edit_the_default_checker_options() {
     );
 }
 
+// leaf: audit-options-gui-misc-remember-last-open-options-panel-in-this-window
 #[test]
 fn options_remember_navigation_and_apply_search_placement() {
     let (_dirs, store) = store();
@@ -1233,6 +1235,7 @@ fn options_remember_navigation_and_apply_search_placement() {
     assert_eq!(preferences.last_panel, "audio");
 }
 
+// leaf: audit-options-gui-main-window-confirm-client-exit
 #[test]
 fn gui_identity_and_exit_confirmation_reach_the_main_window() {
     let (_dirs, store) = store();
@@ -1317,6 +1320,8 @@ fn gui_identity_and_exit_confirmation_reach_the_main_window() {
     }
 }
 
+// leaf: audit-options-gui-pages-page-tab-names-also-automatically-prompt-when-sending-some-pages-to-one
+// leaf: audit-options-gui-sessions-sessions-number-of-session-backups-to-keep
 #[test]
 fn applied_session_backup_count_controls_the_next_save() {
     use hydrus_core::pages::Session;
@@ -1506,6 +1511,9 @@ fn sleep_options_apply_to_the_network_consumer_and_cancel_drafts() {
     window.invoke_cancel();
 }
 
+// leaf: audit-options-files-and-trash-when-copying-file-hashes-prefix-with-booru-friendly-hash-type
+// leaf: audit-options-tag-editing-tag-dialogs-default-tag-service-in-tag-dialogs
+// leaf: audit-options-tag-editing-tag-dialogs-remember-last-used-default-tag-service-in-manage-tag-dialogs
 #[test]
 fn hash_prefix_option_reaches_selected_and_focused_clipboard_hashes() {
     use hydrus_gui::thumbnail_menu::{HashKind, hashes};
@@ -1634,6 +1642,7 @@ fn tag_dialog_service_dropdown_tracks_remember_checkbox_and_parent_transaction()
     assert_eq!(store.read(get::<TagEditingSettings>).unwrap(), before);
 }
 
+// leaf: audit-options-file-search-file-search-autocomplete-default-tag-service-in-search-pages
 #[test]
 fn default_search_service_option_changes_new_pages_and_missing_keys_fall_back() {
     use hydrus_core::service::builtin_keys;
@@ -1730,6 +1739,8 @@ fn removed_default_service_falls_back_in_options_and_waits_for_apply() {
     }
 }
 
+// leaf: audit-options-file-search-file-search-autocomplete-show-system-everything
+// leaf: audit-options-file-search-file-search-autocomplete-start-new-search-pages-in-searching-immediately
 #[test]
 fn search_defaults_apply_to_new_pages_and_the_real_autocomplete() {
     use hydrus_core::ServiceKey;
@@ -1844,6 +1855,7 @@ fn search_defaults_apply_to_new_pages_and_the_real_autocomplete() {
     reopened.invoke_cancel();
 }
 
+// leaf: audit-options-file-search-file-search-autocomplete-default-fallback-local-file-search-location
 #[test]
 fn default_local_location_child_draft_drives_blank_pages_and_tag_fallback() {
     use hydrus_core::ServiceKey;
@@ -1962,6 +1974,7 @@ fn default_local_location_child_draft_drives_blank_pages_and_tag_fallback() {
     );
 }
 
+// leaf: audit-options-file-search-file-search-autocomplete-autocomplete-dropdown-floats-over-file-search-pages
 #[test]
 fn read_list_sizes_and_float_policy_reach_rendered_new_pages() {
     use hydrus_core::ServiceKey;
@@ -2082,6 +2095,8 @@ fn read_list_sizes_and_float_policy_reach_rendered_new_pages() {
     }
 }
 
+// leaf: audit-options-file-search-file-search-if-explicit-system-limit-then-refresh-search-when-file-sort-changes
+// leaf: audit-options-file-search-file-search-implicit-system-limit-for-all-searches
 #[test]
 fn implicit_limit_options_reach_queries_and_limited_sort_refresh() {
     use hydrus_search::{SortBy, SortOrder};
@@ -2172,6 +2187,8 @@ fn implicit_limit_options_reach_queries_and_limited_sort_refresh() {
     );
 }
 
+// leaf: audit-options-media-playback-transparency-draw-image-transparency-as-checkerboard
+// leaf: audit-options-media-playback-transparency-instead-of-checkerboard-use-a-bright-greenscreen
 #[test]
 fn canvas_options_apply_to_the_open_viewer_and_cancel_discards_the_draft() {
     use hydrus_store::media::FileFlags;
@@ -2320,6 +2337,13 @@ fn canvas_options_apply_to_the_open_viewer_and_cancel_discards_the_draft() {
     opaque_viewer.invoke_close_requested();
 }
 
+// leaf: audit-options-media-playback-zoom-and-position-re-center-media-on-window-resize
+// leaf: audit-options-media-viewer-animation-audio-seek-bar-seek-bar-height
+// leaf: audit-options-media-viewer-animation-audio-seek-bar-seek-bar-height-when-mouse-away
+// leaf: audit-options-media-viewer-animation-audio-seek-bar-seek-bar-nub-width
+// leaf: audit-options-media-viewer-hovers-hover-windows-pop-in-notes-right-hover-window-on-mouseover
+// leaf: audit-options-media-viewer-hovers-hover-windows-pop-in-ratings-and-locations-top-right-hover-window-on-mouseover
+// leaf: audit-options-media-viewer-hovers-hover-windows-pop-in-tags-left-hover-window-on-mouseover
 #[test]
 #[allow(clippy::float_cmp)] // logical pixel geometry is exact
 fn resize_and_seek_options_reach_the_native_viewer_geometry() {
@@ -2516,6 +2540,7 @@ fn resize_and_seek_options_reach_the_native_viewer_geometry() {
     viewer.invoke_close_requested();
 }
 
+// leaf: audit-options-media-viewer-hovers-background-draw-index-text-bottom-right-in-the-viewer-background
 #[test]
 fn hover_options_apply_to_actual_mouseover_panels_and_passive_index_text() {
     use hydrus_store::settings::{self, ViewerHoverSettings};
@@ -2707,6 +2732,8 @@ fn hover_options_apply_to_actual_mouseover_panels_and_passive_index_text() {
     viewer.invoke_close_requested();
 }
 
+// leaf: audit-options-media-viewer-mouse-behaviour-do-not-allow-mouse-media-drag-panning-when-the-media-has-duration
+// leaf: audit-options-media-viewer-mouse-behaviour-hide-mouse-cursor-during-media-viewer-drags
 #[test]
 #[allow(clippy::float_cmp)] // exact integer pointer deltas in logical pixels
 fn pointer_options_change_real_drag_acceptance_and_cursor_transitions() {
@@ -2872,6 +2899,7 @@ fn pointer_options_change_real_drag_acceptance_and_cursor_transitions() {
     reopened.invoke_close_requested();
 }
 
+// leaf: audit-options-tag-autocomplete-tabs-favourite-tags-favourite-tag-list-editor
 #[test]
 fn favourite_tags_child_replays_reference_and_waits_for_parent_apply() {
     use hydrus_store::settings::{self, FavouriteTags};
@@ -2992,6 +3020,8 @@ fn favourite_tags_child_replays_reference_and_waits_for_parent_apply() {
     assert_eq!(store.read(settings::get::<FavouriteTags>).unwrap(), saved);
 }
 
+// leaf: audit-options-media-viewer-animation-audio-seek-bar-seek-bar-full-height-pop-in-requires-window-focus
+// leaf: audit-options-media-viewer-hovers-hover-windows-hover-window-pop-in-requires-window-focus
 #[test]
 #[allow(clippy::float_cmp)] // whole logical-pixel bar heights
 fn focus_options_reach_native_activity_and_actual_mouseover_gates() {
@@ -3263,6 +3293,10 @@ fn show_original_key(ui: &MainWindow, bound: &hydrus_gui::Bound, key: hydrus_cor
     assert_eq!(bound.pages.borrow().shown().key, key);
 }
 
+// leaf: audit-options-media-viewer-closing-focus-advanced-when-closing-the-media-viewer-with-the-above-focusing-options-activate-main-gui
+// leaf: audit-options-media-viewer-closing-focus-debug-when-closing-the-media-viewer-at-any-time-activate-main-gui
+// leaf: audit-options-media-viewer-closing-focus-when-closing-the-media-viewer-re-select-original-search-page
+// leaf: audit-options-media-viewer-closing-focus-when-closing-the-media-viewer-tell-original-search-page-to-select-exit-media
 #[test]
 fn closing_preferences_reach_frozen_page_selection_and_native_main_activation() {
     use hydrus_gui::viewer_closing::set_activation_observer;
@@ -3726,6 +3760,7 @@ fn passive_background_options_paint_independent_copies_behind_opaque_media() {
     reopened.invoke_close_requested();
 }
 
+// leaf: audit-options-downloading-subscriptions-if-a-subscription-has-this-many-failed-file-imports-stop-and-continue-later
 #[test]
 fn subscription_failure_limit_options_replay_qt_values_apply_cancel_and_reopen() {
     use hydrus_store::network::NetworkSettings;
@@ -3813,6 +3848,8 @@ fn subscription_failure_limit_options_replay_qt_values_apply_cancel_and_reopen()
     window.invoke_cancel();
 }
 
+// leaf: audit-options-media-viewer-mouse-behaviour-hide-mouse-cursor-during-media-viewer-drags
+// leaf: audit-options-media-viewer-mouse-behaviour-time-until-mouse-cursor-autohides-on-media-viewer
 #[test]
 fn cursor_timeout_reaches_native_motion_timer_focus_and_actual_popup_lifecycle() {
     use hydrus_gui::{session_autosave, viewer_cursor};
@@ -4010,6 +4047,7 @@ fn cursor_timeout_reaches_native_motion_timer_focus_and_actual_popup_lifecycle()
     );
 }
 
+// leaf: audit-options-downloading-subscriptions-maximum-number-of-subscriptions-that-can-sync-simultaneously
 #[test]
 fn subscription_concurrency_options_replay_bounds_parent_apply_cancel_and_reopen() {
     use hydrus_store::network::NetworkSettings;
@@ -4078,6 +4116,8 @@ fn subscription_concurrency_options_replay_bounds_parent_apply_cancel_and_reopen
     window.invoke_cancel();
 }
 
+// leaf: audit-options-media-playback-video-animations-always-loop-animations
+// leaf: audit-options-media-viewer-hovers-top-hover-button-menu-controls-zoom-switch-button-switches-between
 #[test]
 #[allow(clippy::float_cmp)] // recorded whole logical pixels and frame proportions
 fn hover_zoom_and_loop_options_reach_owned_viewers_and_survive_cancel_and_reopen() {
@@ -4285,6 +4325,7 @@ fn hover_zoom_and_loop_options_reach_owned_viewers_and_survive_cancel_and_reopen
     options.invoke_cancel();
 }
 
+// leaf: audit-options-exporting-export-folder-default-export-directory
 #[test]
 fn default_export_directory_browse_apply_cancel_and_manual_open_use_shared_preference() {
     use hydrus_core::HashId;
@@ -4465,6 +4506,11 @@ fn default_export_directory_browse_apply_cancel_and_manual_open_use_shared_prefe
     export.invoke_dismissed();
 }
 
+// leaf: audit-options-command-palette-command-palette-max-favourite-searches-to-show
+// leaf: audit-options-command-palette-command-palette-max-page-history-to-show
+// leaf: audit-options-command-palette-command-palette-max-page-results-to-show
+// leaf: audit-options-command-palette-command-palette-search-provider-order-add
+// leaf: audit-options-command-palette-command-palette-start-searching-when-this-many-characters-have-been-typed
 #[test]
 fn command_palette_options_stage_queue_changes_and_persist_only_on_apply() {
     use hydrus_store::command_palette::{CommandPaletteSettings, Provider};
@@ -4624,6 +4670,8 @@ fn command_palette_options_stage_queue_changes_and_persist_only_on_apply() {
     successor.invoke_cancel();
 }
 
+// leaf: audit-options-file-viewing-statistics-show-viewing-stats-on-media-right-click-menus
+// leaf: audit-options-file-viewing-statistics-which-views-to-show
 #[test]
 fn viewing_menu_preferences_apply_to_real_menu_lines_and_cancel_preserves_them() {
     use hydrus_core::CanvasType;
@@ -4792,6 +4840,10 @@ fn viewing_menu_preferences_apply_to_real_menu_lines_and_cancel_preserves_them()
     }
 }
 
+// leaf: audit-options-file-viewing-statistics-cap-any-view-on-the-media-viewer-to-this-maximum-time
+// leaf: audit-options-file-viewing-statistics-enable-file-viewing-statistics-tracking-in-the-archive-delete-filter
+// leaf: audit-options-file-viewing-statistics-enable-file-viewing-statistics-tracking-in-the-duplicate-filter
+// leaf: audit-options-file-viewing-statistics-min-time-to-view-on-media-viewer-to-count-as-a-view
 #[test]
 fn viewing_timing_options_reach_real_viewer_and_archive_filter_lifetimes() {
     use hydrus_core::{CanvasType, HashId};
@@ -4998,6 +5050,7 @@ fn viewing_timing_options_reach_real_viewer_and_archive_filter_lifetimes() {
     assert_eq!(stats(file).views, once + 1);
 }
 
+// leaf: audit-options-files-and-trash-confirm-sending-more-than-one-file-to-archive-or-inbox
 #[test]
 fn files_trash_confirmations_are_staged_reopened_and_consumed() {
     use hydrus_gui::media_actions;
@@ -5107,6 +5160,9 @@ fn files_trash_confirmations_are_staged_reopened_and_consumed() {
     assert!(windows.get(0).is_some());
 }
 
+// leaf: audit-options-files-and-trash-advanced-file-deletion-and-custom-reasons-add
+// leaf: audit-options-files-and-trash-advanced-file-deletion-and-custom-reasons-remember-the-last-reason
+// leaf: audit-options-files-and-trash-advanced-file-deletion-and-custom-reasons-use-the-advanced-file-deletion-dialog
 #[test]
 fn advanced_deletion_queue_stages_custom_reason_cancel_and_real_consumer() {
     use hydrus_store::settings::DeletionPreferences;
@@ -5403,6 +5459,12 @@ fn replay_banner_events(window: &hydrus_gui::TagBannerWindow, events: &[serde_js
     }
 }
 
+// leaf: audit-options-nested-tag-banner-appearance
+// leaf: audit-options-nested-tag-banner-namespaces
+// leaf: audit-options-nested-tag-banner-preview
+// leaf: audit-options-tag-presentation-tag-banners-on-media-viewer-top
+// leaf: audit-options-tag-presentation-tag-banners-on-thumbnail-bottom-right
+// leaf: audit-options-tag-presentation-tag-banners-on-thumbnail-top
 #[test]
 fn banner_options_match_qt_drafts_and_refresh_cached_thumbnails_and_open_viewer() {
     use hydrus_core::{ContentStatus, ServiceKey, Tag, tag_summary::TagSummaries};
@@ -5721,6 +5783,9 @@ fn banner_options_match_qt_drafts_and_refresh_cached_thumbnails_and_open_viewer(
     assert!(viewer.get_tag_banner().is_empty());
 }
 
+// leaf: audit-options-media-viewer-hovers-top-hover-button-menu-controls-collapse-hovers-submenu-in-view-options-eye-menu
+// leaf: audit-options-media-viewer-hovers-top-hover-button-menu-controls-collapse-rendering-submenu-in-view-options-eye-menu
+// leaf: audit-options-media-viewer-hovers-top-hover-button-menu-controls-collapse-window-submenu-in-view-options-eye-menu
 #[test]
 fn eye_menu_collapse_options_stage_reopen_and_rebuild_the_existing_browser_viewer() {
     use hydrus_store::settings::{
@@ -6329,6 +6394,7 @@ fn eye_menu_mixed_root_boundaries_match_the_recorded_menu_and_real_declaration_o
     }
 }
 
+// leaf: audit-options-nested-tag-suggestions-weights
 #[test]
 fn related_weight_drafts_cancel_reopen_and_re_rank_an_already_open_service_panel() {
     use hydrus_store::related_tags::{Settings as Related, Weights};
