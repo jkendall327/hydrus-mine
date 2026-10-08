@@ -5026,3 +5026,41 @@ does. The system counts as busy when at least "% on N cores" cores ran above
 "Consider the system busy if CPU usage is above" over the last minute;
 "ignore cpu usage" turns the check off, and forced idle mode never reads busy.
 The status bar still says "idle" and shows "CPU busy".
+
+### Manage tags: entering, removing, the cog, and the viewer's dialog
+
+Typed and suggested tags are only added, as the reference's default has it:
+entering a tag every file already has does nothing. The cog (⚙) beside the tag
+list holds the reference's switches: "allow remove/petition result on tag input
+for already existing tag" (off; on, entering a tag all the files have removes it),
+"confirm remove/petition tags on explicit delete actions" (on) and "select the
+first tag result with actual count" (the same setting as the options page), then
+"migrate tags for these files". Entering a tag only some of the files have (by
+typing with the first switch on, or by double-clicking it in the list) asks
+"What would you like to do?" with the reference's two buttons, `add "x" for 1
+files` and `delete "x" for 2 files` (several tags: `add 2 tags`, `delete 2 tags`);
+closing the question does nothing.
+
+Clicking a listed tag selects it (ctrl and shift extend the selection). "remove all/selected
+tags" removes the selected tags, or every tag if none is selected, and, unless the
+confirmation is off, first asks "Are you sure you want to remove these tags:" with
+the tags (up to nine, each cut at 64 characters) or "Are you sure you want to
+remove these 12 tags?". Delete on the focused list does the same for the selected
+tags; Enter on it enters them again. "copy" puts the selected tags (or all) on the
+clipboard, one per line in natural order, and says "Copied 3 tags!" under the buttons.
+The recent-tags panel has the reference's "clear" button ("Clear recent tags?").
+Activating a suggested tag only ever adds it, whatever the cog says.
+
+With the input empty, Left and Right change the autocomplete's tab and, if its list is
+empty too, Up and Down change the service tab (all wrapping), as the reference's
+`tags_autocomplete` shortcuts do.
+
+Opened from the media viewer (F3 there), the dialog is the reference's
+immediate-commit one: every change is written as it is made (the viewer's tag display
+and the page update at once), there is only a "close" button, the dialog is about the
+file the viewer shows and follows it as the viewer moves, and PageUp / PageDown in an
+empty input move the viewer to the previous / next file. A question still open
+when the viewer moves on is dropped, so it can never be answered for the wrong file.
+Proven by replays of `oracle/fixtures/manage_tags_cog.json` (`manage_tags_cog.rs`),
+`manage_tags_viewer.json` (`manage_tags_viewer.rs`, through real key events and the
+viewer's own navigation) and `manage_tags_keys.json` (the empty-input conditions).

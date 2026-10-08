@@ -18,8 +18,13 @@ fn real_incremental_child_replays_cancel_apply_memory_and_blocks_parent_mutation
     let (_directory, store, files) = fixture::seed(&recorded);
     let mut prior = hydrus_gui::manage_tags::ManageTags::new(store.clone(), files.clone()).unwrap();
     fixture::mine(&mut prior);
-    prior.enter("checkpoint:old").unwrap();
-    prior.enter("checkpoint:live").unwrap();
+    prior
+        .enter_tags(&["checkpoint:old".to_owned()], false, false)
+        .unwrap();
+    prior.remove_tags(&["checkpoint:live".to_owned()]).unwrap();
+    prior
+        .confirm_removal(&["checkpoint:live".to_owned()])
+        .unwrap();
     prior.apply().unwrap();
     let windows = headless::init();
     let ui = MainWindow::new().unwrap();

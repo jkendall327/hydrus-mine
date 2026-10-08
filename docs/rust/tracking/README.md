@@ -32,7 +32,8 @@ native files and what "done" means:
 | #97 | Recheck every done leaf against recordings, including the 378 carried |
 
 Work an issue on its own branch; one PR per issue (or per workstream for
-#97), with one independent review before merge (see `AGENTS.md`).
+#97), with one independent review before merge (see `AGENTS.md`). When a new
+gap turns up, file an issue for it rather than a list in the repository.
 
 ## When is a leaf done?
 
@@ -42,8 +43,9 @@ master. The tracker counts tags; CI runs every test on every push, so a tag on
 green master is a passing test. `scripts/track.py check` (run in CI) rejects
 tags naming unknown IDs.
 
-Leaves signed off under the retired per-leaf ledger (385, state `carried`)
-count as done without a tag. Tag their tests when you touch them.
+Leaves signed off under the retired per-leaf ledger (378 still untagged,
+state `carried`) count as done without a tag, but nobody has checked them
+against this standard; #97 does. Tag their tests when you touch them.
 
 ## States
 
@@ -52,7 +54,7 @@ count as done without a tag. Tag their tests when you touch them.
 | `missing` | not ported | port it, test it, tag the test |
 | `partial` | some of it ported | finish it (notes say what is missing), tag the test |
 | `implemented` | written before 2026-10-08 but never verified against the reference | find the test that covers it; check it really asserts the reference's behaviour; tag it. If there is none, write it. If the code is wrong, fix it. |
-| `carried` | signed off under the old ledger | done |
+| `carried` | signed off under the old ledger | counted as done; to be rechecked (#97) |
 
 The states and notes are from an audit made a few days before 2026-10-08;
 later work is not reflected. **Read the code before trusting a state**: a

@@ -59,6 +59,45 @@ record of what was decided, and why the roadmap looks the way it does.
   editors, the simple downloader, dragging files out) waits until these
   are done.
 
+## Decided (2026-10-08)
+
+- **Verification is a fast local loop, CI on every push, and an honest test
+  tag per leaf**, replacing the per-leaf ledger and publication checkpoints
+  (history: `docs/rust/history/2026-10-08-workplan.md`). A leaf is done when a
+  test tagged with its ID passes on `master` (`docs/rust/tracking/README.md`).
+- **Linux only** for now; Windows and macOS CI run by hand.
+- **Remaining work lives in GitHub issues**, one PR per issue with one
+  independent review, merged to `master` when green. No long-lived
+  integration branches.
+- **Tests replay recordings of the reference** wherever behaviour is more than
+  strings; `scripts/setup-oracle.sh` makes the reference runnable anywhere.
+- **The generated UI crate stays whole for now.** Splitting it by window group
+  would cut a `.slint` rebuild from ~7 minutes to ~1-2, at the cost of a day or
+  more of churn (shared structs and five Slint globals used across groups).
+  Agents in separate containers removed the queueing that made rebuilds
+  hurt; issues #86 and #91 log rebuild time to decide whether the split is
+  still worth it.
+
+- **Out of scope (2026-10-08, #95)**, each recorded on its leaf in
+  `docs/rust/tracking/leaves.json` (priority `out-of-scope`, first note says
+  why; undo by setting it back to `normal`): background sibling/parent loading
+  (`siblings-async`, `parents-async`), the background display-sync manager,
+  repository tabs in Manage Tags, "prefer system FFMPEG", the self-sizing
+  viewer's rescue padding, locale integer rendering, the three image
+  tile-cache settings, the toaster's mouse-on-another-display freeze, two Qt
+  window-state tray workarounds, and three Help > debug entries for the
+  Python thread pool and Qt canvas tiles. `scripts/track.py` stops counting
+  them.
+- **The About box lists hydrus-rs's own components** (platform, SQLite,
+  optional libraries such as ffmpeg and mpv) as the equivalent of the
+  reference's Python/Qt/numpy lines.
+- **System tray: wanted**, through Slint 1.18's own `SystemTrayIcon` (the
+  `system-tray` feature: a pure-Rust D-Bus StatusNotifierItem on Linux, not
+  Qt). Minimise-to-tray cannot detect minimising on Wayland; that part is
+  X11-only.
+- **Merging:** the coordinating agent may merge a PR once CI is green and its
+  independent review's findings are addressed.
+
 ## Roadmap that follows
 
 1. **Client API parity**, with Hydrus Companion's request patterns checked

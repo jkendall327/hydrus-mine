@@ -105,6 +105,7 @@
    "reference": null,
    "native": null,
    "notes": [
+    "Truth pass (2026-10-08): partial, small. Playback, hover and space-to-pause wired but untested; scanbar missing. Missing: Scanbar and volume control in the archive/delete window; tests of pause, playback and hover there. Evidence: archive_delete_window.rs:102-103, 278-320, 577-580; archive_delete.slint:44-49, 143-145",
     "Shared viewer zoom/decoding/playback renders the current file, display tags and information line; native pause toggle is wired during archive/delete filtering. Partial: Shared viewer playback source and generic archive decision regression do not establish archive-specific playback/scanbar/audio/hover actions; those remain a source-supported unverified boundary. Existing regression scope: Archive-specific zoom/pan has focused assertions.",
     "Shared viewer playback source and generic archive decision regression do not establish archive-specific playback/scanbar/audio/hover actions; those remain a source-supported unverified boundary."
    ]
@@ -630,6 +631,7 @@
    "reference": null,
    "native": null,
    "notes": [
+    "Truth pass (2026-10-08): missing, medium. The search context editor has no live counter. Missing: Fragmentary count worker, play/pause/refresh, starts-paused option, estimate-stop cog, labels, restart signal. Evidence: only one-shot counts (duplicates_filtering_sidebar.rs:80-100, auto_resolution_preview.rs:37); reference ClientGUIPotentialDuplicatesSearchContext.py:35-350",
     "Native rule search has no fragmentary count worker, pause/refresh counter, starts-paused setting, estimate stopping or low-hit-rate optimization cog. Preview testing is a separate narrower sample workflow."
    ]
   },
@@ -1747,11 +1749,12 @@
    "label": "commit pending",
    "path": "Services > Service review selector/counts > Client API service review/settings > Client API permission editor > Permits-everything, check-all and search interlocks",
    "workstream": "tags-services",
-   "state": "partial",
+   "state": "implemented",
    "priority": "normal",
    "reference": null,
    "native": null,
    "notes": [
+    "Truth pass (2026-10-08): built-tested-untagged, test-only. The editor checkbox is covered; tag it. Missing: Only the tag; repository upload belongs to repositories. Evidence: client_api_permissions.rs (each_permission_checkbox... loops all recorded rows incl. commit pending); services.rs:89-100 returns 422 for upload",
     "Permission::CommitPending is included in the fourteen-row sorted checkbox list; toggling changes the typed grant set and Apply serializes it. The grant does not make the missing repository upload backend work.",
     "Grant persists correctly, but repository commit_pending refuses because native repository uploading is absent."
    ]
@@ -1954,11 +1957,12 @@
    "label": "Search during idle/normal-time switches",
    "path": "Pages > Duplicates processing page > Similar-files preparation controls",
    "workstream": "duplicates",
-   "state": "partial",
+   "state": "implemented",
    "priority": "normal",
    "reference": null,
    "native": null,
    "notes": [
+    "Truth pass (2026-10-08): built-untested, small. Gating is implemented; the test must drive the real loop. Missing: A test that runs the real daemon loop (extract it from main.rs into a function). Evidence: hydrus-cli/src/main.rs:547-563 (pace from published idle); similar.rs:369; test duplicates_lane_page.rs:1146 replays the decision",
     "Both ticks persist, but run_search ORs idle/active/work-hard and lacks a GUI activity state. An idle-only setting can therefore still run during normal use."
    ]
   },
@@ -2144,11 +2148,12 @@
    "label": "Approval/denial cancellable progress and popup job",
    "path": "Pages > Duplicates processing page > Review/approve/deny rule action pairs",
    "workstream": "duplicates",
-   "state": "missing",
+   "state": "implemented",
    "priority": "normal",
    "reference": null,
    "native": null,
    "notes": [
+    "Truth pass (2026-10-08): built-untested, test-only. Worker, progress and delayed popup exist and match; only a GUI-level test is missing. Missing: A GUI test through the real approve/deny buttons asserting 'approving: 0/N' and the popup. Evidence: auto_resolution_review_window.rs:178-212, 693-750; auto_resolution_review.rs:240-325; reference has no cancel",
     "Native review approve/deny runs the selected operations synchronously then reloads rows/counts. The reference cancellable worker popup/progress UI is absent.",
     "Native approve/deny runs synchronously and refreshes counts; reference worker progress/cancellation and popup UI are absent."
    ]
@@ -2197,11 +2202,12 @@
    "label": "Auto-resolution idle/normal-time switches",
    "path": "Pages > Duplicates processing page > Auto-resolution progress and rule maintenance controls",
    "workstream": "duplicates",
-   "state": "partial",
+   "state": "implemented",
    "priority": "normal",
    "reference": null,
    "native": null,
    "notes": [
+    "Truth pass (2026-10-08): built-untested, small. Gating implemented; needs a real-loop test. Missing: A test of the real auto-resolution loop (same extraction); stale 'always active' comment in main.rs. Evidence: hydrus-cli/src/main.rs:~655-672; duplicates/auto.rs:65",
     "Both fields persist and sidebar computes working status from either field, but CLI auto-resolution loop counts itself always active and only gates on during_active. Idle-only rules will not run."
    ]
   },
@@ -2294,6 +2300,7 @@
    "reference": null,
    "native": null,
    "notes": [
+    "Truth pass (2026-10-08): partial, small. Shapes and live preview done and recorded; SVG appearance not faithful. Missing: SVG choice is a free-text name and is not rendered (shape_path maps Svg to the default star); reference offers a list of installed SVG icons. Evidence: services_editor_window.rs:118-145, 319-370; recorded preview tests services_editor.rs:505,617,655",
     "Native shape selector/named SVG field sets rating appearance and preserves existing SVG configuration.",
     "No live rating-settings preview; rendering has existing named-SVG limits."
    ]
@@ -2329,11 +2336,12 @@
    "label": "Select service and show native counts",
    "path": "Services > Service review selector/counts",
    "workstream": "tags-services",
-   "state": "partial",
+   "state": "implemented",
    "priority": "normal",
    "reference": null,
    "native": null,
    "notes": [
+    "Truth pass (2026-10-08): built-tested-untagged, test-only. Tag; record the notebook/descriptive-text differences in DIFFERENCES.md. Evidence: services_review.rs:100-203; model test services_review.rs:6 vs oracle/fixtures/services.json; GUI services_review.rs:14",
     "Reads service-kind file/size/mapping/tag/rating/note counts in a consistent native snapshot; dropdown selects a row and renders statistics.",
     "Reference local/remote/type notebook and long service-specific descriptions are absent."
    ]
@@ -2404,6 +2412,7 @@
    "reference": null,
    "native": null,
    "notes": [
+    "Truth pass (2026-10-08): missing, medium. Values only preserved and shown read-only. Missing: Editable https / normie-eris / external override controls, HTTPS serving, alternate welcome page, external overrides in copied API links. Evidence: services_editor_window.rs:99,178-195 read-only; client_api_listener.rs:38 rejects https",
     "Native listener supports HTTP and imported HTTPS disable only; normie-Eris/external URL override values are preserved but not editable/runnable here."
    ]
   },
@@ -2638,10 +2647,12 @@
    "path": "Media files, metadata and viewing > Manage tags for selected files",
    "workstream": "media",
    "state": "missing",
-   "priority": "normal",
+   "priority": "out-of-scope",
    "reference": null,
    "native": null,
    "notes": [
+    "Out of scope by the owner's decision of 2026-10-08 (#95): repository tabs in Manage Tags (tag repositories are out of scope). To bring it back, set priority to normal and remove this note.",
+    "Truth pass (2026-10-08): missing, large. Repository-dependent. Missing: Repository tabs in Manage Tags with pend/petition/rescind and reasons. Evidence: manage_tags.rs:76 local tags only; pend/petition exists in the sibling/parent editor and pending store",
     "The native ManageTags constructor enumerates LocalTag only; repository mapping actions, reason prompts and moderator permission bypass are not exposed."
    ]
   },
@@ -2815,6 +2826,7 @@
    "reference": null,
    "native": null,
    "notes": [
+    "Truth pass (2026-10-08): missing, large. Genuinely platform work. Missing: Hand-written XDND source (X11, x11rb) and wl_data_device start_drag (Wayland), via the raw window handle; not headlessly testable. Evidence: #26; no drag-source API in winit 0.30.13 or Slint 1.18.1",
     "Native drag callback opens a file-browser path rather than constructing a reference MIME/URL drag object; drag-out remains missing.",
     "Native hover drag position opens the file browser; Slint cannot initiate the reference external file drag."
    ]
@@ -2843,6 +2855,7 @@
    "reference": null,
    "native": null,
    "notes": [
+    "Truth pass (2026-10-08): built-tested-untagged, test-only. Tag the existing viewer tests. Evidence: animation.rs:59; scanbar.rs:21,68,241 (viewer_canvas_options.json); mpv.rs:54,106",
     "Uses native decoders/animation/player/scanbar and updates hover information for the chosen media; configured media behavior and unavailable formats are subject to the separate playback implementation. First-pass evidence scope: Recorded player choice and focused animation/MPV rendering/seek/pause assertions support the implemented playback slice. Codec tests cover representative ugoira/WebP/H.264 files, not an exhaustive format/engine matrix."
    ]
   },
@@ -3085,6 +3098,7 @@
    "reference": "hydrus/client/gui/ClientGUIStringPanels.py:675",
    "native": null,
    "notes": [
+    "Truth pass (2026-10-08): partial, large. Record a corpus of common forms, prove those, document the rest as a difference. Missing: No recording of the reference's dateparser outputs; the multilingual/fuzzy grammar is not ported (full parity impractical). Evidence: hydrus-core/src/url/string_dates.rs:~260-340; DIFFERENCES.md ~885",
     "Execute and preview common ISO/English dates, numeric US dates, RFC dates with offsets and relative English second-through-year expressions, now/today/yesterday/tomorrow. Preserve reference code14/null interchange.",
     "Full dateparser multilingual/fuzzy grammar is not implemented. This entry remains partial and is not counted as completed."
    ]
@@ -3315,11 +3329,12 @@
    "label": "Login/domain metadata, bitmap clipboard and drag/drop",
    "path": "Network > Downloader definitions > Downloader package import/export",
    "workstream": "network",
-   "state": "missing",
+   "state": "partial",
    "priority": "normal",
    "reference": "hydrus/client/gui/parsing/ClientGUIParsing.py:44",
    "native": "crates/hydrus-gui/src/downloader_interchange_window.rs:707",
    "notes": [
+    "Truth pass (2026-10-08): partial, medium. Login scripts now work; domain metadata, bitmap and drop remain. Missing: Domain metadata packages, clipboard bitmap as PNG, PNG drag/drop into the window. Evidence: downloader_interchange_window.rs:707, 531; login scripts work (downloader_interchange.rs:24 vs mixed_login_packages.json)",
     "Native package workflow supports URL classes/GUGs/pages only; bitmap/drop and login/domain packages have no native path."
    ]
   },
@@ -3328,11 +3343,12 @@
    "label": "Interactive filename examples menu and tags sidebar",
    "path": "File > Manual selected-file export",
    "workstream": "files-io",
-   "state": "partial",
+   "state": "implemented",
    "priority": "normal",
    "reference": "hydrus/client/gui/exporting/ClientGUIExport.py:592",
    "native": null,
    "notes": [
+    "Truth pass (2026-10-08): built-tested-untagged, test-only. Both parts replay recordings; tag them. Tag-list maintenance extras go in DIFFERENCES.md. Evidence: export_files.rs:254 (export_pattern_shortcuts.json), :452 (export_selected_tags.json); model export_files.rs:515, 585",
     "Folder and manual-export filename boxes expose the real shared pattern shortcuts menu: exact heading, seven labels and separator groups, clipboard phrases including Unicode placeholders; the reference heading itself is enabled and copies its own text. Choosing an item preserves the staged filename pattern; copied phrases reach the existing native filename generator after paste/accept. Invalid, closed, child-modal, working or pending-question callbacks cannot copy from a stale owner. The read-only files' tags sidebar now shows all-known DISPLAY_ACTUAL current/pending/petitioned counts for selected files or all kept files, preserves surviving selected tag IDs, locally sorts tag/subtag/count with separately remembered orders and namespace grouping. Exact raw/subtag/count/underscore copy menus and Ctrl+C/A, normal extended selection, middle/Shift-middle AND/OR launches, native AND/OR/separate/duplicate page consumers, relationship editors and immediate favourite/most-used mutations share owner guards. Double-click is a reference no-op; closing discards pending answers and stops each-page dispatch after synchronous owner closure.",
     "Generic media-tag maintenance→regenerate tag display and advanced experimental storage/display-type switching remain unported, along with full keyboard navigation. This combined original feature and manual-export parent remain Partial.",
     "Native shortcut menus omit Qt bold-heading styling/action hover tooltips; the tag sidebar uses native Slint presentation, without Qt per-row custom-painted sibling/parent decoration."
@@ -3876,6 +3892,7 @@
    "reference": "hydrus/client/gui/importing/ClientGUIImportOptionsPanels.py:988",
    "native": null,
    "notes": [
+    "Truth pass (2026-10-08): partial, small. Wired and the child tested; needs a parent-driven test and the child's menus. Missing: No parent-driven test of the 'N additional tags' button, label and overwrite check; child lacks multi-select/maintenance menus. The leaf's 'parse threshold' is a stale label (no such reference control). Evidence: import_options_window.rs:362-367, 818-845, 884, 987; child tested in write_autocomplete.rs:180",
     "Per-service import additional tags open a detached write-tag child using that service; whitelist uses all known tags. Typed entry toggles, paste only adds, duplicate pastes retain existing tags. Accepted lists update only the captured parent draft field; cancelling child or owner discards edits, native child close unlocks parent, pending child blocks parent Apply. Shared favourites/children tabs now use the configured count service for favourites decorators and descendant/display-count ordering for children; selected tags are excluded and applied limit/show-all feeds existing inputs. Shared right-click native menus now copy raw tags/subtags/underscores/counts/parents/all rows, toggle per-widget/per-tab decorations, manage favourites and per-service most-used with exact removal questions and reread concurrent writes, and launch raw child predicates through a weak main-window hook. Pending menus block owner editing/Apply and owner close invalidates questions/callbacks. Menus now query all real service display graphs for grouped siblings/ideal/parent/child entries and open owned relationship editors seeded on every service tab; owner close cancels child. Relationship dialogs consume configured default/remember preferences and preserve staged cancellation separately from immediate service memory. Per-widget file/tag-domain buttons now have checked menus and exact all-known interlocks, preserve independent service drafts, feed real query/count/decorator/children consumers and use an owned staged multiple/deleted selector; cancelling does not write options or damage input domains.",
     "Maintenance/admin actions and multiple-tag selection menus remain outstanding. Native tab dropdown/layout differs from Qt; multiple/deleted selector exposes existing native advanced domain ticks to preserve combined-domain choices. Existing parent leaf remains partial."
    ]
@@ -3929,6 +3946,7 @@
    "reference": "hydrus/client/gui/importing/ClientGUIImportOptionsPanels.py:838",
    "native": "crates/hydrus-gui/src/import_options_window.rs:210",
    "notes": [
+    "Truth pass (2026-10-08): partial, small. Status/inbox gates work and are tested; location needs the shared selector. Missing: Presentation location is a 2-item combo, not the shared location selector (multiple/deleted contexts); no recording replay. Evidence: import_options_window.rs:44-48, 209-233, 396-406; test import_options_fields.rs:237 (untagged, no recording)",
     "Supported presentation status/inbox/location fields return to the owner; not all Qt locations can be authored."
    ]
   },
@@ -4540,11 +4558,12 @@
    "label": "The preview window has its own volume:",
    "path": "File > Options window > audio",
    "workstream": "options-media",
-   "state": "missing",
+   "state": "partial",
    "priority": "normal",
    "reference": null,
    "native": null,
    "notes": [
+    "Truth pass (2026-10-08): partial, medium. Decide whether preview playback is in scope. Missing: Preview audio playback, preview volume/mute settings and control; or decide the preview stays silent. Evidence: options.rs:1714-1718 row, unread; AudioSettings has no preview volume; the reference preview does play audio",
     "Reference editor/control 'The preview window has its own volume:' is recorded on 'audio' and defined by the referenced options panel. No corresponding editable row exists in native options::pages; this is a missing GUI editing path, even if a setting is imported or consumed elsewhere.",
     "Native options registry has no editable 'The preview window has its own volume:' control in this page/box path."
    ]
@@ -5587,11 +5606,12 @@
    "label": "BUGFIX: Set drag-and-drops to have a \"move\" flag:",
    "path": "File > Options window > exporting > drag and drop",
    "workstream": "options-system",
-   "state": "missing",
+   "state": "partial",
    "priority": "normal",
    "reference": null,
    "native": null,
    "notes": [
+    "Truth pass (2026-10-08): partial, large. Waits on drag-out. Missing: Drag-out (see viewer drag); a row test of the interlock. Evidence: options.rs:2177-2182 row with interlock, unread",
     "Reference editor/control 'BUGFIX: Set drag-and-drops to have a \"move\" flag:' is recorded on 'exporting' and defined by the referenced options panel. No corresponding editable row exists in native options::pages; this is a missing GUI editing path, even if a setting is imported or consumed elsewhere.",
     "Native options registry has no editable 'BUGFIX: Set drag-and-drops to have a \"move\" flag:' control in this page/box path."
    ]
@@ -5601,11 +5621,12 @@
    "label": "Copy files to temp folder for drag-and-drop (works for <=50, <200MB file DnDs--fixes Discord!):",
    "path": "File > Options window > exporting > drag and drop",
    "workstream": "options-system",
-   "state": "missing",
+   "state": "partial",
    "priority": "normal",
    "reference": null,
    "native": null,
    "notes": [
+    "Truth pass (2026-10-08): partial, large. Waits on drag-out. Missing: Drag-out; the temp-copy and limits could be built and unit-tested now. Evidence: options.rs:2171-2175 row, unread",
     "Reference editor/control 'Copy files to temp folder for drag-and-drop (works for <=50, <200MB file DnDs--fixes Discord!):' is recorded on 'exporting' and defined by the referenced options panel. No corresponding editable row exists in native options::pages; this is a missing GUI editing path, even if a setting is imported or consumed elsewhere.",
     "Native options registry has no editable 'Copy files to temp folder for drag-and-drop (works for <=50, <200MB file DnDs--fixes Discord!):' control in this page/box path."
    ]
@@ -5615,11 +5636,12 @@
    "label": "Drag-and-drop export filename pattern:",
    "path": "File > Options window > exporting > drag and drop",
    "workstream": "options-system",
-   "state": "missing",
+   "state": "partial",
    "priority": "normal",
    "reference": null,
    "native": null,
    "notes": [
+    "Truth pass (2026-10-08): partial, medium. Waits on drag-out. Missing: Drag-out; the pattern can reuse the export filename code. Evidence: options.rs:2183-2187 row, unread",
     "Reference editor/control 'Drag-and-drop export filename pattern:' is recorded on 'exporting' and defined by the referenced options panel. No corresponding editable row exists in native options::pages; this is a missing GUI editing path, even if a setting is imported or consumed elsewhere.",
     "Native options registry has no editable 'Drag-and-drop export filename pattern:' control in this page/box path."
    ]
@@ -6128,6 +6150,7 @@
    "reference": null,
    "native": null,
    "notes": [
+    "Truth pass (2026-10-08): missing, small. Small once the tray exists. Missing: The tray, plus File > 'minimise to system tray' (shown when a tray is available and Windows or advanced mode). Evidence: main_menu.rs:665; reference ClientGUI.py:3490-3492",
     "Reference File menu hides the main GUI to a system tray icon. Native file_menu omits this action and has no tray integration.",
     "No native action/editor path for this reference workflow."
    ]
@@ -6406,6 +6429,7 @@
    "reference": null,
    "native": null,
    "notes": [
+    "Truth pass (2026-10-08): partial, small. Delete question matches the recording; undelete question missing. Missing: Undelete never asks the reference's 'Undelete this file back to {service}?' (ClientGUIMediaModalActions.py:1629). Evidence: options.rs:2479; options_window.rs:5000-5040; media_actions.rs:98-120; recorded policy test media_actions.rs:239 (files_trash.json)",
     "Exact default-true checkbox stages, persists/reopens and imports legacy confirm_trash. Thumbnail/viewer local delete consumers skip a single-actionable-domain question when false, retain multiple-domain ambiguity and physical questions, and use the remembered selected action in advanced auto-resolution. Undelete still restores immediately, so the original leaf remains Partial.",
     "Remote repository/IPFS deletion is excluded from this local native dialog. Simple/nonadvanced service-choice picker, undelete confirmation, local-domain copy/move and archive-delete/duplicate filtering chooser remain parent limitations; no parent or alias completion is claimed.",
     "Queue uses existing ListTable/SessionDialog geometry. Recorded selection/add/edit/move/delete behavior and Delete-key route are covered; general ListTable keyboard arrow selection is not expanded by this slice.",
@@ -6618,6 +6642,7 @@
    "reference": null,
    "native": null,
    "notes": [
+    "Truth pass (2026-10-08): built-tested-untagged, test-only. Tag the options test (optionally add a queue test showing no temp copy). Evidence: options.rs:2564, 6218; consumer hydrus-download/src/queue.rs:1321; label in options_dialog.json",
     "check control reads and sets folders.copy_import_files_to_temp_dir; Editor holds the draft and the Apply transaction saves changes. The existing Qt-recording comparison checks this exact label, box path, kind, bounds and migrated initial value.",
     "Assessment covers this editable control and shared Apply/Cancel, not every control on its containing reference page or every background consumer."
    ]
@@ -6700,6 +6725,7 @@
    "reference": null,
    "native": null,
    "notes": [
+    "Truth pass (2026-10-08): built-tested-untagged, test-only. Tag the options apply test. Evidence: options_window.rs:343 (lines 470-482); consumers maintenance.rs:111, paths.rs, queue.rs:1404, export.rs:476, add_files.rs:332; tests normal_time_maintenance.rs:80, physical_delete_delay.rs:109-124",
     "check control reads and sets folders.delete_to_recycle_bin; Editor holds the draft and the Apply transaction saves changes. The existing Qt-recording comparison checks this exact label, box path, kind, bounds and migrated initial value.",
     "Assessment covers this editable control and shared Apply/Cancel, not every control on its containing reference page or every background consumer."
    ]
@@ -6753,10 +6779,12 @@
    "path": "File > Options window > gui > frame locations",
    "workstream": "options-gui",
    "state": "missing",
-   "priority": "normal",
+   "priority": "out-of-scope",
    "reference": null,
    "native": null,
    "notes": [
+    "Out of scope by the owner's decision of 2026-10-08 (#95): applies only to the reference's self-sizing viewer. To bring it back, set priority to normal and remove this note.",
+    "Truth pass (2026-10-08): not-applicable, test-only. Applies only to the reference's self-sizing viewer. Evidence: options.rs:2738-2742 row round-trips",
     "Reference editor/control 'DEBUG: When rescuing resizing-to-media media viewer, add top-left safety padding:' is recorded on 'gui' and defined by the referenced options panel. No corresponding editable row exists in native options::pages; this is a missing GUI editing path, even if a setting is imported or consumed elsewhere.",
     "Native options registry has no editable 'DEBUG: When rescuing resizing-to-media media viewer, add top-left safety padding:' control in this page/box path."
    ]
@@ -6771,6 +6799,7 @@
    "reference": null,
    "native": null,
    "notes": [
+    "Truth pass (2026-10-08): partial, medium. Table and editor done and recorded; only 3 of ~28 frames use the saved size/position. Missing: ~25 other named frames never consult their frame location; no absolute desktop position adapter or screen fitting. Evidence: windows.rs:115-160 place_named, used by main_gui, manage_options_dialog, media_viewer only",
     "The live owned geometry child edits both remember flags, noneable dimensions/coordinates with exact bounds and retained values, x/y gravity, default position, maximised/fullscreen. Child Apply replaces only the parent draft; child Cancel discards; parent Cancel force-closes/inactivates; child blocks parent Apply. Parent Apply persists/reopens and reaches existing supported placement. Gravity/default-position and other named-owner consumers remain unfinished, so editor stays Partial.",
     "Placement consumers use remembered size/position and maximised/fullscreen for main_gui, media_viewer and manage_options_dialog. Other named owners, default gravity/parent-cursor positioning, screen fitting and offscreen rescue remain parent limitations; no parent or geometry-editor completion claimed.",
     "Native MinimalSoftwareWindow supports size/state but does not implement native-position adapter. Coordinate persistence and actual placement dispatch are covered; no rendered absolute desktop-position assertion is claimed.",
@@ -6879,6 +6908,7 @@
    "reference": null,
    "native": null,
    "notes": [
+    "Truth pass (2026-10-08): partial, small. Main window retitles; other windows don't. Missing: Secondary window titles (reference sets the application display name, which Qt appends to every window) and the tray tooltip. Evidence: options.rs:2649; main_identity.rs:14-30; tests options_dialog.rs:795-812, main_identity.rs:336",
     "Adds imported/persistent display-name editing with the reference empty-string fallback and preserved whitespace. Apply refreshes the main-window title with the chosen name and Rust version; Cancel/reopen follow the shared draft transaction.",
     "Secondary windows still use their existing captions, so this remains partial.",
     "Native title suffix uses the Rust package version rather than the reference 688 version."
@@ -7052,10 +7082,12 @@
    "path": "File > Options window > gui > misc",
    "workstream": "options-gui",
    "state": "missing",
-   "priority": "normal",
+   "priority": "out-of-scope",
    "reference": null,
    "native": null,
    "notes": [
+    "Out of scope by the owner's decision of 2026-10-08 (#95): Qt-locale experiment switch; would need CLDR number data. To bring it back, set priority to normal and remove this note.",
+    "Truth pass (2026-10-08): not-applicable, small. Qt-locale experiment switch; optional small slice if locale grouping is wanted. Evidence: options.rs:2701-2705 row round-trips; native formatter has no locale hook",
     "Reference editor/control 'TEST: Use your locale for integer rendering:' is recorded on 'gui' and defined by the referenced options panel. No corresponding editable row exists in native options::pages; this is a missing GUI editing path, even if a setting is imported or consumed elsewhere.",
     "Native options registry has no editable 'TEST: Use your locale for integer rendering:' control in this page/box path."
    ]
@@ -7545,6 +7577,7 @@
    "reference": null,
    "native": null,
    "notes": [
+    "Truth pass (2026-10-08): partial, medium. All but out-of-window mouse movement built and tested; consider documenting the difference and tagging. Missing: Mouse movement outside hydrus-rs windows does not reset mouse idle (needs a global cursor query; X11 only, not Wayland). Evidence: tests/gui/session_autosave.rs:51,148,212,274",
     "Consume the applied idle-only checkbox on the historical autosave timer; active sessions retry after 60 seconds. Reference boot guard and independent user/mouse/API timeouts are driven by input across all native auxiliary/main windows and atomic timestamp-only IPC from every recognized API request before authentication or busy refusal. Rejected and read-only API requests also postpone idle saves.",
     "The reference polls global OS cursor position; mouse movement outside native application windows does not yet reset native mouse idle. The leaf remains partial and is not counted as completed."
    ]
@@ -7670,10 +7703,12 @@
    "path": "Help > debug > report modes",
    "workstream": "help-debug",
    "state": "missing",
-   "priority": "low",
+   "priority": "out-of-scope",
    "reference": null,
    "native": null,
    "notes": [
+    "Out of scope by the owner's decision of 2026-10-08 (#95): reports the Python CallTo thread pool. To bring it back, set priority to normal and remove this note.",
+    "Truth pass (2026-10-08): not-applicable, small. Reports tasks given to the Python CallTo thread pool, which hydrus-rs does not have. Evidence: Reference ClientGUI.py:3591 reports tasks given to HydrusThreading's Python thread pool; hydrus-rs has no such pool.",
     "Reference debug action wires 'callto report mode' to the client diagnostics callback at this AppendMenu entry. The native Help/Command registry exposes no equivalent diagnostics action.",
     "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools."
    ]
@@ -7684,10 +7719,12 @@
    "path": "Help > debug > report modes",
    "workstream": "help-debug",
    "state": "missing",
-   "priority": "low",
+   "priority": "out-of-scope",
    "reference": null,
    "native": null,
    "notes": [
+    "Out of scope by the owner's decision of 2026-10-08 (#95): borders on Qt canvas tiles. To bring it back, set priority to normal and remove this note.",
+    "Truth pass (2026-10-08): not-applicable, small. Draws borders on the Qt media-canvas tiles; hydrus-rs has no tiled canvas. Evidence: Flag::CanvasTileBorders is defined but nothing reads it; the menu does not offer it.",
     "Reference debug action wires 'canvas tile borders mode' to the client diagnostics callback at this AppendMenu entry. The native Help/Command registry exposes no equivalent diagnostics action.",
     "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools."
    ]
@@ -7766,6 +7803,7 @@
    "reference": null,
    "native": null,
    "notes": [
+    "Truth pass (2026-10-08): missing, small. Flag exists but nothing reads it. Missing: Report sites in the store's job loop, the menu entry, a test. Evidence: Flag::DbReport defined in hydrus-core/src/debug_flags.rs; no report sites; not in REPORT_MODES.",
     "Reference debug action wires 'db report mode' to the client diagnostics callback at this AppendMenu entry. The native Help/Command registry exposes no equivalent diagnostics action.",
     "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools."
    ]
@@ -7871,6 +7909,7 @@
    "reference": null,
    "native": null,
    "notes": [
+    "Truth pass (2026-10-08): missing, small. Flag only. Missing: Report sites in the media sort code, the menu entry, a test. Evidence: Flag::FileSortReport defined, never reported to.",
     "Reference debug action wires 'file sort report mode' to the client diagnostics callback at this AppendMenu entry. The native Help/Command registry exposes no equivalent diagnostics action.",
     "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools."
    ]
@@ -7971,6 +8010,7 @@
    "reference": null,
    "native": null,
    "notes": [
+    "Truth pass (2026-10-08): missing, small. Flag only. Missing: Report calls in the canvas hover show/hide code, the menu entry, a test. Evidence: Flag::HoverWindowReport defined, never reported to. Reference ClientGUICanvasHoverFrames.py:494,516,730,740,758.",
     "Reference debug action wires 'hover window report mode' to the client diagnostics callback at this AppendMenu entry. The native Help/Command registry exposes no equivalent diagnostics action.",
     "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools."
    ]
@@ -8168,6 +8208,7 @@
    "reference": null,
    "native": null,
    "notes": [
+    "Truth pass (2026-10-08): missing, small. Flag only. Missing: Report sites in the media loader, the menu entry, a test. Evidence: Flag::MediaLoadReport defined, never reported to.",
     "Reference debug action wires 'media load report mode' to the client diagnostics callback at this AppendMenu entry. The native Help/Command registry exposes no equivalent diagnostics action.",
     "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools."
    ]
@@ -8225,6 +8266,7 @@
    "reference": null,
    "native": null,
    "notes": [
+    "Truth pass (2026-10-08): missing, small. Flag only. Missing: Report sites in the potential-duplicates search, the menu entry, a test. Evidence: Flag::PotentialDuplicatesReport defined, never reported to.",
     "Reference debug action wires 'potential duplicates report mode' to the client diagnostics callback at this AppendMenu entry. The native Help/Command registry exposes no equivalent diagnostics action.",
     "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools."
    ]
@@ -8239,6 +8281,7 @@
    "reference": null,
    "native": null,
    "notes": [
+    "Truth pass (2026-10-08): missing, medium. Needs a timing hook on API request handling. Missing: API request timing hook, toggle, profile log, test. Evidence: No profile mode code or menu entry (main_menu.rs ~1400-1520 has only profiling > 'what is this?').",
     "Reference debug action wires 'profile mode (client api)' to the client diagnostics callback at this AppendMenu entry. The native Help/Command registry exposes no equivalent diagnostics action.",
     "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools."
    ]
@@ -8253,6 +8296,7 @@
    "reference": null,
    "native": null,
    "notes": [
+    "Truth pass (2026-10-08): missing, medium. rusqlite profile callback or job timing, off the hot path. Missing: SQLite/job timing hook, toggle, profile log, test. Evidence: No profile flag; the store has no per-statement or per-job timing hook.",
     "Reference debug action wires 'profile mode (db)' to the client diagnostics callback at this AppendMenu entry. The native Help/Command registry exposes no equivalent diagnostics action.",
     "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools."
    ]
@@ -8263,10 +8307,12 @@
    "path": "Help > debug > profiling",
    "workstream": "help-debug",
    "state": "missing",
-   "priority": "low",
+   "priority": "out-of-scope",
    "reference": null,
    "native": null,
    "notes": [
+    "Out of scope by the owner's decision of 2026-10-08 (#95): profiles the Python thread pool. To bring it back, set priority to normal and remove this note.",
+    "Truth pass (2026-10-08): not-applicable, small. Profiles Python thread-pool jobs with cProfile. Evidence: The reference profiles its Python thread-pool CallTo jobs; no native equivalent.",
     "Reference debug action wires 'profile mode (threads)' to the client diagnostics callback at this AppendMenu entry. The native Help/Command registry exposes no equivalent diagnostics action.",
     "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools."
    ]
@@ -8281,6 +8327,7 @@
    "reference": null,
    "native": null,
    "notes": [
+    "Truth pass (2026-10-08): missing, medium. Would time Slint callbacks/timers. Missing: Timing wrapper on UI callbacks, toggle, profile log, test. Evidence: No flag or menu entry; no timing around Slint callbacks.",
     "Reference debug action wires 'profile mode (ui)' to the client diagnostics callback at this AppendMenu entry. The native Help/Command registry exposes no equivalent diagnostics action.",
     "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools."
    ]
@@ -8295,6 +8342,7 @@
    "reference": null,
    "native": null,
    "notes": [
+    "Truth pass (2026-10-08): missing, small. Sits next to the existing delayed-popup debug actions. Missing: Menu entry, five-second delayed publish of real files, test. Evidence: No entry; the popup job model supports files via set_files (hydrus-gui-model/src/debug_actions.rs).",
     "Reference debug action wires 'publish some sub files in five seconds' to the client diagnostics callback at this AppendMenu entry. The native Help/Command registry exposes no equivalent diagnostics action.",
     "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools."
    ]
@@ -8324,6 +8372,7 @@
    "reference": null,
    "native": null,
    "notes": [
+    "Truth pass (2026-10-08): missing, medium. Same infrastructure as profile mode (db). Missing: EXPLAIN QUERY PLAN hook in the store, toggle, test. Evidence: No code or menu entry.",
     "Reference debug action wires 'query planner mode' to the client diagnostics callback at this AppendMenu entry. The native Help/Command registry exposes no equivalent diagnostics action.",
     "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools."
    ]
@@ -8421,11 +8470,12 @@
    "label": "run fast memory maintenance",
    "path": "Help > debug > memory actions",
    "workstream": "help-debug",
-   "state": "missing",
+   "state": "partial",
    "priority": "low",
    "reference": null,
    "native": null,
    "notes": [
+    "Truth pass (2026-10-08): partial, small. Cache maintenance exists but has no debug entry. Missing: Menu entry calling cache maintenance; test with an over-limit cache. Evidence: No menu entry; thumbnail_cache.rs:169 maintain(now) exists.",
     "Reference debug action wires 'run fast memory maintenance' to the client diagnostics callback at this AppendMenu entry. The native Help/Command registry exposes no equivalent diagnostics action.",
     "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools."
    ]
@@ -8435,11 +8485,12 @@
    "label": "run slow memory maintenance",
    "path": "Help > debug > memory actions",
    "workstream": "help-debug",
-   "state": "missing",
+   "state": "partial",
    "priority": "low",
    "reference": null,
    "native": null,
    "notes": [
+    "Truth pass (2026-10-08): partial, small. As fast maintenance, covering the slower caches. Missing: Menu entry maintaining all native caches; test. Evidence: No menu entry; the same maintain() exists.",
     "Reference debug action wires 'run slow memory maintenance' to the client diagnostics callback at this AppendMenu entry. The native Help/Command registry exposes no equivalent diagnostics action.",
     "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools."
    ]
@@ -8600,6 +8651,7 @@
    "reference": null,
    "native": null,
    "notes": [
+    "Truth pass (2026-10-08): missing, small. Flag only. Missing: Report calls as workers and daemons stop, the menu entry, a test. Evidence: Flag::ShutdownReport defined, never reported to. Reference hydrus_client_boot.py:288, ClientDaemons.py:243,252.",
     "Reference debug action wires 'shutdown report mode' to the client diagnostics callback at this AppendMenu entry. The native Help/Command registry exposes no equivalent diagnostics action.",
     "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools."
    ]
@@ -8623,11 +8675,12 @@
    "label": "simulate a wake from sleep",
    "path": "Help > debug > debug modes",
    "workstream": "help-debug",
-   "state": "missing",
+   "state": "partial",
    "priority": "low",
    "reference": null,
    "native": null,
    "notes": [
+    "Truth pass (2026-10-08): partial, small. The engine can already simulate it. Missing: Menu entry, a GUI handle to the engine, GUI test. Evidence: hydrus-net/src/engine.rs:897-902 NetEngine::sleep_check_at, tested at 2638-2645; the GUI keeps no shared NetEngine.",
     "Reference debug action wires 'simulate a wake from sleep' to the client diagnostics callback at this AppendMenu entry. The native Help/Command registry exposes no equivalent diagnostics action.",
     "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools."
    ]
@@ -8670,6 +8723,7 @@
    "reference": null,
    "native": null,
    "notes": [
+    "Truth pass (2026-10-08): missing, small. Check the reference's snapshot format first. Missing: Menu entry dumping subscription state to a popup, test. Evidence: No menu entry or code.",
     "Reference debug action wires 'subscription manager snapshot' to the client diagnostics callback at this AppendMenu entry. The native Help/Command registry exposes no equivalent diagnostics action.",
     "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools."
    ]
@@ -8786,6 +8840,7 @@
    "reference": null,
    "native": null,
    "notes": [
+    "Truth pass (2026-10-08): missing, medium. Needs a dialog and native deserialisation. Missing: Paste dialog, decoding of serialised objects, popup of its type, test. Evidence: No menu entry or code.",
     "Reference debug action wires 'what is this object?' to the client diagnostics callback at this AppendMenu entry. The native Help/Command registry exposes no equivalent diagnostics action.",
     "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools."
    ]
@@ -8867,11 +8922,12 @@
    "label": "delete",
    "path": "File > Options window > import options > favourites/profiles > Named favourite import profiles",
    "workstream": "options-system",
-   "state": "partial",
+   "state": "implemented",
    "priority": "normal",
    "reference": null,
    "native": null,
    "notes": [
+    "Truth pass (2026-10-08): built-tested-untagged, test-only. Replays the recording; tag it. Missing: Only the tag (the reference's single-delete crash is a documented deliberate difference). Evidence: model test import_options_panel.rs:67 replays oracle/fixtures/import_options_panel.json; GUI import_options_panel.rs:~353-370",
     "Native safely asks the intended named-profile question and deletes accepted frozen targets; recorded multi-profile questions/cancellation/deletion replay unchanged.",
     "Native presents this page as an Options-owned child window; its confirmations and informational messages are inline rather than separate blocking Qt dialogs.",
     "Actual reference single-profile deletion raises ValueError before asking because it unpacks the one-row list incorrectly. Native safe single deletion differs, so this original entry remains partial and is not counted."
@@ -8967,11 +9023,12 @@
    "label": "When DnDing a URL onto the program, switch to the page where it lands:",
    "path": "File > Options window > importing > drag and drop",
    "workstream": "options-system",
-   "state": "missing",
+   "state": "partial",
    "priority": "normal",
    "reference": null,
    "native": null,
    "notes": [
+    "Truth pass (2026-10-08): partial, medium. Checkbox editable but inert; depends on URL drops, which winit may not deliver (platform question). Missing: URL drag-and-drop import onto the window (winit delivers only dropped files), then the switch-to-page consumer. Evidence: options.rs:3057-3063 row exists; nothing reads it; drops.rs handles files only",
     "Reference editor/control 'When DnDing a URL onto the program, switch to the page where it lands:' is recorded on 'importing' and defined by the referenced options panel. No corresponding editable row exists in native options::pages; this is a missing GUI editing path, even if a setting is imported or consumed elsewhere.",
     "Native options registry has no editable 'When DnDing a URL onto the program, switch to the page where it lands:' control in this page/box path."
    ]
@@ -9599,11 +9656,12 @@
    "label": "CPU busy usage threshold (%)",
    "path": "File > Options window > maintenance and processing > when to run high cpu jobs > idle",
    "workstream": "options-system",
-   "state": "missing",
+   "state": "implemented",
    "priority": "normal",
    "reference": null,
    "native": null,
    "notes": [
+    "Truth pass (2026-10-08): built-untested, test-only. Control built and read by the busy check; add a high-threshold assertion and tag. Missing: A case showing a higher percent stays not busy; the disabled-when-no-core-count state. Evidence: options.rs:3176-3184; maintenance_runtime.rs:190-208; idle_state.rs:47-59; test options_system_consumers.rs:1358 (untagged)",
     "Reference percent control accepts 5..99, initializes system_busy_cpu_percent and saves it in UpdateOptions. SystemBusy compares each CPU reading against this percentage, then applies the separate core-count threshold. Native options registry has no corresponding editable CPU-percentage control.",
     "No native options editor for system_busy_cpu_percent."
    ]
@@ -9691,11 +9749,12 @@
    "label": "Max number of minutes to run shutdown jobs:",
    "path": "File > Options window > maintenance and processing > when to run high cpu jobs > shutdown",
    "workstream": "options-system",
-   "state": "missing",
+   "state": "implemented",
    "priority": "normal",
    "reference": null,
    "native": null,
    "notes": [
+    "Truth pass (2026-10-08): built-untested, test-only. Control and consumers exist; add an apply-then-exit test. Missing: A test with a non-default value reaching the question text and deadline. Evidence: options.rs:3214-3221; shutdown_work.rs:82,102",
     "Reference editor/control 'Max number of minutes to run shutdown jobs:' is recorded on 'maintenance and processing' and defined by the referenced options panel. No corresponding editable row exists in native options::pages; this is a missing GUI editing path, even if a setting is imported or consumed elsewhere.",
     "Native options registry has no editable 'Max number of minutes to run shutdown jobs:' control in this page/box path."
    ]
@@ -9705,11 +9764,12 @@
    "label": "Only run shutdown jobs once per:",
    "path": "File > Options window > maintenance and processing > when to run high cpu jobs > shutdown",
    "workstream": "options-system",
-   "state": "missing",
+   "state": "implemented",
    "priority": "normal",
    "reference": null,
    "native": null,
    "notes": [
+    "Truth pass (2026-10-08): built-untested, test-only. Control and consumer exist; add an Options edit then exit test. Missing: A test editing the period and seeing a recent run skip / a due run ask. Evidence: options.rs:3205-3213; shutdown_work.rs:74-75",
     "Reference editor/control 'Only run shutdown jobs once per:' is recorded on 'maintenance and processing' and defined by the referenced options panel. No corresponding editable row exists in native options::pages; this is a missing GUI editing path, even if a setting is imported or consumed elsewhere.",
     "Native options registry has no editable 'Only run shutdown jobs once per:' control in this page/box path."
    ]
@@ -9719,11 +9779,12 @@
    "label": "Run jobs on shutdown:",
    "path": "File > Options window > maintenance and processing > when to run high cpu jobs > shutdown",
    "workstream": "options-system",
-   "state": "missing",
+   "state": "implemented",
    "priority": "normal",
    "reference": null,
    "native": null,
    "notes": [
+    "Truth pass (2026-10-08): built-untested, test-only. Control and consumer exist; needs an Options-to-exit test. Missing: A test that edits the option in Options, applies, and sees the exit follow it. Evidence: options.rs:3197-3204; shutdown_work.rs decide(); client_exit.rs:96-140; model test tests/model/shutdown_work.rs:6",
     "Reference editor/control 'Run jobs on shutdown:' is recorded on 'maintenance and processing' and defined by the referenced options panel. No corresponding editable row exists in native options::pages; this is a missing GUI editing path, even if a setting is imported or consumed elsewhere.",
     "Native options registry has no editable 'Run jobs on shutdown:' control in this page/box path."
    ]
@@ -9782,6 +9843,7 @@
    "reference": null,
    "native": null,
    "notes": [
+    "Truth pass (2026-10-08): missing, small. Doable now. Missing: Read 'audio-device-list' (mpv_get_property_string), an action-button row kind, a choice dialog, the unavailable message; test with a stubbed list. Evidence: mpv.rs dlopens libmpv; reference MediaPlaybackPanel.py:405-436",
     "Reference editor/control '--Fetch list of mpv audio device strings:' is recorded on 'media playback' and defined by the referenced options panel. No corresponding editable row exists in native options::pages; this is a missing GUI editing path, even if a setting is imported or consumed elsewhere.",
     "Native options registry has no editable '--Fetch list of mpv audio device strings:' control in this page/box path."
    ]
@@ -10048,10 +10110,12 @@
    "path": "File > Options window > media playback > system",
    "workstream": "options-media",
    "state": "missing",
-   "priority": "normal",
+   "priority": "out-of-scope",
    "reference": null,
    "native": null,
    "notes": [
+    "Out of scope by the owner's decision of 2026-10-08 (#95): hydrus-rs has no bundled ffmpeg, so it always uses the system one. To bring it back, set priority to normal and remove this note.",
+    "Truth pass (2026-10-08): not-applicable, test-only. Always effectively 'prefer system'; no bundled ffmpeg. Evidence: options.rs:3705 row; ffmpeg/mod.rs:40-47 always uses PATH",
     "Reference editor/control 'Prefer system FFMPEG:' is recorded on 'media playback' and defined by the referenced options panel. No corresponding editable row exists in native options::pages; this is a missing GUI editing path, even if a setting is imported or consumed elsewhere.",
     "Native options registry has no editable 'Prefer system FFMPEG:' control in this page/box path."
    ]
@@ -10999,11 +11063,12 @@
    "label": "options…",
    "path": "File",
    "workstream": "files-io",
-   "state": "partial",
+   "state": "implemented",
    "priority": "normal",
    "reference": null,
    "native": null,
    "notes": [
+    "Truth pass (2026-10-08): built-tested-untagged, test-only. Tag the existing test; the Qt style page is n/a. Evidence: options_window.rs:27-34, 343 (opens via File > options…, asserts the page list); 37 of 38 reference pages, missing only the Qt 'style' page",
     "Calls the Options hook in bind(), which opens the typed Settings draft and prevents duplicate options windows. The expanded canonical Options window describes Apply/Cancel and the omitted controls.",
     "Expanded Options editor contains twenty of thirty-eight reference tabs."
    ]
@@ -12123,6 +12188,7 @@
    "reference": null,
    "native": null,
    "notes": [
+    "Truth pass (2026-10-08): partial, small. Search, selection and highlight work; only native option rows are indexed. Missing: Index auxiliary/unit labels and combo current values on every page; expand boxes / switch inner tabs as the reference does. Evidence: options.rs:5432; tests options_window.rs:402-445, 1191-1225",
     "Search filters exposed option labels and headings case-insensitively, arrows/Enter select a match and highlight its actual row. Same-label native results retain distinct rows, unlike Qt last-match lookup.",
     "Auxiliary widget labels, unit labels and current combo choices are omitted; only exposed native rows are searchable."
    ]
@@ -12169,10 +12235,12 @@
    "path": "File > Options window > popup notifications > popup window toaster",
    "workstream": "options-gui",
    "state": "missing",
-   "priority": "normal",
+   "priority": "out-of-scope",
    "reference": null,
    "native": null,
    "notes": [
+    "Out of scope by the owner's decision of 2026-10-08 (#95): no separate toaster window; Wayland hides the global pointer. To bring it back, set priority to normal and remove this note.",
+    "Truth pass (2026-10-08): not-applicable, large. No separate toaster window to freeze; global cursor impossible on Wayland. Evidence: options_popup_width.rs:22-25; no separate toaster window; winit has no global cursor query",
     "Reference editor/control 'Freeze the popup toaster when mouse is on another display:' is recorded on 'popup notifications' and defined by the referenced options panel. No corresponding editable row exists in native options::pages; this is a missing GUI editing path, even if a setting is imported or consumed elsewhere.",
     "Native options registry has no editable 'Freeze the popup toaster when mouse is on another display:' control in this page/box path."
    ]
@@ -13573,11 +13641,12 @@
    "label": "Clear and paste file-path image hash data",
    "path": "Pages > File search page sidebar > Input system predicate editors > system:similar files > data > Pixel/perceptual hashes and Hamming distance",
    "workstream": "search-pages",
-   "state": "partial",
+   "state": "implemented",
    "priority": "normal",
    "reference": null,
    "native": null,
    "notes": [
+    "Truth pass (2026-10-08): built-untested, small. Implemented; record the reference's hashes, then tag. Missing: A reference recording of the pasted hashes for a fixture image (path and bitmap) and the incompatible-mime warning. Evidence: predicate_editor_window.rs:281-310; test predicate_editors.rs:1955 (untagged)",
     "Part of the Pixel/perceptual hashes and Hamming distance panel: Clear and paste file-path image hash data. Uses its native typed field/change path and contributes to the same Panel::predicates result; the recorded panel regression covers the represented default and available widget changes.",
     "Clipboard paste accepts an image file path, not bitmap/image data."
    ]
@@ -14859,11 +14928,12 @@
    "label": "Num pairs to prefetch in Duplicate Filter:",
    "path": "File > Options window > speed and memory > image prefetch",
    "workstream": "options-system",
-   "state": "missing",
+   "state": "implemented",
    "priority": "normal",
    "reference": null,
    "native": null,
    "notes": [
+    "Truth pass (2026-10-08): built-untested, test-only. Control exists, persists and is consumed; add an apply-and-consume test. Missing: A test editing the row, applying, and seeing the filter prefetch that many pairs. Evidence: options.rs:4310-4316; viewer_prefetch.rs:20-82; filter_window.rs:~525-535",
     "Reference editor/control 'Num pairs to prefetch in Duplicate Filter:' is recorded on 'speed and memory' and defined by the referenced options panel. No corresponding editable row exists in native options::pages; this is a missing GUI editing path, even if a setting is imported or consumed elsewhere.",
     "Native options registry has no editable 'Num pairs to prefetch in Duplicate Filter:' control in this page/box path."
    ]
@@ -14892,10 +14962,12 @@
    "path": "File > Options window > speed and memory > image tile cache",
    "workstream": "options-system",
    "state": "missing",
-   "priority": "normal",
+   "priority": "out-of-scope",
    "reference": null,
    "native": null,
    "notes": [
+    "Out of scope by the owner's decision of 2026-10-08 (#95): no tiled renderer or tile cache natively. To bring it back, set priority to normal and remove this note.",
+    "Truth pass (2026-10-08): not-applicable, large. No tile renderer natively. Evidence: options.rs:4334-4338 row, unread; native renders whole rasters",
     "Reference editor/control 'Ideal tile width/height px:' is recorded on 'speed and memory' and defined by the referenced options panel. No corresponding editable row exists in native options::pages; this is a missing GUI editing path, even if a setting is imported or consumed elsewhere.",
     "Native options registry has no editable 'Ideal tile width/height px:' control in this page/box path."
    ]
@@ -14906,10 +14978,12 @@
    "path": "File > Options window > speed and memory > image tile cache",
    "workstream": "options-system",
    "state": "missing",
-   "priority": "normal",
+   "priority": "out-of-scope",
    "reference": null,
    "native": null,
    "notes": [
+    "Out of scope by the owner's decision of 2026-10-08 (#95): no tiled renderer or tile cache natively. To bring it back, set priority to normal and remove this note.",
+    "Truth pass (2026-10-08): not-applicable, large. No tile cache natively. Evidence: options.rs:4326-4333 row, unread",
     "Reference editor/control 'Image tile cache timeout:' is recorded on 'speed and memory' and defined by the referenced options panel. No corresponding editable row exists in native options::pages; this is a missing GUI editing path, even if a setting is imported or consumed elsewhere.",
     "Native options registry has no editable 'Image tile cache timeout:' control in this page/box path."
    ]
@@ -14920,10 +14994,12 @@
    "path": "File > Options window > speed and memory > image tile cache",
    "workstream": "options-system",
    "state": "missing",
-   "priority": "normal",
+   "priority": "out-of-scope",
    "reference": null,
    "native": null,
    "notes": [
+    "Out of scope by the owner's decision of 2026-10-08 (#95): no tiled renderer or tile cache natively. To bring it back, set priority to normal and remove this note.",
+    "Truth pass (2026-10-08): not-applicable, large. No tile cache natively (unless the image cache should honour this budget: a design decision). Evidence: options.rs:4322-4325 row, unread",
     "Reference editor/control 'Memory reserved for image tile cache:' is recorded on 'speed and memory' and defined by the referenced options panel. No corresponding editable row exists in native options::pages; this is a missing GUI editing path, even if a setting is imported or consumed elsewhere.",
     "Native options registry has no editable 'Memory reserved for image tile cache:' control in this page/box path."
    ]
@@ -14969,11 +15045,12 @@
    "label": "Memory for video buffer:",
    "path": "File > Options window > speed and memory > video buffer",
    "workstream": "options-system",
-   "state": "missing",
+   "state": "partial",
    "priority": "normal",
    "reference": null,
    "native": null,
    "notes": [
+    "Truth pass (2026-10-08): partial, small. The native animation player has a hard-coded lookahead where the reference sizes it from this option. Missing: Size the native animation player's lookahead from the option with the reference's formula; model test. Evidence: options.rs:4382-4385 row, unread; animation.rs const AHEAD: usize = 3; reference ClientRendering.py:604-650",
     "Reference editor/control 'Memory for video buffer:' is recorded on 'speed and memory' and defined by the referenced options panel. No corresponding editable row exists in native options::pages; this is a missing GUI editing path, even if a setting is imported or consumed elsewhere.",
     "Native options registry has no editable 'Memory for video buffer:' control in this page/box path."
    ]
@@ -14983,11 +15060,12 @@
    "label": "Idle, application/system busy and database activity fields",
    "path": "Page/file-selection and network status",
    "workstream": "shell",
-   "state": "missing",
+   "state": "partial",
    "priority": "normal",
    "reference": null,
    "native": null,
    "notes": [
+    "Truth pass (2026-10-08): partial, small. Idle and CPU-busy fields work; app-busy and DB-activity fields missing. Missing: The application-busy (thread pool) and DB-activity fields and their tooltips; may need a design decision (no native thread pool / DB-job status). Evidence: main.slint:599-600, 2222-2230; maintenance_runtime.rs:184-186; tested in options_system_consumers.rs:1358",
     "Reference updates independent status fields for idle/application/system busy and DB locking/actions. Native renders page status and network text only.",
     "No native action/editor path for this reference workflow."
    ]
@@ -15055,11 +15133,12 @@
    "label": "Include the file system in this wait:",
    "path": "File > Options window > system > system sleep",
    "workstream": "options-system",
-   "state": "missing",
+   "state": "partial",
    "priority": "normal",
    "reference": null,
    "native": null,
    "notes": [
+    "Truth pass (2026-10-08): partial, small. Checkbox stored but inert; needs the file-system wait. Missing: A wake-aware wait before file-store access, and a test. Evidence: options.rs:4404-4407 stored only; reference ClientFilesManager._WaitOnWakeup (ClientFilesManager.py:863); hydrus-net has wake detection",
     "Reference editor/control 'Include the file system in this wait:' is recorded on 'system' and defined by the referenced options panel. No corresponding editable row exists in native options::pages; this is a missing GUI editing path, even if a setting is imported or consumed elsewhere.",
     "Native options registry has no editable 'Include the file system in this wait:' control in this page/box path."
    ]
@@ -15069,11 +15148,12 @@
    "label": "Always show the hydrus system tray icon:",
    "path": "File > Options window > system tray",
    "workstream": "options-system",
-   "state": "missing",
+   "state": "partial",
    "priority": "normal",
    "reference": null,
    "native": null,
    "notes": [
+    "Truth pass (2026-10-08): partial, medium. Not platform-blocked: Slint 1.18 has a tray icon element. Missing: Enable 'system-tray' (rerun hakari), a HydrusTray component with show/hide and exit menu, created when the option is on and a StatusNotifier host exists, live toggle on apply, click toggles the main window; row test. Evidence: options.rs:4410-4440 row, unread; Slint 1.18.1 SystemTrayIcon (i-slint-core items/system_tray.rs; ksni on Linux) behind slint feature 'system-tray', off in Cargo.toml",
     "Reference editor/control 'Always show the hydrus system tray icon:' is recorded on 'system tray' and defined by the referenced options panel. No corresponding editable row exists in native options::pages; this is a missing GUI editing path, even if a setting is imported or consumed elsewhere.",
     "Native options registry has no editable 'Always show the hydrus system tray icon:' control in this page/box path."
    ]
@@ -15084,10 +15164,12 @@
    "path": "File > Options window > system tray",
    "workstream": "options-system",
    "state": "missing",
-   "priority": "normal",
+   "priority": "out-of-scope",
    "reference": null,
    "native": null,
    "notes": [
+    "Out of scope by the owner's decision of 2026-10-08 (#95): a Qt window-state workaround. To bring it back, set priority to normal and remove this note.",
+    "Truth pass (2026-10-08): not-applicable, test-only. Qt window-state workaround with no Slint/winit equivalent. Evidence: options.rs:4422-4425; Qt window-state workaround",
     "Reference editor/control 'BUGFIX: Do minimise-hide using event-deferred state-prep tech:' is recorded on 'system tray' and defined by the referenced options panel. No corresponding editable row exists in native options::pages; this is a missing GUI editing path, even if a setting is imported or consumed elsewhere.",
     "Native options registry has no editable 'BUGFIX: Do minimise-hide using event-deferred state-prep tech:' control in this page/box path."
    ]
@@ -15098,10 +15180,12 @@
    "path": "File > Options window > system tray",
    "workstream": "options-system",
    "state": "missing",
-   "priority": "normal",
+   "priority": "out-of-scope",
    "reference": null,
    "native": null,
    "notes": [
+    "Out of scope by the owner's decision of 2026-10-08 (#95): a Qt window-state workaround. To bring it back, set priority to normal and remove this note.",
+    "Truth pass (2026-10-08): not-applicable, test-only. Qt-specific workaround. Evidence: options.rs:4426-4429; Qt restore-after-show workaround",
     "Reference editor/control 'BUGFIX: Do minimise-hide with post-show state restoration:' is recorded on 'system tray' and defined by the referenced options panel. No corresponding editable row exists in native options::pages; this is a missing GUI editing path, even if a setting is imported or consumed elsewhere.",
     "Native options registry has no editable 'BUGFIX: Do minimise-hide with post-show state restoration:' control in this page/box path."
    ]
@@ -15111,11 +15195,12 @@
    "label": "Close the main window to system tray:",
    "path": "File > Options window > system tray",
    "workstream": "options-system",
-   "state": "missing",
+   "state": "partial",
    "priority": "normal",
    "reference": null,
    "native": null,
    "notes": [
+    "Truth pass (2026-10-08): partial, small. Small once the tray exists. Missing: The tray, plus close_requested hiding the window. Evidence: options.rs:4430-4433 row, unread",
     "Reference editor/control 'Close the main window to system tray:' is recorded on 'system tray' and defined by the referenced options panel. No corresponding editable row exists in native options::pages; this is a missing GUI editing path, even if a setting is imported or consumed elsewhere.",
     "Native options registry has no editable 'Close the main window to system tray:' control in this page/box path."
    ]
@@ -15125,11 +15210,12 @@
    "label": "Minimise the main window to system tray:",
    "path": "File > Options window > system tray",
    "workstream": "options-system",
-   "state": "missing",
+   "state": "partial",
    "priority": "normal",
    "reference": null,
    "native": null,
    "notes": [
+    "Truth pass (2026-10-08): partial, medium. Depends on the tray; minimise detection impossible on Wayland. Missing: The tray, plus minimise detection (winit is_minimized: polled; not available on Wayland). Evidence: options.rs:4418-4421 row, unread",
     "Reference editor/control 'Minimise the main window to system tray:' is recorded on 'system tray' and defined by the referenced options panel. No corresponding editable row exists in native options::pages; this is a missing GUI editing path, even if a setting is imported or consumed elsewhere.",
     "Native options registry has no editable 'Minimise the main window to system tray:' control in this page/box path."
    ]
@@ -15139,11 +15225,12 @@
    "label": "Start the client minimised to system tray:",
    "path": "File > Options window > system tray",
    "workstream": "options-system",
-   "state": "missing",
+   "state": "partial",
    "priority": "normal",
    "reference": null,
    "native": null,
    "notes": [
+    "Truth pass (2026-10-08): partial, small. Small once the tray exists. Missing: The tray, plus starting hidden (a visible tray keeps Slint's loop alive). Evidence: options.rs:4434-4437 row, unread",
     "Reference editor/control 'Start the client minimised to system tray:' is recorded on 'system tray' and defined by the referenced options panel. No corresponding editable row exists in native options::pages; this is a missing GUI editing path, even if a setting is imported or consumed elsewhere.",
     "Native options registry has no editable 'Start the client minimised to system tray:' control in this page/box path."
    ]
@@ -15733,11 +15820,12 @@
    "label": "Number of recent petition reasons to remember in dialogs:",
    "path": "File > Options window > tag editing > tag dialogs",
    "workstream": "options-gui",
-   "state": "missing",
+   "state": "partial",
    "priority": "normal",
    "reference": null,
    "native": null,
    "notes": [
+    "Truth pass (2026-10-08): partial, small. Could be consumed by the existing sibling/parent reason prompts. Missing: A recent-reasons store fed by the sibling/parent reason prompts and capped by this count. Evidence: options.rs:4492-4496 row, tested, unread",
     "Reference editor/control 'Number of recent petition reasons to remember in dialogs:' is recorded on 'tag editing' and defined by the referenced options panel. No corresponding editable row exists in native options::pages; this is a missing GUI editing path, even if a setting is imported or consumed elsewhere.",
     "Native options registry has no editable 'Number of recent petition reasons to remember in dialogs:' control in this page/box path."
    ]
@@ -16771,6 +16859,7 @@
    "reference": null,
    "native": null,
    "notes": [
+    "Truth pass (2026-10-08): partial, small. Deleted ticks and all-known replay the reference; the caller flag matrix is missing. Missing: The selector's caller flags (only-importable, no-combined, local-only) are not modelled; import-options callers don't use the selector. Evidence: domains.rs:122, 206; search_domains.rs:149 replays oracle/fixtures/search_domains.json (tagged for sibling leaves)",
     "Ordinary mode obeys AdvancedMode while autocomplete invokes the shared selector with advanced choices enabled to retain all-known/combined/deleted contexts.",
     "Qt caller flags can restrict importable/local/combined domains independently; native ordinary/autocomplete entrypoints expose two modes rather than the complete flag matrix."
    ]
@@ -17091,11 +17180,12 @@
    "label": "Tag-filter control tooltips",
    "path": "Reusable editors > Reusable tag filter editor",
    "workstream": "editors",
-   "state": "missing",
+   "state": "partial",
    "priority": "normal",
    "reference": null,
    "native": null,
    "notes": [
+    "Truth pass (2026-10-08): partial, small. Not platform-blocked: Slint 1.18 has tooltips; DIFFERENCES.md's 'no tooltips' is stale. Missing: Wire Tooltip elements in tag_filter.slint (wrap the buttons) and test the model text against the reference. Evidence: tag_filter_editor.rs:47-70 computes the text; Slint 1.18.1 has a Tooltip element (i-slint-compiler builtin_elements.rs)",
     "The reference editor supplies explanatory control help/tooltips; native tag-filter buttons have no tooltip properties."
    ]
   },
@@ -17353,6 +17443,7 @@
    "reference": "hydrus/client/gui/parsing/ClientGUIParsing.py:91",
    "native": "crates/hydrus-gui/src/downloader_interchange_window.rs:707",
    "notes": [
+    "Truth pass (2026-10-08): missing, medium. A contained medium slice; the data to package already exists. Missing: The domain prompt, DomainMetadataPackage (type 71) encode/decode in JSON/PNG, review and import, and a recording. Evidence: downloader_interchange.rs:436-446 has no domain metadata category; header and bandwidth storage exist",
     "Top-level native downloader package accepts URL classes/GUGs/page parsers; domain metadata and login script packages are rejected, not edited or imported."
    ]
   },
@@ -17510,6 +17601,7 @@
    "reference": "hydrus/client/gui/importing/ClientGUIImportOptionsPanels.py:37",
    "native": "crates/hydrus-gui-model/src/import_options_editor.rs:56",
    "notes": [
+    "Truth pass (2026-10-08): missing, large. Only an opaque pass-through exists. Missing: Typed entry model, add/edit/delete list, the when-to-run chooser, the program choices, and execution after import. Evidence: hydrus-core/src/import_options.rs:430-436 (opaque stored string); import_options_window.rs:201-204 '(not editable here yet)'",
     "External program data can survive migration, but the native editor cannot author commands and the worker does not execute them."
    ]
   },
@@ -17536,6 +17628,7 @@
    "reference": "hydrus/client/gui/importing/ClientGUIImportOptionsPanels.py:324",
    "native": "crates/hydrus-gui-model/src/import_options_editor.rs:53",
    "notes": [
+    "Truth pass (2026-10-08): partial, medium. Flags and a single destination write through; the rest and all tests are missing. Missing: Multi-destination selection (reference LocationSearchContextButton restricted to importable domains), the empty-destination warning, hiding URL checkboxes for non-downloader callers, the archive interlock, and any test. Evidence: import_options_window.rs:322-336, 456-470; import_options.slint:103-105, 349-359",
     "Destination selection and automatic archive update the locations slice; only one native file-service destination is editable.",
     "Missing clipboard/favourites and narrower native location/field widgets do not imply whole Qt editor parity."
    ]
@@ -17712,10 +17805,12 @@
    "path": "Tags > Tag parents",
    "workstream": "tags-services",
    "state": "missing",
-   "priority": "normal",
+   "priority": "out-of-scope",
    "reference": null,
    "native": null,
    "notes": [
+    "Out of scope by the owner's decision of 2026-10-08 (#95): background loading of parent pairs; hydrus-rs loads them when the editor opens. To bring it back, set priority to normal and remove this note.",
+    "Truth pass (2026-10-08): missing, medium. Shared with siblings-async. Missing: Same change as siblings-async. Evidence: same as siblings-async",
     "Native Relationships::new synchronously loads service state; reference async initialization/fetch progress is absent."
    ]
   },
@@ -17785,6 +17880,7 @@
    "reference": "hydrus/client/gui/metadata/ClientGUITagActions.py:20",
    "native": null,
    "notes": [
+    "Truth pass (2026-10-08): partial, medium. Reasons work; suggestions and account handling missing. Missing: Recent and fixed reason suggestions; account permission/moderator handling. Evidence: tag_relationships.rs:725-750; tests tag_relationships.rs:38,337 and GUI :198",
     "Local add/delete or repository pend/petition/rescind uses typed updates and stored reasons; repository tests reopen pending/reasons and rescind correctly.",
     "Reasons/rescinds exist; permission warnings, moderator bypass and recent/fixed suggestions are deferred."
    ]
@@ -17835,10 +17931,12 @@
    "path": "Tags > Tag siblings",
    "workstream": "tags-services",
    "state": "missing",
-   "priority": "normal",
+   "priority": "out-of-scope",
    "reference": null,
    "native": null,
    "notes": [
+    "Out of scope by the owner's decision of 2026-10-08 (#95): background loading of sibling pairs; hydrus-rs loads them when the editor opens. To bring it back, set priority to normal and remove this note.",
+    "Truth pass (2026-10-08): missing, medium. One change covers siblings and parents. Missing: Background load per service with loading state (Timer-polled mailbox); shared with parents-async. Evidence: tag_relationships.rs:92-120 loads synchronously",
     "Native Relationships::new synchronously loads service state; reference async initialization/fetch progress is absent."
    ]
   },
@@ -18037,6 +18135,7 @@
    "reference": "hydrus/client/gui/ClientGUISubscriptions.py:2463",
    "native": null,
    "notes": [
+    "Truth pass (2026-10-08): partial, medium. Modern and legacy exchange recorded and tested; specific gaps remain. Missing: Old seed-cache versions 1-7, clipboard bitmap and drag/drop, per-object selection, cache-header gaps. Evidence: extensively recorded and tested (subscriptions.rs:1219-2049; record_subscription_exchange.py etc.)",
     "Manage subscriptions exposes serialized import/export of modern reference container90 objects through an owned child. Settings, complete query states, cached velocity/example-seed headers and both file/gallery histories survive JSON/PNG exchange, staged import and Apply/reopen. Casefold name collisions use (1) suffixes and every imported query gets a fresh history identity. JSON file export asks the original existing-path overwrite question; rejecting or closing the owner preserves the existing file. Format-specific multi-file JSON/PNG imports validate before staging, cancellation leaves the saved store unchanged, and stale callbacks cannot append or overwrite. Export reads current native queues plus draft reset/retry commands and preserves copied header metadata. Incomplete objects now ask the exact reference missing query log data title, message and import/back-out choices before they enter the draft; accepting persists empty logs and rejecting or cancelling continues remaining objects in list order. Apply is blocked while the question remains unanswered. Modern clipboard/JSON/PNG menu choices now dispatch their actual transport action. Legacy subscription type3 versions1–10 and legacy query1–3 import with full embedded histories, historical checker/limit defaults and fresh identity handling; obsolete gallery identifiers become the original paused unknown downloader. Actual Qt direct conversion and list exports constrain full upgraded payloads, apart from generated random identities. Fresh history names invalidate velocity/status according to SetQueryLogContainerName while retaining example/cached-count fields. Actual Reset/RetryFailed/RetryIgnored exports now refresh file-count/example caches without changing velocity or gallery examples. Retried files lose hashes exactly as SetStatus(UNKNOWN) does, in both detached exports and the real Apply transaction; reopening exports those persisted caches.",
     "Historical file seed-cache type8 versions1–7 remain unsupported and fail explicitly; current cache8 with seed versions handled by the legacy decoder is supported.",
     "Clipboard PNG-image precedence and PNG drag/drop remain absent; PNG files and the original transport popup choices are supported.",
@@ -18147,10 +18246,12 @@
    "path": "Tags",
    "workstream": "tags-services",
    "state": "missing",
-   "priority": "normal",
+   "priority": "out-of-scope",
    "reference": null,
    "native": null,
    "notes": [
+    "Out of scope by the owner's decision of 2026-10-08 (#95): the background display-sync manager; hydrus-rs rebuilds display at once, and the Tags > sync menu leaves cover the UI. To bring it back, set priority to normal and remove this note.",
+    "Truth pass (2026-10-08): not-applicable, test-only. Covered by the four sync menu leaves; the background manager is unnecessary (display rebuilt synchronously). Evidence: Tags > sync submenu, review window and switches tagged under four other leaves (tags_sync_menu.rs:33-35)",
     "Reference sync review/work-now and idle/normal-time scheduling operate a background display maintenance manager. Native relationship/application edits rebuild immediately; this background GUI manager and menu actions are absent.",
     "This entry is todo()/a checkbox without a command in tags_menu; no native main-menu workflow runs it."
    ]

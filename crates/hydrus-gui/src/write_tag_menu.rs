@@ -164,7 +164,15 @@ impl TagMenu {
     fn execute(&self, action: Action) {
         match action {
             Action::Copy(text) => crate::copy_to_clipboard(&text),
-            Action::Domain(..) | Action::Decorate { .. } => (self.decorate)(action),
+            Action::Domain(..) | Action::Decorate { .. } | Action::MigrateTags => {
+                (self.decorate)(action);
+            }
+            Action::Cog(setting) => {
+                if let Err(e) = setting.persist(&self.store) {
+                    (self.error)(&e.to_string());
+                }
+                (self.decorate)(Action::Cog(setting));
+            }
             Action::Locations(location) => {
                 let chosen = Rc::new({
                     let editable = self.editable.clone();

@@ -23,8 +23,8 @@
 #
 # Environment: DEV_JOBS (default 4) is the Cargo job count. DEV_LANE names a
 # GUI test lane (crates/hydrus-gui/tests/lane_<name>.rs) for `gui` and `lint`
-# to use instead of the shared `gui` test binary (see AGENTS.md, "Several
-# agents at once").
+# to use instead of the shared `gui` test binary, for agents sharing one
+# checkout (see AGENTS.md, "Several agents at once").
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
@@ -48,6 +48,12 @@ slint_check() {
   local bin=target/tools/debug/slint-check
   if [ -x "$bin" ] && [ -z "$(find tools/slint-check -newer "$bin" -type f -print -quit)" ]; then
     "$bin"
+  elif pgrep -f 'crate-name hydrus_gui_ui' >/dev/null; then
+    # (building the checker beside the ~13 GB UI-crate compile runs a 16 GB
+    # machine out of memory and the kernel kills the UI build)
+    echo "dev.sh slint: the UI crate is compiling and the checker is not built yet;" >&2
+    echo "  building the checker now would run out of memory. Retry when it finishes." >&2
+    exit 1
   else
     cargo run -q --manifest-path tools/slint-check/Cargo.toml --target-dir target/tools
   fi
@@ -57,9 +63,19 @@ build_ui() {
   cargo_ build -p hydrus-gui-ui
 }
 
+base_commit() {
+  # (a fresh clone of a branch may not have origin/master; without it every
+  # crate would look unchanged and pre-push would check nothing)
+  if ! git rev-parse -q --verify origin/master >/dev/null; then
+    git fetch -q origin master:refs/remotes/origin/master >&2 ||
+      { echo "dev.sh: cannot find or fetch origin/master; name the crates" >&2; exit 2; }
+  fi
+  git merge-base HEAD origin/master
+}
+
 changed_crates() {
   local base
-  base=$(git merge-base HEAD origin/master 2>/dev/null || git rev-parse HEAD)
+  base=$(base_commit)
   { git diff --name-only "$base"; git ls-files --others --exclude-standard; git diff --name-only; } |
     sed -n 's|^crates/\([^/]*\)/.*|\1|p' | sort -u | grep -v '^hydrus-gui-ui$' || true
 }
@@ -120,7 +136,7 @@ case "${1:-}" in
     ;;
   pre-push)
     mapfile -t crates < <(changed_crates)
-    git diff --name-only "$(git merge-base HEAD origin/master 2>/dev/null || echo HEAD)" -- crates/hydrus-gui/ui | grep -q . && slint_check
+    if git diff --name-only "$(base_commit)" -- crates/hydrus-gui/ui | grep -q .; then slint_check; fi
     gui=0
     for c in "${crates[@]}"; do
       case " $gui_inputs " in *" $c "*) gui=1 ;; esac

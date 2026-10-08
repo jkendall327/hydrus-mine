@@ -26,3 +26,24 @@ pub fn all_local_page(store: std::sync::Arc<hydrus_store::Store>) -> hydrus_gui:
         .unwrap();
     hydrus_gui::SearchPage::new(store)
 }
+
+/// Runs the export-folder worker until no folder is left flagged to run now,
+/// collecting every run. A folder whose activity lock is briefly unavailable
+/// is skipped by design ("a harmless skipped run") and runs on the next pass;
+/// in a test binary another test's child process can hold an inherited copy
+/// of the lock for a moment, so one pass may skip a folder.
+pub fn export_folders_until_done(
+    store: &std::sync::Arc<hydrus_store::Store>,
+) -> Vec<(String, hydrus_download::export::ExportRun)> {
+    let mut all = Vec::new();
+    for _ in 0..20 {
+        all.extend(hydrus_download::export::work_export_folders(store).unwrap());
+        let folders: hydrus_store::settings::ExportFolders =
+            store.read(hydrus_store::settings::get).unwrap();
+        if folders.0.iter().all(|f| !f.run_now) {
+            return all;
+        }
+        std::thread::sleep(std::time::Duration::from_millis(20));
+    }
+    panic!("export folders still flagged to run after 20 passes: {all:?}");
+}

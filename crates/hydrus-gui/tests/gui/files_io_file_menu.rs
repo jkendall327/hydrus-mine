@@ -447,7 +447,7 @@ fn export_folders_are_paused_and_run_from_the_file_menu_and_the_worker_obeys() {
     let shown = file_menu(&ui, &["import/export folders", "pause", "export folders"]);
     assert!(shown[2][1].2, "ticked while paused");
     assert_eq!(paused(&store), (false, false));
-    let runs = hydrus_download::export::work_export_folders(&store).unwrap();
+    let runs = crate::common::export_folders_until_done(&store);
     assert_eq!(
         runs.iter().map(|r| r.0.as_str()).collect::<Vec<_>>(),
         ["sync"]
@@ -460,7 +460,7 @@ fn export_folders_are_paused_and_run_from_the_file_menu_and_the_worker_obeys() {
         &["import/export folders", "run export folder now", "run all"],
     );
     assert!(flags(&store).iter().all(|f| f.1));
-    let runs = hydrus_download::export::work_export_folders(&store).unwrap();
+    let runs = crate::common::export_folders_until_done(&store);
     assert_eq!(runs.len(), 3);
     assert_eq!(flags(&store), all_false);
 }

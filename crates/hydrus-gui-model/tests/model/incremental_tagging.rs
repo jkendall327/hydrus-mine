@@ -12,8 +12,13 @@ fn actual_child_defaults_conflicts_reverse_pairs_and_nested_cancellation_replay(
     let recorded = hydrus_testkit::fixture_json("manage_tag_counts_incremental.json");
     let (_directory, store, files) = fixture::seed(&recorded);
     let mut prior = ManageTags::new(store.clone(), files.clone()).unwrap();
-    prior.enter("checkpoint:old").unwrap();
-    prior.enter("checkpoint:live").unwrap();
+    prior
+        .enter_tags(&["checkpoint:old".to_owned()], false, false)
+        .unwrap();
+    prior.remove_tags(&["checkpoint:live".to_owned()]).unwrap();
+    prior
+        .confirm_removal(&["checkpoint:live".to_owned()])
+        .unwrap();
     prior.apply().unwrap();
     for case in recorded["incremental"].as_array().unwrap() {
         let mut parent = ManageTags::new(store.clone(), files.clone()).unwrap();
@@ -100,13 +105,22 @@ fn add_then_remove_retains_the_reference_deleted_mapping_in_private_preview() {
     let recorded = hydrus_testkit::fixture_json("manage_tag_counts_incremental.json");
     let (_directory, store, files) = fixture::seed(&recorded);
     let mut parent = ManageTags::new(store.clone(), files.clone()).unwrap();
-    parent.enter("checkpoint:old").unwrap();
-    parent.enter("checkpoint:live").unwrap();
+    parent
+        .enter_tags(&["checkpoint:old".to_owned()], false, false)
+        .unwrap();
+    parent.remove_tags(&["checkpoint:live".to_owned()]).unwrap();
+    parent
+        .confirm_removal(&["checkpoint:live".to_owned()])
+        .unwrap();
     parent.apply().unwrap();
     let mut parent = ManageTags::new(store.clone(), files.clone()).unwrap();
     parent.flip_show_deleted().unwrap();
-    parent.enter("checkpoint:cycle").unwrap();
-    parent.enter("checkpoint:cycle").unwrap();
+    parent
+        .enter_tags(&["checkpoint:cycle".to_owned()], false, false)
+        .unwrap();
+    parent
+        .enter_tags(&["checkpoint:cycle".to_owned()], false, false)
+        .unwrap();
     assert_eq!(
         parent.has_changes(),
         recorded["fresh_cycle"]["has_changes"].as_bool().unwrap()

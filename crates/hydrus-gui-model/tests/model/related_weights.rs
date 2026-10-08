@@ -145,7 +145,7 @@ fn real_service_mappings_replay_recorded_ranks_and_never_cross_service() {
             .unwrap();
         tags.choose_service(index).unwrap();
         service = tags.migration_service_key();
-        tags.add_side_suggestions(&[tag.into()]);
+        tags.add_side_suggestions(&[tag.into()]).unwrap();
         tags.apply().unwrap();
     }
     let f = hydrus_testkit::fixture_json("related_tag_weights.json");
