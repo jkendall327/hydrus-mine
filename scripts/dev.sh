@@ -48,6 +48,12 @@ slint_check() {
   local bin=target/tools/debug/slint-check
   if [ -x "$bin" ] && [ -z "$(find tools/slint-check -newer "$bin" -type f -print -quit)" ]; then
     "$bin"
+  elif pgrep -f 'crate-name hydrus_gui_ui' >/dev/null; then
+    # (building the checker beside the ~13 GB UI-crate compile runs a 16 GB
+    # machine out of memory and the kernel kills the UI build)
+    echo "dev.sh slint: the UI crate is compiling and the checker is not built yet;" >&2
+    echo "  building the checker now would run out of memory. Retry when it finishes." >&2
+    exit 1
   else
     cargo run -q --manifest-path tools/slint-check/Cargo.toml --target-dir target/tools
   fi
