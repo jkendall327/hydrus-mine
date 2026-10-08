@@ -24,9 +24,13 @@ fn deleted_counts_status_rows_and_global_toggle_replay_apply_cancel_and_reopen()
         states[1]["other_open_owner"]
     );
     model.remove_tags(&["checkpoint:live".to_owned()]).unwrap();
-    model.confirm_removal(&["checkpoint:live".to_owned()]).unwrap();
+    model
+        .confirm_removal(&["checkpoint:live".to_owned()])
+        .unwrap();
     assert_eq!(fixture::snapshot(&mut model), states[2]["state"]);
-    model.enter_tags(&["checkpoint:old".to_owned()], false, false).unwrap();
+    model
+        .enter_tags(&["checkpoint:old".to_owned()], false, false)
+        .unwrap();
     assert_eq!(fixture::snapshot(&mut model), states[3]["state"]);
     assert_eq!(
         fixture::snapshot(&mut second),
@@ -45,9 +49,15 @@ fn deleted_counts_status_rows_and_global_toggle_replay_apply_cancel_and_reopen()
     drop(model);
     let mut reopened = ManageTags::new(store.clone(), files.clone()).unwrap();
     assert_eq!(fixture::snapshot(&mut reopened), states[4]["state"]);
-    reopened.enter_tags(&["checkpoint:old".to_owned()], false, false).unwrap();
-    reopened.remove_tags(&["checkpoint:live".to_owned()]).unwrap();
-    reopened.confirm_removal(&["checkpoint:live".to_owned()]).unwrap();
+    reopened
+        .enter_tags(&["checkpoint:old".to_owned()], false, false)
+        .unwrap();
+    reopened
+        .remove_tags(&["checkpoint:live".to_owned()])
+        .unwrap();
+    reopened
+        .confirm_removal(&["checkpoint:live".to_owned()])
+        .unwrap();
     reopened.apply().unwrap();
     let mut saved = ManageTags::new(store.clone(), files.clone()).unwrap();
     assert_eq!(fixture::snapshot(&mut saved), states[5]["state"]);

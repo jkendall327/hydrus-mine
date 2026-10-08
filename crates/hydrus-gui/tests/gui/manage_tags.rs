@@ -394,9 +394,8 @@ fn tags_are_added_and_removed_as_the_reference_does() {
         })
         .unwrap();
     let mut manage = ManageTags::new(store.clone(), vec![tagged]).unwrap();
-    let enter = |m: &mut ManageTags, typed: &str| {
-        m.add_tags(&[typed.to_owned()], false).map(|_| ())
-    };
+    let enter =
+        |m: &mut ManageTags, typed: &str| m.add_tags(&[typed.to_owned()], false).map(|_| ());
     let names = manage.service_names();
     let mine = names.iter().position(|n| n == "my tags").unwrap();
     manage.choose_service(mine).unwrap();

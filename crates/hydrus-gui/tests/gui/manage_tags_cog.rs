@@ -74,7 +74,10 @@ fn row_of(manage: &ManageTagsWindow, tag: &str) -> i32 {
 }
 
 fn listed(manage: &ManageTagsWindow, tag: &str) -> bool {
-    manage.get_tags().iter().any(|row| row.text.starts_with(tag))
+    manage
+        .get_tags()
+        .iter()
+        .any(|row| row.text.starts_with(tag))
 }
 
 fn recorded_case(recorded: &serde_json::Value, name: &str, confirm: bool) -> serde_json::Value {
@@ -87,7 +90,10 @@ fn recorded_case(recorded: &serde_json::Value, name: &str, confirm: bool) -> ser
         .clone()
 }
 
-fn set_cog(store: &hydrus_store::Store, f: impl FnOnce(&mut hydrus_store::tag_editing::TagEditingSettings) + Send + 'static) {
+fn set_cog(
+    store: &hydrus_store::Store,
+    f: impl FnOnce(&mut hydrus_store::tag_editing::TagEditingSettings) + Send + 'static,
+) {
     store
         .write(move |ctx| {
             let mut o: hydrus_store::tag_editing::TagEditingSettings =
@@ -110,14 +116,21 @@ fn remove_button_confirms_as_the_reference_does_and_stages_the_removal() {
     );
     // nothing selected: every tag is removable, and the question counts them
     m.invoke_remove_pressed();
-    assert!(m.get_tag_menu_question().starts_with("Are you sure you want to remove these "));
+    assert!(
+        m.get_tag_menu_question()
+            .starts_with("Are you sure you want to remove these ")
+    );
     assert_eq!(m.get_tag_menu_yes_label().as_str(), "yes");
     m.invoke_tag_menu_answered(false);
     assert!(m.get_tag_menu_question().is_empty());
     assert!(listed(m, "cog:all"), "'no' removes nothing");
     // one tag selected: the question is the reference's, with the tag
     m.invoke_tag_clicked(row_of(m, "cog:some"), false, false);
-    assert!(m.get_tag_selected().row_data(usize::try_from(row_of(m, "cog:some")).unwrap()).unwrap());
+    assert!(
+        m.get_tag_selected()
+            .row_data(usize::try_from(row_of(m, "cog:some")).unwrap())
+            .unwrap()
+    );
     m.invoke_remove_pressed();
     let asked = recorded_case(&recorded, "remove_button_selected_declined", true)["asked"][0]
         .as_str()
@@ -163,11 +176,18 @@ fn cog_menu_toggles_are_written_and_the_confirmation_obeys_them() {
         .map(|i| i["title"].as_str().unwrap().to_owned())
         .collect();
     assert_eq!(
-        labels.iter().filter(|l| !l.is_empty()).cloned().collect::<Vec<_>>(),
+        labels
+            .iter()
+            .filter(|l| !l.is_empty())
+            .cloned()
+            .collect::<Vec<_>>(),
         titles
     );
     // "confirm remove/petition tags…" is on by default: turn it off
-    let at = labels.iter().position(|l| l.starts_with("confirm remove")).unwrap();
+    let at = labels
+        .iter()
+        .position(|l| l.starts_with("confirm remove"))
+        .unwrap();
     m.invoke_tag_menu_clicked(0, i32::try_from(at).unwrap(), 0.0, 0.0, 0.0);
     let saved: hydrus_store::tag_editing::TagEditingSettings =
         o.store.read(hydrus_store::settings::get).unwrap();
@@ -206,7 +226,11 @@ fn copy_button_copies_selected_or_all_tags_with_the_reference_notice() {
         .as_str()
         .unwrap()
         .replace('3', "2");
-    assert_eq!(m.get_notice().as_str(), notice, "(the recorded wording, two tags)");
+    assert_eq!(
+        m.get_notice().as_str(),
+        notice,
+        "(the recorded wording, two tags)"
+    );
     m.invoke_tag_clicked(row_of(m, "cog:all"), false, false);
     m.invoke_tag_clicked(row_of(m, "cog:all"), true, false);
     m.invoke_copy_pressed();
@@ -226,10 +250,8 @@ fn recent_panel_clear_button_asks_then_forgets_the_services_recent_tags() {
                     ctx.conn(),
                     &hydrus_store::settings::TagSuggestionSettings::default(),
                 )?;
-                let tag = hydrus_store::master::intern_tag(
-                    ctx.conn(),
-                    &Tag::new("recent:one").unwrap(),
-                )?;
+                let tag =
+                    hydrus_store::master::intern_tag(ctx.conn(), &Tag::new("recent:one").unwrap())?;
                 ctx.conn().execute(
                     "INSERT INTO recent_tags(service_id,tag_id,used_ms) VALUES(?,?,?)",
                     rusqlite::params![service, tag, hydrus_core::time::TimestampMs::now().0],
@@ -241,7 +263,12 @@ fn recent_panel_clear_button_asks_then_forgets_the_services_recent_tags() {
     let service = o.store.snapshot().services.by_name("my tags").unwrap().id;
     let m = &o.manage;
     assert!(m.get_recent_tags_enabled());
-    let recent = || m.get_recent_tag_rows().iter().map(|r| r.cells.row_data(0).unwrap().to_string()).collect::<Vec<_>>();
+    let recent = || {
+        m.get_recent_tag_rows()
+            .iter()
+            .map(|r| r.cells.row_data(0).unwrap().to_string())
+            .collect::<Vec<_>>()
+    };
     assert_eq!(recent(), ["recent:one"]);
     // (the reference: GetYesNo( 'Clear recent tags?' ))
     m.invoke_clear_recent();
@@ -253,7 +280,13 @@ fn recent_panel_clear_button_asks_then_forgets_the_services_recent_tags() {
     assert!(recent().is_empty());
     let left: i64 = o
         .store
-        .read(|c| Ok(c.query_row("SELECT COUNT(*) FROM recent_tags WHERE service_id = ?", [service], |r| r.get(0))?))
+        .read(|c| {
+            Ok(c.query_row(
+                "SELECT COUNT(*) FROM recent_tags WHERE service_id = ?",
+                [service],
+                |r| r.get(0),
+            )?)
+        })
         .unwrap();
     assert_eq!(left, 0);
 }

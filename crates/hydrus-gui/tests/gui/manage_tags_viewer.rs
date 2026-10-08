@@ -67,7 +67,12 @@ fn dialog_from_the_viewer_commits_at_once_follows_the_file_and_steps_the_viewer(
     ui.show().unwrap();
     let bound = bind(
         &ui,
-        Pages::single(SearchPage::fixed(store.clone(), "viewer tags", None, files.clone())),
+        Pages::single(SearchPage::fixed(
+            store.clone(),
+            "viewer tags",
+            None,
+            files.clone(),
+        )),
     );
     ui.invoke_thumbnail_activated(0);
     let viewer = bound.viewer.borrow().as_ref().unwrap().clone_strong();
@@ -88,7 +93,11 @@ fn dialog_from_the_viewer_commits_at_once_follows_the_file_and_steps_the_viewer(
     manage.invoke_entered();
     assert!(tags_of(&store, files[0]).contains(&"view:new".to_owned()));
     assert_eq!(shown(&manage), ["view:0 (1)", "view:new (1)"]);
-    let hover: Vec<String> = viewer.get_tags().iter().map(|r| r.text.to_string()).collect();
+    let hover: Vec<String> = viewer
+        .get_tags()
+        .iter()
+        .map(|r| r.text.to_string())
+        .collect();
     assert!(
         hover.contains(&"view:new".to_owned()),
         "the viewer's own tag display shows it: {hover:?}"

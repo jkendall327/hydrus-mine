@@ -62,9 +62,8 @@ fn set_cog(store: &Store, allow: bool, confirm: bool) {
                 hydrus_store::settings::get(ctx.conn())?;
             o.allow_remove_on_input = allow;
             o.confirm_remove = confirm;
-            o.default_service = hydrus_core::ServiceKey::new(
-                hydrus_core::service::builtin_keys::MY_TAGS.to_vec(),
-            );
+            o.default_service =
+                hydrus_core::ServiceKey::new(hydrus_core::service::builtin_keys::MY_TAGS.to_vec());
             hydrus_store::settings::set(ctx.conn(), &o)
         })
         .unwrap();
@@ -203,7 +202,11 @@ fn replay(store: &Arc<Store>, files: &[HashId], case: &Value) {
         (None, None) => {}
         (Some(clip), Some((text, notice))) => {
             assert_eq!(text, clip[1].as_str().unwrap(), "{name}: clipboard");
-            assert_eq!(notice, case["notices"][0].as_str().unwrap(), "{name}: notice");
+            assert_eq!(
+                notice,
+                case["notices"][0].as_str().unwrap(),
+                "{name}: notice"
+            );
         }
         (recorded, got) => panic!("{name}: clipboard {recorded:?} vs {got:?}"),
     }

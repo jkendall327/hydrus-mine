@@ -128,6 +128,18 @@ export component ManageTagsWindow inherits Window {
                 if (event.text == Key.PageDown) { root.show-next(); return accept; }
                 if (event.text == Key.PageUp) { root.show-previous(); return accept; }
             }
+            // (the reference's tags_autocomplete shortcuts that act on an empty input:
+            // Left/Right change the autocomplete's tab, Up/Down the service's
+            // tab when the list is empty too)
+            if (root.input-focused && root.text == "" && root.question == "" && root.tag-menu-question == "" && root.tag-menu-panes.length == 0
+                && !event.modifiers.control && !event.modifiers.shift && !event.modifiers.alt && !event.modifiers.meta) {
+                if (event.text == Key.LeftArrow) { root.tab-chosen(mod(root.autocomplete-tab + 2, 3)); return accept; }
+                if (event.text == Key.RightArrow) { root.tab-chosen(mod(root.autocomplete-tab + 1, 3)); return accept; }
+                if (root.suggestions.length == 0 && root.service-names.length > 1) {
+                    if (event.text == Key.UpArrow) { root.service-chosen(mod(root.service-index + root.service-names.length - 1, root.service-names.length)); return accept; }
+                    if (event.text == Key.DownArrow) { root.service-chosen(mod(root.service-index + 1, root.service-names.length)); return accept; }
+                }
+            }
             if (event.text == Key.Escape) {
                 if root.tag-menu-panes.length > 0 || root.tag-menu-question != "" { root.tag-menu-dismissed(); } else if !input.escape-results() { root.cancel(); }
                 return accept;

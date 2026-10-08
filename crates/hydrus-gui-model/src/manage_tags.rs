@@ -143,7 +143,7 @@ impl ManageTags {
             stored,
             deleted,
             input,
-            tag_selection: Default::default(),
+            tag_selection: crate::list_selection::ListSelection::default(),
             immediate: false,
             committed: false,
             last_error: None,

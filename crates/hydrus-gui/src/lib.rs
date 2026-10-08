@@ -6666,7 +6666,7 @@ fn open_viewer(
     viewer_tag_wheel::bind(&window, &viewing_stats, model.borrow().store());
     let last_tag_file = Rc::new(std::cell::Cell::new(None));
     // the Manage Tags window opened from here follows the file shown
-    let tags_follow: Rc<RefCell<Option<Rc<dyn Fn(HashId)>>>> = Rc::default();
+    let tags_follow: manage_tags_window::Follow = Rc::default();
     let show = {
         let tags_follow = tags_follow.clone();
         let warm = warm.clone();

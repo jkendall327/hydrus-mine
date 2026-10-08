@@ -85,10 +85,22 @@ fn rows(window: &ManageTagsWindow) -> Value {
 /// The reference asked "what would you like to do?" (some of the files had
 /// the tag): its message and buttons, then the recorded choice (the first, add).
 fn choose_add(window: &hydrus_gui::ManageTagsWindow, asked: &serde_json::Value) {
-    assert_eq!(window.get_tag_menu_question_title().as_str(), asked["title"].as_str().unwrap());
-    assert_eq!(window.get_tag_menu_question().as_str(), asked["message"].as_str().unwrap());
-    assert_eq!(window.get_tag_menu_yes_label().as_str(), asked["choices"][0].as_str().unwrap());
-    assert_eq!(window.get_tag_menu_no_label().as_str(), asked["choices"][1].as_str().unwrap());
+    assert_eq!(
+        window.get_tag_menu_question_title().as_str(),
+        asked["title"].as_str().unwrap()
+    );
+    assert_eq!(
+        window.get_tag_menu_question().as_str(),
+        asked["message"].as_str().unwrap()
+    );
+    assert_eq!(
+        window.get_tag_menu_yes_label().as_str(),
+        asked["choices"][0].as_str().unwrap()
+    );
+    assert_eq!(
+        window.get_tag_menu_no_label().as_str(),
+        asked["choices"][1].as_str().unwrap()
+    );
     assert_eq!(asked["chosen"], asked["choices"][0]);
     window.invoke_tag_menu_answered(true);
 }
@@ -234,7 +246,10 @@ fn expanded_parent_rows_keep_colour_and_activate_their_originating_tag() {
         slint::Color::from_rgb_u8(11, 13, 17)
     );
     manage.invoke_tag_activated(i32::try_from(child + 1).unwrap());
-    choose_add(&manage, &recorded["cases"][15]["parent_activation"]["asked"][0]);
+    choose_add(
+        &manage,
+        &recorded["cases"][15]["parent_activation"]["asked"][0],
+    );
     manage.invoke_cancel();
     ui.invoke_manage_tags_selected();
     let reopened = bound.manage_tags.borrow().as_ref().unwrap().clone_strong();
@@ -248,7 +263,10 @@ fn expanded_parent_rows_keep_colour_and_activate_their_originating_tag() {
         .position(|row| row.text.starts_with("parity:amber old ("))
         .unwrap();
     reopened.invoke_tag_activated(i32::try_from(child + 1).unwrap());
-    choose_add(&reopened, &recorded["cases"][15]["parent_activation"]["asked"][0]);
+    choose_add(
+        &reopened,
+        &recorded["cases"][15]["parent_activation"]["asked"][0],
+    );
     reopened.invoke_apply();
     ui.invoke_manage_tags_selected();
     let persisted = bound.manage_tags.borrow().as_ref().unwrap().clone_strong();

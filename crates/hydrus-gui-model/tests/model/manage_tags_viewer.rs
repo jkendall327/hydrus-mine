@@ -54,9 +54,8 @@ fn allow_remove(store: &Store, allow: bool) {
                 hydrus_store::settings::get(ctx.conn())?;
             o.allow_remove_on_input = allow;
             o.confirm_remove = true;
-            o.default_service = hydrus_core::ServiceKey::new(
-                hydrus_core::service::builtin_keys::MY_TAGS.to_vec(),
-            );
+            o.default_service =
+                hydrus_core::ServiceKey::new(hydrus_core::service::builtin_keys::MY_TAGS.to_vec());
             hydrus_store::settings::set(ctx.conn(), &o)
         })
         .unwrap();
@@ -82,7 +81,11 @@ fn viewer_dialog_commits_each_change_and_follows_the_file_shown() {
     let check = |model: &ManageTags, store: &Store, name: &str, asked: &[String]| {
         let expected = step(name);
         assert_eq!(rows(model), expected["rows"], "{name}: rows");
-        assert_eq!(stored(store, &files), expected["stored"], "{name}: database");
+        assert_eq!(
+            stored(store, &files),
+            expected["stored"],
+            "{name}: database"
+        );
         assert_eq!(
             !model.staged_changes().is_empty(),
             expected["has_changes"].as_bool().unwrap(),
@@ -105,11 +108,21 @@ fn viewer_dialog_commits_each_change_and_follows_the_file_shown() {
     check(&model, &store, "follows_to_second", &[]);
     model.add_tags(&["v:shared".into()], false).unwrap();
     assert!(!model.take_committed(), "nothing to write");
-    check(&model, &store, "typed_existing_tag_does_nothing_by_default", &[]);
+    check(
+        &model,
+        &store,
+        "typed_existing_tag_does_nothing_by_default",
+        &[],
+    );
     allow_remove(&store, true);
     model.add_tags(&["v:shared".into()], false).unwrap();
     assert!(model.take_committed());
-    check(&model, &store, "typed_existing_tag_removes_when_allowed", &[]);
+    check(
+        &model,
+        &store,
+        "typed_existing_tag_removes_when_allowed",
+        &[],
+    );
 
     // removal asks, then writes
     let Removal::Confirm { message, tags } = model.remove_tags(&["v:b".into()]).unwrap() else {

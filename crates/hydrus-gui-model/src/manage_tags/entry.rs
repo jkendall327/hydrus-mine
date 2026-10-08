@@ -58,7 +58,9 @@ fn elide(text: &str, max: usize) -> String {
 
 impl ManageTags {
     fn live_preferences(&self) -> hydrus_store::tag_editing::TagEditingSettings {
-        self.store.read(hydrus_store::settings::get).unwrap_or_default()
+        self.store
+            .read(hydrus_store::settings::get)
+            .unwrap_or_default()
     }
 
     /// Typed or suggested entry: only adds, unless the cog allows removal.
@@ -86,10 +88,16 @@ impl ManageTags {
         for tag in &cleaned {
             let have = counts.get(tag).copied().unwrap_or(0);
             if !only_remove && have < files {
-                choices.entry(Verb::Add).or_default().push((tag.clone(), files - have));
+                choices
+                    .entry(Verb::Add)
+                    .or_default()
+                    .push((tag.clone(), files - have));
             }
             if !only_add && have > 0 {
-                choices.entry(Verb::Delete).or_default().push((tag.clone(), have));
+                choices
+                    .entry(Verb::Delete)
+                    .or_default()
+                    .push((tag.clone(), have));
             }
         }
         match choices.len() {
@@ -167,11 +175,7 @@ impl ManageTags {
     fn carry_out(&mut self, verb: Verb, tags: impl IntoIterator<Item = String>) {
         let selected = self.selected_tags();
         for tag in tags {
-            let have: BTreeSet<HashId> = self
-                .current_tags()
-                .get(&tag)
-                .cloned()
-                .unwrap_or_default();
+            let have: BTreeSet<HashId> = self.current_tags().get(&tag).cloned().unwrap_or_default();
             for file in self.files.clone() {
                 match verb {
                     Verb::Add if !have.contains(&file) => self.stage_mapping(&tag, file, true),
@@ -222,7 +226,7 @@ impl ManageTags {
         for staged in &mut self.staged {
             staged.clear();
         }
-        self.tag_selection = Default::default();
+        self.tag_selection = crate::list_selection::ListSelection::default();
         self.refresh_stored();
         self.input.set_context_tags(self.tags().into_keys());
     }

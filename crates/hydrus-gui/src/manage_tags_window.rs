@@ -8,12 +8,15 @@ use slint::{ComponentHandle as _, ModelRc, SharedString, VecModel};
 use crate::manage_tags::ManageTags;
 use crate::{ListText, ManageTagsWindow};
 
+/// What the viewer calls with the file it shows, while a dialog follows it.
+pub(crate) type Follow = Rc<RefCell<Option<Rc<dyn Fn(hydrus_core::HashId)>>>>;
+
 /// The media viewer a Manage Tags window opened from it follows
 /// (the reference's `canvas_key`): the viewer calls `follow` with each file it
 /// shows, and `step` moves it to the next (`true`) or previous file.
 #[derive(Clone)]
 pub(crate) struct ViewerLink {
-    pub follow: Rc<RefCell<Option<Rc<dyn Fn(hydrus_core::HashId)>>>>,
+    pub follow: Follow,
     pub step: Rc<dyn Fn(bool)>,
 }
 

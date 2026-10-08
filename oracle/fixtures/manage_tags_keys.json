@@ -1,0 +1,427 @@
+{
+  "info": {
+    "services": [
+      "downloader tags",
+      "my tags",
+      "second tags"
+    ],
+    "num_tabs": 3,
+    "tab_names": [
+      "results",
+      "favourites",
+      "children"
+    ]
+  },
+  "results": [
+    {
+      "input": "",
+      "list_filled": false,
+      "command": "tab_left",
+      "matched": true,
+      "tab": [
+        0,
+        2
+      ],
+      "service_page": [
+        0,
+        0
+      ],
+      "published": []
+    },
+    {
+      "input": "",
+      "list_filled": false,
+      "command": "tab_right",
+      "matched": true,
+      "tab": [
+        0,
+        1
+      ],
+      "service_page": [
+        0,
+        0
+      ],
+      "published": []
+    },
+    {
+      "input": "",
+      "list_filled": false,
+      "command": "page_left",
+      "matched": true,
+      "tab": [
+        0,
+        0
+      ],
+      "service_page": [
+        0,
+        2
+      ],
+      "published": []
+    },
+    {
+      "input": "",
+      "list_filled": false,
+      "command": "page_right",
+      "matched": true,
+      "tab": [
+        0,
+        0
+      ],
+      "service_page": [
+        0,
+        1
+      ],
+      "published": []
+    },
+    {
+      "input": "",
+      "list_filled": false,
+      "command": "media_previous",
+      "matched": true,
+      "tab": [
+        0,
+        0
+      ],
+      "service_page": [
+        0,
+        0
+      ],
+      "published": [
+        "canvas_show_previous"
+      ]
+    },
+    {
+      "input": "",
+      "list_filled": false,
+      "command": "media_next",
+      "matched": true,
+      "tab": [
+        0,
+        0
+      ],
+      "service_page": [
+        0,
+        0
+      ],
+      "published": [
+        "canvas_show_next"
+      ]
+    },
+    {
+      "input": "",
+      "list_filled": true,
+      "command": "tab_left",
+      "matched": true,
+      "tab": [
+        0,
+        2
+      ],
+      "service_page": [
+        0,
+        0
+      ],
+      "published": []
+    },
+    {
+      "input": "",
+      "list_filled": true,
+      "command": "tab_right",
+      "matched": true,
+      "tab": [
+        0,
+        1
+      ],
+      "service_page": [
+        0,
+        0
+      ],
+      "published": []
+    },
+    {
+      "input": "",
+      "list_filled": true,
+      "command": "page_left",
+      "matched": false,
+      "tab": [
+        0,
+        0
+      ],
+      "service_page": [
+        0,
+        0
+      ],
+      "published": []
+    },
+    {
+      "input": "",
+      "list_filled": true,
+      "command": "page_right",
+      "matched": false,
+      "tab": [
+        0,
+        0
+      ],
+      "service_page": [
+        0,
+        0
+      ],
+      "published": []
+    },
+    {
+      "input": "",
+      "list_filled": true,
+      "command": "media_previous",
+      "matched": false,
+      "tab": [
+        0,
+        0
+      ],
+      "service_page": [
+        0,
+        0
+      ],
+      "published": []
+    },
+    {
+      "input": "",
+      "list_filled": true,
+      "command": "media_next",
+      "matched": false,
+      "tab": [
+        0,
+        0
+      ],
+      "service_page": [
+        0,
+        0
+      ],
+      "published": []
+    },
+    {
+      "input": "blu",
+      "list_filled": false,
+      "command": "tab_left",
+      "matched": false,
+      "tab": [
+        0,
+        0
+      ],
+      "service_page": [
+        0,
+        0
+      ],
+      "published": []
+    },
+    {
+      "input": "blu",
+      "list_filled": false,
+      "command": "tab_right",
+      "matched": false,
+      "tab": [
+        0,
+        0
+      ],
+      "service_page": [
+        0,
+        0
+      ],
+      "published": []
+    },
+    {
+      "input": "blu",
+      "list_filled": false,
+      "command": "page_left",
+      "matched": false,
+      "tab": [
+        0,
+        0
+      ],
+      "service_page": [
+        0,
+        0
+      ],
+      "published": []
+    },
+    {
+      "input": "blu",
+      "list_filled": false,
+      "command": "page_right",
+      "matched": false,
+      "tab": [
+        0,
+        0
+      ],
+      "service_page": [
+        0,
+        0
+      ],
+      "published": []
+    },
+    {
+      "input": "blu",
+      "list_filled": false,
+      "command": "media_previous",
+      "matched": false,
+      "tab": [
+        0,
+        0
+      ],
+      "service_page": [
+        0,
+        0
+      ],
+      "published": []
+    },
+    {
+      "input": "blu",
+      "list_filled": false,
+      "command": "media_next",
+      "matched": false,
+      "tab": [
+        0,
+        0
+      ],
+      "service_page": [
+        0,
+        0
+      ],
+      "published": []
+    },
+    {
+      "input": "blu",
+      "list_filled": true,
+      "command": "tab_left",
+      "matched": false,
+      "tab": [
+        0,
+        0
+      ],
+      "service_page": [
+        0,
+        0
+      ],
+      "published": []
+    },
+    {
+      "input": "blu",
+      "list_filled": true,
+      "command": "tab_right",
+      "matched": false,
+      "tab": [
+        0,
+        0
+      ],
+      "service_page": [
+        0,
+        0
+      ],
+      "published": []
+    },
+    {
+      "input": "blu",
+      "list_filled": true,
+      "command": "page_left",
+      "matched": false,
+      "tab": [
+        0,
+        0
+      ],
+      "service_page": [
+        0,
+        0
+      ],
+      "published": []
+    },
+    {
+      "input": "blu",
+      "list_filled": true,
+      "command": "page_right",
+      "matched": false,
+      "tab": [
+        0,
+        0
+      ],
+      "service_page": [
+        0,
+        0
+      ],
+      "published": []
+    },
+    {
+      "input": "blu",
+      "list_filled": true,
+      "command": "media_previous",
+      "matched": false,
+      "tab": [
+        0,
+        0
+      ],
+      "service_page": [
+        0,
+        0
+      ],
+      "published": []
+    },
+    {
+      "input": "blu",
+      "list_filled": true,
+      "command": "media_next",
+      "matched": false,
+      "tab": [
+        0,
+        0
+      ],
+      "service_page": [
+        0,
+        0
+      ],
+      "published": []
+    }
+  ],
+  "wrap": [
+    {
+      "command": "tab_left",
+      "before": [
+        0,
+        0
+      ],
+      "after": [
+        2,
+        0
+      ]
+    },
+    {
+      "command": "tab_right",
+      "before": [
+        2,
+        0
+      ],
+      "after": [
+        0,
+        0
+      ]
+    },
+    {
+      "command": "page_left",
+      "before": [
+        0,
+        0
+      ],
+      "after": [
+        0,
+        2
+      ]
+    },
+    {
+      "command": "page_right",
+      "before": [
+        0,
+        2
+      ],
+      "after": [
+        0,
+        0
+      ]
+    }
+  ]
+}
