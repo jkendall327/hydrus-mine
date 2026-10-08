@@ -690,8 +690,8 @@ fn simple_delete_includes_os_launch_rows_but_cancel_and_closed_owner_do_not_chan
     retired_delete_question_preserves_successor(&ui, &bound, &store);
     let w = open(&ui, &bound);
     let list_index = windows.count() - 1;
-    w.invoke_external_call_clicked(0, false, false);
-    w.invoke_external_call_clicked(1, false, true);
+    w.invoke_external_call_clicked(named(&w, &before[0]), false, false);
+    w.invoke_external_call_clicked(named(&w, &before[1]), true, false);
     w.invoke_external_call_action("delete".into());
     let q = bound
         .options_external_calls
@@ -700,18 +700,32 @@ fn simple_delete_includes_os_launch_rows_but_cancel_and_closed_owner_do_not_chan
         .as_ref()
         .unwrap()
         .clone_strong();
-    assert_eq!(q.get_message(), declined["questions"][0]["message"].as_str().unwrap());
+    assert_eq!(
+        q.get_message(),
+        declined["questions"][0]["message"].as_str().unwrap()
+    );
+    // (The recording lists data in insertion order; the list is shown sorted by
+    // pipeline, so compare as sorted names.)
     let names = |w: &OptionsWindow| {
-        list_rows(w)
+        let mut names = list_rows(w)
             .into_iter()
             .map(|row| row.0[0].clone())
-            .collect::<Vec<_>>()
+            .collect::<Vec<_>>();
+        names.sort();
+        names
     };
-    assert_eq!(names(&w), before);
-    assert_eq!(
-        list_rows(&w).iter().map(|row| row.1).collect::<Vec<_>>(),
-        [true, true, false]
-    );
+    let sorted = |mut names: Vec<String>| {
+        names.sort();
+        names
+    };
+    assert_eq!(names(&w), sorted(before.clone()));
+    let mut selected = list_rows(&w)
+        .into_iter()
+        .filter(|row| row.1)
+        .map(|row| row.0[0].clone())
+        .collect::<Vec<_>>();
+    selected.sort();
+    assert_eq!(selected, sorted(before[..2].to_vec()));
     list_capture(
         &windows,
         windows.count() - 1,
@@ -720,7 +734,7 @@ fn simple_delete_includes_os_launch_rows_but_cancel_and_closed_owner_do_not_chan
         (520, 200),
     );
     q.invoke_answered(false);
-    assert_eq!(names(&w), strings(&declined["names"]));
+    assert_eq!(names(&w), sorted(strings(&declined["names"])));
     w.invoke_external_call_action("delete".into());
     let q = bound
         .options_external_calls
@@ -729,9 +743,12 @@ fn simple_delete_includes_os_launch_rows_but_cancel_and_closed_owner_do_not_chan
         .as_ref()
         .unwrap()
         .clone_strong();
-    assert_eq!(q.get_message(), accepted["questions"][0]["message"].as_str().unwrap());
+    assert_eq!(
+        q.get_message(),
+        accepted["questions"][0]["message"].as_str().unwrap()
+    );
     q.invoke_answered(true);
-    assert_eq!(names(&w), strings(&accepted["names"]));
+    assert_eq!(names(&w), sorted(strings(&accepted["names"])));
     assert_eq!(saved(&store), original);
     assert!(!w.get_external_call_selected());
     assert!(!w.get_external_call_child_open());
@@ -1671,7 +1688,7 @@ fn retired_duplicate_question_preserves_successor(
 fn retired_delete_question_preserves_successor(ui: &MainWindow, bound: &Bound, store: &Store) {
     // Use the existing OS file/URL fixture; do not rewrite the Store.
     let persisted = saved(store);
-    assert_eq!(persisted.calls.len(), 2);
+    assert_eq!(persisted.calls.len(), 3);
     let retired_options = open(ui, bound);
     retired_options.invoke_external_call_clicked(0, false, false);
     retired_options.invoke_external_call_action("delete".into());
@@ -1688,7 +1705,7 @@ fn retired_delete_question_preserves_successor(ui: &MainWindow, bound: &Bound, s
     successor.invoke_external_call_action("delete".into());
     let current = question(bound);
     let rows = list_rows(&successor);
-    assert_eq!(rows.len(), 2);
+    assert_eq!(rows.len(), 3);
     assert!(rows[last].1);
     assert!(!rows[0].1);
     let flags = list_flags(&successor);

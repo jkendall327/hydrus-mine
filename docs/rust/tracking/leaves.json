@@ -2568,9 +2568,9 @@
    ],
    "recheck": {
     "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "GUI test drives the editor: filter button enabled only with the search permission, cancel leaves it detached, accepted filter lands only after child and parent Apply, stale handles cannot commit; the API consumer is tested separately. The recording's search_enabled/full_enabled/none_enabled states are never compared; the enabled states and tag_ok results are typed literals. Note about missing filter favourites looks stale-prone (favourites code exists in tag_filter_window). Tests: crates/hydrus-gui/tests/gui/client_api_admin.rs:50 cancellation_nested_ownership_permissions_and_key_validation; hydrus-api/tests/api_keys.rs (filter consumer)"
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "cancellation_nested_ownership_permissions_and_key_validation (client_api_admin.rs) now compares the permission-list/check-all/filter-button enabled states in the full, search and none states with client_api_admin.json (full_enabled, search_enabled, none_enabled)."
    }
   },
   {
@@ -3084,9 +3084,9 @@
    ],
    "recheck": {
     "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "One-star forces zero normalization is replayed from services.json/rating_preview_one_star.json, including a GUI test, and the GUI applies stars/padding/fraction to the stored config. The valid ranges (1-20 stars, +-64 padding, fraction 0-2) are typed literals though numerical_ranges was recorded and is never read; out-of-range input is not driven through the window. Tests: crates/hydrus-gui-model/tests/model/services_editor.rs:420,445; crates/hydrus-gui/tests/gui/services_editor.rs:161,743"
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "staged_rating_config_applies_and_cancel_writes_nothing and numerical_rating_star_and_padding_ranges_replay_the_recorded_spin_boxes (gui/services_editor.rs) take the star (1-20) and padding (-64..64) ranges from services.json numerical_ranges and drive values just outside and on the edges through the add dialog; one-star normalisation replays rating_preview_one_star.json. The fraction setting has no recorded range."
    }
   },
   {
@@ -7851,9 +7851,9 @@
    ],
    "recheck": {
     "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Real Delete button, question, decline/accept, staging and retired owner are all driven, but 'Remove all selected?' and the outcomes are typed literals: the recorded 'deletes' cases in external_calls.json are never replayed. Tests: crates/hydrus-gui/tests/gui/external_calls.rs:658 simple_delete_includes_os_launch_rows_but_cancel_and_closed_owner_do_not_change_saved_calls; :1649 retired_delete_question_preserves_successor; :203"
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "simple_delete_includes_os_launch_rows_but_cancel_and_closed_owner_do_not_change_saved_calls (gui/external_calls.rs) now seeds the recorded three calls, selects the two OS calls and compares the question and the names left after decline and accept with external_calls.json deletes."
    }
   },
   {
@@ -9244,9 +9244,9 @@
    ],
    "recheck": {
     "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Options fields (defaults, clamps, 1s 234ms etc.) are replayed from physical_delete_delay.json through the real window, but the consumer waits ([600,600], [900], failure=no wait) are typed literals in maintenance.rs, not replayed from the recorded 'passes' events (only the normal/idle gate part of 'passes' is replayed). A recording exists, so source-restated. Tests: crates/hydrus-gui-model/tests/model/physical_delete_delay.rs:26; crates/hydrus-gui/tests/gui/physical_delete_delay.rs:42; crates/hydrus-gui/tests/gui/normal_time_maintenance.rs:299; crates/hydrus-store/src/maintenance.rs:~323 captured_wait_follows_committed_pairs_...; crates/hydrus-store/src/physical_delete.rs:83"
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "hydrus-store maintenance.rs tests captured_wait_follows_committed_pairs... and missing_file_still_waits... now take their waits and the successor pass's delay from physical_delete_delay.json passes (change_during_wait, missing), alongside the recorded options replay."
    }
   },
   {
@@ -9934,9 +9934,9 @@
    ],
    "recheck": {
     "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Importer pages (gallery, watchers, simple, urls) replay recorded importer_focus call counts through real tab switches with real text focus. The search-page case in the 135 test uses typed counts; fixture['focus'] is not replayed anywhere. Tests: crates/hydrus-gui/tests/gui/page_navigation_options.rs:135,241; crates/hydrus-gui-model/tests/model/page_navigation_options.rs"
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "applied_controls_reopen_and_drive_history_and_search_focus (gui/page_navigation_options.rs) now replays the recorded search-page focus steps (off, on, off; page_navigation_options.json focus) through real tab switches, alongside the importer_focus replay."
    }
   },
   {

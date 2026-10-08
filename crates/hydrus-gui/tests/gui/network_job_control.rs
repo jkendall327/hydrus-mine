@@ -189,7 +189,10 @@ fn page_cog_rules_cancel_apply_and_error_owner_boundary() {
     window.invoke_control_action(false, 100);
     until(|| network_data_window::last_rules().is_some_and(|w| w.window().is_visible()));
     let edit = network_data_window::last_rules().unwrap();
-    assert_eq!(edit.get_window_title(), cancelled["title"].as_str().unwrap());
+    assert_eq!(
+        edit.get_window_title(),
+        cancelled["title"].as_str().unwrap()
+    );
     edit.set_amount("0".into());
     edit.invoke_add_rule();
     assert!(edit.get_error().contains("positive"));
@@ -260,7 +263,10 @@ fn page_cog_rules_cancel_apply_and_error_owner_boundary() {
     until(|| window.get_file_cog().has_error);
     window.invoke_control_action(false, 8);
     let error = gui::last_error().unwrap();
-    assert_eq!(error.get_error_text(), recorded["messages"][0][1].as_str().unwrap());
+    assert_eq!(
+        error.get_error_text(),
+        recorded["messages"][0][1].as_str().unwrap()
+    );
     window.invoke_control_action(false, 9);
     assert_eq!(
         copies.borrow().last().unwrap(),

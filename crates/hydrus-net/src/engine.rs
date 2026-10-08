@@ -2548,12 +2548,16 @@ mod reload_tests {
         // rules still does at created + 5 s, not after, and "override
         // bandwidth rules for this job" stops it obeying.
         let recorded = hydrus_testkit::fixture_json("network_job_control.json");
-        let created = recorded["now"].as_i64().unwrap();
+        // (Only offsets from the creation time matter; arming reads the real clock.)
+        let created = now();
         let obeys = |name: &str| recorded["actions"][name].as_bool().unwrap();
         let job = Job::new();
         job.state.lock().created = created;
         job.auto_override_bandwidth(true);
-        assert_eq!(!job.bandwidth_overridden(created + 5), obeys("auto_at_five"));
+        assert_eq!(
+            !job.bandwidth_overridden(created + 5),
+            obeys("auto_at_five")
+        );
         assert_eq!(
             !job.bandwidth_overridden(created + 6),
             obeys("auto_after_five")
@@ -2673,7 +2677,11 @@ mod reload_tests {
                 engine.sleep_check_at(t + elapsed);
             }
             engine.sleep_check_at(t + delay_ms + 1);
-            assert_eq!(engine.wake.lock().1.is_some(), case["after_delay"], "{case}");
+            assert_eq!(
+                engine.wake.lock().1.is_some(),
+                case["after_delay"],
+                "{case}"
+            );
         }
         // A wait still pending when the option is turned off ends at the next check.
         let pending = &recorded["disabled_pending"];

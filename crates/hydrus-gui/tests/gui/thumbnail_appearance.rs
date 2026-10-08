@@ -918,3 +918,47 @@ fn qt_marker_background_has_exact_extent_in_old_and_default_new_owners() {
         ui.hide().unwrap();
     }
 }
+
+// Replacing a thumbnail's whole cell fades the old one out over the opacity
+// curve the reference's new renderer was recorded drawing (`new_fade`), with
+// the old paint kept until the fade completes.
+#[test]
+fn new_renderer_fade_follows_the_recorded_opacity_curve() {
+    use hydrus_gui::thumbnail_paint::Paints;
+    let _windows = headless::init();
+    let recorded = hydrus_testkit::fixture_json("thumbnail_appearance.json");
+    let image = slint::Image::from_rgb8(slint::SharedPixelBuffer::<slint::Rgb8Pixel>::new(2, 2));
+    for sample in recorded["new_fade"]["samples"].as_array().unwrap() {
+        let mut paints = Paints::default();
+        let mut thumbnail = Thumbnail::default();
+        let mut paint = ThumbnailPaint {
+            image: image.clone(),
+            top: "old".into(),
+            ..ThumbnailPaint::default()
+        };
+        let start = Duration::from_secs(10);
+        let decorate = |paints: &mut Paints, thumbnail: &mut Thumbnail, paint: &ThumbnailPaint| {
+            paints.decorate(HashId(1), 0, paint.clone(), thumbnail, start, true, false);
+        };
+        decorate(&mut paints, &mut thumbnail, &paint);
+        paints.dirty(HashId(1));
+        paint.top = "new".into();
+        decorate(&mut paints, &mut thumbnail, &paint);
+        assert!(recorded["new_fade"]["old_at_start"].as_bool().unwrap());
+        assert_eq!(thumbnail.previous.top, "old");
+        let elapsed = Duration::from_secs_f64(sample["elapsed"].as_f64().unwrap());
+        paints.tick(start + elapsed, true, true);
+        decorate(&mut paints, &mut thumbnail, &paint);
+        let expected = sample["opacity"].as_f64().unwrap();
+        assert!(
+            (f64::from(thumbnail.fade_opacity) - expected).abs() < 0.01,
+            "at {elapsed:?}: {} vs {expected}",
+            thumbnail.fade_opacity
+        );
+        assert_eq!(
+            thumbnail.previous.image.size().width > 0,
+            sample["old_retained"].as_bool().unwrap(),
+            "at {elapsed:?}"
+        );
+    }
+}
