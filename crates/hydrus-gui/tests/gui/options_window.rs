@@ -558,6 +558,8 @@ fn the_options_window_applies_its_changes() {
 /// settings make them (one stored at the old size scaled to it, as the
 /// reference's `_GetThumbnailHydrusBitmap` does), and the stored one is
 /// made again from its file at that size.
+// leaf: audit-options-thumbnails-appearance-thumbnail-width
+// leaf: audit-options-thumbnails-appearance-thumbnail-height
 #[test]
 #[allow(clippy::float_cmp, clippy::cast_precision_loss)] // (sizes set, not computed)
 fn thumbnails_take_the_size_the_options_give_them() {
@@ -650,6 +652,8 @@ fn thumbnails_take_the_size_the_options_give_them() {
 /// the cells take the border at once, and the margins how many fit across
 /// (as the reference's, the width over a cell and two margins); the
 /// thumbnails, of the same size, aren't decoded again.
+// leaf: audit-options-thumbnails-appearance-thumbnail-border
+// leaf: audit-options-thumbnails-appearance-thumbnail-margin
 #[test]
 #[allow(clippy::float_cmp)] // (sizes set, not computed)
 fn the_thumbnails_border_and_margin_lay_out_the_grid() {

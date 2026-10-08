@@ -643,6 +643,128 @@ mod tests {
         );
     }
 
+    // leaf: audit-options-media-playback-per-filetype-handling-add
+    // leaf: audit-options-media-playback-per-filetype-handling-edit
+    // leaf: audit-options-media-playback-per-filetype-handling-delete
+    #[test]
+    fn added_edited_and_deleted_filetype_handling_reaches_the_viewer_s_zoom() {
+        let _windows = crate::headless::init();
+        let directory = tempfile::tempdir().unwrap();
+        let store = Store::open(directory.path()).unwrap();
+        let jpeg = Mime::ImageJpeg.code();
+        let saved = || store.read(settings::get::<MediaViewerSettings>).unwrap();
+        // File > options..., opened afresh on what is saved.
+        let open = || {
+            let editor = Rc::new(RefCell::new(Editor::new(
+                store.read(Settings::load).unwrap(),
+            )));
+            let window = OptionsWindow::new().unwrap();
+            window.show().unwrap();
+            let binding = bind(&window, &editor, &Rc::new(Cell::new(true)));
+            (binding.show)();
+            (editor, window, binding)
+        };
+        // Apply: what the viewer opens with afterwards.
+        let apply = |editor: &Rc<RefCell<Editor>>| {
+            let (after, before, problems) = {
+                let editor = editor.borrow();
+                let (after, before, problems) = editor.applied();
+                (after, before.clone(), problems)
+            };
+            assert!(problems.is_empty());
+            store
+                .write(move |ctx| after.save(ctx.conn(), &before))
+                .unwrap();
+        };
+        // a small picture in a bigger window, as the viewer's zoom has it
+        let rect = || {
+            crate::zoom::Zoom::new(saved(), Mime::ImageJpeg, Some((300, 200)), (1000, 750), 1.0)
+                .rect()
+        };
+        let rows = |editor: &Rc<RefCell<Editor>>| editor.borrow().edited_media_views();
+        let click = |window: &OptionsWindow, editor: &Rc<RefCell<Editor>>| {
+            let table = Table::new(&rows(editor));
+            let index = table.rows.iter().position(|row| row.code == jpeg).unwrap();
+            window.invoke_media_view_clicked(i32::try_from(index).unwrap(), false, false);
+        };
+        let fitted = rect();
+        assert_eq!(fitted, (0, 41, 1000, 667), "scaled up to the window");
+
+        // add: the filetype chosen from those without a row, then its editor
+        let (editor, window, binding) = open();
+        assert!(
+            !rows(&editor).contains_key(&jpeg),
+            "jpeg has no row of its own"
+        );
+        window.invoke_media_view_action("add".into());
+        let chooser = binding
+            .children
+            .borrow()
+            .chooser
+            .as_ref()
+            .unwrap()
+            .clone_strong();
+        let addable = Table::new(&rows(&editor)).addable();
+        let at = addable.iter().position(|(_, code)| *code == jpeg).unwrap();
+        chooser.invoke_chosen(i32::try_from(at).unwrap());
+        let added = binding
+            .children
+            .borrow()
+            .editor
+            .as_ref()
+            .unwrap()
+            .clone_strong();
+        assert_eq!(
+            added.get_window_title(),
+            "add media view options information"
+        );
+        added.set_media_up(index_of(&SCALES, ScaleAction::Full));
+        added.invoke_apply();
+        assert_eq!(rows(&editor)[&jpeg].zoom.media_scale_up, ScaleAction::Full);
+        assert_eq!(rect(), fitted, "nothing until the options are applied");
+        apply(&editor);
+        assert_eq!(
+            saved().media_view[&jpeg].zoom.media_scale_up,
+            ScaleAction::Full
+        );
+        assert_eq!(rect(), (350, 275, 300, 200), "shown as it is");
+
+        // edit: the row chosen, its editor on its options
+        let (editor, window, binding) = open();
+        click(&window, &editor);
+        window.invoke_media_view_action("edit".into());
+        let edit = binding
+            .children
+            .borrow()
+            .editor
+            .as_ref()
+            .unwrap()
+            .clone_strong();
+        assert_eq!(
+            edit.get_window_title(),
+            "edit media view options information"
+        );
+        assert_eq!(edit.get_media_up(), index_of(&SCALES, ScaleAction::Full));
+        edit.set_media_up(index_of(&SCALES, ScaleAction::ToCanvas));
+        edit.invoke_apply();
+        apply(&editor);
+        assert_eq!(
+            saved().media_view[&jpeg].zoom.media_scale_up,
+            ScaleAction::ToCanvas
+        );
+        assert_eq!(rect(), fitted, "scaled up again");
+
+        // delete: the selected row goes, and the filetype takes its class's
+        let (editor, window, _binding) = open();
+        click(&window, &editor);
+        window.invoke_media_view_action("delete".into());
+        assert!(!rows(&editor).contains_key(&jpeg));
+        assert!(saved().media_view.contains_key(&jpeg), "not before apply");
+        apply(&editor);
+        assert!(!saved().media_view.contains_key(&jpeg));
+        assert_eq!(rect(), fitted);
+    }
+
     #[test]
     fn options_apply_waits_for_current_media_child_to_close() {
         let windows = crate::headless::init();

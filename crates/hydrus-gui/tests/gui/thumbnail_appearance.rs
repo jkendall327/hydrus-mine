@@ -62,6 +62,7 @@ fn row(window: &OptionsWindow, label: &str) -> i32 {
 const PATH: &str =
     "EXPERIMENTAL: Image path for thumbnail panel background image (set blank to clear):";
 
+// leaf: audit-options-thumbnails-new-rendering-tech-use-the-new-thumbnail-rendering-tech-only-applies-to-new-pages
 #[test]
 fn staged_browse_cancel_apply_new_page_policy_and_permanent_owner_retirement() {
     let (dirs, store) = store();
