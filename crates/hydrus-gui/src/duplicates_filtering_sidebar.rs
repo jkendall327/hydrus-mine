@@ -17,7 +17,11 @@ use crate::{DuplicatesFiltering, MainWindow, SessionDialog};
 /// The "Are you sure?" question a set button last asked, while it is open
 /// (for interaction tests).
 pub fn question_opened() -> Option<SessionDialog> {
-    QUESTION.with(|q| q.borrow().as_ref().map(|d| d.clone_strong()))
+    QUESTION.with(|q| {
+        q.borrow()
+            .as_ref()
+            .map(slint::ComponentHandle::clone_strong)
+    })
 }
 
 fn strings(items: impl IntoIterator<Item = String>) -> ModelRc<SharedString> {

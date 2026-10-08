@@ -1297,6 +1297,13 @@ script/domain Apply preserves concurrent edits to the other half of preferences.
 
 ## Network session and HTTP-header management
 
+The session browser's "create new" offers the reference's two types (web domain,
+hydrus service). The service choice lists the repositories by name; a hydrus
+service session is keyed by the service key's hex, as the existing ones are. With
+no repository the context is the kind's default, as an empty choice makes in
+the reference. Qt names the service wherever it lists a network context
+("hydrus service: <name>"); native lists the key's hex.
+
 Cookie and HTTP-header editing uses detached native drafts with Apply/Cancel;
 Qt cookie-list actions take effect immediately, while its header list is staged.
 Changing a cookie's name/domain/path replaces the old identity, while Qt adds the
