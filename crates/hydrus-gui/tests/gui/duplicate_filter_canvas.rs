@@ -77,12 +77,7 @@ fn replay(scenario: &Value) {
 
     for step in scenario["steps"].as_array().unwrap() {
         let what = format!("{name}: {} {}", step["do"], step["answers"]);
-        let mut pressed: Vec<String> = step["answers"]
-            .as_array()
-            .unwrap()
-            .iter()
-            .map(|a| a.as_str().unwrap().to_owned())
-            .collect();
+        let mut pressed: Vec<String> = Vec::new();
         let mut asked_now: Vec<(String, Vec<String>, Option<String>)> = Vec::new();
         match step["do"].as_str().unwrap() {
             "close" => window.invoke_close_requested(),
@@ -101,11 +96,22 @@ fn replay(scenario: &Value) {
                 .into(),
             ),
         }
-        // press the recorded buttons on the questions the window asks
+        // press the recorded buttons on the questions the window asks (and
+        // "yes" where the reference asked a yes/no question, which it was
+        // scripted to accept)
+        let mut to_press: Vec<String> = step["asked"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|a| match a.get("pressed") {
+                Some(button) => button.as_str().unwrap().to_owned(),
+                None => "yes".to_owned(),
+            })
+            .collect();
         while !window.get_question().is_empty() && window.window().is_visible() {
             let question = window.get_question().to_string();
             let buttons = answers_of(&window);
-            let Some(button) = (!pressed.is_empty()).then(|| pressed.remove(0)) else {
+            let Some(button) = (!to_press.is_empty()).then(|| to_press.remove(0)) else {
                 // a question nobody answered
                 asked_now.push((question, buttons, None));
                 break;
@@ -117,6 +123,7 @@ fn replay(scenario: &Value) {
             asked_now.push((question, buttons, Some(button)));
             window.invoke_answer(i32::try_from(at).unwrap());
         }
+        pressed.clear();
         // the questions the reference asked: the dialogs with their buttons,
         // then its yes/no questions (which have no buttons of ours)
         let recorded_asked: Vec<(String, BTreeSet<String>, Option<String>)> = step["asked"]
@@ -160,12 +167,22 @@ fn replay(scenario: &Value) {
             if !theirs.1.is_empty() {
                 assert_eq!(ours.1, theirs.1, "{what}: buttons");
                 assert_eq!(ours.2, theirs.2, "{what}: pressed");
+            } else {
+                // a yes/no question, answered yes
+                assert_eq!(ours.1, BTreeSet::from(["yes".to_owned(), "no".to_owned()]), "{what}");
             }
         }
 
         let after = &step["after"];
         let open = window.window().is_visible();
-        assert_eq!(open, after["open"].as_bool().unwrap(), "{what}: open");
+        // (the reference's harness left its window open when closing was
+        // allowed; the window closes)
+        let closed = step.get("ok_to_close").and_then(Value::as_bool) == Some(true);
+        if closed {
+            assert!(!open, "{what}: still open");
+        } else {
+            assert_eq!(open, after["open"].as_bool().unwrap(), "{what}: open");
+        }
         if open {
             assert_eq!(window.get_index_text(), after["index"].as_str().unwrap(), "{what}");
             let shown = after["shown"].as_str().map(|shown| {

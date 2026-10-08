@@ -34,6 +34,8 @@ enum Asking {
     Group,
     /// Closing with decisions pending: commit, forget, or carry on.
     Close,
+    /// Forgetting the pending decisions, asked again: yes closes.
+    Forget,
     /// Nothing more to do: close.
     Done,
     /// A custom action's decision.
@@ -766,6 +768,7 @@ pub(crate) fn open_filter_with_cache(
         let update = update.clone();
         let state = state.clone();
         let close = close.clone();
+        let weak = window.as_weak();
         move |answer| {
             if !state.borrow().viewing_stats.active() {
                 return;
@@ -857,7 +860,34 @@ pub(crate) fn open_filter_with_cache(
                         Err(e) => update(&|_| Some(Err(anyhow::anyhow!("{e}")))),
                     }
                 }
-                (Asking::Close, 1) | (Asking::Done, _) => close(),
+                (Asking::Close, 1) => {
+                    if let Some(window) = weak.upgrade() {
+                        ask(
+                            &window,
+                            &mut state.borrow_mut(),
+                            Asking::Forget,
+                            "Quit filtering now and forget your work?",
+                            &["yes", "no"],
+                        );
+                    }
+                }
+                (Asking::Forget, 0) | (Asking::Done, _) => close(),
+                // (not forgetting: the reference's dialog is as it was)
+                (Asking::Forget, _) => {
+                    if let Some(window) = weak.upgrade() {
+                        let pending = state.borrow().model.pending();
+                        ask(
+                            &window,
+                            &mut state.borrow_mut(),
+                            Asking::Close,
+                            &format!(
+                                "commit {} decisions?",
+                                hydrus_core::numbers::human_int(pending as u64)
+                            ),
+                            &["commit", "forget", "back to filtering"],
+                        );
+                    }
+                }
                 (Asking::Close, _) => update(&|_| Some(Ok(Step::Showing))),
                 (Asking::Nothing, _) => {}
             }
