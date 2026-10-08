@@ -594,6 +594,81 @@ async fn queues_wait_while_their_downloads_are_paused_globally() {
     wait_until_done(&s.store, queue.id).await;
 }
 
+/// A URL queue given a gallery page and a post while `pauses` hold, then
+/// let go: what the site was asked for while held, and that all of it gets
+/// done once the pauses are lifted.
+async fn queue_under_pauses(pauses: hydrus_store::settings::Pauses) -> Vec<String> {
+    use hydrus_store::settings::Pauses;
+    let s = setup().await;
+    s.store
+        .write(move |ctx| hydrus_store::settings::set(ctx.conn(), &pauses))
+        .unwrap();
+    s.runner.start_all().unwrap();
+    let queue = s.runner.url_queue_for(None, None, None).unwrap();
+    s.runner
+        .pend_urls(
+            queue.id,
+            &[
+                format!("{}/gallery/1", s.base),
+                format!("{}/post/7", s.base),
+            ],
+            &BTreeSet::new(),
+            &[],
+        )
+        .unwrap();
+    tokio::time::sleep(Duration::from_millis(1500)).await;
+    let mut held: Vec<String> = s.site.hits.lock().keys().cloned().collect();
+    held.sort();
+    // let go: the queue gets on with everything
+    s.store
+        .write(|ctx| hydrus_store::settings::set(ctx.conn(), &Pauses::default()))
+        .unwrap();
+    s.runner.wake(queue.id);
+    for _ in 0..400 {
+        let seeds = s
+            .store
+            .read(|conn| queues::file_seeds(conn, queue.id))
+            .unwrap();
+        // the post, and the gallery's two
+        if seeds.len() == 3 && seeds.iter().all(|seed| seed.status != SeedStatus::Unknown) {
+            return held;
+        }
+        tokio::time::sleep(Duration::from_millis(50)).await;
+    }
+    panic!("the queue did not finish once resumed");
+}
+
+// leaf: audit-network-pause-paged_importers
+#[tokio::test(flavor = "multi_thread")]
+async fn pausing_all_paged_importers_holds_gallery_pages_and_posts_alike() {
+    use hydrus_store::settings::Pauses;
+    let held = queue_under_pauses(Pauses {
+        paged_importers: true,
+        ..Pauses::default()
+    })
+    .await;
+    assert!(
+        held.is_empty(),
+        "nothing was fetched while paused: {held:?}"
+    );
+}
+
+// leaf: audit-network-pause-gallery_searches
+#[tokio::test(flavor = "multi_thread")]
+async fn pausing_gallery_searches_holds_gallery_pages_but_not_posts() {
+    use hydrus_store::settings::Pauses;
+    let held = queue_under_pauses(Pauses {
+        gallery_searches: true,
+        ..Pauses::default()
+    })
+    .await;
+    assert!(held.contains(&"post/7".to_owned()), "{held:?}");
+    assert!(
+        !held.iter().any(|h| h.starts_with("gallery/")),
+        "no gallery page was read while paused: {held:?}"
+    );
+}
+
 #[tokio::test(flavor = "multi_thread")]
 async fn a_file_that_fails_does_not_hold_up_the_rest_of_its_queue() {
     let s = setup().await;

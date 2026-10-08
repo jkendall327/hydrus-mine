@@ -1718,3 +1718,155 @@ fn dimensions_presets_cancel_hidden_and_retired_callbacks_do_not_change_owner() 
     successor.invoke_cancel();
     ui.hide().unwrap();
 }
+
+// The URL class panel of system:urls, with the client's URL classes (the
+// recording had none to offer): it offers those that file URLs go with, and
+// makes the reference's `has url with class` / `does not have url with
+// class` (`ClientGUIPredicatesSingle.PanelPredicateSystemKnownURLsURLClass`,
+// text as recorded in `predicate_custom_defaults.json`).
+// leaf: audit-options-predicate-urls-known-urls-knownurlsurlclass-has
+// leaf: audit-options-predicate-urls-known-urls-knownurlsurlclass-rule
+#[test]
+fn the_url_class_panel_offers_the_clients_url_classes_and_makes_has_or_not_has() {
+    use hydrus_core::url::{UrlClass, UrlClassSettings, UrlType};
+    let (_dirs, store) = store();
+    let _windows = headless::init();
+    let recording = hydrus_testkit::fixture_json("predicate_custom_defaults.json");
+    let recorded_text = recording["cases"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|p| p["class"] == "PanelPredicateSystemKnownURLsURLClass")
+        .map(|p| p["before"]["text"][0].as_str().unwrap().to_owned())
+        .expect("recorded");
+    let class = |name: &str, key: u8, files: bool| UrlClass {
+        name: name.into(),
+        key: vec![key],
+        url_type: UrlType::Post,
+        should_be_associated_with_files: files,
+        ..UrlClass::default()
+    };
+    store
+        .write_and_refresh(move |ctx| {
+            hydrus_store::settings::set(
+                ctx.conn(),
+                &UrlClassSettings {
+                    url_classes: vec![
+                        class("predicate defaults posts 0", 1, true),
+                        class("not for files", 2, false),
+                        class("second posts", 3, true),
+                    ],
+                    ..UrlClassSettings::default()
+                },
+            )
+        })
+        .unwrap();
+    let ui = MainWindow::new().unwrap();
+    ui.show().unwrap();
+    let bound = bind(&ui, Pages::single(SearchPage::new(store.clone())));
+    let open = || {
+        ui.invoke_search_edited("".into());
+        ui.invoke_suggestion_chosen(suggestion(&ui, "system:urls"));
+        bound
+            .predicate_editor
+            .borrow()
+            .as_ref()
+            .unwrap()
+            .clone_strong()
+    };
+    let window = open();
+    // panels: exact url, domain, regex, url class
+    let panel = window.get_panels().row_data(3).unwrap();
+    let field = |i: usize| panel.fields.row_data(i).unwrap();
+    assert_eq!(
+        field(3)
+            .options
+            .iter()
+            .map(|o| o.to_string())
+            .collect::<Vec<_>>(),
+        ["predicate defaults posts 0", "second posts"],
+        "only the classes that go with files"
+    );
+    assert_eq!(field(1).options.row_data(0).unwrap(), "has");
+    // has, the first class
+    window.invoke_ok(3);
+    let first = shown_predicates(&ui);
+    assert_eq!(
+        first,
+        ["system:has url with class predicate defaults posts 0"]
+    );
+    assert_eq!(first[0], recorded_text);
+    // does not have, the second class
+    let window = open();
+    window.invoke_chose(3, 1, 1);
+    window.invoke_chose(3, 3, 1);
+    window.invoke_ok(3);
+    assert!(
+        shown_predicates(&ui)
+            .contains(&"system:does not have url with class second posts".to_string())
+    );
+}
+
+// system:rating offers one panel per rating service, each labelled with
+// the service's name and making a predicate for that service's key, as the
+// recorded editor does (`PredicateSystemRatingLike` for "favourites",
+// `...Numerical` for "stars", `...IncDec` for "counter").
+// (the like/numerical/inc-dec "service or service-type selection" leaves stay
+// open: these panels choose a specific service, not a service type)
+#[test]
+fn each_rating_panel_is_for_its_own_service() {
+    use hydrus_core::search::predicate::{ServiceRef, SystemPredicate};
+    let (_dirs, store) = store();
+    let recorded = recorded();
+    let context = context(&store, &recorded);
+    let editor = Editor::new(Blank::from_text("system:rating").unwrap(), &context);
+    let key_of = |name: &str| -> Vec<u8> {
+        let service = recorded["services"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .find(|s| s["name"] == name)
+            .unwrap();
+        hex::decode(service["key"].as_str().unwrap()).unwrap()
+    };
+    let theirs: Vec<(&str, &str)> = recorded["editors"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|e| e["text"] == "system:rating")
+        .unwrap()["pages"][0]["panels"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .filter_map(|p| {
+            let label = p["widgets"][0]["text"].as_str()?;
+            (p["widgets"][0]["kind"] == "label").then(|| (p["class"].as_str().unwrap(), label))
+        })
+        .collect();
+    assert_eq!(
+        theirs.iter().map(|(_, n)| *n).collect::<Vec<_>>(),
+        ["favourites", "stars", "counter"]
+    );
+    let mut seen = 0;
+    for panel in &editor.pages[0].panels {
+        let class = panel.kind.class_name();
+        let Some((_, name)) = theirs.iter().find(|(c, _)| *c == class) else {
+            continue;
+        };
+        assert!(
+            matches!(&panel.fields[0], Field::Label(l) if l == name),
+            "{class} is labelled with its service"
+        );
+        let made = panel.predicates(&context).unwrap();
+        let [Predicate::System(SystemPredicate::Rating { service, .. })] = &made[..] else {
+            panic!("{class}: {made:?}");
+        };
+        assert_eq!(
+            service,
+            &ServiceRef::Key(hydrus_core::ServiceKey::new(key_of(name))),
+            "{class}"
+        );
+        seen += 1;
+    }
+    assert_eq!(seen, 3);
+}

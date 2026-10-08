@@ -301,6 +301,48 @@ async fn a_watcher_follows_a_thread_until_it_404s() {
     assert_eq!(hits, 3);
 }
 
+// leaf: audit-network-pause-paged_importers
+#[tokio::test(flavor = "multi_thread")]
+async fn pausing_all_paged_importers_holds_watcher_checks_until_resumed() {
+    use hydrus_store::settings::Pauses;
+    let s = setup().await;
+    s.site.threads.lock().insert(5, vec![1]);
+    s.store
+        .write(|ctx| {
+            hydrus_store::settings::set(
+                ctx.conn(),
+                &Pauses {
+                    paged_importers: true,
+                    ..Pauses::default()
+                },
+            )
+        })
+        .unwrap();
+    s.runner.start_all().unwrap();
+    let (queue, _) = s
+        .runner
+        .watch(
+            &format!("{}/thread/5", s.base),
+            None,
+            None,
+            None,
+            &BTreeSet::new(),
+            &[],
+        )
+        .unwrap();
+    tokio::time::sleep(Duration::from_millis(1500)).await;
+    assert!(s.site.hits.lock().is_empty(), "no check while paused");
+    s.store
+        .write(|ctx| hydrus_store::settings::set(ctx.conn(), &Pauses::default()))
+        .unwrap();
+    s.runner.wake(queue.id);
+    wait_for(&s.store, &s.runner, queue.id, 1).await;
+    assert_eq!(
+        files(&s.store, queue.id),
+        [("1.jpg".to_owned(), SeedStatus::SuccessfulAndNew)]
+    );
+}
+
 #[tokio::test(flavor = "multi_thread")]
 async fn watcher_checks_share_their_own_live_capacity_and_owner_close_releases_it() {
     use hydrus_store::settings::{self, ImportWorkSlots};

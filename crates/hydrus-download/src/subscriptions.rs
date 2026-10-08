@@ -1407,6 +1407,83 @@ mod tests {
         );
     }
 
+    // leaf: audit-options-downloading-subscriptions-sync-subscriptions-in-random-order
+    #[test]
+    fn the_random_order_option_picks_ready_subscriptions_at_random_or_by_name() {
+        let dir = tempfile::tempdir().unwrap();
+        let store = hydrus_store::Store::open(dir.path()).unwrap();
+        let net = std::sync::Arc::new(
+            hydrus_net::NetEngine::new(
+                std::sync::Arc::clone(&store),
+                hydrus_net::NetOptions {
+                    obey_bandwidth: false,
+                    ..hydrus_net::NetOptions::default()
+                },
+            )
+            .unwrap(),
+        );
+        let importer = hydrus_import::FileImporter::new(
+            std::sync::Arc::clone(&store),
+            hydrus_media::MediaTools::new(),
+        );
+        let downloader = std::sync::Arc::new(
+            Downloader::new(std::sync::Arc::clone(&store), net, importer).unwrap(),
+        );
+        let runner = SubscriptionRunner::new(std::sync::Arc::clone(&downloader));
+        store
+            .write(|ctx| {
+                for name in ["sub 10", "sub 2", "sub 1", "sub 3"] {
+                    let id = store_subs::create_subscription(
+                        ctx.conn(),
+                        name,
+                        &SubscriptionSettings::default(),
+                    )?
+                    .unwrap();
+                    let queue = store_subs::add_query(
+                        ctx.conn(),
+                        id,
+                        &hydrus_core::subscriptions::QueryState::new(name),
+                        0,
+                    )?;
+                    let mut state = store_subs::query(ctx.conn(), queue)?.unwrap().state;
+                    state.next_check_time = 100;
+                    store_subs::set_query_state(ctx.conn(), queue, &state)?;
+                }
+                Ok(())
+            })
+            .unwrap();
+        let at = 1_000_000;
+        let pick = |random: bool| {
+            store
+                .write(move |ctx| {
+                    let mut settings: hydrus_store::network::NetworkSettings =
+                        hydrus_store::settings::get(ctx.conn())?;
+                    settings.process_subs_in_random_order = random;
+                    hydrus_store::settings::set(ctx.conn(), &settings)
+                })
+                .unwrap();
+            downloader.reload_settings().unwrap();
+            (0..60)
+                .map(|_| {
+                    runner
+                        .next_at(&HashMap::new(), at)
+                        .unwrap()
+                        .ok()
+                        .unwrap()
+                        .name
+                })
+                .collect::<std::collections::BTreeSet<_>>()
+        };
+        // (the reference sorts by name, naturally: "sub 2" before "sub 10")
+        assert_eq!(pick(false), ["sub 1".to_owned()].into());
+        let random = pick(true);
+        assert!(
+            random.len() > 1,
+            "random order picks different ones: {random:?}"
+        );
+        assert_eq!(pick(false), ["sub 1".to_owned()].into());
+    }
+
     #[test]
     fn outer_typed_exception_budget_replays_recorded_classes_and_reset() {
         let recording = hydrus_testkit::fixture_json("subscription_failure_limit.json");

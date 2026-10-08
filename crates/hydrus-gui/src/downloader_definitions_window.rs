@@ -696,11 +696,9 @@ fn open_definition(
         return Ok(());
     }
     let value = match d.kind {
-        Kind::Classes => {
-            Value::Class(Box::new(selected.map_or_else(UrlClass::default, |i| {
-                d.classes.url_classes[i].clone()
-            })))
-        }
+        Kind::Classes => Value::Class(Box::new(
+            selected.map_or_else(definitions::new_class, |i| d.classes.url_classes[i].clone()),
+        )),
         Kind::Generators => Value::Gug(selected.map_or_else(
             || AnyGug::Single(definitions::new_gug()),
             |i| d.downloaders.gugs.gugs[i].clone(),
