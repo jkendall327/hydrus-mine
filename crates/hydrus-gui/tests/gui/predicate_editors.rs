@@ -1961,8 +1961,6 @@ fn archived_and_modified_date_panels_make_the_recorded_date_and_time_predicates(
 // "Paste image!" takes the clipboard's bitmap if it holds one, else a file
 // path, as the reference's `_Paste` does; the hashes are those of a file of
 // the same pixels.
-// (not tagged ...-similartodata-paste: the bitmap hashes are compared with this
-// port's own file hashes, not with a recording of the reference's)
 #[test]
 fn paste_image_takes_a_clipboard_bitmap_or_a_file_path_and_clear_empties_both_hashes() {
     let (_dirs, store) = store();
@@ -2065,6 +2063,137 @@ fn paste_image_takes_a_clipboard_bitmap_or_a_file_path_and_clear_empties_both_ha
         window.get_error(),
         "Sorry, that clipboard text did not look like a valid file path!"
     );
+    hydrus_gui::clear_clipboard_reader();
+    hydrus_gui::set_clipboard_image_reader(|| None);
+}
+
+// leaf: audit-options-predicate-similar-files-data-similartodata-paste
+#[test]
+fn paste_image_makes_the_hashes_the_reference_recorded_and_warns_as_it_did() {
+    let recorded = hydrus_testkit::fixture_json("similar_data_paste.json");
+    let (_dirs, store) = store();
+    let _windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    ui.show().unwrap();
+    let bound = bind(&ui, Pages::single(SearchPage::new(store.clone())));
+    let text = |window: &hydrus_gui::PredicateEditorWindow, f: usize| {
+        window
+            .get_panels()
+            .row_data(0)
+            .unwrap()
+            .fields
+            .row_data(f)
+            .unwrap()
+            .text
+            .to_string()
+    };
+    let bitmap = |name: &str| {
+        let hex = recorded["bitmaps"][name].as_str().unwrap();
+        let rgba: Vec<u8> = (0..hex.len() / 2)
+            .map(|i| u8::from_str_radix(&hex[2 * i..2 * i + 2], 16).unwrap())
+            .collect();
+        hydrus_gui::ClipboardImage {
+            width: 16,
+            height: 16,
+            rgba,
+        }
+    };
+    let file = |name: &str| {
+        let folder = if name.starts_with("pixels") || name.starts_with("not an") {
+            "similar_data_paste"
+        } else {
+            "auto_resolution"
+        };
+        hydrus_testkit::fixture_path(format!("{folder}/{name}"))
+            .to_string_lossy()
+            .into_owned()
+    };
+    // (the recorder's cases, by what the clipboard held)
+    let mut replayed = 0;
+    for case in recorded["cases"].as_array().unwrap() {
+        let name = case["name"].as_str().unwrap();
+        hydrus_gui::set_clipboard_image_reader(|| None);
+        hydrus_gui::set_clipboard_reader(|| Ok(None));
+        let presses = match name {
+            "empty clipboard" => 1,
+            "text that is no file" => {
+                hydrus_gui::set_clipboard_reader(|| Ok(Some("/no/such/file.png".to_owned())));
+                1
+            }
+            "text file path" => {
+                let shown = file("not an image.txt");
+                hydrus_gui::set_clipboard_reader(move || Ok(Some(shown.clone())));
+                1
+            }
+            "png path as text" | "larger png path" | "jpeg path" | "gif path" | "bmp path" => {
+                let shown = file(match name {
+                    "png path as text" => "pixels.png",
+                    "larger png path" => "p00_a.png",
+                    "jpeg path" => "p00_f_exif.jpg",
+                    "gif path" => "p00_h.gif",
+                    _ => "p00_c.bmp",
+                });
+                hydrus_gui::set_clipboard_reader(move || Ok(Some(shown.clone())));
+                1
+            }
+            "bitmap" | "pasted twice" => {
+                let image = bitmap("pixels");
+                hydrus_gui::set_clipboard_image_reader(move || Some(image.clone()));
+                if name == "pasted twice" { 2 } else { 1 }
+            }
+            "bitmap preferred to a path" => {
+                let image = bitmap("pixels");
+                hydrus_gui::set_clipboard_image_reader(move || Some(image.clone()));
+                let shown = file("p00_a.png");
+                hydrus_gui::set_clipboard_reader(move || Ok(Some(shown.clone())));
+                1
+            }
+            "translucent bitmap" => {
+                let image = bitmap("translucent");
+                hydrus_gui::set_clipboard_image_reader(move || Some(image.clone()));
+                1
+            }
+            // (a local path on the clipboard is read from the system's)
+            "png path as local path" => continue,
+            other => panic!("a case the recorder made: {other}"),
+        };
+        ui.invoke_search_edited("".into());
+        ui.invoke_suggestion_chosen(suggestion(&ui, "system:similar files"));
+        let window = bound
+            .predicate_editor
+            .borrow()
+            .as_ref()
+            .map(slint::ComponentHandle::clone_strong)
+            .expect("an editor");
+        for _ in 0..presses {
+            window.invoke_pressed(0, 2);
+        }
+        let warnings = case["warnings"].as_array().unwrap();
+        assert_eq!(
+            window.get_error(),
+            warnings.first().and_then(Json::as_str).unwrap_or(""),
+            "{name}: warning"
+        );
+        assert_eq!(
+            text(&window, 4),
+            case["fields"]["pixel"].as_str().unwrap(),
+            "{name}: pixel hashes"
+        );
+        assert_eq!(
+            text(&window, 5),
+            case["fields"]["perceptual"].as_str().unwrap(),
+            "{name}: perceptual hashes"
+        );
+        // clear empties both
+        window.invoke_pressed(0, 1);
+        assert_eq!(text(&window, 4), case["cleared"]["pixel"].as_str().unwrap());
+        assert_eq!(
+            text(&window, 5),
+            case["cleared"]["perceptual"].as_str().unwrap()
+        );
+        replayed += 1;
+    }
+    assert_eq!(replayed, recorded["cases"].as_array().unwrap().len() - 1);
     hydrus_gui::clear_clipboard_reader();
     hydrus_gui::set_clipboard_image_reader(|| None);
 }

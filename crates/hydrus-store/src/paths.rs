@@ -70,6 +70,43 @@ pub fn delete_or_recycle(path: impl AsRef<Path>, recycle: bool) -> io::Result<()
     }
 }
 
+/// Whether the OS's recycle bin holds a file deleted from `original`, for tests
+/// of the recycle-bin option (false where the bin can't be listed).
+#[doc(hidden)]
+#[cfg(all(unix, not(target_os = "macos")))]
+pub fn recycle_bin_holds(original: impl AsRef<Path>) -> bool {
+    let original = original.as_ref();
+    ::trash::os_limited::list()
+        .is_ok_and(|items| items.iter().any(|item| item.original_path() == original))
+}
+
+/// Empty the OS's recycle bin of the file deleted from `original`, after a test.
+#[doc(hidden)]
+#[cfg(all(unix, not(target_os = "macos")))]
+pub fn purge_from_recycle_bin(original: impl AsRef<Path>) {
+    let original = original.as_ref();
+    if let Ok(items) = ::trash::os_limited::list() {
+        let _ = ::trash::os_limited::purge_all(
+            items
+                .into_iter()
+                .filter(|item| item.original_path() == original),
+        );
+    }
+}
+
+/// Empty the OS's recycle bin of the file deleted from `original`, after a test.
+#[doc(hidden)]
+#[cfg(not(all(unix, not(target_os = "macos"))))]
+pub fn purge_from_recycle_bin(_original: impl AsRef<Path>) {}
+
+/// Whether the OS's recycle bin holds a file deleted from `original`, for tests
+/// of the recycle-bin option (false where the bin can't be listed).
+#[doc(hidden)]
+#[cfg(not(all(unix, not(target_os = "macos"))))]
+pub fn recycle_bin_holds(_original: impl AsRef<Path>) -> bool {
+    false
+}
+
 #[cfg(all(test, unix))]
 mod tests {
     use super::*;

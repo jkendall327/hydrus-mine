@@ -550,3 +550,65 @@ fn applied_defaults_url_overrides_profiles_and_simple_preference_reach_consumers
     folder.invoke_cancel();
     folders.invoke_cancel();
 }
+
+// leaf: audit-options-import-options-favourites-profiles-delete
+// (the reference's delete of a single selected profile raises before it asks,
+// a known difference in DIFFERENCES.md; the recorded multi-profile delete is
+// replayed here)
+#[test]
+fn deleting_selected_profiles_asks_as_the_reference_does_and_cancel_keeps_them() {
+    let fixture = hydrus_testkit::fixture_json("import_options_panel.json");
+    let recorded: Vec<&serde_json::Value> = fixture["steps"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .filter(|step| step["action"] == "_DeleteFavourite" && step["error"].is_null())
+        .collect();
+    let question = recorded[0]["calls"][0]["question"].as_str().unwrap();
+    assert_eq!(recorded[0]["calls"][0]["answer"], false);
+    assert_eq!(recorded[1]["calls"][0]["answer"], true);
+    assert_eq!(recorded[1]["calls"][0]["question"], question);
+
+    let (_dirs, store) = crate::subscriptions::store();
+    let _windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+    open_options(&ui);
+    let options = bound.options.borrow().as_ref().unwrap().clone_strong();
+    page(&options);
+    let window = panel::last_opened().unwrap();
+    let profiles = |window: &ImportOptionsPanelWindow| -> Vec<String> {
+        rows(window, 2)
+            .into_iter()
+            .map(|row| row[0].clone())
+            .collect()
+    };
+    let before = profiles(&window);
+    for _ in 0..2 {
+        window.invoke_action(2, "add".into());
+        let editor = panel::editing_window().unwrap();
+        editor.set_favourite_name("new profile".into());
+        kind(&editor, "notes");
+        editor.invoke_apply();
+    }
+    let added: Vec<String> = profiles(&window)
+        .into_iter()
+        .filter(|name| !before.contains(name))
+        .collect();
+    assert_eq!(added, ["new profile", "new profile (1)"]);
+
+    // both selected: the recorded question; no keeps them, yes deletes them
+    let rows_of = |window: &ImportOptionsPanelWindow| profiles(window);
+    let at = |name: &str| rows_of(&window).iter().position(|n| n == name).unwrap() as i32;
+    window.invoke_clicked(2, at("new profile"), false, false);
+    window.invoke_clicked(2, at("new profile (1)"), true, false);
+    window.invoke_action(2, "delete".into());
+    assert_eq!(window.get_question(), question);
+    window.invoke_answered(false);
+    assert_eq!(profiles(&window).len(), before.len() + 2, "cancelled");
+    window.invoke_action(2, "delete".into());
+    assert_eq!(window.get_question(), question);
+    window.invoke_answered(true);
+    assert_eq!(profiles(&window), before, "deleted");
+    options.invoke_cancel();
+}
