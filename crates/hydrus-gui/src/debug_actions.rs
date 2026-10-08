@@ -89,8 +89,8 @@ pub fn crash_logging() -> bool {
 /// panic is written, with a backtrace, to a "client crash" log in the
 /// database directory; turning it off puts the earlier panic hook back.
 fn flip_crash_logging(dir: &std::path::Path) {
-    static EARLIER: Mutex<Option<Box<dyn Fn(&std::panic::PanicHookInfo<'_>) + Send + Sync>>> =
-        Mutex::new(None);
+    type Hook = Box<dyn Fn(&std::panic::PanicHookInfo<'_>) + Send + Sync>;
+    static EARLIER: Mutex<Option<Hook>> = Mutex::new(None);
     if CRASH_LOGGING.fetch_xor(true, Ordering::SeqCst) {
         let earlier = EARLIER
             .lock()
