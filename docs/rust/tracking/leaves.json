@@ -1709,7 +1709,13 @@
    "native": null,
    "notes": [
     "Rating list chooses unused services and compatible move/copy/two-way actions; native merge semantics sum inc/dec and only replace numerical ratings with higher values. First-pass evidence scope: Actual per-service rating-action rows and accepted values are reference-compared; old URL-sync assertion alone did not establish this leaf."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "weak",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "The model test replays oracle/fixtures/merge_options_editor.json (add_rating/edit_rating/delete_ratings, rating rows, choices, resulting value) against MergeOptionsEditor, and rating merge semantics are replayed in duplicate_merges.json, but no GUI test touches the rating list at all (crates/hydrus-gui/tests/gui/merge_options.rs has no rating add/edit/delete/double-click); the window's rating wiring (merge_options_window.rs ~285-465) is unproven. Tracker note about 'old URL-sync assertion' is stale. Tests: crates/hydrus-gui-model/tests/model/merge_options_editor.rs:179 the_editor_edits_merge_options_as_the_reference_does; crates/hydrus-api/tests/duplicate_merges.rs (merge semantics vs duplicate_merges.json)"
+   }
   },
   {
    "id": "audit-media-merge-sync",
@@ -1722,7 +1728,13 @@
    "native": null,
    "notes": [
     "Choice callbacks alter archive policy and modified/URL/note sync actions. Available actions depend on the duplicate relationship and default/custom editor mode."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "sound",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Recording replay covers archive/file-modified/URLs/notes choices per relationship and default/custom mode against the editor the window uses; GUI tests drive the real window (urls choice, archive choice, note settings, apply) and read the written settings and the filter's consumer. file_modified/notes choices are not individually driven in the GUI but share generic wiring. Tests: crates/hydrus-gui-model/tests/model/merge_options_editor.rs:179; crates/hydrus-gui/tests/gui/merge_options.rs:70 the_default_merge_options_are_edited_and_written; a_rules_custom_merge_options_are_edited; the_duplicate_filters_custom_action_merges_by_its_own_options"
+   }
   },
   {
    "id": "audit-media-merge-tags",
@@ -1735,7 +1747,13 @@
    "native": null,
    "notes": [
     "Tag list adds unused services, chooses permitted relationship-dependent actions, opens the shared filter, edits/deletes rules and serializes service-key merge entries."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "sound",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Recording replay of add/edit/delete tag rows, relationship-dependent action lists, filter dialog and serialised value against MergeOptionsEditor; GUI test drives delete with question, add via action select and the tag filter editor, and checks the written settings. Tests: crates/hydrus-gui-model/tests/model/merge_options_editor.rs:179; crates/hydrus-gui/tests/gui/merge_options.rs:70 the_default_merge_options_are_edited_and_written"
+   }
   },
   {
    "id": "audit-media-metadata-basics",
@@ -2241,7 +2259,13 @@
    "native": null,
    "notes": [
     "Native distance input/presets persist 0–64 search distance; preparation recomputes eligible/searched gauge and labels. Existing GUI assertions compare speculative/custom labels and can-start state."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "sound",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Model test replays duplicates_preparation.json (eligible/searched/gauge/can_start/page name for 13 count sets, and distance labels 0..10 incl. custom) against preparation()/distance_label(), the functions the sidebar calls; GUI test drives the distance action and checks labels, counts and persisted setting. Minor: gauge and the 0-64 clamp are not asserted in the GUI test. Tests: crates/hydrus-gui/tests/gui/duplicates_page.rs:34 the_sidebar_tabs_show_and_change_the_search_and_the_rules; crates/hydrus-gui-model/tests/model/duplicates_page.rs the_preparation_tab_says_what_the_references_does"
+   }
   },
   {
    "id": "audit-media-preparation-numbers",
@@ -2268,7 +2292,13 @@
    "native": null,
    "notes": [
     "Reset asks before deleting potential_pairs and dup_auto_pairs and setting all searched distances NULL; following refresh exposes newly pending discovery."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "sound",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Drives delete pairs through the sidebar: asks (text constant equals the reference's string, test checks only the prefix), cancel leaves pairs, yes empties potential_pairs and the page shows 'Have not yet searched'. Native delete_potential_pairs also clears dup_auto_pairs as the reference does, though the test does not assert that. Tests: crates/hydrus-gui/tests/gui/duplicates_page.rs:34 the_sidebar_tabs_show_and_change_the_search_and_the_rules"
+   }
   },
   {
    "id": "audit-media-preparation-scheduling",
@@ -2295,7 +2325,13 @@
    "native": null,
    "notes": [
     "Native preparation lacks the reference cleanup of potential pairs whose file was physically deleted; reset-all is a separate implemented operation."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "source-restated",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Drives the cog: question prefix, cancel leaves pairs, yes clears the orphan pair and a popup says 'Done! Pairs for 2 out-of-domain files cleared out.', all from literals restated from the Python source (no recording). Tracker note is stale: native resync_potentials_to_local_storage exists and is tested. Tests: crates/hydrus-gui/tests/gui/duplicates_lane_page.rs:83 the_preparation_cog_regenerates_numbers_and_tree_and_resyncs_pairs"
+   }
   },
   {
    "id": "audit-media-preparation-tree",
@@ -2322,7 +2358,13 @@
    "native": null,
    "notes": [
     "Start/stop sets persisted work_hard; run_search treats it as enabling search even when both scheduling switches are off. Can-start is based on remaining files at this distance."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "weak",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Only toggles the persisted work_hard flag and the page's working_hard/can_start display (can_start itself is replayed in the preparation recording). The consumer (hydrus-cli daemon 'pace.allowed |= work_hard' and similar::run_search) is untested, so the flag only round-trips; the reference's work-hard is a runtime manager state. Tests: crates/hydrus-gui/tests/gui/duplicates_lane_page.rs:1057 working_hard_is_started_and_stopped_and_needs_something_left_to_search"
+   }
   },
   {
    "id": "audit-media-preview-context",
@@ -2336,7 +2378,13 @@
    "notes": [
     "Native preview activation opens a pair filter; pass/fail lists have no right-click show-selected-pairs-in-page menu.",
     "Native pass/fail activation opens filter, but reference preview pair-list context menu and show-selected-in-page action are absent."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "weak",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Native menu exists (tracker notes saying it is absent are stale) and the test drives the pass list: labels 'show selected row in a new page' / 'show 2 rows in a new page' match the reference's ThumbnailPairList source, and a page opens. But the page's files are only checked as 3 to 4 distinct files, not the selected pairs' exact files; the fail list's menu is never driven with a selection; labels are typed, not recorded. Tests: crates/hydrus-gui/tests/gui/duplicates_lane_page.rs:415 preview_pair_lists_offer_show_selected_pairs_in_a_new_page"
+   }
   },
   {
    "id": "audit-media-ratings-clipboard",
@@ -2445,7 +2493,13 @@
    "notes": [
     "Separate actioned and denied tabs load stored pair histories; undo moves pairs back to relevant native queues and refreshes counts.",
     "Undo resets rule status; it is not a reversal of metadata merges or physical file deletion."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "sound",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Drives the real review window on the reference's run database and replays auto_resolution_review.json step by step: approve, deny, undo a denial and undo an action, comparing each tab's pairs, the confirmation questions and which files are in the trash. Notes accurately state undo is a group dissolve/undelete, not a merge reversal, as the reference. Tests: crates/hydrus-gui/tests/gui/auto_resolution_review.rs:175 pairs_are_approved_denied_and_undone_as_the_reference_does; crates/hydrus-gui-model/tests/model/auto_resolution_review.rs"
+   }
   },
   {
    "id": "audit-media-review-pending",
@@ -2459,7 +2513,13 @@
    "notes": [
     "Selected pending IDs are approved/denied through native rule-actions, update counts and refresh the view; fetch controls choose finite/all samples.",
     "Actions execute immediately without reference cancellable progress/popup."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "source-restated",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Drives fetch limit (default 250, 1 -> 'Found 1 pairs.'), fetch all, refresh, select all and approve of both pairs through the real window; expected labels and counts are typed from the Python source and the fetch-limit/select-all path is not in the recording (recording covers only single approve/deny). Reference's >5 'Are you sure' confirm and progress popup are untested here. Tests: crates/hydrus-gui/tests/gui/duplicates_lane_page.rs:350 pending_pairs_are_sampled_refreshed_selected_and_approved; auto_resolution_review.rs:175"
+   }
   },
   {
    "id": "audit-media-review-progress",
@@ -2487,7 +2547,13 @@
    "native": null,
    "notes": [
     "Rule fields update paused/operation/max-pending and validate rule names; action-changing controls reset incompatible custom merge state."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "source-restated",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Drives the rule editor for name, paused, operation mode, max pending (77) and casefolded unique name ('X (1)'), reads back written rules and reopened values; expectations are typed from the Python source, no recording of the editor, and the operation-mode choice labels are not asserted in the test. Tests: crates/hydrus-gui/tests/gui/duplicates_lane_page.rs:860 rule_identity_and_search_choices_are_staged_then_persisted_on_apply; crates/hydrus-duplicates/tests/reference_run.rs (consumer of mode/cap)"
+   }
   },
   {
    "id": "audit-media-rule-sidebar-progress",
@@ -2500,7 +2566,13 @@
    "native": null,
    "notes": [
     "Stable rule IDs drive multi-selection and pause flips; live auto::counts drive progress/status text. Existing sidebar assertions verify selected-row enablement and paused/unpaused status."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "sound",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Model test replays auto_resolution_rows.json (progress and status text for 11 count/pause/cap cases) against rule_progress/rule_status, which the sidebar calls; GUI test drives selection (click, ctrl-click) and pause flipping of selected rules by stable id with live counts and checks persistence. Shift-click ranges are not tested. Tests: crates/hydrus-gui/tests/gui/duplicates_lane_page.rs:725 the_rules_list_selects_pauses_shows_progress_and_resets_queues; crates/hydrus-gui-model/tests/model/duplicates_page.rs the_auto_resolution_rules_rows_are_the_references; crates/hydrus-gui/tests/gui/duplicates_page.rs:34"
+   }
   },
   {
    "id": "audit-media-rule-sidebar-resets",
@@ -2513,7 +2585,13 @@
    "native": null,
    "notes": [
     "Reset selects chosen IDs or all when none selected, asks a targeted question, then moves stored pair queues back to search/test/pending stages."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "source-restated",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Drives reset search/test/denied through the sidebar on a real store: question (from reset_question, same text as the reference), cancel, yes, and per-status DB counts, plus none-selected = all rules. Expected status moves are restated from the Python source (no recording), and the test asserts zeros for some statuses but not that pairs land in the exact target queue for search/test. Tests: crates/hydrus-gui/tests/gui/duplicates_lane_page.rs:725 the_rules_list_selects_pauses_shows_progress_and_resets_queues; crates/hydrus-gui/tests/gui/duplicates_page.rs:34"
+   }
   },
   {
    "id": "audit-media-rule-sidebar-scheduling",
@@ -2541,7 +2619,13 @@
    "notes": [
     "Reference rule/comparator list import/export/duplicate buttons serialize full graphs. Native rule list has add/suggest/edit/delete but no serialized interchange or duplicate callback.",
     "Native rule list has no serialized interchange/duplicate callbacks; reference reusable list buttons preserve entire rule/comparator graphs."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "weak",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Import of the reference's serialised rules/comparators is checked against the reference's stored JSON and the GUI drives clipboard export/import/duplicate for rules and comparators, but export writes hydrus-rs JSON, not the reference's serialised form (DIFFERENCES.md 'Auto-resolution rule export and import'), so the reference could not read it and the export half is not compared with the reference; png paths and OR/AND inner lists untested. Tracker notes saying there is no interchange are stale. Tests: crates/hydrus-gui-model/tests/model/auto_resolution_exchange.rs (the_reference_s_serialised_rules_import, comparators_export_and_import_alone_in_lists_and_from_the_reference:55); crates/hydrus-gui/tests/gui/duplicates_lane_page.rs:1264 rules_and_comparators_are_exported_imported_and_duplicated_whole"
+   }
   },
   {
    "id": "audit-media-rules-list",
@@ -2554,7 +2638,13 @@
    "native": null,
    "notes": [
     "Suggested templates and new-rule choices open a staged rule editor; list selection/edit/delete persists through write_rules only when parent Apply is accepted."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "sound",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Model tests replay auto_resolution_summaries.json (list rows, suggested rules, add-comparator choices); GUI tests drive add suggested, new rule, edit, delete with 'Remove all selected?' and show that cancel writes nothing and apply writes via the store. Delete is in the untagged sibling test, and the 'Select which to add' title is a string only. Tests: crates/hydrus-gui/tests/gui/duplicates_lane_page.rs:860 rule_identity_and_search_choices_are_staged_then_persisted_on_apply; crates/hydrus-gui/tests/gui/auto_resolution_rules.rs:43 rules_are_added_edited_deleted_and_written (untagged); crates/hydrus-gui-model/tests/model/auto_resolution_rules.rs"
+   }
   },
   {
    "id": "audit-media-service-api-listener",
@@ -3376,7 +3466,13 @@
    "notes": [
     "Execute Python-compatible strptime fields with UTC/local/offset rules, six-digit microseconds, UTC/GMT/system timezone names, year/directive validation, aware local offsets, pre-epoch timestamps and default omitted fields. Update the conversion and sequence previews live.",
     "Jiff diagnostic reasons differ from Python. Locale directives use English/C forms. Platform-specific DST choices may differ; the recorded Linux New York repeated/nonexistent times match."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "sound",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Carried, untagged. Recorded direct-reference cases (fields, %f, UTC/GMT names, bad directives, pre-epoch, offsets, New York DST) run through the real StringConverter engine with exact successes and error-up-to-reason; previews replayed from a Qt recording; GUI test sidecars.rs:724 drives the window. One naive-local case is rewritten in the test to avoid host timezone (minor). Tests: crates/hydrus-core/src/url/string_dates.rs:344,408 date_conversions_match_direct_reference_execution, local_names_and_dst_boundaries_match_recorded_reference_platform (string_dates.json, from oracle/dump_string_dates.py); crates/hydrus-gui-model/tests/model/string_converter_editor.rs:182 date_controls_and_live_preview_follow_real_qt_accept_cancel_and_reorder (string_date_editor.json)"
+   }
   },
   {
    "id": "audit-network-conversion-date-encode",
@@ -3390,7 +3486,13 @@
    "notes": [
     "Execute integer timestamp formatting and live previews, preserving the reference current-local-offset behavior, naive %z/%Z fields, zero microseconds, fractions/noninteger rejection, underscores and pre-epoch values.",
     "Locale date phrases use English/C forms. Platform-specific strftime extensions such as %s remain outside the supported grammar."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "source-restated",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Carried, untagged. UTC encode cases (naive %z/%Z, zero %f, underscores, fractions rejected, pre-epoch) are recorded and compared exactly. The leaf's distinctive 'current local offset' behaviour is only checked by a test whose expected value comes from the same native strftime and the recordings run at UTC offset 0, so it cannot distinguish current from historical offset. Tests: crates/hydrus-core/src/url/string_dates.rs:344 date_conversions_match_direct_reference_execution, :437 local_encode_uses_current_offset_and_naive_timezone_fields; string_converter_editor.rs:182 (string_date_editor.json, recorded under TZ=UTC)"
+   }
   },
   {
    "id": "audit-network-conversion-date-fields",
@@ -3404,7 +3506,13 @@
    "notes": [
     "Date controls produce typed executable conversions; UTC/local/offset and phrase values update previews and survive reference interchange. Previously preserved native date payloads execute without requiring an edit.",
     "Native date phrase documentation is still plain text; this does not affect the executable fields."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "sound",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Carried, untagged. GUI test drives the real conversion window (timezone/offset/phrase, live result, cancel/apply) and a separate recording replay of the Qt date editor covers the same model; interchange test keeps the reference codes. Preserved-native-payload part is only lightly covered. Tests: crates/hydrus-gui/tests/gui/sidecars.rs:724 date_conversion_fields_preview_and_cancel_reach_the_converter; string_converter_editor.rs:182 (string_date_editor.json); crates/hydrus-downloader-exchange/tests/interchange.rs:278 date_conversions_keep_reference_codes_through_definition_exchange"
+   }
   },
   {
    "id": "audit-network-conversion-dateparser",
@@ -3432,7 +3540,13 @@
    "native": "crates/hydrus-gui/src/string_processor_window.rs:1543",
    "notes": [
     "Supported encoding choices and regex replacement use the native conversion engine; malformed values report native errors."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "weak",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Coordinator override (rubric): the model test replays the recording well, but no GUI test drives the window for this leaf; add a window-level drive. Recording includes encode/decode (base64, hex, base64url, url percent, html entities, unicode escape) and regex substitution with the ok-question for a no-group regex; replayed step by step incl. editor state and results. Window glue is not asserted by a GUI test of its own, but it is thin; no regex-error case beyond the recorded one. Tests: crates/hydrus-gui-model/tests/model/string_converter_editor.rs:174-186 the_string_converter_editor_works_as_the_references_does (replays oracle/fixtures/string_converter_editor.json, Qt recording)"
+   }
   },
   {
    "id": "audit-network-conversion-ordinary",
@@ -3445,7 +3559,13 @@
    "native": "crates/hydrus-gui/src/string_processor_window.rs:1543",
    "notes": [
     "Typed ordinary variants execute; random results are inherently variable."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "weak",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Coordinator override (rubric): the model test replays the recording well, but no GUI test drives the window for this leaf; add a window-level drive. Recording covers prepend, remove begin/end, take end/start, reverse, integer addition, hash sha1 and append random (structural length check), edited and added; the editor value and result are compared with the recording. Append text and some keep variants only implied. Window glue untested by GUI. Tests: crates/hydrus-gui-model/tests/model/string_converter_editor.rs:174-186 the_string_converter_editor_works_as_the_references_does (replays oracle/fixtures/string_converter_editor.json, Qt recording)"
+   }
   },
   {
    "id": "audit-network-converter-sequence",
@@ -3458,7 +3578,13 @@
    "native": "crates/hydrus-gui/src/string_processor_window.rs:1185",
    "notes": [
     "Ordinary transformations run for row previews; add/edit/delete/order mutate only the converter draft."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "weak",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Coordinator override (rubric): the model test replays the recording well, but no GUI test drives the window for this leaf; add a window-level drive. Numbered rows, per-row converted example, selection, up/down, delete question and add/edit/cancel replayed from the Qt recording; parent draft-only behaviour is covered by formula_editors.rs:725 lifecycle GUI test. Tests: crates/hydrus-gui-model/tests/model/string_converter_editor.rs:174-186 the_string_converter_editor_works_as_the_references_does (replays oracle/fixtures/string_converter_editor.json, Qt recording)"
+   }
   },
   {
    "id": "audit-network-cookies-expiry",
@@ -3573,7 +3699,13 @@
     "No new debug action is invented; the reference leaf label is broader than its actual _ShowCogMenu implementation.",
     "Automatic policy is local and intentionally not persisted across rebuilding a control.",
     "Native rule UI uses detached apply/cancel rather than Qt modal editors."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "source-restated",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Carried, untagged. Real GUI/engine path is driven (copy URL, retry/scrub/override commands, rule apply/cancel, auto-override after 5 s, page close) but expected values are typed literals; the recording (network_job_control.json) is replayed only for menu labels and error text. Recorded 'rules', 'retry' gating, 'auto_at_five' and clipboard keys are never read by any test. Tracker note about 'no debug menu' is accurate (reference has none). Tests: crates/hydrus-gui-model/tests/model/network_job_control.rs:40 cog_replays_actual_qt_context_submenu_and_phase_actions, :132 control_auto_policy_targets_future_requests_and_owner_clears_error_once; crates/hydrus-gui/tests/gui/network_job_control.rs:58,252,365,497"
+   }
   },
   {
    "id": "audit-network-download-control-errors",
@@ -3588,7 +3720,13 @@
     "Native page controls and shared Control/Errors support reference show/copy and explicit owner clear, retaining an error after a job leaves, hiding after clear without journal resurrection. Actual engine failures populate owning controls via context+request-role journal; show preserves Network Error title and text, copy preserves exact text. No visible clear menu item. The page-parser example-fetch owner clears only after validating a new URL, sets completed failure text after removing the live job, preserves the error for empty URL/raw test-panel fetch, and closes error descendants when its editor closes.",
     "Native error display is a scrollable window instead of a modal critical message box.",
     "Failure journal retains 128 requests per daemon epoch and displays the reference long-text prefix."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "source-restated",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Carried, untagged. Show/copy/clear, retention after job leaves, owner-only clear and parser example-fetch owner are driven through windows, but the text is typed; the recording is used only for clear-semantics in the model test. The 'Network Error' title and 128-request journal are not asserted against the recording. Tests: crates/hydrus-gui/tests/gui/network_job_control.rs:58,497,563; crates/hydrus-gui/tests/gui/parser_editors.rs:298-353; model/network_job_control.rs:132"
+   }
   },
   {
    "id": "audit-network-exchange-commit",
@@ -3685,7 +3823,13 @@
     "Export-folder update test example files runs the actual current query on a worker and publishes up to 25 media examples to router and source child previews. It matches reference loading/got-N/reset states, size selection only when a local query limit removes results, previous examples retained after query changes, and empty results. Closing the folder/list discards pending results and stale mutations; edited queries remain staged until owner Apply and reach the persisted real query consumer. Folder and manual-export filename boxes expose the real shared pattern shortcuts menu: exact heading, seven labels and separator groups, clipboard phrases including Unicode placeholders; the reference heading itself is enabled and copies its own text. Choosing an item preserves the staged filename pattern; copied phrases reach the existing native filename generator after paste/accept. Invalid, closed, child-modal, working or pending-question callbacks cannot copy from a stale owner.",
     "Unlimited results use stable file-id order rather than Python set iteration. Reference export-folder UI disallows all-known-file queries; imported all-known contexts retain native deterministic size selection and are outside this original clicked leaf.",
     "Native shortcut menus do not reproduce Qt bold-heading styling or per-action hover tooltips. No extra filename-preview panel or worker is invented: original source line 449 only refreshes the media test context."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "sound",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Carried, no tag. The GUI test drives the real export-folder editor and replays oracle/fixtures/export_folder_examples.json step by step (before/loading/finished labels, media hashes, source strings, retained examples, close/stale handling); the model test replays the same recording against export_test_examples; the pattern-shortcut menu replays export_pattern_shortcuts.json. Tracker note is far broader than the leaf (original line 449 only refreshes the test context) but nothing in the leaf is uncovered. Tests: crates/hydrus-gui/tests/gui/sidecars.rs:1409 export_folder_query_examples_refresh_media_and_reach_source_children; crates/hydrus-gui-model/tests/model/folders.rs:363 export_folder_examples_use_recorded_queries_limits_and_media_contexts; crates/hydrus-gui-model/tests/model/export_files.rs:514 shared_pattern_menu_copies_recorded_phrases_including_its_heading"
+   }
   },
   {
    "id": "audit-network-export-folder-filename",
@@ -3698,7 +3842,13 @@
    "native": "crates/hydrus-gui/src/folders_window.rs:1453",
    "notes": [
     "Phrase and sidecar overwrite policy reach the scheduled export engine."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "weak",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Phrase: GUI test plus recorded dialog replay (bad-phrase vetoes, values) and the recorded worker run cover it. Overwrite-next/always: the GUI test only round-trips the two flags and checks the worker spends the one-time flag; no sidecar router/existing sidecar is present, so nothing shows that overwriting actually changes the written sidecars (consumer export.rs:340 not exercised). Overwrite semantics are therefore untested. Tests: crates/hydrus-gui/tests/gui/files_io_folder_editors.rs:226 an_export_folders_search_phrase_schedule_and_overwrites_are_what_its_worker_does; crates/hydrus-gui-model/tests/model/folders.rs:232 the_export_folder_dialog_is_the_references"
+   }
   },
   {
    "id": "audit-network-export-folder-predicates",
@@ -3711,7 +3861,13 @@
    "native": "crates/hydrus-gui/src/folders_window.rs:1721",
    "notes": [
     "Native text parser builds the folder predicate tree, displayed as removable rows."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "source-restated",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Real editor: two typed predicates ANDed, an unparsable one refused, one removed, and the real worker exports only pngs (then everything after removal), plus reopen. Expected values (counts, png-only) are typed literals; typed-search parsing and the row text are not recorded (GUI asserts only row_count; the model test checks recorded predicate texts). No recording of the typed-entry path. Tests: crates/hydrus-gui/tests/gui/files_io_folder_editors.rs:227 same test; crates/hydrus-gui-model/tests/model/folders.rs:232 (recorded predicate display via predicate_text)"
+   }
   },
   {
    "id": "audit-network-export-folder-schedule",
@@ -3725,7 +3881,13 @@
    "notes": [
     "Saved scheduling fields control regular export-folder execution. Opened schedule values/enablement have fixture coverage; no scoped inspected assertion edits every period/run-now/popup field, reopens it, and verifies due execution.",
     "Opened schedule values/enablement have fixture coverage; no scoped inspected assertion edits every period/run-now/popup field, reopens it, and verifies due execution."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "weak",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Fields are edited, saved and reopened, and run-now makes the worker run (flag spent). Not covered: run-regularly period actually making the folder due, and the popup flag's effect (worker recording test shows popups only for its fixed folders, not the edited values). Tracker note (that no test edits every field) is partly stale: the test does edit all of them, but consumers of period and popup are untested. Tests: crates/hydrus-gui/tests/gui/files_io_folder_editors.rs:225 same test; crates/hydrus-gui-model/tests/model/folders.rs:232; crates/hydrus-download/tests/export_folder.rs:75 export_folders_do_what_the_reference_did"
+   }
   },
   {
    "id": "audit-network-export-folder-type",
@@ -3739,7 +3901,13 @@
    "notes": [
     "Changing type disables incompatible trashing and accepted destructive export asks the reference warning.",
     "The GUI regression switches synchronise/trash; symlink execution is covered by migrated worker fixtures rather than a GUI checkbox roundtrip."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "sound",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Window switches to synchronise (trash disabled), symlinks on, stray file synchronised away, link-ness checked; switching back and ticking delete asks both reference questions and No keeps the dialog. Warning texts and the sync/delete-enabled rules are replayed from folders_dialogs.json against check_export_folder, and sync/delete worker behaviour from export_folder_run.json. Symlink execution itself is not recorded (checked by literal in the GUI test); minor. Tests: crates/hydrus-gui/tests/gui/files_io_folder_editors.rs:331 an_export_folders_type_symlinks_and_trash_choices_reach_its_worker; crates/hydrus-gui-model/tests/model/folders.rs:232; crates/hydrus-download/tests/export_folder.rs:75"
+   }
   },
   {
    "id": "audit-network-export-paths",
@@ -3752,7 +3920,13 @@
    "native": "crates/hydrus-gui/src/export_files_window.rs:393",
    "notes": [
     "Folder selection changes the preview root; location launches in the platform file browser."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "source-restated",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Real window with stand-in picker and launcher: browse sets destination and moves the preview, open-location launches the folder, a missing folder reports 'That location does not seem to exist!' (native status line, reference uses a ShowCritical dialog titled 'Does not exist!'). All strings are restated from the Python source; no recording, and the launcher is a stand-in. Tests: crates/hydrus-gui/tests/gui/files_io_export_files.rs:96 the_destination_is_browsed_for_and_its_location_opened"
+   }
   },
   {
    "id": "audit-network-export-policy",
@@ -3765,7 +3939,13 @@
    "native": "crates/hydrus-gui-model/src/export_files.rs:219",
    "notes": [
     "Trash and export-and-close warnings are explicit; symlink and trash settings are mutually restricted."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "source-restated",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Real window: plain copy and symlinks ask nothing, trash asks TRASH_WARNING (declining exports nothing, accepting copies real files, trash wins over symlinks). The question texts are checked against export_files.json in the model test (via Plan::confirmation) but the GUI compares against the same constant; the symlink/trash restriction and the symlink results are literals from the source (the test sets symlinks and trash by property, not via the checkbox toggle, which native disables instead of unticking). Export-and-close question is driven in an untagged test. Tests: crates/hydrus-gui/tests/gui/files_io_export_files.rs:158 files_are_copied_or_symlinked_and_trashing_asks_and_wins_over_symlinks; crates/hydrus-gui/tests/gui/export_files.rs (untagged, export(true) question); crates/hydrus-gui-model/tests/model/export_files.rs:72 preview_and_confirmations_match_reference_panel"
+   }
   },
   {
    "id": "audit-network-export-preview",
@@ -3778,7 +3958,13 @@
    "native": "crates/hydrus-gui-model/src/export_files.rs:156",
    "notes": [
     "Shared filename engine produces numbered preview paths, appends collision suffixes, and rejects paths outside the destination."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "sound",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Replays export_files.json previews (phrases, numbering, collision suffixes, ../escape and bad-phrase rejection) against export_files::preview, which the window calls, and the recorded confirmation questions; extra non-recorded nested/Windows cases are additions. Covers the leaf. Tests: crates/hydrus-gui-model/tests/model/export_files.rs:71 preview_and_confirmations_match_reference_panel"
+   }
   },
   {
    "id": "audit-network-export-remove",
@@ -3791,7 +3977,13 @@
    "native": "crates/hydrus-gui/src/export_files_window.rs:435",
    "notes": [
     "Selected file IDs are snapshotted for confirmation and removal immediately recalculates names."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "source-restated",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Real window: nothing selected asks nothing; shift-click range; No keeps rows; Yes removes and renumbers ('{#}' names). The question text is recorded and checked in the model test, but the renumbering expectations are literals from _DeletePaths and are not recorded. Tests: crates/hydrus-gui/tests/gui/files_io_export_files.rs:48 selected_rows_are_removed_after_asking_and_the_names_are_made_again; crates/hydrus-gui-model/tests/model/export_files.rs:72 (REMOVE_QUESTION vs recording)"
+   }
   },
   {
    "id": "audit-network-export-worker",
@@ -3809,7 +4001,13 @@
     "Native progress and error details remain in the review window rather than Qt job popup/critical dialog. Failed or cancelled Export-and-close stays open natively; Qt closes its review frame after worker completion.",
     "Qt blocks its worker on critical-error acknowledgement before prefix cleanup, allowing cancellation during that pause. Native reports the error inline and may immediately begin already-confirmed cleanup, with no modal acknowledgement gate. The recorder intercepts ShowCritical and does not validate acknowledgement timing.",
     "Cancellation is sampled between files and once before deletion; it does not roll back completed copies or cancel already-authorized deletion chunks. Sidecars can remain after a later copy failure."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "sound",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Carried, no tag. export_files::run, the function the window's worker thread calls, is replayed against export_files.json (copy digests) and export_failure_prefix.json (copied files, cancelled/done/error counts, durable trash membership after reopen) for first/second failure, sidecar failure and cancel cases; an untagged window test drives the failure-prefix path through the real dialog. Atomic copies and several sidecar/ordering behaviours are native-only and documented as differences; the Cancel button and progress label are not driven in a test, minor. Tests: crates/hydrus-gui-model/tests/model/export_files.rs:161,220,258,348,399,445 (copies_overwrite..., cancellation_suppresses_trash..., export_failure_and_cancellation_match_reference_durable_membership, sidecar_failure..., later_trash_transaction_failure..., symlinks_existing_links...); crates/hydrus-gui/tests/gui/export_files.rs (untagged failure-prefix window test)"
+   }
   },
   {
    "id": "audit-network-file-log-advanced",
@@ -3998,7 +4196,13 @@
    "notes": [
     "Filetype controls and recently-modified skip period configure what a folder worker considers. The skip-period model value is regression-backed; no inspected GUI assertion changes each allowed-filetype control and verifies its saved import/filter consumer.",
     "The skip-period model value is regression-backed; no inspected GUI assertion changes each allowed-filetype control and verifies its saved import/filter consumer."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "source-restated",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Real editor and import-options child unticks png, the real worker finds 2 files and imports only the jpeg. Only one filetype is exercised and expectations are literals; the skip period is covered in the schedule test, not here. No recording of filetype filtering. Tests: crates/hydrus-gui/tests/gui/files_io_folder_editors.rs:419 an_import_folders_allowed_filetypes_decide_which_files_its_worker_imports"
+   }
   },
   {
    "id": "audit-network-import-folder-outcomes",
@@ -4012,7 +4216,13 @@
    "notes": [
     "Per-outcome choices validate required move folders and ask safety/path questions before acceptance.",
     "Coverage is the recorded outcome cases, not every outcome/action/path combination."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "sound",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Recorded vetoes and safety questions (missing move path, nonexistent move folder, delete/ignore choices) are replayed against check_import_folder, which the window calls, and driven in the window by an untagged test; the tagged test then drives move/ignore/delete through the worker (files moved, deleted as chosen) and the recorded import_folder_run covers moved results. Recording covers only some outcome combinations, as the tracker note says. Tests: crates/hydrus-gui/tests/gui/files_io_folder_editors.rs:83 (the same test as schedule); crates/hydrus-gui/tests/gui/folders.rs:64 import_folders_are_added_edited_and_written (untagged validations); crates/hydrus-gui-model/tests/model/folders.rs:120 the_import_folder_dialog_is_the_references; crates/hydrus-download/tests/import_folder.rs:80"
+   }
   },
   {
    "id": "audit-network-import-folder-schedule",
@@ -4026,7 +4236,13 @@
    "notes": [
     "Recorded schedule fields and accepted model values cover period/pause/check-now. The GUI regression changes period/pause and asserts the saved folder; the worker replay reads persisted check-now and popup settings.",
     "Regular timer cadence and every popup setting combination are source-traced, not separately asserted by these tests."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "weak",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Period, skip, check-now and popup/page flags are edited, saved and reopened; check-now makes the worker run and is spent. Not covered: the folder-level pause actually stopping the worker (the test only sets paused=false), the regular period making it due, and the popup/page flags' effect for edited values. Recorded dialog values cover the model only. Tests: crates/hydrus-gui/tests/gui/files_io_folder_editors.rs:82 an_import_folders_schedule_skip_period_and_outcomes_are_what_its_worker_does; crates/hydrus-gui-model/tests/model/folders.rs:120; crates/hydrus-download/tests/import_folder.rs:80"
+   }
   },
   {
    "id": "audit-network-import-folder-tagging",
@@ -4039,7 +4255,13 @@
    "native": "crates/hydrus-gui/src/folders_window.rs:1029",
    "notes": [
     "Selected service opens canonical filename options mode; accepted defaults join the folder draft."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "source-restated",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Real editor: add for a service, duplicate-service refusal (reference string), edit reopens with saved values, delete, persisted with the folder. The worker consumer (filename_tags) is replayed against the recorded import_folder_run which has filename tagging. The add/edit/delete dialog behaviour itself is not recorded (folders_dialogs.json records an empty list) so its strings and flow are restated from the source. Edit path only cancels, never applies. Tests: crates/hydrus-gui/tests/gui/folders.rs:302 an_import_folders_filename_tagging_is_added_edited_and_deleted; crates/hydrus-download/tests/import_folder.rs:80"
+   }
   },
   {
    "id": "audit-network-import-parsing",
@@ -4052,7 +4274,13 @@
    "native": "crates/hydrus-gui-model/src/local_import.rs:149",
    "notes": [
     "Folders are expanded, unsupported/empty/missing/occupied files classified, and sidecars set aside."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "sound",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Replays local_import_dialog.json (folder with sidecars, subfolder, duplicate, empty, unsupported, missing path; with/without subdirectories) against Review: rows (number/path/filetype/size), progress text, button enables and good paths all equal the reference's. The window is a thin wrapper over Review; the GUI tests also parse real files. Tests: crates/hydrus-gui-model/tests/model/local_import_dialog.rs:59 the_list_is_the_references"
+   }
   },
   {
    "id": "audit-network-import-paths",
@@ -4065,7 +4293,13 @@
    "native": "crates/hydrus-gui/src/import_window.rs:161",
    "notes": [
     "Paths from real platform pickers and typed/drop sources join the single review queue."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "source-restated",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Real window: typed (quoted) folder path, dropped files (new window then added to the open one), and add files/add folder through a stand-in picker with titles 'Select the files to add.' / 'Select a folder to add.' (reference strings). All expectations are literals; the real platform picker is stubbed and nothing is recorded for these entry points (the reference has no typed-path box, so that part is native-only). Tests: crates/hydrus-gui/tests/gui/import_files.rs:80 files_given_are_reviewed_then_imported; crates/hydrus-gui/tests/gui/import_files.rs:438 files_and_folders_picked_are_reviewed"
+   }
   },
   {
    "id": "audit-network-import-pause-stop",
@@ -4078,7 +4312,13 @@
    "native": "crates/hydrus-gui/src/import_window.rs:211",
    "notes": [
     "Pause retains pending paths; Stop clears unparsed work while keeping parsed rows."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "source-restated",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Real window: paused path stays unparsed, resume parses, stop drops unparsed paths but keeps parsed rows, and the window is usable after. Progress strings ('0/1 files parsed.', '1 files parsed.') and enable rules are literals restated from _InitialiseParseWorkUpdater/_UpdateWidgets; the recording only has finished-state texts and button enables. Tests: crates/hydrus-gui/tests/gui/files_io_import_review.rs:182 pausing_holds_the_paths_still_to_parse_and_stop_drops_them_but_keeps_the_parsed; crates/hydrus-gui-model/tests/model/local_import_dialog.rs (parsing_shows_its_progress_and_can_be_paused_and_stopped)"
+   }
   },
   {
    "id": "audit-network-import-queue",
@@ -4091,7 +4331,13 @@
    "native": "crates/hydrus-gui/src/import_window.rs:235",
    "notes": [
     "Only good parsed paths create a local-import page/queue; delete-after-success reaches queue settings."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "source-restated",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Import now closes the window, opens an import page whose queue has only the good paths in list order with their modified times, and delete_after_success lands in the queue settings; the download test shows the queue runner honours it. Good-path lists are recorded, but the page/queue creation and delete semantics are literals from _DoImport/HDDImport; no recording of them. Tests: crates/hydrus-gui/tests/gui/import_files.rs:80 files_given_are_reviewed_then_imported; crates/hydrus-download/tests/local_import.rs:289 a_local_import_imports_its_files; crates/hydrus-gui-model/tests/model/local_import_dialog.rs:59"
+   }
   },
   {
    "id": "audit-network-import-remove",
@@ -4104,7 +4350,13 @@
    "native": "crates/hydrus-gui/src/import_window.rs:198",
    "notes": [
     "Selected rows are removed only after the inline Remove all selected confirmation."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "source-restated",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Real window: click/ctrl/shift/ctrl+shift selection, Delete key raises the inline 'Remove all selected?' ask, nothing removed until yes, then the row goes and the rest are renumbered. Expectations are literals from RemovePaths; the test sets asking_remove false and calls the remove callback directly rather than pressing yes/no, and never checks the question text or the No path. Tests: crates/hydrus-gui/tests/gui/files_io_import_review.rs:84 rows_are_selected_as_a_list_selects_and_removed_after_asking_then_numbered_again"
+   }
   },
   {
    "id": "audit-network-jobs-cancel",
@@ -4185,7 +4437,13 @@
     "Native dedicated favourites popup contains the reference favourites submenu; the existing help/components controls stay separate rather than sharing the entire RegexButton menu.",
     "Reference heading is bold; native menu currently uses normal menu typography.",
     "Favourite management behavior already existed; this slice adds the actual popup and live global refresh, without a second claim for the existing manager."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "sound",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Carried, untagged. GUI test drives the popup and replays the recorded menus/saved lists/unchanged input on accept and cancel, with persistence, live refresh and parent-cancel invalidation; model test replays the same recording. Bold heading difference is documented. Tests: crates/hydrus-gui/tests/gui/regex_favourites.rs:268 matcher_favourite_popup_copies_refreshes_and_owns_persisted_management, :59; crates/hydrus-gui-model/tests/model/regex_favourites.rs:120 (matcher_favourites.json, Qt recording)"
+   }
   },
   {
    "id": "audit-network-matcher-fields",
@@ -4198,7 +4456,13 @@
    "native": "crates/hydrus-gui/src/string_processor_window.rs:1125",
    "notes": [
     "Current matcher parses these fields and validates optional examples before Apply."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "weak",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Coordinator override (rubric): the model test replays the recording well, but no GUI test drives the window for this leaf; add a window-level drive. Replays Qt recording of type switching, shown rows, fixed/regex/flexible/min/max, example test text and ok/veto; regex-error wording loosened. Window glue not GUI-tested. Tests: crates/hydrus-gui-model/tests/model/string_match_editor.rs:74 the_string_match_editor_works_as_the_references_does (string_match_editor.json)"
+   }
   },
   {
    "id": "audit-network-options-additional-tags",
@@ -4226,7 +4490,13 @@
    "native": "crates/hydrus-gui/src/import_options_window.rs:253",
    "notes": [
     "Boolean controls reach FileFiltering options consumed by file import."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "source-restated",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "GUI test drives the editor and reads back the saved slice, with typed expected values (defaults from the Python source, no recording of this page). Consumers exist and are tested separately in hydrus-import, but not from the editor's output. Tag is shared with sizes and specific-default. Tests: crates/hydrus-gui/tests/gui/import_options_fields.rs:77 file_filtering_checkboxes_and_bounds_reach_the_importers_options; consumers hydrus-import/src/lib.rs:195,220 with hydrus-import/tests/import.rs:234,357"
+   }
   },
   {
    "id": "audit-network-options-note-conflict",
@@ -4239,7 +4509,13 @@
    "native": "crates/hydrus-gui/src/import_options_window.rs:285",
    "notes": [
     "Typed whitelist and source-to-destination name renames join merge-conflict and extension options."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "source-restated",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Drives the notes page and checks the saved slice, all typed (choice order restated from source; no recording). Consumer in hydrus-store/src/import/decode.rs:2904 is not exercised from here. Tests: crates/hydrus-gui/tests/gui/import_options_fields.rs:158 note_conflict_extension_whitelist_and_renames_reach_the_importers_options"
+   }
   },
   {
    "id": "audit-network-options-prefetch",
@@ -4252,7 +4528,13 @@
    "native": "crates/hydrus-gui/src/import_options_window.rs:385",
    "notes": [
     "Known hash/URL handling and neighbour-spam flags populate the prefetch slice."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "source-restated",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Real window drives hash/url checks, dispositive interlock and flags; expected values typed from source. Recorded summaries only cover the summary text. Consumer hydrus-download/src/predict.rs not exercised from the editor. Tests: crates/hydrus-gui/tests/gui/import_options_fields.rs:204 prefetch_checks_fetch_flags_and_the_dispositive_interlock_reach_the_importers_options; model/import_options_editor.rs:276 (summaries recorded)"
+   }
   },
   {
    "id": "audit-network-options-present",
@@ -4279,7 +4561,13 @@
    "native": "crates/hydrus-gui/src/import_options_window.rs:1021",
    "notes": [
     "Enabled size/unit and width/height controls populate optional validated bounds."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "source-restated",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Size/GIF/resolution bounds driven through the window incl. reopen and off; typed values, no recording. Validation of bounds (e.g. min above max) and unit choices are not compared with the reference. Tests: crates/hydrus-gui/tests/gui/import_options_fields.rs:78 file_filtering_checkboxes_and_bounds_reach_the_importers_options"
+   }
   },
   {
    "id": "audit-network-options-specific-default",
@@ -4292,7 +4580,13 @@
    "native": "crates/hydrus-gui/src/import_options_window.rs:889",
    "notes": [
     "Caller-visible kind list resolves inherited defaults; accepted specific slice overrides only its selected kinds."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "sound",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Recorded tab labels, descriptions, choices and custom-tab lists replayed against the model function; GUI test drives the real editor and checks only the selected kind is overridden. Tests: crates/hydrus-gui-model/tests/model/import_options_editor.rs:60 the_editors_lists_are_the_references (import_options_editor.json); crates/hydrus-gui/tests/gui/import_options_fields.rs:79; import_options_panel.rs fixture tests"
+   }
   },
   {
    "id": "audit-network-options-tag-fetch",
@@ -4305,7 +4599,13 @@
    "native": "crates/hydrus-gui/src/import_options_window.rs:963",
    "notes": [
     "Get-tags controls and new/redundant statuses decide which parsed/additional tags each service receives."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "source-restated",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Window drives per-service get-tags, new/inbox/archive gates and overwrite-deleted; saved slice and applies_to checked with typed expectations (no recording of the page). Consumer hydrus-download/src/content.rs:150 is not driven from the editor. Tests: crates/hydrus-gui/tests/gui/import_options_fields.rs:276 per_service_get_tags_and_new_or_redundant_gates_reach_the_importers_options"
+   }
   },
   {
    "id": "audit-network-parser-auto-links",
@@ -4455,7 +4755,13 @@
    "notes": [
     "Import/export selected processing steps in reference single-object/list JSON and compressed PNG. Clipboard/file import reviews atomic appended steps; selected exports retain execution order; accepted imports update draft previews, and parent cancellation invalidates exchange children.",
     "Mixed unsupported packages are rejected atomically, whereas the reference may append permitted entries and warn about rejected ones. Native uses a shared text/PNG review window."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "weak",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Carried, untagged. Recorded single/list JSON, clipboard append and atomic invalid import are replayed through the window and model; PNG only via the codec test, not the window. The leaf itself admits mixed unsupported packages are rejected atomically where the reference appends the permitted ones, so part of the behaviour is not matched or tested. Tests: crates/hydrus-gui/tests/gui/sidecars.rs:792 processing_exchange_reviews_append_and_parent_cancel_invalidates_children; crates/hydrus-gui-model/tests/model/string_processor_editor.rs:276; crates/hydrus-downloader-exchange/tests/interchange.rs:312 (processing_exchange.json/.png, Qt recording)"
+   }
   },
   {
    "id": "audit-network-processor-order",
@@ -4468,7 +4774,13 @@
    "native": "crates/hydrus-gui/src/string_processor_window.rs:195",
    "notes": [
     "Selected steps move in order and child acceptance returns a typed step to the parent draft."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "weak",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Coordinator override (rubric): the model test replays the recording well, but no GUI test drives the window for this leaf; add a window-level drive. Qt recording replayed: add/edit/delete/up/down, selection, step editor given/returned values. Window glue is thin and lifecycle-tested in formula_editors.rs:725. Tests: crates/hydrus-gui-model/tests/model/string_processor_editor.rs:204 the_string_processor_editor_works_as_the_references_does (string_processor_editor.json)"
+   }
   },
   {
    "id": "audit-network-processor-results",
@@ -4481,7 +4793,13 @@
    "native": "crates/hydrus-gui/src/string_processor_window.rs:195",
    "notes": [
     "Intermediate and final result tabs use the actual processor; examples propagate to child step tests."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "weak",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Coordinator override (rubric): the model test replays the recording well, but no GUI test drives the window for this leaf; add a window-level drive. Processed strings, starting-string tabs and example propagation to child step editors are compared with the recording at every step. Uses the real StringProcessor. Tests: crates/hydrus-gui-model/tests/model/string_processor_editor.rs:205 (same test)"
+   }
   },
   {
    "id": "audit-network-quality-csv",
@@ -4697,7 +5015,13 @@
    "native": "crates/hydrus-gui/src/filename_tagging_window.rs:594",
    "notes": [
     "Options mode shows one example path/tags and returns defaults into its owning folder draft."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "wrong",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "The native example path contradicts the reference: reference _PathChanged lists up to HOW_MANY_EXAMPLE_OBJECTS_TO_USE entries and keeps only files whose mime is in HC.ALLOWED_MIMES (else example_path is None), while native takes the first sorted regular file of any kind (a sidecar .txt would be chosen), and the test relies on that with a 1-byte 'pic 1.jpg' the reference would reject. The shown example tags 'filename:pic 1, imported' are a typed literal; no recording of the options panel's example output. Tests: crates/hydrus-gui/tests/gui/folders.rs:303 an_import_folders_filename_tagging_is_added_edited_and_deleted; crates/hydrus-gui/src/folders_window.rs:678 example_path"
+   }
   },
   {
    "id": "audit-network-tagging-number",
@@ -4710,7 +5034,13 @@
    "native": "crates/hydrus-gui-model/src/filename_tagging.rs:45",
    "notes": [
     "Manual tagging numbers each path from base/step, cleans number tags and preserves selected-only additions."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "sound",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "The GUI test drives the real filename-tagging dialog (namespace cleaning, base/step, selected-only tag kept); the model test replays the recorded filename_tagging.json number cases (incl. negative step) against the same ServiceTagging/row functions the window calls. Tests: crates/hydrus-gui/tests/gui/files_io_import_review.rs:230 files_are_numbered_from_a_base...; crates/hydrus-gui-model/tests/model/filename_tagging.rs rows_and_values_are_the_references"
+   }
   },
   {
    "id": "audit-network-tagging-regex",
@@ -4728,7 +5058,13 @@
     "Native Python-compatible regex errors preserve the reference warning prefix and validation boundary; detailed engine diagnostics may differ. The filename clipboard snippet follows the host separator, as the reference does.",
     "The simple tag autocomplete/paste box, sidecars, broader manual-import/folder parents, shared favourites editor IDs and export workflows remain separately assessed and are not claimed by this change.",
     "Rust model/GUI regressions are authored for root hosted CI; no local Cargo builds or tests were run."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "sound",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Both the real window and the model Editor replay oracle/fixtures/filename_rules.json step by step (quick add/edit/delete, regex add/remove, sort, errors, menus, reopen, resulting tags). Carried, no tag, but the tests are sound; tag them. Tests: crates/hydrus-gui/tests/gui/filename_rules.rs:23 real_lists_replay_reference_and_save_folder_consumers...; :281 attached_regex_menus...; crates/hydrus-gui-model/tests/model/filename_rules.rs"
+   }
   },
   {
    "id": "audit-network-tagging-sidecars",
@@ -4741,7 +5077,13 @@
    "native": "crates/hydrus-gui/src/filename_tagging_window.rs:115",
    "notes": [
     "Sidecar tab previews routes and opens the canonical import routers editor; accepted routers join local import settings."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "sound",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "GUI test drives the sidecars tab and routers editor into an import page; per-file preview strings come from sidecars::file_preview, which sidecar_previews.rs replays against the recorded sidecar_previews.json (60 files); router label from the sidecar_descriptions recording. Tests: crates/hydrus-gui/tests/gui/import_files.rs:339 files_are_imported_with_the_sidecars_tab_routers; crates/hydrus-gui-model/tests/model/sidecar_previews.rs; sidecar_descriptions.rs"
+   }
   },
   {
    "id": "audit-network-tagging-simple",
@@ -4758,7 +5100,13 @@
     "Qt unavailable clipboard shows a critical message and subsequently raises TypeError in the original SimplePanel handler; native preserves the draft and displays the recorded error title/text without that crash.",
     "Native UI presentation and shared autocomplete child are reused; no new exported windows or shared autocomplete reference leaves counted.",
     "Rust model/GUI regressions are authored for root hosted CI; no local Cargo builds/tests were run."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "sound",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "GUI window replays filename_simple.json (additive entry, selected union, paste, removal) through to manual-import seeds; directory/filename tags checked against filename_simple_paths.json. Carried, no tag, but sound; tag them. Tests: crates/hydrus-gui/tests/gui/filename_simple.rs:44 real_simple_actions_replay...; :300 folder_tag_child_is_staged...; crates/hydrus-gui-model/tests/model/filename_simple.rs"
+   }
   },
   {
    "id": "audit-options-about-credits",
@@ -9029,7 +9377,13 @@
    "notes": [
     "Reference debug action wires 'autocomplete delay mode' to the client diagnostics callback at this AppendMenu entry. The native Help/Command registry exposes no equivalent diagnostics action.",
     "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "weak",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Sets Flag::AutocompleteDelay directly and times search_tags; the Help > debug > gui actions menu entry is never clicked (only the menu model lists the label), and nothing checks the checked state. Reference skips the delay when exact_match and also delays GetMediaPredicates; native delays every search and the test only uses a wildcard query. Tracker notes ('no equivalent diagnostics action') are stale. Tests: crates/hydrus-store/tests/debug_autocomplete_delay.rs:14 autocomplete_delay_mode_makes_each_search_take_three_seconds"
+   }
   },
   {
    "id": "audit-options-help-debug-action-blurhash-mode",
@@ -9043,7 +9397,13 @@
    "notes": [
     "Reference debug action wires 'blurhash mode' to the client diagnostics callback at this AppendMenu entry. The native Help/Command registry exposes no equivalent diagnostics action.",
     "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "weak",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Flips the flag directly on the thumbnail loader; no menu click or checked state. Expected pixels come from the native recovery() function (circular), no recording. Reference also applies it in the second ClientCaches site (line 1218); not covered. Tracker notes are stale. Tests: crates/hydrus-gui/src/thumbnails.rs:336 blurhash_mode_draws_the_blurhash_in_place_of_the_stored_thumbnail"
+   }
   },
   {
    "id": "audit-options-help-debug-action-cache-report-mode",
@@ -9057,7 +9417,13 @@
    "notes": [
     "Reference debug action wires 'cache report mode' to the client diagnostics callback at this AppendMenu entry. The native Help/Command registry exposes no equivalent diagnostics action.",
     "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "weak",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Typed-literal message for one eviction on the thumbnail Cache; no menu path. Reference has three messages (adding, removing specific, removing oldest) and covers image and thumb caches; native tests only 'removing oldest' and the size format uses 'X/Y' human bytes rather than the reference's ConvertValueRangeToBytes. Stale tracker notes. Tests: crates/hydrus-gui-model/tests/model/debug_flags.rs:64 cache_report_mode_reports_each_eviction_with_the_sizes"
+   }
   },
   {
    "id": "audit-options-help-debug-action-callto-report-mode",
@@ -9103,7 +9469,13 @@
    "notes": [
     "Reference debug action wires 'clear all rendering caches' to the client diagnostics callback at this AppendMenu entry. The native Help/Command registry exposes no equivalent diagnostics action.",
     "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "weak",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Clicks the real menu and checks thumbnail cached_bytes becomes 0, but never asserts the image cache was populated first, so its keys().is_empty() is vacuous; reference also clears image tiles and the graphics-view thumbnail cache. No recording. Stale tracker notes. Tests: crates/hydrus-gui/tests/gui/debug_menu_actions.rs:271 clear_all_rendering_caches_empties_the_thumbnail_and_image_caches"
+   }
   },
   {
    "id": "audit-options-help-debug-action-clear-thumbnail-cache",
@@ -9121,7 +9493,13 @@
     "Native cache accounts decoded RGB/RGBA buffer bytes and 128 bytes for a missing-thumbnail entry. Reference HydrusBitmap may store compressed data. Renderer-held image clones, loader queues, metadata/icon caches and total process/GPU memory are outside this finite accounted budget. As in reference, admission may overflow by one incoming entry until maintenance; this is not a hard total-memory ceiling.",
     "Timeout uses monotonic last access and strict older-than expiry. Existing 25ms owned main collection ticks perform maintenance without requiring a new thumbnail request. Native inline day/hour/minute editing preserves untouched raw 299 seconds and enforces 300 seconds once edited; the reference duration-popup geometry remains outside this slice.",
     "No recorded Qt PNG shows the clear-action menu or post-clear state. The source-grounded reference QAction recording proves clear_thumbnail_cache plus notify_complete_thumbnail_reset and empty cache keys; fresh native menu/reload stills plus unchanged reset/generation/owner regressions support this action, without pixel parity. Historical Qt cache Options at 1 day and native saved 5 minutes are different fixture states."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "sound",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Real menu click empties the shared cache with no question or settings write and thumbnails reload; the model test replays the recorded reference clear trace against Cache::clear, and the fixture's debug label/published topics are checked. No tagged: line (carried). Tests: crates/hydrus-gui/tests/gui/thumbnail_cache.rs:155 staged_exact_byte_units_timeout_policy_clear_reopen_and_incarnation_retirement; crates/hydrus-gui-model/tests/model/thumbnail_cache.rs:6 byte_lru_soft_overflow_timeout_touch_policy_and_clear_match_actual_reference; oracle/fixtures/thumbnail_cache.json (record_thumbnail_cache.py)"
+   }
   },
   {
    "id": "audit-options-help-debug-action-close-and-reload-current-gui-session",
@@ -9139,7 +9517,13 @@
     "Already-running Store work finishes and removes its slot after retirement; its reply cannot replace pages. Native IO diagnostics use the existing main-window note instead of the Qt exception popup.",
     "Manual save-last-session, wider session/debug GUI/style families and parent/alias nodes receive no credit.",
     "Qt screenshot is post-reload first-root locked2-files search with tags and no displayed thumbnails; native export follows same reload consumer with decoded thumbnails. Compare tab names/first selection and legible controls, not whole-frame geometry or identical thumbnail capture timing. Native unique private slots differ from fixed Qt temporary name."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "sound",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Clicks the real menu, waits for the worker, and compares the reloaded tree, names, file lists, first-selection reset, shown page, no question, no leftover temp slot and closed originals against the recorded reference. Carried, no tag. Tests: crates/hydrus-gui/tests/gui/debug_session_reload.rs:155 actual_menu_snapshot_restores_order_resets_selection_and_keeps_closed_originals; :232 importer_logs_restore_with_new_queue_identity_and_paused_closed_owner; oracle/fixtures/debug_session_reload.json"
+   }
   },
   {
    "id": "audit-options-help-debug-action-daemon-report-mode",
@@ -9153,7 +9537,13 @@
    "notes": [
     "Reference debug action wires 'daemon report mode' to the client diagnostics callback at this AppendMenu entry. The native Help/Command registry exposes no equivalent diagnostics action.",
     "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "weak",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Drives the menu toggle and the real maintenance runtime, but expected strings are typed literals. Reference reports in DAEMON._DoPreCall on every firing before the job checks idle; native reports only after its gates allow, and only for the two ported daemons. No recording. Stale tracker notes. Tests: crates/hydrus-gui/tests/gui/debug_menu_actions.rs:415 daemon_report_mode_says_when_a_maintenance_daemon_does_a_job"
+   }
   },
   {
    "id": "audit-options-help-debug-action-db-report-mode",
@@ -9231,7 +9621,13 @@
     "The existing GUI-local per-request NetEngine pattern preserves ordinary policy/accounting; this does not claim joint scheduling/ceilings with a separately running daemon or all network-family consumers.",
     "Permanent GUI retirement cancellation is native owner policy; existing hidden work is allowed to complete, matching recorded Qt delivery.",
     "No parents, semantic aliases or new native window IDs receive credit."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "sound",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Real menu to prompt text, local HTTP via the NetEngine, question text/buttons, saved bytes, decoded clipboard text, forget/cancel/error paths and dismiss deadline all replayed from the recording. Carried, no tag. Tests: crates/hydrus-gui/tests/gui/debug_fetch.rs:~74 actual_menu_binary_save_decoded_clipboard_forget_cookie_headers_and_dismiss_deadline; :237 overlapping_held_jobs_popup_stop_error_and_cancelled_save_have_real_consumers; hidden_children_close..., ordinary_get_waits_for_saved_bandwidth...; oracle/fixtures/debug_fetch_url.json"
+   }
   },
   {
    "id": "audit-options-help-debug-action-file-import-report-mode",
@@ -9245,7 +9641,13 @@
    "notes": [
     "Reference debug action wires 'file import report mode' to the client diagnostics callback at this AppendMenu entry. The native Help/Command registry exposes no equivalent diagnostics action.",
     "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "weak",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Sets the flag directly on FileImporter; no menu. Only 4 of the ~25 reference messages (ClientImportFiles and ClientDB 'File import job ...') are emitted/tested, order differs (hash/done), typed literals. Stale tracker notes. Tests: crates/hydrus-import/tests/debug_reports.rs:11 file_import_report_mode_reports_the_import_job_as_it_goes"
+   }
   },
   {
    "id": "audit-options-help-debug-action-file-report-mode",
@@ -9259,7 +9661,13 @@
    "notes": [
     "Reference debug action wires 'file report mode' to the client diagnostics callback at this AppendMenu entry. The native Help/Command registry exposes no equivalent diagnostics action.",
     "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "weak",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Sets the flag directly; no menu. Covers 2 messages; native formats hash as hex and mime as Debug name and omits the mime from the thumbnail request, unlike the reference str((hash, mime)); reference's 'Adding thumbnail', 'Adding file from string', 'Changing file ext', 'Adding file to client file structure' reports are absent. Stale tracker notes. Tests: crates/hydrus-store/tests/debug_file_report.rs:10 file_report_mode_reports_file_and_thumbnail_path_requests"
+   }
   },
   {
    "id": "audit-options-help-debug-action-file-sort-report-mode",
@@ -9288,7 +9696,13 @@
    "notes": [
     "Reference debug action wires 'flush log' to the client diagnostics callback at this AppendMenu entry. The native Help/Command registry exposes no equivalent diagnostics action.",
     "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "sound",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Real menu click prints 'Flushing log' (the reference's only string) to the console and flushes; reads back via the debug_printed record. Behaviour is only a string, matching reference. Tests: crates/hydrus-gui/tests/gui/debug_menu_actions.rs:210 flush_log_prints_flushing_log"
+   }
   },
   {
    "id": "audit-options-help-debug-action-force-a-main-gui-layout-now",
@@ -9317,7 +9731,13 @@
    "notes": [
     "Reference debug action wires 'force database commit' to the client diagnostics callback at this AppendMenu entry. The native Help/Command registry exposes no equivalent diagnostics action.",
     "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "sound",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Real menu click; a copy of the main db file without its WAL contains the probe row, proving the commit actually happened. No recording needed for this behaviour. Tests: crates/hydrus-gui/tests/gui/debug_menu_actions.rs:218 force_database_commit_puts_everything_in_the_database_file"
+   }
   },
   {
    "id": "audit-options-help-debug-action-force-idle-mode",
@@ -9331,7 +9751,13 @@
    "notes": [
     "Reference debug action wires 'force idle mode' to the client diagnostics callback at this AppendMenu entry. The native Help/Command registry exposes no equivalent diagnostics action.",
     "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "sound",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Real menu toggles replay the recorded checked/reopened states, the recorded idle matrix is run through the real idle monitor, and the actual trash/deferred workers and session autosave consume the forced state; model test replays recorded worker entry eligibility. Shutdown rows and the cpu-busy answer are not replayed in the GUI test but the leaf is covered. Tests: crates/hydrus-gui/tests/gui/force_idle.rs:50 real_menu_checked_states_controller_matrix_activity_and_autosave_consumer; :~170 forced_idle_admits_real_trash_and_physical_passes_...; crates/hydrus-gui-model/tests/model/force_idle.rs; oracle/fixtures/force_idle_mode.json"
+   }
   },
   {
    "id": "audit-options-help-debug-action-graphics-view-thumbnail-update-report-mode",
@@ -9360,7 +9786,13 @@
    "notes": [
     "Reference debug action wires 'gui report mode' to the client diagnostics callback at this AppendMenu entry. The native Help/Command registry exposes no equivalent diagnostics action.",
     "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "weak",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Real menu toggle and key events, but typed literals and only key events; reference gui_report_mode also reports mouse events, manage-tags panel opening and list-box virtual size, none tested or ported. Stale tracker notes. Tests: crates/hydrus-gui/tests/gui/debug_menu_actions.rs:576 gui_report_mode_says_which_key_events_it_caught"
+   }
   },
   {
    "id": "audit-options-help-debug-action-hover-window-report-mode",
@@ -9389,7 +9821,13 @@
    "notes": [
     "Reference debug action wires 'idle report mode' to the client diagnostics callback at this AppendMenu entry. The native Help/Command registry exposes no equivalent diagnostics action.",
     "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "weak",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Real menu toggle, but typed literals and only two reasons are tested (120s boot block, forced). Reference also reports shutting down, user/mouse/API action blocked, options disabled, Turning ON/OFF; blocked_reasons has no 'Turning ON/OFF' and those paths are untested. The forced-off case maps to a 'shutting down' string. Stale tracker notes. Tests: crates/hydrus-gui/tests/gui/debug_menu_actions.rs:358 idle_report_mode_says_why_the_client_is_not_idle"
+   }
   },
   {
    "id": "audit-options-help-debug-action-induce-a-program-crash",
@@ -9451,7 +9889,13 @@
     "Native cancelled/dismissed-owner queue disposal is intentionally stronger than independent Qt CallLater callbacks after dismissal. Merely hidden existing jobs continue as in reference.",
     "Only this exact original Missing leaf is proposed. Broader Help/debug/popup/API/monitor/freeze families remain outside this claim; no parent/alias/Options MIME-mode credit.",
     "Qt recorder captures/drains actual scheduled setters with deterministic vocabulary; it does not execute25seconds of actual scheduler timing. Native replay injects owner clock and explicitly drains the same production tick. Qt PNG shows final two grown cards at24800ms; native initial is a different state and final is the corresponding logical state. Font-derived geometry is allowed to differ."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "sound",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Real menu click then every one of the 124 recorded CallLater deadlines, texts, titles and job flags replayed through the production tick against the recording (using recorded word cycle), cards compared to Store jobs. Carried, no tag. Tests: crates/hydrus-gui/tests/gui/debug_long_popup.rs:~60 actual_menu_and_toaster_replay_every_recorded_deadline_and_durable_string; dismissal_prunes_future_title_jobs...; hidden_launch_exit_cancel_rebind...; oracle/fixtures/debug_long_popup.json"
+   }
   },
   {
    "id": "audit-options-help-debug-action-make-a-modal-popup-in-five-seconds",
@@ -9465,7 +9909,13 @@
    "notes": [
     "Reference debug action wires 'make a modal popup in five seconds' to the client diagnostics callback at this AppendMenu entry. The native Help/Command registry exposes no equivalent diagnostics action.",
     "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "weak",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Real menu click, waits ~5s real time, checks title/pausable/cancellable and a 'Will auto-dismiss in ' prefix only. Reference publishes 'modal_message' (a modal dialog); native posts an ordinary toaster popup, which the test and DIFFERENCES do not call out. Countdown values, gauge, 10 s dismissal, cancel stopping the loop are untested; no recording. Stale tracker notes. Tests: crates/hydrus-gui/tests/gui/debug_menu_actions.rs:145 modal_popups_arrive_after_five_seconds_counting_down_and_only_one_can_be_cancelled"
+   }
   },
   {
    "id": "audit-options-help-debug-action-make-a-new-page-in-five-seconds",
@@ -9483,7 +9933,13 @@
     "Merely hidden Main receives existing work without being raised; new native GUI invocation while hidden is refused. Real Qt minimized delivery was recorded, while backend-specific native minimized state remains a hosted/platform limit. Native accepted-exit/rebind/destruction permanently disposes pending requests more strongly than independent Qt backend callbacks.",
     "The separate refresh-pages-menu-in-five-seconds action remains absent and unclaimed. Native already regenerates current facts on opening; no fabricated refresh operation, evidence-only alias promotion or broader diagnostics completion is proposed. Parents/aliases/new IDs count0.",
     "Qt captures the delivered blank query with empty predicates before a search; native export follows an additional Everything query and decoded thumbnails. Compare tab/domain presence and native consumer visibility, not identical result state. Real Qt minimized delivery is recorded; native minimized backend is not proved by headless hide."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "sound",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Real menu click captures the location at menu time; owned-clock deadlines, hidden delivery, current-notebook placement, empty predicates, locations and a real Store query are checked against the recording (5 s delay, new_page_query). Owned clock instead of real 5 s is documented. Carried, no tag. Tests: crates/hydrus-gui/tests/gui/debug_delayed_pages.rs:~90 menu_snapshot_overlapping_hidden_delivery_current_notebook_and_real_query; pages_share_popup_deadlines...; cancel_exit_preserves_query...; background_delivery_preserves_the_open_choosers...; oracle/fixtures/debug_delayed_pages.json"
+   }
   },
   {
    "id": "audit-options-help-debug-action-make-a-non-cancellable-modal-popup-in-five-seconds",
@@ -9497,7 +9953,13 @@
    "notes": [
     "Reference debug action wires 'make a non-cancellable modal popup in five seconds' to the client diagnostics callback at this AppendMenu entry. The native Help/Command registry exposes no equivalent diagnostics action.",
     "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "weak",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Real menu click and real 5 s wait, but the reference's job is a modal dialog (modal_message); native posts an ordinary toast popup (DIFFERENCES says so). Test only checks title, not pausable, one of two cancellable and a text prefix: no gauge, no countdown progression, no cancel-stops-it, and the non-cancellable job is only inferred from the count. Tracker note ('no equivalent action') is stale. Tests: crates/hydrus-gui/tests/gui/debug_menu_actions.rs:146 modal_popups_arrive_after_five_seconds_counting_down_and_only_one_can_be_cancelled"
+   }
   },
   {
    "id": "audit-options-help-debug-action-make-a-parentless-text-ctrl-dialog",
@@ -9530,7 +9992,13 @@
     "Native permanent GUI-retirement disposal is stronger than independent reference background callbacks. Already-published completed jobs retain existing toaster dismissal ownership; broader debug/job/cookie/freeze/monitor/API families stay outside this finite leaf.",
     "Import-favourites delete is already implemented with an explicit prior Partial/count=false packet and single-row reference ValueError; it receives no evidence-only completion or source changes. Parents, aliases and new native IDs receive zero credit.",
     "Actual Qt recording forwards the real CallLater/background SingleJob and messagepublication and observes real elapsed 5054.124/6002.523ms. Native tests inject this owner clock and call the production tick at 4999/5000/5999/6000ms; these prove deadline admission/order/noearly publication, not physical five-second native timer latency or equality of Qt/native timestamps."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "sound",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Clicks the real help>debug>gui actions entry twice, drives the production tick with an injected clock at 4999/5000/5999/6000 ms, and compares text/title/done/pausable/cancellable of the stored jobs and the cards to the recording of the real Qt CallLater/ShowText. Covers the whole leaf. The test has no '// leaf:' tag (leaf is carried), so it should be tagged; the notes are long ledger prose, not stale. Tests: crates/hydrus-gui/tests/gui/debug_delayed_popup.rs:46 actual_menu_overlapping_deadlines_hidden_progress_store_reopen_and_rendered_cards; oracle/record_debug_delayed_popup.py, oracle/fixtures/debug_delayed_popup.json"
+   }
   },
   {
    "id": "audit-options-help-debug-action-make-a-qmessagebox",
@@ -9544,7 +10012,13 @@
    "notes": [
     "Reference debug action wires 'make a QMessageBox' to the client diagnostics callback at this AppendMenu entry. The native Help/Command registry exposes no equivalent diagnostics action.",
     "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "source-restated",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Real menu click and real message window; title 'Warning' matches ShowWarning. Expected text is only a starts_with literal of the Python string (the rest is the native const MESSAGE_BOX_TEXT, never compared in full); no recording. Tracker note is stale. Tests: crates/hydrus-gui/tests/gui/debug_menu_actions.rs:90 make_a_qmessagebox_shows_the_test_warning"
+   }
   },
   {
    "id": "audit-options-help-debug-action-make-some-popups",
@@ -9558,7 +10032,13 @@
    "notes": [
     "Reference debug action wires 'make some popups' to the client diagnostics callback at this AppendMenu entry. The native Help/Command registry exposes no equivalent diagnostics action.",
     "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "weak",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Native leaves out the user-call, auto-account, gap-downloader and network-job popups (DIFFERENCES). Tests check the six numbered, long text, gauge, error and three delayed texts by typed literals (count of delayed ones, not the 0.5 s spacing); title/file/merge/unicode popups are only partly checked in the model test and not through the menu. No recording. Tracker note is stale. Tests: crates/hydrus-gui/tests/gui/debug_menu_actions.rs:100 make_some_popups_throws_the_reference_s_varied_popups_then_three_delayed_ones; crates/hydrus-gui-model/tests/model/debug_actions.rs:10 some_popups_are_the_reference_s_less_its_callbacks"
+   }
   },
   {
    "id": "audit-options-help-debug-action-media-load-report-mode",
@@ -9602,7 +10082,13 @@
    "notes": [
     "Reference debug action wires 'network report mode' to the client diagnostics callback at this AppendMenu entry. The native Help/Command registry exposes no equivalent diagnostics action.",
     "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "weak",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Sets the flag directly (no menu click), drives the real engine against a local server and checks the redirect line and an error prefix against typed strings. Reference also reports domain-manager headers, request/response headers and URL class lookups; native does not (DIFFERENCES). The menu entry's reference semantics (clearing silent) are not mirrored by menu_bar's plain flip(). Tests: crates/hydrus-net/tests/debug_reports.rs:14 network_report_mode_reports_redirects_and_errors_unless_silent"
+   }
   },
   {
    "id": "audit-options-help-debug-action-network-report-mode-silent",
@@ -9616,7 +10102,13 @@
    "notes": [
     "Reference debug action wires 'network report mode (silent)' to the client diagnostics callback at this AppendMenu entry. The native Help/Command registry exposes no equivalent diagnostics action.",
     "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "wrong",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Reference ClientGUI._SwitchBoolean: the silent entry flips network_report_mode AND sets silent=True (prints to console), and the plain entry clears silent. Native flips only its own flag and report_network needs NetworkReport on, so clicking 'silent' alone reports nothing, and network-then-silent leaves reporting on where the reference turns it off. The test sets both flags directly, bypassing the menu, and only asserts that nothing reaches the sink (not that it goes to the console). Tests: crates/hydrus-net/tests/debug_reports.rs:15 (same test); native menu: crates/hydrus-gui/src/menu_bar.rs:799 Command::DebugFlag flip()"
+   }
   },
   {
    "id": "audit-options-help-debug-action-potential-duplicates-report-mode",
@@ -9796,7 +10288,13 @@
    "notes": [
     "Reference debug action wires 'reset multi-column list settings to default' to the client diagnostics callback at this AppendMenu entry. The native Help/Command registry exposes no equivalent diagnostics action.",
     "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "weak",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Only the question text is shown and answered no (compared with the native const RESET_COLUMNS_QUESTION, circular). The yes path does nothing because hydrus-rs saves no column widths (DIFFERENCES), and is untested. Tracker note is stale. Tests: crates/hydrus-gui/tests/gui/debug_menu_actions.rs:178 reset_multi_column_list_settings_asks_the_reference_s_question"
+   }
   },
   {
    "id": "audit-options-help-debug-action-review-current-network-jobs",
@@ -9810,7 +10308,13 @@
    "notes": [
     "Reference debug action wires 'review current network jobs' to the client diagnostics callback at this AppendMenu entry. The native Help/Command registry exposes no equivalent diagnostics action.",
     "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "weak",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Only asserts a visible network-jobs window exists after the click: no title ('review network jobs') or content check. Presence instead of content. Tracker note is stale. Tests: crates/hydrus-gui/tests/gui/debug_menu_actions.rs:301 review_current_network_jobs_opens_the_jobs_review"
+   }
   },
   {
    "id": "audit-options-help-debug-action-review-threads",
@@ -9944,7 +10448,13 @@
    "notes": [
     "Reference debug action wires 'save 'last session' gui session' to the client diagnostics callback at this AppendMenu entry. The native Help/Command registry exposes no equivalent diagnostics action.",
     "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "weak",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Real menu click and real store, but only asserts the 'last session' row exists with non-empty pages; the saved content is not compared with the open pages or the reference's session (changed-page-data, clean-data fleshing). Presence only. Tests: crates/hydrus-gui/tests/gui/debug_menu_actions.rs:188 save_last_session_writes_the_current_pages_now"
+   }
   },
   {
    "id": "audit-options-help-debug-action-scan-file-storage-folders",
@@ -9958,7 +10468,13 @@
    "notes": [
     "Reference debug action wires 'scan file storage folders' to the client diagnostics callback at this AppendMenu entry. The native Help/Command registry exposes no equivalent diagnostics action.",
     "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "source-restated",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Drives the real menu, picker title 'Select directory', cancel path and result text; native scan logic matches TryToGetPresumptiveSubfolderPathsBeneathLocation line by line. Expected values are typed literals (3 subfolders, limits, 'Too many files!'), no recording; initial picker directory (DB dir) not checked. Tests: crates/hydrus-gui/tests/gui/debug_menu_actions.rs:531 scan_file_storage_folders_asks_for_a_directory_and_says_what_it_found; crates/hydrus-gui-model/tests/model/debug_actions.rs:68 scan_file_storage_folders_finds_the_prefix_folders_or_gives_up_quickly"
+   }
   },
   {
    "id": "audit-options-help-debug-action-shortcut-report-mode",
@@ -9972,7 +10488,13 @@
    "notes": [
     "Reference debug action wires 'shortcut report mode' to the client diagnostics callback at this AppendMenu entry. The native Help/Command registry exposes no equivalent diagnostics action.",
     "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "weak",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Toggles via the real menu and presses real keys. Unmatched line and 'matched on \"main_gui\" set to' prefix are typed; the command is printed as a number rather than the reference's repr(command), only the GetCommand-level messages exist (not the passing-through/parent/key-ord reports), and the unmatched text omits the reference's variants. Partial coverage, no recording. Tests: crates/hydrus-gui/tests/gui/debug_menu_actions.rs:390 shortcut_report_mode_says_what_a_shortcut_matched"
+   }
   },
   {
    "id": "audit-options-help-debug-action-show-env",
@@ -9986,7 +10508,13 @@
    "notes": [
     "Reference debug action wires 'show env' to the client diagnostics callback at this AppendMenu entry. The native Help/Command registry exposes no equivalent diagnostics action.",
     "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "source-restated",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Real menu click; popup text checked against the live process environment and a typed model case for DumpEnv's sort/PATH/DIRS splitting. Native env_text matches DumpEnv; expected values are typed from the source, no recording. Tests: crates/hydrus-gui/tests/gui/debug_menu_actions.rs:242 show_env_prints_and_pops_up_the_environment; crates/hydrus-gui-model/tests/model/debug_actions.rs:51 modal_countdown_and_env_dump_read_as_the_reference_s"
+   }
   },
   {
    "id": "audit-options-help-debug-action-show-scheduled-jobs",
@@ -10030,7 +10558,13 @@
    "notes": [
     "Reference debug action wires 'similar files metadata generation report mode' to the client diagnostics callback at this AppendMenu entry. The native Help/Command registry exposes no equivalent diagnostics action.",
     "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "source-restated",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Calls perceptual_hash with the flag set directly (no menu) and compares the eight lines with typed strings from ClientImagePerceptualHashes. Native omits the reference's 'loading image' line and shapes come from the native raster; no recording of the reference. Tests: crates/hydrus-media/tests/debug_reports.rs:10 phash_generation_report_mode_reports_each_stage"
+   }
   },
   {
    "id": "audit-options-help-debug-action-simulate-a-wake-from-sleep",
@@ -10059,7 +10593,13 @@
    "notes": [
     "Reference debug action wires 'simulate program exit signal' to the client diagnostics callback at this AppendMenu entry. The native Help/Command registry exposes no equivalent diagnostics action.",
     "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "weak",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Asserts only a test-only EXIT_REQUESTED atomic set by the action itself, which nothing in production reads; that slint::quit_event_loop actually stops the loop (the leaf) is not exercised. Stand-in flag. Tests: crates/hydrus-gui/tests/gui/debug_menu_actions.rs:262 simulate_program_exit_signal_stops_the_event_loop"
+   }
   },
   {
    "id": "audit-options-help-debug-action-subprocess-report-mode",
@@ -10073,7 +10613,13 @@
    "notes": [
     "Reference debug action wires 'subprocess report mode' to the client diagnostics callback at this AppendMenu entry. The native Help/Command registry exposes no equivalent diagnostics action.",
     "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "weak",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Calls the model's test_call with the flag set directly and checks a loose 'KWargs are: ' prefix and a substring. Native prints a Rust arg list, not Python kwargs, and omits the env dump and the 'stdout:/stderr:/No stdout or stderr came back.' reports (DIFFERENCES). Not driven through the menu; no recording. Tests: crates/hydrus-gui-model/tests/model/debug_flags.rs:36 subprocess_report_mode_reports_the_call_before_it_is_made"
+   }
   },
   {
    "id": "audit-options-help-debug-action-subscription-manager-snapshot",
@@ -10102,7 +10648,13 @@
    "notes": [
     "Reference debug action wires 'subscription report mode' to the client diagnostics callback at this AppendMenu entry. The native Help/Command registry exposes no equivalent diagnostics action.",
     "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "weak",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Uses the SubscriptionQueryLegacy wording ('Paused/dead status is a/b'); the live reference path (ClientImportSubscriptionQuery.IsSyncDue, used by ClientImportSubscriptions) says 'Paused/dead/container status is a/b/c', so the native text differs from what the current client prints. Only that one of the many subscription report points is implemented. Flag set directly, not via the menu. Possibly wrong rather than weak. Tests: crates/hydrus-download/tests/debug_reports.rs:16 subscription_report_mode_says_why_each_query_is_or_is_not_due"
+   }
   },
   {
    "id": "audit-options-help-debug-action-thumbnail-debug-mode",
@@ -10131,7 +10683,13 @@
    "notes": [
     "Reference debug action wires 'use faulthandler to log crashes' to the client diagnostics callback at this AppendMenu entry. The native Help/Command registry exposes no equivalent diagnostics action.",
     "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "weak",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Real menu toggle and check state, but the mechanism is a Rust panic hook writing a new 'client crash - N.log' file, tested with a thread panic: not faulthandler (fatal signals, writes into the client log; segfaults not caught). The reference's 'DO NOT PLAY ANYTHING WITH MPV...' popup on enabling is not shown or tested. Stand-in behaviour, documented in DIFFERENCES. Tests: crates/hydrus-gui/tests/gui/debug_menu_actions.rs:492 crash_logging_writes_panics_to_a_log_until_turned_off"
+   }
   },
   {
    "id": "audit-options-help-debug-action-warning-mega-laggy-print-memory-use-snapshot-diff",
@@ -10190,7 +10748,13 @@
    "notes": [
     "Reference debug action wires 'what is this?' to the client diagnostics callback at this AppendMenu entry. The native Help/Command registry exposes no equivalent diagnostics action.",
     "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "source-restated",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Real menu click, title 'Information' and dismissal checked. Body is compared with the native const PROFILE_MESSAGE (circular) plus a starts_with literal; the model test only checks its ending. The const does equal the Python string, but no test compares the full text to the reference. Tests: crates/hydrus-gui/tests/gui/debug_menu_actions.rs:79 profiling_what_is_this_shows_the_profile_information"
+   }
   },
   {
    "id": "audit-options-help-debug-action-what-is-this-object",
@@ -12880,7 +13444,13 @@
    "notes": [
     "Sets check_now on matching saved import-folder records, or all records for check all; the daemon import-folder scheduler performs the work. The native menu names come from Store rather than static test data.",
     "Store flag and scheduler connection are inspected; existing menu GUI test does not directly replay this named/all dispatch boundary."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "source-restated",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Real menu click sets check_now on all folders and the import-folder worker then checks; menu entries (check all, separator, names) are replayed from the recorded main_menu.json, but the flag effect is a typed literal restated from _CheckImportFolder, not recorded. Native also omits the reference's 'Import folders are currently paused...' text when checking while paused. Tracker note saying the all/named boundary lacks a test is stale. Tests: crates/hydrus-gui/tests/gui/files_io_file_menu.rs:263 import_folders_are_paused_and_checked_from_the_file_menu_and_the_worker_obeys; crates/hydrus-gui-model/tests/model/folder_runs.rs; main_menu.rs import_and_export_folders_are_offered_to_run_now"
+   }
   },
   {
    "id": "audit-options-menu-menu-file-check-import-folder-now-folder",
@@ -12894,7 +13464,13 @@
    "notes": [
     "Sets check_now on matching saved import-folder records, or all records for check all; the daemon import-folder scheduler performs the work. The native menu names come from Store rather than static test data.",
     "Store flag and scheduler connection are inspected; existing menu GUI test does not directly replay this named/all dispatch boundary."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "source-restated",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Clicking a named folder flags only it (via the real menu, names from the store, recorded menu shape in main_menu.json); effect asserted with typed literals from the Python source, no recording of the check-now flag. The reference's paused-state message is not ported. Stale note claims no direct dispatch test. Tests: crates/hydrus-gui/tests/gui/files_io_file_menu.rs:262 import_folders_are_paused_and_checked_from_the_file_menu_and_the_worker_obeys"
+   }
   },
   {
    "id": "audit-options-menu-menu-file-database-directory",
@@ -12908,7 +13484,13 @@
    "notes": [
     "Launches the executable parent directory or the actual Store directory through the OS launcher; database-directory target and rendered menu pointer interaction are asserted in existing GUI regressions.",
     "Installation directory means the Rust executable parent, not the Python source installation path."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "source-restated",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Real menu click launches store.dir() through a substituted launcher; menu labels are in the recorded main_menu.json, but the target (reference GetDBDir) is asserted from source. Tests: crates/hydrus-gui/tests/gui/files_io_file_menu.rs:179 open_entries_launch_directories_and_manage_entries_open_the_folder_lists"
+   }
   },
   {
    "id": "audit-options-menu-menu-file-exit",
@@ -12922,7 +13504,13 @@
    "notes": [
     "Dispatches Slint CloseRequested; main.rs keeps frame geometry, then after the event loop saves the last session, forgets closed-page queues and stops the daemon.",
     "No reference exit-confirmation flow or shutdown-maintenance/restart options."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "source-restated",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Real menu and close path: confirmation question (typed from ClientGUI.TryToExit), decline keeps client, accept closes, plain exit leaves shutdown work alone. Question text and flow are restated from source, not recorded; the page-with-importers variant and low-disk-space prompt are not covered. Stale note says there is no exit-confirmation flow. Tests: crates/hydrus-gui/tests/gui/files_io_file_menu.rs:112 exit_restart_and_force_maintenance_ask_as_the_reference_does_and_close_the_client"
+   }
   },
   {
    "id": "audit-options-menu-menu-file-exit-force-maintenance",
@@ -12936,7 +13524,13 @@
    "notes": [
     "'exit/force maintenance' is emitted as a disabled todo()/command-less entry. No callback executes its reference workflow.",
     "No native Command for 'exit/force maintenance'."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "source-restated",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "The test runs exit/force maintenance with the option off and recently done and asserts last_done advances and the window closes, so the shutdown work really runs. Expectations restated from source. Stale note says it is a disabled todo/command-less entry and has no Command; it is implemented (Command::ExitForceMaintenance). Tests: crates/hydrus-gui/tests/gui/files_io_file_menu.rs:114 same test (force-maintenance section)"
+   }
   },
   {
    "id": "audit-options-menu-menu-file-export-folders",
@@ -12949,7 +13543,13 @@
    "native": null,
    "notes": [
     "'export folders' toggles the matching FolderSettings pause flag in Store. Menu facts read it back and the daemon's folder workers consume the persisted pause setting."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "sound",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Real pause > export folders check item (state shown ticked) flips the persisted flag and hydrus_download::work_export_folders runs nothing while paused, then runs once unpaused; menu shape recorded in main_menu.json and the worker is separately tested against export_folder_run.json. Tests: crates/hydrus-gui/tests/gui/files_io_file_menu.rs:383 export_folders_are_paused_and_run_from_the_file_menu_and_the_worker_obeys"
+   }
   },
   {
    "id": "audit-options-menu-menu-file-import-files",
@@ -12963,7 +13563,13 @@
    "notes": [
     "'import files…' calls the bound local file import window hook; changes reach its real import queue or persisted folder configuration. Child editor coverage is linked separately.",
     "The menu entry is reachable; its complete downstream editor workflow is a separate assessed family."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "sound",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Menu entry opens the real review-imports window and runs the full flow to an import page; the window's rows/progress strings are replayed from local_import_dialog.json in the model tests. Tests: crates/hydrus-gui/tests/gui/import_files.rs:79 files_given_are_reviewed_then_imported; files_io_import_review.rs; crates/hydrus-gui-model/tests/model/local_import_dialog.rs"
+   }
   },
   {
    "id": "audit-options-menu-menu-file-import-folders",
@@ -12976,7 +13582,13 @@
    "native": null,
    "notes": [
     "'import folders' toggles the matching FolderSettings pause flag in Store. Menu facts read it back and the daemon's folder workers consume the persisted pause setting."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "sound",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Real menu pause > import folders flips the persisted flag, menu shows it ticked, and work_on_import_folder does not check while paused then checks and imports a file once unpaused; menu shape recorded. Tests: crates/hydrus-gui/tests/gui/files_io_file_menu.rs:261 import_folders_are_paused_and_checked_from_the_file_menu_and_the_worker_obeys"
+   }
   },
   {
    "id": "audit-options-menu-menu-file-installation-directory",
@@ -12990,7 +13602,13 @@
    "notes": [
     "Launches the executable parent directory or the actual Store directory through the OS launcher; database-directory target and rendered menu pointer interaction are asserted in existing GUI regressions.",
     "Installation directory means the Rust executable parent, not the Python source installation path."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "source-restated",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Real menu click launches the executable's parent via a substituted launcher; reference opens HC.BASE_DIR, so the target is a documented intentional difference asserted from source, not recorded. Tests: crates/hydrus-gui/tests/gui/files_io_file_menu.rs:180 open_entries_launch_directories_and_manage_entries_open_the_folder_lists"
+   }
   },
   {
    "id": "audit-options-menu-menu-file-manage-export-folders",
@@ -13004,7 +13622,13 @@
    "notes": [
     "'manage export folders…' calls the bound folder-management window hook; changes reach its real import queue or persisted folder configuration. Child editor coverage is linked separately.",
     "The menu entry is reachable; its complete downstream editor workflow is a separate assessed family."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "sound",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Real menu click opens the export-folders list window titled 'edit export folders' (recorded in folder_manager_lifecycle.json); the list contents and editor are covered by their own recorded folders tests. Leaf names only the entry. Tests: crates/hydrus-gui/tests/gui/files_io_file_menu.rs:182 open_entries_launch_directories_and_manage_entries_open_the_folder_lists"
+   }
   },
   {
    "id": "audit-options-menu-menu-file-manage-import-folders",
@@ -13018,7 +13642,13 @@
    "notes": [
     "'manage import folders…' calls the bound folder-management window hook; changes reach its real import queue or persisted folder configuration. Child editor coverage is linked separately.",
     "The menu entry is reachable; its complete downstream editor workflow is a separate assessed family."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "sound",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Real menu click opens the import-folders list window titled 'edit import folders' (recorded title); the dialog body is covered by separate recorded folder tests. Tests: crates/hydrus-gui/tests/gui/files_io_file_menu.rs:181 open_entries_launch_directories_and_manage_entries_open_the_folder_lists"
+   }
   },
   {
    "id": "audit-options-menu-menu-file-options",
@@ -13051,7 +13681,13 @@
     "Qt recording and required validation are Linux; platform target normalization is documented while raw saved strings remain unchanged. Windows/macOS success not inferred.",
     "Launcher arguments are tested with existing launcher substituted; real OS file manager behavior and selection are outside leaf.",
     "No path picker/confirmation or broad File/database menu completion follows from this leaf."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "sound",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Real File menu click and real Options cancel/apply/reopen replayed against quick_export_directory.json (recorded launch targets, fallback, errors); the saved ExportSettings consumer is exercised. Carried, no tag, but sound; tag it. Tests: crates/hydrus-gui/tests/gui/quick_export_directory.rs:71 actual_file_menu_replays_saved_paths_fallback_errors_cancel_and_reopen; :251; crates/hydrus-gui-model/tests/model/quick_export_directory.rs"
+   }
   },
   {
    "id": "audit-options-menu-menu-file-restart",
@@ -13065,7 +13701,13 @@
    "notes": [
     "'restart' is emitted as a disabled todo()/command-less entry. No callback executes its reference workflow.",
     "No native Command for 'restart'."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "weak",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Question flow and the RESTART flag are asserted, but the consumer that actually relaunches the process (hydrus-gui/src/main.rs:102) is untested, so a flag stands in for the restart. Question text is restated from source. Stale note says it is a disabled todo with no Command; it is implemented. Tests: crates/hydrus-gui/tests/gui/files_io_file_menu.rs:113 exit_restart_and_force_maintenance_ask_as_the_reference_does_and_close_the_client"
+   }
   },
   {
    "id": "audit-options-menu-menu-file-run-all",
@@ -13079,7 +13721,13 @@
    "notes": [
     "Sets run_now on matching persisted ExportFolders entries, or all entries for run all; the daemon export-folder scheduler consumes those settings.",
     "Named/all menu-to-scheduler boundary lacks a focused GUI regression in the inspected evidence."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "source-restated",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Real menu 'run all' flags every export folder and the scheduler runs all three and clears flags; labels (run all, separator, names) match the recorded main_menu.json; flag semantics typed from _RunExportFolder, not recorded, and the paused-state message is not ported. Stale note says no focused regression. Tests: crates/hydrus-gui/tests/gui/files_io_file_menu.rs:385 export_folders_are_paused_and_run_from_the_file_menu_and_the_worker_obeys"
+   }
   },
   {
    "id": "audit-options-menu-menu-file-run-export-folder-now-folder",
@@ -13093,7 +13741,13 @@
    "notes": [
     "Sets run_now on matching persisted ExportFolders entries, or all entries for run all; the daemon export-folder scheduler consumes those settings.",
     "Named/all menu-to-scheduler boundary lacks a focused GUI regression in the inspected evidence."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "source-restated",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Named entry flags only that folder and the worker runs it once and clears the flag; menu shape recorded, flag behaviour restated from source. Paused-state message of the reference not ported. Stale note claims no focused regression. Tests: crates/hydrus-gui/tests/gui/files_io_file_menu.rs:384 export_folders_are_paused_and_run_from_the_file_menu_and_the_worker_obeys"
+   }
   },
   {
    "id": "audit-options-menu-menu-help-8chan-moe-t-hydrus-network-general",
@@ -19570,7 +20224,13 @@
    "native": null,
    "notes": [
     "Rust keeps selected ticks in an isolated state and calls the owner with the normalized LocationContext on Apply; cancel and close release the slot without a handoff."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "sound",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Apply hands the normalized context to the owner, cancel and owner-close release the slot with no handoff, driven through the real locations window; dialog semantics are simple. Close by window X shares the cancel closure and is not driven. Tracker note fine. Tests: crates/hydrus-gui/tests/gui/write_autocomplete.rs:721 write_domain_buttons_query_counts_and_own_cancelled_location_child; crates/hydrus-gui/tests/gui/search_domains.rs:378 the_domain_buttons_change_what_the_page_searches"
+   }
   },
   {
    "id": "audit-shared-location-current",
@@ -19583,7 +20243,13 @@
    "native": null,
    "notes": [
     "Native tick rows are derived from the current service registry and draft LocationContext; the existing domain regression compares the reference’s current-service menu/checklist states."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "sound",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Recorded tick list (labels, order, normal and advanced mode) and surplus normalisation replayed against the functions the locations window calls; GUI test checks initial ticks in the window with typed values. The recorded 'checked' flags are compared with a test-local computation, not the window's ticked_for. Tests: crates/hydrus-gui/tests/gui/search_domains.rs:146 the_domain_buttons_are_the_references (search_domains.json); :378 the_domain_buttons_change_what_the_page_searches"
+   }
   },
   {
    "id": "audit-shared-location-deleted",
@@ -19611,7 +20277,13 @@
    "native": null,
    "notes": [
     "The existing domain regression checks that selected combined domains remove redundant current/deleted service entries, and the Rust toggle refreshes normalized ticks immediately."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "sound",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "The recording's `surplus` cases (ClearSurplusLocalFilesServices) are replayed against domains::ticked_location, the same function locations_window.rs calls on every toggle; a GUI test drives the toggle and sees 'my files' unticked when the combined domain is ticked, and Cancel keeps the page. Covers the leaf. Tests: crates/hydrus-gui-model/tests/model/ (none); crates/hydrus-gui/tests/gui/search_domains.rs:147 the_domain_buttons_are_the_references (surplus cases from search_domains.json via ticked_location) and :~366-405 the_domain_buttons_change_what_the_page_searches (drives the locations window toggle)"
+   }
   },
   {
    "id": "audit-shared-sidecar-destination-json",
@@ -19626,7 +20298,13 @@
     "JSON sidecar destination object names use the actual ordered queue with add, edit the first selected row, double-click editing, up/down from the correct edge and X/delete confirmation (Remove N selected?). Enter Text child asks Enter the JSON Object name., rejects empty input with Cannot enter blank text here!, and preserves accepted duplicate names, spaces, whitespace-only names and embedded newlines exactly. Literal row identities and extended selection survive reorder; accepting/cancelling a text child stages/discards only its name. Apply returns the complete native exporter; cancelling or closing the exporter/router owner closes descendants and suppresses retained child/parent callbacks. Saved router settings reach the real manual export worker, merging nested duplicate/newline keys into an existing JSON sidecar while preserving unrelated object contents.",
     "The native queue uses the existing ListTable/SessionDialog geometry and omits the reference explanatory queue hover tooltip; no native window or reference alias is counted as a second implementation leaf.",
     "Sidecar source/exporter/router parent assessments remain Partial for their independent boundaries. Native Rust regressions are authored for root asynchronous CI; reference recording and cached Slint compilation passed locally."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "source-restated",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Queue add/edit/up/down/delete/blank-veto and child strings are driven through the real window and replayed step by step against a recording, plus a model replay of the same. The last part of the leaf (saved router reaches the real export worker, merging nested duplicate/newline keys into an existing JSON file and keeping unrelated content) has typed-literal expectations only: no recording of the reference writing a nested-name JSON sidecar exists (router_exchange.json 'consumer' is a TXT urls sidecar). Tracker has no tag; test is untagged (carried). Also omits the reference queue tooltip (noted). Tests: crates/hydrus-gui/tests/gui/sidecars.rs:1624 json_object_names_use_staged_text_children_and_saved_router_worker; crates/hydrus-gui-model/tests/model/sidecar_editors.rs json_object_name_queue_replays_literal_reference_rows_and_exporter_values (fixture sidecar_json_names.json)"
+   }
   },
   {
    "id": "audit-shared-sidecar-destination-note",
@@ -19639,7 +20317,13 @@
    "native": null,
    "notes": [
     "The forced-name checkbox enables the note-name input and preserves its value in the exporter draft; the existing exporter replay checks these fields."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "weak",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Recorded forced_name steps are replayed on ExporterEditor only. No GUI test sets this control through the sidecar node window (crates/hydrus-gui/src/sidecars_window.rs reads it into the editor at ~337-354, untested), so only the model replay of the recording covers it. Nothing drives the checkbox enabling the name input or the name being kept in the applied exporter through the window. Tests: crates/hydrus-gui-model/tests/model/sidecar_editors.rs:226-300 the_sidecar_editors_show_and_edit_as_the_reference_does (replays oracle/fixtures/sidecar_editors.json against ImporterEditor/ExporterEditor); GUI :249 only asserts node.get_show_forced() after switching to notes"
+   }
   },
   {
    "id": "audit-shared-sidecar-destination-tags",
@@ -19652,7 +20336,13 @@
    "native": null,
    "notes": [
     "Tag media inputs select a live tag service; sources also choose stored versus display tags. Destination editing warns when its tag service has disappeared instead of silently retaining an unusable service."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "weak",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Recorded service/tags-display states are replayed on ExporterEditor/service_choices only. No GUI test sets this control through the sidecar node window (crates/hydrus-gui/src/sidecars_window.rs reads it into the editor at ~337-354, untested), so only the model replay of the recording covers it. The note's claim that the destination warns when its tag service has disappeared is not in the recording nor in any test I found. Tests: crates/hydrus-gui-model/tests/model/sidecar_editors.rs:226-300 the_sidecar_editors_show_and_edit_as_the_reference_does (replays oracle/fixtures/sidecar_editors.json against ImporterEditor/ExporterEditor)"
+   }
   },
   {
    "id": "audit-shared-sidecar-destination-timestamp",
@@ -19665,7 +20355,13 @@
    "native": null,
    "notes": [
     "The UI reveals file/deleted service, canvas or domain controls only for the selected timestamp kind; the recorded boxes replay compares those conditional values."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "weak",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Recorded timestamp type/file-service/deleted-service/canvas/domain conditional boxes are compared via boxes_json on the model only. No GUI test sets this control through the sidecar node window (crates/hydrus-gui/src/sidecars_window.rs reads it into the editor at ~337-354, untested), so only the model replay of the recording covers it. Tests: crates/hydrus-gui-model/tests/model/sidecar_editors.rs:226-300 the_sidecar_editors_show_and_edit_as_the_reference_does (replays oracle/fixtures/sidecar_editors.json against ImporterEditor/ExporterEditor)"
+   }
   },
   {
    "id": "audit-shared-sidecar-destination-types",
@@ -19678,7 +20374,13 @@
    "native": null,
    "notes": [
     "The native chooser derives allowed source/destination kinds from import/export context and preserves shared fields through type changes; the source/destination fixture compares those allowed choices and values."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "sound",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "The recording's change_type questions/choices and resulting values (both contexts) are replayed on the model, and the real window is driven changing destination type tags->notes->tags and source txt<->json keeping naming (window calls the same change_type_choices/change_type). Slightly thin on the export-context chooser through the GUI, but the model replay covers it. Tests: crates/hydrus-gui-model/tests/model/sidecar_editors.rs:226-300 the_sidecar_editors_show_and_edit_as_the_reference_does (replays oracle/fixtures/sidecar_editors.json against ImporterEditor/ExporterEditor); crates/hydrus-gui/tests/gui/sidecars.rs:249 an_import_folders_sidecars_are_edited_and_written"
+   }
   },
   {
    "id": "audit-shared-sidecar-export",
@@ -19692,7 +20394,13 @@
    "notes": [
     "The native router list has add/edit/delete/templates but no reference router-definition import/export controls or serializer path.",
     "The corresponding routers-list exchange workflow is absent."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "sound",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "The tagged test alone is circular (native export decoded and compared to native input), but the untagged test at 1017 drives the window's export and compares the clipboard text with router_exchange.json queues[1].text, writes and decodes a PNG, and the written sidecar with the recorded consumer output; codec tests in hydrus-downloader-exchange/tests/routers.rs round-trip recorded queues. Tracker note ('no reference router-definition import/export controls') is stale/false; the tag arguably belongs on the 1017 test. Tests: crates/hydrus-gui/tests/gui/sidecars.rs:1851 the_router_list_exports_its_selected_routers_duplicates_and_reads_its_own_export_back (tagged, circular round-trip) and :1017 router_queue_exchange_is_staged_context_checked_and_reaches_manual_export (untagged)"
+   }
   },
   {
    "id": "audit-shared-sidecar-import",
@@ -19710,7 +20418,13 @@
     "Existing bounded reference-compatible typed codec fields, all six source/destination variants, JSON formula/processor data and tag-service keys are preserved. Unsupported processors, unknown/future objects and actual-time timestamp payloads remain rejected rather than silently losing data. Byte/object/depth safety bounds remain explicit; malformed/unsupported data is not claimed as full reference serialisable-loader parity.",
     "Actual router control import menu offers clipboard and multiple PNGs, with no JSON-file action or named-object bulk export workflow. The existing native text/path review convenience remains; no new formats or inert controls added. Generic strict exchange decode callers retain their original atomic rejection contract.",
     "Captured visible/active/exact queue and child lifecycle guards reject hidden, cancelled, replaced and dropped owners; chooser-return checks revalidate before file reads/staging. Queue direct owning-slot backedge and exchange refresh backedge are weak. Existing deeper router/source editor topology remains separately Partial."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "sound",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Real queue window, real exchange child: clipboard text and multi-PNG picker cases replayed against the recording (warnings text, added routers, order, stop at first failed file, cancelled picker), and only queue Apply hands routers back. Documented difference (staged review vs Qt immediate append, no 'N objects added' notice) is in the tracker notes. Untagged because carried. Tests: crates/hydrus-gui/tests/gui/sidecars.rs:38 router_import_replays_permitted_subsets_and_ordered_png_failures (all 9 cases of router_import.json); :175 hidden/cancel guard; :1017 queue exchange; hydrus-downloader-exchange/tests/routers.rs"
+   }
   },
   {
    "id": "audit-shared-sidecar-source-tags",
@@ -19723,7 +20437,13 @@
    "native": null,
    "notes": [
     "Tag media inputs select a live tag service; sources also choose stored versus display tags. Destination editing warns when its tag service has disappeared instead of silently retaining an unusable service."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "weak",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Recorded importer service and stored/display states replayed on ImporterEditor only. No GUI test sets this control through the sidecar node window (crates/hydrus-gui/src/sidecars_window.rs reads it into the editor at ~337-354, untested), so only the model replay of the recording covers it. Tests: crates/hydrus-gui-model/tests/model/sidecar_editors.rs:226-300 the_sidecar_editors_show_and_edit_as_the_reference_does (replays oracle/fixtures/sidecar_editors.json against ImporterEditor/ExporterEditor)"
+   }
   },
   {
    "id": "audit-shared-sidecar-source-timestamp",
@@ -19736,7 +20456,13 @@
    "native": null,
    "notes": [
     "The UI reveals file/deleted service, canvas or domain controls only for the selected timestamp kind; the recorded boxes replay compares those conditional values."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "weak",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Recorded timestamp detail boxes replayed on ImporterEditor only. No GUI test sets this control through the sidecar node window (crates/hydrus-gui/src/sidecars_window.rs reads it into the editor at ~337-354, untested), so only the model replay of the recording covers it. Tests: crates/hydrus-gui-model/tests/model/sidecar_editors.rs:226-300 the_sidecar_editors_show_and_edit_as_the_reference_does (replays oracle/fixtures/sidecar_editors.json against ImporterEditor/ExporterEditor)"
+   }
   },
   {
    "id": "audit-shared-sidecar-source-types",
@@ -19749,7 +20475,13 @@
    "native": null,
    "notes": [
     "The native chooser derives allowed source/destination kinds from import/export context and preserves shared fields through type changes; the source/destination fixture compares those allowed choices and values."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "sound",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Recorded change_type questions/choices per context and resulting source values replayed on ImporterEditor; the real window is driven through source type changes (txt -> json -> txt keeping suffix/remove-ext, result filename) using the same change_type_choices. Tests: crates/hydrus-gui-model/tests/model/sidecar_editors.rs:226-300 the_sidecar_editors_show_and_edit_as_the_reference_does (replays oracle/fixtures/sidecar_editors.json against ImporterEditor/ExporterEditor); crates/hydrus-gui/tests/gui/sidecars.rs:249 an_import_folders_sidecars_are_edited_and_written"
+   }
   },
   {
    "id": "audit-shared-tag-advanced",
@@ -19762,7 +20494,13 @@
    "native": null,
    "notes": [
     "The replay compares advanced blacklist/whitelist rules and except-input enablement after add/delete/block-everything transitions."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "weak",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "The recording of advanced add/delete, block-everything and except-input enablement is replayed on TagFilterEditor only. The window is driven for advanced exclude typing and removal (tag_filter_removal.rs) but no GUI test clicks block-everything on the advanced tab, adds to the except list, or checks except-input enablement. Tests: crates/hydrus-gui-model/tests/model/tag_filter_editor.rs:59 the_editor_shows_and_edits_a_filter_as_the_reference_does; GUI only crates/hydrus-gui/tests/gui/tag_filter_removal.rs:37"
+   }
   },
   {
    "id": "audit-shared-tag-apply",
@@ -19775,7 +20513,13 @@
    "native": null,
    "notes": [
     "Added native callback and CloseRequested regression coverage for existing detached Apply/Cancel/owner-close behavior, plus pending favourite-import cancellation and stale naming/Apply invalidation. This is an evidence-only reassessment outside newly implemented completion counts."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "sound",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Drives the real window: Cancel returns nothing and hides, Apply (after load) returns the chosen filter, the caller's filter is untouched, CloseRequested closes the owner and kills pending children. Behaviour is simple and matches the reference's detached dialog. Tests: crates/hydrus-gui/tests/gui/tag_filter_favourites.rs:17 shared_favourites_exchange_and_cancel_preserve_the_owner_and_persist_on_reopen"
+   }
   },
   {
    "id": "audit-shared-tag-blacklist",
@@ -19788,7 +20532,13 @@
    "native": null,
    "notes": [
     "Recorded black_global/black_ns and black_add/remove states are compared with the native draft, including already-covered rule summaries."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "weak",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "black_global/black_ns/add/remove states replayed on TagFilterEditor only. The window is driven for typing and removing blacklist slices, but no GUI test clicks the blacklist global or namespace ticks (only the whitelist's, in import_options.rs:369), though the leaf names them. Tests: crates/hydrus-gui-model/tests/model/tag_filter_editor.rs:58; GUI tag_filter_removal.rs:37"
+   }
   },
   {
    "id": "audit-shared-tag-extra-panels",
@@ -19801,7 +20551,13 @@
    "native": null,
    "notes": [
     "Advanced mode offers show other panels in blacklist-only editors. It appends whitelist and advanced tabs after blacklist, hides the button and preserves fixed-blacklist sibling/unnamespaced-to-namespaced testing."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "sound",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Real window in advanced mode: button offered, clicked, tabs become blacklist/whitelist/advanced and the blacklist test result matches the recorded extra_panels; the model replays both advanced=false (not offered) and true cases against the same show_other_panels_offered the window uses. Tests: crates/hydrus-gui/tests/gui/tag_filter_favourites.rs:183 blacklist_extra_panels_and_all_four_paste_controls_follow_the_recording; model tag_filter_favourites.rs reference_bulk_paste_and_extra_blacklist_panels_keep_rule_and_test_semantics"
+   }
   },
   {
    "id": "audit-shared-tag-favourite-delete",
@@ -19814,7 +20570,13 @@
    "native": null,
    "notes": [
     "List saved favourites, ask Delete name using the reference string, preserve rejected deletes, and persist accepted deletion of only that name immediately without changing the draft or caller."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "sound",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "GUI: delete menu lists names, 'Delete \"apple\"?' asked, No keeps, Yes removes only that name, persisted, draft/caller untouched. Model replays delete_no/delete_yes events and delete menu from the recording using delete_favourite. Tests: crates/hydrus-gui/tests/gui/tag_filter_favourites.rs:20 (delete part); model tag_filter_favourites.rs:~21 reference_favourite_workflow..."
+   }
   },
   {
    "id": "audit-shared-tag-favourite-export",
@@ -19827,7 +20589,13 @@
    "native": null,
    "notes": [
     "Export this draft or a selected saved favourite to the reference JSON Tag Filter format, copy immediately to clipboard and offer an atomic JSON file export; saved favourites retain insertion order after this-filter entry."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "weak",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Export menu names match the recording, but the exported text is never compared with the reference's text: the model checks import_favourite(export_favourite(x)) == import_favourite(recorded payload) (native round trip) and the GUI re-imports its own clipboard/file output. Only the 'this tag filter' entry is exported through the GUI; exporting a selected saved favourite is untested. Tests: crates/hydrus-gui/tests/gui/tag_filter_favourites.rs:21 (export part); model tag_filter_favourites.rs import_invalid branch"
+   }
   },
   {
    "id": "audit-shared-tag-favourite-import",
@@ -19841,7 +20609,13 @@
    "notes": [
     "Import bounded reference [44,1,rules] JSON from clipboard or UTF-8 JSON file, clean rules, ask for a nonblank name and confirm exact-name overwrites. Only successful naming/confirmation saves and loads the imported filter; rejected, malformed and cancelled imports leave settings/draft/caller untouched.",
     "An additional inline text/file panel precedes the reference naming prompt."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "weak",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Naming prompt, cancel, overwrite no/yes and dirty-payload cleaning match the recording (model) and are driven through the window. But the recorded error dialogs ('Error', 'That object was not a Tag Filter! It seemed to be a ...SerialisableList') are not compared: the model only checks is_err / contains 'JSON-serialised Tag Filter object', the GUI only that exchange_error is non-empty, and the native strings differ from the reference's. Overwrite-yes through the window is not driven. Tests: crates/hydrus-gui/tests/gui/tag_filter_favourites.rs:22 (import part); model tag_filter_favourites.rs workflow import_* events and import_invalid/import_wrong_type"
+   }
   },
   {
    "id": "audit-shared-tag-favourite-load",
@@ -19855,7 +20629,13 @@
    "notes": [
     "The load button lists insertion-ordered named favourites, displays no-favourites label when empty, and loads a detached saved value into all rule views/testing. Loaded edits never mutate saved favourites or caller settings until explicit save/Apply.",
     "Repository serverside tag filters are not offered because remote repositories are not functional."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "sound",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Window lists insertion-ordered names, loading one into the draft and applying it returns it, caller and saved favourites unchanged; model replays the recorded load event, menu and 'no favourites set!' constant (which the window shows, tag_filter_window.rs:233), though no GUI test asserts the empty label. Tests: crates/hydrus-gui/tests/gui/tag_filter_favourites.rs:19 (load part); model reference_favourite_workflow... 'load' event with load_menu/empty_menu"
+   }
   },
   {
    "id": "audit-shared-tag-favourite-save",
@@ -19868,7 +20648,13 @@
    "native": null,
    "notes": [
     "Ask Enter a name for the favourite; reject blank names, allow literal whitespace and case-sensitive distinct names, ask exact reference overwrite question, and persist only accepted saves immediately. Atomic per-name updates preserve other editors' saves."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "weak",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Save, cancel, overwrite question text and No/keep match the recording (model) and are driven through the window. But the window silently ignores a blank name (tag_filter_window.rs:543 `if name.is_empty() return`), so the reference's 'Cannot enter blank text here!' error (recorded empty_name_error) is never shown; the model checks it only on FavouriteTagFilters::save which the window does not reach for blank names. The recorded whitespace-only name ('  ') is not tested anywhere; overwrite-yes is not driven through the window. Tests: crates/hydrus-gui/tests/gui/tag_filter_favourites.rs:18 (save part); model tag_filter_favourites.rs save_cancel/save/save_no/save_yes and concurrent_favourite_saves_merge..."
+   }
   },
   {
    "id": "audit-shared-tag-paste",
@@ -19882,7 +20668,13 @@
    "notes": [
     "All four rule-list inputs have paste buttons. Split the reference newline forms, remove leading BOM/whitespace and blank lines, then apply the same whitelist/blacklist/advanced cleaning, wildcard and deduplication behavior as entered slices.",
     "Native paste buttons are text-labelled; the reference shows an icon and micro-notification."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "sound",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Drives invoke_paste on all four lists of the real window with the recorded BOM/CRLF/blank/wildcard payload and compares the applied rules with the recording's `paste` cases; the model replays the same with paste_slices, which the window calls. Icon/micro-notification differences documented. Tests: crates/hydrus-gui/tests/gui/tag_filter_favourites.rs:183 blacklist_extra_panels_and_all_four_paste_controls_follow_the_recording; model reference_bulk_paste_..."
+   }
   },
   {
    "id": "audit-shared-tag-removal",
@@ -19895,7 +20687,13 @@
    "native": null,
    "notes": [
     "Both list selection and removal callbacks are wired; confirmation is used before deleting selected rules, and the replay checks resulting filter values."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "sound",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Drives the real TagFilterWindow: selection, 'Remove all selected?' yes/no, double-click removal without asking, both simple and advanced lists, Apply result. The question text is the reference's (ClientGUITagFilter.py:249 etc.); the removal effects themselves are replayed from the recording in the model test against the same TagFilterEditor methods the window calls. Tests: crates/hydrus-gui/tests/gui/tag_filter_removal.rs:35 removing_selected_entries_asks_first_and_double_click_removes_without_asking; crates/hydrus-gui-model/tests/model/tag_filter_editor.rs:57 (black_remove/adv_*_delete steps)"
+   }
   },
   {
    "id": "audit-shared-tag-testing",
@@ -19909,7 +20707,13 @@
    "notes": [
     "The model replay checks testing text/colors against reference cases without siblings; the native window supplies actual store sibling groups for blacklist tests. Sibling-aware behavior is separately covered by string-tag-filter fixtures.",
     "Store sibling resolution is inspected separately from the reference recording, which has no sibling groups."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "weak",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "The recording has no sibling groups, so the sibling-aware blacklist result is only checked in a model test with a typed sibling closure and typed expected strings. The window's real sibling lookup from the store (tag_filter_window.rs siblings()) is never exercised by any test; no GUI test types into the test box with siblings present. Tests: crates/hydrus-gui-model/tests/model/tag_filter_editor.rs:173 a_blacklist_test_blocks_a_tag_when_a_sibling_is_blocked_as_the_reference_does; crates/hydrus-gui-model/tests/model/tag_filter_editor.rs:57 (test steps, no siblings)"
+   }
   },
   {
    "id": "audit-shared-tag-tooltips",
@@ -19936,7 +20740,13 @@
    "native": null,
    "notes": [
     "The recorded replay checks whitelist global/namespace interlocks and simple slice additions/removals; callbacks select the whitelist list and refresh the detached draft."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "sound",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Model test replays every whitelist global/namespace/add/remove step of tag_filter_editor.json (lists, enabled flags, errors, redundant messages, resulting rules) against the TagFilterEditor the window calls. The GUI only drives one whitelist global click incidentally (existing_tags_filter), so window wiring of namespaces and slice add/remove is untested; accepted as sound under the model-with-recording rule. Tests: crates/hydrus-gui-model/tests/model/tag_filter_editor.rs:57 the_editor_shows_and_edits_a_filter_as_the_reference_does; crates/hydrus-gui/tests/gui/existing_tags_filter.rs:7 (global_clicked on whitelist)"
+   }
   },
   {
    "id": "bandwidth-delete-history",
@@ -20212,7 +21022,13 @@
    "native": null,
    "notes": [
     "Names, context-variable keys and common string processors are editable in an isolated draft. Context keys including missing variables and newline-preserving note inputs run through the real parsing engine; Apply commits and Cancel discards."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "sound",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "GUI test drives the real window (type change, variable and name, context text, Test, Apply) and the model test replays the recorded context_formula case (defaults, results, processor before-texts, absent variable gives no results) through the same FormulaEditor. Cancel is not driven for this kind (only for static). Engine parsing of context-variable formulae is also in formulas.json. Tracker note is accurate. Tests: crates/hydrus-gui/tests/gui/formula_editors.rs:824 scalar_formula_controls_preview_processing_cancel_and_save; crates/hydrus-gui-model/tests/model/formula_editors.rs:388 scalar_formula_controls_match_reference (recursive_formula_editors.json context_formula)"
+   }
   },
   {
    "id": "formula-exchange",
@@ -20226,7 +21042,13 @@
    "notes": [
     "Shared exchange accepts exactly one formula object, stages JSON/PNG import in its active owner and exports preserved reference auxiliary data.",
     "Clipboard bitmap/drop ingestion is absent; unsupported processing steps are rejected."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "weak",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Window export (text, PNG) and import (PNG, refusals of a non-formula and of two formulae) are driven, but exports are only round-tripped through the native encoder and the refusals are checked as non-empty error strings, not against reference text or a recording of this formula-level exchange. Clipboard bitmap and drop ingestion are absent (tracker note says so), so part of the leaf is uncovered. Tests: crates/hydrus-gui/tests/gui/formula_exchange.rs:13 a_formula_exports_as_text_and_png_and_imports_exactly_one_formula"
+   }
   },
   {
    "id": "formula-fetch",
@@ -20240,7 +21062,13 @@
    "notes": [
     "Formula test panels fetch a trimmed URL through actual background downloader HTTP jobs with live progress and cancellation. Requests use the stored network settings, headers, cookies and bandwidth accounting; decoded documents update live formula previews. Successful, failed and cancelled documents preserve variables while assigning requested URL/post index zero. Fetched and pasted examples remain selectable with their source URLs. Parent Apply is blocked during fetching; owner cancellation discards late worker results and leaves the formula draft unapplied.",
     "Fetch controls use an inline URL field instead of the reference prompt. Window-local jobs show progress in their test panel rather than the daemon jobs review."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "sound",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "GUI test drives the real fetch against a local HTTP server: trimmed URL, network pause respected, live preview, context url/post_index=0 with other variables kept, error and cancel texts, Apply blocked while fetching, owner cancel discarding late results. The model test replays the recorded success/error/cancel documents and context (and the request flags: bandwidth override, no referral). The 404 error wording is native, not recorded (recording used a scripted error); minor. Tests: crates/hydrus-gui/tests/gui/formula_editors.rs:27 formula_fetch_decodes_real_documents_updates_preview_and_discards_closed_owner_results; crates/hydrus-gui-model/tests/model/formula_editors.rs:11 fetched_documents_replay_reference_success_error_and_cancellation_context (parser_test_data.json formula_fetch)"
+   }
   },
   {
    "id": "formula-html-rule",
@@ -20254,7 +21082,13 @@
    "notes": [
     "Rule child has typed HTML navigation/tag/attributes/position/content and JSON item/key/index controls; accepted rule replaces its address in the current owner draft.",
     "Native grouped text/checkbox widgets differ; matcher configuration uses the shared child editor."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "sound",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "The model test replays the four recorded HTML navigation types (descriptions, search/depth enabled flags) through RuleEditor, which the rule window uses. The GUI test opens the rule child from the formula window, edits index and text match, applies, and checks results, the delete question and Apply of the formula. Rule description assert in the GUI is partial (contains 'last <a>'). Tests: crates/hydrus-gui-model/tests/model/formula_editors.rs:57 formula_editor_controls_and_parses_match_reference (html_rule cases); crates/hydrus-gui/tests/gui/formula_editors.rs:143 formula_editors_html_rules_validation_processing_and_screenshot"
+   }
   },
   {
    "id": "formula-json-rule",
@@ -20268,7 +21102,13 @@
    "notes": [
     "Rule child has typed HTML navigation/tag/attributes/position/content and JSON item/key/index controls; accepted rule replaces its address in the current owner draft.",
     "Native grouped text/checkbox widgets differ; matcher configuration uses the shared child editor."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "sound",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "The model test replays all six recorded JSON rule types (descriptions, values, results per content kind) through RuleEditor. GUI tests (untagged) drive the real rule child for JSON rules (all items, index) and check the saved formula, but only two types are driven through the window; the other types rely on the model replay. Tracker note text is copy-pasted from the HTML leaf. Tests: crates/hydrus-gui-model/tests/model/formula_editors.rs:57 formula_editor_controls_and_parses_match_reference (json_formula cases); crates/hydrus-gui/tests/gui/formula_editors.rs:342 and :469 (untagged, JSON rule child via sidecar formula)"
+   }
   },
   {
    "id": "formula-static",
@@ -20281,7 +21121,13 @@
    "native": null,
    "notes": [
     "Names, static text and bounded output count (1–65,535) are editable. Common string processing and previews honor the caller newline policy; reopening retains accepted count/text and cancellation leaves the original intact."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "sound",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "GUI test drives the real window (name, text, count 3, Test results, processing child, Apply, reopen retains count, Cancel leaves original). Model test replays the recorded static_formula case including defaults, min 1 / max 65535, results and processing texts through FormulaEditor. The 1-65535 clamp in formula_window.rs:189 is not driven through the window itself. Tests: crates/hydrus-gui/tests/gui/formula_editors.rs:824 scalar_formula_controls_preview_processing_cancel_and_save; crates/hydrus-gui-model/tests/model/formula_editors.rs:388 scalar_formula_controls_match_reference (static_formula)"
+   }
   },
   {
    "id": "gug-members",
@@ -20325,7 +21171,13 @@
     "Add the exact per-service already-exist-test filter action. Capture the service key, open the shared three-tab tag-filter editor with the exact reference explanation and configured parser namespaces, and enable the test when its filter is accepted. The accepted filter updates only the importer draft; child Cancel preserves filter/toggle, parent Apply waits, and owner Cancel/close retires the child and retained callbacks. Saved queue options preserve the selected filter; the real file importer tests only admitted parsed/additional tags against current mappings on the selected service, while excluded tags and disabled gates bypass the test.",
     "Native presents the existing-tag action directly on the service panel rather than in the reference cog menu, and uses its existing owned detached filter window rather than a Qt modal dialog.",
     "This claim covers one original missing action and its saved consumer; broader per-service/import-option editor parents remain Partial. Existing shared tag-filter language/favourites are reused and are not new completions."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "sound",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "GUI test drives the importer's options window and the filter child (title from the recording, reference message, three tabs, child Cancel keeps state, parent Apply blocked while child open, Apply enables the test and persists, owner close retires the child). The consumer test replays the recorded known/parsed/additional/consumer/second-service/disabled outcomes through the real file importer. Message text compared to a native constant that matches the reference source verbatim (not in the fixture). Tests: crates/hydrus-gui/tests/gui/existing_tags_filter.rs:7; crates/hydrus-gui-model/tests/model/existing_tags_filter.rs:9; crates/hydrus-download/tests/local_import.rs:79"
+   }
   },
   {
    "id": "import-external-program-entry",
@@ -20352,7 +21204,13 @@
    "native": "crates/hydrus-gui/src/import_options_window.rs:479",
    "notes": [
     "No native favourites save/load/select callback exists."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "sound",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Replays the recorded ui_favourites menus, save/add/edit/delete steps with prompt texts and resulting rows, persistence after reopen, and cancel/close invalidation, driving the Controller and its real prompt/editor/overwrite windows. Tracker note 'No native favourites save/load/select callback exists' is stale. Tests: crates/hydrus-gui/tests/gui/import_options.rs:523 favourites_popup_replays_real_dialogs_persists_and_invalidates_children; crates/hydrus-gui-model/tests/model/import_options_overwrite.rs:66"
+   }
   },
   {
    "id": "import-locations",
@@ -20380,7 +21238,13 @@
    "native": "crates/hydrus-gui/src/import_options_window.rs:479",
    "notes": [
     "Native option editor has no serialized clipboard or custom-merging controls."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "weak",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "The custom-merge chooser is replayed against the recording (model, all 5 overwrite steps; GUI one preset), but the fixture's copied_text, errors (expected 'JSON-serialised Import Options Container') and merge-paste steps/questions are never read by any test. Copy only round-trips through the native codec, and the paste error is a substring check; paste modes 0/1 and the profile-level merge-paste are untested. Tracker note 'no serialized clipboard or custom-merging controls' is stale (paste_options/copy_options exist). Tests: crates/hydrus-gui/tests/gui/import_options.rs:12 shared_overwrite_drafts_close_cleanly_and_clipboard_reaches_real_importer; crates/hydrus-gui-model/tests/model/import_options_overwrite.rs:8"
+   }
   },
   {
    "id": "login-credential-definition",
@@ -20704,7 +21568,13 @@
    "notes": [
     "This sidecar control uses the canonical shared editor or naming/separator box. The sidecar replay checks its draft fields and values; it does not establish absent example-file testing, processor exchange or unsupported date conversion execution.",
     "Existing first pass; complete Qt parity has not been established."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "sound",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Model test replays recorded suffix/remove-extension/example steps (example path result, converter text, resulting object) through ImporterEditor/ExporterEditor; the GUI test drives the node window for suffix, remove-extension and type change (result path my_image.tags.txt / .json) and checks the saved folder. Unsupported date conversion execution is a documented gap outside this leaf. Tests: crates/hydrus-gui-model/tests/model/sidecar_editors.rs:236 the_sidecar_editors_show_and_edit_as_the_reference_does (suffix, remove_ext, example steps); crates/hydrus-gui/tests/gui/sidecars.rs:249 an_import_folders_sidecars_are_edited_and_written"
+   }
   },
   {
    "id": "sidecar-test",
@@ -20720,7 +21590,13 @@
     "Uses a source selector and table instead of the reference notebook.",
     "General filesystem I/O errors include the operating-system error text; the recorded formula parse error is asserted exactly.",
     "Unlimited queries use stable file-id order rather than depending on Python set iteration; limited all-known-file queries use native deterministic size selection rather than reference random sampling when database-level sorting is unavailable."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "sound",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Recordings sidecar_testing.json and export_folder_examples.json are replayed through the real router window and export-folder editor: source selector tables, source and router processor inputs, button/label states (update, loading, got N), retained examples, owner close invalidation and read-only media. Documented deviations: table instead of notebook, deterministic sampling for limited queries instead of random. No tag, so carried. Tests: crates/hydrus-gui-model/tests/model/sidecar_editors.rs:494 recorded_router_tables_and_child_strings_use_real_sidecars_and_read_only_media; crates/hydrus-gui/tests/gui/sidecars.rs:845 router_examples_follow_reference_source_tabs_and_processor_children_without_exports; crates/hydrus-gui/tests/gui/sidecars.rs:1408 export_folder_query_examples_refresh_media_and_reach_source_children"
+   }
   },
   {
    "id": "sidecar-txt-separator",
@@ -20734,7 +21610,13 @@
    "notes": [
     "This sidecar control uses the canonical shared editor or naming/separator box. The sidecar replay checks its draft fields and values; it does not establish absent example-file testing, processor exchange or unsupported date conversion execution.",
     "Existing first pass; complete Qt parity has not been established."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "weak",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Only the model replay of recorded separator choices (newline, four pipes, custom text) exists. No GUI test sets the separator control (sidecars_window.rs:279-281) or checks its custom text field; the GUI test only sees the default newline saved. Window wiring of the separator is untested. Tests: crates/hydrus-gui-model/tests/model/sidecar_editors.rs:236 the_sidecar_editors_show_and_edit_as_the_reference_does (separator steps)"
+   }
   },
   {
    "id": "string-conversion-tests",
@@ -20748,7 +21630,13 @@
    "notes": [
     "Processor and converter tests show starting strings, each supported step result and final output; example input is editable.",
     "Unsupported date steps fail and sidecar examples are not supplied automatically. This status covers visible test tabs, not every conversion result."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "sound",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Recordings of the real multiline test panel (starting strings, processed strings, tabs, example through steps) and converter editor rows (example converted up to each row) are replayed; GUI tests drive the processor and converter windows (example edit, tab rows, converted example). Date steps and sidecar example supply are documented gaps outside the leaf. Tests: crates/hydrus-gui-model/tests/model/string_processor_editor.rs:210 the_string_processor_editor_works_as_the_references_does; crates/hydrus-gui-model/tests/model/string_converter_editor.rs; crates/hydrus-gui/tests/gui/sidecars.rs:628 and :439"
+   }
   },
   {
    "id": "string-joiner",
@@ -20762,7 +21650,13 @@
    "notes": [
     "Joiner delimiter and tuple-size choice generate grouped joined results using starting strings.",
     "Step fields and recorded supported result behavior; shared child/editor limits remain separate."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "weak",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Model replay of recorded joiner states (delimiter, tuple size, summary, results) is good, but no GUI test edits a joiner's fields: sidecars.rs only adds a default joiner and applies it. The window's joiner/tuple-size wiring (string_processor_window.rs, string_processor.slint) is untested. Same single test is tagged on four step leaves. Tests: crates/hydrus-gui-model/tests/model/string_processor_editor.rs:210 the_string_processor_editor_works_as_the_references_does (joiner step states)"
+   }
   },
   {
    "id": "string-slicer",
@@ -20776,7 +21670,13 @@
    "notes": [
     "Optional signed bounds are retained and slice the string list using reference semantics.",
     "Step fields and recorded supported result behavior; shared child/editor limits remain separate."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "weak",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Model replay of recorded slicer states exists, but no GUI test opens or edits a slicer step at all, so the window's single/range select and bound fields are untested. Tests: crates/hydrus-gui-model/tests/model/string_processor_editor.rs:210 the_string_processor_editor_works_as_the_references_does (slicer step states)"
+   }
   },
   {
    "id": "string-sorter",
@@ -20790,7 +21690,13 @@
    "notes": [
     "Human, lexicographic and reverse kinds, direction and optional regex affect the actual result sequence.",
     "Step fields and recorded supported result behavior; shared child/editor limits remain separate."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "sound",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Recorded sorter states (type, asc, regex, results) replayed through SorterEditor; the GUI test opens the sorter step from the real processor window, flips to descending and checks the sorted tab and the saved step. Sort type and regex fields are not driven through the window. Tests: crates/hydrus-gui-model/tests/model/string_processor_editor.rs:210 the_string_processor_editor_works_as_the_references_does (sorter states); crates/hydrus-gui/tests/gui/sidecars.rs:439 a_routers_processing_is_edited_in_the_string_processor_editor"
+   }
   },
   {
    "id": "string-splitter",
@@ -20804,7 +21710,13 @@
    "notes": [
     "Separator and optional max_splits produce multiple ordered results; invalid Python string escapes fail validation.",
     "Step fields and recorded supported result behavior; shared child/editor limits remain separate."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "sound",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Recorded splitter states (separator, max_splits, results, invalid escapes) replayed through SplitterEditor; the GUI test adds a splitter via the real window, checks its example/results, the 'Sorry, you have to have a value in the separator field!' veto and the resulting step row. The max_splits field is not driven through the window. Tests: crates/hydrus-gui-model/tests/model/string_processor_editor.rs:210 the_string_processor_editor_works_as_the_references_does (splitter states); crates/hydrus-gui/tests/gui/sidecars.rs:439 a_routers_processing_is_edited_in_the_string_processor_editor"
+   }
   },
   {
    "id": "subscription-add",
