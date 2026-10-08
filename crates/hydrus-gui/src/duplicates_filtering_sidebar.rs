@@ -96,7 +96,8 @@ fn ensure_count(window: &MainWindow, page: &SearchPage, d: &hydrus_core::pages::
         let handle = Handle::start(
             gate.as_ref().map_or(BLOCK_GUIDELINE, |g| g.guideline()),
             options.starts_paused,
-            true,
+            // (a test gate searches the pairs in the order given)
+            gate.is_none(),
             model_options(options),
             StoreSource::new(page.store().clone(), Arc::clone(&search)),
             gate,
