@@ -94,7 +94,9 @@ impl Flag {
 
     /// The "report modes" submenu's switches, in the reference's order. Only
     /// switches something in hydrus-rs reads are offered.
-    pub const REPORT_MODES: [Flag; 3] = [
+    pub const REPORT_MODES: [Flag; 5] = [
+        Flag::CacheReport,
+        Flag::FileImportReport,
         Flag::IdleReport,
         Flag::ShortcutReport,
         Flag::SubprocessReport,
