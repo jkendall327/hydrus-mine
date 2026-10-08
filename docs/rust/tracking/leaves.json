@@ -2647,10 +2647,11 @@
    "path": "Media files, metadata and viewing > Manage tags for selected files",
    "workstream": "media",
    "state": "missing",
-   "priority": "normal",
+   "priority": "out-of-scope",
    "reference": null,
    "native": null,
    "notes": [
+    "Out of scope by the owner's decision of 2026-10-08 (#95): repository tabs in Manage Tags (tag repositories are out of scope). To bring it back, set priority to normal and remove this note.",
     "Truth pass (2026-10-08): missing, large. Repository-dependent. Missing: Repository tabs in Manage Tags with pend/petition/rescind and reasons. Evidence: manage_tags.rs:76 local tags only; pend/petition exists in the sibling/parent editor and pending store",
     "The native ManageTags constructor enumerates LocalTag only; repository mapping actions, reason prompts and moderator permission bypass are not exposed."
    ]
@@ -6778,10 +6779,11 @@
    "path": "File > Options window > gui > frame locations",
    "workstream": "options-gui",
    "state": "missing",
-   "priority": "normal",
+   "priority": "out-of-scope",
    "reference": null,
    "native": null,
    "notes": [
+    "Out of scope by the owner's decision of 2026-10-08 (#95): applies only to the reference's self-sizing viewer. To bring it back, set priority to normal and remove this note.",
     "Truth pass (2026-10-08): not-applicable, test-only. Applies only to the reference's self-sizing viewer. Evidence: options.rs:2738-2742 row round-trips",
     "Reference editor/control 'DEBUG: When rescuing resizing-to-media media viewer, add top-left safety padding:' is recorded on 'gui' and defined by the referenced options panel. No corresponding editable row exists in native options::pages; this is a missing GUI editing path, even if a setting is imported or consumed elsewhere.",
     "Native options registry has no editable 'DEBUG: When rescuing resizing-to-media media viewer, add top-left safety padding:' control in this page/box path."
@@ -7080,10 +7082,11 @@
    "path": "File > Options window > gui > misc",
    "workstream": "options-gui",
    "state": "missing",
-   "priority": "normal",
+   "priority": "out-of-scope",
    "reference": null,
    "native": null,
    "notes": [
+    "Out of scope by the owner's decision of 2026-10-08 (#95): Qt-locale experiment switch; would need CLDR number data. To bring it back, set priority to normal and remove this note.",
     "Truth pass (2026-10-08): not-applicable, small. Qt-locale experiment switch; optional small slice if locale grouping is wanted. Evidence: options.rs:2701-2705 row round-trips; native formatter has no locale hook",
     "Reference editor/control 'TEST: Use your locale for integer rendering:' is recorded on 'gui' and defined by the referenced options panel. No corresponding editable row exists in native options::pages; this is a missing GUI editing path, even if a setting is imported or consumed elsewhere.",
     "Native options registry has no editable 'TEST: Use your locale for integer rendering:' control in this page/box path."
@@ -7700,10 +7703,11 @@
    "path": "Help > debug > report modes",
    "workstream": "help-debug",
    "state": "missing",
-   "priority": "low",
+   "priority": "out-of-scope",
    "reference": null,
    "native": null,
    "notes": [
+    "Out of scope by the owner's decision of 2026-10-08 (#95): reports the Python CallTo thread pool. To bring it back, set priority to normal and remove this note.",
     "Truth pass (2026-10-08): not-applicable, small. Reports tasks given to the Python CallTo thread pool, which hydrus-rs does not have. Evidence: Reference ClientGUI.py:3591 reports tasks given to HydrusThreading's Python thread pool; hydrus-rs has no such pool.",
     "Reference debug action wires 'callto report mode' to the client diagnostics callback at this AppendMenu entry. The native Help/Command registry exposes no equivalent diagnostics action.",
     "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools."
@@ -7715,10 +7719,11 @@
    "path": "Help > debug > report modes",
    "workstream": "help-debug",
    "state": "missing",
-   "priority": "low",
+   "priority": "out-of-scope",
    "reference": null,
    "native": null,
    "notes": [
+    "Out of scope by the owner's decision of 2026-10-08 (#95): borders on Qt canvas tiles. To bring it back, set priority to normal and remove this note.",
     "Truth pass (2026-10-08): not-applicable, small. Draws borders on the Qt media-canvas tiles; hydrus-rs has no tiled canvas. Evidence: Flag::CanvasTileBorders is defined but nothing reads it; the menu does not offer it.",
     "Reference debug action wires 'canvas tile borders mode' to the client diagnostics callback at this AppendMenu entry. The native Help/Command registry exposes no equivalent diagnostics action.",
     "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools."
@@ -8302,10 +8307,11 @@
    "path": "Help > debug > profiling",
    "workstream": "help-debug",
    "state": "missing",
-   "priority": "low",
+   "priority": "out-of-scope",
    "reference": null,
    "native": null,
    "notes": [
+    "Out of scope by the owner's decision of 2026-10-08 (#95): profiles the Python thread pool. To bring it back, set priority to normal and remove this note.",
     "Truth pass (2026-10-08): not-applicable, small. Profiles Python thread-pool jobs with cProfile. Evidence: The reference profiles its Python thread-pool CallTo jobs; no native equivalent.",
     "Reference debug action wires 'profile mode (threads)' to the client diagnostics callback at this AppendMenu entry. The native Help/Command registry exposes no equivalent diagnostics action.",
     "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools."
@@ -10104,10 +10110,11 @@
    "path": "File > Options window > media playback > system",
    "workstream": "options-media",
    "state": "missing",
-   "priority": "normal",
+   "priority": "out-of-scope",
    "reference": null,
    "native": null,
    "notes": [
+    "Out of scope by the owner's decision of 2026-10-08 (#95): hydrus-rs has no bundled ffmpeg, so it always uses the system one. To bring it back, set priority to normal and remove this note.",
     "Truth pass (2026-10-08): not-applicable, test-only. Always effectively 'prefer system'; no bundled ffmpeg. Evidence: options.rs:3705 row; ffmpeg/mod.rs:40-47 always uses PATH",
     "Reference editor/control 'Prefer system FFMPEG:' is recorded on 'media playback' and defined by the referenced options panel. No corresponding editable row exists in native options::pages; this is a missing GUI editing path, even if a setting is imported or consumed elsewhere.",
     "Native options registry has no editable 'Prefer system FFMPEG:' control in this page/box path."
@@ -12228,10 +12235,11 @@
    "path": "File > Options window > popup notifications > popup window toaster",
    "workstream": "options-gui",
    "state": "missing",
-   "priority": "normal",
+   "priority": "out-of-scope",
    "reference": null,
    "native": null,
    "notes": [
+    "Out of scope by the owner's decision of 2026-10-08 (#95): no separate toaster window; Wayland hides the global pointer. To bring it back, set priority to normal and remove this note.",
     "Truth pass (2026-10-08): not-applicable, large. No separate toaster window to freeze; global cursor impossible on Wayland. Evidence: options_popup_width.rs:22-25; no separate toaster window; winit has no global cursor query",
     "Reference editor/control 'Freeze the popup toaster when mouse is on another display:' is recorded on 'popup notifications' and defined by the referenced options panel. No corresponding editable row exists in native options::pages; this is a missing GUI editing path, even if a setting is imported or consumed elsewhere.",
     "Native options registry has no editable 'Freeze the popup toaster when mouse is on another display:' control in this page/box path."
@@ -14954,10 +14962,11 @@
    "path": "File > Options window > speed and memory > image tile cache",
    "workstream": "options-system",
    "state": "missing",
-   "priority": "normal",
+   "priority": "out-of-scope",
    "reference": null,
    "native": null,
    "notes": [
+    "Out of scope by the owner's decision of 2026-10-08 (#95): no tiled renderer or tile cache natively. To bring it back, set priority to normal and remove this note.",
     "Truth pass (2026-10-08): not-applicable, large. No tile renderer natively. Evidence: options.rs:4334-4338 row, unread; native renders whole rasters",
     "Reference editor/control 'Ideal tile width/height px:' is recorded on 'speed and memory' and defined by the referenced options panel. No corresponding editable row exists in native options::pages; this is a missing GUI editing path, even if a setting is imported or consumed elsewhere.",
     "Native options registry has no editable 'Ideal tile width/height px:' control in this page/box path."
@@ -14969,10 +14978,11 @@
    "path": "File > Options window > speed and memory > image tile cache",
    "workstream": "options-system",
    "state": "missing",
-   "priority": "normal",
+   "priority": "out-of-scope",
    "reference": null,
    "native": null,
    "notes": [
+    "Out of scope by the owner's decision of 2026-10-08 (#95): no tiled renderer or tile cache natively. To bring it back, set priority to normal and remove this note.",
     "Truth pass (2026-10-08): not-applicable, large. No tile cache natively. Evidence: options.rs:4326-4333 row, unread",
     "Reference editor/control 'Image tile cache timeout:' is recorded on 'speed and memory' and defined by the referenced options panel. No corresponding editable row exists in native options::pages; this is a missing GUI editing path, even if a setting is imported or consumed elsewhere.",
     "Native options registry has no editable 'Image tile cache timeout:' control in this page/box path."
@@ -14984,10 +14994,11 @@
    "path": "File > Options window > speed and memory > image tile cache",
    "workstream": "options-system",
    "state": "missing",
-   "priority": "normal",
+   "priority": "out-of-scope",
    "reference": null,
    "native": null,
    "notes": [
+    "Out of scope by the owner's decision of 2026-10-08 (#95): no tiled renderer or tile cache natively. To bring it back, set priority to normal and remove this note.",
     "Truth pass (2026-10-08): not-applicable, large. No tile cache natively (unless the image cache should honour this budget: a design decision). Evidence: options.rs:4322-4325 row, unread",
     "Reference editor/control 'Memory reserved for image tile cache:' is recorded on 'speed and memory' and defined by the referenced options panel. No corresponding editable row exists in native options::pages; this is a missing GUI editing path, even if a setting is imported or consumed elsewhere.",
     "Native options registry has no editable 'Memory reserved for image tile cache:' control in this page/box path."
@@ -15153,10 +15164,11 @@
    "path": "File > Options window > system tray",
    "workstream": "options-system",
    "state": "missing",
-   "priority": "normal",
+   "priority": "out-of-scope",
    "reference": null,
    "native": null,
    "notes": [
+    "Out of scope by the owner's decision of 2026-10-08 (#95): a Qt window-state workaround. To bring it back, set priority to normal and remove this note.",
     "Truth pass (2026-10-08): not-applicable, test-only. Qt window-state workaround with no Slint/winit equivalent. Evidence: options.rs:4422-4425; Qt window-state workaround",
     "Reference editor/control 'BUGFIX: Do minimise-hide using event-deferred state-prep tech:' is recorded on 'system tray' and defined by the referenced options panel. No corresponding editable row exists in native options::pages; this is a missing GUI editing path, even if a setting is imported or consumed elsewhere.",
     "Native options registry has no editable 'BUGFIX: Do minimise-hide using event-deferred state-prep tech:' control in this page/box path."
@@ -15168,10 +15180,11 @@
    "path": "File > Options window > system tray",
    "workstream": "options-system",
    "state": "missing",
-   "priority": "normal",
+   "priority": "out-of-scope",
    "reference": null,
    "native": null,
    "notes": [
+    "Out of scope by the owner's decision of 2026-10-08 (#95): a Qt window-state workaround. To bring it back, set priority to normal and remove this note.",
     "Truth pass (2026-10-08): not-applicable, test-only. Qt-specific workaround. Evidence: options.rs:4426-4429; Qt restore-after-show workaround",
     "Reference editor/control 'BUGFIX: Do minimise-hide with post-show state restoration:' is recorded on 'system tray' and defined by the referenced options panel. No corresponding editable row exists in native options::pages; this is a missing GUI editing path, even if a setting is imported or consumed elsewhere.",
     "Native options registry has no editable 'BUGFIX: Do minimise-hide with post-show state restoration:' control in this page/box path."
@@ -17792,10 +17805,11 @@
    "path": "Tags > Tag parents",
    "workstream": "tags-services",
    "state": "missing",
-   "priority": "normal",
+   "priority": "out-of-scope",
    "reference": null,
    "native": null,
    "notes": [
+    "Out of scope by the owner's decision of 2026-10-08 (#95): background loading of parent pairs; hydrus-rs loads them when the editor opens. To bring it back, set priority to normal and remove this note.",
     "Truth pass (2026-10-08): missing, medium. Shared with siblings-async. Missing: Same change as siblings-async. Evidence: same as siblings-async",
     "Native Relationships::new synchronously loads service state; reference async initialization/fetch progress is absent."
    ]
@@ -17917,10 +17931,11 @@
    "path": "Tags > Tag siblings",
    "workstream": "tags-services",
    "state": "missing",
-   "priority": "normal",
+   "priority": "out-of-scope",
    "reference": null,
    "native": null,
    "notes": [
+    "Out of scope by the owner's decision of 2026-10-08 (#95): background loading of sibling pairs; hydrus-rs loads them when the editor opens. To bring it back, set priority to normal and remove this note.",
     "Truth pass (2026-10-08): missing, medium. One change covers siblings and parents. Missing: Background load per service with loading state (Timer-polled mailbox); shared with parents-async. Evidence: tag_relationships.rs:92-120 loads synchronously",
     "Native Relationships::new synchronously loads service state; reference async initialization/fetch progress is absent."
    ]
@@ -18231,10 +18246,11 @@
    "path": "Tags",
    "workstream": "tags-services",
    "state": "missing",
-   "priority": "normal",
+   "priority": "out-of-scope",
    "reference": null,
    "native": null,
    "notes": [
+    "Out of scope by the owner's decision of 2026-10-08 (#95): the background display-sync manager; hydrus-rs rebuilds display at once, and the Tags > sync menu leaves cover the UI. To bring it back, set priority to normal and remove this note.",
     "Truth pass (2026-10-08): not-applicable, test-only. Covered by the four sync menu leaves; the background manager is unnecessary (display rebuilt synchronously). Evidence: Tags > sync submenu, review window and switches tagged under four other leaves (tags_sync_menu.rs:33-35)",
     "Reference sync review/work-now and idle/normal-time scheduling operate a background display maintenance manager. Native relationship/application edits rebuild immediately; this background GUI manager and menu actions are absent.",
     "This entry is todo()/a checkbox without a command in tags_menu; no native main-menu workflow runs it."
