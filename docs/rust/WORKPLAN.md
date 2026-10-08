@@ -212,3 +212,21 @@ agent's own rebuilds dominate its time.
   `claude/impl-help-debug` (session_01SRhsQFQojn7WDE3krZbZzi). Each writes a
   report to `docs/rust/notes/impl-*.md` with build/rebuild/loop timings. I
   merge their branches after review.
+
+### Round 5 (remote sessions only, 2026-10-08 11:30 UTC)
+
+- Merged `claude/impl-external-callables` (16 tests; one Clippy fix on top:
+  its pre-push lint had not finished before the push). Its session moved on to
+  the options-system remainder (idle detection, shutdown jobs, sleep wait).
+- Remote trial verdict so far: own machine, ~23 min first build, ~7 min UI
+  rebuild, 20-40 s loop; no lock contention. Scaled out to every remaining
+  workstream, one session each, all from this branch:
+  `claude/impl-search-pages` (session_01375RaYXk3CVBxKmkALxCWo),
+  `claude/impl-options-gui-media` (session_01Hh9F3nMmGfr29cvixaf766),
+  `claude/impl-small-areas` (session_015Mj34GrH4eN9XPCcZsX11Q), plus
+  help-debug and external-callables (options-system) still running.
+  Prompt template: implement, not just test; untagged when nothing reads a
+  setting; report to `docs/rust/notes/impl-<branch>.md`.
+- Merge plan: one branch at a time into this branch, rebuild UI, run the
+  branch's tests + `dev.sh lint`, push; expect `GUI.md`/`DIFFERENCES.md` and
+  `tests/gui/main.rs` conflicts (keep both sides).
