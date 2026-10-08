@@ -104,6 +104,7 @@ def record( session ):
     controller = session.controller
     gui = controller.gui
 
+    from hydrus.core import HydrusConstants as HC
     from hydrus.core import HydrusTime
 
     HydrusTime.GetNow = lambda: NOW
@@ -248,7 +249,7 @@ def record( session ):
 
                         for content_update in content_updates:
 
-                            if content_update.GetDataType() == 0 and content_update.GetAction() == 1:
+                            if content_update.GetDataType() == HC.CONTENT_TYPE_FILES and content_update.GetAction() == HC.CONTENT_UPDATE_DELETE:
 
                                 deleted.extend( sorted( h.hex() for h in content_update.GetHashes() ) )
 
