@@ -451,7 +451,6 @@ async fn a_local_import_imports_its_files() {
     assert!(again.exists());
 }
 
-// leaf: audit-options-files-and-trash-test-import-local-files-directly-from-source-do-not-copy-to-temp-dir-beforehand
 #[tokio::test(flavor = "multi_thread")]
 async fn a_local_import_copies_to_a_temp_path_first_unless_the_option_says_not_to() {
     let dir = tempfile::tempdir().unwrap();

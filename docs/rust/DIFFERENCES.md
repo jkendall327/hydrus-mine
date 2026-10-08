@@ -4387,3 +4387,12 @@ directory.
   mute/unmute", "Mute/unmute: preview") are missing.
 - A change to the preview's show action while a file plays restarts it within
   a quarter of a second, not at once.
+
+## Leaves left untagged because only part is tested
+
+- **Client API "commit pending" permission.** The checkbox and the stored grant are tested; nothing consumes the permission (repository commit-pending upload is absent, the routes return 422).
+- **Importer "present" (show files) options.** The editor's status, inbox and location choices are tested against the recordings and the saved options hold them; no test runs the queue's "show files" filter by current and deleted domains.
+- **"Import local files directly from source" (test option).** The importer's temp-copy behaviour is tested with the setting written to the store; no test drives the Options row.
+- **mpv "set null audio device on silent media".** The Options row and the player plan's audio device are tested; mpv itself is not driven (no libmpv), and the leaf is out of scope.
+- **Importer destination: deleted domains and all-known mode.** The model supports them; no GUI caller offers them, so they are not driven through a window.
+

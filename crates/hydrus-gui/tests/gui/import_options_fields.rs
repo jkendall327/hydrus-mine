@@ -232,7 +232,6 @@ fn prefetch_checks_fetch_flags_and_the_dispositive_interlock_reach_the_importers
     assert!(!prefetch.url_check_looks_for_neighbour_spam);
 }
 
-// leaf: audit-network-options-present
 #[test]
 fn presentation_status_inbox_and_location_gates_reach_the_importers_options() {
     let _windows = headless::init();

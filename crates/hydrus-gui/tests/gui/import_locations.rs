@@ -232,7 +232,6 @@ fn theirs(chosen: &Json) -> Json {
 // turn, several at once through the shared list (and cancelling it), and
 // none, which warns; applied to the importer and read back from it.
 // leaf: import-locations
-// leaf: audit-shared-location-deleted
 #[test]
 fn the_destination_button_chooses_one_several_or_no_domains_as_the_reference_does() {
     let _windows = headless::init();
@@ -362,7 +361,6 @@ fn the_destination_button_chooses_one_several_or_no_domains_as_the_reference_doe
 
 // The presentation panel's status and inbox choices, which controls
 // "do not show anything" greys, and the values chosen reaching the importer.
-// leaf: audit-network-options-present
 #[test]
 fn presentation_status_and_inbox_choices_follow_the_references_panel() {
     let _windows = headless::init();
@@ -486,7 +484,6 @@ fn an_import_folders_destination_hides_the_url_boxes() {
 // (including all known files, and in advanced mode everything deleted), the
 // list with "deleted from" boxes in advanced mode, and what is chosen
 // reaching the importer's options.
-// leaf: audit-network-options-present
 #[test]
 fn the_presentation_location_is_the_unrestricted_button() {
     let _windows = headless::init();

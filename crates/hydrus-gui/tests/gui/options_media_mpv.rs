@@ -24,7 +24,6 @@ fn plan(client: &Client, has_audio: bool) -> Plan {
 
 // leaf: audit-options-media-playback-mpv-debug-loop-playlist-instead-of-loop-file-in-mpv
 // leaf: audit-options-media-playback-mpv-preferred-audio-output-device
-// leaf: audit-options-media-playback-mpv-debug-set-null-audio-device-on-silent-media
 #[test]
 fn the_mpv_rows_set_what_a_player_is_told_as_a_file_loads() {
     let client = Client::basic();
