@@ -4551,7 +4551,13 @@
    "notes": [
     "text control reads and sets info_line.has_audio_label.clone, info_line.has_audio_label; Editor holds the draft and the Apply transaction saves changes. The existing Qt-recording comparison checks this exact label, box path, kind, bounds and migrated initial value.",
     "Assessment covers this editable control and shared Apply/Cancel, not every control on its containing reference page or every background consumer."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "sound",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Real options window edits the label, Apply, and the real viewer's top line shows ', with audio' (default 🔊 before); info_lines.rs replays the recorded reference top line with the changed label ('with audio') through the same top_line function. Tests: crates/hydrus-gui/tests/gui/options_media_hovers.rs:222 the_audio_label_is_the_text_the_viewer_uses_for_files_with_audio; crates/hydrus-gui/tests/gui/info_lines.rs:47 info_lines_are_the_reference_s"
+   }
   },
   {
    "id": "audit-options-audio-the-preview-window-has-its-own-volume",
@@ -9801,7 +9807,13 @@
    "notes": [
     "Reference editor/control 'DEBUG: Loop Playlist instead of Loop File in mpv:' is recorded on 'media playback' and defined by the referenced options panel. No corresponding editable row exists in native options::pages; this is a missing GUI editing path, even if a setting is imported or consumed elsewhere.",
     "Native options registry has no editable 'DEBUG: Loop Playlist instead of Loop File in mpv:' control in this page/box path."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "weak",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Real Options row is driven, but the consumer is stood in for by Plan::for_file(..).commands() (libmpv absent; playback.rs/mpv.rs set_playback_options never run) and the expected set loop/loop-playlist commands are literals from ClientGUIMPV.UpdateConfAndCoreOptions, no recording. Stale tracker note: says no editable row exists, but the row exists and is driven. Tests: crates/hydrus-gui/tests/gui/options_media_mpv.rs:25 the_mpv_rows_set_what_a_player_is_told_as_a_file_loads; crates/hydrus-gui-model/tests/model/mpv_options.rs"
+   }
   },
   {
    "id": "audit-options-media-playback-mpv-debug-set-null-audio-device-on-silent-media",
@@ -9875,7 +9887,13 @@
    "notes": [
     "Reference editor/control 'Preferred audio output device:' is recorded on 'media playback' and defined by the referenced options panel. No corresponding editable row exists in native options::pages; this is a missing GUI editing path, even if a setting is imported or consumed elsewhere.",
     "Native options registry has no editable 'Preferred audio output device:' control in this page/box path."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "weak",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Same as loop-playlist: the real row stages/cancels/applies, but the effect is read through Plan::for_file (decision function standing in for the mpv player; 'auto' for none, typed 'alsa/hw:1' literal), not the player. Also the reference panel's device choices/list are not compared. Stale tracker note (says no editable row). Tests: crates/hydrus-gui/tests/gui/options_media_mpv.rs:26 the_mpv_rows_set_what_a_player_is_told_as_a_file_loads"
+   }
   },
   {
    "id": "audit-options-media-playback-mpv-set-a-new-mpv-conf-on-dialog-ok",
@@ -9889,7 +9907,13 @@
    "notes": [
     "Reference editor/control 'Set a new mpv.conf on dialog ok?:' is recorded on 'media playback' and defined by the referenced options panel. No corresponding editable row exists in native options::pages; this is a missing GUI editing path, even if a setting is imported or consumed elsewhere.",
     "Native options registry has no editable 'Set a new mpv.conf on dialog ok?:' control in this page/box path."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "source-restated",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Real window: typed path is copied over the store's mpv.conf only on OK, ignored on cancel, not remembered, nonexistent path changes nothing; matches MediaPlaybackPanel.UpdateOptions but expectations are literals restated from source (file I/O could be recorded), the reference's starting directory/error toast and the running player reloading the conf are not covered. Stale tracker note (says no editable row). Tests: crates/hydrus-gui/tests/gui/options_media_mpv.rs:88 a_new_mpv_conf_replaces_the_databases_on_ok_and_nothing_is_kept"
+   }
   },
   {
    "id": "audit-options-media-playback-mpv-test-destroy-recreate-mpv-players-instead-of-recycling-them",
@@ -9933,7 +9957,13 @@
    "notes": [
     "Reference editor/control 'add' is recorded on 'media playback' and defined by the referenced options panel. No corresponding editable row exists in native options::pages; this is a missing GUI editing path, even if a setting is imported or consumed elsewhere.",
     "Native options registry has no editable 'add' control in this page/box path."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "weak",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Drives the real Options buttons and chooser/editor, but the 'reaches the viewer' check uses crate::zoom::Zoom::new(..).rect() (a decision function standing in for the viewer) with literal rects, and Apply is simulated via editor.applied()+save; the recording (media_view_options.json) only covers rows/addable/editor choices in a model test, not the add behaviour. Stale tracker note (says no editable row). Tests: crates/hydrus-gui/src/options_media_views.rs:646 added_edited_and_deleted_filetype_handling_reaches_the_viewer_s_zoom; :492 earlier add-path test; crates/hydrus-gui-model/tests/model/media_view_options.rs:46,120"
+   }
   },
   {
    "id": "audit-options-media-playback-per-filetype-handling-delete",
@@ -9947,7 +9977,13 @@
    "notes": [
     "Reference editor/control 'delete' is recorded on 'media playback' and defined by the referenced options panel. No corresponding editable row exists in native options::pages; this is a missing GUI editing path, even if a setting is imported or consumed elsewhere.",
     "Native options registry has no editable 'delete' control in this page/box path."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "weak",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Real delete button drives the editor, but effect is judged via Zoom::new rect stand-in and a simulated Apply; the delete rules (classes undeletable, fallback to class) are typed literals in a model test, the fixture's 'deletable'/'actions' keys are not replayed. Stale tracker note. Tests: crates/hydrus-gui/src/options_media_views.rs:648 added_edited_and_deleted_filetype_handling_reaches_the_viewer_s_zoom; crates/hydrus-gui-model/tests/model/media_view_options.rs:120 delete_spares_classes_and_add_copies_the_class"
+   }
   },
   {
    "id": "audit-options-media-playback-per-filetype-handling-edit",
@@ -9961,7 +9997,13 @@
    "notes": [
     "Reference editor/control 'edit' is recorded on 'media playback' and defined by the referenced options panel. No corresponding editable row exists in native options::pages; this is a missing GUI editing path, even if a setting is imported or consumed elsewhere.",
     "Native options registry has no editable 'edit' control in this page/box path."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "weak",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Real edit button and editor window ('edit media view options information'), but the viewer consumer is Zoom::new(..).rect() with literals and Apply is simulated; the recorded editor choices are replayed only in the model test, not tied to the edit flow. Stale tracker note. Tests: crates/hydrus-gui/src/options_media_views.rs:647 added_edited_and_deleted_filetype_handling_reaches_the_viewer_s_zoom; :492 edit/cancel test; crates/hydrus-gui-model/tests/model/media_view_options.rs:46"
+   }
   },
   {
    "id": "audit-options-media-playback-qtmediaplayer-debug-set-null-audio-device-on-silent-media",
@@ -10069,7 +10111,13 @@
     "Static image refresh preserves intervals/zoom. Paused animation frames are retained; future frame conversions consume live policy, without promising prefetched-frame cancellation that the reference image-cache notification does not provide.",
     "Qt Options and native viewer are different surfaces/states; no paired bitmap or dedicated native checkbox image.",
     "Separate truncated loading remains unimplemented and earns zero credit; browser eye-menu ICC, universal formats/plugins/mpv and Media Playback parents are outside scope."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "sound",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Real Options checkbox (cancel/hidden/Apply) then real preview, media viewer (media and sharp tile) and archive/delete filter repaint with pixels from the recorded reference decode (image_decoder_policies.json, ICC on/off); model test replays the recorded Qt checkbox cancel/save/reopen. Carried, no tag. Tests: crates/hydrus-gui/tests/gui/image_colour.rs:180 actual_saved_icc_updates_preview_viewer_tiles_and_archive_without_resetting_owned_state; crates/hydrus-gui/tests/gui/image_colour.rs:570; crates/hydrus-gui-model/tests/model/image_colour.rs:21"
+   }
   },
   {
    "id": "audit-options-media-playback-system-ffmpeg-call-timeout",
@@ -10087,7 +10135,13 @@
     "Explicit Ffmpeg::timeout(Duration) precision is preserved and overrides the saved reader. Streaming reads retain existing fixed per-chunk timeout and Drop kill/wait; streaming/player-reuse/executable-selection controls remain unclaimed.",
     "About preserves existing synchronous scheduling and unavailable-version UI rather than the reference timeout path diagnostic. Metadata timeout wording is preserved. Saved provider is weak Store-owned; existing workers/preview generations continue their own cancellation/publication guards, with no new worker or mutable global.",
     "Other media playback/system options and parents remain Partial; parents/aliases/new IDs count zero."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "sound",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Real Options spinner replays the recorded Qt cases (1..600 bounds, 0/601 clamp, cancel, raw imports) from ffmpeg_timeout.json, with the saved/published value reaching a real local subprocess whose deadline (3s granularity, kill+reap) matches the recording of real HydrusFFMPEG. Carried, no tag. Tests: crates/hydrus-gui/tests/gui/ffmpeg_timeout.rs:29,114,173; crates/hydrus-gui-model/tests/model/ffmpeg_timeout.rs:34,118"
+   }
   },
   {
    "id": "audit-options-media-playback-system-load-images-with-pil",
@@ -10132,7 +10186,13 @@
    "notes": [
     "choice control reads and sets file_handling.transparency_strictness; Editor holds the draft and the Apply transaction saves changes. The existing Qt-recording comparison checks this exact label, box path, kind, bounds and migrated initial value.",
     "Assessment covers this editable control and shared Apply/Cancel, not every control on its containing reference page or every background consumer."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "weak",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Real dropdown and Apply are driven, but the consumer is stood in for: FileImporter::new is only constructed and Raster::has_useful_alpha is called directly (no file imported, no flag set), with expected (bool,bool) pairs typed from source and no recording of the levels (fixtures only dump options). Tests: crates/hydrus-gui/tests/gui/options_media_playback.rs:23 the_transparency_strictness_is_what_the_importer_judges_images_by"
+   }
   },
   {
    "id": "audit-options-media-playback-transparency-draw-image-transparency-as-checkerboard",
@@ -10146,7 +10206,13 @@
    "notes": [
     "Exact checkbox defaults false and stages until Apply. Existing viewer and later files consult actual FileFlags::TRANSPARENCY metadata. Enabled transparent media receives alternating 16-logical-pixel RGB237/222 tiles aligned to the media box; disabled or opaque media uses its ordinary canvas background. Only visible tiles are created when zoomed. Persist/reopen, Cancel and legacy import are covered.",
     "The unchecked native canvas retains its existing dark colour, while reference normal backgrounds follow its configurable palette. Preview and duplicate-filter transparency policies remain separate leaves."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "sound",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Real options checkbox cancel/Apply on an open viewer; rendered checker pixels at five points are compared with the recorded reference (237/222 grey), draft does not repaint, cancel keeps settings. Carried, no tag. Tests: crates/hydrus-gui/tests/gui/options_window.rs:2176 canvas_options_apply_to_the_open_viewer_and_cancel_discards_the_draft; viewer_canvas_options.json"
+   }
   },
   {
    "id": "audit-options-media-playback-transparency-instead-of-checkerboard-use-a-bright-greenscreen",
@@ -10160,7 +10226,13 @@
    "notes": [
     "Exact subordinate checkbox defaults false, stages until Apply and migrates legacy preferences. When checkerboard is enabled for transparent media, this preference selects reference RGB34/255/0 greenscreen. When checkerboard is disabled or media opaque it leaves the ordinary background. All four checkbox combinations are recorded and rendered, including open-viewer refresh, Cancel and reopen.",
     "The unchecked native canvas retains its existing dark colour rather than the reference configurable palette. Preview and backend-specific policies are unclaimed."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "sound",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Same test: the four recorded checker/green combinations are applied through the real window and the viewer's rendered pixels match the recorded greenscreen (34,255,0) only when both are on. Carried, no tag. Tests: crates/hydrus-gui/tests/gui/options_window.rs:2176 canvas_options_apply_to_the_open_viewer_and_cancel_discards_the_draft"
+   }
   },
   {
    "id": "audit-options-media-playback-video-animations-always-loop-animations",
@@ -10174,7 +10246,13 @@
    "notes": [
     "Exact Always Loop Animations checkbox defaulttrue stages until Apply, persists and imports always_loop_gifs. Native animation players in media viewer/archive-delete/duplicate filters read the preference at each wrap and honor file play counts when false, pausing on the final frame after the stored count. Stored0 and ugoira mean infinite; missing GIF loop metadata means1. The existing mpv consumer captures GIF/APNG metadata at file load, pauses/seeks to start after the finite restart count and uses newly applied preference on the next load. Slideshow stop remains independent. Fresh actual Qt decoding/painting/timer output covers stored0/1/2 with forced looping on/off; separate real GIF/APNG reads cover finite/infinite/absent metadata. Tests cover controls, migration, decoded-native finite pause/live changes, owned viewer final-frame stability/resume, Cancel/reopen and existing MPV backend when available.",
     "This adds no absent animation backend. Native animation decoding remains WebP/ugoira; existing GIF/APNG playback requires libmpv. The MPV regression runs only where libmpv is available, as existing player tests do; metadata parsing and native decoded-frame regressions are unconditional. Existing MPV restart polling behavior is retained. Enabling looping does not resume already paused media, matching the reference."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "sound",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Real checkbox cancel/Apply/reopen with a real viewer on an animation: off stops at the recorded last frame and stays after two plays, on loops (progress 1 to 0), enabling does not resume a pause; frame counts from the recording. Carried, no tag. Tests: crates/hydrus-gui/tests/gui/options_window.rs:4082 hover_zoom_and_loop_options_reach_owned_viewers_and_survive_cancel_and_reopen; viewer_zoom_loop_options.json"
+   }
   },
   {
    "id": "audit-options-media-playback-video-animations-start-animations-this-in",
@@ -10188,7 +10266,13 @@
    "notes": [
     "Reference editor/control 'Start animations this % in:' is recorded on 'media playback' and defined by the referenced options panel. No corresponding editable row exists in native options::pages; this is a missing GUI editing path, even if a setting is imported or consumed elsewhere.",
     "Native options registry has no editable 'Start animations this % in:' control in this page/box path."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "sound",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Real window (bounds, cancel, hidden, retired, raw 0.119 -> 11 display, truncation) then the real viewer's initial seek on next media; recorded animation_start.json supplies controls cases (replayed in the model test), states and the rendered file. Stale tracker note: says no editable row exists. Tests: crates/hydrus-gui/tests/gui/animation_start.rs:51; crates/hydrus-gui-model/tests/model/animation_start.rs:26; crates/hydrus-gui/src/animation.rs:455,606"
+   }
   },
   {
    "id": "audit-options-media-playback-zoom-and-position-centerpoint-for-media-zooming",
@@ -10202,7 +10286,13 @@
    "notes": [
     "choice control reads and sets media_viewer.zoom_centre; Editor holds the draft and the Apply transaction saves changes. The existing Qt-recording comparison checks this exact label, box path, kind, bounds and migrated initial value.",
     "Assessment covers this editable control and shared Apply/Cancel, not every control on its containing reference page or every background consumer."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "source-restated",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Real window and real viewer key zoom for viewer-centre, media top-left and media centre, but expectations are typed (stays-put, +-1px) restated from source, no recording of centre behaviour exists (viewer_zoom.json only records the setting); the default 'mouse' choice is not driven through the viewer (only in Zoom-level tests). Tests: crates/hydrus-gui/tests/gui/options_media_zoom.rs:154 zooming_keeps_the_centerpoint_the_option_names"
+   }
   },
   {
    "id": "audit-options-media-playback-zoom-and-position-media-viewer-default-zoom",
@@ -10216,7 +10306,13 @@
    "notes": [
     "choice control reads and sets media_viewer.default_zoom_type; Editor holds the draft and the Apply transaction saves changes. The existing Qt-recording comparison checks this exact label, box path, kind, bounds and migrated initial value.",
     "Assessment covers this editable control and shared Apply/Cancel, not every control on its containing reference page or every background consumer."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "sound",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Real window sets 100% and the real viewer opens at the file's size (fit before), with six choice labels checked; viewer_zoom.json (defaults and custom with canvas-fill override) is replayed against canvas_zooms, the function the viewer's Zoom calls. GUI test exercises only the 100% choice. Tests: crates/hydrus-gui/tests/gui/options_media_zoom.rs:85 the_default_zoom_and_the_zoom_steps_are_the_viewer_s; crates/hydrus-legacy/tests/viewer_zoom.rs:25"
+   }
   },
   {
    "id": "audit-options-media-playback-zoom-and-position-media-zooms",
@@ -10230,7 +10326,13 @@
    "notes": [
     "text control reads and sets media_viewer.media_zooms; Editor holds the draft and the Apply transaction saves changes. The existing Qt-recording comparison checks this exact label, box path, kind, bounds and migrated initial value.",
     "Assessment covers this editable control and shared Apply/Cancel, not every control on its containing reference page or every background consumer."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "source-restated",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Real text row '0.5, 1, 3' drives real viewer +/- stepping and parse errors are checked against the reference message, but the step results are typed literals (next_zoom in viewer_zoom.rs also literals); recording only replays canvas_zooms, not stepping through a custom media_zooms list. Tests: crates/hydrus-gui/tests/gui/options_media_zoom.rs:86 the_default_zoom_and_the_zoom_steps_are_the_viewer_s; crates/hydrus-gui-model/src/options.rs:6273"
+   }
   },
   {
    "id": "audit-options-media-playback-zoom-and-position-preview-viewer-default-zoom",
@@ -10248,7 +10350,13 @@
     "48 actual Qt MediaContainer SetMedia rectangles and48 actual Qt DPR2 calculated sizes cover six choices/four resolutions/two panes; DPR2 cases are backend arithmetic evidence, not an actual HiDPI native screenshot.",
     "The existing basic JPEG metadata reports120x80 while its decoded payload is64x48; recorded canvas geometry uses existing metadata. The Qt warning is retained in the recording log, and pixel-identical bitmap parity is not claimed.",
     "Actual Qt parent resize resets the default policy; native implementation samples on accepted media or actual measured viewport/DPR changes while preserving ICC/cache redisplay and unrelated full-viewer zoom state."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "sound",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Real Options dropdown (cancel, retired, all six modes) then real preview pane geometry compared with recorded Qt rects (preview_default_zoom.json), including clipping and independence from the full viewer's zoom. Carried, no tag. Tests: crates/hydrus-gui/tests/gui/preview_default_zoom.rs:110; crates/hydrus-gui-model/tests/model/preview_default_zoom.rs:45,138"
+   }
   },
   {
    "id": "audit-options-media-playback-zoom-and-position-re-center-media-on-window-resize",
@@ -10262,7 +10370,13 @@
    "notes": [
     "Exact checkbox defaults true. Apply persists the resize policy read live by an already-open media viewer. False retains its current detail zoom/pan and compensates a top-left window resize to preserve absolute screen position; true reinitializes the native default zoom and centered position. Cancel does not change the live policy. Legacy preference migrates.",
     "The native default zoom implementation has its existing limitations; reference per-filetype zoom-lock controls are separate unclaimed leaves."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "sound",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Real checkbox toggles the open viewer's resize policy (preserved rect when off, recentred when on); zoom.rs replays recorded before/after rects (viewer_canvas_options.json) through resize_with_policy, the function the viewer calls. The recentred rect in the options test is compared with Zoom::new but the recording covers it. Carried, no tag. Tests: crates/hydrus-gui/tests/gui/options_window.rs:2325 resize_and_seek_options_reach_the_native_viewer_geometry; crates/hydrus-gui/tests/gui/zoom.rs:489 resizing_preserves_or_recenters_the_recorded_zoom_and_pan"
+   }
   },
   {
    "id": "audit-options-media-viewer-animation-audio-seek-bar-seek-bar-full-height-pop-in-requires-window-focus",
@@ -10276,7 +10390,13 @@
    "notes": [
     "Exact default-true checkbox stages/persists the seek-bar focus requirement independently of hover focus. Actual shared native OS activity routes viewer/window identity to the open viewer. When enabled, ordinary mouseover of an inactive viewer uses configured away height (recorded20→5); disabling it permits full height while inactive. Actual held scrub and existing volume popup preserve the reference forced-full exception. Native volume control follows the same full-height eligibility. Apply updates the open viewer, Cancel retains policy, and legacy animated_scanbar_pop_in_requires_focus migrates.",
     "Preview canvases and backend-specific MPV controls remain separate unclaimed leaves. Existing native full/away heights and presentation styling apply."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "sound",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Real checkbox then real viewer with WindowActiveChanged events and mouse at the bottom; seek_full and seek_height are asserted for each recorded event; cancel keeps state. Carried, no tag. Tests: crates/hydrus-gui/tests/gui/options_window.rs:2997 focus_options_reach_native_activity_and_actual_mouseover_gates (viewer_focus_options.json events); crates/hydrus-gui-model/tests/model/options_dialog.rs:1606"
+   }
   },
   {
    "id": "audit-options-media-viewer-animation-audio-seek-bar-seek-bar-height",
@@ -10290,7 +10410,13 @@
    "notes": [
     "Exact Seek bar height numeric control defaults20 and clamps1..255 pixels. Apply changes an open native animation viewer and persists/migrates the preference. The actual seek-bar and companion volume-control geometry use the configured full height when near the pointer or a popup/drag is active. Cancel keeps the applied height.",
     "The reference focus requirement is a separate unimplemented control; no focus-policy completion is claimed."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "sound",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Real number rows set the recorded heights (1 and 20 plus cancel of 255) and the rendered seek bar's pixels/rect match the recording's full_rect/small_rect/nub_x (viewer_canvas_options.json). Carried, no tag. Tests: crates/hydrus-gui/tests/gui/options_window.rs:2325 resize_and_seek_options_reach_the_native_viewer_geometry; crates/hydrus-gui-model/tests/model/options_dialog.rs:1339; crates/hydrus-gui/tests/gui/scanbar.rs:242"
+   }
   },
   {
    "id": "audit-options-media-viewer-animation-audio-seek-bar-seek-bar-height-when-mouse-away",
@@ -10304,7 +10430,13 @@
    "notes": [
     "Exact noneable Seek bar height when mouse away control defaultsSome5 and clamps1..255 pixels with reference phrase no, hide it completely. Apply changes collapsed native seek/volume geometry live; None renders no bar while away and restores the full configured height near it. Numeric/None cases, actual Qt visibility, persistence, Cancel and legacy migration are covered.",
     "Qt computes a5px ideal rectangle even when None hides its widget; native uses zero visible height. The recorder includes both reference geometry and actual visibility. Focus requirement is a separate unclaimed control."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "sound",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Recorded hidden heights (5 and None) applied through the real window; the collapsed bar's rendered rows (and its disappearance for None) match the recording. Carried, no tag. Tests: crates/hydrus-gui/tests/gui/options_window.rs:2325 resize_and_seek_options_reach_the_native_viewer_geometry"
+   }
   },
   {
    "id": "audit-options-media-viewer-animation-audio-seek-bar-seek-bar-nub-width",
@@ -10318,7 +10450,13 @@
    "notes": [
     "Exact Seek bar nub width numeric control defaults10 and clamps1..63 pixels. Apply updates the current viewer. Nub drawing uses floor((bar width minus nub width)*progress), with the reference endpoint/midpoint positions. Both animation frame seeking and player time seeking compensate clicks/drags by half the configured nub width and divide by the available width. Fresh reference mouse→frame targets and physical native nub pixels are asserted. Persist, Cancel and migration covered.",
     "Widths smaller than the nub are bounded safely by native rendering/seek arithmetic; no backend-specific playback option completion is claimed."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "sound",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Recorded nub widths (10, 1) applied through the real window; nub pixel extent at the recorded nub_x compared in the rendered seek bar. Carried, no tag. Tests: crates/hydrus-gui/tests/gui/options_window.rs:2325 resize_and_seek_options_reach_the_native_viewer_geometry; crates/hydrus-gui/tests/gui/scanbar.rs:242"
+   }
   },
   {
    "id": "audit-options-media-viewer-closing-focus-advanced-when-closing-the-media-viewer-with-the-above-focusing-options-activate-main-gui",
@@ -10332,7 +10470,13 @@
    "notes": [
     "Exact default-false checkbox stages, persists and imports activate_main_gui_on_focusing_viewer_close. A close with surviving original receiver and exit media requests actual native main-window focus when either above focusing preference is enabled, even if its source page is closed or exit file absent. With both focusing preferences disabled it makes no focusing activation request. The original and main handles are weak, and unrelated replacement pages receive no focus/selection notification.",
     "Existing native viewer menu/shortcut and visual presentation differences remain separate unclaimed boundaries. These controls cover ordinary viewer close notifications. Native desktop activation uses winit focus_window; the headless observer records real attempts without replacing that request."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "sound",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "All 16 recorded value combinations plus scenarios set through the real window, then the real viewer close; the activation sequence (focusing-panel vs debug-main) is compared with the recorded list via the activation observer that wraps the real focus_window call. Carried, no tag. Tests: crates/hydrus-gui/tests/gui/options_window.rs:3267 closing_preferences_reach_frozen_page_selection_and_native_main_activation; viewer_closing_options.json"
+   }
   },
   {
    "id": "audit-options-media-viewer-closing-focus-debug-when-closing-the-media-viewer-at-any-time-activate-main-gui",
@@ -10346,7 +10490,13 @@
    "notes": [
     "Exact default-false checkbox stages, persists and imports activate_main_gui_on_viewer_close. Every current viewer close requests actual native weak-main activation when enabled, including unowned media viewers, missing/destroyed original sources and absence of ordinary exit media. Debug notification follows the independent advanced notification; enabling both produces two activation requests, matching actual Qt output. Stale callbacks cannot activate or close a successor and a destroyed main component receives no request.",
     "Existing native viewer menu/shortcut and visual presentation differences remain separate unclaimed boundaries. These controls cover ordinary viewer close notifications. Native desktop activation uses winit focus_window; the headless observer records real attempts without replacing that request."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "sound",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Same replay: recorded 'activation' results for DEBUG on/off including closed/replaced owner, and the stale-viewer test at :3500 expects ActivateDebug only for the live one. Carried, no tag. Tests: crates/hydrus-gui/tests/gui/options_window.rs:3267 closing_preferences_reach_frozen_page_selection_and_native_main_activation; viewer_closing_options.json"
+   }
   },
   {
    "id": "audit-options-media-viewer-closing-focus-when-closing-the-media-viewer-re-select-original-search-page",
@@ -10360,7 +10510,13 @@
    "notes": [
     "Exact default-false checkbox stages, persists and imports focus_media_tab_on_viewer_close_if_possible. A current viewer close reselects its frozen launching PageKey, even after background tab changes. An absent or closed source cannot redirect another page; a retained closed source can still receive the other exit notification, as recorded. Stale viewer close callbacks cannot close or redirect a successor.",
     "Existing native viewer menu/shortcut and visual presentation differences remain separate unclaimed boundaries. These controls cover ordinary viewer close notifications. Native desktop activation uses winit focus_window; the headless observer records real attempts without replacing that request."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "sound",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Recorded events compare which page is shown after close (original vs other), including closed-owner undo. Carried, no tag. Tests: crates/hydrus-gui/tests/gui/options_window.rs:3267 closing_preferences_reach_frozen_page_selection_and_native_main_activation; viewer_closing_options.json"
+   }
   },
   {
    "id": "audit-options-media-viewer-closing-focus-when-closing-the-media-viewer-tell-original-search-page-to-select-exit-media",
@@ -10374,7 +10530,13 @@
    "notes": [
     "Exact default-true checkbox stages, persists and imports focus_media_thumb_on_viewer_close. Close resolves the exit file within the weak original page, focuses its thumbnail or collection and scrolls to it. Existing multiple selection is preserved when the exit is already selected; missing exit media leaves selection unchanged. Closed undoable sources receive selection while hidden, reveal it after undo, and persist the selection in the last session. Session replacement destroys the original receiver and does not redirect replacement pages.",
     "Existing native viewer menu/shortcut and visual presentation differences remain separate unclaimed boundaries. These controls cover ordinary viewer close notifications. Native desktop activation uses winit focus_window; the headless observer records real attempts without replacing that request."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "sound",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Recorded events compare the original page's selected set and focused file after close (normal, selected-multiple, missing-exit) plus reveal request and persistence. Carried, no tag. Tests: crates/hydrus-gui/tests/gui/options_window.rs:3267 closing_preferences_reach_frozen_page_selection_and_native_main_activation; viewer_closing_options.json"
+   }
   },
   {
    "id": "audit-options-media-viewer-hovers-background-draw-file-information-top-in-the-viewer-background",
@@ -10388,7 +10550,13 @@
    "notes": [
     "Exact default-true checkbox stages, persists and imports draw_top_hover_in_media_viewer_background. The real viewer paints its current native file-information line at the top centre of the passive canvas, before media, independently of top popup/focus eligibility. Opaque media covers it; Apply changes an open viewer and Cancel retains saved policy.",
     "Existing native fonts, file-information-line content and rating layout remain in use, so these passive copies follow native hover presentation rather than Qt glyph metrics. Preview copies, top hover disable, menu/dominance rules and backend-specific controls remain separate gaps. The already-completed passive index leaf is excluded."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "weak",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Real window toggles and saved values match the recorded combos, but what is drawn is checked only as presence: aggregate non-background pixel count > 0 and opaque-cover occupancy; the recording's per-item draws (kind, rect, text such as the 1.7 KB jpeg line) are never compared, so file information is not isolated or checked for content/position. Carried, no tag. Tests: crates/hydrus-gui/tests/gui/options_window.rs:3555 passive_background_options_paint_independent_copies_behind_opaque_media; crates/hydrus-gui-model/tests/model/options_dialog.rs:1720"
+   }
   },
   {
    "id": "audit-options-media-viewer-hovers-background-draw-index-text-bottom-right-in-the-viewer-background",
@@ -10402,7 +10570,13 @@
    "notes": [
     "Exact default-true checkbox stages and persists drawing the reference zoom - index string three pixels from the bottom-right canvas edge, underneath media. Apply updates an open viewer, Cancel retains the applied state, and the legacy boolean migrates. Fresh actual Qt _DrawIndexAndZoom draw calls and native exact strings/pixel presence/opaque-media occlusion regressions prove the visible consumer.",
     "Native text palette/font metrics differ from Qt; exact string format, bottom-right inset and background stacking match the reference. Other passive background copies and preview/duplicate-filter preferences are unclaimed."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "sound",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Real checkbox then the real viewer: index background text equals the recorded draw text for each recorded caption/zoom, ink appears only in the bottom-right region when on, and opaque media covers it. Carried, no tag. Tests: crates/hydrus-gui/tests/gui/options_window.rs:2520 hover_options_apply_to_actual_mouseover_panels_and_passive_index_text; viewer_hover_options.json"
+   }
   },
   {
    "id": "audit-options-media-viewer-hovers-background-draw-notes-right-in-the-viewer-background",
@@ -10416,7 +10590,13 @@
    "notes": [
     "Exact default-true checkbox stages, persists and imports draw_notes_hover_in_media_viewer_background. The real viewer paints sorted note names/content at the right, before media, independently of notes-popup/focus eligibility. Its origin follows the top-right copy height when that preference is enabled, or resets to0 when disabled, preserving the reference overlap dependency. Text wraps/clips using existing native notes presentation, and opaque media covers it.",
     "Existing native fonts, file-information-line content and rating layout remain in use, so these passive copies follow native hover presentation rather than Qt glyph metrics. Preview copies, top hover disable, menu/dominance rules and backend-specific controls remain separate gaps. The already-completed passive index leaf is excluded."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "weak",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Same as file information: only presence/occupancy and the notes y-offset below ratings (input_y > 0) are checked against the recording; the recorded note texts and rects are not compared, so the notes content and right-side position are not proven. Carried, no tag. Tests: crates/hydrus-gui/tests/gui/options_window.rs:3555 passive_background_options_paint_independent_copies_behind_opaque_media; crates/hydrus-gui-model/tests/model/options_dialog.rs:1720"
+   }
   },
   {
    "id": "audit-options-media-viewer-hovers-background-draw-ratings-and-locations-top-right-in-the-viewer-background",
@@ -10430,7 +10610,13 @@
    "notes": [
     "Exact default-true checkbox stages, persists and imports draw_top_right_hover_in_media_viewer_background. The real viewer paints a passive top-right copy of its existing rating glyphs, inbox/trash indicators, sorted current local domains followed by remote domain names with pending/petitioned suffixes, and displayed URL labels. It paints before media and is independent of popup/focus enables. The passive glyph component is shared with the existing interactive hover without adding input to the copy.",
     "Existing native fonts, file-information-line content and rating layout remain in use, so these passive copies follow native hover presentation rather than Qt glyph metrics. Preview copies, top hover disable, menu/dominance rules and backend-specific controls remain separate gaps. The already-completed passive index leaf is excluded."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "weak",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Real viewer and Options row driven over all 16x2 recorded combinations, but the only check on what is painted is whether any non-background pixel exists. The recording holds the drawn texts and rects (e.g. 'my files' at [953,80], the rating glyph at [970,42]) and the test never compares them, so presence is tested, not content or position. Tests: crates/hydrus-gui/tests/gui/options_window.rs:3557 passive_background_options_paint_independent_copies_behind_opaque_media; oracle/fixtures/viewer_background_options.json"
+   }
   },
   {
    "id": "audit-options-media-viewer-hovers-background-draw-tags-left-in-the-viewer-background",
@@ -10444,7 +10630,13 @@
    "notes": [
     "Exact default-true checkbox stages, persists and imports draw_tags_hover_in_media_viewer_background. The real viewer paints its display/sorted/coloured tag rows at the left of the passive canvas, before media, independently of the tag popup enable or window focus. Opaque media covers those copies and the passive content never takes input.",
     "Existing native fonts, file-information-line content and rating layout remain in use, so these passive copies follow native hover presentation rather than Qt glyph metrics. Preview copies, top hover disable, menu/dominance rules and backend-specific controls remain separate gaps. The already-completed passive index leaf is excluded."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "weak",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Same test: ink-present vs recorded visible_pixels>0 only. The recorded tag rows (text, left-edge rect) are never compared with the native rows, so what is drawn at the left is unverified. Opaque-cover behaviour is compared with the recording. Tests: crates/hydrus-gui/tests/gui/options_window.rs:3557 passive_background_options_paint_independent_copies_behind_opaque_media; oracle/fixtures/viewer_background_options.json"
+   }
   },
   {
    "id": "audit-options-media-viewer-hovers-hover-windows-allow-a-mouse-wheel-scroll-over-the-taglist-to-propagate-to-the-main-canvas",
@@ -10462,7 +10654,13 @@
     "No Qt PNG: recorder writes JSON only. Fresh native hover PNG proves presentation/scroll state but cannot visually compare Qt pixels.",
     "Measured native row heights and Winit line normalization(60logical pixels per line; three rows per tick) differ from Qt pixels/platform line preferences; fractional Qt wheel accumulation is not claimed.",
     "Ordinary browser viewer hover only. Preview/filter canvases without native hover panes, full tag selection/context actions and broader hover/list parents remain Partial or Missing."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "sound",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Model test replays recorded Qt cases (all four codes, scrollbar, directions, timing) against WheelGate, the gate the real viewer uses; the GUI test drives the Options dropdown, real wheel events, next-file navigation and Ctrl-zoom with Apply/Cancel/reopen. Native-vs-Qt wheel units are documented as differing. Tests: crates/hydrus-gui/tests/gui/viewer_tag_wheel.rs:46 long_tag_hover_scrolls_before_policy_gated_real_navigation_and_zoom; crates/hydrus-gui-model/tests/model/viewer_tag_wheel.rs:12 parent_wheel_gates_replay_actual_qt_boundaries_and_directions, :64 four_policy_choices_stage_cancel_save_and_reopen_with_reference_labels; fixture viewer_tag_wheel.json"
+   }
   },
   {
    "id": "audit-options-media-viewer-hovers-hover-windows-hover-window-pop-in-requires-window-focus",
@@ -10476,7 +10674,13 @@
    "notes": [
     "Exact default-true checkbox stages/persists an independent focus policy for the top-information, tags, ratings/locations and notes hover panels. The shared actual native observer distinguishes this viewer, another application window, and no active application window. Enabled focus policy suppresses new raises without viewer activity, preserves already-raised panels during None only while the pointer remains in position, and hides them when another window becomes active. Fresh real Qt activation/raise consumers record all8preference×activity combinations and each panel transient[true,true,false,false,true,false], replayed through the same native-ID observer and real native pointer events. Apply/Cancel, imported preferences, callback identity isolation and dead-owner release are covered.",
     "Native hover content/layout and existing menu/dominant-hover interaction differences remain outside this control. Passive background-copy preferences, preview controls and duplicate-filter-specific hovers are separate unclaimed leaves."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "sound",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Real viewer driven with activation changes, the four hovers (top, tags, ratings, notes) checked against recorded hover_up for each option state, plus the recorded transient active->none->other traces and Apply/Cancel. Tests: crates/hydrus-gui/tests/gui/options_window.rs:2997 focus_options_reach_native_activity_and_actual_mouseover_gates; fixture viewer_focus_options.json"
+   }
   },
   {
    "id": "audit-options-media-viewer-hovers-hover-windows-pin-the-duplicates-right-duplicates-filter-hover-window-so-it-is-always-visible",
@@ -10490,7 +10694,13 @@
    "notes": [
     "Reference editor/control 'Pin the duplicates (right, duplicates filter) hover window so it is always visible:' is recorded on 'media viewer hovers' and defined by the referenced options panel. No corresponding editable row exists in native options::pages; this is a missing GUI editing path, even if a setting is imported or consumed elsewhere.",
     "Native options registry has no editable 'Pin the duplicates (right, duplicates filter) hover window so it is always visible:' control in this page/box path."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "source-restated",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Drives the real duplicate filter window and the real Options row (default on, Apply, Cancel); but pinned/popped behaviour is typed from the Python source (hover_window_duplicates_always_on_top), no recorder exists and viewer_eye_menu.json deliberately omits the pin item. Tracker notes ('no editable row exists') are stale: the row exists and is tested. Tests: crates/hydrus-gui/tests/gui/duplicate_hover_pin.rs:36 the_duplicates_hover_is_pinned_or_pops_in_as_the_option_says"
+   }
   },
   {
    "id": "audit-options-media-viewer-hovers-hover-windows-pop-in-notes-right-hover-window-on-mouseover",
@@ -10504,7 +10714,13 @@
    "notes": [
     "Exact default-true checkbox stages and persists independent enablement of the native notes pop-in panel. Apply gates the current viewer immediately and disables its existing right mouseover hit region; Cancel retains the live preference. Legacy disable_notes_hover_in_media_viewer is inverted into the enabled control. Synthetic real notes exercise actual Qt layout decisions and native visible notes boundaries under ratings.",
     "Native hover panels retain existing layout/content differences. The reference focus requirement, other passive background copies, preview and duplicate-filter hover controls are separate unclaimed leaves."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "sound",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Real viewer and Options row; for every recorded combination the native notes hover is up at the right-edge point iff the recorded Qt ideal-layout size is nonzero; Apply/Cancel checked. Tests: crates/hydrus-gui/tests/gui/options_window.rs:2515 hover_options_apply_to_actual_mouseover_panels_and_passive_index_text; fixture viewer_hover_options.json"
+   }
   },
   {
    "id": "audit-options-media-viewer-hovers-hover-windows-pop-in-ratings-and-locations-top-right-hover-window-on-mouseover",
@@ -10518,7 +10734,13 @@
    "notes": [
     "Exact default-true checkbox stages and persists independent enablement of the native ratings/locations pop-in panel. Apply gates the current viewer immediately and disables its existing top-right mouseover hit region; Cancel retains the live preference. Legacy disable_top_right_hover_in_media_viewer is inverted into the enabled control. Real Qt layout decisions and native actual mouseover states cover independent combinations.",
     "Native hover panels retain existing layout/content differences. The reference focus requirement, other passive background copies, preview and duplicate-filter hover controls are separate unclaimed leaves."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "sound",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "As notes: real viewer mouseover state per recorded combination of the three enable boxes, Apply/Cancel; legacy inversion tested in decode.rs. Tests: crates/hydrus-gui/tests/gui/options_window.rs:2515 hover_options_apply_to_actual_mouseover_panels_and_passive_index_text; fixture viewer_hover_options.json"
+   }
   },
   {
    "id": "audit-options-media-viewer-hovers-hover-windows-pop-in-tags-left-hover-window-on-mouseover",
@@ -10532,7 +10754,13 @@
    "notes": [
     "Exact default-true checkbox stages and persists independent enablement of the native tags pop-in panel. Apply gates the current viewer immediately, disabling its existing left mouseover hit region; Cancel retains the live preference. Legacy disable_tags_hover_in_media_viewer is inverted into the enabled control. Fresh real Qt ideal-layout decisions and native actual mouseover states cover independent combinations.",
     "Native hover panels retain existing layout/content differences. The reference focus requirement, other passive background copies, preview and duplicate-filter hover controls are separate unclaimed leaves."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "sound",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "As notes: real viewer left-edge hover shown iff recorded ideal size is nonzero, for all recorded combinations; Apply/Cancel. Tests: crates/hydrus-gui/tests/gui/options_window.rs:2515 hover_options_apply_to_actual_mouseover_panels_and_passive_index_text; fixture viewer_hover_options.json"
+   }
   },
   {
    "id": "audit-options-media-viewer-hovers-preview-window-hovers-draw-ratings-and-locations-top-right-in-preview-window-background",
@@ -10546,7 +10774,13 @@
    "notes": [
     "Reference editor/control 'Draw ratings and locations (top-right) in preview window background:' is recorded on 'media viewer hovers' and defined by the referenced options panel. No corresponding editable row exists in native options::pages; this is a missing GUI editing path, even if a setting is imported or consumed elsewhere.",
     "Native options registry has no editable 'Draw ratings and locations (top-right) in preview window background:' control in this page/box path."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "source-restated",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Real Options rows and the real preview pane, but the test's own header says expectations are read from the Python source (no recording); it only checks the draw flag and that the lines model is nonempty, not what is drawn. Tests: crates/hydrus-gui/tests/gui/preview_top_right.rs:155 the_top_right_hover_draws_in_the_background_and_pops_in_as_the_options_say"
+   }
   },
   {
    "id": "audit-options-media-viewer-hovers-preview-window-hovers-pop-in-this-hover-on-mouseover",
@@ -10560,7 +10794,13 @@
    "notes": [
     "Reference editor/control 'Pop-in this hover on mouseover:' is recorded on 'media viewer hovers' and defined by the referenced options panel. No corresponding editable row exists in native options::pages; this is a missing GUI editing path, even if a setting is imported or consumed elsewhere.",
     "Native options registry has no editable 'Pop-in this hover on mouseover:' control in this page/box path."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "source-restated",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Real preview pane pointer movement and Options Apply, default on, pop-in off/on; behaviour typed from the Python source, not recorded. Tests: crates/hydrus-gui/tests/gui/preview_top_right.rs:155 the_top_right_hover_draws_in_the_background_and_pops_in_as_the_options_say"
+   }
   },
   {
    "id": "audit-options-media-viewer-hovers-top-hover-button-menu-controls-collapse-hovers-submenu-in-view-options-eye-menu",
@@ -10578,7 +10818,13 @@
     "Actual Qt recording captures eight combinations, control save/reopen, and discarded MediaViewerHoversPanel edits on one open browser viewer. Historical author metadata records the original no-local-Cargo/no-mutation provenance; current exact-source validation is recorded separately.",
     "Slint ContextMenuArea materializes its native menu tree internally. Root separator/order validation checks the actual consumer declarations and all eight recorded Qt roots; native regressions retain real compiled row/flag bindings and action/store consumers. This does not claim direct OS-menu tree introspection or physical OS window-manager behavior.",
     "The current Qt rerun reproduces all eight menu trees and five supporting window-action transitions. Its image shows the Options pane; PopupMenu is intercepted to record the real QAction trees, so there is no displayed Qt popup image for pixel comparison."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "sound",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Options checkboxes applied, then the real viewer eye menu popup is opened and its flags, checks and group order compared with the recorded Qt menu for all 8 topologies, with Cancel/reopen. Caveat: the hovers submenu also lacks the reference \"pin the duplicates\" item, so only the collapse behaviour is proved. Tests: crates/hydrus-gui/tests/gui/options_window.rs:~5700-6250 eye-menu viewer test and eye_menu_mixed_root_boundaries_match_the_recorded_menu_and_real_declaration_order; fixture viewer_eye_menu.json"
+   }
   },
   {
    "id": "audit-options-media-viewer-hovers-top-hover-button-menu-controls-collapse-rendering-submenu-in-view-options-eye-menu",
@@ -10596,7 +10842,13 @@
     "Actual Qt recording captures eight combinations, control save/reopen, and discarded MediaViewerHoversPanel edits on one open browser viewer. Historical author metadata records the original no-local-Cargo/no-mutation provenance; current exact-source validation is recorded separately.",
     "Slint ContextMenuArea materializes its native menu tree internally. Root separator/order validation checks the actual consumer declarations and all eight recorded Qt roots; native regressions retain real compiled row/flag bindings and action/store consumers. This does not claim direct OS-menu tree introspection or physical OS window-manager behavior.",
     "The current Qt rerun reproduces all eight menu trees and five supporting window-action transitions. Its image shows the Options pane; PopupMenu is intercepted to record the real QAction trees, so there is no displayed Qt popup image for pixel comparison."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "sound",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Options checkboxes applied, then the real viewer eye menu popup is opened and its flags, checks and group order compared with the recorded Qt menu for all 8 topologies, with Cancel/reopen. Caveat: the native rendering submenu omits the ICC-profile and duplicate-filter checkerboard items, so only the collapse behaviour is proved. Tests: crates/hydrus-gui/tests/gui/options_window.rs:~5700-6250 eye-menu viewer test and eye_menu_mixed_root_boundaries_match_the_recorded_menu_and_real_declaration_order; fixture viewer_eye_menu.json"
+   }
   },
   {
    "id": "audit-options-media-viewer-hovers-top-hover-button-menu-controls-collapse-window-submenu-in-view-options-eye-menu",
@@ -10614,7 +10866,13 @@
     "Actual Qt recording captures eight combinations, control save/reopen, and discarded MediaViewerHoversPanel edits on one open browser viewer. Historical author metadata records the original no-local-Cargo/no-mutation provenance; current exact-source validation is recorded separately.",
     "Slint ContextMenuArea materializes its native menu tree internally. Root separator/order validation checks the actual consumer declarations and all eight recorded Qt roots; native regressions retain real compiled row/flag bindings and action/store consumers. This does not claim direct OS-menu tree introspection or physical OS window-manager behavior.",
     "The current Qt rerun reproduces all eight menu trees and five supporting window-action transitions. Its image shows the Options pane; PopupMenu is intercepted to record the real QAction trees, so there is no displayed Qt popup image for pixel comparison."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "sound",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Options checkboxes applied, then the real viewer eye menu popup is opened and its flags, checks and group order compared with the recorded Qt menu for all 8 topologies, with Cancel/reopen. Caveat: window submenu items all present, so only the collapse behaviour is proved. Tests: crates/hydrus-gui/tests/gui/options_window.rs:~5700-6250 eye-menu viewer test and eye_menu_mixed_root_boundaries_match_the_recorded_menu_and_real_declaration_order; fixture viewer_eye_menu.json"
+   }
   },
   {
    "id": "audit-options-media-viewer-hovers-top-hover-button-menu-controls-zoom-switch-button-switches-between",
@@ -10628,7 +10886,13 @@
    "notes": [
     "Exact four-choice top-hover zoom control with default100%/fit and two centered variants stages until Apply, persists, and imports legacy zoom_switch_command values91/106/172/173. Opening a viewer captures its configured button command, matching reference ownership. Actual clicked canvas coordinates reach the chosen zoom centre; fit/fill switching preserves current zoom type and cycles100% ->fit ->fill ->100%, with reference recentering and large-file clamp rules. Ordinary right-click/keyboard100%/fit switching remains its own command. Fresh real Qt button/geometry replay covers small and large JPEGs, media-centre/mouse preferences, all four choices and repeated cycles. Native owned-viewer GUI regressions cover Apply, Cancel, reopened choice, actual geometry and stale successor lifetime.",
     "This leaf covers the top-hover button configuration. It does not claim zoom menu expansion, backend-specific scaling options or preview zoom defaults. The command is frozen at viewer construction, as in the reference; changing the option affects newly opened viewers."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "sound",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "All four choices applied through the real Options row (labels from the recording), then the real viewer zoom-switch request is compared with recorded rects per choice for a large jpeg; Cancel leaves the saved choice. Only one file/centre case of the recording is replayed. Tests: crates/hydrus-gui/tests/gui/options_window.rs:4140 zoom switch/loop test; crates/hydrus-gui-model/tests/model/options_dialog.rs:2003"
+   }
   },
   {
    "id": "audit-options-media-viewer-hovers-top-hover-file-summary-hide-uninteresting-modified-times",
@@ -10642,7 +10906,13 @@
    "notes": [
     "check control reads and sets info_line.hide_uninteresting_modified_time; Editor holds the draft and the Apply transaction saves changes. The existing Qt-recording comparison checks this exact label, box path, kind, bounds and migrated initial value.",
     "Assessment covers this editable control and shared Apply/Cancel, not every control on its containing reference page or every background consumer."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "sound",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Options row flipped in the real window, real viewer's top line compared with top_line_with_format; the same function is replayed against oracle/fixtures/info_lines.json (defaults vs all eight booleans flipped together), which shows this flag's effect. Recorded modified lines appear only when the flag is off. Tests: crates/hydrus-gui/tests/gui/options_media_hovers.rs fn summary_option + crates/hydrus-gui/tests/gui/info_lines.rs:48 info_lines_are_the_reference_s"
+   }
   },
   {
    "id": "audit-options-media-viewer-hovers-top-hover-file-summary-show-archived-status",
@@ -10656,7 +10926,13 @@
    "notes": [
     "check control reads and sets info_line.archived_interesting; Editor holds the draft and the Apply transaction saves changes. The existing Qt-recording comparison checks this exact label, box path, kind, bounds and migrated initial value.",
     "Assessment covers this editable control and shared Apply/Cancel, not every control on its containing reference page or every background consumer."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "sound",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Options row flipped in the real window, real viewer's top line compared with top_line_with_format; the same function is replayed against oracle/fixtures/info_lines.json (defaults vs all eight booleans flipped together), which shows this flag's effect. The archived line leaves the top line when archived-interesting is off (recorded). Tests: crates/hydrus-gui/tests/gui/options_media_hovers.rs fn summary_option + crates/hydrus-gui/tests/gui/info_lines.rs:48 info_lines_are_the_reference_s"
+   }
   },
   {
    "id": "audit-options-media-viewer-hovers-top-hover-file-summary-show-archived-time",
@@ -10670,7 +10946,13 @@
    "notes": [
     "check control reads and sets info_line.archived_time_interesting; Editor holds the draft and the Apply transaction saves changes. The existing Qt-recording comparison checks this exact label, box path, kind, bounds and migrated initial value.",
     "Assessment covers this editable control and shared Apply/Cancel, not every control on its containing reference page or every background consumer."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "source-restated",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "GUI test flips this one flag and compares the real viewer with top_line_with_format (circular); info_lines.json flips all eight booleans together, so the single-flag case the test runs (archived-time off with archived status on gives a bare 'archived'; the recording flips archived status off in the same phase so it never shows that text) is never recorded. Tests: crates/hydrus-gui/tests/gui/options_media_hovers.rs fn summary_option + crates/hydrus-gui/tests/gui/info_lines.rs:48 info_lines_are_the_reference_s"
+   }
   },
   {
    "id": "audit-options-media-viewer-hovers-top-hover-file-summary-show-file-service-add-times",
@@ -10684,7 +10966,13 @@
    "notes": [
     "check control reads and sets info_line.file_services_import_times_interesting; Editor holds the draft and the Apply transaction saves changes. The existing Qt-recording comparison checks this exact label, box path, kind, bounds and migrated initial value.",
     "Assessment covers this editable control and shared Apply/Cancel, not every control on its containing reference page or every background consumer."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "source-restated",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "GUI test flips this one flag and compares the real viewer with top_line_with_format (circular); info_lines.json flips all eight booleans together, so the single-flag case the test runs (services on and import times off gives bare 'added to art'; the recording has both on) is never recorded. Tests: crates/hydrus-gui/tests/gui/options_media_hovers.rs fn summary_option + crates/hydrus-gui/tests/gui/info_lines.rs:48 info_lines_are_the_reference_s"
+   }
   },
   {
    "id": "audit-options-media-viewer-hovers-top-hover-file-summary-show-file-services",
@@ -10698,7 +10986,13 @@
    "notes": [
     "check control reads and sets info_line.file_services_interesting; Editor holds the draft and the Apply transaction saves changes. The existing Qt-recording comparison checks this exact label, box path, kind, bounds and migrated initial value.",
     "Assessment covers this editable control and shared Apply/Cancel, not every control on its containing reference page or every background consumer."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "sound",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Options row flipped in the real window, real viewer's top line compared with top_line_with_format; the same function is replayed against oracle/fixtures/info_lines.json (defaults vs all eight booleans flipped together), which shows this flag's effect. Recorded 'added to art/my files' lines appear in the top line only when services-interesting is on. Tests: crates/hydrus-gui/tests/gui/options_media_hovers.rs fn summary_option + crates/hydrus-gui/tests/gui/info_lines.rs:48 info_lines_are_the_reference_s"
+   }
   },
   {
    "id": "audit-options-media-viewer-hovers-top-hover-file-summary-show-file-trash-reasons",
@@ -10712,7 +11006,13 @@
    "notes": [
     "check control reads and sets info_line.trash_reason_interesting; Editor holds the draft and the Apply transaction saves changes. The existing Qt-recording comparison checks this exact label, box path, kind, bounds and migrated initial value.",
     "Assessment covers this editable control and shared Apply/Cancel, not every control on its containing reference page or every background consumer."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "source-restated",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "GUI test flips this one flag and compares the real viewer with top_line_with_format (circular); info_lines.json flips all eight booleans together, so the single-flag case the test runs (reason alone on/off; the recording flips trash time and reason together (default 'in the trash', changed 'sent to trash X ago (reason)')) is never recorded. Tests: crates/hydrus-gui/tests/gui/options_media_hovers.rs fn summary_option + crates/hydrus-gui/tests/gui/info_lines.rs:48 info_lines_are_the_reference_s"
+   }
   },
   {
    "id": "audit-options-media-viewer-hovers-top-hover-file-summary-show-file-trash-times",
@@ -10726,7 +11026,13 @@
    "notes": [
     "check control reads and sets info_line.trash_time_interesting; Editor holds the draft and the Apply transaction saves changes. The existing Qt-recording comparison checks this exact label, box path, kind, bounds and migrated initial value.",
     "Assessment covers this editable control and shared Apply/Cancel, not every control on its containing reference page or every background consumer."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "source-restated",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "GUI test flips this one flag and compares the real viewer with top_line_with_format (circular); info_lines.json flips all eight booleans together, so the single-flag case the test runs (time alone on/off; the recording flips trash time and reason together) is never recorded. Tests: crates/hydrus-gui/tests/gui/options_media_hovers.rs fn summary_option + crates/hydrus-gui/tests/gui/info_lines.rs:48 info_lines_are_the_reference_s"
+   }
   },
   {
    "id": "audit-options-media-viewer-hovers-top-hover-file-summary-swap-in-common-resolution-labels",
@@ -10740,7 +11046,13 @@
    "notes": [
     "check control reads and sets info_line.nice_resolutions; Editor holds the draft and the Apply transaction saves changes. The existing Qt-recording comparison checks this exact label, box path, kind, bounds and migrated initial value.",
     "Assessment covers this editable control and shared Apply/Cancel, not every control on its containing reference page or every background consumer."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "sound",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Options row flipped in the real window, real viewer's top line compared with top_line_with_format; the same function is replayed against oracle/fixtures/info_lines.json (defaults vs all eight booleans flipped together), which shows this flag's effect. Recording shows 1080p/480p vs 1,920x1,080/640x480 for the same files. Tests: crates/hydrus-gui/tests/gui/options_media_hovers.rs fn summary_option + crates/hydrus-gui/tests/gui/info_lines.rs:48 info_lines_are_the_reference_s"
+   }
   },
   {
    "id": "audit-options-media-viewer-mouse-behaviour-anchor-mouse-cursor-during-media-viewer-drags",
@@ -10758,7 +11070,13 @@
     "No Qt PNG: this recorder writes JSON only. Fresh native controls/scene images were actually inspected; this cannot be called a paired Qt visual comparison.",
     "Physical cursor warp requires OS/compositor support; native requests through existing Winit window may fail/are ignored in headless backend. Pure replay proves request semantics; GUI proves actual pointer-to-media deltas, not compositor execution.",
     "No full touchscreen-event support, preview/filter canvases, other mouse controls or broader Media Viewer parent credit."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "sound",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Real viewer pointer events after Options Apply produce the recorded per-step deltas; the model test replays recorded deltas and warp requests against the Drag the viewer uses. The actual OS cursor warp call (set_cursor_position) cannot run headless and is not asserted in the GUI test. Tests: crates/hydrus-gui/tests/gui/viewer_drag.rs:36 actual_pointer_drags_replay_qt_and_options_refresh_cancel_and_reopen; crates/hydrus-gui-model/tests/model/viewer_drag.rs:15 anchored_and_touch_overridden_drags_replay_actual_qt_threshold_and_warps; fixture viewer_anchor_options.json"
+   }
   },
   {
    "id": "audit-options-media-viewer-mouse-behaviour-do-not-allow-mouse-media-drag-panning-when-the-media-has-duration",
@@ -10773,7 +11091,13 @@
     "Exact default-false checkbox stages/persists drag blocking on real files with duration. Apply updates the open viewer. The actual pointer press snapshots eligibility, rejects panning for duration media only, and leaves keyboard panning and the independent seek bar available. Fresh real Qt recorded displayed local GIF and JPEG drag acceptance and native pointer events reproduce their 21,7 or zero rectangle deltas.",
     "Cursor anchoring/warping, touchscreen unanchoring and idle cursor auto-hide are separate unclaimed controls. Native default cursor follows the platform Arrow/default shape; the Linux Qt recording uses Arrow0 and Blank10.",
     "The animation start percentage is separately unclaimed; its cold/warm previous-frame-count quirk is recorded for future porting."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "sound",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Real viewer on a still jpeg and an animated webp, Options row applied; drag acceptance and media delta match the recorded Qt cases for each has_duration x option state; Cancel and keyboard pan checked. Tests: crates/hydrus-gui/tests/gui/options_window.rs:2713 pointer_options_change_real_drag_acceptance_and_cursor_transitions; fixture viewer_pointer_options.json"
+   }
   },
   {
    "id": "audit-options-media-viewer-mouse-behaviour-hide-mouse-cursor-during-media-viewer-drags",
@@ -10788,7 +11112,13 @@
     "Exact checkbox stages/persists cursor hiding, default enabled except macOS. Imported legacy preference is preserved. Actual accepted pointer movement binds the native cursor to MouseCursor.none when enabled; pressing begins with ordinary cursor, release retains blank, and subsequent ordinary pointer movement restores default. Rejected duration-media drags retain ordinary cursor. All four actual Qt cursor phases, independent preference combinations, native pointer events, Cancel, persistence and reopening are covered.",
     "Cursor anchoring/warping, touchscreen unanchoring and idle cursor auto-hide are separate unclaimed controls. Native default cursor follows the platform Arrow/default shape; the Linux Qt recording uses Arrow0 and Blank10.",
     "The animation start percentage is separately unclaimed; its cold/warm previous-frame-count quirk is recorded for future porting."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "sound",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Replays viewer_pointer_options.json drags (accept, delta, Blank/Arrow cursor at pressed/moved/released/ordinary move) through real pointer events on the real viewer after applying the option in the Options window; Cancel and reopen covered. Reads the viewer's drag-cursor property bound to the cursor. Tests: crates/hydrus-gui/tests/gui/options_window.rs:2711 pointer_options_change_real_drag_acceptance_and_cursor_transitions; crates/hydrus-gui/tests/gui/options_window.rs:3817 cursor_timeout_..."
+   }
   },
   {
    "id": "audit-options-media-viewer-mouse-behaviour-if-set-to-anchor-drags-undo-on-apparent-touchscreen-drag",
@@ -10806,7 +11136,13 @@
     "No Qt PNG: this recorder writes JSON only. Fresh native controls/scene images were actually inspected; this cannot be called a paired Qt visual comparison.",
     "Physical cursor warp requires OS/compositor support; native requests through existing Winit window may fail/are ignored in headless backend. Pure replay proves request semantics; GUI proves actual pointer-to-media deltas, not compositor execution.",
     "No full touchscreen-event support, preview/filter canvases, other mouse controls or broader Media Viewer parent credit."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "sound",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Real pointer drags on the viewer after toggling both options replay viewer_anchor_options.json deltas (touch_override cases included); the model test replays the recorded warps/touch latch against Drag. Apply, Cancel, reopen and retired owner covered. Warp execution by the compositor is not claimed. Tests: crates/hydrus-gui/tests/gui/viewer_drag.rs:43 actual_pointer_drags_replay_qt_and_options_refresh_cancel_and_reopen; crates/hydrus-gui-model/tests/model/viewer_drag.rs:19"
+   }
   },
   {
    "id": "audit-options-media-viewer-mouse-behaviour-time-until-mouse-cursor-autohides-on-media-viewer",
@@ -10820,7 +11156,13 @@
    "notes": [
     "Exact defaultSome700ms noneable control stages/persists/imports media_viewer_cursor_autohide_time_ms with100..100000ms bounds and do not autohide. The actual native viewer owns a Slint SingleShot timer and weak per-WindowId motion callback in the shared desktop ActivityHandler; focus comes from the existing native application observer. Its strict elapsed>delay policy and100..250ms polling (None1000) match fresh real Qt QCursor/QTimer output. Ordinary motion restores the actual cursor and restarts at100ms; accepted hidden drag pauses until ordinary motion resumes. Inactive windows, interactive hover/volume regions and actual open popup stacks restore the cursor and reset the wait. Synchronous native menu show returns establish a fresh wait after blocking timer delivery. Visibility reaches winit set_cursor_visible and the Slint MouseCursor binding; close stops the actual timer and ignores late input. Apply/Cancel, duplicate/other-ID isolation, dead weak registration, actual context-menu open/cancel lifecycle and reopened persisted control value are covered.",
     "Native canvas and existing Slint hover/volume eligibility apply; backend-specific MPV widget input and cursor anchoring remain separate gaps. Slint1.18 internal popup lifecycle is pinned by the repository dependency; synchronous native popup execution uses actual show start/return callbacks while asynchronous menus use the real popup stack. This leaf does not claim cursor anchoring or other mouse-drag controls."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "sound",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Real viewer and noneable Options row driven with the recorded events of viewer_cursor_options.json (strict threshold, polling interval, focus, popup/menu, hidden drag); the model replays the recorded trace against CursorWait. Time is injected through check_at rather than waiting on the timer, which is the held-still-clock pattern. Tests: crates/hydrus-gui/tests/gui/options_window.rs:3817 cursor_timeout_reaches_native_motion_timer_focus_and_actual_popup_lifecycle; crates/hydrus-gui-model/tests/model/viewer_cursor.rs:4"
+   }
   },
   {
    "id": "audit-options-media-viewer-slideshows-always-play-media-once-through-before-moving-on",
@@ -10834,7 +11176,13 @@
    "notes": [
     "check control reads and sets slideshow.once_through; Editor holds the draft and the Apply transaction saves changes. The existing Qt-recording comparison checks this exact label, box path, kind, bounds and migrated initial value.",
     "Assessment covers this editable control and shared Apply/Cancel, not every control on its containing reference page or every background consumer."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "weak",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Only proves the option reaches the real viewer's menu check state (always/this-slideshow checked, default unchecked as slideshow.json menus). Its effect, holding a duration file until it has played once before moving on (Slideshow::due once_through gate), is not exercised through the viewer with this option; expected menu strings are typed. Tests: crates/hydrus-gui/tests/gui/options_media_slideshow.rs:67 the_viewer_s_slideshow_menu_lists_the_saved_durations_and_once_through"
+   }
   },
   {
    "id": "audit-options-media-viewer-slideshows-slideshow-durations",
@@ -10848,7 +11196,13 @@
    "notes": [
     "text control reads and sets slideshow.durations; Editor holds the draft and the Apply transaction saves changes. The existing Qt-recording comparison checks this exact label, box path, kind, bounds and migrated initial value.",
     "Assessment covers this editable control and shared Apply/Cancel, not every control on its containing reference page or every background consumer."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "source-restated",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Real Options window edit then real viewer menu shows '2.5 seconds','7 seconds' and choosing one starts 'stop (7 seconds)'; defaults match slideshow.json but the edited values and their labels are typed literals, and the 1.0,5.0,... default text is restated; no recording of a non-default durations list. Tests: crates/hydrus-gui/tests/gui/options_media_slideshow.rs:66 same test"
+   }
   },
   {
    "id": "audit-options-media-viewer-slideshows-slideshow-long-media-allowed-delay-percentage-threshold",
@@ -10862,7 +11216,13 @@
    "notes": [
     "noneable control reads and sets slideshow.long_overspill_percentage; Editor holds the draft and the Apply transaction saves changes. The existing Qt-recording comparison checks this exact label, box path, kind, bounds and migrated initial value.",
     "Assessment covers this editable control and shared Apply/Cancel, not every control on its containing reference page or every background consumer."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "weak",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Drives the Options row through the window, but then calls Slideshow::new/start/due directly (a decision function) instead of the viewer's slideshow timer; thresholds are typed literals (hundredths). special_period is replayed against slideshow.json elsewhere (tests/gui/slideshow.rs:15) but not through this path. Tests: crates/hydrus-gui/tests/gui/options_media_slideshow.rs:235 a_long_file_holds_a_slideshow_past_its_period_by_the_allowed_delay"
+   }
   },
   {
    "id": "audit-options-media-viewer-slideshows-slideshow-short-media-skip-percentage-threshold",
@@ -10876,7 +11236,13 @@
    "notes": [
     "noneable control reads and sets slideshow.short_loop_percentage; Editor holds the draft and the Apply transaction saves changes. The existing Qt-recording comparison checks this exact label, box path, kind, bounds and migrated initial value.",
     "Assessment covers this editable control and shared Apply/Cancel, not every control on its containing reference page or every background consumer."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "weak",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Drives the Options row through the window, but then calls Slideshow::new/start/due directly (a decision function) instead of the viewer's slideshow timer; thresholds are typed literals (hundredths). special_period is replayed against slideshow.json elsewhere (tests/gui/slideshow.rs:15) but not through this path. Tests: crates/hydrus-gui/tests/gui/options_media_slideshow.rs:198 a_short_file_moves_a_slideshow_on_after_the_skip_percentage_of_the_period"
+   }
   },
   {
    "id": "audit-options-media-viewer-slideshows-slideshow-short-media-skip-seconds-threshold",
@@ -10890,7 +11256,13 @@
    "notes": [
     "noneable control reads and sets slideshow.short_loop_seconds; Editor holds the draft and the Apply transaction saves changes. The existing Qt-recording comparison checks this exact label, box path, kind, bounds and migrated initial value.",
     "Assessment covers this editable control and shared Apply/Cancel, not every control on its containing reference page or every background consumer."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "weak",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Drives the Options row through the window, but then calls Slideshow::new/start/due directly (a decision function) instead of the viewer's slideshow timer; thresholds are typed literals (hundredths). special_period is replayed against slideshow.json elsewhere (tests/gui/slideshow.rs:15) but not through this path. Tests: crates/hydrus-gui/tests/gui/options_media_slideshow.rs:179 a_short_file_moves_a_slideshow_on_after_the_skip_seconds"
+   }
   },
   {
    "id": "audit-options-media-viewer-slideshows-slideshow-shorter-media-cutoff-percentage-threshold",
@@ -10904,7 +11276,13 @@
    "notes": [
     "noneable control reads and sets slideshow.short_cutoff_percentage; Editor holds the draft and the Apply transaction saves changes. The existing Qt-recording comparison checks this exact label, box path, kind, bounds and migrated initial value.",
     "Assessment covers this editable control and shared Apply/Cancel, not every control on its containing reference page or every background consumer."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "weak",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Drives the Options row through the window, but then calls Slideshow::new/start/due directly (a decision function) instead of the viewer's slideshow timer; thresholds are typed literals (hundredths). special_period is replayed against slideshow.json elsewhere (tests/gui/slideshow.rs:15) but not through this path. Tests: crates/hydrus-gui/tests/gui/options_media_slideshow.rs:216 a_file_longer_than_the_cutoff_part_of_the_period_moves_on_when_it_has_played_once"
+   }
   },
   {
    "id": "audit-options-menu-menu-file-check-all",
@@ -16465,7 +16843,13 @@
    "notes": [
     "Reference editor/control 'Fade thumbnails:' is recorded on 'thumbnails' and defined by the referenced options panel. No corresponding editable row exists in native options::pages; this is a missing GUI editing path, even if a setting is imported or consumed elsewhere.",
     "Native options registry has no editable 'Fade thumbnails:' control in this page/box path."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "source-restated",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Real Options row and real grid paint: fade on starts at opacity 0.0, off shows 1.0 at once. Values typed; the recorded fade durations/samples in thumbnail_appearance.json (new_fade/old_fade) are not replayed anywhere, and the default/staging recording is replayed only in the model test. Tracker note ('no editable row exists') is stale: the row exists and is tested. Tests: crates/hydrus-gui/tests/gui/options_media_thumbnails.rs:181 thumbnails_fade_in_only_if_asked_to"
+   }
   },
   {
    "id": "audit-options-thumbnails-appearance-generate-video-thumbnails-this-in",
@@ -16479,7 +16863,13 @@
    "notes": [
     "int control reads and sets thumbnails.video_percentage_in; Editor holds the draft and the Apply transaction saves changes. The existing Qt-recording comparison checks this exact label, box path, kind, bounds and migrated initial value.",
     "Assessment covers this editable control and shared Apply/Cancel, not every control on its containing reference page or every background consumer."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "weak",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Only asserts the regenerated gif thumbnail bytes differ at 100% versus 35% and return at 35%; which frame is chosen (tools.rs: pct/100*(frames-1)) is never compared with the reference (dump_media.py records only percentage 35). Presence of change instead of content. Tests: crates/hydrus-gui/tests/gui/options_media_thumbnails.rs:154 the_video_percentage_picks_the_frame_the_thumbnail_is_made_from"
+   }
   },
   {
    "id": "audit-options-thumbnails-appearance-thumbnail-border",
@@ -16493,7 +16883,13 @@
    "notes": [
     "int control reads and sets thumbnail_layout.border; Editor holds the draft and the Apply transaction saves changes. The existing Qt-recording comparison checks this exact label, box path, kind, bounds and migrated initial value.",
     "Assessment covers this editable control and shared Apply/Cancel, not every control on its containing reference page or every background consumer."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "source-restated",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Real Options window changes the grid: cell width 152->156, height 131, columns 5->4->3, no re-decode. All numbers are typed literals from the Python layout formula; no recording of grid geometry under border/margin. Tests: crates/hydrus-gui/tests/gui/options_window.rs:655 the_thumbnails_border_and_margin_lay_out_the_grid"
+   }
   },
   {
    "id": "audit-options-thumbnails-appearance-thumbnail-height",
@@ -16507,7 +16903,13 @@
    "notes": [
     "int control reads and sets thumbnails.bounding_height; Editor holds the draft and the Apply transaction saves changes. The existing Qt-recording comparison checks this exact label, box path, kind, bounds and migrated initial value.",
     "Assessment covers this editable control and shared Apply/Cancel, not every control on its containing reference page or every background consumer."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "source-restated",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Real Options window; thumbnails shown and stored regenerate at new size, but expected size comes from ThumbnailSettings::resolution (unrecorded core function; only hydrus-media's thumbnail_resolution is replayed against the reference) and cell box 302x252 is typed. Tests: crates/hydrus-gui/tests/gui/options_window.rs:562 thumbnails_take_the_size_the_options_give_them"
+   }
   },
   {
    "id": "audit-options-thumbnails-appearance-thumbnail-margin",
@@ -16521,7 +16923,13 @@
    "notes": [
     "int control reads and sets thumbnail_layout.margin; Editor holds the draft and the Apply transaction saves changes. The existing Qt-recording comparison checks this exact label, box path, kind, bounds and migrated initial value.",
     "Assessment covers this editable control and shared Apply/Cancel, not every control on its containing reference page or every background consumer."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "source-restated",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Same test as border: real window, typed layout literals, no recording of margin effect. Tests: crates/hydrus-gui/tests/gui/options_window.rs:656 the_thumbnails_border_and_margin_lay_out_the_grid"
+   }
   },
   {
    "id": "audit-options-thumbnails-appearance-thumbnail-scaling",
@@ -16535,7 +16943,13 @@
    "notes": [
     "choice control reads and sets thumbnails.scale; Editor holds the draft and the Apply transaction saves changes. The existing Qt-recording comparison checks this exact label, box path, kind, bounds and migrated initial value.",
     "Assessment covers this editable control and shared Apply/Cancel, not every control on its containing reference page or every background consumer."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "sound",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Real Options window changes scale, then FileImporter::regenerate_thumbnail (which calls the recorded hydrus_media::thumbnail_resolution) makes thumbnails of the expected sizes; the resolution function is replayed against 600+ GetThumbnailResolution cases incl. all three scales. GUI check compares with core resolution, but the real path is the recorded one. Tests: crates/hydrus-gui/tests/gui/options_media_thumbnails.rs:72 the_thumbnail_scaling_decides_how_a_small_picture_is_made; crates/hydrus-media/tests/reference_parity.rs:441 thumbnail_resolutions_match_reference"
+   }
   },
   {
    "id": "audit-options-thumbnails-appearance-thumbnail-ui-scale-supersampling",
@@ -16549,7 +16963,13 @@
    "notes": [
     "int control reads and sets thumbnails.dpr_percent; Editor holds the draft and the Apply transaction saves changes. The existing Qt-recording comparison checks this exact label, box path, kind, bounds and migrated initial value.",
     "Assessment covers this editable control and shared Apply/Cancel, not every control on its containing reference page or every background consumer."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "sound",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Same structure as scaling: Options row -> regeneration through the recorded thumbnail_resolution (dpr_percent cases 33..200 recorded). Thumbnails get bigger after 200%. Tests: crates/hydrus-gui/tests/gui/options_media_thumbnails.rs:121 the_supersampling_scales_the_thumbnails_made; crates/hydrus-media/tests/reference_parity.rs:441"
+   }
   },
   {
    "id": "audit-options-thumbnails-appearance-thumbnail-width",
@@ -16563,7 +16983,13 @@
    "notes": [
     "int control reads and sets thumbnails.bounding_width; Editor holds the draft and the Apply transaction saves changes. The existing Qt-recording comparison checks this exact label, box path, kind, bounds and migrated initial value.",
     "Assessment covers this editable control and shared Apply/Cancel, not every control on its containing reference page or every background consumer."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "source-restated",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Same test as height: real Options window and real regeneration, but expectations are from core ThumbnailSettings::resolution and typed cell sizes. Tests: crates/hydrus-gui/tests/gui/options_window.rs:561 thumbnails_take_the_size_the_options_give_them"
+   }
   },
   {
    "id": "audit-options-thumbnails-appearance-use-blurhash-missing-thumbnail-fallback",
@@ -16581,7 +17007,13 @@
     "Background bitmap decoding uses existing native Image::load_from_path; unsupported formats/errors yield blank just as failed path admission cannot supply a pixmap. Path cache is main-incarnation owned rather than process-global.",
     "Qt provides actual recovery JSON and exact decoder bytes, with no matching visible blurhash-recovery or disabled-Options screenshot. The selected decorated Qt thumbnail PNG is context only.",
     "The settled native capture uses an owned clock and actual paint with saved fade still enabled. This establishes recovered/default visibility, not Qt fade/renderer architecture parity."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "sound",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Real grid with the missing original/thumbnail shows decoded blurhash pixels, flips to the default after Apply, Cancel keeps it; decode_blurhash is replayed against recorded reference pixels (recovery.pixels) and defaults/cancel/merge against the recording. Native default thumbnail pixels are only asserted different, not recorded. Tests: crates/hydrus-gui/tests/gui/thumbnail_appearance.rs:164 blurhash_real_metadata_default_invalid_disable_and_owned_cache_policy; crates/hydrus-media/src/blurhash.rs:219; crates/hydrus-gui-model/tests/model/thumbnail_appearance.rs:23; crates/hydrus-store/src/thumbnail_appearance.rs:105"
+   }
   },
   {
    "id": "audit-options-thumbnails-interaction-do-not-scroll-down-on-key-navigation-if-thumbnail-at-least-this-visible",
@@ -16599,7 +17031,13 @@
     "Winit normalizes a line tick to60px; the native consumer uses the recorded Qt default of3 wheel lines with a page cap. Physical-pixel smooth deltas use this scale; platform wheel-line settings and Qt fractional wheel accumulation are not ported.",
     "Nonfinite/out-of-signed-int rates retain the prior native step without reproducing Qt conversion exceptions; raw accepted text remains saved. Invalid text silently keeps the prior saved string.",
     "Historical author metadata records authored pointer/key/wheel replays without local Cargo builds/tests or mutation runs. Current exact-source Linux execution and fresh Main/saved-Options rendered review are recorded separately in the accepted checkpoint. Historical source and reference-recording provenance are retained."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "sound",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "GUI test replays thumbnail_navigation.json events through the Options window and real Down key at percent thresholds in a real grid; model replays recorded scroll_target cases bit-exact. Apply/Cancel/reopen covered. Tests: crates/hydrus-gui/tests/gui/thumbnail_navigation.rs:354 owned_options_replay_cancel_save_reopen_and_real_keyboard_wheel_consumers; crates/hydrus-gui-model/tests/model/thumbnail_navigation.rs"
+   }
   },
   {
    "id": "audit-options-thumbnails-interaction-experimental-scroll-thumbnails-at-this-rate-per-scroll-tick",
@@ -16617,7 +17055,13 @@
     "Winit normalizes a line tick to60px; the native consumer uses the recorded Qt default of3 wheel lines with a page cap. Physical-pixel smooth deltas use this scale; platform wheel-line settings and Qt fractional wheel accumulation are not ported.",
     "Nonfinite/out-of-signed-int rates retain the prior native step without reproducing Qt conversion exceptions; raw accepted text remains saved. Invalid text silently keeps the prior saved string.",
     "Historical author metadata records authored pointer/key/wheel replays without local Cargo builds/tests or mutation runs. Current exact-source Linux execution and fresh Main/saved-Options rendered review are recorded separately in the accepted checkpoint. Historical source and reference-recording provenance are retained."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "sound",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Replays every recorded rate string (ties, underscores, fullwidth, nan/inf, negative) in Options, checks wheel step against the recording, and real PointerScrolled distance; model replays single_step/wheel_target. Winit 60px/line normalisation is a documented difference. Tests: crates/hydrus-gui/tests/gui/thumbnail_navigation.rs:354 owned_options_replay_cancel_save_reopen_and_real_keyboard_wheel_consumers; crates/hydrus-gui-model/tests/model/thumbnail_navigation.rs"
+   }
   },
   {
    "id": "audit-options-thumbnails-interaction-on-ctrl-selection-focus-thumbnails-in-the-preview-window",
@@ -16635,7 +17079,13 @@
     "Exactly four frozen-original preference leaves only. No parent, alias, ghost-navigation duplicate, renderer/fade/blurhash or broader thumbnail/player completion credit.",
     "Existing owned still/poster preview workers, presentation, viewing statistics and page lifetime remain the consumer; broader animation/player/renderer parity is outside these preferences.",
     "Recorder observes actual Qt focus publications but disconnects downstream preview movie-playback connections only in its private process. This does not prove movie/player execution."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "sound",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "GUI test drives Options checkboxes and real Ctrl/Shift pointer clicks into the preview pane and viewing stats; model replays 16 recorded selection scenarios across policies for Ctrl and Shift through the Selection functions the page calls. No tag, carried. Tests: crates/hydrus-gui/tests/gui/thumbnail_preview_selection.rs:158 staged_controls_reach_pointer_range_key_preview_and_permanent_owner_retirement; crates/hydrus-gui-model/tests/model/thumbnail_preview_selection.rs:153 all_qt_modifier_ranges_focus_anchor_ghost_and_keyboard_publications"
+   }
   },
   {
    "id": "audit-options-thumbnails-interaction-on-shift-selection-focus-thumbnails-in-the-preview-window",
@@ -16653,7 +17103,13 @@
     "Exactly four frozen-original preference leaves only. No parent, alias, ghost-navigation duplicate, renderer/fade/blurhash or broader thumbnail/player completion credit.",
     "Existing owned still/poster preview workers, presentation, viewing statistics and page lifetime remain the consumer; broader animation/player/renderer parity is outside these preferences.",
     "Recorder observes actual Qt focus publications but disconnects downstream preview movie-playback connections only in its private process. This does not prove movie/player execution."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "sound",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Same evidence: recorded Shift range/endpoint/keyboard/anchorless fallback publications replayed on Selection, plus real Shift clicks and Shift+Right in the window; ghost checkbox enable state recorded and checked. No tag, carried. Tests: crates/hydrus-gui/tests/gui/thumbnail_preview_selection.rs:158; crates/hydrus-gui-model/tests/model/thumbnail_preview_selection.rs:153"
+   }
   },
   {
    "id": "audit-options-thumbnails-interaction-only-on-files-with-no-duration",
@@ -16671,7 +17127,13 @@
     "Exactly four frozen-original preference leaves only. No parent, alias, ghost-navigation duplicate, renderer/fade/blurhash or broader thumbnail/player completion credit.",
     "Existing owned still/poster preview workers, presentation, viewing statistics and page lifetime remain the consumer; broader animation/player/renderer parity is outside these preferences.",
     "Recorder observes actual Qt focus publications but disconnects downstream preview movie-playback connections only in its private process. This does not prove movie/player execution."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "sound",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Ctrl static-only gate: recorded duration_shapes (None, Some(0), collections) replayed on has_duration/focus_target, and real click path with store durations, Some(0) retains existing preview, collections use aggregate. No tag, carried. Tests: crates/hydrus-gui/tests/gui/thumbnail_preview_selection.rs:158, :446 live_store_collection_gate_uses_all_members_and_preserves_zero_duration_distinction; crates/hydrus-gui-model/tests/model/thumbnail_preview_selection.rs:203 exact_singleton_zero_and_collection_aggregate_duration_eligibility"
+   }
   },
   {
    "id": "audit-options-thumbnails-interaction-only-on-files-with-no-duration-2",
@@ -16689,7 +17151,13 @@
     "Exactly four frozen-original preference leaves only. No parent, alias, ghost-navigation duplicate, renderer/fade/blurhash or broader thumbnail/player completion credit.",
     "Existing owned still/poster preview workers, presentation, viewing statistics and page lifetime remain the consumer; broader animation/player/renderer parity is outside these preferences.",
     "Recorder observes actual Qt focus publications but disconnects downstream preview movie-playback connections only in its private process. This does not prove movie/player execution."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "sound",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Shift static-only gate: recorded range/keyboard scenarios with duration targets replayed, plus real window run where a rejected duration target keeps the preview while the range contracts, and live policy flip. No tag, carried. Tests: crates/hydrus-gui/tests/gui/thumbnail_preview_selection.rs:158; crates/hydrus-gui-model/tests/model/thumbnail_preview_selection.rs:153,203"
+   }
   },
   {
    "id": "audit-options-thumbnails-interaction-when-a-single-thumbnail-is-selected-show-the-media-viewer-s-normal-top-hover-file-text-in-the-status",
@@ -16703,7 +17171,13 @@
    "notes": [
     "check control reads and sets info_line.single_file_in_status_bar; Editor holds the draft and the Apply transaction saves changes. The existing Qt-recording comparison checks this exact label, box path, kind, bounds and migrated initial value.",
     "Assessment covers this editable control and shared Apply/Cancel, not every control on its containing reference page or every background consumer."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "source-restated",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Real Options row and real page status: the info line is present when on and absent after Apply when off, but the expected line is computed by the native status_line_with_format (recorded elsewhere in info_lines.json) rather than a recording of the toggle. status_bar.json does record the off case, but its replay (status_bar.rs:30) decides the single line itself rather than via the page/option. Tests: crates/hydrus-gui/tests/gui/options_media_hovers.rs:255 a_single_selected_thumbnail_shows_the_top_hover_text_in_the_status_bar_if_asked"
+   }
   },
   {
    "id": "audit-options-thumbnails-interaction-when-shift-selecting-move-the-navigate-from-here-position-with-it",
@@ -16721,7 +17195,13 @@
     "Winit normalizes a line tick to60px; the native consumer uses the recorded Qt default of3 wheel lines with a page cap. Physical-pixel smooth deltas use this scale; platform wheel-line settings and Qt fractional wheel accumulation are not ported.",
     "Nonfinite/out-of-signed-int rates retain the prior native step without reproducing Qt conversion exceptions; raw accepted text remains saved. Invalid text silently keeps the prior saved string.",
     "Historical author metadata records authored pointer/key/wheel replays without local Cargo builds/tests or mutation runs. Current exact-source Linux execution and fresh Main/saved-Options rendered review are recorded separately in the accepted checkpoint. Historical source and reference-recording provenance are retained."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "sound",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Recorded click/shift/right/shift/right histories (selected, focused, last_hit) replayed on Selection and through real clicks and Right key in the window after toggling the Options checkbox. Tests: crates/hydrus-gui/tests/gui/thumbnail_navigation.rs:354 owned_options_replay_cancel_save_reopen_and_real_keyboard_wheel_consumers; crates/hydrus-gui-model/tests/model/thumbnail_navigation.rs :optional_last_hit_origin_preserves_actual_ranges_focus_and_repeated_navigation"
+   }
   },
   {
    "id": "audit-options-thumbnails-media-background-experimental-image-path-for-thumbnail-panel-background-image-set-blank-to-clear",
@@ -16739,7 +17219,13 @@
     "Background bitmap decoding uses existing native Image::load_from_path; unsupported formats/errors yield blank just as failed path admission cannot supply a pixmap. Path cache is main-incarnation owned rather than process-global.",
     "Old Qt screenshot contains media in a different viewport; new Qt screenshot is a366x718background-only painter canvas. Compare31x17marker extent, bottom-right anchor and clear policy, not whole-window pixels.",
     "Oversized native pink fixture intentionally fills the clipped viewport; nonuniform native marker is a stronger independent extent/resize input. Supplemental solid-marker images use real empty MainWindow owners, not replacement Qt windows."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "sound",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Model replays recorded draft cases/browse seeds (blank clears, whitespace literal, normalised path); GUI renders the real grid with an image bottom-right anchored, unscaled, clipped and fixed on scroll in old and new owners (31x17 marker matching the recorded anchor rule and new-renderer draw coordinates), then clears. Qt PNGs not pixel-diffed. No tag, carried. Tests: crates/hydrus-gui/tests/gui/thumbnail_appearance.rs:468,:800,:859,:546; crates/hydrus-gui-model/tests/model/thumbnail_appearance.rs:23; crates/hydrus-gui/tests/gui/thumbnail_appearance.rs:67"
+   }
   },
   {
    "id": "audit-options-thumbnails-new-rendering-tech-use-the-new-thumbnail-rendering-tech-only-applies-to-new-pages",
@@ -16753,7 +17239,13 @@
    "notes": [
     "Reference editor/control 'Use the new thumbnail rendering tech (only applies to new pages):' is recorded on 'thumbnails' and defined by the referenced options panel. No corresponding editable row exists in native options::pages; this is a missing GUI editing path, even if a setting is imported or consumed elsewhere.",
     "Native options registry has no editable 'Use the new thumbnail rendering tech (only applies to new pages):' control in this page/box path."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "source-restated",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Real Options toggle: existing page keeps the renderer, new SearchPage takes it; default true matches the recording (new_renderer_default). It asserts the page's flag accessor, not a different rendering, and the old/new fade timings (recorded) are not replayed. Tracker note (no editable row exists) is stale. Tests: crates/hydrus-gui/tests/gui/thumbnail_appearance.rs:65 staged_browse_cancel_apply_new_page_policy_and_permanent_owner_retirement; model thumbnail_appearance.rs:23"
+   }
   },
   {
    "id": "audit-options-undo-manager-redo-last-content-operation",
