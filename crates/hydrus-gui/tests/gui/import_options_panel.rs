@@ -263,6 +263,7 @@ fn options_drafts_replay_clear_reset_simple_mode_and_cancel_without_store_change
     options.invoke_cancel();
 }
 
+// leaf: audit-options-import-options-favourites-profiles-delete
 #[test]
 fn applied_defaults_url_overrides_profiles_and_simple_preference_reach_consumers() {
     let (_dirs, store) = crate::subscriptions::store();
