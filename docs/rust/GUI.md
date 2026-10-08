@@ -4892,3 +4892,49 @@ PATH entries. Per-input enable flags, tokens, string processors, the timeout /
 "this can live for a very long time" marker, hide terminal and text flags, the
 executable questions (empty path, `which` failure) and both tests are proven in
 `tests/gui/external_calls_editor.rs`.
+
+### Options: frame gravity and position, the preview hover, tag suggestion tabs, mpv, the pinned duplicates hover
+
+**Frame locations.** A window with no remembered size or place opens as the
+reference's `SetInitialTLWSizeAndPosition` says: its default gravity grows each
+axis toward the main window (the main window's size less 24 pixels either
+side; "expand width as much as needed" keeps the window's own size) and the
+display limits it; its default position puts it at the main window's top-left
+plus the padding (slid back up and left if it would leave the display),
+centred on the main window, or at the mouse. Remembered sizes and places still
+come first. The main window, the media viewer and the Options window consult
+their frames; the Options window is placed once shown, when its own size is
+known. Proven by `tests/model/frame_placement.rs` (the formulae worked from the
+reference's source) and `options_gui_frames.rs` (editing the Options window's
+own frame through the frames editor).
+
+**Preview window.** The preview pane draws the file's ratings at the sizes
+from Options > ratings > preview window (rounded, as the reference's
+`round( GetFloat(...) )`), its inbox/trash icons, locations and URL names in its
+top-right corner when "Draw ratings and locations (top-right) in preview window
+background" is on. With "Pop-in this hover on mouseover" on, the mouse over the
+corner raises the same box with live rating controls (click or drag to set, right
+click to clear). Proven by `tests/gui/preview_top_right.rs`.
+
+**Tag suggestions.** The page now has the reference's four notebook pages as
+titled groups: most used (the per-service lists), related ("Show related tags",
+the three search durations, the concurrence threshold and the weight tables),
+file lookup scripts (the switch) and recent (the count, or "do not show").
+"Show related tags", the concurrence threshold and the recent count change
+the Manage Tags window's panels; the durations and file lookup switch are kept
+only (see DIFFERENCES.md). Proven by `options_gui_suggestions.rs`.
+
+**mpv.** "Set a new mpv.conf on dialog ok?" copies the chosen file over the
+database's `mpv.conf` when Options is OKed (never kept, and a path that isn't a
+file does nothing). The preferred audio device, "Loop Playlist instead of Loop
+File" and "Set null audio device on silent media" decide the commands a player
+is sent as each file loads (`mpv_options::Plan`); a file without sound plays on
+the `null` device when asked. Proven by `options_media_mpv.rs` and
+`tests/model/mpv_options.rs`; libmpv is not available to the tests, so what is
+driven is the plan the player executes, not mpv.
+
+**Duplicates filter hover.** "Pin the duplicates ... hover window so it is always
+visible" (on by default) keeps the comparison panel beside the canvas; off, the
+canvas fills the window and the panel pops in over its right edge when the
+mouse goes there and stays while the mouse is over it. It follows the option
+while the filter is open. Proven by `duplicate_hover_pin.rs`.

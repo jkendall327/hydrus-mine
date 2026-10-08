@@ -49,6 +49,7 @@ pub const BOOLEANS: &[(&str, bool)] = &[
     ("secret_discord_dnd_fix", false),
     ("set_requests_ca_bundle_env", false),
     ("show_destination_page_when_dnd_url", true),
+    ("show_file_lookup_script_tags", false),
     ("start_client_in_system_tray", false),
     ("use_legacy_mpv_mediator", false),
     ("use_native_menubar", false),

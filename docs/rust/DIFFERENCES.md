@@ -2184,9 +2184,10 @@ sequence as an unchanged draft.
 
 Frame locations: the complete imported table and geometry editor persist all
 fields, but placement consumers currently use remembered size/position and
-maximised/fullscreen for the main window, media viewer and Options window. Existing named dialog owners also use their wired frame keys. Default gravity,
-parent/cursor positioning and screen fitting remain incomplete; the broader
-frame/table/editor coverage remains Partial.
+maximised/fullscreen for the main window, media viewer and Options window. Existing named dialog owners also use their wired frame keys. Default gravity
+and parent/centre positioning now reach those owners too (see "Options kept but
+not used"); pointer positioning and screen fitting remain incomplete; the
+broader frame/table/editor coverage remains Partial.
 The real Options lifecycle does not retain incidental resize/move geometry on
 Cancel/X or unchanged Apply: the accepted-dialog geometry save occurs before
 the GUI page commits its captured frame table. Native retains the same final
@@ -3776,19 +3777,45 @@ change nothing). They are marked out of scope in `docs/rust/tracking/`.
 ## Options kept but not used
 
 - These Options rows are kept and edited, as the reference keeps them, but
-  nothing in hydrus-rs reads them yet: the preview window's own volume, the
-  REQUESTS_CA_BUNDLE switch (hydrus-rs uses its own TLS roots), drag-and-drop
-  export (no files can be dragged out yet), the Qt-only gui misc and frame
-  switches, the hide-page signal, the URL drop page switch, mpv's null audio,
+  nothing in hydrus-rs reads them yet: the preview window's own volume (the
+  preview shows a still or poster and plays nothing), the REQUESTS_CA_BUNDLE
+  switch (hydrus-rs uses its own TLS roots), drag-and-drop export (no files
+  can be dragged out yet), the Qt-only gui misc and frame switches, the
+  integer locale switch, the hide-page signal, the URL drop page switch, mpv's
   legacy mediator, player reuse and setGeometry switches, every QtMediaPlayer
   row, system FFMPEG, truncated images and PIL (hydrus-rs decodes images its
-  own way), the pinned duplicates hover, the preview window hovers, the
-  other-display popup freeze, the image tile cache and video buffer (hydrus-rs
+  own way), the other-display popup freeze (hydrus-rs's popups sit inside the
+  main window, not in a toaster window of their own that could be frozen from
+  another display), the self-sizing media viewer rescue padding (there is no
+  self-sizing viewer), the image tile cache and video buffer (hydrus-rs
   renders whole images and leaves video to mpv), the file system wake wait,
-  the system tray page (there is no tray icon) and the petition reason count.
-- The mpv box lacks "Set a new mpv.conf on dialog ok?" and the audio device
-  fetch button; the QtMediaPlayer box lacks its device choice and fetch button.
-  The style page isn't offered: Slint has no Qt styles or stylesheets.
+  the system tray page (there is no tray icon), the petition reason count
+  (there are no tag repositories to petition), the related-tag search
+  durations (hydrus-rs ranks exactly rather than within time slices) and the
+  file lookup scripts switch (there are no file lookup scripts).
+- The mpv box lacks the audio device fetch button (it needs a running libmpv);
+  the QtMediaPlayer box lacks its device choice and fetch button. The tag
+  suggestions page lacks the "recent tags in quick entry dialogs" count, the
+  favourite file lookup script choice and the second recent count (there are
+  no quick dialogs or lookup scripts). The style page isn't offered: Slint has
+  no Qt styles or stylesheets.
+- The mpv.conf chosen in the mpv box goes over the database's `mpv.conf` on
+  OK, as the reference's does. mpv reads it when a player is made, so a
+  running player keeps its old one (the reference reloads it in place).
+- The preview window's top-right hover shows a file's ratings, its inbox and
+  trash icons, locations and URL names as text. URLs can't be clicked there,
+  and the cog menu of the reference's hover does not exist.
+- The duplicates filter's hover is a fixed panel beside the canvas while
+  pinned (the reference floats it over the canvas); unpinned it pops in over
+  the canvas' right edge. There is no cog menu to flip the pin from the
+  hover itself.
+- Frame locations: a child window opens at its parent's top-left (less the
+  padding), centred on it, or where the mouse is, and grows toward the main
+  window by its gravity, as `SetInitialTLWSizeAndPosition` does. Winit cannot
+  read the pointer outside the application's windows, so "mouse" opens the
+  window centred on the main window. The frame padding of the title bar is not
+  known, so the parent's available size is its whole frame. Only the main
+  window, the media viewer and the Options window consult their frames.
 
 ## Review vacuum data
 

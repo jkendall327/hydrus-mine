@@ -122,3 +122,111 @@ fn the_frame_editor_s_switches_decide_how_the_media_viewer_next_opens() {
     let (_, maximised, fullscreen) = opened_viewer(&client);
     assert!(!maximised && fullscreen);
 }
+
+/// The options dialog's own frame, edited by `change` in the editor child
+/// (through the open dialog) and applied.
+fn edit_options_frame(client: &Client, change: &dyn Fn(&FrameLocationWindow)) {
+    let options = client.open_options();
+    show_page(&options, "gui");
+    options.invoke_frame_clicked(index(&options, "manage_options_dialog"), false, false);
+    options.invoke_frame_action("edit".into());
+    let child = client
+        .bound
+        .options_frame_child
+        .borrow()
+        .as_ref()
+        .expect("the editor opens")
+        .clone_strong();
+    change(&child);
+    child.invoke_apply();
+    options.invoke_apply();
+}
+
+// leaf: audit-options-nested-frame-location-gravity
+#[test]
+fn default_gravity_and_position_decide_where_a_child_window_next_opens() {
+    let client = Client::basic();
+    // a main window of 1000x800 to open relative to
+    let native = client.native();
+    hydrus_gui::headless::render(&native, 1000, 800);
+    let logical = |window: &hydrus_gui::OptionsWindow| {
+        let size = window
+            .window()
+            .size()
+            .to_logical(window.window().scale_factor());
+        (size.width, size.height)
+    };
+
+    // the reference's default: as large as the dialog needs, at the main
+    // window's top-left (less the child padding)
+    let natural = {
+        let options = client.open_options();
+        let size = logical(&options);
+        options.invoke_cancel();
+        size
+    };
+    let frame = |client: &Client| {
+        client
+            .setting::<WindowSettings>()
+            .frame("manage_options_dialog")
+            .cloned()
+            .unwrap()
+    };
+    let placement = |client: &Client| {
+        let options = client.open_options();
+        let placed = hydrus_gui::windows::placement(options.window(), &frame(client), false);
+        options.invoke_cancel();
+        placed
+    };
+    assert_eq!(frame(&client).default_gravity, (-1, -1));
+    assert_eq!(
+        placement(&client).size,
+        (natural.0 as i32, natural.1 as i32)
+    );
+    assert_eq!(placement(&client).position, Some((24, 24)));
+
+    // expand to the width and the height of the parent
+    edit_options_frame(&client, &|child| {
+        child.set_gravity_x(0);
+        child.set_gravity_y(0);
+    });
+    assert_eq!(frame(&client).default_gravity, (1, 1));
+    let options = client.open_options();
+    assert_eq!(logical(&options), (952.0, 752.0), "1000x800 less 24 a side");
+    options.invoke_cancel();
+
+    // expand the width only: the dialog's own height is what it needs (a
+    // headless window has none until it is drawn, so the placement is
+    // worked out for one that was)
+    edit_options_frame(&client, &|child| child.set_gravity_y(1));
+    assert_eq!(frame(&client).default_gravity, (1, -1));
+    let options = client.open_options();
+    let last = client.windows().count() - 1;
+    hydrus_gui::headless::render(&client.windows().get(last).unwrap(), 640, 480);
+    let placed = hydrus_gui::windows::placement(options.window(), &frame(&client), false);
+    assert_eq!(placed.size, (952, 480));
+    options.invoke_cancel();
+
+    // centred on the parent: its centre less the dialog's
+    edit_options_frame(&client, &|child| child.set_default_position(1));
+    assert_eq!(frame(&client).default_position, "center");
+    let placed = placement(&client);
+    let (width, height) = placed.size;
+    assert_eq!(
+        placed.position,
+        Some((499 - (width - 1) / 2, 399 - (height - 1) / 2))
+    );
+    // remembered, its own size and place win
+    edit_options_frame(&client, &|child| {
+        child.set_remember_size(true);
+        child.set_size_none(false);
+        child.set_last_width(640);
+        child.set_last_height(480);
+        child.set_remember_position(true);
+        child.set_position_none(false);
+        child.set_last_x(33);
+        child.set_last_y(44);
+    });
+    let placed = placement(&client);
+    assert_eq!((placed.size, placed.position), ((640, 480), Some((33, 44))));
+}

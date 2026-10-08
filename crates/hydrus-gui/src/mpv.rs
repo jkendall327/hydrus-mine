@@ -349,21 +349,17 @@ impl Player {
         }])
     }
 
-    /// Loop the playlist rather than the file
-    /// (`mpv_loop_playlist_instead_of_file`), and play through `device`
-    /// (none: mpv's own choice), as the reference sets them on its players.
+    /// Make mpv loop, and play through the device, as `plan` says (the
+    /// reference sets them on its players as a file loads).
     pub fn set_playback_options(
         &self,
-        loop_playlist: bool,
-        device: Option<&str>,
+        plan: &hydrus_gui_model::mpv_options::Plan,
     ) -> Result<(), String> {
-        self.command(&["set", "loop", if loop_playlist { "no" } else { "inf" }])?;
-        self.command(&[
-            "set",
-            "loop-playlist",
-            if loop_playlist { "inf" } else { "no" },
-        ])?;
-        self.command(&["set", "audio-device", device.unwrap_or("auto")])
+        for command in plan.commands() {
+            let command: Vec<&str> = command.iter().map(String::as_str).collect();
+            self.command(&command)?;
+        }
+        Ok(())
     }
 
     /// Play at `volume` (0 to 100), muted or not.

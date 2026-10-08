@@ -49,6 +49,29 @@ fn normalise_idle_timeout(seconds: Option<u64>) -> Option<u64> {
     seconds.map(|seconds| (seconds / 60).clamp(1, 1000) * 60)
 }
 
+/// A file to copy over `mpv.conf` when the dialog is OKed (the reference's
+/// `FilePickerCtrl` in the mpv box); a request, never kept.
+#[derive(Debug, Clone, Default, PartialEq, Eq)]
+pub struct MpvConfPath(pub String);
+
+fn no_mpv_conf(_: &Connection) -> hydrus_store::Result<MpvConfPath> {
+    Ok(MpvConfPath::default())
+}
+
+/// Copy `source` over the database's `mpv.conf` (`HydrusPaths.MirrorFile`),
+/// if it names a file that exists. `Ok(false)` when there was nothing to
+/// copy.
+pub fn set_mpv_conf(source: &str, destination: &std::path::Path) -> Result<bool, String> {
+    let source = std::path::Path::new(source);
+    if source.as_os_str().is_empty() || !source.is_file() {
+        return Ok(false);
+    }
+    if source != destination {
+        std::fs::copy(source, destination).map_err(|e| e.to_string())?;
+    }
+    Ok(true)
+}
+
 macro_rules! settings {
     (@save $conn:ident, $after:ident, $before:ident, maintenance_gates) => {
         $after.maintenance_gates.save_changed($conn, &$before.maintenance_gates)?;
@@ -99,9 +122,20 @@ macro_rules! settings {
         hydrus_store::popup_width::save_changed($conn, &$after.popup_width, &$before.popup_width)?;
     };
     (@save $conn:ident, $after:ident, $before:ident, related_tags) => {
-        if $after.related_tags.weights != $before.related_tags.weights {
+        if $after.related_tags != $before.related_tags {
             let mut current: hydrus_store::related_tags::Settings = hydrus_store::settings::get($conn)?;
-            current.weights.clone_from(&$after.related_tags.weights);
+            if $after.related_tags.weights != $before.related_tags.weights {
+                current.weights.clone_from(&$after.related_tags.weights);
+            }
+            if $after.related_tags.enabled != $before.related_tags.enabled {
+                current.enabled = $after.related_tags.enabled;
+            }
+            if $after.related_tags.durations_ms != $before.related_tags.durations_ms {
+                current.durations_ms = $after.related_tags.durations_ms;
+            }
+            if $after.related_tags.concurrence_percent != $before.related_tags.concurrence_percent {
+                current.concurrence_percent = $after.related_tags.concurrence_percent;
+            }
             hydrus_store::settings::set($conn, &current)?;
         }
     };
@@ -262,6 +296,7 @@ macro_rules! settings {
             hydrus_store::settings::set($conn, &latest)?;
         }
     };
+    (@save $conn:ident, $after:ident, $before:ident, mpv_conf_path) => {};
     (@save $conn:ident, $after:ident, $before:ident, $field:ident) => {
         if $after.$field != $before.$field {hydrus_store::settings::set($conn, &$after.$field)?;}
     };
@@ -397,6 +432,7 @@ settings! {
     viewer_cursor: ViewerCursorSettings,
     viewer_playback: ViewerPlaybackSettings,
     reference_options: hydrus_store::reference_options::ReferenceOptions,
+    mpv_conf_path: MpvConfPath => no_mpv_conf,
 }
 
 /// An option's value as its control holds it.
@@ -758,6 +794,10 @@ impl std::fmt::Debug for Opt {
 pub enum Item {
     Opt(Opt),
     Box(&'static str, Vec<Item>),
+    /// A page of a notebook: laid out as a box, but its title is not
+    /// something the options search offers (the reference searches static
+    /// boxes' titles and labels, not tabs').
+    Tab(&'static str, Vec<Item>),
 }
 
 #[derive(Debug, Clone)]
@@ -773,7 +813,7 @@ impl Page {
             for item in items {
                 match item {
                     Item::Opt(opt) => out.push(opt),
-                    Item::Box(_, items) => walk(items, out),
+                    Item::Box(_, items) | Item::Tab(_, items) => walk(items, out),
                 }
             }
         }
@@ -1385,6 +1425,10 @@ fn kept_noneable_text(label: &'static str, none_phrase: &'static str, name: &'st
 
 fn boxed(title: &'static str, items: Vec<Item>) -> Item {
     Item::Box(title, items)
+}
+
+fn tab(title: &'static str, items: Vec<Item>) -> Item {
+    Item::Tab(title, items)
 }
 
 /// Exact command-palette control order and bounds from the reference options panel.
@@ -3562,6 +3606,18 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                 boxed(
                     "mpv",
                     vec![
+                        opt(
+                            "Set a new mpv.conf on dialog ok?:",
+                            Kind::FilePath,
+                            Rc::new(|s| Value::Text(s.mpv_conf_path.0.clone())),
+                            Rc::new(|s, v| match v {
+                                Value::Text(path) => {
+                                    s.mpv_conf_path = MpvConfPath(path.clone());
+                                    Ok(())
+                                }
+                                _ => Err(wrong("mpv.conf path")),
+                            }),
+                        ),
                         kept_noneable_text(
                             "Preferred audio output device:",
                             "use default",
@@ -4728,31 +4784,86 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                                     .into();
                         },
                     ),
-                    opt(
-                        "adjust scores by search tags",
-                        Kind::RelatedWeights,
-                        Rc::new(|s| Value::RelatedWeights(s.related_tags.weights.clone())),
-                        Rc::new(|s, v| {
-                            if let Value::RelatedWeights(weights) = v {
-                                s.related_tags.weights.clone_from(weights);
-                                Ok(())
-                            } else {
-                                Err(wrong("related tag weights"))
-                            }
-                        }),
+                    tab(
+                        "most used",
+                        vec![opt(
+                            "Add your most used tags for each particular service here, and then you can just double-click to add, rather than typing every time.",
+                            Kind::MostUsedTags,
+                            Rc::new(|s| {
+                                Value::MostUsedTags(s.tag_autocomplete_tabs.most_used.clone())
+                            }),
+                            Rc::new(|s, v| {
+                                if let Value::MostUsedTags(tags) = v {
+                                    s.tag_autocomplete_tabs.most_used.clone_from(tags);
+                                    Ok(())
+                                } else {
+                                    Err(wrong("most used tags"))
+                                }
+                            }),
+                        )],
                     ),
-                    opt(
-                        "Add your most used tags for each particular service here, and then you can just double-click to add, rather than typing every time.",
-                        Kind::MostUsedTags,
-                        Rc::new(|s| Value::MostUsedTags(s.tag_autocomplete_tabs.most_used.clone())),
-                        Rc::new(|s, v| {
-                            if let Value::MostUsedTags(tags) = v {
-                                s.tag_autocomplete_tabs.most_used.clone_from(tags);
-                                Ok(())
-                            } else {
-                                Err(wrong("most used tags"))
-                            }
-                        }),
+                    tab(
+                        "related",
+                        vec![
+                            check(
+                                "Show related tags: ",
+                                |s| s.related_tags.enabled,
+                                |s, v| s.related_tags.enabled = v,
+                            ),
+                            int(
+                                "Initial/Quick search duration (ms): ",
+                                (50, 60_000),
+                                |s| i64::from(s.related_tags.durations_ms[0]),
+                                |s, v| s.related_tags.durations_ms[0] = v as u32,
+                            ),
+                            int(
+                                "Medium search duration (ms): ",
+                                (50, 60_000),
+                                |s| i64::from(s.related_tags.durations_ms[1]),
+                                |s, v| s.related_tags.durations_ms[1] = v as u32,
+                            ),
+                            int(
+                                "Thorough search duration (ms): ",
+                                (50, 60_000),
+                                |s| i64::from(s.related_tags.durations_ms[2]),
+                                |s, v| s.related_tags.durations_ms[2] = v as u32,
+                            ),
+                            int(
+                                "Tag concurrence threshold %: ",
+                                (1, 100),
+                                |s| i64::from(s.related_tags.concurrence_percent),
+                                |s, v| s.related_tags.concurrence_percent = v as u8,
+                            ),
+                            opt(
+                                "adjust scores by search tags",
+                                Kind::RelatedWeights,
+                                Rc::new(|s| Value::RelatedWeights(s.related_tags.weights.clone())),
+                                Rc::new(|s, v| {
+                                    if let Value::RelatedWeights(weights) = v {
+                                        s.related_tags.weights.clone_from(weights);
+                                        Ok(())
+                                    } else {
+                                        Err(wrong("related tag weights"))
+                                    }
+                                }),
+                            ),
+                        ],
+                    ),
+                    tab(
+                        "file lookup scripts",
+                        vec![kept_check(
+                            "Show file lookup scripts on single-file manage tags windows: ",
+                            "show_file_lookup_script_tags",
+                        )],
+                    ),
+                    tab(
+                        "recent",
+                        vec![noneable(
+                            RECENT_TAGS_MESSAGE,
+                            none("do not show", 20, (1, 1_000_000), None),
+                            |s| s.tag_suggestions.recent_limit.map(|n| n as i64),
+                            |s, v| s.tag_suggestions.recent_limit = v.map(|n| n as usize),
+                        )],
                     ),
                 ],
             )],
@@ -5016,6 +5127,10 @@ pub fn applied(
 /// The search box's placeholder, as the reference's.
 pub const SEARCH_PLACEHOLDER: &str = "Search options... (Experimental!)";
 
+/// The message of the recent tags spin box of the tag suggestions page, as
+/// the reference's search sees it.
+const RECENT_TAGS_MESSAGE: &str = "number of recent tags to show: ";
+
 /// How many suggestions show at once (more scroll), as the reference's.
 pub const SEARCH_SHOWN: usize = 10;
 
@@ -5037,6 +5152,7 @@ pub fn suggestions(pages: &[Page]) -> Vec<Suggestion> {
             // completer sees their actual embedded group-box titles.
             let labels: &[&str] = match item {
                 Item::Box(title, _) => std::slice::from_ref(title),
+                Item::Tab(..) => &[],
                 Item::Opt(option) => match option.kind {
                     Kind::OpenExternally => &["URL calls", "single file calls"],
                     Kind::Shortcuts => &["built-in hydrus shortcut sets", "custom user sets"],
@@ -5051,7 +5167,7 @@ pub fn suggestions(pages: &[Page]) -> Vec<Suggestion> {
                 });
             }
             *row += 1;
-            if let Item::Box(_, items) = item {
+            if let Item::Box(_, items) | Item::Tab(_, items) = item {
                 walk(items, page, name, row, out);
             }
         }
@@ -5069,7 +5185,7 @@ pub fn suggestions_with_values(pages: &[Page], values: &[Vec<Value>]) -> Vec<Sug
     fn walk<'a>(items: &'a [Item], out: &mut Vec<&'a Item>) {
         for item in items {
             out.push(item);
-            if let Item::Box(_, children) = item {
+            if let Item::Box(_, children) | Item::Tab(_, children) = item {
                 walk(children, out);
             }
         }
@@ -5306,7 +5422,7 @@ impl Editor {
         ) {
             for item in items {
                 match item {
-                    Item::Box(title, items) => {
+                    Item::Box(title, items) | Item::Tab(title, items) => {
                         out.push(Row::Title { title, depth });
                         walk(items, depth + 1, values, numbers, settings, next, out);
                     }

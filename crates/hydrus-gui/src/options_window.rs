@@ -1748,6 +1748,17 @@ pub(crate) fn open(
             {
                 after.open_externally.wash(&mut after.external_calls);
             }
+            let mut problems = problems;
+            // the mpv.conf asked for goes over the database's, as the
+            // reference's dialog does when OKed
+            let mpv_conf = std::mem::take(&mut after.mpv_conf_path.0);
+            let conf_to = store.dir().join("mpv.conf");
+            if let Err(e) = hydrus_gui_model::options::set_mpv_conf(&mpv_conf, &conf_to) {
+                problems.push(format!(
+                    "Could not set the mpv conf path \"{mpv_conf}\" to \"{}\"! Error follows!\n{e}",
+                    conf_to.display()
+                ));
+            }
             let saved = store.write_and_refresh(move |ctx| {
                 after.save(ctx.conn(), &before)?;
                 let now = hydrus_core::time::TimestampMs::now().millis() / 1000;
@@ -1776,7 +1787,8 @@ pub(crate) fn open(
             slint::CloseRequestResponse::HideWindow
         }
     });
-    crate::windows::place_named(window.window(), store, "manage_options_dialog");
     window.show().map_err(|e| e.to_string())?;
+    // (placed once shown, when the size it needs is known to grow from)
+    crate::windows::place_named(window.window(), store, "manage_options_dialog");
     Ok(window)
 }

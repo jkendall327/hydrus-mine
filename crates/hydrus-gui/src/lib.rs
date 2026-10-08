@@ -574,6 +574,7 @@ fn lay_out_thumbnails(window: &MainWindow, store: &hydrus_store::Store, rows: &T
 
 /// Show `pages` in `window`, and let the window change them.
 pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
+    windows::register_main(window);
     about_window::note_boot();
     window
         .global::<TagTextHistory<'_>>()

@@ -68,6 +68,16 @@ impl Client {
             .clone_strong()
     }
 
+    /// Every window made so far, for rendering and pointer events.
+    pub fn windows(&self) -> &headless::Windows {
+        &self._windows
+    }
+
+    /// The main window's headless window, for rendering and pointer events.
+    pub fn native(&self) -> std::rc::Rc<slint::platform::software_renderer::MinimalSoftwareWindow> {
+        self._windows.get(0).expect("the main window")
+    }
+
     /// A saved setting, as the consumers read it.
     pub fn setting<T: hydrus_store::settings::Setting + Default>(&self) -> T {
         self.store
