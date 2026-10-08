@@ -1,0 +1,29 @@
+name: tracker
+
+# The checks for changes that cannot affect the build: the work tracker
+# (docs/rust/tracking/, scripts/track.py) and the shell scripts. Seconds,
+# where rust.yml takes ~25 minutes. A change to code runs rust.yml, whose
+# lint job also runs the tag check.
+on:
+  push:
+    branches: [master, 'claude/**', 'codex/**']
+    paths: ['docs/rust/tracking/**', 'scripts/**', '.github/workflows/tracker.yml']
+  pull_request:
+    paths: ['docs/rust/tracking/**', 'scripts/**', '.github/workflows/tracker.yml']
+
+concurrency:
+  group: tracker-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  tracker:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: leaves.json is valid and every leaf tag names a known leaf
+        run: python3 scripts/track.py check
+      - name: tracker summary
+        run: python3 scripts/track.py
+      - name: shell scripts parse
+        run: for f in scripts/*.sh; do bash -n "$f"; done

@@ -140,7 +140,9 @@ The GUI compiles locally; use it. Measured on a 4-core, 16 GB machine:
 check, hakari, strict Clippy, parity ratchet) and a test job (every Linux
 test, including the ~960 GUI tests), in parallel, ~25 minutes. A newer push
 cancels the older run on the same branch. Windows and macOS run only when
-dispatched by hand with `secondary_platforms`.
+dispatched by hand with `secondary_platforms`. Changes to the tracker
+(`docs/rust/tracking/`) or the scripts alone run `tracker.yml` instead: the
+tag check and a script parse, in seconds. Other docs run no CI.
 
 ## Several agents at once
 
