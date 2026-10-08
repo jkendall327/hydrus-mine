@@ -237,7 +237,20 @@ def record( session ):
 
     qt = lambda f, *a: controller.CallBlockingToQt( gui, f, *a )
 
+    # (the shutdown signal is handled when Python next runs on the Qt thread)
+    def tick():
+
+        from qtpy import QtCore as QC
+
+        timer = QC.QTimer( gui )
+        timer.timeout.connect( lambda: None )
+        timer.start( 200 )
+
+        state[ 'timer' ] = timer
+
     state = {}
+
+    qt( tick )
 
     def make( options ):
 
@@ -339,9 +352,15 @@ def record( session ):
         answers.clear()
         writes.clear()
 
+        print( 'DBG making', name, file = sys.stderr, flush = True )
+
         qt( make, options )
 
+        print( 'DBG made', file = sys.stderr, flush = True )
+
         first = wait_for_pair()
+
+        print( 'DBG first', first, file = sys.stderr, flush = True )
 
         sizes.clear()
 
@@ -371,6 +390,8 @@ def record( session ):
             if observed[ 'committing' ]:
 
                 observed = wait_for_pair()
+
+            print( 'DBG step', do, observed, file = sys.stderr, flush = True )
 
             entry = { 'do' : do, 'answers' : step_answers, 'after' : observed, 'asked' : list( asked[ asked_before : ] ), 'writes' : list( writes[ writes_before : ] ) }
 
@@ -417,6 +438,8 @@ def record( session ):
 
                 run_step( step[ 'do' ], list( step.get( 'answers', [] ) ) )
 
+        print( 'DBG steps done', file = sys.stderr, flush = True )
+
         time.sleep( SETTLE )
 
         hashes = sorted( { h for pair in scenario[ 'batch' ] for h in pair } )
@@ -431,6 +454,8 @@ def record( session ):
 
             scenario[ 'relationships' ] = { ( h.hex() if isinstance( h, bytes ) else h ) : r for ( h, r ) in relationships.items() }
 
+        print( 'DBG relationships done', file = sys.stderr, flush = True )
+
         scenario[ 'unused_answers' ] = list( answers )
 
         recorded.append( scenario )
@@ -443,11 +468,15 @@ def record( session ):
 
         qt( close )
 
+        print( 'DBG closed', file = sys.stderr, flush = True )
+
         time.sleep( SETTLE )
 
     for ( key, value ) in original_options.items():
 
         controller.new_options.SetNoneableInteger( key, value )
+
+    print( 'DBG toplevels', qt( lambda: [ ( type( w ).__name__, w.isVisible(), w.windowTitle() ) for w in QW.QApplication.topLevelWidgets() if w.isVisible() ] ), file = sys.stderr, flush = True )
 
     return { 'scenarios' : recorded }
 
