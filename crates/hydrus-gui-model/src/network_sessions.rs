@@ -62,7 +62,6 @@ pub fn validate_domain(domain: &str) -> Result<(), String> {
     }
     Ok(())
 }
-/// Hostname with an optional numeric port, as request contexts retain the authority.
 /// The note under the context type choice (`CC.network_context_type_description_lookup`)
 /// for the new-session editor's two types: 0 web domain, 1 hydrus service.
 pub fn context_type_info(choice: i32) -> &'static str {
@@ -73,6 +72,7 @@ pub fn context_type_info(choice: i32) -> &'static str {
     }
 }
 
+/// Hostname with an optional numeric port, as request contexts retain the authority.
 pub fn validate_context_domain(domain: &str) -> Result<(), String> {
     if let Some((host, port)) = domain.rsplit_once(':') {
         port.parse::<u16>()

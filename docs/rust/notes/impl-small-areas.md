@@ -80,3 +80,33 @@ Full GUI suite: 925 of 926 pass. `emoji_fonts::outline_fox_is_selected_...`
 fails here on a font family id (this container's fonts); none of my changes
 touch fonts. Model, download, api, store, legacy and cli tests pass; strict
 Clippy and `cargo fmt --check` are clean.
+
+## Final section (after the coordinator's review and change of plan)
+
+Finished since the last section:
+- Merged `claude/pensive-darwin-kvjhpq` (clean).
+- Review findings 1 and 2: a hydrus-service session with no repository chosen
+  is refused ("Choose a hydrus service for this context."), with a test;
+  `context_type_info` moved off `validate_context_domain`'s doc comment.
+
+Not done (the coordinator stopped new work; each is a small slice):
+- Finding 3 (~1 h): the API-request registration opens for a fixed hour. Make
+  it a short expiry renewed by the waiting window's timer so a crashed GUI
+  can't leave it open; mind `hydrus api-keys listen`, which shares the row.
+- Finding 4 (~30 min): the comparator png import (mode 3) should use the
+  reference's wording for a png source, not "clipboard". I checked
+  `COMPARATOR_TYPES` against `HydrusSerialisable.py` (130, 131, 137, 138, 140,
+  141, 152 are right); the test helper still reuses that list and should parse
+  the Python constants instead.
+- Finding 5 (~half a day): `audit-media-review-progress` should be driven from
+  the sidebar approve/deny buttons (or untagged); the two scheduling tags
+  replay `pace(is_idle(..))` and should run one daemon pass with an injected
+  idle state (or be untagged); the sidecar-export test name claims a read-back
+  it doesn't do (rename or add the import). Until then treat those four tags
+  as weak.
+
+Remaining, not started: the manage-tags cluster (`audit-media-tags-missing-cog`,
+`-repository`, `-viewer-follow`, `-suggestions`, `-autocomplete`; 2-3 days with
+one or two UI rebuilds, needs a selectable tag list and a remove button first)
+and `audit-media-duplicate-search-count` (~1 day). Nothing was started and
+dropped.

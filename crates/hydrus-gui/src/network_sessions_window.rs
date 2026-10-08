@@ -944,13 +944,11 @@ fn edit_value(
                 match &mut st.data {
                     Data::Sessions(_) => {
                         let context = if w.get_context_type() == 1 {
-                            // (no repository to choose: the kind's default, as the
-                            // reference's empty choice makes)
                             let key = usize::try_from(w.get_service_index())
                                 .ok()
                                 .and_then(|i| services.get(i))
                                 .map(|(key, _)| key.clone())
-                                .unwrap_or_default();
+                                .ok_or("Choose a hydrus service for this context.")?;
                             NetworkContext {
                                 kind: hydrus_core::network::CONTEXT_HYDRUS,
                                 data: key,
