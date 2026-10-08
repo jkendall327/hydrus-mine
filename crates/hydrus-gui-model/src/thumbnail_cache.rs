@@ -16,6 +16,7 @@ pub struct Cache<T> {
     order: VecDeque<HashId>,
     bytes: u64,
     policy: ThumbnailCacheSettings,
+    name: &'static str,
 }
 impl<T> std::fmt::Debug for Cache<T> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
@@ -34,7 +35,14 @@ impl<T> Cache<T> {
             order: VecDeque::new(),
             bytes: 0,
             policy,
+            name: "thumbnail",
         }
+    }
+    /// Name the cache in cache report mode's lines.
+    #[must_use]
+    pub fn named(mut self, name: &'static str) -> Self {
+        self.name = name;
+        self
     }
     /// Entries currently owned, including accounted negative entries.
     pub fn len(&self) -> usize {
@@ -57,6 +65,18 @@ impl<T> Cache<T> {
             && let Some(entry) = self.entries.remove(&id)
         {
             self.bytes -= entry.bytes;
+            hydrus_core::debug_flags::report(hydrus_core::debug_flags::Flag::CacheReport, || {
+                format!(
+                    "Cache \"{}\" removing oldest item \"{id:?}\", size \"{}\". Current size {}.",
+                    self.name,
+                    hydrus_core::numbers::human_bytes(entry.bytes),
+                    format!(
+                        "{}/{}",
+                        hydrus_core::numbers::human_bytes(self.bytes),
+                        hydrus_core::numbers::human_bytes(self.policy.bytes)
+                    )
+                )
+            });
         }
     }
     /// A duplicate admission leaves both its value and its access time untouched.
