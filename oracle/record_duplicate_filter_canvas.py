@@ -326,7 +326,7 @@ def record( session ):
 
     original_options = { 'duplicate_filter_auto_commit_batch_size' : controller.new_options.GetNoneableInteger( 'duplicate_filter_auto_commit_batch_size' ) }
 
-    for ( name, options, steps ) in SCENARIOS:
+    for ( name, options, steps ) in [ SCENARIOS[ int( os.environ[ 'SCENARIO' ] ) ] ]:
 
         asked.clear()
         answers.clear()
@@ -412,6 +412,8 @@ def record( session ):
 
         hashes = sorted( { h for pair in scenario[ 'batch' ] for h in pair } )
 
+        scenario[ 'sizes' ] = { h : controller.Read( 'media_results', [ bytes.fromhex( h ) ] )[ 0 ].GetSize() for h in hashes }
+
         if len( hashes ) > 0:
 
             location = ClientLocation.LocationContext.STATICCreateSimple( CC.COMBINED_LOCAL_FILE_DOMAINS_SERVICE_KEY )
@@ -468,15 +470,25 @@ def main():
 
     import hydrus_driver
 
-    with tempfile.TemporaryDirectory() as work:
+    merged = { 'scenarios' : [] }
 
-        path = os.path.join( work, 'duplicate_filter_canvas.json' )
+    # (each scenario on its own copy of the database: commits change it)
+    for i in range( len( SCENARIOS ) ):
 
-        hydrus_driver.run_in_subprocess( os.path.abspath( __file__ ), '--child', path )
+        with tempfile.TemporaryDirectory() as work:
 
-        with open( path ) as f:
+            path = os.path.join( work, 'duplicate_filter_canvas.json' )
 
-            result = json.load( f )
+            os.environ[ 'SCENARIO' ] = str( i )
+
+            hydrus_driver.run_in_subprocess( os.path.abspath( __file__ ), '--child', path )
+
+            with open( path ) as f:
+
+                merged[ 'scenarios' ].extend( json.load( f )[ 'scenarios' ] )
+
+
+    result = merged
 
 
     with open( OUT, 'w' ) as f:
