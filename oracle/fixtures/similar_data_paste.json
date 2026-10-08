@@ -1,0 +1,170 @@
+{
+  "cases": [
+    {
+      "name": "empty clipboard",
+      "fields": {
+        "pixel": "",
+        "perceptual": ""
+      },
+      "warnings": [
+        "Did not see an image bitmap or a file path in the clipboard!"
+      ],
+      "cleared": {
+        "pixel": "",
+        "perceptual": ""
+      }
+    },
+    {
+      "name": "text that is no file",
+      "fields": {
+        "pixel": "",
+        "perceptual": ""
+      },
+      "warnings": [
+        "Sorry, that clipboard text did not look like a valid file path!"
+      ],
+      "cleared": {
+        "pixel": "",
+        "perceptual": ""
+      }
+    },
+    {
+      "name": "text file path",
+      "fields": {
+        "pixel": "",
+        "perceptual": ""
+      },
+      "warnings": [
+        "Sorry, \"unknown filetype\" files are not compatible with the similar file search system!"
+      ],
+      "cleared": {
+        "pixel": "",
+        "perceptual": ""
+      }
+    },
+    {
+      "name": "png path as text",
+      "fields": {
+        "pixel": "4d96869ea256be3924f475ad1ae2025b8aa5599d1da911b06c76f8d77b108e48",
+        "perceptual": "a0724f7ae92f012f"
+      },
+      "warnings": [],
+      "cleared": {
+        "pixel": "",
+        "perceptual": ""
+      }
+    },
+    {
+      "name": "png path as local path",
+      "fields": {
+        "pixel": "4d96869ea256be3924f475ad1ae2025b8aa5599d1da911b06c76f8d77b108e48",
+        "perceptual": "a0724f7ae92f012f"
+      },
+      "warnings": [],
+      "cleared": {
+        "pixel": "",
+        "perceptual": ""
+      }
+    },
+    {
+      "name": "larger png path",
+      "fields": {
+        "pixel": "f5fadebb14387d70301b0ca8564e70d76cc9ad373cac9a94b769c73140edd7fa",
+        "perceptual": "c6c4acc4d2e1717b"
+      },
+      "warnings": [],
+      "cleared": {
+        "pixel": "",
+        "perceptual": ""
+      }
+    },
+    {
+      "name": "jpeg path",
+      "fields": {
+        "pixel": "9099157654c7347ea0accda81bd89bda9ec148d2a2768c15bff3816c5c758f05",
+        "perceptual": "c6c4acc4d2e1717b"
+      },
+      "warnings": [],
+      "cleared": {
+        "pixel": "",
+        "perceptual": ""
+      }
+    },
+    {
+      "name": "gif path",
+      "fields": {
+        "pixel": "803336d436ec08edf7004b26ec5eff7a573ebfe66834558c37d1b6a0f665fc74",
+        "perceptual": "c6c4acccd2e17173"
+      },
+      "warnings": [],
+      "cleared": {
+        "pixel": "",
+        "perceptual": ""
+      }
+    },
+    {
+      "name": "bmp path",
+      "fields": {
+        "pixel": "f5fadebb14387d70301b0ca8564e70d76cc9ad373cac9a94b769c73140edd7fa",
+        "perceptual": "c6c4acc4d2e1717b"
+      },
+      "warnings": [],
+      "cleared": {
+        "pixel": "",
+        "perceptual": ""
+      }
+    },
+    {
+      "name": "bitmap",
+      "fields": {
+        "pixel": "4d96869ea256be3924f475ad1ae2025b8aa5599d1da911b06c76f8d77b108e48",
+        "perceptual": "a0724f7ae92f012f"
+      },
+      "warnings": [],
+      "cleared": {
+        "pixel": "",
+        "perceptual": ""
+      }
+    },
+    {
+      "name": "bitmap preferred to a path",
+      "fields": {
+        "pixel": "4d96869ea256be3924f475ad1ae2025b8aa5599d1da911b06c76f8d77b108e48",
+        "perceptual": "a0724f7ae92f012f"
+      },
+      "warnings": [],
+      "cleared": {
+        "pixel": "",
+        "perceptual": ""
+      }
+    },
+    {
+      "name": "translucent bitmap",
+      "fields": {
+        "pixel": "34d340bd784af9491576d981462cc74eb97a5f266ce3d28e25b6d6b71bbfc352",
+        "perceptual": "91314778e90f6b0f"
+      },
+      "warnings": [],
+      "cleared": {
+        "pixel": "",
+        "perceptual": ""
+      }
+    },
+    {
+      "name": "pasted twice",
+      "fields": {
+        "pixel": "4d96869ea256be3924f475ad1ae2025b8aa5599d1da911b06c76f8d77b108e48",
+        "perceptual": "a0724f7ae92f012f"
+      },
+      "warnings": [],
+      "cleared": {
+        "pixel": "",
+        "perceptual": ""
+      }
+    }
+  ],
+  "bitmaps": {
+    "pixels": "0000c8ff1000c8ff2000c8ff3000c8ff40001eff50001eff60001eff70001eff8000c8ff9000c8ffa000c8ffb000c8ffc0001effd0001effe0001efff0001eff0010c8ff1010c8ff2010c8ff3010c8ff40101eff50101eff60101eff70101eff8010c8ff9010c8ffa010c8ffb010c8ffc0101effd0101effe0101efff0101eff0020c8ff1020c8ff2020c8ff3020c8ff40201eff50201eff60201eff70201eff8020c8ff9020c8ffa020c8ffb020c8ffc0201effd0201effe0201efff0201eff0030c8ff1030c8ff2030c8ff3030c8ff40301eff50301eff60301eff70301eff8030c8ff9030c8ffa030c8ffb030c8ffc0301effd0301effe0301efff0301eff00401eff10401eff20401eff30401eff4040c8ff5040c8ff6040c8ff7040c8ff80401eff90401effa0401effb0401effc040c8ffd040c8ffe040c8fff040c8ff00501eff10501eff20501eff30501eff4050c8ff5050c8ff6050c8ff7050c8ff80501eff90501effa0501effb0501effc050c8ffd050c8ffe050c8fff050c8ff00601eff10601eff20601eff30601eff4060c8ff5060c8ff6060c8ff7060c8ff80601eff90601effa0601effb0601effc060c8ffd060c8ffe060c8fff060c8ff00701eff10701eff20701eff30701eff4070c8ff5070c8ff6070c8ff7070c8ff80701eff90701effa0701effb0701effc070c8ffd070c8ffe070c8fff070c8ff0080c8ff1080c8ff2080c8ff3080c8ff40801eff50801eff60801eff70801eff8080c8ff9080c8ffa080c8ffb080c8ffc0801effd0801effe0801efff0801eff0090c8ff1090c8ff2090c8ff3090c8ff40901eff50901eff60901eff70901eff8090c8ff9090c8ffa090c8ffb090c8ffc0901effd0901effe0901efff0901eff00a0c8ff10a0c8ff20a0c8ff30a0c8ff40a01eff50a01eff60a01eff70a01eff80a0c8ff90a0c8ffa0a0c8ffb0a0c8ffc0a01effd0a01effe0a01efff0a01eff00b0c8ff10b0c8ff20b0c8ff30b0c8ff40b01eff50b01eff60b01eff70b01eff80b0c8ff90b0c8ffa0b0c8ffb0b0c8ffc0b01effd0b01effe0b01efff0b01eff00c01eff10c01eff20c01eff30c01eff40c0c8ff50c0c8ff60c0c8ff70c0c8ff80c01eff90c01effa0c01effb0c01effc0c0c8ffd0c0c8ffe0c0c8fff0c0c8ff00d01eff10d01eff20d01eff30d01eff40d0c8ff50d0c8ff60d0c8ff70d0c8ff80d01eff90d01effa0d01effb0d01effc0d0c8ffd0d0c8ffe0d0c8fff0d0c8ff00e01eff10e01eff20e01eff30e01eff40e0c8ff50e0c8ff60e0c8ff70e0c8ff80e01eff90e01effa0e01effb0e01effc0e0c8ffd0e0c8ffe0e0c8fff0e0c8ff00f01eff10f01eff20f01eff30f01eff40f0c8ff50f0c8ff60f0c8ff70f0c8ff80f01eff90f01effa0f01effb0f01effc0f0c8ffd0f0c8ffe0f0c8fff0f0c8ff",
+    "translucent": "0000c8ff1000c8ff2000c8ff3000c8ff40001eff50001eff60001eff70001eff8000c8809000c880a000c880b000c880c0001e80d0001e80e0001e80f0001e800010c8ff1010c8ff2010c8ff3010c8ff40101eff50101eff60101eff70101eff8010c8809010c880a010c880b010c880c0101e80d0101e80e0101e80f0101e800020c8ff1020c8ff2020c8ff3020c8ff40201eff50201eff60201eff70201eff8020c8809020c880a020c880b020c880c0201e80d0201e80e0201e80f0201e800030c8ff1030c8ff2030c8ff3030c8ff40301eff50301eff60301eff70301eff8030c8809030c880a030c880b030c880c0301e80d0301e80e0301e80f0301e8000401eff10401eff20401eff30401eff4040c8ff5040c8ff6040c8ff7040c8ff80401e8090401e80a0401e80b0401e80c040c880d040c880e040c880f040c88000501eff10501eff20501eff30501eff4050c8ff5050c8ff6050c8ff7050c8ff80501e8090501e80a0501e80b0501e80c050c880d050c880e050c880f050c88000601eff10601eff20601eff30601eff4060c8ff5060c8ff6060c8ff7060c8ff80601e8090601e80a0601e80b0601e80c060c880d060c880e060c880f060c88000701eff10701eff20701eff30701eff4070c8ff5070c8ff6070c8ff7070c8ff80701e8090701e80a0701e80b0701e80c070c880d070c880e070c880f070c8800080c8ff1080c8ff2080c8ff3080c8ff40801eff50801eff60801eff70801eff8080c8809080c880a080c880b080c880c0801e80d0801e80e0801e80f0801e800090c8ff1090c8ff2090c8ff3090c8ff40901eff50901eff60901eff70901eff8090c8809090c880a090c880b090c880c0901e80d0901e80e0901e80f0901e8000a0c8ff10a0c8ff20a0c8ff30a0c8ff40a01eff50a01eff60a01eff70a01eff80a0c88090a0c880a0a0c880b0a0c880c0a01e80d0a01e80e0a01e80f0a01e8000b0c8ff10b0c8ff20b0c8ff30b0c8ff40b01eff50b01eff60b01eff70b01eff80b0c88090b0c880a0b0c880b0b0c880c0b01e80d0b01e80e0b01e80f0b01e8000c01eff10c01eff20c01eff30c01eff40c0c8ff50c0c8ff60c0c8ff70c0c8ff80c01e8090c01e80a0c01e80b0c01e80c0c0c880d0c0c880e0c0c880f0c0c88000d01eff10d01eff20d01eff30d01eff40d0c8ff50d0c8ff60d0c8ff70d0c8ff80d01e8090d01e80a0d01e80b0d01e80c0d0c880d0d0c880e0d0c880f0d0c88000e01eff10e01eff20e01eff30e01eff40e0c8ff50e0c8ff60e0c8ff70e0c8ff80e01e8090e01e80a0e01e80b0e01e80c0e0c880d0e0c880e0e0c880f0e0c88000f01eff10f01eff20f01eff30f01eff40f0c8ff50f0c8ff60f0c8ff70f0c8ff80f01e8090f01e80a0f01e80b0f01e80c0f0c880d0f0c880e0f0c880f0f0c880"
+  }
+}

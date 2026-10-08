@@ -236,6 +236,7 @@ fn export_files_menu_window_previews_confirmation_and_worker() {
     viewer.invoke_close_requested();
 }
 
+// leaf: audit-network-export-examples
 #[test]
 fn shared_pattern_shortcuts_copy_without_editing_and_guard_closed_owners() {
     use hydrus_gui::export_files_window::{self, Slots};
@@ -430,6 +431,7 @@ fn export_tag_row(window: &hydrus_gui::ExportFilesWindow, tag: &str) -> i32 {
     .unwrap()
 }
 
+// leaf: audit-network-export-examples
 #[test]
 fn selected_export_tag_sidebar_copies_launches_native_pages_persists_favourites_and_closes() {
     use hydrus_core::{HashId, Tag, pages::PageContent, search::predicate::Predicate};
