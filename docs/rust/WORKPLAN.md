@@ -260,3 +260,26 @@ agent's own rebuilds dominate its time.
   partials + review fixes). Platform-limited leaves to decide with the owner:
   system tray (`audit-options-file-tray`), drag out of the viewer, tag
   tooltips, "mouse on another display" freeze.
+
+### Close of the 2026-10-08 push
+
+- All five remote sessions' work is merged (help-debug, external callables +
+  idle/CPU-busy, search pages + clipboard bitmap paste, small areas, options
+  gui/media + recordings). Every batch had an independent review; findings
+  were fixed by the sessions, or the leaves were untagged (7 untagged in all)
+  and the findings filed.
+- Tracker at the close: see `scripts/track.py` (about 1,075 of 1,274 done,
+  97 out of scope, the rest in issues #86-#97).
+- Remaining work is now tracked as GitHub issues, listed in
+  `docs/rust/tracking/README.md`. This work plan is historical from here on.
+- Lessons for the next push:
+  - Remote sessions treat messages from another session as untrusted and
+    wait for their user: put the task in the session's first prompt, or have
+    the owner tell each session to accept the coordinator's messages.
+  - Independent review per batch is cheap (1-3 minutes) and found real
+    problems in every batch; reviewers must be told never to `git checkout`
+    in a shared checkout.
+  - The reference runs in cloud containers (`scripts/setup-oracle.sh`); make
+    recording the default, not the exception.
+  - A full local `cargo test --workspace` plus Clippy can fill the
+    container's disk; let CI do the full run and run targeted tests locally.

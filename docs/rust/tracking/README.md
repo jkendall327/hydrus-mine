@@ -11,6 +11,29 @@ scripts/track.py next database    # what to do next in a workstream
 scripts/track.py show <leaf-id>   # one leaf in full
 ```
 
+## Remaining work (GitHub issues, filed 2026-10-08)
+
+Every leaf not done is listed in exactly one issue, with its reference and
+native files and what "done" means:
+
+| Issue | Area |
+|---|---|
+| #86 | Manage tags dialog: suggested tags, cog, follow the viewer, autocomplete |
+| #87 | Idle, CPU-busy, shutdown and sleep maintenance timing |
+| #88 | Duplicates: search count, scheduling switches, review progress, prefetch |
+| #89 | Import options and shared editors |
+| #90 | Downloader and subscription exchange |
+| #91 | Shell: popups, About box, window geometry |
+| #92 | Options window partials and small remainders |
+| #93 | Open findings from the 2026-10-08 batch reviews |
+| #94 | Platform-limited features (decision needed; drag out is #26) |
+| #95 | Proposed out-of-scope moves (decision needed) |
+| #96 | Help > debug remainder (low priority) |
+| #97 | Recheck every done leaf against recordings, including the 378 carried |
+
+Work an issue on its own branch; one PR per issue (or per workstream for
+#97), with one independent review before merge (see `AGENTS.md`).
+
 ## When is a leaf done?
 
 When a test tagged `// leaf: <id>` (the comment on the lines just above
