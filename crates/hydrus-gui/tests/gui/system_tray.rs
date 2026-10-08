@@ -26,7 +26,12 @@ enum Asked {
 #[derive(Default)]
 struct Recorder {
     available: Cell<bool>,
+    /// The icon cannot be made.
+    broken: Cell<bool>,
     asked: RefCell<Vec<Asked>>,
+    /// The main window, to see whether it was still shown as the icon came.
+    window: RefCell<Option<slint::Weak<MainWindow>>>,
+    window_shown_at_show: RefCell<Vec<bool>>,
 }
 
 impl Recorder {
@@ -57,8 +62,19 @@ impl Host for Recorder {
         self.available.get()
     }
 
-    fn show(&self, view: &View) {
+    fn show(&self, view: &View) -> bool {
+        let shown = self
+            .window
+            .borrow()
+            .as_ref()
+            .and_then(slint::Weak::upgrade)
+            .is_some_and(|window| window.window().is_visible());
+        self.window_shown_at_show.borrow_mut().push(shown);
+        if self.broken.get() {
+            return false;
+        }
         self.asked.borrow_mut().push(Asked::Show(view.clone()));
+        true
     }
 
     fn hide(&self) {
@@ -94,6 +110,7 @@ fn open(dir: tempfile::TempDir, store: std::sync::Arc<Store>, available: bool) -
     let bound = bind(&ui, Pages::single(SearchPage::new(store.clone())));
     let host = Recorder::available();
     host.available.set(available);
+    *host.window.borrow_mut() = Some(ui.as_weak());
     bound.tray.set_host(host.clone());
     // the window is in front
     bound.tray.set_active(Rc::new(|| true));
@@ -290,6 +307,7 @@ fn closing_hides_the_window_to_the_icon_instead_of_exiting() {
         "the option alone does not show the icon"
     );
     request_close(&client.ui);
+    pump(500);
     assert!(!client.ui.window().is_visible(), "the window is hidden");
     assert!(
         client.ui.get_question().is_empty(),
@@ -319,6 +337,7 @@ fn closing_hides_the_window_to_the_icon_instead_of_exiting() {
 
     // the icon's exit entry asks to exit too, hidden or not
     request_close(&client.ui);
+    pump(500);
     assert!(client.bound.tray.hidden());
     client.bound.tray.exit();
     assert!(client.ui.window().is_visible());
@@ -383,7 +402,8 @@ fn a_client_starts_hidden_in_the_icon_when_told_to_and_a_tray_is_there() {
     assert!(ui.window().is_visible());
 }
 
-// leaf: audit-options-system-tray-minimise-the-main-window-to-system-tray
+// (not tagged: this drives Slint's own minimised state in the headless
+// platform, not winit's, and has not been run against a real window manager)
 #[test]
 fn minimising_hides_the_window_to_the_icon_where_the_window_system_reports_it() {
     let _windows = headless::init();
@@ -404,6 +424,7 @@ fn minimising_hides_the_window_to_the_icon_where_the_window_system_reports_it() 
     client.ui.window().set_minimized(true);
     pump(600);
     assert!(client.bound.tray.hidden(), "minimising hid it");
+    pump(500);
     assert!(!client.ui.window().is_visible());
     assert!(!client.host.view().ui_shown);
     // showing it again restores what it was before the minimise
@@ -476,6 +497,7 @@ fn file_minimise_to_system_tray_is_offered_with_a_tray_in_advanced_mode_and_hide
 
     choose_in_file_menu(&client.ui, ENTRY);
     assert!(client.bound.tray.hidden());
+    pump(500);
     assert!(!client.ui.window().is_visible());
     assert!(!client.host.view().ui_shown, "the icon was made");
     // the icon's show entry brings it back
@@ -511,8 +533,8 @@ impl Host for Both {
     fn available(&self) -> bool {
         self.1.available()
     }
-    fn show(&self, view: &View) {
-        self.0.show(view);
+    fn show(&self, view: &View) -> bool {
+        self.0.show(view)
     }
     fn hide(&self) {
         self.0.hide();
@@ -595,4 +617,72 @@ fn slint_s_tray_menu_has_the_reference_s_entries() {
     for title in wanted {
         assert!(source.contains(&format!("\"{title}\"")), "{title}");
     }
+}
+
+#[test]
+fn the_icon_is_up_before_the_window_goes_so_the_event_loop_is_never_left_empty() {
+    let _windows = headless::init();
+    let client = client(true);
+    set_options(&client, &[(CLOSE, true)]);
+    request_close(&client.ui);
+    // as the icon was made the window was still shown (a tray icon and a
+    // window each keep Slint's event loop alive; hiding the last of them
+    // ends it, and the icon takes hold a turn after it is made)
+    assert_eq!(*client.host.window_shown_at_show.borrow(), [true]);
+    assert!(client.ui.window().is_visible(), "not yet");
+    assert!(client.bound.tray.hidden());
+    pump(500);
+    assert!(!client.ui.window().is_visible(), "and then it is");
+
+    // shown again before the window went: it simply stays
+    client.bound.tray.flip_show_hide();
+    request_close(&client.ui);
+    client.bound.tray.flip_show_hide();
+    pump(500);
+    assert!(client.ui.window().is_visible());
+    assert!(!client.bound.tray.hidden());
+}
+
+#[test]
+fn a_window_is_not_hidden_when_there_is_no_icon_to_hide_it_to() {
+    let _windows = headless::init();
+    let client = client(true);
+    set_options(&client, &[(CLOSE, true)]);
+    client.host.broken.set(true);
+    request_close(&client.ui);
+    pump(500);
+    assert!(client.ui.window().is_visible());
+    assert!(!client.bound.tray.hidden());
+    assert!(!client.bound.tray.has_icon());
+}
+
+#[test]
+fn a_window_hidden_to_a_tray_that_goes_away_comes_back() {
+    let _windows = headless::init();
+    let client = client(true);
+    set_options(&client, &[(CLOSE, true)]);
+    request_close(&client.ui);
+    pump(500);
+    assert!(client.bound.tray.hidden());
+    client.host.available.set(false);
+    pump(600);
+    assert!(!client.bound.tray.hidden());
+    assert!(client.ui.window().is_visible());
+}
+
+#[test]
+fn an_exit_that_was_vetoed_does_not_make_the_next_close_button_exit() {
+    let _windows = headless::init();
+    let client = client(true);
+    set_options(&client, &[(CLOSE, true)]);
+    // File > exit while the window cannot take it (hidden): vetoed
+    client.ui.hide().unwrap();
+    hydrus_gui::client_exit::set_mode(hydrus_gui_model::shutdown_work::ExitMode::Exit);
+    request_close(&client.ui);
+    client.ui.show().unwrap();
+    assert!(client.ui.get_question().is_empty());
+    // the close button still hides to the tray, as the option says
+    request_close(&client.ui);
+    assert!(client.ui.get_question().is_empty(), "nothing asked to exit");
+    assert!(client.bound.tray.hidden());
 }

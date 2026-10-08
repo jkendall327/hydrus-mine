@@ -5047,8 +5047,9 @@ reference.
   shows a hidden window; on a window in front it minimises it, or hides it
   when minimise-to-tray is on; on a window behind others it brings it forward.
 - "Close the main window to system tray": the window's close button hides the
-  window instead of asking to exit. File > exit, restart and the icon's exit
-  entry still exit (asking as ever).
+  window (a moment after the icon is up) instead of asking to exit. File >
+  exit, restart and the icon's exit entry still exit (asking as ever). If the
+  tray goes away while the client is hidden to it, the window comes back.
 - "Start the client minimised to system tray": the client starts with its
   window hidden, and the icon showing.
 - "Minimise the main window to system tray": minimising the window hides it

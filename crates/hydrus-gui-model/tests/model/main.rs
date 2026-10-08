@@ -222,8 +222,8 @@ mod tag_namespace_order;
 mod media_view_options;
 mod menu_choice_wheel;
 mod popup_freeze;
-mod system_tray;
 mod popup_modal;
 mod popup_network_job;
+mod system_tray;
 
 mod viewer_prefetch;

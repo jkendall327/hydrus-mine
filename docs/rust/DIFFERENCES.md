@@ -4212,19 +4212,32 @@ directory.
 
 ## System tray
 
-- **Minimise to tray needs the window system to say the window is minimised.**
-  Winit has no minimise event, so the main window is looked at four times a
-  second (only while the option and a tray are there) and hidden to the tray
-  when it is found minimised. On X11, Windows and macOS winit answers; on
-  **Wayland it does not** (`is_minimized` is `None`), so there minimising the
-  window just minimises it, whatever the option says, while closing, starting
-  hidden, the icon's click and File > minimise to system tray work. The
-  test of the minimise leaf drives Slint's own minimised state in the
-  headless platform; it has not been run against a real X11 window manager.
-  The reference's two "BUGFIX" switches (minimise-hide using event-deferred
-  state-prep, with post-show state restoration) work around Qt's own window
-  state events and have no counterpart; the window is restored from the
-  minimise before it is hidden, which is the reference's default path.
+- **Minimise to tray is unproven against a real window system, and Wayland
+  cannot do it.** Winit has no minimise event, so the main window is looked at
+  four times a second (only while the option and a tray are there) and hidden
+  to the tray when it is found minimised. Winit answers `is_minimized` on X11,
+  Windows and macOS; on **Wayland it does not** (`None`), so there minimising
+  just minimises, whatever the option says, while closing, starting hidden,
+  the icon's click and File > minimise to system tray work. The test of that
+  leaf drives Slint's own minimised state in the headless platform, never
+  winit's `is_minimized`, and nothing has been run against a real X11 window
+  manager, so the leaf is **not tagged**. The reference's two "BUGFIX"
+  switches (minimise-hide using event-deferred state-prep, with post-show
+  state restoration) work around Qt's own window state events and have no
+  counterpart; the window is restored from the minimise before it is hidden,
+  which is the reference's default path.
+- **The window goes a third of a second after the icon appears.** Slint's
+  event loop ends when its last visible window or tray icon goes, and a tray
+  icon only holds the loop a turn after it is made, so hiding to the tray
+  shows the icon first, hides the window 300 ms later, and does not hide it
+  at all if the icon could not be made. This has been checked only as an
+  order of events against a recording tray; no real tray host (the container
+  has no session bus) has been seen to keep the loop alive.
+- **Whether there is a tray** is looked for on a thread of its own (a
+  StatusNotifierWatcher on the session bus), at the first need, waited for at
+  most half a second, and again every five seconds. A tray that appears later
+  is noticed within that; one that goes away while the client is hidden to it
+  brings the window back within a quarter of a second of the next look.
 - **Only the main window is hidden.** The reference hides every top-level
   window (and, when a dialog is open, brings the dialog forward instead of
   hiding). hydrus-rs's other windows are separate Slint windows with no list
@@ -4239,7 +4252,7 @@ directory.
   the reference's. Menu checks are Slint's `checked`, kept by the client (the
   reference regenerates its menu).
 - **"Is there a tray?"** is whether a StatusNotifierWatcher is on the session
-  bus. A watcher that does not
+  bus (see above). A watcher that does not
   actually show icons still counts as a tray.
 - The tray menu's entries are checked against the recording for their words
   only (the headless platform has no menu to open), and Slint cannot show the

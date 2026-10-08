@@ -7,9 +7,10 @@
 //! real host is Slint's own `SystemTrayIcon` (a StatusNotifierItem on
 //! Linux), and tests put a recording one in its place.
 
-use std::cell::{Cell, RefCell};
+use std::cell::{Cell, OnceCell, RefCell};
 use std::rc::{Rc, Weak};
-use std::sync::Arc;
+use std::sync::atomic::{AtomicBool, Ordering};
+use std::sync::{Arc, mpsc};
 use std::time::Duration;
 
 use slint::ComponentHandle as _;
@@ -37,8 +38,8 @@ pub trait Host {
     /// Whether the desktop has a tray to show it in
     /// (`QSystemTrayIcon.isSystemTrayAvailable`).
     fn available(&self) -> bool;
-    /// Make the icon exist, showing this.
-    fn show(&self, view: &View);
+    /// Make the icon exist, showing this; false if it could not be made.
+    fn show(&self, view: &View) -> bool;
     /// Take the icon away.
     fn hide(&self);
     /// Told where its events go; the controller calls this once.
@@ -80,6 +81,8 @@ pub struct Controller {
     minimised: Cell<bool>,
     me: Weak<Self>,
     watch: slint::Timer,
+    /// Hides the window a moment after the icon is up.
+    pending: slint::Timer,
 }
 
 impl std::fmt::Debug for Controller {
@@ -94,6 +97,9 @@ impl std::fmt::Debug for Controller {
 /// How often the main window is looked at for minimising (winit gives no
 /// event for it).
 const WATCH: Duration = Duration::from_millis(250);
+
+/// How long after the icon is made the window is hidden.
+const HIDE_AFTER: Duration = Duration::from_millis(300);
 
 impl Controller {
     /// A controller using Slint's tray.
@@ -120,6 +126,7 @@ impl Controller {
             minimised: Cell::new(false),
             me: me.clone(),
             watch: slint::Timer::default(),
+            pending: slint::Timer::default(),
         });
         host.connect(Rc::downgrade(&controller));
         // a window close request first asks whether to hide to the tray
@@ -192,14 +199,16 @@ impl Controller {
         let options = self.options();
         let available = self.available();
         let need = rules::needs_icon(available, options.always_show, self.hidden.get());
+        let mut made = false;
         if need {
-            self.host.borrow().show(&self.view());
+            made = self.host.borrow().show(&self.view());
         } else if self.icon.get() {
             self.host.borrow().hide();
         }
-        self.icon.set(need);
-        // looking for a minimise is only worth the wake-ups when it would hide
-        if rules::minimise_hides(available, options.minimise) {
+        self.icon.set(need && made);
+        // looking at the window is only worth the wake-ups when it would hide
+        // (a minimise), or when the tray going away would strand it
+        if self.hidden.get() || rules::minimise_hides(available, options.minimise) {
             let me = self.me.clone();
             self.watch
                 .start(slint::TimerMode::Repeated, WATCH, move || {
@@ -249,10 +258,30 @@ impl Controller {
             window.window().set_minimized(false);
         }
         self.maximised.set(Some(window.window().is_maximized()));
-        let _ = window.hide();
         self.hidden.set(true);
         self.minimised.set(false);
+        // The icon first: hiding the last visible window quits the event
+        // loop unless a visible tray icon holds it, and the icon takes hold
+        // on a later turn of the loop than the one that makes it. So the
+        // window is hidden a moment after, and not at all without an icon.
         self.update_icon();
+        if !self.icon.get() {
+            self.hidden.set(false);
+            self.update_icon();
+            eprintln!("could not show the system tray icon; not hiding the window");
+            return;
+        }
+        let weak = self.window.clone();
+        let me = self.me.clone();
+        self.pending
+            .start(slint::TimerMode::SingleShot, HIDE_AFTER, move || {
+                let hidden = me
+                    .upgrade()
+                    .is_some_and(|controller| controller.hidden.get());
+                if hidden && let Some(window) = weak.upgrade() {
+                    let _ = window.hide();
+                }
+            });
     }
 
     /// `_SystemTrayShow`.
@@ -260,6 +289,7 @@ impl Controller {
         if !self.hidden.get() {
             return;
         }
+        self.pending.stop();
         if let Some(window) = self.window.upgrade() {
             let _ = window.show();
             if let Some(maximised) = self.maximised.take() {
@@ -366,6 +396,7 @@ impl Controller {
     /// The client is exiting: the icon goes with it (`SaveAndHide`).
     pub fn retire(&self) {
         self.watch.stop();
+        self.pending.stop();
         if self.icon.replace(false) {
             self.host.borrow().hide();
         }
@@ -374,10 +405,18 @@ impl Controller {
 
     /// Look for the main window being minimised (`changeEvent`).
     fn look(&self) {
+        // (the tray went away while the window was hidden to it: nothing
+        // could bring it back, so it comes back)
+        if self.hidden.get() {
+            if !self.available() {
+                self.show_from_tray();
+            }
+            return;
+        }
         let Some(window) = self.window.upgrade() else {
             return;
         };
-        if self.hidden.get() || !window.window().is_visible() {
+        if !window.window().is_visible() {
             self.minimised.set(false);
             return;
         }
@@ -422,11 +461,58 @@ fn tray_available() -> bool {
     true
 }
 
+/// Whether a tray is there, found out on a thread of its own: a session
+/// bus can be slow, and the window must not wait on it.
+struct Availability {
+    there: Arc<AtomicBool>,
+    /// The first answer, waited for (briefly) once.
+    first: RefCell<Option<mpsc::Receiver<()>>>,
+}
+
+/// How long the first look at the tray may be waited for.
+const FIRST_LOOK: Duration = Duration::from_millis(500);
+/// How often the tray is looked for again.
+const LOOK_AGAIN: Duration = Duration::from_secs(5);
+
+impl Availability {
+    fn start() -> Self {
+        let there = Arc::new(AtomicBool::new(false));
+        let (told, first) = mpsc::channel();
+        let weak = Arc::downgrade(&there);
+        let spawned = std::thread::Builder::new()
+            .name("system-tray-watch".into())
+            .spawn(move || {
+                // (ends with the host that asked)
+                while let Some(there) = weak.upgrade() {
+                    there.store(tray_available(), Ordering::Relaxed);
+                    let _ = told.send(());
+                    drop(there);
+                    std::thread::sleep(LOOK_AGAIN);
+                }
+            });
+        if let Err(error) = spawned {
+            eprintln!("could not look for a system tray: {error}");
+        }
+        Self {
+            there,
+            first: RefCell::new(Some(first)),
+        }
+    }
+
+    fn get(&self) -> bool {
+        if let Some(first) = self.first.take() {
+            let _ = first.recv_timeout(FIRST_LOOK);
+        }
+        self.there.load(Ordering::Relaxed)
+    }
+}
+
 /// Slint's `SystemTrayIcon`.
 #[derive(Default)]
 pub struct SlintHost {
     tray: RefCell<Option<HydrusTray>>,
     controller: RefCell<Weak<Controller>>,
+    available: OnceCell<Availability>,
 }
 
 impl std::fmt::Debug for SlintHost {
@@ -479,22 +565,22 @@ impl SlintHost {
 
 impl Host for SlintHost {
     fn available(&self) -> bool {
-        tray_available()
+        self.available.get_or_init(Availability::start).get()
     }
 
-    fn show(&self, view: &View) {
+    fn show(&self, view: &View) -> bool {
         let mut slot = self.tray.borrow_mut();
         if slot.is_none() {
             match self.make() {
                 Ok(tray) => *slot = Some(tray),
                 Err(error) => {
                     eprintln!("could not make the system tray icon: {error}");
-                    return;
+                    return false;
                 }
             }
         }
         let Some(tray) = slot.as_ref() else {
-            return;
+            return false;
         };
         tray.set_ui_shown(view.ui_shown);
         tray.set_tooltip_text(view.tooltip.as_str().into());
@@ -504,6 +590,7 @@ impl Host for SlintHost {
         tray.set_close_to_tray(view.options.close);
         tray.set_start_in_tray(view.options.start);
         let _ = tray.show();
+        true
     }
 
     fn hide(&self) {

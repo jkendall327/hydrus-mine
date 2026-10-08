@@ -268,16 +268,19 @@ fn bind_with_timeout(
         let timer = timer.clone();
         let weak = window.as_weak();
         move || {
+            // (this request's own marks, spent whatever becomes of it: a
+            // vetoed request must not leave them for the next close button)
+            let explicit = EXPLICIT.with(|e| e.replace(false));
             if !active.get()
                 || !weak
                     .upgrade()
                     .is_some_and(|window| window.window().is_visible())
             {
+                MODE.with(|m| m.set(ExitMode::Exit));
                 return slint::CloseRequestResponse::KeepWindowShown;
             }
             // (the window's close button hides to the system tray when told
             // to; File > exit does not)
-            let explicit = EXPLICIT.with(|e| e.replace(false));
             let intercept = INTERCEPT.with(|i| i.borrow().clone());
             if !explicit && intercept.is_some_and(|intercept| intercept()) {
                 return slint::CloseRequestResponse::KeepWindowShown;
