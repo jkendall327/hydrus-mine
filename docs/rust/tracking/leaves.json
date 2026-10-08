@@ -18480,7 +18480,7 @@
     "date": "2026-10-08",
     "class": "sound",
     "by": "phase 2 session",
-    "note": "crates/hydrus-gui/tests/gui/predicate_editors.rs each_change_in_the_window_makes_what_the_reference_s_makes and panels_set_in_several_ways_in_the_window_make_what_the_reference_s_make (every recorded change and scenario put to the real editor window through its field callbacks and \"ok\", result read from the page's search or the window's error), against oracle/fixtures/system_predicate_editors.json; the model tests stay as the fast check of Panel. Dates start at the real day, read as the recorded day."
+    "note": "crates/hydrus-gui/tests/gui/predicate_editors.rs each_change_in_the_window_makes_what_the_reference_s_makes and panels_set_in_several_ways_in_the_window_make_what_the_reference_s_make (every recorded change and scenario put to the real editor window through its field callbacks and \"ok\", result read from the page's search or the window's error), against oracle/fixtures/system_predicate_editors.json; the model tests stay as the fast check of Panel. Dates start at the real day, read as the recorded day. The reference's tag autocomplete widget (widget 7) has no counterpart and is skipped, in the model and window tests alike."
    }
   },
   {
@@ -18500,7 +18500,7 @@
     "date": "2026-10-08",
     "class": "sound",
     "by": "phase 2 session",
-    "note": "crates/hydrus-gui/tests/gui/predicate_editors.rs each_change_in_the_window_makes_what_the_reference_s_makes and panels_set_in_several_ways_in_the_window_make_what_the_reference_s_make (every recorded change and scenario put to the real editor window through its field callbacks and \"ok\", result read from the page's search or the window's error), against oracle/fixtures/system_predicate_editors.json; the model tests stay as the fast check of Panel. Dates start at the real day, read as the recorded day."
+    "note": "crates/hydrus-gui/tests/gui/predicate_editors.rs each_change_in_the_window_makes_what_the_reference_s_makes and panels_set_in_several_ways_in_the_window_make_what_the_reference_s_make (every recorded change and scenario put to the real editor window through its field callbacks and \"ok\", result read from the page's search or the window's error), against oracle/fixtures/system_predicate_editors.json; the model tests stay as the fast check of Panel. Dates start at the real day, read as the recorded day. The reference's tag autocomplete widget (widget 7) has no counterpart and is skipped, in the model and window tests alike."
    }
   },
   {
@@ -18635,8 +18635,8 @@
    "recheck": {
     "date": "2026-10-08",
     "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Replays the recorded date+time scenario against Panel::predicates only; the window test covers just a bad date refusal on the import page; typed date/time fields replace the calendar/time widgets (a documented difference). Tests: crates/hydrus-gui/tests/gui/predicate_editors.rs:607-608 panels_set_in_several_ways_make_what_the_reference_s_make"
+    "by": "phase 2 session",
+    "note": "The recorded date+time scenario now goes through the real editor window (panels_set_in_several_ways_in_the_window...). Still weak: typed date and time text fields replace the reference's calendar and time widgets, a documented difference, so the widgets themselves are not driven."
    }
   },
   {
@@ -18770,8 +18770,8 @@
    "recheck": {
     "date": "2026-10-08",
     "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Replays the recorded date+time scenario against Panel::predicates only; the window test covers just a bad date refusal on the import page; typed date/time fields replace the calendar/time widgets (a documented difference). Tests: crates/hydrus-gui/tests/gui/predicate_editors.rs:607-608 panels_set_in_several_ways_make_what_the_reference_s_make"
+    "by": "phase 2 session",
+    "note": "The recorded date+time scenario now goes through the real editor window (panels_set_in_several_ways_in_the_window...). Still weak: typed date and time text fields replace the reference's calendar and time widgets, a documented difference, so the widgets themselves are not driven."
    }
   },
   {
@@ -18944,8 +18944,8 @@
    "recheck": {
     "date": "2026-10-08",
     "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Recorded text change (\"abc\") replays against Panel::predicates only (no window); the reference CheckValid veto (regex compile, \"Cannot compile that regex\") is tested in a model test from a different recording, not in the window, and exact/domain rule validation is not recorded. Tests: crates/hydrus-gui/tests/gui/predicate_editors.rs:526 each_change_to_a_panel_makes_what_the_reference_s_makes; crates/hydrus-gui-model/src/predicate_editors/defaults.rs:~515 (regex veto)"
+    "by": "phase 2 session",
+    "note": "The recorded text change ('abc') goes through the real editor window, but exact/domain validation is not recorded, so no window test drives any veto for this panel (the regex panel's veto is driven for the regex leaf)."
    }
   },
   {
@@ -18981,9 +18981,9 @@
    ],
    "recheck": {
     "date": "2026-10-08",
-    "class": "sound",
+    "class": "weak",
     "by": "phase 2 session",
-    "note": "crates/hydrus-gui/tests/gui/predicate_editors.rs each_change_in_the_window_makes_what_the_reference_s_makes and panels_set_in_several_ways_in_the_window_make_what_the_reference_s_make (every recorded change and scenario put to the real editor window through its field callbacks and \"ok\", result read from the page's search or the window's error), against oracle/fixtures/system_predicate_editors.json; the model tests stay as the fast check of Panel. Dates start at the real day, read as the recorded day."
+    "note": "The recorded text change ('abc') goes through the real editor window, but exact/domain validation is not recorded, so no window test drives any veto for this panel (the regex panel's veto is driven for the regex leaf)."
    }
   },
   {
@@ -19021,7 +19021,7 @@
     "date": "2026-10-08",
     "class": "sound",
     "by": "phase 2 session",
-    "note": "crates/hydrus-gui/tests/gui/predicate_editors.rs each_change_in_the_window_makes_what_the_reference_s_makes and panels_set_in_several_ways_in_the_window_make_what_the_reference_s_make (every recorded change and scenario put to the real editor window through its field callbacks and \"ok\", result read from the page's search or the window's error), against oracle/fixtures/system_predicate_editors.json; the model tests stay as the fast check of Panel. Dates start at the real day, read as the recorded day."
+    "note": "gui/predicate_editors.rs: the recorded text change ('abc') goes through the real editor window (each_change_in_the_window...), and the_windows_known_url_regex_panel_refuses_a_regex_that_will_not_compile types the recording's bad regex ('[') into the window, presses ok, and checks the editor stays open with nothing searched and the 'Cannot compile that regex' refusal (predicate_custom_defaults.json invalid_regex; the reason is Python's words in the reference, native words here)."
    }
   },
   {

@@ -2260,7 +2260,9 @@ fn open_editor(store: &Arc<Store>, editor: &str, page: usize) -> Opened {
 }
 
 /// The reference's recording was made today; the editors' dates start at
-/// today, so read the recorded day as the real one.
+/// today, so read the recorded day as the real one. (The window reads the
+/// clock when it opens and this reads it after: across midnight they can
+/// differ, and the test then fails rather than passing wrongly.)
 fn as_today(recorded: &Json, text: &str) -> String {
     let now = hydrus_search::Clock::system().today().to_string();
     text.replace(recorded["today"].as_str().unwrap(), &now[..10])
@@ -2521,6 +2523,7 @@ fn each_change_in_the_window_makes_what_the_reference_s_makes() {
     let windows = headless::init();
     let context = context(&store, &recorded);
     let mut checked = 0;
+    let mut skipped: Vec<String> = Vec::new();
     for editor in recorded["editors"].as_array().unwrap() {
         let name = editor["text"].as_str().unwrap();
         let blank = Blank::from_text(name).unwrap();
@@ -2542,6 +2545,7 @@ fn each_change_in_the_window_makes_what_the_reference_s_makes() {
                         &mut Vec::new(),
                         &mut |_| {},
                     ) {
+                        skipped.push(format!("{class} {widget}"));
                         continue;
                     }
                     let got = make_in_window(&windows, &store, name, page, panel, &mut |act| {
@@ -2552,6 +2556,9 @@ fn each_change_in_the_window_makes_what_the_reference_s_makes() {
                         .as_array()
                         .map(|_| strings(&change_made["predicates"]));
                     // (the reference offers terabytes, but can't write them)
+                    // (the reference offers terabytes but writes "200TB" in a form neither
+                    // parser takes; the native editor makes "system:filesize < 200TB":
+                    // docs/rust/DIFFERENCES.md, the filesize predicate)
                     if set == "TB" {
                         assert_eq!(
                             got.predicates,
@@ -2566,7 +2573,10 @@ fn each_change_in_the_window_makes_what_the_reference_s_makes() {
                             Ok(expected
                                 .iter()
                                 .map(|p| {
-                                    if set.to_string().contains("2026") {
+                                    if set
+                                        .to_string()
+                                        .contains(&recorded["today"].as_str().unwrap()[..4])
+                                    {
                                         p.clone()
                                     } else {
                                         as_today(&recorded, p)
@@ -2582,6 +2592,8 @@ fn each_change_in_the_window_makes_what_the_reference_s_makes() {
             }
         }
     }
+    // only the reference's tag autocomplete widget has no counterpart here
+    assert_eq!(skipped, ["PanelPredicateSystemTagAdvanced 7"]);
     assert!(checked > 150, "{checked}");
 }
 
@@ -2627,7 +2639,9 @@ fn panels_set_in_several_ways_in_the_window_make_what_the_reference_s_make() {
             .map(|s| format!("{} {}", s["widget"], s["set"]))
             .collect::<Vec<_>>()
             .join(", ");
-        let typed_date = scenario["steps"].to_string().contains("2026");
+        let typed_date = scenario["steps"]
+            .to_string()
+            .contains(&recorded["today"].as_str().unwrap()[..4]);
         match scenario["predicates"].as_array() {
             Some(_) => assert_eq!(
                 got.predicates,
@@ -2653,4 +2667,56 @@ fn panels_set_in_several_ways_in_the_window_make_what_the_reference_s_make() {
             "{name}: {steps}"
         );
     }
+}
+
+// leaf: audit-options-predicate-urls-known-urls-knownurlsregex-rule
+#[test]
+fn the_windows_known_url_regex_panel_refuses_a_regex_that_will_not_compile() {
+    let (_dirs, store) = store();
+    let recorded = recorded();
+    let custom = hydrus_testkit::fixture_json("predicate_custom_defaults.json");
+    let veto = custom["invalid_regex"]["accept_validation_error"]
+        .as_str()
+        .unwrap();
+    let _windows = headless::init();
+    let context = context(&store, &recorded);
+    let editor = Editor::new(Blank::from_text("system:urls").unwrap(), &context);
+    let (page, panel) = editor
+        .pages
+        .iter()
+        .enumerate()
+        .find_map(|(page, p)| {
+            p.panels
+                .iter()
+                .position(|panel| panel.kind.class_name() == "PanelPredicateSystemKnownURLsRegex")
+                .map(|panel| (page, panel))
+        })
+        .unwrap();
+    let field = editor.pages[page].panels[panel]
+        .fields
+        .iter()
+        .position(|f| matches!(f, Field::Text { .. }))
+        .unwrap();
+    // the recording's own bad regex, typed into the window and "ok"ed
+    let Opened { ui, bound, window } = open_editor(&store, "system:urls", page);
+    let at = |n: usize| i32::try_from(n).unwrap();
+    window.invoke_text_edited(at(panel), at(field), "[".into());
+    window.invoke_ok(at(panel));
+    assert!(
+        bound.predicate_editor.borrow().is_some(),
+        "the editor stays open"
+    );
+    assert!(shown_predicates(&ui).is_empty(), "nothing is searched");
+    // (the reference's reason is Python's words; the refusal is its own)
+    assert!(
+        window.get_error().starts_with("Cannot compile that regex"),
+        "{}",
+        window.get_error()
+    );
+    assert!(veto.starts_with("Cannot compile that regex"));
+    // and a regex that compiles is searched
+    window.invoke_text_edited(at(panel), at(field), "abc".into());
+    window.invoke_ok(at(panel));
+    assert!(bound.predicate_editor.borrow().is_none());
+    assert_eq!(shown_predicates(&ui), ["system:has url matching regex abc"]);
 }
