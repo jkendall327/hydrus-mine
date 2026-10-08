@@ -235,3 +235,28 @@ agent's own rebuilds dominate its time.
   edits). Its tests, `dev.sh lint`, fmt and track check pass here. 28 debug
   leaves that exist only for Qt/Python/the reference's harness moved out of
   scope. Tracker: 1,039 done, 48 partial, 87 missing, 97 out of scope.
+- 13:45 UTC: merged `claude/impl-search-pages` (14 leaves, tests only: the
+  states were stale), `claude/impl-small-areas` (14 leaves, 4 real features)
+  and `claude/impl-options-gui-media` (10 leaves; frame gravity, preview hover,
+  duplicate hover pin, mpv plan, ratings examples). All model tests and 957/958
+  GUI tests pass here (emoji_fonts: this container's fonts; passes in CI).
+  Tracker: 1,078 done; ~80 normal-priority leaves left plus 19 debug.
+- **Independent review per batch works**: three Sonnet reviewers (read-only,
+  2-3 min each) found real problems the sessions' own checks missed: a
+  ratings-example template that contradicts the reference (saved at once,
+  only colours/shape cloned), int-vs-round icon sizes, an empty-data session,
+  a registration window left open for an hour, tests replaying a decision
+  function instead of the daemon, and two date panels proved with borrowed,
+  string-rewritten scenarios. Findings go back to the owning session as its
+  next first task. Keep this step. Tell reviewers: `git show`/`git diff` only,
+  never `git checkout` (one detached HEAD in the shared checkout).
+- **The reference can be recorded in cloud containers after all**:
+  `scripts/setup-oracle.sh` (pip + libEGL + libmpv, ~3 min) and recorders run
+  (13 s for the date-time editor, byte-identical fixture). Sessions had been
+  testing against the reference's source instead. The archived/modified date
+  leaves are now proved against new recordings.
+- Next: the four running sessions (options-system; manage-tags cluster +
+  review fixes; editors/network + similar-files paste; shell + options
+  partials + review fixes). Platform-limited leaves to decide with the owner:
+  system tray (`audit-options-file-tray`), drag out of the viewer, tag
+  tooltips, "mouse on another display" freeze.
