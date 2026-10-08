@@ -28102,7 +28102,7 @@
        "changes": [
         {
          "predicates": [
-          "system:import time: since 2026-10-02"
+          "system:import time: since 2026-10-08"
          ],
          "set": "since",
          "widget": 1,
@@ -28158,7 +28158,7 @@
           {
            "class": "QCalendarWidget",
            "kind": "date",
-           "value": "2026-10-02"
+           "value": "2026-10-08"
           },
           {
            "class": "QTimeEdit",
@@ -28174,7 +28174,7 @@
         },
         {
          "predicates": [
-          "system:import time: on the day of 2026-10-02"
+          "system:import time: on the day of 2026-10-08"
          ],
          "set": "the day of",
          "widget": 2,
@@ -28230,7 +28230,7 @@
           {
            "class": "QCalendarWidget",
            "kind": "date",
-           "value": "2026-10-02"
+           "value": "2026-10-08"
           },
           {
            "class": "QTimeEdit",
@@ -28246,7 +28246,7 @@
         },
         {
          "predicates": [
-          "system:import time: a month either side of 2026-10-02"
+          "system:import time: a month either side of 2026-10-08"
          ],
          "set": "+/- a month of",
          "widget": 3,
@@ -28302,7 +28302,7 @@
           {
            "class": "QCalendarWidget",
            "kind": "date",
-           "value": "2026-10-02"
+           "value": "2026-10-08"
           },
           {
            "class": "QTimeEdit",
@@ -28319,7 +28319,7 @@
        ],
        "class": "PanelPredicateSystemAgeDate",
        "predicates": [
-        "system:import time: before 2026-10-02"
+        "system:import time: before 2026-10-08"
        ],
        "widgets": [
         {
@@ -28373,7 +28373,7 @@
         {
          "class": "QCalendarWidget",
          "kind": "date",
-         "value": "2026-10-02"
+         "value": "2026-10-08"
         },
         {
          "class": "QTimeEdit",
@@ -29091,7 +29091,7 @@
        "changes": [
         {
          "predicates": [
-          "system:modified time: before 2026-10-02"
+          "system:modified time: before 2026-10-08"
          ],
          "set": "before",
          "widget": 0,
@@ -29147,7 +29147,7 @@
           {
            "class": "QCalendarWidget",
            "kind": "date",
-           "value": "2026-10-02"
+           "value": "2026-10-08"
           },
           {
            "class": "QTimeEdit",
@@ -29163,7 +29163,7 @@
         },
         {
          "predicates": [
-          "system:modified time: on the day of 2026-10-02"
+          "system:modified time: on the day of 2026-10-08"
          ],
          "set": "the day of",
          "widget": 2,
@@ -29219,7 +29219,7 @@
           {
            "class": "QCalendarWidget",
            "kind": "date",
-           "value": "2026-10-02"
+           "value": "2026-10-08"
           },
           {
            "class": "QTimeEdit",
@@ -29235,7 +29235,7 @@
         },
         {
          "predicates": [
-          "system:modified time: a month either side of 2026-10-02"
+          "system:modified time: a month either side of 2026-10-08"
          ],
          "set": "+/- a month of",
          "widget": 3,
@@ -29291,7 +29291,7 @@
           {
            "class": "QCalendarWidget",
            "kind": "date",
-           "value": "2026-10-02"
+           "value": "2026-10-08"
           },
           {
            "class": "QTimeEdit",
@@ -29308,7 +29308,7 @@
        ],
        "class": "PanelPredicateSystemModifiedDate",
        "predicates": [
-        "system:modified time: since 2026-10-02"
+        "system:modified time: since 2026-10-08"
        ],
        "widgets": [
         {
@@ -29362,7 +29362,7 @@
         {
          "class": "QCalendarWidget",
          "kind": "date",
-         "value": "2026-10-02"
+         "value": "2026-10-08"
         },
         {
          "class": "QTimeEdit",
@@ -30080,7 +30080,7 @@
        "changes": [
         {
          "predicates": [
-          "system:last viewed time: before 2026-10-02"
+          "system:last viewed time: before 2026-10-08"
          ],
          "set": "before",
          "widget": 0,
@@ -30136,7 +30136,7 @@
           {
            "class": "QCalendarWidget",
            "kind": "date",
-           "value": "2026-10-02"
+           "value": "2026-10-08"
           },
           {
            "class": "QTimeEdit",
@@ -30152,7 +30152,7 @@
         },
         {
          "predicates": [
-          "system:last viewed time: on the day of 2026-10-02"
+          "system:last viewed time: on the day of 2026-10-08"
          ],
          "set": "the day of",
          "widget": 2,
@@ -30208,7 +30208,7 @@
           {
            "class": "QCalendarWidget",
            "kind": "date",
-           "value": "2026-10-02"
+           "value": "2026-10-08"
           },
           {
            "class": "QTimeEdit",
@@ -30224,7 +30224,7 @@
         },
         {
          "predicates": [
-          "system:last viewed time: a month either side of 2026-10-02"
+          "system:last viewed time: a month either side of 2026-10-08"
          ],
          "set": "+/- a month of",
          "widget": 3,
@@ -30280,7 +30280,7 @@
           {
            "class": "QCalendarWidget",
            "kind": "date",
-           "value": "2026-10-02"
+           "value": "2026-10-08"
           },
           {
            "class": "QTimeEdit",
@@ -30297,7 +30297,7 @@
        ],
        "class": "PanelPredicateSystemLastViewedDate",
        "predicates": [
-        "system:last viewed time: since 2026-10-02"
+        "system:last viewed time: since 2026-10-08"
        ],
        "widgets": [
         {
@@ -30351,7 +30351,7 @@
         {
          "class": "QCalendarWidget",
          "kind": "date",
-         "value": "2026-10-02"
+         "value": "2026-10-08"
         },
         {
          "class": "QTimeEdit",
@@ -31069,7 +31069,7 @@
        "changes": [
         {
          "predicates": [
-          "system:archived time: before 2026-10-02"
+          "system:archived time: before 2026-10-08"
          ],
          "set": "before",
          "widget": 0,
@@ -31125,7 +31125,7 @@
           {
            "class": "QCalendarWidget",
            "kind": "date",
-           "value": "2026-10-02"
+           "value": "2026-10-08"
           },
           {
            "class": "QTimeEdit",
@@ -31141,7 +31141,7 @@
         },
         {
          "predicates": [
-          "system:archived time: on the day of 2026-10-02"
+          "system:archived time: on the day of 2026-10-08"
          ],
          "set": "the day of",
          "widget": 2,
@@ -31197,7 +31197,7 @@
           {
            "class": "QCalendarWidget",
            "kind": "date",
-           "value": "2026-10-02"
+           "value": "2026-10-08"
           },
           {
            "class": "QTimeEdit",
@@ -31213,7 +31213,7 @@
         },
         {
          "predicates": [
-          "system:archived time: a month either side of 2026-10-02"
+          "system:archived time: a month either side of 2026-10-08"
          ],
          "set": "+/- a month of",
          "widget": 3,
@@ -31269,7 +31269,7 @@
           {
            "class": "QCalendarWidget",
            "kind": "date",
-           "value": "2026-10-02"
+           "value": "2026-10-08"
           },
           {
            "class": "QTimeEdit",
@@ -31286,7 +31286,7 @@
        ],
        "class": "PanelPredicateSystemArchivedDate",
        "predicates": [
-        "system:archived time: since 2026-10-02"
+        "system:archived time: since 2026-10-08"
        ],
        "widgets": [
         {
@@ -31340,7 +31340,7 @@
         {
          "class": "QCalendarWidget",
          "kind": "date",
-         "value": "2026-10-02"
+         "value": "2026-10-08"
         },
         {
          "class": "QTimeEdit",
@@ -35228,7 +35228,7 @@
       {
        "class": "QCalendarWidget",
        "kind": "date",
-       "value": "2026-10-02"
+       "value": "2026-10-08"
       },
       {
        "class": "QTimeEdit",
@@ -35297,7 +35297,7 @@
       {
        "class": "QCalendarWidget",
        "kind": "date",
-       "value": "2026-10-02"
+       "value": "2026-10-08"
       },
       {
        "class": "QTimeEdit",
@@ -35512,7 +35512,7 @@
       {
        "class": "QCalendarWidget",
        "kind": "date",
-       "value": "2026-10-02"
+       "value": "2026-10-08"
       },
       {
        "class": "QTimeEdit",
@@ -35581,7 +35581,7 @@
       {
        "class": "QCalendarWidget",
        "kind": "date",
-       "value": "2026-10-02"
+       "value": "2026-10-08"
       },
       {
        "class": "QTimeEdit",
@@ -54063,6 +54063,1004 @@
      "text": "system:"
     }
    ]
+  },
+  {
+   "editor": "system:time",
+   "error": null,
+   "page": 1,
+   "panel": 1,
+   "predicates": [
+    "system:modified time: since 2011-06-04 13:05:00"
+   ],
+   "steps": [
+    {
+     "set": null,
+     "widget": 1,
+     "widgets": [
+      {
+       "checked": false,
+       "class": "EnterCatchingRadioButton",
+       "group": [
+        "before",
+        "since",
+        "the day of",
+        "+/- a month of"
+       ],
+       "kind": "radio",
+       "text": "before"
+      },
+      {
+       "checked": true,
+       "class": "EnterCatchingRadioButton",
+       "group": [
+        "before",
+        "since",
+        "the day of",
+        "+/- a month of"
+       ],
+       "kind": "radio",
+       "text": "since"
+      },
+      {
+       "checked": false,
+       "class": "EnterCatchingRadioButton",
+       "group": [
+        "before",
+        "since",
+        "the day of",
+        "+/- a month of"
+       ],
+       "kind": "radio",
+       "text": "the day of"
+      },
+      {
+       "checked": false,
+       "class": "EnterCatchingRadioButton",
+       "group": [
+        "before",
+        "since",
+        "the day of",
+        "+/- a month of"
+       ],
+       "kind": "radio",
+       "text": "+/- a month of"
+      },
+      {
+       "class": "QCalendarWidget",
+       "kind": "date",
+       "value": "2026-10-08"
+      },
+      {
+       "class": "QTimeEdit",
+       "kind": "time",
+       "value": "00:00:00"
+      },
+      {
+       "class": "BetterStaticText",
+       "kind": "label",
+       "text": "system:modified time"
+      }
+     ]
+    },
+    {
+     "set": "2011-06-04",
+     "widget": 4,
+     "widgets": [
+      {
+       "checked": false,
+       "class": "EnterCatchingRadioButton",
+       "group": [
+        "before",
+        "since",
+        "the day of",
+        "+/- a month of"
+       ],
+       "kind": "radio",
+       "text": "before"
+      },
+      {
+       "checked": true,
+       "class": "EnterCatchingRadioButton",
+       "group": [
+        "before",
+        "since",
+        "the day of",
+        "+/- a month of"
+       ],
+       "kind": "radio",
+       "text": "since"
+      },
+      {
+       "checked": false,
+       "class": "EnterCatchingRadioButton",
+       "group": [
+        "before",
+        "since",
+        "the day of",
+        "+/- a month of"
+       ],
+       "kind": "radio",
+       "text": "the day of"
+      },
+      {
+       "checked": false,
+       "class": "EnterCatchingRadioButton",
+       "group": [
+        "before",
+        "since",
+        "the day of",
+        "+/- a month of"
+       ],
+       "kind": "radio",
+       "text": "+/- a month of"
+      },
+      {
+       "class": "QCalendarWidget",
+       "kind": "date",
+       "value": "2026-10-08"
+      },
+      {
+       "class": "QTimeEdit",
+       "kind": "time",
+       "value": "00:00:00"
+      },
+      {
+       "class": "BetterStaticText",
+       "kind": "label",
+       "text": "system:modified time"
+      }
+     ]
+    },
+    {
+     "set": "13:05",
+     "widget": 5,
+     "widgets": [
+      {
+       "checked": false,
+       "class": "EnterCatchingRadioButton",
+       "group": [
+        "before",
+        "since",
+        "the day of",
+        "+/- a month of"
+       ],
+       "kind": "radio",
+       "text": "before"
+      },
+      {
+       "checked": true,
+       "class": "EnterCatchingRadioButton",
+       "group": [
+        "before",
+        "since",
+        "the day of",
+        "+/- a month of"
+       ],
+       "kind": "radio",
+       "text": "since"
+      },
+      {
+       "checked": false,
+       "class": "EnterCatchingRadioButton",
+       "group": [
+        "before",
+        "since",
+        "the day of",
+        "+/- a month of"
+       ],
+       "kind": "radio",
+       "text": "the day of"
+      },
+      {
+       "checked": false,
+       "class": "EnterCatchingRadioButton",
+       "group": [
+        "before",
+        "since",
+        "the day of",
+        "+/- a month of"
+       ],
+       "kind": "radio",
+       "text": "+/- a month of"
+      },
+      {
+       "class": "QCalendarWidget",
+       "kind": "date",
+       "value": "2011-06-04"
+      },
+      {
+       "class": "QTimeEdit",
+       "kind": "time",
+       "value": "00:00:00"
+      },
+      {
+       "class": "BetterStaticText",
+       "kind": "label",
+       "text": "system:modified time"
+      }
+     ]
+    }
+   ],
+   "warnings": [],
+   "widgets": [
+    {
+     "checked": false,
+     "class": "EnterCatchingRadioButton",
+     "group": [
+      "before",
+      "since",
+      "the day of",
+      "+/- a month of"
+     ],
+     "kind": "radio",
+     "text": "before"
+    },
+    {
+     "checked": true,
+     "class": "EnterCatchingRadioButton",
+     "group": [
+      "before",
+      "since",
+      "the day of",
+      "+/- a month of"
+     ],
+     "kind": "radio",
+     "text": "since"
+    },
+    {
+     "checked": false,
+     "class": "EnterCatchingRadioButton",
+     "group": [
+      "before",
+      "since",
+      "the day of",
+      "+/- a month of"
+     ],
+     "kind": "radio",
+     "text": "the day of"
+    },
+    {
+     "checked": false,
+     "class": "EnterCatchingRadioButton",
+     "group": [
+      "before",
+      "since",
+      "the day of",
+      "+/- a month of"
+     ],
+     "kind": "radio",
+     "text": "+/- a month of"
+    },
+    {
+     "class": "QCalendarWidget",
+     "kind": "date",
+     "value": "2011-06-04"
+    },
+    {
+     "class": "QTimeEdit",
+     "kind": "time",
+     "value": "13:05:00"
+    },
+    {
+     "class": "BetterStaticText",
+     "kind": "label",
+     "text": "system:modified time"
+    }
+   ]
+  },
+  {
+   "editor": "system:time",
+   "error": null,
+   "page": 1,
+   "panel": 1,
+   "predicates": [
+    "system:modified time: a month either side of 1999-12-31"
+   ],
+   "steps": [
+    {
+     "set": null,
+     "widget": 3,
+     "widgets": [
+      {
+       "checked": false,
+       "class": "EnterCatchingRadioButton",
+       "group": [
+        "before",
+        "since",
+        "the day of",
+        "+/- a month of"
+       ],
+       "kind": "radio",
+       "text": "before"
+      },
+      {
+       "checked": true,
+       "class": "EnterCatchingRadioButton",
+       "group": [
+        "before",
+        "since",
+        "the day of",
+        "+/- a month of"
+       ],
+       "kind": "radio",
+       "text": "since"
+      },
+      {
+       "checked": false,
+       "class": "EnterCatchingRadioButton",
+       "group": [
+        "before",
+        "since",
+        "the day of",
+        "+/- a month of"
+       ],
+       "kind": "radio",
+       "text": "the day of"
+      },
+      {
+       "checked": false,
+       "class": "EnterCatchingRadioButton",
+       "group": [
+        "before",
+        "since",
+        "the day of",
+        "+/- a month of"
+       ],
+       "kind": "radio",
+       "text": "+/- a month of"
+      },
+      {
+       "class": "QCalendarWidget",
+       "kind": "date",
+       "value": "2026-10-08"
+      },
+      {
+       "class": "QTimeEdit",
+       "kind": "time",
+       "value": "00:00:00"
+      },
+      {
+       "class": "BetterStaticText",
+       "kind": "label",
+       "text": "system:modified time"
+      }
+     ]
+    },
+    {
+     "set": "1999-12-31",
+     "widget": 4,
+     "widgets": [
+      {
+       "checked": false,
+       "class": "EnterCatchingRadioButton",
+       "group": [
+        "before",
+        "since",
+        "the day of",
+        "+/- a month of"
+       ],
+       "kind": "radio",
+       "text": "before"
+      },
+      {
+       "checked": false,
+       "class": "EnterCatchingRadioButton",
+       "group": [
+        "before",
+        "since",
+        "the day of",
+        "+/- a month of"
+       ],
+       "kind": "radio",
+       "text": "since"
+      },
+      {
+       "checked": false,
+       "class": "EnterCatchingRadioButton",
+       "group": [
+        "before",
+        "since",
+        "the day of",
+        "+/- a month of"
+       ],
+       "kind": "radio",
+       "text": "the day of"
+      },
+      {
+       "checked": true,
+       "class": "EnterCatchingRadioButton",
+       "group": [
+        "before",
+        "since",
+        "the day of",
+        "+/- a month of"
+       ],
+       "kind": "radio",
+       "text": "+/- a month of"
+      },
+      {
+       "class": "QCalendarWidget",
+       "kind": "date",
+       "value": "2026-10-08"
+      },
+      {
+       "class": "QTimeEdit",
+       "kind": "time",
+       "value": "00:00:00"
+      },
+      {
+       "class": "BetterStaticText",
+       "kind": "label",
+       "text": "system:modified time"
+      }
+     ]
+    }
+   ],
+   "warnings": [],
+   "widgets": [
+    {
+     "checked": false,
+     "class": "EnterCatchingRadioButton",
+     "group": [
+      "before",
+      "since",
+      "the day of",
+      "+/- a month of"
+     ],
+     "kind": "radio",
+     "text": "before"
+    },
+    {
+     "checked": false,
+     "class": "EnterCatchingRadioButton",
+     "group": [
+      "before",
+      "since",
+      "the day of",
+      "+/- a month of"
+     ],
+     "kind": "radio",
+     "text": "since"
+    },
+    {
+     "checked": false,
+     "class": "EnterCatchingRadioButton",
+     "group": [
+      "before",
+      "since",
+      "the day of",
+      "+/- a month of"
+     ],
+     "kind": "radio",
+     "text": "the day of"
+    },
+    {
+     "checked": true,
+     "class": "EnterCatchingRadioButton",
+     "group": [
+      "before",
+      "since",
+      "the day of",
+      "+/- a month of"
+     ],
+     "kind": "radio",
+     "text": "+/- a month of"
+    },
+    {
+     "class": "QCalendarWidget",
+     "kind": "date",
+     "value": "1999-12-31"
+    },
+    {
+     "class": "QTimeEdit",
+     "kind": "time",
+     "value": "00:00:00"
+    },
+    {
+     "class": "BetterStaticText",
+     "kind": "label",
+     "text": "system:modified time"
+    }
+   ]
+  },
+  {
+   "editor": "system:time",
+   "error": null,
+   "page": 3,
+   "panel": 1,
+   "predicates": [
+    "system:archived time: since 2011-06-04 13:05:00"
+   ],
+   "steps": [
+    {
+     "set": null,
+     "widget": 1,
+     "widgets": [
+      {
+       "checked": false,
+       "class": "EnterCatchingRadioButton",
+       "group": [
+        "before",
+        "since",
+        "the day of",
+        "+/- a month of"
+       ],
+       "kind": "radio",
+       "text": "before"
+      },
+      {
+       "checked": true,
+       "class": "EnterCatchingRadioButton",
+       "group": [
+        "before",
+        "since",
+        "the day of",
+        "+/- a month of"
+       ],
+       "kind": "radio",
+       "text": "since"
+      },
+      {
+       "checked": false,
+       "class": "EnterCatchingRadioButton",
+       "group": [
+        "before",
+        "since",
+        "the day of",
+        "+/- a month of"
+       ],
+       "kind": "radio",
+       "text": "the day of"
+      },
+      {
+       "checked": false,
+       "class": "EnterCatchingRadioButton",
+       "group": [
+        "before",
+        "since",
+        "the day of",
+        "+/- a month of"
+       ],
+       "kind": "radio",
+       "text": "+/- a month of"
+      },
+      {
+       "class": "QCalendarWidget",
+       "kind": "date",
+       "value": "2026-10-08"
+      },
+      {
+       "class": "QTimeEdit",
+       "kind": "time",
+       "value": "00:00:00"
+      },
+      {
+       "class": "BetterStaticText",
+       "kind": "label",
+       "text": "system:archived time"
+      }
+     ]
+    },
+    {
+     "set": "2011-06-04",
+     "widget": 4,
+     "widgets": [
+      {
+       "checked": false,
+       "class": "EnterCatchingRadioButton",
+       "group": [
+        "before",
+        "since",
+        "the day of",
+        "+/- a month of"
+       ],
+       "kind": "radio",
+       "text": "before"
+      },
+      {
+       "checked": true,
+       "class": "EnterCatchingRadioButton",
+       "group": [
+        "before",
+        "since",
+        "the day of",
+        "+/- a month of"
+       ],
+       "kind": "radio",
+       "text": "since"
+      },
+      {
+       "checked": false,
+       "class": "EnterCatchingRadioButton",
+       "group": [
+        "before",
+        "since",
+        "the day of",
+        "+/- a month of"
+       ],
+       "kind": "radio",
+       "text": "the day of"
+      },
+      {
+       "checked": false,
+       "class": "EnterCatchingRadioButton",
+       "group": [
+        "before",
+        "since",
+        "the day of",
+        "+/- a month of"
+       ],
+       "kind": "radio",
+       "text": "+/- a month of"
+      },
+      {
+       "class": "QCalendarWidget",
+       "kind": "date",
+       "value": "2026-10-08"
+      },
+      {
+       "class": "QTimeEdit",
+       "kind": "time",
+       "value": "00:00:00"
+      },
+      {
+       "class": "BetterStaticText",
+       "kind": "label",
+       "text": "system:archived time"
+      }
+     ]
+    },
+    {
+     "set": "13:05",
+     "widget": 5,
+     "widgets": [
+      {
+       "checked": false,
+       "class": "EnterCatchingRadioButton",
+       "group": [
+        "before",
+        "since",
+        "the day of",
+        "+/- a month of"
+       ],
+       "kind": "radio",
+       "text": "before"
+      },
+      {
+       "checked": true,
+       "class": "EnterCatchingRadioButton",
+       "group": [
+        "before",
+        "since",
+        "the day of",
+        "+/- a month of"
+       ],
+       "kind": "radio",
+       "text": "since"
+      },
+      {
+       "checked": false,
+       "class": "EnterCatchingRadioButton",
+       "group": [
+        "before",
+        "since",
+        "the day of",
+        "+/- a month of"
+       ],
+       "kind": "radio",
+       "text": "the day of"
+      },
+      {
+       "checked": false,
+       "class": "EnterCatchingRadioButton",
+       "group": [
+        "before",
+        "since",
+        "the day of",
+        "+/- a month of"
+       ],
+       "kind": "radio",
+       "text": "+/- a month of"
+      },
+      {
+       "class": "QCalendarWidget",
+       "kind": "date",
+       "value": "2011-06-04"
+      },
+      {
+       "class": "QTimeEdit",
+       "kind": "time",
+       "value": "00:00:00"
+      },
+      {
+       "class": "BetterStaticText",
+       "kind": "label",
+       "text": "system:archived time"
+      }
+     ]
+    }
+   ],
+   "warnings": [],
+   "widgets": [
+    {
+     "checked": false,
+     "class": "EnterCatchingRadioButton",
+     "group": [
+      "before",
+      "since",
+      "the day of",
+      "+/- a month of"
+     ],
+     "kind": "radio",
+     "text": "before"
+    },
+    {
+     "checked": true,
+     "class": "EnterCatchingRadioButton",
+     "group": [
+      "before",
+      "since",
+      "the day of",
+      "+/- a month of"
+     ],
+     "kind": "radio",
+     "text": "since"
+    },
+    {
+     "checked": false,
+     "class": "EnterCatchingRadioButton",
+     "group": [
+      "before",
+      "since",
+      "the day of",
+      "+/- a month of"
+     ],
+     "kind": "radio",
+     "text": "the day of"
+    },
+    {
+     "checked": false,
+     "class": "EnterCatchingRadioButton",
+     "group": [
+      "before",
+      "since",
+      "the day of",
+      "+/- a month of"
+     ],
+     "kind": "radio",
+     "text": "+/- a month of"
+    },
+    {
+     "class": "QCalendarWidget",
+     "kind": "date",
+     "value": "2011-06-04"
+    },
+    {
+     "class": "QTimeEdit",
+     "kind": "time",
+     "value": "13:05:00"
+    },
+    {
+     "class": "BetterStaticText",
+     "kind": "label",
+     "text": "system:archived time"
+    }
+   ]
+  },
+  {
+   "editor": "system:time",
+   "error": null,
+   "page": 3,
+   "panel": 1,
+   "predicates": [
+    "system:archived time: a month either side of 1999-12-31"
+   ],
+   "steps": [
+    {
+     "set": null,
+     "widget": 3,
+     "widgets": [
+      {
+       "checked": false,
+       "class": "EnterCatchingRadioButton",
+       "group": [
+        "before",
+        "since",
+        "the day of",
+        "+/- a month of"
+       ],
+       "kind": "radio",
+       "text": "before"
+      },
+      {
+       "checked": true,
+       "class": "EnterCatchingRadioButton",
+       "group": [
+        "before",
+        "since",
+        "the day of",
+        "+/- a month of"
+       ],
+       "kind": "radio",
+       "text": "since"
+      },
+      {
+       "checked": false,
+       "class": "EnterCatchingRadioButton",
+       "group": [
+        "before",
+        "since",
+        "the day of",
+        "+/- a month of"
+       ],
+       "kind": "radio",
+       "text": "the day of"
+      },
+      {
+       "checked": false,
+       "class": "EnterCatchingRadioButton",
+       "group": [
+        "before",
+        "since",
+        "the day of",
+        "+/- a month of"
+       ],
+       "kind": "radio",
+       "text": "+/- a month of"
+      },
+      {
+       "class": "QCalendarWidget",
+       "kind": "date",
+       "value": "2026-10-08"
+      },
+      {
+       "class": "QTimeEdit",
+       "kind": "time",
+       "value": "00:00:00"
+      },
+      {
+       "class": "BetterStaticText",
+       "kind": "label",
+       "text": "system:archived time"
+      }
+     ]
+    },
+    {
+     "set": "1999-12-31",
+     "widget": 4,
+     "widgets": [
+      {
+       "checked": false,
+       "class": "EnterCatchingRadioButton",
+       "group": [
+        "before",
+        "since",
+        "the day of",
+        "+/- a month of"
+       ],
+       "kind": "radio",
+       "text": "before"
+      },
+      {
+       "checked": false,
+       "class": "EnterCatchingRadioButton",
+       "group": [
+        "before",
+        "since",
+        "the day of",
+        "+/- a month of"
+       ],
+       "kind": "radio",
+       "text": "since"
+      },
+      {
+       "checked": false,
+       "class": "EnterCatchingRadioButton",
+       "group": [
+        "before",
+        "since",
+        "the day of",
+        "+/- a month of"
+       ],
+       "kind": "radio",
+       "text": "the day of"
+      },
+      {
+       "checked": true,
+       "class": "EnterCatchingRadioButton",
+       "group": [
+        "before",
+        "since",
+        "the day of",
+        "+/- a month of"
+       ],
+       "kind": "radio",
+       "text": "+/- a month of"
+      },
+      {
+       "class": "QCalendarWidget",
+       "kind": "date",
+       "value": "2026-10-08"
+      },
+      {
+       "class": "QTimeEdit",
+       "kind": "time",
+       "value": "00:00:00"
+      },
+      {
+       "class": "BetterStaticText",
+       "kind": "label",
+       "text": "system:archived time"
+      }
+     ]
+    }
+   ],
+   "warnings": [],
+   "widgets": [
+    {
+     "checked": false,
+     "class": "EnterCatchingRadioButton",
+     "group": [
+      "before",
+      "since",
+      "the day of",
+      "+/- a month of"
+     ],
+     "kind": "radio",
+     "text": "before"
+    },
+    {
+     "checked": false,
+     "class": "EnterCatchingRadioButton",
+     "group": [
+      "before",
+      "since",
+      "the day of",
+      "+/- a month of"
+     ],
+     "kind": "radio",
+     "text": "since"
+    },
+    {
+     "checked": false,
+     "class": "EnterCatchingRadioButton",
+     "group": [
+      "before",
+      "since",
+      "the day of",
+      "+/- a month of"
+     ],
+     "kind": "radio",
+     "text": "the day of"
+    },
+    {
+     "checked": true,
+     "class": "EnterCatchingRadioButton",
+     "group": [
+      "before",
+      "since",
+      "the day of",
+      "+/- a month of"
+     ],
+     "kind": "radio",
+     "text": "+/- a month of"
+    },
+    {
+     "class": "QCalendarWidget",
+     "kind": "date",
+     "value": "1999-12-31"
+    },
+    {
+     "class": "QTimeEdit",
+     "kind": "time",
+     "value": "00:00:00"
+    },
+    {
+     "class": "BetterStaticText",
+     "kind": "label",
+     "text": "system:archived time"
+    }
+   ]
   }
  ],
  "services": [
@@ -54479,9 +55477,9 @@
       "≈",
       "date",
       [
-       2026,
-       10,
-       2,
+       1999,
+       12,
+       31,
        0,
        0
       ]
@@ -54489,7 +55487,29 @@
      true
     ]
    ],
-   "text": "system:archived time: a month either side of 2026-10-02"
+   "text": "system:archived time: a month either side of 1999-12-31"
+  },
+  {
+   "serialised": [
+    14,
+    8,
+    [
+     47,
+     [
+      "≈",
+      "date",
+      [
+       2026,
+       10,
+       8,
+       0,
+       0
+      ]
+     ],
+     true
+    ]
+   ],
+   "text": "system:archived time: a month either side of 2026-10-08"
   },
   {
    "serialised": [
@@ -54524,7 +55544,7 @@
       [
        2026,
        10,
-       2,
+       8,
        0,
        0
       ]
@@ -54532,7 +55552,7 @@
      true
     ]
    ],
-   "text": "system:archived time: before 2026-10-02"
+   "text": "system:archived time: before 2026-10-08"
   },
   {
    "serialised": [
@@ -54567,7 +55587,7 @@
       [
        2026,
        10,
-       2,
+       8,
        0,
        0
       ]
@@ -54575,7 +55595,7 @@
      true
     ]
    ],
-   "text": "system:archived time: on the day of 2026-10-02"
+   "text": "system:archived time: on the day of 2026-10-08"
   },
   {
    "serialised": [
@@ -54608,9 +55628,31 @@
       ">",
       "date",
       [
+       2011,
+       6,
+       4,
+       13,
+       5
+      ]
+     ],
+     true
+    ]
+   ],
+   "text": "system:archived time: since 2011-06-04 13:05:00"
+  },
+  {
+   "serialised": [
+    14,
+    8,
+    [
+     47,
+     [
+      ">",
+      "date",
+      [
        2026,
        10,
-       2,
+       8,
        0,
        0
       ]
@@ -54618,7 +55660,7 @@
      true
     ]
    ],
-   "text": "system:archived time: since 2026-10-02"
+   "text": "system:archived time: since 2026-10-08"
   },
   {
    "serialised": [
@@ -56750,7 +57792,7 @@
       [
        2026,
        10,
-       2,
+       8,
        0,
        0
       ]
@@ -56758,7 +57800,7 @@
      true
     ]
    ],
-   "text": "system:import time: a month either side of 2026-10-02"
+   "text": "system:import time: a month either side of 2026-10-08"
   },
   {
    "serialised": [
@@ -56793,7 +57835,7 @@
       [
        2026,
        10,
-       2,
+       8,
        0,
        0
       ]
@@ -56801,7 +57843,7 @@
      true
     ]
    ],
-   "text": "system:import time: before 2026-10-02"
+   "text": "system:import time: before 2026-10-08"
   },
   {
    "serialised": [
@@ -56836,7 +57878,7 @@
       [
        2026,
        10,
-       2,
+       8,
        0,
        0
       ]
@@ -56844,7 +57886,7 @@
      true
     ]
    ],
-   "text": "system:import time: on the day of 2026-10-02"
+   "text": "system:import time: on the day of 2026-10-08"
   },
   {
    "serialised": [
@@ -56943,7 +57985,7 @@
       [
        2026,
        10,
-       2,
+       8,
        0,
        0
       ]
@@ -56951,7 +57993,7 @@
      true
     ]
    ],
-   "text": "system:import time: since 2026-10-02"
+   "text": "system:import time: since 2026-10-08"
   },
   {
    "serialised": [
@@ -57271,7 +58313,7 @@
       [
        2026,
        10,
-       2,
+       8,
        0,
        0
       ]
@@ -57279,7 +58321,7 @@
      true
     ]
    ],
-   "text": "system:last viewed time: a month either side of 2026-10-02"
+   "text": "system:last viewed time: a month either side of 2026-10-08"
   },
   {
    "serialised": [
@@ -57314,7 +58356,7 @@
       [
        2026,
        10,
-       2,
+       8,
        0,
        0
       ]
@@ -57322,7 +58364,7 @@
      true
     ]
    ],
-   "text": "system:last viewed time: before 2026-10-02"
+   "text": "system:last viewed time: before 2026-10-08"
   },
   {
    "serialised": [
@@ -57357,7 +58399,7 @@
       [
        2026,
        10,
-       2,
+       8,
        0,
        0
       ]
@@ -57365,7 +58407,7 @@
      true
     ]
    ],
-   "text": "system:last viewed time: on the day of 2026-10-02"
+   "text": "system:last viewed time: on the day of 2026-10-08"
   },
   {
    "serialised": [
@@ -57400,7 +58442,7 @@
       [
        2026,
        10,
-       2,
+       8,
        0,
        0
       ]
@@ -57408,7 +58450,7 @@
      true
     ]
    ],
-   "text": "system:last viewed time: since 2026-10-02"
+   "text": "system:last viewed time: since 2026-10-08"
   },
   {
    "serialised": [
@@ -57552,9 +58594,9 @@
       "≈",
       "date",
       [
-       2026,
-       10,
-       2,
+       1999,
+       12,
+       31,
        0,
        0
       ]
@@ -57562,7 +58604,29 @@
      true
     ]
    ],
-   "text": "system:modified time: a month either side of 2026-10-02"
+   "text": "system:modified time: a month either side of 1999-12-31"
+  },
+  {
+   "serialised": [
+    14,
+    8,
+    [
+     35,
+     [
+      "≈",
+      "date",
+      [
+       2026,
+       10,
+       8,
+       0,
+       0
+      ]
+     ],
+     true
+    ]
+   ],
+   "text": "system:modified time: a month either side of 2026-10-08"
   },
   {
    "serialised": [
@@ -57597,7 +58661,7 @@
       [
        2026,
        10,
-       2,
+       8,
        0,
        0
       ]
@@ -57605,7 +58669,7 @@
      true
     ]
    ],
-   "text": "system:modified time: before 2026-10-02"
+   "text": "system:modified time: before 2026-10-08"
   },
   {
    "serialised": [
@@ -57640,7 +58704,7 @@
       [
        2026,
        10,
-       2,
+       8,
        0,
        0
       ]
@@ -57648,7 +58712,7 @@
      true
     ]
    ],
-   "text": "system:modified time: on the day of 2026-10-02"
+   "text": "system:modified time: on the day of 2026-10-08"
   },
   {
    "serialised": [
@@ -57681,9 +58745,31 @@
       ">",
       "date",
       [
+       2011,
+       6,
+       4,
+       13,
+       5
+      ]
+     ],
+     true
+    ]
+   ],
+   "text": "system:modified time: since 2011-06-04 13:05:00"
+  },
+  {
+   "serialised": [
+    14,
+    8,
+    [
+     35,
+     [
+      ">",
+      "date",
+      [
        2026,
        10,
-       2,
+       8,
        0,
        0
       ]
@@ -57691,7 +58777,7 @@
      true
     ]
    ],
-   "text": "system:modified time: since 2026-10-02"
+   "text": "system:modified time: since 2026-10-08"
   },
   {
    "serialised": [
@@ -60294,5 +61380,5 @@
    "text": "system:width ≥ 1,920"
   }
  ],
- "today": "2026-10-02"
+ "today": "2026-10-08"
 }

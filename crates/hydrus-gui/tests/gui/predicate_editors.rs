@@ -1878,10 +1878,9 @@ fn each_rating_panel_is_for_its_own_service() {
     assert_eq!(seen, 3);
 }
 
-// The archived and modified date panels share the reference's
-// `PanelPredicateSystemDate` base with the import and last-viewed ones, whose
-// recorded scenarios (an operator, a date and a time) are replayed above:
-// the same changes make the same text with the panel's own time kind.
+// The archived and modified date panels, each replaying its own recorded
+// scenarios (an operator, a date and a time, as the import and last-viewed
+// ones above).
 // (the date and time are typed and validated here, a calendar and a time box
 // in the reference, which cannot be set to a date that does not exist)
 // leaf: audit-options-predicate-time-archived-archiveddate-date-time
@@ -1892,18 +1891,18 @@ fn archived_and_modified_date_panels_make_the_recorded_date_and_time_predicates(
     let recorded = recorded();
     let context = context(&store, &recorded);
     let text = text_context(&store);
-    let scenarios: Vec<&Json> = recorded["scenarios"]
-        .as_array()
-        .unwrap()
-        .iter()
-        .filter(|s| s["editor"] == "system:time")
-        .collect();
-    assert_eq!(scenarios.len(), 2, "the recorded absolute-date scenarios");
     let editor = Editor::new(Blank::from_text("system:time").unwrap(), &context);
-    for (class, name) in [
-        ("PanelPredicateSystemArchivedDate", "archived"),
-        ("PanelPredicateSystemModifiedDate", "modified"),
+    for (class, page) in [
+        ("PanelPredicateSystemModifiedDate", 1),
+        ("PanelPredicateSystemArchivedDate", 3),
     ] {
+        let scenarios: Vec<&Json> = recorded["scenarios"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .filter(|s| s["editor"] == "system:time" && s["page"] == page)
+            .collect();
+        assert_eq!(scenarios.len(), 2, "{class}: the recorded scenarios");
         let panel = editor
             .pages
             .iter()
@@ -1914,8 +1913,6 @@ fn archived_and_modified_date_panels_make_the_recorded_date_and_time_predicates(
             let mut panel = panel.clone();
             let mut warnings = Vec::new();
             for step in scenario["steps"].as_array().unwrap() {
-                // (the recorded editor for another kind starts on another
-                // operator, so a step setting no value picks the operator)
                 let widgets = step["widgets"].as_array().unwrap();
                 let widget = usize::try_from(step["widget"].as_u64().unwrap()).unwrap();
                 assert!(change(
@@ -1927,14 +1924,11 @@ fn archived_and_modified_date_panels_make_the_recorded_date_and_time_predicates(
                 ));
             }
             let made = panel.predicates(&context).map(|p| texts(&p, &text));
-            let wanted: Vec<String> = strings(&scenario["predicates"])
-                .into_iter()
-                .map(|t| {
-                    let (_, rest) = t.split_once(": ").unwrap();
-                    format!("system:{name} time: {rest}")
-                })
-                .collect();
-            assert_eq!(made, Ok(wanted), "{class}: {scenario}");
+            assert_eq!(
+                made,
+                Ok(strings(&scenario["predicates"])),
+                "{class}: {scenario}"
+            );
         }
         // a date or time that is not one is refused, never searched
         let mut panel = panel.clone();
