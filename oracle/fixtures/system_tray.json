@@ -1,0 +1,592 @@
+{
+ "icon": [
+  {
+   "available": false,
+   "always_show": false,
+   "hidden": false,
+   "icon": false,
+   "icon_visible": false
+  },
+  {
+   "available": false,
+   "always_show": false,
+   "hidden": true,
+   "icon": false,
+   "icon_visible": false
+  },
+  {
+   "available": false,
+   "always_show": true,
+   "hidden": false,
+   "icon": false,
+   "icon_visible": false
+  },
+  {
+   "available": false,
+   "always_show": true,
+   "hidden": true,
+   "icon": false,
+   "icon_visible": false
+  },
+  {
+   "available": true,
+   "always_show": false,
+   "hidden": false,
+   "icon": false,
+   "icon_visible": false
+  },
+  {
+   "available": true,
+   "always_show": false,
+   "hidden": true,
+   "icon": true,
+   "icon_visible": true
+  },
+  {
+   "available": true,
+   "always_show": true,
+   "hidden": false,
+   "icon": true,
+   "icon_visible": true
+  },
+  {
+   "available": true,
+   "always_show": true,
+   "hidden": true,
+   "icon": true,
+   "icon_visible": true
+  }
+ ],
+ "close": [
+  {
+   "hidden": false,
+   "icon": false,
+   "minimised": false,
+   "available": false,
+   "close_to_tray": false,
+   "exit_asked": true
+  },
+  {
+   "hidden": false,
+   "icon": false,
+   "minimised": false,
+   "available": false,
+   "close_to_tray": true,
+   "exit_asked": true
+  },
+  {
+   "hidden": false,
+   "icon": false,
+   "minimised": false,
+   "available": true,
+   "close_to_tray": false,
+   "exit_asked": true
+  },
+  {
+   "hidden": true,
+   "icon": true,
+   "minimised": false,
+   "available": true,
+   "close_to_tray": true,
+   "exit_asked": false
+  }
+ ],
+ "minimise": [
+  {
+   "hidden": false,
+   "icon": false,
+   "minimised": true,
+   "available": false,
+   "minimise_to_tray": false,
+   "bugfix": "none",
+   "window_state": 3
+  },
+  {
+   "hidden": false,
+   "icon": false,
+   "minimised": true,
+   "available": false,
+   "minimise_to_tray": false,
+   "bugfix": "deferred_state_set",
+   "window_state": 3
+  },
+  {
+   "hidden": false,
+   "icon": false,
+   "minimised": true,
+   "available": false,
+   "minimise_to_tray": false,
+   "bugfix": "restore_after_show",
+   "window_state": 3
+  },
+  {
+   "hidden": false,
+   "icon": false,
+   "minimised": true,
+   "available": false,
+   "minimise_to_tray": true,
+   "bugfix": "none",
+   "window_state": 3
+  },
+  {
+   "hidden": false,
+   "icon": false,
+   "minimised": true,
+   "available": false,
+   "minimise_to_tray": true,
+   "bugfix": "deferred_state_set",
+   "window_state": 3
+  },
+  {
+   "hidden": false,
+   "icon": false,
+   "minimised": true,
+   "available": false,
+   "minimise_to_tray": true,
+   "bugfix": "restore_after_show",
+   "window_state": 3
+  },
+  {
+   "hidden": false,
+   "icon": false,
+   "minimised": true,
+   "available": true,
+   "minimise_to_tray": false,
+   "bugfix": "none",
+   "window_state": 3
+  },
+  {
+   "hidden": false,
+   "icon": false,
+   "minimised": true,
+   "available": true,
+   "minimise_to_tray": false,
+   "bugfix": "deferred_state_set",
+   "window_state": 3
+  },
+  {
+   "hidden": false,
+   "icon": false,
+   "minimised": true,
+   "available": true,
+   "minimise_to_tray": false,
+   "bugfix": "restore_after_show",
+   "window_state": 3
+  },
+  {
+   "hidden": true,
+   "icon": true,
+   "minimised": false,
+   "available": true,
+   "minimise_to_tray": true,
+   "bugfix": "none",
+   "window_state": 2,
+   "shown_again_minimised": false,
+   "shown_again_maximised": true
+  },
+  {
+   "hidden": true,
+   "icon": true,
+   "minimised": false,
+   "available": true,
+   "minimise_to_tray": true,
+   "bugfix": "deferred_state_set",
+   "window_state": 2,
+   "shown_again_minimised": false,
+   "shown_again_maximised": true
+  },
+  {
+   "hidden": true,
+   "icon": true,
+   "minimised": true,
+   "available": true,
+   "minimise_to_tray": true,
+   "bugfix": "restore_after_show",
+   "window_state": 3,
+   "shown_again_minimised": false,
+   "shown_again_maximised": true
+  }
+ ],
+ "activation": [
+  {
+   "hidden": false,
+   "icon": true,
+   "minimised": false,
+   "was_hidden": false,
+   "active": false,
+   "minimise_to_tray": false
+  },
+  {
+   "hidden": false,
+   "icon": true,
+   "minimised": false,
+   "was_hidden": false,
+   "active": false,
+   "minimise_to_tray": true
+  },
+  {
+   "hidden": false,
+   "icon": true,
+   "minimised": true,
+   "was_hidden": false,
+   "active": true,
+   "minimise_to_tray": false
+  },
+  {
+   "hidden": true,
+   "icon": true,
+   "minimised": false,
+   "was_hidden": false,
+   "active": true,
+   "minimise_to_tray": true
+  },
+  {
+   "hidden": false,
+   "icon": true,
+   "minimised": false,
+   "was_hidden": true,
+   "active": false,
+   "minimise_to_tray": false
+  },
+  {
+   "hidden": false,
+   "icon": true,
+   "minimised": false,
+   "was_hidden": true,
+   "active": false,
+   "minimise_to_tray": true
+  },
+  {
+   "hidden": false,
+   "icon": true,
+   "minimised": false,
+   "was_hidden": true,
+   "active": true,
+   "minimise_to_tray": false
+  },
+  {
+   "hidden": false,
+   "icon": true,
+   "minimised": false,
+   "was_hidden": true,
+   "active": true,
+   "minimise_to_tray": true
+  }
+ ],
+ "flip": [
+  {
+   "hidden": true,
+   "icon": true,
+   "minimised": false,
+   "was_hidden": false
+  },
+  {
+   "hidden": false,
+   "icon": true,
+   "minimised": false,
+   "was_hidden": true
+  }
+ ],
+ "file_menu": [
+  {
+   "available": false,
+   "windows": false,
+   "advanced_mode": false,
+   "menu_item_visible": false,
+   "menu_item_text": "minimise to system tray",
+   "menu_item_tooltip": "Hide the client to an icon on your system tray.",
+   "hid_by_action": false
+  },
+  {
+   "available": false,
+   "windows": false,
+   "advanced_mode": true,
+   "menu_item_visible": false,
+   "menu_item_text": "minimise to system tray",
+   "menu_item_tooltip": "Hide the client to an icon on your system tray.",
+   "hid_by_action": false
+  },
+  {
+   "available": false,
+   "windows": true,
+   "advanced_mode": false,
+   "menu_item_visible": false,
+   "menu_item_text": "minimise to system tray",
+   "menu_item_tooltip": "Hide the client to an icon on your system tray.",
+   "hid_by_action": false
+  },
+  {
+   "available": false,
+   "windows": true,
+   "advanced_mode": true,
+   "menu_item_visible": false,
+   "menu_item_text": "minimise to system tray",
+   "menu_item_tooltip": "Hide the client to an icon on your system tray.",
+   "hid_by_action": false
+  },
+  {
+   "available": true,
+   "windows": false,
+   "advanced_mode": false,
+   "menu_item_visible": false,
+   "menu_item_text": "minimise to system tray",
+   "menu_item_tooltip": "Hide the client to an icon on your system tray.",
+   "hid_by_action": false
+  },
+  {
+   "available": true,
+   "windows": false,
+   "advanced_mode": true,
+   "menu_item_visible": true,
+   "menu_item_text": "minimise to system tray",
+   "menu_item_tooltip": "Hide the client to an icon on your system tray.",
+   "hid_by_action": true
+  },
+  {
+   "available": true,
+   "windows": true,
+   "advanced_mode": false,
+   "menu_item_visible": true,
+   "menu_item_text": "minimise to system tray",
+   "menu_item_tooltip": "Hide the client to an icon on your system tray.",
+   "hid_by_action": true
+  },
+  {
+   "available": true,
+   "windows": true,
+   "advanced_mode": true,
+   "menu_item_visible": true,
+   "menu_item_text": "minimise to system tray",
+   "menu_item_tooltip": "Hide the client to an icon on your system tray.",
+   "hid_by_action": true
+  }
+ ],
+ "menu": {
+  "shown": [
+   {
+    "text": "hide to system tray",
+    "tooltip": "Hide or show the hydrus client",
+    "checkable": false
+   },
+   {
+    "separator": true
+   },
+   {
+    "text": "pause network traffic",
+    "tooltip": "Pause/resume network traffic",
+    "checkable": true,
+    "checked": false
+   },
+   {
+    "text": "pause subscriptions",
+    "tooltip": "Pause/resume subscriptions",
+    "checkable": true,
+    "checked": false
+   },
+   {
+    "separator": true
+   },
+   {
+    "text": "options",
+    "tooltip": "options",
+    "checkable": false,
+    "submenu": [
+     {
+      "text": "minimise client to system tray",
+      "tooltip": "Set whether the client should shrink to the taskbar on minimise or hide to\nsystem tray.",
+      "checkable": true,
+      "checked": false
+     },
+     {
+      "text": "close client to system tray",
+      "tooltip": "Set whether the client should exit the program on close or hide to system tray.",
+      "checkable": true,
+      "checked": false
+     },
+     {
+      "text": "start client in system tray",
+      "tooltip": "Set whether the client should boot up hidden to system tray.",
+      "checkable": true,
+      "checked": false
+     }
+    ]
+   },
+   {
+    "separator": true
+   },
+   {
+    "text": "exit",
+    "tooltip": "Close the hydrus client",
+    "checkable": false
+   }
+  ],
+  "hidden": [
+   {
+    "text": "show",
+    "tooltip": "Hide or show the hydrus client",
+    "checkable": false
+   },
+   {
+    "separator": true
+   },
+   {
+    "text": "pause network traffic",
+    "tooltip": "Pause/resume network traffic",
+    "checkable": true,
+    "checked": false
+   },
+   {
+    "text": "pause subscriptions",
+    "tooltip": "Pause/resume subscriptions",
+    "checkable": true,
+    "checked": false
+   },
+   {
+    "separator": true
+   },
+   {
+    "text": "options",
+    "tooltip": "options",
+    "checkable": false,
+    "submenu": [
+     {
+      "text": "minimise client to system tray",
+      "tooltip": "Set whether the client should shrink to the taskbar on minimise or hide to\nsystem tray.",
+      "checkable": true,
+      "checked": false
+     },
+     {
+      "text": "close client to system tray",
+      "tooltip": "Set whether the client should exit the program on close or hide to system tray.",
+      "checkable": true,
+      "checked": false
+     },
+     {
+      "text": "start client in system tray",
+      "tooltip": "Set whether the client should boot up hidden to system tray.",
+      "checkable": true,
+      "checked": false
+     }
+    ]
+   },
+   {
+    "separator": true
+   },
+   {
+    "text": "exit",
+    "tooltip": "Close the hydrus client",
+    "checkable": false
+   }
+  ],
+  "tooltips": [
+   {
+    "network_paused": false,
+    "subscriptions_paused": false,
+    "tooltip": "my hydrus"
+   },
+   {
+    "network_paused": false,
+    "subscriptions_paused": true,
+    "tooltip": "my hydrus - subscriptions paused"
+   },
+   {
+    "network_paused": true,
+    "subscriptions_paused": false,
+    "tooltip": "my hydrus - network traffic paused"
+   },
+   {
+    "network_paused": true,
+    "subscriptions_paused": true,
+    "tooltip": "my hydrus - network traffic paused - subscriptions paused"
+   }
+  ],
+  "after_close_option_on": [
+   {
+    "text": "hide to system tray",
+    "tooltip": "Hide or show the hydrus client",
+    "checkable": false
+   },
+   {
+    "separator": true
+   },
+   {
+    "text": "pause network traffic",
+    "tooltip": "Pause/resume network traffic",
+    "checkable": true,
+    "checked": false
+   },
+   {
+    "text": "pause subscriptions",
+    "tooltip": "Pause/resume subscriptions",
+    "checkable": true,
+    "checked": false
+   },
+   {
+    "separator": true
+   },
+   {
+    "text": "options",
+    "tooltip": "options",
+    "checkable": false,
+    "submenu": [
+     {
+      "text": "minimise client to system tray",
+      "tooltip": "Set whether the client should shrink to the taskbar on minimise or hide to\nsystem tray.",
+      "checkable": true,
+      "checked": false
+     },
+     {
+      "text": "close client to system tray",
+      "tooltip": "Set whether the client should exit the program on close or hide to system tray.",
+      "checkable": true,
+      "checked": true
+     },
+     {
+      "text": "start client in system tray",
+      "tooltip": "Set whether the client should boot up hidden to system tray.",
+      "checkable": true,
+      "checked": false
+     }
+    ]
+   },
+   {
+    "separator": true
+   },
+   {
+    "text": "exit",
+    "tooltip": "Close the hydrus client",
+    "checkable": false
+   }
+  ]
+ },
+ "start": [
+  {
+   "available": false,
+   "start_option": false,
+   "hidden": false,
+   "window_visible": true,
+   "icon": false
+  },
+  {
+   "available": false,
+   "start_option": true,
+   "hidden": false,
+   "window_visible": true,
+   "icon": false
+  },
+  {
+   "available": true,
+   "start_option": false,
+   "hidden": false,
+   "window_visible": true,
+   "icon": false
+  },
+  {
+   "available": true,
+   "start_option": true,
+   "hidden": true,
+   "window_visible": false,
+   "icon": true
+  }
+ ]
+}
