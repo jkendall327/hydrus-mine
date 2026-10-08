@@ -920,9 +920,9 @@
    ],
    "recheck": {
     "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Window test cycles all three kinds through the rule editor, applies, persists and reopens, with labels matching the Python combo. But a setting that is stored while its reader (the engine's matching_pairs / potential_pairs with each kind) has no test against the reference for the non-default kinds; reference_run covers only the suggested rules. Tracker note is stale: the test does change all three kinds, not only the default. Tests: crates/hydrus-gui/tests/gui/duplicates_lane_page.rs:860 rule_identity_and_search_choices_are_staged_then_persisted_on_apply"
+    "class": "sound",
+    "by": "issue 88 session",
+    "note": "Sound: tests/gui/duplicates_search_settings.rs every_search_setting_finds_the_pairs_the_reference_finds sets each of the three search types (with every pixel preference, distance and pair of file searches: 54 settings) on the duplicates page's filtering tab and the count line it shows (the pairs the search finds and the size of the space) is what the reference's own fragmentary count found on the same database (oracle/fixtures/potential_duplicates_search.json). The rule editor's persistence of the choice stays in duplicates_lane_page.rs."
    }
   },
   {
@@ -940,9 +940,9 @@
    ],
    "recheck": {
     "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Window test drives required/allowed/excluded and distances 6, 0 and 12 through apply, persist and reopen. The reader of Excluded and of non-default distance (store duplicates/mod.rs, engine) has no test with a recording, so the setting only round-trips. Tracker note is stale: nondefault choices are tested. Tests: crates/hydrus-gui/tests/gui/duplicates_lane_page.rs:860 rule_identity_and_search_choices_are_staged_then_persisted_on_apply"
+    "class": "sound",
+    "by": "issue 88 session",
+    "note": "Sound: tests/gui/duplicates_search_settings.rs every_search_setting_finds_the_pairs_the_reference_finds sets required, allowed and excluded with maximum distances 0, 4 and 8 across the three search types and two pairs of file searches, and the counts match the reference's recording; the persistence of the choices is in duplicates_lane_page.rs."
    }
   },
   {
@@ -959,9 +959,9 @@
    ],
    "recheck": {
     "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "The tagged test types two predicate lines, refuses an invalid one and checks only the predicate counts (1 each) after persisting; the shared location is tested in a separate untagged test. Native uses text lines instead of the reference's two search widgets with autocomplete (documented), so the part the leaf names is not compared with the reference. Tests: crates/hydrus-gui/tests/gui/duplicates_lane_page.rs:860 rule_identity_and_search_choices_are_staged_then_persisted_on_apply; crates/hydrus-gui/tests/gui/auto_resolution_rules.rs a_rules_searches_location_is_chosen (untagged)"
+    "class": "sound",
+    "by": "issue 88 session",
+    "note": "Sound for what the searches find: tests/gui/duplicates_search_settings.rs every_search_setting_finds_the_pairs_the_reference_finds sets a jpeg search and a png search (typed as predicate lines, the native difference from the reference's two search widgets, in DIFFERENCES.md) across every search type, pixel preference and distance, and the counts match the reference's. The file domain is the page's, shown in the filtering tab by the page; choosing it in the rule editor is tested in auto_resolution_rules.rs."
    }
   },
   {
