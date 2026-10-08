@@ -503,6 +503,13 @@ fn search_tags_inner(
     query: &TagQuery,
     write_display_service: Option<ServiceId>,
 ) -> Result<Vec<TagMatch>> {
+    // autocomplete delay mode: every search takes three seconds
+    if hydrus_core::debug_flags::Flag::AutocompleteDelay.is_on() {
+        let stop = std::time::Instant::now() + std::time::Duration::from_secs(3);
+        while std::time::Instant::now() < stop {
+            std::thread::sleep(std::time::Duration::from_millis(100));
+        }
+    }
     let all_known_files = services
         .of_type(ServiceType::CombinedFile)
         .next()

@@ -92,6 +92,7 @@ fn kept(entries: &[Value]) -> Vec<Value> {
                 (
                     "gui actions",
                     &[
+                        "autocomplete delay mode",
                         "close and reload current gui session",
                         "make a long text popup",
                         "make a modal popup in five seconds",

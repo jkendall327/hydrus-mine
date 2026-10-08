@@ -1426,6 +1426,15 @@ fn help_menu(facts: &Facts) -> Entry {
                     menu(
                         "gui actions",
                         vec![
+                            check(
+                                "autocomplete delay mode",
+                                Some(Command::DebugFlag(
+                                    hydrus_core::debug_flags::Flag::AutocompleteDelay,
+                                )),
+                                facts
+                                    .debug_flags
+                                    .contains(&hydrus_core::debug_flags::Flag::AutocompleteDelay),
+                            ),
                             item(
                                 "close and reload current gui session",
                                 Command::DebugReloadSession,
