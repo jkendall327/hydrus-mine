@@ -230,3 +230,8 @@ agent's own rebuilds dominate its time.
 - Merge plan: one branch at a time into this branch, rebuild UI, run the
   branch's tests + `dev.sh lint`, push; expect `GUI.md`/`DIFFERENCES.md` and
   `tests/gui/main.rs` conflicts (keep both sides).
+- 12:00 UTC: merged `claude/impl-help-debug` (30 leaves tagged, report in
+  `docs/rust/notes/impl-help-debug.md`; first build 19 min, no `.slint`
+  edits). Its tests, `dev.sh lint`, fmt and track check pass here. 28 debug
+  leaves that exist only for Qt/Python/the reference's harness moved out of
+  scope. Tracker: 1,039 done, 48 partial, 87 missing, 97 out of scope.
