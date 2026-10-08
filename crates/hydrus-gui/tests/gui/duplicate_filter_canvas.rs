@@ -179,11 +179,20 @@ fn replay(scenario: &Value) {
     let Some(relationships) = scenario.get("relationships") else {
         return;
     };
-    let id = o
+    // (the reference asked about the combined local file domains: my files
+    // here, which has no trashed file; "local" is the local file storage)
+    let local = o
         .store
         .snapshot()
         .services
         .builtin(builtin_keys::HYDRUS_LOCAL_FILE_STORAGE)
+        .unwrap()
+        .id;
+    let id = o
+        .store
+        .snapshot()
+        .services
+        .builtin(builtin_keys::MY_FILES)
         .unwrap()
         .id;
     let scope = FileScope::Domains {
@@ -195,7 +204,7 @@ fn replay(scenario: &Value) {
     for (hash, theirs) in relationships.as_object().unwrap() {
         let ours = o
             .store
-            .read(|c| file_relationships(c, &scope, id, ids[hash]))
+            .read(|c| file_relationships(c, &scope, local, ids[hash]))
             .unwrap();
         let hashes = |key: &str| -> BTreeSet<String> {
             theirs[key]
