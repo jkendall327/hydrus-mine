@@ -4,7 +4,7 @@ use hydrus_gui::{Bound, MainWindow, OptionsWindow, Pages, bind, headless};
 use hydrus_store::{Store, import::import_legacy};
 use slint::{ComponentHandle as _, Model as _};
 use std::sync::Arc;
-fn store() -> ([tempfile::TempDir; 2], Arc<Store>) {
+pub(crate) fn store() -> ([tempfile::TempDir; 2], Arc<Store>) {
     let legacy = hydrus_testkit::legacy_fixture("basic");
     let native = tempfile::tempdir().unwrap();
     import_legacy(
@@ -15,7 +15,7 @@ fn store() -> ([tempfile::TempDir; 2], Arc<Store>) {
     let store = Store::open(native.path()).unwrap();
     ([legacy, native], store)
 }
-fn open(ui: &MainWindow, bound: &Bound) -> OptionsWindow {
+pub(crate) fn open(ui: &MainWindow, bound: &Bound) -> OptionsWindow {
     ui.invoke_menu_title_pressed(0, 20.0, 22.0);
     let lines = ui.get_menu_panes().row_data(0).unwrap().lines;
     let at = (0..lines.row_count())
@@ -30,7 +30,7 @@ fn open(ui: &MainWindow, bound: &Bound) -> OptionsWindow {
     w.invoke_page_chosen(i32::try_from(at).unwrap());
     w
 }
-fn named(w: &OptionsWindow, name: &str) -> i32 {
+pub(crate) fn named(w: &OptionsWindow, name: &str) -> i32 {
     let rows = w.get_external_call_rows();
     i32::try_from(
         (0..rows.row_count())
@@ -39,7 +39,7 @@ fn named(w: &OptionsWindow, name: &str) -> i32 {
     )
     .unwrap()
 }
-fn call(bound: &Bound) -> hydrus_gui::ExternalCallWindow {
+pub(crate) fn call(bound: &Bound) -> hydrus_gui::ExternalCallWindow {
     bound
         .options_external_calls
         .editor
@@ -48,10 +48,10 @@ fn call(bound: &Bound) -> hydrus_gui::ExternalCallWindow {
         .unwrap()
         .clone_strong()
 }
-fn saved(store: &Store) -> Manager {
+pub(crate) fn saved(store: &Store) -> Manager {
     store.read(hydrus_store::settings::get).unwrap()
 }
-fn seed(store: &Store) -> Callable {
+pub(crate) fn seed(store: &Store) -> Callable {
     let mut c = Callable::new("synthetic call");
     c.call = ActualCall::Process(Process {
         executable: std::env::current_exe()
@@ -71,6 +71,7 @@ fn seed(store: &Store) -> Callable {
     c
 }
 
+// leaf: audit-options-external-programs-external-calls-edit
 #[test]
 fn callable_command_child_apply_cancel_parent_staging_reopen_and_retired_owner() {
     let (_dirs, store) = store();
@@ -356,6 +357,7 @@ fn list_duplicate_defaults_delete_capture_and_options_persistence() {
     assert!(!bound.options_external_calls.has_open());
     assert_eq!(saved(&store), persisted);
 }
+// leaf: audit-options-external-programs-external-calls-import
 #[test]
 fn imported_reference_calls_review_cancel_and_saved_process_test_consumer() {
     let (_dirs, store) = store();
@@ -406,6 +408,7 @@ fn imported_reference_calls_review_cancel_and_saved_process_test_consumer() {
     assert_eq!(persisted.calls[0].call, ActualCall::DefaultFile);
 }
 
+// leaf: audit-options-nested-external-call-test-execution
 #[test]
 fn reopened_saved_process_uses_real_editor_inputs_and_owned_test_call_worker() {
     let (_dirs, store) = store();
@@ -749,7 +752,7 @@ fn command(bound: &Bound) -> hydrus_gui::ExternalCommandWindow {
         .unwrap()
         .clone_strong()
 }
-fn question(bound: &Bound) -> hydrus_gui::SessionDialog {
+pub(crate) fn question(bound: &Bound) -> hydrus_gui::SessionDialog {
     bound
         .options_external_calls
         .question

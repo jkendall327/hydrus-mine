@@ -14,9 +14,19 @@ export component ExternalCallsTable inherits Rectangle {
     callback sort(int,bool);
     callback action(string);
     min-height:350px;
+    help := PopupWindow {
+        width:300px;height:40px;
+        Rectangle { background:#f0f0f0;border-width:1px;border-color:#888;
+            Button{text:"open the external programs help";clicked=>{help.close();root.action("help");}} }
+    }
     VerticalLayout {
         spacing:6px;
-        Text { text:"IF YOU IMPORT A CALL HERE THAT SOMEONE ELSE MADE, MAKE SURE YOU INSPECT IT BEFORE HOOKING IT UP TO ANYTHING. LOOK AT THE PARAMETERS.\n\nUSE YOUR BRAIN. DO NOT CALL THINGS BLINDLY.";wrap:word-wrap; }
+        HorizontalLayout { alignment:end;spacing:6px;
+            Text{text:"help for this panel -->";vertical-alignment:center;}
+            help-button := Button{text:"help  ▾";clicked=>{help.show();}}
+        }
+        Text { text:"This system is under active development.\n\nHere we can teach your client about other programs it can call to complete jobs. You set them up here, and they will appear as options in appropriate places around the client. Each job has a certain type, starting with simple things like \"open file in external program\", and, as I write the pipelines for them, we will eventually get tasks like \"download URL\" and \"suggest tags\". Depending on the job type, it will have certain call parameters (e.g. a local media file path) that hydrus can pass on to the external program (e.g. an AI model for tagging). In future, there will also be response parameters (e.g. a list of tags) that hydrus will then ingest.";wrap:word-wrap; }
+        Text { horizontal-alignment:center;color:#c00000;text:"IF YOU IMPORT A CALL HERE THAT SOMEONE ELSE MADE, MAKE SURE YOU INSPECT IT BEFORE HOOKING IT UP TO ANYTHING. LOOK AT THE PARAMETERS.\n\nUSE YOUR BRAIN. DO NOT CALL THINGS BLINDLY.";wrap:word-wrap; }
         ListTable {
             rows:root.rows;sort-column:root.sort-column;ascending:root.ascending;
             columns:[{title:"name",width:160px,stretch:true},{title:"type",width:110px},{title:"command",width:240px,stretch:true}];
@@ -58,6 +68,8 @@ export component ExternalCallWindow inherits Window {
     in-out property <bool> hide-terminal:true;
     in-out property <bool> output-text:true;
     in property <string> preview;
+    in property <string> pipeline-description;
+    in property <string> default-launch-description;
     in property <string> test-status;
     in property <bool> testing;
     in property <bool> child-open;
@@ -80,11 +92,13 @@ export component ExternalCallWindow inherits Window {
                 Text{text:"Set a name for this external call and select the job it will do.";wrap:word-wrap;}
                 HorizontalLayout {Text{text:"name: ";}LineEdit{text<=>root.name;enabled:!root.child-open;}}
                 HorizontalLayout {Text{text:"job: ";}ComboBox{model:["send single file","send single URL"];current-index<=>root.pipeline;enabled:!root.child-open;selected=>{root.changed();}}}
-                Text{text:root.pipeline==0 ? "This tells the client how to open a file in another program." : "This tells the client how to open a URL in another program.";wrap:word-wrap;}
+                Text{text:root.pipeline-description;wrap:word-wrap;}
                 Text{text:"actual call";font-weight:700;}
+                Text{text:"Choose the type of call and then set it up. Availability tests are mostly for other users who might import your call. Do not forget to test it!";wrap:word-wrap;}
                 ComboBox{model:root.pipeline==0 ? ["local process call","default OS launch file call"] : ["local process call","default OS launch URL call"];current-index<=>root.call-type;enabled:!root.child-open;selected=>{root.changed();}}
                 if root.call-type==0: VerticalLayout {
                     spacing:6px;
+                    Text{text:"This makes a general process call. Select which input parameter(s) you want to use and make sure you are happy with their replacement tokens (the '%path%' stuff, which you can rename if you need to), and then insert those parameters in your command template (e.g. 'my_program \"%path%\"'). When this call fires, the given input parameters will be placed into your template and the process launched.\n\nThe \"availability\" test for this call just does a \"which\" call. If you have a full path, it checks if that path exists; if you have just a name, it searches for it in your PATH.";wrap:word-wrap;}
                     Button{text:"show PATH";enabled:!root.child-open;clicked=>{root.show-path();}}
                     Text{text:"input parameters";font-weight:700;}
                     for row[i] in root.rules: HorizontalLayout {
@@ -99,13 +113,13 @@ export component ExternalCallWindow inherits Window {
                     CheckBox{text:"hide terminal: ";checked<=>root.hide-terminal;enabled:!root.child-open;toggled=>{root.changed();}}
                     CheckBox{text:"output is text: ";checked<=>root.output-text;enabled:!root.child-open;toggled=>{root.changed();}}
                 }
-                if root.call-type==1: Text{text:root.pipeline==0 ? "Call the OS default file launcher." : "Call the OS default URL launcher.";wrap:word-wrap;}
+                if root.call-type==1: Text{text:root.default-launch-description;wrap:word-wrap;}
                 Text{text:root.validity;wrap:word-wrap;}
             }
             VerticalLayout {
                 spacing:6px;
                 Text{text:"testing";font-weight:700;}
-                Text{text:"Test your call here. Put in a real path or URL in the provided input parameter box and click \"test call!\". It will fire for real, so don't screw around!";wrap:word-wrap;}
+                Text{text:"Test your call here. Put in a real path or URL in the provided input parameter box and click \"test call!\". It will fire for real, so don't screw around!\n\nRemember that if your application is inside a sandbox, for instance you installed it via flatpak, it needs to be able to see any paths you give it. Same deal for hydrus seeing an exe.";wrap:word-wrap;}
                 Button{text:"test availability!";enabled:root.call-type==0 && !root.testing && !root.child-open;clicked=>{root.test(true);}}
                 Text{text:"test input parameters";font-weight:700;}
                 for row[i] in root.rules: HorizontalLayout {
@@ -148,7 +162,7 @@ export component ExternalCommandWindow inherits Window {
     callback cancel();
     VerticalLayout {
         padding:12px;spacing:8px;
-        Text{text:"Set the command and its parameters. Do not put parameters in the command input section. Put the %path% or %url% style parameter replacement token in the appropriate place in your parameter list.";wrap:word-wrap;}
+        Text{text:"Set the command and its parameters. Do not put parameters in the command input section. Put the %path% or %url% style parameter replacement token in the appropriate place in your parameter list. For quick entry, you can paste the whole template and I will try and figure it out.\n\nRemember to keep it simple. If you need to set up environment variables or use ten different awkward parameters or pipe and grep around, just write a .sh script to do it all and point to that instead.";wrap:word-wrap;}
         HorizontalLayout{Text{text:"executable command/path: ";}LineEdit{text<=>root.executable;enabled:!root.child-open;edited=>{root.changed();}}}
         Text{text:"parameters: ";}
         FocusScope {

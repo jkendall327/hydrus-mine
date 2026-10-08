@@ -4876,3 +4876,19 @@ fresh-image review at `4b5e7ae15` approve exactly these two leaves: 343 sign-off
 103 new across ten recent checkpoints and 32 existing candidates pending.
 All 700 GUI and 67 media tests pass; eight fresh native images support the scoped
 claims. The failed generation run and corrective preflight remain documented.
+
+### Options > external programs: help, intro text and editor wording
+
+The page opens with the reference's "under active development" explanation, an
+"external calls" box with the capitalised inspect-before-importing warning, and
+a "help for this panel -->" menu button whose "open the external programs help"
+opens `external_programs.html` in the browser. The call editor describes the
+chosen job as the reference does ("Summary: ...", "Available input parameters:
+...", "Expected output parameters: none"), explains the local process call and
+its "which" availability test, words the default OS launch calls for the
+platform (`xdg-open %path%` on Linux), and carries the testing, sandbox and
+command-paste hints. "show PATH" gives the reference's full warning before the
+PATH entries. Per-input enable flags, tokens, string processors, the timeout /
+"this can live for a very long time" marker, hide terminal and text flags, the
+executable questions (empty path, `which` failure) and both tests are proven in
+`tests/gui/external_calls_editor.rs`.
