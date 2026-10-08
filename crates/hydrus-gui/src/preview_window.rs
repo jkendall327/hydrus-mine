@@ -968,17 +968,20 @@ impl Monitor {
 mod worker_tests {
     use super::*;
 
+    /// `GetIncDecSize`, replayed from the reference (`oracle/dump_incdec_sizes.py`).
     #[test]
     #[allow(clippy::float_cmp)] // (whole pixels)
-    fn inc_dec_widths_follow_the_references_size_rule() {
-        // twice the height, until more than three digits
-        assert_eq!(incdec_width(12.0, 0), 24.0);
-        assert_eq!(incdec_width(12.0, 999), 24.0);
-        // 4 digits: 24 + 11 * (4 - (2 + 4/3)) = 31.33 -> 31
-        assert_eq!(incdec_width(12.0, 1234), 31.0);
-        // 6 digits: 24 + 11 * (6 - 4) = 46
-        assert_eq!(incdec_width(12.0, 123_456), 46.0);
-        assert_eq!(incdec_width(18.0, -5), 36.0);
+    fn inc_dec_widths_are_the_references() {
+        let recorded = hydrus_testkit::fixture_json("incdec_sizes.json");
+        for row in recorded["rows"].as_array().unwrap() {
+            let height = row[0].as_f64().unwrap();
+            let number = row[1].as_i64();
+            assert_eq!(
+                incdec_width(height, number.unwrap_or(0)),
+                row[2].as_f64().unwrap(),
+                "{row}"
+            );
+        }
     }
 
     #[test]

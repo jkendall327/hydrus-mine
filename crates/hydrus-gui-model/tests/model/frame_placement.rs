@@ -1,6 +1,6 @@
-//! `GetSafeSize` and `SetInitialTLWSizeAndPosition`'s defaults, worked by
-//! hand from the reference's source (`ClientGUITopLevelWindows`): there is no
-//! Qt in the sandbox to record them with.
+//! `GetSafeSize` and `SetInitialTLWSizeAndPosition`'s defaults: worked by hand
+//! from the reference's source (`ClientGUITopLevelWindows`), and replayed from
+//! its recording (`oracle/record_frame_placement.py`).
 use hydrus_core::windows::FrameLocation;
 use hydrus_gui_model::frame_placement::{
     CHILD_POSITION_PADDING, Parent, Placement, Rect, Surroundings, initial, safe_size,
@@ -140,4 +140,60 @@ fn the_frame_padding_comes_off_the_parent_and_display_sizes_but_not_a_fullscreen
         height: 600,
     });
     assert_eq!(safe_size((900, 700), (-1, -1), &padded), (748, 520));
+}
+
+// leaf: audit-options-nested-frame-location-gravity
+// leaf: audit-options-geometry
+#[test]
+fn every_recorded_frame_setting_opens_a_window_where_the_reference_did() {
+    let recorded = hydrus_testkit::fixture_json("frame_placement.json");
+    let rect = |v: &serde_json::Value| Rect {
+        x: i32::try_from(v[0].as_i64().unwrap()).unwrap(),
+        y: i32::try_from(v[1].as_i64().unwrap()).unwrap(),
+        width: i32::try_from(v[2].as_i64().unwrap()).unwrap(),
+        height: i32::try_from(v[3].as_i64().unwrap()).unwrap(),
+    };
+    let number = |v: &serde_json::Value| i32::try_from(v.as_i64().unwrap()).unwrap();
+    let main = rect(&recorded["main"]);
+    let client = &recorded["main_client"];
+    let around = Surroundings {
+        parent: Some(Parent {
+            frame: main,
+            fullscreen: false,
+        }),
+        display: Some(rect(&recorded["screen"])),
+        mouse: Some((number(&recorded["mouse"][0]), number(&recorded["mouse"][1]))),
+        // (the frame padding is the main window's own: the dialog had none yet)
+        frame_padding: (
+            main.width - number(&client[0]),
+            main.height - number(&client[1]),
+        ),
+    };
+    let hint = (number(&recorded["hint"][0]), number(&recorded["hint"][1]));
+    assert_eq!(
+        number(&recorded["child_position_padding"]),
+        CHILD_POSITION_PADDING
+    );
+    let pair = |v: &serde_json::Value| -> Option<(i32, i32)> {
+        (!v.is_null()).then(|| (number(&v[0]), number(&v[1])))
+    };
+    for case in recorded["cases"].as_array().unwrap() {
+        let f = &case["frame"];
+        let frame = FrameLocation {
+            remember_size: f["remember_size"].as_bool().unwrap(),
+            remember_position: f["remember_position"].as_bool().unwrap(),
+            last_size: pair(&f["last_size"]),
+            last_position: pair(&f["last_position"]),
+            default_gravity: pair(&f["gravity"]).unwrap(),
+            default_position: f["position"].as_str().unwrap().into(),
+            maximised: false,
+            fullscreen: false,
+        };
+        let placed = initial(&frame, hint, &around);
+        assert_eq!(
+            (placed.size, placed.position),
+            (pair(&case["size"]).unwrap(), pair(&case["position"])),
+            "{f}"
+        );
+    }
 }
