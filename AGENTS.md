@@ -142,7 +142,9 @@ macOS run only when dispatched by hand with `secondary_platforms`.
   mod my_new_tests;
   ```
 
-  and runs `DEV_LANE=<workstream> scripts/dev.sh gui <filter>` (and the same
+  (start the lane with `#![allow(dead_code)]` if it includes `common`, whose
+  helpers your tests may not all use) and runs
+  `DEV_LANE=<workstream> scripts/dev.sh gui <filter>` (and the same
   for `lint`). The coordinating agent moves lane modules into
   `tests/gui/main.rs` when it commits. In a checkout of your own, skip lanes.
 - **Memory:** only one generated-UI build fits on a 16 GB machine at a time.
