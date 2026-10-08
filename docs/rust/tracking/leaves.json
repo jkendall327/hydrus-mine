@@ -2371,7 +2371,13 @@
     "Truth pass (2026-10-08): built-tested-untagged, test-only. The editor checkbox is covered; tag it. Missing: Only the tag; repository upload belongs to repositories. Evidence: client_api_permissions.rs (each_permission_checkbox... loops all recorded rows incl. commit pending); services.rs:89-100 returns 422 for upload",
     "Permission::CommitPending is included in the fourteen-row sorted checkbox list; toggling changes the typed grant set and Apply serializes it. The grant does not make the missing repository upload backend work.",
     "Grant persists correctly, but repository commit_pending refuses because native repository uploading is absent."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "weak",
+    "by": "phase 2 session (blind agent)",
+    "note": "client_api_permissions.rs:57 each_permission_checkbox_has_the_reference_label_and_serializes_alone loops the recorded client_api_admin.json rows through the real editor and checks the label and single-grant serialisation. Only the checkbox and the stored grant are proven: the routes that check CommitPending just return 422 because repository commit-pending upload is absent, so no consumer is exercised."
+   }
   },
   {
    "id": "audit-media-permission-edit-ratings",
@@ -2656,7 +2662,13 @@
    "notes": [
     "Truth pass (2026-10-08): built-untested, small. Gating is implemented; the test must drive the real loop. Missing: A test that runs the real daemon loop (extract it from main.rs into a function). Evidence: hydrus-cli/src/main.rs:547-563 (pace from published idle); similar.rs:369; test duplicates_lane_page.rs:1146 replays the decision",
     "Both ticks persist, but run_search ORs idle/active/work-hard and lacks a GUI activity state. An idle-only setting can therefore still run during normal use."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "source-restated",
+    "by": "phase 2 session (blind agent)",
+    "note": "hydrus-cli main.rs:1129 the_similar_files_loop_holds_and_works_by_the_published_idle_state calls the real similar_files_step the daemon loop uses, with real published idle state, settings and search status table, and asserts held versus searched for the idle-only and normal-only switches including the no-GUI case. Expectations are literals from the reference source, no recording. Work-hard also bypasses the switches and that is not checked against the reference."
+   }
   },
   {
    "id": "audit-media-preparation-storage-resync",
@@ -2920,7 +2932,13 @@
     "Truth pass (2026-10-08): built-untested, test-only. Worker, progress and delayed popup exist and match; only a GUI-level test is missing. Missing: A GUI test through the real approve/deny buttons asserting 'approving: 0/N' and the popup. Evidence: auto_resolution_review_window.rs:178-212, 693-750; auto_resolution_review.rs:240-325; reference has no cancel",
     "Native review approve/deny runs the selected operations synchronously then reloads rows/counts. The reference cancellable worker popup/progress UI is absent.",
     "Native approve/deny runs synchronously and refreshes counts; reference worker progress/cancellation and popup UI are absent."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "source-restated",
+    "by": "phase 2 session (blind agent)",
+    "note": "auto_resolution_review.rs:464 approving_and_denying_show_their_progress_on_the_button_and_in_a_popup drives the real review window's approve/deny while the store writer is held and asserts the 'approving: 0/1' / 'denying: 0/1' button text, the popup job text, that it is not cancellable and is dismissed when done. Strings and the zero popup delay are restated from the reference source, not recorded."
+   }
   },
   {
    "id": "audit-media-rule-identity",
@@ -2991,7 +3009,13 @@
    "notes": [
     "Truth pass (2026-10-08): built-untested, small. Gating implemented; needs a real-loop test. Missing: A test of the real auto-resolution loop (same extraction); stale 'always active' comment in main.rs. Evidence: hydrus-cli/src/main.rs:~655-672; duplicates/auto.rs:65",
     "Both fields persist and sidebar computes working status from either field, but CLI auto-resolution loop counts itself always active and only gates on during_active. Idle-only rules will not run."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "source-restated",
+    "by": "phase 2 session (blind agent)",
+    "note": "hydrus-cli main.rs:1214 the_auto_resolution_loop_holds_and_works_by_the_published_idle_state drives the real auto_resolution_step with a stub work closure and checks hold versus work, the 100 ms normal and 1000 ms idle budgets and the no-GUI-is-not-idle case. Expectations are literals; the rule work is stubbed and the sidebar's status display is not covered."
+   }
   },
   {
    "id": "audit-media-rules-exchange",
@@ -3175,7 +3199,13 @@
     "Truth pass (2026-10-08): built-tested-untagged, test-only. Tag; record the notebook/descriptive-text differences in DIFFERENCES.md. Evidence: services_review.rs:100-203; model test services_review.rs:6 vs oracle/fixtures/services.json; GUI services_review.rs:14",
     "Reads service-kind file/size/mapping/tag/rating/note counts in a consistent native snapshot; dropdown selects a row and renders statistics.",
     "Reference local/remote/type notebook and long service-specific descriptions are absent."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "sound",
+    "by": "phase 2 session (blind agent)",
+    "note": "services_review.rs:103 choosing_each_service_in_the_review_shows_the_counts_the_reference_shows opens the real services > review window and selects every recorded service from services.json, asserting the header and statistics text for 12 services against the recording. The reference's notebook layout and long descriptions are documented differences."
+   }
   },
   {
    "id": "audit-media-services-delete",
@@ -4207,7 +4237,13 @@
    "native": null,
    "notes": [
     "Updated for #89 (2026-10-08, owner decision): the easy conversion matches a dateparser-less reference (dateutil) plus dateparser's English relative dates, replayed against oracle/fixtures/dateparser_corpus.json (247 forms, none unmatched) in string_dates.rs and through the conversion editor's preview in dateparser_preview.rs. Non-English, fuzzy and Unix-timestamp text is not parsed, as without dateparser (DIFFERENCES.md)."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "sound",
+    "by": "phase 2 session (blind agent)",
+    "note": "string_dates.rs:362 the_easy_parser_matches_the_recorded_dateparser_corpus replays all 247 forms of dateparser_corpus.json at a fixed now, and dateparser_preview.rs:57 runs a zone-independent subset through the real conversion editor's preview, checking the reference's error prefixes. Non-English, fuzzy and Unix-timestamp text are not parsed (owner-accepted documented difference)."
+   }
   },
   {
    "id": "audit-network-conversion-encoding",
@@ -4555,7 +4591,13 @@
     "Folder and manual-export filename boxes expose the real shared pattern shortcuts menu: exact heading, seven labels and separator groups, clipboard phrases including Unicode placeholders; the reference heading itself is enabled and copies its own text. Choosing an item preserves the staged filename pattern; copied phrases reach the existing native filename generator after paste/accept. Invalid, closed, child-modal, working or pending-question callbacks cannot copy from a stale owner. The read-only files' tags sidebar now shows all-known DISPLAY_ACTUAL current/pending/petitioned counts for selected files or all kept files, preserves surviving selected tag IDs, locally sorts tag/subtag/count with separately remembered orders and namespace grouping. Exact raw/subtag/count/underscore copy menus and Ctrl+C/A, normal extended selection, middle/Shift-middle AND/OR launches, native AND/OR/separate/duplicate page consumers, relationship editors and immediate favourite/most-used mutations share owner guards. Double-click is a reference no-op; closing discards pending answers and stops each-page dispatch after synchronous owner closure.",
     "Generic media-tag maintenance→regenerate tag display and advanced experimental storage/display-type switching remain unported, along with full keyboard navigation. This combined original feature and manual-export parent remain Partial.",
     "Native shortcut menus omit Qt bold-heading styling/action hover tooltips; the tag sidebar uses native Slint presentation, without Qt per-row custom-painted sibling/parent decoration."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "sound",
+    "by": "phase 2 session (blind agent)",
+    "note": "export_files.rs:239 shared_pattern_shortcuts_copy_without_editing_and_guard_closed_owners and :434 selected_export_tag_sidebar_copies_launches_native_pages_persists_favourites_and_closes drive the real export window against export_pattern_shortcuts.json and export_selected_tags.json (heading, labels, rendered tag rows with counts, keyboard copy, AND/OR page launches). Tag-display regeneration, Qt bold headings and tooltips are documented gaps."
+   }
   },
   {
    "id": "audit-network-export-folder-examples",
@@ -5330,7 +5372,13 @@
    "native": null,
    "notes": [
     "Updated for #89 (2026-10-08): the editor has the reference's single 'N additional tags' button, its dialog message and accept/cancel, and the overwrite check, driven from the editor and replayed against oracle/fixtures/additional_tags_button.json (import_additional_tags.rs). The 'parse threshold' in the label is stale (no such reference control). Remaining: the tag entry dialog lacks multiple-selection and maintenance right-click menus (DIFFERENCES.md); the cog menu is check boxes."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "sound",
+    "by": "phase 2 session (blind agent)",
+    "note": "import_additional_tags.rs:55 the_additional_tags_button_counts_opens_the_dialog_and_keeps_or_discards_what_it_returns opens the real import-options editor and replays additional_tags_button.json: button labels for 0, 1, 2 and 1,234 tags, the dialog message, accept versus cancel, the overwrite-deleted flag and the saved queue options. The downloader code that reads additional_tags is not exercised in this test; the tag dialog's multi-selection and right-click menus are missing and documented."
+   }
   },
   {
    "id": "audit-network-options-deleted-bombs",
@@ -5400,7 +5448,13 @@
    "native": "crates/hydrus-gui/src/import_options_window.rs:210",
    "notes": [
     "Updated for #89 (2026-10-08): the presentation location is the unrestricted shared selector (menu, list with deleted-from boxes in advanced mode) and the status/inbox choices and greying replay oracle/fixtures/location_selector_flags.json; 'show files' filters by current and deleted domains (queues.rs). Remaining: the kinds-list summary names no domain for other locations (DIFFERENCES.md)."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "weak",
+    "by": "phase 2 session (blind agent)",
+    "note": "import_options_fields.rs:235 and import_locations.rs:365/:489 replay the recorded status, inbox, greying and location data through the real editor and check the saved options hold the values, but none runs the 'show files' consumer filtering by current and deleted domains in queues.rs, so the setting only round-trips while its reader is untested."
+   }
   },
   {
    "id": "audit-network-options-sizes",
@@ -6270,7 +6324,13 @@
     "Truth pass (2026-10-08): partial, medium. The owner decided preview playback is in scope (2026-10-08, issue #104): the preview plays the file's audio and video at its own volume or the global one, with the reference's volume control. Missing then: preview audio playback, preview volume/mute settings and control (since added; see docs/rust/DIFFERENCES.md, Preview sound, for what only libmpv verifies).",
     "Reference editor/control 'The preview window has its own volume:' is recorded on 'audio' and defined by the referenced options panel. No corresponding editable row exists in native options::pages; this is a missing GUI editing path, even if a setting is imported or consumed elsewhere.",
     "Native options registry has no editable 'The preview window has its own volume:' control in this page/box path."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "sound",
+    "by": "phase 2 session (blind agent)",
+    "note": "preview_audio.rs:131, :247 and :302 drive the real preview player and volume control and the Options audio row (staged until OK, Cancel keeps the old value, kept after reopening); volume/mute cases and slider/mute-click outcomes are replayed from preview_audio.json."
+   }
   },
   {
    "id": "audit-options-colours-current-colourset",
@@ -8484,7 +8544,13 @@
     "Truth pass (2026-10-08): missing, small. Small once the tray exists. Missing: The tray, plus File > 'minimise to system tray' (shown when a tray is available and Windows or advanced mode). Evidence: main_menu.rs:665; reference ClientGUI.py:3490-3492",
     "Reference File menu hides the main GUI to a system tray icon. Native file_menu omits this action and has no tray integration.",
     "No native action/editor path for this reference workflow."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "source-restated",
+    "by": "phase 2 session (blind agent)",
+    "note": "system_tray.rs:471 file_minimise_to_system_tray_is_offered_with_a_tray_in_advanced_mode_and_hides_the_window drives the real File menu (not offered in simple mode on Linux or with no tray; offered in advanced mode between separators; choosing it hides the window and the icon's show entry restores it). The menu order and conditions are literals from ClientGUI.py:3490, not taken from system_tray.json."
+   }
   },
   {
    "id": "audit-options-file-viewing-statistics-cap-any-view-on-the-media-viewer-to-this-maximum-time",
@@ -9156,7 +9222,13 @@
     "Truth pass (2026-10-08): built-tested-untagged, test-only. Tag the options test (optionally add a queue test showing no temp copy). Evidence: options.rs:2564, 6218; consumer hydrus-download/src/queue.rs:1321; label in options_dialog.json",
     "check control reads and sets folders.copy_import_files_to_temp_dir; Editor holds the draft and the Apply transaction saves changes. The existing Qt-recording comparison checks this exact label, box path, kind, bounds and migrated initial value.",
     "Assessment covers this editable control and shared Apply/Cancel, not every control on its containing reference page or every background consumer."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "weak",
+    "by": "phase 2 session (blind agent)",
+    "note": "hydrus-download local_import.rs:454 a_local_import_copies_to_a_temp_path_first_unless_the_option_says_not_to writes copy_import_files_to_temp_dir into the store and shows the queue consumer making or skipping the temp copy, but no tagged test opens the Options window, so the leaf's editable row (label, checkbox, Apply/Cancel) is not driven."
+   }
   },
   {
    "id": "audit-options-files-and-trash-when-copying-file-hashes-prefix-with-booru-friendly-hash-type",
@@ -9263,7 +9335,13 @@
     "Truth pass (2026-10-08): built-tested-untagged, test-only. Tag the options apply test. Evidence: options_window.rs:343 (lines 470-482); consumers maintenance.rs:111, paths.rs, queue.rs:1404, export.rs:476, add_files.rs:332; tests normal_time_maintenance.rs:80, physical_delete_delay.rs:109-124",
     "check control reads and sets folders.delete_to_recycle_bin; Editor holds the draft and the Apply transaction saves changes. The existing Qt-recording comparison checks this exact label, box path, kind, bounds and migrated initial value.",
     "Assessment covers this editable control and shared Apply/Cancel, not every control on its containing reference page or every background consumer."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "source-restated",
+    "by": "phase 2 session (blind agent)",
+    "note": "normal_time_maintenance.rs:518 the_recycle_bin_option_decides_whether_physical_deletes_go_to_the_os_bin toggles the real Options row and runs the real deferred-delete worker: off, the file is gone; on, it is in the OS recycle bin. The row's label and kind are literals, there is no recording, only the physical-delete worker is exercised (not the setting's other consumers), and the test skips where the OS has no usable bin."
+   }
   },
   {
    "id": "audit-options-geometry",
@@ -12002,7 +12080,13 @@
     "Native safely asks the intended named-profile question and deletes accepted frozen targets; recorded multi-profile questions/cancellation/deletion replay unchanged.",
     "Native presents this page as an Options-owned child window; its confirmations and informational messages are inline rather than separate blocking Qt dialogs.",
     "Actual reference single-profile deletion raises ValueError before asking because it unpacks the one-row list incorrectly. Native safe single deletion differs, so this original entry remains partial and is not counted."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "sound",
+    "by": "phase 2 session (blind agent)",
+    "note": "model import_options_panel.rs:66 three_lists_and_staged_actions_replay_the_reference and gui import_options_panel.rs deleting_selected_profiles_asks_as_the_reference_does_and_cancel_keeps_them replay the recorded _DeleteFavourite steps from import_options_panel.json (question text, cancel keeps the profiles, accept deletes them) through the Options-owned panel window. The reference's single-profile delete raises a ValueError before asking: a documented deliberate difference."
+   }
   },
   {
    "id": "audit-options-import-options-favourites-profiles-edit",
@@ -12903,7 +12987,13 @@
     "Truth pass (2026-10-08): built-untested, test-only. Control built and read by the busy check; add a high-threshold assertion and tag. Missing: A case showing a higher percent stays not busy; the disabled-when-no-core-count state. Evidence: options.rs:3176-3184; maintenance_runtime.rs:190-208; idle_state.rs:47-59; test options_system_consumers.rs:1358 (untagged)",
     "Reference percent control accepts 5..99, initializes system_busy_cpu_percent and saves it in UpdateOptions. SystemBusy compares each CPU reading against this percentage, then applies the separate core-count threshold. Native options registry has no corresponding editable CPU-percentage control.",
     "No native options editor for system_busy_cpu_percent."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "source-restated",
+    "by": "phase 2 session (blind agent)",
+    "note": "options_system_consumers.rs:1344 idle_and_cpu_busy_options_decide_whether_background_work_may_run edits the real percent row (bounds 5..99), applies it and feeds a fake /proc/stat to the real maintenance runtime: 60% load is busy at 5%, not busy at 70%, not at exactly 60% (the > comparison), busy at 59%; also the disabled row with no core count and the status-bar text. The comparison is restated from the reference SystemBusy code, with no recording."
+   }
   },
   {
    "id": "audit-options-maintenance-and-processing-when-to-run-high-cpu-jobs-idle-on",
@@ -13026,7 +13116,13 @@
     "Truth pass (2026-10-08): built-untested, test-only. Control and consumers exist; add an apply-then-exit test. Missing: A test with a non-default value reaching the question text and deadline. Evidence: options.rs:3214-3221; shutdown_work.rs:82,102",
     "Reference editor/control 'Max number of minutes to run shutdown jobs:' is recorded on 'maintenance and processing' and defined by the referenced options panel. No corresponding editable row exists in native options::pages; this is a missing GUI editing path, even if a setting is imported or consumed elsewhere.",
     "Native options registry has no editable 'Max number of minutes to run shutdown jobs:' control in this page/box path."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "source-restated",
+    "by": "phase 2 session (blind agent)",
+    "note": "options_system_consumers.rs:1644 the_edited_shutdown_minutes_are_in_the_question checks the row's kind and range (1..1440, default 5), that it is disabled when jobs are not run on shutdown, and that edited values 5, 7 and 90 reach the exit question text. The wording is a literal from the Python source, not recorded, and the deadline itself is not checked."
+   }
   },
   {
    "id": "audit-options-maintenance-and-processing-when-to-run-high-cpu-jobs-shutdown-only-run-shutdown-jobs-once-per",
@@ -13041,7 +13137,13 @@
     "Truth pass (2026-10-08): built-untested, test-only. Control and consumer exist; add an Options edit then exit test. Missing: A test editing the period and seeing a recent run skip / a due run ask. Evidence: options.rs:3205-3213; shutdown_work.rs:74-75",
     "Reference editor/control 'Only run shutdown jobs once per:' is recorded on 'maintenance and processing' and defined by the referenced options panel. No corresponding editable row exists in native options::pages; this is a missing GUI editing path, even if a setting is imported or consumed elsewhere.",
     "Native options registry has no editable 'Only run shutdown jobs once per:' control in this page/box path."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "source-restated",
+    "by": "phase 2 session (blind agent)",
+    "note": "options_system_consumers.rs:1594 shutdown_jobs_run_only_once_per_the_edited_period edits the day/hour/minute row through Options, applies it and runs the real exit: a recent run is skipped under the one-day default, asked under a 5-minute period and skipped again under 2 hours. Expected behaviour comes from the Python logic, with no recording."
+   }
   },
   {
    "id": "audit-options-maintenance-and-processing-when-to-run-high-cpu-jobs-shutdown-run-jobs-on-shutdown",
@@ -13056,7 +13158,13 @@
     "Truth pass (2026-10-08): built-untested, test-only. Control and consumer exist; needs an Options-to-exit test. Missing: A test that edits the option in Options, applies, and sees the exit follow it. Evidence: options.rs:3197-3204; shutdown_work.rs decide(); client_exit.rs:96-140; model test tests/model/shutdown_work.rs:6",
     "Reference editor/control 'Run jobs on shutdown:' is recorded on 'maintenance and processing' and defined by the referenced options panel. No corresponding editable row exists in native options::pages; this is a missing GUI editing path, even if a setting is imported or consumed elsewhere.",
     "Native options registry has no editable 'Run jobs on shutdown:' control in this page/box path."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "source-restated",
+    "by": "phase 2 session (blind agent)",
+    "note": "options_system_consumers.rs:1544 run_jobs_on_shutdown_decides_what_the_exit_does checks the three choices (against the model's ACTIONS constant), the ask-first default, and picks each choice through Options then exits through the real client_exit path. The choice list, default and question title are source-derived, not recorded."
+   }
   },
   {
    "id": "audit-options-media-playback-mpv-debug-loop-playlist-instead-of-loop-file-in-mpv",
@@ -13091,7 +13199,13 @@
     "Not applicable: a debug/test switch for the reference's Qt-embedded mpv player workarounds. (triaged 2026-10-08)",
     "Reference editor/control 'DEBUG: Set null audio device on silent media:' is recorded on 'media playback' and defined by the referenced options panel. No corresponding editable row exists in native options::pages; this is a missing GUI editing path, even if a setting is imported or consumed elsewhere.",
     "Native options registry has no editable 'DEBUG: Set null audio device on silent media:' control in this page/box path."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "weak",
+    "by": "phase 2 session (blind agent)",
+    "note": "options_media_mpv.rs:27 the_mpv_rows_set_what_a_player_is_told_as_a_file_loads drives the real Options row but the consumer is only Plan::for_file(..).audio_device == \"null\", a literal restated from the source; the player is never driven (no libmpv), there is no recording, and the leaf is marked out-of-scope in the tracker, so a decision function stands in for the player."
+   }
   },
   {
    "id": "audit-options-media-playback-mpv-debug-use-legacy-mpv-communication-method",
@@ -14778,7 +14892,13 @@
     "Truth pass (2026-10-08): built-tested-untagged, test-only. Tag the existing test; the Qt style page is n/a. Evidence: options_window.rs:27-34, 343 (opens via File > options…, asserts the page list); 37 of 38 reference pages, missing only the Qt 'style' page",
     "Calls the Options hook in bind(), which opens the typed Settings draft and prevents duplicate options windows. The expanded canonical Options window describes Apply/Cancel and the omitted controls.",
     "Expanded Options editor contains twenty of thirty-eight reference tabs."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "sound",
+    "by": "phase 2 session (blind agent)",
+    "note": "options_window.rs:6747 file_options_is_where_the_reference_has_it_and_opens_its_options_window_once opens the real File menu, compares the options… position and neighbours with main_menu.json, clicks it, compares the page list and opened-on page with options_dialog.json (minus the Qt style page, documented n/a), and checks a second open reuses the window."
+   }
   },
   {
    "id": "audit-options-menu-menu-file-quick-export-directory",
@@ -18418,7 +18538,13 @@
     "Truth pass (2026-10-08): built-untested, small. Implemented; record the reference's hashes, then tag. Missing: A reference recording of the pasted hashes for a fixture image (path and bitmap) and the incompatible-mime warning. Evidence: predicate_editor_window.rs:281-310; test predicate_editors.rs:1955 (untagged)",
     "Part of the Pixel/perceptual hashes and Hamming distance panel: Clear and paste file-path image hash data. Uses its native typed field/change path and contributes to the same Panel::predicates result; the recorded panel regression covers the represented default and available widget changes.",
     "Clipboard paste accepts an image file path, not bitmap/image data."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "sound",
+    "by": "phase 2 session (blind agent)",
+    "note": "predicate_editors.rs paste_image_makes_the_hashes_the_reference_recorded_and_warns_as_it_did replays every case in similar_data_paste.json (empty, bad text, non-image file, png/jpg/gif/bmp paths, bitmap, translucent, twice) through the real editor window's paste and clear buttons, comparing warnings and the pixel/perceptual fields. Only the 'png path as local path' case is skipped."
+   }
   },
   {
    "id": "audit-options-predicate-similar-files-files-similartofiles-distance",
@@ -20233,7 +20359,13 @@
     "Truth pass (2026-10-08): built-untested, test-only. Control exists, persists and is consumed; add an apply-and-consume test. Missing: A test editing the row, applying, and seeing the filter prefetch that many pairs. Evidence: options.rs:4310-4316; viewer_prefetch.rs:20-82; filter_window.rs:~525-535",
     "Reference editor/control 'Num pairs to prefetch in Duplicate Filter:' is recorded on 'speed and memory' and defined by the referenced options panel. No corresponding editable row exists in native options::pages; this is a missing GUI editing path, even if a setting is imported or consumed elsewhere.",
     "Native options registry has no editable 'Num pairs to prefetch in Duplicate Filter:' control in this page/box path."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "source-restated",
+    "by": "phase 2 session (blind agent)",
+    "note": "duplicate_filter.rs:524 the_filter_prefetches_the_pair_shown_and_the_edited_number_of_pairs_after_it edits the real Options row (max 25), applies it, launches the real filter and waits for the real image cache to warm exactly the expected files. The expected set comes from the native DuplicateFilter::upcoming(n), restating ClientGUICanvasDuplicates.py, not a recording."
+   }
   },
   {
    "id": "audit-options-speed-and-memory-image-prefetch-num-previous-to-prefetch-in-media-viewer",
@@ -20483,7 +20615,13 @@
     "Truth pass (2026-10-08): partial, medium. Not platform-blocked: Slint 1.18 has a tray icon element. Missing: Enable 'system-tray' (rerun hakari), a HydrusTray component with show/hide and exit menu, created when the option is on and a StatusNotifier host exists, live toggle on apply, click toggles the main window; row test. Evidence: options.rs:4410-4440 row, unread; Slint 1.18.1 SystemTrayIcon (i-slint-core items/system_tray.rs; ksni on Linux) behind slint feature 'system-tray', off in Cargo.toml",
     "Reference editor/control 'Always show the hydrus system tray icon:' is recorded on 'system tray' and defined by the referenced options panel. No corresponding editable row exists in native options::pages; this is a missing GUI editing path, even if a setting is imported or consumed elsewhere.",
     "Native options registry has no editable 'Always show the hydrus system tray icon:' control in this page/box path."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "source-restated",
+    "by": "phase 2 session (blind agent)",
+    "note": "system_tray.rs:210 and :548 tick the real Options row and check the icon is made, hidden and kept on reopening, the tooltip and the Slint component state, through a recording stand-in host (the headless platform has no tray host). Expected strings are literals from the source; system_tray.json is used only by model tests and no real tray host is exercised."
+   }
   },
   {
    "id": "audit-options-system-tray-bugfix-do-minimise-hide-using-event-deferred-state-prep-tech",
@@ -20530,7 +20668,13 @@
     "Truth pass (2026-10-08): partial, small. Small once the tray exists. Missing: The tray, plus close_requested hiding the window. Evidence: options.rs:4430-4433 row, unread",
     "Reference editor/control 'Close the main window to system tray:' is recorded on 'system tray' and defined by the referenced options panel. No corresponding editable row exists in native options::pages; this is a missing GUI editing path, even if a setting is imported or consumed elsewhere.",
     "Native options registry has no editable 'Close the main window to system tray:' control in this page/box path."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "source-restated",
+    "by": "phase 2 session (blind agent)",
+    "note": "system_tray.rs:292 closing_hides_the_window_to_the_icon_instead_of_exiting sets the real Options row and checks that close requests hide the window, the show entry restores it, File > exit and the icon's exit still ask, and the default still asks. The host is a recording stand-in and the expectations are literals from the Python source."
+   }
   },
   {
    "id": "audit-options-system-tray-minimise-the-main-window-to-system-tray",
@@ -20560,7 +20704,13 @@
     "Truth pass (2026-10-08): partial, small. Small once the tray exists. Missing: The tray, plus starting hidden (a visible tray keeps Slint's loop alive). Evidence: options.rs:4434-4437 row, unread",
     "Reference editor/control 'Start the client minimised to system tray:' is recorded on 'system tray' and defined by the referenced options panel. No corresponding editable row exists in native options::pages; this is a missing GUI editing path, even if a setting is imported or consumed elsewhere.",
     "Native options registry has no editable 'Start the client minimised to system tray:' control in this page/box path."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "source-restated",
+    "by": "phase 2 session (blind agent)",
+    "note": "system_tray.rs:353 a_client_starts_hidden_in_the_icon_when_told_to_and_a_tray_is_there sets the option through the real Options window, restarts and checks the window starts hidden with the icon, a click shows it, and with no tray or the option off the window is shown. The tray host is a stand-in and the expectations are restated from the source."
+   }
   },
   {
    "id": "audit-options-tabs-api",
@@ -22847,7 +22997,13 @@
    "native": null,
    "notes": [
     "Updated for #89 (2026-10-08): deleted ticks and all-known replay search_domains.json; the caller flags (importable, local-only, combined-local-only, no multiple, all-known) are modelled in domains::Flags and replayed against the real button in location_selector_flags.json. Only the importable and unrestricted flags have a GUI caller (the import options editor, tested through its window); the other flags are model-only (DIFFERENCES.md)."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "weak",
+    "by": "phase 2 session (blind agent)",
+    "note": "import_locations.rs:235 the_destination_button_chooses_one_several_or_no_domains_as_the_reference_does uses the importable-only selector, which lists only 'art' and 'my files' and shows no deleted ticks or all-known mode, so the leaf's deleted-domain ticks and all-known autocomplete mode are not driven through any GUI caller (model-only)."
+   }
   },
   {
    "id": "audit-shared-location-normalize",
@@ -23921,7 +24077,13 @@
    "native": "crates/hydrus-gui-model/src/import_options_editor.rs:53",
    "notes": [
     "Updated for #89 (2026-10-08): the destination is the shared file domain button restricted to importable domains (several domains through the shared list, the empty-destination warning, URL boxes only for downloader callers, the archive interlock), proved against oracle/fixtures/location_selector_flags.json by import_locations.rs and import_options_panel.rs (every Options caller), with hydrus-import/tests/destinations.rs as the consumer. Remaining: the reference's popup menu is a drop-down plus label here (DIFFERENCES.md)."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "sound",
+    "by": "phase 2 session (blind agent)",
+    "note": "import_locations.rs:234 and import_options_panel.rs:610 every_callers_destination_editor_is_the_references_for_that_caller drive the real import options editor and every Options caller, comparing menu, labels, warning, URL boxes, multi-select list (including cancel), the archive interlock and the saved result against location_selector_flags.json. The reference's popup menu being a drop-down here is documented."
+   }
   },
   {
    "id": "import-paste",
