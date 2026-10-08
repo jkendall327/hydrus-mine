@@ -585,10 +585,9 @@ pub fn select_pairs(
     // a missing or zero size counts as 1, as in the reference
     let sizes = |p: &PairRow| (p.smaller_size.max(1), p.larger_size.max(1));
 
-    // ties break by the pair's groups (the reference's media ids: its
-    // stable sort keeps the order the database gave, by those), so the
-    // order is deterministic
-    let ids = |p: &PairRow| p.groups;
+    // ties break by ids, so the order is deterministic (the reference's
+    // ties fall as its database gave the pairs, which it does not promise)
+    let ids = |p: &PairRow| (p.smaller_king, p.larger_king);
     match order {
         PairOrder::Random => {
             use rand::seq::SliceRandom as _;

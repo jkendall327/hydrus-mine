@@ -133,6 +133,14 @@ def record( session ):
     # sample cannot be replayed, so the batch is the first pairs by the sort
     # (which is what hydrus-rs fetches; docs/rust/DIFFERENCES.md): the same
     # search and sort, all the matching pairs, then the first `no_more_than`.
+    import sqlite3
+
+    master = sqlite3.connect( 'file:' + os.path.join( controller.db_dir, 'client.master.db' ) + '?mode=ro', uri = True )
+
+    hash_ids = { bytes( h ) : i for ( i, h ) in master.execute( 'SELECT hash_id, hash FROM hashes;' ) }
+
+    master.close()
+
     def do_search_work( factory, *args ):
 
         search = factory._potential_duplicate_pairs_fragmentary_search
@@ -144,6 +152,10 @@ def record( session ):
             found = CG.client_controller.Read( 'potential_duplicate_media_result_pairs_and_distances_fragmentary', search, no_more_than = 10 ** 9 )
 
             rows.extend( list( found.IterateRows() ) )
+
+        # (pairs the sort cannot tell apart are ordered by their files' ids, as
+        # hydrus-rs breaks ties; the reference keeps whatever order the database gave)
+        rows.sort( key = lambda row: ( hash_ids[ row[ 0 ].GetHash() ], hash_ids[ row[ 1 ].GetHash() ] ) )
 
         everything = ClientPotentialDuplicatesSearchContext.PotentialDuplicateMediaResultPairsAndDistances( rows )
 
