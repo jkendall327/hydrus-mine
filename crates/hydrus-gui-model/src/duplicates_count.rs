@@ -137,7 +137,7 @@ impl<R: Clone> Search<R> {
     /// estimate, or as given) and start a search over it.
     fn set_space(&mut self, mut rows: Vec<R>, shuffle: bool, now: Instant) {
         if shuffle {
-            rows = randomise_by_chunks(rows, 32);
+            rows = randomise_by_chunks(&rows, 32);
         }
         self.still = rows.iter().cloned().collect();
         self.space = rows;
@@ -239,7 +239,7 @@ pub fn wrap_tooltip(s: &str) -> String {
 }
 
 /// `HydrusLists.RandomiseListByChunks`: the chunks in a random order.
-fn randomise_by_chunks<R: Clone>(rows: Vec<R>, n: usize) -> Vec<R> {
+fn randomise_by_chunks<R: Clone>(rows: &[R], n: usize) -> Vec<R> {
     let mut chunks: Vec<&[R]> = rows.chunks(n).collect();
     for i in (1..chunks.len()).rev() {
         let j = (rand::random::<u64>() % (i as u64 + 1)) as usize;
@@ -695,7 +695,8 @@ impl<R: Clone + Send + 'static> Handle<R> {
     pub fn search_changed(&self, file_domain_changed: bool) {
         self.poke(|i| {
             i.query_generation += 1;
-            i.counter.search_changed(file_domain_changed, Instant::now());
+            i.counter
+                .search_changed(file_domain_changed, Instant::now());
         });
     }
 

@@ -8,18 +8,18 @@ use std::rc::Rc;
 use std::sync::{Arc, Mutex, PoisonError};
 use std::time::Duration;
 
-use hydrus_gui_model::duplicates_filtering::{
-    self as model, GROUP_MODES, KINDS, PIXEL, SET_BUTTONS, SORTS, Which,
-};
 use hydrus_core::duplicates::DuplicatesSearch;
 use hydrus_gui_model::duplicates_count::{
     self as counting, BLOCK_GUIDELINE, COG_FILE_SEARCH_OPTIMISATION, COG_STARTS_PAUSED,
     COG_STOPS_TO_ESTIMATE, Gate, Handle, StoreSource,
 };
+use hydrus_gui_model::duplicates_filtering::{
+    self as model, GROUP_MODES, KINDS, PIXEL, SET_BUTTONS, SORTS, Which,
+};
 use hydrus_search::{TextContext, predicate_text};
 use hydrus_store::duplicates::cache::PairRow;
 use hydrus_store::settings::{self, PotentialPairsCountOptions};
-use slint::{ComponentHandle as _, ModelRc, SharedString, VecModel, Timer, TimerMode};
+use slint::{ComponentHandle as _, ModelRc, SharedString, Timer, TimerMode, VecModel};
 
 use crate::page::SearchPage;
 use crate::{DuplicatesFiltering, MainWindow, SessionDialog};
@@ -78,10 +78,7 @@ fn ensure_count(window: &MainWindow, page: &SearchPage, d: &hydrus_core::pages::
     COUNT.with(|count| {
         let mut count = count.borrow_mut();
         if let Some(active) = count.as_ref() {
-            let mut counted = active
-                .search
-                .lock()
-                .unwrap_or_else(PoisonError::into_inner);
+            let mut counted = active.search.lock().unwrap_or_else(PoisonError::into_inner);
             if *counted != d.search {
                 let domain_changed = counted.search_1.location != d.search.search_1.location;
                 *counted = d.search.clone();

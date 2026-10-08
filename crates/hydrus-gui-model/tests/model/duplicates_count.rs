@@ -13,11 +13,12 @@ use serde_json::Value;
 
 use hydrus_core::duplicates::{DuplicatesSearch, PairSearchKind, PixelDuplicates};
 use hydrus_core::pages::DuplicatesPage;
-use hydrus_search::FileSearchContext;
 use hydrus_gui_model::duplicates_count::{
-    BLOCK_GUIDELINE, Gate, Handle, Options, Signals, Snapshot, Source, Waiting, relative_error_at_95,
+    BLOCK_GUIDELINE, Gate, Handle, Options, Signals, Snapshot, Source, Waiting,
+    relative_error_at_95,
 };
 use hydrus_gui_model::duplicates_filtering::{distance_enabled, second_search_shown};
+use hydrus_search::FileSearchContext;
 
 type Row = (i64, i64, u32);
 
@@ -76,7 +77,10 @@ fn release(gate: &Gate, handle: &Handle<Row>, block: bool, seconds: f64) -> bool
     }
     let start = std::time::Instant::now();
     while handle.epoch() == epoch {
-        assert!(start.elapsed() < TIMEOUT, "the released work did not finish");
+        assert!(
+            start.elapsed() < TIMEOUT,
+            "the released work did not finish"
+        );
         std::thread::sleep(Duration::from_millis(1));
     }
     settle(handle);
@@ -93,11 +97,27 @@ fn delta(now: Signals, before: Signals) -> Value {
 
 fn check(recorded: &Value, shot: &Snapshot, before: Signals, what: &str) {
     assert_eq!(shot.label, recorded["label"].as_str().unwrap(), "{what}");
-    assert_eq!(shot.tooltip, recorded["tooltip"].as_str().unwrap(), "{what}");
+    assert_eq!(
+        shot.tooltip,
+        recorded["tooltip"].as_str().unwrap(),
+        "{what}"
+    );
     assert_eq!(shot.paused, recorded["paused"], "{what}");
-    assert_eq!(shot.matches as u64, recorded["matches"].as_u64().unwrap(), "{what}");
-    assert_eq!(shot.searched as u64, recorded["searched"].as_u64().unwrap(), "{what}");
-    assert_eq!(shot.in_space as u64, recorded["in_space"].as_u64().unwrap(), "{what}");
+    assert_eq!(
+        shot.matches as u64,
+        recorded["matches"].as_u64().unwrap(),
+        "{what}"
+    );
+    assert_eq!(
+        shot.searched as u64,
+        recorded["searched"].as_u64().unwrap(),
+        "{what}"
+    );
+    assert_eq!(
+        shot.in_space as u64,
+        recorded["in_space"].as_u64().unwrap(),
+        "{what}"
+    );
     // (`valueChanged` tells the panel's owner that the search was edited:
     // the three edits below)
     let mut signals = recorded["signals"].clone();

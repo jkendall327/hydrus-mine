@@ -45,7 +45,8 @@ pub struct Searched {
 /// of work and rests, by the idle state published at `now_ms`. "Work hard"
 /// (the preparation tab's button) works whatever the state.
 pub fn similar_files_turn(store: &Store, now_ms: i64) -> Tick<Searched> {
-    let settings: SimilarFilesSettings = store.read(hydrus_store::settings::get).unwrap_or_default();
+    let settings: SimilarFilesSettings =
+        store.read(hydrus_store::settings::get).unwrap_or_default();
     let idle = idle_state::is_idle(store.dir(), now_ms);
     let mut pace = settings.pace(idle);
     pace.allowed |= settings.work_hard;

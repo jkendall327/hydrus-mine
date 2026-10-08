@@ -122,12 +122,25 @@ fn the_rules_worker_holds_or_works_by_the_switches_and_the_published_idle_state(
     let (ui, store) = (&o.ui, &o.store);
     let rules = store.read(auto::rules).unwrap();
     let (rule, _) = rules.iter().find(|(_, r)| !r.paused).unwrap().clone();
-    let name = rules.iter().find(|(id, _)| *id == rule).unwrap().1.name.clone();
+    let name = rules
+        .iter()
+        .find(|(id, _)| *id == rule)
+        .unwrap()
+        .1
+        .name
+        .clone();
 
     // select the rule and reset its search: its pairs are to be searched
     let rows = ui.get_duplicates_rules();
     let row = (0..rows.row_count())
-        .find(|&r| rows.row_data(r).unwrap().cells.iter().next().is_some_and(|c| c == name.as_str()))
+        .find(|&r| {
+            rows.row_data(r)
+                .unwrap()
+                .cells
+                .iter()
+                .next()
+                .is_some_and(|c| c == name.as_str())
+        })
         .expect("the rule is listed");
     let waiting = |s: &Store| counts(s, rule)[&PairStatus::NotSearched];
     let forget = || {

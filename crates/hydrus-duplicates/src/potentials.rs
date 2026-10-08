@@ -41,7 +41,11 @@ pub struct PreparedQuery {
 
 impl PreparedQuery {
     /// How many of `rows` the search finds.
-    pub fn count_matching(&self, conn: &Connection, rows: &[PairRow]) -> hydrus_store::Result<usize> {
+    pub fn count_matching(
+        &self,
+        conn: &Connection,
+        rows: &[PairRow],
+    ) -> hydrus_store::Result<usize> {
         let one = self.one.as_ref().map(in_set);
         let two = self.two.as_ref().map(in_set);
         let search = PotentialsSearch {

@@ -498,9 +498,11 @@ fn spin_timers_until(what: &str, mut ready: impl FnMut() -> bool) {
 fn popup_states(store: &Store) -> Vec<String> {
     store
         .read(|c| {
-            Ok(c.prepare("SELECT what || ' ' || job FROM popup_log ORDER BY rowid")?
-                .query_map([], |r| r.get::<_, String>(0))?
-                .collect::<rusqlite::Result<Vec<_>>>()?)
+            Ok(
+                c.prepare("SELECT what || ' ' || job FROM popup_log ORDER BY rowid")?
+                    .query_map([], |r| r.get::<_, String>(0))?
+                    .collect::<rusqlite::Result<Vec<_>>>()?,
+            )
         })
         .unwrap()
 }
@@ -561,11 +563,18 @@ fn approving_and_denying_show_their_progress_on_the_button_and_in_a_popup_after_
     release();
     settle(&window);
     set_popup_after(None);
-    assert_eq!(window.get_label(), "0 pairs remaining.");
+    assert_eq!(window.get_label(), "Found 0 pairs.");
     let states = popup_states(&o.store);
-    assert_eq!(states.len(), 4, "{states:?}");
-    assert!(states[0].starts_with("added ") && states[0].contains("denying auto-resolution decisions"));
-    assert!(states[1].starts_with("changed ") && states[1].contains("denying: 0/1"));
-    assert!(states[2].starts_with("changed ") && states[2].contains("\"dismissed\":true"));
-    assert!(states[3].starts_with("removed "));
+    // (added with its title, given the progress, then finished and
+    // dismissed, which removes it)
+    assert_eq!(states.len(), 3, "{states:?}");
+    assert!(
+        states[0].starts_with("added ")
+            && states[0].contains("\"status_text_1\":\"denying auto-resolution decisions\"")
+    );
+    assert!(
+        states[1].starts_with("changed ")
+            && states[1].contains("\"status_text_1\":\"denying: 0/1\"")
+    );
+    assert!(states[2].starts_with("removed "));
 }

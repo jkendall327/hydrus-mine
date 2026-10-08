@@ -51,7 +51,14 @@ fn release(gate: &Gate) {
 }
 
 fn page_search(o: &Opened) -> hydrus_core::duplicates::DuplicatesSearch {
-    o.bound.current.borrow().borrow().duplicates().unwrap().search.clone()
+    o.bound
+        .current
+        .borrow()
+        .borrow()
+        .duplicates()
+        .unwrap()
+        .search
+        .clone()
 }
 
 /// The pairs of the page's search in the order they are searched, and which
@@ -59,11 +66,9 @@ fn page_search(o: &Opened) -> hydrus_core::duplicates::DuplicatesSearch {
 /// with, not the worker's).
 fn space_and_hits(o: &Opened) -> (usize, Vec<bool>) {
     let snapshot = o.store.snapshot();
-    let query = hydrus_duplicates::potentials::PotentialsQuery::from_search(
-        &snapshot,
-        &page_search(o),
-    )
-    .unwrap();
+    let query =
+        hydrus_duplicates::potentials::PotentialsQuery::from_search(&snapshot, &page_search(o))
+            .unwrap();
     let space = o.store.read(|c| query.space(c, &snapshot)).unwrap();
     let found: HashSet<(i64, i64)> = o
         .store
@@ -83,10 +88,7 @@ fn space_and_hits(o: &Opened) -> (usize, Vec<bool>) {
 }
 
 fn searching(searched: usize, space: usize, matches: usize) -> String {
-    format!(
-        "{}/{} pairs searched; {matches} match\u{2026}",
-        searched, space
-    )
+    format!("{searched}/{space} pairs searched; {matches} match\u{2026}")
 }
 
 // leaf: audit-media-duplicate-search-count
@@ -97,7 +99,10 @@ fn the_pair_count_goes_a_block_at_a_time_and_the_buttons_and_search_changes_driv
     let o = opened();
     let (ui, store) = (&o.ui, &o.store);
     let (space, hits) = space_and_hits(&o);
-    assert!(space > 6, "the store needs several blocks of pairs ({space})");
+    assert!(
+        space > 6,
+        "the store needs several blocks of pairs ({space})"
+    );
     let matches = |n: usize| hits[..n].iter().filter(|h| **h).count();
     let (total, found) = model::count(store, &{
         let page = o.bound.current.borrow();
@@ -201,7 +206,10 @@ fn the_cog_keeps_its_three_options_and_new_counts_start_paused_when_asked() {
     assert!(!gate.release(0.0));
     ui.invoke_duplicates_filtering_action("pause count".into(), 0);
     release(&gate);
-    await_count(ui, &searching(3, space, hits[..3].iter().filter(|h| **h).count()));
+    await_count(
+        ui,
+        &searching(3, space, hits[..3].iter().filter(|h| **h).count()),
+    );
 
     // each item of the cog flips its stored option
     let stored = || {
@@ -210,7 +218,10 @@ fn the_cog_keeps_its_three_options_and_new_counts_start_paused_when_asked() {
             .unwrap()
     };
     for (item, read) in [
-        (0, (|o: PotentialPairsCountOptions| o.starts_paused) as fn(_) -> bool),
+        (
+            0,
+            (|o: PotentialPairsCountOptions| o.starts_paused) as fn(_) -> bool,
+        ),
         (1, |o| o.stops_to_estimate),
         (2, |o| o.file_search_optimisation),
     ] {
@@ -218,7 +229,9 @@ fn the_cog_keeps_its_three_options_and_new_counts_start_paused_when_asked() {
         ui.invoke_duplicates_filtering_action("count option".into(), item);
         assert_eq!(read(stored()), !before, "item {item}");
         assert_eq!(
-            ui.get_duplicates_filtering().count_ticks.row_data(item as usize),
+            ui.get_duplicates_filtering()
+                .count_ticks
+                .row_data(item as usize),
             Some(!before)
         );
         ui.invoke_duplicates_filtering_action("count option".into(), item);

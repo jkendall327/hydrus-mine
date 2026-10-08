@@ -897,7 +897,13 @@
    "notes": [
     "Truth pass (2026-10-08): missing, medium. The search context editor has no live counter. Missing: Fragmentary count worker, play/pause/refresh, starts-paused option, estimate-stop cog, labels, restart signal. Evidence: only one-shot counts (duplicates_filtering_sidebar.rs:80-100, auto_resolution_preview.rs:37); reference ClientGUIPotentialDuplicatesSearchContext.py:35-350",
     "Native rule search has no fragmentary count worker, pause/refresh counter, starts-paused setting, estimate stopping or low-hit-rate optimization cog. Preview testing is a separate narrower sample workflow."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "sound",
+    "by": "issue 88 session",
+    "note": "Sound: tests/model/duplicates_count.rs replays all 11 scenarios of oracle/fixtures/potential_duplicates_count.json (the real reference panel on a scripted space, blocks released one at a time) step by step on the worker the page uses; tests/gui/duplicates_count.rs drives the page's play/pause, refresh, distance change and cog through the window against the one-shot search. The cog's options are read by the count. Not covered, and said in DIFFERENCES.md: the rule editor's search fields have no counter; pairs changed while counting are not subtracted."
+   }
   },
   {
    "id": "audit-media-duplicate-search-kind",
@@ -2656,7 +2662,13 @@
    "notes": [
     "Truth pass (2026-10-08): built-untested, small. Gating is implemented; the test must drive the real loop. Missing: A test that runs the real daemon loop (extract it from main.rs into a function). Evidence: hydrus-cli/src/main.rs:547-563 (pace from published idle); similar.rs:369; test duplicates_lane_page.rs:1146 replays the decision",
     "Both ticks persist, but run_search ORs idle/active/work-hard and lacks a GUI activity state. An idle-only setting can therefore still run during normal use."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "sound",
+    "by": "issue 88 session",
+    "note": "Sound: tests/gui/duplicates_daemon.rs the_search_worker_holds_or_works... runs the daemon's own turn (hydrus_duplicates::daemon::similar_files_turn, which hydrus serve calls) on a store whose pairs were forgotten, by the sidebar's switches and the published idle state; held turns search nothing, working turns restore the pairs. The loop around it only sleeps."
+   }
   },
   {
    "id": "audit-media-preparation-storage-resync",
@@ -2920,7 +2932,13 @@
     "Truth pass (2026-10-08): built-untested, test-only. Worker, progress and delayed popup exist and match; only a GUI-level test is missing. Missing: A GUI test through the real approve/deny buttons asserting 'approving: 0/N' and the popup. Evidence: auto_resolution_review_window.rs:178-212, 693-750; auto_resolution_review.rs:240-325; reference has no cancel",
     "Native review approve/deny runs the selected operations synchronously then reloads rows/counts. The reference cancellable worker popup/progress UI is absent.",
     "Native approve/deny runs synchronously and refreshes counts; reference worker progress/cancellation and popup UI are absent."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "sound",
+    "by": "issue 88 session",
+    "note": "Sound for what the reference does: tests/gui/auto_resolution_review.rs approving_and_denying_show_their_progress... drives the real approve and deny buttons with the store's writer held, sees 'approving: 0/1' / 'denying: 0/1' on the button, and with the popup delay shortened sees the popup added with its title, given the progress and removed when finished; with the default delay no popup is made. The reference's job is not cancellable."
+   }
   },
   {
    "id": "audit-media-rule-identity",
@@ -2991,7 +3009,13 @@
    "notes": [
     "Truth pass (2026-10-08): built-untested, small. Gating implemented; needs a real-loop test. Missing: A test of the real auto-resolution loop (same extraction); stale 'always active' comment in main.rs. Evidence: hydrus-cli/src/main.rs:~655-672; duplicates/auto.rs:65",
     "Both fields persist and sidebar computes working status from either field, but CLI auto-resolution loop counts itself always active and only gates on during_active. Idle-only rules will not run."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "sound",
+    "by": "issue 88 session",
+    "note": "Sound: tests/gui/duplicates_daemon.rs the_rules_worker_holds_or_works... runs the daemon's auto_resolution_turn on a rule whose search was reset through the sidebar, by the sidebar's switches and the published idle state; held turns leave the pair counts alone."
+   }
   },
   {
    "id": "audit-media-rules-exchange",
@@ -20230,7 +20254,13 @@
     "Truth pass (2026-10-08): built-untested, test-only. Control exists, persists and is consumed; add an apply-and-consume test. Missing: A test editing the row, applying, and seeing the filter prefetch that many pairs. Evidence: options.rs:4310-4316; viewer_prefetch.rs:20-82; filter_window.rs:~525-535",
     "Reference editor/control 'Num pairs to prefetch in Duplicate Filter:' is recorded on 'speed and memory' and defined by the referenced options panel. No corresponding editable row exists in native options::pages; this is a missing GUI editing path, even if a setting is imported or consumed elsewhere.",
     "Native options registry has no editable 'Num pairs to prefetch in Duplicate Filter:' control in this page/box path."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-08",
+    "class": "sound",
+    "by": "issue 88 session",
+    "note": "Sound: tests/gui/viewer_prefetch.rs the_duplicate_filter_prefetches_as_many_pairs... edits the row in the Options window (default 3), applies, launches the filter and sees exactly the files of the pair shown and that many next pairs decoded into the image cache, for 0, 2 and 1."
+   }
   },
   {
    "id": "audit-options-speed-and-memory-image-prefetch-num-previous-to-prefetch-in-media-viewer",
