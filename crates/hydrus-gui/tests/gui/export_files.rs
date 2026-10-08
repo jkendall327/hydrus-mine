@@ -7,6 +7,110 @@ use std::sync::Arc;
 use std::time::{Duration, Instant};
 
 #[test]
+fn failed_export_trashes_only_completed_prefix_and_refreshes_owner() {
+    use hydrus_core::HashId;
+    use hydrus_gui::export_files_window::{self, Slots};
+    use std::{cell::Cell, rc::Rc};
+
+    let (_dirs, store) = crate::subscriptions::store();
+    let rendered = headless::init();
+    let work = tempfile::tempdir().unwrap();
+    let snapshot = store.snapshot();
+    let media = store
+        .read(|c| hydrus_store::media::load(c, &snapshot.services, None, &[HashId(8)]))
+        .unwrap()
+        .results
+        .remove(0);
+    let missing = snapshot
+        .storage
+        .file_path(&media.hash, media.info.unwrap().mime)
+        .unwrap();
+    std::fs::remove_file(missing).unwrap();
+    let changes = Rc::new(Cell::new(0));
+    let slots = Slots::default();
+    let window = export_files_window::open(
+        &store,
+        vec![HashId(1), HashId(8), HashId(3)],
+        &slots,
+        Rc::new({
+            let changes = changes.clone();
+            move || changes.set(changes.get() + 1)
+        }),
+    )
+    .unwrap();
+    window.set_destination(work.path().to_string_lossy().into_owned().into());
+    window.set_phrase("{#}".into());
+    window.invoke_update();
+    window.set_trash(true);
+    window.invoke_export(true);
+    assert!(window.get_asking());
+    window.invoke_answer(1);
+    assert!(!window.get_working());
+    assert!(!work.path().join("1.png").exists());
+    // Declining Export-and-close retires the owner. Open a fresh owner, then
+    // accept the destructive confirmation through its real callback.
+    let window = export_files_window::open(
+        &store,
+        vec![HashId(1), HashId(8), HashId(3)],
+        &slots,
+        Rc::new({
+            let changes = changes.clone();
+            move || changes.set(changes.get() + 1)
+        }),
+    )
+    .unwrap();
+    window.set_destination(work.path().to_string_lossy().into_owned().into());
+    window.set_phrase("{#}".into());
+    window.invoke_update();
+    window.set_trash(true);
+    window.invoke_export(true);
+    window.invoke_answer(0);
+    let started = Instant::now();
+    while window.get_working() && started.elapsed() < Duration::from_secs(15) {
+        std::thread::sleep(Duration::from_millis(20));
+        slint::platform::update_timers_and_animations();
+    }
+    assert!(!window.get_working());
+    assert!(window.get_status().contains("export file #2"));
+    assert!(window.get_status().contains("actually missing"));
+    assert_eq!(changes.get(), 1);
+    assert!(
+        slots.window.borrow().is_some(),
+        "failure remains available for review"
+    );
+    assert!(work.path().join("1.png").is_file());
+    assert!(!work.path().join("2.png").exists());
+    assert!(!work.path().join("3.flac").exists());
+    let reopened = Store::open(store.dir()).unwrap();
+    let snapshot = reopened.snapshot();
+    let roles = hydrus_store::content::DomainRoles::new(&snapshot.services).unwrap();
+    let media = reopened
+        .read(|c| {
+            hydrus_store::media::load(
+                c,
+                &snapshot.services,
+                None,
+                &[HashId(1), HashId(8), HashId(3)],
+            )
+        })
+        .unwrap();
+    for file in media.results {
+        assert_eq!(file.is_current_in(roles.trash), file.hash_id == HashId(1));
+    }
+    let pixels = headless::render(&rendered.get(rendered.count() - 1).unwrap(), 880, 610);
+    headless::save_png(
+        &std::path::Path::new(env!("CARGO_TARGET_TMPDIR")).join("export_failure_prefix.png"),
+        &pixels,
+        880,
+        610,
+    )
+    .unwrap();
+    window.invoke_dismissed();
+    assert!(slots.window.borrow().is_none());
+    assert_eq!(changes.get(), 1);
+}
+
+#[test]
 fn export_files_menu_window_previews_confirmation_and_worker() {
     let legacy = hydrus_testkit::legacy_fixture("basic");
     let native = tempfile::tempdir().unwrap();

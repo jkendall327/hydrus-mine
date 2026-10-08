@@ -1165,6 +1165,13 @@ reference's confirmation and disables links; "export and close" asks "Export
 as shown?" and closes after success. `oracle/record_export_files.py` records
 the reference panel's previews, removal and confirmations, and its export
 worker's collision filenames and overwritten file contents.
+When a file or sidecar fails, confirmed trash-after-export now moves only the
+fully exported preceding files to trash, in batches of 64. Cancellation before
+that phase keeps every source, including cancellation after the last copy.
+The failed-file message remains visible and completed trash changes refresh
+the owner. `oracle/record_export_failure_prefix.py` records actual Qt copies,
+sidecar/missing-file failures, cancellation and committed trash membership.
+Native replay and the failure-window render await this slice's Linux validation.
 The read-only "files' tags" sidebar shows actual display tags for selected
 files, falling back to all kept files, with current, pending and petitioned
 counts. Local tag/subtag/count sorting preserves selected tags and remembers

@@ -25,6 +25,12 @@ export QT_QPA_PLATFORM=offscreen
 
 ## Scripts
 
+`record_export_failure_prefix.py` runs the real manual-export worker on fresh
+private databases, recording missing-source and sidecar failures, cancellation
+after first/final copies, actual content-update batches and trash membership
+after clean shutdown. It observes real MirrorFile and cancels real JobStatus
+at fixed copy boundaries; dialog replies and worker scheduling are scripted.
+
 | script | output |
 |---|---|
 | `record_namespace_entry_validation.py` | `fixtures/namespace_entry_validation.json` and namespace Add/Delete Qt PNGs: actual empty Apply/Return warning and retained input, subsequent valid entry, distinct whitespace handler path, and mixed protected/custom Delete No/Yes; preserves the earlier handler-level fixture |

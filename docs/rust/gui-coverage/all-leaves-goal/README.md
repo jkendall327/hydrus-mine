@@ -6,10 +6,9 @@ source-proven shared-alias crosswalk: 813 originally partial/missing and 461
 historical first-pass leaves. The approximate 800 figure describes the original
 implementation deficit, not the whole verification checklist.
 
-At the `1a49a30f0` validation checkpoint, 373 have explicit implementation
-sign-off and 901 remain outside that ledger. The 2 existing proposed candidates
-are a subset of
-that remaining work. Historical first-pass status earns no automatic fresh
+At the `88e9851e6` validation checkpoint, 375 have explicit implementation
+sign-off and 899 remain outside that ledger. No existing proposed candidate
+remains awaiting sign-off. Historical first-pass status earns no automatic fresh
 verification credit. Structural parents, aliases and native surfaces do not add
 individual completions. The source-pinned audit retains the one alias adjustment
 from the original 1,275-terminal topology and the complete 1,812-ID crosswalk.
