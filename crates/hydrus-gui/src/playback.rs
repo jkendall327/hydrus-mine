@@ -293,6 +293,45 @@ mod tests {
         false
     }
 
+    /// `mpv_null_audio_on_silent_media` asks the store whether the file at a
+    /// path (named by its hash) has sound: it does if the store says so, and
+    /// where the store or the name cannot say.
+    #[test]
+    fn a_file_has_sound_as_the_store_says_and_by_default_where_it_cannot() {
+        let legacy = hydrus_testkit::legacy_fixture("basic");
+        let directory = tempfile::tempdir().unwrap();
+        hydrus_store::import::import_legacy(
+            legacy.path(),
+            &directory.path().join(hydrus_store::store::DB_FILE_NAME),
+        )
+        .unwrap();
+        let store = hydrus_store::Store::open(directory.path()).unwrap();
+        let (silent, loud) = store
+            .write(|ctx| {
+                let ids: Vec<u32> = ctx
+                    .conn()
+                    .prepare("SELECT hash_id FROM files ORDER BY hash_id LIMIT 2")?
+                    .query_map([], |row| row.get(0))?
+                    .collect::<Result<_, _>>()?;
+                ctx.conn()
+                    .execute("UPDATE files SET has_audio = 0 WHERE hash_id = ?", [ids[0]])?;
+                ctx.conn()
+                    .execute("UPDATE files SET has_audio = 1 WHERE hash_id = ?", [ids[1]])?;
+                let name = |id: u32| -> hydrus_store::Result<String> {
+                    let hash = hydrus_store::master::hash(ctx.conn(), hydrus_core::HashId(id))?;
+                    Ok(format!("{}.mp4", hash.expect("a hash")))
+                };
+                Ok((name(ids[0])?, name(ids[1])?))
+            })
+            .unwrap();
+        assert!(!has_audio(&store, Path::new(&silent)));
+        assert!(has_audio(&store, Path::new(&loud)));
+        // no such hash in the store, and no hash in the name: sound
+        let unknown = format!("{}.mp4", "ab".repeat(32));
+        assert!(has_audio(&store, Path::new(&unknown)));
+        assert!(has_audio(&store, Path::new("not-a-hash.mp4")));
+    }
+
     #[test]
     fn finite_gif_loop_metadata_reaches_the_existing_mpv_player() {
         if !mpv::available() {

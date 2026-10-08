@@ -90,36 +90,52 @@ fn the_preview_window_draws_its_ratings_at_the_sizes_the_options_say() {
     options.invoke_cancel();
 
     preview_first(&client);
-    let rows = client.ui.get_preview_ratings();
-    assert!(
-        rows.row_count() >= 3,
-        "the likes, the stars and the counter"
-    );
-    assert_eq!(
+    let ui = &client.ui;
+    let kinds: Vec<i32> = ui
+        .get_preview_ratings()
+        .iter()
+        .map(|r| r.graphic.kind)
+        .collect();
+    assert!(kinds.len() >= 3, "the likes, the stars and the counter");
+    let likes = kinds.iter().filter(|k| **k == 0).count() as f32;
+    assert!(likes >= 1.0);
+    // what is drawn: the likes along one row (each with the 2 pixels after
+    // it), the counter a rectangle of twice its height (and 1 pixel after)
+    let drawn = |ui: &hydrus_gui::MainWindow| {
+        headless::render(&client.native(), 1000, 900);
         (
-            client.ui.get_preview_rating_size(),
-            client.ui.get_preview_incdec_height()
-        ),
-        (12.0, 12.0),
+            ui.get_preview_likes_width(),
+            ui.get_preview_incdecs_width(),
+            ui.get_preview_incdecs_height(),
+        )
+    };
+    let (likes_width, incdec_width, incdec_height) = drawn(ui);
+    assert_eq!(
+        (likes_width, incdec_width, incdec_height),
+        (likes * 14.0, 25.0, 12.0),
         "the reference's defaults"
     );
-    let narrow = client.ui.get_preview_hover_width();
 
-    // the reference rounds both sizes (`round( GetFloat(...) )`, half to even)
+    // the background draw rounds both sizes (`round( GetFloat(...) )`, half
+    // to even)...
     set_options(&client, &[(SIZE, "30"), (HEIGHT, "17.5")], &[]);
     let saved = client.setting::<RatingContextSizes>();
     assert_eq!(
         (saved.preview_icon_size, saved.preview_incdec_height),
         (30.0, 17.5)
     );
-    assert_eq!(client.ui.get_preview_rating_size(), 30.0);
-    assert_eq!(client.ui.get_preview_incdec_height(), 18.0);
-    assert!(
-        client.ui.get_preview_hover_width() > narrow,
-        "the stars are wider"
-    );
+    assert_eq!(drawn(ui), (likes * 32.0, 37.0, 18.0));
+    // ...and the popped-in hover cuts them off (`GetIconSize`'s `int()`):
+    // 17.5 is 18 drawn and 17 popped
+    let (x, y) = (ui.get_preview_hover_x(), ui.get_preview_hover_y());
+    let w = ui.get_preview_hover_width();
+    pointer_to(&client, x + w - 3.0, y + 3.0);
+    assert!(ui.get_preview_hover_popped());
+    assert_eq!(drawn(ui), (likes * 32.0, 35.0, 17.0));
+    pointer_to(&client, x - 100.0, y + ui.get_preview_hover_height() + 40.0);
+    // half to even: 16.5 draws as 16
     set_options(&client, &[(HEIGHT, "16.5")], &[]);
-    assert_eq!(client.ui.get_preview_incdec_height(), 16.0);
+    assert_eq!(drawn(ui).2, 16.0);
 
     // a value outside the spin box's range is taken at its edge (as the
     // dialogs' rating size spin boxes are)
@@ -177,7 +193,7 @@ fn the_top_right_hover_draws_in_the_background_and_pops_in_as_the_options_say() 
     let like_row = i32::try_from(
         ui.get_preview_ratings()
             .iter()
-            .position(|r| r.kind == 0)
+            .position(|r| r.graphic.kind == 0)
             .unwrap(),
     )
     .unwrap();

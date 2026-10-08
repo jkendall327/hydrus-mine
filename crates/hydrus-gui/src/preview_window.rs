@@ -5,7 +5,7 @@ use crate::{MainWindow, thumbnails::Pixels};
 use hydrus_core::{CanvasType, HashId, TimestampMs, pages::PageKey};
 use hydrus_gui_model::viewing_statistics::Tracker;
 use hydrus_store::Store;
-use slint::{ComponentHandle as _, Timer, TimerMode};
+use slint::{ComponentHandle as _, Model as _, Timer, TimerMode};
 use std::{
     cell::{Cell, RefCell},
     collections::HashMap,
@@ -181,6 +181,68 @@ impl Canvas {
         }
     }
 }
+/// `GetIncDecSize`'s width: twice the height, widened for a number of more
+/// than three digits, whole pixels.
+fn incdec_width(height: f64, value: i64) -> f64 {
+    let mut width = height * 2.0;
+    if value > 0 {
+        let digits = value.to_string().len() as f64;
+        if digits > 3.0 {
+            width += (height - 1.0) * (digits - (2.0 + digits / 3.0));
+        }
+    }
+    width.trunc()
+}
+
+/// One rating as the corner draws it in the background (the sizes rounded,
+/// half to even, as `_DrawTopRight`) and popped in (`GetIconSize`, whole
+/// pixels cut off).
+fn rating_at_sizes(
+    control: &hydrus_gui_model::ratings::Control,
+    sizes: &hydrus_store::settings::RatingContextSizes,
+) -> crate::PreviewRatingRow {
+    use hydrus_gui_model::ratings::{Kind, outline_width};
+    let graphic = crate::rating_row(control);
+    let (icon, incdec) = (
+        sizes.preview_icon_size.round_ties_even(),
+        sizes.preview_incdec_height.round_ties_even(),
+    );
+    let (popup_icon, popup_incdec) = (
+        sizes.preview_icon_size.trunc(),
+        sizes.preview_incdec_height.trunc(),
+    );
+    let stars = graphic.shapes.row_count() as f64;
+    let pad = f64::from(graphic.pad);
+    let (width, height, popup_width, popup_height) = match &control.kind {
+        Kind::IncDec { value } => (
+            incdec_width(incdec, *value),
+            incdec,
+            incdec_width(popup_incdec, *value),
+            popup_incdec,
+        ),
+        Kind::Numerical { .. } => (
+            stars * (icon + pad) - pad,
+            icon,
+            stars * (popup_icon + pad) - pad,
+            popup_icon,
+        ),
+        Kind::Like { .. } => (icon, icon, popup_icon, popup_icon),
+    };
+    crate::PreviewRatingRow {
+        graphic,
+        width: width as f32,
+        height: height as f32,
+        popup_width: popup_width as f32,
+        popup_height: popup_height as f32,
+        icon: icon as f32,
+        popup_icon: popup_icon as f32,
+        incdec: incdec as f32,
+        popup_incdec: popup_incdec as f32,
+        outline: outline_width(icon) as f32,
+        popup_outline: outline_width(popup_icon) as f32,
+    }
+}
+
 /// The top-right hover's contents for the file shown, kept so the rating
 /// controls a click lands on are the ones drawn.
 #[derive(Default)]
@@ -352,11 +414,6 @@ impl State {
             options.boolean("draw_top_right_hover_in_preview_window_background"),
         );
         window.set_preview_pop_in(options.boolean("preview_window_hover_top_right_shows_popup"));
-        window.set_preview_rating_size(sizes.preview_icon_size.round_ties_even() as f32);
-        window.set_preview_incdec_height(sizes.preview_incdec_height.round_ties_even() as f32);
-        window.set_preview_rating_outline(hydrus_gui_model::ratings::outline_width(
-            sizes.preview_icon_size.round_ties_even(),
-        ) as f32);
         let mut overlay = self.overlay.borrow_mut();
         overlay.file = file;
         overlay.checked = Some(now);
@@ -369,8 +426,20 @@ impl State {
             return;
         };
         let controls = hydrus_gui_model::ratings::controls(&self.store, file);
+        let has = |wanted: fn(&hydrus_gui_model::ratings::Kind) -> bool| {
+            controls.iter().any(|control| wanted(&control.kind))
+        };
+        window.set_preview_has_likes(has(|kind| {
+            matches!(kind, hydrus_gui_model::ratings::Kind::Like { .. })
+        }));
+        window.set_preview_has_incdecs(has(|kind| {
+            matches!(kind, hydrus_gui_model::ratings::Kind::IncDec { .. })
+        }));
         window.set_preview_ratings(slint::ModelRc::new(slint::VecModel::from(
-            controls.iter().map(crate::rating_row).collect::<Vec<_>>(),
+            controls
+                .iter()
+                .map(|control| rating_at_sizes(control, &sizes))
+                .collect::<Vec<_>>(),
         )));
         overlay.controls = controls;
         let shown = crate::viewer::shown(&self.store, file);
@@ -898,6 +967,19 @@ impl Monitor {
 #[cfg(test)]
 mod worker_tests {
     use super::*;
+
+    #[test]
+    #[allow(clippy::float_cmp)] // (whole pixels)
+    fn inc_dec_widths_follow_the_references_size_rule() {
+        // twice the height, until more than three digits
+        assert_eq!(incdec_width(12.0, 0), 24.0);
+        assert_eq!(incdec_width(12.0, 999), 24.0);
+        // 4 digits: 24 + 11 * (4 - (2 + 4/3)) = 31.33 -> 31
+        assert_eq!(incdec_width(12.0, 1234), 31.0);
+        // 6 digits: 24 + 11 * (6 - 4) = 46
+        assert_eq!(incdec_width(12.0, 123_456), 46.0);
+        assert_eq!(incdec_width(18.0, -5), 36.0);
+    }
 
     #[test]
     fn idle_preview_workers_do_not_retain_the_store() {

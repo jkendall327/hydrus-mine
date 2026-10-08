@@ -4911,7 +4911,8 @@ own frame through the frames editor).
 **Preview window.** The preview pane draws the file's ratings at the sizes
 from Options > ratings > preview window (rounded, as the reference's
 `round( GetFloat(...) )`), its inbox/trash icons, locations and URL names in its
-top-right corner when "Draw ratings and locations (top-right) in preview window
+top-right corner (likes along a row, each numerical on its own, inc/decs along a
+row) when "Draw ratings and locations (top-right) in preview window
 background" is on. With "Pop-in this hover on mouseover" on, the mouse over the
 corner raises the same box with live rating controls (click or drag to set, right
 click to clear). Proven by `tests/gui/preview_top_right.rs`.
@@ -4948,4 +4949,7 @@ like/dislike service's shape and colours on five stars), and an inc/dec
 rectangle, drawn at the whole pixels typed in that box above them. Clicking or
 dragging the stars rates the example (the fraction beside them shows it), right
 click clears; the rectangle counts up on a click and down on a right click.
-The samples are never kept. Proven by `options_gui_ratings_examples.rs`.
+The samples are never kept. The chosen service is kept the moment it is chosen,
+cancelled dialog or not, and a later choice changes only the stars' shape and
+colours, as the reference's `SetServiceTemplate` does. Proven by
+`options_gui_ratings_examples.rs`.
