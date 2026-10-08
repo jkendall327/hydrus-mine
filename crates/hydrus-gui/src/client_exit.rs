@@ -45,6 +45,17 @@ pub(crate) fn intercept_close(intercept: Rc<dyn Fn() -> bool>) {
     INTERCEPT.with(|i| *i.borrow_mut() = Some(intercept));
 }
 
+/// The "Maintenance is due" question while it is shown, for tests that answer it.
+#[doc(hidden)]
+pub fn maintenance_question() -> Option<crate::SessionDialog> {
+    MAINTENANCE.with(|slot| {
+        slot.borrow()
+            .as_ref()
+            .filter(|question| question.dialog.window().is_visible())
+            .map(|question| question.dialog.clone_strong())
+    })
+}
+
 /// The maintenance child owns its timer; callbacks hold only weak backedges.
 struct MaintenanceQuestion {
     dialog: crate::SessionDialog,

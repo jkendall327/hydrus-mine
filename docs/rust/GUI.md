@@ -5055,6 +5055,14 @@ does. The system counts as busy when at least "% on N cores" cores ran above
 "ignore cpu usage" turns the check off, and forced idle mode never reads busy.
 The status bar still says "idle" and shows "CPU busy".
 
+## Files and trash: local import copying
+
+Options > files and trash > "TEST: Import local files directly from source, do
+not copy to temp dir beforehand" is read by local imports and import folders.
+Left unticked (the default), each file is copied to a temporary path and
+imported from there, as the reference does; ticked, it is imported from where
+it is.
+
 ## System tray
 
 Slint's own `SystemTrayIcon` (on Linux a StatusNotifierItem on the session bus,

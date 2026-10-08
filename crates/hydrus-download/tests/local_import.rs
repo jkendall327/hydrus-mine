@@ -449,3 +449,99 @@ async fn a_local_import_imports_its_files() {
     assert_eq!(seeds[0].status, SeedStatus::SuccessfulButRedundant);
     assert!(again.exists());
 }
+
+// leaf: audit-options-files-and-trash-test-import-local-files-directly-from-source-do-not-copy-to-temp-dir-beforehand
+#[tokio::test(flavor = "multi_thread")]
+async fn a_local_import_copies_to_a_temp_path_first_unless_the_option_says_not_to() {
+    let dir = tempfile::tempdir().unwrap();
+    let store = Arc::new(Store::open(dir.path()).unwrap());
+    let net = Arc::new(
+        NetEngine::new(
+            Arc::clone(&store),
+            NetOptions {
+                obey_bandwidth: false,
+                ..NetOptions::default()
+            },
+        )
+        .unwrap(),
+    );
+    let importer = FileImporter::new(Arc::clone(&store), MediaTools::new());
+    let probe = importer.clone();
+    let downloader = Arc::new(Downloader::new(Arc::clone(&store), net, importer).unwrap());
+    let worker = QueueRunner::new(downloader, 60);
+    let work = tempfile::tempdir().unwrap();
+    let one = place(work.path(), "bmp_24.bmp");
+    let two = place(work.path(), "apng_rgba.png");
+    let hash_of = |queue: i64| -> String {
+        store.read(|conn| queues::file_seeds(conn, queue)).unwrap()[0]
+            .meta
+            .hash("sha256")
+            .unwrap()
+            .to_owned()
+    };
+    let import = |path: &Path| {
+        let path = path_text(path);
+        store
+            .write(move |ctx| {
+                queues::create_local_import(
+                    ctx.conn(),
+                    None,
+                    &ImportOptionsSlice::default(),
+                    &[(path, None)],
+                    &queues::PathTags::new(),
+                    LocalImport::default(),
+                    0,
+                )
+            })
+            .unwrap()
+    };
+
+    // the reference's default: the file is copied to a temp path and imported
+    // from there
+    assert!(
+        store
+            .read(settings::get::<FolderSettings>)
+            .unwrap()
+            .copy_import_files_to_temp_dir
+    );
+    let first = import(&one);
+    worker.start_all().unwrap();
+    wait_until_done(&store, first).await;
+    assert_eq!(probe.temp_copies_made(), 1);
+    let leftovers = |dir: &Path| std::fs::read_dir(dir.join("tmp")).map_or(0, Iterator::count);
+    assert_eq!(leftovers(dir.path()), 0, "the temp copy is gone afterwards");
+    let copied = hash_of(first);
+
+    // "import local files directly from source": the same file, no copy
+    store
+        .write(|ctx| {
+            let mut folders: FolderSettings = settings::get(ctx.conn())?;
+            folders.copy_import_files_to_temp_dir = false;
+            settings::set(ctx.conn(), &folders)
+        })
+        .unwrap();
+    let second = import(&two);
+    worker.start_all().unwrap();
+    wait_until_done(&store, second).await;
+    assert_eq!(probe.temp_copies_made(), 1, "no second copy was made");
+    let direct = hash_of(second);
+    assert_ne!(copied, direct);
+    // imported all the same: the file is in the database, from where it was
+    for (queue, path) in [(first, &one), (second, &two)] {
+        let seed = &store.read(|conn| queues::file_seeds(conn, queue)).unwrap()[0];
+        assert!(seed.status.is_successful(), "{}", seed.note);
+        assert!(path.exists(), "the source is left where it was");
+    }
+    // and a repeat of the first file, with the option back on, copies again
+    store
+        .write(|ctx| {
+            let mut folders: FolderSettings = settings::get(ctx.conn())?;
+            folders.copy_import_files_to_temp_dir = true;
+            settings::set(ctx.conn(), &folders)
+        })
+        .unwrap();
+    let third = import(&one);
+    worker.start_all().unwrap();
+    wait_until_done(&store, third).await;
+    assert_eq!(probe.temp_copies_made(), 2);
+}

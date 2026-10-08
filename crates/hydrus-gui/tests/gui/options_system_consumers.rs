@@ -1340,24 +1340,8 @@ const IDLE_ENABLED: &str =
 const CPU_PERCENT: &str = "Consider the system busy if CPU usage is above: ";
 const CPU_CORES: &str = "% on ";
 
-/// Spin every core for a moment, so the next CPU sample reads busy.
-fn spin(for_ms: u64) -> Vec<std::thread::JoinHandle<()>> {
-    let end = std::time::Instant::now() + std::time::Duration::from_millis(for_ms);
-    let cores = std::thread::available_parallelism().map_or(2, usize::from);
-    (0..cores)
-        .map(|_| {
-            std::thread::spawn(move || {
-                while std::time::Instant::now() < end {
-                    std::hint::black_box(0u64.wrapping_add(1));
-                }
-            })
-        })
-        .collect()
-}
-
 // leaf: audit-options-maintenance-and-processing-when-to-run-high-cpu-jobs-idle-run-maintenance-jobs-when-the-client-is-idle-and-the-system-is-not-otherwise-busy
-// (not tagged ...-idle-consider-the-system-busy-if-cpu-usage-is-above: nothing
-// here shows a higher percent staying not busy; the threshold is only unit-tested)
+// leaf: audit-options-maintenance-and-processing-when-to-run-high-cpu-jobs-idle-consider-the-system-busy-if-cpu-usage-is-above
 // leaf: audit-options-maintenance-and-processing-when-to-run-high-cpu-jobs-idle-on
 #[test]
 fn idle_and_cpu_busy_options_decide_whether_background_work_may_run() {
@@ -1398,36 +1382,298 @@ fn idle_and_cpu_busy_options_decide_whether_background_work_may_run() {
     assert!(saved.enabled);
     assert_eq!((saved.busy_cpu_percent, saved.busy_cpu_count), (5, Some(1)));
 
-    // The runtime's first sample has nothing to compare with; the next, after
-    // a busy minute, reads every core above 5%, so work is not idle.
+    // The runtime's first sample has nothing to compare with. The cores are
+    // read from a fake `/proc/stat`: this one core ran 60% busy in each
+    // minute (60 of 100 jiffies), however long the test takes.
+    let jiffies = std::rc::Rc::new(std::cell::Cell::new((0u64, 0u64)));
+    client.bound.maintenance.use_cpu_times({
+        let jiffies = jiffies.clone();
+        move || vec![jiffies.get()]
+    });
     let dir = client.store.dir().to_owned();
     let base = hydrus_core::TimestampMs::now().0 + 10_000_000;
+    let minute = |n: i64| {
+        jiffies.set((60 * n as u64, 100 * n as u64));
+        client.bound.maintenance.poll_at(base + 60_000 * n).unwrap();
+        base + 60_000 * n
+    };
+    let set_percent = |percent: i64| {
+        let options = client.options("maintenance and processing");
+        let (i, _) = row_in(&options, "idle", CPU_PERCENT);
+        options.invoke_number_edited(i, percent as _);
+        options.invoke_apply();
+    };
+    jiffies.set((0, 0));
     client.bound.maintenance.poll_at(base).unwrap();
     assert!(idle_state::is_idle(&dir, base));
-    let spinners = spin(600);
-    std::thread::sleep(std::time::Duration::from_millis(100));
-    client.bound.maintenance.poll_at(base + 60_000).unwrap();
-    for spinner in spinners {
-        spinner.join().unwrap();
-    }
-    assert!(!idle_state::is_idle(&dir, base + 60_000), "busy system");
+    // 60% is above 5%: busy, though still idle.
+    let at = minute(1);
+    assert!(!idle_state::is_idle(&dir, at), "busy system");
     assert_eq!(client.ui.get_status_busy(), "CPU busy");
     assert_eq!(client.ui.get_status_idle(), "idle", "still idle, but busy");
 
-    // "ignore cpu usage" clears it at the next check.
+    // Raise the percent above what the cores ran: the same load is not busy,
+    // and work may run again.
+    set_percent(70);
+    let saved: hydrus_store::settings::GuiIdleSettings = client.get();
+    assert_eq!(saved.busy_cpu_percent, 70);
+    let at = minute(2);
+    assert!(idle_state::is_idle(&dir, at), "60% is not above 70%");
+    assert_eq!(client.ui.get_status_busy(), "");
+    // Exactly the load is not above it either (the reference compares with >).
+    set_percent(60);
+    let at = minute(3);
+    assert!(idle_state::is_idle(&dir, at), "60% is not above 60%");
+    set_percent(59);
+    let at = minute(4);
+    assert!(!idle_state::is_idle(&dir, at), "60% is above 59%");
+    assert_eq!(client.ui.get_status_busy(), "CPU busy");
+
+    // "ignore cpu usage" clears it at the next check, and the percent
+    // control is disabled while no core count is set (and enabled again
+    // once one is).
     let options = client.options("maintenance and processing");
+    assert!(row_in(&options, "idle", CPU_PERCENT).1.enabled);
     let (i, _) = row_in(&options, "idle", CPU_CORES);
     options.invoke_none_toggled(i, true);
     options.invoke_apply();
-    client.bound.maintenance.poll_at(base + 120_000).unwrap();
-    assert!(idle_state::is_idle(&dir, base + 120_000));
+    let options = client.options("maintenance and processing");
+    assert!(
+        !row_in(&options, "idle", CPU_PERCENT).1.enabled,
+        "no core count: the percent is not used"
+    );
+    let at = minute(5);
+    assert!(idle_state::is_idle(&dir, at));
     assert_eq!(client.ui.get_status_busy(), "");
+    let (i, _) = row_in(&options, "idle", CPU_CORES);
+    options.invoke_none_toggled(i, false);
+    options.invoke_apply();
+    let options = client.options("maintenance and processing");
+    assert!(
+        row_in(&options, "idle", CPU_PERCENT).1.enabled,
+        "a core count is set again"
+    );
+    options.invoke_cancel();
+    let at = minute(6);
+    assert!(
+        !idle_state::is_idle(&dir, at),
+        "busy again, at 59% on 1 core"
+    );
 
     // Switching the idle option off stops idle work whatever the CPU does.
     let options = client.options("maintenance and processing");
     let (i, _) = row_in(&options, "idle", IDLE_ENABLED);
     options.invoke_check_toggled(i, false);
     options.invoke_apply();
-    client.bound.maintenance.poll_at(base + 130_000).unwrap();
-    assert!(!idle_state::is_idle(&dir, base + 130_000));
+    let at = minute(7);
+    assert!(!idle_state::is_idle(&dir, at));
+}
+
+// Exiting after editing the shutdown box (File > options…, then the window's close).
+
+fn shutdown_row(options: &OptionsWindow, label: &str) -> (i32, OptionRow) {
+    row_in(options, "shutdown", label)
+}
+
+fn shutdown_settings(client: &Client) -> hydrus_store::settings::ShutdownWork {
+    client.get()
+}
+
+fn seconds_now() -> i64 {
+    hydrus_core::TimestampMs::now().secs()
+}
+
+impl Client {
+    /// Bind the window again, as a client started afresh (a closed one does
+    /// not take another exit).
+    fn restart(&mut self) {
+        self.ui.show().unwrap();
+        self.bound = bind(&self.ui, Pages::open(self.store.clone()).unwrap());
+    }
+
+    /// With the shutdown settings as new and the last shutdown work `ago`
+    /// seconds back, the shutdown box edited by `edit` and applied; then the
+    /// window is closed.
+    fn exit_after(&mut self, ago: i64, edit: impl FnOnce(&OptionsWindow)) {
+        self.restart();
+        self.store
+            .write(move |ctx| {
+                ctx.conn()
+                    .execute_batch("DROP TABLE IF EXISTS sqlite_stat1")?;
+                hydrus_store::settings::set(
+                    ctx.conn(),
+                    &hydrus_store::settings::ShutdownWork {
+                        last_done: seconds_now() - ago,
+                        ..Default::default()
+                    },
+                )
+            })
+            .unwrap();
+        let options = self.options("maintenance and processing");
+        edit(&options);
+        options.invoke_apply();
+        self.ui
+            .window()
+            .dispatch_event(slint::platform::WindowEvent::CloseRequested);
+    }
+}
+
+fn choose_shutdown(options: &OptionsWindow, choice: i32) {
+    let (i, row) = shutdown_row(options, "Run jobs on shutdown: ");
+    assert_eq!(row.items.row_count(), 3);
+    options.invoke_choice_chosen(i, choice);
+}
+
+/// Whether the database has been analysed (planner statistics exist; empty
+/// tables get none, so the list of tables due stays as it was).
+fn analysed(client: &Client) -> bool {
+    client
+        .store
+        .read(|conn| {
+            Ok(conn
+                .query_row(
+                    "SELECT 1 FROM sqlite_master WHERE name = 'sqlite_stat1'",
+                    [],
+                    |_| Ok(()),
+                )
+                .is_ok())
+        })
+        .unwrap()
+}
+
+// leaf: audit-options-maintenance-and-processing-when-to-run-high-cpu-jobs-shutdown-run-jobs-on-shutdown
+#[test]
+fn run_jobs_on_shutdown_decides_what_the_exit_does() {
+    use hydrus_gui_model::shutdown_work::{ACTIONS, ASK_TITLE};
+    let mut client = client();
+    let options = client.options("maintenance and processing");
+    let (_, row) = shutdown_row(&options, "Run jobs on shutdown: ");
+    let items: Vec<String> = row.items.iter().map(|s| s.to_string()).collect();
+    assert_eq!(items, ACTIONS, "the reference's three choices");
+    assert_eq!(row.index, 2, "ask first is the default");
+    options.invoke_cancel();
+
+    // do not run jobs: the exit goes straight through, doing nothing.
+    client.exit_after(1_000_000, |o| choose_shutdown(o, 0));
+    assert_eq!(shutdown_settings(&client).action, 0);
+    assert!(hydrus_gui::client_exit::maintenance_question().is_none());
+    assert!(!client.ui.window().is_visible(), "exited");
+    assert!(!analysed(&client), "no work was done");
+    assert!(
+        shutdown_settings(&client).last_done < seconds_now() - 900_000,
+        "untouched"
+    );
+
+    // run if needed: the work is done without asking.
+    client.exit_after(1_000_000, |o| choose_shutdown(o, 1));
+    assert_eq!(shutdown_settings(&client).action, 1);
+    assert!(hydrus_gui::client_exit::maintenance_question().is_none());
+    assert!(!client.ui.window().is_visible(), "exited");
+    assert!(analysed(&client), "the outstanding analysis was run");
+    assert!(shutdown_settings(&client).last_done >= seconds_now() - 5);
+
+    // ask first: the exit waits on the question; no skips the work but is
+    // not asked again, yes does it.
+    client.exit_after(1_000_000, |o| choose_shutdown(o, 2));
+    assert_eq!(shutdown_settings(&client).action, 2);
+    let question = hydrus_gui::client_exit::maintenance_question().expect("asked");
+    assert_eq!(question.get_window_title(), ASK_TITLE);
+    assert!(client.ui.window().is_visible(), "the exit waits");
+    question.invoke_answered(false);
+    assert!(!client.ui.window().is_visible(), "exited");
+    assert!(!analysed(&client), "declined");
+    assert!(shutdown_settings(&client).last_done >= seconds_now() - 5);
+
+    client.exit_after(1_000_000, |o| choose_shutdown(o, 2));
+    let question = hydrus_gui::client_exit::maintenance_question().expect("asked");
+    question.invoke_answered(true);
+    assert!(!client.ui.window().is_visible(), "exited");
+    assert!(analysed(&client), "accepted: the analysis was run");
+}
+
+// leaf: audit-options-maintenance-and-processing-when-to-run-high-cpu-jobs-shutdown-only-run-shutdown-jobs-once-per
+#[test]
+fn shutdown_jobs_run_only_once_per_the_edited_period() {
+    const PERIOD: &str = "Only run shutdown jobs once per: ";
+    let mut client = client();
+    let options = client.options("maintenance and processing");
+    let (_, row) = shutdown_row(&options, PERIOD);
+    let units: Vec<String> = row.fields.iter().map(|f| f.label.to_string()).collect();
+    assert_eq!(units.len(), 3, "days, hours and minutes: {units:?}");
+    assert!(row.enabled);
+    assert_eq!(row.fields.row_data(0).unwrap().value, 1, "one day");
+    // no use while jobs are not run on shutdown
+    choose_shutdown(&options, 0);
+    options.invoke_apply();
+    let options = client.options("maintenance and processing");
+    assert!(!shutdown_row(&options, PERIOD).1.enabled);
+    options.invoke_cancel();
+
+    // Ten minutes since the last run, and the default period is a day: no
+    // question, though ask-first is the default.
+    client.exit_after(600, |_| {});
+    assert!(hydrus_gui::client_exit::maintenance_question().is_none());
+    assert!(!client.ui.window().is_visible(), "exited at once");
+    assert!(!analysed(&client));
+
+    // The same ten minutes against an edited period of five: due, so asked.
+    client.exit_after(600, |o| {
+        let (i, _) = shutdown_row(o, PERIOD);
+        o.invoke_field_edited(i, 0, 0);
+        o.invoke_field_edited(i, 1, 0);
+        o.invoke_field_edited(i, 2, 5);
+    });
+    assert_eq!(shutdown_settings(&client).period_seconds, 300);
+    let question = hydrus_gui::client_exit::maintenance_question().expect("due, so asked");
+    assert!(client.ui.window().is_visible());
+    question.invoke_answered(false);
+    assert!(!client.ui.window().is_visible());
+
+    // A longer period than the time since the last run: skipped again.
+    client.exit_after(600, |o| {
+        let (i, _) = shutdown_row(o, PERIOD);
+        o.invoke_field_edited(i, 0, 0);
+        o.invoke_field_edited(i, 1, 2);
+        o.invoke_field_edited(i, 2, 0);
+    });
+    assert_eq!(shutdown_settings(&client).period_seconds, 7_200);
+    assert!(hydrus_gui::client_exit::maintenance_question().is_none());
+    assert!(!client.ui.window().is_visible());
+}
+
+// leaf: audit-options-maintenance-and-processing-when-to-run-high-cpu-jobs-shutdown-max-number-of-minutes-to-run-shutdown-jobs
+#[test]
+fn the_edited_shutdown_minutes_are_in_the_question() {
+    const MINUTES: &str = "Max number of minutes to run shutdown jobs: ";
+    let mut client = client();
+    let options = client.options("maintenance and processing");
+    let (_, row) = shutdown_row(&options, MINUTES);
+    assert_eq!(
+        (row.kind, row.minimum, row.maximum, row.number),
+        (2, 1, 1440, 5)
+    );
+    assert!(row.enabled);
+    // no use unless jobs are run on shutdown
+    choose_shutdown(&options, 0);
+    options.invoke_apply();
+    let options = client.options("maintenance and processing");
+    assert!(!shutdown_row(&options, MINUTES).1.enabled, "not run at all");
+    options.invoke_cancel();
+
+    for minutes in [5, 7, 90] {
+        client.exit_after(1_000_000, |o| {
+            let (i, _) = shutdown_row(o, MINUTES);
+            o.invoke_number_edited(i, minutes);
+        });
+        assert_eq!(shutdown_settings(&client).max_minutes, minutes as u32);
+        let question = hydrus_gui::client_exit::maintenance_question().expect("asked");
+        let message = question.get_message().to_string();
+        assert!(
+            message.starts_with(&format!(
+                "Is now a good time for the client to do up to {minutes} minutes' maintenance work? (Will auto-no in 15 seconds)\n\nThe outstanding jobs appear to be:\n\nanalyze "
+            )),
+            "{message}"
+        );
+        question.invoke_answered(false);
+    }
 }
