@@ -3853,6 +3853,14 @@ change nothing). They are marked out of scope in `docs/rust/tracking/`.
 - "force database commit" checkpoints SQLite's write-ahead log (hydrus-rs
   commits each write as it happens); "flush log" writes its line to
   standard error.
+- Report modes are offered only where something in hydrus-rs can report:
+  idle, shortcut and subprocess. The rest (blurhash, cache, callto, canvas
+  tile borders, daemon, db, file, file import, file sort, graphics view,
+  gui, hover window, media load, mpv, network, potential duplicates,
+  pubsub, similar files, shutdown, subscription) are missing. The idle and
+  shortcut reports use the reference's wording; the subprocess report shows
+  the argument list, not Python's keyword arguments, and does not dump the
+  environment.
 
 ## Thumbnail manage > file relationships
 

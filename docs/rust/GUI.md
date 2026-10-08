@@ -4665,6 +4665,19 @@ program exit signal" (leaves the event loop at once); and memory actions >
 `tests/model/debug_actions.rs` checks the texts and popups;
 `tests/model/main_menu.rs` the menu against the recording.
 
+Help > debug > report modes offers the reference's checked switches, off at
+every start and shared by the whole client: "idle report mode" makes a popup
+(and a console line) each time the idle decision is asked, saying why the
+client is not idle ("Program has not been on for 120s yet", "Options have
+disabled normal idle work", "Last user action was ... ago", the mouse and
+Client API versions) or that idle mode is forced from the debug menu;
+"shortcut report mode" says what each main-window or media-viewer key
+shortcut matched (or that it matched no command); "subprocess report mode"
+reports each external program's argument list before it is started.
+`tests/gui/debug_menu_actions.rs` clicks each debug entry in the real menu
+and reads the effect back; `tests/model/debug_flags.rs` covers the switch
+and the subprocess report.
+
 ## Pages > weight report
 
 Pages > weight > "total session weight: N" now explains the number as the

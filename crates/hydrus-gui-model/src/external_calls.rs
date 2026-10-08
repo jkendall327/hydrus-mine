@@ -174,6 +174,9 @@ fn process_command(process: &Process, inputs: &Inputs) -> Result<Command, String
     let executable = args
         .first()
         .ok_or_else(|| "No executable path is set!".to_owned())?;
+    hydrus_core::debug_flags::report(hydrus_core::debug_flags::Flag::SubprocessReport, || {
+        format!("KWargs are: {{'args': {args:?}}}")
+    });
     let mut command = Command::new(executable);
     command.args(&args[1..]);
     #[cfg(windows)]

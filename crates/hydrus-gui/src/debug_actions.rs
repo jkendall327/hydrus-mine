@@ -6,6 +6,8 @@
 use std::cell::RefCell;
 use std::io::Write as _;
 use std::rc::Rc;
+use std::sync::Mutex;
+use std::sync::atomic::{AtomicBool, Ordering};
 use std::time::{Duration, SystemTime, UNIX_EPOCH};
 
 use hydrus_core::Sha256;
@@ -25,6 +27,45 @@ thread_local! {
 /// something and wait for "ok").
 pub fn message_window() -> Option<ChoiceButtonsWindow> {
     MESSAGE.with(|m| m.borrow().as_ref().map(ChoiceButtonsWindow::clone_strong))
+}
+
+/// Set by "simulate program exit signal", once the event loop is told to stop.
+static EXIT_REQUESTED: AtomicBool = AtomicBool::new(false);
+
+/// Whether "simulate program exit signal" has run in this process.
+pub fn exit_requested() -> bool {
+    EXIT_REQUESTED.load(Ordering::SeqCst)
+}
+
+/// What `HydrusData.DebugPrint` was given, oldest first: the debug actions
+/// print to the console and keep the lines, for the tests.
+static PRINTED: Mutex<Vec<String>> = Mutex::new(Vec::new());
+
+/// The lines the debug actions have printed so far.
+pub fn debug_printed() -> Vec<String> {
+    PRINTED
+        .lock()
+        .unwrap_or_else(std::sync::PoisonError::into_inner)
+        .clone()
+}
+
+/// `HydrusData.DebugPrint`: a line on the console, flushed at once.
+fn debug_print(line: &str) {
+    eprintln!("{line}");
+    let _ = std::io::stderr().flush();
+    PRINTED
+        .lock()
+        .unwrap_or_else(std::sync::PoisonError::into_inner)
+        .push(line.to_owned());
+}
+
+/// Send the report modes' messages to the console and a popup in `store`
+/// (`HydrusData.ShowText`), unless something already receives them.
+pub(crate) fn install_report_sink(store: std::sync::Arc<Store>) {
+    hydrus_core::debug_flags::set_sink_if_none(Box::new(move |text| {
+        debug_print(text);
+        post(&store, vec![Job::text(text.to_owned(), now())]);
+    }));
 }
 
 /// What the actions work with.
@@ -137,8 +178,7 @@ pub(crate) fn run(context: &Context, action: Action) {
             }
         }
         Action::FlushLog => {
-            eprintln!("{}", model::FLUSH_LOG);
-            let _ = std::io::stderr().flush();
+            debug_print(model::FLUSH_LOG);
         }
         Action::ForceCommit => {
             let done = store.write(|ctx| {
@@ -153,10 +193,11 @@ pub(crate) fn run(context: &Context, action: Action) {
         Action::ShowEnv => {
             let separator = if cfg!(windows) { ';' } else { ':' };
             let text = model::env_text(std::env::vars(), separator);
-            eprintln!("{text}");
+            debug_print(&text);
             post(&store, vec![Job::text(text, now())]);
         }
         Action::Exit => {
+            EXIT_REQUESTED.store(true, Ordering::SeqCst);
             let _ = slint::quit_event_loop();
         }
         Action::ClearRenderingCaches => (context.clear_caches)(),

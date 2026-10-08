@@ -47,6 +47,7 @@ fn checked(ui: &MainWindow) -> bool {
     ui.invoke_menu_dismissed();
     checked
 }
+// leaf: audit-options-help-debug-action-force-idle-mode
 #[test]
 fn real_menu_checked_states_controller_matrix_activity_and_autosave_consumer() {
     let directory = tempfile::tempdir().unwrap();

@@ -281,6 +281,8 @@ pub enum Command {
     DebugFetchUrl,
     /// Override the current owned live idle decision until toggled or retired.
     DebugForceIdleMode,
+    /// Help > debug's runtime switches (`HG.x = not HG.x`).
+    DebugFlag(hydrus_core::debug_flags::Flag),
     /// Publish the actual delayed message after five seconds.
     DebugDelayedTextPopup,
     Debug(crate::debug_actions::Action),
@@ -361,6 +363,8 @@ pub struct Facts {
     pub darkmode: bool,
     /// Current unpersisted main-binding debug idle override.
     pub force_idle: bool,
+    /// The debug switches that are on.
+    pub debug_flags: Vec<hydrus_core::debug_flags::Flag>,
     pub advanced: bool,
     pub folders: FolderSettings,
     /// The import and export folders' names.
@@ -1405,6 +1409,19 @@ fn help_menu(facts: &Facts) -> Entry {
                     menu(
                         "profiling",
                         vec![item("what is this?", debug(DebugAction::ProfileInfo))],
+                    ),
+                    menu(
+                        "report modes",
+                        hydrus_core::debug_flags::Flag::REPORT_MODES
+                            .iter()
+                            .map(|flag| {
+                                check(
+                                    flag.label(),
+                                    Some(Command::DebugFlag(*flag)),
+                                    facts.debug_flags.contains(flag),
+                                )
+                            })
+                            .collect(),
                     ),
                     menu(
                         "gui actions",
