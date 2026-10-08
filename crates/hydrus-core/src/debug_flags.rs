@@ -94,10 +94,12 @@ impl Flag {
 
     /// The "report modes" submenu's switches, in the reference's order. Only
     /// switches something in hydrus-rs reads are offered.
-    pub const REPORT_MODES: [Flag; 5] = [
+    pub const REPORT_MODES: [Flag; 7] = [
         Flag::CacheReport,
         Flag::FileImportReport,
         Flag::IdleReport,
+        Flag::NetworkReport,
+        Flag::NetworkReportSilent,
         Flag::ShortcutReport,
         Flag::SubprocessReport,
     ];
@@ -146,5 +148,19 @@ pub fn report(flag: Flag, message: impl FnOnce() -> String) {
     match SINK.lock().unwrap_or_else(PoisonError::into_inner).as_ref() {
         Some(sink) => sink(&text),
         None => eprintln!("{text}"),
+    }
+}
+
+/// Network report mode (`ClientNetworkingFunctions.NetworkReportMode`): the
+/// message goes to the sink, or only to the console in silent mode.
+pub fn report_network(message: impl FnOnce() -> String) {
+    if !Flag::NetworkReport.is_on() {
+        return;
+    }
+    let text = message();
+    if Flag::NetworkReportSilent.is_on() {
+        eprintln!("{text}");
+    } else {
+        report(Flag::NetworkReport, || text);
     }
 }
