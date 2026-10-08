@@ -20,7 +20,7 @@ checkout to itself. Measured with `date -u` as the work went.
 | 15:51:37 | Code committed. |
 | 15:51:37-16:06:36 | `scripts/dev.sh pre-push`: **14 m 58 s** (lint, slint check, tests of changed crates; the GUI binary alone 288 s for 967 tests). Result: 966 pass, the known `emoji_fonts::outline_fox_is_selected_without_replacing_platform_text_fallbacks` fails on this container's fonts. |
 | 16:09:40 | PR #99 opened (branch pushed 16:09:25). |
-| 16:26:55 | CI green on the branch push (17 m 27 s). The PR's own run of the same commit: see the PR. |
+| 16:26:55 | CI green on the branch push of the first PR commit (17 m 27 s). |
 | 16:46 | Independent review: changes requested (tags too wide). Untagged geometry and the two About leaves, wired the database backup as a real modal job, fixed docs; GUI test relink after the backup edit **3 m 44 s** (the one over 2 minutes). |
 
 ## Other time lost
@@ -54,3 +54,4 @@ checkout to itself. Measured with `date -u` as the work went.
 
 - 17:36-17:46: merged master (which carried #86's `.slint` changes and the export-folders test fix) into the branch; the UI crate had to be rebuilt to check the merge, so the first `dev.sh gui` took **10 m 24 s** (UI rebuild #2, cause: master's `.slint` changes, not mine). My modal, geometry, backup and About tests pass on the merge.
 - The pull_request run of `c49d377` had its `test` job stuck at "install media tools and fonts" for over 20 minutes; the push run failed on the export-folders test race fixed by #105.
+- 18:03-18:04: **CI green on the merged head `5430315`**: the push run (17 m 55 s) and the pull_request run (16 m 30 s) both passed, tracker check too. The earlier push-run failure on `c49d377` (one racy export-folders test, fixed on master by #105) was the only red.
