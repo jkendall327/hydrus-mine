@@ -307,23 +307,24 @@ fn availability_test_is_a_which_call_with_the_reference_messages() {
     let _ = Pipeline::File;
 }
 
+fn walk(v: &mut serde_json::Value) {
+    if let serde_json::Value::Array(a) = v {
+        // [serialisable type, version, [name, key, ...]]: the key is a 64 hex string.
+        for item in a.iter_mut() {
+            if let serde_json::Value::String(s) = item
+                && s.len() == 64
+                && s.chars().all(|c| c.is_ascii_hexdigit())
+            {
+                *s = String::new();
+            }
+            walk(item);
+        }
+    }
+}
+
 /// Reference export text with the generated keys blanked, for comparison.
 fn without_keys(value: &serde_json::Value) -> serde_json::Value {
     let mut value = value.clone();
-    fn walk(v: &mut serde_json::Value) {
-        if let serde_json::Value::Array(a) = v {
-            // [serialisable type, version, [name, key, ...]]: the key is a 64 hex string.
-            for item in a.iter_mut() {
-                if let serde_json::Value::String(s) = item
-                    && s.len() == 64
-                    && s.chars().all(|c| c.is_ascii_hexdigit())
-                {
-                    *s = String::new();
-                }
-                walk(item);
-            }
-        }
-    }
     walk(&mut value);
     value
 }
