@@ -133,3 +133,19 @@ The 2026-10-08 review found:
   `git diff -U0 | grep -v '^+// leaf:'`, run the agent's new tests, stage only
   that agent's `mod` lines with `git update-index --cacheinfo` (append to the
   HEAD version), commit per agent.
+- **Round 2** (4 agents in lanes, 18-44 min each): search-pages 142,
+  options-system 49, database 33 (+16 marked not applicable), options-gui 50.
+  Done 535 -> ~830 of 1,274. One product change (worker pace extracted into
+  testable methods) and test accessors; no bugs found. I untagged 4 tags that
+  lacked a real consumer (deferred-delete switches, preview-window rating
+  sizes). Full GUI suite 819/820 (emoji_fonts, font-dependent), strict Clippy
+  clean.
+- Lanes worked: no agent reported being blocked by another's tests, only by
+  half-edited `src/` files (unavoidable with one crate). New friction: the lane
+  needs `#![allow(dead_code)]` for `common`, or leave `common` out; lanes cost
+  ~1.5 GB of disk each while active (delete at integration); `dev.sh lint`'s
+  `cargo fmt --all` touches others' files.
+- Remaining shape: ~140 `implemented` (options-media, duplicates, files-io,
+  media, shell), ~85 partial, ~240 missing (77 debug). The verification sweep
+  is nearly exhausted; next is real implementation, where `.slint` edits (and
+  so the UI split) start to matter.

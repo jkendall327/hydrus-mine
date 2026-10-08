@@ -43,6 +43,7 @@ fn count(bound: &hydrus_gui::Bound) -> usize {
     bound.pages.borrow().session().pages.len()
 }
 
+// leaf: audit-options-gui-main-window-switch-to-main-window-when-creating-new-file-search-page-from-media-viewer
 #[test]
 fn actual_middle_press_uses_canonical_tag_location_defaults_and_saved_activation() {
     let (_directories, store) = crate::subscriptions::store();

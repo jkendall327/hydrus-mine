@@ -339,6 +339,7 @@ fn most_used_child_stages_each_service_cancels_descendants_and_persists_options(
     ui.hide().unwrap();
 }
 
+// leaf: audit-options-options-apply
 #[test]
 fn the_options_window_applies_its_changes() {
     let (_dirs, store) = store();

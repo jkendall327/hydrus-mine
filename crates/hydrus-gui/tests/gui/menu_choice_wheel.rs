@@ -355,6 +355,7 @@ fn wheel_protocol_emits_single_choice_and_empty_consumes_without_selection() {
         }
     }
 }
+// leaf: audit-options-gui-misc-mouse-wheel-can-scroll-through-menu-buttons
 #[test]
 fn options_staging_saved_policy_bubbling_and_retired_roots_are_owned() {
     let windows = headless::init();

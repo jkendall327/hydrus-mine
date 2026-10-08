@@ -91,6 +91,7 @@ fn gesture(
         button: B::Left,
     });
 }
+// leaf: audit-options-gui-pages-preview-window-hide-the-bottom-left-preview-window
 #[test]
 fn real_drag_menu_saved_defaults_per_page_reopen_restore_options_and_exit_ownership() {
     let (_dirs, store) = crate::subscriptions::store();

@@ -50,6 +50,9 @@ fn edit(window: &OptionsWindow, event: &Value) {
         i32::try_from(event["input"][2].as_i64().unwrap()).unwrap(),
     );
 }
+// leaf: audit-options-gui-frame-locations-bugfix-disable-off-screen-window-rescue
+// leaf: audit-options-gui-frame-locations-when-rescuing-add-top-left-safety-padding
+// leaf: audit-options-gui-frame-locations-debug-top-left-padding-to-use-px
 #[test]
 fn staged_options_cancel_reopen_and_live_owned_opening_consumer_match_qt() {
     let fixture = hydrus_testkit::fixture_json("window_rescue.json");
