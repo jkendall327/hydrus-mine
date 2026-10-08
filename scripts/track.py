@@ -16,6 +16,7 @@ docs/rust/tracking/leaves.json; see docs/rust/tracking/README.md.
 
 import argparse
 import json
+import signal
 import re
 import sys
 from collections import Counter, defaultdict
@@ -87,6 +88,8 @@ def show(leaf, tagged):
 
 
 def main():
+    # (quiet when piped into `head`)
+    signal.signal(signal.SIGPIPE, signal.SIG_DFL)
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     sub = ap.add_subparsers(dest="cmd")
     nx = sub.add_parser("next")
