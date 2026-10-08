@@ -277,9 +277,11 @@ search.
   inspection are pending.
   "Paste image!" takes the clipboard's bitmap if it holds one, else a file
   path, else the clipboard text as a path, as the reference does. A bitmap is
-  written to a temporary PNG and hashed as a file of those pixels, so its
-  hashes are a file's, not the numpy array's (not compared against the
-  reference's bitmap path, which Qt's clipboard cannot be scripted to feed).
+  written to a temporary PNG and hashed as a file of those pixels; its pixel
+  and perceptual hashes, and every warning, are compared with the reference's
+  for the same images (`oracle/record_similar_data_paste.py`, including a
+  translucent bitmap). A local path on the system clipboard (as opposed to
+  text) is read from the system's and is not replayed from the recording.
   The archived and modified date panels are checked, with the import and
   last-viewed ones, against the shared base class's recorded scenarios; the
   recorder ran import and last-viewed only, so the other two replay the same
@@ -1140,6 +1142,10 @@ native/store/model regression source awaits hosted CI; no Rust runs locally.
   Python traceback to show.
 
 ## Repositories (`/manage_services/*`)
+
+- **Commit pending is only an editor checkbox.** The Client API permission
+  editor offers and stores the "commit pending" permission (checked against the
+  recorded permission rows), but nothing can commit to a repository.
 
 - **Pending content can't be committed.** hydrus-rs doesn't talk to
   repository servers (the PTR, file repositories), so `commit_pending`
@@ -4209,6 +4215,28 @@ directory.
 - The CPU-busy check reads per-core times from `/proc/stat`, so it exists on
   Linux only; elsewhere the system never reads busy. The reference's
   just-woke-from-sleep condition is not part of the idle gate here.
+
+## Quick-leaf checks (notes)
+
+- **Media Viewer playback** (still/animation/audio/video and scanbar) is left
+  untagged: the animation and scanbar tests run everywhere, but the libmpv
+  video test is skipped where libmpv is not installed (CI installs none), and
+  no test plays audio in the viewer.
+- **Import local files directly from source** now works: with the option off a
+  local import reads the file where it is; with it on (the default) it is
+  copied to a temporary path first, as the reference does. The reference's
+  "copying file to temp location" status text is not shown. The copy goes in
+  the database folder's `tmp` (on the same disk as the database, removed after
+  the import), not the system temp directory the reference uses, so it does not
+  move files off slow source storage onto the system partition. Only local
+  imports and import folders read the option; the Client API's add file by path
+  and the other import paths always copy, as the reference's do.
+- **Approve/deny progress** has no cancel, as in the reference. Its popup
+  appears once four seconds have passed at the start of a chunk of four pairs;
+  the reference publishes it after four seconds regardless.
+- **Shutdown and CPU options** live-enable their dependent rows only after the
+  options are applied and reopened (the reference enables them as the control
+  changes).
 
 ## System tray
 
