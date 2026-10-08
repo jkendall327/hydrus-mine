@@ -3011,8 +3011,7 @@ retains only the latest queued target. A held obsolete decode therefore permits
 one successor to display; idle workers retain no Store, and close discards queued
 work and retires running replies. Actual Qt Options, manager and CanvasPanel transitions are
 recorded in `preview_viewing_intervals.json`; native model/display/store regressions
-are authored for hosted CI. Preview playback, audio, zoom and hover/rating controls
-remain Partial.
+are authored for hosted CI. Preview zoom and hover/rating controls remain Partial.
 
 Search-page autocomplete now shares results, favourites and children tabs in
 both its embedded and floating layouts. Favourites show the full saved list;
@@ -5102,3 +5101,27 @@ when the viewer moves on is dropped, so it can never be answered for the wrong f
 Proven by replays of `oracle/fixtures/manage_tags_cog.json` (`manage_tags_cog.rs`),
 `manage_tags_viewer.json` (`manage_tags_viewer.rs`, through real key events and the
 viewer's own navigation) and `manage_tags_keys.json` (the empty-input conditions).
+
+### Preview sound
+
+The preview pane plays the file it shows, as the reference's preview canvas
+does: a video, audio file or animation whose kind the view options show in
+mpv (`preview_show_action`, mpv by default for video, audio and GIF/APNG) and
+that does not start behind an embed button plays in the media viewer's
+player, from the start, looping, and starts paused if the view says so. A
+still, or a kind shown some other way, plays nothing, and moving on stops it.
+It plays at the volume and mute the reference picks (`ClientGUIMediaVolume`):
+the preview's own volume (`preview_audio_volume`, imported from a v688
+install with `preview_audio_mute`) if **File > Options > audio > The preview
+window has its own volume** is on (it is, by default), else the global
+volume; it is muted if either its own mute or the global mute is on. ctrl+g,
+the Options window and the control all take effect on the playing file.
+
+A file with sound has the reference's volume control at the bottom right of
+the preview: the global mute button, and with the pointer on it the volume
+slider (moving the preview's own volume or the global one, whichever applies)
+and the preview's own mute button. `oracle/record_preview_audio.py` records
+the reference's choice of volume and mute for every combination of the
+option, the three volumes and the three mutes, what the real preview control
+moves and flips, and the kinds the preview plays; they are replayed in
+`tests/model/preview_audio.rs` and `tests/gui/preview_audio.rs`.

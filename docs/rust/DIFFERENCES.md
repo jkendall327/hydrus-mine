@@ -2151,7 +2151,7 @@ preview minimum/maximum fields, with the same cap-before-minimum and duration-ti
 policy. Successful raster presentation accepts the original request timestamp;
 unrenderable files and loading placeholders are rejected rather than counted as
 views. Qt accepts media before its player/decoder renders. The native canvas does
-not yet reproduce preview audio/video playback, embed/external buttons, interactive zoom/pan,
+not yet reproduce preview embed/external buttons, interactive zoom/pan,
 hovers or rating controls. These broader preview parents remain Partial. Owned
 page/request generations retire late decoded frames and rebound-window callbacks;
 hidden/cleared media and accepted client close finish once. Actual Qt boundary
@@ -3851,8 +3851,7 @@ change nothing). They are marked out of scope in `docs/rust/tracking/`.
 ## Options kept but not used
 
 - These Options rows are kept and edited, as the reference keeps them, but
-  nothing in hydrus-rs reads them yet: the preview window's own volume (the
-  preview shows a still or poster and plays nothing), the REQUESTS_CA_BUNDLE
+  nothing in hydrus-rs reads them yet: the REQUESTS_CA_BUNDLE
   switch (hydrus-rs uses its own TLS roots), drag-and-drop export (no files
   can be dragged out yet), the Qt-only gui misc and frame switches, the
   integer locale switch, the hide-page signal, the URL drop page switch, mpv's
@@ -4288,3 +4287,24 @@ directory.
   keys were the one concrete reference behaviour found missing and are now done,
   but no test covers what those leaves name as a whole, and their long notes (context
   menus, selection, undo history) were not re-verified here.
+
+## Preview sound
+
+- The preview plays through the media viewer's player (`mpv.rs`), so it needs
+  libmpv; without it the preview keeps showing the still, as the viewer does.
+  The tests run without libmpv: the preview's player records what it was asked
+  to play and the volume and mute it was given, and the tests check those
+  (which kinds play, which volume applies under each setting, the control, the
+  Options row). **Only verified with libmpv, by hand and not in CI:** that
+  sound actually comes out, that video frames replace the still in the pane,
+  and that a file starting paused (`preview_start_paused`) is paused (the
+  decision is made, but nothing observes the pause without mpv).
+- A kind whose preview starts behind an embed button (`preview_start_with_embed`)
+  plays nothing, since hydrus-rs has no embed button yet; the reference plays
+  it after a click.
+- The reference's preview control is a pop-up window that appears when the
+  pointer is on the global mute button; here it is drawn in the pane, at the
+  bottom right of the media, and opens in the same way. Its look (icons are
+  text speaker glyphs) is not the reference's.
+- The preview's player is one per window, not one per page: switching pages
+  starts the new page's file afresh, rather than keeping each page's player.
