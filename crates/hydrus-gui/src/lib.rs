@@ -6072,6 +6072,54 @@ pub(crate) fn clipboard_text() -> Result<Option<String>, String> {
     }
 }
 
+/// A bitmap on the clipboard: RGBA, row by row.
+#[derive(Debug)]
+pub struct ClipboardImage {
+    pub width: usize,
+    pub height: usize,
+    pub rgba: Vec<u8>,
+}
+
+type ClipboardImageReader = Rc<dyn Fn() -> Option<ClipboardImage>>;
+thread_local! {
+    static CLIPBOARD_IMAGE_READER: RefCell<Option<ClipboardImageReader>> = RefCell::new(None);
+}
+
+/// Substitute the clipboard's bitmap on this thread (for tests; the
+/// reader's `None` is a clipboard without an image).
+pub fn set_clipboard_image_reader(reader: impl Fn() -> Option<ClipboardImage> + 'static) {
+    CLIPBOARD_IMAGE_READER.with(|slot| *slot.borrow_mut() = Some(Rc::new(reader)));
+}
+
+/// The clipboard's bitmap, if it holds one (the reference's
+/// `ClipboardHasImage` and `GetClipboardImage`).
+pub(crate) fn clipboard_image() -> Option<ClipboardImage> {
+    if let Some(reader) = CLIPBOARD_IMAGE_READER.with(|reader| reader.borrow().clone()) {
+        return reader();
+    }
+    let image = arboard::Clipboard::new().ok()?.get_image().ok()?;
+    Some(ClipboardImage {
+        width: image.width,
+        height: image.height,
+        rgba: image.bytes.into_owned(),
+    })
+}
+
+/// The file paths on the clipboard (the reference's
+/// `GetClipboardLocalPaths`), none when it holds none.
+pub(crate) fn clipboard_paths() -> Vec<std::path::PathBuf> {
+    if CLIPBOARD_IMAGE_READER.with(|reader| reader.borrow().is_some())
+        || CLIPBOARD_READER.with(|reader| reader.borrow().is_some())
+        || PASTER.with(|p| p.borrow().is_some())
+    {
+        return Vec::new();
+    }
+    arboard::Clipboard::new()
+        .ok()
+        .and_then(|mut c| c.get().file_list().ok())
+        .unwrap_or_default()
+}
+
 type ClipboardReader = Rc<dyn Fn() -> Result<Option<String>, String>>;
 thread_local! {
     static CLIPBOARD_READER: RefCell<Option<ClipboardReader>> = RefCell::new(None);

@@ -1945,3 +1945,113 @@ fn archived_and_modified_date_panels_make_the_recorded_date_and_time_predicates(
         assert!(panel.predicates(&context).is_err(), "{class}: no 25:61");
     }
 }
+
+// "Paste image!" takes the clipboard's bitmap if it holds one, else a file
+// path, as the reference's `_Paste` does; the hashes are those of a file of
+// the same pixels.
+// leaf: audit-options-predicate-similar-files-data-similartodata-paste
+#[test]
+fn paste_image_takes_a_clipboard_bitmap_or_a_file_path_and_clear_empties_both_hashes() {
+    let (_dirs, store) = store();
+    let _windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    ui.show().unwrap();
+    let bound = bind(&ui, Pages::single(SearchPage::new(store.clone())));
+    let editor = || {
+        bound
+            .predicate_editor
+            .borrow()
+            .as_ref()
+            .map(slint::ComponentHandle::clone_strong)
+            .expect("an editor")
+    };
+    let text = |window: &hydrus_gui::PredicateEditorWindow, f: usize| {
+        window
+            .get_panels()
+            .row_data(0)
+            .unwrap()
+            .fields
+            .row_data(f)
+            .unwrap()
+            .text
+            .to_string()
+    };
+    // a 16 x 16 picture with some structure
+    let (width, height) = (16_usize, 16_usize);
+    let mut rgba = Vec::new();
+    for y in 0..height {
+        for x in 0..width {
+            rgba.extend([
+                (x * 16) as u8,
+                (y * 16) as u8,
+                if (x / 4 + y / 4) % 2 == 0 { 200 } else { 30 },
+                255,
+            ]);
+        }
+    }
+    let dir = tempfile::tempdir().unwrap();
+    let path = dir.path().join("same pixels.png");
+    {
+        let file = std::fs::File::create(&path).unwrap();
+        let mut encoder = png::Encoder::new(file, width as u32, height as u32);
+        encoder.set_color(png::ColorType::Rgba);
+        encoder.set_depth(png::BitDepth::Eight);
+        encoder
+            .write_header()
+            .unwrap()
+            .write_image_data(&rgba)
+            .unwrap();
+    }
+
+    // nothing on the clipboard: the reference's warning, nothing pasted
+    hydrus_gui::set_clipboard_image_reader(|| None);
+    hydrus_gui::set_clipboard_reader(|| Ok(None));
+    ui.invoke_search_edited("".into());
+    ui.invoke_suggestion_chosen(suggestion(&ui, "system:similar files"));
+    let window = editor();
+    window.invoke_pressed(0, 2);
+    assert_eq!(
+        window.get_error(),
+        "Did not see an image bitmap or a file path in the clipboard!"
+    );
+    assert_eq!(text(&window, 4), "");
+
+    // a file path: its pixel and perceptual hashes
+    let shown = path.to_string_lossy().into_owned();
+    hydrus_gui::set_clipboard_reader(move || Ok(Some(shown.clone())));
+    window.invoke_pressed(0, 2);
+    let (pixel, perceptual) = (text(&window, 4), text(&window, 5));
+    assert_eq!(pixel.len(), 64, "{pixel}");
+    assert_eq!(perceptual.len(), 16, "{perceptual}");
+
+    // clear, then the bitmap (which is preferred to text, as the reference
+    // prefers it): the same hashes as the file of those pixels
+    window.invoke_pressed(0, 1);
+    assert_eq!(text(&window, 4), "");
+    let pixels = rgba.clone();
+    hydrus_gui::set_clipboard_image_reader(move || {
+        Some(hydrus_gui::ClipboardImage {
+            width,
+            height,
+            rgba: pixels.clone(),
+        })
+    });
+    hydrus_gui::set_clipboard_reader(|| Ok(Some("/no/such/file.png".to_owned())));
+    window.invoke_pressed(0, 2);
+    assert_eq!(text(&window, 4), pixel);
+    assert_eq!(text(&window, 5), perceptual);
+    // pasting again keeps each hash once
+    window.invoke_pressed(0, 2);
+    assert_eq!(text(&window, 4), pixel);
+
+    // text that is no file says so
+    hydrus_gui::set_clipboard_image_reader(|| None);
+    window.invoke_pressed(0, 1);
+    window.invoke_pressed(0, 2);
+    assert_eq!(
+        window.get_error(),
+        "Sorry, that clipboard text did not look like a valid file path!"
+    );
+    hydrus_gui::clear_clipboard_reader();
+    hydrus_gui::set_clipboard_image_reader(|| None);
+}

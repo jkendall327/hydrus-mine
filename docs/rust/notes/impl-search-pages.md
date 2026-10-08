@@ -23,12 +23,38 @@ Most of this was already implemented; the states were stale. No production code 
 - Active-edit: the active list's inherited sibling/parent entries are not covered (tracked with tag relationships).
 - Multiwatcher test covers watcher pages only (first watcher auto-highlighted); gallery pages were not checked as untouched.
 
-## Not done
+## Not done in the first pass
 
-- audit-options-predicate-similar-files-data-similartodata-paste: reading a clipboard bitmap needs arboard's `image-data` feature (pulls in `image`, changes hakari and rebuilds). Native paste takes a file path only.
+- similartodata-paste (done in the final section below).
 
 ## Friction
 
 - First `dev.sh ui` build: 12 min here (737 s), then ~1 min per test-binary relink.
 - A missing `AdvancedMode(true)` hides domain choices in the favourite editor; the existing test sets it without a comment.
 - Highlight rules (first watcher auto-highlighted, activating the shown one clears it) cost one failed run.
+
+## Final section (after the coordinator's change of plan)
+
+Finished: `audit-options-predicate-similar-files-data-similartodata-paste`.
+"Paste image!" now takes the clipboard bitmap (arboard `image-data`, hakari
+regenerated and verified, `Cargo.lock` updated), else a file path, else text,
+in the reference's order; the bitmap is written as a PNG and hashed like a
+file. `predicate_editors::paste_image_takes_a_clipboard_bitmap_...` checks
+nothing/path/bitmap/duplicate/invalid-path and "clear". Not compared against a
+recording of the reference's bitmap path (no oracle run; the merge of the
+base branch and `scripts/setup-oracle.sh` were not done).
+
+Started and dropped: nothing in code. The merge of
+`origin/claude/pensive-darwin-kvjhpq` was refused by the permission
+classifier, then the plan changed.
+
+Not started: the `editors` workstream (Slint tooltips unexamined: I did not
+check whether Slint 1.18 has a tooltip mechanism) and the `network` leaves
+(`audit-network-exchange-unsupported`, `exchange-domain`,
+`import-external-program-entry`). Sizes unknown; I read none of their code.
+
+Note: the archived/modified date-time tags rest on replaying the import and
+last-viewed scenarios; the coordinator is re-recording them.
+
+Friction: `cargo-hakari` was not installed (~4 min to install); the
+`image-data` change rebuilt hydrus-gui in ~7 min.

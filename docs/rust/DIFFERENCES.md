@@ -275,9 +275,11 @@ search.
   styling uses the existing Slint notice rather than Qt's warning icon. Hash
   source regressions and PNG captures are authored; hosted execution/rendered
   inspection are pending.
-  "Paste image!" takes a file's path from the clipboard, not image data
-  (reading a bitmap needs `arboard`'s `image-data` feature and so the `image`
-  crate; the leaf `...similartodata-paste` stays open for that).
+  "Paste image!" takes the clipboard's bitmap if it holds one, else a file
+  path, else the clipboard text as a path, as the reference does. A bitmap is
+  written to a temporary PNG and hashed as a file of those pixels, so its
+  hashes are a file's, not the numpy array's (not compared against the
+  reference's bitmap path, which Qt's clipboard cannot be scripted to feed).
   The archived and modified date panels are checked, with the import and
   last-viewed ones, against the shared base class's recorded scenarios; the
   recorder ran import and last-viewed only, so the other two replay the same
