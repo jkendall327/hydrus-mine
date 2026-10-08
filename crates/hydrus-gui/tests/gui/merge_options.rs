@@ -314,3 +314,139 @@ fn the_duplicate_filters_custom_action_merges_by_its_own_options() {
         .unwrap();
     assert!(groups > 0, "the pair is set as duplicates");
 }
+
+fn texts(model: &slint::ModelRc<slint::SharedString>) -> Vec<String> {
+    model.iter().map(|s| s.to_string()).collect()
+}
+
+// leaf: audit-media-merge-ratings
+#[test]
+fn the_ratings_list_adds_edits_and_deletes_as_the_references_does() {
+    // the editor's steps on ratings, as the reference's recording has them
+    // (`oracle/record_merge_options_editor.py`), done in the window on the
+    // same services: the service and action questions asked, the rows
+    // listed after each step, and the options written on Apply
+    let recorded = hydrus_testkit::fixture_json("merge_options_editor.json");
+    let _windows = headless::init();
+    let legacy = hydrus_testkit::legacy_fixture("basic");
+    let dir = tempfile::tempdir().unwrap();
+    hydrus_store::import::import_legacy(
+        legacy.path(),
+        &dir.path().join(hydrus_store::store::DB_FILE_NAME),
+    )
+    .unwrap();
+    let store = Store::open(dir.path()).unwrap();
+    duplicates_page(&store);
+    let ui = MainWindow::new().unwrap();
+    let _bound = bind(&ui, Pages::open(Arc::clone(&store)).unwrap());
+    let mut played = 0;
+    for case in recorded["cases"].as_array().unwrap() {
+        // (the page's menu: better, same quality, alternates, false positive;
+        // the ones started from the client's options, not a rule's or empty)
+        let index = match case["decision"].as_str().unwrap() {
+            "better" => 0,
+            "same quality" => 1,
+            "alternates" => 2,
+            _ => 3,
+        };
+        if case["start"] != "client" || case["custom"].as_bool().unwrap() {
+            continue;
+        }
+        ui.invoke_duplicates_action("merge options".into(), index, false, false);
+        let editor = last_opened().expect("it opens");
+        let row_of = |editor: &MergeOptionsWindow, name: &str| -> i32 {
+            cells(&editor.get_rating_rows())
+                .iter()
+                .position(|r| r[0] == name)
+                .unwrap_or_else(|| panic!("no rating row {name}")) as i32
+        };
+        let first = &case["states"][0]["state"]["rating_rows"];
+        let rows = |value: &serde_json::Value| -> Vec<Vec<String>> {
+            value
+                .as_array()
+                .unwrap()
+                .iter()
+                .map(|r| {
+                    r.as_array()
+                        .unwrap()
+                        .iter()
+                        .map(|c| c.as_str().unwrap().to_owned())
+                        .collect()
+                })
+                .collect()
+        };
+        assert_eq!(cells(&editor.get_rating_rows()), rows(first), "{}", case["decision"]);
+        for state in case["states"].as_array().unwrap() {
+            let Some(step) = state["step"].as_array() else {
+                continue;
+            };
+            let kind = step[0].as_str().unwrap();
+            if !kind.ends_with("rating") && kind != "delete_ratings" {
+                continue;
+            }
+            let at = format!("{} {step:?}", case["decision"]);
+            let said = state["said"].as_array().unwrap();
+            let ask = |editor: &MergeOptionsWindow, title: &str, choices: &serde_json::Value| {
+                assert_eq!(editor.get_asking_title(), title, "{at}");
+                let mut shown = texts(&editor.get_asking_choices());
+                let mut theirs: Vec<String> = choices
+                    .as_array()
+                    .unwrap()
+                    .iter()
+                    .map(|c| c.as_str().unwrap().to_owned())
+                    .collect();
+                shown.sort();
+                theirs.sort();
+                assert_eq!(shown, theirs, "{at}");
+            };
+            let choose = |editor: &MergeOptionsWindow, label: &str| {
+                let at = texts(&editor.get_asking_choices())
+                    .iter()
+                    .position(|c| c == label)
+                    .unwrap_or_else(|| panic!("no choice {label}"));
+                editor.invoke_chosen(at as i32);
+            };
+            match kind {
+                "add_rating" => {
+                    editor.invoke_list_button(1, "add".into());
+                    // (a lone service is taken without asking)
+                    let first = &said[0];
+                    if let Some(title) = first.get("select") {
+                        ask(&editor, title.as_str().unwrap(), &first["choices"]);
+                    } else {
+                        assert!(!editor.get_asking(), "{at}");
+                    }
+                    if let Some(service) = step[1].as_str() {
+                        choose(&editor, service);
+                        if let Some(second) = said.get(1) {
+                            ask(&editor, second["select"].as_str().unwrap(), &second["choices"]);
+                            choose(&editor, step[2].as_str().unwrap());
+                        }
+                    } else {
+                        editor.invoke_cancelled();
+                    }
+                }
+                "edit_rating" => {
+                    let row = row_of(&editor, step[1].as_str().unwrap());
+                    editor.invoke_row_activated(1, row);
+                    ask(&editor, said[0]["select"].as_str().unwrap(), &said[0]["choices"]);
+                    choose(&editor, step[2].as_str().unwrap());
+                }
+                _ => {
+                    for name in step[1].as_array().unwrap() {
+                        let row = row_of(&editor, name.as_str().unwrap());
+                        editor.invoke_row_clicked(1, row, true, false);
+                    }
+                    editor.invoke_list_button(1, "delete".into());
+                    assert_eq!(editor.get_asking_message(), said[0]["asked"].as_str().unwrap(), "{at}");
+                    editor.invoke_chosen(0);
+                }
+            }
+            assert!(!editor.get_asking(), "{at}");
+            assert_eq!(cells(&editor.get_rating_rows()), rows(&state["state"]["rating_rows"]), "{at}");
+            played += 1;
+        }
+        editor.invoke_apply();
+    }
+    assert!(played >= 5, "{played}");
+}

@@ -167,9 +167,9 @@
    ],
    "recheck": {
     "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "The window test adds two children in nested editors, deletes one, applies, persists and reopens; AND/empty-AND summaries are replayed against the recording. Editing an existing child (sub_edit is never invoked), nested AND-in-AND depth and the AND summary in the GUI are untested, so add/edit/delete is only two thirds covered. Tracker note is stale: a GUI test does accept and persist edited comparators. Tests: crates/hydrus-gui/tests/gui/duplicates_lane_page.rs:507 edited_comparators_are_accepted_and_persisted_with_their_summaries; crates/hydrus-gui-model/tests/model/auto_resolution_rules.rs rules_rows_and_comparators_are_the_references"
+    "class": "sound",
+    "by": "issue 88 session",
+    "note": "Sound: tests/gui/auto_resolution_comparator_editors.rs and_and_or_groups_are_built_edited_and_nested... builds the reference's own comparators through the nested editors (an AND inside an OR; a child made as '<' and edited to '=' through the group's edit button; a third child deleted; a second OR whose AND is reopened from the rule's list) and the groups' summaries, as the editors and the rule's list show them, are the reference's recorded GetSummary text (oracle/fixtures/auto_resolution_summaries.json)."
    }
   },
   {
@@ -226,9 +226,9 @@
    ],
    "recheck": {
     "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Only adds one pair-test child (A and B have the same filetype) to an OR and checks the persisted Or(vec![Pair]); editing or deleting an OR child and nesting are never driven (the delete is covered only for AND). Tag sits on a broad rules-list test; the first-pass note admits deep editing is source-traced. Tests: crates/hydrus-gui/tests/gui/auto_resolution_rules.rs:41 rules_are_added_edited_deleted_and_written"
+    "class": "sound",
+    "by": "issue 88 session",
+    "note": "Sound: tests/gui/auto_resolution_comparator_editors.rs and_and_or_groups_are_built_edited_and_nested... builds an OR of an AND and a relative test, and an OR of an AND and a jpeg-quality test, through the nested editors, adding, editing an existing child and nesting, and compares the OR's summary with the reference's recorded text."
    }
   },
   {
@@ -246,9 +246,9 @@
    ],
    "recheck": {
     "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Window test does accept and persist width, approximate-percent 15, multiplier 2.5, delta 3 and reopens them, and checks the 'not a number' error; but only one property and one operator family are driven (no absolute tolerance, no time property presentation, no other operators, delta errors), and the error text and operator lists are typed from source. Tracker note is stale: a GUI test does accept and persist edited comparators. Tests: crates/hydrus-gui/tests/gui/duplicates_lane_page.rs:507 edited_comparators_are_accepted_and_persisted_with_their_summaries; crates/hydrus-gui/tests/gui/auto_resolution_rules.rs:41 (multiplier 1.5, cancelled)"
+    "class": "sound",
+    "by": "issue 88 session",
+    "note": "Sound: tests/gui/auto_resolution_comparator_editors.rs a_relative_comparator_of_each_operator_family... sets property, operator, multiplier, delta and range for the six relative comparators of the reference's 'more comparators' rule (greater, less-or-equal with a multiplier, a duration with a delta in milliseconds, framerate approximate percent, number of tags with a delta, not equal) and the editor's summary and the list's row are the reference's recorded GetSummary text."
    }
   },
   {
