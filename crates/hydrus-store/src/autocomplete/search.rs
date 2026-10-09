@@ -611,8 +611,31 @@ fn search_tags_inner(
                 TagMatcher::Nothing | TagMatcher::Text { .. } => (),
             }
         }
+        // only tags the searched tag service has (in its mappings, or in its
+        // siblings and parents), as the reference looks its zero-count
+        // results up in that service's own tag tables
+        let mut known: HashSet<TagId> = HashSet::new();
+        for &service in &tag_services {
+            let graph = graphs.get(service);
+            known.extend(candidates.iter().copied().filter(|&t| graph.touches(t)));
+            let tables = MappingTables::new(service);
+            let table = match scope.display {
+                TagDisplayType::Storage => tables.counts,
+                TagDisplayType::Display => tables.display_counts,
+            };
+            let sql = format!(
+                "SELECT DISTINCT tag_id FROM {table} WHERE tag_id IN rarray(?1) AND (current > 0 OR pending > 0)"
+            );
+            let mut stmt = conn.prepare_cached(&sql)?;
+            let rows = stmt.query_map([id_array(&candidates)], |row| row.get::<_, TagId>(0))?;
+            for tag in rows {
+                known.insert(tag?);
+            }
+        }
         for candidate in candidates {
-            merged.entry(candidate).or_default();
+            if known.contains(&candidate) {
+                merged.entry(candidate).or_default();
+            }
         }
     }
     if merged.is_empty() {

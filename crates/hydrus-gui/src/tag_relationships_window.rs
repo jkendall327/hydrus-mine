@@ -884,19 +884,16 @@ pub(crate) fn open(
         move |file| {
             let text = binding.borrow().model.export();
             if file {
-                let Some(path) = rfd::FileDialog::new()
-                    .set_title("Set the export path.")
-                    .set_file_name(
-                        if binding.borrow().model.kind()
-                            == hydrus_store::display::RelationKind::Siblings
-                        {
-                            "siblings.txt"
-                        } else {
-                            "parents.txt"
-                        },
-                    )
-                    .save_file()
-                else {
+                let Some(path) = crate::pick_save(
+                    "Set the export path.",
+                    if binding.borrow().model.kind()
+                        == hydrus_store::display::RelationKind::Siblings
+                    {
+                        "siblings.txt"
+                    } else {
+                        "parents.txt"
+                    },
+                ) else {
                     return;
                 };
                 if let Err(e) = std::fs::write(path, text)

@@ -1,0 +1,608 @@
+{
+  "mappings": [
+    [
+      "my tags",
+      "wd:mine",
+      [
+        "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+        "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61"
+      ]
+    ],
+    [
+      "my tags",
+      "wd:both",
+      [
+        "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b"
+      ]
+    ],
+    [
+      "downloader tags",
+      "wd:both",
+      [
+        "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+        "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61",
+        "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147"
+      ]
+    ],
+    [
+      "downloader tags",
+      "wd:down",
+      [
+        "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147"
+      ]
+    ]
+  ],
+  "trashed": [
+    "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61"
+  ],
+  "cases": [
+    {
+      "domain": "my tags",
+      "override": null,
+      "text": "wd:bot",
+      "location": [
+        "my files"
+      ],
+      "tag_service": "my tags",
+      "display_service": "my tags",
+      "location_label": "my files",
+      "tag_label": "my tags",
+      "rows": [
+        "wd:bot",
+        "wd:both (1)"
+      ]
+    },
+    {
+      "domain": "my tags",
+      "override": null,
+      "text": "wd:min",
+      "location": [
+        "my files"
+      ],
+      "tag_service": "my tags",
+      "display_service": "my tags",
+      "location_label": "my files",
+      "tag_label": "my tags",
+      "rows": [
+        "wd:min",
+        "wd:mine (1)"
+      ]
+    },
+    {
+      "domain": "my tags",
+      "override": null,
+      "text": "wd:dow",
+      "location": [
+        "my files"
+      ],
+      "tag_service": "my tags",
+      "display_service": "my tags",
+      "location_label": "my files",
+      "tag_label": "my tags",
+      "rows": [
+        "wd:dow"
+      ]
+    },
+    {
+      "domain": "my tags",
+      "override": "my files",
+      "text": "wd:bot",
+      "location": [
+        "my files"
+      ],
+      "tag_service": "my tags",
+      "display_service": "my tags",
+      "location_label": "my files",
+      "tag_label": "my tags",
+      "rows": [
+        "wd:bot",
+        "wd:both (1)"
+      ]
+    },
+    {
+      "domain": "my tags",
+      "override": "my files",
+      "text": "wd:min",
+      "location": [
+        "my files"
+      ],
+      "tag_service": "my tags",
+      "display_service": "my tags",
+      "location_label": "my files",
+      "tag_label": "my tags",
+      "rows": [
+        "wd:min",
+        "wd:mine (1)"
+      ]
+    },
+    {
+      "domain": "my tags",
+      "override": "my files",
+      "text": "wd:dow",
+      "location": [
+        "my files"
+      ],
+      "tag_service": "my tags",
+      "display_service": "my tags",
+      "location_label": "my files",
+      "tag_label": "my tags",
+      "rows": [
+        "wd:dow"
+      ]
+    },
+    {
+      "domain": "my tags",
+      "override": "trash",
+      "text": "wd:bot",
+      "location": [
+        "trash"
+      ],
+      "tag_service": "my tags",
+      "display_service": "my tags",
+      "location_label": "trash",
+      "tag_label": "my tags",
+      "rows": [
+        "wd:bot",
+        "wd:both"
+      ]
+    },
+    {
+      "domain": "my tags",
+      "override": "trash",
+      "text": "wd:min",
+      "location": [
+        "trash"
+      ],
+      "tag_service": "my tags",
+      "display_service": "my tags",
+      "location_label": "trash",
+      "tag_label": "my tags",
+      "rows": [
+        "wd:min",
+        "wd:mine"
+      ]
+    },
+    {
+      "domain": "my tags",
+      "override": "trash",
+      "text": "wd:dow",
+      "location": [
+        "trash"
+      ],
+      "tag_service": "my tags",
+      "display_service": "my tags",
+      "location_label": "trash",
+      "tag_label": "my tags",
+      "rows": [
+        "wd:dow"
+      ]
+    },
+    {
+      "domain": "my tags",
+      "override": "all known files",
+      "text": "wd:bot",
+      "location": [
+        "all known files"
+      ],
+      "tag_service": "my tags",
+      "display_service": "my tags",
+      "location_label": "all known files with tags",
+      "tag_label": "my tags",
+      "rows": [
+        "wd:bot",
+        "wd:both (1)"
+      ]
+    },
+    {
+      "domain": "my tags",
+      "override": "all known files",
+      "text": "wd:min",
+      "location": [
+        "all known files"
+      ],
+      "tag_service": "my tags",
+      "display_service": "my tags",
+      "location_label": "all known files with tags",
+      "tag_label": "my tags",
+      "rows": [
+        "wd:min",
+        "wd:mine (2)"
+      ]
+    },
+    {
+      "domain": "my tags",
+      "override": "all known files",
+      "text": "wd:dow",
+      "location": [
+        "all known files"
+      ],
+      "tag_service": "my tags",
+      "display_service": "my tags",
+      "location_label": "all known files with tags",
+      "tag_label": "my tags",
+      "rows": [
+        "wd:dow"
+      ]
+    },
+    {
+      "domain": "downloader tags",
+      "override": null,
+      "text": "wd:bot",
+      "location": [
+        "my files"
+      ],
+      "tag_service": "downloader tags",
+      "display_service": "my tags",
+      "location_label": "my files",
+      "tag_label": "downloader tags",
+      "rows": [
+        "wd:bot",
+        "wd:both (2)"
+      ]
+    },
+    {
+      "domain": "downloader tags",
+      "override": null,
+      "text": "wd:min",
+      "location": [
+        "my files"
+      ],
+      "tag_service": "downloader tags",
+      "display_service": "my tags",
+      "location_label": "my files",
+      "tag_label": "downloader tags",
+      "rows": [
+        "wd:min"
+      ]
+    },
+    {
+      "domain": "downloader tags",
+      "override": null,
+      "text": "wd:dow",
+      "location": [
+        "my files"
+      ],
+      "tag_service": "downloader tags",
+      "display_service": "my tags",
+      "location_label": "my files",
+      "tag_label": "downloader tags",
+      "rows": [
+        "wd:dow",
+        "wd:down (1)"
+      ]
+    },
+    {
+      "domain": "downloader tags",
+      "override": "my files",
+      "text": "wd:bot",
+      "location": [
+        "my files"
+      ],
+      "tag_service": "downloader tags",
+      "display_service": "my tags",
+      "location_label": "my files",
+      "tag_label": "downloader tags",
+      "rows": [
+        "wd:bot",
+        "wd:both (2)"
+      ]
+    },
+    {
+      "domain": "downloader tags",
+      "override": "my files",
+      "text": "wd:min",
+      "location": [
+        "my files"
+      ],
+      "tag_service": "downloader tags",
+      "display_service": "my tags",
+      "location_label": "my files",
+      "tag_label": "downloader tags",
+      "rows": [
+        "wd:min"
+      ]
+    },
+    {
+      "domain": "downloader tags",
+      "override": "my files",
+      "text": "wd:dow",
+      "location": [
+        "my files"
+      ],
+      "tag_service": "downloader tags",
+      "display_service": "my tags",
+      "location_label": "my files",
+      "tag_label": "downloader tags",
+      "rows": [
+        "wd:dow",
+        "wd:down (1)"
+      ]
+    },
+    {
+      "domain": "downloader tags",
+      "override": "trash",
+      "text": "wd:bot",
+      "location": [
+        "trash"
+      ],
+      "tag_service": "downloader tags",
+      "display_service": "my tags",
+      "location_label": "trash",
+      "tag_label": "downloader tags",
+      "rows": [
+        "wd:bot",
+        "wd:both"
+      ]
+    },
+    {
+      "domain": "downloader tags",
+      "override": "trash",
+      "text": "wd:min",
+      "location": [
+        "trash"
+      ],
+      "tag_service": "downloader tags",
+      "display_service": "my tags",
+      "location_label": "trash",
+      "tag_label": "downloader tags",
+      "rows": [
+        "wd:min"
+      ]
+    },
+    {
+      "domain": "downloader tags",
+      "override": "trash",
+      "text": "wd:dow",
+      "location": [
+        "trash"
+      ],
+      "tag_service": "downloader tags",
+      "display_service": "my tags",
+      "location_label": "trash",
+      "tag_label": "downloader tags",
+      "rows": [
+        "wd:dow",
+        "wd:down"
+      ]
+    },
+    {
+      "domain": "downloader tags",
+      "override": "all known files",
+      "text": "wd:bot",
+      "location": [
+        "all known files"
+      ],
+      "tag_service": "downloader tags",
+      "display_service": "my tags",
+      "location_label": "all known files with tags",
+      "tag_label": "downloader tags",
+      "rows": [
+        "wd:bot",
+        "wd:both (3)"
+      ]
+    },
+    {
+      "domain": "downloader tags",
+      "override": "all known files",
+      "text": "wd:min",
+      "location": [
+        "all known files"
+      ],
+      "tag_service": "downloader tags",
+      "display_service": "my tags",
+      "location_label": "all known files with tags",
+      "tag_label": "downloader tags",
+      "rows": [
+        "wd:min"
+      ]
+    },
+    {
+      "domain": "downloader tags",
+      "override": "all known files",
+      "text": "wd:dow",
+      "location": [
+        "all known files"
+      ],
+      "tag_service": "downloader tags",
+      "display_service": "my tags",
+      "location_label": "all known files with tags",
+      "tag_label": "downloader tags",
+      "rows": [
+        "wd:dow",
+        "wd:down (1)"
+      ]
+    },
+    {
+      "domain": "all known tags",
+      "override": null,
+      "text": "wd:bot",
+      "location": [
+        "my files"
+      ],
+      "tag_service": "all known tags",
+      "display_service": "my tags",
+      "location_label": "my files",
+      "tag_label": "all known tags",
+      "rows": [
+        "wd:bot",
+        "wd:both (2-3)"
+      ]
+    },
+    {
+      "domain": "all known tags",
+      "override": null,
+      "text": "wd:min",
+      "location": [
+        "my files"
+      ],
+      "tag_service": "all known tags",
+      "display_service": "my tags",
+      "location_label": "my files",
+      "tag_label": "all known tags",
+      "rows": [
+        "wd:min",
+        "wd:mine (1)"
+      ]
+    },
+    {
+      "domain": "all known tags",
+      "override": null,
+      "text": "wd:dow",
+      "location": [
+        "my files"
+      ],
+      "tag_service": "all known tags",
+      "display_service": "my tags",
+      "location_label": "my files",
+      "tag_label": "all known tags",
+      "rows": [
+        "wd:dow",
+        "wd:down (1)"
+      ]
+    },
+    {
+      "domain": "all known tags",
+      "override": "my files",
+      "text": "wd:bot",
+      "location": [
+        "my files"
+      ],
+      "tag_service": "all known tags",
+      "display_service": "my tags",
+      "location_label": "my files",
+      "tag_label": "all known tags",
+      "rows": [
+        "wd:bot",
+        "wd:both (2-3)"
+      ]
+    },
+    {
+      "domain": "all known tags",
+      "override": "my files",
+      "text": "wd:min",
+      "location": [
+        "my files"
+      ],
+      "tag_service": "all known tags",
+      "display_service": "my tags",
+      "location_label": "my files",
+      "tag_label": "all known tags",
+      "rows": [
+        "wd:min",
+        "wd:mine (1)"
+      ]
+    },
+    {
+      "domain": "all known tags",
+      "override": "my files",
+      "text": "wd:dow",
+      "location": [
+        "my files"
+      ],
+      "tag_service": "all known tags",
+      "display_service": "my tags",
+      "location_label": "my files",
+      "tag_label": "all known tags",
+      "rows": [
+        "wd:dow",
+        "wd:down (1)"
+      ]
+    },
+    {
+      "domain": "all known tags",
+      "override": "trash",
+      "text": "wd:bot",
+      "location": [
+        "trash"
+      ],
+      "tag_service": "all known tags",
+      "display_service": "my tags",
+      "location_label": "trash",
+      "tag_label": "all known tags",
+      "rows": [
+        "wd:bot",
+        "wd:both"
+      ]
+    },
+    {
+      "domain": "all known tags",
+      "override": "trash",
+      "text": "wd:min",
+      "location": [
+        "trash"
+      ],
+      "tag_service": "all known tags",
+      "display_service": "my tags",
+      "location_label": "trash",
+      "tag_label": "all known tags",
+      "rows": [
+        "wd:min",
+        "wd:mine"
+      ]
+    },
+    {
+      "domain": "all known tags",
+      "override": "trash",
+      "text": "wd:dow",
+      "location": [
+        "trash"
+      ],
+      "tag_service": "all known tags",
+      "display_service": "my tags",
+      "location_label": "trash",
+      "tag_label": "all known tags",
+      "rows": [
+        "wd:dow",
+        "wd:down"
+      ]
+    },
+    {
+      "domain": "all known tags",
+      "override": "all known files",
+      "text": "wd:bot",
+      "location": [
+        "hydrus local file storage"
+      ],
+      "tag_service": "all known tags",
+      "display_service": "my tags",
+      "location_label": "hydrus local file storage",
+      "tag_label": "all known tags",
+      "rows": [
+        "wd:bot",
+        "wd:both (3-4)"
+      ]
+    },
+    {
+      "domain": "all known tags",
+      "override": "all known files",
+      "text": "wd:min",
+      "location": [
+        "hydrus local file storage"
+      ],
+      "tag_service": "all known tags",
+      "display_service": "my tags",
+      "location_label": "hydrus local file storage",
+      "tag_label": "all known tags",
+      "rows": [
+        "wd:min",
+        "wd:mine (2)"
+      ]
+    },
+    {
+      "domain": "all known tags",
+      "override": "all known files",
+      "text": "wd:dow",
+      "location": [
+        "hydrus local file storage"
+      ],
+      "tag_service": "all known tags",
+      "display_service": "my tags",
+      "location_label": "hydrus local file storage",
+      "tag_label": "all known tags",
+      "rows": [
+        "wd:dow",
+        "wd:down (1)"
+      ]
+    }
+  ]
+}
