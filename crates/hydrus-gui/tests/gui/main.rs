@@ -143,6 +143,7 @@ mod thumbnail_navigation;
 mod thumbnail_preview_selection;
 mod thumbnail_ratings;
 mod thumbnail_selection;
+mod trash_normal_time;
 mod undelete_question;
 mod unlock;
 mod viewer_menu;
