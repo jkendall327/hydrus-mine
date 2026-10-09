@@ -42,10 +42,6 @@ enum Asking {
         Box<hydrus_downloader_exchange::subscriptions::Subscription>,
         crate::subscription_import::Queue,
     ),
-    MissingHistory(
-        Box<hydrus_downloader_exchange::subscriptions::Subscription>,
-        Vec<hydrus_downloader_exchange::subscriptions::Subscription>,
-    ),
     FavouriteLoad(String),
     Delete,
     ClearImportOptions(Vec<u64>, String),
@@ -416,26 +412,6 @@ fn merge_named(
     }
 }
 
-/// Import in reference list order, pausing at each incomplete subscription.
-fn import_next(
-    open: &mut Open,
-    mut incoming: Vec<hydrus_downloader_exchange::subscriptions::Subscription>,
-) {
-    while !incoming.is_empty() {
-        let subscription = incoming.remove(0);
-        if subscription.queries.iter().any(|q| q.log.is_none()) {
-            open.asking = Some(Asking::MissingHistory(Box::new(subscription), incoming));
-            return;
-        }
-        if let Err(error) =
-            hydrus_gui_model::subscription_exchange::stage(&mut open.dialog, vec![subscription])
-        {
-            open.asking = Some(Asking::Message(error));
-            return;
-        }
-    }
-}
-
 fn direct_import_next(open: &mut Open, mut queue: crate::subscription_import::Queue) {
     use crate::subscription_import::Event;
     while let Some(event) = queue.next() {
@@ -527,9 +503,7 @@ fn show(window: &SubscriptionsWindow, open: &Open) {
             .collect()
     };
     let question = match &open.asking {
-        Some(
-            Asking::DirectImportMissing(subscription, _) | Asking::MissingHistory(subscription, _),
-        ) => Some((
+        Some(Asking::DirectImportMissing(subscription, _)) => Some((
             hydrus_gui_model::subscription_exchange::missing_history_question(&subscription.name),
             false,
         )),
@@ -1225,18 +1199,6 @@ pub(crate) fn open(
                     }
                     direct_import_next(open, queue);
                 }
-                Some(Asking::MissingHistory(subscription, rest)) => {
-                    if index == 0
-                        && let Err(error) = hydrus_gui_model::subscription_exchange::stage(
-                            &mut open.dialog,
-                            vec![*subscription],
-                        )
-                    {
-                        open.asking = Some(Asking::Message(error));
-                        return;
-                    }
-                    import_next(open, rest);
-                }
                 Some(Asking::ClearImportOptions(keys, _)) => {
                     if index == 0 {
                         open.dialog.clear_import_options(&keys);
@@ -1371,9 +1333,6 @@ pub(crate) fn open(
                         accepted,
                     }) => {
                         merge_named(open, &group, primary, rest, accepted, None);
-                    }
-                    Some(Asking::MissingHistory(_, rest)) => {
-                        import_next(open, rest);
                     }
                     _ => (),
                 }
@@ -1593,43 +1552,30 @@ pub(crate) fn open(
         let store = store.clone();
         let weak = window.as_weak();
         let slots = exchange.clone();
-        move |importing| {
-            if !active.get() || slots.has_open() || state.borrow().asking.is_some()
-                || state.borrow().favourites.as_ref().is_some_and(|owner| owner.busy())
+        move || {
+            if !active.get()
+                || slots.has_open()
+                || state.borrow().asking.is_some()
+                || state
+                    .borrow()
+                    .favourites
+                    .as_ref()
+                    .is_some_and(|owner| owner.busy())
             {
                 return;
             }
-            let definitions = if importing {
-                Ok(Vec::new())
-            } else {
-                hydrus_gui_model::subscription_exchange::selected(&store, &state.borrow().dialog, now())
-            };
-            let result = definitions.and_then(|definitions| {
-                let preview = Rc::new(|incoming: Vec<hydrus_downloader_exchange::subscriptions::Subscription>| {
-                    hydrus_gui_model::subscription_exchange::validate(&incoming)?;
-                    let missing = incoming.iter()
-                        .filter(|s| s.queries.iter().any(|q| q.log.is_none()))
-                        .map(|s| s.name.as_str()).collect::<Vec<_>>();
-                    let warning = if missing.is_empty() {
-                        String::new()
-                    } else {
-                        format!("\nMissing query histories in {} will be reinitialised empty. Cancel to back out.", missing.join(", "))
-                    };
-                    let names = incoming.iter().map(|s| s.name.as_str()).collect::<Vec<_>>().join("\n");
-                    Ok(format!("Import {} complete subscriptions:\n{names}{warning}\nChanges are saved only when you apply manage subscriptions.", incoming.len()))
-                });
-                let applied = Rc::new({
-                    let active = active.clone();
-                    let state = state.clone();
-                    move |incoming| {
-                        if !active.get() {
-                            return Err("The subscription list was closed.".into());
-                        }
-                        import_next(&mut state.borrow_mut(), incoming);
-                        Ok(())
-                    }
-                });
-                crate::downloader_interchange_window::open_subscriptions(&store, &slots, importing, &definitions, preview, applied)
+            // (only exports use the child; imports add to the list directly)
+            let result = hydrus_gui_model::subscription_exchange::selected(
+                &store,
+                &state.borrow().dialog,
+                now(),
+            )
+            .and_then(|definitions| {
+                crate::downloader_interchange_window::open_subscriptions(
+                    &store,
+                    &slots,
+                    &definitions,
+                )
             });
             if let Some(parent) = weak.upgrade() {
                 match result {
@@ -1640,14 +1586,18 @@ pub(crate) fn open(
                             let state = state.clone();
                             let active = active.clone();
                             move || {
-                                if active.get() && let Some(parent) = weak.upgrade() {
+                                if active.get()
+                                    && let Some(parent) = weak.upgrade()
+                                {
                                     parent.set_exchange_open(false);
                                     show(&parent, &state.borrow());
                                 }
                             }
                         });
                     }
-                    Err(error) => { parent.set_import_status(error.into()); }
+                    Err(error) => {
+                        parent.set_import_status(error.into());
+                    }
                 }
             }
         }
@@ -1681,7 +1631,7 @@ pub(crate) fn open(
                 });
                 return;
             }
-            parent.invoke_exchange(mode >= 3);
+            parent.invoke_exchange();
             let child = slots
                 .0
                 .borrow()

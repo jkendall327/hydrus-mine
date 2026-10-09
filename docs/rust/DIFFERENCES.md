@@ -824,9 +824,10 @@ deleted sidecars by `crates/hydrus-download/tests/local_import.rs`.
 - **Full subscription exchange transport** supports modern reference container 90
   JSON and PNG without dropping query history or cached header metadata. Legacy
   subscription type3 versions1–10 now import through the actual list. The original transport menus are wired; clipboard text and JSON/PNG import menus now
-  add to the staged list directly. The legacy explicit exchange callback still
-  opens its former review child. Clipboard PNG
-  image precedence and PNG list drops remain absent. Historical file-cache
+  add to the staged list directly, as the reference's list control does (all
+  three import choices; only export opens a window). Clipboard PNG
+  image precedence and PNG list drops remain absent (their own leaf,
+  `subscriptions-exchange-bitmap-drop`, low priority). Historical file-cache
   versions 1–7 now upgrade within the exchange codec, with recorded order,
   timestamp, note, count and example preservation. A repeated seed in a
   historical cache is dropped, first one winning, as the reference does when it
@@ -852,9 +853,11 @@ deleted sidecars by `crates/hydrus-download/tests/local_import.rs`.
   16 MiB/4096-object limit. Unsupported subscription payloads still fail loading
   their entire package rather than partially decoding its histories. Staged and saved reset/retry exports now refresh the
   original file-count/example caches and forget hashes of retried files. Fresh
-  native query exports initialise counts/examples; gallery and velocity caches
-  without a retained reference header remain unsynchronised. This slice does not
-  complete subscriptions-exchange.
+  native query exports initialise counts and the example file seed and are
+  marked unsynced with default velocity, exactly as the reference's add-query
+  header is; the reference's own Sync then recalculates velocity, next check
+  and the example gallery seed on load (recorded in
+  `subscription_header_resync.json`), so native does not compute them.
 - **The manage subscriptions dialog is a first pass.** It lists the
   subscriptions and can delete, pause/resume, scrub delays, check
   queries now and select by query text, add and edit subscriptions,

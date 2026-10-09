@@ -96,27 +96,25 @@ fn open_with_actions(
     )
 }
 
-/// Import/export complete subscriptions from their owning list draft.
+/// Export complete subscriptions from their owning list draft. (Imports add
+/// to the list directly, as the reference's list control does.)
 pub fn open_subscriptions(
     store: &Arc<Store>,
     slots: &Slots,
-    importing: bool,
     subscriptions: &[hydrus_downloader_exchange::subscriptions::Subscription],
-    preview: Preview<hydrus_downloader_exchange::subscriptions::Subscription>,
-    applied: Apply<hydrus_downloader_exchange::subscriptions::Subscription>,
 ) -> Result<DownloaderExchangeWindow, String> {
     use hydrus_downloader_exchange::subscriptions;
-    let payload = if importing {
-        None
-    } else {
-        Some((
-            subscriptions::encode_text(subscriptions).map_err(|e| e.to_string())?,
-            subscriptions.len(),
-        ))
-    };
+    let payload = (
+        subscriptions::encode_text(subscriptions).map_err(|e| e.to_string())?,
+        subscriptions.len(),
+    );
+    let preview: Preview<subscriptions::Subscription> =
+        Rc::new(|_| Err("Subscriptions are imported straight into the list.".into()));
+    let applied: Apply<subscriptions::Subscription> =
+        Rc::new(|_| Err("Subscriptions are imported straight into the list.".into()));
     let window = open_objects(
         slots,
-        importing,
+        false,
         subscriptions,
         preview,
         applied,
@@ -130,16 +128,12 @@ pub fn open_subscriptions(
         },
     )?;
     window.set_json_enabled(true);
-    window.set_window_title(
-        if importing {
-            "import subscriptions"
-        } else {
-            "export subscriptions"
-        }
-        .into(),
+    window.set_window_title("export subscriptions".into());
+    window.set_instructions(
+        "Complete subscriptions include query settings and file/gallery histories.".into(),
     );
-    window.set_instructions("Complete subscriptions include query settings and file/gallery histories. Import stays staged until manage subscriptions is applied.".into());
-    if let Some((payload, count)) = payload {
+    {
+        let (payload, count) = payload;
         let summary = hydrus_gui_model::png_export::object_payload_description_with_format(
             &payload,
             "Subscription Container",
