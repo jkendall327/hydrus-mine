@@ -74,7 +74,15 @@ fn the_chosen_service_styles_the_example_stars_and_the_typed_sizes_size_them() {
             first.graphic.shape.to_string(),
             first.graphic.shapes.row_count()
         ),
-        favourites
+        // (opened on the reference's default look, circles, until a service is
+        // chosen: the dropdown shows the first without applying it)
+        (
+            hydrus_gui_model::ratings::shape_path(&StarAppearance::Shape(
+                hydrus_store::services::StarShape(0)
+            ))
+            .to_owned(),
+            5
+        )
     );
     // choose the numerical service: only its shape and colours are taken, the
     // stars' count staying as the opening template made it
