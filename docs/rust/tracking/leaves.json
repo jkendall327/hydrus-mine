@@ -13178,7 +13178,7 @@
     "date": "2026-10-09",
     "class": "sound",
     "by": "recheck bin E session (claude/recheck-e-dupes)",
-    "note": "crates/hydrus-gui/tests/gui/shutdown_jobs.rs exiting_does_the_shutdown_work_the_reference_does replays oracle/fixtures/shutdown_work.json: minutes 5, 7, 90 and 1,440 (and 20 under force maintenance) set through the real Options row reach the 'Maintenance is due' question as the reference words it ('1,440 minutes'') and the work is told to stop that many minutes after the exit's start, compared with the stop_time the reference's DoIdleShutdownWork gave MaintainDB (read back through shutdown_work::last_run). Row (1..1440, default 5, disabled under 'do not run') in the_shutdown_box_rows_are_the_references."
+    "note": "crates/hydrus-gui/tests/gui/shutdown_jobs.rs exiting_does_the_shutdown_work_the_reference_does replays oracle/fixtures/shutdown_work.json: minutes 5, 7, 90 and 1,440 (and 20 under force maintenance) set through the real Options row reach the 'Maintenance is due' question as the reference words it ('up to 1,440 minutes') and the work is told to stop that many minutes after the exit's start, compared with the stop_time the reference's DoIdleShutdownWork gave MaintainDB (read back through shutdown_work::last_run). Row (1..1440, default 5, disabled under 'do not run') in the_shutdown_box_rows_are_the_references."
    }
   },
   {
