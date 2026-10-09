@@ -136,6 +136,7 @@ mod subscriptions_separate;
 mod system_tray;
 mod thumbnail_appearance;
 mod thumbnail_cache;
+mod thumbnail_grid_geometry;
 mod thumbnail_icons;
 mod thumbnail_menu;
 mod thumbnail_navigation;

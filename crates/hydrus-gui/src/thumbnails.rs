@@ -108,6 +108,37 @@ pub fn recovery(
     )
 }
 
+/// The icon of `id`'s type at the size the settings make thumbnails, for a
+/// type with no thumbnail of its own (the reference's thumbnail cache's
+/// `_special_thumbs`, made on `Clear`); `None` for a type with thumbnails.
+fn type_icon(
+    store: &Store,
+    id: HashId,
+    settings: &ThumbnailSettings,
+) -> Option<hydrus_media::Raster> {
+    let mime = store
+        .read(|conn| hydrus_store::media::load_basic(conn, &[id]))
+        .ok()?
+        .into_iter()
+        .next()?
+        .info?
+        .mime;
+    if hydrus_media::mimes::has_thumbnail(mime) {
+        return None;
+    }
+    let icon = hydrus_media::type_icon(mime).ok()?;
+    let (width, height) = settings.resolution(Some(icon.width()), Some(icon.height()));
+    if (width, height) == (icon.width(), icon.height()) {
+        return Some(icon);
+    }
+    let interpolation = if width < icon.width() || height < icon.height() {
+        Interpolation::Area
+    } else {
+        Interpolation::Lanczos4
+    };
+    Some(resize(&icon, width, height, interpolation))
+}
+
 /// The size, in the screen's pixels, to show a stored thumbnail of
 /// `stored` pixels at: the reference draws it at its own size (over its
 /// DPR), centred in the bounding box, and never stretches it to fill; a
@@ -265,6 +296,16 @@ impl ThumbnailLoader {
                     } in jobs
                     {
                         let mut wrong_size = false;
+                        // a type with no thumbnail of its own shows its icon,
+                        // fitted to the box, whatever is stored (the
+                        // reference's "special thumbs")
+                        if let Some(icon) = type_icon(&store, id, &settings) {
+                            let pixels = Some(Pixels::new(&for_display(icon, &settings, scale)));
+                            if done.send((id, scale, generation, pixels)).is_err() {
+                                break;
+                            }
+                            continue;
+                        }
                         // blurhash mode (`HG.blurhash_mode`): the stored thumbnail
                         // is never used, so the blurhash shows (if it's allowed)
                         let stored = if hydrus_core::debug_flags::Flag::Blurhash.is_on() {
