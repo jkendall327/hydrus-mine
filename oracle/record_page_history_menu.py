@@ -2,7 +2,7 @@
 """Record the reference's pages > history menu.
 
 In the running client, on the `basic` fixture, five search pages ("one" to
-"five") are opened, and a script of steps is run: show a page, close a
+"five") are opened, and a script of steps is run: show a page, choose an entry of the menu, close a
 page, change "the number of entries shown" (`page_nav_history_max_entries`),
 click "Clear History". After each step the entries of the history menu
 (`page_nav_history_menu`, rebuilt by `_UpdateMenuPagesHistoryIfDirty`) are
@@ -32,6 +32,9 @@ STEPS = [
     [ 'show', 'one' ],
     [ 'show', 'five' ],
     [ 'show', 'three' ],
+    [ 'choose', 3 ],
+    [ 'choose', 1 ],
+    [ 'choose', 4 ],
     [ 'max', 3 ],
     [ 'show', 'two' ],
     [ 'max', 20 ],
@@ -143,6 +146,24 @@ def record( session ):
 
                 gui.NotifyPageJustChanged()
 
+            elif step[ 0 ] == 'choose':
+
+                gui._pages_history_dirty = True
+
+                gui._UpdateMenuPagesHistoryIfDirty()
+
+                prefix = '{}: '.format( step[ 1 ] )
+
+                for action in gui.page_nav_history_menu.actions():
+
+                    if action.text().startswith( prefix ):
+
+                        action.trigger()
+
+                        break
+
+
+
             elif step[ 0 ] == 'max':
 
                 controller.new_options.SetInteger( 'page_nav_history_max_entries', step[ 1 ] )
@@ -156,7 +177,7 @@ def record( session ):
 
         time.sleep( 0.3 )
 
-        results.append( { 'step' : step, 'entries' : qt( entries ) } )
+        results.append( { 'step' : step, 'entries' : qt( entries ), 'current' : qt( lambda: gui._notebook.GetCurrentMediaPage().GetName() ) } )
 
 
     return { 'names' : NAMES, 'steps' : results }

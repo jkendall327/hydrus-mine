@@ -104,6 +104,7 @@ fn tree(store: &Store, pages: &[Page]) -> serde_json::Value {
 // leaf: audit-options-menu-menu-pages-new-gallery-page
 // leaf: audit-options-menu-menu-pages-new-duplicates-processing-page
 // leaf: audit-options-menu-menu-pages-file-search-domain
+// leaf: audit-options-menu-menu-pages-new-page
 #[test]
 fn pages_menu_entries_open_the_pages_the_reference_opened_where_it_opened_them() {
     let _windows = headless::init();
@@ -153,20 +154,34 @@ fn pages_menu_entries_open_the_pages_the_reference_opened_where_it_opened_them()
             .position(|i| titles.row_data(i).unwrap().label == "pages")
             .unwrap();
         ui.invoke_menu_title_pressed(i32::try_from(at).unwrap(), 80.0, 22.0);
-        hover(&ui, entry[0]);
-        // (the file search entries are the reference's, by domain)
-        let recorded_searches: Vec<&str> = recorded["search_entries"]
-            .as_array()
-            .unwrap()
-            .iter()
-            .map(|e| e.as_str().unwrap())
-            .collect();
-        if entry[0] == "file search" {
-            let ours = panes(&ui).last().unwrap().clone();
-            assert_eq!(ours, recorded_searches, "the file search entries");
+        if entry.len() == 1 {
+            // new page…: the chooser, a page of pages picked or cancelled
+            let (p, i) = line(&ui, entry[0]);
+            ui.invoke_menu_line_clicked(p, i, 0.0, 0.0, 0.0);
+            assert!(ui.get_chooser_labels().row_count() > 0, "the chooser");
+            if case["chooser"] == "cancelled" {
+                ui.invoke_chooser_cancel();
+            } else {
+                ui.invoke_chooser_pressed(6);
+                ui.invoke_chooser_pressed(8);
+            }
+            assert_eq!(ui.get_chooser_labels().row_count(), 0);
+        } else {
+            hover(&ui, entry[0]);
+            // (the file search entries are the reference's, by domain)
+            let recorded_searches: Vec<&str> = recorded["search_entries"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .map(|e| e.as_str().unwrap())
+                .collect();
+            if entry[0] == "file search" {
+                let ours = panes(&ui).last().unwrap().clone();
+                assert_eq!(ours, recorded_searches, "the file search entries");
+            }
+            let (p, i) = line(&ui, entry[1]);
+            ui.invoke_menu_line_clicked(p, i, 0.0, 0.0, 0.0);
         }
-        let (p, i) = line(&ui, entry[1]);
-        ui.invoke_menu_line_clicked(p, i, 0.0, 0.0, 0.0);
 
         let pages = bound.pages.borrow();
         assert_eq!(
@@ -184,7 +199,7 @@ fn pages_menu_entries_open_the_pages_the_reference_opened_where_it_opened_them()
         assert_eq!(current, theirs, "the tabs that are current after {case}");
         made += 1;
     }
-    assert_eq!(made, 18);
+    assert_eq!(made, 22);
 }
 
 fn chooser_labels(ui: &MainWindow) -> Vec<String> {
@@ -245,10 +260,35 @@ fn new_page_from_the_pages_menu_asks_the_chooser_the_reference_asked() {
         .unwrap();
     let ui = MainWindow::new().unwrap();
     let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+    let recorded_choices: usize = recorded["steps"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|step| step["choices"].as_array().unwrap().len())
+        .sum();
+    assert_eq!(recorded["steps"].as_array().unwrap().len(), 48);
     let mut seen = 0;
+    let mut domains = 1;
     for step in recorded["steps"].as_array().unwrap() {
-        if step["count"] != 1 {
-            continue;
+        // (the domains the recording had: more are added as its steps
+        // need them)
+        let count = usize::try_from(step["count"].as_u64().unwrap()).unwrap();
+        while domains < count {
+            let service = recorded["services"][domains].clone();
+            let key = ServiceKey::from_hex(service["key"].as_str().unwrap()).unwrap();
+            let name = service["name"].as_str().unwrap().to_owned();
+            store
+                .write_and_refresh(move |ctx| {
+                    hydrus_store::services::insert(
+                        ctx.conn(),
+                        &key,
+                        &name,
+                        &hydrus_store::services::ServiceKind::LocalFiles,
+                    )?;
+                    Ok(())
+                })
+                .unwrap();
+            domains += 1;
         }
         let flags: Vec<bool> = step["flags"]
             .as_array()
@@ -308,7 +348,7 @@ fn new_page_from_the_pages_menu_asks_the_chooser_the_reference_asked() {
             seen += 1;
         }
     }
-    assert_eq!(seen, 40);
+    assert_eq!(seen, recorded_choices);
 }
 
 // leaf: audit-options-menu-menu-pages-history-page
@@ -374,6 +414,25 @@ fn the_history_menu_follows_the_pages_shown_closed_and_cleared_as_the_reference_
                 ui.invoke_tab_chosen(0, tab_of(step["step"][1].as_str().unwrap()));
                 ui.invoke_close_page();
             }
+            "choose" => {
+                let prefix = format!("{}: ", step["step"][1]);
+                let titles = ui.get_menu_titles();
+                let at = (0..titles.row_count())
+                    .position(|i| titles.row_data(i).unwrap().label == "pages")
+                    .unwrap();
+                ui.invoke_menu_title_pressed(i32::try_from(at).unwrap(), 80.0, 22.0);
+                hover(&ui, "history");
+                let panes = panes(&ui);
+                let entry = panes
+                    .last()
+                    .unwrap()
+                    .iter()
+                    .find(|l| l.starts_with(&prefix))
+                    .unwrap()
+                    .clone();
+                let (p, i) = line(&ui, &entry);
+                ui.invoke_menu_line_clicked(p, i, 0.0, 0.0, 0.0);
+            }
             "max" => {
                 let entries = u16::try_from(step["step"][1].as_u64().unwrap()).unwrap();
                 store
@@ -409,5 +468,13 @@ fn the_history_menu_follows_the_pages_shown_closed_and_cleared_as_the_reference_
             })
             .collect();
         assert_eq!(history_menu(&ui), theirs, "after {}", step["step"]);
+        // (and the page that is shown: choosing an entry shows that page, and
+        // closing one shows the one the reference moved to)
+        assert_eq!(
+            bound.pages.borrow().shown().name,
+            step["current"].as_str().unwrap(),
+            "the page shown after {}",
+            step["step"]
+        );
     }
 }

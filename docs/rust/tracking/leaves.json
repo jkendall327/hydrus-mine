@@ -15392,7 +15392,7 @@
     "date": "2026-10-09",
     "class": "sound",
     "by": "phase 2 session",
-    "note": "gui/pages_menu_new_pages.rs the_history_menu_follows_the_pages_shown_closed_and_cleared_as_the_reference_s_does shows pages, closes pages, changes the number of entries and clicks Clear History in the real window, and compares the pages > history menu's entries after every step with page_history_menu.json, recorded from the reference's own history menu (oracle/record_page_history_menu.py): newest first, a revisited page moves to the top, closed pages leave, the limit cuts the list, and after Clear History only that entry is left. The first entry is bold in the reference; the native menu has no bold, so that is not compared (DIFFERENCES.md)."
+    "note": "gui/pages_menu_new_pages.rs the_history_menu_follows_the_pages_shown_closed_and_cleared_as_the_reference_s_does shows pages, chooses entries, closes pages, changes the number of entries and clicks Clear History in the real window, and compares the pages > history menu's entries and the page shown after every step with page_history_menu.json, recorded from the reference's own history menu (oracle/record_page_history_menu.py): newest first, a revisited page moves to the top, closed pages leave, the limit cuts the list, and after Clear History only that entry is left. The first entry is bold in the reference; the native menu has no bold, so that is not compared (DIFFERENCES.md)."
    }
   },
   {
@@ -15431,7 +15431,7 @@
     "date": "2026-10-09",
     "class": "sound",
     "by": "phase 2 session",
-    "note": "gui/pages_menu_new_pages.rs the_history_menu_follows_the_pages_shown_closed_and_cleared_as_the_reference_s_does shows pages, closes pages, changes the number of entries and clicks Clear History in the real window, and compares the pages > history menu's entries after every step with page_history_menu.json, recorded from the reference's own history menu (oracle/record_page_history_menu.py): newest first, a revisited page moves to the top, closed pages leave, the limit cuts the list, and after Clear History only that entry is left. The first entry is bold in the reference; the native menu has no bold, so that is not compared (DIFFERENCES.md)."
+    "note": "gui/pages_menu_new_pages.rs the_history_menu_follows_the_pages_shown_closed_and_cleared_as_the_reference_s_does shows pages, chooses entries from the history menu, closes pages, changes the number of entries and clicks Clear History in the real window, and compares the menu's entries and the page shown after every step with page_history_menu.json, recorded from the reference's own history menu (oracle/record_page_history_menu.py): newest first, a revisited or chosen page moves to the top, choosing an entry shows that page, closed pages leave, and the limit cuts the list (recorded at 3 and 20; the default of 100 is the same in both). The first entry is bold in the reference; the native menu has no bold, so that is not compared (DIFFERENCES.md)."
    }
   },
   {
@@ -15491,7 +15491,7 @@
     "date": "2026-10-09",
     "class": "sound",
     "by": "phase 2 session",
-    "note": "gui/pages_menu_new_pages.rs new_page_from_the_pages_menu_asks_the_chooser_the_reference_asked chooses pages > new page… in the real window and, for each of the recording's sixteen chooser settings with one local file domain (page_chooser_options.json, recorded from the reference's chooser), compares the chooser's choices with the recorded ones, cancels (no page is made), and presses each recorded choice to check the page it opens searches exactly the recorded domain. Keys (digits) inside the chooser are not driven from the menu."
+    "note": "gui/pages_menu_new_pages.rs new_page_from_the_pages_menu_asks_the_chooser_the_reference_asked chooses pages > new page… in the real window and replays all 48 recorded chooser settings of page_chooser_options.json (one, two and ten local file domains, the four options): the choices offered, cancelling makes no page, and each recorded choice opens a search of exactly the recorded domain. pages_menu_entries_open_the_pages_the_reference_opened_where_it_opened_them chooses it with the current page a search page and with it a page of pages, picking a page of pages or cancelling, and compares the tree with new_page_menu.json (the new page goes inside the deepest page of pages). Keys (digits) inside the chooser are not driven from the menu."
    }
   },
   {

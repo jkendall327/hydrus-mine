@@ -41,6 +41,202 @@
      "type": 6
     }
    ],
+   "chooser": "page of pages",
+   "current": [
+    1,
+    0
+   ],
+   "entry": [
+    "new page…"
+   ],
+   "inside": false
+  },
+  {
+   "after": [
+    {
+     "name": "outer",
+     "pages": [
+      {
+       "location": {
+        "current": [
+         "my files"
+        ],
+        "deleted": []
+       },
+       "name": "inner",
+       "type": 6
+      },
+      {
+       "name": "pages",
+       "pages": [
+        {
+         "location": {
+          "current": [
+           "my files"
+          ],
+          "deleted": []
+         },
+         "name": "files",
+         "type": 6
+        }
+       ],
+       "type": "pages"
+      }
+     ],
+     "type": "pages"
+    }
+   ],
+   "before": [
+    {
+     "name": "outer",
+     "pages": [
+      {
+       "location": {
+        "current": [
+         "my files"
+        ],
+        "deleted": []
+       },
+       "name": "inner",
+       "type": 6
+      }
+     ],
+     "type": "pages"
+    }
+   ],
+   "chooser": "page of pages",
+   "current": [
+    0,
+    1,
+    0
+   ],
+   "entry": [
+    "new page…"
+   ],
+   "inside": true
+  },
+  {
+   "after": [
+    {
+     "location": {
+      "current": [
+       "my files"
+      ],
+      "deleted": []
+     },
+     "name": "start",
+     "type": 6
+    }
+   ],
+   "before": [
+    {
+     "location": {
+      "current": [
+       "my files"
+      ],
+      "deleted": []
+     },
+     "name": "start",
+     "type": 6
+    }
+   ],
+   "chooser": "cancelled",
+   "current": [
+    0
+   ],
+   "entry": [
+    "new page…"
+   ],
+   "inside": false
+  },
+  {
+   "after": [
+    {
+     "name": "outer",
+     "pages": [
+      {
+       "location": {
+        "current": [
+         "my files"
+        ],
+        "deleted": []
+       },
+       "name": "inner",
+       "type": 6
+      }
+     ],
+     "type": "pages"
+    }
+   ],
+   "before": [
+    {
+     "name": "outer",
+     "pages": [
+      {
+       "location": {
+        "current": [
+         "my files"
+        ],
+        "deleted": []
+       },
+       "name": "inner",
+       "type": 6
+      }
+     ],
+     "type": "pages"
+    }
+   ],
+   "chooser": "cancelled",
+   "current": [
+    0,
+    0
+   ],
+   "entry": [
+    "new page…"
+   ],
+   "inside": true
+  },
+  {
+   "after": [
+    {
+     "location": {
+      "current": [
+       "my files"
+      ],
+      "deleted": []
+     },
+     "name": "start",
+     "type": 6
+    },
+    {
+     "name": "pages",
+     "pages": [
+      {
+       "location": {
+        "current": [
+         "my files"
+        ],
+        "deleted": []
+       },
+       "name": "files",
+       "type": 6
+      }
+     ],
+     "type": "pages"
+    }
+   ],
+   "before": [
+    {
+     "location": {
+      "current": [
+       "my files"
+      ],
+      "deleted": []
+     },
+     "name": "start",
+     "type": 6
+    }
+   ],
    "current": [
     1,
     0

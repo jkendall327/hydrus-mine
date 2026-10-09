@@ -8,6 +8,7 @@
  ],
  "steps": [
   {
+   "current": "one",
    "entries": [
     {
      "bold": true,
@@ -25,6 +26,7 @@
    ]
   },
   {
+   "current": "two",
    "entries": [
     {
      "bold": true,
@@ -46,6 +48,7 @@
    ]
   },
   {
+   "current": "three",
    "entries": [
     {
      "bold": true,
@@ -71,6 +74,7 @@
    ]
   },
   {
+   "current": "one",
    "entries": [
     {
      "bold": true,
@@ -96,6 +100,7 @@
    ]
   },
   {
+   "current": "five",
    "entries": [
     {
      "bold": true,
@@ -125,6 +130,7 @@
    ]
   },
   {
+   "current": "three",
    "entries": [
     {
      "bold": true,
@@ -154,18 +160,109 @@
    ]
   },
   {
+   "current": "one",
    "entries": [
     {
      "bold": true,
-     "text": "1: three"
+     "text": "1: one"
     },
     {
      "bold": false,
-     "text": "2: five"
+     "text": "2: three"
     },
     {
      "bold": false,
-     "text": "3: one"
+     "text": "3: five"
+    },
+    {
+     "bold": false,
+     "text": "4: two"
+    },
+    "---",
+    {
+     "bold": false,
+     "text": "Clear History"
+    }
+   ],
+   "step": [
+    "choose",
+    3
+   ]
+  },
+  {
+   "current": "one",
+   "entries": [
+    {
+     "bold": true,
+     "text": "1: one"
+    },
+    {
+     "bold": false,
+     "text": "2: three"
+    },
+    {
+     "bold": false,
+     "text": "3: five"
+    },
+    {
+     "bold": false,
+     "text": "4: two"
+    },
+    "---",
+    {
+     "bold": false,
+     "text": "Clear History"
+    }
+   ],
+   "step": [
+    "choose",
+    1
+   ]
+  },
+  {
+   "current": "two",
+   "entries": [
+    {
+     "bold": true,
+     "text": "1: two"
+    },
+    {
+     "bold": false,
+     "text": "2: one"
+    },
+    {
+     "bold": false,
+     "text": "3: three"
+    },
+    {
+     "bold": false,
+     "text": "4: five"
+    },
+    "---",
+    {
+     "bold": false,
+     "text": "Clear History"
+    }
+   ],
+   "step": [
+    "choose",
+    4
+   ]
+  },
+  {
+   "current": "two",
+   "entries": [
+    {
+     "bold": true,
+     "text": "1: two"
+    },
+    {
+     "bold": false,
+     "text": "2: one"
+    },
+    {
+     "bold": false,
+     "text": "3: three"
     },
     "---",
     {
@@ -179,6 +276,7 @@
    ]
   },
   {
+   "current": "two",
    "entries": [
     {
      "bold": true,
@@ -186,11 +284,11 @@
     },
     {
      "bold": false,
-     "text": "2: three"
+     "text": "2: one"
     },
     {
      "bold": false,
-     "text": "3: five"
+     "text": "3: three"
     },
     "---",
     {
@@ -204,6 +302,7 @@
    ]
   },
   {
+   "current": "two",
    "entries": [
     {
      "bold": true,
@@ -211,15 +310,15 @@
     },
     {
      "bold": false,
-     "text": "2: three"
+     "text": "2: one"
     },
     {
      "bold": false,
-     "text": "3: five"
+     "text": "3: three"
     },
     {
      "bold": false,
-     "text": "4: one"
+     "text": "4: five"
     },
     "---",
     {
@@ -233,6 +332,7 @@
    ]
   },
   {
+   "current": "four",
    "entries": [
     {
      "bold": true,
@@ -244,11 +344,11 @@
     },
     {
      "bold": false,
-     "text": "3: five"
+     "text": "3: one"
     },
     {
      "bold": false,
-     "text": "4: one"
+     "text": "4: five"
     },
     "---",
     {
@@ -262,6 +362,7 @@
    ]
   },
   {
+   "current": "four",
    "entries": [
     {
      "bold": true,
@@ -269,11 +370,11 @@
     },
     {
      "bold": false,
-     "text": "2: five"
+     "text": "2: one"
     },
     {
      "bold": false,
-     "text": "3: one"
+     "text": "3: five"
     },
     "---",
     {
@@ -287,6 +388,7 @@
    ]
   },
   {
+   "current": "four",
    "entries": [
     {
      "bold": true,
@@ -294,11 +396,11 @@
     },
     {
      "bold": false,
-     "text": "2: five"
+     "text": "2: one"
     },
     {
      "bold": false,
-     "text": "3: one"
+     "text": "3: five"
     },
     "---",
     {
@@ -312,6 +414,7 @@
    ]
   },
   {
+   "current": "four",
    "entries": [
     {
      "bold": false,
@@ -323,6 +426,7 @@
    ]
   },
   {
+   "current": "five",
    "entries": [
     {
      "bold": true,
@@ -340,6 +444,7 @@
    ]
   },
   {
+   "current": "one",
    "entries": [
     {
      "bold": true,

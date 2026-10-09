@@ -173,9 +173,54 @@ def record( session ):
         time.sleep( 0.3 )
 
 
-    entries = [ ( [ 'special' if s == 'special' else 'download', e ], e ) for ( s, e ) in ENTRIES ]
-
     cases = []
+
+    # (the new page chooser, standing in for the user's choice: a page of
+    # pages, or none)
+    from qtpy import QtWidgets as QW
+
+    from hydrus.client.gui.pages import ClientGUINewPageChooser
+
+    real_chooser = ClientGUINewPageChooser.DialogPageChooser
+
+    class Chosen:
+
+        cancel = False
+
+        def __init__( self, *args ): pass
+        def __enter__( self ): return self
+        def __exit__( self, *args ): pass
+        def exec( self ): return QW.QDialog.DialogCode.Rejected if Chosen.cancel else QW.QDialog.DialogCode.Accepted
+        def GetValue( self ): return ( 'pages', None )
+
+
+    ClientGUINewPageChooser.DialogPageChooser = Chosen
+
+    for cancel in ( False, True ):
+
+        for inside in ( False, True ):
+
+            reset( inside )
+
+            Chosen.cancel = cancel
+
+            before = qt( lambda: tree( gui._notebook ) )
+
+            qt( lambda: find_action( pages_menu(), [ 'new page\u2026' ] ).trigger() )
+
+            time.sleep( 0.5 )
+
+            cases.append( {
+                'entry' : [ 'new page\u2026' ],
+                'chooser' : 'cancelled' if cancel else 'page of pages',
+                'inside' : inside,
+                'before' : before,
+                'after' : qt( lambda: tree( gui._notebook ) ),
+                'current' : qt( current_path ),
+            } )
+
+
+    ClientGUINewPageChooser.DialogPageChooser = real_chooser
 
     for ( labels, name ) in [ ( [ s, e ], e ) for ( s, e ) in ENTRIES ] + [ ( [ 'file search', label ], label ) for label in search_labels ]:
 
