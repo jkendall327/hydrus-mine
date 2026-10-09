@@ -511,9 +511,11 @@ fn checking_and_running_folders_from_the_file_menu_flags_and_says_what_the_refer
             let imports = imports.clone();
             move |ctx| {
                 for (name, paused, regularly) in &imports {
-                    let mut settings = hydrus_parse::folders::ImportFolderSettings::default();
-                    settings.path = format!("/nonexistent/{name}");
-                    settings.check_regularly = *regularly;
+                    let settings = hydrus_parse::folders::ImportFolderSettings {
+                        path: format!("/nonexistent/{name}"),
+                        check_regularly: *regularly,
+                        ..hydrus_parse::folders::ImportFolderSettings::default()
+                    };
                     import_folders::create_import_folder(
                         ctx.conn(),
                         name,
