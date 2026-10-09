@@ -62,8 +62,10 @@ fn info_lines_are_the_reference_s() {
     );
     let now_ms = fixture["now"].as_i64().unwrap() * 1000;
     let snapshot = store.snapshot();
-    for phase in ["defaults", "changed"] {
-        let expected = &fixture["phases"][phase];
+    // (new options, all turned the other way, and each flag turned alone)
+    let phases = fixture["phases"].as_object().unwrap();
+    assert_eq!(phases.len(), 11);
+    for (phase, expected) in phases {
         let settings = settings_of(expected);
         let files = expected["files"].as_object().unwrap();
         assert!(files.len() > 30);
