@@ -14618,10 +14618,10 @@
     "Assessment covers this editable control and shared Apply/Cancel, not every control on its containing reference page or every background consumer."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Only proves the option reaches the real viewer's menu check state (always/this-slideshow checked, default unchecked as slideshow.json menus). Its effect, holding a duration file until it has played once before moving on (Slideshow::due once_through gate), is not exercised through the viewer with this option; expected menu strings are typed. Tests: crates/hydrus-gui/tests/gui/options_media_slideshow.rs:67 the_viewer_s_slideshow_menu_lists_the_saved_durations_and_once_through"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "With the option off a 0.1 second slideshow leaves the animation at once; with it on the viewer waits until the animation has played through. The option under test is changed in the real options window (the other slideshow options are saved directly as the baseline) and a slideshow is run in the real media viewer on a real animated file (oracle/fixtures/media/gif_anim.gif, imported; frame delays 100/0/10/250 ms, about half a second as the viewer knows it; played by mpv where libmpv is present, and the test is skipped without it), timing when the viewer moves to the next file. The expected moments (1.0 s, 2.0 s, the animation's end) are worked out by hand from the reference's rule, not read from a recording: the viewer applies the same special_period function that slideshow.json validates over 2,205 recorded cases (files_with_durations_bend_the_period_as_the_reference_s). The comparison that matters is relative (the changed option moves on clearly sooner than the saved one, or holds longer); late moments are bounded below only (a delay can only make them later), the early one is the best of five tries, and there are no absolute upper margins. Test: crates/hydrus-gui/tests/gui/options_media_slideshow.rs a_slideshow_holds_an_animation_until_it_has_played_once_when_the_option_says. The menu's checked state: the_viewer_s_slideshow_menu_lists_the_saved_durations_and_once_through."
    }
   },
   {
@@ -14658,10 +14658,10 @@
     "Assessment covers this editable control and shared Apply/Cancel, not every control on its containing reference page or every background consumer."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Drives the Options row through the window, but then calls Slideshow::new/start/due directly (a decision function) instead of the viewer's slideshow timer; thresholds are typed literals (hundredths). special_period is replayed against slideshow.json elsewhere (tests/gui/slideshow.rs:15) but not through this path. Tests: crates/hydrus-gui/tests/gui/options_media_slideshow.rs:235 a_long_file_holds_a_slideshow_past_its_period_by_the_allowed_delay"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "A 0.3 second slideshow moves off the longer animation at 0.3 s with a 10% delay and holds it until it ends with 200%. The option under test is changed in the real options window (the other slideshow options are saved directly as the baseline) and a slideshow is run in the real media viewer on a real animated file (oracle/fixtures/media/gif_anim.gif, imported; frame delays 100/0/10/250 ms, about half a second as the viewer knows it; played by mpv where libmpv is present, and the test is skipped without it), timing when the viewer moves to the next file. The expected moments (1.0 s, 2.0 s, the animation's end) are worked out by hand from the reference's rule, not read from a recording: the viewer applies the same special_period function that slideshow.json validates over 2,205 recorded cases (files_with_durations_bend_the_period_as_the_reference_s). The comparison that matters is relative (the changed option moves on clearly sooner than the saved one, or holds longer); late moments are bounded below only (a delay can only make them later), the early one is the best of five tries, and there are no absolute upper margins. Test: crates/hydrus-gui/tests/gui/options_media_slideshow.rs a_long_file_holds_a_slideshow_past_its_period_by_the_allowed_delay."
    }
   },
   {
@@ -14678,10 +14678,10 @@
     "Assessment covers this editable control and shared Apply/Cancel, not every control on its containing reference page or every background consumer."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Drives the Options row through the window, but then calls Slideshow::new/start/due directly (a decision function) instead of the viewer's slideshow timer; thresholds are typed literals (hundredths). special_period is replayed against slideshow.json elsewhere (tests/gui/slideshow.rs:15) but not through this path. Tests: crates/hydrus-gui/tests/gui/options_media_slideshow.rs:198 a_short_file_moves_a_slideshow_on_after_the_skip_percentage_of_the_period"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "At 5% of 2 seconds the animation does not fit and waits the period; at 50% it moves on at about 1 second. The option under test is changed in the real options window (the other slideshow options are saved directly as the baseline) and a slideshow is run in the real media viewer on a real animated file (oracle/fixtures/media/gif_anim.gif, imported; frame delays 100/0/10/250 ms, about half a second as the viewer knows it; played by mpv where libmpv is present, and the test is skipped without it), timing when the viewer moves to the next file. The expected moments (1.0 s, 2.0 s, the animation's end) are worked out by hand from the reference's rule, not read from a recording: the viewer applies the same special_period function that slideshow.json validates over 2,205 recorded cases (files_with_durations_bend_the_period_as_the_reference_s). The comparison that matters is relative (the changed option moves on clearly sooner than the saved one, or holds longer); late moments are bounded below only (a delay can only make them later), the early one is the best of five tries, and there are no absolute upper margins. Test: crates/hydrus-gui/tests/gui/options_media_slideshow.rs a_short_file_moves_a_slideshow_on_after_the_skip_percentage_of_the_period."
    }
   },
   {
@@ -14698,10 +14698,10 @@
     "Assessment covers this editable control and shared Apply/Cancel, not every control on its containing reference page or every background consumer."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Drives the Options row through the window, but then calls Slideshow::new/start/due directly (a decision function) instead of the viewer's slideshow timer; thresholds are typed literals (hundredths). special_period is replayed against slideshow.json elsewhere (tests/gui/slideshow.rs:15) but not through this path. Tests: crates/hydrus-gui/tests/gui/options_media_slideshow.rs:179 a_short_file_moves_a_slideshow_on_after_the_skip_seconds"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "A 2 second slideshow holds a half-second animation to the period, and with the skip seconds at 1 moves on at about 1 second. The option under test is changed in the real options window (the other slideshow options are saved directly as the baseline) and a slideshow is run in the real media viewer on a real animated file (oracle/fixtures/media/gif_anim.gif, imported; frame delays 100/0/10/250 ms, about half a second as the viewer knows it; played by mpv where libmpv is present, and the test is skipped without it), timing when the viewer moves to the next file. The expected moments (1.0 s, 2.0 s, the animation's end) are worked out by hand from the reference's rule, not read from a recording: the viewer applies the same special_period function that slideshow.json validates over 2,205 recorded cases (files_with_durations_bend_the_period_as_the_reference_s). The comparison that matters is relative (the changed option moves on clearly sooner than the saved one, or holds longer); late moments are bounded below only (a delay can only make them later), the early one is the best of five tries, and there are no absolute upper margins. Test: crates/hydrus-gui/tests/gui/options_media_slideshow.rs a_short_file_moves_a_slideshow_on_after_the_skip_seconds."
    }
   },
   {
@@ -14718,10 +14718,10 @@
     "Assessment covers this editable control and shared Apply/Cancel, not every control on its containing reference page or every background consumer."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Drives the Options row through the window, but then calls Slideshow::new/start/due directly (a decision function) instead of the viewer's slideshow timer; thresholds are typed literals (hundredths). special_period is replayed against slideshow.json elsewhere (tests/gui/slideshow.rs:15) but not through this path. Tests: crates/hydrus-gui/tests/gui/options_media_slideshow.rs:216 a_file_longer_than_the_cutoff_part_of_the_period_moves_on_when_it_has_played_once"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "At 95% of 2 seconds the animation is not longer than the cutoff and waits the period; at 10% it moves on as it ends. The option under test is changed in the real options window (the other slideshow options are saved directly as the baseline) and a slideshow is run in the real media viewer on a real animated file (oracle/fixtures/media/gif_anim.gif, imported; frame delays 100/0/10/250 ms, about half a second as the viewer knows it; played by mpv where libmpv is present, and the test is skipped without it), timing when the viewer moves to the next file. The expected moments (1.0 s, 2.0 s, the animation's end) are worked out by hand from the reference's rule, not read from a recording: the viewer applies the same special_period function that slideshow.json validates over 2,205 recorded cases (files_with_durations_bend_the_period_as_the_reference_s). The comparison that matters is relative (the changed option moves on clearly sooner than the saved one, or holds longer); late moments are bounded below only (a delay can only make them later), the early one is the best of five tries, and there are no absolute upper margins. Test: crates/hydrus-gui/tests/gui/options_media_slideshow.rs a_file_longer_than_the_cutoff_part_of_the_period_moves_on_when_it_has_played_once."
    }
   },
   {
