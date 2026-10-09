@@ -98,6 +98,8 @@ jobs:
       - name: test
         env:
           HYDRUS_INTERCHANGE_SCREENSHOTS: ${{ github.workspace }}/target/tmp
+          # a test that needs libmpv fails here rather than skip
+          HYDRUS_REQUIRE_MPV: '1'
         run: |
           mkdir -p target/tmp
           cargo test --workspace --locked --no-fail-fast

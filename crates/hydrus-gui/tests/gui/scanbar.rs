@@ -64,6 +64,7 @@ fn the_bar_shows_and_seeks_as_the_reference_s_does() {
     assert_eq!(video.seek_delta(8000.0, 1, 5000), 0.0);
 }
 
+// leaf: audit-media-viewer-playback
 #[test]
 fn a_file_that_plays_seeks_by_its_bar_and_by_key() {
     let legacy = hydrus_testkit::legacy_fixture("basic");
@@ -102,8 +103,7 @@ fn a_file_that_plays_seeks_by_its_bar_and_by_key() {
     let still = viewer(index_of(hydrus_core::Mime::ImagePng));
     assert!(!still.get_scanbar_shown());
     still.invoke_close_requested();
-    if !mpv::available() {
-        eprintln!("libmpv is not installed here; the viewer part is skipped");
+    if mpv::skip_without_libmpv() {
         return;
     }
     // (the fixture's videos aren't in its local files: one is imported)

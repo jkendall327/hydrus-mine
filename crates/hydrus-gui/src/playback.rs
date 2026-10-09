@@ -354,8 +354,7 @@ mod tests {
 
     #[test]
     fn finite_gif_loop_metadata_reaches_the_existing_mpv_player() {
-        if !mpv::available() {
-            eprintln!("libmpv is not installed here; skipped");
+        if mpv::skip_without_libmpv() {
             return;
         }
         let _windows = crate::headless::init();
@@ -409,8 +408,7 @@ mod tests {
 
     #[test]
     fn a_file_plays_through_and_may_stop_at_its_end() {
-        if !mpv::available() {
-            eprintln!("libmpv is not installed here; skipped");
+        if mpv::skip_without_libmpv() {
             return;
         }
         let _windows = crate::headless::init();

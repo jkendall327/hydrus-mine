@@ -209,6 +209,11 @@ modules in a gitignored `crates/hydrus-gui/tests/lane_<name>.rs` (with
   tests and recordings can hold it still.
 - **Temporary directories**: `let Opened { store, .. } = opened();` drops the
   temp dir at once; bind it (`_dir`) for as long as the store is used.
+- **libmpv tests**: the video and audio viewer tests skip where libmpv is
+  missing; CI installs it and sets `HYDRUS_REQUIRE_MPV=1`, which turns a skip
+  into a failure. `headless::init` points every mpv player at a null audio
+  output, because mpv probing PipeWire, ALSA and JACK in several tests at
+  once crashed the test binary.
 - **The reference client runs its own worker threads.** In recorders, pause the
   importers you make and give the client a moment between steps that need it.
 - **`git stash`/`pop` touches every file's mtime** and forces a needless UI

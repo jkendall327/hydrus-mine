@@ -122,6 +122,24 @@ fn api() -> Option<&'static Api> {
     API.get_or_init(Api::load).as_ref()
 }
 
+/// For tests that need libmpv: whether to skip (it isn't installed). Where
+/// `HYDRUS_REQUIRE_MPV` is set (CI) a missing libmpv fails the test instead,
+/// so that a test is never skipped there unseen.
+///
+/// # Panics
+/// If libmpv is missing and `HYDRUS_REQUIRE_MPV` is set.
+pub fn skip_without_libmpv() -> bool {
+    if available() {
+        return false;
+    }
+    assert!(
+        std::env::var_os("HYDRUS_REQUIRE_MPV").is_none(),
+        "libmpv is required here (HYDRUS_REQUIRE_MPV) but could not be loaded"
+    );
+    eprintln!("libmpv is not installed here; skipped");
+    true
+}
+
 /// Whether libmpv is there to play video.
 pub fn available() -> bool {
     api().is_some()

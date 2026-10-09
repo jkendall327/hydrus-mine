@@ -537,13 +537,18 @@ separator.
   metadata. Where the buffer holds a single frame, the reference's render
   thread counts a frame behind its decoder and shows each frame's
   neighbour; hydrus-rs decodes the same frames but keeps each as itself.
-- **Playback is not yet proven against the reference as a whole**
-  (`audit-media-viewer-playback`, untagged). The viewer's animation test
-  (`tests/gui/animation.rs`) plays, pauses and seeks ugoiras and animated
-  WebP with expected scanbar text worked out from the reference's
-  arithmetic rather than recorded from it; the mpv video tests skip where
-  libmpv isn't installed, which includes CI; and no test plays an audio
-  file in the viewer.
+- **Video and audio playback are compared with the reference only for
+  what libmpv shares.** Ugoira and animated WebP playback, the scanbar,
+  seeking, frame steps and coming round for a slideshow are replayed from
+  `oracle/record_animation_playback.py` (the reference's own `Animation`
+  and `AnimationBar` on a frozen clock). Video and audio files play in
+  libmpv in both clients, and the viewer tests (an mp4 and flac files, in
+  CI too, where `HYDRUS_REQUIRE_MPV` makes a missing libmpv a failure and
+  the harness gives mpv a null audio output) check that the bar moves,
+  holds while paused and goes where a click seeks; their expected times
+  come from the native bar's arithmetic, not a recorded mpv session of the
+  reference. Not tested: embedded cover art, GIF, APNG and other containers
+  through mpv, and volume or mute beyond the property round trip.
 
 ## The duplicate filter (`hydrus-gui`, `hydrus-duplicates::statements`)
 
