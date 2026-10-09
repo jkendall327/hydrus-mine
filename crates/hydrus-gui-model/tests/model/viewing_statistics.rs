@@ -45,7 +45,9 @@ fn viewing_menu_controls_match_qt_and_preserve_the_parent_draft() {
         Value::Canvases(vec![CanvasType::MediaViewer, CanvasType::ClientApi])
     );
     assert_eq!(original.menu_display, ViewingStatsMenuDisplay::Combined);
-    assert!(!editor.search("preview views").is_empty());
+    // (the reference's search lists no checklist items: they are list items,
+    // not widgets, so `options_dialog.json` has none of these three)
+    assert!(editor.search("preview views").is_empty());
     editor.choose(menu, 1);
     editor.canvas(canvases, 0, false);
     editor.canvas(canvases, 1, true);
