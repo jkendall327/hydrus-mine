@@ -56,10 +56,17 @@ fn a_backup_chosen_from_the_menu_is_appended_as_the_reference_appends_it() {
     let bound = bind(&ui, Pages::open(store.clone()).unwrap());
     let before = bound.pages.borrow().session().pages.len();
 
-    // the session's backups, as the reference lists them (local time)
+    // the session's backups, as the reference lists them: the recorded
+    // times in the local zone, formatted here (not by the code under test)
     let path = ["pages", "sessions", "append backup", "backup test"];
     let tz = jiff::tz::TimeZone::system();
-    let label = |ms: i64| hydrus_gui_model::session_saving::backup_timestamp(ms, &tz);
+    let label = |ms: i64| {
+        jiff::Timestamp::from_millisecond(ms)
+            .unwrap()
+            .to_zoned(tz.clone())
+            .strftime("%Y-%m-%d %H:%M:%S")
+            .to_string()
+    };
     let backups: Vec<String> = recorded["steps"].as_array().unwrap().last().unwrap()["backups"]
         .as_array()
         .unwrap()
@@ -71,9 +78,14 @@ fn a_backup_chosen_from_the_menu_is_appended_as_the_reference_appends_it() {
         .map(|l| l.0)
         .collect();
     assert_eq!(lines, backups);
+    // (the recording is in UTC: where this machine is too, its label)
+    let timestamp = recorded["timestamp"].as_i64().unwrap();
+    let offset = tz.to_offset(jiff::Timestamp::from_millisecond(timestamp).unwrap());
+    if offset.seconds() == 0 {
+        assert!(lines.contains(&recorded["label_utc"].as_str().unwrap().to_owned()));
+    }
 
     // the recorded one chosen: appended at the top level
-    let timestamp = recorded["timestamp"].as_i64().unwrap();
     main_menu::choose(&ui, &path, &label(timestamp));
     let pages = bound.pages.borrow();
     let session = pages.session();

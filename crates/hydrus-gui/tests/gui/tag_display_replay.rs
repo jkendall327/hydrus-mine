@@ -94,7 +94,9 @@ fn the_autocomplete_boxes_interlock_as_the_reference_s_do() {
             Some(threshold) => {
                 assert_eq!(i64::from(window.get_threshold()), threshold, "{context}");
             }
-            None => assert_eq!(window.get_threshold(), 0, "{context}"),
+            // (fetching by hand: the reference has no threshold, the window's
+            // 0 is set above by the test, so there is nothing to compare)
+            None => assert!(!window.get_fetch_automatically(), "{context}"),
         }
     }
     window.invoke_cancel();

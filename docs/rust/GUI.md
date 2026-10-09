@@ -1918,7 +1918,10 @@ editors on cancel and preserve unrelated settings.
 Applying updates selection tags on all open pages (including locked pages),
 viewer tags, search suggestions (including an open manage-tags draft), graphs
 and counts. The real reference panels
-and checkbox interlocks are recorded in `oracle/record_tag_display.py` ("Allow namespace:" and "Allow namespace:*" are disabled, and ticked, as a namespace search change leaves them, "namespace:*" while "namespace:" is ticked); pure model
+and checkbox interlocks are recorded in `oracle/record_tag_display.py`
+("Allow namespace:" and "Allow namespace:*" are disabled, and ticked, as a
+namespace search change leaves them, "namespace:*" while "namespace:" is
+ticked); pure model
 and real-store GUI regressions cover persistence and publication.
 
 The parser editor foundation (`hydrus-gui-model::parser_editors`) owns native

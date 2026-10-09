@@ -68,6 +68,11 @@ pub fn hold_time(now_ms: i64, tz: jiff::tz::TimeZone) {
     HELD.with(|held| *held.borrow_mut() = Some((now_ms, tz)));
 }
 
+/// Go back to the system clock and time zone (after [`hold_time`]).
+pub fn release_time() {
+    HELD.with(|held| *held.borrow_mut() = None);
+}
+
 /// The time the dialog runs at: now, in seconds and milliseconds.
 fn now() -> (i64, i64) {
     let ms = HELD

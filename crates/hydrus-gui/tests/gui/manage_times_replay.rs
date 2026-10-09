@@ -167,6 +167,15 @@ fn load(store: &Store, file: HashId) -> MediaResult {
         .remove(0)
 }
 
+impl Drop for Replay {
+    fn drop(&mut self) {
+        // (nothing held or caught outlives the case that set it)
+        hydrus_gui::manage_times_window::release_time();
+        hydrus_gui::set_clipper(|_| {});
+        hydrus_gui::set_paster(String::new);
+    }
+}
+
 impl Replay {
     /// The basic fixture's first files given `specs`' times, on a page of
     /// their own, held at `now` (seconds) in UTC (on a thread whose
@@ -551,22 +560,42 @@ fn manage_times_replays_the_references_dialog_through_the_window() {
                     edit(&mut said, &action[2], action[3].as_i64().unwrap(), true);
                 }
                 "copy" => {
-                    // the copy menu's entries, as the reference's
-                    let entry = match action[1]
+                    // the reference's copy menu (`_Copy`'s entries, by their
+                    // labels): the bottom "copy" button opens it, the entry
+                    // for the recorded kinds is chosen
+                    let label = match action[1]
                         .as_array()
                         .map(|k| k.iter().map(|x| x.as_i64().unwrap()).collect::<Vec<_>>())
                     {
-                        None => 0,
+                        None => "all times",
                         Some(k) => match k.as_slice() {
-                            [1] => 1,
-                            [5] => 2,
-                            [6] => 3,
-                            [0] => 4,
-                            _ => 5,
+                            [1] => "file modified time",
+                            [5] => "archived time",
+                            [6] => "last viewed times",
+                            [0] => "web domain times",
+                            _ => "file service times",
                         },
                     };
+                    let win = dialog.window();
+                    widgets::lay_out(win, 900.0, 700.0);
                     if dialog.get_can_copy() {
-                        dialog.invoke_copy(entry);
+                        // (the last "copy" is the bottom button, after the
+                        // rows' own)
+                        let button = widgets::count(win, "copy") - 1;
+                        widgets::click_nth(win, "copy", button);
+                        for entry in [
+                            "all times",
+                            "file modified time",
+                            "archived time",
+                            "last viewed times",
+                            "web domain times",
+                            "file service times",
+                        ] {
+                            assert!(widgets::shows(win, entry), "{entry} in the copy menu");
+                        }
+                        widgets::click(win, label);
+                    } else {
+                        assert!(widgets::count(win, "copy") > 0);
                     }
                 }
                 "paste" => {

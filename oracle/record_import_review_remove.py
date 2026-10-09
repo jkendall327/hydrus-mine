@@ -111,6 +111,59 @@ def record( session ):
 
     steps = [ { 'rows' : controller.CallBlockingToQt( gui, rows ) } ]
 
+    def selected_rows():
+        
+        view = holder[ 'panel' ]._paths_list
+        
+        return sorted( { i.row() for i in view.selectionModel().selectedIndexes() } )
+        
+    
+    def click_row( row, modifiers ):
+        
+        view = holder[ 'panel' ]._paths_list
+        
+        index = view.model().index( row, 0 )
+        
+        QT.QTest.mouseClick( view.viewport(), QC.Qt.MouseButton.LeftButton, modifiers, view.visualRect( index ).center() )
+        
+        QW.QApplication.processEvents()
+        
+        return selected_rows()
+        
+    
+    def show_panel():
+        
+        panel = holder[ 'panel' ]
+        
+        panel.resize( 900, 600 )
+        panel.show()
+        
+        QW.QApplication.processEvents()
+        
+    
+    controller.CallBlockingToQt( gui, show_panel )
+    
+    NONE = QC.Qt.KeyboardModifier.NoModifier
+    CTRL = QC.Qt.KeyboardModifier.ControlModifier
+    SHIFT = QC.Qt.KeyboardModifier.ShiftModifier
+    
+    # the extended selection: click, ctrl-click, shift-click, ctrl+shift-click
+    selection_steps = []
+    
+    for ( label, row, modifiers ) in [
+        ( 'click 0', 0, NONE ),
+        ( 'ctrl-click 2', 2, CTRL ),
+        ( 'ctrl-click 0', 0, CTRL ),
+        ( 'shift-click 1', 1, SHIFT ),
+        ( 'click 0', 0, NONE ),
+        ( 'shift-click 3', 3, SHIFT ),
+        ( 'click 1', 1, NONE ),
+        ( 'ctrl+shift-click 3', 3, CTRL | SHIFT ),
+    ]:
+        
+        selection_steps.append( { 'do' : label, 'selected' : controller.CallBlockingToQt( gui, lambda r = row, m = modifiers: click_row( r, m ) ) } )
+        
+    
     def select_second():
 
         view = holder[ 'panel' ]._paths_list
@@ -159,7 +212,7 @@ def record( session ):
 
     controller.CallBlockingToQt( gui, lambda: holder[ 'panel' ].deleteLater() )
 
-    return { 'files' : NAMES, 'selected' : selected, 'steps' : steps }
+    return { 'files' : NAMES, 'selection_steps' : selection_steps, 'selected' : selected, 'steps' : steps }
 
 
 def main():

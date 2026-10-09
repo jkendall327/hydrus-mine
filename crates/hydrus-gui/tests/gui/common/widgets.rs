@@ -159,3 +159,8 @@ pub fn enabled(window: &slint::Window, label: &str) -> bool {
 pub fn checked(window: &slint::Window, label: &str) -> bool {
     property(window, label, AccessibleStringProperty::Checked).is_some_and(|c| c == "true")
 }
+
+/// How many visible widgets are labelled `label`.
+pub fn count(window: &slint::Window, label: &str) -> usize {
+    labelled(window, label).len()
+}

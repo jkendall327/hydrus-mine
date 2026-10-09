@@ -113,14 +113,13 @@ fn rows_are_selected_as_a_list_selects_and_removed_after_asking_then_numbered_ag
     };
     let steps = recorded["steps"].as_array().unwrap();
     assert_eq!(shown(&window), steps[0]["rows"]);
-    let placed = rows(&window).len();
     assert!(
         !window.get_any_selected(),
         "nothing selected, nothing to remove"
     );
 
-    // click selects one; ctrl-click toggles; shift-click extends from the
-    // anchor; ctrl+shift-click adds the range to what is selected
+    // the recorded extended selection: click, ctrl-click, shift-click and
+    // ctrl+shift-click, rows 0..3 (`selection_steps`)
     let selected = |w: &ReviewImportsWindow| -> Vec<usize> {
         rows(w)
             .iter()
@@ -129,21 +128,34 @@ fn rows_are_selected_as_a_list_selects_and_removed_after_asking_then_numbered_ag
             .map(|(i, _)| i)
             .collect()
     };
-    window.invoke_row_clicked(0, false, false);
-    assert_eq!(selected(&window), [0]);
-    window.invoke_row_clicked(2, true, false);
-    assert_eq!(selected(&window), [0, 2]);
-    window.invoke_row_clicked(0, true, false);
-    assert_eq!(selected(&window), [2]);
-    window.invoke_row_clicked(1, false, true);
+    let mut differs = Vec::new();
+    for step in recorded["selection_steps"].as_array().unwrap() {
+        let name = step["do"].as_str().unwrap();
+        let (kind, row) = name.rsplit_once(' ').unwrap();
+        let row: i32 = row.parse().unwrap();
+        match kind {
+            "click" => window.invoke_row_clicked(row, false, false),
+            "ctrl-click" => window.invoke_row_clicked(row, true, false),
+            "shift-click" => window.invoke_row_clicked(row, false, true),
+            _ => window.invoke_row_clicked(row, true, true),
+        }
+        let theirs: Vec<usize> = step["selected"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|r| usize::try_from(r.as_i64().unwrap()).unwrap())
+            .collect();
+        if selected(&window) != theirs {
+            differs.push((name.to_owned(), selected(&window), theirs));
+        }
+    }
+    // (a shift-click after a ctrl-click that cleared the range's origin
+    // keeps the other ctrl-selected row in the reference, not here:
+    // DIFFERENCES.md)
     assert_eq!(
-        selected(&window),
-        [0, 1],
-        "from the anchor, the last clicked row"
+        differs,
+        [("shift-click 1".to_owned(), vec![0, 1], vec![0, 1, 2])]
     );
-    window.invoke_row_clicked(0, false, false);
-    window.invoke_row_clicked(placed as i32 - 1, false, true);
-    assert_eq!(selected(&window), (0..placed).collect::<Vec<_>>());
     // the recorded selection: the second row
     window.invoke_row_clicked(1, false, false);
     assert_eq!(selected(&window), [1]);
