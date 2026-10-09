@@ -225,6 +225,7 @@ fn dialogs_stage_cancel_apply_questions_and_update_display() {
 }
 
 // leaf: relationship-reasons
+// leaf: audit-media-parents-reasons
 // leaf: audit-options-tag-editing-tag-dialogs-number-of-recent-petition-reasons-to-remember-in-dialogs
 #[test]
 fn reason_questions_offer_recent_then_fixed_reasons_and_the_option_caps_the_recent_ones() {
@@ -366,17 +367,16 @@ fn reason_questions_offer_recent_then_fixed_reasons_and_the_option_caps_the_rece
             if answer.is_null() {
                 w.invoke_answered(false);
             } else {
-                // (a suggestion's button sets the reason and answers)
-                w.set_reason(match answer.as_i64() {
-                    Some(i) => {
-                        offered[usize::try_from(if i < 0 { offered.len() as i64 + i } else { i })
-                            .unwrap()]
-                        .clone()
-                        .into()
-                    }
-                    None => answer.as_str().unwrap().into(),
-                });
-                w.invoke_answered(true);
+                crate::common::widgets::lay_out(w.window(), 900.0, 800.0);
+                if let Some(i) = answer.as_i64() {
+                    // a suggestion's button sets the reason and answers
+                    let at =
+                        usize::try_from(if i < 0 { offered.len() as i64 + i } else { i }).unwrap();
+                    crate::common::widgets::click(w.window(), &offered[at]);
+                } else {
+                    w.set_reason(answer.as_str().unwrap().into());
+                    crate::common::widgets::click(w.window(), &w.get_yes_label());
+                }
             }
             assert!(w.get_question().is_empty(), "{step}");
             let kept: hydrus_store::reference_options::RecentPetitionReasons = client.setting();

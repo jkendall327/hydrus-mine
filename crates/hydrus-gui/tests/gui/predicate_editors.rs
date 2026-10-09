@@ -2784,6 +2784,50 @@ fn panels_set_in_several_ways_in_the_window_make_what_the_reference_s_make() {
     }
 }
 
+// The archived and modified date panels refuse in the window what is not a
+// date or a time, and the window's replay has both recorded scenarios of
+// each (the model-level counterpart is above).
+// leaf: audit-options-predicate-time-archived-archiveddate-date-time
+// leaf: audit-options-predicate-time-modified-modifieddate-date-time
+#[test]
+fn the_date_panels_in_the_window_have_their_recorded_scenarios_and_refuse_bad_dates() {
+    let (_dirs, store) = store();
+    let recorded = recorded();
+    let windows = headless::init();
+    let context = context(&store, &recorded);
+    let editor = Editor::new(Blank::from_text("system:time").unwrap(), &context);
+    for (class, page) in [
+        ("PanelPredicateSystemModifiedDate", 1),
+        ("PanelPredicateSystemArchivedDate", 3),
+    ] {
+        let scenarios = recorded["scenarios"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .filter(|s| s["editor"] == "system:time" && s["page"] == page)
+            .count();
+        assert_eq!(scenarios, 2, "{class}: the recorded scenarios");
+        let (panel, shape) = editor.pages[page]
+            .panels
+            .iter()
+            .enumerate()
+            .find(|(_, p)| p.kind.class_name() == class)
+            .unwrap();
+        let texts: Vec<usize> = (0..shape.fields.len())
+            .filter(|&i| matches!(shape.fields[i], Field::Text { .. }))
+            .collect();
+        for (field, bad) in [(0, "2011-02-30"), (1, "25:61")] {
+            let got = make_in_window(&windows, &store, "system:time", page, panel, &mut |act| {
+                if field == 1 {
+                    act(Act::Text(texts[0], "2011-06-04".into()));
+                }
+                act(Act::Text(texts[field], bad.into()));
+            });
+            assert!(got.predicates.is_err(), "{class}: {bad} refused: {got:?}");
+        }
+    }
+}
+
 // The rating panels in the window, one per rating service as the
 // reference's are: each labelled with its service, and what "ok" makes of
 // it, as it opens and after each recorded change, names that service.
@@ -2816,6 +2860,14 @@ fn each_rating_panel_in_the_window_is_for_its_own_service() {
         }
         let service = label["text"].as_str().unwrap();
         services.push(service.to_owned());
+        // each leaf's own panel: like, numerical or inc/dec
+        let class = match service {
+            "favourites" => "PredicateSystemRatingLike",
+            "stars" => "PredicateSystemRatingNumerical",
+            _ => "PredicateSystemRatingIncDec",
+        };
+        assert_eq!(theirs["class"], class);
+        assert_eq!(ours.pages[0].panels[panel].kind.class_name(), class);
         // the panel's label, in the window
         let Opened { window, .. } = open_editor(&store, "system:rating", 0);
         let fields = window.get_panels().row_data(panel).unwrap().fields;

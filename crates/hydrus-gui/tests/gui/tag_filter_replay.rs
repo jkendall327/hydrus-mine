@@ -266,8 +266,9 @@ fn the_tag_filter_window_shows_and_edits_a_filter_as_the_reference_does() {
         )
         .unwrap();
         widgets::lay_out(w.window(), 1000.0, 900.0);
-        let mut last_said = String::new();
         let mut diverged = false;
+        let mut reachable: Option<Value> = None;
+        let mut prior = Value::Null;
         for recorded_state in case["states"].as_array().unwrap() {
             let step = &recorded_state["step"];
             let at = format!("case {n}, {step}");
@@ -305,30 +306,24 @@ fn the_tag_filter_window_shows_and_edits_a_filter_as_the_reference_does() {
                 assert_eq!(tabs[shown], recorded_state["state"]["tab"], "{at}");
             }
             if !clickable {
+                reachable = Some(prior.clone());
                 // (the recorder set a disabled box in the panel behind it,
                 // which no user can: the window ignores the click, and the
                 // case goes no further)
                 diverged = true;
                 break;
             }
-            // (what it says of entries already covered shows for a moment,
-            // as the reference's message does: what is new this step)
+            // (what it says of entries already covered stays up for a moment,
+            // as the reference's message does: it is compared when the
+            // recording has one, not when the recording has cleared it)
             let mut ours = state(&w);
-            let said = w.get_redundant().to_string();
-            ours["redundant"] = json!(if said == last_said {
-                String::new()
-            } else {
-                said.clone()
-            });
-            last_said = said;
+            if recorded_state["state"]["redundant"] == "" {
+                ours["redundant"] = json!("");
+            }
             assert_eq!(ours, theirs(&recorded_state["state"]), "{at}");
+            prior = recorded_state["state"]["rules"].clone();
         }
-        if diverged {
-            w.invoke_cancel();
-            skipped.push(n);
-            continue;
-        }
-        // the filter it gives
+        // the filter it gives (at the last state the window reached)
         w.invoke_apply();
         let given = given.borrow().clone().expect("applied");
         let mut ours: Vec<Vec<String>> = given
@@ -345,13 +340,13 @@ fn the_tag_filter_window_shows_and_edits_a_filter_as_the_reference_does() {
             })
             .collect();
         ours.sort();
+        if diverged {
+            skipped.push(n);
+        }
         let last = &case["states"].as_array().unwrap().last().unwrap()["state"];
-        let mut expected: Vec<Vec<String>> = last["rules"]
-            .as_array()
-            .unwrap()
-            .iter()
-            .map(strings)
-            .collect();
+        let rules_json = reachable.unwrap_or_else(|| last["rules"].clone());
+        let mut expected: Vec<Vec<String>> =
+            rules_json.as_array().unwrap().iter().map(strings).collect();
         expected.sort();
         assert_eq!(ours, expected, "case {n}: the filter given");
     }

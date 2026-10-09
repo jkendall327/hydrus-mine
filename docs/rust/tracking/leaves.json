@@ -2218,13 +2218,13 @@
    "native": null,
    "notes": [
     "Local add/delete or repository pend/petition/rescind uses typed updates and stored reasons; repository tests reopen pending/reasons and rescind correctly.",
-    "Account/moderator permission warnings/bypass and recent/fixed reason suggestions are absent; uploading remains unavailable."
+    "Recent and fixed reason suggestions are offered (clicked as buttons) and the recent count option caps them; account/moderator permission warnings and the moderator bypass are not ported; uploading remains unavailable."
    ],
    "recheck": {
     "date": "2026-10-09",
     "class": "sound",
     "by": "Claude session (recheck bins A/B), #97 phase 2",
-    "note": "crates/hydrus-gui/tests/gui/tag_relationships_replay.rs the_relationship_windows_edit_and_filter_pairs_as_the_reference_s_do, for tags > parents on a tag repository: pairs entered and 'add' clicked, a row selected and 'delete' clicked, the reason question ('Enter a reason for: ... A janitor will review your petition.', OK/cancel) and the rescind question answered with their buttons, a reason typed; the questions and the rows with their reasons equal tag_relationships.json's. Moderator permission bypass is not ported (DIFFERENCES.md; repositories are out of scope)."
+    "note": "crates/hydrus-gui/tests/gui/tag_relationships_replay.rs the_relationship_windows_edit_and_filter_pairs_as_the_reference_s_do, for tags > parents on a tag repository: pairs entered and 'add' clicked, a row selected and 'delete' clicked, the reason question ('Enter a reason for: ... A janitor will review your petition.', OK/cancel) and the rescind question answered with their buttons, a reason typed; the questions and the rows with their reasons equal tag_relationships.json's. Moderator permission bypass is not ported (DIFFERENCES.md; repositories are out of scope). Also crates/hydrus-gui/tests/gui/tag_relationships.rs reason_questions_offer_recent_then_fixed_reasons_and_the_option_caps_the_recent_ones (relationship_reasons.json, parents and siblings, tag repository): 'To be added' and 'To be deleted' (petition of a current pair) questions, the recent then fixed suggestions offered and clicked as buttons, the remembered reasons and the count option compared. The notes' 'suggestions are absent' was stale and is corrected."
    }
   },
   {
@@ -18469,7 +18469,7 @@
     "date": "2026-10-09",
     "class": "sound",
     "by": "Claude session (recheck bins A/B), #97 phase 2",
-    "note": "crates/hydrus-gui/tests/gui/predicate_editors.rs each_rating_panel_in_the_window_is_for_its_own_service opens system:rating's editor window, one panel per rating service as the reference's: each panel's label is its service's (favourites, stars, counter) as system_predicate_editors.json records, and what 'ok' adds to the page's search as the panel opens and after each recorded change names that service and equals the reference's predicate. The reference has no service selector inside a panel."
+    "note": "crates/hydrus-gui/tests/gui/predicate_editors.rs each_rating_panel_in_the_window_is_for_its_own_service opens system:rating's editor window, one panel per rating service as the reference's: each panel's label is its service's (favourites, stars, counter) as system_predicate_editors.json records, and what 'ok' adds to the page's search as the panel opens and after each recorded change names that service and equals the reference's predicate. The reference has no service selector inside a panel. The test asserts each service's panel class (Like, Numerical, IncDec) in the recording and in the window's editor."
    }
   },
   {
@@ -18509,7 +18509,7 @@
     "date": "2026-10-09",
     "class": "sound",
     "by": "Claude session (recheck bins A/B), #97 phase 2",
-    "note": "crates/hydrus-gui/tests/gui/predicate_editors.rs each_rating_panel_in_the_window_is_for_its_own_service opens system:rating's editor window, one panel per rating service as the reference's: each panel's label is its service's (favourites, stars, counter) as system_predicate_editors.json records, and what 'ok' adds to the page's search as the panel opens and after each recorded change names that service and equals the reference's predicate. The reference has no service selector inside a panel."
+    "note": "crates/hydrus-gui/tests/gui/predicate_editors.rs each_rating_panel_in_the_window_is_for_its_own_service opens system:rating's editor window, one panel per rating service as the reference's: each panel's label is its service's (favourites, stars, counter) as system_predicate_editors.json records, and what 'ok' adds to the page's search as the panel opens and after each recorded change names that service and equals the reference's predicate. The reference has no service selector inside a panel. The test asserts each service's panel class (Like, Numerical, IncDec) in the recording and in the window's editor."
    }
   },
   {
@@ -18549,7 +18549,7 @@
     "date": "2026-10-09",
     "class": "sound",
     "by": "Claude session (recheck bins A/B), #97 phase 2",
-    "note": "crates/hydrus-gui/tests/gui/predicate_editors.rs each_rating_panel_in_the_window_is_for_its_own_service opens system:rating's editor window, one panel per rating service as the reference's: each panel's label is its service's (favourites, stars, counter) as system_predicate_editors.json records, and what 'ok' adds to the page's search as the panel opens and after each recorded change names that service and equals the reference's predicate. The reference has no service selector inside a panel."
+    "note": "crates/hydrus-gui/tests/gui/predicate_editors.rs each_rating_panel_in_the_window_is_for_its_own_service opens system:rating's editor window, one panel per rating service as the reference's: each panel's label is its service's (favourites, stars, counter) as system_predicate_editors.json records, and what 'ok' adds to the page's search as the panel opens and after each recorded change names that service and equals the reference's predicate. The reference has no service selector inside a panel. The test asserts each service's panel class (Like, Numerical, IncDec) in the recording and in the window's editor."
    }
   },
   {
@@ -18786,7 +18786,7 @@
     "date": "2026-10-09",
     "class": "sound",
     "by": "Claude session (recheck bins A/B), #97 phase 2",
-    "note": "crates/hydrus-gui/tests/gui/predicate_editors.rs panels_set_in_several_ways_in_the_window_make_what_the_reference_s_make replays every recorded scenario through the editor window, among them the archived-date panel's two (operator, date and time typed): what 'ok' adds to the page's search equals the reference's. Typed date/time stand for the calendar and time widgets (DIFFERENCES.md)."
+    "note": "crates/hydrus-gui/tests/gui/predicate_editors.rs panels_set_in_several_ways_in_the_window_make_what_the_reference_s_make replays every recorded scenario through the editor window, among them the archived-date panel's two (operator, date and time typed): what 'ok' adds to the page's search equals the reference's. Typed date/time stand for the calendar and time widgets (DIFFERENCES.md). The panel's refusals (30 February, 25:61) are also made in the window (the_date_panels_in_the_window_have_their_recorded_scenarios_and_refuse_bad_dates), which asserts both recorded scenarios of the panel exist."
    }
   },
   {
@@ -19077,7 +19077,7 @@
     "date": "2026-10-09",
     "class": "sound",
     "by": "Claude session (recheck bins A/B), #97 phase 2",
-    "note": "crates/hydrus-gui/tests/gui/predicate_editors.rs panels_set_in_several_ways_in_the_window_make_what_the_reference_s_make replays every recorded scenario through the editor window, among them the modified-date panel's two (operator, date and time typed): what 'ok' adds to the page's search equals the reference's. Typed date/time stand for the calendar and time widgets (DIFFERENCES.md)."
+    "note": "crates/hydrus-gui/tests/gui/predicate_editors.rs panels_set_in_several_ways_in_the_window_make_what_the_reference_s_make replays every recorded scenario through the editor window, among them the modified-date panel's two (operator, date and time typed): what 'ok' adds to the page's search equals the reference's. Typed date/time stand for the calendar and time widgets (DIFFERENCES.md). The panel's refusals (30 February, 25:61) are also made in the window (the_date_panels_in_the_window_have_their_recorded_scenarios_and_refuse_bad_dates), which asserts both recorded scenarios of the panel exist."
    }
   },
   {
@@ -23375,7 +23375,7 @@
     "date": "2026-10-09",
     "class": "sound",
     "by": "Claude session (recheck bins A/B), #97 phase 2",
-    "note": "crates/hydrus-gui/tests/gui/tag_filter_replay.rs the_tag_filter_window_shows_and_edits_a_filter_as_the_reference_does: the advanced tab's exclude and except lists typed into, selected and deleted (asked, answered with its button), 'block everything' clicked, comparing both advanced lists, whether 'except for these' takes input, the redundancy messages ('already blocked/permitted by a broader rule'), the current filter and the filter applied with tag_filter_editor.json after each step."
+    "note": "crates/hydrus-gui/tests/gui/tag_filter_replay.rs the_tag_filter_window_shows_and_edits_a_filter_as_the_reference_does: the advanced tab's exclude and except lists typed into, selected and deleted (asked, answered with its button), 'block everything' clicked, comparing both advanced lists, whether 'except for these' takes input, the redundancy messages ('already blocked/permitted by a broader rule'), the current filter and the filter applied with tag_filter_editor.json after each step. Slices are handed to the window's typing callback (invoke_typed) and the test text to set_test_input, not typed key by key. Case 1's last recorded step sets a box the window has disabled; the case's applied filter is compared at the last state reached."
    }
   },
   {
@@ -23413,7 +23413,7 @@
     "date": "2026-10-09",
     "class": "sound",
     "by": "Claude session (recheck bins A/B), #97 phase 2",
-    "note": "crates/hydrus-gui/tests/gui/tag_filter_replay.rs the_tag_filter_window_shows_and_edits_a_filter_as_the_reference_does replays tag_filter_editor.json through the window (namespaces offered from a parser, as the reference's): tabs clicked, the blacklist's global and namespace boxes clicked for real, slices typed, selected and removed (question answered with its button), comparing both simple lists (ticks, entries, enabled, errors), the advanced lists, the redundancy message, the current filter and the test box after each step, and the filter applied. Case 1's last recorded step sets a box the window has disabled (the recorder set it behind the panel); the window ignores the click and the test stops that case there."
+    "note": "crates/hydrus-gui/tests/gui/tag_filter_replay.rs the_tag_filter_window_shows_and_edits_a_filter_as_the_reference_does replays tag_filter_editor.json through the window (namespaces offered from a parser, as the reference's): tabs clicked, the blacklist's global and namespace boxes clicked for real, slices handed to the window's typing callback (invoke_typed, not key presses), selected and removed (question answered with its button), comparing both simple lists (ticks, entries, enabled, errors), the advanced lists, the redundancy message, the current filter and the test box (set_test_input and its edited callback) after each step, and the filter applied. Case 1's last recorded step sets a box the window has disabled (the recorder set it behind the panel); the window ignores the click and the test stops that case there."
    }
   },
   {
