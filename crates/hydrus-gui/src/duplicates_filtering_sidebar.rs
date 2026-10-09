@@ -61,12 +61,17 @@ thread_local! {
 
 /// The count's cog options as stored.
 fn count_options(page: &SearchPage) -> PotentialPairsCountOptions {
-    page.store()
+    stored_options(page.store())
+}
+
+/// The count's cog options in `store` (shared by the rule editor's count).
+pub(crate) fn stored_options(store: &hydrus_store::Store) -> PotentialPairsCountOptions {
+    store
         .read(settings::get::<PotentialPairsCountOptions>)
         .unwrap_or_default()
 }
 
-fn model_options(options: PotentialPairsCountOptions) -> counting::Options {
+pub(crate) fn model_options(options: PotentialPairsCountOptions) -> counting::Options {
     counting::Options {
         stops_to_estimate: options.stops_to_estimate,
         file_search_optimisation: options.file_search_optimisation,

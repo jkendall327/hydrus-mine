@@ -312,7 +312,7 @@ fn replay(scenario: &Value) {
     }
 }
 
-// leaf: audit-media-filter-decisions, audit-media-filter-back, audit-media-filter-commit
+// leaf: audit-media-filter-decisions, audit-media-filter-commit
 #[test]
 fn the_filter_window_goes_through_the_references_batches_as_it_does() {
     let _windows = headless::init();

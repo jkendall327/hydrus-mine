@@ -291,3 +291,117 @@ fn a_rules_searches_location_is_chosen() {
     assert_eq!(search.search_1.location.current().len(), 2);
     assert_eq!(search.search_1.location, search.search_2.location);
 }
+
+// A rule editor's search counts its pairs as the duplicates page's does:
+// a block at a time off the UI thread, the buttons and the cog driving it,
+// and counting afresh when the search is edited.
+// leaf: audit-media-duplicate-search-count
+#[test]
+fn a_rules_search_counts_its_pairs_and_counts_again_when_edited() {
+    use hydrus_gui_model::duplicates_count::{Gate, Waiting};
+    use hydrus_gui_model::duplicates_filtering as model;
+    use hydrus_store::settings::{self, PotentialPairsCountOptions};
+
+    let gate = Gate::new(3);
+    gate.install_here();
+    let _windows = headless::init();
+    let (_dir, store) = store_with_pairs();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::open(Arc::clone(&store)).unwrap());
+    ui.invoke_duplicates_action("edit rules".into(), 0, false, false);
+    let list = bound
+        .auto_resolution
+        .list
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
+    list.invoke_add_suggested();
+    list.invoke_suggested_chosen(0);
+    list.invoke_row_clicked(0, false, false);
+    list.invoke_edit();
+    let rule = bound
+        .auto_resolution
+        .rule
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
+
+    let until = || std::time::Instant::now() + std::time::Duration::from_secs(20);
+    let wait = |what: &str, mut ready: Box<dyn FnMut() -> bool + '_>| {
+        let until = until();
+        while !ready() {
+            assert!(std::time::Instant::now() < until, "{what}");
+            std::thread::sleep(std::time::Duration::from_millis(10));
+            slint::platform::update_timers_and_animations();
+        }
+    };
+
+    // the pairs are fetched, then searched a block at a time
+    wait(
+        "the count never started",
+        Box::new(|| rule.get_count() == "initialising\u{2026}"),
+    );
+    assert!(!rule.get_count_paused());
+    // pausing lets the block under way finish, then stops
+    wait("the pairs never arrived", Box::new(|| gate.release(0.0)));
+    wait(
+        "no block was under way",
+        Box::new(|| gate.waiting() == Some(Waiting::Block)),
+    );
+    rule.invoke_count_action("pause count".into(), 0);
+    assert!(rule.get_count_paused());
+    wait("the block never finished", Box::new(|| gate.release(0.0)));
+    wait(
+        "the block was not shown",
+        Box::new(|| rule.get_count().contains("pairs searched")),
+    );
+    let paused_at = rule.get_count();
+    std::thread::sleep(std::time::Duration::from_millis(200));
+    assert!(!gate.release(0.0), "a paused count searched another block");
+    assert_eq!(rule.get_count(), paused_at);
+    rule.invoke_count_action("pause count".into(), 0);
+    assert!(!rule.get_count_paused());
+
+    // the count goes to the end, then a change of the distance counts again
+    wait(
+        "the count never finished",
+        Box::new(|| {
+            gate.release(0.0);
+            let count = rule.get_count();
+            count.contains("pairs searched") && !count.ends_with('\u{2026}')
+        }),
+    );
+    rule.set_distance(64);
+    rule.invoke_changed();
+    wait(
+        "the changed search was not counted again",
+        Box::new(|| gate.waiting().is_some()),
+    );
+
+    // the cog's options are stored and ticked
+    rule.invoke_count_action("count option".into(), 0);
+    let stored = store
+        .read(settings::get::<PotentialPairsCountOptions>)
+        .unwrap();
+    assert!(stored.starts_paused);
+    assert!(rule.get_count_ticks().row_data(0).unwrap());
+
+    // the recount ends at the count of the written rule's search
+    rule.invoke_apply();
+    list.invoke_apply();
+    let written = store.read(auto::rules).unwrap();
+    let search = written[0].1.search.clone();
+    assert_eq!(search.max_hamming_distance, 64);
+    let (total, found) = model::count(&store, &DuplicatesPage::new(search)).unwrap();
+    let expected = model::count_text(total, found);
+    wait(
+        "the recount never reached the rule's count",
+        Box::new(|| {
+            gate.release(0.0);
+            rule.get_count() == expected
+        }),
+    );
+    gate.free();
+}

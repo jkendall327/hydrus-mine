@@ -12,7 +12,7 @@ use std::time::{Duration, Instant};
 use slint::Model as _;
 
 use hydrus_gui::MainWindow;
-use hydrus_gui_model::duplicates_count::Gate;
+use hydrus_gui_model::duplicates_count::{Gate, Waiting};
 use hydrus_gui_model::duplicates_filtering as model;
 use hydrus_store::settings::{self, PotentialPairsCountOptions};
 
@@ -122,6 +122,9 @@ fn the_pair_count_goes_a_block_at_a_time_and_the_buttons_and_search_changes_driv
     await_count(ui, &searching(3, space, matches(3)));
 
     // pausing lets the block under way finish, then stops
+    spin_until("no block was under way to pause", || {
+        gate.waiting() == Some(Waiting::Block)
+    });
     ui.invoke_duplicates_filtering_action("pause count".into(), 0);
     assert!(ui.get_duplicates_filtering().count_paused);
     release(&gate);
@@ -156,6 +159,9 @@ fn the_pair_count_goes_a_block_at_a_time_and_the_buttons_and_search_changes_driv
     let wider_found = wider.iter().filter(|h| **h).count();
     assert!(wider_found >= found);
     let wide = model::count_text(space, wider_found);
+    // (the reference keeps the old text until the new count publishes, so the
+    // wider count must differ from it for this wait to prove a recount)
+    assert_ne!(wide, done, "the wider search finds the same pairs");
     spin_until("the wider search never finished", || {
         gate.release(0.0);
         count_of(ui) == wide

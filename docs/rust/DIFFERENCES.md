@@ -568,6 +568,10 @@ reference's (`oracle/dump_comparison_statements.py`).
   back, forgets that the first file was to be merged or deleted twice (a
   typo for the second file), so a later pair with the second file can still
   be skipped as dealt with.
+- **Group mode's skipped-group question is not recorded.** Skip and back
+  are replayed against the reference's real canvas, but the question group
+  mode asks before loading another group has no recording yet, so
+  `audit-media-filter-back` stays untagged.
 - **A batch's first pair is skipped if it can't be shown**, as every later
   pair is. The reference shows it.
 - **"software/source metadata" is listed.** The reference makes the
@@ -4066,8 +4070,8 @@ change nothing). They are marked out of scope in `docs/rust/tracking/`.
   once, which is what it does in the reference; pairs the filter or "set"
   buttons change while the count runs are not subtracted from it (the
   reference's `NotifyPotentialDuplicatePairsUpdate`), so the count is of the
-  pairs as fetched until it is refreshed or restarted; the rule editor's
-  search fields have no counter.
+  pairs as fetched until it is refreshed or restarted. The rule editor's
+  search fields have the same counter (and share the cog's stored options).
 - Setting the shown files' relationship applies each pair once with the default
   merge options; the reference runs its merges twice so content propagates
   between all files.

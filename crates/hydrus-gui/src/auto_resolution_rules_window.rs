@@ -737,6 +737,18 @@ fn open_rule(
         selected: None,
         merge_for,
     }));
+    // the pair count of the rule's search, as the reference's panel shows it
+    let count =
+        crate::rule_count::RuleCount::start(&window, store, state.borrow().rule.search.clone());
+    window.on_count_action({
+        let weak = window.as_weak();
+        let count = count.clone();
+        move |what, n| {
+            if let Some(window) = weak.upgrade() {
+                count.action(&window, &what, n);
+            }
+        }
+    });
     let close = {
         let weak = window.as_weak();
         let slot = slots.rule.clone();
@@ -751,6 +763,7 @@ fn open_rule(
         let weak = window.as_weak();
         let state = state.clone();
         let store = store.clone();
+        let count = count.clone();
         move || {
             let Some(window) = weak.upgrade() else {
                 return;
@@ -758,6 +771,7 @@ fn open_rule(
             let mut state = state.borrow_mut();
             read_rule(&window, &store, &mut state);
             show_rule(&window, &state, false);
+            count.search_changed(&state.rule.search);
         }
     });
     // the searches' location, chosen in the locations list
@@ -765,6 +779,7 @@ fn open_rule(
         let weak = window.as_weak();
         let state = state.clone();
         let store = store.clone();
+        let count = count.clone();
         let slot = slots.locations.clone();
         move || {
             let Some(window) = weak.upgrade() else {
@@ -779,6 +794,7 @@ fn open_rule(
                 let weak = window.as_weak();
                 let state = state.clone();
                 let store = store.clone();
+                let count = count.clone();
                 Rc::new(move |location| {
                     let Some(window) = weak.upgrade() else {
                         return;
@@ -791,6 +807,7 @@ fn open_rule(
                     // (both searches search the one location)
                     state.rule.search.search_2.location = location.clone();
                     state.rule.search.search_1.location = location;
+                    count.search_changed(&state.rule.search);
                 })
             };
             if let Err(e) = crate::locations_window::open(&slot, store.clone(), &current, chosen) {

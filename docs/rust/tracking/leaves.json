@@ -905,10 +905,10 @@
     "Native rule search has no fragmentary count worker, pause/refresh counter, starts-paused setting, estimate stopping or low-hit-rate optimization cog. Preview testing is a separate narrower sample workflow."
    ],
    "recheck": {
-    "date": "2026-10-08",
+    "date": "2026-10-09",
     "class": "sound",
     "by": "issue 88 session",
-    "note": "Sound: tests/model/duplicates_count.rs replays all 11 scenarios of oracle/fixtures/potential_duplicates_count.json (the real reference panel on a scripted space, blocks released one at a time) step by step on the worker the page uses; tests/gui/duplicates_count.rs drives the page's play/pause, refresh, distance change and cog through the window against the one-shot search. The cog's options are read by the count. Not covered, and said in DIFFERENCES.md: the rule editor's search fields have no counter; pairs changed while counting are not subtracted."
+    "note": "Sound: tests/model/duplicates_count.rs replays all 11 scenarios of oracle/fixtures/potential_duplicates_count.json (the real reference panel on a scripted space, blocks released one at a time) step by step on the worker the page uses; tests/gui/duplicates_count.rs drives the page's play/pause, refresh, distance change and cog through the window against the one-shot search. The cog's options are read by the count. Not covered, and said in DIFFERENCES.md: pairs changed while counting are not subtracted. The rule editor's search has the same counter: tests/gui/auto_resolution_rules.rs a_rules_search_counts_its_pairs_and_counts_again_when_edited drives it (gate, pause, cog stored, distance edit recounts, ends at the written rule's count)."
    }
   },
   {
@@ -984,10 +984,10 @@
     "Reference back has a known second-file bookkeeping bug that the native intentionally corrects."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "sound",
+    "date": "2026-10-09",
+    "class": "weak",
     "by": "issue 88 session",
-    "note": "Sound: tests/gui/duplicate_filter_canvas.rs the_filter_window_goes_through_the_references_batches_as_it_does replays six scenarios of oracle/fixtures/duplicate_filter_canvas.json (the reference's real CanvasFilterDuplicates on the auto-resolution database, driven with its application commands, each on a fresh database) through the native filter window: back (several times in a row, and to undo a decision), skip, switching to the other file, going back from the batch-end question, and the close question's 'back to filtering' are driven through the window and the pair shown and the top bar's text are the reference's after each. The replay found the missing 'Quit filtering now and forget your work?' question, now asked. Group mode's skipped-group question is not covered here."
+    "note": "Skip and back are proved against the reference's real canvas (tests/gui/duplicate_filter_canvas.rs, six scenarios of oracle/fixtures/duplicate_filter_canvas.json), but the leaf also names group-mode continuation (the skipped-group question when another group would load), which no recording covers, so the tag is not claimed. Record the filter in group mode to finish it."
    }
   },
   {

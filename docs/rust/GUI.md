@@ -4751,7 +4751,8 @@ search panels paused", "optimisation: try to state an estimate of final count ra
 than counting everything" and "optimisation: allow single slow search optimisation when
 seeing low hit-rate" (at a hit rate under 1% of a space over 10,000 pairs it searches
 all that is left at once); the three are kept. Blocks follow the time they take
-(`duplicates_count`). The duplicate filter box sorts
+(`duplicates_count`). The auto-resolution rule editor's search tab has the same
+count line, buttons and cog for the rule's own search. The duplicate filter box sorts
 pairs by larger/smaller filesize, similarity or random with the matching
 direction words, and picks mixed pairs or group mode; "launch the filter" uses
 all of these. "quick and dirty processing" shows a random potential group in the
