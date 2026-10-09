@@ -12,6 +12,7 @@ use hydrus_core::open_externally::{CallRef, Routing};
 use hydrus_gui::{MainWindow, Pages, bind, headless};
 use hydrus_store::settings;
 use serde_json::Value;
+use slint::ComponentHandle as _;
 use std::{cell::RefCell, collections::BTreeMap, rc::Rc};
 
 fn key(value: &Value) -> [u8; 32] {
@@ -138,7 +139,7 @@ fn opening_runs_the_first_call_the_reference_ran_with_its_inputs() {
         inputs["1"].as_str().unwrap(),
         format!("file://{recorded_path}")
     );
-    assert_eq!(jpeg.hash_id.0, inputs["6"].as_i64().unwrap());
+    assert_eq!(i64::from(jpeg.hash_id.0), inputs["6"].as_i64().unwrap());
     await_output(
         &captured,
         &format!(

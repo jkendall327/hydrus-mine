@@ -278,8 +278,16 @@ fn background_copies_say_and_place_what_the_reference_draws() {
                     near((ours.x0 + ours.x1) / 2.0, (theirs.x0 + theirs.x1) / 2.0)
                         && near(ours.y0, theirs.y0)
                 }
-                // right-aligned from the right edge
-                _ => near(ours.x1, theirs.x1) && near(ours.y0, theirs.y0),
+                // a column at the right: the reference's rectangles are the
+                // column (its texts wrap in it), ours is ink inside it
+                "Notes" => {
+                    near(ours.x0, theirs.x0) && ours.x1 <= theirs.x1 + SLACK && near(ours.y0, theirs.y0)
+                }
+                // right-aligned from the right edge, ending where the
+                // reference's locations end (its rectangles are its texts:
+                // the inc/dec value and the locations; the stars above them
+                // are shapes it does not record)
+                _ => near(ours.x1, theirs.x1) && ours.y0 <= theirs.y0 && near(ours.y1, theirs.y1),
             };
             assert!(fits, "{kind}: ours {ours:?}, the reference's {theirs:?}");
         }

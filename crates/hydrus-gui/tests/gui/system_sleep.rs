@@ -7,6 +7,7 @@ use hydrus_gui::{MainWindow, Pages, bind, headless};
 use hydrus_net::{Job, NetEngine, NetOptions, Request};
 use hydrus_store::network::NetworkSettings;
 use hydrus_store::settings::get;
+use slint::ComponentHandle as _;
 use std::sync::Arc;
 
 const DETECT: &str = "Allow wake-from-system-sleep detection:";
@@ -65,6 +66,15 @@ fn held(engine: &NetEngine) -> bool {
 fn sleep_rows_reach_the_daemon_s_engine_and_replay_the_reference_s_checks() {
     let recorded = hydrus_testkit::fixture_json("system_sleep_options.json");
     let (_dirs, store) = store();
+    // (the fixture's client has new network traffic paused, which holds
+    // requests before any wake would)
+    store
+        .write(|ctx| {
+            let mut pauses: hydrus_store::settings::Pauses = get(ctx.conn())?;
+            pauses.network_traffic = false;
+            hydrus_store::settings::set(ctx.conn(), &pauses)
+        })
+        .unwrap();
     let _windows = headless::init();
     let ui = MainWindow::new().unwrap();
     let bound = bind(&ui, Pages::open(store.clone()).unwrap());

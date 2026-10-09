@@ -2145,9 +2145,11 @@ execution or canonical inventory promotion is part of this slice.
 Passive tags, file-information, ratings/locations and notes copies now consume
 all four background preferences independently of popup and focus settings.
 They paint before the media, preserving occlusion and the reference's notes
-origin dependency on the top-right copy. Existing native fonts, information-line
-content and rating layout remain in use, so the copies follow the native hover
-presentation rather than reproducing Qt glyph metrics. Preview-window passive
+origin dependency on the top-right copy. Their texts are the reference's
+(the file-information copy puts the zoom second, as `_GetInfoString` does) and
+they land within a few pixels of the reference's; native fonts and rating
+layout remain in use, so glyph metrics differ, and the notes start under the
+ratings at the native ratings' height rather than the reference's. Preview-window passive
 copies and hover menu/dominance rules remain separate gaps. The already-supported
 index background preference is unchanged by these four controls.
 

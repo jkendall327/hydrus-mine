@@ -7,7 +7,7 @@ use super::external_calls::{call, named, open, question, saved, store};
 use hydrus_core::external_calls::Callable;
 use hydrus_gui::{Bound, MainWindow, OptionsWindow, Pages, bind, headless};
 use serde_json::{Value, json};
-use slint::Model as _;
+use slint::{ComponentHandle as _, Model as _};
 
 fn strings(value: &Value) -> Vec<String> {
     value
@@ -23,6 +23,18 @@ fn rows(w: &OptionsWindow) -> Vec<Vec<String>> {
         .iter()
         .map(|row| row.cells.iter().map(|c| c.to_string()).collect())
         .collect()
+}
+
+/// The same names, in any order: the recorder added the calls through the
+/// panel's `_AddCallableFullyFormed`/`_AddCallableViaImport` themselves, which
+/// append, where the list's import button then sorts
+/// (`_ImportFromClipboard`), as ours does.
+fn same_names(ours: Vec<String>, recorded: &Value) -> bool {
+    let mut ours = ours;
+    let mut recorded = strings(recorded);
+    ours.sort();
+    recorded.sort();
+    ours == recorded
 }
 
 fn names(w: &OptionsWindow) -> Vec<String> {
@@ -139,7 +151,7 @@ fn editing_a_call_replays_the_reference_s_list_staging_save_and_reopen() {
     let child = call(&bound);
     child.set_name("edited 日本".into());
     // the list does not change until the child is applied
-    assert_eq!(names(&w), strings(&reference["parent_before_child_accept"]));
+    assert!(same_names(names(&w), &reference["parent_before_child_accept"]));
     child.invoke_apply();
     assert_eq!(
         key_of(&bound, &w, "edited 日本") == first,
@@ -186,7 +198,7 @@ fn importing_replays_the_reference_s_names_keys_and_weird_call_question() {
     assert_eq!(names(&w), strings(&reference["reopened_names"]));
 
     import(&bound, &w, reference["export"].as_str().unwrap());
-    assert_eq!(names(&w), strings(&reference["after_import"]));
+    assert!(same_names(names(&w), &reference["after_import"]), "{:?}", names(&w));
     let exported =
         hydrus_downloader_exchange::external_calls::decode_text(reference["export"].as_str().unwrap())
             .unwrap();
@@ -207,7 +219,7 @@ fn importing_replays_the_reference_s_names_keys_and_weird_call_question() {
     assert_eq!(asked.get_message().as_str(), reference["questions"][0]["message"]);
     asked.invoke_answered(false);
     assert_eq!(w.get_external_call_error().as_str(), reference["declined"]);
-    assert_eq!(names(&w), strings(&reference["after_import"]));
+    assert!(same_names(names(&w), &reference["after_import"]), "{:?}", names(&w));
     // and yes adds it
     import(&bound, &w, &weird);
     question(&bound).invoke_answered(true);

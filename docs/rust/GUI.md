@@ -3804,15 +3804,18 @@ diagnostic evidence and earn no credit.
 
 Supported process calls expose enabled input rules, tokens and the existing
 string-processor child, an ordered command-argument editor, timeout/flags and
-preview/test inputs. Reopening a saved process and pressing its Test Call runs
-its argument vector in an owned worker. Closing the owner cancels and reaps its
-direct child; output is discarded, and long-lived test calls use a 15 second
-deadline. Clipboard/JSON-file/PNG exchange reviews supported callable exports
+preview/test inputs, which start at the reference's example path or URL.
+'test availability!' says whether the program is found; 'test call!' runs the
+call's argument vector in an owned worker and reports as the reference does:
+"Looks good!", or its error text for a program that is missing or exits with
+an error (quoting the first of its output). Long-lived calls are tested with a
+15 second deadline. Closing the owner cancels and reaps the direct child.
+Importing calls asks before adding one that looks unusual (a very long
+program path, too many or too long parameters), as the reference does. Clipboard/JSON-file/PNG exchange reviews supported callable exports
 before changing the Options draft. These editor/exchange/runtime families remain
 partial: legacy executable-manager import and regeneration when opening only
 the registered-call page, deeper per-call launch menus and routing import,
-OS-launch test execution, rule clipboard controls,
-full process output/error handling and some command/dialog interactions are not
+OS-launch test execution, rule clipboard controls and some command/dialog interactions are not
 ported. The complete scope is recorded in the external-call parity proposal.
 Options > media viewer > mouse behaviour now stages cursor anchoring and its
 apparent-touchscreen override. Apply updates an already-open viewer; Cancel
