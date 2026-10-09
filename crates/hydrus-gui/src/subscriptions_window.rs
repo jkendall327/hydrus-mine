@@ -1270,6 +1270,8 @@ pub(crate) fn open(
                 .map(|w| w.get_asked_text().to_string())
                 .unwrap_or_default();
             change(&|open| match open.asking.take() {
+                // (answered above)
+                Some(Asking::MissingLogs(_)) => (),
                 Some(Asking::DirectImportNotice(_, _, queue)) => direct_import_next(open, queue),
                 Some(Asking::DirectImportMissing(subscription, queue)) => {
                     if index == 0
