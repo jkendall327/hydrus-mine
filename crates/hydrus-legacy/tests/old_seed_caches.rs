@@ -56,12 +56,23 @@ fn caches_of_versions_one_to_seven_upgrade_as_the_reference_does() {
         }
         if version >= 5 {
             let repeated = read(&case["duplicate_cache"]).unwrap();
-            assert_eq!(
-                repeated.len(),
-                seeds.len(),
-                "repeats are dropped, first wins"
-            );
-            assert_eq!(repeated[0].note, seeds[0].note);
+            let ours: Vec<Value> = repeated
+                .iter()
+                .map(|s| {
+                    json!([s.seed_type, s.data, s.created, s.modified, s.source_time, s.status, s.note])
+                })
+                .collect();
+            // the reference's list export of the same cache has no repeat ...
+            let exported = &case["duplicate_exported"][2][1][2][0][1][3][1];
+            assert_eq!(ours, recorded(exported), "version {version}");
+            // ... and the upgrade alone keeps them, the first of each winning
+            let mut first: Vec<Value> = Vec::new();
+            for row in recorded(&case["duplicate_upgraded"]) {
+                if !first.iter().any(|f| f[0] == row[0] && f[1] == row[1]) {
+                    first.push(row);
+                }
+            }
+            assert_eq!(ours, first, "version {version}");
         }
     }
     for rewrite in fixture["rewrites"].as_array().unwrap() {

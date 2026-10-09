@@ -30,6 +30,7 @@ export component DownloaderExchangeWindow inherits Window {
     in property <bool> domain-enabled;
     in property <bool> domain-prompt;
     in-out property <string> domain-text;
+    out property <string> domain-prompt-text: "Enter domain.";
     VerticalLayout {
         padding: 12px; spacing: 8px;
         Text { text: root.instructions; color: Theme.text; wrap: word-wrap; }
@@ -50,7 +51,7 @@ export component DownloaderExchangeWindow inherits Window {
         }
         if root.domain-prompt: VerticalLayout {
             spacing: 4px;
-            Text { text: "Enter domain."; color: Theme.text; }
+            Text { text: root.domain-prompt-text; color: Theme.text; }
             HorizontalLayout {
                 spacing: 8px;
                 LineEdit { horizontal-stretch: 1; text <=> root.domain-text; accepted => { root.action("domain-ok"); } }

@@ -777,4 +777,51 @@ fn the_presentation_editors_choices_filter_the_files_show_files_presents() {
     editor.invoke_apply();
     show_default_files(&ui);
     assert_eq!(shown(&bound), ids);
+
+    // the inbox gate and "do not show anything": the second file (the
+    // redundant one) is the only one in the inbox
+    {
+        let inboxed = ids[1];
+        store
+            .write(move |ctx| {
+                ctx.conn()
+                    .execute("INSERT INTO file_inbox (hash_id) VALUES (?)", [inboxed])?;
+                Ok(())
+            })
+            .unwrap();
+    }
+    let choose = |status: &str, inbox: &str| {
+        let editor = shown_editor(&ui, &bound);
+        custom_page(&editor, "presentation");
+        editor.set_status_index(status_at(&editor, status));
+        editor.invoke_changed();
+        if !inbox.is_empty() {
+            let at = texts(&editor.get_inbox_choices())
+                .iter()
+                .position(|t| t == inbox)
+                .unwrap_or_else(|| panic!("no {inbox} choice"));
+            editor.set_inbox_index(i32::try_from(at).unwrap());
+            editor.invoke_changed();
+        }
+        editor.invoke_apply();
+        ui.set_error("".into());
+        show_default_files(&ui);
+    };
+    // new files, inbox or archive: the three new ones
+    choose("new files", "inbox or archive");
+    assert_eq!(shown(&bound), [ids[0], ids[2], ids[3]]);
+    // ... or in inbox: the redundant file joins them, being in the inbox
+    choose("new files", "or in inbox");
+    assert_eq!(shown(&bound), ids);
+    // all files, must be in inbox: only the inboxed one
+    choose("all files", "must be in inbox");
+    assert_eq!(shown(&bound), [ids[1]]);
+    // new files, must be in inbox: none is both
+    choose("new files", "must be in inbox");
+    assert_eq!(ui.get_error(), "No presented files for that selection!");
+    // do not show anything
+    choose("all files", "inbox or archive");
+    assert_eq!(shown(&bound), ids);
+    choose("do not show anything", "");
+    assert_eq!(ui.get_error(), "No presented files for that selection!");
 }

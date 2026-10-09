@@ -1188,8 +1188,9 @@ native/store/model regression source awaits hosted CI; no Rust runs locally.
 
 - **Commit pending only gates the pending routes.** The Client API permission
   editor's "commit pending" permission is checked against the recorded
-  permission rows, and a key with it reads pending counts and forgets pending
-  content; nothing can commit to a repository (`commit_pending` passes the
+  permission rows, and the pending-counts and commit routes check it (the test
+  reads the counts with a key that has it and is refused for one that lacks it);
+  nothing can commit to a repository (`commit_pending` passes the
   permission check, then answers 422).
 
 - **Pending content can't be committed.** hydrus-rs doesn't talk to
