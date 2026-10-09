@@ -307,4 +307,5 @@ mod search_pages_favourites;
 mod search_pages_menu;
 mod subscriptions_overwrite_checker;
 mod tag_filter_removal;
+mod video_buffer;
 mod viewer_prefetch;
