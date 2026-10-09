@@ -464,3 +464,191 @@ fn export_folders_are_paused_and_run_from_the_file_menu_and_the_worker_obeys() {
     assert_eq!(runs.len(), 3);
     assert_eq!(flags(&store), all_false);
 }
+
+// leaf: audit-options-menu-menu-file-check-all
+// leaf: audit-options-menu-menu-file-check-import-folder-now-folder
+// leaf: audit-options-menu-menu-file-run-all
+// leaf: audit-options-menu-menu-file-run-export-folder-now-folder
+#[test]
+fn checking_and_running_folders_from_the_file_menu_flags_and_says_what_the_reference_did() {
+    use hydrus_store::popups;
+
+    let recorded = hydrus_testkit::fixture_json("folder_runs.json");
+    // (the export folders of this fixture stand in for the recorded three,
+    // in order: the second is the one run alone)
+    let (_dirs, store) = fixture_store("export_folder");
+    let _windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let _bound = bind(&ui, Pages::open(store.clone()).unwrap());
+    let export_names: Vec<String> = {
+        let folders: ExportFolders = store.read(settings::get).unwrap();
+        let mut names: Vec<_> = folders.0.iter().map(|f| f.name.clone()).collect();
+        names.sort();
+        names
+    };
+    assert_eq!(export_names.len(), 3);
+    let imports: Vec<(String, bool, bool)> = recorded["import_folders"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|f| {
+            (
+                f["name"].as_str().unwrap().to_owned(),
+                f["paused"].as_bool().unwrap(),
+                f["check_regularly"].as_bool().unwrap(),
+            )
+        })
+        .collect();
+    let recorded_exports: Vec<String> = recorded["export_folders"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|f| f["name"].as_str().unwrap().to_owned())
+        .collect();
+    // import folders as recorded, once
+    store
+        .write({
+            let imports = imports.clone();
+            move |ctx| {
+                for (name, paused, regularly) in &imports {
+                    let mut settings = hydrus_parse::folders::ImportFolderSettings::default();
+                    settings.path = format!("/nonexistent/{name}");
+                    settings.check_regularly = *regularly;
+                    import_folders::create_import_folder(
+                        ctx.conn(),
+                        name,
+                        &settings,
+                        &hydrus_core::import_options::ImportOptionsSlice::default(),
+                        *paused,
+                        0,
+                    )?;
+                }
+                Ok(())
+            }
+        })
+        .unwrap();
+    let state = |store: &Store| -> serde_json::Value {
+        let mut imports = serde_json::Map::new();
+        for folder in store.read(import_folders::import_folders).unwrap() {
+            if recorded["import_folders"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .any(|f| f["name"] == folder.name())
+            {
+                imports.insert(
+                    folder.name().to_owned(),
+                    serde_json::json!({"paused": folder.paused(), "check_now": folder.settings.check_now}),
+                );
+            }
+        }
+        let folders: ExportFolders = store.read(settings::get).unwrap();
+        let mut exports = serde_json::Map::new();
+        for (i, name) in recorded_exports.iter().enumerate() {
+            let ours = folders
+                .0
+                .iter()
+                .find(|f| f.name == export_names[i])
+                .unwrap();
+            exports.insert(name.clone(), serde_json::json!({"run_now": ours.run_now}));
+        }
+        serde_json::json!({"imports": imports, "exports": exports})
+    };
+    let said = |store: &Store| -> Vec<String> {
+        store
+            .read(|c| popups::all(c, hydrus_core::TimestampMs::now().0 / 1000 + 1))
+            .unwrap()
+            .into_iter()
+            .filter_map(|job| job.status_text_1)
+            .collect()
+    };
+    let mut seen = 0;
+    for case in recorded["cases"].as_array().unwrap() {
+        // the folders as the recording began each case
+        store
+            .write({
+                let imports = imports.clone();
+                let sync_paused = case["sync_paused"].as_bool().unwrap();
+                move |ctx| {
+                    let conn = ctx.conn();
+                    for folder in import_folders::import_folders(conn)? {
+                        if let Some((_, paused, _)) =
+                            imports.iter().find(|(n, _, _)| n == folder.name())
+                        {
+                            let mut settings = folder.settings.clone();
+                            settings.check_now = false;
+                            import_folders::set_settings(conn, folder.id(), &settings)?;
+                            hydrus_store::queues::set_paused(
+                                conn,
+                                folder.id(),
+                                Some(*paused),
+                                None,
+                            )?;
+                        }
+                    }
+                    let mut exports: ExportFolders = settings::get(conn)?;
+                    for folder in &mut exports.0 {
+                        folder.run_now = false;
+                    }
+                    settings::set(conn, &exports)?;
+                    let mut folders: FolderSettings = settings::get(conn)?;
+                    folders.pause_import_folders = sync_paused;
+                    folders.pause_export_folders = sync_paused;
+                    settings::set(conn, &folders)
+                }
+            })
+            .unwrap();
+        assert_eq!(state(&store), case["before"], "{}", case["what"]);
+        let before_said = said(&store);
+        let (menu, entry): (&[&str], &str) = match case["what"].as_str().unwrap() {
+            "check one" => (
+                &["import/export folders", "check import folder now"],
+                "paused one",
+            ),
+            "check one, not paused" => (
+                &["import/export folders", "check import folder now"],
+                "drop box",
+            ),
+            "check all" => (
+                &["import/export folders", "check import folder now"],
+                "check all",
+            ),
+            "run one" => (
+                &["import/export folders", "run export folder now"],
+                export_names[1].as_str(),
+            ),
+            _ => (
+                &["import/export folders", "run export folder now"],
+                "run all",
+            ),
+        };
+        let mut path = menu.to_vec();
+        path.push(entry);
+        file_menu(&ui, &path);
+        assert_eq!(state(&store), case["after"], "{}", case["what"]);
+        let mut new: Vec<String> = said(&store);
+        new.retain(|text| !before_said.contains(text));
+        let theirs: Vec<String> = case["messages"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|m| m.as_str().unwrap().to_owned())
+            .collect();
+        if theirs.is_empty() {
+            assert!(new.is_empty(), "{} said {new:?}", case["what"]);
+        } else {
+            assert_eq!(new, theirs, "{}", case["what"]);
+        }
+        // (so that the next case's message is new)
+        store
+            .write(|ctx| {
+                for job in popups::all(ctx.conn(), hydrus_core::TimestampMs::now().0 / 1000 + 1)? {
+                    popups::update(ctx.conn(), &job.key, 0, |job| job.dismissed = true)?;
+                }
+                Ok(())
+            })
+            .unwrap();
+        seen += 1;
+    }
+    assert_eq!(seen, 10);
+}

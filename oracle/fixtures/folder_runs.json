@@ -1,0 +1,635 @@
+{
+ "cases": [
+  {
+   "after": {
+    "exports": {
+     "clear out": {
+      "run_now": false
+     },
+     "favourites": {
+      "run_now": false
+     },
+     "mirror": {
+      "run_now": false
+     }
+    },
+    "imports": {
+     "drop box": {
+      "check_now": false,
+      "paused": false
+     },
+     "manual only": {
+      "check_now": false,
+      "paused": false
+     },
+     "paused one": {
+      "check_now": true,
+      "paused": false
+     }
+    }
+   },
+   "before": {
+    "exports": {
+     "clear out": {
+      "run_now": false
+     },
+     "favourites": {
+      "run_now": false
+     },
+     "mirror": {
+      "run_now": false
+     }
+    },
+    "imports": {
+     "drop box": {
+      "check_now": false,
+      "paused": false
+     },
+     "manual only": {
+      "check_now": false,
+      "paused": false
+     },
+     "paused one": {
+      "check_now": false,
+      "paused": true
+     }
+    }
+   },
+   "messages": [],
+   "sync_paused": false,
+   "what": "check one"
+  },
+  {
+   "after": {
+    "exports": {
+     "clear out": {
+      "run_now": false
+     },
+     "favourites": {
+      "run_now": false
+     },
+     "mirror": {
+      "run_now": false
+     }
+    },
+    "imports": {
+     "drop box": {
+      "check_now": true,
+      "paused": false
+     },
+     "manual only": {
+      "check_now": false,
+      "paused": false
+     },
+     "paused one": {
+      "check_now": false,
+      "paused": true
+     }
+    }
+   },
+   "before": {
+    "exports": {
+     "clear out": {
+      "run_now": false
+     },
+     "favourites": {
+      "run_now": false
+     },
+     "mirror": {
+      "run_now": false
+     }
+    },
+    "imports": {
+     "drop box": {
+      "check_now": false,
+      "paused": false
+     },
+     "manual only": {
+      "check_now": false,
+      "paused": false
+     },
+     "paused one": {
+      "check_now": false,
+      "paused": true
+     }
+    }
+   },
+   "messages": [],
+   "sync_paused": false,
+   "what": "check one, not paused"
+  },
+  {
+   "after": {
+    "exports": {
+     "clear out": {
+      "run_now": false
+     },
+     "favourites": {
+      "run_now": false
+     },
+     "mirror": {
+      "run_now": false
+     }
+    },
+    "imports": {
+     "drop box": {
+      "check_now": true,
+      "paused": false
+     },
+     "manual only": {
+      "check_now": true,
+      "paused": false
+     },
+     "paused one": {
+      "check_now": true,
+      "paused": false
+     }
+    }
+   },
+   "before": {
+    "exports": {
+     "clear out": {
+      "run_now": false
+     },
+     "favourites": {
+      "run_now": false
+     },
+     "mirror": {
+      "run_now": false
+     }
+    },
+    "imports": {
+     "drop box": {
+      "check_now": false,
+      "paused": false
+     },
+     "manual only": {
+      "check_now": false,
+      "paused": false
+     },
+     "paused one": {
+      "check_now": false,
+      "paused": true
+     }
+    }
+   },
+   "messages": [],
+   "sync_paused": false,
+   "what": "check all"
+  },
+  {
+   "after": {
+    "exports": {
+     "clear out": {
+      "run_now": false
+     },
+     "favourites": {
+      "run_now": false
+     },
+     "mirror": {
+      "run_now": true
+     }
+    },
+    "imports": {
+     "drop box": {
+      "check_now": false,
+      "paused": false
+     },
+     "manual only": {
+      "check_now": false,
+      "paused": false
+     },
+     "paused one": {
+      "check_now": false,
+      "paused": true
+     }
+    }
+   },
+   "before": {
+    "exports": {
+     "clear out": {
+      "run_now": false
+     },
+     "favourites": {
+      "run_now": false
+     },
+     "mirror": {
+      "run_now": false
+     }
+    },
+    "imports": {
+     "drop box": {
+      "check_now": false,
+      "paused": false
+     },
+     "manual only": {
+      "check_now": false,
+      "paused": false
+     },
+     "paused one": {
+      "check_now": false,
+      "paused": true
+     }
+    }
+   },
+   "messages": [],
+   "sync_paused": false,
+   "what": "run one"
+  },
+  {
+   "after": {
+    "exports": {
+     "clear out": {
+      "run_now": true
+     },
+     "favourites": {
+      "run_now": true
+     },
+     "mirror": {
+      "run_now": true
+     }
+    },
+    "imports": {
+     "drop box": {
+      "check_now": false,
+      "paused": false
+     },
+     "manual only": {
+      "check_now": false,
+      "paused": false
+     },
+     "paused one": {
+      "check_now": false,
+      "paused": true
+     }
+    }
+   },
+   "before": {
+    "exports": {
+     "clear out": {
+      "run_now": false
+     },
+     "favourites": {
+      "run_now": false
+     },
+     "mirror": {
+      "run_now": false
+     }
+    },
+    "imports": {
+     "drop box": {
+      "check_now": false,
+      "paused": false
+     },
+     "manual only": {
+      "check_now": false,
+      "paused": false
+     },
+     "paused one": {
+      "check_now": false,
+      "paused": true
+     }
+    }
+   },
+   "messages": [],
+   "sync_paused": false,
+   "what": "run all"
+  },
+  {
+   "after": {
+    "exports": {
+     "clear out": {
+      "run_now": false
+     },
+     "favourites": {
+      "run_now": false
+     },
+     "mirror": {
+      "run_now": false
+     }
+    },
+    "imports": {
+     "drop box": {
+      "check_now": false,
+      "paused": false
+     },
+     "manual only": {
+      "check_now": false,
+      "paused": false
+     },
+     "paused one": {
+      "check_now": true,
+      "paused": false
+     }
+    }
+   },
+   "before": {
+    "exports": {
+     "clear out": {
+      "run_now": false
+     },
+     "favourites": {
+      "run_now": false
+     },
+     "mirror": {
+      "run_now": false
+     }
+    },
+    "imports": {
+     "drop box": {
+      "check_now": false,
+      "paused": false
+     },
+     "manual only": {
+      "check_now": false,
+      "paused": false
+     },
+     "paused one": {
+      "check_now": false,
+      "paused": true
+     }
+    }
+   },
+   "messages": [
+    "Import folders are currently paused under the 'file' menu. Please unpause them and try this again."
+   ],
+   "sync_paused": true,
+   "what": "check one"
+  },
+  {
+   "after": {
+    "exports": {
+     "clear out": {
+      "run_now": false
+     },
+     "favourites": {
+      "run_now": false
+     },
+     "mirror": {
+      "run_now": false
+     }
+    },
+    "imports": {
+     "drop box": {
+      "check_now": true,
+      "paused": false
+     },
+     "manual only": {
+      "check_now": false,
+      "paused": false
+     },
+     "paused one": {
+      "check_now": false,
+      "paused": true
+     }
+    }
+   },
+   "before": {
+    "exports": {
+     "clear out": {
+      "run_now": false
+     },
+     "favourites": {
+      "run_now": false
+     },
+     "mirror": {
+      "run_now": false
+     }
+    },
+    "imports": {
+     "drop box": {
+      "check_now": false,
+      "paused": false
+     },
+     "manual only": {
+      "check_now": false,
+      "paused": false
+     },
+     "paused one": {
+      "check_now": false,
+      "paused": true
+     }
+    }
+   },
+   "messages": [
+    "Import folders are currently paused under the 'file' menu. Please unpause them and try this again."
+   ],
+   "sync_paused": true,
+   "what": "check one, not paused"
+  },
+  {
+   "after": {
+    "exports": {
+     "clear out": {
+      "run_now": false
+     },
+     "favourites": {
+      "run_now": false
+     },
+     "mirror": {
+      "run_now": false
+     }
+    },
+    "imports": {
+     "drop box": {
+      "check_now": true,
+      "paused": false
+     },
+     "manual only": {
+      "check_now": true,
+      "paused": false
+     },
+     "paused one": {
+      "check_now": true,
+      "paused": false
+     }
+    }
+   },
+   "before": {
+    "exports": {
+     "clear out": {
+      "run_now": false
+     },
+     "favourites": {
+      "run_now": false
+     },
+     "mirror": {
+      "run_now": false
+     }
+    },
+    "imports": {
+     "drop box": {
+      "check_now": false,
+      "paused": false
+     },
+     "manual only": {
+      "check_now": false,
+      "paused": false
+     },
+     "paused one": {
+      "check_now": false,
+      "paused": true
+     }
+    }
+   },
+   "messages": [
+    "Import folders are currently paused under the 'file' menu. Please unpause them and try this again."
+   ],
+   "sync_paused": true,
+   "what": "check all"
+  },
+  {
+   "after": {
+    "exports": {
+     "clear out": {
+      "run_now": false
+     },
+     "favourites": {
+      "run_now": false
+     },
+     "mirror": {
+      "run_now": true
+     }
+    },
+    "imports": {
+     "drop box": {
+      "check_now": false,
+      "paused": false
+     },
+     "manual only": {
+      "check_now": false,
+      "paused": false
+     },
+     "paused one": {
+      "check_now": false,
+      "paused": true
+     }
+    }
+   },
+   "before": {
+    "exports": {
+     "clear out": {
+      "run_now": false
+     },
+     "favourites": {
+      "run_now": false
+     },
+     "mirror": {
+      "run_now": false
+     }
+    },
+    "imports": {
+     "drop box": {
+      "check_now": false,
+      "paused": false
+     },
+     "manual only": {
+      "check_now": false,
+      "paused": false
+     },
+     "paused one": {
+      "check_now": false,
+      "paused": true
+     }
+    }
+   },
+   "messages": [
+    "Export folders are currently paused under the 'file' menu. Please unpause them and try this again."
+   ],
+   "sync_paused": true,
+   "what": "run one"
+  },
+  {
+   "after": {
+    "exports": {
+     "clear out": {
+      "run_now": true
+     },
+     "favourites": {
+      "run_now": true
+     },
+     "mirror": {
+      "run_now": true
+     }
+    },
+    "imports": {
+     "drop box": {
+      "check_now": false,
+      "paused": false
+     },
+     "manual only": {
+      "check_now": false,
+      "paused": false
+     },
+     "paused one": {
+      "check_now": false,
+      "paused": true
+     }
+    }
+   },
+   "before": {
+    "exports": {
+     "clear out": {
+      "run_now": false
+     },
+     "favourites": {
+      "run_now": false
+     },
+     "mirror": {
+      "run_now": false
+     }
+    },
+    "imports": {
+     "drop box": {
+      "check_now": false,
+      "paused": false
+     },
+     "manual only": {
+      "check_now": false,
+      "paused": false
+     },
+     "paused one": {
+      "check_now": false,
+      "paused": true
+     }
+    }
+   },
+   "messages": [
+    "Export folders are currently paused under the 'file' menu. Please unpause them and try this again."
+   ],
+   "sync_paused": true,
+   "what": "run all"
+  }
+ ],
+ "export_folders": [
+  {
+   "name": "favourites",
+   "run_regularly": true
+  },
+  {
+   "name": "mirror",
+   "run_regularly": true
+  },
+  {
+   "name": "clear out",
+   "run_regularly": false
+  }
+ ],
+ "import_folders": [
+  {
+   "check_regularly": true,
+   "name": "drop box",
+   "paused": false
+  },
+  {
+   "check_regularly": true,
+   "name": "paused one",
+   "paused": true
+  },
+  {
+   "check_regularly": false,
+   "name": "manual only",
+   "paused": false
+  }
+ ]
+}
