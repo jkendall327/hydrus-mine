@@ -847,6 +847,16 @@ fn run_server(dir: &Path, port: Option<u16>, bind: Option<IpAddr>, attached: boo
                 }
             });
         }
+        // (file paths wait after a wake too, when the options say so)
+        {
+            let store = store.clone();
+            tokio::spawn(async move {
+                loop {
+                    store.sleep_check();
+                    tokio::time::sleep(Duration::from_secs(15)).await;
+                }
+            });
+        }
         // stopping: on a signal, or (attached) with the input closing
         let (stop, stopped) = tokio::sync::watch::channel(false);
         let stopping_subscriptions = state.subscriptions.clone();

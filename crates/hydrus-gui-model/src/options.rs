@@ -611,6 +611,9 @@ pub enum Kind {
     /// boxes (0 media viewer, 1 preview window, 2 thumbnails, 3 dialogs), to
     /// click; shown, never edited.
     RatingExamples(usize),
+    /// The media playback page's "fetch mpv audio devices" button, which
+    /// fills the preferred audio device above it.
+    FetchMpvAudioDevices,
 }
 
 /// A tag sort's types, as the reference's control names them
@@ -3656,6 +3659,12 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                             "use default",
                             "mpv_preferred_audio_device",
                         ),
+                        opt(
+                            "--Fetch list of mpv audio device strings:",
+                            Kind::FetchMpvAudioDevices,
+                            Rc::new(|_| Value::Text(String::new())),
+                            Rc::new(|_, _| Ok(())),
+                        ),
                         kept_check(
                             "DEBUG: Set null audio device on silent media:",
                             "mpv_null_audio_on_silent_media",
@@ -6089,6 +6098,31 @@ impl Editor {
                 *value = Value::RelatedWeights(weights);
                 return;
             }
+        }
+    }
+
+    /// The mpv preferred audio device's draft set from the device chooser:
+    /// a name, or none (mpv's default).
+    pub fn set_mpv_audio_device(&mut self, device: Option<String>) {
+        for (page, options) in self.pages.iter().enumerate() {
+            let options = options.options();
+            let Some(fetch) = options
+                .iter()
+                .position(|o| o.kind == Kind::FetchMpvAudioDevices)
+            else {
+                continue;
+            };
+            // (the option the button sits under)
+            let Some(i) = fetch.checked_sub(1) else {
+                return;
+            };
+            if let Value::NoneableText { none, text } = &mut self.values[page][i] {
+                *none = device.is_none();
+                if let Some(device) = device {
+                    *text = device;
+                }
+            }
+            return;
         }
     }
 

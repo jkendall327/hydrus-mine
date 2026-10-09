@@ -96,6 +96,11 @@ pub struct Snapshot {
     pub display: DisplayGraphs,
     pub storage: FileStorage,
     pub thumbnails: ThumbnailSettings,
+    /// The sleep options file paths wait on.
+    pub wake: crate::wake::WakeSettings,
+    /// When the computer last seemed to wake, shared by every snapshot of a
+    /// store.
+    pub wake_gate: Arc<crate::wake::WakeGate>,
     /// The client's URL classes, ready for matching.
     pub url_classes: UrlClasses,
     /// The files of each file domain, shared by every snapshot of a store.
@@ -108,7 +113,10 @@ impl Snapshot {
     pub fn load(conn: &Connection) -> Result<Self> {
         let services = ServiceRegistry::load(conn)?;
         let display = DisplayGraphs::load(conn, &services)?;
-        let storage = FileStorage::load(conn)?;
+        let mut storage = FileStorage::load(conn)?;
+        let wake = Self::wake_settings(conn)?;
+        let wake_gate = Arc::<crate::wake::WakeGate>::default();
+        storage.wait_on_wakeup(Arc::clone(&wake_gate), wake);
         let thumbnails = settings::get(conn)?;
         let url_classes = UrlClasses::new(settings::get::<UrlClassSettings>(conn)?);
         Ok(Self {
@@ -117,14 +125,29 @@ impl Snapshot {
             display,
             storage,
             thumbnails,
+            wake,
+            wake_gate,
             url_classes,
             domains: Arc::default(),
             duplicates: Arc::default(),
         })
     }
 
+    fn wake_settings(conn: &Connection) -> Result<crate::wake::WakeSettings> {
+        let network: crate::network::NetworkSettings = settings::get(conn)?;
+        let options: crate::reference_options::ReferenceOptions = settings::get(conn)?;
+        Ok(crate::wake::WakeSettings {
+            detect: network.detect_sleep,
+            delay_secs: network.wake_delay_period,
+            file_system_waits: options.boolean("file_system_waits_on_wakeup"),
+        })
+    }
+
     fn reload(conn: &Connection, old: &Self) -> Result<Self> {
         let mut fresh = Self::load(conn)?;
+        // (the gate is the same, so a wake noticed before the reload counts)
+        fresh.wake_gate = Arc::clone(&old.wake_gate);
+        fresh.storage.wait_on_wakeup(Arc::clone(&fresh.wake_gate), fresh.wake);
         fresh.domains = Arc::clone(&old.domains);
         fresh.duplicates = Arc::clone(&old.duplicates);
         Ok(fresh)
@@ -255,6 +278,21 @@ impl Store {
         self.db.pause()
     }
 
+    /// The sleep check (`SleepCheck`): called now and then so a long gap
+    /// shows the computer slept. File paths wait after a wake when the
+    /// options say so.
+    pub fn sleep_check(&self) {
+        let snapshot = self.snapshot();
+        snapshot
+            .wake_gate
+            .check_at(hydrus_core::time::TimestampMs::now().0, snapshot.wake);
+    }
+
+    /// What the database is doing now: "db writing", "db reading" or "".
+    pub fn db_activity(&self) -> &'static str {
+        self.db.activity()
+    }
+
     /// Run a read against a consistent database snapshot.
     pub fn read<R>(&self, f: impl FnOnce(&Connection) -> Result<R>) -> Result<R> {
         self.db.read(f)
@@ -282,7 +320,8 @@ impl Store {
         let old = self.snapshot();
         let changed = self.read(|conn| {
             Ok(settings::get::<SnapshotRevision>(conn)?.0 != old.revision
-                || settings::get::<ThumbnailSettings>(conn)? != old.thumbnails)
+                || settings::get::<ThumbnailSettings>(conn)? != old.thumbnails
+                || Snapshot::wake_settings(conn)? != old.wake)
         })?;
         if changed {
             self.refresh()?;

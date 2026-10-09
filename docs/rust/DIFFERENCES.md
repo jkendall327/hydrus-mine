@@ -4397,3 +4397,51 @@ directory.
 - **Importer destination: deleted domains and all-known mode.** The model supports them; no GUI caller offers them, so they are not driven through a window.
 
 - **Closing tabs while downloaders are running.** Closing other pages, or the pages to the left or right, asks a plain yes/no question with the recorded wording; the reference, when a closing page has a downloader at work, asks a longer question with a statement and a third "no, but show me the pages" button. That path is not implemented or tested, so those three menu leaves stay untagged.
+
+## Options and shell leftovers (#91, #92)
+
+- **Undelete with several files.** The reference asks its single-file
+  question whatever the number of files (it says "this file"); so does
+  hydrus-rs, with the one domain. The remote-repository case of the question
+  has no counterpart (no remote file services).
+- **`audit-options-options-search` is untagged.** Of the 738 entries the
+  reference's search box offers (`oracle/fixtures/options_dialog.json`),
+  513 exist natively. The 225 missing are labels the native pages do not draw
+  at all: the help paragraphs the Qt panels carry ("Scheduled jobs such as
+  reparsing...", "These options are advanced!..."), the "help for this
+  panel -->" links, "(you appear to have 4 cores)"-style computed labels, and
+  the unit and "no limit"/"do not use" labels of some noneable controls and
+  combo boxes' current values on pages whose controls differ in kind. The
+  native options window has no collapsible boxes or inner tabs (they are
+  flattened into headings), so choosing a result needs no expanding.
+- **`audit-options-gui-main-window-application-display-name` is untagged.**
+  The main window and the tray tooltip follow the name; other windows keep
+  their own captions. Qt appends the display name to every window title;
+  here each window is a Slint component with its own title and no common
+  parent, so it would mean a change in all ~170 window openings.
+- **`audit-options-status-activity` is untagged.** Idle and CPU busy have
+  their tooltips, and the database field shows this process's reads and
+  writes ("db writing", "db reading"; the daemon is another process, so its
+  work is not shown, and with no job names there is no "current db job"
+  tooltip). The application-busy field (the reference's worker thread
+  pool: "working" above 3 busy threads, "busy" above 8, tooltip "There were N
+  threads doing jobs at last check") has no counterpart: hydrus-rs has no
+  such pool in the client.
+- **`audit-options-system-tray-minimise-the-main-window-to-system-tray`
+  stays untagged.** Minimising is found by looking at winit's `is_minimized`
+  four times a second, which X11, Windows and macOS answer and **Wayland does
+  not** (there minimising only minimises). The test drives Slint's own
+  minimised state; nothing here runs a real window manager.
+- **`audit-options-importing-drag-and-drop-when-dnding-a-url-onto-the-program-switch-to-the-page-where-it-lands`
+  stays untagged.** winit 0.30 delivers `DroppedFile` for dropped files on
+  X11 only, and its X11 drop parser rejects every non-`file://` URI
+  (`UnexpectedProtocol`), so a URL dragged from a browser never reaches the
+  program; on Wayland winit has no drag-and-drop at all. With no URL drops
+  there is nothing for the switch-to-page option to act on. It would need a
+  platform drop handler outside winit.
+- **`audit-options-geometry` stays untagged**, as documented under Frame
+  locations: main window saves, and the opening rescue, are proved; other
+  frames' saving and the reference's minimum size are not.
+- **The mpv "Preferred audio output device" is saved but not read**: the
+  player does not set mpv's `audio-device` from it, so choosing a device
+  with the fetch button changes the option only.

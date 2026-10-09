@@ -173,6 +173,7 @@ pub mod frame_locations;
 pub mod frame_placement;
 pub mod frame_save;
 pub mod incremental_tagging;
+pub mod mpv_audio_devices;
 pub mod mpv_options;
 pub mod tag_banner;
 

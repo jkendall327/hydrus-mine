@@ -1411,6 +1411,15 @@ fn idle_and_cpu_busy_options_decide_whether_background_work_may_run() {
     assert!(!idle_state::is_idle(&dir, at), "busy system");
     assert_eq!(client.ui.get_status_busy(), "CPU busy");
     assert_eq!(client.ui.get_status_idle(), "idle", "still idle, but busy");
+    // (their tooltips are the reference's)
+    assert_eq!(
+        client.ui.get_status_idle_tip(),
+        "client is idle, it can do maintenance work"
+    );
+    assert_eq!(
+        client.ui.get_status_busy_tip(),
+        "this computer has been doing work recently, so some hydrus maintenance will not start"
+    );
 
     // Raise the percent above what the cores ran: the same load is not busy,
     // and work may run again.
