@@ -286,8 +286,10 @@ fn background_copies_say_and_place_what_the_reference_draws() {
                 "Tags" => near(ours.x0, theirs.x0) && near(ours.y0, theirs.y0),
                 // centred lines at the top
                 "TopMiddle" => {
-                    near(f64::midpoint(ours.x0, ours.x1), f64::midpoint(theirs.x0, theirs.x1))
-                        && near(ours.y0, theirs.y0)
+                    near(
+                        f64::midpoint(ours.x0, ours.x1),
+                        f64::midpoint(theirs.x0, theirs.x1),
+                    ) && near(ours.y0, theirs.y0)
                 }
                 // a column at the right: the reference's rectangles are the
                 // column (its texts wrap in it), ours is ink inside it
