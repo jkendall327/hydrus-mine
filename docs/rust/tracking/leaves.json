@@ -9090,10 +9090,10 @@
     "Assessment covers this editable control and shared Apply/Cancel, not every control on its containing reference page or every background consumer."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Tagged test only calls Reinbox::applies(&lock), a decision function standing in for the duplicate filter's delete; the duplicate filter window/DuplicateFilter::commit is never run with the option. A recorded reinbox phase exists but is replayed through the Client API, not the filter. Tests: crates/hydrus-gui/tests/gui/options_system_consumers.rs:238 delete_lock_options_decide_which_archived_files_can_be_deleted_and_reinboxed (Reinbox::applies); crates/hydrus-api/tests/delete_lock.rs (reinbox phase via API)"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "Claude (recheck bin C)",
+    "note": "oracle/record_duplicate_filter_delete_lock.py drives the reference's real CanvasFilterDuplicates (via record_duplicate_filter_canvas.record) on the auto_resolution database with every file archived, under four phases of delete lock x this option: 'this is better, delete the other' on the first pair, then close and commit; it records each batch file's inbox state and domains. The GUI test sets both options in the real Options window, archives every file, chooses better-delete in the real duplicate filter window and presses its 'commit' on close, and checks each batch file's (inbox, in my files, in trash) equals the reference's: the deletee is inboxed before going to the trash only with lock and option both on. With the filter's Reinbox forced to Never the test fails. Tests: crates/hydrus-gui/tests/gui/duplicate_filter_delete_lock.rs the_duplicate_filter_inboxes_locked_deletees_as_the_reference_does"
    }
   },
   {
@@ -9130,10 +9130,10 @@
     "Assessment covers this editable control and shared Apply/Cancel, not every control on its containing reference page or every background consumer."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Tagged test only asserts Reinbox::InAutoResolution.applies(&lock): a decision function. The auto-resolution engine is never run with the option set; merge_summaries replays recorded in_auto_resolution plans but does not vary the delete-lock option. Tests: crates/hydrus-gui/tests/gui/options_system_consumers.rs:240 (Reinbox::InAutoResolution.applies); crates/hydrus-gui-model/tests/model/merge_summaries.rs:231"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "Claude (recheck bin C)",
+    "note": "oracle/record_auto_resolution_delete_lock.py, on the auto_resolution database with every file archived, approves the pending 'pixel-perfect gifs vs pngs' pair that auto_resolution_review.json approves, as the review window's approve does (ClientDuplicatesAutoResolution.ActionAutoResolutionReviewPairs), under four phases of delete lock x this option, and records both files' inbox/my files/trash. The GUI test sets the options in the real Options window, archives every file, selects the same pair in the rule's real review window and approves it (the native engine's action, Reinbox::InAutoResolution), and checks both files equal the reference's. With the engine's Reinbox forced to Never the test fails. Tests: crates/hydrus-gui/tests/gui/duplicate_filter_delete_lock.rs approved_auto_resolution_actions_inbox_locked_deletees_as_the_reference_does"
    }
   },
   {

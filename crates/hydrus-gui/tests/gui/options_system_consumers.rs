@@ -236,8 +236,6 @@ fn local_files(store: &Store) -> Vec<HashId> {
 }
 
 // leaf: audit-options-files-and-trash-delete-lock-do-not-permit-archived-files-to-be-deleted-from-the-trash
-// leaf: audit-options-files-and-trash-delete-lock-after-duplicate-filter-ensure-deletees-are-inboxed-before-delete
-// leaf: audit-options-files-and-trash-delete-lock-in-duplicates-auto-resolution-ensure-deletees-are-inboxed-before-delete
 #[test]
 fn delete_lock_options_decide_which_archived_files_can_be_deleted_and_reinboxed() {
     use hydrus_store::delete_lock::{DeleteLock, Reinbox};

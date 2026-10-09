@@ -1557,7 +1557,10 @@ custom action asks which decision, then (for "this is better", "same
 quality", or "alternates" in advanced mode) its merge options in the
 merge options editor, for that decision alone, then which files to
 delete ("delete neither", "delete this one", "delete the other", "delete
-both" or "forget it"), as the reference's does. As in the reference, a
+both" or "forget it"), as the reference's does. With the archived-file
+delete lock on, an archived file the filter (or an approved or automatic
+auto-resolution action) deletes is inboxed first, so it can go to the trash,
+when Options > files and trash asks for it. As in the reference, a
 left click on the file is "better, delete the other", a right click
 "alternates", a middle click goes back and up skips; video, audio and
 animations play as in the media viewer, and the next three pairs' files
