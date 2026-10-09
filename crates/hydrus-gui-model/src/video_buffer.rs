@@ -178,8 +178,8 @@ impl<T> Buffer<T> {
         if rewind {
             self.last_rendered = -1;
         }
-        if !self.frames.contains_key(&index) {
-            self.frames.insert(index, frame);
+        if let std::collections::btree_map::Entry::Vacant(slot) = self.frames.entry(index) {
+            slot.insert(frame);
             let (start, end) = (self.start, self.end);
             self.frames.retain(|&i, _| !out_of_range(i, start, end));
         }
