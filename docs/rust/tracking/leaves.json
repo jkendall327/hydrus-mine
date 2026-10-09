@@ -4586,14 +4586,9 @@
    "native": "crates/hydrus-gui/src/downloader_interchange_window.rs:707",
    "notes": [
     "2026-10-09: domain metadata packages done (exchange-domain). Remaining: clipboard bitmap as PNG and PNG drag/drop (owner: low priority).",
-    "2026-10-09: clipboard bitmap as PNG and PNG drag/drop into the downloader exchange window split out to exchange-bitmap-drop. Login scripts (exchange-login) and domain metadata (exchange-domain) are done."
-   ],
-   "recheck": {
-    "date": "2026-10-09",
-    "class": "sound",
-    "by": "claude, branch claude/subscriptions-exchange-rest",
-    "note": "With bitmap and drag/drop split out to exchange-bitmap-drop, what the leaf names is login scripts and domain metadata in downloader packages: the mixed login package and the domain metadata package are driven through the real package window against mixed_login_packages.json and domain_metadata_packages.json (export, PNG, review, import, reopen). Tests: crates/hydrus-gui/tests/gui/downloader_interchange.rs mixed_registered_login_package_reviews_png_selects_dependencies_and_reopens_saved_scripts; crates/hydrus-gui/tests/gui/domain_metadata.rs."
-   }
+    "2026-10-09: clipboard bitmap as PNG and PNG drag/drop into the downloader exchange window split out to exchange-bitmap-drop. Login scripts (exchange-login) and domain metadata (exchange-domain) are done.",
+    "2026-10-09 review of #147: untagged. Not matched: the reference's separate Add choosers and questions (chooser_states, export_questions, notices in mixed_login_packages.json and domain_metadata_packages.json) are native checkboxes; per-object import selection and the one-pop-up-per-package domain metadata review are not ported. Covered by exchange-login and exchange-domain for what they name."
+   ]
   },
   {
    "id": "exchange-bitmap-drop",
@@ -24817,14 +24812,9 @@
    "notes": [
     "Manage subscriptions exposes serialized import/export of modern reference container90 objects through an owned child. Settings, complete query states, cached velocity/example-seed headers and both file/gallery histories survive JSON/PNG exchange, staged import and Apply/reopen. Casefold name collisions use (1) suffixes and every imported query gets a fresh history identity. JSON file export asks the original existing-path overwrite question; rejecting or closing the owner preserves the existing file. Format-specific multi-file JSON/PNG imports validate before staging, cancellation leaves the saved store unchanged, and stale callbacks cannot append or overwrite. Export reads current native queues plus draft reset/retry commands and preserves copied header metadata. Incomplete objects now ask the exact reference missing query log data title, message and import/back-out choices before they enter the draft; accepting persists empty logs and rejecting or cancelling continues remaining objects in list order. Apply is blocked while the question remains unanswered. Modern clipboard/JSON/PNG menu choices now dispatch their actual transport action. Legacy subscription type3 versions1–10 and legacy query1–3 import with full embedded histories, historical checker/limit defaults and fresh identity handling; obsolete gallery identifiers become the original paused unknown downloader. Actual Qt direct conversion and list exports constrain full upgraded payloads, apart from generated random identities. Fresh history names invalidate velocity/status according to SetQueryLogContainerName while retaining example/cached-count fields. Actual Reset/RetryFailed/RetryIgnored exports now refresh file-count/example caches without changing velocity or gallery examples. Retried files lose hashes exactly as SetStatus(UNKNOWN) does, in both detached exports and the real Apply transaction; reopening exports those persisted caches.",
     "Native initialises accepted missing logs directly during Apply instead of requiring a reopen.",
-    "2026-10-09: clipboard PNG image and PNG drag-and-drop split out to subscriptions-exchange-bitmap-drop. Seed caches 1-7, direct import for all three menu choices and the unsynced fresh-query header (subscription_header_resync.json) are done."
-   ],
-   "recheck": {
-    "date": "2026-10-09",
-    "class": "sound",
-    "by": "claude, branch claude/subscriptions-exchange-rest",
-    "note": "The real subscriptions window is driven through all six menu choices: export (clipboard, JSON file with the recorded overwrite question, PNG) and the three direct imports (clipboard, JSON files, PNG files) replaying subscription_exchange.json, subscription_import_flow.json (type warnings, accepted prefixes, missing-history questions) and subscription_legacy_exchange.json, then Apply and reopen. Old seed caches 1-7 replay legacy_seed_caches.json (codec and model tests; database importer in hydrus-legacy). The unsynced fresh-query header replays subscription_header_resync.json (crates/hydrus-downloader-exchange/tests/header_resync.rs). Clipboard PNG image and PNG drag-and-drop are split out as subscriptions-exchange-bitmap-drop. Tests: crates/hydrus-gui/tests/gui/subscriptions.rs full_subscription_exchange_is_staged_cancellable_and_reopens_with_complete_histories, direct_import_menus_replay_qt_type_warnings_file_prefixes_and_missing_rejection, legacy_subscription_clipboard_import_reaches_saved_query_settings_and_full_histories."
-   }
+    "2026-10-09: clipboard PNG image and PNG drag-and-drop split out to subscriptions-exchange-bitmap-drop. Seed caches 1-7, direct import for all three menu choices and the unsynced fresh-query header (subscription_header_resync.json) are done.",
+    "2026-10-09 review of #147: untagged. Not matched yet: (1) the reference's accept path for missing query logs (Apply stores the subscription with the log missing; the next open of manage subscriptions asks 'Missing Query Logs!' (continue / back out), then writes empty logs and Resets the headers; meanwhile the subscription daemon pauses it with a message) where native creates empty logs on Apply; (2) a checker options edit marks headers whose history was not loaded unsynced with the velocity words 'will recalculate when next fully loaded' (Subscription.SetCheckerOptions) where native recomputes natively and leaves the cached header as it was. Fresh queries keep the default 'unknown' (recorded), the override is only for checker edits."
+   ]
   },
   {
    "id": "subscriptions-exchange-bitmap-drop",

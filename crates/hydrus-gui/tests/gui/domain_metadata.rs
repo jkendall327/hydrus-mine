@@ -180,7 +180,6 @@ fn add_domain(window: &hydrus_gui::DownloaderExchangeWindow, text: Option<&str>)
 }
 
 // leaf: exchange-domain
-// leaf: audit-network-exchange-unsupported
 #[test]
 fn domain_metadata_is_prompted_exported_to_png_and_imported_as_the_reference_does() {
     let _rendered = headless::init();

@@ -21,7 +21,6 @@ fn one_page() -> String {
     .unwrap()
 }
 // leaf: exchange-login
-// leaf: audit-network-exchange-unsupported
 #[test]
 fn mixed_registered_login_package_reviews_png_selects_dependencies_and_reopens_saved_scripts() {
     let rendered = headless::init();

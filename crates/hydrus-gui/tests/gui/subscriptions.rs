@@ -1219,7 +1219,6 @@ fn add_uses_a_separate_gallery_list_then_the_editor() {
     assert!(bound.edit_subscription.borrow().is_none());
 }
 
-// leaf: subscriptions-exchange
 #[test]
 fn full_subscription_exchange_is_staged_cancellable_and_reopens_with_complete_histories() {
     use hydrus_downloader_exchange::subscriptions as exchange;
@@ -1401,7 +1400,6 @@ fn subscription_exchange_file_menus_load_selected_packages_and_cancel_invalid_ba
     hydrus_gui::set_picker(|_, _| Vec::new());
 }
 
-// leaf: subscriptions-exchange
 #[test]
 fn legacy_subscription_clipboard_import_reaches_saved_query_settings_and_full_histories() {
     use hydrus_downloader_exchange::subscriptions as exchange;
@@ -1697,7 +1695,52 @@ fn subscription_reset_and_retries_refresh_persisted_export_caches_and_forget_fil
     }
 }
 
-// leaf: subscriptions-exchange
+/// A query made natively is exported, through the real window, as the
+/// reference's add-query header: unsynced, default velocity, no examples, so
+/// the reference's own Sync recalculates it
+/// (`oracle/fixtures/subscription_header_resync.json`).
+#[test]
+fn a_fresh_native_query_exports_through_the_window_as_the_references_unsynced_header() {
+    use hydrus_core::subscriptions::QueryState;
+    let fixture = hydrus_testkit::fixture_json("subscription_header_resync.json");
+    let (_dirs, store) = store();
+    store
+        .write(|tx| {
+            let id = subscriptions::create_subscription(
+                tx.conn(),
+                "Fresh",
+                &SubscriptionSettings::default(),
+            )?
+            .unwrap();
+            subscriptions::add_query(tx.conn(), id, &QueryState::new("fresh query"), now())?;
+            Ok(())
+        })
+        .unwrap();
+    let _windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+    let dialog = open_dialog(&ui, &bound);
+    dialog.invoke_row_clicked(0, false, false);
+    dialog.invoke_exchange();
+    let child = bound
+        .subscription_exchange
+        .0
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
+    let exported: serde_json::Value = serde_json::from_str(child.get_text().as_str()).unwrap();
+    let header = &exported[2][0][3][1][0];
+    let recorded = &fixture["fresh"];
+    for index in [8, 13, 14, 15, 16] {
+        assert_eq!(header[2][index], recorded[2][index], "header field {index}");
+    }
+    // (an empty history: no files by status, none found yet)
+    assert_eq!(header[2][9][2][1], recorded[2][9][2][1]);
+    assert_eq!(header[2][9][2][2], recorded[2][9][2][2]);
+    dialog.invoke_cancel();
+}
+
 #[test]
 fn direct_import_menus_replay_qt_type_warnings_file_prefixes_and_missing_rejection() {
     use hydrus_downloader_exchange::subscriptions as exchange;

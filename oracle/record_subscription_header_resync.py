@@ -48,6 +48,13 @@ def record(session):
             out = dict(now=NOW, source=single)
             out['imported'] = tuple_of(header)
             out['imported_wants_resync'] = header.WantsToResyncWithLogContainer()
+            # a new history name marks the header unsynced too
+            renamed = S.CreateFromSerialisableTuple(json.loads(header.DumpToString()))
+            renamed.SetQueryLogContainerName('renamed history')
+            out['renamed'] = tuple_of(renamed)
+            # `unsynced` is SetQueryLogContainerStatus(UNSYNCED) itself, which is
+            # what a rename (SetQueryLogContainerName) and a checker options edit
+            # (with an override for the velocity words) both call
             header.SetQueryLogContainerStatus(Q.LOG_CONTAINER_UNSYNCED)
             out['unsynced'] = tuple_of(header)
             out['unsynced_wants_resync'] = header.WantsToResyncWithLogContainer()

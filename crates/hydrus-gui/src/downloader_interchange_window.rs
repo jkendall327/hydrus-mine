@@ -83,8 +83,7 @@ fn open_with_actions(
         slots,
         importing,
         definitions,
-        preview,
-        applied,
+        Some((preview, applied)),
         Codec {
             encode_text: model::encode_text,
             decode_text: model::decode_text,
@@ -108,16 +107,11 @@ pub fn open_subscriptions(
         subscriptions::encode_text(subscriptions).map_err(|e| e.to_string())?,
         subscriptions.len(),
     );
-    let preview: Preview<subscriptions::Subscription> =
-        Rc::new(|_| Err("Subscriptions are imported straight into the list.".into()));
-    let applied: Apply<subscriptions::Subscription> =
-        Rc::new(|_| Err("Subscriptions are imported straight into the list.".into()));
     let window = open_objects(
         slots,
         false,
         subscriptions,
-        preview,
-        applied,
+        None,
         Codec {
             encode_text: subscriptions::encode_text,
             decode_text: subscriptions::decode_text,
@@ -165,8 +159,7 @@ pub fn open_external_calls(
         slots,
         importing,
         calls,
-        preview,
-        applied,
+        Some((preview, applied)),
         Codec {
             encode_text: codec::encode_text,
             decode_text: codec::decode_text,
@@ -235,8 +228,7 @@ pub fn open_steps(
         slots,
         importing,
         steps,
-        preview,
-        applied,
+        Some((preview, applied)),
         Codec {
             encode_text: processing::encode_text,
             decode_text: processing::decode_text,
@@ -261,8 +253,7 @@ pub fn open_login_scripts(
         slots,
         importing,
         scripts,
-        preview,
-        applied,
+        Some((preview, applied)),
         Codec {
             encode_text: logins::encode_text,
             decode_text: logins::decode_text,
@@ -297,8 +288,7 @@ pub fn open_subsidiaries(
         slots,
         importing,
         parsers,
-        preview,
-        applied,
+        Some((preview, applied)),
         Codec {
             encode_text: subsidiaries::encode_text,
             decode_text: subsidiaries::decode_text,
@@ -333,8 +323,7 @@ pub fn open_routers(
         slots,
         importing,
         routers,
-        preview,
-        applied,
+        Some((preview, applied)),
         Codec {
             encode_text: routers::encode_text,
             decode_text: routers::decode_text,
@@ -465,8 +454,8 @@ fn open_objects<T: Clone + 'static>(
     slots: &Slots,
     importing: bool,
     definitions: &[T],
-    preview: Preview<T>,
-    applied: Apply<T>,
+    // `None` for a window that only exports
+    review: Option<(Preview<T>, Apply<T>)>,
     codec: Codec<T>,
 ) -> Result<DownloaderExchangeWindow, String> {
     if let Some(w) = slots.0.borrow().as_ref() {
@@ -583,7 +572,7 @@ fn open_objects<T: Clone + 'static>(
                                 return Err("Subscription package exceeds the object limit.".into());
                             }
                         }
-                        w.set_review(preview(definitions.clone())?.into());
+                        w.set_review(review_of(&review)?.0(definitions.clone())?.into());
                         *pending.borrow_mut() = Some(definitions);
                         w.set_ready(true);
                     }
@@ -658,7 +647,7 @@ fn open_objects<T: Clone + 'static>(
                         } else {
                             (codec.decode_text)(w.get_text().as_str()).map_err(|e| e.to_string())?
                         };
-                        let description = preview(definitions.clone())?;
+                        let description = review_of(&review)?.0(definitions.clone())?;
                         w.set_review(description.into());
                         *pending.borrow_mut() = Some(definitions);
                         w.set_ready(true);
@@ -668,7 +657,7 @@ fn open_objects<T: Clone + 'static>(
                             .borrow()
                             .clone()
                             .ok_or_else(|| "Review a package before importing.".to_owned())?;
-                        applied(definitions)?;
+                        review_of(&review)?.1(definitions)?;
                         close();
                     }
                     other => {
@@ -689,6 +678,13 @@ fn open_objects<T: Clone + 'static>(
     w.show().map_err(|e| e.to_string())?;
     *slots.0.borrow_mut() = Some(w.clone_strong());
     Ok(w)
+}
+fn review_of<T>(
+    review: &Option<(Preview<T>, Apply<T>)>,
+) -> Result<&(Preview<T>, Apply<T>), String> {
+    review
+        .as_ref()
+        .ok_or_else(|| "This window only exports.".to_owned())
 }
 fn export_text<T>(window: &DownloaderExchangeWindow, codec: &Codec<T>) -> Result<String, String> {
     let selected =

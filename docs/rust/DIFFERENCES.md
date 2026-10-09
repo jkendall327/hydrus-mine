@@ -858,6 +858,14 @@ deleted sidecars by `crates/hydrus-download/tests/local_import.rs`.
   header is; the reference's own Sync then recalculates velocity, next check
   and the example gallery seed on load (recorded in
   `subscription_header_resync.json`), so native does not compute them.
+  Two reference behaviours are not matched yet (so `subscriptions-exchange`
+  stays untagged): accepting an import with missing query logs stores the
+  subscription with the log missing and the next open of manage subscriptions
+  asks "Missing Query Logs!" before writing empty logs and resetting the
+  headers (native creates empty logs on Apply); and editing the checker
+  options marks headers whose history was not loaded unsynced with the
+  velocity words "will recalculate when next fully loaded" (native recomputes
+  the next check itself and leaves the cached header as it was).
 - **The manage subscriptions dialog is a first pass.** It lists the
   subscriptions and can delete, pause/resume, scrub delays, check
   queries now and select by query text, add and edit subscriptions,
