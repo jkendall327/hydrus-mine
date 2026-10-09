@@ -6459,10 +6459,10 @@
     "Native providers expose existing supported native menu/search contexts. This setting claim does not promote the entire palette or any absent menu command/backend."
    ],
    "recheck": {
-    "date": "2026-10-08",
+    "date": "2026-10-09",
     "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Only the setting-on path with a typed query 'none' is tested, through the real thumbnail dispatcher (plus stale-page rejection). The recorded media_events in command_palette.json (queries 'refresh'/'select') are never replayed by any test, there is no test of show_media_menu=false, and no comparison of result labels/ordering with the reference. Tests: crates/hydrus-gui/tests/gui/command_palette.rs:246 media_provider_uses_the_actual_thumbnail_dispatcher_and_rejects_a_changed_page; crates/hydrus-gui/tests/gui/options_window.rs:4469 command_palette_options_stage_queue_changes_and_persist_only_on_apply"
+    "by": "phase 2 session",
+    "note": "Setting off (no rows) and on (the recorded 'refresh' row; empty 'select' on a page with no files) replayed through the window (command_palette.rs media_menu_results_follow_the_setting_and_the_page_shown_as_the_reference_did); media actions run through the real thumbnail dispatcher (media_provider_uses_the_actual_thumbnail_dispatcher_and_rejects_a_changed_page). Missing: rows and an activated entry's effect for a page with files selected are not recorded (DIFFERENCES.md)."
    }
   },
   {
@@ -6479,10 +6479,10 @@
     "Native providers expose existing supported native menu/search contexts. This setting claim does not promote the entire palette or any absent menu command/backend."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
+    "date": "2026-10-09",
+    "class": "sound",
     "by": "phase 2 session",
-    "note": "Untagged until activating a notebook row (focus its remembered sub-page) is tested. Recording event 0 (off: 3 rows, notebook excluded, children kept with parent name) and event 10 (on: 4 rows) replayed through palette::query, the function the window runs; Options checkbox staged/applied/reopened in GUI test and label/default checked against options_dialog.json. Activation of a notebook row (focus its remembered sub-page) is not tested. Tests: crates/hydrus-gui-model/tests/model/command_palette.rs:98 providers_match_real_qt_order_limits_and_thresholds (event 0 vs 10); crates/hydrus-gui/tests/gui/options_window.rs:4469 command_palette_options_stage_queue_changes_and_persist_only_on_apply"
+    "note": "Off: notebook not a result, its child listed as \"child of 'Palette Nested'\"; on: one notebook row (full text pair compared with the recording), and choosing it shows a child page of the notebook (the recording has one child, so which of several is remembered is not shown). Test: command_palette.rs a_page_of_pages_row_shows_when_the_setting_is_on_and_opens_its_remembered_page."
    }
   },
   {
@@ -6499,10 +6499,10 @@
     "Native providers expose existing supported native menu/search contexts. This setting claim does not promote the entire palette or any absent menu command/backend."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Empty-query gating is asserted only with typed values in the model test (3 rows by default, 0 when off); the recording has no empty-query event. Window shows pages at empty query with the default (true) only. Control label/default/persistence are recorded/sound. Tests: crates/hydrus-gui-model/tests/model/command_palette.rs:242 each_live_provider_policy_reaches_its_results_and_preferences_persist; crates/hydrus-gui/tests/gui/command_palette.rs:47; crates/hydrus-gui/tests/gui/options_window.rs:4469 command_palette_options_stage_queue_changes_and_persist_only_on_apply"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "Empty query under the setting on and off replayed from command_palette.json empty_events through the real Ctrl+P window over a session (files, Alpha, nested Beta, Gamma): same rows and secondary text. Test: crates/hydrus-gui/tests/gui/command_palette.rs an_empty_palette_shows_the_results_each_initially_show_option_allows_as_the_reference_did."
    }
   },
   {
@@ -6519,10 +6519,10 @@
     "Native providers expose existing supported native menu/search contexts. This setting claim does not promote the entire palette or any absent menu command/backend."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Empty-query favourites (2 rows when on, none off) asserted with typed values; real window shows them at empty query when saved on (:370). Typed-query matching by name/folder is recorded (events 2,3). No recording of the empty-query behaviour. Tests: crates/hydrus-gui-model/tests/model/command_palette.rs:242 each_live_provider_policy_...; crates/hydrus-gui/tests/gui/command_palette.rs:370 saved_favourite_current_page_policy_and_provider_order_reach_a_reopened_palette; crates/hydrus-gui/tests/gui/options_window.rs:4469 command_palette_options_stage_queue_changes_and_persist_only_on_apply"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "Empty query favourites on/off (folder subtitle, order) replayed from empty_events through the window. Test: command_palette.rs an_empty_palette_shows_the_results_each_initially_show_option_allows_as_the_reference_did."
    }
   },
   {
@@ -6539,10 +6539,10 @@
     "Native providers expose existing supported native menu/search contexts. This setting claim does not promote the entire palette or any absent menu command/backend."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Typed-query history ordering and ordinal labels ('1st result in history') are replayed from the recording, but the empty-query gate this leaf is about is checked only with typed values (history off gives no rows); no window test shows history rows at empty query. Tests: crates/hydrus-gui-model/tests/model/command_palette.rs:242 each_live_provider_policy_...; crates/hydrus-gui-model/tests/model/command_palette.rs:98 (event 1, 12); crates/hydrus-gui/tests/gui/options_window.rs:4469 command_palette_options_stage_queue_changes_and_persist_only_on_apply"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "Empty query history on/off, order and ordinals, replayed from empty_events through the window after clicking tabs in the recorded order. Test: command_palette.rs an_empty_palette_shows_the_results_each_initially_show_option_allows_as_the_reference_did."
    }
   },
   {
@@ -6619,10 +6619,10 @@
     "Native providers expose existing supported native menu/search contexts. This setting claim does not promote the entire palette or any absent menu command/backend."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Both settings values drive the real palette and Pages. Expected values are typed in the test, not read from the recorded 'selected' block (favourite new_pages 1 / favourite_current new_pages 0 same_page true), and favourite sort/collect and new-page initial search timing are not checked. Tests: crates/hydrus-gui/tests/gui/command_palette.rs:47 (true: new page, named, search and synchronisation); crates/hydrus-gui/tests/gui/command_palette.rs:370 (false: same page overwritten, count unchanged); crates/hydrus-gui/tests/gui/options_window.rs:4469 command_palette_options_stage_queue_changes_and_persist_only_on_apply"
+    "date": "2026-10-09",
+    "class": "weak",
+    "by": "phase 2 session",
+    "note": "Both settings drive the real palette; the new-page count (selected.favourite) and, for the off case, the new-page count and same_page (selected.favourite_current) are read from the recording. Missing: favourite sort/collect are not recorded and not compared (DIFFERENCES.md); the recorded page's name was already the favourite's, so the off case's name is not comparable. Tests: command_palette.rs ctrl_p_async_palette_launches_real_pages_favourites_and_main_menu_actions; saved_favourite_current_page_policy_and_provider_order_reach_a_reopened_palette."
    }
   },
   {

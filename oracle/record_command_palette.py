@@ -62,6 +62,14 @@ def record(session):
             options.SetNoneableInteger('command_palette_'+key,initial[key])
         options.SetInteger('command_palette_num_chars_for_results_threshold',4)
         events.extend(snap(code,text) for code,text in ((3,'Pal'),(3,'Pale'),(3,'   '),(1,'Pal'),(1,'Pale')))
+        # Empty query: each "initially show" option on and off, per provider.
+        empty_events=[]
+        for key,code in (('initially_show_all_pages',3),('initially_show_history',4),('initially_show_favourite_searches',5)):
+            for value in (True,False):
+                options.SetBoolean('command_palette_'+key,value)
+                event=snap(code,'');event['option']=key;event['value']=value
+                empty_events.append(event)
+            options.SetBoolean('command_palette_'+key,initial[key] if key!='initially_show_favourite_searches' else True)
         # Calculator bypasses the application-provider character threshold.
         calculator_events=[snap(0,text) for text in (
             '2', '-2**2', '(-2)**2', '2**-2', '2**3**2', '--3',
@@ -109,6 +117,13 @@ def record(session):
         chosen.activate();QW.QApplication.processEvents()
         window_route['closed_after_launch']=not widget.isVisible()
         window_route['page']=notebook.GetCurrentMediaPage().GetName()
+        options.SetBoolean('command_palette_show_page_of_pages',True)
+        gui.ShowPage(alpha.GetPageKey());QW.QApplication.processEvents()
+        p,rows=query(3,'Palette Nested');nested_rows=[r for r in rows if 'Palette Nested' in r.text[0] and 'top level' in r.text[1]]
+        p.resultSelected(nested_rows[0].id);QW.QApplication.processEvents()
+        current=notebook.GetCurrentMediaPage()
+        selected['notebook_row']={'rows':len(nested_rows),'page':current.GetName() if current is not None else None}
+        options.SetBoolean('command_palette_show_media_menu',False);media_off=[snap(2,'refresh')]
         options.SetBoolean('command_palette_show_media_menu',True)
         media_events=[snap(2,'refresh'),snap(2,'select')]
         unicode_name='Unicode Straße ffi ff'
@@ -140,7 +155,7 @@ def record(session):
             ClientGUIDialogsQuick.GetYesNo=old_yesno;ClientGUIDialogsQuick.SelectFromListButtons=old_select
             session.controller.favourite_search_manager.SetFavouriteSearchRows(old_favourites)
             gui._menubar.removeAction(menu.menuAction());menu.deleteLater();panel.deleteLater()
-        return {'initial':initial,'events':events,'selected':selected,'window_route':window_route,'media_events':media_events,'calculator_events':calculator_events,'unicode_events':unicode_events,'queue_events':queue_events,'questions':questions,'persisted':persisted}
+        return {'initial':initial,'events':events,'empty_events':empty_events,'selected':selected,'window_route':window_route,'media_events':media_events,'media_events_off':media_off,'calculator_events':calculator_events,'unicode_events':unicode_events,'queue_events':queue_events,'questions':questions,'persisted':persisted}
     return session.controller.CallBlockingToQt(session.controller.gui,qt)
 
 def main():

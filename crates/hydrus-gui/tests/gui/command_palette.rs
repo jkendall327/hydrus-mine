@@ -436,7 +436,11 @@ fn saved_favourite_current_page_policy_and_provider_order_reach_a_reopened_palet
     let recorded = hydrus_testkit::fixture_json("command_palette.json");
     let same_page = &recorded["selected"]["favourite_current"];
     assert!(bound.command_palette.borrow().is_none());
-    assert_eq!(bound.pages.borrow().shown().key, original);
+    assert_eq!(
+        bound.pages.borrow().shown().key == original,
+        same_page["same_page"].as_bool().unwrap()
+    );
+    // (the recorded page already carried the favourite's name; ours keeps its own)
     assert_eq!(bound.pages.borrow().shown().name, "Palette Beta");
     assert_eq!(
         bound.pages.borrow().page_count(),
@@ -503,4 +507,314 @@ fn persisted_unicode_thresholds_reach_the_async_palette_after_reopening() {
         assert!(bound.command_palette.borrow().is_none());
         assert_eq!(bound.pages.borrow().shown().key, page);
     }
+}
+
+fn rows_of(window: &CommandPaletteWindow) -> Vec<(String, String)> {
+    let rows = window.get_rows();
+    (0..rows.row_count())
+        .filter_map(|i| {
+            let row = rows.row_data(i).unwrap();
+            (!row.heading).then(|| (row.primary.to_string(), row.secondary.to_string()))
+        })
+        .collect()
+}
+
+// leaf: audit-options-command-palette-command-palette-initially-show-all-page-results
+// leaf: audit-options-command-palette-command-palette-initially-show-page-history-results
+// leaf: audit-options-command-palette-command-palette-initially-show-favourite-search-results
+#[test]
+fn an_empty_palette_shows_the_results_each_initially_show_option_allows_as_the_reference_did() {
+    use hydrus_core::pages::{Page, PageContent, PageKey, Session};
+    use hydrus_store::sessions;
+    let recorded = hydrus_testkit::fixture_json("command_palette.json");
+    let search = |name: &str| Page {
+        key: PageKey::random(),
+        name: name.into(),
+        content: PageContent::Search {
+            search: hydrus_core::search::context::FileSearchContext::default(),
+            synchronised: false,
+            sort: None,
+            lock: None,
+            collect: None,
+        },
+    };
+    let alpha = search("Palette Alpha");
+    let beta = search("Palette Beta");
+    let gamma = search("Palette Gamma");
+    let keys = (alpha.key, beta.key, gamma.key);
+    let directory = tempfile::tempdir().unwrap();
+    let store = Store::open(directory.path()).unwrap();
+    let session = Session {
+        name: sessions::LAST_SESSION.into(),
+        pages: vec![
+            search("files"),
+            alpha,
+            Page {
+                key: PageKey::random(),
+                name: "Palette Nested".into(),
+                content: PageContent::Pages(vec![beta]),
+            },
+            gamma,
+        ],
+    };
+    store
+        .write(move |ctx| sessions::save(ctx.conn(), &session, 1))
+        .unwrap();
+    let favourites = [
+        (Some("Palette Folder"), "Favourite Alpha"),
+        (None, "Favourite Beta"),
+    ]
+    .map(|(folder, name)| FavouriteSearch {
+        folder: folder.map(Into::into),
+        name: name.into(),
+        search: hydrus_core::search::context::FileSearchContext::default(),
+        synchronised: folder.is_none(),
+        sort: None,
+        collect: None,
+    });
+    store
+        .write(move |ctx| {
+            hydrus_store::settings::set(
+                ctx.conn(),
+                &hydrus_store::settings::FavouriteSearches(favourites.to_vec()),
+            )
+        })
+        .unwrap();
+    let _windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+    // Clicked in the order the recording showed them: alpha, beta (inside
+    // the nested notebook), gamma.
+    for (level, tab, key) in [(0, 1, keys.0), (0, 2, keys.1), (0, 3, keys.2)] {
+        ui.invoke_tab_chosen(level, tab);
+        assert_eq!(bound.pages.borrow().shown().key, key);
+    }
+    let plain = |text: &str| {
+        text.replace("<b>", "")
+            .replace("</b>", "")
+            .replace("<i>", "")
+            .replace("</i>", "")
+    };
+    for event in recorded["empty_events"].as_array().unwrap() {
+        let option = event["option"].as_str().unwrap();
+        let on = event["value"].as_bool().unwrap();
+        // (the recording had "include page of pages" on by then)
+        let settings = CommandPaletteSettings {
+            show_notebooks: true,
+            initially_show_pages: on && option == "initially_show_all_pages",
+            initially_show_history: on && option == "initially_show_history",
+            initially_show_favourites: on && option == "initially_show_favourite_searches",
+            ..Default::default()
+        };
+        store
+            .write(move |ctx| hydrus_store::settings::set(ctx.conn(), &settings))
+            .unwrap();
+        ui.invoke_command_palette_requested();
+        let palette = bound
+            .command_palette
+            .borrow()
+            .as_ref()
+            .expect("the palette opens")
+            .clone_strong();
+        let expected: Vec<(String, String)> = event["rows"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|row| {
+                let text = row["text"].as_array().unwrap();
+                (
+                    plain(text[0].as_str().unwrap()),
+                    plain(text[1].as_str().unwrap()),
+                )
+            })
+            .collect();
+        let deadline = Instant::now() + Duration::from_secs(5);
+        loop {
+            palette.invoke_poll();
+            if rows_of(&palette) == expected || Instant::now() > deadline {
+                break;
+            }
+            std::thread::sleep(Duration::from_millis(2));
+        }
+        if expected.is_empty() {
+            // Nothing to wait for: give the worker time to (wrongly) answer.
+            for _ in 0..100 {
+                palette.invoke_poll();
+                std::thread::sleep(Duration::from_millis(2));
+            }
+        }
+        assert_eq!(rows_of(&palette), expected, "{option} = {on}");
+        palette.invoke_cancel();
+    }
+}
+
+#[test]
+fn media_menu_results_follow_the_setting_and_the_page_shown_as_the_reference_did() {
+    let recorded = hydrus_testkit::fixture_json("command_palette.json");
+    let directory = tempfile::tempdir().unwrap();
+    let store = Store::open(directory.path()).unwrap();
+    let _windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+    // The page shown in the recording held no files.
+    bound.pages.borrow_mut().rename_shown("Palette Alpha");
+    let plain = |text: &str| text.replace("<b>", "").replace("</b>", "");
+    let mut cases = vec![(false, &recorded["media_events_off"][0])];
+    cases.extend(
+        recorded["media_events"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|e| (true, e)),
+    );
+    for (on, event) in cases {
+        store
+            .write(move |ctx| {
+                hydrus_store::settings::set(
+                    ctx.conn(),
+                    &CommandPaletteSettings {
+                        show_media_menu: on,
+                        provider_order: vec![Provider::MediaMenu],
+                        ..Default::default()
+                    },
+                )
+            })
+            .unwrap();
+        ui.invoke_command_palette_requested();
+        let palette = bound
+            .command_palette
+            .borrow()
+            .as_ref()
+            .unwrap()
+            .clone_strong();
+        let query = event["query"].as_str().unwrap();
+        palette.invoke_query_edited(query.into());
+        let expected: Vec<(String, String)> = event["rows"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|row| {
+                let text = row["text"].as_array().unwrap();
+                (
+                    plain(text[0].as_str().unwrap()),
+                    plain(text[1].as_str().unwrap()),
+                )
+            })
+            .collect();
+        let deadline = Instant::now() + Duration::from_secs(2);
+        loop {
+            palette.invoke_poll();
+            if (!expected.is_empty() && rows_of(&palette) == expected) || Instant::now() > deadline
+            {
+                break;
+            }
+            std::thread::sleep(Duration::from_millis(2));
+        }
+        if expected.is_empty() {
+            // Nothing to wait for: give the worker time to (wrongly) answer.
+            for _ in 0..100 {
+                palette.invoke_poll();
+                std::thread::sleep(Duration::from_millis(2));
+            }
+        }
+        assert_eq!(rows_of(&palette), expected, "{query:?} with the menu {on}");
+        palette.invoke_cancel();
+    }
+}
+
+// leaf: audit-options-command-palette-command-palette-include-page-of-pages-page-results
+#[test]
+fn a_page_of_pages_row_shows_when_the_setting_is_on_and_opens_its_remembered_page() {
+    use hydrus_core::pages::{Page, PageContent, PageKey, Session};
+    use hydrus_store::sessions;
+    let recorded = hydrus_testkit::fixture_json("command_palette.json");
+    let search = |name: &str| Page {
+        key: PageKey::random(),
+        name: name.into(),
+        content: PageContent::Search {
+            search: hydrus_core::search::context::FileSearchContext::default(),
+            synchronised: false,
+            sort: None,
+            lock: None,
+            collect: None,
+        },
+    };
+    let directory = tempfile::tempdir().unwrap();
+    let store = Store::open(directory.path()).unwrap();
+    let session = Session {
+        name: sessions::LAST_SESSION.into(),
+        pages: vec![
+            search("Palette Alpha"),
+            Page {
+                key: PageKey::random(),
+                name: "Palette Nested".into(),
+                content: PageContent::Pages(vec![search("Palette Beta")]),
+            },
+            search("Palette Gamma"),
+        ],
+    };
+    store
+        .write(move |ctx| sessions::save(ctx.conn(), &session, 1))
+        .unwrap();
+    let _windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+    ui.invoke_tab_chosen(0, 0);
+    let open = |on: bool| {
+        store
+            .write(move |ctx| {
+                hydrus_store::settings::set(
+                    ctx.conn(),
+                    &CommandPaletteSettings {
+                        show_notebooks: on,
+                        ..Default::default()
+                    },
+                )
+            })
+            .unwrap();
+        ui.invoke_command_palette_requested();
+        let palette = bound
+            .command_palette
+            .borrow()
+            .as_ref()
+            .unwrap()
+            .clone_strong();
+        palette.invoke_query_edited("Palette".into());
+        palette
+    };
+    // Off: the notebook is not a result, its child is (named for its parent).
+    let palette = open(false);
+    wait(&palette, "Palette Beta");
+    let off = rows_of(&palette);
+    assert!(
+        !off.iter().any(|(name, _)| name == "Palette Nested"),
+        "{off:?}"
+    );
+    assert!(
+        off.contains(&("Palette Beta".into(), "child of 'Palette Nested'".into())),
+        "{off:?}"
+    );
+    palette.invoke_cancel();
+    // On: one notebook row, and choosing it shows the page the reference showed.
+    let palette = open(true);
+    wait(&palette, "Palette Nested");
+    palette.invoke_query_edited("Palette Nested".into());
+    wait(&palette, "Palette Nested");
+    let notebook_rows = rows_of(&palette)
+        .into_iter()
+        .filter(|(name, other)| name == "Palette Nested" && other == "top level page")
+        .count();
+    assert_eq!(
+        notebook_rows as u64,
+        recorded["selected"]["notebook_row"]["rows"]
+            .as_u64()
+            .unwrap()
+    );
+    activate(&palette, "Palette Nested");
+    assert_eq!(
+        bound.pages.borrow().shown().name,
+        recorded["selected"]["notebook_row"]["page"]
+            .as_str()
+            .unwrap()
+    );
 }
