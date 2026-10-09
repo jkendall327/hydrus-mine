@@ -1734,7 +1734,7 @@ async fn the_direct_import_row_decides_whether_a_local_import_copies_to_a_temp_p
                 )
             })
             .unwrap();
-        worker.wake(queue);
+        worker.start_all().unwrap();
         queue
     };
     let finished = |queue: i64| {
@@ -1750,7 +1750,11 @@ async fn the_direct_import_row_decides_whether_a_local_import_copies_to_a_temp_p
                 }
                 tokio::time::sleep(std::time::Duration::from_millis(50)).await;
             }
-            panic!("the import did not finish");
+            let seeds = store.read(|conn| queues::file_seeds(conn, queue)).unwrap();
+            panic!(
+                "the import did not finish: {:?}",
+                seeds.iter().map(|s| (s.status, s.note.clone())).collect::<Vec<_>>()
+            );
         }
     };
 

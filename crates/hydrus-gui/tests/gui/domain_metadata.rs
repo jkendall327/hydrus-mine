@@ -8,7 +8,7 @@ use hydrus_store::bandwidth::BandwidthSettings;
 use hydrus_store::network::{self, Approval};
 use hydrus_store::{Store, settings};
 use serde_json::{Value, json};
-use slint::{ComponentHandle as _, Model as _};
+use slint::Model as _;
 use std::sync::Arc;
 
 fn setup() -> (tempfile::TempDir, Arc<Store>) {
@@ -111,8 +111,14 @@ fn seed_initial(store: &Store, fixture: &Value) {
             header(store, domain, name, row[0].as_str().unwrap(), approval, row[2].as_str().unwrap());
         }
     }
-    for (domain, recorded) in fixture["initial"]["rules"].as_object().unwrap() {
-        rules(store, domain, recorded);
+    // (rules in the order the reference held them, as its package lists them)
+    for definition in exchange::decode_text(&fixture["reference"].to_string()).unwrap() {
+        if let Native::Domain(m) = &definition.native
+            && let Some(recorded) = &m.rules
+        {
+            let rows = recorded.iter().map(|r| json!([r.kind as i64, r.time_delta, r.max_allowed]));
+            rules(store, &m.domain, &Value::Array(rows.collect()));
+        }
     }
     // The recorded downloader, its URL class and parser.
     let definitions: Vec<_> = exchange::decode_text(&fixture["reference"].to_string())
@@ -125,11 +131,11 @@ fn seed_initial(store: &Store, fixture: &Value) {
     draft.save(store).unwrap();
 }
 
-fn choice_names(window: &crate::DownloaderExchangeWindow) -> Vec<String> {
+fn choice_names(window: &hydrus_gui::DownloaderExchangeWindow) -> Vec<String> {
     window.get_package_choices().iter().map(|c| c.label.to_string()).collect()
 }
 
-fn add_domain(window: &crate::DownloaderExchangeWindow, text: Option<&str>) {
+fn add_domain(window: &hydrus_gui::DownloaderExchangeWindow, text: Option<&str>) {
     window.invoke_action("add-domain".into());
     assert!(window.get_domain_prompt());
     match text {
@@ -157,7 +163,7 @@ fn domain_metadata_is_prompted_exported_to_png_and_imported_as_the_reference_doe
     );
     // The recorded prompt steps: cancel, nothing, pending-only, subdomain, repeat.
     let steps = fixture["export_steps"].as_array().unwrap();
-    let domain_names = |window: &crate::DownloaderExchangeWindow| -> Vec<String> {
+    let domain_names = |window: &hydrus_gui::DownloaderExchangeWindow| -> Vec<String> {
         choice_names(window)
             .into_iter()
             .filter_map(|n| n.strip_prefix("Domain Metadata: ").map(str::to_owned))

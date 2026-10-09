@@ -85,6 +85,7 @@ fn call(
     runtime: &tokio::runtime::Runtime,
     method: &str,
     uri: &str,
+    body: &str,
     byte: u8,
 ) -> axum::http::StatusCode {
     use tower::ServiceExt as _;
@@ -92,7 +93,8 @@ fn call(
         .method(method)
         .uri(uri)
         .header("Hydrus-Client-API-Access-Key", hex::encode([byte; 32]))
-        .body(axum::body::Body::empty())
+        .header("Content-Type", "application/json")
+        .body(axum::body::Body::from(body.to_owned()))
         .unwrap();
     runtime
         .block_on(router.clone().oneshot(request))
@@ -141,11 +143,11 @@ fn the_commit_pending_checkbox_grants_the_pending_routes_to_that_key_alone() {
     // The key the editor granted it to reads the pending counts; the other,
     // saved by the same editor without it, is refused.
     assert_eq!(
-        call(&router, &runtime, "GET", counts, 0x41),
+        call(&router, &runtime, "GET", counts, "", 0x41),
         axum::http::StatusCode::OK
     );
     assert_eq!(
-        call(&router, &runtime, "GET", counts, 0x42),
+        call(&router, &runtime, "GET", counts, "", 0x42),
         axum::http::StatusCode::FORBIDDEN
     );
     // Committing passes the permission check, then stops where hydrus-rs
@@ -153,19 +155,20 @@ fn the_commit_pending_checkbox_grants_the_pending_routes_to_that_key_alone() {
     let repository = store
         .snapshot()
         .services
-        .iter()
+        .all()
         .find(|s| s.service_type() == hydrus_core::ServiceType::TagRepository)
         .map(|s| s.key.to_hex())
         .expect("the repositories fixture has a tag repository");
     {
         let key = repository;
-        let uri = format!("/manage_services/commit_pending?service_key={key}");
+        let uri = "/manage_services/commit_pending";
+        let body = format!("{{\"service_key\": \"{key}\"}}");
         assert_eq!(
-            call(&router, &runtime, "POST", &uri, 0x41),
+            call(&router, &runtime, "POST", uri, &body, 0x41),
             axum::http::StatusCode::UNPROCESSABLE_ENTITY
         );
         assert_eq!(
-            call(&router, &runtime, "POST", &uri, 0x42),
+            call(&router, &runtime, "POST", uri, &body, 0x42),
             axum::http::StatusCode::FORBIDDEN
         );
     }

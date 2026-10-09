@@ -584,6 +584,11 @@ fn presentation(store: &Store, queue: i64) -> hydrus_core::import_options::Prese
 
 /// Open the highlighted search's import options editor, as the page shows it.
 fn shown_editor(ui: &MainWindow, bound: &hydrus_gui::Bound) -> ImportOptionsWindow {
+    // ("show files" shows the files instead of the search; selecting its row
+    // and highlighting it shows the search again)
+    if !ui.get_gallery_data().highlighted {
+        ui.invoke_gallery_highlight();
+    }
     ui.invoke_shown_import_options();
     bound
         .folders
@@ -624,10 +629,11 @@ fn the_presentation_editors_choices_filter_the_files_show_files_presents() {
     let (_dirs, store) = crate::subscriptions::store();
     set_advanced(&store, true);
     crate::importer_list_menu::with_downloader(&store);
-    let services = store.snapshot().services.clone();
+    let snapshot = store.snapshot();
     let find = |name: &str| {
-        services
-            .iter()
+        snapshot
+            .services
+            .all()
             .find(|s| s.name == name)
             .unwrap_or_else(|| panic!("service {name}"))
             .id
@@ -692,7 +698,12 @@ fn the_presentation_editors_choices_filter_the_files_show_files_presents() {
             })
             .unwrap()
     };
-    let shown = |bound: &hydrus_gui::Bound| bound.current.borrow().borrow().files().clone();
+    // (the page sorts what it shows)
+    let shown = |bound: &hydrus_gui::Bound| {
+        let mut files = bound.current.borrow().borrow().files().clone();
+        files.sort();
+        files
+    };
     let status_at = |editor: &ImportOptionsWindow, text: &str| {
         i32::try_from(
             texts(&editor.get_status_choices())

@@ -367,6 +367,12 @@ fn old_file_seed_cache(cache: &SerialisableObject) -> DecodeResult<Vec<LegacyFil
             text = text.replace("//media.tumblr.com", "//data.tumblr.com");
         }
         let seed_type = i64::from(text.starts_with("http"));
+        if seed_type == 1 {
+            // (a new `FileSeed` stores its URL in the generic normalised form)
+            text = hydrus_core::url::UrlClasses::default()
+                .normalise(&text, true)
+                .unwrap_or(text);
+        }
         // (a cache cannot hold a seed twice: the reference drops repeats,
         // keeping the first, the first time it indexes them)
         if !identities.insert((seed_type, text.clone())) {
