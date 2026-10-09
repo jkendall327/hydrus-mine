@@ -575,14 +575,28 @@ fn run_server(dir: &Path, port: Option<u16>, bind: Option<IpAddr>, attached: boo
                 ),
             ));
             loop {
-                let (store, importer, throttle) =
-                    (maintainer.clone(), importer.clone(), throttle.clone());
+                let (importer, throttle) = (importer.clone(), throttle.clone());
                 let redownloader = redownloader.clone();
                 let wait = tokio::task::spawn_blocking(move || {
                     let throttle = throttle
                         .lock()
                         .unwrap_or_else(std::sync::PoisonError::into_inner);
-                    file_maintenance_step(&store, &throttle, &importer, redownloader.as_ref())
+                    importer.file_maintenance_pass(
+                        &throttle,
+                        &hydrus_store::workers::SystemClock,
+                        &|urls| {
+                            if let Some(runner) = &redownloader {
+                                if let Err(e) = runner.redownload(urls) {
+                                    tracing::error!(error = %e, "downloading missing files again failed");
+                                }
+                            } else {
+                                tracing::error!(
+                                    ?urls,
+                                    "missing files could be downloaded again, but the downloader is not running"
+                                );
+                            }
+                        },
+                    )
                 })
                 .await
                 .unwrap_or(hydrus_store::workers::AFTER_ERROR);
@@ -597,10 +611,9 @@ fn run_server(dir: &Path, port: Option<u16>, bind: Option<IpAddr>, attached: boo
             loop {
                 let store = resolver.clone();
                 let wait = tokio::task::spawn_blocking(move || {
-                    hydrus_store::workers::auto_resolution_step(
+                    hydrus_duplicates::auto_resolution_pass(
                         &store,
                         &hydrus_store::workers::SystemClock,
-                        work_auto_resolution,
                     )
                 })
                 .await
@@ -648,8 +661,7 @@ fn run_server(dir: &Path, port: Option<u16>, bind: Option<IpAddr>, attached: boo
                         hydrus_store::folder_activity::Kind::Import,
                         before_work,
                         Duration::from_secs(wait.unsigned_abs()),
-                    )
-                    .await;
+                    ).await;
                 }
             });
         }
@@ -658,8 +670,10 @@ fn run_server(dir: &Path, port: Option<u16>, bind: Option<IpAddr>, attached: boo
         tokio::spawn(async move {
             tokio::time::sleep(Duration::from_secs(5)).await;
             loop {
-                let before_work =
-                    folder_wait::capture(&exporter, hydrus_store::folder_activity::Kind::Export);
+                let before_work = folder_wait::capture(
+                    &exporter,
+                    hydrus_store::folder_activity::Kind::Export,
+                );
                 let store = exporter.clone();
                 let done = tokio::task::spawn_blocking(move || {
                     hydrus_download::export::work_export_folders(&store)
@@ -688,8 +702,7 @@ fn run_server(dir: &Path, port: Option<u16>, bind: Option<IpAddr>, attached: boo
                     hydrus_store::folder_activity::Kind::Export,
                     before_work,
                     Duration::from_secs(180),
-                )
-                .await;
+                ).await;
             }
         });
         // queues another process (the desktop client) made or changed, as
@@ -714,9 +727,7 @@ fn run_server(dir: &Path, port: Option<u16>, bind: Option<IpAddr>, attached: boo
                 loop {
                     let net = net.clone();
                     match tokio::task::spawn_blocking(move || net.publish_runtime()).await {
-                        Ok(Err(e)) => {
-                            tracing::warn!(error = %e, "publishing network runtime failed");
-                        }
+                        Ok(Err(e)) => tracing::warn!(error = %e, "publishing network runtime failed"),
                         Err(e) => tracing::warn!(error = %e, "network runtime worker failed"),
                         Ok(Ok(())) => {}
                     }
@@ -746,10 +757,14 @@ fn run_server(dir: &Path, port: Option<u16>, bind: Option<IpAddr>, attached: boo
                         bytes,
                         speed,
                         at,
-                        jobs: queues.iter().map(|(_, live)| live.jobs_in_flight()).sum(),
+                        jobs: queues
+                            .iter()
+                            .map(|(_, live)| live.jobs_in_flight())
+                            .sum(),
                     };
                     let stale = said.is_none_or(|s| {
-                        (s.started, s.bytes, s.speed, s.jobs) != (started, bytes, speed, usage.jobs)
+                        (s.started, s.bytes, s.speed, s.jobs)
+                            != (started, bytes, speed, usage.jobs)
                             || at - s.at >= 5
                     });
                     if stale {
@@ -991,53 +1006,24 @@ fn forget_unfinished_popups(store: &hydrus_store::Store) {
 }
 
 /// One pass of the similar-files search loop (see
-/// [`hydrus_store::workers::similar_files_step`]), on the system clock.
+/// [`hydrus_store::workers::similar_files_step`]), on the system clock: files
+/// are searched sixteen at a time until the packet's time is up.
 fn similar_files_step(store: &Store) -> Duration {
-    hydrus_store::workers::similar_files_step(store, &hydrus_store::workers::SystemClock, |store| {
-        hydrus_store::similar::run_search(store, 16)
-    })
-}
-
-/// Work the auto-resolution rules for `budget`; whether work is left.
-fn work_auto_resolution(store: &Store, budget: Duration) -> hydrus_store::Result<bool> {
-    let done = hydrus_duplicates::work_rules(
+    hydrus_store::workers::similar_files_step(
         store,
-        budget,
-        &mut hydrus_duplicates::Shuffle,
-        &hydrus_search::Clock::system(),
-    )?;
-    if done != hydrus_duplicates::WorkDone::default() {
-        tracing::debug!(?done, "auto-resolution worked");
-    }
-    Ok(done.more_to_do)
-}
-
-/// One pass of the file maintenance loop (see
-/// [`hydrus_store::workers::FileMaintenanceThrottle::step`]): a batch of due
-/// jobs as the throttle allows, handing missing files that could be
-/// downloaded again to the downloader.
-fn file_maintenance_step(
-    store: &Store,
-    throttle: &hydrus_store::workers::FileMaintenanceThrottle,
-    importer: &hydrus_import::FileImporter,
-    redownloader: Option<&std::sync::Arc<hydrus_download::QueueRunner>>,
-) -> Duration {
-    throttle.step(store, &hydrus_store::workers::SystemClock, |able, used| {
-        let report = importer.run_file_maintenance_batch(able, used)?;
-        if !report.redownload.is_empty() {
-            if let Some(runner) = redownloader {
-                if let Err(e) = runner.redownload(&report.redownload) {
-                    tracing::error!(error = %e, "downloading missing files again failed");
+        &hydrus_store::workers::SystemClock,
+        |store, packet| {
+            let started = std::time::Instant::now();
+            let mut total = 0;
+            loop {
+                let n = hydrus_store::similar::run_search(store, 16)?;
+                total += n;
+                if n == 0 || started.elapsed() >= packet {
+                    return Ok(total);
                 }
-            } else {
-                tracing::error!(
-                    urls = ?report.redownload,
-                    "missing files could be downloaded again, but the downloader is not running"
-                );
             }
-        }
-        Ok::<_, hydrus_import::ImportError>(report.total())
-    })
+        },
+    )
 }
 
 #[cfg(test)]

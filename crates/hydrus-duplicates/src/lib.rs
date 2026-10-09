@@ -11,4 +11,6 @@ pub mod potentials;
 pub mod selector;
 pub mod statements;
 
-pub use engine::{NoShuffle, Orientation, Shuffle, WorkDone, approve, deny, work_rules};
+pub use engine::{
+    NoShuffle, Orientation, Shuffle, WorkDone, approve, auto_resolution_pass, deny, work_rules,
+};

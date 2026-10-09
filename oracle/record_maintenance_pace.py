@@ -37,7 +37,7 @@ TYPED = {
 
 # one packet of work: how much of the packet it took, whether work is left,
 # and how many files it searched
-PACKETS = [(0.5, False, 3), (1.25, True, 5), (10, True, 50)]
+PACKETS = [(0.5, False, 3), (0.5, True, 5), (1.25, True, 5), (10, True, 50)]
 
 # the file maintenance queue: one job per file, by weight 100, 25 and 5
 JOBS = ['metadata', 'exif', 'exif', 'exif', 'exif', 'presence', 'metadata', 'metadata', 'exif']
@@ -63,6 +63,7 @@ def record(session):
         panels = []
         clock = [float(T0)]
         idle = [False]
+        good = [True]
         events = []
 
         job_types = {
@@ -172,7 +173,7 @@ def record(session):
 
         controller_overrides = {
             'CurrentlyIdle': lambda: idle[0],
-            'GoodTimeToStartBackgroundWork': lambda: True,
+            'GoodTimeToStartBackgroundWork': lambda: good[0],
             'WaitUntilViewFree': lambda: None,
         }
         real_write = c.WriteSynchronous
@@ -285,18 +286,21 @@ def record(session):
                 for switches in [(True, True), (True, False), (False, True)]:
                     type_values(values, switches)
                     case = {'values': label, 'switches': list(switches), 'saved': saved(), 'passes': []}
-                    for now_idle in [False, True]:
+                    # normal use; idle; idle with the system busy (or just woken),
+                    # when it is not a good time to start background work
+                    for (now_idle, now_good) in [(False, True), (True, True), (True, False)]:
                         idle[0] = now_idle
+                        good[0] = now_good
                         for worker in ['similar', 'auto']:
                             for packet in PACKETS:
                                 events.clear()
                                 clock[0] = float(T0)
                                 workers[worker](packet)
-                                case['passes'].append({'worker': worker, 'idle': now_idle, 'packet': list(packet), 'events': list(events)})
+                                case['passes'].append({'worker': worker, 'idle': now_idle, 'good_time': now_good, 'packet': list(packet), 'events': list(events)})
                         events.clear()
                         clock[0] = float(T0)
                         files_pass()
-                        case['passes'].append({'worker': 'files', 'idle': now_idle, 'events': squeeze(events)})
+                        case['passes'].append({'worker': 'files', 'idle': now_idle, 'good_time': now_good, 'events': squeeze(events)})
                     out['cases'].append(case)
             out['limits'] = 'Each manager\'s real _DoSingleLoop (and the file manager\'s real bandwidth-rule throttle and tracker) runs on a held clock. Idle state, database work, the job queue and _RunJob (reduced to reporting each job\'s weight, as its finally does) are scripted; sleeps and event waits are recorded and move the clock. Work-hard modes are not recorded.'
             return out

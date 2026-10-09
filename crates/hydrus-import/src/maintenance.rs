@@ -143,6 +143,25 @@ impl FileImporter {
         )
     }
 
+    /// One pass of the background file maintenance loop (see
+    /// [`hydrus_store::workers::FileMaintenanceThrottle::step`]): a batch of
+    /// due jobs as the throttle allows, handing missing files that could be
+    /// downloaded again to `redownload`. Returns the wait before the next pass.
+    pub fn file_maintenance_pass(
+        &self,
+        throttle: &hydrus_store::workers::FileMaintenanceThrottle,
+        clock: &dyn hydrus_store::workers::WorkClock,
+        redownload: &dyn Fn(&[String]),
+    ) -> std::time::Duration {
+        throttle.step(&self.store, clock, |able, used| {
+            let report = self.run_file_maintenance_batch(able, used)?;
+            if !report.redownload.is_empty() {
+                redownload(&report.redownload);
+            }
+            Ok::<_, crate::ImportError>(report.total())
+        })
+    }
+
     /// Run only captured files, as the thumbnail menu's `RunJobImmediately`
     /// does. Selection applies at queue admission, before any batch limit.
     /// Like ordinary maintenance, this pass defers if the file lease is busy.
@@ -248,7 +267,9 @@ impl FileImporter {
             committed,
         } = callbacks;
         let _lease = loop {
-            if !continue_work() {
+            // (the background manager asks its throttle before each file, not
+            // before it knows there is a job due)
+            if !ONE_BATCH && !continue_work() {
                 return Ok(MaintenanceReport::default());
             }
             if let Some(lease) = hydrus_store::store::lock_file_maintenance(self.store.dir())? {

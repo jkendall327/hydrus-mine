@@ -1079,6 +1079,7 @@ fn packet(options: &OptionsWindow, in_box: &str, label: &str, seconds: i32, ms: 
 
 /// The background workers' pace (`oracle/fixtures/maintenance_pace.json`).
 mod pace {
+    use std::collections::BTreeMap;
     use std::time::Duration;
 
     use serde_json::Value;
@@ -1197,9 +1198,15 @@ mod pace {
         );
     }
 
-    /// The GUI's idle state, published as of the clock.
-    fn publish(store: &Store, clock: &HeldClock, idle: bool) {
-        hydrus_store::idle_state::publish(store.dir(), idle, clock.now_ms()).unwrap();
+    /// The GUI's idle state, published as of the clock: idle or not, and if
+    /// idle whether it is a good time to start background work.
+    fn publish(store: &Store, clock: &HeldClock, idle: bool, good_time: bool) {
+        hydrus_store::idle_state::publish_state(store.dir(), idle, good_time, clock.now_ms())
+            .unwrap();
+    }
+
+    fn good_time(pass: &Value) -> bool {
+        pass["good_time"].as_bool().unwrap()
     }
 
     /// A recorded potential duplicates search or auto-resolution pass, run
@@ -1212,21 +1219,17 @@ mod pace {
         let more = pass["packet"][1].as_bool().unwrap();
         let files = usize::try_from(pass["packet"][2].as_u64().unwrap()).unwrap();
         let clock = HeldClock::at(t0_ms);
-        publish(store, &clock, idle);
+        publish(store, &clock, idle, good_time(pass));
         let reference_packet = worked(events);
         let reference_wait = waited(events);
         match pass["worker"].as_str().unwrap() {
             "similar" => {
-                // a search packet goes on until its time is up or nothing is
-                // left: the first batch takes the recorded share of the
-                // packet, and a packet that isn't over finds nothing more
+                // one search call a pass, given the packet: it takes the
+                // recorded share of it
                 let calls = std::cell::Cell::new(0);
-                let wait = workers::similar_files_step(store, &clock, |_| {
+                let wait = workers::similar_files_step(store, &clock, |_, budget| {
                     calls.set(calls.get() + 1);
-                    if calls.get() > 1 {
-                        return Ok(0);
-                    }
-                    clock.advance(reference_packet.unwrap().mul_f64(share));
+                    clock.advance(budget.mul_f64(share));
                     Ok(files)
                 });
                 if reference_packet.is_none() {
@@ -1234,9 +1237,7 @@ mod pace {
                     assert_eq!(reference_wait, Duration::from_secs(30), "{what}");
                     assert_eq!(wait, workers::SIMILAR_FILES_HOLD, "{what}");
                 } else {
-                    // (the packet's end is where the reference's was)
-                    let expected_calls = if more { 1 } else { 2 };
-                    assert_eq!(calls.get(), expected_calls, "{what}");
+                    assert_eq!(calls.get(), 1, "{what}");
                     close(wait, reference_wait, &what);
                 }
             }
@@ -1281,13 +1282,19 @@ mod pace {
         GaveUp,
     }
 
-    fn kind(weight: u64) -> &'static str {
-        match weight {
-            100 => "metadata",
-            25 => "exif",
-            5 => "presence",
-            other => panic!("weight {other}"),
-        }
+    /// How many jobs of each type are queued.
+    fn due_jobs(store: &Store) -> BTreeMap<i64, i64> {
+        store
+            .read(|conn| {
+                let mut q = conn.prepare(
+                    "SELECT job_type, COUNT(*) FROM file_maintenance_jobs GROUP BY job_type",
+                )?;
+                Ok(
+                    q.query_map([], |r| Ok((r.get::<_, i64>(0)?, r.get::<_, i64>(1)?)))?
+                        .collect::<rusqlite::Result<_>>()?,
+                )
+            })
+            .unwrap()
     }
 
     fn recorded_trace(events: &[Value]) -> Vec<Line> {
@@ -1372,14 +1379,26 @@ mod pace {
             .sum();
         let mut polls = 0;
         loop {
-            publish(store, &clock, idle);
-            let wait = throttle.step(store, &clock, |able, used| {
-                let report = importer.run_file_maintenance_batch(able, &mut |weight| {
-                    trace.push(Line::Job(clock.now_ms() / 1000 - t0, kind(weight)));
-                    used(weight);
-                })?;
-                Ok::<_, hydrus_import::ImportError>(report.total())
-            });
+            publish(store, &clock, idle, good_time(pass));
+            let before = due_jobs(store);
+            let wait = importer.file_maintenance_pass(&throttle, &clock, &|_| {});
+            // (the jobs the pass did, in the order the reference ran them)
+            let after = due_jobs(store);
+            for job in JobType::RUN_ORDER {
+                for _ in after.get(&job.code()).copied().unwrap_or(0)
+                    ..before.get(&job.code()).copied().unwrap_or(0)
+                {
+                    trace.push(Line::Job(
+                        clock.now_ms() / 1000 - t0,
+                        match job {
+                            JobType::FileMetadata => "metadata",
+                            JobType::HasExif => "exif",
+                            JobType::IntegrityPresenceLogOnly => "presence",
+                            other => panic!("{other:?}"),
+                        },
+                    ));
+                }
+            }
             clock.advance(wait);
             match wait {
                 workers::FILE_MAINTENANCE_POLL => {

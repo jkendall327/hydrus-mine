@@ -13,7 +13,7 @@ use hydrus_core::bandwidth::{BandwidthType, Rule, Rules, Tracker};
 use crate::Store;
 use crate::duplicates::auto::AutoResolutionSettings;
 use crate::file_maintenance::FileMaintenanceSettings;
-use crate::idle_state::is_idle;
+use crate::idle_state::{currently_idle, is_idle};
 use crate::similar::SimilarFilesSettings;
 
 /// The time a worker reads, in milliseconds since the epoch: for the GUI's
@@ -67,14 +67,17 @@ fn since(clock: &dyn WorkClock, started_ms: i64) -> Duration {
     Duration::from_millis(u64::try_from(clock.now_ms() - started_ms).unwrap_or(0))
 }
 
-/// One pass of the potential duplicates search: `search` (a batch of files
-/// each call, returning how many it searched) runs for the idle or normal
-/// time packet, or not at all when that time's switch is off. Returns the
-/// wait before the next pass: the packet's rest when files were searched.
+/// One pass of the potential duplicates search, as the reference's manager
+/// does one: `search` is given the idle or normal time packet and returns how
+/// many files it searched in it, or the pass is not made when that time's
+/// switch is off. Returns the wait before the next pass: the packet's rest
+/// (by the time it took, as the reference's `_GetRestTime`), or a hold when
+/// nothing was left to search. Idle here is `CurrentlyIdle`: the search
+/// does not wait for a good time to start background work.
 pub fn similar_files_step(
     store: &Store,
     clock: &dyn WorkClock,
-    mut search: impl FnMut(&Store) -> crate::Result<usize>,
+    search: impl FnOnce(&Store, Duration) -> crate::Result<usize>,
 ) -> Duration {
     let settings: SimilarFilesSettings = match store.read(crate::settings::get) {
         Ok(s) => s,
@@ -83,29 +86,21 @@ pub fn similar_files_step(
             return AFTER_ERROR;
         }
     };
-    let mut pace = settings.pace(is_idle(store.dir(), clock.now_ms()));
+    let mut pace = settings.pace(currently_idle(store.dir(), clock.now_ms()));
     pace.allowed |= settings.work_hard;
     if !pace.allowed {
         return SIMILAR_FILES_HOLD;
     }
     let started = clock.now_ms();
-    let mut total = 0;
-    loop {
-        let n = match search(store) {
-            Ok(n) => n,
-            Err(e) => {
-                tracing::error!(error = %e, "the similar-files search failed");
-                return AFTER_ERROR;
-            }
-        };
-        total += n;
-        let worked = since(clock, started);
-        if n == 0 && total == 0 {
-            return SIMILAR_FILES_HOLD;
+    match search(store, pace.work) {
+        Ok(0) => SIMILAR_FILES_HOLD,
+        Ok(files) => {
+            tracing::debug!(files, "searched for similar files");
+            pace.rest(since(clock, started)).max(SHORTEST_REST)
         }
-        if n == 0 || worked >= pace.work {
-            tracing::debug!(files = total, "searched for similar files");
-            return pace.rest(worked).max(SHORTEST_REST);
+        Err(e) => {
+            tracing::error!(error = %e, "the similar-files search failed");
+            AFTER_ERROR
         }
     }
 }
@@ -125,8 +120,13 @@ pub fn auto_resolution_step(
             return AFTER_ERROR;
         }
     };
-    let pace = settings.pace(is_idle(store.dir(), clock.now_ms()));
-    if !pace.allowed {
+    let now = clock.now_ms();
+    // (idle time also waits for a good time to start background work, as the
+    // reference's `_AbleToWorkIdleNormal` does; it does not fall back to
+    // normal time while the system is busy)
+    let idle = currently_idle(store.dir(), now);
+    let pace = settings.pace(idle);
+    if !pace.allowed || (idle && !is_idle(store.dir(), now)) {
         return AUTO_RESOLUTION_HOLD;
     }
     let started = clock.now_ms();
@@ -176,7 +176,10 @@ impl FileMaintenanceThrottle {
         let held = Cell::new(false);
         let able = || {
             let now = clock.now_ms();
-            let (allowed, files, seconds) = settings.allowance(is_idle(store.dir(), now));
+            let idle = currently_idle(store.dir(), now);
+            let (allowed, files, seconds) = settings.allowance(idle);
+            // (idle time also waits for a good time to start background work)
+            let allowed = allowed && (!idle || is_idle(store.dir(), now));
             let rules = Rules::new([Rule::new(
                 BandwidthType::Requests,
                 Some(seconds),
