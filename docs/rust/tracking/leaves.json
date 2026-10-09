@@ -2695,10 +2695,10 @@
     "Native preparation lacks the reference cleanup of potential pairs whose file was physically deleted; reset-all is a separate implemented operation."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Drives the cog: question prefix, cancel leaves pairs, yes clears the orphan pair and a popup says 'Done! Pairs for 2 out-of-domain files cleared out.', all from literals restated from the Python source (no recording). Tracker note is stale: native resync_potentials_to_local_storage exists and is tested. Tests: crates/hydrus-gui/tests/gui/duplicates_lane_page.rs:83 the_preparation_cog_regenerates_numbers_and_tree_and_resyncs_pairs"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "recheck bin E session (claude/recheck-e-dupes)",
+    "note": "crates/hydrus-gui/tests/gui/auto_resolution_resets.rs resyncing_potential_pairs_to_local_storage_clears_the_pairs_the_reference_does replays oracle/fixtures/potential_pairs_resync.json (record_potential_pairs_resync.py: the real PreparationPanel button on the reference's auto-resolution database after two files with potential pairs were taken out of the local file tables, as pairs the reference once forgot to delist) in the real sidebar: the question's wording, no changes nothing (all 100 pairs stay), yes clears the pairs of the 2 orphaned files (9 pairs, leaving 91; every remaining pair compared by its kings' hashes), and the popup 'resyncing potential pairs to hydrus local file storage' ends 'Done! Pairs for 2 out-of-domain files cleared out.'. The reference's intermediate 'Clearing orphans: x/y' status is not compared (it clears 16 media at a time and 2 are cleared)."
    }
   },
   {

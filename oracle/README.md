@@ -55,6 +55,7 @@ at fixed copy boundaries; dialog replies and worker scheduling are scripted.
 | `record_auto_resolution_editor.py` | `fixtures/auto_resolution_editor.json`: the rule editor's name/pause/mode/max pending, unique naming, the hardcoded and visual comparator editors and the merge options' note settings dialog (the real nested panel) |
 | `record_auto_resolution_resets.py` | `fixtures/auto_resolution_resets.json`: the auto-resolution tab's reset/regenerate/resync buttons with rules selected or none, with every rule's pair counts by status |
 | `record_auto_resolution_pending.py` | `fixtures/auto_resolution_pending.json`: the review window's pending tab at ten pairs: fetch limits, select all, the confirmation, chunked progress texts and popups |
+| `record_potential_pairs_resync.py` | `fixtures/potential_pairs_resync.json`: the preparation tab's "resync potential pairs to local physical storage" with files taken out of the local file tables first, the pairs before and after and the popup text |
 | `dump_legacy_expectations.py` | `fixtures/legacy_db/<name>.expected.json`: what the reference reads from a fixture database, for `hydrus-legacy`'s tests |
 | `build_scenarios.py` | `scenarios/*.json`: Client API conformance scenarios (declarative request lists) |
 | `record_api.py` | `recordings/*.json`: the reference client's responses to each scenario |

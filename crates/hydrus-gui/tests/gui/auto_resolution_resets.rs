@@ -138,3 +138,117 @@ fn the_reset_buttons_ask_and_move_pairs_as_the_reference_does() {
         );
     }
 }
+
+// leaf: audit-media-preparation-storage-resync
+#[test]
+fn resyncing_potential_pairs_to_local_storage_clears_the_pairs_the_reference_does() {
+    let _windows = hydrus_gui::headless::init();
+    let recorded = hydrus_testkit::fixture_json("potential_pairs_resync.json");
+    let o = opened();
+    let (ui, store) = (&o.ui, &o.store);
+    // the orphans: the recorded files taken out of the local file tables
+    // before the reference started (and the pairs it recorded)
+    let orphans: Vec<_> = recorded["orphans"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|h| o.ids[&h.as_str().unwrap().to_lowercase()])
+        .collect();
+    let snapshot = store.snapshot();
+    let domains: Vec<_> = {
+        use hydrus_core::service::builtin_keys as keys;
+        [
+            keys::HYDRUS_LOCAL_FILE_STORAGE,
+            keys::COMBINED_LOCAL_FILE_DOMAINS,
+            keys::MY_FILES,
+        ]
+        .into_iter()
+        .map(|k| snapshot.services.builtin(k).unwrap().id)
+        .collect()
+    };
+    let removed = orphans.clone();
+    store
+        .write(move |ctx| {
+            for id in &removed {
+                for domain in &domains {
+                    ctx.conn().execute(
+                        "DELETE FROM file_domain_current WHERE hash_id = ?1 AND service_id = ?2",
+                        rusqlite::params![id, domain],
+                    )?;
+                }
+            }
+            Ok(())
+        })
+        .unwrap();
+    let pairs_now = || -> Vec<Vec<String>> {
+        let rows: Vec<(hydrus_core::HashId, hydrus_core::HashId)> = store
+            .read(|c| {
+                let mut q = c.prepare(
+                    "SELECT k1.king_hash_id, k2.king_hash_id FROM potential_pairs p
+                     JOIN dup_groups k1 ON k1.group_id = p.smaller_group_id
+                     JOIN dup_groups k2 ON k2.group_id = p.larger_group_id",
+                )?;
+                Ok(q.query_map([], |r| Ok((r.get(0)?, r.get(1)?)))?
+                    .collect::<Result<_, _>>()?)
+            })
+            .unwrap();
+        let mut out: Vec<Vec<String>> = rows
+            .into_iter()
+            .map(|(a, b)| vec![o.hex[&a].clone(), o.hex[&b].clone()])
+            .collect();
+        out.sort();
+        out
+    };
+    let theirs = |pairs: &Value| -> Vec<Vec<String>> {
+        let mut out: Vec<Vec<String>> = pairs
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|p| {
+                vec![
+                    p[0].as_str().unwrap().to_lowercase(),
+                    p[1].as_str().unwrap().to_lowercase(),
+                ]
+            })
+            .collect();
+        out.sort();
+        out
+    };
+    // (the pairs as the reference had them, each pair's files by king)
+    assert_eq!(pairs_now(), theirs(&recorded["before"]));
+    for press in recorded["presses"].as_array().unwrap() {
+        ui.invoke_duplicates_action("resync pairs".into(), 0, false, false);
+        let asked = press["asked"].as_array().unwrap();
+        assert_eq!(asked.len(), 1);
+        assert_eq!(
+            ui.get_duplicates().asking_message,
+            asked[0]["message"].as_str().unwrap()
+        );
+        if press["answer"] == "yes" {
+            ui.invoke_duplicates_action("chosen".into(), 0, false, false);
+        } else {
+            ui.invoke_duplicates_action("cancelled".into(), 0, false, false);
+        }
+        assert_eq!(
+            pairs_now(),
+            theirs(&press["pairs"]),
+            "answered {}",
+            press["answer"]
+        );
+        if let Some(job) = press["jobs"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .find(|j| j["title"] == "resyncing potential pairs to hydrus local file storage")
+        {
+            let popups = store
+                .read(|c| hydrus_store::popups::all(c, i64::MAX / 4))
+                .unwrap();
+            let popup = popups
+                .iter()
+                .find(|p| p.status_title.as_deref() == Some(job["title"].as_str().unwrap()))
+                .expect("the resync's popup");
+            assert_eq!(popup.status_text_1.as_deref(), job["text"].as_str());
+        }
+    }
+}

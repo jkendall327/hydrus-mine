@@ -86,7 +86,6 @@ fn choices(ui: &MainWindow) -> Vec<String> {
 
 // (numbers and tree regeneration are out of scope: the native store keeps no
 // such caches, so only their questions are shown)
-// leaf: audit-media-preparation-storage-resync
 #[test]
 fn the_preparation_cog_regenerates_numbers_and_tree_and_resyncs_pairs() {
     let Opened {
