@@ -31,6 +31,7 @@ mod duplicate_filter_canvas;
 mod duplicate_filter_delete_lock;
 mod duplicates_count;
 mod duplicates_page;
+mod duplicates_quick_processing;
 mod duplicates_search_settings;
 mod edit_subscription;
 mod embedded_metadata;

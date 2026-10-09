@@ -669,6 +669,23 @@ fn potential_network(rows: &[PairRow], start: [HashId; 2]) -> HashSet<HashId> {
     seen
 }
 
+/// Whether the random group is pinned to the one with the lowest pair.
+static PINNED_GROUP_CHOICE: std::sync::atomic::AtomicBool =
+    std::sync::atomic::AtomicBool::new(false);
+
+/// Pin [`random_potential_group`]'s pick to the group of the lowest pair
+/// (by its two kings' hash ids), so a test can replay a recording whose
+/// reference pick was pinned. The reference's recorders pin theirs to the
+/// lowest *media* id, which coincides with this on the recorded database
+/// only because of how its ids were assigned (`docs/rust/DIFFERENCES.md`).
+/// A pinned pick is one a random pick could make. This is a process-wide
+/// switch that production code never sets; tests that call it stay in a
+/// process of their own or do not care which group they get.
+#[doc(hidden)]
+pub fn pin_random_group_choice() {
+    PINNED_GROUP_CHOICE.store(true, std::sync::atomic::Ordering::Relaxed);
+}
+
 /// The kings of a random potential duplicate group, as the Client API's
 /// `get_random_potentials` gives them: a random pair the search finds, then
 /// every file of a found pair within that pair's whole network of potential
@@ -681,7 +698,12 @@ pub fn random_potential_group(
     use rand::seq::IndexedRandom as _;
     let in_scope = pairs_in_scope(conn, snapshot, &search.scope)?;
     let pairs = matching(conn, search, &in_scope)?;
-    let Some(chosen) = pairs.choose(&mut rand::rng()) else {
+    let chosen = if PINNED_GROUP_CHOICE.load(std::sync::atomic::Ordering::Relaxed) {
+        pairs.iter().min_by_key(|p| (p.smaller_king, p.larger_king))
+    } else {
+        pairs.choose(&mut rand::rng())
+    };
+    let Some(chosen) = chosen else {
         return Ok(Vec::new());
     };
     let network = potential_network(&in_scope, [chosen.smaller_king, chosen.larger_king]);
