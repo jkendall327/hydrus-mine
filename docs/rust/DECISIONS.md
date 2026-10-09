@@ -118,6 +118,12 @@ record of what was decided, and why the roadmap looks the way it does.
   Reading old saved-object versions stays in scope: importing an existing
   hydrus install must be easy.
 
+- **Client API extras are wanted** (2026-10-08, #120): HTTPS, the
+  normie-friendly welcome page, and the external scheme/host/port overrides.
+  The reference hides the three override rows (`if False:`) and nothing reads
+  them; hydrus-rs shows them as editable rows in advanced mode at the owner's
+  request. The video buffer follows the reference's sizing (#121).
+
 ## Roadmap that follows
 
 1. **Client API parity**, with Hydrus Companion's request patterns checked
