@@ -2,6 +2,7 @@
 //! option in the real options window (the control as the reference shows it),
 //! applies, and checks the behaviour the saved value changes.
 
+use std::rc::Rc;
 use std::sync::Arc;
 
 use slint::{ComponentHandle as _, Model as _};
@@ -959,119 +960,120 @@ fn leading_double_slash_option_changes_the_gallery_urls_made_from_a_query() {
 // leaf: audit-options-exporting-all-exports-advanced-export-dirname-length-limit-characters-bytes
 // leaf: audit-options-exporting-all-exports-advanced-export-path-length-limit-characters-bytes
 #[test]
-fn export_name_options_shape_the_names_the_export_dialog_previews() {
-    use hydrus_gui_model::export_files::preview;
+fn export_name_options_shape_the_names_the_export_dialog_shows_as_the_reference_does() {
+    use hydrus_gui::export_files_window;
 
+    // oracle/record_export_names.py: the reference's manual export panel
+    // over four files, under sixteen sets of these options, four
+    // destinations and thirty-three phrases
+    let recorded: serde_json::Value = hydrus_testkit::fixture_json("export_names.json");
     let client = client();
-    let file = local_files(&client.store)[0];
-    // (the manual export dialog's names for one file, as a path)
-    let name_of = |phrase: &str| -> (String, String) {
-        let rows = preview(&client.store, &[file], "/export/here", phrase)
-            .unwrap_or_else(|e| panic!("{phrase:?}: {e}"));
-        let destination = rows[0].destination.clone();
-        let name = destination
-            .file_name()
-            .unwrap()
-            .to_string_lossy()
-            .into_owned();
-        let dir = destination
-            .parent()
-            .unwrap()
-            .strip_prefix("/export/here")
-            .unwrap()
-            .to_string_lossy()
-            .into_owned();
-        (dir, name)
-    };
-    let long = "x".repeat(150);
-    let (dir, name) = name_of(&long);
-    assert_eq!(dir, "");
-    let ext_len = name.len() - 150;
-    assert!(
-        name.starts_with(&long) && name[150..].starts_with('.'),
-        "{name}"
-    );
-    let (_, plain) = name_of("a:b|c");
-    assert_eq!(&plain[..5], "a:b|c", "(not a Windows filesystem)");
-    let deep = format!("{}/leaf", "d".repeat(50));
-    assert_eq!(name_of(&deep).0, "d".repeat(50));
+    let files: Vec<HashId> = recorded["files"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|f| HashId(u32::try_from(f["file_id"].as_u64().unwrap()).unwrap()))
+        .collect();
+    let phrases: Vec<&str> = recorded["phrases"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|p| p.as_str().unwrap())
+        .collect();
 
     let ntfs = "ADVANCED: Always apply NTFS filename rules to export filenames: ";
     let path_limit = "ADVANCED: Export path length limit (characters/bytes): ";
     let dir_limit = "ADVANCED: Export dirname length limit (characters/bytes): ";
     let name_limit = "ADVANCED: Export filename length limit (characters/bytes): ";
-
     let window = client.options("exporting");
     let (_, found) = row(&window, ntfs);
     assert_eq!((found.kind, found.checked), (1, false));
     let (_, found) = row(&window, path_limit);
     assert_eq!(
-        (
-            found.kind,
-            found.number,
-            found.minimum,
-            found.maximum,
-            found.is_none
-        ),
-        (3, 250, 96, 8192, true)
+        (found.number, found.minimum, found.maximum, found.is_none),
+        (250, 96, 8192, true)
     );
-    assert_eq!(found.none_phrase, "let hydrus decide");
     let (_, found) = row(&window, dir_limit);
     assert_eq!(
-        (
-            found.kind,
-            found.number,
-            found.minimum,
-            found.maximum,
-            found.is_none
-        ),
-        (3, 64, 16, 8192, true)
+        (found.number, found.minimum, found.maximum, found.is_none),
+        (64, 16, 8192, true)
     );
-    assert_eq!(found.none_phrase, "let hydrus decide");
     let (_, found) = row(&window, name_limit);
     assert_eq!(
-        (found.kind, found.number, found.minimum, found.maximum),
-        (2, 220, 16, 8192)
+        (found.number, found.minimum, found.maximum),
+        (220, 16, 8192)
     );
+    window.invoke_cancel();
 
-    // the Windows rules turn the characters it forbids into underscores
-    check(&window, ntfs, true);
-    window.invoke_apply();
-    let (_, windows) = name_of("a:b|c");
-    assert_eq!(&windows[..5], "a_b_c");
-    let window = client.options("exporting");
-    check(&window, ntfs, false);
+    let slots = export_files_window::Slots::default();
+    let export =
+        export_files_window::open(&client.store, files.clone(), &slots, Rc::new(|| {})).unwrap();
+    let limit = |v: &serde_json::Value| v.as_i64().map(|n| n as i32);
+    let mut compared = 0;
+    for case in recorded["cases"].as_array().unwrap() {
+        // the options, set in the Options window
+        let window = client.options("exporting");
+        check(&window, ntfs, case["ntfs"].as_bool().unwrap());
+        noneable(
+            &window,
+            path_limit,
+            "let hydrus decide",
+            limit(&case["path_limit"]),
+        );
+        noneable(
+            &window,
+            dir_limit,
+            "let hydrus decide",
+            limit(&case["dirname_limit"]),
+        );
+        number(
+            &window,
+            name_limit,
+            (16, 8192),
+            limit(&case["filename_limit"]).unwrap(),
+        );
+        window.invoke_apply();
 
-    // the filename limit counts the extension
-    number(&window, name_limit, (16, 8192), 40);
-    window.invoke_apply();
-    let (_, short) = name_of(&long);
-    assert_eq!(short.len(), 40, "{short}");
-    assert!(short.starts_with(&"x".repeat(40 - ext_len)));
+        // and the names the export window shows under them
+        let destination = case["destination"].as_str().unwrap();
+        export.set_destination(destination.into());
+        for (phrase, theirs) in phrases.iter().zip(case["names"].as_array().unwrap()) {
+            export.set_phrase((*phrase).into());
+            export.invoke_update();
+            let ours: Vec<String> = export_rows(&export)
+                .into_iter()
+                .map(|r| r[2].clone())
+                .collect();
+            let theirs: Vec<String> = serde_json::from_value(theirs.clone()).unwrap();
+            assert_eq!(
+                ours,
+                theirs,
+                "{phrase:?} into {destination:?} under {}",
+                serde_json::json!([
+                    case["ntfs"],
+                    case["path_limit"],
+                    case["dirname_limit"],
+                    case["filename_limit"]
+                ])
+            );
+            compared += 1;
+        }
+    }
+    assert_eq!(compared, 16 * 4 * phrases.len());
+    export.invoke_dismissed();
+}
 
-    // the directory limit shortens each directory the phrase makes
-    let window = client.options("exporting");
-    noneable(&window, dir_limit, "let hydrus decide", Some(20));
-    window.invoke_apply();
-    assert_eq!(name_of(&deep).0, "d".repeat(20));
-
-    // the path limit squeezes the filename to fit with the destination
-    let window = client.options("exporting");
-    number(&window, name_limit, (16, 8192), 220);
-    noneable(&window, dir_limit, "let hydrus decide", None);
-    noneable(&window, path_limit, "let hydrus decide", Some(96));
-    window.invoke_apply();
-    let (_, squeezed) = name_of(&long);
-    assert!(
-        squeezed.len() < 150 + ext_len && squeezed.len() > 40,
-        "{squeezed}"
-    );
-    assert!(
-        "/export/here".len() + 1 + squeezed.len() <= 96,
-        "{squeezed}"
-    );
-    // (a directory that leaves the filename under 18 characters is refused)
-    assert!(preview(&client.store, &[file], "/export/here", &deep).is_err());
+/// The export window's rows: number, filetype, destination.
+fn export_rows(window: &hydrus_gui::ExportFilesWindow) -> Vec<Vec<String>> {
+    let rows = window.get_rows();
+    (0..rows.row_count())
+        .map(|r| {
+            let cells = rows.row_data(r).unwrap().cells;
+            (0..cells.row_count())
+                .map(|c| cells.row_data(c).unwrap().to_string())
+                .collect()
+        })
+        .collect()
 }
 
 /// A time row (kind 8), its seconds and milliseconds set.

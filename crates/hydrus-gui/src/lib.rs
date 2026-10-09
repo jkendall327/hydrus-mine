@@ -5907,13 +5907,29 @@ fn launch(target: &str) {
     };
     #[cfg(not(any(windows, target_os = "macos")))]
     let mut command = {
-        let mut c = Command::new("xdg-open");
+        let program = LAUNCH_DIR.with(|d| d.borrow().clone()).map_or_else(
+            || std::path::PathBuf::from("xdg-open"),
+            |dir| dir.join("xdg-open"),
+        );
+        let mut c = Command::new(program);
         c.arg(target);
         c
     };
     if let Err(e) = command.spawn() {
         eprintln!("could not open {target}: {e}");
     }
+}
+
+thread_local! {
+    /// Where the opener program is looked for ahead of PATH, if anywhere.
+    #[cfg_attr(any(windows, target_os = "macos"), allow(dead_code))]
+    static LAUNCH_DIR: RefCell<Option<std::path::PathBuf>> = const { RefCell::new(None) };
+}
+
+/// Look for the OS's opener program (`xdg-open`) in `dir` rather than on
+/// PATH, on this thread (for tests, which put a stub there).
+pub fn set_launch_dir(dir: impl Into<std::path::PathBuf>) {
+    LAUNCH_DIR.with(|d| *d.borrow_mut() = Some(dir.into()));
 }
 
 thread_local! {

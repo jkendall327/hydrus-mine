@@ -4371,6 +4371,16 @@ font metrics and warning icons; automatic OS focus/modality and destruction
 closure for every shown child are not established. Continued typing explicitly
 clicks the retained LineEdit after acknowledgement.
 
+Manual export remakes the names as soon as rows are removed. The reference
+renumbers the rows but keeps showing (and would export to) the names made
+before the removal until the phrase or destination changes, a stale cache, so
+`oracle/fixtures/export_names.json` is matched by number at once and by name
+after the phrase is entered again (as "file metadata reflects the database"
+above).
+
+The export folder editor says why a typed search can't be parsed, under the
+query; the reference's autocomplete leaves the text in place and says nothing.
+
 Manual export's "open location" reports a missing destination in the window's
 status line ("That location does not seem to exist!") where the reference shows a
 critical dialog; File > open > installation directory opens the Rust executable's

@@ -45,113 +45,174 @@ fn finish(window: &hydrus_gui::ExportFilesWindow) {
     assert!(!window.get_working());
 }
 
+/// The recording of the reference's panel naming, removing and browsing
+/// (oracle/record_export_names.py), its scratch folder as `work`.
+fn recorded(work: &std::path::Path) -> serde_json::Value {
+    let text = std::fs::read_to_string(hydrus_testkit::fixture_path("export_names.json")).unwrap();
+    serde_json::from_str(&text.replace("{work}", work.to_str().unwrap())).unwrap()
+}
+
+fn strings(v: &serde_json::Value) -> Vec<Vec<String>> {
+    serde_json::from_value(v.clone()).unwrap()
+}
+
 // leaf: audit-network-export-remove
 #[test]
-fn selected_rows_are_removed_after_asking_and_the_names_are_made_again() {
+fn selected_rows_are_removed_after_asking_and_renumbered_as_the_reference_does() {
+    let (_dirs, store) = crate::subscriptions::store();
+    let _windows = headless::init();
+    let work = tempfile::tempdir().unwrap();
+    let recorded = recorded(work.path());
+    let all: Vec<HashId> = recorded["remove_files"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|f| HashId(u32::try_from(f["file_id"].as_u64().unwrap()).unwrap()))
+        .collect();
+    for removal in recorded["removals"].as_array().unwrap() {
+        let slots = Slots::default();
+        let window = open(&store, &all, &slots);
+        let phrase = removal["phrase"].as_str().unwrap();
+        window.set_destination("/tmp/hx".into());
+        window.set_phrase(phrase.into());
+        window.invoke_update();
+        let steps = removal["steps"].as_array().unwrap();
+        assert_eq!(rows(&window), strings(&steps[0]["rows"]), "{phrase}");
+        let mut kept = all.clone();
+        for step in &steps[1..] {
+            // the recorded files selected: a click, then ctrl-clicks
+            let selected: Vec<HashId> = step["selected"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .map(|i| all[i.as_u64().unwrap() as usize])
+                .collect();
+            for (n, file) in selected.iter().enumerate() {
+                let at = kept.iter().position(|f| f == file).unwrap();
+                window.invoke_row_clicked(at as i32, n > 0, false);
+            }
+            window.invoke_remove();
+            let asked: Vec<String> = serde_json::from_value(step["asked"].clone()).unwrap();
+            assert_eq!(window.get_asking(), !asked.is_empty(), "{step}");
+            if window.get_asking() {
+                assert_eq!(window.get_question(), asked[0]);
+                let yes = step["yes"].as_bool().unwrap();
+                window.invoke_answer(i32::from(!yes));
+                assert!(!window.get_asking());
+                if yes {
+                    kept.retain(|f| !selected.contains(f));
+                }
+            }
+            // the rows renumbered at once; the names as the reference makes
+            // them once the phrase is entered again (it shows the old names
+            // until then)
+            let shown = rows(&window);
+            let theirs = strings(&step["rows"]);
+            assert_eq!(shown.len(), theirs.len(), "{step}");
+            for (ours, theirs) in shown.iter().zip(&theirs) {
+                assert_eq!(ours[..2], theirs[..2], "{step}");
+            }
+            assert_eq!(shown, strings(&step["refreshed"]), "{step}");
+        }
+        window.invoke_dismissed();
+        assert!(slots.window.borrow().is_none());
+    }
+}
+
+// leaf: audit-network-export-paths
+#[cfg(target_os = "linux")]
+#[test]
+fn the_destination_is_browsed_for_and_its_location_opened_as_the_reference_does() {
+    use std::os::unix::fs::PermissionsExt;
+
     let (_dirs, store) = crate::subscriptions::store();
     let _windows = headless::init();
     let slots = Slots::default();
     let work = tempfile::tempdir().unwrap();
-    let window = open(&store, &[HashId(1), HashId(8), HashId(3)], &slots);
-    window.set_destination(work.path().to_string_lossy().into_owned().into());
-    window.set_phrase("{#}".into());
-    window.invoke_update();
-    let names = |w: &hydrus_gui::ExportFilesWindow| -> Vec<String> {
-        rows(w)
-            .iter()
-            .map(|r| {
-                std::path::Path::new(&r[2])
-                    .file_name()
-                    .unwrap()
-                    .to_string_lossy()
-                    .into_owned()
-            })
-            .collect()
-    };
-    assert_eq!(names(&window), ["1.png", "2.png", "3.flac"]);
+    let recorded = recorded(work.path());
+    std::fs::create_dir_all(work.path().join("picked").join("inner")).unwrap();
+    // the OS opener, a stub that writes down how it was run (as the
+    // recorder's did)
+    let bin = work.path().join("bin");
+    std::fs::create_dir(&bin).unwrap();
+    let stub = bin.join("xdg-open");
+    let launched = work.path().join("launched.txt");
+    std::fs::write(
+        &stub,
+        format!(
+            "#!/bin/sh\nprintf \"%s\" \"$0\" >> \"{0}\"\nfor a in \"$@\"; do printf \"\\0%s\" \"$a\" >> \"{0}\"; done\necho >> \"{0}\"\n",
+            launched.display()
+        ),
+    )
+    .unwrap();
+    std::fs::set_permissions(&stub, std::fs::Permissions::from_mode(0o755)).unwrap();
+    hydrus_gui::set_launch_dir(&bin);
 
-    // nothing selected: nothing to ask
-    window.invoke_remove();
-    assert!(!window.get_asking());
-
-    // the first two rows (click, then shift-click); asked, and declined
-    window.invoke_row_clicked(0, false, false);
-    window.invoke_row_clicked(1, false, true);
-    window.invoke_remove();
-    assert!(window.get_asking());
-    assert_eq!(window.get_question(), "Remove all selected?");
-    window.invoke_answer(1);
-    assert!(!window.get_asking());
-    assert_eq!(names(&window), ["1.png", "2.png", "3.flac"]);
-    // asked again, and accepted: the last file is now the first
-    window.invoke_remove();
-    window.invoke_answer(0);
-    assert_eq!(names(&window), ["1.flac"]);
-    let left = rows(&window);
-    assert_eq!(left[0][0], "1");
-    window.invoke_dismissed();
-    assert!(slots.window.borrow().is_none());
-}
-
-// leaf: audit-network-export-paths
-#[test]
-fn the_destination_is_browsed_for_and_its_location_opened() {
-    let (_dirs, store) = crate::subscriptions::store();
-    let _windows = headless::init();
-    let slots = Slots::default();
-    let picked = tempfile::tempdir().unwrap();
-    let asked: Rc<RefCell<Vec<(hydrus_gui::Pick, String)>>> = Rc::default();
+    let answers: Rc<RefCell<Vec<Option<std::path::PathBuf>>>> = Rc::default();
+    let asked: Rc<RefCell<Vec<String>>> = Rc::default();
     hydrus_gui::set_picker({
+        let answers = answers.clone();
         let asked = asked.clone();
-        let picked = picked.path().to_path_buf();
         move |kind, title| {
-            asked.borrow_mut().push((kind, title.to_owned()));
-            vec![picked.clone()]
+            assert_eq!(kind, hydrus_gui::Pick::Folder);
+            asked.borrow_mut().push(title.to_owned());
+            answers.borrow_mut().remove(0).into_iter().collect()
         }
     });
-    let launched: Rc<RefCell<Vec<String>>> = Rc::default();
-    hydrus_gui::set_launcher({
-        let launched = launched.clone();
-        move |target| launched.borrow_mut().push(target.to_owned())
-    });
-    let window = open(&store, &[HashId(1), HashId(3)], &slots);
+    let files = [HashId(1), HashId(3)];
+    let window = open(&store, &files, &slots);
+    window.set_destination("/tmp/hx".into());
     window.set_phrase("{hash}".into());
-    window.set_destination("".into());
-    window.invoke_open_location();
-    assert!(
-        launched.borrow().is_empty(),
-        "an empty location does nothing"
-    );
+    window.invoke_update();
 
-    // browse: the picked folder is the destination, and the preview moves
-    window.invoke_browse();
-    assert_eq!(
-        *asked.borrow(),
-        [(hydrus_gui::Pick::Folder, "Select directory".to_owned())]
-    );
-    assert_eq!(
-        window.get_destination(),
-        picked.path().to_string_lossy().as_ref()
-    );
-    let shown = rows(&window);
-    assert_eq!(shown.len(), 2);
-    assert!(
-        shown
-            .iter()
-            .all(|r| r[2].starts_with(picked.path().to_str().unwrap()))
-    );
+    // browse: a folder (tidied), a cancel, and a folder that isn't there
+    for browse in recorded["browses"].as_array().unwrap() {
+        answers
+            .borrow_mut()
+            .push(browse["answer"].as_str().map(std::path::PathBuf::from));
+        window.invoke_browse();
+        assert_eq!(
+            window.get_destination(),
+            browse["field"].as_str().unwrap(),
+            "{browse}"
+        );
+        assert_eq!(rows(&window), strings(&browse["rows"]), "{browse}");
+    }
+    let titles: Vec<&str> = recorded["browse_asked"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|a| a[0].as_str().unwrap())
+        .collect();
+    assert_eq!(*asked.borrow(), titles);
 
-    // open location: the folder is launched; one that is gone says so
-    window.invoke_open_location();
-    assert_eq!(
-        *launched.borrow(),
-        [picked.path().to_string_lossy().into_owned()]
-    );
-    let gone = picked.path().join("gone");
-    window.set_destination(gone.to_string_lossy().into_owned().into());
-    window.invoke_open_location();
-    assert_eq!(launched.borrow().len(), 1);
-    assert_eq!(window.get_status(), "That location does not seem to exist!");
+    // open location: nothing for an empty one, the opener for one that
+    // exists, and a missing one said so
+    for opened in recorded["opened"].as_array().unwrap() {
+        window.set_status("".into());
+        window.set_destination(opened["destination"].as_str().unwrap().into());
+        window.invoke_open_location();
+        let critical = opened["criticals"].as_array().unwrap();
+        if critical.is_empty() {
+            assert_eq!(window.get_status(), "");
+        } else {
+            // (a status line here, where the reference shows a dialog
+            // titled "Does not exist!")
+            assert_eq!(window.get_status(), critical[0][1].as_str().unwrap());
+        }
+    }
+    let started = Instant::now();
+    while !launched.exists() && started.elapsed() < Duration::from_secs(10) {
+        std::thread::sleep(Duration::from_millis(20));
+    }
+    std::thread::sleep(Duration::from_millis(200));
+    let ours: Vec<Vec<String>> = std::fs::read_to_string(&launched)
+        .unwrap()
+        .lines()
+        .filter(|l| !l.trim().is_empty())
+        .map(|l| l.split('\0').map(str::to_owned).collect())
+        .collect();
+    assert_eq!(ours, strings(&recorded["launched"]));
     window.invoke_dismissed();
 }
 

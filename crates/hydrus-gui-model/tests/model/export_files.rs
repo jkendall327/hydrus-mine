@@ -90,7 +90,17 @@ fn preview_and_confirmations_match_reference_panel() {
             }
             continue;
         }
-        if phrase == "../escape" || phrase == "{bad" {
+        if phrase == "../escape" {
+            // no export, and each row shown as the reference shows it
+            let directory = "/tmp/hydrus-manual-export-oracle";
+            assert!(export_files::preview(&store, &files, directory, phrase).is_err());
+            let shown = export_files::shown(&store, &files, directory, phrase).unwrap();
+            for (row, theirs) in shown.iter().zip(case["rows"].as_array().unwrap()) {
+                assert_eq!(row.text(directory), theirs[2]);
+            }
+            continue;
+        }
+        if phrase == "{bad" {
             assert!(
                 export_files::preview(&store, &files, "/tmp/hydrus-manual-export-oracle", phrase)
                     .is_err()

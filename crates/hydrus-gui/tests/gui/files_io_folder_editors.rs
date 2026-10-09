@@ -187,6 +187,100 @@ fn an_import_folders_schedule_skip_period_and_outcomes_are_what_its_worker_does(
     );
 }
 
+fn texts(model: &slint::ModelRc<slint::SharedString>) -> Vec<String> {
+    (0..model.row_count())
+        .map(|i| model.row_data(i).unwrap().to_string())
+        .collect()
+}
+
+// leaf: audit-network-export-folder-predicates
+#[test]
+fn typed_predicates_make_the_export_folders_search_as_the_reference_does() {
+    // oracle/record_export_folder_predicates.py: the reference's editor
+    // taking typed predicates, and the folder it makes running
+    let recorded: serde_json::Value = hydrus_testkit::fixture_json("export_folder_predicates.json");
+    let (_dirs, store) = crate::subscriptions::store();
+    let _windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+
+    // typed in one at a time, as Enter enters them; rows removed
+    crate::folders::open(&ui, "manage export folders\u{2026}");
+    let list = export_list(&bound);
+    list.invoke_add();
+    let edit = export_edit(&bound);
+    let steps = recorded["typing"].as_array().unwrap();
+    let rows =
+        |v: &serde_json::Value| -> Vec<String> { serde_json::from_value(v.clone()).unwrap() };
+    assert_eq!(texts(&edit.get_predicates()), rows(&steps[0]["rows"]));
+    for step in &steps[1..] {
+        if let Some(typed) = step["typed"].as_str() {
+            edit.set_typed(typed.into());
+            edit.invoke_typed_accepted();
+            assert_eq!(
+                edit.get_typed(),
+                step["left"].as_str().unwrap(),
+                "{typed:?}"
+            );
+            // (the reference says nothing of a search it can't parse; here
+            // the editor says why)
+            assert_eq!(
+                edit.get_error().is_empty(),
+                step["left"].as_str().unwrap().is_empty(),
+                "{typed:?}"
+            );
+        } else {
+            edit.invoke_predicate_removed(step["removed"].as_i64().unwrap() as i32);
+        }
+        assert_eq!(texts(&edit.get_predicates()), rows(&step["rows"]), "{step}");
+    }
+    edit.invoke_cancel();
+    list.invoke_cancel();
+
+    // a folder over the two predicates, run; then over one, run again
+    let dest = tempfile::tempdir().unwrap();
+    crate::folders::open(&ui, "manage export folders\u{2026}");
+    let list = export_list(&bound);
+    list.invoke_add();
+    let edit = export_edit(&bound);
+    edit.set_name("mine".into());
+    edit.set_path(dest.path().to_string_lossy().into_owned().into());
+    edit.set_phrase("{file_id}".into());
+    edit.set_run_regularly(false);
+    edit.set_run_now(true);
+    for typed in ["system:filesize > 1B", "system:filetype is png"] {
+        edit.set_typed(typed.into());
+        edit.invoke_typed_accepted();
+    }
+    for (n, run) in recorded["runs"].as_array().unwrap().iter().enumerate() {
+        if n > 0 {
+            crate::folders::open(&ui, "manage export folders\u{2026}");
+            let list = export_list(&bound);
+            list.invoke_row_clicked(0, false, false);
+            list.invoke_edit();
+            let edit = export_edit(&bound);
+            edit.invoke_predicate_removed(1);
+            assert_eq!(texts(&edit.get_predicates()), rows(&run["rows"]));
+            edit.set_run_now(true);
+            edit.invoke_apply();
+            list.invoke_apply();
+        } else {
+            assert_eq!(texts(&edit.get_predicates()), rows(&run["rows"]));
+            edit.invoke_apply();
+            list.invoke_apply();
+        }
+        let runs = crate::common::export_folders_until_done(&store);
+        assert_eq!(runs.len(), 1, "{runs:?}");
+        assert_eq!(runs[0].1.error, None);
+        assert_eq!(
+            exported(dest.path()),
+            rows(&run["files"]),
+            "{}",
+            run["step"]
+        );
+    }
+}
+
 fn export_edit(bound: &Bound) -> hydrus_gui::ExportFolderWindow {
     bound
         .folders
@@ -224,7 +318,6 @@ fn stored_export(store: &Store, name: &str) -> hydrus_parse::folders::ExportFold
 
 // leaf: audit-network-export-folder-schedule
 // leaf: audit-network-export-folder-filename
-// leaf: audit-network-export-folder-predicates
 #[test]
 fn an_export_folders_search_phrase_schedule_and_overwrites_are_what_its_worker_does() {
     let (_dirs, store) = crate::subscriptions::store();

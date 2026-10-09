@@ -462,7 +462,11 @@ the popup, run on dialog ok, the query (typed as the Client API's tags,
 double-click to remove), the filename phrase (refused if it doesn't
 parse) and the sidecar overwrite options. The rows and the checks are as
 `oracle/record_folders_lists.py` and `oracle/record_folders_dialogs.py`
-recorded the reference's.
+recorded the reference's. Typed predicates are entered as the reference's
+Enter key enters them (entering one again removes it, a negated tag replaces
+its positive, the list sorted as the reference's, text that doesn't start with
+"system:" taken as a tag), and the folder runs the search they make, as
+`oracle/record_export_folder_predicates.py` recorded.
 
 File > import/export folders > "check import folder now" and "run export folder now" flag a named folder, or all of them with "check all" / "run all", to be checked or run at the scheduler's next pass. Checking a folder also unpauses it, as the reference's `CheckNow` does. While the folders are paused under file > pause, the entries still flag the folders but say that they are paused ("Import folders are currently paused under the 'file' menu. Please unpause them and try this again.", and the export equivalent), as the reference does (`oracle/record_folder_runs.py`).
 
@@ -1227,10 +1231,16 @@ thumbnails or the viewer's file (`ui/export_files.slint`,
 `src/export_files_window.rs`, `hydrus-gui-model::export_files`). It previews
 number, filetype and destination using the export folders' filename machinery,
 adds ` (1)` suffixes for selected files whose names collide, remembers the
-export phrase, and removes selected rows after asking. Its browse button asks
-for a "Select directory" folder, as the reference's directory picker does, and
-"open location" does nothing for an empty destination and launches any existing
-path (one that is gone says so in the status line, not in a dialog). New panels open at the
+export phrase, and removes selected rows after asking. A row whose name can't be
+made (too long for the export length limits, say) or that leaves the destination
+shows "INVALID, above destination directory: " and why, as the reference's does.
+Its browse button asks for a "Select directory" folder, tidies the chosen path
+and remakes the names only for a folder that exists, as the reference's
+directory picker does, and "open location" does nothing for an empty destination
+and runs `xdg-open` on any existing path (one that is gone says so in the status
+line, not in a dialog). The names under the exporting options (NTFS rules, path,
+dirname and filename limits) and removal and browsing are replayed against
+`oracle/record_export_names.py`. New panels open at the
 **exporting > export folder > Default export directory** option. Its path and
 browse control wait for options Apply; Cancel discards them. Empty or whitespace
 uses `hydrus_export` in the home directory, and a one-off manual destination does
