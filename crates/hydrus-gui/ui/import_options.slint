@@ -1,3 +1,5 @@
+import { Btn } from "btn.slint";
+import { TipButton, TipComboBox } from "tip_widgets.slint";
 // The import options editor for an importer ("edit import options", the
 // reference's `EditSpecificImportOptionsContainerPanel`; its workings are
 // hydrus-gui-model's `import_options_editor`, bound by
@@ -34,6 +36,8 @@ export struct TagServiceRow {
     get-tags: bool,
     // what its "get tags" filter lets through
     filter: string,
+    // the whole of the filter text, which the button's label may elide
+    filter-tooltip: string,
     // the additional tags button's label ("3 additional tags")
     additional: string,
     to-new: bool,
@@ -134,6 +138,7 @@ export component ImportOptionsWindow inherits Window {
     // tag filtering
     // the blacklist button's label
     in property <string> tag-blacklist;
+    in property <string> tag-blacklist-tooltip;
     callback edit-blacklist();
     // a tag service's "get tags" filter button clicked
     callback edit-get-tags-filter(int);
@@ -479,14 +484,15 @@ export component ImportOptionsWindow inherits Window {
                         HorizontalLayout {
                             spacing: 6px;
                             Label { text: "file blacklist: "; }
-                            Button {
+                            TipButton {
                                 horizontal-stretch: 1;
                                 text: root.tag-blacklist;
+                                tip: root.tag-blacklist-tooltip;
                                 clicked => { root.edit-blacklist(); }
                             }
                         }
                         Label { text: "file whitelist (a file must have one of these tags, if any are set; a tag a line): "; }
-                        Button { text: "edit whitelist tags…"; enabled: !root.tag-child-open; clicked => { root.edit-whitelist(); } }
+                        Btn { text: "edit whitelist tags…"; enabled: !root.tag-child-open; clicked => { root.edit-whitelist(); } }
                         TextEdit {
                             height: 100px;
                             text <=> root.tag-whitelist;
@@ -518,14 +524,15 @@ export component ImportOptionsWindow inherits Window {
                                         checked: service.get-tags;
                                         toggled => { root.tag-service-toggled(i, "get-tags", self.checked); }
                                     }
-                                    Button {
+                                    TipButton {
                                         text: service.filter;
+                                        tip: service.filter-tooltip;
                                         enabled: service.get-tags && !root.tag-child-open;
                                         horizontal-stretch: 1;
                                         clicked => { root.edit-get-tags-filter(i); }
                                     }
                                 }
-                                Button { text: service.additional; enabled: !root.tag-child-open; clicked => { root.edit-additional-tags(i); } }
+                                Btn { text: service.additional; enabled: !root.tag-child-open; clicked => { root.edit-additional-tags(i); } }
                                 CheckBox {
                                     text: "apply tags to new files";
                                     checked: service.to-new;
@@ -556,7 +563,7 @@ export component ImportOptionsWindow inherits Window {
                                     checked: service.only-existing;
                                     toggled => { root.tag-service-toggled(i, "only-existing", self.checked); }
                                 }
-                                Button {
+                                Btn {
                                     text: "set a filter for already-exist test";
                                     enabled: !root.tag-child-open;
                                     clicked => { root.edit-existing-tags-filter(i); }
@@ -581,11 +588,11 @@ export component ImportOptionsWindow inherits Window {
                 refresh => { root.refresh-favourites(); }
                 selected(action, name) => { root.favourite(action, name); }
             }
-            Button { text: "copy"; enabled: !root.overwrite-open && !root.tag-child-open && !root.favourite-child-open && !root.location-child-open; clicked => { root.copy-options(); } }
+            Btn { text: "copy"; enabled: !root.overwrite-open && !root.tag-child-open && !root.favourite-child-open && !root.location-child-open; clicked => { root.copy-options(); } }
             Rectangle {
                 width: 66px;
                 height: 28px;
-                Button { width: parent.width; height: parent.height; text: "paste"; enabled: !root.overwrite-open && !root.tag-child-open && !root.favourite-child-open && !root.location-child-open; clicked => { clipboard-menu.show(); } }
+                Btn { width: parent.width; height: parent.height; text: "paste"; enabled: !root.overwrite-open && !root.tag-child-open && !root.favourite-child-open && !root.location-child-open; clicked => { clipboard-menu.show(); } }
                 clipboard-menu := PopupWindow {
                     y: parent.height;
                     width: 320px;
@@ -597,21 +604,21 @@ export component ImportOptionsWindow inherits Window {
                         VerticalLayout {
                             padding: 4px;
                             spacing: 2px;
-                            Button { text: "custom paste: choose what you want"; clicked => { clipboard-menu.close(); root.paste-options(3); } }
+                            Btn { text: "custom paste: choose what you want"; clicked => { clipboard-menu.close(); root.paste-options(3); } }
                             Rectangle { height: 1px; background: Theme.border; }
-                            Button { text: "merge-paste"; clicked => { clipboard-menu.close(); root.paste-options(0); } }
-                            Button { text: "fill-in-gaps-paste"; clicked => { clipboard-menu.close(); root.paste-options(1); } }
-                            Button { text: "replace-paste"; clicked => { clipboard-menu.close(); root.paste-options(2); } }
+                            Btn { text: "merge-paste"; clicked => { clipboard-menu.close(); root.paste-options(0); } }
+                            Btn { text: "fill-in-gaps-paste"; clicked => { clipboard-menu.close(); root.paste-options(1); } }
+                            Btn { text: "replace-paste"; clicked => { clipboard-menu.close(); root.paste-options(2); } }
                         }
                     }
                 }
             }
-            Button {
+            Btn {
                 text: "apply";
                 enabled: !root.overwrite-open && !root.tag-child-open && !root.favourite-child-open && !root.location-child-open;
                 clicked => { root.apply(); }
             }
-            Button {
+            Btn {
                 text: "cancel";
                 clicked => { root.cancel(); }
             }

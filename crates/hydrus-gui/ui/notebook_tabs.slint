@@ -1,3 +1,4 @@
+import { Btn } from "btn.slint";
 import { ScrollView, ListView, Button } from "std-widgets.slint";
 import { Theme } from "theme.slint";
 
@@ -324,8 +325,8 @@ export component NotebookTree inherits Rectangle {
         }
         HorizontalLayout {
             height: 28px; spacing: 2px;
-            Button { text: "Collapse all"; clicked => { keys.focus(); root.navigate(7); } }
-            Button { text: "Expand all"; clicked => { keys.focus(); root.navigate(8); } }
+            Btn { text: "Collapse all"; clicked => { keys.focus(); root.navigate(7); } }
+            Btn { text: "Expand all"; clicked => { keys.focus(); root.navigate(8); } }
         }
         list := ListView {
             y: 28px; height: max(0px,parent.height - 28px);

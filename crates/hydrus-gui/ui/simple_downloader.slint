@@ -1,3 +1,4 @@
+import { Btn } from "btn.slint";
 // A simple downloader page's "parsing" box (the reference's
 // `SidebarImporterSimpleDownloader`, bound in `src/lib.rs` over
 // hydrus-gui-model's `simple_downloader`): what its parsing is doing and
@@ -77,7 +78,7 @@ export component SimpleParsingBox inherits Rectangle {
                 vertical-alignment: center;
                 horizontal-stretch: 1;
             }
-            Button {
+            Btn {
                 text: "parsing log";
                 clicked => { root.parsing-log(); }
             }
@@ -102,19 +103,19 @@ export component SimpleParsingBox inherits Rectangle {
             VerticalLayout {
                 alignment: center;
                 spacing: 2px;
-                Button {
+                Btn {
                     text: "\u{2191}";
                     width: 28px;
                     enabled: root.any-job-selected;
                     clicked => { root.move-jobs(-1); }
                 }
-                Button {
+                Btn {
                     text: "X";
                     width: 28px;
                     enabled: root.any-job-selected;
                     clicked => { root.delete-jobs(); }
                 }
-                Button {
+                Btn {
                     text: "\u{2193}";
                     width: 28px;
                     enabled: root.any-job-selected;
@@ -133,12 +134,12 @@ export component SimpleParsingBox inherits Rectangle {
                     self.text = "";
                 }
             }
-            Button {
+            Btn {
                 text: "paste";
                 clicked => { root.paste-urls(); }
             }
         }
-        Button { text: "edit formulae"; clicked => { root.edit-formulae(); } }
+        Btn { text: "edit formulae"; clicked => { root.edit-formulae(); } }
         ComboBox {
             model: root.formulae;
             current-index <=> root.formula;

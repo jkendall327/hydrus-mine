@@ -1,3 +1,5 @@
+import { Btn } from "btn.slint";
+import { TipButton, TipComboBox } from "tip_widgets.slint";
 import { Button, CheckBox, ComboBox, LineEdit, VerticalBox, HorizontalBox } from "std-widgets.slint";
 import { Theme } from "theme.slint";
 export component TagMigrationWindow inherits Window {
@@ -25,6 +27,8 @@ export component TagMigrationWindow inherits Window {
     in-out property <int> status;
     in-out property <int> action;
     in-out property <bool> selected-files;
+    in property <string> left-tooltip;
+    in property <string> right-tooltip;
     in property <bool> have-files;
     in property <string> file-label;
     in property <string> location-label;
@@ -60,7 +64,7 @@ export component TagMigrationWindow inherits Window {
                 ComboBox { enabled: !root.running && root.question == ""; model: root.services; current-index <=> root.source; selected => { root.choices-changed(); } }
             }
             if root.source-archive: HorizontalBox {
-                Button { text: root.source-path; enabled: !root.running && root.question == ""; clicked => { root.choose-archive(true); } }
+                Btn { text: root.source-path; enabled: !root.running && root.question == ""; clicked => { root.choose-archive(true); } }
                 if root.content == 0: Text { text: root.source-hash; color: Theme.text; }
             }
             HorizontalBox {
@@ -74,15 +78,15 @@ export component TagMigrationWindow inherits Window {
                 ComboBox { enabled: !root.running && root.question == ""; model: root.services; current-index <=> root.destination; selected => { root.choices-changed(); } }
             }
             if root.destination-archive: HorizontalBox {
-                Button { text: root.destination-path; enabled: !root.running && root.question == ""; clicked => { root.choose-archive(false); } }
+                Btn { text: root.destination-path; enabled: !root.running && root.question == ""; clicked => { root.choose-archive(false); } }
                 if root.content == 0: ComboBox { model: ["sha256", "md5", "sha1", "sha512"]; current-index <=> root.hash-kind; enabled: !root.hash-locked && !root.running && root.question == ""; selected => { root.choices-changed(); } }
             }
             if root.content == 0: HorizontalBox {
                 if root.have-files: CheckBox { enabled: !root.running && root.question == ""; text: root.file-label; checked <=> root.selected-files; toggled => {root.choices-changed();} }
-                Button { text: root.location-label; enabled: !root.selected-files && !root.running && root.question == ""; clicked => {root.edit-location();} }
+                Btn { text: root.location-label; enabled: !root.selected-files && !root.running && root.question == ""; clicked => {root.edit-location();} }
             }
-            Button { enabled: !root.running && root.question == ""; text: root.left-label; clicked => {root.edit-filter(false);} }
-            if root.content != 0: Button { enabled: !root.running && root.question == ""; text: root.right-label; clicked => {root.edit-filter(true);} }
+            TipButton { enabled: !root.running && root.question == ""; text: root.left-label; tip: root.left-tooltip; clicked => {root.edit-filter(false);} }
+            if root.content != 0: TipButton { enabled: !root.running && root.question == ""; text: root.right-label; tip: root.right-tooltip; clicked => {root.edit-filter(true);} }
             if root.content != 0: VerticalBox {
                 CheckBox { text: root.content == 1 ? "only if worse (left) side has count" : "only if child (left) side has count"; checked <=> root.count-left; enabled: !root.count-either && !root.running && root.question == ""; toggled => {root.choices-changed();} }
                 CheckBox { text: root.content == 1 ? "only if ideal (where right side's chain terminates) has count" : "only if parent (right) side has count"; checked <=> root.count-right; enabled: !root.count-either && !root.running && root.question == ""; toggled => {root.choices-changed();} }
@@ -101,11 +105,11 @@ export component TagMigrationWindow inherits Window {
         Text { text: root.error; color: Theme.error; wrap: word-wrap; }
         Rectangle { vertical-stretch: 1; }
         HorizontalBox {
-            if root.question != "": Button { text: root.last-chance ? "yes" : "looks good"; clicked => {root.answer(true);} }
-            if root.question != "": Button { text: root.last-chance ? "no" : "go back"; clicked => {root.answer(false);} }
-            if root.question == "" && !root.running: Button { text: "Go!"; clicked => {root.go();} }
+            if root.question != "": Btn { text: root.last-chance ? "yes" : "looks good"; clicked => {root.answer(true);} }
+            if root.question != "": Btn { text: root.last-chance ? "no" : "go back"; clicked => {root.answer(false);} }
+            if root.question == "" && !root.running: Btn { text: "Go!"; clicked => {root.go();} }
             Rectangle { horizontal-stretch: 1; }
-            Button { text: "close"; clicked => {root.close-clicked();} }
+            Btn { text: "close"; clicked => {root.close-clicked();} }
         }
     }
 }
@@ -131,9 +135,9 @@ export component TagMigrationProgressWindow inherits Window {
         Text { text: root.error; color: Theme.error; wrap: word-wrap; }
         Rectangle { vertical-stretch: 1; }
         HorizontalBox {
-            if root.can-control: Button { text: root.paused ? "resume" : "pause"; clicked => { root.pause-job(); } }
-            if root.can-control: Button { text: "cancel"; clicked => { root.cancel-job(); } }
-            if !root.can-control: Button { text: "dismiss"; clicked => { root.dismiss(); } }
+            if root.can-control: Btn { text: root.paused ? "resume" : "pause"; clicked => { root.pause-job(); } }
+            if root.can-control: Btn { text: "cancel"; clicked => { root.cancel-job(); } }
+            if !root.can-control: Btn { text: "dismiss"; clicked => { root.dismiss(); } }
         }
     }
 }

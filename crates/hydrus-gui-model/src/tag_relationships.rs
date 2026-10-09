@@ -21,6 +21,9 @@ pub struct Question {
     pub yes: String,
     pub no: String,
     pub reason: bool,
+    /// For a reason question: the recent reasons, then the fixed ones, each
+    /// a button that answers with it.
+    pub suggestions: Vec<String>,
 }
 
 /// A relationship row, with its status prefix and explanatory note.
@@ -366,6 +369,8 @@ impl Relationships {
         let mut answer = Answers {
             values: answers.iter(),
             replacement: false,
+            store: &self.store,
+            kind: self.kind,
         };
         // Invalid self-pairs cannot replace an existing valid relationship.
         let mut cleaned = Vec::new();
@@ -373,7 +378,7 @@ impl Relationships {
             if pair.0 == pair.1 {
                 answer.ask(Question {
                     message: format!("Cannot add self-referencing relationship {}->{}. A tag cannot replace or parent itself.", pair.0, pair.1),
-                    yes: "OK".into(), no: "cancel".into(), reason: false,
+                    yes: "OK".into(), no: "cancel".into(), reason: false, suggestions: Vec::new(),
                 })?;
             } else {
                 cleaned.push(pair);
@@ -434,7 +439,7 @@ impl Relationships {
         {
             answer.ask(Question {
                 message: "The relationships include a cycle or conflicting sibling ideals. No changes have been staged. Enter these pairs separately to resolve the links.".into(),
-                yes: "OK".into(), no: "cancel".into(), reason: false,
+                yes: "OK".into(), no: "cancel".into(), reason: false, suggestions: Vec::new(),
             })?;
             return Ok(());
         }
@@ -598,6 +603,7 @@ impl Relationships {
             yes: "yes".into(),
             no: "no".into(),
             reason: false,
+            suggestions: Vec::new(),
         })
     }
     /// Changes to be applied, by service and content action.
@@ -653,6 +659,66 @@ impl Relationships {
 struct Answers<'a> {
     values: std::slice::Iter<'a, Option<String>>,
     replacement: bool,
+    store: &'a Store,
+    kind: RelationKind,
+}
+
+/// The reasons the reference offers with a petition question: the fixed ones
+/// for the kind and action, after the recently typed (`_GetFixedPendSuggestions`,
+/// `_GetFixedPetitionSuggestions`).
+pub fn fixed_reasons(kind: RelationKind, removing: bool) -> Vec<String> {
+    let reasons: &[&str] = match (kind, removing) {
+        (RelationKind::Siblings, false) => &[
+            "merging underscores/typos/phrasing/unnamespaced to a single uncontroversial good tag",
+            "rewording/namespacing based on preference",
+        ],
+        (RelationKind::Siblings, true) => &[
+            "obvious typo/mistake",
+            "disambiguation",
+            "correcting to repository standard",
+        ],
+        (RelationKind::Parents, false) => &[
+            "obvious by definition (a sword is a weapon)",
+            "character/series/studio/etc... belonging (character x belongs to series y)",
+        ],
+        (RelationKind::Parents, true) => &["obvious typo/mistake"],
+    };
+    reasons.iter().map(|r| (*r).to_owned()).collect()
+}
+
+fn reason_key(kind: RelationKind, removing: bool) -> String {
+    let kind = match kind {
+        RelationKind::Siblings => "siblings",
+        RelationKind::Parents => "parents",
+    };
+    format!("{kind}/{}", if removing { "delete" } else { "add" })
+}
+
+fn recent_count(store: &Store) -> i64 {
+    store
+        .read(hydrus_store::settings::get::<hydrus_store::reference_options::ReferenceOptions>)
+        .map_or(5, |o| o.integer("num_recent_petition_reasons"))
+}
+
+/// The recently typed reasons for a kind and action, newest first, as many as
+/// the options remember.
+pub fn recent_reasons(store: &Store, kind: RelationKind, removing: bool) -> Vec<String> {
+    store
+        .read(hydrus_store::settings::get::<hydrus_store::reference_options::RecentPetitionReasons>)
+        .map(|r| r.get(&reason_key(kind, removing), recent_count(store)))
+        .unwrap_or_default()
+}
+
+fn remember_reason(store: &Store, kind: RelationKind, removing: bool, reason: &str) {
+    let count = recent_count(store);
+    let key = reason_key(kind, removing);
+    let reason = reason.to_owned();
+    let _ = store.write(move |ctx| {
+        let mut recent: hydrus_store::reference_options::RecentPetitionReasons =
+            hydrus_store::settings::get(ctx.conn())?;
+        recent.push(&key, &reason, count);
+        hydrus_store::settings::set(ctx.conn(), &recent)
+    });
 }
 impl Answers<'_> {
     fn ask(&mut self, q: Question) -> Result<Option<String>, Question> {
@@ -734,10 +800,19 @@ fn toggle_group(
                 .into(),
             )
         } else {
-            answers.ask(Question {
+            let fixed = fixed_reasons(answers.kind, removing);
+            let mut suggestions = recent_reasons(answers.store, answers.kind, removing);
+            suggestions.extend(fixed.iter().cloned());
+            let asked = answers.ask(Question {
                 message: format!("Enter a reason for:\n\n{}\n\n{}", pair_strings(&group, false), if removing { "to be removed. You will see the delete as soon as you upload, but a janitor will review your petition to decide if all users should receive it as well." } else { "To be added. A janitor will review your petition." }),
-                yes: "OK".into(), no: "cancel".into(), reason: true,
-            })?
+                yes: "OK".into(), no: "cancel".into(), reason: true, suggestions,
+            })?;
+            if let Some(reason) = &asked
+                && !fixed.contains(reason)
+            {
+                remember_reason(answers.store, answers.kind, removing, reason);
+            }
+            asked
         };
         if let Some(mut reason) = reason {
             if reason == "TO BE AUTO-PETITIONED" {
@@ -792,6 +867,7 @@ fn toggle_group(
             .into(),
             no: "do nothing".into(),
             reason: false,
+            suggestions: Vec::new(),
         })?;
         if accepted.is_some() {
             let set = if pending {

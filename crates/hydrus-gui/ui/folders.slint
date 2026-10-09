@@ -1,3 +1,4 @@
+import { Btn } from "btn.slint";
 // The manage import folders and manage export folders dialogs (file >
 // import/export folders; the reference's `EditImportFoldersPanel` and
 // `EditExportFoldersPanel`), and their edit dialogs (`EditImportFolderPanel`,
@@ -85,7 +86,7 @@ component PathRow inherits HorizontalLayout {
         text <=> root.text;
         horizontal-stretch: 1;
     }
-    Button {
+    Btn {
         text: "browse";
         clicked => { root.browse(); }
     }
@@ -113,12 +114,12 @@ component Footer inherits VerticalLayout {
     HorizontalLayout {
         alignment: end;
         spacing: 6px;
-        Button {
+        Btn {
             text: "apply";
             enabled: !root.asking && !root.waiting;
             clicked => { root.apply(); }
         }
-        Button {
+        Btn {
             text: "cancel";
             clicked => { root.cancel(); }
         }
@@ -189,17 +190,17 @@ export component FoldersWindow inherits Window {
             HorizontalLayout {
                 spacing: 6px;
                 alignment: end;
-                Button {
+                Btn {
                     text: "add";
                     enabled: !root.asking && !root.waiting;
                     clicked => { root.add(); }
                 }
-                Button {
+                Btn {
                     text: "edit";
                     enabled: root.one-selected && !root.asking && !root.waiting;
                     clicked => { root.edit(); }
                 }
-                Button {
+                Btn {
                     text: "delete";
                     enabled: root.any-selected && !root.asking && !root.waiting;
                     clicked => { root.delete(); }
@@ -374,14 +375,14 @@ export component ImportFolderWindow inherits Window {
                                 text: root.cached-paths;
                                 vertical-alignment: center;
                             }
-                            Button {
+                            Btn {
                                 text: "file log";
                                 enabled: root.has-file-log;
                                 clicked => { root.file-log(); }
                             }
                         }
                     }
-                    Button {
+                    Btn {
                         text: root.import-options;
                         clicked => { root.edit-import-options(); }
                     }
@@ -404,7 +405,7 @@ export component ImportFolderWindow inherits Window {
                                 text: row.location;
                                 edited(text) => { root.location-edited(i, text); }
                             }
-                            Button {
+                            Btn {
                                 text: "browse";
                                 enabled: row.action == 2;
                                 clicked => { root.browse-location(i); }
@@ -421,11 +422,11 @@ export component ImportFolderWindow inherits Window {
                                 horizontal-stretch: 1;
                                 vertical-alignment: center;
                             }
-                            Button {
+                            Btn {
                                 text: "edit";
                                 clicked => { root.tagging-edit(i); }
                             }
-                            Button {
+                            Btn {
                                 text: "delete";
                                 clicked => { root.tagging-delete(i); }
                             }
@@ -441,13 +442,13 @@ export component ImportFolderWindow inherits Window {
                                 model: root.tagging-choices;
                                 current-index <=> root.tagging-choice;
                             }
-                            Button {
+                            Btn {
                                 text: "add";
                                 clicked => { root.tagging-add(); }
                             }
                         }
                         Label { text: "sidecar importing:"; }
-                        Button {
+                        Btn {
                             text: root.sidecars;
                             clicked => { root.edit-sidecars(); }
                         }
@@ -643,11 +644,11 @@ export component ExportFolderWindow inherits Window {
                             label: "DANGEROUS: always overwrite all sidecars on every run: ";
                             checked <=> root.overwrite-always;
                         }
-                        Button {
+                        Btn {
                             text: root.sidecars;
                             clicked => { root.edit-sidecars(); }
                         }
-                        Button {
+                        Btn {
                             text: root.examples-label;
                             enabled: root.examples-enabled;
                             clicked => { root.update-examples(); }

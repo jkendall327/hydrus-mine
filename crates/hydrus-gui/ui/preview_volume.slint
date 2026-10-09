@@ -9,6 +9,9 @@ export component PreviewVolume inherits Rectangle {
     in property <int> volume;
     in property <bool> global-muted;
     in property <bool> preview-muted;
+    // the reference's tooltips on its two mute buttons
+    in property <string> global-tooltip;
+    in property <string> preview-tooltip;
     out property <bool> open: area.has-hover || area.pressed;
     callback volume-changed(int);
     callback flip-global-mute();
@@ -77,5 +80,15 @@ export component PreviewVolume inherits Rectangle {
                 root.volume-changed(root.volume-at(self.mouse-y));
             }
         }
+    }
+    Rectangle {
+        y: root.height - root.line;
+        height: root.line;
+        Tooltip { text: @markdown("\{root.global-tooltip}"); }
+    }
+    if root.open: Rectangle {
+        y: root.popup - root.line;
+        height: root.line;
+        Tooltip { text: @markdown("\{root.preview-tooltip}"); }
     }
 }

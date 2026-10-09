@@ -1,3 +1,4 @@
+import { Btn } from "btn.slint";
 // The "manage urls" dialog for some files (the reference's
 // `EditURLsPanel`, opened by a thumbnail's or the viewer's "urls >
 // manage"; its workings are hydrus-gui-model's `urls_editor`, bound by
@@ -60,12 +61,12 @@ export component ManageUrlsWindow inherits Window {
         HorizontalLayout {
             alignment: end;
             spacing: 6px;
-            Button {
+            Btn {
                 text: "copy";
                 enabled: !root.asking;
                 clicked => { root.copy(); }
             }
-            Button {
+            Btn {
                 text: "paste";
                 enabled: !root.asking;
                 clicked => { root.paste(); }
@@ -82,12 +83,12 @@ export component ManageUrlsWindow inherits Window {
         HorizontalLayout {
             alignment: end;
             spacing: 6px;
-            Button {
+            Btn {
                 text: "apply";
                 enabled: !root.asking;
                 clicked => { root.apply(); }
             }
-            Button {
+            Btn {
                 text: "cancel";
                 clicked => { root.cancel(); }
             }

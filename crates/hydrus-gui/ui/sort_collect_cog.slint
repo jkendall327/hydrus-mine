@@ -1,3 +1,4 @@
+import { Btn } from "btn.slint";
 // Actual grouped tag-service and namespace-display/unmatched cog actions.
 import { Button } from "std-widgets.slint";
 export struct ContextCogItem { label: string, checked: bool, id: int }
@@ -43,6 +44,6 @@ export component SortCollectCog inherits Rectangle {
                 }
             }
         }
-        Button {text: "⚙"; clicked => { root.opened(); cog.show({x: 0px, y: self.height}); }}
+        Btn {text: "⚙"; clicked => { root.opened(); cog.show({x: 0px, y: self.height}); }}
     }
 }

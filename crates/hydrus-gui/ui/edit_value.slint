@@ -1,3 +1,4 @@
+import { Btn } from "btn.slint";
 // A single number to edit (the reference's `EditSingleCtrlPanel` with a
 // spin box in an "edit value" dialog), as an inc/dec rating's middle click
 // opens it.
@@ -25,11 +26,11 @@ export component EditValueWindow inherits Window {
         HorizontalLayout {
             alignment: end;
             spacing: 6px;
-            Button {
+            Btn {
                 text: "apply";
                 clicked => { root.apply(); }
             }
-            Button {
+            Btn {
                 text: "cancel";
                 clicked => { root.cancel(); }
             }

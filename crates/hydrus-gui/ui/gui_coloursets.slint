@@ -1,3 +1,4 @@
+import { Btn } from "btn.slint";
 // The two legacy coloursets share thirteen RGB roles; edits belong to Options.
 import { Button, LineEdit, SpinBox } from "std-widgets.slint";
 import { Theme } from "theme.slint";
@@ -16,8 +17,8 @@ export component GuiColoursets {
         spacing: 8px;
         HorizontalLayout {
             alignment: start;
-            Button { enabled: root.enabled; text: "default"; primary: root.colourset == 0; clicked => { root.colourset = 0; root.menu-role = -1; } }
-            Button { enabled: root.enabled; text: "darkmode"; primary: root.colourset == 1; clicked => { root.colourset = 1; root.menu-role = -1; } }
+            Btn { enabled: root.enabled; text: "default"; primary: root.colourset == 0; clicked => { root.colourset = 0; root.menu-role = -1; } }
+            Btn { enabled: root.enabled; text: "darkmode"; primary: root.colourset == 1; clicked => { root.colourset = 1; root.menu-role = -1; } }
         }
         for row in root.rows: HorizontalLayout {
             spacing: 8px;
@@ -40,8 +41,8 @@ export component GuiColoursets {
         x: max(0px,root.menu-x);y:root.menu-y;width:280px;height:72px;
         background:Theme.panel;border-width:1px;border-color:Theme.border;
         VerticalLayout {
-            Button { text:"copy "+root.menu-hex+" to the clipboard";clicked=>{root.clipboard-action(root.colourset,root.menu-role,false);root.menu-role=-1;} }
-            Button { text:"import a hex colour from the clipboard";clicked=>{root.clipboard-action(root.colourset,root.menu-role,true);root.menu-role=-1;} }
+            Btn { text:"copy "+root.menu-hex+" to the clipboard";clicked=>{root.clipboard-action(root.colourset,root.menu-role,false);root.menu-role=-1;} }
+            Btn { text:"import a hex colour from the clipboard";clicked=>{root.clipboard-action(root.colourset,root.menu-role,true);root.menu-role=-1;} }
         }
     }
 }
@@ -102,8 +103,8 @@ export component GuiColourPickerWindow inherits Window {
             }
             HorizontalLayout {
                 alignment:end;vertical-stretch:0;
-                ok := Button { text:"OK";clicked=>{root.accepted(root.red,root.green,root.blue);} }
-                cancel := Button { text:"Cancel";clicked=>{root.cancelled();} }
+                ok := Btn { text:"OK";clicked=>{root.accepted(root.red,root.green,root.blue);} }
+                cancel := Btn { text:"Cancel";clicked=>{root.cancelled();} }
             }
         }
     }

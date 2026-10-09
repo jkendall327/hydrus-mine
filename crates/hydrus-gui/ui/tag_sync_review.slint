@@ -1,3 +1,4 @@
+import { Btn } from "btn.slint";
 // Tags > sibling/parent sync > review current sibling/parent sync.
 import { Button } from "std-widgets.slint";
 import { Theme } from "theme.slint";
@@ -37,13 +38,13 @@ export component TagSyncReviewWindow inherits Window {
                 Text { text: root.progress; color: Theme.text; }
                 HorizontalLayout {
                     alignment: end;
-                    Button { text: "refresh"; clicked => { root.refresh-clicked(); } }
+                    Btn { text: "refresh"; clicked => { root.refresh-clicked(); } }
                 }
             }
         }
         HorizontalLayout {
             alignment: end;
-            Button { text: "close"; clicked => { root.close-clicked(); } }
+            Btn { text: "close"; clicked => { root.close-clicked(); } }
         }
     }
 }

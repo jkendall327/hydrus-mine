@@ -1,3 +1,4 @@
+import { Btn } from "btn.slint";
 // A watcher downloader page's sidebar (the reference's
 // SidebarImporterMultipleWatcher): the "watchers" box with its watchers'
 // list, their buttons and the watcher url box; and the "highlighted
@@ -162,7 +163,7 @@ export component WatcherSidebar inherits VerticalLayout {
                     enabled: root.data.has-selection;
                     clicked => { root.pause-play(true, false); }
                 }
-                Button {
+                Btn {
                     text: "check now";
                     enabled: root.data.has-selection;
                     clicked => { root.check-now(false); }
@@ -176,11 +177,11 @@ export component WatcherSidebar inherits VerticalLayout {
             }
             if root.data.can-retry-ignored || root.data.can-retry-failed: HorizontalLayout {
                 spacing: 4px;
-                if root.data.can-retry-ignored: Button {
+                if root.data.can-retry-ignored: Btn {
                     text: "retry ignored";
                     clicked => { root.retry(true); }
                 }
-                if root.data.can-retry-failed: Button {
+                if root.data.can-retry-failed: Btn {
                     text: "retry failed";
                     clicked => { root.retry(false); }
                 }
@@ -204,15 +205,15 @@ export component WatcherSidebar inherits VerticalLayout {
                     clicked => { root.paste(); }
                 }
             }
-            Button {
+            Btn {
                 text: "checker options";
                 clicked => { root.page-checker(); }
             }
-            Button {
+            Btn {
                 text: root.data.import-options;
                 clicked => { root.import-options(); }
             }
-            if root.data.can-set-options: Button {
+            if root.data.can-set-options: Btn {
                 text: "update selected with current options";
                 clicked => { root.set-options(); }
             }
@@ -267,7 +268,7 @@ export component WatcherSidebar inherits VerticalLayout {
                             vertical-alignment: center;
                             horizontal-stretch: 1;
                         }
-                        Button {
+                        Btn {
                             text: "file log";
                             clicked => { root.file-log(); }
                         }
@@ -320,7 +321,7 @@ export component WatcherSidebar inherits VerticalLayout {
                             vertical-alignment: center;
                             horizontal-stretch: 1;
                         }
-                        Button {
+                        Btn {
                             text: "check now";
                             enabled: root.data.can-check-now;
                             clicked => { root.check-now(true); }
@@ -340,18 +341,18 @@ export component WatcherSidebar inherits VerticalLayout {
                     }
                     HorizontalLayout {
                         spacing: 4px;
-                        Button {
+                        Btn {
                             text: "check log";
                             clicked => { root.search-log(); }
                         }
-                        Button {
+                        Btn {
                             text: "checker options";
                             clicked => { root.watcher-checker(); }
                         }
                     }
                 }
             }
-            Button {
+            Btn {
                 text: root.data.shown-import-options;
                 clicked => { root.shown-import-options(); }
             }

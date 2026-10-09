@@ -1,3 +1,4 @@
+import { Btn } from "btn.slint";
 // Options > media playback > per-filetype handling (`src/options_media_views.rs`,
 // hydrus-gui-model's media_view_options): the list with add/edit/delete, and
 // the "media view options information" editor.
@@ -103,8 +104,8 @@ export component MediaViewWindow inherits Window {
             HorizontalLayout {
                 alignment: end;
                 spacing: 6px;
-                Button { text: "apply"; clicked => { root.apply(); } }
-                Button { text: "cancel"; clicked => { root.cancel(); } }
+                Btn { text: "apply"; clicked => { root.apply(); } }
+                Btn { text: "cancel"; clicked => { root.cancel(); } }
             }
         }
     }

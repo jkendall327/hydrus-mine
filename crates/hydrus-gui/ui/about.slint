@@ -1,3 +1,4 @@
+import { Btn } from "btn.slint";
 // The about window (help > about, the reference's `ShowAboutWindow`,
 // bound by `src/about_window.rs`; its texts are hydrus-gui-model's
 // `about`): the name, version and site over four tabs.
@@ -89,7 +90,7 @@ export component AboutWindow inherits Window {
         }
         HorizontalLayout {
             alignment: end;
-            Button {
+            Btn {
                 text: "close";
                 clicked => { root.close-clicked(); }
             }

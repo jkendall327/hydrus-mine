@@ -1,3 +1,4 @@
+import { Btn } from "btn.slint";
 import { Button } from "std-widgets.slint";
 import { Theme } from "theme.slint";
 import { ListTable, TableRow } from "list_table.slint";
@@ -27,22 +28,22 @@ export component LoginDomainsWindow inherits Window {
         Text { text: "WARNING: Never use important accounts with hydrus. Hydrus does not store credentials securely. Always use a throwaway account you don't care much about.\nIf you are looking for your login cookies, go to network > data > review session cookies."; color: Theme.error; wrap: word-wrap; }
         ListTable { vertical-stretch: 1; columns: [{title: "domain", width: 160px}, {title: "login script", width: 180px}, {title: "access", width: 210px, stretch: true}, {title: "active", width: 60px}, {title: "logged in", width: 180px}, {title: "validity", width: 140px}, {title: "delay", width: 170px}]; rows: root.rows; row-clicked(i,c,s) => { if !root.child-open && root.question == "" && !root.running { root.row-clicked(i,c,s); } } row-activated(i) => { if !root.child-open && root.question == "" && !root.running { root.row-clicked(i,false,false); root.action("credentials"); } } }
         HorizontalLayout { spacing: 6px;
-            Button { text: "add"; enabled: !root.child-open && root.question == "" && !root.running; clicked => { root.action("add"); } }
-            Button { text: "delete"; enabled: root.any-selected && !root.child-open && root.question == "" && !root.running; clicked => { root.action("delete"); } }
-            Button { text: "edit credentials"; enabled: root.can-edit && !root.child-open && root.question == "" && !root.running; clicked => { root.action("credentials"); } }
-            Button { text: "change login script"; enabled: root.any-selected && !root.child-open && root.question == "" && !root.running; clicked => { root.action("change-script"); } }
-            Button { text: "flip active"; enabled: root.any-selected && !root.child-open && root.question == "" && !root.running; clicked => { root.action("flip-active"); } }
-            Button { text: "scrub delays"; enabled: root.can-scrub-delays && !root.child-open && root.question == "" && !root.running; clicked => { root.action("scrub-delays"); } }
-            Button { text: "scrub invalidity"; enabled: root.can-scrub-invalidity && !root.child-open && root.question == "" && !root.running; clicked => { root.action("scrub-invalidity"); } }
+            Btn { text: "add"; enabled: !root.child-open && root.question == "" && !root.running; clicked => { root.action("add"); } }
+            Btn { text: "delete"; enabled: root.any-selected && !root.child-open && root.question == "" && !root.running; clicked => { root.action("delete"); } }
+            Btn { text: "edit credentials"; enabled: root.can-edit && !root.child-open && root.question == "" && !root.running; clicked => { root.action("credentials"); } }
+            Btn { text: "change login script"; enabled: root.any-selected && !root.child-open && root.question == "" && !root.running; clicked => { root.action("change-script"); } }
+            Btn { text: "flip active"; enabled: root.any-selected && !root.child-open && root.question == "" && !root.running; clicked => { root.action("flip-active"); } }
+            Btn { text: "scrub delays"; enabled: root.can-scrub-delays && !root.child-open && root.question == "" && !root.running; clicked => { root.action("scrub-delays"); } }
+            Btn { text: "scrub invalidity"; enabled: root.can-scrub-invalidity && !root.child-open && root.question == "" && !root.running; clicked => { root.action("scrub-invalidity"); } }
         }
         HorizontalLayout { spacing: 6px;
-            Button { text: "do login now"; enabled: root.can-do-login && !root.child-open && root.question == "" && !root.running; clicked => { root.action("do-login"); } }
-            Button { text: "reset login (delete cookies)"; enabled: root.any-selected && !root.child-open && root.question == "" && !root.running; clicked => { root.action("reset-login"); } }
-            Button { text: "cancel login"; enabled: root.running; clicked => { root.action("cancel-login"); } }
+            Btn { text: "do login now"; enabled: root.can-do-login && !root.child-open && root.question == "" && !root.running; clicked => { root.action("do-login"); } }
+            Btn { text: "reset login (delete cookies)"; enabled: root.any-selected && !root.child-open && root.question == "" && !root.running; clicked => { root.action("reset-login"); } }
+            Btn { text: "cancel login"; enabled: root.running; clicked => { root.action("cancel-login"); } }
         }
         if root.status != "": Text { text: root.status; color: Theme.text; wrap: word-wrap; }
-        if root.question != "": HorizontalLayout { spacing: 6px; Text { text: root.question; color: Theme.text; wrap: word-wrap; } Button { text: "yes"; clicked => { root.action(root.confirming-delete ? "confirm-delete" : root.confirming-reset ? "confirm-reset" : root.confirming-login ? "confirm-login" : "activate"); } } Button { text: "no"; clicked => { root.action(root.confirming-delete ? "back-delete" : root.confirming-reset ? "back-reset" : root.confirming-login ? "back-login" : "leave-inactive"); } } }
+        if root.question != "": HorizontalLayout { spacing: 6px; Text { text: root.question; color: Theme.text; wrap: word-wrap; } Btn { text: "yes"; clicked => { root.action(root.confirming-delete ? "confirm-delete" : root.confirming-reset ? "confirm-reset" : root.confirming-login ? "confirm-login" : "activate"); } } Btn { text: "no"; clicked => { root.action(root.confirming-delete ? "back-delete" : root.confirming-reset ? "back-reset" : root.confirming-login ? "back-login" : "leave-inactive"); } } }
         if root.error != "": Text { text: root.error; color: Theme.error; wrap: word-wrap; }
-        HorizontalLayout { alignment: end; spacing: 6px; Button { text: "apply"; enabled: !root.child-open && root.question == "" && !root.running; clicked => { root.action("apply"); } } Button { text: "cancel"; clicked => { root.action("cancel"); } } }
+        HorizontalLayout { alignment: end; spacing: 6px; Btn { text: "apply"; enabled: !root.child-open && root.question == "" && !root.running; clicked => { root.action("apply"); } } Btn { text: "cancel"; clicked => { root.action("cancel"); } } }
     }
 }

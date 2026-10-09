@@ -223,3 +223,175 @@ fn dialogs_stage_cancel_apply_questions_and_update_display() {
     w.invoke_apply();
     assert!(bound.tag_relationships.borrow().is_none());
 }
+
+// leaf: relationship-reasons
+// leaf: audit-options-tag-editing-tag-dialogs-number-of-recent-petition-reasons-to-remember-in-dialogs
+#[test]
+fn reason_questions_offer_recent_then_fixed_reasons_and_the_option_caps_the_recent_ones() {
+    use crate::options_gui_support::{Client, row, show_page};
+    use hydrus_store::content::tag_relations::{self, RelationAction, RelationUpdate};
+    let recording = hydrus_testkit::fixture_json("relationship_reasons.json");
+    let client = Client::basic();
+    client
+        .store
+        .write_and_refresh(|ctx| {
+            hydrus_store::services::insert(
+                ctx.conn(),
+                &hydrus_core::ServiceKey::new(vec![62; 16]),
+                "reasons repository",
+                &hydrus_store::services::ServiceKind::TagRepository(
+                    hydrus_store::services::RepositoryConfig::default(),
+                ),
+            )?;
+            Ok(())
+        })
+        .unwrap();
+    let repository = client
+        .store
+        .snapshot()
+        .services
+        .by_name("reasons repository")
+        .unwrap()
+        .id;
+    let ui = &client.ui;
+    for run in recording["runs"].as_array().unwrap() {
+        let kind = if run["kind"] == "siblings" {
+            hydrus_store::display::RelationKind::Siblings
+        } else {
+            hydrus_store::display::RelationKind::Parents
+        };
+        // the pairs the recording starts from are current on the repository
+        for pair in run["initial"].as_array().unwrap() {
+            let left = hydrus_core::Tag::new(pair[0].as_str().unwrap()).unwrap();
+            let right = hydrus_core::Tag::new(pair[1].as_str().unwrap()).unwrap();
+            let _ = tag_relations::apply(
+                &client.store,
+                kind,
+                vec![RelationUpdate {
+                    service: repository,
+                    left,
+                    right,
+                    action: RelationAction::Add,
+                }],
+            );
+        }
+        // the count of reasons to remember, set in Options > tag editing
+        let count = i32::try_from(run["count"].as_i64().unwrap()).unwrap();
+        let options = client.open_options();
+        show_page(&options, "tag editing");
+        let (at, _) = row(
+            &options,
+            "Number of recent petition reasons to remember in dialogs: ",
+        );
+        options.invoke_number_edited(at, count);
+        options.invoke_apply();
+        client
+            .store
+            .write(|ctx| {
+                hydrus_store::settings::set(
+                    ctx.conn(),
+                    &hydrus_store::reference_options::RecentPetitionReasons::default(),
+                )
+            })
+            .unwrap();
+        let top = (0..ui.get_menu_titles().row_count())
+            .find(|&i| ui.get_menu_titles().row_data(i).unwrap().label == "tags")
+            .unwrap();
+        ui.invoke_menu_title_pressed(i32::try_from(top).unwrap(), 0.0, 22.0);
+        let pane = ui.get_menu_panes().row_data(0).unwrap();
+        let line = (0..pane.lines.row_count())
+            .find(|&i| {
+                pane.lines
+                    .row_data(i)
+                    .unwrap()
+                    .label
+                    .starts_with(run["kind"].as_str().unwrap())
+            })
+            .unwrap();
+        ui.invoke_menu_line_clicked(0, i32::try_from(line).unwrap(), 0.0, 0.0, 0.0);
+        let w = client
+            .bound
+            .tag_relationships
+            .borrow()
+            .as_ref()
+            .unwrap()
+            .clone_strong();
+        let at = w
+            .get_service_names()
+            .iter()
+            .position(|name| name == "reasons repository")
+            .unwrap();
+        w.invoke_service_chosen(i32::try_from(at).unwrap());
+        w.set_show_all(true);
+        w.invoke_filters_changed();
+        for step in run["steps"].as_array().unwrap() {
+            let recorded = &step["asked"][0];
+            let (left, right) = (
+                step["pair"][0].as_str().unwrap(),
+                step["pair"][1].as_str().unwrap(),
+            );
+            if step["action"] == "add" {
+                w.invoke_enter_tags(false, left.into());
+                w.invoke_enter_tags(true, right.into());
+                w.invoke_add();
+            } else {
+                // a current pair is selected in the list and deleted: a petition
+                let rows = w.get_rows();
+                let at = (0..rows.row_count())
+                    .find(|&i| {
+                        let cells = rows.row_data(i).unwrap().cells;
+                        cells.row_data(1).unwrap() == left && cells.row_data(2).unwrap() == right
+                    })
+                    .unwrap_or_else(|| panic!("{left}->{right} is listed"));
+                w.invoke_row_clicked(i32::try_from(at).unwrap(), false, false);
+                w.invoke_delete();
+            }
+            assert!(w.get_ask_reason(), "{step}");
+            assert_eq!(
+                w.get_question().replace("\n\n", " "),
+                recorded["message"].as_str().unwrap().replace("\n\n", " "),
+                "{step}"
+            );
+            let offered: Vec<String> = w
+                .get_reason_suggestions()
+                .iter()
+                .map(|s| s.to_string())
+                .collect();
+            assert_eq!(
+                serde_json::json!(offered),
+                recorded["suggestions"],
+                "{step}"
+            );
+            let answer = &recorded["answer"];
+            if answer.is_null() {
+                w.invoke_answered(false);
+            } else {
+                // (a suggestion's button sets the reason and answers)
+                w.set_reason(match answer.as_i64() {
+                    Some(i) => {
+                        offered[usize::try_from(if i < 0 { offered.len() as i64 + i } else { i })
+                            .unwrap()]
+                        .clone()
+                        .into()
+                    }
+                    None => answer.as_str().unwrap().into(),
+                });
+                w.invoke_answered(true);
+            }
+            assert!(w.get_question().is_empty(), "{step}");
+            let kept: hydrus_store::reference_options::RecentPetitionReasons = client.setting();
+            let name = run["kind"].as_str().unwrap();
+            assert_eq!(
+                serde_json::json!(kept.get(&format!("{name}/add"), i64::from(count))),
+                step["recent_add"],
+                "{step}"
+            );
+            assert_eq!(
+                serde_json::json!(kept.get(&format!("{name}/delete"), i64::from(count))),
+                step["recent_delete"],
+                "{step}"
+            );
+        }
+        w.invoke_cancel();
+    }
+}

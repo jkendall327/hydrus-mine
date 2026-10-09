@@ -1,3 +1,4 @@
+import { Btn } from "btn.slint";
 import { Button, LineEdit, ScrollView } from "std-widgets.slint";
 import { Theme } from "theme.slint";
 
@@ -13,7 +14,7 @@ component FavouriteSubmenu inherits Rectangle {
     callback save();
     width: 220px;
     height: 28px;
-    Button { width: parent.width; height: parent.height; text: root.label + "  ›"; clicked => { entries.show(); } }
+    Btn { width: parent.width; height: parent.height; text: root.label + "  ›"; clicked => { entries.show(); } }
     entries := PopupWindow {
         x: parent.width;
         width: 540px;
@@ -26,10 +27,10 @@ component FavouriteSubmenu inherits Rectangle {
                 VerticalLayout {
                     padding: 4px;
                     spacing: 2px;
-                    for row in root.rows: Button { text: root.editing ? row.edit-label : row.label; clicked => { entries.close(); root.selected(row.name); } }
+                    for row in root.rows: Btn { text: root.editing ? row.edit-label : row.label; clicked => { entries.close(); root.selected(row.name); } }
                     if root.editing: Rectangle { height: 1px; background: Theme.border; }
-                    if root.editing: Button { text: "add new favourite"; clicked => { entries.close(); root.add(); } }
-                    if root.editing && root.save-current-allowed: Button { text: "save current value as new favourite"; clicked => { entries.close(); root.save(); } }
+                    if root.editing: Btn { text: "add new favourite"; clicked => { entries.close(); root.add(); } }
+                    if root.editing && root.save-current-allowed: Btn { text: "save current value as new favourite"; clicked => { entries.close(); root.save(); } }
                 }
             }
         }
@@ -46,7 +47,7 @@ export component ImportFavouritesButton inherits Rectangle {
     callback selected(int, string);
     width: 30px;
     height: 28px;
-    Button {
+    Btn {
         width: parent.width; height: parent.height;
         text: "★";
         enabled: root.enabled && (root.edit-allowed || root.rows.length > 0);
@@ -104,8 +105,8 @@ export component ImportFavouritePromptWindow inherits Window {
         }
         HorizontalLayout {
             alignment: end; spacing: 6px;
-            Button { text: root.asking-name ? "apply" : "yes"; clicked => { root.accepted(root.name); } }
-            Button { text: root.asking-name ? "cancel" : "no"; clicked => { root.cancelled(); } }
+            Btn { text: root.asking-name ? "apply" : "yes"; clicked => { root.accepted(root.name); } }
+            Btn { text: root.asking-name ? "cancel" : "no"; clicked => { root.cancelled(); } }
         }
     }
 }

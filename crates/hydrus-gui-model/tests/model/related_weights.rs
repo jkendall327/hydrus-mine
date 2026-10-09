@@ -95,6 +95,8 @@ fn search_and_result_weights_change_actual_qt_cosine_ranking_separately() {
             local: true,
             display: false,
             concurrence_percent: 6,
+            max_ms: None,
+            exclude: std::collections::BTreeSet::default(),
             weights: Weights {
                 search: serde_json::from_value(case["search_weights"].clone()).unwrap(),
                 result: serde_json::from_value(case["result_weights"].clone()).unwrap(),
@@ -160,8 +162,12 @@ fn real_service_mappings_replay_recorded_ranks_and_never_cross_service() {
                 result: serde_json::from_value(case["result_weights"].clone()).unwrap(),
             },
             concurrence_percent: 6,
+            max_ms: None,
+            exclude: std::collections::BTreeSet::default(),
         };
-        let rows = hydrus_store::related_tags::query(&store, &request, &|| false).unwrap();
+        let rows = hydrus_store::related_tags::query(&store, &request, &|| false)
+            .unwrap()
+            .suggestions;
         if case["name"] == "zero all" {
             assert!(rows.is_empty());
         } else {
@@ -173,6 +179,7 @@ fn real_service_mappings_replay_recorded_ranks_and_never_cross_service() {
         assert!(
             hydrus_store::related_tags::query(&store, &other, &|| false)
                 .unwrap()
+                .suggestions
                 .is_empty()
         );
     }
@@ -299,8 +306,12 @@ fn binary64_result_rounding_and_sibling_contexts_replay_the_actual_db() {
                 result: vec![(String::new(), 0), (":".into(), 0), ("round:".into(), 29)],
             },
             concurrence_percent: 6,
+            max_ms: None,
+            exclude: std::collections::BTreeSet::default(),
         };
-        let result = hydrus_store::related_tags::query(&store, &request, &|| false).unwrap();
+        let result = hydrus_store::related_tags::query(&store, &request, &|| false)
+            .unwrap()
+            .suggestions;
         assert_eq!(serde_json::json!(result), case["rows"]);
         let rounding = result
             .iter()
@@ -323,8 +334,12 @@ fn binary64_result_rounding_and_sibling_contexts_replay_the_actual_db() {
                 result: vec![(String::new(), 0), (":".into(), 0), ("scope:".into(), 100)],
             },
             concurrence_percent: 6,
+            max_ms: None,
+            exclude: std::collections::BTreeSet::default(),
         };
-        let result = hydrus_store::related_tags::query(&store, &request, &|| false).unwrap();
+        let result = hydrus_store::related_tags::query(&store, &request, &|| false)
+            .unwrap()
+            .suggestions;
         assert_eq!(
             serde_json::json!(result),
             case["rows"],

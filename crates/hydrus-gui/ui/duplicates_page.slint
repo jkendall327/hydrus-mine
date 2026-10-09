@@ -1,3 +1,4 @@
+import { Btn } from "btn.slint";
 // A duplicates page's sidebar (the reference's `SidebarDuplicateFilter`):
 // its preparation tab (how far the similar files search has got, its
 // distance, working hard, and its cog menu), its filtering tab (launching
@@ -103,7 +104,7 @@ export component DuplicatesSidebar inherits VerticalLayout {
                         text: root.data.eligible;
                         horizontal-stretch: 1;
                     }
-                    Button {
+                    Btn {
                         width: 30px;
                         text: "⟳";
                         clicked => { root.action("refresh", 0, false, false); }
@@ -145,7 +146,7 @@ export component DuplicatesSidebar inherits VerticalLayout {
                                 activated => { root.action("delete pairs", 0, false, false); }
                             }
                         }
-                        Button {
+                        Btn {
                             width: 30px;
                             text: "⚙";
                             clicked => { prep-cog.show({ x: 0px, y: self.height }); }
@@ -175,7 +176,7 @@ export component DuplicatesSidebar inherits VerticalLayout {
                                 activated => { root.action("distance", 8, false, false); }
                             }
                         }
-                        Button {
+                        Btn {
                             text: root.data.distance-label;
                             clicked => { distance-menu.show({ x: 0px, y: self.height }); }
                         }
@@ -198,12 +199,12 @@ export component DuplicatesSidebar inherits VerticalLayout {
                         ProgressIndicator { progress: root.data.searched-fraction; }
                     }
                     // (the reference's play and pause icons)
-                    if !root.data.working-hard: Button {
+                    if !root.data.working-hard: Btn {
                         text: "work harder";
                         enabled: root.data.can-start;
                         clicked => { root.action("work hard", 1, false, false); }
                     }
-                    if root.data.working-hard: Button {
+                    if root.data.working-hard: Btn {
                         text: "stop";
                         clicked => { root.action("work hard", 0, false, false); }
                     }
@@ -231,7 +232,7 @@ export component DuplicatesSidebar inherits VerticalLayout {
                             activated => { root.action("merge options", 2, false, false); }
                         }
                     }
-                    Button {
+                    Btn {
                         text: "edit default duplicate metadata merge options";
                         clicked => { merge-menu.show({ x: 0px, y: self.height }); }
                     }
@@ -241,14 +242,14 @@ export component DuplicatesSidebar inherits VerticalLayout {
                 ComboBox { model: root.filtering.kinds; current-index: root.filtering.kind; selected => { root.filtering-action("kind", self.current-index); } }
                 for text[i] in root.filtering.search-1: HorizontalLayout {
                     Label { text: text; horizontal-stretch: 1; }
-                    Button { text: "×"; clicked => { root.filtering-action("remove 1", i); } }
+                    Btn { text: "×"; clicked => { root.filtering-action("remove 1", i); } }
                 }
                 LineEdit { placeholder-text: "tag or system predicate"; text <=> root.filter-input-1; accepted => { root.filtering-action("add 1", 0); } }
                 if root.filtering.second-shown: VerticalLayout {
                     spacing: 6px;
                     for text[i] in root.filtering.search-2: HorizontalLayout {
                         Label { text: text; horizontal-stretch: 1; }
-                        Button { text: "×"; clicked => { root.filtering-action("remove 2", i); } }
+                        Btn { text: "×"; clicked => { root.filtering-action("remove 2", i); } }
                     }
                     LineEdit { placeholder-text: "tag or system predicate"; text <=> root.filter-input-2; accepted => { root.filtering-action("add 2", 0); } }
                 }
@@ -261,7 +262,7 @@ export component DuplicatesSidebar inherits VerticalLayout {
                 HorizontalLayout {
                     spacing: 4px;
                     Label { text: root.filtering.count; horizontal-stretch: 1; }
-                    Button { text: "⟳"; clicked => { root.filtering-action("refresh count", 0); } }
+                    Btn { text: "⟳"; clicked => { root.filtering-action("refresh count", 0); } }
                 }
                 Text { text: "duplicate filter"; font-weight: 700; color: Theme.text; }
                 HorizontalLayout {
@@ -270,13 +271,13 @@ export component DuplicatesSidebar inherits VerticalLayout {
                     if root.filtering.directions.length > 0: ComboBox { model: root.filtering.directions; current-index: root.filtering.direction; selected => { root.filtering-action("direction", self.current-index); } }
                     ComboBox { model: root.filtering.groups; current-index: root.filtering.group; selected => { root.filtering-action("group", self.current-index); } }
                 }
-                Button {
+                Btn {
                     text: "launch the filter";
                     clicked => { root.action("launch filter", 0, false, false); }
                 }
                 Text { text: "quick and dirty processing"; font-weight: 700; color: Theme.text; }
-                Button { text: "show some random potential duplicates"; clicked => { root.filtering-action("random", 0); } }
-                for text[i] in root.filtering.set-buttons: Button { text: text; clicked => { root.filtering-action("set", i); } }
+                Btn { text: "show some random potential duplicates"; clicked => { root.filtering-action("random", 0); } }
+                for text[i] in root.filtering.set-buttons: Btn { text: text; clicked => { root.filtering-action("set", i); } }
             }
         }
         Tab {
@@ -287,7 +288,7 @@ export component DuplicatesSidebar inherits VerticalLayout {
                 HorizontalLayout {
                     spacing: 4px;
                     alignment: end;
-                    Button {
+                    Btn {
                         width: 30px;
                         text: "⟳";
                         clicked => { root.action("refresh", 0, false, false); }
@@ -321,7 +322,7 @@ export component DuplicatesSidebar inherits VerticalLayout {
                                 activated => { root.action("reset denied", 0, false, false); }
                             }
                         }
-                        Button {
+                        Btn {
                             width: 30px;
                             text: "⚙";
                             clicked => { rules-cog.show({ x: 0px, y: self.height }); }
@@ -343,17 +344,17 @@ export component DuplicatesSidebar inherits VerticalLayout {
                 HorizontalLayout {
                     spacing: 4px;
                     alignment: end;
-                    Button {
+                    Btn {
                         text: "pause/play";
                         enabled: root.data.any-rule-selected && !root.data.asking;
                         clicked => { root.action("pause rules", 0, false, false); }
                     }
-                    Button {
+                    Btn {
                         text: "review actions";
                         enabled: root.data.any-rule-selected && !root.data.asking;
                         clicked => { root.action("review actions", 0, false, false); }
                     }
-                    Button {
+                    Btn {
                         text: "edit rules";
                         enabled: !root.data.asking;
                         clicked => { root.action("edit rules", 0, false, false); }

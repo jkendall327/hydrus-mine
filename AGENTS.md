@@ -185,6 +185,13 @@ modules in a gitignored `crates/hydrus-gui/tests/lane_<name>.rs` (with
   `ListTable`. Standard widgets such as `Button` cannot have children
   (a `Timer` inside a `Button` fails to compile). Row kinds in
   `options.slint` are bare integers: check the existing ones before adding.
+- **Slint compile memory**: the generated UI crate peaks near 14 GB (the cap
+  of a cloud session is 14.3 GB). A written-out `Button { }` costs ~4 KB of
+  generated Rust, a `Tooltip` ~135 KB. Use `Btn` (`ui/btn.slint`: text, enabled,
+  primary, clicked) for a plain button, and `TipButton`/`TipComboBox`
+  (`ui/tip_widgets.slint`) for one with a tooltip, so the cost is paid once.
+  Measure a `.slint` change in seconds with the slint compiler's output size
+  (run the crate's build script by hand) before the 7-minute build.
 - **Slint geometry**: a child-to-parent two-way link keeps the parent's
   existing binding or value. An unbound parent output can therefore replace
   measured child geometry with its default zero. Expose measured geometry

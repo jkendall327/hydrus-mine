@@ -1,3 +1,4 @@
+import { Btn } from "btn.slint";
 // The reference shared ExportPatternButton: copy shortcuts to the clipboard.
 import { Button } from "std-widgets.slint";
 export component ExportPatternButton inherits ContextMenuArea {
@@ -22,7 +23,7 @@ export component ExportPatternButton inherits ContextMenuArea {
         MenuItem { title: root.labels[6]; activated => { root.selected(6); } }
 
     }
-    button := Button {
+    button := Btn {
         width: parent.width;
         height: parent.height;
         text: "pattern shortcuts";

@@ -162,6 +162,8 @@ mod network_data;
 
 mod domain_metadata;
 mod downloader_interchange;
+mod suggested_tag_panels;
+mod tag_filter_tooltips;
 mod tag_migration;
 
 mod manage_notes_replay;
@@ -185,6 +187,7 @@ mod tag_namespace_order;
 mod unselected_tag_cap;
 
 mod write_autocomplete;
+mod write_autocomplete_leaves;
 
 mod network_job_control;
 
@@ -221,6 +224,7 @@ mod autocomplete_tabs;
 mod gui_colours;
 mod gui_format;
 mod preview_default_zoom;
+mod related_tags_panel;
 mod related_weight_table;
 
 mod external_calls;

@@ -1,3 +1,4 @@
+import { Btn } from "btn.slint";
 // The "manage times" dialog for some files (the reference's
 // `EditFileTimestampsPanel`, opened by a thumbnail's or the viewer's
 // "manage > times"; its workings are hydrus-gui-model's `times_editor`,
@@ -117,18 +118,18 @@ export component ManageTimesWindow inherits Window {
                 vertical-alignment: center;
                 min-width: 200px;
             }
-            Button {
+            Btn {
                 text: row.text;
                 horizontal-stretch: 1;
                 enabled: row.enabled && !root.asking;
                 clicked => { root.time-clicked(i); }
             }
-            Button {
+            Btn {
                 text: "copy";
                 enabled: !root.asking;
                 clicked => { root.time-copy(i); }
             }
-            Button {
+            Btn {
                 text: "paste";
                 enabled: row.enabled && !root.asking;
                 clicked => { root.time-paste(i); }
@@ -158,17 +159,17 @@ export component ManageTimesWindow inherits Window {
             HorizontalLayout {
                 alignment: end;
                 spacing: 6px;
-                Button {
+                Btn {
                     text: "add";
                     enabled: !root.asking;
                     clicked => { root.add-domain(); }
                 }
-                Button {
+                Btn {
                     text: "edit";
                     enabled: root.domain-selected && !root.asking;
                     clicked => { root.edit-domains(); }
                 }
-                Button {
+                Btn {
                     text: "delete";
                     enabled: root.domain-selected && !root.asking;
                     clicked => { root.delete-domains(); }
@@ -192,7 +193,7 @@ export component ManageTimesWindow inherits Window {
             }
             HorizontalLayout {
                 alignment: end;
-                Button {
+                Btn {
                     text: "edit";
                     enabled: root.service-selected && !root.asking;
                     clicked => { root.edit-services(); }
@@ -207,13 +208,13 @@ export component ManageTimesWindow inherits Window {
                 vertical-alignment: center;
                 color: Theme.text;
             }
-            copy-button := Button {
+            copy-button := Btn {
                 visible: root.can-copy;
                 text: "copy";
                 enabled: !root.asking;
                 clicked => { copy-menu.show(); }
             }
-            Button {
+            Btn {
                 text: "paste";
                 enabled: !root.asking;
                 clicked => { root.paste(); }
@@ -231,12 +232,12 @@ export component ManageTimesWindow inherits Window {
         HorizontalLayout {
             alignment: end;
             spacing: 6px;
-            Button {
+            Btn {
                 text: "apply";
                 enabled: !root.asking;
                 clicked => { root.apply(); }
             }
-            Button {
+            Btn {
                 text: "cancel";
                 clicked => { root.cancel(); }
             }
@@ -329,15 +330,15 @@ export component DateTimeEditorWindow inherits Window {
                 vertical-alignment: center;
                 color: Theme.text;
             }
-            Button {
+            Btn {
                 text: "copy";
                 clicked => { root.copy(); }
             }
-            Button {
+            Btn {
                 text: "paste";
                 clicked => { root.paste(); }
             }
-            Button {
+            Btn {
                 text: "now";
                 clicked => { root.now(); }
             }
@@ -353,12 +354,12 @@ export component DateTimeEditorWindow inherits Window {
         HorizontalLayout {
             alignment: end;
             spacing: 6px;
-            Button {
+            Btn {
                 text: "apply";
                 enabled: !root.asking;
                 clicked => { root.apply(); }
             }
-            Button {
+            Btn {
                 text: "cancel";
                 clicked => { root.cancel(); }
             }

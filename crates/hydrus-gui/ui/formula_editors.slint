@@ -1,3 +1,4 @@
+import { Btn } from "btn.slint";
 import { Button, CheckBox, ComboBox, LineEdit, SpinBox, TextEdit } from "std-widgets.slint";
 import { Asking } from "subscriptions.slint";
 import { Theme } from "theme.slint";
@@ -61,11 +62,11 @@ export component FormulaWindow inherits Window {
                 if root.kind < 2 || root.kind == 3: ListTable { vertical-stretch: 1; columns: [{title: root.kind == 3 ? "component formulae" : "parsing rules", width: 430px, stretch: true}]; rows: root.rules; row-clicked(r,c,s) => { if !root.deleting && !root.child-open { root.row-clicked(r,c,s); } } row-activated(r) => { if !root.deleting && !root.child-open { root.row-activated(r); } } }
                 if root.kind < 2 || root.kind == 3: HorizontalLayout {
                     spacing: 4px;
-                    Button { text: "add"; enabled: root.supported && !root.deleting && !root.child-open; clicked => { root.add(); } }
-                    Button { text: "edit"; enabled: root.selected && !root.deleting && !root.child-open; clicked => { root.edit(); } }
-                    Button { text: "delete"; enabled: root.selected && !root.deleting && !root.child-open; clicked => { root.delete(); } }
-                    Button { text: "↑"; enabled: root.selected && !root.deleting && !root.child-open; clicked => { root.shift(false); } }
-                    Button { text: "↓"; enabled: root.selected && !root.deleting && !root.child-open; clicked => { root.shift(true); } }
+                    Btn { text: "add"; enabled: root.supported && !root.deleting && !root.child-open; clicked => { root.add(); } }
+                    Btn { text: "edit"; enabled: root.selected && !root.deleting && !root.child-open; clicked => { root.edit(); } }
+                    Btn { text: "delete"; enabled: root.selected && !root.deleting && !root.child-open; clicked => { root.delete(); } }
+                    Btn { text: "↑"; enabled: root.selected && !root.deleting && !root.child-open; clicked => { root.shift(false); } }
+                    Btn { text: "↓"; enabled: root.selected && !root.deleting && !root.child-open; clicked => { root.shift(true); } }
                 }
                 if root.kind < 2: Text { text: "content to fetch:"; color: Theme.text; }
                 if root.kind < 2: ComboBox { model: root.contents; current-index <=> root.content; enabled: root.supported && !root.deleting && !root.child-open; selected => { root.changed(); } }
@@ -77,15 +78,15 @@ export component FormulaWindow inherits Window {
                     Text { text: "Whatever is parsed by the first formula is sent to the second."; wrap: word-wrap; color: Theme.text; }
                     Text { text: "first formula:"; color: Theme.text; }
                     Text { text: root.main-label; wrap: word-wrap; color: Theme.text; }
-                    Button { text: "edit first formula"; enabled: !root.child-open; clicked => { root.edit-child(false); } }
+                    Btn { text: "edit first formula"; enabled: !root.child-open; clicked => { root.edit-child(false); } }
                     Text { text: "second formula:"; color: Theme.text; }
                     Text { text: root.sub-label; wrap: word-wrap; color: Theme.text; }
-                    Button { text: "edit second formula"; enabled: !root.child-open; clicked => { root.edit-child(true); } }
+                    Btn { text: "edit second formula"; enabled: !root.child-open; clicked => { root.edit-child(true); } }
                 }
                 if root.kind == 3: VerticalLayout {
                     HorizontalLayout {
-                        Button { text: "import components"; enabled: !root.child-open && !root.deleting; clicked => { root.member-exchange(true); } }
-                        Button { text: "export selected"; enabled: root.selected && !root.child-open && !root.deleting; clicked => { root.member-exchange(false); } }
+                        Btn { text: "import components"; enabled: !root.child-open && !root.deleting; clicked => { root.member-exchange(true); } }
+                        Btn { text: "export selected"; enabled: root.selected && !root.child-open && !root.deleting; clicked => { root.member-exchange(false); } }
                     }
                     Text { text: "substitution phrase (\\1, \\2, …):"; color: Theme.text; }
                     LineEdit { text <=> root.phrase; enabled: !root.child-open && !root.deleting; edited => { root.changed(); } }
@@ -103,35 +104,35 @@ export component FormulaWindow inherits Window {
                     }
                 }
                 HorizontalLayout {
-                    Button { text: "import formula"; enabled: !root.child-open && !root.deleting; clicked => { root.exchange(true); } }
-                    Button { text: "export formula"; enabled: !root.child-open && !root.deleting; clicked => { root.exchange(false); } }
+                    Btn { text: "import formula"; enabled: !root.child-open && !root.deleting; clicked => { root.exchange(true); } }
+                    Btn { text: "export formula"; enabled: !root.child-open && !root.deleting; clicked => { root.exchange(false); } }
                 }
                 Text { text: root.newline-note; wrap: word-wrap; color: Theme.text; }
-                Button { text: root.processing; enabled: root.supported && !root.deleting && !root.child-open; clicked => { root.edit-processing(); } }
+                Btn { text: root.processing; enabled: root.supported && !root.deleting && !root.child-open; clicked => { root.edit-processing(); } }
             }
             VerticalLayout {
                 horizontal-stretch: 1; spacing: 6px;
                 Text { text: "test — example document"; font-weight: 700; color: Theme.text; }
                 HorizontalLayout {
                     LineEdit { text <=> root.fetch-url; placeholder-text: "URL to fetch"; enabled: !root.child-open; }
-                    Button { text: "fetch from URL"; enabled: !root.child-open; clicked => { root.fetch(); } }
-                    Button { text: "cancel fetch"; enabled: root.fetching; clicked => { root.cancel-fetch(); } }
+                    Btn { text: "fetch from URL"; enabled: !root.child-open; clicked => { root.fetch(); } }
+                    Btn { text: "cancel fetch"; enabled: root.fetching; clicked => { root.cancel-fetch(); } }
                 }
                 if root.fetch-status != "": Text { text: root.fetch-status; color: Theme.text; wrap: word-wrap; }
                 HorizontalLayout {
                     ComboBox { model: root.examples; current-index <=> root.example; enabled: !root.child-open; selected => { root.example-chosen(); } }
-                    Button { text: "add example"; enabled: !root.child-open; clicked => { root.add-example(); } }
-                    Button { text: "remove example"; enabled: root.examples.length > 1 && !root.child-open; clicked => { root.remove-example(); } }
+                    Btn { text: "add example"; enabled: !root.child-open; clicked => { root.add-example(); } }
+                    Btn { text: "remove example"; enabled: root.examples.length > 1 && !root.child-open; clicked => { root.remove-example(); } }
                 }
                 HorizontalLayout {
-                    Button { text: "copy data"; enabled: !root.child-open; clicked => { root.raw-action("copy"); } }
-                    Button { text: "paste data"; enabled: !root.child-open; clicked => { root.raw-action("paste"); } }
+                    Btn { text: "copy data"; enabled: !root.child-open; clicked => { root.raw-action("copy"); } }
+                    Btn { text: "paste data"; enabled: !root.child-open; clicked => { root.raw-action("paste"); } }
                 }
                 Text { text: root.raw-description; color: Theme.text; wrap: word-wrap; }
                 TextEdit { vertical-stretch: 1; text: root.raw-preview; read-only: true; }
                 Text { text: "parsing context (one key=value per line)"; color: Theme.text; }
                 TextEdit { height: 65px; text <=> root.context; enabled: !root.child-open; edited(t) => { root.context = t; root.changed(); } }
-                Button { text: "test parse"; enabled: root.parse-enabled && !root.child-open; clicked => { root.test(); } }
+                Btn { text: "test parse"; enabled: root.parse-enabled && !root.child-open; clicked => { root.test(); } }
                 Text { text: root.status; wrap: word-wrap; color: Theme.text; }
                 ListTable { vertical-stretch: 1; columns: [{title: "parsed strings", width: 430px, stretch: true}]; rows: root.results; }
             }
@@ -139,8 +140,8 @@ export component FormulaWindow inherits Window {
         if root.deleting: Asking { title: "Are you sure?"; message: root.question; choices: ["yes", "no"]; chosen(i) => { root.chosen(i); } cancelled => { root.cancelled(); } }
         Text { text: root.veto; wrap: word-wrap; color: Theme.text; }
         HorizontalLayout { alignment: end; spacing: 6px;
-            Button { text: "apply"; enabled: !root.deleting && !root.child-open; clicked => { root.apply(); } }
-            Button { text: "cancel"; clicked => { root.cancel(); } }
+            Btn { text: "apply"; enabled: !root.deleting && !root.child-open; clicked => { root.apply(); } }
+            Btn { text: "cancel"; clicked => { root.cancel(); } }
         }
     }
 }
@@ -181,7 +182,7 @@ export component FormulaRuleWindow inherits Window {
             HorizontalLayout {
                 LineEdit { enabled: !root.child-open; placeholder-text: "name"; text <=> root.attr-key; }
                 LineEdit { enabled: !root.child-open; placeholder-text: "value"; text <=> root.attr-value; }
-                Button { enabled: !root.child-open; text: "set attribute"; clicked => { root.attribute-put(); } }
+                Btn { enabled: !root.child-open; text: "set attribute"; clicked => { root.attribute-put(); } }
             }
         }
         if (root.html && root.rule-type != 1) || (!root.html && (root.rule-type == 2 || root.rule-type == 5)): HorizontalLayout {
@@ -194,14 +195,14 @@ export component FormulaRuleWindow inherits Window {
             SpinBox { enabled: !root.child-open; value <=> root.depth; minimum: 1; maximum: root.html ? 255 : 64; edited => { root.changed(); } }
         }
         if root.html: CheckBox { enabled: !root.child-open; text: "should test tag string"; checked <=> root.match-on; toggled => { root.changed(); } }
-        if root.html || root.rule-type == 0 || root.rule-type == 3: Button {
+        if root.html || root.rule-type == 0 || root.rule-type == 3: Btn {
             text: root.match-label; enabled: (!root.html || root.match-on) && !root.child-open; clicked => { root.edit-match(); }
         }
         Rectangle { vertical-stretch: 1; }
         Text { text: root.veto; color: Theme.text; }
         HorizontalLayout { alignment: end; spacing: 6px;
-            Button { text: "apply"; enabled: !root.child-open; clicked => { root.apply(); } }
-            Button { text: "cancel"; clicked => { root.cancel(); } }
+            Btn { text: "apply"; enabled: !root.child-open; clicked => { root.apply(); } }
+            Btn { text: "cancel"; clicked => { root.cancel(); } }
         }
     }
 }

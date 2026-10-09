@@ -1,0 +1,800 @@
+{
+  "most_used": [
+    "parity:new10",
+    "parity:new2",
+    "parity:present",
+    "parity:漢字"
+  ],
+  "files": [
+    "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+    "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61",
+    "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147",
+    "65131efb3aae7bf341ae655277f26961a60f64953126f17f95cda4a4a8ab2f7b",
+    "5dd3019b5f7f5e020c79a3d97b4688b2523d4027dc876b02f3b3125476a1f96a",
+    "01310d25cceed29dac584b96a0d17162da836adf1a76585f3d69509682387e5b"
+  ],
+  "selected": [
+    "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+    "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61"
+  ],
+  "corpus": [
+    [
+      "parity:present",
+      [
+        0,
+        1
+      ]
+    ],
+    [
+      "source:seed",
+      [
+        0,
+        1,
+        2,
+        3
+      ]
+    ],
+    [
+      "context:seed",
+      [
+        2,
+        3
+      ]
+    ],
+    [
+      "alpha:first",
+      [
+        0,
+        1,
+        2
+      ]
+    ],
+    [
+      "beta:second",
+      [
+        3,
+        4,
+        5
+      ]
+    ],
+    [
+      "alpha:third",
+      [
+        2,
+        3,
+        4
+      ]
+    ],
+    [
+      "gamma:other",
+      [
+        0,
+        1,
+        4,
+        5
+      ]
+    ]
+  ],
+  "cases": [
+    {
+      "layout": "notebook",
+      "default": "favourites",
+      "labels": [
+        "most used",
+        "related",
+        "recent"
+      ],
+      "selected": "most used",
+      "lists": {
+        "favourites": [
+          "parity:new2",
+          "parity:new10",
+          "parity:漢字"
+        ],
+        "related": [
+          "alpha:third",
+          "beta:second",
+          "smile",
+          "context:seed",
+          "éclair",
+          "blue eyes",
+          "creator:someone else",
+          "character:link",
+          "series:the legend of zelda",
+          "indoors",
+          "キャラクター:初音ミク",
+          "format:jpeg",
+          "volume:3",
+          "page:10",
+          "creator:anonymous artist",
+          "red hair",
+          "meta:low resolution",
+          "page:3",
+          "page:1",
+          "outdoors"
+        ],
+        "recent": [
+          "parity:recent"
+        ]
+      },
+      "activated": [
+        {
+          "tags": [
+            "parity:new2"
+          ],
+          "only_add": true
+        },
+        {
+          "tags": [
+            "alpha:third"
+          ],
+          "only_add": true
+        },
+        {
+          "tags": [
+            "parity:recent"
+          ],
+          "only_add": true
+        }
+      ],
+      "remaining": {
+        "favourites": [
+          "parity:new10",
+          "parity:漢字"
+        ],
+        "related": [
+          "beta:second",
+          "smile",
+          "context:seed",
+          "éclair",
+          "blue eyes",
+          "creator:someone else",
+          "character:link",
+          "series:the legend of zelda",
+          "indoors",
+          "キャラクター:初音ミク",
+          "format:jpeg",
+          "volume:3",
+          "page:10",
+          "creator:anonymous artist",
+          "red hair",
+          "meta:low resolution",
+          "page:3",
+          "page:1",
+          "outdoors"
+        ],
+        "recent": []
+      }
+    },
+    {
+      "layout": "notebook",
+      "default": "related",
+      "labels": [
+        "most used",
+        "related",
+        "recent"
+      ],
+      "selected": "related",
+      "lists": {
+        "favourites": [
+          "parity:new2",
+          "parity:new10",
+          "parity:漢字"
+        ],
+        "related": [
+          "alpha:third",
+          "beta:second",
+          "smile",
+          "context:seed",
+          "éclair",
+          "blue eyes",
+          "creator:someone else",
+          "character:link",
+          "series:the legend of zelda",
+          "indoors",
+          "キャラクター:初音ミク",
+          "format:jpeg",
+          "volume:3",
+          "page:10",
+          "creator:anonymous artist",
+          "red hair",
+          "meta:low resolution",
+          "page:3",
+          "page:1",
+          "outdoors"
+        ],
+        "recent": [
+          "parity:recent"
+        ]
+      },
+      "activated": [
+        {
+          "tags": [
+            "parity:new2"
+          ],
+          "only_add": true
+        },
+        {
+          "tags": [
+            "alpha:third"
+          ],
+          "only_add": true
+        },
+        {
+          "tags": [
+            "parity:recent"
+          ],
+          "only_add": true
+        }
+      ],
+      "remaining": {
+        "favourites": [
+          "parity:new10",
+          "parity:漢字"
+        ],
+        "related": [
+          "beta:second",
+          "smile",
+          "context:seed",
+          "éclair",
+          "blue eyes",
+          "creator:someone else",
+          "character:link",
+          "series:the legend of zelda",
+          "indoors",
+          "キャラクター:初音ミク",
+          "format:jpeg",
+          "volume:3",
+          "page:10",
+          "creator:anonymous artist",
+          "red hair",
+          "meta:low resolution",
+          "page:3",
+          "page:1",
+          "outdoors"
+        ],
+        "recent": []
+      }
+    },
+    {
+      "layout": "notebook",
+      "default": "file_lookup_scripts",
+      "labels": [
+        "most used",
+        "related",
+        "recent"
+      ],
+      "selected": "most used",
+      "lists": {
+        "favourites": [
+          "parity:new2",
+          "parity:new10",
+          "parity:漢字"
+        ],
+        "related": [
+          "alpha:third",
+          "beta:second",
+          "smile",
+          "context:seed",
+          "éclair",
+          "blue eyes",
+          "creator:someone else",
+          "character:link",
+          "series:the legend of zelda",
+          "indoors",
+          "キャラクター:初音ミク",
+          "format:jpeg",
+          "volume:3",
+          "page:10",
+          "creator:anonymous artist",
+          "red hair",
+          "meta:low resolution",
+          "page:3",
+          "page:1",
+          "outdoors"
+        ],
+        "recent": [
+          "parity:recent"
+        ]
+      },
+      "activated": [
+        {
+          "tags": [
+            "parity:new2"
+          ],
+          "only_add": true
+        },
+        {
+          "tags": [
+            "alpha:third"
+          ],
+          "only_add": true
+        },
+        {
+          "tags": [
+            "parity:recent"
+          ],
+          "only_add": true
+        }
+      ],
+      "remaining": {
+        "favourites": [
+          "parity:new10",
+          "parity:漢字"
+        ],
+        "related": [
+          "beta:second",
+          "smile",
+          "context:seed",
+          "éclair",
+          "blue eyes",
+          "creator:someone else",
+          "character:link",
+          "series:the legend of zelda",
+          "indoors",
+          "キャラクター:初音ミク",
+          "format:jpeg",
+          "volume:3",
+          "page:10",
+          "creator:anonymous artist",
+          "red hair",
+          "meta:low resolution",
+          "page:3",
+          "page:1",
+          "outdoors"
+        ],
+        "recent": []
+      }
+    },
+    {
+      "layout": "notebook",
+      "default": "recent",
+      "labels": [
+        "most used",
+        "related",
+        "recent"
+      ],
+      "selected": "recent",
+      "lists": {
+        "favourites": [
+          "parity:new2",
+          "parity:new10",
+          "parity:漢字"
+        ],
+        "related": [
+          "alpha:third",
+          "beta:second",
+          "smile",
+          "context:seed",
+          "éclair",
+          "blue eyes",
+          "creator:someone else",
+          "character:link",
+          "series:the legend of zelda",
+          "indoors",
+          "キャラクター:初音ミク",
+          "format:jpeg",
+          "volume:3",
+          "page:10",
+          "creator:anonymous artist",
+          "red hair",
+          "meta:low resolution",
+          "page:3",
+          "page:1",
+          "outdoors"
+        ],
+        "recent": [
+          "parity:recent"
+        ]
+      },
+      "activated": [
+        {
+          "tags": [
+            "parity:new2"
+          ],
+          "only_add": true
+        },
+        {
+          "tags": [
+            "alpha:third"
+          ],
+          "only_add": true
+        },
+        {
+          "tags": [
+            "parity:recent"
+          ],
+          "only_add": true
+        }
+      ],
+      "remaining": {
+        "favourites": [
+          "parity:new10",
+          "parity:漢字"
+        ],
+        "related": [
+          "beta:second",
+          "smile",
+          "context:seed",
+          "éclair",
+          "blue eyes",
+          "creator:someone else",
+          "character:link",
+          "series:the legend of zelda",
+          "indoors",
+          "キャラクター:初音ミク",
+          "format:jpeg",
+          "volume:3",
+          "page:10",
+          "creator:anonymous artist",
+          "red hair",
+          "meta:low resolution",
+          "page:3",
+          "page:1",
+          "outdoors"
+        ],
+        "recent": []
+      }
+    },
+    {
+      "layout": "columns",
+      "default": "favourites",
+      "labels": [
+        "most used",
+        "related",
+        "recent"
+      ],
+      "selected": null,
+      "lists": {
+        "favourites": [
+          "parity:new2",
+          "parity:new10",
+          "parity:漢字"
+        ],
+        "related": [
+          "alpha:third",
+          "beta:second",
+          "smile",
+          "context:seed",
+          "éclair",
+          "blue eyes",
+          "creator:someone else",
+          "character:link",
+          "series:the legend of zelda",
+          "indoors",
+          "キャラクター:初音ミク",
+          "format:jpeg",
+          "volume:3",
+          "page:10",
+          "creator:anonymous artist",
+          "red hair",
+          "meta:low resolution",
+          "page:3",
+          "page:1",
+          "outdoors"
+        ],
+        "recent": [
+          "parity:recent"
+        ]
+      },
+      "activated": [
+        {
+          "tags": [
+            "parity:new2"
+          ],
+          "only_add": true
+        },
+        {
+          "tags": [
+            "alpha:third"
+          ],
+          "only_add": true
+        },
+        {
+          "tags": [
+            "parity:recent"
+          ],
+          "only_add": true
+        }
+      ],
+      "remaining": {
+        "favourites": [
+          "parity:new10",
+          "parity:漢字"
+        ],
+        "related": [
+          "beta:second",
+          "smile",
+          "context:seed",
+          "éclair",
+          "blue eyes",
+          "creator:someone else",
+          "character:link",
+          "series:the legend of zelda",
+          "indoors",
+          "キャラクター:初音ミク",
+          "format:jpeg",
+          "volume:3",
+          "page:10",
+          "creator:anonymous artist",
+          "red hair",
+          "meta:low resolution",
+          "page:3",
+          "page:1",
+          "outdoors"
+        ],
+        "recent": []
+      }
+    },
+    {
+      "layout": "columns",
+      "default": "related",
+      "labels": [
+        "most used",
+        "related",
+        "recent"
+      ],
+      "selected": null,
+      "lists": {
+        "favourites": [
+          "parity:new2",
+          "parity:new10",
+          "parity:漢字"
+        ],
+        "related": [
+          "alpha:third",
+          "beta:second",
+          "smile",
+          "context:seed",
+          "éclair",
+          "blue eyes",
+          "creator:someone else",
+          "character:link",
+          "series:the legend of zelda",
+          "indoors",
+          "キャラクター:初音ミク",
+          "format:jpeg",
+          "volume:3",
+          "page:10",
+          "creator:anonymous artist",
+          "red hair",
+          "meta:low resolution",
+          "page:3",
+          "page:1",
+          "outdoors"
+        ],
+        "recent": [
+          "parity:recent"
+        ]
+      },
+      "activated": [
+        {
+          "tags": [
+            "parity:new2"
+          ],
+          "only_add": true
+        },
+        {
+          "tags": [
+            "alpha:third"
+          ],
+          "only_add": true
+        },
+        {
+          "tags": [
+            "parity:recent"
+          ],
+          "only_add": true
+        }
+      ],
+      "remaining": {
+        "favourites": [
+          "parity:new10",
+          "parity:漢字"
+        ],
+        "related": [
+          "beta:second",
+          "smile",
+          "context:seed",
+          "éclair",
+          "blue eyes",
+          "creator:someone else",
+          "character:link",
+          "series:the legend of zelda",
+          "indoors",
+          "キャラクター:初音ミク",
+          "format:jpeg",
+          "volume:3",
+          "page:10",
+          "creator:anonymous artist",
+          "red hair",
+          "meta:low resolution",
+          "page:3",
+          "page:1",
+          "outdoors"
+        ],
+        "recent": []
+      }
+    },
+    {
+      "layout": "columns",
+      "default": "file_lookup_scripts",
+      "labels": [
+        "most used",
+        "related",
+        "recent"
+      ],
+      "selected": null,
+      "lists": {
+        "favourites": [
+          "parity:new2",
+          "parity:new10",
+          "parity:漢字"
+        ],
+        "related": [
+          "alpha:third",
+          "beta:second",
+          "smile",
+          "context:seed",
+          "éclair",
+          "blue eyes",
+          "creator:someone else",
+          "character:link",
+          "series:the legend of zelda",
+          "indoors",
+          "キャラクター:初音ミク",
+          "format:jpeg",
+          "volume:3",
+          "page:10",
+          "creator:anonymous artist",
+          "red hair",
+          "meta:low resolution",
+          "page:3",
+          "page:1",
+          "outdoors"
+        ],
+        "recent": [
+          "parity:recent"
+        ]
+      },
+      "activated": [
+        {
+          "tags": [
+            "parity:new2"
+          ],
+          "only_add": true
+        },
+        {
+          "tags": [
+            "alpha:third"
+          ],
+          "only_add": true
+        },
+        {
+          "tags": [
+            "parity:recent"
+          ],
+          "only_add": true
+        }
+      ],
+      "remaining": {
+        "favourites": [
+          "parity:new10",
+          "parity:漢字"
+        ],
+        "related": [
+          "beta:second",
+          "smile",
+          "context:seed",
+          "éclair",
+          "blue eyes",
+          "creator:someone else",
+          "character:link",
+          "series:the legend of zelda",
+          "indoors",
+          "キャラクター:初音ミク",
+          "format:jpeg",
+          "volume:3",
+          "page:10",
+          "creator:anonymous artist",
+          "red hair",
+          "meta:low resolution",
+          "page:3",
+          "page:1",
+          "outdoors"
+        ],
+        "recent": []
+      }
+    },
+    {
+      "layout": "columns",
+      "default": "recent",
+      "labels": [
+        "most used",
+        "related",
+        "recent"
+      ],
+      "selected": null,
+      "lists": {
+        "favourites": [
+          "parity:new2",
+          "parity:new10",
+          "parity:漢字"
+        ],
+        "related": [
+          "alpha:third",
+          "beta:second",
+          "smile",
+          "context:seed",
+          "éclair",
+          "blue eyes",
+          "creator:someone else",
+          "character:link",
+          "series:the legend of zelda",
+          "indoors",
+          "キャラクター:初音ミク",
+          "format:jpeg",
+          "volume:3",
+          "page:10",
+          "creator:anonymous artist",
+          "red hair",
+          "meta:low resolution",
+          "page:3",
+          "page:1",
+          "outdoors"
+        ],
+        "recent": [
+          "parity:recent"
+        ]
+      },
+      "activated": [
+        {
+          "tags": [
+            "parity:new2"
+          ],
+          "only_add": true
+        },
+        {
+          "tags": [
+            "alpha:third"
+          ],
+          "only_add": true
+        },
+        {
+          "tags": [
+            "parity:recent"
+          ],
+          "only_add": true
+        }
+      ],
+      "remaining": {
+        "favourites": [
+          "parity:new10",
+          "parity:漢字"
+        ],
+        "related": [
+          "beta:second",
+          "smile",
+          "context:seed",
+          "éclair",
+          "blue eyes",
+          "creator:someone else",
+          "character:link",
+          "series:the legend of zelda",
+          "indoors",
+          "キャラクター:初音ミク",
+          "format:jpeg",
+          "volume:3",
+          "page:10",
+          "creator:anonymous artist",
+          "red hair",
+          "meta:low resolution",
+          "page:3",
+          "page:1",
+          "outdoors"
+        ],
+        "recent": []
+      }
+    }
+  ]
+}

@@ -1,3 +1,5 @@
+import { Btn } from "btn.slint";
+import { TipButton, TipComboBox } from "tip_widgets.slint";
 import { Button, CheckBox, ComboBox, SpinBox } from "std-widgets.slint";
 import { ListTable, TableRow } from "list_table.slint";
 import { Theme } from "theme.slint";
@@ -9,6 +11,8 @@ export component TagDisplayWindow inherits Window {
     in property <[string]> services;
     in-out property <int> service-index;
     in property <bool> real-service;
+    in property <string> single-tooltip;
+    in property <string> selection-tooltip;
     in property <string> single-label;
     in property <string> selection-label;
     in-out property <bool> fetch-automatically;
@@ -42,13 +46,13 @@ export component TagDisplayWindow inherits Window {
             ComboBox { enabled: !root.child-open; model: root.services; current-index <=> root.service-index; selected => { root.service-chosen(self.current-index); } }
             if !root.application: VerticalLayout {
                 spacing: 8px;
-                HorizontalLayout { Text { text: "Tag filter for single file views:"; color: Theme.text; } Button { enabled: !root.child-open; text: root.single-label; clicked => { root.filter(false); } } }
-                HorizontalLayout { Text { text: "Tag filter for multiple file views:"; color: Theme.text; } Button { enabled: !root.child-open; text: root.selection-label; clicked => { root.filter(true); } } }
+                HorizontalLayout { Text { text: "Tag filter for single file views:"; color: Theme.text; } TipButton { enabled: !root.child-open; text: root.single-label; tip: root.single-tooltip; clicked => { root.filter(false); } } }
+                HorizontalLayout { Text { text: "Tag filter for multiple file views:"; color: Theme.text; } TipButton { enabled: !root.child-open; text: root.selection-label; tip: root.selection-tooltip; clicked => { root.filter(true); } } }
                 CheckBox { enabled: !root.child-open; text: "Fetch results as you type"; checked <=> root.fetch-automatically; toggled => { root.options-changed(); } }
                 HorizontalLayout { Text { text: "Do-not-autocomplete character threshold (0 = always):"; color: Theme.text; } SpinBox { enabled: !root.child-open; minimum: 0; maximum: 256; value <=> root.threshold; edited => { root.options-changed(); } } }
                 if root.real-service: VerticalLayout {
                     CheckBox { enabled: !root.child-open; text: "Override default autocomplete file domain in manage tags"; checked <=> root.override-location; toggled => { root.options-changed(); } }
-                    Button { text: "Default autocomplete location: " + root.location-label; enabled: root.override-location && !root.child-open; clicked => { root.location(); } }
+                    Btn { text: "Default autocomplete location: " + root.location-label; enabled: root.override-location && !root.child-open; clicked => { root.location(); } }
                     HorizontalLayout { Text { text: "Default autocomplete tag domain:"; color: Theme.text; } ComboBox { enabled: !root.child-open; model: root.services; current-index <=> root.write-service; selected => { root.options-changed(); } } }
                 }
                 CheckBox { enabled: !root.child-open; text: "Search namespaces with normal input"; checked <=> root.search-namespaces; toggled => { root.rule-changed(0, self.checked); } }
@@ -65,23 +69,23 @@ export component TagDisplayWindow inherits Window {
                 Text { text: "sibling application"; color: Theme.text; }
                 ListTable { vertical-stretch: 1; columns: [{title: "service (priority order)", width: 600px, stretch: true}]; rows: root.sibling-rows; row-clicked(i, ctrl, shift) => { root.source-click(false, i); } }
                 HorizontalLayout {
-                    Button { enabled: !root.child-open; text: "add"; clicked => { root.source-add(false); } }
-                    Button { enabled: !root.child-open; text: "remove"; clicked => { root.source-change(false, 0); } }
-                    Button { enabled: !root.child-open; text: "up"; clicked => { root.source-change(false, -1); } }
-                    Button { enabled: !root.child-open; text: "down"; clicked => { root.source-change(false, 1); } }
+                    Btn { enabled: !root.child-open; text: "add"; clicked => { root.source-add(false); } }
+                    Btn { enabled: !root.child-open; text: "remove"; clicked => { root.source-change(false, 0); } }
+                    Btn { enabled: !root.child-open; text: "up"; clicked => { root.source-change(false, -1); } }
+                    Btn { enabled: !root.child-open; text: "down"; clicked => { root.source-change(false, 1); } }
                 }
                 Text { text: "parent application"; color: Theme.text; }
                 ListTable { vertical-stretch: 1; columns: [{title: "service (priority order)", width: 600px, stretch: true}]; rows: root.parent-rows; row-clicked(i, ctrl, shift) => { root.source-click(true, i); } }
                 HorizontalLayout {
-                    Button { enabled: !root.child-open; text: "add"; clicked => { root.source-add(true); } }
-                    Button { enabled: !root.child-open; text: "remove"; clicked => { root.source-change(true, 0); } }
-                    Button { enabled: !root.child-open; text: "up"; clicked => { root.source-change(true, -1); } }
-                    Button { enabled: !root.child-open; text: "down"; clicked => { root.source-change(true, 1); } }
+                    Btn { enabled: !root.child-open; text: "add"; clicked => { root.source-add(true); } }
+                    Btn { enabled: !root.child-open; text: "remove"; clicked => { root.source-change(true, 0); } }
+                    Btn { enabled: !root.child-open; text: "up"; clicked => { root.source-change(true, -1); } }
+                    Btn { enabled: !root.child-open; text: "down"; clicked => { root.source-change(true, 1); } }
                 }
             }
             Rectangle { vertical-stretch: root.application ? 0 : 1; background: transparent; }
             Text { text: root.error; color: Theme.error; wrap: word-wrap; }
-            HorizontalLayout { Rectangle { horizontal-stretch: 1; background: transparent; } Button { enabled: !root.child-open; text: "apply"; clicked => { root.apply(); } } Button { text: "cancel"; clicked => { root.cancel(); } } }
+            HorizontalLayout { Rectangle { horizontal-stretch: 1; background: transparent; } Btn { enabled: !root.child-open; text: "apply"; clicked => { root.apply(); } } Btn { text: "cancel"; clicked => { root.cancel(); } } }
         }
     }
 }
