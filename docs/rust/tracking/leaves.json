@@ -11845,10 +11845,10 @@
     "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Asserts only a test-only EXIT_REQUESTED atomic set by the action itself, which nothing in production reads; that slint::quit_event_loop actually stops the loop (the leaf) is not exercised. Stand-in flag. Tests: crates/hydrus-gui/tests/gui/debug_menu_actions.rs:262 simulate_program_exit_signal_stops_the_event_loop"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "Claude (recheck bin C)",
+    "note": "The reference's item is `QApplication.instance().exit` (only strings and that call: nothing further to record). The test, alone in its own binary because Slint keeps one event-loop proxy per process, runs the real event loop on the headless platform (headless::init_with_event_loop, a quit-only proxy), clicks help > debug > data actions > simulate program exit signal on the real main window from a timer, and checks that slint::run_event_loop returns because of it (a 60 s give-up timer must not have fired) with the main window still shown. With the action's quit removed the test fails. The test-only EXIT_REQUESTED flag is gone. Tests: crates/hydrus-gui/tests/event_loop.rs simulate_program_exit_signal_stops_the_event_loop"
    }
   },
   {

@@ -2,9 +2,7 @@
 //! in the real menu and its effect read back where the reference puts it
 //! (`ClientGUI._DebugMake*`, `HydrusData.DebugPrint`,
 //! `ClientController.ForceDatabaseCommit`, `HydrusEnvironment.DumpEnv`).
-use hydrus_gui::{
-    Bound, MainWindow, Pages, bind, debug_printed, exit_requested, headless, message_window,
-};
+use hydrus_gui::{Bound, MainWindow, Pages, bind, debug_printed, headless, message_window};
 use hydrus_gui_model::debug_actions as model;
 use hydrus_store::{Store, popups, sessions};
 use slint::{ComponentHandle as _, Model as _};
@@ -270,15 +268,6 @@ fn show_env_prints_and_pops_up_the_environment() {
     assert!(text.contains(&format!("\n{name}: {value}")));
     assert!(text.contains("\nPATH:\n    "), "PATH is one entry per line");
     assert!(debug_printed().contains(&text));
-}
-
-// leaf: audit-options-help-debug-action-simulate-program-exit-signal
-#[test]
-fn simulate_program_exit_signal_stops_the_event_loop() {
-    let d = start();
-    assert!(!exit_requested());
-    d.click(&["data actions", "simulate program exit signal"]);
-    assert!(exit_requested());
 }
 
 // leaf: audit-options-help-debug-action-clear-all-rendering-caches
