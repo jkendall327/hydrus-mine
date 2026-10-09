@@ -237,8 +237,8 @@ fn background_copies_say_and_place_what_the_reference_draws() {
         if shown[1] {
             let top = texts(draws, "TopMiddle");
             assert_eq!(viewer.get_tag_banner().as_str(), top[0]);
-            assert_eq!(without_age(&viewer.get_info_line()), without_age(&top[1]));
-            assert!(viewer.get_info_line().ends_with(" ago"));
+            assert_eq!(without_age(&viewer.get_background_info_line()), without_age(&top[1]));
+            assert!(viewer.get_background_info_line().ends_with(" ago"));
         }
         if shown[2] {
             // the reference writes an inc/dec rating's value and the
