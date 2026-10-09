@@ -1517,6 +1517,9 @@ decoded (a changed size applies to the next file opened); each frame is
 shown for its duration (a ugoira's
 from its animation.json, else its timing notes), looping, and space
 pauses them (`src/animation.rs`; animated JPEG XL shows its first frame).
+The scanbar's drag, ctrl+arrows and ctrl+b/ctrl+n go where the reference's
+do, and a frame step pauses afterwards, as the reference's does
+(`oracle/record_animation_playback.py`).
 Video, audio and other animations play in mpv: libmpv is loaded when first
 needed, so building needs nothing more, and without it these show their
 thumbnail. A file loops, space pauses it, and the store's `mpv.conf` (else

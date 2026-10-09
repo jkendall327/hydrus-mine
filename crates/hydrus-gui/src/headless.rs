@@ -107,7 +107,14 @@ impl Platform for Headless {
 /// Make this process draw its windows headless (call once, before creating
 /// any window, on the thread that will use them). Retain the returned collector
 /// until every window in that UI scope has finished; drop it before thread exit.
+///
+/// For tests only (it is `pub` for the integration tests): it also makes
+/// every mpv player in the process use a null audio output, overriding a
+/// conf's `ao`, so that tests need no sound card (see
+/// [`crate::mpv::use_audio_output`]).
 pub fn init() -> Windows {
+    // (no sound card to play to, or probe for, in a test)
+    crate::mpv::use_audio_output("null");
     let windows = Windows::default();
     slint::platform::set_platform(Box::new(Headless {
         registry: windows.0.registry.clone(),

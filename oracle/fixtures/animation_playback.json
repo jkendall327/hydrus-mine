@@ -1,0 +1,1873 @@
+{
+  "ugoira": {
+    "file": "ugoira_json.zip",
+    "mime": 74,
+    "num_frames": 5,
+    "duration_ms": 400,
+    "bar_width": 210,
+    "nub_width": 10,
+    "initial": {
+      "index": 0,
+      "timestamp_ms": 0,
+      "paused": true,
+      "played_through": false,
+      "text": "1/5 - 0.000/0.400"
+    },
+    "durations_ms": [
+      60,
+      70,
+      80,
+      90,
+      100
+    ],
+    "timeline": [
+      {
+        "index": 1,
+        "timestamp_ms": 60,
+        "paused": false,
+        "played_through": false,
+        "text": "2/5 - 0.060/0.400",
+        "due_in_ms": 69
+      },
+      {
+        "index": 2,
+        "timestamp_ms": 130,
+        "paused": false,
+        "played_through": false,
+        "text": "3/5 - 0.130/0.400",
+        "due_in_ms": 79
+      },
+      {
+        "index": 3,
+        "timestamp_ms": 210,
+        "paused": false,
+        "played_through": false,
+        "text": "4/5 - 0.210/0.400",
+        "due_in_ms": 89
+      },
+      {
+        "index": 4,
+        "timestamp_ms": 300,
+        "paused": false,
+        "played_through": false,
+        "text": "5/5 - 0.300/0.400",
+        "due_in_ms": 99
+      },
+      {
+        "index": 0,
+        "timestamp_ms": 0,
+        "paused": false,
+        "played_through": true,
+        "text": "1/5 - 0.000/0.400",
+        "due_in_ms": 59
+      },
+      {
+        "index": 1,
+        "timestamp_ms": 60,
+        "paused": false,
+        "played_through": true,
+        "text": "2/5 - 0.060/0.400",
+        "due_in_ms": 69
+      },
+      {
+        "index": 2,
+        "timestamp_ms": 130,
+        "paused": false,
+        "played_through": true,
+        "text": "3/5 - 0.130/0.400",
+        "due_in_ms": 79
+      },
+      {
+        "index": 3,
+        "timestamp_ms": 210,
+        "paused": false,
+        "played_through": true,
+        "text": "4/5 - 0.210/0.400",
+        "due_in_ms": 89
+      },
+      {
+        "index": 4,
+        "timestamp_ms": 300,
+        "paused": false,
+        "played_through": true,
+        "text": "5/5 - 0.300/0.400",
+        "due_in_ms": 99
+      },
+      {
+        "index": 0,
+        "timestamp_ms": 0,
+        "paused": false,
+        "played_through": true,
+        "text": "1/5 - 0.000/0.400",
+        "due_in_ms": 59
+      },
+      {
+        "index": 1,
+        "timestamp_ms": 60,
+        "paused": false,
+        "played_through": true,
+        "text": "2/5 - 0.060/0.400",
+        "due_in_ms": 69
+      },
+      {
+        "index": 2,
+        "timestamp_ms": 130,
+        "paused": false,
+        "played_through": true,
+        "text": "3/5 - 0.130/0.400",
+        "due_in_ms": 79
+      }
+    ],
+    "goto": [
+      {
+        "index": 4,
+        "play_first": false,
+        "pause_afterwards": true,
+        "timestamp_ms": 300,
+        "paused": true,
+        "played_through": false,
+        "text": "5/5 - 0.300/0.400"
+      },
+      {
+        "index": 2,
+        "play_first": false,
+        "pause_afterwards": true,
+        "timestamp_ms": 130,
+        "paused": true,
+        "played_through": false,
+        "text": "3/5 - 0.130/0.400"
+      },
+      {
+        "index": 2,
+        "play_first": false,
+        "pause_afterwards": true,
+        "timestamp_ms": 130,
+        "paused": true,
+        "played_through": false,
+        "text": "3/5 - 0.130/0.400"
+      },
+      {
+        "index": 0,
+        "play_first": false,
+        "pause_afterwards": true,
+        "timestamp_ms": 0,
+        "paused": true,
+        "played_through": false,
+        "text": "1/5 - 0.000/0.400"
+      },
+      {
+        "index": 1,
+        "play_first": false,
+        "pause_afterwards": true,
+        "timestamp_ms": 60,
+        "paused": true,
+        "played_through": false,
+        "text": "2/5 - 0.060/0.400"
+      },
+      {
+        "index": 4,
+        "play_first": false,
+        "pause_afterwards": true,
+        "timestamp_ms": 300,
+        "paused": true,
+        "played_through": false,
+        "text": "5/5 - 0.300/0.400"
+      },
+      {
+        "index": 0,
+        "play_first": false,
+        "pause_afterwards": true,
+        "timestamp_ms": 0,
+        "paused": true,
+        "played_through": false,
+        "text": "1/5 - 0.000/0.400"
+      },
+      {
+        "index": 3,
+        "play_first": true,
+        "pause_afterwards": true,
+        "timestamp_ms": 210,
+        "paused": true,
+        "played_through": false,
+        "text": "4/5 - 0.210/0.400"
+      },
+      {
+        "index": 1,
+        "play_first": true,
+        "pause_afterwards": false,
+        "timestamp_ms": 60,
+        "paused": false,
+        "played_through": false,
+        "text": "2/5 - 0.060/0.400"
+      },
+      {
+        "index": 3,
+        "play_first": false,
+        "pause_afterwards": false,
+        "timestamp_ms": 210,
+        "paused": false,
+        "played_through": false,
+        "text": "4/5 - 0.210/0.400"
+      }
+    ],
+    "seek_delta": [
+      {
+        "start": {
+          "index": 3,
+          "timestamp_ms": 210,
+          "paused": true,
+          "played_through": false,
+          "text": "4/5 - 0.210/0.400"
+        },
+        "steps": [
+          {
+            "direction": -1,
+            "ms": 50,
+            "index": 2,
+            "timestamp_ms": 130,
+            "paused": true,
+            "played_through": false,
+            "text": "3/5 - 0.130/0.400"
+          },
+          {
+            "direction": -1,
+            "ms": 10,
+            "index": 1,
+            "timestamp_ms": 60,
+            "paused": true,
+            "played_through": false,
+            "text": "2/5 - 0.060/0.400"
+          },
+          {
+            "direction": 1,
+            "ms": 10,
+            "index": 2,
+            "timestamp_ms": 130,
+            "paused": true,
+            "played_through": false,
+            "text": "3/5 - 0.130/0.400"
+          },
+          {
+            "direction": 1,
+            "ms": 100,
+            "index": 3,
+            "timestamp_ms": 210,
+            "paused": true,
+            "played_through": false,
+            "text": "4/5 - 0.210/0.400"
+          },
+          {
+            "direction": -1,
+            "ms": 2500,
+            "index": 0,
+            "timestamp_ms": 0,
+            "paused": true,
+            "played_through": false,
+            "text": "1/5 - 0.000/0.400"
+          },
+          {
+            "direction": -1,
+            "ms": 1,
+            "index": 0,
+            "timestamp_ms": 0,
+            "paused": true,
+            "played_through": false,
+            "text": "1/5 - 0.000/0.400"
+          },
+          {
+            "direction": 1,
+            "ms": 140,
+            "index": 2,
+            "timestamp_ms": 130,
+            "paused": true,
+            "played_through": false,
+            "text": "3/5 - 0.130/0.400"
+          },
+          {
+            "direction": 1,
+            "ms": 5000,
+            "index": 0,
+            "timestamp_ms": 0,
+            "paused": true,
+            "played_through": false,
+            "text": "1/5 - 0.000/0.400"
+          },
+          {
+            "direction": 1,
+            "ms": 1,
+            "index": 1,
+            "timestamp_ms": 60,
+            "paused": true,
+            "played_through": false,
+            "text": "2/5 - 0.060/0.400"
+          },
+          {
+            "direction": -1,
+            "ms": 1000000,
+            "index": 0,
+            "timestamp_ms": 0,
+            "paused": true,
+            "played_through": false,
+            "text": "1/5 - 0.000/0.400"
+          },
+          {
+            "direction": 1,
+            "ms": 300,
+            "index": 4,
+            "timestamp_ms": 300,
+            "paused": true,
+            "played_through": false,
+            "text": "5/5 - 0.300/0.400"
+          },
+          {
+            "direction": 1,
+            "ms": 0,
+            "index": 0,
+            "timestamp_ms": 0,
+            "paused": true,
+            "played_through": false,
+            "text": "1/5 - 0.000/0.400"
+          },
+          {
+            "direction": -1,
+            "ms": 0,
+            "index": 0,
+            "timestamp_ms": 0,
+            "paused": true,
+            "played_through": false,
+            "text": "1/5 - 0.000/0.400"
+          }
+        ]
+      },
+      {
+        "start": {
+          "index": 3,
+          "timestamp_ms": 210,
+          "paused": false,
+          "played_through": false,
+          "text": "4/5 - 0.210/0.400"
+        },
+        "steps": [
+          {
+            "direction": -1,
+            "ms": 50,
+            "index": 2,
+            "timestamp_ms": 130,
+            "paused": false,
+            "played_through": false,
+            "text": "3/5 - 0.130/0.400"
+          },
+          {
+            "direction": -1,
+            "ms": 10,
+            "index": 1,
+            "timestamp_ms": 60,
+            "paused": false,
+            "played_through": false,
+            "text": "2/5 - 0.060/0.400"
+          },
+          {
+            "direction": 1,
+            "ms": 10,
+            "index": 2,
+            "timestamp_ms": 130,
+            "paused": false,
+            "played_through": false,
+            "text": "3/5 - 0.130/0.400"
+          },
+          {
+            "direction": 1,
+            "ms": 100,
+            "index": 3,
+            "timestamp_ms": 210,
+            "paused": false,
+            "played_through": false,
+            "text": "4/5 - 0.210/0.400"
+          },
+          {
+            "direction": -1,
+            "ms": 2500,
+            "index": 0,
+            "timestamp_ms": 0,
+            "paused": false,
+            "played_through": false,
+            "text": "1/5 - 0.000/0.400"
+          },
+          {
+            "direction": -1,
+            "ms": 1,
+            "index": 0,
+            "timestamp_ms": 0,
+            "paused": false,
+            "played_through": false,
+            "text": "1/5 - 0.000/0.400"
+          },
+          {
+            "direction": 1,
+            "ms": 140,
+            "index": 2,
+            "timestamp_ms": 130,
+            "paused": false,
+            "played_through": false,
+            "text": "3/5 - 0.130/0.400"
+          },
+          {
+            "direction": 1,
+            "ms": 5000,
+            "index": 0,
+            "timestamp_ms": 0,
+            "paused": false,
+            "played_through": false,
+            "text": "1/5 - 0.000/0.400"
+          },
+          {
+            "direction": 1,
+            "ms": 1,
+            "index": 1,
+            "timestamp_ms": 60,
+            "paused": false,
+            "played_through": false,
+            "text": "2/5 - 0.060/0.400"
+          },
+          {
+            "direction": -1,
+            "ms": 1000000,
+            "index": 0,
+            "timestamp_ms": 0,
+            "paused": false,
+            "played_through": false,
+            "text": "1/5 - 0.000/0.400"
+          },
+          {
+            "direction": 1,
+            "ms": 300,
+            "index": 4,
+            "timestamp_ms": 300,
+            "paused": false,
+            "played_through": false,
+            "text": "5/5 - 0.300/0.400"
+          },
+          {
+            "direction": 1,
+            "ms": 0,
+            "index": 0,
+            "timestamp_ms": 0,
+            "paused": false,
+            "played_through": false,
+            "text": "1/5 - 0.000/0.400"
+          },
+          {
+            "direction": -1,
+            "ms": 0,
+            "index": 0,
+            "timestamp_ms": 0,
+            "paused": false,
+            "played_through": false,
+            "text": "1/5 - 0.000/0.400"
+          }
+        ]
+      }
+    ],
+    "frame_step": [
+      {
+        "direction": -1,
+        "index": 4,
+        "timestamp_ms": 300,
+        "paused": true,
+        "played_through": false,
+        "text": "5/5 - 0.300/0.400"
+      },
+      {
+        "direction": 1,
+        "index": 0,
+        "timestamp_ms": 0,
+        "paused": true,
+        "played_through": false,
+        "text": "1/5 - 0.000/0.400"
+      },
+      {
+        "direction": 1,
+        "index": 1,
+        "timestamp_ms": 60,
+        "paused": true,
+        "played_through": false,
+        "text": "2/5 - 0.060/0.400"
+      },
+      {
+        "direction": 1,
+        "index": 2,
+        "timestamp_ms": 130,
+        "paused": true,
+        "played_through": false,
+        "text": "3/5 - 0.130/0.400"
+      },
+      {
+        "direction": -1,
+        "index": 1,
+        "timestamp_ms": 60,
+        "paused": true,
+        "played_through": false,
+        "text": "2/5 - 0.060/0.400"
+      },
+      {
+        "direction": -1,
+        "index": 0,
+        "timestamp_ms": 0,
+        "paused": true,
+        "played_through": false,
+        "text": "1/5 - 0.000/0.400"
+      },
+      {
+        "direction": 1,
+        "index": 1,
+        "timestamp_ms": 60,
+        "paused": true,
+        "played_through": false,
+        "text": "2/5 - 0.060/0.400"
+      },
+      {
+        "direction": 1,
+        "index": 2,
+        "timestamp_ms": 130,
+        "paused": true,
+        "played_through": false,
+        "text": "3/5 - 0.130/0.400"
+      },
+      {
+        "direction": 1,
+        "index": 3,
+        "timestamp_ms": 210,
+        "paused": true,
+        "played_through": false,
+        "text": "4/5 - 0.210/0.400"
+      },
+      {
+        "direction": 1,
+        "index": 4,
+        "timestamp_ms": 300,
+        "paused": true,
+        "played_through": false,
+        "text": "5/5 - 0.300/0.400"
+      },
+      {
+        "direction": 1,
+        "index": 0,
+        "timestamp_ms": 0,
+        "paused": true,
+        "played_through": false,
+        "text": "1/5 - 0.000/0.400"
+      },
+      {
+        "direction": 1,
+        "index": 1,
+        "timestamp_ms": 60,
+        "paused": true,
+        "played_through": false,
+        "text": "2/5 - 0.060/0.400"
+      }
+    ],
+    "scan": [
+      {
+        "x": 5.0,
+        "start_paused": true,
+        "pressed": {
+          "index": 0,
+          "timestamp_ms": 0,
+          "paused": true,
+          "played_through": false,
+          "text": "1/5 - 0.000/0.400"
+        },
+        "released": {
+          "index": 0,
+          "timestamp_ms": 0,
+          "paused": true,
+          "played_through": false,
+          "text": "1/5 - 0.000/0.400"
+        }
+      },
+      {
+        "x": 55.0,
+        "start_paused": true,
+        "pressed": {
+          "index": 1,
+          "timestamp_ms": 60,
+          "paused": true,
+          "played_through": false,
+          "text": "2/5 - 0.060/0.400"
+        },
+        "released": {
+          "index": 1,
+          "timestamp_ms": 60,
+          "paused": true,
+          "played_through": false,
+          "text": "2/5 - 0.060/0.400"
+        }
+      },
+      {
+        "x": 125.0,
+        "start_paused": true,
+        "pressed": {
+          "index": 2,
+          "timestamp_ms": 130,
+          "paused": true,
+          "played_through": false,
+          "text": "3/5 - 0.130/0.400"
+        },
+        "released": {
+          "index": 2,
+          "timestamp_ms": 130,
+          "paused": true,
+          "played_through": false,
+          "text": "3/5 - 0.130/0.400"
+        }
+      },
+      {
+        "x": 135.0,
+        "start_paused": true,
+        "pressed": {
+          "index": 3,
+          "timestamp_ms": 210,
+          "paused": true,
+          "played_through": false,
+          "text": "4/5 - 0.210/0.400"
+        },
+        "released": {
+          "index": 3,
+          "timestamp_ms": 210,
+          "paused": true,
+          "played_through": false,
+          "text": "4/5 - 0.210/0.400"
+        }
+      },
+      {
+        "x": 155.0,
+        "start_paused": true,
+        "pressed": {
+          "index": 3,
+          "timestamp_ms": 210,
+          "paused": true,
+          "played_through": false,
+          "text": "4/5 - 0.210/0.400"
+        },
+        "released": {
+          "index": 3,
+          "timestamp_ms": 210,
+          "paused": true,
+          "played_through": false,
+          "text": "4/5 - 0.210/0.400"
+        }
+      },
+      {
+        "x": 205.0,
+        "start_paused": true,
+        "pressed": {
+          "index": 4,
+          "timestamp_ms": 300,
+          "paused": true,
+          "played_through": false,
+          "text": "5/5 - 0.300/0.400"
+        },
+        "released": {
+          "index": 4,
+          "timestamp_ms": 300,
+          "paused": true,
+          "played_through": false,
+          "text": "5/5 - 0.300/0.400"
+        }
+      },
+      {
+        "x": 500,
+        "start_paused": true,
+        "pressed": {
+          "index": 4,
+          "timestamp_ms": 300,
+          "paused": true,
+          "played_through": false,
+          "text": "5/5 - 0.300/0.400"
+        },
+        "released": {
+          "index": 4,
+          "timestamp_ms": 300,
+          "paused": true,
+          "played_through": false,
+          "text": "5/5 - 0.300/0.400"
+        }
+      },
+      {
+        "x": -20,
+        "start_paused": true,
+        "pressed": {
+          "index": 0,
+          "timestamp_ms": 0,
+          "paused": true,
+          "played_through": false,
+          "text": "1/5 - 0.000/0.400"
+        },
+        "released": {
+          "index": 0,
+          "timestamp_ms": 0,
+          "paused": true,
+          "played_through": false,
+          "text": "1/5 - 0.000/0.400"
+        }
+      },
+      {
+        "x": 0,
+        "start_paused": true,
+        "pressed": {
+          "index": 0,
+          "timestamp_ms": 0,
+          "paused": true,
+          "played_through": false,
+          "text": "1/5 - 0.000/0.400"
+        },
+        "released": {
+          "index": 0,
+          "timestamp_ms": 0,
+          "paused": true,
+          "played_through": false,
+          "text": "1/5 - 0.000/0.400"
+        }
+      },
+      {
+        "x": 1,
+        "start_paused": true,
+        "pressed": {
+          "index": 0,
+          "timestamp_ms": 0,
+          "paused": true,
+          "played_through": false,
+          "text": "1/5 - 0.000/0.400"
+        },
+        "released": {
+          "index": 0,
+          "timestamp_ms": 0,
+          "paused": true,
+          "played_through": false,
+          "text": "1/5 - 0.000/0.400"
+        }
+      },
+      {
+        "x": 5.0,
+        "start_paused": false,
+        "pressed": {
+          "index": 0,
+          "timestamp_ms": 0,
+          "paused": true,
+          "played_through": false,
+          "text": "1/5 - 0.000/0.400"
+        },
+        "released": {
+          "index": 0,
+          "timestamp_ms": 0,
+          "paused": false,
+          "played_through": false,
+          "text": "1/5 - 0.000/0.400"
+        }
+      },
+      {
+        "x": 55.0,
+        "start_paused": false,
+        "pressed": {
+          "index": 1,
+          "timestamp_ms": 60,
+          "paused": true,
+          "played_through": false,
+          "text": "2/5 - 0.060/0.400"
+        },
+        "released": {
+          "index": 1,
+          "timestamp_ms": 60,
+          "paused": false,
+          "played_through": false,
+          "text": "2/5 - 0.060/0.400"
+        }
+      },
+      {
+        "x": 125.0,
+        "start_paused": false,
+        "pressed": {
+          "index": 2,
+          "timestamp_ms": 130,
+          "paused": true,
+          "played_through": false,
+          "text": "3/5 - 0.130/0.400"
+        },
+        "released": {
+          "index": 2,
+          "timestamp_ms": 130,
+          "paused": false,
+          "played_through": false,
+          "text": "3/5 - 0.130/0.400"
+        }
+      },
+      {
+        "x": 135.0,
+        "start_paused": false,
+        "pressed": {
+          "index": 3,
+          "timestamp_ms": 210,
+          "paused": true,
+          "played_through": false,
+          "text": "4/5 - 0.210/0.400"
+        },
+        "released": {
+          "index": 3,
+          "timestamp_ms": 210,
+          "paused": false,
+          "played_through": false,
+          "text": "4/5 - 0.210/0.400"
+        }
+      },
+      {
+        "x": 155.0,
+        "start_paused": false,
+        "pressed": {
+          "index": 3,
+          "timestamp_ms": 210,
+          "paused": true,
+          "played_through": false,
+          "text": "4/5 - 0.210/0.400"
+        },
+        "released": {
+          "index": 3,
+          "timestamp_ms": 210,
+          "paused": false,
+          "played_through": false,
+          "text": "4/5 - 0.210/0.400"
+        }
+      },
+      {
+        "x": 205.0,
+        "start_paused": false,
+        "pressed": {
+          "index": 4,
+          "timestamp_ms": 300,
+          "paused": true,
+          "played_through": false,
+          "text": "5/5 - 0.300/0.400"
+        },
+        "released": {
+          "index": 4,
+          "timestamp_ms": 300,
+          "paused": false,
+          "played_through": false,
+          "text": "5/5 - 0.300/0.400"
+        }
+      },
+      {
+        "x": 500,
+        "start_paused": false,
+        "pressed": {
+          "index": 4,
+          "timestamp_ms": 300,
+          "paused": true,
+          "played_through": false,
+          "text": "5/5 - 0.300/0.400"
+        },
+        "released": {
+          "index": 4,
+          "timestamp_ms": 300,
+          "paused": false,
+          "played_through": false,
+          "text": "5/5 - 0.300/0.400"
+        }
+      },
+      {
+        "x": -20,
+        "start_paused": false,
+        "pressed": {
+          "index": 0,
+          "timestamp_ms": 0,
+          "paused": true,
+          "played_through": false,
+          "text": "1/5 - 0.000/0.400"
+        },
+        "released": {
+          "index": 0,
+          "timestamp_ms": 0,
+          "paused": false,
+          "played_through": false,
+          "text": "1/5 - 0.000/0.400"
+        }
+      },
+      {
+        "x": 0,
+        "start_paused": false,
+        "pressed": {
+          "index": 0,
+          "timestamp_ms": 0,
+          "paused": true,
+          "played_through": false,
+          "text": "1/5 - 0.000/0.400"
+        },
+        "released": {
+          "index": 0,
+          "timestamp_ms": 0,
+          "paused": false,
+          "played_through": false,
+          "text": "1/5 - 0.000/0.400"
+        }
+      },
+      {
+        "x": 1,
+        "start_paused": false,
+        "pressed": {
+          "index": 0,
+          "timestamp_ms": 0,
+          "paused": true,
+          "played_through": false,
+          "text": "1/5 - 0.000/0.400"
+        },
+        "released": {
+          "index": 0,
+          "timestamp_ms": 0,
+          "paused": false,
+          "played_through": false,
+          "text": "1/5 - 0.000/0.400"
+        }
+      }
+    ],
+    "stop_for_slideshow": [
+      {
+        "index": 4,
+        "timestamp_ms": 300,
+        "paused": false,
+        "played_through": false,
+        "text": "5/5 - 0.300/0.400"
+      },
+      {
+        "index": 4,
+        "timestamp_ms": 300,
+        "paused": true,
+        "played_through": true,
+        "text": "5/5 - 0.300/0.400"
+      },
+      {
+        "index": 4,
+        "timestamp_ms": 300,
+        "paused": true,
+        "played_through": true,
+        "text": "5/5 - 0.300/0.400"
+      },
+      {
+        "index": 4,
+        "timestamp_ms": 300,
+        "paused": true,
+        "played_through": true,
+        "text": "5/5 - 0.300/0.400"
+      }
+    ]
+  },
+  "webp": {
+    "file": "webp_anim.webp",
+    "mime": 83,
+    "num_frames": 3,
+    "duration_ms": 283,
+    "bar_width": 210,
+    "nub_width": 10,
+    "initial": {
+      "index": 0,
+      "timestamp_ms": 0,
+      "paused": true,
+      "played_through": false,
+      "text": "1/3 - 0.000/0.283"
+    },
+    "durations_ms": [
+      80,
+      120,
+      83
+    ],
+    "timeline": [
+      {
+        "index": 1,
+        "timestamp_ms": 80,
+        "paused": false,
+        "played_through": false,
+        "text": "2/3 - 0.080/0.283",
+        "due_in_ms": 119
+      },
+      {
+        "index": 2,
+        "timestamp_ms": 200,
+        "paused": false,
+        "played_through": false,
+        "text": "3/3 - 0.200/0.283",
+        "due_in_ms": 82
+      },
+      {
+        "index": 0,
+        "timestamp_ms": 0,
+        "paused": false,
+        "played_through": true,
+        "text": "1/3 - 0.000/0.283",
+        "due_in_ms": 79
+      },
+      {
+        "index": 1,
+        "timestamp_ms": 80,
+        "paused": false,
+        "played_through": true,
+        "text": "2/3 - 0.080/0.283",
+        "due_in_ms": 119
+      },
+      {
+        "index": 2,
+        "timestamp_ms": 200,
+        "paused": false,
+        "played_through": true,
+        "text": "3/3 - 0.200/0.283",
+        "due_in_ms": 82
+      },
+      {
+        "index": 0,
+        "timestamp_ms": 0,
+        "paused": false,
+        "played_through": true,
+        "text": "1/3 - 0.000/0.283",
+        "due_in_ms": 79
+      },
+      {
+        "index": 1,
+        "timestamp_ms": 80,
+        "paused": false,
+        "played_through": true,
+        "text": "2/3 - 0.080/0.283",
+        "due_in_ms": 119
+      },
+      {
+        "index": 2,
+        "timestamp_ms": 200,
+        "paused": false,
+        "played_through": true,
+        "text": "3/3 - 0.200/0.283",
+        "due_in_ms": 82
+      }
+    ],
+    "goto": [
+      {
+        "index": 2,
+        "play_first": false,
+        "pause_afterwards": true,
+        "timestamp_ms": 200,
+        "paused": true,
+        "played_through": false,
+        "text": "3/3 - 0.200/0.283"
+      },
+      {
+        "index": 1,
+        "play_first": false,
+        "pause_afterwards": true,
+        "timestamp_ms": 80,
+        "paused": true,
+        "played_through": false,
+        "text": "2/3 - 0.080/0.283"
+      },
+      {
+        "index": 1,
+        "play_first": false,
+        "pause_afterwards": true,
+        "timestamp_ms": 80,
+        "paused": true,
+        "played_through": false,
+        "text": "2/3 - 0.080/0.283"
+      },
+      {
+        "index": 0,
+        "play_first": false,
+        "pause_afterwards": true,
+        "timestamp_ms": 0,
+        "paused": true,
+        "played_through": false,
+        "text": "1/3 - 0.000/0.283"
+      },
+      {
+        "index": 1,
+        "play_first": false,
+        "pause_afterwards": true,
+        "timestamp_ms": 80,
+        "paused": true,
+        "played_through": false,
+        "text": "2/3 - 0.080/0.283"
+      },
+      {
+        "index": 2,
+        "play_first": false,
+        "pause_afterwards": true,
+        "timestamp_ms": 200,
+        "paused": true,
+        "played_through": false,
+        "text": "3/3 - 0.200/0.283"
+      },
+      {
+        "index": 0,
+        "play_first": false,
+        "pause_afterwards": true,
+        "timestamp_ms": 0,
+        "paused": true,
+        "played_through": false,
+        "text": "1/3 - 0.000/0.283"
+      },
+      {
+        "index": 1,
+        "play_first": true,
+        "pause_afterwards": true,
+        "timestamp_ms": 80,
+        "paused": true,
+        "played_through": false,
+        "text": "2/3 - 0.080/0.283"
+      },
+      {
+        "index": 1,
+        "play_first": true,
+        "pause_afterwards": false,
+        "timestamp_ms": 80,
+        "paused": false,
+        "played_through": false,
+        "text": "2/3 - 0.080/0.283"
+      },
+      {
+        "index": 1,
+        "play_first": false,
+        "pause_afterwards": false,
+        "timestamp_ms": 80,
+        "paused": false,
+        "played_through": false,
+        "text": "2/3 - 0.080/0.283"
+      }
+    ],
+    "seek_delta": [
+      {
+        "start": {
+          "index": 1,
+          "timestamp_ms": 80,
+          "paused": true,
+          "played_through": false,
+          "text": "2/3 - 0.080/0.283"
+        },
+        "steps": [
+          {
+            "direction": -1,
+            "ms": 50,
+            "index": 0,
+            "timestamp_ms": 0,
+            "paused": true,
+            "played_through": false,
+            "text": "1/3 - 0.000/0.283"
+          },
+          {
+            "direction": -1,
+            "ms": 10,
+            "index": 0,
+            "timestamp_ms": 0,
+            "paused": true,
+            "played_through": false,
+            "text": "1/3 - 0.000/0.283"
+          },
+          {
+            "direction": 1,
+            "ms": 10,
+            "index": 1,
+            "timestamp_ms": 80,
+            "paused": true,
+            "played_through": false,
+            "text": "2/3 - 0.080/0.283"
+          },
+          {
+            "direction": 1,
+            "ms": 100,
+            "index": 2,
+            "timestamp_ms": 200,
+            "paused": true,
+            "played_through": false,
+            "text": "3/3 - 0.200/0.283"
+          },
+          {
+            "direction": -1,
+            "ms": 2500,
+            "index": 0,
+            "timestamp_ms": 0,
+            "paused": true,
+            "played_through": false,
+            "text": "1/3 - 0.000/0.283"
+          },
+          {
+            "direction": -1,
+            "ms": 1,
+            "index": 0,
+            "timestamp_ms": 0,
+            "paused": true,
+            "played_through": false,
+            "text": "1/3 - 0.000/0.283"
+          },
+          {
+            "direction": 1,
+            "ms": 140,
+            "index": 1,
+            "timestamp_ms": 80,
+            "paused": true,
+            "played_through": false,
+            "text": "2/3 - 0.080/0.283"
+          },
+          {
+            "direction": 1,
+            "ms": 5000,
+            "index": 0,
+            "timestamp_ms": 0,
+            "paused": true,
+            "played_through": false,
+            "text": "1/3 - 0.000/0.283"
+          },
+          {
+            "direction": 1,
+            "ms": 1,
+            "index": 1,
+            "timestamp_ms": 80,
+            "paused": true,
+            "played_through": false,
+            "text": "2/3 - 0.080/0.283"
+          },
+          {
+            "direction": -1,
+            "ms": 1000000,
+            "index": 0,
+            "timestamp_ms": 0,
+            "paused": true,
+            "played_through": false,
+            "text": "1/3 - 0.000/0.283"
+          },
+          {
+            "direction": 1,
+            "ms": 300,
+            "index": 1,
+            "timestamp_ms": 80,
+            "paused": true,
+            "played_through": false,
+            "text": "2/3 - 0.080/0.283"
+          },
+          {
+            "direction": 1,
+            "ms": 0,
+            "index": 2,
+            "timestamp_ms": 200,
+            "paused": true,
+            "played_through": false,
+            "text": "3/3 - 0.200/0.283"
+          },
+          {
+            "direction": -1,
+            "ms": 0,
+            "index": 1,
+            "timestamp_ms": 80,
+            "paused": true,
+            "played_through": false,
+            "text": "2/3 - 0.080/0.283"
+          }
+        ]
+      },
+      {
+        "start": {
+          "index": 1,
+          "timestamp_ms": 80,
+          "paused": false,
+          "played_through": false,
+          "text": "2/3 - 0.080/0.283"
+        },
+        "steps": [
+          {
+            "direction": -1,
+            "ms": 50,
+            "index": 0,
+            "timestamp_ms": 0,
+            "paused": false,
+            "played_through": false,
+            "text": "1/3 - 0.000/0.283"
+          },
+          {
+            "direction": -1,
+            "ms": 10,
+            "index": 0,
+            "timestamp_ms": 0,
+            "paused": false,
+            "played_through": false,
+            "text": "1/3 - 0.000/0.283"
+          },
+          {
+            "direction": 1,
+            "ms": 10,
+            "index": 1,
+            "timestamp_ms": 80,
+            "paused": false,
+            "played_through": false,
+            "text": "2/3 - 0.080/0.283"
+          },
+          {
+            "direction": 1,
+            "ms": 100,
+            "index": 2,
+            "timestamp_ms": 200,
+            "paused": false,
+            "played_through": false,
+            "text": "3/3 - 0.200/0.283"
+          },
+          {
+            "direction": -1,
+            "ms": 2500,
+            "index": 0,
+            "timestamp_ms": 0,
+            "paused": false,
+            "played_through": false,
+            "text": "1/3 - 0.000/0.283"
+          },
+          {
+            "direction": -1,
+            "ms": 1,
+            "index": 0,
+            "timestamp_ms": 0,
+            "paused": false,
+            "played_through": false,
+            "text": "1/3 - 0.000/0.283"
+          },
+          {
+            "direction": 1,
+            "ms": 140,
+            "index": 1,
+            "timestamp_ms": 80,
+            "paused": false,
+            "played_through": false,
+            "text": "2/3 - 0.080/0.283"
+          },
+          {
+            "direction": 1,
+            "ms": 5000,
+            "index": 0,
+            "timestamp_ms": 0,
+            "paused": false,
+            "played_through": false,
+            "text": "1/3 - 0.000/0.283"
+          },
+          {
+            "direction": 1,
+            "ms": 1,
+            "index": 1,
+            "timestamp_ms": 80,
+            "paused": false,
+            "played_through": false,
+            "text": "2/3 - 0.080/0.283"
+          },
+          {
+            "direction": -1,
+            "ms": 1000000,
+            "index": 0,
+            "timestamp_ms": 0,
+            "paused": false,
+            "played_through": false,
+            "text": "1/3 - 0.000/0.283"
+          },
+          {
+            "direction": 1,
+            "ms": 300,
+            "index": 1,
+            "timestamp_ms": 80,
+            "paused": false,
+            "played_through": false,
+            "text": "2/3 - 0.080/0.283"
+          },
+          {
+            "direction": 1,
+            "ms": 0,
+            "index": 2,
+            "timestamp_ms": 200,
+            "paused": false,
+            "played_through": false,
+            "text": "3/3 - 0.200/0.283"
+          },
+          {
+            "direction": -1,
+            "ms": 0,
+            "index": 1,
+            "timestamp_ms": 80,
+            "paused": false,
+            "played_through": false,
+            "text": "2/3 - 0.080/0.283"
+          }
+        ]
+      }
+    ],
+    "frame_step": [
+      {
+        "direction": -1,
+        "index": 2,
+        "timestamp_ms": 200,
+        "paused": true,
+        "played_through": false,
+        "text": "3/3 - 0.200/0.283"
+      },
+      {
+        "direction": 1,
+        "index": 0,
+        "timestamp_ms": 0,
+        "paused": true,
+        "played_through": false,
+        "text": "1/3 - 0.000/0.283"
+      },
+      {
+        "direction": 1,
+        "index": 1,
+        "timestamp_ms": 80,
+        "paused": true,
+        "played_through": false,
+        "text": "2/3 - 0.080/0.283"
+      },
+      {
+        "direction": 1,
+        "index": 2,
+        "timestamp_ms": 200,
+        "paused": true,
+        "played_through": false,
+        "text": "3/3 - 0.200/0.283"
+      },
+      {
+        "direction": -1,
+        "index": 1,
+        "timestamp_ms": 80,
+        "paused": true,
+        "played_through": false,
+        "text": "2/3 - 0.080/0.283"
+      },
+      {
+        "direction": -1,
+        "index": 0,
+        "timestamp_ms": 0,
+        "paused": true,
+        "played_through": false,
+        "text": "1/3 - 0.000/0.283"
+      },
+      {
+        "direction": 1,
+        "index": 1,
+        "timestamp_ms": 80,
+        "paused": true,
+        "played_through": false,
+        "text": "2/3 - 0.080/0.283"
+      },
+      {
+        "direction": 1,
+        "index": 2,
+        "timestamp_ms": 200,
+        "paused": true,
+        "played_through": false,
+        "text": "3/3 - 0.200/0.283"
+      },
+      {
+        "direction": 1,
+        "index": 0,
+        "timestamp_ms": 0,
+        "paused": true,
+        "played_through": false,
+        "text": "1/3 - 0.000/0.283"
+      },
+      {
+        "direction": 1,
+        "index": 1,
+        "timestamp_ms": 80,
+        "paused": true,
+        "played_through": false,
+        "text": "2/3 - 0.080/0.283"
+      }
+    ],
+    "scan": [
+      {
+        "x": 5.0,
+        "start_paused": true,
+        "pressed": {
+          "index": 0,
+          "timestamp_ms": 0,
+          "paused": true,
+          "played_through": false,
+          "text": "1/3 - 0.000/0.283"
+        },
+        "released": {
+          "index": 0,
+          "timestamp_ms": 0,
+          "paused": true,
+          "played_through": false,
+          "text": "1/3 - 0.000/0.283"
+        }
+      },
+      {
+        "x": 55.0,
+        "start_paused": true,
+        "pressed": {
+          "index": 1,
+          "timestamp_ms": 80,
+          "paused": true,
+          "played_through": false,
+          "text": "2/3 - 0.080/0.283"
+        },
+        "released": {
+          "index": 1,
+          "timestamp_ms": 80,
+          "paused": true,
+          "played_through": false,
+          "text": "2/3 - 0.080/0.283"
+        }
+      },
+      {
+        "x": 125.0,
+        "start_paused": true,
+        "pressed": {
+          "index": 1,
+          "timestamp_ms": 80,
+          "paused": true,
+          "played_through": false,
+          "text": "2/3 - 0.080/0.283"
+        },
+        "released": {
+          "index": 1,
+          "timestamp_ms": 80,
+          "paused": true,
+          "played_through": false,
+          "text": "2/3 - 0.080/0.283"
+        }
+      },
+      {
+        "x": 135.0,
+        "start_paused": true,
+        "pressed": {
+          "index": 1,
+          "timestamp_ms": 80,
+          "paused": true,
+          "played_through": false,
+          "text": "2/3 - 0.080/0.283"
+        },
+        "released": {
+          "index": 1,
+          "timestamp_ms": 80,
+          "paused": true,
+          "played_through": false,
+          "text": "2/3 - 0.080/0.283"
+        }
+      },
+      {
+        "x": 155.0,
+        "start_paused": true,
+        "pressed": {
+          "index": 2,
+          "timestamp_ms": 200,
+          "paused": true,
+          "played_through": false,
+          "text": "3/3 - 0.200/0.283"
+        },
+        "released": {
+          "index": 2,
+          "timestamp_ms": 200,
+          "paused": true,
+          "played_through": false,
+          "text": "3/3 - 0.200/0.283"
+        }
+      },
+      {
+        "x": 205.0,
+        "start_paused": true,
+        "pressed": {
+          "index": 2,
+          "timestamp_ms": 200,
+          "paused": true,
+          "played_through": false,
+          "text": "3/3 - 0.200/0.283"
+        },
+        "released": {
+          "index": 2,
+          "timestamp_ms": 200,
+          "paused": true,
+          "played_through": false,
+          "text": "3/3 - 0.200/0.283"
+        }
+      },
+      {
+        "x": 500,
+        "start_paused": true,
+        "pressed": {
+          "index": 2,
+          "timestamp_ms": 200,
+          "paused": true,
+          "played_through": false,
+          "text": "3/3 - 0.200/0.283"
+        },
+        "released": {
+          "index": 2,
+          "timestamp_ms": 200,
+          "paused": true,
+          "played_through": false,
+          "text": "3/3 - 0.200/0.283"
+        }
+      },
+      {
+        "x": -20,
+        "start_paused": true,
+        "pressed": {
+          "index": 0,
+          "timestamp_ms": 0,
+          "paused": true,
+          "played_through": false,
+          "text": "1/3 - 0.000/0.283"
+        },
+        "released": {
+          "index": 0,
+          "timestamp_ms": 0,
+          "paused": true,
+          "played_through": false,
+          "text": "1/3 - 0.000/0.283"
+        }
+      },
+      {
+        "x": 0,
+        "start_paused": true,
+        "pressed": {
+          "index": 0,
+          "timestamp_ms": 0,
+          "paused": true,
+          "played_through": false,
+          "text": "1/3 - 0.000/0.283"
+        },
+        "released": {
+          "index": 0,
+          "timestamp_ms": 0,
+          "paused": true,
+          "played_through": false,
+          "text": "1/3 - 0.000/0.283"
+        }
+      },
+      {
+        "x": 1,
+        "start_paused": true,
+        "pressed": {
+          "index": 0,
+          "timestamp_ms": 0,
+          "paused": true,
+          "played_through": false,
+          "text": "1/3 - 0.000/0.283"
+        },
+        "released": {
+          "index": 0,
+          "timestamp_ms": 0,
+          "paused": true,
+          "played_through": false,
+          "text": "1/3 - 0.000/0.283"
+        }
+      },
+      {
+        "x": 5.0,
+        "start_paused": false,
+        "pressed": {
+          "index": 0,
+          "timestamp_ms": 0,
+          "paused": true,
+          "played_through": false,
+          "text": "1/3 - 0.000/0.283"
+        },
+        "released": {
+          "index": 0,
+          "timestamp_ms": 0,
+          "paused": false,
+          "played_through": false,
+          "text": "1/3 - 0.000/0.283"
+        }
+      },
+      {
+        "x": 55.0,
+        "start_paused": false,
+        "pressed": {
+          "index": 1,
+          "timestamp_ms": 80,
+          "paused": true,
+          "played_through": false,
+          "text": "2/3 - 0.080/0.283"
+        },
+        "released": {
+          "index": 1,
+          "timestamp_ms": 80,
+          "paused": false,
+          "played_through": false,
+          "text": "2/3 - 0.080/0.283"
+        }
+      },
+      {
+        "x": 125.0,
+        "start_paused": false,
+        "pressed": {
+          "index": 1,
+          "timestamp_ms": 80,
+          "paused": true,
+          "played_through": false,
+          "text": "2/3 - 0.080/0.283"
+        },
+        "released": {
+          "index": 1,
+          "timestamp_ms": 80,
+          "paused": false,
+          "played_through": false,
+          "text": "2/3 - 0.080/0.283"
+        }
+      },
+      {
+        "x": 135.0,
+        "start_paused": false,
+        "pressed": {
+          "index": 1,
+          "timestamp_ms": 80,
+          "paused": true,
+          "played_through": false,
+          "text": "2/3 - 0.080/0.283"
+        },
+        "released": {
+          "index": 1,
+          "timestamp_ms": 80,
+          "paused": false,
+          "played_through": false,
+          "text": "2/3 - 0.080/0.283"
+        }
+      },
+      {
+        "x": 155.0,
+        "start_paused": false,
+        "pressed": {
+          "index": 2,
+          "timestamp_ms": 200,
+          "paused": true,
+          "played_through": false,
+          "text": "3/3 - 0.200/0.283"
+        },
+        "released": {
+          "index": 2,
+          "timestamp_ms": 200,
+          "paused": false,
+          "played_through": false,
+          "text": "3/3 - 0.200/0.283"
+        }
+      },
+      {
+        "x": 205.0,
+        "start_paused": false,
+        "pressed": {
+          "index": 2,
+          "timestamp_ms": 200,
+          "paused": true,
+          "played_through": false,
+          "text": "3/3 - 0.200/0.283"
+        },
+        "released": {
+          "index": 2,
+          "timestamp_ms": 200,
+          "paused": false,
+          "played_through": false,
+          "text": "3/3 - 0.200/0.283"
+        }
+      },
+      {
+        "x": 500,
+        "start_paused": false,
+        "pressed": {
+          "index": 2,
+          "timestamp_ms": 200,
+          "paused": true,
+          "played_through": false,
+          "text": "3/3 - 0.200/0.283"
+        },
+        "released": {
+          "index": 2,
+          "timestamp_ms": 200,
+          "paused": false,
+          "played_through": false,
+          "text": "3/3 - 0.200/0.283"
+        }
+      },
+      {
+        "x": -20,
+        "start_paused": false,
+        "pressed": {
+          "index": 0,
+          "timestamp_ms": 0,
+          "paused": true,
+          "played_through": false,
+          "text": "1/3 - 0.000/0.283"
+        },
+        "released": {
+          "index": 0,
+          "timestamp_ms": 0,
+          "paused": false,
+          "played_through": false,
+          "text": "1/3 - 0.000/0.283"
+        }
+      },
+      {
+        "x": 0,
+        "start_paused": false,
+        "pressed": {
+          "index": 0,
+          "timestamp_ms": 0,
+          "paused": true,
+          "played_through": false,
+          "text": "1/3 - 0.000/0.283"
+        },
+        "released": {
+          "index": 0,
+          "timestamp_ms": 0,
+          "paused": false,
+          "played_through": false,
+          "text": "1/3 - 0.000/0.283"
+        }
+      },
+      {
+        "x": 1,
+        "start_paused": false,
+        "pressed": {
+          "index": 0,
+          "timestamp_ms": 0,
+          "paused": true,
+          "played_through": false,
+          "text": "1/3 - 0.000/0.283"
+        },
+        "released": {
+          "index": 0,
+          "timestamp_ms": 0,
+          "paused": false,
+          "played_through": false,
+          "text": "1/3 - 0.000/0.283"
+        }
+      }
+    ],
+    "stop_for_slideshow": [
+      {
+        "index": 2,
+        "timestamp_ms": 200,
+        "paused": false,
+        "played_through": false,
+        "text": "3/3 - 0.200/0.283"
+      },
+      {
+        "index": 2,
+        "timestamp_ms": 200,
+        "paused": true,
+        "played_through": true,
+        "text": "3/3 - 0.200/0.283"
+      },
+      {
+        "index": 2,
+        "timestamp_ms": 200,
+        "paused": true,
+        "played_through": true,
+        "text": "3/3 - 0.200/0.283"
+      },
+      {
+        "index": 2,
+        "timestamp_ms": 200,
+        "paused": true,
+        "played_through": true,
+        "text": "3/3 - 0.200/0.283"
+      }
+    ]
+  },
+  "limits": "Time is held still; each step waits for the reference render thread. The bar text is made with the calls AnimationBar._Redraw makes, from the real Animation.GetAnimationBarStatus(). Frame step runs the real MediaContainer.GotoPreviousOrNextFrame on a stand-in for self holding the media, window and show action. Scans press and release the real AnimationBar with the mouse position scripted."
+}

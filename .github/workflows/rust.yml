@@ -88,13 +88,18 @@ jobs:
       - name: install media tools and fonts
         run: |
           sudo apt-get -o Acquire::Retries=3 update
-          sudo apt-get -o Acquire::Retries=3 install -y ffmpeg fontconfig libfontconfig1-dev fonts-noto-cjk
+          # libmpv2 is loaded when first needed (see crates/hydrus-gui/src/mpv.rs),
+          # so the video and audio viewer tests run here rather than skip; they
+          # give mpv a null audio output, so no sound card is needed
+          sudo apt-get -o Acquire::Retries=3 install -y ffmpeg fontconfig libfontconfig1-dev fonts-noto-cjk libmpv2
       - name: build the generated UI on its own
         # ~13 GB peak; built alone so it never overlaps the GUI crate (see scripts/dev.sh).
         run: cargo build -p hydrus-gui-ui --locked
       - name: test
         env:
           HYDRUS_INTERCHANGE_SCREENSHOTS: ${{ github.workspace }}/target/tmp
+          # a test that needs libmpv fails here rather than skip
+          HYDRUS_REQUIRE_MPV: '1'
         run: |
           mkdir -p target/tmp
           cargo test --workspace --locked --no-fail-fast

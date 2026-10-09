@@ -490,13 +490,15 @@ impl Animator {
     }
 
     /// Go a frame on (`direction` 1) or back (-1), round from the last to
-    /// the first and back (`GotoPreviousOrNextFrame`).
+    /// the first and back, and stay there paused (`GotoPreviousOrNextFrame`,
+    /// which is `GotoFrame` with its `pause_afterwards`).
     pub fn step(self: &Rc<Self>, direction: i32) {
         let index = {
-            let running = self.running.borrow();
-            let Some(running) = running.as_ref() else {
+            let mut running = self.running.borrow_mut();
+            let Some(running) = running.as_mut() else {
                 return;
             };
+            running.paused = true;
             let Status { index, frames, .. } = running.status;
             if frames == 0 {
                 return;
@@ -902,6 +904,20 @@ mod tests {
         }
         let status = animator.status().unwrap();
         assert!(status.paused && status.index == count - 1, "{status:?}");
+        // (as the reference's Animation does on coming round with
+        // `StopForSlideshow`: paused on its last frame, played through)
+        let recorded = hydrus_testkit::fixture_json("animation_playback.json");
+        let last = recorded["webp"]["stop_for_slideshow"]
+            .as_array()
+            .unwrap()
+            .last()
+            .unwrap();
+        assert_eq!(status.index as u64, last["index"].as_u64().unwrap());
+        assert_eq!(status.paused, last["paused"].as_bool().unwrap());
+        assert_eq!(
+            animator.played_through(),
+            last["played_through"].as_bool().unwrap()
+        );
         // a new file plays on, not yet played through
         animator.play(Some(frames()), |_| {});
         assert!(!animator.played_through());

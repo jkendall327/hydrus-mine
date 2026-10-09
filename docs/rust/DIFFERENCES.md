@@ -537,13 +537,27 @@ separator.
   metadata. Where the buffer holds a single frame, the reference's render
   thread counts a frame behind its decoder and shows each frame's
   neighbour; hydrus-rs decodes the same frames but keeps each as itself.
-- **Playback is not yet proven against the reference as a whole**
-  (`audit-media-viewer-playback`, untagged). The viewer's animation test
-  (`tests/gui/animation.rs`) plays, pauses and seeks ugoiras and animated
-  WebP with expected scanbar text worked out from the reference's
-  arithmetic rather than recorded from it; the mpv video tests skip where
-  libmpv isn't installed, which includes CI; and no test plays an audio
-  file in the viewer.
+- **Viewer playback (`audit-media-viewer-playback`) is partly tested, so
+  the leaf is untagged.** Covered: ugoira and animated WebP in the viewer,
+  replayed from `oracle/record_animation_playback.py` (the reference's own
+  `Animation` and `AnimationBar` on a frozen clock: playing through two
+  loops, going to a frame, seeking by time paused and playing, frame steps,
+  bar presses and drags, coming round for a slideshow); an mp4 and flac
+  files through libmpv in the viewer (the bar moves, holds while paused and
+  goes where a click seeks; the volume control shows), which CI runs now
+  that it installs libmpv and sets `HYDRUS_REQUIRE_MPV`; and volume and mute
+  as mpv properties. Not covered: stills as part of this leaf; GIF, APNG,
+  webm and other containers through mpv; embedded cover art; volume and mute
+  reaching audio that is playing; and any recorded mpv session of the
+  reference (the expected video and audio times are the native bar's
+  arithmetic). Recorded but not replayed text for text: the seek-by-time
+  steps made while *playing* (the recording freezes the clock, the viewer
+  runs in real time, so the test checks only that a seek leaves it playing),
+  the `GotoFrame` entries made while playing (they are the bar drag and the
+  frame step, replayed paused and checked for pausing), and the status after
+  a scan is released while playing (checked as: it plays on). The headless
+  harness gives mpv a null audio output, which `headless::init` and
+  `mpv::use_audio_output` set for tests only.
 
 ## The duplicate filter (`hydrus-gui`, `hydrus-duplicates::statements`)
 

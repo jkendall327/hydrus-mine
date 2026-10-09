@@ -126,6 +126,24 @@ fn api() -> Option<&'static Api> {
     API.get_or_init(Api::load).as_ref()
 }
 
+/// For tests that need libmpv: whether to skip (it isn't installed). Where
+/// `HYDRUS_REQUIRE_MPV` is set (CI) a missing libmpv fails the test instead,
+/// so that a test is never skipped there unseen.
+///
+/// # Panics
+/// If libmpv is missing and `HYDRUS_REQUIRE_MPV` is set.
+pub fn skip_without_libmpv() -> bool {
+    if available() {
+        return false;
+    }
+    assert!(
+        std::env::var_os("HYDRUS_REQUIRE_MPV").is_none(),
+        "libmpv is required here (HYDRUS_REQUIRE_MPV) but could not be loaded"
+    );
+    eprintln!("libmpv is not installed here; skipped");
+    true
+}
+
 /// Whether libmpv is there to play video.
 pub fn available() -> bool {
     api().is_some()
@@ -215,6 +233,22 @@ unsafe extern "C" fn on_update(data: *mut c_void) {
     let _ = wake.try_send(Wake::Update);
 }
 
+/// The audio output every player is told to use whatever its conf says
+/// (unset in the client).
+static AUDIO_OUTPUT: std::sync::OnceLock<String> = std::sync::OnceLock::new();
+
+/// Make every player from now on use audio output `name` (`null` plays in
+/// real time with no sound card). **For tests only**: it is `pub` so the
+/// integration tests can reach it, but the client never calls it, and where
+/// it has been called it overrides the user's `mpv.conf` `ao`. Left to
+/// itself, mpv probes
+/// PipeWire, ALSA and JACK for each file with sound, which on a machine
+/// without a sound card (CI) is slow, noisy, and crashes when several
+/// players probe at once.
+pub fn use_audio_output(name: &str) {
+    let _ = AUDIO_OUTPUT.set(name.to_owned());
+}
+
 impl Player {
     /// A player, with `conf` (the store's `mpv.conf`) if there is one.
     pub fn new(conf: Option<&Path>) -> Result<Player, String> {
@@ -248,6 +282,9 @@ impl Player {
                     option(name, value);
                 }
             }
+        }
+        if let Some(output) = AUDIO_OUTPUT.get() {
+            option("ao", output);
         }
         // SAFETY: a valid, configured handle
         if unsafe { (api.initialize)(handle) } < 0 {
