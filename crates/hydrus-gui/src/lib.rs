@@ -6088,6 +6088,17 @@ pub(crate) fn pick_debug_response() -> Option<std::path::PathBuf> {
         .save_file()
 }
 
+/// Ask where to save a file named `name` by default, with the public picker boundary.
+pub(crate) fn pick_save(title: &str, name: &str) -> Option<std::path::PathBuf> {
+    if let Some(picker) = PICKER.with(|p| p.borrow().clone()) {
+        return picker(Pick::Files, title).into_iter().next();
+    }
+    rfd::FileDialog::new()
+        .set_title(title)
+        .set_file_name(name)
+        .save_file()
+}
+
 /// Read pasted text from `paster` rather than the clipboard (for tests),
 /// on this thread.
 pub fn set_paster(paster: impl Fn() -> String + 'static) {

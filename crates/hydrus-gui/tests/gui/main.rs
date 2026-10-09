@@ -134,6 +134,7 @@ mod subscriptions_dedupe;
 mod subscriptions_duplicate;
 mod subscriptions_separate;
 mod system_tray;
+mod tag_filter_sibling_testing;
 mod thumbnail_appearance;
 mod thumbnail_cache;
 mod thumbnail_icons;
@@ -236,6 +237,8 @@ mod gui_format;
 mod preview_default_zoom;
 mod related_tags_panel;
 mod related_weight_table;
+mod relationship_application;
+mod relationship_exchange;
 
 mod external_calls;
 mod external_calls_editor;
