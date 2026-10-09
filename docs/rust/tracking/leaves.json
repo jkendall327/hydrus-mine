@@ -20802,10 +20802,10 @@
     "Grouped downloader objections use native yes/no; the extra reference no-but-show-pages response is deferred."
    ],
    "recheck": {
-    "date": "2026-10-08",
+    "date": "2026-10-09",
     "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Menu entry driven in the window with cancel and accept, and the recorded 'Close 5 other pages?' flow replayed via the real close_tabs_question. The bulk-close question is replayed from tab_actions.json through close_tabs_question (session.rs:1861 bulk_tab_close_matches_reference_and_undo_restores_nested_positions), but no test covers the downloader-objection path (reference ShowReasonsAndPagesConfirmationDialog: 'Are you sure you want to close N ...?' plus statement, with yes / no / 'no, but show me the pages' and yes disabled at first); native uses a plain yes/no (DIFFERENCES-style gap noted in the leaf notes). The singular 'close other page' label for two tabs has no test. Tests: crates/hydrus-gui/tests/gui/session.rs:1986 tab_popup_bulk_close_cancellation_and_acceptance_are_wired; session.rs:1861"
+    "by": "phase 2 session",
+    "note": "gui/tab_context_menu.rs close_other_left_and_right_from_the_tab_menu_ask_and_close_as_the_reference_did drives the menu entries ('close' > other pages / pages to the left / pages to the right) for all six cases of tab_actions.json `close` (question text, decline, accept, remaining pages, undo). Still weak: the reference's longer question when a closing page has a downloader at work is not implemented or tested (DIFFERENCES.md), so the tag is withheld."
    }
   },
   {
@@ -20822,10 +20822,10 @@
     "Grouped downloader objections use native yes/no; the extra reference no-but-show-pages response is deferred."
    ],
    "recheck": {
-    "date": "2026-10-08",
+    "date": "2026-10-09",
     "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Recorded left-side questions, closed sets and undo are replayed with the real close_tabs_question/close_tab_keys, but no test clicks the 'close > pages to the left' menu entry. The bulk-close question is replayed from tab_actions.json through close_tabs_question (session.rs:1861 bulk_tab_close_matches_reference_and_undo_restores_nested_positions), but no test covers the downloader-objection path (reference ShowReasonsAndPagesConfirmationDialog: 'Are you sure you want to close N ...?' plus statement, with yes / no / 'no, but show me the pages' and yes disabled at first); native uses a plain yes/no (DIFFERENCES-style gap noted in the leaf notes). Tests: crates/hydrus-gui/tests/gui/session.rs:1861 bulk_tab_close_matches_reference_and_undo_restores_nested_positions"
+    "by": "phase 2 session",
+    "note": "gui/tab_context_menu.rs close_other_left_and_right_from_the_tab_menu_ask_and_close_as_the_reference_did drives the menu entries ('close' > other pages / pages to the left / pages to the right) for all six cases of tab_actions.json `close` (question text, decline, accept, remaining pages, undo). Still weak: the reference's longer question when a closing page has a downloader at work is not implemented or tested (DIFFERENCES.md), so the tag is withheld."
    }
   },
   {
@@ -20842,10 +20842,10 @@
     "Grouped downloader objections use native yes/no; the extra reference no-but-show-pages response is deferred."
    ],
    "recheck": {
-    "date": "2026-10-08",
+    "date": "2026-10-09",
     "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Recorded right-side questions, closed sets and undo are replayed with the real close_tabs_question/close_tab_keys, but no test clicks the 'close > pages to the right' menu entry. The bulk-close question is replayed from tab_actions.json through close_tabs_question (session.rs:1861 bulk_tab_close_matches_reference_and_undo_restores_nested_positions), but no test covers the downloader-objection path (reference ShowReasonsAndPagesConfirmationDialog: 'Are you sure you want to close N ...?' plus statement, with yes / no / 'no, but show me the pages' and yes disabled at first); native uses a plain yes/no (DIFFERENCES-style gap noted in the leaf notes). Tests: crates/hydrus-gui/tests/gui/session.rs:1861 bulk_tab_close_matches_reference_and_undo_restores_nested_positions"
+    "by": "phase 2 session",
+    "note": "gui/tab_context_menu.rs close_other_left_and_right_from_the_tab_menu_ask_and_close_as_the_reference_did drives the menu entries ('close' > other pages / pages to the left / pages to the right) for all six cases of tab_actions.json `close` (question text, decline, accept, remaining pages, undo). Still weak: the reference's longer question when a closing page has a downloader at work is not implemented or tested (DIFFERENCES.md), so the tag is withheld."
    }
   },
   {
@@ -20881,10 +20881,10 @@
     "Select the first eligible page using reference notebook descent and recent-move handling. Bulk targets freeze page keys before confirmation; cancellation changes nothing and confirmed close uses the ordinary reverse-order undo stack."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "The recording's navigation cases are replayed against Pages::navigate_tabs (session.rs:1924 tab_close_focus_settings_and_context_navigation_reach_consumers) and the select submenu labels against tab_context::menu (tab_context.rs:dynamic_close_select_move_and_sort_menus_match_real_reference), but no test clicks the tab-menu 'select' entry to drive Command::NavigateTabs through the window; the ctrl+page keys are driven (shell_tabs.rs) but are another path. Leaf note is a copy-paste about bulk close and is stale. Tests: crates/hydrus-gui/tests/gui/session.rs:1924 tab_close_focus_settings_and_context_navigation_reach_consumers"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "gui/tab_context_menu.rs select_from_the_tab_menu_goes_where_the_reference_went opens the real tab menu on the recorded four pages with the third selected, compares its 'select' submenu with the recorded menu, clicks the entry and compares the page selected with tab_actions.json `navigation`; 'last page' is driven from the first tab, where the recorded menu offers it."
    }
   },
   {
@@ -20900,10 +20900,10 @@
     "Move selection left using reference notebook descent and recent-move handling. Bulk targets freeze page keys before confirmation; cancellation changes nothing and confirmed close uses the ordinary reverse-order undo stack."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "The recording's navigation cases are replayed against Pages::navigate_tabs (session.rs:1924 tab_close_focus_settings_and_context_navigation_reach_consumers) and the select submenu labels against tab_context::menu (tab_context.rs:dynamic_close_select_move_and_sort_menus_match_real_reference), but no test clicks the tab-menu 'select' entry to drive Command::NavigateTabs through the window; the ctrl+page keys are driven (shell_tabs.rs) but are another path. Leaf note is a copy-paste about bulk close and is stale. Tests: crates/hydrus-gui/tests/gui/session.rs:1924; shell_tabs.rs (ctrl+page up)"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "gui/tab_context_menu.rs select_from_the_tab_menu_goes_where_the_reference_went opens the real tab menu on the recorded four pages with the third selected, compares its 'select' submenu with the recorded menu, clicks the entry and compares the page selected with tab_actions.json `navigation`; 'last page' is driven from the first tab, where the recorded menu offers it."
    }
   },
   {
@@ -20919,10 +20919,10 @@
     "Move selection right using reference notebook descent and recent-move handling. Bulk targets freeze page keys before confirmation; cancellation changes nothing and confirmed close uses the ordinary reverse-order undo stack."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "The recording's navigation cases are replayed against Pages::navigate_tabs (session.rs:1924 tab_close_focus_settings_and_context_navigation_reach_consumers) and the select submenu labels against tab_context::menu (tab_context.rs:dynamic_close_select_move_and_sort_menus_match_real_reference), but no test clicks the tab-menu 'select' entry to drive Command::NavigateTabs through the window; the ctrl+page keys are driven (shell_tabs.rs) but are another path. Leaf note is a copy-paste about bulk close and is stale. Tests: crates/hydrus-gui/tests/gui/session.rs:1924; shell_tabs.rs (ctrl+page down)"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "gui/tab_context_menu.rs select_from_the_tab_menu_goes_where_the_reference_went opens the real tab menu on the recorded four pages with the third selected, compares its 'select' submenu with the recorded menu, clicks the entry and compares the page selected with tab_actions.json `navigation`; 'last page' is driven from the first tab, where the recorded menu offers it."
    }
   },
   {
@@ -20938,10 +20938,10 @@
     "Select the last eligible page using reference notebook descent and recent-move handling. Bulk targets freeze page keys before confirmation; cancellation changes nothing and confirmed close uses the ordinary reverse-order undo stack."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "The recording's navigation cases are replayed against Pages::navigate_tabs (session.rs:1924 tab_close_focus_settings_and_context_navigation_reach_consumers) and the select submenu labels against tab_context::menu (tab_context.rs:dynamic_close_select_move_and_sort_menus_match_real_reference), but no test clicks the tab-menu 'select' entry to drive Command::NavigateTabs through the window; the ctrl+page keys are driven (shell_tabs.rs) but are another path. Leaf note is a copy-paste about bulk close and is stale. Tests: crates/hydrus-gui/tests/gui/session.rs:1924"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "gui/tab_context_menu.rs select_from_the_tab_menu_goes_where_the_reference_went opens the real tab menu on the recorded four pages with the third selected, compares its 'select' submenu with the recorded menu, clicks the entry and compares the page selected with tab_actions.json `navigation`; 'last page' is driven from the first tab, where the recorded menu offers it."
    }
   },
   {
@@ -20996,10 +20996,10 @@
     "Move clicked tab to first sibling position. Boundary destinations are omitted; selected and unselected tabs retain the shown leaf, including containing notebooks."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Model test replays tab_context.json moves only against tab_context::destination, building the order itself (tab_context.rs:sorts_and_moves_match_the_reference); the real worker Pages::move_tab is tested with typed values only for Move::First (session.rs:1665 tab_reordering_keeps_nested_notebooks_and_shown_leaf), never Left/Right, and no test clicks the 'move page' menu entry. Tests: crates/hydrus-gui-model/tests/model/tab_context.rs:4 sorts_and_moves_match_the_reference; crates/hydrus-gui/tests/gui/session.rs:1665"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "gui/tab_context_menu.rs move_page_from_the_tab_menu_reorders_as_the_reference_did opens the real tab menu on each tab of six pages and clicks 'move page' > the recorded entry for all 16 cases of tab_context.json `moves`, comparing the order of the pages and that the page shown is still the recorded one; moves the reference does not offer are checked to be absent and to change nothing."
    }
   },
   {
@@ -21015,10 +21015,10 @@
     "Move clicked tab one sibling to the left. Boundary destinations are omitted; selected and unselected tabs retain the shown leaf, including containing notebooks."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Model test replays tab_context.json moves only against tab_context::destination, building the order itself (tab_context.rs:sorts_and_moves_match_the_reference); the real worker Pages::move_tab is tested with typed values only for Move::First (session.rs:1665 tab_reordering_keeps_nested_notebooks_and_shown_leaf), never Left/Right, and no test clicks the 'move page' menu entry. Tests: crates/hydrus-gui-model/tests/model/tab_context.rs:4 sorts_and_moves_match_the_reference"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "gui/tab_context_menu.rs move_page_from_the_tab_menu_reorders_as_the_reference_did opens the real tab menu on each tab of six pages and clicks 'move page' > the recorded entry for all 16 cases of tab_context.json `moves`, comparing the order of the pages and that the page shown is still the recorded one; moves the reference does not offer are checked to be absent and to change nothing."
    }
   },
   {
@@ -21034,10 +21034,10 @@
     "Move clicked tab one sibling to the right. Boundary destinations are omitted; selected and unselected tabs retain the shown leaf, including containing notebooks."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Model test replays tab_context.json moves only against tab_context::destination, building the order itself (tab_context.rs:sorts_and_moves_match_the_reference); the real worker Pages::move_tab is tested with typed values only for Move::First (session.rs:1665 tab_reordering_keeps_nested_notebooks_and_shown_leaf), never Left/Right, and no test clicks the 'move page' menu entry. Tests: crates/hydrus-gui-model/tests/model/tab_context.rs:4 sorts_and_moves_match_the_reference"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "gui/tab_context_menu.rs move_page_from_the_tab_menu_reorders_as_the_reference_did opens the real tab menu on each tab of six pages and clicks 'move page' > the recorded entry for all 16 cases of tab_context.json `moves`, comparing the order of the pages and that the page shown is still the recorded one; moves the reference does not offer are checked to be absent and to change nothing."
    }
   },
   {
@@ -21053,10 +21053,10 @@
     "Move clicked tab to last sibling position. Boundary destinations are omitted; selected and unselected tabs retain the shown leaf, including containing notebooks."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Recording (tab_context.json moves, tab_actions.json menus) replayed only in model tests against tab_context::destination/menu. The GUI test calls Pages::move_tab directly (and only Move::First), not through the tab menu, and never 'to right end'. Menu click to Command::MoveTab to move_tab is not driven through the window. Tests: hydrus-gui-model/tests/model/tab_context.rs:sorts_and_moves_match_the_reference, dynamic_close_select_move_and_sort_menus_match_real_reference, menus_expose_six_sorts_and_only_possible_moves; hydrus-gui/tests/gui/session.rs:1666 tab_reordering_keeps_nested_notebooks_and_shown_leaf"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "gui/tab_context_menu.rs move_page_from_the_tab_menu_reorders_as_the_reference_did opens the real tab menu on each tab of six pages and clicks 'move page' > the recorded entry for all 16 cases of tab_context.json `moves`, comparing the order of the pages and that the page shown is still the recorded one; moves the reference does not offer are checked to be absent and to change nothing."
    }
   },
   {
@@ -21384,10 +21384,10 @@
     "Append the freshest saved session as an independent notebook inside the frozen clicked tab row parent, retain background visible sibling and remember destination child selection; preserve files, selection and importer snapshot data independently of live source."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Resulting tree/shown/destination selection are compared with notebook_sessions.json 'appended', and importer snapshot independence is tested, but only by calling Pages methods; no GUI test clicks 'append session > name' in the tab menu (the submenu is only checked in the model test). Menu-to-command wiring through the window is undriven. Tests: hydrus-gui/tests/gui/notebook_sessions.rs:75 (appended fixture section, calls Pages::append_session_to_notebook directly), :244; hydrus-gui-model/tests/model/tab_context.rs:notebook_session_submenus_match_actual_tab_popup_reserved_name_rules; session.rs:1717,2276"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "gui/notebook_sessions.rs append_session_from_the_tab_menu_lands_where_the_reference_put_it chooses 'append session > existing work' from a tab menu inside the source notebook and compares the resulting tree with notebook_sessions.json `appended`; which page is shown afterwards is compared where the recording's direct call is replayed through Pages::append_session_to_notebook."
    }
   },
   {

@@ -366,3 +366,49 @@ fn notebook_session_copies_preserve_media_and_independent_importer_state() {
             .is_none()
     );
 }
+
+// leaf: audit-options-tabs-context-action-2270-saved-session-name
+// "append session > name" chosen from the notebook tab's menu, as the
+// reference's was (notebook_sessions.json `appended`): the saved session's
+// pages land inside the notebook and the page shown is the recorded one.
+#[test]
+fn append_session_from_the_tab_menu_lands_where_the_reference_put_it() {
+    let _windows = headless::init();
+    let (_dirs, store) = store();
+    let fixture = hydrus_testkit::fixture_json("notebook_sessions.json");
+    let original = source();
+    // the saved session the recording appended: the source notebook's contents
+    let PageContent::Pages(contents) = &original[0].content else {
+        panic!("the source notebook")
+    };
+    let saved = Session {
+        name: "existing work".into(),
+        pages: contents.clone(),
+    };
+    let last = Session {
+        name: sessions::LAST_SESSION.into(),
+        pages: original.clone(),
+    };
+    let outside = original[1].key;
+    store
+        .write(move |ctx| {
+            sessions::save(ctx.conn(), &saved, 1)?;
+            sessions::save(ctx.conn(), &last, 100)?;
+            sessions::set_shown(ctx.conn(), sessions::LAST_SESSION, Some(&outside))
+        })
+        .unwrap();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+    // (a tab's \"append session\" adds to the notebook that holds the tab: the
+    // source notebook's own tabs, shown once it is selected)
+    bound.pages.borrow_mut().select(0, 0);
+    ui.invoke_tab_menu_requested(1, 0, 30.0, 55.0);
+    choose(&ui, 0, "append session");
+    choose(&ui, 1, "existing work");
+    assert_eq!(
+        tree(&bound.pages.borrow().session().pages),
+        fixture["appended"]["tree"]
+    );
+    // (which page is shown afterwards is compared where the recording's direct
+    // call is replayed, through Pages::append_session_to_notebook, above)
+}
