@@ -218,7 +218,7 @@ fn connection_options_reach_the_running_network_engine() {
 }
 
 /// The file handling options are the process's: tests of them take turns.
-static FILE_HANDLING: std::sync::Mutex<()> = std::sync::Mutex::new(());
+pub static FILE_HANDLING: std::sync::Mutex<()> = std::sync::Mutex::new(());
 
 fn local_files(store: &Store) -> Vec<HashId> {
     let storage = hydrus_store::content::DomainRoles::new(&store.snapshot().services)

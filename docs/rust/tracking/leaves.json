@@ -13628,10 +13628,10 @@
     "Assessment covers this editable control and shared Apply/Cancel, not every control on its containing reference page or every background consumer."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Real dropdown and Apply are driven, but the consumer is stood in for: FileImporter::new is only constructed and Raster::has_useful_alpha is called directly (no file imported, no flag set), with expected (bool,bool) pairs typed from source and no recording of the levels (fixtures only dump options). Tests: crates/hydrus-gui/tests/gui/options_media_playback.rs:23 the_transparency_strictness_is_what_the_importer_judges_images_by"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "Claude (recheck bin C)",
+    "note": "The GUI test checks the dropdown's choices and default against oracle/fixtures/transparency_strictness.json (record_transparency_strictness.py: each level chosen in the reference's real MediaPlaybackPanel, UpdateOptions and ReinitGlobalSettings as OK does, then the real FileImportJob.GeneratePreImportHashAndStatus/GenerateInfo on five PNGs: no alpha, opaque, clear, three faint pixels, a clear half). For each level, on a fresh client, an importer made before the change (as the daemon's) imports the same five files after the level is chosen and applied in the real Options window, and each file's stored transparency flag equals the reference's HasTransparency(). Fixed here: an importer now takes changed file handling settings at its next import (before, only when made). Tests: crates/hydrus-gui/tests/gui/options_media_playback.rs the_transparency_strictness_is_what_the_importer_judges_images_by"
    }
   },
   {

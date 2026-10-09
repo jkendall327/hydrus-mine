@@ -623,7 +623,8 @@ importing (looking inside .zip files for comics), maintenance and
 processing (file maintenance in normal time and its throttle, the
 potential duplicates search, auto-resolution in normal time and its work
 and rest), media playback (the zoom centre, the zoom steps, the media
-viewer's default zoom, and what counts as transparency), media viewer
+viewer's default zoom, and what counts as transparency, which the next
+import takes, even by an importer already running), media viewer
 (slideshows), media viewer hovers (the top hover's
 file summary), ratings (the media viewer's rating sizes, and the
 thumbnails': their sizes, which go up to the thumbnails' width as the

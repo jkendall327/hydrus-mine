@@ -66,6 +66,8 @@ pub struct FileImporter {
     tools: MediaTools,
     /// How many temporary copies of source files have been made.
     temp_copies: Arc<std::sync::atomic::AtomicUsize>,
+    /// The file handling settings last applied to the process.
+    applied: Arc<std::sync::Mutex<hydrus_store::settings::FileHandlingSettings>>,
 }
 
 impl FileImporter {
@@ -73,7 +75,7 @@ impl FileImporter {
     /// handling settings to this process (as the reference applies its
     /// options at boot).
     pub fn new(store: Arc<Store>, tools: MediaTools) -> Self {
-        apply_file_handling(&store);
+        let applied = apply_file_handling(&store);
         let weak = Arc::downgrade(&store);
         let tools = tools.with_icc_reader(Arc::new(move || {
             let Some(store) = weak.upgrade() else {
@@ -92,6 +94,7 @@ impl FileImporter {
             store,
             tools,
             temp_copies: Arc::default(),
+            applied: Arc::new(std::sync::Mutex::new(applied)),
         }
     }
 
@@ -210,6 +213,18 @@ impl FileImporter {
         options: &FileImportOptions,
     ) -> Result<ImportResult> {
         use hydrus_core::debug_flags::{Flag, report};
+        // (options changed since this importer was made count, as the
+        // reference's options dialog applies them on OK)
+        if let Ok(settings) = self.store.read(hydrus_store::settings::get) {
+            let mut applied = self
+                .applied
+                .lock()
+                .unwrap_or_else(std::sync::PoisonError::into_inner);
+            if *applied != settings {
+                apply_file_handling_settings(settings);
+                *applied = settings;
+            }
+        }
         report(Flag::FileImportReport, || {
             format!(
                 "File import job created:\nSource: {source}\nRaw import path: {}.",
@@ -609,10 +624,15 @@ fn write_bytes_into_storage(bytes: &[u8], destination: &Path) -> Result<()> {
 /// Apply the store's file handling settings to this process: comic book
 /// detection, what counts as transparency, and whether files' permissions
 /// are left alone.
-pub fn apply_file_handling(store: &Store) {
-    use hydrus_media::TransparencyStrictness as Level;
+pub fn apply_file_handling(store: &Store) -> hydrus_store::settings::FileHandlingSettings {
     let settings: hydrus_store::settings::FileHandlingSettings =
         store.read(hydrus_store::settings::get).unwrap_or_default();
+    apply_file_handling_settings(settings);
+    settings
+}
+
+fn apply_file_handling_settings(settings: hydrus_store::settings::FileHandlingSettings) {
+    use hydrus_media::TransparencyStrictness as Level;
     hydrus_media::set_comic_book_detection(settings.comic_book_detection);
     hydrus_media::set_transparency_strictness(match settings.transparency_strictness {
         0 => Level::ChannelPresence,
