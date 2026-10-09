@@ -4161,10 +4161,12 @@ change nothing). They are marked out of scope in `docs/rust/tracking/`.
 
 ## Shutdown maintenance
 
-- The shutdown work is analyzing tables without statistics; there is no
-  repository processing (remote repositories are out of scope). It runs on the
-  UI thread before the window closes, without the reference's exit splash or
-  its cancel button.
+- The shutdown work is analyzing the tables due; there is no repository
+  processing (remote repositories are out of scope). It runs on the UI thread
+  before the window closes, without the reference's exit splash or its cancel
+  button. The native schema has its own tables, so "analyze N table_names"
+  counts differ from the reference's on the same library (391 on `basic` in
+  the reference); FTS virtual tables are never analysed.
 - Restart is offered on every platform (the reference hides it for frozen
   Linux builds).
 
@@ -4481,6 +4483,17 @@ rendered grid.
 - The CPU-busy check reads per-core times from `/proc/stat`, so it exists on
   Linux only; elsewhere the system never reads busy. The reference's
   just-woke-from-sleep condition is not part of the idle gate here.
+- While idle mode is forced, hydrus-rs clears the CPU-busy state. The
+  reference's `SystemBusy` just returns false and keeps its last stored value,
+  so when forcing ends the old busy value comes back until the next look (up to
+  a minute later); here it does not.
+- **Trash maintenance order.** When the trash is over its maximum size,
+  hydrus-rs deletes the oldest-trashed files first. The reference asks its
+  database for the oldest 256 "oldest first" (its comment says so), but turns
+  them into a set of file ids before deleting, so it deletes as many files,
+  eight at a time, in roughly file-id (import) order instead
+  (`oracle/fixtures/trash_maintenance.json`, the two ordering scenarios). Which
+  files go differs; how many, and the size and age boundaries, are the same.
 
 ## Quick-leaf checks (notes)
 

@@ -1,0 +1,597 @@
+{
+ "now_ms": 1767225600500,
+ "scenarios": [
+  {
+   "name": "defaults keep young files, drop those over 72 hours",
+   "max_age_hours": 72,
+   "max_size_mb": 2048,
+   "trash": [
+    {
+     "name": "jpeg_00.jpg",
+     "ago_ms": 262800000,
+     "hash": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+     "size": 1744,
+     "trashed_ms": 1766962800500
+    },
+    {
+     "name": "jpeg_01.jpg",
+     "ago_ms": 259201000,
+     "hash": "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5",
+     "size": 6791,
+     "trashed_ms": 1766966399500
+    },
+    {
+     "name": "jpeg_02.jpg",
+     "ago_ms": 259200000,
+     "hash": "a4d4f5f391c94942e38d89472fed0fc63cf097e3ee05bc40642bcd036407cdaf",
+     "size": 15232,
+     "trashed_ms": 1766966400500
+    },
+    {
+     "name": "jpeg_03.jpg",
+     "ago_ms": 255600000,
+     "hash": "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c",
+     "size": 15895,
+     "trashed_ms": 1766970000500
+    },
+    {
+     "name": "jpeg_04.jpg",
+     "ago_ms": 1000,
+     "hash": "9f3f4aed09bdb9fbb4ea41dfa91e3f43300d688bcdc55cd37df3dbb20cc62f7c",
+     "size": 14247,
+     "trashed_ms": 1767225599500
+    }
+   ],
+   "groups": [
+    [
+     "jpeg_00.jpg",
+     "jpeg_01.jpg"
+    ]
+   ],
+   "left": [
+    "jpeg_02.jpg",
+    "jpeg_03.jpg",
+    "jpeg_04.jpg"
+   ]
+  },
+  {
+   "name": "age cutoff is a whole second, strictly older",
+   "max_age_hours": 3,
+   "max_size_mb": null,
+   "trash": [
+    {
+     "name": "jpeg_00.jpg",
+     "ago_ms": 10801500,
+     "hash": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+     "size": 1744,
+     "trashed_ms": 1767214799000
+    },
+    {
+     "name": "jpeg_01.jpg",
+     "ago_ms": 10800501,
+     "hash": "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5",
+     "size": 6791,
+     "trashed_ms": 1767214799999
+    },
+    {
+     "name": "jpeg_02.jpg",
+     "ago_ms": 10800500,
+     "hash": "a4d4f5f391c94942e38d89472fed0fc63cf097e3ee05bc40642bcd036407cdaf",
+     "size": 15232,
+     "trashed_ms": 1767214800000
+    },
+    {
+     "name": "jpeg_03.jpg",
+     "ago_ms": 10800000,
+     "hash": "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c",
+     "size": 15895,
+     "trashed_ms": 1767214800500
+    },
+    {
+     "name": "jpeg_04.jpg",
+     "ago_ms": 10799999,
+     "hash": "9f3f4aed09bdb9fbb4ea41dfa91e3f43300d688bcdc55cd37df3dbb20cc62f7c",
+     "size": 14247,
+     "trashed_ms": 1767214800501
+    },
+    {
+     "name": "jpeg_05.jpg",
+     "ago_ms": 7200000,
+     "hash": "ba408cebd8481517e808a5f7351c604805284fbb5fc1cd90b1b3b80ceac8f457",
+     "size": 11989,
+     "trashed_ms": 1767218400500
+    }
+   ],
+   "groups": [
+    [
+     "jpeg_00.jpg",
+     "jpeg_01.jpg"
+    ]
+   ],
+   "left": [
+    "jpeg_02.jpg",
+    "jpeg_03.jpg",
+    "jpeg_04.jpg",
+    "jpeg_05.jpg"
+   ]
+  },
+  {
+   "name": "no age limit keeps old files",
+   "max_age_hours": null,
+   "max_size_mb": null,
+   "trash": [
+    {
+     "name": "jpeg_00.jpg",
+     "ago_ms": 36000000000,
+     "hash": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+     "size": 1744,
+     "trashed_ms": 1731225600500
+    },
+    {
+     "name": "bmp1",
+     "ago_ms": 5000,
+     "hash": "0426a142f5221d2252cd2215f0de6070257de27b20b4f5aa008ece42fbea6134",
+     "size": 2097152,
+     "trashed_ms": 1767225595500
+    }
+   ],
+   "groups": [],
+   "left": [
+    "bmp1",
+    "jpeg_00.jpg"
+   ]
+  },
+  {
+   "name": "a megabyte exactly is not over a megabyte",
+   "max_age_hours": null,
+   "max_size_mb": 1,
+   "trash": [
+    {
+     "name": "bmp1",
+     "ago_ms": 5000,
+     "hash": "57bb9b33e99c9736e3e357f40e78976925c0dc707567d8d0ee5be8f3b5720298",
+     "size": 1048576,
+     "trashed_ms": 1767225595500
+    }
+   ],
+   "groups": [],
+   "left": [
+    "bmp1"
+   ]
+  },
+  {
+   "name": "a byte over a megabyte is",
+   "max_age_hours": null,
+   "max_size_mb": 1,
+   "trash": [
+    {
+     "name": "bmp2",
+     "ago_ms": 5000,
+     "hash": "b90c799e75601eee169448509236eb6e1555969c9b3d456e2223f81ef5348e06",
+     "size": 1048577,
+     "trashed_ms": 1767225595500
+    }
+   ],
+   "groups": [
+    [
+     "bmp2"
+    ]
+   ],
+   "left": []
+  },
+  {
+   "name": "oldest first, eight at a time, size checked between",
+   "max_age_hours": null,
+   "max_size_mb": 1,
+   "trash": [
+    {
+     "name": "bmp10",
+     "ago_ms": 1000,
+     "hash": "b0ba1942a8cf09651e23d540174650952296d41bc77f2114d1c0c93bc4860d02",
+     "size": 100000,
+     "trashed_ms": 1767225599500
+    },
+    {
+     "name": "bmp11",
+     "ago_ms": 8000,
+     "hash": "48fa70ad62c60037dc345fc87a699a7168d855f2977c1e054773bc33fb956ae2",
+     "size": 100000,
+     "trashed_ms": 1767225592500
+    },
+    {
+     "name": "bmp12",
+     "ago_ms": 15000,
+     "hash": "24a53c18b22ae9156fa74e3c79f69c727e7f65efd7c9a6af9f540d84a28508c8",
+     "size": 100000,
+     "trashed_ms": 1767225585500
+    },
+    {
+     "name": "bmp13",
+     "ago_ms": 2000,
+     "hash": "130ed566a74d87bf25a379e3b0855baa8ca35d2d4b0dc4cbde42953c1217be8e",
+     "size": 100000,
+     "trashed_ms": 1767225598500
+    },
+    {
+     "name": "bmp14",
+     "ago_ms": 9000,
+     "hash": "25d3c1a8a1c4e1e396643e7d7bc6e69a98db588ae21617e04a8439bb8547e40f",
+     "size": 100000,
+     "trashed_ms": 1767225591500
+    },
+    {
+     "name": "bmp15",
+     "ago_ms": 16000,
+     "hash": "5b912bfc54e276b4a2b881dcb34d58c1d0616a569b3d9f7dfaa4a1a88c998ec6",
+     "size": 100000,
+     "trashed_ms": 1767225584500
+    },
+    {
+     "name": "bmp16",
+     "ago_ms": 3000,
+     "hash": "087b61bf61fc8cb93aeb3fbf6d57eb438c1dbfde8a56fc5cd07e9631ec069da8",
+     "size": 100000,
+     "trashed_ms": 1767225597500
+    },
+    {
+     "name": "bmp17",
+     "ago_ms": 10000,
+     "hash": "854f7dda1d4fa540fc3628ecf253c6fa13b935df3b45f2dc2e2c70171c420651",
+     "size": 100000,
+     "trashed_ms": 1767225590500
+    },
+    {
+     "name": "bmp18",
+     "ago_ms": 17000,
+     "hash": "7993309307473f82adee160e73e6ba35c4e7949f42be3b8393ff148db97f0b1f",
+     "size": 100000,
+     "trashed_ms": 1767225583500
+    },
+    {
+     "name": "bmp19",
+     "ago_ms": 4000,
+     "hash": "bc4ff5c355ba04efedf1b8e032f110a1cc341001b6d8c308604d6bc94319ccbe",
+     "size": 100000,
+     "trashed_ms": 1767225596500
+    },
+    {
+     "name": "bmp20",
+     "ago_ms": 11000,
+     "hash": "ae36fc838aa98108b51aeccbfd08f846ff93c9a7ccc6b064a7a1304757aeb598",
+     "size": 100000,
+     "trashed_ms": 1767225589500
+    },
+    {
+     "name": "bmp21",
+     "ago_ms": 18000,
+     "hash": "66c8b063d7b03bec0a32584a538ffe7d67021ff308b18cb449eb0fdfefb0142a",
+     "size": 100000,
+     "trashed_ms": 1767225582500
+    },
+    {
+     "name": "bmp22",
+     "ago_ms": 5000,
+     "hash": "f9ebbee23c4f856abf371e7ac58df0cd8b864db8ada4863941dcea098b3c8756",
+     "size": 100000,
+     "trashed_ms": 1767225595500
+    },
+    {
+     "name": "bmp23",
+     "ago_ms": 12000,
+     "hash": "9844d913638f476e08d55c6c4bfbf32077340c86bc86def2730ba85549ff9fb8",
+     "size": 100000,
+     "trashed_ms": 1767225588500
+    },
+    {
+     "name": "bmp24",
+     "ago_ms": 19000,
+     "hash": "483a8de7583e53ea9ddc70d27a8082405164520fe09218d986b946b9057b7326",
+     "size": 100000,
+     "trashed_ms": 1767225581500
+    },
+    {
+     "name": "bmp25",
+     "ago_ms": 6000,
+     "hash": "34d235d86b1b6c7c159aaad3eee466f334ea897c322b341ef803e098bff59d3b",
+     "size": 100000,
+     "trashed_ms": 1767225594500
+    },
+    {
+     "name": "bmp26",
+     "ago_ms": 13000,
+     "hash": "9c322cd43a922332da4e9b236215213ae073b56c12ff063b1fbb80ae0fec0639",
+     "size": 100000,
+     "trashed_ms": 1767225587500
+    },
+    {
+     "name": "bmp27",
+     "ago_ms": 20000,
+     "hash": "e446d1bb04e24624b79716abecc22a193373d9fbcca7ac77c5daf65ac44e8525",
+     "size": 100000,
+     "trashed_ms": 1767225580500
+    },
+    {
+     "name": "bmp28",
+     "ago_ms": 7000,
+     "hash": "e2086fd24cbb220889c1b5377f5b58f198579e66feb6c94be97bb0ea89dab891",
+     "size": 100000,
+     "trashed_ms": 1767225593500
+    },
+    {
+     "name": "bmp29",
+     "ago_ms": 14000,
+     "hash": "283125bd495448212f242a1edcf0895fc261d7b979dc2499126c79beff132016",
+     "size": 100000,
+     "trashed_ms": 1767225586500
+    }
+   ],
+   "groups": [
+    [
+     "bmp14",
+     "bmp17",
+     "bmp13",
+     "bmp10",
+     "bmp12",
+     "bmp16",
+     "bmp15",
+     "bmp11"
+    ],
+    [
+     "bmp18",
+     "bmp22",
+     "bmp25",
+     "bmp23",
+     "bmp24",
+     "bmp21",
+     "bmp19",
+     "bmp20"
+    ]
+   ],
+   "left": [
+    "bmp26",
+    "bmp27",
+    "bmp28",
+    "bmp29"
+   ]
+  },
+  {
+   "name": "small files go with the big ones in a group",
+   "max_age_hours": null,
+   "max_size_mb": 1,
+   "trash": [
+    {
+     "name": "bmp3",
+     "ago_ms": 9000,
+     "hash": "c042312ddfbefef03d28a7954aedb928e9e7cfd345d49217aa7d1cb7c323a20c",
+     "size": 600000,
+     "trashed_ms": 1767225591500
+    },
+    {
+     "name": "jpeg_00.jpg",
+     "ago_ms": 8000,
+     "hash": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+     "size": 1744,
+     "trashed_ms": 1767225592500
+    },
+    {
+     "name": "bmp4",
+     "ago_ms": 7000,
+     "hash": "e93601a2e83cee45dbfc1403c2308d0c8ae02b770c8bc9a707834e67064c86a5",
+     "size": 600000,
+     "trashed_ms": 1767225593500
+    },
+    {
+     "name": "jpeg_01.jpg",
+     "ago_ms": 6000,
+     "hash": "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5",
+     "size": 6791,
+     "trashed_ms": 1767225594500
+    },
+    {
+     "name": "png_00.png",
+     "ago_ms": 5000,
+     "hash": "a1bfa38c420fc82c7bed25ef2970777322cfec7dd637af8b205654f5bfd68a5a",
+     "size": 1095,
+     "trashed_ms": 1767225595500
+    },
+    {
+     "name": "bmp5",
+     "ago_ms": 4000,
+     "hash": "c1ec6326a64c38372c197bdb78f1ea4c458585f05b1aa6bd8407c8b6afa8ad8b",
+     "size": 300000,
+     "trashed_ms": 1767225596500
+    },
+    {
+     "name": "jpeg_02.jpg",
+     "ago_ms": 3000,
+     "hash": "a4d4f5f391c94942e38d89472fed0fc63cf097e3ee05bc40642bcd036407cdaf",
+     "size": 15232,
+     "trashed_ms": 1767225597500
+    },
+    {
+     "name": "jpeg_03.jpg",
+     "ago_ms": 2000,
+     "hash": "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c",
+     "size": 15895,
+     "trashed_ms": 1767225598500
+    },
+    {
+     "name": "jpeg_04.jpg",
+     "ago_ms": 1500,
+     "hash": "9f3f4aed09bdb9fbb4ea41dfa91e3f43300d688bcdc55cd37df3dbb20cc62f7c",
+     "size": 14247,
+     "trashed_ms": 1767225599000
+    },
+    {
+     "name": "bmp6",
+     "ago_ms": 1000,
+     "hash": "d792855668f5581ccbc628748a6627661011ce7f3c0901410c97307e7098d663",
+     "size": 300000,
+     "trashed_ms": 1767225599500
+    }
+   ],
+   "groups": [
+    [
+     "jpeg_02.jpg",
+     "jpeg_01.jpg",
+     "png_00.png",
+     "bmp4",
+     "bmp5",
+     "jpeg_00.jpg",
+     "bmp3",
+     "bmp6"
+    ]
+   ],
+   "left": [
+    "jpeg_03.jpg",
+    "jpeg_04.jpg"
+   ]
+  },
+  {
+   "name": "size first, then age",
+   "max_age_hours": 1,
+   "max_size_mb": 1,
+   "trash": [
+    {
+     "name": "bmp7",
+     "ago_ms": 1800000,
+     "hash": "990e3dcdeca83ffc41f34c3f0335324d50c1cf788b3b22c31574ae696fcbdeb5",
+     "size": 700000,
+     "trashed_ms": 1767223800500
+    },
+    {
+     "name": "bmp8",
+     "ago_ms": 1200000,
+     "hash": "416a8c575553c21b10574769e2a1ae88eecb59a7062cc59d4de68c8c46d95129",
+     "size": 700000,
+     "trashed_ms": 1767224400500
+    },
+    {
+     "name": "jpeg_00.jpg",
+     "ago_ms": 7200000,
+     "hash": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+     "size": 1744,
+     "trashed_ms": 1767218400500
+    },
+    {
+     "name": "jpeg_01.jpg",
+     "ago_ms": 600000,
+     "hash": "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5",
+     "size": 6791,
+     "trashed_ms": 1767225000500
+    }
+   ],
+   "groups": [
+    [
+     "jpeg_01.jpg",
+     "bmp8",
+     "jpeg_00.jpg",
+     "bmp7"
+    ]
+   ],
+   "left": []
+  },
+  {
+   "name": "zero megabytes empties the trash",
+   "max_age_hours": null,
+   "max_size_mb": 0,
+   "trash": [
+    {
+     "name": "jpeg_00.jpg",
+     "ago_ms": 1000,
+     "hash": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+     "size": 1744,
+     "trashed_ms": 1767225599500
+    },
+    {
+     "name": "jpeg_01.jpg",
+     "ago_ms": 2000,
+     "hash": "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5",
+     "size": 6791,
+     "trashed_ms": 1767225598500
+    },
+    {
+     "name": "jpeg_02.jpg",
+     "ago_ms": 3000,
+     "hash": "a4d4f5f391c94942e38d89472fed0fc63cf097e3ee05bc40642bcd036407cdaf",
+     "size": 15232,
+     "trashed_ms": 1767225597500
+    },
+    {
+     "name": "jpeg_03.jpg",
+     "ago_ms": 4000,
+     "hash": "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c",
+     "size": 15895,
+     "trashed_ms": 1767225596500
+    },
+    {
+     "name": "jpeg_04.jpg",
+     "ago_ms": 5000,
+     "hash": "9f3f4aed09bdb9fbb4ea41dfa91e3f43300d688bcdc55cd37df3dbb20cc62f7c",
+     "size": 14247,
+     "trashed_ms": 1767225595500
+    },
+    {
+     "name": "jpeg_05.jpg",
+     "ago_ms": 6000,
+     "hash": "ba408cebd8481517e808a5f7351c604805284fbb5fc1cd90b1b3b80ceac8f457",
+     "size": 11989,
+     "trashed_ms": 1767225594500
+    },
+    {
+     "name": "jpeg_06.jpg",
+     "ago_ms": 7000,
+     "hash": "12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c",
+     "size": 30716,
+     "trashed_ms": 1767225593500
+    },
+    {
+     "name": "jpeg_07.jpg",
+     "ago_ms": 8000,
+     "hash": "bdc0a7dad4000a210576140fd54e1430858cee0fa344c77de64b2bc4107ea8cc",
+     "size": 6350,
+     "trashed_ms": 1767225592500
+    },
+    {
+     "name": "jpeg_08.jpg",
+     "ago_ms": 9000,
+     "hash": "39175d281c889f076d785e7fed391e5ef45a72e73d88057f383961a7b82effa7",
+     "size": 51681,
+     "trashed_ms": 1767225591500
+    },
+    {
+     "name": "png_00.png",
+     "ago_ms": 10000,
+     "hash": "a1bfa38c420fc82c7bed25ef2970777322cfec7dd637af8b205654f5bfd68a5a",
+     "size": 1095,
+     "trashed_ms": 1767225590500
+    },
+    {
+     "name": "png_01.png",
+     "ago_ms": 11000,
+     "hash": "d101e8e138c4b0b0acaedaa8dec27f434779878d7df8da0af075e50d67483b68",
+     "size": 1070,
+     "trashed_ms": 1767225589500
+    }
+   ],
+   "groups": [
+    [
+     "jpeg_01.jpg",
+     "png_00.png",
+     "jpeg_00.jpg",
+     "png_01.png",
+     "jpeg_02.jpg",
+     "jpeg_08.jpg",
+     "jpeg_04.jpg",
+     "jpeg_03.jpg"
+    ],
+    [
+     "jpeg_06.jpg",
+     "jpeg_05.jpg",
+     "jpeg_07.jpg"
+    ]
+   ],
+   "left": []
+  }
+ ]
+}

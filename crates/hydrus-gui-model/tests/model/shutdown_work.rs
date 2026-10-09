@@ -44,10 +44,15 @@ fn shutdown_work_runs_asks_or_skips_as_the_reference_decides() {
 fn the_work_analyzes_the_due_tables_and_registers_itself() {
     let dir = tempfile::tempdir().unwrap();
     let store = hydrus_store::Store::open(dir.path()).unwrap();
-    let before = work_due(&store);
+    let now = hydrus_core::TimestampMs::now().secs();
+    let before = work_due(&store, now);
     assert_eq!(before.len(), 1);
     assert!(before[0].starts_with("analyze "));
-    run(&store, 12_345).unwrap();
+    let started = hydrus_core::TimestampMs::now().secs();
+    run(&store, started).unwrap();
+    // registered when it finished (oracle/fixtures/shutdown_work.json)
     let saved: ShutdownWork = store.read(hydrus_store::settings::get).unwrap();
-    assert_eq!(saved.last_done, 12_345);
+    assert!((started..=hydrus_core::TimestampMs::now().secs()).contains(&saved.last_done));
+    // and nothing is due any more
+    assert!(work_due(&store, now).is_empty());
 }

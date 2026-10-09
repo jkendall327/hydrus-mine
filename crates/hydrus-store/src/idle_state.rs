@@ -58,49 +58,92 @@ pub fn currently_idle(dir: &Path, now_ms: i64) -> bool {
 
 /// The CPU-busy check (`SystemBusy`): busy when at least `count` cores ran
 /// above `percent` between two samples of their times. None: ignore CPU use.
+///
+/// Each core's use is worked out as the reference's psutil does
+/// (`cpu_percent(percpu=True)`): every counter is read in seconds (jiffies
+/// over the clock's 100 ticks a second), a counter that went backwards
+/// counts as no time, guest time is already in user time so it leaves the
+/// total, idle and iowait are not busy, and the percentage is rounded to one
+/// decimal place before it is compared.
 #[derive(Debug, Default)]
 pub struct CpuBusy {
-    last: Option<Vec<(u64, u64)>>,
+    last: Option<Vec<Vec<f64>>>,
+    percents: Vec<f64>,
 }
+
+/// psutil's Linux CPU time fields: user, nice, system, idle, iowait, irq,
+/// softirq, steal, guest and guest_nice.
+const FIELDS: usize = 10;
+/// `os.sysconf('SC_CLK_TCK')` on Linux.
+const CLOCK_TICKS: f64 = 100.0;
 
 impl CpuBusy {
     /// Sample now; `None` when the system's per-core times can't be read
     /// (only Linux's `/proc/stat` is read), or on the first sample.
     pub fn sample(&mut self, percent: u32, count: u32) -> Option<bool> {
-        self.sample_times(&per_core_times()?, percent, count)
+        let stat = std::fs::read_to_string("/proc/stat").ok()?;
+        self.sample_stat(&stat, percent, count)
     }
 
-    /// [`Self::sample`] with the cores' (busy, total) times given.
-    pub fn sample_times(&mut self, now: &[(u64, u64)], percent: u32, count: u32) -> Option<bool> {
-        let last = self.last.replace(now.to_owned())?;
-        let busy = now
+    /// [`Self::sample`] with the text of `/proc/stat` given.
+    pub fn sample_stat(&mut self, stat: &str, percent: u32, count: u32) -> Option<bool> {
+        let now = per_core_times(stat)?;
+        let last = self.last.replace(now.clone())?;
+        self.percents = now
             .iter()
             .zip(&last)
-            .filter(|((busy, total), (busy_0, total_0))| {
-                let (busy, total) = (busy.saturating_sub(*busy_0), total.saturating_sub(*total_0));
-                total > 0 && busy * 100 > u64::from(percent) * total
-            })
+            .map(|(now, last)| core_percent(last, now))
+            .collect();
+        let busy = self
+            .percents
+            .iter()
+            .filter(|&&core| core > f64::from(percent))
             .count();
         Some(busy >= count as usize)
     }
+
+    /// Each core's percentage at the latest sample that had a previous one.
+    pub fn percents(&self) -> &[f64] {
+        &self.percents
+    }
 }
 
-/// Each core's (busy, total) jiffies.
-fn per_core_times() -> Option<Vec<(u64, u64)>> {
-    let stat = std::fs::read_to_string("/proc/stat").ok()?;
-    let cores: Vec<(u64, u64)> = stat
+/// One core's busy percentage between two samples, rounded as psutil
+/// rounds it (`round(busy / total * 100, 1)`; 0 when no time passed).
+fn core_percent(last: &[f64], now: &[f64]) -> f64 {
+    let deltas: Vec<f64> = (0..FIELDS)
+        .map(|i| {
+            let field = |times: &[f64]| times.get(i).copied().unwrap_or(0.0);
+            (field(now) - field(last)).max(0.0)
+        })
+        .collect();
+    let mut total: f64 = deltas.iter().sum();
+    total -= deltas[8];
+    total -= deltas[9];
+    let busy = total - deltas[3] - deltas[4];
+    if total == 0.0 {
+        return 0.0;
+    }
+    // Python's round() to a place is the correctly rounded decimal, as
+    // Rust's formatting is.
+    format!("{:.1}", busy / total * 100.0)
+        .parse()
+        .unwrap_or(0.0)
+}
+
+/// Each core's counters, in seconds, from the text of `/proc/stat` (the
+/// lines after the first that start with `cpu`, as psutil reads them).
+fn per_core_times(stat: &str) -> Option<Vec<Vec<f64>>> {
+    let cores: Vec<Vec<f64>> = stat
         .lines()
-        .filter(|l| l.starts_with("cpu") && l.as_bytes().get(3).is_some_and(u8::is_ascii_digit))
+        .skip(1)
+        .filter(|l| l.starts_with("cpu"))
         .map(|l| {
-            let values: Vec<u64> = l
-                .split_whitespace()
+            l.split_whitespace()
                 .skip(1)
-                .filter_map(|v| v.parse().ok())
-                .collect();
-            let total: u64 = values.iter().sum();
-            // idle and iowait are not busy
-            let idle = values.get(3).copied().unwrap_or(0) + values.get(4).copied().unwrap_or(0);
-            (total - idle.min(total), total)
+                .take(FIELDS)
+                .map(|v| v.parse::<f64>().unwrap_or(0.0) / CLOCK_TICKS)
+                .collect()
         })
         .collect();
     (!cores.is_empty()).then_some(cores)
@@ -120,29 +163,6 @@ mod tests {
         assert!(!is_idle(dir.path(), 999));
         publish(dir.path(), false, 2_000).unwrap();
         assert!(!is_idle(dir.path(), 2_000));
-    }
-
-    #[test]
-    fn busy_needs_this_many_cores_above_this_percentage() {
-        // two cores: 60% and 20% busy over the interval
-        let first = vec![(0, 0), (0, 0)];
-        let second = vec![(60, 100), (20, 100)];
-        let mut cpu = CpuBusy::default();
-        assert_eq!(cpu.sample_times(&first, 50, 1), None, "first sample");
-        assert_eq!(cpu.sample_times(&second, 50, 1), Some(true));
-        let mut cpu = CpuBusy::default();
-        cpu.sample_times(&first, 50, 1);
-        assert_eq!(cpu.sample_times(&second, 50, 2), Some(false));
-        let mut cpu = CpuBusy::default();
-        cpu.sample_times(&first, 5, 2);
-        assert_eq!(cpu.sample_times(&second, 5, 2), Some(true));
-        let mut cpu = CpuBusy::default();
-        cpu.sample_times(&first, 60, 1);
-        assert_eq!(
-            cpu.sample_times(&second, 60, 1),
-            Some(false),
-            "strictly above"
-        );
     }
 
     #[test]

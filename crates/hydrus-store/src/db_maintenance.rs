@@ -172,41 +172,110 @@ pub fn analyze(conn: &Connection, full: bool) -> Result<()> {
     Ok(())
 }
 
-/// Tables with no planner statistics yet (`GetTableNamesDueAnalysis`).
-pub fn tables_due_analysis(conn: &Connection) -> Result<Vec<String>> {
-    let has_stats = conn
-        .query_row(
-            "SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = 'sqlite_stat1'",
-            [],
-            |_| Ok(()),
-        )
-        .is_ok();
-    let sql = if has_stats {
-        "SELECT name FROM sqlite_master WHERE type = 'table' AND name NOT LIKE 'sqlite_%'
-         AND sql NOT LIKE 'CREATE VIRTUAL%'
-         AND name NOT IN (SELECT tbl FROM sqlite_stat1) ORDER BY name"
-    } else {
-        "SELECT name FROM sqlite_master WHERE type = 'table' AND name NOT LIKE 'sqlite_%'
-         AND sql NOT LIKE 'CREATE VIRTUAL%' ORDER BY name"
-    };
+/// When each table was last analysed and how many rows it had then (the
+/// reference's `analyze_timestamps`): table name to (rows, milliseconds).
+#[derive(Debug, Default, Clone, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
+pub struct AnalyzeTimestamps(pub std::collections::BTreeMap<String, (i64, i64)>);
+
+impl crate::settings::Setting for AnalyzeTimestamps {
+    const KEY: &'static str = "analyze_timestamps";
+}
+
+/// The reference's re-analysis schedule: tables of at most this many rows,
+/// whether they are analysed at once while looking (small ones are cheap),
+/// and how long after the last analysis.
+const ANALYZE_BOUNDARIES: [(i64, bool, i64); 4] = [
+    (100, true, 6 * 3600),
+    (10_000, true, 3 * 86_400),
+    (100_000, false, 3 * 30 * 86_400),
+    (10_000_000, false, 12 * 30 * 86_400),
+];
+
+fn analysable_tables(conn: &Connection) -> Result<Vec<String>> {
     Ok(conn
-        .prepare(sql)?
+        .prepare(
+            "SELECT name FROM sqlite_master WHERE type = 'table' AND name NOT LIKE 'sqlite_%'
+             AND name NOT LIKE 'deferred\\_delete\\_%' ESCAPE '\\'
+             AND sql NOT LIKE 'CREATE VIRTUAL%' ORDER BY name",
+        )?
         .query_map([], |r| r.get(0))?
         .collect::<rusqlite::Result<Vec<String>>>()?)
 }
 
-/// Analyze these tables one at a time until `stop` passes; returns how many.
-pub fn analyze_tables(
+fn has_at_least(conn: &Connection, table: &str, rows: i64) -> Result<bool> {
+    let quoted = table.replace('"', "\"\"");
+    Ok(conn.query_row(
+        &format!("SELECT COUNT(*) FROM (SELECT 1 FROM \"{quoted}\" LIMIT ?1)"),
+        [rows],
+        |r| r.get::<_, i64>(0),
+    )? >= rows)
+}
+
+/// The tables due an analysis at `now_ms` (`GetTableNamesDueAnalysis`):
+/// those never analysed, and those whose time under the reference's
+/// schedule has passed. As in the reference, a small table that has not
+/// grown is analysed here, on the spot, and not listed; a table can be due
+/// under more than one boundary, and is listed once for each; tables set
+/// aside for deferred deletion are never listed.
+pub fn tables_due_analysis_at(conn: &Connection, now_ms: i64) -> Result<Vec<String>> {
+    let seen: AnalyzeTimestamps = crate::settings::get(conn)?;
+    let now = now_ms.div_euclid(1000);
+    let mut due = Vec::new();
+    for name in analysable_tables(conn)? {
+        let Some(&(rows, at_ms)) = seen.0.get(&name) else {
+            due.push(name);
+            continue;
+        };
+        let at = at_ms.div_euclid(1000);
+        for (limit, immediate, period) in ANALYZE_BOUNDARIES {
+            if rows > limit || now <= at + period {
+                continue;
+            }
+            if immediate && !has_at_least(conn, &name, limit)? {
+                analyze_table(conn, &name, now_ms)?;
+            } else {
+                due.push(name.clone());
+            }
+        }
+    }
+    Ok(due)
+}
+
+/// The tables due an analysis now (see [`tables_due_analysis_at`]).
+pub fn tables_due_analysis(conn: &Connection) -> Result<Vec<String>> {
+    tables_due_analysis_at(conn, hydrus_core::TimestampMs::now().0)
+}
+
+/// Analyse one table and remember it (`AnalyzeTable`): a table analysed
+/// with rows before that is empty now is not analysed again, only its time
+/// is renewed.
+pub fn analyze_table(conn: &Connection, table: &str, now_ms: i64) -> Result<()> {
+    let mut seen: AnalyzeTimestamps = crate::settings::get(conn)?;
+    let mut rows = seen.0.get(table).map_or(0, |&(rows, _)| rows);
+    let quoted = table.replace('"', "\"\"");
+    if rows <= 0 || has_at_least(conn, table, 1)? {
+        conn.execute_batch(&format!("ANALYZE \"{quoted}\";"))?;
+        rows = conn.query_row(&format!("SELECT COUNT(*) FROM \"{quoted}\""), [], |r| {
+            r.get(0)
+        })?;
+    }
+    seen.0.insert(table.to_owned(), (rows, now_ms));
+    crate::settings::set(conn, &seen)
+}
+
+/// Analyse the tables due at `now_ms`, one at a time, until `stop` passes;
+/// returns how many.
+pub fn analyze_due_tables(
     conn: &Connection,
-    tables: &[String],
+    now_ms: i64,
     stop: std::time::Instant,
 ) -> Result<usize> {
     let mut done = 0;
-    for table in tables {
+    for table in &tables_due_analysis_at(conn, now_ms)? {
         if std::time::Instant::now() >= stop {
             break;
         }
-        conn.execute_batch(&format!("ANALYZE \"{}\";", table.replace('"', "\"\"")))?;
+        analyze_table(conn, table, now_ms)?;
         done += 1;
     }
     Ok(done)
@@ -464,6 +533,55 @@ mod tests {
         let (source, dest, _) = import_basic();
         let store = Store::open(dest.path()).unwrap();
         (source, dest, store)
+    }
+
+    #[test]
+    fn analysis_follows_the_references_schedule() {
+        let (_s, _d, store) = basic();
+        let t0 = 1_700_000_000_000_i64;
+        let hour = 3_600_000_i64;
+        let forever = std::time::Instant::now() + std::time::Duration::from_secs(60);
+        store
+            .write(move |ctx| {
+                let conn = ctx.conn();
+                let fill = |rows: i64| {
+                    conn.execute(
+                        "WITH RECURSIVE n(i) AS (SELECT 1 UNION ALL SELECT i + 1 FROM n WHERE i < ?1)
+                         INSERT INTO grown SELECT i FROM n",
+                        [rows],
+                    )
+                };
+                conn.execute_batch(
+                    "CREATE TABLE grown (x INTEGER);
+                     CREATE TABLE deferred_delete_old_1234 (x INTEGER);",
+                )?;
+                fill(50)?;
+                // never analysed: all due, but not tables set aside for deletion
+                let due = tables_due_analysis_at(conn, t0)?;
+                assert!(due.iter().any(|n| n == "grown"));
+                assert!(!due.iter().any(|n| n.starts_with("deferred_delete_")));
+                assert_eq!(analyze_due_tables(conn, t0, forever)?, due.len());
+                assert!(tables_due_analysis_at(conn, t0)?.is_empty());
+                fill(150)?; // now 200 rows
+                // not yet six hours on: nothing is due
+                assert!(tables_due_analysis_at(conn, t0 + 6 * hour)?.is_empty());
+                // past six hours: the small tables that have not grown are
+                // analysed on the spot and not listed, while the one that
+                // went from 50 rows to 100 or more is left to the user
+                let later = t0 + 6 * hour + 1000;
+                assert_eq!(tables_due_analysis_at(conn, later)?, ["grown"]);
+                let seen: AnalyzeTimestamps = crate::settings::get(conn)?;
+                let small = seen.0.iter().filter(|&(n, &(rows, _))| n != "grown" && rows <= 100).collect::<Vec<_>>();
+                assert!(!small.is_empty() && small.iter().all(|&(_, &(_, at))| at == later));
+                assert_eq!(seen.0["grown"], (50, t0));
+                // analysing it records its new size and time
+                analyze_table(conn, "grown", later)?;
+                let seen: AnalyzeTimestamps = crate::settings::get(conn)?;
+                assert_eq!(seen.0["grown"], (200, later));
+                assert!(tables_due_analysis_at(conn, later + 6 * hour)?.is_empty());
+                Ok(())
+            })
+            .unwrap();
     }
 
     #[test]

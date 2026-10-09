@@ -117,7 +117,7 @@ fn shutdown_work_with_timeout(
     let now = hydrus_core::time::TimestampMs::now().secs();
     let settings: hydrus_store::settings::ShutdownWork =
         store.read(hydrus_store::settings::get).unwrap_or_default();
-    let work = shutdown_work::work_due(store);
+    let work = shutdown_work::work_due(store, now);
     let run = {
         let store = store.clone();
         move || {
@@ -428,7 +428,10 @@ mod tests {
     fn maintenance_test_store() -> (tempfile::TempDir, Arc<Store>) {
         let directory = tempfile::tempdir().unwrap();
         let store = Store::open(directory.path()).unwrap();
-        assert!(!shutdown_work::work_due(&store).is_empty());
+        assert!(
+            !shutdown_work::work_due(&store, hydrus_core::time::TimestampMs::now().secs())
+                .is_empty()
+        );
         store
             .write(|ctx| {
                 hydrus_store::settings::set(

@@ -1,0 +1,738 @@
+{
+ "files": [
+  "jpeg_00.jpg",
+  "jpeg_01.jpg",
+  "jpeg_02.jpg",
+  "jpeg_03.jpg",
+  "jpeg_04.jpg",
+  "jpeg_05.jpg",
+  "jpeg_06.jpg",
+  "jpeg_07.jpg",
+  "jpeg_08.jpg",
+  "jpeg_09.jpg",
+  "jpeg_10.jpg",
+  "jpeg_11.jpg",
+  "png_00.png",
+  "png_01.png"
+ ],
+ "kept": [
+  "png_00.png",
+  "png_01.png"
+ ],
+ "archived_before": [
+  "jpeg_00.jpg",
+  "jpeg_02.jpg",
+  "jpeg_04.jpg",
+  "jpeg_06.jpg",
+  "jpeg_08.jpg",
+  "jpeg_10.jpg",
+  "png_00.png"
+ ],
+ "deleted_from": "my files",
+ "settings": [
+  {
+   "lock": false,
+   "reinbox": false,
+   "after_commit": {
+    "jpeg_00.jpg": {
+     "inbox": false,
+     "my_files": false,
+     "trash": true,
+     "stored": true
+    },
+    "jpeg_01.jpg": {
+     "inbox": true,
+     "my_files": false,
+     "trash": true,
+     "stored": true
+    },
+    "jpeg_02.jpg": {
+     "inbox": false,
+     "my_files": false,
+     "trash": true,
+     "stored": true
+    },
+    "jpeg_03.jpg": {
+     "inbox": true,
+     "my_files": false,
+     "trash": true,
+     "stored": true
+    },
+    "jpeg_04.jpg": {
+     "inbox": false,
+     "my_files": false,
+     "trash": true,
+     "stored": true
+    },
+    "jpeg_05.jpg": {
+     "inbox": true,
+     "my_files": false,
+     "trash": true,
+     "stored": true
+    },
+    "jpeg_06.jpg": {
+     "inbox": false,
+     "my_files": false,
+     "trash": true,
+     "stored": true
+    },
+    "jpeg_07.jpg": {
+     "inbox": true,
+     "my_files": false,
+     "trash": true,
+     "stored": true
+    },
+    "jpeg_08.jpg": {
+     "inbox": false,
+     "my_files": false,
+     "trash": true,
+     "stored": true
+    },
+    "jpeg_09.jpg": {
+     "inbox": true,
+     "my_files": false,
+     "trash": true,
+     "stored": true
+    },
+    "jpeg_10.jpg": {
+     "inbox": false,
+     "my_files": false,
+     "trash": true,
+     "stored": true
+    },
+    "jpeg_11.jpg": {
+     "inbox": true,
+     "my_files": false,
+     "trash": true,
+     "stored": true
+    },
+    "png_00.png": {
+     "inbox": false,
+     "my_files": true,
+     "trash": false,
+     "stored": true
+    },
+    "png_01.png": {
+     "inbox": false,
+     "my_files": true,
+     "trash": false,
+     "stored": true
+    }
+   },
+   "after_emptying_trash": {
+    "jpeg_00.jpg": {
+     "inbox": false,
+     "my_files": false,
+     "trash": false,
+     "stored": false
+    },
+    "jpeg_01.jpg": {
+     "inbox": false,
+     "my_files": false,
+     "trash": false,
+     "stored": false
+    },
+    "jpeg_02.jpg": {
+     "inbox": false,
+     "my_files": false,
+     "trash": false,
+     "stored": false
+    },
+    "jpeg_03.jpg": {
+     "inbox": false,
+     "my_files": false,
+     "trash": false,
+     "stored": false
+    },
+    "jpeg_04.jpg": {
+     "inbox": false,
+     "my_files": false,
+     "trash": false,
+     "stored": false
+    },
+    "jpeg_05.jpg": {
+     "inbox": false,
+     "my_files": false,
+     "trash": false,
+     "stored": false
+    },
+    "jpeg_06.jpg": {
+     "inbox": false,
+     "my_files": false,
+     "trash": false,
+     "stored": false
+    },
+    "jpeg_07.jpg": {
+     "inbox": false,
+     "my_files": false,
+     "trash": false,
+     "stored": false
+    },
+    "jpeg_08.jpg": {
+     "inbox": false,
+     "my_files": false,
+     "trash": false,
+     "stored": false
+    },
+    "jpeg_09.jpg": {
+     "inbox": false,
+     "my_files": false,
+     "trash": false,
+     "stored": false
+    },
+    "jpeg_10.jpg": {
+     "inbox": false,
+     "my_files": false,
+     "trash": false,
+     "stored": false
+    },
+    "jpeg_11.jpg": {
+     "inbox": false,
+     "my_files": false,
+     "trash": false,
+     "stored": false
+    },
+    "png_00.png": {
+     "inbox": false,
+     "my_files": true,
+     "trash": false,
+     "stored": true
+    },
+    "png_01.png": {
+     "inbox": false,
+     "my_files": true,
+     "trash": false,
+     "stored": true
+    }
+   }
+  },
+  {
+   "lock": false,
+   "reinbox": true,
+   "after_commit": {
+    "jpeg_00.jpg": {
+     "inbox": false,
+     "my_files": false,
+     "trash": true,
+     "stored": true
+    },
+    "jpeg_01.jpg": {
+     "inbox": true,
+     "my_files": false,
+     "trash": true,
+     "stored": true
+    },
+    "jpeg_02.jpg": {
+     "inbox": false,
+     "my_files": false,
+     "trash": true,
+     "stored": true
+    },
+    "jpeg_03.jpg": {
+     "inbox": true,
+     "my_files": false,
+     "trash": true,
+     "stored": true
+    },
+    "jpeg_04.jpg": {
+     "inbox": false,
+     "my_files": false,
+     "trash": true,
+     "stored": true
+    },
+    "jpeg_05.jpg": {
+     "inbox": true,
+     "my_files": false,
+     "trash": true,
+     "stored": true
+    },
+    "jpeg_06.jpg": {
+     "inbox": false,
+     "my_files": false,
+     "trash": true,
+     "stored": true
+    },
+    "jpeg_07.jpg": {
+     "inbox": true,
+     "my_files": false,
+     "trash": true,
+     "stored": true
+    },
+    "jpeg_08.jpg": {
+     "inbox": false,
+     "my_files": false,
+     "trash": true,
+     "stored": true
+    },
+    "jpeg_09.jpg": {
+     "inbox": true,
+     "my_files": false,
+     "trash": true,
+     "stored": true
+    },
+    "jpeg_10.jpg": {
+     "inbox": false,
+     "my_files": false,
+     "trash": true,
+     "stored": true
+    },
+    "jpeg_11.jpg": {
+     "inbox": true,
+     "my_files": false,
+     "trash": true,
+     "stored": true
+    },
+    "png_00.png": {
+     "inbox": false,
+     "my_files": true,
+     "trash": false,
+     "stored": true
+    },
+    "png_01.png": {
+     "inbox": false,
+     "my_files": true,
+     "trash": false,
+     "stored": true
+    }
+   },
+   "after_emptying_trash": {
+    "jpeg_00.jpg": {
+     "inbox": false,
+     "my_files": false,
+     "trash": false,
+     "stored": false
+    },
+    "jpeg_01.jpg": {
+     "inbox": false,
+     "my_files": false,
+     "trash": false,
+     "stored": false
+    },
+    "jpeg_02.jpg": {
+     "inbox": false,
+     "my_files": false,
+     "trash": false,
+     "stored": false
+    },
+    "jpeg_03.jpg": {
+     "inbox": false,
+     "my_files": false,
+     "trash": false,
+     "stored": false
+    },
+    "jpeg_04.jpg": {
+     "inbox": false,
+     "my_files": false,
+     "trash": false,
+     "stored": false
+    },
+    "jpeg_05.jpg": {
+     "inbox": false,
+     "my_files": false,
+     "trash": false,
+     "stored": false
+    },
+    "jpeg_06.jpg": {
+     "inbox": false,
+     "my_files": false,
+     "trash": false,
+     "stored": false
+    },
+    "jpeg_07.jpg": {
+     "inbox": false,
+     "my_files": false,
+     "trash": false,
+     "stored": false
+    },
+    "jpeg_08.jpg": {
+     "inbox": false,
+     "my_files": false,
+     "trash": false,
+     "stored": false
+    },
+    "jpeg_09.jpg": {
+     "inbox": false,
+     "my_files": false,
+     "trash": false,
+     "stored": false
+    },
+    "jpeg_10.jpg": {
+     "inbox": false,
+     "my_files": false,
+     "trash": false,
+     "stored": false
+    },
+    "jpeg_11.jpg": {
+     "inbox": false,
+     "my_files": false,
+     "trash": false,
+     "stored": false
+    },
+    "png_00.png": {
+     "inbox": false,
+     "my_files": true,
+     "trash": false,
+     "stored": true
+    },
+    "png_01.png": {
+     "inbox": false,
+     "my_files": true,
+     "trash": false,
+     "stored": true
+    }
+   }
+  },
+  {
+   "lock": true,
+   "reinbox": false,
+   "after_commit": {
+    "jpeg_00.jpg": {
+     "inbox": false,
+     "my_files": false,
+     "trash": true,
+     "stored": true
+    },
+    "jpeg_01.jpg": {
+     "inbox": true,
+     "my_files": false,
+     "trash": true,
+     "stored": true
+    },
+    "jpeg_02.jpg": {
+     "inbox": false,
+     "my_files": false,
+     "trash": true,
+     "stored": true
+    },
+    "jpeg_03.jpg": {
+     "inbox": true,
+     "my_files": false,
+     "trash": true,
+     "stored": true
+    },
+    "jpeg_04.jpg": {
+     "inbox": false,
+     "my_files": false,
+     "trash": true,
+     "stored": true
+    },
+    "jpeg_05.jpg": {
+     "inbox": true,
+     "my_files": false,
+     "trash": true,
+     "stored": true
+    },
+    "jpeg_06.jpg": {
+     "inbox": false,
+     "my_files": false,
+     "trash": true,
+     "stored": true
+    },
+    "jpeg_07.jpg": {
+     "inbox": true,
+     "my_files": false,
+     "trash": true,
+     "stored": true
+    },
+    "jpeg_08.jpg": {
+     "inbox": false,
+     "my_files": false,
+     "trash": true,
+     "stored": true
+    },
+    "jpeg_09.jpg": {
+     "inbox": true,
+     "my_files": false,
+     "trash": true,
+     "stored": true
+    },
+    "jpeg_10.jpg": {
+     "inbox": false,
+     "my_files": false,
+     "trash": true,
+     "stored": true
+    },
+    "jpeg_11.jpg": {
+     "inbox": true,
+     "my_files": false,
+     "trash": true,
+     "stored": true
+    },
+    "png_00.png": {
+     "inbox": false,
+     "my_files": true,
+     "trash": false,
+     "stored": true
+    },
+    "png_01.png": {
+     "inbox": false,
+     "my_files": true,
+     "trash": false,
+     "stored": true
+    }
+   },
+   "after_emptying_trash": {
+    "jpeg_00.jpg": {
+     "inbox": false,
+     "my_files": false,
+     "trash": true,
+     "stored": true
+    },
+    "jpeg_01.jpg": {
+     "inbox": false,
+     "my_files": false,
+     "trash": false,
+     "stored": false
+    },
+    "jpeg_02.jpg": {
+     "inbox": false,
+     "my_files": false,
+     "trash": true,
+     "stored": true
+    },
+    "jpeg_03.jpg": {
+     "inbox": false,
+     "my_files": false,
+     "trash": false,
+     "stored": false
+    },
+    "jpeg_04.jpg": {
+     "inbox": false,
+     "my_files": false,
+     "trash": true,
+     "stored": true
+    },
+    "jpeg_05.jpg": {
+     "inbox": false,
+     "my_files": false,
+     "trash": false,
+     "stored": false
+    },
+    "jpeg_06.jpg": {
+     "inbox": false,
+     "my_files": false,
+     "trash": true,
+     "stored": true
+    },
+    "jpeg_07.jpg": {
+     "inbox": false,
+     "my_files": false,
+     "trash": false,
+     "stored": false
+    },
+    "jpeg_08.jpg": {
+     "inbox": false,
+     "my_files": false,
+     "trash": true,
+     "stored": true
+    },
+    "jpeg_09.jpg": {
+     "inbox": false,
+     "my_files": false,
+     "trash": false,
+     "stored": false
+    },
+    "jpeg_10.jpg": {
+     "inbox": false,
+     "my_files": false,
+     "trash": true,
+     "stored": true
+    },
+    "jpeg_11.jpg": {
+     "inbox": false,
+     "my_files": false,
+     "trash": false,
+     "stored": false
+    },
+    "png_00.png": {
+     "inbox": false,
+     "my_files": true,
+     "trash": false,
+     "stored": true
+    },
+    "png_01.png": {
+     "inbox": false,
+     "my_files": true,
+     "trash": false,
+     "stored": true
+    }
+   }
+  },
+  {
+   "lock": true,
+   "reinbox": true,
+   "after_commit": {
+    "jpeg_00.jpg": {
+     "inbox": true,
+     "my_files": false,
+     "trash": true,
+     "stored": true
+    },
+    "jpeg_01.jpg": {
+     "inbox": true,
+     "my_files": false,
+     "trash": true,
+     "stored": true
+    },
+    "jpeg_02.jpg": {
+     "inbox": true,
+     "my_files": false,
+     "trash": true,
+     "stored": true
+    },
+    "jpeg_03.jpg": {
+     "inbox": true,
+     "my_files": false,
+     "trash": true,
+     "stored": true
+    },
+    "jpeg_04.jpg": {
+     "inbox": true,
+     "my_files": false,
+     "trash": true,
+     "stored": true
+    },
+    "jpeg_05.jpg": {
+     "inbox": true,
+     "my_files": false,
+     "trash": true,
+     "stored": true
+    },
+    "jpeg_06.jpg": {
+     "inbox": true,
+     "my_files": false,
+     "trash": true,
+     "stored": true
+    },
+    "jpeg_07.jpg": {
+     "inbox": true,
+     "my_files": false,
+     "trash": true,
+     "stored": true
+    },
+    "jpeg_08.jpg": {
+     "inbox": true,
+     "my_files": false,
+     "trash": true,
+     "stored": true
+    },
+    "jpeg_09.jpg": {
+     "inbox": true,
+     "my_files": false,
+     "trash": true,
+     "stored": true
+    },
+    "jpeg_10.jpg": {
+     "inbox": true,
+     "my_files": false,
+     "trash": true,
+     "stored": true
+    },
+    "jpeg_11.jpg": {
+     "inbox": true,
+     "my_files": false,
+     "trash": true,
+     "stored": true
+    },
+    "png_00.png": {
+     "inbox": false,
+     "my_files": true,
+     "trash": false,
+     "stored": true
+    },
+    "png_01.png": {
+     "inbox": false,
+     "my_files": true,
+     "trash": false,
+     "stored": true
+    }
+   },
+   "after_emptying_trash": {
+    "jpeg_00.jpg": {
+     "inbox": false,
+     "my_files": false,
+     "trash": false,
+     "stored": false
+    },
+    "jpeg_01.jpg": {
+     "inbox": false,
+     "my_files": false,
+     "trash": false,
+     "stored": false
+    },
+    "jpeg_02.jpg": {
+     "inbox": false,
+     "my_files": false,
+     "trash": false,
+     "stored": false
+    },
+    "jpeg_03.jpg": {
+     "inbox": false,
+     "my_files": false,
+     "trash": false,
+     "stored": false
+    },
+    "jpeg_04.jpg": {
+     "inbox": false,
+     "my_files": false,
+     "trash": false,
+     "stored": false
+    },
+    "jpeg_05.jpg": {
+     "inbox": false,
+     "my_files": false,
+     "trash": false,
+     "stored": false
+    },
+    "jpeg_06.jpg": {
+     "inbox": false,
+     "my_files": false,
+     "trash": false,
+     "stored": false
+    },
+    "jpeg_07.jpg": {
+     "inbox": false,
+     "my_files": false,
+     "trash": false,
+     "stored": false
+    },
+    "jpeg_08.jpg": {
+     "inbox": false,
+     "my_files": false,
+     "trash": false,
+     "stored": false
+    },
+    "jpeg_09.jpg": {
+     "inbox": false,
+     "my_files": false,
+     "trash": false,
+     "stored": false
+    },
+    "jpeg_10.jpg": {
+     "inbox": false,
+     "my_files": false,
+     "trash": false,
+     "stored": false
+    },
+    "jpeg_11.jpg": {
+     "inbox": false,
+     "my_files": false,
+     "trash": false,
+     "stored": false
+    },
+    "png_00.png": {
+     "inbox": false,
+     "my_files": true,
+     "trash": false,
+     "stored": true
+    },
+    "png_01.png": {
+     "inbox": false,
+     "my_files": true,
+     "trash": false,
+     "stored": true
+    }
+   }
+  }
+ ]
+}

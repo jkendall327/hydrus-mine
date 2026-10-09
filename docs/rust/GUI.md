@@ -4763,8 +4763,15 @@ Options > maintenance and processing > shutdown sets whether to run jobs on
 shutdown ("do not run…", "…if needed", "…if needed, but ask first"), at most how
 often and for how many minutes. On exit, when due, the client runs the work or
 asks "Maintenance is due" (auto-no in 15 seconds; no stops it asking until the
-next period) listing the outstanding jobs. The work analyzes the tables that have
-no planner statistics, within the minutes allowed. File > exit/force maintenance
+next period) listing the outstanding jobs. The work analyzes the tables due
+under the reference's schedule (never analysed, or small, middling and large
+tables again after six hours, three days, three months or a year; small
+tables that have not grown are analysed on the spot when the client works out
+what is due, and tables set aside for deferred deletion are left alone), told to stop
+at the exit's start plus the minutes allowed, and registers itself when it
+finishes; "due" means more than one period since then (exactly one period is
+not). All of this is replayed from `oracle/fixtures/shutdown_work.json`
+(`tests/gui/shutdown_jobs.rs`). File > exit/force maintenance
 runs it whatever the schedule, and File > restart asks the restart question,
 exits, and starts the client again once it has let go of the store.
 
@@ -5185,7 +5192,41 @@ and the system is not busy, as the reference's `GoodTimeToStartBackgroundWork`
 does. The system counts as busy when at least "% on N cores" cores ran above
 "Consider the system busy if CPU usage is above" over the last minute;
 "ignore cpu usage" turns the check off, and forced idle mode never reads busy.
-The status bar still says "idle" and shows "CPU busy".
+The status bar still says "idle" and shows "CPU busy". Each core's use is
+worked out as the reference's psutil does (iowait idle, guest time out of the
+total, decreasing counters as no time, rounded to one decimal place before
+the strict "above"), the CPU is looked at again only once more than a minute
+has passed, and "ignore cpu usage" clears "CPU busy" at once; all as
+`oracle/fixtures/cpu_busy.json` records (`tests/gui/cpu_busy.rs`).
+
+### Options > files and trash: trash limits
+
+Trash maintenance deletes for good the files trashed longer ago than "Number
+of hours a file will stay in the trash" (cut off at a whole second, strictly
+older), and while the trash is bigger than "Maximum size of trash (MB)"
+(strictly bigger; a trash of exactly the limit stays) deletes eight files at a
+time, checking the size between groups, before the age limit. Both are
+replayed against the reference's own pass in
+`oracle/fixtures/trash_maintenance.json` (`tests/gui/trash_maintenance.rs`).
+
+## Files and trash: archive/delete filter and the delete lock
+
+With "Do not permit archived files to be deleted from the trash" on, "After
+archive/delete filter, ensure deletees are inboxed before delete" puts the
+filter's deletees back in the inbox as it commits, so emptying the trash then
+deletes them; with the lock off it does nothing, and with it off the lock keeps
+archived deletees. Replayed through the real filter window from
+`oracle/fixtures/archive_delete_reinbox.json` (`archive_delete_reinbox.rs`).
+
+## Files and trash: permissions and the recycle bin
+
+"ADVANCED: Do not do chmod when copying files" off, an imported file keeps its
+source's permissions with owner read/write and others' read added (0400 becomes
+0644, 0700 0744); on, every stored file has a new file's permissions (0644 under
+umask 022), as `oracle/fixtures/file_paths_options.json` records
+(`hydrus-import/tests/chmod.rs`). "send them to the OS's recycle bin" sends a
+physically deleted file to the freedesktop.org trash, its thumbnail always
+deleted for good (`normal_time_maintenance.rs`).
 
 ## Files and trash: local import copying
 

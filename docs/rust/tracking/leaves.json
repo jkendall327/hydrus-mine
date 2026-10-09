@@ -8798,10 +8798,10 @@
     "Assessment covers this editable control and shared Apply/Cancel, not every control on its containing reference page or every background consumer."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Real Options row sets the process flag via apply_file_handling and a separate unit test shows copy_file honours it; label/kind/default come from the Qt options recording. The chmod behaviour itself (reference sets HydrusPaths.DO_NOT_DO_CHMOD_MODE; shutil.copyfile vs copy2) is restated from the Python source, not recorded; give_nice_permission_bits reader untested. Tests: crates/hydrus-gui/tests/gui/options_system_consumers.rs:536 the_chmod_option_reaches_the_process_when_file_handling_is_applied; crates/hydrus-store/src/paths.rs:78 copies_keep_permissions_unless_told_not_to; options_dialog.json via options_window.rs"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "recheck bin E session (claude/recheck-e-dupes)",
+    "note": "Two tests: crates/hydrus-gui/tests/gui/options_system_consumers.rs the_chmod_option_reaches_the_process_when_file_handling_is_applied toggles the real Options row and shows apply_file_handling (what every FileImporter::new runs) setting the process flag; crates/hydrus-import/tests/chmod.rs imported_files_get_the_permissions_the_reference_gives_them (own binary, the flag being process-wide) replays oracle/fixtures/file_paths_options.json (record_file_paths_options.py: the reference's own Client API import, option set and ReinitGlobalSettings run, under umask 022): eight source modes 0400..0755, off (copy2 plus nice bits: 0400 -> 0644, 0700 -> 0744, 0755 stays) and on (every stored file 0644, a fresh file's mode). The recording exposed and this PR fixed 'on' storing 0600 (the temporary file's private mode)."
    }
   },
   {
@@ -9069,10 +9069,10 @@
     "Assessment covers this editable control and shared Apply/Cancel, not every control on its containing reference page or every background consumer."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Options row set through the real window and the real filter commit path checked, matching the reference condition (lock AND option, ClientGUICanvas.py:3672) with typed expectations; no recording of the reference filter's reinbox behaviour. Drives the model ArchiveDeleteFilter, not the window. Tests: crates/hydrus-gui/tests/gui/options_system_consumers.rs:316 archive_delete_filter_reinboxes_deletees_when_the_option_and_lock_are_set; ArchiveDeleteFilter::commit (archive_delete.rs:430)"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "recheck bin E session (claude/recheck-e-dupes)",
+    "note": "crates/hydrus-gui/tests/gui/archive_delete_reinbox.rs the_archive_delete_filter_reinboxes_deletees_as_the_reference_does replays oracle/fixtures/archive_delete_reinbox.json (record_archive_delete_reinbox.py: the reference's own CommitArchiveDelete on 14 basic files, half archived, 2 kept and 12 deleted from my files across its ten-file blocks, then its DAEMONMaintainTrash at 0 MB) for all four settings of the lock and this option, set through the real Options window: each file kept or deleted in the real archive/delete filter window and committed, then the real maintenance runtime's trash pass. Inbox/my files/trash/stored match the reference after the commit and after emptying the trash: only lock on with this option off leaves the archived deletees stored; the option alone does nothing."
    }
   },
   {
@@ -9170,10 +9170,10 @@
     "Assessment covers this editable control and shared Apply/Cancel, not every control on its containing reference page or every background consumer."
    ],
    "recheck": {
-    "date": "2026-10-08",
+    "date": "2026-10-09",
     "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Real Options noneable row sets trash.max_size_mb and maintain_trash deletes oldest to fit, but expected deletions are typed (reference ClientDaemons.DAEMONMaintainTrash restated); no recording of size trimming. Default 2048, range 0..20480 and None phrase match the reference and the options recording. Tests: crates/hydrus-gui/tests/gui/options_system_consumers.rs:402 trash_limits_decide_which_trashed_files_maintenance_deletes_for_good; options_window.rs:414 (Qt row recording)"
+    "by": "recheck bin E session (claude/recheck-e-dupes)",
+    "note": "Untagged: the reference empties an oversized trash by taking the oldest 256 as a set and deleting in file-id order (CPython set order), hydrus-rs deletes the oldest first, so which files stay differs (DIFFERENCES.md). trash_maintenance.rs replays the recorded size scenarios and agrees on how many files go and in what group sizes, and exactly on the size boundaries (1 MiB stays, 1 MiB + 1 byte goes, 0 MB empties), but the files left in the two ordered scenarios are the hydrus-rs choice, not the reference's."
    }
   },
   {
@@ -9190,10 +9190,10 @@
     "Assessment covers this editable control and shared Apply/Cancel, not every control on its containing reference page or every background consumer."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Real Options row sets trash.max_age_hours and maintain_trash removes older files with typed expectations; only age 0 is recorded (delete_lock.json empty_trash). Default 72 and range match the reference. Tests: crates/hydrus-gui/tests/gui/options_system_consumers.rs:401 (same test); crates/hydrus-api/tests/delete_lock.rs (max_age 0 emptying, recorded)"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "recheck bin E session (claude/recheck-e-dupes)",
+    "note": "crates/hydrus-gui/tests/gui/trash_maintenance.rs trash_limits_delete_what_the_reference_deletes replays oracle/fixtures/trash_maintenance.json (the reference's own DAEMONMaintainTrash, time held still half a second into a second) through the Options window and the real maintenance runtime's trash pass: the 72-hour default keeps a file trashed exactly 72 h ago and drops one 72 h + 1 s ago; at 3 h the cutoff is a whole second and strictly older (cutoff - 1 ms goes, the cutoff itself and 'exactly 3 h ago' stay); no age limit keeps a 10,000-hour-old file; size first then age. Rows (72, 0..8640, 'no age limit') checked."
    }
   },
   {
@@ -9387,10 +9387,10 @@
     "Assessment covers this editable control and shared Apply/Cancel, not every control on its containing reference page or every background consumer."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "phase 2 session (blind agent)",
-    "note": "normal_time_maintenance.rs:518 the_recycle_bin_option_decides_whether_physical_deletes_go_to_the_os_bin toggles the real Options row and runs the real deferred-delete worker: off, the file is gone; on, it is in the OS recycle bin. The row's label and kind are literals, there is no recording, only the physical-delete worker is exercised (not the setting's other consumers), and the test skips where the OS has no usable bin."
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "recheck bin E session (claude/recheck-e-dupes)",
+    "note": "crates/hydrus-gui/tests/gui/normal_time_maintenance.rs the_recycle_bin_option_decides_whether_physical_deletes_go_to_the_os_bin toggles the real Options row and runs the real deferred physical delete worker, replaying oracle/fixtures/file_paths_options.json (record_file_paths_options.py: the reference's own DoDeferredPhysicalDeletes into a freedesktop trash): off, file and thumbnail gone for good; on, the file in the OS bin with its original path, the thumbnail still deleted for good. The test skips (and says so) where the OS has no usable bin for the disk. Other consumers (export/import folders, Client API delete-after-import) share delete_or_recycle but are not exercised here."
    }
   },
   {
@@ -13045,10 +13045,10 @@
     "No native options editor for system_busy_cpu_percent."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "phase 2 session (blind agent)",
-    "note": "options_system_consumers.rs:1344 idle_and_cpu_busy_options_decide_whether_background_work_may_run edits the real percent row (bounds 5..99), applies it and feeds a fake /proc/stat to the real maintenance runtime: 60% load is busy at 5%, not busy at 70%, not at exactly 60% (the > comparison), busy at 59%; also the disabled row with no core count and the status-bar text. The comparison is restated from the reference SystemBusy code, with no recording."
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "recheck bin E session (claude/recheck-e-dupes)",
+    "note": "crates/hydrus-gui/tests/gui/cpu_busy.rs idle_and_cpu_busy_options_decide_whether_background_work_may_run_as_recorded replays all 29 cases of oracle/fixtures/cpu_busy.json (record_cpu_busy.py: the reference's own SystemBusy/CurrentlyIdle/GoodTimeToStartBackgroundWork with the real psutil reading scripted /proc/stat files): sets percent/cores/idle through the real Options window, feeds the same /proc/stat texts to the real maintenance runtime at the recorded times and checks busy, the status bar's 'CPU busy'/'idle' and the published background-work state. Covers the threshold at 5/59/60/61/70/99 against 60%, psutil's one-decimal rounding (60.04 is not above 60, 60.06 is), iowait/guest/steal/irq accounting, decreasing counters, a percent changed between looks. The recording exposed and this PR fixed exact-compare (no rounding), counter accounting, and the look interval. Rows (5..99, default 50) in the_idle_box_rows_are_the_references."
    }
   },
   {
@@ -13065,10 +13065,10 @@
     "No native options editor for system_busy_cpu_count; migrated legacy values do not provide this editing workflow."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Drives the real Options rows (cores/percent/enable), Apply, then the real maintenance runtime poll_at with genuinely spun CPU: busy -> 'CPU busy', ignore -> cleared, idle option off -> not idle. Expected behaviour is reasoned from ClientController.SystemBusy (>= count of cores above percent) rather than recorded, only one threshold point is tested (never a count above the busy cores, never percent above load), and the tag pairs two leaves in one test. Stale tracker note says no editable row exists; it does. Tests: crates/hydrus-gui/tests/gui/options_system_consumers.rs:1361 idle_and_cpu_busy_options_decide_whether_background_work_may_run; options_dialog.json recorded the cores row (noneable 1..64, 'ignore cpu usage', default 1)"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "recheck bin E session (claude/recheck-e-dupes)",
+    "note": "crates/hydrus-gui/tests/gui/cpu_busy.rs idle_and_cpu_busy_options_decide_whether_background_work_may_run_as_recorded replays oracle/fixtures/cpu_busy.json (reference SystemBusy with real psutil over scripted /proc/stat) through the real Options rows and maintenance runtime: core counts 1/2/3/4 and none against three of four cores over 50%, 'ignore cpu usage' clearing busy at once (fixed here: it waited for the next look), the look only once more than 60 s passed (fixed here: exactly 60 s looked again), and the baseline/first look. Rows (noneable 1..64, 'ignore cpu usage', default 1; percent disabled with no count) in the_idle_box_rows_are_the_references."
    }
   },
   {
@@ -13153,10 +13153,10 @@
     "Native options registry has no editable 'Run maintenance jobs when the client is idle and the system is not otherwise busy:' control in this page/box path."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Real Options checkbox then Apply then real maintenance runtime poll_at: switching it off makes is_idle false whatever the CPU does, on makes it idle. Expected results are written from the reference logic, not recorded; only the row's label/kind/default come from the recording. Stale tracker note says no editable row exists; it does. Tests: crates/hydrus-gui/tests/gui/options_system_consumers.rs:1358 idle_and_cpu_busy_options_decide_whether_background_work_may_run; options_dialog.json (row present, default true)"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "recheck bin E session (claude/recheck-e-dupes)",
+    "note": "crates/hydrus-gui/tests/gui/cpu_busy.rs idle_and_cpu_busy_options_decide_whether_background_work_may_run_as_recorded sets the checkbox through the real Options window and replays oracle/fixtures/cpu_busy.json (the reference's CurrentlyIdle and GoodTimeToStartBackgroundWork on scripted CPU loads): with it off the client is never idle and background work never starts, busy or not; on, idle shows 'idle' and background work starts only when not CPU busy (the published state the daemon reads), including with cpu usage ignored."
    }
   },
   {
@@ -13174,10 +13174,10 @@
     "Native options registry has no editable 'Max number of minutes to run shutdown jobs:' control in this page/box path."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "phase 2 session (blind agent)",
-    "note": "options_system_consumers.rs:1644 the_edited_shutdown_minutes_are_in_the_question checks the row's kind and range (1..1440, default 5), that it is disabled when jobs are not run on shutdown, and that edited values 5, 7 and 90 reach the exit question text. The wording is a literal from the Python source, not recorded, and the deadline itself is not checked."
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "recheck bin E session (claude/recheck-e-dupes)",
+    "note": "crates/hydrus-gui/tests/gui/shutdown_jobs.rs exiting_does_the_shutdown_work_the_reference_does replays oracle/fixtures/shutdown_work.json: minutes 5, 7, 90 and 1,440 (and 20 under force maintenance) set through the real Options row reach the 'Maintenance is due' question as the reference words it ('up to 1,440 minutes') and the work is told to stop that many minutes after the exit's start, compared with the stop_time the reference's DoIdleShutdownWork gave MaintainDB (read back through shutdown_work::last_run). Row (1..1440, default 5, disabled under 'do not run') in the_shutdown_box_rows_are_the_references."
    }
   },
   {
@@ -13195,10 +13195,10 @@
     "Native options registry has no editable 'Only run shutdown jobs once per:' control in this page/box path."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "phase 2 session (blind agent)",
-    "note": "options_system_consumers.rs:1594 shutdown_jobs_run_only_once_per_the_edited_period edits the day/hour/minute row through Options, applies it and runs the real exit: a recent run is skipped under the one-day default, asked under a 5-minute period and skipped again under 2 hours. Expected behaviour comes from the Python logic, with no recording."
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "recheck bin E session (claude/recheck-e-dupes)",
+    "note": "crates/hydrus-gui/tests/gui/shutdown_jobs.rs exiting_does_the_shutdown_work_the_reference_does replays oracle/fixtures/shutdown_work.json (the reference's own TryToExit with held time) with the period set through the real Options day/hour/minute row: exactly one day since the last work is not due (strict), one day and a second is, never done is due; a five-minute period ten minutes on asks, a two-hour period does not; force maintenance runs whatever the period; and the last work time registered is the time the work finished (fixed here: it was the exit's start). The exit is started early in a second so the whole-second boundary holds."
    }
   },
   {
@@ -13216,10 +13216,10 @@
     "Native options registry has no editable 'Run jobs on shutdown:' control in this page/box path."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "phase 2 session (blind agent)",
-    "note": "options_system_consumers.rs:1544 run_jobs_on_shutdown_decides_what_the_exit_does checks the three choices (against the model's ACTIONS constant), the ask-first default, and picks each choice through Options then exits through the real client_exit path. The choice list, default and question title are source-derived, not recorded."
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "recheck bin E session (claude/recheck-e-dupes)",
+    "note": "crates/hydrus-gui/tests/gui/shutdown_jobs.rs exiting_does_the_shutdown_work_the_reference_does replays the 18 cases of oracle/fixtures/shutdown_work.json (record_shutdown_work.py: the reference's own TryToExit and DoIdleShutdownWork, question answered by script, time held still): the choice set through the real Options window, then the real window's close (or File > exit/force maintenance). Never: no question, no work; run if needed: work without asking when due, nothing when not; ask first: 'Maintenance is due' (title, wording up to the native table count, auto-no 15) with yes running the work, no registering so it is not asked again, cancel abandoning the exit; nothing left to do after a real run: not asked (fixed here: the native analysis never stopped being due). Choices/default in the_shutdown_box_rows_are_the_references."
    }
   },
   {

@@ -52,9 +52,14 @@ pub enum Decision {
 pub const ASK_TITLE: &str = "Maintenance is due";
 
 /// The outstanding work (`GetIdleShutdownWorkDue`).
-pub fn work_due(store: &Store) -> Vec<String> {
+///
+/// As in the reference, asking also analyses the small tables that have not
+/// grown, so this writes.
+pub fn work_due(store: &Store, now: i64) -> Vec<String> {
     let due = store
-        .read(hydrus_store::db_maintenance::tables_due_analysis)
+        .write(move |ctx| {
+            hydrus_store::db_maintenance::tables_due_analysis_at(ctx.conn(), now * 1000)
+        })
         .unwrap_or_default();
     if due.is_empty() {
         Vec::new()
@@ -95,15 +100,29 @@ pub fn register(store: &Store, now: i64) -> hydrus_store::Result<()> {
     })
 }
 
-/// Do the shutdown work for at most its minutes, then register it.
+thread_local! {
+    /// When the last shutdown work on this thread started and was told to
+    /// stop (seconds), for tests.
+    static LAST_RUN: std::cell::Cell<Option<(i64, i64)>> = const { std::cell::Cell::new(None) };
+}
+
+/// When the last shutdown work run on this thread started and was told to
+/// stop, in seconds.
+#[doc(hidden)]
+pub fn last_run() -> Option<(i64, i64)> {
+    LAST_RUN.with(std::cell::Cell::get)
+}
+
+/// Do the shutdown work, told to stop at `now` plus its minutes, then
+/// register it as done when it finishes (`DoIdleShutdownWork`).
 pub fn run(store: &Store, now: i64) -> hydrus_store::Result<usize> {
     let settings: ShutdownWork = store.read(hydrus_store::settings::get)?;
-    let stop = std::time::Instant::now()
-        + std::time::Duration::from_secs(u64::from(settings.max_minutes) * 60);
+    let minutes = i64::from(settings.max_minutes) * 60;
+    LAST_RUN.with(|last| last.set(Some((now, now + minutes))));
+    let stop = std::time::Instant::now() + std::time::Duration::from_secs(minutes.unsigned_abs());
     let done = store.write(move |ctx| {
-        let tables = hydrus_store::db_maintenance::tables_due_analysis(ctx.conn())?;
-        hydrus_store::db_maintenance::analyze_tables(ctx.conn(), &tables, stop)
+        hydrus_store::db_maintenance::analyze_due_tables(ctx.conn(), now * 1000, stop)
     })?;
-    register(store, now)?;
+    register(store, hydrus_core::time::TimestampMs::now().secs())?;
     Ok(done)
 }
