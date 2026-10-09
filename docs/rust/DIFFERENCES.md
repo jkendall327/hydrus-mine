@@ -4104,6 +4104,24 @@ change nothing). They are marked out of scope in `docs/rust/tracking/`.
   in with the connections closed; the effect on the file is the same.
 - The window opens directly, without the "loading database data" popup.
 
+## Delete lock, importers and the trash worker, as rechecked
+
+- The delete lock's reinbox options are checked for the duplicate filter's
+  "this is better, delete the other" on a first pair and for "approve" in the
+  auto-resolution review window; the custom action's deletes and fully
+  automatic runs use the same code but are not separately replayed.
+- An importer re-reads the file handling settings (transparency level, comic
+  book detection, permissions) at each import; the reference applies them
+  once, on Options OK.
+- A trash pass deletes in groups of eight, oldest first, including files
+  already in the trash when the limit is set.
+
+## mpv options on open players
+
+- A player already open takes changed mpv options (loop playlist, audio
+  device) within half a second of Options OK, checked from its frame timer,
+  where the reference's `notify_new_options` updates it at once.
+
 ## Idle-time maintenance
 
 - The GUI publishes its idle state to a marker file the daemon reads; without
@@ -4419,10 +4437,38 @@ the reference's at the same window size; its place and the rule for its width
 are the reference's. The reference's slideshow menu raises an error for a
 duration of infinity (`inf` or `1e400`); ours shows it.
 
+Manual export remakes the names as soon as rows are removed. The reference
+renumbers the rows but keeps showing (and would export to) the names made
+before the removal until the phrase or destination changes, a stale cache, so
+`oracle/fixtures/export_names.json` is matched by number at once and by name
+after the phrase is entered again (as "file metadata reflects the database"
+above).
+
+The export folder editor says why a typed search can't be parsed, under the
+query; the reference's autocomplete leaves the text in place and says nothing.
+
+Manual export's browse button asks for a folder without the reference's
+starting folder (the destination typed so far); the picked path and the rows
+after it are the recording's, the picker's start is not. Its removal of rows
+remakes names at once; the test compares names after the reference's refresh
+(its stale names, which a later export would use, are not reproduced or tested).
+The recordings' phrases include `../` and absolute ones: rows that leave the
+destination read "INVALID, above destination directory" as the reference's do.
+
 Manual export's "open location" reports a missing destination in the window's
 status line ("That location does not seem to exist!") where the reference shows a
 critical dialog; File > open > installation directory opens the Rust executable's
 directory.
+
+## Options > thumbnails
+
+The grid's geometry under the thumbnail size, border and margin is replayed
+against the reference (`oracle/record_thumbnail_grid.py`): spans, columns, the
+grid's content height, click hits and the size each thumbnail is shown at. How
+the border is drawn (its colour and drawing) is not tested. Click hits were
+recorded for the first two columns and rows only, at one viewport per setting,
+and thumbnail positions are the layout's rule rather than read from the
+rendered grid.
 
 ## Options > external programs
 

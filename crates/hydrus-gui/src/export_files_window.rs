@@ -43,6 +43,27 @@ struct State {
     cancel: Arc<AtomicBool>,
     receiver: Option<std::sync::mpsc::Receiver<Progress>>,
     tags: export_files::tags::Tags,
+    /// The names last made, drawn against the destination field.
+    shown: Vec<export_files::Shown>,
+}
+
+/// The rows' cells: number, filetype, and destination as drawn against the
+/// destination field.
+fn draw_rows(window: &ExportFilesWindow, state: &State) {
+    let directory = window.get_destination();
+    let rows: Vec<_> = state
+        .shown
+        .iter()
+        .map(|r| TableRow {
+            cells: ModelRc::new(VecModel::from(vec![
+                r.number.to_string().into(),
+                r.mime.clone().into(),
+                r.text(&directory).into(),
+            ])),
+            selected: state.selection.is_selected(r.file),
+        })
+        .collect();
+    window.set_rows(ModelRc::new(VecModel::from(rows)));
 }
 
 /// Open a manual export window over selected local files.
@@ -102,6 +123,7 @@ pub fn open(
         receiver: None,
         tags: export_files::tags::Tags::new(store.clone())
             .map_err(|error| slint::PlatformError::Other(error.to_string()))?,
+        shown: Vec::new(),
     }));
     let refresh: Rc<dyn Fn()> = Rc::new({
         let weak = window.as_weak();
@@ -112,28 +134,19 @@ pub fn open(
                 return;
             };
             let mut state = state.borrow_mut();
-            match export_files::preview(
+            match export_files::shown(
                 &store,
                 &state.files,
                 &window.get_destination(),
                 &window.get_phrase(),
             ) {
                 Ok(rows) => {
-                    let rows: Vec<_> = rows
-                        .into_iter()
-                        .map(|r| TableRow {
-                            cells: ModelRc::new(VecModel::from(vec![
-                                r.number.to_string().into(),
-                                r.mime.into(),
-                                r.destination.to_string_lossy().into_owned().into(),
-                            ])),
-                            selected: state.selection.is_selected(r.file),
-                        })
-                        .collect();
-                    window.set_rows(ModelRc::new(VecModel::from(rows)));
+                    state.shown = rows;
+                    draw_rows(&window, &state);
                     window.set_status("".into());
                 }
                 Err(e) => {
+                    state.shown.clear();
                     window.set_rows(ModelRc::default());
                     window.set_status(e.into());
                 }
@@ -393,13 +406,21 @@ pub fn open(
     window.on_browse({
         let weak = window.as_weak();
         let refresh = refresh.clone();
+        let state = state.clone();
         move || {
             if let (Some(w), Some(p)) = (
                 weak.upgrade(),
                 crate::pick(crate::Pick::Folder, "Select directory").first(),
             ) {
+                // (as the reference's picker: the path tidied, and the names
+                // made again only for a folder that exists)
+                let p = export_files::normpath(p);
                 w.set_destination(p.to_string_lossy().into_owned().into());
-                refresh();
+                if p.exists() {
+                    refresh();
+                } else {
+                    draw_rows(&w, &state.borrow());
+                }
             }
         }
     });

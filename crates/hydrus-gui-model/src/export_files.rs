@@ -127,6 +127,12 @@ pub struct Plan {
     pub symlinks: bool,
 }
 
+/// `os.path.normpath`: `.` and `..` resolved by text, trailing separators
+/// dropped.
+pub fn normpath(path: &Path) -> PathBuf {
+    normalise(path)
+}
+
 fn normalise(path: &Path) -> PathBuf {
     let mut out = PathBuf::new();
     for c in path.components() {
@@ -151,14 +157,55 @@ pub fn directory_path(directory: &str) -> Result<PathBuf, String> {
     ))
 }
 
-/// Build the preview with the shared filename generator, distinguishing only
-/// collisions within this export (existing files on disk will be overwritten).
-pub fn preview(
+/// The prefix the reference shows before a row's path, or its error, when
+/// the row cannot be exported under the destination.
+pub const INVALID_PREFIX: &str = "INVALID, above destination directory: ";
+
+/// A preview row as the reference's list shows it: the destination, or the
+/// reason there is none.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct Shown {
+    /// File exported by this row.
+    pub file: HashId,
+    /// One-based order used by `{#}`.
+    pub number: usize,
+    /// The displayed filetype.
+    pub mime: String,
+    /// Where the file goes, or the text shown in its place (after
+    /// [`INVALID_PREFIX`]).
+    pub destination: Result<PathBuf, String>,
+}
+
+impl Shown {
+    /// The destination column's text while the destination field reads
+    /// `directory`: the path, or the error, after [`INVALID_PREFIX`] unless
+    /// it begins with the field's text (the reference's string test, made
+    /// as the list is drawn).
+    pub fn text(&self, directory: &str) -> String {
+        let raw = match &self.destination {
+            Ok(path) => path.to_string_lossy().into_owned(),
+            Err(why) => why.clone(),
+        };
+        if raw.starts_with(directory) {
+            raw
+        } else {
+            format!("{INVALID_PREFIX}{raw}")
+        }
+    }
+}
+
+/// Every row's name with the shared filename generator, as the reference's
+/// list shows them: a name that cannot be made (too long for the limits,
+/// say) or that leaves the destination is that row's error, and the rest
+/// are still named. Names already used in this export get " (1)", " (2)"...
+/// (existing files on disk will be overwritten). Only a missing destination
+/// or an unparsable phrase fails the whole list.
+pub fn shown(
     store: &Store,
     files: &[HashId],
     directory: &str,
     phrase: &str,
-) -> Result<Vec<Row>, String> {
+) -> Result<Vec<Shown>, String> {
     let directory = directory_path(directory)?;
     let terms = parse_export_phrase(phrase)
         .map_err(|e| format!("Problem parsing export phrase!\n\n{e}"))?;
@@ -174,34 +221,34 @@ pub fn preview(
             .iter()
             .find(|m| m.hash_id == *file)
             .ok_or("File metadata is missing.")?;
-        let name = hydrus_download::export::filename_for_media(
+        let destination = hydrus_download::export::filename_for_media(
             store,
             &directory.to_string_lossy(),
             media,
             &terms,
             i + 1,
-        )?;
-        let path = Path::new(&name);
-        let ext = path
-            .extension()
-            .map(|e| format!(".{}", e.to_string_lossy()))
-            .unwrap_or_default();
-        let stem = name.strip_suffix(&ext).unwrap_or(&name);
-        let mut unique = name.clone();
-        let mut suffix = 1;
-        while used.contains(&unique) {
-            unique = format!("{stem} ({suffix}){ext}");
-            suffix += 1;
-        }
-        used.insert(unique.clone());
-        let destination = normalise(&directory.join(unique));
-        if destination == directory || !destination.starts_with(&directory) {
-            return Err(format!(
-                "INVALID, above destination directory: {}",
-                destination.display()
-            ));
-        }
-        rows.push(Row {
+        )
+        .and_then(|name| {
+            let path = Path::new(&name);
+            let ext = path
+                .extension()
+                .map(|e| format!(".{}", e.to_string_lossy()))
+                .unwrap_or_default();
+            let stem = name.strip_suffix(&ext).unwrap_or(&name);
+            let mut unique = name.clone();
+            let mut suffix = 1;
+            while used.contains(&unique) {
+                unique = format!("{stem} ({suffix}){ext}");
+                suffix += 1;
+            }
+            used.insert(unique.clone());
+            let destination = normalise(&directory.join(unique));
+            if destination == directory || !destination.starts_with(&directory) {
+                return Err(destination.to_string_lossy().into_owned());
+            }
+            Ok(destination)
+        });
+        rows.push(Shown {
             file: *file,
             number: i + 1,
             mime: media.info.as_ref().map_or_else(
@@ -212,6 +259,28 @@ pub fn preview(
         });
     }
     Ok(rows)
+}
+
+/// The rows to export: [`shown`], failing on the first row that has no
+/// destination.
+pub fn preview(
+    store: &Store,
+    files: &[HashId],
+    directory: &str,
+    phrase: &str,
+) -> Result<Vec<Row>, String> {
+    shown(store, files, directory, phrase)?
+        .into_iter()
+        .map(|row| match row.destination {
+            Ok(destination) => Ok(Row {
+                file: row.file,
+                number: row.number,
+                mime: row.mime,
+                destination,
+            }),
+            Err(why) => Err(format!("{INVALID_PREFIX}{why}")),
+        })
+        .collect()
 }
 
 impl Plan {

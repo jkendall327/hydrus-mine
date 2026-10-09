@@ -40,7 +40,7 @@ mod database_backup_window;
 pub mod database_locations_window;
 mod debug_actions;
 mod rule_count;
-pub use debug_actions::{crash_logging, debug_printed, exit_requested, message_window};
+pub use debug_actions::{crash_logging, debug_printed, message_window};
 pub use orphan_files_window::chooser as orphan_files_chooser;
 pub mod debug_fetch;
 pub mod debug_long_popup;
@@ -307,6 +307,7 @@ pub use hydrus_gui_model::{
 };
 pub use page::SearchPage;
 pub use pages::{Pages, Tabs};
+pub use playback::live_property as live_mpv_property;
 pub use unlock::unlock_window;
 pub use viewer::MediaViewer;
 
@@ -5907,13 +5908,34 @@ fn launch(target: &str) {
     };
     #[cfg(not(any(windows, target_os = "macos")))]
     let mut command = {
-        let mut c = Command::new("xdg-open");
+        let program = LAUNCH_DIR.with(|d| d.borrow().clone()).map_or_else(
+            || std::path::PathBuf::from("xdg-open"),
+            |dir| dir.join("xdg-open"),
+        );
+        let mut c = Command::new(program);
         c.arg(target);
         c
     };
     if let Err(e) = command.spawn() {
         eprintln!("could not open {target}: {e}");
     }
+}
+
+thread_local! {
+    /// Where the opener program is looked for ahead of PATH, if anywhere.
+    #[cfg_attr(any(windows, target_os = "macos"), allow(dead_code))]
+    static LAUNCH_DIR: RefCell<Option<std::path::PathBuf>> = const { RefCell::new(None) };
+}
+
+/// Go back to looking for the OS's opener program on PATH.
+pub fn clear_launch_dir() {
+    LAUNCH_DIR.with(|d| *d.borrow_mut() = None);
+}
+
+/// Look for the OS's opener program (`xdg-open`) in `dir` rather than on
+/// PATH, on this thread (for tests, which put a stub there).
+pub fn set_launch_dir(dir: impl Into<std::path::PathBuf>) {
+    LAUNCH_DIR.with(|d| *d.borrow_mut() = Some(dir.into()));
 }
 
 thread_local! {

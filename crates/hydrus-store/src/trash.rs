@@ -59,6 +59,8 @@ pub fn maintain_trash(store: &Store, batch: usize) -> Result<TrashReport> {
 
 /// An owned automatic pass can stop before admitting another group/write.
 /// The caller captures its normal-time/idle admission once before this pass.
+/// Each group of eight is its own write, as the reference's are, at most
+/// `batch` files a write.
 pub fn maintain_trash_with_control(
     store: &Store,
     batch: usize,
@@ -72,15 +74,18 @@ pub fn maintain_trash_with_control(
     if settings.max_age_hours.is_none() && settings.max_size_mb.is_none() {
         return Ok(report);
     }
+    let per_write = batch.clamp(1, CHUNK);
     while !control.is_cancelled() {
         let cancellation = control.clone();
-        let step = store
-            .write_content(move |w| clear_some_owned(w, settings, batch, Some(&cancellation)))?;
+        let step = store.write_content(move |w| {
+            clear_some_owned(w, settings, per_write, Some(&cancellation))
+        })?;
         report.over_size += step.over_size;
         report.over_age += step.over_age;
         if step.total() == 0 {
             break;
         }
+        control.wrote();
     }
     Ok(report)
 }

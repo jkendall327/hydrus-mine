@@ -1,0 +1,50 @@
+{
+ "files": [
+  "clear.png",
+  "few_faint.png",
+  "half_clear.png",
+  "opaque.png",
+  "rgb.png"
+ ],
+ "levels": [
+  {
+   "index": 0,
+   "saved": 2,
+   "has_transparency": {
+    "clear.png": false,
+    "few_faint.png": false,
+    "half_clear.png": true,
+    "opaque.png": false,
+    "rgb.png": false
+   }
+  },
+  {
+   "index": 1,
+   "saved": 1,
+   "has_transparency": {
+    "clear.png": false,
+    "few_faint.png": true,
+    "half_clear.png": true,
+    "opaque.png": false,
+    "rgb.png": false
+   }
+  },
+  {
+   "index": 2,
+   "saved": 0,
+   "has_transparency": {
+    "clear.png": true,
+    "few_faint.png": true,
+    "half_clear.png": true,
+    "opaque.png": true,
+    "rgb.png": false
+   }
+  }
+ ],
+ "choices": [
+  "it has a transparency channel that a human might recognise",
+  "it has a transparency channel that is not completely transparent or opaque",
+  "it has a transparency channel"
+ ],
+ "default_index": 0
+}
