@@ -24,7 +24,11 @@ pub fn set_fetch(fetch: Fetch) {
 
 /// The last chooser or message shown, for tests.
 pub fn last_dialog() -> Option<ChoiceButtonsWindow> {
-    DIALOG.with(|d| d.borrow().as_ref().map(slint::ComponentHandle::clone_strong))
+    DIALOG.with(|d| {
+        d.borrow()
+            .as_ref()
+            .map(slint::ComponentHandle::clone_strong)
+    })
 }
 
 /// The button was clicked: `chosen` gets the device's option value.

@@ -17,9 +17,9 @@ pub(crate) fn seek_options(window: &ArchiveDeleteWindow, store: &Store) {
     let options: hydrus_store::settings::ViewerCanvasSettings =
         store.read(hydrus_store::settings::get).unwrap_or_default();
     window.set_seek_height(f32::from(options.seek_height.clamp(1, 255) as u8));
-    window.set_seek_hidden_height(
-        f32::from(options.seek_hidden_height.map_or(0, |h| h.clamp(1, 255)) as u8),
-    );
+    window.set_seek_hidden_height(f32::from(
+        options.seek_hidden_height.map_or(0, |h| h.clamp(1, 255)) as u8,
+    ));
     window.set_seek_nub_width(f32::from(options.seek_nub_width.clamp(1, 63) as u8));
 }
 
@@ -145,13 +145,15 @@ impl Controls {
         let this = self.clone();
         // (the bar follows playing; weak, as the state owns the timer)
         let follower = Rc::downgrade(&self.0);
-        self.0
-            .timer
-            .start(slint::TimerMode::Repeated, Duration::from_millis(50), move || {
+        self.0.timer.start(
+            slint::TimerMode::Repeated,
+            Duration::from_millis(50),
+            move || {
                 if let Some(state) = follower.upgrade() {
                     Controls(state).follow();
                 }
-            });
+            },
+        );
         window.on_scan({
             let this = this.clone();
             move |x, width| {

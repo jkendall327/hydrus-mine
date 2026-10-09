@@ -11,7 +11,9 @@ use std::time::{Duration, Instant};
 use slint::{ComponentHandle as _, Model as _};
 
 use hydrus_core::media_viewer::AudioSettings;
-use hydrus_gui::{ArchiveDeleteWindow, MainWindow, MediaViewerWindow, Pages, SearchPage, bind, headless};
+use hydrus_gui::{
+    ArchiveDeleteWindow, MainWindow, MediaViewerWindow, Pages, SearchPage, bind, headless,
+};
 use hydrus_import::{FileImportOptions, FileImporter};
 use hydrus_media::MediaTools;
 use hydrus_store::Store;
@@ -150,9 +152,16 @@ fn the_filter_plays_files_with_a_scanbar_and_volume_as_the_viewer_does() {
         // space pauses; again plays on
         key(&window, " ");
         watch(&window, Duration::from_millis(50));
-        assert_eq!(watch(&window, Duration::from_millis(400)).len(), 1, "{name}");
+        assert_eq!(
+            watch(&window, Duration::from_millis(400)).len(),
+            1,
+            "{name}"
+        );
         key(&window, " ");
-        assert!(watch(&window, Duration::from_millis(1000)).len() >= 2, "{name}");
+        assert!(
+            watch(&window, Duration::from_millis(1000)).len() >= 2,
+            "{name}"
+        );
 
         // the scanbar, by frame; a drag pauses and goes to the frame under
         // the pointer
@@ -169,7 +178,11 @@ fn the_filter_plays_files_with_a_scanbar_and_volume_as_the_viewer_does() {
         let wanted = format!("{}/{frames} - ", target + 1);
         let there = scanbar_reaches(&window, &wanted);
         assert!(there.starts_with(&wanted), "{name}: {there}");
-        assert_eq!(watch(&window, Duration::from_millis(300)).len(), 1, "{name}: paused");
+        assert_eq!(
+            watch(&window, Duration::from_millis(300)).len(),
+            1,
+            "{name}: paused"
+        );
         let progress = window.get_scanbar_progress();
         window.invoke_scan_ended();
         assert!(
@@ -188,7 +201,10 @@ fn the_filter_plays_files_with_a_scanbar_and_volume_as_the_viewer_does() {
             std::thread::sleep(Duration::from_millis(10));
         }
         assert_eq!(viewer.get_scanbar_text().to_string(), there, "{name}");
-        assert!((viewer.get_scanbar_progress() - progress).abs() < f32::EPSILON, "{name}");
+        assert!(
+            (viewer.get_scanbar_progress() - progress).abs() < f32::EPSILON,
+            "{name}"
+        );
         viewer.invoke_close_requested();
     }
 

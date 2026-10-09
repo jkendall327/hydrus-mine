@@ -103,7 +103,10 @@ fn chooser_open() -> bool {
 }
 
 /// What the run's recorded writes restored, per file: the domain names.
-fn restored(log: &[Value], deleted: &HashMap<String, BTreeSet<String>>) -> HashMap<String, BTreeSet<String>> {
+fn restored(
+    log: &[Value],
+    deleted: &HashMap<String, BTreeSet<String>>,
+) -> HashMap<String, BTreeSet<String>> {
     let mut out: HashMap<String, BTreeSet<String>> = HashMap::new();
     for entry in log {
         let Some(to) = entry["undelete"].as_str() else {
@@ -127,7 +130,10 @@ fn deleting_and_undeleting_ask_as_recorded() {
     let (_dir, store) = opened();
     let _windows = headless::init();
     let ui = MainWindow::new().unwrap();
-    let bound = bind(&ui, Pages::single(hydrus_gui::SearchPage::new(store.clone())));
+    let bound = bind(
+        &ui,
+        Pages::single(hydrus_gui::SearchPage::new(store.clone())),
+    );
     ui.show().unwrap();
     ui.invoke_search_accepted();
     let page = bound.current.borrow().clone();
@@ -144,7 +150,12 @@ fn deleting_and_undeleting_ask_as_recorded() {
     let select = |chosen: &[HashId]| {
         ui.invoke_select_none();
         for (i, file) in chosen.iter().enumerate() {
-            let index = page.borrow().results().iter().position(|f| f == file).unwrap();
+            let index = page
+                .borrow()
+                .results()
+                .iter()
+                .position(|f| f == file)
+                .unwrap();
             ui.invoke_thumbnail_clicked(i32::try_from(index).unwrap(), i > 0, false);
         }
         assert_eq!(page.borrow().selected_files().len(), chosen.len());
@@ -216,18 +227,25 @@ fn deleting_and_undeleting_ask_as_recorded() {
         for run in case["runs"].as_array().unwrap() {
             let what = format!("{} {run}", case["case"]);
             confirm_trash(&store, run["confirm"].as_bool().unwrap());
-            let before: Vec<BTreeSet<String>> = chosen.iter().map(|&f| local(&store, f).0).collect();
+            let before: Vec<BTreeSet<String>> =
+                chosen.iter().map(|&f| local(&store, f).0).collect();
             select(&chosen);
             ui.invoke_undelete_selected();
             let log = run["log"].as_array().unwrap();
             if let Some(asked) = log.iter().find(|e| e.get("chooser").is_some()) {
                 let chooser = hydrus_gui::undelete::last_chooser().unwrap();
                 assert!(chooser.window().is_visible(), "{what}");
-                assert_eq!(chooser.get_window_title(), asked["chooser"].as_str().unwrap());
+                assert_eq!(
+                    chooser.get_window_title(),
+                    asked["chooser"].as_str().unwrap()
+                );
                 assert_eq!(chooser.get_message(), asked["message"].as_str().unwrap());
                 assert_eq!(chooser.get_no_label(), "");
-                let choices: Vec<String> =
-                    chooser.get_choices().iter().map(|c| c.to_string()).collect();
+                let choices: Vec<String> = chooser
+                    .get_choices()
+                    .iter()
+                    .map(|c| c.to_string())
+                    .collect();
                 let recorded: Vec<String> = asked["choices"]
                     .as_array()
                     .unwrap()
@@ -270,11 +288,19 @@ fn deleting_and_undeleting_ask_as_recorded() {
     assert_eq!(partial["case"], "deleted from one of its two domains");
     let file = by_hash[strings(&partial["files"]).iter().next().unwrap()];
     confirm_trash(&store, true);
-    let index = page.borrow().results().iter().position(|&f| f == file).unwrap();
+    let index = page
+        .borrow()
+        .results()
+        .iter()
+        .position(|&f| f == file)
+        .unwrap();
     ui.invoke_thumbnail_activated(i32::try_from(index).unwrap());
     let viewer = bound.viewer.borrow().as_ref().unwrap().clone_strong();
     viewer.invoke_undelete();
-    assert_eq!(viewer.get_question(), "Undelete this file back to my files?");
+    assert_eq!(
+        viewer.get_question(),
+        "Undelete this file back to my files?"
+    );
     viewer.invoke_answer(false);
     assert_eq!(local(&store, file).0, BTreeSet::from(["art".to_owned()]));
     viewer.invoke_undelete();
@@ -287,7 +313,12 @@ fn deleting_and_undeleting_ask_as_recorded() {
 
     let both = &cases[1];
     let file = by_hash[strings(&both["files"]).iter().next().unwrap()];
-    let index = page.borrow().results().iter().position(|&f| f == file).unwrap();
+    let index = page
+        .borrow()
+        .results()
+        .iter()
+        .position(|&f| f == file)
+        .unwrap();
     ui.invoke_thumbnail_activated(i32::try_from(index).unwrap());
     let viewer = bound.viewer.borrow().as_ref().unwrap().clone_strong();
     viewer.invoke_undelete();

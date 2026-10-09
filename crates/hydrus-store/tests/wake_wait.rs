@@ -45,13 +45,9 @@ fn file_paths_wait_out_the_wake_delay_when_asked_as_recorded() {
         let hash = Sha256([7; 32]);
         let started = Instant::now();
         let path = store.snapshot().storage.file_path(&hash, Mime::ImagePng);
-        let blocked = started.elapsed().as_secs_f64().round();
+        let blocked = started.elapsed().as_secs_f64().round() as u64;
         assert!(path.is_some());
-        assert_eq!(
-            blocked,
-            case["blocked_seconds"].as_f64().unwrap(),
-            "{case}"
-        );
+        assert_eq!(blocked, case["blocked_seconds"].as_u64().unwrap(), "{case}");
         let just_woke = snapshot
             .wake_gate
             .just_woke_at(TimestampMs::now().0, snapshot.wake);

@@ -149,7 +149,9 @@ pub fn audio_devices() -> Option<Vec<hydrus_gui_model::mpv_audio_devices::Device
             if text.is_null() {
                 String::new()
             } else {
-                let list = std::ffi::CStr::from_ptr(text).to_string_lossy().into_owned();
+                let list = std::ffi::CStr::from_ptr(text)
+                    .to_string_lossy()
+                    .into_owned();
                 (api.free)(text.cast());
                 list
             }

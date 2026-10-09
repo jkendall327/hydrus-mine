@@ -184,18 +184,18 @@ pub fn thumbnail_recovery(
 ) -> hydrus_media::Raster {
     thumbnails::recovery(store, id, settings, allow)
 }
-pub mod choice_buttons;
-pub mod undelete;
 mod archive_delete_playback;
-pub mod options_mpv_devices;
+pub mod choice_buttons;
 pub mod database_maintenance_window;
 pub mod how_boned_window;
+pub mod options_mpv_devices;
 pub mod set_password_window;
 pub mod thumbnail_maintenance_window;
 pub mod thumbnail_menu;
 mod thumbnail_navigation;
 pub mod thumbnail_paint;
 mod thumbnails;
+pub mod undelete;
 mod unlock;
 mod viewer;
 pub mod viewer_closing;

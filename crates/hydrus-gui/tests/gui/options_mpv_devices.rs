@@ -15,6 +15,7 @@ use hydrus_store::reference_options::ReferenceOptions;
 
 const DEVICE: &str = "Preferred audio output device:";
 
+#[allow(clippy::unnecessary_wraps)] // (the shape of `Fetch`)
 fn recorded_devices() -> Option<Vec<model::Device>> {
     let recording = hydrus_testkit::fixture_json("mpv_audio_devices.json");
     Some(model::parse(
@@ -74,7 +75,10 @@ fn the_fetch_button_offers_mpv_s_devices_and_fills_the_preferred_device_as_recor
     let _windows = headless::init();
     let ui = MainWindow::new().unwrap();
     ui.show().unwrap();
-    let bound = bind(&ui, Pages::single(super::common::all_local_page(store.clone())));
+    let bound = bind(
+        &ui,
+        Pages::single(super::common::all_local_page(store.clone())),
+    );
 
     for run in recording["runs"].as_array().unwrap() {
         let what = run.to_string();
@@ -110,7 +114,10 @@ fn the_fetch_button_offers_mpv_s_devices_and_fills_the_preferred_device_as_recor
             dialog.invoke_cancelled();
         } else {
             let asked = &log[0];
-            assert_eq!(dialog.get_window_title(), asked["chooser"].as_str().unwrap());
+            assert_eq!(
+                dialog.get_window_title(),
+                asked["chooser"].as_str().unwrap()
+            );
             assert_eq!(dialog.get_message(), asked["message"].as_str().unwrap());
             let shown: Vec<String> = dialog.get_choices().iter().map(|c| c.to_string()).collect();
             let recorded: Vec<&str> = asked["choices"]

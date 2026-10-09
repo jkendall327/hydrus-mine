@@ -378,7 +378,11 @@ struct ActivityGuard<'a>(&'a Activity, bool);
 
 impl<'a> ActivityGuard<'a> {
     fn enter(activity: &'a Activity, write: bool) -> Self {
-        let counter = if write { &activity.writes } else { &activity.reads };
+        let counter = if write {
+            &activity.writes
+        } else {
+            &activity.reads
+        };
         counter.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
         Self(activity, write)
     }
@@ -386,7 +390,11 @@ impl<'a> ActivityGuard<'a> {
 
 impl Drop for ActivityGuard<'_> {
     fn drop(&mut self) {
-        let counter = if self.1 { &self.0.writes } else { &self.0.reads };
+        let counter = if self.1 {
+            &self.0.writes
+        } else {
+            &self.0.reads
+        };
         counter.fetch_sub(1, std::sync::atomic::Ordering::Relaxed);
     }
 }

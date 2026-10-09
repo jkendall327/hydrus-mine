@@ -37,7 +37,10 @@ impl WakeGate {
     /// The sleep check at `now_ms`: a gap of over a minute since the last
     /// one is a wake.
     pub fn check_at(&self, now_ms: i64, settings: WakeSettings) {
-        let mut state = self.state.lock().unwrap_or_else(std::sync::PoisonError::into_inner);
+        let mut state = self
+            .state
+            .lock()
+            .unwrap_or_else(std::sync::PoisonError::into_inner);
         if !settings.detect {
             state.awake_at_ms = None;
             state.last_check_ms = Some(now_ms);

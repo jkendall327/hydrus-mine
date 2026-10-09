@@ -19,7 +19,11 @@ thread_local! {
 
 /// The last "Undelete for?" chooser opened, for tests.
 pub fn last_chooser() -> Option<ChoiceButtonsWindow> {
-    CHOOSER.with(|c| c.borrow().as_ref().map(slint::ComponentHandle::clone_strong))
+    CHOOSER.with(|c| {
+        c.borrow()
+            .as_ref()
+            .map(slint::ComponentHandle::clone_strong)
+    })
 }
 
 /// Asks a yes/no question, running the closure on yes.

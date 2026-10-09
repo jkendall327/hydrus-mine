@@ -147,7 +147,9 @@ impl Snapshot {
         let mut fresh = Self::load(conn)?;
         // (the gate is the same, so a wake noticed before the reload counts)
         fresh.wake_gate = Arc::clone(&old.wake_gate);
-        fresh.storage.wait_on_wakeup(Arc::clone(&fresh.wake_gate), fresh.wake);
+        fresh
+            .storage
+            .wait_on_wakeup(Arc::clone(&fresh.wake_gate), fresh.wake);
         fresh.domains = Arc::clone(&old.domains);
         fresh.duplicates = Arc::clone(&old.duplicates);
         Ok(fresh)

@@ -244,9 +244,8 @@ impl Undeletion {
     /// "Confirm sending files to trash" is on (the reference words it for one
     /// file whatever the count).
     pub fn question(&self, store: &Store) -> Option<String> {
-        let (_, name) = match &self.domains[..] {
-            [only] => only,
-            _ => return None,
+        let [(_, name)] = &self.domains[..] else {
+            return None;
         };
         store
             .read(hydrus_store::settings::get::<hydrus_store::settings::DeletionPreferences>)
@@ -289,7 +288,8 @@ pub fn undeletion(store: &Store, files: &[HashId]) -> Option<Undeletion> {
 pub fn undelete_to(store: &Store, files: &[HashId], domain: ServiceId) -> hydrus_store::Result<()> {
     let snapshot = store.snapshot();
     let roles = DomainRoles::new(&snapshot.services)?;
-    let batch = store.read(|conn| hydrus_store::media::load(conn, &snapshot.services, None, files))?;
+    let batch =
+        store.read(|conn| hydrus_store::media::load(conn, &snapshot.services, None, files))?;
     let wanted: Vec<HashId> = batch
         .results
         .iter()

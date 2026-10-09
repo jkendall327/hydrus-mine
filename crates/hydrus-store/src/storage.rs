@@ -49,7 +49,10 @@ pub struct FileStorage {
     locations: Vec<StorageLocation>,
     /// Wait for the computer to settle after waking before handing out a
     /// path, when the options say so.
-    wake: Option<(std::sync::Arc<crate::wake::WakeGate>, crate::wake::WakeSettings)>,
+    wake: Option<(
+        std::sync::Arc<crate::wake::WakeGate>,
+        crate::wake::WakeSettings,
+    )>,
 }
 
 impl FileStorage {
