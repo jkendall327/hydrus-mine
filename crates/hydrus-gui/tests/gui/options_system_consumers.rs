@@ -2677,3 +2677,426 @@ mod network_consumers {
         assert!(asked.try_recv().is_err(), "no proxy, no ask");
     }
 }
+
+/// The downloading page's error delays, each changed in the real options
+/// window and then waited out by the real downloader that makes it: a URL
+/// queue's runner for gallery and watcher network errors, the subscription
+/// runner for a subscription's network and other errors.
+mod error_delays {
+    use std::sync::Arc;
+    use std::time::Duration;
+
+    use hydrus_download::{Downloader, QueueRunner};
+    use hydrus_import::FileImporter;
+    use hydrus_media::MediaTools;
+    use hydrus_net::{Job, NetEngine, NetOptions};
+    use hydrus_store::network::NetworkSettings;
+    use hydrus_store::queues::{self, FileSeedMeta, NewFileSeed, SeedType};
+
+    use super::{Client, client, row};
+
+    const NETWORK_ROW: &str = "Delay time on a gallery/watcher network error:";
+    const SUBSCRIPTION_NETWORK_ROW: &str = "Delay time on a subscription network error:";
+    const SUBSCRIPTION_OTHER_ROW: &str = "Delay time on a subscription other error:";
+
+    /// Seconds from the epoch.
+    fn now() -> i64 {
+        i64::try_from(
+            std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .unwrap()
+                .as_secs(),
+        )
+        .unwrap()
+    }
+
+    /// A client, its downloader (no retries, no halting, no pauses) and a
+    /// port nothing listens on.
+    fn with_downloader() -> (Client, Arc<Downloader>, tokio::net::TcpSocket, String) {
+        let client = client();
+        client
+            .store
+            .write(|ctx| {
+                let mut pauses: hydrus_store::settings::Pauses =
+                    hydrus_store::settings::get(ctx.conn())?;
+                pauses.network_traffic = false;
+                pauses.subscriptions = false;
+                pauses.paged_importers = false;
+                pauses.file_queues = false;
+                pauses.gallery_searches = false;
+                hydrus_store::settings::set(ctx.conn(), &pauses)?;
+                let mut network: NetworkSettings = hydrus_store::settings::get(ctx.conn())?;
+                network.max_connection_attempts = 1;
+                network.domain_error_number = 0;
+                hydrus_store::settings::set(ctx.conn(), &network)?;
+                hydrus_store::settings::set(ctx.conn(), &hydrus_store::settings::AdvancedMode(true))
+            })
+            .unwrap();
+        let settings: NetworkSettings = client.get();
+        let net = Arc::new(
+            NetEngine::new(
+                client.store.clone(),
+                NetOptions {
+                    obey_bandwidth: false,
+                    ..NetOptions::from_settings(&settings)
+                },
+            )
+            .unwrap(),
+        );
+        let importer = FileImporter::new(client.store.clone(), MediaTools::new());
+        let downloader = Arc::new(Downloader::new(client.store.clone(), net, importer).unwrap());
+        // (a socket bound and never listened on refuses connections)
+        let socket = tokio::net::TcpSocket::new_v4().unwrap();
+        socket.bind("127.0.0.1:0".parse().unwrap()).unwrap();
+        let address = socket.local_addr().unwrap().to_string();
+        (client, downloader, socket, address)
+    }
+
+    /// The example downloader (key "aa") searching `address`, with a URL
+    /// class and a parser for its pages so that it counts as functional.
+    fn functional_downloader(client: &Client, address: &str) {
+        use hydrus_core::url::strings::StringMatch;
+        use hydrus_core::url::{
+            AnyGug, DomainMask, Gug, Gugs, UrlClass, UrlClassSettings, UrlType,
+        };
+        use hydrus_parse::content::{ContentKind, ContentParser, PageParser};
+        use hydrus_parse::formula::{
+            Formula, FormulaKind, HtmlContent, HtmlRule, HtmlWalk, TagSearch,
+        };
+        let search = UrlClass {
+            name: "search".into(),
+            key: vec![0xce],
+            url_type: UrlType::Gallery,
+            preferred_scheme: "http".into(),
+            domain_mask: DomainMask::new(vec![address.to_owned()], vec![], false, false),
+            path_components: [
+                StringMatch::fixed("search"),
+                StringMatch::any(),
+                StringMatch::any(),
+            ]
+            .into_iter()
+            .map(|m| (m, None))
+            .collect(),
+            ..UrlClass::default()
+        };
+        let thread = UrlClass {
+            name: "thread".into(),
+            key: vec![0xcf],
+            url_type: UrlType::Watchable,
+            preferred_scheme: "http".into(),
+            domain_mask: DomainMask::new(vec![address.to_owned()], vec![], false, false),
+            path_components: [StringMatch::fixed("thread"), StringMatch::any()]
+                .into_iter()
+                .map(|m| (m, None))
+                .collect(),
+            ..UrlClass::default()
+        };
+        let classes = UrlClassSettings {
+            parser_links: vec![
+                (hex::encode(&search.key), Some("ac".into())),
+                (hex::encode(&thread.key), Some("ac".into())),
+            ],
+            parser_keys: vec!["ac".into()],
+            url_classes: vec![search, thread],
+            collapse_leading_slashes: false,
+        };
+        let downloaders = hydrus_parse::Downloaders {
+            parsers: vec![PageParser {
+                reference_auxiliary: None,
+                name: "search".into(),
+                key: "ac".into(),
+                converter: hydrus_core::url::StringConverter::default(),
+                subsidiary: Vec::new(),
+                content_parsers: vec![ContentParser {
+                    name: "posts".into(),
+                    kind: ContentKind::Url {
+                        url_type: 7,
+                        priority: 50,
+                    },
+                    formula: Formula {
+                        reference_auxiliary: None,
+                        name: String::new(),
+                        kind: FormulaKind::Html {
+                            rules: vec![HtmlRule {
+                                walk: HtmlWalk::Descendants(TagSearch {
+                                    attrs: [("class".to_owned(), "thumb".to_owned())]
+                                        .into_iter()
+                                        .collect(),
+                                    index: None,
+                                }),
+                                tag_name: Some("a".into()),
+                                text_match: None,
+                            }],
+                            content: HtmlContent::Attribute("href".into()),
+                        },
+                        processor: hydrus_core::url::StringProcessor::default(),
+                    },
+                }],
+                example_urls: Vec::new(),
+            }],
+            gugs: Gugs {
+                gugs: vec![AnyGug::Single(Gug {
+                    name: "example tag search".into(),
+                    key: "aa".into(),
+                    url_template: format!("http://{address}/search/%tags%/1"),
+                    replacement_phrase: "%tags%".into(),
+                    separator: "+".into(),
+                    initial_search_text: "tag".into(),
+                    example_search_text: "blue_eyes".into(),
+                })],
+                keys_to_display: vec!["aa".into()],
+            },
+            ..hydrus_parse::Downloaders::default()
+        };
+        client
+            .store
+            .write_and_refresh(move |ctx| {
+                hydrus_store::settings::set(ctx.conn(), &classes)?;
+                hydrus_store::settings::set(ctx.conn(), &downloaders)?;
+                hydrus_store::settings::set(
+                    ctx.conn(),
+                    &hydrus_core::subscriptions::GalleryDefaults {
+                        file_limit: Some(2000),
+                        gug: Some(("aa".into(), "example tag search".into())),
+                    },
+                )
+            })
+            .unwrap();
+    }
+
+    /// Set the duration row to `days` days, `hours` hours, `minutes` minutes
+    /// and `seconds` seconds, apply, and return the seconds that make.
+    fn set_delay(
+        client: &Client,
+        row_label: &str,
+        (days, hours, minutes, seconds): (i32, i32, i32, i32),
+    ) -> i64 {
+        let window = client.options("downloading");
+        let (i, found) = row(&window, row_label);
+        assert_eq!(found.kind, 8, "{row_label}");
+        for (field, value) in [days, hours, minutes, seconds].into_iter().enumerate() {
+            window.invoke_field_edited(i, i32::try_from(field).unwrap(), value);
+        }
+        window.invoke_apply();
+        i64::from(days) * 86_400
+            + i64::from(hours) * 3_600
+            + i64::from(minutes) * 60
+            + i64::from(seconds)
+    }
+
+    // leaf: audit-options-downloading-misc-delay-time-on-a-gallery-watcher-network-error
+    #[tokio::test(flavor = "multi_thread")]
+    async fn a_search_or_a_watcher_that_meets_a_network_error_waits_as_long_as_the_option_says() {
+        use super::new_page;
+        let (client, downloader, _held, address) = with_downloader();
+        functional_downloader(&client, &address);
+        downloader.reload_settings().unwrap();
+        let runner = QueueRunner::new(
+            Arc::clone(&downloader),
+            client
+                .get::<NetworkSettings>()
+                .downloader_network_error_delay,
+        );
+        // a gallery page with a search, set going
+        let search = |query: &str| {
+            new_page(&client.ui, true);
+            client.ui.invoke_gallery_queries(query.into());
+            client.bound.downloader_updates.force();
+            (client.bound.sync)();
+            let queue = client
+                .bound
+                .current
+                .borrow()
+                .borrow()
+                .gallery()
+                .unwrap()
+                .queries[0]
+                .queue;
+            client
+                .store
+                .write(move |ctx| queues::set_paused(ctx.conn(), queue, Some(false), Some(false)))
+                .unwrap();
+            runner.start_all().unwrap();
+            queue
+        };
+        let waiting = |queue: i64| {
+            let runner = Arc::clone(&runner);
+            async move {
+                for _ in 0..600 {
+                    if let Some(until) = runner.status(queue).delayed_until {
+                        return until;
+                    }
+                    tokio::time::sleep(Duration::from_millis(50)).await;
+                }
+                panic!("the search never waited: {:?}", runner.status(queue));
+            }
+        };
+        // a watcher page with a thread, set going
+        let watch = |thread: u32| {
+            new_page(&client.ui, false);
+            client
+                .ui
+                .invoke_watcher_urls(format!("http://{address}/thread/{thread}").into());
+            client.bound.downloader_updates.force();
+            (client.bound.sync)();
+            let queue = client
+                .bound
+                .current
+                .borrow()
+                .borrow()
+                .watchers()
+                .unwrap()
+                .watchers[0]
+                .queue;
+            runner.start_all().unwrap();
+            queue
+        };
+        // seconds from now it is told to wait, when it is told
+        let watcher_waits = |queue: i64| {
+            let store = client.store.clone();
+            async move {
+                for _ in 0..600 {
+                    let state = store
+                        .read(move |c| {
+                            Ok(hydrus_store::watchers::watcher_state(
+                                &queues::queue(c, queue)?.unwrap(),
+                            ))
+                        })
+                        .unwrap()
+                        .unwrap();
+                    if state.no_work_until > 0 {
+                        return state.no_work_until - now();
+                    }
+                    tokio::time::sleep(Duration::from_millis(50)).await;
+                }
+                panic!("the watcher never waited");
+            }
+        };
+        // the default: ninety minutes, for a search and for a watcher
+        let first = search("first");
+        let wait = waiting(first).await - now();
+        assert!((5_390..=5_400).contains(&wait), "{wait}");
+        let wait = watcher_waits(watch(1)).await;
+        assert!((5_390..=5_400).contains(&wait), "{wait}");
+        // three hours, twenty minutes and five seconds, once the runner has
+        // reloaded the options as the app's poll does
+        let set = set_delay(&client, NETWORK_ROW, (0, 3, 20, 5));
+        runner.reload_settings().unwrap();
+        let second = search("second");
+        let wait = waiting(second).await - now();
+        assert!((set - 10..=set).contains(&wait), "{wait} against {set}");
+        let wait = watcher_waits(watch(2)).await;
+        assert!((set - 10..=set).contains(&wait), "{wait} against {set}");
+    }
+
+    /// A subscription holding one query: due for a search of the example
+    /// downloader (at `address`) if `searching`, otherwise already synced and
+    /// holding a file to fetch, with no place to import it.
+    fn subscription(client: &Client, name: &str, searching: bool) -> i64 {
+        use hydrus_core::import_options::{ImportOptionsSlice, LocationOptions};
+        use hydrus_core::subscriptions::{QueryState, SubscriptionSettings};
+        let settings = SubscriptionSettings {
+            gug_key: "aa".into(),
+            gug_name: "example tag search".into(),
+            import_options: ImportOptionsSlice {
+                locations: (!searching).then(|| LocationOptions {
+                    destinations: Vec::new(),
+                    ..LocationOptions::default()
+                }),
+                ..ImportOptionsSlice::default()
+            },
+            ..SubscriptionSettings::default()
+        };
+        let name = name.to_owned();
+        client
+            .store
+            .write(move |ctx| {
+                let id =
+                    hydrus_store::subscriptions::create_subscription(ctx.conn(), &name, &settings)?
+                        .unwrap();
+                let at = now();
+                let state = if searching {
+                    QueryState::new("blue_eyes")
+                } else {
+                    QueryState {
+                        last_check_time: at,
+                        next_check_time: at + 86_400,
+                        ..QueryState::new("synced")
+                    }
+                };
+                let queue = hydrus_store::subscriptions::add_query(ctx.conn(), id, &state, 0)?;
+                if !searching {
+                    let url = "http://127.0.0.1:1/file".to_owned();
+                    queues::add_file_seeds(
+                        ctx.conn(),
+                        queue,
+                        &[NewFileSeed {
+                            seed_type: SeedType::Url,
+                            data: url.clone(),
+                            data_for_comparison: url,
+                            source_time: None,
+                            referral_url: None,
+                            meta: FileSeedMeta::default(),
+                        }],
+                        false,
+                        0,
+                    )?;
+                }
+                Ok(id)
+            })
+            .unwrap()
+    }
+
+    /// Run a subscription and how long, from now, it was told to wait, and why.
+    async fn waits(client: &Client, downloader: &Downloader, id: i64) -> (i64, String) {
+        downloader.run_subscription(id, &Job::new()).await.unwrap();
+        let sub = client
+            .store
+            .read(move |c| hydrus_store::subscriptions::subscription(c, id))
+            .unwrap()
+            .unwrap();
+        (
+            sub.settings.no_work_until - now(),
+            sub.settings.no_work_until_reason,
+        )
+    }
+
+    // leaf: audit-options-downloading-misc-delay-time-on-a-subscription-network-error
+    #[tokio::test(flavor = "multi_thread")]
+    async fn a_subscription_that_meets_a_network_error_waits_as_long_as_the_option_says() {
+        let (client, downloader, _held, address) = with_downloader();
+        functional_downloader(&client, &address);
+        downloader.reload_settings().unwrap();
+        let first = subscription(&client, "first", true);
+        // the default: twelve hours
+        let (wait, reason) = waits(&client, &downloader, first).await;
+        assert!((43_190..=43_200).contains(&wait), "{wait}");
+        assert!(reason.starts_with("network error: "), "{reason}");
+        // a day, two hours and a minute, once the downloader has reloaded the
+        // options as the app's poll does
+        let set = set_delay(&client, SUBSCRIPTION_NETWORK_ROW, (1, 2, 1, 0));
+        downloader.reload_settings().unwrap();
+        let second = subscription(&client, "second", true);
+        let (wait, reason) = waits(&client, &downloader, second).await;
+        assert!((set - 10..=set).contains(&wait), "{wait} against {set}");
+        assert!(reason.starts_with("network error: "), "{reason}");
+    }
+
+    // leaf: audit-options-downloading-misc-delay-time-on-a-subscription-other-error
+    #[tokio::test(flavor = "multi_thread")]
+    async fn a_subscription_that_meets_another_error_waits_as_long_as_the_option_says() {
+        let (client, downloader, _held, _address) = with_downloader();
+        let first = subscription(&client, "first", false);
+        // the default: thirty-six hours
+        let (wait, reason) = waits(&client, &downloader, first).await;
+        assert!((129_590..=129_600).contains(&wait), "{wait}");
+        assert!(reason.starts_with("error: "), "{reason}");
+        // two days and an hour
+        let set = set_delay(&client, SUBSCRIPTION_OTHER_ROW, (2, 1, 0, 0));
+        downloader.reload_settings().unwrap();
+        let second = subscription(&client, "second", false);
+        let (wait, reason) = waits(&client, &downloader, second).await;
+        assert!((set - 10..=set).contains(&wait), "{wait} against {set}");
+        assert!(reason.starts_with("error: "), "{reason}");
+    }
+}
