@@ -18,14 +18,20 @@ def record(session):
         from hydrus.client.importing import ClientImportFileSeeds as S
         old_pub=c.pub
         out={'cases':[]}
+        U,H=S.FILE_SEED_TYPE_URL,S.FILE_SEED_TYPE_HDD
         cases=[
-            ('urls',S.FILE_SEED_TYPE_URL,['https://example.com/post/1','https://example.com/post/%E6%97%A5%E6%9C%AC 2','https://example.com/post/3'],[0,1,2]),
-            ('some selected',S.FILE_SEED_TYPE_URL,['https://example.com/post/1','https://example.com/post/2','https://example.com/post/3'],[2,0]),
-            ('one selected',S.FILE_SEED_TYPE_URL,['https://example.com/post/1','https://example.com/post/2'],[1]),
-            ('paths',S.FILE_SEED_TYPE_HDD,['/synthetic/a.jpg','/synthetic/b.jpg'],[0,1]),
+            ('urls',[(U,x) for x in ['https://example.com/post/1','https://example.com/post/%E6%97%A5%E6%9C%AC 2','https://example.com/post/3']],[0,1,2]),
+            ('some selected',[(U,x) for x in ['https://example.com/post/1','https://example.com/post/2','https://example.com/post/3']],[2,0]),
+            ('one selected',[(U,x) for x in ['https://example.com/post/1','https://example.com/post/2']],[1]),
+            ('paths',[(H,x) for x in ['/synthetic/a.jpg','/synthetic/b.jpg']],[0,1]),
+            ('non-http url among http',[(U,'ftp://example.com/a'),(U,'https://example.com/post/9')],[0,1]),
+            ('only a non-http url',[(U,'ftp://example.com/a'),(U,'https://example.com/post/9')],[0]),
+            ('url first, then a path',[(U,'https://example.com/post/1'),(H,'/synthetic/a.jpg')],[0,1]),
+            ('path first, then a url',[(H,'/synthetic/a.jpg'),(U,'https://example.com/post/1')],[0,1]),
         ]
-        for name,kind,sources,selected in cases:
-            cache=S.FileSeedCache();cache.AddFileSeeds([S.FileSeed(kind,s) for s in sources])
+        for name,items,selected in cases:
+            sources=[x for _,x in items];kinds=['url' if k==U else 'path' for k,_ in items]
+            cache=S.FileSeedCache();cache.AddFileSeeds([S.FileSeed(k,x) for k,x in items])
             panel=W.EditFileSeedCachePanel(c.gui,cache)
             seeds=cache.GetFileSeeds()
             lc=panel._list_ctrl
@@ -46,7 +52,7 @@ def record(session):
             c.pub=pub
             menu=panel._GetListCtrlMenu()
             entry=next((a for a in menu.actions() if a.text()=='search for URLs'),None)
-            record_={'name':name,'sources':sources,'selected':selected,'offered':entry is not None,'pubs':pubs}
+            record_={'name':name,'sources':sources,'kinds':kinds,'selected':selected,'offered':entry is not None,'pubs':pubs}
             if entry is not None:entry.trigger()
             QW.QApplication.processEvents()
             out['cases'].append(record_)
