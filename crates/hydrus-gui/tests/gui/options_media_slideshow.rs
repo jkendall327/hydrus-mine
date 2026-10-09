@@ -64,73 +64,84 @@ fn set_noneable(client: &Media, label: &str, phrase: &str, n: i32) {
 
 // leaf: audit-options-media-viewer-slideshows-slideshow-durations
 #[test]
-fn the_viewer_s_slideshow_menu_lists_the_saved_durations_and_once_through() {
+fn the_slideshow_durations_text_makes_the_menu_and_the_start_period_as_the_reference_does() {
+    // oracle/record_slideshow_durations.py: the reference's options panel
+    // reading each text, and its viewer's slideshow menu over the list saved
+    let recorded: serde_json::Value = hydrus_testkit::fixture_json("slideshow_durations.json");
     let client = Media::basic();
     client.search("system:everything");
-    let viewer = open_viewer(&client, 0);
     let labels = |viewer: &MediaViewerWindow| -> Vec<String> {
         menu_rows(viewer).into_iter().map(|r| r.0).collect()
     };
-    assert_eq!(
-        labels(&viewer),
-        [
-            "1 second",
-            "5 seconds",
-            "10 seconds",
-            "30 seconds",
-            "1 minute",
-            "very fast",
-            "custom interval",
-            "shuffle this slideshow",
-            "all slideshows shuffle",
-            "this slideshow plays media once through",
-            "always play media once through"
-        ]
-    );
-    assert!(menu_rows(&viewer).iter().all(|r| !r.2), "nothing checked");
-    viewer.invoke_close_requested();
-
-    let options = client.open_options();
-    show_page(&options, "media viewer");
-    let (d, found) = row(&options, "Slideshow durations:");
-    assert_eq!(box_of(&options, "Slideshow durations:"), BOX);
-    assert_eq!(found.text, "1.0,5.0,10.0,30.0,60.0");
-    let (o, found) = row(&options, "Always play media once through before moving on:");
-    assert_eq!((found.kind, found.checked), (1, false));
-    options.invoke_text_edited(d, "2.5,7".into());
-    options.invoke_check_toggled(o, true);
-    // (the viewer opened now still has the saved ones)
-    assert_eq!(
-        client.setting::<SlideshowSettings>().durations,
-        [1.0, 5.0, 10.0, 30.0, 60.0]
-    );
-    options.invoke_apply();
-    options.hide().unwrap();
-
+    // the duration entries of a menu: those before "very fast"
+    let durations = |all: Vec<String>| -> Vec<String> {
+        all.into_iter().take_while(|l| l != "very fast").collect()
+    };
+    let theirs = |menu: &serde_json::Value| -> Vec<String> {
+        menu["entries"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|e| e.as_str().unwrap().to_owned())
+            .take_while(|l| l != "very fast")
+            .collect()
+    };
+    for case in recorded["results"].as_array().unwrap() {
+        let text = case["text"].as_str().unwrap();
+        // the list the option held before the text was typed
+        let before: Vec<f64> = serde_json::from_value(case["before"].clone()).unwrap();
+        let mut settings = client.setting::<SlideshowSettings>();
+        settings.durations = before.clone();
+        keep(&client, settings);
+        let options = client.open_options();
+        show_page(&options, "media viewer");
+        let (d, found) = row(&options, "Slideshow durations:");
+        assert_eq!(box_of(&options, "Slideshow durations:"), BOX);
+        assert_eq!(
+            found.text,
+            before
+                .iter()
+                .map(|d| format!("{d:?}"))
+                .collect::<Vec<_>>()
+                .join(",")
+        );
+        options.invoke_text_edited(d, text.into());
+        options.invoke_apply();
+        options.hide().unwrap();
+        let saved: Vec<f64> = serde_json::from_value(case["saved"].clone()).unwrap();
+        assert_eq!(
+            client.setting::<SlideshowSettings>().durations,
+            saved,
+            "{text:?}"
+        );
+        let viewer = open_viewer(&client, 0);
+        assert_eq!(
+            durations(labels(&viewer)),
+            theirs(&case["fresh"]),
+            "{text:?}: the menu"
+        );
+        // choosing the first duration starts the slideshow at it
+        let first = menu_rows(&viewer)[0].1;
+        viewer.invoke_menu_chosen(first);
+        assert_eq!(
+            menu_rows(&viewer)[0].0,
+            case["played"]["entries"][0].as_str().unwrap(),
+            "{text:?}: started"
+        );
+        viewer.invoke_close_requested();
+    }
+    // a saved list with nothing in it starts at a second
+    let mut settings = client.setting::<SlideshowSettings>();
+    settings.durations = Vec::new();
+    keep(&client, settings);
     let viewer = open_viewer(&client, 0);
-    let rows = menu_rows(&viewer);
+    let empty = &recorded["empty"];
     assert_eq!(
-        rows.iter()
-            .map(|r| r.0.as_str())
-            .take(4)
-            .collect::<Vec<_>>(),
-        ["2.5 seconds", "7 seconds", "very fast", "custom interval"]
+        durations(labels(&viewer)),
+        theirs(&empty["fresh"]),
+        "an empty list"
     );
-    assert!(
-        rows.iter()
-            .any(|r| r.0 == "always play media once through" && r.2),
-        "checked: {rows:?}"
-    );
-    assert!(
-        rows.iter()
-            .any(|r| r.0 == "this slideshow plays media once through" && r.2),
-        "a new viewer starts with it"
-    );
-    // choosing one of them starts a slideshow at it
-    let id = rows.iter().find(|r| r.0 == "7 seconds").unwrap().1;
-    viewer.invoke_menu_chosen(id);
-    let rows = menu_rows(&viewer);
-    assert_eq!(rows[0].0, "stop (7 seconds)");
+    viewer.invoke_close_requested();
 }
 
 /// When the real viewer's slideshow moved on from a real animated file, in

@@ -1,0 +1,1688 @@
+{
+ "cases": [
+  {
+   "frame": {
+    "remember_size": true,
+    "maximised": true,
+    "fullscreen": true,
+    "last_size": [
+     700,
+     500
+    ],
+    "last_position": null
+   },
+   "opened": {
+    "maximised": false,
+    "fullscreen": true,
+    "size": [
+     800,
+     800
+    ]
+   },
+   "user": "as it is",
+   "after_user": {
+    "maximised": false,
+    "fullscreen": true,
+    "size": [
+     800,
+     800
+    ]
+   },
+   "saved": {
+    "remember_size": true,
+    "last_size": [
+     800,
+     800
+    ],
+    "last_position": null,
+    "maximised": false,
+    "fullscreen": true
+   }
+  },
+  {
+   "frame": {
+    "remember_size": true,
+    "maximised": true,
+    "fullscreen": true,
+    "last_size": [
+     700,
+     500
+    ],
+    "last_position": null
+   },
+   "opened": {
+    "maximised": false,
+    "fullscreen": true,
+    "size": [
+     800,
+     800
+    ]
+   },
+   "user": "restored",
+   "after_user": {
+    "maximised": false,
+    "fullscreen": false,
+    "size": [
+     700,
+     500
+    ]
+   },
+   "saved": {
+    "remember_size": true,
+    "last_size": [
+     700,
+     500
+    ],
+    "last_position": null,
+    "maximised": false,
+    "fullscreen": false
+   }
+  },
+  {
+   "frame": {
+    "remember_size": true,
+    "maximised": true,
+    "fullscreen": true,
+    "last_size": [
+     700,
+     500
+    ],
+    "last_position": null
+   },
+   "opened": {
+    "maximised": false,
+    "fullscreen": true,
+    "size": [
+     800,
+     800
+    ]
+   },
+   "user": "maximised by hand",
+   "after_user": {
+    "maximised": true,
+    "fullscreen": false,
+    "size": [
+     796,
+     796
+    ]
+   },
+   "saved": {
+    "remember_size": true,
+    "last_size": [
+     796,
+     796
+    ],
+    "last_position": null,
+    "maximised": true,
+    "fullscreen": false
+   }
+  },
+  {
+   "frame": {
+    "remember_size": true,
+    "maximised": true,
+    "fullscreen": true,
+    "last_size": [
+     700,
+     500
+    ],
+    "last_position": null
+   },
+   "opened": {
+    "maximised": false,
+    "fullscreen": true,
+    "size": [
+     800,
+     800
+    ]
+   },
+   "user": "fullscreened by hand",
+   "after_user": {
+    "maximised": false,
+    "fullscreen": true,
+    "size": [
+     800,
+     800
+    ]
+   },
+   "saved": {
+    "remember_size": true,
+    "last_size": [
+     800,
+     800
+    ],
+    "last_position": null,
+    "maximised": false,
+    "fullscreen": true
+   }
+  },
+  {
+   "frame": {
+    "remember_size": true,
+    "maximised": true,
+    "fullscreen": true,
+    "last_size": [
+     700,
+     500
+    ],
+    "last_position": [
+     33,
+     44
+    ]
+   },
+   "opened": {
+    "maximised": false,
+    "fullscreen": true,
+    "size": [
+     800,
+     800
+    ]
+   },
+   "user": "as it is",
+   "after_user": {
+    "maximised": false,
+    "fullscreen": true,
+    "size": [
+     800,
+     800
+    ]
+   },
+   "saved": {
+    "remember_size": true,
+    "last_size": [
+     700,
+     500
+    ],
+    "last_position": [
+     33,
+     44
+    ],
+    "maximised": false,
+    "fullscreen": true
+   }
+  },
+  {
+   "frame": {
+    "remember_size": true,
+    "maximised": true,
+    "fullscreen": true,
+    "last_size": [
+     700,
+     500
+    ],
+    "last_position": [
+     33,
+     44
+    ]
+   },
+   "opened": {
+    "maximised": false,
+    "fullscreen": true,
+    "size": [
+     800,
+     800
+    ]
+   },
+   "user": "restored",
+   "after_user": {
+    "maximised": false,
+    "fullscreen": false,
+    "size": [
+     700,
+     500
+    ]
+   },
+   "saved": {
+    "remember_size": true,
+    "last_size": [
+     700,
+     500
+    ],
+    "last_position": [
+     33,
+     44
+    ],
+    "maximised": false,
+    "fullscreen": false
+   }
+  },
+  {
+   "frame": {
+    "remember_size": true,
+    "maximised": true,
+    "fullscreen": true,
+    "last_size": [
+     700,
+     500
+    ],
+    "last_position": [
+     33,
+     44
+    ]
+   },
+   "opened": {
+    "maximised": false,
+    "fullscreen": true,
+    "size": [
+     800,
+     800
+    ]
+   },
+   "user": "maximised by hand",
+   "after_user": {
+    "maximised": true,
+    "fullscreen": false,
+    "size": [
+     796,
+     796
+    ]
+   },
+   "saved": {
+    "remember_size": true,
+    "last_size": [
+     700,
+     500
+    ],
+    "last_position": [
+     33,
+     44
+    ],
+    "maximised": true,
+    "fullscreen": false
+   }
+  },
+  {
+   "frame": {
+    "remember_size": true,
+    "maximised": true,
+    "fullscreen": true,
+    "last_size": [
+     700,
+     500
+    ],
+    "last_position": [
+     33,
+     44
+    ]
+   },
+   "opened": {
+    "maximised": false,
+    "fullscreen": true,
+    "size": [
+     800,
+     800
+    ]
+   },
+   "user": "fullscreened by hand",
+   "after_user": {
+    "maximised": false,
+    "fullscreen": true,
+    "size": [
+     800,
+     800
+    ]
+   },
+   "saved": {
+    "remember_size": true,
+    "last_size": [
+     700,
+     500
+    ],
+    "last_position": [
+     33,
+     44
+    ],
+    "maximised": false,
+    "fullscreen": true
+   }
+  },
+  {
+   "frame": {
+    "remember_size": true,
+    "maximised": true,
+    "fullscreen": false,
+    "last_size": [
+     700,
+     500
+    ],
+    "last_position": null
+   },
+   "opened": {
+    "maximised": true,
+    "fullscreen": false,
+    "size": [
+     796,
+     796
+    ]
+   },
+   "user": "as it is",
+   "after_user": {
+    "maximised": true,
+    "fullscreen": false,
+    "size": [
+     796,
+     796
+    ]
+   },
+   "saved": {
+    "remember_size": true,
+    "last_size": [
+     796,
+     796
+    ],
+    "last_position": null,
+    "maximised": true,
+    "fullscreen": false
+   }
+  },
+  {
+   "frame": {
+    "remember_size": true,
+    "maximised": true,
+    "fullscreen": false,
+    "last_size": [
+     700,
+     500
+    ],
+    "last_position": null
+   },
+   "opened": {
+    "maximised": true,
+    "fullscreen": false,
+    "size": [
+     796,
+     796
+    ]
+   },
+   "user": "restored",
+   "after_user": {
+    "maximised": false,
+    "fullscreen": false,
+    "size": [
+     700,
+     500
+    ]
+   },
+   "saved": {
+    "remember_size": true,
+    "last_size": [
+     700,
+     500
+    ],
+    "last_position": null,
+    "maximised": false,
+    "fullscreen": false
+   }
+  },
+  {
+   "frame": {
+    "remember_size": true,
+    "maximised": true,
+    "fullscreen": false,
+    "last_size": [
+     700,
+     500
+    ],
+    "last_position": null
+   },
+   "opened": {
+    "maximised": true,
+    "fullscreen": false,
+    "size": [
+     796,
+     796
+    ]
+   },
+   "user": "maximised by hand",
+   "after_user": {
+    "maximised": true,
+    "fullscreen": false,
+    "size": [
+     796,
+     796
+    ]
+   },
+   "saved": {
+    "remember_size": true,
+    "last_size": [
+     796,
+     796
+    ],
+    "last_position": null,
+    "maximised": true,
+    "fullscreen": false
+   }
+  },
+  {
+   "frame": {
+    "remember_size": true,
+    "maximised": true,
+    "fullscreen": false,
+    "last_size": [
+     700,
+     500
+    ],
+    "last_position": null
+   },
+   "opened": {
+    "maximised": true,
+    "fullscreen": false,
+    "size": [
+     796,
+     796
+    ]
+   },
+   "user": "fullscreened by hand",
+   "after_user": {
+    "maximised": false,
+    "fullscreen": true,
+    "size": [
+     800,
+     800
+    ]
+   },
+   "saved": {
+    "remember_size": true,
+    "last_size": [
+     800,
+     800
+    ],
+    "last_position": null,
+    "maximised": false,
+    "fullscreen": true
+   }
+  },
+  {
+   "frame": {
+    "remember_size": true,
+    "maximised": true,
+    "fullscreen": false,
+    "last_size": [
+     700,
+     500
+    ],
+    "last_position": [
+     33,
+     44
+    ]
+   },
+   "opened": {
+    "maximised": true,
+    "fullscreen": false,
+    "size": [
+     796,
+     796
+    ]
+   },
+   "user": "as it is",
+   "after_user": {
+    "maximised": true,
+    "fullscreen": false,
+    "size": [
+     796,
+     796
+    ]
+   },
+   "saved": {
+    "remember_size": true,
+    "last_size": [
+     700,
+     500
+    ],
+    "last_position": [
+     33,
+     44
+    ],
+    "maximised": true,
+    "fullscreen": false
+   }
+  },
+  {
+   "frame": {
+    "remember_size": true,
+    "maximised": true,
+    "fullscreen": false,
+    "last_size": [
+     700,
+     500
+    ],
+    "last_position": [
+     33,
+     44
+    ]
+   },
+   "opened": {
+    "maximised": true,
+    "fullscreen": false,
+    "size": [
+     796,
+     796
+    ]
+   },
+   "user": "restored",
+   "after_user": {
+    "maximised": false,
+    "fullscreen": false,
+    "size": [
+     700,
+     500
+    ]
+   },
+   "saved": {
+    "remember_size": true,
+    "last_size": [
+     700,
+     500
+    ],
+    "last_position": [
+     33,
+     44
+    ],
+    "maximised": false,
+    "fullscreen": false
+   }
+  },
+  {
+   "frame": {
+    "remember_size": true,
+    "maximised": true,
+    "fullscreen": false,
+    "last_size": [
+     700,
+     500
+    ],
+    "last_position": [
+     33,
+     44
+    ]
+   },
+   "opened": {
+    "maximised": true,
+    "fullscreen": false,
+    "size": [
+     796,
+     796
+    ]
+   },
+   "user": "maximised by hand",
+   "after_user": {
+    "maximised": true,
+    "fullscreen": false,
+    "size": [
+     796,
+     796
+    ]
+   },
+   "saved": {
+    "remember_size": true,
+    "last_size": [
+     700,
+     500
+    ],
+    "last_position": [
+     33,
+     44
+    ],
+    "maximised": true,
+    "fullscreen": false
+   }
+  },
+  {
+   "frame": {
+    "remember_size": true,
+    "maximised": true,
+    "fullscreen": false,
+    "last_size": [
+     700,
+     500
+    ],
+    "last_position": [
+     33,
+     44
+    ]
+   },
+   "opened": {
+    "maximised": true,
+    "fullscreen": false,
+    "size": [
+     796,
+     796
+    ]
+   },
+   "user": "fullscreened by hand",
+   "after_user": {
+    "maximised": false,
+    "fullscreen": true,
+    "size": [
+     800,
+     800
+    ]
+   },
+   "saved": {
+    "remember_size": true,
+    "last_size": [
+     700,
+     500
+    ],
+    "last_position": [
+     33,
+     44
+    ],
+    "maximised": false,
+    "fullscreen": true
+   }
+  },
+  {
+   "frame": {
+    "remember_size": true,
+    "maximised": false,
+    "fullscreen": true,
+    "last_size": [
+     700,
+     500
+    ],
+    "last_position": null
+   },
+   "opened": {
+    "maximised": false,
+    "fullscreen": true,
+    "size": [
+     800,
+     800
+    ]
+   },
+   "user": "as it is",
+   "after_user": {
+    "maximised": false,
+    "fullscreen": true,
+    "size": [
+     800,
+     800
+    ]
+   },
+   "saved": {
+    "remember_size": true,
+    "last_size": [
+     800,
+     800
+    ],
+    "last_position": null,
+    "maximised": false,
+    "fullscreen": true
+   }
+  },
+  {
+   "frame": {
+    "remember_size": true,
+    "maximised": false,
+    "fullscreen": true,
+    "last_size": [
+     700,
+     500
+    ],
+    "last_position": null
+   },
+   "opened": {
+    "maximised": false,
+    "fullscreen": true,
+    "size": [
+     800,
+     800
+    ]
+   },
+   "user": "restored",
+   "after_user": {
+    "maximised": false,
+    "fullscreen": false,
+    "size": [
+     700,
+     500
+    ]
+   },
+   "saved": {
+    "remember_size": true,
+    "last_size": [
+     700,
+     500
+    ],
+    "last_position": null,
+    "maximised": false,
+    "fullscreen": false
+   }
+  },
+  {
+   "frame": {
+    "remember_size": true,
+    "maximised": false,
+    "fullscreen": true,
+    "last_size": [
+     700,
+     500
+    ],
+    "last_position": null
+   },
+   "opened": {
+    "maximised": false,
+    "fullscreen": true,
+    "size": [
+     800,
+     800
+    ]
+   },
+   "user": "maximised by hand",
+   "after_user": {
+    "maximised": true,
+    "fullscreen": false,
+    "size": [
+     796,
+     796
+    ]
+   },
+   "saved": {
+    "remember_size": true,
+    "last_size": [
+     796,
+     796
+    ],
+    "last_position": null,
+    "maximised": true,
+    "fullscreen": false
+   }
+  },
+  {
+   "frame": {
+    "remember_size": true,
+    "maximised": false,
+    "fullscreen": true,
+    "last_size": [
+     700,
+     500
+    ],
+    "last_position": null
+   },
+   "opened": {
+    "maximised": false,
+    "fullscreen": true,
+    "size": [
+     800,
+     800
+    ]
+   },
+   "user": "fullscreened by hand",
+   "after_user": {
+    "maximised": false,
+    "fullscreen": true,
+    "size": [
+     800,
+     800
+    ]
+   },
+   "saved": {
+    "remember_size": true,
+    "last_size": [
+     800,
+     800
+    ],
+    "last_position": null,
+    "maximised": false,
+    "fullscreen": true
+   }
+  },
+  {
+   "frame": {
+    "remember_size": true,
+    "maximised": false,
+    "fullscreen": true,
+    "last_size": [
+     700,
+     500
+    ],
+    "last_position": [
+     33,
+     44
+    ]
+   },
+   "opened": {
+    "maximised": false,
+    "fullscreen": true,
+    "size": [
+     800,
+     800
+    ]
+   },
+   "user": "as it is",
+   "after_user": {
+    "maximised": false,
+    "fullscreen": true,
+    "size": [
+     800,
+     800
+    ]
+   },
+   "saved": {
+    "remember_size": true,
+    "last_size": [
+     700,
+     500
+    ],
+    "last_position": [
+     33,
+     44
+    ],
+    "maximised": false,
+    "fullscreen": true
+   }
+  },
+  {
+   "frame": {
+    "remember_size": true,
+    "maximised": false,
+    "fullscreen": true,
+    "last_size": [
+     700,
+     500
+    ],
+    "last_position": [
+     33,
+     44
+    ]
+   },
+   "opened": {
+    "maximised": false,
+    "fullscreen": true,
+    "size": [
+     800,
+     800
+    ]
+   },
+   "user": "restored",
+   "after_user": {
+    "maximised": false,
+    "fullscreen": false,
+    "size": [
+     700,
+     500
+    ]
+   },
+   "saved": {
+    "remember_size": true,
+    "last_size": [
+     700,
+     500
+    ],
+    "last_position": [
+     33,
+     44
+    ],
+    "maximised": false,
+    "fullscreen": false
+   }
+  },
+  {
+   "frame": {
+    "remember_size": true,
+    "maximised": false,
+    "fullscreen": true,
+    "last_size": [
+     700,
+     500
+    ],
+    "last_position": [
+     33,
+     44
+    ]
+   },
+   "opened": {
+    "maximised": false,
+    "fullscreen": true,
+    "size": [
+     800,
+     800
+    ]
+   },
+   "user": "maximised by hand",
+   "after_user": {
+    "maximised": true,
+    "fullscreen": false,
+    "size": [
+     796,
+     796
+    ]
+   },
+   "saved": {
+    "remember_size": true,
+    "last_size": [
+     700,
+     500
+    ],
+    "last_position": [
+     33,
+     44
+    ],
+    "maximised": true,
+    "fullscreen": false
+   }
+  },
+  {
+   "frame": {
+    "remember_size": true,
+    "maximised": false,
+    "fullscreen": true,
+    "last_size": [
+     700,
+     500
+    ],
+    "last_position": [
+     33,
+     44
+    ]
+   },
+   "opened": {
+    "maximised": false,
+    "fullscreen": true,
+    "size": [
+     800,
+     800
+    ]
+   },
+   "user": "fullscreened by hand",
+   "after_user": {
+    "maximised": false,
+    "fullscreen": true,
+    "size": [
+     800,
+     800
+    ]
+   },
+   "saved": {
+    "remember_size": true,
+    "last_size": [
+     700,
+     500
+    ],
+    "last_position": [
+     33,
+     44
+    ],
+    "maximised": false,
+    "fullscreen": true
+   }
+  },
+  {
+   "frame": {
+    "remember_size": true,
+    "maximised": false,
+    "fullscreen": false,
+    "last_size": [
+     700,
+     500
+    ],
+    "last_position": null
+   },
+   "opened": {
+    "maximised": false,
+    "fullscreen": false,
+    "size": [
+     700,
+     500
+    ]
+   },
+   "user": "as it is",
+   "after_user": {
+    "maximised": false,
+    "fullscreen": false,
+    "size": [
+     700,
+     500
+    ]
+   },
+   "saved": {
+    "remember_size": true,
+    "last_size": [
+     700,
+     500
+    ],
+    "last_position": null,
+    "maximised": false,
+    "fullscreen": false
+   }
+  },
+  {
+   "frame": {
+    "remember_size": true,
+    "maximised": false,
+    "fullscreen": false,
+    "last_size": [
+     700,
+     500
+    ],
+    "last_position": null
+   },
+   "opened": {
+    "maximised": false,
+    "fullscreen": false,
+    "size": [
+     700,
+     500
+    ]
+   },
+   "user": "restored",
+   "after_user": {
+    "maximised": false,
+    "fullscreen": false,
+    "size": [
+     700,
+     500
+    ]
+   },
+   "saved": {
+    "remember_size": true,
+    "last_size": [
+     700,
+     500
+    ],
+    "last_position": null,
+    "maximised": false,
+    "fullscreen": false
+   }
+  },
+  {
+   "frame": {
+    "remember_size": true,
+    "maximised": false,
+    "fullscreen": false,
+    "last_size": [
+     700,
+     500
+    ],
+    "last_position": null
+   },
+   "opened": {
+    "maximised": false,
+    "fullscreen": false,
+    "size": [
+     700,
+     500
+    ]
+   },
+   "user": "maximised by hand",
+   "after_user": {
+    "maximised": true,
+    "fullscreen": false,
+    "size": [
+     796,
+     796
+    ]
+   },
+   "saved": {
+    "remember_size": true,
+    "last_size": [
+     796,
+     796
+    ],
+    "last_position": null,
+    "maximised": true,
+    "fullscreen": false
+   }
+  },
+  {
+   "frame": {
+    "remember_size": true,
+    "maximised": false,
+    "fullscreen": false,
+    "last_size": [
+     700,
+     500
+    ],
+    "last_position": null
+   },
+   "opened": {
+    "maximised": false,
+    "fullscreen": false,
+    "size": [
+     700,
+     500
+    ]
+   },
+   "user": "fullscreened by hand",
+   "after_user": {
+    "maximised": false,
+    "fullscreen": true,
+    "size": [
+     800,
+     800
+    ]
+   },
+   "saved": {
+    "remember_size": true,
+    "last_size": [
+     800,
+     800
+    ],
+    "last_position": null,
+    "maximised": false,
+    "fullscreen": true
+   }
+  },
+  {
+   "frame": {
+    "remember_size": true,
+    "maximised": false,
+    "fullscreen": false,
+    "last_size": [
+     700,
+     500
+    ],
+    "last_position": [
+     33,
+     44
+    ]
+   },
+   "opened": {
+    "maximised": false,
+    "fullscreen": false,
+    "size": [
+     700,
+     500
+    ]
+   },
+   "user": "as it is",
+   "after_user": {
+    "maximised": false,
+    "fullscreen": false,
+    "size": [
+     700,
+     500
+    ]
+   },
+   "saved": {
+    "remember_size": true,
+    "last_size": [
+     700,
+     500
+    ],
+    "last_position": [
+     33,
+     44
+    ],
+    "maximised": false,
+    "fullscreen": false
+   }
+  },
+  {
+   "frame": {
+    "remember_size": true,
+    "maximised": false,
+    "fullscreen": false,
+    "last_size": [
+     700,
+     500
+    ],
+    "last_position": [
+     33,
+     44
+    ]
+   },
+   "opened": {
+    "maximised": false,
+    "fullscreen": false,
+    "size": [
+     700,
+     500
+    ]
+   },
+   "user": "restored",
+   "after_user": {
+    "maximised": false,
+    "fullscreen": false,
+    "size": [
+     700,
+     500
+    ]
+   },
+   "saved": {
+    "remember_size": true,
+    "last_size": [
+     700,
+     500
+    ],
+    "last_position": [
+     33,
+     44
+    ],
+    "maximised": false,
+    "fullscreen": false
+   }
+  },
+  {
+   "frame": {
+    "remember_size": true,
+    "maximised": false,
+    "fullscreen": false,
+    "last_size": [
+     700,
+     500
+    ],
+    "last_position": [
+     33,
+     44
+    ]
+   },
+   "opened": {
+    "maximised": false,
+    "fullscreen": false,
+    "size": [
+     700,
+     500
+    ]
+   },
+   "user": "maximised by hand",
+   "after_user": {
+    "maximised": true,
+    "fullscreen": false,
+    "size": [
+     796,
+     796
+    ]
+   },
+   "saved": {
+    "remember_size": true,
+    "last_size": [
+     700,
+     500
+    ],
+    "last_position": [
+     33,
+     44
+    ],
+    "maximised": true,
+    "fullscreen": false
+   }
+  },
+  {
+   "frame": {
+    "remember_size": true,
+    "maximised": false,
+    "fullscreen": false,
+    "last_size": [
+     700,
+     500
+    ],
+    "last_position": [
+     33,
+     44
+    ]
+   },
+   "opened": {
+    "maximised": false,
+    "fullscreen": false,
+    "size": [
+     700,
+     500
+    ]
+   },
+   "user": "fullscreened by hand",
+   "after_user": {
+    "maximised": false,
+    "fullscreen": true,
+    "size": [
+     800,
+     800
+    ]
+   },
+   "saved": {
+    "remember_size": true,
+    "last_size": [
+     700,
+     500
+    ],
+    "last_position": [
+     33,
+     44
+    ],
+    "maximised": false,
+    "fullscreen": true
+   }
+  },
+  {
+   "frame": {
+    "remember_size": false,
+    "maximised": true,
+    "fullscreen": true,
+    "last_size": [
+     700,
+     500
+    ],
+    "last_position": null
+   },
+   "opened": {
+    "maximised": false,
+    "fullscreen": true,
+    "size": [
+     800,
+     800
+    ]
+   },
+   "user": "as it is",
+   "after_user": {
+    "maximised": false,
+    "fullscreen": true,
+    "size": [
+     800,
+     800
+    ]
+   },
+   "saved": {
+    "remember_size": false,
+    "last_size": [
+     700,
+     500
+    ],
+    "last_position": null,
+    "maximised": true,
+    "fullscreen": true
+   }
+  },
+  {
+   "frame": {
+    "remember_size": false,
+    "maximised": true,
+    "fullscreen": true,
+    "last_size": [
+     700,
+     500
+    ],
+    "last_position": [
+     33,
+     44
+    ]
+   },
+   "opened": {
+    "maximised": false,
+    "fullscreen": true,
+    "size": [
+     800,
+     800
+    ]
+   },
+   "user": "as it is",
+   "after_user": {
+    "maximised": false,
+    "fullscreen": true,
+    "size": [
+     800,
+     800
+    ]
+   },
+   "saved": {
+    "remember_size": false,
+    "last_size": [
+     700,
+     500
+    ],
+    "last_position": [
+     33,
+     44
+    ],
+    "maximised": true,
+    "fullscreen": true
+   }
+  },
+  {
+   "frame": {
+    "remember_size": false,
+    "maximised": true,
+    "fullscreen": false,
+    "last_size": [
+     700,
+     500
+    ],
+    "last_position": null
+   },
+   "opened": {
+    "maximised": true,
+    "fullscreen": false,
+    "size": [
+     796,
+     796
+    ]
+   },
+   "user": "as it is",
+   "after_user": {
+    "maximised": true,
+    "fullscreen": false,
+    "size": [
+     796,
+     796
+    ]
+   },
+   "saved": {
+    "remember_size": false,
+    "last_size": [
+     700,
+     500
+    ],
+    "last_position": null,
+    "maximised": true,
+    "fullscreen": false
+   }
+  },
+  {
+   "frame": {
+    "remember_size": false,
+    "maximised": true,
+    "fullscreen": false,
+    "last_size": [
+     700,
+     500
+    ],
+    "last_position": [
+     33,
+     44
+    ]
+   },
+   "opened": {
+    "maximised": true,
+    "fullscreen": false,
+    "size": [
+     796,
+     796
+    ]
+   },
+   "user": "as it is",
+   "after_user": {
+    "maximised": true,
+    "fullscreen": false,
+    "size": [
+     796,
+     796
+    ]
+   },
+   "saved": {
+    "remember_size": false,
+    "last_size": [
+     700,
+     500
+    ],
+    "last_position": [
+     33,
+     44
+    ],
+    "maximised": true,
+    "fullscreen": false
+   }
+  },
+  {
+   "frame": {
+    "remember_size": false,
+    "maximised": false,
+    "fullscreen": true,
+    "last_size": [
+     700,
+     500
+    ],
+    "last_position": null
+   },
+   "opened": {
+    "maximised": false,
+    "fullscreen": true,
+    "size": [
+     800,
+     800
+    ]
+   },
+   "user": "as it is",
+   "after_user": {
+    "maximised": false,
+    "fullscreen": true,
+    "size": [
+     800,
+     800
+    ]
+   },
+   "saved": {
+    "remember_size": false,
+    "last_size": [
+     700,
+     500
+    ],
+    "last_position": null,
+    "maximised": false,
+    "fullscreen": true
+   }
+  },
+  {
+   "frame": {
+    "remember_size": false,
+    "maximised": false,
+    "fullscreen": true,
+    "last_size": [
+     700,
+     500
+    ],
+    "last_position": [
+     33,
+     44
+    ]
+   },
+   "opened": {
+    "maximised": false,
+    "fullscreen": true,
+    "size": [
+     800,
+     800
+    ]
+   },
+   "user": "as it is",
+   "after_user": {
+    "maximised": false,
+    "fullscreen": true,
+    "size": [
+     800,
+     800
+    ]
+   },
+   "saved": {
+    "remember_size": false,
+    "last_size": [
+     700,
+     500
+    ],
+    "last_position": [
+     33,
+     44
+    ],
+    "maximised": false,
+    "fullscreen": true
+   }
+  },
+  {
+   "frame": {
+    "remember_size": false,
+    "maximised": false,
+    "fullscreen": false,
+    "last_size": [
+     700,
+     500
+    ],
+    "last_position": null
+   },
+   "opened": {
+    "maximised": false,
+    "fullscreen": false,
+    "size": [
+     300,
+     200
+    ]
+   },
+   "user": "as it is",
+   "after_user": {
+    "maximised": false,
+    "fullscreen": false,
+    "size": [
+     300,
+     200
+    ]
+   },
+   "saved": {
+    "remember_size": false,
+    "last_size": [
+     700,
+     500
+    ],
+    "last_position": null,
+    "maximised": false,
+    "fullscreen": false
+   }
+  },
+  {
+   "frame": {
+    "remember_size": false,
+    "maximised": false,
+    "fullscreen": false,
+    "last_size": [
+     700,
+     500
+    ],
+    "last_position": [
+     33,
+     44
+    ]
+   },
+   "opened": {
+    "maximised": false,
+    "fullscreen": false,
+    "size": [
+     300,
+     200
+    ]
+   },
+   "user": "as it is",
+   "after_user": {
+    "maximised": false,
+    "fullscreen": false,
+    "size": [
+     300,
+     200
+    ]
+   },
+   "saved": {
+    "remember_size": false,
+    "last_size": [
+     700,
+     500
+    ],
+    "last_position": [
+     33,
+     44
+    ],
+    "maximised": false,
+    "fullscreen": false
+   }
+  }
+ ],
+ "screen": [
+  800,
+  800
+ ]
+}

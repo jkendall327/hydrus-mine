@@ -62,7 +62,6 @@ fn opened_viewer(client: &Client) -> ((f32, f32), bool, bool) {
 }
 
 // leaf: audit-options-nested-frame-location-remember
-// leaf: audit-options-nested-frame-location-state
 // leaf: audit-options-gui-frame-locations-flip-remember-size
 #[test]
 fn the_frame_editor_s_switches_decide_how_the_media_viewer_next_opens() {
@@ -230,4 +229,138 @@ fn default_gravity_and_position_decide_where_a_child_window_next_opens() {
     });
     let placed = placement(&client);
     assert_eq!((placed.size, placed.position), ((640, 480), Some((33, 44))));
+}
+
+/// The media viewer's frame opening maximised or fullscreen, and what is kept
+/// of it when it closes, in every combination the reference's real window
+/// was put through (oracle/record_frame_state.py).
+// leaf: audit-options-nested-frame-location-state
+#[test]
+#[allow(clippy::cast_possible_truncation)]
+fn the_start_maximised_and_fullscreen_switches_open_and_keep_the_window_as_the_reference_does() {
+    let recorded: serde_json::Value = hydrus_testkit::fixture_json("frame_state.json");
+    let client = Client::basic();
+    client.ui.invoke_search_edited("system:everything".into());
+    client.ui.invoke_search_accepted();
+    // (the viewer keeps its window as it closes, as the reference does if asked to)
+    client
+        .store
+        .write(|ctx| {
+            let mut windows: WindowSettings = hydrus_store::settings::get(ctx.conn())?;
+            windows.save_media_viewer_on_close = true;
+            hydrus_store::settings::set(ctx.conn(), &windows)
+        })
+        .unwrap();
+    let mut compared = 0;
+    for case in recorded["cases"].as_array().unwrap() {
+        let frame = &case["frame"];
+        let (maximised, fullscreen) = (
+            frame["maximised"].as_bool().unwrap(),
+            frame["fullscreen"].as_bool().unwrap(),
+        );
+        let remember_size = frame["remember_size"].as_bool().unwrap();
+        let position = frame["last_position"]
+            .as_array()
+            .map(|p| (p[0].as_i64().unwrap() as i32, p[1].as_i64().unwrap() as i32));
+        let user = case["user"].as_str().unwrap();
+        let what = format!(
+            "remember size {remember_size}, maximised {maximised}, fullscreen {fullscreen}, position {position:?}, then {user}"
+        );
+
+        // the frame, set in the editor
+        edit_media_viewer(&client, &|child| {
+            child.set_remember_size(remember_size);
+            child.set_size_none(false);
+            child.set_last_width(700);
+            child.set_last_height(500);
+            child.set_remember_position(position.is_some());
+            child.set_position_none(position.is_none());
+            if let Some((x, y)) = position {
+                child.set_last_x(x);
+                child.set_last_y(y);
+            }
+            child.set_maximised(maximised);
+            child.set_fullscreen(fullscreen);
+        });
+
+        // opened
+        client.ui.invoke_thumbnail_activated(0);
+        let viewer = client
+            .bound
+            .viewer
+            .borrow()
+            .as_ref()
+            .expect("the viewer opens")
+            .clone_strong();
+        let window = viewer.window();
+        let opened = &case["opened"];
+        assert_eq!(
+            (window.is_maximized(), window.is_fullscreen()),
+            (
+                opened["maximised"].as_bool().unwrap(),
+                opened["fullscreen"].as_bool().unwrap()
+            ),
+            "{what}: opened"
+        );
+        if !maximised && !fullscreen && remember_size {
+            let size = window.size().to_logical(window.scale_factor());
+            assert_eq!(
+                (size.width, size.height),
+                (
+                    opened["size"][0].as_f64().unwrap() as f32,
+                    opened["size"][1].as_f64().unwrap() as f32
+                ),
+                "{what}: its size"
+            );
+        }
+
+        // the user changes it, and closes it
+        match user {
+            "restored" => {
+                window.set_fullscreen(false);
+                window.set_maximized(false);
+            }
+            "maximised by hand" => {
+                window.set_fullscreen(false);
+                window.set_maximized(true);
+            }
+            "fullscreened by hand" => window.set_fullscreen(true),
+            _ => {}
+        }
+        let after = &case["after_user"];
+        assert_eq!(
+            (
+                window.is_maximized() && !window.is_fullscreen(),
+                window.is_fullscreen()
+            ),
+            (
+                after["maximised"].as_bool().unwrap(),
+                after["fullscreen"].as_bool().unwrap()
+            ),
+            "{what}: after the user"
+        );
+        viewer.invoke_close_requested();
+
+        // what is kept
+        let kept = client.setting::<WindowSettings>().media_viewer;
+        let saved = &case["saved"];
+        assert_eq!(
+            kept.remember_size,
+            saved["remember_size"].as_bool().unwrap(),
+            "{what}"
+        );
+        assert_eq!(
+            (kept.maximised, kept.fullscreen),
+            (
+                saved["maximised"].as_bool().unwrap(),
+                saved["fullscreen"].as_bool().unwrap()
+            ),
+            "{what}: the switches kept"
+        );
+        if saved["last_size"] == serde_json::json!([700, 500]) {
+            assert_eq!(kept.last_size, Some((700, 500)), "{what}: the size kept");
+        }
+        compared += 1;
+    }
+    assert_eq!(compared, 40);
 }

@@ -4371,6 +4371,16 @@ font metrics and warning icons; automatic OS focus/modality and destruction
 closure for every shown child are not established. Continued typing explicitly
 clicks the retained LineEdit after acknowledgement.
 
+The preview window's corner, the ratings examples and the duplicates hover are
+compared by sizes and the rules that place them, not by pixel positions: the
+reference's hover is Qt widgets with their own fonts, margins and spacing (its
+rows are two pixels further apart than ours, its location text another font),
+where ours is drawn by Slint. The duplicates hover holds more than the
+reference's (the decision buttons are text), so it is wider and taller than
+the reference's at the same window size; its place and the rule for its width
+are the reference's. The reference's slideshow menu raises an error for a
+duration of infinity (`inf` or `1e400`); ours shows it.
+
 Manual export's "open location" reports a missing destination in the window's
 status line ("That location does not seem to exist!") where the reference shows a
 critical dialog; File > open > installation directory opens the Rust executable's

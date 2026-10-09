@@ -67,9 +67,10 @@ pub fn set_mpv_conf(source: &str, destination: &std::path::Path) -> Result<bool,
     if source.as_os_str().is_empty() || !source.is_file() {
         return Ok(false);
     }
-    if source != destination {
-        std::fs::copy(source, destination).map_err(|e| e.to_string())?;
-    }
+    // (a copy only if it is not there already with the same size and time,
+    // and it takes the source's time, as the reference's mirror does)
+    hydrus_import::paths::mirror_file(&source.to_string_lossy(), &destination.to_string_lossy())
+        .map_err(|e| e.to_string())?;
     Ok(true)
 }
 
@@ -1632,9 +1633,9 @@ fn numbers_text(numbers: &[f64]) -> String {
 fn parse_numbers(text: &str, what: &str) -> Result<Vec<f64>, String> {
     let numbers: Vec<f64> = text
         .split(',')
-        .map(|part| part.trim().parse::<f64>())
+        .map(|part| hydrus_core::numbers::py_float(part).ok_or(()))
         .collect::<Result<_, _>>()
-        .map_err(|_| format!("Could not parse those {what}, so they were not saved!"))?;
+        .map_err(|()| format!("Could not parse those {what}, so they were not saved!"))?;
     Ok(numbers.into_iter().filter(|d| *d > 0.0).collect())
 }
 
