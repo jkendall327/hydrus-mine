@@ -6,8 +6,13 @@ use hydrus_core::{
     url::{AnyGug, UrlClassSettings, UrlClasses, UrlType},
 };
 pub use hydrus_downloader_exchange::{
-    Definition, Native, decode_png, decode_text, encode_png, encode_text,
+    Definition, Native, decode_png, decode_text, domain_metadata::DomainMetadata, encode_png,
+    encode_text,
 };
+use hydrus_core::bandwidth::{Rule, Rules};
+use hydrus_core::network::NetworkContext;
+use hydrus_store::bandwidth::BandwidthSettings;
+use hydrus_store::network::{Approval, CustomHeader};
 use hydrus_parse::Downloaders;
 use hydrus_parse::login::LoginScript;
 use hydrus_store::{
@@ -59,22 +64,39 @@ pub struct Draft {
     pub downloaders: Downloaders,
     pub auxiliary: Auxiliary,
     pub login_scripts: Vec<LoginScript>,
+    /// Each domain context's custom headers, as loaded.
+    pub domain_headers: BTreeMap<String, Vec<CustomHeader>>,
+    /// Every context's bandwidth rules, as loaded.
+    pub bandwidth: Vec<(NetworkContext, Rules)>,
+    /// Imported domain metadata waiting for save, sorted by domain.
+    pub domain_metadata: Vec<DomainMetadata>,
+    /// Domain metadata added to the export list by the domain prompt.
+    pub domain_exports: Vec<DomainMetadata>,
     original_classes: UrlClassSettings,
     original_downloaders: Downloaders,
     original_auxiliary: Auxiliary,
     original_login_scripts: Vec<LoginScript>,
+    original_network: (BTreeMap<String, Vec<CustomHeader>>, Vec<(NetworkContext, Rules)>),
 }
 /// The review displayed before staging an import.
 #[derive(Debug, Clone, Default, PartialEq, Eq)]
 pub struct Review {
     pub added: Vec<String>,
     pub duplicates: usize,
+    /// The reference shows the first eight new domain metadata objects in
+    /// detail before its final confirmation.
+    pub details: Vec<String>,
 }
 impl Review {
     /// Concrete definitions and duplicate count for the confirmation panel.
     pub fn text(&self) -> String {
+        let details = if self.details.is_empty() {
+            String::new()
+        } else {
+            format!("{}\n\n", self.details.join("\n\n"))
+        };
         format!(
-            "{} definition(s) to add; {} exact duplicate(s) skipped.\n\n{}\n\nChanges are saved only when you apply the owning editor.",
+            "{} definition(s) to add; {} exact duplicate(s) skipped.\n\n{}\n\n{details}Changes are saved only when you apply the owning editor.",
             self.added.len(),
             self.duplicates,
             self.added.join("\n")
@@ -94,6 +116,9 @@ impl Draft {
             draft
                 .original_login_scripts
                 .clone_from(&draft.login_scripts);
+            draft.domain_headers = domain_headers(conn)?;
+            draft.bandwidth = settings::get::<BandwidthSettings>(conn)?.rules;
+            draft.original_network = (draft.domain_headers.clone(), draft.bandwidth.clone());
             Ok(draft)
         })
     }
@@ -105,6 +130,11 @@ impl Draft {
             original_auxiliary: auxiliary.clone(),
             login_scripts: Vec::new(),
             original_login_scripts: Vec::new(),
+            domain_headers: BTreeMap::new(),
+            bandwidth: Vec::new(),
+            domain_metadata: Vec::new(),
+            domain_exports: Vec::new(),
+            original_network: (BTreeMap::new(), Vec::new()),
             classes,
             downloaders,
             auxiliary,
@@ -115,10 +145,14 @@ impl Draft {
         if definitions.iter().any(|d| {
             !matches!(
                 d.native,
-                Native::Class(_) | Native::Gug(_) | Native::Page(_) | Native::Login(_)
+                Native::Class(_)
+                    | Native::Gug(_)
+                    | Native::Page(_)
+                    | Native::Login(_)
+                    | Native::Domain(_)
             )
         }) {
-            return Err("Downloader bundles accept URL classes, generators, page parsers and login scripts. Import formulas or content nodes from their own editor.".into());
+            return Err("Downloader bundles accept URL classes, generators, page parsers, login scripts and domain metadata. Import formulas or content nodes from their own editor.".into());
         }
         let mut next = self.clone();
         let mut review = Review::default();
@@ -136,6 +170,7 @@ impl Draft {
                 Native::Class(_) => "URL Class",
                 Native::Page(_) => "Parser",
                 Native::Login(_) => "Login Script",
+                Native::Domain(_) => "Domain Metadata",
                 _ => "GUG",
             };
             let name_seen = (category.to_owned(), definition.name().to_owned());
@@ -257,6 +292,24 @@ impl Draft {
                     script.key = PageKey::random().to_hex();
                     next.login_scripts.push(script.clone());
                 }
+                Native::Domain(metadata) => {
+                    // Only the headers and rules the client lacks are kept.
+                    let headers = metadata
+                        .headers
+                        .take()
+                        .filter(|h| !next.has_exactly_these_headers(&metadata.domain, h));
+                    let rules = metadata
+                        .rules
+                        .take()
+                        .filter(|r| !next.has_exactly_these_rules(&metadata.domain, r));
+                    if headers.is_none() && rules.is_none() {
+                        review.duplicates += 1;
+                        continue;
+                    }
+                    metadata.headers = headers;
+                    metadata.rules = rules;
+                    next.domain_metadata.push(metadata.clone());
+                }
                 _ => unreachable!("definition kinds were checked before staging"),
             }
             seen.insert(name_seen);
@@ -283,6 +336,13 @@ impl Draft {
             .iter()
             .map(|p| p.key.clone())
             .collect();
+        next.domain_metadata.sort_by(|a, b| a.domain.cmp(&b.domain));
+        review.details = next
+            .domain_metadata
+            .iter()
+            .take(8)
+            .map(DomainMetadata::detailed_summary)
+            .collect();
         *self = next;
         Ok(review)
     }
@@ -296,10 +356,14 @@ impl Draft {
             let downloaders: Downloaders = settings::get(conn)?;
             let auxiliary: Auxiliary = settings::get(conn)?;
             let mut logins = hydrus_store::logins::load(conn)?;
+            let mut bandwidth: BandwidthSettings = settings::get(conn)?;
             if classes != draft.original_classes
                 || downloaders != draft.original_downloaders
                 || auxiliary != draft.original_auxiliary
                 || logins.scripts != draft.original_login_scripts
+                || (!draft.domain_metadata.is_empty()
+                    && (domain_headers(conn)? != draft.original_network.0
+                        || bandwidth.rules != draft.original_network.1))
             {
                 return Err(StoreError::Invalid("Downloader definitions changed in another editor. Reopen the import before applying.".into()));
             }
@@ -320,6 +384,42 @@ impl Draft {
                 }
                 hydrus_store::logins::save(conn, &logins)?;
             }
+            if !draft.domain_metadata.is_empty() {
+                // The reference's bandwidth manager stops at the first package
+                // without rules (`AutoAddDomainMetadatas` returns, rather than
+                // continuing), so later packages' rules are not added.
+                for metadata in &draft.domain_metadata {
+                    let Some(rules) = &metadata.rules else {
+                        break;
+                    };
+                    let context = NetworkContext::domain(metadata.domain.clone());
+                    bandwidth.rules.retain(|(c, _)| c != &context);
+                    bandwidth
+                        .rules
+                        .push((context, Rules::new(rules.iter().copied())));
+                }
+                settings::set(conn, &bandwidth)?;
+                // Headers replace the domain's whole set, approved.
+                for metadata in &draft.domain_metadata {
+                    let Some(headers) = &metadata.headers else {
+                        continue;
+                    };
+                    let context = NetworkContext::domain(metadata.domain.clone());
+                    for old in hydrus_store::network::headers(conn, &context)? {
+                        hydrus_store::network::delete_header(conn, &context, &old.name)?;
+                    }
+                    for (name, value, reason) in headers {
+                        hydrus_store::network::set_header(
+                            conn,
+                            &context,
+                            name,
+                            Some(value),
+                            Some(Approval::Approved),
+                            Some(reason),
+                        )?;
+                    }
+                }
+            }
             settings::set(conn, &draft.classes)?;
             settings::set(conn, &draft.downloaders)?;
             settings::set(conn, &draft.auxiliary)
@@ -335,6 +435,7 @@ impl Draft {
             .chain(self.downloaders.gugs.gugs.iter().cloned().map(Native::Gug))
             .chain(self.downloaders.parsers.iter().cloned().map(Native::Page))
             .chain(self.login_scripts.iter().cloned().map(Native::Login))
+            .chain(self.domain_exports.iter().cloned().map(Native::Domain))
             .map(|n| self.auxiliary.definition(n))
             .collect()
     }
@@ -419,11 +520,35 @@ impl Draft {
                 break;
             }
         }
-        definitions
+        let mut out: Vec<Definition> = definitions
             .into_iter()
             .enumerate()
             .filter_map(|(index, definition)| included.contains(&index).then_some(definition))
-            .collect()
+            .collect();
+        // Adding a downloader also packages the headers and bandwidth rules of
+        // its example URLs' domains (`_AddGUG`).
+        let mut domains = Vec::new();
+        for definition in &out {
+            if let Native::Gug(AnyGug::Single(gug)) = &definition.native
+                && let Ok(url) = gug.example_url(hydrus_core::url::GugOptions::default())
+                && let Ok(domain) = hydrus_core::url::url_domain(&url)
+            {
+                domains.push(domain);
+            }
+        }
+        let existing = out
+            .iter()
+            .filter_map(|d| match &d.native {
+                Native::Domain(m) => Some(m.domain.clone()),
+                _ => None,
+            })
+            .collect();
+        out.extend(
+            self.domain_metadata_for(&domains, &existing)
+                .into_iter()
+                .map(|m| Definition::new(Native::Domain(m))),
+        );
+        out
     }
 }
 fn second_level(url: &str) -> Option<String> {
@@ -439,6 +564,7 @@ pub fn category(definition: &Definition) -> &'static str {
         Native::Gug(_) => "GUG",
         Native::Page(_) => "Parser",
         Native::Login(_) => "Login Script",
+        Native::Domain(_) => "Domain Metadata",
         Native::Content(_) => "Content Parser",
         Native::Formula(_) => "Formula",
         Native::Simple(_) => "Simple Formula",
@@ -531,4 +657,104 @@ fn semantic_eq<T: Serialize>(a: &T, b: &T) -> bool {
     strip(&mut a);
     strip(&mut b);
     a == b
+}
+
+fn domain_headers(
+    conn: &rusqlite::Connection,
+) -> hydrus_store::Result<BTreeMap<String, Vec<CustomHeader>>> {
+    let mut out = BTreeMap::new();
+    for context in hydrus_store::network::header_contexts(conn)? {
+        if context.kind == hydrus_core::network::CONTEXT_DOMAIN && !context.data.is_empty() {
+            let headers = hydrus_store::network::headers(conn, &context)?;
+            out.insert(context.data, headers);
+        }
+    }
+    Ok(out)
+}
+
+impl Draft {
+    /// `AlreadyHaveExactlyTheseHeaders`: the same names and values (reasons
+    /// and approval aside). A domain without headers has exactly none.
+    fn has_exactly_these_headers(&self, domain: &str, headers: &[(String, String, String)]) -> bool {
+        let existing = self.domain_headers.get(domain).map_or(&[][..], Vec::as_slice);
+        existing.len() == headers.len()
+            && headers.iter().all(|(name, value, _)| {
+                existing
+                    .iter()
+                    .any(|h| &h.name == name && &h.value == value)
+            })
+    }
+
+    /// `AlreadyHaveExactlyTheseBandwidthRules`: the domain has its own rules,
+    /// and they are these.
+    fn has_exactly_these_rules(&self, domain: &str, rules: &[Rule]) -> bool {
+        let context = NetworkContext::domain(domain);
+        self.bandwidth
+            .iter()
+            .find(|(c, _)| c == &context)
+            .is_some_and(|(_, existing)| {
+                existing.rules().len() == rules.len()
+                    && rules.iter().all(|r| existing.rules().contains(r))
+            })
+    }
+
+    /// The reference's "add headers/bandwidth rules" button: package a typed
+    /// domain (and its parents). Returns the new entries' detail text, or the
+    /// reference's notice when there is nothing to share.
+    pub fn add_domain_exports(&mut self, domain: &str) -> Result<Vec<String>, String> {
+        let existing = self
+            .domain_exports
+            .iter()
+            .map(|m| m.domain.clone())
+            .collect();
+        let found = self.domain_metadata_for(&[domain.to_owned()], &existing);
+        if found.is_empty() {
+            return Err("No headers/bandwidth rules found!".into());
+        }
+        let details = found.iter().map(DomainMetadata::detailed_summary).collect();
+        self.domain_exports.extend(found);
+        Ok(details)
+    }
+
+    /// The domain metadata the reference's "add headers/bandwidth rules"
+    /// prompt (and an added downloader's example domains) packages: for
+    /// each of the domains and their parents down to the registrable
+    /// domain, not already in `existing`, its approved headers and its own
+    /// bandwidth rules, if it has either.
+    pub fn domain_metadata_for(
+        &self,
+        domains: &[String],
+        existing: &BTreeSet<String>,
+    ) -> Vec<DomainMetadata> {
+        let mut all: BTreeSet<String> = domains
+            .iter()
+            .flat_map(|d| hydrus_core::url::psl::all_applicable_domains(d))
+            .collect();
+        all.retain(|d| !existing.contains(d));
+        all.into_iter()
+            .filter_map(|domain| {
+                let headers = self
+                    .domain_headers
+                    .get(&domain)
+                    .filter(|h| !h.is_empty())
+                    .map(|h| {
+                        h.iter()
+                            .filter(|h| h.approval == Approval::Approved)
+                            .map(|h| (h.name.clone(), h.value.clone(), h.reason.clone()))
+                            .collect()
+                    });
+                let context = NetworkContext::domain(domain.clone());
+                let rules = self
+                    .bandwidth
+                    .iter()
+                    .find(|(c, _)| c == &context)
+                    .map(|(_, r)| r.rules().to_vec());
+                (headers.is_some() || rules.is_some()).then_some(DomainMetadata {
+                    domain,
+                    headers,
+                    rules,
+                })
+            })
+            .collect()
+    }
 }

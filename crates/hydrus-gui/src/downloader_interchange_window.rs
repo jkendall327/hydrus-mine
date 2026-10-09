@@ -68,6 +68,17 @@ pub fn open(
     preview: Preview,
     applied: Apply,
 ) -> Result<DownloaderExchangeWindow, String> {
+    open_with_actions(slots, importing, definitions, preview, applied, None)
+}
+
+fn open_with_actions(
+    slots: &Slots,
+    importing: bool,
+    definitions: &[Definition],
+    preview: Preview,
+    applied: Apply,
+    actions: Option<ExtraActions>,
+) -> Result<DownloaderExchangeWindow, String> {
     open_objects(
         slots,
         importing,
@@ -80,6 +91,7 @@ pub fn open(
             encode_png: model::encode_png,
             decode_png: model::decode_png,
             processing: false,
+            actions,
         },
     )
 }
@@ -114,6 +126,7 @@ pub fn open_subscriptions(
             encode_png: subscriptions::encode_png,
             decode_png: subscriptions::decode_png,
             processing: false,
+            actions: None,
         },
     )?;
     window.set_json_enabled(true);
@@ -166,6 +179,7 @@ pub fn open_external_calls(
             encode_png: codec::encode_png,
             decode_png: codec::decode_png,
             processing: false,
+            actions: None,
         },
     )?;
     w.set_json_enabled(true);
@@ -195,7 +209,11 @@ struct Codec<T> {
     encode_png: fn(&[T]) -> hydrus_downloader_exchange::Result<Vec<u8>>,
     decode_png: fn(&[u8]) -> hydrus_downloader_exchange::Result<Vec<T>>,
     processing: bool,
+    /// Owner-specific actions (the package window's domain prompt).
+    actions: Option<ExtraActions>,
 }
+/// Handle an action the shared window does not know.
+type ExtraActions = Rc<dyn Fn(&DownloaderExchangeWindow, &str) -> Result<(), String>>;
 
 /// Import/export the shared processor editor's selected steps using reference
 /// JSON, clipboard text or PNG. Applying appends only to the owner's draft.
@@ -229,6 +247,7 @@ pub fn open_steps(
             encode_png: processing::encode_png,
             decode_png: processing::decode_png,
             processing: true,
+            actions: None,
         },
     )
 }
@@ -254,6 +273,7 @@ pub fn open_login_scripts(
             encode_png: logins::encode_png,
             decode_png: logins::decode_png,
             processing: false,
+            actions: None,
         },
     )?;
     window.set_window_title(
@@ -289,6 +309,7 @@ pub fn open_subsidiaries(
             encode_png: subsidiaries::encode_png,
             decode_png: subsidiaries::decode_png,
             processing: false,
+            actions: None,
         },
     )?;
     window.set_window_title(
@@ -324,6 +345,7 @@ pub fn open_routers(
             encode_png: routers::encode_png,
             decode_png: routers::decode_png,
             processing: false,
+            actions: None,
         },
     )?;
     window.set_window_title(
@@ -653,7 +675,11 @@ fn open_objects<T: Clone + 'static>(
                         applied(definitions)?;
                         close();
                     }
-                    _ => (),
+                    other => {
+                        if let Some(actions) = &codec.actions {
+                            actions(&w, other)?;
+                        }
+                    }
                 }
                 Ok(())
             })();
@@ -726,7 +752,7 @@ pub fn package(
             })
         }
     });
-    let export_draft = draft.clone();
+    let export_draft = Rc::new(RefCell::new(draft.clone()));
     let applied: Apply = Rc::new({
         let store = store.clone();
         move |definitions| {
@@ -735,80 +761,119 @@ pub fn package(
             next.save(&store).map_err(|e| e.to_string())
         }
     });
-    let window = open(slots, importing, &definitions, preview, applied)?;
+    let selected = Rc::new(RefCell::new(
+        (0..definitions.len()).collect::<BTreeSet<_>>(),
+    ));
+    let refresh: Rc<dyn Fn(&DownloaderExchangeWindow, &str)> = Rc::new({
+        let export_draft = export_draft.clone();
+        let selected = selected.clone();
+        move |window: &DownloaderExchangeWindow, notice: &str| {
+            let draft = export_draft.borrow();
+            let definitions = draft.definitions();
+            let selected = selected.borrow();
+            window.set_package_choices(slint::ModelRc::new(slint::VecModel::from(
+                definitions
+                    .iter()
+                    .enumerate()
+                    .map(|(index, definition)| crate::PackageChoice {
+                        label: format!("{}: {}", model::category(definition), definition.name())
+                            .into(),
+                        included: selected.contains(&index),
+                    })
+                    .collect::<Vec<_>>(),
+            )));
+            let payload = draft.export(&selected);
+            let mut review = format!("{} component(s) included with dependencies.", payload.len());
+            if !notice.is_empty() {
+                review = format!("{notice}\n\n{review}");
+            }
+            window.set_review(review.into());
+            if payload.is_empty() {
+                window.set_text("".into());
+            } else {
+                match model::encode_text(&payload) {
+                    Ok(text) => window.set_text(text.into()),
+                    Err(error) => window.set_error(error.to_string().into()),
+                }
+            }
+        }
+    });
+    let window = open_with_actions(
+        slots,
+        importing,
+        &definitions,
+        preview,
+        applied,
+        (!importing).then(|| -> ExtraActions {
+            let export_draft = export_draft.clone();
+            let selected = selected.clone();
+            let refresh = refresh.clone();
+            Rc::new(move |window: &DownloaderExchangeWindow, action: &str| match action {
+                "add-domain" => {
+                    window.set_domain_text("".into());
+                    window.set_domain_prompt(true);
+                    Ok(())
+                }
+                "domain-cancel" => {
+                    window.set_domain_prompt(false);
+                    Ok(())
+                }
+                "domain-ok" => {
+                    window.set_domain_prompt(false);
+                    let domain = window.get_domain_text().to_string();
+                    let details = export_draft.borrow_mut().add_domain_exports(&domain)?;
+                    let count = export_draft.borrow().definitions().len();
+                    // (the new entries are the last ones)
+                    for index in count - details.len()..count {
+                        selected.borrow_mut().insert(index);
+                    }
+                    refresh(window, &details.join("\n\n"));
+                    Ok(())
+                }
+                _ => Ok(()),
+            })
+        }),
+    )?;
     window.set_json_enabled(true);
     if !importing {
-        let choice_count = definitions.len();
-        let selected = Rc::new(RefCell::new(
-            (0..definitions.len()).collect::<BTreeSet<_>>(),
-        ));
-        let refresh = Rc::new({
+        window.set_domain_enabled(true);
+        refresh(&window, "");
+        window.set_instructions("Choose the registered components to share. Linked generators, URL classes and parsers are included automatically. Login scripts include their rules, but not saved domain credentials, sessions or activation. Headers and bandwidth rules can be added by domain.".into());
+        window.on_package_chosen({
             let weak = window.as_weak();
-            let selected = selected.clone();
-            move || {
+            let refresh = refresh.clone();
+            let export_draft = export_draft.clone();
+            move |index, included| {
                 let Some(window) = weak.upgrade() else {
                     return;
                 };
-                let selected = selected.borrow();
-                window.set_package_choices(slint::ModelRc::new(slint::VecModel::from(
-                    definitions
-                        .iter()
-                        .enumerate()
-                        .map(|(index, definition)| crate::PackageChoice {
-                            label: format!(
-                                "{}: {}",
-                                model::category(definition),
-                                definition.name()
-                            )
-                            .into(),
-                            included: selected.contains(&index),
-                        })
-                        .collect::<Vec<_>>(),
-                )));
-                let payload = export_draft.export(&selected);
-                window.set_review(
-                    format!("{} component(s) included with dependencies.", payload.len()).into(),
-                );
-                if payload.is_empty() {
-                    window.set_text("".into());
-                } else {
-                    match model::encode_text(&payload) {
-                        Ok(text) => window.set_text(text.into()),
-                        Err(error) => window.set_error(error.to_string().into()),
-                    }
-                }
-            }
-        });
-        refresh();
-        window.set_instructions("Choose the registered components to share. Linked generators, URL classes and parsers are included automatically. Login scripts include their rules, but not saved domain credentials, sessions or activation.".into());
-        window.on_package_chosen({
-            let weak = window.as_weak();
-            move |index, included| {
-                if !weak.upgrade().is_some_and(|window| {
-                    window.get_active()
-                        && !window.get_png_child()
-                        && window.get_overwrite_question().is_empty()
-                }) {
+                if !(window.get_active()
+                    && !window.get_png_child()
+                    && window.get_overwrite_question().is_empty()
+                    && !window.get_domain_prompt())
+                {
                     return;
                 }
-                let mut selected = selected.borrow_mut();
-                if index < 0 {
-                    if included {
-                        *selected = (0..choice_count).collect();
-                    } else {
-                        selected.clear();
-                    }
-                } else if let Ok(index) = usize::try_from(index)
-                    && index < choice_count
+                let choice_count = export_draft.borrow().definitions().len();
                 {
-                    if included {
-                        selected.insert(index);
-                    } else {
-                        selected.remove(&index);
+                    let mut selected = selected.borrow_mut();
+                    if index < 0 {
+                        if included {
+                            *selected = (0..choice_count).collect();
+                        } else {
+                            selected.clear();
+                        }
+                    } else if let Ok(index) = usize::try_from(index)
+                        && index < choice_count
+                    {
+                        if included {
+                            selected.insert(index);
+                        } else {
+                            selected.remove(&index);
+                        }
                     }
                 }
-                drop(selected);
-                refresh();
+                refresh(&window, "");
             }
         });
     }
