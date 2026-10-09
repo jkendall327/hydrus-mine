@@ -125,13 +125,8 @@ fn idle_and_cpu_busy_options_decide_whether_background_work_may_run_as_recorded(
             *stat.borrow_mut() = step["stat"].as_str().unwrap().to_owned();
             let at = base + ms;
             client.bound.maintenance.poll_at(at).unwrap();
-            if step["looked"] == true {
-                let recorded: Vec<f64> = step["percents"]
-                    .as_array()
-                    .unwrap()
-                    .iter()
-                    .map(|p| p.as_f64().unwrap())
-                    .collect();
+            if let Some(recorded) = step["percents"].as_array() {
+                let recorded: Vec<f64> = recorded.iter().map(|p| p.as_f64().unwrap()).collect();
                 assert_eq!(
                     client.bound.maintenance.cpu_percents(),
                     recorded,

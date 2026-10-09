@@ -571,7 +571,7 @@ mod tests {
                 let later = t0 + 6 * hour + 1000;
                 assert_eq!(tables_due_analysis_at(conn, later)?, ["grown"]);
                 let seen: AnalyzeTimestamps = crate::settings::get(conn)?;
-                let small = seen.0.iter().filter(|(n, _)| *n != "grown").collect::<Vec<_>>();
+                let small = seen.0.iter().filter(|&(n, &(rows, _))| n != "grown" && rows <= 100).collect::<Vec<_>>();
                 assert!(!small.is_empty() && small.iter().all(|&(_, &(_, at))| at == later));
                 assert_eq!(seen.0["grown"], (50, t0));
                 // analysing it records its new size and time

@@ -4737,7 +4737,9 @@ often and for how many minutes. On exit, when due, the client runs the work or
 asks "Maintenance is due" (auto-no in 15 seconds; no stops it asking until the
 next period) listing the outstanding jobs. The work analyzes the tables due
 under the reference's schedule (never analysed, or small, middling and large
-tables again after six hours, three days, three months or a year), told to stop
+tables again after six hours, three days, three months or a year; small
+tables that have not grown are analysed on the spot when the client works out
+what is due, and tables set aside for deferred deletion are left alone), told to stop
 at the exit's start plus the minutes allowed, and registers itself when it
 finishes; "due" means more than one period since then (exactly one period is
 not). All of this is replayed from `oracle/fixtures/shutdown_work.json`
