@@ -65,6 +65,7 @@ mod manage_tags_cog;
 mod manage_tags_sort;
 mod manage_tags_viewer;
 mod manage_times;
+mod manage_times_replay;
 mod manage_urls;
 mod media_actions;
 mod media_shortcuts;

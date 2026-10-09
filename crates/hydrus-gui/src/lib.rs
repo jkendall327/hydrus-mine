@@ -102,7 +102,7 @@ pub mod maintenance_runtime;
 mod manage_notes_window;
 mod manage_ratings_window;
 pub(crate) mod manage_tags_window;
-mod manage_times_window;
+pub mod manage_times_window;
 mod manage_urls_window;
 mod menu_bar;
 mod menu_choice_wheel;

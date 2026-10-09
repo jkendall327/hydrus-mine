@@ -30,7 +30,7 @@ fn said(said: &[Said]) -> Vec<Value> {
         .collect()
 }
 
-// leaf: audit-media-datetime-fields, audit-media-datetime-clipboard
+// (the window replays this recording in hydrus-gui's manage_times_replay)
 #[test]
 fn the_date_time_editor_works_as_the_references_does() {
     let recorded = hydrus_testkit::fixture_json("datetime_editor.json");
