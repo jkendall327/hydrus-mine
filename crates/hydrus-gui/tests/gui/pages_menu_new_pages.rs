@@ -851,3 +851,91 @@ fn the_chooser_has_no_sessions_button_without_saved_sessions() {
     assert_eq!(ours[5], home[5]);
     assert_eq!(ours[7], home[7]);
 }
+
+// leaf: audit-options-menu-menu-pages-sessions-append-saved-session
+#[test]
+fn appending_a_saved_session_from_the_menu_lands_where_the_reference_put_it() {
+    use hydrus_store::settings::{self, PageInsertion};
+
+    let _windows = headless::init();
+    let recorded = hydrus_testkit::fixture_json("sessions_append.json");
+    let legacy = hydrus_testkit::legacy_fixture("basic");
+    let native = tempfile::tempdir().unwrap();
+    import_legacy(
+        legacy.path(),
+        &native.path().join(hydrus_store::store::DB_FILE_NAME),
+    )
+    .unwrap();
+    let store = Store::open(native.path()).unwrap();
+    // the saved session the recording appended: a, and nested (b, c)
+    let work = Session {
+        name: "work".into(),
+        pages: pages_of(&serde_json::json!([
+            { "name": "a" },
+            { "name": "nested", "pages": [ { "name": "b" }, { "name": "c" } ] },
+        ])),
+    };
+    store
+        .write(move |ctx| sessions::save(ctx.conn(), &work, 5))
+        .unwrap();
+    let mut made = 0;
+    for case in recorded["cases"].as_array().unwrap() {
+        let mode = PageInsertion::from_code(case["mode"].as_i64().unwrap()).unwrap();
+        let session = Session {
+            name: sessions::LAST_SESSION.into(),
+            pages: pages_of(&case["before"]),
+        };
+        store
+            .write(move |ctx| {
+                sessions::save(ctx.conn(), &session, 1)?;
+                settings::set(ctx.conn(), &mode)
+            })
+            .unwrap();
+        let ui = MainWindow::new().unwrap();
+        ui.show().unwrap();
+        let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+        for (level, index) in case["before_current"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .enumerate()
+        {
+            bound
+                .pages
+                .borrow_mut()
+                .select(level, usize::try_from(index.as_u64().unwrap()).unwrap());
+        }
+        assert_eq!(
+            names_tree(&bound.pages.borrow().session().pages),
+            case["before"],
+            "{case}"
+        );
+        for step in case["steps"].as_array().unwrap() {
+            let titles = ui.get_menu_titles();
+            let at = (0..titles.row_count())
+                .position(|i| titles.row_data(i).unwrap().label == "pages")
+                .unwrap();
+            ui.invoke_menu_title_pressed(i32::try_from(at).unwrap(), 80.0, 22.0);
+            hover(&ui, "sessions");
+            hover(&ui, "append");
+            let (p, i) = line(&ui, "work");
+            ui.invoke_menu_line_clicked(p, i, 0.0, 0.0, 0.0);
+            let pages = bound.pages.borrow();
+            assert_eq!(
+                names_tree(&pages.session().pages),
+                step["tree"],
+                "after {case}"
+            );
+            let now: Vec<u64> = pages.tabs().iter().map(|t| t.selected as u64).collect();
+            let theirs: Vec<u64> = step["current"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .map(|c| c.as_u64().unwrap())
+                .collect();
+            assert_eq!(now, theirs, "the tabs that are current after {case}");
+            made += 1;
+        }
+    }
+    assert_eq!(made, 16);
+}
