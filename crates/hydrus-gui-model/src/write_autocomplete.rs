@@ -736,8 +736,7 @@ impl WriteAutocomplete {
                 parents: parents.clone(),
                 parent_row: false,
             });
-            // expanded parents show whether or not the parent count does
-            if prefs.autocomplete_expand_parents {
+            if prefs.autocomplete_expand_parents && prefs.autocomplete_show_parents {
                 let all_parents = parents.clone();
                 rows.extend(parents.into_iter().map(|parent| Suggestion {
                     tag: m.tag.clone(),

@@ -1377,7 +1377,7 @@ repository uploader's existing capabilities. Self-pairs imported from text are
 reported and rejected rather than stored after the reference's critical loop
 warning (the display graph ignores such pairs anyway); a repository still asks
 its reason first, as the reference does, and remembers it. Batches creating loops
-or conflicting sibling ideals are rejected with an explicit message; enter
+or conflicting sibling ideals are rejected as a whole with an explicit message (so the batch's valid pairs are dropped too, and a repository's reason question is still asked first); enter
 the pairs separately to perform the ordinary automatic repairs. Already corrupt
 reference graph cycles are traversed safely, but do not raise its detailed
 pre-existing-loop warning. Manual background sibling/parent synchronization
@@ -2088,7 +2088,7 @@ service tabs and list rows use Slint geometry. Inherited parent ordering follows
 natural tag order; Qt's inherited-parent collection does not specify relative
 order. Existing Manage Tags differences remain: multiple stored-tag selection and its
 full context menu are not implemented, and remote service petition dialogs are outside this
-local-service slice. Manage Tags has tabs for local tag services only: the
+local-service slice. Not covered by a replay: a tag whose mappings were all removed, in the write autocomplete's filter of tags the service has, and the " *" on a tab after a staged tag is undone. Manage Tags has tabs for local tag services only: the
 reference's tag repository tabs are missing, so a default service tab naming a
 repository opens hydrus-rs's first tab. The four preference leaves do not claim those parent
 workflow gaps complete.

@@ -76,7 +76,7 @@
     "date": "2026-10-09",
     "class": "sound",
     "by": "phase 2 session (bin E)",
-    "note": "GUI test opens tags > advanced > the application window, sets my tags' sibling and parent queues by removing and adding sources as a user does (own then downloader, downloader then own, downloader only, none, siblings in both orders, nothing applied, and the default), checks the shown queues against the reference panel's GetValue, applies, and checks every tag's ideal, sibling chain, parents and children on the display graph the client reads against the reference's own tag_siblings_and_parents_lookup after sync (oracle/record_relationship_application.py). Tests: crates/hydrus-gui/tests/gui/relationship_application.rs:65 source_queues_apply_services_rules_in_the_reference_order"
+    "note": "GUI test opens tags > advanced > the application window, sets my tags' sibling and parent queues by removing and adding sources as a user does (own then downloader, downloader then own, downloader only, none, siblings in both orders, nothing applied, and the default), checks the shown queues against the reference panel's GetValue, applies, and checks every tag's ideal, sibling chain, parents and children on the display graph the client reads against the reference's own tag_siblings_and_parents_lookup after sync (oracle/record_relationship_application.py). Tests: crates/hydrus-gui/tests/gui/relationship_application.rs:65 source_queues_apply_services_rules_in_the_reference_order Not covered: the up/down buttons and the explicit-empty queue persisting after reopening."
    }
   },
   {
@@ -2182,9 +2182,9 @@
    ],
    "recheck": {
     "date": "2026-10-09",
-    "class": "sound",
+    "class": "weak",
     "by": "phase 2 session (bin E)",
-    "note": "GUI test drives the real parents window's clipboard and .txt import and export on a local service and a tag repository, replaying oracle/record_relationship_exchange.py step by step (uneven lines, cleaning, blank lines, pre-existing pairs ignored, a loop's last link petitioned, more than ten pairs, empty import): every reason and yes/no question, rows after each import, default order, exported texts for no/one/three selected rows, and the committed result after Apply. Self-pairs are rejected where the reference stores them (DIFFERENCES.md); that step asserts the rejection. Tests: crates/hydrus-gui/tests/gui/relationship_exchange.rs:56 pair_import_and_export_replay_the_reference_on_local_and_repository_services"
+    "note": "Replays oracle/record_relationship_exchange.py through the real window (import and export on a local service and a repository, uneven lines, cleaning, pre-existing/pending/petitioned pairs, conflicts, loops, more than ten pairs, exports), but two recorded steps differ and the test filters them out of later comparisons: hydrus-rs rejects self-pairs (the reference stores them after a critical warning). Not tagged; the owner decides on storing them via #165. Tests: crates/hydrus-gui/tests/gui/relationship_exchange.rs:56 pair_import_and_export_replay_the_reference_on_local_and_repository_services"
    }
   },
   {
@@ -2858,12 +2858,12 @@
    "label": "Save/default tag-service tab preference",
    "path": "Tags > Tag parents",
    "workstream": "tags-services",
-   "state": "missing",
+   "state": "implemented",
    "priority": "normal",
    "reference": null,
    "native": null,
    "notes": [
-    "Native selector always starts with index zero and does not restore/save reference default tag-service-tab preference."
+    "The dialog opens on the default service tab and saves a tab change when the option is on, as the reference does. hydrus-rs has no repository tab in Manage tags, so a default naming one opens the first tab there."
    ],
    "recheck": {
     "date": "2026-10-09",
@@ -2877,12 +2877,12 @@
    "label": "Save/default tag-service tab preference",
    "path": "Tags > Tag siblings",
    "workstream": "tags-services",
-   "state": "missing",
+   "state": "implemented",
    "priority": "normal",
    "reference": null,
    "native": null,
    "notes": [
-    "Native selector always starts with index zero and does not restore/save reference default tag-service-tab preference."
+    "The dialog opens on the default service tab and saves a tab change when the option is on, as the reference does. hydrus-rs has no repository tab in Manage tags, so a default naming one opens the first tab there."
    ],
    "recheck": {
     "date": "2026-10-09",
@@ -3418,9 +3418,9 @@
    ],
    "recheck": {
     "date": "2026-10-09",
-    "class": "sound",
+    "class": "weak",
     "by": "phase 2 session (bin E)",
-    "note": "GUI test drives the real siblings window's clipboard and .txt import and its clipboard and .txt export on a local service and a tag repository, replaying oracle/record_relationship_exchange.py step by step: uneven lines (the reference's message), cleaning and blank lines, pre-existing and pending pairs ignored, a sibling conflict auto-petitioned, a loop's last link petitioned, re-importing a petitioned pair (rescind questions), more than ten pairs (repository reason text), an empty import; every reason question with its recent/fixed suggestions, every yes/no question, the listed rows after each import, the list's default order, the exported texts for no/one/three selected rows, and what Apply commits. Self-pairs and a batch giving one tag two ideals are rejected by hydrus-rs where the reference stores them (DIFFERENCES.md); those steps assert the rejection and are left out of later comparisons. Tests: crates/hydrus-gui/tests/gui/relationship_exchange.rs:56 pair_import_and_export_replay_the_reference_on_local_and_repository_services"
+    "note": "Replays oracle/record_relationship_exchange.py through the real window (import and export on a local service and a repository, uneven lines, cleaning, pre-existing/pending/petitioned pairs, conflicts, loops, more than ten pairs, exports), but two recorded steps differ and the test filters them out of later comparisons: hydrus-rs rejects self-pairs (the reference stores them after a critical warning) and rejects a whole sibling batch that gives one tag two ideals, dropping its valid pairs too (the reference stores them). Not tagged; the owner decides on storing them via #165. Tests: crates/hydrus-gui/tests/gui/relationship_exchange.rs:56 pair_import_and_export_replay_the_reference_on_local_and_repository_services"
    }
   },
   {
@@ -3526,13 +3526,12 @@
    "label": "Write tag service and override file location",
    "path": "Tags > Tag display/search settings > Tag autocomplete options",
    "workstream": "tags-services",
-   "state": "partial",
+   "state": "implemented",
    "priority": "normal",
    "reference": null,
    "native": null,
    "notes": [
-    "Native write-service selector and accepted nested location draft persist by service and control manage-tags suggestions without discarding an existing tag draft. Partial: Existing cited test checks threshold/manual-fetch and cancels a location child; it does not accept/persist a changed write-tag service/location and verify suggestions use it. Native callback/store validation support that behavior, but its green evidence claim was too broad.",
-    "Existing cited test checks threshold/manual-fetch and cancels a location child; it does not accept/persist a changed write-tag service/location and verify suggestions use it. Native callback/store validation support that behavior, but its green evidence claim was too broad."
+    "The write-service selector and the accepted nested file-domain override persist per service and decide Manage tags' autocomplete domain and suggestions; replayed from oracle/record_write_domain.py. Not covered: a tag whose mappings were all removed, in the write autocomplete filter."
    ],
    "recheck": {
     "date": "2026-10-09",
@@ -3692,8 +3691,7 @@
    "reference": null,
    "native": null,
    "notes": [
-    "Chooses a LocalTag service, retains per-service staged mappings and displays file-count suffixes; source inspection supports this local slice.",
-    "Local services only; repository tabs and saved default-tab preference are separate missing features."
+    "Local service tabs with \"name (tags)\" labels, \" *\" while changes wait, per-service staged mappings and the saved default tab. Local services only; the reference's repository tabs are missing. Not covered: the \" *\" after undoing a staged tag."
    ],
    "recheck": {
     "date": "2026-10-09",
@@ -21859,7 +21857,7 @@
     "date": "2026-10-09",
     "class": "sound",
     "by": "phase 2 session (bin E)",
-    "note": "GUI test sets all eight combinations of the expand-parents, parent-info and sibling-info switches in the real Options window (tag editing page, Apply), then reads Manage tags' autocomplete rows for three texts against oracle/record_autocomplete_decoration_flags.py (the reference's TagEditingPanel UpdateOptions and a new write autocomplete). Expanded parent rows are compared as a set per suggestion (the reference keeps them in a Python set). The recording showed the reference expands parents with parent info off, which hydrus-rs did not; fixed. Tests: crates/hydrus-gui/tests/gui/autocomplete_decoration_flags.rs:90 each_decoration_switch_works_alone_in_the_manage_tags_autocomplete"
+    "note": "GUI test sets all eight combinations of the expand-parents, parent-info and sibling-info switches in the real Options window (tag editing page, Apply), then reads Manage tags' autocomplete rows for three texts against oracle/record_autocomplete_decoration_flags.py (the reference's TagEditingPanel UpdateOptions and a new write autocomplete). Expanded parent rows are compared as a set per suggestion (the reference keeps them in a Python set).  Parent rows show only with both the expand and parent-info switches on, as in the reference. Tests: crates/hydrus-gui/tests/gui/autocomplete_decoration_flags.rs:90 each_decoration_switch_works_alone_in_the_manage_tags_autocomplete"
    }
   },
   {

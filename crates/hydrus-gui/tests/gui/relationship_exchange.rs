@@ -50,8 +50,9 @@ fn strings(value: &Value) -> Vec<String> {
         .collect()
 }
 
-// leaf: audit-media-siblings-exchange
-// leaf: audit-media-parents-exchange
+// Not tagged: the self-pair and two-ideals steps differ from the reference
+// (DIFFERENCES.md) and are filtered out below, so this proves only part of
+// the exchange leaves.
 #[test]
 fn pair_import_and_export_replay_the_reference_on_local_and_repository_services() {
     let recording = hydrus_testkit::fixture_json("relationship_exchange.json");

@@ -388,17 +388,13 @@
         {
           "tag": "parity:amber",
           "rows": [
-            "parity:amber (3)",
-            "    parity:root",
-            "    parity:colour"
+            "parity:amber (3)"
           ]
         },
         {
           "tag": "parity:amber old",
           "rows": [
-            "parity:amber old (1)",
-            "    parity:root",
-            "    parity:colour"
+            "parity:amber old (1)"
           ]
         }
       ]
@@ -417,17 +413,13 @@
         {
           "tag": "parity:amber",
           "rows": [
-            "parity:amber (3)",
-            "    parity:root",
-            "    parity:colour"
+            "parity:amber (3)"
           ]
         },
         {
           "tag": "parity:amber old",
           "rows": [
-            "parity:amber old (1)",
-            "    parity:root",
-            "    parity:colour"
+            "parity:amber old (1)"
           ]
         }
       ]
@@ -452,8 +444,7 @@
         {
           "tag": "parity:colour",
           "rows": [
-            "parity:colour",
-            "    parity:root"
+            "parity:colour"
           ]
         }
       ]
@@ -478,17 +469,13 @@
         {
           "tag": "parity:amber",
           "rows": [
-            "parity:amber (3)",
-            "    parity:root",
-            "    parity:colour"
+            "parity:amber (3)"
           ]
         },
         {
           "tag": "parity:amber old",
           "rows": [
-            "parity:amber old (1) → parity:amber",
-            "    parity:root",
-            "    parity:colour"
+            "parity:amber old (1) → parity:amber"
           ]
         }
       ]
@@ -507,17 +494,13 @@
         {
           "tag": "parity:amber",
           "rows": [
-            "parity:amber (3)",
-            "    parity:root",
-            "    parity:colour"
+            "parity:amber (3)"
           ]
         },
         {
           "tag": "parity:amber old",
           "rows": [
-            "parity:amber old (1) → parity:amber",
-            "    parity:root",
-            "    parity:colour"
+            "parity:amber old (1) → parity:amber"
           ]
         }
       ]
@@ -542,8 +525,7 @@
         {
           "tag": "parity:colour",
           "rows": [
-            "parity:colour",
-            "    parity:root"
+            "parity:colour"
           ]
         }
       ]

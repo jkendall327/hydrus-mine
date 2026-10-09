@@ -68,8 +68,8 @@ def record(session):
                         box.SetPredicates([]); box.SetPredicates(captured['matches'])
                         rows = []
                         for term in box._ordered_terms:
-                            # the list's own switches, as the dropdown set them from the options
-                            texts = term.GetRowsOfPresentationTextsWithNamespaces(True, box._show_sibling_decorators, ' → ', None, box._show_parent_decorators, box._extra_parent_rows_allowed)
+                            # the list's own switches (it shows parent rows only with both parent switches), as the dropdown set them from the options
+                            texts = term.GetRowsOfPresentationTextsWithNamespaces(True, box._show_sibling_decorators, ' → ', None, box._show_parent_decorators, box._show_parent_decorators and box._extra_parent_rows_allowed)
                             rows.append({'tag': term.GetPredicate().GetValue(), 'rows': [''.join(t[0] for t in row) for row in texts]})
                         return {'list_switches': [box._extra_parent_rows_allowed, box._show_parent_decorators, box._show_sibling_decorators], 'rows': rows}
                     shown = qt(show)
