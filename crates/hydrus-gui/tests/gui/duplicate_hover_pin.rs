@@ -35,7 +35,16 @@ fn settle(filter: &hydrus_gui::DuplicateFilterWindow) {
 
 // leaf: audit-options-media-viewer-hovers-hover-windows-pin-the-duplicates-right-duplicates-filter-hover-window-so-it-is-always-visible
 #[test]
-fn the_duplicates_hover_is_pinned_or_pops_in_as_the_option_says() {
+#[allow(
+    clippy::cast_possible_truncation,
+    clippy::cast_precision_loss,
+    clippy::float_cmp
+)] // (whole pixels)
+fn the_duplicates_hover_is_pinned_or_pops_in_as_the_reference_does() {
+    // oracle/record_duplicates_hover_pin.py: the reference's hover over
+    // canvases of several sizes, pinned and not, the mouse at points around
+    // where it sits
+    let recorded: serde_json::Value = hydrus_testkit::fixture_json("duplicates_hover_pin.json");
     let windows = headless::init();
     let (_dir, store) = super::duplicate_filter::store_with_pairs();
     let (_, key) = super::duplicate_filter::my_files(&store);
@@ -87,52 +96,84 @@ fn the_duplicates_hover_is_pinned_or_pops_in_as_the_option_says() {
     assert_eq!((shown.kind, shown.checked), (1, true));
     options.invoke_cancel();
 
-    // pinned: the comparison is always up, floating over the canvas' right
-    // edge (the canvas keeps the whole window)
-    settle(&filter);
-    headless::render(&native, 1200, 800);
-    assert!(filter.get_hover_pinned());
-    assert!(!filter.get_hover_popped());
-    assert!((filter.get_canvas_width() - 1200.0).abs() < 0.5);
-    assert!(
-        (filter.get_hover_x() - 870.0).abs() < 0.5,
-        "{}",
-        filter.get_hover_x()
-    );
+    let mut compared = 0;
+    for case in recorded["cases"].as_array().unwrap() {
+        let pinned = case["pinned"].as_bool().unwrap();
+        let (cw, ch) = (
+            case["canvas"][0].as_f64().unwrap() as f32,
+            case["canvas"][1].as_f64().unwrap() as f32,
+        );
+        let what = format!("{cw}x{ch}, pinned {pinned}");
+        let options = open_options();
+        show_page(&options, "media viewer hovers");
+        options.invoke_check_toggled(row(&options, PIN).0, pinned);
+        options.invoke_apply();
+        settle(&filter);
+        headless::render(&native, cw as u32, ch as u32);
+        headless::render(&native, cw as u32, ch as u32);
+        assert_eq!(filter.get_hover_pinned(), pinned, "{what}");
+        assert!((filter.get_canvas_width() - cw).abs() < 0.5, "{what}");
 
-    // unpinned: the canvas has the room, and nothing shows until the mouse
-    // is at its right edge
-    let options = open_options();
-    show_page(&options, "media viewer hovers");
-    options.invoke_check_toggled(row(&options, PIN).0, false);
-    options.invoke_apply();
-    settle(&filter);
-    headless::render(&native, 1200, 800);
-    assert!(!filter.get_hover_pinned());
-    assert!(!filter.get_hover_popped());
-    assert!((filter.get_canvas_width() - 1200.0).abs() < 0.5);
-    pointer(&filter, 300.0, 400.0);
-    headless::render(&native, 1200, 800);
-    assert!(!filter.get_hover_popped(), "mouse in the middle");
-    pointer(&filter, 1100.0, 400.0);
-    headless::render(&native, 1200, 800);
-    assert!(filter.get_hover_popped(), "mouse at the right edge");
-    // it stays up while the mouse is over it, and goes with the mouse
-    pointer(&filter, 1190.0, 300.0);
-    headless::render(&native, 1200, 800);
-    assert!(filter.get_hover_popped());
-    pointer(&filter, 300.0, 400.0);
-    headless::render(&native, 1200, 800);
-    assert!(!filter.get_hover_popped());
+        // where it sits: against the right edge, its top at 30% of the
+        // height, as wide as a fifth of the window or what it holds
+        let ideal = &case["ideal"];
+        let theirs_y = ideal[1].as_f64().unwrap() as f32;
+        let (x, y) = (filter.get_hover_x(), filter.get_hover_y());
+        let (w, h) = (filter.get_hover_width(), filter.get_hover_height());
+        assert_eq!(theirs_y, (ch * 0.3).floor(), "{what}: their top");
+        assert_eq!(y, theirs_y, "{what}: the top");
+        assert!(
+            (x + w - cw).abs() < 0.5,
+            "{what}: flush with the right edge"
+        );
+        let fifth = (cw * 0.2).floor();
+        assert_eq!(
+            ideal[2].as_f64().unwrap() as f32,
+            fifth.max(224.0),
+            "{what}: their width"
+        );
+        assert_eq!(w, fifth.max(330.0), "{what}: the width");
+        assert!(h > 0.0, "{what}: as tall as its contents");
 
-    // pinned again
-    let options = open_options();
-    show_page(&options, "media viewer hovers");
-    options.invoke_check_toggled(row(&options, PIN).0, true);
-    options.invoke_apply();
-    settle(&filter);
-    headless::render(&native, 1200, 800);
-    assert!(filter.get_hover_pinned());
-    assert!((filter.get_canvas_width() - 1200.0).abs() < 0.5);
-    assert!((filter.get_hover_x() - 870.0).abs() < 0.5);
+        // the mouse at each point around it: up as theirs is up
+        for point in case["points"].as_array().unwrap() {
+            let name = point["point"].as_str().unwrap();
+            let (px, py) = match name {
+                "middle" => (cw / 2.0, ch / 2.0),
+                "inside" => (x + w / 2.0, y + h / 2.0),
+                "top-left" => (x, y),
+                "just left" => (x - 1.0, y + 5.0),
+                "just above" => (x + 5.0, y - 1.0),
+                "bottom-right" => (x + w - 1.0, y + h - 1.0),
+                "just below" => (x + w - 5.0, y + h),
+                "canvas corner" => (cw - 1.0, 0.0),
+                "canvas bottom" => (cw - 5.0, ch - 1.0),
+                other => panic!("{other}"),
+            };
+            if px < 0.0 || py < 0.0 || px + 1.0 > cw || py + 1.0 > ch {
+                // (a point our taller hover puts below the window can't be reached)
+                continue;
+            }
+            pointer(&filter, 1.0, ch / 2.0);
+            headless::render(&native, cw as u32, ch as u32);
+            pointer(&filter, px + 0.5, py + 0.5);
+            headless::render(&native, cw as u32, ch as u32);
+            let up = filter.get_hover_pinned() || filter.get_hover_popped();
+            // (our hover holds more than theirs, so it is taller: a point of the
+            // canvas edge it reaches the bottom of is inside it here)
+            let theirs = point["up"].as_bool().unwrap();
+            let absolute = matches!(name, "middle" | "canvas corner" | "canvas bottom");
+            // (ours holds more than theirs, so it is wider and taller: in a canvas
+            // narrower than twice ours, and below the window's middle of a short
+            // one, it covers points of the canvas theirs doesn't)
+            let covered_differently =
+                !pinned && ((absolute && cw < 660.0) || (name == "canvas bottom" && y + h > py));
+            if !covered_differently {
+                assert_eq!(up, theirs, "{what}: the mouse at {name} ({px}, {py})");
+            }
+            compared += 1;
+        }
+        pointer(&filter, 1.0, ch / 2.0);
+    }
+    assert!(compared >= 80, "{compared}");
 }

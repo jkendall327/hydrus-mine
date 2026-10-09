@@ -1,0 +1,714 @@
+{
+ "cases": [
+  {
+   "canvas": [
+    1200,
+    800
+   ],
+   "pinned": true,
+   "ideal": [
+    960,
+    240,
+    240,
+    287
+   ],
+   "ideal_from_right": 0,
+   "ideal_top_over_height": 0.3,
+   "points": [
+    {
+     "point": "middle",
+     "x": 600,
+     "y": 400,
+     "up": true
+    },
+    {
+     "point": "inside",
+     "x": 1079,
+     "y": 383,
+     "up": true
+    },
+    {
+     "point": "top-left",
+     "x": 960,
+     "y": 240,
+     "up": true
+    },
+    {
+     "point": "just left",
+     "x": 959,
+     "y": 245,
+     "up": true
+    },
+    {
+     "point": "just above",
+     "x": 965,
+     "y": 239,
+     "up": true
+    },
+    {
+     "point": "bottom-right",
+     "x": 1199,
+     "y": 526,
+     "up": true
+    },
+    {
+     "point": "just below",
+     "x": 1194,
+     "y": 527,
+     "up": true
+    },
+    {
+     "point": "canvas corner",
+     "x": 1199,
+     "y": 0,
+     "up": true
+    },
+    {
+     "point": "canvas bottom",
+     "x": 1195,
+     "y": 799,
+     "up": true
+    }
+   ]
+  },
+  {
+   "canvas": [
+    1200,
+    800
+   ],
+   "pinned": false,
+   "ideal": [
+    960,
+    240,
+    240,
+    287
+   ],
+   "ideal_from_right": 0,
+   "ideal_top_over_height": 0.3,
+   "points": [
+    {
+     "point": "middle",
+     "x": 600,
+     "y": 400,
+     "up": false
+    },
+    {
+     "point": "inside",
+     "x": 1079,
+     "y": 383,
+     "up": true
+    },
+    {
+     "point": "top-left",
+     "x": 960,
+     "y": 240,
+     "up": true
+    },
+    {
+     "point": "just left",
+     "x": 959,
+     "y": 245,
+     "up": false
+    },
+    {
+     "point": "just above",
+     "x": 965,
+     "y": 239,
+     "up": false
+    },
+    {
+     "point": "bottom-right",
+     "x": 1199,
+     "y": 526,
+     "up": true
+    },
+    {
+     "point": "just below",
+     "x": 1194,
+     "y": 527,
+     "up": false
+    },
+    {
+     "point": "canvas corner",
+     "x": 1199,
+     "y": 0,
+     "up": false
+    },
+    {
+     "point": "canvas bottom",
+     "x": 1195,
+     "y": 799,
+     "up": false
+    }
+   ]
+  },
+  {
+   "canvas": [
+    800,
+    600
+   ],
+   "pinned": true,
+   "ideal": [
+    576,
+    180,
+    224,
+    287
+   ],
+   "ideal_from_right": 0,
+   "ideal_top_over_height": 0.3,
+   "points": [
+    {
+     "point": "middle",
+     "x": 400,
+     "y": 300,
+     "up": true
+    },
+    {
+     "point": "inside",
+     "x": 687,
+     "y": 323,
+     "up": true
+    },
+    {
+     "point": "top-left",
+     "x": 576,
+     "y": 180,
+     "up": true
+    },
+    {
+     "point": "just left",
+     "x": 575,
+     "y": 185,
+     "up": true
+    },
+    {
+     "point": "just above",
+     "x": 581,
+     "y": 179,
+     "up": true
+    },
+    {
+     "point": "bottom-right",
+     "x": 799,
+     "y": 466,
+     "up": true
+    },
+    {
+     "point": "just below",
+     "x": 794,
+     "y": 467,
+     "up": true
+    },
+    {
+     "point": "canvas corner",
+     "x": 799,
+     "y": 0,
+     "up": true
+    },
+    {
+     "point": "canvas bottom",
+     "x": 795,
+     "y": 599,
+     "up": true
+    }
+   ]
+  },
+  {
+   "canvas": [
+    800,
+    600
+   ],
+   "pinned": false,
+   "ideal": [
+    576,
+    180,
+    224,
+    287
+   ],
+   "ideal_from_right": 0,
+   "ideal_top_over_height": 0.3,
+   "points": [
+    {
+     "point": "middle",
+     "x": 400,
+     "y": 300,
+     "up": false
+    },
+    {
+     "point": "inside",
+     "x": 687,
+     "y": 323,
+     "up": true
+    },
+    {
+     "point": "top-left",
+     "x": 576,
+     "y": 180,
+     "up": true
+    },
+    {
+     "point": "just left",
+     "x": 575,
+     "y": 185,
+     "up": false
+    },
+    {
+     "point": "just above",
+     "x": 581,
+     "y": 179,
+     "up": false
+    },
+    {
+     "point": "bottom-right",
+     "x": 799,
+     "y": 466,
+     "up": true
+    },
+    {
+     "point": "just below",
+     "x": 794,
+     "y": 467,
+     "up": false
+    },
+    {
+     "point": "canvas corner",
+     "x": 799,
+     "y": 0,
+     "up": false
+    },
+    {
+     "point": "canvas bottom",
+     "x": 795,
+     "y": 599,
+     "up": false
+    }
+   ]
+  },
+  {
+   "canvas": [
+    3000,
+    1200
+   ],
+   "pinned": true,
+   "ideal": [
+    2400,
+    360,
+    600,
+    287
+   ],
+   "ideal_from_right": 0,
+   "ideal_top_over_height": 0.3,
+   "points": [
+    {
+     "point": "middle",
+     "x": 1500,
+     "y": 600,
+     "up": true
+    },
+    {
+     "point": "inside",
+     "x": 2699,
+     "y": 503,
+     "up": true
+    },
+    {
+     "point": "top-left",
+     "x": 2400,
+     "y": 360,
+     "up": true
+    },
+    {
+     "point": "just left",
+     "x": 2399,
+     "y": 365,
+     "up": true
+    },
+    {
+     "point": "just above",
+     "x": 2405,
+     "y": 359,
+     "up": true
+    },
+    {
+     "point": "bottom-right",
+     "x": 2999,
+     "y": 646,
+     "up": true
+    },
+    {
+     "point": "just below",
+     "x": 2994,
+     "y": 647,
+     "up": true
+    },
+    {
+     "point": "canvas corner",
+     "x": 2999,
+     "y": 0,
+     "up": true
+    },
+    {
+     "point": "canvas bottom",
+     "x": 2995,
+     "y": 1199,
+     "up": true
+    }
+   ]
+  },
+  {
+   "canvas": [
+    3000,
+    1200
+   ],
+   "pinned": false,
+   "ideal": [
+    2400,
+    360,
+    600,
+    287
+   ],
+   "ideal_from_right": 0,
+   "ideal_top_over_height": 0.3,
+   "points": [
+    {
+     "point": "middle",
+     "x": 1500,
+     "y": 600,
+     "up": false
+    },
+    {
+     "point": "inside",
+     "x": 2699,
+     "y": 503,
+     "up": true
+    },
+    {
+     "point": "top-left",
+     "x": 2400,
+     "y": 360,
+     "up": true
+    },
+    {
+     "point": "just left",
+     "x": 2399,
+     "y": 365,
+     "up": false
+    },
+    {
+     "point": "just above",
+     "x": 2405,
+     "y": 359,
+     "up": false
+    },
+    {
+     "point": "bottom-right",
+     "x": 2999,
+     "y": 646,
+     "up": true
+    },
+    {
+     "point": "just below",
+     "x": 2994,
+     "y": 647,
+     "up": false
+    },
+    {
+     "point": "canvas corner",
+     "x": 2999,
+     "y": 0,
+     "up": false
+    },
+    {
+     "point": "canvas bottom",
+     "x": 2995,
+     "y": 1199,
+     "up": false
+    }
+   ]
+  },
+  {
+   "canvas": [
+    500,
+    400
+   ],
+   "pinned": true,
+   "ideal": [
+    276,
+    120,
+    224,
+    287
+   ],
+   "ideal_from_right": 0,
+   "ideal_top_over_height": 0.3,
+   "points": [
+    {
+     "point": "middle",
+     "x": 250,
+     "y": 200,
+     "up": true
+    },
+    {
+     "point": "inside",
+     "x": 387,
+     "y": 263,
+     "up": true
+    },
+    {
+     "point": "top-left",
+     "x": 276,
+     "y": 120,
+     "up": true
+    },
+    {
+     "point": "just left",
+     "x": 275,
+     "y": 125,
+     "up": true
+    },
+    {
+     "point": "just above",
+     "x": 281,
+     "y": 119,
+     "up": true
+    },
+    {
+     "point": "bottom-right",
+     "x": 499,
+     "y": 406,
+     "up": true
+    },
+    {
+     "point": "just below",
+     "x": 494,
+     "y": 407,
+     "up": true
+    },
+    {
+     "point": "canvas corner",
+     "x": 499,
+     "y": 0,
+     "up": true
+    },
+    {
+     "point": "canvas bottom",
+     "x": 495,
+     "y": 399,
+     "up": true
+    }
+   ]
+  },
+  {
+   "canvas": [
+    500,
+    400
+   ],
+   "pinned": false,
+   "ideal": [
+    276,
+    120,
+    224,
+    287
+   ],
+   "ideal_from_right": 0,
+   "ideal_top_over_height": 0.3,
+   "points": [
+    {
+     "point": "middle",
+     "x": 250,
+     "y": 200,
+     "up": false
+    },
+    {
+     "point": "inside",
+     "x": 387,
+     "y": 263,
+     "up": true
+    },
+    {
+     "point": "top-left",
+     "x": 276,
+     "y": 120,
+     "up": true
+    },
+    {
+     "point": "just left",
+     "x": 275,
+     "y": 125,
+     "up": false
+    },
+    {
+     "point": "just above",
+     "x": 281,
+     "y": 119,
+     "up": false
+    },
+    {
+     "point": "bottom-right",
+     "x": 499,
+     "y": 406,
+     "up": true
+    },
+    {
+     "point": "just below",
+     "x": 494,
+     "y": 407,
+     "up": false
+    },
+    {
+     "point": "canvas corner",
+     "x": 499,
+     "y": 0,
+     "up": false
+    },
+    {
+     "point": "canvas bottom",
+     "x": 495,
+     "y": 399,
+     "up": true
+    }
+   ]
+  },
+  {
+   "canvas": [
+    1920,
+    1080
+   ],
+   "pinned": true,
+   "ideal": [
+    1536,
+    324,
+    384,
+    287
+   ],
+   "ideal_from_right": 0,
+   "ideal_top_over_height": 0.3,
+   "points": [
+    {
+     "point": "middle",
+     "x": 960,
+     "y": 540,
+     "up": true
+    },
+    {
+     "point": "inside",
+     "x": 1727,
+     "y": 467,
+     "up": true
+    },
+    {
+     "point": "top-left",
+     "x": 1536,
+     "y": 324,
+     "up": true
+    },
+    {
+     "point": "just left",
+     "x": 1535,
+     "y": 329,
+     "up": true
+    },
+    {
+     "point": "just above",
+     "x": 1541,
+     "y": 323,
+     "up": true
+    },
+    {
+     "point": "bottom-right",
+     "x": 1919,
+     "y": 610,
+     "up": true
+    },
+    {
+     "point": "just below",
+     "x": 1914,
+     "y": 611,
+     "up": true
+    },
+    {
+     "point": "canvas corner",
+     "x": 1919,
+     "y": 0,
+     "up": true
+    },
+    {
+     "point": "canvas bottom",
+     "x": 1915,
+     "y": 1079,
+     "up": true
+    }
+   ]
+  },
+  {
+   "canvas": [
+    1920,
+    1080
+   ],
+   "pinned": false,
+   "ideal": [
+    1536,
+    324,
+    384,
+    287
+   ],
+   "ideal_from_right": 0,
+   "ideal_top_over_height": 0.3,
+   "points": [
+    {
+     "point": "middle",
+     "x": 960,
+     "y": 540,
+     "up": false
+    },
+    {
+     "point": "inside",
+     "x": 1727,
+     "y": 467,
+     "up": true
+    },
+    {
+     "point": "top-left",
+     "x": 1536,
+     "y": 324,
+     "up": true
+    },
+    {
+     "point": "just left",
+     "x": 1535,
+     "y": 329,
+     "up": false
+    },
+    {
+     "point": "just above",
+     "x": 1541,
+     "y": 323,
+     "up": false
+    },
+    {
+     "point": "bottom-right",
+     "x": 1919,
+     "y": 610,
+     "up": true
+    },
+    {
+     "point": "just below",
+     "x": 1914,
+     "y": 611,
+     "up": false
+    },
+    {
+     "point": "canvas corner",
+     "x": 1919,
+     "y": 0,
+     "up": false
+    },
+    {
+     "point": "canvas bottom",
+     "x": 1915,
+     "y": 1079,
+     "up": false
+    }
+   ]
+  }
+ ]
+}

@@ -181,7 +181,6 @@ fn the_mpv_rows_set_what_a_player_is_told_as_a_file_loads() {
     );
 }
 
-// leaf: audit-options-media-playback-mpv-set-a-new-mpv-conf-on-dialog-ok
 #[test]
 fn a_new_mpv_conf_replaces_the_databases_on_ok_and_nothing_is_kept() {
     let client = Client::basic();
@@ -225,4 +224,94 @@ fn a_new_mpv_conf_replaces_the_databases_on_ok_and_nothing_is_kept() {
     options.invoke_text_edited(row(&options, CONF).0, "/no/such/mpv.conf".into());
     options.invoke_apply();
     assert_eq!(std::fs::read_to_string(&conf).unwrap(), "mine\n");
+}
+
+/// The mpv.conf over the database's, in the cases the reference's real
+/// options panel was run through (oracle/record_mpv_conf.py): what is there
+/// afterwards, with its time and write bit.
+// leaf: audit-options-media-playback-mpv-set-a-new-mpv-conf-on-dialog-ok
+#[cfg(unix)]
+#[test]
+fn a_new_mpv_conf_is_mirrored_over_the_databases_as_the_reference_does() {
+    use std::os::unix::fs::{MetadataExt as _, PermissionsExt as _};
+
+    let recorded: serde_json::Value = hydrus_testkit::fixture_json("mpv_conf.json");
+    let source_time = recorded["source_time"].as_i64().unwrap();
+    let other_time = recorded["other_time"].as_i64().unwrap();
+    let set_time = |path: &std::path::Path, seconds: i64| {
+        let time =
+            std::time::UNIX_EPOCH + std::time::Duration::from_secs(u64::try_from(seconds).unwrap());
+        std::fs::File::options()
+            .write(true)
+            .open(path)
+            .unwrap()
+            .set_modified(time)
+            .unwrap();
+    };
+    let client = Client::basic();
+    let conf = client.store.dir().join("mpv.conf");
+    let work = tempfile::tempdir().unwrap();
+    for (n, case) in recorded["cases"].as_array().unwrap().iter().enumerate() {
+        let name = case["name"].as_str().unwrap();
+        let how = case["how"].as_str().unwrap();
+        if conf.exists() {
+            std::fs::set_permissions(&conf, std::fs::Permissions::from_mode(0o644)).unwrap();
+            std::fs::remove_file(&conf).unwrap();
+        }
+        if let Some(existing) = case["existing"].as_str() {
+            std::fs::write(&conf, hex::decode(existing).unwrap()).unwrap();
+        }
+        let source = case["source"].as_str().unwrap();
+        let path = work.path().join(format!("source-{n}.conf"));
+        let typed = match source {
+            "folder" => {
+                std::fs::create_dir(&path).unwrap();
+                path.to_string_lossy().into_owned()
+            }
+            "missing" => path.to_string_lossy().into_owned(),
+            "blank" => String::new(),
+            "spaces" => "   ".to_owned(),
+            bytes => {
+                std::fs::write(&path, hex::decode(bytes).unwrap()).unwrap();
+                set_time(&path, source_time);
+                path.to_string_lossy().into_owned()
+            }
+        };
+        match how {
+            "readonly" => {
+                std::fs::set_permissions(&conf, std::fs::Permissions::from_mode(0o444)).unwrap();
+            }
+            "same_time" => set_time(&conf, source_time),
+            "other_time" => set_time(&conf, other_time),
+            _ => {}
+        }
+        let options = client.open_options();
+        show_page(&options, "media playback");
+        options.invoke_text_edited(row(&options, CONF).0, typed.into());
+        if how == "cancel" {
+            options.invoke_cancel();
+        } else {
+            options.invoke_apply();
+        }
+        let theirs = &case["outcome"];
+        assert_eq!(conf.exists(), theirs["exists"].as_bool().unwrap(), "{name}");
+        if theirs["exists"].as_bool().unwrap() {
+            let meta = std::fs::metadata(&conf).unwrap();
+            assert_eq!(
+                hex::encode(std::fs::read(&conf).unwrap()),
+                theirs["hex"].as_str().unwrap(),
+                "{name}: the bytes"
+            );
+            assert_eq!(
+                meta.mtime() == source_time,
+                theirs["source_time"].as_bool().unwrap(),
+                "{name}: the time"
+            );
+            assert_eq!(
+                meta.permissions().mode() & 0o200 == 0,
+                theirs["readonly"].as_bool().unwrap(),
+                "{name}: the write bit"
+            );
+        }
+    }
 }

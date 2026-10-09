@@ -141,10 +141,13 @@ fn place_as(window: &slint::Window, frame: &FrameLocation, is_main: bool) {
         #[allow(clippy::cast_precision_loss)]
         window.set_position(slint::LogicalPosition::new(x as f32, y as f32));
     }
-    if frame.maximised {
+    // (`showMaximized`, then `showFullScreen`, which takes the maximised
+    // state away: with both, the window is fullscreen and not maximised)
+    let fullscreen = frame.fullscreen && !cfg!(target_os = "macos");
+    if frame.maximised && !fullscreen {
         window.set_maximized(true);
     }
-    if frame.fullscreen && !cfg!(target_os = "macos") {
+    if fullscreen {
         window.set_fullscreen(true);
     }
 }
@@ -440,7 +443,8 @@ pub fn state(window: &slint::Window) -> WindowState {
     WindowState {
         size: (size.width.round() as i32, size.height.round() as i32),
         position: (position.x.round() as i32, position.y.round() as i32),
-        maximised: window.is_maximized(),
+        // (a fullscreen window is not maximised, as Qt has it)
+        maximised: window.is_maximized() && !window.is_fullscreen(),
         fullscreen: window.is_fullscreen(),
     }
 }

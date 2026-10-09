@@ -126,8 +126,77 @@ pub fn py_int(text: &str) -> Option<i64> {
     Some(if negative { -value } else { value })
 }
 
+/// The first code point of each run of ten decimal digits (Unicode `Nd`)
+/// in the Basic Multilingual Plane, which Python's `float()` and `int()`
+/// read as the digits 0 to 9.
+const DECIMAL_ZEROS: &[u32] = &[
+    0x30, 0x660, 0x6F0, 0x7C0, 0x966, 0x9E6, 0xA66, 0xAE6, 0xB66, 0xBE6, 0xC66, 0xCE6, 0xD66,
+    0xDE6, 0xE50, 0xED0, 0xF20, 0x1040, 0x1090, 0x17E0, 0x1810, 0x1946, 0x19D0, 0x1A80, 0x1A90,
+    0x1B50, 0x1BB0, 0x1C40, 0x1C50, 0xA620, 0xA8D0, 0xA900, 0xA9D0, 0xA9F0, 0xAA50, 0xABF0, 0xFF10,
+];
+
+/// Python's `float(text)`: surrounding whitespace allowed, a sign, decimal
+/// digits of any script, single underscores between digits, an exponent,
+/// and `inf`, `infinity` and `nan` in any case.
+pub fn py_float(text: &str) -> Option<f64> {
+    let t = text.trim_matches(|c: char| c.is_whitespace() || matches!(c, '\u{1c}'..='\u{1f}'));
+    let mut ascii = String::with_capacity(t.len());
+    for c in t.chars() {
+        let code = c as u32;
+        let digit = DECIMAL_ZEROS
+            .iter()
+            .find(|zero| (**zero..**zero + 10).contains(&code))
+            .map(|zero| char::from(b'0' + u8::try_from(code - zero).unwrap_or(0)));
+        ascii.push(digit.unwrap_or(c));
+    }
+    // an underscore only between two digits
+    let chars: Vec<char> = ascii.chars().collect();
+    for (i, c) in chars.iter().enumerate() {
+        if *c == '_'
+            && !(i > 0
+                && i + 1 < chars.len()
+                && chars[i - 1].is_ascii_digit()
+                && chars[i + 1].is_ascii_digit())
+        {
+            return None;
+        }
+    }
+    let ascii: String = ascii.chars().filter(|c| *c != '_').collect();
+    if ascii.is_empty() || !ascii.is_ascii() || ascii.contains(char::is_whitespace) {
+        return None;
+    }
+    ascii.parse::<f64>().ok()
+}
+
 #[cfg(test)]
 mod tests {
+
+    #[test]
+    fn python_floats_are_read_as_python_reads_them() {
+        for (text, want) in [
+            ("1.5", Some(1.5)),
+            (" 2 ", Some(2.0)),
+            ("+3", Some(3.0)),
+            (".5", Some(0.5)),
+            ("5.", Some(5.0)),
+            ("1e2", Some(100.0)),
+            ("1_0", Some(10.0)),
+            ("\u{ff11}", Some(1.0)),
+            ("\u{663}", Some(3.0)),
+            ("2\u{a0}", Some(2.0)),
+            ("1__0", None),
+            ("_1", None),
+            ("1_", None),
+            ("1e", None),
+            ("1 2", None),
+            ("", None),
+            ("abc", None),
+        ] {
+            assert_eq!(py_float(text), want, "{text:?}");
+        }
+        assert!(py_float("nan").is_some_and(f64::is_nan));
+        assert_eq!(py_float("-Infinity"), Some(f64::NEG_INFINITY));
+    }
     use super::*;
 
     #[test]

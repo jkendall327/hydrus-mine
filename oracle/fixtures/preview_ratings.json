@@ -1,0 +1,3309 @@
+{
+ "popins": [
+  {
+   "pop_in": true,
+   "canvas": [
+    396,
+    236
+   ],
+   "hover": [
+    348,
+    192
+   ],
+   "should_resize": false,
+   "ideal_size": [
+    348,
+    192
+   ],
+   "ideal_from_right": 0,
+   "ideal_y": 0,
+   "points": [
+    {
+     "from_left": 0,
+     "from_top": 0,
+     "contains": true
+    },
+    {
+     "from_left": -1,
+     "from_top": 0,
+     "contains": false
+    },
+    {
+     "from_left": 0,
+     "from_top": -1,
+     "contains": false
+    },
+    {
+     "from_left": 347,
+     "from_top": 191,
+     "contains": true
+    },
+    {
+     "from_left": 348,
+     "from_top": 191,
+     "contains": false
+    },
+    {
+     "from_left": 347,
+     "from_top": 192,
+     "contains": false
+    },
+    {
+     "from_left": 174,
+     "from_top": 96,
+     "contains": true
+    },
+    {
+     "from_left": -30,
+     "from_top": 222,
+     "contains": false
+    }
+   ]
+  },
+  {
+   "pop_in": false,
+   "canvas": [
+    396,
+    236
+   ],
+   "hover": [
+    348,
+    192
+   ],
+   "should_resize": false,
+   "ideal_size": [
+    0,
+    0
+   ],
+   "ideal_from_right": 396,
+   "ideal_y": 0,
+   "points": [
+    {
+     "from_left": 0,
+     "from_top": 0,
+     "contains": false
+    },
+    {
+     "from_left": -1,
+     "from_top": 0,
+     "contains": false
+    },
+    {
+     "from_left": 0,
+     "from_top": -1,
+     "contains": false
+    },
+    {
+     "from_left": -1,
+     "from_top": -1,
+     "contains": false
+    },
+    {
+     "from_left": 0,
+     "from_top": -1,
+     "contains": false
+    },
+    {
+     "from_left": -1,
+     "from_top": 0,
+     "contains": false
+    },
+    {
+     "from_left": 0,
+     "from_top": 0,
+     "contains": false
+    },
+    {
+     "from_left": -30,
+     "from_top": 30,
+     "contains": false
+    }
+   ]
+  }
+ ],
+ "services": {
+  "likes": [
+   "favourites"
+  ],
+  "numericals": [
+   "stars"
+  ],
+  "incdecs": [
+   "counter"
+  ]
+ },
+ "results": [
+  {
+   "icon": 12.0,
+   "incdec_height": 12.0,
+   "incdec_value": 0,
+   "background": {
+    "canvas": [
+     396,
+     236
+    ],
+    "calls": [
+     {
+      "kind": "like",
+      "service": "favourites",
+      "x": 378,
+      "y": 6,
+      "size": [
+       12,
+       12
+      ],
+      "state": 0
+     },
+     {
+      "kind": "numerical_width",
+      "service": "stars",
+      "star_width": 12,
+      "width": 80
+     },
+     {
+      "kind": "numerical",
+      "service": "stars",
+      "x": 314,
+      "y": 24,
+      "size": [
+       12,
+       12
+      ],
+      "pad": 4,
+      "state": 3,
+      "rating": 0.6
+     },
+     {
+      "kind": "incdec",
+      "service": "counter",
+      "x": 367,
+      "y": 42,
+      "size": [
+       24,
+       12
+      ],
+      "state": 3,
+      "rating": 0
+     }
+    ]
+   },
+   "popped": [
+    {
+     "kind": "like",
+     "service": "favourites",
+     "hint": [
+      -1,
+      -1
+     ],
+     "minimum": [
+      16,
+      16
+     ],
+     "size": [
+      16,
+      16
+     ]
+    },
+    {
+     "kind": "numerical",
+     "service": "stars",
+     "hint": [
+      -1,
+      -1
+     ],
+     "minimum": [
+      80,
+      16
+     ],
+     "size": [
+      80,
+      16
+     ]
+    },
+    {
+     "kind": "incdec",
+     "service": "counter",
+     "hint": [
+      25,
+      16
+     ],
+     "minimum": [
+      0,
+      0
+     ],
+     "size": [
+      25,
+      16
+     ]
+    }
+   ]
+  },
+  {
+   "icon": 30.0,
+   "incdec_height": 17.5,
+   "incdec_value": 0,
+   "background": {
+    "canvas": [
+     396,
+     236
+    ],
+    "calls": [
+     {
+      "kind": "like",
+      "service": "favourites",
+      "x": 360,
+      "y": 6,
+      "size": [
+       30,
+       30
+      ],
+      "state": 0
+     },
+     {
+      "kind": "numerical_width",
+      "service": "stars",
+      "star_width": 30,
+      "width": 170
+     },
+     {
+      "kind": "numerical",
+      "service": "stars",
+      "x": 224,
+      "y": 42,
+      "size": [
+       30,
+       30
+      ],
+      "pad": 4,
+      "state": 3,
+      "rating": 0.6
+     },
+     {
+      "kind": "incdec",
+      "service": "counter",
+      "x": 355,
+      "y": 78,
+      "size": [
+       36,
+       18
+      ],
+      "state": 3,
+      "rating": 0
+     }
+    ]
+   },
+   "popped": [
+    {
+     "kind": "like",
+     "service": "favourites",
+     "hint": [
+      -1,
+      -1
+     ],
+     "minimum": [
+      34,
+      34
+     ],
+     "size": [
+      34,
+      34
+     ]
+    },
+    {
+     "kind": "numerical",
+     "service": "stars",
+     "hint": [
+      -1,
+      -1
+     ],
+     "minimum": [
+      170,
+      34
+     ],
+     "size": [
+      170,
+      34
+     ]
+    },
+    {
+     "kind": "incdec",
+     "service": "counter",
+     "hint": [
+      35,
+      21
+     ],
+     "minimum": [
+      0,
+      0
+     ],
+     "size": [
+      35,
+      21
+     ]
+    }
+   ]
+  },
+  {
+   "icon": 30.0,
+   "incdec_height": 16.5,
+   "incdec_value": 0,
+   "background": {
+    "canvas": [
+     396,
+     236
+    ],
+    "calls": [
+     {
+      "kind": "like",
+      "service": "favourites",
+      "x": 360,
+      "y": 6,
+      "size": [
+       30,
+       30
+      ],
+      "state": 0
+     },
+     {
+      "kind": "numerical_width",
+      "service": "stars",
+      "star_width": 30,
+      "width": 170
+     },
+     {
+      "kind": "numerical",
+      "service": "stars",
+      "x": 224,
+      "y": 42,
+      "size": [
+       30,
+       30
+      ],
+      "pad": 4,
+      "state": 3,
+      "rating": 0.6
+     },
+     {
+      "kind": "incdec",
+      "service": "counter",
+      "x": 359,
+      "y": 78,
+      "size": [
+       32,
+       16
+      ],
+      "state": 3,
+      "rating": 0
+     }
+    ]
+   },
+   "popped": [
+    {
+     "kind": "like",
+     "service": "favourites",
+     "hint": [
+      -1,
+      -1
+     ],
+     "minimum": [
+      34,
+      34
+     ],
+     "size": [
+      34,
+      34
+     ]
+    },
+    {
+     "kind": "numerical",
+     "service": "stars",
+     "hint": [
+      -1,
+      -1
+     ],
+     "minimum": [
+      170,
+      34
+     ],
+     "size": [
+      170,
+      34
+     ]
+    },
+    {
+     "kind": "incdec",
+     "service": "counter",
+     "hint": [
+      33,
+      20
+     ],
+     "minimum": [
+      0,
+      0
+     ],
+     "size": [
+      33,
+      20
+     ]
+    }
+   ]
+  },
+  {
+   "icon": 14.4,
+   "incdec_height": 14.6,
+   "incdec_value": 0,
+   "background": {
+    "canvas": [
+     396,
+     236
+    ],
+    "calls": [
+     {
+      "kind": "like",
+      "service": "favourites",
+      "x": 376,
+      "y": 6,
+      "size": [
+       14,
+       14
+      ],
+      "state": 0
+     },
+     {
+      "kind": "numerical_width",
+      "service": "stars",
+      "star_width": 14,
+      "width": 90
+     },
+     {
+      "kind": "numerical",
+      "service": "stars",
+      "x": 304,
+      "y": 26,
+      "size": [
+       14,
+       14
+      ],
+      "pad": 4,
+      "state": 3,
+      "rating": 0.6
+     },
+     {
+      "kind": "incdec",
+      "service": "counter",
+      "x": 361,
+      "y": 46,
+      "size": [
+       30,
+       15
+      ],
+      "state": 3,
+      "rating": 0
+     }
+    ]
+   },
+   "popped": [
+    {
+     "kind": "like",
+     "service": "favourites",
+     "hint": [
+      -1,
+      -1
+     ],
+     "minimum": [
+      18,
+      18
+     ],
+     "size": [
+      18,
+      18
+     ]
+    },
+    {
+     "kind": "numerical",
+     "service": "stars",
+     "hint": [
+      -1,
+      -1
+     ],
+     "minimum": [
+      90,
+      18
+     ],
+     "size": [
+      90,
+      18
+     ]
+    },
+    {
+     "kind": "incdec",
+     "service": "counter",
+     "hint": [
+      29,
+      18
+     ],
+     "minimum": [
+      0,
+      0
+     ],
+     "size": [
+      29,
+      18
+     ]
+    }
+   ]
+  },
+  {
+   "icon": 14.5,
+   "incdec_height": 15.5,
+   "incdec_value": 0,
+   "background": {
+    "canvas": [
+     396,
+     236
+    ],
+    "calls": [
+     {
+      "kind": "like",
+      "service": "favourites",
+      "x": 376,
+      "y": 6,
+      "size": [
+       14,
+       14
+      ],
+      "state": 0
+     },
+     {
+      "kind": "numerical_width",
+      "service": "stars",
+      "star_width": 14,
+      "width": 90
+     },
+     {
+      "kind": "numerical",
+      "service": "stars",
+      "x": 304,
+      "y": 26,
+      "size": [
+       14,
+       14
+      ],
+      "pad": 4,
+      "state": 3,
+      "rating": 0.6
+     },
+     {
+      "kind": "incdec",
+      "service": "counter",
+      "x": 359,
+      "y": 46,
+      "size": [
+       32,
+       16
+      ],
+      "state": 3,
+      "rating": 0
+     }
+    ]
+   },
+   "popped": [
+    {
+     "kind": "like",
+     "service": "favourites",
+     "hint": [
+      -1,
+      -1
+     ],
+     "minimum": [
+      18,
+      18
+     ],
+     "size": [
+      18,
+      18
+     ]
+    },
+    {
+     "kind": "numerical",
+     "service": "stars",
+     "hint": [
+      -1,
+      -1
+     ],
+     "minimum": [
+      90,
+      18
+     ],
+     "size": [
+      90,
+      18
+     ]
+    },
+    {
+     "kind": "incdec",
+     "service": "counter",
+     "hint": [
+      31,
+      19
+     ],
+     "minimum": [
+      0,
+      0
+     ],
+     "size": [
+      31,
+      19
+     ]
+    }
+   ]
+  },
+  {
+   "icon": 1.0,
+   "incdec_height": 2.0,
+   "incdec_value": 0,
+   "background": {
+    "canvas": [
+     396,
+     236
+    ],
+    "calls": [
+     {
+      "kind": "like",
+      "service": "favourites",
+      "x": 389,
+      "y": 6,
+      "size": [
+       1,
+       1
+      ],
+      "state": 0
+     },
+     {
+      "kind": "numerical_width",
+      "service": "stars",
+      "star_width": 1,
+      "width": 25
+     },
+     {
+      "kind": "numerical",
+      "service": "stars",
+      "x": 369,
+      "y": 13,
+      "size": [
+       1,
+       1
+      ],
+      "pad": 4,
+      "state": 3,
+      "rating": 0.6
+     },
+     {
+      "kind": "incdec",
+      "service": "counter",
+      "x": 387,
+      "y": 20,
+      "size": [
+       4,
+       2
+      ],
+      "state": 3,
+      "rating": 0
+     }
+    ]
+   },
+   "popped": [
+    {
+     "kind": "like",
+     "service": "favourites",
+     "hint": [
+      -1,
+      -1
+     ],
+     "minimum": [
+      5,
+      5
+     ],
+     "size": [
+      5,
+      5
+     ]
+    },
+    {
+     "kind": "numerical",
+     "service": "stars",
+     "hint": [
+      -1,
+      -1
+     ],
+     "minimum": [
+      25,
+      5
+     ],
+     "size": [
+      25,
+      5
+     ]
+    },
+    {
+     "kind": "incdec",
+     "service": "counter",
+     "hint": [
+      5,
+      6
+     ],
+     "minimum": [
+      0,
+      0
+     ],
+     "size": [
+      5,
+      6
+     ]
+    }
+   ]
+  },
+  {
+   "icon": 255.0,
+   "incdec_height": 255.0,
+   "incdec_value": 0,
+   "background": {
+    "canvas": [
+     396,
+     236
+    ],
+    "calls": [
+     {
+      "kind": "like",
+      "service": "favourites",
+      "x": 135,
+      "y": 6,
+      "size": [
+       255,
+       255
+      ],
+      "state": 0
+     },
+     {
+      "kind": "numerical_width",
+      "service": "stars",
+      "star_width": 255,
+      "width": 1295
+     },
+     {
+      "kind": "numerical",
+      "service": "stars",
+      "x": -901,
+      "y": 267,
+      "size": [
+       255,
+       255
+      ],
+      "pad": 4,
+      "state": 3,
+      "rating": 0.6
+     },
+     {
+      "kind": "incdec",
+      "service": "counter",
+      "x": -119,
+      "y": 528,
+      "size": [
+       510,
+       255
+      ],
+      "state": 3,
+      "rating": 0
+     }
+    ]
+   },
+   "popped": [
+    {
+     "kind": "like",
+     "service": "favourites",
+     "hint": [
+      -1,
+      -1
+     ],
+     "minimum": [
+      259,
+      259
+     ],
+     "size": [
+      259,
+      259
+     ]
+    },
+    {
+     "kind": "numerical",
+     "service": "stars",
+     "hint": [
+      -1,
+      -1
+     ],
+     "minimum": [
+      1295,
+      259
+     ],
+     "size": [
+      1295,
+      259
+     ]
+    },
+    {
+     "kind": "incdec",
+     "service": "counter",
+     "hint": [
+      511,
+      259
+     ],
+     "minimum": [
+      0,
+      0
+     ],
+     "size": [
+      511,
+      259
+     ]
+    }
+   ]
+  },
+  {
+   "icon": 2.5,
+   "incdec_height": 3.5,
+   "incdec_value": 0,
+   "background": {
+    "canvas": [
+     396,
+     236
+    ],
+    "calls": [
+     {
+      "kind": "like",
+      "service": "favourites",
+      "x": 388,
+      "y": 6,
+      "size": [
+       2,
+       2
+      ],
+      "state": 0
+     },
+     {
+      "kind": "numerical_width",
+      "service": "stars",
+      "star_width": 2,
+      "width": 30
+     },
+     {
+      "kind": "numerical",
+      "service": "stars",
+      "x": 364,
+      "y": 14,
+      "size": [
+       2,
+       2
+      ],
+      "pad": 4,
+      "state": 3,
+      "rating": 0.6
+     },
+     {
+      "kind": "incdec",
+      "service": "counter",
+      "x": 383,
+      "y": 22,
+      "size": [
+       8,
+       4
+      ],
+      "state": 3,
+      "rating": 0
+     }
+    ]
+   },
+   "popped": [
+    {
+     "kind": "like",
+     "service": "favourites",
+     "hint": [
+      -1,
+      -1
+     ],
+     "minimum": [
+      6,
+      6
+     ],
+     "size": [
+      6,
+      6
+     ]
+    },
+    {
+     "kind": "numerical",
+     "service": "stars",
+     "hint": [
+      -1,
+      -1
+     ],
+     "minimum": [
+      30,
+      6
+     ],
+     "size": [
+      30,
+      6
+     ]
+    },
+    {
+     "kind": "incdec",
+     "service": "counter",
+     "hint": [
+      7,
+      7
+     ],
+     "minimum": [
+      0,
+      0
+     ],
+     "size": [
+      7,
+      7
+     ]
+    }
+   ]
+  },
+  {
+   "icon": 13.49,
+   "incdec_height": 13.51,
+   "incdec_value": 0,
+   "background": {
+    "canvas": [
+     396,
+     236
+    ],
+    "calls": [
+     {
+      "kind": "like",
+      "service": "favourites",
+      "x": 377,
+      "y": 6,
+      "size": [
+       13,
+       13
+      ],
+      "state": 0
+     },
+     {
+      "kind": "numerical_width",
+      "service": "stars",
+      "star_width": 13,
+      "width": 85
+     },
+     {
+      "kind": "numerical",
+      "service": "stars",
+      "x": 309,
+      "y": 25,
+      "size": [
+       13,
+       13
+      ],
+      "pad": 4,
+      "state": 3,
+      "rating": 0.6
+     },
+     {
+      "kind": "incdec",
+      "service": "counter",
+      "x": 363,
+      "y": 44,
+      "size": [
+       28,
+       14
+      ],
+      "state": 3,
+      "rating": 0
+     }
+    ]
+   },
+   "popped": [
+    {
+     "kind": "like",
+     "service": "favourites",
+     "hint": [
+      -1,
+      -1
+     ],
+     "minimum": [
+      17,
+      17
+     ],
+     "size": [
+      17,
+      17
+     ]
+    },
+    {
+     "kind": "numerical",
+     "service": "stars",
+     "hint": [
+      -1,
+      -1
+     ],
+     "minimum": [
+      85,
+      17
+     ],
+     "size": [
+      85,
+      17
+     ]
+    },
+    {
+     "kind": "incdec",
+     "service": "counter",
+     "hint": [
+      27,
+      17
+     ],
+     "minimum": [
+      0,
+      0
+     ],
+     "size": [
+      27,
+      17
+     ]
+    }
+   ]
+  },
+  {
+   "icon": 64.0,
+   "incdec_height": 8.0,
+   "incdec_value": 0,
+   "background": {
+    "canvas": [
+     396,
+     236
+    ],
+    "calls": [
+     {
+      "kind": "like",
+      "service": "favourites",
+      "x": 326,
+      "y": 6,
+      "size": [
+       64,
+       64
+      ],
+      "state": 0
+     },
+     {
+      "kind": "numerical_width",
+      "service": "stars",
+      "star_width": 64,
+      "width": 340
+     },
+     {
+      "kind": "numerical",
+      "service": "stars",
+      "x": 54,
+      "y": 76,
+      "size": [
+       64,
+       64
+      ],
+      "pad": 4,
+      "state": 3,
+      "rating": 0.6
+     },
+     {
+      "kind": "incdec",
+      "service": "counter",
+      "x": 375,
+      "y": 146,
+      "size": [
+       16,
+       8
+      ],
+      "state": 3,
+      "rating": 0
+     }
+    ]
+   },
+   "popped": [
+    {
+     "kind": "like",
+     "service": "favourites",
+     "hint": [
+      -1,
+      -1
+     ],
+     "minimum": [
+      68,
+      68
+     ],
+     "size": [
+      68,
+      68
+     ]
+    },
+    {
+     "kind": "numerical",
+     "service": "stars",
+     "hint": [
+      -1,
+      -1
+     ],
+     "minimum": [
+      340,
+      68
+     ],
+     "size": [
+      340,
+      68
+     ]
+    },
+    {
+     "kind": "incdec",
+     "service": "counter",
+     "hint": [
+      17,
+      12
+     ],
+     "minimum": [
+      0,
+      0
+     ],
+     "size": [
+      17,
+      12
+     ]
+    }
+   ]
+  },
+  {
+   "icon": 12.0,
+   "incdec_height": 12.0,
+   "incdec_value": 5,
+   "background": {
+    "canvas": [
+     396,
+     236
+    ],
+    "calls": [
+     {
+      "kind": "like",
+      "service": "favourites",
+      "x": 378,
+      "y": 6,
+      "size": [
+       12,
+       12
+      ],
+      "state": 0
+     },
+     {
+      "kind": "numerical_width",
+      "service": "stars",
+      "star_width": 12,
+      "width": 80
+     },
+     {
+      "kind": "numerical",
+      "service": "stars",
+      "x": 314,
+      "y": 24,
+      "size": [
+       12,
+       12
+      ],
+      "pad": 4,
+      "state": 3,
+      "rating": 0.6
+     },
+     {
+      "kind": "incdec",
+      "service": "counter",
+      "x": 367,
+      "y": 42,
+      "size": [
+       24,
+       12
+      ],
+      "state": 3,
+      "rating": 5
+     }
+    ]
+   },
+   "popped": [
+    {
+     "kind": "like",
+     "service": "favourites",
+     "hint": [
+      -1,
+      -1
+     ],
+     "minimum": [
+      16,
+      16
+     ],
+     "size": [
+      16,
+      16
+     ]
+    },
+    {
+     "kind": "numerical",
+     "service": "stars",
+     "hint": [
+      -1,
+      -1
+     ],
+     "minimum": [
+      80,
+      16
+     ],
+     "size": [
+      80,
+      16
+     ]
+    },
+    {
+     "kind": "incdec",
+     "service": "counter",
+     "hint": [
+      25,
+      16
+     ],
+     "minimum": [
+      0,
+      0
+     ],
+     "size": [
+      25,
+      16
+     ]
+    }
+   ]
+  },
+  {
+   "icon": 30.0,
+   "incdec_height": 17.5,
+   "incdec_value": 5,
+   "background": {
+    "canvas": [
+     396,
+     236
+    ],
+    "calls": [
+     {
+      "kind": "like",
+      "service": "favourites",
+      "x": 360,
+      "y": 6,
+      "size": [
+       30,
+       30
+      ],
+      "state": 0
+     },
+     {
+      "kind": "numerical_width",
+      "service": "stars",
+      "star_width": 30,
+      "width": 170
+     },
+     {
+      "kind": "numerical",
+      "service": "stars",
+      "x": 224,
+      "y": 42,
+      "size": [
+       30,
+       30
+      ],
+      "pad": 4,
+      "state": 3,
+      "rating": 0.6
+     },
+     {
+      "kind": "incdec",
+      "service": "counter",
+      "x": 355,
+      "y": 78,
+      "size": [
+       36,
+       18
+      ],
+      "state": 3,
+      "rating": 5
+     }
+    ]
+   },
+   "popped": [
+    {
+     "kind": "like",
+     "service": "favourites",
+     "hint": [
+      -1,
+      -1
+     ],
+     "minimum": [
+      34,
+      34
+     ],
+     "size": [
+      34,
+      34
+     ]
+    },
+    {
+     "kind": "numerical",
+     "service": "stars",
+     "hint": [
+      -1,
+      -1
+     ],
+     "minimum": [
+      170,
+      34
+     ],
+     "size": [
+      170,
+      34
+     ]
+    },
+    {
+     "kind": "incdec",
+     "service": "counter",
+     "hint": [
+      35,
+      21
+     ],
+     "minimum": [
+      0,
+      0
+     ],
+     "size": [
+      35,
+      21
+     ]
+    }
+   ]
+  },
+  {
+   "icon": 30.0,
+   "incdec_height": 16.5,
+   "incdec_value": 5,
+   "background": {
+    "canvas": [
+     396,
+     236
+    ],
+    "calls": [
+     {
+      "kind": "like",
+      "service": "favourites",
+      "x": 360,
+      "y": 6,
+      "size": [
+       30,
+       30
+      ],
+      "state": 0
+     },
+     {
+      "kind": "numerical_width",
+      "service": "stars",
+      "star_width": 30,
+      "width": 170
+     },
+     {
+      "kind": "numerical",
+      "service": "stars",
+      "x": 224,
+      "y": 42,
+      "size": [
+       30,
+       30
+      ],
+      "pad": 4,
+      "state": 3,
+      "rating": 0.6
+     },
+     {
+      "kind": "incdec",
+      "service": "counter",
+      "x": 359,
+      "y": 78,
+      "size": [
+       32,
+       16
+      ],
+      "state": 3,
+      "rating": 5
+     }
+    ]
+   },
+   "popped": [
+    {
+     "kind": "like",
+     "service": "favourites",
+     "hint": [
+      -1,
+      -1
+     ],
+     "minimum": [
+      34,
+      34
+     ],
+     "size": [
+      34,
+      34
+     ]
+    },
+    {
+     "kind": "numerical",
+     "service": "stars",
+     "hint": [
+      -1,
+      -1
+     ],
+     "minimum": [
+      170,
+      34
+     ],
+     "size": [
+      170,
+      34
+     ]
+    },
+    {
+     "kind": "incdec",
+     "service": "counter",
+     "hint": [
+      33,
+      20
+     ],
+     "minimum": [
+      0,
+      0
+     ],
+     "size": [
+      33,
+      20
+     ]
+    }
+   ]
+  },
+  {
+   "icon": 14.4,
+   "incdec_height": 14.6,
+   "incdec_value": 5,
+   "background": {
+    "canvas": [
+     396,
+     236
+    ],
+    "calls": [
+     {
+      "kind": "like",
+      "service": "favourites",
+      "x": 376,
+      "y": 6,
+      "size": [
+       14,
+       14
+      ],
+      "state": 0
+     },
+     {
+      "kind": "numerical_width",
+      "service": "stars",
+      "star_width": 14,
+      "width": 90
+     },
+     {
+      "kind": "numerical",
+      "service": "stars",
+      "x": 304,
+      "y": 26,
+      "size": [
+       14,
+       14
+      ],
+      "pad": 4,
+      "state": 3,
+      "rating": 0.6
+     },
+     {
+      "kind": "incdec",
+      "service": "counter",
+      "x": 361,
+      "y": 46,
+      "size": [
+       30,
+       15
+      ],
+      "state": 3,
+      "rating": 5
+     }
+    ]
+   },
+   "popped": [
+    {
+     "kind": "like",
+     "service": "favourites",
+     "hint": [
+      -1,
+      -1
+     ],
+     "minimum": [
+      18,
+      18
+     ],
+     "size": [
+      18,
+      18
+     ]
+    },
+    {
+     "kind": "numerical",
+     "service": "stars",
+     "hint": [
+      -1,
+      -1
+     ],
+     "minimum": [
+      90,
+      18
+     ],
+     "size": [
+      90,
+      18
+     ]
+    },
+    {
+     "kind": "incdec",
+     "service": "counter",
+     "hint": [
+      29,
+      18
+     ],
+     "minimum": [
+      0,
+      0
+     ],
+     "size": [
+      29,
+      18
+     ]
+    }
+   ]
+  },
+  {
+   "icon": 14.5,
+   "incdec_height": 15.5,
+   "incdec_value": 5,
+   "background": {
+    "canvas": [
+     396,
+     236
+    ],
+    "calls": [
+     {
+      "kind": "like",
+      "service": "favourites",
+      "x": 376,
+      "y": 6,
+      "size": [
+       14,
+       14
+      ],
+      "state": 0
+     },
+     {
+      "kind": "numerical_width",
+      "service": "stars",
+      "star_width": 14,
+      "width": 90
+     },
+     {
+      "kind": "numerical",
+      "service": "stars",
+      "x": 304,
+      "y": 26,
+      "size": [
+       14,
+       14
+      ],
+      "pad": 4,
+      "state": 3,
+      "rating": 0.6
+     },
+     {
+      "kind": "incdec",
+      "service": "counter",
+      "x": 359,
+      "y": 46,
+      "size": [
+       32,
+       16
+      ],
+      "state": 3,
+      "rating": 5
+     }
+    ]
+   },
+   "popped": [
+    {
+     "kind": "like",
+     "service": "favourites",
+     "hint": [
+      -1,
+      -1
+     ],
+     "minimum": [
+      18,
+      18
+     ],
+     "size": [
+      18,
+      18
+     ]
+    },
+    {
+     "kind": "numerical",
+     "service": "stars",
+     "hint": [
+      -1,
+      -1
+     ],
+     "minimum": [
+      90,
+      18
+     ],
+     "size": [
+      90,
+      18
+     ]
+    },
+    {
+     "kind": "incdec",
+     "service": "counter",
+     "hint": [
+      31,
+      19
+     ],
+     "minimum": [
+      0,
+      0
+     ],
+     "size": [
+      31,
+      19
+     ]
+    }
+   ]
+  },
+  {
+   "icon": 1.0,
+   "incdec_height": 2.0,
+   "incdec_value": 5,
+   "background": {
+    "canvas": [
+     396,
+     236
+    ],
+    "calls": [
+     {
+      "kind": "like",
+      "service": "favourites",
+      "x": 389,
+      "y": 6,
+      "size": [
+       1,
+       1
+      ],
+      "state": 0
+     },
+     {
+      "kind": "numerical_width",
+      "service": "stars",
+      "star_width": 1,
+      "width": 25
+     },
+     {
+      "kind": "numerical",
+      "service": "stars",
+      "x": 369,
+      "y": 13,
+      "size": [
+       1,
+       1
+      ],
+      "pad": 4,
+      "state": 3,
+      "rating": 0.6
+     },
+     {
+      "kind": "incdec",
+      "service": "counter",
+      "x": 387,
+      "y": 20,
+      "size": [
+       4,
+       2
+      ],
+      "state": 3,
+      "rating": 5
+     }
+    ]
+   },
+   "popped": [
+    {
+     "kind": "like",
+     "service": "favourites",
+     "hint": [
+      -1,
+      -1
+     ],
+     "minimum": [
+      5,
+      5
+     ],
+     "size": [
+      5,
+      5
+     ]
+    },
+    {
+     "kind": "numerical",
+     "service": "stars",
+     "hint": [
+      -1,
+      -1
+     ],
+     "minimum": [
+      25,
+      5
+     ],
+     "size": [
+      25,
+      5
+     ]
+    },
+    {
+     "kind": "incdec",
+     "service": "counter",
+     "hint": [
+      5,
+      6
+     ],
+     "minimum": [
+      0,
+      0
+     ],
+     "size": [
+      5,
+      6
+     ]
+    }
+   ]
+  },
+  {
+   "icon": 255.0,
+   "incdec_height": 255.0,
+   "incdec_value": 5,
+   "background": {
+    "canvas": [
+     396,
+     236
+    ],
+    "calls": [
+     {
+      "kind": "like",
+      "service": "favourites",
+      "x": 135,
+      "y": 6,
+      "size": [
+       255,
+       255
+      ],
+      "state": 0
+     },
+     {
+      "kind": "numerical_width",
+      "service": "stars",
+      "star_width": 255,
+      "width": 1295
+     },
+     {
+      "kind": "numerical",
+      "service": "stars",
+      "x": -901,
+      "y": 267,
+      "size": [
+       255,
+       255
+      ],
+      "pad": 4,
+      "state": 3,
+      "rating": 0.6
+     },
+     {
+      "kind": "incdec",
+      "service": "counter",
+      "x": -119,
+      "y": 528,
+      "size": [
+       510,
+       255
+      ],
+      "state": 3,
+      "rating": 5
+     }
+    ]
+   },
+   "popped": [
+    {
+     "kind": "like",
+     "service": "favourites",
+     "hint": [
+      -1,
+      -1
+     ],
+     "minimum": [
+      259,
+      259
+     ],
+     "size": [
+      259,
+      259
+     ]
+    },
+    {
+     "kind": "numerical",
+     "service": "stars",
+     "hint": [
+      -1,
+      -1
+     ],
+     "minimum": [
+      1295,
+      259
+     ],
+     "size": [
+      1295,
+      259
+     ]
+    },
+    {
+     "kind": "incdec",
+     "service": "counter",
+     "hint": [
+      511,
+      259
+     ],
+     "minimum": [
+      0,
+      0
+     ],
+     "size": [
+      511,
+      259
+     ]
+    }
+   ]
+  },
+  {
+   "icon": 2.5,
+   "incdec_height": 3.5,
+   "incdec_value": 5,
+   "background": {
+    "canvas": [
+     396,
+     236
+    ],
+    "calls": [
+     {
+      "kind": "like",
+      "service": "favourites",
+      "x": 388,
+      "y": 6,
+      "size": [
+       2,
+       2
+      ],
+      "state": 0
+     },
+     {
+      "kind": "numerical_width",
+      "service": "stars",
+      "star_width": 2,
+      "width": 30
+     },
+     {
+      "kind": "numerical",
+      "service": "stars",
+      "x": 364,
+      "y": 14,
+      "size": [
+       2,
+       2
+      ],
+      "pad": 4,
+      "state": 3,
+      "rating": 0.6
+     },
+     {
+      "kind": "incdec",
+      "service": "counter",
+      "x": 383,
+      "y": 22,
+      "size": [
+       8,
+       4
+      ],
+      "state": 3,
+      "rating": 5
+     }
+    ]
+   },
+   "popped": [
+    {
+     "kind": "like",
+     "service": "favourites",
+     "hint": [
+      -1,
+      -1
+     ],
+     "minimum": [
+      6,
+      6
+     ],
+     "size": [
+      6,
+      6
+     ]
+    },
+    {
+     "kind": "numerical",
+     "service": "stars",
+     "hint": [
+      -1,
+      -1
+     ],
+     "minimum": [
+      30,
+      6
+     ],
+     "size": [
+      30,
+      6
+     ]
+    },
+    {
+     "kind": "incdec",
+     "service": "counter",
+     "hint": [
+      7,
+      7
+     ],
+     "minimum": [
+      0,
+      0
+     ],
+     "size": [
+      7,
+      7
+     ]
+    }
+   ]
+  },
+  {
+   "icon": 13.49,
+   "incdec_height": 13.51,
+   "incdec_value": 5,
+   "background": {
+    "canvas": [
+     396,
+     236
+    ],
+    "calls": [
+     {
+      "kind": "like",
+      "service": "favourites",
+      "x": 377,
+      "y": 6,
+      "size": [
+       13,
+       13
+      ],
+      "state": 0
+     },
+     {
+      "kind": "numerical_width",
+      "service": "stars",
+      "star_width": 13,
+      "width": 85
+     },
+     {
+      "kind": "numerical",
+      "service": "stars",
+      "x": 309,
+      "y": 25,
+      "size": [
+       13,
+       13
+      ],
+      "pad": 4,
+      "state": 3,
+      "rating": 0.6
+     },
+     {
+      "kind": "incdec",
+      "service": "counter",
+      "x": 363,
+      "y": 44,
+      "size": [
+       28,
+       14
+      ],
+      "state": 3,
+      "rating": 5
+     }
+    ]
+   },
+   "popped": [
+    {
+     "kind": "like",
+     "service": "favourites",
+     "hint": [
+      -1,
+      -1
+     ],
+     "minimum": [
+      17,
+      17
+     ],
+     "size": [
+      17,
+      17
+     ]
+    },
+    {
+     "kind": "numerical",
+     "service": "stars",
+     "hint": [
+      -1,
+      -1
+     ],
+     "minimum": [
+      85,
+      17
+     ],
+     "size": [
+      85,
+      17
+     ]
+    },
+    {
+     "kind": "incdec",
+     "service": "counter",
+     "hint": [
+      27,
+      17
+     ],
+     "minimum": [
+      0,
+      0
+     ],
+     "size": [
+      27,
+      17
+     ]
+    }
+   ]
+  },
+  {
+   "icon": 64.0,
+   "incdec_height": 8.0,
+   "incdec_value": 5,
+   "background": {
+    "canvas": [
+     396,
+     236
+    ],
+    "calls": [
+     {
+      "kind": "like",
+      "service": "favourites",
+      "x": 326,
+      "y": 6,
+      "size": [
+       64,
+       64
+      ],
+      "state": 0
+     },
+     {
+      "kind": "numerical_width",
+      "service": "stars",
+      "star_width": 64,
+      "width": 340
+     },
+     {
+      "kind": "numerical",
+      "service": "stars",
+      "x": 54,
+      "y": 76,
+      "size": [
+       64,
+       64
+      ],
+      "pad": 4,
+      "state": 3,
+      "rating": 0.6
+     },
+     {
+      "kind": "incdec",
+      "service": "counter",
+      "x": 375,
+      "y": 146,
+      "size": [
+       16,
+       8
+      ],
+      "state": 3,
+      "rating": 5
+     }
+    ]
+   },
+   "popped": [
+    {
+     "kind": "like",
+     "service": "favourites",
+     "hint": [
+      -1,
+      -1
+     ],
+     "minimum": [
+      68,
+      68
+     ],
+     "size": [
+      68,
+      68
+     ]
+    },
+    {
+     "kind": "numerical",
+     "service": "stars",
+     "hint": [
+      -1,
+      -1
+     ],
+     "minimum": [
+      340,
+      68
+     ],
+     "size": [
+      340,
+      68
+     ]
+    },
+    {
+     "kind": "incdec",
+     "service": "counter",
+     "hint": [
+      17,
+      12
+     ],
+     "minimum": [
+      0,
+      0
+     ],
+     "size": [
+      17,
+      12
+     ]
+    }
+   ]
+  },
+  {
+   "icon": 12.0,
+   "incdec_height": 12.0,
+   "incdec_value": 12345,
+   "background": {
+    "canvas": [
+     396,
+     236
+    ],
+    "calls": [
+     {
+      "kind": "like",
+      "service": "favourites",
+      "x": 378,
+      "y": 6,
+      "size": [
+       12,
+       12
+      ],
+      "state": 0
+     },
+     {
+      "kind": "numerical_width",
+      "service": "stars",
+      "star_width": 12,
+      "width": 80
+     },
+     {
+      "kind": "numerical",
+      "service": "stars",
+      "x": 314,
+      "y": 24,
+      "size": [
+       12,
+       12
+      ],
+      "pad": 4,
+      "state": 3,
+      "rating": 0.6
+     },
+     {
+      "kind": "incdec",
+      "service": "counter",
+      "x": 353,
+      "y": 42,
+      "size": [
+       38,
+       12
+      ],
+      "state": 3,
+      "rating": 12345
+     }
+    ]
+   },
+   "popped": [
+    {
+     "kind": "like",
+     "service": "favourites",
+     "hint": [
+      -1,
+      -1
+     ],
+     "minimum": [
+      16,
+      16
+     ],
+     "size": [
+      16,
+      16
+     ]
+    },
+    {
+     "kind": "numerical",
+     "service": "stars",
+     "hint": [
+      -1,
+      -1
+     ],
+     "minimum": [
+      80,
+      16
+     ],
+     "size": [
+      80,
+      16
+     ]
+    },
+    {
+     "kind": "incdec",
+     "service": "counter",
+     "hint": [
+      39,
+      16
+     ],
+     "minimum": [
+      0,
+      0
+     ],
+     "size": [
+      39,
+      16
+     ]
+    }
+   ]
+  },
+  {
+   "icon": 30.0,
+   "incdec_height": 17.5,
+   "incdec_value": 12345,
+   "background": {
+    "canvas": [
+     396,
+     236
+    ],
+    "calls": [
+     {
+      "kind": "like",
+      "service": "favourites",
+      "x": 360,
+      "y": 6,
+      "size": [
+       30,
+       30
+      ],
+      "state": 0
+     },
+     {
+      "kind": "numerical_width",
+      "service": "stars",
+      "star_width": 30,
+      "width": 170
+     },
+     {
+      "kind": "numerical",
+      "service": "stars",
+      "x": 224,
+      "y": 42,
+      "size": [
+       30,
+       30
+      ],
+      "pad": 4,
+      "state": 3,
+      "rating": 0.6
+     },
+     {
+      "kind": "incdec",
+      "service": "counter",
+      "x": 333,
+      "y": 78,
+      "size": [
+       58,
+       18
+      ],
+      "state": 3,
+      "rating": 12345
+     }
+    ]
+   },
+   "popped": [
+    {
+     "kind": "like",
+     "service": "favourites",
+     "hint": [
+      -1,
+      -1
+     ],
+     "minimum": [
+      34,
+      34
+     ],
+     "size": [
+      34,
+      34
+     ]
+    },
+    {
+     "kind": "numerical",
+     "service": "stars",
+     "hint": [
+      -1,
+      -1
+     ],
+     "minimum": [
+      170,
+      34
+     ],
+     "size": [
+      170,
+      34
+     ]
+    },
+    {
+     "kind": "incdec",
+     "service": "counter",
+     "hint": [
+      56,
+      21
+     ],
+     "minimum": [
+      0,
+      0
+     ],
+     "size": [
+      56,
+      21
+     ]
+    }
+   ]
+  },
+  {
+   "icon": 30.0,
+   "incdec_height": 16.5,
+   "incdec_value": 12345,
+   "background": {
+    "canvas": [
+     396,
+     236
+    ],
+    "calls": [
+     {
+      "kind": "like",
+      "service": "favourites",
+      "x": 360,
+      "y": 6,
+      "size": [
+       30,
+       30
+      ],
+      "state": 0
+     },
+     {
+      "kind": "numerical_width",
+      "service": "stars",
+      "star_width": 30,
+      "width": 170
+     },
+     {
+      "kind": "numerical",
+      "service": "stars",
+      "x": 224,
+      "y": 42,
+      "size": [
+       30,
+       30
+      ],
+      "pad": 4,
+      "state": 3,
+      "rating": 0.6
+     },
+     {
+      "kind": "incdec",
+      "service": "counter",
+      "x": 339,
+      "y": 78,
+      "size": [
+       52,
+       16
+      ],
+      "state": 3,
+      "rating": 12345
+     }
+    ]
+   },
+   "popped": [
+    {
+     "kind": "like",
+     "service": "favourites",
+     "hint": [
+      -1,
+      -1
+     ],
+     "minimum": [
+      34,
+      34
+     ],
+     "size": [
+      34,
+      34
+     ]
+    },
+    {
+     "kind": "numerical",
+     "service": "stars",
+     "hint": [
+      -1,
+      -1
+     ],
+     "minimum": [
+      170,
+      34
+     ],
+     "size": [
+      170,
+      34
+     ]
+    },
+    {
+     "kind": "incdec",
+     "service": "counter",
+     "hint": [
+      53,
+      20
+     ],
+     "minimum": [
+      0,
+      0
+     ],
+     "size": [
+      53,
+      20
+     ]
+    }
+   ]
+  },
+  {
+   "icon": 14.4,
+   "incdec_height": 14.6,
+   "incdec_value": 12345,
+   "background": {
+    "canvas": [
+     396,
+     236
+    ],
+    "calls": [
+     {
+      "kind": "like",
+      "service": "favourites",
+      "x": 376,
+      "y": 6,
+      "size": [
+       14,
+       14
+      ],
+      "state": 0
+     },
+     {
+      "kind": "numerical_width",
+      "service": "stars",
+      "star_width": 14,
+      "width": 90
+     },
+     {
+      "kind": "numerical",
+      "service": "stars",
+      "x": 304,
+      "y": 26,
+      "size": [
+       14,
+       14
+      ],
+      "pad": 4,
+      "state": 3,
+      "rating": 0.6
+     },
+     {
+      "kind": "incdec",
+      "service": "counter",
+      "x": 343,
+      "y": 46,
+      "size": [
+       48,
+       15
+      ],
+      "state": 3,
+      "rating": 12345
+     }
+    ]
+   },
+   "popped": [
+    {
+     "kind": "like",
+     "service": "favourites",
+     "hint": [
+      -1,
+      -1
+     ],
+     "minimum": [
+      18,
+      18
+     ],
+     "size": [
+      18,
+      18
+     ]
+    },
+    {
+     "kind": "numerical",
+     "service": "stars",
+     "hint": [
+      -1,
+      -1
+     ],
+     "minimum": [
+      90,
+      18
+     ],
+     "size": [
+      90,
+      18
+     ]
+    },
+    {
+     "kind": "incdec",
+     "service": "counter",
+     "hint": [
+      46,
+      18
+     ],
+     "minimum": [
+      0,
+      0
+     ],
+     "size": [
+      46,
+      18
+     ]
+    }
+   ]
+  },
+  {
+   "icon": 14.5,
+   "incdec_height": 15.5,
+   "incdec_value": 12345,
+   "background": {
+    "canvas": [
+     396,
+     236
+    ],
+    "calls": [
+     {
+      "kind": "like",
+      "service": "favourites",
+      "x": 376,
+      "y": 6,
+      "size": [
+       14,
+       14
+      ],
+      "state": 0
+     },
+     {
+      "kind": "numerical_width",
+      "service": "stars",
+      "star_width": 14,
+      "width": 90
+     },
+     {
+      "kind": "numerical",
+      "service": "stars",
+      "x": 304,
+      "y": 26,
+      "size": [
+       14,
+       14
+      ],
+      "pad": 4,
+      "state": 3,
+      "rating": 0.6
+     },
+     {
+      "kind": "incdec",
+      "service": "counter",
+      "x": 339,
+      "y": 46,
+      "size": [
+       52,
+       16
+      ],
+      "state": 3,
+      "rating": 12345
+     }
+    ]
+   },
+   "popped": [
+    {
+     "kind": "like",
+     "service": "favourites",
+     "hint": [
+      -1,
+      -1
+     ],
+     "minimum": [
+      18,
+      18
+     ],
+     "size": [
+      18,
+      18
+     ]
+    },
+    {
+     "kind": "numerical",
+     "service": "stars",
+     "hint": [
+      -1,
+      -1
+     ],
+     "minimum": [
+      90,
+      18
+     ],
+     "size": [
+      90,
+      18
+     ]
+    },
+    {
+     "kind": "incdec",
+     "service": "counter",
+     "hint": [
+      49,
+      19
+     ],
+     "minimum": [
+      0,
+      0
+     ],
+     "size": [
+      49,
+      19
+     ]
+    }
+   ]
+  },
+  {
+   "icon": 1.0,
+   "incdec_height": 2.0,
+   "incdec_value": 12345,
+   "background": {
+    "canvas": [
+     396,
+     236
+    ],
+    "calls": [
+     {
+      "kind": "like",
+      "service": "favourites",
+      "x": 389,
+      "y": 6,
+      "size": [
+       1,
+       1
+      ],
+      "state": 0
+     },
+     {
+      "kind": "numerical_width",
+      "service": "stars",
+      "star_width": 1,
+      "width": 25
+     },
+     {
+      "kind": "numerical",
+      "service": "stars",
+      "x": 369,
+      "y": 13,
+      "size": [
+       1,
+       1
+      ],
+      "pad": 4,
+      "state": 3,
+      "rating": 0.6
+     },
+     {
+      "kind": "incdec",
+      "service": "counter",
+      "x": 386,
+      "y": 20,
+      "size": [
+       5,
+       2
+      ],
+      "state": 3,
+      "rating": 12345
+     }
+    ]
+   },
+   "popped": [
+    {
+     "kind": "like",
+     "service": "favourites",
+     "hint": [
+      -1,
+      -1
+     ],
+     "minimum": [
+      5,
+      5
+     ],
+     "size": [
+      5,
+      5
+     ]
+    },
+    {
+     "kind": "numerical",
+     "service": "stars",
+     "hint": [
+      -1,
+      -1
+     ],
+     "minimum": [
+      25,
+      5
+     ],
+     "size": [
+      25,
+      5
+     ]
+    },
+    {
+     "kind": "incdec",
+     "service": "counter",
+     "hint": [
+      6,
+      6
+     ],
+     "minimum": [
+      0,
+      0
+     ],
+     "size": [
+      6,
+      6
+     ]
+    }
+   ]
+  },
+  {
+   "icon": 255.0,
+   "incdec_height": 255.0,
+   "incdec_value": 12345,
+   "background": {
+    "canvas": [
+     396,
+     236
+    ],
+    "calls": [
+     {
+      "kind": "like",
+      "service": "favourites",
+      "x": 135,
+      "y": 6,
+      "size": [
+       255,
+       255
+      ],
+      "state": 0
+     },
+     {
+      "kind": "numerical_width",
+      "service": "stars",
+      "star_width": 255,
+      "width": 1295
+     },
+     {
+      "kind": "numerical",
+      "service": "stars",
+      "x": -901,
+      "y": 267,
+      "size": [
+       255,
+       255
+      ],
+      "pad": 4,
+      "state": 3,
+      "rating": 0.6
+     },
+     {
+      "kind": "incdec",
+      "service": "counter",
+      "x": -457,
+      "y": 528,
+      "size": [
+       848,
+       255
+      ],
+      "state": 3,
+      "rating": 12345
+     }
+    ]
+   },
+   "popped": [
+    {
+     "kind": "like",
+     "service": "favourites",
+     "hint": [
+      -1,
+      -1
+     ],
+     "minimum": [
+      259,
+      259
+     ],
+     "size": [
+      259,
+      259
+     ]
+    },
+    {
+     "kind": "numerical",
+     "service": "stars",
+     "hint": [
+      -1,
+      -1
+     ],
+     "minimum": [
+      1295,
+      259
+     ],
+     "size": [
+      1295,
+      259
+     ]
+    },
+    {
+     "kind": "incdec",
+     "service": "counter",
+     "hint": [
+      849,
+      259
+     ],
+     "minimum": [
+      0,
+      0
+     ],
+     "size": [
+      849,
+      259
+     ]
+    }
+   ]
+  },
+  {
+   "icon": 2.5,
+   "incdec_height": 3.5,
+   "incdec_value": 12345,
+   "background": {
+    "canvas": [
+     396,
+     236
+    ],
+    "calls": [
+     {
+      "kind": "like",
+      "service": "favourites",
+      "x": 388,
+      "y": 6,
+      "size": [
+       2,
+       2
+      ],
+      "state": 0
+     },
+     {
+      "kind": "numerical_width",
+      "service": "stars",
+      "star_width": 2,
+      "width": 30
+     },
+     {
+      "kind": "numerical",
+      "service": "stars",
+      "x": 364,
+      "y": 14,
+      "size": [
+       2,
+       2
+      ],
+      "pad": 4,
+      "state": 3,
+      "rating": 0.6
+     },
+     {
+      "kind": "incdec",
+      "service": "counter",
+      "x": 379,
+      "y": 22,
+      "size": [
+       12,
+       4
+      ],
+      "state": 3,
+      "rating": 12345
+     }
+    ]
+   },
+   "popped": [
+    {
+     "kind": "like",
+     "service": "favourites",
+     "hint": [
+      -1,
+      -1
+     ],
+     "minimum": [
+      6,
+      6
+     ],
+     "size": [
+      6,
+      6
+     ]
+    },
+    {
+     "kind": "numerical",
+     "service": "stars",
+     "hint": [
+      -1,
+      -1
+     ],
+     "minimum": [
+      30,
+      6
+     ],
+     "size": [
+      30,
+      6
+     ]
+    },
+    {
+     "kind": "incdec",
+     "service": "counter",
+     "hint": [
+      9,
+      7
+     ],
+     "minimum": [
+      0,
+      0
+     ],
+     "size": [
+      9,
+      7
+     ]
+    }
+   ]
+  },
+  {
+   "icon": 13.49,
+   "incdec_height": 13.51,
+   "incdec_value": 12345,
+   "background": {
+    "canvas": [
+     396,
+     236
+    ],
+    "calls": [
+     {
+      "kind": "like",
+      "service": "favourites",
+      "x": 377,
+      "y": 6,
+      "size": [
+       13,
+       13
+      ],
+      "state": 0
+     },
+     {
+      "kind": "numerical_width",
+      "service": "stars",
+      "star_width": 13,
+      "width": 85
+     },
+     {
+      "kind": "numerical",
+      "service": "stars",
+      "x": 309,
+      "y": 25,
+      "size": [
+       13,
+       13
+      ],
+      "pad": 4,
+      "state": 3,
+      "rating": 0.6
+     },
+     {
+      "kind": "incdec",
+      "service": "counter",
+      "x": 346,
+      "y": 44,
+      "size": [
+       45,
+       14
+      ],
+      "state": 3,
+      "rating": 12345
+     }
+    ]
+   },
+   "popped": [
+    {
+     "kind": "like",
+     "service": "favourites",
+     "hint": [
+      -1,
+      -1
+     ],
+     "minimum": [
+      17,
+      17
+     ],
+     "size": [
+      17,
+      17
+     ]
+    },
+    {
+     "kind": "numerical",
+     "service": "stars",
+     "hint": [
+      -1,
+      -1
+     ],
+     "minimum": [
+      85,
+      17
+     ],
+     "size": [
+      85,
+      17
+     ]
+    },
+    {
+     "kind": "incdec",
+     "service": "counter",
+     "hint": [
+      43,
+      17
+     ],
+     "minimum": [
+      0,
+      0
+     ],
+     "size": [
+      43,
+      17
+     ]
+    }
+   ]
+  },
+  {
+   "icon": 64.0,
+   "incdec_height": 8.0,
+   "incdec_value": 12345,
+   "background": {
+    "canvas": [
+     396,
+     236
+    ],
+    "calls": [
+     {
+      "kind": "like",
+      "service": "favourites",
+      "x": 326,
+      "y": 6,
+      "size": [
+       64,
+       64
+      ],
+      "state": 0
+     },
+     {
+      "kind": "numerical_width",
+      "service": "stars",
+      "star_width": 64,
+      "width": 340
+     },
+     {
+      "kind": "numerical",
+      "service": "stars",
+      "x": 54,
+      "y": 76,
+      "size": [
+       64,
+       64
+      ],
+      "pad": 4,
+      "state": 3,
+      "rating": 0.6
+     },
+     {
+      "kind": "incdec",
+      "service": "counter",
+      "x": 366,
+      "y": 146,
+      "size": [
+       25,
+       8
+      ],
+      "state": 3,
+      "rating": 12345
+     }
+    ]
+   },
+   "popped": [
+    {
+     "kind": "like",
+     "service": "favourites",
+     "hint": [
+      -1,
+      -1
+     ],
+     "minimum": [
+      68,
+      68
+     ],
+     "size": [
+      68,
+      68
+     ]
+    },
+    {
+     "kind": "numerical",
+     "service": "stars",
+     "hint": [
+      -1,
+      -1
+     ],
+     "minimum": [
+      340,
+      68
+     ],
+     "size": [
+      340,
+      68
+     ]
+    },
+    {
+     "kind": "incdec",
+     "service": "counter",
+     "hint": [
+      26,
+      12
+     ],
+     "minimum": [
+      0,
+      0
+     ],
+     "size": [
+      26,
+      12
+     ]
+    }
+   ]
+  }
+ ],
+ "switches": [
+  {
+   "draw": true,
+   "pop_in": true,
+   "calls": 4
+  },
+  {
+   "draw": true,
+   "pop_in": false,
+   "calls": 4
+  },
+  {
+   "draw": false,
+   "pop_in": true,
+   "calls": 0
+  },
+  {
+   "draw": false,
+   "pop_in": false,
+   "calls": 0
+  }
+ ]
+}

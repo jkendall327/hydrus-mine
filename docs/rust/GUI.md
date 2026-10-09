@@ -5157,7 +5157,9 @@ only (see DIFFERENCES.md). Proven by `options_gui_suggestions.rs`.
 
 **mpv.** "Set a new mpv.conf on dialog ok?" copies the chosen file over the
 database's `mpv.conf` when Options is OKed (never kept, and a path that isn't a
-file does nothing). The preferred audio device, "Loop Playlist instead of Loop
+file does nothing). The copy is the reference's mirror: it takes the source's
+modification time and leaves a destination with the same size and time alone
+(`oracle/record_mpv_conf.py`). The preferred audio device, "Loop Playlist instead of Loop
 File" and "Set null audio device on silent media" decide the commands a player
 is sent as each file loads (`mpv_options::Plan`); a file without sound plays on
 the `null` device when asked. Proven by `options_media_mpv.rs` and
@@ -5167,8 +5169,26 @@ driven is the plan the player executes, not mpv.
 **Duplicates filter hover.** "Pin the duplicates ... hover window so it is always
 visible" (on by default) keeps the comparison panel beside the canvas; off, the
 canvas fills the window and the panel pops in over its right edge when the
-mouse goes there and stays while the mouse is over it. It follows the option
-while the filter is open. Proven by `duplicate_hover_pin.rs`.
+mouse goes there and stays while the mouse is over it. It sits where the
+reference puts it: at the canvas' right edge, its top at 30% of the window's
+height, a fifth of the window wide (or as wide as its contents), as tall as its
+contents; the mouse brings it up only over that rectangle. It follows the option
+while the filter is open. Proven by `duplicate_hover_pin.rs` against
+`oracle/record_duplicates_hover_pin.py`.
+
+The preview window's corner draws and pops in its ratings at the sizes the
+ratings page sets (the background draw rounds them half to even, the popped-in
+hover cuts them to whole pixels), with the two switches for drawing it in the
+background and popping it in; replayed against
+`oracle/record_preview_ratings.py`. The media viewer zooms through the "Media
+zooms" list about the centrepoint the option names, from the opening zoom, with
+the file dragged or not and the mouse over the viewer or outside it, step for
+step as `oracle/record_viewer_zoom_steps.py` recorded the reference's. The
+slideshow durations text is read as Python reads floats (digits of any script,
+underscores between digits, exponents) and gives the viewer's menu entries
+(`oracle/record_slideshow_durations.py`). A frame that starts both maximised and
+fullscreen opens fullscreen only, and a window closed fullscreen keeps no
+maximised state, as the reference's window does (`oracle/record_frame_state.py`).
 
 **Ratings page examples.** The page opens with the reference's "choose rating
 service style to display for examples" box: a dropdown of the like/dislike and

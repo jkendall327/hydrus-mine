@@ -39,10 +39,13 @@ const SIZES: [(&str, &str); 4] = [
 pub(crate) fn template(store: &Store, key: &ServiceKey) -> NumericalRatingConfig {
     let plain = NumericalRatingConfig {
         display: RatingDisplay::default(),
-        appearance: hydrus_store::services::StarAppearance::default(),
+        // (the reference's preview service: circles, a pad of four)
+        appearance: hydrus_store::services::StarAppearance::Shape(
+            hydrus_store::services::StarShape(0),
+        ),
         num_stars: 5,
         allow_zero: true,
-        custom_pad: 0,
+        custom_pad: 4,
         show_fraction_beside_stars: 0,
     };
     let snapshot = store.snapshot();

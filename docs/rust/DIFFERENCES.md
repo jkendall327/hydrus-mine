@@ -4435,6 +4435,16 @@ font metrics and warning icons; automatic OS focus/modality and destruction
 closure for every shown child are not established. Continued typing explicitly
 clicks the retained LineEdit after acknowledgement.
 
+The preview window's corner, the ratings examples and the duplicates hover are
+compared by sizes and the rules that place them, not by pixel positions: the
+reference's hover is Qt widgets with their own fonts, margins and spacing (its
+rows are two pixels further apart than ours, its location text another font),
+where ours is drawn by Slint. The duplicates hover holds more than the
+reference's (the decision buttons are text), so it is wider and taller than
+the reference's at the same window size; its place and the rule for its width
+are the reference's. The reference's slideshow menu raises an error for a
+duration of infinity (`inf` or `1e400`); ours shows it.
+
 Manual export remakes the names as soon as rows are removed. The reference
 renumbers the rows but keeps showing (and would export to) the names made
 before the removal until the phrase or destination changes, a stale cache, so
@@ -4467,6 +4477,10 @@ the border is drawn (its colour and drawing) is not tested. Click hits were
 recorded for the first two columns and rows only, at one viewport per setting,
 and thumbnail positions are the layout's rule rather than read from the
 rendered grid.
+
+## Options > media playback
+
+The `mpv.conf` copy replaces a read-only mpv.conf; recorded as root the reference did too, but run as another user on Linux its mirror keeps the old file (it makes the destination writable only on Windows).
 
 ## Options > external programs
 

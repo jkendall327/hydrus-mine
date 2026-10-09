@@ -1,8 +1,8 @@
 //! The preview window's top-right hover against the reference's
 //! `CanvasPanel._DrawTopRight` and `CanvasHoverFrameTopRight`: ratings at the
 //! preview window's icon sizes, and the two switches for drawing it in the
-//! background and for popping it in on mouseover. Read from the reference's
-//! source (there is no Qt in the sandbox to record with).
+//! background and for popping it in on mouseover. The first two tests read
+//! the reference's source; the third replays `oracle/record_preview_ratings.py`.
 
 use slint::platform::{PointerEventButton, WindowEvent};
 use slint::{ComponentHandle as _, Model as _};
@@ -72,8 +72,6 @@ const HEIGHT: &str = "Preview window inc/dec rating icon height:";
 const DRAW: &str = "Draw ratings and locations (top-right) in preview window background: ";
 const POP_IN: &str = "Pop-in this hover on mouseover: ";
 
-// leaf: audit-options-ratings-preview-window-preview-window-like-dislike-and-numerical-rating-icon-size
-// leaf: audit-options-ratings-preview-window-preview-window-inc-dec-rating-icon-height
 #[test]
 #[allow(clippy::float_cmp)] // (sizes set, not computed)
 fn the_preview_window_draws_its_ratings_at_the_sizes_the_options_say() {
@@ -223,4 +221,202 @@ fn the_top_right_hover_draws_in_the_background_and_pops_in_as_the_options_say() 
     pointer_to(&client, x + w / 2.0, y + 3.0);
     assert!(ui.get_preview_hover_popped());
     let _ = PointerEventButton::Left;
+}
+
+/// The ratings' sizes the options say, the two switches, and where the
+/// hover pops in, against the reference's real preview canvas
+/// (oracle/record_preview_ratings.py).
+// leaf: audit-options-ratings-preview-window-preview-window-like-dislike-and-numerical-rating-icon-size
+// leaf: audit-options-ratings-preview-window-preview-window-inc-dec-rating-icon-height
+#[test]
+#[allow(
+    clippy::cast_possible_truncation,
+    clippy::cast_precision_loss,
+    clippy::float_cmp
+)] // (sizes of whole pixels)
+fn the_preview_ratings_and_hover_are_the_references_under_the_options() {
+    use hydrus_gui_model::ratings::{Kind, controls};
+
+    let recorded: serde_json::Value = hydrus_testkit::fixture_json("preview_ratings.json");
+    let client = Client::basic();
+    let file = preview_first(&client);
+    let set_ratings = |incdec: i64| {
+        for control in controls(&client.store, file) {
+            let service = control.service;
+            match control.kind {
+                Kind::Like { .. } => client
+                    .store
+                    .write_content(move |w| w.set_rating(service, &[file], Some(1.0)))
+                    .unwrap(),
+                Kind::Numerical { .. } => client
+                    .store
+                    .write_content(move |w| w.set_rating(service, &[file], Some(0.6)))
+                    .unwrap(),
+                Kind::IncDec { .. } => client
+                    .store
+                    .write_content(move |w| w.set_incdec(service, &[file], incdec))
+                    .unwrap(),
+            }
+        }
+    };
+    let num = |v: &serde_json::Value| v.as_f64().unwrap() as f32;
+    let mut last_incdec = -1;
+    for result in recorded["results"].as_array().unwrap() {
+        let incdec = result["incdec_value"].as_i64().unwrap();
+        if incdec != last_incdec {
+            set_ratings(incdec);
+            last_incdec = incdec;
+        }
+        // the sizes, set in the Options window
+        set_options(
+            &client,
+            &[
+                (SIZE, &format!("{}", result["icon"].as_f64().unwrap())),
+                (
+                    HEIGHT,
+                    &format!("{}", result["incdec_height"].as_f64().unwrap()),
+                ),
+            ],
+            &[],
+        );
+        client.bound.preview.refresh();
+        headless::render(&client.native(), 1000, 900);
+        let what = format!(
+            "icon {}, incdec {}, value {incdec}",
+            result["icon"], result["incdec_height"]
+        );
+        let rows: Vec<_> = client.ui.get_preview_ratings().iter().collect();
+        assert_eq!(rows.len(), 3, "{what}: a like, the stars and a counter");
+        let calls = result["background"]["calls"].as_array().unwrap();
+        let call = |kind: &str| calls.iter().find(|c| c["kind"] == kind).unwrap();
+        let widget = |kind: &str| {
+            result["popped"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .find(|c| c["kind"] == kind)
+                .unwrap()["size"]
+                .clone()
+        };
+        for row in &rows {
+            let (kind, pad) = (row.graphic.kind, row.graphic.pad);
+            let (width, height) = (row.width, row.height);
+            let (popup_width, popup_height) = (row.popup_width, row.popup_height);
+            match kind {
+                0 => {
+                    let size = &call("like")["size"];
+                    assert_eq!(
+                        (width, height),
+                        (num(&size[0]), num(&size[1])),
+                        "{what}: like drawn"
+                    );
+                    let w = widget("like");
+                    assert_eq!(
+                        (popup_width + 4.0, popup_height + 4.0),
+                        (num(&w[0]), num(&w[1])),
+                        "{what}: like popped in"
+                    );
+                }
+                1 => {
+                    let numerical = call("numerical");
+                    let reserved = calls
+                        .iter()
+                        .find(|c| c["kind"] == "numerical_width")
+                        .unwrap();
+                    let size = &numerical["size"];
+                    assert_eq!(pad, num(&numerical["pad"]), "{what}: the numerical pad");
+                    assert_eq!(
+                        (width + pad, height),
+                        (num(&reserved["width"]), num(&size[1])),
+                        "{what}: numerical drawn"
+                    );
+                    let w = widget("numerical");
+                    assert_eq!(
+                        (popup_width + pad, popup_height + 4.0),
+                        (num(&w[0]), num(&w[1])),
+                        "{what}: numerical popped in"
+                    );
+                }
+                _ => {
+                    let size = &call("incdec")["size"];
+                    assert_eq!(
+                        (width, height),
+                        (num(&size[0]), num(&size[1])),
+                        "{what}: incdec drawn"
+                    );
+                    let w = widget("incdec");
+                    assert_eq!(
+                        (popup_width + 1.0, popup_height + 4.0),
+                        (num(&w[0]), num(&w[1])),
+                        "{what}: incdec popped in"
+                    );
+                }
+            }
+        }
+    }
+    // the options go back to the defaults for what follows
+    set_options(&client, &[(SIZE, "12"), (HEIGHT, "12")], &[]);
+
+    // the draw switch: nothing is drawn with it off
+    for switch in recorded["switches"].as_array().unwrap() {
+        set_options(
+            &client,
+            &[],
+            &[
+                (DRAW, switch["draw"].as_bool().unwrap()),
+                (POP_IN, switch["pop_in"].as_bool().unwrap()),
+            ],
+        );
+        assert_eq!(
+            client.ui.get_preview_draw_top_right(),
+            switch["calls"].as_u64().unwrap() > 0,
+            "{switch}"
+        );
+    }
+
+    // the pop-in switch: the points around the hover's edges that pop it in
+    // are the reference's rectangle's
+    let mut popped_somewhere = 0;
+    for popin in recorded["popins"].as_array().unwrap() {
+        let on = popin["pop_in"].as_bool().unwrap();
+        set_options(&client, &[], &[(DRAW, true), (POP_IN, on)]);
+        let ui = &client.ui;
+        pointer_to(&client, 1.0, 1.0);
+        let (x, y) = (ui.get_preview_hover_x(), ui.get_preview_hover_y());
+        let (w, h) = (ui.get_preview_hover_width(), ui.get_preview_hover_height());
+        let map = |d: f32, size: f32, theirs: f32| -> f32 {
+            if (d - (theirs - 1.0)).abs() < f32::EPSILON {
+                size - 1.0
+            } else if (d - theirs).abs() < f32::EPSILON {
+                size
+            } else if (d - (theirs / 2.0).floor()).abs() < f32::EPSILON {
+                (size / 2.0).floor()
+            } else if d > theirs {
+                d - theirs + size
+            } else {
+                d
+            }
+        };
+        let mut points = popin["points"].as_array().unwrap().clone();
+        points.dedup();
+        let (ideal_w, ideal_h) = (num(&popin["ideal_size"][0]), num(&popin["ideal_size"][1]));
+        for point in &points {
+            let (dx, dy) = (num(&point["from_left"]), num(&point["from_top"]));
+            let (px, py) = if on {
+                (x + map(dx, w, ideal_w), y + map(dy, h, ideal_h))
+            } else {
+                (x + dx, y + dy)
+            };
+            pointer_to(&client, px + 0.5, py + 0.5);
+            assert_eq!(
+                ui.get_preview_hover_popped(),
+                point["contains"].as_bool().unwrap() && on,
+                "pop-in {on}: the point {dx}, {dy} from the hover's corner"
+            );
+            popped_somewhere += usize::from(ui.get_preview_hover_popped());
+            pointer_to(&client, 1.0, 1.0);
+        }
+    }
+    assert!(popped_somewhere >= 3, "the points inside pop it in");
+    set_options(&client, &[], &[(POP_IN, true)]);
 }

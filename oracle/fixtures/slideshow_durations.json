@@ -1,0 +1,2279 @@
+{
+ "default": [
+  1.0,
+  5.0,
+  10.0,
+  30.0,
+  60.0
+ ],
+ "results": [
+  {
+   "text": "1.0,5.0,10.0,30.0,60.0",
+   "before": [
+    4.0,
+    8.0
+   ],
+   "saved": [
+    1.0,
+    5.0,
+    10.0,
+    30.0,
+    60.0
+   ],
+   "fresh": {
+    "menu": "start slideshow",
+    "entries": [
+     "1 second",
+     "5 seconds",
+     "10 seconds",
+     "30 seconds",
+     "1 minute",
+     "very fast",
+     "custom interval",
+     "---",
+     {
+      "check": "shuffle this slideshow",
+      "checked": false
+     },
+     {
+      "check": "all slideshows shuffle",
+      "checked": false
+     },
+     "---",
+     {
+      "check": "this slideshow plays media once through",
+      "checked": false
+     },
+     {
+      "check": "always play media once through",
+      "checked": false
+     }
+    ]
+   },
+   "played": {
+    "menu": "slideshow running",
+    "entries": [
+     "stop (1 second)",
+     "---",
+     "1 second",
+     "5 seconds",
+     "10 seconds",
+     "30 seconds",
+     "1 minute",
+     "very fast",
+     "custom interval",
+     "---",
+     {
+      "check": "shuffle this slideshow",
+      "checked": false
+     },
+     {
+      "check": "all slideshows shuffle",
+      "checked": false
+     },
+     "---",
+     {
+      "check": "this slideshow plays media once through",
+      "checked": false
+     },
+     {
+      "check": "always play media once through",
+      "checked": false
+     }
+    ]
+   }
+  },
+  {
+   "text": "2.5,7",
+   "before": [
+    4.0,
+    8.0
+   ],
+   "saved": [
+    2.5,
+    7.0
+   ],
+   "fresh": {
+    "menu": "start slideshow",
+    "entries": [
+     "2.5 seconds",
+     "7 seconds",
+     "very fast",
+     "custom interval",
+     "---",
+     {
+      "check": "shuffle this slideshow",
+      "checked": false
+     },
+     {
+      "check": "all slideshows shuffle",
+      "checked": false
+     },
+     "---",
+     {
+      "check": "this slideshow plays media once through",
+      "checked": false
+     },
+     {
+      "check": "always play media once through",
+      "checked": false
+     }
+    ]
+   },
+   "played": {
+    "menu": "slideshow running",
+    "entries": [
+     "stop (2.5 seconds)",
+     "---",
+     "2.5 seconds",
+     "7 seconds",
+     "very fast",
+     "custom interval",
+     "---",
+     {
+      "check": "shuffle this slideshow",
+      "checked": false
+     },
+     {
+      "check": "all slideshows shuffle",
+      "checked": false
+     },
+     "---",
+     {
+      "check": "this slideshow plays media once through",
+      "checked": false
+     },
+     {
+      "check": "always play media once through",
+      "checked": false
+     }
+    ]
+   }
+  },
+  {
+   "text": "0.1",
+   "before": [
+    4.0,
+    8.0
+   ],
+   "saved": [
+    0.1
+   ],
+   "fresh": {
+    "menu": "start slideshow",
+    "entries": [
+     "100 milliseconds",
+     "very fast",
+     "custom interval",
+     "---",
+     {
+      "check": "shuffle this slideshow",
+      "checked": false
+     },
+     {
+      "check": "all slideshows shuffle",
+      "checked": false
+     },
+     "---",
+     {
+      "check": "this slideshow plays media once through",
+      "checked": false
+     },
+     {
+      "check": "always play media once through",
+      "checked": false
+     }
+    ]
+   },
+   "played": {
+    "menu": "slideshow running",
+    "entries": [
+     "stop (100 milliseconds)",
+     "---",
+     "100 milliseconds",
+     "very fast",
+     "custom interval",
+     "---",
+     {
+      "check": "shuffle this slideshow",
+      "checked": false
+     },
+     {
+      "check": "all slideshows shuffle",
+      "checked": false
+     },
+     "---",
+     {
+      "check": "this slideshow plays media once through",
+      "checked": false
+     },
+     {
+      "check": "always play media once through",
+      "checked": false
+     }
+    ]
+   }
+  },
+  {
+   "text": "3",
+   "before": [
+    4.0,
+    8.0
+   ],
+   "saved": [
+    3.0
+   ],
+   "fresh": {
+    "menu": "start slideshow",
+    "entries": [
+     "3 seconds",
+     "very fast",
+     "custom interval",
+     "---",
+     {
+      "check": "shuffle this slideshow",
+      "checked": false
+     },
+     {
+      "check": "all slideshows shuffle",
+      "checked": false
+     },
+     "---",
+     {
+      "check": "this slideshow plays media once through",
+      "checked": false
+     },
+     {
+      "check": "always play media once through",
+      "checked": false
+     }
+    ]
+   },
+   "played": {
+    "menu": "slideshow running",
+    "entries": [
+     "stop (3 seconds)",
+     "---",
+     "3 seconds",
+     "very fast",
+     "custom interval",
+     "---",
+     {
+      "check": "shuffle this slideshow",
+      "checked": false
+     },
+     {
+      "check": "all slideshows shuffle",
+      "checked": false
+     },
+     "---",
+     {
+      "check": "this slideshow plays media once through",
+      "checked": false
+     },
+     {
+      "check": "always play media once through",
+      "checked": false
+     }
+    ]
+   }
+  },
+  {
+   "text": " 4 , 5 ",
+   "before": [
+    4.0,
+    8.0
+   ],
+   "saved": [
+    4.0,
+    5.0
+   ],
+   "fresh": {
+    "menu": "start slideshow",
+    "entries": [
+     "4 seconds",
+     "5 seconds",
+     "very fast",
+     "custom interval",
+     "---",
+     {
+      "check": "shuffle this slideshow",
+      "checked": false
+     },
+     {
+      "check": "all slideshows shuffle",
+      "checked": false
+     },
+     "---",
+     {
+      "check": "this slideshow plays media once through",
+      "checked": false
+     },
+     {
+      "check": "always play media once through",
+      "checked": false
+     }
+    ]
+   },
+   "played": {
+    "menu": "slideshow running",
+    "entries": [
+     "stop (4 seconds)",
+     "---",
+     "4 seconds",
+     "5 seconds",
+     "very fast",
+     "custom interval",
+     "---",
+     {
+      "check": "shuffle this slideshow",
+      "checked": false
+     },
+     {
+      "check": "all slideshows shuffle",
+      "checked": false
+     },
+     "---",
+     {
+      "check": "this slideshow plays media once through",
+      "checked": false
+     },
+     {
+      "check": "always play media once through",
+      "checked": false
+     }
+    ]
+   }
+  },
+  {
+   "text": "1,,2",
+   "before": [
+    4.0,
+    8.0
+   ],
+   "saved": [
+    4.0,
+    8.0
+   ],
+   "fresh": {
+    "menu": "start slideshow",
+    "entries": [
+     "4 seconds",
+     "8 seconds",
+     "very fast",
+     "custom interval",
+     "---",
+     {
+      "check": "shuffle this slideshow",
+      "checked": false
+     },
+     {
+      "check": "all slideshows shuffle",
+      "checked": false
+     },
+     "---",
+     {
+      "check": "this slideshow plays media once through",
+      "checked": false
+     },
+     {
+      "check": "always play media once through",
+      "checked": false
+     }
+    ]
+   },
+   "played": {
+    "menu": "slideshow running",
+    "entries": [
+     "stop (4 seconds)",
+     "---",
+     "4 seconds",
+     "8 seconds",
+     "very fast",
+     "custom interval",
+     "---",
+     {
+      "check": "shuffle this slideshow",
+      "checked": false
+     },
+     {
+      "check": "all slideshows shuffle",
+      "checked": false
+     },
+     "---",
+     {
+      "check": "this slideshow plays media once through",
+      "checked": false
+     },
+     {
+      "check": "always play media once through",
+      "checked": false
+     }
+    ]
+   }
+  },
+  {
+   "text": "0",
+   "before": [
+    4.0,
+    8.0
+   ],
+   "saved": [
+    4.0,
+    8.0
+   ],
+   "fresh": {
+    "menu": "start slideshow",
+    "entries": [
+     "4 seconds",
+     "8 seconds",
+     "very fast",
+     "custom interval",
+     "---",
+     {
+      "check": "shuffle this slideshow",
+      "checked": false
+     },
+     {
+      "check": "all slideshows shuffle",
+      "checked": false
+     },
+     "---",
+     {
+      "check": "this slideshow plays media once through",
+      "checked": false
+     },
+     {
+      "check": "always play media once through",
+      "checked": false
+     }
+    ]
+   },
+   "played": {
+    "menu": "slideshow running",
+    "entries": [
+     "stop (4 seconds)",
+     "---",
+     "4 seconds",
+     "8 seconds",
+     "very fast",
+     "custom interval",
+     "---",
+     {
+      "check": "shuffle this slideshow",
+      "checked": false
+     },
+     {
+      "check": "all slideshows shuffle",
+      "checked": false
+     },
+     "---",
+     {
+      "check": "this slideshow plays media once through",
+      "checked": false
+     },
+     {
+      "check": "always play media once through",
+      "checked": false
+     }
+    ]
+   }
+  },
+  {
+   "text": "-1, 5",
+   "before": [
+    4.0,
+    8.0
+   ],
+   "saved": [
+    5.0
+   ],
+   "fresh": {
+    "menu": "start slideshow",
+    "entries": [
+     "5 seconds",
+     "very fast",
+     "custom interval",
+     "---",
+     {
+      "check": "shuffle this slideshow",
+      "checked": false
+     },
+     {
+      "check": "all slideshows shuffle",
+      "checked": false
+     },
+     "---",
+     {
+      "check": "this slideshow plays media once through",
+      "checked": false
+     },
+     {
+      "check": "always play media once through",
+      "checked": false
+     }
+    ]
+   },
+   "played": {
+    "menu": "slideshow running",
+    "entries": [
+     "stop (5 seconds)",
+     "---",
+     "5 seconds",
+     "very fast",
+     "custom interval",
+     "---",
+     {
+      "check": "shuffle this slideshow",
+      "checked": false
+     },
+     {
+      "check": "all slideshows shuffle",
+      "checked": false
+     },
+     "---",
+     {
+      "check": "this slideshow plays media once through",
+      "checked": false
+     },
+     {
+      "check": "always play media once through",
+      "checked": false
+     }
+    ]
+   }
+  },
+  {
+   "text": "0, 3, -2, 8",
+   "before": [
+    4.0,
+    8.0
+   ],
+   "saved": [
+    3.0,
+    8.0
+   ],
+   "fresh": {
+    "menu": "start slideshow",
+    "entries": [
+     "3 seconds",
+     "8 seconds",
+     "very fast",
+     "custom interval",
+     "---",
+     {
+      "check": "shuffle this slideshow",
+      "checked": false
+     },
+     {
+      "check": "all slideshows shuffle",
+      "checked": false
+     },
+     "---",
+     {
+      "check": "this slideshow plays media once through",
+      "checked": false
+     },
+     {
+      "check": "always play media once through",
+      "checked": false
+     }
+    ]
+   },
+   "played": {
+    "menu": "slideshow running",
+    "entries": [
+     "stop (3 seconds)",
+     "---",
+     "3 seconds",
+     "8 seconds",
+     "very fast",
+     "custom interval",
+     "---",
+     {
+      "check": "shuffle this slideshow",
+      "checked": false
+     },
+     {
+      "check": "all slideshows shuffle",
+      "checked": false
+     },
+     "---",
+     {
+      "check": "this slideshow plays media once through",
+      "checked": false
+     },
+     {
+      "check": "always play media once through",
+      "checked": false
+     }
+    ]
+   }
+  },
+  {
+   "text": "abc",
+   "before": [
+    4.0,
+    8.0
+   ],
+   "saved": [
+    4.0,
+    8.0
+   ],
+   "fresh": {
+    "menu": "start slideshow",
+    "entries": [
+     "4 seconds",
+     "8 seconds",
+     "very fast",
+     "custom interval",
+     "---",
+     {
+      "check": "shuffle this slideshow",
+      "checked": false
+     },
+     {
+      "check": "all slideshows shuffle",
+      "checked": false
+     },
+     "---",
+     {
+      "check": "this slideshow plays media once through",
+      "checked": false
+     },
+     {
+      "check": "always play media once through",
+      "checked": false
+     }
+    ]
+   },
+   "played": {
+    "menu": "slideshow running",
+    "entries": [
+     "stop (4 seconds)",
+     "---",
+     "4 seconds",
+     "8 seconds",
+     "very fast",
+     "custom interval",
+     "---",
+     {
+      "check": "shuffle this slideshow",
+      "checked": false
+     },
+     {
+      "check": "all slideshows shuffle",
+      "checked": false
+     },
+     "---",
+     {
+      "check": "this slideshow plays media once through",
+      "checked": false
+     },
+     {
+      "check": "always play media once through",
+      "checked": false
+     }
+    ]
+   }
+  },
+  {
+   "text": "",
+   "before": [
+    4.0,
+    8.0
+   ],
+   "saved": [
+    4.0,
+    8.0
+   ],
+   "fresh": {
+    "menu": "start slideshow",
+    "entries": [
+     "4 seconds",
+     "8 seconds",
+     "very fast",
+     "custom interval",
+     "---",
+     {
+      "check": "shuffle this slideshow",
+      "checked": false
+     },
+     {
+      "check": "all slideshows shuffle",
+      "checked": false
+     },
+     "---",
+     {
+      "check": "this slideshow plays media once through",
+      "checked": false
+     },
+     {
+      "check": "always play media once through",
+      "checked": false
+     }
+    ]
+   },
+   "played": {
+    "menu": "slideshow running",
+    "entries": [
+     "stop (4 seconds)",
+     "---",
+     "4 seconds",
+     "8 seconds",
+     "very fast",
+     "custom interval",
+     "---",
+     {
+      "check": "shuffle this slideshow",
+      "checked": false
+     },
+     {
+      "check": "all slideshows shuffle",
+      "checked": false
+     },
+     "---",
+     {
+      "check": "this slideshow plays media once through",
+      "checked": false
+     },
+     {
+      "check": "always play media once through",
+      "checked": false
+     }
+    ]
+   }
+  },
+  {
+   "text": "1e2",
+   "before": [
+    4.0,
+    8.0
+   ],
+   "saved": [
+    100.0
+   ],
+   "fresh": {
+    "menu": "start slideshow",
+    "entries": [
+     "1 minute 40 seconds",
+     "very fast",
+     "custom interval",
+     "---",
+     {
+      "check": "shuffle this slideshow",
+      "checked": false
+     },
+     {
+      "check": "all slideshows shuffle",
+      "checked": false
+     },
+     "---",
+     {
+      "check": "this slideshow plays media once through",
+      "checked": false
+     },
+     {
+      "check": "always play media once through",
+      "checked": false
+     }
+    ]
+   },
+   "played": {
+    "menu": "slideshow running",
+    "entries": [
+     "stop (1 minute 40 seconds)",
+     "---",
+     "1 minute 40 seconds",
+     "very fast",
+     "custom interval",
+     "---",
+     {
+      "check": "shuffle this slideshow",
+      "checked": false
+     },
+     {
+      "check": "all slideshows shuffle",
+      "checked": false
+     },
+     "---",
+     {
+      "check": "this slideshow plays media once through",
+      "checked": false
+     },
+     {
+      "check": "always play media once through",
+      "checked": false
+     }
+    ]
+   }
+  },
+  {
+   "text": "0.0001,3600",
+   "before": [
+    4.0,
+    8.0
+   ],
+   "saved": [
+    0.0001,
+    3600.0
+   ],
+   "fresh": {
+    "menu": "start slideshow",
+    "entries": [
+     "100 microseconds",
+     "1 hour",
+     "very fast",
+     "custom interval",
+     "---",
+     {
+      "check": "shuffle this slideshow",
+      "checked": false
+     },
+     {
+      "check": "all slideshows shuffle",
+      "checked": false
+     },
+     "---",
+     {
+      "check": "this slideshow plays media once through",
+      "checked": false
+     },
+     {
+      "check": "always play media once through",
+      "checked": false
+     }
+    ]
+   },
+   "played": {
+    "menu": "slideshow running",
+    "entries": [
+     "stop (100 microseconds)",
+     "---",
+     "100 microseconds",
+     "1 hour",
+     "very fast",
+     "custom interval",
+     "---",
+     {
+      "check": "shuffle this slideshow",
+      "checked": false
+     },
+     {
+      "check": "all slideshows shuffle",
+      "checked": false
+     },
+     "---",
+     {
+      "check": "this slideshow plays media once through",
+      "checked": false
+     },
+     {
+      "check": "always play media once through",
+      "checked": false
+     }
+    ]
+   }
+  },
+  {
+   "text": "1.5,2.25,3.125,86400",
+   "before": [
+    4.0,
+    8.0
+   ],
+   "saved": [
+    1.5,
+    2.25,
+    3.125,
+    86400.0
+   ],
+   "fresh": {
+    "menu": "start slideshow",
+    "entries": [
+     "1.5 seconds",
+     "2.2 seconds",
+     "3.1 seconds",
+     "1 day",
+     "very fast",
+     "custom interval",
+     "---",
+     {
+      "check": "shuffle this slideshow",
+      "checked": false
+     },
+     {
+      "check": "all slideshows shuffle",
+      "checked": false
+     },
+     "---",
+     {
+      "check": "this slideshow plays media once through",
+      "checked": false
+     },
+     {
+      "check": "always play media once through",
+      "checked": false
+     }
+    ]
+   },
+   "played": {
+    "menu": "slideshow running",
+    "entries": [
+     "stop (1.5 seconds)",
+     "---",
+     "1.5 seconds",
+     "2.2 seconds",
+     "3.1 seconds",
+     "1 day",
+     "very fast",
+     "custom interval",
+     "---",
+     {
+      "check": "shuffle this slideshow",
+      "checked": false
+     },
+     {
+      "check": "all slideshows shuffle",
+      "checked": false
+     },
+     "---",
+     {
+      "check": "this slideshow plays media once through",
+      "checked": false
+     },
+     {
+      "check": "always play media once through",
+      "checked": false
+     }
+    ]
+   }
+  },
+  {
+   "text": "5,5,5",
+   "before": [
+    4.0,
+    8.0
+   ],
+   "saved": [
+    5.0,
+    5.0,
+    5.0
+   ],
+   "fresh": {
+    "menu": "start slideshow",
+    "entries": [
+     "5 seconds",
+     "5 seconds",
+     "5 seconds",
+     "very fast",
+     "custom interval",
+     "---",
+     {
+      "check": "shuffle this slideshow",
+      "checked": false
+     },
+     {
+      "check": "all slideshows shuffle",
+      "checked": false
+     },
+     "---",
+     {
+      "check": "this slideshow plays media once through",
+      "checked": false
+     },
+     {
+      "check": "always play media once through",
+      "checked": false
+     }
+    ]
+   },
+   "played": {
+    "menu": "slideshow running",
+    "entries": [
+     "stop (5 seconds)",
+     "---",
+     "5 seconds",
+     "5 seconds",
+     "5 seconds",
+     "very fast",
+     "custom interval",
+     "---",
+     {
+      "check": "shuffle this slideshow",
+      "checked": false
+     },
+     {
+      "check": "all slideshows shuffle",
+      "checked": false
+     },
+     "---",
+     {
+      "check": "this slideshow plays media once through",
+      "checked": false
+     },
+     {
+      "check": "always play media once through",
+      "checked": false
+     }
+    ]
+   }
+  },
+  {
+   "text": "59,60,61,90,120,3599,3600,3601",
+   "before": [
+    4.0,
+    8.0
+   ],
+   "saved": [
+    59.0,
+    60.0,
+    61.0,
+    90.0,
+    120.0,
+    3599.0,
+    3600.0,
+    3601.0
+   ],
+   "fresh": {
+    "menu": "start slideshow",
+    "entries": [
+     "59 seconds",
+     "1 minute",
+     "1 minute 1 second",
+     "1 minute 30 seconds",
+     "2 minutes",
+     "59 minutes 59 seconds",
+     "1 hour",
+     "1 hour",
+     "very fast",
+     "custom interval",
+     "---",
+     {
+      "check": "shuffle this slideshow",
+      "checked": false
+     },
+     {
+      "check": "all slideshows shuffle",
+      "checked": false
+     },
+     "---",
+     {
+      "check": "this slideshow plays media once through",
+      "checked": false
+     },
+     {
+      "check": "always play media once through",
+      "checked": false
+     }
+    ]
+   },
+   "played": {
+    "menu": "slideshow running",
+    "entries": [
+     "stop (59 seconds)",
+     "---",
+     "59 seconds",
+     "1 minute",
+     "1 minute 1 second",
+     "1 minute 30 seconds",
+     "2 minutes",
+     "59 minutes 59 seconds",
+     "1 hour",
+     "1 hour",
+     "very fast",
+     "custom interval",
+     "---",
+     {
+      "check": "shuffle this slideshow",
+      "checked": false
+     },
+     {
+      "check": "all slideshows shuffle",
+      "checked": false
+     },
+     "---",
+     {
+      "check": "this slideshow plays media once through",
+      "checked": false
+     },
+     {
+      "check": "always play media once through",
+      "checked": false
+     }
+    ]
+   }
+  },
+  {
+   "text": "0.5,0.25,0.75,0.9",
+   "before": [
+    4.0,
+    8.0
+   ],
+   "saved": [
+    0.5,
+    0.25,
+    0.75,
+    0.9
+   ],
+   "fresh": {
+    "menu": "start slideshow",
+    "entries": [
+     "500 milliseconds",
+     "250 milliseconds",
+     "750 milliseconds",
+     "900 milliseconds",
+     "very fast",
+     "custom interval",
+     "---",
+     {
+      "check": "shuffle this slideshow",
+      "checked": false
+     },
+     {
+      "check": "all slideshows shuffle",
+      "checked": false
+     },
+     "---",
+     {
+      "check": "this slideshow plays media once through",
+      "checked": false
+     },
+     {
+      "check": "always play media once through",
+      "checked": false
+     }
+    ]
+   },
+   "played": {
+    "menu": "slideshow running",
+    "entries": [
+     "stop (500 milliseconds)",
+     "---",
+     "500 milliseconds",
+     "250 milliseconds",
+     "750 milliseconds",
+     "900 milliseconds",
+     "very fast",
+     "custom interval",
+     "---",
+     {
+      "check": "shuffle this slideshow",
+      "checked": false
+     },
+     {
+      "check": "all slideshows shuffle",
+      "checked": false
+     },
+     "---",
+     {
+      "check": "this slideshow plays media once through",
+      "checked": false
+     },
+     {
+      "check": "always play media once through",
+      "checked": false
+     }
+    ]
+   }
+  },
+  {
+   "text": "2,1",
+   "before": [
+    4.0,
+    8.0
+   ],
+   "saved": [
+    2.0,
+    1.0
+   ],
+   "fresh": {
+    "menu": "start slideshow",
+    "entries": [
+     "2 seconds",
+     "1 second",
+     "very fast",
+     "custom interval",
+     "---",
+     {
+      "check": "shuffle this slideshow",
+      "checked": false
+     },
+     {
+      "check": "all slideshows shuffle",
+      "checked": false
+     },
+     "---",
+     {
+      "check": "this slideshow plays media once through",
+      "checked": false
+     },
+     {
+      "check": "always play media once through",
+      "checked": false
+     }
+    ]
+   },
+   "played": {
+    "menu": "slideshow running",
+    "entries": [
+     "stop (2 seconds)",
+     "---",
+     "2 seconds",
+     "1 second",
+     "very fast",
+     "custom interval",
+     "---",
+     {
+      "check": "shuffle this slideshow",
+      "checked": false
+     },
+     {
+      "check": "all slideshows shuffle",
+      "checked": false
+     },
+     "---",
+     {
+      "check": "this slideshow plays media once through",
+      "checked": false
+     },
+     {
+      "check": "always play media once through",
+      "checked": false
+     }
+    ]
+   }
+  },
+  {
+   "text": "7.0",
+   "before": [
+    4.0,
+    8.0
+   ],
+   "saved": [
+    7.0
+   ],
+   "fresh": {
+    "menu": "start slideshow",
+    "entries": [
+     "7 seconds",
+     "very fast",
+     "custom interval",
+     "---",
+     {
+      "check": "shuffle this slideshow",
+      "checked": false
+     },
+     {
+      "check": "all slideshows shuffle",
+      "checked": false
+     },
+     "---",
+     {
+      "check": "this slideshow plays media once through",
+      "checked": false
+     },
+     {
+      "check": "always play media once through",
+      "checked": false
+     }
+    ]
+   },
+   "played": {
+    "menu": "slideshow running",
+    "entries": [
+     "stop (7 seconds)",
+     "---",
+     "7 seconds",
+     "very fast",
+     "custom interval",
+     "---",
+     {
+      "check": "shuffle this slideshow",
+      "checked": false
+     },
+     {
+      "check": "all slideshows shuffle",
+      "checked": false
+     },
+     "---",
+     {
+      "check": "this slideshow plays media once through",
+      "checked": false
+     },
+     {
+      "check": "always play media once through",
+      "checked": false
+     }
+    ]
+   }
+  },
+  {
+   "text": "100000",
+   "before": [
+    4.0,
+    8.0
+   ],
+   "saved": [
+    100000.0
+   ],
+   "fresh": {
+    "menu": "start slideshow",
+    "entries": [
+     "1 day 3 hours",
+     "very fast",
+     "custom interval",
+     "---",
+     {
+      "check": "shuffle this slideshow",
+      "checked": false
+     },
+     {
+      "check": "all slideshows shuffle",
+      "checked": false
+     },
+     "---",
+     {
+      "check": "this slideshow plays media once through",
+      "checked": false
+     },
+     {
+      "check": "always play media once through",
+      "checked": false
+     }
+    ]
+   },
+   "played": {
+    "menu": "slideshow running",
+    "entries": [
+     "stop (1 day 3 hours)",
+     "---",
+     "1 day 3 hours",
+     "very fast",
+     "custom interval",
+     "---",
+     {
+      "check": "shuffle this slideshow",
+      "checked": false
+     },
+     {
+      "check": "all slideshows shuffle",
+      "checked": false
+     },
+     "---",
+     {
+      "check": "this slideshow plays media once through",
+      "checked": false
+     },
+     {
+      "check": "always play media once through",
+      "checked": false
+     }
+    ]
+   }
+  },
+  {
+   "text": "１",
+   "before": [
+    4.0,
+    8.0
+   ],
+   "saved": [
+    1.0
+   ],
+   "fresh": {
+    "menu": "start slideshow",
+    "entries": [
+     "1 second",
+     "very fast",
+     "custom interval",
+     "---",
+     {
+      "check": "shuffle this slideshow",
+      "checked": false
+     },
+     {
+      "check": "all slideshows shuffle",
+      "checked": false
+     },
+     "---",
+     {
+      "check": "this slideshow plays media once through",
+      "checked": false
+     },
+     {
+      "check": "always play media once through",
+      "checked": false
+     }
+    ]
+   },
+   "played": {
+    "menu": "slideshow running",
+    "entries": [
+     "stop (1 second)",
+     "---",
+     "1 second",
+     "very fast",
+     "custom interval",
+     "---",
+     {
+      "check": "shuffle this slideshow",
+      "checked": false
+     },
+     {
+      "check": "all slideshows shuffle",
+      "checked": false
+     },
+     "---",
+     {
+      "check": "this slideshow plays media once through",
+      "checked": false
+     },
+     {
+      "check": "always play media once through",
+      "checked": false
+     }
+    ]
+   }
+  },
+  {
+   "text": "1_0",
+   "before": [
+    4.0,
+    8.0
+   ],
+   "saved": [
+    10.0
+   ],
+   "fresh": {
+    "menu": "start slideshow",
+    "entries": [
+     "10 seconds",
+     "very fast",
+     "custom interval",
+     "---",
+     {
+      "check": "shuffle this slideshow",
+      "checked": false
+     },
+     {
+      "check": "all slideshows shuffle",
+      "checked": false
+     },
+     "---",
+     {
+      "check": "this slideshow plays media once through",
+      "checked": false
+     },
+     {
+      "check": "always play media once through",
+      "checked": false
+     }
+    ]
+   },
+   "played": {
+    "menu": "slideshow running",
+    "entries": [
+     "stop (10 seconds)",
+     "---",
+     "10 seconds",
+     "very fast",
+     "custom interval",
+     "---",
+     {
+      "check": "shuffle this slideshow",
+      "checked": false
+     },
+     {
+      "check": "all slideshows shuffle",
+      "checked": false
+     },
+     "---",
+     {
+      "check": "this slideshow plays media once through",
+      "checked": false
+     },
+     {
+      "check": "always play media once through",
+      "checked": false
+     }
+    ]
+   }
+  },
+  {
+   "text": "1__0",
+   "before": [
+    4.0,
+    8.0
+   ],
+   "saved": [
+    4.0,
+    8.0
+   ],
+   "fresh": {
+    "menu": "start slideshow",
+    "entries": [
+     "4 seconds",
+     "8 seconds",
+     "very fast",
+     "custom interval",
+     "---",
+     {
+      "check": "shuffle this slideshow",
+      "checked": false
+     },
+     {
+      "check": "all slideshows shuffle",
+      "checked": false
+     },
+     "---",
+     {
+      "check": "this slideshow plays media once through",
+      "checked": false
+     },
+     {
+      "check": "always play media once through",
+      "checked": false
+     }
+    ]
+   },
+   "played": {
+    "menu": "slideshow running",
+    "entries": [
+     "stop (4 seconds)",
+     "---",
+     "4 seconds",
+     "8 seconds",
+     "very fast",
+     "custom interval",
+     "---",
+     {
+      "check": "shuffle this slideshow",
+      "checked": false
+     },
+     {
+      "check": "all slideshows shuffle",
+      "checked": false
+     },
+     "---",
+     {
+      "check": "this slideshow plays media once through",
+      "checked": false
+     },
+     {
+      "check": "always play media once through",
+      "checked": false
+     }
+    ]
+   }
+  },
+  {
+   "text": "_1",
+   "before": [
+    4.0,
+    8.0
+   ],
+   "saved": [
+    4.0,
+    8.0
+   ],
+   "fresh": {
+    "menu": "start slideshow",
+    "entries": [
+     "4 seconds",
+     "8 seconds",
+     "very fast",
+     "custom interval",
+     "---",
+     {
+      "check": "shuffle this slideshow",
+      "checked": false
+     },
+     {
+      "check": "all slideshows shuffle",
+      "checked": false
+     },
+     "---",
+     {
+      "check": "this slideshow plays media once through",
+      "checked": false
+     },
+     {
+      "check": "always play media once through",
+      "checked": false
+     }
+    ]
+   },
+   "played": {
+    "menu": "slideshow running",
+    "entries": [
+     "stop (4 seconds)",
+     "---",
+     "4 seconds",
+     "8 seconds",
+     "very fast",
+     "custom interval",
+     "---",
+     {
+      "check": "shuffle this slideshow",
+      "checked": false
+     },
+     {
+      "check": "all slideshows shuffle",
+      "checked": false
+     },
+     "---",
+     {
+      "check": "this slideshow plays media once through",
+      "checked": false
+     },
+     {
+      "check": "always play media once through",
+      "checked": false
+     }
+    ]
+   }
+  },
+  {
+   "text": "1_",
+   "before": [
+    4.0,
+    8.0
+   ],
+   "saved": [
+    4.0,
+    8.0
+   ],
+   "fresh": {
+    "menu": "start slideshow",
+    "entries": [
+     "4 seconds",
+     "8 seconds",
+     "very fast",
+     "custom interval",
+     "---",
+     {
+      "check": "shuffle this slideshow",
+      "checked": false
+     },
+     {
+      "check": "all slideshows shuffle",
+      "checked": false
+     },
+     "---",
+     {
+      "check": "this slideshow plays media once through",
+      "checked": false
+     },
+     {
+      "check": "always play media once through",
+      "checked": false
+     }
+    ]
+   },
+   "played": {
+    "menu": "slideshow running",
+    "entries": [
+     "stop (4 seconds)",
+     "---",
+     "4 seconds",
+     "8 seconds",
+     "very fast",
+     "custom interval",
+     "---",
+     {
+      "check": "shuffle this slideshow",
+      "checked": false
+     },
+     {
+      "check": "all slideshows shuffle",
+      "checked": false
+     },
+     "---",
+     {
+      "check": "this slideshow plays media once through",
+      "checked": false
+     },
+     {
+      "check": "always play media once through",
+      "checked": false
+     }
+    ]
+   }
+  },
+  {
+   "text": "+3",
+   "before": [
+    4.0,
+    8.0
+   ],
+   "saved": [
+    3.0
+   ],
+   "fresh": {
+    "menu": "start slideshow",
+    "entries": [
+     "3 seconds",
+     "very fast",
+     "custom interval",
+     "---",
+     {
+      "check": "shuffle this slideshow",
+      "checked": false
+     },
+     {
+      "check": "all slideshows shuffle",
+      "checked": false
+     },
+     "---",
+     {
+      "check": "this slideshow plays media once through",
+      "checked": false
+     },
+     {
+      "check": "always play media once through",
+      "checked": false
+     }
+    ]
+   },
+   "played": {
+    "menu": "slideshow running",
+    "entries": [
+     "stop (3 seconds)",
+     "---",
+     "3 seconds",
+     "very fast",
+     "custom interval",
+     "---",
+     {
+      "check": "shuffle this slideshow",
+      "checked": false
+     },
+     {
+      "check": "all slideshows shuffle",
+      "checked": false
+     },
+     "---",
+     {
+      "check": "this slideshow plays media once through",
+      "checked": false
+     },
+     {
+      "check": "always play media once through",
+      "checked": false
+     }
+    ]
+   }
+  },
+  {
+   "text": ".5",
+   "before": [
+    4.0,
+    8.0
+   ],
+   "saved": [
+    0.5
+   ],
+   "fresh": {
+    "menu": "start slideshow",
+    "entries": [
+     "500 milliseconds",
+     "very fast",
+     "custom interval",
+     "---",
+     {
+      "check": "shuffle this slideshow",
+      "checked": false
+     },
+     {
+      "check": "all slideshows shuffle",
+      "checked": false
+     },
+     "---",
+     {
+      "check": "this slideshow plays media once through",
+      "checked": false
+     },
+     {
+      "check": "always play media once through",
+      "checked": false
+     }
+    ]
+   },
+   "played": {
+    "menu": "slideshow running",
+    "entries": [
+     "stop (500 milliseconds)",
+     "---",
+     "500 milliseconds",
+     "very fast",
+     "custom interval",
+     "---",
+     {
+      "check": "shuffle this slideshow",
+      "checked": false
+     },
+     {
+      "check": "all slideshows shuffle",
+      "checked": false
+     },
+     "---",
+     {
+      "check": "this slideshow plays media once through",
+      "checked": false
+     },
+     {
+      "check": "always play media once through",
+      "checked": false
+     }
+    ]
+   }
+  },
+  {
+   "text": "5.",
+   "before": [
+    4.0,
+    8.0
+   ],
+   "saved": [
+    5.0
+   ],
+   "fresh": {
+    "menu": "start slideshow",
+    "entries": [
+     "5 seconds",
+     "very fast",
+     "custom interval",
+     "---",
+     {
+      "check": "shuffle this slideshow",
+      "checked": false
+     },
+     {
+      "check": "all slideshows shuffle",
+      "checked": false
+     },
+     "---",
+     {
+      "check": "this slideshow plays media once through",
+      "checked": false
+     },
+     {
+      "check": "always play media once through",
+      "checked": false
+     }
+    ]
+   },
+   "played": {
+    "menu": "slideshow running",
+    "entries": [
+     "stop (5 seconds)",
+     "---",
+     "5 seconds",
+     "very fast",
+     "custom interval",
+     "---",
+     {
+      "check": "shuffle this slideshow",
+      "checked": false
+     },
+     {
+      "check": "all slideshows shuffle",
+      "checked": false
+     },
+     "---",
+     {
+      "check": "this slideshow plays media once through",
+      "checked": false
+     },
+     {
+      "check": "always play media once through",
+      "checked": false
+     }
+    ]
+   }
+  },
+  {
+   "text": "٣",
+   "before": [
+    4.0,
+    8.0
+   ],
+   "saved": [
+    3.0
+   ],
+   "fresh": {
+    "menu": "start slideshow",
+    "entries": [
+     "3 seconds",
+     "very fast",
+     "custom interval",
+     "---",
+     {
+      "check": "shuffle this slideshow",
+      "checked": false
+     },
+     {
+      "check": "all slideshows shuffle",
+      "checked": false
+     },
+     "---",
+     {
+      "check": "this slideshow plays media once through",
+      "checked": false
+     },
+     {
+      "check": "always play media once through",
+      "checked": false
+     }
+    ]
+   },
+   "played": {
+    "menu": "slideshow running",
+    "entries": [
+     "stop (3 seconds)",
+     "---",
+     "3 seconds",
+     "very fast",
+     "custom interval",
+     "---",
+     {
+      "check": "shuffle this slideshow",
+      "checked": false
+     },
+     {
+      "check": "all slideshows shuffle",
+      "checked": false
+     },
+     "---",
+     {
+      "check": "this slideshow plays media once through",
+      "checked": false
+     },
+     {
+      "check": "always play media once through",
+      "checked": false
+     }
+    ]
+   }
+  },
+  {
+   "text": "1e",
+   "before": [
+    4.0,
+    8.0
+   ],
+   "saved": [
+    4.0,
+    8.0
+   ],
+   "fresh": {
+    "menu": "start slideshow",
+    "entries": [
+     "4 seconds",
+     "8 seconds",
+     "very fast",
+     "custom interval",
+     "---",
+     {
+      "check": "shuffle this slideshow",
+      "checked": false
+     },
+     {
+      "check": "all slideshows shuffle",
+      "checked": false
+     },
+     "---",
+     {
+      "check": "this slideshow plays media once through",
+      "checked": false
+     },
+     {
+      "check": "always play media once through",
+      "checked": false
+     }
+    ]
+   },
+   "played": {
+    "menu": "slideshow running",
+    "entries": [
+     "stop (4 seconds)",
+     "---",
+     "4 seconds",
+     "8 seconds",
+     "very fast",
+     "custom interval",
+     "---",
+     {
+      "check": "shuffle this slideshow",
+      "checked": false
+     },
+     {
+      "check": "all slideshows shuffle",
+      "checked": false
+     },
+     "---",
+     {
+      "check": "this slideshow plays media once through",
+      "checked": false
+     },
+     {
+      "check": "always play media once through",
+      "checked": false
+     }
+    ]
+   }
+  },
+  {
+   "text": "2 ",
+   "before": [
+    4.0,
+    8.0
+   ],
+   "saved": [
+    2.0
+   ],
+   "fresh": {
+    "menu": "start slideshow",
+    "entries": [
+     "2 seconds",
+     "very fast",
+     "custom interval",
+     "---",
+     {
+      "check": "shuffle this slideshow",
+      "checked": false
+     },
+     {
+      "check": "all slideshows shuffle",
+      "checked": false
+     },
+     "---",
+     {
+      "check": "this slideshow plays media once through",
+      "checked": false
+     },
+     {
+      "check": "always play media once through",
+      "checked": false
+     }
+    ]
+   },
+   "played": {
+    "menu": "slideshow running",
+    "entries": [
+     "stop (2 seconds)",
+     "---",
+     "2 seconds",
+     "very fast",
+     "custom interval",
+     "---",
+     {
+      "check": "shuffle this slideshow",
+      "checked": false
+     },
+     {
+      "check": "all slideshows shuffle",
+      "checked": false
+     },
+     "---",
+     {
+      "check": "this slideshow plays media once through",
+      "checked": false
+     },
+     {
+      "check": "always play media once through",
+      "checked": false
+     }
+    ]
+   }
+  },
+  {
+   "text": "nan",
+   "before": [
+    4.0,
+    8.0
+   ],
+   "saved": [
+    4.0,
+    8.0
+   ],
+   "fresh": {
+    "menu": "start slideshow",
+    "entries": [
+     "4 seconds",
+     "8 seconds",
+     "very fast",
+     "custom interval",
+     "---",
+     {
+      "check": "shuffle this slideshow",
+      "checked": false
+     },
+     {
+      "check": "all slideshows shuffle",
+      "checked": false
+     },
+     "---",
+     {
+      "check": "this slideshow plays media once through",
+      "checked": false
+     },
+     {
+      "check": "always play media once through",
+      "checked": false
+     }
+    ]
+   },
+   "played": {
+    "menu": "slideshow running",
+    "entries": [
+     "stop (4 seconds)",
+     "---",
+     "4 seconds",
+     "8 seconds",
+     "very fast",
+     "custom interval",
+     "---",
+     {
+      "check": "shuffle this slideshow",
+      "checked": false
+     },
+     {
+      "check": "all slideshows shuffle",
+      "checked": false
+     },
+     "---",
+     {
+      "check": "this slideshow plays media once through",
+      "checked": false
+     },
+     {
+      "check": "always play media once through",
+      "checked": false
+     }
+    ]
+   }
+  },
+  {
+   "text": "1 2",
+   "before": [
+    4.0,
+    8.0
+   ],
+   "saved": [
+    4.0,
+    8.0
+   ],
+   "fresh": {
+    "menu": "start slideshow",
+    "entries": [
+     "4 seconds",
+     "8 seconds",
+     "very fast",
+     "custom interval",
+     "---",
+     {
+      "check": "shuffle this slideshow",
+      "checked": false
+     },
+     {
+      "check": "all slideshows shuffle",
+      "checked": false
+     },
+     "---",
+     {
+      "check": "this slideshow plays media once through",
+      "checked": false
+     },
+     {
+      "check": "always play media once through",
+      "checked": false
+     }
+    ]
+   },
+   "played": {
+    "menu": "slideshow running",
+    "entries": [
+     "stop (4 seconds)",
+     "---",
+     "4 seconds",
+     "8 seconds",
+     "very fast",
+     "custom interval",
+     "---",
+     {
+      "check": "shuffle this slideshow",
+      "checked": false
+     },
+     {
+      "check": "all slideshows shuffle",
+      "checked": false
+     },
+     "---",
+     {
+      "check": "this slideshow plays media once through",
+      "checked": false
+     },
+     {
+      "check": "always play media once through",
+      "checked": false
+     }
+    ]
+   }
+  }
+ ],
+ "empty": {
+  "fresh": {
+   "menu": "start slideshow",
+   "entries": [
+    "very fast",
+    "custom interval",
+    "---",
+    {
+     "check": "shuffle this slideshow",
+     "checked": false
+    },
+    {
+     "check": "all slideshows shuffle",
+     "checked": false
+    },
+    "---",
+    {
+     "check": "this slideshow plays media once through",
+     "checked": false
+    },
+    {
+     "check": "always play media once through",
+     "checked": false
+    }
+   ]
+  },
+  "played": {
+   "menu": "slideshow running",
+   "entries": [
+    "stop (1 second)",
+    "---",
+    "very fast",
+    "custom interval",
+    "---",
+    {
+     "check": "shuffle this slideshow",
+     "checked": false
+    },
+    {
+     "check": "all slideshows shuffle",
+     "checked": false
+    },
+    "---",
+    {
+     "check": "this slideshow plays media once through",
+     "checked": false
+    },
+    {
+     "check": "always play media once through",
+     "checked": false
+    }
+   ]
+  }
+ }
+}

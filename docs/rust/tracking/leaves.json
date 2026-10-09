@@ -13348,10 +13348,10 @@
     "Native options registry has no editable 'Set a new mpv.conf on dialog ok?:' control in this page/box path."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Real window: typed path is copied over the store's mpv.conf only on OK, ignored on cancel, not remembered, nonexistent path changes nothing; matches MediaPlaybackPanel.UpdateOptions but expectations are literals restated from source (file I/O could be recorded), the reference's starting directory/error toast and the running player reloading the conf are not covered. Stale tracker note (says no editable row). Tests: crates/hydrus-gui/tests/gui/options_media_mpv.rs:88 a_new_mpv_conf_replaces_the_databases_on_ok_and_nothing_is_kept"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "Claude (recheck bin E, #97 phase 2)",
+    "note": "The real Options row is typed with the path in 14 cases the reference's real panel was run through (oracle/fixtures/mpv_conf.json): no mpv.conf yet, other content, an empty source, bytes that aren't text, CRLF, a large file, a read-only destination, same size and time (left alone), same size and another time, a folder, a missing path, blank, spaces, and a cancelled dialog; the bytes, the modification time and the write bit afterwards match. Fixed here: the copy is now the reference's mirror (it was a plain copy that lost the time and failed on a read-only file). The running player reloading the file is not covered (libmpv is not available to the tests). Tests: crates/hydrus-gui/tests/gui/options_media_mpv.rs a_new_mpv_conf_is_mirrored_over_the_databases_as_the_reference_does. The recording ran as root: the read-only case replaced the file, but on Linux as another user the reference's mirror keeps it (it makes a file writable only on Windows); see DIFFERENCES.md."
    }
   },
   {
@@ -13727,10 +13727,10 @@
     "Assessment covers this editable control and shared Apply/Cancel, not every control on its containing reference page or every background consumer."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Real window and real viewer key zoom for viewer-centre, media top-left and media centre, but expectations are typed (stays-put, +-1px) restated from source, no recording of centre behaviour exists (viewer_zoom.json only records the setting); the default 'mouse' choice is not driven through the viewer (only in Zoom-level tests). Tests: crates/hydrus-gui/tests/gui/options_media_zoom.rs:154 zooming_keeps_the_centerpoint_the_option_names"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "Claude (recheck bin E, #97 phase 2)",
+    "note": "The centrepoint choice is set through the real Options window (default 'mouse' checked) and the real viewer is zoomed with the mouse over the viewer at three places and outside it, the file dragged or not, for all four centrepoints; every step's x, y, width and height match the reference's real viewer (oracle/fixtures/viewer_zoom_steps.json). Tests: crates/hydrus-gui/tests/gui/options_media_zoom.rs zooming_steps_through_the_list_about_the_centrepoint_as_the_reference_does."
    }
   },
   {
@@ -13767,10 +13767,10 @@
     "Assessment covers this editable control and shared Apply/Cancel, not every control on its containing reference page or every background consumer."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Real text row '0.5, 1, 3' drives real viewer +/- stepping and parse errors are checked against the reference message, but the step results are typed literals (next_zoom in viewer_zoom.rs also literals); recording only replays canvas_zooms, not stepping through a custom media_zooms list. Tests: crates/hydrus-gui/tests/gui/options_media_zoom.rs:86 the_default_zoom_and_the_zoom_steps_are_the_viewer_s; crates/hydrus-gui-model/src/options.rs:6273"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "Claude (recheck bin E, #97 phase 2)",
+    "note": "The Media zooms row is set through the real Options window to five lists and the real viewer zoomed in 12 times and out 14 on a small and a large jpeg, with the file dragged or not and under every centrepoint, each step's rectangle compared with the reference's real viewer (oracle/fixtures/viewer_zoom_steps.json, 140 runs of 26 steps); 16 texts of the box (blank, zero, negative, underscores, exponent, other scripts' digits, nan) are compared with the reference's panel. Fixed here: Python's float() syntax is read (digits of any script, underscores). Tests: crates/hydrus-gui/tests/gui/options_media_zoom.rs zooming_steps_through_the_list_about_the_centrepoint_as_the_reference_does."
    }
   },
   {
@@ -14135,10 +14135,10 @@
     "Native options registry has no editable 'Pin the duplicates (right, duplicates filter) hover window so it is always visible:' control in this page/box path."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Drives the real duplicate filter window and the real Options row (default on, Apply, Cancel); but pinned/popped behaviour is typed from the Python source (hover_window_duplicates_always_on_top), no recorder exists and viewer_eye_menu.json deliberately omits the pin item. Tracker notes ('no editable row exists') are stale: the row exists and is tested. Tests: crates/hydrus-gui/tests/gui/duplicate_hover_pin.rs:36 the_duplicates_hover_is_pinned_or_pops_in_as_the_option_says"
+    "date": "2026-10-09",
+    "class": "likely-good",
+    "by": "Claude (recheck bin E, #97 phase 2)",
+    "note": "The pin/unpin rule matches the recording: pinned the hover is always up, unpinned it comes up only with the mouse inside its rectangle (flush right, top at 30% of the window's height), over five window sizes (oracle/fixtures/duplicates_hover_pin.json). Sizes differ (ours is wider, 330 against 224 pixels, and taller; the height is only checked to be above zero) and the mouse points are placed relative to our own rectangle (DIFFERENCES.md). Fixed here: the hover was full height from the top. Tests: crates/hydrus-gui/tests/gui/duplicate_hover_pin.rs the_duplicates_hover_is_pinned_or_pops_in_as_the_reference_does."
    }
   },
   {
@@ -14215,10 +14215,10 @@
     "Native options registry has no editable 'Draw ratings and locations (top-right) in preview window background:' control in this page/box path."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Real Options rows and the real preview pane, but the test's own header says expectations are read from the Python source (no recording); it only checks the draw flag and that the lines model is nonempty, not what is drawn. Tests: crates/hydrus-gui/tests/gui/preview_top_right.rs:155 the_top_right_hover_draws_in_the_background_and_pops_in_as_the_options_say"
+    "date": "2026-10-09",
+    "class": "weak",
+    "by": "Claude (recheck bin E, #97 phase 2)",
+    "note": "Only part of the leaf is covered: the draw switch is checked as a flag (the reference's canvas makes its rating draw calls only with it on, oracle/fixtures/preview_ratings.json) and the ratings' sizes as in the size leaves; the locations and icons it also draws (the leaf's 'and locations') are not compared, and the flag is not checked against what is painted. Tests: crates/hydrus-gui/tests/gui/preview_top_right.rs the_top_right_hover_draws_in_the_background_and_pops_in_as_the_options_say; the_preview_ratings_and_hover_are_the_references_under_the_options."
    }
   },
   {
@@ -14235,10 +14235,10 @@
     "Native options registry has no editable 'Pop-in this hover on mouseover:' control in this page/box path."
    ],
    "recheck": {
-    "date": "2026-10-08",
+    "date": "2026-10-09",
     "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Real preview pane pointer movement and Options Apply, default on, pop-in off/on; behaviour typed from the Python source, not recorded. Tests: crates/hydrus-gui/tests/gui/preview_top_right.rs:155 the_top_right_hover_draws_in_the_background_and_pops_in_as_the_options_say"
+    "by": "Claude (recheck bin E, #97 phase 2)",
+    "note": "Real preview pane and Options row: the sizes the popped-in hover takes and the points around its edges that pop it up are checked against the reference's `_GetIdealSizeAndPosition` rectangle (oracle/fixtures/preview_ratings.json), but the recording holds only that rectangle's `contains` for each point, not the reference's hide/show with the switch off; 'never with it off' is the test's own expectation, restated from the Python source. Tests: crates/hydrus-gui/tests/gui/preview_top_right.rs the_top_right_hover_draws_in_the_background_and_pops_in_as_the_options_say; the_preview_ratings_and_hover_are_the_references_under_the_options."
    }
   },
   {
@@ -14637,10 +14637,10 @@
     "Assessment covers this editable control and shared Apply/Cancel, not every control on its containing reference page or every background consumer."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Real Options window edit then real viewer menu shows '2.5 seconds','7 seconds' and choosing one starts 'stop (7 seconds)'; defaults match slideshow.json but the edited values and their labels are typed literals, and the 1.0,5.0,... default text is restated; no recording of a non-default durations list. Tests: crates/hydrus-gui/tests/gui/options_media_slideshow.rs:66 same test"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "Claude (recheck bin E, #97 phase 2)",
+    "note": "The real Options row is typed with 33 texts (the default, lists, padded, blank, zero and negative entries, 'abc', exponents, underscores, digits of other scripts, nan) and the saved list, and the real viewer's slideshow menu entries over it and the period chosen from its first entry, match the reference's real MediaViewerPanel and viewer (oracle/fixtures/slideshow_durations.json); an empty list too. Fixed here: Python's float syntax is read. Infinity is left out (the reference's menu raises an error for it). Tests: crates/hydrus-gui/tests/gui/options_media_slideshow.rs the_slideshow_durations_text_makes_the_menu_and_the_start_period_as_the_reference_does."
    }
   },
   {
@@ -16044,10 +16044,10 @@
     "No native action/editor path for this reference workflow."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "STALE NOTES: the editor has maximised/fullscreen controls and the viewer consumes them. The GUI test drives them and checks the opened viewer is maximised or fullscreen, but the expected values are typed from the reference source: no recording captures opening a window maximised/fullscreen (frame_placement.json is explicitly built with maximised/fullscreen false; frame_locations.json only holds the table columns). Tests: crates/hydrus-gui/tests/gui/options_gui_frames.rs:65 the_frame_editor_s_switches_decide_how_the_media_viewer_next_opens; crates/hydrus-gui/tests/gui/frame_locations.rs:69"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "Claude (recheck bin E, #97 phase 2)",
+    "note": "The frame editor's maximised and fullscreen switches are set (with remember size and a remembered position or none) and the real media viewer is opened and closed, as the reference's window was in 40 cases (oracle/fixtures/frame_state.json): its state when it opens, after the user restores, maximises or fullscreens it by hand, and the switches kept when it closes. Fixed here: with both switches the window is fullscreen and not maximised, and a fullscreen window is saved as not maximised. Tests: crates/hydrus-gui/tests/gui/options_gui_frames.rs the_start_maximised_and_fullscreen_switches_open_and_keep_the_window_as_the_reference_does. The recording is a plain QWidget opened by SetInitialTLWSizeAndPosition and closed through SaveTLWSizeAndPosition, not the media viewer's own frame; the last and opened positions are not compared, only the states and the saved switches and size."
    }
   },
   {
@@ -19379,10 +19379,10 @@
     "Native options registry has no editable 'Select rating service for styling numerical stars:' control in this page/box path."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Stale note: the row exists. Row label, box, choices and initial index are checked against options_dialog.json, and the GUI test drives the dropdown and the persisted key. But what the choice does (example shapes/colours from the service, int truncation, click behaviour) is checked against the native shape_path helper and typed literals read from the Python source, with no recording of the example widget. Tests: crates/hydrus-gui/tests/gui/options_gui_ratings_examples.rs:39 the_chosen_service_styles_the_example_stars_and_the_typed_sizes_size_them; crates/hydrus-gui-model/tests/model/options_dialog.rs:410 (RatingStyle row vs recording)"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "Claude (recheck bin E, #97 phase 2)",
+    "note": "The real ratings page: the dropdown's choices, the look of the example stars as the page opens (the reference's default circles, pad four), after each choice, and rated at one to five stars, and when the page is opened again with each service saved, match the reference's real RatingsPanel (oracle/fixtures/rating_examples.json); every size box (eight) is typed 16 values and the example's whole pixels match, clamping as its spin box does. Fixed here: the default look was fat stars with no pad. Star outlines are compared by shape number, not drawn geometry. Tests: crates/hydrus-gui/tests/gui/options_gui_ratings_examples.rs the_examples_are_styled_by_the_chosen_service_as_the_reference_does. When the page is opened again with a service saved, only the unrated look is compared (the rated one was recorded but not replayed)."
    }
   },
   {
@@ -19487,10 +19487,10 @@
     "Native options registry has no editable 'Preview window inc/dec rating icon height:' control in this page/box path."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Stale note: the row exists. Control label/box/bounds/persistence are recorded; the real preview pane consumer is driven, but its drawn widths/heights (round half-to-even when drawn vs int() when popped in) are typed expectations restated from the Python source (file header admits no recording). Tests: crates/hydrus-gui/tests/gui/preview_top_right.rs:77 the_preview_window_draws_its_ratings_at_the_sizes_the_options_say; crates/hydrus-gui-model/tests/model/options_dialog.rs:540; rating_sizes.rs:15 (recorded control)"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "Claude (recheck bin E, #97 phase 2)",
+    "note": "As the icon size leaf: the inc/dec height row set through the real Options window for ten values and three counter values (including 12345, which widens it), compared with the reference's drawn counter size and popped-in control size (oracle/fixtures/preview_ratings.json). Tests: crates/hydrus-gui/tests/gui/preview_top_right.rs the_preview_ratings_and_hover_are_the_references_under_the_options."
    }
   },
   {
@@ -19507,10 +19507,10 @@
     "Native options registry has no editable 'Preview window like/dislike and numerical rating icon size:' control in this page/box path."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Same: real preview-pane consumer and recorded control, but drawn likes width (14 px per like etc.) are literals from the source, not a recording. Tests: crates/hydrus-gui/tests/gui/preview_top_right.rs:77; crates/hydrus-gui-model/tests/model/options_dialog.rs:540; rating_sizes.rs:15"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "Claude (recheck bin E, #97 phase 2)",
+    "note": "The preview icon size is set through the real Options window to ten values (1 to 255, fractional, halves) with inc/dec values 0, 5 and 12345, and the preview pane's likes and stars are compared with the reference's real preview canvas (oracle/fixtures/preview_ratings.json, record_preview_ratings.py): the sizes `_DrawTopRight` draws them at (rounded half to even) and the sizes of the popped-in hover's controls (whole pixels, plus the reference's padding). Positions of the hover's items are not compared (Slint, not Qt, lays them out; see DIFFERENCES.md). Tests: crates/hydrus-gui/tests/gui/preview_top_right.rs the_preview_ratings_and_hover_are_the_references_under_the_options."
    }
   },
   {

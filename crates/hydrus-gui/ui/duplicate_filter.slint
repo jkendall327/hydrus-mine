@@ -32,9 +32,11 @@ component DuplicatePanel inherits Rectangle {
     in property <int> score;
     in property <bool> reviewing;
     callback decide(string);
+    // how tall its contents want to be (the hover is as tall as they are)
+    out property <length> content-height: content.preferred-height;
     width: 330px;
                 background: Theme.window;
-                VerticalLayout {
+                content := VerticalLayout {
                     padding: 8px;
                     spacing: 4px;
                     for statement in root.statements: Text {
@@ -110,8 +112,23 @@ export component DuplicateFilterWindow inherits Window {
     in property <int> transparency-mode;
     // the duplicates hover is pinned (always visible) or pops in on mouseover
     in property <bool> hover-pinned: true;
-    out property <bool> hover-popped: !root.hover-pinned && ((pointer.has-hover && pointer.mouse-x >= area.width - 330px) || popped-touch.has-hover);
+    // where the hover is, as the reference's `_GetIdealSizeAndPosition`
+    // puts it: as wide as a fifth of the window (or as its contents need),
+    // as tall as its contents, its top at 30% of the window's height, at the
+    // right edge
+    property <length> ideal-width: max(floor(root.width / 1px * 0.2) * 1px, 330px);
+    property <length> ideal-height: min(panel.content-height, root.height);
+    property <length> ideal-y: floor(root.height / 1px * 0.3) * 1px;
+    // pinned, it is always up; else it comes up with the mouse over where it
+    // would be, and stays while the mouse is over it
+    out property <bool> hover-popped: !root.hover-pinned && ((pointer.has-hover
+        && pointer.mouse-x >= root.width - root.ideal-width
+        && pointer.mouse-y >= root.ideal-y && pointer.mouse-y < root.ideal-y + root.ideal-height)
+        || popped-touch.has-hover);
     out property <length> hover-x: popped-touch.absolute-position.x;
+    out property <length> hover-y: popped-touch.absolute-position.y;
+    out property <length> hover-width: popped-touch.width;
+    out property <length> hover-height: popped-touch.height;
 
     in property <image> media;
     // e.g. "File One - 3/100 - 2 decisions"
@@ -292,12 +309,12 @@ export component DuplicateFilterWindow inherits Window {
         // the hover floats over the canvas' right edge: always while pinned,
         // on mouseover otherwise
         popped-touch := TouchArea {
-            x: root.width - 330px;
-            y: 0;
-            width: 330px;
-            height: root.height;
+            x: root.width - self.width;
+            y: root.ideal-y;
+            width: root.ideal-width;
+            height: root.ideal-height;
             visible: root.hover-pinned || root.hover-popped;
-            DuplicatePanel {
+            panel := DuplicatePanel {
                 width: parent.width;
                 height: parent.height;
                 statements: root.statements;
