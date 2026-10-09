@@ -691,7 +691,8 @@ fn open_inner(
         Editor::new(&manager, caller, context.simple, own)
     };
     let active = Rc::new(Cell::new(true));
-    let window = crate::app_title::new::<crate::ImportOptionsWindow>().map_err(|e| e.to_string())?;
+    let window =
+        crate::app_title::new::<crate::ImportOptionsWindow>().map_err(|e| e.to_string())?;
     window.set_favourite_editor(caller == CallerType::Favourites);
     window.set_favourite_name(name.unwrap_or_default().into());
     if caller == CallerType::Favourites {

@@ -16,7 +16,8 @@ pub(crate) struct Binding {
 }
 // Warnings follow the completed Enter Text question in the same private owner slot.
 fn warning_notice(child: &Slot, show: &Rc<dyn Fn()>, message: &str) -> Result<(), String> {
-    let notice = crate::app_title::new::<crate::SessionDialog>().map_err(|error| error.to_string())?;
+    let notice =
+        crate::app_title::new::<crate::SessionDialog>().map_err(|error| error.to_string())?;
     notice.set_window_title("Warning".into());
     notice.set_message(message.into());
     notice.set_notice_only(true);

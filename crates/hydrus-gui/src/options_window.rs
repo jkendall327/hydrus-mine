@@ -415,6 +415,9 @@ fn option_row(row: &Row<'_>, store: &Store, sessions: &[(Option<String>, String)
                 (Kind::RelatedWeights, Value::RelatedWeights(_)) => {
                     out.kind = 29;
                 }
+                (Kind::Note, _) => {
+                    out.kind = 41;
+                }
                 (Kind::FetchMpvAudioDevices, _) => {
                     out.kind = 40;
                     out.text = hydrus_gui_model::mpv_audio_devices::BUTTON.into();
@@ -522,6 +525,12 @@ pub(crate) fn open(
     let mut editor = Editor::new(settings);
     editor.set_local_location(resolved);
     editor.resolve_tag_services(store);
+    let bounds = store.snapshot().thumbnails;
+    editor.add_estimates(&hydrus_gui_model::options::Environment {
+        cores: std::thread::available_parallelism().map_or(1, std::num::NonZero::get),
+        screen: crate::windows::display_size(window.window()),
+        thumbnail_bounds: (bounds.bounding_width, bounds.bounding_height),
+    });
     let downloaders: hydrus_parse::Downloaders =
         store.read(hydrus_store::settings::get).unwrap_or_default();
     let current = hydrus_gui_model::gallery_source::resolve(

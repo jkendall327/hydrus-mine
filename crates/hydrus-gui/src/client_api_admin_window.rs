@@ -178,7 +178,8 @@ fn edit(
         w.show().map_err(|e| e.to_string())?;
         return Ok(());
     }
-    let window = crate::app_title::new::<crate::EditApiPermissionsWindow>().map_err(|e| e.to_string())?;
+    let window =
+        crate::app_title::new::<crate::EditApiPermissionsWindow>().map_err(|e| e.to_string())?;
     window.set_access_key(hex::encode(&key.access_key).into());
     window.set_name(key.name.as_str().into());
     window.set_permits_everything(key.permits_everything);
@@ -396,7 +397,8 @@ pub fn open(
         w.show().map_err(|e| e.to_string())?;
         return Ok(w.clone_strong());
     }
-    let window = crate::app_title::new::<crate::ClientApiKeysWindow>().map_err(|e| e.to_string())?;
+    let window =
+        crate::app_title::new::<crate::ClientApiKeysWindow>().map_err(|e| e.to_string())?;
     let editor = Rc::new(RefCell::new(
         Editor::new(&store).map_err(|e| e.to_string())?,
     ));

@@ -4450,29 +4450,51 @@ directory.
   question whatever the number of files (it says "this file"); so does
   hydrus-rs, with the one domain. The remote-repository case of the question
   has no counterpart (no remote file services).
-- **`audit-options-options-search` is untagged.** Of the 738 entries the
-  reference's search box offers (`oracle/fixtures/options_dialog.json`),
-  513 exist natively. The 225 missing are labels the native pages do not draw
-  at all: the help paragraphs the Qt panels carry ("Scheduled jobs such as
-  reparsing...", "These options are advanced!..."), the "help for this
-  panel -->" links, "(you appear to have 4 cores)"-style computed labels, and
-  the unit and "no limit"/"do not use" labels of some noneable controls and
-  combo boxes' current values on pages whose controls differ in kind. The
-  native options window has no collapsible boxes or inner tabs (they are
-  flattened into headings), so choosing a result needs no expanding.
-- **`audit-options-gui-main-window-application-display-name` is untagged.**
-  The main window and the tray tooltip follow the name; other windows keep
-  their own captions. Qt appends the display name to every window title;
-  here each window is a Slint component with its own title and no common
-  parent, so it would mean a change in all ~170 window openings.
-- **`audit-options-status-activity` is untagged.** Idle and CPU busy have
-  their tooltips, and the database field shows this process's reads and
-  writes ("db writing", "db reading"; the daemon is another process, so its
-  work is not shown, and with no job names there is no "current db job"
-  tooltip). The application-busy field (the reference's worker thread
-  pool: "working" above 3 busy threads, "busy" above 8, tooltip "There were N
-  threads doing jobs at last check") has no counterpart: hydrus-rs has no
-  such pool in the client.
+- **Options search (`audit-options-options-search`).** The search offers
+  705 of the reference's 738 entries (`oracle/fixtures/options_dialog.json`),
+  and 23 more. The index now has the reference's help paragraphs (drawn as
+  text rows on the pages, in their boxes), the labels inside the compound
+  editors, the byte controls' unit, and the labels it computes from the
+  machine (the core count; how many thumbnails, screens and 720p frames a
+  cache holds; the prefetch check), captured when the window opens. The test
+  compares the whole list and pins the rest in
+  `oracle/fixtures/options_search_known_differences.json`:
+  - the entries of pages hydrus-rs does not have as pages: **import options**
+    (its own window), **style** (Qt styles and stylesheets) and the Qt-only
+    "Preferred audio output device" of the QtMediaPlayer box;
+  - the "help for this panel -->" links (no help button here), the
+    "TEST: run the curl_cffi test..." control, and the four blank "   "
+    labels of the viewing statistics time controls;
+  - the tag suggestions page's labels where native words them differently
+    (recent tags, file lookup scripts, the notebook's service choice), the
+    ratings page's "favourites" and a sort control's current "chapter";
+  - **extra** entries: native time controls list days, hours, minutes and
+    seconds where the reference's widgets for those controls offer fewer.
+  The native window has no collapsible boxes or inner tabs (they are
+  flattened into headings), so choosing a result needs no expanding. A
+  paragraph of help is a row of its own and is highlighted when chosen. The
+  screen-dependent estimates need the screen the window is on, which the
+  window system answers only once the window is shown; opened before that
+  the screen-size entries are left out.
+- **Application display name on every window
+  (`audit-options-gui-main-window-application-display-name`).** Every
+  secondary window's title ends " - {name} {version}", as Qt appends the
+  display name (and its version, here hydrus-rs's) to each window title.
+  Windows already open keep the suffix they were made with when the name is
+  changed in Options (Qt updates them at once). A window whose title is empty
+  would show only the name in Qt; here it shows " - {name} {version}". Qt's
+  composition happens in the platform plugin, so it cannot be recorded; the
+  test checks the suffix each window is made with, with the recorded names.
+- **Status bar activity (`audit-options-status-activity`).** Idle and CPU
+  busy have the reference's tooltips. The **application-busy** field uses the
+  reference's wording and thresholds ("working" above 3 jobs, "busy" above 8,
+  looked at most every ten seconds, tooltip "There were N threads doing jobs
+  at last check.") but counts hydrus-rs's own work: the daemon's running
+  downloader queues (what it last said, if within ten seconds) plus the
+  client's running maintenance passes, not Python threads. The **database**
+  field says "db writing" or "db reading" while this window's connection is
+  busy (the daemon is another process, so its work is not shown); there are
+  no job names, so no "current db job" tooltip.
 - **`audit-options-importing-drag-and-drop-when-dnding-a-url-onto-the-program-switch-to-the-page-where-it-lands`
   stays untagged.** winit 0.30 delivers `DroppedFile` for dropped files on
   X11 only, and its X11 drop parser rejects every non-`file://` URI

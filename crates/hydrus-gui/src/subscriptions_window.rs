@@ -875,7 +875,8 @@ pub(crate) fn open(
     let exchange = edit_slots.exchange.clone();
     let state = Rc::new(RefCell::new(read(store).map_err(|e| e.to_string())?));
     let active = Rc::new(Cell::new(true));
-    let window = crate::app_title::new::<crate::SubscriptionsWindow>().map_err(|e| e.to_string())?;
+    let window =
+        crate::app_title::new::<crate::SubscriptionsWindow>().map_err(|e| e.to_string())?;
     let paused = store
         .read(hydrus_store::settings::get::<hydrus_store::settings::Pauses>)
         .is_ok_and(|p| p.subscriptions);

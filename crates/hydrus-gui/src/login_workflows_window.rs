@@ -1131,7 +1131,8 @@ pub fn open_scripts(store: &Arc<Store>, slots: &Slots) -> Result<LoginScriptsWin
     if let Some(window) = slots.scripts.borrow().as_ref() {
         return Ok(window.clone_strong());
     }
-    let window = crate::app_title::new::<crate::LoginScriptsWindow>().map_err(|error| error.to_string())?;
+    let window =
+        crate::app_title::new::<crate::LoginScriptsWindow>().map_err(|error| error.to_string())?;
     let editor = Rc::new(RefCell::new(ScriptsEditor::new(
         store
             .read(hydrus_store::logins::load)

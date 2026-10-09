@@ -207,7 +207,13 @@ impl Control {
                 } else {
                     0
                 };
-                queues + self.0.pending.iter().filter(|p| p.borrow().is_some()).count()
+                queues
+                    + self
+                        .0
+                        .pending
+                        .iter()
+                        .filter(|p| p.borrow().is_some())
+                        .count()
             });
             (text, tip.to_owned())
         };

@@ -1487,6 +1487,9 @@ fn command_palette_page() -> Page {
         items: vec![boxed(
             "command palette",
             vec![
+                note(
+                    "By default, you can hit Ctrl+P to bring up a Command Palette. It initially shows your pages for quick navigation, but it can search for more.",
+                ),
                 check(
                     "Initially show all page results:",
                     |s| s.command_palette.initially_show_pages,
@@ -2075,6 +2078,9 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                 boxed(
                     "duplicate filter comparison score weights",
                     vec![
+                        note(
+                            "When processing potential duplicate pairs in the duplicate filter, the client tries to present the 'best' file first. It judges the two files on a variety of potential differences, each with a score. The file with the greatest total score is presented first. Here you can tinker with these scores.\n\nI recommend you leave all these as positive numbers, but if you wish, you can set a negative number to reduce the score.",
+                        ),
                         score(
                             "Score for jpeg with non-trivially higher jpeg quality:",
                             |s| s.duplicate_filter.scores.higher_jpeg_quality,
@@ -2130,6 +2136,9 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                 boxed(
                     "colours",
                     vec![
+                        note(
+                            "The duplicate filter can darken/lighten your normal background colour. This highlights the transitions between A and B and, if your background colour is normally pure white or black, can differentiate transparency vs white/black opaque image background.",
+                        ),
                         noneable(
                             "background light/dark switch intensity for A:",
                             none("do not change", 3, (1, 9), None),
@@ -2185,6 +2194,9 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                 boxed(
                     "drag and drop",
                     vec![
+                        note(
+                            "You can drag-and-drop a selection of files out of the client to quickly copy-export them to a folder or an external program (include web browser upload boxes).",
+                        ),
                         kept_check(
                             "Copy files to temp folder for drag-and-drop (works for <=50, <200MB file DnDs--fixes Discord!): ",
                             "discord_dnd_fix",
@@ -2224,36 +2236,46 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
         ),
         page(
             "open externally",
-            vec![opt(
-                "open externally",
-                Kind::OpenExternally,
-                Rc::new(|s| Value::OpenExternally(s.open_externally.clone())),
-                Rc::new(|s, value| match value {
-                    Value::OpenExternally(routing) => {
-                        s.open_externally = routing.clone();
-                        Ok(())
-                    }
-                    _ => Err(wrong("open externally")),
-                }),
-            )],
+            vec![
+                note(
+                    "This page uses the executable calls as set under the \"external programs\" panel. Go there first if you need to define a new url/file call.\n\nIf you rename calls there, the new labels will not update here until dialog ok. If you delete calls there, they will be removed from here on dialog ok. If you make big edits to your callables, it is best to ok the options dialog to lock them in and come back in here.",
+                ),
+                opt(
+                    "open externally",
+                    Kind::OpenExternally,
+                    Rc::new(|s| Value::OpenExternally(s.open_externally.clone())),
+                    Rc::new(|s, value| match value {
+                        Value::OpenExternally(routing) => {
+                            s.open_externally = routing.clone();
+                            Ok(())
+                        }
+                        _ => Err(wrong("open externally")),
+                    }),
+                ),
+            ],
         ),
         page(
             "external programs",
-            vec![boxed(
-                "external calls",
-                vec![opt(
+            vec![
+                note(
+                    "This system is under active development.\n\nHere we can teach your client about other programs it can call to complete jobs. You set them up here, and they will appear as options in appropriate places around the client. Each job has a certain type, starting with simple things like \"open file in external program\", and, as I write the pipelines for them, we will eventually get tasks like \"download URL\" and \"suggest tags\". Depending on the job type, it will have certain call parameters (e.g. a local media file path) that hydrus can pass on to the external program (e.g. an AI model for tagging). In future, there will also be response parameters (e.g. a list of tags) that hydrus will then ingest.",
+                ),
+                boxed(
                     "external calls",
-                    Kind::ExternalCalls,
-                    Rc::new(|s| Value::ExternalCalls(s.external_calls.clone())),
-                    Rc::new(|s, v| match v {
-                        Value::ExternalCalls(calls) => {
-                            s.external_calls = calls.clone();
-                            Ok(())
-                        }
-                        _ => Err(wrong("external calls")),
-                    }),
-                )],
-            )],
+                    vec![opt(
+                        "external calls",
+                        Kind::ExternalCalls,
+                        Rc::new(|s| Value::ExternalCalls(s.external_calls.clone())),
+                        Rc::new(|s, v| match v {
+                            Value::ExternalCalls(calls) => {
+                                s.external_calls = calls.clone();
+                                Ok(())
+                            }
+                            _ => Err(wrong("external calls")),
+                        }),
+                    )],
+                ),
+            ],
         ),
         page(
             "file search",
@@ -2261,6 +2283,9 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                 boxed(
                     "file search autocomplete",
                     vec![
+                        note(
+                            "This tag autocomplete appears in file search pages and other places where you use tags and system predicates to search for files.",
+                        ),
                         int(
                             "Active Search Predicates list height:",
                             (1, 128),
@@ -2485,6 +2510,9 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
         page(
             "files and trash",
             vec![
+                note(
+                    "If you set the default export directory blank, the client will use 'hydrus_export' under the current user's home directory.",
+                ),
                 check(
                     "When copying file hashes, prefix with booru-friendly hash type: ",
                     |s| s.file_handling.prefix_hash_when_copying,
@@ -2741,6 +2769,9 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                 boxed(
                     "frame locations",
                     vec![
+                        note(
+                            "Here you can override the current and default values for many frame and dialog sizing and positioning variables.\nThis is an advanced control. If you aren't confident of what you are doing here, come back later!",
+                        ),
                         check(
                             "BUGFIX: Disable off-screen window rescue: ",
                             |s| s.window_rescue.disabled,
@@ -2945,6 +2976,9 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                 boxed(
                     "page tab names",
                     vec![
+                        note(
+                            "If you have enough pages in a row, left/right arrows will appear to navigate them back and forth.\nDue to an unfortunate Qt issue, the tab bar will scroll so the current tab is right-most visible whenever you change page or a page is renamed. This is very annoying to live with.\nTherefore, do not put import pages in a long row of tabs, as it will reset scroll position on every progress update. Try to avoid long rows in general.\nJust make some nested 'page of pages' so they are not all in the same row.",
+                        ),
                         int(
                             "Max characters to display in a page name: ",
                             (1, 256),
@@ -3080,6 +3114,10 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                 boxed(
                     "work slots",
                     vec![
+                        note("ADVANCED! DO NOT CHANGE THIS UNLESS YOU UNDERSTAND IT."),
+                        note(
+                            "Due to current technical limitations, the hydrus import pages are throttled so that only so many can run in parallel. In UI, this is the difference between \"pending\" and \"working\" job status. Unfortunately, a page that is \"working\" but blocked on bandwidth or similar will nonetheless consume a slot.",
+                        ),
                         int(
                             "Number of gallery downloader file queues that can import at the same time:",
                             (1, 500),
@@ -3243,6 +3281,9 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                 boxed(
                     "file maintenance",
                     vec![
+                        note(
+                            "Scheduled jobs such as reparsing file metadata and regenerating thumbnails are performed in the background.",
+                        ),
                         check(
                             "Run file maintenance during idle time: ",
                             |s| s.file_maintenance.during_idle,
@@ -3288,6 +3329,9 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                 boxed(
                     "repository processing",
                     vec![
+                        note(
+                            "Repository processing takes a lot of CPU and works best when it can rip for long periods in idle time.",
+                        ),
                         duration(
                             "\"Very idle\" ideal work packet time: ",
                             time(&[Unit::Seconds, Unit::Milliseconds], 0.1),
@@ -3340,6 +3384,9 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                 boxed(
                     "sibling/parent sync processing",
                     vec![
+                        note(
+                            "The database compiles sibling and parent implication calculations in the background. This can use a LOT of CPU in big bumps.",
+                        ),
                         check(
                             "Do work in \"idle\" time: ",
                             |s| s.background_work.tag_display_during_idle,
@@ -3402,6 +3449,9 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                 boxed(
                     "potential duplicates search",
                     vec![
+                        note(
+                            "The discovery of new potential duplicate file pairs (as on the duplicates page, preparation tab) can run automatically.",
+                        ),
                         check(
                             "Search for potential duplicates in \"idle\" time: ",
                             |s| s.similar_files.during_idle,
@@ -3441,6 +3491,9 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                 boxed(
                     "duplicates auto-resolution",
                     vec![
+                        note(
+                            "The search, testing, and resolution work of duplicates auto-resolution rules (as on the duplicates page, auto-resolution tab) runs automatically in the background.",
+                        ),
                         check(
                             "Work duplicates auto-resolution in \"idle\" time: ",
                             |s| s.auto_resolution.during_idle,
@@ -3484,6 +3537,7 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                 boxed(
                     "deferred table delete",
                     vec![
+                        note("The database deletes old data in the background."),
                         duration(
                             "\"Idle\" ideal work packet time: ",
                             time(&[Unit::Seconds, Unit::Milliseconds], 0.1),
@@ -3655,6 +3709,9 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                 boxed(
                     "mpv",
                     vec![
+                        note(
+                            "MPV loads up the \"mpv.conf\" file in your database directory. Feel free to edit that file in place any time--it is reloaded in hydrus every time you ok this options dialog. Or, if you have everything set up in a different file already, you can overwrite your mpv.conf from that path here.\n\nNote, however, that applying a new mpv.conf will not \"reset/undo\" any options that are now ommitted in the new file. If you want to remove a line, edit/update the mpv.conf and then restart the client.",
+                        ),
                         opt(
                             "Set a new mpv.conf on dialog ok?:",
                             Kind::FilePath,
@@ -3914,6 +3971,9 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
         page(
             "media viewer hovers",
             vec![
+                note(
+                    "Hover windows are the pop-in panels in the Media Viewers. You typically have tags on the left, file info up top, and ratings, notes, and sometimes duplicate controls down the right.",
+                ),
                 boxed(
                     "background",
                     vec![
@@ -3994,6 +4054,9 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                 boxed(
                     "top hover button/menu controls",
                     vec![
+                        note(
+                            "The top hover in the center-top of the window provides various controls. Some of their behaviour can be customized here.",
+                        ),
                         choice(
                             "Zoom switch button switches between:",
                             &[
@@ -4025,6 +4088,9 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                 boxed(
                     "top hover file summary",
                     vec![
+                        note(
+                            "The top hover window shows a text summary of the file, usually the basic file metadata and the time it was imported. You can show more information here.\n\nYou set this same text to show in the main window status bar for single thumbnail selections under the \"thumbnails\" page.",
+                        ),
                         check(
                             "Show archived status: ",
                             |s| s.info_line.archived_interesting,
@@ -4245,9 +4311,11 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
         page(
             "speed and memory",
             vec![
+                note("These options are advanced! PROTIP: Do not go crazy here."),
                 Item::Box(
                     "thumbnail cache",
                     vec![
+                        note("Does not change much, thumbs are cheap."),
                         opt(
                             "Memory reserved for thumbnail cache:",
                             Kind::Bytes,
@@ -4277,6 +4345,9 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                 Item::Box(
                     "image cache",
                     vec![
+                        note(
+                            "Important if you want smooth navigation between different images in the media viewer. If you deal with huge images, bump up cache size and max size that can be cached or prefetched, but be prepared to pay the memory price.\n\nAllowing more prefetch is great, but it needs CPU.",
+                        ),
                         opt(
                             "Memory reserved for image cache:",
                             Kind::Bytes,
@@ -4341,6 +4412,9 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                 boxed(
                     "image tile cache",
                     vec![
+                        note(
+                            "Important if you do a lot of zooming in and out on the same image or a small number of comparison images.",
+                        ),
                         kept_bytes(
                             "Memory reserved for image tile cache:",
                             "image_tile_cache_size",
@@ -4363,6 +4437,7 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                 boxed(
                     "download pages update",
                     vec![
+                        note("EXPERIMENTAL, HYDEV ONLY, STAY AWAY!"),
                         duration(
                             "EXPERIMENTAL: Minimum gallery importer update time:",
                             time(&[Unit::Seconds, Unit::Milliseconds], 0.25),
@@ -4403,7 +4478,12 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                 ),
                 boxed(
                     "video buffer",
-                    vec![kept_bytes("Memory for video buffer: ", "video_buffer_size")],
+                    vec![
+                        note(
+                            "This old option does not apply to mpv! It only applies to the native hydrus animation renderer!\nHydrus video rendering is CPU intensive.\nIf you have a lot of memory, you can set a generous potential video buffer to compensate.\nIf the video buffer can hold an entire video, it only needs to be rendered once and will play and loop very smoothly.\nPROTIP: Do not go crazy here.",
+                        ),
+                        kept_bytes("Memory for video buffer: ", "video_buffer_size"),
+                    ],
                 ),
             ],
         ),
@@ -4433,6 +4513,7 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
         page(
             "system tray",
             vec![
+                note("Unfortunately, your system does not seem to have a supported system tray."),
                 kept_check(
                     "Always show the hydrus system tray icon: ",
                     "always_show_system_tray_icon",
@@ -4536,6 +4617,9 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                 boxed(
                     "tag edit autocomplete",
                     vec![
+                        note(
+                            "This tag autocomplete appears in the manage tags dialog and other places where you edit a list of tags.",
+                        ),
                         check(
                             "By default, select the first tag result with actual count in write-autocomplete: ",
                             |s| s.tag_editing.select_first_with_count,
@@ -4629,6 +4713,9 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                 boxed(
                     "namespace rendering",
                     vec![
+                        note(
+                            "Namespaced tags are stored and directly edited in hydrus as \"namespace:subtag\", but most presentation windows can display them differently.",
+                        ),
                         check(
                             "Show namespaces: ",
                             |s| s.tag_presentation.show_namespaces,
@@ -4843,6 +4930,7 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
             vec![boxed(
                 "suggested tags",
                 vec![
+                    note("The manage tags dialog can provide several kinds of tag suggestions."),
                     int(
                         "Width of suggested tags columns: ",
                         (20, 65535),
@@ -4891,6 +4979,9 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                     tab(
                         "related",
                         vec![
+                            note(
+                                "This will search the database for tags statistically related to what your files already have. It only searches within the specific service atm. The score weights are advanced, so only change them if you know what is going on!",
+                            ),
                             check(
                                 "Show related tags: ",
                                 |s| s.related_tags.enabled,
@@ -4937,10 +5028,13 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                     ),
                     tab(
                         "file lookup scripts",
-                        vec![kept_check(
-                            "Show file lookup scripts on single-file manage tags windows: ",
-                            "show_file_lookup_script_tags",
-                        )],
+                        vec![
+                            note("This is an increasingly defunct system, do not expect miracles!"),
+                            kept_check(
+                                "Show file lookup scripts on single-file manage tags windows: ",
+                                "show_file_lookup_script_tags",
+                            ),
+                        ],
                     ),
                     tab(
                         "recent",
@@ -5240,8 +5334,43 @@ pub fn suggestions(pages: &[Page]) -> Vec<Suggestion> {
                 Item::Box(title, _) => std::slice::from_ref(title),
                 Item::Tab(..) => &[],
                 Item::Opt(option) => match option.kind {
-                    Kind::OpenExternally => &["URL calls", "single file calls"],
-                    Kind::Shortcuts => &["built-in hydrus shortcut sets", "custom user sets"],
+                    Kind::OpenExternally => &[
+                        "URL calls",
+                        "By default, when you ask to open a URL, hydrus will send it to your OS, and that figures out what your \"default\" web browser is. These OS launch commands can be buggy, though, and sometimes lose #anchor components. If this happens to you, set the specific launch command for your web browser here. You can set several different commands for multiple browsers or profiles, and these choices will be exposed in the deeper url menus; the top-most is the default for quicker actions like shortcuts or left-clicks on hyperlinks.",
+                        "single file calls",
+                        "Similarly, when you ask to open a file \"externally\", by default hydrus will send it to your OS to figure out your \"default\" program. This OS call may fail or direct to a program you do not want for several reasons, so you may set a specific and more reliable call here instead. You can even set multiple choices.\n\nThe \"all files\" entry is a backstop for all files. You can set an entry for \"image\", to mean all images, or specifically down to each filetype. A specific entry _completely overwrites_ a more general entry.",
+                    ],
+                    Kind::Shortcuts => &[
+                        "built-in hydrus shortcut sets",
+                        "custom user sets",
+                        "Custom shortcuts are advanced. They apply to the media viewer and must be turned on to take effect.",
+                        "Treat all non-number numpad inputs as \"normal\": ",
+                        "Replace \"left/right\"-click labels with \"primary/secondary\": ",
+                    ],
+                    Kind::NamespaceSorts => &[
+                        "You can manage your namespace sorting schemes here.\nThe client will sort media by comparing their namespaces, moving from left to right until an inequality is found.\nAny namespaces here will also appear in your collect-by dropdowns.",
+                    ],
+                    // (the box's title says it; the table has no label)
+                    Kind::ExternalCalls => &[
+                        "IF YOU IMPORT A CALL HERE THAT SOMEONE ELSE MADE, MAKE SURE YOU INSPECT IT BEFORE HOOKING IT UP TO ANYTHING. LOOK AT THE PARAMETERS.\n\nUSE YOUR BRAIN. DO NOT CALL THINGS BLINDLY.",
+                    ],
+                    // (the two colourset editors, each with these labels)
+                    Kind::GuiColours => &[
+                        "thumbnail background (local: normal/selected, not local: normal/selected): ",
+                        "thumbnail border (local: normal/selected, not local: normal/selected): ",
+                        "thumbnail grid background: ",
+                        "autocomplete background: ",
+                        "media viewer background: ",
+                        "media viewer text: ",
+                        "tags box background: ",
+                        "thumbnail background (local: normal/selected, not local: normal/selected): ",
+                        "thumbnail border (local: normal/selected, not local: normal/selected): ",
+                        "thumbnail grid background: ",
+                        "autocomplete background: ",
+                        "media viewer background: ",
+                        "media viewer text: ",
+                        "tags box background: ",
+                    ],
                     _ => std::slice::from_ref(&option.label),
                 },
             };
@@ -5263,6 +5392,17 @@ pub fn suggestions(pages: &[Page]) -> Vec<Suggestion> {
         walk(&page.items, i, page.name, &mut 0, &mut out);
     }
     out
+}
+
+/// What the machine says for the labels the options panels compute.
+#[derive(Debug, Clone, Copy)]
+pub struct Environment {
+    /// How many CPU cores there are.
+    pub cores: usize,
+    /// The size of the screen the window is on, in pixels, if known.
+    pub screen: Option<(u64, u64)>,
+    /// The thumbnails' bounding width and height.
+    pub thumbnail_bounds: (u32, u32),
 }
 
 /// Searchable auxiliary labels and current combo values, captured on opening as
@@ -5305,8 +5445,9 @@ pub fn suggestions_with_values(pages: &[Page], values: &[Vec<Value>]) -> Vec<Sug
                     labels.extend(*unit);
                 }
                 (Kind::NoneableText { none_phrase }, _) => labels.push(*none_phrase),
-                (Kind::CanvasTicks, _) => {
-                    labels.extend(["media views", "preview views", "client api views"]);
+                // (the unit combo's current text)
+                (Kind::Bytes, Value::Bytes { unit, .. }) => {
+                    labels.extend(["B", "KB", "MB", "GB", "TB"].get(*unit).copied());
                 }
                 (Kind::Duration { units, .. }, _) => {
                     labels.extend(units.iter().map(|unit| unit.label()));
@@ -5446,6 +5587,114 @@ impl Editor {
                         });
                     }
                 }
+            }
+        }
+    }
+
+    /// Add the labels the reference computes from the machine when it builds
+    /// its panels (the core count, how many thumbnails or screens a cache
+    /// holds), which its search captures with the rest.
+    pub fn add_estimates(&mut self, environment: &Environment) {
+        let policy = self.applied().0;
+        let bytes_of = |editor: &Self, label: &str| {
+            editor.pages.iter().enumerate().find_map(|(i, page)| {
+                page.options()
+                    .iter()
+                    .zip(&editor.values[i])
+                    .find_map(|(option, value)| match (option.label == label, value) {
+                        (true, Value::Bytes { amount, unit }) => {
+                            Some(crate::thumbnail_cache::combined(*amount, *unit))
+                        }
+                        _ => None,
+                    })
+            })
+        };
+        let mut found: Vec<(&str, &str, String)> = Vec::new();
+        found.push((
+            "maintenance and processing",
+            "ignore cpu usage",
+            format!("(you appear to have {} cores)", environment.cores),
+        ));
+        if let Some(bytes) = bytes_of(self, "Memory reserved for thumbnail cache:") {
+            let (width, height) = environment.thumbnail_bounds;
+            found.push((
+                "speed and memory",
+                "Memory reserved for thumbnail cache:",
+                format!(
+                    "(at {width}x{height}, about {} thumbnails)",
+                    hydrus_core::numbers::human_int(
+                        bytes / (3 * u64::from(width) * u64::from(height)).max(1)
+                    )
+                ),
+            ));
+        }
+        if let Some(bytes) = bytes_of(self, "Memory for video buffer: ") {
+            found.push((
+                "speed and memory",
+                "Memory for video buffer: ",
+                crate::video_buffer::estimate(bytes),
+            ));
+        }
+        if let Some(screen) = environment.screen {
+            found.push((
+                "speed and memory",
+                "Memory reserved for image cache:",
+                crate::image_cache::screen_estimate(policy.image_cache.bytes, screen),
+            ));
+        }
+        if let (Some(screen), Some(bytes)) = (
+            environment.screen,
+            bytes_of(self, "Memory reserved for image tile cache:"),
+        ) {
+            found.push((
+                "speed and memory",
+                "Memory reserved for image tile cache:",
+                format!(
+                    "(about {} fullscreens)",
+                    hydrus_core::numbers::human_int(bytes / (3 * screen.0 * screen.1).max(1))
+                ),
+            ));
+        }
+        for text in [
+            "Prefetch numbers exceed cache prefetch limit?",
+            crate::viewer_prefetch::warning(policy.image_cache.bytes, policy.viewer_prefetch),
+        ] {
+            found.push((
+                "speed and memory",
+                "Num next to prefetch in Media Viewer:",
+                text.to_owned(),
+            ));
+        }
+        found.push((
+            "speed and memory",
+            "Maximum % of cache that will be prefetched per media viewer:",
+            crate::viewer_prefetch::percentage_estimate(
+                policy.image_cache.bytes,
+                policy.viewer_prefetch.percentage,
+                policy.info_line.nice_resolutions,
+            ),
+        ));
+        found.push((
+            "speed and memory",
+            "Maximum image size (in % of cache) that can be cached:",
+            crate::image_cache::percentage_estimate(
+                policy.image_cache,
+                policy.info_line.nice_resolutions,
+            ),
+        ));
+        for (page, label, text) in found {
+            let anchor = format!("{label} ({page})");
+            if let Some((page_index, row)) = self
+                .suggestions
+                .iter()
+                .find(|suggestion| suggestion.text == anchor)
+                .map(|suggestion| (suggestion.page, suggestion.row))
+            {
+                self.suggestions.push(Suggestion {
+                    text: format!("{text} ({page})"),
+                    page: page_index,
+                    row,
+                });
             }
         }
     }

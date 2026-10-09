@@ -31,7 +31,8 @@ pub fn open(
         answer(Some(0));
         return Ok(None);
     }
-    let window = crate::app_title::new::<crate::ChoiceButtonsWindow>().map_err(|e| e.to_string())?;
+    let window =
+        crate::app_title::new::<crate::ChoiceButtonsWindow>().map_err(|e| e.to_string())?;
     window.set_window_title(ask.title.into());
     window.set_message(ask.message.into());
     window.set_no_label(ask.no_label.into());

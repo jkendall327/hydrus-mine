@@ -11,7 +11,7 @@ use std::cell::RefCell;
 use slint::SharedString;
 
 thread_local! {
-    static SUFFIX: RefCell<SharedString> = const { RefCell::new(SharedString::new()) };
+    static SUFFIX: RefCell<SharedString> = RefCell::new(SharedString::new());
 }
 
 /// The title suffix for the display name `name` (with the version, as the

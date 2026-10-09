@@ -1297,6 +1297,7 @@ fn options_open_and_place_the_search_bar_as_the_reference_did() {
 }
 
 // leaf: audit-options-gui-main-window-confirm-client-exit
+// leaf: audit-options-gui-main-window-application-display-name
 #[test]
 fn gui_identity_and_exit_confirmation_reach_the_main_window() {
     let (_dirs, store) = store();
@@ -1334,6 +1335,22 @@ fn gui_identity_and_exit_confirmation_reach_the_main_window() {
                 env!("CARGO_PKG_VERSION")
             )
         );
+        // and a window opened now ends its title with the name, as Qt does
+        // for every window: the Options window made next has it, while the
+        // one applied above (kept here) still has the one it was made with
+        let earlier = window.get_title_suffix();
+        open(&ui);
+        let next = bound.options.borrow().as_ref().unwrap().clone_strong();
+        assert_eq!(
+            next.get_title_suffix(),
+            format!(
+                " - {} {}",
+                name["saved"].as_str().unwrap(),
+                env!("CARGO_PKG_VERSION")
+            )
+        );
+        assert_eq!(window.get_title_suffix(), earlier);
+        next.invoke_cancel();
     }
     // A canceled switch leaves the live exit consumer unchanged.
     open(&ui);

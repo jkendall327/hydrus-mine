@@ -62,7 +62,8 @@ pub fn open(
     applied: Rc<dyn Fn(ImportOptionsSlice)>,
     closed: Rc<dyn Fn()>,
 ) -> Result<ImportOptionsOverwriteWindow, String> {
-    let window = crate::app_title::new::<crate::ImportOptionsOverwriteWindow>().map_err(|e| e.to_string())?;
+    let window = crate::app_title::new::<crate::ImportOptionsOverwriteWindow>()
+        .map_err(|e| e.to_string())?;
     let state = Rc::new(RefCell::new(draft));
     let active = Rc::new(Cell::new(true));
     let snapshot = store.snapshot();

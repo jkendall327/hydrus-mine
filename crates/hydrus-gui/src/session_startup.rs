@@ -88,7 +88,8 @@ pub fn prepare(store: Arc<Store>, bad: bool, ready: Ready) -> Result<Option<Reco
         return Ok(None);
     };
     let question = RecoveryQuestion::for_session(&name);
-    let window = crate::app_title::new::<crate::SessionDialog>().map_err(|error| error.to_string())?;
+    let window =
+        crate::app_title::new::<crate::SessionDialog>().map_err(|error| error.to_string())?;
     window.set_window_title(question.title.into());
     window.set_message(question.message.into());
     window.set_yes_label(question.yes.into());

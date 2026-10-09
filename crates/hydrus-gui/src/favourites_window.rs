@@ -406,7 +406,8 @@ fn open_edit(
     if let Some(old) = old {
         old.invoke_cancel();
     }
-    let window = crate::app_title::new::<crate::FavouriteEditWindow>().map_err(|e| e.to_string())?;
+    let window =
+        crate::app_title::new::<crate::FavouriteEditWindow>().map_err(|e| e.to_string())?;
     let sorts: SortSettings = words
         .store
         .read(hydrus_store::settings::get)

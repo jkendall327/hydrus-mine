@@ -515,7 +515,8 @@ pub fn open(
     slots: &Slots,
     changed: Rc<dyn Fn()>,
 ) -> Result<ServicesEditorWindow, String> {
-    let window = crate::app_title::new::<crate::ServicesEditorWindow>().map_err(|e| e.to_string())?;
+    let window =
+        crate::app_title::new::<crate::ServicesEditorWindow>().map_err(|e| e.to_string())?;
     let active = Rc::new(Cell::new(true));
     let editor = Rc::new(RefCell::new(Editor::new(store).map_err(|e| e.to_string())?));
     let sizes = store

@@ -140,7 +140,8 @@ fn present(
     closed: Rc<dyn Fn()>,
 ) -> Result<(), String> {
     slots.cancel();
-    let window = crate::app_title::new::<crate::SearchLogImportWindow>().map_err(|e| e.to_string())?;
+    let window =
+        crate::app_title::new::<crate::SearchLogImportWindow>().map_err(|e| e.to_string())?;
     let alive = Rc::new(Cell::new(true));
     let pending = Rc::new(RefCell::new(step));
     let close: Rc<dyn Fn()> = Rc::new({

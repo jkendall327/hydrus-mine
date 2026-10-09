@@ -404,7 +404,8 @@ impl Controller {
         message: &str,
         accepted: Rc<dyn Fn(String) -> Result<(), String>>,
     ) -> Result<(), String> {
-        let window = crate::app_title::new::<crate::ImportFavouritePromptWindow>().map_err(|e| e.to_string())?;
+        let window = crate::app_title::new::<crate::ImportFavouritePromptWindow>()
+            .map_err(|e| e.to_string())?;
         window.set_asking_name(asking_name);
         window.set_message(message.into());
         let live = Rc::new(Cell::new(true));

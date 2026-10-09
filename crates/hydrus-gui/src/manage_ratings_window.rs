@@ -117,7 +117,8 @@ pub(crate) fn open(
         .iter()
         .map(|f| ratings.remove(f).unwrap_or_default())
         .collect();
-    let window = crate::app_title::new::<crate::ManageRatingsWindow>().map_err(|e| e.to_string())?;
+    let window =
+        crate::app_title::new::<crate::ManageRatingsWindow>().map_err(|e| e.to_string())?;
     window.set_window_title(title(files.len()).into());
     let sizes = store
         .read(hydrus_store::settings::get::<hydrus_store::settings::RatingContextSizes>)

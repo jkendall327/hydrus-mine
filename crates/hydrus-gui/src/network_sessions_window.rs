@@ -792,7 +792,8 @@ fn edit_value(
     child: &Rc<RefCell<Option<EditNetworkValueWindow>>>,
     parent_active: Rc<Cell<bool>>,
 ) -> Result<(), String> {
-    let window = crate::app_title::new::<crate::EditNetworkValueWindow>().map_err(|e| e.to_string())?;
+    let window =
+        crate::app_title::new::<crate::EditNetworkValueWindow>().map_err(|e| e.to_string())?;
     let data = state.borrow().data.clone();
     let original_cookie = match &data {
         Data::Cookies(d) => Some(index.map_or_else(

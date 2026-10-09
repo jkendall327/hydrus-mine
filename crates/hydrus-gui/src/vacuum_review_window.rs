@@ -262,7 +262,8 @@ fn open_using_with_admission(
             (data, free)
         })
         .collect();
-    let window = crate::app_title::new::<crate::VacuumReviewWindow>().map_err(|error| error.to_string())?;
+    let window =
+        crate::app_title::new::<crate::VacuumReviewWindow>().map_err(|error| error.to_string())?;
     window.set_info(model::INFO.into());
     let state = Rc::new(Confirmation {
         window: window.as_weak(),

@@ -185,8 +185,8 @@ pub fn thumbnail_recovery(
 ) -> hydrus_media::Raster {
     thumbnails::recovery(store, id, settings, allow)
 }
-mod archive_delete_playback;
 pub mod app_title;
+mod archive_delete_playback;
 pub mod choice_buttons;
 pub mod database_maintenance_window;
 pub mod how_boned_window;

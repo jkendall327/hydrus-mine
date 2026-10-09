@@ -28,7 +28,8 @@ fn notice(
     allowed: Rc<dyn Fn() -> bool>,
 ) -> Result<(), String> {
     cancel_notice(slot);
-    let window = crate::app_title::new::<crate::SessionDialog>().map_err(|error| error.to_string())?;
+    let window =
+        crate::app_title::new::<crate::SessionDialog>().map_err(|error| error.to_string())?;
     window.set_window_title(title.into());
     window.set_notice_only(true);
     window.set_notice_ok_label("OK".into());
