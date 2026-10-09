@@ -965,7 +965,7 @@ operators as drop-downs, numbers (a span of time in its units), "≈"'s amount
 either side and "≈%"'s percentage shown when chosen, tick boxes, text
 (greyed when it doesn't count, as the namespace is until "namespace" is
 chosen), and what a panel can't make (a date that isn't one, a regex that
-doesn't compile) said under them. What a panel makes is the reference's:
+doesn't compile) said under them. "system:urls"'s exact URL and domain panels take any text as typed, as the reference's do (empty, padded or not a URL), and its URL class panel offers the client's classes that go with files, as `oracle/record_known_urls_panels.py` recorded. What a panel makes is the reference's:
 "number of tags" for a namespace with none or any becomes the namespace's
 own predicate (`-character:*anything*`), an empty note name is "notes", an
 invalid advanced tag is "invalid tag", and "≠" ratios are searched though

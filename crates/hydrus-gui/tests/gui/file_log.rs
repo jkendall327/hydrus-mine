@@ -390,11 +390,43 @@ fn search_for_urls_asks_for_the_page_the_reference_asked_for() {
         ui.invoke_new_page();
         ui.invoke_chooser_pressed(4);
         ui.invoke_chooser_pressed(8);
-        let text = sources.join("\n");
-        hydrus_gui::set_clipboard_reader(move || Ok(Some(text.clone())));
+        let queue = bound.current.borrow().borrow().importer().unwrap().queue;
+        let kinds: Vec<&str> = case["kinds"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|k| k.as_str().unwrap())
+            .collect();
+        let news: Vec<NewFileSeed> = sources
+            .iter()
+            .zip(&kinds)
+            .map(|(source, kind)| {
+                // (a URL source is stored percent-encoded, as the reference's
+                // seed does; the clipboard import is tested on its own)
+                let data = if *kind == "url" {
+                    hydrus_core::url::ensure_url_is_encoded(source, false, false)
+                } else {
+                    (*source).to_owned()
+                };
+                NewFileSeed {
+                    seed_type: if *kind == "url" {
+                        SeedType::Url
+                    } else {
+                        SeedType::Path
+                    },
+                    data: data.clone(),
+                    data_for_comparison: data,
+                    source_time: None,
+                    referral_url: None,
+                    meta: FileSeedMeta::default(),
+                }
+            })
+            .collect();
+        store
+            .write(move |ctx| queues::add_file_seeds(ctx.conn(), queue, &news, false, 0))
+            .unwrap();
         ui.invoke_open_file_log();
         let log = bound.file_log.borrow().as_ref().unwrap().clone_strong();
-        clipboard_import(&log);
         assert_eq!(cells(&log).len(), sources.len());
         let selected: Vec<i32> = case["selected"]
             .as_array()
@@ -468,7 +500,16 @@ fn search_for_urls_asks_for_the_page_the_reference_asked_for() {
         drop(pages);
         log.invoke_close_window();
     }
-    assert_eq!(offered_cases, 3);
+    // (the reference's panel also asks not to raise the window, which is not
+    // modelled: the page opens and is shown in this window)
+    let offered_recorded = recorded["cases"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .filter(|case| case["offered"].as_bool().unwrap())
+        .count();
+    assert_eq!(offered_cases, offered_recorded);
+    assert!(offered_recorded >= 5);
 }
 
 fn png_import(log: &FileLogWindow) {

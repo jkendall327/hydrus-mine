@@ -7,6 +7,11 @@
     "https://example.com/post/%E6%97%A5%E6%9C%AC 2",
     "https://example.com/post/3"
    ],
+   "kinds": [
+    "url",
+    "url",
+    "url"
+   ],
    "selected": [
     0,
     1,
@@ -50,6 +55,11 @@
     "https://example.com/post/2",
     "https://example.com/post/3"
    ],
+   "kinds": [
+    "url",
+    "url",
+    "url"
+   ],
    "selected": [
     2,
     0
@@ -87,6 +97,10 @@
     "https://example.com/post/1",
     "https://example.com/post/2"
    ],
+   "kinds": [
+    "url",
+    "url"
+   ],
    "selected": [
     1
    ],
@@ -118,6 +132,132 @@
    "sources": [
     "/synthetic/a.jpg",
     "/synthetic/b.jpg"
+   ],
+   "kinds": [
+    "path",
+    "path"
+   ],
+   "selected": [
+    0,
+    1
+   ],
+   "offered": false,
+   "pubs": []
+  },
+  {
+   "name": "non-http url among http",
+   "sources": [
+    "ftp://example.com/a",
+    "https://example.com/post/9"
+   ],
+   "kinds": [
+    "url",
+    "url"
+   ],
+   "selected": [
+    0,
+    1
+   ],
+   "offered": true,
+   "pubs": [
+    {
+     "location": [
+      "616c6c206c6f63616c206d65646961"
+     ],
+     "predicates": [
+      {
+       "text": "system:has url https://example.com/post/9",
+       "type": 30,
+       "inner": [
+        [
+         "system:has url https://example.com/post/9",
+         "(True, 'exact_match', 'https://example.com/post/9', 'has url https://example.com/post/9')"
+        ]
+       ]
+      }
+     ],
+     "page_name": "url search",
+     "activate_window": false
+    }
+   ]
+  },
+  {
+   "name": "only a non-http url",
+   "sources": [
+    "ftp://example.com/a",
+    "https://example.com/post/9"
+   ],
+   "kinds": [
+    "url",
+    "url"
+   ],
+   "selected": [
+    0
+   ],
+   "offered": true,
+   "pubs": [
+    {
+     "location": [
+      "616c6c206c6f63616c206d65646961"
+     ],
+     "predicates": [
+      {
+       "text": "",
+       "type": 30,
+       "inner": []
+      }
+     ],
+     "page_name": "url search",
+     "activate_window": false
+    }
+   ]
+  },
+  {
+   "name": "url first, then a path",
+   "sources": [
+    "https://example.com/post/1",
+    "/synthetic/a.jpg"
+   ],
+   "kinds": [
+    "url",
+    "path"
+   ],
+   "selected": [
+    0,
+    1
+   ],
+   "offered": true,
+   "pubs": [
+    {
+     "location": [
+      "616c6c206c6f63616c206d65646961"
+     ],
+     "predicates": [
+      {
+       "text": "system:has url https://example.com/post/1",
+       "type": 30,
+       "inner": [
+        [
+         "system:has url https://example.com/post/1",
+         "(True, 'exact_match', 'https://example.com/post/1', 'has url https://example.com/post/1')"
+        ]
+       ]
+      }
+     ],
+     "page_name": "url search",
+     "activate_window": false
+    }
+   ]
+  },
+  {
+   "name": "path first, then a url",
+   "sources": [
+    "/synthetic/a.jpg",
+    "https://example.com/post/1"
+   ],
+   "kinds": [
+    "path",
+    "url"
    ],
    "selected": [
     0,

@@ -247,6 +247,9 @@ search.
   for exactly nine historical leaves, with zero additional implementation credit.
   Evidence (checkpoint `dimensions-e00ddab70`, in git history before 2026-10-08).
 
+- **The URL class panel of "system:urls"**, with no URL class that goes with
+  files, makes no predicate when accepted; the reference's panel raises an
+  error there (its class choice has no value).
 - **System predicate editors type dates** ("2011-06-04", and "13:05") where
   the reference's have a calendar and a time box. Viewing-time predicates
   now preserve the millisecond fields through creation, reference import,
