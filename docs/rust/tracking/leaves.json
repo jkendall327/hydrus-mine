@@ -212,10 +212,10 @@
     "Imported hardcoded summaries are reference-compared; no inspected GUI regression changes and persists A/B/either target and the chosen hardcoded test together."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Window test sets target B plus the non-progressive test (and Either plus progressive in an AND child), applies and persists; the summaries are recorded and replayed against comparator_summary. The looking-at labels and the test order are typed from the Python source (they match it) rather than recorded. Tracker note is stale: a GUI test does accept and persist edited comparators. Tests: crates/hydrus-gui/tests/gui/duplicates_lane_page.rs:507 edited_comparators_are_accepted_and_persisted_with_their_summaries; crates/hydrus-gui-model/tests/model/auto_resolution_rules.rs rules_rows_and_comparators_are_the_references"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "recheck bin E session (claude/recheck-e-dupes)",
+    "note": "auto_resolution_editor.rs the_one_file_hardcoded_comparator_editor_is_the_references replays the recorded real EditPairComparatorOneFileHardcodedPanel for all 3 targets x 2 tests: the title, both choice lists and the default (A / progressive), and the comparator summary the editor and the rules list show ('B will match: is a non-progressive jpeg'), then written by the list and read back from the store. Looking-at labels and test order are the recorded ones, no longer typed."
    }
   },
   {
@@ -271,10 +271,10 @@
     "Reference comparator summaries and duplicate-engine outcomes exist, but no scoped GUI assertion accepts/persists a changed visual confidence selector; engine parity alone does not establish this control."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Window test checks the three confidence labels, picks the top one, applies and persists VisualDuplicates{100} (and 60 in an AND child); summaries for the three levels are recorded. The choice labels in the test come from the native visual_text itself and the choice list (60/85/100) is restated from the Python source; no recording of the editor's choices (the recorder docstring promises one, the fixture has none). Tracker note is stale: a GUI test does accept and persist edited comparators. Tests: crates/hydrus-gui/tests/gui/duplicates_lane_page.rs:507 edited_comparators_are_accepted_and_persisted_with_their_summaries; crates/hydrus-gui-model/tests/model/auto_resolution_rules.rs"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "recheck bin E session (claude/recheck-e-dupes)",
+    "note": "auto_resolution_editor.rs the_visual_duplicates_comparator_editor_is_the_references replays the recorded real EditPairComparatorRelativeVisualDuplicatesPanel: the three confidence choices (very probably / almost certainly / near-perfect) and their order, the default (almost certainly), each choice's summary ('A and B are near-perfect visual duplicates'), accepted into a rule and written (60, 85, 100) and read back; the editor's 'add comparator' kinds are checked to be among the reference's offered ones. Whether the engine's visual comparison agrees is covered separately by the visual-data recordings."
    }
   },
   {
@@ -1862,10 +1862,10 @@
     "Note settings modal stages extend-existing and ignore/replace/append/rename conflicts, returns them only on acceptance, and carries them into persisted merge options."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "The recording drives only one note_settings step (extend false, append) and the recorder replaces the reference's EditNoteImportOptionsPanel with a fake, so the nested panel's own content and conflict choices are not recorded. The window test sets extend false/append once, accepts and persists; ignore, replace, rename, cancel and extend true are untested, and the native modal's labels are not compared with the reference. Tests: crates/hydrus-gui-model/tests/model/merge_options_editor.rs:179 the_editor_edits_merge_options_as_the_reference_does; crates/hydrus-gui/tests/gui/merge_options.rs:70 the_default_merge_options_are_edited_and_written"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "recheck bin E session (claude/recheck-e-dupes)",
+    "note": "auto_resolution_editor.rs the_note_merge_settings_dialog_is_the_references replays 64 cases of the real nested note settings (EditDuplicateContentMergeOptionsWidget._EditNoteImportOptions with the real EditNoteImportOptionsPanel in simple mode and the real DialogEdit; no fake panel): for 'same quality' and 'better', accepted and cancelled, from two starting states, over all 8 extend x conflict edits: the dialog's title, its two rows, the four conflict choices and their order, the starting values it shows, and the merge options held after (cancel leaves them), through the native editor's apply."
    }
   },
   {
@@ -2965,10 +2965,10 @@
     "Rule fields update paused/operation/max-pending and validate rule names; action-changing controls reset incompatible custom merge state."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Drives the rule editor for name, paused, operation mode, max pending (77) and casefolded unique name ('X (1)'), reads back written rules and reopened values; expectations are typed from the Python source, no recording of the editor, and the operation-mode choice labels are not asserted in the test. Tests: crates/hydrus-gui/tests/gui/duplicates_lane_page.rs:860 rule_identity_and_search_choices_are_staged_then_persisted_on_apply; crates/hydrus-duplicates/tests/reference_run.rs (consumer of mode/cap)"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "recheck bin E session (claude/recheck-e-dupes)",
+    "note": "crates/hydrus-gui/tests/gui/auto_resolution_editor.rs the_rule_editors_name_pause_mode_and_pending_limit_are_the_references replays oracle/fixtures/auto_resolution_editor.json (record_auto_resolution_editor.py: the real EditDuplicatesAutoResolutionRulePanel and EditDuplicatesAutoResolutionRulesPanel._ImportRule driven through their controls) in the real rule editor and rules list: a new rule's controls (name 'new rule', operation choices semi-automatic/fully automatic, maximum pending 500), 9 identity cases (paused, either mode, max pending 1/77/512/1,000,000/none, empty and padded names kept exactly as typed) written and reopened, the max pending box enabled only for a semi-automatic rule, the 'better' action refused with the reference's wording when no comparator tells A from B, and 8 casefolded unique-name cases (new rule (1)/(2), STRASSE vs Straße, ...). The recording exposed and this PR fixed names being trimmed (the reference keeps them as typed). Consumers of mode and max pending are covered by hydrus-duplicates/tests/reference_run.rs."
    }
   },
   {
@@ -3003,10 +3003,10 @@
     "Reset selects chosen IDs or all when none selected, asks a targeted question, then moves stored pair queues back to search/test/pending stages."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Drives reset search/test/denied through the sidebar on a real store: question (from reset_question, same text as the reference), cancel, yes, and per-status DB counts, plus none-selected = all rules. Expected status moves are restated from the Python source (no recording), and the test asserts zeros for some statuses but not that pairs land in the exact target queue for search/test. Tests: crates/hydrus-gui/tests/gui/duplicates_lane_page.rs:725 the_rules_list_selects_pauses_shows_progress_and_resets_queues; crates/hydrus-gui/tests/gui/duplicates_page.rs:34"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "recheck bin E session (claude/recheck-e-dupes)",
+    "note": "crates/hydrus-gui/tests/gui/auto_resolution_resets.rs the_reset_buttons_ask_and_move_pairs_as_the_reference_does replays oracle/fixtures/auto_resolution_resets.json (record_auto_resolution_resets.py: the real ReviewDuplicatesAutoResolutionPanel on the reference's own auto-resolution database) through the real sidebar: reset search / test / denied with one rule selected or none (all 8 rules), the question worded by the reference with the rule count, answered no (nothing moves) and yes, and every rule's pair counts by status after each step (denied back to not searched, tested pairs back to untested, everything but the actioned pairs back to not searched, actioned pairs untouched). The reference's regen numbers and resync buttons for the rules are not ported."
    }
   },
   {

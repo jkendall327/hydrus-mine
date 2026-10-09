@@ -4669,3 +4669,12 @@ The palette's media-menu rows and the effect of activating one are recorded only
 ### Downloading misc options: unrecorded cases
 
 The text of a URL class's refusal to match (for example the leading-double-slash case) is not compared with the reference's, only whether a URL matches and what it becomes. The "consider %20 the same as space" option is checked on a gallery's first page only. The pause and stop characters are plain strings and are not recorded.
+
+## Auto-resolution rules panel: regenerate numbers and resync (recheck)
+
+The reference's auto-resolution tab has cog entries "regen numbers" ("This will
+delete all the cached pair counts for your rules...") and "resync rules to
+location contexts" ("This will check that every rule is tracking all the pairs in
+its search domain..."), recorded in `oracle/fixtures/auto_resolution_resets.json`.
+hydrus-rs keeps no cached counts to rebuild (it counts from its tables) and its
+rules follow their searches' domains as they are edited, so it has no such buttons.

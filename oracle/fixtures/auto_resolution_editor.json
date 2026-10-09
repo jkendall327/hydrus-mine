@@ -1,0 +1,3628 @@
+{
+ "identity_start": {
+  "name": "new rule",
+  "paused": false,
+  "modes": [
+   [
+    "semi-automatic: will search and test, but no action without human approval",
+    1
+   ],
+   [
+    "fully automatic: will search and test and action",
+    2
+   ]
+  ],
+  "mode": 1,
+  "max_pending": 500,
+  "max_pending_enabled": true,
+  "max_pending_none_phrase": "no limit",
+  "tabs": [
+   "search",
+   "comparison",
+   "action",
+   "preview"
+  ],
+  "max_pending_range": [
+   1,
+   1000000
+  ]
+ },
+ "identity": [
+  {
+   "name": "a rule",
+   "paused": false,
+   "mode": 1,
+   "max_pending": 512,
+   "max_pending_enabled": true,
+   "rule": {
+    "name": "a rule",
+    "paused": false,
+    "mode": 1,
+    "max_pending": 512,
+    "action": 4
+   }
+  },
+  {
+   "name": "a rule",
+   "paused": true,
+   "mode": 1,
+   "max_pending": 512,
+   "max_pending_enabled": true,
+   "rule": {
+    "name": "a rule",
+    "paused": true,
+    "mode": 1,
+    "max_pending": 512,
+    "action": 4
+   }
+  },
+  {
+   "name": "a rule",
+   "paused": false,
+   "mode": 2,
+   "max_pending": 512,
+   "max_pending_enabled": false,
+   "rule": {
+    "name": "a rule",
+    "paused": false,
+    "mode": 2,
+    "max_pending": 512,
+    "action": 4
+   }
+  },
+  {
+   "name": "a rule",
+   "paused": true,
+   "mode": 2,
+   "max_pending": null,
+   "max_pending_enabled": false,
+   "rule": {
+    "name": "a rule",
+    "paused": true,
+    "mode": 2,
+    "max_pending": null,
+    "action": 4
+   }
+  },
+  {
+   "name": "",
+   "paused": false,
+   "mode": 1,
+   "max_pending": 512,
+   "max_pending_enabled": true,
+   "rule": {
+    "name": "",
+    "paused": false,
+    "mode": 1,
+    "max_pending": 512,
+    "action": 4
+   }
+  },
+  {
+   "name": "  spaced  ",
+   "paused": false,
+   "mode": 1,
+   "max_pending": 1,
+   "max_pending_enabled": true,
+   "rule": {
+    "name": "  spaced  ",
+    "paused": false,
+    "mode": 1,
+    "max_pending": 1,
+    "action": 4
+   }
+  },
+  {
+   "name": "77 pending",
+   "paused": false,
+   "mode": 1,
+   "max_pending": 77,
+   "max_pending_enabled": true,
+   "rule": {
+    "name": "77 pending",
+    "paused": false,
+    "mode": 1,
+    "max_pending": 77,
+    "action": 4
+   }
+  },
+  {
+   "name": "no limit",
+   "paused": false,
+   "mode": 1,
+   "max_pending": null,
+   "max_pending_enabled": true,
+   "rule": {
+    "name": "no limit",
+    "paused": false,
+    "mode": 1,
+    "max_pending": null,
+    "action": 4
+   }
+  },
+  {
+   "name": "Ünïcode ß",
+   "paused": false,
+   "mode": 2,
+   "max_pending": 1000000,
+   "max_pending_enabled": false,
+   "rule": {
+    "name": "Ünïcode ß",
+    "paused": false,
+    "mode": 2,
+    "max_pending": 1000000,
+    "action": 4
+   }
+  },
+  {
+   "name": "no comparator",
+   "paused": false,
+   "mode": 1,
+   "max_pending": 512,
+   "max_pending_enabled": true,
+   "error": "VetoException: Hey, you have the action set to \"better/worse duplicate\" but the comparison step has no way to figure out A or B! You need to add at least one step that specifies either A or B so the rule knows which way around to apply the action. If there is no easy determination, perhaps \"set as same quality\" is more appropriate?"
+  }
+ ],
+ "names": [
+  {
+   "existing": [],
+   "imported": "new rule",
+   "names": [
+    "new rule"
+   ],
+   "got": "new rule"
+  },
+  {
+   "existing": [
+    "new rule"
+   ],
+   "imported": "new rule",
+   "names": [
+    "new rule",
+    "new rule (1)"
+   ],
+   "got": "new rule (1)"
+  },
+  {
+   "existing": [
+    "New Rule"
+   ],
+   "imported": "new rule",
+   "names": [
+    "New Rule",
+    "new rule (1)"
+   ],
+   "got": "new rule (1)"
+  },
+  {
+   "existing": [
+    "new rule",
+    "new rule (1)"
+   ],
+   "imported": "new rule",
+   "names": [
+    "new rule",
+    "new rule (1)",
+    "new rule (2)"
+   ],
+   "got": "new rule (2)"
+  },
+  {
+   "existing": [
+    "new rule",
+    "NEW RULE (1)"
+   ],
+   "imported": "new rule",
+   "names": [
+    "NEW RULE (1)",
+    "new rule",
+    "new rule (2)"
+   ],
+   "got": "new rule (2)"
+  },
+  {
+   "existing": [
+    "Straße"
+   ],
+   "imported": "STRASSE",
+   "names": [
+    "STRASSE (1)",
+    "Straße"
+   ],
+   "got": "STRASSE (1)"
+  },
+  {
+   "existing": [
+    "a",
+    "A (1)",
+    "a (2)"
+   ],
+   "imported": "A",
+   "names": [
+    "A (1)",
+    "A (3)",
+    "a",
+    "a (2)"
+   ],
+   "got": "A (3)"
+  },
+  {
+   "existing": [
+    "x (1)"
+   ],
+   "imported": "x (1)",
+   "names": [
+    "x (1)",
+    "x (1) (1)"
+   ],
+   "got": "x (1) (1)"
+  }
+ ],
+ "hardcoded": {
+  "target_choices": [
+   [
+    "A will match",
+    0
+   ],
+   [
+    "B will match",
+    1
+   ],
+   [
+    "either will match",
+    2
+   ]
+  ],
+  "test_choices": [
+   [
+    "is a progressive jpeg",
+    0
+   ],
+   [
+    "is a non-progressive jpeg",
+    1
+   ]
+  ],
+  "start": [
+   0,
+   0
+  ],
+  "cases": [
+   {
+    "target": 0,
+    "test": 0,
+    "summary": "A will match: is a progressive jpeg",
+    "looking_at": 0,
+    "type": 0
+   },
+   {
+    "target": 0,
+    "test": 1,
+    "summary": "A will match: is a non-progressive jpeg",
+    "looking_at": 0,
+    "type": 1
+   },
+   {
+    "target": 1,
+    "test": 0,
+    "summary": "B will match: is a progressive jpeg",
+    "looking_at": 1,
+    "type": 0
+   },
+   {
+    "target": 1,
+    "test": 1,
+    "summary": "B will match: is a non-progressive jpeg",
+    "looking_at": 1,
+    "type": 1
+   },
+   {
+    "target": 2,
+    "test": 0,
+    "summary": "either will match: is a progressive jpeg",
+    "looking_at": 2,
+    "type": 0
+   },
+   {
+    "target": 2,
+    "test": 1,
+    "summary": "either will match: is a non-progressive jpeg",
+    "looking_at": 2,
+    "type": 1
+   }
+  ]
+ },
+ "visual": {
+  "choices": [
+   [
+    "very probably visual duplicates",
+    60
+   ],
+   [
+    "almost certainly visual duplicates",
+    85
+   ],
+   [
+    "near-perfect visual duplicates",
+    100
+   ]
+  ],
+  "start": 85,
+  "cases": [
+   {
+    "confidence": 60,
+    "summary": "A and B are very probably visual duplicates",
+    "value": 60
+   },
+   {
+    "confidence": 85,
+    "summary": "A and B are almost certainly visual duplicates",
+    "value": 85
+   },
+   {
+    "confidence": 100,
+    "summary": "A and B are near-perfect visual duplicates",
+    "value": 100
+   }
+  ]
+ },
+ "comparator_list": {
+  "title": "Which type of comparator?",
+  "choices": [
+   [
+    "test A or B using search terms",
+    "A comparator that tests one file at a time using system predicates."
+   ],
+   [
+    "test A or B using other file info",
+    "A comparator that tests one file at a time using a special routine."
+   ],
+   [
+    "test A against B using file info",
+    "A comparator that performs a number test on the width, filesize, etc.. of A vs B."
+   ],
+   [
+    "test if A and B are visual duplicates",
+    "A comparator that examines the differences in the images' shape and colour to determine if they are visual duplicates."
+   ],
+   [
+    "A and B have the same filetype",
+    "A comparator that tests if the two files share the same filetype."
+   ],
+   [
+    "A and B have different filetypes",
+    "A comparator that tests if the two files have different filetype."
+   ],
+   [
+    "A has clearly better jpeg quality than B",
+    "A comparator that tests if A has a non-trivially higher apparent jpeg quality than B. The difference corresponds to about one label-step of quality as you see in the duplicate filter. If either file is not a jpeg, it fails."
+   ],
+   [
+    "A has same or better metadata flags to B",
+    "Easy one-shot comparator that wants to preserve rich metadata in A. If B has a \"has_x\" flag, A must have it too. The flags tested are: EXIF, XMP, IPTC, software/source, human-readable. The actual contents are not compared, only the presence."
+   ],
+   [
+    "A has ICC Profile if B does",
+    "Easy one-shot comparator that wants to keep ICC Profiles in A. If B has an ICC Profile, A must have one too. The actual contents are not compared, only the presence."
+   ],
+   [
+    "A and B have the same \"has exif\" value",
+    "A comparator that tests if the two files either both have or both do not have some amount of EXIF data."
+   ],
+   [
+    "A and B have the same \"has icc profile\" value",
+    "A comparator that tests if the two files either both have or both do not have some amount of ICC Profile data."
+   ],
+   [
+    "OR Comparator",
+    "A comparator that tests an OR of several sub-comparators."
+   ],
+   [
+    "AND Comparator",
+    "A comparator that tests an AND of several sub-comparators. Use when you need to mix several different comparators within an OR."
+   ]
+  ]
+ },
+ "note_settings": [
+  {
+   "decision": 2,
+   "accept": true,
+   "start": [
+    true,
+    1
+   ],
+   "edit": [
+    false,
+    0
+   ],
+   "dialog": {
+    "title": "edit note merge options",
+    "labels": [
+     "if possible, extend existing notes: ",
+     "if existing note-name conflict, what to do: "
+    ],
+    "extend": true,
+    "conflict": 1,
+    "conflict_choices": [
+     [
+      "replace the existing note",
+      0
+     ],
+     [
+      "do not add the new note",
+      1
+     ],
+     [
+      "append the new note to the end of the existing note",
+      2
+     ],
+     [
+      "add the new note under a new name",
+      3
+     ]
+    ],
+    "hidden": {
+     "get_notes": true,
+     "whitelist": true,
+     "overrides": true,
+     "all_override": true
+    }
+   },
+   "after": [
+    false,
+    0
+   ],
+   "notes_button_enabled": true
+  },
+  {
+   "decision": 2,
+   "accept": true,
+   "start": [
+    true,
+    1
+   ],
+   "edit": [
+    false,
+    1
+   ],
+   "dialog": {
+    "title": "edit note merge options",
+    "labels": [
+     "if possible, extend existing notes: ",
+     "if existing note-name conflict, what to do: "
+    ],
+    "extend": true,
+    "conflict": 1,
+    "conflict_choices": [
+     [
+      "replace the existing note",
+      0
+     ],
+     [
+      "do not add the new note",
+      1
+     ],
+     [
+      "append the new note to the end of the existing note",
+      2
+     ],
+     [
+      "add the new note under a new name",
+      3
+     ]
+    ],
+    "hidden": {
+     "get_notes": true,
+     "whitelist": true,
+     "overrides": true,
+     "all_override": true
+    }
+   },
+   "after": [
+    false,
+    1
+   ],
+   "notes_button_enabled": true
+  },
+  {
+   "decision": 2,
+   "accept": true,
+   "start": [
+    true,
+    1
+   ],
+   "edit": [
+    false,
+    2
+   ],
+   "dialog": {
+    "title": "edit note merge options",
+    "labels": [
+     "if possible, extend existing notes: ",
+     "if existing note-name conflict, what to do: "
+    ],
+    "extend": true,
+    "conflict": 1,
+    "conflict_choices": [
+     [
+      "replace the existing note",
+      0
+     ],
+     [
+      "do not add the new note",
+      1
+     ],
+     [
+      "append the new note to the end of the existing note",
+      2
+     ],
+     [
+      "add the new note under a new name",
+      3
+     ]
+    ],
+    "hidden": {
+     "get_notes": true,
+     "whitelist": true,
+     "overrides": true,
+     "all_override": true
+    }
+   },
+   "after": [
+    false,
+    2
+   ],
+   "notes_button_enabled": true
+  },
+  {
+   "decision": 2,
+   "accept": true,
+   "start": [
+    true,
+    1
+   ],
+   "edit": [
+    false,
+    3
+   ],
+   "dialog": {
+    "title": "edit note merge options",
+    "labels": [
+     "if possible, extend existing notes: ",
+     "if existing note-name conflict, what to do: "
+    ],
+    "extend": true,
+    "conflict": 1,
+    "conflict_choices": [
+     [
+      "replace the existing note",
+      0
+     ],
+     [
+      "do not add the new note",
+      1
+     ],
+     [
+      "append the new note to the end of the existing note",
+      2
+     ],
+     [
+      "add the new note under a new name",
+      3
+     ]
+    ],
+    "hidden": {
+     "get_notes": true,
+     "whitelist": true,
+     "overrides": true,
+     "all_override": true
+    }
+   },
+   "after": [
+    false,
+    3
+   ],
+   "notes_button_enabled": true
+  },
+  {
+   "decision": 2,
+   "accept": true,
+   "start": [
+    true,
+    1
+   ],
+   "edit": [
+    true,
+    0
+   ],
+   "dialog": {
+    "title": "edit note merge options",
+    "labels": [
+     "if possible, extend existing notes: ",
+     "if existing note-name conflict, what to do: "
+    ],
+    "extend": true,
+    "conflict": 1,
+    "conflict_choices": [
+     [
+      "replace the existing note",
+      0
+     ],
+     [
+      "do not add the new note",
+      1
+     ],
+     [
+      "append the new note to the end of the existing note",
+      2
+     ],
+     [
+      "add the new note under a new name",
+      3
+     ]
+    ],
+    "hidden": {
+     "get_notes": true,
+     "whitelist": true,
+     "overrides": true,
+     "all_override": true
+    }
+   },
+   "after": [
+    true,
+    0
+   ],
+   "notes_button_enabled": true
+  },
+  {
+   "decision": 2,
+   "accept": true,
+   "start": [
+    true,
+    1
+   ],
+   "edit": [
+    true,
+    1
+   ],
+   "dialog": {
+    "title": "edit note merge options",
+    "labels": [
+     "if possible, extend existing notes: ",
+     "if existing note-name conflict, what to do: "
+    ],
+    "extend": true,
+    "conflict": 1,
+    "conflict_choices": [
+     [
+      "replace the existing note",
+      0
+     ],
+     [
+      "do not add the new note",
+      1
+     ],
+     [
+      "append the new note to the end of the existing note",
+      2
+     ],
+     [
+      "add the new note under a new name",
+      3
+     ]
+    ],
+    "hidden": {
+     "get_notes": true,
+     "whitelist": true,
+     "overrides": true,
+     "all_override": true
+    }
+   },
+   "after": [
+    true,
+    1
+   ],
+   "notes_button_enabled": true
+  },
+  {
+   "decision": 2,
+   "accept": true,
+   "start": [
+    true,
+    1
+   ],
+   "edit": [
+    true,
+    2
+   ],
+   "dialog": {
+    "title": "edit note merge options",
+    "labels": [
+     "if possible, extend existing notes: ",
+     "if existing note-name conflict, what to do: "
+    ],
+    "extend": true,
+    "conflict": 1,
+    "conflict_choices": [
+     [
+      "replace the existing note",
+      0
+     ],
+     [
+      "do not add the new note",
+      1
+     ],
+     [
+      "append the new note to the end of the existing note",
+      2
+     ],
+     [
+      "add the new note under a new name",
+      3
+     ]
+    ],
+    "hidden": {
+     "get_notes": true,
+     "whitelist": true,
+     "overrides": true,
+     "all_override": true
+    }
+   },
+   "after": [
+    true,
+    2
+   ],
+   "notes_button_enabled": true
+  },
+  {
+   "decision": 2,
+   "accept": true,
+   "start": [
+    true,
+    1
+   ],
+   "edit": [
+    true,
+    3
+   ],
+   "dialog": {
+    "title": "edit note merge options",
+    "labels": [
+     "if possible, extend existing notes: ",
+     "if existing note-name conflict, what to do: "
+    ],
+    "extend": true,
+    "conflict": 1,
+    "conflict_choices": [
+     [
+      "replace the existing note",
+      0
+     ],
+     [
+      "do not add the new note",
+      1
+     ],
+     [
+      "append the new note to the end of the existing note",
+      2
+     ],
+     [
+      "add the new note under a new name",
+      3
+     ]
+    ],
+    "hidden": {
+     "get_notes": true,
+     "whitelist": true,
+     "overrides": true,
+     "all_override": true
+    }
+   },
+   "after": [
+    true,
+    3
+   ],
+   "notes_button_enabled": true
+  },
+  {
+   "decision": 2,
+   "accept": true,
+   "start": [
+    false,
+    3
+   ],
+   "edit": [
+    false,
+    0
+   ],
+   "dialog": {
+    "title": "edit note merge options",
+    "labels": [
+     "if possible, extend existing notes: ",
+     "if existing note-name conflict, what to do: "
+    ],
+    "extend": false,
+    "conflict": 3,
+    "conflict_choices": [
+     [
+      "replace the existing note",
+      0
+     ],
+     [
+      "do not add the new note",
+      1
+     ],
+     [
+      "append the new note to the end of the existing note",
+      2
+     ],
+     [
+      "add the new note under a new name",
+      3
+     ]
+    ],
+    "hidden": {
+     "get_notes": true,
+     "whitelist": true,
+     "overrides": true,
+     "all_override": true
+    }
+   },
+   "after": [
+    false,
+    0
+   ],
+   "notes_button_enabled": true
+  },
+  {
+   "decision": 2,
+   "accept": true,
+   "start": [
+    false,
+    3
+   ],
+   "edit": [
+    false,
+    1
+   ],
+   "dialog": {
+    "title": "edit note merge options",
+    "labels": [
+     "if possible, extend existing notes: ",
+     "if existing note-name conflict, what to do: "
+    ],
+    "extend": false,
+    "conflict": 3,
+    "conflict_choices": [
+     [
+      "replace the existing note",
+      0
+     ],
+     [
+      "do not add the new note",
+      1
+     ],
+     [
+      "append the new note to the end of the existing note",
+      2
+     ],
+     [
+      "add the new note under a new name",
+      3
+     ]
+    ],
+    "hidden": {
+     "get_notes": true,
+     "whitelist": true,
+     "overrides": true,
+     "all_override": true
+    }
+   },
+   "after": [
+    false,
+    1
+   ],
+   "notes_button_enabled": true
+  },
+  {
+   "decision": 2,
+   "accept": true,
+   "start": [
+    false,
+    3
+   ],
+   "edit": [
+    false,
+    2
+   ],
+   "dialog": {
+    "title": "edit note merge options",
+    "labels": [
+     "if possible, extend existing notes: ",
+     "if existing note-name conflict, what to do: "
+    ],
+    "extend": false,
+    "conflict": 3,
+    "conflict_choices": [
+     [
+      "replace the existing note",
+      0
+     ],
+     [
+      "do not add the new note",
+      1
+     ],
+     [
+      "append the new note to the end of the existing note",
+      2
+     ],
+     [
+      "add the new note under a new name",
+      3
+     ]
+    ],
+    "hidden": {
+     "get_notes": true,
+     "whitelist": true,
+     "overrides": true,
+     "all_override": true
+    }
+   },
+   "after": [
+    false,
+    2
+   ],
+   "notes_button_enabled": true
+  },
+  {
+   "decision": 2,
+   "accept": true,
+   "start": [
+    false,
+    3
+   ],
+   "edit": [
+    false,
+    3
+   ],
+   "dialog": {
+    "title": "edit note merge options",
+    "labels": [
+     "if possible, extend existing notes: ",
+     "if existing note-name conflict, what to do: "
+    ],
+    "extend": false,
+    "conflict": 3,
+    "conflict_choices": [
+     [
+      "replace the existing note",
+      0
+     ],
+     [
+      "do not add the new note",
+      1
+     ],
+     [
+      "append the new note to the end of the existing note",
+      2
+     ],
+     [
+      "add the new note under a new name",
+      3
+     ]
+    ],
+    "hidden": {
+     "get_notes": true,
+     "whitelist": true,
+     "overrides": true,
+     "all_override": true
+    }
+   },
+   "after": [
+    false,
+    3
+   ],
+   "notes_button_enabled": true
+  },
+  {
+   "decision": 2,
+   "accept": true,
+   "start": [
+    false,
+    3
+   ],
+   "edit": [
+    true,
+    0
+   ],
+   "dialog": {
+    "title": "edit note merge options",
+    "labels": [
+     "if possible, extend existing notes: ",
+     "if existing note-name conflict, what to do: "
+    ],
+    "extend": false,
+    "conflict": 3,
+    "conflict_choices": [
+     [
+      "replace the existing note",
+      0
+     ],
+     [
+      "do not add the new note",
+      1
+     ],
+     [
+      "append the new note to the end of the existing note",
+      2
+     ],
+     [
+      "add the new note under a new name",
+      3
+     ]
+    ],
+    "hidden": {
+     "get_notes": true,
+     "whitelist": true,
+     "overrides": true,
+     "all_override": true
+    }
+   },
+   "after": [
+    true,
+    0
+   ],
+   "notes_button_enabled": true
+  },
+  {
+   "decision": 2,
+   "accept": true,
+   "start": [
+    false,
+    3
+   ],
+   "edit": [
+    true,
+    1
+   ],
+   "dialog": {
+    "title": "edit note merge options",
+    "labels": [
+     "if possible, extend existing notes: ",
+     "if existing note-name conflict, what to do: "
+    ],
+    "extend": false,
+    "conflict": 3,
+    "conflict_choices": [
+     [
+      "replace the existing note",
+      0
+     ],
+     [
+      "do not add the new note",
+      1
+     ],
+     [
+      "append the new note to the end of the existing note",
+      2
+     ],
+     [
+      "add the new note under a new name",
+      3
+     ]
+    ],
+    "hidden": {
+     "get_notes": true,
+     "whitelist": true,
+     "overrides": true,
+     "all_override": true
+    }
+   },
+   "after": [
+    true,
+    1
+   ],
+   "notes_button_enabled": true
+  },
+  {
+   "decision": 2,
+   "accept": true,
+   "start": [
+    false,
+    3
+   ],
+   "edit": [
+    true,
+    2
+   ],
+   "dialog": {
+    "title": "edit note merge options",
+    "labels": [
+     "if possible, extend existing notes: ",
+     "if existing note-name conflict, what to do: "
+    ],
+    "extend": false,
+    "conflict": 3,
+    "conflict_choices": [
+     [
+      "replace the existing note",
+      0
+     ],
+     [
+      "do not add the new note",
+      1
+     ],
+     [
+      "append the new note to the end of the existing note",
+      2
+     ],
+     [
+      "add the new note under a new name",
+      3
+     ]
+    ],
+    "hidden": {
+     "get_notes": true,
+     "whitelist": true,
+     "overrides": true,
+     "all_override": true
+    }
+   },
+   "after": [
+    true,
+    2
+   ],
+   "notes_button_enabled": true
+  },
+  {
+   "decision": 2,
+   "accept": true,
+   "start": [
+    false,
+    3
+   ],
+   "edit": [
+    true,
+    3
+   ],
+   "dialog": {
+    "title": "edit note merge options",
+    "labels": [
+     "if possible, extend existing notes: ",
+     "if existing note-name conflict, what to do: "
+    ],
+    "extend": false,
+    "conflict": 3,
+    "conflict_choices": [
+     [
+      "replace the existing note",
+      0
+     ],
+     [
+      "do not add the new note",
+      1
+     ],
+     [
+      "append the new note to the end of the existing note",
+      2
+     ],
+     [
+      "add the new note under a new name",
+      3
+     ]
+    ],
+    "hidden": {
+     "get_notes": true,
+     "whitelist": true,
+     "overrides": true,
+     "all_override": true
+    }
+   },
+   "after": [
+    true,
+    3
+   ],
+   "notes_button_enabled": true
+  },
+  {
+   "decision": 2,
+   "accept": false,
+   "start": [
+    true,
+    1
+   ],
+   "edit": [
+    false,
+    0
+   ],
+   "dialog": {
+    "title": "edit note merge options",
+    "labels": [
+     "if possible, extend existing notes: ",
+     "if existing note-name conflict, what to do: "
+    ],
+    "extend": true,
+    "conflict": 1,
+    "conflict_choices": [
+     [
+      "replace the existing note",
+      0
+     ],
+     [
+      "do not add the new note",
+      1
+     ],
+     [
+      "append the new note to the end of the existing note",
+      2
+     ],
+     [
+      "add the new note under a new name",
+      3
+     ]
+    ],
+    "hidden": {
+     "get_notes": true,
+     "whitelist": true,
+     "overrides": true,
+     "all_override": true
+    }
+   },
+   "after": [
+    true,
+    1
+   ],
+   "notes_button_enabled": true
+  },
+  {
+   "decision": 2,
+   "accept": false,
+   "start": [
+    true,
+    1
+   ],
+   "edit": [
+    false,
+    1
+   ],
+   "dialog": {
+    "title": "edit note merge options",
+    "labels": [
+     "if possible, extend existing notes: ",
+     "if existing note-name conflict, what to do: "
+    ],
+    "extend": true,
+    "conflict": 1,
+    "conflict_choices": [
+     [
+      "replace the existing note",
+      0
+     ],
+     [
+      "do not add the new note",
+      1
+     ],
+     [
+      "append the new note to the end of the existing note",
+      2
+     ],
+     [
+      "add the new note under a new name",
+      3
+     ]
+    ],
+    "hidden": {
+     "get_notes": true,
+     "whitelist": true,
+     "overrides": true,
+     "all_override": true
+    }
+   },
+   "after": [
+    true,
+    1
+   ],
+   "notes_button_enabled": true
+  },
+  {
+   "decision": 2,
+   "accept": false,
+   "start": [
+    true,
+    1
+   ],
+   "edit": [
+    false,
+    2
+   ],
+   "dialog": {
+    "title": "edit note merge options",
+    "labels": [
+     "if possible, extend existing notes: ",
+     "if existing note-name conflict, what to do: "
+    ],
+    "extend": true,
+    "conflict": 1,
+    "conflict_choices": [
+     [
+      "replace the existing note",
+      0
+     ],
+     [
+      "do not add the new note",
+      1
+     ],
+     [
+      "append the new note to the end of the existing note",
+      2
+     ],
+     [
+      "add the new note under a new name",
+      3
+     ]
+    ],
+    "hidden": {
+     "get_notes": true,
+     "whitelist": true,
+     "overrides": true,
+     "all_override": true
+    }
+   },
+   "after": [
+    true,
+    1
+   ],
+   "notes_button_enabled": true
+  },
+  {
+   "decision": 2,
+   "accept": false,
+   "start": [
+    true,
+    1
+   ],
+   "edit": [
+    false,
+    3
+   ],
+   "dialog": {
+    "title": "edit note merge options",
+    "labels": [
+     "if possible, extend existing notes: ",
+     "if existing note-name conflict, what to do: "
+    ],
+    "extend": true,
+    "conflict": 1,
+    "conflict_choices": [
+     [
+      "replace the existing note",
+      0
+     ],
+     [
+      "do not add the new note",
+      1
+     ],
+     [
+      "append the new note to the end of the existing note",
+      2
+     ],
+     [
+      "add the new note under a new name",
+      3
+     ]
+    ],
+    "hidden": {
+     "get_notes": true,
+     "whitelist": true,
+     "overrides": true,
+     "all_override": true
+    }
+   },
+   "after": [
+    true,
+    1
+   ],
+   "notes_button_enabled": true
+  },
+  {
+   "decision": 2,
+   "accept": false,
+   "start": [
+    true,
+    1
+   ],
+   "edit": [
+    true,
+    0
+   ],
+   "dialog": {
+    "title": "edit note merge options",
+    "labels": [
+     "if possible, extend existing notes: ",
+     "if existing note-name conflict, what to do: "
+    ],
+    "extend": true,
+    "conflict": 1,
+    "conflict_choices": [
+     [
+      "replace the existing note",
+      0
+     ],
+     [
+      "do not add the new note",
+      1
+     ],
+     [
+      "append the new note to the end of the existing note",
+      2
+     ],
+     [
+      "add the new note under a new name",
+      3
+     ]
+    ],
+    "hidden": {
+     "get_notes": true,
+     "whitelist": true,
+     "overrides": true,
+     "all_override": true
+    }
+   },
+   "after": [
+    true,
+    1
+   ],
+   "notes_button_enabled": true
+  },
+  {
+   "decision": 2,
+   "accept": false,
+   "start": [
+    true,
+    1
+   ],
+   "edit": [
+    true,
+    1
+   ],
+   "dialog": {
+    "title": "edit note merge options",
+    "labels": [
+     "if possible, extend existing notes: ",
+     "if existing note-name conflict, what to do: "
+    ],
+    "extend": true,
+    "conflict": 1,
+    "conflict_choices": [
+     [
+      "replace the existing note",
+      0
+     ],
+     [
+      "do not add the new note",
+      1
+     ],
+     [
+      "append the new note to the end of the existing note",
+      2
+     ],
+     [
+      "add the new note under a new name",
+      3
+     ]
+    ],
+    "hidden": {
+     "get_notes": true,
+     "whitelist": true,
+     "overrides": true,
+     "all_override": true
+    }
+   },
+   "after": [
+    true,
+    1
+   ],
+   "notes_button_enabled": true
+  },
+  {
+   "decision": 2,
+   "accept": false,
+   "start": [
+    true,
+    1
+   ],
+   "edit": [
+    true,
+    2
+   ],
+   "dialog": {
+    "title": "edit note merge options",
+    "labels": [
+     "if possible, extend existing notes: ",
+     "if existing note-name conflict, what to do: "
+    ],
+    "extend": true,
+    "conflict": 1,
+    "conflict_choices": [
+     [
+      "replace the existing note",
+      0
+     ],
+     [
+      "do not add the new note",
+      1
+     ],
+     [
+      "append the new note to the end of the existing note",
+      2
+     ],
+     [
+      "add the new note under a new name",
+      3
+     ]
+    ],
+    "hidden": {
+     "get_notes": true,
+     "whitelist": true,
+     "overrides": true,
+     "all_override": true
+    }
+   },
+   "after": [
+    true,
+    1
+   ],
+   "notes_button_enabled": true
+  },
+  {
+   "decision": 2,
+   "accept": false,
+   "start": [
+    true,
+    1
+   ],
+   "edit": [
+    true,
+    3
+   ],
+   "dialog": {
+    "title": "edit note merge options",
+    "labels": [
+     "if possible, extend existing notes: ",
+     "if existing note-name conflict, what to do: "
+    ],
+    "extend": true,
+    "conflict": 1,
+    "conflict_choices": [
+     [
+      "replace the existing note",
+      0
+     ],
+     [
+      "do not add the new note",
+      1
+     ],
+     [
+      "append the new note to the end of the existing note",
+      2
+     ],
+     [
+      "add the new note under a new name",
+      3
+     ]
+    ],
+    "hidden": {
+     "get_notes": true,
+     "whitelist": true,
+     "overrides": true,
+     "all_override": true
+    }
+   },
+   "after": [
+    true,
+    1
+   ],
+   "notes_button_enabled": true
+  },
+  {
+   "decision": 2,
+   "accept": false,
+   "start": [
+    false,
+    3
+   ],
+   "edit": [
+    false,
+    0
+   ],
+   "dialog": {
+    "title": "edit note merge options",
+    "labels": [
+     "if possible, extend existing notes: ",
+     "if existing note-name conflict, what to do: "
+    ],
+    "extend": false,
+    "conflict": 3,
+    "conflict_choices": [
+     [
+      "replace the existing note",
+      0
+     ],
+     [
+      "do not add the new note",
+      1
+     ],
+     [
+      "append the new note to the end of the existing note",
+      2
+     ],
+     [
+      "add the new note under a new name",
+      3
+     ]
+    ],
+    "hidden": {
+     "get_notes": true,
+     "whitelist": true,
+     "overrides": true,
+     "all_override": true
+    }
+   },
+   "after": [
+    false,
+    3
+   ],
+   "notes_button_enabled": true
+  },
+  {
+   "decision": 2,
+   "accept": false,
+   "start": [
+    false,
+    3
+   ],
+   "edit": [
+    false,
+    1
+   ],
+   "dialog": {
+    "title": "edit note merge options",
+    "labels": [
+     "if possible, extend existing notes: ",
+     "if existing note-name conflict, what to do: "
+    ],
+    "extend": false,
+    "conflict": 3,
+    "conflict_choices": [
+     [
+      "replace the existing note",
+      0
+     ],
+     [
+      "do not add the new note",
+      1
+     ],
+     [
+      "append the new note to the end of the existing note",
+      2
+     ],
+     [
+      "add the new note under a new name",
+      3
+     ]
+    ],
+    "hidden": {
+     "get_notes": true,
+     "whitelist": true,
+     "overrides": true,
+     "all_override": true
+    }
+   },
+   "after": [
+    false,
+    3
+   ],
+   "notes_button_enabled": true
+  },
+  {
+   "decision": 2,
+   "accept": false,
+   "start": [
+    false,
+    3
+   ],
+   "edit": [
+    false,
+    2
+   ],
+   "dialog": {
+    "title": "edit note merge options",
+    "labels": [
+     "if possible, extend existing notes: ",
+     "if existing note-name conflict, what to do: "
+    ],
+    "extend": false,
+    "conflict": 3,
+    "conflict_choices": [
+     [
+      "replace the existing note",
+      0
+     ],
+     [
+      "do not add the new note",
+      1
+     ],
+     [
+      "append the new note to the end of the existing note",
+      2
+     ],
+     [
+      "add the new note under a new name",
+      3
+     ]
+    ],
+    "hidden": {
+     "get_notes": true,
+     "whitelist": true,
+     "overrides": true,
+     "all_override": true
+    }
+   },
+   "after": [
+    false,
+    3
+   ],
+   "notes_button_enabled": true
+  },
+  {
+   "decision": 2,
+   "accept": false,
+   "start": [
+    false,
+    3
+   ],
+   "edit": [
+    false,
+    3
+   ],
+   "dialog": {
+    "title": "edit note merge options",
+    "labels": [
+     "if possible, extend existing notes: ",
+     "if existing note-name conflict, what to do: "
+    ],
+    "extend": false,
+    "conflict": 3,
+    "conflict_choices": [
+     [
+      "replace the existing note",
+      0
+     ],
+     [
+      "do not add the new note",
+      1
+     ],
+     [
+      "append the new note to the end of the existing note",
+      2
+     ],
+     [
+      "add the new note under a new name",
+      3
+     ]
+    ],
+    "hidden": {
+     "get_notes": true,
+     "whitelist": true,
+     "overrides": true,
+     "all_override": true
+    }
+   },
+   "after": [
+    false,
+    3
+   ],
+   "notes_button_enabled": true
+  },
+  {
+   "decision": 2,
+   "accept": false,
+   "start": [
+    false,
+    3
+   ],
+   "edit": [
+    true,
+    0
+   ],
+   "dialog": {
+    "title": "edit note merge options",
+    "labels": [
+     "if possible, extend existing notes: ",
+     "if existing note-name conflict, what to do: "
+    ],
+    "extend": false,
+    "conflict": 3,
+    "conflict_choices": [
+     [
+      "replace the existing note",
+      0
+     ],
+     [
+      "do not add the new note",
+      1
+     ],
+     [
+      "append the new note to the end of the existing note",
+      2
+     ],
+     [
+      "add the new note under a new name",
+      3
+     ]
+    ],
+    "hidden": {
+     "get_notes": true,
+     "whitelist": true,
+     "overrides": true,
+     "all_override": true
+    }
+   },
+   "after": [
+    false,
+    3
+   ],
+   "notes_button_enabled": true
+  },
+  {
+   "decision": 2,
+   "accept": false,
+   "start": [
+    false,
+    3
+   ],
+   "edit": [
+    true,
+    1
+   ],
+   "dialog": {
+    "title": "edit note merge options",
+    "labels": [
+     "if possible, extend existing notes: ",
+     "if existing note-name conflict, what to do: "
+    ],
+    "extend": false,
+    "conflict": 3,
+    "conflict_choices": [
+     [
+      "replace the existing note",
+      0
+     ],
+     [
+      "do not add the new note",
+      1
+     ],
+     [
+      "append the new note to the end of the existing note",
+      2
+     ],
+     [
+      "add the new note under a new name",
+      3
+     ]
+    ],
+    "hidden": {
+     "get_notes": true,
+     "whitelist": true,
+     "overrides": true,
+     "all_override": true
+    }
+   },
+   "after": [
+    false,
+    3
+   ],
+   "notes_button_enabled": true
+  },
+  {
+   "decision": 2,
+   "accept": false,
+   "start": [
+    false,
+    3
+   ],
+   "edit": [
+    true,
+    2
+   ],
+   "dialog": {
+    "title": "edit note merge options",
+    "labels": [
+     "if possible, extend existing notes: ",
+     "if existing note-name conflict, what to do: "
+    ],
+    "extend": false,
+    "conflict": 3,
+    "conflict_choices": [
+     [
+      "replace the existing note",
+      0
+     ],
+     [
+      "do not add the new note",
+      1
+     ],
+     [
+      "append the new note to the end of the existing note",
+      2
+     ],
+     [
+      "add the new note under a new name",
+      3
+     ]
+    ],
+    "hidden": {
+     "get_notes": true,
+     "whitelist": true,
+     "overrides": true,
+     "all_override": true
+    }
+   },
+   "after": [
+    false,
+    3
+   ],
+   "notes_button_enabled": true
+  },
+  {
+   "decision": 2,
+   "accept": false,
+   "start": [
+    false,
+    3
+   ],
+   "edit": [
+    true,
+    3
+   ],
+   "dialog": {
+    "title": "edit note merge options",
+    "labels": [
+     "if possible, extend existing notes: ",
+     "if existing note-name conflict, what to do: "
+    ],
+    "extend": false,
+    "conflict": 3,
+    "conflict_choices": [
+     [
+      "replace the existing note",
+      0
+     ],
+     [
+      "do not add the new note",
+      1
+     ],
+     [
+      "append the new note to the end of the existing note",
+      2
+     ],
+     [
+      "add the new note under a new name",
+      3
+     ]
+    ],
+    "hidden": {
+     "get_notes": true,
+     "whitelist": true,
+     "overrides": true,
+     "all_override": true
+    }
+   },
+   "after": [
+    false,
+    3
+   ],
+   "notes_button_enabled": true
+  },
+  {
+   "decision": 4,
+   "accept": true,
+   "start": [
+    true,
+    1
+   ],
+   "edit": [
+    false,
+    0
+   ],
+   "dialog": {
+    "title": "edit note merge options",
+    "labels": [
+     "if possible, extend existing notes: ",
+     "if existing note-name conflict, what to do: "
+    ],
+    "extend": true,
+    "conflict": 1,
+    "conflict_choices": [
+     [
+      "replace the existing note",
+      0
+     ],
+     [
+      "do not add the new note",
+      1
+     ],
+     [
+      "append the new note to the end of the existing note",
+      2
+     ],
+     [
+      "add the new note under a new name",
+      3
+     ]
+    ],
+    "hidden": {
+     "get_notes": true,
+     "whitelist": true,
+     "overrides": true,
+     "all_override": true
+    }
+   },
+   "after": [
+    false,
+    0
+   ],
+   "notes_button_enabled": true
+  },
+  {
+   "decision": 4,
+   "accept": true,
+   "start": [
+    true,
+    1
+   ],
+   "edit": [
+    false,
+    1
+   ],
+   "dialog": {
+    "title": "edit note merge options",
+    "labels": [
+     "if possible, extend existing notes: ",
+     "if existing note-name conflict, what to do: "
+    ],
+    "extend": true,
+    "conflict": 1,
+    "conflict_choices": [
+     [
+      "replace the existing note",
+      0
+     ],
+     [
+      "do not add the new note",
+      1
+     ],
+     [
+      "append the new note to the end of the existing note",
+      2
+     ],
+     [
+      "add the new note under a new name",
+      3
+     ]
+    ],
+    "hidden": {
+     "get_notes": true,
+     "whitelist": true,
+     "overrides": true,
+     "all_override": true
+    }
+   },
+   "after": [
+    false,
+    1
+   ],
+   "notes_button_enabled": true
+  },
+  {
+   "decision": 4,
+   "accept": true,
+   "start": [
+    true,
+    1
+   ],
+   "edit": [
+    false,
+    2
+   ],
+   "dialog": {
+    "title": "edit note merge options",
+    "labels": [
+     "if possible, extend existing notes: ",
+     "if existing note-name conflict, what to do: "
+    ],
+    "extend": true,
+    "conflict": 1,
+    "conflict_choices": [
+     [
+      "replace the existing note",
+      0
+     ],
+     [
+      "do not add the new note",
+      1
+     ],
+     [
+      "append the new note to the end of the existing note",
+      2
+     ],
+     [
+      "add the new note under a new name",
+      3
+     ]
+    ],
+    "hidden": {
+     "get_notes": true,
+     "whitelist": true,
+     "overrides": true,
+     "all_override": true
+    }
+   },
+   "after": [
+    false,
+    2
+   ],
+   "notes_button_enabled": true
+  },
+  {
+   "decision": 4,
+   "accept": true,
+   "start": [
+    true,
+    1
+   ],
+   "edit": [
+    false,
+    3
+   ],
+   "dialog": {
+    "title": "edit note merge options",
+    "labels": [
+     "if possible, extend existing notes: ",
+     "if existing note-name conflict, what to do: "
+    ],
+    "extend": true,
+    "conflict": 1,
+    "conflict_choices": [
+     [
+      "replace the existing note",
+      0
+     ],
+     [
+      "do not add the new note",
+      1
+     ],
+     [
+      "append the new note to the end of the existing note",
+      2
+     ],
+     [
+      "add the new note under a new name",
+      3
+     ]
+    ],
+    "hidden": {
+     "get_notes": true,
+     "whitelist": true,
+     "overrides": true,
+     "all_override": true
+    }
+   },
+   "after": [
+    false,
+    3
+   ],
+   "notes_button_enabled": true
+  },
+  {
+   "decision": 4,
+   "accept": true,
+   "start": [
+    true,
+    1
+   ],
+   "edit": [
+    true,
+    0
+   ],
+   "dialog": {
+    "title": "edit note merge options",
+    "labels": [
+     "if possible, extend existing notes: ",
+     "if existing note-name conflict, what to do: "
+    ],
+    "extend": true,
+    "conflict": 1,
+    "conflict_choices": [
+     [
+      "replace the existing note",
+      0
+     ],
+     [
+      "do not add the new note",
+      1
+     ],
+     [
+      "append the new note to the end of the existing note",
+      2
+     ],
+     [
+      "add the new note under a new name",
+      3
+     ]
+    ],
+    "hidden": {
+     "get_notes": true,
+     "whitelist": true,
+     "overrides": true,
+     "all_override": true
+    }
+   },
+   "after": [
+    true,
+    0
+   ],
+   "notes_button_enabled": true
+  },
+  {
+   "decision": 4,
+   "accept": true,
+   "start": [
+    true,
+    1
+   ],
+   "edit": [
+    true,
+    1
+   ],
+   "dialog": {
+    "title": "edit note merge options",
+    "labels": [
+     "if possible, extend existing notes: ",
+     "if existing note-name conflict, what to do: "
+    ],
+    "extend": true,
+    "conflict": 1,
+    "conflict_choices": [
+     [
+      "replace the existing note",
+      0
+     ],
+     [
+      "do not add the new note",
+      1
+     ],
+     [
+      "append the new note to the end of the existing note",
+      2
+     ],
+     [
+      "add the new note under a new name",
+      3
+     ]
+    ],
+    "hidden": {
+     "get_notes": true,
+     "whitelist": true,
+     "overrides": true,
+     "all_override": true
+    }
+   },
+   "after": [
+    true,
+    1
+   ],
+   "notes_button_enabled": true
+  },
+  {
+   "decision": 4,
+   "accept": true,
+   "start": [
+    true,
+    1
+   ],
+   "edit": [
+    true,
+    2
+   ],
+   "dialog": {
+    "title": "edit note merge options",
+    "labels": [
+     "if possible, extend existing notes: ",
+     "if existing note-name conflict, what to do: "
+    ],
+    "extend": true,
+    "conflict": 1,
+    "conflict_choices": [
+     [
+      "replace the existing note",
+      0
+     ],
+     [
+      "do not add the new note",
+      1
+     ],
+     [
+      "append the new note to the end of the existing note",
+      2
+     ],
+     [
+      "add the new note under a new name",
+      3
+     ]
+    ],
+    "hidden": {
+     "get_notes": true,
+     "whitelist": true,
+     "overrides": true,
+     "all_override": true
+    }
+   },
+   "after": [
+    true,
+    2
+   ],
+   "notes_button_enabled": true
+  },
+  {
+   "decision": 4,
+   "accept": true,
+   "start": [
+    true,
+    1
+   ],
+   "edit": [
+    true,
+    3
+   ],
+   "dialog": {
+    "title": "edit note merge options",
+    "labels": [
+     "if possible, extend existing notes: ",
+     "if existing note-name conflict, what to do: "
+    ],
+    "extend": true,
+    "conflict": 1,
+    "conflict_choices": [
+     [
+      "replace the existing note",
+      0
+     ],
+     [
+      "do not add the new note",
+      1
+     ],
+     [
+      "append the new note to the end of the existing note",
+      2
+     ],
+     [
+      "add the new note under a new name",
+      3
+     ]
+    ],
+    "hidden": {
+     "get_notes": true,
+     "whitelist": true,
+     "overrides": true,
+     "all_override": true
+    }
+   },
+   "after": [
+    true,
+    3
+   ],
+   "notes_button_enabled": true
+  },
+  {
+   "decision": 4,
+   "accept": true,
+   "start": [
+    false,
+    3
+   ],
+   "edit": [
+    false,
+    0
+   ],
+   "dialog": {
+    "title": "edit note merge options",
+    "labels": [
+     "if possible, extend existing notes: ",
+     "if existing note-name conflict, what to do: "
+    ],
+    "extend": false,
+    "conflict": 3,
+    "conflict_choices": [
+     [
+      "replace the existing note",
+      0
+     ],
+     [
+      "do not add the new note",
+      1
+     ],
+     [
+      "append the new note to the end of the existing note",
+      2
+     ],
+     [
+      "add the new note under a new name",
+      3
+     ]
+    ],
+    "hidden": {
+     "get_notes": true,
+     "whitelist": true,
+     "overrides": true,
+     "all_override": true
+    }
+   },
+   "after": [
+    false,
+    0
+   ],
+   "notes_button_enabled": true
+  },
+  {
+   "decision": 4,
+   "accept": true,
+   "start": [
+    false,
+    3
+   ],
+   "edit": [
+    false,
+    1
+   ],
+   "dialog": {
+    "title": "edit note merge options",
+    "labels": [
+     "if possible, extend existing notes: ",
+     "if existing note-name conflict, what to do: "
+    ],
+    "extend": false,
+    "conflict": 3,
+    "conflict_choices": [
+     [
+      "replace the existing note",
+      0
+     ],
+     [
+      "do not add the new note",
+      1
+     ],
+     [
+      "append the new note to the end of the existing note",
+      2
+     ],
+     [
+      "add the new note under a new name",
+      3
+     ]
+    ],
+    "hidden": {
+     "get_notes": true,
+     "whitelist": true,
+     "overrides": true,
+     "all_override": true
+    }
+   },
+   "after": [
+    false,
+    1
+   ],
+   "notes_button_enabled": true
+  },
+  {
+   "decision": 4,
+   "accept": true,
+   "start": [
+    false,
+    3
+   ],
+   "edit": [
+    false,
+    2
+   ],
+   "dialog": {
+    "title": "edit note merge options",
+    "labels": [
+     "if possible, extend existing notes: ",
+     "if existing note-name conflict, what to do: "
+    ],
+    "extend": false,
+    "conflict": 3,
+    "conflict_choices": [
+     [
+      "replace the existing note",
+      0
+     ],
+     [
+      "do not add the new note",
+      1
+     ],
+     [
+      "append the new note to the end of the existing note",
+      2
+     ],
+     [
+      "add the new note under a new name",
+      3
+     ]
+    ],
+    "hidden": {
+     "get_notes": true,
+     "whitelist": true,
+     "overrides": true,
+     "all_override": true
+    }
+   },
+   "after": [
+    false,
+    2
+   ],
+   "notes_button_enabled": true
+  },
+  {
+   "decision": 4,
+   "accept": true,
+   "start": [
+    false,
+    3
+   ],
+   "edit": [
+    false,
+    3
+   ],
+   "dialog": {
+    "title": "edit note merge options",
+    "labels": [
+     "if possible, extend existing notes: ",
+     "if existing note-name conflict, what to do: "
+    ],
+    "extend": false,
+    "conflict": 3,
+    "conflict_choices": [
+     [
+      "replace the existing note",
+      0
+     ],
+     [
+      "do not add the new note",
+      1
+     ],
+     [
+      "append the new note to the end of the existing note",
+      2
+     ],
+     [
+      "add the new note under a new name",
+      3
+     ]
+    ],
+    "hidden": {
+     "get_notes": true,
+     "whitelist": true,
+     "overrides": true,
+     "all_override": true
+    }
+   },
+   "after": [
+    false,
+    3
+   ],
+   "notes_button_enabled": true
+  },
+  {
+   "decision": 4,
+   "accept": true,
+   "start": [
+    false,
+    3
+   ],
+   "edit": [
+    true,
+    0
+   ],
+   "dialog": {
+    "title": "edit note merge options",
+    "labels": [
+     "if possible, extend existing notes: ",
+     "if existing note-name conflict, what to do: "
+    ],
+    "extend": false,
+    "conflict": 3,
+    "conflict_choices": [
+     [
+      "replace the existing note",
+      0
+     ],
+     [
+      "do not add the new note",
+      1
+     ],
+     [
+      "append the new note to the end of the existing note",
+      2
+     ],
+     [
+      "add the new note under a new name",
+      3
+     ]
+    ],
+    "hidden": {
+     "get_notes": true,
+     "whitelist": true,
+     "overrides": true,
+     "all_override": true
+    }
+   },
+   "after": [
+    true,
+    0
+   ],
+   "notes_button_enabled": true
+  },
+  {
+   "decision": 4,
+   "accept": true,
+   "start": [
+    false,
+    3
+   ],
+   "edit": [
+    true,
+    1
+   ],
+   "dialog": {
+    "title": "edit note merge options",
+    "labels": [
+     "if possible, extend existing notes: ",
+     "if existing note-name conflict, what to do: "
+    ],
+    "extend": false,
+    "conflict": 3,
+    "conflict_choices": [
+     [
+      "replace the existing note",
+      0
+     ],
+     [
+      "do not add the new note",
+      1
+     ],
+     [
+      "append the new note to the end of the existing note",
+      2
+     ],
+     [
+      "add the new note under a new name",
+      3
+     ]
+    ],
+    "hidden": {
+     "get_notes": true,
+     "whitelist": true,
+     "overrides": true,
+     "all_override": true
+    }
+   },
+   "after": [
+    true,
+    1
+   ],
+   "notes_button_enabled": true
+  },
+  {
+   "decision": 4,
+   "accept": true,
+   "start": [
+    false,
+    3
+   ],
+   "edit": [
+    true,
+    2
+   ],
+   "dialog": {
+    "title": "edit note merge options",
+    "labels": [
+     "if possible, extend existing notes: ",
+     "if existing note-name conflict, what to do: "
+    ],
+    "extend": false,
+    "conflict": 3,
+    "conflict_choices": [
+     [
+      "replace the existing note",
+      0
+     ],
+     [
+      "do not add the new note",
+      1
+     ],
+     [
+      "append the new note to the end of the existing note",
+      2
+     ],
+     [
+      "add the new note under a new name",
+      3
+     ]
+    ],
+    "hidden": {
+     "get_notes": true,
+     "whitelist": true,
+     "overrides": true,
+     "all_override": true
+    }
+   },
+   "after": [
+    true,
+    2
+   ],
+   "notes_button_enabled": true
+  },
+  {
+   "decision": 4,
+   "accept": true,
+   "start": [
+    false,
+    3
+   ],
+   "edit": [
+    true,
+    3
+   ],
+   "dialog": {
+    "title": "edit note merge options",
+    "labels": [
+     "if possible, extend existing notes: ",
+     "if existing note-name conflict, what to do: "
+    ],
+    "extend": false,
+    "conflict": 3,
+    "conflict_choices": [
+     [
+      "replace the existing note",
+      0
+     ],
+     [
+      "do not add the new note",
+      1
+     ],
+     [
+      "append the new note to the end of the existing note",
+      2
+     ],
+     [
+      "add the new note under a new name",
+      3
+     ]
+    ],
+    "hidden": {
+     "get_notes": true,
+     "whitelist": true,
+     "overrides": true,
+     "all_override": true
+    }
+   },
+   "after": [
+    true,
+    3
+   ],
+   "notes_button_enabled": true
+  },
+  {
+   "decision": 4,
+   "accept": false,
+   "start": [
+    true,
+    1
+   ],
+   "edit": [
+    false,
+    0
+   ],
+   "dialog": {
+    "title": "edit note merge options",
+    "labels": [
+     "if possible, extend existing notes: ",
+     "if existing note-name conflict, what to do: "
+    ],
+    "extend": true,
+    "conflict": 1,
+    "conflict_choices": [
+     [
+      "replace the existing note",
+      0
+     ],
+     [
+      "do not add the new note",
+      1
+     ],
+     [
+      "append the new note to the end of the existing note",
+      2
+     ],
+     [
+      "add the new note under a new name",
+      3
+     ]
+    ],
+    "hidden": {
+     "get_notes": true,
+     "whitelist": true,
+     "overrides": true,
+     "all_override": true
+    }
+   },
+   "after": [
+    true,
+    1
+   ],
+   "notes_button_enabled": true
+  },
+  {
+   "decision": 4,
+   "accept": false,
+   "start": [
+    true,
+    1
+   ],
+   "edit": [
+    false,
+    1
+   ],
+   "dialog": {
+    "title": "edit note merge options",
+    "labels": [
+     "if possible, extend existing notes: ",
+     "if existing note-name conflict, what to do: "
+    ],
+    "extend": true,
+    "conflict": 1,
+    "conflict_choices": [
+     [
+      "replace the existing note",
+      0
+     ],
+     [
+      "do not add the new note",
+      1
+     ],
+     [
+      "append the new note to the end of the existing note",
+      2
+     ],
+     [
+      "add the new note under a new name",
+      3
+     ]
+    ],
+    "hidden": {
+     "get_notes": true,
+     "whitelist": true,
+     "overrides": true,
+     "all_override": true
+    }
+   },
+   "after": [
+    true,
+    1
+   ],
+   "notes_button_enabled": true
+  },
+  {
+   "decision": 4,
+   "accept": false,
+   "start": [
+    true,
+    1
+   ],
+   "edit": [
+    false,
+    2
+   ],
+   "dialog": {
+    "title": "edit note merge options",
+    "labels": [
+     "if possible, extend existing notes: ",
+     "if existing note-name conflict, what to do: "
+    ],
+    "extend": true,
+    "conflict": 1,
+    "conflict_choices": [
+     [
+      "replace the existing note",
+      0
+     ],
+     [
+      "do not add the new note",
+      1
+     ],
+     [
+      "append the new note to the end of the existing note",
+      2
+     ],
+     [
+      "add the new note under a new name",
+      3
+     ]
+    ],
+    "hidden": {
+     "get_notes": true,
+     "whitelist": true,
+     "overrides": true,
+     "all_override": true
+    }
+   },
+   "after": [
+    true,
+    1
+   ],
+   "notes_button_enabled": true
+  },
+  {
+   "decision": 4,
+   "accept": false,
+   "start": [
+    true,
+    1
+   ],
+   "edit": [
+    false,
+    3
+   ],
+   "dialog": {
+    "title": "edit note merge options",
+    "labels": [
+     "if possible, extend existing notes: ",
+     "if existing note-name conflict, what to do: "
+    ],
+    "extend": true,
+    "conflict": 1,
+    "conflict_choices": [
+     [
+      "replace the existing note",
+      0
+     ],
+     [
+      "do not add the new note",
+      1
+     ],
+     [
+      "append the new note to the end of the existing note",
+      2
+     ],
+     [
+      "add the new note under a new name",
+      3
+     ]
+    ],
+    "hidden": {
+     "get_notes": true,
+     "whitelist": true,
+     "overrides": true,
+     "all_override": true
+    }
+   },
+   "after": [
+    true,
+    1
+   ],
+   "notes_button_enabled": true
+  },
+  {
+   "decision": 4,
+   "accept": false,
+   "start": [
+    true,
+    1
+   ],
+   "edit": [
+    true,
+    0
+   ],
+   "dialog": {
+    "title": "edit note merge options",
+    "labels": [
+     "if possible, extend existing notes: ",
+     "if existing note-name conflict, what to do: "
+    ],
+    "extend": true,
+    "conflict": 1,
+    "conflict_choices": [
+     [
+      "replace the existing note",
+      0
+     ],
+     [
+      "do not add the new note",
+      1
+     ],
+     [
+      "append the new note to the end of the existing note",
+      2
+     ],
+     [
+      "add the new note under a new name",
+      3
+     ]
+    ],
+    "hidden": {
+     "get_notes": true,
+     "whitelist": true,
+     "overrides": true,
+     "all_override": true
+    }
+   },
+   "after": [
+    true,
+    1
+   ],
+   "notes_button_enabled": true
+  },
+  {
+   "decision": 4,
+   "accept": false,
+   "start": [
+    true,
+    1
+   ],
+   "edit": [
+    true,
+    1
+   ],
+   "dialog": {
+    "title": "edit note merge options",
+    "labels": [
+     "if possible, extend existing notes: ",
+     "if existing note-name conflict, what to do: "
+    ],
+    "extend": true,
+    "conflict": 1,
+    "conflict_choices": [
+     [
+      "replace the existing note",
+      0
+     ],
+     [
+      "do not add the new note",
+      1
+     ],
+     [
+      "append the new note to the end of the existing note",
+      2
+     ],
+     [
+      "add the new note under a new name",
+      3
+     ]
+    ],
+    "hidden": {
+     "get_notes": true,
+     "whitelist": true,
+     "overrides": true,
+     "all_override": true
+    }
+   },
+   "after": [
+    true,
+    1
+   ],
+   "notes_button_enabled": true
+  },
+  {
+   "decision": 4,
+   "accept": false,
+   "start": [
+    true,
+    1
+   ],
+   "edit": [
+    true,
+    2
+   ],
+   "dialog": {
+    "title": "edit note merge options",
+    "labels": [
+     "if possible, extend existing notes: ",
+     "if existing note-name conflict, what to do: "
+    ],
+    "extend": true,
+    "conflict": 1,
+    "conflict_choices": [
+     [
+      "replace the existing note",
+      0
+     ],
+     [
+      "do not add the new note",
+      1
+     ],
+     [
+      "append the new note to the end of the existing note",
+      2
+     ],
+     [
+      "add the new note under a new name",
+      3
+     ]
+    ],
+    "hidden": {
+     "get_notes": true,
+     "whitelist": true,
+     "overrides": true,
+     "all_override": true
+    }
+   },
+   "after": [
+    true,
+    1
+   ],
+   "notes_button_enabled": true
+  },
+  {
+   "decision": 4,
+   "accept": false,
+   "start": [
+    true,
+    1
+   ],
+   "edit": [
+    true,
+    3
+   ],
+   "dialog": {
+    "title": "edit note merge options",
+    "labels": [
+     "if possible, extend existing notes: ",
+     "if existing note-name conflict, what to do: "
+    ],
+    "extend": true,
+    "conflict": 1,
+    "conflict_choices": [
+     [
+      "replace the existing note",
+      0
+     ],
+     [
+      "do not add the new note",
+      1
+     ],
+     [
+      "append the new note to the end of the existing note",
+      2
+     ],
+     [
+      "add the new note under a new name",
+      3
+     ]
+    ],
+    "hidden": {
+     "get_notes": true,
+     "whitelist": true,
+     "overrides": true,
+     "all_override": true
+    }
+   },
+   "after": [
+    true,
+    1
+   ],
+   "notes_button_enabled": true
+  },
+  {
+   "decision": 4,
+   "accept": false,
+   "start": [
+    false,
+    3
+   ],
+   "edit": [
+    false,
+    0
+   ],
+   "dialog": {
+    "title": "edit note merge options",
+    "labels": [
+     "if possible, extend existing notes: ",
+     "if existing note-name conflict, what to do: "
+    ],
+    "extend": false,
+    "conflict": 3,
+    "conflict_choices": [
+     [
+      "replace the existing note",
+      0
+     ],
+     [
+      "do not add the new note",
+      1
+     ],
+     [
+      "append the new note to the end of the existing note",
+      2
+     ],
+     [
+      "add the new note under a new name",
+      3
+     ]
+    ],
+    "hidden": {
+     "get_notes": true,
+     "whitelist": true,
+     "overrides": true,
+     "all_override": true
+    }
+   },
+   "after": [
+    false,
+    3
+   ],
+   "notes_button_enabled": true
+  },
+  {
+   "decision": 4,
+   "accept": false,
+   "start": [
+    false,
+    3
+   ],
+   "edit": [
+    false,
+    1
+   ],
+   "dialog": {
+    "title": "edit note merge options",
+    "labels": [
+     "if possible, extend existing notes: ",
+     "if existing note-name conflict, what to do: "
+    ],
+    "extend": false,
+    "conflict": 3,
+    "conflict_choices": [
+     [
+      "replace the existing note",
+      0
+     ],
+     [
+      "do not add the new note",
+      1
+     ],
+     [
+      "append the new note to the end of the existing note",
+      2
+     ],
+     [
+      "add the new note under a new name",
+      3
+     ]
+    ],
+    "hidden": {
+     "get_notes": true,
+     "whitelist": true,
+     "overrides": true,
+     "all_override": true
+    }
+   },
+   "after": [
+    false,
+    3
+   ],
+   "notes_button_enabled": true
+  },
+  {
+   "decision": 4,
+   "accept": false,
+   "start": [
+    false,
+    3
+   ],
+   "edit": [
+    false,
+    2
+   ],
+   "dialog": {
+    "title": "edit note merge options",
+    "labels": [
+     "if possible, extend existing notes: ",
+     "if existing note-name conflict, what to do: "
+    ],
+    "extend": false,
+    "conflict": 3,
+    "conflict_choices": [
+     [
+      "replace the existing note",
+      0
+     ],
+     [
+      "do not add the new note",
+      1
+     ],
+     [
+      "append the new note to the end of the existing note",
+      2
+     ],
+     [
+      "add the new note under a new name",
+      3
+     ]
+    ],
+    "hidden": {
+     "get_notes": true,
+     "whitelist": true,
+     "overrides": true,
+     "all_override": true
+    }
+   },
+   "after": [
+    false,
+    3
+   ],
+   "notes_button_enabled": true
+  },
+  {
+   "decision": 4,
+   "accept": false,
+   "start": [
+    false,
+    3
+   ],
+   "edit": [
+    false,
+    3
+   ],
+   "dialog": {
+    "title": "edit note merge options",
+    "labels": [
+     "if possible, extend existing notes: ",
+     "if existing note-name conflict, what to do: "
+    ],
+    "extend": false,
+    "conflict": 3,
+    "conflict_choices": [
+     [
+      "replace the existing note",
+      0
+     ],
+     [
+      "do not add the new note",
+      1
+     ],
+     [
+      "append the new note to the end of the existing note",
+      2
+     ],
+     [
+      "add the new note under a new name",
+      3
+     ]
+    ],
+    "hidden": {
+     "get_notes": true,
+     "whitelist": true,
+     "overrides": true,
+     "all_override": true
+    }
+   },
+   "after": [
+    false,
+    3
+   ],
+   "notes_button_enabled": true
+  },
+  {
+   "decision": 4,
+   "accept": false,
+   "start": [
+    false,
+    3
+   ],
+   "edit": [
+    true,
+    0
+   ],
+   "dialog": {
+    "title": "edit note merge options",
+    "labels": [
+     "if possible, extend existing notes: ",
+     "if existing note-name conflict, what to do: "
+    ],
+    "extend": false,
+    "conflict": 3,
+    "conflict_choices": [
+     [
+      "replace the existing note",
+      0
+     ],
+     [
+      "do not add the new note",
+      1
+     ],
+     [
+      "append the new note to the end of the existing note",
+      2
+     ],
+     [
+      "add the new note under a new name",
+      3
+     ]
+    ],
+    "hidden": {
+     "get_notes": true,
+     "whitelist": true,
+     "overrides": true,
+     "all_override": true
+    }
+   },
+   "after": [
+    false,
+    3
+   ],
+   "notes_button_enabled": true
+  },
+  {
+   "decision": 4,
+   "accept": false,
+   "start": [
+    false,
+    3
+   ],
+   "edit": [
+    true,
+    1
+   ],
+   "dialog": {
+    "title": "edit note merge options",
+    "labels": [
+     "if possible, extend existing notes: ",
+     "if existing note-name conflict, what to do: "
+    ],
+    "extend": false,
+    "conflict": 3,
+    "conflict_choices": [
+     [
+      "replace the existing note",
+      0
+     ],
+     [
+      "do not add the new note",
+      1
+     ],
+     [
+      "append the new note to the end of the existing note",
+      2
+     ],
+     [
+      "add the new note under a new name",
+      3
+     ]
+    ],
+    "hidden": {
+     "get_notes": true,
+     "whitelist": true,
+     "overrides": true,
+     "all_override": true
+    }
+   },
+   "after": [
+    false,
+    3
+   ],
+   "notes_button_enabled": true
+  },
+  {
+   "decision": 4,
+   "accept": false,
+   "start": [
+    false,
+    3
+   ],
+   "edit": [
+    true,
+    2
+   ],
+   "dialog": {
+    "title": "edit note merge options",
+    "labels": [
+     "if possible, extend existing notes: ",
+     "if existing note-name conflict, what to do: "
+    ],
+    "extend": false,
+    "conflict": 3,
+    "conflict_choices": [
+     [
+      "replace the existing note",
+      0
+     ],
+     [
+      "do not add the new note",
+      1
+     ],
+     [
+      "append the new note to the end of the existing note",
+      2
+     ],
+     [
+      "add the new note under a new name",
+      3
+     ]
+    ],
+    "hidden": {
+     "get_notes": true,
+     "whitelist": true,
+     "overrides": true,
+     "all_override": true
+    }
+   },
+   "after": [
+    false,
+    3
+   ],
+   "notes_button_enabled": true
+  },
+  {
+   "decision": 4,
+   "accept": false,
+   "start": [
+    false,
+    3
+   ],
+   "edit": [
+    true,
+    3
+   ],
+   "dialog": {
+    "title": "edit note merge options",
+    "labels": [
+     "if possible, extend existing notes: ",
+     "if existing note-name conflict, what to do: "
+    ],
+    "extend": false,
+    "conflict": 3,
+    "conflict_choices": [
+     [
+      "replace the existing note",
+      0
+     ],
+     [
+      "do not add the new note",
+      1
+     ],
+     [
+      "append the new note to the end of the existing note",
+      2
+     ],
+     [
+      "add the new note under a new name",
+      3
+     ]
+    ],
+    "hidden": {
+     "get_notes": true,
+     "whitelist": true,
+     "overrides": true,
+     "all_override": true
+    }
+   },
+   "after": [
+    false,
+    3
+   ],
+   "notes_button_enabled": true
+  }
+ ]
+}

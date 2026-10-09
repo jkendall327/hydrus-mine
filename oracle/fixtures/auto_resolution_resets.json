@@ -1,0 +1,549 @@
+{
+ "start": {
+  "near-perfect jpegs vs pngs": {
+   "0": 77,
+   "2": 23
+  },
+  "pixel-perfect gifs vs pngs": {
+   "0": 95,
+   "1": 2,
+   "3": 1,
+   "5": 2,
+   "6": 1
+  },
+  "pixel-perfect gifs vs pngs - except when png is smaller": {
+   "0": 95,
+   "2": 5
+  },
+  "pixel-perfect jpegs vs pngs": {
+   "0": 100,
+   "3": 5
+  },
+  "pixel-perfect jpegs vs pngs - except when png is smaller": {
+   "0": 100
+  },
+  "pixel-perfect pairs": {
+   "0": 84,
+   "2": 16,
+   "3": 13
+  },
+  "visually similar pairs": {
+   "0": 61,
+   "2": 39
+  },
+  "visually similar pairs - only earlier imports": {
+   "0": 61,
+   "2": 39
+  }
+ },
+ "steps": [
+  {
+   "button": "reset_search",
+   "selected": [
+    "pixel-perfect gifs vs pngs"
+   ],
+   "answer": "no",
+   "asked": [
+    {
+     "message": "This will command the database to re-search these 1 rules. It will not undo any user-denied decisions. There is no point to running this unless you suspect a miscount or other sync bug.",
+     "title": "Are you sure?",
+     "pressed": "no"
+    }
+   ],
+   "counts": {
+    "near-perfect jpegs vs pngs": {
+     "0": 77,
+     "2": 23
+    },
+    "pixel-perfect gifs vs pngs": {
+     "0": 95,
+     "1": 2,
+     "3": 1,
+     "5": 2,
+     "6": 1
+    },
+    "pixel-perfect gifs vs pngs - except when png is smaller": {
+     "0": 95,
+     "2": 5
+    },
+    "pixel-perfect jpegs vs pngs": {
+     "0": 100,
+     "3": 5
+    },
+    "pixel-perfect jpegs vs pngs - except when png is smaller": {
+     "0": 100
+    },
+    "pixel-perfect pairs": {
+     "0": 84,
+     "2": 16,
+     "3": 13
+    },
+    "visually similar pairs": {
+     "0": 61,
+     "2": 39
+    },
+    "visually similar pairs - only earlier imports": {
+     "0": 61,
+     "2": 39
+    }
+   }
+  },
+  {
+   "button": "reset_denied",
+   "selected": [
+    "pixel-perfect gifs vs pngs"
+   ],
+   "answer": "yes",
+   "asked": [
+    {
+     "message": "This will command the database to repeal all user-denied decisions for these 1 rules.\n\nDo this only if the rules have tens of thousands of denied pairs and you do not want to undo them manually in the \"review actions\" window.",
+     "title": "Are you sure?",
+     "pressed": "yes"
+    }
+   ],
+   "counts": {
+    "near-perfect jpegs vs pngs": {
+     "0": 77,
+     "2": 23
+    },
+    "pixel-perfect gifs vs pngs": {
+     "0": 95,
+     "1": 2,
+     "3": 1,
+     "4": 1,
+     "5": 2
+    },
+    "pixel-perfect gifs vs pngs - except when png is smaller": {
+     "0": 95,
+     "2": 5
+    },
+    "pixel-perfect jpegs vs pngs": {
+     "0": 100,
+     "3": 5
+    },
+    "pixel-perfect jpegs vs pngs - except when png is smaller": {
+     "0": 100
+    },
+    "pixel-perfect pairs": {
+     "0": 84,
+     "2": 16,
+     "3": 13
+    },
+    "visually similar pairs": {
+     "0": 61,
+     "2": 39
+    },
+    "visually similar pairs - only earlier imports": {
+     "0": 61,
+     "2": 39
+    }
+   }
+  },
+  {
+   "button": "reset_test",
+   "selected": [
+    "pixel-perfect pairs"
+   ],
+   "answer": "yes",
+   "asked": [
+    {
+     "message": "This will command the database to re-test the pending/fails for these 1 rules. It will not undo any user-denied decisions. There is no point to running this unless you suspect a miscount or other sync bug.",
+     "title": "Are you sure?",
+     "pressed": "yes"
+    }
+   ],
+   "counts": {
+    "near-perfect jpegs vs pngs": {
+     "0": 77,
+     "2": 23
+    },
+    "pixel-perfect gifs vs pngs": {
+     "0": 95,
+     "1": 2,
+     "3": 1,
+     "4": 1,
+     "5": 2
+    },
+    "pixel-perfect gifs vs pngs - except when png is smaller": {
+     "0": 95,
+     "2": 5
+    },
+    "pixel-perfect jpegs vs pngs": {
+     "0": 100,
+     "3": 5
+    },
+    "pixel-perfect jpegs vs pngs - except when png is smaller": {
+     "0": 100
+    },
+    "pixel-perfect pairs": {
+     "0": 84,
+     "1": 16,
+     "3": 13
+    },
+    "visually similar pairs": {
+     "0": 61,
+     "2": 39
+    },
+    "visually similar pairs - only earlier imports": {
+     "0": 61,
+     "2": 39
+    }
+   }
+  },
+  {
+   "button": "reset_search",
+   "selected": [
+    "pixel-perfect pairs"
+   ],
+   "answer": "yes",
+   "asked": [
+    {
+     "message": "This will command the database to re-search these 1 rules. It will not undo any user-denied decisions. There is no point to running this unless you suspect a miscount or other sync bug.",
+     "title": "Are you sure?",
+     "pressed": "yes"
+    }
+   ],
+   "counts": {
+    "near-perfect jpegs vs pngs": {
+     "0": 77,
+     "2": 23
+    },
+    "pixel-perfect gifs vs pngs": {
+     "0": 95,
+     "1": 2,
+     "3": 1,
+     "4": 1,
+     "5": 2
+    },
+    "pixel-perfect gifs vs pngs - except when png is smaller": {
+     "0": 95,
+     "2": 5
+    },
+    "pixel-perfect jpegs vs pngs": {
+     "0": 100,
+     "3": 5
+    },
+    "pixel-perfect jpegs vs pngs - except when png is smaller": {
+     "0": 100
+    },
+    "pixel-perfect pairs": {
+     "3": 13,
+     "4": 100
+    },
+    "visually similar pairs": {
+     "0": 61,
+     "2": 39
+    },
+    "visually similar pairs - only earlier imports": {
+     "0": 61,
+     "2": 39
+    }
+   }
+  },
+  {
+   "button": "reset_test",
+   "selected": null,
+   "answer": "yes",
+   "asked": [
+    {
+     "message": "This will command the database to re-test the pending/fails for these 8 rules. It will not undo any user-denied decisions. There is no point to running this unless you suspect a miscount or other sync bug.",
+     "title": "Are you sure?",
+     "pressed": "yes"
+    }
+   ],
+   "counts": {
+    "near-perfect jpegs vs pngs": {
+     "0": 77,
+     "1": 23
+    },
+    "pixel-perfect gifs vs pngs": {
+     "0": 95,
+     "1": 4,
+     "3": 1,
+     "4": 1
+    },
+    "pixel-perfect gifs vs pngs - except when png is smaller": {
+     "0": 95,
+     "1": 5
+    },
+    "pixel-perfect jpegs vs pngs": {
+     "0": 100,
+     "3": 5
+    },
+    "pixel-perfect jpegs vs pngs - except when png is smaller": {
+     "0": 100
+    },
+    "pixel-perfect pairs": {
+     "3": 13,
+     "4": 100
+    },
+    "visually similar pairs": {
+     "0": 61,
+     "1": 39
+    },
+    "visually similar pairs - only earlier imports": {
+     "0": 61,
+     "1": 39
+    }
+   }
+  },
+  {
+   "button": "reset_denied",
+   "selected": null,
+   "answer": "no",
+   "asked": [
+    {
+     "message": "This will command the database to repeal all user-denied decisions for these 8 rules.\n\nDo this only if the rules have tens of thousands of denied pairs and you do not want to undo them manually in the \"review actions\" window.",
+     "title": "Are you sure?",
+     "pressed": "no"
+    }
+   ],
+   "counts": {
+    "near-perfect jpegs vs pngs": {
+     "0": 77,
+     "1": 23
+    },
+    "pixel-perfect gifs vs pngs": {
+     "0": 95,
+     "1": 4,
+     "3": 1,
+     "4": 1
+    },
+    "pixel-perfect gifs vs pngs - except when png is smaller": {
+     "0": 95,
+     "1": 5
+    },
+    "pixel-perfect jpegs vs pngs": {
+     "0": 100,
+     "3": 5
+    },
+    "pixel-perfect jpegs vs pngs - except when png is smaller": {
+     "0": 100
+    },
+    "pixel-perfect pairs": {
+     "3": 13,
+     "4": 100
+    },
+    "visually similar pairs": {
+     "0": 61,
+     "1": 39
+    },
+    "visually similar pairs - only earlier imports": {
+     "0": 61,
+     "1": 39
+    }
+   }
+  },
+  {
+   "button": "reset_denied",
+   "selected": null,
+   "answer": "yes",
+   "asked": [
+    {
+     "message": "This will command the database to repeal all user-denied decisions for these 8 rules.\n\nDo this only if the rules have tens of thousands of denied pairs and you do not want to undo them manually in the \"review actions\" window.",
+     "title": "Are you sure?",
+     "pressed": "yes"
+    }
+   ],
+   "counts": {
+    "near-perfect jpegs vs pngs": {
+     "0": 77,
+     "1": 23
+    },
+    "pixel-perfect gifs vs pngs": {
+     "0": 95,
+     "1": 4,
+     "3": 1,
+     "4": 1
+    },
+    "pixel-perfect gifs vs pngs - except when png is smaller": {
+     "0": 95,
+     "1": 5
+    },
+    "pixel-perfect jpegs vs pngs": {
+     "0": 100,
+     "3": 5
+    },
+    "pixel-perfect jpegs vs pngs - except when png is smaller": {
+     "0": 100
+    },
+    "pixel-perfect pairs": {
+     "3": 13,
+     "4": 100
+    },
+    "visually similar pairs": {
+     "0": 61,
+     "1": 39
+    },
+    "visually similar pairs - only earlier imports": {
+     "0": 61,
+     "1": 39
+    }
+   }
+  },
+  {
+   "button": "reset_search",
+   "selected": null,
+   "answer": "yes",
+   "asked": [
+    {
+     "message": "This will command the database to re-search these 8 rules. It will not undo any user-denied decisions. There is no point to running this unless you suspect a miscount or other sync bug.",
+     "title": "Are you sure?",
+     "pressed": "yes"
+    }
+   ],
+   "counts": {
+    "near-perfect jpegs vs pngs": {
+     "4": 100
+    },
+    "pixel-perfect gifs vs pngs": {
+     "3": 1,
+     "4": 100
+    },
+    "pixel-perfect gifs vs pngs - except when png is smaller": {
+     "4": 100
+    },
+    "pixel-perfect jpegs vs pngs": {
+     "3": 5,
+     "4": 100
+    },
+    "pixel-perfect jpegs vs pngs - except when png is smaller": {
+     "4": 100
+    },
+    "pixel-perfect pairs": {
+     "3": 13,
+     "4": 100
+    },
+    "visually similar pairs": {
+     "4": 100
+    },
+    "visually similar pairs - only earlier imports": {
+     "4": 100
+    }
+   }
+  },
+  {
+   "button": "regen_numbers",
+   "selected": null,
+   "answer": "no",
+   "asked": [
+    {
+     "message": "This will delete all the cached pair counts for your rules. If it seems there is a miscount somewhere (e.g. a pending pair to search that never clears), try hitting this.",
+     "title": "Are you sure?",
+     "pressed": "no"
+    }
+   ],
+   "counts": {
+    "near-perfect jpegs vs pngs": {
+     "4": 100
+    },
+    "pixel-perfect gifs vs pngs": {
+     "3": 1,
+     "4": 100
+    },
+    "pixel-perfect gifs vs pngs - except when png is smaller": {
+     "4": 100
+    },
+    "pixel-perfect jpegs vs pngs": {
+     "3": 5,
+     "4": 100
+    },
+    "pixel-perfect jpegs vs pngs - except when png is smaller": {
+     "4": 100
+    },
+    "pixel-perfect pairs": {
+     "3": 13,
+     "4": 100
+    },
+    "visually similar pairs": {
+     "4": 100
+    },
+    "visually similar pairs - only earlier imports": {
+     "4": 100
+    }
+   }
+  },
+  {
+   "button": "regen_numbers",
+   "selected": null,
+   "answer": "yes",
+   "asked": [
+    {
+     "message": "This will delete all the cached pair counts for your rules. If it seems there is a miscount somewhere (e.g. a pending pair to search that never clears), try hitting this.",
+     "title": "Are you sure?",
+     "pressed": "yes"
+    }
+   ],
+   "counts": {
+    "near-perfect jpegs vs pngs": {
+     "4": 100
+    },
+    "pixel-perfect gifs vs pngs": {
+     "3": 1,
+     "4": 100
+    },
+    "pixel-perfect gifs vs pngs - except when png is smaller": {
+     "4": 100
+    },
+    "pixel-perfect jpegs vs pngs": {
+     "3": 5,
+     "4": 100
+    },
+    "pixel-perfect jpegs vs pngs - except when png is smaller": {
+     "4": 100
+    },
+    "pixel-perfect pairs": {
+     "3": 13,
+     "4": 100
+    },
+    "visually similar pairs": {
+     "4": 100
+    },
+    "visually similar pairs - only earlier imports": {
+     "4": 100
+    }
+   }
+  },
+  {
+   "button": "resync",
+   "selected": null,
+   "answer": "yes",
+   "asked": [
+    {
+     "message": "This will check that every rule is tracking all the pairs in its search domain, and no others. There is no point to running this unless you see a pair that should not be in a pending queue or similar (e.g. if one of the files is trashed).",
+     "title": "Are you sure?",
+     "pressed": "yes"
+    }
+   ],
+   "counts": {
+    "near-perfect jpegs vs pngs": {
+     "4": 100
+    },
+    "pixel-perfect gifs vs pngs": {
+     "3": 1,
+     "4": 100
+    },
+    "pixel-perfect gifs vs pngs - except when png is smaller": {
+     "4": 100
+    },
+    "pixel-perfect jpegs vs pngs": {
+     "3": 5,
+     "4": 100
+    },
+    "pixel-perfect jpegs vs pngs - except when png is smaller": {
+     "4": 100
+    },
+    "pixel-perfect pairs": {
+     "3": 13,
+     "4": 100
+    },
+    "visually similar pairs": {
+     "4": 100
+    },
+    "visually similar pairs - only earlier imports": {
+     "4": 100
+    }
+   }
+  }
+ ]
+}
