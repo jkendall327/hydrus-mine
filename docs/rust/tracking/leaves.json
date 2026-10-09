@@ -4589,7 +4589,7 @@
   },
   {
    "id": "audit-network-exchange-unsupported",
-   "label": "Login/domain metadata, bitmap clipboard and drag/drop",
+   "label": "Login/domain metadata packages",
    "path": "Network > Downloader definitions > Downloader package import/export",
    "workstream": "network",
    "state": "partial",
@@ -4597,9 +4597,22 @@
    "reference": "hydrus/client/gui/parsing/ClientGUIParsing.py:44",
    "native": "crates/hydrus-gui/src/downloader_interchange_window.rs:707",
    "notes": [
-    "Owner (2026-10-08): clipboard-bitmap and PNG drag-and-drop exchange is wanted but low priority; the other gaps here keep their priority.",
-    "Truth pass (2026-10-08): partial, medium. Login scripts now work; domain metadata, bitmap and drop remain. Missing: Domain metadata packages, clipboard bitmap as PNG, PNG drag/drop into the window. Evidence: downloader_interchange_window.rs:707, 531; login scripts work (downloader_interchange.rs:24 vs mixed_login_packages.json)",
-    "2026-10-09: domain metadata packages done (exchange-domain). Remaining: clipboard bitmap as PNG and PNG drag/drop (owner: low priority)."
+    "2026-10-09: domain metadata packages done (exchange-domain). Remaining: clipboard bitmap as PNG and PNG drag/drop (owner: low priority).",
+    "2026-10-09: clipboard bitmap as PNG and PNG drag/drop into the downloader exchange window split out to exchange-bitmap-drop. Login scripts (exchange-login) and domain metadata (exchange-domain) are done.",
+    "2026-10-09 review of #147: untagged. Not matched: the reference's separate Add choosers and questions (chooser_states, export_questions, notices in mixed_login_packages.json and domain_metadata_packages.json) are native checkboxes; per-object import selection and the one-pop-up-per-package domain metadata review are not ported. Covered by exchange-login and exchange-domain for what they name."
+   ]
+  },
+  {
+   "id": "exchange-bitmap-drop",
+   "label": "Clipboard bitmap and PNG drag-and-drop for downloader packages",
+   "path": "Network > Downloader definitions > Downloader package import/export",
+   "workstream": "network",
+   "state": "missing",
+   "priority": "low",
+   "reference": "hydrus/client/gui/parsing/ClientGUIParsing.py:44",
+   "native": null,
+   "notes": [
+    "Split out 2026-10-09; owner deferred clipboard bitmap and PNG drag-and-drop."
    ]
   },
   {
@@ -24890,14 +24903,23 @@
    "reference": "hydrus/client/gui/ClientGUISubscriptions.py:2463",
    "native": null,
    "notes": [
-    "Owner (2026-10-08): clipboard-bitmap and PNG drag-and-drop exchange is wanted but low priority; the other gaps here keep their priority.",
-    "Truth pass (2026-10-08): partial, medium. Modern and legacy exchange recorded and tested; specific gaps remain. Missing (as of that pass; seed caches 1-7 since done): clipboard bitmap and drag/drop, per-object selection, cache-header gaps. Evidence: extensively recorded and tested (subscriptions.rs:1219-2049; record_subscription_exchange.py etc.)",
     "Manage subscriptions exposes serialized import/export of modern reference container90 objects through an owned child. Settings, complete query states, cached velocity/example-seed headers and both file/gallery histories survive JSON/PNG exchange, staged import and Apply/reopen. Casefold name collisions use (1) suffixes and every imported query gets a fresh history identity. JSON file export asks the original existing-path overwrite question; rejecting or closing the owner preserves the existing file. Format-specific multi-file JSON/PNG imports validate before staging, cancellation leaves the saved store unchanged, and stale callbacks cannot append or overwrite. Export reads current native queues plus draft reset/retry commands and preserves copied header metadata. Incomplete objects now ask the exact reference missing query log data title, message and import/back-out choices before they enter the draft; accepting persists empty logs and rejecting or cancelling continues remaining objects in list order. Apply is blocked while the question remains unanswered. Modern clipboard/JSON/PNG menu choices now dispatch their actual transport action. Legacy subscription type3 versions1–10 and legacy query1–3 import with full embedded histories, historical checker/limit defaults and fresh identity handling; obsolete gallery identifiers become the original paused unknown downloader. Actual Qt direct conversion and list exports constrain full upgraded payloads, apart from generated random identities. Fresh history names invalidate velocity/status according to SetQueryLogContainerName while retaining example/cached-count fields. Actual Reset/RetryFailed/RetryIgnored exports now refresh file-count/example caches without changing velocity or gallery examples. Retried files lose hashes exactly as SetStatus(UNKNOWN) does, in both detached exports and the real Apply transaction; reopening exports those persisted caches.",
-    "Clipboard PNG-image precedence and PNG drag/drop remain absent; PNG files and the original transport popup choices are supported.",
-    "Native package/file selection review rejects an entire invalid selection atomically; the reference can retain earlier valid objects and show type warnings. Imports open an additional reviewed child before staging.",
     "Native initialises accepted missing logs directly during Apply instead of requiring a reopen.",
-    "Fresh native queries now export file counts/examples, but gallery/velocity caches without a retained reference header remain unsynchronised.",
-    "2026-10-09: old seed-cache versions 1-7 now read by the database importer and the exchange codec drops repeated seeds as the reference does. Still missing: clipboard bitmap and PNG drag/drop (low priority), per-object selection and partial skips, header caches (velocity, gallery examples) for fresh native queries."
+    "2026-10-09: clipboard PNG image and PNG drag-and-drop split out to subscriptions-exchange-bitmap-drop. Seed caches 1-7, direct import for all three menu choices and the unsynced fresh-query header (subscription_header_resync.json) are done.",
+    "2026-10-09 review of #147: untagged. Not matched yet: (1) the reference's accept path for missing query logs (Apply stores the subscription with the log missing; the next open of manage subscriptions asks 'Missing Query Logs!' (continue / back out), then writes empty logs and Resets the headers; meanwhile the subscription daemon pauses it with a message) where native creates empty logs on Apply; (2) a checker options edit marks headers whose history was not loaded unsynced with the velocity words 'will recalculate when next fully loaded' (Subscription.SetCheckerOptions) where native recomputes natively and leaves the cached header as it was. Fresh queries keep the default 'unknown' (recorded), the override is only for checker edits."
+   ]
+  },
+  {
+   "id": "subscriptions-exchange-bitmap-drop",
+   "label": "Clipboard PNG image and PNG drag-and-drop into the subscriptions list",
+   "path": "Network > Manage subscriptions > Subscription serialized import/export",
+   "workstream": "network",
+   "state": "missing",
+   "priority": "low",
+   "reference": "hydrus/client/gui/lists/ClientGUIListCtrl.py:1685",
+   "native": null,
+   "notes": [
+    "Split out 2026-10-09; owner deferred clipboard bitmap and PNG drag-and-drop."
    ]
   },
   {

@@ -156,7 +156,7 @@ export component SubscriptionsWindow inherits Window {
     background: Theme.window;
     in property <bool> gallery-open;
     in property <bool> exchange-open;
-    callback exchange(bool);
+    callback exchange();
     callback exchange-mode(int);
     in property <[string]> exchange-export-labels: ["to clipboard", "to json file", "to png file"];
     in property <[string]> exchange-import-labels: ["from clipboard", "from json files", "from png files (you can also drag and drop pngs onto this list)"];

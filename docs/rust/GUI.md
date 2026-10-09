@@ -215,8 +215,8 @@ continues remaining objects; the information count includes permitted objects
 whose missing-log import was rejected, as in Qt. Cancel invalidates pending
 imports and picker/notice callbacks. `oracle/record_subscription_import_flow.py`
 records these direct menu imports, warnings, accepted prefixes and selection.
-The explicit legacy exchange callback still supports its old review child;
-actual import menus use the direct flow. Clipboard bitmap precedence and list
+All three import choices (clipboard, JSON files, PNG files) use this direct flow;
+export opens the exchange window. Clipboard bitmap precedence and list
 drag/drop remain absent (see DIFFERENCES.md).
 
 Network > "subscriptions…" opens the manage subscriptions dialog
