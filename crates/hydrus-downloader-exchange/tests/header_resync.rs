@@ -7,16 +7,21 @@ use serde_json::Value;
 
 fn fixture() -> (Value, Vec<exchange::Subscription>) {
     let fixture = hydrus_testkit::fixture_json("subscription_header_resync.json");
-    let subs =
-        exchange::decode_text_at(&fixture["source"].to_string(), fixture["now"].as_i64().unwrap())
-            .unwrap();
+    let subs = exchange::decode_text_at(
+        &fixture["source"].to_string(),
+        fixture["now"].as_i64().unwrap(),
+    )
+    .unwrap();
     (fixture, subs)
 }
 
 /// The cache fields of a v3 header: log status, file status, velocity, its
 /// words, and the two example seeds.
 fn cached(header: &Value) -> Vec<Value> {
-    [8, 9, 13, 14, 15, 16].iter().map(|i| header[2][*i].clone()).collect()
+    [8, 9, 13, 14, 15, 16]
+        .iter()
+        .map(|i| header[2][*i].clone())
+        .collect()
 }
 
 #[test]
