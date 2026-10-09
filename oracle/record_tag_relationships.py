@@ -73,7 +73,11 @@ def record(session):
             filtered = {}
             for whole in [False, True]:
                 filtered[str(whole).lower()] = sorted([list(p) for p in context.GetPertinentPairsForTags({'cousin'}, False, False, whole)])
-            out.append({'kind': name, 'local': local, 'initial': [list(p) for p in initial], 'columns': columns, 'default_sort': list(table.model()._column_list_status.GetSort()), 'buttons': buttons, 'labels': labels, 'steps': steps, 'filtered': filtered})
+            # (and with pending and petitioned groups shown)
+            filtered_pending = {}
+            for whole in [False, True]:
+                filtered_pending[str(whole).lower()] = sorted([list(p) for p in context.GetPertinentPairsForTags({'cousin'}, False, True, whole)])
+            out.append({'kind': name, 'local': local, 'initial': [list(p) for p in initial], 'columns': columns, 'default_sort': list(table.model()._column_list_status.GetSort()), 'buttons': buttons, 'labels': labels, 'steps': steps, 'filtered': filtered, 'filtered_pending': filtered_pending})
             panel.deleteLater()
         return out
     result = controller.CallBlockingToQt(controller.gui, work)

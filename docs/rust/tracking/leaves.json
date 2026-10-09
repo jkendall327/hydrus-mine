@@ -2218,13 +2218,13 @@
    "native": null,
    "notes": [
     "Local add/delete or repository pend/petition/rescind uses typed updates and stored reasons; repository tests reopen pending/reasons and rescind correctly.",
-    "Account/moderator permission warnings/bypass and recent/fixed reason suggestions are absent; uploading remains unavailable."
+    "Recent and fixed reason suggestions are offered (clicked as buttons) and the recent count option caps them; account/moderator permission warnings and the moderator bypass are not ported; uploading remains unavailable."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Recording replay covers reason questions and update reasons; the repository reopen/rescind test uses typed values. The GUI reason flow is only driven for siblings. Moderator/permission warnings, reason bypass and recent/fixed reason suggestions are absent (part of the reference's reason dialog). Tests: crates/hydrus-gui-model/tests/model/tag_relationships.rs:23,326 repository_changes_keep_reasons_and_rescinds_across_reopen"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "Claude session (recheck bins A/B), #97 phase 2",
+    "note": "crates/hydrus-gui/tests/gui/tag_relationships_replay.rs the_relationship_windows_edit_and_filter_pairs_as_the_reference_s_do, for tags > parents on a tag repository: pairs entered and 'add' clicked, a row selected and 'delete' clicked, the reason question ('Enter a reason for: ... A janitor will review your petition.', OK/cancel) and the rescind question answered with their buttons, a reason typed; the questions and the rows with their reasons equal tag_relationships.json's. Moderator permission bypass is not ported (DIFFERENCES.md; repositories are out of scope). Also crates/hydrus-gui/tests/gui/tag_relationships.rs reason_questions_offer_recent_then_fixed_reasons_and_the_option_caps_the_recent_ones (relationship_reasons.json, parents and siblings, tag repository): 'To be added' and 'To be deleted' (petition of a current pair) questions, the recent then fixed suggestions offered and clicked as buttons, the remembered reasons and the count option compared. The notes' 'suggestions are absent' was stale and is corrected."
    }
   },
   {
@@ -2241,10 +2241,10 @@
     "Rows load synchronously; no reference background fetch/progress state."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Model replays the recorded filter/wipe/sort results, but no GUI test drives the parents workspace, current/pending or whole-chain filters (set_whole_chain is never exercised in tests/gui); rows load synchronously without the reference's background fetch. Tests: crates/hydrus-gui-model/tests/model/tag_relationships.rs:23,167; crates/hydrus-gui/tests/gui/tag_relationships.rs:11 (siblings show_all only)"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "Claude session (recheck bins A/B), #97 phase 2",
+    "note": "crates/hydrus-gui/tests/gui/tag_relationships_replay.rs the_relationship_windows_edit_and_filter_pairs_as_the_reference_s_do, for tags > parents (local and repository): workspace wiped to 'cousin', 'show all pairs', 'show pending and petitioned groups' and 'show whole chains' clicked, the pairs compared with the reference's for each combination (tag_relationships.json, filtered and filtered_pending). Rows load synchronously (DIFFERENCES.md)."
    }
   },
   {
@@ -3477,10 +3477,10 @@
     "Rows load synchronously; no reference background fetch/progress state."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Model test replays the recorded filtered row sets and wipe, but the GUI test only toggles show_all; the current/pending/whole-chain switches and workspace wipe callback are never driven through the window. Tests: crates/hydrus-gui-model/tests/model/tag_relationships.rs:23 (filtered/wipe via recording); crates/hydrus-gui/tests/gui/tag_relationships.rs:10"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "Claude session (recheck bins A/B), #97 phase 2",
+    "note": "crates/hydrus-gui/tests/gui/tag_relationships_replay.rs the_relationship_windows_edit_and_filter_pairs_as_the_reference_s_do opens tags > siblings from the menu bar for a local service and a repository, replays tag_relationships.json's adds and deletes (rows compared), then types 'cousin', clicks 'wipe workspace', unticks 'show all pairs' and ticks/unticks 'show pending and petitioned groups', comparing the pairs with the reference's filtered pairs (the recorder now also records the pending filter). Siblings have no whole-chain box, as in the reference. Rows load synchronously (DIFFERENCES.md)."
    }
   },
   {
@@ -18464,10 +18464,10 @@
     "Native rating/star/radio interactions use dropdown/tick controls; only local rating-service panel construction is implemented."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Checks the panel's label and ServiceRef key against the recorded labels and service keys, at Panel level only; no window test, and the leaf's 'service selection' is reduced to a label (test comment says the reference has no selector). Tracker note 'only local rating-service panel construction is implemented' is partly stale/vague. Weak: no GUI drive. Tests: crates/hydrus-gui/tests/gui/predicate_editors.rs:1823 each_rating_panel_is_for_its_own_service"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "Claude session (recheck bins A/B), #97 phase 2",
+    "note": "crates/hydrus-gui/tests/gui/predicate_editors.rs each_rating_panel_in_the_window_is_for_its_own_service opens system:rating's editor window, one panel per rating service as the reference's: each panel's label is its service's (favourites, stars, counter) as system_predicate_editors.json records, and what 'ok' adds to the page's search as the panel opens and after each recorded change names that service and equals the reference's predicate. The reference has no service selector inside a panel. The test asserts each service's panel class (Like, Numerical, IncDec) in the recording and in the window's editor."
    }
   },
   {
@@ -18504,10 +18504,10 @@
     "Native rating/star/radio interactions use dropdown/tick controls; only local rating-service panel construction is implemented."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Checks the panel's label and ServiceRef key against the recorded labels and service keys, at Panel level only; no window test, and the leaf's 'service selection' is reduced to a label (test comment says the reference has no selector). Tracker note 'only local rating-service panel construction is implemented' is partly stale/vague. Weak: no GUI drive. Tests: crates/hydrus-gui/tests/gui/predicate_editors.rs:1823 each_rating_panel_is_for_its_own_service"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "Claude session (recheck bins A/B), #97 phase 2",
+    "note": "crates/hydrus-gui/tests/gui/predicate_editors.rs each_rating_panel_in_the_window_is_for_its_own_service opens system:rating's editor window, one panel per rating service as the reference's: each panel's label is its service's (favourites, stars, counter) as system_predicate_editors.json records, and what 'ok' adds to the page's search as the panel opens and after each recorded change names that service and equals the reference's predicate. The reference has no service selector inside a panel. The test asserts each service's panel class (Like, Numerical, IncDec) in the recording and in the window's editor."
    }
   },
   {
@@ -18544,10 +18544,10 @@
     "Native rating/star/radio interactions use dropdown/tick controls; only local rating-service panel construction is implemented."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Checks the panel's label and ServiceRef key against the recorded labels and service keys, at Panel level only; no window test, and the leaf's 'service selection' is reduced to a label (test comment says the reference has no selector). Tracker note 'only local rating-service panel construction is implemented' is partly stale/vague. Weak: no GUI drive. Tests: crates/hydrus-gui/tests/gui/predicate_editors.rs:1823 each_rating_panel_is_for_its_own_service"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "Claude session (recheck bins A/B), #97 phase 2",
+    "note": "crates/hydrus-gui/tests/gui/predicate_editors.rs each_rating_panel_in_the_window_is_for_its_own_service opens system:rating's editor window, one panel per rating service as the reference's: each panel's label is its service's (favourites, stars, counter) as system_predicate_editors.json records, and what 'ok' adds to the page's search as the panel opens and after each recorded change names that service and equals the reference's predicate. The reference has no service selector inside a panel. The test asserts each service's panel class (Like, Numerical, IncDec) in the recording and in the window's editor."
    }
   },
   {
@@ -18781,10 +18781,10 @@
     "Date/time fields are typed strings with validation instead of Qt calendar and time widgets."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Replays recorded archived-date scenarios and rejects bad dates, but through Panel only; no window drives the date/time fields, and the calendar/time widgets are typed strings (disclosed). Tests: crates/hydrus-gui/tests/gui/predicate_editors.rs:1889 archived_and_modified_date_panels_make_the_recorded_date_and_time_predicates"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "Claude session (recheck bins A/B), #97 phase 2",
+    "note": "crates/hydrus-gui/tests/gui/predicate_editors.rs panels_set_in_several_ways_in_the_window_make_what_the_reference_s_make replays every recorded scenario through the editor window, among them the archived-date panel's two (operator, date and time typed): what 'ok' adds to the page's search equals the reference's. Typed date/time stand for the calendar and time widgets (DIFFERENCES.md). The panel's refusals (30 February, 25:61) are also made in the window (the_date_panels_in_the_window_have_their_recorded_scenarios_and_refuse_bad_dates), which asserts both recorded scenarios of the panel exist."
    }
   },
   {
@@ -19072,10 +19072,10 @@
     "Date/time fields are typed strings with validation instead of Qt calendar and time widgets."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Replays the two recorded modified-date scenarios and refuses bad dates/times against Panel only (the refusal cases are typed, not recorded); typed text fields replace the calendar/time widgets and no window test drives this panel. Tests: crates/hydrus-gui/tests/gui/predicate_editors.rs:1887 archived_and_modified_date_panels_make_the_recorded_date_and_time_predicates"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "Claude session (recheck bins A/B), #97 phase 2",
+    "note": "crates/hydrus-gui/tests/gui/predicate_editors.rs panels_set_in_several_ways_in_the_window_make_what_the_reference_s_make replays every recorded scenario through the editor window, among them the modified-date panel's two (operator, date and time typed): what 'ok' adds to the page's search equals the reference's. Typed date/time stand for the calendar and time widgets (DIFFERENCES.md). The panel's refusals (30 February, 25:61) are also made in the window (the_date_panels_in_the_window_have_their_recorded_scenarios_and_refuse_bad_dates), which asserts both recorded scenarios of the panel exist."
    }
   },
   {
@@ -23370,10 +23370,10 @@
     "The replay compares advanced blacklist/whitelist rules and except-input enablement after add/delete/block-everything transitions."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "The recording of advanced add/delete, block-everything and except-input enablement is replayed on TagFilterEditor only. The window is driven for advanced exclude typing and removal (tag_filter_removal.rs) but no GUI test clicks block-everything on the advanced tab, adds to the except list, or checks except-input enablement. Tests: crates/hydrus-gui-model/tests/model/tag_filter_editor.rs:59 the_editor_shows_and_edits_a_filter_as_the_reference_does; GUI only crates/hydrus-gui/tests/gui/tag_filter_removal.rs:37"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "Claude session (recheck bins A/B), #97 phase 2",
+    "note": "crates/hydrus-gui/tests/gui/tag_filter_replay.rs the_tag_filter_window_shows_and_edits_a_filter_as_the_reference_does: the advanced tab's exclude and except lists typed into, selected and deleted (asked, answered with its button), 'block everything' clicked, comparing both advanced lists, whether 'except for these' takes input, the redundancy messages ('already blocked/permitted by a broader rule'), the current filter and the filter applied with tag_filter_editor.json after each step. Slices are handed to the window's typing callback (invoke_typed) and the test text to set_test_input, not typed key by key. Case 1's last recorded step sets a box the window has disabled; the case's applied filter is compared at the last state reached."
    }
   },
   {
@@ -23408,10 +23408,10 @@
     "Recorded black_global/black_ns and black_add/remove states are compared with the native draft, including already-covered rule summaries."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "black_global/black_ns/add/remove states replayed on TagFilterEditor only. The window is driven for typing and removing blacklist slices, but no GUI test clicks the blacklist global or namespace ticks (only the whitelist's, in import_options.rs:369), though the leaf names them. Tests: crates/hydrus-gui-model/tests/model/tag_filter_editor.rs:58; GUI tag_filter_removal.rs:37"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "Claude session (recheck bins A/B), #97 phase 2",
+    "note": "crates/hydrus-gui/tests/gui/tag_filter_replay.rs the_tag_filter_window_shows_and_edits_a_filter_as_the_reference_does replays tag_filter_editor.json through the window (namespaces offered from a parser, as the reference's): tabs clicked, the blacklist's global and namespace boxes clicked for real, slices handed to the window's typing callback (invoke_typed, not key presses), selected and removed (question answered with its button), comparing both simple lists (ticks, entries, enabled, errors), the advanced lists, the redundancy message, the current filter and the test box (set_test_input and its edited callback) after each step, and the filter applied. Case 1's last recorded step sets a box the window has disabled (the recorder set it behind the panel); the window ignores the click and the test stops that case there."
    }
   },
   {
