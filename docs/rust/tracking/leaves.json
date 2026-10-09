@@ -2379,10 +2379,10 @@
     "Grant persists correctly, but repository commit_pending refuses because native repository uploading is absent."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "phase 2 session (blind agent)",
-    "note": "client_api_permissions.rs:57 each_permission_checkbox_has_the_reference_label_and_serializes_alone loops the recorded client_api_admin.json rows through the real editor and checks the label and single-grant serialisation. Only the checkbox and the stored grant are proven: the routes that check CommitPending just return 422 because repository commit-pending upload is absent, so no consumer is exercised."
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "claude, branch claude/exchange-and-fixes",
+    "note": "The real permission editor grants only 'commit pending' to one key (label from client_api_admin.json); the real API router then lets that key read pending counts and refuses another key; commit_pending passes the check and answers 422 because repository upload is absent (DIFFERENCES.md). Test: crates/hydrus-gui/tests/gui/client_api_permissions.rs the_commit_pending_checkbox_grants_the_pending_routes_to_that_key_alone."
    }
   },
   {
@@ -4587,7 +4587,7 @@
    "notes": [
     "Owner (2026-10-08): clipboard-bitmap and PNG drag-and-drop exchange is wanted but low priority; the other gaps here keep their priority.",
     "Truth pass (2026-10-08): partial, medium. Login scripts now work; domain metadata, bitmap and drop remain. Missing: Domain metadata packages, clipboard bitmap as PNG, PNG drag/drop into the window. Evidence: downloader_interchange_window.rs:707, 531; login scripts work (downloader_interchange.rs:24 vs mixed_login_packages.json)",
-    "Native package workflow supports URL classes/GUGs/pages only; bitmap/drop and login/domain packages have no native path."
+    "2026-10-09: domain metadata packages done (exchange-domain). Remaining: clipboard bitmap as PNG and PNG drag/drop (owner: low priority)."
    ]
   },
   {
@@ -5463,10 +5463,10 @@
     "Updated for #89 (2026-10-08): the presentation location is the unrestricted shared selector (menu, list with deleted-from boxes in advanced mode) and the status/inbox choices and greying replay oracle/fixtures/location_selector_flags.json; 'show files' filters by current and deleted domains (queues.rs). Remaining: the kinds-list summary names no domain for other locations (DIFFERENCES.md)."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "phase 2 session (blind agent)",
-    "note": "import_options_fields.rs:235 and import_locations.rs:365/:489 replay the recorded status, inbox, greying and location data through the real editor and check the saved options hold the values, but none runs the 'show files' consumer filtering by current and deleted domains in queues.rs, so the setting only round-trips while its reader is untested."
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "claude, branch claude/exchange-and-fixes",
+    "note": "The saved presentation (status, location with deleted-from domains, all known files) is chosen in the real import options editor and then read by the real 'show files' > 'default presented files' menu action, which filters by current and deleted domains. Test: crates/hydrus-gui/tests/gui/import_locations.rs the_presentation_editors_choices_filter_the_files_show_files_presents; the editor's choices replay location_selector_flags.json in the same file."
    }
   },
   {
@@ -9243,10 +9243,10 @@
     "Assessment covers this editable control and shared Apply/Cancel, not every control on its containing reference page or every background consumer."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "phase 2 session (blind agent)",
-    "note": "hydrus-download local_import.rs:454 a_local_import_copies_to_a_temp_path_first_unless_the_option_says_not_to writes copy_import_files_to_temp_dir into the store and shows the queue consumer making or skipping the temp copy, but no tagged test opens the Options window, so the leaf's editable row (label, checkbox, Apply/Cancel) is not driven."
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "claude, branch claude/exchange-and-fixes",
+    "note": "The Options window row (label, unchecked by default, cancel, apply, reopen) is driven, and the real local-import worker then copies to a temp path or reads the source directly as the saved value says. The test finds the row by the reference's literal label; the model tests check the label, kind and initial value against the Qt options recording. Test: crates/hydrus-gui/tests/gui/options_system_consumers.rs the_direct_import_row_decides_whether_a_local_import_copies_to_a_temp_path_first."
    }
   },
   {
@@ -23042,10 +23042,10 @@
     "Updated for #89 (2026-10-08): deleted ticks and all-known replay search_domains.json; the caller flags (importable, local-only, combined-local-only, no multiple, all-known) are modelled in domains::Flags and replayed against the real button in location_selector_flags.json. Only the importable and unrestricted flags have a GUI caller (the import options editor, tested through its window); the other flags are model-only (DIFFERENCES.md)."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "phase 2 session (blind agent)",
-    "note": "import_locations.rs:235 the_destination_button_chooses_one_several_or_no_domains_as_the_reference_does uses the importable-only selector, which lists only 'art' and 'my files' and shows no deleted ticks or all-known mode, so the leaf's deleted-domain ticks and all-known autocomplete mode are not driven through any GUI caller (model-only)."
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "claude, branch claude/exchange-and-fixes",
+    "note": "The unrestricted selector (the presentation location) is driven through the import options editor: deleted-from ticks, all known files, and their effect on what 'show files' presents. Other callers' flags remain model-only (DIFFERENCES.md). Test: crates/hydrus-gui/tests/gui/import_locations.rs the_presentation_editors_choices_filter_the_files_show_files_presents."
    }
   },
   {
@@ -23862,14 +23862,19 @@
    "label": "Domain metadata export packages",
    "path": "Network > Downloader definitions > Downloader package import/export",
    "workstream": "network",
-   "state": "missing",
+   "state": "implemented",
    "priority": "normal",
    "reference": "hydrus/client/gui/parsing/ClientGUIParsing.py:91",
    "native": "crates/hydrus-gui/src/downloader_interchange_window.rs:707",
    "notes": [
-    "Truth pass (2026-10-08): missing, medium. A contained medium slice; the data to package already exists. Missing: The domain prompt, DomainMetadataPackage (type 71) encode/decode in JSON/PNG, review and import, and a recording. Evidence: downloader_interchange.rs:436-446 has no domain metadata category; header and bandwidth storage exist",
-    "Top-level native downloader package accepts URL classes/GUGs/page parsers; domain metadata and login script packages are rejected, not edited or imported."
-   ]
+    "2026-10-09: ported (type 71 codec, domain prompt, review, import); recorded by oracle/record_domain_metadata_packages.py."
+   ],
+   "recheck": {
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "claude, branch claude/exchange-and-fixes",
+    "note": "Window test drives the export prompt (cancel, nothing found, pending-only, subdomain, repeat), the downloader choice adding its example domain's rules, PNG export, and import (review details, cancel, accept, repeat) against domain_metadata_packages.json recorded from the real reference panels; model tests replay the bandwidth early-return and the eight-detail limit. Tests: crates/hydrus-gui/tests/gui/domain_metadata.rs, crates/hydrus-gui-model/tests/model/domain_metadata.rs. Per-object selection and the pop-up-per-package review are documented differences."
+   }
   },
   {
    "id": "exchange-login",
@@ -24793,13 +24798,13 @@
    "native": null,
    "notes": [
     "Owner (2026-10-08): clipboard-bitmap and PNG drag-and-drop exchange is wanted but low priority; the other gaps here keep their priority.",
-    "Truth pass (2026-10-08): partial, medium. Modern and legacy exchange recorded and tested; specific gaps remain. Missing: Old seed-cache versions 1-7, clipboard bitmap and drag/drop, per-object selection, cache-header gaps. Evidence: extensively recorded and tested (subscriptions.rs:1219-2049; record_subscription_exchange.py etc.)",
+    "Truth pass (2026-10-08): partial, medium. Modern and legacy exchange recorded and tested; specific gaps remain. Missing (as of that pass; seed caches 1-7 since done): clipboard bitmap and drag/drop, per-object selection, cache-header gaps. Evidence: extensively recorded and tested (subscriptions.rs:1219-2049; record_subscription_exchange.py etc.)",
     "Manage subscriptions exposes serialized import/export of modern reference container90 objects through an owned child. Settings, complete query states, cached velocity/example-seed headers and both file/gallery histories survive JSON/PNG exchange, staged import and Apply/reopen. Casefold name collisions use (1) suffixes and every imported query gets a fresh history identity. JSON file export asks the original existing-path overwrite question; rejecting or closing the owner preserves the existing file. Format-specific multi-file JSON/PNG imports validate before staging, cancellation leaves the saved store unchanged, and stale callbacks cannot append or overwrite. Export reads current native queues plus draft reset/retry commands and preserves copied header metadata. Incomplete objects now ask the exact reference missing query log data title, message and import/back-out choices before they enter the draft; accepting persists empty logs and rejecting or cancelling continues remaining objects in list order. Apply is blocked while the question remains unanswered. Modern clipboard/JSON/PNG menu choices now dispatch their actual transport action. Legacy subscription type3 versions1–10 and legacy query1–3 import with full embedded histories, historical checker/limit defaults and fresh identity handling; obsolete gallery identifiers become the original paused unknown downloader. Actual Qt direct conversion and list exports constrain full upgraded payloads, apart from generated random identities. Fresh history names invalidate velocity/status according to SetQueryLogContainerName while retaining example/cached-count fields. Actual Reset/RetryFailed/RetryIgnored exports now refresh file-count/example caches without changing velocity or gallery examples. Retried files lose hashes exactly as SetStatus(UNKNOWN) does, in both detached exports and the real Apply transaction; reopening exports those persisted caches.",
-    "Historical file seed-cache type8 versions1–7 remain unsupported and fail explicitly; current cache8 with seed versions handled by the legacy decoder is supported.",
     "Clipboard PNG-image precedence and PNG drag/drop remain absent; PNG files and the original transport popup choices are supported.",
     "Native package/file selection review rejects an entire invalid selection atomically; the reference can retain earlier valid objects and show type warnings. Imports open an additional reviewed child before staging.",
     "Native initialises accepted missing logs directly during Apply instead of requiring a reopen.",
-    "Fresh native queries now export file counts/examples, but gallery/velocity caches without a retained reference header remain unsynchronised."
+    "Fresh native queries now export file counts/examples, but gallery/velocity caches without a retained reference header remain unsynchronised.",
+    "2026-10-09: old seed-cache versions 1-7 now read by the database importer and the exchange codec drops repeated seeds as the reference does. Still missing: clipboard bitmap and PNG drag/drop (low priority), per-object selection and partial skips, header caches (velocity, gallery examples) for fresh native queries."
    ]
   },
   {

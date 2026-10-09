@@ -828,14 +828,17 @@ deleted sidecars by `crates/hydrus-download/tests/local_import.rs`.
   opens its former review child. Clipboard PNG
   image precedence and PNG list drops remain absent. Historical file-cache
   versions 1–7 now upgrade within the exchange codec, with recorded order,
-  timestamp, note, count and example preservation. Later historical caches can
-  contain duplicate identities; native queues cannot preserve those, so these
-  imports fail explicitly instead of dropping entries. Version-1 float/complex
-  notes requiring Python `str()` also fail explicitly; text, integer, boolean
-  and None notes are supported. The codec applies generic URL encoding without
-  a client's URL-class configuration; custom class-specific rewrites remain
-  outside this recorded slice. The read-only database importer's cache decoder
-  remains version 8 only.
+  timestamp, note, count and example preservation. A repeated seed in a
+  historical cache is dropped, first one winning, as the reference does when it
+  first indexes the cache (recorded with a list export). Version-1 notes of any
+  scalar type (text, integer, float, boolean, None) become text as Python's
+  `str()` makes them; a list or dictionary note fails explicitly. The exchange
+  codec applies generic URL encoding without a client's URL-class configuration;
+  custom class-specific rewrites remain outside this recorded slice. The
+  read-only database importer (an old install's subscriptions, import folders
+  and sessions) reads caches of versions 1–7 too, with the same upgrades
+  (`record_legacy_seed_caches.py`); there a URL seed's comparison form is
+  worked out from the client's URL classes, as for any seed saved before version 8.
   Missing histories now ask the original message, title and decisions before
   staging; accepted missing logs are initialised empty directly on Apply. The list owner now stages modern imports and
   persists both histories. JSON file export/overwrite and multi-file JSON/PNG
@@ -1202,9 +1205,12 @@ native/store/model regression source awaits hosted CI; no Rust runs locally.
 
 ## Repositories (`/manage_services/*`)
 
-- **Commit pending is only an editor checkbox.** The Client API permission
-  editor offers and stores the "commit pending" permission (checked against the
-  recorded permission rows), but nothing can commit to a repository.
+- **Commit pending only gates the pending routes.** The Client API permission
+  editor's "commit pending" permission is checked against the recorded
+  permission rows, and the pending-counts and commit routes check it (the test
+  reads the counts with a key that has it and is refused for one that lacks it);
+  nothing can commit to a repository (`commit_pending` passes the
+  permission check, then answers 422).
 
 - **Pending content can't be committed.** hydrus-rs doesn't talk to
   repository servers (the PTR, file repositories), so `commit_pending`
@@ -1554,9 +1560,9 @@ earlier unsupported versions must first be re-exported by the reference client.
 Unknown processing steps/conversions are rejected before staging because their
 native execution forms cannot retain all original data. Native/runtime fields
 take precedence over preserved auxiliary editor fields when exporting edits.
-Mixed downloader package import accepts URL classes, GUGs, page parsers and login scripts;
+Mixed downloader package import accepts URL classes, GUGs, page parsers, login scripts and domain metadata;
 standalone formulas/content nodes belong in their matching native editors.
-Domain metadata packages remain unsupported here. The native mixed exporter
+The native mixed exporter
 uses component checkboxes with dependency expansion instead of Qt's separate
 Add choosers. Imports review a whole supported package; Qt additionally offers
 optional per-object selection and skips unsupported objects. Mixed login script
@@ -1566,8 +1572,13 @@ credentials/activation/delays without configuring new example domains. Standalon
 login-list imports retain their separate nonduplicate-name policy. The actual
 Qt mixed-package recording also captures a repeated nested GUG import creating
 an additional nested generator after child keys change; native retains its
-existing remapped dependency duplicate checks. This login slice does not claim
-domain metadata, bitmap/drag ingestion, or the wider downloader exchange parent.
+existing remapped dependency duplicate checks. Domain metadata is reviewed in the same text as the other
+components, not in one pop-up per package, and imports have no final "successfully
+added" notice. Like the reference's bandwidth manager, an import stops adding
+rules at the first package (in domain order) that has none, so a headers-only
+package keeps later packages' rules out until they are imported again
+(recorded in `domain_metadata_packages.json`). Clipboard bitmap and drag/drop
+ingestion are not exposed (low priority).
 
 Tab context menus expose close, select, move-page, sort-pages and send-down submenus,
 rename, duplicate, collapse, grouped close and per-notebook saved-session
@@ -4429,11 +4440,7 @@ directory.
 
 ## Leaves left untagged because only part is tested
 
-- **Client API "commit pending" permission.** The checkbox and the stored grant are tested; nothing consumes the permission (repository commit-pending upload is absent, the routes return 422).
-- **Importer "present" (show files) options.** The editor's status, inbox and location choices are tested against the recordings and the saved options hold them; no test runs the queue's "show files" filter by current and deleted domains.
-- **"Import local files directly from source" (test option).** The importer's temp-copy behaviour is tested with the setting written to the store; no test drives the Options row.
 - **mpv "set null audio device on silent media".** The Options row and the player plan's audio device are tested; mpv itself is not driven (no libmpv), and the leaf is out of scope.
-- **Importer destination: deleted domains and all-known mode.** The model supports them; no GUI caller offers them, so they are not driven through a window.
 
 - **Closing tabs while downloaders are running.** Closing other pages, or the pages to the left or right, asks a plain yes/no question with the recorded wording; the reference, when a closing page has a downloader at work, asks a longer question with a statement and a third "no, but show me the pages" button. That path is not implemented or tested, so those three menu leaves stay untagged.
 

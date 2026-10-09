@@ -1686,3 +1686,126 @@ fn the_edited_shutdown_minutes_are_in_the_question() {
         question.invoke_answered(false);
     }
 }
+
+// leaf: audit-options-files-and-trash-test-import-local-files-directly-from-source-do-not-copy-to-temp-dir-beforehand
+#[tokio::test(flavor = "multi_thread")]
+async fn the_direct_import_row_decides_whether_a_local_import_copies_to_a_temp_path_first() {
+    use hydrus_core::import_options::ImportOptionsSlice;
+    use hydrus_download::{Downloader, QueueRunner};
+    use hydrus_import::FileImporter;
+    use hydrus_media::MediaTools;
+    use hydrus_net::{NetEngine, NetOptions};
+    use hydrus_store::queues::{self, LocalImport};
+    use hydrus_store::settings::FolderSettings;
+
+    const LABEL: &str =
+        "TEST: Import local files directly from source, do not copy to temp dir beforehand.";
+    let client = client();
+    let store = client.store.clone();
+    let net = Arc::new(
+        NetEngine::new(
+            Arc::clone(&store),
+            NetOptions {
+                obey_bandwidth: false,
+                ..NetOptions::default()
+            },
+        )
+        .unwrap(),
+    );
+    let importer = FileImporter::new(Arc::clone(&store), MediaTools::new());
+    let probe = importer.clone();
+    let downloader = Arc::new(Downloader::new(Arc::clone(&store), net, importer).unwrap());
+    let worker = QueueRunner::new(downloader, 60);
+    let work = tempfile::tempdir().unwrap();
+    let place = |name: &str| {
+        let to = work.path().join(name);
+        std::fs::copy(
+            std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
+                .join("../../oracle/fixtures/media")
+                .join(name),
+            &to,
+        )
+        .unwrap();
+        to
+    };
+    let import = |path: &std::path::Path| {
+        let path = path.to_string_lossy().into_owned();
+        let queue = store
+            .write(move |ctx| {
+                queues::create_local_import(
+                    ctx.conn(),
+                    None,
+                    &ImportOptionsSlice::default(),
+                    &[(path, None)],
+                    &queues::PathTags::new(),
+                    LocalImport::default(),
+                    0,
+                )
+            })
+            .unwrap();
+        worker.start_all().unwrap();
+        queue
+    };
+    let finished = |queue: i64| {
+        let store = store.clone();
+        async move {
+            for _ in 0..400 {
+                if store
+                    .read(|conn| queues::next_file_seed(conn, queue))
+                    .unwrap()
+                    .is_none()
+                {
+                    return;
+                }
+                tokio::time::sleep(std::time::Duration::from_millis(50)).await;
+            }
+            let seeds = store.read(|conn| queues::file_seeds(conn, queue)).unwrap();
+            panic!(
+                "the import did not finish: {:?}",
+                seeds
+                    .iter()
+                    .map(|s| (s.status, s.note.clone()))
+                    .collect::<Vec<_>>()
+            );
+        }
+    };
+
+    // The row is the opposite of the stored copy flag, and starts unchecked
+    // (the reference copies by default).
+    let window = client.options("files and trash");
+    let (_, shown) = row(&window, LABEL);
+    assert_eq!(shown.kind, 1);
+    assert!(!shown.checked);
+    assert!(client.get::<FolderSettings>().copy_import_files_to_temp_dir);
+    // Cancel leaves the setting alone.
+    check(&window, LABEL, true);
+    window.invoke_cancel();
+    assert!(client.get::<FolderSettings>().copy_import_files_to_temp_dir);
+    // The default import makes a temp copy.
+    let first = import(&place("bmp_24.bmp"));
+    finished(first).await;
+    assert_eq!(probe.temp_copies_made(), 1);
+
+    // Ticking the row and applying imports directly from the source.
+    let window = client.options("files and trash");
+    check(&window, LABEL, true);
+    window.invoke_apply();
+    assert!(!client.get::<FolderSettings>().copy_import_files_to_temp_dir);
+    let reopened = client.options("files and trash");
+    assert!(row(&reopened, LABEL).1.checked, "shown again as saved");
+    reopened.invoke_cancel();
+    let second = import(&place("apng_rgba.png"));
+    finished(second).await;
+    assert_eq!(probe.temp_copies_made(), 1, "no second copy was made");
+    let seeds = store.read(|conn| queues::file_seeds(conn, second)).unwrap();
+    assert!(seeds[0].status.is_successful(), "{}", seeds[0].note);
+
+    // Unticking it copies again.
+    let window = client.options("files and trash");
+    check(&window, LABEL, false);
+    window.invoke_apply();
+    assert!(client.get::<FolderSettings>().copy_import_files_to_temp_dir);
+    let third = import(&place("apng_3frames.png"));
+    finished(third).await;
+    assert_eq!(probe.temp_copies_made(), 2);
+}

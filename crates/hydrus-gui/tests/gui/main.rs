@@ -160,6 +160,7 @@ mod network_sessions;
 
 mod network_data;
 
+mod domain_metadata;
 mod downloader_interchange;
 mod tag_migration;
 

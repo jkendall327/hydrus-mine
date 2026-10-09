@@ -26,6 +26,11 @@ export component DownloaderExchangeWindow inherits Window {
     callback closed();
     in property <[PackageChoice]> package-choices;
     callback package-chosen(int, bool);
+    // The reference's "add headers/bandwidth rules" button and its domain prompt.
+    in property <bool> domain-enabled;
+    in property <bool> domain-prompt;
+    in-out property <string> domain-text;
+    out property <string> domain-prompt-text: "Enter domain.";
     VerticalLayout {
         padding: 12px; spacing: 8px;
         Text { text: root.instructions; color: Theme.text; wrap: word-wrap; }
@@ -39,8 +44,19 @@ export component DownloaderExchangeWindow inherits Window {
                 }
             } }
             HorizontalLayout {
-                Button { text: "all"; enabled: !root.png-child && root.overwrite-question == ""; clicked => { root.package-chosen(-1, true); } }
-                Button { text: "none"; enabled: !root.png-child && root.overwrite-question == ""; clicked => { root.package-chosen(-1, false); } }
+                Button { text: "all"; enabled: !root.png-child && root.overwrite-question == "" && !root.domain-prompt; clicked => { root.package-chosen(-1, true); } }
+                Button { text: "none"; enabled: !root.png-child && root.overwrite-question == "" && !root.domain-prompt; clicked => { root.package-chosen(-1, false); } }
+                if root.domain-enabled: Button { text: "add headers/bandwidth rules"; enabled: root.active && !root.png-child && root.overwrite-question == "" && !root.domain-prompt; clicked => { root.action("add-domain"); } }
+            }
+        }
+        if root.domain-prompt: VerticalLayout {
+            spacing: 4px;
+            Text { text: root.domain-prompt-text; color: Theme.text; }
+            HorizontalLayout {
+                spacing: 8px;
+                LineEdit { horizontal-stretch: 1; text <=> root.domain-text; accepted => { root.action("domain-ok"); } }
+                Button { text: "ok"; clicked => { root.action("domain-ok"); } }
+                Button { text: "cancel"; clicked => { root.action("domain-cancel"); } }
             }
         }
         TextEdit { vertical-stretch: 1; text <=> root.text; read-only: root.text-read-only; enabled: !root.ready && !root.png-child && root.overwrite-question == ""; }
