@@ -547,14 +547,7 @@ fn rules_for(pipeline: Pipeline, process: &Process) -> Vec<RuleDraft> {
             RuleDraft {
                 enabled: rule.is_some(),
                 rule: rule.unwrap_or_else(|| Rule::new(*p)),
-                input: match p {
-                    Parameter::Url => "https://external.example/post/123".into(),
-                    Parameter::Path => "/synthetic/example.png".into(),
-                    Parameter::Uri => "file:///synthetic/example.png".into(),
-                    Parameter::Hash => "11".repeat(32),
-                    Parameter::FileId => "123".into(),
-                    Parameter::Paths | Parameter::Uris => String::new(),
-                },
+                input: p.example().into(),
             }
         })
         .collect()

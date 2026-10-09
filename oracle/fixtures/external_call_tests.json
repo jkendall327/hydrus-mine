@@ -1,0 +1,254 @@
+{
+  "setups": [
+    {
+      "call": {
+        "kind": "process",
+        "executable": "xdg-open",
+        "arguments": [
+          "%path%"
+        ],
+        "parameters": [
+          0
+        ],
+        "long_lived": false
+      },
+      "rows": [
+        {
+          "name": "file path",
+          "value": "/home/me/hydrus_files/f89/89...jpg"
+        }
+      ],
+      "preview": "xdg-open /home/me/hydrus_files/f89/89...jpg",
+      "availability_enabled": true,
+      "test_call_enabled": true,
+      "output": ""
+    },
+    {
+      "call": {
+        "kind": "process",
+        "executable": "firefox",
+        "arguments": [
+          "%url%"
+        ],
+        "parameters": [
+          2
+        ],
+        "long_lived": false
+      },
+      "rows": [
+        {
+          "name": "URL",
+          "value": "https://somebooru.org/post/123456"
+        }
+      ],
+      "preview": "firefox https://somebooru.org/post/123456",
+      "availability_enabled": true,
+      "test_call_enabled": true,
+      "output": ""
+    },
+    {
+      "call": {
+        "kind": "ExecutableLocalProcessDefaultLaunchFile"
+      },
+      "rows": [
+        {
+          "name": "file path",
+          "value": "/home/me/hydrus_files/f89/89...jpg"
+        }
+      ],
+      "preview": "Ask OS to open \"/home/me/hydrus_files/f89/89...jpg\"",
+      "availability_enabled": false,
+      "test_call_enabled": true,
+      "output": ""
+    },
+    {
+      "call": {
+        "kind": "ExecutableLocalProcessDefaultLaunchURL"
+      },
+      "rows": [
+        {
+          "name": "URL",
+          "value": "https://somebooru.org/post/123456"
+        }
+      ],
+      "preview": "Ask OS to open \"https://somebooru.org/post/123456\"",
+      "availability_enabled": false,
+      "test_call_enabled": true,
+      "output": ""
+    }
+  ],
+  "availability": [
+    {
+      "call": {
+        "kind": "process",
+        "executable": "sh",
+        "arguments": [
+          "%path%"
+        ],
+        "parameters": [
+          0
+        ],
+        "long_lived": false
+      },
+      "enabled": true,
+      "interim": {
+        "output": "Testing…",
+        "enabled": false
+      },
+      "output": "Availability test worked!",
+      "enabled_after": true
+    },
+    {
+      "call": {
+        "kind": "process",
+        "executable": "/bin/sh",
+        "arguments": [
+          "%path%"
+        ],
+        "parameters": [
+          0
+        ],
+        "long_lived": false
+      },
+      "enabled": true,
+      "interim": {
+        "output": "Testing…",
+        "enabled": false
+      },
+      "output": "Availability test worked!",
+      "enabled_after": true
+    },
+    {
+      "call": {
+        "kind": "process",
+        "executable": "no-such-program-anywhere",
+        "arguments": [
+          "%path%"
+        ],
+        "parameters": [
+          0
+        ],
+        "long_lived": false
+      },
+      "enabled": true,
+      "interim": {
+        "output": "Testing…",
+        "enabled": false
+      },
+      "output": "Availability test failed!",
+      "enabled_after": true
+    },
+    {
+      "call": {
+        "kind": "ExecutableLocalProcessDefaultLaunchFile"
+      },
+      "enabled": false
+    }
+  ],
+  "calls": [
+    {
+      "name": "works",
+      "call": {
+        "kind": "process",
+        "executable": "sh",
+        "arguments": [
+          "-c",
+          "printf \"synthetic 日本\" > \"$0\"",
+          "%path%"
+        ],
+        "parameters": [
+          0
+        ],
+        "long_lived": false
+      },
+      "input": "/tmp/tmpnhvmz_7i/owned output.txt",
+      "preview": "sh -c printf \"synthetic 日本\" > \"$0\" /tmp/tmpnhvmz_7i/owned output.txt",
+      "interim": {
+        "output": "Testing…",
+        "enabled": false
+      },
+      "output": "Looks good!",
+      "enabled_after": true,
+      "written": "synthetic 日本"
+    },
+    {
+      "name": "missing",
+      "call": {
+        "kind": "process",
+        "executable": "no-such-program-anywhere",
+        "arguments": [
+          "%path%"
+        ],
+        "parameters": [
+          0
+        ],
+        "long_lived": false
+      },
+      "input": "/synthetic/漢.png",
+      "preview": "no-such-program-anywhere /synthetic/漢.png",
+      "interim": {
+        "output": "Testing…",
+        "enabled": false
+      },
+      "output": "ExecutableException: Problem running external local process! Final call list was \"['no-such-program-anywhere', '/synthetic/漢.png']\", error was: [Errno 2] No such file or directory: 'no-such-program-anywhere'",
+      "enabled_after": true,
+      "written": null
+    },
+    {
+      "name": "exit code",
+      "call": {
+        "kind": "process",
+        "executable": "sh",
+        "arguments": [
+          "-c",
+          "exit 3",
+          "%path%"
+        ],
+        "parameters": [
+          0
+        ],
+        "long_lived": false
+      },
+      "input": "/synthetic/漢.png",
+      "preview": "sh -c exit 3 /synthetic/漢.png",
+      "interim": {
+        "output": "Testing…",
+        "enabled": false
+      },
+      "output": "BadReturnCodeException: A call to another executable gave a non-zero return code (3)! The call was: ['sh', '-c', 'exit 3', '/synthetic/漢.png']\n\n========== stdout ==========\n''\n========== stderr ==========\n''\n============================\n",
+      "enabled_after": true,
+      "written": null
+    },
+    {
+      "name": "long lived",
+      "call": {
+        "kind": "process",
+        "executable": "sh",
+        "arguments": [
+          "-c",
+          "printf \"synthetic 日本\" > \"$0\"",
+          "%path%"
+        ],
+        "parameters": [
+          0
+        ],
+        "long_lived": true
+      },
+      "input": "/tmp/tmpnhvmz_7i/owned output.txt",
+      "preview": "sh -c printf \"synthetic 日本\" > \"$0\" /tmp/tmpnhvmz_7i/owned output.txt",
+      "interim": {
+        "output": "Testing… (forcing a 15 second timeout for testing purposes)",
+        "enabled": false
+      },
+      "output": "Looks good!",
+      "enabled_after": true,
+      "written": "synthetic 日本"
+    }
+  ],
+  "typed": {
+    "output_before": "BadReturnCodeException: A call to another executable gave a non-zero return code (2)! The call was: ['sh', '-c', 'printf \"synthetic 日本\" > \"$0\"', 'pre:/tmp/tmpnhvmz_7i/owned output.txt']\n\n========== stdout ==========\n''\n========== stderr ==========\n'pre:/tmp/tmpnhvmz_7i/owned output.txt: 1: cannot create pre:/tmp/tmpnhvmz_7i/owned output.txt: Directory nonexistent\\n'\n============================\n",
+    "output": "",
+    "preview": "sh -c printf \"synthetic 日本\" > \"$0\" pre:/typed/漢 value.png"
+  },
+  "output_path": "/tmp/tmpnhvmz_7i/owned output.txt"
+}

@@ -133,6 +133,7 @@ mod subscriptions;
 mod subscriptions_dedupe;
 mod subscriptions_duplicate;
 mod subscriptions_separate;
+mod system_sleep;
 mod system_tray;
 mod thumbnail_appearance;
 mod thumbnail_cache;
@@ -146,6 +147,7 @@ mod undelete_question;
 mod unlock;
 mod viewer_menu;
 mod viewer_top_frame;
+mod viewer_background;
 mod viewer_window;
 mod volume;
 mod watcher_checker;
@@ -237,9 +239,12 @@ mod preview_default_zoom;
 mod related_tags_panel;
 mod related_weight_table;
 
+mod external_call_tests;
 mod external_calls;
 mod external_calls_editor;
+mod external_calls_recorded;
 mod open_externally;
+mod open_externally_dispatch;
 mod viewer_drag;
 mod window_rescue;
 
