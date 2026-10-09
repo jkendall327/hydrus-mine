@@ -60,9 +60,7 @@ pub fn generate_cert_and_key(cert_path: &Path, key_path: &Path) -> io::Result<()
         hex::encode(rand::random::<[u8; 32]>()),
     );
     params.distinguished_name = name;
-    params.subject_alt_names = vec![SanType::DnsName(
-        "localhost".try_into().map_err(fail)?,
-    )];
+    params.subject_alt_names = vec![SanType::DnsName("localhost".try_into().map_err(fail)?)];
     // `x509.random_serial_number`: 159 random bits, positive
     let mut serial = rand::random::<[u8; 20]>();
     serial[0] &= 0x7f;
@@ -142,8 +140,9 @@ fn pkcs1_from_pkcs8(pkcs8: &[u8]) -> Option<&[u8]> {
 /// The TLS settings for the pair in `db_dir` (made first if need be).
 pub fn server_config(db_dir: &Path) -> io::Result<Arc<rustls::ServerConfig>> {
     let (cert_path, key_path) = ssl_paths(db_dir)?;
-    let unreadable =
-        |path: &Path, e: &dyn std::fmt::Display| io::Error::other(format!("{}: {e}", path.display()));
+    let unreadable = |path: &Path, e: &dyn std::fmt::Display| {
+        io::Error::other(format!("{}: {e}", path.display()))
+    };
     let certs = CertificateDer::pem_file_iter(&cert_path)
         .map_err(|e| unreadable(&cert_path, &e))?
         .collect::<Result<Vec<_>, _>>()
@@ -163,6 +162,7 @@ pub fn server_config(db_dir: &Path) -> io::Result<Arc<rustls::ServerConfig>> {
 /// A listener whose connections have finished their TLS handshake. The
 /// handshakes run on their own tasks, so a slow or broken client (plain HTTP
 /// to this port, say) holds up no one else.
+#[derive(Debug)]
 pub struct TlsListener {
     ready: mpsc::Receiver<(TlsStream<TcpStream>, SocketAddr)>,
     local: SocketAddr,

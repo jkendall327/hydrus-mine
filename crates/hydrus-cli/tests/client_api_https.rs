@@ -3,7 +3,6 @@
 //! self-signed pair made in the db directory, a pair the user dropped in, and
 //! half a pair.
 
-use std::io::{Read as _, Write as _};
 use std::net::TcpStream;
 use std::path::{Path, PathBuf};
 use std::process::{Child, Command, Stdio};
@@ -50,7 +49,9 @@ fn unused_port() -> u16 {
 }
 
 /// (status line, headers, body) of `GET /` over `stream`.
-fn get(mut stream: impl std::io::Read + std::io::Write) -> std::io::Result<(String, String, String)> {
+fn get(
+    mut stream: impl std::io::Read + std::io::Write,
+) -> std::io::Result<(String, String, String)> {
     stream.write_all(b"GET / HTTP/1.1\r\nHost: localhost\r\nConnection: close\r\n\r\n")?;
     let mut bytes = Vec::new();
     // a peer that closes without TLS's close_notify still sent everything
@@ -62,8 +63,13 @@ fn get(mut stream: impl std::io::Read + std::io::Write) -> std::io::Result<(Stri
     if bytes.is_empty() {
         return Err(std::io::Error::other("no answer"));
     }
-    let text = String::from_utf8(bytes).unwrap();
-    let (head, body) = text.split_once("\r\n\r\n").unwrap();
+    let text = String::from_utf8_lossy(&bytes).into_owned();
+    let Some((head, body)) = text
+        .split_once("\r\n\r\n")
+        .filter(|_| text.starts_with("HTTP/"))
+    else {
+        return Err(std::io::Error::other("not an HTTP answer"));
+    };
     let (status, headers) = head.split_once("\r\n").unwrap();
     Ok((status.into(), headers.to_lowercase(), body.into()))
 }
@@ -86,11 +92,9 @@ fn https(port: u16, cert: &Path) -> std::io::Result<(String, String, String)> {
     .unwrap()
     .with_root_certificates(roots)
     .with_no_client_auth();
-    let connection = rustls::ClientConnection::new(
-        Arc::new(config),
-        ServerName::try_from("localhost").unwrap(),
-    )
-    .unwrap();
+    let connection =
+        rustls::ClientConnection::new(Arc::new(config), ServerName::try_from("localhost").unwrap())
+            .unwrap();
     let tcp = TcpStream::connect(("127.0.0.1", port))?;
     tcp.set_read_timeout(Some(Duration::from_secs(10)))?;
     get(rustls::StreamOwned::new(connection, tcp))
@@ -107,11 +111,12 @@ fn content_type(headers: &str) -> String {
 /// The recorded `describe_cert` of a PEM file.
 fn describe(cert: &Path) -> Value {
     use x509_parser::prelude::*;
+    use x509_parser::public_key::PublicKey;
     let pem = std::fs::read(cert).unwrap();
     let (_, pem) = parse_x509_pem(&pem).unwrap();
     let cert = pem.parse_x509().unwrap();
     let subject = cert.subject();
-    let first = |it: &mut dyn Iterator<Item = &AttributeTypeAndValue>| {
+    let first = |it: &mut dyn Iterator<Item = &AttributeTypeAndValue<'_>>| {
         it.next().unwrap().as_str().unwrap().to_owned()
     };
     let unit = first(&mut subject.iter_organizational_unit());
@@ -149,7 +154,10 @@ fn describe(cert: &Path) -> Value {
 
 fn mode(path: &Path) -> String {
     use std::os::unix::fs::PermissionsExt;
-    format!("0o{:o}", std::fs::metadata(path).unwrap().permissions().mode() & 0o7777)
+    format!(
+        "0o{:o}",
+        std::fs::metadata(path).unwrap().permissions().mode() & 0o7777
+    )
 }
 
 fn pair(dir: &Path) -> Vec<String> {
@@ -212,7 +220,7 @@ fn welcome_pages_and_https_serve_as_the_reference_does() {
     );
     let pid = serving.0.id();
     // apply `config` on a new port, and wait for the daemon to report it
-    let mut apply = |config: &mut ServerConfig| -> ClientApiState {
+    let apply = |config: &mut ServerConfig| -> ClientApiState {
         config.port = Some(unused_port());
         update(config);
         let deadline = Instant::now() + Duration::from_secs(60);
@@ -236,7 +244,11 @@ fn welcome_pages_and_https_serve_as_the_reference_does() {
     let page = |which: &str, got: (String, String, String)| {
         let expected = &recorded[which];
         assert_eq!(got.0, "HTTP/1.1 200 OK", "{which}");
-        assert_eq!(content_type(&got.1), expected["content_type"], "{which}");
+        assert_eq!(
+            content_type(&got.1),
+            expected["content_type"].as_str().unwrap().to_lowercase(),
+            "{which}"
+        );
         assert!(got.1.contains("content-disposition: inline"), "{which}");
         assert_eq!(got.2, expected["body"].as_str().unwrap(), "{which}");
     };
@@ -266,7 +278,11 @@ fn welcome_pages_and_https_serve_as_the_reference_does() {
     assert_eq!(serde_json::json!(pair(&dir)), generated["files"]);
     assert_eq!(describe(&cert), generated["cert"]);
     assert_eq!(
-        std::fs::read_to_string(&key).unwrap().lines().next().unwrap(),
+        std::fs::read_to_string(&key)
+            .unwrap()
+            .lines()
+            .next()
+            .unwrap(),
         generated["key_pem_header"]
     );
     assert_eq!(mode(&cert), generated["cert_mode"]);
@@ -275,7 +291,10 @@ fn welcome_pages_and_https_serve_as_the_reference_does() {
     assert_eq!(generated["served_is_generated"], true);
     page("https_eris", https(port, &cert).unwrap());
     // plain HTTP to the HTTPS port gets no answer
-    assert_eq!(recorded["http_to_https_port"]["error"], "RemoteDisconnected");
+    assert_eq!(
+        recorded["http_to_https_port"]["error"],
+        "RemoteDisconnected"
+    );
     let plain = http(port);
     assert!(
         plain
@@ -301,7 +320,10 @@ fn welcome_pages_and_https_serve_as_the_reference_does() {
     page("https_eris", https(port, &cert).unwrap());
     let stale = other.path().join("generated.crt");
     std::fs::write(&stale, generated_cert).unwrap();
-    assert!(https(port, &stale).is_err(), "the dropped-in cert replaced the generated one");
+    assert!(
+        https(port, &stale).is_err(),
+        "the dropped-in cert replaced the generated one"
+    );
     assert_eq!(pair(&dir), ["client.crt", "client.key"]);
     // half a pair: the Client API doesn't start, says why, and makes nothing
     remove(&key);
@@ -325,7 +347,10 @@ fn welcome_pages_and_https_serve_as_the_reference_does() {
     drop(serving.0.stdin.take());
     let started = Instant::now();
     while serving.0.try_wait().unwrap().is_none() {
-        assert!(started.elapsed() < Duration::from_secs(15), "daemon did not stop");
+        assert!(
+            started.elapsed() < Duration::from_secs(15),
+            "daemon did not stop"
+        );
         std::thread::sleep(Duration::from_millis(50));
     }
 }

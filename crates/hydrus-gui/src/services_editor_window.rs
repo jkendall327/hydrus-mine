@@ -1,9 +1,9 @@
 //! Manage local services with detached edits and transaction-time deletion checks.
+use crate::import_options_window::advanced_mode;
 use crate::{
     EditServiceWindow, ServiceColourRow, ServiceRatingExampleRow, ServicesEditorWindow,
     TableColumn, TableRow,
 };
-use crate::import_options_window::advanced_mode;
 use hydrus_core::{ServiceId, ServiceKey};
 use hydrus_gui_model::services_editor::{self, Editor};
 use hydrus_store::{
@@ -649,7 +649,14 @@ pub fn open(
                     }
                 }
             });
-            if let Err(e) = edit(service, &slots, done, active.clone(), sizes, advanced_mode(&store)) {
+            if let Err(e) = edit(
+                service,
+                &slots,
+                done,
+                active.clone(),
+                sizes,
+                advanced_mode(&store),
+            ) {
                 w.set_error(e.into());
             }
         }
@@ -696,7 +703,14 @@ pub fn open(
                     }
                 }
             });
-            if let Err(e) = edit(row.service, &slots, done, active.clone(), sizes, advanced_mode(&store)) {
+            if let Err(e) = edit(
+                row.service,
+                &slots,
+                done,
+                active.clone(),
+                sizes,
+                advanced_mode(&store),
+            ) {
                 w.set_error(e.into());
             }
         }

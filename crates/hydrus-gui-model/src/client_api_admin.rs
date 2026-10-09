@@ -247,9 +247,15 @@ pub fn server_config(
     config.log_requests = edit.logs;
     config.use_https = edit.use_https;
     config.use_normie_eris = edit.normie_eris;
-    config.external_scheme_override.clone_from(&edit.external_scheme);
-    config.external_host_override.clone_from(&edit.external_host);
-    config.external_port_override.clone_from(&edit.external_port);
+    config
+        .external_scheme_override
+        .clone_from(&edit.external_scheme);
+    config
+        .external_host_override
+        .clone_from(&edit.external_host);
+    config
+        .external_port_override
+        .clone_from(&edit.external_port);
     Ok(config)
 }
 
@@ -260,5 +266,6 @@ pub mod tooltips {
     pub const CORS: &str = "Have this server support Cross-Origin Resource Sharing, which allows web browsers to access it off other domains. Turn this on if you want to access this service through a web-based wrapper (e.g. a booru wrapper) hosted on another domain.";
     pub const LOGS: &str = "Hydrus server services will write a brief anonymous line to the log for every request made, but for the client services this tends to be a bit spammy. You probably want this off unless you are testing something.";
     pub const NORMIE: &str = "Use alternate ASCII art on the root page of the server.";
-    pub const EXTERNAL_PORT: &str = "Setting this to a non-none empty string will forego the ':' in the URL.";
+    pub const EXTERNAL_PORT: &str =
+        "Setting this to a non-none empty string will forego the ':' in the URL.";
 }

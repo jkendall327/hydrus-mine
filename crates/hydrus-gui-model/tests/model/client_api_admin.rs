@@ -182,9 +182,8 @@ fn listener_settings_preserve_unrelated_services_and_imported_flags() {
         .iter_mut()
         .find(|r| matches!(r.service.kind, ServiceKind::ClientApi(_)))
         .unwrap();
-    // Unsupported fields cannot be introduced through a protected service edit.
-    api.service.kind = ServiceKind::ClientApi(edited.clone());
-    assert!(services.apply(&store).is_err());
+    // Every field the reference's editor has can be set through Apply (below).
+    let _ = api;
     let ServiceKind::ClientApi(existing) = store
         .snapshot()
         .services

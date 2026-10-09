@@ -3292,14 +3292,21 @@
    "label": "HTTPS/normie-Eris/external URL override controls",
    "path": "Services > Service review selector/counts > Client API service review/settings",
    "workstream": "tags-services",
-   "state": "missing",
+   "state": "implemented",
    "priority": "normal",
    "reference": null,
    "native": null,
    "notes": [
     "Truth pass (2026-10-08): missing, medium. Values only preserved and shown read-only. Missing: Editable https / normie-eris / external override controls, HTTPS serving, alternate welcome page, external overrides in copied API links. Evidence: services_editor_window.rs:99,178-195 read-only; client_api_listener.rs:38 rejects https",
-    "Native listener supports HTTP and imported HTTPS disable only; normie-Eris/external URL override values are preserved but not editable/runnable here."
-   ]
+    "Native listener supports HTTP and imported HTTPS disable only; normie-Eris/external URL override values are preserved but not editable/runnable here.",
+    "2026-10-09: HTTPS serving, the normie welcome page and the editable overrides are done (#120). The reference reads the overrides nowhere, so there are no copied links to change."
+   ],
+   "recheck": {
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "claude (issue #120)",
+    "note": "Drives the real services editor window (rows, labels, tooltip text, enable rules, advanced-mode visibility, Apply, cancel, 'none' boxes, empty port text) against oracle/fixtures/client_api_https.json, and a real `hydrus serve` daemon over HTTP and HTTPS: both welcome pages byte-equal to the recording, generated cert fields, a dropped-in pair served, half a pair refused with the reference's message. The reference reads the external overrides nowhere, so there is no consumer to test; DIFFERENCES.md says so. Tooltips are shown as captions, not hover tooltips."
+   }
   },
   {
    "id": "audit-media-services-missing-rating-preview",

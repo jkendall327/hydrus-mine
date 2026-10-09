@@ -541,7 +541,10 @@ fn flat(text: &str) -> String {
 fn open_api_editor(
     store: &std::sync::Arc<Store>,
     slots: &hydrus_gui::services_editor_window::Slots,
-) -> (hydrus_gui::ServicesEditorWindow, hydrus_gui::EditServiceWindow) {
+) -> (
+    hydrus_gui::ServicesEditorWindow,
+    hydrus_gui::EditServiceWindow,
+) {
     let window = hydrus_gui::services_editor_window::open(store, slots, Rc::new(|| {})).unwrap();
     *slots.manage.borrow_mut() = Some(window.clone_strong());
     let row = window
@@ -561,7 +564,11 @@ fn control(enabled: bool, text: Option<(&str, bool, bool)>) -> serde_json::Value
         state["text"] = text.into();
         state["none_checked"] = none.into();
         state["text_enabled"] = text_enabled.into();
-        state["value"] = if none { serde_json::Value::Null } else { text.into() };
+        state["value"] = if none {
+            serde_json::Value::Null
+        } else {
+            text.into()
+        };
     }
     state
 }
@@ -584,6 +591,7 @@ fn editor_state(edit: &hydrus_gui::EditServiceWindow) -> serde_json::Value {
 // leaf: audit-media-services-missing-listener-unsupported
 #[test]
 fn service_editor_https_normie_and_external_override_rows_match_the_reference() {
+    use hydrus_gui_model::client_api_admin::tooltips;
     let recorded = hydrus_testkit::fixture_json("client_api_https.json");
     let dir = tempfile::tempdir().unwrap();
     let store = Store::open(dir.path()).unwrap();
@@ -593,12 +601,17 @@ fn service_editor_https_normie_and_external_override_rows_match_the_reference() 
     let set = |config: ServerConfig| {
         store
             .write_and_refresh(move |ctx| {
-                hydrus_store::services::update_config(ctx.conn(), id, &ServiceKind::ClientApi(config))
+                hydrus_store::services::update_config(
+                    ctx.conn(),
+                    id,
+                    &ServiceKind::ClientApi(config),
+                )
             })
             .unwrap();
     };
     let stored = || {
-        let ServiceKind::ClientApi(config) = store.snapshot().services.get(id).unwrap().kind.clone()
+        let ServiceKind::ClientApi(config) =
+            store.snapshot().services.get(id).unwrap().kind.clone()
         else {
             panic!("API")
         };
@@ -614,7 +627,6 @@ fn service_editor_https_normie_and_external_override_rows_match_the_reference() 
     // the reference's labels and tooltips (the recorded `controls` tooltips)
     let on = &recorded["editor"]["on"];
     let tips = |name: &str| flat(on["controls"][name]["tooltip"].as_str().unwrap());
-    use hydrus_gui_model::client_api_admin::tooltips;
     assert_eq!(flat(tooltips::NON_LOCAL), tips("non_local"));
     assert_eq!(flat(tooltips::HTTPS), tips("https"));
     assert_eq!(flat(tooltips::CORS), tips("cors"));
@@ -662,10 +674,16 @@ fn service_editor_https_normie_and_external_override_rows_match_the_reference() 
     assert_eq!(shown, want);
     // "run the client api?:" off disables every row, as `_UpdateControls` does
     edit.set_api_running(false);
-    let all_off = recorded["editor"]["on"]["enabled_after_toggle"].as_object().unwrap();
+    let all_off = recorded["editor"]["on"]["enabled_after_toggle"]
+        .as_object()
+        .unwrap();
     assert!(all_off.iter().all(|(k, v)| k == "run" || v == false));
     assert!(!edit.get_api_controls_enabled());
-    assert!(!edit.get_api_scheme_enabled() && !edit.get_api_host_enabled() && !edit.get_api_external_port_enabled());
+    assert!(
+        !edit.get_api_scheme_enabled()
+            && !edit.get_api_host_enabled()
+            && !edit.get_api_external_port_enabled()
+    );
     edit.set_api_running(true);
     // untouched, Apply keeps every value (what the reference's `GetValue` reads)
     edit.invoke_apply_clicked();
@@ -674,9 +692,18 @@ fn service_editor_https_normie_and_external_override_rows_match_the_reference() 
     let config = stored();
     assert_eq!(config.use_https, value["use_https"]);
     assert_eq!(config.use_normie_eris, value["use_normie_eris"]);
-    assert_eq!(config.external_scheme_override.as_deref(), value["external_scheme_override"].as_str());
-    assert_eq!(config.external_host_override.as_deref(), value["external_host_override"].as_str());
-    assert_eq!(config.external_port_override.as_deref(), value["external_port_override"].as_str());
+    assert_eq!(
+        config.external_scheme_override.as_deref(),
+        value["external_scheme_override"].as_str()
+    );
+    assert_eq!(
+        config.external_host_override.as_deref(),
+        value["external_host_override"].as_str()
+    );
+    assert_eq!(
+        config.external_port_override.as_deref(),
+        value["external_port_override"].as_str()
+    );
     // the "none" boxes, and an empty port text kept as the empty string
     let (manage, edit) = open_api_editor(&store, &slots);
     edit.set_api_scheme_none(true);
@@ -708,9 +735,21 @@ fn service_editor_https_normie_and_external_override_rows_match_the_reference() 
     assert!(!edit.get_api_running());
     assert_eq!(edit.get_api_controls_enabled(), off["non_local"]["enabled"]);
     for (name, shown) in [
-        ("scheme", (edit.get_api_scheme_none(), edit.get_api_scheme_enabled())),
-        ("host", (edit.get_api_host_none(), edit.get_api_host_enabled())),
-        ("external_port", (edit.get_api_external_port_none(), edit.get_api_external_port_enabled())),
+        (
+            "scheme",
+            (edit.get_api_scheme_none(), edit.get_api_scheme_enabled()),
+        ),
+        (
+            "host",
+            (edit.get_api_host_none(), edit.get_api_host_enabled()),
+        ),
+        (
+            "external_port",
+            (
+                edit.get_api_external_port_none(),
+                edit.get_api_external_port_enabled(),
+            ),
+        ),
     ] {
         assert_eq!(shown.0, off[name]["none_checked"], "{name}");
         assert_eq!(shown.1, off[name]["text_enabled"], "{name}");

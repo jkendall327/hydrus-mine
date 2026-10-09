@@ -27,25 +27,19 @@ fn configuration(store: &Store) -> hydrus_store::Result<(String, ServerConfig)> 
             .unwrap_or_else(|| ("client api".into(), ServerConfig::default())))
     })
 }
-fn options(
-    config: &ServerConfig,
-    port: Option<u16>,
-    ip: Option<IpAddr>,
-) -> Result<Option<ServerOptions>, String> {
-    let Some(port) = port.or(config.port) else {
-        return Ok(None);
-    };
+fn options(config: &ServerConfig, port: Option<u16>, ip: Option<IpAddr>) -> Option<ServerOptions> {
+    let port = port.or(config.port)?;
     let ip = ip.unwrap_or(IpAddr::V4(if config.allow_non_local_connections {
         Ipv4Addr::UNSPECIFIED
     } else {
         Ipv4Addr::LOCALHOST
     }));
-    Ok(Some(ServerOptions {
+    Some(ServerOptions {
         addr: SocketAddr::new(ip, port),
         cors: config.support_cors,
         log_requests: config.log_requests,
         tls: None,
-    }))
+    })
 }
 async fn changed(
     receiver: &mut watch::Receiver<(String, ServerConfig)>,
@@ -102,27 +96,15 @@ pub async fn run(
             break;
         }
         let (name, config) = receiver.borrow_and_update().clone();
-        let options = match options(&config, port, ip) {
-            Ok(Some(options)) => options,
-            Ok(None) => {
-                say(ClientApiState::Off);
-                println!("The Client API is off: \"{name}\" has no port (--port serves it anyway)");
-                if !changed(&mut receiver, &mut stopped).await {
-                    break;
-                }
-                continue;
+        let Some(mut options) = options(&config, port, ip) else {
+            say(ClientApiState::Off);
+            println!("The Client API is off: \"{name}\" has no port (--port serves it anyway)");
+            if !changed(&mut receiver, &mut stopped).await {
+                break;
             }
-            Err(why) => {
-                println!("Client API couldn't start ({why}); everything else runs on");
-                say(ClientApiState::Failed(why));
-                if !changed(&mut receiver, &mut stopped).await {
-                    break;
-                }
-                continue;
-            }
+            continue;
         };
         say(ClientApiState::Starting);
-        let mut options = options;
         if config.use_https {
             // the pair in the db directory, made (slowly: an RSA key) on first use
             let dir = state.store.dir().to_path_buf();
@@ -159,7 +141,11 @@ pub async fn run(
         };
         let addr = listener.local_addr().unwrap_or(options.addr);
         say(ClientApiState::Listening(addr.to_string()));
-        let scheme = if options.tls.is_some() { "https" } else { "http" };
+        let scheme = if options.tls.is_some() {
+            "https"
+        } else {
+            "http"
+        };
         println!("Client API at {scheme}://{addr}");
         let (stop_listener, listener_stopped) = oneshot::channel();
         let mut server = tokio::spawn({
@@ -198,17 +184,15 @@ mod tests {
     #[test]
     fn cli_overrides_are_explicit() {
         let mut config = ServerConfig::default();
-        assert!(options(&config, None, None).unwrap().is_none());
+        assert!(options(&config, None, None).is_none());
         config.port = Some(45869);
         config.allow_non_local_connections = true;
         config.support_cors = true;
         config.log_requests = true;
-        let configured = options(&config, None, None).unwrap().unwrap();
+        let configured = options(&config, None, None).unwrap();
         assert_eq!(configured.addr, "0.0.0.0:45869".parse().unwrap());
         assert!(configured.cors && configured.log_requests);
-        let overridden = options(&config, Some(45999), Some("127.0.0.1".parse().unwrap()))
-            .unwrap()
-            .unwrap();
+        let overridden = options(&config, Some(45999), Some("127.0.0.1".parse().unwrap())).unwrap();
         assert_eq!(overridden.addr, "127.0.0.1:45999".parse().unwrap());
     }
 }
