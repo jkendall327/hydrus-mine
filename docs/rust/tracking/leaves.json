@@ -9070,10 +9070,10 @@
     "Assessment covers this editable control and shared Apply/Cancel, not every control on its containing reference page or every background consumer."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Options row set through the real window and the real filter commit path checked, matching the reference condition (lock AND option, ClientGUICanvas.py:3672) with typed expectations; no recording of the reference filter's reinbox behaviour. Drives the model ArchiveDeleteFilter, not the window. Tests: crates/hydrus-gui/tests/gui/options_system_consumers.rs:316 archive_delete_filter_reinboxes_deletees_when_the_option_and_lock_are_set; ArchiveDeleteFilter::commit (archive_delete.rs:430)"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "recheck bin E session (claude/recheck-e-dupes)",
+    "note": "crates/hydrus-gui/tests/gui/archive_delete_reinbox.rs the_archive_delete_filter_reinboxes_deletees_as_the_reference_does replays oracle/fixtures/archive_delete_reinbox.json (record_archive_delete_reinbox.py: the reference's own CommitArchiveDelete on 14 basic files, half archived, 2 kept and 12 deleted from my files across its ten-file blocks, then its DAEMONMaintainTrash at 0 MB) for all four settings of the lock and this option, set through the real Options window: each file kept or deleted in the real archive/delete filter window and committed, then the real maintenance runtime's trash pass. Inbox/my files/trash/stored match the reference after the commit and after emptying the trash: only lock on with this option off leaves the archived deletees stored; the option alone does nothing."
    }
   },
   {

@@ -5155,6 +5155,15 @@ time, checking the size between groups, before the age limit. Both are
 replayed against the reference's own pass in
 `oracle/fixtures/trash_maintenance.json` (`tests/gui/trash_maintenance.rs`).
 
+## Files and trash: archive/delete filter and the delete lock
+
+With "Do not permit archived files to be deleted from the trash" on, "After
+archive/delete filter, ensure deletees are inboxed before delete" puts the
+filter's deletees back in the inbox as it commits, so emptying the trash then
+deletes them; with the lock off it does nothing, and with it off the lock keeps
+archived deletees. Replayed through the real filter window from
+`oracle/fixtures/archive_delete_reinbox.json` (`archive_delete_reinbox.rs`).
+
 ## Files and trash: permissions and the recycle bin
 
 "ADVANCED: Do not do chmod when copying files" off, an imported file keeps its

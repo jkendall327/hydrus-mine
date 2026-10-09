@@ -12,6 +12,7 @@ mod animation_start;
 mod api_update_toasts;
 mod archive_delete;
 mod archive_delete_playback;
+mod archive_delete_reinbox;
 mod auto_resolution_comparator_editors;
 mod auto_resolution_preview;
 mod auto_resolution_review;
