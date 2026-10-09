@@ -48,7 +48,7 @@ struct Inner {
     statistics: RefCell<Statistics>,
     timer: slint::Timer,
     /// The idle state last published for the daemon, and when.
-    published: Cell<Option<(bool, i64)>>,
+    published: Cell<Option<((bool, bool), i64)>>,
     /// The CPU-busy check, sampled once a minute, and its answer.
     cpu: RefCell<hydrus_store::idle_state::CpuBusy>,
     /// The text of `/proc/stat`, given by a test instead of the system's.
@@ -181,12 +181,14 @@ impl Control {
             .0
             .published
             .get()
-            .is_none_or(|(was, at)| was != work_idle || now_ms - at >= 5_000);
+            .is_none_or(|(was, at)| was != (idle, work_idle) || now_ms - at >= 5_000);
         if due {
-            if let Err(error) = hydrus_store::idle_state::publish(store.dir(), work_idle, now_ms) {
+            if let Err(error) =
+                hydrus_store::idle_state::publish_state(store.dir(), idle, work_idle, now_ms)
+            {
                 eprintln!("could not publish the idle state: {error}");
             }
-            self.0.published.set(Some((work_idle, now_ms)));
+            self.0.published.set(Some(((idle, work_idle), now_ms)));
         }
         let (idle_text, busy_text) = hydrus_gui_model::status::activity(idle, self.0.busy.get());
         window.set_status_idle(idle_text.into());

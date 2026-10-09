@@ -14,24 +14,46 @@ pub const FRESH_MS: i64 = 15_000;
 
 /// Publish whether the client is idle at `now_ms`.
 pub fn publish(dir: &Path, idle: bool, now_ms: i64) -> std::io::Result<()> {
+    publish_state(dir, idle, true, now_ms)
+}
+
+/// Publish the client's idle state: whether it is idle (`CurrentlyIdle`) and,
+/// if so, whether it is also a good time to start background work
+/// (`GoodTimeToStartBackgroundWork`: not just woken, system not busy).
+pub fn publish_state(dir: &Path, idle: bool, good_time: bool, now_ms: i64) -> std::io::Result<()> {
     let mut file = tempfile::NamedTempFile::new_in(dir)?;
-    file.write_all(&[u8::from(idle)])?;
+    file.write_all(&[match (idle, good_time) {
+        (false, _) => 0,
+        (true, true) => 1,
+        (true, false) => 2,
+    }])?;
     file.write_all(&now_ms.to_le_bytes())?;
     file.persist(dir.join(FILE_NAME)).map_err(|e| e.error)?;
     Ok(())
 }
 
-/// Whether a fresh published state says idle at `now_ms`.
-pub fn is_idle(dir: &Path, now_ms: i64) -> bool {
-    let Ok(file) = std::fs::File::open(dir.join(FILE_NAME)) else {
-        return false;
-    };
+/// What a fresh published state says: 0 not idle, 1 idle at a good time to
+/// start background work, 2 idle with the system busy; None if there is none.
+fn state(dir: &Path, now_ms: i64) -> Option<u8> {
+    let file = std::fs::File::open(dir.join(FILE_NAME)).ok()?;
     let mut bytes = Vec::with_capacity(10);
     if file.take(10).read_to_end(&mut bytes).is_err() || bytes.len() != 9 {
-        return false;
+        return None;
     }
     let at = i64::from_le_bytes(bytes[1..9].try_into().expect("eight bytes"));
-    bytes[0] == 1 && now_ms >= at && now_ms - at <= FRESH_MS
+    (now_ms >= at && now_ms - at <= FRESH_MS).then_some(bytes[0])
+}
+
+/// Whether a fresh published state says idle, and a good time to start
+/// background work (`GoodTimeToStartBackgroundWork`), at `now_ms`.
+pub fn is_idle(dir: &Path, now_ms: i64) -> bool {
+    state(dir, now_ms) == Some(1)
+}
+
+/// Whether a fresh published state says idle at `now_ms`, busy system or not
+/// (`CurrentlyIdle`).
+pub fn currently_idle(dir: &Path, now_ms: i64) -> bool {
+    matches!(state(dir, now_ms), Some(1 | 2))
 }
 
 /// The CPU-busy check (`SystemBusy`): busy when at least `count` cores ran

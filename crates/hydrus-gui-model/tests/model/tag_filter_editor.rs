@@ -55,8 +55,6 @@ fn check_simple(ours: &SimpleView, theirs: &Value, at: &str) {
 }
 
 // leaf: audit-shared-tag-whitelist
-// leaf: audit-shared-tag-blacklist
-// leaf: audit-shared-tag-advanced
 #[test]
 fn the_editor_shows_and_edits_a_filter_as_the_reference_does() {
     let recorded = hydrus_testkit::fixture_json("tag_filter_editor.json");

@@ -4679,7 +4679,11 @@ maintenance jobs when the client is idle and the system is not otherwise
 busy"). The daemon's potential duplicates search, duplicates auto-resolution
 and file maintenance then work with their idle or normal settings: whether to
 work, the "ideal work packet time" and "rest time percentage", and file
-maintenance's idle throttle, all now on the page. The status bar shows "idle"
+maintenance's idle throttle, all now on the page. Each worker paces itself
+as the reference's does: the packet it is given, the rest after it (a
+percentage of up to five packets' time), the hold while its switch is off,
+and file maintenance's "heavy work units every" throttle, a batch of due jobs
+at a time. The status bar shows "idle"
 and, from the "Consider the system busy if CPU usage is above: N% on M cores"
 check sampled once a minute, "CPU busy".
 
