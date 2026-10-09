@@ -24,6 +24,49 @@ pub fn missing_history_question(name: &str) -> crate::subscriptions_dialog::Choi
     }
 }
 
+/// The question the next opening of manage subscriptions asks about queries
+/// whose imported history was missing (`ClientGUI._ManageSubscriptions`).
+pub fn missing_logs_question(count: usize) -> crate::subscriptions_dialog::Choice {
+    let count = hydrus_core::numbers::human_int(count as u64);
+    crate::subscriptions_dialog::Choice {
+        title: "Missing Query Logs!".into(),
+        message: format!(
+            "{count} subscription queries had missing database data! This is a serious error!\n\nIf you continue, the client will now create and save empty file/search logs for those queries, essentially resetting them, but if you know you need to exit and fix your database in a different way, cancel out now.\n\nIf you do not know why this happened, you may have had a hard drive fault. Please check the 'Recovery->Help my db is broke' document in the help, and you may want to contact hydrus dev."
+        ),
+        choices: vec!["continue".into(), "back out".into()],
+    }
+}
+
+/// "continue": give the missing queries empty logs and reset their headers
+/// (`SubscriptionQueryHeader.Reset`: never checked, alive, unpaused, no files),
+/// then forget that they were missing.
+pub fn reinitialise_missing_logs(
+    conn: &rusqlite::Connection,
+    queues: &[i64],
+    now: i64,
+) -> hydrus_store::Result<()> {
+    for &queue in queues {
+        if let Some(saved) = hydrus_store::subscriptions::query(conn, queue)? {
+            let mut state = saved.state;
+            state.last_check_time = 0;
+            state.next_check_time = 0;
+            state.dead = false;
+            state.paused = false;
+            hydrus_store::subscriptions::set_query_state(conn, queue, &state)?;
+            queues::remove_file_seeds(
+                conn,
+                queue,
+                &(0..=10)
+                    .filter_map(queues::SeedStatus::from_code)
+                    .collect::<Vec<_>>(),
+            )?;
+            update_file_status(conn, queue, now)?;
+        }
+        hydrus_store::subscriptions::set_missing_log(conn, queue, false)?;
+    }
+    Ok(())
+}
+
 /// Validate that the entire imported history can run in native queues.
 pub fn validate(subscriptions: &[Subscription]) -> Result<(), String> {
     for subscription in subscriptions {
@@ -94,6 +137,9 @@ pub fn stage(dialog: &mut Subscriptions, incoming: Vec<Subscription>) -> Result<
 pub fn restore(conn: &rusqlite::Connection, queue: i64, query: &Query) -> hydrus_store::Result<()> {
     if let Some(log) = &query.log {
         hydrus_store::import::restore_subscription_log(conn, queue, log)?;
+    } else {
+        // (accepted without its history: the reference finds it missing)
+        hydrus_store::subscriptions::set_missing_log(conn, queue, true)?;
     }
     let header = exchange::query_header_tuple(query)
         .map_err(|e| hydrus_store::StoreError::Invalid(e.to_string()))?;
@@ -127,6 +173,37 @@ pub fn update_file_status(
     headers
         .0
         .insert(queue, query.reference_header.expect("refreshed cache"));
+    settings::set(conn, &headers)
+}
+
+/// Carry a checker options edit into a saved query's cached header.
+pub fn apply_checker_edit(
+    conn: &rusqlite::Connection,
+    queue: i64,
+    edit: &exchange::CheckerEdit,
+    now: i64,
+) -> hydrus_store::Result<()> {
+    let Some(saved) = hydrus_store::subscriptions::query(conn, queue)? else {
+        return Ok(());
+    };
+    let mut headers: Headers = settings::get(conn)?;
+    let header = headers.0.get(&queue).cloned();
+    let name = header.as_ref().and_then(|h| h[2][0].as_str()).map_or_else(
+        || hydrus_core::pages::PageKey::random().to_hex(),
+        str::to_owned,
+    );
+    let log = history(conn, queue, &name).map_err(hydrus_store::StoreError::Invalid)?;
+    let mut query = Query {
+        state: saved.state,
+        log: Some(log),
+        log_name: name,
+        reference_header: header,
+    };
+    exchange::apply_checker_edit(&mut query, edit, now)
+        .map_err(|e| hydrus_store::StoreError::Invalid(e.to_string()))?;
+    headers
+        .0
+        .insert(queue, query.reference_header.expect("edited header"));
     settings::set(conn, &headers)
 }
 
@@ -251,6 +328,11 @@ pub fn selected(
             if query.reference_header.is_none() || !draft.log_changes.is_empty() {
                 exchange::update_file_status(&mut query, now).map_err(|e| e.to_string())?;
             }
+            if let Some(edit) = &draft.checker_edit {
+                exchange::apply_checker_edit(&mut query, edit, now).map_err(|e| e.to_string())?;
+            }
+            // (the reference reads a history it exports into the dialog)
+            draft.loaded.set(true);
             queries.push(query);
         }
         out.push(Subscription {

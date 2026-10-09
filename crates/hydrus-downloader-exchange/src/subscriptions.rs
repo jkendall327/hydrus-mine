@@ -50,6 +50,68 @@ pub fn rename_history(query: &mut Query, name: String) {
         header[2][velocity + 1] = json!("unknown");
     }
 }
+/// The velocity words a header shows until the reference reads its history
+/// again (`SetCheckerOptions`' `pretty_velocity_override`).
+pub const RECALCULATE_WORDS: &str = "will recalculate when next fully loaded";
+
+/// What editing a subscription's checker options does to a query's cached
+/// header (`Subscription.SetCheckerOptions`).
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum CheckerEdit {
+    /// Its history was not loaded: marked unsynced, to be recalculated by the
+    /// reference's own sync when it next loads the history.
+    Unsynced,
+    /// Its history was loaded (an imported one, or one read for an export or
+    /// a reset): recalculated at once (`SyncToQueryLogContainer`) with the
+    /// velocity the new checker options find in it.
+    Synced {
+        /// `GetRawCurrentVelocity`: files found, over how many seconds.
+        velocity: (i64, i64),
+        /// `GetPrettyCurrentVelocity` without its prefix.
+        words: String,
+    },
+}
+
+/// Carry out a checker edit on a query's cached header, making the header if
+/// it has none yet. A synced header also takes the example gallery seed of
+/// its history; the reference picks one at random when none is unfinished,
+/// native takes the first of the last ten.
+pub fn apply_checker_edit(query: &mut Query, edit: &CheckerEdit, now: i64) -> Result<()> {
+    if query.reference_header.is_none() || matches!(edit, CheckerEdit::Synced { .. }) {
+        update_file_status(query, now)?;
+    }
+    if query.reference_header.is_none() {
+        query.reference_header = Some(query_header_tuple(query)?);
+    }
+    let velocity_index = match query.reference_header.as_ref().map(|h| &h[1]) {
+        Some(version) if *version == json!(1) => 11,
+        _ => 13,
+    };
+    let example_gallery = query.log.as_ref().and_then(|log| {
+        log.gallery_seeds
+            .iter()
+            .find(|s| s.status == 0)
+            .or_else(|| log.gallery_seeds.iter().rev().take(10).last())
+            .map(gallery)
+    });
+    let Some(header) = &mut query.reference_header else {
+        return Ok(());
+    };
+    match edit {
+        CheckerEdit::Unsynced => {
+            header[2][8] = json!(1);
+            header[2][velocity_index] = json!([0, 1]);
+            header[2][velocity_index + 1] = json!(RECALCULATE_WORDS);
+        }
+        CheckerEdit::Synced { velocity, words } => {
+            header[2][8] = json!(0);
+            header[2][velocity_index] = json!([velocity.0, velocity.1]);
+            header[2][velocity_index + 1] = json!(words);
+            header[2][velocity_index + 3] = example_gallery.unwrap_or(Value::Null);
+        }
+    }
+    Ok(())
+}
 /// Refresh the reference file-count and example-seed fields after a log edit.
 /// Reset/retry keeps gallery examples and velocity unchanged (`UpdateFileStatus`).
 pub fn update_file_status(query: &mut Query, now: i64) -> Result<()> {

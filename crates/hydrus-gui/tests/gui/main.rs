@@ -162,6 +162,7 @@ mod network_data;
 
 mod domain_metadata;
 mod downloader_interchange;
+mod subscriptions_missing_logs;
 mod suggested_tag_panels;
 mod tag_filter_tooltips;
 mod tag_migration;

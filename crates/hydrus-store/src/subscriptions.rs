@@ -12,6 +12,36 @@ use hydrus_core::subscriptions::{QueryState, SubscriptionSettings};
 
 use crate::error::{Result, StoreError};
 use crate::queues::{self, QueueKind};
+use crate::settings::{self, Setting};
+
+/// Queries whose history the reference would find missing: an import with
+/// missing logs was accepted ("import it anyway"), so the query has no log of
+/// its own until manage subscriptions is opened and the missing data is
+/// reinitialised. By queue.
+#[derive(Debug, Clone, Default, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
+pub struct MissingLogs(pub std::collections::BTreeSet<i64>);
+impl Setting for MissingLogs {
+    const KEY: &'static str = "subscription_missing_logs";
+}
+
+/// The queries marked as missing their history.
+pub fn missing_logs(conn: &Connection) -> Result<std::collections::BTreeSet<i64>> {
+    Ok(settings::get::<MissingLogs>(conn)?.0)
+}
+
+/// Mark a query as missing its history, or clear the mark.
+pub fn set_missing_log(conn: &Connection, queue_id: i64, missing: bool) -> Result<()> {
+    let mut marks: MissingLogs = settings::get(conn)?;
+    let changed = if missing {
+        marks.0.insert(queue_id)
+    } else {
+        marks.0.remove(&queue_id)
+    };
+    if changed {
+        settings::set(conn, &marks)?;
+    }
+    Ok(())
+}
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct Subscription {

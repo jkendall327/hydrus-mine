@@ -603,7 +603,7 @@ impl EditSubscription {
     /// (`_CheckerOptionsUpdated`).
     pub fn set_checker(&mut self, checker: hydrus_core::subscriptions::CheckerOptions, now: i64) {
         for q in &mut self.queries {
-            q.query.sync_to_checker(&checker, now);
+            q.query.checker_changed(&checker, now);
         }
         self.settings.checker = checker;
     }

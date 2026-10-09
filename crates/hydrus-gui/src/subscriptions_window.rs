@@ -37,6 +37,9 @@ const MULTIPLE_FAVOURITE_LOAD: &str = "Hey, multiple items in the subscriptions 
 
 /// What a question waits on.
 enum Asking {
+    /// Queries whose imported history was missing, asked about when the
+    /// dialog is opened.
+    MissingLogs(Vec<i64>),
     DirectImportNotice(String, String, crate::subscription_import::Queue),
     DirectImportMissing(
         Box<hydrus_downloader_exchange::subscriptions::Subscription>,
@@ -133,6 +136,7 @@ fn read(store: &Store) -> hydrus_store::Result<Open> {
                     copy_of: None,
                     exchange: None,
                     state: q.state,
+                    ..DialogQuery::new(QueryState::new(""))
                 });
             }
             read.insert(
@@ -171,6 +175,8 @@ struct QueryWrite {
     /// A new query's file log, copied from this queue's.
     copy_of: Option<i64>,
     exchange: Option<hydrus_downloader_exchange::subscriptions::Query>,
+    /// What a checker options edit did to its cached header.
+    checker_edit: Option<hydrus_downloader_exchange::subscriptions::CheckerEdit>,
 }
 
 /// A change "apply" writes.
@@ -189,6 +195,8 @@ enum Write {
     RemoveQuery(i64),
     /// A query's file log changed.
     Log(i64, LogChange),
+    /// A checker options edit reached a saved query's cached header.
+    Header(i64, hydrus_downloader_exchange::subscriptions::CheckerEdit),
 }
 
 /// What the dialog changed: deleted subscriptions, new ones, changed
@@ -226,6 +234,7 @@ fn changes(open: &Open) -> Vec<Write> {
                         logs: q.log_changes.clone(),
                         copy_of: q.copy_of,
                         exchange: q.exchange.clone(),
+                        checker_edit: q.checker_edit.clone(),
                     })
                     .collect(),
             ));
@@ -249,6 +258,7 @@ fn changes(open: &Open) -> Vec<Write> {
                         logs: q.log_changes.clone(),
                         copy_of: q.copy_of,
                         exchange: q.exchange.clone(),
+                        checker_edit: q.checker_edit.clone(),
                     }),
                 ));
                 continue;
@@ -257,6 +267,9 @@ fn changes(open: &Open) -> Vec<Write> {
                 writes.push(Write::Move(queue, id));
             }
             writes.extend(q.log_changes.iter().map(|&c| Write::Log(queue, c)));
+            if let Some(edit) = &q.checker_edit {
+                writes.push(Write::Header(queue, edit.clone()));
+            }
             let before = owners
                 .get(&queue)
                 .and_then(|owner| open.read.get(owner))
@@ -336,12 +349,22 @@ fn write(store: &Store, writes: Vec<Write>) -> hydrus_store::Result<()> {
                             for &change in &q.logs {
                                 change_log(conn, queue, change, now)?;
                             }
+                            if let Some(edit) = &q.checker_edit {
+                                hydrus_gui_model::subscription_exchange::apply_checker_edit(
+                                    conn, queue, edit, now,
+                                )?;
+                            }
                             continue;
                         };
                         subscriptions::move_query(conn, queue, id)?;
                         subscriptions::set_query_state(conn, queue, &q.state)?;
                         for &change in &q.logs {
                             change_log(conn, queue, change, now)?;
+                        }
+                        if let Some(edit) = &q.checker_edit {
+                            hydrus_gui_model::subscription_exchange::apply_checker_edit(
+                                conn, queue, edit, now,
+                            )?;
                         }
                     }
                 }
@@ -357,9 +380,19 @@ fn write(store: &Store, writes: Vec<Write>) -> hydrus_store::Result<()> {
                     for &change in &q.logs {
                         change_log(conn, queue, change, now)?;
                     }
+                    if let Some(edit) = &q.checker_edit {
+                        hydrus_gui_model::subscription_exchange::apply_checker_edit(
+                            conn, queue, edit, now,
+                        )?;
+                    }
                 }
                 Write::RemoveQuery(queue) => subscriptions::remove_query(conn, *queue)?,
                 Write::Log(queue, change) => change_log(conn, *queue, *change, now)?,
+                Write::Header(queue, edit) => {
+                    hydrus_gui_model::subscription_exchange::apply_checker_edit(
+                        conn, *queue, edit, now,
+                    )?;
+                }
                 Write::Rename(id, name) => {
                     subscriptions::rename_subscription(conn, *id, name)?;
                 }
@@ -441,6 +474,43 @@ fn direct_import_next(open: &mut Open, mut queue: crate::subscription_import::Qu
     }
 }
 
+/// Answer the question about queries whose history was missing: "continue"
+/// reinitialises them and shows the list as it now is; backing out closes the
+/// dialog (`ClientGUI._ManageSubscriptions`).
+fn answer_missing_logs(
+    state: &Rc<RefCell<Open>>,
+    store: &Arc<Store>,
+    queues: &[i64],
+    carry_on: bool,
+    weak: &slint::Weak<SubscriptionsWindow>,
+    close: &impl Fn(),
+) {
+    state.borrow_mut().asking = None;
+    if !carry_on {
+        close();
+        return;
+    }
+    let queues = queues.to_vec();
+    let now = now();
+    let done = store.write(move |ctx| {
+        hydrus_gui_model::subscription_exchange::reinitialise_missing_logs(ctx.conn(), &queues, now)
+    });
+    let fresh = done
+        .map_err(|e| e.to_string())
+        .and_then(|()| read(store).map_err(|e| e.to_string()));
+    match fresh {
+        Ok(fresh) => {
+            let mut open = state.borrow_mut();
+            open.dialog = fresh.dialog;
+            open.read = fresh.read;
+        }
+        Err(error) => state.borrow_mut().asking = Some(Asking::Message(error)),
+    }
+    if let Some(window) = weak.upgrade() {
+        show(&window, &state.borrow());
+    }
+}
+
 /// Show the dialog's list, buttons and question.
 fn show(window: &SubscriptionsWindow, open: &Open) {
     let now = now();
@@ -503,6 +573,10 @@ fn show(window: &SubscriptionsWindow, open: &Open) {
             .collect()
     };
     let question = match &open.asking {
+        Some(Asking::MissingLogs(queues)) => Some((
+            hydrus_gui_model::subscription_exchange::missing_logs_question(queues.len()),
+            false,
+        )),
         Some(Asking::DirectImportMissing(subscription, _)) => Some((
             hydrus_gui_model::subscription_exchange::missing_history_question(&subscription.name),
             false,
@@ -1163,6 +1237,8 @@ pub(crate) fn open(
     });
     window.on_chosen({
         let state = state.clone();
+        let store = store.clone();
+        let close = close.clone();
         let favourites = favourites.clone();
         let change = change.clone();
         let weak = window.as_weak();
@@ -1170,6 +1246,14 @@ pub(crate) fn open(
             let Ok(index) = usize::try_from(index) else {
                 return;
             };
+            let missing = match state.borrow().asking.as_ref() {
+                Some(Asking::MissingLogs(queues)) => Some(queues.clone()),
+                _ => None,
+            };
+            if let Some(queues) = missing {
+                answer_missing_logs(&state, &store, &queues, index == 0, &weak, &close);
+                return;
+            }
             let favourite = match state.borrow().asking.as_ref() {
                 Some(Asking::FavouriteLoad(name)) => Some(name.clone()),
                 _ => None,
@@ -1318,7 +1402,20 @@ pub(crate) fn open(
     });
     window.on_cancelled({
         let change = change.clone();
+        let state = state.clone();
+        let store = store.clone();
+        let close = close.clone();
+        let weak = window.as_weak();
         move || {
+            let missing = match state.borrow().asking.as_ref() {
+                Some(Asking::MissingLogs(queues)) => Some(queues.clone()),
+                _ => None,
+            };
+            if let Some(queues) = missing {
+                // (closing the question is backing out of it)
+                answer_missing_logs(&state, &store, &queues, false, &weak, &close);
+                return;
+            }
             change(&|open| {
                 match open.asking.take() {
                     Some(
@@ -1717,6 +1814,22 @@ pub(crate) fn open(
             slint::CloseRequestResponse::HideWindow
         }
     });
+    // queries the reference would find missing their history ask first
+    let missing: Vec<i64> = store
+        .read(hydrus_store::subscriptions::missing_logs)
+        .map_err(|e| e.to_string())?
+        .into_iter()
+        .filter(|queue| {
+            state
+                .borrow()
+                .read
+                .values()
+                .any(|r| r.queries.iter().any(|(q, _)| *q == Some(*queue)))
+        })
+        .collect();
+    if !missing.is_empty() {
+        state.borrow_mut().asking = Some(Asking::MissingLogs(missing));
+    }
     show(&window, &state.borrow());
     window.show().map_err(|e| e.to_string())?;
     Ok(window)
