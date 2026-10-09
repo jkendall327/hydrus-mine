@@ -639,9 +639,16 @@ they fit it, their border and margin, the UI-scale supersampling, how far
 into a video its thumbnail is taken, and the single file's text in the
 status bar) and advanced. The grid is laid out as the reference's: each
 cell is the thumbnail box and its border, with the margin all round, as
-many across as fit (a click in a margin is on no file). Thumbnails given a new size show it at once: the grid's cells
+many across as fit (a click in a margin, or below the last row, is on no
+file). Thumbnails given a new size show it at once: the grid's cells
 take it, and a thumbnail made at the old size is shown scaled to the new
-one and made again from its file, as the reference does. Times
+one and made again from its file, as the reference does. A file of a type
+with no thumbnail of its own (an archive, say) shows its type's icon fitted
+to the box, as the reference's thumbnail cache does. The grid's spans,
+columns, rows, clicks around the margins and each thumbnail's size under ten
+size/border/margin settings are replayed against
+`oracle/record_thumbnail_grid.py`, and the frame a video's thumbnail is taken
+from at seven percentages against `oracle/record_video_thumbnail_frames.py`. Times
 show as the reference's fields (days, hours, minutes, seconds, ms), and a
 rate as its number, the reference's words ("errors within") and a time;
 text that may be none has the reference's "none" box. The window opens on

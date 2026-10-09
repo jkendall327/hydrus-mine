@@ -145,6 +145,7 @@ mod tag_filter_sibling_testing;
 mod tag_service_tabs;
 mod thumbnail_appearance;
 mod thumbnail_cache;
+mod thumbnail_grid_geometry;
 mod thumbnail_icons;
 mod thumbnail_menu;
 mod thumbnail_navigation;

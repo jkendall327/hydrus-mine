@@ -4450,6 +4450,16 @@ status line ("That location does not seem to exist!") where the reference shows 
 critical dialog; File > open > installation directory opens the Rust executable's
 directory.
 
+## Options > thumbnails
+
+The grid's geometry under the thumbnail size, border and margin is replayed
+against the reference (`oracle/record_thumbnail_grid.py`): spans, columns, the
+grid's content height, click hits and the size each thumbnail is shown at. How
+the border is drawn (its colour and drawing) is not tested. Click hits were
+recorded for the first two columns and rows only, at one viewport per setting,
+and thumbnail positions are the layout's rule rather than read from the
+rendered grid.
+
 ## Options > external programs
 
 - The job list has "send single file" and "send single URL" only; the

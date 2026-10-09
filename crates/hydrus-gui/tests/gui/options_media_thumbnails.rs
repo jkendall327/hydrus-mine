@@ -151,31 +151,130 @@ fn the_supersampling_scales_the_thumbnails_made() {
     );
 }
 
+/// The recorder's signature of a thumbnail: the mean of the RGB values in
+/// each of 16 by 16 blocks (oracle/record_video_thumbnail_frames.py).
+fn signature(bytes: &[u8]) -> Vec<i64> {
+    let raster = hydrus_media::decode_image(bytes).unwrap();
+    let (w, h) = (raster.width() as usize, raster.height() as usize);
+    let c = usize::from(raster.channels());
+    let rgb = |x: usize, y: usize| -> i64 {
+        let p = &raster.data()[(y.min(h - 1) * w + x.min(w - 1)) * c..];
+        if c < 3 {
+            3 * i64::from(p[0])
+        } else {
+            p[..3].iter().map(|&v| i64::from(v)).sum()
+        }
+    };
+    let mut out = Vec::new();
+    for by in 0..16 {
+        for bx in 0..16 {
+            let (x0, x1) = (bx * w / 16, (bx + 1) * w / 16);
+            let (y0, y1) = (by * h / 16, (by + 1) * h / 16);
+            let (mut total, mut count) = (0, 0);
+            for y in y0..y1.max(y0 + 1) {
+                for x in x0..x1.max(x0 + 1) {
+                    total += rgb(x, y);
+                    count += 3;
+                }
+            }
+            out.push(total / count);
+        }
+    }
+    out
+}
+
+fn distance(a: &[i64], b: &[i64]) -> i64 {
+    a.iter().zip(b).map(|(a, b)| (a - b).abs()).sum()
+}
+
 // leaf: audit-options-thumbnails-appearance-generate-video-thumbnails-this-in
 #[test]
+// (the thumbnails of the gif, apng, webm and mp4 are made with ffmpeg, as the
+// reference's are)
 fn the_video_percentage_picks_the_frame_the_thumbnail_is_made_from() {
+    // the reference's thumbnails of an animated gif and apng, a webm and an
+    // mp4 at seven percentages, made by its client files manager
+    let recorded: serde_json::Value = hydrus_testkit::fixture_json("video_thumbnail_frames.json");
     let client = Media::basic();
-    client.search("system:everything");
-    let (file, _) = find(&client, |i| {
-        i.mime == hydrus_core::Mime::AnimationGif && i.num_frames == Some(5)
-    });
-    let (_, at_35) = remake(&client, file);
-    number(
-        &client,
-        "Generate video thumbnails this % in: ",
-        (0, 100),
-        100,
-    );
-    assert_eq!(client.store.snapshot().thumbnails.video_percentage_in, 100);
-    let (_, at_end) = remake(&client, file);
-    assert_ne!(at_35, at_end, "another frame");
-    number(
-        &client,
-        "Generate video thumbnails this % in: ",
-        (0, 100),
-        35,
-    );
-    assert_eq!(remake(&client, file).1, at_35, "and back");
+    let files: Vec<(HashId, &serde_json::Value)> = recorded["files"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|f| {
+            let hash = hex::decode(f["hash"].as_str().unwrap()).unwrap();
+            let hash = hydrus_core::Sha256::from_slice(&hash).unwrap();
+            let id = client
+                .store
+                .read(|c| hydrus_store::master::hash_id(c, &hash))
+                .unwrap()
+                .unwrap();
+            (id, f)
+        })
+        .collect();
+    let mut made: Vec<Vec<Vec<i64>>> = vec![Vec::new(); files.len()];
+    for (n, percentage) in recorded["percentages"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .enumerate()
+    {
+        let percentage = i32::try_from(percentage.as_i64().unwrap()).unwrap();
+        number(
+            &client,
+            "Generate video thumbnails this % in: ",
+            (0, 100),
+            percentage,
+        );
+        assert_eq!(
+            client.store.snapshot().thumbnails.video_percentage_in,
+            u32::try_from(percentage).unwrap()
+        );
+        for (i, (id, file)) in files.iter().enumerate() {
+            let theirs = &file["thumbnails"][n];
+            assert_eq!(theirs["percentage"], percentage);
+            let (size, bytes) = remake(&client, *id);
+            let name = file["name"].as_str().unwrap();
+            assert_eq!(
+                [size.0, size.1],
+                [
+                    theirs["size"][0].as_u64().unwrap() as u32,
+                    theirs["size"][1].as_u64().unwrap() as u32
+                ],
+                "{name} at {percentage}%"
+            );
+            made[i].push(signature(&bytes));
+        }
+    }
+    // each thumbnail is the reference's at that percentage: closer to it
+    // than to any of its other frames (decoders differ a little)
+    for (i, (_, file)) in files.iter().enumerate() {
+        let name = file["name"].as_str().unwrap();
+        let theirs: Vec<Vec<i64>> = file["thumbnails"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|t| serde_json::from_value(t["signature"].clone()).unwrap())
+            .collect();
+        for (n, ours) in made[i].iter().enumerate() {
+            let same = distance(ours, &theirs[n]);
+            for (m, other) in theirs.iter().enumerate() {
+                if other != &theirs[n] {
+                    assert!(
+                        same < distance(ours, other),
+                        "{name}: ours at {}% is {same} from theirs, {} from theirs at {}%",
+                        recorded["percentages"][n],
+                        distance(ours, other),
+                        recorded["percentages"][m]
+                    );
+                }
+            }
+            assert!(
+                same <= 256 * 4,
+                "{name} at {}%: {same}",
+                recorded["percentages"][n]
+            );
+        }
+    }
 }
 
 // leaf: audit-options-thumbnails-appearance-fade-thumbnails

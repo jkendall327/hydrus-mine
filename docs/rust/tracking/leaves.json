@@ -22603,10 +22603,10 @@
     "Assessment covers this editable control and shared Apply/Cancel, not every control on its containing reference page or every background consumer."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Only asserts the regenerated gif thumbnail bytes differ at 100% versus 35% and return at 35%; which frame is chosen (tools.rs: pct/100*(frames-1)) is never compared with the reference (dump_media.py records only percentage 35). Presence of change instead of content. Tests: crates/hydrus-gui/tests/gui/options_media_thumbnails.rs:154 the_video_percentage_picks_the_frame_the_thumbnail_is_made_from"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "Claude (recheck bin E, #97 phase 2)",
+    "note": "The percentage row set through the real Options window to 0, 1, 20, 35, 50, 99 and 100; the thumbnails of an animated gif (5 frames), apng (4), webm (16) and mp4 (10) are made again by the real regeneration path and each is closer, by a 16x16 block signature, to the reference's thumbnail at that percentage than to any of its other frames, at the reference's size (oracle/fixtures/video_thumbnail_frames.json, record_video_thumbnail_frames.py through the reference's client files manager). Tests: crates/hydrus-gui/tests/gui/options_media_thumbnails.rs the_video_percentage_picks_the_frame_the_thumbnail_is_made_from."
    }
   },
   {
@@ -22623,10 +22623,10 @@
     "Assessment covers this editable control and shared Apply/Cancel, not every control on its containing reference page or every background consumer."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Real Options window changes the grid: cell width 152->156, height 131, columns 5->4->3, no re-decode. All numbers are typed literals from the Python layout formula; no recording of grid geometry under border/margin. Tests: crates/hydrus-gui/tests/gui/options_window.rs:655 the_thumbnails_border_and_margin_lay_out_the_grid"
+    "date": "2026-10-09",
+    "class": "likely-good",
+    "by": "Claude (recheck bin E, #97 phase 2)",
+    "note": "The border row (0, 1, 2, 3, 5, 20) set through the real Options window: spans, columns at six viewports, grid content height and which file real clicks hit at the cell edges match the reference's graphics-view panel (oracle/fixtures/thumbnail_grid.json). Tests: crates/hydrus-gui/tests/gui/thumbnail_grid_geometry.rs the_thumbnail_options_lay_out_the_grid_as_the_reference_does. Geometry only: how the border is drawn (its colour and drawing) is untested; hits were recorded for the first two columns and rows at one viewport (DIFFERENCES.md)."
    }
   },
   {
@@ -22643,10 +22643,10 @@
     "Assessment covers this editable control and shared Apply/Cancel, not every control on its containing reference page or every background consumer."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Real Options window; thumbnails shown and stored regenerate at new size, but expected size comes from ThumbnailSettings::resolution (unrecorded core function; only hydrus-media's thumbnail_resolution is replayed against the reference) and cell box 302x252 is typed. Tests: crates/hydrus-gui/tests/gui/options_window.rs:562 thumbnails_take_the_size_the_options_give_them"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "Claude (recheck bin E, #97 phase 2)",
+    "note": "Same test and recording as the width leaf: the height row set through the real Options window under ten settings, and the grid's content height, click hits and every file's shown thumbnail size match the reference's panel and thumbnail cache (oracle/fixtures/thumbnail_grid.json). Tests: crates/hydrus-gui/tests/gui/thumbnail_grid_geometry.rs the_thumbnail_options_lay_out_the_grid_as_the_reference_does."
    }
   },
   {
@@ -22663,10 +22663,10 @@
     "Assessment covers this editable control and shared Apply/Cancel, not every control on its containing reference page or every background consumer."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Same test as border: real window, typed layout literals, no recording of margin effect. Tests: crates/hydrus-gui/tests/gui/options_window.rs:656 the_thumbnails_border_and_margin_lay_out_the_grid"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "Claude (recheck bin E, #97 phase 2)",
+    "note": "The margin row (0, 1, 2, 7, 20) set through the real Options window: spans, columns at six viewports, grid content height and real clicks on, just inside and just outside every margin edge of the first two columns and rows match the reference's panel (oracle/fixtures/thumbnail_grid.json). Tests: crates/hydrus-gui/tests/gui/thumbnail_grid_geometry.rs the_thumbnail_options_lay_out_the_grid_as_the_reference_does."
    }
   },
   {
@@ -22723,10 +22723,10 @@
     "Assessment covers this editable control and shared Apply/Cancel, not every control on its containing reference page or every background consumer."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Same test as height: real Options window and real regeneration, but expectations are from core ThumbnailSettings::resolution and typed cell sizes. Tests: crates/hydrus-gui/tests/gui/options_window.rs:561 thumbnails_take_the_size_the_options_give_them"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "Claude (recheck bin E, #97 phase 2)",
+    "note": "Sets width, height, border and margin through the real Options window for ten settings (box 20x20 to 512x64, border 0-20, margin 0-20) and replays oracle/fixtures/thumbnail_grid.json (record_thumbnail_grid.py drives the reference's default graphics-view thumbnail panel): at six viewports each the span, columns and grid content height match (thumbnail positions are the layout's rule, not read from the rendered grid); 2,000+ real clicks around the margins hit the file the reference's panel finds; and every file's shown thumbnail is the size the reference's thumbnail cache gives the grid under each box. Fixed here: types without thumbnails (an archive, say) show their icon fitted to the box, not the stored padded square; a click below the last row deselects. Tests: crates/hydrus-gui/tests/gui/thumbnail_grid_geometry.rs the_thumbnail_options_lay_out_the_grid_as_the_reference_does."
    }
   },
   {

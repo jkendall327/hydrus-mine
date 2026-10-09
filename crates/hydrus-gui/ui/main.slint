@@ -2194,6 +2194,22 @@ export component MainWindow inherits Window {
                                 x: parent.width - self.width;
                                 y: parent.height - self.height;
                             }
+                            // (below the rows: a click on no file, as the
+                            // reference's empty space)
+                            TouchArea {
+                                property <bool> ctrl;
+                                property <bool> shift;
+                                pointer-event(event) => {
+                                    if (event.kind == PointerEventKind.down) {
+                                        self.ctrl = event.modifiers.control;
+                                        self.shift = event.modifiers.shift;
+                                    }
+                                }
+                                clicked => {
+                                    grid-keys.focus();
+                                    root.thumbnail-clicked(-1, self.ctrl, self.shift);
+                                }
+                            }
                         }
                         grid := ThumbnailGrid {
                             width: 100%;
