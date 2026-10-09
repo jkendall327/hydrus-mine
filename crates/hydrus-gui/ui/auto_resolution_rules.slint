@@ -1,3 +1,4 @@
+import { Btn } from "btn.slint";
 // The duplicates auto-resolution rules editor (the reference's "edit
 // rules" dialog, `EditDuplicatesAutoResolutionRulesPanel`, its rule editor
 // `EditDuplicatesAutoResolutionRulePanel`, and the comparator editors; the
@@ -99,16 +100,16 @@ export component ComparatorList inherits VerticalLayout {
             model: root.kinds;
             current-index <=> root.kind;
         }
-        Button {
+        Btn {
             text: "add";
             clicked => { root.add(); }
         }
-        Button {
+        Btn {
             text: "edit";
             enabled: root.selected >= 0;
             clicked => { root.edit(); }
         }
-        Button {
+        Btn {
             text: "delete";
             enabled: root.selected >= 0;
             clicked => { root.delete(); }
@@ -119,7 +120,7 @@ export component ComparatorList inherits VerticalLayout {
         alignment: end;
         SubscriptionExchangeButton { label: "export"; choices: ["to clipboard", "to png"]; available: root.selected >= 0; selected(mode) => { root.exchange(mode); } }
         SubscriptionExchangeButton { label: "import"; choices: ["from clipboard", "from pngs"]; available: true; selected(mode) => { root.exchange(mode + 2); } }
-        Button {
+        Btn {
             text: "duplicate";
             enabled: root.selected >= 0;
             clicked => { root.exchange(4); }
@@ -195,11 +196,11 @@ export component AutoResolutionRulesWindow inherits Window {
                     font-weight: 700;
                     color: Theme.text;
                 }
-                for name[i] in root.suggestions: Button {
+                for name[i] in root.suggestions: Btn {
                     text: name;
                     clicked => { root.suggested-chosen(i); }
                 }
-                Button {
+                Btn {
                     text: "cancel";
                     clicked => { root.suggested-chosen(-1); }
                 }
@@ -214,37 +215,37 @@ export component AutoResolutionRulesWindow inherits Window {
         }
         HorizontalLayout {
             spacing: 6px;
-            Button {
+            Btn {
                 text: "add suggested";
                 clicked => { root.add-suggested(); }
             }
-            Button {
+            Btn {
                 text: "add";
                 clicked => { root.add(); }
             }
-            Button {
+            Btn {
                 text: "edit";
                 enabled: root.one-selected;
                 clicked => { root.edit(); }
             }
-            Button {
+            Btn {
                 text: "delete";
                 enabled: root.any-selected;
                 clicked => { root.delete(); }
             }
             SubscriptionExchangeButton { label: "export"; choices: ["to clipboard", "to json file", "to png file"]; available: root.any-selected && !root.asking; selected(mode) => { root.exchange(mode); } }
             SubscriptionExchangeButton { label: "import"; choices: ["from clipboard", "from json files", "from png files (you can also drag and drop pngs onto this list)"]; available: !root.asking; selected(mode) => { root.exchange(mode + 3); } }
-            Button {
+            Btn {
                 text: "duplicate";
                 enabled: root.any-selected && !root.asking;
                 clicked => { root.exchange(6); }
             }
             Rectangle { horizontal-stretch: 1; }
-            Button {
+            Btn {
                 text: "apply";
                 clicked => { root.apply(); }
             }
-            Button {
+            Btn {
                 text: "cancel";
                 clicked => { root.cancel(); }
             }
@@ -421,7 +422,7 @@ export component AutoResolutionRuleWindow inherits Window {
             HorizontalLayout {
                 spacing: 6px;
                 Label { text: "searching: "; }
-                Button {
+                Btn {
                     text: root.location;
                     clicked => { root.edit-location(); }
                 }
@@ -457,12 +458,12 @@ export component AutoResolutionRuleWindow inherits Window {
             HorizontalLayout {
                 spacing: 4px;
                 Label { text: root.count; horizontal-stretch: 1; }
-                Button {
+                Btn {
                     width: 30px;
                     text: root.count-paused ? "▶" : "⏸";
                     clicked => { root.count-action("pause count", 0); }
                 }
-                Button { width: 30px; text: "⟳"; clicked => { root.count-action("refresh count", 0); } }
+                Btn { width: 30px; text: "⟳"; clicked => { root.count-action("refresh count", 0); } }
                 count-cog := ContextMenuArea {
                     width: 30px;
                     Menu {
@@ -486,7 +487,7 @@ export component AutoResolutionRuleWindow inherits Window {
                             activated => { root.count-action("count option", 2); }
                         }
                     }
-                    Button {
+                    Btn {
                         width: 30px;
                         text: "⚙";
                         clicked => { count-cog.show({ x: 0px, y: self.height }); }
@@ -566,7 +567,7 @@ export component AutoResolutionRuleWindow inherits Window {
                     checked <=> root.default-merge;
                     toggled => { root.changed(); }
                 }
-                Button {
+                Btn {
                     text: "edit custom merge options";
                     enabled: !root.default-merge;
                     clicked => { root.edit-merge(); }
@@ -603,7 +604,7 @@ export component AutoResolutionRuleWindow inherits Window {
                     checked <=> root.preview-fetch-all;
                     toggled => { root.preview-fetch-changed(); }
                 }
-                Button {
+                Btn {
                     // (the reference's refresh icon: "Fetch a sample of pairs")
                     text: "fetch again";
                     clicked => { root.preview-refetch(); }
@@ -615,7 +616,7 @@ export component AutoResolutionRuleWindow inherits Window {
                     horizontal-stretch: 1;
                     text: root.preview-to-test-label;
                 }
-                Button {
+                Btn {
                     // ("Retest the fetched pairs")
                     text: "test again";
                     clicked => { root.preview-retest(); }
@@ -661,11 +662,11 @@ export component AutoResolutionRuleWindow inherits Window {
         HorizontalLayout {
             alignment: end;
             spacing: 6px;
-            Button {
+            Btn {
                 text: "apply";
                 clicked => { root.apply(); }
             }
-            Button {
+            Btn {
                 text: "cancel";
                 clicked => { root.cancel(); }
             }
@@ -825,11 +826,11 @@ export component ComparatorWindow inherits Window {
         HorizontalLayout {
             alignment: end;
             spacing: 6px;
-            Button {
+            Btn {
                 text: "apply";
                 clicked => { root.apply(); }
             }
-            Button {
+            Btn {
                 text: "cancel";
                 clicked => { root.cancel(); }
             }

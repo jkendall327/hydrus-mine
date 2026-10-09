@@ -1,7 +1,8 @@
 //! Options controls for reference settings that hydrus-rs keeps and round-trips
 //! without a native consumer (the Qt locale for integers, the media viewer's
-//! rescue padding, the toaster's other-display freeze, the number of recent
-//! petition reasons): each is where and what the reference's panel has it, starts
+//! rescue padding, the toaster's other-display freeze) and the number of recent
+//! petition reasons (which the petition reason questions read; their test is
+//! `tag_relationships`'): each is where and what the reference's panel has it, starts
 //! on the reference's default, is staged until OK, and survives reopening.
 use crate::options_gui_support::{Client, box_of, row, show_page};
 

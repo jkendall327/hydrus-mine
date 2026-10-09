@@ -6554,7 +6554,7 @@ fn related_weight_drafts_cancel_reopen_and_re_rank_an_already_open_service_panel
     assert_eq!(manage.get_window_title(), "manage tags for 6 files");
     manage.invoke_service_chosen(second);
     manage.set_related_display(false);
-    manage.invoke_related_search();
+    manage.invoke_related_search(0);
     let mine = i32::try_from(
         manage
             .get_service_names()
@@ -6779,7 +6779,7 @@ fn related_weight_drafts_cancel_reopen_and_re_rank_an_already_open_service_panel
     assert_eq!(committed(), 3, "activation stays staged");
     manage.invoke_apply();
     assert_eq!(committed(), i64::try_from(files.len()).unwrap());
-    manage.invoke_related_search();
+    manage.invoke_related_search(0);
     assert_eq!(committed(), 6, "retired request cannot add again");
     open(&ui);
     let options = bound.options.borrow().as_ref().unwrap().clone_strong();

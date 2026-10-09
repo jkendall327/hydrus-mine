@@ -1,3 +1,4 @@
+import { Btn } from "btn.slint";
 // The checker options editor ("edit checker options", `src/checker_options.rs`
 // in hydrus-gui-model, bound by `src/checker_options_window.rs`), as the
 // reference's `EditCheckerOptions`: its reasonable defaults, the velocity
@@ -75,7 +76,7 @@ export component CheckerOptionsWindow inherits Window {
             color: Theme.error;
         }
         BoxTitle { text: root.texts.defaults-box; }
-        for label[i] in root.presets: Button {
+        for label[i] in root.presets: Btn {
             text: label;
             clicked => { root.preset(i); }
         }
@@ -169,11 +170,11 @@ export component CheckerOptionsWindow inherits Window {
         HorizontalLayout {
             alignment: end;
             spacing: 6px;
-            Button {
+            Btn {
                 text: "apply";
                 clicked => { root.ok(); }
             }
-            Button {
+            Btn {
                 text: "cancel";
                 clicked => { root.cancel(); }
             }

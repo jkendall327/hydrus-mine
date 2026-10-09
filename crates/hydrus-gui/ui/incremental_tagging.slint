@@ -1,3 +1,4 @@
+import { Btn } from "btn.slint";
 import { Button, CheckBox, LineEdit, SpinBox } from "std-widgets.slint";
 import { Theme } from "theme.slint";
 export component IncrementalTaggingWindow inherits Window {
@@ -30,7 +31,7 @@ export component IncrementalTaggingWindow inherits Window {
             Text { text: root.summary; color: Theme.text; wrap: word-wrap; }
             if root.error != "": Text { text: root.error; color: Theme.error; wrap: word-wrap; }
             Rectangle { vertical-stretch: 1; }
-            HorizontalLayout { vertical-stretch: 0; height: 32px; alignment: end; spacing: 6px; Button { text: "apply"; clicked=>{root.apply();} } Button { text: "cancel"; clicked=>{root.cancel();} } }
+            HorizontalLayout { vertical-stretch: 0; height: 32px; alignment: end; spacing: 6px; Btn { text: "apply"; clicked=>{root.apply();} } Btn { text: "cancel"; clicked=>{root.cancel();} } }
         }
     }
 }

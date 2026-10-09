@@ -1,3 +1,4 @@
+import { Btn } from "btn.slint";
 // Database > db maintenance > review vacuum data.
 import { Button } from "std-widgets.slint";
 import { Theme } from "theme.slint";
@@ -33,19 +34,19 @@ export component VacuumReviewWindow inherits Window {
         }
         HorizontalLayout {
             alignment: start;
-            Button { text: "vacuum"; enabled: root.can-vacuum && root.question == ""; clicked => { root.vacuum-clicked(); } }
+            Btn { text: "vacuum"; enabled: root.can-vacuum && root.question == ""; clicked => { root.vacuum-clicked(); } }
         }
         if root.question != "": VerticalLayout {
             Text { text: root.question; color: Theme.text; wrap: word-wrap; }
             HorizontalLayout {
                 alignment: start;
-                Button { text: "do it"; clicked => { root.answered(true); } }
-                Button { text: "forget it"; clicked => { root.answered(false); } }
+                Btn { text: "do it"; clicked => { root.answered(true); } }
+                Btn { text: "forget it"; clicked => { root.answered(false); } }
             }
         }
         HorizontalLayout {
             alignment: end;
-            Button { text: "close"; clicked => { root.close-clicked(); } }
+            Btn { text: "close"; clicked => { root.close-clicked(); } }
         }
     }
 }

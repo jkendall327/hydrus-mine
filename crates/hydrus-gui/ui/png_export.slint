@@ -1,3 +1,4 @@
+import { Btn } from "btn.slint";
 // Reusable reference PNGExportPanel parameters; payload bytes live in its owner.
 import { Button, LineEdit, SpinBox } from "std-widgets.slint";
 import { Theme } from "theme.slint";
@@ -23,7 +24,7 @@ export component PngExportWindow inherits Window {
         HorizontalLayout {
             Text { text: "file:"; color: Theme.text; vertical-alignment: center; }
             LineEdit { text <=> root.path; horizontal-stretch: 1; edited(text) => { root.action("update"); } }
-            Button { text: "browse…"; clicked => { root.action("browse"); } }
+            Btn { text: "browse…"; clicked => { root.action("browse"); } }
         }
         HorizontalLayout {
             Text { text: "title:"; color: Theme.text; vertical-alignment: center; }
@@ -44,8 +45,8 @@ export component PngExportWindow inherits Window {
         Text { text: root.error; color: Theme.text; wrap: word-wrap; }
         HorizontalLayout {
             alignment: end;
-            Button { text: root.done ? "done!" : root.export-label; enabled: root.can-export; clicked => { root.action("export"); } }
-            Button { text: "close"; clicked => { root.action("close"); } }
+            Btn { text: root.done ? "done!" : root.export-label; enabled: root.can-export; clicked => { root.action("export"); } }
+            Btn { text: "close"; clicked => { root.action("close"); } }
         }
     }
 }

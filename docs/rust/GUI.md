@@ -1870,7 +1870,9 @@ service pages' changes. Removing a pending or petitioned pair asks whether to
 rescind it. Apply asks about a complete uncommitted input pair. Show all pairs,
 show pending and petitioned groups, the parents' show whole chains, and wipe
 workspace filter the remembered groups. Clipboard/.txt import and selected
-pair export use alternating tag lines. Repository changes ask for reasons and
+pair export use alternating tag lines. Repository changes ask for reasons (the question offers the reasons recently
+typed for that kind and action, as many as Options > tag editing keeps, then the
+fixed ones, each a button that answers with it) and
 remain pending/petitioned through the existing store content status machinery.
 Applying updates the display graph and autocomplete counts atomically before
 the main page refreshes its tags. `oracle/record_tag_relationships.py` records
@@ -5218,6 +5220,17 @@ the reference's choice of volume and mute for every combination of the
 option, the three volumes and the three mutes, what the real preview control
 moves and flips, and the kinds the preview plays; they are replayed in
 `tests/model/preview_audio.rs` and `tests/gui/preview_audio.rs`.
+
+Tag filter buttons (tag migration, tag display, string tag filter, import options'
+"get tags" and blacklist, the Client API permitted tags) and the tag filter
+editor's "show other panels" show the reference's tooltips after the pointer
+rests on them; so do the preview's two mute buttons ("Global mute/unmute",
+"Mute/unmute: preview viewer") and the related-tags panel's buttons.
+`oracle/record_tag_filter_tooltips.py` records the texts and
+`oracle/record_relationship_reasons.py` the reason suggestions.
+Manage tags' related panel has quick, medium and thorough buttons (the three
+durations from Options > tag suggestions) and searches from the selected tags
+alone when some are selected; `oracle/record_related_tags_panel.py` records it.
 
 ### Undeleting: where to, and the question
 

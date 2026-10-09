@@ -589,6 +589,8 @@ impl ManageTags {
         &self,
         local: bool,
         display: bool,
+        level: usize,
+        selected: Option<&[String]>,
     ) -> hydrus_store::Result<hydrus_store::related_tags::Query> {
         let preferences: hydrus_store::related_tags::Settings =
             self.store.read(hydrus_store::settings::get)?;
@@ -601,15 +603,30 @@ impl ManageTags {
         ) {
             tags.entry(tag).or_default().extend(files);
         }
+        // With tags selected the search uses only those, and the other tags on
+        // the files are not suggested (`_FetchRelatedTagsNew`).
+        let (searches, exclude): (Vec<String>, std::collections::BTreeSet<String>) =
+            match selected.filter(|s| !s.is_empty()) {
+                Some(selected) => (
+                    selected.to_vec(),
+                    tags.keys()
+                        .filter(|tag| !selected.contains(tag))
+                        .cloned()
+                        .collect(),
+                ),
+                None => (tags.into_keys().collect(), BTreeSet::default()),
+            };
         Ok(hydrus_store::related_tags::Query {
             service: self.migration_service_key().ok_or_else(|| {
                 hydrus_store::StoreError::Invalid("The tag service has been removed.".into())
             })?,
-            searches: tags.into_keys().collect(),
+            searches,
             local,
             display,
             weights: preferences.weights,
             concurrence_percent: preferences.concurrence_percent,
+            max_ms: Some(preferences.durations_ms[level.min(2)]),
+            exclude,
         })
     }
     /// Filter related results with the same add-only current/pending rule as other sides.

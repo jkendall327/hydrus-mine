@@ -1,3 +1,4 @@
+import { Btn } from "btn.slint";
 import { Button, CheckBox, ScrollView } from "std-widgets.slint";
 import { ListTable, TableRow, TableColumn } from "list_table.slint";
 import { ImportFavouriteRow, ImportFavouritesButton } from "import_options_favourites.slint";
@@ -23,7 +24,7 @@ component ImportList {
     callback favourite(int, string);
     VerticalLayout {
         spacing: 4px;
-        Button { text: root.title + (root.expanded ? "  ▾" : "  ▸"); clicked => { root.expanded = !root.expanded; } }
+        Btn { text: root.title + (root.expanded ? "  ▾" : "  ▸"); clicked => { root.expanded = !root.expanded; } }
         if root.expanded: VerticalLayout {
             spacing: 4px;
             ListTable {
@@ -40,9 +41,9 @@ component ImportList {
             HorizontalLayout {
                 spacing: 4px;
                 alignment: start;
-                if !root.profiles: Button { text: "show stack"; enabled: root.enabled && root.one-selected; clicked => {root.action("stack");} }
-                Button { text: "copy"; enabled: root.enabled && root.one-selected; clicked => {root.action("copy");} }
-                Button { text: "paste  ▾"; enabled: root.enabled && root.any-selected; clicked => {paste.show();} }
+                if !root.profiles: Btn { text: "show stack"; enabled: root.enabled && root.one-selected; clicked => {root.action("stack");} }
+                Btn { text: "copy"; enabled: root.enabled && root.one-selected; clicked => {root.action("copy");} }
+                Btn { text: "paste  ▾"; enabled: root.enabled && root.any-selected; clicked => {paste.show();} }
                 if !root.profiles: ImportFavouritesButton {
                     rows: root.favourites;
                     enabled: root.enabled;
@@ -50,10 +51,10 @@ component ImportList {
                     refresh => {root.action("refresh-favourites");}
                     selected(action,name) => {root.favourite(action,name);}
                 }
-                if root.profiles: Button { text: "add"; enabled: root.enabled; clicked => {root.action("add");} }
-                Button { text: "edit"; enabled: root.enabled && root.one-selected; clicked => {root.action("edit");} }
-                Button { text: root.profiles ? "delete" : "clear"; enabled: root.enabled && root.any-selected; clicked => {root.action(root.profiles ? "delete" : "clear");} }
-                if root.defaults: Button { text: "reset to defaults"; enabled: root.enabled; clicked => {root.action("reset");} }
+                if root.profiles: Btn { text: "add"; enabled: root.enabled; clicked => {root.action("add");} }
+                Btn { text: "edit"; enabled: root.enabled && root.one-selected; clicked => {root.action("edit");} }
+                Btn { text: root.profiles ? "delete" : "clear"; enabled: root.enabled && root.any-selected; clicked => {root.action(root.profiles ? "delete" : "clear");} }
+                if root.defaults: Btn { text: "reset to defaults"; enabled: root.enabled; clicked => {root.action("reset");} }
             }
         }
     }
@@ -66,10 +67,10 @@ component ImportList {
             border-color: Theme.border;
             VerticalLayout {
                 padding: 4px; spacing: 2px;
-                Button { text: "custom paste: choose what you want"; clicked => {paste.close();root.action("paste-custom");} }
-                Button { text: "merge-paste"; clicked => {paste.close();root.action("paste-replace");} }
-                Button { text: "fill-in-gaps-paste"; clicked => {paste.close();root.action("paste-merge");} }
-                Button { text: "replace-paste"; clicked => {paste.close();root.action("paste-fill");} }
+                Btn { text: "custom paste: choose what you want"; clicked => {paste.close();root.action("paste-custom");} }
+                Btn { text: "merge-paste"; clicked => {paste.close();root.action("paste-replace");} }
+                Btn { text: "fill-in-gaps-paste"; clicked => {paste.close();root.action("paste-merge");} }
+                Btn { text: "replace-paste"; clicked => {paste.close();root.action("paste-fill");} }
             }
         }
     }
@@ -117,7 +118,7 @@ export component ImportOptionsPanelWindow inherits Window {
             HorizontalLayout {
                 spacing: 8px; alignment: start;
                 Text { text: "help for this panel -->"; color: Theme.text; vertical-alignment: center; }
-                Button { text: "help  ▾"; clicked => {help.show();} }
+                Btn { text: "help  ▾"; clicked => {help.show();} }
                 CheckBox { text: "keep this panel simple :^)"; checked <=> root.simple; enabled: !root.busy && root.question == "" && !root.resetting; toggled => {root.simple-changed(self.checked);} }
             }
             ScrollView {
@@ -168,29 +169,29 @@ export component ImportOptionsPanelWindow inherits Window {
             }
             if root.information != "": VerticalLayout {
                 Text { text: root.information; color: Theme.text; wrap: word-wrap; }
-                Button { text: "ok"; clicked => {root.action(-1,"dismiss-information");} }
+                Btn { text: "ok"; clicked => {root.action(-1,"dismiss-information");} }
             }
             if root.resetting: VerticalLayout {
                 Text { text: "Reset things?"; color: Theme.text; }
                 for label[index] in root.reset-labels: HorizontalLayout {
-                    Button { text: label; clicked => {root.reset-chosen(index);} }
+                    Btn { text: label; clicked => {root.reset-chosen(index);} }
                     Text { text: root.reset-descriptions[index]; color: Theme.text; wrap: word-wrap; horizontal-stretch: 1; }
                 }
-                Button { text: "cancel"; clicked => {root.reset-chosen(-1);} }
+                Btn { text: "cancel"; clicked => {root.reset-chosen(-1);} }
             }
             if root.question != "": VerticalLayout {
                 Text { text: root.question; color: Theme.text; wrap: word-wrap; }
                 HorizontalLayout {
                     alignment: end; spacing: 6px;
-                    Button { text: root.yes-label; clicked => {root.answered(true);} }
-                    Button { text: root.no-label; clicked => {root.answered(false);} }
+                    Btn { text: root.yes-label; clicked => {root.answered(true);} }
+                    Btn { text: root.no-label; clicked => {root.answered(false);} }
                 }
             }
             if root.error != "": Text { text: root.error; wrap: word-wrap; color: Theme.error; }
             HorizontalLayout {
                 alignment: end; spacing: 6px;
-                Button { text: "apply"; enabled: !root.busy && root.question == "" && !root.resetting; clicked => {root.apply();} }
-                Button { text: "cancel"; clicked => {root.cancel();} }
+                Btn { text: "apply"; enabled: !root.busy && root.question == "" && !root.resetting; clicked => {root.apply();} }
+                Btn { text: "cancel"; clicked => {root.cancel();} }
             }
         }
     }
@@ -200,8 +201,8 @@ export component ImportOptionsPanelWindow inherits Window {
             background: Theme.panel;
             VerticalLayout {
                 padding: 4px; spacing: 2px;
-                Button { text: "open tl;dr"; clicked => {help.close();root.action(-1,"tldr");} }
-                Button { text: "open the import options help"; clicked => {help.close();root.action(-1,"help");} }
+                Btn { text: "open tl;dr"; clicked => {help.close();root.action(-1,"tldr");} }
+                Btn { text: "open the import options help"; clicked => {help.close();root.action(-1,"help");} }
             }
         }
     }

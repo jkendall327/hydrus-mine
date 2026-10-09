@@ -1,0 +1,721 @@
+{
+  "buttons": [
+    {
+      "config": "migration_taken",
+      "filter": "all",
+      "rules": [],
+      "text": "tags taken: all tags",
+      "tooltip": "tags taken: all tags"
+    },
+    {
+      "config": "migration_taken",
+      "filter": "blacklist",
+      "rules": [
+        [
+          "series:",
+          "black"
+        ],
+        [
+          "",
+          "black"
+        ]
+      ],
+      "text": "tags taken: all namespaced tags while still …",
+      "tooltip": "tags taken: all namespaced tags while still filtering out 'series' tags"
+    },
+    {
+      "config": "migration_taken",
+      "filter": "whitelist",
+      "rules": [
+        [
+          "",
+          "black"
+        ],
+        [
+          ":",
+          "black"
+        ],
+        [
+          "character:",
+          "white"
+        ],
+        [
+          "creator:",
+          "white"
+        ]
+      ],
+      "text": "tags taken: only adding 'character' tags, 'c…",
+      "tooltip": "tags taken: only adding 'character' tags, 'creator' tags"
+    },
+    {
+      "config": "migration_taken",
+      "filter": "long",
+      "rules": [
+        [
+          "goblin",
+          "black"
+        ],
+        [
+          "a very long tag that goes on and on",
+          "black"
+        ],
+        [
+          "series:",
+          "black"
+        ],
+        [
+          "meta:",
+          "black"
+        ]
+      ],
+      "text": "tags taken: all tags except a very long tag …",
+      "tooltip": "tags taken: all tags except a very long tag that goes on and on, goblin, 'meta'\ntags, 'series' tags"
+    },
+    {
+      "config": "migration_taken",
+      "filter": "except",
+      "rules": [
+        [
+          "series:",
+          "black"
+        ],
+        [
+          "series:evangelion",
+          "white"
+        ]
+      ],
+      "text": "tags taken: all tags except 'series' tags wh…",
+      "tooltip": "tags taken: all tags except 'series' tags while still allowing series:evangelion"
+    },
+    {
+      "config": "migration_left",
+      "filter": "all",
+      "rules": [],
+      "text": "left: all tags",
+      "tooltip": "left: all tags"
+    },
+    {
+      "config": "migration_left",
+      "filter": "blacklist",
+      "rules": [
+        [
+          "series:",
+          "black"
+        ],
+        [
+          "",
+          "black"
+        ]
+      ],
+      "text": "left: all namespaced tags while still filter…",
+      "tooltip": "left: all namespaced tags while still filtering out 'series' tags"
+    },
+    {
+      "config": "migration_left",
+      "filter": "whitelist",
+      "rules": [
+        [
+          "",
+          "black"
+        ],
+        [
+          ":",
+          "black"
+        ],
+        [
+          "character:",
+          "white"
+        ],
+        [
+          "creator:",
+          "white"
+        ]
+      ],
+      "text": "left: only adding 'character' tags, 'creator…",
+      "tooltip": "left: only adding 'character' tags, 'creator' tags"
+    },
+    {
+      "config": "migration_left",
+      "filter": "long",
+      "rules": [
+        [
+          "goblin",
+          "black"
+        ],
+        [
+          "a very long tag that goes on and on",
+          "black"
+        ],
+        [
+          "series:",
+          "black"
+        ],
+        [
+          "meta:",
+          "black"
+        ]
+      ],
+      "text": "left: all tags except a very long tag that g…",
+      "tooltip": "left: all tags except a very long tag that goes on and on, goblin, 'meta' tags,\n'series' tags"
+    },
+    {
+      "config": "migration_left",
+      "filter": "except",
+      "rules": [
+        [
+          "series:",
+          "black"
+        ],
+        [
+          "series:evangelion",
+          "white"
+        ]
+      ],
+      "text": "left: all tags except 'series' tags while st…",
+      "tooltip": "left: all tags except 'series' tags while still allowing series:evangelion"
+    },
+    {
+      "config": "migration_right",
+      "filter": "all",
+      "rules": [],
+      "text": "right: all tags",
+      "tooltip": "right: all tags"
+    },
+    {
+      "config": "migration_right",
+      "filter": "blacklist",
+      "rules": [
+        [
+          "series:",
+          "black"
+        ],
+        [
+          "",
+          "black"
+        ]
+      ],
+      "text": "right: all namespaced tags while still filte…",
+      "tooltip": "right: all namespaced tags while still filtering out 'series' tags"
+    },
+    {
+      "config": "migration_right",
+      "filter": "whitelist",
+      "rules": [
+        [
+          "",
+          "black"
+        ],
+        [
+          ":",
+          "black"
+        ],
+        [
+          "character:",
+          "white"
+        ],
+        [
+          "creator:",
+          "white"
+        ]
+      ],
+      "text": "right: only adding 'character' tags, 'creato…",
+      "tooltip": "right: only adding 'character' tags, 'creator' tags"
+    },
+    {
+      "config": "migration_right",
+      "filter": "long",
+      "rules": [
+        [
+          "goblin",
+          "black"
+        ],
+        [
+          "a very long tag that goes on and on",
+          "black"
+        ],
+        [
+          "series:",
+          "black"
+        ],
+        [
+          "meta:",
+          "black"
+        ]
+      ],
+      "text": "right: all tags except a very long tag that …",
+      "tooltip": "right: all tags except a very long tag that goes on and on, goblin, 'meta' tags,\n'series' tags"
+    },
+    {
+      "config": "migration_right",
+      "filter": "except",
+      "rules": [
+        [
+          "series:",
+          "black"
+        ],
+        [
+          "series:evangelion",
+          "white"
+        ]
+      ],
+      "text": "right: all tags except 'series' tags while s…",
+      "tooltip": "right: all tags except 'series' tags while still allowing series:evangelion"
+    },
+    {
+      "config": "display_shown",
+      "filter": "all",
+      "rules": [],
+      "text": "tags shown: all tags",
+      "tooltip": "tags shown: all tags"
+    },
+    {
+      "config": "display_shown",
+      "filter": "blacklist",
+      "rules": [
+        [
+          "series:",
+          "black"
+        ],
+        [
+          "",
+          "black"
+        ]
+      ],
+      "text": "tags shown: all namespaced tags while still …",
+      "tooltip": "tags shown: all namespaced tags while still filtering out 'series' tags"
+    },
+    {
+      "config": "display_shown",
+      "filter": "whitelist",
+      "rules": [
+        [
+          "",
+          "black"
+        ],
+        [
+          ":",
+          "black"
+        ],
+        [
+          "character:",
+          "white"
+        ],
+        [
+          "creator:",
+          "white"
+        ]
+      ],
+      "text": "tags shown: only adding 'character' tags, 'c…",
+      "tooltip": "tags shown: only adding 'character' tags, 'creator' tags"
+    },
+    {
+      "config": "display_shown",
+      "filter": "long",
+      "rules": [
+        [
+          "goblin",
+          "black"
+        ],
+        [
+          "a very long tag that goes on and on",
+          "black"
+        ],
+        [
+          "series:",
+          "black"
+        ],
+        [
+          "meta:",
+          "black"
+        ]
+      ],
+      "text": "tags shown: all tags except a very long tag …",
+      "tooltip": "tags shown: all tags except a very long tag that goes on and on, goblin, 'meta'\ntags, 'series' tags"
+    },
+    {
+      "config": "display_shown",
+      "filter": "except",
+      "rules": [
+        [
+          "series:",
+          "black"
+        ],
+        [
+          "series:evangelion",
+          "white"
+        ]
+      ],
+      "text": "tags shown: all tags except 'series' tags wh…",
+      "tooltip": "tags shown: all tags except 'series' tags while still allowing series:evangelion"
+    },
+    {
+      "config": "string_match",
+      "filter": "all",
+      "rules": [],
+      "text": "allowing all tags",
+      "tooltip": "allowing all tags"
+    },
+    {
+      "config": "string_match",
+      "filter": "blacklist",
+      "rules": [
+        [
+          "series:",
+          "black"
+        ],
+        [
+          "",
+          "black"
+        ]
+      ],
+      "text": "allowing all namespaced tags while still dis…",
+      "tooltip": "allowing all namespaced tags while still disallowing 'series' tags"
+    },
+    {
+      "config": "string_match",
+      "filter": "whitelist",
+      "rules": [
+        [
+          "",
+          "black"
+        ],
+        [
+          ":",
+          "black"
+        ],
+        [
+          "character:",
+          "white"
+        ],
+        [
+          "creator:",
+          "white"
+        ]
+      ],
+      "text": "only allowing 'character' tags, 'creator' ta…",
+      "tooltip": "only allowing 'character' tags, 'creator' tags"
+    },
+    {
+      "config": "string_match",
+      "filter": "long",
+      "rules": [
+        [
+          "goblin",
+          "black"
+        ],
+        [
+          "a very long tag that goes on and on",
+          "black"
+        ],
+        [
+          "series:",
+          "black"
+        ],
+        [
+          "meta:",
+          "black"
+        ]
+      ],
+      "text": "allowing all tags except a very long tag tha…",
+      "tooltip": "allowing all tags except a very long tag that goes on and on, goblin, 'meta'\ntags, 'series' tags"
+    },
+    {
+      "config": "string_match",
+      "filter": "except",
+      "rules": [
+        [
+          "series:",
+          "black"
+        ],
+        [
+          "series:evangelion",
+          "white"
+        ]
+      ],
+      "text": "allowing all tags except 'series' tags while…",
+      "tooltip": "allowing all tags except 'series' tags while still allowing series:evangelion"
+    },
+    {
+      "config": "import_get_tags",
+      "filter": "all",
+      "rules": [],
+      "text": "adding: all tags",
+      "tooltip": "adding: all tags"
+    },
+    {
+      "config": "import_get_tags",
+      "filter": "blacklist",
+      "rules": [
+        [
+          "series:",
+          "black"
+        ],
+        [
+          "",
+          "black"
+        ]
+      ],
+      "text": "adding: all namespaced tags while still filt…",
+      "tooltip": "adding: all namespaced tags while still filtering out 'series' tags"
+    },
+    {
+      "config": "import_get_tags",
+      "filter": "whitelist",
+      "rules": [
+        [
+          "",
+          "black"
+        ],
+        [
+          ":",
+          "black"
+        ],
+        [
+          "character:",
+          "white"
+        ],
+        [
+          "creator:",
+          "white"
+        ]
+      ],
+      "text": "adding: only adding 'character' tags, 'creat…",
+      "tooltip": "adding: only adding 'character' tags, 'creator' tags"
+    },
+    {
+      "config": "import_get_tags",
+      "filter": "long",
+      "rules": [
+        [
+          "goblin",
+          "black"
+        ],
+        [
+          "a very long tag that goes on and on",
+          "black"
+        ],
+        [
+          "series:",
+          "black"
+        ],
+        [
+          "meta:",
+          "black"
+        ]
+      ],
+      "text": "adding: all tags except a very long tag that…",
+      "tooltip": "adding: all tags except a very long tag that goes on and on, goblin, 'meta'\ntags, 'series' tags"
+    },
+    {
+      "config": "import_get_tags",
+      "filter": "except",
+      "rules": [
+        [
+          "series:",
+          "black"
+        ],
+        [
+          "series:evangelion",
+          "white"
+        ]
+      ],
+      "text": "adding: all tags except 'series' tags while …",
+      "tooltip": "adding: all tags except 'series' tags while still allowing series:evangelion"
+    },
+    {
+      "config": "import_blacklist",
+      "filter": "all",
+      "rules": [],
+      "text": "no blacklist set",
+      "tooltip": "no blacklist set"
+    },
+    {
+      "config": "import_blacklist",
+      "filter": "blacklist",
+      "rules": [
+        [
+          "series:",
+          "black"
+        ],
+        [
+          "",
+          "black"
+        ]
+      ],
+      "text": "blacklisting on unnamespaced tags, 'series' …",
+      "tooltip": "blacklisting on unnamespaced tags, 'series' tags"
+    },
+    {
+      "config": "import_blacklist",
+      "filter": "whitelist",
+      "rules": [
+        [
+          "",
+          "black"
+        ],
+        [
+          ":",
+          "black"
+        ],
+        [
+          "character:",
+          "white"
+        ],
+        [
+          "creator:",
+          "white"
+        ]
+      ],
+      "text": "blacklisting on any tags except 'character' …",
+      "tooltip": "blacklisting on any tags except 'character' tags, 'creator' tags"
+    },
+    {
+      "config": "import_blacklist",
+      "filter": "long",
+      "rules": [
+        [
+          "goblin",
+          "black"
+        ],
+        [
+          "a very long tag that goes on and on",
+          "black"
+        ],
+        [
+          "series:",
+          "black"
+        ],
+        [
+          "meta:",
+          "black"
+        ]
+      ],
+      "text": "blacklisting on a very long tag that goes on…",
+      "tooltip": "blacklisting on a very long tag that goes on and on, goblin, 'meta' tags,\n'series' tags"
+    },
+    {
+      "config": "import_blacklist",
+      "filter": "except",
+      "rules": [
+        [
+          "series:",
+          "black"
+        ],
+        [
+          "series:evangelion",
+          "white"
+        ]
+      ],
+      "text": "blacklisting on 'series' tags except series:…",
+      "tooltip": "blacklisting on 'series' tags except series:evangelion"
+    },
+    {
+      "config": "api_permitted",
+      "filter": "all",
+      "rules": [],
+      "text": "permitted tags: allowing all tags",
+      "tooltip": "permitted tags: allowing all tags"
+    },
+    {
+      "config": "api_permitted",
+      "filter": "blacklist",
+      "rules": [
+        [
+          "series:",
+          "black"
+        ],
+        [
+          "",
+          "black"
+        ]
+      ],
+      "text": "permitted tags: allowing all namespaced tags…",
+      "tooltip": "permitted tags: allowing all namespaced tags while still disallowing 'series'\ntags"
+    },
+    {
+      "config": "api_permitted",
+      "filter": "whitelist",
+      "rules": [
+        [
+          "",
+          "black"
+        ],
+        [
+          ":",
+          "black"
+        ],
+        [
+          "character:",
+          "white"
+        ],
+        [
+          "creator:",
+          "white"
+        ]
+      ],
+      "text": "permitted tags: only allowing 'character' ta…",
+      "tooltip": "permitted tags: only allowing 'character' tags, 'creator' tags"
+    },
+    {
+      "config": "api_permitted",
+      "filter": "long",
+      "rules": [
+        [
+          "goblin",
+          "black"
+        ],
+        [
+          "a very long tag that goes on and on",
+          "black"
+        ],
+        [
+          "series:",
+          "black"
+        ],
+        [
+          "meta:",
+          "black"
+        ]
+      ],
+      "text": "permitted tags: allowing all tags except a v…",
+      "tooltip": "permitted tags: allowing all tags except a very long tag that goes on and on,\ngoblin, 'meta' tags, 'series' tags"
+    },
+    {
+      "config": "api_permitted",
+      "filter": "except",
+      "rules": [
+        [
+          "series:",
+          "black"
+        ],
+        [
+          "series:evangelion",
+          "white"
+        ]
+      ],
+      "text": "permitted tags: allowing all tags except 'se…",
+      "tooltip": "permitted tags: allowing all tags except 'series' tags while still allowing\nseries:evangelion"
+    }
+  ],
+  "show_other_panels": "This shows the whitelist and advanced panels, in case you want to craft a clever\nblacklist with 'except' rules.",
+  "global_mute": "Global mute/unmute",
+  "preview_mute": "Mute/unmute: preview viewer",
+  "wrapped": [
+    {
+      "text": "short",
+      "wrapped": "short"
+    },
+    {
+      "text": "This shows the whitelist and advanced panels, in case you want to craft a clever blacklist with 'except' rules.",
+      "wrapped": "This shows the whitelist and advanced panels, in case you want to craft a clever\nblacklist with 'except' rules."
+    },
+    {
+      "text": "two\n\nparagraphs with a fairly long second line that needs to be wrapped at around eighty characters wide",
+      "wrapped": "two\n\nparagraphs with a fairly long second line that needs to be wrapped at around\neighty characters wide"
+    },
+    {
+      "text": "averyveryveryveryveryveryveryveryveryveryveryveryveryveryveryveryveryveryverylongwordthatcannotbreak and more",
+      "wrapped": "averyveryveryveryveryveryveryveryveryveryveryveryveryveryveryveryveryveryverylongwordthatcannotbreak\nand more"
+    }
+  ]
+}

@@ -1,3 +1,4 @@
+import { Btn } from "btn.slint";
 import { Button, CheckBox, ComboBox, LineEdit, SpinBox, ScrollView, VerticalBox, HorizontalBox } from "std-widgets.slint";
 import { TableColumn, TableRow, ListTable } from "list_table.slint";
 import { RatingRow, RatingGraphic } from "viewer.slint";
@@ -100,20 +101,20 @@ export component ServicesEditorWindow inherits Window {
         }
         HorizontalBox {
             ComboBox { model: root.add-types; current-index <=> root.add-type; }
-            Button { text: "add"; enabled: root.question == ""; clicked => { root.add-clicked(root.add-type); } }
+            Btn { text: "add"; enabled: root.question == ""; clicked => { root.add-clicked(root.add-type); } }
             Rectangle { horizontal-stretch: 1; }
-            Button { text: "edit"; enabled: root.can-edit && root.question == ""; clicked => { root.edit-clicked(); } }
-            Button { text: "delete"; enabled: root.can-delete && root.question == ""; clicked => { root.delete-clicked(); } }
+            Btn { text: "edit"; enabled: root.can-edit && root.question == ""; clicked => { root.edit-clicked(); } }
+            Btn { text: "delete"; enabled: root.can-delete && root.question == ""; clicked => { root.delete-clicked(); } }
         }
         Text { text: root.error; color: Theme.error; wrap: word-wrap; }
         if root.question != "": VerticalBox {
             Text { text: root.question; color: Theme.text; wrap: word-wrap; }
-            HorizontalBox { Button { text: "yes"; clicked => { root.answered(true); } } Button { text: "no"; clicked => { root.answered(false); } } }
+            HorizontalBox { Btn { text: "yes"; clicked => { root.answered(true); } } Btn { text: "no"; clicked => { root.answered(false); } } }
         }
         HorizontalBox {
             Rectangle { horizontal-stretch: 1; }
-            Button { text: "apply"; enabled: root.question == ""; clicked => { root.apply-clicked(); } }
-            Button { text: "cancel"; clicked => { root.cancel-clicked(); } }
+            Btn { text: "apply"; enabled: root.question == ""; clicked => { root.apply-clicked(); } }
+            Btn { text: "cancel"; clicked => { root.cancel-clicked(); } }
         }
     }
 }
@@ -251,7 +252,7 @@ export component EditServiceWindow inherits Window {
                 VerticalBox {
                     visible: root.rating;
                     height: self.visible ? self.preferred-height : 0px;
-                    Button { text: root.example-expanded ? "▼ example display" : "▶ example display"; clicked => { root.example-expanded = !root.example-expanded; } }
+                    Btn { text: root.example-expanded ? "▼ example display" : "▶ example display"; clicked => { root.example-expanded = !root.example-expanded; } }
                     // Keep the source of read-only geometry structurally present.
                     // A child -> root two-way alias discards the child's binding
                     // in favour of the root's default zero during construction.
@@ -265,8 +266,8 @@ export component EditServiceWindow inherits Window {
                     if root.counter-editing: HorizontalBox {
                         Text { text: "edit value"; color: Theme.text; }
                         SpinBox { minimum: 0; maximum: 1000000; value <=> root.counter-value; }
-                        Button { text: "ok"; clicked => { root.counter-answered(true); } }
-                        Button { text: "cancel"; clicked => { root.counter-answered(false); } }
+                        Btn { text: "ok"; clicked => { root.counter-answered(true); } }
+                        Btn { text: "cancel"; clicked => { root.counter-answered(false); } }
                     }
                 }
             }
@@ -274,8 +275,8 @@ export component EditServiceWindow inherits Window {
         Text { text: root.error; color: Theme.error; wrap: word-wrap; }
         HorizontalBox {
             Rectangle { horizontal-stretch: 1; }
-            Button { text: "apply"; enabled: !root.counter-editing; clicked => { root.apply-clicked(); } }
-            Button { text: "cancel"; clicked => { root.cancel-clicked(); } }
+            Btn { text: "apply"; enabled: !root.counter-editing; clicked => { root.apply-clicked(); } }
+            Btn { text: "cancel"; clicked => { root.cancel-clicked(); } }
         }
     }
 }

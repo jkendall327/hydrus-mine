@@ -3555,7 +3555,13 @@
     "Broader maintenance/admin and multi-tag selection boundaries remain Partial; scoped regeneration and context-menu behaviors are cited separately.",
     "Native dropdown layout and synchronous query/presentation differ from Qt. Continuous dragging outside the viewport is not asserted.",
     "Redo restores the saved post-edit caret; Qt can retain a later command caret/selection at redo boundaries. Same-text programmatic resets cannot be distinguished from live model refreshes."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "Claude (tags leftovers, issue 86)",
+    "note": "Manage tags' write autocomplete, driven through the window: for every recorded option set (first-with-count, expanded/decorated parents and siblings, count service) the typed text's rows (the parents as an unordered bag, as Qt lists them) and what Enter enters (exactly the recorded selection, as the one tag added) match oracle/fixtures/write_tag_autocomplete.json; the recorded context menu on a result (two levels), the recorded multiline-paste questions with and without the skip option, and manual fetch (Ctrl+Space) with fetch-as-you-type off. The leaf's other listed behaviours (selection, keyboard, undo, drag) have their own tests in write_autocomplete.rs and the model tests. Native dropdown layout differs from Qt (DIFFERENCES.md). Tests: crates/hydrus-gui/tests/gui/write_autocomplete_leaves.rs."
+   }
   },
   {
    "id": "audit-media-tags-missing-cog",
@@ -3648,8 +3654,14 @@
    "reference": null,
    "native": null,
    "notes": [
-    "Native autocomplete suggestions do not provide reference favourites/recent/related/file-lookup suggested-tag panels."
-   ]
+    "Suggested tags side panels (most used, related, recent): exist and are replayed in tests/gui/suggested_tag_panels.rs. File lookup scripts were split out as file-lookup-scripts (out of scope, owner decision 2026-10-09); the lists' own context menus and keyboard are suggested-tag-list-interactions."
+   ],
+   "recheck": {
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "Claude (tags leftovers, issue 86)",
+    "note": "Manage tags' suggested panels replayed from oracle/fixtures/suggested_tag_panels.json (the real SuggestedTagsPanel with most used, related and recent on): the panels present, the page shown for each default page in notebook and column layouts (a file-lookup default falls back, as the reference does), the three lists exactly (the related list's 20 tags and order included), and that activating the first tag of each adds it (add-only) and removes it from its list; the related list is not searched again by that add. The recent panel decays on read (the oldest beyond the option are forgotten for good) and Clear asks and empties it, replayed from oracle/fixtures/recent_tags_decay.json. The related panel's buttons, status and selected-tag search have their own replay (related_tags_panel.rs, related_tags_panel.json). Not covered: the lists' own context menus and keyboard (suggested-tag-list-interactions). Tests: crates/hydrus-gui/tests/gui/suggested_tag_panels.rs, related_tags_panel.rs."
+   }
   },
   {
    "id": "audit-media-tags-missing-viewer-follow",
@@ -16244,7 +16256,7 @@
   },
   {
    "id": "audit-options-nested-tag-suggestions-tabs",
-   "label": "Most-used, related, file lookup and recent suggested-tag controls",
+   "label": "Most-used, related and recent suggested-tag controls",
    "path": "File > Options window > tag suggestions > Suggested-tag tabs, per-service favourites and related weights",
    "workstream": "options-gui",
    "state": "missing",
@@ -16252,8 +16264,46 @@
    "reference": null,
    "native": null,
    "notes": [
-    "Reference nested notebook configures each suggestion source independently; native no corresponding options notebook.",
-    "No native action/editor path for this reference workflow."
+    "Reference nested notebook configures each suggestion source independently. Native has the notebook (most used, related, recent) with real consumers: most used, recent (the count, read with decay) and related (show, concurrence, three durations, weights). Left untagged: no test drives the related durations from the Options rows to an observable effect (a duration shows only at its extremes, and the rows allow no less than 50 ms), and no test drives the concurrence and recent-count rows through Options to the panels. File lookup scripts: file-lookup-scripts (out of scope). The recent tab's second count (quick entry dialogs): shortcut-interactive-tag-entry."
+   ]
+  },
+  {
+   "id": "file-lookup-scripts",
+   "label": "File lookup scripts: suggested-tags panel, script editor and manager, favourite script option",
+   "path": "File > Options window > tag suggestions; Manage tags > Suggested tags",
+   "workstream": "media",
+   "state": "missing",
+   "priority": "out-of-scope",
+   "reference": null,
+   "native": null,
+   "notes": [
+    "Owner decision 2026-10-09: out of scope. A legacy feature superseded by downloaders: FileLookupScriptTagsPanel, the script editor and manager, the favourite file lookup script option and the show_file_lookup_script_tags switch."
+   ]
+  },
+  {
+   "id": "shortcut-interactive-tag-entry",
+   "label": "Interactive tag entry from a shortcut: quick tag dialog and its recent-tags count",
+   "path": "Shortcuts > media/viewer actions; File > Options window > tag suggestions > recent",
+   "workstream": "options-gui",
+   "state": "missing",
+   "priority": "normal",
+   "reference": null,
+   "native": null,
+   "notes": [
+    "GetContentApplicationCommandFromInteractiveContentCommand asks for a tag in a quick dialog offering the recent tags (Options: recent tags in quick entry dialogs, 10 by default, none to hide). Native has no interactive content command and no such dialog, so the option has no consumer."
+   ]
+  },
+  {
+   "id": "suggested-tag-list-interactions",
+   "label": "Suggested tags lists' own context menus and keyboard",
+   "path": "Media files, metadata and viewing > Manage tags for selected files > Suggested tags side panels",
+   "workstream": "media",
+   "state": "missing",
+   "priority": "normal",
+   "reference": null,
+   "native": null,
+   "notes": [
+    "The reference's suggestion lists are ListBoxTagsStrings: right-click tag menus (copy, favourites, search), Ctrl+A/C and keyboard selection. Native lists have click/select and double-click activation only."
    ]
   },
   {
@@ -20536,7 +20586,7 @@
     "date": "2026-10-09",
     "class": "sound",
     "by": "claude (issue #121)",
-    "note": "The Options row is driven through the window (default 96MB shown as 96 MB with '(about 36 frames of 720p video)', typed amount/unit estimates, cancel, apply, reopen) against oracle/record_video_buffer.py's fixture; the saved size reaches the viewer's real animation player, which keeps frames by the ported RasterContainerVideo formula and buffer logic (model test replays the recorded sizes and each recorded decode step), and a nine-frame loop that fits is decoded once over two loops while a six-frame buffer decodes again. Tests: crates/hydrus-gui/tests/gui/video_buffer.rs; crates/hydrus-gui-model/tests/model/video_buffer.rs. Not covered: the zoomed-size resolution the reference sizes by (see DIFFERENCES.md)."
+    "note": "The Options row is driven through the window (default 96MB shown as 96 MB with '(about 36 frames of 720p video)', typed amount/unit estimates, cancel, apply, reopen) against oracle/record_video_buffer.py's fixture; the saved size reaches the viewer's real animation player, which keeps frames by the ported RasterContainerVideo formula and buffer logic (model test replays the recorded sizes and each recorded decode step), and a nine-frame loop that fits is decoded once over two loops while a six-frame buffer decodes again. Tests: crates/hydrus-gui/tests/gui/video_buffer.rs; crates/hydrus-gui-model/tests/model/video_buffer.rs. Not covered: the zoomed-size resolution the reference sizes by (see DIFFERENCES.md). 2026-10-09 (flake fix): the GUI test counts a loop by the frame index going back instead of seeing the last frame and then frame 0, and asserts a whole loop (more than the frame count of distinct frames) was shown instead of every frame of both loops, so a poll that skips a frame on a loaded runner cannot fail it; the decode counts, which are what the leaf is about, are unchanged and exact. It also waits for the previous file's decoder thread to end (animation::decoders_running) before counting."
    }
   },
   {
@@ -21612,7 +21662,13 @@
     "Truth pass (2026-10-08): partial, small. Could be consumed by the existing sibling/parent reason prompts. Missing: A recent-reasons store fed by the sibling/parent reason prompts and capped by this count. Evidence: options.rs:4492-4496 row, tested, unread",
     "Reference editor/control 'Number of recent petition reasons to remember in dialogs:' is recorded on 'tag editing' and defined by the referenced options panel. No corresponding editable row exists in native options::pages; this is a missing GUI editing path, even if a setting is imported or consumed elsewhere.",
     "Native options registry has no editable 'Number of recent petition reasons to remember in dialogs:' control in this page/box path."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "Claude (tags leftovers, issue 86)",
+    "note": "Stale tracker note: the row exists (options_gui_kept.rs) and is now read: the sibling/parent petition reason questions remember and offer at most that many recent reasons (0 remembers none), driven through the Options row and the relationship window and replayed from oracle/fixtures/relationship_reasons.json for counts 2 and 0. Tests: crates/hydrus-gui/tests/gui/tag_relationships.rs reason_questions_offer_recent_then_fixed_reasons_and_the_option_caps_the_recent_ones; crates/hydrus-gui-model/tests/model/tag_relationships.rs."
+   }
   },
   {
    "id": "audit-options-tag-editing-tag-dialogs-remember-last-used-default-tag-service-in-manage-tag-dialogs",
@@ -23515,7 +23571,13 @@
    "notes": [
     "Truth pass (2026-10-08): partial, small. Not platform-blocked: Slint 1.18 has tooltips; DIFFERENCES.md's 'no tooltips' is stale. Missing: Wire Tooltip elements in tag_filter.slint (wrap the buttons) and test the model text against the reference. Evidence: tag_filter_editor.rs:47-70 computes the text; Slint 1.18.1 has a Tooltip element (i-slint-compiler builtin_elements.rs)",
     "The reference editor supplies explanatory control help/tooltips; native tag-filter buttons have no tooltip properties."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "Claude (tags leftovers, issue 86)",
+    "note": "Slint 1.18 Tooltip elements wrap the tag filter editor's \"show other panels\" button and every native tag filter button (tag migration, tag display options, string tag filter, import options' get tags and blacklist, Client API permitted tags) through the shared TipButton. Button text and tooltip for every configuration (migration's three, display, string match, import get-tags and blacklist, API permitted tags) are replayed from the reference's TagFilterButton (oracle/fixtures/tag_filter_tooltips.json, model test tag_filter_tooltips.rs); the windows assign the same button_label tooltip (the display options' button now has the reference's \"tags shown: \" prefix in its tooltip). The tooltip popup itself is observed: after one pointer move and the delay, the drawn picture beside the pointer differs from no tooltip and from another text. Only \"show other panels\" and the preview's buttons are driven by hover; the other buttons share the TipButton component and are asserted by their windows' tests (some by prefix and content, one by the recording's literal). Qt's 80-column wrapping is Slint's own wrapping. Tests: crates/hydrus-gui/tests/gui/tag_filter_tooltips.rs, crates/hydrus-gui-model/tests/model/tag_filter_tooltips.rs, tag_migration.rs, tag_display.rs, import_options.rs."
+   }
   },
   {
    "id": "audit-shared-tag-whitelist",
@@ -24400,7 +24462,13 @@
     "Broader maintenance/admin and multi-tag selection boundaries remain Partial; scoped regeneration and context-menu behaviors are cited separately.",
     "Native dropdown layout and synchronous query/presentation differ from Qt. Continuous dragging outside the viewport is not asserted.",
     "Redo restores the saved post-edit caret; Qt can retain a later command caret/selection at redo boundaries. Same-text programmatic resets cannot be distinguished from live model refreshes."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "Claude (tags leftovers, issue 86)",
+    "note": "The parent editor's two write inputs driven through the window against the same recording as Manage tags: rows and entry for every option set, the recorded context menu (two levels), the multiline-paste questions and manual fetch. Menu actions and selection/keyboard/undo have their own tests (write_autocomplete.rs, model write_autocomplete.rs). Tests: crates/hydrus-gui/tests/gui/write_autocomplete_leaves.rs. Entry and paste check the exact tags added (before and after), not presence."
+   }
   },
   {
    "id": "parser-context",
@@ -24462,7 +24530,7 @@
   },
   {
    "id": "relationship-reasons",
-   "label": "Repository permission/reason context",
+   "label": "Reason suggestions on repository sibling/parent questions",
    "path": "Tags > Tag siblings",
    "workstream": "tags-services",
    "state": "partial",
@@ -24470,9 +24538,28 @@
    "reference": "hydrus/client/gui/metadata/ClientGUITagActions.py:20",
    "native": null,
    "notes": [
-    "Truth pass (2026-10-08): partial, medium. Reasons work; suggestions and account handling missing. Missing: Recent and fixed reason suggestions; account permission/moderator handling. Evidence: tag_relationships.rs:725-750; tests tag_relationships.rs:38,337 and GUI :198",
     "Local add/delete or repository pend/petition/rescind uses typed updates and stored reasons; repository tests reopen pending/reasons and rescind correctly.",
-    "Reasons/rescinds exist; permission warnings, moderator bypass and recent/fixed suggestions are deferred."
+    "Split 2026-10-09: the recent and fixed reason suggestions stay here; account permission/moderator handling is `relationship-reasons-account-handling`."
+   ],
+   "recheck": {
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "Claude (tags leftovers, issue 86)",
+    "note": "The reason question of a tag repository's sibling/parent pend and petition offers the recent reasons then the fixed ones (per kind and action) as buttons, remembers typed non-fixed reasons up to the options count, and matches oracle/fixtures/relationship_reasons.json (recorded from the real TagPairActionContext, siblings and parents, counts 2 and 0, add and delete/petition steps, typed answers, suggestion buttons and cancel) in a model test and through the window (adds by typing, deletes by selecting a current pair). Account/moderator handling was split into relationship-reasons-account-handling (out of scope). Tests: crates/hydrus-gui-model/tests/model/tag_relationships.rs petition_reasons_offer_recent_then_fixed_suggestions_capped_by_the_option; crates/hydrus-gui/tests/gui/tag_relationships.rs reason_questions_offer_recent_then_fixed_reasons_and_the_option_caps_the_recent_ones."
+   }
+  },
+  {
+   "id": "relationship-reasons-account-handling",
+   "label": "Account permission and moderator handling of reasons",
+   "path": "Tags > Tag siblings",
+   "workstream": "tags-services",
+   "state": "missing",
+   "priority": "out-of-scope",
+   "reference": "hydrus/client/gui/metadata/ClientGUITagActions.py:20",
+   "native": null,
+   "notes": [
+    "split 2026-10-09; account/moderator handling is PTR-adjacent, out of scope with the PTR",
+    "The reference (TagPairActionContext) skips the reason question with 'Entered by a janitor.' for an account with moderate permission on the content type; hydrus-rs always asks."
    ]
   },
   {
@@ -24550,7 +24637,13 @@
     "Broader maintenance/admin and multi-tag selection boundaries remain Partial; scoped regeneration and context-menu behaviors are cited separately.",
     "Native dropdown layout and synchronous query/presentation differ from Qt. Continuous dragging outside the viewport is not asserted.",
     "Redo restores the saved post-edit caret; Qt can retain a later command caret/selection at redo boundaries. Same-text programmatic resets cannot be distinguished from live model refreshes."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "Claude (tags leftovers, issue 86)",
+    "note": "The sibling editor's two write inputs driven through the window against the same recording as Manage tags: rows and entry for every option set, the recorded context menu (two levels), the multiline-paste questions (a sibling's ideal side keeps one pasted tag) and manual fetch. Menu actions and selection/keyboard/undo have their own tests (write_autocomplete.rs, model write_autocomplete.rs). Tests: crates/hydrus-gui/tests/gui/write_autocomplete_leaves.rs. Entry and paste check the exact tags added (before and after), not presence."
+   }
   },
   {
    "id": "sidecar-details",

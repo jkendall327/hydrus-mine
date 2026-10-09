@@ -1,3 +1,4 @@
+import { Btn } from "btn.slint";
 import { Button, CheckBox, ComboBox, VerticalBox } from "std-widgets.slint";
 import { ListTable, TableColumn, TableRow } from "list_table.slint";
 import { Theme } from "theme.slint";
@@ -34,22 +35,22 @@ export component DownloaderDisplayWindow inherits Window {
             row-activated(r) => { if root.question == "" { root.row-clicked(r,false,false); root.edit-clicked(); } }
             sort(c,a) => { if root.question == "" { root.sort(c,a); } }
         }
-        Button { text: "edit"; enabled: root.can-edit && root.question == ""; clicked => { root.edit-clicked(); } }
+        Btn { text: "edit"; enabled: root.can-edit && root.question == ""; clicked => { root.edit-clicked(); } }
         if root.tab == 1: CheckBox { text: "show urls that do not have a matching url class?: "; checked <=> root.show-unmatched; enabled: root.question == ""; }
         if root.question != "": VerticalBox {
             Text { text: root.question-title; color: Theme.text; font-weight: 700; }
             Text { text: root.question; color: Theme.text; wrap: word-wrap; }
             HorizontalLayout {
-                Button { text: "yes"; clicked => { root.answer(1); } }
-                Button { text: "no"; clicked => { root.answer(0); } }
-                Button { text: "cancel"; clicked => { root.answer(-1); } }
+                Btn { text: "yes"; clicked => { root.answer(1); } }
+                Btn { text: "no"; clicked => { root.answer(0); } }
+                Btn { text: "cancel"; clicked => { root.answer(-1); } }
             }
         }
         Text { text: root.error; color: Theme.error; wrap: word-wrap; }
         HorizontalLayout {
             Rectangle { horizontal-stretch: 1; }
-            Button { text: "apply"; enabled: root.question == ""; clicked => { root.apply-clicked(); } }
-            Button { text: "cancel"; clicked => { root.cancel-clicked(); } }
+            Btn { text: "apply"; enabled: root.question == ""; clicked => { root.apply-clicked(); } }
+            Btn { text: "cancel"; clicked => { root.cancel-clicked(); } }
         }
     }
 }

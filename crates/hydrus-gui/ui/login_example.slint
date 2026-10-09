@@ -1,3 +1,4 @@
+import { Btn } from "btn.slint";
 import { Button, ComboBox, LineEdit } from "std-widgets.slint";
 import { Theme } from "theme.slint";
 export component LoginExampleDomainWindow inherits Window {
@@ -16,10 +17,10 @@ export component LoginExampleDomainWindow inherits Window {
         if root.error != "": Text { text: root.error; color: Theme.error; wrap: word-wrap; }
         Rectangle { vertical-stretch: 1; }
         HorizontalLayout { alignment: end; spacing: 6px;
-            if root.stage < 2: Button { text: "next"; enabled: root.stage != 0 || root.domain != ""; clicked => { root.action("next"); } }
-            if root.stage == 2: Button { text: "save"; enabled: root.description != ""; clicked => { root.action("save"); } }
-            if root.stage == 2: Button { text: "keep description"; clicked => { root.action("keep-description"); } }
-            if root.stage < 2: Button { text: "cancel"; clicked => { root.action("cancel"); } }
+            if root.stage < 2: Btn { text: "next"; enabled: root.stage != 0 || root.domain != ""; clicked => { root.action("next"); } }
+            if root.stage == 2: Btn { text: "save"; enabled: root.description != ""; clicked => { root.action("save"); } }
+            if root.stage == 2: Btn { text: "keep description"; clicked => { root.action("keep-description"); } }
+            if root.stage < 2: Btn { text: "cancel"; clicked => { root.action("cancel"); } }
         }
     }
 }

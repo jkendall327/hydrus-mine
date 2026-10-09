@@ -1,3 +1,4 @@
+import { Btn } from "btn.slint";
 // The "filename tagging" dialog for files about to be imported from disk
 // (the reference's `EditLocalImportFilenameTaggingPanel`, opened by "review
 // files to import"'s "add tags/urls with the import >>"; its workings are
@@ -182,7 +183,7 @@ export component FilenameTaggingWindow inherits Window {
                 rows: root.sidecar-rows;
             }
             BoxTitle { text: "sidecar import routes"; }
-            Button {
+            Btn {
                 text: root.sidecars;
                 clicked => { root.edit-sidecars(); }
             }
@@ -223,8 +224,8 @@ export component FilenameTaggingWindow inherits Window {
                     text <=> root.tags-all;
                 }
                 HorizontalLayout {
-                    Button { text: "edit tags…"; clicked => { root.edit-tags(false); } }
-                    Button { text: "paste tags"; clicked => { root.paste-tags(false); } }
+                    Btn { text: "edit tags…"; clicked => { root.edit-tags(false); } }
+                    Btn { text: "paste tags"; clicked => { root.paste-tags(false); } }
                 }
             }
             if !root.options-mode: VerticalLayout {
@@ -238,8 +239,8 @@ export component FilenameTaggingWindow inherits Window {
                     text <=> root.tags-selected;
                 }
                 HorizontalLayout {
-                    Button { text: "edit tags…"; enabled: root.has-selection; clicked => { root.edit-tags(true); } }
-                    Button { text: "paste tags"; enabled: root.has-selection; clicked => { root.paste-tags(true); } }
+                    Btn { text: "edit tags…"; enabled: root.has-selection; clicked => { root.edit-tags(true); } }
+                    Btn { text: "paste tags"; enabled: root.has-selection; clicked => { root.paste-tags(true); } }
                 }
             }
             VerticalLayout {
@@ -284,9 +285,9 @@ export component FilenameTaggingWindow inherits Window {
                 }
                 HorizontalLayout {
                     spacing: 4px;
-                    Button { text: "add"; clicked => { root.rule-action("quick_add"); } }
-                    Button { text: "edit"; enabled: root.quick-one-selected; clicked => { root.rule-action("quick_edit"); } }
-                    Button { text: "delete"; enabled: root.quick-any-selected; clicked => { root.rule-action("quick_delete"); } }
+                    Btn { text: "add"; clicked => { root.rule-action("quick_add"); } }
+                    Btn { text: "edit"; enabled: root.quick-one-selected; clicked => { root.rule-action("quick_edit"); } }
+                    Btn { text: "delete"; enabled: root.quick-any-selected; clicked => { root.rule-action("quick_delete"); } }
                 }
             }
             VerticalLayout {
@@ -307,8 +308,8 @@ export component FilenameTaggingWindow inherits Window {
                         placeholder-text: "enter regex here";
                         accepted => { root.rule-action("regex_add"); }
                     }
-                    regex-button := Button { text: ".*"; enabled: !root.regex-child-open; clicked => { root.regex-menu(regex-button.absolute-position.x / 1px, (regex-button.absolute-position.y + regex-button.height) / 1px); } }
-                    Button { text: "add"; clicked => { root.rule-action("regex_add"); } }
+                    regex-button := Btn { text: ".*"; enabled: !root.regex-child-open; clicked => { root.regex-menu(regex-button.absolute-position.x / 1px, (regex-button.absolute-position.y + regex-button.height) / 1px); } }
+                    Btn { text: "add"; clicked => { root.rule-action("regex_add"); } }
                 }
                 if !root.options-mode: BoxTitle { text: "#"; }
                 if !root.options-mode: HorizontalLayout {
@@ -346,12 +347,12 @@ export component FilenameTaggingWindow inherits Window {
             vertical-stretch: 0;
             alignment: end;
             spacing: 6px;
-            Button {
+            Btn {
                 vertical-stretch: 0;
                 text: "apply";
                 clicked => { root.apply(); }
             }
-            Button {
+            Btn {
                 vertical-stretch: 0;
                 text: "cancel";
                 clicked => { root.cancel(); }
@@ -368,15 +369,15 @@ export component FilenameTaggingWindow inherits Window {
             LineEdit { horizontal-stretch: 1; text <=> root.rule-namespace; placeholder-text: "namespace"; }
             Label { text: ":"; }
             LineEdit { horizontal-stretch: 2; enabled: !root.regex-child-open; text <=> root.rule-regex; placeholder-text: "regex"; accepted => { root.rule-entered(); } }
-            child-regex-button := Button { text: ".*"; enabled: !root.regex-child-open; clicked => { root.regex-menu(child-regex-button.absolute-position.x / 1px, (child-regex-button.absolute-position.y + child-regex-button.height) / 1px); } }
+            child-regex-button := Btn { text: ".*"; enabled: !root.regex-child-open; clicked => { root.regex-menu(child-regex-button.absolute-position.x / 1px, (child-regex-button.absolute-position.y + child-regex-button.height) / 1px); } }
         }
         if root.errors != "": Label { text: root.errors; color: Theme.error; }
         Rectangle { vertical-stretch: 1; }
         HorizontalLayout {
             alignment: end;
             spacing: 6px;
-            Button { text: root.rule-child ? "OK" : "yes"; clicked => { if root.rule-child { root.rule-entered(); } else { root.rule-answer(true); } } }
-            Button { text: root.rule-child ? "Cancel" : "no"; clicked => { root.rule-cancel(); } }
+            Btn { text: root.rule-child ? "OK" : "yes"; clicked => { if root.rule-child { root.rule-entered(); } else { root.rule-answer(true); } } }
+            Btn { text: root.rule-child ? "Cancel" : "no"; clicked => { root.rule-cancel(); } }
         }
     }
     }

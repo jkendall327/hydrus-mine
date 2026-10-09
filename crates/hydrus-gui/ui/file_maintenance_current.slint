@@ -1,3 +1,4 @@
+import { Btn } from "btn.slint";
 import { Button, ComboBox, LineEdit, TabWidget } from "std-widgets.slint";
 import { Theme } from "theme.slint";
 import { ListTable, TableRow } from "list_table.slint";
@@ -63,16 +64,16 @@ export component FileMaintenanceWindow inherits Window {
             delete-pressed => { root.clear-clicked(); }
         }
         HorizontalLayout {
-            Button { text: "clear"; enabled: root.can-clear && root.question == ""; clicked => { root.clear-clicked(); } }
-            Button { text: "do work"; enabled: root.can-work && root.question == ""; clicked => { root.work-clicked(false); } }
-            Button { text: "do all work"; enabled: root.can-all && root.question == ""; clicked => { root.work-clicked(true); } }
-            Button { text: "refresh"; enabled: root.question == ""; clicked => { root.refresh-clicked(); } }
+            Btn { text: "clear"; enabled: root.can-clear && root.question == ""; clicked => { root.clear-clicked(); } }
+            Btn { text: "do work"; enabled: root.can-work && root.question == ""; clicked => { root.work-clicked(false); } }
+            Btn { text: "do all work"; enabled: root.can-all && root.question == ""; clicked => { root.work-clicked(true); } }
+            Btn { text: "refresh"; enabled: root.question == ""; clicked => { root.refresh-clicked(); } }
         }
         if root.question != "": VerticalLayout {
             Text { text: root.question; color: Theme.text; wrap: word-wrap; }
             HorizontalLayout {
-                Button { text: "yes"; clicked => { root.answered(true); } }
-                Button { text: "no"; clicked => { root.answered(false); } }
+                Btn { text: "yes"; clicked => { root.answered(true); } }
+                Btn { text: "no"; clicked => { root.answered(false); } }
             }
         }
         }
@@ -91,45 +92,45 @@ export component FileMaintenanceWindow inherits Window {
             for predicate[i] in root.predicates: HorizontalLayout {
                 spacing: 6px;
                 Text { text: predicate; color: Theme.text; vertical-alignment: center; }
-                Button { text: "remove"; clicked => { root.predicate-removed(i); } }
+                Btn { text: "remove"; clicked => { root.predicate-removed(i); } }
             }
             HorizontalLayout {
                 Text { text: root.search-status; color: Theme.text; vertical-alignment: center; horizontal-stretch: 1; }
-                Button { text: "run this search"; enabled: !root.searching; clicked => { root.run-search(); } }
+                Btn { text: "run this search"; enabled: !root.searching; clicked => { root.run-search(); } }
             }
             Text { text: "easy select"; color: Theme.text; font-weight: 700; }
             HorizontalLayout {
                 alignment: end;
                 spacing: 6px;
-                Button { text: "all media files"; enabled: !root.searching; clicked => { root.easy-select(false); } }
-                Button { text: "all repository update files"; enabled: !root.searching; clicked => { root.easy-select(true); } }
+                Btn { text: "all media files"; enabled: !root.searching; clicked => { root.easy-select(false); } }
+                Btn { text: "all repository update files"; enabled: !root.searching; clicked => { root.easy-select(true); } }
             }
             Text { text: "add job"; color: Theme.text; font-weight: 700; }
             HorizontalLayout {
                 spacing: 6px;
                 Text { text: root.files-label; color: Theme.text; vertical-alignment: center; horizontal-stretch: 1; }
                 ComboBox { model: root.job-labels; current-index <=> root.job-index; }
-                Button { text: "see description"; clicked => { root.see-description(); } }
-                Button { text: "add job"; enabled: root.can-add && root.new-question == ""; clicked => { root.add-job(); } }
+                Btn { text: "see description"; clicked => { root.see-description(); } }
+                Btn { text: "add job"; enabled: root.can-add && root.new-question == ""; clicked => { root.add-job(); } }
             }
             if root.new-question != "": VerticalLayout {
                 Text { text: root.new-question; color: Theme.text; wrap: word-wrap; }
                 HorizontalLayout {
-                    Button { text: "do it"; clicked => { root.new-answered(true); } }
-                    Button { text: "forget it"; clicked => { root.new-answered(false); } }
+                    Btn { text: "do it"; clicked => { root.new-answered(true); } }
+                    Btn { text: "forget it"; clicked => { root.new-answered(false); } }
                 }
             }
             if root.information != "": VerticalLayout {
                 Text { text: root.information; color: Theme.text; wrap: word-wrap; }
                 HorizontalLayout {
                     alignment: start;
-                    Button { text: "ok"; clicked => { root.information-closed(); } }
+                    Btn { text: "ok"; clicked => { root.information-closed(); } }
                 }
             }
         }
         }
         }
         if root.error != "": Text { text: root.error; wrap: word-wrap; color: Theme.error; }
-        Button { text: "close"; clicked => { root.close-clicked(); } }
+        Btn { text: "close"; clicked => { root.close-clicked(); } }
     }
 }
