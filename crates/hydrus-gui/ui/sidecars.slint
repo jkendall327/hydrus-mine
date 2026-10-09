@@ -1,3 +1,4 @@
+import { Btn } from "btn.slint";
 // The sidecar editors (the reference's `ClientGUIMetadataMigration*`;
 // their workings are hydrus-gui-model's `sidecar_editors`, bound by
 // `src/sidecars_window.rs`): the routers list, a router's editor (its
@@ -62,17 +63,17 @@ component EditList inherits HorizontalLayout {
     VerticalLayout {
         spacing: 4px;
         alignment: start;
-        Button {
+        Btn {
             text: "add";
             enabled: !root.asking;
             clicked => { root.add(); }
         }
-        Button {
+        Btn {
             text: "edit";
             enabled: root.one-selected && !root.asking;
             clicked => { root.edit(); }
         }
-        Button {
+        Btn {
             text: "delete";
             enabled: root.any-selected && !root.asking;
             clicked => { root.delete(); }
@@ -87,12 +88,12 @@ component ApplyCancel inherits HorizontalLayout {
     callback cancel();
     alignment: end;
     spacing: 6px;
-    Button {
+    Btn {
         text: "apply";
         enabled: root.enabled;
         clicked => { root.apply(); }
     }
-    Button {
+    Btn {
         text: "cancel";
         clicked => { root.cancel(); }
     }
@@ -151,7 +152,7 @@ export component SidecarRoutersWindow inherits Window {
                         activated => { root.template(i); }
                     }
                 }
-                if root.templates.length > 0: Button {
+                if root.templates.length > 0: Btn {
                     text: "★";
                     enabled: !root.asking && !root.child-open;
                     clicked => { templates-menu.show({ x: 0px, y: self.height }); }
@@ -160,9 +161,9 @@ export component SidecarRoutersWindow inherits Window {
         }
         HorizontalLayout {
             alignment: start; spacing: 6px;
-            Button { text: "import"; enabled: !root.asking && !root.child-open; clicked => { root.exchange(true); } }
-            Button { text: "export"; enabled: root.any-selected && !root.asking && !root.child-open; clicked => { root.exchange(false); } }
-            Button { text: "duplicate"; enabled: root.any-selected && !root.asking && !root.child-open; clicked => { root.duplicate(); } }
+            Btn { text: "import"; enabled: !root.asking && !root.child-open; clicked => { root.exchange(true); } }
+            Btn { text: "export"; enabled: root.any-selected && !root.asking && !root.child-open; clicked => { root.exchange(false); } }
+            Btn { text: "duplicate"; enabled: root.any-selected && !root.asking && !root.child-open; clicked => { root.duplicate(); } }
         }
         if root.error != "": Text { text: root.error; color: Theme.error; wrap: word-wrap; }
         if root.asking: Asking {
@@ -242,7 +243,7 @@ export component SidecarRouterWindow inherits Window {
                 text: root.processing-note;
                 color: Theme.text;
             }
-            Button {
+            Btn {
                 text: root.processing;
                 enabled: !root.asking && !root.child-open;
                 clicked => { root.edit-processing(); }
@@ -259,7 +260,7 @@ export component SidecarRouterWindow inherits Window {
                     vertical-alignment: center;
                     color: Theme.text;
                 }
-                Button {
+                Btn {
                     text: "edit";
                     enabled: !root.asking && !root.child-open;
                     clicked => { root.edit-destination(); }
@@ -366,7 +367,7 @@ export component SidecarNodeWindow inherits Window {
     VerticalLayout {
         padding: 10px;
         spacing: 6px;
-        Button {
+        Btn {
             text: root.type-label;
             enabled: !root.asking && !root.object-child-open;
             clicked => { root.change-type(); }
@@ -375,7 +376,7 @@ export component SidecarNodeWindow inherits Window {
             spacing: 4px;
             Row {
                 label: "tag service: ";
-                Button {
+                Btn {
                     horizontal-stretch: 1;
                     text: root.service-label;
                     enabled: !root.asking && !root.object-child-open;
@@ -443,7 +444,7 @@ export component SidecarNodeWindow inherits Window {
         }
         if root.show-sidecar-help: HorizontalLayout {
             alignment: end;
-            Button {
+            Btn {
                 text: "?";
                 enabled: !root.asking && !root.object-child-open;
                 clicked => { root.sidecar-help(); }
@@ -460,19 +461,19 @@ export component SidecarNodeWindow inherits Window {
                     delete-pressed => {root.nested-action("delete");}
                 }
                 VerticalLayout {
-                    Button {text: "↑"; enabled: root.nested-selected && !root.asking && !root.object-child-open; clicked => {root.nested-action("up");}}
-                    Button {text: "X"; enabled: root.nested-selected && !root.asking && !root.object-child-open; clicked => {root.nested-action("delete");}}
-                    Button {text: "↓"; enabled: root.nested-selected && !root.asking && !root.object-child-open; clicked => {root.nested-action("down");}}
+                    Btn {text: "↑"; enabled: root.nested-selected && !root.asking && !root.object-child-open; clicked => {root.nested-action("up");}}
+                    Btn {text: "X"; enabled: root.nested-selected && !root.asking && !root.object-child-open; clicked => {root.nested-action("delete");}}
+                    Btn {text: "↓"; enabled: root.nested-selected && !root.asking && !root.object-child-open; clicked => {root.nested-action("down");}}
                 }
             }
             HorizontalLayout {
-                Button {text: "add"; enabled: !root.asking && !root.object-child-open; clicked => {root.nested-action("add");}}
-                Button {text: "edit"; enabled: root.nested-selected && !root.asking && !root.object-child-open; clicked => {root.nested-action("edit");}}
+                Btn {text: "add"; enabled: !root.asking && !root.object-child-open; clicked => {root.nested-action("add");}}
+                Btn {text: "edit"; enabled: root.nested-selected && !root.asking && !root.object-child-open; clicked => {root.nested-action("edit");}}
             }
         }
         if root.show-json: Row {
             label: "json parsing formula: ";
-            Button {
+            Btn {
                 horizontal-stretch: 1;
                 text: "edit parsing formula";
                 enabled: !root.asking && !root.object-child-open;
@@ -519,7 +520,7 @@ export component SidecarNodeWindow inherits Window {
             }
             Row {
                 label: "ADVANCED: final sidecar filename conversion: ";
-                Button {
+                Btn {
                     horizontal-stretch: 1;
                     text: root.converter-label;
                     enabled: !root.asking && !root.object-child-open;
@@ -549,7 +550,7 @@ export component SidecarNodeWindow inherits Window {
                 text: root.processing-note;
                 color: Theme.text;
             }
-            Button {
+            Btn {
                 text: root.processing;
                 enabled: !root.asking && !root.object-child-open;
                 clicked => { root.edit-processing(); }

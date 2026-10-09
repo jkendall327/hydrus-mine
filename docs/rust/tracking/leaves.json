@@ -150,7 +150,13 @@
     "Truth pass (2026-10-08): partial, small. Playback, hover and space-to-pause wired but untested; scanbar missing. Missing: Scanbar and volume control in the archive/delete window; tests of pause, playback and hover there. Evidence: archive_delete_window.rs:102-103, 278-320, 577-580; archive_delete.slint:44-49, 143-145",
     "Shared viewer zoom/decoding/playback renders the current file, display tags and information line; native pause toggle is wired during archive/delete filtering. Partial: Shared viewer playback source and generic archive decision regression do not establish archive-specific playback/scanbar/audio/hover actions; those remain a source-supported unverified boundary. Existing regression scope: Archive-specific zoom/pan has focused assertions.",
     "Shared viewer playback source and generic archive decision regression do not establish archive-specific playback/scanbar/audio/hover actions; those remain a source-supported unverified boundary."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-09",
+    "class": "source-restated",
+    "by": "Claude, options-shell-leftovers",
+    "note": "GUI test archive_delete_playback.rs drives the real archive/delete window: animation playing, space pause, the frame scanbar with drag-pause, the volume control and mutes, hover frames; the scanbar and volume are compared with the media viewer's for the same file rather than with a recording of the reference's archive/delete canvas (which uses the same player code). mpv itself is not driven."
+   }
   },
   {
    "id": "audit-media-comparator-and",
@@ -2373,10 +2379,10 @@
     "Grant persists correctly, but repository commit_pending refuses because native repository uploading is absent."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "phase 2 session (blind agent)",
-    "note": "client_api_permissions.rs:57 each_permission_checkbox_has_the_reference_label_and_serializes_alone loops the recorded client_api_admin.json rows through the real editor and checks the label and single-grant serialisation. Only the checkbox and the stored grant are proven: the routes that check CommitPending just return 422 because repository commit-pending upload is absent, so no consumer is exercised."
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "claude, branch claude/exchange-and-fixes",
+    "note": "The real permission editor grants only 'commit pending' to one key (label from client_api_admin.json); the real API router then lets that key read pending counts and refuses another key; commit_pending passes the check and answers 422 because repository upload is absent (DIFFERENCES.md). Test: crates/hydrus-gui/tests/gui/client_api_permissions.rs the_commit_pending_checkbox_grants_the_pending_routes_to_that_key_alone."
    }
   },
   {
@@ -3292,14 +3298,21 @@
    "label": "HTTPS/normie-Eris/external URL override controls",
    "path": "Services > Service review selector/counts > Client API service review/settings",
    "workstream": "tags-services",
-   "state": "missing",
+   "state": "implemented",
    "priority": "normal",
    "reference": null,
    "native": null,
    "notes": [
     "Truth pass (2026-10-08): missing, medium. Values only preserved and shown read-only. Missing: Editable https / normie-eris / external override controls, HTTPS serving, alternate welcome page, external overrides in copied API links. Evidence: services_editor_window.rs:99,178-195 read-only; client_api_listener.rs:38 rejects https",
-    "Native listener supports HTTP and imported HTTPS disable only; normie-Eris/external URL override values are preserved but not editable/runnable here."
-   ]
+    "Native listener supports HTTP and imported HTTPS disable only; normie-Eris/external URL override values are preserved but not editable/runnable here.",
+    "2026-10-09: HTTPS serving, the normie welcome page and the editable overrides are done (#120). The reference reads the overrides nowhere, so there are no copied links to change."
+   ],
+   "recheck": {
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "claude (issue #120)",
+    "note": "Drives the real services editor window (rows, labels, tooltip text, enable rules, advanced-mode visibility, Apply, cancel, 'none' boxes, empty port text) against oracle/fixtures/client_api_https.json, and a real `hydrus serve` daemon over HTTP and HTTPS: both welcome pages byte-equal to the recording, generated cert fields, a dropped-in pair served, half a pair refused with the reference's message. The reference reads the external overrides nowhere, so there is no consumer to test; DIFFERENCES.md says so."
+   }
   },
   {
    "id": "audit-media-services-missing-rating-preview",
@@ -3536,7 +3549,13 @@
     "Broader maintenance/admin and multi-tag selection boundaries remain Partial; scoped regeneration and context-menu behaviors are cited separately.",
     "Native dropdown layout and synchronous query/presentation differ from Qt. Continuous dragging outside the viewport is not asserted.",
     "Redo restores the saved post-edit caret; Qt can retain a later command caret/selection at redo boundaries. Same-text programmatic resets cannot be distinguished from live model refreshes."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "Claude (tags leftovers, issue 86)",
+    "note": "Manage tags' write autocomplete, driven through the window: for every recorded option set (first-with-count, expanded/decorated parents and siblings, count service) the typed text's rows (the parents as an unordered bag, as Qt lists them) and what Enter enters (exactly the recorded selection, as the one tag added) match oracle/fixtures/write_tag_autocomplete.json; the recorded context menu on a result (two levels), the recorded multiline-paste questions with and without the skip option, and manual fetch (Ctrl+Space) with fetch-as-you-type off. The leaf's other listed behaviours (selection, keyboard, undo, drag) have their own tests in write_autocomplete.rs and the model tests. Native dropdown layout differs from Qt (DIFFERENCES.md). Tests: crates/hydrus-gui/tests/gui/write_autocomplete_leaves.rs."
+   }
   },
   {
    "id": "audit-media-tags-missing-cog",
@@ -3629,8 +3648,14 @@
    "reference": null,
    "native": null,
    "notes": [
-    "Native autocomplete suggestions do not provide reference favourites/recent/related/file-lookup suggested-tag panels."
-   ]
+    "Suggested tags side panels (most used, related, recent): exist and are replayed in tests/gui/suggested_tag_panels.rs. File lookup scripts were split out as file-lookup-scripts (out of scope, owner decision 2026-10-09); the lists' own context menus and keyboard are suggested-tag-list-interactions."
+   ],
+   "recheck": {
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "Claude (tags leftovers, issue 86)",
+    "note": "Manage tags' suggested panels replayed from oracle/fixtures/suggested_tag_panels.json (the real SuggestedTagsPanel with most used, related and recent on): the panels present, the page shown for each default page in notebook and column layouts (a file-lookup default falls back, as the reference does), the three lists exactly (the related list's 20 tags and order included), and that activating the first tag of each adds it (add-only) and removes it from its list; the related list is not searched again by that add. The recent panel decays on read (the oldest beyond the option are forgotten for good) and Clear asks and empties it, replayed from oracle/fixtures/recent_tags_decay.json. The related panel's buttons, status and selected-tag search have their own replay (related_tags_panel.rs, related_tags_panel.json). Not covered: the lists' own context menus and keyboard (suggested-tag-list-interactions). Tests: crates/hydrus-gui/tests/gui/suggested_tag_panels.rs, related_tags_panel.rs."
+   }
   },
   {
    "id": "audit-media-tags-missing-viewer-follow",
@@ -4575,7 +4600,7 @@
    "notes": [
     "Owner (2026-10-08): clipboard-bitmap and PNG drag-and-drop exchange is wanted but low priority; the other gaps here keep their priority.",
     "Truth pass (2026-10-08): partial, medium. Login scripts now work; domain metadata, bitmap and drop remain. Missing: Domain metadata packages, clipboard bitmap as PNG, PNG drag/drop into the window. Evidence: downloader_interchange_window.rs:707, 531; login scripts work (downloader_interchange.rs:24 vs mixed_login_packages.json)",
-    "Native package workflow supports URL classes/GUGs/pages only; bitmap/drop and login/domain packages have no native path."
+    "2026-10-09: domain metadata packages done (exchange-domain). Remaining: clipboard bitmap as PNG and PNG drag/drop (owner: low priority)."
    ]
   },
   {
@@ -5451,10 +5476,10 @@
     "Updated for #89 (2026-10-08): the presentation location is the unrestricted shared selector (menu, list with deleted-from boxes in advanced mode) and the status/inbox choices and greying replay oracle/fixtures/location_selector_flags.json; 'show files' filters by current and deleted domains (queues.rs). Remaining: the kinds-list summary names no domain for other locations (DIFFERENCES.md)."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "phase 2 session (blind agent)",
-    "note": "import_options_fields.rs:235 and import_locations.rs:365/:489 replay the recorded status, inbox, greying and location data through the real editor and check the saved options hold the values, but none runs the 'show files' consumer filtering by current and deleted domains in queues.rs, so the setting only round-trips while its reader is untested."
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "claude, branch claude/exchange-and-fixes",
+    "note": "The saved presentation (status, location with deleted-from domains, all known files) is chosen in the real import options editor and then read by the real 'show files' > 'default presented files' menu action, which filters by current and deleted domains. Test: crates/hydrus-gui/tests/gui/import_locations.rs the_presentation_editors_choices_filter_the_files_show_files_presents; the editor's choices replay location_selector_flags.json in the same file."
    }
   },
   {
@@ -8934,7 +8959,13 @@
     "Remote repository/IPFS deletion is excluded from this local native dialog. Simple/nonadvanced service-choice picker, undelete confirmation, local-domain copy/move and archive-delete/duplicate filtering chooser remain parent limitations; no parent or alias completion is claimed.",
     "Queue uses existing ListTable/SessionDialog geometry. Recorded selection/add/edit/move/delete behavior and Delete-key route are covered; general ListTable keyboard arrow selection is not expanded by this slice.",
     "Rust model/native/store regressions are authored for root hosted CI; no local Cargo build/test or mutation tests were run."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "Claude, options-shell-leftovers",
+    "note": "GUI test undelete_question.rs drives the real main window (thumbnail selection, delete and undelete) and the viewer, replaying oracle/fixtures/files_trash.json (delete question per confirm setting and domain count) and the new undelete_question.json (the single-domain yes/no, the 'Undelete for?' chooser with each choice or a cancel, and what is restored). Remote services are excluded (none exist here)."
+   }
   },
   {
    "id": "audit-options-files-and-trash-confirm-sending-more-than-one-file-to-archive-or-inbox",
@@ -9225,10 +9256,10 @@
     "Assessment covers this editable control and shared Apply/Cancel, not every control on its containing reference page or every background consumer."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "phase 2 session (blind agent)",
-    "note": "hydrus-download local_import.rs:454 a_local_import_copies_to_a_temp_path_first_unless_the_option_says_not_to writes copy_import_files_to_temp_dir into the store and shows the queue consumer making or skipping the temp copy, but no tagged test opens the Options window, so the leaf's editable row (label, checkbox, Apply/Cancel) is not driven."
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "claude, branch claude/exchange-and-fixes",
+    "note": "The Options window row (label, unchecked by default, cancel, apply, reopen) is driven, and the real local-import worker then copies to a temp path or reads the source directly as the saved value says. The test finds the row by the reference's literal label; the model tests check the label, kind and initial value against the Qt options recording. Test: crates/hydrus-gui/tests/gui/options_system_consumers.rs the_direct_import_row_decides_whether_a_local_import_copies_to_a_temp_path_first."
    }
   },
   {
@@ -13236,7 +13267,13 @@
     "Truth pass (2026-10-08): missing, small. Doable now. Missing: Read 'audio-device-list' (mpv_get_property_string), an action-button row kind, a choice dialog, the unavailable message; test with a stubbed list. Evidence: mpv.rs dlopens libmpv; reference MediaPlaybackPanel.py:405-436",
     "Reference editor/control '--Fetch list of mpv audio device strings:' is recorded on 'media playback' and defined by the referenced options panel. No corresponding editable row exists in native options::pages; this is a missing GUI editing path, even if a setting is imported or consumed elsewhere.",
     "Native options registry has no editable '--Fetch list of mpv audio device strings:' control in this page/box path."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "Claude, options-shell-leftovers",
+    "note": "GUI test options_mpv_devices.rs clicks the real button in the real options window with the device list stubbed (parsed from mpv's JSON as recorded) and replays oracle/fixtures/mpv_audio_devices.json: the unavailable message, the chooser's title, message and labels, each choice (auto sets none) and cancel, the draft, and Apply. libmpv itself is not driven in the test. The preferred device is applied as each file loads (mpv_options Plan); open players are not updated on Apply (DIFFERENCES.md)."
+   }
   },
   {
    "id": "audit-options-media-playback-mpv-linux-debug-do-not-allow-combined-setgeometry-on-mpv-window",
@@ -16214,7 +16251,7 @@
   },
   {
    "id": "audit-options-nested-tag-suggestions-tabs",
-   "label": "Most-used, related, file lookup and recent suggested-tag controls",
+   "label": "Most-used, related and recent suggested-tag controls",
    "path": "File > Options window > tag suggestions > Suggested-tag tabs, per-service favourites and related weights",
    "workstream": "options-gui",
    "state": "missing",
@@ -16222,8 +16259,46 @@
    "reference": null,
    "native": null,
    "notes": [
-    "Reference nested notebook configures each suggestion source independently; native no corresponding options notebook.",
-    "No native action/editor path for this reference workflow."
+    "Reference nested notebook configures each suggestion source independently. Native has the notebook (most used, related, recent) with real consumers: most used, recent (the count, read with decay) and related (show, concurrence, three durations, weights). Left untagged: no test drives the related durations from the Options rows to an observable effect (a duration shows only at its extremes, and the rows allow no less than 50 ms), and no test drives the concurrence and recent-count rows through Options to the panels. File lookup scripts: file-lookup-scripts (out of scope). The recent tab's second count (quick entry dialogs): shortcut-interactive-tag-entry."
+   ]
+  },
+  {
+   "id": "file-lookup-scripts",
+   "label": "File lookup scripts: suggested-tags panel, script editor and manager, favourite script option",
+   "path": "File > Options window > tag suggestions; Manage tags > Suggested tags",
+   "workstream": "media",
+   "state": "missing",
+   "priority": "out-of-scope",
+   "reference": null,
+   "native": null,
+   "notes": [
+    "Owner decision 2026-10-09: out of scope. A legacy feature superseded by downloaders: FileLookupScriptTagsPanel, the script editor and manager, the favourite file lookup script option and the show_file_lookup_script_tags switch."
+   ]
+  },
+  {
+   "id": "shortcut-interactive-tag-entry",
+   "label": "Interactive tag entry from a shortcut: quick tag dialog and its recent-tags count",
+   "path": "Shortcuts > media/viewer actions; File > Options window > tag suggestions > recent",
+   "workstream": "options-gui",
+   "state": "missing",
+   "priority": "normal",
+   "reference": null,
+   "native": null,
+   "notes": [
+    "GetContentApplicationCommandFromInteractiveContentCommand asks for a tag in a quick dialog offering the recent tags (Options: recent tags in quick entry dialogs, 10 by default, none to hide). Native has no interactive content command and no such dialog, so the option has no consumer."
+   ]
+  },
+  {
+   "id": "suggested-tag-list-interactions",
+   "label": "Suggested tags lists' own context menus and keyboard",
+   "path": "Media files, metadata and viewing > Manage tags for selected files > Suggested tags side panels",
+   "workstream": "media",
+   "state": "missing",
+   "priority": "normal",
+   "reference": null,
+   "native": null,
+   "notes": [
+    "The reference's suggestion lists are ListBoxTagsStrings: right-click tag menus (copy, favourites, search), Ctrl+A/C and keyboard selection. Native lists have click/select and double-click activation only."
    ]
   },
   {
@@ -20506,7 +20581,7 @@
     "date": "2026-10-09",
     "class": "sound",
     "by": "claude (issue #121)",
-    "note": "The Options row is driven through the window (default 96MB shown as 96 MB with '(about 36 frames of 720p video)', typed amount/unit estimates, cancel, apply, reopen) against oracle/record_video_buffer.py's fixture; the saved size reaches the viewer's real animation player, which keeps frames by the ported RasterContainerVideo formula and buffer logic (model test replays the recorded sizes and each recorded decode step), and a nine-frame loop that fits is decoded once over two loops while a six-frame buffer decodes again. Tests: crates/hydrus-gui/tests/gui/video_buffer.rs; crates/hydrus-gui-model/tests/model/video_buffer.rs. Not covered: the zoomed-size resolution the reference sizes by (see DIFFERENCES.md)."
+    "note": "The Options row is driven through the window (default 96MB shown as 96 MB with '(about 36 frames of 720p video)', typed amount/unit estimates, cancel, apply, reopen) against oracle/record_video_buffer.py's fixture; the saved size reaches the viewer's real animation player, which keeps frames by the ported RasterContainerVideo formula and buffer logic (model test replays the recorded sizes and each recorded decode step), and a nine-frame loop that fits is decoded once over two loops while a six-frame buffer decodes again. Tests: crates/hydrus-gui/tests/gui/video_buffer.rs; crates/hydrus-gui-model/tests/model/video_buffer.rs. Not covered: the zoomed-size resolution the reference sizes by (see DIFFERENCES.md). 2026-10-09 (flake fix): the GUI test counts a loop by the frame index going back instead of seeing the last frame and then frame 0, and asserts a whole loop (more than the frame count of distinct frames) was shown instead of every frame of both loops, so a poll that skips a frame on a loaded runner cannot fail it; the decode counts, which are what the leaf is about, are unchanged and exact. It also waits for the previous file's decoder thread to end (animation::decoders_running) before counting."
    }
   },
   {
@@ -20607,7 +20682,13 @@
     "Truth pass (2026-10-08): partial, small. Checkbox stored but inert; needs the file-system wait. Missing: A wake-aware wait before file-store access, and a test. Evidence: options.rs:4404-4407 stored only; reference ClientFilesManager._WaitOnWakeup (ClientFilesManager.py:863); hydrus-net has wake detection",
     "Reference editor/control 'Include the file system in this wait:' is recorded on 'system' and defined by the referenced options panel. No corresponding editable row exists in native options::pages; this is a missing GUI editing path, even if a setting is imported or consumed elsewhere.",
     "Native options registry has no editable 'Include the file system in this wait:' control in this page/box path."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "Claude, options-shell-leftovers",
+    "note": "hydrus-store tests/wake_wait.rs replays oracle/fixtures/file_system_wake_wait.json (recorded from the reference's files manager with a simulated wake): for each combination of the option and wake detection, the real FileStorage::file_path blocks for the recorded whole seconds and the gate reads just-woken as recorded. The GUI heartbeat and the daemon loop call the sleep check; those are not separately tested."
+   }
   },
   {
    "id": "audit-options-system-tray-always-show-the-hydrus-system-tray-icon",
@@ -20696,7 +20777,13 @@
     "Truth pass (2026-10-08): partial, medium. Depends on the tray; minimise detection impossible on Wayland. Missing: The tray, plus minimise detection (winit is_minimized: polled; not available on Wayland). Evidence: options.rs:4418-4421 row, unread",
     "Reference editor/control 'Minimise the main window to system tray:' is recorded on 'system tray' and defined by the referenced options panel. No corresponding editable row exists in native options::pages; this is a missing GUI editing path, even if a setting is imported or consumed elsewhere.",
     "Native options registry has no editable 'Minimise the main window to system tray:' control in this page/box path."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-09",
+    "class": "source-restated",
+    "by": "Claude, options-shell-leftovers",
+    "note": "GUI test system_tray.rs minimising_hides_the_window_to_the_icon_where_the_window_system_reports_it drives the real tray controller (option read, window hidden to the icon, restored with its prior state on show, nothing hidden with no tray) with Slint's own minimised state in the headless platform; winit's is_minimized (X11/Windows/macOS, not Wayland) and a real window manager are not exercised, and the reference's two BUGFIX switches have no counterpart (DIFFERENCES.md, System tray). The expected behaviour follows the reference's source (ClientGUI.changeEvent / _SystemTrayHide); there is no recording of it."
+   }
   },
   {
    "id": "audit-options-system-tray-start-the-client-minimised-to-system-tray",
@@ -21570,7 +21657,13 @@
     "Truth pass (2026-10-08): partial, small. Could be consumed by the existing sibling/parent reason prompts. Missing: A recent-reasons store fed by the sibling/parent reason prompts and capped by this count. Evidence: options.rs:4492-4496 row, tested, unread",
     "Reference editor/control 'Number of recent petition reasons to remember in dialogs:' is recorded on 'tag editing' and defined by the referenced options panel. No corresponding editable row exists in native options::pages; this is a missing GUI editing path, even if a setting is imported or consumed elsewhere.",
     "Native options registry has no editable 'Number of recent petition reasons to remember in dialogs:' control in this page/box path."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "Claude (tags leftovers, issue 86)",
+    "note": "Stale tracker note: the row exists (options_gui_kept.rs) and is now read: the sibling/parent petition reason questions remember and offer at most that many recent reasons (0 remembers none), driven through the Options row and the relationship window and replayed from oracle/fixtures/relationship_reasons.json for counts 2 and 0. Tests: crates/hydrus-gui/tests/gui/tag_relationships.rs reason_questions_offer_recent_then_fixed_reasons_and_the_option_caps_the_recent_ones; crates/hydrus-gui-model/tests/model/tag_relationships.rs."
+   }
   },
   {
    "id": "audit-options-tag-editing-tag-dialogs-remember-last-used-default-tag-service-in-manage-tag-dialogs",
@@ -23006,10 +23099,10 @@
     "Updated for #89 (2026-10-08): deleted ticks and all-known replay search_domains.json; the caller flags (importable, local-only, combined-local-only, no multiple, all-known) are modelled in domains::Flags and replayed against the real button in location_selector_flags.json. Only the importable and unrestricted flags have a GUI caller (the import options editor, tested through its window); the other flags are model-only (DIFFERENCES.md)."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "phase 2 session (blind agent)",
-    "note": "import_locations.rs:235 the_destination_button_chooses_one_several_or_no_domains_as_the_reference_does uses the importable-only selector, which lists only 'art' and 'my files' and shows no deleted ticks or all-known mode, so the leaf's deleted-domain ticks and all-known autocomplete mode are not driven through any GUI caller (model-only)."
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "claude, branch claude/exchange-and-fixes",
+    "note": "The unrestricted selector (the presentation location) is driven through the import options editor: deleted-from ticks, all known files, and their effect on what 'show files' presents. Other callers' flags remain model-only (DIFFERENCES.md). Test: crates/hydrus-gui/tests/gui/import_locations.rs the_presentation_editors_choices_filter_the_files_show_files_presents."
    }
   },
   {
@@ -23473,7 +23566,13 @@
    "notes": [
     "Truth pass (2026-10-08): partial, small. Not platform-blocked: Slint 1.18 has tooltips; DIFFERENCES.md's 'no tooltips' is stale. Missing: Wire Tooltip elements in tag_filter.slint (wrap the buttons) and test the model text against the reference. Evidence: tag_filter_editor.rs:47-70 computes the text; Slint 1.18.1 has a Tooltip element (i-slint-compiler builtin_elements.rs)",
     "The reference editor supplies explanatory control help/tooltips; native tag-filter buttons have no tooltip properties."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "Claude (tags leftovers, issue 86)",
+    "note": "Slint 1.18 Tooltip elements wrap the tag filter editor's \"show other panels\" button and every native tag filter button (tag migration, tag display options, string tag filter, import options' get tags and blacklist, Client API permitted tags) through the shared TipButton. Button text and tooltip for every configuration (migration's three, display, string match, import get-tags and blacklist, API permitted tags) are replayed from the reference's TagFilterButton (oracle/fixtures/tag_filter_tooltips.json, model test tag_filter_tooltips.rs); the windows assign the same button_label tooltip (the display options' button now has the reference's \"tags shown: \" prefix in its tooltip). The tooltip popup itself is observed: after one pointer move and the delay, the drawn picture beside the pointer differs from no tooltip and from another text. Only \"show other panels\" and the preview's buttons are driven by hover; the other buttons share the TipButton component and are asserted by their windows' tests (some by prefix and content, one by the recording's literal). Qt's 80-column wrapping is Slint's own wrapping. Tests: crates/hydrus-gui/tests/gui/tag_filter_tooltips.rs, crates/hydrus-gui-model/tests/model/tag_filter_tooltips.rs, tag_migration.rs, tag_display.rs, import_options.rs."
+   }
   },
   {
    "id": "audit-shared-tag-whitelist",
@@ -23826,14 +23925,19 @@
    "label": "Domain metadata export packages",
    "path": "Network > Downloader definitions > Downloader package import/export",
    "workstream": "network",
-   "state": "missing",
+   "state": "implemented",
    "priority": "normal",
    "reference": "hydrus/client/gui/parsing/ClientGUIParsing.py:91",
    "native": "crates/hydrus-gui/src/downloader_interchange_window.rs:707",
    "notes": [
-    "Truth pass (2026-10-08): missing, medium. A contained medium slice; the data to package already exists. Missing: The domain prompt, DomainMetadataPackage (type 71) encode/decode in JSON/PNG, review and import, and a recording. Evidence: downloader_interchange.rs:436-446 has no domain metadata category; header and bandwidth storage exist",
-    "Top-level native downloader package accepts URL classes/GUGs/page parsers; domain metadata and login script packages are rejected, not edited or imported."
-   ]
+    "2026-10-09: ported (type 71 codec, domain prompt, review, import); recorded by oracle/record_domain_metadata_packages.py."
+   ],
+   "recheck": {
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "claude, branch claude/exchange-and-fixes",
+    "note": "Window test drives the export prompt (cancel, nothing found, pending-only, subdomain, repeat), the downloader choice adding its example domain's rules, PNG export, and import (review details, cancel, accept, repeat) against domain_metadata_packages.json recorded from the real reference panels; model tests replay the bandwidth early-return and the eight-detail limit. Tests: crates/hydrus-gui/tests/gui/domain_metadata.rs, crates/hydrus-gui-model/tests/model/domain_metadata.rs. Per-object selection and the pop-up-per-package review are documented differences."
+   }
   },
   {
    "id": "exchange-login",
@@ -24353,7 +24457,13 @@
     "Broader maintenance/admin and multi-tag selection boundaries remain Partial; scoped regeneration and context-menu behaviors are cited separately.",
     "Native dropdown layout and synchronous query/presentation differ from Qt. Continuous dragging outside the viewport is not asserted.",
     "Redo restores the saved post-edit caret; Qt can retain a later command caret/selection at redo boundaries. Same-text programmatic resets cannot be distinguished from live model refreshes."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "Claude (tags leftovers, issue 86)",
+    "note": "The parent editor's two write inputs driven through the window against the same recording as Manage tags: rows and entry for every option set, the recorded context menu (two levels), the multiline-paste questions and manual fetch. Menu actions and selection/keyboard/undo have their own tests (write_autocomplete.rs, model write_autocomplete.rs). Tests: crates/hydrus-gui/tests/gui/write_autocomplete_leaves.rs. Entry and paste check the exact tags added (before and after), not presence."
+   }
   },
   {
    "id": "parser-context",
@@ -24415,7 +24525,7 @@
   },
   {
    "id": "relationship-reasons",
-   "label": "Repository permission/reason context",
+   "label": "Reason suggestions on repository sibling/parent questions",
    "path": "Tags > Tag siblings",
    "workstream": "tags-services",
    "state": "partial",
@@ -24423,9 +24533,28 @@
    "reference": "hydrus/client/gui/metadata/ClientGUITagActions.py:20",
    "native": null,
    "notes": [
-    "Truth pass (2026-10-08): partial, medium. Reasons work; suggestions and account handling missing. Missing: Recent and fixed reason suggestions; account permission/moderator handling. Evidence: tag_relationships.rs:725-750; tests tag_relationships.rs:38,337 and GUI :198",
     "Local add/delete or repository pend/petition/rescind uses typed updates and stored reasons; repository tests reopen pending/reasons and rescind correctly.",
-    "Reasons/rescinds exist; permission warnings, moderator bypass and recent/fixed suggestions are deferred."
+    "Split 2026-10-09: the recent and fixed reason suggestions stay here; account permission/moderator handling is `relationship-reasons-account-handling`."
+   ],
+   "recheck": {
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "Claude (tags leftovers, issue 86)",
+    "note": "The reason question of a tag repository's sibling/parent pend and petition offers the recent reasons then the fixed ones (per kind and action) as buttons, remembers typed non-fixed reasons up to the options count, and matches oracle/fixtures/relationship_reasons.json (recorded from the real TagPairActionContext, siblings and parents, counts 2 and 0, add and delete/petition steps, typed answers, suggestion buttons and cancel) in a model test and through the window (adds by typing, deletes by selecting a current pair). Account/moderator handling was split into relationship-reasons-account-handling (out of scope). Tests: crates/hydrus-gui-model/tests/model/tag_relationships.rs petition_reasons_offer_recent_then_fixed_suggestions_capped_by_the_option; crates/hydrus-gui/tests/gui/tag_relationships.rs reason_questions_offer_recent_then_fixed_reasons_and_the_option_caps_the_recent_ones."
+   }
+  },
+  {
+   "id": "relationship-reasons-account-handling",
+   "label": "Account permission and moderator handling of reasons",
+   "path": "Tags > Tag siblings",
+   "workstream": "tags-services",
+   "state": "missing",
+   "priority": "out-of-scope",
+   "reference": "hydrus/client/gui/metadata/ClientGUITagActions.py:20",
+   "native": null,
+   "notes": [
+    "split 2026-10-09; account/moderator handling is PTR-adjacent, out of scope with the PTR",
+    "The reference (TagPairActionContext) skips the reason question with 'Entered by a janitor.' for an account with moderate permission on the content type; hydrus-rs always asks."
    ]
   },
   {
@@ -24503,7 +24632,13 @@
     "Broader maintenance/admin and multi-tag selection boundaries remain Partial; scoped regeneration and context-menu behaviors are cited separately.",
     "Native dropdown layout and synchronous query/presentation differ from Qt. Continuous dragging outside the viewport is not asserted.",
     "Redo restores the saved post-edit caret; Qt can retain a later command caret/selection at redo boundaries. Same-text programmatic resets cannot be distinguished from live model refreshes."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "Claude (tags leftovers, issue 86)",
+    "note": "The sibling editor's two write inputs driven through the window against the same recording as Manage tags: rows and entry for every option set, the recorded context menu (two levels), the multiline-paste questions (a sibling's ideal side keeps one pasted tag) and manual fetch. Menu actions and selection/keyboard/undo have their own tests (write_autocomplete.rs, model write_autocomplete.rs). Tests: crates/hydrus-gui/tests/gui/write_autocomplete_leaves.rs. Entry and paste check the exact tags added (before and after), not presence."
+   }
   },
   {
    "id": "sidecar-details",
@@ -24757,13 +24892,13 @@
    "native": null,
    "notes": [
     "Owner (2026-10-08): clipboard-bitmap and PNG drag-and-drop exchange is wanted but low priority; the other gaps here keep their priority.",
-    "Truth pass (2026-10-08): partial, medium. Modern and legacy exchange recorded and tested; specific gaps remain. Missing: Old seed-cache versions 1-7, clipboard bitmap and drag/drop, per-object selection, cache-header gaps. Evidence: extensively recorded and tested (subscriptions.rs:1219-2049; record_subscription_exchange.py etc.)",
+    "Truth pass (2026-10-08): partial, medium. Modern and legacy exchange recorded and tested; specific gaps remain. Missing (as of that pass; seed caches 1-7 since done): clipboard bitmap and drag/drop, per-object selection, cache-header gaps. Evidence: extensively recorded and tested (subscriptions.rs:1219-2049; record_subscription_exchange.py etc.)",
     "Manage subscriptions exposes serialized import/export of modern reference container90 objects through an owned child. Settings, complete query states, cached velocity/example-seed headers and both file/gallery histories survive JSON/PNG exchange, staged import and Apply/reopen. Casefold name collisions use (1) suffixes and every imported query gets a fresh history identity. JSON file export asks the original existing-path overwrite question; rejecting or closing the owner preserves the existing file. Format-specific multi-file JSON/PNG imports validate before staging, cancellation leaves the saved store unchanged, and stale callbacks cannot append or overwrite. Export reads current native queues plus draft reset/retry commands and preserves copied header metadata. Incomplete objects now ask the exact reference missing query log data title, message and import/back-out choices before they enter the draft; accepting persists empty logs and rejecting or cancelling continues remaining objects in list order. Apply is blocked while the question remains unanswered. Modern clipboard/JSON/PNG menu choices now dispatch their actual transport action. Legacy subscription type3 versions1–10 and legacy query1–3 import with full embedded histories, historical checker/limit defaults and fresh identity handling; obsolete gallery identifiers become the original paused unknown downloader. Actual Qt direct conversion and list exports constrain full upgraded payloads, apart from generated random identities. Fresh history names invalidate velocity/status according to SetQueryLogContainerName while retaining example/cached-count fields. Actual Reset/RetryFailed/RetryIgnored exports now refresh file-count/example caches without changing velocity or gallery examples. Retried files lose hashes exactly as SetStatus(UNKNOWN) does, in both detached exports and the real Apply transaction; reopening exports those persisted caches.",
-    "Historical file seed-cache type8 versions1–7 remain unsupported and fail explicitly; current cache8 with seed versions handled by the legacy decoder is supported.",
     "Clipboard PNG-image precedence and PNG drag/drop remain absent; PNG files and the original transport popup choices are supported.",
     "Native package/file selection review rejects an entire invalid selection atomically; the reference can retain earlier valid objects and show type warnings. Imports open an additional reviewed child before staging.",
     "Native initialises accepted missing logs directly during Apply instead of requiring a reopen.",
-    "Fresh native queries now export file counts/examples, but gallery/velocity caches without a retained reference header remain unsynchronised."
+    "Fresh native queries now export file counts/examples, but gallery/velocity caches without a retained reference header remain unsynchronised.",
+    "2026-10-09: old seed-cache versions 1-7 now read by the database importer and the exchange codec drops repeated seeds as the reference does. Still missing: clipboard bitmap and PNG drag/drop (low priority), per-object selection and partial skips, header caches (velocity, gallery examples) for fresh native queries."
    ]
   },
   {

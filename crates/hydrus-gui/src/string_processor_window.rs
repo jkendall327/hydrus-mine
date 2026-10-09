@@ -655,6 +655,7 @@ fn show_step(window: &StringStepWindow, editor: &StepEditor) {
             window.set_kind(5);
             window.set_tag_filter_message(TAG_FILTER_MESSAGE.into());
             window.set_tag_filter(e.filter_label().into());
+            window.set_tag_filter_tooltip(e.filter_tooltip().into());
             window.set_tag_example(e.example.as_str().into());
             let (text, ok) = e.test_result();
             window.set_test_result(text.into());

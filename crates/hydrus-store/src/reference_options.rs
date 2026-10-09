@@ -207,6 +207,40 @@ impl ReferenceOptions {
     }
 }
 
+/// The reasons recently typed into petition questions, newest first, per
+/// content type and action ("siblings/add", "parents/delete"; the reference's
+/// `recent_petition_reasons`). Kept apart from [`ReferenceOptions`] so an
+/// Options dialog applying its staged copy cannot drop reasons typed meanwhile.
+#[derive(Debug, Clone, Default, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(default)]
+pub struct RecentPetitionReasons {
+    pub reasons: BTreeMap<String, Vec<String>>,
+}
+
+impl crate::settings::Setting for RecentPetitionReasons {
+    const KEY: &'static str = "recent_petition_reasons";
+}
+
+impl RecentPetitionReasons {
+    /// The newest `count` reasons for `key` (`GetRecentPetitionReasons`).
+    pub fn get(&self, key: &str, count: i64) -> Vec<String> {
+        let count = usize::try_from(count).unwrap_or(0);
+        self.reasons
+            .get(key)
+            .map(|r| r.iter().take(count).cloned().collect())
+            .unwrap_or_default()
+    }
+
+    /// `reason` to the front of `key`'s reasons, once, keeping the newest
+    /// `count` (`PushRecentPetitionReason`).
+    pub fn push(&mut self, key: &str, reason: &str, count: i64) {
+        let reasons = self.reasons.entry(key.to_owned()).or_default();
+        reasons.retain(|r| r != reason);
+        reasons.insert(0, reason.to_owned());
+        reasons.truncate(usize::try_from(count).unwrap_or(0));
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

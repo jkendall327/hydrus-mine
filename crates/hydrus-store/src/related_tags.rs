@@ -79,6 +79,21 @@ pub struct Query {
     pub display: bool,
     pub weights: Weights,
     pub concurrence_percent: u8,
+    /// How long the search may take (the quick, medium or thorough button's
+    /// duration); `None` is unbounded.
+    pub max_ms: Option<u32>,
+    /// Tags to leave out of the suggestions: when some tags are selected, the
+    /// others on the files (`other_tags_to_exclude`).
+    pub exclude: std::collections::BTreeSet<String>,
+}
+/// A search's suggestions and how much of it was done (the reference's
+/// `num_done`, `num_to_do`, `num_skipped`).
+#[derive(Clone, Debug, PartialEq, Eq, Default)]
+pub struct Report {
+    pub suggestions: Vec<Suggestion>,
+    pub searched: usize,
+    pub total: usize,
+    pub skipped: usize,
 }
 #[derive(Clone, Debug, PartialEq, Eq, Serialize)]
 pub struct Suggestion {
@@ -98,7 +113,9 @@ pub fn rank(
         query,
         cancelled,
         &std::collections::BTreeSet::new(),
+        None,
     )
+    .suggestions
 }
 fn rank_excluding(
     files: &std::collections::BTreeMap<String, std::collections::BTreeSet<hydrus_core::HashId>>,
@@ -106,15 +123,27 @@ fn rank_excluding(
     query: &Query,
     cancelled: &dyn Fn() -> bool,
     excluded: &std::collections::BTreeSet<String>,
-) -> Vec<Suggestion> {
+    deadline: Option<std::time::Instant>,
+) -> Report {
+    let mut skipped = 0;
+    let no_files = std::collections::BTreeSet::new();
     let mut searches: Vec<_> = query
         .searches
         .iter()
         .filter_map(|tag| {
             let weight = Weights::percent(&query.weights.search, tag);
-            let set = files.get(tag)?;
-            let total = counts.get(tag)?.len();
-            (weight > 0 && total > 0).then_some((tag, set, weight, total))
+            if weight == 0 {
+                return None;
+            }
+            let total = counts.get(tag).map_or(0, std::collections::BTreeSet::len);
+            if total == 0 {
+                skipped += 1;
+                return None;
+            }
+            // (a tag counted in the display store may have no raw mappings of its
+            // own, as an ideal sibling searched over all known files: it is
+            // searched, and finds nothing)
+            Some((tag, files.get(tag).unwrap_or(&no_files), weight, total))
         })
         .collect();
     searches.sort_by(|a, b| {
@@ -123,10 +152,20 @@ fn rank_excluding(
             .then_with(|| a.0.cmp(b.0))
     });
     searches.dedup_by(|a, b| a.0 == b.0);
+    let total = searches.len();
+    // A search tag the time ran out before is not searched at all.
+    if let Some(deadline) = deadline {
+        let done = searches
+            .iter()
+            .position(|_| std::time::Instant::now() >= deadline)
+            .unwrap_or(total);
+        searches.truncate(done);
+    }
+    let searched = searches.len();
     let mut scores = Vec::new();
     for (tag, candidate) in files {
         if cancelled() {
-            return Vec::new();
+            return Report::default();
         }
         if candidate.is_empty()
             || excluded.contains(tag)
@@ -163,7 +202,12 @@ fn rank_excluding(
         })
         .collect();
     result.sort_by(|a, b| b.score.cmp(&a.score).then_with(|| a.tag.cmp(&b.tag)));
-    result
+    Report {
+        suggestions: result,
+        searched,
+        total,
+        skipped,
+    }
 }
 /// Read current and pending mappings on the worker connection, optionally applying
 /// this service's sibling/parent graph. Cancellation is checked during row reads.
@@ -171,7 +215,7 @@ pub fn query(
     store: &crate::Store,
     request: &Query,
     cancelled: &dyn Fn() -> bool,
-) -> crate::Result<Vec<Suggestion>> {
+) -> crate::Result<Report> {
     use hydrus_core::{HashId, TagId};
     use std::collections::{BTreeMap, BTreeSet};
     let snapshot = store.snapshot();
@@ -181,6 +225,11 @@ pub fn query(
     ))?;
     let graph = snapshot.display.get(service.id);
     let tables = crate::schema::MappingTables::new(service.id);
+    // The reference stops looking for results at 85% of the time it is given.
+    let deadline = request.max_ms.map(|ms| {
+        std::time::Instant::now()
+            + std::time::Duration::from_secs_f64(f64::from(ms) / 1000.0 * 0.85)
+    });
     store.read(|conn| {
         let mut stored:BTreeMap<TagId,BTreeSet<HashId>>=BTreeMap::new();
         for table in [&tables.current,&tables.pending] {
@@ -188,7 +237,7 @@ pub fn query(
             let mut stmt=conn.prepare(&sql)?;
             let mut rows=stmt.query([local.id])?;
             while let Some(row)=rows.next()? {
-                if cancelled() {return Ok(Vec::new());}
+                if cancelled() {return Ok(Report::default());}
                 stored.entry(row.get(0)?).or_default().insert(row.get(1)?);
             }
         }
@@ -216,11 +265,21 @@ pub fn query(
         }
         request.searches.sort();request.searches.dedup();
         let mut excluded=BTreeSet::new();
-        for tag in &request.searches {
+        // The other tags on the files (their ideals, when searching the display
+        // store) and every search tag, with all of their parents, are not suggested.
+        let mut roots:Vec<String>=request.searches.clone();
+        for tag in &request.exclude {
+            let id=match hydrus_core::Tag::new(tag){Some(t)=>crate::master::tag_id(conn,&t)?,None=>None};
+            let ideal=id.filter(|_|request.display)
+                .and_then(|id|names.get(&graph.ideal(id)).map(|t|t.as_str().to_owned()));
+            roots.push(ideal.unwrap_or_else(||tag.clone()));
+        }
+        excluded.extend(roots.iter().cloned());
+        for tag in &roots {
             if let Some(tag)=hydrus_core::Tag::new(tag) && let Some(id)=crate::master::tag_id(conn,&tag)? {
                 excluded.extend(graph.ancestors(id).iter().filter_map(|ancestor|names.get(ancestor).map(|tag|tag.as_str().to_owned())));
             }
         }
-        Ok(rank_excluding(matches,counts,&request,cancelled,&excluded))
+        Ok(rank_excluding(matches,counts,&request,cancelled,&excluded,deadline))
     })
 }

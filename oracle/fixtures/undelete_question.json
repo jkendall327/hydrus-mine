@@ -1,0 +1,1057 @@
+[
+  {
+    "case": "deleted from its one domain",
+    "files": [
+      "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61"
+    ],
+    "deleted_from": [
+      "art",
+      "my files"
+    ],
+    "current_in": [],
+    "runs": [
+      {
+        "confirm": false,
+        "yes": false,
+        "choice": null,
+        "log": [
+          {
+            "chooser": "Undelete for?",
+            "message": "",
+            "choices": [
+              [
+                "art",
+                "Undelete back to art."
+              ],
+              [
+                "my files",
+                "Undelete back to my files."
+              ],
+              [
+                "all the above",
+                "Undelete back to all services the files have been deleted from."
+              ]
+            ]
+          }
+        ]
+      },
+      {
+        "confirm": false,
+        "yes": true,
+        "choice": null,
+        "log": [
+          {
+            "chooser": "Undelete for?",
+            "message": "",
+            "choices": [
+              [
+                "art",
+                "Undelete back to art."
+              ],
+              [
+                "my files",
+                "Undelete back to my files."
+              ],
+              [
+                "all the above",
+                "Undelete back to all services the files have been deleted from."
+              ]
+            ]
+          }
+        ]
+      },
+      {
+        "confirm": false,
+        "yes": true,
+        "choice": 0,
+        "log": [
+          {
+            "chooser": "Undelete for?",
+            "message": "",
+            "choices": [
+              [
+                "art",
+                "Undelete back to art."
+              ],
+              [
+                "my files",
+                "Undelete back to my files."
+              ],
+              [
+                "all the above",
+                "Undelete back to all services the files have been deleted from."
+              ]
+            ]
+          },
+          {
+            "undelete": "art",
+            "files": [
+              "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61"
+            ]
+          }
+        ]
+      },
+      {
+        "confirm": false,
+        "yes": true,
+        "choice": 1,
+        "log": [
+          {
+            "chooser": "Undelete for?",
+            "message": "",
+            "choices": [
+              [
+                "art",
+                "Undelete back to art."
+              ],
+              [
+                "my files",
+                "Undelete back to my files."
+              ],
+              [
+                "all the above",
+                "Undelete back to all services the files have been deleted from."
+              ]
+            ]
+          },
+          {
+            "undelete": "my files",
+            "files": [
+              "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61"
+            ]
+          }
+        ]
+      },
+      {
+        "confirm": false,
+        "yes": true,
+        "choice": 2,
+        "log": [
+          {
+            "chooser": "Undelete for?",
+            "message": "",
+            "choices": [
+              [
+                "art",
+                "Undelete back to art."
+              ],
+              [
+                "my files",
+                "Undelete back to my files."
+              ],
+              [
+                "all the above",
+                "Undelete back to all services the files have been deleted from."
+              ]
+            ]
+          },
+          {
+            "undelete": "all my files",
+            "files": [
+              "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61"
+            ]
+          }
+        ]
+      },
+      {
+        "confirm": true,
+        "yes": false,
+        "choice": null,
+        "log": [
+          {
+            "chooser": "Undelete for?",
+            "message": "",
+            "choices": [
+              [
+                "art",
+                "Undelete back to art."
+              ],
+              [
+                "my files",
+                "Undelete back to my files."
+              ],
+              [
+                "all the above",
+                "Undelete back to all services the files have been deleted from."
+              ]
+            ]
+          }
+        ]
+      },
+      {
+        "confirm": true,
+        "yes": true,
+        "choice": null,
+        "log": [
+          {
+            "chooser": "Undelete for?",
+            "message": "",
+            "choices": [
+              [
+                "art",
+                "Undelete back to art."
+              ],
+              [
+                "my files",
+                "Undelete back to my files."
+              ],
+              [
+                "all the above",
+                "Undelete back to all services the files have been deleted from."
+              ]
+            ]
+          }
+        ]
+      },
+      {
+        "confirm": true,
+        "yes": true,
+        "choice": 0,
+        "log": [
+          {
+            "chooser": "Undelete for?",
+            "message": "",
+            "choices": [
+              [
+                "art",
+                "Undelete back to art."
+              ],
+              [
+                "my files",
+                "Undelete back to my files."
+              ],
+              [
+                "all the above",
+                "Undelete back to all services the files have been deleted from."
+              ]
+            ]
+          },
+          {
+            "undelete": "art",
+            "files": [
+              "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61"
+            ]
+          }
+        ]
+      },
+      {
+        "confirm": true,
+        "yes": true,
+        "choice": 1,
+        "log": [
+          {
+            "chooser": "Undelete for?",
+            "message": "",
+            "choices": [
+              [
+                "art",
+                "Undelete back to art."
+              ],
+              [
+                "my files",
+                "Undelete back to my files."
+              ],
+              [
+                "all the above",
+                "Undelete back to all services the files have been deleted from."
+              ]
+            ]
+          },
+          {
+            "undelete": "my files",
+            "files": [
+              "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61"
+            ]
+          }
+        ]
+      },
+      {
+        "confirm": true,
+        "yes": true,
+        "choice": 2,
+        "log": [
+          {
+            "chooser": "Undelete for?",
+            "message": "",
+            "choices": [
+              [
+                "art",
+                "Undelete back to art."
+              ],
+              [
+                "my files",
+                "Undelete back to my files."
+              ],
+              [
+                "all the above",
+                "Undelete back to all services the files have been deleted from."
+              ]
+            ]
+          },
+          {
+            "undelete": "all my files",
+            "files": [
+              "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "case": "deleted from both its domains",
+    "files": [
+      "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b"
+    ],
+    "deleted_from": [
+      "art",
+      "my files"
+    ],
+    "current_in": [],
+    "runs": [
+      {
+        "confirm": false,
+        "yes": false,
+        "choice": null,
+        "log": [
+          {
+            "chooser": "Undelete for?",
+            "message": "",
+            "choices": [
+              [
+                "art",
+                "Undelete back to art."
+              ],
+              [
+                "my files",
+                "Undelete back to my files."
+              ],
+              [
+                "all the above",
+                "Undelete back to all services the files have been deleted from."
+              ]
+            ]
+          }
+        ]
+      },
+      {
+        "confirm": false,
+        "yes": true,
+        "choice": null,
+        "log": [
+          {
+            "chooser": "Undelete for?",
+            "message": "",
+            "choices": [
+              [
+                "art",
+                "Undelete back to art."
+              ],
+              [
+                "my files",
+                "Undelete back to my files."
+              ],
+              [
+                "all the above",
+                "Undelete back to all services the files have been deleted from."
+              ]
+            ]
+          }
+        ]
+      },
+      {
+        "confirm": false,
+        "yes": true,
+        "choice": 0,
+        "log": [
+          {
+            "chooser": "Undelete for?",
+            "message": "",
+            "choices": [
+              [
+                "art",
+                "Undelete back to art."
+              ],
+              [
+                "my files",
+                "Undelete back to my files."
+              ],
+              [
+                "all the above",
+                "Undelete back to all services the files have been deleted from."
+              ]
+            ]
+          },
+          {
+            "undelete": "art",
+            "files": [
+              "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b"
+            ]
+          }
+        ]
+      },
+      {
+        "confirm": false,
+        "yes": true,
+        "choice": 1,
+        "log": [
+          {
+            "chooser": "Undelete for?",
+            "message": "",
+            "choices": [
+              [
+                "art",
+                "Undelete back to art."
+              ],
+              [
+                "my files",
+                "Undelete back to my files."
+              ],
+              [
+                "all the above",
+                "Undelete back to all services the files have been deleted from."
+              ]
+            ]
+          },
+          {
+            "undelete": "my files",
+            "files": [
+              "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b"
+            ]
+          }
+        ]
+      },
+      {
+        "confirm": false,
+        "yes": true,
+        "choice": 2,
+        "log": [
+          {
+            "chooser": "Undelete for?",
+            "message": "",
+            "choices": [
+              [
+                "art",
+                "Undelete back to art."
+              ],
+              [
+                "my files",
+                "Undelete back to my files."
+              ],
+              [
+                "all the above",
+                "Undelete back to all services the files have been deleted from."
+              ]
+            ]
+          },
+          {
+            "undelete": "all my files",
+            "files": [
+              "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b"
+            ]
+          }
+        ]
+      },
+      {
+        "confirm": true,
+        "yes": false,
+        "choice": null,
+        "log": [
+          {
+            "chooser": "Undelete for?",
+            "message": "",
+            "choices": [
+              [
+                "art",
+                "Undelete back to art."
+              ],
+              [
+                "my files",
+                "Undelete back to my files."
+              ],
+              [
+                "all the above",
+                "Undelete back to all services the files have been deleted from."
+              ]
+            ]
+          }
+        ]
+      },
+      {
+        "confirm": true,
+        "yes": true,
+        "choice": null,
+        "log": [
+          {
+            "chooser": "Undelete for?",
+            "message": "",
+            "choices": [
+              [
+                "art",
+                "Undelete back to art."
+              ],
+              [
+                "my files",
+                "Undelete back to my files."
+              ],
+              [
+                "all the above",
+                "Undelete back to all services the files have been deleted from."
+              ]
+            ]
+          }
+        ]
+      },
+      {
+        "confirm": true,
+        "yes": true,
+        "choice": 0,
+        "log": [
+          {
+            "chooser": "Undelete for?",
+            "message": "",
+            "choices": [
+              [
+                "art",
+                "Undelete back to art."
+              ],
+              [
+                "my files",
+                "Undelete back to my files."
+              ],
+              [
+                "all the above",
+                "Undelete back to all services the files have been deleted from."
+              ]
+            ]
+          },
+          {
+            "undelete": "art",
+            "files": [
+              "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b"
+            ]
+          }
+        ]
+      },
+      {
+        "confirm": true,
+        "yes": true,
+        "choice": 1,
+        "log": [
+          {
+            "chooser": "Undelete for?",
+            "message": "",
+            "choices": [
+              [
+                "art",
+                "Undelete back to art."
+              ],
+              [
+                "my files",
+                "Undelete back to my files."
+              ],
+              [
+                "all the above",
+                "Undelete back to all services the files have been deleted from."
+              ]
+            ]
+          },
+          {
+            "undelete": "my files",
+            "files": [
+              "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b"
+            ]
+          }
+        ]
+      },
+      {
+        "confirm": true,
+        "yes": true,
+        "choice": 2,
+        "log": [
+          {
+            "chooser": "Undelete for?",
+            "message": "",
+            "choices": [
+              [
+                "art",
+                "Undelete back to art."
+              ],
+              [
+                "my files",
+                "Undelete back to my files."
+              ],
+              [
+                "all the above",
+                "Undelete back to all services the files have been deleted from."
+              ]
+            ]
+          },
+          {
+            "undelete": "all my files",
+            "files": [
+              "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "case": "deleted from one of its two domains",
+    "files": [
+      "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147"
+    ],
+    "deleted_from": [
+      "my files"
+    ],
+    "current_in": [
+      "art"
+    ],
+    "runs": [
+      {
+        "confirm": false,
+        "yes": false,
+        "choice": null,
+        "log": [
+          {
+            "undelete": "my files",
+            "files": [
+              "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147"
+            ]
+          }
+        ]
+      },
+      {
+        "confirm": false,
+        "yes": true,
+        "choice": null,
+        "log": [
+          {
+            "undelete": "my files",
+            "files": [
+              "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147"
+            ]
+          }
+        ]
+      },
+      {
+        "confirm": false,
+        "yes": true,
+        "choice": 0,
+        "log": [
+          {
+            "undelete": "my files",
+            "files": [
+              "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147"
+            ]
+          }
+        ]
+      },
+      {
+        "confirm": false,
+        "yes": true,
+        "choice": 1,
+        "log": [
+          {
+            "undelete": "my files",
+            "files": [
+              "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147"
+            ]
+          }
+        ]
+      },
+      {
+        "confirm": false,
+        "yes": true,
+        "choice": 2,
+        "log": [
+          {
+            "undelete": "my files",
+            "files": [
+              "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147"
+            ]
+          }
+        ]
+      },
+      {
+        "confirm": true,
+        "yes": false,
+        "choice": null,
+        "log": [
+          {
+            "question": "Undelete this file back to my files?"
+          }
+        ]
+      },
+      {
+        "confirm": true,
+        "yes": true,
+        "choice": null,
+        "log": [
+          {
+            "question": "Undelete this file back to my files?"
+          },
+          {
+            "undelete": "my files",
+            "files": [
+              "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147"
+            ]
+          }
+        ]
+      },
+      {
+        "confirm": true,
+        "yes": true,
+        "choice": 0,
+        "log": [
+          {
+            "question": "Undelete this file back to my files?"
+          },
+          {
+            "undelete": "my files",
+            "files": [
+              "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147"
+            ]
+          }
+        ]
+      },
+      {
+        "confirm": true,
+        "yes": true,
+        "choice": 1,
+        "log": [
+          {
+            "question": "Undelete this file back to my files?"
+          },
+          {
+            "undelete": "my files",
+            "files": [
+              "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147"
+            ]
+          }
+        ]
+      },
+      {
+        "confirm": true,
+        "yes": true,
+        "choice": 2,
+        "log": [
+          {
+            "question": "Undelete this file back to my files?"
+          },
+          {
+            "undelete": "my files",
+            "files": [
+              "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "case": "two files, each deleted from one domain",
+    "files": [
+      "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61",
+      "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147"
+    ],
+    "deleted_from": [
+      "art",
+      "my files"
+    ],
+    "current_in": [
+      "art"
+    ],
+    "runs": [
+      {
+        "confirm": false,
+        "yes": false,
+        "choice": null,
+        "log": [
+          {
+            "chooser": "Undelete for?",
+            "message": "",
+            "choices": [
+              [
+                "art",
+                "Undelete back to art."
+              ],
+              [
+                "my files",
+                "Undelete back to my files."
+              ],
+              [
+                "all the above",
+                "Undelete back to all services the files have been deleted from."
+              ]
+            ]
+          }
+        ]
+      },
+      {
+        "confirm": false,
+        "yes": true,
+        "choice": null,
+        "log": [
+          {
+            "chooser": "Undelete for?",
+            "message": "",
+            "choices": [
+              [
+                "art",
+                "Undelete back to art."
+              ],
+              [
+                "my files",
+                "Undelete back to my files."
+              ],
+              [
+                "all the above",
+                "Undelete back to all services the files have been deleted from."
+              ]
+            ]
+          }
+        ]
+      },
+      {
+        "confirm": false,
+        "yes": true,
+        "choice": 0,
+        "log": [
+          {
+            "chooser": "Undelete for?",
+            "message": "",
+            "choices": [
+              [
+                "art",
+                "Undelete back to art."
+              ],
+              [
+                "my files",
+                "Undelete back to my files."
+              ],
+              [
+                "all the above",
+                "Undelete back to all services the files have been deleted from."
+              ]
+            ]
+          },
+          {
+            "undelete": "art",
+            "files": [
+              "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61"
+            ]
+          }
+        ]
+      },
+      {
+        "confirm": false,
+        "yes": true,
+        "choice": 1,
+        "log": [
+          {
+            "chooser": "Undelete for?",
+            "message": "",
+            "choices": [
+              [
+                "art",
+                "Undelete back to art."
+              ],
+              [
+                "my files",
+                "Undelete back to my files."
+              ],
+              [
+                "all the above",
+                "Undelete back to all services the files have been deleted from."
+              ]
+            ]
+          },
+          {
+            "undelete": "my files",
+            "files": [
+              "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147",
+              "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61"
+            ]
+          }
+        ]
+      },
+      {
+        "confirm": false,
+        "yes": true,
+        "choice": 2,
+        "log": [
+          {
+            "chooser": "Undelete for?",
+            "message": "",
+            "choices": [
+              [
+                "art",
+                "Undelete back to art."
+              ],
+              [
+                "my files",
+                "Undelete back to my files."
+              ],
+              [
+                "all the above",
+                "Undelete back to all services the files have been deleted from."
+              ]
+            ]
+          },
+          {
+            "undelete": "all my files",
+            "files": [
+              "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61"
+            ]
+          }
+        ]
+      },
+      {
+        "confirm": true,
+        "yes": false,
+        "choice": null,
+        "log": [
+          {
+            "chooser": "Undelete for?",
+            "message": "",
+            "choices": [
+              [
+                "art",
+                "Undelete back to art."
+              ],
+              [
+                "my files",
+                "Undelete back to my files."
+              ],
+              [
+                "all the above",
+                "Undelete back to all services the files have been deleted from."
+              ]
+            ]
+          }
+        ]
+      },
+      {
+        "confirm": true,
+        "yes": true,
+        "choice": null,
+        "log": [
+          {
+            "chooser": "Undelete for?",
+            "message": "",
+            "choices": [
+              [
+                "art",
+                "Undelete back to art."
+              ],
+              [
+                "my files",
+                "Undelete back to my files."
+              ],
+              [
+                "all the above",
+                "Undelete back to all services the files have been deleted from."
+              ]
+            ]
+          }
+        ]
+      },
+      {
+        "confirm": true,
+        "yes": true,
+        "choice": 0,
+        "log": [
+          {
+            "chooser": "Undelete for?",
+            "message": "",
+            "choices": [
+              [
+                "art",
+                "Undelete back to art."
+              ],
+              [
+                "my files",
+                "Undelete back to my files."
+              ],
+              [
+                "all the above",
+                "Undelete back to all services the files have been deleted from."
+              ]
+            ]
+          },
+          {
+            "undelete": "art",
+            "files": [
+              "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61"
+            ]
+          }
+        ]
+      },
+      {
+        "confirm": true,
+        "yes": true,
+        "choice": 1,
+        "log": [
+          {
+            "chooser": "Undelete for?",
+            "message": "",
+            "choices": [
+              [
+                "art",
+                "Undelete back to art."
+              ],
+              [
+                "my files",
+                "Undelete back to my files."
+              ],
+              [
+                "all the above",
+                "Undelete back to all services the files have been deleted from."
+              ]
+            ]
+          },
+          {
+            "undelete": "my files",
+            "files": [
+              "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147",
+              "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61"
+            ]
+          }
+        ]
+      },
+      {
+        "confirm": true,
+        "yes": true,
+        "choice": 2,
+        "log": [
+          {
+            "chooser": "Undelete for?",
+            "message": "",
+            "choices": [
+              [
+                "art",
+                "Undelete back to art."
+              ],
+              [
+                "my files",
+                "Undelete back to my files."
+              ],
+              [
+                "all the above",
+                "Undelete back to all services the files have been deleted from."
+              ]
+            ]
+          },
+          {
+            "undelete": "all my files",
+            "files": [
+              "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61"
+            ]
+          }
+        ]
+      }
+    ]
+  }
+]

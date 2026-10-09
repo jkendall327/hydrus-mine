@@ -1,3 +1,4 @@
+import { Btn } from "btn.slint";
 // Review selected files' manual export destinations, then export on a worker.
 import { Button, CheckBox, LineEdit, ProgressIndicator } from "std-widgets.slint";
 import { Theme } from "theme.slint";
@@ -91,19 +92,19 @@ export component ExportFilesWindow inherits Window {
             }
         }
         HorizontalLayout {
-            Button { text: "remove selected"; enabled: !root.working && !root.asking; clicked => { root.remove(); } }
+            Btn { text: "remove selected"; enabled: !root.working && !root.asking; clicked => { root.remove(); } }
             Rectangle { horizontal-stretch: 1; }
         }
         Text { text: "export path"; color: Theme.text; font-weight: 700; }
         HorizontalLayout {
             LineEdit { text <=> root.destination; enabled: !root.working && !root.asking; accepted => { root.update(); } }
-            Button { text: "browse…"; enabled: !root.working && !root.asking; clicked => { root.browse(); } }
-            Button { text: "open this location"; clicked => { root.open-location(); } }
+            Btn { text: "browse…"; enabled: !root.working && !root.asking; clicked => { root.browse(); } }
+            Btn { text: "open this location"; clicked => { root.open-location(); } }
         }
         Text { text: "filenames"; color: Theme.text; font-weight: 700; }
         HorizontalLayout {
             LineEdit { text <=> root.phrase; enabled: !root.working && !root.asking; accepted => { root.update(); } }
-            Button { text: "update"; enabled: !root.working && !root.asking; clicked => { root.update(); } }
+            Btn { text: "update"; enabled: !root.working && !root.asking; clicked => { root.update(); } }
             ExportPatternButton {
                 labels: root.pattern-shortcuts;
                 heading: root.pattern-heading;
@@ -114,15 +115,15 @@ export component ExportFilesWindow inherits Window {
         Text { text: "{hash}   {file_id}   {#}   {tags}   {nn tags}   [namespace]   (tag)"; color: Theme.text; }
         CheckBox { text: "trash files in hydrus client after export"; checked <=> root.trash; enabled: !root.working && !root.asking; toggled => { if root.trash { root.symlinks = false; } } }
         CheckBox { text: "EXPERIMENTAL: export symlinks"; checked <=> root.symlinks; enabled: !root.working && !root.trash; }
-        Button { text: root.sidecars; enabled: !root.working && !root.asking; clicked => { root.edit-sidecars(); } }
+        Btn { text: root.sidecars; enabled: !root.working && !root.asking; clicked => { root.edit-sidecars(); } }
         Text { text: root.status; color: Theme.text; wrap: word-wrap; }
         if root.working: ProgressIndicator { progress: root.progress; }
         HorizontalLayout {
             Rectangle { horizontal-stretch: 1; }
-            Button { text: "close"; enabled: !root.working && !root.asking; clicked => { root.dismissed(); } }
-            Button { text: "cancel export"; enabled: root.working; clicked => { root.cancel(); } }
-            Button { text: "export and close"; enabled: !root.working && !root.asking; clicked => { root.export(true); } }
-            Button { text: "export"; enabled: !root.working && !root.asking; clicked => { root.export(false); } }
+            Btn { text: "close"; enabled: !root.working && !root.asking; clicked => { root.dismissed(); } }
+            Btn { text: "cancel export"; enabled: root.working; clicked => { root.cancel(); } }
+            Btn { text: "export and close"; enabled: !root.working && !root.asking; clicked => { root.export(true); } }
+            Btn { text: "export"; enabled: !root.working && !root.asking; clicked => { root.export(false); } }
         }
     }
     if root.asking: Asking {

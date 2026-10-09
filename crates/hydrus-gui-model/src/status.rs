@@ -283,6 +283,23 @@ impl SessionBytes {
     }
 }
 
+/// The tooltips of the status bar's idle and CPU-busy fields
+/// (`_RefreshStatusBar`); none while the field is empty.
+pub fn activity_tooltips(idle: bool, cpu_busy: bool) -> (&'static str, &'static str) {
+    (
+        if idle {
+            "client is idle, it can do maintenance work"
+        } else {
+            ""
+        },
+        if cpu_busy {
+            "this computer has been doing work recently, so some hydrus maintenance will not start"
+        } else {
+            ""
+        },
+    )
+}
+
 /// The status bar's idle and CPU-busy fields (`_RefreshStatusBar`).
 pub fn activity(idle: bool, cpu_busy: bool) -> (&'static str, &'static str) {
     (

@@ -168,6 +168,7 @@ impl Control {
     /// Publish the idle state for the daemon (on change, else every five
     /// seconds) and show it, with the CPU-busy check, in the status bar.
     fn publish_idle(&self, window: &MainWindow, store: &Store, now_ms: i64) {
+        store.sleep_check();
         self.check_busy(store, now_ms);
         let idle = self.0.monitor.idle_at(now_ms);
         // Background work wants idle and a system that is not busy
@@ -187,6 +188,12 @@ impl Control {
         let (idle_text, busy_text) = hydrus_gui_model::status::activity(idle, self.0.busy.get());
         window.set_status_idle(idle_text.into());
         window.set_status_busy(busy_text.into());
+        let (idle_tip, busy_tip) =
+            hydrus_gui_model::status::activity_tooltips(idle, self.0.busy.get());
+        window.set_status_idle_tip(idle_tip.into());
+        window.set_status_busy_tip(busy_tip.into());
+        // (the reference's job name has no counterpart here, so no tooltip)
+        window.set_status_db(store.db_activity().into());
     }
     /// Read the cores' (busy, total) times from `times` instead of the system,
     /// so tests can say how busy each core was.

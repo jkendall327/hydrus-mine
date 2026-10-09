@@ -1,3 +1,4 @@
+import { Btn } from "btn.slint";
 import { Button, CheckBox, ComboBox, LineEdit, ScrollView, VerticalBox } from "std-widgets.slint";
 import { ListTable, TableColumn, TableRow } from "list_table.slint";
 import { DownloadControl, DownloadLine, JobCogMenu } from "importing.slint";
@@ -47,7 +48,7 @@ export component BandwidthWindow inherits Window {
             if root.history == 4: LineEdit { text <=> root.history-seconds; enabled: !root.show-all; edited => { root.refresh(); } }
             CheckBox { text: "show all"; checked <=> root.show-all; toggled => { root.refresh(); } }
             CheckBox { text: "show anything with specific bandwidth rules"; enabled: !root.show-all && root.history != 3; checked <=> root.include-rules; toggled => { root.refresh(); } }
-            Button { text: "refresh snapshot"; clicked => { root.refresh(); } }
+            Btn { text: "refresh snapshot"; clicked => { root.refresh(); } }
         }
         ListTable { columns: root.columns; rows: root.rows; sort-column: root.sort-column; ascending: root.ascending; vertical-stretch: 1;
             row-clicked(r,c,s) => { root.row-clicked(r,c,s); }
@@ -73,26 +74,26 @@ export component BandwidthWindow inherits Window {
             }
         }
         HorizontalLayout {
-            Button { text: "delete selected history"; enabled: root.can-delete && !root.busy && root.question == ""; clicked => { root.delete-history-clicked(); } }
-            Button { text: "edit rules"; enabled: root.can-edit && !root.busy; clicked => { root.edit-clicked(); } }
-            Button { text: "use default rules"; enabled: root.can-revert && !root.busy; clicked => { root.revert-clicked(); } }
+            Btn { text: "delete selected history"; enabled: root.can-delete && !root.busy && root.question == ""; clicked => { root.delete-history-clicked(); } }
+            Btn { text: "edit rules"; enabled: root.can-edit && !root.busy; clicked => { root.edit-clicked(); } }
+            Btn { text: "use default rules"; enabled: root.can-revert && !root.busy; clicked => { root.revert-clicked(); } }
             Rectangle { horizontal-stretch: 1; }
             ComboBox { model: ["global", "web domain", "hydrus service", "downloader page", "subscription", "watcher page"]; current-index <=> root.default-kind; }
-            Button { text: "edit default bandwidth rules"; enabled: !root.busy; clicked => { root.default-clicked(); } }
+            Btn { text: "edit default bandwidth rules"; enabled: !root.busy; clicked => { root.default-clicked(); } }
         }
         HorizontalLayout {
             LineEdit { text <=> root.domain; placeholder-text: "domain (for example example.com)"; horizontal-stretch: 1; }
-            Button { text: "set domain rules"; enabled: !root.busy; clicked => { root.domain-clicked(); } }
-            Button { text: "reset default bandwidth rules"; enabled: !root.busy; clicked => { root.reset-clicked(); } }
+            Btn { text: "set domain rules"; enabled: !root.busy; clicked => { root.domain-clicked(); } }
+            Btn { text: "reset default bandwidth rules"; enabled: !root.busy; clicked => { root.reset-clicked(); } }
         }
         if root.question != "": HorizontalLayout {
             Text { text: root.question; wrap: word-wrap; color: Theme.text; horizontal-stretch: 1; }
-            Button { text: "yes"; clicked => { root.answer(true); } }
-            Button { text: "no"; clicked => { root.answer(false); } }
+            Btn { text: "yes"; clicked => { root.answer(true); } }
+            Btn { text: "no"; clicked => { root.answer(false); } }
         }
         HorizontalLayout {
             Text { text: root.status; color: Theme.text; horizontal-stretch: 1; wrap: word-wrap; }
-            Button { text: "close"; clicked => { root.close-clicked(); } }
+            Btn { text: "close"; clicked => { root.close-clicked(); } }
         }
     }
 }
@@ -135,15 +136,15 @@ export component EditBandwidthRulesWindow inherits Window {
             LineEdit { text <=> root.seconds; enabled: !root.monthly; horizontal-stretch: 1; }
         }
         HorizontalLayout {
-            Button { text: "add"; enabled: !root.busy; clicked => { root.add-rule(); } }
-            Button { text: "replace selected"; enabled: !root.busy; clicked => { root.replace-rule(); } }
-            Button { text: "delete selected"; enabled: !root.busy; clicked => { root.delete-rule(); } }
+            Btn { text: "add"; enabled: !root.busy; clicked => { root.add-rule(); } }
+            Btn { text: "replace selected"; enabled: !root.busy; clicked => { root.replace-rule(); } }
+            Btn { text: "delete selected"; enabled: !root.busy; clicked => { root.delete-rule(); } }
         }
         Text { text: root.error; wrap: word-wrap; color: Theme.text; }
         HorizontalLayout {
             Rectangle { horizontal-stretch: 1; }
-            Button { text: "apply"; enabled: !root.busy; clicked => { root.apply-clicked(); } }
-            Button { text: "cancel"; enabled: !root.busy; clicked => { root.cancel-clicked(); } }
+            Btn { text: "apply"; enabled: !root.busy; clicked => { root.apply-clicked(); } }
+            Btn { text: "cancel"; enabled: !root.busy; clicked => { root.cancel-clicked(); } }
         }
     }
 }
@@ -188,12 +189,12 @@ export component NetworkJobsWindow inherits Window {
         Text { text: root.detail; wrap: word-wrap; color: Theme.text; min-height: 75px; }
         HorizontalLayout {
             spacing: 8px;
-            Button { text: "refresh snapshot"; clicked => { root.refresh(); } }
+            Btn { text: "refresh snapshot"; clicked => { root.refresh(); } }
             CheckBox { text: "auto-refresh"; checked <=> root.auto-refresh; }
-            Button { text: "cancel selected"; enabled: root.can-act; clicked => { root.cancel-jobs(); } }
-            Button { text: "override bandwidth"; enabled: root.can-act; clicked => { root.override-jobs(); } }
+            Btn { text: "cancel selected"; enabled: root.can-act; clicked => { root.cancel-jobs(); } }
+            Btn { text: "override bandwidth"; enabled: root.can-act; clicked => { root.override-jobs(); } }
             Rectangle { horizontal-stretch: 1; }
-            Button { text: "close"; clicked => { root.close-clicked(); } }
+            Btn { text: "close"; clicked => { root.close-clicked(); } }
         }
         Text { text: root.status; wrap: word-wrap; color: Theme.text; }
     }

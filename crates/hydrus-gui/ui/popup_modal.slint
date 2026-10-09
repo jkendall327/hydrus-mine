@@ -1,3 +1,4 @@
+import { Btn } from "btn.slint";
 // A modal popup (`src/popup_modal.rs`): the reference's
 // `PopupMessageDialogPanel` in its dialog. The job's popup (title, texts,
 // gauges, download, pause and stop), and under it a close button, unless
@@ -64,7 +65,7 @@ export component PopupModalWindow inherits Window {
         }
         if !root.hide-close-button: HorizontalLayout {
             alignment: center;
-            Button {
+            Btn {
                 text: "close";
                 clicked => { root.close-clicked(); }
             }

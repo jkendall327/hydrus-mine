@@ -1,3 +1,4 @@
+import { Btn } from "btn.slint";
 import { PaintedTagText } from "tag_text.slint";
 // One write-tag input for editors. State, fetching and paste decisions live in Rust.
 import { Button, ComboBox, ScrollView, ListView } from "std-widgets.slint";
@@ -78,12 +79,12 @@ export component WriteTagInput inherits FocusScope {
                 edited(text) => { root.edited(text); }
                 accepted => { root.entered(); }
             }
-            Button { enabled: root.enabled; text: "paste"; clicked => { root.paste(true); } }
+            Btn { enabled: root.enabled; text: "paste"; clicked => { root.paste(true); } }
         }
         HorizontalLayout {
             spacing: 4px;
-            Button {text:root.file-label;enabled:root.enabled;clicked=>{root.domain-menu(false,self.absolute-position.x,self.absolute-position.y+self.height);} }
-            Button {text:root.tag-label;enabled:root.enabled;clicked=>{root.domain-menu(true,self.absolute-position.x,self.absolute-position.y+self.height);} }
+            Btn {text:root.file-label;enabled:root.enabled;clicked=>{root.domain-menu(false,self.absolute-position.x,self.absolute-position.y+self.height);} }
+            Btn {text:root.tag-label;enabled:root.enabled;clicked=>{root.domain-menu(true,self.absolute-position.x,self.absolute-position.y+self.height);} }
         }
         ComboBox {
             enabled: root.enabled;
@@ -182,8 +183,8 @@ export component TagMenuOverlay inherits Rectangle {
             Text { text: root.question; color: Theme.text; wrap: word-wrap; }
             HorizontalLayout {
                 alignment: end; spacing: 6px;
-                Button { text: root.yes-label; clicked => { root.answered(true); } }
-                Button { text: root.no-label; clicked => { root.answered(false); } }
+                Btn { text: root.yes-label; clicked => { root.answered(true); } }
+                Btn { text: root.no-label; clicked => { root.answered(false); } }
             }
         }
     }
@@ -291,8 +292,8 @@ export component WriteTagsWindow inherits Window {
             HorizontalLayout {
                 alignment: end;
                 spacing: 6px;
-                Button { enabled: root.question == ""; text: "apply"; clicked => { root.apply(); } }
-                Button { text: "cancel"; clicked => { root.cancel(); } }
+                Btn { enabled: root.question == ""; text: "apply"; clicked => { root.apply(); } }
+                Btn { text: "cancel"; clicked => { root.cancel(); } }
             }
         }
 

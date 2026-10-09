@@ -1,3 +1,4 @@
+import { Btn } from "btn.slint";
 import { Button, CheckBox, ComboBox, LineEdit, ScrollView, SpinBox } from "std-widgets.slint";
 import { ListTable, TableRow } from "list_table.slint";
 export struct ExternalRule { label:string, enabled:bool, token:string, summary:string, value:string }
@@ -49,7 +50,7 @@ export component ExternalCallsTable inherits Rectangle {
                     MenuItem {title:"add them all";activated=>{root.action("defaults-all");}}
                     MenuItem {title:"select from a list";activated=>{root.action("defaults");}}
                 }
-                Button {text:"add defaults";enabled:!root.child-open;clicked=>{defaults-menu.show({x:0px,y:defaults-menu.height});}}
+                Btn {text:"add defaults";enabled:!root.child-open;clicked=>{defaults-menu.show({x:0px,y:defaults-menu.height});}}
             }
         }
     }

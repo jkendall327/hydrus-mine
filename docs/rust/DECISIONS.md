@@ -129,6 +129,12 @@ record of what was decided, and why the roadmap looks the way it does.
   hydrus-rs doesn't have; the field shows in-flight background jobs
   (downloads, imports, maintenance) instead, with the reference's wording.
 
+- **File lookup scripts are out of scope** (2026-10-09). The reference's
+  legacy file-lookup-script tag suggestions (the side panel, the script editor
+  and manager, the favourite-script option) are superseded by downloaders and
+  are not ported. Account/moderator handling for relationship petition
+  reasons goes out of scope with the PTR.
+
 ## Roadmap that follows
 
 1. **Client API parity**, with Hydrus Companion's request patterns checked

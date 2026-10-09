@@ -1,3 +1,4 @@
+import { Btn } from "btn.slint";
 import { Button, CheckBox, ComboBox, LineEdit, VerticalBox, HorizontalBox } from "std-widgets.slint";
 import { ListTable, TableColumn, TableRow } from "list_table.slint";
 import { Theme } from "theme.slint";
@@ -27,27 +28,27 @@ export component NetworkDataWindow inherits Window {
             delete-pressed => { root.delete-clicked(); }
         }
         HorizontalBox {
-            Button { text: root.browser ? "create new" : "add"; enabled: !root.editing && root.question == ""; clicked => { root.add-clicked(); } }
-            Button { text: root.browser ? "review" : "edit"; enabled: root.can-edit && !root.editing && root.question == ""; clicked => { root.edit-clicked(); } }
-            Button { text: root.browser ? "clear" : "delete"; enabled: root.can-delete && !root.editing && root.question == ""; clicked => { root.delete-clicked(); } }
-            if !root.browser && !root.cookies: Button { text: "duplicate"; enabled: root.can-delete && !root.editing; clicked => { root.duplicate-clicked(); } }
+            Btn { text: root.browser ? "create new" : "add"; enabled: !root.editing && root.question == ""; clicked => { root.add-clicked(); } }
+            Btn { text: root.browser ? "review" : "edit"; enabled: root.can-edit && !root.editing && root.question == ""; clicked => { root.edit-clicked(); } }
+            Btn { text: root.browser ? "clear" : "delete"; enabled: root.can-delete && !root.editing && root.question == ""; clicked => { root.delete-clicked(); } }
+            if !root.browser && !root.cookies: Btn { text: "duplicate"; enabled: root.can-delete && !root.editing; clicked => { root.duplicate-clicked(); } }
             Rectangle { horizontal-stretch: 1; }
-            Button { text: "refresh"; enabled: !root.editing; clicked => { root.refresh-clicked(); } }
+            Btn { text: "refresh"; enabled: !root.editing; clicked => { root.refresh-clicked(); } }
         }
         if root.browser || root.cookies: HorizontalBox {
-            Button { text: "export to clipboard"; enabled: root.can-delete && !root.editing && root.question == ""; clicked => { root.export-clicked(); } }
-            Button { text: "import from clipboard"; enabled: !root.editing && root.question == ""; clicked => { root.import-clipboard-clicked(); } }
-            Button { text: "import cookies.txt"; enabled: !root.editing && root.question == ""; clicked => { root.import-file-clicked(); } }
+            Btn { text: "export to clipboard"; enabled: root.can-delete && !root.editing && root.question == ""; clicked => { root.export-clicked(); } }
+            Btn { text: "import from clipboard"; enabled: !root.editing && root.question == ""; clicked => { root.import-clipboard-clicked(); } }
+            Btn { text: "import cookies.txt"; enabled: !root.editing && root.question == ""; clicked => { root.import-file-clicked(); } }
         }
         Text { text: root.message; color: Theme.text; wrap: word-wrap; }
         Text { text: root.error; color: Theme.error; wrap: word-wrap; }
         if root.question != "": VerticalBox {
             Text { text: root.question; color: Theme.text; wrap: word-wrap; }
-            HorizontalBox { Button { text: "yes"; clicked => { root.answered(true); } } Button { text: "no"; clicked => { root.answered(false); } } }
+            HorizontalBox { Btn { text: "yes"; clicked => { root.answered(true); } } Btn { text: "no"; clicked => { root.answered(false); } } }
         }
         HorizontalBox { Rectangle { horizontal-stretch: 1; }
-            if !root.browser: Button { text: "apply"; enabled: !root.editing && root.question == ""; clicked => { root.apply-clicked(); } }
-            Button { text: root.browser ? "close" : "cancel"; clicked => { root.cancel-clicked(); } }
+            if !root.browser: Btn { text: "apply"; enabled: !root.editing && root.question == ""; clicked => { root.apply-clicked(); } }
+            Btn { text: root.browser ? "close" : "cancel"; clicked => { root.cancel-clicked(); } }
         }
     }
 }
@@ -81,7 +82,7 @@ export component EditNetworkValueWindow inherits Window {
                 CheckBox { text: "secure (HTTPS only)"; checked <=> root.secure; }
                 CheckBox { text: "session cookie (does not expire)"; checked <=> root.session-cookie; }
                 HorizontalBox { Text { text: "expires (UTC seconds)"; color: Theme.text; width: 160px; } LineEdit { text <=> root.expires; enabled: !root.session-cookie; } }
-                HorizontalBox { LineEdit { text <=> root.expiry-delta; placeholder-text: "seconds from now"; } Button { text: "set expires from now"; clicked => { root.delta-clicked(); } } }
+                HorizontalBox { LineEdit { text <=> root.expiry-delta; placeholder-text: "seconds from now"; } Btn { text: "set expires from now"; clicked => { root.delta-clicked(); } } }
             }
             if !root.cookie: VerticalBox {
                 HorizontalBox { Text { text: "current state"; color: Theme.text; width: 140px; } ComboBox { model: ["approved - will use it", "denied - will not use it", "pending - will ask the user on next use"]; current-index <=> root.approval; } }
@@ -90,7 +91,7 @@ export component EditNetworkValueWindow inherits Window {
         }
         Text { text: root.error; color: Theme.error; wrap: word-wrap; }
         Rectangle { vertical-stretch: 1; }
-        HorizontalBox { Rectangle { horizontal-stretch: 1; } Button { text: "ok"; clicked => { root.apply-clicked(); } } Button { text: "cancel"; clicked => { root.cancel-clicked(); } } }
+        HorizontalBox { Rectangle { horizontal-stretch: 1; } Btn { text: "ok"; clicked => { root.apply-clicked(); } } Btn { text: "cancel"; clicked => { root.cancel-clicked(); } } }
     }
 }
 
@@ -103,13 +104,13 @@ export component CookieImportWindow inherits Window {
         Text { text: root.message; color: Theme.text; wrap: word-wrap; }
         Rectangle { vertical-stretch: 1; }
         if root.choosing: VerticalBox {
-            Button { text: root.matching-label; clicked => { root.action("matching"); } }
-            Button { text: "import everything--I intend to rename the domains"; clicked => { root.action("all"); } }
+            Btn { text: root.matching-label; clicked => { root.action("matching"); } }
+            Btn { text: "import everything--I intend to rename the domains"; clicked => { root.action("all"); } }
         }
         HorizontalBox {
             Rectangle { horizontal-stretch: 1; }
-            if !root.choosing: Button { text: "yes"; clicked => { root.action("import"); } }
-            Button { text: root.choosing ? "cancel" : "no"; clicked => { root.action("cancel"); } }
+            if !root.choosing: Btn { text: "yes"; clicked => { root.action("import"); } }
+            Btn { text: root.choosing ? "cancel" : "no"; clicked => { root.action("cancel"); } }
         }
     }
 }
@@ -123,9 +124,9 @@ export component HeaderApprovalWindow inherits Window {
         Text { text: root.error; wrap: word-wrap; color: Theme.error; }
         Rectangle { vertical-stretch: 1; }
         HorizontalBox { Rectangle { horizontal-stretch: 1; }
-            Button { text: "yes"; enabled: !root.busy; clicked => { root.answer(true); } }
-            Button { text: "no"; enabled: !root.busy; clicked => { root.answer(false); } }
-            Button { text: "later"; enabled: !root.busy; clicked => { root.later(); } }
+            Btn { text: "yes"; enabled: !root.busy; clicked => { root.answer(true); } }
+            Btn { text: "no"; enabled: !root.busy; clicked => { root.answer(false); } }
+            Btn { text: "later"; enabled: !root.busy; clicked => { root.later(); } }
         }
     }
 }

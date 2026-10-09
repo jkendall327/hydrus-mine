@@ -96,6 +96,7 @@ mod subscriptions_dedupe;
 mod subscriptions_list;
 mod tag_filter_editor;
 mod tag_filter_favourites;
+mod tag_filter_tooltips;
 mod thumbnail_appearance;
 mod thumbnail_cache;
 mod thumbnail_maintenance;
@@ -122,6 +123,7 @@ mod client_api_admin;
 
 mod network_sessions;
 
+mod domain_metadata;
 mod downloader_interchange;
 mod network_data;
 mod tag_migration;

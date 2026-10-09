@@ -1,3 +1,4 @@
+import { Btn } from "btn.slint";
 import { WheelMenuChoice, MenuChoiceFrame } from "menu_choice_wheel.slint";
 export { HydrusTray } from "system_tray.slint";
 export { MenuChoicePolicy } from "menu_choice_wheel.slint";
@@ -294,14 +295,14 @@ component SidebarButtonPair inherits Rectangle {
     out property <MenuChoiceFrame> pair-frame: {x:self.absolute-position.x,y:self.absolute-position.y,w:self.width,h:self.height};
     buttons := GridLayout {
         spacing: 4px;
-        first := Button {
+        first := Btn {
             row: 0; col: 0;
             min-width: 20px;
             horizontal-stretch: 1;
             text: root.first-text;
             clicked => { root.first-clicked(self.absolute-position.x,self.absolute-position.y + self.height); }
         }
-        second := Button {
+        second := Btn {
             row: root.stacked ? 1 : 0;
             col: root.stacked ? 0 : 1;
             min-width: 20px;
@@ -355,8 +356,8 @@ component MainQuestionPanel inherits Rectangle {
         HorizontalLayout {
             spacing: 8px;
             Rectangle { horizontal-stretch: 1; }
-            yes := Button { text: "yes"; clicked => { root.answered(true); } }
-            no := Button { text: "no"; clicked => { root.answered(false); } }
+            yes := Btn { text: "yes"; clicked => { root.answered(true); } }
+            no := Btn { text: "no"; clicked => { root.answered(false); } }
         }
     }
     Timer {
@@ -419,6 +420,8 @@ export component MainWindow inherits Window {
     in property <bool> preview-volume-shown;
     in property <int> preview-volume;
     in property <bool> preview-global-muted;
+    in property <string> preview-global-tooltip;
+    in property <string> preview-mute-tooltip;
     in property <bool> preview-muted;
     out property <bool> preview-volume-open: preview-volume-box.open;
     out property <length> preview-volume-x: preview-volume-box.absolute-position.x;
@@ -612,6 +615,12 @@ export component MainWindow inherits Window {
     // the idle and CPU-busy fields ("idle", "CPU busy", or empty)
     in property <string> status-idle;
     in property <string> status-busy;
+    // what the idle, CPU-busy and database fields say when hovered, and the
+    // database's activity ("db writing", "db reading")
+    in property <string> status-idle-tip;
+    in property <string> status-busy-tip;
+    in property <string> status-db;
+    in property <string> status-db-tip;
     in property <string> error;
     // a downloader page's importer (the reference's "url downloader" box):
     // its file log's status and progress, whether it is paused, and its
@@ -1174,7 +1183,7 @@ export component MainWindow inherits Window {
                         pause-play-files => { root.pause-play-files(); }
                         file-log => { root.open-file-log(); }
                     }
-                    Button {
+                    Btn {
                         text: root.import-options-label;
                         clicked => { root.importer-import-options(); }
                     }
@@ -1233,7 +1242,7 @@ export component MainWindow inherits Window {
                         formula-chosen(i) => { root.simple-formula-chosen(i); }
                         edit-formulae => { root.simple-edit-formulae(); }
                     }
-                    Button {
+                    Btn {
                         text: root.import-options-label;
                         clicked => { root.importer-import-options(); }
                     }
@@ -1291,7 +1300,7 @@ export component MainWindow inherits Window {
                         }
                         // (the reference's paste button: newline-separated
                         // URLs from the clipboard)
-                        Button {
+                        Btn {
                             text: "paste";
                             clicked => { root.paste-urls(); }
                         }
@@ -1411,7 +1420,7 @@ export component MainWindow inherits Window {
                         }
                         HorizontalLayout {
                             spacing: 4px;
-                            Button {
+                            Btn {
                                 horizontal-stretch: 1;
                                 text: root.lock-label;
                                 clicked => { root.unlock-search(); }
@@ -1432,7 +1441,7 @@ export component MainWindow inherits Window {
                                         activated => { root.lock-syncs-changed(root.lock-syncs-new, root.lock-syncs-removes); }
                                     }
                                 }
-                                Button {
+                                Btn {
                                     width: 30px;
                                     text: "⚙";
                                     clicked => { cog-menu.show({ x: 0px, y: self.height }); }
@@ -1506,14 +1515,14 @@ export component MainWindow inherits Window {
                             }
                             // as the reference's star button: load or save a
                             // favourite search
-                            if root.can-favourite: Button {
+                            if root.can-favourite: Btn {
                                 width: 30px;
                                 text: "★";
                                 clicked => { root.favourites-menu-requested(self.absolute-position.x, self.absolute-position.y + self.height); }
                             }
                             // and its lock button: lock the files in view to a
                             // fixed system:hash
-                            if root.can-lock-search: Button {
+                            if root.can-lock-search: Btn {
                                 text: "lock";
                                 clicked => { root.lock-search(); }
                             }
@@ -1532,7 +1541,7 @@ export component MainWindow inherits Window {
                         measure-controls: root.measure-sidebar-buttons;
                         controls-measured(p,a,b,aw,bw) => { root.sidebar-buttons-measured(0,p,a,b,aw,bw); }
                     }
-                    if !root.search-locked && root.note == "": Button {
+                    if !root.search-locked && root.note == "": Btn {
                         text: root.synchronised ? "searching immediately" : "search paused";
                         clicked => { root.flip-synchronised(); }
                     }
@@ -1615,6 +1624,8 @@ export component MainWindow inherits Window {
                             y: min(parent.height, root.preview-media-y + root.preview-media-height) - self.height;
                             volume: root.preview-volume;
                             global-muted: root.preview-global-muted;
+                            global-tooltip: root.preview-global-tooltip;
+                            preview-tooltip: root.preview-mute-tooltip;
                             preview-muted: root.preview-muted;
                             volume-changed(v) => { root.preview-volume-changed(v); }
                             flip-global-mute => { root.preview-flip-global-mute(); }
@@ -2224,7 +2235,7 @@ export component MainWindow inherits Window {
                         vertical-alignment: center;
                         horizontal-stretch: 1;
                     }
-                    if root.daemon-retry: Button {
+                    if root.daemon-retry: Btn {
                         text: "start again";
                         clicked => { root.start-daemon-again(); }
                     }
@@ -2232,9 +2243,24 @@ export component MainWindow inherits Window {
             }
             // the status bar, as the reference's: the page's, then the
             // network's (what has been read since opening, and pauses)
-            Rectangle {
+            status-bar := Rectangle {
                 height: 24px;
                 background: Theme.panel;
+                // the tooltip of the field under the pointer, shown after a
+                // moment as the reference's status bar fields do
+                property <bool> hover-idle;
+                property <bool> hover-busy;
+                property <bool> hover-db;
+                property <string> tip: self.hover-idle ? root.status-idle-tip
+                    : self.hover-busy ? root.status-busy-tip
+                    : self.hover-db ? root.status-db-tip : "";
+                out property <bool> tip-visible;
+                changed tip => { self.tip-visible = false; }
+                Timer {
+                    interval: 500ms;
+                    running: status-bar.tip != "" && !status-bar.tip-visible;
+                    triggered => { status-bar.tip-visible = true; }
+                }
                 HorizontalLayout {
                     padding-left: 6px;
                     padding-right: 8px;
@@ -2245,18 +2271,54 @@ export component MainWindow inherits Window {
                         horizontal-stretch: 1;
                         overflow: elide;
                     }
-                    if root.status-idle != "": Text {
-                        text: root.status-idle;
-                        vertical-alignment: center;
+                    if root.status-idle != "": Rectangle {
+                        HorizontalLayout {
+                            Text {
+                                text: root.status-idle;
+                                vertical-alignment: center;
+                            }
+                        }
+                        TouchArea { changed has-hover => { status-bar.hover-idle = self.has-hover; } }
                     }
-                    if root.status-busy != "": Text {
-                        text: root.status-busy;
-                        vertical-alignment: center;
+                    if root.status-busy != "": Rectangle {
+                        HorizontalLayout {
+                            Text {
+                                text: root.status-busy;
+                                vertical-alignment: center;
+                            }
+                        }
+                        TouchArea { changed has-hover => { status-bar.hover-busy = self.has-hover; } }
+                    }
+                    if root.status-db != "": Rectangle {
+                        HorizontalLayout {
+                            Text {
+                                text: root.status-db;
+                                vertical-alignment: center;
+                            }
+                        }
+                        TouchArea { changed has-hover => { status-bar.hover-db = self.has-hover; } }
                     }
                     Text {
                         text: root.status-network;
                         vertical-alignment: center;
                         min-width: 120px;
+                    }
+                }
+                if status-bar.tip-visible && status-bar.tip != "": Rectangle {
+                    width: min(320px, status-bar.width);
+                    height: tip-text.preferred-height + 8px;
+                    x: max(0px, status-bar.width - self.width - 8px);
+                    y: -self.height - 2px;
+                    background: Theme.panel;
+                    border-width: 1px;
+                    border-color: Theme.border;
+                    tip-text := Text {
+                        x: 8px;
+                        y: 4px;
+                        width: parent.width - 16px;
+                        text: status-bar.tip;
+                        wrap: word-wrap;
+                        color: Theme.text;
                     }
                 }
             }

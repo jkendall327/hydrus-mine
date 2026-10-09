@@ -835,14 +835,17 @@ deleted sidecars by `crates/hydrus-download/tests/local_import.rs`.
   opens its former review child. Clipboard PNG
   image precedence and PNG list drops remain absent. Historical file-cache
   versions 1–7 now upgrade within the exchange codec, with recorded order,
-  timestamp, note, count and example preservation. Later historical caches can
-  contain duplicate identities; native queues cannot preserve those, so these
-  imports fail explicitly instead of dropping entries. Version-1 float/complex
-  notes requiring Python `str()` also fail explicitly; text, integer, boolean
-  and None notes are supported. The codec applies generic URL encoding without
-  a client's URL-class configuration; custom class-specific rewrites remain
-  outside this recorded slice. The read-only database importer's cache decoder
-  remains version 8 only.
+  timestamp, note, count and example preservation. A repeated seed in a
+  historical cache is dropped, first one winning, as the reference does when it
+  first indexes the cache (recorded with a list export). Version-1 notes of any
+  scalar type (text, integer, float, boolean, None) become text as Python's
+  `str()` makes them; a list or dictionary note fails explicitly. The exchange
+  codec applies generic URL encoding without a client's URL-class configuration;
+  custom class-specific rewrites remain outside this recorded slice. The
+  read-only database importer (an old install's subscriptions, import folders
+  and sessions) reads caches of versions 1–7 too, with the same upgrades
+  (`record_legacy_seed_caches.py`); there a URL seed's comparison form is
+  worked out from the client's URL classes, as for any seed saved before version 8.
   Missing histories now ask the original message, title and decisions before
   staging; accepted missing logs are initialised empty directly on Apply. The list owner now stages modern imports and
   persists both histories. JSON file export/overwrite and multi-file JSON/PNG
@@ -1055,7 +1058,7 @@ deleted sidecars by `crates/hydrus-download/tests/local_import.rs`.
 - **The tag filter editor** imports/exports reference JSON with an additional
   inline clipboard/file panel before naming an import. It does not yet offer
   repository serverside tag filters in the load menu (remote repositories are
-  not functional), or explanatory control tooltips. Favourite names/save/delete persist
+  not functional). Favourite names/save/delete persist
   immediately as in the reference; filter changes reach the owner on Apply.
 - **"clear and load" a session**: when pages object to closing, the
   question has "yes" and "no" (the reference's also has "no, but show me
@@ -1209,9 +1212,12 @@ native/store/model regression source awaits hosted CI; no Rust runs locally.
 
 ## Repositories (`/manage_services/*`)
 
-- **Commit pending is only an editor checkbox.** The Client API permission
-  editor offers and stores the "commit pending" permission (checked against the
-  recorded permission rows), but nothing can commit to a repository.
+- **Commit pending only gates the pending routes.** The Client API permission
+  editor's "commit pending" permission is checked against the recorded
+  permission rows, and the pending-counts and commit routes check it (the test
+  reads the counts with a key that has it and is refused for one that lacks it);
+  nothing can commit to a repository (`commit_pending` passes the
+  permission check, then answers 422).
 
 - **Pending content can't be committed.** hydrus-rs doesn't talk to
   repository servers (the PTR, file repositories), so `commit_pending`
@@ -1235,7 +1241,7 @@ native/store/model regression source awaits hosted CI; no Rust runs locally.
 
 - **Service review** currently uses a service dropdown in place of the reference's nested local/remote/type tabs. It shows native counts, id/key controls and refresh. The long service descriptions and repository/IPFS account administration remain unavailable. Local trash clear/undelete, double-confirmed deleted-file-record clearing and all three local rating-clear populations are implemented; bulk rating choices and confirmations use native inline controls rather than Qt popup menus/dialogs. Opening a replacement review retires the previous owner's pending maintenance confirmation.
 
-- **Local service management** uses an add-kind dropdown and inline confirmation text rather than Qt popup menus/modal questions. Rating colours use validated #RRGGBB text fields with four live, independently interactive rating examples; named SVG configurations are preserved/edited, with rendering subject to the existing SVG support limits. Remote repository/IPFS/account edits remain unavailable here. Client API listener settings are available; HTTPS, normie Eris and external URL overrides are preserved imported values, with an explicit control to disable unsupported HTTPS. A concurrent registry change rejects Apply and asks the user to reopen the editor; expensive full count rebuilds run inside the atomic service transaction. Successful Apply refreshes displayed selection/viewer tags after source-service deletion, including a locked page whose files stay fixed.
+- **Local service management** uses an add-kind dropdown and inline confirmation text rather than Qt popup menus/modal questions. Rating colours use validated #RRGGBB text fields with four live, independently interactive rating examples; named SVG configurations are preserved/edited, with rendering subject to the existing SVG support limits. Remote repository/IPFS/account edits remain unavailable here. Client API listener settings are available, including HTTPS, the normie welcome page and the external URL overrides (see the Client API entry below). A concurrent registry change rejects Apply and asks the user to reopen the editor; expensive full count rebuilds run inside the atomic service transaction. Successful Apply refreshes displayed selection/viewer tags after source-service deletion, including a locked page whose files stay fixed.
 
 ## Manual file exports
 
@@ -1385,10 +1391,28 @@ open; the renewal rides the UI timer, so a UI thread blocked for over ten second
 for a store without a GUI. Key-change
 questions use an inline edit panel and generated-key button. Listener changes
 may take up to one second; current requests drain for at most ten seconds
-before restart. HTTP logs omit query strings and credentials. HTTPS is refused
-rather than served as plain HTTP; normie Eris/external URL override fields are
-shown as unsupported preserved values in plain text; unset external URL fields
-read "not set".
+before restart. HTTP logs omit query strings and credentials.
+HTTPS: the generated certificate is made with rcgen and aws-lc-rs rather than
+`cryptography`, so its serial number and key bytes differ but every field the
+recording checks (subject, SAN, ten-year validity, RSA 2048, SHA-256, a
+traditional-form unencrypted key, read-only files) matches. The reference
+listens on IPv4 and IPv6 separately; hydrus-rs binds one address (IPv4
+loopback, or all IPv4 interfaces for non-local). Plain HTTP sent to the HTTPS
+port gets no answer, as in the reference. A pair is read when the listener
+starts, so replacing the files takes effect on the next listener restart (any
+settings change, or a restart of the daemon), not mid-run. The two lines the
+reference's "half a pair" error shows as two popups are one message in the
+Client API status.
+The three external overrides are shown in advanced mode only. In the
+reference's current source those rows are hidden unconditionally
+(`if False:`); showing them follows the owner's request (2026-10-08) to have
+all three controls. As in the reference, nothing reads them: no link
+hydrus-rs copies uses the overrides, and "view in a web browser" always opens
+`127.0.0.1`. The port override is text, as in the reference; a number stored
+by an older import is shown as its digits.
+The normie page is the reference's HTML verbatim (service name, software
+version 688, API version, and the local/any-host line filled in as the
+reference fills them).
 Listener reconfiguration retains the same API state, so session keys continue
 to use the current permissions after rebind; revocation still invalidates them.
 
@@ -1543,9 +1567,9 @@ earlier unsupported versions must first be re-exported by the reference client.
 Unknown processing steps/conversions are rejected before staging because their
 native execution forms cannot retain all original data. Native/runtime fields
 take precedence over preserved auxiliary editor fields when exporting edits.
-Mixed downloader package import accepts URL classes, GUGs, page parsers and login scripts;
+Mixed downloader package import accepts URL classes, GUGs, page parsers, login scripts and domain metadata;
 standalone formulas/content nodes belong in their matching native editors.
-Domain metadata packages remain unsupported here. The native mixed exporter
+The native mixed exporter
 uses component checkboxes with dependency expansion instead of Qt's separate
 Add choosers. Imports review a whole supported package; Qt additionally offers
 optional per-object selection and skips unsupported objects. Mixed login script
@@ -1555,8 +1579,13 @@ credentials/activation/delays without configuring new example domains. Standalon
 login-list imports retain their separate nonduplicate-name policy. The actual
 Qt mixed-package recording also captures a repeated nested GUG import creating
 an additional nested generator after child keys change; native retains its
-existing remapped dependency duplicate checks. This login slice does not claim
-domain metadata, bitmap/drag ingestion, or the wider downloader exchange parent.
+existing remapped dependency duplicate checks. Domain metadata is reviewed in the same text as the other
+components, not in one pop-up per package, and imports have no final "successfully
+added" notice. Like the reference's bandwidth manager, an import stops adding
+rules at the first package (in domain order) that has none, so a headers-only
+package keeps later packages' rules out until they are imported again
+(recorded in `domain_metadata_packages.json`). Clipboard bitmap and drag/drop
+ingestion are not exposed (low priority).
 
 Tab context menus expose close, select, move-page, sort-pages and send-down submenus,
 rename, duplicate, collapse, grouped close and per-notebook saved-session
@@ -2503,9 +2532,12 @@ Evidence (checkpoint `2e2a24281`, in git history before 2026-10-08).
 
 
 Suggested tags have real local-service most-used and recent consumers, per-service
-Options list drafts and width/layout controls. Related-tag searching, its weights
-and duration controls, and file-lookup scripts are still absent, so suggestion
-families and the default-notebook-page leaf remain partial. All four reference
+Options list drafts and width/layout controls. The related panel searches (with
+its weights, the three durations behind its quick, medium and thorough buttons,
+and a search from the selected tags; see "The related panel" in the section on
+tooltips, petition reasons and the related panel below), but file-lookup scripts
+are still absent, so suggestion families and the default-notebook-page leaf
+remain partial. All four reference
 page choices are retained and saved; unavailable choices fall back to the first
 available native page, as recorded with those Qt panels disabled. This does not
 claim normal Qt Related/File Lookup availability. Opening captures existing
@@ -2513,9 +2545,12 @@ most-used panel availability, matching Qt; updates refresh an already-existing
 panel without inventing a new tab. Native service-list editing uses owned child
 windows instead of embedding the write input directly in Options.
 
-The recent panel provides real history and add-only activation, but its Clear
-question, read-time decay and the full suggestion-list keyboard/context-menu
-interactions remain outside this slice. No recent/children/related/global
+The recent panel provides real history, add-only activation, the Clear
+question and read-time decay (what is older than the newest few the option
+keeps is forgotten for good), replayed from the reference. The suggestion lists'
+own context menus and keyboard (the reference's list boxes have right-click tag
+menus and Ctrl+A/C) are not ported: `suggested-tag-list-interactions`. No
+recent/children/related/global
 favourite-list aliases are promoted. Native most-used updates poll persisted
 settings every 200 ms instead of Qt's publication subscription. New local
 consumers preserve staged tag cancellation and retire their callbacks/timers.
@@ -3033,10 +3068,9 @@ command editor's mouse capture (press/release, double-click, vertical wheel,
 every button) are replayed against the reference's recordings in
 `tests/gui/options_shortcut_sets.rs`. "delete" with no custom set selected
 does nothing here, where the reference still asks "Remove all selected?".
-Four options the client keeps but does not consume (the Qt locale for
-integers, the media viewer rescue padding, the toaster's other-display freeze,
-the recent petition reasons count) are real, staged controls whose values
-round-trip (`tests/gui/options_gui_kept.rs`); nothing native reads them yet.
+Three options the client keeps but does not consume (the Qt locale for
+integers, the media viewer rescue padding, the toaster's other-display freeze)
+are real, staged controls whose values round-trip (`tests/gui/options_gui_kept.rs`); nothing native reads them yet.
 
 Shortcut capture now has an owned Options > set > command path and persisted
 keyboard consumers in the main GUI and media viewer. The two capture policies
@@ -3936,10 +3970,8 @@ change nothing). They are marked out of scope in `docs/rust/tracking/`.
   another display), the self-sizing media viewer rescue padding (there is no
   self-sizing viewer), the image tile cache (hydrus-rs renders whole
   images), the file system wake wait,
-  the petition reason count
-  (there are no tag repositories to petition), the related-tag search
-  durations (hydrus-rs ranks exactly rather than within time slices) and the
-  file lookup scripts switch (there are no file lookup scripts).
+  the related-tag search durations are read (see Manage tags, below) and the
+  file lookup scripts switch (file lookup scripts are out of scope, below).
 - The mpv box lacks the audio device fetch button (it needs a running libmpv);
   the QtMediaPlayer box lacks its device choice and fetch button. The tag
   suggestions page lacks the "recent tags in quick entry dialogs" count, the
@@ -4275,7 +4307,8 @@ directory.
 - The timeout is one seconds box (1 to 3,600,000) with the "this can live for a
   very long time" checkbox; the reference uses a minutes-and-seconds widget.
 - The reference's tooltips on the warning, timeout, hide terminal and text
-  controls are not shown (Slint has no tooltips here).
+  controls are not shown (Slint 1.18 has a `Tooltip` element, as the tag filter
+  and preview controls now use; these have not been wired).
 - The help menu button is a "help ▾" button with one entry, not the help icon.
 
 - The CPU-busy check reads per-core times from `/proc/stat`, so it exists on
@@ -4313,9 +4346,11 @@ directory.
   Windows and macOS; on **Wayland it does not** (`None`), so there minimising
   just minimises, whatever the option says, while closing, starting hidden,
   the icon's click and File > minimise to system tray work. The test of that
-  leaf drives Slint's own minimised state in the headless platform, never
-  winit's `is_minimized`, and nothing has been run against a real X11 window
-  manager, so the leaf is **not tagged**. The reference's two "BUGFIX"
+  leaf drives the real tray controller and Slint's own minimised state in the
+  headless platform, never winit's `is_minimized`, and nothing has been run
+  against a real X11 window manager; the leaf is tagged on the controller's
+  behaviour (the option read, the window hidden to the icon, restored on show,
+  nothing hidden with no tray), with the platform limits above. The reference's two "BUGFIX"
   switches (minimise-hide using event-deferred state-prep, with post-show
   state restoration) work around Qt's own window state events and have no
   counterpart; the window is restored from the minimise before it is hidden,
@@ -4362,7 +4397,8 @@ directory.
   the copy button.
 - "What would you like to do?" is the shared native question overlay with the two
   choices as its buttons (the reference's local services never offer more); the
-  per-choice tooltips are computed (and tested) but not shown.
+  per-choice tooltips are computed (and tested) but not yet shown (Slint 1.18's
+  `Tooltip` could carry them).
 - Clicking an expanded parent row selects that row, but remove and copy use only
   the selected tag rows, not the parent rows; activating a parent row enters its
   originating tag, as the reference does.
@@ -4370,18 +4406,30 @@ directory.
   it is closed when its own "close" is pressed rather than with the viewer. If a
   Manage tags window opened from a page is already open, F3 in the viewer shows that
   one (which does not follow the viewer).
-- Suggested tags: the file-lookup-script panel is not ported (the legacy
-  parsing scripts it runs are not in hydrus-rs), and `show_file_lookup_script_tags`
-  stays an option nothing reads. The related panel has one search, not the
-  quick/medium/thorough buttons and their time budgets, and does not yet search
-  from the selected tags when some are selected (the reference then searches those
-  alone and excludes the others). `audit-media-tags-missing-suggestions` and
-  `audit-options-nested-tag-suggestions-tabs` are therefore not tagged.
+- **File lookup scripts are out of scope** (owner decision 2026-10-09: a legacy
+  feature superseded by downloaders). Not ported: the suggested-tags
+  file-lookup panel (and its tab), the script editor and manager, the favourite
+  file lookup script option, and `show_file_lookup_script_tags`, which stays an
+  Options row nothing reads. The default notebook page "file_lookup_scripts"
+  falls back to the first available page, as the reference does with the panel
+  disabled. They are the leaf `file-lookup-scripts` (out of scope).
+- Suggested tags: the related panel has the quick, medium and thorough buttons
+  and searches from the selected tags (see "The related panel" below for how
+  the time budget differs). Adding a tag does not search again, as the
+  reference's does not; the listed suggestions are filtered again.
+  `audit-media-tags-missing-suggestions` is tagged on the panels' replay
+  (`suggested_tag_panels.rs`); `audit-options-nested-tag-suggestions-tabs` stays
+  untagged (no test takes the related durations, the concurrence threshold or
+  the recent count from their Options rows to an observable effect). The
+  recent-tags-in-quick-entry-dialogs count has no consumer: the quick dialog
+  belongs to interactive shortcut commands, not ported
+  (`shortcut-interactive-tag-entry`).
 - The write-autocomplete leaves (`audit-media-tags-autocomplete`,
-  `siblings-autocomplete`, `parents-autocomplete`) stay untagged: the empty-input
-  keys were the one concrete reference behaviour found missing and are now done,
-  but no test covers what those leaves name as a whole, and their long notes (context
-  menus, selection, undo history) were not re-verified here.
+  `siblings-autocomplete`, `parents-autocomplete`) are tagged on the tests in
+  `write_autocomplete_leaves.rs` (rows, entry, context menu, paste and manual
+  fetch against the recording); the rest of their long notes (selection,
+  keyboard, undo history, pointer drags) have tests of their own and were
+  not re-verified here.
 
 - **Out-of-range numbers in the services editor.** The Client API port, a numerical rating's star count and its icon padding refuse out-of-range values with an error on Apply; the reference's spin boxes clamp them as they are typed.
 
@@ -4409,17 +4457,105 @@ directory.
   so a file whose still cannot be decoded is not played; the reference sends
   the file to mpv whatever its thumbnail or still does.
 - The preview's right-click volume menu (`AddAudioVolumeMenu`: global, preview
-  and per-player mute) is not ported, and the control's tooltips ("Global
-  mute/unmute", "Mute/unmute: preview") are missing.
+  and per-player mute) is not ported. The control's two mute buttons show the
+  reference's tooltips ("Global mute/unmute", "Mute/unmute: preview viewer",
+  recorded in `oracle/fixtures/tag_filter_tooltips.json`) after the pointer rests
+  on them for half a second (Slint's `Tooltip`; the popup and its text are tested).
 - A change to the preview's show action while a file plays restarts it within
   a quarter of a second, not at once.
 
 ## Leaves left untagged because only part is tested
 
-- **Client API "commit pending" permission.** The checkbox and the stored grant are tested; nothing consumes the permission (repository commit-pending upload is absent, the routes return 422).
-- **Importer "present" (show files) options.** The editor's status, inbox and location choices are tested against the recordings and the saved options hold them; no test runs the queue's "show files" filter by current and deleted domains.
-- **"Import local files directly from source" (test option).** The importer's temp-copy behaviour is tested with the setting written to the store; no test drives the Options row.
 - **mpv "set null audio device on silent media".** The Options row and the player plan's audio device are tested; mpv itself is not driven (no libmpv), and the leaf is out of scope.
-- **Importer destination: deleted domains and all-known mode.** The model supports them; no GUI caller offers them, so they are not driven through a window.
 
 - **Closing tabs while downloaders are running.** Closing other pages, or the pages to the left or right, asks a plain yes/no question with the recorded wording; the reference, when a closing page has a downloader at work, asks a longer question with a statement and a third "no, but show me the pages" button. That path is not implemented or tested, so those three menu leaves stay untagged.
+
+## Tooltips, petition reasons and the related panel (issue 86 leftovers)
+
+- **Tooltips** use Slint 1.18's `Tooltip` (a popup after the pointer rests half
+  a second), not Qt's; they wrap at Slint's width, not at `WrapToolTip`'s 80
+  characters, and use Slint's look. The tag filter controls carrying the
+  reference's `TagFilterButton` tooltip (the whole text its label may elide) are
+  tag migration's two, the tag display options' two, the string tag filter's, the
+  import options' "get tags" and blacklist buttons, and the Client API
+  permissions' "edit permitted tags" button (the reference shows a single
+  button labelled with the filter; hydrus-rs shows a line of text and a button, so the
+  tooltip is on the button). The tag display options' button labels lack the
+  reference's "tags shown: " prefix (a pre-existing difference), so their
+  tooltip is the label. The editor's "show other panels" button has the
+  reference's tooltip. The popup is observed in the tests of "show other panels"
+  and the preview's mute buttons (a picture drawn after the pointer rests,
+  differing with the text); the other buttons use the same `TipButton` and their
+  windows' tests assert the text they hand it.
+- **Petition reasons.** The reason question (a tag repository's sibling or parent
+  pend or petition) offers the recently typed reasons for that kind and action
+  (as many as Options > tag editing > "Number of recent petition reasons to
+  remember in dialogs" keeps; 0 remembers none), then the fixed reasons, as buttons
+  that answer with them; a typed reason that is not a fixed one is remembered.
+  Replayed from `oracle/fixtures/relationship_reasons.json`. A repository
+  account's permission handling is not ported: the reference, for an account
+  with moderate permission on the content type, skips the question and uses
+  "Entered by a janitor."; hydrus-rs always asks. (Tag repositories are
+  out of scope: its own leaf, `relationship-reasons-account-handling`, is marked
+  out of scope with the PTR.)
+- **The related panel** (Manage tags > suggested tags) has the reference's
+  quick, medium and thorough buttons, reading Options > tag suggestions' three
+  durations, and searches from the selected tags alone (excluding the other tags
+  on the files and their parents) when some are selected; the two toggles and the
+  buttons carry the reference's tooltips. The status line reads "Searched N tags
+  in T." (with "(S skipped)" for tags with no count), or "D/N tags searched
+  fully in T." when the time ran out. hydrus-rs scores exactly: the time is checked
+  between search tags, and a tag the time ran out before is not searched at all
+  (the reference stops partway through a tag and keeps what it had, and samples
+  at most a few hundred files per search tag). Results can therefore differ from
+  the reference's on large corpora; on the recorded one they match. The
+  file-lookup-script panel remains unported, so
+  `audit-media-tags-missing-suggestions` and
+  `audit-options-nested-tag-suggestions-tabs` stay untagged (the latter also
+  lacks the favourite file lookup script choice and the recent-tags count for quick
+  entry dialogs, which have no consumers).
+
+## Options and shell leftovers (#91, #92)
+
+- **Undelete with several files.** The reference asks its single-file
+  question whatever the number of files (it says "this file"); so does
+  hydrus-rs, with the one domain. The remote-repository case of the question
+  has no counterpart (no remote file services).
+- **`audit-options-options-search` is untagged.** Of the 738 entries the
+  reference's search box offers (`oracle/fixtures/options_dialog.json`),
+  513 exist natively. The 225 missing are labels the native pages do not draw
+  at all: the help paragraphs the Qt panels carry ("Scheduled jobs such as
+  reparsing...", "These options are advanced!..."), the "help for this
+  panel -->" links, "(you appear to have 4 cores)"-style computed labels, and
+  the unit and "no limit"/"do not use" labels of some noneable controls and
+  combo boxes' current values on pages whose controls differ in kind. The
+  native options window has no collapsible boxes or inner tabs (they are
+  flattened into headings), so choosing a result needs no expanding.
+- **`audit-options-gui-main-window-application-display-name` is untagged.**
+  The main window and the tray tooltip follow the name; other windows keep
+  their own captions. Qt appends the display name to every window title;
+  here each window is a Slint component with its own title and no common
+  parent, so it would mean a change in all ~170 window openings.
+- **`audit-options-status-activity` is untagged.** Idle and CPU busy have
+  their tooltips, and the database field shows this process's reads and
+  writes ("db writing", "db reading"; the daemon is another process, so its
+  work is not shown, and with no job names there is no "current db job"
+  tooltip). The application-busy field (the reference's worker thread
+  pool: "working" above 3 busy threads, "busy" above 8, tooltip "There were N
+  threads doing jobs at last check") has no counterpart: hydrus-rs has no
+  such pool in the client.
+- **`audit-options-importing-drag-and-drop-when-dnding-a-url-onto-the-program-switch-to-the-page-where-it-lands`
+  stays untagged.** winit 0.30 delivers `DroppedFile` for dropped files on
+  X11 only, and its X11 drop parser rejects every non-`file://` URI
+  (`UnexpectedProtocol`), so a URL dragged from a browser never reaches the
+  program; on Wayland winit has no drag-and-drop at all. With no URL drops
+  there is nothing for the switch-to-page option to act on. It would need a
+  platform drop handler outside winit.
+- **`audit-options-geometry` stays untagged**, as documented under Frame
+  locations: main window saves, and the opening rescue, are proved; other
+  frames' saving and the reference's minimum size are not.
+- **The mpv "Preferred audio output device" applies as each file loads**
+  (the player sets `audio-device` before every load); players already open
+  are not updated when Options is applied, though the reference's tooltip
+  promises that ("Will update all new existing mpv players immediately on
+  dialog ok").

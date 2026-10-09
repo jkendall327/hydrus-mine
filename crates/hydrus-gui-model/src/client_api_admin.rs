@@ -175,15 +175,13 @@ pub fn parse_key(text: &str) -> Result<Vec<u8>, String> {
     hex::decode(text)
         .map_err(|_| "Sorry, the key you submitted did not seem to be hexadecimal.".into())
 }
-/// Build the local browser URL, refusing disabled/unsupported HTTPS configurations.
+/// The local browser URL (`_OpenBaseURL`): `https` when the service uses it.
 pub fn base_url(config: &hydrus_store::services::ServerConfig) -> Result<String, String> {
-    if config.use_https {
-        return Err("HTTPS is not supported by this Client API server. Disable HTTPS in the imported configuration before starting it.".into());
-    }
+    let scheme = if config.use_https { "https" } else { "http" };
     let port = config
         .port
         .ok_or("The service is not running, so you cannot view it in a web browser!")?;
-    Ok(format!("http://127.0.0.1:{port}/"))
+    Ok(format!("{scheme}://127.0.0.1:{port}/"))
 }
 
 /// Browser URL for the daemon's actual listener, including CLI port/bind overrides.
@@ -202,7 +200,8 @@ pub fn reported_base_url(
                 std::net::IpAddr::V6(_) => std::net::Ipv6Addr::LOCALHOST.into(),
             });
         }
-        return Ok(format!("http://{address}/"));
+        let scheme = if config.use_https { "https" } else { "http" };
+        return Ok(format!("{scheme}://{address}/"));
     }
     base_url(config)
 }
@@ -220,9 +219,14 @@ pub struct ListenerEdit {
     pub binding: Binding,
     pub cors: bool,
     pub logs: bool,
-    pub disable_https: bool,
+    pub use_https: bool,
+    pub normie_eris: bool,
+    /// `NoneableTextCtrl` values: `None` is the "none" box; text is kept as typed.
+    pub external_scheme: Option<String>,
+    pub external_host: Option<String>,
+    pub external_port: Option<String>,
 }
-/// Edit supported listener fields while preserving all unrelated imported flags.
+/// Apply the service editor's fields, as the reference's `GetValue` reads them.
 pub fn server_config(
     original: &hydrus_store::services::ServerConfig,
     edit: &ListenerEdit,
@@ -241,8 +245,27 @@ pub fn server_config(
     config.allow_non_local_connections = matches!(edit.binding, Binding::Network);
     config.support_cors = edit.cors;
     config.log_requests = edit.logs;
-    if edit.disable_https {
-        config.use_https = false;
-    }
+    config.use_https = edit.use_https;
+    config.use_normie_eris = edit.normie_eris;
+    config
+        .external_scheme_override
+        .clone_from(&edit.external_scheme);
+    config
+        .external_host_override
+        .clone_from(&edit.external_host);
+    config
+        .external_port_override
+        .clone_from(&edit.external_port);
     Ok(config)
+}
+
+/// The service editor's tooltips for the Client API rows, as the reference words them.
+pub mod tooltips {
+    pub const NON_LOCAL: &str = "Allow other computers on the network to talk to use service. If unchecked, only localhost can talk to it. On Windows, the first time you start a local service that allows non-local connections, you will get the Windows firewall popup dialog when you ok the main services dialog.";
+    pub const HTTPS: &str = "Host the server using https instead of http. This uses a self-signed certificate, stored in your db folder, which is imperfect but better than straight http. Your software (e.g. web browser testing the Client API welcome page) may need to go through a manual 'approve this ssl certificate' process before it can work. If you host your client on a real DNS domain and acquire your own signed certificate, you can replace the cert+key file pair with that.";
+    pub const CORS: &str = "Have this server support Cross-Origin Resource Sharing, which allows web browsers to access it off other domains. Turn this on if you want to access this service through a web-based wrapper (e.g. a booru wrapper) hosted on another domain.";
+    pub const LOGS: &str = "Hydrus server services will write a brief anonymous line to the log for every request made, but for the client services this tends to be a bit spammy. You probably want this off unless you are testing something.";
+    pub const NORMIE: &str = "Use alternate ASCII art on the root page of the server.";
+    pub const EXTERNAL_PORT: &str =
+        "Setting this to a non-none empty string will forego the ':' in the URL.";
 }

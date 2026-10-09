@@ -1280,6 +1280,11 @@ impl TagFilterStepEditor {
         crate::tag_filter_editor::button_label(&self.filter, false, "", false).0
     }
 
+    /// The tag filter button's tooltip: the whole text its label may elide.
+    pub fn filter_tooltip(&self) -> String {
+        crate::tag_filter_editor::button_label(&self.filter, false, "", false).1
+    }
+
     /// "Example matches ok!", or "Example does not match - " and why.
     pub fn test_result(&self) -> (String, bool) {
         match tag_filter_test(&self.filter, &self.example) {

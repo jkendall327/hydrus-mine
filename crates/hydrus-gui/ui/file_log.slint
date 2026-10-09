@@ -1,3 +1,4 @@
+import { Btn } from "btn.slint";
 // An importer's file log window (the reference's `EditFileSeedCachePanel`
 // in its frame; its workings are hydrus-gui-model's `file_log`, bound by
 // `src/file_log_window.rs`), which is also the search log window
@@ -72,7 +73,7 @@ export component FileLogWindow inherits Window {
                     color: Theme.text;
                     overflow: elide;
                 }
-                log-button := Button {
+                log-button := Btn {
                     text: "whole log ▾";
                     enabled: !root.asking && !root.busy;
                     clicked => {
@@ -98,8 +99,8 @@ export component FileLogWindow inherits Window {
             }
             HorizontalLayout {
                 alignment: end;
-                if root.staged: Button { text: "apply"; enabled: !root.asking && !root.busy; clicked => { root.apply(); } }
-                Button {
+                if root.staged: Btn { text: "apply"; enabled: !root.asking && !root.busy; clicked => { root.apply(); } }
+                Btn {
                     text: root.staged ? "cancel" : "close";
                     clicked => { root.close-window(); }
                 }

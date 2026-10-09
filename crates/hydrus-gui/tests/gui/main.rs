@@ -11,6 +11,7 @@ mod animation;
 mod animation_start;
 mod api_update_toasts;
 mod archive_delete;
+mod archive_delete_playback;
 mod auto_resolution_preview;
 mod auto_resolution_review;
 mod auto_resolution_rules;
@@ -77,6 +78,7 @@ mod notebook_refresh;
 mod notebook_sessions;
 mod notes_preferences;
 mod options_downloading_checkers;
+mod options_mpv_devices;
 mod options_window;
 mod page_chooser_options;
 mod page_navigation_options;
@@ -132,6 +134,7 @@ mod thumbnail_navigation;
 mod thumbnail_preview_selection;
 mod thumbnail_ratings;
 mod thumbnail_selection;
+mod undelete_question;
 mod unlock;
 mod viewer_menu;
 mod viewer_top_frame;
@@ -157,7 +160,10 @@ mod network_sessions;
 
 mod network_data;
 
+mod domain_metadata;
 mod downloader_interchange;
+mod suggested_tag_panels;
+mod tag_filter_tooltips;
 mod tag_migration;
 
 mod manage_notes_replay;
@@ -181,6 +187,7 @@ mod tag_namespace_order;
 mod unselected_tag_cap;
 
 mod write_autocomplete;
+mod write_autocomplete_leaves;
 
 mod network_job_control;
 
@@ -217,6 +224,7 @@ mod autocomplete_tabs;
 mod gui_colours;
 mod gui_format;
 mod preview_default_zoom;
+mod related_tags_panel;
 mod related_weight_table;
 
 mod external_calls;

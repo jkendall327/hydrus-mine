@@ -93,6 +93,21 @@ def record(session):
                                       direct=direct, exported=exported))
                 finally:
                     panel.deleteLater()
+                if version >= 5:
+                    # Repeats survive the upgrade; the cache drops them when it
+                    # first indexes its seeds, so a list export has none.
+                    duplicate_source_object = json.loads(json.dumps(template))
+                    duplicate_source_object[3][1][0][2][8] = json.loads(json.dumps(duplicate_source))
+                    panel = G.EditSubscriptionsPanel(c.gui, [])
+                    try:
+                        c.GetClipboardText = lambda: json.dumps(duplicate_source_object)
+                        panel._subscriptions_panel._ImportFromClipboard()
+                        panel._subscriptions.SelectDatas(panel._subscriptions.GetData())
+                        panel._subscriptions_panel._ExportToClipboard()
+                        cases[-1]['duplicate_source'] = duplicate_source_object
+                        cases[-1]['duplicate_exported'] = current(S.CreateFromSerialisableTuple(json.loads(copied[-1][2])))
+                    finally:
+                        panel.deleteLater()
                 rewrite = [8, version, [['https://legacy.example/history//media.tumblr.com/file', rows(version)[0][1]]]]
                 rewrites.append(dict(source=rewrite, upgraded=json.loads(upgrade(rewrite).DumpToString())))
             for note in [True, False, None, 42, -17, 1.5, ['complex'], {'complex': True}]:

@@ -1,3 +1,4 @@
+import { Btn } from "btn.slint";
 // Popup messages (`src/popups.rs`), as the reference's popup message
 // manager shows them at the main window's bottom right: each popup's
 // title, texts, gauges, download and buttons, and under them how many
@@ -192,12 +193,12 @@ export component PopupStack inherits Rectangle {
                         line: popup.download;
                     }
                     if popup.has-clipboard: PopupButton { measured(b) => { root.control-measured(i,popup.key,popup.gui-owner,"clipboard",b,card.bounds); } text: popup.clipboard; clicked => { root.copy-payload(popup.key,popup.action-owner,popup.gui-owner); } }
-                    if popup.files != "": Button {
+                    if popup.files != "": Btn {
                         text: popup.files;
                         clicked => { root.show-files(i); }
                     }
                     if popup.has-callable: PopupButton { measured(b) => { root.control-measured(i,popup.key,popup.gui-owner,"callable",b,card.bounds); } text: popup.callable; clicked => { root.call(popup.key,popup.action-owner,popup.gui-owner); } }
-                    if popup.traceback != "": Button {
+                    if popup.traceback != "": Btn {
                         text: card.traceback-shown ? "hide traceback" : "show traceback";
                         clicked => { card.traceback-shown = !card.traceback-shown; }
                     }
@@ -206,7 +207,7 @@ export component PopupStack inherits Rectangle {
                         text: popup.traceback;
                         wrap: word-wrap;
                     }
-                    if popup.traceback != "": Button {
+                    if popup.traceback != "": Btn {
                         text: "copy traceback information";
                         clicked => { root.copy-traceback(i); }
                     }
@@ -238,11 +239,11 @@ export component PopupStack inherits Rectangle {
                     vertical-alignment: center;
                     horizontal-stretch: 1;
                 }
-                Button {
+                Btn {
                     text: "dismiss all";
                     clicked => { root.dismiss-all(); }
                 }
-                Button {
+                Btn {
                     text: root.expanded ? "▾" : "▴";
                     clicked => { root.expanded = !root.expanded; }
                 }

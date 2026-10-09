@@ -1,3 +1,4 @@
+import { Btn } from "btn.slint";
 // The "manage notes" dialog for a file (the reference's
 // `EditFileNotesPanel`, opened by a thumbnail's or the viewer's "manage >
 // notes"; its workings are hydrus-gui-model's `notes_editor`, bound by
@@ -103,32 +104,32 @@ export component ManageNotesWindow inherits Window {
                 vertical-alignment: center;
                 color: Theme.text;
             }
-            Button {
+            Btn {
                 text: "add";
                 enabled: !root.asking;
                 clicked => { root.add(); }
             }
-            Button {
+            Btn {
                 text: "edit current name";
                 enabled: root.can-edit && !root.asking;
                 clicked => { root.rename(); }
             }
-            Button {
+            Btn {
                 text: "delete current note";
                 enabled: root.can-edit && !root.asking;
                 clicked => { root.delete(); }
             }
-            Button {
+            Btn {
                 text: "copy";
                 enabled: !root.asking;
                 clicked => { root.copy(); }
             }
-            Button {
+            Btn {
                 text: "paste";
                 enabled: !root.asking;
                 clicked => { root.paste(); }
             }
-            Button {
+            Btn {
                 text: "copy URLs";
                 enabled: !root.asking;
                 clicked => { root.copy-urls(); }
@@ -146,7 +147,7 @@ export component ManageNotesWindow inherits Window {
                     MenuItem { title: "start editing with text cursor at the end"; checkable: true; checked: root.cog-checks[2]; activated => { root.cog-chosen(2); } }
                     MenuItem { title: "on middle-click note hover copy, only copy text"; checkable: true; checked: root.cog-checks[3]; activated => { root.cog-chosen(3); } }
                 }
-                Button {
+                Btn {
                     text: "⚙"; enabled: !root.asking;
                     clicked => { root.cog-opened(); cog.show({x: 0px, y: self.height}); }
                 }
@@ -164,12 +165,12 @@ export component ManageNotesWindow inherits Window {
         HorizontalLayout {
             alignment: end;
             spacing: 6px;
-            Button {
+            Btn {
                 text: "apply";
                 enabled: !root.asking;
                 clicked => { root.apply(); }
             }
-            Button {
+            Btn {
                 text: "cancel";
                 clicked => { root.cancel(); }
             }

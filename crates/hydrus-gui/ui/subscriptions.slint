@@ -1,3 +1,4 @@
+import { Btn } from "btn.slint";
 // The manage subscriptions dialog (network > subscriptions…; the
 // reference's `EditSubscriptionsPanel`, bound by
 // `src/subscriptions_window.rs`): the subscriptions list, the buttons
@@ -21,7 +22,7 @@ export component SubscriptionExchangeButton inherits ContextMenuArea {
     Menu {
         for choice[i] in root.choices: MenuItem { title: choice; activated => { root.selected(i); } }
     }
-    button := Button {
+    button := Btn {
         width: parent.width; height: parent.height;
         text: root.label; enabled: root.available;
         clicked => { root.show({ x: 0px, y: self.height }); }
@@ -76,11 +77,11 @@ export component Asking inherits Rectangle {
         HorizontalLayout {
             spacing: 6px;
             alignment: end;
-            for choice[i] in root.choices: Button {
+            for choice[i] in root.choices: Btn {
                 text: choice;
                 clicked => { root.chosen(i); }
             }
-            Button {
+            Btn {
                 text: "cancel";
                 clicked => { root.cancelled(); }
             }
@@ -140,8 +141,8 @@ export component SubscriptionGalleryWindow inherits Window {
             HorizontalLayout {
                 alignment: end;
                 spacing: 6px;
-                Button { text: "ok"; clicked => { root.accept-clicked(); } }
-                if root.message == "": Button { text: "cancel"; clicked => { root.cancel(); } }
+                Btn { text: "ok"; clicked => { root.accept-clicked(); } }
+                if root.message == "": Btn { text: "cancel"; clicked => { root.cancel(); } }
             }
         }
     }
@@ -277,17 +278,17 @@ export component SubscriptionsWindow inherits Window {
             HorizontalLayout {
                 spacing: 6px;
                 alignment: end;
-                Button {
+                Btn {
                     text: "add";
                     enabled: !root.asking && !root.gallery-open && !root.import-child-open && !root.exchange-open;
                     clicked => { root.add(); }
                 }
-                Button {
+                Btn {
                     text: "edit";
                     enabled: root.one-selected && !root.asking && !root.gallery-open && !root.import-child-open && !root.exchange-open;
                     clicked => { root.edit(); }
                 }
-                Button {
+                Btn {
                     text: "delete";
                     enabled: root.any-selected && !root.asking && !root.gallery-open && !root.import-child-open && !root.exchange-open;
                     clicked => { root.delete(); }
@@ -295,7 +296,7 @@ export component SubscriptionsWindow inherits Window {
                 SubscriptionExchangeButton { label: "export"; choices: root.exchange-export-labels; available: root.any-selected && !root.asking && !root.gallery-open && !root.import-child-open && !root.exchange-open; selected(mode) => { root.exchange-mode(mode); } }
                 SubscriptionExchangeButton { label: "import"; choices: root.exchange-import-labels; available: !root.asking && !root.gallery-open && !root.import-child-open && !root.exchange-open; selected(mode) => { root.exchange-mode(mode + 3); } }
                 Rectangle { width: 12px; }
-                Button {
+                Btn {
                     text: "duplicate";
                     enabled: root.any-selected && !root.asking && !root.gallery-open && !root.import-child-open && !root.exchange-open;
                     clicked => { root.duplicate(); }
@@ -304,53 +305,53 @@ export component SubscriptionsWindow inherits Window {
             HorizontalLayout {
                 spacing: 6px;
                 alignment: end;
-                Button {
+                Btn {
                     text: "merge";
                     enabled: root.can-merge && !root.asking && !root.gallery-open && !root.import-child-open && !root.exchange-open;
                     clicked => { root.merge(); }
                 }
-                Button {
+                Btn {
                     text: "separate";
                     enabled: root.can-separate && !root.asking && !root.gallery-open && !root.import-child-open && !root.exchange-open;
                     clicked => { root.separate(); }
                 }
-                Button {
+                Btn {
                     text: "deduplicate";
                     enabled: root.can-dedupe && !root.asking && !root.gallery-open && !root.import-child-open && !root.exchange-open;
                     clicked => { root.deduplicate(); }
                 }
-                Button {
+                Btn {
                     text: "lowercase";
                     enabled: root.can-lowercase && !root.asking && !root.gallery-open && !root.import-child-open && !root.exchange-open;
                     clicked => { root.lowercase(); }
                 }
                 Rectangle { width: 12px; }
-                Button {
+                Btn {
                     text: "pause/resume";
                     enabled: root.any-selected && !root.asking && !root.gallery-open && !root.import-child-open && !root.exchange-open;
                     clicked => { root.pause-resume(); }
                 }
-                Button {
+                Btn {
                     text: "scrub delays";
                     enabled: root.can-scrub-delays && !root.asking && !root.gallery-open && !root.import-child-open && !root.exchange-open;
                     clicked => { root.scrub-delays(); }
                 }
-                Button {
+                Btn {
                     text: "check queries now";
                     enabled: root.can-check-now && !root.asking && !root.gallery-open && !root.import-child-open && !root.exchange-open;
                     clicked => { root.check-now(); }
                 }
-                if root.can-retry-failed: Button {
+                if root.can-retry-failed: Btn {
                     text: "retry failed";
                     enabled: !root.asking && !root.gallery-open && !root.import-child-open && !root.exchange-open;
                     clicked => { root.retry-failed(); }
                 }
-                if root.can-retry-ignored: Button {
+                if root.can-retry-ignored: Btn {
                     text: "retry ignored";
                     enabled: !root.asking && !root.gallery-open && !root.import-child-open && !root.exchange-open;
                     clicked => { root.retry-ignored(); }
                 }
-                Button {
+                Btn {
                     text: "reset";
                     enabled: root.can-reset && !root.asking && !root.gallery-open && !root.import-child-open && !root.exchange-open;
                     clicked => { root.reset(); }
@@ -359,17 +360,17 @@ export component SubscriptionsWindow inherits Window {
             HorizontalLayout {
                 spacing: 6px;
                 alignment: end;
-                Button {
+                Btn {
                     text: "select subscriptions";
                     enabled: !root.asking && !root.gallery-open && !root.import-child-open && !root.exchange-open;
                     clicked => { root.select-subscriptions(); }
                 }
-                Button {
+                Btn {
                     text: "overwrite downloader";
                     enabled: root.any-selected && !root.asking && !root.gallery-open && !root.import-child-open && !root.exchange-open;
                     clicked => { root.overwrite-downloader(); }
                 }
-                Button {
+                Btn {
                     text: "overwrite checker options";
                     enabled: root.any-selected && !root.asking && !root.gallery-open && !root.import-child-open && !root.exchange-open;
                     clicked => { root.overwrite-checker(); }
@@ -386,7 +387,7 @@ export component SubscriptionsWindow inherits Window {
                 }
                 Text { text: "import options:"; color: Theme.text; vertical-alignment: center; }
                 Text { text: root.import-status; color: Theme.text; vertical-alignment: center; }
-                Button {
+                Btn {
                     text: "copy";
                     enabled: root.one-selected && !root.asking && !root.gallery-open && !root.import-child-open && !root.exchange-open;
                     clicked => { root.copy-import-options(); }
@@ -394,7 +395,7 @@ export component SubscriptionsWindow inherits Window {
                 Rectangle {
                     width: 66px;
                     height: 28px;
-                    Button {
+                    Btn {
                         width: parent.width;
                         height: parent.height;
                         text: "paste";
@@ -412,16 +413,16 @@ export component SubscriptionsWindow inherits Window {
                             VerticalLayout {
                                 padding: 4px;
                                 spacing: 2px;
-                                Button { text: "custom paste: choose what you want"; clicked => { paste-menu.close(); root.paste-import-options(3); } }
+                                Btn { text: "custom paste: choose what you want"; clicked => { paste-menu.close(); root.paste-import-options(3); } }
                                 Rectangle { height: 1px; background: Theme.border; }
-                                Button { text: "merge-paste"; clicked => { paste-menu.close(); root.paste-import-options(0); } }
-                                Button { text: "fill-in-gaps-paste"; clicked => { paste-menu.close(); root.paste-import-options(1); } }
-                                Button { text: "replace-paste"; clicked => { paste-menu.close(); root.paste-import-options(2); } }
+                                Btn { text: "merge-paste"; clicked => { paste-menu.close(); root.paste-import-options(0); } }
+                                Btn { text: "fill-in-gaps-paste"; clicked => { paste-menu.close(); root.paste-import-options(1); } }
+                                Btn { text: "replace-paste"; clicked => { paste-menu.close(); root.paste-import-options(2); } }
                             }
                         }
                     }
                 }
-                Button {
+                Btn {
                     text: "clear";
                     enabled: root.any-selected && !root.asking && !root.gallery-open && !root.import-child-open && !root.exchange-open;
                     clicked => { root.clear-import-options(); }
@@ -441,12 +442,12 @@ export component SubscriptionsWindow inherits Window {
             HorizontalLayout {
                 alignment: end;
                 spacing: 6px;
-                Button {
+                Btn {
                     text: "apply";
                     enabled: !root.asking && !root.gallery-open && !root.import-child-open && !root.exchange-open;
                     clicked => { root.apply(); }
                 }
-                Button {
+                Btn {
                     text: "cancel";
                     enabled: !root.gallery-open && !root.import-child-open && !root.exchange-open;
                     clicked => { root.cancel(); }

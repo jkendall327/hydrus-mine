@@ -227,7 +227,9 @@ pub struct ClientApiServiceConfig {
     pub use_https: bool,
     pub external_scheme_override: Option<String>,
     pub external_host_override: Option<String>,
-    pub external_port_override: Option<i64>,
+    /// Text in the reference's editor (an empty string drops the `:`); old
+    /// clients stored a number.
+    pub external_port_override: Option<String>,
     /// Bandwidth usage history (type 39), kept verbatim.
     pub bandwidth_tracker: SerialisableObject,
     /// Bandwidth limits (type 38), kept verbatim.
@@ -521,8 +523,10 @@ fn client_api(settings: &Settings<'_>) -> DecodeResult<ClientApiServiceConfig> {
         use_https: opt_bool_setting(settings, "use_https")?,
         external_scheme_override: opt_str("external_scheme_override")?,
         external_host_override: opt_str("external_host_override")?,
-        external_port_override: get(settings, "external_port_override", |v| {
-            opt_int(KIND, v, "external_port_override")
+        external_port_override: get(settings, "external_port_override", |v| match v {
+            PyJson::Null => Ok(None),
+            v if v.as_i64().is_some() => Ok(v.as_i64().map(|p| p.to_string())),
+            v => opt_string(KIND, v, "external_port_override"),
         })?
         .flatten(),
         bandwidth_tracker: object_or(settings, "bandwidth_tracker", EMPTY_BANDWIDTH_TRACKER)?,
