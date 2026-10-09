@@ -4111,9 +4111,21 @@ change nothing). They are marked out of scope in `docs/rust/tracking/`.
   time. Idle time doesn't wait for the reference's two-minute boot delay beyond
   what the GUI's own idle check already applies.
 - CPU use is read from Linux's `/proc/stat`; elsewhere "CPU busy" is never
-  shown. As in the reference v688, CPU busyness only reaches the status bar.
+  shown. A busy system reaches the status bar and, as in the reference's
+  `GoodTimeToStartBackgroundWork`, holds idle-time file maintenance and
+  idle-time auto-resolution (the daemon reads it from the idle marker; they
+  do not fall back to normal time). The potential duplicates search does not
+  wait for it, as the reference's does not. "Just woke from sleep" is not
+  part of that marker: it does not hold them.
 - Similar-files search packets search 16 files at a time until the packet time
   passes, so a packet can run over by one batch.
+- Nothing wakes the daemon's worker loops from the GUI's process, so where the
+  reference sleeps ten minutes until woken by new work, auto-resolution (no
+  rule with work left) and file maintenance (no job due) check every minute.
+  Throttled or held file maintenance asks again every second while a job is
+  due, as the reference does. A rest between packets is never shorter than a
+  tenth of a second (a 0% rest). With no files to search, the search holds 30
+  seconds rather than resting by its percentage.
 - The status bar has no "hydrus busy" or database activity fields yet.
 
 ## Thumbnail manage > maintenance

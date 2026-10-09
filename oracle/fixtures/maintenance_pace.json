@@ -1,0 +1,4247 @@
+{
+ "t0": 1700000000,
+ "typed": {
+  "similar": {
+   "idle": [
+    7.5,
+    123
+   ],
+   "normal": [
+    2.04,
+    456
+   ]
+  },
+  "auto": {
+   "idle": [
+    3.25,
+    77
+   ],
+   "normal": [
+    0.8,
+    88
+   ]
+  },
+  "files": {
+   "idle": [
+    5,
+    150
+   ],
+   "normal": [
+    9,
+    45
+   ]
+  }
+ },
+ "packets": [
+  [
+   0.5,
+   false,
+   3
+  ],
+  [
+   0.5,
+   true,
+   5
+  ],
+  [
+   1.25,
+   true,
+   5
+  ],
+  [
+   10,
+   true,
+   50
+  ]
+ ],
+ "jobs": [
+  "metadata",
+  "exif",
+  "exif",
+  "exif",
+  "exif",
+  "presence",
+  "metadata",
+  "metadata",
+  "exif"
+ ],
+ "cases": [
+  {
+   "values": "defaults",
+   "switches": [
+    true,
+    true
+   ],
+   "saved": {
+    "maintain_similar_files_duplicate_pairs_during_idle": true,
+    "maintain_similar_files_duplicate_pairs_during_active": true,
+    "potential_duplicates_search_work_time_ms_idle": 5000,
+    "potential_duplicates_search_rest_percentage_idle": 50,
+    "potential_duplicates_search_work_time_ms_active": 100,
+    "potential_duplicates_search_rest_percentage_active": 1900,
+    "duplicates_auto_resolution_during_idle": true,
+    "duplicates_auto_resolution_during_active": true,
+    "duplicates_auto_resolution_work_time_ms_idle": 1000,
+    "duplicates_auto_resolution_rest_percentage_idle": 100,
+    "duplicates_auto_resolution_work_time_ms_active": 100,
+    "duplicates_auto_resolution_rest_percentage_active": 900,
+    "file_maintenance_during_idle": true,
+    "file_maintenance_during_active": true,
+    "file_maintenance_idle_throttle_files": 1,
+    "file_maintenance_idle_throttle_time_delta": 2,
+    "file_maintenance_active_throttle_files": 1,
+    "file_maintenance_active_throttle_time_delta": 20
+   },
+   "passes": [
+    {
+     "worker": "similar",
+     "idle": false,
+     "good_time": true,
+     "packet": [
+      0.5,
+      false,
+      3
+     ],
+     "events": [
+      [
+       "work",
+       0.1
+      ],
+      [
+       "wait",
+       "work",
+       0.949999
+      ]
+     ]
+    },
+    {
+     "worker": "similar",
+     "idle": false,
+     "good_time": true,
+     "packet": [
+      0.5,
+      true,
+      5
+     ],
+     "events": [
+      [
+       "work",
+       0.1
+      ],
+      [
+       "wait",
+       "work",
+       0.949999
+      ]
+     ]
+    },
+    {
+     "worker": "similar",
+     "idle": false,
+     "good_time": true,
+     "packet": [
+      1.25,
+      true,
+      5
+     ],
+     "events": [
+      [
+       "work",
+       0.1
+      ],
+      [
+       "wait",
+       "work",
+       2.375
+      ]
+     ]
+    },
+    {
+     "worker": "similar",
+     "idle": false,
+     "good_time": true,
+     "packet": [
+      10,
+      true,
+      50
+     ],
+     "events": [
+      [
+       "work",
+       0.1
+      ],
+      [
+       "wait",
+       "work",
+       9.5
+      ]
+     ]
+    },
+    {
+     "worker": "auto",
+     "idle": false,
+     "good_time": true,
+     "packet": [
+      0.5,
+      false,
+      3
+     ],
+     "events": [
+      [
+       "work",
+       0.1
+      ],
+      [
+       "sleep",
+       0.1
+      ],
+      [
+       "wait",
+       "idle",
+       599.9
+      ]
+     ]
+    },
+    {
+     "worker": "auto",
+     "idle": false,
+     "good_time": true,
+     "packet": [
+      0.5,
+      true,
+      5
+     ],
+     "events": [
+      [
+       "work",
+       0.1
+      ],
+      [
+       "sleep",
+       0.1
+      ],
+      [
+       "wait",
+       "work",
+       0.35
+      ]
+     ]
+    },
+    {
+     "worker": "auto",
+     "idle": false,
+     "good_time": true,
+     "packet": [
+      1.25,
+      true,
+      5
+     ],
+     "events": [
+      [
+       "work",
+       0.1
+      ],
+      [
+       "sleep",
+       0.1
+      ],
+      [
+       "wait",
+       "work",
+       1.025
+      ]
+     ]
+    },
+    {
+     "worker": "auto",
+     "idle": false,
+     "good_time": true,
+     "packet": [
+      10,
+      true,
+      50
+     ],
+     "events": [
+      [
+       "work",
+       0.1
+      ],
+      [
+       "sleep",
+       0.1
+      ],
+      [
+       "wait",
+       "work",
+       4.4
+      ]
+     ]
+    },
+    {
+     "worker": "files",
+     "idle": false,
+     "good_time": true,
+     "events": [
+      [
+       "job",
+       0,
+       "presence"
+      ],
+      [
+       "sleeps",
+       0.0001,
+       1
+      ],
+      [
+       "wait",
+       "work",
+       0.5
+      ],
+      [
+       "job",
+       0,
+       "metadata"
+      ],
+      [
+       "sleeps",
+       1,
+       21
+      ],
+      [
+       "job",
+       21,
+       "metadata"
+      ],
+      [
+       "sleeps",
+       1,
+       21
+      ],
+      [
+       "job",
+       42,
+       "metadata"
+      ],
+      [
+       "sleeps",
+       0.0001,
+       1
+      ],
+      [
+       "wait",
+       "work",
+       0.5
+      ],
+      [
+       "sleeps",
+       1,
+       20
+      ],
+      [
+       "job",
+       63,
+       "exif"
+      ],
+      [
+       "job",
+       63,
+       "exif"
+      ],
+      [
+       "job",
+       63,
+       "exif"
+      ],
+      [
+       "job",
+       63,
+       "exif"
+      ],
+      [
+       "sleeps",
+       1,
+       21
+      ],
+      [
+       "job",
+       84,
+       "exif"
+      ],
+      [
+       "sleeps",
+       0.0001,
+       1
+      ],
+      [
+       "wait",
+       "work",
+       0.5
+      ],
+      [
+       "wait",
+       "idle",
+       600
+      ]
+     ]
+    },
+    {
+     "worker": "similar",
+     "idle": true,
+     "good_time": true,
+     "packet": [
+      0.5,
+      false,
+      3
+     ],
+     "events": [
+      [
+       "work",
+       5.0
+      ],
+      [
+       "wait",
+       "work",
+       1.25
+      ]
+     ]
+    },
+    {
+     "worker": "similar",
+     "idle": true,
+     "good_time": true,
+     "packet": [
+      0.5,
+      true,
+      5
+     ],
+     "events": [
+      [
+       "work",
+       5.0
+      ],
+      [
+       "wait",
+       "work",
+       1.25
+      ]
+     ]
+    },
+    {
+     "worker": "similar",
+     "idle": true,
+     "good_time": true,
+     "packet": [
+      1.25,
+      true,
+      5
+     ],
+     "events": [
+      [
+       "work",
+       5.0
+      ],
+      [
+       "wait",
+       "work",
+       3.125
+      ]
+     ]
+    },
+    {
+     "worker": "similar",
+     "idle": true,
+     "good_time": true,
+     "packet": [
+      10,
+      true,
+      50
+     ],
+     "events": [
+      [
+       "work",
+       5.0
+      ],
+      [
+       "wait",
+       "work",
+       12.5
+      ]
+     ]
+    },
+    {
+     "worker": "auto",
+     "idle": true,
+     "good_time": true,
+     "packet": [
+      0.5,
+      false,
+      3
+     ],
+     "events": [
+      [
+       "work",
+       1.0
+      ],
+      [
+       "sleep",
+       0.1
+      ],
+      [
+       "wait",
+       "idle",
+       599.9
+      ]
+     ]
+    },
+    {
+     "worker": "auto",
+     "idle": true,
+     "good_time": true,
+     "packet": [
+      0.5,
+      true,
+      5
+     ],
+     "events": [
+      [
+       "work",
+       1.0
+      ],
+      [
+       "sleep",
+       0.1
+      ],
+      [
+       "wait",
+       "work",
+       0.4
+      ]
+     ]
+    },
+    {
+     "worker": "auto",
+     "idle": true,
+     "good_time": true,
+     "packet": [
+      1.25,
+      true,
+      5
+     ],
+     "events": [
+      [
+       "work",
+       1.0
+      ],
+      [
+       "sleep",
+       0.1
+      ],
+      [
+       "wait",
+       "work",
+       1.15
+      ]
+     ]
+    },
+    {
+     "worker": "auto",
+     "idle": true,
+     "good_time": true,
+     "packet": [
+      10,
+      true,
+      50
+     ],
+     "events": [
+      [
+       "work",
+       1.0
+      ],
+      [
+       "sleep",
+       0.1
+      ],
+      [
+       "wait",
+       "work",
+       4.9
+      ]
+     ]
+    },
+    {
+     "worker": "files",
+     "idle": true,
+     "good_time": true,
+     "events": [
+      [
+       "job",
+       0,
+       "presence"
+      ],
+      [
+       "sleeps",
+       0.0001,
+       1
+      ],
+      [
+       "wait",
+       "work",
+       0.5
+      ],
+      [
+       "job",
+       0,
+       "metadata"
+      ],
+      [
+       "sleeps",
+       1,
+       3
+      ],
+      [
+       "job",
+       3,
+       "metadata"
+      ],
+      [
+       "sleeps",
+       1,
+       3
+      ],
+      [
+       "job",
+       6,
+       "metadata"
+      ],
+      [
+       "sleeps",
+       0.0001,
+       1
+      ],
+      [
+       "wait",
+       "work",
+       0.5
+      ],
+      [
+       "sleeps",
+       1,
+       2
+      ],
+      [
+       "job",
+       9,
+       "exif"
+      ],
+      [
+       "job",
+       9,
+       "exif"
+      ],
+      [
+       "job",
+       9,
+       "exif"
+      ],
+      [
+       "job",
+       9,
+       "exif"
+      ],
+      [
+       "sleeps",
+       1,
+       3
+      ],
+      [
+       "job",
+       12,
+       "exif"
+      ],
+      [
+       "sleeps",
+       0.0001,
+       1
+      ],
+      [
+       "wait",
+       "work",
+       0.5
+      ],
+      [
+       "wait",
+       "idle",
+       600
+      ]
+     ]
+    },
+    {
+     "worker": "similar",
+     "idle": true,
+     "good_time": false,
+     "packet": [
+      0.5,
+      false,
+      3
+     ],
+     "events": [
+      [
+       "work",
+       5.0
+      ],
+      [
+       "wait",
+       "work",
+       1.25
+      ]
+     ]
+    },
+    {
+     "worker": "similar",
+     "idle": true,
+     "good_time": false,
+     "packet": [
+      0.5,
+      true,
+      5
+     ],
+     "events": [
+      [
+       "work",
+       5.0
+      ],
+      [
+       "wait",
+       "work",
+       1.25
+      ]
+     ]
+    },
+    {
+     "worker": "similar",
+     "idle": true,
+     "good_time": false,
+     "packet": [
+      1.25,
+      true,
+      5
+     ],
+     "events": [
+      [
+       "work",
+       5.0
+      ],
+      [
+       "wait",
+       "work",
+       3.125
+      ]
+     ]
+    },
+    {
+     "worker": "similar",
+     "idle": true,
+     "good_time": false,
+     "packet": [
+      10,
+      true,
+      50
+     ],
+     "events": [
+      [
+       "work",
+       5.0
+      ],
+      [
+       "wait",
+       "work",
+       12.5
+      ]
+     ]
+    },
+    {
+     "worker": "auto",
+     "idle": true,
+     "good_time": false,
+     "packet": [
+      0.5,
+      false,
+      3
+     ],
+     "events": [
+      [
+       "sleep",
+       0.1
+      ],
+      [
+       "wait",
+       "idle",
+       9.9
+      ]
+     ]
+    },
+    {
+     "worker": "auto",
+     "idle": true,
+     "good_time": false,
+     "packet": [
+      0.5,
+      true,
+      5
+     ],
+     "events": [
+      [
+       "sleep",
+       0.1
+      ],
+      [
+       "wait",
+       "idle",
+       9.9
+      ]
+     ]
+    },
+    {
+     "worker": "auto",
+     "idle": true,
+     "good_time": false,
+     "packet": [
+      1.25,
+      true,
+      5
+     ],
+     "events": [
+      [
+       "sleep",
+       0.1
+      ],
+      [
+       "wait",
+       "idle",
+       9.9
+      ]
+     ]
+    },
+    {
+     "worker": "auto",
+     "idle": true,
+     "good_time": false,
+     "packet": [
+      10,
+      true,
+      50
+     ],
+     "events": [
+      [
+       "sleep",
+       0.1
+      ],
+      [
+       "wait",
+       "idle",
+       9.9
+      ]
+     ]
+    },
+    {
+     "worker": "files",
+     "idle": true,
+     "good_time": false,
+     "events": [
+      [
+       "sleeps",
+       1,
+       401
+      ],
+      [
+       "stopped"
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "values": "defaults",
+   "switches": [
+    true,
+    false
+   ],
+   "saved": {
+    "maintain_similar_files_duplicate_pairs_during_idle": true,
+    "maintain_similar_files_duplicate_pairs_during_active": false,
+    "potential_duplicates_search_work_time_ms_idle": 5000,
+    "potential_duplicates_search_rest_percentage_idle": 50,
+    "potential_duplicates_search_work_time_ms_active": 100,
+    "potential_duplicates_search_rest_percentage_active": 1900,
+    "duplicates_auto_resolution_during_idle": true,
+    "duplicates_auto_resolution_during_active": false,
+    "duplicates_auto_resolution_work_time_ms_idle": 1000,
+    "duplicates_auto_resolution_rest_percentage_idle": 100,
+    "duplicates_auto_resolution_work_time_ms_active": 100,
+    "duplicates_auto_resolution_rest_percentage_active": 900,
+    "file_maintenance_during_idle": true,
+    "file_maintenance_during_active": false,
+    "file_maintenance_idle_throttle_files": 1,
+    "file_maintenance_idle_throttle_time_delta": 2,
+    "file_maintenance_active_throttle_files": 1,
+    "file_maintenance_active_throttle_time_delta": 20
+   },
+   "passes": [
+    {
+     "worker": "similar",
+     "idle": false,
+     "good_time": true,
+     "packet": [
+      0.5,
+      false,
+      3
+     ],
+     "events": [
+      [
+       "wait",
+       "idle",
+       30
+      ]
+     ]
+    },
+    {
+     "worker": "similar",
+     "idle": false,
+     "good_time": true,
+     "packet": [
+      0.5,
+      true,
+      5
+     ],
+     "events": [
+      [
+       "wait",
+       "idle",
+       30
+      ]
+     ]
+    },
+    {
+     "worker": "similar",
+     "idle": false,
+     "good_time": true,
+     "packet": [
+      1.25,
+      true,
+      5
+     ],
+     "events": [
+      [
+       "wait",
+       "idle",
+       30
+      ]
+     ]
+    },
+    {
+     "worker": "similar",
+     "idle": false,
+     "good_time": true,
+     "packet": [
+      10,
+      true,
+      50
+     ],
+     "events": [
+      [
+       "wait",
+       "idle",
+       30
+      ]
+     ]
+    },
+    {
+     "worker": "auto",
+     "idle": false,
+     "good_time": true,
+     "packet": [
+      0.5,
+      false,
+      3
+     ],
+     "events": [
+      [
+       "sleep",
+       0.1
+      ],
+      [
+       "wait",
+       "idle",
+       9.9
+      ]
+     ]
+    },
+    {
+     "worker": "auto",
+     "idle": false,
+     "good_time": true,
+     "packet": [
+      0.5,
+      true,
+      5
+     ],
+     "events": [
+      [
+       "sleep",
+       0.1
+      ],
+      [
+       "wait",
+       "idle",
+       9.9
+      ]
+     ]
+    },
+    {
+     "worker": "auto",
+     "idle": false,
+     "good_time": true,
+     "packet": [
+      1.25,
+      true,
+      5
+     ],
+     "events": [
+      [
+       "sleep",
+       0.1
+      ],
+      [
+       "wait",
+       "idle",
+       9.9
+      ]
+     ]
+    },
+    {
+     "worker": "auto",
+     "idle": false,
+     "good_time": true,
+     "packet": [
+      10,
+      true,
+      50
+     ],
+     "events": [
+      [
+       "sleep",
+       0.1
+      ],
+      [
+       "wait",
+       "idle",
+       9.9
+      ]
+     ]
+    },
+    {
+     "worker": "files",
+     "idle": false,
+     "good_time": true,
+     "events": [
+      [
+       "sleeps",
+       1,
+       401
+      ],
+      [
+       "stopped"
+      ]
+     ]
+    },
+    {
+     "worker": "similar",
+     "idle": true,
+     "good_time": true,
+     "packet": [
+      0.5,
+      false,
+      3
+     ],
+     "events": [
+      [
+       "work",
+       5.0
+      ],
+      [
+       "wait",
+       "work",
+       1.25
+      ]
+     ]
+    },
+    {
+     "worker": "similar",
+     "idle": true,
+     "good_time": true,
+     "packet": [
+      0.5,
+      true,
+      5
+     ],
+     "events": [
+      [
+       "work",
+       5.0
+      ],
+      [
+       "wait",
+       "work",
+       1.25
+      ]
+     ]
+    },
+    {
+     "worker": "similar",
+     "idle": true,
+     "good_time": true,
+     "packet": [
+      1.25,
+      true,
+      5
+     ],
+     "events": [
+      [
+       "work",
+       5.0
+      ],
+      [
+       "wait",
+       "work",
+       3.125
+      ]
+     ]
+    },
+    {
+     "worker": "similar",
+     "idle": true,
+     "good_time": true,
+     "packet": [
+      10,
+      true,
+      50
+     ],
+     "events": [
+      [
+       "work",
+       5.0
+      ],
+      [
+       "wait",
+       "work",
+       12.5
+      ]
+     ]
+    },
+    {
+     "worker": "auto",
+     "idle": true,
+     "good_time": true,
+     "packet": [
+      0.5,
+      false,
+      3
+     ],
+     "events": [
+      [
+       "work",
+       1.0
+      ],
+      [
+       "sleep",
+       0.1
+      ],
+      [
+       "wait",
+       "idle",
+       599.9
+      ]
+     ]
+    },
+    {
+     "worker": "auto",
+     "idle": true,
+     "good_time": true,
+     "packet": [
+      0.5,
+      true,
+      5
+     ],
+     "events": [
+      [
+       "work",
+       1.0
+      ],
+      [
+       "sleep",
+       0.1
+      ],
+      [
+       "wait",
+       "work",
+       0.4
+      ]
+     ]
+    },
+    {
+     "worker": "auto",
+     "idle": true,
+     "good_time": true,
+     "packet": [
+      1.25,
+      true,
+      5
+     ],
+     "events": [
+      [
+       "work",
+       1.0
+      ],
+      [
+       "sleep",
+       0.1
+      ],
+      [
+       "wait",
+       "work",
+       1.15
+      ]
+     ]
+    },
+    {
+     "worker": "auto",
+     "idle": true,
+     "good_time": true,
+     "packet": [
+      10,
+      true,
+      50
+     ],
+     "events": [
+      [
+       "work",
+       1.0
+      ],
+      [
+       "sleep",
+       0.1
+      ],
+      [
+       "wait",
+       "work",
+       4.9
+      ]
+     ]
+    },
+    {
+     "worker": "files",
+     "idle": true,
+     "good_time": true,
+     "events": [
+      [
+       "job",
+       0,
+       "presence"
+      ],
+      [
+       "sleeps",
+       0.0001,
+       1
+      ],
+      [
+       "wait",
+       "work",
+       0.5
+      ],
+      [
+       "job",
+       0,
+       "metadata"
+      ],
+      [
+       "sleeps",
+       1,
+       3
+      ],
+      [
+       "job",
+       3,
+       "metadata"
+      ],
+      [
+       "sleeps",
+       1,
+       3
+      ],
+      [
+       "job",
+       6,
+       "metadata"
+      ],
+      [
+       "sleeps",
+       0.0001,
+       1
+      ],
+      [
+       "wait",
+       "work",
+       0.5
+      ],
+      [
+       "sleeps",
+       1,
+       2
+      ],
+      [
+       "job",
+       9,
+       "exif"
+      ],
+      [
+       "job",
+       9,
+       "exif"
+      ],
+      [
+       "job",
+       9,
+       "exif"
+      ],
+      [
+       "job",
+       9,
+       "exif"
+      ],
+      [
+       "sleeps",
+       1,
+       3
+      ],
+      [
+       "job",
+       12,
+       "exif"
+      ],
+      [
+       "sleeps",
+       0.0001,
+       1
+      ],
+      [
+       "wait",
+       "work",
+       0.5
+      ],
+      [
+       "wait",
+       "idle",
+       600
+      ]
+     ]
+    },
+    {
+     "worker": "similar",
+     "idle": true,
+     "good_time": false,
+     "packet": [
+      0.5,
+      false,
+      3
+     ],
+     "events": [
+      [
+       "work",
+       5.0
+      ],
+      [
+       "wait",
+       "work",
+       1.25
+      ]
+     ]
+    },
+    {
+     "worker": "similar",
+     "idle": true,
+     "good_time": false,
+     "packet": [
+      0.5,
+      true,
+      5
+     ],
+     "events": [
+      [
+       "work",
+       5.0
+      ],
+      [
+       "wait",
+       "work",
+       1.25
+      ]
+     ]
+    },
+    {
+     "worker": "similar",
+     "idle": true,
+     "good_time": false,
+     "packet": [
+      1.25,
+      true,
+      5
+     ],
+     "events": [
+      [
+       "work",
+       5.0
+      ],
+      [
+       "wait",
+       "work",
+       3.125
+      ]
+     ]
+    },
+    {
+     "worker": "similar",
+     "idle": true,
+     "good_time": false,
+     "packet": [
+      10,
+      true,
+      50
+     ],
+     "events": [
+      [
+       "work",
+       5.0
+      ],
+      [
+       "wait",
+       "work",
+       12.5
+      ]
+     ]
+    },
+    {
+     "worker": "auto",
+     "idle": true,
+     "good_time": false,
+     "packet": [
+      0.5,
+      false,
+      3
+     ],
+     "events": [
+      [
+       "sleep",
+       0.1
+      ],
+      [
+       "wait",
+       "idle",
+       9.9
+      ]
+     ]
+    },
+    {
+     "worker": "auto",
+     "idle": true,
+     "good_time": false,
+     "packet": [
+      0.5,
+      true,
+      5
+     ],
+     "events": [
+      [
+       "sleep",
+       0.1
+      ],
+      [
+       "wait",
+       "idle",
+       9.9
+      ]
+     ]
+    },
+    {
+     "worker": "auto",
+     "idle": true,
+     "good_time": false,
+     "packet": [
+      1.25,
+      true,
+      5
+     ],
+     "events": [
+      [
+       "sleep",
+       0.1
+      ],
+      [
+       "wait",
+       "idle",
+       9.9
+      ]
+     ]
+    },
+    {
+     "worker": "auto",
+     "idle": true,
+     "good_time": false,
+     "packet": [
+      10,
+      true,
+      50
+     ],
+     "events": [
+      [
+       "sleep",
+       0.1
+      ],
+      [
+       "wait",
+       "idle",
+       9.9
+      ]
+     ]
+    },
+    {
+     "worker": "files",
+     "idle": true,
+     "good_time": false,
+     "events": [
+      [
+       "sleeps",
+       1,
+       401
+      ],
+      [
+       "stopped"
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "values": "defaults",
+   "switches": [
+    false,
+    true
+   ],
+   "saved": {
+    "maintain_similar_files_duplicate_pairs_during_idle": false,
+    "maintain_similar_files_duplicate_pairs_during_active": true,
+    "potential_duplicates_search_work_time_ms_idle": 5000,
+    "potential_duplicates_search_rest_percentage_idle": 50,
+    "potential_duplicates_search_work_time_ms_active": 100,
+    "potential_duplicates_search_rest_percentage_active": 1900,
+    "duplicates_auto_resolution_during_idle": false,
+    "duplicates_auto_resolution_during_active": true,
+    "duplicates_auto_resolution_work_time_ms_idle": 1000,
+    "duplicates_auto_resolution_rest_percentage_idle": 100,
+    "duplicates_auto_resolution_work_time_ms_active": 100,
+    "duplicates_auto_resolution_rest_percentage_active": 900,
+    "file_maintenance_during_idle": false,
+    "file_maintenance_during_active": true,
+    "file_maintenance_idle_throttle_files": 1,
+    "file_maintenance_idle_throttle_time_delta": 2,
+    "file_maintenance_active_throttle_files": 1,
+    "file_maintenance_active_throttle_time_delta": 20
+   },
+   "passes": [
+    {
+     "worker": "similar",
+     "idle": false,
+     "good_time": true,
+     "packet": [
+      0.5,
+      false,
+      3
+     ],
+     "events": [
+      [
+       "work",
+       0.1
+      ],
+      [
+       "wait",
+       "work",
+       0.949999
+      ]
+     ]
+    },
+    {
+     "worker": "similar",
+     "idle": false,
+     "good_time": true,
+     "packet": [
+      0.5,
+      true,
+      5
+     ],
+     "events": [
+      [
+       "work",
+       0.1
+      ],
+      [
+       "wait",
+       "work",
+       0.949999
+      ]
+     ]
+    },
+    {
+     "worker": "similar",
+     "idle": false,
+     "good_time": true,
+     "packet": [
+      1.25,
+      true,
+      5
+     ],
+     "events": [
+      [
+       "work",
+       0.1
+      ],
+      [
+       "wait",
+       "work",
+       2.375
+      ]
+     ]
+    },
+    {
+     "worker": "similar",
+     "idle": false,
+     "good_time": true,
+     "packet": [
+      10,
+      true,
+      50
+     ],
+     "events": [
+      [
+       "work",
+       0.1
+      ],
+      [
+       "wait",
+       "work",
+       9.5
+      ]
+     ]
+    },
+    {
+     "worker": "auto",
+     "idle": false,
+     "good_time": true,
+     "packet": [
+      0.5,
+      false,
+      3
+     ],
+     "events": [
+      [
+       "work",
+       0.1
+      ],
+      [
+       "sleep",
+       0.1
+      ],
+      [
+       "wait",
+       "idle",
+       599.9
+      ]
+     ]
+    },
+    {
+     "worker": "auto",
+     "idle": false,
+     "good_time": true,
+     "packet": [
+      0.5,
+      true,
+      5
+     ],
+     "events": [
+      [
+       "work",
+       0.1
+      ],
+      [
+       "sleep",
+       0.1
+      ],
+      [
+       "wait",
+       "work",
+       0.35
+      ]
+     ]
+    },
+    {
+     "worker": "auto",
+     "idle": false,
+     "good_time": true,
+     "packet": [
+      1.25,
+      true,
+      5
+     ],
+     "events": [
+      [
+       "work",
+       0.1
+      ],
+      [
+       "sleep",
+       0.1
+      ],
+      [
+       "wait",
+       "work",
+       1.025
+      ]
+     ]
+    },
+    {
+     "worker": "auto",
+     "idle": false,
+     "good_time": true,
+     "packet": [
+      10,
+      true,
+      50
+     ],
+     "events": [
+      [
+       "work",
+       0.1
+      ],
+      [
+       "sleep",
+       0.1
+      ],
+      [
+       "wait",
+       "work",
+       4.4
+      ]
+     ]
+    },
+    {
+     "worker": "files",
+     "idle": false,
+     "good_time": true,
+     "events": [
+      [
+       "job",
+       0,
+       "presence"
+      ],
+      [
+       "sleeps",
+       0.0001,
+       1
+      ],
+      [
+       "wait",
+       "work",
+       0.5
+      ],
+      [
+       "job",
+       0,
+       "metadata"
+      ],
+      [
+       "sleeps",
+       1,
+       21
+      ],
+      [
+       "job",
+       21,
+       "metadata"
+      ],
+      [
+       "sleeps",
+       1,
+       21
+      ],
+      [
+       "job",
+       42,
+       "metadata"
+      ],
+      [
+       "sleeps",
+       0.0001,
+       1
+      ],
+      [
+       "wait",
+       "work",
+       0.5
+      ],
+      [
+       "sleeps",
+       1,
+       20
+      ],
+      [
+       "job",
+       63,
+       "exif"
+      ],
+      [
+       "job",
+       63,
+       "exif"
+      ],
+      [
+       "job",
+       63,
+       "exif"
+      ],
+      [
+       "job",
+       63,
+       "exif"
+      ],
+      [
+       "sleeps",
+       1,
+       21
+      ],
+      [
+       "job",
+       84,
+       "exif"
+      ],
+      [
+       "sleeps",
+       0.0001,
+       1
+      ],
+      [
+       "wait",
+       "work",
+       0.5
+      ],
+      [
+       "wait",
+       "idle",
+       600
+      ]
+     ]
+    },
+    {
+     "worker": "similar",
+     "idle": true,
+     "good_time": true,
+     "packet": [
+      0.5,
+      false,
+      3
+     ],
+     "events": [
+      [
+       "wait",
+       "idle",
+       30
+      ]
+     ]
+    },
+    {
+     "worker": "similar",
+     "idle": true,
+     "good_time": true,
+     "packet": [
+      0.5,
+      true,
+      5
+     ],
+     "events": [
+      [
+       "wait",
+       "idle",
+       30
+      ]
+     ]
+    },
+    {
+     "worker": "similar",
+     "idle": true,
+     "good_time": true,
+     "packet": [
+      1.25,
+      true,
+      5
+     ],
+     "events": [
+      [
+       "wait",
+       "idle",
+       30
+      ]
+     ]
+    },
+    {
+     "worker": "similar",
+     "idle": true,
+     "good_time": true,
+     "packet": [
+      10,
+      true,
+      50
+     ],
+     "events": [
+      [
+       "wait",
+       "idle",
+       30
+      ]
+     ]
+    },
+    {
+     "worker": "auto",
+     "idle": true,
+     "good_time": true,
+     "packet": [
+      0.5,
+      false,
+      3
+     ],
+     "events": [
+      [
+       "sleep",
+       0.1
+      ],
+      [
+       "wait",
+       "idle",
+       9.9
+      ]
+     ]
+    },
+    {
+     "worker": "auto",
+     "idle": true,
+     "good_time": true,
+     "packet": [
+      0.5,
+      true,
+      5
+     ],
+     "events": [
+      [
+       "sleep",
+       0.1
+      ],
+      [
+       "wait",
+       "idle",
+       9.9
+      ]
+     ]
+    },
+    {
+     "worker": "auto",
+     "idle": true,
+     "good_time": true,
+     "packet": [
+      1.25,
+      true,
+      5
+     ],
+     "events": [
+      [
+       "sleep",
+       0.1
+      ],
+      [
+       "wait",
+       "idle",
+       9.9
+      ]
+     ]
+    },
+    {
+     "worker": "auto",
+     "idle": true,
+     "good_time": true,
+     "packet": [
+      10,
+      true,
+      50
+     ],
+     "events": [
+      [
+       "sleep",
+       0.1
+      ],
+      [
+       "wait",
+       "idle",
+       9.9
+      ]
+     ]
+    },
+    {
+     "worker": "files",
+     "idle": true,
+     "good_time": true,
+     "events": [
+      [
+       "sleeps",
+       1,
+       401
+      ],
+      [
+       "stopped"
+      ]
+     ]
+    },
+    {
+     "worker": "similar",
+     "idle": true,
+     "good_time": false,
+     "packet": [
+      0.5,
+      false,
+      3
+     ],
+     "events": [
+      [
+       "wait",
+       "idle",
+       30
+      ]
+     ]
+    },
+    {
+     "worker": "similar",
+     "idle": true,
+     "good_time": false,
+     "packet": [
+      0.5,
+      true,
+      5
+     ],
+     "events": [
+      [
+       "wait",
+       "idle",
+       30
+      ]
+     ]
+    },
+    {
+     "worker": "similar",
+     "idle": true,
+     "good_time": false,
+     "packet": [
+      1.25,
+      true,
+      5
+     ],
+     "events": [
+      [
+       "wait",
+       "idle",
+       30
+      ]
+     ]
+    },
+    {
+     "worker": "similar",
+     "idle": true,
+     "good_time": false,
+     "packet": [
+      10,
+      true,
+      50
+     ],
+     "events": [
+      [
+       "wait",
+       "idle",
+       30
+      ]
+     ]
+    },
+    {
+     "worker": "auto",
+     "idle": true,
+     "good_time": false,
+     "packet": [
+      0.5,
+      false,
+      3
+     ],
+     "events": [
+      [
+       "sleep",
+       0.1
+      ],
+      [
+       "wait",
+       "idle",
+       9.9
+      ]
+     ]
+    },
+    {
+     "worker": "auto",
+     "idle": true,
+     "good_time": false,
+     "packet": [
+      0.5,
+      true,
+      5
+     ],
+     "events": [
+      [
+       "sleep",
+       0.1
+      ],
+      [
+       "wait",
+       "idle",
+       9.9
+      ]
+     ]
+    },
+    {
+     "worker": "auto",
+     "idle": true,
+     "good_time": false,
+     "packet": [
+      1.25,
+      true,
+      5
+     ],
+     "events": [
+      [
+       "sleep",
+       0.1
+      ],
+      [
+       "wait",
+       "idle",
+       9.9
+      ]
+     ]
+    },
+    {
+     "worker": "auto",
+     "idle": true,
+     "good_time": false,
+     "packet": [
+      10,
+      true,
+      50
+     ],
+     "events": [
+      [
+       "sleep",
+       0.1
+      ],
+      [
+       "wait",
+       "idle",
+       9.9
+      ]
+     ]
+    },
+    {
+     "worker": "files",
+     "idle": true,
+     "good_time": false,
+     "events": [
+      [
+       "sleeps",
+       1,
+       401
+      ],
+      [
+       "stopped"
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "values": "typed",
+   "switches": [
+    true,
+    true
+   ],
+   "saved": {
+    "maintain_similar_files_duplicate_pairs_during_idle": true,
+    "maintain_similar_files_duplicate_pairs_during_active": true,
+    "potential_duplicates_search_work_time_ms_idle": 7500,
+    "potential_duplicates_search_rest_percentage_idle": 123,
+    "potential_duplicates_search_work_time_ms_active": 2040,
+    "potential_duplicates_search_rest_percentage_active": 456,
+    "duplicates_auto_resolution_during_idle": true,
+    "duplicates_auto_resolution_during_active": true,
+    "duplicates_auto_resolution_work_time_ms_idle": 3250,
+    "duplicates_auto_resolution_rest_percentage_idle": 77,
+    "duplicates_auto_resolution_work_time_ms_active": 800,
+    "duplicates_auto_resolution_rest_percentage_active": 88,
+    "file_maintenance_during_idle": true,
+    "file_maintenance_during_active": true,
+    "file_maintenance_idle_throttle_files": 5,
+    "file_maintenance_idle_throttle_time_delta": 150,
+    "file_maintenance_active_throttle_files": 9,
+    "file_maintenance_active_throttle_time_delta": 45
+   },
+   "passes": [
+    {
+     "worker": "similar",
+     "idle": false,
+     "good_time": true,
+     "packet": [
+      0.5,
+      false,
+      3
+     ],
+     "events": [
+      [
+       "work",
+       2.04
+      ],
+      [
+       "wait",
+       "work",
+       4.6512
+      ]
+     ]
+    },
+    {
+     "worker": "similar",
+     "idle": false,
+     "good_time": true,
+     "packet": [
+      0.5,
+      true,
+      5
+     ],
+     "events": [
+      [
+       "work",
+       2.04
+      ],
+      [
+       "wait",
+       "work",
+       4.6512
+      ]
+     ]
+    },
+    {
+     "worker": "similar",
+     "idle": false,
+     "good_time": true,
+     "packet": [
+      1.25,
+      true,
+      5
+     ],
+     "events": [
+      [
+       "work",
+       2.04
+      ],
+      [
+       "wait",
+       "work",
+       11.628
+      ]
+     ]
+    },
+    {
+     "worker": "similar",
+     "idle": false,
+     "good_time": true,
+     "packet": [
+      10,
+      true,
+      50
+     ],
+     "events": [
+      [
+       "work",
+       2.04
+      ],
+      [
+       "wait",
+       "work",
+       46.512
+      ]
+     ]
+    },
+    {
+     "worker": "auto",
+     "idle": false,
+     "good_time": true,
+     "packet": [
+      0.5,
+      false,
+      3
+     ],
+     "events": [
+      [
+       "work",
+       0.8
+      ],
+      [
+       "sleep",
+       0.1
+      ],
+      [
+       "wait",
+       "idle",
+       599.9
+      ]
+     ]
+    },
+    {
+     "worker": "auto",
+     "idle": false,
+     "good_time": true,
+     "packet": [
+      0.5,
+      true,
+      5
+     ],
+     "events": [
+      [
+       "work",
+       0.8
+      ],
+      [
+       "sleep",
+       0.1
+      ],
+      [
+       "wait",
+       "work",
+       0.252
+      ]
+     ]
+    },
+    {
+     "worker": "auto",
+     "idle": false,
+     "good_time": true,
+     "packet": [
+      1.25,
+      true,
+      5
+     ],
+     "events": [
+      [
+       "work",
+       0.8
+      ],
+      [
+       "sleep",
+       0.1
+      ],
+      [
+       "wait",
+       "work",
+       0.78
+      ]
+     ]
+    },
+    {
+     "worker": "auto",
+     "idle": false,
+     "good_time": true,
+     "packet": [
+      10,
+      true,
+      50
+     ],
+     "events": [
+      [
+       "work",
+       0.8
+      ],
+      [
+       "sleep",
+       0.1
+      ],
+      [
+       "wait",
+       "work",
+       3.42
+      ]
+     ]
+    },
+    {
+     "worker": "files",
+     "idle": false,
+     "good_time": true,
+     "events": [
+      [
+       "job",
+       0,
+       "presence"
+      ],
+      [
+       "sleeps",
+       0.0001,
+       1
+      ],
+      [
+       "wait",
+       "work",
+       0.5
+      ],
+      [
+       "job",
+       0,
+       "metadata"
+      ],
+      [
+       "job",
+       0,
+       "metadata"
+      ],
+      [
+       "job",
+       0,
+       "metadata"
+      ],
+      [
+       "sleeps",
+       0.0001,
+       1
+      ],
+      [
+       "wait",
+       "work",
+       0.5
+      ],
+      [
+       "job",
+       1,
+       "exif"
+      ],
+      [
+       "job",
+       1,
+       "exif"
+      ],
+      [
+       "job",
+       1,
+       "exif"
+      ],
+      [
+       "job",
+       1,
+       "exif"
+      ],
+      [
+       "job",
+       1,
+       "exif"
+      ],
+      [
+       "sleeps",
+       0.0001,
+       1
+      ],
+      [
+       "wait",
+       "work",
+       0.5
+      ],
+      [
+       "wait",
+       "idle",
+       600
+      ]
+     ]
+    },
+    {
+     "worker": "similar",
+     "idle": true,
+     "good_time": true,
+     "packet": [
+      0.5,
+      false,
+      3
+     ],
+     "events": [
+      [
+       "work",
+       7.5
+      ],
+      [
+       "wait",
+       "work",
+       4.6125
+      ]
+     ]
+    },
+    {
+     "worker": "similar",
+     "idle": true,
+     "good_time": true,
+     "packet": [
+      0.5,
+      true,
+      5
+     ],
+     "events": [
+      [
+       "work",
+       7.5
+      ],
+      [
+       "wait",
+       "work",
+       4.6125
+      ]
+     ]
+    },
+    {
+     "worker": "similar",
+     "idle": true,
+     "good_time": true,
+     "packet": [
+      1.25,
+      true,
+      5
+     ],
+     "events": [
+      [
+       "work",
+       7.5
+      ],
+      [
+       "wait",
+       "work",
+       11.53125
+      ]
+     ]
+    },
+    {
+     "worker": "similar",
+     "idle": true,
+     "good_time": true,
+     "packet": [
+      10,
+      true,
+      50
+     ],
+     "events": [
+      [
+       "work",
+       7.5
+      ],
+      [
+       "wait",
+       "work",
+       46.125
+      ]
+     ]
+    },
+    {
+     "worker": "auto",
+     "idle": true,
+     "good_time": true,
+     "packet": [
+      0.5,
+      false,
+      3
+     ],
+     "events": [
+      [
+       "work",
+       3.25
+      ],
+      [
+       "sleep",
+       0.1
+      ],
+      [
+       "wait",
+       "idle",
+       599.9
+      ]
+     ]
+    },
+    {
+     "worker": "auto",
+     "idle": true,
+     "good_time": true,
+     "packet": [
+      0.5,
+      true,
+      5
+     ],
+     "events": [
+      [
+       "work",
+       3.25
+      ],
+      [
+       "sleep",
+       0.1
+      ],
+      [
+       "wait",
+       "work",
+       1.15125
+      ]
+     ]
+    },
+    {
+     "worker": "auto",
+     "idle": true,
+     "good_time": true,
+     "packet": [
+      1.25,
+      true,
+      5
+     ],
+     "events": [
+      [
+       "work",
+       3.25
+      ],
+      [
+       "sleep",
+       0.1
+      ],
+      [
+       "wait",
+       "work",
+       3.028125
+      ]
+     ]
+    },
+    {
+     "worker": "auto",
+     "idle": true,
+     "good_time": true,
+     "packet": [
+      10,
+      true,
+      50
+     ],
+     "events": [
+      [
+       "work",
+       3.25
+      ],
+      [
+       "sleep",
+       0.1
+      ],
+      [
+       "wait",
+       "work",
+       12.4125
+      ]
+     ]
+    },
+    {
+     "worker": "files",
+     "idle": true,
+     "good_time": true,
+     "events": [
+      [
+       "job",
+       0,
+       "presence"
+      ],
+      [
+       "sleeps",
+       0.0001,
+       1
+      ],
+      [
+       "wait",
+       "work",
+       0.5
+      ],
+      [
+       "job",
+       0,
+       "metadata"
+      ],
+      [
+       "job",
+       0,
+       "metadata"
+      ],
+      [
+       "job",
+       0,
+       "metadata"
+      ],
+      [
+       "sleeps",
+       0.0001,
+       1
+      ],
+      [
+       "wait",
+       "work",
+       0.5
+      ],
+      [
+       "job",
+       1,
+       "exif"
+      ],
+      [
+       "job",
+       1,
+       "exif"
+      ],
+      [
+       "job",
+       1,
+       "exif"
+      ],
+      [
+       "job",
+       1,
+       "exif"
+      ],
+      [
+       "job",
+       1,
+       "exif"
+      ],
+      [
+       "sleeps",
+       0.0001,
+       1
+      ],
+      [
+       "wait",
+       "work",
+       0.5
+      ],
+      [
+       "wait",
+       "idle",
+       600
+      ]
+     ]
+    },
+    {
+     "worker": "similar",
+     "idle": true,
+     "good_time": false,
+     "packet": [
+      0.5,
+      false,
+      3
+     ],
+     "events": [
+      [
+       "work",
+       7.5
+      ],
+      [
+       "wait",
+       "work",
+       4.6125
+      ]
+     ]
+    },
+    {
+     "worker": "similar",
+     "idle": true,
+     "good_time": false,
+     "packet": [
+      0.5,
+      true,
+      5
+     ],
+     "events": [
+      [
+       "work",
+       7.5
+      ],
+      [
+       "wait",
+       "work",
+       4.6125
+      ]
+     ]
+    },
+    {
+     "worker": "similar",
+     "idle": true,
+     "good_time": false,
+     "packet": [
+      1.25,
+      true,
+      5
+     ],
+     "events": [
+      [
+       "work",
+       7.5
+      ],
+      [
+       "wait",
+       "work",
+       11.53125
+      ]
+     ]
+    },
+    {
+     "worker": "similar",
+     "idle": true,
+     "good_time": false,
+     "packet": [
+      10,
+      true,
+      50
+     ],
+     "events": [
+      [
+       "work",
+       7.5
+      ],
+      [
+       "wait",
+       "work",
+       46.125
+      ]
+     ]
+    },
+    {
+     "worker": "auto",
+     "idle": true,
+     "good_time": false,
+     "packet": [
+      0.5,
+      false,
+      3
+     ],
+     "events": [
+      [
+       "sleep",
+       0.1
+      ],
+      [
+       "wait",
+       "idle",
+       9.9
+      ]
+     ]
+    },
+    {
+     "worker": "auto",
+     "idle": true,
+     "good_time": false,
+     "packet": [
+      0.5,
+      true,
+      5
+     ],
+     "events": [
+      [
+       "sleep",
+       0.1
+      ],
+      [
+       "wait",
+       "idle",
+       9.9
+      ]
+     ]
+    },
+    {
+     "worker": "auto",
+     "idle": true,
+     "good_time": false,
+     "packet": [
+      1.25,
+      true,
+      5
+     ],
+     "events": [
+      [
+       "sleep",
+       0.1
+      ],
+      [
+       "wait",
+       "idle",
+       9.9
+      ]
+     ]
+    },
+    {
+     "worker": "auto",
+     "idle": true,
+     "good_time": false,
+     "packet": [
+      10,
+      true,
+      50
+     ],
+     "events": [
+      [
+       "sleep",
+       0.1
+      ],
+      [
+       "wait",
+       "idle",
+       9.9
+      ]
+     ]
+    },
+    {
+     "worker": "files",
+     "idle": true,
+     "good_time": false,
+     "events": [
+      [
+       "sleeps",
+       1,
+       401
+      ],
+      [
+       "stopped"
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "values": "typed",
+   "switches": [
+    true,
+    false
+   ],
+   "saved": {
+    "maintain_similar_files_duplicate_pairs_during_idle": true,
+    "maintain_similar_files_duplicate_pairs_during_active": false,
+    "potential_duplicates_search_work_time_ms_idle": 7500,
+    "potential_duplicates_search_rest_percentage_idle": 123,
+    "potential_duplicates_search_work_time_ms_active": 2040,
+    "potential_duplicates_search_rest_percentage_active": 456,
+    "duplicates_auto_resolution_during_idle": true,
+    "duplicates_auto_resolution_during_active": false,
+    "duplicates_auto_resolution_work_time_ms_idle": 3250,
+    "duplicates_auto_resolution_rest_percentage_idle": 77,
+    "duplicates_auto_resolution_work_time_ms_active": 800,
+    "duplicates_auto_resolution_rest_percentage_active": 88,
+    "file_maintenance_during_idle": true,
+    "file_maintenance_during_active": false,
+    "file_maintenance_idle_throttle_files": 5,
+    "file_maintenance_idle_throttle_time_delta": 150,
+    "file_maintenance_active_throttle_files": 9,
+    "file_maintenance_active_throttle_time_delta": 45
+   },
+   "passes": [
+    {
+     "worker": "similar",
+     "idle": false,
+     "good_time": true,
+     "packet": [
+      0.5,
+      false,
+      3
+     ],
+     "events": [
+      [
+       "wait",
+       "idle",
+       30
+      ]
+     ]
+    },
+    {
+     "worker": "similar",
+     "idle": false,
+     "good_time": true,
+     "packet": [
+      0.5,
+      true,
+      5
+     ],
+     "events": [
+      [
+       "wait",
+       "idle",
+       30
+      ]
+     ]
+    },
+    {
+     "worker": "similar",
+     "idle": false,
+     "good_time": true,
+     "packet": [
+      1.25,
+      true,
+      5
+     ],
+     "events": [
+      [
+       "wait",
+       "idle",
+       30
+      ]
+     ]
+    },
+    {
+     "worker": "similar",
+     "idle": false,
+     "good_time": true,
+     "packet": [
+      10,
+      true,
+      50
+     ],
+     "events": [
+      [
+       "wait",
+       "idle",
+       30
+      ]
+     ]
+    },
+    {
+     "worker": "auto",
+     "idle": false,
+     "good_time": true,
+     "packet": [
+      0.5,
+      false,
+      3
+     ],
+     "events": [
+      [
+       "sleep",
+       0.1
+      ],
+      [
+       "wait",
+       "idle",
+       9.9
+      ]
+     ]
+    },
+    {
+     "worker": "auto",
+     "idle": false,
+     "good_time": true,
+     "packet": [
+      0.5,
+      true,
+      5
+     ],
+     "events": [
+      [
+       "sleep",
+       0.1
+      ],
+      [
+       "wait",
+       "idle",
+       9.9
+      ]
+     ]
+    },
+    {
+     "worker": "auto",
+     "idle": false,
+     "good_time": true,
+     "packet": [
+      1.25,
+      true,
+      5
+     ],
+     "events": [
+      [
+       "sleep",
+       0.1
+      ],
+      [
+       "wait",
+       "idle",
+       9.9
+      ]
+     ]
+    },
+    {
+     "worker": "auto",
+     "idle": false,
+     "good_time": true,
+     "packet": [
+      10,
+      true,
+      50
+     ],
+     "events": [
+      [
+       "sleep",
+       0.1
+      ],
+      [
+       "wait",
+       "idle",
+       9.9
+      ]
+     ]
+    },
+    {
+     "worker": "files",
+     "idle": false,
+     "good_time": true,
+     "events": [
+      [
+       "sleeps",
+       1,
+       401
+      ],
+      [
+       "stopped"
+      ]
+     ]
+    },
+    {
+     "worker": "similar",
+     "idle": true,
+     "good_time": true,
+     "packet": [
+      0.5,
+      false,
+      3
+     ],
+     "events": [
+      [
+       "work",
+       7.5
+      ],
+      [
+       "wait",
+       "work",
+       4.6125
+      ]
+     ]
+    },
+    {
+     "worker": "similar",
+     "idle": true,
+     "good_time": true,
+     "packet": [
+      0.5,
+      true,
+      5
+     ],
+     "events": [
+      [
+       "work",
+       7.5
+      ],
+      [
+       "wait",
+       "work",
+       4.6125
+      ]
+     ]
+    },
+    {
+     "worker": "similar",
+     "idle": true,
+     "good_time": true,
+     "packet": [
+      1.25,
+      true,
+      5
+     ],
+     "events": [
+      [
+       "work",
+       7.5
+      ],
+      [
+       "wait",
+       "work",
+       11.53125
+      ]
+     ]
+    },
+    {
+     "worker": "similar",
+     "idle": true,
+     "good_time": true,
+     "packet": [
+      10,
+      true,
+      50
+     ],
+     "events": [
+      [
+       "work",
+       7.5
+      ],
+      [
+       "wait",
+       "work",
+       46.125
+      ]
+     ]
+    },
+    {
+     "worker": "auto",
+     "idle": true,
+     "good_time": true,
+     "packet": [
+      0.5,
+      false,
+      3
+     ],
+     "events": [
+      [
+       "work",
+       3.25
+      ],
+      [
+       "sleep",
+       0.1
+      ],
+      [
+       "wait",
+       "idle",
+       599.9
+      ]
+     ]
+    },
+    {
+     "worker": "auto",
+     "idle": true,
+     "good_time": true,
+     "packet": [
+      0.5,
+      true,
+      5
+     ],
+     "events": [
+      [
+       "work",
+       3.25
+      ],
+      [
+       "sleep",
+       0.1
+      ],
+      [
+       "wait",
+       "work",
+       1.15125
+      ]
+     ]
+    },
+    {
+     "worker": "auto",
+     "idle": true,
+     "good_time": true,
+     "packet": [
+      1.25,
+      true,
+      5
+     ],
+     "events": [
+      [
+       "work",
+       3.25
+      ],
+      [
+       "sleep",
+       0.1
+      ],
+      [
+       "wait",
+       "work",
+       3.028125
+      ]
+     ]
+    },
+    {
+     "worker": "auto",
+     "idle": true,
+     "good_time": true,
+     "packet": [
+      10,
+      true,
+      50
+     ],
+     "events": [
+      [
+       "work",
+       3.25
+      ],
+      [
+       "sleep",
+       0.1
+      ],
+      [
+       "wait",
+       "work",
+       12.4125
+      ]
+     ]
+    },
+    {
+     "worker": "files",
+     "idle": true,
+     "good_time": true,
+     "events": [
+      [
+       "job",
+       0,
+       "presence"
+      ],
+      [
+       "sleeps",
+       0.0001,
+       1
+      ],
+      [
+       "wait",
+       "work",
+       0.5
+      ],
+      [
+       "job",
+       0,
+       "metadata"
+      ],
+      [
+       "job",
+       0,
+       "metadata"
+      ],
+      [
+       "job",
+       0,
+       "metadata"
+      ],
+      [
+       "sleeps",
+       0.0001,
+       1
+      ],
+      [
+       "wait",
+       "work",
+       0.5
+      ],
+      [
+       "job",
+       1,
+       "exif"
+      ],
+      [
+       "job",
+       1,
+       "exif"
+      ],
+      [
+       "job",
+       1,
+       "exif"
+      ],
+      [
+       "job",
+       1,
+       "exif"
+      ],
+      [
+       "job",
+       1,
+       "exif"
+      ],
+      [
+       "sleeps",
+       0.0001,
+       1
+      ],
+      [
+       "wait",
+       "work",
+       0.5
+      ],
+      [
+       "wait",
+       "idle",
+       600
+      ]
+     ]
+    },
+    {
+     "worker": "similar",
+     "idle": true,
+     "good_time": false,
+     "packet": [
+      0.5,
+      false,
+      3
+     ],
+     "events": [
+      [
+       "work",
+       7.5
+      ],
+      [
+       "wait",
+       "work",
+       4.6125
+      ]
+     ]
+    },
+    {
+     "worker": "similar",
+     "idle": true,
+     "good_time": false,
+     "packet": [
+      0.5,
+      true,
+      5
+     ],
+     "events": [
+      [
+       "work",
+       7.5
+      ],
+      [
+       "wait",
+       "work",
+       4.6125
+      ]
+     ]
+    },
+    {
+     "worker": "similar",
+     "idle": true,
+     "good_time": false,
+     "packet": [
+      1.25,
+      true,
+      5
+     ],
+     "events": [
+      [
+       "work",
+       7.5
+      ],
+      [
+       "wait",
+       "work",
+       11.53125
+      ]
+     ]
+    },
+    {
+     "worker": "similar",
+     "idle": true,
+     "good_time": false,
+     "packet": [
+      10,
+      true,
+      50
+     ],
+     "events": [
+      [
+       "work",
+       7.5
+      ],
+      [
+       "wait",
+       "work",
+       46.125
+      ]
+     ]
+    },
+    {
+     "worker": "auto",
+     "idle": true,
+     "good_time": false,
+     "packet": [
+      0.5,
+      false,
+      3
+     ],
+     "events": [
+      [
+       "sleep",
+       0.1
+      ],
+      [
+       "wait",
+       "idle",
+       9.9
+      ]
+     ]
+    },
+    {
+     "worker": "auto",
+     "idle": true,
+     "good_time": false,
+     "packet": [
+      0.5,
+      true,
+      5
+     ],
+     "events": [
+      [
+       "sleep",
+       0.1
+      ],
+      [
+       "wait",
+       "idle",
+       9.9
+      ]
+     ]
+    },
+    {
+     "worker": "auto",
+     "idle": true,
+     "good_time": false,
+     "packet": [
+      1.25,
+      true,
+      5
+     ],
+     "events": [
+      [
+       "sleep",
+       0.1
+      ],
+      [
+       "wait",
+       "idle",
+       9.9
+      ]
+     ]
+    },
+    {
+     "worker": "auto",
+     "idle": true,
+     "good_time": false,
+     "packet": [
+      10,
+      true,
+      50
+     ],
+     "events": [
+      [
+       "sleep",
+       0.1
+      ],
+      [
+       "wait",
+       "idle",
+       9.9
+      ]
+     ]
+    },
+    {
+     "worker": "files",
+     "idle": true,
+     "good_time": false,
+     "events": [
+      [
+       "sleeps",
+       1,
+       401
+      ],
+      [
+       "stopped"
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "values": "typed",
+   "switches": [
+    false,
+    true
+   ],
+   "saved": {
+    "maintain_similar_files_duplicate_pairs_during_idle": false,
+    "maintain_similar_files_duplicate_pairs_during_active": true,
+    "potential_duplicates_search_work_time_ms_idle": 7500,
+    "potential_duplicates_search_rest_percentage_idle": 123,
+    "potential_duplicates_search_work_time_ms_active": 2040,
+    "potential_duplicates_search_rest_percentage_active": 456,
+    "duplicates_auto_resolution_during_idle": false,
+    "duplicates_auto_resolution_during_active": true,
+    "duplicates_auto_resolution_work_time_ms_idle": 3250,
+    "duplicates_auto_resolution_rest_percentage_idle": 77,
+    "duplicates_auto_resolution_work_time_ms_active": 800,
+    "duplicates_auto_resolution_rest_percentage_active": 88,
+    "file_maintenance_during_idle": false,
+    "file_maintenance_during_active": true,
+    "file_maintenance_idle_throttle_files": 5,
+    "file_maintenance_idle_throttle_time_delta": 150,
+    "file_maintenance_active_throttle_files": 9,
+    "file_maintenance_active_throttle_time_delta": 45
+   },
+   "passes": [
+    {
+     "worker": "similar",
+     "idle": false,
+     "good_time": true,
+     "packet": [
+      0.5,
+      false,
+      3
+     ],
+     "events": [
+      [
+       "work",
+       2.04
+      ],
+      [
+       "wait",
+       "work",
+       4.6512
+      ]
+     ]
+    },
+    {
+     "worker": "similar",
+     "idle": false,
+     "good_time": true,
+     "packet": [
+      0.5,
+      true,
+      5
+     ],
+     "events": [
+      [
+       "work",
+       2.04
+      ],
+      [
+       "wait",
+       "work",
+       4.6512
+      ]
+     ]
+    },
+    {
+     "worker": "similar",
+     "idle": false,
+     "good_time": true,
+     "packet": [
+      1.25,
+      true,
+      5
+     ],
+     "events": [
+      [
+       "work",
+       2.04
+      ],
+      [
+       "wait",
+       "work",
+       11.628
+      ]
+     ]
+    },
+    {
+     "worker": "similar",
+     "idle": false,
+     "good_time": true,
+     "packet": [
+      10,
+      true,
+      50
+     ],
+     "events": [
+      [
+       "work",
+       2.04
+      ],
+      [
+       "wait",
+       "work",
+       46.512
+      ]
+     ]
+    },
+    {
+     "worker": "auto",
+     "idle": false,
+     "good_time": true,
+     "packet": [
+      0.5,
+      false,
+      3
+     ],
+     "events": [
+      [
+       "work",
+       0.8
+      ],
+      [
+       "sleep",
+       0.1
+      ],
+      [
+       "wait",
+       "idle",
+       599.9
+      ]
+     ]
+    },
+    {
+     "worker": "auto",
+     "idle": false,
+     "good_time": true,
+     "packet": [
+      0.5,
+      true,
+      5
+     ],
+     "events": [
+      [
+       "work",
+       0.8
+      ],
+      [
+       "sleep",
+       0.1
+      ],
+      [
+       "wait",
+       "work",
+       0.252
+      ]
+     ]
+    },
+    {
+     "worker": "auto",
+     "idle": false,
+     "good_time": true,
+     "packet": [
+      1.25,
+      true,
+      5
+     ],
+     "events": [
+      [
+       "work",
+       0.8
+      ],
+      [
+       "sleep",
+       0.1
+      ],
+      [
+       "wait",
+       "work",
+       0.78
+      ]
+     ]
+    },
+    {
+     "worker": "auto",
+     "idle": false,
+     "good_time": true,
+     "packet": [
+      10,
+      true,
+      50
+     ],
+     "events": [
+      [
+       "work",
+       0.8
+      ],
+      [
+       "sleep",
+       0.1
+      ],
+      [
+       "wait",
+       "work",
+       3.42
+      ]
+     ]
+    },
+    {
+     "worker": "files",
+     "idle": false,
+     "good_time": true,
+     "events": [
+      [
+       "job",
+       0,
+       "presence"
+      ],
+      [
+       "sleeps",
+       0.0001,
+       1
+      ],
+      [
+       "wait",
+       "work",
+       0.5
+      ],
+      [
+       "job",
+       0,
+       "metadata"
+      ],
+      [
+       "job",
+       0,
+       "metadata"
+      ],
+      [
+       "job",
+       0,
+       "metadata"
+      ],
+      [
+       "sleeps",
+       0.0001,
+       1
+      ],
+      [
+       "wait",
+       "work",
+       0.5
+      ],
+      [
+       "job",
+       1,
+       "exif"
+      ],
+      [
+       "job",
+       1,
+       "exif"
+      ],
+      [
+       "job",
+       1,
+       "exif"
+      ],
+      [
+       "job",
+       1,
+       "exif"
+      ],
+      [
+       "job",
+       1,
+       "exif"
+      ],
+      [
+       "sleeps",
+       0.0001,
+       1
+      ],
+      [
+       "wait",
+       "work",
+       0.5
+      ],
+      [
+       "wait",
+       "idle",
+       600
+      ]
+     ]
+    },
+    {
+     "worker": "similar",
+     "idle": true,
+     "good_time": true,
+     "packet": [
+      0.5,
+      false,
+      3
+     ],
+     "events": [
+      [
+       "wait",
+       "idle",
+       30
+      ]
+     ]
+    },
+    {
+     "worker": "similar",
+     "idle": true,
+     "good_time": true,
+     "packet": [
+      0.5,
+      true,
+      5
+     ],
+     "events": [
+      [
+       "wait",
+       "idle",
+       30
+      ]
+     ]
+    },
+    {
+     "worker": "similar",
+     "idle": true,
+     "good_time": true,
+     "packet": [
+      1.25,
+      true,
+      5
+     ],
+     "events": [
+      [
+       "wait",
+       "idle",
+       30
+      ]
+     ]
+    },
+    {
+     "worker": "similar",
+     "idle": true,
+     "good_time": true,
+     "packet": [
+      10,
+      true,
+      50
+     ],
+     "events": [
+      [
+       "wait",
+       "idle",
+       30
+      ]
+     ]
+    },
+    {
+     "worker": "auto",
+     "idle": true,
+     "good_time": true,
+     "packet": [
+      0.5,
+      false,
+      3
+     ],
+     "events": [
+      [
+       "sleep",
+       0.1
+      ],
+      [
+       "wait",
+       "idle",
+       9.9
+      ]
+     ]
+    },
+    {
+     "worker": "auto",
+     "idle": true,
+     "good_time": true,
+     "packet": [
+      0.5,
+      true,
+      5
+     ],
+     "events": [
+      [
+       "sleep",
+       0.1
+      ],
+      [
+       "wait",
+       "idle",
+       9.9
+      ]
+     ]
+    },
+    {
+     "worker": "auto",
+     "idle": true,
+     "good_time": true,
+     "packet": [
+      1.25,
+      true,
+      5
+     ],
+     "events": [
+      [
+       "sleep",
+       0.1
+      ],
+      [
+       "wait",
+       "idle",
+       9.9
+      ]
+     ]
+    },
+    {
+     "worker": "auto",
+     "idle": true,
+     "good_time": true,
+     "packet": [
+      10,
+      true,
+      50
+     ],
+     "events": [
+      [
+       "sleep",
+       0.1
+      ],
+      [
+       "wait",
+       "idle",
+       9.9
+      ]
+     ]
+    },
+    {
+     "worker": "files",
+     "idle": true,
+     "good_time": true,
+     "events": [
+      [
+       "sleeps",
+       1,
+       401
+      ],
+      [
+       "stopped"
+      ]
+     ]
+    },
+    {
+     "worker": "similar",
+     "idle": true,
+     "good_time": false,
+     "packet": [
+      0.5,
+      false,
+      3
+     ],
+     "events": [
+      [
+       "wait",
+       "idle",
+       30
+      ]
+     ]
+    },
+    {
+     "worker": "similar",
+     "idle": true,
+     "good_time": false,
+     "packet": [
+      0.5,
+      true,
+      5
+     ],
+     "events": [
+      [
+       "wait",
+       "idle",
+       30
+      ]
+     ]
+    },
+    {
+     "worker": "similar",
+     "idle": true,
+     "good_time": false,
+     "packet": [
+      1.25,
+      true,
+      5
+     ],
+     "events": [
+      [
+       "wait",
+       "idle",
+       30
+      ]
+     ]
+    },
+    {
+     "worker": "similar",
+     "idle": true,
+     "good_time": false,
+     "packet": [
+      10,
+      true,
+      50
+     ],
+     "events": [
+      [
+       "wait",
+       "idle",
+       30
+      ]
+     ]
+    },
+    {
+     "worker": "auto",
+     "idle": true,
+     "good_time": false,
+     "packet": [
+      0.5,
+      false,
+      3
+     ],
+     "events": [
+      [
+       "sleep",
+       0.1
+      ],
+      [
+       "wait",
+       "idle",
+       9.9
+      ]
+     ]
+    },
+    {
+     "worker": "auto",
+     "idle": true,
+     "good_time": false,
+     "packet": [
+      0.5,
+      true,
+      5
+     ],
+     "events": [
+      [
+       "sleep",
+       0.1
+      ],
+      [
+       "wait",
+       "idle",
+       9.9
+      ]
+     ]
+    },
+    {
+     "worker": "auto",
+     "idle": true,
+     "good_time": false,
+     "packet": [
+      1.25,
+      true,
+      5
+     ],
+     "events": [
+      [
+       "sleep",
+       0.1
+      ],
+      [
+       "wait",
+       "idle",
+       9.9
+      ]
+     ]
+    },
+    {
+     "worker": "auto",
+     "idle": true,
+     "good_time": false,
+     "packet": [
+      10,
+      true,
+      50
+     ],
+     "events": [
+      [
+       "sleep",
+       0.1
+      ],
+      [
+       "wait",
+       "idle",
+       9.9
+      ]
+     ]
+    },
+    {
+     "worker": "files",
+     "idle": true,
+     "good_time": false,
+     "events": [
+      [
+       "sleeps",
+       1,
+       401
+      ],
+      [
+       "stopped"
+      ]
+     ]
+    }
+   ]
+  }
+ ],
+ "defaults_saved": {
+  "maintain_similar_files_duplicate_pairs_during_idle": false,
+  "maintain_similar_files_duplicate_pairs_during_active": false,
+  "potential_duplicates_search_work_time_ms_idle": 5000,
+  "potential_duplicates_search_rest_percentage_idle": 50,
+  "potential_duplicates_search_work_time_ms_active": 100,
+  "potential_duplicates_search_rest_percentage_active": 1900,
+  "duplicates_auto_resolution_during_idle": true,
+  "duplicates_auto_resolution_during_active": true,
+  "duplicates_auto_resolution_work_time_ms_idle": 1000,
+  "duplicates_auto_resolution_rest_percentage_idle": 100,
+  "duplicates_auto_resolution_work_time_ms_active": 100,
+  "duplicates_auto_resolution_rest_percentage_active": 900,
+  "file_maintenance_during_idle": true,
+  "file_maintenance_during_active": true,
+  "file_maintenance_idle_throttle_files": 1,
+  "file_maintenance_idle_throttle_time_delta": 2,
+  "file_maintenance_active_throttle_files": 1,
+  "file_maintenance_active_throttle_time_delta": 20
+ },
+ "limits": "Each manager's real _DoSingleLoop (and the file manager's real bandwidth-rule throttle and tracker) runs on a held clock. Idle state, database work, the job queue and _RunJob (reduced to reporting each job's weight, as its finally does) are scripted; sleeps and event waits are recorded and move the clock. Work-hard modes are not recorded."
+}
