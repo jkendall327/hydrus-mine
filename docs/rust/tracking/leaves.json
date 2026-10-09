@@ -4916,10 +4916,10 @@
     "Whole-log status removal and confirmed selected-ID removal mutate the real queue immediately."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Drives the real window: delete by status and delete-everything empty the store queue, and selected delete asks the reference question (checked in file_log.rs). The menu labels are replayed from oracle/fixtures/file_log.json, but the removal effects (which seeds go) are typed literals; no recording of the effects. Tests: crates/hydrus-gui/tests/gui/file_log_actions.rs:210 whole_log_menu_retries_deletes_reverses_and_shows_files; crates/hydrus-gui/tests/gui/file_log.rs:55 the_file_log_lists_a_queues_files_and_acts_on_them; crates/hydrus-gui-model/tests/model/file_log.rs:71"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "Delete by status, delete everything and delete-everything-except-unknown, each answered no and yes. Test: crates/hydrus-gui/tests/gui/file_log_actions.rs whole_log_menu_entries_ask_and_change_the_list_as_the_reference_did, replaying every whole-log menu entry of oracle/fixtures/file_log_effects.json (recorded from the reference's own PopulateFileSeedCacheMenu on a list holding every status) with each answer: question text, buttons and the list afterwards."
    }
   },
   {
@@ -4976,10 +4976,10 @@
     "Retry writes status changes and nudges queue work; selected Try Again and Skip write specific seed IDs."
    ],
    "recheck": {
-    "date": "2026-10-08",
+    "date": "2026-10-09",
     "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Whole-log 'retry N failures/ignored' tested through the real menu with typed statuses. Selected 'try again' is not tested, and native lacks the reference's _SetSelected question about erasing deletion records for previously-deleted files (no such string in crates/*/src). Tests: crates/hydrus-gui/tests/gui/file_log_actions.rs:210 whole_log_menu_retries_deletes_reverses_and_shows_files; file_log.rs:55 (skip only)"
+    "by": "phase 2 session",
+    "note": "Whole-log 'retry N failures' (asks, clears errors on yes) and 'retry N ignored' (the four-button choice: all, 403s, 404s, blacklisted, or cancel) match the recording. Test: crates/hydrus-gui/tests/gui/file_log_actions.rs whole_log_menu_entries_ask_and_change_the_list_as_the_reference_did, replaying every whole-log menu entry of oracle/fixtures/file_log_effects.json (recorded from the reference's own PopulateFileSeedCacheMenu on a list holding every status) with each answer: question text, buttons and the list afterwards. Missing: the selected rows' 'try again' and its question about erasing deletion records are not recorded or ported."
    }
   },
   {
@@ -4995,10 +4995,10 @@
     "The store queue order is reversed and the daemon nudged."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Real menu click reverses the store queue and the test compares against a locally reversed list; label recorded in file_log.json menus but the effect is not recorded. Tests: crates/hydrus-gui/tests/gui/file_log_actions.rs:210 whole_log_menu_retries_deletes_reverses_and_shows_files"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "Reverse asks the reference question and reverses only on yes. Test: crates/hydrus-gui/tests/gui/file_log_actions.rs whole_log_menu_entries_ask_and_change_the_list_as_the_reference_did, replaying every whole-log menu entry of oracle/fixtures/file_log_effects.json (recorded from the reference's own PopulateFileSeedCacheMenu on a list holding every status) with each answer: question text, buttons and the list afterwards."
    }
   },
   {
@@ -5033,10 +5033,10 @@
     "Hash IDs resolve from file seed metadata, then open_files creates a page for new/all successful seeds."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Real menu 'show all files in a new page' opens one page with the one successful file; typed expectations, only the 'all' variant (not the 'new only' one) is driven here. Tests: crates/hydrus-gui/tests/gui/file_log_actions.rs:210 whole_log_menu_retries_deletes_reverses_and_shows_files; file_log.rs:55"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "'show new files' and 'show all files in a new page' open the recorded files (new only: just the new ones). Test: crates/hydrus-gui/tests/gui/file_log_actions.rs whole_log_menu_entries_ask_and_change_the_list_as_the_reference_did, replaying every whole-log menu entry of oracle/fixtures/file_log_effects.json (recorded from the reference's own PopulateFileSeedCacheMenu on a list holding every status) with each answer: question text, buttons and the list afterwards."
    }
   },
   {

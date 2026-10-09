@@ -308,7 +308,11 @@ them again, skipping and deleting them (asking first), and the whole log's
 menu, which the "whole log" button also opens: retrying failures and
 ignored files, deleting files of each status, skipping the unstarted,
 showing the new or all files in a new page, reversing the order, and
-copying every source. Its actions change the importer at once, as the
+copying every source. Retrying failures, deleting whole statuses and
+reversing ask the reference's questions first (retrying ignored files offers
+its four buttons: all, 403s, 404s, blacklisted), and each entry's effect on a
+list holding every status is as `oracle/record_file_log_effects.py` recorded.
+Its actions change the importer at once, as the
 reference's frame does. The rows and menus are as
 `oracle/record_file_log.py` recorded the reference's. Windows' own
 popup menus are drawn as the menu bar's are (`src/popup_menu.rs`).

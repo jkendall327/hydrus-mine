@@ -33,6 +33,14 @@ enum Asking {
     /// Clipboard/store failures are acknowledged without changing the log.
     Error(String, String),
     Renormalise,
+    /// Retrying every failure.
+    RetryFailed,
+    /// Which of the ignored to retry.
+    RetryIgnored,
+    /// Deleting whole statuses.
+    DeleteStatuses(Vec<SeedStatus>),
+    /// Reversing the log.
+    Reverse,
 }
 
 #[derive(Clone)]
@@ -191,6 +199,12 @@ fn show(window: &FileLogWindow, state: &State) {
         Some(Asking::OpenMany(_)) => Some(OPEN_MANY_QUESTION.to_owned()),
         Some(Asking::Error(_, text)) => Some(text.clone()),
         Some(Asking::Renormalise) => Some(crate::file_log::RENORMALISE_QUESTION.to_owned()),
+        Some(Asking::RetryFailed) => Some(crate::file_log::RETRY_FAILED_QUESTION.to_owned()),
+        Some(Asking::RetryIgnored) => Some(crate::file_log::RETRY_IGNORED_QUESTION.to_owned()),
+        Some(Asking::DeleteStatuses(statuses)) => {
+            Some(crate::file_log::delete_statuses_question(statuses))
+        }
+        Some(Asking::Reverse) => Some(crate::file_log::REVERSE_QUESTION.to_owned()),
     };
     window.set_asking(question.is_some());
     window.set_busy(state.exports.has_open());
@@ -202,6 +216,11 @@ fn show(window: &FileLogWindow, state: &State) {
         window.set_asking_message(message.into());
         let choices: Vec<SharedString> = if matches!(state.asking, Some(Asking::Error(_, _))) {
             vec!["ok".into()]
+        } else if matches!(state.asking, Some(Asking::RetryIgnored)) {
+            crate::file_log::RETRY_IGNORED_CHOICES
+                .iter()
+                .map(|&choice| choice.into())
+                .collect()
         } else {
             vec!["yes".into(), "no".into()]
         };
@@ -237,17 +256,10 @@ fn act(store: &Arc<Store>, state: &mut State, action: &Action, open_files: &Open
     };
     let selected_ids: Vec<i64> = state.selected().iter().map(|s| s.id).collect();
     match action {
-        Action::RetryFailed => write(Box::new(move |c| {
-            queues::retry_file_seeds(c, queue, &[SeedStatus::Error], now).map(|_| ())
-        })),
-        Action::RetryIgnored => write(Box::new(move |c| {
-            queues::retry_file_seeds(c, queue, &[SeedStatus::Vetoed], now).map(|_| ())
-        })),
+        Action::RetryFailed => state.asking = Some(Asking::RetryFailed),
+        Action::RetryIgnored => state.asking = Some(Asking::RetryIgnored),
         Action::DeleteStatuses(statuses) => {
-            let statuses = statuses.clone();
-            write(Box::new(move |c| {
-                queues::remove_file_seeds(c, queue, &statuses).map(|_| ())
-            }));
+            state.asking = Some(Asking::DeleteStatuses(statuses.clone()));
         }
         Action::SkipUnknown => {
             let unknown: Vec<i64> = state
@@ -277,7 +289,7 @@ fn act(store: &Arc<Store>, state: &mut State, action: &Action, open_files: &Open
                 (open_files.0)(files);
             }
         }
-        Action::Reverse => write(Box::new(move |c| queues::reverse_file_seeds(c, queue))),
+        Action::Reverse => state.asking = Some(Asking::Reverse),
         Action::ExportToClipboard => {
             let all: Vec<&str> = state.seeds.iter().map(|s| s.data.as_str()).collect();
             crate::copy_to_clipboard(&all.join("\n"));
@@ -750,8 +762,74 @@ fn open_source(
             }
 
             let asking = state.borrow_mut().asking.take();
-            if index == 0 {
+            if matches!(asking, Some(Asking::RetryIgnored)) {
+                let (source, queue, ids) = {
+                    let state = state.borrow();
+                    let ids: Vec<i64> = state
+                        .seeds
+                        .iter()
+                        .filter(|s| {
+                            s.status == SeedStatus::Vetoed
+                                && crate::file_log::retry_ignored_matches(
+                                    usize::try_from(index).unwrap_or(0),
+                                    &s.note,
+                                )
+                        })
+                        .map(|s| s.id)
+                        .collect();
+                    (state.source.clone(), state.queue, ids)
+                };
+                let now = now();
+                if let Err(e) = source.change(
+                    queue,
+                    Box::new(move |conn| queues::retry_file_seed_ids(conn, &ids, now)),
+                ) {
+                    eprintln!("could not change the file log: {e}");
+                }
+            } else if index == 0 {
                 match asking {
+                    Some(Asking::RetryFailed) => {
+                        let (source, queue) = {
+                            let state = state.borrow();
+                            (state.source.clone(), state.queue)
+                        };
+                        let now = now();
+                        if let Err(e) = source.change(
+                            queue,
+                            Box::new(move |c| {
+                                queues::retry_file_seeds(c, queue, &[SeedStatus::Error], now)
+                                    .map(|_| ())
+                            }),
+                        ) {
+                            eprintln!("could not change the file log: {e}");
+                        }
+                    }
+                    Some(Asking::DeleteStatuses(statuses)) => {
+                        let (source, queue) = {
+                            let state = state.borrow();
+                            (state.source.clone(), state.queue)
+                        };
+                        if let Err(e) = source.change(
+                            queue,
+                            Box::new(move |c| {
+                                queues::remove_file_seeds(c, queue, &statuses).map(|_| ())
+                            }),
+                        ) {
+                            eprintln!("could not change the file log: {e}");
+                        }
+                    }
+                    Some(Asking::Reverse) => {
+                        let (source, queue) = {
+                            let state = state.borrow();
+                            (state.source.clone(), state.queue)
+                        };
+                        if let Err(e) = source.change(
+                            queue,
+                            Box::new(move |c| queues::reverse_file_seeds(c, queue)),
+                        ) {
+                            eprintln!("could not change the file log: {e}");
+                        }
+                    }
                     Some(Asking::Delete(ids)) => {
                         let source = state.borrow().source.clone();
                         if let Err(e) = source.change(
@@ -779,7 +857,7 @@ fn open_source(
                             ));
                         }
                     }
-                    Some(Asking::Error(_, _)) | None => {}
+                    Some(Asking::Error(_, _) | Asking::RetryIgnored) | None => {}
                 }
             }
             refresh(true);

@@ -598,3 +598,53 @@ pub fn delete_question(n: usize) -> String {
 /// What opening many selected asks first.
 pub const OPEN_MANY_QUESTION: &str =
     "You have many objects selected--are you sure you want to open them all?";
+
+/// What retrying every failure asks.
+pub const RETRY_FAILED_QUESTION: &str =
+    "Are you sure you want to retry all the files that encountered errors?";
+
+/// What reversing the log asks.
+pub const REVERSE_QUESTION: &str =
+    "Reverse this file log? Any outstanding imports will process in the opposite order.";
+
+/// What retrying the ignored asks (`GetRetryIgnoredParam`), and its buttons.
+pub const RETRY_IGNORED_QUESTION: &str = "select what to retry";
+pub const RETRY_IGNORED_CHOICES: [&str; 4] =
+    ["retry all", "retry 403s", "retry 404s", "retry blacklisted"];
+
+/// Whether the ignored seed with this note is retried by a choice of
+/// [`RETRY_IGNORED_CHOICES`]: the reference's `re.search` on the note with
+/// `None`, `^403`, `^404` or `blacklisted!$`.
+pub fn retry_ignored_matches(choice: usize, note: &str) -> bool {
+    match choice {
+        0 => true,
+        1 => note.starts_with("403"),
+        2 => note.starts_with("404"),
+        _ => note
+            .strip_suffix('\n')
+            .unwrap_or(note)
+            .ends_with("blacklisted!"),
+    }
+}
+
+/// What deleting whole statuses asks (`ClearFileSeeds`): the statuses in the
+/// order the menu names them.
+pub fn delete_statuses_question(statuses: &[SeedStatus]) -> String {
+    let names: Vec<&str> = statuses
+        .iter()
+        .map(|status| match status {
+            SeedStatus::Unknown => "unknown",
+            SeedStatus::SuccessfulAndNew => "successful",
+            SeedStatus::SuccessfulButRedundant => "already in db",
+            SeedStatus::Deleted => "deleted",
+            SeedStatus::Error => "error",
+            SeedStatus::Vetoed => "ignored",
+            SeedStatus::Skipped => "skipped",
+            SeedStatus::SuccessfulAndChildFiles => "created children",
+        })
+        .collect();
+    format!(
+        "Are you sure you want to delete all the {} file import items? This is useful for cleaning up and de-laggifying a very large list, but be careful you aren't removing something you would want to revisit or what watcher/subscription may be using for future check time calculations.",
+        names.join("/")
+    )
+}

@@ -138,6 +138,10 @@ fn the_file_log_lists_a_queues_files_and_acts_on_them() {
     assert_eq!(menu(&log)[0][0], "retry 1 failures");
     choose(&log, 0, "retry 1 failures");
     assert!(log.get_menu_panes().row_count() == 0, "it closes");
+    // (it asks first, as the reference does; its effects are checked against
+    // the recording in file_log_actions.rs)
+    assert!(log.get_asking());
+    log.invoke_chosen(0);
     assert_eq!(log.get_status(), "1 successful");
 
     // a right click on the third row: copy its URL, then skip it

@@ -1312,6 +1312,17 @@ pub fn retry_file_seeds(
     Ok(n)
 }
 
+/// Retry these seeds: back to unknown, their notes cleared.
+pub fn retry_file_seed_ids(conn: &Connection, ids: &[i64], now: i64) -> Result<()> {
+    for id in ids {
+        conn.prepare_cached(
+            "UPDATE file_seeds SET status = 0, note = '', modified = ? WHERE seed_id = ?",
+        )?
+        .execute(params![now, id])?;
+    }
+    Ok(())
+}
+
 /// Set seeds to a status, their notes cleared (`SetStatus`): set back to
 /// unknown, their hashes are forgotten too, so they import afresh.
 pub fn set_file_seed_statuses(
