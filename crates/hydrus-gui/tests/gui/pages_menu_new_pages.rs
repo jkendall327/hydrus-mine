@@ -701,3 +701,126 @@ fn ctrl_t_opens_the_chooser_the_reference_opens_and_each_choice_makes_its_page()
     }
     assert_eq!(made, recorded["leaves"].as_array().unwrap().len());
 }
+
+/// A notebook tree as `new_page_routes.json` writes it: names, and the pages
+/// inside a page of pages.
+fn names_tree(pages: &[Page]) -> serde_json::Value {
+    pages
+        .iter()
+        .map(|page| match &page.content {
+            PageContent::Pages(children) => {
+                serde_json::json!({ "name": page.name, "pages": names_tree(children) })
+            }
+            _ => serde_json::json!({ "name": page.name }),
+        })
+        .collect()
+}
+
+/// The pages of a recorded tree, as a session's.
+fn pages_of(tree: &serde_json::Value) -> Vec<Page> {
+    tree.as_array()
+        .unwrap()
+        .iter()
+        .map(|entry| {
+            let name = entry["name"].as_str().unwrap();
+            match entry.get("pages") {
+                Some(inner) => Page {
+                    key: PageKey::random(),
+                    name: name.into(),
+                    content: PageContent::Pages(pages_of(inner)),
+                },
+                None => search(name),
+            }
+        })
+        .collect()
+}
+
+// leaf: audit-options-tabs-new
+#[test]
+fn ctrl_t_and_the_tab_row_double_click_put_the_new_page_where_the_reference_put_it() {
+    use hydrus_store::settings::{self, PageInsertion};
+
+    let _windows = headless::init();
+    let recorded = hydrus_testkit::fixture_json("new_page_routes.json");
+    let legacy = hydrus_testkit::legacy_fixture("basic");
+    let native = tempfile::tempdir().unwrap();
+    import_legacy(
+        legacy.path(),
+        &native.path().join(hydrus_store::store::DB_FILE_NAME),
+    )
+    .unwrap();
+    let store = Store::open(native.path()).unwrap();
+    let mut made = 0;
+    for case in recorded["cases"].as_array().unwrap() {
+        let mode = PageInsertion::from_code(case["mode"].as_i64().unwrap()).unwrap();
+        let session = Session {
+            name: sessions::LAST_SESSION.into(),
+            pages: pages_of(&case["before"]),
+        };
+        store
+            .write(move |ctx| {
+                sessions::save(ctx.conn(), &session, 1)?;
+                settings::set(ctx.conn(), &mode)
+            })
+            .unwrap();
+        let ui = MainWindow::new().unwrap();
+        ui.show().unwrap();
+        let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+        // the tabs that are current, as the recording began
+        let current: Vec<usize> = case["before_current"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|c| usize::try_from(c.as_u64().unwrap()).unwrap())
+            .collect();
+        for (level, &index) in current.iter().enumerate() {
+            bound.pages.borrow_mut().select(level, index);
+        }
+        assert_eq!(
+            names_tree(&bound.pages.borrow().session().pages),
+            case["before"],
+            "{case}"
+        );
+
+        match case["how"].as_str().unwrap() {
+            "ctrl+t" => assert!(ui.invoke_shortcut_key("t".into(), 1), "ctrl+t"),
+            "double click, top row" => {
+                ui.invoke_tab_space_pressed(0, false);
+                ui.invoke_tab_space_pressed(0, false);
+            }
+            _ => {
+                ui.invoke_tab_space_pressed(1, false);
+                ui.invoke_tab_space_pressed(1, false);
+            }
+        }
+        assert!(
+            ui.get_chooser_labels().row_count() > 0,
+            "the chooser: {case}"
+        );
+        if case["cancel"] == true {
+            ui.invoke_chooser_cancel();
+        } else {
+            // (a page of pages, the reference's script)
+            ui.invoke_chooser_pressed(6);
+            ui.invoke_chooser_pressed(8);
+        }
+        assert_eq!(ui.get_chooser_labels().row_count(), 0);
+
+        let pages = bound.pages.borrow();
+        assert_eq!(
+            names_tree(&pages.session().pages),
+            case["after"],
+            "after {case}"
+        );
+        let now: Vec<u64> = pages.tabs().iter().map(|t| t.selected as u64).collect();
+        let theirs: Vec<u64> = case["current"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|c| c.as_u64().unwrap())
+            .collect();
+        assert_eq!(now, theirs, "the tabs that are current after {case}");
+        made += 1;
+    }
+    assert_eq!(made, 36);
+}
