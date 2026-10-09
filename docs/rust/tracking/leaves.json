@@ -20716,9 +20716,9 @@
    ],
    "recheck": {
     "date": "2026-10-09",
-    "class": "weak",
+    "class": "source-restated",
     "by": "Claude, options-shell-leftovers",
-    "note": "GUI test system_tray.rs minimising_hides_the_window_to_the_icon_where_the_window_system_reports_it drives the real tray controller (option read, window hidden to the icon, restored with its prior state on show, nothing hidden with no tray) with Slint's own minimised state in the headless platform; winit's is_minimized (X11/Windows/macOS, not Wayland) and a real window manager are not exercised, and the reference's two BUGFIX switches have no counterpart (DIFFERENCES.md, System tray)."
+    "note": "GUI test system_tray.rs minimising_hides_the_window_to_the_icon_where_the_window_system_reports_it drives the real tray controller (option read, window hidden to the icon, restored with its prior state on show, nothing hidden with no tray) with Slint's own minimised state in the headless platform; winit's is_minimized (X11/Windows/macOS, not Wayland) and a real window manager are not exercised, and the reference's two BUGFIX switches have no counterpart (DIFFERENCES.md, System tray). The expected behaviour follows the reference's source (ClientGUI.changeEvent / _SystemTrayHide); there is no recording of it."
    }
   },
   {
