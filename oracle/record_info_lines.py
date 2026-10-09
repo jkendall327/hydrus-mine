@@ -111,6 +111,8 @@ def record( session ):
                     options.SetBoolean( name, defaults[ name ] )
 
 
+                options.SetString( 'has_audio_label', defaults_label )
+
                 for name in ( 'file_info_line_consider_file_services_interesting', 'file_info_line_consider_file_services_import_times_interesting' ):
 
                     options.SetBoolean( name, not defaults[ name ] )

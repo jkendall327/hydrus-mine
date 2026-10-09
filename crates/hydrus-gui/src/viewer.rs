@@ -5,6 +5,24 @@ use std::sync::Arc;
 use hydrus_core::HashId;
 use hydrus_store::Store;
 
+thread_local! {
+    /// The time the info line counts "ago" from, held still for tests and
+    /// recordings (else the clock).
+    static HELD_NOW: std::cell::Cell<Option<i64>> = const { std::cell::Cell::new(None) };
+}
+
+/// Hold the viewer's clock still, in milliseconds since the epoch, on this
+/// thread (`None` lets it run again).
+pub fn hold_time(ms: Option<i64>) {
+    HELD_NOW.with(|held| held.set(ms));
+}
+
+fn now_ms() -> i64 {
+    HELD_NOW
+        .with(std::cell::Cell::get)
+        .unwrap_or_else(|| hydrus_core::TimestampMs::now().0)
+}
+
 pub struct MediaViewer {
     store: Arc<Store>,
     image_cache: Option<crate::image_cache::Handle>,
@@ -301,7 +319,7 @@ pub(crate) fn shown(store: &Store, id: HashId) -> Shown {
                 &media,
                 &snapshot.services,
                 &settings,
-                hydrus_core::TimestampMs::now().0,
+                now_ms(),
                 &hydrus_gui_model::gui_format::preferences(store),
             );
             let trashed =

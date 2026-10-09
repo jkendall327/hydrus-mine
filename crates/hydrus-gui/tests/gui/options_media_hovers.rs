@@ -56,35 +56,6 @@ fn viewer_lines(client: &Client) -> Vec<String> {
         .collect()
 }
 
-/// A line with how long ago each time was left out (the viewer reads the
-/// clock as it is, the recording as it was).
-fn untimed(line: &str) -> String {
-    let is_time = |word: &str| {
-        word.parse::<u64>().is_ok()
-            || ["second", "minute", "hour", "day", "week", "month", "year"]
-                .iter()
-                .any(|unit| word.trim_end_matches('s') == *unit)
-    };
-    let mut words: Vec<&str> = line.split(' ').collect();
-    let mut at = 0;
-    while at < words.len() {
-        if words[at] == "ago" {
-            let mut start = at;
-            while start > 0 && is_time(words[start - 1]) {
-                start -= 1;
-            }
-            words.splice(start..=at, ["<time>"]);
-            at = start;
-        }
-        at += 1;
-    }
-    words.join(" ")
-}
-
-fn untimed_all(lines: &[String]) -> Vec<String> {
-    lines.iter().map(|l| untimed(l)).collect()
-}
-
 /// The top hover line the reference made for each file shown (by hash) in the
 /// recording's `phase` (`oracle/record_info_lines.py`).
 fn recorded_lines(client: &Client, phase: &str) -> Vec<String> {
@@ -105,6 +76,13 @@ fn recorded_lines(client: &Client, phase: &str) -> Vec<String> {
         .collect()
 }
 
+/// Hold the viewer's clock at the recording's "now", so the lines say what
+/// the reference's said ("9 days ago" and all).
+fn hold_time_at_the_recording() {
+    let fixture = hydrus_testkit::fixture_json("info_lines.json");
+    hydrus_gui::hold_viewer_time(Some(fixture["now"].as_i64().unwrap() * 1000));
+}
+
 /// The lines the reference's rule makes with these settings.
 fn expected_lines(client: &Client, settings: &InfoLineSettings) -> Vec<String> {
     let snapshot = client.store.snapshot();
@@ -122,7 +100,10 @@ fn expected_lines(client: &Client, settings: &InfoLineSettings) -> Vec<String> {
                 &media,
                 &snapshot.services,
                 settings,
-                hydrus_core::TimestampMs::now().0,
+                hydrus_testkit::fixture_json("info_lines.json")["now"]
+                    .as_i64()
+                    .unwrap()
+                    * 1000,
                 &hydrus_gui_model::gui_format::preferences(&client.store),
             )
         })
@@ -157,6 +138,7 @@ fn summary_option(
     phases: (&str, &str),
 ) {
     let client = Client::basic();
+    hold_time_at_the_recording();
     search_everything(&client, base.trash);
     let defaults = InfoLineSettings {
         file_services_interesting: base.services,
@@ -169,11 +151,7 @@ fn summary_option(
         .unwrap();
     let before = viewer_lines(&client);
     assert_eq!(before, expected_lines(&client, &defaults));
-    assert_eq!(
-        untimed_all(&before),
-        untimed_all(&recorded_lines(&client, phases.0)),
-        "before"
-    );
+    assert_eq!(before, recorded_lines(&client, phases.0), "before");
     flip(
         &client,
         "media viewer hovers",
@@ -187,11 +165,7 @@ fn summary_option(
     let after = viewer_lines(&client);
     assert_eq!(after, expected_lines(&client, &saved));
     // and they are the lines the reference made with that option turned over
-    assert_eq!(
-        untimed_all(&after),
-        untimed_all(&recorded_lines(&client, phases.1)),
-        "after"
-    );
+    assert_eq!(after, recorded_lines(&client, phases.1), "after");
     assert_ne!(before, after, "{label:?} changes the lines");
 }
 
@@ -314,6 +288,7 @@ fn swap_in_common_resolution_labels() {
 #[test]
 fn the_audio_label_is_the_text_the_viewer_uses_for_files_with_audio() {
     let client = Client::basic();
+    hold_time_at_the_recording();
     search_everything(&client, false);
     let before = viewer_lines(&client);
     let audible =

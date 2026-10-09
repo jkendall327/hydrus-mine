@@ -14353,7 +14353,7 @@
     "date": "2026-10-09",
     "class": "sound",
     "by": "phase 2 session",
-    "note": "gui/options_media_hovers.rs flips the option in the real Options window, applies, opens the real viewer on every file and compares its top line (relative times masked, since the viewer reads the clock as it is) with info_lines.json: a phase recorded from the reference with only this option turned over (add times: services and add times together over services alone). The recorder (record_info_lines.py) now records each flag on its own; gui/info_lines.rs replays all eleven phases against top_line."
+    "note": "gui/options_media_hovers.rs: 'Show archived time' is flipped in the real Options window, applied, and the real viewer opened on every file shown (the viewer's clock held at the recording's now); its top line is compared with info_lines.json phase 'defaults' before and phase 'only file_info_line_consider_archived_time_interesting' after, both recorded from the reference by oracle/record_info_lines.py. gui/info_lines.rs replays all eleven phases against top_line."
    }
   },
   {
@@ -14373,7 +14373,7 @@
     "date": "2026-10-09",
     "class": "sound",
     "by": "phase 2 session",
-    "note": "gui/options_media_hovers.rs flips the option in the real Options window, applies, opens the real viewer on every file and compares its top line (relative times masked, since the viewer reads the clock as it is) with info_lines.json: a phase recorded from the reference with only this option turned over (add times: services and add times together over services alone). The recorder (record_info_lines.py) now records each flag on its own; gui/info_lines.rs replays all eleven phases against top_line."
+    "note": "gui/options_media_hovers.rs: 'Show file service add times (file services on, so the add times show)' is flipped in the real Options window, applied, and the real viewer opened on every file shown (the viewer's clock held at the recording's now); its top line is compared with info_lines.json phase 'only file_info_line_consider_file_services_interesting' before and phase 'services and their add times' after, both recorded from the reference by oracle/record_info_lines.py. gui/info_lines.rs replays all eleven phases against top_line."
    }
   },
   {
@@ -14413,7 +14413,7 @@
     "date": "2026-10-09",
     "class": "sound",
     "by": "phase 2 session",
-    "note": "gui/options_media_hovers.rs flips the option in the real Options window, applies, opens the real viewer on every file and compares its top line (relative times masked, since the viewer reads the clock as it is) with info_lines.json: a phase recorded from the reference with only this option turned over (add times: services and add times together over services alone). The recorder (record_info_lines.py) now records each flag on its own; gui/info_lines.rs replays all eleven phases against top_line."
+    "note": "gui/options_media_hovers.rs: 'Show file trash reasons (searching the trash)' is flipped in the real Options window, applied, and the real viewer opened on every file shown (the viewer's clock held at the recording's now); its top line is compared with info_lines.json phase 'defaults' before and phase 'only file_info_line_consider_trash_reason_interesting' after, both recorded from the reference by oracle/record_info_lines.py. gui/info_lines.rs replays all eleven phases against top_line."
    }
   },
   {
@@ -14433,7 +14433,7 @@
     "date": "2026-10-09",
     "class": "sound",
     "by": "phase 2 session",
-    "note": "gui/options_media_hovers.rs flips the option in the real Options window, applies, opens the real viewer on every file and compares its top line (relative times masked, since the viewer reads the clock as it is) with info_lines.json: a phase recorded from the reference with only this option turned over (add times: services and add times together over services alone). The recorder (record_info_lines.py) now records each flag on its own; gui/info_lines.rs replays all eleven phases against top_line."
+    "note": "gui/options_media_hovers.rs: 'Show file trash times (searching the trash)' is flipped in the real Options window, applied, and the real viewer opened on every file shown (the viewer's clock held at the recording's now); its top line is compared with info_lines.json phase 'defaults' before and phase 'only file_info_line_consider_trash_time_interesting' after, both recorded from the reference by oracle/record_info_lines.py. gui/info_lines.rs replays all eleven phases against top_line."
    }
   },
   {
