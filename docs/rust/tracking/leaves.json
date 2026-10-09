@@ -865,10 +865,10 @@
     "Only supported native date strings are parsed; natural-language dateparser forms are absent."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "The model test replays datetime_editor.json (now, copy, paste incl. errors) against DateTimeEditor, but no GUI test drives the date-time editor window's now/copy/paste buttons; the GUI test only edits and applies. Natural-language dateparser forms absent. Tests: crates/hydrus-gui-model/tests/model/datetime_editor.rs:33 the_date_time_editor_works_as_the_references_does; crates/hydrus-gui/tests/gui/manage_times.rs:76 (editor window, untagged for these leaves)"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "Claude session (recheck bins A/B), #97 phase 2",
+    "note": "crates/hydrus-gui/tests/gui/manage_times_replay.rs the_date_time_editor_replays_the_references_through_the_window presses the editor window's now, copy and paste buttons with datetime_editor.json's steps (clipboard caught and given through set_clipper/set_paster), comparing what is copied, the notices, and the warnings and errors shown in the window's panel (dismissed in turn), and the fields and value after each step. Every recorded paste form passes; date strings beyond them (\"yesterday\") are a documented difference."
    }
   },
   {
@@ -885,10 +885,10 @@
     "Typed date/time and one millisecond step replace calendar and hours/minutes/seconds step controls."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Replays the recording for date, time, step, nulls and mixed values against the model only; no GUI test drives the editor window's date/time/step controls (documented: typed date/time and millisecond step replace calendar and h/m/s step controls). Tests: crates/hydrus-gui-model/tests/model/datetime_editor.rs:33 the_date_time_editor_works_as_the_references_does"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "Claude session (recheck bins A/B), #97 phase 2",
+    "note": "crates/hydrus-gui/tests/gui/manage_times_replay.rs the_date_time_editor_replays_the_references_through_the_window opens the date-time editor from manage times' modified-time row (a real click on its button) on files given datetime_editor.json's times, in UTC with the clock held, and replays every case: date and time typed, the step typed where it shows (the stepped case reached by applying a step and opening the editor again), comparing the label, whether the step shows, date, time, step and value after each step. Whether the value is a change is not shown by the window; the model test replays it against the same DateTimeEditor. Typed fields stand for the calendar and h/m/s step controls (DIFFERENCES.md)."
    }
   },
   {
@@ -3496,10 +3496,10 @@
     "Native set_rule preserves the reference mutually-exclusive namespace/wildcard controls; inspected model replay matches recorded interlocks."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "phase 2 session",
-    "note": "gui/tag_display_replay.rs the_autocomplete_boxes_interlock_as_the_reference_s_do opens the real display/search window and compares the interlocked boxes, fetch-all, fetch-automatically and threshold with tag_display.json's autocomplete_steps (the manual-fetch step asserts only that fetching automatically is off: the window keeps its last threshold number). The test calls invoke_rule_changed and set_fetch_automatically/invoke_options_changed directly, bypassing the checkbox toggle wiring in the .slint file. Still weak: the recorded namespace_enabled (whether the boxes are enabled) is not readable from the window."
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "Claude session (recheck bins A/B), #97 phase 2",
+    "note": "crates/hydrus-gui/tests/gui/tag_display_replay.rs the_autocomplete_boxes_interlock_as_the_reference_s_do replays tag_display.json's autocomplete_steps with real clicks on the check boxes (and the threshold set to 0, the window's 'always autocomplete'), comparing every box's ticked state and whether 'Allow namespace:' and 'Allow namespace:*' are enabled (read from the widgets) with the recording. 'Allow namespace:*' was enabled where the reference disables it ('namespace:' ticked); fixed."
    }
   },
   {
@@ -3735,10 +3735,10 @@
     "Native timestamp/plain-date grammar is narrower than the reference date parser."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Model-only replay of manage_times.json copy/paste steps against TimesEditor; no GUI test drives the copy choices menu or paste in ManageTimesWindow. Native date grammar narrower than reference (noted). Tests: crates/hydrus-gui-model/tests/model/times_editor.rs:59"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "Claude session (recheck bins A/B), #97 phase 2",
+    "note": "crates/hydrus-gui/tests/gui/manage_times_replay.rs manage_times_replays_the_references_dialog_through_the_window opens manage times from the thumbnail menu on basic-fixture files given manage_times.json's times (UTC, clock held) and replays the copy menu's entries (all times, web domain times), paste of copied, invalid and explicit timestamp data, the 'some files' question answered with the panel's buttons: copied text, notices, errors (up to Python's JSON error words) and the grid/lists after each step, then the applied times read back from the store. The 'many files' case (101 files) is replayed by the model test only."
    }
   },
   {
@@ -3774,10 +3774,10 @@
     "Domain entry prompt and multi-row editor stage domain timestamps, including null/mixed values and delete; actual store writes use each TimeUpdate domain."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Model replays recorded add/edit/delete domain steps (incl. 'some files' question); the GUI test drives only add domain and duplicate refusal, so editing multiple rows and delete (and the some-files question) are never driven through the window. Tests: crates/hydrus-gui-model/tests/model/times_editor.rs:59; crates/hydrus-gui/tests/gui/manage_times.rs:76"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "Claude session (recheck bins A/B), #97 phase 2",
+    "note": "crates/hydrus-gui/tests/gui/manage_times_replay.rs manage_times_replays_the_references_dialog_through_the_window: web domain add (prompt, the editor's starting value, the duplicate warning), edit of the selected rows with the some-files question answered both ways, delete asked and answered no then yes, comparing the domain list and what was asked after each step with manage_times.json, and the applied sets and deletes read back from the store per file."
    }
   },
   {
@@ -3812,10 +3812,10 @@
     "Reads service import/delete timestamps with counts, selects multiple rows and applies DateTimeEditor changes per service/file scope. First-pass evidence scope: Selected service/kind edits and resulting TimeUpdates are compared to Qt recording; GUI transport is source-traced and on-disk mtime is separately tested."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Model-only replay of recorded file-service rows and edits against TimesEditor; no GUI test exercises the per-file-service list in the window (tracker admits GUI transport is source-traced). Tests: crates/hydrus-gui-model/tests/model/times_editor.rs:59"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "Claude session (recheck bins A/B), #97 phase 2",
+    "note": "crates/hydrus-gui/tests/gui/manage_times_replay.rs manage_times_replays_the_references_dialog_through_the_window: file service rows (imported, deleted, previously imported over my files, hydrus local file storage and trash) shown as recorded, a row selected and edited in the editor (one file, and three files with a -5 ms cascading step), the list compared after each step and the applied imported times read back from the store per file."
    }
   },
   {
@@ -5264,10 +5264,10 @@
     "Selected rows are removed only after the inline Remove all selected confirmation."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Real window: click/ctrl/shift/ctrl+shift selection, Delete key raises the inline 'Remove all selected?' ask, nothing removed until yes, then the row goes and the rest are renumbered. Expectations are literals from RemovePaths; the test sets asking_remove false and calls the remove callback directly rather than pressing yes/no, and never checks the question text or the No path. Tests: crates/hydrus-gui/tests/gui/files_io_import_review.rs:84 rows_are_selected_as_a_list_selects_and_removed_after_asking_then_numbered_again"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "Claude session (recheck bins A/B), #97 phase 2",
+    "note": "crates/hydrus-gui/tests/gui/files_io_import_review.rs rows_are_selected_as_a_list_selects_and_removed_after_asking_then_numbered_again gives the review window import_review_remove.json's four files in order and replays it (oracle/record_import_review_remove.py): rows compared, the second selected, the Delete key and then a real click on 'remove files' each ask 'Remove all selected?' (shown in the window), answered by clicking 'no' then 'yes'; rows (index, name) compared after each step. Click/ctrl/shift selection is driven through the row callbacks."
    }
   },
   {
@@ -16762,10 +16762,10 @@
     "Right-click calls finish_and_dismiss only for completed jobs; dismiss-all calls dismiss_all_done and preserves active work."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Calls the popup_dismiss / dismiss_all callbacks (not an actual right-click) on done and active jobs; behaviour matches TryToDismiss/DismissAll in source but expectations are typed, not recorded. Tests: shell_popups.rs:184 dismiss_all_keeps_active_jobs_and_a_done_one_dismisses_alone"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "Claude session (recheck bins A/B), #97 phase 2",
+    "note": "crates/hydrus-gui/tests/gui/shell_popups.rs dismiss_all_keeps_active_jobs_and_a_done_one_dismisses_alone replays popup_dismiss.json (oracle/record_popup_dismiss.py, a real right mouse press on the reference's cards): a real right-click on the working card and then a done card, then a real click on 'dismiss all', comparing the cards (text, done, dismissed) and the summary after each step."
    }
   },
   {
@@ -19987,10 +19987,10 @@
     "Early experimental native queue-backed snapshots without frozen importer data cannot restore importer pages."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Recordings (session_backups.json, session_importers.json) are replayed, but the timestamp action is never clicked: the model test checks the label and Command value, the GUI tests call Pages::append_session_backup directly. No test drives the menu entry to the append, nor compares the appended tree/keys/selection to a recording beyond importer seed counts. Tests: crates/hydrus-gui-model/tests/model/session_saving.rs:125 backup_menu_labels_match_the_reference; crates/hydrus-gui/tests/gui/session.rs:2276 downloader_backup_and_freshest_load_survive_source_queue_deletion; session.rs:1759; options_window.rs:1335"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "Claude session (recheck bins A/B), #97 phase 2",
+    "note": "crates/hydrus-gui/tests/gui/session_backup_menu.rs a_backup_chosen_from_the_menu_is_appended_as_the_reference_appends_it saves 'backup test' six times at session_backups.json's times keeping two, opens pages > sessions > append backup > backup test from the menu bar (its entries equal the recorded backups' times), chooses the recorded timestamp, and compares the appended top-level notebook's name and children with the recording."
    }
   },
   {
@@ -20875,10 +20875,10 @@
     "Close asks before stopping an active/pending importer; accepted close preserves the page for Undo > closed pages, pauses its queue and displays the next available page."
    ],
    "recheck": {
-    "date": "2026-10-08",
+    "date": "2026-10-09",
     "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Coordinator correction: not wrong. The reference's 'This is a simple urls import page...' is the simple downloader page's veto (ClientGUISidebarImporters.py:2777, SidebarImporterSimpleDownloader); the URLs import page says 'This is a urls import page...' (line 2966, SidebarImporterURLs), as native does. Still weak: middle-click and Ctrl+W are not driven (tests call invoke_close_page / Pages::close_shown), and the simple downloader page's close veto wording is unchecked. Agent's note follows: Native Importer::close_veto (crates/hydrus-gui/src/page.rs:204) says 'This is a urls import page holding N import objects.' where the reference (ClientGUISidebarImporters.py:2777) says 'This is a simple urls import page holding ...'; the test at session.rs:793 pins the wrong string. Also the tests call invoke_close_page / Pages::close_shown, never the middle-click or Ctrl+W the leaf names, and the first test has no veto at all. Tests: crates/hydrus-gui/tests/gui/session.rs:255 pages_open_and_close_as_the_reference_does, :641 a_url_downloader_page_shows_and_controls_its_queue; page_navigation_options.rs (untagged, close with confirm_all)"
+    "by": "Claude session (recheck bins A/B), #97 phase 2",
+    "note": "crates/hydrus-gui/tests/gui/page_close_replay.rs pages_close_by_middle_click_and_ctrl_w_asking_as_the_reference_does replays page_close.json (oracle/record_page_close.py): real middle-clicks on tabs and Ctrl+W key presses on a search page, a url import page holding 4 URLs and a simple downloader page holding 2, the close questions answered by clicking yes/no, comparing the questions, tabs and page shown after each step. The simple downloader's question was wrong ('urls import page') and now says 'simple urls import page'. Still not sound: closing the last page leaves the reference's notebook empty, while hydrus-rs opens a new search page (DIFFERENCES.md); the test pins that difference."
    }
   },
   {
