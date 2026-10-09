@@ -875,7 +875,14 @@ deleted sidecars by `crates/hydrus-download/tests/local_import.rs`.
   (`subscription_checker_edit.json`). The reference only recalculates a loaded
   history's check times; native also reckons the next check of an unloaded
   one at once instead of at its next load, and the example gallery seed is the
-  first of the last ten where the reference picks one at random.
+  first of the last ten where the reference picks one at random. The
+  reference applies a checker edit when the edit panel's `GetValue` builds the
+  subscription; native applies it to the draft as soon as the checker options
+  window is confirmed, and (as the reference) only when the options changed.
+  The "Missing Query Logs!" question text is taken from the source of
+  `ClientGUI._ManageSubscriptions`, a nested function a recorder cannot call,
+  not recorded. The window tests replay the slow-thread preset; the dead and
+  alive checker edits are replayed against the exchange crate only.
 - **The manage subscriptions dialog is a first pass.** It lists the
   subscriptions and can delete, pause/resume, scrub delays, check
   queries now and select by query text, add and edit subscriptions,

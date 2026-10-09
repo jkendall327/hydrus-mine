@@ -179,6 +179,9 @@ fn a_checker_edit_marks_an_unloaded_history_unsynced_in_the_saved_header() {
     let dialog = open_dialog(&ui, &bound);
     overwrite_with_slow_thread(&dialog, &bound);
     let header = header_of(&store, only_queue(&store));
+    // Compared: status, velocity, words, example gallery. Not compared: the
+    // next/last check fields, which native sets eagerly (DIFFERENCES.md), and
+    // the file count's counting time.
     for index in [8, 9, 13, 14, 15, 16] {
         if index == 9 {
             // (the count of files by status, not when it was counted)
@@ -234,4 +237,104 @@ fn a_checker_edit_recalculates_a_history_the_dialog_holds() {
     assert_eq!(state.next_check_time, recorded[2][5]);
     assert_eq!(state.paused, recorded[2][6]);
     assert_eq!(state.dead, recorded[2][7] == 1);
+}
+
+// leaf: subscriptions-exchange
+#[test]
+fn confirming_the_same_checker_in_the_edit_panel_leaves_the_header_alone() {
+    let fixture = hydrus_testkit::fixture_json("subscription_checker_edit.json");
+    // the reference: an unchanged checker leaves every header field as it was
+    for index in [8, 13, 14] {
+        assert_eq!(
+            fixture["unchanged"][2][index], fixture["imported_header"][2][index],
+            "recorded field {index}"
+        );
+    }
+    let (_dirs, store) = store();
+    let _windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+    paste_and_apply(&ui, &bound, &fixture["source"].to_string());
+    let imported = header_of(&store, only_queue(&store));
+    let dialog = open_dialog(&ui, &bound);
+    dialog.invoke_row_clicked(0, false, false);
+    dialog.invoke_edit();
+    let panel = bound
+        .edit_subscription
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
+    panel.invoke_edit_checker();
+    let editor = bound
+        .checker_options
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
+    let before = store.read(subscriptions::subscriptions).unwrap()[0]
+        .settings
+        .checker
+        .clone();
+    editor.invoke_ok();
+    panel.invoke_apply();
+    dialog.invoke_apply();
+    let after = store.read(subscriptions::subscriptions).unwrap()[0]
+        .settings
+        .checker
+        .clone();
+    assert_eq!(before, after, "the editor returned a different checker");
+    let header = header_of(&store, only_queue(&store));
+    for index in [8, 13, 14] {
+        assert_eq!(header[2][index], imported[2][index], "header field {index}");
+    }
+}
+
+// leaf: subscriptions-exchange
+#[test]
+fn exporting_a_multi_row_selection_exports_every_selected_subscription_in_order() {
+    use hydrus_core::subscriptions::{QueryState, SubscriptionSettings};
+    let (_dirs, store) = store();
+    let now = crate::subscriptions::now();
+    store
+        .write(move |ctx| {
+            let conn = ctx.conn();
+            let settings = SubscriptionSettings {
+                gug_name: "example tag search".into(),
+                ..SubscriptionSettings::default()
+            };
+            for name in ["a", "b", "c"] {
+                let id = subscriptions::create_subscription(conn, name, &settings)?.unwrap();
+                subscriptions::add_query(conn, id, &QueryState::new(name), now)?;
+            }
+            Ok(())
+        })
+        .unwrap();
+    let _windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+    let dialog = open_dialog(&ui, &bound);
+    let index = |name: &str| {
+        i32::try_from(
+            rows(&dialog)
+                .iter()
+                .position(|(cells, _)| cells[0] == name)
+                .unwrap(),
+        )
+        .unwrap()
+    };
+    dialog.invoke_row_clicked(index("a"), false, false);
+    dialog.invoke_row_clicked(index("c"), true, false);
+    dialog.invoke_exchange();
+    let child = bound
+        .subscription_exchange
+        .0
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
+    let exported =
+        hydrus_downloader_exchange::subscriptions::decode_text(child.get_text().as_str()).unwrap();
+    let names: Vec<_> = exported.iter().map(|s| s.name.as_str()).collect();
+    assert_eq!(names, ["a", "c"]);
 }

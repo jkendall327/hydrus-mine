@@ -238,5 +238,6 @@ pub fn move_query(conn: &Connection, queue_id: i64, subscription_id: i64) -> Res
 pub fn remove_query(conn: &Connection, queue_id: i64) -> Result<()> {
     conn.prepare_cached("DELETE FROM subscription_queries WHERE queue_id = ?")?
         .execute([queue_id])?;
+    set_missing_log(conn, queue_id, false)?;
     queues::delete_queue(conn, queue_id)
 }

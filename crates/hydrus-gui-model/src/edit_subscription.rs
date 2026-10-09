@@ -602,8 +602,12 @@ impl EditSubscription {
     /// New checker options, its queries' check times reckoned again
     /// (`_CheckerOptionsUpdated`).
     pub fn set_checker(&mut self, checker: hydrus_core::subscriptions::CheckerOptions, now: i64) {
-        for q in &mut self.queries {
-            q.query.checker_changed(&checker, now);
+        // The reference's `SetCheckerOptions` touches the headers only when
+        // the options changed.
+        if self.settings.checker != checker {
+            for q in &mut self.queries {
+                q.query.checker_changed(&checker, now);
+            }
         }
         self.settings.checker = checker;
     }
