@@ -7051,10 +7051,10 @@
     "Assessment covers this editable control and shared Apply/Cancel, not every control on its containing reference page or every background consumer."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Real options row and gallery page; resulting URLs are typed literals from ClientNetworkingGUG logic, no recording. Tests: crates/hydrus-gui/tests/gui/options_system_consumers.rs:912 percent_twenty_option_changes_the_gallery_urls_made_from_a_query"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "Gallery URLs made from six queries (with %20, %2520, a lone %, leading and doubled %20) for a template with the search in its parameters and one with it in the path, option off and on, equal the reference generator's. Recording: oracle/record_downloading_misc_options.py -> oracle/fixtures/downloading_misc_options.json (the reference's own code under each option), replayed through the real options window and consumer in crates/hydrus-gui/tests/gui/options_system_consumers.rs gallery_urls_made_from_queries_are_the_reference_s_with_and_without_percent_twenty."
    }
   },
   {
@@ -7071,10 +7071,10 @@
     "Assessment covers this editable control and shared Apply/Cancel, not every control on its containing reference page or every background consumer."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Real options row and gallery URL generation, typed literals. Only the gallery GUG path is checked; the reference option applies to all URL normalisation. Tests: crates/hydrus-gui/tests/gui/options_system_consumers.rs:948 leading_double_slash_option_changes_the_gallery_urls_made_from_a_query"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "A URL class for images/<anything> matches and normalises single, double and triple-slash URLs as the reference's class does, option off and on, through the saved setting. Recording: oracle/record_downloading_misc_options.py -> oracle/fixtures/downloading_misc_options.json (the reference's own code under each option), replayed through the real options window and consumer in crates/hydrus-gui/tests/gui/options_system_consumers.rs url_classes_match_double_slash_urls_as_the_reference_s_do_with_the_option."
    }
   },
   {
@@ -7174,10 +7174,10 @@
     "Assessment covers this editable control and shared Apply/Cancel, not every control on its containing reference page or every background consumer."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Real options window and gallery list: '2 - 1D' with the box on, plain '2' off, matching ClientImportFileSeeds format; expected strings are literals, no recording. Only the gallery list is checked, and D is never combined with N or other statuses. Tests: crates/hydrus-gui/tests/gui/options_system_consumers.rs:780 gallery_list_marks_and_short_summaries_follow_the_misc_options"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "As the N leaf: D counts, alone and with N, Ign, F and S, for all four option pairs, in an open page after the option changes. Recording: oracle/record_downloading_misc_options.py -> oracle/fixtures/downloading_misc_options.json (the reference's own code under each option), replayed through the real options window and consumer in crates/hydrus-gui/tests/gui/options_system_consumers.rs short_file_import_summaries_are_the_reference_s_for_every_mix_and_option."
    }
   },
   {
@@ -7194,10 +7194,10 @@
     "Assessment covers this editable control and shared Apply/Cancel, not every control on its containing reference page or every background consumer."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "As the D leaf: '2 - 1N' vs '2' in the gallery list through the real options window; literals from the Python source, gallery list only. Tests: crates/hydrus-gui/tests/gui/options_system_consumers.rs:780 gallery_list_marks_and_short_summaries_follow_the_misc_options"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "The gallery list's short summary for ten mixes of statuses under all four N/D option pairs (40 cases) equals the reference's GetStatusText(simple=True). Found and fixed: an open downloader page kept the options it was made with; its lists now read them each refresh, as the reference does. Recording: oracle/record_downloading_misc_options.py -> oracle/fixtures/downloading_misc_options.json (the reference's own code under each option), replayed through the real options window and consumer in crates/hydrus-gui/tests/gui/options_system_consumers.rs short_file_import_summaries_are_the_reference_s_for_every_mix_and_option."
    }
   },
   {

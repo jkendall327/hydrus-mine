@@ -1,0 +1,683 @@
+{
+ "summaries": [
+  {
+   "mix": {},
+   "show_new": false,
+   "show_deleted": false,
+   "text": ""
+  },
+  {
+   "mix": {},
+   "show_new": false,
+   "show_deleted": true,
+   "text": ""
+  },
+  {
+   "mix": {},
+   "show_new": true,
+   "show_deleted": false,
+   "text": ""
+  },
+  {
+   "mix": {},
+   "show_new": true,
+   "show_deleted": true,
+   "text": ""
+  },
+  {
+   "mix": {
+    "unknown": 3
+   },
+   "show_new": false,
+   "show_deleted": false,
+   "text": "0/3"
+  },
+  {
+   "mix": {
+    "unknown": 3
+   },
+   "show_new": false,
+   "show_deleted": true,
+   "text": "0/3"
+  },
+  {
+   "mix": {
+    "unknown": 3
+   },
+   "show_new": true,
+   "show_deleted": false,
+   "text": "0/3"
+  },
+  {
+   "mix": {
+    "unknown": 3
+   },
+   "show_new": true,
+   "show_deleted": true,
+   "text": "0/3"
+  },
+  {
+   "mix": {
+    "new": 2
+   },
+   "show_new": false,
+   "show_deleted": false,
+   "text": "2"
+  },
+  {
+   "mix": {
+    "new": 2
+   },
+   "show_new": false,
+   "show_deleted": true,
+   "text": "2"
+  },
+  {
+   "mix": {
+    "new": 2
+   },
+   "show_new": true,
+   "show_deleted": false,
+   "text": "2 - 2N"
+  },
+  {
+   "mix": {
+    "new": 2
+   },
+   "show_new": true,
+   "show_deleted": true,
+   "text": "2 - 2N"
+  },
+  {
+   "mix": {
+    "deleted": 1
+   },
+   "show_new": false,
+   "show_deleted": false,
+   "text": "1"
+  },
+  {
+   "mix": {
+    "deleted": 1
+   },
+   "show_new": false,
+   "show_deleted": true,
+   "text": "1 - 1D"
+  },
+  {
+   "mix": {
+    "deleted": 1
+   },
+   "show_new": true,
+   "show_deleted": false,
+   "text": "1"
+  },
+  {
+   "mix": {
+    "deleted": 1
+   },
+   "show_new": true,
+   "show_deleted": true,
+   "text": "1 - 1D"
+  },
+  {
+   "mix": {
+    "new": 2,
+    "deleted": 1
+   },
+   "show_new": false,
+   "show_deleted": false,
+   "text": "3"
+  },
+  {
+   "mix": {
+    "new": 2,
+    "deleted": 1
+   },
+   "show_new": false,
+   "show_deleted": true,
+   "text": "3 - 1D"
+  },
+  {
+   "mix": {
+    "new": 2,
+    "deleted": 1
+   },
+   "show_new": true,
+   "show_deleted": false,
+   "text": "3 - 2N"
+  },
+  {
+   "mix": {
+    "new": 2,
+    "deleted": 1
+   },
+   "show_new": true,
+   "show_deleted": true,
+   "text": "3 - 2N - 1D"
+  },
+  {
+   "mix": {
+    "new": 2,
+    "deleted": 1,
+    "unknown": 4
+   },
+   "show_new": false,
+   "show_deleted": false,
+   "text": "3/7"
+  },
+  {
+   "mix": {
+    "new": 2,
+    "deleted": 1,
+    "unknown": 4
+   },
+   "show_new": false,
+   "show_deleted": true,
+   "text": "3/7 - 1D"
+  },
+  {
+   "mix": {
+    "new": 2,
+    "deleted": 1,
+    "unknown": 4
+   },
+   "show_new": true,
+   "show_deleted": false,
+   "text": "3/7 - 2N"
+  },
+  {
+   "mix": {
+    "new": 2,
+    "deleted": 1,
+    "unknown": 4
+   },
+   "show_new": true,
+   "show_deleted": true,
+   "text": "3/7 - 2N - 1D"
+  },
+  {
+   "mix": {
+    "redundant": 3,
+    "ignored": 1,
+    "failed": 2,
+    "skipped": 1
+   },
+   "show_new": false,
+   "show_deleted": false,
+   "text": "7 - 1Ign2F1S"
+  },
+  {
+   "mix": {
+    "redundant": 3,
+    "ignored": 1,
+    "failed": 2,
+    "skipped": 1
+   },
+   "show_new": false,
+   "show_deleted": true,
+   "text": "7 - 1Ign2F1S"
+  },
+  {
+   "mix": {
+    "redundant": 3,
+    "ignored": 1,
+    "failed": 2,
+    "skipped": 1
+   },
+   "show_new": true,
+   "show_deleted": false,
+   "text": "7 - 1Ign2F1S"
+  },
+  {
+   "mix": {
+    "redundant": 3,
+    "ignored": 1,
+    "failed": 2,
+    "skipped": 1
+   },
+   "show_new": true,
+   "show_deleted": true,
+   "text": "7 - 1Ign2F1S"
+  },
+  {
+   "mix": {
+    "new": 1200,
+    "deleted": 1500,
+    "ignored": 2,
+    "failed": 3,
+    "skipped": 4,
+    "unknown": 5
+   },
+   "show_new": false,
+   "show_deleted": false,
+   "text": "2,709/2,714 - 2Ign3F4S"
+  },
+  {
+   "mix": {
+    "new": 1200,
+    "deleted": 1500,
+    "ignored": 2,
+    "failed": 3,
+    "skipped": 4,
+    "unknown": 5
+   },
+   "show_new": false,
+   "show_deleted": true,
+   "text": "2,709/2,714 - 2Ign1,500D3F4S"
+  },
+  {
+   "mix": {
+    "new": 1200,
+    "deleted": 1500,
+    "ignored": 2,
+    "failed": 3,
+    "skipped": 4,
+    "unknown": 5
+   },
+   "show_new": true,
+   "show_deleted": false,
+   "text": "2,709/2,714 - 1,200N - 2Ign3F4S"
+  },
+  {
+   "mix": {
+    "new": 1200,
+    "deleted": 1500,
+    "ignored": 2,
+    "failed": 3,
+    "skipped": 4,
+    "unknown": 5
+   },
+   "show_new": true,
+   "show_deleted": true,
+   "text": "2,709/2,714 - 1,200N - 2Ign1,500D3F4S"
+  },
+  {
+   "mix": {
+    "deleted": 2,
+    "ignored": 1
+   },
+   "show_new": false,
+   "show_deleted": false,
+   "text": "3 - 1Ign"
+  },
+  {
+   "mix": {
+    "deleted": 2,
+    "ignored": 1
+   },
+   "show_new": false,
+   "show_deleted": true,
+   "text": "3 - 1Ign2D"
+  },
+  {
+   "mix": {
+    "deleted": 2,
+    "ignored": 1
+   },
+   "show_new": true,
+   "show_deleted": false,
+   "text": "3 - 1Ign"
+  },
+  {
+   "mix": {
+    "deleted": 2,
+    "ignored": 1
+   },
+   "show_new": true,
+   "show_deleted": true,
+   "text": "3 - 1Ign2D"
+  },
+  {
+   "mix": {
+    "new": 1,
+    "redundant": 1,
+    "deleted": 1,
+    "ignored": 1,
+    "failed": 1,
+    "skipped": 1,
+    "unknown": 1
+   },
+   "show_new": false,
+   "show_deleted": false,
+   "text": "6/7 - 1Ign1F1S"
+  },
+  {
+   "mix": {
+    "new": 1,
+    "redundant": 1,
+    "deleted": 1,
+    "ignored": 1,
+    "failed": 1,
+    "skipped": 1,
+    "unknown": 1
+   },
+   "show_new": false,
+   "show_deleted": true,
+   "text": "6/7 - 1Ign1D1F1S"
+  },
+  {
+   "mix": {
+    "new": 1,
+    "redundant": 1,
+    "deleted": 1,
+    "ignored": 1,
+    "failed": 1,
+    "skipped": 1,
+    "unknown": 1
+   },
+   "show_new": true,
+   "show_deleted": false,
+   "text": "6/7 - 1N - 1Ign1F1S"
+  },
+  {
+   "mix": {
+    "new": 1,
+    "redundant": 1,
+    "deleted": 1,
+    "ignored": 1,
+    "failed": 1,
+    "skipped": 1,
+    "unknown": 1
+   },
+   "show_new": true,
+   "show_deleted": true,
+   "text": "6/7 - 1N - 1Ign1D1F1S"
+  }
+ ],
+ "gug": [
+  {
+   "template": "params",
+   "query": "blue%20eyes",
+   "on": false,
+   "url": "https://booru.example/posts?tags=blue%20eyes"
+  },
+  {
+   "template": "params",
+   "query": "blue%20eyes",
+   "on": true,
+   "url": "https://booru.example/posts?tags=blue+eyes"
+  },
+  {
+   "template": "params",
+   "query": "blue eyes",
+   "on": false,
+   "url": "https://booru.example/posts?tags=blue+eyes"
+  },
+  {
+   "template": "params",
+   "query": "blue eyes",
+   "on": true,
+   "url": "https://booru.example/posts?tags=blue+eyes"
+  },
+  {
+   "template": "params",
+   "query": "100%20%",
+   "on": false,
+   "url": "https://booru.example/posts?tags=100%20%25"
+  },
+  {
+   "template": "params",
+   "query": "100%20%",
+   "on": true,
+   "url": "https://booru.example/posts?tags=100+%25"
+  },
+  {
+   "template": "params",
+   "query": "a%2520b",
+   "on": false,
+   "url": "https://booru.example/posts?tags=a%2520b"
+  },
+  {
+   "template": "params",
+   "query": "a%2520b",
+   "on": true,
+   "url": "https://booru.example/posts?tags=a%2520b"
+  },
+  {
+   "template": "params",
+   "query": "%20lead",
+   "on": false,
+   "url": "https://booru.example/posts?tags=%20lead"
+  },
+  {
+   "template": "params",
+   "query": "%20lead",
+   "on": true,
+   "url": "https://booru.example/posts?tags=+lead"
+  },
+  {
+   "template": "params",
+   "query": "x%20%20y",
+   "on": false,
+   "url": "https://booru.example/posts?tags=x%20%20y"
+  },
+  {
+   "template": "params",
+   "query": "x%20%20y",
+   "on": true,
+   "url": "https://booru.example/posts?tags=x++y"
+  },
+  {
+   "template": "path",
+   "query": "blue%20eyes",
+   "on": false,
+   "url": "https://booru.example/artist/blue%20eyes/list"
+  },
+  {
+   "template": "path",
+   "query": "blue%20eyes",
+   "on": true,
+   "url": "https://booru.example/artist/blue+eyes/list"
+  },
+  {
+   "template": "path",
+   "query": "blue eyes",
+   "on": false,
+   "url": "https://booru.example/artist/blue+eyes/list"
+  },
+  {
+   "template": "path",
+   "query": "blue eyes",
+   "on": true,
+   "url": "https://booru.example/artist/blue+eyes/list"
+  },
+  {
+   "template": "path",
+   "query": "100%20%",
+   "on": false,
+   "url": "https://booru.example/artist/100%20%25/list"
+  },
+  {
+   "template": "path",
+   "query": "100%20%",
+   "on": true,
+   "url": "https://booru.example/artist/100+%25/list"
+  },
+  {
+   "template": "path",
+   "query": "a%2520b",
+   "on": false,
+   "url": "https://booru.example/artist/a%2520b/list"
+  },
+  {
+   "template": "path",
+   "query": "a%2520b",
+   "on": true,
+   "url": "https://booru.example/artist/a%2520b/list"
+  },
+  {
+   "template": "path",
+   "query": "%20lead",
+   "on": false,
+   "url": "https://booru.example/artist/%20lead/list"
+  },
+  {
+   "template": "path",
+   "query": "%20lead",
+   "on": true,
+   "url": "https://booru.example/artist/+lead/list"
+  },
+  {
+   "template": "path",
+   "query": "x%20%20y",
+   "on": false,
+   "url": "https://booru.example/artist/x%20%20y/list"
+  },
+  {
+   "template": "path",
+   "query": "x%20%20y",
+   "on": true,
+   "url": "https://booru.example/artist/x++y/list"
+  }
+ ],
+ "paths": [
+  {
+   "path": "//a//b",
+   "on": false,
+   "components": [
+    "",
+    "a",
+    "",
+    "b"
+   ]
+  },
+  {
+   "path": "//a//b",
+   "on": true,
+   "components": [
+    "a",
+    "",
+    "b"
+   ]
+  },
+  {
+   "path": "/a",
+   "on": false,
+   "components": [
+    "a"
+   ]
+  },
+  {
+   "path": "/a",
+   "on": true,
+   "components": [
+    "a"
+   ]
+  },
+  {
+   "path": "a",
+   "on": false,
+   "components": [
+    "a"
+   ]
+  },
+  {
+   "path": "a",
+   "on": true,
+   "components": [
+    "a"
+   ]
+  },
+  {
+   "path": "///x/y",
+   "on": false,
+   "components": [
+    "",
+    "",
+    "x",
+    "y"
+   ]
+  },
+  {
+   "path": "///x/y",
+   "on": true,
+   "components": [
+    "x",
+    "y"
+   ]
+  },
+  {
+   "path": "/",
+   "on": false,
+   "components": [
+    ""
+   ]
+  },
+  {
+   "path": "/",
+   "on": true,
+   "components": [
+    ""
+   ]
+  },
+  {
+   "path": "//",
+   "on": false,
+   "components": [
+    "",
+    ""
+   ]
+  },
+  {
+   "path": "//",
+   "on": true,
+   "components": [
+    ""
+   ]
+  }
+ ],
+ "url_class": [
+  {
+   "url": "https://booru.example/images/abc.jpg",
+   "on": false,
+   "matches": true,
+   "normalised": "https://booru.example/images/abc.jpg"
+  },
+  {
+   "url": "https://booru.example/images/abc.jpg",
+   "on": true,
+   "matches": true,
+   "normalised": "https://booru.example/images/abc.jpg"
+  },
+  {
+   "url": "https://booru.example//images/abc.jpg",
+   "on": false,
+   "matches": false,
+   "why": "\"\" did not exactly match \"images\"",
+   "normalised": "https://booru.example//images"
+  },
+  {
+   "url": "https://booru.example//images/abc.jpg",
+   "on": true,
+   "matches": true,
+   "normalised": "https://booru.example/images/abc.jpg"
+  },
+  {
+   "url": "https://booru.example///images/abc.jpg",
+   "on": false,
+   "matches": false,
+   "why": "\"\" did not exactly match \"images\"",
+   "normalised": "https://booru.example//"
+  },
+  {
+   "url": "https://booru.example///images/abc.jpg",
+   "on": true,
+   "matches": true,
+   "normalised": "https://booru.example/images/abc.jpg"
+  },
+  {
+   "url": "https://booru.example//images//abc.jpg",
+   "on": false,
+   "matches": false,
+   "why": "\"\" did not exactly match \"images\"",
+   "normalised": "https://booru.example//images"
+  },
+  {
+   "url": "https://booru.example//images//abc.jpg",
+   "on": true,
+   "matches": true,
+   "normalised": "https://booru.example/images/"
+  }
+ ]
+}

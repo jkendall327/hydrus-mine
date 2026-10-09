@@ -79,7 +79,17 @@ impl WatcherView {
         sort(&mut read, self.sort.0, self.sort.1, now, &|w| {
             Some(self.simple_status(w, now).0)
         });
-        let changed = read != self.watchers || !gone.is_empty();
+        // (the reference reads its options each time it draws the list)
+        let settings: hydrus_core::pages::DownloaderPageSettings =
+            hydrus_store::settings::get(conn)?;
+        let naming: hydrus_core::pages::PageNameSettings = hydrus_store::settings::get(conn)?;
+        let short_summary = (naming.short_summary_new, naming.short_summary_deleted);
+        let changed = read != self.watchers
+            || !gone.is_empty()
+            || settings != self.settings
+            || short_summary != self.short_summary;
+        self.settings = settings;
+        self.short_summary = short_summary;
         self.watchers = read;
         Ok(changed)
     }
