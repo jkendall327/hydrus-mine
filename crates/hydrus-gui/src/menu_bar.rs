@@ -632,13 +632,15 @@ fn run(window: &MainWindow, hooks: &Hooks, command: Command) {
             hooks.tray.refresh();
         }
         Command::CheckImportFolder(name) => {
-            if let Err(e) = hydrus_gui_model::folder_runs::check_import_folders(&store, name) {
-                eprintln!("could not check the import folders: {e}");
+            match hydrus_gui_model::folder_runs::check_import_folders(&store, name) {
+                Ok(said) => say(&store, said),
+                Err(e) => eprintln!("could not check the import folders: {e}"),
             }
         }
         Command::RunExportFolder(name) => {
-            if let Err(e) = hydrus_gui_model::folder_runs::run_export_folders(&store, name) {
-                eprintln!("could not run the export folders: {e}");
+            match hydrus_gui_model::folder_runs::run_export_folders(&store, name) {
+                Ok(said) => say(&store, said),
+                Err(e) => eprintln!("could not run the export folders: {e}"),
             }
         }
         Command::OpenInstallDirectory => match std::env::current_exe() {
@@ -930,5 +932,16 @@ fn run(window: &MainWindow, hooks: &Hooks, command: Command) {
         Command::About => (hooks.about)(),
         Command::ReviewServices => (hooks.review_services)(),
         Command::ManageServices => (hooks.manage_services)(),
+    }
+}
+
+/// Show `text` in a popup (`HydrusData.ShowText`), if there is any.
+fn say(store: &hydrus_store::Store, text: Option<&'static str>) {
+    let Some(text) = text else { return };
+    let now = hydrus_core::time::TimestampMs::now().millis() / 1000;
+    #[allow(clippy::cast_precision_loss)] // (seconds)
+    let popup = hydrus_store::popups::Job::text(text, now as f64);
+    if let Err(e) = store.write(move |ctx| hydrus_store::popups::add(ctx.conn(), &popup, now)) {
+        eprintln!("could not say so: {e}");
     }
 }

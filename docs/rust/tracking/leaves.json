@@ -452,7 +452,7 @@
     "date": "2026-10-09",
     "class": "sound",
     "by": "phase 2 session",
-    "note": "gui/media_selection_menu.rs rearrange_menu_offers_and_makes_the_moves_the_reference_did hits thumbnails as recorded (first plain, the rest ctrl; the last is the focus), compares the rearrange rows the thumbnail menu offers with the reference's GetMenu, then chooses each of the five moves (to start, back one, to here, forward one, to end) from the menu and compares the page's order and what stays selected with thumbnail_rearrange.json, which oracle/record_thumbnail_rearrange.py recorded from the reference (SIMPLE_REARRANGE_THUMBNAILS on a page of the basic fixture's local files, sorted by file size). Moves not offered are checked to have done nothing in the reference."
+    "note": "gui/media_selection_menu.rs rearrange_menu_offers_and_makes_the_moves_the_reference_did hits thumbnails as recorded (first plain, the rest ctrl; the last is the focus), compares the rearrange rows the thumbnail menu offers with the reference's GetMenu, then chooses each of the five moves (to start, back one, to here, forward one, to end) from the menu and compares the page's order and what stays selected with thumbnail_rearrange.json, which oracle/record_thumbnail_rearrange.py recorded from the reference (SIMPLE_REARRANGE_THUMBNAILS on a page of the basic fixture's local files, sorted by file size). Moves not offered are checked to have done nothing in the reference. The test sets the page's sort (file size, smallest first) through the model rather than the sort control, and leaves out of the recording the files that are in no local domain (hydrus-rs's page does not list them); the port breaks import-time ties differently from the reference (DIFFERENCES.md), which is why the recording sorts by file size."
    }
   },
   {
@@ -14738,10 +14738,10 @@
     "Store flag and scheduler connection are inspected; existing menu GUI test does not directly replay this named/all dispatch boundary."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Real menu click sets check_now on all folders and the import-folder worker then checks; menu entries (check all, separator, names) are replayed from the recorded main_menu.json, but the flag effect is a typed literal restated from _CheckImportFolder, not recorded. Native also omits the reference's 'Import folders are currently paused...' text when checking while paused. Tracker note saying the all/named boundary lacks a test is stale. Tests: crates/hydrus-gui/tests/gui/files_io_file_menu.rs:263 import_folders_are_paused_and_checked_from_the_file_menu_and_the_worker_obeys; crates/hydrus-gui-model/tests/model/folder_runs.rs; main_menu.rs import_and_export_folders_are_offered_to_run_now"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "gui/files_io_file_menu.rs checking_and_running_folders_from_the_file_menu_flags_and_says_what_the_reference_did drives the file menu's check/run entries (one folder, all) on real import and export folders, once with the folders running and once paused under the file menu, and compares the folders' flags (paused, check now / run now) afterwards and the text the client shows with folder_runs.json, recorded from the reference by oracle/record_folder_runs.py (_CheckImportFolder / _RunExportFolder). Checking a folder unpauses it, and a paused menu says the reference's 'currently paused' text while still flagging, as recorded."
    }
   },
   {
@@ -14758,10 +14758,10 @@
     "Store flag and scheduler connection are inspected; existing menu GUI test does not directly replay this named/all dispatch boundary."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Clicking a named folder flags only it (via the real menu, names from the store, recorded menu shape in main_menu.json); effect asserted with typed literals from the Python source, no recording of the check-now flag. The reference's paused-state message is not ported. Stale note claims no direct dispatch test. Tests: crates/hydrus-gui/tests/gui/files_io_file_menu.rs:262 import_folders_are_paused_and_checked_from_the_file_menu_and_the_worker_obeys"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "gui/files_io_file_menu.rs checking_and_running_folders_from_the_file_menu_flags_and_says_what_the_reference_did drives the file menu's check/run entries (one folder, all) on real import and export folders, once with the folders running and once paused under the file menu, and compares the folders' flags (paused, check now / run now) afterwards and the text the client shows with folder_runs.json, recorded from the reference by oracle/record_folder_runs.py (_CheckImportFolder / _RunExportFolder). Checking a folder unpauses it, and a paused menu says the reference's 'currently paused' text while still flagging, as recorded."
    }
   },
   {
@@ -15021,10 +15021,10 @@
     "Named/all menu-to-scheduler boundary lacks a focused GUI regression in the inspected evidence."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Real menu 'run all' flags every export folder and the scheduler runs all three and clears flags; labels (run all, separator, names) match the recorded main_menu.json; flag semantics typed from _RunExportFolder, not recorded, and the paused-state message is not ported. Stale note says no focused regression. Tests: crates/hydrus-gui/tests/gui/files_io_file_menu.rs:385 export_folders_are_paused_and_run_from_the_file_menu_and_the_worker_obeys"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "gui/files_io_file_menu.rs checking_and_running_folders_from_the_file_menu_flags_and_says_what_the_reference_did drives the file menu's check/run entries (one folder, all) on real import and export folders, once with the folders running and once paused under the file menu, and compares the folders' flags (paused, check now / run now) afterwards and the text the client shows with folder_runs.json, recorded from the reference by oracle/record_folder_runs.py (_CheckImportFolder / _RunExportFolder). Checking a folder unpauses it, and a paused menu says the reference's 'currently paused' text while still flagging, as recorded."
    }
   },
   {
@@ -15041,10 +15041,10 @@
     "Named/all menu-to-scheduler boundary lacks a focused GUI regression in the inspected evidence."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Named entry flags only that folder and the worker runs it once and clears the flag; menu shape recorded, flag behaviour restated from source. Paused-state message of the reference not ported. Stale note claims no focused regression. Tests: crates/hydrus-gui/tests/gui/files_io_file_menu.rs:384 export_folders_are_paused_and_run_from_the_file_menu_and_the_worker_obeys"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "gui/files_io_file_menu.rs checking_and_running_folders_from_the_file_menu_flags_and_says_what_the_reference_did drives the file menu's check/run entries (one folder, all) on real import and export folders, once with the folders running and once paused under the file menu, and compares the folders' flags (paused, check now / run now) afterwards and the text the client shows with folder_runs.json, recorded from the reference by oracle/record_folder_runs.py (_CheckImportFolder / _RunExportFolder). Checking a folder unpauses it, and a paused menu says the reference's 'currently paused' text while still flagging, as recorded."
    }
   },
   {
