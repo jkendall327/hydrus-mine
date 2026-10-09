@@ -42,6 +42,19 @@ fn the_application_busy_field_says_how_many_jobs_run_as_the_reference_does() {
             )
         })
         .unwrap();
+    // (and it is not idle time either, when they would run regardless)
+    client
+        .store
+        .write(|ctx| {
+            hydrus_store::settings::set(
+                ctx.conn(),
+                &hydrus_store::settings::GuiIdleSettings {
+                    enabled: false,
+                    ..Default::default()
+                },
+            )
+        })
+        .unwrap();
     // (and any pass admitted as the client opened is done)
     let deadline = std::time::Instant::now() + std::time::Duration::from_secs(20);
     while [
@@ -150,4 +163,10 @@ fn the_application_busy_field_says_how_many_jobs_run_as_the_reference_does() {
     writer.join().unwrap();
     poll(1201);
     assert_eq!(client.ui.get_status_db(), "");
+    let stats = client.bound.maintenance.statistics();
+    assert_eq!(
+        (stats.trash_passes, stats.deferred_passes),
+        (0, 0),
+        "no pass of the client's own ran"
+    );
 }
