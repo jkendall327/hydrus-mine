@@ -55,6 +55,47 @@ fn watch(viewer: &MediaViewerWindow, time: Duration) -> HashSet<((u32, u32), Vec
     seen
 }
 
+/// The texts the scanbar shows over time while playing, as they change, and
+/// when each first showed; until `count` or ten seconds.
+fn texts_while_playing(viewer: &MediaViewerWindow, count: usize) -> Vec<(String, Instant)> {
+    let mut seen: Vec<(String, Instant)> = Vec::new();
+    let started = Instant::now();
+    while seen.len() < count && started.elapsed() < Duration::from_secs(10) {
+        slint::platform::update_timers_and_animations();
+        let text = viewer.get_scanbar_text().to_string();
+        if !text.is_empty() && seen.last().is_none_or(|(last, _)| *last != text) {
+            seen.push((text, Instant::now()));
+        }
+        std::thread::sleep(Duration::from_millis(1));
+    }
+    seen
+}
+
+/// Wait until the scanbar shows `wanted` and keeps it.
+fn reaches(viewer: &MediaViewerWindow, wanted: &str, what: &str) {
+    let got = scanbar_reaches(viewer, wanted);
+    assert_eq!(got, wanted, "{what}");
+}
+
+/// Nothing changes on the bar for a moment: the player is paused.
+fn stays(viewer: &MediaViewerWindow, text: &str, what: &str) {
+    assert_eq!(
+        watch(viewer, Duration::from_millis(250)).len(),
+        1,
+        "{what}: the picture moved"
+    );
+    assert_eq!(viewer.get_scanbar_text(), text, "{what}");
+}
+
+fn as_str_vec(value: &serde_json::Value) -> Vec<String> {
+    value
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|item| item["text"].as_str().unwrap().to_owned())
+        .collect()
+}
+
 #[test]
 fn animations_play_in_the_viewer_with_the_client_s_own_player() {
     let legacy = hydrus_testkit::legacy_fixture("basic");
@@ -77,6 +118,7 @@ fn animations_play_in_the_viewer_with_the_client_s_own_player() {
         hashes.push((name, result.hash.unwrap()));
     }
 
+    let recording = hydrus_testkit::fixture_json("animation_playback.json");
     let _windows = headless::init();
     let ui = MainWindow::new().unwrap();
     let bound = bind(&ui, Pages::single(SearchPage::new(store.clone())));
@@ -96,6 +138,31 @@ fn animations_play_in_the_viewer_with_the_client_s_own_player() {
             .as_ref()
             .map(slint::ComponentHandle::clone_strong)
             .expect("the viewer opened");
+        let case = &recording[if name.starts_with("ugoira") {
+            "ugoira"
+        } else {
+            "webp"
+        }];
+        // from the first frame, round twice: the bar's text frame after
+        // frame as the reference's player shows them, each for (at least
+        // most of) its duration
+        let timeline = case["timeline"].as_array().unwrap();
+        let mut expected = vec![case["initial"]["text"].as_str().unwrap().to_owned()];
+        expected.extend(as_str_vec(&case["timeline"]));
+        let mut indexes = vec![0];
+        indexes.extend(timeline.iter().map(|step| step["index"].as_u64().unwrap() as usize));
+        let seen = texts_while_playing(&viewer, expected.len());
+        let texts: Vec<&str> = seen.iter().map(|(text, _)| text.as_str()).collect();
+        assert_eq!(texts, expected.iter().map(String::as_str).collect::<Vec<_>>(), "{name}");
+        // (the bar's text lags a frame by a poll, so the time is taken over
+        // the whole run, from the second text to the last)
+        let durations = case["durations_ms"].as_array().unwrap();
+        let due: f64 = indexes[1..indexes.len() - 1]
+            .iter()
+            .map(|&index| durations[index].as_f64().unwrap())
+            .sum();
+        let took = seen[seen.len() - 1].1.duration_since(seen[1].1).as_secs_f64() * 1000.0;
+        assert!(took >= due * 0.85, "{name}: {took}ms of {due}");
         // (frames of 60 to 100ms, looping)
         let shown = watch(&viewer, Duration::from_millis(1500));
         assert!(shown.len() >= 3, "{name}: {} pictures", shown.len());
@@ -114,96 +181,101 @@ fn animations_play_in_the_viewer_with_the_client_s_own_player() {
             watch(&viewer, Duration::from_millis(1000)).len() >= 2,
             "{name}"
         );
-        // its scanbar: by frame; a drag pauses, goes to the frame under
-        // the pointer, and resumes when let go
+        // its scanbar, driven as the user does and compared with the
+        // reference's own Animation and AnimationBar on a frozen clock
+        // (oracle/record_animation_playback.py)
         assert!(viewer.get_scanbar_shown(), "{name}");
-        watch(&viewer, Duration::from_millis(200));
-        let text = viewer.get_scanbar_text().to_string();
-        assert!(
-            text.contains("/5 - ") || text.contains("/3 - "),
-            "{name}: {text}"
-        );
-        let frames: usize = text.split(['/', ' ']).nth(1).unwrap().parse().unwrap();
-        let width = 210.0;
-        let x = 5.0 + 0.75 * (width - 10.0);
-        let target = (0.75 * (frames - 1) as f64 + 0.5) as usize;
-        viewer.invoke_scan_started();
-        viewer.invoke_scan(x, width);
-        // (once the frame is decoded and shown)
-        // (back and forth: each seek lands on its frame, however the
-        // decoder's thread runs meanwhile)
-        for round in 0..20 {
-            let (to, wanted) = if round % 2 == 0 {
-                (5.0, 1)
-            } else {
-                (x, target + 1)
-            };
-            viewer.invoke_scan(to, width);
-            let wanted = format!("{wanted}/{frames} - ");
-            let got = scanbar_reaches(&viewer, &wanted);
-            assert!(got.starts_with(&wanted), "{name} round {round}: {got}");
+        let frames = case["num_frames"].as_u64().unwrap() as usize;
+        let bar_width = case["bar_width"].as_f64().unwrap() as f32;
+        // (paused from here)
+        viewer.invoke_toggle_pause();
+        watch(&viewer, Duration::from_millis(100));
+        // a press, a drag and a release at each position: the frame under
+        // the pointer, and playing again if it was before
+        let scans = case["scan"].as_array().unwrap();
+        for paused_before in [true, false] {
+            if !paused_before {
+                viewer.invoke_toggle_pause();
+            }
+            for scan in scans
+                .iter()
+                .filter(|scan| scan["start_paused"].as_bool().unwrap() == paused_before)
+            {
+                let x = scan["x"].as_f64().unwrap() as f32;
+                let wanted = scan["pressed"]["text"].as_str().unwrap();
+                viewer.invoke_scan_started();
+                viewer.invoke_scan(x, bar_width);
+                reaches(&viewer, wanted, &format!("{name} scan {x} paused {paused_before}"));
+                // (a drag pauses playing while it lasts)
+                stays(&viewer, wanted, &format!("{name} drag {x}"));
+                viewer.invoke_scan_ended();
+                if paused_before {
+                    stays(&viewer, wanted, &format!("{name} released {x} still paused"));
+                }
+            }
+            if !paused_before {
+                // (let go while playing: it plays on)
+                assert!(
+                    watch(&viewer, Duration::from_millis(1000)).len() >= 2,
+                    "{name}: playing again after the drag"
+                );
+                viewer.invoke_toggle_pause();
+                watch(&viewer, Duration::from_millis(100));
+            }
         }
-        viewer.invoke_scan(x, width);
-        let there = scanbar_reaches(&viewer, &format!("{}/{frames} - ", target + 1));
-        assert!(
-            there.starts_with(&format!("{}/{frames} - ", target + 1)),
-            "{name}: {there}"
-        );
-        if name.starts_with("ugoira") {
-            // (60, 70 and 80ms before the fourth frame)
-            assert_eq!(there, "4/5 - 0.210/0.400");
+        // seeking by time (ctrl and the arrows), paused: to the frame
+        // showing then, or the next if that is this one; past the end,
+        // round to the first
+        let seeks = case["seek_delta"].as_array().unwrap();
+        let goto = |frame: usize| {
+            let x = 5.0 + (frame as f32 / (frames - 1) as f32) * (bar_width - 10.0);
+            viewer.invoke_scan_started();
+            viewer.invoke_scan(x, bar_width);
+            viewer.invoke_scan_ended();
+        };
+        goto(frames - 2);
+        let start = seeks[0]["start"]["text"].as_str().unwrap();
+        reaches(&viewer, start, &format!("{name} before seeking"));
+        for step in seeks[0]["steps"].as_array().unwrap() {
+            let (direction, ms) = (
+                step["direction"].as_i64().unwrap() as i32,
+                step["ms"].as_i64().unwrap() as i32,
+            );
+            viewer.invoke_seek_delta(direction, ms);
+            reaches(
+                &viewer,
+                step["text"].as_str().unwrap(),
+                &format!("{name} seek {direction} {ms}"),
+            );
         }
-        assert_eq!(
-            watch(&viewer, Duration::from_millis(300)).len(),
-            1,
-            "{name}: paused"
-        );
-        assert_eq!(viewer.get_scanbar_text(), there.as_str());
-        // seeking by time (ctrl and the arrows), still paused: to the frame
-        // showing then, or the next if that is this one; past the end, the
-        // first
+        let last = seeks[0]["steps"].as_array().unwrap().last().unwrap();
+        stays(&viewer, last["text"].as_str().unwrap(), &format!("{name} still paused"));
+        // ctrl+b and ctrl+n: a frame back or on, round the ends
+        goto(0);
+        reaches(&viewer, case["initial"]["text"].as_str().unwrap(), name);
+        let wanted = as_str_vec(&case["frame_step"]);
+        for (step, wanted) in case["frame_step"].as_array().unwrap().iter().zip(wanted) {
+            let direction = step["direction"].as_i64().unwrap() as i32;
+            viewer.invoke_frame_step(direction);
+            reaches(&viewer, &wanted, &format!("{name} frame step {direction}"));
+        }
+        // a seek while playing leaves it playing; a frame step pauses it
+        // (`GotoFrame`'s `pause_afterwards`), as the reference's do
+        viewer.invoke_toggle_pause();
         viewer.invoke_seek_delta(1, 1);
-        let next = format!("{}/{frames} - ", (target + 1) % frames + 1);
-        assert!(scanbar_reaches(&viewer, &next).starts_with(&next), "{name}");
-        if name.starts_with("ugoira") {
-            // (frames of 60, 70, 80, 90 and 100ms)
-            for ((direction, step), wanted) in [
-                ((-1, 50), "4/5 - 0.210/0.400"),
-                ((-1, 10), "3/5 - 0.130/0.400"),
-                ((1, 10), "4/5 - 0.210/0.400"),
-                ((1, 100), "5/5 - 0.300/0.400"),
-                ((-1, 2500), "1/5 - 0.000/0.400"),
-                ((-1, 1), "1/5 - 0.000/0.400"),
-                ((1, 140), "3/5 - 0.130/0.400"),
-                ((1, 5000), "1/5 - 0.000/0.400"),
-            ] {
-                viewer.invoke_seek_delta(direction, step);
-                assert_eq!(
-                    scanbar_reaches(&viewer, wanted),
-                    wanted,
-                    "{direction} {step}"
-                );
-            }
-            // ctrl+b and ctrl+n: a frame back or on, round the ends
-            for (direction, wanted) in [
-                (-1, "5/5 - 0.300/0.400"),
-                (1, "1/5 - 0.000/0.400"),
-                (1, "2/5 - 0.060/0.400"),
-            ] {
-                viewer.invoke_frame_step(direction);
-                assert_eq!(
-                    scanbar_reaches(&viewer, wanted),
-                    wanted,
-                    "frame step {direction}"
-                );
-            }
-        }
-        assert_eq!(
-            watch(&viewer, Duration::from_millis(200)).len(),
-            1,
-            "{name}: still paused"
+        assert!(
+            watch(&viewer, Duration::from_millis(1000)).len() >= 2,
+            "{name}: seeking leaves it playing"
         );
-        viewer.invoke_scan_ended();
+        viewer.invoke_frame_step(1);
+        watch(&viewer, Duration::from_millis(100));
+        let shown = viewer.get_scanbar_text().to_string();
+        stays(&viewer, &shown, &format!("{name} a frame step pauses"));
+        assert!(
+            frames > 1 && case["frame_step"].as_array().unwrap().iter().all(|s| s["paused"].as_bool().unwrap()),
+            "{name}: the reference's frame step pauses"
+        );
+        viewer.invoke_toggle_pause();
         assert!(
             watch(&viewer, Duration::from_millis(1000)).len() >= 2,
             "{name}: playing again"

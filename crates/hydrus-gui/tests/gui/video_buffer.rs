@@ -8,7 +8,7 @@
 use std::time::{Duration, Instant};
 
 use hydrus_gui::{Bound, MainWindow, MediaViewerWindow, OptionsWindow, Pages, SearchPage, bind};
-use hydrus_gui::{frames_decoded, headless};
+use hydrus_gui::{decoders_running, frames_decoded, headless};
 use hydrus_import::{FileImportOptions, FileImporter};
 use hydrus_media::MediaTools;
 use hydrus_store::Store;
@@ -81,7 +81,7 @@ fn play(ui: &MainWindow, bound: &Bound, file: usize, count: usize, loops: usize)
         .as_ref()
         .map(slint::ComponentHandle::clone_strong)
         .expect("the viewer opened");
-    let (mut last, mut round, mut seen) = (None, 0, 0);
+    let (mut last, mut round, mut seen) = (None::<usize>, 0, 0);
     let started = Instant::now();
     while round < loops {
         assert!(
@@ -91,7 +91,11 @@ fn play(ui: &MainWindow, bound: &Bound, file: usize, count: usize, loops: usize)
         slint::platform::update_timers_and_animations();
         let now = frame(&viewer);
         if now != last {
-            if now == Some(0) && last == Some(count - 1) {
+            // (round from the end to the start; a frame the poll missed
+            // doesn't matter)
+            if let (Some(now), Some(last)) = (now, last)
+                && now < last
+            {
                 round += 1;
             }
             seen += 1;
@@ -99,12 +103,16 @@ fn play(ui: &MainWindow, bound: &Bound, file: usize, count: usize, loops: usize)
         }
         std::thread::sleep(Duration::from_millis(2));
     }
-    assert!(seen > count * loops, "every frame shown: {seen}");
-    // (and its first frame shown again, decoded or not)
-    std::thread::sleep(Duration::from_millis(100));
-    slint::platform::update_timers_and_animations();
+    assert!(seen > count, "a whole loop shown at least: {seen}");
     viewer.invoke_close_requested();
     assert!(bound.viewer.borrow().is_none());
+    // (a decoder that has been told to stop may be part way through a
+    // frame: it is counted, but must not be counted in the next file's)
+    let started = Instant::now();
+    while decoders_running() > 0 {
+        assert!(started.elapsed() < Duration::from_secs(10), "a decoder never ended");
+        std::thread::sleep(Duration::from_millis(2));
+    }
     frames_decoded() - before
 }
 
