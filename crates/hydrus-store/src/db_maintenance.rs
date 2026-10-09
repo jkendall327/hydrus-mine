@@ -203,13 +203,11 @@ fn analysable_tables(conn: &Connection) -> Result<Vec<String>> {
 
 fn has_at_least(conn: &Connection, table: &str, rows: i64) -> Result<bool> {
     let quoted = table.replace('"', "\"\"");
-    Ok(conn
-        .query_row(
-            &format!("SELECT COUNT(*) FROM (SELECT 1 FROM \"{quoted}\" LIMIT ?1)"),
-            [rows],
-            |r| r.get::<_, i64>(0),
-        )?
-        >= rows)
+    Ok(conn.query_row(
+        &format!("SELECT COUNT(*) FROM (SELECT 1 FROM \"{quoted}\" LIMIT ?1)"),
+        [rows],
+        |r| r.get::<_, i64>(0),
+    )? >= rows)
 }
 
 /// The tables due an analysis at `now_ms` (`GetTableNamesDueAnalysis`):
@@ -217,7 +215,10 @@ fn has_at_least(conn: &Connection, table: &str, rows: i64) -> Result<bool> {
 /// schedule has passed, except small ones the reference analyses at once
 /// while looking (returned second). As in the reference, a table can be due
 /// under more than one boundary, and is listed once for each.
-pub fn tables_due_analysis_at(conn: &Connection, now_ms: i64) -> Result<(Vec<String>, Vec<String>)> {
+pub fn tables_due_analysis_at(
+    conn: &Connection,
+    now_ms: i64,
+) -> Result<(Vec<String>, Vec<String>)> {
     let seen: AnalyzeTimestamps = crate::settings::get(conn)?;
     let now = now_ms.div_euclid(1000);
     let mut due = Vec::new();
@@ -254,7 +255,7 @@ pub fn analyze_table(conn: &Connection, table: &str, now_ms: i64) -> Result<()> 
     let mut seen: AnalyzeTimestamps = crate::settings::get(conn)?;
     let mut rows = seen.0.get(table).map_or(0, |&(rows, _)| rows);
     let quoted = table.replace('"', "\"\"");
-    if !(rows > 0 && !has_at_least(conn, table, 1)?) {
+    if rows <= 0 || has_at_least(conn, table, 1)? {
         conn.execute_batch(&format!("ANALYZE \"{quoted}\";"))?;
         rows = conn.query_row(&format!("SELECT COUNT(*) FROM \"{quoted}\""), [], |r| {
             r.get(0)

@@ -42,7 +42,9 @@ fn states(client: &Client, files: &[(String, HashId)]) -> BTreeMap<String, Value
                 .store
                 .read(move |c| {
                     let inbox = c
-                        .query_row("SELECT 1 FROM file_inbox WHERE hash_id = ?1", [id], |_| Ok(()))
+                        .query_row("SELECT 1 FROM file_inbox WHERE hash_id = ?1", [id], |_| {
+                            Ok(())
+                        })
                         .is_ok();
                     let mut q =
                         c.prepare("SELECT service_id FROM file_domain_current WHERE hash_id = ?1")?;
@@ -110,8 +112,7 @@ fn the_archive_delete_filter_reinboxes_deletees_as_the_reference_does() {
         let context = format!("lock {lock}, reinbox {reinbox}");
         // a fresh `basic` store, its trash emptied
         let (dirs, fresh) = store();
-        client.store = fresh;
-        client._dirs = dirs;
+        client.use_store(dirs, fresh);
         let store = client.store.clone();
         let files: Vec<(String, HashId)> = names
             .iter()
@@ -137,8 +138,9 @@ fn the_archive_delete_filter_reinboxes_deletees_as_the_reference_does() {
                 let mut q = w
                     .conn()
                     .prepare("SELECT hash_id FROM file_domain_current WHERE service_id = ?1")?;
-                let trashed: Vec<HashId> =
-                    q.query_map([trash], |r| r.get(0))?.collect::<Result<_, _>>()?;
+                let trashed: Vec<HashId> = q
+                    .query_map([trash], |r| r.get(0))?
+                    .collect::<Result<_, _>>()?;
                 drop(q);
                 w.delete_files(storage, &trashed, None)?;
                 w.inbox(&inbox)?;

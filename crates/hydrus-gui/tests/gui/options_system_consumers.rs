@@ -25,7 +25,7 @@ pub(crate) fn store() -> ([tempfile::TempDir; 2], Arc<Store>) {
 
 /// The main window, bound to a fresh store.
 pub(crate) struct Client {
-    pub(crate) _dirs: [tempfile::TempDir; 2],
+    dirs: Vec<tempfile::TempDir>,
     pub(crate) store: Arc<Store>,
     pub(crate) ui: MainWindow,
     pub(crate) bound: hydrus_gui::Bound,
@@ -39,7 +39,7 @@ pub(crate) fn client() -> Client {
     ui.show().unwrap();
     let bound = bind(&ui, Pages::open(store.clone()).unwrap());
     Client {
-        _dirs: dirs,
+        dirs: dirs.into(),
         store,
         ui,
         bound,
@@ -60,6 +60,12 @@ impl Client {
         let window = self.bound.options.borrow().as_ref().unwrap().clone_strong();
         show_page(&window, page);
         window
+    }
+
+    /// Use `store` (a fresh one, whose directories are `dirs`) from now on.
+    pub(crate) fn use_store(&mut self, dirs: [tempfile::TempDir; 2], store: Arc<Store>) {
+        self.dirs.extend(dirs);
+        self.store = store;
     }
 
     pub(crate) fn get<T: hydrus_store::settings::Setting>(&self) -> T {

@@ -19,8 +19,22 @@ const IDLE_ENABLED: &str =
 const CPU_PERCENT: &str = "Consider the system busy if CPU usage is above: ";
 const CPU_CORES: &str = "% on ";
 
+/// The core count to set, if any.
+#[derive(Clone, Copy)]
+enum Cores {
+    Leave,
+    Ignore,
+    Count(i64),
+}
+
+impl Cores {
+    fn of(value: &serde_json::Value) -> Self {
+        value.as_i64().map_or(Self::Ignore, Self::Count)
+    }
+}
+
 /// The idle box's options, set through File > options and applied.
-fn set(client: &Client, percent: Option<i64>, count: Option<Option<i64>>, idle: Option<bool>) {
+fn set(client: &Client, percent: Option<i64>, cores: Cores, idle: Option<bool>) {
     let options = client.options("maintenance and processing");
     if let Some(on) = idle {
         let (i, _) = row_in(&options, "idle", IDLE_ENABLED);
@@ -39,12 +53,14 @@ fn set(client: &Client, percent: Option<i64>, count: Option<Option<i64>>, idle: 
         let (i, _) = row_in(&options, "idle", CPU_PERCENT);
         options.invoke_number_edited(i, percent as i32);
     }
-    if let Some(count) = count {
-        let (i, _) = row_in(&options, "idle", CPU_CORES);
-        if let Some(count) = count {
+    let (i, _) = row_in(&options, "idle", CPU_CORES);
+    match cores {
+        Cores::Leave => {}
+        Cores::Ignore => options.invoke_none_toggled(i, true),
+        Cores::Count(count) => {
             options.invoke_number_edited(i, count as i32);
+            options.invoke_none_toggled(i, false);
         }
-        options.invoke_none_toggled(i, count.is_none());
     }
     options.invoke_apply();
 }
@@ -68,12 +84,16 @@ fn idle_and_cpu_busy_options_decide_whether_background_work_may_run_as_recorded(
         set(
             &client,
             Some(case["percent"].as_i64().unwrap()),
-            Some(case["count"].as_i64()),
+            Cores::of(&case["count"]),
             Some(case["idle_on"].as_bool().unwrap()),
         );
         let saved: hydrus_store::settings::GuiIdleSettings = client.get();
         assert_eq!(
-            (saved.enabled, i64::from(saved.busy_cpu_percent), saved.busy_cpu_count.map(i64::from)),
+            (
+                saved.enabled,
+                i64::from(saved.busy_cpu_percent),
+                saved.busy_cpu_count.map(i64::from)
+            ),
             (
                 case["idle_on"].as_bool().unwrap(),
                 case["percent"].as_i64().unwrap(),
@@ -98,7 +118,7 @@ fn idle_and_cpu_busy_options_decide_whether_background_work_may_run_as_recorded(
                 set(
                     &client,
                     change["percent"].as_i64(),
-                    change.get("count").map(serde_json::Value::as_i64),
+                    change.get("count").map_or(Cores::Leave, Cores::of),
                     None,
                 );
             }
@@ -109,7 +129,11 @@ fn idle_and_cpu_busy_options_decide_whether_background_work_may_run_as_recorded(
             let idle = step["idle"].as_bool().unwrap();
             let good = step["good_time_for_background_work"].as_bool().unwrap();
             let context = format!("{name} at {ms} ms");
-            assert_eq!(client.bound.maintenance.system_busy(), busy, "busy: {context}");
+            assert_eq!(
+                client.bound.maintenance.system_busy(),
+                busy,
+                "busy: {context}"
+            );
             assert_eq!(
                 client.ui.get_status_busy(),
                 if busy { "CPU busy" } else { "" },
@@ -135,7 +159,12 @@ fn the_idle_box_rows_are_the_references() {
     let options = client.options("maintenance and processing");
     let (_, percent) = row_in(&options, "idle", CPU_PERCENT);
     assert_eq!(
-        (percent.kind, percent.minimum, percent.maximum, percent.number),
+        (
+            percent.kind,
+            percent.minimum,
+            percent.maximum,
+            percent.number
+        ),
         (2, 5, 99, 50)
     );
     let (_, cores) = row_in(&options, "idle", CPU_CORES);
@@ -151,17 +180,22 @@ fn the_idle_box_rows_are_the_references() {
     );
     // the percent is no use while the core count is none
     assert!(percent.enabled);
-    set(&client, None, Some(None), None);
+    set(&client, None, Cores::Ignore, None);
     let options = client.options("maintenance and processing");
     assert!(!row_in(&options, "idle", CPU_PERCENT).1.enabled);
     options.invoke_cancel();
-    set(&client, None, Some(Some(2)), None);
+    set(&client, None, Cores::Count(2), None);
     let options = client.options("maintenance and processing");
     assert!(row_in(&options, "idle", CPU_PERCENT).1.enabled);
     options.invoke_cancel();
     // the status bar's tooltips are the reference's
-    let stat = |busy: u64| format!("cpu  0 0 0 0\ncpu0 {busy} 0 0 {} 0 0 0 0 0 0\n", 1000 - busy);
-    set(&client, Some(50), Some(Some(1)), Some(true));
+    let stat = |busy: u64| {
+        format!(
+            "cpu  0 0 0 0\ncpu0 {busy} 0 0 {} 0 0 0 0 0 0\n",
+            1000 - busy
+        )
+    };
+    set(&client, Some(50), Cores::Count(1), Some(true));
     let text = Rc::new(RefCell::new(stat(0)));
     client.bound.maintenance.use_proc_stat({
         let text = text.clone();

@@ -45,12 +45,8 @@ fn replay(client: &mut Client, scenario: &Value) -> Vec<String> {
     let name = scenario["name"].as_str().unwrap();
     // a fresh `basic` store, bound to the window, its trash emptied
     let (dirs, fresh) = store();
-    client.bound = hydrus_gui::bind(
-        &client.ui,
-        hydrus_gui::Pages::open(fresh.clone()).unwrap(),
-    );
-    client.store = fresh;
-    client._dirs = dirs;
+    client.bound = hydrus_gui::bind(&client.ui, hydrus_gui::Pages::open(fresh.clone()).unwrap());
+    client.use_store(dirs, fresh);
     let store = client.store.clone();
     let already = in_trash(client);
     store
@@ -80,9 +76,11 @@ fn replay(client: &mut Client, scenario: &Value) -> Vec<String> {
             .unwrap_or_else(|| panic!("{name}: {file_name} imported, as in the recording"));
         let stored: i64 = store
             .read(move |c| {
-                Ok(c.query_row("SELECT size FROM files WHERE hash_id = ?1", [id], |r| {
-                    r.get(0)
-                })?)
+                Ok(
+                    c.query_row("SELECT size FROM files WHERE hash_id = ?1", [id], |r| {
+                        r.get(0)
+                    })?,
+                )
             })
             .unwrap();
         assert_eq!(stored as usize, size, "{name}: {file_name}");
@@ -196,8 +194,7 @@ fn trash_limits_delete_what_the_reference_deletes() {
         (shown.kind, shown.number, shown.minimum, shown.maximum),
         (3, 72, 0, 8640)
     );
-    let (_, shown) =
-        super::options_system_consumers::row(&window, "Maximum size of trash (MB): ");
+    let (_, shown) = super::options_system_consumers::row(&window, "Maximum size of trash (MB): ");
     assert_eq!(
         (shown.kind, shown.number, shown.minimum, shown.maximum),
         (3, 2048, 0, 20480)
@@ -226,7 +223,11 @@ fn trash_limits_delete_what_the_reference_deletes() {
             // hydrus-rs deletes the oldest (docs/rust/DIFFERENCES.md).
             "oldest first, eight at a time, size checked between" => {
                 assert_eq!(groups(scenario), [8, 8], "{name}");
-                assert_eq!(left, ["bmp10", "bmp13", "bmp16", "bmp19"], "the youngest four");
+                assert_eq!(
+                    left,
+                    ["bmp10", "bmp13", "bmp16", "bmp19"],
+                    "the youngest four"
+                );
                 assert_eq!(recorded_left.len(), left.len());
             }
             "small files go with the big ones in a group" => {

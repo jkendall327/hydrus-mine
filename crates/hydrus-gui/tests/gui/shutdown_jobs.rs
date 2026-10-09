@@ -63,8 +63,8 @@ fn replay(client: &mut Client, case: &Value) {
         &client.ui,
         hydrus_gui::Pages::open(client.store.clone()).unwrap(),
     );
-    let nothing_left = case["work_due_now"].as_array().unwrap().is_empty()
-        && case["do_shutdown_work"] == false;
+    let nothing_left =
+        case["work_due_now"].as_array().unwrap().is_empty() && case["do_shutdown_work"] == false;
     if !nothing_left {
         client
             .store
@@ -142,7 +142,10 @@ fn replay(client: &mut Client, case: &Value) {
         [question] => {
             let shown = hydrus_gui::client_exit::maintenance_question()
                 .unwrap_or_else(|| panic!("{name}: asked"));
-            assert_eq!(shown.get_window_title(), question["title"].as_str().unwrap());
+            assert_eq!(
+                shown.get_window_title(),
+                question["title"].as_str().unwrap()
+            );
             assert_eq!(question["kwargs"]["auto_no_time"], 15);
             // the outstanding work is this database's own (its tables differ
             // from the reference's), worded the same
@@ -194,7 +197,11 @@ fn replay(client: &mut Client, case: &Value) {
         let registered = case["last_after_exit_question"].as_i64().unwrap();
         // "no" registers at once, so the question is not asked again; anything
         // else leaves the time alone
-        assert_eq!(done - now, if registered == 0 { 0 } else { last - now }, "{name}");
+        assert_eq!(
+            done - now,
+            if registered == 0 { 0 } else { last - now },
+            "{name}"
+        );
         assert_eq!(registered, if registered == 0 { 0 } else { last - now });
     }
     if !nothing_left && !worked {
