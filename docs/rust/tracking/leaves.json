@@ -985,9 +985,9 @@
    ],
    "recheck": {
     "date": "2026-10-09",
-    "class": "weak",
-    "by": "issue 88 session",
-    "note": "Skip and back are proved against the reference's real canvas (tests/gui/duplicate_filter_canvas.rs, six scenarios of oracle/fixtures/duplicate_filter_canvas.json), but the leaf also names group-mode continuation (the skipped-group question when another group would load), which no recording covers, so the tag is not claimed. Record the filter in group mode to finish it."
+    "class": "sound",
+    "by": "recheck bin E session (claude/recheck-e-dupes)",
+    "note": "crates/hydrus-gui/tests/gui/duplicate_filter_canvas.rs the_filter_window_goes_through_the_references_batches_as_it_does replays the 17 scenarios of oracle/fixtures/duplicate_filter_canvas.json (record_duplicate_filter_canvas.py: the reference's real CanvasFilterDuplicates) in the real filter window: skip and back as before, and now group mode (the sidebar chooser set to group mode, the reference's group pick pinned to the lowest pair): a whole group is worked through, the next group loads after its commit, and a group skipped whole asks 'You appear to have skipped this whole group. Do you want to load up a different one?' answered no (carries on in the same group) and yes (a new group), each step's index text, pair shown, questions and buttons compared."
    }
   },
   {
@@ -1053,18 +1053,19 @@
    "label": "Show random potential group and quick same-quality/alternate/false-positive",
    "path": "Pages > Duplicates processing page > Potential duplicate filtering/search",
    "workstream": "duplicates",
-   "state": "missing",
+   "state": "implemented",
    "priority": "normal",
    "reference": null,
    "native": null,
    "notes": [
-    "Native filtering sidebar has no show-random-group or quick bulk pair-status controls. Launching the pair canvas and opening a duplicate page from media context are separate implemented paths."
+    "The filtering tab has 'show some random potential duplicates' and the three 'set current media as ...' buttons (same quality, alternates, false positive), with the reference's 'Are you sure?' question. Replayed against oracle/fixtures/duplicates_quick_processing.json (tests/gui/duplicates_quick_processing.rs).",
+    "Launching the pair canvas and opening a duplicate page from media context are separate paths."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Window test drives 'show some random', the three set buttons, the 'Are you sure?' question (cancel and yes) and the next group; button labels are literals matching the Python source, question texts are literals in the model test and the window test compares them with the native question(); no recording. Tracker note is stale: the sidebar does have these controls. Tests: crates/hydrus-gui/tests/gui/duplicates_lane_page.rs:1201 show_random_group_and_quick_buttons_set_the_shown_files_and_show_another_group; crates/hydrus-gui-model/tests/model/duplicates_filtering.rs edits_and_texts_follow_the_reference"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "recheck bin E session (claude/recheck-e-dupes)",
+    "note": "crates/hydrus-gui/tests/gui/duplicates_quick_processing.rs show_random_group_and_the_set_buttons_ask_and_act_as_the_reference_does replays the recorded sequence in the real sidebar on the reference's own database: show some random potential duplicates (pick pinned; see DIFFERENCES.md), then the set buttons with the 'Are you sure?' question — alternates for 6 files ('...(15 pairs)', answered no: nothing changes; yes: the next random group of 4), false positive for those 4 files ('...(6 pairs)'), same quality for the next 4 — then another random group; the button labels, question titles and wording, the files shown after each step and the king/alternates/false positives/potentials/members of every file concerned match the reference. question_opened() now reports only a question still open."
    }
   },
   {
@@ -1072,18 +1073,18 @@
    "label": "Pair sorting/direction and mixed-pair/group-mode chooser",
    "path": "Pages > Duplicates processing page > Potential duplicate filtering/search",
    "workstream": "duplicates",
-   "state": "missing",
+   "state": "implemented",
    "priority": "normal",
    "reference": null,
    "native": null,
    "notes": [
-    "Native filter can consume stored group/sort configuration, but filtering tab provides no reference pair sort/direction or mixed/group mode chooser."
+    "The filtering tab has the pair sort chooser (filesize of larger/smaller file, similarity, random), its direction chooser and the mixed pairs/group mode chooser, replayed against oracle/fixtures/duplicates_quick_processing.json (tests/gui/duplicates_quick_processing.rs); group mode reaches the launched filter."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Window test checks the sort labels, directions and mixed/group choices (matching the Python source), that each sets the page, and that group mode reaches the launched filter. Labels and direction lists are typed, directions come from native directions(); no recording. Tracker note is stale: the tab does have the sort/direction/group chooser. Tests: crates/hydrus-gui/tests/gui/duplicates_lane_page.rs:190 the_filtering_tab_chooses_pair_sort_direction_and_group_mode"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "recheck bin E session (claude/recheck-e-dupes)",
+    "note": "crates/hydrus-gui/tests/gui/duplicates_quick_processing.rs the_filtering_tab_chooses_pair_sort_direction_and_group_mode_as_the_reference_does replays oracle/fixtures/duplicates_quick_processing.json (record_duplicates_quick_processing.py: the reference's real PotentialDuplicatesSortWidget and filtering panel group chooser): the four sort labels and order, each sort's direction choices (largest/smallest first, most/least similar first, none for random), the value each sets, and the mixed pairs/group mode choices and the page variable they set, driven through the real sidebar. That group mode reaches the launched filter is proved by the group-mode scenarios in duplicate_filter_canvas.rs."
    }
   },
   {
@@ -4695,10 +4696,10 @@
     "Native text parser builds the folder predicate tree, displayed as removable rows."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Real editor: two typed predicates ANDed, an unparsable one refused, one removed, and the real worker exports only pngs (then everything after removal), plus reopen. Expected values (counts, png-only) are typed literals; typed-search parsing and the row text are not recorded (GUI asserts only row_count; the model test checks recorded predicate texts). No recording of the typed-entry path. Tests: crates/hydrus-gui/tests/gui/files_io_folder_editors.rs:227 same test; crates/hydrus-gui-model/tests/model/folders.rs:232 (recorded predicate display via predicate_text)"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "Claude (recheck bin E, #97 phase 2)",
+    "note": "Real export folder editor: eleven typed entries (system predicates, an unparsable one, tags, a namespace, a wildcard, a negated tag replacing its positive, a repeated predicate removing itself, padded text) and two row removals, rows and leftover text compared with oracle/fixtures/export_folder_predicates.json (the reference's EditExportFolderPanel); then the real export worker runs the two-predicate folder and again with the png predicate removed, and the exported filenames match the reference's ExportFolder.DoWork. Fixed here: typed text is no longer trimmed: the recording shows the reference takes '  system:inbox  ' as a tag (predicate type 0, reading 'inbox'; the system predicate would read 'system:inbox'), and the test checks that. Tests: crates/hydrus-gui/tests/gui/files_io_folder_editors.rs typed_predicates_make_the_export_folders_search_as_the_reference_does."
    }
   },
   {
@@ -4754,10 +4755,10 @@
     "Folder selection changes the preview root; location launches in the platform file browser."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Real window with stand-in picker and launcher: browse sets destination and moves the preview, open-location launches the folder, a missing folder reports 'That location does not seem to exist!' (native status line, reference uses a ShowCritical dialog titled 'Does not exist!'). All strings are restated from the Python source; no recording, and the launcher is a stand-in. Tests: crates/hydrus-gui/tests/gui/files_io_export_files.rs:96 the_destination_is_browsed_for_and_its_location_opened"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "Claude (recheck bin E, #97 phase 2)",
+    "note": "Real export window: browse with a scripted directory (a trailing slash and '..' tidied, a cancel, a folder that doesn't exist and so doesn't remake names, the rows then shown INVALID) and open location (empty, existing, missing) against oracle/fixtures/export_names.json; the real launcher runs a stub xdg-open, as the recorder put one on the reference's PATH, and its argv is compared. Fixed here: the picked path is now normpath'd and only an existing folder refreshes. Known partial: the reference's missing folder shows a 'Does not exist!' dialog; ours is a status line with the same text, and the picker's starting folder is not passed (both in DIFFERENCES.md). Tests: crates/hydrus-gui/tests/gui/files_io_export_files.rs the_destination_is_browsed_for_and_its_location_opened_as_the_reference_does."
    }
   },
   {
@@ -4811,10 +4812,10 @@
     "Selected file IDs are snapshotted for confirmation and removal immediately recalculates names."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Real window: nothing selected asks nothing; shift-click range; No keeps rows; Yes removes and renumbers ('{#}' names). The question text is recorded and checked in the model test, but the renumbering expectations are literals from _DeletePaths and are not recorded. Tests: crates/hydrus-gui/tests/gui/files_io_export_files.rs:48 selected_rows_are_removed_after_asking_and_the_names_are_made_again; crates/hydrus-gui-model/tests/model/export_files.rs:72 (REMOVE_QUESTION vs recording)"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "Claude (recheck bin E, #97 phase 2)",
+    "note": "Real export window over five files, phrases '{#}' and '{#} {file_id}': middle, first-and-last and declined removals and an empty selection, with the question, numbers and names compared with oracle/fixtures/export_names.json (record_export_names.py, the reference's _DeletePaths). Names are remade at once where the reference keeps its stale names until the phrase changes; they are compared with the reference's names only after that refresh; the reference's stale names (which a later export would use) are neither reproduced nor tested (DIFFERENCES.md). Tests: crates/hydrus-gui/tests/gui/files_io_export_files.rs selected_rows_are_removed_after_asking_and_renumbered_as_the_reference_does."
    }
   },
   {
@@ -7472,10 +7473,10 @@
     "Assessment covers this editable control and shared Apply/Cancel, not every control on its containing reference page or every background consumer."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Control (label, box, noneable 1..50, 'no, always confirm', default 1) is compared with options_dialog.json and driven through Apply. The consumer (DuplicateFilter model: batch of 5 asks for confirmation when None, commits itself when auto_commit=5) is checked against typed expectations from ClientGUICanvasDuplicates.py:1061, with no recording of the filter's batching, and it drives the model rather than the filter window. Tests: crates/hydrus-gui/tests/gui/options_gui_duplicates.rs:296 batch_size_and_auto_commit_set_how_the_filter_batches_and_confirms; crates/hydrus-gui-model/tests/model/options_dialog.rs:540 the_options_pages_are_the_references"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "recheck bin E session (claude/recheck-e-dupes)",
+    "note": "duplicate_filter_canvas.rs replays recorded scenarios with the option set through the real Options window: batch of 6 with auto-commit 6 commits without asking, 5 asks 'commit 6 decisions and continue?', a by-hand skip with 6 always asks, auto-commit 1 on small batches, none always asks. The filter window's questions, buttons, commits and index text are the real canvas's. Row control checks (noneable 1..50, 'no, always confirm', default 1) stay in options_gui_duplicates.rs."
    }
   },
   {
@@ -7492,10 +7493,10 @@
     "Assessment covers this editable control and shared Apply/Cancel, not every control on its containing reference page or every background consumer."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Control (int 5..1024, default 100, box) compared with the Qt recording and driven to Apply; consumer check is that a filter with max_batch_size 5 shows '1/5 - no decisions yet' and ends after 5 decisions, a typed expectation with no recording of batch loading, driving the model not the window. Tests: crates/hydrus-gui/tests/gui/options_gui_duplicates.rs:296 batch_size_and_auto_commit_set_how_the_filter_batches_and_confirms; crates/hydrus-gui-model/tests/model/options_dialog.rs:540 the_options_pages_are_the_references"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "recheck bin E session (claude/recheck-e-dupes)",
+    "note": "duplicate_filter_canvas.rs replays recorded scenarios with the option set through the real Options window (5..1024): batches of 5 (the smallest) and 6 end after that many pairs and ask to commit then load the next, and 1024 (more than the 100 potential pairs of the recorded database) gives a single batch of all 100 pairs. Index text 'File One - n/5 - ...' and pairs shown match the reference's canvas."
    }
   },
   {
@@ -7756,10 +7757,10 @@
     "Assessment covers this editable control and shared Apply/Cancel, not every control on its containing reference page or every background consumer."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Real Options row to the manual-export preview; defaults and ranges come from the options_dialog recording, but the resulting filenames ('a:b|c' -> 'a_b_c') are typed literals; no recorder runs the reference's export filename generation (no oracle fixture for it). Tests: crates/hydrus-gui/tests/gui/options_system_consumers.rs:963 export_name_options_shape_the_names_the_export_dialog_previews"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "Claude (recheck bin E, #97 phase 2)",
+    "note": "Sets the NTFS row through the real Options window (16 option sets, NTFS on and off with every limit combination) and replays every name the real manual export window shows for 4 files x 4 destinations x 33 phrases (forbidden characters, reserved names con/CON/Nul./com1, trailing dots and spaces, Unicode and U+001F whitespace, subdirectories) against oracle/fixtures/export_names.json (record_export_names.py drives the reference's ReviewExportFilesPanel). The recording exposed a real difference, fixed here: Python's strip also strips U+001C-U+001F. Tests: crates/hydrus-gui/tests/gui/options_system_consumers.rs export_name_options_shape_the_names_the_export_dialog_shows_as_the_reference_does."
    }
   },
   {
@@ -7776,10 +7777,10 @@
     "Assessment covers this editable control and shared Apply/Cancel, not every control on its containing reference page or every background consumer."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Drives the real row and shows dirnames truncated to 20 chars in the export preview; the expected lengths are typed, not recorded from the reference's export-path code. Tests: crates/hydrus-gui/tests/gui/options_system_consumers.rs:965 export_name_options_shape_the_names_the_export_dialog_previews"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "Claude (recheck bin E, #97 phase 2)",
+    "note": "Sets the dirname limit through the real Options window (none, 16, 20, 64, 8192, with and without NTFS rules) and replays the real manual export window's names against oracle/fixtures/export_names.json: deep, many-level and multi-byte subdirectories truncated per directory in characters (NTFS) or bytes, under four destinations including a multi-byte and a 128-character one. Tests: crates/hydrus-gui/tests/gui/options_system_consumers.rs export_name_options_shape_the_names_the_export_dialog_shows_as_the_reference_does."
    }
   },
   {
@@ -7796,10 +7797,10 @@
     "Assessment covers this editable control and shared Apply/Cancel, not every control on its containing reference page or every background consumer."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Drives the real row and shows the filename cut to 40 chars including extension; expected values typed, no recording of the reference filename-length logic. Tests: crates/hydrus-gui/tests/gui/options_system_consumers.rs:964 export_name_options_shape_the_names_the_export_dialog_previews"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "Claude (recheck bin E, #97 phase 2)",
+    "note": "Sets the filename limit through the real Options window (16 the minimum, 40, 64, 220, 8192) and replays the real manual export window's names against oracle/fixtures/export_names.json: ASCII, 2-, 3- and 4-byte names cut in characters (NTFS) or bytes including the extension (.png, .flac, .jpg), ' (1)' collision suffixes after the cut, and the 'too long' errors shown per row. Tests: crates/hydrus-gui/tests/gui/options_system_consumers.rs export_name_options_shape_the_names_the_export_dialog_shows_as_the_reference_does."
    }
   },
   {
@@ -7816,10 +7817,10 @@
     "Assessment covers this editable control and shared Apply/Cancel, not every control on its containing reference page or every background consumer."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Drives the real row; the path-limit squeeze is checked only by inequalities (len <= 96, < 150+ext, > 40) and a refused case, not against reference-recorded values. Tests: crates/hydrus-gui/tests/gui/options_system_consumers.rs:966 export_name_options_shape_the_names_the_export_dialog_previews"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "Claude (recheck bin E, #97 phase 2)",
+    "note": "Sets the path limit through the real Options window (none, 96 the minimum, 120, 250, 8192) and replays the real manual export window's names against oracle/fixtures/export_names.json for destinations of 7 to 128 characters: filenames squeezed to fit the path, and the reference's 'combined export filename or directory would be too long' error rows where they no longer fit. Tests: crates/hydrus-gui/tests/gui/options_system_consumers.rs export_name_options_shape_the_names_the_export_dialog_shows_as_the_reference_does."
    }
   },
   {
@@ -8955,10 +8956,10 @@
     "Physical native tests use disposable copied media."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Options staging is recorded and the unchecked-and-busy case blocks the real Trash worker, and idle admits it; but no GUI test drives the real trash worker admitted by trash_normal=true while busy (only Preferences::allows, a decision function), and the recorded trash_shutdown / trash_admitted_setting_change / trash_shutdown_between_groups traces ([8,8] groups) are not replayed by any test, though the tracker note claims them. Tests: crates/hydrus-gui/tests/gui/normal_time_maintenance.rs:124,218; crates/hydrus-gui-model/tests/model/normal_time_maintenance.rs:30,110"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "Claude (recheck bin C)",
+    "note": "Against oracle/fixtures/normal_time_maintenance.json (record_normal_time_maintenance.py: the reference's real DAEMONMaintainTrash with scripted idle, queue, sleep and shutdown boundaries): the test sets the option in the real Options window and applies it, then polls the GUI's real trash worker (maintenance runtime) with the client idle or in normal use. For each recorded trash admission (idle x option) the worker runs a pass exactly when the reference read the trash, and leaves the recorded number of the test's trashed file. An admitted pass of two-plus groups of eight keeps going when the option is turned off after its first group (trash_admitted_setting_change: saved off, trash emptied), and a retire between groups stops it before the second write (trash_shutdown_between_groups). Turning the gate to ignore normal use, or the per-group cancellation off, makes the test fail. The options staging (cancel, reopen) of this row is replayed with the deferred-deletes row in normal_time_maintenance.rs staged_controls_cancel_reopen_hidden_retired_and_peer_merge. Fixed here: a trash pass writes one group of eight per write, as the reference's, so a stop lands between groups. Differences: the store's own already-trashed files go in the same pass (the test counts groups from the starting trash size). Tests: crates/hydrus-gui/tests/gui/trash_normal_time.rs the_trash_worker_runs_in_normal_time_as_the_reference_s_does The groups of eight include the files the store had already trashed (the basic store has two), so the test counts groups from the starting trash size."
    }
   },
   {
@@ -9088,10 +9089,10 @@
     "Assessment covers this editable control and shared Apply/Cancel, not every control on its containing reference page or every background consumer."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Tagged test only calls Reinbox::applies(&lock), a decision function standing in for the duplicate filter's delete; the duplicate filter window/DuplicateFilter::commit is never run with the option. A recorded reinbox phase exists but is replayed through the Client API, not the filter. Tests: crates/hydrus-gui/tests/gui/options_system_consumers.rs:238 delete_lock_options_decide_which_archived_files_can_be_deleted_and_reinboxed (Reinbox::applies); crates/hydrus-api/tests/delete_lock.rs (reinbox phase via API)"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "Claude (recheck bin C)",
+    "note": "oracle/record_duplicate_filter_delete_lock.py drives the reference's real CanvasFilterDuplicates (via record_duplicate_filter_canvas.record) on the auto_resolution database with every file archived, under four phases of delete lock x this option: 'this is better, delete the other' on the first pair, then close and commit; it records each batch file's inbox state and domains. The GUI test sets both options in the real Options window, archives every file, chooses better-delete in the real duplicate filter window and presses its 'commit' on close, and checks each batch file's (inbox, in my files, in trash) equals the reference's: the deletee is inboxed before going to the trash only with lock and option both on. With the filter's Reinbox forced to Never the test fails. Tests: crates/hydrus-gui/tests/gui/duplicate_filter_delete_lock.rs the_duplicate_filter_inboxes_locked_deletees_as_the_reference_does Covers 'this is better, delete the other' on the first pair only (not the custom action's deletes)."
    }
   },
   {
@@ -9128,10 +9129,10 @@
     "Assessment covers this editable control and shared Apply/Cancel, not every control on its containing reference page or every background consumer."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Tagged test only asserts Reinbox::InAutoResolution.applies(&lock): a decision function. The auto-resolution engine is never run with the option set; merge_summaries replays recorded in_auto_resolution plans but does not vary the delete-lock option. Tests: crates/hydrus-gui/tests/gui/options_system_consumers.rs:240 (Reinbox::InAutoResolution.applies); crates/hydrus-gui-model/tests/model/merge_summaries.rs:231"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "Claude (recheck bin C)",
+    "note": "oracle/record_auto_resolution_delete_lock.py, on the auto_resolution database with every file archived, approves the pending 'pixel-perfect gifs vs pngs' pair that auto_resolution_review.json approves, as the review window's approve does (ClientDuplicatesAutoResolution.ActionAutoResolutionReviewPairs), under four phases of delete lock x this option, and records both files' inbox/my files/trash. The GUI test sets the options in the real Options window, archives every file, selects the same pair in the rule's real review window and approves it (the native engine's action, Reinbox::InAutoResolution), and checks both files equal the reference's. With the engine's Reinbox forced to Never the test fails. Tests: crates/hydrus-gui/tests/gui/duplicate_filter_delete_lock.rs approved_auto_resolution_actions_inbox_locked_deletees_as_the_reference_does Covers 'approve' in the review window only (not fully automatic rules' own runs)."
    }
   },
   {
@@ -10562,10 +10563,10 @@
     "The native checks active weight on its one-second monitor, while the reference checks when its page-count menu becomes dirty."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "The model test replays the recorded threshold, seed weight (20 each), disabled and one-boot latch, with the weight computed from the fixture's hashes + 20*seeds rather than from real pages. The GUI test drives the checkbox (cancel/apply) but feeds typed weights (10_000_001 etc.) straight to check_size, so it never runs the monitor tick or Pages::session_weight (the real weight of open pages, with closed pages excluded and seeds at 20) into the warning. Only the popup text and latch are shown to come from the recording. Tests: crates/hydrus-gui/tests/gui/session_autosave.rs:332 applied_size_warning_creates_exact_popup_once_and_resets_only_at_new_boot; crates/hydrus-gui-model/tests/model/session_lifecycle.rs:136 size_warning_replays_real_threshold_seed_weight_disabled_and_one_boot_latch (fixture session_warning.json)"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "Claude (recheck bin C)",
+    "note": "The GUI test weighs a real session: a URL downloader page whose queue holds 500,000 then 500,001 URLs, the weight read by Pages::session_weight through the monitor's real tick (SessionAutosave::poll_at), against oracle/fixtures/session_warning.json. Exactly 10,000,000 does not warn (step 2); turned off in the real Options window and applied, 10,000,020 neither warns nor uses up the boot's warning (step 3); turned on, the tick posts the recorded 'Your session weight is 10,000,020, ...' text (step 6's 0 files + 500,001 URLs) once, shown in the popup stack; heavier and re-enabled, no second warning that boot (step 5); the page closed, the weight is 0 and a new boot is quiet; with the heavy page open in the new boot it warns again (step 6). Weighing URLs at 19 makes the test fail. Tests: crates/hydrus-gui/tests/gui/session_autosave.rs applied_size_warning_creates_exact_popup_once_and_resets_only_at_new_boot; model crates/hydrus-gui-model/tests/model/session_lifecycle.rs size_warning_replays_real_threshold_seed_weight_disabled_and_one_boot_latch"
    }
   },
   {
@@ -11843,10 +11844,10 @@
     "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Asserts only a test-only EXIT_REQUESTED atomic set by the action itself, which nothing in production reads; that slint::quit_event_loop actually stops the loop (the leaf) is not exercised. Stand-in flag. Tests: crates/hydrus-gui/tests/gui/debug_menu_actions.rs:262 simulate_program_exit_signal_stops_the_event_loop"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "Claude (recheck bin C)",
+    "note": "The reference's item is `QApplication.instance().exit` (only strings and that call: nothing further to record). The test, alone in its own binary because Slint keeps one event-loop proxy per process, runs the real event loop on the headless platform (headless::init_with_event_loop, a quit-only proxy), clicks help > debug > data actions > simulate program exit signal on the real main window from a timer, and checks that slint::run_event_loop returns because of it (a 60 s give-up timer must not have fired) with the main window still shown. With the action's quit removed the test fails. The test-only EXIT_REQUESTED flag is gone. Tests: crates/hydrus-gui/tests/event_loop.rs simulate_program_exit_signal_stops_the_event_loop"
    }
   },
   {
@@ -13235,10 +13236,10 @@
     "Native options registry has no editable 'DEBUG: Loop Playlist instead of Loop File in mpv:' control in this page/box path."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Real Options row is driven, but the consumer is stood in for by Plan::for_file(..).commands() (libmpv absent; playback.rs/mpv.rs set_playback_options never run) and the expected set loop/loop-playlist commands are literals from ClientGUIMPV.UpdateConfAndCoreOptions, no recording. Stale tracker note: says no editable row exists, but the row exists and is driven. Tests: crates/hydrus-gui/tests/gui/options_media_mpv.rs:25 the_mpv_rows_set_what_a_player_is_told_as_a_file_loads; crates/hydrus-gui-model/tests/model/mpv_options.rs"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "Claude (recheck bin C)",
+    "note": "oracle/record_mpv_playback_options.py types each case into the reference's real MediaPlaybackPanel, UpdateOptions, then runs the real MPVWidget.UpdateConfAndCoreOptions (polite mediator) on a real libmpv player made after the change and on one open all along, reading mpv's own loop-file/loop-playlist/audio-device. The GUI test opens the real media viewer on an animation mpv plays, types the same cases into the real Options window (and a cancelled one), applies, and reads the viewer's own libmpv player's properties (hydrus_gui::live_mpv_property): the open player follows each OK, and a player opened afterwards starts with the recorded values. Fixed here: open players now take changed options (checked twice a second from the frame timer). Skips without libmpv (CI requires it). Tests: crates/hydrus-gui/tests/gui/options_media_mpv.rs the_mpv_rows_set_what_a_player_is_told_as_a_file_loads"
    }
   },
   {
@@ -13327,10 +13328,10 @@
     "Native options registry has no editable 'Preferred audio output device:' control in this page/box path."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Same as loop-playlist: the real row stages/cancels/applies, but the effect is read through Plan::for_file (decision function standing in for the mpv player; 'auto' for none, typed 'alsa/hw:1' literal), not the player. Also the reference panel's device choices/list are not compared. Stale tracker note (says no editable row). Tests: crates/hydrus-gui/tests/gui/options_media_mpv.rs:26 the_mpv_rows_set_what_a_player_is_told_as_a_file_loads"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "Claude (recheck bin C)",
+    "note": "As the loop-playlist leaf: the preferred device (none -> auto, alsa/hw:1, pulse, none again) typed into the real Options window and applied is read back from the media viewer's real libmpv player's audio-device, for the open player and a new one, against oracle/fixtures/mpv_playback_options.json (the reference's real UpdateConfAndCoreOptions and polite mediator on real libmpv). The device chooser's list is covered by options_mpv_devices.rs (mpv_audio_devices.json). Tests: crates/hydrus-gui/tests/gui/options_media_mpv.rs the_mpv_rows_set_what_a_player_is_told_as_a_file_loads"
    }
   },
   {
@@ -13397,10 +13398,10 @@
     "Native options registry has no editable 'add' control in this page/box path."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Drives the real Options buttons and chooser/editor, but the 'reaches the viewer' check uses crate::zoom::Zoom::new(..).rect() (a decision function standing in for the viewer) with literal rects, and Apply is simulated via editor.applied()+save; the recording (media_view_options.json) only covers rows/addable/editor choices in a model test, not the add behaviour. Stale tracker note (says no editable row). Tests: crates/hydrus-gui/src/options_media_views.rs:646 added_edited_and_deleted_filetype_handling_reaches_the_viewer_s_zoom; :492 earlier add-path test; crates/hydrus-gui-model/tests/model/media_view_options.rs:46,120"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "Claude (recheck bin C)",
+    "note": "oracle/record_filetype_handling.py runs the reference's real MediaPlaybackPanel: 'add' (the real filetype chooser, the real EditMediaViewOptionsPanel set to 100% scale up), Options OK, then CalculateCanvasZooms for a small and a big jpeg. The GUI test uses the real Options window: the table has no jpeg row and 'add' is available; add opens the chooser whose choices equal the recording's sorted list, choosing 'image: jpeg' opens the editor titled as the reference's on the general image options' scale up (the recorded 'before' value); set to 100%, Apply stages it (the viewer is unchanged, as the recording's zooms_before_ok), and after Options OK the real media viewer opens the small jpeg at 100% (the recorded 1.0), the big jpeg's recorded zoom being unchanged. With the viewer ignoring per-filetype rows the test fails. Tests: crates/hydrus-gui/tests/gui/filetype_handling.rs filetype_handling_is_added_edited_and_deleted_as_the_reference_does The non-100% zoom is checked as the canvas fit of the recording's own canvas and file, and of this viewer's canvas to a pixel, and equal to the viewer's start."
    }
   },
   {
@@ -13417,10 +13418,10 @@
     "Native options registry has no editable 'delete' control in this page/box path."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Real delete button drives the editor, but effect is judged via Zoom::new rect stand-in and a simulated Apply; the delete rules (classes undeletable, fallback to class) are typed literals in a model test, the fixture's 'deletable'/'actions' keys are not replayed. Stale tracker note. Tests: crates/hydrus-gui/src/options_media_views.rs:648 added_edited_and_deleted_filetype_handling_reaches_the_viewer_s_zoom; crates/hydrus-gui-model/tests/model/media_view_options.rs:120 delete_spares_classes_and_add_copies_the_class"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "Claude (recheck bin C)",
+    "note": "As the add leaf: with the jpeg row selected, 'delete' is available (the recorded can_delete) and asks 'Remove all selected?' (the recording's question; 'no' keeps the row) and 'yes' removes the row from the staged table. Fixed here: delete did not ask, nothing changes until Options OK, and then the real media viewer opens the small jpeg at its class's zoom (the recorded zoom equals the start's). Deleting is seen to change the zoom: the row is first set back to 100%. With delete doing nothing the test fails. Tests: crates/hydrus-gui/tests/gui/filetype_handling.rs filetype_handling_is_added_edited_and_deleted_as_the_reference_does"
    }
   },
   {
@@ -13437,10 +13438,10 @@
     "Native options registry has no editable 'edit' control in this page/box path."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Real edit button and editor window ('edit media view options information'), but the viewer consumer is Zoom::new(..).rect() with literals and Apply is simulated; the recorded editor choices are replayed only in the model test, not tied to the edit flow. Stale tracker note. Tests: crates/hydrus-gui/src/options_media_views.rs:647 added_edited_and_deleted_filetype_handling_reaches_the_viewer_s_zoom; :492 edit/cancel test; crates/hydrus-gui-model/tests/model/media_view_options.rs:46"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "Claude (recheck bin C)",
+    "note": "As the add leaf: 'edit' of the saved jpeg row in the real Options window opens the editor with the reference's title on the saved 100% (the recording's 'before'), changing it to 'scale to the canvas size' and pressing Options OK makes the real media viewer open the small jpeg exactly as it did before any row (the recorded zoom equals the start's). Tests: crates/hydrus-gui/tests/gui/filetype_handling.rs filetype_handling_is_added_edited_and_deleted_as_the_reference_does"
    }
   },
   {
@@ -13626,10 +13627,10 @@
     "Assessment covers this editable control and shared Apply/Cancel, not every control on its containing reference page or every background consumer."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Real dropdown and Apply are driven, but the consumer is stood in for: FileImporter::new is only constructed and Raster::has_useful_alpha is called directly (no file imported, no flag set), with expected (bool,bool) pairs typed from source and no recording of the levels (fixtures only dump options). Tests: crates/hydrus-gui/tests/gui/options_media_playback.rs:23 the_transparency_strictness_is_what_the_importer_judges_images_by"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "Claude (recheck bin C)",
+    "note": "The GUI test checks the dropdown's choices and default against oracle/fixtures/transparency_strictness.json (record_transparency_strictness.py: each level chosen in the reference's real MediaPlaybackPanel, UpdateOptions and ReinitGlobalSettings as OK does, then the real FileImportJob.GeneratePreImportHashAndStatus/GenerateInfo on five PNGs: no alpha, opaque, clear, three faint pixels, a clear half). For each level, on a fresh client, an importer made before the change (as the daemon's) imports the same five files after the level is chosen and applied in the real Options window, and each file's stored transparency flag equals the reference's HasTransparency(). Fixed here: an importer now takes changed file handling settings at its next import (before, only when made). Tests: crates/hydrus-gui/tests/gui/options_media_playback.rs the_transparency_strictness_is_what_the_importer_judges_images_by The importer now re-reads the file handling settings on each import (before, only when made)."
    }
   },
   {
@@ -20466,10 +20467,10 @@
     "Native options registry has no editable 'Num pairs to prefetch in Duplicate Filter:' control in this page/box path."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "phase 2 session (blind agent)",
-    "note": "duplicate_filter.rs:524 the_filter_prefetches_the_pair_shown_and_the_edited_number_of_pairs_after_it edits the real Options row (max 25), applies it, launches the real filter and waits for the real image cache to warm exactly the expected files. The expected set comes from the native DuplicateFilter::upcoming(n), restating ClientGUICanvasDuplicates.py, not a recording."
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "recheck bin E session (claude/recheck-e-dupes)",
+    "note": "duplicate_filter_canvas.rs replays recorded scenarios with the option set through the real Options window (0..25) and the real image cache: at the start and after every step the cache holds at least the images of the files the reference's canvas prefetches (_GetPrefetchNeighboursInPreferenceOrder recorded: the other file of the pair shown plus both files of the next N pairs), for N = 0, 1, 3 and 25 (more than the batch). Only at the start is it also asserted that the cache holds nothing beyond those files and the file shown; later steps assert 'at least'. The recording exposed that a file appearing in several upcoming pairs stalled the warm worker; the candidates are now deduplicated."
    }
   },
   {
@@ -22603,10 +22604,10 @@
     "Assessment covers this editable control and shared Apply/Cancel, not every control on its containing reference page or every background consumer."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Only asserts the regenerated gif thumbnail bytes differ at 100% versus 35% and return at 35%; which frame is chosen (tools.rs: pct/100*(frames-1)) is never compared with the reference (dump_media.py records only percentage 35). Presence of change instead of content. Tests: crates/hydrus-gui/tests/gui/options_media_thumbnails.rs:154 the_video_percentage_picks_the_frame_the_thumbnail_is_made_from"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "Claude (recheck bin E, #97 phase 2)",
+    "note": "The percentage row set through the real Options window to 0, 1, 20, 35, 50, 99 and 100; the thumbnails of an animated gif (5 frames), apng (4), webm (16) and mp4 (10) are made again by the real regeneration path and each is closer, by a 16x16 block signature, to the reference's thumbnail at that percentage than to any of its other frames, at the reference's size (oracle/fixtures/video_thumbnail_frames.json, record_video_thumbnail_frames.py through the reference's client files manager). Tests: crates/hydrus-gui/tests/gui/options_media_thumbnails.rs the_video_percentage_picks_the_frame_the_thumbnail_is_made_from."
    }
   },
   {
@@ -22623,10 +22624,10 @@
     "Assessment covers this editable control and shared Apply/Cancel, not every control on its containing reference page or every background consumer."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Real Options window changes the grid: cell width 152->156, height 131, columns 5->4->3, no re-decode. All numbers are typed literals from the Python layout formula; no recording of grid geometry under border/margin. Tests: crates/hydrus-gui/tests/gui/options_window.rs:655 the_thumbnails_border_and_margin_lay_out_the_grid"
+    "date": "2026-10-09",
+    "class": "likely-good",
+    "by": "Claude (recheck bin E, #97 phase 2)",
+    "note": "The border row (0, 1, 2, 3, 5, 20) set through the real Options window: spans, columns at six viewports, grid content height and which file real clicks hit at the cell edges match the reference's graphics-view panel (oracle/fixtures/thumbnail_grid.json). Tests: crates/hydrus-gui/tests/gui/thumbnail_grid_geometry.rs the_thumbnail_options_lay_out_the_grid_as_the_reference_does. Geometry only: how the border is drawn (its colour and drawing) is untested; hits were recorded for the first two columns and rows at one viewport (DIFFERENCES.md)."
    }
   },
   {
@@ -22643,10 +22644,10 @@
     "Assessment covers this editable control and shared Apply/Cancel, not every control on its containing reference page or every background consumer."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Real Options window; thumbnails shown and stored regenerate at new size, but expected size comes from ThumbnailSettings::resolution (unrecorded core function; only hydrus-media's thumbnail_resolution is replayed against the reference) and cell box 302x252 is typed. Tests: crates/hydrus-gui/tests/gui/options_window.rs:562 thumbnails_take_the_size_the_options_give_them"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "Claude (recheck bin E, #97 phase 2)",
+    "note": "Same test and recording as the width leaf: the height row set through the real Options window under ten settings, and the grid's content height, click hits and every file's shown thumbnail size match the reference's panel and thumbnail cache (oracle/fixtures/thumbnail_grid.json). Tests: crates/hydrus-gui/tests/gui/thumbnail_grid_geometry.rs the_thumbnail_options_lay_out_the_grid_as_the_reference_does."
    }
   },
   {
@@ -22663,10 +22664,10 @@
     "Assessment covers this editable control and shared Apply/Cancel, not every control on its containing reference page or every background consumer."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Same test as border: real window, typed layout literals, no recording of margin effect. Tests: crates/hydrus-gui/tests/gui/options_window.rs:656 the_thumbnails_border_and_margin_lay_out_the_grid"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "Claude (recheck bin E, #97 phase 2)",
+    "note": "The margin row (0, 1, 2, 7, 20) set through the real Options window: spans, columns at six viewports, grid content height and real clicks on, just inside and just outside every margin edge of the first two columns and rows match the reference's panel (oracle/fixtures/thumbnail_grid.json). Tests: crates/hydrus-gui/tests/gui/thumbnail_grid_geometry.rs the_thumbnail_options_lay_out_the_grid_as_the_reference_does."
    }
   },
   {
@@ -22723,10 +22724,10 @@
     "Assessment covers this editable control and shared Apply/Cancel, not every control on its containing reference page or every background consumer."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Same test as height: real Options window and real regeneration, but expectations are from core ThumbnailSettings::resolution and typed cell sizes. Tests: crates/hydrus-gui/tests/gui/options_window.rs:561 thumbnails_take_the_size_the_options_give_them"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "Claude (recheck bin E, #97 phase 2)",
+    "note": "Sets width, height, border and margin through the real Options window for ten settings (box 20x20 to 512x64, border 0-20, margin 0-20) and replays oracle/fixtures/thumbnail_grid.json (record_thumbnail_grid.py drives the reference's default graphics-view thumbnail panel): at six viewports each the span, columns and grid content height match (thumbnail positions are the layout's rule, not read from the rendered grid); 2,000+ real clicks around the margins hit the file the reference's panel finds; and every file's shown thumbnail is the size the reference's thumbnail cache gives the grid under each box. Fixed here: types without thumbnails (an archive, say) show their icon fitted to the box, not the stored padded square; a click below the last row deselects. Tests: crates/hydrus-gui/tests/gui/thumbnail_grid_geometry.rs the_thumbnail_options_lay_out_the_grid_as_the_reference_does."
    }
   },
   {

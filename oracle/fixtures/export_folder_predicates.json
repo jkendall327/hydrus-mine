@@ -1,0 +1,287 @@
+{
+ "typing": [
+  {
+   "rows": [],
+   "types": []
+  },
+  {
+   "typed": "system:filesize > 1B",
+   "rows": [
+    "system:filesize > 1B"
+   ],
+   "types": [
+    10
+   ],
+   "left": ""
+  },
+  {
+   "typed": "system:filetype is png",
+   "rows": [
+    "system:filesize > 1B",
+    "system:filetype is png"
+   ],
+   "types": [
+    10,
+    17
+   ],
+   "left": ""
+  },
+  {
+   "typed": "system:nonsense words",
+   "rows": [
+    "system:filesize > 1B",
+    "system:filetype is png"
+   ],
+   "types": [
+    10,
+    17
+   ],
+   "left": "system:nonsense words"
+  },
+  {
+   "typed": "blue eyes",
+   "rows": [
+    "blue eyes",
+    "system:filesize > 1B",
+    "system:filetype is png"
+   ],
+   "types": [
+    0,
+    10,
+    17
+   ],
+   "left": ""
+  },
+  {
+   "typed": "creator:*",
+   "rows": [
+    "blue eyes",
+    "creator:*anything*",
+    "system:filesize > 1B",
+    "system:filetype is png"
+   ],
+   "types": [
+    0,
+    1,
+    10,
+    17
+   ],
+   "left": ""
+  },
+  {
+   "typed": "blue*",
+   "rows": [
+    "blue eyes",
+    "blue* (wildcard search)",
+    "creator:*anything*",
+    "system:filesize > 1B",
+    "system:filetype is png"
+   ],
+   "types": [
+    0,
+    3,
+    1,
+    10,
+    17
+   ],
+   "left": ""
+  },
+  {
+   "typed": "-blue eyes",
+   "rows": [
+    "-blue eyes",
+    "blue* (wildcard search)",
+    "creator:*anything*",
+    "system:filesize > 1B",
+    "system:filetype is png"
+   ],
+   "types": [
+    0,
+    3,
+    1,
+    10,
+    17
+   ],
+   "left": ""
+  },
+  {
+   "typed": "  system:inbox  ",
+   "rows": [
+    "-blue eyes",
+    "blue* (wildcard search)",
+    "creator:*anything*",
+    "inbox",
+    "system:filesize > 1B",
+    "system:filetype is png"
+   ],
+   "types": [
+    0,
+    3,
+    1,
+    0,
+    10,
+    17
+   ],
+   "left": ""
+  },
+  {
+   "typed": "system:width < 200",
+   "rows": [
+    "-blue eyes",
+    "blue* (wildcard search)",
+    "creator:*anything*",
+    "inbox",
+    "system:filesize > 1B",
+    "system:filetype is png",
+    "system:width < 200"
+   ],
+   "types": [
+    0,
+    3,
+    1,
+    0,
+    10,
+    17,
+    13
+   ],
+   "left": ""
+  },
+  {
+   "typed": "system:filetype is png",
+   "rows": [
+    "-blue eyes",
+    "blue* (wildcard search)",
+    "creator:*anything*",
+    "inbox",
+    "system:filesize > 1B",
+    "system:width < 200"
+   ],
+   "types": [
+    0,
+    3,
+    1,
+    0,
+    10,
+    13
+   ],
+   "left": ""
+  },
+  {
+   "typed": "series:examples",
+   "rows": [
+    "-blue eyes",
+    "blue* (wildcard search)",
+    "creator:*anything*",
+    "inbox",
+    "series:examples",
+    "system:filesize > 1B",
+    "system:width < 200"
+   ],
+   "types": [
+    0,
+    3,
+    1,
+    0,
+    0,
+    10,
+    13
+   ],
+   "left": ""
+  },
+  {
+   "removed": 0,
+   "rows": [
+    "blue* (wildcard search)",
+    "creator:*anything*",
+    "inbox",
+    "series:examples",
+    "system:filesize > 1B",
+    "system:width < 200"
+   ],
+   "types": [
+    3,
+    1,
+    0,
+    0,
+    10,
+    13
+   ]
+  },
+  {
+   "removed": 2,
+   "rows": [
+    "blue* (wildcard search)",
+    "creator:*anything*",
+    "series:examples",
+    "system:filesize > 1B",
+    "system:width < 200"
+   ],
+   "types": [
+    3,
+    1,
+    0,
+    10,
+    13
+   ]
+  }
+ ],
+ "runs": [
+  {
+   "step": "both",
+   "rows": [
+    "system:filesize > 1B",
+    "system:filetype is png"
+   ],
+   "error": "",
+   "files": [
+    "41.png",
+    "43.png",
+    "45.png",
+    "47.png",
+    "49.png",
+    "51.png",
+    "53.png",
+    "8.png"
+   ]
+  },
+  {
+   "step": "png removed",
+   "rows": [
+    "system:filesize > 1B"
+   ],
+   "error": "",
+   "files": [
+    "1.png",
+    "10.jpg",
+    "12.jpg",
+    "14.gif",
+    "15.gif",
+    "17.jpg",
+    "19.jpg",
+    "21.jpg",
+    "23.jpg",
+    "25.jpg",
+    "27.jpg",
+    "29.jpg",
+    "3.flac",
+    "31.jpg",
+    "33.jpg",
+    "35.jpg",
+    "37.jpg",
+    "39.jpg",
+    "4.mp3",
+    "41.png",
+    "43.png",
+    "45.png",
+    "47.png",
+    "49.png",
+    "5.bmp",
+    "51.png",
+    "53.png",
+    "55.tiff",
+    "7.pdf",
+    "8.png"
+   ]
+  }
+ ]
+}

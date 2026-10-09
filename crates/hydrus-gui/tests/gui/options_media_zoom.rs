@@ -13,7 +13,7 @@ use hydrus_gui::{MediaViewerWindow, headless};
 use crate::options_gui_support::{box_of, items, row, show_page};
 use crate::options_media_support::Media;
 
-const CANVAS: (f32, f32) = (800.0, 600.0);
+pub(crate) const CANVAS: (f32, f32) = (800.0, 600.0);
 
 /// Set a dropdown of `page` to the choice named `choice`, apply.
 fn choose(client: &Media, label: &str, choice: &str, box_title: &str) {
@@ -33,7 +33,7 @@ fn choose(client: &Media, label: &str, choice: &str, box_title: &str) {
 
 /// The viewer on the first small jpeg (smaller than the canvas both
 /// ways), and that jpeg's size, with its window drawn once.
-fn small_jpeg_viewer(client: &Media) -> (MediaViewerWindow, (f32, f32)) {
+pub(crate) fn small_jpeg_viewer(client: &Media) -> (MediaViewerWindow, (f32, f32)) {
     // (a second identical search finds nothing: search once)
     if client.results().is_empty() {
         client.search("system:filetype is jpeg");
@@ -66,7 +66,7 @@ fn small_jpeg_viewer(client: &Media) -> (MediaViewerWindow, (f32, f32)) {
     (viewer, size)
 }
 
-fn rect(viewer: &MediaViewerWindow) -> (f32, f32, f32, f32) {
+pub(crate) fn rect(viewer: &MediaViewerWindow) -> (f32, f32, f32, f32) {
     (
         viewer.get_media_x(),
         viewer.get_media_y(),

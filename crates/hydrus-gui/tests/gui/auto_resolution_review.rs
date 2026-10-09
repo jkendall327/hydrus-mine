@@ -110,6 +110,8 @@ fn trashed(store: &Store, hexes: &[String], ids: &HashMap<String, HashId>) -> Ve
 /// The reference's run's database, opened with a duplicates page, and each
 /// file's hash in hex, and back.
 pub(crate) struct Opened {
+    /// The reference's database, whose file storage the import points at.
+    pub(crate) _legacy: tempfile::TempDir,
     pub(crate) _dir: tempfile::TempDir,
     pub(crate) store: Arc<Store>,
     pub(crate) ui: MainWindow,
@@ -163,6 +165,7 @@ pub(crate) fn opened() -> Opened {
     let ui = MainWindow::new().unwrap();
     let bound = bind(&ui, Pages::open(Arc::clone(&store)).unwrap());
     Opened {
+        _legacy: legacy,
         _dir: dir,
         store,
         ui,
@@ -178,6 +181,7 @@ fn pairs_are_approved_denied_and_undone_as_the_reference_does() {
     let recorded = hydrus_testkit::fixture_json("auto_resolution_review.json");
     let windows = headless::init();
     let Opened {
+        _legacy,
         _dir,
         store,
         ui,
@@ -320,6 +324,7 @@ fn a_pending_pair_is_approved_in_the_duplicate_filter() {
     let recorded = hydrus_testkit::fixture_json("auto_resolution_review.json");
     let windows = headless::init();
     let Opened {
+        _legacy,
         _dir,
         store,
         ui,

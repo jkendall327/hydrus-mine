@@ -424,6 +424,12 @@ fn windows_rules(force_ntfs: bool) -> bool {
     cfg!(windows) || force_ntfs
 }
 
+/// Python's `str.isspace`, which `str.strip` strips: Unicode whitespace and
+/// the four information separators (U+001C to U+001F).
+fn is_py_space(c: char) -> bool {
+    c.is_whitespace() || ('\u{1c}'..='\u{1f}').contains(&c)
+}
+
 const NTFS_DISALLOWED: &[&str] = &[
     "con", "prn", "aux", "nul", "com1", "com2", "com3", "com4", "com5", "com6", "com7", "com8",
     "com9", "lpt1", "lpt2", "lpt3", "lpt4", "lpt5", "lpt6", "lpt7", "lpt8", "lpt9",
@@ -432,7 +438,7 @@ const NTFS_DISALLOWED: &[&str] = &[
 /// `SanitizeFilename`.
 pub fn sanitize_filename(name: &str, force_ntfs: bool) -> String {
     if !windows_rules(force_ntfs) {
-        return name.replace('/', "_").trim().to_owned();
+        return name.replace('/', "_").trim_matches(is_py_space).to_owned();
     }
     let mut clean: String = name
         .chars()
@@ -441,7 +447,7 @@ pub fn sanitize_filename(name: &str, force_ntfs: bool) -> String {
     while clean.ends_with('.') || clean.ends_with(' ') {
         clean.pop();
     }
-    let mut clean = clean.trim().to_owned();
+    let mut clean = clean.trim_matches(is_py_space).to_owned();
     while NTFS_DISALLOWED.contains(&clean.to_lowercase().as_str()) {
         clean.pop();
     }
@@ -514,7 +520,7 @@ fn elide_subdirs(
             pop_char(&mut d);
             d = sanitize_filename(&d, force_ntfs);
         }
-        let mut d = d.trim().to_owned();
+        let mut d = d.trim_matches(is_py_space).to_owned();
         if d.is_empty() {
             d = "truncated".into();
         }
@@ -582,7 +588,7 @@ pub fn elide_filename(
         pop_char(&mut name);
         name = sanitize_filename(&name, force_ntfs);
     }
-    let name = name.trim().to_owned();
+    let name = name.trim_matches(is_py_space).to_owned();
     if name.is_empty() {
         return Err(too_long_name());
     }

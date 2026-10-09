@@ -52,7 +52,7 @@ pub use imaging::embedded::{
 pub use imaging::{Raster, TransparencyStrictness, set_transparency_strictness};
 pub use phash::{BLANK_PERCEPTUAL_HASH, is_blank as is_blank_perceptual_hash, perceptual_hash};
 pub use thumbnail::{
-    Thumbnail, ThumbnailFormat, ThumbnailScale, ThumbnailSpec, thumbnail_resolution,
+    Thumbnail, ThumbnailFormat, ThumbnailScale, ThumbnailSpec, thumbnail_resolution, type_icon,
 };
 pub use tools::{Analysis, FileFlags, FileInfo, MediaTools, UGOIRA_DEFAULT_FRAME_DURATION_MS};
 

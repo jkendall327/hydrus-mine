@@ -329,89 +329,187 @@ fn non_page_api_activity_marker_drives_idle_retry_and_expiry_after_reopen() {
     );
 }
 
+/// `n` more URLs in a downloader queue (the seeds a session weighs).
+fn add_seeds(store: &Store, queue: i64, from: i64, n: i64) {
+    store
+        .write(move |ctx| {
+            ctx.conn().execute(
+                "WITH RECURSIVE k(i) AS (SELECT ?2 UNION ALL SELECT i + 1 FROM k WHERE i < ?2 + ?3 - 1)
+                 INSERT INTO file_seeds (queue_id, position, seed_type, data, data_for_comparison,
+                     created, modified, status, note, metadata)
+                 SELECT ?1, i, 1, 'https://weight.example/' || i, 'https://weight.example/' || i,
+                     0, 0, 0, '', '{}' FROM k",
+                rusqlite::params![queue, from, n],
+            )?;
+            Ok(())
+        })
+        .unwrap();
+}
+
+/// The session's real weight, seen by the monitor's tick, against the
+/// reference's warning (`session_warning.json`): over ten million warns once
+/// a boot with the reference's text, the threshold itself does not, a
+/// disabled warning neither warns nor uses up the boot's one warning, and
+/// closed pages don't count.
+// leaf: audit-options-gui-sessions-sessions-show-warning-popup-if-session-size-exceeds-10-000-000
 #[test]
 fn applied_size_warning_creates_exact_popup_once_and_resets_only_at_new_boot() {
+    use hydrus_core::pages::PageContent;
+    use hydrus_gui::page_chooser::NewPage;
+
     const WARNING: &str = "Show warning popup if session size exceeds 10,000,000: ";
     let _windows = headless::init();
     let (_dirs, store) = store();
     let fixture = hydrus_testkit::fixture_json("session_warning.json");
     let ui = MainWindow::new().unwrap();
     ui.show().unwrap();
-    let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+    let bound = bind(
+        &ui,
+        Pages::single(hydrus_gui::SearchPage::new(store.clone())),
+    );
     let before: GuiSessionSettings = store.read(settings::get).unwrap();
     assert_eq!(
         before.warn_large_session,
         fixture["default_enabled"].as_bool().unwrap()
     );
+    // a URL downloader page; its queue's URLs weigh twenty each
+    bound.pages.borrow_mut().new_page(&NewPage::Urls).unwrap();
+    let queue = match &bound.pages.borrow().shown().content {
+        PageContent::Downloader { queues, .. } => queues[0],
+        _ => panic!("a URL downloader page"),
+    };
+    assert_eq!(bound.pages.borrow().session_weight(), 0);
+    let popups_with = |text: &str| {
+        let now = hydrus_core::TimestampMs::now().0;
+        store
+            .read(|conn| hydrus_store::popups::all(conn, now / 1_000))
+            .unwrap()
+            .iter()
+            .filter(|job| job.status_text_1.as_deref() == Some(text))
+            .count()
+    };
+    let any_warning = || {
+        let now = hydrus_core::TimestampMs::now().0;
+        store
+            .read(|conn| hydrus_store::popups::all(conn, now / 1_000))
+            .unwrap()
+            .iter()
+            .any(|job| {
+                job.status_text_1
+                    .as_deref()
+                    .is_some_and(|t| t.starts_with("Your session weight is"))
+            })
+    };
+    let tick = |bound: &hydrus_gui::Bound| {
+        bound
+            .session_autosave
+            .poll_at(hydrus_core::TimestampMs::now().0)
+            .unwrap();
+    };
+
+    // ten million exactly (500,000 URLs): not over (the recording's second step)
+    add_seeds(&store, queue, 0, 500_000);
+    assert_eq!(bound.pages.borrow().session_weight(), 10_000_000);
+    assert!(
+        fixture["steps"][1]["messages"]
+            .as_array()
+            .unwrap()
+            .is_empty()
+    );
+    tick(&bound);
+    assert!(!any_warning());
+
+    // one URL more, the warning turned off and applied (the third step): none,
+    // and the boot's warning is not used up
+    add_seeds(&store, queue, 500_000, 1);
     let window = options(&ui, &bound);
     window.invoke_check_toggled(row(&window, WARNING), false);
     window.invoke_cancel();
     assert_eq!(
         store.read(settings::get::<GuiSessionSettings>).unwrap(),
-        before
+        before,
+        "cancelled"
     );
     let window = options(&ui, &bound);
     window.invoke_check_toggled(row(&window, WARNING), false);
     window.invoke_apply();
-    let now = hydrus_core::TimestampMs::now().0;
-    assert!(!bound.session_autosave.check_size(10_000_001, now).unwrap());
     assert!(
-        !store
-            .read(settings::get::<GuiSessionSettings>)
+        fixture["steps"][2]["messages"]
+            .as_array()
             .unwrap()
-            .warn_large_session
+            .is_empty()
     );
+    tick(&bound);
+    assert!(!any_warning());
+
+    // turned on again: the tick warns, with the reference's words for the
+    // weight (the last step's: 0 files and 500,001 URLs)
     let window = options(&ui, &bound);
     window.invoke_check_toggled(row(&window, WARNING), true);
     window.invoke_apply();
-    assert!(!bound.session_autosave.check_size(10_000_000, now).unwrap());
-    let message = fixture["steps"][3]["messages"][0].as_str().unwrap();
-    assert!(bound.session_autosave.check_size(10_000_001, now).unwrap());
+    let step = &fixture["steps"][5];
+    assert_eq!(
+        (step["hashes"].as_u64(), step["seeds"].as_u64()),
+        (Some(0), Some(500_001))
+    );
+    let message = step["messages"][0].as_str().unwrap();
+    assert!(message.starts_with("Your session weight is 10,000,020,"));
+    tick(&bound);
+    assert_eq!(popups_with(message), 1);
+    // shown in the popup stack
     std::thread::sleep(std::time::Duration::from_millis(300));
     slint::platform::update_timers_and_animations();
     let popups = ui.get_popups();
     let popup = (0..popups.row_count())
         .find(|&index| popups.row_data(index).unwrap().text_1 == message)
-        .unwrap();
+        .expect("the warning is shown");
     ui.invoke_popup_dismiss(i32::try_from(popup).unwrap());
+
+    // heavier still, and the warning turned off and on: once a boot (the
+    // recording's fifth step)
+    add_seeds(&store, queue, 500_001, 10);
     assert!(
-        !bound
-            .session_autosave
-            .check_size(20_000_000, now + 1_000)
+        fixture["steps"][4]["messages"]
+            .as_array()
             .unwrap()
+            .is_empty()
     );
-    assert!(
-        store
-            .read(|conn| hydrus_store::popups::all(conn, now / 1_000))
-            .unwrap()
-            .iter()
-            .all(|job| job.status_text_1.as_deref() != Some(message))
-    );
-    // A new bound client is a new boot; the durable setting survives but the
-    // one-boot warning latch does not. No re-enable/reopen repeats within boot.
+    let window = options(&ui, &bound);
+    window.invoke_check_toggled(row(&window, WARNING), false);
+    window.invoke_apply();
+    let window = options(&ui, &bound);
+    window.invoke_check_toggled(row(&window, WARNING), true);
+    window.invoke_apply();
+    tick(&bound);
+    assert!(!any_warning(), "dismissed, and not again this boot");
+
+    // a closed page doesn't count: the heavy page closed, a new boot is quiet
+    bound.pages.borrow_mut().close_shown().unwrap();
+    assert_eq!(bound.pages.borrow().session_weight(), 0);
+    tick(&bound);
+    drop(bound);
+    drop(ui);
     let reopened_ui = MainWindow::new().unwrap();
     reopened_ui.show().unwrap();
-    let reopened = bind(&reopened_ui, Pages::open(store.clone()).unwrap());
-    assert!(
-        store
-            .read(settings::get::<GuiSessionSettings>)
-            .unwrap()
-            .warn_large_session
+    let reopened = bind(
+        &reopened_ui,
+        Pages::single(hydrus_gui::SearchPage::new(store.clone())),
     );
-    assert!(
-        reopened
-            .session_autosave
-            .check_size(10_000_020, now + 2_000)
-            .unwrap()
-    );
-    let expected = fixture["steps"][5]["messages"][0].as_str().unwrap();
-    assert!(
-        store
-            .read(|conn| hydrus_store::popups::all(conn, now / 1_000 + 2))
-            .unwrap()
-            .iter()
-            .any(|job| job.status_text_1.as_deref() == Some(expected))
-    );
+    tick(&reopened);
+    assert!(!any_warning());
+    // and with the heavy page open in the new boot, it warns again
+    reopened
+        .pages
+        .borrow_mut()
+        .new_page(&NewPage::Urls)
+        .unwrap();
+    let queue = match &reopened.pages.borrow().shown().content {
+        PageContent::Downloader { queues, .. } => queues[0],
+        _ => panic!("a URL downloader page"),
+    };
+    add_seeds(&store, queue, 0, 500_001);
+    tick(&reopened);
+    assert_eq!(popups_with(message), 1);
 }
 
 #[test]

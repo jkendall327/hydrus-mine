@@ -462,7 +462,11 @@ the popup, run on dialog ok, the query (typed as the Client API's tags,
 double-click to remove), the filename phrase (refused if it doesn't
 parse) and the sidecar overwrite options. The rows and the checks are as
 `oracle/record_folders_lists.py` and `oracle/record_folders_dialogs.py`
-recorded the reference's.
+recorded the reference's. Typed predicates are entered as the reference's
+Enter key enters them (entering one again removes it, a negated tag replaces
+its positive, the list sorted as the reference's, text that doesn't start with
+"system:" taken as a tag), and the folder runs the search they make, as
+`oracle/record_export_folder_predicates.py` recorded.
 
 File > import/export folders > "check import folder now" and "run export folder now" flag a named folder, or all of them with "check all" / "run all", to be checked or run at the scheduler's next pass. Checking a folder also unpauses it, as the reference's `CheckNow` does. While the folders are paused under file > pause, the entries still flag the folders but say that they are paused ("Import folders are currently paused under the 'file' menu. Please unpause them and try this again.", and the export equivalent), as the reference does (`oracle/record_folder_runs.py`).
 
@@ -623,7 +627,8 @@ importing (looking inside .zip files for comics), maintenance and
 processing (file maintenance in normal time and its throttle, the
 potential duplicates search, auto-resolution in normal time and its work
 and rest), media playback (the zoom centre, the zoom steps, the media
-viewer's default zoom, and what counts as transparency), media viewer
+viewer's default zoom, and what counts as transparency, which the next
+import takes, even by an importer already running), media viewer
 (slideshows), media viewer hovers (the top hover's
 file summary), ratings (the media viewer's rating sizes, and the
 thumbnails': their sizes, which go up to the thumbnails' width as the
@@ -634,9 +639,16 @@ they fit it, their border and margin, the UI-scale supersampling, how far
 into a video its thumbnail is taken, and the single file's text in the
 status bar) and advanced. The grid is laid out as the reference's: each
 cell is the thumbnail box and its border, with the margin all round, as
-many across as fit (a click in a margin is on no file). Thumbnails given a new size show it at once: the grid's cells
+many across as fit (a click in a margin, or below the last row, is on no
+file). Thumbnails given a new size show it at once: the grid's cells
 take it, and a thumbnail made at the old size is shown scaled to the new
-one and made again from its file, as the reference does. Times
+one and made again from its file, as the reference does. A file of a type
+with no thumbnail of its own (an archive, say) shows its type's icon fitted
+to the box, as the reference's thumbnail cache does. The grid's spans,
+columns, rows, clicks around the margins and each thumbnail's size under ten
+size/border/margin settings are replayed against
+`oracle/record_thumbnail_grid.py`, and the frame a video's thumbnail is taken
+from at seven percentages against `oracle/record_video_thumbnail_frames.py`. Times
 show as the reference's fields (days, hours, minutes, seconds, ms), and a
 rate as its number, the reference's words ("errors within") and a time;
 text that may be none has the reference's "none" box. The window opens on
@@ -1227,10 +1239,16 @@ thumbnails or the viewer's file (`ui/export_files.slint`,
 `src/export_files_window.rs`, `hydrus-gui-model::export_files`). It previews
 number, filetype and destination using the export folders' filename machinery,
 adds ` (1)` suffixes for selected files whose names collide, remembers the
-export phrase, and removes selected rows after asking. Its browse button asks
-for a "Select directory" folder, as the reference's directory picker does, and
-"open location" does nothing for an empty destination and launches any existing
-path (one that is gone says so in the status line, not in a dialog). New panels open at the
+export phrase, and removes selected rows after asking. A row whose name can't be
+made (too long for the export length limits, say) or that leaves the destination
+shows "INVALID, above destination directory: " and why, as the reference's does.
+Its browse button asks for a "Select directory" folder, tidies the chosen path
+and remakes the names only for a folder that exists, as the reference's
+directory picker does, and "open location" does nothing for an empty destination
+and runs `xdg-open` on any existing path (one that is gone says so in the status
+line, not in a dialog). The names under the exporting options (NTFS rules, path,
+dirname and filename limits) and removal and browsing are replayed against
+`oracle/record_export_names.py`. New panels open at the
 **exporting > export folder > Default export directory** option. Its path and
 browse control wait for options Apply; Cancel discards them. Empty or whitespace
 uses `hydrus_export` in the home directory, and a one-off manual destination does
@@ -1538,7 +1556,10 @@ do, and a frame step pauses afterwards, as the reference's does
 Video, audio and other animations play in mpv: libmpv is loaded when first
 needed, so building needs nothing more, and without it these show their
 thumbnail. A file loops, space pauses it, and the store's `mpv.conf` (else
-hydrus's default one) applies. Frames come from mpv's software renderer, on
+hydrus's default one) applies. Options > media playback's mpv rows (loop
+the playlist instead of the file, the preferred audio device) reach players
+already open on OK as well as new ones, as the reference's do. Frames come
+from mpv's software renderer, on
 a thread of their own (`src/mpv.rs`); that is slower than the reference's
 embedded mpv window for large videos. Other files show their thumbnail.
 A duplicates page (a migrated session's, with its search, pair sort and
@@ -1553,7 +1574,10 @@ custom action asks which decision, then (for "this is better", "same
 quality", or "alternates" in advanced mode) its merge options in the
 merge options editor, for that decision alone, then which files to
 delete ("delete neither", "delete this one", "delete the other", "delete
-both" or "forget it"), as the reference's does. As in the reference, a
+both" or "forget it"), as the reference's does. With the archived-file
+delete lock on, an archived file the filter (or an approved or automatic
+auto-resolution action) deletes is inboxed first, so it can go to the trash,
+when Options > files and trash asks for it. As in the reference, a
 left click on the file is "better, delete the other", a right click
 "alternates", a middle click goes back and up skips; video, audio and
 animations play as in the media viewer, and the next three pairs' files
@@ -4771,8 +4795,10 @@ preview show actions and zoom info as the reference does, sorted by column.
 class's options; "edit" (or double-click) opens "edit media view options
 information" with the filetype's own show-action choices, start paused/embed
 switches, scaling, half/double zooms and interpolation qualities, enabled as
-`_UpdateControls` enables them; "delete" removes specific filetypes but never the
-classes. Edits stay in the Options draft until Apply. Dumped by
+`_UpdateControls` enables them; "delete" asks "Remove all selected?" and then
+removes specific filetypes but never the classes. Once Options is applied, the
+media viewer opens a file of that type at the row's zoom (checked on a jpeg
+against `oracle/record_filetype_handling.py`). Edits stay in the Options draft until Apply. Dumped by
 `oracle/dump_media_view_options.py`; `tests/model/media_view_options.rs`.
 Options Apply waits for its open media editor. Cancelled or replaced children,
 and children whose Options owner is hidden, cannot stage an edit or open a
@@ -5391,3 +5417,13 @@ A field after "idle" says "working" or "busy" while background jobs run (the
 daemon's downloads in flight and the client's maintenance passes: above 3 and
 above 8), with the tooltip "There were N threads doing jobs at last check."
 It looks every ten seconds.
+
+## Duplicate filter: batches, group mode, prefetch and quick processing
+
+The filter's batches, auto-commit, back, group mode (including "You appear to
+have skipped this whole group. Do you want to load up a different one?") and
+the pairs prefetched ahead are replayed against the reference's canvas from
+`oracle/fixtures/duplicate_filter_canvas.json`; the filtering tab's sort,
+direction and group chooser and the "quick and dirty processing" buttons from
+`oracle/fixtures/duplicates_quick_processing.json`. A file that is in several
+of the upcoming pairs is warmed once.

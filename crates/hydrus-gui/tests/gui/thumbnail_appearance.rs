@@ -173,7 +173,9 @@ fn blurhash_real_metadata_default_invalid_disable_and_owned_cache_policy() {
         Pages::single(super::common::all_local_page(store.clone())),
     );
     ui.show().unwrap();
-    ui.invoke_search_edited("system:everything".into());
+    // (images: a type with no thumbnail of its own, as the first file of
+    // all is, always shows its icon, never a blurhash)
+    ui.invoke_search_edited("system:filetype is image".into());
     ui.invoke_search_accepted();
     let id = bound.current.borrow().borrow().results()[0];
     let code = "LEHV6nWB2yk8pyo0adR*.7kCMdnj";

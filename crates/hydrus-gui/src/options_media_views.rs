@@ -30,6 +30,29 @@ struct Children {
     live: Rc<Cell<bool>>,
 }
 
+thread_local! {
+    /// The children of the Options window bound last on this thread.
+    static LATEST: RefCell<Option<Rc<RefCell<Children>>>> = const { RefCell::new(None) };
+}
+
+/// The chooser and editor open under the latest Options window, for tests
+/// that press their buttons.
+#[doc(hidden)]
+pub fn open_children() -> (Option<ChoiceButtonsWindow>, Option<MediaViewWindow>) {
+    LATEST.with(|latest| {
+        latest.borrow().as_ref().map_or((None, None), |children| {
+            let children = children.borrow();
+            (
+                children
+                    .chooser
+                    .as_ref()
+                    .map(ChoiceButtonsWindow::clone_strong),
+                children.editor.as_ref().map(MediaViewWindow::clone_strong),
+            )
+        })
+    })
+}
+
 impl Children {
     fn start(&mut self) -> Rc<Cell<bool>> {
         self.live.set(false);
@@ -221,6 +244,7 @@ pub(crate) fn bind(
         &editor.borrow().edited_media_views(),
     )));
     let children: Rc<RefCell<Children>> = Rc::default();
+    LATEST.with(|latest| *latest.borrow_mut() = Some(children.clone()));
     let child_open = {
         let children = children.clone();
         move || {
@@ -338,8 +362,38 @@ pub(crate) fn bind(
             }
             match action.as_str() {
                 "delete" => {
-                    table.borrow_mut().delete_selected();
-                    editor.borrow_mut().set_media_views(table.borrow().values());
+                    // (the reference's list asks first, "Remove all selected?")
+                    if !table.borrow().can_delete() {
+                        return;
+                    }
+                    let live = children.borrow_mut().start();
+                    let (table, editor, active, show_after) =
+                        (table.clone(), editor.clone(), active.clone(), show.clone());
+                    let parent = parent.clone();
+                    let question = crate::choice_buttons::open(
+                        &crate::choice_buttons::Ask {
+                            title: "Are you sure?",
+                            message: "Remove all selected?",
+                            choices: vec!["yes".to_owned()],
+                            no_label: "no",
+                        },
+                        move |choice| {
+                            let current = active.get()
+                                && live.get()
+                                && parent
+                                    .upgrade()
+                                    .is_some_and(|window| window.window().is_visible());
+                            live.set(false);
+                            if current && choice == Some(0) {
+                                table.borrow_mut().delete_selected();
+                                editor.borrow_mut().set_media_views(table.borrow().values());
+                            }
+                            show_after();
+                        },
+                    );
+                    if let Ok(question) = question {
+                        children.borrow_mut().chooser = question;
+                    }
                     show();
                 }
                 "edit" => {
@@ -643,9 +697,6 @@ mod tests {
         );
     }
 
-    // leaf: audit-options-media-playback-per-filetype-handling-add
-    // leaf: audit-options-media-playback-per-filetype-handling-edit
-    // leaf: audit-options-media-playback-per-filetype-handling-delete
     #[test]
     fn added_edited_and_deleted_filetype_handling_reaches_the_viewer_s_zoom() {
         let _windows = crate::headless::init();
@@ -755,9 +806,19 @@ mod tests {
         assert_eq!(rect(), fitted, "scaled up again");
 
         // delete: the selected row goes, and the filetype takes its class's
-        let (editor, window, _binding) = open();
+        let (editor, window, binding) = open();
         click(&window, &editor);
         window.invoke_media_view_action("delete".into());
+        // (asked first)
+        assert!(rows(&editor).contains_key(&jpeg));
+        let question = binding
+            .children
+            .borrow()
+            .chooser
+            .as_ref()
+            .unwrap()
+            .clone_strong();
+        question.invoke_chosen(0);
         assert!(!rows(&editor).contains_key(&jpeg));
         assert!(saved().media_view.contains_key(&jpeg), "not before apply");
         apply(&editor);

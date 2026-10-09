@@ -8,7 +8,7 @@ use slint::PhysicalSize;
 use slint::platform::software_renderer::{
     MinimalSoftwareWindow, PremultipliedRgbaColor, RepaintBufferType,
 };
-use slint::platform::{Clipboard, Platform, PlatformError, WindowAdapter};
+use slint::platform::{Clipboard, EventLoopProxy, Platform, PlatformError, WindowAdapter};
 
 // The platform must never retain an adapter strongly: each adapter's Window
 // retains the Slint context, which owns this platform. Visible windows also
@@ -79,6 +79,27 @@ pub fn clipboard_text() -> Option<String> {
 struct Headless {
     registry: Rc<Registry>,
     collector: Weak<Collected>,
+    /// Set by `slint::quit_event_loop`, where this platform runs an event
+    /// loop ([`init_with_event_loop`]).
+    quit: Option<std::sync::Arc<std::sync::atomic::AtomicBool>>,
+}
+
+/// An event loop proxy that can only quit: calls from other threads are
+/// refused, as without a proxy.
+struct QuitOnly(std::sync::Arc<std::sync::atomic::AtomicBool>);
+
+impl EventLoopProxy for QuitOnly {
+    fn quit_event_loop(&self) -> Result<(), slint::EventLoopError> {
+        self.0.store(true, std::sync::atomic::Ordering::SeqCst);
+        Ok(())
+    }
+
+    fn invoke_from_event_loop(
+        &self,
+        _event: Box<dyn FnOnce() + Send>,
+    ) -> Result<(), slint::EventLoopError> {
+        Err(slint::EventLoopError::NoEventLoopProvider)
+    }
 }
 
 impl Platform for Headless {
@@ -94,6 +115,28 @@ impl Platform for Headless {
             None
         }
     }
+    fn run_event_loop(&self) -> Result<(), PlatformError> {
+        let Some(quit) = &self.quit else {
+            return Err(PlatformError::NoEventLoopProvider);
+        };
+        let most = std::time::Duration::from_millis(10);
+        loop {
+            slint::platform::update_timers_and_animations();
+            if quit.swap(false, std::sync::atomic::Ordering::SeqCst) {
+                return Ok(());
+            }
+            let wait =
+                slint::platform::duration_until_next_timer_update().map_or(most, |d| d.min(most));
+            std::thread::sleep(wait);
+        }
+    }
+
+    fn new_event_loop_proxy(&self) -> Option<Box<dyn EventLoopProxy>> {
+        self.quit
+            .clone()
+            .map(|quit| Box::new(QuitOnly(quit)) as Box<dyn EventLoopProxy>)
+    }
+
     fn create_window_adapter(&self) -> Result<Rc<dyn WindowAdapter>, PlatformError> {
         let window = MinimalSoftwareWindow::new(RepaintBufferType::NewBuffer);
         self.registry.0.borrow_mut().push(Rc::downgrade(&window));
@@ -113,12 +156,25 @@ impl Platform for Headless {
 /// conf's `ao`, so that tests need no sound card (see
 /// [`crate::mpv::use_audio_output`]).
 pub fn init() -> Windows {
+    init_platform(None)
+}
+
+/// [`init`], with an event loop: `slint::run_event_loop` runs timers until
+/// `slint::quit_event_loop` is called. Slint keeps one event loop proxy for
+/// the whole process, so only a test binary of its own, with one UI thread,
+/// can use this.
+pub fn init_with_event_loop() -> Windows {
+    init_platform(Some(std::sync::Arc::default()))
+}
+
+fn init_platform(quit: Option<std::sync::Arc<std::sync::atomic::AtomicBool>>) -> Windows {
     // (no sound card to play to, or probe for, in a test)
     crate::mpv::use_audio_output("null");
     let windows = Windows::default();
     slint::platform::set_platform(Box::new(Headless {
         registry: windows.0.registry.clone(),
         collector: Rc::downgrade(&windows.0),
+        quit,
     }))
     .expect("no platform was set yet");
     crate::fonts::install_emoji_fallback()
