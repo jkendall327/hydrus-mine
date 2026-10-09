@@ -73,6 +73,8 @@ component ApplyCancel inherits HorizontalLayout {
 export component StringProcessorWindow inherits Window {
     in property <string> window-title: "edit string processor";
     in property <string> title-suffix: "";
+    // the title as composed, for tests and the platform
+    out property <string> composed-title: root.title;
     title: (root.window-title) + root.title-suffix;
     preferred-width: 820px;
     preferred-height: 640px;
@@ -229,6 +231,8 @@ export component StringProcessorWindow inherits Window {
 export component StringStepWindow inherits Window {
     in property <string> window-title: "edit processing step";
     in property <string> title-suffix: "";
+    // the title as composed, for tests and the platform
+    out property <string> composed-title: root.title;
     title: (root.window-title) + root.title-suffix;
     preferred-width: 560px;
     preferred-height: 460px;
@@ -651,6 +655,8 @@ export component StringStepWindow inherits Window {
 export component StringConverterWindow inherits Window {
     in property <string> window-title: "edit string converter";
     in property <string> title-suffix: "";
+    // the title as composed, for tests and the platform
+    out property <string> composed-title: root.title;
     title: (root.window-title) + root.title-suffix;
     preferred-width: 760px;
     preferred-height: 460px;
@@ -758,6 +764,8 @@ export component StringConverterWindow inherits Window {
 export component ConversionWindow inherits Window {
     in property <string> window-title: "edit conversion";
     in property <string> title-suffix: "";
+    // the title as composed, for tests and the platform
+    out property <string> composed-title: root.title;
     title: (root.window-title) + root.title-suffix;
     preferred-width: 560px;
     preferred-height: 380px;

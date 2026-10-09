@@ -1335,21 +1335,26 @@ fn gui_identity_and_exit_confirmation_reach_the_main_window() {
                 env!("CARGO_PKG_VERSION")
             )
         );
-        // and a window opened now ends its title with the name, as Qt does
-        // for every window: the Options window made next has it, while the
-        // one applied above (kept here) still has the one it was made with
-        let earlier = window.get_title_suffix();
+        // and every window ends its title with the name, as Qt shows it: the
+        // one applied above is retitled, the one opened next is made with it
+        let wanted = format!(
+            " - {} {}",
+            name["saved"].as_str().unwrap(),
+            env!("CARGO_PKG_VERSION")
+        );
+        assert_eq!(window.get_title_suffix(), wanted);
         open(&ui);
         let next = bound.options.borrow().as_ref().unwrap().clone_strong();
+        assert_eq!(next.get_title_suffix(), wanted);
+        // (composed: the window's own title, then the name)
         assert_eq!(
-            next.get_title_suffix(),
+            next.get_composed_title(),
             format!(
-                " - {} {}",
+                "manage options - {} {}",
                 name["saved"].as_str().unwrap(),
                 env!("CARGO_PKG_VERSION")
             )
         );
-        assert_eq!(window.get_title_suffix(), earlier);
         next.invoke_cancel();
     }
     // A canceled switch leaves the live exit consumer unchanged.

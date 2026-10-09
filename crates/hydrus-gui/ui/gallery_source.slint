@@ -4,6 +4,8 @@ import { Theme } from "theme.slint";
 export component GallerySourceWindow inherits Window {
     in property <string> window-title: "select gallery";
     in property <string> title-suffix: "";
+    // the title as composed, for tests and the platform
+    out property <string> composed-title: root.title;
     title: (root.window-title) + root.title-suffix;
     preferred-width: 720px;
     preferred-height: root.message == "" ? 340px : 190px;

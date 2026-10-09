@@ -2249,9 +2249,30 @@ fn the_options_search_offers_every_entry_the_reference_does_but_the_known_few() 
             .as_array()
             .unwrap()
             .iter()
-            .map(|v| v.as_str().unwrap().to_owned())
+            .map(|v| {
+                assert!(
+                    !v["reason"].as_str().unwrap().is_empty(),
+                    "every difference says why: {v}"
+                );
+                v["entry"].as_str().unwrap().to_owned()
+            })
             .collect()
     };
     assert_eq!(shown(&missing), expected("missing"), "missing");
     assert_eq!(shown(&extra), expected("extra"), "extra");
+}
+
+#[test]
+fn tmp_dump_page() {
+    let recorded = hydrus_testkit::fixture_json("options_dialog.json");
+    let (_dir, store) = fixture_store(&recorded);
+    let settings = store.read(Settings::load).unwrap();
+    let mut editor = hydrus_gui_model::options::Editor::new(settings);
+    editor.resolve_tag_services(&store);
+    let ours: Vec<String> = editor
+        .suggestions()
+        .iter()
+        .map(|s| s.text.clone())
+        .collect();
+    std::fs::write("/tmp/claude-0/-home-user-hydrus-mine/7622ad17-9aec-5c1a-b855-c1330e5ad21c/scratchpad/ours2.json", serde_json::to_string(&ours).unwrap()).unwrap();
 }

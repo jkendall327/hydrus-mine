@@ -2,6 +2,8 @@ import { Button } from "std-widgets.slint";
 import { Theme } from "theme.slint";
 export component LocalTransferWindow inherits Window {
     in property <string> title-suffix: "";
+    // the title as composed, for tests and the platform
+    out property <string> composed-title: root.title;
     title: ("Are you sure?") + root.title-suffix;
     preferred-width: 620px;
     preferred-height: 200px;

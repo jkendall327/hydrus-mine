@@ -2,6 +2,8 @@ import { Button, CheckBox, ComboBox, LineEdit, ScrollView } from "std-widgets.sl
 import { ListTable, TableRow } from "list_table.slint";
 export component ShortcutSetWindow inherits Window {
     in property <string> title-suffix: "";
+    // the title as composed, for tests and the platform
+    out property <string> composed-title: root.title;
     title:("edit shortcuts") + root.title-suffix; width:800px; height:500px;
     in-out property <string> set-name;
     in property <bool> name-enabled;
@@ -62,6 +64,8 @@ export component ShortcutSetsPanel inherits VerticalLayout {
 }
 export component ShortcutCommandWindow inherits Window {
     in property <string> title-suffix: "";
+    // the title as composed, for tests and the platform
+    out property <string> composed-title: root.title;
     title:("edit shortcut command") + root.title-suffix;width:700px;height:420px;
     in property <string> keyboard-text;
     in property <string> mouse-text;

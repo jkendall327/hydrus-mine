@@ -117,6 +117,8 @@ export component TimeFields {
 export component OptionsWindow inherits Window {
     in property <string> prefetch-warning;
     in property <string> title-suffix: "";
+    // the title as composed, for tests and the platform
+    out property <string> composed-title: root.title;
     title: ("manage options") + root.title-suffix;
     preferred-width: 900px;
     preferred-height: 640px;

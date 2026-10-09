@@ -14,6 +14,8 @@ export struct LocationTick {
 
 export component LocationsWindow inherits Window {
     in property <string> title-suffix: "";
+    // the title as composed, for tests and the platform
+    out property <string> composed-title: root.title;
     title: ("edit multiple location") + root.title-suffix;
     preferred-width: 320px;
     background: Theme.window;

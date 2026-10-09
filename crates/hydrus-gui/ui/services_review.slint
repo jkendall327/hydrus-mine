@@ -3,6 +3,8 @@ import { Theme } from "theme.slint";
 export component ServicesReviewWindow inherits Window {
     in property <string> window-title: "review services";
     in property <string> title-suffix: "";
+    // the title as composed, for tests and the platform
+    out property <string> composed-title: root.title;
     title: (root.window-title) + root.title-suffix;
     width: 700px; height: 400px;
     background: Theme.window;

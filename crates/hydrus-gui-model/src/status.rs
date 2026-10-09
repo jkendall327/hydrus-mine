@@ -313,7 +313,7 @@ pub struct AppBusy {
 }
 
 impl AppBusy {
-    /// Seconds between looks.
+    /// Seconds after a look before another (`TimeHasPassed`: strictly more).
     pub const PERIOD: i64 = 10;
     /// "working" above this many jobs, as the reference's thread pool.
     pub const WORKING_ABOVE: usize = 3;
@@ -323,7 +323,7 @@ impl AppBusy {
     /// The field's text ("", "working" or "busy") and its tooltip at `now`
     /// (seconds); `jobs` counts the running jobs when it is looked at.
     pub fn status(&mut self, now: i64, jobs: impl FnOnce() -> usize) -> (&'static str, &str) {
-        if self.checked_at.is_none_or(|at| now - at >= Self::PERIOD) {
+        if self.checked_at.is_none_or(|at| now > at + Self::PERIOD) {
             let n = jobs();
             self.text = if n <= Self::WORKING_ABOVE {
                 ""

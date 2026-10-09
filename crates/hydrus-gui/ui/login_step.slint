@@ -3,6 +3,8 @@ import { Theme } from "theme.slint";
 import { ListTable, TableRow } from "list_table.slint";
 export component LoginStepWindow inherits Window {
     in property <string> title-suffix: "";
+    // the title as composed, for tests and the platform
+    out property <string> composed-title: root.title;
     title: ("edit login step") + root.title-suffix;
     preferred-width: 880px;
     preferred-height: 680px;

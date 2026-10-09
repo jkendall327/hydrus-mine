@@ -28,6 +28,17 @@ pub struct QueueLive {
     pub gallery_job: Option<JobLive>,
 }
 
+impl QueueLive {
+    /// How many of its downloads (file, gallery) are in flight now.
+    pub fn jobs_in_flight(&self) -> u32 {
+        [&self.file_job, &self.gallery_job]
+            .into_iter()
+            .flatten()
+            .filter(|job| !job.done)
+            .count() as u32
+    }
+}
+
 /// The daemon's network use, for the main window's status bar: when its
 /// network engine started, what it has read since and in the last second,
 /// how many queues it is running, and when this was said.
@@ -37,8 +48,8 @@ pub struct DaemonLive {
     pub bytes: u64,
     pub speed: u64,
     pub at: i64,
-    /// How many downloader queues are running, for the status bar's
-    /// application-busy field.
+    /// How many downloads (files and gallery pages) are in flight, for the
+    /// status bar's application-busy field.
     #[serde(default)]
     pub jobs: u32,
 }

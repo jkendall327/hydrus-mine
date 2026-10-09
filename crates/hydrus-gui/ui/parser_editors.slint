@@ -12,6 +12,8 @@ export component ParserListWindow inherits Window {
     in property <[TableRow]> api-rows;
     callback api-sort(int,bool);
     in property <string> title-suffix: "";
+    // the title as composed, for tests and the platform
+    out property <string> composed-title: root.title;
     title: (root.links ? "url class links" : "parsers") + root.title-suffix;
     preferred-width: 1000px; preferred-height: 580px;
     background: Theme.window;
@@ -76,6 +78,8 @@ export component ParserEditWindow inherits Window {
     in property <string> own-separator;
     in-out property <bool> own-sorted;
     in property <string> title-suffix: "";
+    // the title as composed, for tests and the platform
+    out property <string> composed-title: root.title;
     title: (root.subsidiary ? "edit sub page parser" : root.page ? "edit page parser" : "edit content parser") + root.title-suffix;
     preferred-width: 1000px; preferred-height: 780px;
     background: Theme.window;
@@ -245,6 +249,8 @@ export component ParserEditWindow inherits Window {
 export component ParserPickerWindow inherits Window {
     in property <string> window-title;
     in property <string> title-suffix: "";
+    // the title as composed, for tests and the platform
+    out property <string> composed-title: root.title;
     title: (root.window-title) + root.title-suffix;
     preferred-width: 540px; preferred-height: 380px;
     background: Theme.window;

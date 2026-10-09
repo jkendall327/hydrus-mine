@@ -92,6 +92,8 @@ export component Asking inherits Rectangle {
 export component SubscriptionGalleryWindow inherits Window {
     in property <string> window-title: "select gallery";
     in property <string> title-suffix: "";
+    // the title as composed, for tests and the platform
+    out property <string> composed-title: root.title;
     title: (root.window-title) + root.title-suffix;
     preferred-width: 420px;
     preferred-height: root.message == "" ? 320px : 180px;
@@ -151,6 +153,8 @@ export component SubscriptionGalleryWindow inherits Window {
 export component SubscriptionsWindow inherits Window {
     in property <string> window-title: "manage subscriptions";
     in property <string> title-suffix: "";
+    // the title as composed, for tests and the platform
+    out property <string> composed-title: root.title;
     title: (root.window-title) + root.title-suffix;
     preferred-width: 1180px;
     preferred-height: 560px;

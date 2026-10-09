@@ -3,6 +3,8 @@ import { Theme } from "theme.slint";
 import { TableRow, ListTable } from "list_table.slint";
 export component RelatedWeightsWindow inherits Window {
     in property <string> title-suffix: "";
+    // the title as composed, for tests and the platform
+    out property <string> composed-title: root.title;
     title:("related tag weights") + root.title-suffix; width:650px; height:520px; background:Theme.window;
     in property <[TableRow]> rows;
     in property <bool> result;

@@ -4,6 +4,8 @@ import { Theme } from "theme.slint";
 export component NetworkDataWindow inherits Window {
     in property <string> window-title;
     in property <string> title-suffix: "";
+    // the title as composed, for tests and the platform
+    out property <string> composed-title: root.title;
     title: (root.window-title) + root.title-suffix; width: 1100px; height: 620px; background: Theme.window;
     in property <[TableColumn]> columns; in property <[TableRow]> rows;
     in property <bool> browser; in property <bool> cookies; in property <bool> editing;
@@ -54,7 +56,9 @@ export component NetworkDataWindow inherits Window {
 }
 export component EditNetworkValueWindow inherits Window {
     in property <string> title-suffix: "";
-    in property <string> window-title; title: root.window-title; width: 680px; height: 560px; background: Theme.window;
+    // the title as composed, for tests and the platform
+    out property <string> composed-title: root.title;
+    in property <string> window-title; title: root.window-title + root.title-suffix; width: 680px; height: 560px; background: Theme.window;
     in property <bool> cookie; in property <bool> session-only;
     in-out property <bool> global; in-out property <bool> session-cookie; in-out property <bool> secure;
     in-out property <string> name; in-out property <string> value; in-out property <string> domain; in-out property <string> path;
@@ -98,6 +102,8 @@ export component EditNetworkValueWindow inherits Window {
 
 export component CookieImportWindow inherits Window {
     in property <string> title-suffix: "";
+    // the title as composed, for tests and the platform
+    out property <string> composed-title: root.title;
     title: ("import cookies") + root.title-suffix; width: 700px; height: 350px; background: Theme.window;
     in property <string> message; in property <bool> choosing;
     in property <string> matching-label;
@@ -119,6 +125,8 @@ export component CookieImportWindow inherits Window {
 
 export component HeaderApprovalWindow inherits Window {
     in property <string> title-suffix: "";
+    // the title as composed, for tests and the platform
+    out property <string> composed-title: root.title;
     title: ("custom HTTP header approval") + root.title-suffix; width: 700px; height: 360px; background: Theme.window;
     in property <string> question; in property <string> error; in property <bool> busy;
     callback answer(bool); callback later();

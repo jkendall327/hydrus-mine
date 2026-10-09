@@ -2,6 +2,8 @@ import { Button, LineEdit, TextEdit } from "std-widgets.slint";
 import { Theme } from "theme.slint";
 export component LoginTestResultWindow inherits Window {
     in property <string> title-suffix: "";
+    // the title as composed, for tests and the platform
+    out property <string> composed-title: root.title;
     title: ("login test result") + root.title-suffix;
     preferred-width: 900px; preferred-height: 650px;
     background: Theme.window;

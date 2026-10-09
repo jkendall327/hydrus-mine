@@ -5,6 +5,8 @@ export component TagDisplayWindow inherits Window {
     in property <bool> application;
     in property <bool> child-open;
     in property <string> title-suffix: "";
+    // the title as composed, for tests and the platform
+    out property <string> composed-title: root.title;
     title: (root.application ? "manage where tag siblings and parents apply" : "display/search") + root.title-suffix;
     preferred-width: 820px; preferred-height: 660px; background: Theme.window;
     in property <[string]> services;

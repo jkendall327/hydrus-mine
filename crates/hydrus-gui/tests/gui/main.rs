@@ -121,6 +121,7 @@ mod simple_downloader;
 mod simple_formulae_list;
 mod slideshow;
 mod status_app_busy;
+mod window_titles;
 mod status_bar;
 mod still;
 mod subscriptions;

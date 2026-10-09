@@ -473,7 +473,7 @@ fn a_download_is_published_as_it_goes_and_can_be_cancelled() {
     let said = loop {
         let said: hydrus_store::live::DaemonLive = store.read(settings::get).unwrap();
         // (at least what the job had read, as the download goes on)
-        if said.bytes >= job.bytes_read && said.speed > 0 {
+        if said.bytes >= job.bytes_read && said.speed > 0 && said.jobs > 0 {
             break said;
         }
         assert!(
@@ -483,6 +483,8 @@ fn a_download_is_published_as_it_goes_and_can_be_cancelled() {
         std::thread::sleep(Duration::from_millis(100));
     };
     assert!(said.started <= said.at);
+    // (one queue is running: what the status bar's application-busy field counts)
+    assert_eq!(said.jobs, 1, "{said:?}");
     // cancelled as its page's button asks: the file ends vetoed, as the
     // reference notes it
     store
@@ -509,6 +511,16 @@ fn a_download_is_published_as_it_goes_and_can_be_cancelled() {
             "{:?}",
             live_of(queue)
         );
+        std::thread::sleep(Duration::from_millis(100));
+    }
+    // and the queue no longer counts as running
+    let started = Instant::now();
+    loop {
+        let said: hydrus_store::live::DaemonLive = store.read(settings::get).unwrap();
+        if said.jobs == 0 {
+            break;
+        }
+        assert!(started.elapsed() < Duration::from_secs(10), "{said:?}");
         std::thread::sleep(Duration::from_millis(100));
     }
     drop(serving.0.stdin.take());

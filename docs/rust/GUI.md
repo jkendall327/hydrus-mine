@@ -5257,12 +5257,12 @@ machine-dependent labels ("(you appear to have 4 cores)", "(about 36 frames
 of 720p video)") as well as control labels, and a paragraph is a row of text
 on its page that is highlighted when chosen. Every secondary window's title
 ends with " - {application display name} {version}" (File > Options >
-gui > Application display name); windows opened after the name is changed
-have the new one.
+gui > Application display name); changing the name retitles the windows that
+are open.
 
 ### Status bar: application busy
 
 A field after "idle" says "working" or "busy" while background jobs run (the
-daemon's downloader queues and the client's maintenance passes: above 3 and
+daemon's downloads in flight and the client's maintenance passes: above 3 and
 above 8), with the tooltip "There were N threads doing jobs at last check."
 It looks every ten seconds.

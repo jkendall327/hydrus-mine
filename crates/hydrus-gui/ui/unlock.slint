@@ -6,6 +6,8 @@ import { Theme } from "theme.slint";
 
 export component UnlockWindow inherits Window {
     in property <string> title-suffix: "";
+    // the title as composed, for tests and the platform
+    out property <string> composed-title: root.title;
     title: ("hydrus client") + root.title-suffix;
     preferred-width: 360px;
     background: Theme.window;

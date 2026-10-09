@@ -1,46 +1,99 @@
 {
+ "about": "What the options search of hydrus-rs and the reference's (options_dialog.json) still differ by, each with why; the test compares both lists exactly, so a new difference fails it.",
  "missing": [
-  "4 x    (file viewing statistics)",
-  "1 x Favourite file lookup script:  (tag suggestions)",
-  "1 x Hey, there are several custom widget colours that can be ove",
-  "1 x Preferred audio output device: (media playback)",
-  "1 x Qt style: (style)",
-  "1 x Qt stylesheet: (style)",
-  "1 x Set up your common templates here. You can easily load these",
-  "1 x TEST: run the curl_cffi test with this browser definition: (",
-  "1 x Tag service:  (tag suggestions)",
-  "1 x The current styles are what your Qt has available, the style",
-  "1 x This is what your downloaders will use when you do not overr",
-  "1 x This panel is advanced! The default settings are fine, so if",
-  "1 x This simply saves the last n tags you have added for each se",
-  "1 x You can also set special rules just for particular sites. Ta",
-  "1 x adjust scores by suggested tags (tag suggestions)",
-  "1 x chapter (file sort/collect)",
-  "1 x default import options (import options)",
-  "1 x do not run the test (connection)",
-  "1 x do not show (tag suggestions)",
-  "1 x downloader tags (tag suggestions)",
-  "1 x favourites (ratings)",
-  "1 x favourites/profiles (import options)",
-  "1 x help for this panel --> (external programs)",
-  "1 x help for this panel --> (import options)",
-  "1 x keep this panel simple :^) (import options)",
-  "1 x no file lookup scripts in this client (tag suggestions)",
-  "1 x number of recent tags to show in quick entry dialogs:  (tag ",
-  "1 x url class import options (import options)",
-  "1 x use default (\"fusion\") (style)",
-  "1 x use default (style)"
+  {
+   "entry": "4 x    (file viewing statistics)",
+   "reason": "blank spacer labels of the reference's viewing statistics time controls (three spaces each); nothing to find"
+  },
+  {
+   "entry": "1 x Favourite file lookup script:  (tag suggestions)",
+   "reason": "file lookup scripts are out of scope (owner, 2026-10-09)"
+  },
+  {
+   "entry": "1 x Hey, there are several custom widget colours that can be ove",
+   "reason": "Qt's style page (styles and stylesheets) has no counterpart"
+  },
+  {
+   "entry": "1 x Preferred audio output device: (media playback)",
+   "reason": "the QtMediaPlayer box's device chooser; Qt's media player is out of scope"
+  },
+  {
+   "entry": "1 x Qt style: (style)",
+   "reason": "Qt's style page (styles and stylesheets) has no counterpart"
+  },
+  {
+   "entry": "1 x Qt stylesheet: (style)",
+   "reason": "Qt's style page (styles and stylesheets) has no counterpart"
+  },
+  {
+   "entry": "1 x TEST: run the curl_cffi test with this browser definition: (",
+   "reason": "the curl_cffi test control (a Python library switch) has no counterpart"
+  },
+  {
+   "entry": "1 x The current styles are what your Qt has available, the style",
+   "reason": "Qt's style page (styles and stylesheets) has no counterpart"
+  },
+  {
+   "entry": "1 x chapter (file sort/collect)",
+   "reason": "the current text of the namespace dropdown of the reference's collect control, from its namespace defaults; the native collect control has no such dropdown"
+  },
+  {
+   "entry": "1 x do not run the test (connection)",
+   "reason": "the curl_cffi test control (a Python library switch) has no counterpart"
+  },
+  {
+   "entry": "1 x no file lookup scripts in this client (tag suggestions)",
+   "reason": "file lookup scripts are out of scope (owner, 2026-10-09)"
+  },
+  {
+   "entry": "1 x use default (\"fusion\") (style)",
+   "reason": "Qt's style page (styles and stylesheets) has no counterpart"
+  },
+  {
+   "entry": "1 x use default (style)",
+   "reason": "Qt's style page (styles and stylesheets) has no counterpart"
+  }
  ],
  "extra": [
-  "3 x days (downloading)",
-  "1 x days (maintenance and processing)",
-  "2 x days (speed and memory)",
-  "3 x hours (downloading)",
-  "1 x hours (maintenance and processing)",
-  "3 x hours (speed and memory)",
-  "3 x minutes (downloading)",
-  "1 x minutes (maintenance and processing)",
-  "3 x minutes (speed and memory)",
-  "3 x seconds (downloading)"
+  {
+   "entry": "3 x days (downloading)",
+   "reason": "native time controls list days, hours, minutes and seconds where the reference's widgets for these controls show fewer unit labels"
+  },
+  {
+   "entry": "1 x days (maintenance and processing)",
+   "reason": "native time controls list days, hours, minutes and seconds where the reference's widgets for these controls show fewer unit labels"
+  },
+  {
+   "entry": "2 x days (speed and memory)",
+   "reason": "native time controls list days, hours, minutes and seconds where the reference's widgets for these controls show fewer unit labels"
+  },
+  {
+   "entry": "3 x hours (downloading)",
+   "reason": "native time controls list days, hours, minutes and seconds where the reference's widgets for these controls show fewer unit labels"
+  },
+  {
+   "entry": "1 x hours (maintenance and processing)",
+   "reason": "native time controls list days, hours, minutes and seconds where the reference's widgets for these controls show fewer unit labels"
+  },
+  {
+   "entry": "3 x hours (speed and memory)",
+   "reason": "native time controls list days, hours, minutes and seconds where the reference's widgets for these controls show fewer unit labels"
+  },
+  {
+   "entry": "3 x minutes (downloading)",
+   "reason": "native time controls list days, hours, minutes and seconds where the reference's widgets for these controls show fewer unit labels"
+  },
+  {
+   "entry": "1 x minutes (maintenance and processing)",
+   "reason": "native time controls list days, hours, minutes and seconds where the reference's widgets for these controls show fewer unit labels"
+  },
+  {
+   "entry": "3 x minutes (speed and memory)",
+   "reason": "native time controls list days, hours, minutes and seconds where the reference's widgets for these controls show fewer unit labels"
+  },
+  {
+   "entry": "3 x seconds (downloading)",
+   "reason": "native time controls list days, hours, minutes and seconds where the reference's widgets for these controls show fewer unit labels"
+  }
  ]
 }

@@ -5,6 +5,8 @@ import { ListTable, TableRow } from "list_table.slint";
 
 export component VacuumReviewWindow inherits Window {
     in property <string> title-suffix: "";
+    // the title as composed, for tests and the platform
+    out property <string> composed-title: root.title;
     title: ("review vacuum data") + root.title-suffix;
     preferred-width: 980px;
     preferred-height: 420px;

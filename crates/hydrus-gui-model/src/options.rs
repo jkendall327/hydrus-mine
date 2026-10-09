@@ -5038,12 +5038,17 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                     ),
                     tab(
                         "recent",
-                        vec![noneable(
-                            RECENT_TAGS_MESSAGE,
-                            none("do not show", 20, (1, 1_000_000), None),
-                            |s| s.tag_suggestions.recent_limit.map(|n| n as i64),
-                            |s, v| s.tag_suggestions.recent_limit = v.map(|n| n as usize),
-                        )],
+                        vec![
+                            note(
+                                "This simply saves the last n tags you have added for each service.",
+                            ),
+                            noneable(
+                                RECENT_TAGS_MESSAGE,
+                                none("do not show", 20, (1, 1_000_000), None),
+                                |s| s.tag_suggestions.recent_limit.map(|n| n as i64),
+                                |s, v| s.tag_suggestions.recent_limit = v.map(|n| n as usize),
+                            ),
+                        ],
                     ),
                 ],
             )],
@@ -5405,6 +5410,64 @@ pub struct Environment {
     pub thumbnail_bounds: (u32, u32),
 }
 
+/// Entries the reference's search has for widgets hydrus-rs draws elsewhere
+/// (in a child window, or as one control): the page the reference lists them
+/// under, the text, and the option the search goes to instead.
+const SEARCH_ONLY: &[(&str, &str, fn(&Opt) -> bool)] = &[
+    ("import options", "help for this panel -->", |k| {
+        matches!(k.kind, Kind::ImportOptions)
+    }),
+    ("import options", "keep this panel simple :^)", |k| {
+        matches!(k.kind, Kind::ImportOptions)
+    }),
+    ("import options", "default import options", |k| {
+        matches!(k.kind, Kind::ImportOptions)
+    }),
+    (
+        "import options",
+        "This is what your downloaders will use when you do not override the settings on the specific importer. The override each other in a certain stacked order. You should set these up to be what you generally want for each context. Keep it simple and try for global before anything else!",
+        |k| matches!(k.kind, Kind::ImportOptions),
+    ),
+    ("import options", "url class import options", |k| {
+        matches!(k.kind, Kind::ImportOptions)
+    }),
+    (
+        "import options",
+        "You can also set special rules just for particular sites. Tag filtering can make sense here, but do not get lost in the weeds. If you are not sure which URL Class applies, just set what you want on one and copy/paste spam to the others on the same domain.",
+        |k| matches!(k.kind, Kind::ImportOptions),
+    ),
+    ("import options", "favourites/profiles", |k| {
+        matches!(k.kind, Kind::ImportOptions)
+    }),
+    (
+        "import options",
+        "Set up your common templates here. You can easily load these specific options anywhere you see the star icon or on the little down arrow beside any \"import options\" button in an importer panel. If you do a manual import once a month that needs to go to a particular local file domain or follow certain filtering rules, do not re-make it every time: set it up here and give it a good name.",
+        |k| matches!(k.kind, Kind::ImportOptions),
+    ),
+    (
+        "import options",
+        "This panel is advanced! The default settings are fine, so if you are not sure what is going on, hold off or check the help.",
+        |k| matches!(k.kind, Kind::ImportOptions),
+    ),
+    ("external programs", "help for this panel -->", |k| {
+        matches!(k.kind, Kind::ExternalCalls)
+    }),
+    ("tag suggestions", "adjust scores by suggested tags", |k| {
+        matches!(k.kind, Kind::RelatedWeights)
+    }),
+    ("tag suggestions", "Tag service: ", |k| {
+        matches!(k.kind, Kind::MostUsedTags)
+    }),
+    (
+        "tag suggestions",
+        "number of recent tags to show in quick entry dialogs: ",
+        |k| k.label == RECENT_TAGS_MESSAGE,
+    ),
+    ("tag suggestions", "do not show", |k| {
+        k.label == RECENT_TAGS_MESSAGE
+    }),
+];
+
 /// Searchable auxiliary labels and current combo values, captured on opening as
 /// the reference captures its widget text when building its completer.
 pub fn suggestions_with_values(pages: &[Page], values: &[Vec<Value>]) -> Vec<Suggestion> {
@@ -5473,6 +5536,26 @@ pub fn suggestions_with_values(pages: &[Page], values: &[Vec<Value>]) -> Vec<Sug
                     page: page_index,
                     row,
                 });
+            }
+        }
+    }
+    for (display, text, anchor) in SEARCH_ONLY {
+        'pages: for (page_index, page) in pages.iter().enumerate() {
+            let mut row = 0;
+            let mut rows = Vec::new();
+            walk(&page.items, &mut rows);
+            for item in rows {
+                if let Item::Opt(option) = item
+                    && anchor(option)
+                {
+                    out.push(Suggestion {
+                        text: format!("{text} ({display})"),
+                        page: page_index,
+                        row,
+                    });
+                    break 'pages;
+                }
+                row += 1;
             }
         }
     }
@@ -5562,6 +5645,39 @@ impl Editor {
     pub fn resolve_tag_services(&mut self, store: &hydrus_store::Store) {
         for (page_index, page) in self.pages.iter().enumerate() {
             for (option, value) in page.options().iter().zip(&mut self.values[page_index]) {
+                // the service a control shows when it opens: the most used
+                // tags child's first, the ratings page's style service
+                let shown = match (&option.kind, &*value) {
+                    (Kind::MostUsedTags, _) => tag_service_choices(store, false)
+                        .into_iter()
+                        .next()
+                        .map(|(_, name)| name),
+                    (Kind::RatingStyle, Value::TagService(key)) => {
+                        let choices = rating_style_choices(store);
+                        choices
+                            .iter()
+                            .find(|(service, _)| service == key)
+                            .or_else(|| choices.first())
+                            .map(|(_, name)| name.clone())
+                    }
+                    _ => None,
+                };
+                if let Some(name) = shown {
+                    let label = format!("{} ({})", option.label, page.name);
+                    if let Some(row) = self
+                        .suggestions
+                        .iter()
+                        .find(|suggestion| suggestion.text == label)
+                        .map(|suggestion| suggestion.row)
+                    {
+                        self.suggestions.push(Suggestion {
+                            text: format!("{name} ({})", page.name),
+                            page: page_index,
+                            row,
+                        });
+                    }
+                    continue;
+                }
                 let (Kind::TagService { combined }, Value::TagService(key)) = (&option.kind, value)
                 else {
                     continue;

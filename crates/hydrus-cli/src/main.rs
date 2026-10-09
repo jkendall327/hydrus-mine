@@ -767,7 +767,10 @@ fn run_server(dir: &Path, port: Option<u16>, bind: Option<IpAddr>, attached: boo
                         bytes,
                         speed,
                         at,
-                        jobs: u32::try_from(queues.len()).unwrap_or(u32::MAX),
+                        jobs: queues
+                            .iter()
+                            .map(|(_, live)| live.jobs_in_flight())
+                            .sum(),
                     };
                     let stale = said.is_none_or(|s| {
                         (s.started, s.bytes, s.speed, s.jobs)

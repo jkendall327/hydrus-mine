@@ -6,6 +6,8 @@ import { Theme } from "theme.slint";
 export struct MonthlyBandwidthBar { month: string, usage: string, fraction: float }
 export component BandwidthWindow inherits Window {
     in property <string> title-suffix: "";
+    // the title as composed, for tests and the platform
+    out property <string> composed-title: root.title;
     title: ("review bandwidth usage and edit rules") + root.title-suffix;
     width: 1120px;
     height: 720px;
@@ -101,6 +103,8 @@ export component BandwidthWindow inherits Window {
 export component EditBandwidthRulesWindow inherits Window {
     in property <string> window-title;
     in property <string> title-suffix: "";
+    // the title as composed, for tests and the platform
+    out property <string> composed-title: root.title;
     title: (root.window-title) + root.title-suffix;
     width: 670px;
     height: 460px;
@@ -152,6 +156,8 @@ export component EditBandwidthRulesWindow inherits Window {
 
 export component NetworkJobsWindow inherits Window {
     in property <string> title-suffix: "";
+    // the title as composed, for tests and the platform
+    out property <string> composed-title: root.title;
     title: ("review current network jobs") + root.title-suffix;
     width: 1100px;
     height: 590px;

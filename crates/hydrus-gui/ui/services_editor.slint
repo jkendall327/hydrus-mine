@@ -71,6 +71,8 @@ component RatingExamplePanel inherits VerticalBox {
 export component ServicesEditorWindow inherits Window {
     in property <string> window-title: "edit services";
     in property <string> title-suffix: "";
+    // the title as composed, for tests and the platform
+    out property <string> composed-title: root.title;
     title: (root.window-title) + root.title-suffix;
     width: 800px; height: 520px; background: Theme.window;
     in property <[TableColumn]> columns;
@@ -121,6 +123,8 @@ export component ServicesEditorWindow inherits Window {
 export component EditServiceWindow inherits Window {
     in property <string> window-title: "edit service";
     in property <string> title-suffix: "";
+    // the title as composed, for tests and the platform
+    out property <string> composed-title: root.title;
     title: (root.window-title) + root.title-suffix;
     // Initial dimensions are preferences; live layout must depend on the
     // window's actual geometry after native Resize events.

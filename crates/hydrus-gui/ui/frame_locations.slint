@@ -39,6 +39,8 @@ export component FrameLocationsTable inherits Rectangle {
 }
 export component FrameLocationWindow inherits Window {
     in property <string> title-suffix: "";
+    // the title as composed, for tests and the platform
+    out property <string> composed-title: root.title;
     title:("set frame location information") + root.title-suffix;
     width:720px;height:470px;
     in property <string> message;

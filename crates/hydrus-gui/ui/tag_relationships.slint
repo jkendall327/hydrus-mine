@@ -19,6 +19,8 @@ export component TagRelationshipsWindow inherits Window {
 
     in property <bool> siblings;
     in property <string> title-suffix: "";
+    // the title as composed, for tests and the platform
+    out property <string> composed-title: root.title;
     title: (root.siblings ? "manage tag siblings" : "manage tag parents") + root.title-suffix;
     preferred-width: 850px;
     preferred-height: 660px;

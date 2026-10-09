@@ -11,6 +11,8 @@ import { Theme } from "theme.slint";
 export component DatabaseLocationsWindow inherits Window {
     in property <string> window-title: "database locations";
     in property <string> title-suffix: "";
+    // the title as composed, for tests and the platform
+    out property <string> composed-title: root.title;
     title: (root.window-title) + root.title-suffix;
     preferred-width: 980px;
     preferred-height: 520px;
@@ -120,6 +122,8 @@ export component DatabaseLocationsWindow inherits Window {
 export component LocationMaxSizeWindow inherits Window {
     in property <string> window-title: "edit max size";
     in property <string> title-suffix: "";
+    // the title as composed, for tests and the platform
+    out property <string> composed-title: root.title;
     title: (root.window-title) + root.title-suffix;
     preferred-width: 520px;
     background: Theme.window;
@@ -153,6 +157,8 @@ export component LocationMaxSizeWindow inherits Window {
 export component GranularityWindow inherits Window {
     in property <string> window-title: "manage granularity";
     in property <string> title-suffix: "";
+    // the title as composed, for tests and the platform
+    out property <string> composed-title: root.title;
     title: (root.window-title) + root.title-suffix;
     preferred-width: 640px;
     background: Theme.window;

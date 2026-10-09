@@ -4451,25 +4451,28 @@ directory.
   hydrus-rs, with the one domain. The remote-repository case of the question
   has no counterpart (no remote file services).
 - **Options search (`audit-options-options-search`).** The search offers
-  705 of the reference's 738 entries (`oracle/fixtures/options_dialog.json`),
-  and 23 more. The index now has the reference's help paragraphs (drawn as
-  text rows on the pages, in their boxes), the labels inside the compound
-  editors, the byte controls' unit, and the labels it computes from the
-  machine (the core count; how many thumbnails, screens and 720p frames a
-  cache holds; the prefetch check), captured when the window opens. The test
-  compares the whole list and pins the rest in
+  722 of the reference's 738 entries (`oracle/fixtures/options_dialog.json`),
+  and 23 more. The index has the reference's help paragraphs (drawn as text
+  rows on the pages, in their boxes), the labels inside the compound editors,
+  the byte controls' unit, the labels it computes from the machine (the core
+  count; how many thumbnails, screens and 720p frames a cache holds; the
+  prefetch check) and the service a control shows when it opens, captured when
+  the window opens. Entries for widgets hydrus-rs draws elsewhere go to the
+  nearest control: the import options page's labels to the import options
+  button (the manager is its own window), "help for this panel -->" to the
+  external calls row, the most used tags child's "Tag service:" to its button,
+  and the reference's second recent-tags count to the recent tags row (it has
+  no second control here). The test compares the whole list and pins what is
+  left, each with its reason, in
   `oracle/fixtures/options_search_known_differences.json`:
-  - the entries of pages hydrus-rs does not have as pages: **import options**
-    (its own window), **style** (Qt styles and stylesheets) and the Qt-only
-    "Preferred audio output device" of the QtMediaPlayer box;
-  - the "help for this panel -->" links (no help button here), the
-    "TEST: run the curl_cffi test..." control, and the four blank "   "
-    labels of the viewing statistics time controls;
-  - the tag suggestions page's labels where native words them differently
-    (recent tags, file lookup scripts, the notebook's service choice), the
-    ratings page's "favourites" and a sort control's current "chapter";
+  - Qt's style page (styles and stylesheets) and the Qt media player's device
+    chooser;
+  - the file lookup scripts (out of scope), and the curl_cffi test control;
+  - the current text of the collect control's namespace dropdown ("chapter"),
+    which the native collect control does not have;
+  - four blank labels of the viewing statistics time controls;
   - **extra** entries: native time controls list days, hours, minutes and
-    seconds where the reference's widgets for those controls offer fewer.
+    seconds where the reference's widgets for those controls show fewer units.
   The native window has no collapsible boxes or inner tabs (they are
   flattened into headings), so choosing a result needs no expanding. A
   paragraph of help is a row of its own and is highlighted when chosen. The
@@ -4479,19 +4482,19 @@ directory.
 - **Application display name on every window
   (`audit-options-gui-main-window-application-display-name`).** Every
   secondary window's title ends " - {name} {version}", as Qt appends the
-  display name (and its version, here hydrus-rs's) to each window title.
-  Windows already open keep the suffix they were made with when the name is
-  changed in Options (Qt updates them at once). A window whose title is empty
-  would show only the name in Qt; here it shows " - {name} {version}". Qt's
-  composition happens in the platform plugin, so it cannot be recorded; the
-  test checks the suffix each window is made with, with the recorded names.
+  display name (and its version, here hydrus-rs's) to each window title, and
+  changing the name in Options retitles the windows already open
+  (`UpdateAppDisplayName`). A window whose title is empty would show only the
+  name in Qt; here it shows " - {name} {version}". Qt composes the title in
+  the platform plugin, so the " - " form cannot be recorded offscreen; the
+  tests read the composed title of several windows of different files.
 - **Status bar activity (`audit-options-status-activity`).** Idle and CPU
   busy have the reference's tooltips. The **application-busy** field uses the
   reference's wording and thresholds ("working" above 3 jobs, "busy" above 8,
   looked at most every ten seconds, tooltip "There were N threads doing jobs
-  at last check.") but counts hydrus-rs's own work: the daemon's running
-  downloader queues (what it last said, if within ten seconds) plus the
-  client's running maintenance passes, not Python threads. The **database**
+  at last check.") but counts hydrus-rs's own work: the daemon's downloads in
+  flight (files and gallery pages, as it last said, if within ten seconds)
+  plus the client's running maintenance passes, not Python threads. The **database**
   field says "db writing" or "db reading" while this window's connection is
   busy (the daemon is another process, so its work is not shown); there are
   no job names, so no "current db job" tooltip.

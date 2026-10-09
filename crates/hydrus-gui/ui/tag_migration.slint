@@ -2,6 +2,8 @@ import { Button, CheckBox, ComboBox, LineEdit, VerticalBox, HorizontalBox } from
 import { Theme } from "theme.slint";
 export component TagMigrationWindow inherits Window {
     in property <string> title-suffix: "";
+    // the title as composed, for tests and the platform
+    out property <string> composed-title: root.title;
     title: ("migrate tags") + root.title-suffix;
     width: 760px; height: 780px;
     background: Theme.window;
@@ -113,6 +115,8 @@ export component TagMigrationWindow inherits Window {
 
 export component TagMigrationProgressWindow inherits Window {
     in property <string> title-suffix: "";
+    // the title as composed, for tests and the platform
+    out property <string> composed-title: root.title;
     title: ("tag migration") + root.title-suffix;
     width: 500px; height: 190px;
     background: Theme.window;

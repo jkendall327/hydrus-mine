@@ -4,6 +4,8 @@ import { ListTable, TableRow } from "list_table.slint";
 
 export component FileMaintenanceWindow inherits Window {
     in property <string> title-suffix: "";
+    // the title as composed, for tests and the platform
+    out property <string> composed-title: root.title;
     title: ("file maintenance") + root.title-suffix;
     preferred-width: 950px;
     preferred-height: 480px;

@@ -39,6 +39,8 @@ component TitledBox inherits Rectangle {
 export component ManageTimesWindow inherits Window {
     in property <string> window-title: "manage times";
     in property <string> title-suffix: "";
+    // the title as composed, for tests and the platform
+    out property <string> composed-title: root.title;
     title: (root.window-title) + root.title-suffix;
     preferred-width: 720px;
     preferred-height: 620px;
@@ -251,6 +253,8 @@ export component ManageTimesWindow inherits Window {
 // paste and now.
 export component DateTimeEditorWindow inherits Window {
     in property <string> title-suffix: "";
+    // the title as composed, for tests and the platform
+    out property <string> composed-title: root.title;
     title: ("edit datetime") + root.title-suffix;
     preferred-width: 420px;
     background: Theme.window;

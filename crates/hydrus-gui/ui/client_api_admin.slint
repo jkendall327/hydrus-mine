@@ -4,6 +4,8 @@ import { Theme } from "theme.slint";
 export struct ApiPermissionRow { code:int, label:string, checked:bool }
 export component ClientApiKeysWindow inherits Window {
     in property <string> title-suffix: "";
+    // the title as composed, for tests and the platform
+    out property <string> composed-title: root.title;
     title: ("client api access keys") + root.title-suffix; width: 1000px; height: 560px; background: Theme.window;
     in property <[TableColumn]> columns;
     in property <[TableRow]> rows;
@@ -60,6 +62,8 @@ export component ClientApiKeysWindow inherits Window {
 }
 export component EditApiPermissionsWindow inherits Window {
     in property <string> title-suffix: "";
+    // the title as composed, for tests and the platform
+    out property <string> composed-title: root.title;
     title: ("edit api access permissions") + root.title-suffix; width: 720px; height: 740px; background: Theme.window;
     in-out property <string> access-key;
     in-out property <string> name;
@@ -119,6 +123,8 @@ export component EditApiPermissionsWindow inherits Window {
 // "waiting for API access permissions request" (`CaptureAPIAccessPermissionsRequestPanel`)
 export component ApiRequestWindow inherits Window {
     in property <string> title-suffix: "";
+    // the title as composed, for tests and the platform
+    out property <string> composed-title: root.title;
     title: ("waiting for API access permissions request") + root.title-suffix; width: 480px; height: 140px; background: Theme.window;
     in property <string> text: "waiting for request…";
     callback cancel-clicked();

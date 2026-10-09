@@ -2,6 +2,8 @@ import { Button, CheckBox, LineEdit, SpinBox } from "std-widgets.slint";
 import { Theme } from "theme.slint";
 export component IncrementalTaggingWindow inherits Window {
     in property <string> title-suffix: "";
+    // the title as composed, for tests and the platform
+    out property <string> composed-title: root.title;
     title: ("Incremental Tagging") + root.title-suffix;
     preferred-width: 640px; preferred-height: 420px;
     background: Theme.window;

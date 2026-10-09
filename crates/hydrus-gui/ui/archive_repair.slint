@@ -26,6 +26,8 @@ component RepairAction inherits Rectangle {
 export component ArchiveRepairWindow inherits Window {
     in property <string> window-title: "missing archive times work";
     in property <string> title-suffix: "";
+    // the title as composed, for tests and the platform
+    out property <string> composed-title: root.title;
     title: (root.window-title) + root.title-suffix;
     preferred-width: 680px; preferred-height: 480px; background: Theme.window;
     in property <int> phase;

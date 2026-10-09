@@ -9598,7 +9598,7 @@
     "date": "2026-10-09",
     "class": "source-restated",
     "by": "Claude, options-shell-followups",
-    "note": "tests/gui/options_window.rs gui_identity_and_exit_confirmation_reach_the_main_window applies each recorded display name (gui_settings.json) and checks the main title and that the next secondary window (Options) is made with ' - {name} {version}' while an open one keeps its own. Qt composes the title in the platform plugin, so the ' - ' form is from Qt's documentation, not a recording."
+    "note": "tests/gui/options_window.rs gui_identity_and_exit_confirmation_reach_the_main_window applies each recorded display name (gui_settings.json) and checks the main title, that the window just applied and the next Options window carry ' - {name} {version}' (and the composed title); tests/gui/window_titles.rs reads the composed title of windows of different files and that changing the name retitles open ones, as UpdateAppDisplayName does. Qt composes the title in the platform plugin, so the ' - ' form is from Qt's documentation, not a recording."
    }
   },
   {
@@ -16486,7 +16486,7 @@
     "date": "2026-10-09",
     "class": "source-restated",
     "by": "Claude, options-shell-followups",
-    "note": "tests/model/options_dialog.rs compares the whole index the Editor builds (with a machine of four cores and an 800x800 screen, as recorded) with the 738 entries of options_dialog.json; the residual (import options, style and Qt-only entries, links, differently worded tag suggestions labels, extra time units) is pinned in options_search_known_differences.json and DIFFERENCES.md. tests/gui/options_search_notes.rs searches in the real options window for a paragraph, a computed label and a unit and checks the page and highlighted row. The page-level choice of inner tab / box expansion has no native counterpart."
+    "note": "tests/model/options_dialog.rs compares the whole index the Editor builds (a machine of four cores and an 800x800 screen, as recorded) with the 738 entries of options_dialog.json and pins what is left, each with its reason, in options_search_known_differences.json: Qt's style page and the Qt media player device chooser, file lookup scripts (out of scope), the curl_cffi test control, the collect dropdown's current text ('chapter'), four blank labels, and 23 extra time-unit labels. Entries for widgets drawn elsewhere (import options page, the external calls help link, the most used tags service, the second recent-tags count) go to the nearest control, which is not where the reference puts them. tests/gui/options_search_notes.rs searches in the real options window for a paragraph, a computed label and a unit and checks the page and highlighted row. Inner-tab / box expansion has no native counterpart."
    }
   },
   {
@@ -20563,7 +20563,7 @@
     "date": "2026-10-09",
     "class": "source-restated",
     "by": "Claude, options-shell-followups",
-    "note": "tests/gui/status_app_busy.rs drives the real status bar through the maintenance poll with held time: the app-busy thresholds (3/8), the ten-second look, the tooltip and a stale daemon; and a store write in flight shows 'db writing'. Idle and CPU-busy tooltips are asserted in options_system_consumers.rs. Expected values restate the reference's ClientGUI._RefreshStatusBar and HydrusThreading.GetThreadPoolBusyStatus; the counted jobs are hydrus-rs's (DIFFERENCES.md)."
+    "note": "tests/gui/status_app_busy.rs drives the real status bar through the maintenance poll with held time: the app-busy thresholds (3/8), the ten-second look (strictly more than ten seconds, at 11), the tooltip, a stale daemon, a real client maintenance pass counted while it runs (a held writer keeps it in flight), and 'db writing' while a store write is in flight. hydrus-cli tests/serve.rs checks that the real daemon publishes jobs while a real download is in flight and 0 after it is cancelled. Idle and CPU-busy tooltips are asserted in options_system_consumers.rs. Expected values restate the reference's ClientGUI._RefreshStatusBar and HydrusThreading.GetThreadPoolBusyStatus; the counted jobs are hydrus-rs's (DIFFERENCES.md). The GUI reads the daemon's count from the store, which the status tests write directly."
    }
   },
   {
