@@ -673,10 +673,14 @@ fn potential_network(rows: &[PairRow], start: [HashId; 2]) -> HashSet<HashId> {
 static PINNED_GROUP_CHOICE: std::sync::atomic::AtomicBool =
     std::sync::atomic::AtomicBool::new(false);
 
-/// Pin [`random_potential_group`]'s pick to the group of the lowest pair (by
-/// its files' ids), for tests replaying recordings whose reference picks were
-/// pinned the same way. A pinned pick is one a random pick could make, so
-/// other tests are unaffected.
+/// Pin [`random_potential_group`]'s pick to the group of the lowest pair
+/// (by its two kings' hash ids), so a test can replay a recording whose
+/// reference pick was pinned. The reference's recorders pin theirs to the
+/// lowest *media* id, which coincides with this on the recorded database
+/// only because of how its ids were assigned (`docs/rust/DIFFERENCES.md`).
+/// A pinned pick is one a random pick could make. This is a process-wide
+/// switch that production code never sets; tests that call it stay in a
+/// process of their own or do not care which group they get.
 #[doc(hidden)]
 pub fn pin_random_group_choice() {
     PINNED_GROUP_CHOICE.store(true, std::sync::atomic::Ordering::Relaxed);

@@ -613,10 +613,16 @@ reference's (`oracle/dump_comparison_statements.py`).
   back, forgets that the first file was to be merged or deleted twice (a
   typo for the second file), so a later pair with the second file can still
   be skipped as dealt with.
-- **Group mode's skipped-group question is not recorded.** Skip and back
-  are replayed against the reference's real canvas, but the question group
-  mode asks before loading another group has no recording yet, so
-  `audit-media-filter-back` stays untagged.
+- **Group mode is recorded.** The group-mode scenarios of
+  `oracle/fixtures/duplicate_filter_canvas.json` (the next group after a
+  commit, and a group skipped whole answered no and yes) are replayed through
+  the window. The reference picks the group at random (a random media id of a
+  random potential pair); the recording pins that pick to the lowest media
+  id. hydrus-rs's tests pin theirs to the group of the lowest pair by the
+  kings' hash ids (`hydrus_store::duplicates::pin_random_group_choice`, a
+  process-wide switch for tests that production code never sets). The two
+  agree on the recorded database only by coincidence of how its ids were
+  assigned, not by construction.
 - **A batch's first pair is skipped if it can't be shown**, as every later
   pair is. The reference shows it.
 - **"software/source metadata" is listed.** The reference makes the

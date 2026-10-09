@@ -1053,18 +1053,19 @@
    "label": "Show random potential group and quick same-quality/alternate/false-positive",
    "path": "Pages > Duplicates processing page > Potential duplicate filtering/search",
    "workstream": "duplicates",
-   "state": "missing",
+   "state": "implemented",
    "priority": "normal",
    "reference": null,
    "native": null,
    "notes": [
-    "Native filtering sidebar has no show-random-group or quick bulk pair-status controls. Launching the pair canvas and opening a duplicate page from media context are separate implemented paths."
+    "The filtering tab has 'show some random potential duplicates' and the three 'set current media as ...' buttons (same quality, alternates, false positive), with the reference's 'Are you sure?' question. Replayed against oracle/fixtures/duplicates_quick_processing.json (tests/gui/duplicates_quick_processing.rs).",
+    "Launching the pair canvas and opening a duplicate page from media context are separate paths."
    ],
    "recheck": {
     "date": "2026-10-09",
     "class": "sound",
     "by": "recheck bin E session (claude/recheck-e-dupes)",
-    "note": "duplicates_quick_processing.rs show_random_group_and_the_set_buttons_ask_and_act_as_the_reference_does replays the recorded sequence in the real sidebar on the reference's own database: show some random potential duplicates (pick pinned to the lowest group), the set buttons with the 'Are you sure? ... (15 pairs)' question, answered no (nothing changes) and yes (shown files, then the next random group), false positive, same quality; the button labels, question titles and wording, files shown after each step and the king/alternates/false positives/potentials/members of every file concerned match the reference. question_opened() now reports only a question still open."
+    "note": "crates/hydrus-gui/tests/gui/duplicates_quick_processing.rs show_random_group_and_the_set_buttons_ask_and_act_as_the_reference_does replays the recorded sequence in the real sidebar on the reference's own database: show some random potential duplicates (pick pinned; see DIFFERENCES.md), then the set buttons with the 'Are you sure?' question — alternates for 6 files ('...(15 pairs)', answered no: nothing changes; yes: the next random group of 4), false positive for those 4 files ('...(6 pairs)'), same quality for the next 4 — then another random group; the button labels, question titles and wording, the files shown after each step and the king/alternates/false positives/potentials/members of every file concerned match the reference. question_opened() now reports only a question still open."
    }
   },
   {
@@ -1072,12 +1073,12 @@
    "label": "Pair sorting/direction and mixed-pair/group-mode chooser",
    "path": "Pages > Duplicates processing page > Potential duplicate filtering/search",
    "workstream": "duplicates",
-   "state": "missing",
+   "state": "implemented",
    "priority": "normal",
    "reference": null,
    "native": null,
    "notes": [
-    "Native filter can consume stored group/sort configuration, but filtering tab provides no reference pair sort/direction or mixed/group mode chooser."
+    "The filtering tab has the pair sort chooser (filesize of larger/smaller file, similarity, random), its direction chooser and the mixed pairs/group mode chooser, replayed against oracle/fixtures/duplicates_quick_processing.json (tests/gui/duplicates_quick_processing.rs); group mode reaches the launched filter."
    ],
    "recheck": {
     "date": "2026-10-09",
@@ -7495,7 +7496,7 @@
     "date": "2026-10-09",
     "class": "sound",
     "by": "recheck bin E session (claude/recheck-e-dupes)",
-    "note": "duplicate_filter_canvas.rs replays recorded scenarios with the option set through the real Options window (5..1024): batches of 5 (the smallest) and 6 end after that many pairs and ask to commit then load the next, and 1024 (more than all the pairs) gives one batch of every pair. Index text 'File One - n/5 - ...' and pairs shown match the reference's canvas."
+    "note": "duplicate_filter_canvas.rs replays recorded scenarios with the option set through the real Options window (5..1024): batches of 5 (the smallest) and 6 end after that many pairs and ask to commit then load the next, and 1024 (more than the 100 potential pairs of the recorded database) gives a single batch of all 100 pairs. Index text 'File One - n/5 - ...' and pairs shown match the reference's canvas."
    }
   },
   {
@@ -20469,7 +20470,7 @@
     "date": "2026-10-09",
     "class": "sound",
     "by": "recheck bin E session (claude/recheck-e-dupes)",
-    "note": "duplicate_filter_canvas.rs replays recorded scenarios with the option set through the real Options window (0..25) and the real image cache: at the start and after every step the cache holds at least the images of the files the reference's canvas prefetches (_GetPrefetchNeighboursInPreferenceOrder recorded: the other file of the pair shown plus both files of the next N pairs), for N = 0, 1, 3 and 25 (more than the batch), and at the start nothing beyond those and the file shown. The recording exposed that a file appearing in several upcoming pairs stalled the warm worker; the candidates are now deduplicated."
+    "note": "duplicate_filter_canvas.rs replays recorded scenarios with the option set through the real Options window (0..25) and the real image cache: at the start and after every step the cache holds at least the images of the files the reference's canvas prefetches (_GetPrefetchNeighboursInPreferenceOrder recorded: the other file of the pair shown plus both files of the next N pairs), for N = 0, 1, 3 and 25 (more than the batch). Only at the start is it also asserted that the cache holds nothing beyond those files and the file shown; later steps assert 'at least'. The recording exposed that a file appearing in several upcoming pairs stalled the warm worker; the candidates are now deduplicated."
    }
   },
   {
