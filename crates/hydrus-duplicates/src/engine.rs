@@ -622,3 +622,20 @@ fn group_of(conn: &Connection, hash_id: HashId) -> Result<Option<i64>> {
         )
         .optional()?)
 }
+
+/// One pass of the auto-resolution loop `hydrus serve` runs (see
+/// [`hydrus_store::workers::auto_resolution_step`]): the rules are worked for
+/// the idle or normal time packet, when that time's switch allows it. Returns
+/// how long to wait before the next pass.
+pub fn auto_resolution_pass(
+    store: &Store,
+    clock: &dyn hydrus_store::workers::WorkClock,
+) -> std::time::Duration {
+    hydrus_store::workers::auto_resolution_step(store, clock, |store, budget| {
+        let done = work_rules(store, budget, &mut Shuffle, &hydrus_search::Clock::system())?;
+        if done != WorkDone::default() {
+            tracing::debug!(?done, "auto-resolution worked");
+        }
+        Ok(done.more_to_do)
+    })
+}
