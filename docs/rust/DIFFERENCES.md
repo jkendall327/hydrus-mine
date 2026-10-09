@@ -4419,6 +4419,10 @@ directory.
 - The CPU-busy check reads per-core times from `/proc/stat`, so it exists on
   Linux only; elsewhere the system never reads busy. The reference's
   just-woke-from-sleep condition is not part of the idle gate here.
+- While idle mode is forced, hydrus-rs clears the CPU-busy state. The
+  reference's `SystemBusy` just returns false and keeps its last stored value,
+  so when forcing ends the old busy value comes back until the next look (up to
+  a minute later); here it does not.
 - **Trash maintenance order.** When the trash is over its maximum size,
   hydrus-rs deletes the oldest-trashed files first. The reference asks its
   database for the oldest 256 "oldest first" (its comment says so), but turns

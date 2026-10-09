@@ -52,9 +52,14 @@ pub enum Decision {
 pub const ASK_TITLE: &str = "Maintenance is due";
 
 /// The outstanding work (`GetIdleShutdownWorkDue`).
-pub fn work_due(store: &Store) -> Vec<String> {
+///
+/// As in the reference, asking also analyses the small tables that have not
+/// grown, so this writes.
+pub fn work_due(store: &Store, now: i64) -> Vec<String> {
     let due = store
-        .read(hydrus_store::db_maintenance::tables_due_analysis)
+        .write(move |ctx| {
+            hydrus_store::db_maintenance::tables_due_analysis_at(ctx.conn(), now * 1000)
+        })
         .unwrap_or_default();
     if due.is_empty() {
         Vec::new()
@@ -115,8 +120,9 @@ pub fn run(store: &Store, now: i64) -> hydrus_store::Result<usize> {
     let minutes = i64::from(settings.max_minutes) * 60;
     LAST_RUN.with(|last| last.set(Some((now, now + minutes))));
     let stop = std::time::Instant::now() + std::time::Duration::from_secs(minutes.unsigned_abs());
-    let done = store
-        .write(move |ctx| hydrus_store::db_maintenance::analyze_due_tables(ctx.conn(), stop))?;
+    let done = store.write(move |ctx| {
+        hydrus_store::db_maintenance::analyze_due_tables(ctx.conn(), now * 1000, stop)
+    })?;
     register(store, hydrus_core::time::TimestampMs::now().secs())?;
     Ok(done)
 }

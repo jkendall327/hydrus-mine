@@ -188,9 +188,7 @@ fn replay(client: &mut Client, case: &Value) {
             "{name}: told to stop after its minutes"
         );
         assert!(analysed(client), "{name}: the analysis was run");
-        // registered when the work finished (the recording's work took three
-        // minutes of held time; this one took no time to speak of)
-        assert_eq!(case["last_after_work"], 180);
+        // registered when the work finished, not when it started
         assert!((now..=seconds_now()).contains(&done), "{name}: {done}");
     } else {
         assert_eq!(ran, ran_before, "{name}: no work");

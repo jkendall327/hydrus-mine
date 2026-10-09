@@ -177,7 +177,6 @@ fn groups(scenario: &Value) -> Vec<usize> {
 }
 
 // leaf: audit-options-files-and-trash-number-of-hours-a-file-will-stay-in-the-trash-before-being-deleted
-// leaf: audit-options-files-and-trash-maximum-size-of-trash-mb
 #[test]
 fn trash_limits_delete_what_the_reference_deletes() {
     let recorded = hydrus_testkit::fixture_json("trash_maintenance.json");

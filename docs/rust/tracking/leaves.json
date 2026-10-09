@@ -9170,9 +9170,9 @@
    ],
    "recheck": {
     "date": "2026-10-09",
-    "class": "sound",
+    "class": "source-restated",
     "by": "recheck bin E session (claude/recheck-e-dupes)",
-    "note": "crates/hydrus-gui/tests/gui/trash_maintenance.rs trash_limits_delete_what_the_reference_deletes replays the 9 scenarios of oracle/fixtures/trash_maintenance.json (record_trash_maintenance.py: the reference's own DAEMONMaintainTrash on the basic fixture plus generated BMPs of exact sizes, time held still): limits set through the real Options window, the real maintenance runtime's trash pass, and the files left compared with the reference's: exactly 1 MiB stays under 1 MB, 1 MiB + 1 byte goes, 0 MB empties in eights, size before age, no limits. Where the reference deletes by file id instead of oldest-first (a set conversion; DIFFERENCES.md), the test checks the recorded group sizes (8, 8 / 8) and the oldest-first files. Rows (2048, 0..20480, 'no size limit') checked."
+    "note": "Untagged: the reference empties an oversized trash by taking the oldest 256 as a set and deleting in file-id order (CPython set order), hydrus-rs deletes the oldest first, so which files stay differs (DIFFERENCES.md). trash_maintenance.rs replays the recorded size scenarios and agrees on how many files go and in what group sizes, and exactly on the size boundaries (1 MiB stays, 1 MiB + 1 byte goes, 0 MB empties), but the files left in the two ordered scenarios are the hydrus-rs choice, not the reference's."
    }
   },
   {

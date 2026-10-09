@@ -195,6 +195,7 @@ fn analysable_tables(conn: &Connection) -> Result<Vec<String>> {
     Ok(conn
         .prepare(
             "SELECT name FROM sqlite_master WHERE type = 'table' AND name NOT LIKE 'sqlite_%'
+             AND name NOT LIKE 'deferred\\_delete\\_%' ESCAPE '\\'
              AND sql NOT LIKE 'CREATE VIRTUAL%' ORDER BY name",
         )?
         .query_map([], |r| r.get(0))?
@@ -212,17 +213,14 @@ fn has_at_least(conn: &Connection, table: &str, rows: i64) -> Result<bool> {
 
 /// The tables due an analysis at `now_ms` (`GetTableNamesDueAnalysis`):
 /// those never analysed, and those whose time under the reference's
-/// schedule has passed, except small ones the reference analyses at once
-/// while looking (returned second). As in the reference, a table can be due
-/// under more than one boundary, and is listed once for each.
-pub fn tables_due_analysis_at(
-    conn: &Connection,
-    now_ms: i64,
-) -> Result<(Vec<String>, Vec<String>)> {
+/// schedule has passed. As in the reference, a small table that has not
+/// grown is analysed here, on the spot, and not listed; a table can be due
+/// under more than one boundary, and is listed once for each; tables set
+/// aside for deferred deletion are never listed.
+pub fn tables_due_analysis_at(conn: &Connection, now_ms: i64) -> Result<Vec<String>> {
     let seen: AnalyzeTimestamps = crate::settings::get(conn)?;
     let now = now_ms.div_euclid(1000);
     let mut due = Vec::new();
-    let mut at_once = Vec::new();
     for name in analysable_tables(conn)? {
         let Some(&(rows, at_ms)) = seen.0.get(&name) else {
             due.push(name);
@@ -234,18 +232,18 @@ pub fn tables_due_analysis_at(
                 continue;
             }
             if immediate && !has_at_least(conn, &name, limit)? {
-                at_once.push(name.clone());
+                analyze_table(conn, &name, now_ms)?;
             } else {
                 due.push(name.clone());
             }
         }
     }
-    Ok((due, at_once))
+    Ok(due)
 }
 
 /// The tables due an analysis now (see [`tables_due_analysis_at`]).
 pub fn tables_due_analysis(conn: &Connection) -> Result<Vec<String>> {
-    Ok(tables_due_analysis_at(conn, hydrus_core::TimestampMs::now().0)?.0)
+    tables_due_analysis_at(conn, hydrus_core::TimestampMs::now().0)
 }
 
 /// Analyse one table and remember it (`AnalyzeTable`): a table analysed
@@ -265,20 +263,19 @@ pub fn analyze_table(conn: &Connection, table: &str, now_ms: i64) -> Result<()> 
     crate::settings::set(conn, &seen)
 }
 
-/// Analyse the tables due (those the reference analyses at once first)
-/// one at a time until `stop` passes; returns how many of the due ones.
-pub fn analyze_due_tables(conn: &Connection, stop: std::time::Instant) -> Result<usize> {
-    let now = || hydrus_core::TimestampMs::now().0;
-    let (due, at_once) = tables_due_analysis_at(conn, now())?;
-    for table in &at_once {
-        analyze_table(conn, table, now())?;
-    }
+/// Analyse the tables due at `now_ms`, one at a time, until `stop` passes;
+/// returns how many.
+pub fn analyze_due_tables(
+    conn: &Connection,
+    now_ms: i64,
+    stop: std::time::Instant,
+) -> Result<usize> {
     let mut done = 0;
-    for table in &due {
+    for table in &tables_due_analysis_at(conn, now_ms)? {
         if std::time::Instant::now() >= stop {
             break;
         }
-        analyze_table(conn, table, now())?;
+        analyze_table(conn, table, now_ms)?;
         done += 1;
     }
     Ok(done)
@@ -536,6 +533,55 @@ mod tests {
         let (source, dest, _) = import_basic();
         let store = Store::open(dest.path()).unwrap();
         (source, dest, store)
+    }
+
+    #[test]
+    fn analysis_follows_the_references_schedule() {
+        let (_s, _d, store) = basic();
+        let t0 = 1_700_000_000_000_i64;
+        let hour = 3_600_000_i64;
+        let forever = std::time::Instant::now() + std::time::Duration::from_secs(60);
+        store
+            .write(move |ctx| {
+                let conn = ctx.conn();
+                let fill = |rows: i64| {
+                    conn.execute(
+                        "WITH RECURSIVE n(i) AS (SELECT 1 UNION ALL SELECT i + 1 FROM n WHERE i < ?1)
+                         INSERT INTO grown SELECT i FROM n",
+                        [rows],
+                    )
+                };
+                conn.execute_batch(
+                    "CREATE TABLE grown (x INTEGER);
+                     CREATE TABLE deferred_delete_old_1234 (x INTEGER);",
+                )?;
+                fill(50)?;
+                // never analysed: all due, but not tables set aside for deletion
+                let due = tables_due_analysis_at(conn, t0)?;
+                assert!(due.iter().any(|n| n == "grown"));
+                assert!(!due.iter().any(|n| n.starts_with("deferred_delete_")));
+                assert_eq!(analyze_due_tables(conn, t0, forever)?, due.len());
+                assert!(tables_due_analysis_at(conn, t0)?.is_empty());
+                fill(150)?; // now 200 rows
+                // not yet six hours on: nothing is due
+                assert!(tables_due_analysis_at(conn, t0 + 6 * hour)?.is_empty());
+                // past six hours: the small tables that have not grown are
+                // analysed on the spot and not listed, while the one that
+                // went from 50 rows to 100 or more is left to the user
+                let later = t0 + 6 * hour + 1000;
+                assert_eq!(tables_due_analysis_at(conn, later)?, ["grown"]);
+                let seen: AnalyzeTimestamps = crate::settings::get(conn)?;
+                let small = seen.0.iter().filter(|(n, _)| *n != "grown").collect::<Vec<_>>();
+                assert!(!small.is_empty() && small.iter().all(|&(_, &(_, at))| at == later));
+                assert_eq!(seen.0["grown"], (50, t0));
+                // analysing it records its new size and time
+                analyze_table(conn, "grown", later)?;
+                let seen: AnalyzeTimestamps = crate::settings::get(conn)?;
+                assert_eq!(seen.0["grown"], (200, later));
+                assert!(tables_due_analysis_at(conn, later + 6 * hour)?.is_empty());
+                Ok(())
+            })
+            .unwrap();
     }
 
     #[test]

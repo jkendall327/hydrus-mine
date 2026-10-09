@@ -46,6 +46,7 @@ pub fn is_idle(dir: &Path, now_ms: i64) -> bool {
 #[derive(Debug, Default)]
 pub struct CpuBusy {
     last: Option<Vec<Vec<f64>>>,
+    percents: Vec<f64>,
 }
 
 /// psutil's Linux CPU time fields: user, nice, system, idle, iowait, irq,
@@ -66,12 +67,22 @@ impl CpuBusy {
     pub fn sample_stat(&mut self, stat: &str, percent: u32, count: u32) -> Option<bool> {
         let now = per_core_times(stat)?;
         let last = self.last.replace(now.clone())?;
-        let busy = now
+        self.percents = now
             .iter()
             .zip(&last)
-            .filter(|(now, last)| core_percent(last, now) > f64::from(percent))
+            .map(|(now, last)| core_percent(last, now))
+            .collect();
+        let busy = self
+            .percents
+            .iter()
+            .filter(|&&core| core > f64::from(percent))
             .count();
         Some(busy >= count as usize)
+    }
+
+    /// Each core's percentage at the latest sample that had a previous one.
+    pub fn percents(&self) -> &[f64] {
+        &self.percents
     }
 }
 

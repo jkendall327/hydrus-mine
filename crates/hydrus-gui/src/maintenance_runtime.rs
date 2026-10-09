@@ -233,6 +233,11 @@ impl Control {
     pub fn system_busy(&self) -> bool {
         self.0.busy.get()
     }
+    /// Each core's percentage at the latest look, for tests.
+    #[doc(hidden)]
+    pub fn cpu_percents(&self) -> Vec<f64> {
+        self.0.cpu.borrow().percents().to_vec()
+    }
     /// The CPU-busy check (`SystemBusy`): busy when at least the saved number
     /// of cores ran above the saved percentage, looked at again only once
     /// more than a minute has passed since the last look; never while idle
