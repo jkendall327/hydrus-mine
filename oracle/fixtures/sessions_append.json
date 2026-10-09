@@ -18,7 +18,7 @@
     0,
     0
    ],
-   "inside": false,
+   "before_page": "inner",
    "mode": 0,
    "steps": [
     {
@@ -26,6 +26,7 @@
       0,
       0
      ],
+     "page": "a",
      "tree": [
       {
        "name": "work",
@@ -64,6 +65,7 @@
       0,
       0
      ],
+     "page": "a",
      "tree": [
       {
        "name": "work",
@@ -135,7 +137,7 @@
    "before_current": [
     1
    ],
-   "inside": true,
+   "before_page": "start",
    "mode": 0,
    "steps": [
     {
@@ -143,6 +145,7 @@
       0,
       0
      ],
+     "page": "a",
      "tree": [
       {
        "name": "work",
@@ -181,6 +184,7 @@
       0,
       0
      ],
+     "page": "a",
      "tree": [
       {
        "name": "work",
@@ -253,7 +257,7 @@
     0,
     0
    ],
-   "inside": false,
+   "before_page": "inner",
    "mode": 1,
    "steps": [
     {
@@ -261,6 +265,7 @@
       0,
       0
      ],
+     "page": "a",
      "tree": [
       {
        "name": "work",
@@ -299,6 +304,7 @@
       0,
       0
      ],
+     "page": "a",
      "tree": [
       {
        "name": "work",
@@ -370,7 +376,7 @@
    "before_current": [
     1
    ],
-   "inside": true,
+   "before_page": "start",
    "mode": 1,
    "steps": [
     {
@@ -378,6 +384,7 @@
       1,
       0
      ],
+     "page": "a",
      "tree": [
       {
        "name": "outer",
@@ -416,6 +423,7 @@
       1,
       0
      ],
+     "page": "a",
      "tree": [
       {
        "name": "outer",
@@ -487,7 +495,7 @@
    "before_current": [
     0
    ],
-   "inside": false,
+   "before_page": "start",
    "mode": 2,
    "steps": [
     {
@@ -495,6 +503,7 @@
       1,
       0
      ],
+     "page": "a",
      "tree": [
       {
        "name": "start"
@@ -533,6 +542,7 @@
       2,
       0
      ],
+     "page": "a",
      "tree": [
       {
        "name": "start"
@@ -605,7 +615,7 @@
     1,
     0
    ],
-   "inside": true,
+   "before_page": "inner",
    "mode": 2,
    "steps": [
     {
@@ -613,6 +623,7 @@
       2,
       0
      ],
+     "page": "a",
      "tree": [
       {
        "name": "start"
@@ -651,6 +662,7 @@
       3,
       0
      ],
+     "page": "a",
      "tree": [
       {
        "name": "start"
@@ -722,7 +734,7 @@
    "before_current": [
     0
    ],
-   "inside": false,
+   "before_page": "start",
    "mode": 3,
    "steps": [
     {
@@ -730,6 +742,7 @@
       2,
       0
      ],
+     "page": "a",
      "tree": [
       {
        "name": "start"
@@ -768,6 +781,7 @@
       3,
       0
      ],
+     "page": "a",
      "tree": [
       {
        "name": "start"
@@ -840,7 +854,7 @@
     1,
     0
    ],
-   "inside": true,
+   "before_page": "inner",
    "mode": 3,
    "steps": [
     {
@@ -848,6 +862,7 @@
       2,
       0
      ],
+     "page": "a",
      "tree": [
       {
        "name": "start"
@@ -886,6 +901,7 @@
       3,
       0
      ],
+     "page": "a",
      "tree": [
       {
        "name": "start"

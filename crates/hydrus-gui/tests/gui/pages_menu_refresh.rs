@@ -68,10 +68,23 @@ fn refresh_from_the_pages_menu_searches_again_as_the_reference_did() {
     let ui = MainWindow::new().unwrap();
     ui.show().unwrap();
     let bound = bind(&ui, Pages::open(store.clone()).unwrap());
-    let state = |bound: &hydrus_gui::Bound| -> (bool, usize) {
+    let state_now = |bound: &hydrus_gui::Bound| -> (bool, usize) {
         let page = bound.pages.borrow_mut().current();
         let page = page.borrow();
         (page.synchronised(), page.results().len())
+    };
+    // (a search that loads in a moment: the state once it has settled)
+    let state = |bound: &hydrus_gui::Bound, expected: (bool, usize)| -> (bool, usize) {
+        let mut now = state_now(bound);
+        for _ in 0..200 {
+            if now == expected {
+                break;
+            }
+            slint::platform::update_timers_and_animations();
+            std::thread::sleep(std::time::Duration::from_millis(10));
+            now = state_now(bound);
+        }
+        now
     };
     let theirs = |name: &str| -> serde_json::Value {
         recorded["cases"]
@@ -99,9 +112,15 @@ fn refresh_from_the_pages_menu_searches_again_as_the_reference_did() {
         page.borrow_mut().add_predicate("system:inbox");
     }
     let case = theirs("paused with a predicate typed since");
-    assert_eq!(state(&bound), expect(&case, "before"));
+    assert_eq!(
+        state(&bound, expect(&case, "before")),
+        expect(&case, "before")
+    );
     refresh_from_the_menu(&ui);
-    assert_eq!(state(&bound), expect(&case, "after"));
+    assert_eq!(
+        state(&bound, expect(&case, "after")),
+        expect(&case, "after")
+    );
 
     // searched, then paused
     ui.invoke_tab_chosen(0, 1);
@@ -112,9 +131,15 @@ fn refresh_from_the_pages_menu_searches_again_as_the_reference_did() {
         page.borrow_mut().set_synchronised(false);
     }
     let case = theirs("searched, then paused");
-    assert_eq!(state(&bound), expect(&case, "before"));
+    assert_eq!(
+        state(&bound, expect(&case, "before")),
+        expect(&case, "before")
+    );
     refresh_from_the_menu(&ui);
-    assert_eq!(state(&bound), expect(&case, "after"));
+    assert_eq!(
+        state(&bound, expect(&case, "after")),
+        expect(&case, "after")
+    );
 
     // a page opened on given files: its search is locked to them
     let hashes: Vec<hydrus_core::Sha256> = {
@@ -150,25 +175,44 @@ fn refresh_from_the_pages_menu_searches_again_as_the_reference_did() {
         None,
     );
     let case = theirs("opened on given files");
-    let (_, files_before) = state(&bound);
-    assert_eq!(files_before, expect(&case, "before").1);
+    assert_eq!(bound.pages.borrow().shown().name, "files");
+    assert_eq!(
+        state(&bound, expect(&case, "before")),
+        expect(&case, "before")
+    );
     refresh_from_the_menu(&ui);
-    assert_eq!(state(&bound).1, expect(&case, "after").1);
+    assert_eq!(
+        state(&bound, expect(&case, "after")),
+        expect(&case, "after")
+    );
 
-    // a URL downloader page has no search to run
+    // a URL downloader page has no search to run: opened from the menu as a
+    // user would, shown, and refresh changes nothing
+    let case = theirs("url importer");
     let titles = ui.get_menu_titles();
     let at = (0..titles.row_count())
         .position(|i| titles.row_data(i).unwrap().label == "pages")
         .unwrap();
     ui.invoke_menu_title_pressed(i32::try_from(at).unwrap(), 80.0, 22.0);
-    ui.invoke_menu_dismissed();
-    bound.pages.borrow_mut().new_page_in(None);
-    let case = theirs("url importer");
-    let names_before = bound.pages.borrow().session().all_pages().len();
+    {
+        let panes = ui.get_menu_panes();
+        let lines = panes.row_data(0).unwrap().lines;
+        let download = (0..lines.row_count())
+            .position(|i| lines.row_data(i).unwrap().label == "download")
+            .unwrap();
+        ui.invoke_menu_line_hovered(0, i32::try_from(download).unwrap(), 300.0, 100.0, 0.0);
+        let panes = ui.get_menu_panes();
+        let lines = panes.row_data(1).unwrap().lines;
+        let urls = (0..lines.row_count())
+            .position(|i| lines.row_data(i).unwrap().label == "new url download page")
+            .unwrap();
+        ui.invoke_menu_line_clicked(1, i32::try_from(urls).unwrap(), 0.0, 0.0, 0.0);
+    }
+    assert_eq!(bound.pages.borrow().shown().name, "url import");
+    let tree_before = bound.pages.borrow().session().pages.clone();
     refresh_from_the_menu(&ui);
-    assert_eq!(
-        bound.pages.borrow().session().all_pages().len(),
-        names_before
-    );
-    assert_eq!(expect(&case, "after").1, 0);
+    assert_eq!(bound.pages.borrow().shown().name, "url import");
+    assert_eq!(bound.pages.borrow().session().pages, tree_before);
+    assert_eq!(case["after"]["files"], 0);
+    assert_eq!(state_now(&bound).1, 0);
 }
