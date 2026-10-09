@@ -572,7 +572,7 @@ fn open_objects<T: Clone + 'static>(
                                 return Err("Subscription package exceeds the object limit.".into());
                             }
                         }
-                        w.set_review(review_of(&review)?.0(definitions.clone())?.into());
+                        w.set_review(review_of(review.as_ref())?.0(definitions.clone())?.into());
                         *pending.borrow_mut() = Some(definitions);
                         w.set_ready(true);
                     }
@@ -647,7 +647,7 @@ fn open_objects<T: Clone + 'static>(
                         } else {
                             (codec.decode_text)(w.get_text().as_str()).map_err(|e| e.to_string())?
                         };
-                        let description = review_of(&review)?.0(definitions.clone())?;
+                        let description = review_of(review.as_ref())?.0(definitions.clone())?;
                         w.set_review(description.into());
                         *pending.borrow_mut() = Some(definitions);
                         w.set_ready(true);
@@ -657,7 +657,7 @@ fn open_objects<T: Clone + 'static>(
                             .borrow()
                             .clone()
                             .ok_or_else(|| "Review a package before importing.".to_owned())?;
-                        review_of(&review)?.1(definitions)?;
+                        review_of(review.as_ref())?.1(definitions)?;
                         close();
                     }
                     other => {
@@ -680,11 +680,9 @@ fn open_objects<T: Clone + 'static>(
     Ok(w)
 }
 fn review_of<T>(
-    review: &Option<(Preview<T>, Apply<T>)>,
+    review: Option<&(Preview<T>, Apply<T>)>,
 ) -> Result<&(Preview<T>, Apply<T>), String> {
-    review
-        .as_ref()
-        .ok_or_else(|| "This window only exports.".to_owned())
+    review.ok_or_else(|| "This window only exports.".to_owned())
 }
 fn export_text<T>(window: &DownloaderExchangeWindow, codec: &Codec<T>) -> Result<String, String> {
     let selected =
