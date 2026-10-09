@@ -326,7 +326,7 @@ use hydrus_core::debug_flags;
 use std::sync::Mutex;
 
 /// The flags and the sink are process-wide: one of these tests at a time.
-static ONE_AT_A_TIME: Mutex<()> = Mutex::new(());
+pub(crate) static ONE_AT_A_TIME: Mutex<()> = Mutex::new(());
 
 /// Send reports to a list, not the popups.
 fn capture() -> std::sync::Arc<Mutex<Vec<String>>> {
