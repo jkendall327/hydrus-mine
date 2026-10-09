@@ -276,7 +276,6 @@ fn whole_log_menu_entries_ask_and_change_the_list_as_the_reference_did() {
         .iter()
         .map(|l| l.as_str().unwrap().to_owned())
         .collect();
-    let mut checked = 0;
     for action in recorded["actions"].as_array().unwrap() {
         let label = action["label"].as_str().unwrap();
         let answer = action["answer"].as_str().unwrap();
@@ -334,13 +333,25 @@ fn whole_log_menu_entries_ask_and_change_the_list_as_the_reference_did() {
             "{label}: {answer}"
         );
         if let Some(page) = shown.first() {
-            assert_eq!(
-                bound.current.borrow().borrow().files().len(),
-                page[1].as_array().unwrap().len(),
-                "{label}"
-            );
+            let ids = bound.current.borrow().borrow().files();
+            let mut shown_hashes: Vec<String> = store
+                .read(move |conn| {
+                    ids.iter()
+                        .map(|id| Ok(hydrus_store::master::hash(conn, *id)?.unwrap().to_hex()))
+                        .collect::<hydrus_store::Result<Vec<_>>>()
+                })
+                .unwrap();
+            shown_hashes.sort();
+            let mut recorded_hashes: Vec<String> = page[1]
+                .as_array()
+                .unwrap()
+                .iter()
+                .map(|h| h.as_str().unwrap().to_owned())
+                .collect();
+            recorded_hashes.sort();
+            assert_eq!(shown_hashes, recorded_hashes, "{label}");
         }
-        checked += 1;
     }
-    assert_eq!(checked, recorded["actions"].as_array().unwrap().len());
+    // (the recording holds the whole menu with every answer)
+    assert_eq!(recorded["actions"].as_array().unwrap().len(), 33);
 }

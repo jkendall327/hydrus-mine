@@ -365,6 +365,112 @@ fn selected_url_search_opens_a_local_or_search_and_reaches_matching_files() {
     log.invoke_close_window();
 }
 
+/// What the reference's own panel asked for on "search for URLs" with these
+/// rows selected (oracle/record_file_log_search_urls.py): offered only for
+/// URLs, one OR of exact "has url" predicates over the selected URLs (its
+/// own order), in a page named "url search" over all local files.
+// leaf: audit-network-file-log-search-urls
+#[test]
+fn search_for_urls_asks_for_the_page_the_reference_asked_for() {
+    use hydrus_core::pages::PageContent;
+    use hydrus_core::search::predicate::{Predicate, SystemPredicate, UrlRule};
+    let recorded = hydrus_testkit::fixture_json("file_log_search_urls.json");
+    let (_dirs, store) = store();
+    let _windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+    let mut offered_cases = 0;
+    for case in recorded["cases"].as_array().unwrap() {
+        let sources: Vec<&str> = case["sources"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|s| s.as_str().unwrap())
+            .collect();
+        ui.invoke_new_page();
+        ui.invoke_chooser_pressed(4);
+        ui.invoke_chooser_pressed(8);
+        let text = sources.join("\n");
+        hydrus_gui::set_clipboard_reader(move || Ok(Some(text.clone())));
+        ui.invoke_open_file_log();
+        let log = bound.file_log.borrow().as_ref().unwrap().clone_strong();
+        clipboard_import(&log);
+        assert_eq!(cells(&log).len(), sources.len());
+        let selected: Vec<i32> = case["selected"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|n| i32::try_from(n.as_i64().unwrap()).unwrap())
+            .collect();
+        log.invoke_row_clicked(selected[0], false, false);
+        for row in &selected[1..] {
+            log.invoke_row_clicked(*row, true, false);
+        }
+        log.invoke_row_menu(selected[0], 20.0, 20.0);
+        let offered = menu(&log)[0].contains(&"search for URLs".to_owned());
+        assert_eq!(offered, case["offered"].as_bool().unwrap(), "{case}");
+        if !offered {
+            assert!(case["pubs"].as_array().unwrap().is_empty());
+            log.invoke_menu_dismissed();
+            log.invoke_close_window();
+            continue;
+        }
+        offered_cases += 1;
+        let pages_before = bound.pages.borrow().open_pages().len();
+        choose(&log, 0, "search for URLs");
+        let asked = &case["pubs"][0];
+        assert_eq!(
+            bound.pages.borrow().open_pages().len(),
+            pages_before + 1,
+            "{case}"
+        );
+        let pages = bound.pages.borrow();
+        assert_eq!(pages.shown().name, asked["page_name"].as_str().unwrap());
+        let PageContent::Search { search, .. } = &pages.shown().content else {
+            panic!("a search page");
+        };
+        let location: Vec<String> = search
+            .location
+            .current()
+            .iter()
+            .map(|key| hex::encode(key.as_bytes()))
+            .collect();
+        let recorded_location: Vec<&str> = asked["location"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|l| l.as_str().unwrap())
+            .collect();
+        assert_eq!(location, recorded_location);
+        let [Predicate::Or(urls)] = &search.predicates[..] else {
+            panic!("one OR container: {:?}", search.predicates);
+        };
+        let ours: Vec<String> = urls
+            .iter()
+            .map(|p| match p {
+                Predicate::System(SystemPredicate::KnownUrl {
+                    rule: UrlRule::ExactMatch(url),
+                    has: true,
+                }) => format!("system:has url {url}"),
+                other => panic!("an exact has-url predicate: {other:?}"),
+            })
+            .collect();
+        let theirs: Vec<String> = asked["predicates"][0]["inner"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|q| q[0].as_str().unwrap().to_owned())
+            .collect();
+        let (mut ours_sorted, mut theirs_sorted) = (ours.clone(), theirs.clone());
+        ours_sorted.sort();
+        theirs_sorted.sort();
+        assert_eq!(ours_sorted, theirs_sorted, "{case}");
+        drop(pages);
+        log.invoke_close_window();
+    }
+    assert_eq!(offered_cases, 3);
+}
+
 fn png_import(log: &FileLogWindow) {
     log.invoke_log_menu(10.0, 10.0);
     choose(log, 0, "ADVANCED: import new sources");

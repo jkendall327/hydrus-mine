@@ -1,0 +1,130 @@
+{
+ "cases": [
+  {
+   "name": "urls",
+   "sources": [
+    "https://example.com/post/1",
+    "https://example.com/post/%E6%97%A5%E6%9C%AC 2",
+    "https://example.com/post/3"
+   ],
+   "selected": [
+    0,
+    1,
+    2
+   ],
+   "offered": true,
+   "pubs": [
+    {
+     "location": [
+      "616c6c206c6f63616c206d65646961"
+     ],
+     "predicates": [
+      {
+       "text": "system:has url https://example.com/post/1 OR system:has url https://example.com/post/3 OR system:has url https://example.com/post/%E6%97%A5%E6%9C%AC%202",
+       "type": 30,
+       "inner": [
+        [
+         "system:has url https://example.com/post/1",
+         "(True, 'exact_match', 'https://example.com/post/1', 'has url https://example.com/post/1')"
+        ],
+        [
+         "system:has url https://example.com/post/3",
+         "(True, 'exact_match', 'https://example.com/post/3', 'has url https://example.com/post/3')"
+        ],
+        [
+         "system:has url https://example.com/post/%E6%97%A5%E6%9C%AC%202",
+         "(True, 'exact_match', 'https://example.com/post/%E6%97%A5%E6%9C%AC%202', 'has url https://example.com/post/%E6%97%A5%E6%9C%AC%202')"
+        ]
+       ]
+      }
+     ],
+     "page_name": "url search",
+     "activate_window": false
+    }
+   ]
+  },
+  {
+   "name": "some selected",
+   "sources": [
+    "https://example.com/post/1",
+    "https://example.com/post/2",
+    "https://example.com/post/3"
+   ],
+   "selected": [
+    2,
+    0
+   ],
+   "offered": true,
+   "pubs": [
+    {
+     "location": [
+      "616c6c206c6f63616c206d65646961"
+     ],
+     "predicates": [
+      {
+       "text": "system:has url https://example.com/post/1 OR system:has url https://example.com/post/3",
+       "type": 30,
+       "inner": [
+        [
+         "system:has url https://example.com/post/1",
+         "(True, 'exact_match', 'https://example.com/post/1', 'has url https://example.com/post/1')"
+        ],
+        [
+         "system:has url https://example.com/post/3",
+         "(True, 'exact_match', 'https://example.com/post/3', 'has url https://example.com/post/3')"
+        ]
+       ]
+      }
+     ],
+     "page_name": "url search",
+     "activate_window": false
+    }
+   ]
+  },
+  {
+   "name": "one selected",
+   "sources": [
+    "https://example.com/post/1",
+    "https://example.com/post/2"
+   ],
+   "selected": [
+    1
+   ],
+   "offered": true,
+   "pubs": [
+    {
+     "location": [
+      "616c6c206c6f63616c206d65646961"
+     ],
+     "predicates": [
+      {
+       "text": "system:has url https://example.com/post/2",
+       "type": 30,
+       "inner": [
+        [
+         "system:has url https://example.com/post/2",
+         "(True, 'exact_match', 'https://example.com/post/2', 'has url https://example.com/post/2')"
+        ]
+       ]
+      }
+     ],
+     "page_name": "url search",
+     "activate_window": false
+    }
+   ]
+  },
+  {
+   "name": "paths",
+   "sources": [
+    "/synthetic/a.jpg",
+    "/synthetic/b.jpg"
+   ],
+   "selected": [
+    0,
+    1
+   ],
+   "offered": false,
+   "pubs": []
+  }
+ ]
+}
