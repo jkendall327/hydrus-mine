@@ -478,3 +478,118 @@ fn the_history_menu_follows_the_pages_shown_closed_and_cleared_as_the_reference_
         );
     }
 }
+
+// leaf: audit-options-menu-menu-undo-closed-page
+// leaf: audit-options-menu-menu-undo-clear-all
+#[test]
+fn closed_pages_come_back_and_clear_all_asks_as_the_reference_s_undo_menu_does() {
+    let _windows = headless::init();
+    let recorded = hydrus_testkit::fixture_json("undo_closed_pages.json");
+    let names: Vec<String> = recorded["names"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|n| n.as_str().unwrap().to_owned())
+        .collect();
+    let legacy = hydrus_testkit::legacy_fixture("basic");
+    let native = tempfile::tempdir().unwrap();
+    import_legacy(
+        legacy.path(),
+        &native.path().join(hydrus_store::store::DB_FILE_NAME),
+    )
+    .unwrap();
+    let store = Store::open(native.path()).unwrap();
+    let session = Session {
+        name: sessions::LAST_SESSION.into(),
+        pages: names.iter().map(|n| search(n)).collect(),
+    };
+    store
+        .write(move |ctx| sessions::save(ctx.conn(), &session, 1))
+        .unwrap();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+    let tab_of = |name: &str| -> i32 {
+        let at = bound.pages.borrow().tabs()[0]
+            .names
+            .iter()
+            .position(|n| n == name)
+            .unwrap_or_else(|| panic!("{name} open"));
+        i32::try_from(at).unwrap()
+    };
+    let open_closed = |ui: &MainWindow| -> Option<Vec<String>> {
+        let titles = ui.get_menu_titles();
+        let at = (0..titles.row_count())
+            .position(|i| titles.row_data(i).unwrap().label == "undo")
+            .unwrap();
+        // the undo menu can't be opened once there is nothing to undo
+        if !titles.row_data(at).unwrap().usable {
+            return None;
+        }
+        ui.invoke_menu_title_pressed(i32::try_from(at).unwrap(), 80.0, 22.0);
+        hover(ui, "closed pages");
+        Some(panes(ui).last().unwrap().clone())
+    };
+    for step in recorded["steps"].as_array().unwrap() {
+        match step["step"][0].as_str().unwrap() {
+            "close" => {
+                ui.invoke_tab_chosen(0, tab_of(step["step"][1].as_str().unwrap()));
+                ui.invoke_close_page();
+            }
+            "undo" | "entry" => {
+                // (the most recent is the top entry of the menu)
+                let wanted = step["step"].get(1).and_then(|n| n.as_u64()).unwrap_or(1) as usize;
+                let shown = open_closed(&ui).expect("a closed page to bring back");
+                let entry = shown[1 + wanted].clone();
+                let (p, i) = line(&ui, &entry);
+                ui.invoke_menu_line_clicked(p, i, 0.0, 0.0, 0.0);
+            }
+            _ => {
+                let shown = open_closed(&ui).expect("closed pages to clear");
+                assert_eq!(shown[0], "clear all\u{2026}");
+                let (p, i) = line(&ui, "clear all\u{2026}");
+                ui.invoke_menu_line_clicked(p, i, 0.0, 0.0, 0.0);
+                assert_eq!(
+                    ui.get_question(),
+                    step["questions"][0].as_str().unwrap(),
+                    "the question"
+                );
+                ui.invoke_answer(step["step"][1].as_bool().unwrap());
+            }
+        }
+        let what = &step["step"];
+        // the tabs in order and the page shown
+        assert_eq!(
+            serde_json::json!(bound.pages.borrow().tabs()[0].names),
+            step["tabs"],
+            "the tabs after {what}"
+        );
+        assert_eq!(
+            bound.pages.borrow().shown().name,
+            step["current"].as_str().unwrap(),
+            "the page shown after {what}"
+        );
+        // the closed pages menu: most recently closed first, with clear all
+        // above them; nothing at all once none are left (the reference's
+        // undo menu is disabled then)
+        let count = step["closed_count"].as_u64().unwrap();
+        let menu = open_closed(&ui);
+        if count == 0 {
+            assert!(!step["undo_menu_enabled"].as_bool().unwrap());
+            assert_eq!(menu, None, "the undo menu after {what}");
+        } else {
+            let theirs: Vec<String> = step["closed"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .map(|e| e.as_str().unwrap().to_owned())
+                .collect();
+            let ours: Vec<String> = menu
+                .expect("the closed pages")
+                .into_iter()
+                .map(|l| if l.is_empty() { "---".to_owned() } else { l })
+                .collect();
+            assert_eq!(ours, theirs, "the closed pages after {what}");
+            ui.invoke_menu_dismissed();
+        }
+    }
+}
