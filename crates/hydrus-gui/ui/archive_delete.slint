@@ -49,6 +49,34 @@ export component ArchiveDeleteWindow inherits Window {
         && pointer.mouse-x >= root.width * 0.2 && pointer.mouse-x <= root.width * 0.8;
     out property <bool> tags-showing: pointer.has-hover && pointer.mouse-x < root.width * 0.2 && root.tags.length > 0;
 
+    // the scanbar under a file mpv or the animator plays, and the volume
+    // control at its right, as in the media viewer
+    in property <bool> scanbar-shown;
+    in property <float> scanbar-progress;
+    in property <string> scanbar-text;
+    in property <bool> volume-shown;
+    in property <bool> global-muted;
+    in property <bool> viewer-muted;
+    in property <int> volume;
+    in-out property <bool> volume-open;
+    in property <length> seek-height: 20px;
+    in property <length> seek-hidden-height: 5px;
+    in property <length> seek-nub-width: 10px;
+    out property <bool> seek-bar-full: root.scanbar-shown && bar.full;
+    callback scan(length, length);
+    callback scan-started();
+    callback scan-ended();
+    callback flip-global-mute();
+    callback flip-viewer-mute();
+    callback volume-changed(int);
+    pure function volume-at(y: length, top: length, track: length) -> int {
+        return max(0, min(100, round((top + track - y) / track * 100)));
+    }
+    property <length> bar-top: root.media-y + root.media-height - root.seek-height;
+    property <bool> bar-near: pointer.has-hover
+        && pointer.mouse-x >= root.media-x - 50px && pointer.mouse-x <= root.media-x + root.media-width + 50px
+        && pointer.mouse-y >= root.bar-top - 100px && pointer.mouse-y <= root.bar-top + 40px;
+
     callback owner-valid() -> bool;
     callback retire();
     callback keep();
@@ -184,6 +212,111 @@ export component ArchiveDeleteWindow inherits Window {
                         root.delete();
                     } else if (event.button == PointerEventButton.middle) {
                         root.back();
+                    }
+                }
+            }
+        }
+        bar := Rectangle {
+            visible: root.scanbar-shown;
+            property <bool> full: root.bar-near || scrub.has-hover || scrub.pressed || root.volume-open;
+            x: root.media-x;
+            width: root.media-width - (root.volume-shown ? 24px : 0px);
+            height: self.full ? root.seek-height : root.seek-hidden-height;
+            y: root.media-y + root.media-height - self.height;
+            background: #303030;
+            border-width: 1px;
+            border-color: #606060;
+            Rectangle {
+                x: floor((parent.width - min(root.seek-nub-width, parent.width)) * root.scanbar-progress / 1px) * 1px;
+                width: min(root.seek-nub-width, parent.width);
+                background: #b0b0b0;
+            }
+            if bar.full: Text {
+                x: bar.width - self.width - 3px;
+                height: bar.height;
+                vertical-alignment: center;
+                text: root.scanbar-text;
+                color: #f0f0f0;
+                font-size: 11px;
+            }
+            scrub := TouchArea {
+                pointer-event(event) => {
+                    if (event.button == PointerEventButton.left) {
+                        if (event.kind == PointerEventKind.down) {
+                            root.scan-started();
+                            root.scan(self.mouse-x, self.width);
+                        } else if (event.kind == PointerEventKind.up) {
+                            root.scan-ended();
+                        }
+                    }
+                }
+                moved => { root.scan(self.mouse-x, self.width); }
+            }
+        }
+        if root.scanbar-shown && root.volume-shown: volume-box := Rectangle {
+            property <bool> open: volume-area.has-hover || volume-area.pressed;
+            changed open => { root.volume-open = self.open; }
+            property <length> line: 20px;
+            property <length> track-top: 10px;
+            property <length> track: 100px;
+            property <length> popup: self.track + 2 * self.track-top + self.line;
+            width: 24px;
+            height: self.open ? self.popup + root.seek-height : root.seek-bar-full ? root.seek-height : root.seek-hidden-height;
+            x: root.media-x + root.media-width - self.width;
+            y: root.media-y + root.media-height - self.height;
+            background: #303030;
+            border-width: 1px;
+            border-color: #606060;
+            if volume-box.open: Rectangle {
+                x: (volume-box.width - self.width) / 2;
+                y: volume-box.track-top;
+                width: 4px;
+                height: volume-box.track;
+                background: #606060;
+            }
+            if volume-box.open: Rectangle {
+                x: 4px;
+                y: volume-box.track-top + volume-box.track * (1 - root.volume / 100) - 3px;
+                width: volume-box.width - 8px;
+                height: 6px;
+                background: #b0b0b0;
+            }
+            if volume-box.open: Text {
+                y: volume-box.popup - volume-box.line;
+                width: volume-box.width;
+                height: volume-box.line;
+                horizontal-alignment: center;
+                vertical-alignment: center;
+                text: root.viewer-muted ? "🔇" : "🔊";
+                color: #f0f0f0;
+                font-size: 11px;
+            }
+            if volume-box.height >= volume-box.line: Text {
+                y: volume-box.height - volume-box.line;
+                width: volume-box.width;
+                height: volume-box.line;
+                horizontal-alignment: center;
+                vertical-alignment: center;
+                text: root.global-muted ? "🔇" : "🔊";
+                color: #f0f0f0;
+                font-size: 11px;
+            }
+            volume-area := TouchArea {
+                enabled: root.seek-bar-full;
+                pointer-event(event) => {
+                    if (event.button == PointerEventButton.left && event.kind == PointerEventKind.down) {
+                        if (self.mouse-y >= volume-box.height - volume-box.line) {
+                            root.flip-global-mute();
+                        } else if (volume-box.open && self.mouse-y >= volume-box.popup - volume-box.line) {
+                            root.flip-viewer-mute();
+                        } else if (volume-box.open) {
+                            root.volume-changed(root.volume-at(self.mouse-y, volume-box.track-top, volume-box.track));
+                        }
+                    }
+                }
+                moved => {
+                    if (self.pressed && volume-box.open && self.pressed-y < volume-box.popup - volume-box.line) {
+                        root.volume-changed(root.volume-at(self.mouse-y, volume-box.track-top, volume-box.track));
                     }
                 }
             }

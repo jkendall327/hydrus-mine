@@ -178,6 +178,17 @@ impl Frames {
         self.durations.iter().map(|&d| u64::from(d)).sum()
     }
 
+    /// The size its frames are decoded at: an animated WebP's canvas, a
+    /// ugoira's first frame's.
+    pub fn dimensions(&mut self) -> Option<(u32, u32)> {
+        match &mut self.source {
+            Source::Ugoira { zip, names } => {
+                crate::imaging::decode::image_size(&zip.read(names.first()?)?).ok()
+            }
+            Source::Webp { decoder, .. } => Some(decoder.dimensions()),
+        }
+    }
+
     /// Make frame `index` (at most the last) the next one, and say how long
     /// the frames before it show, in ms (its place in time). An animated
     /// WebP is played up to it, as its frames build on each other.

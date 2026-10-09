@@ -107,6 +107,13 @@ pub(crate) fn open(
         .read(hydrus_store::settings::get)
         .unwrap_or_default();
     let zoomed = crate::zoom_window!(window, settings);
+    crate::archive_delete_playback::seek_options(&window, model.borrow().store());
+    let controls = crate::archive_delete_playback::Controls::new(
+        &window,
+        model.borrow().store().clone(),
+        playback.clone(),
+        animator.clone(),
+    );
     let colour_watch = crate::image_colour_watch::Watch::new(model.borrow().store().clone());
     let finish_choices = Rc::new(RefCell::new(
         None::<(Vec<crate::archive_delete::DeletionChoice>, Option<Instant>)>,
@@ -253,6 +260,7 @@ pub(crate) fn open(
         let animator = animator.clone();
         let zoomed = zoomed.clone();
         let image_cache = image_cache.clone();
+        let controls = controls.clone();
         move || {
             let Some(window) = weak.upgrade() else {
                 return;
@@ -266,6 +274,7 @@ pub(crate) fn open(
             let Some(file) = model.current() else {
                 playback.stop();
                 animator.stop();
+                controls.file_shown(false, None, None, None, false);
                 drop(model);
                 ask_finish();
                 return;
@@ -284,6 +293,14 @@ pub(crate) fn open(
             zoomed.set_still(crate::viewer::still_of(media, shape, still));
             zoomed.show(shape);
             window.set_info_line(crate::viewer::shown(store, file).line.into());
+            let (duration_ms, num_frames) = crate::viewer::timing(store, file);
+            controls.file_shown(
+                playable.is_some(),
+                animation.as_ref().map(|f| (f.len(), f.total_ms())),
+                duration_ms,
+                num_frames,
+                crate::viewer::has_audio_of(store, file),
+            );
             let tags: Vec<ListText> = crate::viewer::hover_tags(store, file, tag_display_type)
                 .iter()
                 .map(|(row, rgb)| list_text(row, *rgb))
@@ -307,7 +324,6 @@ pub(crate) fn open(
                 },
             );
             let frame = weak.clone();
-            let (_, num_frames) = crate::viewer::timing(store, file);
             animator.play_with_metadata(animation, num_frames, false, move |image| {
                 if let Some(window) = frame.upgrade() {
                     window.set_media(image);

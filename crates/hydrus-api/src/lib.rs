@@ -23,6 +23,8 @@ pub mod request;
 pub mod routes;
 pub mod server;
 pub mod services_json;
+pub mod tls;
+pub mod welcome;
 
 use auth::{AccessPermissions, AccessRegistry};
 use error::{ApiError, ApiResult};
@@ -155,6 +157,7 @@ pub fn router(state: Arc<AppState>) -> Router {
         relationships, search, services, tags, urls,
     };
     Router::new()
+        .route("/", get(welcome::welcome))
         .route("/api_version", get(access::api_version))
         .route("/verify_access_key", get(access::verify_access_key))
         .route("/session_key", get(access::session_key))

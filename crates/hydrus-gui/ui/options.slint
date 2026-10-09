@@ -263,6 +263,8 @@ export component OptionsWindow inherits Window {
     callback favourite-tags-clicked();
     callback most-used-tags-clicked();
     callback related-weights-clicked();
+    // the media playback page's "fetch mpv audio devices" (kind 40)
+    callback fetch-mpv-audio-devices-clicked();
     callback import-options-clicked();
     callback namespace-sorts-clicked();
     callback banner-clicked(int);
@@ -589,6 +591,7 @@ export component OptionsWindow inherits Window {
                                 clicked => { root.banner-clicked(i); }
                             }
                             if row.kind == 29: Btn { text: "edit related tag weights"; clicked => { root.related-weights-clicked(); } }
+                            if row.kind == 40: Btn { text: row.text; clicked => { root.fetch-mpv-audio-devices-clicked(); } }
                             if row.kind == 28: Btn { text: "edit most used tags"; clicked => { root.most-used-tags-clicked(); } }
                             if row.kind == 21: Btn {
                                 text: row.text;

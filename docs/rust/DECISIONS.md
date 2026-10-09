@@ -118,6 +118,23 @@ record of what was decided, and why the roadmap looks the way it does.
   Reading old saved-object versions stays in scope: importing an existing
   hydrus install must be easy.
 
+- **Client API extras are wanted** (2026-10-08, #120): HTTPS, the
+  normie-friendly welcome page, and the external scheme/host/port overrides.
+  The reference hides the three override rows (`if False:`) and nothing reads
+  them; hydrus-rs shows them as editable rows in advanced mode at the owner's
+  request. The video buffer follows the reference's sizing (#121).
+
+- **The status bar's app-busy field counts hydrus-rs's background jobs**
+  (2026-10-09). The reference reports its Python worker-thread pool, which
+  hydrus-rs doesn't have; the field shows in-flight background jobs
+  (downloads, imports, maintenance) instead, with the reference's wording.
+
+- **File lookup scripts are out of scope** (2026-10-09). The reference's
+  legacy file-lookup-script tag suggestions (the side panel, the script editor
+  and manager, the favourite-script option) are superseded by downloaders and
+  are not ported. Account/moderator handling for relationship petition
+  reasons goes out of scope with the PTR.
+
 ## Roadmap that follows
 
 1. **Client API parity**, with Hydrus Companion's request patterns checked

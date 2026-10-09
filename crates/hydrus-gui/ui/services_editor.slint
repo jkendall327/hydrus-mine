@@ -132,9 +132,27 @@ export component EditServiceWindow inherits Window {
     in-out property <bool> api-non-local;
     in-out property <bool> api-cors;
     in-out property <bool> api-logs;
-    in property <bool> api-https;
-    in-out property <bool> api-disable-https;
-    in property <string> api-unsupported;
+    in-out property <bool> api-https;
+    in-out property <bool> api-normie;
+    // the external-link overrides are shown in advanced mode only
+    in property <bool> api-advanced;
+    in-out property <string> api-scheme;
+    in-out property <bool> api-scheme-none: true;
+    in-out property <string> api-host;
+    in-out property <bool> api-host-none: true;
+    in-out property <string> api-external-port;
+    in-out property <bool> api-external-port-none: true;
+    // the reference's `_UpdateControls`: all but "run" follow "run the client api"
+    out property <bool> api-controls-enabled: root.api-running;
+    out property <bool> api-scheme-enabled: root.api-running && !root.api-scheme-none;
+    out property <bool> api-host-enabled: root.api-running && !root.api-host-none;
+    out property <bool> api-external-port-enabled: root.api-running && !root.api-external-port-none;
+    in property <string> api-tooltip-non-local;
+    in property <string> api-tooltip-https;
+    in property <string> api-tooltip-cors;
+    in property <string> api-tooltip-logs;
+    in property <string> api-tooltip-normie;
+    in property <string> api-tooltip-external-port;
     in property <bool> rating;
     in property <bool> star-rating;
     in property <bool> numerical;
@@ -182,13 +200,30 @@ export component EditServiceWindow inherits Window {
                 if !root.rating && !root.client-api: Text { text: "There are no additional options for this local service."; color: Theme.muted; wrap: word-wrap; }
                 if root.client-api: VerticalBox {
                     Text { text: "client api options"; color: Theme.text; font-weight: 700; }
-                    CheckBox { text: "run the service"; checked <=> root.api-running; }
-                    HorizontalBox { Text { text: "port:"; color: Theme.text; } SpinBox { minimum: 1; maximum: 65535; value <=> root.api-port; enabled: root.api-running; } }
-                    CheckBox { text: "allow non-local connections"; checked <=> root.api-non-local; enabled: root.api-running; }
-                    CheckBox { text: "support CORS"; checked <=> root.api-cors; enabled: root.api-running; }
-                    CheckBox { text: "log requests"; checked <=> root.api-logs; enabled: root.api-running; }
-                    if root.api-https: CheckBox { text: "disable imported HTTPS (unsupported)"; checked <=> root.api-disable-https; }
-                    Text { text: root.api-unsupported; color: Theme.muted; wrap: word-wrap; }
+                    CheckBox { text: "run the client api?:"; checked <=> root.api-running; }
+                    HorizontalBox { Text { text: "local port:"; color: Theme.text; } SpinBox { minimum: 1; maximum: 65535; value <=> root.api-port; enabled: root.api-controls-enabled; } }
+                    CheckBox { text: "allow non-local connections:"; checked <=> root.api-non-local; enabled: root.api-controls-enabled; Tooltip { text: @markdown("\{root.api-tooltip-non-local}"); } }
+                    CheckBox { text: "use https"; checked <=> root.api-https; enabled: root.api-controls-enabled; Tooltip { text: @markdown("\{root.api-tooltip-https}"); } }
+                    CheckBox { text: "support CORS headers"; checked <=> root.api-cors; enabled: root.api-controls-enabled; Tooltip { text: @markdown("\{root.api-tooltip-cors}"); } }
+                    CheckBox { text: "log requests"; checked <=> root.api-logs; enabled: root.api-controls-enabled; Tooltip { text: @markdown("\{root.api-tooltip-logs}"); } }
+                    CheckBox { text: "normie-friendly welcome page"; checked <=> root.api-normie; enabled: root.api-controls-enabled; Tooltip { text: @markdown("\{root.api-tooltip-normie}"); } }
+                    if root.api-advanced: VerticalBox {
+                        HorizontalBox {
+                            Text { text: "scheme (http/https) override when copying external links"; color: Theme.text; wrap: word-wrap; }
+                            LineEdit { text <=> root.api-scheme; placeholder-text: root.api-scheme-none ? "" : "https"; enabled: root.api-scheme-enabled; }
+                            CheckBox { text: "none"; checked <=> root.api-scheme-none; enabled: root.api-controls-enabled; }
+                        }
+                        HorizontalBox {
+                            Text { text: "host override when copying external links"; color: Theme.text; wrap: word-wrap; }
+                            LineEdit { text <=> root.api-host; placeholder-text: root.api-host-none ? "" : "host.com"; enabled: root.api-host-enabled; }
+                            CheckBox { text: "none"; checked <=> root.api-host-none; enabled: root.api-controls-enabled; }
+                        }
+                        HorizontalBox {
+                            Text { text: "port override when copying external links"; color: Theme.text; wrap: word-wrap; Tooltip { text: @markdown("\{root.api-tooltip-external-port}"); } }
+                            LineEdit { text <=> root.api-external-port; placeholder-text: root.api-external-port-none ? "" : "12345"; enabled: root.api-external-port-enabled; Tooltip { text: @markdown("\{root.api-tooltip-external-port}"); } }
+                            CheckBox { text: "none"; checked <=> root.api-external-port-none; enabled: root.api-controls-enabled; }
+                        }
+                    }
                     Text { text: "Apply in the parent services list saves these settings. The daemon restarts only the API listener; downloads and other work continue. Explicit --port/--bind CLI overrides take precedence."; color: Theme.muted; wrap: word-wrap; }
                 }
                 if root.rating: VerticalBox {

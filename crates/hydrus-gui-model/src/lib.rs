@@ -126,6 +126,7 @@ pub mod thumbnail_ratings;
 pub mod times_editor;
 pub mod urls_editor;
 pub mod vacuum_review;
+pub mod video_buffer;
 pub mod viewer_prefetch;
 pub mod viewer_shortcut_menu;
 
@@ -173,6 +174,7 @@ pub mod frame_locations;
 pub mod frame_placement;
 pub mod frame_save;
 pub mod incremental_tagging;
+pub mod mpv_audio_devices;
 pub mod mpv_options;
 pub mod tag_banner;
 

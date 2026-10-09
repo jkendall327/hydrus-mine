@@ -199,8 +199,12 @@ fn option_row(row: &Row<'_>, store: &Store, sessions: &[(Option<String>, String)
                     if option.label == "Memory reserved for image cache:" {
                         return out;
                     }
-                    let bounds = store.snapshot().thumbnails;
                     let bytes = hydrus_gui_model::thumbnail_cache::combined(*amount, *unit);
+                    if option.label == "Memory for video buffer: " {
+                        out.text = hydrus_gui_model::video_buffer::estimate(bytes).into();
+                        return out;
+                    }
+                    let bounds = store.snapshot().thumbnails;
                     let per =
                         3 * u64::from(bounds.bounding_width) * u64::from(bounds.bounding_height);
                     out.text = format!(
@@ -410,6 +414,10 @@ fn option_row(row: &Row<'_>, store: &Store, sessions: &[(Option<String>, String)
                 }
                 (Kind::RelatedWeights, Value::RelatedWeights(_)) => {
                     out.kind = 29;
+                }
+                (Kind::FetchMpvAudioDevices, _) => {
+                    out.kind = 40;
+                    out.text = hydrus_gui_model::mpv_audio_devices::BUTTON.into();
                 }
                 (Kind::MostUsedTags, Value::MostUsedTags(_)) => {
                     out.kind = 28;
@@ -946,6 +954,23 @@ pub(crate) fn open(
             ) {
                 eprintln!("could not edit related weights: {error}");
             }
+        }
+    });
+    window.on_fetch_mpv_audio_devices_clicked({
+        let editor = editor.clone();
+        let active = active.clone();
+        let show_page = show_page.clone();
+        move || {
+            if !active.get() {
+                return;
+            }
+            let (editor, active, show_page) = (editor.clone(), active.clone(), show_page.clone());
+            crate::options_mpv_devices::clicked(move |device| {
+                if active.get() {
+                    editor.borrow_mut().set_mpv_audio_device(device);
+                    show_page();
+                }
+            });
         }
     });
     window.on_most_used_tags_clicked({

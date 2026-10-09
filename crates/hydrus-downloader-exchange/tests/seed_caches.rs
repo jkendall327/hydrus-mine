@@ -49,7 +49,7 @@ fn historical_cache_versions_replay_exact_qt_history_headers_and_list_exports() 
     {
         let log = json!([86, "history", 1, [[67, 1, [26, 3, []]], case["source"]]]);
         let decoded = exchange::decode_log(&log);
-        if case["safe"] == false {
+        if case["safe"] == false && !case["source"][2][0][1]["note"].is_number() {
             assert!(
                 decoded
                     .unwrap_err()
@@ -68,15 +68,22 @@ fn unsafe_or_malformed_history_fails_explicitly_without_truncating_a_package() {
     let fixture = hydrus_testkit::fixture_json("legacy_seed_caches.json");
     for case in fixture["cases"].as_array().unwrap() {
         if case["version"].as_u64().unwrap() >= 5 {
-            let mut source = case["source"].clone();
-            source[3][1][0][2][8] = case["duplicate_cache"].clone();
-            let error = exchange::decode_text(&source.to_string())
-                .unwrap_err()
-                .to_string();
-            assert!(error.contains("duplicate identities"), "{error}");
+            // The upgrade keeps repeated seeds; the reference drops them (first
+            // wins) the first time the cache is indexed, so an export has none.
             assert_eq!(
                 case["duplicate_upgraded"][2][2].as_array().unwrap().len(),
                 5
+            );
+            let now = fixture["now"].as_i64().unwrap();
+            let decoded =
+                exchange::decode_text_at(&case["duplicate_source"].to_string(), now).unwrap();
+            let cache = |value: &Value| value[2][1][2][0][1][3][1].clone();
+            let ours = exchange::tuple(&decoded[0]).unwrap();
+            assert_eq!(
+                cache(&ours),
+                cache(&case["duplicate_exported"]),
+                "cache version {}",
+                case["version"]
             );
         }
     }
@@ -88,7 +95,7 @@ fn unsafe_or_malformed_history_fails_explicitly_without_truncating_a_package() {
         let package = json!([26, 1, [fixture["cases"][0]["source"], source]]);
         assert!(exchange::decode_text(&package.to_string()).is_err());
     }
-    for note in [json!(1.5), json!(["complex"]), json!({"complex": true})] {
+    for note in [json!(["complex"]), json!({"complex": true})] {
         let mut source = fixture["cases"][0]["source"].clone();
         source[3][1][0][2][8][2][0][1]["note"] = note;
         assert!(

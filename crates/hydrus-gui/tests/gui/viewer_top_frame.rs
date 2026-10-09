@@ -110,6 +110,12 @@ fn the_viewer_s_top_hover_frame() {
     assert!(bound.current.borrow().borrow().results().contains(&file));
     assert_eq!(buttons(&viewer), (false, false, true, true));
     viewer.invoke_undelete();
+    // (asked first, while "Confirm sending files to trash" is on)
+    assert_eq!(
+        viewer.get_question(),
+        "Undelete this file back to my files?"
+    );
+    viewer.invoke_answer(true);
     assert_eq!(buttons(&viewer), (false, true, false, false));
 
     // its zoom is the viewer's: the zoom switch changes it, to or from 100%

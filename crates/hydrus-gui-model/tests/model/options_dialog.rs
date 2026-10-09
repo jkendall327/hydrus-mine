@@ -171,6 +171,10 @@ fn compare(kind: &Kind, value: &Value, theirs: &Json, store: &Store) -> Option<S
                 || theirs["value"] != serde_json::json!(codes))
             .then(|| format!("viewing canvases {codes:?}"))
         }
+        (Kind::FetchMpvAudioDevices, _) => (theirs["button"]
+            != hydrus_gui_model::mpv_audio_devices::BUTTON
+            || theirs["tooltip"] != hydrus_gui_model::mpv_audio_devices::TOOLTIP)
+            .then(|| format!("fetch button {theirs}")),
         (Kind::Check, Value::Check(b)) => {
             (theirs.get("check").is_none() || theirs["value"] != *b).then(|| format!("check {b}"))
         }

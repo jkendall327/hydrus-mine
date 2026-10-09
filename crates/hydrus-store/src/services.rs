@@ -224,7 +224,23 @@ pub struct ServerConfig {
     pub use_https: bool,
     pub external_scheme_override: Option<String>,
     pub external_host_override: Option<String>,
-    pub external_port_override: Option<u16>,
+    /// The reference's editor keeps this as text: a non-none empty string
+    /// drops the `:` from copied links. Rows saved before held a number.
+    #[serde(default, deserialize_with = "port_text")]
+    pub external_port_override: Option<String>,
+}
+
+fn port_text<'de, D: serde::Deserializer<'de>>(d: D) -> Result<Option<String>, D::Error> {
+    #[derive(Deserialize)]
+    #[serde(untagged)]
+    enum Port {
+        Number(u64),
+        Text(String),
+    }
+    Ok(Option::<Port>::deserialize(d)?.map(|p| match p {
+        Port::Number(n) => n.to_string(),
+        Port::Text(t) => t,
+    }))
 }
 
 /// Settings of a remote repository. Not functional yet; the fields the

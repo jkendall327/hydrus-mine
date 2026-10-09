@@ -49,22 +49,13 @@ pub fn validate(kind: &ServiceKind) -> Result<()> {
     }
     Ok(())
 }
-// Client API is a protected singleton: only supported configuration fields may
-// change. Imported unsupported flags are retained, with HTTPS allowed to be disabled.
+// Client API is a protected singleton: its type and key stay, and every
+// setting the reference's editor has may change.
 fn supported_api_change(original: &ServiceKind, desired: &ServiceKind) -> bool {
-    let (ServiceKind::ClientApi(original), ServiceKind::ClientApi(desired)) = (original, desired)
-    else {
-        return false;
-    };
-    let mut allowed = original.clone();
-    allowed.port = desired.port;
-    allowed.allow_non_local_connections = desired.allow_non_local_connections;
-    allowed.support_cors = desired.support_cors;
-    allowed.log_requests = desired.log_requests;
-    if original.use_https && !desired.use_https {
-        allowed.use_https = false;
-    }
-    &allowed == desired
+    matches!(
+        (original, desired),
+        (ServiceKind::ClientApi(_), ServiceKind::ClientApi(_))
+    )
 }
 fn validate_list(actual: &[Service], desired: &[Service]) -> Result<HashSet<ServiceKey>> {
     let mut keys = HashSet::new();

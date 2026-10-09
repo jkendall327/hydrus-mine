@@ -1,33 +1,79 @@
 //! Playing the animations the reference plays with its own player rather
 //! than mpv (ugoiras and animated WebP): frames are decoded on a thread of
-//! their own, a few ahead of the one shown, and each is shown for its
-//! duration, looping. The player says which frame it is on and when, and
-//! goes to a frame when asked, as the reference's scanbar has it.
+//! their own into a buffer sized from "Memory for video buffer", two thirds
+//! of it behind the frame shown and a third ahead, as the reference's
+//! `RasterContainerVideo` keeps them (so a short loop is decoded once); and
+//! each is shown for its duration, looping. The player says which frame it
+//! is on and when, and goes to a frame when asked, as the reference's
+//! scanbar has it.
 
 use std::cell::{Cell, RefCell};
 use std::rc::Rc;
-use std::sync::Arc;
+use std::sync::atomic::{AtomicU64, Ordering};
+use std::sync::{Arc, Condvar, Mutex, MutexGuard};
 use std::time::Duration;
 
-use crossbeam_channel::{Receiver, Sender, TryRecvError};
+use hydrus_gui_model::video_buffer::{self, Buffer};
 use hydrus_media::animation::Frames;
 
 use crate::thumbnails::Pixels;
 
-/// How many frames are decoded ahead of the one shown.
-const AHEAD: usize = 3;
-
 /// The least time a frame is shown, so a zero duration doesn't spin.
 const SHORTEST_FRAME_MS: u32 = 10;
 
-/// A frame decoded: its pixels, how long it shows, its index and place in
-/// time (ms), and which seek it follows.
+thread_local! {
+    /// How many frames the players started on this thread have decoded.
+    static DECODED: Arc<AtomicU64> = Arc::default();
+}
+
+/// How many frames the animation players started on this thread (the
+/// event loop's) have decoded, all told: a frame kept in the buffer and
+/// shown again is not decoded again.
+pub fn frames_decoded() -> u64 {
+    DECODED.with(|decoded| decoded.load(Ordering::Relaxed))
+}
+
+/// A frame decoded: its pixels and how long it shows.
 struct Decoded {
     pixels: Pixels,
     ms: u32,
-    index: usize,
-    at_ms: u64,
-    generation: u64,
+}
+
+impl Decoded {
+    fn image(&self) -> slint::Image {
+        match &self.pixels {
+            Pixels::Rgba(pixels) => slint::Image::from_rgba8(pixels.clone()),
+            Pixels::Rgb(pixels) => slint::Image::from_rgb8(pixels.clone()),
+        }
+    }
+}
+
+/// The buffer the decoding thread fills and the player shows from.
+struct Decoding {
+    buffer: Buffer<Decoded>,
+    /// Whether the player has gone (the thread ends), and whether a frame
+    /// couldn't be read (the last one shown stays).
+    stop: bool,
+    failed: bool,
+}
+
+struct Shared {
+    decoding: Mutex<Decoding>,
+    wake: Condvar,
+}
+
+impl Shared {
+    fn lock(&self) -> MutexGuard<'_, Decoding> {
+        self.decoding
+            .lock()
+            .unwrap_or_else(std::sync::PoisonError::into_inner)
+    }
+
+    /// Keep frame `index` and those round it (`GetReadyForFrame`).
+    fn get_ready_for(&self, index: usize) {
+        self.lock().buffer.get_ready_for(index);
+        self.wake.notify_all();
+    }
 }
 
 pub(crate) struct Animator {
@@ -49,13 +95,12 @@ pub(crate) struct Status {
 }
 
 struct Running {
-    frames: Receiver<Decoded>,
-    seeks: Sender<(usize, u64)>,
+    shared: Arc<Shared>,
     show: Box<dyn Fn(slint::Image)>,
     paused: bool,
-    /// The seek frames must follow to be shown; and whether to show the
-    /// next one even though paused (just seeked).
-    generation: u64,
+    /// The frame to show next; and whether to show it even though paused
+    /// (just gone to).
+    want: usize,
     show_one: bool,
     status: Status,
     durations: Vec<u32>,
@@ -64,12 +109,86 @@ struct Running {
     playthroughs: u32,
     times_to_play: u32,
     /// Whether it stops on its last frame rather than come round
-    /// (`StopForSlideshow`), and the first frame, held there until it
-    /// plays on.
+    /// (`StopForSlideshow`).
     stop_at_end: bool,
-    held: Option<Decoded>,
     /// The frame shown last, if any.
     last_shown: Option<usize>,
+}
+
+impl Drop for Running {
+    fn drop(&mut self) {
+        self.shared.lock().stop = true;
+        self.shared.wake.notify_all();
+    }
+}
+
+impl Running {
+    /// The place in time (ms) of frame `index`.
+    fn at_ms(&self, index: usize) -> u64 {
+        self.durations[..index.min(self.durations.len())]
+            .iter()
+            .map(|&ms| u64::from(ms))
+            .sum()
+    }
+}
+
+/// Decode the frames `shared`'s buffer asks for until the player goes or a
+/// frame can't be read (`THREADRender`).
+fn decode(mut frames: Frames, shared: &Shared, decoded: &AtomicU64) {
+    let count = frames.len();
+    // (where the decoder is: the reference's render thread keeps its own
+    // count, which for a one-frame buffer starts a frame behind it; frames
+    // are kept as the count says, but decoded where they are)
+    let mut position = 0;
+    let mut decoding = shared.lock();
+    loop {
+        if decoding.stop {
+            return;
+        }
+        let Some(job) = decoding.buffer.next_job() else {
+            decoding = shared
+                .wake
+                .wait_timeout(decoding, Duration::from_millis(100))
+                .map_or_else(|e| e.into_inner().0, |(guard, _)| guard);
+            continue;
+        };
+        drop(decoding);
+        let mut read = || -> hydrus_media::error::Result<_> {
+            if let Some(to) = job.seek {
+                frames.seek(to)?;
+                position = to;
+            }
+            if let Ok(index) = usize::try_from(job.index)
+                && index != position
+            {
+                frames.seek(index)?;
+                position = index;
+            }
+            let frame = frames.next_frame()?;
+            position = (position + 1) % count.max(1);
+            Ok(frame)
+        };
+        let read = read();
+        decoding = shared.lock();
+        let Ok((raster, ms)) = read else {
+            decoding.failed = true;
+            return;
+        };
+        decoded.fetch_add(1, Ordering::Relaxed);
+        let frame = Decoded {
+            pixels: Pixels::new(&raster),
+            ms,
+        };
+        if decoding.buffer.rendered(job.index, frame) {
+            drop(decoding);
+            if frames.seek(0).is_err() {
+                shared.lock().failed = true;
+                return;
+            }
+            position = 0;
+            decoding = shared.lock();
+        }
+    }
 }
 
 impl Animator {
@@ -97,6 +216,24 @@ impl Animator {
     pub fn play(self: &Rc<Self>, frames: Option<Frames>, show: impl Fn(slint::Image) + 'static) {
         let metadata = frames.as_ref().map(|frames| frames.len() as u64);
         self.play_with_metadata(frames, metadata, false, show);
+    }
+
+    /// "Memory for video buffer", as saved when the file is opened.
+    fn buffer_bytes(&self) -> u64 {
+        self.store
+            .as_ref()
+            .and_then(|store| {
+                store
+                    .read(
+                        hydrus_store::settings::get::<
+                            hydrus_store::reference_options::ReferenceOptions,
+                        >,
+                    )
+                    .ok()
+            })
+            .map_or(video_buffer::DEFAULT_BYTES, |options| {
+                u64::try_from(options.integer("video_buffer_size")).unwrap_or(0)
+            })
     }
 
     /// SetMedia samples the previous widget's count, then installs this one's.
@@ -134,70 +271,46 @@ impl Animator {
         let times_to_play = frames.times_to_play();
         let total_ms = frames.total_ms();
         let durations = frames.durations().to_vec();
-        let (sender, receiver) = crossbeam_channel::bounded(AHEAD);
-        let (seeks, seeking) = crossbeam_channel::unbounded::<(usize, u64)>();
-        let decoding = std::thread::Builder::new()
-            .name("animation".into())
-            .spawn(move || {
-                // An impossible reused-widget index must not silently clamp to
-                // a different first frame. A later explicit seek can recover it.
-                let (to, mut generation) =
-                    if let Some(index) = initial.filter(|index| *index < count) {
-                        (index, 0)
-                    } else {
-                        let Ok(request) = seeking.recv() else {
-                            return;
-                        };
-                        request
-                    };
-                let Ok(mut at_ms) = frames.seek(to) else {
-                    return;
-                };
-                let mut index = to.min(count.saturating_sub(1));
-                // (ends when a frame can't be read, or nothing is watching)
-                loop {
-                    if let Some((to, new)) = seeking.try_iter().last() {
-                        match frames.seek(to) {
-                            Ok(before) => {
-                                (generation, index, at_ms) =
-                                    (new, to.min(count.saturating_sub(1)), before);
-                            }
-                            Err(_) => break,
-                        }
-                    }
-                    let Ok((raster, ms)) = frames.next_frame() else {
-                        break;
-                    };
-                    let decoded = Decoded {
-                        pixels: Pixels::new(&raster),
-                        ms,
-                        index,
-                        at_ms,
-                        generation,
-                    };
-                    if sender.send(decoded).is_err() {
-                        break;
-                    }
-                    index += 1;
-                    at_ms += u64::from(ms);
-                    if index >= count {
-                        (index, at_ms) = (0, 0);
-                    }
-                }
-            });
+        // (sized at the frames' own size, which is the size they are
+        // decoded at)
+        let kept = video_buffer::frames_kept(
+            self.buffer_bytes(),
+            frames.dimensions().unwrap_or((0, 0)),
+            Some(total_ms),
+            Some(count as u64),
+        );
+        let shared = Arc::new(Shared {
+            decoding: Mutex::new(Decoding {
+                buffer: Buffer::new(count, kept),
+                stop: false,
+                failed: false,
+            }),
+            wake: Condvar::new(),
+        });
+        // An impossible reused-widget index must not silently clamp to a
+        // different first frame; nothing is decoded until a later explicit
+        // seek asks for a frame.
+        if let Some(index) = initial.filter(|index| *index < count) {
+            shared.get_ready_for(index);
+        }
+        let decoded = DECODED.with(Arc::clone);
+        let decoding = std::thread::Builder::new().name("animation".into()).spawn({
+            let shared = shared.clone();
+            move || decode(frames, &shared, &decoded)
+        });
         if let Err(e) = decoding {
             eprintln!("could not start playing the animation: {e}");
             return;
         }
+        let want = initial.unwrap_or(0);
         *self.running.borrow_mut() = Some(Running {
-            frames: receiver,
-            seeks,
+            shared,
             show: Box::new(show),
             paused,
-            generation: 0,
-            show_one: true,
+            want,
+            show_one: initial.is_some_and(|index| index < count),
             status: Status {
-                index: initial.unwrap_or(0),
+                index: want,
                 at_ms: 0,
                 frames: count,
                 total_ms,
@@ -207,13 +320,13 @@ impl Animator {
             playthroughs: 0,
             times_to_play,
             stop_at_end: false,
-            held: None,
             last_shown: None,
         });
         self.tick();
     }
 
-    /// Show the next frame if it is ready, and wait its duration (or a
+    /// Show the frame wanted if it is decoded (`GetFrame`, which makes the
+    /// buffer ready for the one after), and wait its duration (or a
     /// moment, for it to be decoded).
     fn tick(self: &Rc<Self>) {
         let wait = {
@@ -221,19 +334,21 @@ impl Animator {
             let Some(running) = running.as_mut().filter(|r| !r.paused || r.show_one) else {
                 return;
             };
-            let next = match running.held.take() {
-                Some(frame) => Ok(frame),
-                None => running.frames.try_recv(),
+            let frames = running.status.frames;
+            let index = running.want;
+            let ready = {
+                let decoding = running.shared.lock();
+                match decoding.buffer.get(index) {
+                    Some(frame) => Ok((frame.image(), frame.ms)),
+                    None => Err(decoding.failed),
+                }
             };
-            match next {
-                // (decoded before the latest seek)
-                Ok(frame) if frame.generation != running.generation => 0,
-                Ok(frame) => {
+            match ready {
+                Ok((image, ms)) => {
                     // round from the last frame to the first: played through
                     // (told to stop there, it stays on the last)
-                    let frames = running.status.frames;
                     if !running.show_one
-                        && frame.index == 0
+                        && index == 0
                         && running.last_shown == Some(frames.saturating_sub(1))
                     {
                         running.playthroughs += 1;
@@ -253,25 +368,26 @@ impl Animator {
                                 && running.playthroughs >= running.times_to_play)
                         {
                             running.paused = true;
-                            running.held = Some(frame);
                             return;
                         }
                     }
-                    running.last_shown = Some(frame.index);
-                    (running.show)(frame.pixels.image());
-                    running.status.index = frame.index;
-                    running.status.at_ms = frame.at_ms;
+                    running.shared.get_ready_for((index + 1) % frames.max(1));
+                    running.last_shown = Some(index);
+                    (running.show)(image);
+                    running.status.index = index;
+                    running.status.at_ms = running.at_ms(index);
+                    running.want = (index + 1) % frames.max(1);
                     if running.show_one {
                         running.show_one = false;
                         if running.paused {
                             return;
                         }
                     }
-                    frame.ms.max(SHORTEST_FRAME_MS)
+                    ms.max(SHORTEST_FRAME_MS)
                 }
-                Err(TryRecvError::Empty) => 5,
+                Err(false) => 5,
                 // (a frame couldn't be read: the last one stays)
-                Err(TryRecvError::Disconnected) => return,
+                Err(true) => return,
             }
         };
         let this = Rc::downgrade(self);
@@ -301,18 +417,14 @@ impl Animator {
             let Some(running) = running.as_mut() else {
                 return;
             };
-            running.generation += 1;
+            let index = index.min(running.status.frames.saturating_sub(1));
+            running.want = index;
             running.show_one = true;
-            // (frames decoded before it are passed over as they come, which
-            // frees the decoder to seek; they aren't emptied out here, as
-            // that could take the frame sought too, the decoder running on
-            // meanwhile)
-            let _ = running.seeks.send((index, running.generation));
+            running.shared.get_ready_for(index);
         }
         self.timer.stop();
         self.tick();
     }
-
     /// Go `step_ms` forwards (`direction` 1) or back (-1) from the frame
     /// shown (`SeekDelta`): to the frame showing then, or if that is this
     /// one, the next (or last) frame; never before the first, and past the
@@ -499,17 +611,19 @@ mod tests {
             animator.status().unwrap().at_ms,
             qt["rendered"]["status"][1].as_u64().unwrap()
         );
-        // A decoded blue frame from generation0 cannot flash after a paused seek.
-        let old = animator
+        // Frames are kept by index, so a frame decoded before a paused seek
+        // (the blue one after the green) cannot show in place of the one
+        // gone to.
+        assert!(until(&animator, |a| a
             .running
             .borrow()
             .as_ref()
             .unwrap()
-            .frames
-            .recv_timeout(Duration::from_secs(10))
-            .unwrap();
-        assert_eq!(old.index, 2);
-        animator.running.borrow_mut().as_mut().unwrap().held = Some(old);
+            .shared
+            .lock()
+            .buffer
+            .get(2)
+            .is_some()));
         seen.borrow_mut().clear();
         animator.goto(0);
         assert!(until(&animator, |_| !seen.borrow().is_empty()));

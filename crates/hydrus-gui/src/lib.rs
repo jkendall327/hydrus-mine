@@ -27,6 +27,7 @@ pub mod archive_repair_window;
 mod auto_resolution_preview_window;
 mod auto_resolution_review_window;
 #[doc(hidden)]
+pub use animation::frames_decoded;
 pub use auto_resolution_review_window::set_popup_delay;
 mod auto_resolution_rules_window;
 mod autocomplete_tabs;
@@ -184,15 +185,18 @@ pub fn thumbnail_recovery(
 ) -> hydrus_media::Raster {
     thumbnails::recovery(store, id, settings, allow)
 }
+mod archive_delete_playback;
 pub mod choice_buttons;
 pub mod database_maintenance_window;
 pub mod how_boned_window;
+pub mod options_mpv_devices;
 pub mod set_password_window;
 pub mod thumbnail_maintenance_window;
 pub mod thumbnail_menu;
 mod thumbnail_navigation;
 pub mod thumbnail_paint;
 mod thumbnails;
+pub mod undelete;
 mod unlock;
 mod viewer;
 pub mod viewer_closing;
@@ -2330,14 +2334,16 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         let page = page.clone();
         let selected_files = selected_files.clone();
         let shown = shown.clone();
+        let ask = ask.clone();
         move || {
-            let files = selected_files();
-            if !files.is_empty()
-                && let Err(e) = media_actions::undelete(page().borrow().store(), &files)
-            {
-                eprintln!("could not undelete the files: {e}");
-            }
-            shown(false);
+            let store = page().borrow().store().clone();
+            let shown = shown.clone();
+            undelete::undelete(
+                &store,
+                &selected_files(),
+                &|question, then| ask(Asked::Then(question, then)),
+                Rc::new(move || shown(false)),
+            );
         }
     });
     window.on_delete_selected({
@@ -6353,6 +6359,8 @@ enum ViewerAsked {
     Delete(media_actions::Deletion, HashId),
     /// Opening these URLs in the web browser.
     OpenUrls(Vec<String>),
+    /// Asking this, then doing that.
+    Then(String, Rc<dyn Fn()>),
 }
 
 /// Open a viewer window on `model`'s file; it forgets itself from `slot`
@@ -7297,6 +7305,7 @@ fn open_viewer(
                     ViewerAsked::OpenUrls(urls) => {
                         Asked::OpenUrls(urls.clone(), external_launches.clone()).question()
                     }
+                    ViewerAsked::Then(question, _) => question.clone(),
                 };
                 let auto_accept = if let ViewerAsked::Delete(deletion, file) = &asked {
                     !media_actions::confirm_deletion(model.borrow().store(), &[*file], deletion)
@@ -7325,6 +7334,26 @@ fn open_viewer(
                 }
                 Err(e) => eprintln!("could not change the file: {e}"),
             }
+        }
+    });
+    // undeleting a file, asking as the reference does
+    let undelete_file: Rc<dyn Fn(HashId)> = Rc::new({
+        let model = model.clone();
+        let ask = ask.clone();
+        let show_info = show_info.clone();
+        let files_changed = files_changed.clone();
+        move |file| {
+            let store = model.borrow().store().clone();
+            let (show_info, files_changed) = (show_info.clone(), files_changed.clone());
+            undelete::undelete(
+                &store,
+                &[file],
+                &|question, then| ask(ViewerAsked::Then(question, then)),
+                Rc::new(move || {
+                    show_info();
+                    files_changed();
+                }),
+            );
         }
     });
     // manage a file's tags; once applied, the hover frame's and the page's
@@ -7422,6 +7451,7 @@ fn open_viewer(
         let zoomed = zoomed.clone();
         let forced_mute = forced_mute.clone();
         let change_file = change_file.clone();
+        let undelete_file = undelete_file.clone();
         let manage_tags_of = manage_tags_of.clone();
         let manage_notes = manage_notes.clone();
         let manage_urls = manage_urls.clone();
@@ -7500,7 +7530,7 @@ fn open_viewer(
                 }
                 Action::Archive => change_file(media_actions::archive, file),
                 Action::Inbox => change_file(media_actions::inbox, file),
-                Action::Undelete => change_file(media_actions::undelete, file),
+                Action::Undelete => undelete_file(file),
                 // Only the thumbnail panels offer this reference action.
                 Action::ClearDeletionRecords => {}
                 Action::ManageTags => manage_tags_of(file),
@@ -7608,7 +7638,10 @@ fn open_viewer(
     };
     window.on_archive(act(media_actions::archive));
     window.on_inbox(act(media_actions::inbox));
-    window.on_undelete(act(media_actions::undelete));
+    window.on_undelete({
+        let model = model.clone();
+        move || undelete_file(model.borrow().current())
+    });
     window.on_delete({
         let model = model.clone();
         let ask = ask.clone();
@@ -7646,6 +7679,10 @@ fn open_viewer(
                 Some(ViewerAsked::OpenUrls(urls)) => {
                     let store = model.borrow().store().clone();
                     Asked::OpenUrls(urls, external_launches.clone()).act(&store, &|_| {});
+                    return;
+                }
+                Some(ViewerAsked::Then(_, then)) => {
+                    then();
                     return;
                 }
                 None => return,

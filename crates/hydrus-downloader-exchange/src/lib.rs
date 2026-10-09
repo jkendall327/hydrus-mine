@@ -3,6 +3,7 @@
 //! editor data the native parser does not execute. All inputs are bounded and
 //! a package is decoded completely before its caller can stage any changes.
 
+pub mod domain_metadata;
 mod encode;
 pub mod external_calls;
 pub mod import_options;
@@ -62,6 +63,8 @@ pub enum Native {
     Formula(Formula),
     Simple(hydrus_parse::simple::SimpleFormula),
     Login(hydrus_parse::login::LoginScript),
+    /// A domain's shareable headers and bandwidth rules (type 71).
+    Domain(domain_metadata::DomainMetadata),
 }
 /// A decoded native object together with auxiliary reference editor data.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
@@ -87,6 +90,7 @@ impl Definition {
             Native::Formula(f) => &f.name,
             Native::Simple(f) => &f.name,
             Native::Login(script) => &script.name,
+            Native::Domain(metadata) => &metadata.domain,
         }
     }
     /// Encode the native fields while retaining auxiliary reference data.
@@ -161,6 +165,7 @@ fn decode_value(
         30 => Native::Content(parsers::content_parser(&object).map_err(err)?),
         27 | 31 | 59 | 60 | 133 | 136 => Native::Formula(parsers::formula(&object).map_err(err)?),
         63 => Native::Simple(parsers::simple_formula(&object).map_err(err)?),
+        71 => Native::Domain(domain_metadata::decode(&value)?),
         73 => Native::Login(hydrus_legacy::objects::logins::login_script(&object).map_err(err)?),
         code => return Err(Error::Unsupported(format!("object type {code}"))),
     };

@@ -123,6 +123,7 @@ mod client_api_admin;
 
 mod network_sessions;
 
+mod domain_metadata;
 mod downloader_interchange;
 mod network_data;
 mod tag_migration;
@@ -228,4 +229,5 @@ mod popup_network_job;
 mod system_tray;
 
 mod preview_audio;
+mod video_buffer;
 mod viewer_prefetch;

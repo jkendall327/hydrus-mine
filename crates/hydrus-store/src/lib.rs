@@ -83,6 +83,7 @@ pub mod undo;
 pub mod urls;
 pub mod vacuum;
 pub mod viewing_maintenance;
+pub mod wake;
 pub mod watchers;
 
 pub use conn::{Db, Paused, WriteCtx};
