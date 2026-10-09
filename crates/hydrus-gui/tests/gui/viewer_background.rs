@@ -231,13 +231,20 @@ fn background_copies_say_and_place_what_the_reference_draws() {
             assert_eq!(drawn_kinds.contains(kind), shown, "{kind}: {event}");
         }
         if shown[0] {
-            let tags: Vec<String> = viewer.get_tags().iter().map(|t| t.text.to_string()).collect();
+            let tags: Vec<String> = viewer
+                .get_tags()
+                .iter()
+                .map(|t| t.text.to_string())
+                .collect();
             assert_eq!(tags, texts(draws, "Tags"), "tags");
         }
         if shown[1] {
             let top = texts(draws, "TopMiddle");
             assert_eq!(viewer.get_tag_banner().as_str(), top[0]);
-            assert_eq!(without_age(&viewer.get_background_info_line()), without_age(&top[1]));
+            assert_eq!(
+                without_age(&viewer.get_background_info_line()),
+                without_age(&top[1])
+            );
             assert!(viewer.get_background_info_line().ends_with(" ago"));
         }
         if shown[2] {
@@ -265,7 +272,11 @@ fn background_copies_say_and_place_what_the_reference_draws() {
         // the reference's rectangles (and the notes below the ratings)
         let pixels = headless::render_snapshot(&drawn, width, height);
         let all = ink(&pixels, width as usize);
-        assert_eq!(all.is_some(), event["visible_pixels"].as_u64().unwrap() > 0, "{event}");
+        assert_eq!(
+            all.is_some(),
+            event["visible_pixels"].as_u64().unwrap() > 0,
+            "{event}"
+        );
         if values.iter().filter(|v| **v).count() == 1 {
             let kind = KINDS[values.iter().position(|v| *v).unwrap()];
             let ours = all.unwrap();
@@ -275,13 +286,15 @@ fn background_copies_say_and_place_what_the_reference_draws() {
                 "Tags" => near(ours.x0, theirs.x0) && near(ours.y0, theirs.y0),
                 // centred lines at the top
                 "TopMiddle" => {
-                    near((ours.x0 + ours.x1) / 2.0, (theirs.x0 + theirs.x1) / 2.0)
+                    near(f64::midpoint(ours.x0, ours.x1), f64::midpoint(theirs.x0, theirs.x1))
                         && near(ours.y0, theirs.y0)
                 }
                 // a column at the right: the reference's rectangles are the
                 // column (its texts wrap in it), ours is ink inside it
                 "Notes" => {
-                    near(ours.x0, theirs.x0) && ours.x1 <= theirs.x1 + SLACK && near(ours.y0, theirs.y0)
+                    near(ours.x0, theirs.x0)
+                        && ours.x1 <= theirs.x1 + SLACK
+                        && near(ours.y0, theirs.y0)
                 }
                 // right-aligned from the right edge, ending where the
                 // reference's locations end (its rectangles are its texts:
@@ -297,8 +310,7 @@ fn background_copies_say_and_place_what_the_reference_draws() {
             let input_y = calls.iter().find(|c| c["kind"] == "Notes").unwrap()["input_y"]
                 .as_f64()
                 .unwrap();
-            let ratings_end = calls.iter().find(|c| c["kind"] == "TopRight").unwrap()
-                ["output_y"]
+            let ratings_end = calls.iter().find(|c| c["kind"] == "TopRight").unwrap()["output_y"]
                 .as_f64()
                 .unwrap();
             assert!((input_y - ratings_end).abs() < f64::EPSILON);

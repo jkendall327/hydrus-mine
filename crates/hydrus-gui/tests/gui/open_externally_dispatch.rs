@@ -65,7 +65,12 @@ fn opening_runs_the_first_call_the_reference_ran_with_its_inputs() {
                     (Pipeline::Url, true) => ActualCall::DefaultUrl,
                     (Pipeline::File, false) => ActualCall::Process(capture_process(
                         &captured,
-                        &[Parameter::Path, Parameter::Uri, Parameter::Hash, Parameter::FileId],
+                        &[
+                            Parameter::Path,
+                            Parameter::Uri,
+                            Parameter::Hash,
+                            Parameter::FileId,
+                        ],
                         &format!("{}|%path%|%path_uri%|%hash%|%file_id%", call.name),
                     )),
                     (Pipeline::Url, false) => ActualCall::Process(capture_process(
@@ -117,8 +122,11 @@ fn opening_runs_the_first_call_the_reference_ran_with_its_inputs() {
         .find(|m| m.hash.to_hex() == recorded_hash)
         .unwrap();
     assert_eq!(jpeg.info.as_ref().unwrap().mime, Mime::ImageJpeg);
-    page.borrow_mut()
-        .hit(Some(ids.iter().position(|id| *id == jpeg.hash_id).unwrap()), false, false);
+    page.borrow_mut().hit(
+        Some(ids.iter().position(|id| *id == jpeg.hash_id).unwrap()),
+        false,
+        false,
+    );
     let path = hydrus_gui::thumbnail_menu::paths(&store, &[jpeg.hash_id])
         .pop()
         .unwrap();
@@ -126,7 +134,10 @@ fn opening_runs_the_first_call_the_reference_ran_with_its_inputs() {
     // 1: a URL goes to the first URL call, with the URL
     let url = dispatch[0]["inputs"]["2"].as_str().unwrap();
     assert!(bound.external_launches.url(&store, url));
-    await_output(&captured, &format!("{}|{url}", dispatch[0]["name"].as_str().unwrap()));
+    await_output(
+        &captured,
+        &format!("{}|{url}", dispatch[0]["name"].as_str().unwrap()),
+    );
     std::fs::remove_file(&captured).unwrap();
 
     // 2: a JPEG goes to its image row's first call, with the file's path,
@@ -134,7 +145,10 @@ fn opening_runs_the_first_call_the_reference_ran_with_its_inputs() {
     ui.invoke_open_externally();
     let inputs = &dispatch[1]["inputs"];
     let recorded_path = inputs["0"].as_str().unwrap();
-    assert!(path.ends_with(in_store(recorded_path)), "{path} / {recorded_path}");
+    assert!(
+        path.ends_with(in_store(recorded_path)),
+        "{path} / {recorded_path}"
+    );
     assert_eq!(
         inputs["1"].as_str().unwrap(),
         format!("file://{recorded_path}")

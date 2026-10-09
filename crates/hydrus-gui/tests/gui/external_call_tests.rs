@@ -19,9 +19,7 @@ fn recorded_call(recorded: &Value) -> (Pipeline, ActualCall) {
                 .as_array()
                 .unwrap()
                 .iter()
-                .map(|p| {
-                    Rule::new(Parameter::from_code(p.as_i64().unwrap()).unwrap())
-                })
+                .map(|p| Rule::new(Parameter::from_code(p.as_i64().unwrap()).unwrap()))
                 .collect::<Vec<_>>();
             let pipeline = if rules.iter().any(|r| r.parameter == Parameter::Url) {
                 Pipeline::Url
@@ -144,7 +142,10 @@ fn test_inputs_and_preview_start_as_the_reference_s_for_each_call() {
         // (the reference also offers 'test call!' for the OS launchers, which
         // opens the example path for real; hydrus-rs does not: DIFFERENCES.md)
         if setup["call"]["kind"] == "process" {
-            assert_eq!(enabled(child), setup["test_call_enabled"].as_bool().unwrap());
+            assert_eq!(
+                enabled(child),
+                setup["test_call_enabled"].as_bool().unwrap()
+            );
         }
         child.invoke_cancel();
         editing.options.invoke_cancel();
@@ -165,7 +166,10 @@ fn test_availability_replays_the_reference_s_texts_and_button_states() {
         if enabled(child) {
             child.invoke_test(true);
             assert_eq!(child.get_test_status().as_str(), case["interim"]["output"]);
-            assert_eq!(enabled(child), case["interim"]["enabled"].as_bool().unwrap());
+            assert_eq!(
+                enabled(child),
+                case["interim"]["enabled"].as_bool().unwrap()
+            );
             settle(child);
             assert_eq!(child.get_test_status().as_str(), case["output"], "{case}");
             assert_eq!(enabled(child), case["enabled_after"].as_bool().unwrap());
@@ -192,10 +196,16 @@ fn test_call_runs_the_call_and_reports_as_the_reference_does() {
         let editing = edit(&case["call"]);
         let child = &editing.child;
         child.invoke_test_input(0, ours(case["input"].as_str().unwrap()).into());
-        assert_eq!(child.get_preview().as_str(), ours(case["preview"].as_str().unwrap()));
+        assert_eq!(
+            child.get_preview().as_str(),
+            ours(case["preview"].as_str().unwrap())
+        );
         child.invoke_test(false);
         assert_eq!(child.get_test_status().as_str(), case["interim"]["output"]);
-        assert_eq!(enabled(child), case["interim"]["enabled"].as_bool().unwrap());
+        assert_eq!(
+            enabled(child),
+            case["interim"]["enabled"].as_bool().unwrap()
+        );
         settle(child);
         assert_eq!(
             child.get_test_status().as_str(),
@@ -223,9 +233,9 @@ fn test_call_runs_the_call_and_reports_as_the_reference_does() {
     child.invoke_test(false);
     settle(child);
     assert!(
-        child
-            .get_test_status()
-            .starts_with("BadReturnCodeException: A call to another executable gave a non-zero return code (2)!"),
+        child.get_test_status().starts_with(
+            "BadReturnCodeException: A call to another executable gave a non-zero return code (2)!"
+        ),
         "{} / {}",
         child.get_test_status(),
         typed["output_before"]

@@ -151,7 +151,10 @@ fn editing_a_call_replays_the_reference_s_list_staging_save_and_reopen() {
     let child = call(&bound);
     child.set_name("edited 日本".into());
     // the list does not change until the child is applied
-    assert!(same_names(names(&w), &reference["parent_before_child_accept"]));
+    assert!(same_names(
+        names(&w),
+        &reference["parent_before_child_accept"]
+    ));
     child.invoke_apply();
     assert_eq!(
         key_of(&bound, &w, "edited 日本") == first,
@@ -170,7 +173,12 @@ fn editing_a_call_replays_the_reference_s_list_staging_save_and_reopen() {
     ours.sort_by(|a, b| a.name.cmp(&b.name));
     theirs.sort_by(|a, b| a.name.cmp(&b.name));
     assert_eq!(ours, theirs);
-    assert!(persisted.calls.iter().any(|c| c.key == first && c.name == "edited 日本"));
+    assert!(
+        persisted
+            .calls
+            .iter()
+            .any(|c| c.key == first && c.name == "edited 日本")
+    );
 
     let w = open(&ui, &bound);
     assert_eq!(names(&w), strings(&reference["reopened_names"]));
@@ -198,10 +206,15 @@ fn importing_replays_the_reference_s_names_keys_and_weird_call_question() {
     assert_eq!(names(&w), strings(&reference["reopened_names"]));
 
     import(&bound, &w, reference["export"].as_str().unwrap());
-    assert!(same_names(names(&w), &reference["after_import"]), "{:?}", names(&w));
-    let exported =
-        hydrus_downloader_exchange::external_calls::decode_text(reference["export"].as_str().unwrap())
-            .unwrap();
+    assert!(
+        same_names(names(&w), &reference["after_import"]),
+        "{:?}",
+        names(&w)
+    );
+    let exported = hydrus_downloader_exchange::external_calls::decode_text(
+        reference["export"].as_str().unwrap(),
+    )
+    .unwrap();
     for name in ["edited 日本 (1)", "synthetic call (1) (1)"] {
         let key = key_of(&bound, &w, name);
         assert!(
@@ -211,15 +224,41 @@ fn importing_replays_the_reference_s_names_keys_and_weird_call_question() {
     }
 
     // a weird call: the reference asks; no declines with its error
-    let weird = json!([26, 3, [[2, [156, "weird", 1, ["22".repeat(32), 1,
-        [157, 1, ["x".repeat(257), [], [26, 3, []], 15, false, true, true]]]]]]])
+    let weird = json!([
+        26,
+        3,
+        [[
+            2,
+            [
+                156,
+                "weird",
+                1,
+                [
+                    "22".repeat(32),
+                    1,
+                    [
+                        157,
+                        1,
+                        ["x".repeat(257), [], [26, 3, []], 15, false, true, true]
+                    ]
+                ]
+            ]
+        ]]
+    ])
     .to_string();
     import(&bound, &w, &weird);
     let asked = question(&bound);
-    assert_eq!(asked.get_message().as_str(), reference["questions"][0]["message"]);
+    assert_eq!(
+        asked.get_message().as_str(),
+        reference["questions"][0]["message"]
+    );
     asked.invoke_answered(false);
     assert_eq!(w.get_external_call_error().as_str(), reference["declined"]);
-    assert!(same_names(names(&w), &reference["after_import"]), "{:?}", names(&w));
+    assert!(
+        same_names(names(&w), &reference["after_import"]),
+        "{:?}",
+        names(&w)
+    );
     // and yes adds it
     import(&bound, &w, &weird);
     question(&bound).invoke_answered(true);

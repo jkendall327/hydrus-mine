@@ -1051,7 +1051,11 @@ fn live_local_membership_restore_reaches_the_same_launcher_after_store_reopen() 
 }
 
 #[cfg(unix)]
-pub(crate) fn capture_process(output: &std::path::Path, parameters: &[Parameter], template: &str) -> Process {
+pub(crate) fn capture_process(
+    output: &std::path::Path,
+    parameters: &[Parameter],
+    template: &str,
+) -> Process {
     Process {
         executable: "/bin/sh".into(),
         arguments: vec![

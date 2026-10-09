@@ -485,7 +485,8 @@ pub(crate) fn bind(
                                 let declined = declined.clone();
                                 move |error| {
                                     let mut sorted = table.borrow_mut();
-                                    let (column, ascending) = (sorted.sort_column, sorted.ascending);
+                                    let (column, ascending) =
+                                        (sorted.sort_column, sorted.ascending);
                                     sorted.sort(column, ascending);
                                     drop(sorted);
                                     changed();

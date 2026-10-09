@@ -713,7 +713,11 @@ fn the_icon_follows_the_reference_s_recorded_cases() {
                 );
             }
         }
-        assert_eq!(client.host.shown(), case["icon"].as_bool().unwrap(), "{case}");
+        assert_eq!(
+            client.host.shown(),
+            case["icon"].as_bool().unwrap(),
+            "{case}"
+        );
         assert_eq!(
             client.bound.tray.has_icon(),
             case["icon_visible"].as_bool().unwrap(),
@@ -740,7 +744,10 @@ fn the_icon_follows_the_reference_s_recorded_cases() {
         if pauses.subscriptions != case["subscriptions_paused"].as_bool().unwrap() {
             client.bound.tray.flip_pause(false);
         }
-        assert_eq!(client.host.view().tooltip, case["tooltip"].as_str().unwrap());
+        assert_eq!(
+            client.host.view().tooltip,
+            case["tooltip"].as_str().unwrap()
+        );
     }
 }
 
@@ -764,7 +771,11 @@ fn file_minimise_to_system_tray_follows_the_reference_s_recorded_cases() {
             .unwrap();
         let entry = case["menu_item_text"].as_str().unwrap();
         let offered = file_menu(&client.ui).contains(&entry.to_owned());
-        assert_eq!(offered, case["menu_item_visible"].as_bool().unwrap(), "{case}");
+        assert_eq!(
+            offered,
+            case["menu_item_visible"].as_bool().unwrap(),
+            "{case}"
+        );
         if offered {
             choose_in_file_menu(&client.ui, entry);
             pump(500);

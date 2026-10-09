@@ -92,7 +92,11 @@ fn sleep_rows_reach_the_daemon_s_engine_and_replay_the_reference_s_checks() {
         let (last, awake_at) = net.wake_state();
         assert_eq!(awake_at.is_some(), case["detected"], "{case}");
         assert_eq!(awake_at.unwrap_or(0), case["deadline_ms"], "{case}");
-        assert_eq!(last == Some(recorded_t), case["last_check_touched"], "{case}");
+        assert_eq!(
+            last == Some(recorded_t),
+            case["last_check_touched"],
+            "{case}"
+        );
         // the daemon checks every 15 s; once the delay is over, requests go
         let delay_ms = delay * 1000;
         for elapsed in (15_000..=delay_ms).step_by(15_000) {
@@ -138,7 +142,10 @@ fn sleep_rows_reach_the_daemon_s_engine_and_replay_the_reference_s_checks() {
     for clamp in recorded["clamps"].as_array().unwrap() {
         set(&ui, &bound, true, clamp["typed"].as_i64().unwrap());
         assert_eq!(
-            store.read(get::<NetworkSettings>).unwrap().wake_delay_period,
+            store
+                .read(get::<NetworkSettings>)
+                .unwrap()
+                .wake_delay_period,
             clamp["saved"].as_u64().unwrap()
         );
     }
