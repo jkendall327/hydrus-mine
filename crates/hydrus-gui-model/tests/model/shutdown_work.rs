@@ -47,7 +47,11 @@ fn the_work_analyzes_the_due_tables_and_registers_itself() {
     let before = work_due(&store);
     assert_eq!(before.len(), 1);
     assert!(before[0].starts_with("analyze "));
-    run(&store, 12_345).unwrap();
+    let started = hydrus_core::TimestampMs::now().secs();
+    run(&store, started).unwrap();
+    // registered when it finished (oracle/fixtures/shutdown_work.json)
     let saved: ShutdownWork = store.read(hydrus_store::settings::get).unwrap();
-    assert_eq!(saved.last_done, 12_345);
+    assert!((started..=hydrus_core::TimestampMs::now().secs()).contains(&saved.last_done));
+    // and nothing is due any more
+    assert!(work_due(&store).is_empty());
 }
