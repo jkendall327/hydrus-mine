@@ -917,6 +917,13 @@ impl NetEngine {
         *last = Some(now);
     }
 
+    /// When the sleep check last ran, and when requests may go again after a
+    /// wake, in ms (for tests replaying the reference's checks).
+    #[doc(hidden)]
+    pub fn wake_state(&self) -> (Option<i64>, Option<i64>) {
+        *self.wake.lock()
+    }
+
     fn just_woke(&self) -> bool {
         self.wake.lock().1.is_some_and(|t| now_ms() < t)
     }

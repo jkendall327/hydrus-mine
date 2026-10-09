@@ -71,7 +71,6 @@ pub(crate) fn seed(store: &Store) -> Callable {
     c
 }
 
-// leaf: audit-options-external-programs-external-calls-edit
 #[test]
 fn callable_command_child_apply_cancel_parent_staging_reopen_and_retired_owner() {
     let (_dirs, store) = store();
@@ -358,7 +357,6 @@ fn list_duplicate_defaults_delete_capture_and_options_persistence() {
     assert!(!bound.options_external_calls.has_open());
     assert_eq!(saved(&store), persisted);
 }
-// leaf: audit-options-external-programs-external-calls-import
 #[test]
 fn imported_reference_calls_review_cancel_and_saved_process_test_consumer() {
     let (_dirs, store) = store();
@@ -409,7 +407,6 @@ fn imported_reference_calls_review_cancel_and_saved_process_test_consumer() {
     assert_eq!(persisted.calls[0].call, ActualCall::DefaultFile);
 }
 
-// leaf: audit-options-nested-external-call-test-execution
 #[test]
 fn reopened_saved_process_uses_real_editor_inputs_and_owned_test_call_worker() {
     let (_dirs, store) = store();

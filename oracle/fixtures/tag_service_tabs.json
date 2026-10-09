@@ -1,0 +1,740 @@
+{
+  "untagged_file": 2,
+  "mappings": [
+    [
+      "my tags",
+      "tabs:one",
+      [
+        0,
+        1
+      ]
+    ],
+    [
+      "my tags",
+      "tabs:two",
+      [
+        0
+      ]
+    ],
+    [
+      "my tags",
+      "tabs:three",
+      [
+        1
+      ]
+    ],
+    [
+      "downloader tags",
+      "tabs:down",
+      [
+        0
+      ]
+    ]
+  ],
+  "manage_tags_opened": {
+    "one": {
+      "files": [
+        0
+      ],
+      "tabs": [
+        "downloader tags (3)",
+        "my tags (3)",
+        "second tags",
+        "a tag repository (1)"
+      ]
+    },
+    "two": {
+      "files": [
+        0,
+        1
+      ],
+      "tabs": [
+        "downloader tags (3)",
+        "my tags (5)",
+        "second tags (2)",
+        "a tag repository (1)"
+      ]
+    },
+    "untouched": {
+      "files": [
+        2
+      ],
+      "tabs": [
+        "downloader tags (2)",
+        "my tags (3)",
+        "second tags",
+        "a tag repository"
+      ]
+    }
+  },
+  "manage_tags_defaults": [
+    {
+      "default": "my tags",
+      "save_on_change": false,
+      "opened": 1,
+      "default_after_open": "my tags",
+      "chosen": [
+        {
+          "index": 3,
+          "current": 3,
+          "default": "my tags"
+        },
+        {
+          "index": 0,
+          "current": 0,
+          "default": "my tags"
+        }
+      ]
+    },
+    {
+      "default": "my tags",
+      "save_on_change": true,
+      "opened": 1,
+      "default_after_open": "my tags",
+      "chosen": [
+        {
+          "index": 3,
+          "current": 3,
+          "default": "a tag repository"
+        },
+        {
+          "index": 0,
+          "current": 0,
+          "default": "downloader tags"
+        }
+      ]
+    },
+    {
+      "default": "downloader tags",
+      "save_on_change": false,
+      "opened": 0,
+      "default_after_open": "downloader tags",
+      "chosen": [
+        {
+          "index": 3,
+          "current": 3,
+          "default": "downloader tags"
+        },
+        {
+          "index": 0,
+          "current": 0,
+          "default": "downloader tags"
+        }
+      ]
+    },
+    {
+      "default": "downloader tags",
+      "save_on_change": true,
+      "opened": 0,
+      "default_after_open": "downloader tags",
+      "chosen": [
+        {
+          "index": 3,
+          "current": 3,
+          "default": "a tag repository"
+        },
+        {
+          "index": 0,
+          "current": 0,
+          "default": "downloader tags"
+        }
+      ]
+    },
+    {
+      "default": "a tag repository",
+      "save_on_change": false,
+      "opened": 3,
+      "default_after_open": "a tag repository",
+      "chosen": [
+        {
+          "index": 3,
+          "current": 3,
+          "default": "a tag repository"
+        },
+        {
+          "index": 0,
+          "current": 0,
+          "default": "a tag repository"
+        }
+      ]
+    },
+    {
+      "default": "a tag repository",
+      "save_on_change": true,
+      "opened": 3,
+      "default_after_open": "a tag repository",
+      "chosen": [
+        {
+          "index": 3,
+          "current": 3,
+          "default": "a tag repository"
+        },
+        {
+          "index": 0,
+          "current": 0,
+          "default": "downloader tags"
+        }
+      ]
+    },
+    {
+      "default": "all known tags",
+      "save_on_change": false,
+      "opened": 0,
+      "default_after_open": "616c6c206b6e6f776e2074616773",
+      "chosen": [
+        {
+          "index": 3,
+          "current": 3,
+          "default": "616c6c206b6e6f776e2074616773"
+        },
+        {
+          "index": 0,
+          "current": 0,
+          "default": "616c6c206b6e6f776e2074616773"
+        }
+      ]
+    },
+    {
+      "default": "all known tags",
+      "save_on_change": true,
+      "opened": 0,
+      "default_after_open": "616c6c206b6e6f776e2074616773",
+      "chosen": [
+        {
+          "index": 3,
+          "current": 3,
+          "default": "a tag repository"
+        },
+        {
+          "index": 0,
+          "current": 0,
+          "default": "downloader tags"
+        }
+      ]
+    }
+  ],
+  "manage_tags_staging": [
+    {
+      "step": "opened",
+      "current": 1,
+      "tabs": [
+        "downloader tags (3)",
+        "my tags (3)",
+        "second tags",
+        "a tag repository (1)"
+      ],
+      "pages": {
+        "downloader tags": {
+          "terms": [
+            "filename:apng_animated",
+            "source:fixture",
+            "tabs:down"
+          ],
+          "staged": [],
+          "changed": false
+        },
+        "my tags": {
+          "terms": [
+            "safe",
+            "tabs:one",
+            "tabs:two"
+          ],
+          "staged": [],
+          "changed": false
+        },
+        "second tags": {
+          "terms": [],
+          "staged": [],
+          "changed": false
+        },
+        "a tag repository": {
+          "terms": [
+            "pended tag"
+          ],
+          "staged": [],
+          "changed": false
+        }
+      }
+    },
+    {
+      "step": "added on my tags",
+      "current": 1,
+      "tabs": [
+        "downloader tags (3)",
+        "my tags (4) *",
+        "second tags",
+        "a tag repository (1)"
+      ],
+      "pages": {
+        "downloader tags": {
+          "terms": [
+            "filename:apng_animated",
+            "source:fixture",
+            "tabs:down"
+          ],
+          "staged": [],
+          "changed": false
+        },
+        "my tags": {
+          "terms": [
+            "safe",
+            "tabs:one",
+            "tabs:staged mine",
+            "tabs:two"
+          ],
+          "staged": [
+            [
+              0,
+              "tabs:staged mine"
+            ]
+          ],
+          "changed": true
+        },
+        "second tags": {
+          "terms": [],
+          "staged": [],
+          "changed": false
+        },
+        "a tag repository": {
+          "terms": [
+            "pended tag"
+          ],
+          "staged": [],
+          "changed": false
+        }
+      }
+    },
+    {
+      "step": "added on downloader tags",
+      "current": 0,
+      "tabs": [
+        "downloader tags (4) *",
+        "my tags (4) *",
+        "second tags",
+        "a tag repository (1)"
+      ],
+      "pages": {
+        "downloader tags": {
+          "terms": [
+            "filename:apng_animated",
+            "source:fixture",
+            "tabs:down",
+            "tabs:staged down"
+          ],
+          "staged": [
+            [
+              0,
+              "tabs:staged down"
+            ]
+          ],
+          "changed": true
+        },
+        "my tags": {
+          "terms": [
+            "safe",
+            "tabs:one",
+            "tabs:staged mine",
+            "tabs:two"
+          ],
+          "staged": [
+            [
+              0,
+              "tabs:staged mine"
+            ]
+          ],
+          "changed": true
+        },
+        "second tags": {
+          "terms": [],
+          "staged": [],
+          "changed": false
+        },
+        "a tag repository": {
+          "terms": [
+            "pended tag"
+          ],
+          "staged": [],
+          "changed": false
+        }
+      }
+    },
+    {
+      "step": "back on my tags",
+      "current": 1,
+      "tabs": [
+        "downloader tags (4) *",
+        "my tags (4) *",
+        "second tags",
+        "a tag repository (1)"
+      ],
+      "pages": {
+        "downloader tags": {
+          "terms": [
+            "filename:apng_animated",
+            "source:fixture",
+            "tabs:down",
+            "tabs:staged down"
+          ],
+          "staged": [
+            [
+              0,
+              "tabs:staged down"
+            ]
+          ],
+          "changed": true
+        },
+        "my tags": {
+          "terms": [
+            "safe",
+            "tabs:one",
+            "tabs:staged mine",
+            "tabs:two"
+          ],
+          "staged": [
+            [
+              0,
+              "tabs:staged mine"
+            ]
+          ],
+          "changed": true
+        },
+        "second tags": {
+          "terms": [],
+          "staged": [],
+          "changed": false
+        },
+        "a tag repository": {
+          "terms": [
+            "pended tag"
+          ],
+          "staged": [],
+          "changed": false
+        }
+      }
+    }
+  ],
+  "manage_tags_viewer": {
+    "opened": [
+      "downloader tags (3)",
+      "my tags (3)",
+      "second tags",
+      "a tag repository (1)"
+    ],
+    "next file": [
+      "downloader tags",
+      "my tags (4)",
+      "second tags (2)",
+      "a tag repository (1)"
+    ],
+    "untouched file": [
+      "downloader tags (2)",
+      "my tags (3)",
+      "second tags",
+      "a tag repository"
+    ]
+  },
+  "siblings_tabs": [
+    "downloader tags",
+    "my tags",
+    "second tags",
+    "a tag repository"
+  ],
+  "siblings_defaults": [
+    {
+      "default": "my tags",
+      "save_on_change": false,
+      "opened": 1,
+      "default_after_open": "my tags",
+      "chosen": [
+        {
+          "index": 3,
+          "current": 3,
+          "default": "my tags"
+        },
+        {
+          "index": 0,
+          "current": 0,
+          "default": "my tags"
+        }
+      ]
+    },
+    {
+      "default": "my tags",
+      "save_on_change": true,
+      "opened": 1,
+      "default_after_open": "my tags",
+      "chosen": [
+        {
+          "index": 3,
+          "current": 3,
+          "default": "a tag repository"
+        },
+        {
+          "index": 0,
+          "current": 0,
+          "default": "downloader tags"
+        }
+      ]
+    },
+    {
+      "default": "downloader tags",
+      "save_on_change": false,
+      "opened": 0,
+      "default_after_open": "downloader tags",
+      "chosen": [
+        {
+          "index": 3,
+          "current": 3,
+          "default": "downloader tags"
+        },
+        {
+          "index": 0,
+          "current": 0,
+          "default": "downloader tags"
+        }
+      ]
+    },
+    {
+      "default": "downloader tags",
+      "save_on_change": true,
+      "opened": 0,
+      "default_after_open": "downloader tags",
+      "chosen": [
+        {
+          "index": 3,
+          "current": 3,
+          "default": "a tag repository"
+        },
+        {
+          "index": 0,
+          "current": 0,
+          "default": "downloader tags"
+        }
+      ]
+    },
+    {
+      "default": "a tag repository",
+      "save_on_change": false,
+      "opened": 3,
+      "default_after_open": "a tag repository",
+      "chosen": [
+        {
+          "index": 3,
+          "current": 3,
+          "default": "a tag repository"
+        },
+        {
+          "index": 0,
+          "current": 0,
+          "default": "a tag repository"
+        }
+      ]
+    },
+    {
+      "default": "a tag repository",
+      "save_on_change": true,
+      "opened": 3,
+      "default_after_open": "a tag repository",
+      "chosen": [
+        {
+          "index": 3,
+          "current": 3,
+          "default": "a tag repository"
+        },
+        {
+          "index": 0,
+          "current": 0,
+          "default": "downloader tags"
+        }
+      ]
+    },
+    {
+      "default": "all known tags",
+      "save_on_change": false,
+      "opened": 0,
+      "default_after_open": "616c6c206b6e6f776e2074616773",
+      "chosen": [
+        {
+          "index": 3,
+          "current": 3,
+          "default": "616c6c206b6e6f776e2074616773"
+        },
+        {
+          "index": 0,
+          "current": 0,
+          "default": "616c6c206b6e6f776e2074616773"
+        }
+      ]
+    },
+    {
+      "default": "all known tags",
+      "save_on_change": true,
+      "opened": 0,
+      "default_after_open": "616c6c206b6e6f776e2074616773",
+      "chosen": [
+        {
+          "index": 3,
+          "current": 3,
+          "default": "a tag repository"
+        },
+        {
+          "index": 0,
+          "current": 0,
+          "default": "downloader tags"
+        }
+      ]
+    }
+  ],
+  "parents_tabs": [
+    "downloader tags",
+    "my tags",
+    "second tags",
+    "a tag repository"
+  ],
+  "parents_defaults": [
+    {
+      "default": "my tags",
+      "save_on_change": false,
+      "opened": 1,
+      "default_after_open": "my tags",
+      "chosen": [
+        {
+          "index": 3,
+          "current": 3,
+          "default": "my tags"
+        },
+        {
+          "index": 0,
+          "current": 0,
+          "default": "my tags"
+        }
+      ]
+    },
+    {
+      "default": "my tags",
+      "save_on_change": true,
+      "opened": 1,
+      "default_after_open": "my tags",
+      "chosen": [
+        {
+          "index": 3,
+          "current": 3,
+          "default": "a tag repository"
+        },
+        {
+          "index": 0,
+          "current": 0,
+          "default": "downloader tags"
+        }
+      ]
+    },
+    {
+      "default": "downloader tags",
+      "save_on_change": false,
+      "opened": 0,
+      "default_after_open": "downloader tags",
+      "chosen": [
+        {
+          "index": 3,
+          "current": 3,
+          "default": "downloader tags"
+        },
+        {
+          "index": 0,
+          "current": 0,
+          "default": "downloader tags"
+        }
+      ]
+    },
+    {
+      "default": "downloader tags",
+      "save_on_change": true,
+      "opened": 0,
+      "default_after_open": "downloader tags",
+      "chosen": [
+        {
+          "index": 3,
+          "current": 3,
+          "default": "a tag repository"
+        },
+        {
+          "index": 0,
+          "current": 0,
+          "default": "downloader tags"
+        }
+      ]
+    },
+    {
+      "default": "a tag repository",
+      "save_on_change": false,
+      "opened": 3,
+      "default_after_open": "a tag repository",
+      "chosen": [
+        {
+          "index": 3,
+          "current": 3,
+          "default": "a tag repository"
+        },
+        {
+          "index": 0,
+          "current": 0,
+          "default": "a tag repository"
+        }
+      ]
+    },
+    {
+      "default": "a tag repository",
+      "save_on_change": true,
+      "opened": 3,
+      "default_after_open": "a tag repository",
+      "chosen": [
+        {
+          "index": 3,
+          "current": 3,
+          "default": "a tag repository"
+        },
+        {
+          "index": 0,
+          "current": 0,
+          "default": "downloader tags"
+        }
+      ]
+    },
+    {
+      "default": "all known tags",
+      "save_on_change": false,
+      "opened": 0,
+      "default_after_open": "616c6c206b6e6f776e2074616773",
+      "chosen": [
+        {
+          "index": 3,
+          "current": 3,
+          "default": "616c6c206b6e6f776e2074616773"
+        },
+        {
+          "index": 0,
+          "current": 0,
+          "default": "616c6c206b6e6f776e2074616773"
+        }
+      ]
+    },
+    {
+      "default": "all known tags",
+      "save_on_change": true,
+      "opened": 0,
+      "default_after_open": "616c6c206b6e6f776e2074616773",
+      "chosen": [
+        {
+          "index": 3,
+          "current": 3,
+          "default": "a tag repository"
+        },
+        {
+          "index": 0,
+          "current": 0,
+          "default": "downloader tags"
+        }
+      ]
+    }
+  ]
+}

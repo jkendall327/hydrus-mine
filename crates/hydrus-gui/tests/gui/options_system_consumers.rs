@@ -128,13 +128,6 @@ fn noneable_text(options: &OptionsWindow, label: &str, text: Option<&str>) {
     options.invoke_none_toggled(i, text.is_none());
 }
 
-// leaf: audit-options-connection-general-max-connection-attempts-allowed-per-request
-// leaf: audit-options-connection-general-max-retries-allowed-per-request
-// leaf: audit-options-connection-general-debug-do-not-verify-regular-https-traffic
-// leaf: audit-options-connection-general-halt-new-jobs-as-long-as-this-many-network-infrastructure-errors-on-their-domain-0-for-never-wait
-// leaf: audit-options-connection-proxy-settings-http
-// leaf: audit-options-connection-proxy-settings-https
-// leaf: audit-options-connection-proxy-settings-no-proxy
 #[test]
 fn connection_options_reach_the_running_network_engine() {
     use hydrus_net::{NetEngine, NetOptions};
@@ -1621,4 +1614,923 @@ fn open_gallery_and_watcher_pages_show_the_changed_pause_and_stop_characters() {
         .unwrap();
     let watcher = show_watcher();
     assert_eq!((&watcher[1][..], &watcher[2][..]), ("PAUSED", "STOPPED"));
+}
+
+/// The connection page's general and proxy options, each changed in the real
+/// options window and then met by the real network engine, which is asked for
+/// things by a local server. The engine is reloaded by the test calling
+/// `reload_settings` as the app's poll does (the poll itself is not driven),
+/// and, as the app's, honours proxies named in the environment.
+mod network_consumers {
+    use std::collections::HashMap;
+    use std::sync::Arc;
+    use std::sync::Mutex;
+    use std::sync::atomic::{AtomicUsize, Ordering};
+    use std::time::{Duration, Instant};
+
+    use axum::Router;
+    use axum::extract::{Path, State};
+    use axum::http::StatusCode;
+    use axum::response::{IntoResponse, Response};
+    use axum::routing::get;
+    use hydrus_net::{Job, NetEngine, NetError, NetOptions, Request};
+    use hydrus_store::network::NetworkSettings;
+    use hydrus_store::network_runtime::WaitReason;
+
+    use super::{Client, client, noneable_text, number, row};
+
+    #[derive(Default)]
+    struct Hits {
+        counts: Mutex<HashMap<String, usize>>,
+        active: AtomicUsize,
+        max_active: AtomicUsize,
+    }
+
+    impl Hits {
+        fn hit(&self, key: &str) -> usize {
+            let mut counts = self.counts.lock().unwrap();
+            let n = counts.entry(key.to_owned()).or_default();
+            *n += 1;
+            *n
+        }
+        fn count(&self, key: &str) -> usize {
+            self.counts.lock().unwrap().get(key).copied().unwrap_or(0)
+        }
+    }
+
+    async fn status(State(hits): State<Arc<Hits>>, Path(code): Path<u16>) -> Response {
+        hits.hit(&format!("status{code}"));
+        (StatusCode::from_u16(code).unwrap(), "no").into_response()
+    }
+
+    async fn hold(State(hits): State<Arc<Hits>>) -> &'static str {
+        let now = hits.active.fetch_add(1, Ordering::SeqCst) + 1;
+        hits.max_active.fetch_max(now, Ordering::SeqCst);
+        tokio::time::sleep(Duration::from_millis(300)).await;
+        hits.active.fetch_sub(1, Ordering::SeqCst);
+        "held"
+    }
+
+    async fn stall() -> &'static str {
+        tokio::time::sleep(Duration::from_secs(60)).await;
+        "late"
+    }
+
+    async fn whole_uri(State(hits): State<Arc<Hits>>, uri: axum::http::Uri) -> String {
+        hits.hit("uri");
+        uri.to_string()
+    }
+
+    /// A local server and what it was asked.
+    async fn serve() -> (String, Arc<Hits>) {
+        let hits = Arc::new(Hits::default());
+        let app = Router::new()
+            .route("/status/{code}", get(status))
+            .route("/hold", get(hold))
+            .route("/stall", get(stall))
+            .route("/uri", get(whole_uri))
+            .with_state(Arc::clone(&hits));
+        let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
+        let base = format!("http://{}", listener.local_addr().unwrap());
+        tokio::spawn(async move { axum::serve(listener, app).await.unwrap() });
+        (base, hits)
+    }
+
+    /// A client in advanced mode (its waits and timeouts may be a second),
+    /// and a network engine on its store.
+    fn with_engine() -> (Client, NetEngine) {
+        let client = client();
+        client
+            .store
+            .write(|ctx| {
+                hydrus_store::settings::set(ctx.conn(), &hydrus_store::settings::AdvancedMode(true))
+            })
+            .unwrap();
+        // (the fixture's client has all new network traffic paused)
+        let mut pauses: hydrus_store::settings::Pauses = client.get();
+        pauses.network_traffic = false;
+        client
+            .store
+            .write(move |ctx| hydrus_store::settings::set(ctx.conn(), &pauses))
+            .unwrap();
+        let settings: NetworkSettings = client.get();
+        // (the local server takes requests as fast as they come: the default
+        // bandwidth rules, which space them out, are not what is tested)
+        let options = NetOptions {
+            obey_bandwidth: false,
+            ..NetOptions::from_settings(&settings)
+        };
+        let engine = NetEngine::new(client.store.clone(), options).unwrap();
+        (client, engine)
+    }
+
+    /// Edit the connection page, apply, and let the engine take it.
+    fn apply(client: &Client, engine: &NetEngine, edit: impl FnOnce(&hydrus_gui::OptionsWindow)) {
+        let window = client.options("connection");
+        edit(&window);
+        window.invoke_apply();
+        assert!(engine.reload_settings().unwrap(), "the engine took it");
+    }
+
+    /// How a request ended, how long it took, and every status its job showed
+    /// (sampled every 20 ms).
+    struct Fetched {
+        result: Result<(), NetError>,
+        seconds: f64,
+        statuses: Vec<String>,
+    }
+
+    async fn fetch(engine: &NetEngine, url: &str) -> Fetched {
+        let started = Instant::now();
+        let job = Job::new();
+        let request = Request::get(url);
+        let mut statuses: Vec<String> = Vec::new();
+        let mut call = Box::pin(engine.fetch(&request, &job));
+        let result = loop {
+            tokio::select! {
+                r = &mut call => break r.map(|_| ()),
+                () = tokio::time::sleep(Duration::from_millis(20)) => {
+                    let status = job.state().status;
+                    if statuses.last() != Some(&status) {
+                        statuses.push(status);
+                    }
+                    assert!(started.elapsed() < Duration::from_secs(40), "stuck: {statuses:?}");
+                }
+            }
+        };
+        Fetched {
+            result,
+            seconds: started.elapsed().as_secs_f64(),
+            statuses,
+        }
+    }
+
+    /// Six requests for `url` at once.
+    async fn six(engine: &NetEngine, url: &str) {
+        let f = || fetch(engine, url);
+        let _ = tokio::join!(f(), f(), f(), f(), f(), f());
+    }
+
+    /// A URL on a port nothing listens on: a socket bound and never listened
+    /// on refuses connections, and is held for as long as the test.
+    fn closed_port() -> (tokio::net::TcpSocket, String) {
+        let socket = tokio::net::TcpSocket::new_v4().unwrap();
+        socket.bind("127.0.0.1:0".parse().unwrap()).unwrap();
+        let url = format!("http://{}/x", socket.local_addr().unwrap());
+        (socket, url)
+    }
+
+    /// The seconds the connection waits announced, in order.
+    fn retry_waits(statuses: &[String]) -> Vec<u64> {
+        statuses
+            .iter()
+            .filter_map(|s| {
+                let n = s.strip_prefix("connection failed - retrying in ")?;
+                n.strip_suffix(" seconds")?.parse().ok()
+            })
+            .collect()
+    }
+
+    // leaf: audit-options-connection-general-max-connection-attempts-allowed-per-request
+    // leaf: audit-options-connection-general-connection-error-retry-wait-seconds
+    #[tokio::test]
+    async fn failed_connections_are_retried_as_often_and_as_slowly_as_the_options_say() {
+        let (client, engine) = with_engine();
+        let (_held, url) = closed_port();
+        // three attempts, a second of wait per attempt gone: a wait of 1 s
+        // after the first failure and one of 2 s after the second
+        apply(&client, &engine, |w| {
+            number(
+                w,
+                "max connection attempts allowed per request: ",
+                (1, 10),
+                3,
+            );
+            number(
+                w,
+                "connection error retry wait (seconds): ",
+                (1, 2_592_000),
+                1,
+            );
+        });
+        let three = fetch(&engine, &url).await;
+        assert!(matches!(three.result, Err(NetError::Connection(_))));
+        assert_eq!(retry_waits(&three.statuses), [1, 2], "{:?}", three.statuses);
+        assert!(three.seconds >= 3.0, "{}", three.seconds);
+        // two attempts: the one wait
+        apply(&client, &engine, |w| {
+            number(
+                w,
+                "max connection attempts allowed per request: ",
+                (1, 10),
+                2,
+            );
+        });
+        let two = fetch(&engine, &url).await;
+        assert!(matches!(two.result, Err(NetError::Connection(_))));
+        assert_eq!(retry_waits(&two.statuses), [1], "{:?}", two.statuses);
+        // the same two attempts, with a wait of two seconds
+        apply(&client, &engine, |w| {
+            number(
+                w,
+                "connection error retry wait (seconds): ",
+                (1, 2_592_000),
+                2,
+            );
+        });
+        let slower = fetch(&engine, &url).await;
+        assert_eq!(retry_waits(&slower.statuses), [2], "{:?}", slower.statuses);
+        assert!(slower.seconds >= 2.0, "{}", slower.seconds);
+    }
+
+    // leaf: audit-options-connection-general-max-retries-allowed-per-request
+    #[tokio::test]
+    async fn a_failing_server_is_asked_as_many_times_as_the_retries_option_says() {
+        let (client, engine) = with_engine();
+        let (base, hits) = serve().await;
+        for retries in [2, 4] {
+            apply(&client, &engine, |w| {
+                number(w, "max retries allowed per request: ", (1, 10), retries);
+            });
+            let before = hits.count("status503");
+            let fetched = fetch(&engine, &format!("{base}/status/503")).await;
+            assert!(
+                matches!(fetched.result, Err(NetError::Infrastructure(_))),
+                "{:?}",
+                fetched.result
+            );
+            assert_eq!(
+                hits.count("status503") - before,
+                usize::try_from(retries).unwrap()
+            );
+        }
+    }
+
+    // leaf: audit-options-connection-general-serverside-bandwidth-retry-wait-seconds
+    #[tokio::test]
+    async fn a_server_that_limits_bandwidth_is_waited_for_as_long_as_the_option_says() {
+        let (client, engine) = with_engine();
+        let (base, hits) = serve().await;
+        // two asks, one wait of 1.25^2 times the option
+        apply(&client, &engine, |w| {
+            number(w, "max retries allowed per request: ", (1, 10), 2);
+            number(
+                w,
+                "serverside bandwidth retry wait (seconds): ",
+                (1, 2_592_000),
+                1,
+            );
+        });
+        let short = fetch(&engine, &format!("{base}/status/429")).await;
+        assert!(
+            matches!(short.result, Err(NetError::Bandwidth(_))),
+            "{:?}",
+            short.result
+        );
+        assert_eq!(hits.count("status429"), 2);
+        assert!(
+            short
+                .statuses
+                .iter()
+                .any(|s| s == "server reported limited bandwidth - retrying")
+        );
+        assert!(short.seconds >= 1.5625, "{}", short.seconds);
+        // (the default of a minute would be a minute and a half)
+        apply(&client, &engine, |w| {
+            number(
+                w,
+                "serverside bandwidth retry wait (seconds): ",
+                (1, 2_592_000),
+                3,
+            );
+        });
+        let long = fetch(&engine, &format!("{base}/status/429")).await;
+        assert!(long.seconds >= 3.0 * 1.5625, "{}", long.seconds);
+    }
+
+    // leaf: audit-options-connection-general-max-number-of-simultaneous-active-network-jobs
+    // leaf: audit-options-connection-general-max-number-of-simultaneous-active-network-jobs-per-domain
+    #[tokio::test]
+    async fn only_as_many_jobs_run_at_once_as_the_options_say() {
+        let (client, engine) = with_engine();
+        let (base, hits) = serve().await;
+        let url = format!("{base}/hold");
+        let busiest = |hits: &Hits| {
+            let seen = hits.max_active.swap(0, Ordering::SeqCst);
+            assert_eq!(hits.active.load(Ordering::SeqCst), 0);
+            seen
+        };
+        // two at once overall (and room for more on the domain)
+        apply(&client, &engine, |w| {
+            number(
+                w,
+                "max number of simultaneous active network jobs: ",
+                (1, 1000),
+                2,
+            );
+            number(
+                w,
+                "max number of simultaneous active network jobs per domain: ",
+                (1, 100),
+                5,
+            );
+        });
+        six(&engine, &url).await;
+        let seen = busiest(&hits);
+        assert!((2..=2).contains(&seen), "{seen}");
+        // five overall, but three on the domain
+        apply(&client, &engine, |w| {
+            number(
+                w,
+                "max number of simultaneous active network jobs: ",
+                (1, 1000),
+                5,
+            );
+            number(
+                w,
+                "max number of simultaneous active network jobs per domain: ",
+                (1, 100),
+                3,
+            );
+        });
+        six(&engine, &url).await;
+        let seen = busiest(&hits);
+        assert!((2..=3).contains(&seen), "{seen}");
+    }
+
+    // leaf: audit-options-connection-general-halt-new-jobs-as-long-as-this-many-network-infrastructure-errors-on-their-domain-0-for-never-wait
+    #[tokio::test]
+    async fn a_domain_with_enough_errors_is_left_alone_for_as_long_as_the_options_say() {
+        let (client, engine) = with_engine();
+        let (base, _hits) = serve().await;
+        let label = "Halt new jobs as long as this many network infrastructure errors on their domain (0 for never wait): ";
+        let set = |n: i32, minutes: i32| {
+            apply(&client, &engine, |w| {
+                number(w, "max retries allowed per request: ", (1, 10), 1);
+                let (i, _) = row(w, label);
+                w.invoke_number_edited(i, n);
+                w.invoke_field_edited(i, 0, 0);
+                w.invoke_field_edited(i, 1, minutes);
+                w.invoke_field_edited(i, 2, 0);
+            });
+        };
+        // two errors in twenty minutes (not the default ten) halt it
+        set(2, 20);
+        assert_eq!(engine.options().domain_error_window, 20 * 60);
+        for _ in 0..2 {
+            let fetched = fetch(&engine, &format!("{base}/status/500")).await;
+            assert!(fetched.result.is_err());
+        }
+        assert!(!engine.domain_ok(&base));
+        let job = Job::new();
+        let request = Request::get(format!("{base}/uri"));
+        let waited =
+            tokio::time::timeout(Duration::from_millis(400), engine.fetch(&request, &job)).await;
+        assert!(waited.is_err(), "it waited");
+        assert_eq!(job.state().wait, WaitReason::Domain);
+        // three needed: the same two do not halt it, and a request goes
+        set(3, 20);
+        assert!(engine.domain_ok(&base));
+        assert!(fetch(&engine, &format!("{base}/uri")).await.result.is_ok());
+        // zero is never wait: even with the errors still counted, and more
+        set(0, 20);
+        assert!(engine.domain_ok(&base));
+        let fetched = fetch(&engine, &format!("{base}/status/500")).await;
+        assert!(fetched.result.is_err());
+        assert!(engine.domain_ok(&base));
+        assert!(fetch(&engine, &format!("{base}/uri")).await.result.is_ok());
+    }
+
+    #[tokio::test]
+    async fn a_server_that_goes_quiet_is_given_the_timeout_the_option_says() {
+        let (client, engine) = with_engine();
+        let (base, _hits) = serve().await;
+        // one second to connect, six to hear back (the reference's); the
+        // default of ten would be a minute
+        apply(&client, &engine, |w| {
+            number(w, "network timeout (seconds): ", (1, 2_592_000), 1);
+            number(w, "max retries allowed per request: ", (1, 10), 1);
+        });
+        let fetched = fetch(&engine, &format!("{base}/stall")).await;
+        assert!(
+            matches!(fetched.result, Err(NetError::StreamTimeout(_))),
+            "{:?}",
+            fetched.result
+        );
+        assert!(fetched.seconds >= 6.0, "{}", fetched.seconds);
+    }
+
+    // leaf: audit-options-connection-proxy-settings-http
+    // leaf: audit-options-connection-proxy-settings-no-proxy
+    #[tokio::test]
+    async fn the_http_proxy_and_the_hosts_it_is_not_used_for_decide_where_requests_go() {
+        let (client, engine) = with_engine();
+        let (base, hits) = serve().await;
+        // the local server is the proxy: a proxied request asks it for the
+        // whole URL
+        apply(&client, &engine, |w| {
+            noneable_text(w, "http: ", Some(&base));
+        });
+        let proxied = engine
+            .fetch(&Request::get("http://booru.invalid/uri"), &Job::new())
+            .await
+            .unwrap()
+            .text();
+        assert_eq!(proxied, "http://booru.invalid/uri");
+        assert_eq!(hits.count("uri"), 1);
+        // the default no_proxy has the local host: asked directly
+        let direct = engine
+            .fetch(&Request::get(format!("{base}/uri")), &Job::new())
+            .await
+            .unwrap()
+            .text();
+        assert_eq!(direct, "/uri");
+        assert_eq!(hits.count("uri"), 2);
+        // naming the invalid host in no_proxy sends it where it points, not
+        // to the proxy
+        apply(&client, &engine, |w| {
+            noneable_text(w, "no_proxy: ", Some("booru.invalid,127.0.0.1"));
+            number(
+                w,
+                "max connection attempts allowed per request: ",
+                (1, 10),
+                1,
+            );
+        });
+        let fetched = fetch(&engine, "http://booru.invalid/uri").await;
+        assert!(fetched.result.is_err(), "{:?}", fetched.result);
+        assert_eq!(hits.count("uri"), 2, "the proxy was not asked");
+        // and with the proxy cleared, nothing is asked of it
+        apply(&client, &engine, |w| {
+            noneable_text(w, "http: ", None);
+            noneable_text(w, "no_proxy: ", None);
+        });
+        let fetched = fetch(&engine, "http://booru.invalid/uri").await;
+        assert!(fetched.result.is_err());
+        assert_eq!(hits.count("uri"), 2, "the proxy was not asked");
+    }
+
+    // leaf: audit-options-connection-proxy-settings-https
+    #[tokio::test]
+    async fn https_requests_ask_the_https_proxy_to_connect() {
+        use std::io::{BufRead as _, BufReader, Write as _};
+        let (client, engine) = with_engine();
+        // a proxy that notes what it is asked and refuses
+        let listener = std::net::TcpListener::bind("127.0.0.1:0").unwrap();
+        let proxy = format!("http://{}", listener.local_addr().unwrap());
+        let (sent, asked) = std::sync::mpsc::channel();
+        std::thread::spawn(move || {
+            while let Ok((mut stream, _)) = listener.accept() {
+                let mut line = String::new();
+                let _ = BufReader::new(stream.try_clone().unwrap()).read_line(&mut line);
+                let _ = sent.send(line.trim().to_owned());
+                let _ = stream.write_all(b"HTTP/1.1 403 Forbidden\r\ncontent-length: 0\r\n\r\n");
+            }
+        });
+        apply(&client, &engine, |w| {
+            noneable_text(w, "https: ", Some(&proxy));
+            number(
+                w,
+                "max connection attempts allowed per request: ",
+                (1, 10),
+                1,
+            );
+        });
+        let fetched = fetch(&engine, "https://booru.invalid/x").await;
+        assert!(fetched.result.is_err(), "the proxy refused");
+        assert_eq!(
+            asked.recv_timeout(Duration::from_secs(5)).unwrap(),
+            "CONNECT booru.invalid:443 HTTP/1.1"
+        );
+        // and with none, it is not asked again
+        apply(&client, &engine, |w| {
+            noneable_text(w, "https: ", None);
+        });
+        let fetched = fetch(&engine, "https://booru.invalid/x").await;
+        assert!(fetched.result.is_err());
+        assert!(asked.try_recv().is_err(), "no proxy, no ask");
+    }
+}
+
+/// The downloading page's error delays, each changed in the real options
+/// window and then waited out by the real downloader that makes it: a URL
+/// queue's runner for gallery and watcher network errors, the subscription
+/// runner for a subscription's network and other errors.
+mod error_delays {
+    use std::sync::Arc;
+    use std::time::Duration;
+
+    use hydrus_download::{Downloader, QueueRunner};
+    use hydrus_import::FileImporter;
+    use hydrus_media::MediaTools;
+    use hydrus_net::{Job, NetEngine, NetOptions};
+    use hydrus_store::network::NetworkSettings;
+    use hydrus_store::queues::{self, FileSeedMeta, NewFileSeed, SeedType};
+
+    use super::{Client, client, row};
+
+    const NETWORK_ROW: &str = "Delay time on a gallery/watcher network error:";
+    const SUBSCRIPTION_NETWORK_ROW: &str = "Delay time on a subscription network error:";
+    const SUBSCRIPTION_OTHER_ROW: &str = "Delay time on a subscription other error:";
+
+    /// Seconds from the epoch.
+    fn now() -> i64 {
+        i64::try_from(
+            std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .unwrap()
+                .as_secs(),
+        )
+        .unwrap()
+    }
+
+    /// A client, its downloader (no retries, no halting, no pauses) and a
+    /// port nothing listens on.
+    fn with_downloader() -> (Client, Arc<Downloader>, tokio::net::TcpSocket, String) {
+        let client = client();
+        client
+            .store
+            .write(|ctx| {
+                let mut pauses: hydrus_store::settings::Pauses =
+                    hydrus_store::settings::get(ctx.conn())?;
+                pauses.network_traffic = false;
+                pauses.subscriptions = false;
+                pauses.paged_importers = false;
+                pauses.file_queues = false;
+                pauses.gallery_searches = false;
+                hydrus_store::settings::set(ctx.conn(), &pauses)?;
+                let mut network: NetworkSettings = hydrus_store::settings::get(ctx.conn())?;
+                network.max_connection_attempts = 1;
+                network.domain_error_number = 0;
+                hydrus_store::settings::set(ctx.conn(), &network)?;
+                hydrus_store::settings::set(ctx.conn(), &hydrus_store::settings::AdvancedMode(true))
+            })
+            .unwrap();
+        let settings: NetworkSettings = client.get();
+        let net = Arc::new(
+            NetEngine::new(
+                client.store.clone(),
+                NetOptions {
+                    obey_bandwidth: false,
+                    ..NetOptions::from_settings(&settings)
+                },
+            )
+            .unwrap(),
+        );
+        let importer = FileImporter::new(client.store.clone(), MediaTools::new());
+        let downloader = Arc::new(Downloader::new(client.store.clone(), net, importer).unwrap());
+        // (a socket bound and never listened on refuses connections)
+        let socket = tokio::net::TcpSocket::new_v4().unwrap();
+        socket.bind("127.0.0.1:0".parse().unwrap()).unwrap();
+        let address = socket.local_addr().unwrap().to_string();
+        (client, downloader, socket, address)
+    }
+
+    /// The example downloader (key "aa") searching `address`, with a URL
+    /// class and a parser for its pages so that it counts as functional.
+    fn functional_downloader(client: &Client, address: &str) {
+        use hydrus_core::url::strings::StringMatch;
+        use hydrus_core::url::{
+            AnyGug, DomainMask, Gug, Gugs, UrlClass, UrlClassSettings, UrlType,
+        };
+        use hydrus_parse::content::{ContentKind, ContentParser, PageParser};
+        use hydrus_parse::formula::{
+            Formula, FormulaKind, HtmlContent, HtmlRule, HtmlWalk, TagSearch,
+        };
+        let search = UrlClass {
+            name: "search".into(),
+            key: vec![0xce],
+            url_type: UrlType::Gallery,
+            preferred_scheme: "http".into(),
+            domain_mask: DomainMask::new(vec![address.to_owned()], vec![], false, false),
+            path_components: [
+                StringMatch::fixed("search"),
+                StringMatch::any(),
+                StringMatch::any(),
+            ]
+            .into_iter()
+            .map(|m| (m, None))
+            .collect(),
+            ..UrlClass::default()
+        };
+        let thread = UrlClass {
+            name: "thread".into(),
+            key: vec![0xcf],
+            url_type: UrlType::Watchable,
+            preferred_scheme: "http".into(),
+            domain_mask: DomainMask::new(vec![address.to_owned()], vec![], false, false),
+            path_components: [StringMatch::fixed("thread"), StringMatch::any()]
+                .into_iter()
+                .map(|m| (m, None))
+                .collect(),
+            ..UrlClass::default()
+        };
+        let classes = UrlClassSettings {
+            parser_links: vec![
+                (hex::encode(&search.key), Some("ac".into())),
+                (hex::encode(&thread.key), Some("ac".into())),
+            ],
+            parser_keys: vec!["ac".into()],
+            url_classes: vec![search, thread],
+            collapse_leading_slashes: false,
+        };
+        let downloaders = hydrus_parse::Downloaders {
+            parsers: vec![PageParser {
+                reference_auxiliary: None,
+                name: "search".into(),
+                key: "ac".into(),
+                converter: hydrus_core::url::StringConverter::default(),
+                subsidiary: Vec::new(),
+                content_parsers: vec![ContentParser {
+                    name: "posts".into(),
+                    kind: ContentKind::Url {
+                        url_type: 7,
+                        priority: 50,
+                    },
+                    formula: Formula {
+                        reference_auxiliary: None,
+                        name: String::new(),
+                        kind: FormulaKind::Html {
+                            rules: vec![HtmlRule {
+                                walk: HtmlWalk::Descendants(TagSearch {
+                                    attrs: [("class".to_owned(), "thumb".to_owned())]
+                                        .into_iter()
+                                        .collect(),
+                                    index: None,
+                                }),
+                                tag_name: Some("a".into()),
+                                text_match: None,
+                            }],
+                            content: HtmlContent::Attribute("href".into()),
+                        },
+                        processor: hydrus_core::url::StringProcessor::default(),
+                    },
+                }],
+                example_urls: Vec::new(),
+            }],
+            gugs: Gugs {
+                gugs: vec![AnyGug::Single(Gug {
+                    name: "example tag search".into(),
+                    key: "aa".into(),
+                    url_template: format!("http://{address}/search/%tags%/1"),
+                    replacement_phrase: "%tags%".into(),
+                    separator: "+".into(),
+                    initial_search_text: "tag".into(),
+                    example_search_text: "blue_eyes".into(),
+                })],
+                keys_to_display: vec!["aa".into()],
+            },
+            ..hydrus_parse::Downloaders::default()
+        };
+        client
+            .store
+            .write_and_refresh(move |ctx| {
+                hydrus_store::settings::set(ctx.conn(), &classes)?;
+                hydrus_store::settings::set(ctx.conn(), &downloaders)?;
+                hydrus_store::settings::set(
+                    ctx.conn(),
+                    &hydrus_core::subscriptions::GalleryDefaults {
+                        file_limit: Some(2000),
+                        gug: Some(("aa".into(), "example tag search".into())),
+                    },
+                )
+            })
+            .unwrap();
+    }
+
+    /// Set the duration row to `days` days, `hours` hours, `minutes` minutes
+    /// and `seconds` seconds, apply, and return the seconds that make.
+    fn set_delay(
+        client: &Client,
+        row_label: &str,
+        (days, hours, minutes, seconds): (i32, i32, i32, i32),
+    ) -> i64 {
+        let window = client.options("downloading");
+        let (i, found) = row(&window, row_label);
+        assert_eq!(found.kind, 8, "{row_label}");
+        for (field, value) in [days, hours, minutes, seconds].into_iter().enumerate() {
+            window.invoke_field_edited(i, i32::try_from(field).unwrap(), value);
+        }
+        window.invoke_apply();
+        i64::from(days) * 86_400
+            + i64::from(hours) * 3_600
+            + i64::from(minutes) * 60
+            + i64::from(seconds)
+    }
+
+    // leaf: audit-options-downloading-misc-delay-time-on-a-gallery-watcher-network-error
+    #[tokio::test(flavor = "multi_thread")]
+    async fn a_search_or_a_watcher_that_meets_a_network_error_waits_as_long_as_the_option_says() {
+        use super::new_page;
+        let (client, downloader, _held, address) = with_downloader();
+        functional_downloader(&client, &address);
+        downloader.reload_settings().unwrap();
+        let runner = QueueRunner::new(
+            Arc::clone(&downloader),
+            client
+                .get::<NetworkSettings>()
+                .downloader_network_error_delay,
+        );
+        // a gallery page with a search, set going
+        let search = |query: &str| {
+            new_page(&client.ui, true);
+            client.ui.invoke_gallery_queries(query.into());
+            client.bound.downloader_updates.force();
+            (client.bound.sync)();
+            let queue = client
+                .bound
+                .current
+                .borrow()
+                .borrow()
+                .gallery()
+                .unwrap()
+                .queries[0]
+                .queue;
+            client
+                .store
+                .write(move |ctx| queues::set_paused(ctx.conn(), queue, Some(false), Some(false)))
+                .unwrap();
+            runner.start_all().unwrap();
+            queue
+        };
+        let waiting = |queue: i64| {
+            let runner = Arc::clone(&runner);
+            async move {
+                for _ in 0..600 {
+                    if let Some(until) = runner.status(queue).delayed_until {
+                        return until;
+                    }
+                    tokio::time::sleep(Duration::from_millis(50)).await;
+                }
+                panic!("the search never waited: {:?}", runner.status(queue));
+            }
+        };
+        // a watcher page with a thread, set going
+        let watch = |thread: u32| {
+            new_page(&client.ui, false);
+            client
+                .ui
+                .invoke_watcher_urls(format!("http://{address}/thread/{thread}").into());
+            client.bound.downloader_updates.force();
+            (client.bound.sync)();
+            let queue = client
+                .bound
+                .current
+                .borrow()
+                .borrow()
+                .watchers()
+                .unwrap()
+                .watchers[0]
+                .queue;
+            runner.start_all().unwrap();
+            queue
+        };
+        // seconds from now it is told to wait, when it is told
+        let watcher_waits = |queue: i64| {
+            let store = client.store.clone();
+            async move {
+                for _ in 0..600 {
+                    let state = store
+                        .read(move |c| {
+                            Ok(hydrus_store::watchers::watcher_state(
+                                &queues::queue(c, queue)?.unwrap(),
+                            ))
+                        })
+                        .unwrap()
+                        .unwrap();
+                    if state.no_work_until > 0 {
+                        return state.no_work_until - now();
+                    }
+                    tokio::time::sleep(Duration::from_millis(50)).await;
+                }
+                panic!("the watcher never waited");
+            }
+        };
+        // the default: ninety minutes, for a search and for a watcher
+        let first = search("first");
+        let wait = waiting(first).await - now();
+        assert!((5_390..=5_400).contains(&wait), "{wait}");
+        let wait = watcher_waits(watch(1)).await;
+        assert!((5_390..=5_400).contains(&wait), "{wait}");
+        // three hours, twenty minutes and five seconds, once the runner has
+        // reloaded the options as the app's poll does
+        let set = set_delay(&client, NETWORK_ROW, (0, 3, 20, 5));
+        runner.reload_settings().unwrap();
+        let second = search("second");
+        let wait = waiting(second).await - now();
+        assert!((set - 10..=set).contains(&wait), "{wait} against {set}");
+        let wait = watcher_waits(watch(2)).await;
+        assert!((set - 10..=set).contains(&wait), "{wait} against {set}");
+    }
+
+    /// A subscription holding one query: due for a search of the example
+    /// downloader (at `address`) if `searching`, otherwise already synced and
+    /// holding a file to fetch, with no place to import it.
+    fn subscription(client: &Client, name: &str, searching: bool) -> i64 {
+        use hydrus_core::import_options::{ImportOptionsSlice, LocationOptions};
+        use hydrus_core::subscriptions::{QueryState, SubscriptionSettings};
+        let settings = SubscriptionSettings {
+            gug_key: "aa".into(),
+            gug_name: "example tag search".into(),
+            import_options: ImportOptionsSlice {
+                locations: (!searching).then(|| LocationOptions {
+                    destinations: Vec::new(),
+                    ..LocationOptions::default()
+                }),
+                ..ImportOptionsSlice::default()
+            },
+            ..SubscriptionSettings::default()
+        };
+        let name = name.to_owned();
+        client
+            .store
+            .write(move |ctx| {
+                let id =
+                    hydrus_store::subscriptions::create_subscription(ctx.conn(), &name, &settings)?
+                        .unwrap();
+                let at = now();
+                let state = if searching {
+                    QueryState::new("blue_eyes")
+                } else {
+                    QueryState {
+                        last_check_time: at,
+                        next_check_time: at + 86_400,
+                        ..QueryState::new("synced")
+                    }
+                };
+                let queue = hydrus_store::subscriptions::add_query(ctx.conn(), id, &state, 0)?;
+                if !searching {
+                    let url = "http://127.0.0.1:1/file".to_owned();
+                    queues::add_file_seeds(
+                        ctx.conn(),
+                        queue,
+                        &[NewFileSeed {
+                            seed_type: SeedType::Url,
+                            data: url.clone(),
+                            data_for_comparison: url,
+                            source_time: None,
+                            referral_url: None,
+                            meta: FileSeedMeta::default(),
+                        }],
+                        false,
+                        0,
+                    )?;
+                }
+                Ok(id)
+            })
+            .unwrap()
+    }
+
+    /// Run a subscription and how long, from now, it was told to wait, and why.
+    async fn waits(client: &Client, downloader: &Downloader, id: i64) -> (i64, String) {
+        downloader.run_subscription(id, &Job::new()).await.unwrap();
+        let sub = client
+            .store
+            .read(move |c| hydrus_store::subscriptions::subscription(c, id))
+            .unwrap()
+            .unwrap();
+        (
+            sub.settings.no_work_until - now(),
+            sub.settings.no_work_until_reason,
+        )
+    }
+
+    // leaf: audit-options-downloading-misc-delay-time-on-a-subscription-network-error
+    #[tokio::test(flavor = "multi_thread")]
+    async fn a_subscription_that_meets_a_network_error_waits_as_long_as_the_option_says() {
+        let (client, downloader, _held, address) = with_downloader();
+        functional_downloader(&client, &address);
+        downloader.reload_settings().unwrap();
+        let first = subscription(&client, "first", true);
+        // the default: twelve hours
+        let (wait, reason) = waits(&client, &downloader, first).await;
+        assert!((43_190..=43_200).contains(&wait), "{wait}");
+        assert!(reason.starts_with("network error: "), "{reason}");
+        // a day, two hours and a minute, once the downloader has reloaded the
+        // options as the app's poll does
+        let set = set_delay(&client, SUBSCRIPTION_NETWORK_ROW, (1, 2, 1, 0));
+        downloader.reload_settings().unwrap();
+        let second = subscription(&client, "second", true);
+        let (wait, reason) = waits(&client, &downloader, second).await;
+        assert!((set - 10..=set).contains(&wait), "{wait} against {set}");
+        assert!(reason.starts_with("network error: "), "{reason}");
+    }
+
+    // leaf: audit-options-downloading-misc-delay-time-on-a-subscription-other-error
+    #[tokio::test(flavor = "multi_thread")]
+    async fn a_subscription_that_meets_another_error_waits_as_long_as_the_option_says() {
+        let (client, downloader, _held, _address) = with_downloader();
+        let first = subscription(&client, "first", false);
+        // the default: thirty-six hours
+        let (wait, reason) = waits(&client, &downloader, first).await;
+        assert!((129_590..=129_600).contains(&wait), "{wait}");
+        assert!(reason.starts_with("error: "), "{reason}");
+        // two days and an hour
+        let set = set_delay(&client, SUBSCRIPTION_OTHER_ROW, (2, 1, 0, 0));
+        downloader.reload_settings().unwrap();
+        let second = subscription(&client, "second", false);
+        let (wait, reason) = waits(&client, &downloader, second).await;
+        assert!((set - 10..=set).contains(&wait), "{wait} against {set}");
+        assert!(reason.starts_with("error: "), "{reason}");
+    }
 }

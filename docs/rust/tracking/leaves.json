@@ -73,10 +73,10 @@
     "Native applies/recalculates immediately; reference background sync status and saved default service tab are unavailable."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Only the model-level TagDisplayEditor is tested, with typed expected values; no GUI test drives the parents source queue (the one GUI test, tag_display.rs:44, uses the siblings list only: source_add(false)). The recording tag_display.json has application_initial/reordered/empty but is siblings-only and no test reads those keys. Tests: crates/hydrus-gui-model/tests/model/tag_application_queues.rs:112 parent_source_queue_adds_reorders_removes_and_reopens (via queue_test)"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "phase 2 session (bin E)",
+    "note": "GUI test opens tags > advanced > the application window, sets my tags' sibling and parent queues by removing and adding sources as a user does (own then downloader, downloader then own, downloader only, none, siblings in both orders, nothing applied, and the default), checks the shown queues against the reference panel's GetValue, applies, and checks every tag's ideal, sibling chain, parents and children on the display graph the client reads against the reference's own tag_siblings_and_parents_lookup after sync (oracle/record_relationship_application.py). Tests: crates/hydrus-gui/tests/gui/relationship_application.rs:65 source_queues_apply_services_rules_in_the_reference_order Not covered: the up/down buttons and the explicit-empty queue persisting after reopening."
    }
   },
   {
@@ -865,10 +865,10 @@
     "Only supported native date strings are parsed; natural-language dateparser forms are absent."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "The model test replays datetime_editor.json (now, copy, paste incl. errors) against DateTimeEditor, but no GUI test drives the date-time editor window's now/copy/paste buttons; the GUI test only edits and applies. Natural-language dateparser forms absent. Tests: crates/hydrus-gui-model/tests/model/datetime_editor.rs:33 the_date_time_editor_works_as_the_references_does; crates/hydrus-gui/tests/gui/manage_times.rs:76 (editor window, untagged for these leaves)"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "Claude session (recheck bins A/B), #97 phase 2",
+    "note": "crates/hydrus-gui/tests/gui/manage_times_replay.rs the_date_time_editor_replays_the_references_through_the_window presses the editor window's now, copy and paste buttons with datetime_editor.json's steps (clipboard caught and given through set_clipper/set_paster), comparing what is copied, the notices, and the warnings and errors shown in the window's panel (dismissed in turn), and the fields and value after each step. Every recorded paste form passes; date strings beyond them (\"yesterday\") are a documented difference. The change flag is compared by the model test (tagged)."
    }
   },
   {
@@ -885,10 +885,10 @@
     "Typed date/time and one millisecond step replace calendar and hours/minutes/seconds step controls."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Replays the recording for date, time, step, nulls and mixed values against the model only; no GUI test drives the editor window's date/time/step controls (documented: typed date/time and millisecond step replace calendar and h/m/s step controls). Tests: crates/hydrus-gui-model/tests/model/datetime_editor.rs:33 the_date_time_editor_works_as_the_references_does"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "Claude session (recheck bins A/B), #97 phase 2",
+    "note": "crates/hydrus-gui/tests/gui/manage_times_replay.rs the_date_time_editor_replays_the_references_through_the_window opens the date-time editor from manage times' modified-time row (a real click on its button) on files given datetime_editor.json's times, in UTC with the clock held, and replays every case: date and time typed, the step typed where it shows (the stepped case reached by applying a step and opening the editor again), comparing the label, whether the step shows, date, time, step and value after each step. Whether the value is a change is not shown by the window; the model test replays it against the same DateTimeEditor. Typed fields stand for the calendar and h/m/s step controls (DIFFERENCES.md). Whether the value is a change is compared by the model test (tagged), the window not showing it."
    }
   },
   {
@@ -2181,10 +2181,10 @@
     "Direct buttons replace reference import/export menus; no reference add-only autocomplete context option."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Import/export, 'Uneven number of tags in clipboard!' and selection are checked with typed values from the Python source; tag_relationships.json does not cover import/export. The GUI test drives the shared window's import/export buttons for siblings only, parents is model-only. Direct buttons replace the reference menus. Tests: crates/hydrus-gui-model/tests/model/tag_relationships.rs:167 per_service_inputs_cancel_import_and_selection, :429; crates/hydrus-gui/tests/gui/tag_relationships.rs:11 (siblings-kind, shared window)"
+    "date": "2026-10-09",
+    "class": "weak",
+    "by": "phase 2 session (bin E)",
+    "note": "Replays oracle/record_relationship_exchange.py through the real window (import and export on a local service and a repository, uneven lines, cleaning, pre-existing/pending/petitioned pairs, conflicts, loops, more than ten pairs, exports), but two recorded steps differ and the test filters them out of later comparisons: hydrus-rs rejects self-pairs (the reference stores them after a critical warning). Not tagged; the owner decides on storing them via #165. Tests: crates/hydrus-gui/tests/gui/relationship_exchange.rs:56 pair_import_and_export_replay_the_reference_on_local_and_repository_services"
    }
   },
   {
@@ -2858,18 +2858,18 @@
    "label": "Save/default tag-service tab preference",
    "path": "Tags > Tag parents",
    "workstream": "tags-services",
-   "state": "missing",
+   "state": "implemented",
    "priority": "normal",
    "reference": null,
    "native": null,
    "notes": [
-    "Native selector always starts with index zero and does not restore/save reference default tag-service-tab preference."
+    "The dialog opens on the default service tab and saves a tab change when the option is on, as the reference does. hydrus-rs has no repository tab in Manage tags, so a default naming one opens the first tab there."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Model-only test with typed expectations (no recording, no GUI test driving the dialog's tab bar); the window does call choose_service_remembered (tag_relationships_window.rs:524) but that is untested. Tracker note 'selector always starts with index zero and does not save' is stale: the code now opens on the default service and saves it when the option is on. Tests: crates/hydrus-gui-model/tests/model/tag_relationships_default.rs:77,83 (run())"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "phase 2 session (bin E)",
+    "note": "GUI test opens tags > parents through the menu on the repositories fixture with each default service tab (two local services, the tag repository, a key that is no tab) and saving on change off and on, replaying oracle/record_tag_service_tabs.py: tab order, the tab it opens on, the saved default after opening and after choosing the last then the first tab. Tests: crates/hydrus-gui/tests/gui/tag_service_tabs.rs:414 relationship_dialogs_open_on_the_default_tab_and_save_it_on_change_as_the_reference_does"
    }
   },
   {
@@ -2877,18 +2877,18 @@
    "label": "Save/default tag-service tab preference",
    "path": "Tags > Tag siblings",
    "workstream": "tags-services",
-   "state": "missing",
+   "state": "implemented",
    "priority": "normal",
    "reference": null,
    "native": null,
    "notes": [
-    "Native selector always starts with index zero and does not restore/save reference default tag-service-tab preference."
+    "The dialog opens on the default service tab and saves a tab change when the option is on, as the reference does. hydrus-rs has no repository tab in Manage tags, so a default naming one opens the first tab there."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Model-only test with typed expectations (no recording, no GUI test driving the dialog's tab bar); the window does call choose_service_remembered (tag_relationships_window.rs:524) but that is untested. Tracker note 'selector always starts with index zero and does not save' is stale: the code now opens on the default service and saves it when the option is on. Tests: crates/hydrus-gui-model/tests/model/tag_relationships_default.rs:77,83 (run())"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "phase 2 session (bin E)",
+    "note": "GUI test opens tags > siblings through the menu on the repositories fixture with each default service tab (two local services, the tag repository, a key that is no tab) and saving on change off and on, replaying oracle/record_tag_service_tabs.py: tab order, the tab it opens on, the saved default after opening and after choosing the last then the first tab. Tests: crates/hydrus-gui/tests/gui/tag_service_tabs.rs:414 relationship_dialogs_open_on_the_default_tab_and_save_it_on_change_as_the_reference_does"
    }
   },
   {
@@ -3417,10 +3417,10 @@
     "Direct buttons replace reference import/export menus; no reference add-only autocomplete context option."
    ],
    "recheck": {
-    "date": "2026-10-08",
+    "date": "2026-10-09",
     "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "GUI test drives clipboard export of one selected row, the 'Uneven number of tags' error and a .txt import, with typed values and no recording. Not covered: duplicate/conflict/reason questions during import, export of visible rows with no selection, and the sibling-specific import path beyond one clean file. Tests: crates/hydrus-gui/tests/gui/tag_relationships.rs:10 dialogs_stage_cancel_apply_questions_and_update_display; crates/hydrus-gui-model/tests/model/tag_relationships.rs:167 (tagged parents-exchange only)"
+    "by": "phase 2 session (bin E)",
+    "note": "Replays oracle/record_relationship_exchange.py through the real window (import and export on a local service and a repository, uneven lines, cleaning, pre-existing/pending/petitioned pairs, conflicts, loops, more than ten pairs, exports), but two recorded steps differ and the test filters them out of later comparisons: hydrus-rs rejects self-pairs (the reference stores them after a critical warning) and rejects a whole sibling batch that gives one tag two ideals, dropping its valid pairs too (the reference stores them). Not tagged; the owner decides on storing them via #165. Tests: crates/hydrus-gui/tests/gui/relationship_exchange.rs:56 pair_import_and_export_replay_the_reference_on_local_and_repository_services"
    }
   },
   {
@@ -3496,10 +3496,10 @@
     "Native set_rule preserves the reference mutually-exclusive namespace/wildcard controls; inspected model replay matches recorded interlocks."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "phase 2 session",
-    "note": "gui/tag_display_replay.rs the_autocomplete_boxes_interlock_as_the_reference_s_do opens the real display/search window and compares the interlocked boxes, fetch-all, fetch-automatically and threshold with tag_display.json's autocomplete_steps (the manual-fetch step asserts only that fetching automatically is off: the window keeps its last threshold number). The test calls invoke_rule_changed and set_fetch_automatically/invoke_options_changed directly, bypassing the checkbox toggle wiring in the .slint file. Still weak: the recorded namespace_enabled (whether the boxes are enabled) is not readable from the window."
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "Claude session (recheck bins A/B), #97 phase 2",
+    "note": "crates/hydrus-gui/tests/gui/tag_display_replay.rs the_autocomplete_boxes_interlock_as_the_reference_s_do replays tag_display.json's autocomplete_steps with real clicks on the check boxes (and the threshold set to 0, the window's 'always autocomplete'), comparing every box's ticked state and whether 'Allow namespace:' and 'Allow namespace:*' are enabled (read from the widgets) with the recording. 'Allow namespace:*' was enabled where the reference disables it ('namespace:' ticked); fixed."
    }
   },
   {
@@ -3526,19 +3526,18 @@
    "label": "Write tag service and override file location",
    "path": "Tags > Tag display/search settings > Tag autocomplete options",
    "workstream": "tags-services",
-   "state": "partial",
+   "state": "implemented",
    "priority": "normal",
    "reference": null,
    "native": null,
    "notes": [
-    "Native write-service selector and accepted nested location draft persist by service and control manage-tags suggestions without discarding an existing tag draft. Partial: Existing cited test checks threshold/manual-fetch and cancels a location child; it does not accept/persist a changed write-tag service/location and verify suggestions use it. Native callback/store validation support that behavior, but its green evidence claim was too broad.",
-    "Existing cited test checks threshold/manual-fetch and cancels a location child; it does not accept/persist a changed write-tag service/location and verify suggestions use it. Native callback/store validation support that behavior, but its green evidence claim was too broad."
+    "The write-service selector and the accepted nested file-domain override persist per service and decide Manage tags' autocomplete domain and suggestions; replayed from oracle/record_write_domain.py. Not covered: a tag whose mappings were all removed, in the write autocomplete filter."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Model-only: mutates editor.current_mut() directly and checks ManageTags suggestions use the override; no GUI test drives the write-service selector or nested location child in the window to accept a change, and no recording. The tracker note is garbled (it says the cited test does not accept a change, but the model test does). Tests: crates/hydrus-gui-model/tests/model/tag_display.rs:228 write_autocomplete_uses_override_or_launcher_domain_and_rejects_tag_locations"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "phase 2 session (bin E)",
+    "note": "GUI test sets my tags' write tag service (itself, the other local service, all known tags) and file-domain override (off, my files, trash, all known files) in the real tags > display/search window and its location child, applies, then opens Manage tags from the page and compares its file/tag domain labels and its suggestion rows with counts for three texts against oracle/record_write_domain.py (the reference's own autocomplete options panel and WriteFetch), including the all-files-plus-all-tags fallback to local file storage and a trashed file. The recording showed hydrus-rs offering zero-count tags the write service has never had; fixed. Tests: crates/hydrus-gui/tests/gui/write_domain.rs:41 write_service_and_location_override_reach_the_manage_tags_autocomplete"
    }
   },
   {
@@ -3692,14 +3691,13 @@
    "reference": null,
    "native": null,
    "notes": [
-    "Chooses a LocalTag service, retains per-service staged mappings and displays file-count suffixes; source inspection supports this local slice.",
-    "Local services only; repository tabs and saved default-tab preference are separate missing features."
+    "Local service tabs with \"name (tags)\" labels, \" *\" while changes wait, per-service staged mappings and the saved default tab. Local services only; the reference's repository tabs are missing. Not covered: the \" *\" after undoing a staged tag."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Test chooses only 'my tags' and checks (n) count suffixes with typed literals; no recording of the service tabs, and per-service staged retention across switching services is not asserted in any test found (manage_tags_sort only checks sort). Local-only; repo tabs/default-tab missing. Tests: crates/hydrus-gui/tests/gui/manage_tags.rs:358 tags_are_added_and_removed_as_the_reference_does"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "phase 2 session (bin E)",
+    "note": "GUI test opens Manage tags from page selections (one file, two files, another file) on the repositories fixture and compares the local services' tab labels ('name (tags)', ' *' while changes wait) with oracle/record_tag_service_tabs.py, stages tags on two services and checks each stays staged while the other is used, and follows the viewer to other files with the labels recounted. The recording showed hydrus-rs's tabs were bare names; fixed. The reference's tag repository tabs are not in hydrus-rs's Manage tags (DIFFERENCES.md); the leaf is the local-service selector. Tests: crates/hydrus-gui/tests/gui/tag_service_tabs.rs:222 manage_tags_tabs_count_tags_mark_changes_keep_staging_and_follow_the_viewer"
    }
   },
   {
@@ -3735,10 +3733,10 @@
     "Native timestamp/plain-date grammar is narrower than the reference date parser."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Model-only replay of manage_times.json copy/paste steps against TimesEditor; no GUI test drives the copy choices menu or paste in ManageTimesWindow. Native date grammar narrower than reference (noted). Tests: crates/hydrus-gui-model/tests/model/times_editor.rs:59"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "Claude session (recheck bins A/B), #97 phase 2",
+    "note": "crates/hydrus-gui/tests/gui/manage_times_replay.rs manage_times_replays_the_references_dialog_through_the_window opens manage times from the thumbnail menu on basic-fixture files given manage_times.json's times (UTC, clock held) and opens the copy menu (the bottom copy button, whose six entries are checked by their labels from the reference's source) and chooses the entry for each recorded kind set, paste of copied, invalid and explicit timestamp data, the 'some files' question answered with the panel's buttons: copied text, notices, errors (up to Python's JSON error words) and the grid/lists after each step, then the applied times read back from the store. The 'many files' case (over 100 files) is replayed by the model test only (DIFFERENCES.md); it concerns apply, not the clipboard. A copy menu popup with no width and a wrong position, found by this test, is fixed."
    }
   },
   {
@@ -3774,10 +3772,10 @@
     "Domain entry prompt and multi-row editor stage domain timestamps, including null/mixed values and delete; actual store writes use each TimeUpdate domain."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Model replays recorded add/edit/delete domain steps (incl. 'some files' question); the GUI test drives only add domain and duplicate refusal, so editing multiple rows and delete (and the some-files question) are never driven through the window. Tests: crates/hydrus-gui-model/tests/model/times_editor.rs:59; crates/hydrus-gui/tests/gui/manage_times.rs:76"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "Claude session (recheck bins A/B), #97 phase 2",
+    "note": "crates/hydrus-gui/tests/gui/manage_times_replay.rs manage_times_replays_the_references_dialog_through_the_window: web domain add (prompt, the editor's starting value, the duplicate warning), edit of the selected rows with the some-files question answered both ways, delete asked and answered no then yes, comparing the domain list and what was asked after each step with manage_times.json, and the applied sets and deletes read back from the store per file."
    }
   },
   {
@@ -3812,10 +3810,10 @@
     "Reads service import/delete timestamps with counts, selects multiple rows and applies DateTimeEditor changes per service/file scope. First-pass evidence scope: Selected service/kind edits and resulting TimeUpdates are compared to Qt recording; GUI transport is source-traced and on-disk mtime is separately tested."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Model-only replay of recorded file-service rows and edits against TimesEditor; no GUI test exercises the per-file-service list in the window (tracker admits GUI transport is source-traced). Tests: crates/hydrus-gui-model/tests/model/times_editor.rs:59"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "Claude session (recheck bins A/B), #97 phase 2",
+    "note": "crates/hydrus-gui/tests/gui/manage_times_replay.rs manage_times_replays_the_references_dialog_through_the_window: file service rows (imported, deleted, previously imported over my files, hydrus local file storage and trash) shown as recorded, a row selected and edited in the editor (one file, and three files with a -5 ms cascading step), the list compared after each step and the applied imported times read back from the store per file."
    }
   },
   {
@@ -5264,10 +5262,10 @@
     "Selected rows are removed only after the inline Remove all selected confirmation."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Real window: click/ctrl/shift/ctrl+shift selection, Delete key raises the inline 'Remove all selected?' ask, nothing removed until yes, then the row goes and the rest are renumbered. Expectations are literals from RemovePaths; the test sets asking_remove false and calls the remove callback directly rather than pressing yes/no, and never checks the question text or the No path. Tests: crates/hydrus-gui/tests/gui/files_io_import_review.rs:84 rows_are_selected_as_a_list_selects_and_removed_after_asking_then_numbered_again"
+    "date": "2026-10-09",
+    "class": "weak",
+    "by": "Claude session (recheck bins A/B), #97 phase 2",
+    "note": "crates/hydrus-gui/tests/gui/files_io_import_review.rs rows_are_selected_as_a_list_selects_and_removed_after_asking_then_numbered_again replays import_review_remove.json (oracle/record_import_review_remove.py): the recorded click, ctrl-click, shift-click and ctrl+shift-click selection steps (real Qt mouse clicks on the reference's list) compared after each step, then the Delete key and a click on 'remove files' ask 'Remove all selected?' and are answered by clicking 'no' then 'yes'; rows compared. Weak: one recorded selection step differs (shift-click 1 after click 0, ctrl-click 2, ctrl-click 0: the reference keeps row 2 selected, [0,1,2]; hydrus-rs's shared ListSelection gives [0,1]); the test pins it and DIFFERENCES.md says so."
    }
   },
   {
@@ -6679,10 +6677,10 @@
     "Bounds use the mode saved when opening the dialog; changing advanced mode takes effect after Apply and reopening, as Qt constructs its controls."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Only model tests: recorded ranges/clamps (options_ranges.json, real pages() get/set) plus page-shape replay of options_dialog.json. No GUI test applies this control and nothing checks that the engine/consumer then behaves with the saved value (engine reads it but only via NetOptions set directly in hydrus-net tests). Used at engine.rs:1790 for retry backoff. Tests: crates/hydrus-gui-model/tests/model/options_dialog.rs:664 advanced_network_ranges_and_clamps_match_the_reference, :862 reopening_numeric_options_clamps_saved_advanced_values, :540 the_options_pages_are_the_references"
+    "date": "2026-10-09",
+    "class": "source-restated",
+    "by": "phase 2 session",
+    "note": "The wait after the nth failed connection is n times the option, as the job announces it: with the option at 1 the waits are 1 s then 2 s, and with the option at 2 (two attempts) the one wait is 2 s. Each option is changed in the real options window (advanced mode on, so waits and timeouts may be a second) and applied; the test then reloads a real NetEngine with engine.reload_settings() (as the app's poll does; the poll itself is not driven) and asks a local axum server, a held socket that refuses connections, or a raw proxy listener. The engine's bandwidth rules are off (the default rules space out local requests), and, like the app's, it honours proxies named in the environment. The expected values are worked out from the reference's NetworkJob (hydrus/client/networking/) and not recorded from it: running the reference's job against the same server is not done, hence source-restated. Timing is bounded below only, and attempts and waits are read from the job's own status text and the server's counts. Test: crates/hydrus-gui/tests/gui/options_system_consumers.rs network_consumers::failed_connections_are_retried_as_often_and_as_slowly_as_the_options_say."
    }
   },
   {
@@ -6702,7 +6700,7 @@
     "date": "2026-10-08",
     "class": "weak",
     "by": "blind Sonnet agent, #97 phase 1",
-    "note": "GUI toggle reaches NetEngine.options().verify_https after reload, but nothing tests that http_client (engine.rs:564 tls_danger_accept_invalid_certs) actually accepts or rejects certificates; only the option snapshot is checked. Tests: crates/hydrus-gui/tests/gui/options_system_consumers.rs:133 connection_options_reach_the_running_network_engine"
+    "note": "GUI toggle reaches NetEngine.options().verify_https after reload, but nothing tests that http_client (engine.rs:564 tls_danger_accept_invalid_certs) actually accepts or rejects certificates; only the option snapshot is checked. Tests: crates/hydrus-gui/tests/gui/options_system_consumers.rs:133 connection_options_reach_the_running_network_engine (Untagged from connection_options_reach_the_running_network_engine, which only reads the engine's option snapshot.)"
    }
   },
   {
@@ -6734,10 +6732,10 @@
     "Assessment covers this editable control and shared Apply/Cancel, not every control on its containing reference page or every background consumer."
    ],
    "recheck": {
-    "date": "2026-10-08",
+    "date": "2026-10-09",
     "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "GUI test drives the real options window (labels/kinds/limits, Apply) and checks a standalone NetEngine reloads the new value; page shape is replayed from options_dialog.json. Reader behaviour is tested separately in hydrus-net with NetOptions set directly, and expected numbers are typed literals. Velocity editor checks only the count of unit fields (3), and number/hours/minutes/seconds to window seconds is a typed literal. Tests: crates/hydrus-gui/tests/gui/options_system_consumers.rs:133 connection_options_reach_the_running_network_engine; hydrus-net engine.rs/tests/engine.rs:1222 domain_ok"
+    "by": "phase 2 session",
+    "note": "Two server errors within twenty minutes (the window set through the velocity row, not the default ten) halt the domain: the next request's job waits with the domain wait reason; at three errors needed a request goes through, and at 0 (never wait) it does even with the errors still counted. Each option is changed in the real options window (advanced mode on, so waits and timeouts may be a second) and applied; the test then reloads a real NetEngine with engine.reload_settings() (as the app's poll does; the poll itself is not driven) and asks a local axum server, a held socket that refuses connections, or a raw proxy listener. The engine's bandwidth rules are off (the default rules space out local requests), and, like the app's, it honours proxies named in the environment. The expected values are worked out from the reference's NetworkJob (hydrus/client/networking/) and not recorded from it: running the reference's job against the same server is not done, hence source-restated. Timing is bounded below only, and attempts and waits are read from the job's own status text and the server's counts. Test: crates/hydrus-gui/tests/gui/options_system_consumers.rs network_consumers::a_domain_with_enough_errors_is_left_alone_for_as_long_as_the_options_say."
    }
   },
   {
@@ -6754,10 +6752,10 @@
     "Assessment covers this editable control and shared Apply/Cancel, not every control on its containing reference page or every background consumer."
    ],
    "recheck": {
-    "date": "2026-10-08",
+    "date": "2026-10-09",
     "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "GUI test drives the real options window (labels/kinds/limits, Apply) and checks a standalone NetEngine reloads the new value; page shape is replayed from options_dialog.json. Reader behaviour is tested separately in hydrus-net with NetOptions set directly, and expected numbers are typed literals. Tests: crates/hydrus-gui/tests/gui/options_system_consumers.rs:133; hydrus-net tests/engine.rs:1346"
+    "by": "phase 2 session",
+    "note": "A refused connection is retried: with the option at 3 the job announces waits of 1 s and 2 s (two retries), with 2 one wait of 1 s. Each option is changed in the real options window (advanced mode on, so waits and timeouts may be a second) and applied; the test then reloads a real NetEngine with engine.reload_settings() (as the app's poll does; the poll itself is not driven) and asks a local axum server, a held socket that refuses connections, or a raw proxy listener. The engine's bandwidth rules are off (the default rules space out local requests), and, like the app's, it honours proxies named in the environment. The expected values are worked out from the reference's NetworkJob (hydrus/client/networking/) and not recorded from it: running the reference's job against the same server is not done, hence source-restated. Timing is bounded below only, and attempts and waits are read from the job's own status text and the server's counts. Test: crates/hydrus-gui/tests/gui/options_system_consumers.rs network_consumers::failed_connections_are_retried_as_often_and_as_slowly_as_the_options_say."
    }
   },
   {
@@ -6774,10 +6772,10 @@
     "Bounds use the mode saved when opening the dialog; changing advanced mode takes effect after Apply and reopening, as Qt constructs its controls."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Only model tests: recorded ranges/clamps (options_ranges.json, real pages() get/set) plus page-shape replay of options_dialog.json. No GUI test applies this control and nothing checks that the engine/consumer then behaves with the saved value (engine reads it but only via NetOptions set directly in hydrus-net tests). The engine's slot rebuild is tested in engine.rs changed_options_are_picked_up, with max_jobs written to the store directly. Tests: crates/hydrus-gui-model/tests/model/options_dialog.rs:664 advanced_network_ranges_and_clamps_match_the_reference, :862 reopening_numeric_options_clamps_saved_advanced_values, :540 the_options_pages_are_the_references"
+    "date": "2026-10-09",
+    "class": "source-restated",
+    "by": "phase 2 session",
+    "note": "Six concurrent requests to a server that holds each: exactly 2 in flight with the option at 2 (and room on the domain). Each option is changed in the real options window (advanced mode on, so waits and timeouts may be a second) and applied; the test then reloads a real NetEngine with engine.reload_settings() (as the app's poll does; the poll itself is not driven) and asks a local axum server, a held socket that refuses connections, or a raw proxy listener. The engine's bandwidth rules are off (the default rules space out local requests), and, like the app's, it honours proxies named in the environment. The expected values are worked out from the reference's NetworkJob (hydrus/client/networking/) and not recorded from it: running the reference's job against the same server is not done, hence source-restated. Timing is bounded below only, and attempts and waits are read from the job's own status text and the server's counts. Test: crates/hydrus-gui/tests/gui/options_system_consumers.rs network_consumers::only_as_many_jobs_run_at_once_as_the_options_say."
    }
   },
   {
@@ -6794,10 +6792,10 @@
     "Bounds use the mode saved when opening the dialog; changing advanced mode takes effect after Apply and reopening, as Qt constructs its controls."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Only model tests: recorded ranges/clamps (options_ranges.json, real pages() get/set) plus page-shape replay of options_dialog.json. No GUI test applies this control and nothing checks that the engine/consumer then behaves with the saved value (engine reads it but only via NetOptions set directly in hydrus-net tests). Domain-slot rebuild is tested in engine.rs changed_options_are_picked_up via a direct store write. Tests: crates/hydrus-gui-model/tests/model/options_dialog.rs:664 advanced_network_ranges_and_clamps_match_the_reference, :862 reopening_numeric_options_clamps_saved_advanced_values, :540 the_options_pages_are_the_references"
+    "date": "2026-10-09",
+    "class": "source-restated",
+    "by": "phase 2 session",
+    "note": "With 5 overall and 3 per domain, six concurrent requests to one domain are never more than 3 in flight (and more than one). Each option is changed in the real options window (advanced mode on, so waits and timeouts may be a second) and applied; the test then reloads a real NetEngine with engine.reload_settings() (as the app's poll does; the poll itself is not driven) and asks a local axum server, a held socket that refuses connections, or a raw proxy listener. The engine's bandwidth rules are off (the default rules space out local requests), and, like the app's, it honours proxies named in the environment. The expected values are worked out from the reference's NetworkJob (hydrus/client/networking/) and not recorded from it: running the reference's job against the same server is not done, hence source-restated. Timing is bounded below only, and attempts and waits are read from the job's own status text and the server's counts. Test: crates/hydrus-gui/tests/gui/options_system_consumers.rs network_consumers::only_as_many_jobs_run_at_once_as_the_options_say."
    }
   },
   {
@@ -6814,10 +6812,10 @@
     "Assessment covers this editable control and shared Apply/Cancel, not every control on its containing reference page or every background consumer."
    ],
    "recheck": {
-    "date": "2026-10-08",
+    "date": "2026-10-09",
     "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "GUI test drives the real options window (labels/kinds/limits, Apply) and checks a standalone NetEngine reloads the new value; page shape is replayed from options_dialog.json. Reader behaviour is tested separately in hydrus-net with NetOptions set directly, and expected numbers are typed literals. Tests: crates/hydrus-gui/tests/gui/options_system_consumers.rs:133; hydrus-net engine.rs:1698 uses max_get_attempts"
+    "by": "phase 2 session",
+    "note": "A server that always answers 503 is asked 2 times with the option at 2 and 4 times at 4 (counted by the server). Each option is changed in the real options window (advanced mode on, so waits and timeouts may be a second) and applied; the test then reloads a real NetEngine with engine.reload_settings() (as the app's poll does; the poll itself is not driven) and asks a local axum server, a held socket that refuses connections, or a raw proxy listener. The engine's bandwidth rules are off (the default rules space out local requests), and, like the app's, it honours proxies named in the environment. The expected values are worked out from the reference's NetworkJob (hydrus/client/networking/) and not recorded from it: running the reference's job against the same server is not done, hence source-restated. Timing is bounded below only, and attempts and waits are read from the job's own status text and the server's counts. Test: crates/hydrus-gui/tests/gui/options_system_consumers.rs network_consumers::a_failing_server_is_asked_as_many_times_as_the_retries_option_says."
    }
   },
   {
@@ -6834,10 +6832,10 @@
     "Bounds use the mode saved when opening the dialog; changing advanced mode takes effect after Apply and reopening, as Qt constructs its controls."
    ],
    "recheck": {
-    "date": "2026-10-08",
+    "date": "2026-10-09",
     "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Only model tests: recorded ranges/clamps (options_ranges.json, real pages() get/set) plus page-shape replay of options_dialog.json. No GUI test applies this control and nothing checks that the engine/consumer then behaves with the saved value (engine reads it but only via NetOptions set directly in hydrus-net tests). Used for connect/read timeouts at engine.rs:562. Tests: crates/hydrus-gui-model/tests/model/options_dialog.rs:664 advanced_network_ranges_and_clamps_match_the_reference, :862 reopening_numeric_options_clamps_saved_advanced_values, :540 the_options_pages_are_the_references"
+    "by": "phase 2 session",
+    "note": "A server that goes quiet is given at least six times the option to answer (1 s: an error after at least 6 s; the default of ten would be a minute and the test gives up at forty seconds) through the real options window and engine (options_system_consumers.rs network_consumers::a_server_that_goes_quiet_is_given_the_timeout_the_option_says, untagged). The connect half of the timeout (the option itself) is not driven: it needs an address that never answers. Left untagged."
    }
   },
   {
@@ -6854,10 +6852,10 @@
     "Bounds use the mode saved when opening the dialog; changing advanced mode takes effect after Apply and reopening, as Qt constructs its controls."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Only model tests: recorded ranges/clamps (options_ranges.json, real pages() get/set) plus page-shape replay of options_dialog.json. No GUI test applies this control and nothing checks that the engine/consumer then behaves with the saved value (engine reads it but only via NetOptions set directly in hydrus-net tests). Used at engine.rs:1726. Tests: crates/hydrus-gui-model/tests/model/options_dialog.rs:664 advanced_network_ranges_and_clamps_match_the_reference, :862 reopening_numeric_options_clamps_saved_advanced_values, :540 the_options_pages_are_the_references"
+    "date": "2026-10-09",
+    "class": "source-restated",
+    "by": "phase 2 session",
+    "note": "A server answering 429 with no retry-after is asked twice and waited for at least 1.25^2 times the option (1 s: at least 1.56 s; 3 s: at least 4.7 s) before the bandwidth error; the job says it is waiting on the server's bandwidth. Each option is changed in the real options window (advanced mode on, so waits and timeouts may be a second) and applied; the test then reloads a real NetEngine with engine.reload_settings() (as the app's poll does; the poll itself is not driven) and asks a local axum server, a held socket that refuses connections, or a raw proxy listener. The engine's bandwidth rules are off (the default rules space out local requests), and, like the app's, it honours proxies named in the environment. The expected values are worked out from the reference's NetworkJob (hydrus/client/networking/) and not recorded from it: running the reference's job against the same server is not done, hence source-restated. Timing is bounded below only, and attempts and waits are read from the job's own status text and the server's counts. Test: crates/hydrus-gui/tests/gui/options_system_consumers.rs network_consumers::a_server_that_limits_bandwidth_is_waited_for_as_long_as_the_option_says."
    }
   },
   {
@@ -6889,10 +6887,10 @@
     "Assessment covers this editable control and shared Apply/Cancel, not every control on its containing reference page or every background consumer."
    ],
    "recheck": {
-    "date": "2026-10-08",
+    "date": "2026-10-09",
     "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "GUI test drives the real options window (labels/kinds/limits, Apply) and checks a standalone NetEngine reloads the new value; page shape is replayed from options_dialog.json. Reader behaviour is tested separately in hydrus-net with NetOptions set directly, and expected numbers are typed literals. Proxy use is tested at engine level with a local proxy server; reference text of the field (default placeholder socks5/http) not checked. Tests: crates/hydrus-gui/tests/gui/options_system_consumers.rs:133; hydrus-net tests/engine.rs:846 requests_go_through_the_clients_proxy"
+    "by": "phase 2 session",
+    "note": "With the local server as http proxy a request for another host is asked of it with the whole URL (the server counts it); hosts in no_proxy (the default has the local host) are asked directly; with the host named in no_proxy, or the proxy cleared, the proxy's count does not rise. Each option is changed in the real options window (advanced mode on, so waits and timeouts may be a second) and applied; the test then reloads a real NetEngine with engine.reload_settings() (as the app's poll does; the poll itself is not driven) and asks a local axum server, a held socket that refuses connections, or a raw proxy listener. The engine's bandwidth rules are off (the default rules space out local requests), and, like the app's, it honours proxies named in the environment. The expected values are worked out from the reference's NetworkJob (hydrus/client/networking/) and not recorded from it: running the reference's job against the same server is not done, hence source-restated. Timing is bounded below only, and attempts and waits are read from the job's own status text and the server's counts. Test: crates/hydrus-gui/tests/gui/options_system_consumers.rs network_consumers::the_http_proxy_and_the_hosts_it_is_not_used_for_decide_where_requests_go."
    }
   },
   {
@@ -6909,10 +6907,10 @@
     "Assessment covers this editable control and shared Apply/Cancel, not every control on its containing reference page or every background consumer."
    ],
    "recheck": {
-    "date": "2026-10-08",
+    "date": "2026-10-09",
     "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "GUI test drives the real options window (labels/kinds/limits, Apply) and checks a standalone NetEngine reloads the new value; page shape is replayed from options_dialog.json. Reader behaviour is tested separately in hydrus-net with NetOptions set directly, and expected numbers are typed literals. Only the http proxy path is exercised by the engine proxy test; the https proxy is only checked as an option snapshot. Tests: crates/hydrus-gui/tests/gui/options_system_consumers.rs:133; hydrus-net tests/engine.rs:846"
+    "by": "phase 2 session",
+    "note": "An https request asks the https proxy to CONNECT (the proxy, a raw listener, reads 'CONNECT booru.invalid:443 HTTP/1.1'); with the proxy cleared it is not asked. Each option is changed in the real options window (advanced mode on, so waits and timeouts may be a second) and applied; the test then reloads a real NetEngine with engine.reload_settings() (as the app's poll does; the poll itself is not driven) and asks a local axum server, a held socket that refuses connections, or a raw proxy listener. The engine's bandwidth rules are off (the default rules space out local requests), and, like the app's, it honours proxies named in the environment. The expected values are worked out from the reference's NetworkJob (hydrus/client/networking/) and not recorded from it: running the reference's job against the same server is not done, hence source-restated. Timing is bounded below only, and attempts and waits are read from the job's own status text and the server's counts. Test: crates/hydrus-gui/tests/gui/options_system_consumers.rs network_consumers::https_requests_ask_the_https_proxy_to_connect."
    }
   },
   {
@@ -6929,10 +6927,10 @@
     "Assessment covers this editable control and shared Apply/Cancel, not every control on its containing reference page or every background consumer."
    ],
    "recheck": {
-    "date": "2026-10-08",
+    "date": "2026-10-09",
     "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "GUI test drives the real options window (labels/kinds/limits, Apply) and checks a standalone NetEngine reloads the new value; page shape is replayed from options_dialog.json. Reader behaviour is tested separately in hydrus-net with NetOptions set directly, and expected numbers are typed literals. Tests: crates/hydrus-gui/tests/gui/options_system_consumers.rs:133; hydrus-net tests/engine.rs:846 (no_proxy host asked directly)"
+    "by": "phase 2 session",
+    "note": "Naming a host in no_proxy sends its requests direct though an http proxy is set (the proxy's count stays); the default's local host is asked directly. Each option is changed in the real options window (advanced mode on, so waits and timeouts may be a second) and applied; the test then reloads a real NetEngine with engine.reload_settings() (as the app's poll does; the poll itself is not driven) and asks a local axum server, a held socket that refuses connections, or a raw proxy listener. The engine's bandwidth rules are off (the default rules space out local requests), and, like the app's, it honours proxies named in the environment. The expected values are worked out from the reference's NetworkJob (hydrus/client/networking/) and not recorded from it: running the reference's job against the same server is not done, hence source-restated. Timing is bounded below only, and attempts and waits are read from the job's own status text and the server's counts. Test: crates/hydrus-gui/tests/gui/options_system_consumers.rs network_consumers::the_http_proxy_and_the_hosts_it_is_not_used_for_decide_where_requests_go."
    }
   },
   {
@@ -7092,10 +7090,10 @@
     "Bounds use the saved mode when opening, matching Qt construction."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Recorded minimum (600 / 1 advanced) and clamp at model level, and a GUI test sets the days field and checks the saved value. Nothing tests that the downloader queue (queue.rs:100) uses the saved delay after an error. Tests: crates/hydrus-gui/tests/gui/options_window.rs:526 (untagged round-trip); crates/hydrus-gui-model/tests/model/options_dialog.rs:664 advanced_network_ranges_and_clamps_match_the_reference, :862 reopening_numeric_options_clamps_saved_advanced_values, :540 the_options_pages_are_the_references"
+    "date": "2026-10-09",
+    "class": "source-restated",
+    "by": "phase 2 session",
+    "note": "A gallery search whose page cannot be reached (a connection refused by a held socket that was never listened on) waits ninety minutes by default and 3 h 20 m 5 s once changed, read from the queue runner's delayed_until; a watcher whose thread check fails the same way waits the same, read from its state's no_work_until. The option is changed in the real options window (advanced mode on; days/hours/minutes/seconds fields) and applied; the test then has the real downloader reload its settings as the CLI's one-second poll does (the poll itself is not driven). The expected waits are the option values by the reference's _DelayWork rules, not recorded from the reference (source-restated). Test: crates/hydrus-gui/tests/gui/options_system_consumers.rs error_delays::a_search_or_a_watcher_that_meets_a_network_error_waits_as_long_as_the_option_says."
    }
   },
   {
@@ -7113,10 +7111,10 @@
     "Bounds use the saved mode when opening, matching Qt construction."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Recorded minimum/clamp only at model level; no GUI test touches this row and subscriptions.rs:429 consumer is not tested with the setting. Tests: crates/hydrus-gui-model/tests/model/options_dialog.rs:664 advanced_network_ranges_and_clamps_match_the_reference, :862 reopening_numeric_options_clamps_saved_advanced_values, :540 the_options_pages_are_the_references"
+    "date": "2026-10-09",
+    "class": "source-restated",
+    "by": "phase 2 session",
+    "note": "A subscription whose search cannot be reached (the same refused connection) waits twelve hours by default, then 1 d 2 h 1 m once changed, with reason 'network error: ...', read from its no_work_until. The option is changed in the real options window (advanced mode on; days/hours/minutes/seconds fields) and applied; the test then has the real downloader reload its settings as the CLI's one-second poll does (the poll itself is not driven). The expected waits are the option values by the reference's _DelayWork rules, not recorded from the reference (source-restated). Test: crates/hydrus-gui/tests/gui/options_system_consumers.rs error_delays::a_subscription_that_meets_a_network_error_waits_as_long_as_the_option_says."
    }
   },
   {
@@ -7134,10 +7132,10 @@
     "Bounds use the saved mode when opening, matching Qt construction."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Recorded minimum/clamp at model level; the download test sets subscription_other_error_delay directly in the store, no options window involved. Tests: crates/hydrus-gui-model/tests/model/options_dialog.rs:664 advanced_network_ranges_and_clamps_match_the_reference, :862 reopening_numeric_options_clamps_saved_advanced_values, :540 the_options_pages_are_the_references; crates/hydrus-download/tests/subscriptions.rs:842"
+    "date": "2026-10-09",
+    "class": "source-restated",
+    "by": "phase 2 session",
+    "note": "A subscription whose query is already synced and holds a file to fetch, with an empty list of import destinations, fails CheckReadyToImport (no import destination): it waits thirty-six hours by default, then 2 d 1 h once changed, with reason 'error: ...', read from its no_work_until. No connection is made. The option is changed in the real options window (advanced mode on; days/hours/minutes/seconds fields) and applied; the test then has the real downloader reload its settings as the CLI's one-second poll does (the poll itself is not driven). The expected waits are the option values by the reference's _DelayWork rules, not recorded from the reference (source-restated). Test: crates/hydrus-gui/tests/gui/options_system_consumers.rs error_delays::a_subscription_that_meets_another_error_waits_as_long_as_the_option_says."
    }
   },
   {
@@ -8000,10 +7998,10 @@
     "Native options registry has no editable 'edit' control in this page/box path."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Real Edit button, child Apply/Cancel, parent staging, persistence with the key kept, reopen and retired owners. All expected values (e.g. 'edited 日本', 'saved 日本') are typed; the recorded edit flow (saved_manager, reopened_names, child_retains_key) is not replayed and existing-name dedupe on edit is untested. Stale tracker note (no editable row) is false. Tests: crates/hydrus-gui/tests/gui/external_calls.rs:75 callable_command_child_apply_cancel_parent_staging_reopen_and_retired_owner"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "phase 2 session (recheck bin D)",
+    "note": "Options > external programs, a fresh client: the real 'add defaults' (just for my platform) gives the reference's original_rows exactly (all three columns); the recorder's synthetic call imported twice gives its rows (names, job, command) with fresh, unique keys; Edit renames the first to 'edited 日本' in the real callable editor, the list unchanged until the child's Apply (names as recorded in parent_before_child_accept, compared as a set since the recorder appended without the button's sort), the key kept (child_retains_key), nothing saved until Options Apply; the saved manager equals the reference's saved_manager call for call, keys aside; reopening lists reopened_names in order. Recording: oracle/record_external_calls.py -> external_calls.json. Test: crates/hydrus-gui/tests/gui/external_calls_recorded.rs editing_a_call_replays_the_reference_s_list_staging_save_and_reopen. Not covered: an edit that renames a call to a name already in the list (the recording has no such case)."
    }
   },
   {
@@ -8040,10 +8038,10 @@
     "Native options registry has no editable 'import' control in this page/box path."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Imports the recorded export and one default, checks only the row count (2), rejection of a wrong-class text and Cancel/Apply. Does not check imported names/fresh keys/dedupe against after_import, nor the reference's 'seems to be a bit weird' confirm for imports: native import preview (options_external_calls.rs) refuses such calls with an error instead of asking (DIFFERENCES.md notes the override question is missing). Stale tracker note is false. Tests: crates/hydrus-gui/tests/gui/external_calls.rs:361 imported_reference_calls_review_cancel_and_saved_process_test_consumer"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "phase 2 session (recheck bin D)",
+    "note": "From the reference's saved_manager, the real import window takes the recorded export: the names become after_import (with the reference's ' (1)' dedupe; compared as a set, the recorder having called _AddCallableViaImport without the button's sort), each imported call equal to the exported one but for its name and a fresh key. A weird call (257-character path) now asks the reference's recorded question; no stops with the recorded 'User declined to add--the import looked weird.' and changes nothing, yes adds it; nothing is saved until Options Apply. Native import used to refuse such calls outright; fixed (options_external_calls.rs). Recording: oracle/record_external_calls.py -> external_calls.json. Test: crates/hydrus-gui/tests/gui/external_calls_recorded.rs importing_replays_the_reference_s_names_keys_and_weird_call_question."
    }
   },
   {
@@ -8591,10 +8589,10 @@
     "No native action/editor path for this reference workflow."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "phase 2 session (blind agent)",
-    "note": "system_tray.rs:471 file_minimise_to_system_tray_is_offered_with_a_tray_in_advanced_mode_and_hides_the_window drives the real File menu (not offered in simple mode on Linux or with no tray; offered in advanced mode between separators; choosing it hides the window and the icon's show entry restores it). The menu order and conditions are literals from ClientGUI.py:3490, not taken from system_tray.json."
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "phase 2 session (recheck bin D)",
+    "note": "Every recorded Linux file_menu case (system_tray.json: tray or not x advanced mode) is replayed through the real File menu: the entry is offered as recorded under the recorded text, and choosing it hides the client to the icon as recorded (hid_by_action), the icon's show entry bringing it back. The Windows cases are deferred with Windows; the menu's tooltips are not shown (native menus have none). Test: crates/hydrus-gui/tests/gui/system_tray.rs file_minimise_to_system_tray_follows_the_reference_s_recorded_cases."
    }
   },
   {
@@ -13992,10 +13990,10 @@
     "Existing native fonts, file-information-line content and rating layout remain in use, so these passive copies follow native hover presentation rather than Qt glyph metrics. Preview copies, top hover disable, menu/dominance rules and backend-specific controls remain separate gaps. The already-completed passive index leaf is excluded."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Real window toggles and saved values match the recorded combos, but what is drawn is checked only as presence: aggregate non-background pixel count > 0 and opaque-cover occupancy; the recording's per-item draws (kind, rect, text such as the 1.7 KB jpeg line) are never compared, so file information is not isolated or checked for content/position. Carried, no tag. Tests: crates/hydrus-gui/tests/gui/options_window.rs:3555 passive_background_options_paint_independent_copies_behind_opaque_media; crates/hydrus-gui-model/tests/model/options_dialog.rs:1720"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "phase 2 session (recheck bin D)",
+    "note": "All 32 recorded combinations through the real Options rows and viewer: the top copy is drawn when the reference's is, its title ('p3') and its info line equal the recorded ones (the age part aside: the recorder's clock), now with the zoom second as the reference's _GetInfoString puts it (ported); centred at the top within 8 px; covered by opaque media. Test: crates/hydrus-gui/tests/gui/viewer_background.rs background_copies_say_and_place_what_the_reference_draws."
    }
   },
   {
@@ -14032,10 +14030,10 @@
     "Existing native fonts, file-information-line content and rating layout remain in use, so these passive copies follow native hover presentation rather than Qt glyph metrics. Preview copies, top hover disable, menu/dominance rules and backend-specific controls remain separate gaps. The already-completed passive index leaf is excluded."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Same as file information: only presence/occupancy and the notes y-offset below ratings (input_y > 0) are checked against the recording; the recorded note texts and rects are not compared, so the notes content and right-side position are not proven. Carried, no tag. Tests: crates/hydrus-gui/tests/gui/options_window.rs:3555 passive_background_options_paint_independent_copies_behind_opaque_media; crates/hydrus-gui-model/tests/model/options_dialog.rs:1720"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "phase 2 session (recheck bin D)",
+    "note": "All 32 recorded combinations through the real Options rows and viewer: the notes copy is drawn when the reference's is, the names and texts as recorded, inside the reference's right-hand column within 8 px, starting under the ratings copy when that is drawn (the reference's input_y); covered by opaque media. Test: crates/hydrus-gui/tests/gui/viewer_background.rs background_copies_say_and_place_what_the_reference_draws."
    }
   },
   {
@@ -14052,10 +14050,10 @@
     "Existing native fonts, file-information-line content and rating layout remain in use, so these passive copies follow native hover presentation rather than Qt glyph metrics. Preview copies, top hover disable, menu/dominance rules and backend-specific controls remain separate gaps. The already-completed passive index leaf is excluded."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Real viewer and Options row driven over all 16x2 recorded combinations, but the only check on what is painted is whether any non-background pixel exists. The recording holds the drawn texts and rects (e.g. 'my files' at [953,80], the rating glyph at [970,42]) and the test never compares them, so presence is tested, not content or position. Tests: crates/hydrus-gui/tests/gui/options_window.rs:3557 passive_background_options_paint_independent_copies_behind_opaque_media; oracle/fixtures/viewer_background_options.json"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "phase 2 session (recheck bin D)",
+    "note": "All 32 recorded combinations through the real Options rows and viewer: the top-right copy is drawn when the reference's is, its texts (the inc/dec rating's value and the location 'my files') equal the recorded ones, its right edge and bottom within 8 px of the reference's (its stars are shapes the recording does not hold); covered by opaque media. Test: crates/hydrus-gui/tests/gui/viewer_background.rs background_copies_say_and_place_what_the_reference_draws."
    }
   },
   {
@@ -14072,10 +14070,10 @@
     "Existing native fonts, file-information-line content and rating layout remain in use, so these passive copies follow native hover presentation rather than Qt glyph metrics. Preview copies, top hover disable, menu/dominance rules and backend-specific controls remain separate gaps. The already-completed passive index leaf is excluded."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Same test: ink-present vs recorded visible_pixels>0 only. The recorded tag rows (text, left-edge rect) are never compared with the native rows, so what is drawn at the left is unverified. Opaque-cover behaviour is compared with the recording. Tests: crates/hydrus-gui/tests/gui/options_window.rs:3557 passive_background_options_paint_independent_copies_behind_opaque_media; oracle/fixtures/viewer_background_options.json"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "phase 2 session (recheck bin D)",
+    "note": "All 32 recorded combinations (viewer_background_options.json) set through the real Options rows on the real viewer: tags drawn exactly when the reference draws them, the rows being the recorded texts in order, the ink's left edge and top within 8 px of the reference's text rectangles, and covered by opaque media. Test: crates/hydrus-gui/tests/gui/viewer_background.rs background_copies_say_and_place_what_the_reference_draws."
    }
   },
   {
@@ -15965,10 +15963,10 @@
     "No native action/editor path for this reference workflow."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Drives the real test button and worker for an existing and a missing executable; 'Availability test worked!/failed!' are literals from the Python. external_calls.json records only the true result (availability) and the test does not read it; the interim 'Testing...' text, button disabling and the error/exception text are untested. Stale tracker note ('no test UI') is false. Tests: crates/hydrus-gui/tests/gui/external_calls_editor.rs:281 availability_test_is_a_which_call_with_the_reference_messages"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "phase 2 session (recheck bin D)",
+    "note": "New recording oracle/record_external_call_tests.py -> external_call_tests.json clicks the reference's TestCallablePanel 'test availability!' for sh, /bin/sh, a missing program and the OS file launcher; the test opens each call in the real callable editor (Options > external programs > edit) and replays it: button enabled or not (off for OS launchers), the interim 'Testing…' with the button off, then the verdict and the button back on. Test: crates/hydrus-gui/tests/gui/external_call_tests.rs test_availability_replays_the_reference_s_texts_and_button_states."
    }
   },
   {
@@ -15985,10 +15983,10 @@
     "No native action/editor path for this reference workflow."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Real editor typed input, owned worker and real /bin/sh process, with 'Looks good!' and 'Availability test worked!' (reference strings); preview is checked only with contains(value) in the GUI, while recorded preview/missing_preview/unused_preview are replayed only against ActualCall::preview in the model. Not covered: the error/failure feedback of Test call (reference shows the exception summary), pipeline-appropriate test-input rows per pipeline, the 'forcing a 15 second timeout' message for long-lived calls, and the recorded process_output is never compared. Tag over-claims. Tests: crates/hydrus-gui/tests/gui/external_calls.rs:411 reopened_saved_process_uses_real_editor_inputs_and_owned_test_call_worker; crates/hydrus-gui-model/tests/model/external_calls.rs actual_reference_substitution_validation_and_argument_cleaning, saved_call_executes_owned_harmless_process..."
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "phase 2 session (recheck bin D)",
+    "note": "Recording oracle/record_external_call_tests.py -> external_call_tests.json (the reference's TestCallablePanel). Through the real callable editor and its worker: each call's input rows start with the reference's labels and example values, its preview and both buttons' states equal the reference's (file and URL processes, OS launchers); 'test call!' for a working sh call, a missing program, a non-zero exit and a long-lived call gives the reference's interim text (with the forced 15 second timeout), its final text in full ('Looks good!', or the ExecutableException / BadReturnCodeException texts, now ported, with the program's stderr) and the file written; a later editor starts each input at the value last typed for its kind (PARAM_TYPES_TO_LAST_SEEN_VALUES, now ported); typing clears the result and redoes the preview; 'test call!' on the OS file and URL launchers (now enabled) opens the input as the reference's would, then says 'Looks good!'. Not compared: the OS launchers' brief 'Testing…' (native opens at once). Tests: crates/hydrus-gui/tests/gui/external_call_tests.rs test_inputs_and_preview_start_as_the_reference_s_for_each_call, test_call_runs_the_call_and_reports_as_the_reference_does."
    }
   },
   {
@@ -16137,10 +16135,10 @@
     "Current nested entry, arrows and child responses are callback-driven. Six native captures use explicit queue580x340, chooser520x440 and notice520x200 sizes; no physical nested-button coordinates, universal geometry or OS focus/modality are established."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Arrow reorder and Remove N selected? question are replayed against the recording (nested_checks 3/4/5/6, notices[4]). 'First is default' consumer side (main/viewer open-externally buttons use the first call, specific MIME overrides class, empty means OS) is driven through the real main window and viewer but with typed expectations (%path% etc. literals, hand-written Routing); the recorded dispatch/specific_empty entries are not compared with native results (specific_empty unused, dispatch[1] only used elsewhere). Tests: crates/hydrus-gui/tests/gui/open_externally.rs:528 options_routes_replay_qt_owned_choosers_cancel_order_apply_reopen_and_retirement; crates/hydrus-gui/tests/gui/open_externally.rs:1507 file_queue_replays_all_nested_reference_states_and_live_children; crates/hydrus-gui/tests/gui/open_externally.rs:2051 outer_mime_mapping_reference_replay_saved_keys_delete_and_retired_children; crates/hydrus-gui-model/tests/model/open_externally.rs:66 actual_qt_registered_choices_queue_order_and_protected_mime_rows; crates/hydrus-gui/tests/gui/open_externally.rs:1073 saved_registered_vectors_feed_actual_main_live_viewer_and_url_pipeline; crates/hydrus-gui/tests/gui/open_externally.rs:840; crates/hydrus-gui-model/tests/model/open_externally.rs:193"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "phase 2 session (recheck bin D)",
+    "note": "Replays the reference's recorded launches (dispatch, specific_empty in open_externally.json) with the recorder's calls and washed routes saved: a URL runs the first URL call with the URL; the JPEG selected in the main window runs its image row's first call with the recorded path (from the file store on), file URI, hash and file id 17; an explicitly empty JPEG row resolves to Default OS File Launch (specific_empty) and opens through the OS launcher; a missing URL call shows the recorded notice and runs nothing; an empty URL queue goes to the OS URL launcher. Reordering and removal in the nested queue are the existing replays (open_externally.rs). Test: crates/hydrus-gui/tests/gui/open_externally_dispatch.rs opening_runs_the_first_call_the_reference_ran_with_its_inputs."
    }
   },
   {
@@ -16762,10 +16760,10 @@
     "Right-click calls finish_and_dismiss only for completed jobs; dismiss-all calls dismiss_all_done and preserves active work."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Calls the popup_dismiss / dismiss_all callbacks (not an actual right-click) on done and active jobs; behaviour matches TryToDismiss/DismissAll in source but expectations are typed, not recorded. Tests: shell_popups.rs:184 dismiss_all_keeps_active_jobs_and_a_done_one_dismisses_alone"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "Claude session (recheck bins A/B), #97 phase 2",
+    "note": "crates/hydrus-gui/tests/gui/shell_popups.rs dismiss_all_keeps_active_jobs_and_a_done_one_dismisses_alone replays popup_dismiss.json (oracle/record_popup_dismiss.py, a real right mouse press on the reference's cards): a real right-click on the working card and then a done card, then a real click on 'dismiss all', comparing the cards (text, done, dismissed) and the summary after each step."
    }
   },
   {
@@ -19987,10 +19985,10 @@
     "Early experimental native queue-backed snapshots without frozen importer data cannot restore importer pages."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Recordings (session_backups.json, session_importers.json) are replayed, but the timestamp action is never clicked: the model test checks the label and Command value, the GUI tests call Pages::append_session_backup directly. No test drives the menu entry to the append, nor compares the appended tree/keys/selection to a recording beyond importer seed counts. Tests: crates/hydrus-gui-model/tests/model/session_saving.rs:125 backup_menu_labels_match_the_reference; crates/hydrus-gui/tests/gui/session.rs:2276 downloader_backup_and_freshest_load_survive_source_queue_deletion; session.rs:1759; options_window.rs:1335"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "Claude session (recheck bins A/B), #97 phase 2",
+    "note": "crates/hydrus-gui/tests/gui/session_backup_menu.rs a_backup_chosen_from_the_menu_is_appended_as_the_reference_appends_it saves 'backup test' six times at session_backups.json's times keeping two, opens pages > sessions > append backup > backup test from the menu bar (its entries equal the recorded backups' times, formatted independently of the code under test, and the recorded label_utc where the machine's zone is UTC), chooses the recorded timestamp, and compares the appended top-level notebook's name and children with the recording."
    }
   },
   {
@@ -20680,10 +20678,10 @@
     "A clock gap strictly greater than 60000 ms starts the wait. Zero seconds permits immediate network access. The daemon owns periodic checking; GUI workflows do not run a separate sleep checker."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Control range 0..60, default 15 and clamps (-1->0, 61->60) are replayed from system_sleep_options.json and the GUI saves through the real row to NetOptions; but the delay's effect (deadline = detection + delay, requests held then released) is tested by engine tests with typed literals (61 s gap, 15 s delay, 0/15/60) and the recorded cases (gap_ms, deadline_ms) are never loaded. The 15 s CLI daemon loop is untested. Tests: crates/hydrus-gui/tests/gui/options_window.rs:1462 sleep_options_apply_to_the_network_consumer_and_cancel_drafts; crates/hydrus-gui-model/tests/model/options_dialog.rs:962 system_sleep_controls_match_reference_and_clamp; crates/hydrus-net/src/engine.rs:2628 sleep_detection_obeys_threshold_delay_and_disabled_pending_wait; crates/hydrus-net/tests/engine.rs:878,1049"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "phase 2 session (recheck bin D)",
+    "note": "The delays 0/15/60 of the recorded cases are typed into the real Options row and applied; the daemon-built engine's deadline after a 61 s gap is the recorded deadline_ms (detection time + delay), a 60 s gap is no wake, requests are held for the delay and go after it (none held at 0), and the recorded clamps (-1 -> 0, 61 -> 60) are what is saved. Test: crates/hydrus-gui/tests/gui/system_sleep.rs sleep_rows_reach_the_daemon_s_engine_and_replay_the_reference_s_checks. The daemon's 15 s tick (hydrus-cli) is not run: the test calls the engine's sleep check at the recorded times itself."
    }
   },
   {
@@ -20700,10 +20698,10 @@
     "The daemon owns periodic sleep checks; the GUI has no independent periodic detector. Filesystem wake waiting remains absent. The network engine gates requests by the wake deadline; it does not expose the reference controller’s transient just-woke GUI flag."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Checkbox default and Apply to NetOptions.detect_sleep replayed against the recording via the real window; engine tests show a real fetch is held after a >60 s gap and released after reload with detection disabled (matching reference SleepCheck), but with typed literals: recorded cases/disabled_pending are not loaded. Periodic daemon (hydrus-cli main.rs) not tested. Tests: crates/hydrus-gui/tests/gui/options_window.rs:1462 sleep_options_apply_to_the_network_consumer_and_cancel_drafts; crates/hydrus-gui-model/tests/model/options_dialog.rs:962 system_sleep_controls_match_reference_and_clamp; crates/hydrus-net/src/engine.rs:2628 sleep_detection_obeys_threshold_delay_and_disabled_pending_wait; crates/hydrus-net/tests/engine.rs:878,1049"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "phase 2 session (recheck bin D)",
+    "note": "Each recorded case (system_sleep_options.json) is set through the real Options > system rows and applied; a network engine built from the saved options as the daemon builds it then runs the reference's checks at its times: detected or not, deadline_ms, last check touched, and released after the delay; with real times a request is held (job status 'looks like computer just woke up, waiting a bit') exactly when a wake is pending. disabled_pending: unticking the row while a wait is pending ends it in the running engine at its next check after reloading the settings. Test: crates/hydrus-gui/tests/gui/system_sleep.rs sleep_rows_reach_the_daemon_s_engine_and_replay_the_reference_s_checks. The daemon's 15 s tick (hydrus-cli) is not run: the test calls the engine's sleep check at the recorded times itself."
    }
   },
   {
@@ -20742,10 +20740,10 @@
     "Native options registry has no editable 'Always show the hydrus system tray icon:' control in this page/box path."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "phase 2 session (blind agent)",
-    "note": "system_tray.rs:210 and :548 tick the real Options row and check the icon is made, hidden and kept on reopening, the tooltip and the Slint component state, through a recording stand-in host (the headless platform has no tray host). Expected strings are literals from the source; system_tray.json is used only by model tests and no real tray host is exercised."
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "phase 2 session (recheck bin D)",
+    "note": "Every recorded icon case (system_tray.json: tray or not x the Options row x hidden to the tray, the hiding done through File > minimise to system tray) gives the recorded icon and icon_visible through the real Options row and tray controller; the icon's tooltip equals the recorded four as network > pause flips the pauses, with the name 'my hydrus'. With no tray the client cannot be hidden (nothing offers it), so the recorded no-tray hidden cases are checked as: no icon, nothing to hide with. The tray host is a recording stand-in (the headless platform has none); Slint's own tray component is driven separately in system_tray.rs. Test: crates/hydrus-gui/tests/gui/system_tray.rs the_icon_follows_the_reference_s_recorded_cases."
    }
   },
   {
@@ -20875,10 +20873,10 @@
     "Close asks before stopping an active/pending importer; accepted close preserves the page for Undo > closed pages, pauses its queue and displays the next available page."
    ],
    "recheck": {
-    "date": "2026-10-08",
+    "date": "2026-10-09",
     "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Coordinator correction: not wrong. The reference's 'This is a simple urls import page...' is the simple downloader page's veto (ClientGUISidebarImporters.py:2777, SidebarImporterSimpleDownloader); the URLs import page says 'This is a urls import page...' (line 2966, SidebarImporterURLs), as native does. Still weak: middle-click and Ctrl+W are not driven (tests call invoke_close_page / Pages::close_shown), and the simple downloader page's close veto wording is unchecked. Agent's note follows: Native Importer::close_veto (crates/hydrus-gui/src/page.rs:204) says 'This is a urls import page holding N import objects.' where the reference (ClientGUISidebarImporters.py:2777) says 'This is a simple urls import page holding ...'; the test at session.rs:793 pins the wrong string. Also the tests call invoke_close_page / Pages::close_shown, never the middle-click or Ctrl+W the leaf names, and the first test has no veto at all. Tests: crates/hydrus-gui/tests/gui/session.rs:255 pages_open_and_close_as_the_reference_does, :641 a_url_downloader_page_shows_and_controls_its_queue; page_navigation_options.rs (untagged, close with confirm_all)"
+    "by": "Claude session (recheck bins A/B), #97 phase 2",
+    "note": "crates/hydrus-gui/tests/gui/page_close_replay.rs pages_close_by_middle_click_and_ctrl_w_asking_as_the_reference_does replays page_close.json (oracle/record_page_close.py): real middle-clicks on tabs and Ctrl+W key presses on a search page, a url import page holding 4 URLs and a simple downloader page holding 2, the close questions answered by clicking yes/no, comparing the questions, tabs and page shown after each step. The simple downloader's question was wrong ('urls import page') and now says 'simple urls import page'. Still not sound: closing the last page leaves the reference's notebook empty, while hydrus-rs opens a new search page (DIFFERENCES.md); the test pins that difference."
    }
   },
   {
@@ -21856,10 +21854,10 @@
     "Native layout differs from Qt, including fixed row pixels for character-height sizing. Declining multiline paste preserves the current native text instead of handing the event to Qt normal paste. Full parent entries remain partial because maintenance/admin actions and multiple-tag selection menus are not yet implemented."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "The recording replay only ever flips autocomplete parent info together with sibling info (parents False only with siblings False and expanded False), so the parent flag is not shown to work independently, nor parents=False with expanded=True (code gates on expand && show_parents). Options toggle only through model Editor. Borderline: the on/off outputs are correct against the recording. Tests: crates/hydrus-gui-model/tests/model/write_autocomplete.rs:89 exact_rows_counts_domains_decorations_and_first_selection_match_reference, :240"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "phase 2 session (bin E)",
+    "note": "GUI test sets all eight combinations of the expand-parents, parent-info and sibling-info switches in the real Options window (tag editing page, Apply), then reads Manage tags' autocomplete rows for three texts against oracle/record_autocomplete_decoration_flags.py (the reference's TagEditingPanel UpdateOptions and a new write autocomplete). Expanded parent rows are compared as a set per suggestion (the reference keeps them in a Python set).  Parent rows show only with both the expand and parent-info switches on, as in the reference. Tests: crates/hydrus-gui/tests/gui/autocomplete_decoration_flags.rs:90 each_decoration_switch_works_alone_in_the_manage_tags_autocomplete"
    }
   },
   {
@@ -21896,10 +21894,10 @@
     "Native layout differs from Qt, including fixed row pixels for character-height sizing. Declining multiline paste preserves the current native text instead of handing the event to Qt normal paste. Full parent entries remain partial because maintenance/admin actions and multiple-tag selection menus are not yet implemented."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Sibling decoration is only ever varied together with parent info (siblings False only with parents False and expanded False) in the recording, so independence from the parent flag is unproven; the all-known-tags display-service case is covered. Options toggle only through the model Editor. Borderline: outputs match the recording. Tests: crates/hydrus-gui-model/tests/model/write_autocomplete.rs:89, :240"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "phase 2 session (bin E)",
+    "note": "GUI test sets all eight combinations of the expand-parents, parent-info and sibling-info switches in the real Options window (tag editing page, Apply), then reads Manage tags' autocomplete rows (sibling arrows with each other switch on and off) for three texts against oracle/record_autocomplete_decoration_flags.py. Tests: crates/hydrus-gui/tests/gui/autocomplete_decoration_flags.rs:90 each_decoration_switch_works_alone_in_the_manage_tags_autocomplete"
    }
   },
   {
@@ -23585,10 +23583,10 @@
     "Store sibling resolution is inspected separately from the reference recording, which has no sibling groups."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "The recording has no sibling groups, so the sibling-aware blacklist result is only checked in a model test with a typed sibling closure and typed expected strings. The window's real sibling lookup from the store (tag_filter_window.rs siblings()) is never exercised by any test; no GUI test types into the test box with siblings present. Tests: crates/hydrus-gui-model/tests/model/tag_filter_editor.rs:173 a_blacklist_test_blocks_a_tag_when_a_sibling_is_blocked_as_the_reference_does; crates/hydrus-gui-model/tests/model/tag_filter_editor.rs:57 (test steps, no siblings)"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "phase 2 session (bin E)",
+    "note": "GUI test opens the real tag filter editor window (blacklist-only and full) on a store with siblings on two tag services and types 13 test texts (aliases, ideals, other-service chains, unnamespaced rules on namespaced tags, unknown tags, several lines, duplicates after cleaning, blank lines) for five blacklists; result text and pass/blocked style, and the empty-box text, match oracle/record_tag_filter_sibling_testing.py (the reference's own _UpdateTest with its tag_siblings_lookup). Tests: crates/hydrus-gui/tests/gui/tag_filter_sibling_testing.rs:12 blacklist_tests_check_every_sibling_on_every_tag_service_as_the_reference_does"
    }
   },
   {
