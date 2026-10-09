@@ -198,7 +198,13 @@ impl Importer {
             return Some("This page is still importing.".into());
         }
         let held: usize = self.files.values().sum();
-        let kind = if self.local { "local" } else { "urls" };
+        let kind = if self.local {
+            "local"
+        } else if self.simple.is_some() {
+            "simple urls"
+        } else {
+            "urls"
+        };
         (confirm_non_empty && held > 0).then(|| {
             format!(
                 "This is a {kind} import page holding {} import objects.",

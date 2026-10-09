@@ -87,6 +87,7 @@ mod options_mpv_devices;
 mod options_search_notes;
 mod options_window;
 mod page_chooser_options;
+mod page_close_replay;
 mod page_navigation_options;
 mod page_scroll;
 mod pages_menu_new_pages;

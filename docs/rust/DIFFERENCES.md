@@ -205,6 +205,10 @@ search.
 
 ## Pages (`hydrus-gui`)
 
+- **Closing the last page** (Ctrl+W or a middle click on the only tab)
+  leaves the reference's main notebook empty; hydrus-rs's top notebook
+  always holds a page, so a new search page ("files") takes its place
+  (`oracle/record_page_close.py`, the last step).
 - **Active predicate editing remains Partial.** Represented system values and
   simple tags/namespaces/wildcards can now be edited together, with one atomic
   Apply and separate supplied values for repeated system families. Immutable
