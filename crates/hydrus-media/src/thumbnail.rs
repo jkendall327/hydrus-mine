@@ -190,6 +190,16 @@ fn default_icon(mime: Mime) -> &'static [u8] {
     }
 }
 
+/// The type's icon, decoded: what the reference's thumbnail cache shows for
+/// a file of a type with no thumbnail of its own (its "special thumbs",
+/// `mimes_to_default_thumbnail_paths`), before fitting it to the box.
+pub fn type_icon(mime: Mime) -> Result<Raster> {
+    decode::open(default_icon(mime))?
+        .image
+        .normalise()?
+        .into_raster(false)
+}
+
 /// `GenerateDefaultThumbnail`: the type's icon padded into the target box
 /// (`ImageOps.pad`), keeping its alpha channel.
 pub(crate) fn default_thumbnail(mime: Mime, target: (u32, u32)) -> Result<Raster> {

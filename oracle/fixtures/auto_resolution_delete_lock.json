@@ -1,0 +1,88 @@
+{
+ "phases": [
+  {
+   "delete_lock": true,
+   "reinbox_in_auto_resolution": false,
+   "rule": "pixel-perfect gifs vs pngs",
+   "pair": [
+    "b3f62f19da738731be45dbdf0a7bf76a76898584d20add4defa3d9856aaccf83",
+    "6887295caca6074b4634e8d1bba1ebcf3ade6be554c4d09a5bd4514392e9ed3c"
+   ],
+   "files": {
+    "b3f62f19da738731be45dbdf0a7bf76a76898584d20add4defa3d9856aaccf83": {
+     "inbox": false,
+     "my files": true,
+     "trash": false
+    },
+    "6887295caca6074b4634e8d1bba1ebcf3ade6be554c4d09a5bd4514392e9ed3c": {
+     "inbox": false,
+     "my files": false,
+     "trash": true
+    }
+   }
+  },
+  {
+   "delete_lock": true,
+   "reinbox_in_auto_resolution": true,
+   "rule": "pixel-perfect gifs vs pngs",
+   "pair": [
+    "b3f62f19da738731be45dbdf0a7bf76a76898584d20add4defa3d9856aaccf83",
+    "6887295caca6074b4634e8d1bba1ebcf3ade6be554c4d09a5bd4514392e9ed3c"
+   ],
+   "files": {
+    "b3f62f19da738731be45dbdf0a7bf76a76898584d20add4defa3d9856aaccf83": {
+     "inbox": false,
+     "my files": true,
+     "trash": false
+    },
+    "6887295caca6074b4634e8d1bba1ebcf3ade6be554c4d09a5bd4514392e9ed3c": {
+     "inbox": true,
+     "my files": false,
+     "trash": true
+    }
+   }
+  },
+  {
+   "delete_lock": false,
+   "reinbox_in_auto_resolution": true,
+   "rule": "pixel-perfect gifs vs pngs",
+   "pair": [
+    "b3f62f19da738731be45dbdf0a7bf76a76898584d20add4defa3d9856aaccf83",
+    "6887295caca6074b4634e8d1bba1ebcf3ade6be554c4d09a5bd4514392e9ed3c"
+   ],
+   "files": {
+    "b3f62f19da738731be45dbdf0a7bf76a76898584d20add4defa3d9856aaccf83": {
+     "inbox": false,
+     "my files": true,
+     "trash": false
+    },
+    "6887295caca6074b4634e8d1bba1ebcf3ade6be554c4d09a5bd4514392e9ed3c": {
+     "inbox": false,
+     "my files": false,
+     "trash": true
+    }
+   }
+  },
+  {
+   "delete_lock": false,
+   "reinbox_in_auto_resolution": false,
+   "rule": "pixel-perfect gifs vs pngs",
+   "pair": [
+    "b3f62f19da738731be45dbdf0a7bf76a76898584d20add4defa3d9856aaccf83",
+    "6887295caca6074b4634e8d1bba1ebcf3ade6be554c4d09a5bd4514392e9ed3c"
+   ],
+   "files": {
+    "b3f62f19da738731be45dbdf0a7bf76a76898584d20add4defa3d9856aaccf83": {
+     "inbox": false,
+     "my files": true,
+     "trash": false
+    },
+    "6887295caca6074b4634e8d1bba1ebcf3ade6be554c4d09a5bd4514392e9ed3c": {
+     "inbox": false,
+     "my files": false,
+     "trash": true
+    }
+   }
+  }
+ ]
+}

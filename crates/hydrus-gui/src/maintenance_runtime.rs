@@ -155,6 +155,12 @@ impl Control {
     pub fn statistics(&self) -> Statistics {
         self.0.statistics.borrow().clone()
     }
+    /// The cancellation this binding's passes share (for tests that act
+    /// between a pass's writes).
+    #[doc(hidden)]
+    pub fn purge_control(&self) -> PurgeControl {
+        self.0.control.clone()
+    }
     /// Whether this binding still has a pass running off the GUI thread.
     pub fn running(&self, worker: Worker) -> bool {
         self.0.pending[index(worker)].borrow().is_some()

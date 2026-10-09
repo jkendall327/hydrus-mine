@@ -547,6 +547,9 @@ pub(crate) fn open_filter_with_cache(
                         .into_iter()
                         .skip(2),
                 );
+                // (a file in several of the pairs is warmed once)
+                let mut seen = std::collections::HashSet::new();
+                files.retain(|file| seen.insert(*file));
                 files
             }
         }),

@@ -292,8 +292,6 @@ fn my_files_filter(store: &Arc<Store>) -> DuplicateFilter {
     DuplicateFilter::new(store.clone(), query, PairOrder::MaxFilesize, false, false).unwrap()
 }
 
-// leaf: audit-options-duplicates-duplicate-filter-batches-max-size-of-duplicate-filter-pair-batches-in-mixed-mode
-// leaf: audit-options-duplicates-duplicate-filter-batches-auto-commit-completed-batches-of-this-size-or-smaller
 #[test]
 fn batch_size_and_auto_commit_set_how_the_filter_batches_and_confirms() {
     let (dirs, store) = store_with_pairs();

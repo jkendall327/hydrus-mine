@@ -29,14 +29,6 @@ pub fn message_window() -> Option<ChoiceButtonsWindow> {
     MESSAGE.with(|m| m.borrow().as_ref().map(ChoiceButtonsWindow::clone_strong))
 }
 
-/// Set by "simulate program exit signal", once the event loop is told to stop.
-static EXIT_REQUESTED: AtomicBool = AtomicBool::new(false);
-
-/// Whether "simulate program exit signal" has run in this process.
-pub fn exit_requested() -> bool {
-    EXIT_REQUESTED.load(Ordering::SeqCst)
-}
-
 /// What `HydrusData.DebugPrint` was given, oldest first: the debug actions
 /// print to the console and keep the lines, for the tests.
 static PRINTED: Mutex<Vec<String>> = Mutex::new(Vec::new());
@@ -253,8 +245,8 @@ pub(crate) fn run(context: &Context, action: Action) {
             debug_print(&text);
             post(&store, vec![Job::text(text, now())]);
         }
+        // (as the reference's `QApplication.exit`: the event loop stops)
         Action::Exit => {
-            EXIT_REQUESTED.store(true, Ordering::SeqCst);
             let _ = slint::quit_event_loop();
         }
         Action::ClearRenderingCaches => (context.clear_caches)(),

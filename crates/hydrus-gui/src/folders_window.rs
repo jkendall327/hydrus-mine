@@ -1738,8 +1738,10 @@ fn open_export_folder(
             let Some(window) = weak.upgrade() else {
                 return;
             };
-            let typed = window.get_typed().trim().to_owned();
-            if typed.is_empty() {
+            // (untrimmed: as the reference's autocomplete, only text that
+            // starts with "system:" is a system predicate)
+            let typed = window.get_typed().to_string();
+            if typed.trim().is_empty() {
                 return;
             }
             match parse_api_search(&serde_json::json!([typed])) {

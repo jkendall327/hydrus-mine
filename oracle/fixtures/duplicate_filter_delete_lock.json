@@ -1,0 +1,744 @@
+{
+ "phases": [
+  {
+   "delete_lock": true,
+   "reinbox_after_duplicate_filter": false,
+   "steps": [
+    {
+     "do": "better_delete_other",
+     "answers": [],
+     "after": {
+      "index": "File One - 2/6 - 1 decisions",
+      "loading": "0/100 pairs searched; 0 matched…",
+      "shown": "37285b729ffed3927a05feb112ee63dd912a8065a8f34ae1715ed3b156dfe819",
+      "other": "fe2f6dba54db14a67e98038f5cdfdbfc40f70c33687ebd3ada6268044b816b5f",
+      "pair_index": 1,
+      "num_pairs": 6,
+      "decisions": [
+       "DuplicatesAction"
+      ],
+      "open": true,
+      "committing": false
+     },
+     "asked": [],
+     "writes": []
+    },
+    {
+     "do": "close",
+     "answers": [
+      "commit"
+     ],
+     "after": {
+      "index": "File One - 3/6 - no decisions yet",
+      "loading": "0/100 pairs searched; 0 matched…",
+      "shown": "e6fc343a8256954a180ff713e3392101b2fe7e86b45d8f44a07aaa256d499674",
+      "other": "d17cfbec55c579015262906e2bcb2cba16c022c9c33395d34e67f4c10d3cf671",
+      "pair_index": 2,
+      "num_pairs": 6,
+      "decisions": [
+       "SkipAuto"
+      ],
+      "open": true,
+      "committing": false
+     },
+     "asked": [
+      {
+       "texts": [
+        "commit 1 decisions?",
+        "-or-"
+       ],
+       "buttons": [
+        "commit",
+        "forget",
+        "back to filtering"
+       ],
+       "pressed": "commit"
+      }
+     ],
+     "writes": [
+      {
+       "type": 4,
+       "a": "2c8f109c62f467ae9bc57b2a58ca8f46e290148869d435c7a5f0ee5b2437a4d5",
+       "b": "a8b66799eb4f40c0113cc10a43722b41c04e61ca1b0acb264c1b2e0a22c97cbb",
+       "deleted": [
+        "a8b66799eb4f40c0113cc10a43722b41c04e61ca1b0acb264c1b2e0a22c97cbb"
+       ]
+      }
+     ],
+     "ok_to_close": true
+    }
+   ],
+   "batch": [
+    [
+     "2c8f109c62f467ae9bc57b2a58ca8f46e290148869d435c7a5f0ee5b2437a4d5",
+     "a8b66799eb4f40c0113cc10a43722b41c04e61ca1b0acb264c1b2e0a22c97cbb"
+    ],
+    [
+     "37285b729ffed3927a05feb112ee63dd912a8065a8f34ae1715ed3b156dfe819",
+     "fe2f6dba54db14a67e98038f5cdfdbfc40f70c33687ebd3ada6268044b816b5f"
+    ],
+    [
+     "e6fc343a8256954a180ff713e3392101b2fe7e86b45d8f44a07aaa256d499674",
+     "d17cfbec55c579015262906e2bcb2cba16c022c9c33395d34e67f4c10d3cf671"
+    ],
+    [
+     "1ddfdfb0fdd66c77a7c04407c100e6838370ee96a72a22afd2bb4d04e89ff148",
+     "ec8b2e5a2a04d65268d2b6021782648cc0d808b0b30f9b07f3711957cbf927ed"
+    ],
+    [
+     "e665a9581c75979e1a2873a65bc2b1e93d8ea4ab90df0e78b78aa2a6979a4bff",
+     "8c201a9e0faf1950160e067603b1fdea2c476943c6dbe202f0119f6a7a27c76e"
+    ],
+    [
+     "af903ff62452c926f75d8133f2a19109b224da9cbcdb14c68c29eceee99d2057",
+     "fe2f6dba54db14a67e98038f5cdfdbfc40f70c33687ebd3ada6268044b816b5f"
+    ]
+   ],
+   "files": {
+    "d17cfbec55c579015262906e2bcb2cba16c022c9c33395d34e67f4c10d3cf671": {
+     "inbox": false,
+     "domains": [
+      "combined local file domains",
+      "hydrus local file storage",
+      "my files"
+     ]
+    },
+    "e6fc343a8256954a180ff713e3392101b2fe7e86b45d8f44a07aaa256d499674": {
+     "inbox": false,
+     "domains": [
+      "combined local file domains",
+      "hydrus local file storage",
+      "my files"
+     ]
+    },
+    "2c8f109c62f467ae9bc57b2a58ca8f46e290148869d435c7a5f0ee5b2437a4d5": {
+     "inbox": false,
+     "domains": [
+      "combined local file domains",
+      "hydrus local file storage",
+      "my files"
+     ]
+    },
+    "a8b66799eb4f40c0113cc10a43722b41c04e61ca1b0acb264c1b2e0a22c97cbb": {
+     "inbox": false,
+     "domains": [
+      "deleted from anywhere",
+      "hydrus local file storage",
+      "trash"
+     ]
+    },
+    "ec8b2e5a2a04d65268d2b6021782648cc0d808b0b30f9b07f3711957cbf927ed": {
+     "inbox": false,
+     "domains": [
+      "combined local file domains",
+      "hydrus local file storage",
+      "my files"
+     ]
+    },
+    "1ddfdfb0fdd66c77a7c04407c100e6838370ee96a72a22afd2bb4d04e89ff148": {
+     "inbox": false,
+     "domains": [
+      "combined local file domains",
+      "hydrus local file storage",
+      "my files"
+     ]
+    },
+    "8c201a9e0faf1950160e067603b1fdea2c476943c6dbe202f0119f6a7a27c76e": {
+     "inbox": false,
+     "domains": [
+      "combined local file domains",
+      "hydrus local file storage",
+      "my files"
+     ]
+    },
+    "e665a9581c75979e1a2873a65bc2b1e93d8ea4ab90df0e78b78aa2a6979a4bff": {
+     "inbox": false,
+     "domains": [
+      "combined local file domains",
+      "hydrus local file storage",
+      "my files"
+     ]
+    },
+    "fe2f6dba54db14a67e98038f5cdfdbfc40f70c33687ebd3ada6268044b816b5f": {
+     "inbox": false,
+     "domains": [
+      "combined local file domains",
+      "hydrus local file storage",
+      "my files"
+     ]
+    },
+    "37285b729ffed3927a05feb112ee63dd912a8065a8f34ae1715ed3b156dfe819": {
+     "inbox": false,
+     "domains": [
+      "combined local file domains",
+      "hydrus local file storage",
+      "my files"
+     ]
+    },
+    "af903ff62452c926f75d8133f2a19109b224da9cbcdb14c68c29eceee99d2057": {
+     "inbox": false,
+     "domains": [
+      "combined local file domains",
+      "hydrus local file storage",
+      "my files"
+     ]
+    }
+   }
+  },
+  {
+   "delete_lock": true,
+   "reinbox_after_duplicate_filter": true,
+   "steps": [
+    {
+     "do": "better_delete_other",
+     "answers": [],
+     "after": {
+      "index": "File One - 2/6 - 1 decisions",
+      "loading": "0/100 pairs searched; 0 matched…",
+      "shown": "37285b729ffed3927a05feb112ee63dd912a8065a8f34ae1715ed3b156dfe819",
+      "other": "fe2f6dba54db14a67e98038f5cdfdbfc40f70c33687ebd3ada6268044b816b5f",
+      "pair_index": 1,
+      "num_pairs": 6,
+      "decisions": [
+       "DuplicatesAction"
+      ],
+      "open": true,
+      "committing": false
+     },
+     "asked": [],
+     "writes": []
+    },
+    {
+     "do": "close",
+     "answers": [
+      "commit"
+     ],
+     "after": {
+      "index": "File One - 3/6 - no decisions yet",
+      "loading": "0/100 pairs searched; 0 matched…",
+      "shown": "e6fc343a8256954a180ff713e3392101b2fe7e86b45d8f44a07aaa256d499674",
+      "other": "d17cfbec55c579015262906e2bcb2cba16c022c9c33395d34e67f4c10d3cf671",
+      "pair_index": 2,
+      "num_pairs": 6,
+      "decisions": [
+       "SkipAuto"
+      ],
+      "open": true,
+      "committing": false
+     },
+     "asked": [
+      {
+       "texts": [
+        "commit 1 decisions?",
+        "-or-"
+       ],
+       "buttons": [
+        "commit",
+        "forget",
+        "back to filtering"
+       ],
+       "pressed": "commit"
+      }
+     ],
+     "writes": [
+      {
+       "type": 4,
+       "a": "2c8f109c62f467ae9bc57b2a58ca8f46e290148869d435c7a5f0ee5b2437a4d5",
+       "b": "a8b66799eb4f40c0113cc10a43722b41c04e61ca1b0acb264c1b2e0a22c97cbb",
+       "deleted": [
+        "a8b66799eb4f40c0113cc10a43722b41c04e61ca1b0acb264c1b2e0a22c97cbb"
+       ]
+      }
+     ],
+     "ok_to_close": true
+    }
+   ],
+   "batch": [
+    [
+     "2c8f109c62f467ae9bc57b2a58ca8f46e290148869d435c7a5f0ee5b2437a4d5",
+     "a8b66799eb4f40c0113cc10a43722b41c04e61ca1b0acb264c1b2e0a22c97cbb"
+    ],
+    [
+     "37285b729ffed3927a05feb112ee63dd912a8065a8f34ae1715ed3b156dfe819",
+     "fe2f6dba54db14a67e98038f5cdfdbfc40f70c33687ebd3ada6268044b816b5f"
+    ],
+    [
+     "e6fc343a8256954a180ff713e3392101b2fe7e86b45d8f44a07aaa256d499674",
+     "d17cfbec55c579015262906e2bcb2cba16c022c9c33395d34e67f4c10d3cf671"
+    ],
+    [
+     "1ddfdfb0fdd66c77a7c04407c100e6838370ee96a72a22afd2bb4d04e89ff148",
+     "ec8b2e5a2a04d65268d2b6021782648cc0d808b0b30f9b07f3711957cbf927ed"
+    ],
+    [
+     "e665a9581c75979e1a2873a65bc2b1e93d8ea4ab90df0e78b78aa2a6979a4bff",
+     "8c201a9e0faf1950160e067603b1fdea2c476943c6dbe202f0119f6a7a27c76e"
+    ],
+    [
+     "af903ff62452c926f75d8133f2a19109b224da9cbcdb14c68c29eceee99d2057",
+     "fe2f6dba54db14a67e98038f5cdfdbfc40f70c33687ebd3ada6268044b816b5f"
+    ]
+   ],
+   "files": {
+    "d17cfbec55c579015262906e2bcb2cba16c022c9c33395d34e67f4c10d3cf671": {
+     "inbox": false,
+     "domains": [
+      "combined local file domains",
+      "hydrus local file storage",
+      "my files"
+     ]
+    },
+    "e6fc343a8256954a180ff713e3392101b2fe7e86b45d8f44a07aaa256d499674": {
+     "inbox": false,
+     "domains": [
+      "combined local file domains",
+      "hydrus local file storage",
+      "my files"
+     ]
+    },
+    "2c8f109c62f467ae9bc57b2a58ca8f46e290148869d435c7a5f0ee5b2437a4d5": {
+     "inbox": false,
+     "domains": [
+      "combined local file domains",
+      "hydrus local file storage",
+      "my files"
+     ]
+    },
+    "a8b66799eb4f40c0113cc10a43722b41c04e61ca1b0acb264c1b2e0a22c97cbb": {
+     "inbox": true,
+     "domains": [
+      "deleted from anywhere",
+      "hydrus local file storage",
+      "trash"
+     ]
+    },
+    "ec8b2e5a2a04d65268d2b6021782648cc0d808b0b30f9b07f3711957cbf927ed": {
+     "inbox": false,
+     "domains": [
+      "combined local file domains",
+      "hydrus local file storage",
+      "my files"
+     ]
+    },
+    "1ddfdfb0fdd66c77a7c04407c100e6838370ee96a72a22afd2bb4d04e89ff148": {
+     "inbox": false,
+     "domains": [
+      "combined local file domains",
+      "hydrus local file storage",
+      "my files"
+     ]
+    },
+    "8c201a9e0faf1950160e067603b1fdea2c476943c6dbe202f0119f6a7a27c76e": {
+     "inbox": false,
+     "domains": [
+      "combined local file domains",
+      "hydrus local file storage",
+      "my files"
+     ]
+    },
+    "e665a9581c75979e1a2873a65bc2b1e93d8ea4ab90df0e78b78aa2a6979a4bff": {
+     "inbox": false,
+     "domains": [
+      "combined local file domains",
+      "hydrus local file storage",
+      "my files"
+     ]
+    },
+    "fe2f6dba54db14a67e98038f5cdfdbfc40f70c33687ebd3ada6268044b816b5f": {
+     "inbox": false,
+     "domains": [
+      "combined local file domains",
+      "hydrus local file storage",
+      "my files"
+     ]
+    },
+    "37285b729ffed3927a05feb112ee63dd912a8065a8f34ae1715ed3b156dfe819": {
+     "inbox": false,
+     "domains": [
+      "combined local file domains",
+      "hydrus local file storage",
+      "my files"
+     ]
+    },
+    "af903ff62452c926f75d8133f2a19109b224da9cbcdb14c68c29eceee99d2057": {
+     "inbox": false,
+     "domains": [
+      "combined local file domains",
+      "hydrus local file storage",
+      "my files"
+     ]
+    }
+   }
+  },
+  {
+   "delete_lock": false,
+   "reinbox_after_duplicate_filter": true,
+   "steps": [
+    {
+     "do": "better_delete_other",
+     "answers": [],
+     "after": {
+      "index": "File One - 2/6 - 1 decisions",
+      "loading": "0/100 pairs searched; 0 matched…",
+      "shown": "37285b729ffed3927a05feb112ee63dd912a8065a8f34ae1715ed3b156dfe819",
+      "other": "fe2f6dba54db14a67e98038f5cdfdbfc40f70c33687ebd3ada6268044b816b5f",
+      "pair_index": 1,
+      "num_pairs": 6,
+      "decisions": [
+       "DuplicatesAction"
+      ],
+      "open": true,
+      "committing": false
+     },
+     "asked": [],
+     "writes": []
+    },
+    {
+     "do": "close",
+     "answers": [
+      "commit"
+     ],
+     "after": {
+      "index": "File One - 3/6 - no decisions yet",
+      "loading": "0/100 pairs searched; 0 matched…",
+      "shown": "e6fc343a8256954a180ff713e3392101b2fe7e86b45d8f44a07aaa256d499674",
+      "other": "d17cfbec55c579015262906e2bcb2cba16c022c9c33395d34e67f4c10d3cf671",
+      "pair_index": 2,
+      "num_pairs": 6,
+      "decisions": [
+       "SkipAuto"
+      ],
+      "open": true,
+      "committing": false
+     },
+     "asked": [
+      {
+       "texts": [
+        "commit 1 decisions?",
+        "-or-"
+       ],
+       "buttons": [
+        "commit",
+        "forget",
+        "back to filtering"
+       ],
+       "pressed": "commit"
+      }
+     ],
+     "writes": [
+      {
+       "type": 4,
+       "a": "2c8f109c62f467ae9bc57b2a58ca8f46e290148869d435c7a5f0ee5b2437a4d5",
+       "b": "a8b66799eb4f40c0113cc10a43722b41c04e61ca1b0acb264c1b2e0a22c97cbb",
+       "deleted": [
+        "a8b66799eb4f40c0113cc10a43722b41c04e61ca1b0acb264c1b2e0a22c97cbb"
+       ]
+      }
+     ],
+     "ok_to_close": true
+    }
+   ],
+   "batch": [
+    [
+     "2c8f109c62f467ae9bc57b2a58ca8f46e290148869d435c7a5f0ee5b2437a4d5",
+     "a8b66799eb4f40c0113cc10a43722b41c04e61ca1b0acb264c1b2e0a22c97cbb"
+    ],
+    [
+     "37285b729ffed3927a05feb112ee63dd912a8065a8f34ae1715ed3b156dfe819",
+     "fe2f6dba54db14a67e98038f5cdfdbfc40f70c33687ebd3ada6268044b816b5f"
+    ],
+    [
+     "e6fc343a8256954a180ff713e3392101b2fe7e86b45d8f44a07aaa256d499674",
+     "d17cfbec55c579015262906e2bcb2cba16c022c9c33395d34e67f4c10d3cf671"
+    ],
+    [
+     "1ddfdfb0fdd66c77a7c04407c100e6838370ee96a72a22afd2bb4d04e89ff148",
+     "ec8b2e5a2a04d65268d2b6021782648cc0d808b0b30f9b07f3711957cbf927ed"
+    ],
+    [
+     "e665a9581c75979e1a2873a65bc2b1e93d8ea4ab90df0e78b78aa2a6979a4bff",
+     "8c201a9e0faf1950160e067603b1fdea2c476943c6dbe202f0119f6a7a27c76e"
+    ],
+    [
+     "af903ff62452c926f75d8133f2a19109b224da9cbcdb14c68c29eceee99d2057",
+     "fe2f6dba54db14a67e98038f5cdfdbfc40f70c33687ebd3ada6268044b816b5f"
+    ]
+   ],
+   "files": {
+    "d17cfbec55c579015262906e2bcb2cba16c022c9c33395d34e67f4c10d3cf671": {
+     "inbox": false,
+     "domains": [
+      "combined local file domains",
+      "hydrus local file storage",
+      "my files"
+     ]
+    },
+    "e6fc343a8256954a180ff713e3392101b2fe7e86b45d8f44a07aaa256d499674": {
+     "inbox": false,
+     "domains": [
+      "combined local file domains",
+      "hydrus local file storage",
+      "my files"
+     ]
+    },
+    "2c8f109c62f467ae9bc57b2a58ca8f46e290148869d435c7a5f0ee5b2437a4d5": {
+     "inbox": false,
+     "domains": [
+      "combined local file domains",
+      "hydrus local file storage",
+      "my files"
+     ]
+    },
+    "a8b66799eb4f40c0113cc10a43722b41c04e61ca1b0acb264c1b2e0a22c97cbb": {
+     "inbox": false,
+     "domains": [
+      "deleted from anywhere",
+      "hydrus local file storage",
+      "trash"
+     ]
+    },
+    "ec8b2e5a2a04d65268d2b6021782648cc0d808b0b30f9b07f3711957cbf927ed": {
+     "inbox": false,
+     "domains": [
+      "combined local file domains",
+      "hydrus local file storage",
+      "my files"
+     ]
+    },
+    "1ddfdfb0fdd66c77a7c04407c100e6838370ee96a72a22afd2bb4d04e89ff148": {
+     "inbox": false,
+     "domains": [
+      "combined local file domains",
+      "hydrus local file storage",
+      "my files"
+     ]
+    },
+    "8c201a9e0faf1950160e067603b1fdea2c476943c6dbe202f0119f6a7a27c76e": {
+     "inbox": false,
+     "domains": [
+      "combined local file domains",
+      "hydrus local file storage",
+      "my files"
+     ]
+    },
+    "e665a9581c75979e1a2873a65bc2b1e93d8ea4ab90df0e78b78aa2a6979a4bff": {
+     "inbox": false,
+     "domains": [
+      "combined local file domains",
+      "hydrus local file storage",
+      "my files"
+     ]
+    },
+    "fe2f6dba54db14a67e98038f5cdfdbfc40f70c33687ebd3ada6268044b816b5f": {
+     "inbox": false,
+     "domains": [
+      "combined local file domains",
+      "hydrus local file storage",
+      "my files"
+     ]
+    },
+    "37285b729ffed3927a05feb112ee63dd912a8065a8f34ae1715ed3b156dfe819": {
+     "inbox": false,
+     "domains": [
+      "combined local file domains",
+      "hydrus local file storage",
+      "my files"
+     ]
+    },
+    "af903ff62452c926f75d8133f2a19109b224da9cbcdb14c68c29eceee99d2057": {
+     "inbox": false,
+     "domains": [
+      "combined local file domains",
+      "hydrus local file storage",
+      "my files"
+     ]
+    }
+   }
+  },
+  {
+   "delete_lock": false,
+   "reinbox_after_duplicate_filter": false,
+   "steps": [
+    {
+     "do": "better_delete_other",
+     "answers": [],
+     "after": {
+      "index": "File One - 2/6 - 1 decisions",
+      "loading": "0/100 pairs searched; 0 matched…",
+      "shown": "37285b729ffed3927a05feb112ee63dd912a8065a8f34ae1715ed3b156dfe819",
+      "other": "fe2f6dba54db14a67e98038f5cdfdbfc40f70c33687ebd3ada6268044b816b5f",
+      "pair_index": 1,
+      "num_pairs": 6,
+      "decisions": [
+       "DuplicatesAction"
+      ],
+      "open": true,
+      "committing": false
+     },
+     "asked": [],
+     "writes": []
+    },
+    {
+     "do": "close",
+     "answers": [
+      "commit"
+     ],
+     "after": {
+      "index": "File One - 3/6 - no decisions yet",
+      "loading": "0/100 pairs searched; 0 matched…",
+      "shown": "e6fc343a8256954a180ff713e3392101b2fe7e86b45d8f44a07aaa256d499674",
+      "other": "d17cfbec55c579015262906e2bcb2cba16c022c9c33395d34e67f4c10d3cf671",
+      "pair_index": 2,
+      "num_pairs": 6,
+      "decisions": [
+       "SkipAuto"
+      ],
+      "open": true,
+      "committing": false
+     },
+     "asked": [
+      {
+       "texts": [
+        "commit 1 decisions?",
+        "-or-"
+       ],
+       "buttons": [
+        "commit",
+        "forget",
+        "back to filtering"
+       ],
+       "pressed": "commit"
+      }
+     ],
+     "writes": [
+      {
+       "type": 4,
+       "a": "2c8f109c62f467ae9bc57b2a58ca8f46e290148869d435c7a5f0ee5b2437a4d5",
+       "b": "a8b66799eb4f40c0113cc10a43722b41c04e61ca1b0acb264c1b2e0a22c97cbb",
+       "deleted": [
+        "a8b66799eb4f40c0113cc10a43722b41c04e61ca1b0acb264c1b2e0a22c97cbb"
+       ]
+      }
+     ],
+     "ok_to_close": true
+    }
+   ],
+   "batch": [
+    [
+     "2c8f109c62f467ae9bc57b2a58ca8f46e290148869d435c7a5f0ee5b2437a4d5",
+     "a8b66799eb4f40c0113cc10a43722b41c04e61ca1b0acb264c1b2e0a22c97cbb"
+    ],
+    [
+     "37285b729ffed3927a05feb112ee63dd912a8065a8f34ae1715ed3b156dfe819",
+     "fe2f6dba54db14a67e98038f5cdfdbfc40f70c33687ebd3ada6268044b816b5f"
+    ],
+    [
+     "e6fc343a8256954a180ff713e3392101b2fe7e86b45d8f44a07aaa256d499674",
+     "d17cfbec55c579015262906e2bcb2cba16c022c9c33395d34e67f4c10d3cf671"
+    ],
+    [
+     "1ddfdfb0fdd66c77a7c04407c100e6838370ee96a72a22afd2bb4d04e89ff148",
+     "ec8b2e5a2a04d65268d2b6021782648cc0d808b0b30f9b07f3711957cbf927ed"
+    ],
+    [
+     "e665a9581c75979e1a2873a65bc2b1e93d8ea4ab90df0e78b78aa2a6979a4bff",
+     "8c201a9e0faf1950160e067603b1fdea2c476943c6dbe202f0119f6a7a27c76e"
+    ],
+    [
+     "af903ff62452c926f75d8133f2a19109b224da9cbcdb14c68c29eceee99d2057",
+     "fe2f6dba54db14a67e98038f5cdfdbfc40f70c33687ebd3ada6268044b816b5f"
+    ]
+   ],
+   "files": {
+    "d17cfbec55c579015262906e2bcb2cba16c022c9c33395d34e67f4c10d3cf671": {
+     "inbox": false,
+     "domains": [
+      "combined local file domains",
+      "hydrus local file storage",
+      "my files"
+     ]
+    },
+    "e6fc343a8256954a180ff713e3392101b2fe7e86b45d8f44a07aaa256d499674": {
+     "inbox": false,
+     "domains": [
+      "combined local file domains",
+      "hydrus local file storage",
+      "my files"
+     ]
+    },
+    "2c8f109c62f467ae9bc57b2a58ca8f46e290148869d435c7a5f0ee5b2437a4d5": {
+     "inbox": false,
+     "domains": [
+      "combined local file domains",
+      "hydrus local file storage",
+      "my files"
+     ]
+    },
+    "a8b66799eb4f40c0113cc10a43722b41c04e61ca1b0acb264c1b2e0a22c97cbb": {
+     "inbox": false,
+     "domains": [
+      "deleted from anywhere",
+      "hydrus local file storage",
+      "trash"
+     ]
+    },
+    "ec8b2e5a2a04d65268d2b6021782648cc0d808b0b30f9b07f3711957cbf927ed": {
+     "inbox": false,
+     "domains": [
+      "combined local file domains",
+      "hydrus local file storage",
+      "my files"
+     ]
+    },
+    "1ddfdfb0fdd66c77a7c04407c100e6838370ee96a72a22afd2bb4d04e89ff148": {
+     "inbox": false,
+     "domains": [
+      "combined local file domains",
+      "hydrus local file storage",
+      "my files"
+     ]
+    },
+    "8c201a9e0faf1950160e067603b1fdea2c476943c6dbe202f0119f6a7a27c76e": {
+     "inbox": false,
+     "domains": [
+      "combined local file domains",
+      "hydrus local file storage",
+      "my files"
+     ]
+    },
+    "e665a9581c75979e1a2873a65bc2b1e93d8ea4ab90df0e78b78aa2a6979a4bff": {
+     "inbox": false,
+     "domains": [
+      "combined local file domains",
+      "hydrus local file storage",
+      "my files"
+     ]
+    },
+    "fe2f6dba54db14a67e98038f5cdfdbfc40f70c33687ebd3ada6268044b816b5f": {
+     "inbox": false,
+     "domains": [
+      "combined local file domains",
+      "hydrus local file storage",
+      "my files"
+     ]
+    },
+    "37285b729ffed3927a05feb112ee63dd912a8065a8f34ae1715ed3b156dfe819": {
+     "inbox": false,
+     "domains": [
+      "combined local file domains",
+      "hydrus local file storage",
+      "my files"
+     ]
+    },
+    "af903ff62452c926f75d8133f2a19109b224da9cbcdb14c68c29eceee99d2057": {
+     "inbox": false,
+     "domains": [
+      "combined local file domains",
+      "hydrus local file storage",
+      "my files"
+     ]
+    }
+   }
+  }
+ ]
+}
