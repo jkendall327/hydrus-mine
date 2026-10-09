@@ -1977,9 +1977,6 @@ fn the_url_panels_make_what_the_reference_s_make_for_every_text_and_choice() {
 // for one service and shows its name, so the "service or service-type
 // selection" leaves of the like, numerical and inc/dec panels are this; the
 // advanced panel's service chooser is tagged with its own scenarios)
-// leaf: audit-options-predicate-rating-ratinglike-service
-// leaf: audit-options-predicate-rating-ratingnumerical-service
-// leaf: audit-options-predicate-rating-ratingincdec-service
 #[test]
 fn each_rating_panel_is_for_its_own_service() {
     use hydrus_core::search::predicate::{ServiceRef, SystemPredicate};
@@ -2043,8 +2040,6 @@ fn each_rating_panel_is_for_its_own_service() {
 // ones above).
 // (the date and time are typed and validated here, a calendar and a time box
 // in the reference, which cannot be set to a date that does not exist)
-// leaf: audit-options-predicate-time-archived-archiveddate-date-time
-// leaf: audit-options-predicate-time-modified-modifieddate-date-time
 #[test]
 fn archived_and_modified_date_panels_make_the_recorded_date_and_time_predicates() {
     let (_dirs, store) = store();
@@ -2720,6 +2715,8 @@ fn each_change_in_the_window_makes_what_the_reference_s_makes() {
 // leaf: audit-options-predicate-similar-files-data-similartodata-hashes
 // leaf: audit-options-predicate-time-import-agedate-date-time
 // leaf: audit-options-predicate-time-last-viewed-lastvieweddate-date-time
+// leaf: audit-options-predicate-time-archived-archiveddate-date-time
+// leaf: audit-options-predicate-time-modified-modifieddate-date-time
 // leaf: audit-options-predicate-rating-ratingadvanced-service
 #[test]
 fn panels_set_in_several_ways_in_the_window_make_what_the_reference_s_make() {
@@ -2785,6 +2782,83 @@ fn panels_set_in_several_ways_in_the_window_make_what_the_reference_s_make() {
             "{name}: {steps}"
         );
     }
+}
+
+// The rating panels in the window, one per rating service as the
+// reference's are: each labelled with its service, and what "ok" makes of
+// it, as it opens and after each recorded change, names that service.
+// leaf: audit-options-predicate-rating-ratinglike-service
+// leaf: audit-options-predicate-rating-ratingnumerical-service
+// leaf: audit-options-predicate-rating-ratingincdec-service
+#[test]
+fn each_rating_panel_in_the_window_is_for_its_own_service() {
+    let (_dirs, store) = store();
+    let recorded = recorded();
+    let windows = headless::init();
+    let context = context(&store, &recorded);
+    let editor = recorded["editors"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|e| e["text"] == "system:rating")
+        .unwrap();
+    let ours = Editor::new(Blank::from_text("system:rating").unwrap(), &context);
+    let mut services = Vec::new();
+    for (panel, theirs) in editor["pages"][0]["panels"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .enumerate()
+    {
+        let label = &theirs["widgets"][0];
+        if label["kind"] != "label" {
+            continue;
+        }
+        let service = label["text"].as_str().unwrap();
+        services.push(service.to_owned());
+        // the panel's label, in the window
+        let Opened { window, .. } = open_editor(&store, "system:rating", 0);
+        let fields = window.get_panels().row_data(panel).unwrap().fields;
+        assert_eq!(fields.row_data(0).unwrap().text, service);
+        window.invoke_cancel();
+        // as it opens
+        let got = make_in_window(&windows, &store, "system:rating", 0, panel, &mut |_| {});
+        assert_eq!(
+            got.predicates,
+            Ok(strings(&theirs["predicates"])),
+            "{service}"
+        );
+        // after each recorded change: the same service, or nothing
+        let widgets = theirs["widgets"].as_array().unwrap();
+        for made in theirs["changes"].as_array().unwrap() {
+            let widget = usize::try_from(made["widget"].as_u64().unwrap()).unwrap();
+            let got = make_in_window(&windows, &store, "system:rating", 0, panel, &mut |act| {
+                let mut mirror = ours.pages[0].panels[panel].clone();
+                change(
+                    &mut mirror,
+                    widgets,
+                    widget,
+                    &made["set"],
+                    &mut Vec::new(),
+                    act,
+                );
+            });
+            match made["predicates"].as_array() {
+                Some(_) => {
+                    let theirs = strings(&made["predicates"]);
+                    assert!(theirs.iter().all(|p| p.contains(service)), "{theirs:?}");
+                    assert_eq!(
+                        got.predicates,
+                        Ok(theirs),
+                        "{service} {widget} {}",
+                        made["set"]
+                    );
+                }
+                None => assert!(got.predicates.is_err(), "{service} {widget}"),
+            }
+        }
+    }
+    assert_eq!(services, ["favourites", "stars", "counter"]);
 }
 
 // leaf: audit-options-predicate-urls-known-urls-knownurlsregex-rule

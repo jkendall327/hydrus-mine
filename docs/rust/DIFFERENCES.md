@@ -1370,9 +1370,9 @@ rows are loaded synchronously when the dialog opens, so opening a service with
 very many pairs can pause the UI; reference background fetch/progress states
 remain to be ported. The port commits and recalculates display immediately,
 so it shows that behavior instead of the reference's background-sync status.
-Repository reasons and rescinds are supported, but account/moderator permission
-warnings, moderator reason bypass and recent/fixed reason suggestions are not
-implemented. Pending changes are persisted; uploading still depends on the
+Repository reasons and rescinds are supported (with recent and fixed reason
+suggestions, below), but account/moderator permission warnings and the
+moderator reason bypass are not implemented. Pending changes are persisted; uploading still depends on the
 repository uploader's existing capabilities. Self-pairs imported from text are
 reported and rejected rather than stored after the reference's critical loop
 warning (the display graph ignores such pairs anyway). Batches creating loops

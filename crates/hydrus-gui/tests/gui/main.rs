@@ -155,6 +155,7 @@ mod zoom;
 mod export_files;
 mod services_review;
 mod tag_relationships;
+mod tag_relationships_replay;
 
 mod services_editor;
 
@@ -325,6 +326,7 @@ mod search_pages_favourites;
 mod search_pages_menu;
 mod subscriptions_overwrite_checker;
 mod tag_filter_removal;
+mod tag_filter_replay;
 mod video_buffer;
 mod viewer_audio;
 mod viewer_prefetch;
