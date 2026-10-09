@@ -389,3 +389,97 @@ fn actual_duplicate_filter_uses_the_same_saved_percentage_for_future_images_with
     );
     filter.invoke_close_requested();
 }
+
+// leaf: audit-options-speed-and-memory-image-prefetch-num-pairs-to-prefetch-in-duplicate-filter
+#[test]
+fn the_duplicate_filter_prefetches_as_many_pairs_as_the_options_row_says() {
+    use hydrus_core::{
+        duplicates::DuplicatesSearch,
+        pages::{DuplicatesPage, Page, PageContent, PageKey, Session},
+    };
+    use hydrus_search::{FileSearchContext, LocationContext};
+    use hydrus_store::{
+        duplicates::{PairSearchKind, PixelDuplicates},
+        sessions::{self, LAST_SESSION},
+    };
+    const PAIRS: &str = "Num pairs to prefetch in Duplicate Filter:";
+    let _headless_windows = headless::init();
+    let mut seen = Vec::new();
+    for pairs in [0_i32, 2, 1] {
+        let (_dir, store) = super::duplicate_filter::store_with_pairs();
+        let (_, key) = super::duplicate_filter::my_files(&store);
+        let search = FileSearchContext {
+            location: LocationContext::single(key),
+            ..Default::default()
+        };
+        let session = Session {
+            name: LAST_SESSION.into(),
+            pages: vec![Page {
+                key: PageKey::random(),
+                name: "duplicates".into(),
+                content: PageContent::Duplicates {
+                    duplicates: DuplicatesPage::new(DuplicatesSearch {
+                        search_1: search.clone(),
+                        search_2: search,
+                        kind: PairSearchKind::OneFileMatchesOneSearch,
+                        pixel_duplicates: PixelDuplicates::Allowed,
+                        max_hamming_distance: 4,
+                    }),
+                    sort: None,
+                },
+            }],
+        };
+        store
+            .write(move |ctx| {
+                sessions::save(ctx.conn(), &session, 0)?;
+                settings::set(
+                    ctx.conn(),
+                    &Preferences {
+                        percentage: 50,
+                        ..Preferences::default()
+                    },
+                )
+            })
+            .unwrap();
+        let ui = MainWindow::new().unwrap();
+        ui.show().unwrap();
+        let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+
+        // the row, as the options window shows it, edited and applied
+        let window = options(&ui, &bound);
+        let at = row(&window, PAIRS);
+        assert_eq!(window.get_rows().row_data(at as usize).unwrap().number, 3);
+        window.invoke_number_edited(at, pairs);
+        window.invoke_apply();
+        assert_eq!(
+            store.read(viewer_prefetch::load).unwrap().duplicate_pairs,
+            pairs as u64
+        );
+
+        // the filter shows its pair and decodes ahead that many more
+        let mut batch = super::duplicate_filter::filter(&store, false);
+        batch.load_batch().unwrap();
+        let expected: std::collections::HashSet<_> =
+            batch.upcoming(pairs as usize).into_iter().collect();
+        assert!(
+            batch.upcoming(usize::MAX).len() > expected.len(),
+            "the store needs more pairs than {pairs} ahead"
+        );
+        ui.invoke_launch_filter();
+        let filter = bound.filter.borrow().as_ref().unwrap().clone_strong();
+        assert!(!filter.get_media().to_rgba8().unwrap().as_bytes().is_empty());
+        pump_until(|| bound.image_cache.keys().len() >= expected.len());
+        // (and no more arrive)
+        let until = Instant::now() + Duration::from_millis(500);
+        while Instant::now() < until {
+            slint::platform::update_timers_and_animations();
+            std::thread::sleep(Duration::from_millis(10));
+        }
+        let cached: std::collections::HashSet<_> = bound.image_cache.keys().into_iter().collect();
+        assert_eq!(cached, expected, "{pairs} pairs ahead");
+        seen.push(cached.len());
+        filter.invoke_close_requested();
+    }
+    // (the more pairs the row says, the more are decoded ahead)
+    assert!(seen[0] < seen[2] && seen[2] < seen[1], "{seen:?}");
+}

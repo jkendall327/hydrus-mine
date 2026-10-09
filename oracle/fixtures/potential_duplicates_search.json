@@ -1,0 +1,598 @@
+{
+ "results": [
+  {
+   "kind": 0,
+   "pixel": 0,
+   "distance": 0,
+   "one": [],
+   "two": [],
+   "space": 100,
+   "matches": 16
+  },
+  {
+   "kind": 0,
+   "pixel": 0,
+   "distance": 0,
+   "one": [
+    "system:filetype is jpeg"
+   ],
+   "two": [
+    "system:filetype is png"
+   ],
+   "space": 100,
+   "matches": 0
+  },
+  {
+   "kind": 0,
+   "pixel": 0,
+   "distance": 4,
+   "one": [],
+   "two": [],
+   "space": 100,
+   "matches": 16
+  },
+  {
+   "kind": 0,
+   "pixel": 0,
+   "distance": 4,
+   "one": [
+    "system:filetype is jpeg"
+   ],
+   "two": [
+    "system:filetype is png"
+   ],
+   "space": 100,
+   "matches": 0
+  },
+  {
+   "kind": 0,
+   "pixel": 0,
+   "distance": 8,
+   "one": [],
+   "two": [],
+   "space": 100,
+   "matches": 16
+  },
+  {
+   "kind": 0,
+   "pixel": 0,
+   "distance": 8,
+   "one": [
+    "system:filetype is jpeg"
+   ],
+   "two": [
+    "system:filetype is png"
+   ],
+   "space": 100,
+   "matches": 0
+  },
+  {
+   "kind": 0,
+   "pixel": 1,
+   "distance": 0,
+   "one": [],
+   "two": [],
+   "space": 100,
+   "matches": 55
+  },
+  {
+   "kind": 0,
+   "pixel": 1,
+   "distance": 0,
+   "one": [
+    "system:filetype is jpeg"
+   ],
+   "two": [
+    "system:filetype is png"
+   ],
+   "space": 100,
+   "matches": 39
+  },
+  {
+   "kind": 0,
+   "pixel": 1,
+   "distance": 4,
+   "one": [],
+   "two": [],
+   "space": 100,
+   "matches": 100
+  },
+  {
+   "kind": 0,
+   "pixel": 1,
+   "distance": 4,
+   "one": [
+    "system:filetype is jpeg"
+   ],
+   "two": [
+    "system:filetype is png"
+   ],
+   "space": 100,
+   "matches": 60
+  },
+  {
+   "kind": 0,
+   "pixel": 1,
+   "distance": 8,
+   "one": [],
+   "two": [],
+   "space": 100,
+   "matches": 100
+  },
+  {
+   "kind": 0,
+   "pixel": 1,
+   "distance": 8,
+   "one": [
+    "system:filetype is jpeg"
+   ],
+   "two": [
+    "system:filetype is png"
+   ],
+   "space": 100,
+   "matches": 60
+  },
+  {
+   "kind": 0,
+   "pixel": 2,
+   "distance": 0,
+   "one": [],
+   "two": [],
+   "space": 100,
+   "matches": 39
+  },
+  {
+   "kind": 0,
+   "pixel": 2,
+   "distance": 0,
+   "one": [
+    "system:filetype is jpeg"
+   ],
+   "two": [
+    "system:filetype is png"
+   ],
+   "space": 100,
+   "matches": 39
+  },
+  {
+   "kind": 0,
+   "pixel": 2,
+   "distance": 4,
+   "one": [],
+   "two": [],
+   "space": 100,
+   "matches": 84
+  },
+  {
+   "kind": 0,
+   "pixel": 2,
+   "distance": 4,
+   "one": [
+    "system:filetype is jpeg"
+   ],
+   "two": [
+    "system:filetype is png"
+   ],
+   "space": 100,
+   "matches": 60
+  },
+  {
+   "kind": 0,
+   "pixel": 2,
+   "distance": 8,
+   "one": [],
+   "two": [],
+   "space": 100,
+   "matches": 84
+  },
+  {
+   "kind": 0,
+   "pixel": 2,
+   "distance": 8,
+   "one": [
+    "system:filetype is jpeg"
+   ],
+   "two": [
+    "system:filetype is png"
+   ],
+   "space": 100,
+   "matches": 60
+  },
+  {
+   "kind": 1,
+   "pixel": 0,
+   "distance": 0,
+   "one": [],
+   "two": [],
+   "space": 100,
+   "matches": 16
+  },
+  {
+   "kind": 1,
+   "pixel": 0,
+   "distance": 0,
+   "one": [
+    "system:filetype is jpeg"
+   ],
+   "two": [
+    "system:filetype is png"
+   ],
+   "space": 100,
+   "matches": 0
+  },
+  {
+   "kind": 1,
+   "pixel": 0,
+   "distance": 4,
+   "one": [],
+   "two": [],
+   "space": 100,
+   "matches": 16
+  },
+  {
+   "kind": 1,
+   "pixel": 0,
+   "distance": 4,
+   "one": [
+    "system:filetype is jpeg"
+   ],
+   "two": [
+    "system:filetype is png"
+   ],
+   "space": 100,
+   "matches": 0
+  },
+  {
+   "kind": 1,
+   "pixel": 0,
+   "distance": 8,
+   "one": [],
+   "two": [],
+   "space": 100,
+   "matches": 16
+  },
+  {
+   "kind": 1,
+   "pixel": 0,
+   "distance": 8,
+   "one": [
+    "system:filetype is jpeg"
+   ],
+   "two": [
+    "system:filetype is png"
+   ],
+   "space": 100,
+   "matches": 0
+  },
+  {
+   "kind": 1,
+   "pixel": 1,
+   "distance": 0,
+   "one": [],
+   "two": [],
+   "space": 100,
+   "matches": 55
+  },
+  {
+   "kind": 1,
+   "pixel": 1,
+   "distance": 0,
+   "one": [
+    "system:filetype is jpeg"
+   ],
+   "two": [
+    "system:filetype is png"
+   ],
+   "space": 100,
+   "matches": 6
+  },
+  {
+   "kind": 1,
+   "pixel": 1,
+   "distance": 4,
+   "one": [],
+   "two": [],
+   "space": 100,
+   "matches": 100
+  },
+  {
+   "kind": 1,
+   "pixel": 1,
+   "distance": 4,
+   "one": [
+    "system:filetype is jpeg"
+   ],
+   "two": [
+    "system:filetype is png"
+   ],
+   "space": 100,
+   "matches": 7
+  },
+  {
+   "kind": 1,
+   "pixel": 1,
+   "distance": 8,
+   "one": [],
+   "two": [],
+   "space": 100,
+   "matches": 100
+  },
+  {
+   "kind": 1,
+   "pixel": 1,
+   "distance": 8,
+   "one": [
+    "system:filetype is jpeg"
+   ],
+   "two": [
+    "system:filetype is png"
+   ],
+   "space": 100,
+   "matches": 7
+  },
+  {
+   "kind": 1,
+   "pixel": 2,
+   "distance": 0,
+   "one": [],
+   "two": [],
+   "space": 100,
+   "matches": 39
+  },
+  {
+   "kind": 1,
+   "pixel": 2,
+   "distance": 0,
+   "one": [
+    "system:filetype is jpeg"
+   ],
+   "two": [
+    "system:filetype is png"
+   ],
+   "space": 100,
+   "matches": 6
+  },
+  {
+   "kind": 1,
+   "pixel": 2,
+   "distance": 4,
+   "one": [],
+   "two": [],
+   "space": 100,
+   "matches": 84
+  },
+  {
+   "kind": 1,
+   "pixel": 2,
+   "distance": 4,
+   "one": [
+    "system:filetype is jpeg"
+   ],
+   "two": [
+    "system:filetype is png"
+   ],
+   "space": 100,
+   "matches": 7
+  },
+  {
+   "kind": 1,
+   "pixel": 2,
+   "distance": 8,
+   "one": [],
+   "two": [],
+   "space": 100,
+   "matches": 84
+  },
+  {
+   "kind": 1,
+   "pixel": 2,
+   "distance": 8,
+   "one": [
+    "system:filetype is jpeg"
+   ],
+   "two": [
+    "system:filetype is png"
+   ],
+   "space": 100,
+   "matches": 7
+  },
+  {
+   "kind": 2,
+   "pixel": 0,
+   "distance": 0,
+   "one": [],
+   "two": [],
+   "space": 100,
+   "matches": 16
+  },
+  {
+   "kind": 2,
+   "pixel": 0,
+   "distance": 0,
+   "one": [
+    "system:filetype is jpeg"
+   ],
+   "two": [
+    "system:filetype is png"
+   ],
+   "space": 100,
+   "matches": 0
+  },
+  {
+   "kind": 2,
+   "pixel": 0,
+   "distance": 4,
+   "one": [],
+   "two": [],
+   "space": 100,
+   "matches": 16
+  },
+  {
+   "kind": 2,
+   "pixel": 0,
+   "distance": 4,
+   "one": [
+    "system:filetype is jpeg"
+   ],
+   "two": [
+    "system:filetype is png"
+   ],
+   "space": 100,
+   "matches": 0
+  },
+  {
+   "kind": 2,
+   "pixel": 0,
+   "distance": 8,
+   "one": [],
+   "two": [],
+   "space": 100,
+   "matches": 16
+  },
+  {
+   "kind": 2,
+   "pixel": 0,
+   "distance": 8,
+   "one": [
+    "system:filetype is jpeg"
+   ],
+   "two": [
+    "system:filetype is png"
+   ],
+   "space": 100,
+   "matches": 0
+  },
+  {
+   "kind": 2,
+   "pixel": 1,
+   "distance": 0,
+   "one": [],
+   "two": [],
+   "space": 100,
+   "matches": 55
+  },
+  {
+   "kind": 2,
+   "pixel": 1,
+   "distance": 0,
+   "one": [
+    "system:filetype is jpeg"
+   ],
+   "two": [
+    "system:filetype is png"
+   ],
+   "space": 100,
+   "matches": 23
+  },
+  {
+   "kind": 2,
+   "pixel": 1,
+   "distance": 4,
+   "one": [],
+   "two": [],
+   "space": 100,
+   "matches": 100
+  },
+  {
+   "kind": 2,
+   "pixel": 1,
+   "distance": 4,
+   "one": [
+    "system:filetype is jpeg"
+   ],
+   "two": [
+    "system:filetype is png"
+   ],
+   "space": 100,
+   "matches": 33
+  },
+  {
+   "kind": 2,
+   "pixel": 1,
+   "distance": 8,
+   "one": [],
+   "two": [],
+   "space": 100,
+   "matches": 100
+  },
+  {
+   "kind": 2,
+   "pixel": 1,
+   "distance": 8,
+   "one": [
+    "system:filetype is jpeg"
+   ],
+   "two": [
+    "system:filetype is png"
+   ],
+   "space": 100,
+   "matches": 33
+  },
+  {
+   "kind": 2,
+   "pixel": 2,
+   "distance": 0,
+   "one": [],
+   "two": [],
+   "space": 100,
+   "matches": 39
+  },
+  {
+   "kind": 2,
+   "pixel": 2,
+   "distance": 0,
+   "one": [
+    "system:filetype is jpeg"
+   ],
+   "two": [
+    "system:filetype is png"
+   ],
+   "space": 100,
+   "matches": 23
+  },
+  {
+   "kind": 2,
+   "pixel": 2,
+   "distance": 4,
+   "one": [],
+   "two": [],
+   "space": 100,
+   "matches": 84
+  },
+  {
+   "kind": 2,
+   "pixel": 2,
+   "distance": 4,
+   "one": [
+    "system:filetype is jpeg"
+   ],
+   "two": [
+    "system:filetype is png"
+   ],
+   "space": 100,
+   "matches": 33
+  },
+  {
+   "kind": 2,
+   "pixel": 2,
+   "distance": 8,
+   "one": [],
+   "two": [],
+   "space": 100,
+   "matches": 84
+  },
+  {
+   "kind": 2,
+   "pixel": 2,
+   "distance": 8,
+   "one": [
+    "system:filetype is jpeg"
+   ],
+   "two": [
+    "system:filetype is png"
+   ],
+   "space": 100,
+   "matches": 33
+  }
+ ]
+}

@@ -772,6 +772,34 @@ impl Setting for AdvancedMode {
     const KEY: &'static str = "advanced_mode";
 }
 
+/// The cog of a potential duplicate search's pair count
+/// (`potential_duplicate_pairs_search_starts_paused`, `..._context_panel_
+/// stops_to_estimate`, `..._can_do_file_search_based_optimisation`).
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, serde::Deserialize)]
+#[serde(default)]
+pub struct PotentialPairsCountOptions {
+    /// New counts start paused.
+    pub starts_paused: bool,
+    /// Stop with an estimate when it is close enough, not count everything.
+    pub stops_to_estimate: bool,
+    /// Search all that is left at once when the hit rate is low.
+    pub file_search_optimisation: bool,
+}
+
+impl Default for PotentialPairsCountOptions {
+    fn default() -> Self {
+        Self {
+            starts_paused: false,
+            stops_to_estimate: true,
+            file_search_optimisation: true,
+        }
+    }
+}
+
+impl Setting for PotentialPairsCountOptions {
+    const KEY: &'static str = "potential_pairs_count_options";
+}
+
 impl Setting for FolderSettings {
     const KEY: &'static str = "folders";
 }

@@ -39,6 +39,7 @@ pub mod daemon;
 mod database_backup_window;
 pub mod database_locations_window;
 mod debug_actions;
+mod rule_count;
 pub use debug_actions::{crash_logging, debug_printed, exit_requested, message_window};
 pub use orphan_files_window::chooser as orphan_files_chooser;
 pub mod debug_fetch;
@@ -287,6 +288,7 @@ pub(crate) use bind_zoom;
 
 // (the workings without the windows, in their own crate, under their
 // names here)
+pub use filter_window::shown_pair;
 pub use grid::ThumbnailRows;
 pub use hydrus_gui_model::downloader_definitions;
 pub use hydrus_gui_model::{

@@ -279,6 +279,11 @@ export component AutoResolutionRuleWindow inherits Window {
     in property <[string]> pixel-choices;
     in-out property <int> pixel;
     in-out property <int> distance;
+    in property <string> count;
+    in property <bool> count-paused;
+    in property <[string]> count-cog;
+    in property <[bool]> count-ticks;
+    callback count-action(string, int);
     // comparison
     in property <string> comparison-text;
     in property <[string]> comparators;
@@ -447,6 +452,46 @@ export component AutoResolutionRuleWindow inherits Window {
                     step-size: 2;
                     value <=> root.distance;
                     edited => { root.changed(); }
+                }
+            }
+            // the pair count of this search, as the duplicates page's
+            HorizontalLayout {
+                spacing: 4px;
+                Label { text: root.count; horizontal-stretch: 1; }
+                Btn {
+                    width: 30px;
+                    text: root.count-paused ? "▶" : "⏸";
+                    clicked => { root.count-action("pause count", 0); }
+                }
+                Btn { width: 30px; text: "⟳"; clicked => { root.count-action("refresh count", 0); } }
+                count-cog := ContextMenuArea {
+                    width: 30px;
+                    Menu {
+                        MenuItem {
+                            title: root.count-cog[0];
+                            checkable: true;
+                            checked: root.count-ticks[0];
+                            activated => { root.count-action("count option", 0); }
+                        }
+                        MenuSeparator { }
+                        MenuItem {
+                            title: root.count-cog[1];
+                            checkable: true;
+                            checked: root.count-ticks[1];
+                            activated => { root.count-action("count option", 1); }
+                        }
+                        MenuItem {
+                            title: root.count-cog[2];
+                            checkable: true;
+                            checked: root.count-ticks[2];
+                            activated => { root.count-action("count option", 2); }
+                        }
+                    }
+                    Btn {
+                        width: 30px;
+                        text: "⚙";
+                        clicked => { count-cog.show({ x: 0px, y: self.height }); }
+                    }
                 }
             }
             ComboBox {

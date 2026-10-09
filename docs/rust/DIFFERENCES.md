@@ -555,10 +555,23 @@ reference's (`oracle/dump_comparison_statements.py`).
   reference searches the potential pairs in throttled fragments, re-reads
   the whole search space after every commit, and commits four decisions per
   round trip; that is most of why it is slow.
+- **A mixed batch is the first pairs by the sort.** The reference fetches a
+  random sample of the matching pairs (as many as the batch size) and sorts
+  those; hydrus-rs takes the pairs that come first by the chosen sort, so a
+  batch is the same whenever it is fetched. Pairs the sort cannot tell apart
+  (equal file sizes) come in the order of their files' ids; the reference
+  keeps whatever order its database gave them. The recording
+  (`oracle/record_duplicate_filter_canvas.py`) is made with the reference's
+  batch chosen this way, and replayed through the window
+  (`tests/gui/duplicate_filter_canvas.rs`).
 - **Going back undoes exactly what the decision did.** The reference, going
   back, forgets that the first file was to be merged or deleted twice (a
   typo for the second file), so a later pair with the second file can still
   be skipped as dealt with.
+- **Group mode's skipped-group question is not recorded.** Skip and back
+  are replayed against the reference's real canvas, but the question group
+  mode asks before loading another group has no recording yet, so
+  `audit-media-filter-back` stays untagged.
 - **A batch's first pair is skipped if it can't be shown**, as every later
   pair is. The reference shows it.
 - **"software/source metadata" is listed.** The reference makes the
@@ -4061,8 +4074,18 @@ change nothing). They are marked out of scope in `docs/rust/tracking/`.
 ## Duplicates page filtering
 
 - The pair searches are typed predicates (as in file history), not read
-  autocompletes, and keep the page's file domain; there is no count pause,
-  estimate or optimisation cog: counts are exact and run once per change.
+  autocompletes, and keep the page's file domain.
+- The pair count is the reference's fragmentary count (play/pause, refresh,
+  restart on change, the estimate stop, the starts-paused option, the cog's
+  three items, blocks sized by the time they take), with these differences:
+  the count line's tooltip text is not shown (Slint has none); the file
+  searches are run once for each search and the blocks are filtered in memory,
+  so the low hit-rate optimisation only decides to search all that is left at
+  once, which is what it does in the reference; pairs the filter or "set"
+  buttons change while the count runs are not subtracted from it (the
+  reference's `NotifyPotentialDuplicatePairsUpdate`), so the count is of the
+  pairs as fetched until it is refreshed or restarted. The rule editor's
+  search fields have the same counter (and share the cog's stored options).
 - Setting the shown files' relationship applies each pair once with the default
   merge options; the reference runs its merges twice so content propagates
   between all files.

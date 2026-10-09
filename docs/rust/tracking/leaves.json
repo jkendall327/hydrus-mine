@@ -173,9 +173,9 @@
    ],
    "recheck": {
     "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "The window test adds two children in nested editors, deletes one, applies, persists and reopens; AND/empty-AND summaries are replayed against the recording. Editing an existing child (sub_edit is never invoked), nested AND-in-AND depth and the AND summary in the GUI are untested, so add/edit/delete is only two thirds covered. Tracker note is stale: a GUI test does accept and persist edited comparators. Tests: crates/hydrus-gui/tests/gui/duplicates_lane_page.rs:507 edited_comparators_are_accepted_and_persisted_with_their_summaries; crates/hydrus-gui-model/tests/model/auto_resolution_rules.rs rules_rows_and_comparators_are_the_references"
+    "class": "sound",
+    "by": "issue 88 session",
+    "note": "Sound: tests/gui/auto_resolution_comparator_editors.rs and_and_or_groups_are_built_edited_and_nested... builds the reference's own comparators through the nested editors (an AND inside an OR; a child made as '<' and edited to '=' through the group's edit button; a third child deleted; a second OR whose AND is reopened from the rule's list) and the groups' summaries, as the editors and the rule's list show them, are the reference's recorded GetSummary text (oracle/fixtures/auto_resolution_summaries.json)."
    }
   },
   {
@@ -232,9 +232,9 @@
    ],
    "recheck": {
     "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Only adds one pair-test child (A and B have the same filetype) to an OR and checks the persisted Or(vec![Pair]); editing or deleting an OR child and nesting are never driven (the delete is covered only for AND). Tag sits on a broad rules-list test; the first-pass note admits deep editing is source-traced. Tests: crates/hydrus-gui/tests/gui/auto_resolution_rules.rs:41 rules_are_added_edited_deleted_and_written"
+    "class": "sound",
+    "by": "issue 88 session",
+    "note": "Sound: tests/gui/auto_resolution_comparator_editors.rs and_and_or_groups_are_built_edited_and_nested... builds an OR of an AND and a relative test, and an OR of an AND and a jpeg-quality test, through the nested editors, adding, editing an existing child and nesting, and compares the OR's summary with the reference's recorded text."
    }
   },
   {
@@ -252,9 +252,9 @@
    ],
    "recheck": {
     "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Window test does accept and persist width, approximate-percent 15, multiplier 2.5, delta 3 and reopens them, and checks the 'not a number' error; but only one property and one operator family are driven (no absolute tolerance, no time property presentation, no other operators, delta errors), and the error text and operator lists are typed from source. Tracker note is stale: a GUI test does accept and persist edited comparators. Tests: crates/hydrus-gui/tests/gui/duplicates_lane_page.rs:507 edited_comparators_are_accepted_and_persisted_with_their_summaries; crates/hydrus-gui/tests/gui/auto_resolution_rules.rs:41 (multiplier 1.5, cancelled)"
+    "class": "sound",
+    "by": "issue 88 session",
+    "note": "Sound: tests/gui/auto_resolution_comparator_editors.rs a_relative_comparator_of_each_operator_family... sets property, operator, multiplier, delta and range for the six relative comparators of the reference's 'more comparators' rule (greater, less-or-equal with a multiplier, a duration with a delta in milliseconds, framerate approximate percent, number of tags with a delta, not equal) and the editor's summary and the list's row are the reference's recorded GetSummary text."
    }
   },
   {
@@ -903,7 +903,13 @@
    "notes": [
     "Truth pass (2026-10-08): missing, medium. The search context editor has no live counter. Missing: Fragmentary count worker, play/pause/refresh, starts-paused option, estimate-stop cog, labels, restart signal. Evidence: only one-shot counts (duplicates_filtering_sidebar.rs:80-100, auto_resolution_preview.rs:37); reference ClientGUIPotentialDuplicatesSearchContext.py:35-350",
     "Native rule search has no fragmentary count worker, pause/refresh counter, starts-paused setting, estimate stopping or low-hit-rate optimization cog. Preview testing is a separate narrower sample workflow."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "issue 88 session",
+    "note": "Sound: tests/model/duplicates_count.rs replays all 11 scenarios of oracle/fixtures/potential_duplicates_count.json (the real reference panel on a scripted space, blocks released one at a time) step by step on the worker the page uses; tests/gui/duplicates_count.rs drives the page's play/pause, refresh, distance change and cog through the window against the one-shot search. The cog's options are read by the count. Not covered, and said in DIFFERENCES.md: pairs changed while counting are not subtracted. The rule editor's search has the same counter: tests/gui/auto_resolution_rules.rs a_rules_search_counts_its_pairs_and_counts_again_when_edited drives it (gate, pause, cog stored, distance edit recounts, ends at the written rule's count)."
+   }
   },
   {
    "id": "audit-media-duplicate-search-kind",
@@ -920,9 +926,9 @@
    ],
    "recheck": {
     "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Window test cycles all three kinds through the rule editor, applies, persists and reopens, with labels matching the Python combo. But a setting that is stored while its reader (the engine's matching_pairs / potential_pairs with each kind) has no test against the reference for the non-default kinds; reference_run covers only the suggested rules. Tracker note is stale: the test does change all three kinds, not only the default. Tests: crates/hydrus-gui/tests/gui/duplicates_lane_page.rs:860 rule_identity_and_search_choices_are_staged_then_persisted_on_apply"
+    "class": "sound",
+    "by": "issue 88 session",
+    "note": "Sound: tests/gui/duplicates_search_settings.rs every_search_setting_finds_the_pairs_the_reference_finds sets each of the three search types (with every pixel preference, distance and pair of file searches: 54 settings) on the duplicates page's filtering tab and the count line it shows (the pairs the search finds and the size of the space) is what the reference's own fragmentary count found on the same database (oracle/fixtures/potential_duplicates_search.json). The rule editor's persistence of the choice stays in duplicates_lane_page.rs."
    }
   },
   {
@@ -940,9 +946,9 @@
    ],
    "recheck": {
     "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Window test drives required/allowed/excluded and distances 6, 0 and 12 through apply, persist and reopen. The reader of Excluded and of non-default distance (store duplicates/mod.rs, engine) has no test with a recording, so the setting only round-trips. Tracker note is stale: nondefault choices are tested. Tests: crates/hydrus-gui/tests/gui/duplicates_lane_page.rs:860 rule_identity_and_search_choices_are_staged_then_persisted_on_apply"
+    "class": "sound",
+    "by": "issue 88 session",
+    "note": "Sound: tests/gui/duplicates_search_settings.rs every_search_setting_finds_the_pairs_the_reference_finds sets required, allowed and excluded with maximum distances 0, 4 and 8 across the three search types and two pairs of file searches, and the counts match the reference's recording; the persistence of the choices is in duplicates_lane_page.rs."
    }
   },
   {
@@ -959,9 +965,9 @@
    ],
    "recheck": {
     "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "The tagged test types two predicate lines, refuses an invalid one and checks only the predicate counts (1 each) after persisting; the shared location is tested in a separate untagged test. Native uses text lines instead of the reference's two search widgets with autocomplete (documented), so the part the leaf names is not compared with the reference. Tests: crates/hydrus-gui/tests/gui/duplicates_lane_page.rs:860 rule_identity_and_search_choices_are_staged_then_persisted_on_apply; crates/hydrus-gui/tests/gui/auto_resolution_rules.rs a_rules_searches_location_is_chosen (untagged)"
+    "class": "sound",
+    "by": "issue 88 session",
+    "note": "Sound for what the searches find: tests/gui/duplicates_search_settings.rs every_search_setting_finds_the_pairs_the_reference_finds sets a jpeg search and a png search (typed as predicate lines, the native difference from the reference's two search widgets, in DIFFERENCES.md) across every search type, pixel preference and distance, and the counts match the reference's. The file domain is the page's, shown in the filtering tab by the page; choosing it in the rule editor is tested in auto_resolution_rules.rs."
    }
   },
   {
@@ -978,10 +984,10 @@
     "Reference back has a known second-file bookkeeping bug that the native intentionally corrects."
    ],
    "recheck": {
-    "date": "2026-10-08",
+    "date": "2026-10-09",
     "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Skip, back and group-mode SkippedGroup are tested on the DuplicateFilter model, not through the window's back/skip controls (only the group question is seen through the window in another test). Question texts are source-derived, no recording of the canvas; native back deliberately differs from the reference (documented). Missing: the window's back path. Tests: crates/hydrus-gui/tests/gui/duplicate_filter.rs:113 decisions_wait_for_the_end_of_the_batch_and_can_be_undone; :218 group_mode_keeps_to_one_group; crates/hydrus-gui/tests/gui/duplicates_lane_page.rs:190 (group-mode question via window)"
+    "by": "issue 88 session",
+    "note": "Skip and back are proved against the reference's real canvas (tests/gui/duplicate_filter_canvas.rs, six scenarios of oracle/fixtures/duplicate_filter_canvas.json), but the leaf also names group-mode continuation (the skipped-group question when another group would load), which no recording covers, so the tag is not claimed. Record the filter in group mode to finish it."
    }
   },
   {
@@ -998,9 +1004,9 @@
    ],
    "recheck": {
     "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "The batch-end 'commit N decisions and continue?' prompt, commit and its writes are tested on the DuplicateFilter model, not the window. The window test drives close with a pending decision, then back and forget, but never the commit answer, and asserts nothing was kept after forget. Strings match the Python source but there is no canvas recording; the commit writer is checked elsewhere (duplicate_merges recording in hydrus-api). Tests: crates/hydrus-gui/tests/gui/duplicate_filter.rs:113 decisions_wait_for_the_end_of_the_batch_and_can_be_undone; :229 the_filter_opens_from_a_duplicates_page_and_compares_the_pair"
+    "class": "sound",
+    "by": "issue 88 session",
+    "note": "Sound: tests/gui/duplicate_filter_canvas.rs the_filter_window_goes_through_the_references_batches_as_it_does replays six scenarios of oracle/fixtures/duplicate_filter_canvas.json (the reference's real CanvasFilterDuplicates on the auto-resolution database, driven with its application commands, each on a fresh database) through the native filter window: 'commit N decisions and continue?' with its two buttons, the batch committed without asking when it is within duplicate_filter_auto_commit_batch_size and nothing was skipped by hand, the next batch after a commit, and closing with decisions pending (commit, forget with its second question, back to filtering) are pressed through the window; what each commit wrote is compared through the relationships and deletions it left."
    }
   },
   {
@@ -1037,9 +1043,9 @@
    ],
    "recheck": {
     "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Calls DuplicateFilter::decide with each Decision constant, not the window's buttons or keys, then commit_pending and checks the relationships in the store; no reference recording for the filter's decisions (the merge writer recording is elsewhere). The window is driven for better-delete only once in another test. Missing: the five window actions. Tests: crates/hydrus-gui/tests/gui/duplicates_lane_page.rs:259 each_filter_decision_writes_its_relationship_when_committed"
+    "class": "sound",
+    "by": "issue 88 session",
+    "note": "Sound for the five buttons: tests/gui/duplicate_filter_canvas.rs the_filter_window_goes_through_the_references_batches_as_it_does replays six scenarios of oracle/fixtures/duplicate_filter_canvas.json (the reference's real CanvasFilterDuplicates on the auto-resolution database, driven with its application commands, each on a fresh database) through the native filter window: better (delete the other, keep both), same, alternates and not related are pressed through the window and the pair shown, top bar text, files merged or deleted skipping their other pairs, the files left in my files and every relationship after the commits are the reference's. Not covered: the custom action, the delete command, approve/deny of a review, group mode."
    }
   },
   {
@@ -1876,9 +1882,9 @@
    ],
    "recheck": {
     "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "The model test replays oracle/fixtures/merge_options_editor.json (add_rating/edit_rating/delete_ratings, rating rows, choices, resulting value) against MergeOptionsEditor, and rating merge semantics are replayed in duplicate_merges.json, but no GUI test touches the rating list at all (crates/hydrus-gui/tests/gui/merge_options.rs has no rating add/edit/delete/double-click); the window's rating wiring (merge_options_window.rs ~285-465) is unproven. Tracker note about 'old URL-sync assertion' is stale. Tests: crates/hydrus-gui-model/tests/model/merge_options_editor.rs:179 the_editor_edits_merge_options_as_the_reference_does; crates/hydrus-api/tests/duplicate_merges.rs (merge semantics vs duplicate_merges.json)"
+    "class": "sound",
+    "by": "issue 88 session",
+    "note": "Sound: tests/gui/merge_options.rs the_ratings_list_adds_edits_and_deletes_as_the_references_does replays every rating step of oracle/fixtures/merge_options_editor.json (the client-started 'better' and 'alternates' cases) through the window: add (the service question, and the action question for 'this is better'), cancel, edit by double-click with the action question, and delete with its 'Remove all selected?' question; the questions' choices and the rows after each step are the reference's. The model test replays the same steps, and the merge semantics are in duplicate_merges.json."
    }
   },
   {

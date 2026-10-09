@@ -55,7 +55,7 @@ pub(crate) fn my_files(store: &Store) -> (ServiceId, hydrus_core::ServiceKey) {
     (service.id, service.key.clone())
 }
 
-fn filter(store: &Arc<Store>, group_mode: bool) -> DuplicateFilter {
+pub(crate) fn filter(store: &Arc<Store>, group_mode: bool) -> DuplicateFilter {
     let (id, key) = my_files(store);
     let search = FileSearchContext {
         location: LocationContext::single(key),
@@ -357,6 +357,15 @@ fn the_filter_opens_from_a_duplicates_page_and_compares_the_pair() {
     assert_eq!(filter.get_question(), "", "back to filtering");
     filter.invoke_close_requested();
     filter.invoke_answer(1);
+    // (forgetting asks again, as the reference does; no keeps the dialog)
+    assert_eq!(
+        filter.get_question(),
+        "Quit filtering now and forget your work?"
+    );
+    filter.invoke_answer(1);
+    assert_eq!(filter.get_question(), "commit 1 decisions?");
+    filter.invoke_answer(1);
+    filter.invoke_answer(0);
     assert!(bound.filter.borrow().is_none(), "closed, forgetting");
 
     // a new duplicates page from the page chooser: special, then duplicates

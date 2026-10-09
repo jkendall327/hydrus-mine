@@ -464,6 +464,26 @@ fn visible_files(
         .collect())
 }
 
+/// Every potential pair in a file domain (the reference's
+/// `GetPotentialDuplicateIdPairsAndDistances`): the space a search counts
+/// through a block at a time.
+pub fn pair_space(
+    conn: &Connection,
+    snapshot: &Snapshot,
+    scope: &FileScope,
+) -> Result<Vec<PairRow>> {
+    pairs_in_scope(conn, snapshot, scope)
+}
+
+/// How many of `rows` (pairs of the search's space) the search finds.
+pub fn count_matching(
+    conn: &Connection,
+    search: &PotentialsSearch<'_>,
+    rows: &[PairRow],
+) -> Result<usize> {
+    Ok(matching(conn, search, rows)?.len())
+}
+
 /// The potential pairs a search finds.
 pub fn potential_pairs(
     conn: &Connection,
@@ -565,7 +585,8 @@ pub fn select_pairs(
     // a missing or zero size counts as 1, as in the reference
     let sizes = |p: &PairRow| (p.smaller_size.max(1), p.larger_size.max(1));
 
-    // ties break by ids, so the order is deterministic
+    // ties break by ids, so the order is deterministic (the reference's
+    // ties fall as its database gave the pairs, which it does not promise)
     let ids = |p: &PairRow| (p.smaller_king, p.larger_king);
     match order {
         PairOrder::Random => {

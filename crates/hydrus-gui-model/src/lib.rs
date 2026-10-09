@@ -30,6 +30,7 @@ pub mod downloader_interchange;
 pub mod downloader_update_times;
 pub mod duplicate_colours;
 pub mod duplicate_filter;
+pub mod duplicates_count;
 pub mod duplicates_filtering;
 pub mod duplicates_page;
 pub mod edit_subscription;

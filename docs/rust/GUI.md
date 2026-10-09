@@ -4724,6 +4724,16 @@ Options Apply waits for its open media editor. Cancelled or replaced children,
 and children whose Options owner is hidden, cannot stage an edit or open a
 successor from a retained callback.
 
+## Duplicate filter canvas against the reference
+
+The duplicate filter window's decision buttons, skip, back, switching file,
+the batch-end question ("commit N decisions and continue?", skipped when the
+batch is small enough and nothing was skipped by hand) and the close question
+("commit N decisions?" with commit, forget and back to filtering; forget asks
+"Quit filtering now and forget your work?" first) go as the reference's canvas
+does in six recorded scenarios, which the window replays pair by pair
+(`oracle/record_duplicate_filter_canvas.py`, `tests/gui/duplicate_filter_canvas.rs`).
+
 ## Duplicates page filtering
 
 A duplicates page's filtering tab now edits its potential pair search as the
@@ -4731,14 +4741,28 @@ reference's panel does: the search kind ("at least one file matches the search",
 "both files match the search", "the two files match different searches", the
 second search shown only for the last), typed tag/system predicates per search,
 "maximum search distance of pair" (disabled when pixel dupes are required) and the
-pixel-dupe preference. A count line ("N pairs searched; M match") recounts off the
-UI thread as the search changes, or on refresh. The duplicate filter box sorts
+pixel-dupe preference. A count line counts the page's pairs off the UI thread a
+block at a time, as the reference's panel does: "initialising…" while it fetches
+the pairs in the file domain, "no potential pairs in this file domain!", "4,000/30,000
+pairs searched; 1,540 match…" as it goes, "30,000 pairs searched; 11,540 match" when
+done, and, once the share found is known to within 2.5% (95% of the time), "30,000
+pairs; ~11,000 match". A play/pause button stops and resumes it (the block under way
+finishes), the refresh button fetches the pairs again, and any change to the search
+restarts the count over the same pairs. Its cog has "start new potential duplicate pair
+search panels paused", "optimisation: try to state an estimate of final count rather
+than counting everything" and "optimisation: allow single slow search optimisation when
+seeing low hit-rate" (at a hit rate under 1% of a space over 10,000 pairs it searches
+all that is left at once); the three are kept. Blocks follow the time they take
+(`duplicates_count`). The auto-resolution rule editor's search tab has the same
+count line, buttons and cog for the rule's own search. The duplicate filter box sorts
 pairs by larger/smaller filesize, similarity or random with the matching
 direction words, and picks mixed pairs or group mode; "launch the filter" uses
 all of these. "quick and dirty processing" shows a random potential group in the
 page and sets the shown files as same quality, alternates or false positives
 after the reference's questions, then shows another group.
-`tests/model/duplicates_filtering.rs` covers the model.
+`tests/model/duplicates_filtering.rs` covers the model, and
+`tests/model/duplicates_count.rs` replays the reference's panel step by step
+(`oracle/record_potential_duplicates_count.py`).
 
 ## Help > debug actions
 

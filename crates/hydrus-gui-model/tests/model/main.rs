@@ -23,6 +23,7 @@ mod delete_files;
 mod downloader_definitions;
 mod downloader_update_times;
 mod duplicate_colours;
+mod duplicates_count;
 mod duplicates_filtering;
 mod duplicates_page;
 mod edit_subscription;

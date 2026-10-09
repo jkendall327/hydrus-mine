@@ -51,6 +51,11 @@ export struct DuplicatesFiltering {
     pixels: [string],
     pixel: int,
     count: string,
+    count-paused: bool,
+    // the count's cog: its titles and whether each is ticked (starts paused,
+    // estimate, low hit-rate optimisation)
+    count-cog: [string],
+    count-ticks: [bool],
     sorts: [string],
     sort: int,
     directions: [string],
@@ -75,8 +80,9 @@ export component DuplicatesSidebar inherits VerticalLayout {
     in-out property <string> filter-input-2;
     // the filtering tab: "kind", "pixel", "distance", "sort", "direction",
     // "group" (the chosen index), "add 1"/"add 2" (the inputs' text),
-    // "remove 1"/"remove 2" (a predicate's index), "refresh count",
-    // "random", "set" (the set button's index)
+    // "remove 1"/"remove 2" (a predicate's index), "pause count" (play or
+    // pause), "refresh count" (fetch the pairs again), "count option" (a cog
+    // item's index), "random", "set" (the set button's index)
     callback filtering-action(string, int);
     // what was done: "launch filter", "refresh", "distance" (the distance),
     // "work hard" (1 or 0), "search during idle", "search during active",
@@ -262,7 +268,41 @@ export component DuplicatesSidebar inherits VerticalLayout {
                 HorizontalLayout {
                     spacing: 4px;
                     Label { text: root.filtering.count; horizontal-stretch: 1; }
-                    Btn { text: "⟳"; clicked => { root.filtering-action("refresh count", 0); } }
+                    Btn {
+                        width: 30px;
+                        text: root.filtering.count-paused ? "▶" : "⏸";
+                        clicked => { root.filtering-action("pause count", 0); }
+                    }
+                    Btn { width: 30px; text: "⟳"; clicked => { root.filtering-action("refresh count", 0); } }
+                    count-cog := ContextMenuArea {
+                        width: 30px;
+                        Menu {
+                            MenuItem {
+                                title: root.filtering.count-cog[0];
+                                checkable: true;
+                                checked: root.filtering.count-ticks[0];
+                                activated => { root.filtering-action("count option", 0); }
+                            }
+                            MenuSeparator { }
+                            MenuItem {
+                                title: root.filtering.count-cog[1];
+                                checkable: true;
+                                checked: root.filtering.count-ticks[1];
+                                activated => { root.filtering-action("count option", 1); }
+                            }
+                            MenuItem {
+                                title: root.filtering.count-cog[2];
+                                checkable: true;
+                                checked: root.filtering.count-ticks[2];
+                                activated => { root.filtering-action("count option", 2); }
+                            }
+                        }
+                        Btn {
+                            width: 30px;
+                            text: "⚙";
+                            clicked => { count-cog.show({ x: 0px, y: self.height }); }
+                        }
+                    }
                 }
                 Text { text: "duplicate filter"; font-weight: 700; color: Theme.text; }
                 HorizontalLayout {
