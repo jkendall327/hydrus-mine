@@ -241,6 +241,12 @@ pub(crate) fn open(
     let related_results = Rc::new(RefCell::new(
         Vec::<hydrus_store::related_tags::Suggestion>::new(),
     ));
+    // the tags selected when a search was last asked for, and when it began
+    let related_selection = Rc::new(RefCell::new(None::<Vec<String>>));
+    let related_started = Rc::new(Cell::new(None::<std::time::Instant>));
+    window.set_related_button_tooltip(RELATED_BUTTON_TOOLTIP.into());
+    window.set_related_local_tooltip(RELATED_LOCAL_TOOLTIP.into());
+    window.set_related_display_tooltip(RELATED_DISPLAY_TOOLTIP.into());
     let side_pages = Rc::new(RefCell::new(std::collections::BTreeMap::<
         hydrus_core::ServiceKey,
         i32,
@@ -257,6 +263,8 @@ pub(crate) fn open(
         let results = related_results.clone();
         let pages = side_pages.clone();
         let shown = shown_side_service.clone();
+        let selection = related_selection.clone();
+        let started = related_started.clone();
         move || {
             if !active.get() {
                 return;
@@ -301,26 +309,41 @@ pub(crate) fn open(
             if w.get_related_tags_enabled()
                 && let Some(worker) = &worker
             {
-                match m.related_query(w.get_related_local(), w.get_related_display()) {
+                match m.related_query(
+                    w.get_related_local(),
+                    w.get_related_display(),
+                    usize::try_from(w.get_related_level()).unwrap_or(0),
+                    selection.borrow().as_deref(),
+                ) {
+                    Ok(query) if query.searches.is_empty() => {
+                        // nothing to search from: the reference hides its status
+                        *last.borrow_mut() = Some(query);
+                        results.borrow_mut().clear();
+                        w.set_related_status("".into());
+                    }
                     Ok(query) => {
-                        if last.borrow().as_ref() != Some(&query) {
+                        // (the reference searches again when its context changes or a
+                        // button is pressed, not when tags are added: the listed
+                        // suggestions are only filtered again)
+                        let mut same_context = query.clone();
+                        if let Some(previous) = last.borrow().as_ref() {
+                            same_context.searches.clone_from(&previous.searches);
+                            same_context.exclude.clone_from(&previous.exclude);
+                        }
+                        if last.borrow().as_ref() != Some(&same_context) {
                             worker.request(query.clone());
                             *last.borrow_mut() = Some(query);
+                            started.set(Some(std::time::Instant::now()));
                             results.borrow_mut().clear();
                             w.set_related_status("searching…".into());
                         }
                         if let Some(result) = worker.poll() {
                             match result {
-                                Ok(rows) => {
-                                    w.set_related_status(
-                                        if rows.is_empty() {
-                                            "no related tags found!"
-                                        } else {
-                                            "ready"
-                                        }
-                                        .into(),
-                                    );
-                                    *results.borrow_mut() = rows;
+                                Ok(report) => {
+                                    let took =
+                                        started.get().map_or(0.0, |s| s.elapsed().as_secs_f64());
+                                    w.set_related_status(related_status(&report, took).into());
+                                    *results.borrow_mut() = report.suggestions;
                                 }
                                 Err(error) => {
                                     results.borrow_mut().clear();
@@ -390,8 +413,12 @@ pub(crate) fn open(
         let last = related_request.clone();
         let refresh = refresh_sides.clone();
         let incremental = incremental_open.clone();
-        move || {
+        let selection = related_selection.clone();
+        let model = model.clone();
+        move |_level| {
             if active.get() && !incremental.get() {
+                let selected = model.borrow().selected_tags();
+                *selection.borrow_mut() = (!selected.is_empty()).then_some(selected);
                 last.borrow_mut().take();
                 refresh();
             }
@@ -1517,4 +1544,41 @@ pub(crate) fn open(
     refresh();
     window.show()?;
     Ok(window)
+}
+
+/// The tooltips on the related panel's controls (`RelatedTagsPanel`).
+const RELATED_BUTTON_TOOLTIP: &str =
+    "If you select some tags, this will search using only those as reference!";
+const RELATED_LOCAL_TOOLTIP: &str = "Select how big the search is. Searching across all known files on a repository produces high quality results but takes a long time.";
+const RELATED_DISPLAY_TOOLTIP: &str = "Select whether to search through the \"display\" tag store, which is connected and merged by sibling and parent data, or the \"storage\" store, which just has the raw mappings as they are edited.";
+
+/// The related panel's status once a search is done (`FetchRelatedTagsNew`'s
+/// `qt_code`): how many search tags were done, of those there were, in how long.
+fn related_status(report: &hydrus_store::related_tags::Report, seconds: f64) -> String {
+    if report.total == 0 && report.suggestions.is_empty() {
+        return "no related tags found!".into();
+    }
+    let tags = if report.skipped == 0 {
+        "tags".to_owned()
+    } else {
+        format!(
+            "tags ({} skipped)",
+            hydrus_core::numbers::human_int(report.skipped as u64)
+        )
+    };
+    let done = if report.searched == report.total {
+        format!(
+            "Searched {} {tags} in ",
+            hydrus_core::numbers::human_int(report.searched as u64)
+        )
+    } else {
+        format!(
+            "{} {tags} searched fully in ",
+            hydrus_core::numbers::value_range(report.searched as u64, report.total as u64)
+        )
+    };
+    format!(
+        "{done}{}.",
+        hydrus_core::time::pretty_time_delta_f64(seconds)
+    )
 }

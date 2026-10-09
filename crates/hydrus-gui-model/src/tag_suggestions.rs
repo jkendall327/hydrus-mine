@@ -87,13 +87,40 @@ pub fn most_used(store: &Store, key: &hydrus_core::ServiceKey) -> Vec<String> {
 }
 
 /// Imported/native recent history, newest first; ties retain stable tag identity.
+/// Reading decays it, as the reference's does: what is older than the newest
+/// `limit` is forgotten for good (`GetRecentTags`).
 pub fn recent(
     store: &Store,
     service: hydrus_core::ServiceId,
     limit: usize,
 ) -> hydrus_store::Result<Vec<String>> {
+    let all = store.read(|conn| {
+        conn.prepare(
+            "SELECT tag_id FROM recent_tags WHERE service_id=? ORDER BY used_ms DESC, tag_id",
+        )?
+        .query_map(rusqlite::params![service], |row| {
+            row.get::<_, hydrus_core::TagId>(0)
+        })?
+        .collect::<rusqlite::Result<Vec<_>>>()
+        .map_err(Into::into)
+    })?;
+    let (kept, decayed) = all.split_at(limit.min(all.len()));
+    if !decayed.is_empty() {
+        let decayed = decayed.to_vec();
+        store.write(move |ctx| {
+            for tag in &decayed {
+                ctx.conn().execute(
+                    "DELETE FROM recent_tags WHERE service_id=? AND tag_id=?",
+                    rusqlite::params![service, tag],
+                )?;
+            }
+            Ok(())
+        })?;
+    }
     store.read(|conn| {
-        let ids = conn.prepare("SELECT tag_id FROM recent_tags WHERE service_id=? ORDER BY used_ms DESC, tag_id LIMIT ?")?.query_map(rusqlite::params![service, limit as i64], |row| row.get::<_,hydrus_core::TagId>(0))?.collect::<rusqlite::Result<Vec<_>>>()?;
-        ids.into_iter().filter_map(|id| hydrus_store::master::tag(conn,id).transpose()).map(|tag|tag.map(|tag|tag.as_str().to_owned())).collect()
+        kept.iter()
+            .filter_map(|id| hydrus_store::master::tag(conn, *id).transpose())
+            .map(|tag| tag.map(|tag| tag.as_str().to_owned()))
+            .collect()
     })
 }

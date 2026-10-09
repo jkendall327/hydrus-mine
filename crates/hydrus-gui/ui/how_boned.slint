@@ -1,3 +1,4 @@
+import { Btn } from "btn.slint";
 // Database > how boned am I? (`src/how_boned_window.rs`, hydrus-gui-model's
 // how_boned): a search on the left, Mr. Bones (or his words) and the files,
 // views and duplicates tabs on the right.
@@ -43,7 +44,7 @@ export component HowBonedWindow inherits Window {
                 VerticalLayout {
                     for text[i] in root.predicates: HorizontalLayout {
                         Text { text: text; color: Theme.text; wrap: word-wrap; horizontal-stretch: 1; }
-                        Button { text: "×"; clicked => { root.remove(i); } }
+                        Btn { text: "×"; clicked => { root.remove(i); } }
                     }
                 }
             }
@@ -51,8 +52,8 @@ export component HowBonedWindow inherits Window {
             HorizontalLayout {
                 spacing: 4px;
                 Text { text: root.loading-text; color: Theme.text; horizontal-stretch: 1; horizontal-alignment: right; vertical-alignment: center; }
-                Button { text: "stop"; enabled: root.loading; clicked => { root.cancel-search(); } }
-                Button { text: "refresh"; enabled: !root.loading; clicked => { root.refresh(); } }
+                Btn { text: "stop"; enabled: root.loading; clicked => { root.cancel-search(); } }
+                Btn { text: "refresh"; enabled: !root.loading; clicked => { root.refresh(); } }
             }
         }
         VerticalLayout {

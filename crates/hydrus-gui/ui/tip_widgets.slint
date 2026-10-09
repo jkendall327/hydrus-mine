@@ -1,0 +1,33 @@
+// A std button, and a std combo box, with the tooltip the reference shows on
+// them. One component each, so that the popup a `Tooltip` makes is generated
+// once rather than at every place that wants one (the generated UI crate is
+// at the edge of what a 16 GB machine compiles).
+import { Button, ComboBox } from "std-widgets.slint";
+
+export component TipButton inherits HorizontalLayout {
+    in property <string> text;
+    in property <string> tip;
+    in property <bool> enabled: true;
+    in property <bool> primary: false;
+    callback clicked();
+    Button {
+        text: root.text;
+        enabled: root.enabled;
+        primary: root.primary;
+        clicked => { root.clicked(); }
+        Tooltip { text: @markdown("\{root.tip}"); }
+    }
+}
+
+export component TipComboBox inherits HorizontalLayout {
+    in property <[string]> model;
+    in property <int> current-index;
+    in property <string> tip;
+    callback selected(int);
+    ComboBox {
+        model: root.model;
+        current-index: root.current-index;
+        selected(_) => { root.selected(self.current-index); }
+        Tooltip { text: @markdown("\{root.tip}"); }
+    }
+}

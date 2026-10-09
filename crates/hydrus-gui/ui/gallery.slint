@@ -1,3 +1,4 @@
+import { Btn } from "btn.slint";
 // A gallery downloader page's sidebar (the reference's
 // SidebarImporterMultipleGallery): the "gallery downloader" box with its
 // searches' list, their buttons, the query box, the downloader and file
@@ -176,11 +177,11 @@ export component GallerySidebar inherits VerticalLayout {
             }
             if root.data.can-retry-ignored || root.data.can-retry-failed: HorizontalLayout {
                 spacing: 4px;
-                if root.data.can-retry-ignored: Button {
+                if root.data.can-retry-ignored: Btn {
                     text: "retry ignored";
                     clicked => { root.retry(true); }
                 }
-                if root.data.can-retry-failed: Button {
+                if root.data.can-retry-failed: Btn {
                     text: "retry failed";
                     clicked => { root.retry(false); }
                 }
@@ -234,11 +235,11 @@ export component GallerySidebar inherits VerticalLayout {
                 checked: root.data.no-limit;
                 toggled => { root.limit-changed(self.checked, limit.value); }
             }
-            Button {
+            Btn {
                 text: root.data.import-options;
                 clicked => { root.import-options(); }
             }
-            if root.data.can-set-options: Button {
+            if root.data.can-set-options: Btn {
                 text: "update selected with current options";
                 clicked => { root.set-options(); }
             }
@@ -300,7 +301,7 @@ export component GallerySidebar inherits VerticalLayout {
                 checked: root.data.shown-no-limit;
                 toggled => { root.shown-limit-changed(self.checked, shown-limit.value); }
             }
-            Button {
+            Btn {
                 text: root.data.shown-import-options;
                 clicked => { root.shown-import-options(); }
             }

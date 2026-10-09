@@ -1,3 +1,4 @@
+import { Btn } from "btn.slint";
 import { WriteTagLineEdit } from "write_tag_line_edit.slint";
 import { Button, LineEdit, ScrollView } from "std-widgets.slint";
 import { ReadAutocomplete } from "read_autocomplete.slint";
@@ -55,7 +56,7 @@ export component SearchOrWindow inherits Window {
                 ScrollView { VerticalLayout {
                     for predicate[i] in root.predicates: HorizontalLayout {
                         Text { text: predicate; color: Theme.text; horizontal-stretch: 1; wrap: word-wrap; }
-                        Button { text: "×"; enabled: !root.blocked; clicked => { root.remove(i); } }
+                        Btn { text: "×"; enabled: !root.blocked; clicked => { root.remove(i); } }
                     }
                 }
             }
@@ -120,8 +121,8 @@ export component SearchOrWindow inherits Window {
             HorizontalLayout {
                 alignment: end;
                 spacing: 6px;
-                Button { text: "ok"; enabled: !root.blocked; clicked => { root.apply(); } }
-                Button { text: "cancel"; clicked => { root.cancel(); } }
+                Btn { text: "ok"; enabled: !root.blocked; clicked => { root.apply(); } }
+                Btn { text: "cancel"; clicked => { root.cancel(); } }
             }
         }
     }

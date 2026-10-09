@@ -1,3 +1,4 @@
+import { Btn } from "btn.slint";
 // The duplicate metadata merge options editor (the reference's
 // `EditDuplicateContentMergeOptionsWidget`; its workings are
 // hydrus-gui-model's `merge_options_editor`, bound by
@@ -119,22 +120,22 @@ export component MergeOptionsWindow inherits Window {
                 HorizontalLayout {
                     spacing: 4px;
                     alignment: end;
-                    Button {
+                    Btn {
                         text: "add";
                         enabled: !root.asking;
                         clicked => { root.list-button(0, "add"); }
                     }
-                    if root.edit-action-shown: Button {
+                    if root.edit-action-shown: Btn {
                         text: "edit action";
                         enabled: root.tag-one-selected && !root.asking;
                         clicked => { root.list-button(0, "edit action"); }
                     }
-                    Button {
+                    Btn {
                         text: "edit filter";
                         enabled: root.tag-one-selected && !root.asking;
                         clicked => { root.list-button(0, "edit filter"); }
                     }
-                    Button {
+                    Btn {
                         text: "delete";
                         enabled: root.tag-any-selected && !root.asking;
                         clicked => { root.list-button(0, "delete"); }
@@ -163,17 +164,17 @@ export component MergeOptionsWindow inherits Window {
                 HorizontalLayout {
                     spacing: 4px;
                     alignment: end;
-                    Button {
+                    Btn {
                         text: "add";
                         enabled: !root.asking;
                         clicked => { root.list-button(1, "add"); }
                     }
-                    if root.edit-action-shown: Button {
+                    if root.edit-action-shown: Btn {
                         text: "edit action";
                         enabled: root.rating-one-selected && !root.asking;
                         clicked => { root.list-button(1, "edit action"); }
                     }
-                    Button {
+                    Btn {
                         text: "delete";
                         enabled: root.rating-any-selected && !root.asking;
                         clicked => { root.list-button(1, "delete"); }
@@ -222,7 +223,7 @@ export component MergeOptionsWindow inherits Window {
             }
             Row {
                 label: "";
-                Button {
+                Btn {
                     horizontal-stretch: 1;
                     text: "note merge settings";
                     enabled: root.note-settings-enabled && !root.asking && !root.note-settings-open;
@@ -248,11 +249,11 @@ export component MergeOptionsWindow inherits Window {
                 HorizontalLayout {
                     spacing: 4px;
                     alignment: end;
-                    Button {
+                    Btn {
                         text: "apply";
                         clicked => { root.note-settings-done(true); }
                     }
-                    Button {
+                    Btn {
                         text: "cancel";
                         clicked => { root.note-settings-done(false); }
                     }
@@ -269,12 +270,12 @@ export component MergeOptionsWindow inherits Window {
         HorizontalLayout {
             alignment: end;
             spacing: 6px;
-            Button {
+            Btn {
                 text: "apply";
                 enabled: !root.asking && !root.note-settings-open;
                 clicked => { root.apply(); }
             }
-            Button {
+            Btn {
                 text: "cancel";
                 clicked => { root.cancel(); }
             }

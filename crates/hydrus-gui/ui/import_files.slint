@@ -1,3 +1,4 @@
+import { Btn } from "btn.slint";
 // The "review files to import" window (file > import files, or files
 // dropped on the main window; `src/local_import.rs`), as the reference's
 // `ReviewLocalFileImports`: the paths given, each parsed (#, path,
@@ -155,11 +156,11 @@ export component ReviewImportsWindow inherits Window {
                         self.text = "";
                     }
                 }
-                Button {
+                Btn {
                     text: "add files";
                     clicked => { root.add-files(); }
                 }
-                Button {
+                Btn {
                     text: "add folder";
                     clicked => { root.add-folder(); }
                 }
@@ -168,7 +169,7 @@ export component ReviewImportsWindow inherits Window {
                     checked <=> root.search-subdirectories;
                     toggled => { root.subdirectories-toggled(self.checked); }
                 }
-                Button {
+                Btn {
                     text: "remove files";
                     enabled: root.any-selected;
                     clicked => { root.asking-remove = true; }
@@ -181,14 +182,14 @@ export component ReviewImportsWindow inherits Window {
                     text: "Remove all selected?";
                     vertical-alignment: center;
                 }
-                Button {
+                Btn {
                     text: "yes";
                     clicked => {
                         root.asking-remove = false;
                         root.remove-files();
                     }
                 }
-                Button {
+                Btn {
                     text: "no";
                     clicked => { root.asking-remove = false; }
                 }
@@ -236,13 +237,13 @@ export component ReviewImportsWindow inherits Window {
             HorizontalLayout {
                 spacing: 6px;
                 alignment: end;
-                Button {
+                Btn {
                     text: "import now";
                     enabled: root.can-import;
                     clicked => { root.import-now(); }
                 }
                 // (the "filename tagging" dialog, which starts the import)
-                Button {
+                Btn {
                     text: "add tags/urls with the import >>";
                     enabled: root.can-import;
                     clicked => { root.add-tags(); }

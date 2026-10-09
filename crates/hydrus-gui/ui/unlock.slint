@@ -1,3 +1,4 @@
+import { Btn } from "btn.slint";
 // Asked for before the client opens when a lock password is set, as the
 // reference asks: until the password is right, or the window is closed.
 
@@ -39,11 +40,11 @@ export component UnlockWindow inherits Window {
         HorizontalLayout {
             alignment: end;
             spacing: 8px;
-            Button {
+            Btn {
                 text: "cancel";
                 clicked => { root.cancelled(); }
             }
-            Button {
+            Btn {
                 text: "ok";
                 enabled: password.text != "";
                 clicked => {

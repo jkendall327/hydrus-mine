@@ -5,7 +5,7 @@ use std::rc::Rc;
 
 use hydrus_gui_model::tag_relationships::{Question, Relationships};
 use hydrus_gui_model::write_autocomplete::{Paste, WriteAutocomplete};
-use slint::{ComponentHandle as _, ModelRc, VecModel};
+use slint::{ComponentHandle as _, ModelRc, SharedString, VecModel};
 
 use crate::{TableRow, TagRelationshipsWindow};
 
@@ -371,6 +371,7 @@ pub(crate) fn open(
                             yes: "yes".into(),
                             no: "no".into(),
                             reason: false,
+                            suggestions: Vec::new(),
                         })
                     } else {
                         if answers[0].is_some()
@@ -419,12 +420,19 @@ pub(crate) fn open(
                 yes,
                 no,
                 reason,
+                suggestions,
             }) = result
             {
                 window.set_question(message.into());
                 window.set_yes_label(yes.into());
                 window.set_no_label(no.into());
                 window.set_ask_reason(reason);
+                window.set_reason_suggestions(ModelRc::new(VecModel::from(
+                    suggestions
+                        .into_iter()
+                        .map(SharedString::from)
+                        .collect::<Vec<_>>(),
+                )));
                 window.set_reason("".into());
             } else {
                 binding.operation = None;

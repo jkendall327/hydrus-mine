@@ -1,0 +1,18 @@
+// A std button behind a component of its own. The generated UI crate is at the
+// edge of what a 16 GB machine compiles, and every `Button { }` written out
+// costs about 4 KB of generated Rust where an instance of this costs a
+// fraction; use it for any button that needs only these properties.
+import { Button } from "std-widgets.slint";
+
+export component Btn inherits HorizontalLayout {
+    in property <string> text;
+    in property <bool> enabled: true;
+    in property <bool> primary: false;
+    callback clicked();
+    Button {
+        text: root.text;
+        enabled: root.enabled;
+        primary: root.primary;
+        clicked => { root.clicked(); }
+    }
+}

@@ -1,3 +1,4 @@
+import { Btn } from "btn.slint";
 // Detailed embedded file metadata, bound by embedded_metadata_window.rs.
 import { Button, ScrollView, TextEdit } from "std-widgets.slint";
 import { Theme } from "theme.slint";
@@ -93,7 +94,7 @@ export component EmbeddedMetadataWindow inherits Window {
         }
         HorizontalLayout {
             alignment: end;
-            Button { text: "close"; clicked => { root.dismissed(); } }
+            Btn { text: "close"; clicked => { root.dismissed(); } }
         }
     }
 }

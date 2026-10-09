@@ -1,3 +1,5 @@
+import { Btn } from "btn.slint";
+import { TipButton, TipComboBox } from "tip_widgets.slint";
 import { Button, CheckBox, LineEdit, ScrollView, VerticalBox, HorizontalBox } from "std-widgets.slint";
 import { ListTable, TableColumn, TableRow } from "list_table.slint";
 import { Theme } from "theme.slint";
@@ -36,24 +38,24 @@ export component ClientApiKeysWindow inherits Window {
             delete-pressed => { if root.question == "" && !root.editing { root.delete-clicked(); } }
         }
         HorizontalBox {
-            Button { text: "add manually"; enabled: root.question == "" && !root.editing; clicked => { root.add-clicked(); } }
-            Button { text: "add from api request"; enabled: root.question == "" && !root.editing; clicked => { root.add-from-api-clicked(); } }
-            Button { text: "edit"; enabled: root.can-edit && root.question == "" && !root.editing; clicked => { root.edit-clicked(); } }
-            Button { text: "duplicate"; enabled: root.can-delete && root.question == "" && !root.editing; clicked => { root.duplicate-clicked(); } }
-            Button { text: "delete"; enabled: root.can-delete && root.question == "" && !root.editing; clicked => { root.delete-clicked(); } }
+            Btn { text: "add manually"; enabled: root.question == "" && !root.editing; clicked => { root.add-clicked(); } }
+            Btn { text: "add from api request"; enabled: root.question == "" && !root.editing; clicked => { root.add-from-api-clicked(); } }
+            Btn { text: "edit"; enabled: root.can-edit && root.question == "" && !root.editing; clicked => { root.edit-clicked(); } }
+            Btn { text: "duplicate"; enabled: root.can-delete && root.question == "" && !root.editing; clicked => { root.duplicate-clicked(); } }
+            Btn { text: "delete"; enabled: root.can-delete && root.question == "" && !root.editing; clicked => { root.delete-clicked(); } }
             Rectangle { horizontal-stretch: 1; }
-            Button { text: "open client api base url"; clicked => { root.open-base-url(); } }
-            Button { text: "copy api access key"; enabled: root.can-edit; clicked => { root.copy-key(); } }
+            Btn { text: "open client api base url"; clicked => { root.open-base-url(); } }
+            Btn { text: "copy api access key"; enabled: root.can-edit; clicked => { root.copy-key(); } }
         }
         Text { text: "Changes are saved when you apply."; color: Theme.muted; wrap: word-wrap; }
         Text { text: root.error; color: Theme.error; wrap: word-wrap; }
         if root.question != "": VerticalBox {
             Text { text: root.question; color: Theme.text; wrap: word-wrap; }
-            HorizontalBox { Button { text: "yes"; clicked => { root.answered(true); } } Button { text: "no"; clicked => { root.answered(false); } } }
+            HorizontalBox { Btn { text: "yes"; clicked => { root.answered(true); } } Btn { text: "no"; clicked => { root.answered(false); } } }
         }
         HorizontalBox { Rectangle { horizontal-stretch: 1; }
-            Button { text: "apply"; enabled: root.question == "" && !root.editing; clicked => { root.apply-clicked(); } }
-            Button { text: "cancel"; clicked => { root.cancel-clicked(); } }
+            Btn { text: "apply"; enabled: root.question == "" && !root.editing; clicked => { root.apply-clicked(); } }
+            Btn { text: "cancel"; clicked => { root.cancel-clicked(); } }
         }
     }
 }
@@ -85,14 +87,14 @@ export component EditApiPermissionsWindow inherits Window {
     VerticalBox { padding: 12px; spacing: 8px;
         ScrollView { vertical-stretch: 1; VerticalBox { spacing: 8px;
             Text { text: "access key: " + root.access-key; color: Theme.text; wrap: word-wrap; }
-            Button { text: "I want to change the Access Key"; enabled: !root.filtering; clicked => { root.change-key(); } }
+            Btn { text: "I want to change the Access Key"; enabled: !root.filtering; clicked => { root.change-key(); } }
             if root.changing-key: VerticalBox {
                 Text { text: root.key-warning; color: Theme.text; wrap: word-wrap; }
                 LineEdit { text <=> root.new-key; }
                 HorizontalBox {
-                    Button { text: "random key"; clicked => { root.generate-key(); } }
-                    Button { text: "ok"; clicked => { root.accept-key(); } }
-                    Button { text: "cancel key change"; clicked => { root.cancel-key(); } }
+                    Btn { text: "random key"; clicked => { root.generate-key(); } }
+                    Btn { text: "ok"; clicked => { root.accept-key(); } }
+                    Btn { text: "cancel key change"; clicked => { root.cancel-key(); } }
                 }
             }
             Text { text: "name:"; color: Theme.text; }
@@ -102,14 +104,14 @@ export component EditApiPermissionsWindow inherits Window {
             for p in root.permissions: CheckBox { text: p.label; checked: p.checked; enabled: !root.permits-everything && !root.filtering;
                 toggled => { root.permission-toggled(p.code,self.checked); }
             }
-            Button { text: "check all permissions"; enabled: root.can-check-all && !root.filtering; clicked => { root.check-all(); } }
+            Btn { text: "check all permissions"; enabled: root.can-check-all && !root.filtering; clicked => { root.check-all(); } }
             Text { text: "tag search permissions: " + root.filter-description; color: Theme.text; wrap: word-wrap; }
-            Button { text: "edit permitted tags"; enabled: root.can-filter && !root.filtering; clicked => { root.edit-filter(); } }
+            TipButton { text: "edit permitted tags"; tip: root.filter-description; enabled: root.can-filter && !root.filtering; clicked => { root.edit-filter(); } }
         } }
         Text { text: root.error; color: Theme.error; wrap: word-wrap; }
         HorizontalBox { Rectangle { horizontal-stretch: 1; }
-            Button { text: "apply"; enabled: !root.filtering && !root.changing-key; clicked => { root.apply-clicked(); } }
-            Button { text: "cancel"; clicked => { root.cancel-clicked(); } }
+            Btn { text: "apply"; enabled: !root.filtering && !root.changing-key; clicked => { root.apply-clicked(); } }
+            Btn { text: "cancel"; clicked => { root.cancel-clicked(); } }
         }
     }
 }
@@ -121,6 +123,6 @@ export component ApiRequestWindow inherits Window {
     callback cancel-clicked();
     VerticalBox { padding: 16px; spacing: 12px;
         Text { text: root.text; color: Theme.text; wrap: word-wrap; vertical-stretch: 1; }
-        HorizontalBox { Rectangle { horizontal-stretch: 1; } Button { text: "close"; clicked => { root.cancel-clicked(); } } }
+        HorizontalBox { Rectangle { horizontal-stretch: 1; } Btn { text: "close"; clicked => { root.cancel-clicked(); } } }
     }
 }

@@ -1,3 +1,4 @@
+import { Btn } from "btn.slint";
 import { WheelMenuChoice, MenuChoiceFrame } from "menu_choice_wheel.slint";
 import { PaintedTagText } from "tag_text.slint";
 // The manage tags window (F3): the files' tags on the tag service chosen,
@@ -113,7 +114,11 @@ export component ManageTagsWindow inherits Window {
     in property <string> related-status;
     in-out property <bool> related-local:true;
     in-out property <bool> related-display:true;
-    callback related-search();
+    in-out property <int> related-level: 0;
+    in property <string> related-button-tooltip;
+    in property <string> related-local-tooltip;
+    in property <string> related-display-tooltip;
+    callback related-search(int);
     in property <bool> suggested-columns;
     in property <length> suggested-width:300px;
     in-out property <int> suggested-page;
@@ -193,17 +198,17 @@ export component ManageTagsWindow inherits Window {
                 HorizontalLayout {
                     alignment: end;
                     spacing: 6px;
-                    Button { text: root.remove-button-text; enabled: root.question == ""; clicked => { root.remove-pressed(); } }
-                    Button { text: "copy"; enabled: root.question == ""; clicked => { root.copy-pressed(); } }
-                    if root.incremental-available: Button { text: "±"; enabled: root.question == ""; clicked => { root.incremental-tags(); } }
-                    cog := Button { text: "⚙"; enabled: root.question == ""; clicked => { root.cog-pressed(self.absolute-position.x, self.absolute-position.y + self.height); } }
+                    Btn { text: root.remove-button-text; enabled: root.question == ""; clicked => { root.remove-pressed(); } }
+                    Btn { text: "copy"; enabled: root.question == ""; clicked => { root.copy-pressed(); } }
+                    if root.incremental-available: Btn { text: "±"; enabled: root.question == ""; clicked => { root.incremental-tags(); } }
+                    cog := Btn { text: "⚙"; enabled: root.question == ""; clicked => { root.cog-pressed(self.absolute-position.x, self.absolute-position.y + self.height); } }
                 }
                 if root.notice != "": Text { text: root.notice; color: Theme.text; horizontal-alignment: right; }
                 if root.deleted-count-visible: HorizontalLayout {
                     alignment: end;
                     spacing: 6px;
                     Text { text: root.deleted-count-label; color: Theme.text; vertical-alignment: center; }
-                    Button {
+                    Btn {
                         text: root.show-deleted ? "hide deleted mappings" : "show deleted mappings";
                         enabled: root.question == "";
                         clicked => { root.flip-show-deleted(); }
@@ -241,16 +246,16 @@ export component ManageTagsWindow inherits Window {
                 HorizontalLayout {
                     spacing: 6px;
                     alignment: end;
-                    if !root.immediate: Button {
+                    if !root.immediate: Btn {
                         enabled: root.question == "";
                         text: "apply";
                         clicked => { root.apply(); }
                     }
-                    if !root.immediate: Button {
+                    if !root.immediate: Btn {
                         text: "cancel";
                         clicked => { root.cancel(); }
                     }
-                    if root.immediate: Button {
+                    if root.immediate: Btn {
                         text: "close";
                         clicked => { root.cancel(); }
                     }
@@ -260,7 +265,7 @@ export component ManageTagsWindow inherits Window {
                 most-used:root.most-used-rows;recent:root.recent-tag-rows;
                 most-used-enabled:root.most-used-enabled;recent-enabled:root.recent-tags-enabled;
                 related:root.related-tag-rows;related-enabled:root.related-tags-enabled;related-status:root.related-status;
-                related-local<=>root.related-local;related-display<=>root.related-display;related-search=>{root.related-search();}
+                related-local<=>root.related-local;related-display<=>root.related-display;related-level<=>root.related-level;related-button-tooltip:root.related-button-tooltip;related-local-tooltip:root.related-local-tooltip;related-display-tooltip:root.related-display-tooltip;related-search(l)=>{root.related-search(l);}
                 columns:root.suggested-columns;column-width:root.suggested-width;selected:root.suggested-page;
                 selected-page(i)=>{root.suggested-page=i;}
                 clicked(p,i,c,s)=>{root.side-clicked(p,i,c,s);}

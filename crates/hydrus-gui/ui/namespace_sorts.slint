@@ -1,3 +1,4 @@
+import { Btn } from "btn.slint";
 // Staged namespace scheme queue, with the reference's text/tag-view questions.
 import { Button, LineEdit, ScrollView } from "std-widgets.slint";
 import { ListTable, TableRow } from "list_table.slint";
@@ -52,11 +53,11 @@ export component NamespaceSortsWindow inherits Window {
                 }
                 HorizontalLayout {
                     spacing: 6px;
-                    Button { text: "add"; clicked => { root.action("add"); } }
-                    Button { text: "edit"; enabled: root.has-selection; clicked => { root.action("edit"); } }
-                    Button { text: "\u{2191}"; enabled: root.has-selection; clicked => { root.action("up"); } }
-                    Button { text: "X"; enabled: root.has-selection; clicked => { root.action("delete"); } }
-                    Button { text: "\u{2193}"; enabled: root.has-selection; clicked => { root.action("down"); } }
+                    Btn { text: "add"; clicked => { root.action("add"); } }
+                    Btn { text: "edit"; enabled: root.has-selection; clicked => { root.action("edit"); } }
+                    Btn { text: "\u{2191}"; enabled: root.has-selection; clicked => { root.action("up"); } }
+                    Btn { text: "X"; enabled: root.has-selection; clicked => { root.action("delete"); } }
+                    Btn { text: "\u{2193}"; enabled: root.has-selection; clicked => { root.action("down"); } }
                 }
             }
             if root.asking-text || root.choosing-view || root.confirming: Text { text: root.message; wrap: word-wrap; color: Theme.text; }
@@ -65,19 +66,19 @@ export component NamespaceSortsWindow inherits Window {
                 vertical-stretch: 1;
                 VerticalLayout {
                     alignment: start;
-                    for name[i] in root.views: Button { text: name; clicked => { root.view-chosen(i); } }
+                    for name[i] in root.views: Btn { text: name; clicked => { root.view-chosen(i); } }
                 }
             }
             if root.error != "": Text { text: root.error; wrap: word-wrap; color: Theme.error; }
             HorizontalLayout {
                 alignment: end;
                 spacing: 6px;
-                if root.asking-text: Button { text: "ok"; enabled: root.text != ""; clicked => { root.text-entered(); } }
-                if root.confirming: Button { text: "yes"; clicked => { root.answer(true); } }
-                if root.confirming: Button { text: "no"; clicked => { root.answer(false); } }
-                if root.asking-text || root.choosing-view: Button { text: "cancel"; clicked => { root.cancel-prompt(); } }
-                if !root.asking-text && !root.choosing-view && !root.confirming: Button { text: "apply"; clicked => { root.apply(); } }
-                if !root.asking-text && !root.choosing-view && !root.confirming: Button { text: "cancel"; clicked => { root.cancel(); } }
+                if root.asking-text: Btn { text: "ok"; enabled: root.text != ""; clicked => { root.text-entered(); } }
+                if root.confirming: Btn { text: "yes"; clicked => { root.answer(true); } }
+                if root.confirming: Btn { text: "no"; clicked => { root.answer(false); } }
+                if root.asking-text || root.choosing-view: Btn { text: "cancel"; clicked => { root.cancel-prompt(); } }
+                if !root.asking-text && !root.choosing-view && !root.confirming: Btn { text: "apply"; clicked => { root.apply(); } }
+                if !root.asking-text && !root.choosing-view && !root.confirming: Btn { text: "cancel"; clicked => { root.cancel(); } }
             }
         }
     }

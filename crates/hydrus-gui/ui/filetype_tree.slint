@@ -1,3 +1,4 @@
+import { Btn } from "btn.slint";
 // The reference's tree of filetypes to tick (`OptionsPanelMimesTree`), as
 // the system:filetype editor and file filtering import options show it:
 // each group with a button to show or hide its filetypes, a group's box
@@ -28,7 +29,7 @@ export component FiletypeTree inherits VerticalLayout {
         if row.shown: HorizontalLayout {
             padding-left: row.option < 0 ? 0px : 32px;
             spacing: 2px;
-            if row.option < 0: Button {
+            if row.option < 0: Btn {
                 width: 28px;
                 text: row.expanded ? "▾" : "▸";
                 clicked => { root.expanded(row.group, !row.expanded); }

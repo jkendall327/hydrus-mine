@@ -114,6 +114,9 @@ fn dialogs_cancel_nested_editors_persist_and_refresh_locked_pages_and_viewer() {
     nested.invoke_apply();
     assert!(!w.get_child_open());
     assert!(w.get_single_label().contains("display lane own"));
+    // (the reference's button text: "tags shown: ", then the filter in filter language)
+    assert!(w.get_single_tooltip().starts_with("tags shown: "));
+    assert!(w.get_single_tooltip().contains("display lane own"));
     w.invoke_filter(true);
     let cancelled_child = hydrus_gui::tag_filter_window::last_opened().unwrap();
     cancelled_child.invoke_typed(2, "display lane own".into());

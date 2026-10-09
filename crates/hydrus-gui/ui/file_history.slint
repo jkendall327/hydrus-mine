@@ -1,3 +1,4 @@
+import { Btn } from "btn.slint";
 import { Button,CheckBox,ComboBox,LineEdit,SpinBox,ScrollView } from "std-widgets.slint";
 import { Theme } from "theme.slint";
 export component FileHistoryWindow inherits Window {
@@ -33,15 +34,15 @@ export component FileHistoryWindow inherits Window {
                 ScrollView { vertical-stretch: 1; VerticalLayout {
                     for text[i] in root.predicates: HorizontalLayout {
                         Text { text: text; color: Theme.text; wrap: word-wrap; horizontal-stretch: 1; }
-                        Button { text: "×"; clicked => { root.remove(i); } }
+                        Btn { text: "×"; clicked => { root.remove(i); } }
                     }
                 } }
                 LineEdit { placeholder-text: "tag or system predicate"; text <=> root.input; accepted => { root.enter(); } }
-                Button { text: "add predicate"; clicked => { root.enter(); } }
+                Btn { text: "add predicate"; clicked => { root.enter(); } }
                 Text { text: "Enter a tag or system predicate to filter the chart."; color: Theme.muted; wrap: word-wrap; }
                 HorizontalLayout {
-                    Button { text: "cancel"; enabled: root.loading; clicked => { root.cancel-work(); } }
-                    Button { text: "refresh"; clicked => { root.refresh(); } }
+                    Btn { text: "cancel"; enabled: root.loading; clicked => { root.cancel-work(); } }
+                    Btn { text: "refresh"; clicked => { root.refresh(); } }
                 }
             }
             VerticalLayout { spacing: 6px;
@@ -66,15 +67,15 @@ export component FileHistoryWindow inherits Window {
                 HorizontalLayout {
                     SpinBox { minimum: 0; maximum: 1000000000; value <=> root.min-count; edited => { root.count-edited(root.min-count,root.max-count); } }
                     SpinBox { minimum: 0; maximum: 1000000000; value <=> root.max-count; edited => { root.count-edited(root.min-count,root.max-count); } }
-                    Button { text: "refit y axis"; clicked => { root.refit(false); } }
+                    Btn { text: "refit y axis"; clicked => { root.refit(false); } }
                 }
                 HorizontalLayout {
                     LineEdit { text <=> root.start-date; accepted => { root.date-edited(root.start-date,root.end-date); } }
                     LineEdit { text <=> root.end-date; accepted => { root.date-edited(root.start-date,root.end-date); } }
-                    Button { text: "refit x axis"; clicked => { root.refit(true); } }
+                    Btn { text: "refit x axis"; clicked => { root.refit(true); } }
                 }
             }
         }
-        Button { text: "close"; clicked => { root.close-clicked(); } }
+        Btn { text: "close"; clicked => { root.close-clicked(); } }
     }
 }

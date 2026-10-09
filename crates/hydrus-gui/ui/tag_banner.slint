@@ -1,3 +1,4 @@
+import { Btn } from "btn.slint";
 import {Button, CheckBox, LineEdit, SpinBox, TextEdit} from "std-widgets.slint";
 import {Theme} from "theme.slint";
 import {ListTable, TableRow} from "list_table.slint";
@@ -40,20 +41,20 @@ export component TagBannerWindow inherits Window {
             Text {text:"RGBA channels (red, green, blue, alpha)";color:Theme.muted;}
             ListTable {columns:[{title:"namespace | prefix | separator",width:680px,stretch:true}];rows:root.rows;vertical-stretch:1;row-clicked(i,ctrl,shift)=>{if !root.asking && !root.confirming {root.row-clicked(i,ctrl,shift);}}row-activated(i)=>{if !root.asking && !root.confirming {root.row-clicked(i,false,false);root.action("edit");}}}
             HorizontalLayout {spacing:6px;
-                Button {text:"add";enabled:!root.asking && !root.confirming;clicked=>{root.action("add");}}
-                Button {text:"edit";enabled:root.selected && !root.asking && !root.confirming;clicked=>{root.action("edit");}}
-                Button {text:"↑";enabled:root.selected && !root.asking && !root.confirming;clicked=>{root.action("up");}}
-                Button {text:"↓";enabled:root.selected && !root.asking && !root.confirming;clicked=>{root.action("down");}}
-                Button {text:"X";enabled:root.selected && !root.asking && !root.confirming;clicked=>{root.action("delete");}}
+                Btn {text:"add";enabled:!root.asking && !root.confirming;clicked=>{root.action("add");}}
+                Btn {text:"edit";enabled:root.selected && !root.asking && !root.confirming;clicked=>{root.action("edit");}}
+                Btn {text:"↑";enabled:root.selected && !root.asking && !root.confirming;clicked=>{root.action("up");}}
+                Btn {text:"↓";enabled:root.selected && !root.asking && !root.confirming;clicked=>{root.action("down");}}
+                Btn {text:"X";enabled:root.selected && !root.asking && !root.confirming;clicked=>{root.action("delete");}}
             }
             HorizontalLayout {Text {text:"separator";color:Theme.text;vertical-alignment:center;}LineEdit {text<=>root.separator;enabled:!root.asking && !root.confirming;horizontal-stretch:1;edited=>{root.changed();}}}
-            if root.asking: VerticalLayout {Text {text:root.message;color:Theme.text;}LineEdit {text<=>root.prompt-text;accepted=>{root.prompt-accepted();}}HorizontalLayout {Button {text:"ok";clicked=>{root.prompt-accepted();}}Button {text:"cancel";clicked=>{root.prompt-cancelled();}}}}
-            if root.confirming: HorizontalLayout {Text {text:root.message;color:Theme.text;}Button {text:"yes";clicked=>{root.answer(true);}}Button {text:"no";clicked=>{root.answer(false);}}}
+            if root.asking: VerticalLayout {Text {text:root.message;color:Theme.text;}LineEdit {text<=>root.prompt-text;accepted=>{root.prompt-accepted();}}HorizontalLayout {Btn {text:"ok";clicked=>{root.prompt-accepted();}}Btn {text:"cancel";clicked=>{root.prompt-cancelled();}}}}
+            if root.confirming: HorizontalLayout {Text {text:root.message;color:Theme.text;}Btn {text:"yes";clicked=>{root.answer(true);}}Btn {text:"no";clicked=>{root.answer(false);}}}
             Text {text:"example";color:Theme.text;font-weight:700;}
             Text {text:"Enter some newline-separated tags here to see what your current object would generate.";color:Theme.text;wrap:word-wrap;}
             TextEdit {text<=>root.examples;enabled:!root.asking && !root.confirming;vertical-stretch:1;edited=>{root.changed();}}
             LineEdit {text:root.preview;read-only:true;}
-            HorizontalLayout {alignment:end;spacing:6px;Button {text:"apply";enabled:!root.asking && !root.confirming;clicked=>{root.action("apply");}}Button {text:"cancel";clicked=>{root.action("cancel");}}}
+            HorizontalLayout {alignment:end;spacing:6px;Btn {text:"apply";enabled:!root.asking && !root.confirming;clicked=>{root.action("apply");}}Btn {text:"cancel";clicked=>{root.action("cancel");}}}
         }
     }
 }

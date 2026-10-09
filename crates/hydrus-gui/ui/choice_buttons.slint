@@ -1,3 +1,4 @@
+import { Btn } from "btn.slint";
 // A choice among buttons (the reference's `SelectFromListButtons`, and
 // `GetYesYesNo`): a message over a column of buttons, one per choice, and
 // optionally a "no" button. Driven by `src/choice_buttons.rs`.
@@ -30,11 +31,11 @@ export component ChoiceButtonsWindow inherits Window {
                 wrap: word-wrap;
                 color: Theme.text;
             }
-            for choice[i] in root.choices: Button {
+            for choice[i] in root.choices: Btn {
                 text: choice;
                 clicked => { root.chosen(i); }
             }
-            if root.no-label != "": Button {
+            if root.no-label != "": Btn {
                 text: root.no-label;
                 clicked => { root.cancelled(); }
             }

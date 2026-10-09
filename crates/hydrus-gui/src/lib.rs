@@ -27,7 +27,7 @@ pub mod archive_repair_window;
 mod auto_resolution_preview_window;
 mod auto_resolution_review_window;
 #[doc(hidden)]
-pub use animation::frames_decoded;
+pub use animation::{decoders_running, frames_decoded};
 pub use auto_resolution_review_window::set_popup_delay;
 mod auto_resolution_rules_window;
 mod autocomplete_tabs;

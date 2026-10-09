@@ -1,3 +1,4 @@
+import { Btn } from "btn.slint";
 import { Button, CheckBox, LineEdit, ListView, TextEdit } from "std-widgets.slint";
 import { ListTable, TableColumn, TableRow } from "list_table.slint";
 import { WriteTagInput, TagMenuOverlay } from "write_autocomplete.slint";
@@ -55,6 +56,7 @@ export component TagRelationshipsWindow inherits Window {
     in property <string> no-label;
     in property <bool> ask-reason;
     in-out property <string> reason;
+    in property <[string]> reason-suggestions;
     public function normal-paste(right: bool) { if right { right-entry.normal-paste(); } else { left-entry.normal-paste(); } }
     public function select-input(right: bool, anchor: int, cursor: int) { if right { right-entry.select-input(anchor,cursor); } else { left-entry.select-input(anchor,cursor); } }
     callback service-chosen(int);
@@ -116,7 +118,7 @@ export component TagRelationshipsWindow inherits Window {
                     if !root.siblings: CheckBox { text: "show whole chains"; enabled: !root.show-all; checked <=> root.whole-chain; toggled => { root.filters-changed(); } }
                 }
                 HorizontalLayout {
-                    Button { text: "wipe workspace"; clicked => { root.wipe-workspace(); } }
+                    Btn { text: "wipe workspace"; clicked => { root.wipe-workspace(); } }
                     Text { text: root.rows.length + " pairs."; color: Theme.text; vertical-alignment: center; }
                 }
                 ListTable {
@@ -137,12 +139,12 @@ export component TagRelationshipsWindow inherits Window {
                 }
                 HorizontalLayout {
                     spacing: 6px;
-                    Button { text: "add"; enabled: root.can-add; clicked => { root.add(); } }
-                    Button { text: "delete"; enabled: root.has-selection; clicked => { root.delete(); } }
-                    Button { text: "import clipboard"; clicked => { root.import-pairs(false); } }
-                    Button { text: "import .txt"; clicked => { root.import-pairs(true); } }
-                    Button { text: "export clipboard"; enabled: root.has-selection; clicked => { root.export-pairs(false); } }
-                    Button { text: "export .txt"; enabled: root.has-selection; clicked => { root.export-pairs(true); } }
+                    Btn { text: "add"; enabled: root.can-add; clicked => { root.add(); } }
+                    Btn { text: "delete"; enabled: root.has-selection; clicked => { root.delete(); } }
+                    Btn { text: "import clipboard"; clicked => { root.import-pairs(false); } }
+                    Btn { text: "import .txt"; clicked => { root.import-pairs(true); } }
+                    Btn { text: "export clipboard"; enabled: root.has-selection; clicked => { root.export-pairs(false); } }
+                    Btn { text: "export .txt"; enabled: root.has-selection; clicked => { root.export-pairs(true); } }
                 }
                 HorizontalLayout {
                     spacing: 12px;
@@ -220,8 +222,8 @@ export component TagRelationshipsWindow inherits Window {
                 if root.error != "": Text { text: root.error; color: Theme.error; wrap: word-wrap; }
                 HorizontalLayout {
                     alignment: end; spacing: 8px;
-                    Button { text: "apply"; clicked => { root.apply(); } }
-                    Button { text: "cancel"; clicked => { root.cancel(); } }
+                    Btn { text: "apply"; clicked => { root.apply(); } }
+                    Btn { text: "cancel"; clicked => { root.cancel(); } }
                 }
             }
         }
@@ -232,15 +234,19 @@ export component TagRelationshipsWindow inherits Window {
         if root.question != "": Rectangle {
             background: Theme.window;
             border-width: 1px; border-color: Theme.border;
-            x: 50px; y: 150px; width: parent.width - 100px; height: 340px;
+            x: 50px; y: 150px; width: parent.width - 100px; height: root.ask-reason ? 340px + 30px * root.reason-suggestions.length : 340px;
             VerticalLayout {
                 padding: 20px; spacing: 10px;
                 TextEdit { text: root.question; read-only: true; vertical-stretch: 1; }
+                if root.ask-reason: VerticalLayout {
+                    spacing: 4px;
+                    for suggestion in root.reason-suggestions: Btn { text: suggestion; clicked => { root.reason = suggestion; root.answered(true); } }
+                }
                 if root.ask-reason: LineEdit { text <=> root.reason; placeholder-text: "reason"; }
                 HorizontalLayout {
                     alignment: end; spacing: 10px;
-                    Button { text: root.yes-label; enabled: !root.ask-reason || root.reason != ""; clicked => { root.answered(true); } }
-                    Button { text: root.no-label; clicked => { root.answered(false); } }
+                    Btn { text: root.yes-label; enabled: !root.ask-reason || root.reason != ""; clicked => { root.answered(true); } }
+                    Btn { text: root.no-label; clicked => { root.answered(false); } }
                 }
             }
         }

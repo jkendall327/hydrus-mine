@@ -1,3 +1,4 @@
+import { Btn } from "btn.slint";
 // Reference SelectGUGKeyAndName: functional main choices, then a category list.
 import { Button, ScrollView } from "std-widgets.slint";
 import { Theme } from "theme.slint";
@@ -45,8 +46,8 @@ export component GallerySourceWindow inherits Window {
             HorizontalLayout {
                 alignment: end;
                 spacing: 6px;
-                Button { text: "ok"; enabled: root.message != "" || root.selected >= 0; clicked => { root.accept-clicked(); } }
-                if root.message == "": Button { text: "cancel"; clicked => { root.cancel(); } }
+                Btn { text: "ok"; enabled: root.message != "" || root.selected >= 0; clicked => { root.accept-clicked(); } }
+                if root.message == "": Btn { text: "cancel"; clicked => { root.cancel(); } }
             }
         }
     }

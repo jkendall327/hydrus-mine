@@ -186,6 +186,9 @@ fn show(window: &TagFilterWindow, state: &State, store: &Store) {
         .unwrap_or_default()
         .0;
     window.set_show_other_panels(editor.show_other_panels_offered(advanced));
+    window.set_show_other_panels_tooltip(
+        hydrus_gui_model::tag_filter_editor::SHOW_OTHER_PANELS_TOOLTIP.into(),
+    );
     let namespaces: Vec<String> = editor.namespaces().to_vec();
     let global = || GLOBAL_BOXES.iter().map(|&b| b.to_owned());
     window.set_white_enabled(view.whitelist.enabled);

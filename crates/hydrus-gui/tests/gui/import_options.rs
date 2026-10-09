@@ -359,6 +359,11 @@ fn a_gallery_pages_import_options_are_edited_for_its_new_searches() {
     filter.invoke_apply();
     assert!(hydrus_gui::tag_filter_window::last_opened().is_none());
     assert_eq!(editor.get_tag_blacklist(), "blacklisting on goblin, orc");
+    // (the button's tooltip is the whole text its label may elide)
+    assert_eq!(
+        editor.get_tag_blacklist_tooltip(),
+        "blacklisting on goblin, orc"
+    );
     assert_eq!(
         labels(&editor)[2],
         "> tag filtering: blacklisting on goblin, orc"
@@ -405,6 +410,14 @@ fn a_gallery_pages_import_options_are_edited_for_its_new_searches() {
     filter.invoke_apply();
     assert_eq!(
         editor.get_tag_services().row_data(mine).unwrap().filter,
+        "adding: all unnamespaced tags"
+    );
+    assert_eq!(
+        editor
+            .get_tag_services()
+            .row_data(mine)
+            .unwrap()
+            .filter_tooltip,
         "adding: all unnamespaced tags"
     );
 

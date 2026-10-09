@@ -1,3 +1,4 @@
+import { Btn } from "btn.slint";
 // Native downloader lists and typed rule editors. Fields are individual
 // controls, never a serialized definition or free-form JSON editor.
 import { Button, CheckBox, ComboBox, LineEdit, ScrollView, TextEdit } from "std-widgets.slint";
@@ -69,8 +70,8 @@ export component DownloaderDefinitionsWindow inherits Window {
     VerticalLayout {
         padding: 10px; spacing: 8px;
         if root.generators: HorizontalLayout {
-            Button { text: "gallery url generators"; enabled: root.tab != 0; clicked => { root.tab-chosen(0); } }
-            Button { text: "nested gallery url generators"; enabled: root.tab != 1; clicked => { root.tab-chosen(1); } }
+            Btn { text: "gallery url generators"; enabled: root.tab != 0; clicked => { root.tab-chosen(0); } }
+            Btn { text: "nested gallery url generators"; enabled: root.tab != 1; clicked => { root.tab-chosen(1); } }
         }
         if !root.generators: HorizontalLayout {
             LineEdit { text <=> root.test-url; placeholder-text: "test a URL"; edited(text) => { root.test-edited(text); } }
@@ -86,19 +87,19 @@ export component DownloaderDefinitionsWindow inherits Window {
         }
         HorizontalLayout {
             spacing: 6px; alignment: start;
-            Button { text: "add"; clicked => { root.action("add"); } }
-            Button { text: "edit"; enabled: root.can-edit; clicked => { root.action("edit"); } }
-            Button { text: "duplicate"; enabled: root.can-edit; clicked => { root.action("duplicate"); } }
-            Button { text: "delete"; enabled: root.can-delete; clicked => { root.action("delete"); } }
-            Button { text: "import"; clicked => { root.action("import"); } }
-            Button { text: "export"; enabled: root.can-delete; clicked => { root.action("export"); } }
+            Btn { text: "add"; clicked => { root.action("add"); } }
+            Btn { text: "edit"; enabled: root.can-edit; clicked => { root.action("edit"); } }
+            Btn { text: "duplicate"; enabled: root.can-edit; clicked => { root.action("duplicate"); } }
+            Btn { text: "delete"; enabled: root.can-delete; clicked => { root.action("delete"); } }
+            Btn { text: "import"; clicked => { root.action("import"); } }
+            Btn { text: "export"; enabled: root.can-delete; clicked => { root.action("export"); } }
         }
         if root.error != "": Text { text: root.error; color: Theme.error; wrap: word-wrap; }
         if root.question != "": Question { text: root.question; answered(yes) => { root.answered(yes); } }
         HorizontalLayout {
             alignment: end; spacing: 6px;
-            Button { text: "apply"; clicked => { root.action("apply"); } }
-            Button { text: "cancel"; clicked => { root.action("cancel"); } }
+            Btn { text: "apply"; clicked => { root.action("apply"); } }
+            Btn { text: "cancel"; clicked => { root.action("cancel"); } }
         }
     }
 }
@@ -166,7 +167,7 @@ export component DownloaderDefinitionEditWindow inherits Window {
         padding: 10px; spacing: 8px;
         if root.tabs.length > 0: HorizontalLayout {
             vertical-stretch: 0;
-            for name[i] in root.tabs: Button { text: name; enabled: root.tab != i && !root.child-open; clicked => { root.tab-chosen(i); } }
+            for name[i] in root.tabs: Btn { text: name; enabled: root.tab != i && !root.child-open; clicked => { root.tab-chosen(i); } }
         }
         ScrollView {
             min-height: 0px;
@@ -198,9 +199,9 @@ export component DownloaderDefinitionEditWindow inherits Window {
                                 delete-pressed => { if !root.child-open {root.domain-action(false,"delete");} }
                             }
                             HorizontalLayout {
-                                Button { text: "add"; enabled: !root.child-open; clicked => {root.domain-action(false,"add");} }
-                                Button { text: "edit"; enabled: root.domain-raw-selected && !root.child-open; clicked => {root.domain-action(false,"edit");} }
-                                Button { text: "delete"; enabled: root.domain-raw-selected && !root.child-open; clicked => {root.domain-action(false,"delete");} }
+                                Btn { text: "add"; enabled: !root.child-open; clicked => {root.domain-action(false,"add");} }
+                                Btn { text: "edit"; enabled: root.domain-raw-selected && !root.child-open; clicked => {root.domain-action(false,"edit");} }
+                                Btn { text: "delete"; enabled: root.domain-raw-selected && !root.child-open; clicked => {root.domain-action(false,"delete");} }
                             }
                         }
                         VerticalLayout {
@@ -212,9 +213,9 @@ export component DownloaderDefinitionEditWindow inherits Window {
                                 delete-pressed => { if !root.child-open {root.domain-action(true,"delete");} }
                             }
                             HorizontalLayout {
-                                Button { text: "add"; enabled: !root.child-open; clicked => {root.domain-action(true,"add");} }
-                                Button { text: "edit"; enabled: root.domain-regex-selected && !root.child-open; clicked => {root.domain-action(true,"edit");} }
-                                Button { text: "delete"; enabled: root.domain-regex-selected && !root.child-open; clicked => {root.domain-action(true,"delete");} }
+                                Btn { text: "add"; enabled: !root.child-open; clicked => {root.domain-action(true,"add");} }
+                                Btn { text: "edit"; enabled: root.domain-regex-selected && !root.child-open; clicked => {root.domain-action(true,"edit");} }
+                                Btn { text: "delete"; enabled: root.domain-regex-selected && !root.child-open; clicked => {root.domain-action(true,"delete");} }
                             }
                         }
                     }
@@ -239,7 +240,7 @@ export component DownloaderDefinitionEditWindow inherits Window {
                 }
                 if root.rule-tabs.length > 0 && root.tab == 0: VerticalLayout {
                     HorizontalLayout {
-                        for name[i] in root.rule-tabs: Button { text: name; enabled: root.rule-tab != i && !root.child-open; clicked => { root.rule-tab-chosen(i); } }
+                        for name[i] in root.rule-tabs: Btn { text: name; enabled: root.rule-tab != i && !root.child-open; clicked => { root.rule-tab-chosen(i); } }
                     }
                     for rule[i] in root.rules: Rectangle {
                         height: 28px;
@@ -249,18 +250,18 @@ export component DownloaderDefinitionEditWindow inherits Window {
                     }
                     HorizontalLayout {
                         spacing: 6px; alignment: start;
-                        Button { text: "add"; enabled: !root.child-open; clicked => { root.rule-action("add"); } }
-                        Button { text: "edit"; enabled: root.selected-rule >= 0 && !root.child-open; clicked => { root.rule-action("edit"); } }
-                        Button { text: "delete"; enabled: root.selected-rule >= 0 && !root.child-open; clicked => { root.rule-action("delete"); } }
-                        Button { text: "up"; enabled: root.rule-tab == 0 && root.selected-rule > 0 && !root.child-open; clicked => { root.rule-action("up"); } }
-                        Button { text: "down"; enabled: root.rule-tab == 0 && root.selected-rule >= 0 && root.selected-rule < root.rules.length - 1 && !root.child-open; clicked => { root.rule-action("down"); } }
+                        Btn { text: "add"; enabled: !root.child-open; clicked => { root.rule-action("add"); } }
+                        Btn { text: "edit"; enabled: root.selected-rule >= 0 && !root.child-open; clicked => { root.rule-action("edit"); } }
+                        Btn { text: "delete"; enabled: root.selected-rule >= 0 && !root.child-open; clicked => { root.rule-action("delete"); } }
+                        Btn { text: "up"; enabled: root.rule-tab == 0 && root.selected-rule > 0 && !root.child-open; clicked => { root.rule-action("up"); } }
+                        Btn { text: "down"; enabled: root.rule-tab == 0 && root.selected-rule >= 0 && root.selected-rule < root.rules.length - 1 && !root.child-open; clicked => { root.rule-action("down"); } }
                     }
                 }
                 if root.rule-tabs.length > 0 && root.tab == 1: HorizontalLayout {
-                    Button { text: "edit API/redirect converter"; enabled: !root.child-open; clicked => { root.converter(0); } }
-                    Button { text: "edit referral converter"; enabled: !root.child-open; clicked => { root.converter(1); } }
+                    Btn { text: "edit API/redirect converter"; enabled: !root.child-open; clicked => { root.converter(0); } }
+                    Btn { text: "edit referral converter"; enabled: !root.child-open; clicked => { root.converter(1); } }
                 }
-                if root.rule-processor: Button { text: "edit default value string processor"; enabled: !root.child-open; clicked => { root.converter(2); } }
+                if root.rule-processor: Btn { text: "edit default value string processor"; enabled: !root.child-open; clicked => { root.converter(2); } }
                 if root.nested: VerticalLayout {
                     vertical-stretch: 0;
                     Text { text: "choose gugs"; color: Theme.text; }
@@ -291,7 +292,7 @@ export component DownloaderDefinitionEditWindow inherits Window {
         x: 10px; y: root.height - 42px;
         width: root.width - 20px; height: 32px;
         spacing: 6px; alignment: end;
-        Button { text: "apply"; enabled: !root.child-open; clicked => { root.action("apply"); } }
-        Button { text: "cancel"; enabled: !root.child-open; clicked => { root.action("cancel"); } }
+        Btn { text: "apply"; enabled: !root.child-open; clicked => { root.action("apply"); } }
+        Btn { text: "cancel"; enabled: !root.child-open; clicked => { root.action("cancel"); } }
     }
 }
