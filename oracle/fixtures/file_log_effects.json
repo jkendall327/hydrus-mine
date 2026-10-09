@@ -1,0 +1,2198 @@
+{
+ "hashes": [
+  "01310d25cceed29dac584b96a0d17162da836adf1a76585f3d69509682387e5b",
+  "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b"
+ ],
+ "start": [
+  [
+   "https://example.com/post/1",
+   1,
+   ""
+  ],
+  [
+   "https://example.com/post/2",
+   2,
+   ""
+  ],
+  [
+   "https://example.com/post/3",
+   3,
+   "Previously deleted"
+  ],
+  [
+   "https://example.com/post/4",
+   4,
+   "Error: 404"
+  ],
+  [
+   "https://example.com/post/5",
+   4,
+   "Error: 500"
+  ],
+  [
+   "https://example.com/post/6",
+   7,
+   "403 forbidden"
+  ],
+  [
+   "https://example.com/post/7",
+   7,
+   "404 not found"
+  ],
+  [
+   "https://example.com/post/8",
+   7,
+   "veto: blacklisted!"
+  ],
+  [
+   "https://example.com/post/9",
+   8,
+   ""
+  ],
+  [
+   "https://example.com/post/10",
+   0,
+   ""
+  ],
+  [
+   "https://example.com/post/11",
+   0,
+   ""
+  ]
+ ],
+ "menu": [
+  "retry 2 failures",
+  "retry 3 ignored",
+  "delete 2 'successful' file import items from the queue",
+  "delete 1 'already in db' file import items from the queue",
+  "delete 1 'previously deleted' file import items from the queue",
+  "delete 2 'failed' file import items from the queue",
+  "delete 3 'ignored' file import items from the queue",
+  "delete 1 'skipped' file import items from the queue",
+  "delete 2 'unknown' (i.e. unstarted) file import items from the queue",
+  "delete everything except 'unknown' (i.e. unstarted) (9 items) from the queue",
+  "delete everything (11 items) from the queue",
+  "set 2 'unknown' (i.e. unstarted) file import items to 'skipped'",
+  "show new files in a new page",
+  "show all files in a new page",
+  "reverse import order",
+  "export all sources",
+  "ADVANCED: import new sources",
+  "advanced"
+ ],
+ "actions": [
+  {
+   "label": "retry 2 failures",
+   "answer": "no",
+   "asked": [
+    {
+     "kind": "yesno",
+     "text": "Are you sure you want to retry all the files that encountered errors?"
+    }
+   ],
+   "after": [
+    [
+     "https://example.com/post/1",
+     1,
+     ""
+    ],
+    [
+     "https://example.com/post/2",
+     2,
+     ""
+    ],
+    [
+     "https://example.com/post/3",
+     3,
+     "Previously deleted"
+    ],
+    [
+     "https://example.com/post/4",
+     4,
+     "Error: 404"
+    ],
+    [
+     "https://example.com/post/5",
+     4,
+     "Error: 500"
+    ],
+    [
+     "https://example.com/post/6",
+     7,
+     "403 forbidden"
+    ],
+    [
+     "https://example.com/post/7",
+     7,
+     "404 not found"
+    ],
+    [
+     "https://example.com/post/8",
+     7,
+     "veto: blacklisted!"
+    ],
+    [
+     "https://example.com/post/9",
+     8,
+     ""
+    ],
+    [
+     "https://example.com/post/10",
+     0,
+     ""
+    ],
+    [
+     "https://example.com/post/11",
+     0,
+     ""
+    ]
+   ],
+   "pages": []
+  },
+  {
+   "label": "retry 2 failures",
+   "answer": "yes",
+   "asked": [
+    {
+     "kind": "yesno",
+     "text": "Are you sure you want to retry all the files that encountered errors?"
+    }
+   ],
+   "after": [
+    [
+     "https://example.com/post/1",
+     1,
+     ""
+    ],
+    [
+     "https://example.com/post/2",
+     2,
+     ""
+    ],
+    [
+     "https://example.com/post/3",
+     3,
+     "Previously deleted"
+    ],
+    [
+     "https://example.com/post/4",
+     0,
+     ""
+    ],
+    [
+     "https://example.com/post/5",
+     0,
+     ""
+    ],
+    [
+     "https://example.com/post/6",
+     7,
+     "403 forbidden"
+    ],
+    [
+     "https://example.com/post/7",
+     7,
+     "404 not found"
+    ],
+    [
+     "https://example.com/post/8",
+     7,
+     "veto: blacklisted!"
+    ],
+    [
+     "https://example.com/post/9",
+     8,
+     ""
+    ],
+    [
+     "https://example.com/post/10",
+     0,
+     ""
+    ],
+    [
+     "https://example.com/post/11",
+     0,
+     ""
+    ]
+   ],
+   "pages": []
+  },
+  {
+   "label": "retry 3 ignored",
+   "answer": "cancel",
+   "asked": [
+    {
+     "kind": "choices",
+     "text": "select what to retry",
+     "buttons": [
+      "retry all",
+      "retry 403s",
+      "retry 404s",
+      "retry blacklisted"
+     ]
+    }
+   ],
+   "after": [
+    [
+     "https://example.com/post/1",
+     1,
+     ""
+    ],
+    [
+     "https://example.com/post/2",
+     2,
+     ""
+    ],
+    [
+     "https://example.com/post/3",
+     3,
+     "Previously deleted"
+    ],
+    [
+     "https://example.com/post/4",
+     4,
+     "Error: 404"
+    ],
+    [
+     "https://example.com/post/5",
+     4,
+     "Error: 500"
+    ],
+    [
+     "https://example.com/post/6",
+     7,
+     "403 forbidden"
+    ],
+    [
+     "https://example.com/post/7",
+     7,
+     "404 not found"
+    ],
+    [
+     "https://example.com/post/8",
+     7,
+     "veto: blacklisted!"
+    ],
+    [
+     "https://example.com/post/9",
+     8,
+     ""
+    ],
+    [
+     "https://example.com/post/10",
+     0,
+     ""
+    ],
+    [
+     "https://example.com/post/11",
+     0,
+     ""
+    ]
+   ],
+   "pages": []
+  },
+  {
+   "label": "retry 3 ignored",
+   "answer": "retry all",
+   "asked": [
+    {
+     "kind": "choices",
+     "text": "select what to retry",
+     "buttons": [
+      "retry all",
+      "retry 403s",
+      "retry 404s",
+      "retry blacklisted"
+     ]
+    }
+   ],
+   "after": [
+    [
+     "https://example.com/post/1",
+     1,
+     ""
+    ],
+    [
+     "https://example.com/post/2",
+     2,
+     ""
+    ],
+    [
+     "https://example.com/post/3",
+     3,
+     "Previously deleted"
+    ],
+    [
+     "https://example.com/post/4",
+     4,
+     "Error: 404"
+    ],
+    [
+     "https://example.com/post/5",
+     4,
+     "Error: 500"
+    ],
+    [
+     "https://example.com/post/6",
+     0,
+     ""
+    ],
+    [
+     "https://example.com/post/7",
+     0,
+     ""
+    ],
+    [
+     "https://example.com/post/8",
+     0,
+     ""
+    ],
+    [
+     "https://example.com/post/9",
+     8,
+     ""
+    ],
+    [
+     "https://example.com/post/10",
+     0,
+     ""
+    ],
+    [
+     "https://example.com/post/11",
+     0,
+     ""
+    ]
+   ],
+   "pages": []
+  },
+  {
+   "label": "retry 3 ignored",
+   "answer": "retry 403s",
+   "asked": [
+    {
+     "kind": "choices",
+     "text": "select what to retry",
+     "buttons": [
+      "retry all",
+      "retry 403s",
+      "retry 404s",
+      "retry blacklisted"
+     ]
+    }
+   ],
+   "after": [
+    [
+     "https://example.com/post/1",
+     1,
+     ""
+    ],
+    [
+     "https://example.com/post/2",
+     2,
+     ""
+    ],
+    [
+     "https://example.com/post/3",
+     3,
+     "Previously deleted"
+    ],
+    [
+     "https://example.com/post/4",
+     4,
+     "Error: 404"
+    ],
+    [
+     "https://example.com/post/5",
+     4,
+     "Error: 500"
+    ],
+    [
+     "https://example.com/post/6",
+     0,
+     ""
+    ],
+    [
+     "https://example.com/post/7",
+     7,
+     "404 not found"
+    ],
+    [
+     "https://example.com/post/8",
+     7,
+     "veto: blacklisted!"
+    ],
+    [
+     "https://example.com/post/9",
+     8,
+     ""
+    ],
+    [
+     "https://example.com/post/10",
+     0,
+     ""
+    ],
+    [
+     "https://example.com/post/11",
+     0,
+     ""
+    ]
+   ],
+   "pages": []
+  },
+  {
+   "label": "retry 3 ignored",
+   "answer": "retry 404s",
+   "asked": [
+    {
+     "kind": "choices",
+     "text": "select what to retry",
+     "buttons": [
+      "retry all",
+      "retry 403s",
+      "retry 404s",
+      "retry blacklisted"
+     ]
+    }
+   ],
+   "after": [
+    [
+     "https://example.com/post/1",
+     1,
+     ""
+    ],
+    [
+     "https://example.com/post/2",
+     2,
+     ""
+    ],
+    [
+     "https://example.com/post/3",
+     3,
+     "Previously deleted"
+    ],
+    [
+     "https://example.com/post/4",
+     4,
+     "Error: 404"
+    ],
+    [
+     "https://example.com/post/5",
+     4,
+     "Error: 500"
+    ],
+    [
+     "https://example.com/post/6",
+     7,
+     "403 forbidden"
+    ],
+    [
+     "https://example.com/post/7",
+     0,
+     ""
+    ],
+    [
+     "https://example.com/post/8",
+     7,
+     "veto: blacklisted!"
+    ],
+    [
+     "https://example.com/post/9",
+     8,
+     ""
+    ],
+    [
+     "https://example.com/post/10",
+     0,
+     ""
+    ],
+    [
+     "https://example.com/post/11",
+     0,
+     ""
+    ]
+   ],
+   "pages": []
+  },
+  {
+   "label": "retry 3 ignored",
+   "answer": "retry blacklisted",
+   "asked": [
+    {
+     "kind": "choices",
+     "text": "select what to retry",
+     "buttons": [
+      "retry all",
+      "retry 403s",
+      "retry 404s",
+      "retry blacklisted"
+     ]
+    }
+   ],
+   "after": [
+    [
+     "https://example.com/post/1",
+     1,
+     ""
+    ],
+    [
+     "https://example.com/post/2",
+     2,
+     ""
+    ],
+    [
+     "https://example.com/post/3",
+     3,
+     "Previously deleted"
+    ],
+    [
+     "https://example.com/post/4",
+     4,
+     "Error: 404"
+    ],
+    [
+     "https://example.com/post/5",
+     4,
+     "Error: 500"
+    ],
+    [
+     "https://example.com/post/6",
+     7,
+     "403 forbidden"
+    ],
+    [
+     "https://example.com/post/7",
+     7,
+     "404 not found"
+    ],
+    [
+     "https://example.com/post/8",
+     0,
+     ""
+    ],
+    [
+     "https://example.com/post/9",
+     8,
+     ""
+    ],
+    [
+     "https://example.com/post/10",
+     0,
+     ""
+    ],
+    [
+     "https://example.com/post/11",
+     0,
+     ""
+    ]
+   ],
+   "pages": []
+  },
+  {
+   "label": "delete 2 'successful' file import items from the queue",
+   "answer": "no",
+   "asked": [
+    {
+     "kind": "yesno",
+     "text": "Are you sure you want to delete all the successful/already in db/created children file import items? This is useful for cleaning up and de-laggifying a very large list, but be careful you aren't removing something you would want to revisit or what watcher/subscription may be using for future check time calculations."
+    }
+   ],
+   "after": [
+    [
+     "https://example.com/post/1",
+     1,
+     ""
+    ],
+    [
+     "https://example.com/post/2",
+     2,
+     ""
+    ],
+    [
+     "https://example.com/post/3",
+     3,
+     "Previously deleted"
+    ],
+    [
+     "https://example.com/post/4",
+     4,
+     "Error: 404"
+    ],
+    [
+     "https://example.com/post/5",
+     4,
+     "Error: 500"
+    ],
+    [
+     "https://example.com/post/6",
+     7,
+     "403 forbidden"
+    ],
+    [
+     "https://example.com/post/7",
+     7,
+     "404 not found"
+    ],
+    [
+     "https://example.com/post/8",
+     7,
+     "veto: blacklisted!"
+    ],
+    [
+     "https://example.com/post/9",
+     8,
+     ""
+    ],
+    [
+     "https://example.com/post/10",
+     0,
+     ""
+    ],
+    [
+     "https://example.com/post/11",
+     0,
+     ""
+    ]
+   ],
+   "pages": []
+  },
+  {
+   "label": "delete 2 'successful' file import items from the queue",
+   "answer": "yes",
+   "asked": [
+    {
+     "kind": "yesno",
+     "text": "Are you sure you want to delete all the successful/already in db/created children file import items? This is useful for cleaning up and de-laggifying a very large list, but be careful you aren't removing something you would want to revisit or what watcher/subscription may be using for future check time calculations."
+    }
+   ],
+   "after": [
+    [
+     "https://example.com/post/3",
+     3,
+     "Previously deleted"
+    ],
+    [
+     "https://example.com/post/4",
+     4,
+     "Error: 404"
+    ],
+    [
+     "https://example.com/post/5",
+     4,
+     "Error: 500"
+    ],
+    [
+     "https://example.com/post/6",
+     7,
+     "403 forbidden"
+    ],
+    [
+     "https://example.com/post/7",
+     7,
+     "404 not found"
+    ],
+    [
+     "https://example.com/post/8",
+     7,
+     "veto: blacklisted!"
+    ],
+    [
+     "https://example.com/post/9",
+     8,
+     ""
+    ],
+    [
+     "https://example.com/post/10",
+     0,
+     ""
+    ],
+    [
+     "https://example.com/post/11",
+     0,
+     ""
+    ]
+   ],
+   "pages": []
+  },
+  {
+   "label": "delete 1 'already in db' file import items from the queue",
+   "answer": "no",
+   "asked": [
+    {
+     "kind": "yesno",
+     "text": "Are you sure you want to delete all the already in db file import items? This is useful for cleaning up and de-laggifying a very large list, but be careful you aren't removing something you would want to revisit or what watcher/subscription may be using for future check time calculations."
+    }
+   ],
+   "after": [
+    [
+     "https://example.com/post/1",
+     1,
+     ""
+    ],
+    [
+     "https://example.com/post/2",
+     2,
+     ""
+    ],
+    [
+     "https://example.com/post/3",
+     3,
+     "Previously deleted"
+    ],
+    [
+     "https://example.com/post/4",
+     4,
+     "Error: 404"
+    ],
+    [
+     "https://example.com/post/5",
+     4,
+     "Error: 500"
+    ],
+    [
+     "https://example.com/post/6",
+     7,
+     "403 forbidden"
+    ],
+    [
+     "https://example.com/post/7",
+     7,
+     "404 not found"
+    ],
+    [
+     "https://example.com/post/8",
+     7,
+     "veto: blacklisted!"
+    ],
+    [
+     "https://example.com/post/9",
+     8,
+     ""
+    ],
+    [
+     "https://example.com/post/10",
+     0,
+     ""
+    ],
+    [
+     "https://example.com/post/11",
+     0,
+     ""
+    ]
+   ],
+   "pages": []
+  },
+  {
+   "label": "delete 1 'already in db' file import items from the queue",
+   "answer": "yes",
+   "asked": [
+    {
+     "kind": "yesno",
+     "text": "Are you sure you want to delete all the already in db file import items? This is useful for cleaning up and de-laggifying a very large list, but be careful you aren't removing something you would want to revisit or what watcher/subscription may be using for future check time calculations."
+    }
+   ],
+   "after": [
+    [
+     "https://example.com/post/1",
+     1,
+     ""
+    ],
+    [
+     "https://example.com/post/3",
+     3,
+     "Previously deleted"
+    ],
+    [
+     "https://example.com/post/4",
+     4,
+     "Error: 404"
+    ],
+    [
+     "https://example.com/post/5",
+     4,
+     "Error: 500"
+    ],
+    [
+     "https://example.com/post/6",
+     7,
+     "403 forbidden"
+    ],
+    [
+     "https://example.com/post/7",
+     7,
+     "404 not found"
+    ],
+    [
+     "https://example.com/post/8",
+     7,
+     "veto: blacklisted!"
+    ],
+    [
+     "https://example.com/post/9",
+     8,
+     ""
+    ],
+    [
+     "https://example.com/post/10",
+     0,
+     ""
+    ],
+    [
+     "https://example.com/post/11",
+     0,
+     ""
+    ]
+   ],
+   "pages": []
+  },
+  {
+   "label": "delete 1 'previously deleted' file import items from the queue",
+   "answer": "no",
+   "asked": [
+    {
+     "kind": "yesno",
+     "text": "Are you sure you want to delete all the deleted file import items? This is useful for cleaning up and de-laggifying a very large list, but be careful you aren't removing something you would want to revisit or what watcher/subscription may be using for future check time calculations."
+    }
+   ],
+   "after": [
+    [
+     "https://example.com/post/1",
+     1,
+     ""
+    ],
+    [
+     "https://example.com/post/2",
+     2,
+     ""
+    ],
+    [
+     "https://example.com/post/3",
+     3,
+     "Previously deleted"
+    ],
+    [
+     "https://example.com/post/4",
+     4,
+     "Error: 404"
+    ],
+    [
+     "https://example.com/post/5",
+     4,
+     "Error: 500"
+    ],
+    [
+     "https://example.com/post/6",
+     7,
+     "403 forbidden"
+    ],
+    [
+     "https://example.com/post/7",
+     7,
+     "404 not found"
+    ],
+    [
+     "https://example.com/post/8",
+     7,
+     "veto: blacklisted!"
+    ],
+    [
+     "https://example.com/post/9",
+     8,
+     ""
+    ],
+    [
+     "https://example.com/post/10",
+     0,
+     ""
+    ],
+    [
+     "https://example.com/post/11",
+     0,
+     ""
+    ]
+   ],
+   "pages": []
+  },
+  {
+   "label": "delete 1 'previously deleted' file import items from the queue",
+   "answer": "yes",
+   "asked": [
+    {
+     "kind": "yesno",
+     "text": "Are you sure you want to delete all the deleted file import items? This is useful for cleaning up and de-laggifying a very large list, but be careful you aren't removing something you would want to revisit or what watcher/subscription may be using for future check time calculations."
+    }
+   ],
+   "after": [
+    [
+     "https://example.com/post/1",
+     1,
+     ""
+    ],
+    [
+     "https://example.com/post/2",
+     2,
+     ""
+    ],
+    [
+     "https://example.com/post/4",
+     4,
+     "Error: 404"
+    ],
+    [
+     "https://example.com/post/5",
+     4,
+     "Error: 500"
+    ],
+    [
+     "https://example.com/post/6",
+     7,
+     "403 forbidden"
+    ],
+    [
+     "https://example.com/post/7",
+     7,
+     "404 not found"
+    ],
+    [
+     "https://example.com/post/8",
+     7,
+     "veto: blacklisted!"
+    ],
+    [
+     "https://example.com/post/9",
+     8,
+     ""
+    ],
+    [
+     "https://example.com/post/10",
+     0,
+     ""
+    ],
+    [
+     "https://example.com/post/11",
+     0,
+     ""
+    ]
+   ],
+   "pages": []
+  },
+  {
+   "label": "delete 2 'failed' file import items from the queue",
+   "answer": "no",
+   "asked": [
+    {
+     "kind": "yesno",
+     "text": "Are you sure you want to delete all the error file import items? This is useful for cleaning up and de-laggifying a very large list, but be careful you aren't removing something you would want to revisit or what watcher/subscription may be using for future check time calculations."
+    }
+   ],
+   "after": [
+    [
+     "https://example.com/post/1",
+     1,
+     ""
+    ],
+    [
+     "https://example.com/post/2",
+     2,
+     ""
+    ],
+    [
+     "https://example.com/post/3",
+     3,
+     "Previously deleted"
+    ],
+    [
+     "https://example.com/post/4",
+     4,
+     "Error: 404"
+    ],
+    [
+     "https://example.com/post/5",
+     4,
+     "Error: 500"
+    ],
+    [
+     "https://example.com/post/6",
+     7,
+     "403 forbidden"
+    ],
+    [
+     "https://example.com/post/7",
+     7,
+     "404 not found"
+    ],
+    [
+     "https://example.com/post/8",
+     7,
+     "veto: blacklisted!"
+    ],
+    [
+     "https://example.com/post/9",
+     8,
+     ""
+    ],
+    [
+     "https://example.com/post/10",
+     0,
+     ""
+    ],
+    [
+     "https://example.com/post/11",
+     0,
+     ""
+    ]
+   ],
+   "pages": []
+  },
+  {
+   "label": "delete 2 'failed' file import items from the queue",
+   "answer": "yes",
+   "asked": [
+    {
+     "kind": "yesno",
+     "text": "Are you sure you want to delete all the error file import items? This is useful for cleaning up and de-laggifying a very large list, but be careful you aren't removing something you would want to revisit or what watcher/subscription may be using for future check time calculations."
+    }
+   ],
+   "after": [
+    [
+     "https://example.com/post/1",
+     1,
+     ""
+    ],
+    [
+     "https://example.com/post/2",
+     2,
+     ""
+    ],
+    [
+     "https://example.com/post/3",
+     3,
+     "Previously deleted"
+    ],
+    [
+     "https://example.com/post/6",
+     7,
+     "403 forbidden"
+    ],
+    [
+     "https://example.com/post/7",
+     7,
+     "404 not found"
+    ],
+    [
+     "https://example.com/post/8",
+     7,
+     "veto: blacklisted!"
+    ],
+    [
+     "https://example.com/post/9",
+     8,
+     ""
+    ],
+    [
+     "https://example.com/post/10",
+     0,
+     ""
+    ],
+    [
+     "https://example.com/post/11",
+     0,
+     ""
+    ]
+   ],
+   "pages": []
+  },
+  {
+   "label": "delete 3 'ignored' file import items from the queue",
+   "answer": "no",
+   "asked": [
+    {
+     "kind": "yesno",
+     "text": "Are you sure you want to delete all the ignored file import items? This is useful for cleaning up and de-laggifying a very large list, but be careful you aren't removing something you would want to revisit or what watcher/subscription may be using for future check time calculations."
+    }
+   ],
+   "after": [
+    [
+     "https://example.com/post/1",
+     1,
+     ""
+    ],
+    [
+     "https://example.com/post/2",
+     2,
+     ""
+    ],
+    [
+     "https://example.com/post/3",
+     3,
+     "Previously deleted"
+    ],
+    [
+     "https://example.com/post/4",
+     4,
+     "Error: 404"
+    ],
+    [
+     "https://example.com/post/5",
+     4,
+     "Error: 500"
+    ],
+    [
+     "https://example.com/post/6",
+     7,
+     "403 forbidden"
+    ],
+    [
+     "https://example.com/post/7",
+     7,
+     "404 not found"
+    ],
+    [
+     "https://example.com/post/8",
+     7,
+     "veto: blacklisted!"
+    ],
+    [
+     "https://example.com/post/9",
+     8,
+     ""
+    ],
+    [
+     "https://example.com/post/10",
+     0,
+     ""
+    ],
+    [
+     "https://example.com/post/11",
+     0,
+     ""
+    ]
+   ],
+   "pages": []
+  },
+  {
+   "label": "delete 3 'ignored' file import items from the queue",
+   "answer": "yes",
+   "asked": [
+    {
+     "kind": "yesno",
+     "text": "Are you sure you want to delete all the ignored file import items? This is useful for cleaning up and de-laggifying a very large list, but be careful you aren't removing something you would want to revisit or what watcher/subscription may be using for future check time calculations."
+    }
+   ],
+   "after": [
+    [
+     "https://example.com/post/1",
+     1,
+     ""
+    ],
+    [
+     "https://example.com/post/2",
+     2,
+     ""
+    ],
+    [
+     "https://example.com/post/3",
+     3,
+     "Previously deleted"
+    ],
+    [
+     "https://example.com/post/4",
+     4,
+     "Error: 404"
+    ],
+    [
+     "https://example.com/post/5",
+     4,
+     "Error: 500"
+    ],
+    [
+     "https://example.com/post/9",
+     8,
+     ""
+    ],
+    [
+     "https://example.com/post/10",
+     0,
+     ""
+    ],
+    [
+     "https://example.com/post/11",
+     0,
+     ""
+    ]
+   ],
+   "pages": []
+  },
+  {
+   "label": "delete 1 'skipped' file import items from the queue",
+   "answer": "no",
+   "asked": [
+    {
+     "kind": "yesno",
+     "text": "Are you sure you want to delete all the skipped file import items? This is useful for cleaning up and de-laggifying a very large list, but be careful you aren't removing something you would want to revisit or what watcher/subscription may be using for future check time calculations."
+    }
+   ],
+   "after": [
+    [
+     "https://example.com/post/1",
+     1,
+     ""
+    ],
+    [
+     "https://example.com/post/2",
+     2,
+     ""
+    ],
+    [
+     "https://example.com/post/3",
+     3,
+     "Previously deleted"
+    ],
+    [
+     "https://example.com/post/4",
+     4,
+     "Error: 404"
+    ],
+    [
+     "https://example.com/post/5",
+     4,
+     "Error: 500"
+    ],
+    [
+     "https://example.com/post/6",
+     7,
+     "403 forbidden"
+    ],
+    [
+     "https://example.com/post/7",
+     7,
+     "404 not found"
+    ],
+    [
+     "https://example.com/post/8",
+     7,
+     "veto: blacklisted!"
+    ],
+    [
+     "https://example.com/post/9",
+     8,
+     ""
+    ],
+    [
+     "https://example.com/post/10",
+     0,
+     ""
+    ],
+    [
+     "https://example.com/post/11",
+     0,
+     ""
+    ]
+   ],
+   "pages": []
+  },
+  {
+   "label": "delete 1 'skipped' file import items from the queue",
+   "answer": "yes",
+   "asked": [
+    {
+     "kind": "yesno",
+     "text": "Are you sure you want to delete all the skipped file import items? This is useful for cleaning up and de-laggifying a very large list, but be careful you aren't removing something you would want to revisit or what watcher/subscription may be using for future check time calculations."
+    }
+   ],
+   "after": [
+    [
+     "https://example.com/post/1",
+     1,
+     ""
+    ],
+    [
+     "https://example.com/post/2",
+     2,
+     ""
+    ],
+    [
+     "https://example.com/post/3",
+     3,
+     "Previously deleted"
+    ],
+    [
+     "https://example.com/post/4",
+     4,
+     "Error: 404"
+    ],
+    [
+     "https://example.com/post/5",
+     4,
+     "Error: 500"
+    ],
+    [
+     "https://example.com/post/6",
+     7,
+     "403 forbidden"
+    ],
+    [
+     "https://example.com/post/7",
+     7,
+     "404 not found"
+    ],
+    [
+     "https://example.com/post/8",
+     7,
+     "veto: blacklisted!"
+    ],
+    [
+     "https://example.com/post/10",
+     0,
+     ""
+    ],
+    [
+     "https://example.com/post/11",
+     0,
+     ""
+    ]
+   ],
+   "pages": []
+  },
+  {
+   "label": "delete 2 'unknown' (i.e. unstarted) file import items from the queue",
+   "answer": "no",
+   "asked": [
+    {
+     "kind": "yesno",
+     "text": "Are you sure you want to delete all the unknown file import items? This is useful for cleaning up and de-laggifying a very large list, but be careful you aren't removing something you would want to revisit or what watcher/subscription may be using for future check time calculations."
+    }
+   ],
+   "after": [
+    [
+     "https://example.com/post/1",
+     1,
+     ""
+    ],
+    [
+     "https://example.com/post/2",
+     2,
+     ""
+    ],
+    [
+     "https://example.com/post/3",
+     3,
+     "Previously deleted"
+    ],
+    [
+     "https://example.com/post/4",
+     4,
+     "Error: 404"
+    ],
+    [
+     "https://example.com/post/5",
+     4,
+     "Error: 500"
+    ],
+    [
+     "https://example.com/post/6",
+     7,
+     "403 forbidden"
+    ],
+    [
+     "https://example.com/post/7",
+     7,
+     "404 not found"
+    ],
+    [
+     "https://example.com/post/8",
+     7,
+     "veto: blacklisted!"
+    ],
+    [
+     "https://example.com/post/9",
+     8,
+     ""
+    ],
+    [
+     "https://example.com/post/10",
+     0,
+     ""
+    ],
+    [
+     "https://example.com/post/11",
+     0,
+     ""
+    ]
+   ],
+   "pages": []
+  },
+  {
+   "label": "delete 2 'unknown' (i.e. unstarted) file import items from the queue",
+   "answer": "yes",
+   "asked": [
+    {
+     "kind": "yesno",
+     "text": "Are you sure you want to delete all the unknown file import items? This is useful for cleaning up and de-laggifying a very large list, but be careful you aren't removing something you would want to revisit or what watcher/subscription may be using for future check time calculations."
+    }
+   ],
+   "after": [
+    [
+     "https://example.com/post/1",
+     1,
+     ""
+    ],
+    [
+     "https://example.com/post/2",
+     2,
+     ""
+    ],
+    [
+     "https://example.com/post/3",
+     3,
+     "Previously deleted"
+    ],
+    [
+     "https://example.com/post/4",
+     4,
+     "Error: 404"
+    ],
+    [
+     "https://example.com/post/5",
+     4,
+     "Error: 500"
+    ],
+    [
+     "https://example.com/post/6",
+     7,
+     "403 forbidden"
+    ],
+    [
+     "https://example.com/post/7",
+     7,
+     "404 not found"
+    ],
+    [
+     "https://example.com/post/8",
+     7,
+     "veto: blacklisted!"
+    ],
+    [
+     "https://example.com/post/9",
+     8,
+     ""
+    ]
+   ],
+   "pages": []
+  },
+  {
+   "label": "delete everything except 'unknown' (i.e. unstarted) (9 items) from the queue",
+   "answer": "no",
+   "asked": [
+    {
+     "kind": "yesno",
+     "text": "Are you sure you want to delete all the successful/already in db/deleted/error/ignored/skipped/created children file import items? This is useful for cleaning up and de-laggifying a very large list, but be careful you aren't removing something you would want to revisit or what watcher/subscription may be using for future check time calculations."
+    }
+   ],
+   "after": [
+    [
+     "https://example.com/post/1",
+     1,
+     ""
+    ],
+    [
+     "https://example.com/post/2",
+     2,
+     ""
+    ],
+    [
+     "https://example.com/post/3",
+     3,
+     "Previously deleted"
+    ],
+    [
+     "https://example.com/post/4",
+     4,
+     "Error: 404"
+    ],
+    [
+     "https://example.com/post/5",
+     4,
+     "Error: 500"
+    ],
+    [
+     "https://example.com/post/6",
+     7,
+     "403 forbidden"
+    ],
+    [
+     "https://example.com/post/7",
+     7,
+     "404 not found"
+    ],
+    [
+     "https://example.com/post/8",
+     7,
+     "veto: blacklisted!"
+    ],
+    [
+     "https://example.com/post/9",
+     8,
+     ""
+    ],
+    [
+     "https://example.com/post/10",
+     0,
+     ""
+    ],
+    [
+     "https://example.com/post/11",
+     0,
+     ""
+    ]
+   ],
+   "pages": []
+  },
+  {
+   "label": "delete everything except 'unknown' (i.e. unstarted) (9 items) from the queue",
+   "answer": "yes",
+   "asked": [
+    {
+     "kind": "yesno",
+     "text": "Are you sure you want to delete all the successful/already in db/deleted/error/ignored/skipped/created children file import items? This is useful for cleaning up and de-laggifying a very large list, but be careful you aren't removing something you would want to revisit or what watcher/subscription may be using for future check time calculations."
+    }
+   ],
+   "after": [
+    [
+     "https://example.com/post/10",
+     0,
+     ""
+    ],
+    [
+     "https://example.com/post/11",
+     0,
+     ""
+    ]
+   ],
+   "pages": []
+  },
+  {
+   "label": "delete everything (11 items) from the queue",
+   "answer": "no",
+   "asked": [
+    {
+     "kind": "yesno",
+     "text": "Are you sure you want to delete all the unknown/successful/already in db/deleted/error/ignored/skipped/created children file import items? This is useful for cleaning up and de-laggifying a very large list, but be careful you aren't removing something you would want to revisit or what watcher/subscription may be using for future check time calculations."
+    }
+   ],
+   "after": [
+    [
+     "https://example.com/post/1",
+     1,
+     ""
+    ],
+    [
+     "https://example.com/post/2",
+     2,
+     ""
+    ],
+    [
+     "https://example.com/post/3",
+     3,
+     "Previously deleted"
+    ],
+    [
+     "https://example.com/post/4",
+     4,
+     "Error: 404"
+    ],
+    [
+     "https://example.com/post/5",
+     4,
+     "Error: 500"
+    ],
+    [
+     "https://example.com/post/6",
+     7,
+     "403 forbidden"
+    ],
+    [
+     "https://example.com/post/7",
+     7,
+     "404 not found"
+    ],
+    [
+     "https://example.com/post/8",
+     7,
+     "veto: blacklisted!"
+    ],
+    [
+     "https://example.com/post/9",
+     8,
+     ""
+    ],
+    [
+     "https://example.com/post/10",
+     0,
+     ""
+    ],
+    [
+     "https://example.com/post/11",
+     0,
+     ""
+    ]
+   ],
+   "pages": []
+  },
+  {
+   "label": "delete everything (11 items) from the queue",
+   "answer": "yes",
+   "asked": [
+    {
+     "kind": "yesno",
+     "text": "Are you sure you want to delete all the unknown/successful/already in db/deleted/error/ignored/skipped/created children file import items? This is useful for cleaning up and de-laggifying a very large list, but be careful you aren't removing something you would want to revisit or what watcher/subscription may be using for future check time calculations."
+    }
+   ],
+   "after": [],
+   "pages": []
+  },
+  {
+   "label": "set 2 'unknown' (i.e. unstarted) file import items to 'skipped'",
+   "answer": "no",
+   "asked": [],
+   "after": [
+    [
+     "https://example.com/post/1",
+     1,
+     ""
+    ],
+    [
+     "https://example.com/post/2",
+     2,
+     ""
+    ],
+    [
+     "https://example.com/post/3",
+     3,
+     "Previously deleted"
+    ],
+    [
+     "https://example.com/post/4",
+     4,
+     "Error: 404"
+    ],
+    [
+     "https://example.com/post/5",
+     4,
+     "Error: 500"
+    ],
+    [
+     "https://example.com/post/6",
+     7,
+     "403 forbidden"
+    ],
+    [
+     "https://example.com/post/7",
+     7,
+     "404 not found"
+    ],
+    [
+     "https://example.com/post/8",
+     7,
+     "veto: blacklisted!"
+    ],
+    [
+     "https://example.com/post/9",
+     8,
+     ""
+    ],
+    [
+     "https://example.com/post/10",
+     8,
+     ""
+    ],
+    [
+     "https://example.com/post/11",
+     8,
+     ""
+    ]
+   ],
+   "pages": []
+  },
+  {
+   "label": "set 2 'unknown' (i.e. unstarted) file import items to 'skipped'",
+   "answer": "yes",
+   "asked": [],
+   "after": [
+    [
+     "https://example.com/post/1",
+     1,
+     ""
+    ],
+    [
+     "https://example.com/post/2",
+     2,
+     ""
+    ],
+    [
+     "https://example.com/post/3",
+     3,
+     "Previously deleted"
+    ],
+    [
+     "https://example.com/post/4",
+     4,
+     "Error: 404"
+    ],
+    [
+     "https://example.com/post/5",
+     4,
+     "Error: 500"
+    ],
+    [
+     "https://example.com/post/6",
+     7,
+     "403 forbidden"
+    ],
+    [
+     "https://example.com/post/7",
+     7,
+     "404 not found"
+    ],
+    [
+     "https://example.com/post/8",
+     7,
+     "veto: blacklisted!"
+    ],
+    [
+     "https://example.com/post/9",
+     8,
+     ""
+    ],
+    [
+     "https://example.com/post/10",
+     8,
+     ""
+    ],
+    [
+     "https://example.com/post/11",
+     8,
+     ""
+    ]
+   ],
+   "pages": []
+  },
+  {
+   "label": "show new files in a new page",
+   "answer": "no",
+   "asked": [],
+   "after": [
+    [
+     "https://example.com/post/1",
+     1,
+     ""
+    ],
+    [
+     "https://example.com/post/2",
+     2,
+     ""
+    ],
+    [
+     "https://example.com/post/3",
+     3,
+     "Previously deleted"
+    ],
+    [
+     "https://example.com/post/4",
+     4,
+     "Error: 404"
+    ],
+    [
+     "https://example.com/post/5",
+     4,
+     "Error: 500"
+    ],
+    [
+     "https://example.com/post/6",
+     7,
+     "403 forbidden"
+    ],
+    [
+     "https://example.com/post/7",
+     7,
+     "404 not found"
+    ],
+    [
+     "https://example.com/post/8",
+     7,
+     "veto: blacklisted!"
+    ],
+    [
+     "https://example.com/post/9",
+     8,
+     ""
+    ],
+    [
+     "https://example.com/post/10",
+     0,
+     ""
+    ],
+    [
+     "https://example.com/post/11",
+     0,
+     ""
+    ]
+   ],
+   "pages": [
+    [
+     "new_page_query",
+     [
+      "01310d25cceed29dac584b96a0d17162da836adf1a76585f3d69509682387e5b"
+     ]
+    ]
+   ]
+  },
+  {
+   "label": "show new files in a new page",
+   "answer": "yes",
+   "asked": [],
+   "after": [
+    [
+     "https://example.com/post/1",
+     1,
+     ""
+    ],
+    [
+     "https://example.com/post/2",
+     2,
+     ""
+    ],
+    [
+     "https://example.com/post/3",
+     3,
+     "Previously deleted"
+    ],
+    [
+     "https://example.com/post/4",
+     4,
+     "Error: 404"
+    ],
+    [
+     "https://example.com/post/5",
+     4,
+     "Error: 500"
+    ],
+    [
+     "https://example.com/post/6",
+     7,
+     "403 forbidden"
+    ],
+    [
+     "https://example.com/post/7",
+     7,
+     "404 not found"
+    ],
+    [
+     "https://example.com/post/8",
+     7,
+     "veto: blacklisted!"
+    ],
+    [
+     "https://example.com/post/9",
+     8,
+     ""
+    ],
+    [
+     "https://example.com/post/10",
+     0,
+     ""
+    ],
+    [
+     "https://example.com/post/11",
+     0,
+     ""
+    ]
+   ],
+   "pages": [
+    [
+     "new_page_query",
+     [
+      "01310d25cceed29dac584b96a0d17162da836adf1a76585f3d69509682387e5b"
+     ]
+    ]
+   ]
+  },
+  {
+   "label": "show all files in a new page",
+   "answer": "no",
+   "asked": [],
+   "after": [
+    [
+     "https://example.com/post/1",
+     1,
+     ""
+    ],
+    [
+     "https://example.com/post/2",
+     2,
+     ""
+    ],
+    [
+     "https://example.com/post/3",
+     3,
+     "Previously deleted"
+    ],
+    [
+     "https://example.com/post/4",
+     4,
+     "Error: 404"
+    ],
+    [
+     "https://example.com/post/5",
+     4,
+     "Error: 500"
+    ],
+    [
+     "https://example.com/post/6",
+     7,
+     "403 forbidden"
+    ],
+    [
+     "https://example.com/post/7",
+     7,
+     "404 not found"
+    ],
+    [
+     "https://example.com/post/8",
+     7,
+     "veto: blacklisted!"
+    ],
+    [
+     "https://example.com/post/9",
+     8,
+     ""
+    ],
+    [
+     "https://example.com/post/10",
+     0,
+     ""
+    ],
+    [
+     "https://example.com/post/11",
+     0,
+     ""
+    ]
+   ],
+   "pages": [
+    [
+     "new_page_query",
+     [
+      "01310d25cceed29dac584b96a0d17162da836adf1a76585f3d69509682387e5b",
+      "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b"
+     ]
+    ]
+   ]
+  },
+  {
+   "label": "show all files in a new page",
+   "answer": "yes",
+   "asked": [],
+   "after": [
+    [
+     "https://example.com/post/1",
+     1,
+     ""
+    ],
+    [
+     "https://example.com/post/2",
+     2,
+     ""
+    ],
+    [
+     "https://example.com/post/3",
+     3,
+     "Previously deleted"
+    ],
+    [
+     "https://example.com/post/4",
+     4,
+     "Error: 404"
+    ],
+    [
+     "https://example.com/post/5",
+     4,
+     "Error: 500"
+    ],
+    [
+     "https://example.com/post/6",
+     7,
+     "403 forbidden"
+    ],
+    [
+     "https://example.com/post/7",
+     7,
+     "404 not found"
+    ],
+    [
+     "https://example.com/post/8",
+     7,
+     "veto: blacklisted!"
+    ],
+    [
+     "https://example.com/post/9",
+     8,
+     ""
+    ],
+    [
+     "https://example.com/post/10",
+     0,
+     ""
+    ],
+    [
+     "https://example.com/post/11",
+     0,
+     ""
+    ]
+   ],
+   "pages": [
+    [
+     "new_page_query",
+     [
+      "01310d25cceed29dac584b96a0d17162da836adf1a76585f3d69509682387e5b",
+      "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b"
+     ]
+    ]
+   ]
+  },
+  {
+   "label": "reverse import order",
+   "answer": "no",
+   "asked": [
+    {
+     "kind": "yesno",
+     "text": "Reverse this file log? Any outstanding imports will process in the opposite order."
+    }
+   ],
+   "after": [
+    [
+     "https://example.com/post/1",
+     1,
+     ""
+    ],
+    [
+     "https://example.com/post/2",
+     2,
+     ""
+    ],
+    [
+     "https://example.com/post/3",
+     3,
+     "Previously deleted"
+    ],
+    [
+     "https://example.com/post/4",
+     4,
+     "Error: 404"
+    ],
+    [
+     "https://example.com/post/5",
+     4,
+     "Error: 500"
+    ],
+    [
+     "https://example.com/post/6",
+     7,
+     "403 forbidden"
+    ],
+    [
+     "https://example.com/post/7",
+     7,
+     "404 not found"
+    ],
+    [
+     "https://example.com/post/8",
+     7,
+     "veto: blacklisted!"
+    ],
+    [
+     "https://example.com/post/9",
+     8,
+     ""
+    ],
+    [
+     "https://example.com/post/10",
+     0,
+     ""
+    ],
+    [
+     "https://example.com/post/11",
+     0,
+     ""
+    ]
+   ],
+   "pages": []
+  },
+  {
+   "label": "reverse import order",
+   "answer": "yes",
+   "asked": [
+    {
+     "kind": "yesno",
+     "text": "Reverse this file log? Any outstanding imports will process in the opposite order."
+    }
+   ],
+   "after": [
+    [
+     "https://example.com/post/11",
+     0,
+     ""
+    ],
+    [
+     "https://example.com/post/10",
+     0,
+     ""
+    ],
+    [
+     "https://example.com/post/9",
+     8,
+     ""
+    ],
+    [
+     "https://example.com/post/8",
+     7,
+     "veto: blacklisted!"
+    ],
+    [
+     "https://example.com/post/7",
+     7,
+     "404 not found"
+    ],
+    [
+     "https://example.com/post/6",
+     7,
+     "403 forbidden"
+    ],
+    [
+     "https://example.com/post/5",
+     4,
+     "Error: 500"
+    ],
+    [
+     "https://example.com/post/4",
+     4,
+     "Error: 404"
+    ],
+    [
+     "https://example.com/post/3",
+     3,
+     "Previously deleted"
+    ],
+    [
+     "https://example.com/post/2",
+     2,
+     ""
+    ],
+    [
+     "https://example.com/post/1",
+     1,
+     ""
+    ]
+   ],
+   "pages": []
+  }
+ ]
+}

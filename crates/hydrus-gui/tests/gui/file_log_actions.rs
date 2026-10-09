@@ -14,32 +14,6 @@ use hydrus_store::queues::{self, FileSeedMeta, NewFileSeed, SeedStatus, SeedType
 
 use crate::subscriptions::store;
 
-fn urls(log: &FileLogWindow) -> Vec<String> {
-    let rows = log.get_rows();
-    (0..rows.row_count())
-        .map(|r| {
-            rows.row_data(r)
-                .unwrap()
-                .cells
-                .row_data(1)
-                .unwrap()
-                .to_string()
-        })
-        .collect()
-}
-fn statuses(log: &FileLogWindow) -> Vec<String> {
-    let rows = log.get_rows();
-    (0..rows.row_count())
-        .map(|r| {
-            rows.row_data(r)
-                .unwrap()
-                .cells
-                .row_data(2)
-                .unwrap()
-                .to_string()
-        })
-        .collect()
-}
 fn lines(log: &FileLogWindow, pane: usize) -> Vec<String> {
     let panes = log.get_menu_panes();
     let lines = panes.row_data(pane).unwrap().lines;
@@ -203,41 +177,170 @@ fn selected_rows_copy_sources_and_notes_and_open_many_only_after_confirming() {
     assert!(all.starts_with("https://site.example/post/0\n"));
 }
 
-// leaf: audit-network-file-log-retry
+/// Every whole-log menu entry the reference's real menu offered on one list
+/// holding every status, chosen in the real window with each answer to its
+/// question: the questions asked, the buttons and the list afterwards are
+/// the recorded ones (oracle/record_file_log_effects.py).
 // leaf: audit-network-file-log-delete
 // leaf: audit-network-file-log-reverse
 // leaf: audit-network-file-log-show
 #[test]
-fn whole_log_menu_retries_deletes_reverses_and_shows_files() {
+fn whole_log_menu_entries_ask_and_change_the_list_as_the_reference_did() {
+    let recorded = hydrus_testkit::fixture_json("file_log_effects.json");
     let _windows = headless::init();
-    let (_dirs, _copied, _launched, _ui, bound, log) = setup(6);
-    assert_eq!(statuses(&log)[..3], ["successful", "error", "ignored"]);
-    // Retry the ignored: only they go back to unknown.
-    log.invoke_log_menu(10.0, 10.0);
-    choose(&log, 0, "retry 1 ignored");
-    assert_eq!(statuses(&log)[..3], ["successful", "error", ""]);
-    log.invoke_log_menu(10.0, 10.0);
-    choose(&log, 0, "retry 1 failures");
-    assert_eq!(statuses(&log)[..3], ["successful", "", ""]);
-    // Reverse the import order.
-    let before = urls(&log);
-    log.invoke_log_menu(10.0, 10.0);
-    choose(&log, 0, "reverse import order");
-    let mut reversed = before.clone();
-    reversed.reverse();
-    assert_eq!(urls(&log), reversed);
-    // Show the successful files in a new page.
-    let pages = bound.pages.borrow().open_pages().len();
-    log.invoke_log_menu(10.0, 10.0);
-    choose(&log, 0, "show all files in a new page");
-    assert_eq!(bound.pages.borrow().open_pages().len(), pages + 1);
-    assert_eq!(bound.current.borrow().borrow().files().len(), 1);
-    // Delete by status removes just that status; delete everything empties the log.
-    log.invoke_log_menu(10.0, 10.0);
-    choose(&log, 0, "delete 1 'successful'");
-    assert_eq!(urls(&log).len(), 5);
-    assert!(!statuses(&log).contains(&"successful".to_owned()));
-    log.invoke_log_menu(10.0, 10.0);
-    choose(&log, 0, "delete everything (5 items)");
-    assert!(urls(&log).is_empty());
+    let (_dirs, _copied, _launched, ui, bound, log) = setup(3);
+    log.invoke_close_window();
+    let store = bound.pages.borrow().store().clone();
+    let queue = bound
+        .current
+        .borrow()
+        .borrow()
+        .importer()
+        .map(|i| i.queue)
+        .unwrap();
+    let hashes: Vec<String> = recorded["hashes"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|h| h.as_str().unwrap().to_owned())
+        .collect();
+    let seeds_now = |store: &hydrus_store::Store| -> Vec<(String, i64, String)> {
+        store
+            .read(move |conn| queues::file_seeds(conn, queue))
+            .unwrap()
+            .into_iter()
+            .map(|s| (s.data, s.status.code(), s.note))
+            .collect()
+    };
+    let reset = |store: &hydrus_store::Store| {
+        let start: Vec<(String, i64, String)> = recorded["start"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|row| {
+                (
+                    row[0].as_str().unwrap().to_owned(),
+                    row[1].as_i64().unwrap(),
+                    row[2].as_str().unwrap().to_owned(),
+                )
+            })
+            .collect();
+        let hashes = hashes.clone();
+        store
+            .write(move |ctx| {
+                let conn = ctx.conn();
+                let old: Vec<i64> = queues::file_seeds(conn, queue)?
+                    .iter()
+                    .map(|s| s.id)
+                    .collect();
+                queues::remove_file_seeds_by_id(conn, &old)?;
+                let news: Vec<NewFileSeed> = start
+                    .iter()
+                    .map(|(url, _, _)| NewFileSeed {
+                        seed_type: SeedType::Url,
+                        data: url.clone(),
+                        data_for_comparison: url.clone(),
+                        source_time: None,
+                        referral_url: None,
+                        meta: FileSeedMeta::default(),
+                    })
+                    .collect();
+                queues::add_file_seeds(conn, queue, &news, false, 0)?;
+                for (n, mut seed) in queues::file_seeds(conn, queue)?.into_iter().enumerate() {
+                    seed.status = SeedStatus::from_code(start[n].1).unwrap();
+                    seed.note = start[n].2.clone();
+                    if n < 2 {
+                        seed.meta.set_hash("sha256", hashes[n].clone());
+                    }
+                    queues::update_file_seed(conn, &seed)?;
+                }
+                Ok(())
+            })
+            .unwrap();
+    };
+    let start: Vec<(String, i64, String)> = recorded["start"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|row| {
+            (
+                row[0].as_str().unwrap().to_owned(),
+                row[1].as_i64().unwrap(),
+                row[2].as_str().unwrap().to_owned(),
+            )
+        })
+        .collect();
+    let menu_labels: Vec<String> = recorded["menu"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|l| l.as_str().unwrap().to_owned())
+        .collect();
+    let mut checked = 0;
+    for action in recorded["actions"].as_array().unwrap() {
+        let label = action["label"].as_str().unwrap();
+        let answer = action["answer"].as_str().unwrap();
+        assert!(menu_labels.iter().any(|l| l == label));
+        reset(&store);
+        assert_eq!(seeds_now(&store), start);
+        ui.invoke_open_file_log();
+        let log = bound.file_log.borrow().as_ref().unwrap().clone_strong();
+        log.invoke_log_menu(10.0, 10.0);
+        let pages = bound.pages.borrow().open_pages().len();
+        choose(&log, 0, label);
+        let asked = action["asked"].as_array().unwrap();
+        assert_eq!(log.get_asking(), !asked.is_empty(), "{label}");
+        if let Some(question) = asked.first() {
+            assert_eq!(log.get_asking_message(), question["text"].as_str().unwrap());
+            let buttons: Vec<String> = log
+                .get_asking_choices()
+                .iter()
+                .map(|c| c.to_string())
+                .collect();
+            if question["kind"].as_str().unwrap() == "yesno" {
+                assert_eq!(buttons, ["yes", "no"], "{label}");
+                log.invoke_chosen(i32::from(answer != "yes"));
+            } else {
+                let recorded_buttons: Vec<&str> = question["buttons"]
+                    .as_array()
+                    .unwrap()
+                    .iter()
+                    .map(|b| b.as_str().unwrap())
+                    .collect();
+                assert_eq!(buttons, recorded_buttons, "{label}");
+                match buttons.iter().position(|b| b == answer) {
+                    Some(index) => log.invoke_chosen(i32::try_from(index).unwrap()),
+                    None => log.invoke_cancelled(),
+                }
+            }
+        }
+        let after: Vec<(String, i64, String)> = action["after"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|row| {
+                (
+                    row[0].as_str().unwrap().to_owned(),
+                    row[1].as_i64().unwrap(),
+                    row[2].as_str().unwrap().to_owned(),
+                )
+            })
+            .collect();
+        assert_eq!(seeds_now(&store), after, "{label}: {answer}");
+        let shown = action["pages"].as_array().unwrap();
+        assert_eq!(
+            bound.pages.borrow().open_pages().len(),
+            pages + shown.len(),
+            "{label}: {answer}"
+        );
+        if let Some(page) = shown.first() {
+            assert_eq!(
+                bound.current.borrow().borrow().files().len(),
+                page[1].as_array().unwrap().len(),
+                "{label}"
+            );
+        }
+        checked += 1;
+    }
+    assert_eq!(checked, recorded["actions"].as_array().unwrap().len());
 }
