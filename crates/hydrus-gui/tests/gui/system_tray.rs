@@ -207,7 +207,6 @@ fn choose_in_file_menu(ui: &MainWindow, label: &str) {
     ui.invoke_menu_line_clicked(0, i32::try_from(at).unwrap(), 0., 0., 0.);
 }
 
-// leaf: audit-options-system-tray-always-show-the-hydrus-system-tray-icon
 #[test]
 fn the_icon_is_made_and_taken_away_as_always_show_is_applied_where_there_is_a_tray() {
     let _windows = headless::init();
@@ -469,7 +468,6 @@ fn a_click_on_the_icon_does_what_the_reference_does() {
     assert!(!client.ui.window().is_minimized());
 }
 
-// leaf: audit-options-file-tray
 #[test]
 fn file_minimise_to_system_tray_is_offered_with_a_tray_in_advanced_mode_and_hides_the_window() {
     const ENTRY: &str = "minimise to system tray";
@@ -546,7 +544,6 @@ impl Host for Both {
 }
 
 // Slint's own tray: its component, its menu's state and its events.
-// leaf: audit-options-system-tray-always-show-the-hydrus-system-tray-icon
 #[test]
 fn slint_s_tray_shows_the_view_and_sends_its_events_to_the_controller() {
     let _windows = headless::init();
@@ -686,4 +683,126 @@ fn an_exit_that_was_vetoed_does_not_make_the_next_close_button_exit() {
     request_close(&client.ui);
     assert!(client.ui.get_question().is_empty(), "nothing asked to exit");
     assert!(client.bound.tray.hidden());
+}
+
+/// The recorded `icon` cases: whether the icon is made, by whether there is
+/// a tray, the Options row and whether the client is hidden to it (through
+/// File > minimise to system tray, offered in advanced mode).
+// leaf: audit-options-system-tray-always-show-the-hydrus-system-tray-icon
+#[test]
+fn the_icon_follows_the_reference_s_recorded_cases() {
+    let recorded = hydrus_testkit::fixture_json("system_tray.json");
+    let _windows = headless::init();
+    for case in recorded["icon"].as_array().unwrap() {
+        let available = case["available"].as_bool().unwrap();
+        let client = client(available);
+        client
+            .store
+            .write(|ctx| settings::set(ctx.conn(), &AdvancedMode(true)))
+            .unwrap();
+        set_options(&client, &[(ALWAYS, case["always_show"].as_bool().unwrap())]);
+        if case["hidden"].as_bool().unwrap() {
+            if available {
+                choose_in_file_menu(&client.ui, hydrus_gui_model::system_tray::FILE_ENTRY);
+                assert!(client.bound.tray.hidden());
+            } else {
+                // (no tray: nothing offers to hide the client, so it is not)
+                assert!(
+                    !file_menu(&client.ui)
+                        .contains(&hydrus_gui_model::system_tray::FILE_ENTRY.to_owned())
+                );
+            }
+        }
+        assert_eq!(
+            client.host.shown(),
+            case["icon"].as_bool().unwrap(),
+            "{case}"
+        );
+        assert_eq!(
+            client.bound.tray.has_icon(),
+            case["icon_visible"].as_bool().unwrap(),
+            "{case}"
+        );
+    }
+
+    // the icon's tooltip names the client and what is paused
+    let client = client(true);
+    client
+        .store
+        .write(|ctx| {
+            let mut gui: GuiSettings = settings::get(ctx.conn())?;
+            gui.application_display_name = "my hydrus".into();
+            settings::set(ctx.conn(), &gui)
+        })
+        .unwrap();
+    set_options(&client, &[(ALWAYS, true)]);
+    // (paused through the main window's network > pause menu)
+    let network = i32::try_from(
+        super::menu_bar::titles(&client.ui)
+            .iter()
+            .position(|(label, _)| label == "network")
+            .unwrap(),
+    )
+    .unwrap();
+    let flip = |label: &str| {
+        client.ui.invoke_menu_title_pressed(network, 200.0, 22.0);
+        super::menu_bar::hover(&client.ui, "pause");
+        super::menu_bar::choose(&client.ui, label);
+    };
+    for case in recorded["menu"]["tooltips"].as_array().unwrap() {
+        let pauses: settings::Pauses = client.store.read(settings::get).unwrap();
+        if pauses.network_traffic != case["network_paused"].as_bool().unwrap() {
+            flip("all new network traffic");
+        }
+        if pauses.subscriptions != case["subscriptions_paused"].as_bool().unwrap() {
+            flip("subscriptions");
+        }
+        assert_eq!(
+            client.host.view().tooltip,
+            case["tooltip"].as_str().unwrap()
+        );
+    }
+}
+
+/// The recorded `file_menu` cases (Linux's: the Windows ones are deferred):
+/// File > minimise to system tray is offered with a tray in advanced mode,
+/// under the reference's words, and hides the client.
+// leaf: audit-options-file-tray
+#[test]
+fn file_minimise_to_system_tray_follows_the_reference_s_recorded_cases() {
+    let recorded = hydrus_testkit::fixture_json("system_tray.json");
+    let _windows = headless::init();
+    for case in recorded["file_menu"].as_array().unwrap() {
+        if case["windows"].as_bool().unwrap() != cfg!(windows) {
+            continue;
+        }
+        let client = client(case["available"].as_bool().unwrap());
+        let advanced = case["advanced_mode"].as_bool().unwrap();
+        client
+            .store
+            .write(move |ctx| settings::set(ctx.conn(), &AdvancedMode(advanced)))
+            .unwrap();
+        let entry = case["menu_item_text"].as_str().unwrap();
+        let offered = file_menu(&client.ui).contains(&entry.to_owned());
+        assert_eq!(
+            offered,
+            case["menu_item_visible"].as_bool().unwrap(),
+            "{case}"
+        );
+        if offered {
+            choose_in_file_menu(&client.ui, entry);
+            pump(500);
+        }
+        assert_eq!(
+            client.bound.tray.hidden(),
+            case["hid_by_action"].as_bool().unwrap(),
+            "{case}"
+        );
+        assert_eq!(client.ui.window().is_visible(), !client.bound.tray.hidden());
+        if client.bound.tray.hidden() {
+            assert!(!client.host.view().ui_shown, "the icon offers to show it");
+            client.bound.tray.flip_show_hide();
+            assert!(client.ui.window().is_visible());
+        }
+    }
 }

@@ -1,0 +1,191 @@
+{
+  "options": {
+    "confirm_non_empty_downloader_page_close": true,
+    "close_page_focus_goes": 1,
+    "urls_paused": true,
+    "simple_paused": true
+  },
+  "urls": [
+    "https://site.example/post/1",
+    "https://site.example/post/2",
+    "https://site.example/post/3",
+    "https://site.example/post/4"
+  ],
+  "simple_urls": [
+    "https://site.example/file/1.jpg",
+    "https://site.example/file/2.jpg"
+  ],
+  "steps": [
+    {
+      "state": {
+        "tabs": [
+          "a",
+          "url import",
+          "simple downloader",
+          "c"
+        ],
+        "current": "a"
+      }
+    },
+    {
+      "do": [
+        "middle",
+        "url import",
+        false
+      ],
+      "asked": [
+        "Close \"url import\"?\n\nThis is a urls import page holding 4 import objects."
+      ],
+      "state": {
+        "tabs": [
+          "a",
+          "url import",
+          "simple downloader",
+          "c"
+        ],
+        "current": "a"
+      }
+    },
+    {
+      "do": [
+        "play",
+        "url import"
+      ],
+      "asked": [],
+      "state": {
+        "tabs": [
+          "a",
+          "url import",
+          "simple downloader",
+          "c"
+        ],
+        "current": "a"
+      }
+    },
+    {
+      "do": [
+        "select",
+        "url import"
+      ],
+      "asked": [],
+      "state": {
+        "tabs": [
+          "a",
+          "url import",
+          "simple downloader",
+          "c"
+        ],
+        "current": "url import"
+      }
+    },
+    {
+      "do": [
+        "ctrl_w",
+        false
+      ],
+      "asked": [
+        "Close \"url import\"?\n\nThis page is still importing."
+      ],
+      "state": {
+        "tabs": [
+          "a",
+          "url import",
+          "simple downloader",
+          "c"
+        ],
+        "current": "url import"
+      }
+    },
+    {
+      "do": [
+        "ctrl_w",
+        true
+      ],
+      "asked": [
+        "Close \"url import\"?\n\nThis page is still importing."
+      ],
+      "state": {
+        "tabs": [
+          "a",
+          "simple downloader",
+          "c"
+        ],
+        "current": "simple downloader"
+      }
+    },
+    {
+      "do": [
+        "select",
+        "simple downloader"
+      ],
+      "asked": [],
+      "state": {
+        "tabs": [
+          "a",
+          "simple downloader",
+          "c"
+        ],
+        "current": "simple downloader"
+      }
+    },
+    {
+      "do": [
+        "ctrl_w",
+        false
+      ],
+      "asked": [
+        "Close \"simple downloader\"?\n\nThis is a simple urls import page holding 2 import objects."
+      ],
+      "state": {
+        "tabs": [
+          "a",
+          "simple downloader",
+          "c"
+        ],
+        "current": "simple downloader"
+      }
+    },
+    {
+      "do": [
+        "middle",
+        "simple downloader",
+        true
+      ],
+      "asked": [
+        "Close \"simple downloader\"?\n\nThis is a simple urls import page holding 2 import objects."
+      ],
+      "state": {
+        "tabs": [
+          "a",
+          "c"
+        ],
+        "current": "c"
+      }
+    },
+    {
+      "do": [
+        "middle",
+        "a",
+        true
+      ],
+      "asked": [],
+      "state": {
+        "tabs": [
+          "c"
+        ],
+        "current": "c"
+      }
+    },
+    {
+      "do": [
+        "ctrl_w",
+        true
+      ],
+      "asked": [],
+      "state": {
+        "tabs": [],
+        "current": null
+      }
+    }
+  ]
+}

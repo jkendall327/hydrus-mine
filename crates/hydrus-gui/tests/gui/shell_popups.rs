@@ -14,6 +14,9 @@ use hydrus_store::Store;
 use hydrus_store::import::import_legacy;
 use hydrus_store::popups::{self, Job};
 
+use crate::common::widgets;
+use slint::platform::PointerEventButton;
+
 fn store() -> ([tempfile::TempDir; 2], Arc<Store>) {
     let legacy = hydrus_testkit::legacy_fixture("basic");
     let native = tempfile::tempdir().unwrap();
@@ -184,32 +187,58 @@ fn copy_traceback_puts_version_system_and_the_whole_job_on_the_clipboard() {
 // leaf: audit-options-popups-dismiss
 #[test]
 fn dismiss_all_keeps_active_jobs_and_a_done_one_dismisses_alone() {
+    // replayed against the reference's (`oracle/fixtures/popup_dismiss.json`,
+    // from `oracle/record_popup_dismiss.py`): each card right-clicked, then
+    // "dismiss all" clicked, the cards and summary compared after each
+    let recorded = hydrus_testkit::fixture_json("popup_dismiss.json");
     let (_dirs, store) = store();
-    let active = Job::new(true, true, 0.0);
+    let mut working = Job::new(true, true, 0.0);
+    working.status_text_1 = Some("working".into());
     let mut done = Job::text("done", 0.0);
     done.finish();
-    let mut other = Job::text("also done", 0.0);
-    other.finish();
-    add(&store, &active);
-    add(&store, &done);
-    add(&store, &other);
+    let mut also = Job::text("also done", 0.0);
+    also.finish();
+    let jobs = [working, done, also];
+    for job in &jobs {
+        add(&store, job);
+    }
     let (ui, _bound) = window(&store);
-    assert_eq!(ui.get_popup_summary(), "3 messages");
-    // dismissing the active one does nothing
-    ui.invoke_popup_dismiss(0);
-    assert_eq!(ui.get_popups().row_count(), 3);
-    assert!(!stored(&store, active.key).unwrap().dismissed);
-    // a done one goes, and only it
-    ui.invoke_popup_dismiss(1);
-    assert_eq!(ui.get_popups().row_count(), 2);
-    assert!(stored(&store, done.key).is_none());
-    assert!(stored(&store, other.key).is_some());
-    // dismiss all: those done go, the active job stays
-    ui.invoke_popups_dismiss_all();
-    assert_eq!(ui.get_popups().row_count(), 1);
-    assert!(stored(&store, active.key).is_some());
-    assert!(stored(&store, other.key).is_none());
-    assert_eq!(ui.get_popup_summary(), "1 message");
+    let win = ui.window();
+    widgets::lay_out(win, 1200.0, 800.0);
+    let state = || {
+        let rows = ui.get_popups();
+        let cards: Vec<serde_json::Value> = (0..rows.row_count())
+            .map(|i| rows.row_data(i).unwrap())
+            .map(|row| {
+                let text = row.text_1.to_string();
+                let job = jobs
+                    .iter()
+                    .find(|j| j.status_text_1.as_deref() == Some(text.as_str()))
+                    .and_then(|j| stored(&store, j.key))
+                    .expect("a shown card's job is stored");
+                serde_json::json!({ "text": text, "done": job.done, "dismissed": job.dismissed })
+            })
+            .collect();
+        serde_json::json!({ "cards": cards, "summary": ui.get_popup_summary().as_str() })
+    };
+    let steps = recorded["steps"].as_array().unwrap();
+    assert_eq!(state(), steps[0]["state"], "start");
+    for step in &steps[1..] {
+        let action = step["do"].as_array().unwrap();
+        match action[0].as_str().unwrap() {
+            // a card right-clicked (`EventDismiss`), on its text
+            "right_click" => {
+                let at = widgets::position(win, action[1].as_str().unwrap(), 0);
+                widgets::click_at(win, at, PointerEventButton::Right);
+            }
+            _ => widgets::click(win, "dismiss all"),
+        }
+        assert_eq!(state(), step["state"], "{}", step["do"]);
+    }
+    // (those dismissed are gone from the store, the working one kept)
+    assert!(stored(&store, jobs[1].key).is_none());
+    assert!(stored(&store, jobs[2].key).is_none());
+    assert!(stored(&store, jobs[0].key).is_some());
 }
 
 // leaf: audit-options-popups-files

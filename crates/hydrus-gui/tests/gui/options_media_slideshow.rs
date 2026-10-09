@@ -182,6 +182,15 @@ fn viewer_moves_on(
     moved.expect("the slideshow moves on")
 }
 
+/// The idle report mode and the debug sink are process-wide, and a viewer
+/// running for seconds has its window's idle checks report to whatever sink
+/// is set: the timing tests take turns with the debug-menu tests.
+fn exclusive() -> std::sync::MutexGuard<'static, ()> {
+    crate::debug_menu_actions::ONE_AT_A_TIME
+        .lock()
+        .unwrap_or_else(std::sync::PoisonError::into_inner)
+}
+
 /// The patience of a run that waits on mpv's loop (as the playback tests').
 const LOOP_PATIENCE: std::time::Duration = std::time::Duration::from_secs(90);
 const QUICK: std::time::Duration = std::time::Duration::from_secs(10);
@@ -252,6 +261,7 @@ fn timed_threshold(
     if mpv::skip_without_libmpv() {
         return;
     }
+    let _one = exclusive();
     let (client, index, duration) = client_with_animation();
     keep(&client, preset);
     let held = viewer_moves_on(&client, index, period, 300, LOOP_PATIENCE).since_start;
@@ -331,6 +341,7 @@ fn a_long_file_holds_a_slideshow_past_its_period_by_the_allowed_delay() {
     if mpv::skip_without_libmpv() {
         return;
     }
+    let _one = exclusive();
     // a 0.3 second slideshow moves on at 0.3; with a delay of 200% the
     // animation, which is longer, plays out first
     let (client, index, duration) = client_with_animation();
@@ -360,6 +371,7 @@ fn a_slideshow_holds_an_animation_until_it_has_played_once_when_the_option_says(
     if mpv::skip_without_libmpv() {
         return;
     }
+    let _one = exclusive();
     // a 0.1 second slideshow moves off the half-second animation at once; with
     // the option on it waits for the animation to play through (mpv comes
     // round to the end late, so that run is given a long patience)
@@ -377,8 +389,9 @@ fn a_slideshow_holds_an_animation_until_it_has_played_once_when_the_option_says(
     options.hide().unwrap();
     let held = viewer_moves_on(&client, index, 0.1, 120, LOOP_PATIENCE);
     assert!(
-        held.since_shown >= duration,
-        "with the option on: {} after the file was shown (the animation lasts {duration})",
+        held.since_shown >= duration - 0.1,
+        "with the option on: {} after the file was shown (the animation lasts {duration}; the \
+         moment taken as shown can come a little after mpv starts the clip)",
         held.since_shown
     );
     assert!(
