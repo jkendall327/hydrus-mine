@@ -2168,6 +2168,18 @@ dependency expansion, PNG export and mixed import. Native codec/model/window
 replays cover saved script-list consumers, concurrent domain changes, stale
 script lists and retired callbacks; these new assertions await hosted CI.
 
+Domain metadata (a domain's shareable custom headers and bandwidth rules, type 71)
+travels in the same packages. The export window's "add headers/bandwidth rules"
+button asks "Enter domain." and lists, for that domain and each parent down to
+its registrable domain, the ones that have approved headers or rules of their own;
+a domain with nothing to share says "No headers/bandwidth rules found!". Choosing a
+downloader also packages the headers and rules of its example URLs' domains. The
+review shows each package's headers and rules in detail (the first eight when
+there are more). Import keeps only the headers and rules the client lacks (same
+names and values count as the same), replaces the domain's headers with the shared
+approved ones and sets its rules. `record_domain_metadata_packages.py` drives the
+real chooser, domain prompt, PNG export and import, and the window replays it.
+
 Tab right-click offers the reference's four move-page destinations and six
 sibling sorts (file count, total size and name, both ways). Actions target the
 clicked notebook row and preserve its selected leaf, including nested notebooks.

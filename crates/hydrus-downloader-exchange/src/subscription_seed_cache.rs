@@ -17,6 +17,11 @@ fn note(value: &Value, version: u32) -> Result<String> {
             Value::Number(value) if value.is_i64() || value.is_u64() => {
                 return Ok(value.to_string());
             }
+            Value::Number(value) if value.as_f64().is_some() => {
+                let mut out = String::new();
+                hydrus_core::pyjson::write_python_float(value.as_f64().unwrap_or_default(), &mut out);
+                return Ok(out);
+            }
             _ => {
                 return Err(Error::Unsupported(
                     "Historical cache note needs an unsupported Python string conversion.".into(),
@@ -69,13 +74,10 @@ fn cache(value: &Value) -> Result<Value> {
         if seed_type == 1 {
             text = UrlClasses::default().normalise(&text, true).unwrap_or(text);
         }
-        // Native queues have one entry per type/data identity. A later cache
-        // can retain duplicates; reject instead of silently dropping its history.
+        // A cache holds one seed per type/data identity; the reference drops
+        // later repeats (keeping the first) when it first indexes the cache.
         if !native_texts.insert((seed_type, text.clone())) {
-            return Err(Error::Unsupported(
-                "Historical file cache has duplicate identities that native queues cannot retain."
-                    .into(),
-            ));
+            continue;
         }
         let source = if object.version <= 5 {
             Value::Null

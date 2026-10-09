@@ -571,3 +571,196 @@ pub(crate) fn set_additional_tags(owner: &ImportOptionsWindow, service: i32, tag
     }
     child.invoke_apply();
 }
+
+fn presentation(store: &Store, queue: i64) -> hydrus_core::import_options::PresentationOptions {
+    store
+        .read(move |c| queues::queue(c, queue))
+        .unwrap()
+        .unwrap()
+        .options
+        .presentation
+        .expect("custom presentation")
+}
+
+/// Open the highlighted search's import options editor, as the page shows it.
+fn shown_editor(ui: &MainWindow, bound: &hydrus_gui::Bound) -> ImportOptionsWindow {
+    ui.invoke_shown_import_options();
+    bound
+        .folders
+        .import_options
+        .borrow()
+        .as_ref()
+        .expect("the editor opens")
+        .clone_strong()
+}
+
+/// Press "show files" > "default presented files (...)" on the first row.
+fn show_default_files(ui: &MainWindow) {
+    ui.invoke_importer_list_menu(0, 20.0, 20.0);
+    let pane = |ui: &MainWindow, at: usize| -> Vec<String> {
+        let lines = ui.get_menu_panes().row_data(at).unwrap().lines;
+        lines.iter().map(|l| l.label.to_string()).collect()
+    };
+    let choose = |ui: &MainWindow, pane_at: usize, starts: &str| {
+        let line = pane(ui, pane_at)
+            .iter()
+            .position(|l| l.starts_with(starts))
+            .unwrap_or_else(|| panic!("{starts} in {:?}", pane(ui, pane_at)));
+        let (p, l) = (i32::try_from(pane_at).unwrap(), i32::try_from(line).unwrap());
+        ui.invoke_menu_line_hovered(p, l, 300.0, 100.0, 10.0);
+        ui.invoke_menu_line_clicked(p, l, 300.0, 100.0, 10.0);
+    };
+    choose(ui, 0, "show files");
+    choose(ui, 1, "default presented files");
+}
+
+// leaf: audit-network-options-present
+// leaf: audit-shared-location-deleted
+#[test]
+fn the_presentation_editors_choices_filter_the_files_show_files_presents() {
+    use hydrus_core::import_options::PresentationStatus;
+    use hydrus_store::queues::{FileSeedMeta, NewFileSeed, SeedStatus, SeedType};
+    let _windows = headless::init();
+    let (_dirs, store) = crate::subscriptions::store();
+    set_advanced(&store, true);
+    crate::importer_list_menu::with_downloader(&store);
+    let services = store.snapshot().services.clone();
+    let find = |name: &str| {
+        services
+            .iter()
+            .find(|s| s.name == name)
+            .unwrap_or_else(|| panic!("service {name}"))
+            .id
+    };
+    let (mine, art) = (find("my files"), find("art"));
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+    ui.invoke_new_page();
+    ui.invoke_chooser_pressed(4);
+    ui.invoke_chooser_pressed(6);
+    ui.invoke_gallery_queries("blue".into());
+    let queue = bound.current.borrow().borrow().gallery().unwrap().queries[0].queue;
+    // four imported files: the first two are in my files (the second was
+    // already there), the third was deleted from art, the last is nowhere
+    let hashes: Vec<hydrus_core::Sha256> = (1..=4)
+        .map(|n| hydrus_core::Sha256::from_slice(&[0xB0 + n; 32]).unwrap())
+        .collect();
+    let ids = {
+        let hashes = hashes.clone();
+        store
+            .write(move |ctx| {
+                let conn = ctx.conn();
+                let ids: Vec<hydrus_core::HashId> = hashes
+                    .iter()
+                    .map(|h| hydrus_store::master::intern_hash(conn, h))
+                    .collect::<Result<_, _>>()?;
+                for id in &ids[..2] {
+                    conn.execute(
+                        "INSERT INTO file_domain_current (service_id, hash_id, added_ms) VALUES (?, ?, 0)",
+                        rusqlite::params![mine, id],
+                    )?;
+                }
+                conn.execute(
+                    "INSERT INTO file_domain_deleted (service_id, hash_id, deleted_ms, original_added_ms) VALUES (?, ?, 0, 0)",
+                    rusqlite::params![art, ids[2]],
+                )?;
+                let seeds: Vec<NewFileSeed> = (1..=4)
+                    .map(|n| {
+                        let mut meta = FileSeedMeta::default();
+                        meta.set_hash("sha256", hashes[n - 1].to_hex());
+                        let url = format!("https://booru.example/post/{n}");
+                        NewFileSeed {
+                            seed_type: SeedType::Url,
+                            data: url.clone(),
+                            data_for_comparison: url,
+                            source_time: None,
+                            referral_url: None,
+                            meta,
+                        }
+                    })
+                    .collect();
+                queues::add_file_seeds(conn, queue, &seeds, false, 0)?;
+                for (seed, n) in queues::file_seeds(conn, queue)?.iter_mut().zip(1..) {
+                    seed.status = if n == 2 {
+                        SeedStatus::SuccessfulButRedundant
+                    } else {
+                        SeedStatus::SuccessfulAndNew
+                    };
+                    queues::update_file_seed(conn, seed)?;
+                }
+                Ok(ids)
+            })
+            .unwrap()
+    };
+    let shown = |bound: &hydrus_gui::Bound| bound.current.borrow().borrow().files().clone();
+    let status_at = |editor: &ImportOptionsWindow, text: &str| {
+        i32::try_from(
+            texts(&editor.get_status_choices())
+                .iter()
+                .position(|t| t == text)
+                .unwrap(),
+        )
+        .unwrap()
+    };
+
+    // new files in my files: the redundant one is not new
+    let editor = shown_editor(&ui, &bound);
+    custom_page(&editor, "presentation");
+    editor.set_status_index(status_at(&editor, "new files"));
+    editor.invoke_changed();
+    pick(&editor, "presentation", "my files");
+    editor.invoke_apply();
+    let saved = presentation(&store, queue);
+    assert_eq!(saved.status, PresentationStatus::NewOnly);
+    show_default_files(&ui);
+    assert_eq!(shown(&bound), [ids[0]]);
+
+    // all files in my files: both of its files
+    let editor = shown_editor(&ui, &bound);
+    custom_page(&editor, "presentation");
+    editor.set_status_index(status_at(&editor, "all files"));
+    editor.invoke_changed();
+    editor.invoke_apply();
+    show_default_files(&ui);
+    assert_eq!(shown(&bound), [ids[0], ids[1]]);
+
+    // my files with files deleted from art: the deleted one joins them
+    let editor = shown_editor(&ui, &bound);
+    custom_page(&editor, "presentation");
+    pick(&editor, "presentation", "multiple/deleted locations");
+    let list = locations_window::last_opened().expect("the list opens");
+    let tick = |list: &hydrus_gui::LocationsWindow, label: &str, on: bool| {
+        let at = list
+            .get_ticks()
+            .iter()
+            .position(|t| t.label == label)
+            .unwrap_or_else(|| panic!("no {label} box"));
+        list.invoke_toggled(i32::try_from(at).unwrap(), on);
+    };
+    tick(&list, "deleted from art", true);
+    list.invoke_apply();
+    editor.invoke_apply();
+    let saved = presentation(&store, queue);
+    assert_eq!(saved.deleted_location.len(), 1);
+    show_default_files(&ui);
+    assert_eq!(shown(&bound), [ids[0], ids[1], ids[2]]);
+
+    // only the deleted domain
+    let editor = shown_editor(&ui, &bound);
+    custom_page(&editor, "presentation");
+    pick(&editor, "presentation", "multiple/deleted locations");
+    let list = locations_window::last_opened().expect("the list opens");
+    tick(&list, "my files", false);
+    list.invoke_apply();
+    editor.invoke_apply();
+    show_default_files(&ui);
+    assert_eq!(shown(&bound), [ids[2]]);
+
+    // all known files does not filter by location
+    let editor = shown_editor(&ui, &bound);
+    custom_page(&editor, "presentation");
+    pick(&editor, "presentation", "all known files");
+    editor.invoke_apply();
+    show_default_files(&ui);
+    assert_eq!(shown(&bound), ids);
+}

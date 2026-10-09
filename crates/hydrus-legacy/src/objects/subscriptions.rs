@@ -325,14 +325,88 @@ pub fn gallery_seed(object: &SerialisableObject) -> DecodeResult<LegacyGallerySe
     })
 }
 
-/// Decode a file seed cache (8, v8; older caches predate the current
-/// subscription system and import folders).
+/// Decode a file seed cache (8). Versions 1-7 (a list of `[text, info
+/// dictionary]` rows, from before file seeds were objects) are upgraded as
+/// `FileSeedCache._UpdateSerialisableInfo` does.
 pub fn file_seed_cache(cache: &SerialisableObject) -> DecodeResult<Vec<LegacyFileSeed>> {
-    expect(cache, FILE_SEED_CACHE, &[8])?;
+    expect(cache, FILE_SEED_CACHE, &[1, 2, 3, 4, 5, 6, 7, 8])?;
+    if cache.version < 8 {
+        return old_file_seed_cache(cache);
+    }
     nested_list(FILE_SEED_CACHE, &cache.info(), "file seed cache")?
         .iter()
         .map(file_seed)
         .collect()
+}
+
+fn old_file_seed_cache(cache: &SerialisableObject) -> DecodeResult<Vec<LegacyFileSeed>> {
+    let k = FILE_SEED_CACHE;
+    let version = cache.version;
+    let info = cache.info();
+    let mut seen = std::collections::HashSet::new();
+    let mut identities = std::collections::HashSet::new();
+    let mut out = Vec::new();
+    for row in list(k, &info, "file seed cache")? {
+        let [text, fields] = tuple::<2>(k, row, "file seed row")?;
+        let mut text = string(k, text, "file seed text")?;
+        // (version 4 dropped repeats, keeping the first)
+        if version <= 4 && !seen.insert(text.clone()) {
+            continue;
+        }
+        let PyJson::Object(fields) = fields else {
+            return Err(malformed(k, "file seed info is not a dictionary"));
+        };
+        let field = |name: &str| {
+            fields
+                .iter()
+                .find(|(key, _)| key == name)
+                .map(|(_, value)| value)
+                .ok_or_else(|| malformed(k, format!("file seed info has no {name}")))
+        };
+        if version <= 6 {
+            text = text.replace("//media.tumblr.com", "//data.tumblr.com");
+        }
+        let seed_type = i64::from(text.starts_with("http"));
+        // (a cache cannot hold a seed twice: the reference drops repeats,
+        // keeping the first, the first time it indexes them)
+        if !identities.insert((seed_type, text.clone())) {
+            continue;
+        }
+        let note = field("note")?;
+        // (version 1 notes could be anything; the upgrade `str()`ed them)
+        let note = match note {
+            PyJson::Str(note) => note.clone(),
+            other if version == 1 => other
+                .py_str()
+                .ok_or_else(|| malformed(k, "file seed note cannot be converted to text"))?,
+            _ => return Err(malformed(k, "file seed note is not text")),
+        };
+        let source_time = if version <= 5 {
+            None
+        } else {
+            opt_int(k, field("source_timestamp")?, "source time")?
+        };
+        out.push(LegacyFileSeed {
+            seed_type,
+            data_for_comparison: (seed_type == 0).then(|| text.clone()),
+            data: text,
+            created: int(k, field("added_timestamp")?, "created")?,
+            modified: int(k, field("last_modified_timestamp")?, "modified")?,
+            source_time,
+            status: int(k, field("status")?, "status")?,
+            note,
+            referral_url: None,
+            request_headers: Vec::new(),
+            external_filterable_tags: Vec::new(),
+            external_additional_tags: Vec::new(),
+            primary_urls: Vec::new(),
+            source_urls: Vec::new(),
+            tags: Vec::new(),
+            notes: Vec::new(),
+            hashes: Vec::new(),
+        });
+    }
+    Ok(out)
 }
 
 /// Decode a gallery log (67).
