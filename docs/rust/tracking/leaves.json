@@ -985,9 +985,9 @@
    ],
    "recheck": {
     "date": "2026-10-09",
-    "class": "weak",
-    "by": "issue 88 session",
-    "note": "Skip and back are proved against the reference's real canvas (tests/gui/duplicate_filter_canvas.rs, six scenarios of oracle/fixtures/duplicate_filter_canvas.json), but the leaf also names group-mode continuation (the skipped-group question when another group would load), which no recording covers, so the tag is not claimed. Record the filter in group mode to finish it."
+    "class": "sound",
+    "by": "recheck bin E session (claude/recheck-e-dupes)",
+    "note": "crates/hydrus-gui/tests/gui/duplicate_filter_canvas.rs the_filter_window_goes_through_the_references_batches_as_it_does replays the 17 scenarios of oracle/fixtures/duplicate_filter_canvas.json (record_duplicate_filter_canvas.py: the reference's real CanvasFilterDuplicates) in the real filter window: skip and back as before, and now group mode (the sidebar chooser set to group mode, the reference's group pick pinned to the lowest pair): a whole group is worked through, the next group loads after its commit, and a group skipped whole asks 'You appear to have skipped this whole group. Do you want to load up a different one?' answered no (carries on in the same group) and yes (a new group), each step's index text, pair shown, questions and buttons compared."
    }
   },
   {
@@ -1061,10 +1061,10 @@
     "Native filtering sidebar has no show-random-group or quick bulk pair-status controls. Launching the pair canvas and opening a duplicate page from media context are separate implemented paths."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Window test drives 'show some random', the three set buttons, the 'Are you sure?' question (cancel and yes) and the next group; button labels are literals matching the Python source, question texts are literals in the model test and the window test compares them with the native question(); no recording. Tracker note is stale: the sidebar does have these controls. Tests: crates/hydrus-gui/tests/gui/duplicates_lane_page.rs:1201 show_random_group_and_quick_buttons_set_the_shown_files_and_show_another_group; crates/hydrus-gui-model/tests/model/duplicates_filtering.rs edits_and_texts_follow_the_reference"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "recheck bin E session (claude/recheck-e-dupes)",
+    "note": "duplicates_quick_processing.rs show_random_group_and_the_set_buttons_ask_and_act_as_the_reference_does replays the recorded sequence in the real sidebar on the reference's own database: show some random potential duplicates (pick pinned to the lowest group), the set buttons with the 'Are you sure? ... (15 pairs)' question, answered no (nothing changes) and yes (shown files, then the next random group), false positive, same quality; the button labels, question titles and wording, files shown after each step and the king/alternates/false positives/potentials/members of every file concerned match the reference. question_opened() now reports only a question still open."
    }
   },
   {
@@ -1080,10 +1080,10 @@
     "Native filter can consume stored group/sort configuration, but filtering tab provides no reference pair sort/direction or mixed/group mode chooser."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Window test checks the sort labels, directions and mixed/group choices (matching the Python source), that each sets the page, and that group mode reaches the launched filter. Labels and direction lists are typed, directions come from native directions(); no recording. Tracker note is stale: the tab does have the sort/direction/group chooser. Tests: crates/hydrus-gui/tests/gui/duplicates_lane_page.rs:190 the_filtering_tab_chooses_pair_sort_direction_and_group_mode"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "recheck bin E session (claude/recheck-e-dupes)",
+    "note": "crates/hydrus-gui/tests/gui/duplicates_quick_processing.rs the_filtering_tab_chooses_pair_sort_direction_and_group_mode_as_the_reference_does replays oracle/fixtures/duplicates_quick_processing.json (record_duplicates_quick_processing.py: the reference's real PotentialDuplicatesSortWidget and filtering panel group chooser): the four sort labels and order, each sort's direction choices (largest/smallest first, most/least similar first, none for random), the value each sets, and the mixed pairs/group mode choices and the page variable they set, driven through the real sidebar. That group mode reaches the launched filter is proved by the group-mode scenarios in duplicate_filter_canvas.rs."
    }
   },
   {
@@ -7474,10 +7474,10 @@
     "Assessment covers this editable control and shared Apply/Cancel, not every control on its containing reference page or every background consumer."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Control (label, box, noneable 1..50, 'no, always confirm', default 1) is compared with options_dialog.json and driven through Apply. The consumer (DuplicateFilter model: batch of 5 asks for confirmation when None, commits itself when auto_commit=5) is checked against typed expectations from ClientGUICanvasDuplicates.py:1061, with no recording of the filter's batching, and it drives the model rather than the filter window. Tests: crates/hydrus-gui/tests/gui/options_gui_duplicates.rs:296 batch_size_and_auto_commit_set_how_the_filter_batches_and_confirms; crates/hydrus-gui-model/tests/model/options_dialog.rs:540 the_options_pages_are_the_references"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "recheck bin E session (claude/recheck-e-dupes)",
+    "note": "duplicate_filter_canvas.rs replays recorded scenarios with the option set through the real Options window: batch of 6 with auto-commit 6 commits without asking, 5 asks 'commit 6 decisions and continue?', a by-hand skip with 6 always asks, auto-commit 1 on small batches, none always asks. The filter window's questions, buttons, commits and index text are the real canvas's. Row control checks (noneable 1..50, 'no, always confirm', default 1) stay in options_gui_duplicates.rs."
    }
   },
   {
@@ -7494,10 +7494,10 @@
     "Assessment covers this editable control and shared Apply/Cancel, not every control on its containing reference page or every background consumer."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Control (int 5..1024, default 100, box) compared with the Qt recording and driven to Apply; consumer check is that a filter with max_batch_size 5 shows '1/5 - no decisions yet' and ends after 5 decisions, a typed expectation with no recording of batch loading, driving the model not the window. Tests: crates/hydrus-gui/tests/gui/options_gui_duplicates.rs:296 batch_size_and_auto_commit_set_how_the_filter_batches_and_confirms; crates/hydrus-gui-model/tests/model/options_dialog.rs:540 the_options_pages_are_the_references"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "recheck bin E session (claude/recheck-e-dupes)",
+    "note": "duplicate_filter_canvas.rs replays recorded scenarios with the option set through the real Options window (5..1024): batches of 5 (the smallest) and 6 end after that many pairs and ask to commit then load the next, and 1024 (more than all the pairs) gives one batch of every pair. Index text 'File One - n/5 - ...' and pairs shown match the reference's canvas."
    }
   },
   {
@@ -20468,10 +20468,10 @@
     "Native options registry has no editable 'Num pairs to prefetch in Duplicate Filter:' control in this page/box path."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "phase 2 session (blind agent)",
-    "note": "duplicate_filter.rs:524 the_filter_prefetches_the_pair_shown_and_the_edited_number_of_pairs_after_it edits the real Options row (max 25), applies it, launches the real filter and waits for the real image cache to warm exactly the expected files. The expected set comes from the native DuplicateFilter::upcoming(n), restating ClientGUICanvasDuplicates.py, not a recording."
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "recheck bin E session (claude/recheck-e-dupes)",
+    "note": "duplicate_filter_canvas.rs replays recorded scenarios with the option set through the real Options window (0..25) and the real image cache: at the start and after every step the cache holds at least the images of the files the reference's canvas prefetches (_GetPrefetchNeighboursInPreferenceOrder recorded: the other file of the pair shown plus both files of the next N pairs), for N = 0, 1, 3 and 25 (more than the batch), and at the start nothing beyond those and the file shown. The recording exposed that a file appearing in several upcoming pairs stalled the warm worker; the candidates are now deduplicated."
    }
   },
   {

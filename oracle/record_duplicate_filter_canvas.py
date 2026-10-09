@@ -94,6 +94,54 @@ SCENARIOS = [
     ( 'files_merged_or_deleted_skip_their_other_pairs', AUTO_COMMIT_OFF, [
         { 'cycle' : [ 'better_delete_other' ], 'answers' : [ 'commit and continue' ], 'stop_after_answers' : True },
     ] ),
+    # the auto-commit size against the decisions in a batch of six: exactly
+    # six commits without asking, five asks, and a skip by hand always asks
+    ( 'auto_commit_at_exactly_the_batch_size', { 'duplicate_filter_auto_commit_batch_size' : 6, 'duplicate_filter_max_batch_size' : 6 }, [
+        'alternates', 'alternates', 'alternates', 'alternates', 'alternates', 'alternates', 'alternates',
+    ] ),
+    ( 'auto_commit_one_under_the_batch_size_asks', { 'duplicate_filter_auto_commit_batch_size' : 5, 'duplicate_filter_max_batch_size' : 6 }, [
+        'alternates', 'alternates', 'alternates', 'alternates', 'alternates',
+        { 'do' : 'alternates', 'answers' : [ 'commit and continue' ] },
+    ] ),
+    ( 'a_skip_by_hand_stops_auto_commit', { 'duplicate_filter_auto_commit_batch_size' : 6, 'duplicate_filter_max_batch_size' : 6 }, [
+        'alternates', 'alternates', 'alternates', 'alternates', 'alternates',
+        { 'do' : 'skip', 'answers' : [ 'commit and continue' ] },
+    ] ),
+    # the batch size: the smallest Options allows, and more than there are
+    ( 'batches_of_five', { 'duplicate_filter_auto_commit_batch_size' : None, 'duplicate_filter_max_batch_size' : 5 }, [
+        { 'cycle' : [ 'alternates', 'false_positive' ], 'answers' : [ 'commit and continue' ], 'stop_after_answers' : True },
+        'same',
+    ] ),
+    ( 'a_batch_bigger_than_all_the_pairs', { 'duplicate_filter_auto_commit_batch_size' : None, 'duplicate_filter_max_batch_size' : 1024 }, [
+        'alternates',
+        'skip',
+        { 'do' : 'close', 'answers' : [ 'forget' ] },
+    ] ),
+    # what the canvas prefetches: the other file of the pair shown, and the
+    # files of the next N pairs of the batch
+    ( 'prefetch_no_pairs', { 'duplicate_filter_auto_commit_batch_size' : None, 'duplicate_filter_max_batch_size' : 6, 'duplicate_filter_prefetch_num_pairs' : 0 }, [
+        'alternates', 'switch', 'skip',
+    ] ),
+    ( 'prefetch_one_pair', { 'duplicate_filter_auto_commit_batch_size' : None, 'duplicate_filter_max_batch_size' : 6, 'duplicate_filter_prefetch_num_pairs' : 1 }, [
+        'alternates', 'switch', 'skip', 'back',
+    ] ),
+    ( 'prefetch_three_pairs', { 'duplicate_filter_auto_commit_batch_size' : None, 'duplicate_filter_max_batch_size' : 6, 'duplicate_filter_prefetch_num_pairs' : 3 }, [
+        'alternates', 'skip', 'alternates', 'alternates', 'alternates',
+    ] ),
+    ( 'prefetch_more_than_the_batch', { 'duplicate_filter_auto_commit_batch_size' : None, 'duplicate_filter_max_batch_size' : 6, 'duplicate_filter_prefetch_num_pairs' : 25 }, [
+        'alternates', 'alternates',
+    ] ),
+    # group mode: one group at a time; done with one, the next comes; a group
+    # skipped whole asks whether to load another
+    ( 'group_mode_goes_on_to_the_next_group', { 'duplicate_filter_auto_commit_batch_size' : None, 'group_mode' : True }, [
+        { 'cycle' : [ 'alternates' ], 'answers' : [ 'commit and continue' ], 'stop_after_answers' : True },
+        { 'cycle' : [ 'false_positive' ], 'answers' : [ 'commit and continue' ], 'stop_after_answers' : True },
+    ] ),
+    ( 'group_mode_a_group_skipped_whole', { 'duplicate_filter_auto_commit_batch_size' : None, 'group_mode' : True }, [
+        { 'cycle' : [ 'skip' ], 'answers' : [ 'no' ], 'stop_after_answers' : True },
+        { 'cycle' : [ 'skip' ], 'answers' : [ 'yes' ], 'stop_after_answers' : True },
+        'alternates',
+    ] ),
 ]
 
 MAX_STEPS = 60
@@ -176,6 +224,38 @@ def record( session ):
 
     ClientPotentialDuplicatesPairFactory.PotentialDuplicatePairFactoryDBMixed.DoSearchWork = do_search_work
 
+    # Group mode picks a random pair of a first look at the pairs to start its
+    # group from: pinned to the lowest (hydrus-rs's tests pin theirs the same
+    # way), so the first group is the one with the lowest file in it.
+    class Lowest( object ):
+
+        @staticmethod
+        def choice( seq ):
+
+            return min( seq )
+
+
+    ClientPotentialDuplicatesPairFactory.random = Lowest
+
+    original_group_search = ClientPotentialDuplicatesPairFactory.PotentialDuplicatePairFactoryDBGroupMode.DoSearchWork
+
+    def group_search_work( factory, *args ):
+
+        result = original_group_search( factory, *args )
+
+        fetched = factory._fetched_media_result_pairs_and_distances
+
+        if len( fetched ) > 0:
+
+            # (ties in the sort fall by the files' ids, as hydrus-rs breaks them)
+            rows = sorted( fetched.IterateRows(), key = lambda row: ( hash_ids[ row[ 0 ].GetHash() ], hash_ids[ row[ 1 ].GetHash() ] ) )
+
+            factory._fetched_media_result_pairs_and_distances = ClientPotentialDuplicatesSearchContext.PotentialDuplicateMediaResultPairsAndDistances( rows )
+
+        return result
+
+    ClientPotentialDuplicatesPairFactory.PotentialDuplicatePairFactoryDBGroupMode.DoSearchWork = group_search_work
+
     # (the space is searched in its order, so ties in the sort fall the same way each time)
     from hydrus.core import HydrusLists
 
@@ -185,6 +265,14 @@ def record( session ):
     answers = []
 
     def yes_no( win, message, **kwargs ):
+
+        if len( answers ) > 0 and answers[ 0 ] in ( 'yes', 'no' ):
+
+            wanted = answers.pop( 0 )
+
+            asked.append( { 'yes_no' : message, 'pressed' : wanted } )
+
+            return QW.QDialog.DialogCode.Accepted if wanted == 'yes' else QW.QDialog.DialogCode.Rejected
 
         asked.append( { 'yes_no' : message } )
 
@@ -282,7 +370,11 @@ def record( session ):
 
         for ( key, value ) in options.items():
 
-            if key == 'duplicate_filter_max_batch_size':
+            if key == 'group_mode':
+
+                continue
+
+            elif key in ( 'duplicate_filter_max_batch_size', 'duplicate_filter_prefetch_num_pairs' ):
 
                 new_options.SetInteger( key, value )
 
@@ -290,10 +382,18 @@ def record( session ):
 
                 new_options.SetNoneableInteger( key, value )
 
+        state[ 'prefetch' ] = 'duplicate_filter_prefetch_num_pairs' in options
+
         context = ClientPotentialDuplicatesSearchContext.PotentialDuplicatesSearchContext()
         context.SetMaxHammingDistance( 4 )
 
-        factory = ClientPotentialDuplicatesPairFactory.PotentialDuplicatePairFactoryDBMixed( context, ClientDuplicates.DUPE_PAIR_SORT_MAX_FILESIZE, False, new_options.GetInteger( 'duplicate_filter_max_batch_size' ) )
+        if options.get( 'group_mode' ):
+
+            factory = ClientPotentialDuplicatesPairFactory.PotentialDuplicatePairFactoryDBGroupMode( context, ClientDuplicates.DUPE_PAIR_SORT_MAX_FILESIZE, False )
+
+        else:
+
+            factory = ClientPotentialDuplicatesPairFactory.PotentialDuplicatePairFactoryDBMixed( context, ClientDuplicates.DUPE_PAIR_SORT_MAX_FILESIZE, False, new_options.GetInteger( 'duplicate_filter_max_batch_size' ) )
 
         frame = ClientGUICanvasFrame.CanvasFrame( gui )
         canvas = ClientGUICanvasDuplicates.CanvasFilterDuplicates( frame, factory )
@@ -326,6 +426,10 @@ def record( session ):
         if media is not None and len( canvas._media_list ) > 1:
 
             out[ 'other' ] = canvas._media_list.GetNext( media ).GetHash().hex()
+
+        if state.get( 'prefetch' ):
+
+            out[ 'prefetch' ] = [ m.GetHash().hex() for m in canvas._GetPrefetchNeighboursInPreferenceOrder() ]
 
         return out
 

@@ -32,24 +32,160 @@ fn answers_of(window: &hydrus_gui::DuplicateFilterWindow) -> Vec<String> {
     window.get_answers().iter().map(|a| a.to_string()).collect()
 }
 
+/// File > options, on `page`.
+fn options_page(o: &Opened, page: &str) -> hydrus_gui::OptionsWindow {
+    o.ui.invoke_menu_title_pressed(0, 20.0, 22.0);
+    let lines = o.ui.get_menu_panes().row_data(0).unwrap().lines;
+    let at = (0..lines.row_count())
+        .position(|i| lines.row_data(i).unwrap().label == "options\u{2026}")
+        .expect("file > options");
+    o.ui.invoke_menu_line_clicked(0, at as i32, 0.0, 0.0, 0.0);
+    let options = o.bound.options.borrow().as_ref().unwrap().clone_strong();
+    let at = (0..options.get_pages().row_count())
+        .position(|i| options.get_pages().row_data(i).unwrap().text == page)
+        .unwrap_or_else(|| panic!("page {page}"));
+    options.invoke_page_chosen(at as i32);
+    options
+}
+
+fn option_row(options: &hydrus_gui::OptionsWindow, label: &str) -> (i32, hydrus_gui::OptionRow) {
+    let rows = options.get_rows();
+    (0..rows.row_count())
+        .map(|i| (i as i32, rows.row_data(i).unwrap()))
+        .find(|(_, r)| r.label == label)
+        .unwrap_or_else(|| panic!("{label:?}"))
+}
+
+/// The scenario's options, set in the Options window and applied: the
+/// duplicate filter's batch size and auto-commit size (duplicates), and the
+/// pairs to prefetch (speed and memory).
+fn set_options(o: &Opened, options: &Value) {
+    let window = options_page(o, "duplicates");
+    let (row, shown) =
+        option_row(&window, "Max size of duplicate filter pair batches (in mixed mode):");
+    assert_eq!((shown.kind, shown.minimum, shown.maximum), (2, 5, 1024));
+    let size = options["duplicate_filter_max_batch_size"]
+        .as_i64()
+        .unwrap_or(100);
+    window.invoke_number_edited(row, size as i32);
+    let (row, shown) = option_row(
+        &window,
+        "Auto-commit completed batches of this size or smaller:",
+    );
+    assert_eq!((shown.kind, shown.minimum, shown.maximum), (3, 1, 50));
+    let auto = options
+        .get("duplicate_filter_auto_commit_batch_size")
+        .and_then(Value::as_i64);
+    if let Some(auto) = auto {
+        window.invoke_number_edited(row, auto as i32);
+    }
+    window.invoke_none_toggled(row, auto.is_none());
+    window.invoke_apply();
+    let saved: DuplicateFilterSettings = o.store.read(hydrus_store::settings::get).unwrap();
+    assert_eq!(
+        (saved.max_batch_size, saved.auto_commit_batch_size),
+        (size as u32, auto.map(|n| n as u32))
+    );
+    if let Some(pairs) = options
+        .get("duplicate_filter_prefetch_num_pairs")
+        .and_then(Value::as_i64)
+    {
+        let window = options_page(o, "speed and memory");
+        let (row, shown) = option_row(&window, "Num pairs to prefetch in Duplicate Filter:");
+        assert_eq!((shown.minimum, shown.maximum), (0, 25));
+        window.invoke_number_edited(row, pairs as i32);
+        // (and room in the cache for all of it: what the reference asked to
+        // prefetch is what is compared)
+        let (row, _) = option_row(
+            &window,
+            "Maximum % of cache that will be prefetched per media viewer:",
+        );
+        window.invoke_number_edited(row, 50);
+        let (row, _) = option_row(&window, "Memory reserved for image cache:");
+        // 4 GiB
+        window.invoke_number_edited(row, 4);
+        window.invoke_choice_chosen(row, 3);
+        window.invoke_apply();
+        assert_eq!(
+            o.store
+                .read(hydrus_store::image_cache::load)
+                .unwrap()
+                .bytes,
+            4 << 30
+        );
+    }
+}
+
+/// The images among `files` (what the image cache warms).
+fn images(o: &Opened, files: &[HashId]) -> BTreeSet<HashId> {
+    let loaded = o
+        .store
+        .read(|conn| hydrus_store::media::load_basic(conn, files))
+        .unwrap();
+    loaded
+        .iter()
+        .filter(|f| {
+            f.info
+                .as_ref()
+                .is_some_and(|i| i.mime.general_class() == Some(hydrus_core::Mime::GeneralImage))
+        })
+        .map(|f| f.hash_id)
+        .collect()
+}
+
+/// The image cache warms what the reference's canvas prefetched (its
+/// `_GetPrefetchNeighboursInPreferenceOrder`: the other file of the pair
+/// shown and both files of the next pairs); at the start, nothing more than
+/// that and the file shown.
+fn prefetched(o: &Opened, prefetch: &Value, shown: &str, start: bool, what: &str) {
+    let wanted: Vec<HashId> = prefetch
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|h| o.ids[h.as_str().unwrap()])
+        .collect();
+    let wanted = images(o, &wanted);
+    let cache = o.bound.image_cache.clone();
+    let deadline = std::time::Instant::now() + std::time::Duration::from_secs(60);
+    loop {
+        slint::platform::update_timers_and_animations();
+        let warmed: BTreeSet<HashId> = cache.keys().into_iter().collect();
+        if warmed.is_superset(&wanted) {
+            break;
+        }
+        assert!(
+            std::time::Instant::now() < deadline,
+            "{what}: warmed {warmed:?}, wanted {wanted:?}"
+        );
+        std::thread::sleep(std::time::Duration::from_millis(20));
+    }
+    if start {
+        for _ in 0..10 {
+            slint::platform::update_timers_and_animations();
+            std::thread::sleep(std::time::Duration::from_millis(30));
+        }
+        let mut allowed = wanted.clone();
+        allowed.extend(images(o, &[o.ids[shown]]));
+        let warmed: BTreeSet<HashId> = cache.keys().into_iter().collect();
+        assert!(
+            warmed.is_subset(&allowed),
+            "{what}: warmed more than the reference prefetched: {:?}",
+            warmed.difference(&allowed).collect::<Vec<_>>()
+        );
+    }
+}
+
 /// Replay one recorded scenario; the questions the native window asked.
 fn replay(scenario: &Value) {
     let o = opened();
     let name = scenario["name"].as_str().unwrap();
     let options = &scenario["options"];
-    let settings = DuplicateFilterSettings {
-        max_batch_size: options["duplicate_filter_max_batch_size"]
-            .as_u64()
-            .unwrap_or(100) as u32,
-        auto_commit_batch_size: options
-            .get("duplicate_filter_auto_commit_batch_size")
-            .and_then(Value::as_u64)
-            .map(|n| n as u32),
-        ..DuplicateFilterSettings::default()
-    };
-    o.store
-        .write(move |ctx| hydrus_store::settings::set(ctx.conn(), &settings))
-        .unwrap();
+    // the options through File > options, as a user sets them
+    set_options(&o, options);
+    if options.get("group_mode") == Some(&Value::Bool(true)) {
+        // the filtering tab's "mixed pairs"/"group mode" chooser
+        o.ui.invoke_duplicates_filtering_action("group".into(), 1);
+    }
     o.ui.invoke_launch_filter();
     let window = o
         .bound
@@ -85,6 +221,9 @@ fn replay(scenario: &Value) {
         })
         .collect();
     assert_eq!(batch.len() as u64, start["num_pairs"].as_u64().unwrap());
+    if let Some(prefetch) = start.get("prefetch") {
+        prefetched(&o, prefetch, start["shown"].as_str().unwrap(), true, name);
+    }
 
     let my_files = o
         .store
@@ -233,6 +372,9 @@ fn replay(scenario: &Value) {
                 ]
             });
             assert_eq!(pair_now(&o), shown, "{what}: pair");
+            if let Some(prefetch) = after.get("prefetch") {
+                prefetched(&o, prefetch, after["shown"].as_str().unwrap(), false, &what);
+            }
         }
     }
 
@@ -313,12 +455,18 @@ fn replay(scenario: &Value) {
 }
 
 // leaf: audit-media-filter-decisions, audit-media-filter-commit
+// leaf: audit-media-filter-back
+// leaf: audit-options-duplicates-duplicate-filter-batches-auto-commit-completed-batches-of-this-size-or-smaller
+// leaf: audit-options-duplicates-duplicate-filter-batches-max-size-of-duplicate-filter-pair-batches-in-mixed-mode
+// leaf: audit-options-speed-and-memory-image-prefetch-num-pairs-to-prefetch-in-duplicate-filter
 #[test]
 fn the_filter_window_goes_through_the_references_batches_as_it_does() {
     let _windows = headless::init();
+    // (the reference's random group pick was pinned to the lowest pair)
+    hydrus_store::duplicates::pin_random_group_choice();
     let recorded = hydrus_testkit::fixture_json("duplicate_filter_canvas.json");
     let scenarios = recorded["scenarios"].as_array().unwrap();
-    assert!(scenarios.len() >= 6);
+    assert_eq!(scenarios.len(), 17);
     for scenario in scenarios {
         replay(scenario);
     }
