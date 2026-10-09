@@ -186,3 +186,228 @@ fn pages_menu_entries_open_the_pages_the_reference_opened_where_it_opened_them()
     }
     assert_eq!(made, 18);
 }
+
+fn chooser_labels(ui: &MainWindow) -> Vec<String> {
+    let labels = ui.get_chooser_labels();
+    (0..labels.row_count())
+        .map(|i| labels.row_data(i).unwrap().to_string())
+        .collect()
+}
+
+fn choose_from_pages_menu(ui: &MainWindow, label: &str) {
+    let titles = ui.get_menu_titles();
+    let at = (0..titles.row_count())
+        .position(|i| titles.row_data(i).unwrap().label == "pages")
+        .unwrap();
+    ui.invoke_menu_title_pressed(i32::try_from(at).unwrap(), 80.0, 22.0);
+    let (p, i) = line(ui, label);
+    ui.invoke_menu_line_clicked(p, i, 0.0, 0.0, 0.0);
+}
+
+// leaf: audit-options-menu-menu-pages-new-page
+#[test]
+fn new_page_from_the_pages_menu_asks_the_chooser_the_reference_asked() {
+    use hydrus_core::ServiceKey;
+    use hydrus_store::settings::{self, PageChooserSettings};
+
+    let _windows = headless::init();
+    let recorded = hydrus_testkit::fixture_json("page_chooser_options.json");
+    let legacy = hydrus_testkit::legacy_fixture("basic");
+    let native = tempfile::tempdir().unwrap();
+    import_legacy(
+        legacy.path(),
+        &native.path().join(hydrus_store::store::DB_FILE_NAME),
+    )
+    .unwrap();
+    let store = Store::open(native.path()).unwrap();
+    // (the recording's one local file domain is called "domain 01", and the
+    // client has no art domain, or other, to offer)
+    let lone = recorded["steps"][0]["labels"].clone();
+    assert_eq!(lone[7], "domain 01");
+    let my_files = ServiceKey::new(hydrus_core::service::builtin_keys::MY_FILES.to_vec());
+    store
+        .write_and_refresh(move |ctx| {
+            ctx.conn()
+                .execute("DELETE FROM services WHERE name = 'art'", [])?;
+            ctx.conn().execute(
+                "UPDATE services SET name = 'domain 01' WHERE service_key = ?",
+                [my_files],
+            )?;
+            Ok(())
+        })
+        .unwrap();
+    let session = Session {
+        name: sessions::LAST_SESSION.into(),
+        pages: vec![search("start")],
+    };
+    store
+        .write(move |ctx| sessions::save(ctx.conn(), &session, 1))
+        .unwrap();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+    let mut seen = 0;
+    for step in recorded["steps"].as_array().unwrap() {
+        if step["count"] != 1 {
+            continue;
+        }
+        let flags: Vec<bool> = step["flags"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|f| f.as_bool().unwrap())
+            .collect();
+        store
+            .write(move |ctx| {
+                settings::set(
+                    ctx.conn(),
+                    &PageChooserSettings {
+                        show_combined: flags[0],
+                        combined_at_top: flags[1],
+                        show_storage: flags[2],
+                        storage_at_top: flags[3],
+                    },
+                )
+            })
+            .unwrap();
+        let want: Vec<String> = step["labels"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|l| l.as_str().unwrap().to_owned())
+            .collect();
+        // cancelled: the chooser's choices, and no page
+        let before = bound.pages.borrow().session().clone();
+        choose_from_pages_menu(&ui, "new page\u{2026}");
+        ui.invoke_chooser_pressed(8);
+        assert_eq!(chooser_labels(&ui), want, "{}", step["flags"]);
+        ui.invoke_chooser_cancel();
+        assert_eq!(ui.get_chooser_labels().row_count(), 0);
+        assert_eq!(bound.pages.borrow().session(), &before);
+        // each choice opens a search of exactly the domain it names
+        for choice in step["choices"].as_array().unwrap() {
+            choose_from_pages_menu(&ui, "new page\u{2026}");
+            ui.invoke_chooser_pressed(8);
+            ui.invoke_chooser_pressed(i32::try_from(choice["button"].as_u64().unwrap()).unwrap());
+            assert_eq!(ui.get_chooser_labels().row_count(), 0);
+            let page = bound.pages.borrow_mut().current();
+            let page = page.borrow();
+            let current: Vec<String> = page
+                .location()
+                .current()
+                .iter()
+                .map(ServiceKey::to_hex)
+                .collect();
+            let theirs: Vec<String> = choice["current"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .map(|k| k.as_str().unwrap().to_owned())
+                .collect();
+            assert_eq!(current, theirs, "{choice}");
+            assert!(page.location().deleted().is_empty());
+            seen += 1;
+        }
+    }
+    assert_eq!(seen, 40);
+}
+
+// leaf: audit-options-menu-menu-pages-history-page
+// leaf: audit-options-menu-menu-pages-clear-history
+#[test]
+fn the_history_menu_follows_the_pages_shown_closed_and_cleared_as_the_reference_s_does() {
+    use hydrus_store::settings::{self, PageNavigationSettings};
+
+    let _windows = headless::init();
+    let recorded = hydrus_testkit::fixture_json("page_history_menu.json");
+    let names: Vec<String> = recorded["names"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|n| n.as_str().unwrap().to_owned())
+        .collect();
+    let legacy = hydrus_testkit::legacy_fixture("basic");
+    let native = tempfile::tempdir().unwrap();
+    import_legacy(
+        legacy.path(),
+        &native.path().join(hydrus_store::store::DB_FILE_NAME),
+    )
+    .unwrap();
+    let store = Store::open(native.path()).unwrap();
+    let session = Session {
+        name: sessions::LAST_SESSION.into(),
+        pages: names.iter().map(|n| search(n)).collect(),
+    };
+    store
+        .write(move |ctx| sessions::save(ctx.conn(), &session, 1))
+        .unwrap();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+    // (the page up from the start has not "just changed")
+    bound.pages.borrow_mut().clear_history();
+    let tab_of = |name: &str| -> i32 {
+        let at = bound.pages.borrow().tabs()[0]
+            .names
+            .iter()
+            .position(|n| n == name)
+            .unwrap_or_else(|| panic!("{name} open"));
+        i32::try_from(at).unwrap()
+    };
+    let history_menu = |ui: &MainWindow| -> Vec<String> {
+        let titles = ui.get_menu_titles();
+        let at = (0..titles.row_count())
+            .position(|i| titles.row_data(i).unwrap().label == "pages")
+            .unwrap();
+        ui.invoke_menu_title_pressed(i32::try_from(at).unwrap(), 80.0, 22.0);
+        hover(ui, "history");
+        let lines = panes(ui).last().unwrap().clone();
+        ui.invoke_menu_dismissed();
+        lines
+            .into_iter()
+            .map(|l| if l.is_empty() { "---".to_owned() } else { l })
+            .collect()
+    };
+    for step in recorded["steps"].as_array().unwrap() {
+        let what = step["step"][0].as_str().unwrap();
+        match what {
+            "show" => ui.invoke_tab_chosen(0, tab_of(step["step"][1].as_str().unwrap())),
+            "close" => {
+                ui.invoke_tab_chosen(0, tab_of(step["step"][1].as_str().unwrap()));
+                ui.invoke_close_page();
+            }
+            "max" => {
+                let entries = u16::try_from(step["step"][1].as_u64().unwrap()).unwrap();
+                store
+                    .write(move |ctx| {
+                        settings::set(
+                            ctx.conn(),
+                            &PageNavigationSettings {
+                                history_entries: entries,
+                                ..settings::get::<PageNavigationSettings>(ctx.conn())?
+                            },
+                        )
+                    })
+                    .unwrap();
+            }
+            _ => {
+                let titles = ui.get_menu_titles();
+                let at = (0..titles.row_count())
+                    .position(|i| titles.row_data(i).unwrap().label == "pages")
+                    .unwrap();
+                ui.invoke_menu_title_pressed(i32::try_from(at).unwrap(), 80.0, 22.0);
+                hover(&ui, "history");
+                let (p, i) = line(&ui, "Clear History");
+                ui.invoke_menu_line_clicked(p, i, 0.0, 0.0, 0.0);
+            }
+        }
+        let theirs: Vec<String> = step["entries"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|e| {
+                e.as_str()
+                    .map_or_else(|| e["text"].as_str().unwrap().to_owned(), str::to_owned)
+            })
+            .collect();
+        assert_eq!(history_menu(&ui), theirs, "after {}", step["step"]);
+    }
+}

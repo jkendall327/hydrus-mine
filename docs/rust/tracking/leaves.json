@@ -15389,10 +15389,10 @@
     "History maximum is fixed at twenty; latest row lacks Qt bold styling. This is tab history, not absent predicate undo history."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Real menu: Clear History empties the history and a later page starts a new one. Expectations typed from source; the recording (main_menu.json) holds only a one-entry structure. Stale note: the maximum is not fixed at twenty, main_menu.rs reads page_navigation.history_entries (page_nav_history_max_entries); the limit is untested here. Tests: crates/hydrus-gui/tests/gui/search_pages_menu.rs:142 the_history_menu_shows_pages_newest_first_and_clear_history_empties_it; model main_menu.rs:293"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "gui/pages_menu_new_pages.rs the_history_menu_follows_the_pages_shown_closed_and_cleared_as_the_reference_s_does shows pages, closes pages, changes the number of entries and clicks Clear History in the real window, and compares the pages > history menu's entries after every step with page_history_menu.json, recorded from the reference's own history menu (oracle/record_page_history_menu.py): newest first, a revisited page moves to the top, closed pages leave, the limit cuts the list, and after Clear History only that entry is left. The first entry is bold in the reference; the native menu has no bold, so that is not compared (DIFFERENCES.md)."
    }
   },
   {
@@ -15428,10 +15428,10 @@
     "History maximum is fixed at twenty; latest row lacks Qt bold styling. This is tab history, not absent predicate undo history."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Real menu: newest-first '1: one','2: three','3: two' numbering and choosing shows the page. Order and numbering typed from the source (recording has one entry only); max entries and bold are untested. Stale note about fixed twenty (see clear-history). Tests: crates/hydrus-gui/tests/gui/search_pages_menu.rs:142"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "gui/pages_menu_new_pages.rs the_history_menu_follows_the_pages_shown_closed_and_cleared_as_the_reference_s_does shows pages, closes pages, changes the number of entries and clicks Clear History in the real window, and compares the pages > history menu's entries after every step with page_history_menu.json, recorded from the reference's own history menu (oracle/record_page_history_menu.py): newest first, a revisited page moves to the top, closed pages leave, the limit cuts the list, and after Clear History only that entry is left. The first entry is bold in the reference; the native menu has no bold, so that is not compared (DIFFERENCES.md)."
    }
   },
   {
@@ -15488,10 +15488,10 @@
     "Native chooser accepts both top-row digits and keypad digits; Qt uses keypad only."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "The tagged test only opens the chooser from the menu and cancels it. The chooser contents and a choice becoming Pages::new_page are tested elsewhere (page_chooser_options.rs with fixtures/page_chooser_options.json, notebook_new_page.rs with tab_new_page.json) but under other leaves; digit-key handling is not tested. Tests: crates/hydrus-gui/tests/gui/search_pages_menu.rs:220 new_page_asks_the_chooser_and_refresh_searches_a_paused_page_again"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "gui/pages_menu_new_pages.rs new_page_from_the_pages_menu_asks_the_chooser_the_reference_asked chooses pages > new page… in the real window and, for each of the recording's sixteen chooser settings with one local file domain (page_chooser_options.json, recorded from the reference's chooser), compares the chooser's choices with the recorded ones, cancels (no page is made), and presses each recorded choice to check the page it opens searches exactly the recorded domain. Keys (digits) inside the chooser are not driven from the menu."
    }
   },
   {

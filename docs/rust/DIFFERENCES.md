@@ -509,9 +509,8 @@ search.
 
 
 The search-undo entries (additions, removals, clear search history) act as the
-reference's do but show no status-bar tooltips. After "Clear History" the
-pages > history menu shows only that entry, without the reference's leading
-separator.
+reference's do but show no status-bar tooltips. The pages > history menu's
+first entry is bold in the reference; the native menu does not bold it.
 
 A page sorted by import time puts files with equal import times in a different order from the reference (which keeps the order it was given them). The thumbnail rearrange recording (`thumbnail_rearrange.json`) therefore sorts its page by file size, which no two files of the fixture share.
 
