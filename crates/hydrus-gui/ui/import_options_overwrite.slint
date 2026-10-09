@@ -1,3 +1,4 @@
+import { Btn } from "btn.slint";
 import { Button, CheckBox, ScrollView } from "std-widgets.slint";
 import { Theme } from "theme.slint";
 
@@ -33,9 +34,9 @@ export component ImportOptionsOverwriteWindow inherits Window {
             padding: 10px;
             HorizontalLayout {
                 spacing: 6px;
-                Button { text: "merge-paste"; clicked => { root.preset(0); } }
-                if !root.global-options: Button { text: "fill-in-gaps-paste"; clicked => { root.preset(1); } }
-                if !root.global-options: Button { text: "replace-paste"; clicked => { root.preset(2); } }
+                Btn { text: "merge-paste"; clicked => { root.preset(0); } }
+                if !root.global-options: Btn { text: "fill-in-gaps-paste"; clicked => { root.preset(1); } }
+                if !root.global-options: Btn { text: "replace-paste"; clicked => { root.preset(2); } }
             }
             if root.notice != "": Text { text: root.notice; wrap: word-wrap; color: Theme.text; }
             HorizontalLayout {
@@ -99,8 +100,8 @@ export component ImportOptionsOverwriteWindow inherits Window {
             HorizontalLayout {
                 alignment: end;
                 spacing: 6px;
-                Button { text: "apply"; clicked => { root.apply(); } }
-                Button { text: "cancel"; clicked => { root.cancel(); } }
+                Btn { text: "apply"; clicked => { root.apply(); } }
+                Btn { text: "cancel"; clicked => { root.cancel(); } }
             }
         }
     }

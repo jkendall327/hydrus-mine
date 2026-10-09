@@ -1,3 +1,4 @@
+import { Btn } from "btn.slint";
 // A compact equivalent of RegexButton's clipboard menus.
 import { Button, ComboBox, ScrollView } from "std-widgets.slint";
 import { Theme } from "theme.slint";
@@ -10,7 +11,7 @@ export component RegexTools inherits Rectangle {
     callback selected(int, int);
     width: 42px;
     height: 28px;
-    Button { text: ".*"; enabled: root.enabled; clicked => { menu.show(); } }
+    Btn { text: ".*"; enabled: root.enabled; clicked => { menu.show(); } }
     menu := PopupWindow {
         x: 0px;
         y: root.height;
@@ -32,7 +33,7 @@ export component RegexTools inherits Rectangle {
                     vertical-stretch: 1;
                     VerticalLayout {
                         spacing: 2px;
-                        for label[i] in root.category == 0 ? root.components : root.groups: Button {
+                        for label[i] in root.category == 0 ? root.components : root.groups: Btn {
                             text: label;
                             clicked => { root.selected(root.category + 1, i); menu.close(); }
                         }

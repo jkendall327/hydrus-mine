@@ -1,3 +1,4 @@
+import { Btn } from "btn.slint";
 // The "manage ratings" dialog for some files (the reference's
 // `DialogManageRatings`, opened by a thumbnail's or the viewer's "manage >
 // ratings"; its workings are hydrus-gui-model's `ratings_editor`, bound by
@@ -108,12 +109,12 @@ export component ManageRatingsWindow inherits Window {
                 vertical-alignment: center;
                 color: Theme.text;
             }
-            Button {
+            Btn {
                 text: "copy";
                 enabled: !root.asking;
                 clicked => { root.copy(); }
             }
-            Button {
+            Btn {
                 text: "paste";
                 enabled: !root.asking;
                 clicked => { root.paste(); }
@@ -130,12 +131,12 @@ export component ManageRatingsWindow inherits Window {
         HorizontalLayout {
             alignment: end;
             spacing: 6px;
-            Button {
+            Btn {
                 text: "apply";
                 enabled: !root.asking;
                 clicked => { root.apply(); }
             }
-            Button {
+            Btn {
                 text: "cancel";
                 clicked => { root.cancel(); }
             }

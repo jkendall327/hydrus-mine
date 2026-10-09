@@ -1,3 +1,4 @@
+import { Btn } from "btn.slint";
 // The archive/delete filter's window: a page's files one at a time, at
 // their default zoom. As the reference's defaults have it, a left click or
 // F7 keeps the file, a right click or delete deletes it, a middle click or
@@ -200,19 +201,19 @@ export component ArchiveDeleteWindow inherits Window {
                 padding:12px;spacing:8px;
                 if root.forget-question: Text {text:"Quit filtering now and forget your work?";color:Theme.text;wrap:word-wrap;horizontal-alignment:center;}
                 if root.forget-question: HorizontalLayout {
-                    Button {text:"yes";clicked=>{root.forget-answered(true);}}
-                    Button {text:"no";clicked=>{root.forget-answered(false);}}
+                    Btn {text:"yes";clicked=>{root.forget-answered(true);}}
+                    Btn {text:"no";clicked=>{root.forget-answered(false);}}
                 }
                 if !root.forget-question: VerticalLayout {
                     spacing:8px;
                     if root.finish-header!="": Text {text:root.finish-header;color:Theme.text;wrap:word-wrap;horizontal-alignment:center;}
                     for label[index] in root.commit-labels: VerticalLayout {
                         Text {text:label;color:Theme.text;wrap:word-wrap;horizontal-alignment:center;}
-                        Button {text:"commit";enabled:root.commit-ready;clicked=>{root.commit-choice(index);}}
+                        Btn {text:"commit";enabled:root.commit-ready;clicked=>{root.commit-choice(index);}}
                     }
-                    Button {text:"forget";clicked=>{root.forget();}}
+                    Btn {text:"forget";clicked=>{root.forget();}}
                     Text {text:"-or-";color:Theme.text;horizontal-alignment:center;}
-                    Button {text:"back to filtering";clicked=>{root.resume();}}
+                    Btn {text:"back to filtering";clicked=>{root.resume();}}
                 }
             }
         }

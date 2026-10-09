@@ -1,3 +1,4 @@
+import { Btn } from "btn.slint";
 // Raw Options grouping queue, including the two sentinel namespace entries.
 import { Button } from "std-widgets.slint";
 import { ListTable, TableRow } from "list_table.slint";
@@ -21,15 +22,15 @@ export component TagNamespaceOrder {
             }
             VerticalLayout {
                 spacing: 4px;
-                Button { text: "↑"; enabled: root.selected && !root.child-open; clicked => { root.action("up"); } }
-                Button { text: "X"; enabled: root.selected && !root.child-open; clicked => { root.action("delete"); } }
-                Button { text: "↓"; enabled: root.selected && !root.child-open; clicked => { root.action("down"); } }
+                Btn { text: "↑"; enabled: root.selected && !root.child-open; clicked => { root.action("up"); } }
+                Btn { text: "X"; enabled: root.selected && !root.child-open; clicked => { root.action("delete"); } }
+                Btn { text: "↓"; enabled: root.selected && !root.child-open; clicked => { root.action("down"); } }
             }
         }
         HorizontalLayout {
             spacing: 4px;
-            Button { text: "add"; enabled: !root.child-open; clicked => { root.action("add"); } }
-            Button { text: "edit"; enabled: root.selected && !root.child-open; clicked => { root.action("edit"); } }
+            Btn { text: "add"; enabled: !root.child-open; clicked => { root.action("add"); } }
+            Btn { text: "edit"; enabled: root.selected && !root.child-open; clicked => { root.action("edit"); } }
         }
     }
 }

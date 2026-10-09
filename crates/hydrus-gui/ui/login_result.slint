@@ -1,3 +1,4 @@
+import { Btn } from "btn.slint";
 import { Button, LineEdit, TextEdit } from "std-widgets.slint";
 import { Theme } from "theme.slint";
 export component LoginTestResultWindow inherits Window {
@@ -21,12 +22,12 @@ export component LoginTestResultWindow inherits Window {
         TextEdit { text: root.body; read-only: true; vertical-stretch: 1; }
         Text { text: "data:"; color: Theme.text; }
         TextEdit { text: root.data; read-only: true; vertical-stretch: 2; }
-        HorizontalLayout { alignment: end; Button { text: root.copied ? "Copied!" : "copy data"; clicked => { root.action("copy"); } } }
+        HorizontalLayout { alignment: end; Btn { text: root.copied ? "Copied!" : "copy data"; clicked => { root.action("copy"); } } }
         Text { text: "new temp vars:"; color: Theme.text; }
         TextEdit { text: root.variables; read-only: true; vertical-stretch: 1; }
         Text { text: "new cookies:"; color: Theme.text; }
         TextEdit { text: root.cookies; read-only: true; vertical-stretch: 1; }
         Text { text: "result: " + root.result; color: Theme.text; wrap: word-wrap; }
-        HorizontalLayout { alignment: end; Button { text: "close"; clicked => { root.action("close"); } } }
+        HorizontalLayout { alignment: end; Btn { text: "close"; clicked => { root.action("close"); } } }
     }
 }

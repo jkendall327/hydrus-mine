@@ -1,3 +1,4 @@
+import { Btn } from "btn.slint";
 import { Button, LineEdit } from "std-widgets.slint";
 import { ListTable, TableRow } from "list_table.slint";
 import { Theme } from "theme.slint";
@@ -40,17 +41,17 @@ export component RegexFavouritesWindow inherits Window {
         }
         HorizontalLayout {
             spacing: 6px;
-            Button { text: "add"; enabled: !root.editing && !root.deleting; clicked => { root.action("add"); } }
-            Button { text: "edit"; enabled: root.one-selected && !root.editing && !root.deleting; clicked => { root.action("edit"); } }
-            Button { text: "delete"; enabled: root.any-selected && !root.editing && !root.deleting; clicked => { root.action("delete"); } }
-            Button { text: "copy phrase"; enabled: root.one-selected && !root.editing && !root.deleting; clicked => { root.action("copy"); } }
+            Btn { text: "add"; enabled: !root.editing && !root.deleting; clicked => { root.action("add"); } }
+            Btn { text: "edit"; enabled: root.one-selected && !root.editing && !root.deleting; clicked => { root.action("edit"); } }
+            Btn { text: "delete"; enabled: root.any-selected && !root.editing && !root.deleting; clicked => { root.action("delete"); } }
+            Btn { text: "copy phrase"; enabled: root.one-selected && !root.editing && !root.deleting; clicked => { root.action("copy"); } }
         }
         if root.editing: VerticalLayout {
             spacing: 6px;
             HorizontalLayout {
                 Text { text: "regex phrase: "; color: Theme.text; vertical-alignment: center; }
                 LineEdit { horizontal-stretch: 1; text <=> root.phrase; edited => { root.changed(); } }
-                Button { text: "favourites ▾"; clicked => { root.favourite-menu(self.absolute-position.x,self.absolute-position.y+self.height); } }
+                Btn { text: "favourites ▾"; clicked => { root.favourite-menu(self.absolute-position.x,self.absolute-position.y+self.height); } }
             }
             HorizontalLayout {
                 Text { text: "description: "; color: Theme.text; vertical-alignment: center; }
@@ -60,22 +61,22 @@ export component RegexFavouritesWindow inherits Window {
             HorizontalLayout {
                 alignment: end;
                 spacing: 6px;
-                Button { text: "save row"; clicked => { root.action("save-row"); } }
-                Button { text: "cancel row"; clicked => { root.action("cancel-row"); } }
+                Btn { text: "save row"; clicked => { root.action("save-row"); } }
+                Btn { text: "cancel row"; clicked => { root.action("cancel-row"); } }
             }
         }
         if root.deleting: HorizontalLayout {
             spacing: 6px;
             Text { text: "Remove all selected?"; color: Theme.text; vertical-alignment: center; }
-            Button { text: "yes"; clicked => { root.action("confirm-delete"); } }
-            Button { text: "no"; clicked => { root.action("cancel-delete"); } }
+            Btn { text: "yes"; clicked => { root.action("confirm-delete"); } }
+            Btn { text: "no"; clicked => { root.action("cancel-delete"); } }
         }
         if root.error != "": Text { text: root.error; color: Theme.error; wrap: word-wrap; }
         HorizontalLayout {
             alignment: end;
             spacing: 6px;
-            Button { text: "apply"; enabled: !root.editing && !root.deleting; clicked => { root.action("apply"); } }
-            Button { text: "cancel"; clicked => { root.action("cancel"); } }
+            Btn { text: "apply"; enabled: !root.editing && !root.deleting; clicked => { root.action("apply"); } }
+            Btn { text: "cancel"; clicked => { root.action("cancel"); } }
         }
     }
     if root.favourite-panes.length > 0: MenuPanes {

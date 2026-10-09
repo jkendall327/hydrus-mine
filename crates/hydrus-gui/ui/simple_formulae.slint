@@ -1,3 +1,4 @@
+import { Btn } from "btn.slint";
 import { Button, LineEdit } from "std-widgets.slint";
 import { Theme } from "theme.slint";
 import { ListTable, TableRow } from "list_table.slint";
@@ -21,23 +22,23 @@ export component SimpleFormulaeWindow inherits Window {
     VerticalLayout { padding: 10px; spacing: 6px;
         ListTable { vertical-stretch: 1; columns: [{title: "formula", width: 600px, stretch: true}]; rows: root.rows; row-clicked(r,c,s) => { if !root.naming && !root.deleting && !root.editing-formula { root.row-clicked(r,c,s); } } row-activated(r) => { if !root.naming && !root.deleting && !root.editing-formula { root.row-activated(r); } } }
         HorizontalLayout { spacing: 6px;
-            Button { text: "add"; enabled: !root.naming && !root.deleting && !root.editing-formula; clicked => { root.add(); } }
-            Button { text: "edit"; enabled: root.selected && !root.naming && !root.deleting && !root.editing-formula; clicked => { root.edit(); } }
-            Button { text: "delete"; enabled: root.selected && !root.naming && !root.deleting && !root.editing-formula; clicked => { root.delete(); } }
-            Button { text: "import"; enabled: !root.naming && !root.deleting && !root.editing-formula; clicked => { root.exchange(true); } }
-            Button { text: "export"; enabled: root.selected && !root.naming && !root.deleting && !root.editing-formula; clicked => { root.exchange(false); } }
-            Button { text: "add defaults"; enabled: !root.naming && !root.deleting && !root.editing-formula; clicked => { root.defaults(); } }
+            Btn { text: "add"; enabled: !root.naming && !root.deleting && !root.editing-formula; clicked => { root.add(); } }
+            Btn { text: "edit"; enabled: root.selected && !root.naming && !root.deleting && !root.editing-formula; clicked => { root.edit(); } }
+            Btn { text: "delete"; enabled: root.selected && !root.naming && !root.deleting && !root.editing-formula; clicked => { root.delete(); } }
+            Btn { text: "import"; enabled: !root.naming && !root.deleting && !root.editing-formula; clicked => { root.exchange(true); } }
+            Btn { text: "export"; enabled: root.selected && !root.naming && !root.deleting && !root.editing-formula; clicked => { root.exchange(false); } }
+            Btn { text: "add defaults"; enabled: !root.naming && !root.deleting && !root.editing-formula; clicked => { root.defaults(); } }
         }
         if root.naming: VerticalLayout {
             Text { text: "Edit name."; color: Theme.text; }
             LineEdit { text <=> root.name; accepted => { root.named(); } }
-            HorizontalLayout { Button { text: "continue"; clicked => { root.named(); } } Button { text: "cancel name"; clicked => { root.name-cancelled(); } } }
+            HorizontalLayout { Btn { text: "continue"; clicked => { root.named(); } } Btn { text: "cancel name"; clicked => { root.name-cancelled(); } } }
         }
         if root.deleting: Asking { title: "Are you sure?"; message: root.question; choices: ["yes", "no"]; chosen(i) => { root.chosen(i); } cancelled => { root.cancelled(); } }
         Text { text: root.error; color: Theme.text; wrap: word-wrap; }
         HorizontalLayout { alignment: end; spacing: 6px;
-            Button { text: "apply"; enabled: !root.naming && !root.deleting && !root.editing-formula; clicked => { root.apply(); } }
-            Button { text: "cancel"; clicked => { root.cancel(); } }
+            Btn { text: "apply"; enabled: !root.naming && !root.deleting && !root.editing-formula; clicked => { root.apply(); } }
+            Btn { text: "cancel"; clicked => { root.cancel(); } }
         }
     }
 }

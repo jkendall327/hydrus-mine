@@ -1,3 +1,4 @@
+import { Btn } from "btn.slint";
 // The duplicate filter's window: the file shown of a pair, and beside it
 // how it compares with the other (the reference's comparison statements)
 // and the decisions. As in the reference: a left click on the file says it
@@ -19,7 +20,7 @@ export struct Statement {
     score: int,
 }
 
-component Choice inherits Button {
+component Choice inherits Btn {
     width: 100%;
 }
 
@@ -319,7 +320,7 @@ export component DuplicateFilterWindow inherits Window {
                         text: root.question;
                         wrap: word-wrap;
                     }
-                    for answer[i] in root.answers: Button {
+                    for answer[i] in root.answers: Btn {
                         text: answer;
                         clicked => { root.answer(i); }
                     }

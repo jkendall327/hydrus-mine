@@ -1,3 +1,4 @@
+import { Btn } from "btn.slint";
 // The "multiple/deleted locations" list (the reference's
 // `EditMultipleLocationContextPanel`, in its "edit multiple location"
 // dialog), from a search page's file domain button: a tick box for each
@@ -48,11 +49,11 @@ export component LocationsWindow inherits Window {
             HorizontalLayout {
                 alignment: end;
                 spacing: 6px;
-                Button {
+                Btn {
                     text: "apply";
                     clicked => { root.apply(); }
                 }
-                Button {
+                Btn {
                     text: "cancel";
                     clicked => { root.cancel(); }
                 }

@@ -1,3 +1,4 @@
+import { Btn } from "btn.slint";
 // Database > locations (the reference's `MoveMediaFilesPanel`; its rows
 // and words are hydrus-gui-model's `database_locations`, bound by
 // `src/database_locations_window.rs`): the database's parts, the media
@@ -77,23 +78,23 @@ export component DatabaseLocationsWindow inherits Window {
                 }
                 HorizontalLayout {
                     spacing: 4px;
-                    Button { text: "add new location for files"; enabled: !root.busy; clicked => { root.action("add"); } }
-                    Button { text: "increase location weight"; enabled: !root.busy && root.buttons[0]; clicked => { root.action("increase"); } }
-                    Button { text: "decrease location weight"; enabled: !root.busy && root.buttons[1]; clicked => { root.action("decrease"); } }
-                    Button { text: "set max size"; enabled: !root.busy && root.buttons[2]; clicked => { root.action("max"); } }
-                    Button { text: "remove location"; enabled: !root.busy && root.buttons[3]; clicked => { root.action("remove"); } }
+                    Btn { text: "add new location for files"; enabled: !root.busy; clicked => { root.action("add"); } }
+                    Btn { text: "increase location weight"; enabled: !root.busy && root.buttons[0]; clicked => { root.action("increase"); } }
+                    Btn { text: "decrease location weight"; enabled: !root.busy && root.buttons[1]; clicked => { root.action("decrease"); } }
+                    Btn { text: "set max size"; enabled: !root.busy && root.buttons[2]; clicked => { root.action("max"); } }
+                    Btn { text: "remove location"; enabled: !root.busy && root.buttons[3]; clicked => { root.action("remove"); } }
                 }
                 HorizontalLayout {
                     spacing: 4px;
                     Text { text: "thumbnail location override"; vertical-alignment: center; color: Theme.text; }
                     Text { text: root.thumbnail-location; vertical-alignment: center; color: Theme.text; horizontal-stretch: 1; }
-                    Button { text: "set"; enabled: !root.busy; clicked => { root.action("set thumbnails"); } }
-                    Button { text: "clear"; enabled: !root.busy && root.can-clear-thumbnails; clicked => { root.action("clear thumbnails"); } }
+                    Btn { text: "set"; enabled: !root.busy; clicked => { root.action("set thumbnails"); } }
+                    Btn { text: "clear"; enabled: !root.busy && root.can-clear-thumbnails; clicked => { root.action("clear thumbnails"); } }
                 }
                 HorizontalLayout {
                     spacing: 4px;
                     Text { text: root.granularity; horizontal-alignment: right; vertical-alignment: center; color: Theme.text; horizontal-stretch: 1; }
-                    Button { text: "manage granularity"; enabled: !root.busy; clicked => { root.action("granularity"); } }
+                    Btn { text: "manage granularity"; enabled: !root.busy; clicked => { root.action("granularity"); } }
                 }
                 HorizontalLayout {
                     spacing: 4px;
@@ -104,13 +105,13 @@ export component DatabaseLocationsWindow inherits Window {
                         color: root.can-rebalance ? Theme.error : Theme.text;
                         horizontal-stretch: 1;
                     }
-                    Button { text: "move files now"; enabled: !root.busy && root.can-rebalance; clicked => { root.action("rebalance"); } }
+                    Btn { text: "move files now"; enabled: !root.busy && root.can-rebalance; clicked => { root.action("rebalance"); } }
                 }
             }
         }
         HorizontalLayout {
             alignment: end;
-            Button { text: "close"; clicked => { root.close-window(); } }
+            Btn { text: "close"; clicked => { root.close-window(); } }
         }
     }
 }
@@ -140,8 +141,8 @@ export component LocationMaxSizeWindow inherits Window {
         HorizontalLayout {
             alignment: end;
             spacing: 6px;
-            Button { text: "apply"; clicked => { root.apply(); } }
-            Button { text: "cancel"; clicked => { root.cancel(); } }
+            Btn { text: "apply"; clicked => { root.apply(); } }
+            Btn { text: "cancel"; clicked => { root.cancel(); } }
         }
     }
 }
@@ -175,8 +176,8 @@ export component GranularityWindow inherits Window {
                 Text { text: root.client-label; wrap: word-wrap; color: Theme.text; }
                 HorizontalLayout {
                     alignment: end;
-                    if root.granularity == 2: Button { text: "I AM READY TO GO FROM 2 TO 3"; enabled: !root.busy; clicked => { root.action("2to3"); } }
-                    if root.granularity == 3: Button { text: "I want to return from 3 back to 2"; enabled: !root.busy; clicked => { root.action("3to2"); } }
+                    if root.granularity == 2: Btn { text: "I AM READY TO GO FROM 2 TO 3"; enabled: !root.busy; clicked => { root.action("2to3"); } }
+                    if root.granularity == 3: Btn { text: "I want to return from 3 back to 2"; enabled: !root.busy; clicked => { root.action("3to2"); } }
                 }
             }
         }
@@ -191,8 +192,8 @@ export component GranularityWindow inherits Window {
                 HorizontalLayout {
                     alignment: end;
                     spacing: 4px;
-                    Button { text: "Migrate an offline folder from 2 to 3"; enabled: !root.busy; clicked => { root.action("folder 2to3"); } }
-                    Button { text: "Migrate an offline folder from 3 to 2"; enabled: !root.busy; clicked => { root.action("folder 3to2"); } }
+                    Btn { text: "Migrate an offline folder from 2 to 3"; enabled: !root.busy; clicked => { root.action("folder 2to3"); } }
+                    Btn { text: "Migrate an offline folder from 3 to 2"; enabled: !root.busy; clicked => { root.action("folder 3to2"); } }
                 }
             }
         }

@@ -1,3 +1,4 @@
+import { Btn } from "btn.slint";
 // Importers' boxes, as the reference's downloader pages show them: a
 // download in progress (its network job control), and an importer's
 // "imports" and "search" boxes (a URL page's, a gallery page's highlighted
@@ -38,7 +39,7 @@ export component NetworkErrorWindow inherits Window {
             vertical-stretch: 1;
             Text { text: root.error-text; wrap: word-wrap; color: Theme.text; }
         }
-        Button { text: "close"; clicked => { root.close-clicked(); } }
+        Btn { text: "close"; clicked => { root.close-clicked(); } }
     }
 }
 
@@ -110,7 +111,7 @@ export component DownloadControl inherits Rectangle {
                         activated => { root.action(7); }
                     }
                 }
-                Button {
+                Btn {
                     width: 30px;
                     text: "⚙";
                     clicked => { root.open-menu(); cog-menu.show({ x: 0px, y: self.height }); }
@@ -182,7 +183,7 @@ export component ImporterBoxes inherits VerticalLayout {
                     vertical-alignment: center;
                     horizontal-stretch: 1;
                 }
-                Button {
+                Btn {
                     text: "file log";
                     clicked => { root.file-log(); }
                 }
@@ -217,7 +218,7 @@ export component ImporterBoxes inherits VerticalLayout {
                     vertical-alignment: center;
                     horizontal-stretch: 1;
                 }
-                Button {
+                Btn {
                     text: "search log";
                     clicked => { root.search-log(); }
                 }
@@ -294,7 +295,7 @@ export component LocalImportBox inherits Rectangle {
                 vertical-alignment: center;
                 horizontal-stretch: 1;
             }
-            Button {
+            Btn {
                 text: "file log";
                 clicked => { root.file-log(); }
             }

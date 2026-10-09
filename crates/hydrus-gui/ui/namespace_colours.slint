@@ -1,3 +1,4 @@
+import { Btn } from "btn.slint";
 import { Button, ScrollView } from "std-widgets.slint";
 import { Theme } from "theme.slint";
 export struct NamespaceColourRow { label: string, colour: color, selected: bool }
@@ -26,9 +27,9 @@ export component NamespaceColourList inherits Rectangle {
             }
         }
         HorizontalLayout {
-            Button {text:"add";enabled:root.enabled && !root.child-open;clicked=>{root.action("add");}}
-            Button {text:"edit";enabled:root.enabled && !root.child-open;clicked=>{root.action("edit");}}
-            Button {text:"delete";enabled:root.enabled && !root.child-open;clicked=>{root.action("delete");}}
+            Btn {text:"add";enabled:root.enabled && !root.child-open;clicked=>{root.action("add");}}
+            Btn {text:"edit";enabled:root.enabled && !root.child-open;clicked=>{root.action("edit");}}
+            Btn {text:"delete";enabled:root.enabled && !root.child-open;clicked=>{root.action("delete");}}
         }
     }
 }

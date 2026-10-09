@@ -1,3 +1,4 @@
+import { Btn } from "btn.slint";
 // The favourite searches' dialogs (`src/favourites_window.rs` binds them):
 // the reference's "edit favourite searches" (`EditFavouriteSearchesPanel`),
 // a list of them to add to, edit and delete from, and its "edit favourite
@@ -26,11 +27,11 @@ export component Question {
             wrap: word-wrap;
             color: Theme.text;
         }
-        Button {
+        Btn {
             text: "yes";
             clicked => { root.answered(true); }
         }
-        Button {
+        Btn {
             text: "no";
             clicked => { root.answered(false); }
         }
@@ -138,16 +139,16 @@ export component FavouritesWindow inherits Window {
             HorizontalLayout {
                 spacing: 6px;
                 alignment: start;
-                Button {
+                Btn {
                     text: "add";
                     clicked => { root.add(); }
                 }
-                Button {
+                Btn {
                     text: "edit";
                     enabled: root.can-edit;
                     clicked => { root.edit(); }
                 }
-                Button {
+                Btn {
                     text: "delete";
                     enabled: root.can-delete;
                     clicked => { root.delete(); }
@@ -160,11 +161,11 @@ export component FavouritesWindow inherits Window {
             HorizontalLayout {
                 alignment: end;
                 spacing: 6px;
-                Button {
+                Btn {
                     text: "apply";
                     clicked => { root.apply(); }
                 }
-                Button {
+                Btn {
                     text: "cancel";
                     clicked => { root.cancel(); }
                 }
@@ -307,7 +308,7 @@ export component FavouriteEditWindow inherits Window {
             }
             HorizontalLayout {
                 spacing: 4px;
-                Button {
+                Btn {
                     horizontal-stretch: 1;
                     text: root.synchronised ? "searching immediately" : "search paused";
                     enabled: root.can-edit;
@@ -345,8 +346,8 @@ export component FavouriteEditWindow inherits Window {
                     toggled => { root.location-ticked(i, self.checked); }
                 }
                 HorizontalLayout {
-                    Button { text: "apply locations"; clicked => { root.locations-answered(true); } }
-                    Button { text: "cancel locations"; clicked => { root.locations-answered(false); } }
+                    Btn { text: "apply locations"; clicked => { root.locations-answered(true); } }
+                    Btn { text: "cancel locations"; clicked => { root.locations-answered(false); } }
                 }
             }
             Rectangle {
@@ -449,12 +450,12 @@ export component FavouriteEditWindow inherits Window {
             HorizontalLayout {
                 alignment: end;
                 spacing: 6px;
-                Button {
+                Btn {
                     text: "apply";
                     enabled: root.can-edit;
                     clicked => { root.apply(); }
                 }
-                Button {
+                Btn {
                     text: "cancel";
                     clicked => { root.cancel(); }
                 }
