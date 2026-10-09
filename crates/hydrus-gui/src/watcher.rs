@@ -75,11 +75,20 @@ impl WatcherView {
             }
         }
         self.queues.retain(|q| !gone.contains(q));
+        // (the reference reads its options each time it draws the list; the
+        // sort by status uses them, so they are read first)
+        let settings: hydrus_core::pages::DownloaderPageSettings =
+            hydrus_store::settings::get(conn)?;
+        let naming: hydrus_core::pages::PageNameSettings = hydrus_store::settings::get(conn)?;
+        let short_summary = (naming.short_summary_new, naming.short_summary_deleted);
+        let options_changed = settings != self.settings || short_summary != self.short_summary;
+        self.settings = settings;
+        self.short_summary = short_summary;
         let now = crate::page::now();
         sort(&mut read, self.sort.0, self.sort.1, now, &|w| {
             Some(self.simple_status(w, now).0)
         });
-        let changed = read != self.watchers || !gone.is_empty();
+        let changed = read != self.watchers || !gone.is_empty() || options_changed;
         self.watchers = read;
         Ok(changed)
     }

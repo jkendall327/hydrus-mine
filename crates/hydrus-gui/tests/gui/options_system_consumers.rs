@@ -772,10 +772,6 @@ fn new_queries_and_watchers_are_highlighted_only_when_the_options_say() {
     assert!(enter(false, "https://booru.example/thread/4"));
 }
 
-// leaf: audit-options-downloading-misc-pause-character
-// leaf: audit-options-downloading-misc-stop-character
-// leaf: audit-options-downloading-misc-show-a-n-for-new-count-on-short-file-import-summaries
-// leaf: audit-options-downloading-misc-show-a-d-for-deleted-count-on-short-file-import-summaries
 #[test]
 fn gallery_list_marks_and_short_summaries_follow_the_misc_options() {
     use hydrus_store::queues::{self, FileSeedMeta, NewFileSeed, SeedStatus, SeedType};
@@ -907,7 +903,6 @@ fn first_page_urls(client: &Client, query: &str) -> Vec<String> {
         .unwrap()
 }
 
-// leaf: audit-options-downloading-misc-debug-consider-20-the-same-as-space-in-downloader-query-text-inputs
 #[test]
 fn percent_twenty_option_changes_the_gallery_urls_made_from_a_query() {
     let client = client();
@@ -943,7 +938,6 @@ fn percent_twenty_option_changes_the_gallery_urls_made_from_a_query() {
     );
 }
 
-// leaf: audit-options-downloading-misc-debug-remove-leading-double-slashes-from-url-paths
 #[test]
 fn leading_double_slash_option_changes_the_gallery_urls_made_from_a_query() {
     let client = client();
@@ -1808,4 +1802,389 @@ async fn the_direct_import_row_decides_whether_a_local_import_copies_to_a_temp_p
     let third = import(&place("apng_3frames.png"));
     finished(third).await;
     assert_eq!(probe.temp_copies_made(), 2);
+}
+
+fn misc_recording() -> serde_json::Value {
+    hydrus_testkit::fixture_json("downloading_misc_options.json")
+}
+
+/// Tick (or not) the row of the downloading page's misc box and apply.
+fn set_misc_checks(client: &Client, rows: &[(&str, bool)]) {
+    let window = client.options("downloading");
+    for (label, on) in rows {
+        let (i, found) = row_in(&window, "misc", label);
+        assert_eq!(found.kind, 1, "{label}");
+        window.invoke_check_toggled(i, *on);
+    }
+    window.invoke_apply();
+}
+
+/// The short file import summary the gallery list shows, for every mix of
+/// statuses the reference's own status text was asked about
+/// (oracle/record_downloading_misc_options.py), under each pair of the 'N' and
+/// 'D' options set in the real options window. One page holds a search for
+/// each mix, built once.
+// leaf: audit-options-downloading-misc-show-a-n-for-new-count-on-short-file-import-summaries
+// leaf: audit-options-downloading-misc-show-a-d-for-deleted-count-on-short-file-import-summaries
+#[test]
+fn short_file_import_summaries_are_the_reference_s_for_every_mix_and_option() {
+    use hydrus_store::queues::{self, FileSeedMeta, NewFileSeed, SeedStatus, SeedType};
+    let recorded = misc_recording();
+    let client = client();
+    add_example_downloader(&client.store);
+    // the distinct mixes, in the order recorded
+    let mut mixes: Vec<serde_json::Value> = Vec::new();
+    for case in recorded["summaries"].as_array().unwrap() {
+        if !mixes.contains(&case["mix"]) {
+            mixes.push(case["mix"].clone());
+        }
+    }
+    new_page(&client.ui, true);
+    let names: Vec<String> = (0..mixes.len()).map(|n| format!("mix_{n}")).collect();
+    client.ui.invoke_gallery_queries(names.join("\n").into());
+    let queues_made: Vec<(String, i64)> = client
+        .bound
+        .current
+        .borrow()
+        .borrow()
+        .gallery()
+        .unwrap()
+        .queries
+        .iter()
+        .map(|q| (q.query.clone(), q.queue))
+        .collect();
+    assert_eq!(queues_made.len(), mixes.len(), "{queues_made:?}");
+    let status_of = |name: &str| match name {
+        "new" => SeedStatus::SuccessfulAndNew,
+        "redundant" => SeedStatus::SuccessfulButRedundant,
+        "ignored" => SeedStatus::Vetoed,
+        "deleted" => SeedStatus::Deleted,
+        "failed" => SeedStatus::Error,
+        "skipped" => SeedStatus::Skipped,
+        _ => SeedStatus::Unknown,
+    };
+    for (n, mix) in mixes.iter().enumerate() {
+        let queue = queues_made
+            .iter()
+            .find(|(query, _)| *query == names[n])
+            .unwrap()
+            .1;
+        let mix: Vec<(String, usize)> = mix
+            .as_object()
+            .unwrap()
+            .iter()
+            .map(|(name, count)| {
+                (
+                    name.clone(),
+                    usize::try_from(count.as_u64().unwrap()).unwrap(),
+                )
+            })
+            .collect();
+        client
+            .store
+            .write(move |ctx| {
+                let conn = ctx.conn();
+                let mut made = 0;
+                for (name, count) in &mix {
+                    let news: Vec<NewFileSeed> = (0..*count)
+                        .map(|_| {
+                            made += 1;
+                            let url = format!("https://booru.example/post/{made}");
+                            NewFileSeed {
+                                seed_type: SeedType::Url,
+                                data: url.clone(),
+                                data_for_comparison: url,
+                                source_time: None,
+                                referral_url: None,
+                                meta: FileSeedMeta::default(),
+                            }
+                        })
+                        .collect();
+                    queues::add_file_seeds(conn, queue, &news, false, 0)?;
+                    let status = status_of(name);
+                    if status != SeedStatus::Unknown {
+                        let ids: Vec<i64> = queues::file_seeds(conn, queue)?
+                            .iter()
+                            .filter(|s| s.status == SeedStatus::Unknown)
+                            .map(|s| s.id)
+                            .collect();
+                        queues::set_file_seed_statuses(conn, &ids, status, 1)?;
+                    }
+                }
+                Ok(())
+            })
+            .unwrap();
+    }
+    let new_label = "Show a 'N' (for 'new') count on short file import summaries:";
+    let deleted_label = "Show a 'D' (for 'deleted') count on short file import summaries:";
+    let mut checked = 0;
+    for (show_new, show_deleted) in [(false, false), (false, true), (true, false), (true, true)] {
+        set_misc_checks(
+            &client,
+            &[(new_label, show_new), (deleted_label, show_deleted)],
+        );
+        client.bound.downloader_updates.force();
+        (client.bound.sync)();
+        let rows = gallery_cells(&client.ui);
+        for case in recorded["summaries"].as_array().unwrap() {
+            if case["show_new"] != show_new || case["show_deleted"] != show_deleted {
+                continue;
+            }
+            let n = mixes.iter().position(|mix| *mix == case["mix"]).unwrap();
+            let row = rows
+                .iter()
+                .find(|row| row[0].trim_start_matches("* ") == names[n])
+                .unwrap();
+            assert_eq!(row[5], case["text"].as_str().unwrap(), "{case}");
+            checked += 1;
+        }
+    }
+    assert_eq!(checked, recorded["summaries"].as_array().unwrap().len());
+}
+
+/// The gallery URLs made from queries, in a template with the search in its
+/// parameters and in its path, with the "%20 is a space" option off and on in
+/// the real options window, as the reference's own generator made them (the
+/// first page's URLs: later pages are made from the URL class's index).
+// leaf: audit-options-downloading-misc-debug-consider-20-the-same-as-space-in-downloader-query-text-inputs
+#[test]
+fn gallery_urls_made_from_queries_are_the_reference_s_with_and_without_percent_twenty() {
+    let recorded = misc_recording();
+    let client = client();
+    let label = "DEBUG: consider %20 the same as space in downloader query text inputs:";
+    let mut checked = 0;
+    for on in [false, true] {
+        set_misc_checks(&client, &[(label, on)]);
+        for (kind, template) in [
+            ("params", "https://booru.example/posts?tags=%tags%"),
+            ("path", "https://booru.example/artist/%tags%/list"),
+        ] {
+            add_downloader_with_template(&client.store, template);
+            for case in recorded["gug"].as_array().unwrap() {
+                if case["on"] != on || case["template"] != kind {
+                    continue;
+                }
+                let urls = first_page_urls(&client, case["query"].as_str().unwrap());
+                assert_eq!(urls, [case["url"].as_str().unwrap()], "{case}");
+                checked += 1;
+            }
+        }
+    }
+    assert_eq!(checked, recorded["gug"].as_array().unwrap().len());
+}
+
+/// A URL class for paths of `images/<anything>`, with the "remove leading
+/// double slashes" option off and on in the real options window: the URLs it
+/// matches and what it makes of them are the reference's own class's.
+// leaf: audit-options-downloading-misc-debug-remove-leading-double-slashes-from-url-paths
+#[test]
+fn url_classes_match_double_slash_urls_as_the_reference_s_do_with_the_option() {
+    use hydrus_core::url::{DomainMask, StringMatch, UrlClass, UrlClassSettings};
+    let recorded = misc_recording();
+    let client = client();
+    client
+        .store
+        .write_and_refresh(|ctx| {
+            hydrus_store::settings::set(
+                ctx.conn(),
+                &UrlClassSettings {
+                    url_classes: vec![UrlClass {
+                        name: "images".into(),
+                        key: vec![7],
+                        domain_mask: DomainMask::new(
+                            vec!["booru.example".into()],
+                            Vec::new(),
+                            false,
+                            false,
+                        ),
+                        path_components: vec![
+                            (StringMatch::fixed("images"), None),
+                            (StringMatch::any(), None),
+                        ],
+                        parameters: Vec::new(),
+                        ..UrlClass::default()
+                    }],
+                    ..UrlClassSettings::default()
+                },
+            )
+        })
+        .unwrap();
+    let label = "DEBUG: remove leading double-slashes from URL paths:";
+    let mut checked = 0;
+    for on in [false, true] {
+        set_misc_checks(&client, &[(label, on)]);
+        let classes = client.store.snapshot().url_classes.clone();
+        // the path split itself, as the reference's ConvertPathTextToList
+        for case in recorded["paths"].as_array().unwrap() {
+            if case["on"] != on {
+                continue;
+            }
+            let theirs: Vec<&str> = case["components"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .map(|c| c.as_str().unwrap())
+                .collect();
+            assert_eq!(
+                hydrus_core::url::functions::path_components(
+                    case["path"].as_str().unwrap(),
+                    classes.settings().collapse_leading_slashes
+                ),
+                theirs,
+                "{case}"
+            );
+            checked += 1;
+        }
+        for case in recorded["url_class"].as_array().unwrap() {
+            if case["on"] != on {
+                continue;
+            }
+            let url = case["url"].as_str().unwrap();
+            assert_eq!(
+                classes.class_for(url).is_some(),
+                case["matches"].as_bool().unwrap(),
+                "{case}"
+            );
+            if case["matches"].as_bool().unwrap() {
+                assert_eq!(
+                    classes.normalise(url, false).unwrap(),
+                    case["normalised"].as_str().unwrap(),
+                    "{case}"
+                );
+            }
+            checked += 1;
+        }
+    }
+    assert_eq!(
+        checked,
+        recorded["url_class"].as_array().unwrap().len()
+            + recorded["paths"].as_array().unwrap().len()
+    );
+}
+
+fn watcher_cells(ui: &MainWindow) -> Vec<String> {
+    let rows = ui.get_watcher_rows();
+    rows.row_data(0)
+        .unwrap()
+        .cells
+        .iter()
+        .map(|c| c.to_string())
+        .collect()
+}
+
+/// A gallery page and a watcher page left open while the pause and stop
+/// characters are changed in the real options window: their lists show the new
+/// characters at once, as the reference's draw them from its options, in the
+/// gallery list's files and gallery columns and the watcher list's files and
+/// checking columns (a dead watcher's checking column is the stop character).
+// leaf: audit-options-downloading-misc-pause-character
+// leaf: audit-options-downloading-misc-stop-character
+#[test]
+fn open_gallery_and_watcher_pages_show_the_changed_pause_and_stop_characters() {
+    use hydrus_core::watchers::CheckerStatus;
+    use hydrus_store::queues::{self, FileSeedMeta, NewFileSeed, SeedStatus, SeedType};
+    let client = client();
+    add_example_downloader(&client.store);
+    // the gallery page: one finished file, so its files column is stopped
+    new_page(&client.ui, true);
+    client.ui.invoke_gallery_queries("blue_eyes".into());
+    let queue = client
+        .bound
+        .current
+        .borrow()
+        .borrow()
+        .gallery()
+        .unwrap()
+        .queries[0]
+        .queue;
+    client
+        .store
+        .write(move |ctx| {
+            let url = "https://booru.example/post/1".to_owned();
+            queues::add_file_seeds(
+                ctx.conn(),
+                queue,
+                &[NewFileSeed {
+                    seed_type: SeedType::Url,
+                    data: url.clone(),
+                    data_for_comparison: url,
+                    source_time: None,
+                    referral_url: None,
+                    meta: FileSeedMeta::default(),
+                }],
+                false,
+                0,
+            )?;
+            let ids: Vec<i64> = queues::file_seeds(ctx.conn(), queue)?
+                .iter()
+                .map(|s| s.id)
+                .collect();
+            queues::set_file_seed_statuses(ctx.conn(), &ids, SeedStatus::SuccessfulAndNew, 1)
+        })
+        .unwrap();
+    client.bound.downloader_updates.force();
+    (client.bound.sync)();
+    client.ui.invoke_gallery_row_clicked(0, false, false);
+    client.ui.invoke_gallery_pause_play(true, false);
+    // the watcher page: files and checking both paused
+    new_page(&client.ui, false);
+    client
+        .ui
+        .invoke_watcher_urls("https://booru.example/thread/1".into());
+    let watcher_queue = client
+        .bound
+        .current
+        .borrow()
+        .borrow()
+        .watchers()
+        .unwrap()
+        .watchers[0]
+        .queue;
+    client.ui.invoke_watcher_row_clicked(0, false, false);
+    client.ui.invoke_watcher_pause_play(false, true);
+    client.ui.invoke_watcher_pause_play(true, true);
+    let show_gallery = || {
+        client.ui.invoke_tab_chosen(0, 1);
+        client.bound.downloader_updates.force();
+        (client.bound.sync)();
+        gallery_cells(&client.ui).remove(0)
+    };
+    let show_watcher = || {
+        client.ui.invoke_tab_chosen(0, 2);
+        client.bound.downloader_updates.force();
+        (client.bound.sync)();
+        watcher_cells(&client.ui)
+    };
+    let (gallery, watcher) = (show_gallery(), show_watcher());
+    assert_eq!((&gallery[2][..], &gallery[3][..]), ("\u{23F9}", "\u{23F8}"));
+    assert_eq!((&watcher[1][..], &watcher[2][..]), ("\u{23F8}", "\u{23F8}"));
+    // change both characters with both pages open
+    let window = client.options("downloading");
+    let (i, _) = row_in(&window, "misc", "Pause character:");
+    window.invoke_text_edited(i, "PAUSED".into());
+    let (i, _) = row_in(&window, "misc", "Stop character:");
+    window.invoke_text_edited(i, "STOPPED".into());
+    window.invoke_apply();
+    let (gallery, watcher) = (show_gallery(), show_watcher());
+    assert_eq!((&gallery[2][..], &gallery[3][..]), ("STOPPED", "PAUSED"));
+    assert_eq!((&watcher[1][..], &watcher[2][..]), ("PAUSED", "PAUSED"));
+    // a dead watcher, paused, has the stop character where it checks
+    let mut state = client
+        .store
+        .read(move |c| {
+            Ok(hydrus_store::watchers::watcher_state(
+                &queues::queue(c, watcher_queue)?.unwrap(),
+            ))
+        })
+        .unwrap()
+        .unwrap();
+    state.status = CheckerStatus::Dead;
+    state.checking_paused = true;
+    let extra = serde_json::to_value(&state).unwrap();
+    client
+        .store
+        .write(move |ctx| queues::set_queue_extra(ctx.conn(), watcher_queue, &extra))
+        .unwrap();
+    let watcher = show_watcher();
+    assert_eq!((&watcher[1][..], &watcher[2][..]), ("PAUSED", "STOPPED"));
 }

@@ -4665,3 +4665,7 @@ directory.
 ### Command palette: unrecorded cases
 
 The palette's media-menu rows and the effect of activating one are recorded only for a page with no files (`oracle/fixtures/command_palette.json`); rows for selected files are checked against the thumbnail menu's own code, not a recording. Favourite searches opened from the palette are compared for page count and synchronisation, but their sort and collect settings are not recorded. Which of several children a page-of-pages row shows is not recorded either (the recording has one child).
+
+### Downloading misc options: unrecorded cases
+
+The text of a URL class's refusal to match (for example the leading-double-slash case) is not compared with the reference's, only whether a URL matches and what it becomes. The "consider %20 the same as space" option is checked on a gallery's first page only. The pause and stop characters are plain strings and are not recorded.

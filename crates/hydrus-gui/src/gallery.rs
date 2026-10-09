@@ -83,6 +83,14 @@ impl GalleryView {
             || !gone.is_empty()
             || gugs != self.gugs
             || definitions.gugs.keys_to_display != self.gug_keys_to_display;
+        // (the reference reads its options each time it draws the list)
+        let settings: hydrus_core::pages::DownloaderPageSettings =
+            hydrus_store::settings::get(conn)?;
+        let naming: hydrus_core::pages::PageNameSettings = hydrus_store::settings::get(conn)?;
+        let short_summary = (naming.short_summary_new, naming.short_summary_deleted);
+        let changed = changed || settings != self.settings || short_summary != self.short_summary;
+        self.settings = settings;
+        self.short_summary = short_summary;
         self.gugs = gugs;
         self.gug_keys_to_display = definitions.gugs.keys_to_display;
         self.queries = read;

@@ -317,6 +317,8 @@ reference's frame does. The rows and menus are as
 `oracle/record_file_log.py` recorded the reference's. Windows' own
 popup menus are drawn as the menu bar's are (`src/popup_menu.rs`).
 
+The downloader pages' lists follow the downloading options (the pause and stop characters, and whether the short file import summary shows 'N' and 'D' counts) as soon as they are applied, in pages already open, as the reference's lists read them each time they draw; the summaries, the gallery URLs made with "consider %20 the same as a space" and the URL classes' handling of a leading double slash are as `oracle/record_downloading_misc_options.py` recorded the reference's.
+
 The "search" box (a gallery search's, a URL downloader's) has a "search
 log" button, and a watcher's "checker" box a "check log" button, which
 open the same window as the search log (`src/search_log_window.rs`,
