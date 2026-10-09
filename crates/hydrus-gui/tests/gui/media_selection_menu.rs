@@ -243,7 +243,8 @@ fn rearrange_menu_offers_and_makes_the_moves_the_reference_did() {
                     .invoke_menu_chosen(find(&rows(&menu.rearrange), name));
                 made += 1;
             } else {
-                // (not offered: the reference's move did nothing)
+                // (not offered: the reference's move did nothing; the move is not
+                // run, the equality of the offered rows above is what covers it)
                 assert_eq!(expected, initial, "{name} for {}", case["indices"]);
             }
             assert_eq!(
