@@ -19170,10 +19170,10 @@
     "Part of the Known URL domain panel: Exact/domain/regex/class rule input and validation. Uses its native typed field/change path and contributes to the same Panel::predicates result; the recorded panel regression covers the represented default and available widget changes."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
+    "date": "2026-10-09",
+    "class": "sound",
     "by": "phase 2 session",
-    "note": "The recorded text change ('abc') goes through the real editor window, but exact/domain validation is not recorded, so no window test drives any veto for this panel (the regex panel's veto is driven for the regex leaf)."
+    "note": "Every recorded text and both choices make the recorded predicate (no stripping, no refusal); the choices offered are the recorded ones. Test: crates/hydrus-gui/tests/gui/predicate_editors.rs the_url_panels_make_what_the_reference_s_make_for_every_text_and_choice, replaying oracle/fixtures/known_urls_panels.json (recorded from the reference's real panels) through the real editor window."
    }
   },
   {
@@ -19208,10 +19208,10 @@
     "Part of the Exact known URL panel: Exact/domain/regex/class rule input and validation. Uses its native typed field/change path and contributes to the same Panel::predicates result; the recorded panel regression covers the represented default and available widget changes."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
+    "date": "2026-10-09",
+    "class": "sound",
     "by": "phase 2 session",
-    "note": "The recorded text change ('abc') goes through the real editor window, but exact/domain validation is not recorded, so no window test drives any veto for this panel (the regex panel's veto is driven for the regex leaf)."
+    "note": "Every recorded text (empty, padded, with spaces and a fragment, not a URL) and both has / does not have choices make the recorded predicate; the reference refuses none of them, and neither does the window. Test: crates/hydrus-gui/tests/gui/predicate_editors.rs the_url_panels_make_what_the_reference_s_make_for_every_text_and_choice, replaying oracle/fixtures/known_urls_panels.json (recorded from the reference's real panels) through the real editor window."
    }
   },
   {
@@ -19265,10 +19265,10 @@
     "Part of the Known URL class panel: Has/does-not-have URL. Uses its native typed field/change path and contributes to the same Panel::predicates result; the recorded panel regression covers the represented default and available widget changes."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Drives the real editor window with typed URL classes; the \"has\" text is checked against predicate_custom_defaults.json, but the class list filter and the \"does not have ... second posts\" text are typed literals from the Python source (the recording had no classes to offer). Tests: crates/hydrus-gui/tests/gui/predicate_editors.rs:1729 the_url_class_panel_offers_the_clients_url_classes_and_makes_has_or_not_has"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "With the client's URL classes (one not going with files) the panel offers the same classes and the 'has' / 'does not have' choices, and makes the recorded text for each class and choice. Test: crates/hydrus-gui/tests/gui/predicate_editors.rs the_url_panels_make_what_the_reference_s_make_for_every_text_and_choice, replaying oracle/fixtures/known_urls_panels.json (recorded from the reference's real panels) through the real editor window."
    }
   },
   {
@@ -19284,10 +19284,10 @@
     "Part of the Known URL class panel: Exact/domain/regex/class rule input and validation. Uses its native typed field/change path and contributes to the same Panel::predicates result; the recorded panel regression covers the represented default and available widget changes."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Drives the real editor window with typed URL classes; the \"has\" text is checked against predicate_custom_defaults.json, but the class list filter and the \"does not have ... second posts\" text are typed literals from the Python source (the recording had no classes to offer). Tests: crates/hydrus-gui/tests/gui/predicate_editors.rs:1729 the_url_class_panel_offers_the_clients_url_classes_and_makes_has_or_not_has"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "The class rule: only classes that go with files are offered and each chosen class makes the recorded predicate. Test: crates/hydrus-gui/tests/gui/predicate_editors.rs the_url_panels_make_what_the_reference_s_make_for_every_text_and_choice, replaying oracle/fixtures/known_urls_panels.json (recorded from the reference's real panels) through the real editor window."
    }
   },
   {

@@ -1780,8 +1780,6 @@ fn dimensions_presets_cancel_hidden_and_retired_callbacks_do_not_change_owner() 
 // makes the reference's `has url with class` / `does not have url with
 // class` (`ClientGUIPredicatesSingle.PanelPredicateSystemKnownURLsURLClass`,
 // text as recorded in `predicate_custom_defaults.json`).
-// leaf: audit-options-predicate-urls-known-urls-knownurlsurlclass-has
-// leaf: audit-options-predicate-urls-known-urls-knownurlsurlclass-rule
 #[test]
 fn the_url_class_panel_offers_the_clients_url_classes_and_makes_has_or_not_has() {
     use hydrus_core::url::{UrlClass, UrlClassSettings, UrlType};
@@ -1861,6 +1859,138 @@ fn the_url_class_panel_offers_the_clients_url_classes_and_makes_has_or_not_has()
         shown_predicates(&ui)
             .contains(&"system:does not have url with class second posts".to_string())
     );
+}
+
+// The exact URL and domain panels of system:urls, driven in the editor
+// window with the texts the reference's real panels were given
+// (oracle/record_known_urls_panels.py): it makes the predicate with the text
+// as typed, whether empty, padded or not a URL at all, for each choice of
+// has / does not have, and refuses nothing; the domain box's hint and both
+// choices are the recorded ones. And the URL class panel, with the client's
+// URL classes (some not going with files): the same classes offered, the
+// same first one chosen when the predicate's own is not among them, and the
+// reference's text for each class and choice.
+// leaf: audit-options-predicate-urls-known-urls-knownurlsexacturl-rule
+// leaf: audit-options-predicate-urls-known-urls-knownurlsdomain-rule
+// leaf: audit-options-predicate-urls-known-urls-knownurlsurlclass-has
+// leaf: audit-options-predicate-urls-known-urls-knownurlsurlclass-rule
+#[test]
+fn the_url_panels_make_what_the_reference_s_make_for_every_text_and_choice() {
+    use hydrus_core::url::{UrlClass, UrlClassSettings, UrlType};
+    let recorded = hydrus_testkit::fixture_json("known_urls_panels.json");
+    let (_dirs, store) = store();
+    let _windows = headless::init();
+    let class = |name: &str, key: u8, files: bool| UrlClass {
+        name: name.into(),
+        key: vec![key],
+        url_type: UrlType::Post,
+        should_be_associated_with_files: files,
+        ..UrlClass::default()
+    };
+    store
+        .write_and_refresh(move |ctx| {
+            hydrus_store::settings::set(
+                ctx.conn(),
+                &UrlClassSettings {
+                    url_classes: vec![
+                        class("posts a", 1, true),
+                        class("not for files", 2, false),
+                        class("posts b", 3, true),
+                    ],
+                    ..UrlClassSettings::default()
+                },
+            )
+        })
+        .unwrap();
+    let ui = MainWindow::new().unwrap();
+    ui.show().unwrap();
+    let bound = bind(&ui, Pages::single(SearchPage::new(store.clone())));
+    let open = || {
+        ui.invoke_search_edited("".into());
+        ui.invoke_suggestion_chosen(suggestion(&ui, "system:urls"));
+        bound
+            .predicate_editor
+            .borrow()
+            .as_ref()
+            .unwrap()
+            .clone_strong()
+    };
+    let options = |window: &hydrus_gui::PredicateEditorWindow, panel: i32, field: usize| {
+        window
+            .get_panels()
+            .row_data(usize::try_from(panel).unwrap())
+            .unwrap()
+            .fields
+            .row_data(field)
+            .unwrap()
+            .options
+            .iter()
+            .map(|o| o.to_string())
+            .collect::<Vec<_>>()
+    };
+    let window = open();
+    for (panel, key) in [(0, "exact_default"), (1, "domain_default")] {
+        let theirs: Vec<String> = recorded[key]["operators"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|o| o.as_str().unwrap().to_owned())
+            .collect();
+        assert_eq!(options(&window, panel, 1), theirs, "{key}");
+    }
+    window.invoke_cancel();
+    for (panel, key) in [(0, "exact"), (1, "domain")] {
+        for case in recorded[key].as_array().unwrap() {
+            let window = open();
+            let operator = i32::try_from(case["operator_index"].as_i64().unwrap()).unwrap();
+            window.invoke_text_edited(panel, 3, case["text"].as_str().unwrap().into());
+            window.invoke_chose(panel, 1, operator);
+            window.invoke_ok(panel);
+            let made = case["made"][0]["text"].as_str().unwrap();
+            assert!(
+                shown_predicates(&ui).iter().any(|shown| shown == made),
+                "{key} {case}: {:?}",
+                shown_predicates(&ui)
+            );
+        }
+    }
+    // the URL class panel
+    let window = open();
+    let offered: Vec<String> = recorded["classes_offered"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|c| c.as_str().unwrap().to_owned())
+        .collect();
+    assert_eq!(options(&window, 3, 3), offered);
+    let operators: Vec<String> = recorded["class_operators"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|c| c.as_str().unwrap().to_owned())
+        .collect();
+    assert_eq!(options(&window, 3, 1), operators);
+    window.invoke_cancel();
+    for case in recorded["classes"].as_array().unwrap() {
+        let window = open();
+        window.invoke_chose(
+            3,
+            1,
+            i32::try_from(case["operator_index"].as_i64().unwrap()).unwrap(),
+        );
+        window.invoke_chose(
+            3,
+            3,
+            i32::try_from(case["index"].as_i64().unwrap()).unwrap(),
+        );
+        window.invoke_ok(3);
+        let made = case["made"][0]["text"].as_str().unwrap();
+        assert!(
+            shown_predicates(&ui).iter().any(|shown| shown == made),
+            "{case}: {:?}",
+            shown_predicates(&ui)
+        );
+    }
 }
 
 // system:rating offers one panel per rating service, each labelled with

@@ -1,0 +1,408 @@
+{
+ "exact": [
+  {
+   "text": "",
+   "operator_index": 0,
+   "made": [
+    {
+     "text": "system:has url ",
+     "operator": true,
+     "rule_type": "exact_match",
+     "rule": "",
+     "description": "has url "
+    }
+   ]
+  },
+  {
+   "text": "",
+   "operator_index": 1,
+   "made": [
+    {
+     "text": "system:does not have url ",
+     "operator": false,
+     "rule_type": "exact_match",
+     "rule": "",
+     "description": "does not have url "
+    }
+   ]
+  },
+  {
+   "text": "x",
+   "operator_index": 0,
+   "made": [
+    {
+     "text": "system:has url x",
+     "operator": true,
+     "rule_type": "exact_match",
+     "rule": "x",
+     "description": "has url x"
+    }
+   ]
+  },
+  {
+   "text": "x",
+   "operator_index": 1,
+   "made": [
+    {
+     "text": "system:does not have url x",
+     "operator": false,
+     "rule_type": "exact_match",
+     "rule": "x",
+     "description": "does not have url x"
+    }
+   ]
+  },
+  {
+   "text": "  padded  ",
+   "operator_index": 0,
+   "made": [
+    {
+     "text": "system:has url   padded  ",
+     "operator": true,
+     "rule_type": "exact_match",
+     "rule": "  padded  ",
+     "description": "has url   padded  "
+    }
+   ]
+  },
+  {
+   "text": "  padded  ",
+   "operator_index": 1,
+   "made": [
+    {
+     "text": "system:does not have url   padded  ",
+     "operator": false,
+     "rule_type": "exact_match",
+     "rule": "  padded  ",
+     "description": "does not have url   padded  "
+    }
+   ]
+  },
+  {
+   "text": "https://Example.com/a b?c=d#frag",
+   "operator_index": 0,
+   "made": [
+    {
+     "text": "system:has url https://Example.com/a b?c=d#frag",
+     "operator": true,
+     "rule_type": "exact_match",
+     "rule": "https://Example.com/a b?c=d#frag",
+     "description": "has url https://Example.com/a b?c=d#frag"
+    }
+   ]
+  },
+  {
+   "text": "https://Example.com/a b?c=d#frag",
+   "operator_index": 1,
+   "made": [
+    {
+     "text": "system:does not have url https://Example.com/a b?c=d#frag",
+     "operator": false,
+     "rule_type": "exact_match",
+     "rule": "https://Example.com/a b?c=d#frag",
+     "description": "does not have url https://Example.com/a b?c=d#frag"
+    }
+   ]
+  },
+  {
+   "text": "EXAMPLE.com",
+   "operator_index": 0,
+   "made": [
+    {
+     "text": "system:has url EXAMPLE.com",
+     "operator": true,
+     "rule_type": "exact_match",
+     "rule": "EXAMPLE.com",
+     "description": "has url EXAMPLE.com"
+    }
+   ]
+  },
+  {
+   "text": "EXAMPLE.com",
+   "operator_index": 1,
+   "made": [
+    {
+     "text": "system:does not have url EXAMPLE.com",
+     "operator": false,
+     "rule_type": "exact_match",
+     "rule": "EXAMPLE.com",
+     "description": "does not have url EXAMPLE.com"
+    }
+   ]
+  },
+  {
+   "text": "http://[bad",
+   "operator_index": 0,
+   "made": [
+    {
+     "text": "system:has url http://[bad",
+     "operator": true,
+     "rule_type": "exact_match",
+     "rule": "http://[bad",
+     "description": "has url http://[bad"
+    }
+   ]
+  },
+  {
+   "text": "http://[bad",
+   "operator_index": 1,
+   "made": [
+    {
+     "text": "system:does not have url http://[bad",
+     "operator": false,
+     "rule_type": "exact_match",
+     "rule": "http://[bad",
+     "description": "does not have url http://[bad"
+    }
+   ]
+  }
+ ],
+ "domain": [
+  {
+   "text": "",
+   "operator_index": 0,
+   "made": [
+    {
+     "text": "system:has url with domain ",
+     "operator": true,
+     "rule_type": "domain",
+     "rule": "",
+     "description": "has url with domain "
+    }
+   ]
+  },
+  {
+   "text": "",
+   "operator_index": 1,
+   "made": [
+    {
+     "text": "system:does not have url with domain ",
+     "operator": false,
+     "rule_type": "domain",
+     "rule": "",
+     "description": "does not have url with domain "
+    }
+   ]
+  },
+  {
+   "text": "x",
+   "operator_index": 0,
+   "made": [
+    {
+     "text": "system:has url with domain x",
+     "operator": true,
+     "rule_type": "domain",
+     "rule": "x",
+     "description": "has url with domain x"
+    }
+   ]
+  },
+  {
+   "text": "x",
+   "operator_index": 1,
+   "made": [
+    {
+     "text": "system:does not have url with domain x",
+     "operator": false,
+     "rule_type": "domain",
+     "rule": "x",
+     "description": "does not have url with domain x"
+    }
+   ]
+  },
+  {
+   "text": "  padded  ",
+   "operator_index": 0,
+   "made": [
+    {
+     "text": "system:has url with domain   padded  ",
+     "operator": true,
+     "rule_type": "domain",
+     "rule": "  padded  ",
+     "description": "has url with domain   padded  "
+    }
+   ]
+  },
+  {
+   "text": "  padded  ",
+   "operator_index": 1,
+   "made": [
+    {
+     "text": "system:does not have url with domain   padded  ",
+     "operator": false,
+     "rule_type": "domain",
+     "rule": "  padded  ",
+     "description": "does not have url with domain   padded  "
+    }
+   ]
+  },
+  {
+   "text": "https://Example.com/a b?c=d#frag",
+   "operator_index": 0,
+   "made": [
+    {
+     "text": "system:has url with domain https://Example.com/a b?c=d#frag",
+     "operator": true,
+     "rule_type": "domain",
+     "rule": "https://Example.com/a b?c=d#frag",
+     "description": "has url with domain https://Example.com/a b?c=d#frag"
+    }
+   ]
+  },
+  {
+   "text": "https://Example.com/a b?c=d#frag",
+   "operator_index": 1,
+   "made": [
+    {
+     "text": "system:does not have url with domain https://Example.com/a b?c=d#frag",
+     "operator": false,
+     "rule_type": "domain",
+     "rule": "https://Example.com/a b?c=d#frag",
+     "description": "does not have url with domain https://Example.com/a b?c=d#frag"
+    }
+   ]
+  },
+  {
+   "text": "EXAMPLE.com",
+   "operator_index": 0,
+   "made": [
+    {
+     "text": "system:has url with domain EXAMPLE.com",
+     "operator": true,
+     "rule_type": "domain",
+     "rule": "EXAMPLE.com",
+     "description": "has url with domain EXAMPLE.com"
+    }
+   ]
+  },
+  {
+   "text": "EXAMPLE.com",
+   "operator_index": 1,
+   "made": [
+    {
+     "text": "system:does not have url with domain EXAMPLE.com",
+     "operator": false,
+     "rule_type": "domain",
+     "rule": "EXAMPLE.com",
+     "description": "does not have url with domain EXAMPLE.com"
+    }
+   ]
+  },
+  {
+   "text": "http://[bad",
+   "operator_index": 0,
+   "made": [
+    {
+     "text": "system:has url with domain http://[bad",
+     "operator": true,
+     "rule_type": "domain",
+     "rule": "http://[bad",
+     "description": "has url with domain http://[bad"
+    }
+   ]
+  },
+  {
+   "text": "http://[bad",
+   "operator_index": 1,
+   "made": [
+    {
+     "text": "system:does not have url with domain http://[bad",
+     "operator": false,
+     "rule_type": "domain",
+     "rule": "http://[bad",
+     "description": "does not have url with domain http://[bad"
+    }
+   ]
+  }
+ ],
+ "exact_default": {
+  "placeholder": "",
+  "operators": [
+   "has",
+   "does not have"
+  ],
+  "default": [
+   true,
+   "exact_match",
+   "",
+   ""
+  ]
+ },
+ "domain_default": {
+  "placeholder": "example.com",
+  "operators": [
+   "has",
+   "does not have"
+  ],
+  "default": [
+   true,
+   "domain",
+   "",
+   ""
+  ]
+ },
+ "classes_offered": [
+  "posts a",
+  "posts b"
+ ],
+ "class_initial": "posts a",
+ "class_default": "booru post url",
+ "class_operators": [
+  "has",
+  "does not have"
+ ],
+ "classes": [
+  {
+   "index": 0,
+   "operator_index": 0,
+   "made": [
+    {
+     "text": "system:has url with class posts a",
+     "operator": true,
+     "rule_type": "url_class",
+     "rule": "posts a",
+     "description": "has url with class posts a"
+    }
+   ]
+  },
+  {
+   "index": 0,
+   "operator_index": 1,
+   "made": [
+    {
+     "text": "system:does not have url with class posts a",
+     "operator": false,
+     "rule_type": "url_class",
+     "rule": "posts a",
+     "description": "does not have url with class posts a"
+    }
+   ]
+  },
+  {
+   "index": 1,
+   "operator_index": 0,
+   "made": [
+    {
+     "text": "system:has url with class posts b",
+     "operator": true,
+     "rule_type": "url_class",
+     "rule": "posts b",
+     "description": "has url with class posts b"
+    }
+   ]
+  },
+  {
+   "index": 1,
+   "operator_index": 1,
+   "made": [
+    {
+     "text": "system:does not have url with class posts b",
+     "operator": false,
+     "rule_type": "url_class",
+     "rule": "posts b",
+     "description": "does not have url with class posts b"
+    }
+   ]
+  }
+ ]
+}
