@@ -92,8 +92,21 @@ fn show(window: &TagMigrationWindow, model: &Migration) {
         .into(),
     );
     window.set_right_label(format!("right: {}", model.right_filter.to_filter_string()).into());
-    window.set_left_tooltip(window.get_left_label());
-    window.set_right_tooltip(window.get_right_label());
+    let tooltip = |filter, prefix| {
+        hydrus_gui_model::tag_filter_editor::button_label(filter, false, prefix, true).1
+    };
+    window.set_left_tooltip(
+        tooltip(
+            &model.left_filter,
+            if model.content == Content::Mappings {
+                "tags taken: "
+            } else {
+                "left: "
+            },
+        )
+        .into(),
+    );
+    window.set_right_tooltip(tooltip(&model.right_filter, "right: ").into());
     window.set_location_label(format!("file domain: {}", model.location_description()).into());
 }
 /// Open with an optional selected-file scope; notify consumers after committed work.

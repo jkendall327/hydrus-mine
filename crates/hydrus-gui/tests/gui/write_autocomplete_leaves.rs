@@ -9,6 +9,7 @@ use hydrus_store::content::tag_relations::{self, RelationAction, RelationUpdate}
 use hydrus_store::{Store, settings, tag_editing::TagEditingSettings};
 use serde_json::Value;
 use slint::{ComponentHandle as _, Model as _};
+use std::collections::BTreeSet;
 use std::sync::Arc;
 
 fn seeded(fixture: &Value) -> (Vec<tempfile::TempDir>, Arc<Store>) {
@@ -81,25 +82,41 @@ fn seeded(fixture: &Value) -> (Vec<tempfile::TempDir>, Arc<Store>) {
     (dirs, store)
 }
 
-/// Manage tags on the first of the store's files, opened from a page.
+/// Manage tags on a file the corpus does not tag, opened from a page.
 fn open_manage_tags(
     store: &Arc<Store>,
+    fixture: &Value,
 ) -> (MainWindow, hydrus_gui::Bound, hydrus_gui::ManageTagsWindow) {
-    let files: Vec<hydrus_core::HashId> = store
+    let tagged: BTreeSet<hydrus_core::HashId> = store
         .read(|conn| {
-            Ok(conn
-                .prepare("SELECT hash_id FROM files ORDER BY hash_id LIMIT 1")?
-                .query_map([], |r| r.get(0))?
-                .collect::<rusqlite::Result<_>>()?)
+            let mut ids = BTreeSet::new();
+            for row in fixture["corpus"].as_array().unwrap() {
+                for hash in row["hashes"].as_array().unwrap() {
+                    let hash: Sha256 = hash.as_str().unwrap().parse().unwrap();
+                    ids.extend(hydrus_store::master::hash_id(conn, &hash)?);
+                }
+            }
+            Ok(ids)
         })
         .unwrap();
+    let file = store
+        .read(|conn| {
+            Ok(conn
+                .prepare("SELECT hash_id FROM files ORDER BY hash_id")?
+                .query_map([], |r| r.get(0))?
+                .collect::<rusqlite::Result<Vec<hydrus_core::HashId>>>()?)
+        })
+        .unwrap()
+        .into_iter()
+        .find(|id| !tagged.contains(id))
+        .expect("a file outside the corpus");
     let mut page = SearchPage::new(store.clone());
     page.choose_location(hydrus_core::search::context::LocationContext::default());
     page.enter();
     let ui = MainWindow::new().unwrap();
     let bound = bind(&ui, Pages::single(page));
     ui.show().unwrap();
-    bound.current.borrow().borrow_mut().select_files(&files);
+    bound.current.borrow().borrow_mut().select_files(&[file]);
     ui.invoke_manage_tags_selected();
     let w = bound
         .manage_tags
@@ -246,6 +263,41 @@ fn same_paths(mut a: Vec<Vec<String>>, mut b: Vec<Vec<String>>) -> bool {
     a == b
 }
 
+/// The tag a listed row is for ("tag (3)", "tag (1) → ideal" and "tag" are all "tag").
+fn tag_of(row: &str) -> String {
+    row.split(" (").next().unwrap().to_owned()
+}
+
+/// The tags a Manage tags list shows (its indented parent rows are not tags of the files).
+fn listed_tags(w: &hydrus_gui::ManageTagsWindow) -> BTreeSet<String> {
+    w.get_tags()
+        .iter()
+        .filter(|r| !r.text.starts_with(' '))
+        .map(|r| tag_of(&r.text))
+        .collect()
+}
+
+/// The tags listed on one side of a sibling or parent editor.
+fn side_tags(w: &hydrus_gui::TagRelationshipsWindow, right: bool) -> BTreeSet<String> {
+    let rows = if right {
+        w.get_right_tags()
+    } else {
+        w.get_left_tags()
+    };
+    rows.iter().map(|r| tag_of(&r.text)).collect()
+}
+
+/// The tags an event pasted, by the recording.
+fn recorded_pasted(event: &Value) -> BTreeSet<String> {
+    event["pasted"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .flat_map(|batch| batch.as_array().unwrap())
+        .map(|t| t.as_str().unwrap().to_owned())
+        .collect()
+}
+
 fn recorded_lines(text: &str) -> Vec<String> {
     let mut lines: Vec<String> = text
         .split_once("\n\n")
@@ -265,7 +317,7 @@ fn manage_tags_typing_highlighting_entering_and_fetching_follow_the_recording() 
     let _windows = headless::init();
     for query in f["queries"].as_array().unwrap() {
         apply_query(&store, query);
-        let (_ui, _bound, w) = open_manage_tags(&store);
+        let (_ui, _bound, w) = open_manage_tags(&store, &f);
         w.invoke_text_edited(query["text"].as_str().unwrap().into());
         let rows: Vec<String> = w
             .get_suggestions()
@@ -273,6 +325,24 @@ fn manage_tags_typing_highlighting_entering_and_fetching_follow_the_recording() 
             .map(|r| r.text.to_string())
             .collect();
         assert_eq!(grouped(&rows), expected_groups(query), "{query}");
+        // Enter enters what is highlighted
+        let before = listed_tags(&w);
+        w.invoke_entered();
+        let after = listed_tags(&w);
+        // exactly what the recording had highlighted is added
+        let entered = query["selected"][0].as_str().unwrap();
+        assert_eq!(
+            after.difference(&before).cloned().collect::<Vec<_>>(),
+            [entered.to_owned()],
+            "{query}"
+        );
+        // (the input is cleared by an entry: typed again for the rest)
+        w.invoke_text_edited(query["text"].as_str().unwrap().into());
+        let rows: Vec<String> = w
+            .get_suggestions()
+            .iter()
+            .map(|r| r.text.to_string())
+            .collect();
         if query == &f["queries"][0] {
             // the context menu on a result is the recorded one
             let at = rows
@@ -302,6 +372,7 @@ fn manage_tags_typing_highlighting_entering_and_fetching_follow_the_recording() 
                 set_skip_paste_question(&store, event["skip"].as_bool().unwrap());
                 let text = event["text"].as_str().unwrap().to_owned();
                 hydrus_gui::set_paster(move || text.clone());
+                let before: BTreeSet<String> = listed_tags(&w);
                 let consumed = w.invoke_paste_requested(event["button"].as_bool().unwrap());
                 // (a question is raised before the paste is known to be consumed)
                 if !event["consumed"].is_null() && event["asked"].as_array().unwrap().is_empty() {
@@ -318,29 +389,13 @@ fn manage_tags_typing_highlighting_entering_and_fetching_follow_the_recording() 
                     );
                     w.invoke_paste_answered(event["answer"].as_bool().unwrap());
                 }
-                for tag in event["pasted"]
-                    .as_array()
-                    .unwrap()
-                    .iter()
-                    .flat_map(|batch| batch.as_array().unwrap())
-                {
-                    assert!(
-                        w.get_tags()
-                            .iter()
-                            .any(|r| r.text.starts_with(tag.as_str().unwrap())),
-                        "{tag}"
-                    );
-                }
+                // exactly the tags the recording pasted are added, and nothing else
+                let after: BTreeSet<String> = listed_tags(&w);
+                let added: BTreeSet<String> = after.difference(&before).cloned().collect();
+                assert_eq!(added, recorded_pasted(event), "{event}");
             }
             w.invoke_text_edited(query["text"].as_str().unwrap().into());
         }
-        // Enter enters what is highlighted
-        w.invoke_entered();
-        let entered = query["selected"][0].as_str().unwrap();
-        assert!(
-            w.get_tags().iter().any(|r| r.text.starts_with(entered)),
-            "{entered} is listed"
-        );
         w.invoke_cancel();
     }
     // without fetch-as-you-type only the typed tag is offered until Ctrl+Space
@@ -363,7 +418,7 @@ fn manage_tags_typing_highlighting_entering_and_fetching_follow_the_recording() 
             settings::set(ctx.conn(), &widgets)
         })
         .unwrap();
-    let (_ui, _bound, w) = open_manage_tags(&store);
+    let (_ui, _bound, w) = open_manage_tags(&store, &f);
     w.invoke_text_edited("parity:amb".into());
     assert_eq!(w.get_suggestions().row_count(), 1);
     w.invoke_fetch();
@@ -422,6 +477,26 @@ fn relationship_inputs(kind: &str) {
             };
             let rows: Vec<String> = suggestions.iter().map(|r| r.text.to_string()).collect();
             assert_eq!(grouped(&rows), expected_groups(query), "{kind} {query}");
+            // Enter, or a double-click on the highlight, enters it
+            let before = side_tags(&w, right);
+            w.invoke_autocomplete_chosen(right, -1);
+            // exactly what the recording had highlighted is added
+            let after = side_tags(&w, right);
+            assert_eq!(
+                after.difference(&before).cloned().collect::<Vec<_>>(),
+                [query["selected"][0].as_str().unwrap().to_owned()],
+                "{kind} right={right} {query}"
+            );
+            // (the input is cleared by an entry: typed again for the rest)
+            w.invoke_autocomplete_edited(right, query["text"].as_str().unwrap().into());
+            let rows: Vec<String> = if right {
+                w.get_right_suggestions()
+            } else {
+                w.get_left_suggestions()
+            }
+            .iter()
+            .map(|r| r.text.to_string())
+            .collect();
             if query == &f["queries"][0] {
                 let at = rows
                     .iter()
@@ -449,6 +524,7 @@ fn relationship_inputs(kind: &str) {
                     set_skip_paste_question(&store, event["skip"].as_bool().unwrap());
                     let text = event["text"].as_str().unwrap().to_owned();
                     hydrus_gui::set_paster(move || text.clone());
+                    let before = side_tags(&w, right);
                     let consumed =
                         w.invoke_autocomplete_paste(right, event["button"].as_bool().unwrap());
                     // (a question is raised before the paste is known to be consumed)
@@ -467,47 +543,20 @@ fn relationship_inputs(kind: &str) {
                         );
                         w.invoke_answered(event["answer"].as_bool().unwrap());
                     }
-                    let side = if right {
-                        w.get_right_tags()
-                    } else {
-                        w.get_left_tags()
-                    };
+                    let after = side_tags(&w, right);
+                    let added: BTreeSet<String> = after.difference(&before).cloned().collect();
+                    let pasted = recorded_pasted(event);
                     // (a sibling's ideal side holds one tag, so many pasted there
                     // leave one of them; every other side keeps them all)
-                    let pasted: Vec<&str> = event["pasted"]
-                        .as_array()
-                        .unwrap()
-                        .iter()
-                        .flat_map(|batch| batch.as_array().unwrap())
-                        .map(|t| t.as_str().unwrap())
-                        .collect();
-                    let listed = |tag: &&str| side.iter().any(|r| r.text.starts_with(*tag));
                     if kind == "siblings" && right {
-                        assert!(
-                            pasted.is_empty() || pasted.iter().any(listed),
-                            "{kind}: {pasted:?}"
-                        );
+                        assert!(added.is_subset(&pasted), "{kind}: {added:?} of {pasted:?}");
+                        assert_eq!(added.len(), usize::from(!pasted.is_empty()), "{event}");
                     } else {
-                        for tag in &pasted {
-                            assert!(listed(tag), "{kind} right={right}: {tag}");
-                        }
+                        assert_eq!(added, pasted, "{kind} right={right} {event}");
                     }
                 }
                 w.invoke_autocomplete_edited(right, query["text"].as_str().unwrap().into());
             }
-            // Enter, or a double-click on the highlight, enters it
-            w.invoke_autocomplete_chosen(right, -1);
-            let entered = query["selected"][0].as_str().unwrap();
-            let side = if right {
-                w.get_right_tags()
-            } else {
-                w.get_left_tags()
-            };
-            assert!(
-                side.iter().any(|r| r.text.starts_with(entered)),
-                "{kind}: {entered} is entered on the {} side",
-                if right { "right" } else { "left" }
-            );
         }
         w.invoke_cancel();
     }

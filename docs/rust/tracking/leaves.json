@@ -3541,7 +3541,7 @@
     "date": "2026-10-09",
     "class": "sound",
     "by": "Claude (tags leftovers, issue 86)",
-    "note": "Manage tags' write autocomplete, driven through the window: for every recorded option set (first-with-count, expanded/decorated parents and siblings, count service) the typed text's rows (the parents as an unordered bag, as Qt lists them) and what Enter enters match oracle/fixtures/write_tag_autocomplete.json; the recorded context menu on a result (two levels), the recorded multiline-paste questions with and without the skip option, and manual fetch (Ctrl+Space) with fetch-as-you-type off. The leaf's other listed behaviours (selection, keyboard, undo, drag) have their own tests in write_autocomplete.rs and the model tests. Native dropdown layout differs from Qt (DIFFERENCES.md). Tests: crates/hydrus-gui/tests/gui/write_autocomplete_leaves.rs."
+    "note": "Manage tags' write autocomplete, driven through the window: for every recorded option set (first-with-count, expanded/decorated parents and siblings, count service) the typed text's rows (the parents as an unordered bag, as Qt lists them) and what Enter enters (exactly the recorded selection, as the one tag added) match oracle/fixtures/write_tag_autocomplete.json; the recorded context menu on a result (two levels), the recorded multiline-paste questions with and without the skip option, and manual fetch (Ctrl+Space) with fetch-as-you-type off. The leaf's other listed behaviours (selection, keyboard, undo, drag) have their own tests in write_autocomplete.rs and the model tests. Native dropdown layout differs from Qt (DIFFERENCES.md). Tests: crates/hydrus-gui/tests/gui/write_autocomplete_leaves.rs."
    }
   },
   {
@@ -23481,9 +23481,9 @@
    ],
    "recheck": {
     "date": "2026-10-09",
-    "class": "weak",
+    "class": "sound",
     "by": "Claude (tags leftovers, issue 86)",
-    "note": "Tooltip elements (Slint 1.18) now wrap the tag filter editor's \"show other panels\" button and every native tag filter button (tag migration, tag display options, string tag filter, import options' get tags and blacklist, Client API permitted tags) through the shared TipButton. The button text and tooltip for every configuration are replayed from the reference's TagFilterButton (oracle/fixtures/tag_filter_tooltips.json, model test tag_filter_tooltips.rs); the windows' tests assert the text handed to each Tooltip. Not covered: the popup itself appearing after the pointer rests (the headless test platform draws none); Qt's 80-column wrapping is Slint's own wrapping here. Tests: crates/hydrus-gui/tests/gui/tag_filter_tooltips.rs, crates/hydrus-gui-model/tests/model/tag_filter_tooltips.rs, tag_migration.rs, tag_display.rs, import_options.rs."
+    "note": "Slint 1.18 Tooltip elements wrap the tag filter editor's \"show other panels\" button and every native tag filter button (tag migration, tag display options, string tag filter, import options' get tags and blacklist, Client API permitted tags) through the shared TipButton. Button text and tooltip for every configuration (migration's three, display, string match, import get-tags and blacklist, API permitted tags) are replayed from the reference's TagFilterButton (oracle/fixtures/tag_filter_tooltips.json, model test tag_filter_tooltips.rs); the windows assign the same button_label tooltip (the display options' button now has the reference's \"tags shown: \" prefix in its tooltip). The tooltip popup itself is observed: after one pointer move and the delay, the drawn picture beside the pointer differs from no tooltip and from another text. Only \"show other panels\" and the preview's buttons are driven by hover; the other buttons share the TipButton component and are asserted by their windows' tests (some by prefix and content, one by the recording's literal). Qt's 80-column wrapping is Slint's own wrapping. Tests: crates/hydrus-gui/tests/gui/tag_filter_tooltips.rs, crates/hydrus-gui-model/tests/model/tag_filter_tooltips.rs, tag_migration.rs, tag_display.rs, import_options.rs."
    }
   },
   {
@@ -24369,7 +24369,7 @@
     "date": "2026-10-09",
     "class": "sound",
     "by": "Claude (tags leftovers, issue 86)",
-    "note": "The parent editor's two write inputs driven through the window against the same recording as Manage tags: rows and entry for every option set, the recorded context menu (two levels), the multiline-paste questions and manual fetch. Menu actions and selection/keyboard/undo have their own tests (write_autocomplete.rs, model write_autocomplete.rs). Tests: crates/hydrus-gui/tests/gui/write_autocomplete_leaves.rs."
+    "note": "The parent editor's two write inputs driven through the window against the same recording as Manage tags: rows and entry for every option set, the recorded context menu (two levels), the multiline-paste questions and manual fetch. Menu actions and selection/keyboard/undo have their own tests (write_autocomplete.rs, model write_autocomplete.rs). Tests: crates/hydrus-gui/tests/gui/write_autocomplete_leaves.rs. Entry and paste check the exact tags added (before and after), not presence."
    }
   },
   {
@@ -24432,7 +24432,7 @@
   },
   {
    "id": "relationship-reasons",
-   "label": "Repository permission/reason context",
+   "label": "Reason suggestions on repository sibling/parent questions",
    "path": "Tags > Tag siblings",
    "workstream": "tags-services",
    "state": "partial",
@@ -24440,16 +24440,29 @@
    "reference": "hydrus/client/gui/metadata/ClientGUITagActions.py:20",
    "native": null,
    "notes": [
-    "Truth pass (2026-10-08): partial, medium. Reasons work; suggestions and account handling missing. Missing: Recent and fixed reason suggestions; account permission/moderator handling. Evidence: tag_relationships.rs:725-750; tests tag_relationships.rs:38,337 and GUI :198",
     "Local add/delete or repository pend/petition/rescind uses typed updates and stored reasons; repository tests reopen pending/reasons and rescind correctly.",
-    "Reasons/rescinds exist; permission warnings, moderator bypass and recent/fixed suggestions are deferred."
+    "Split 2026-10-09: the recent and fixed reason suggestions stay here; account permission/moderator handling is `relationship-reasons-account-handling`."
    ],
    "recheck": {
     "date": "2026-10-09",
-    "class": "weak",
+    "class": "sound",
     "by": "Claude (tags leftovers, issue 86)",
-    "note": "The reason question of a tag repository's sibling/parent pend and petition now offers the recent reasons then the fixed ones (per kind and action) as buttons, remembers typed non-fixed reasons up to the options count, and matches oracle/fixtures/relationship_reasons.json (recorded from the real TagPairActionContext) in a model test and through the window. Not done, out of scope per the coordinating session and not decided by the owner: account permission/moderator handling (the reference skips the question with 'Entered by a janitor.' for a moderator). Tests: crates/hydrus-gui-model/tests/model/tag_relationships.rs petition_reasons_offer_recent_then_fixed_suggestions_capped_by_the_option; crates/hydrus-gui/tests/gui/tag_relationships.rs reason_questions_offer_recent_then_fixed_reasons_and_the_option_caps_the_recent_ones."
+    "note": "The reason question of a tag repository's sibling/parent pend and petition offers the recent reasons then the fixed ones (per kind and action) as buttons, remembers typed non-fixed reasons up to the options count, and matches oracle/fixtures/relationship_reasons.json (recorded from the real TagPairActionContext, siblings and parents, counts 2 and 0, add and delete/petition steps, typed answers, suggestion buttons and cancel) in a model test and through the window (adds by typing, deletes by selecting a current pair). Account/moderator handling was split into relationship-reasons-account-handling (out of scope). Tests: crates/hydrus-gui-model/tests/model/tag_relationships.rs petition_reasons_offer_recent_then_fixed_suggestions_capped_by_the_option; crates/hydrus-gui/tests/gui/tag_relationships.rs reason_questions_offer_recent_then_fixed_reasons_and_the_option_caps_the_recent_ones."
    }
+  },
+  {
+   "id": "relationship-reasons-account-handling",
+   "label": "Account permission and moderator handling of reasons",
+   "path": "Tags > Tag siblings",
+   "workstream": "tags-services",
+   "state": "missing",
+   "priority": "out-of-scope",
+   "reference": "hydrus/client/gui/metadata/ClientGUITagActions.py:20",
+   "native": null,
+   "notes": [
+    "split 2026-10-09; account/moderator handling is PTR-adjacent, out of scope with the PTR",
+    "The reference (TagPairActionContext) skips the reason question with 'Entered by a janitor.' for an account with moderate permission on the content type; hydrus-rs always asks."
+   ]
   },
   {
    "id": "service-ipfs",
@@ -24531,7 +24544,7 @@
     "date": "2026-10-09",
     "class": "sound",
     "by": "Claude (tags leftovers, issue 86)",
-    "note": "The sibling editor's two write inputs driven through the window against the same recording as Manage tags: rows and entry for every option set, the recorded context menu (two levels), the multiline-paste questions (a sibling's ideal side keeps one pasted tag) and manual fetch. Menu actions and selection/keyboard/undo have their own tests (write_autocomplete.rs, model write_autocomplete.rs). Tests: crates/hydrus-gui/tests/gui/write_autocomplete_leaves.rs."
+    "note": "The sibling editor's two write inputs driven through the window against the same recording as Manage tags: rows and entry for every option set, the recorded context menu (two levels), the multiline-paste questions (a sibling's ideal side keeps one pasted tag) and manual fetch. Menu actions and selection/keyboard/undo have their own tests (write_autocomplete.rs, model write_autocomplete.rs). Tests: crates/hydrus-gui/tests/gui/write_autocomplete_leaves.rs. Entry and paste check the exact tags added (before and after), not presence."
    }
   },
   {

@@ -229,6 +229,7 @@ fn dialogs_stage_cancel_apply_questions_and_update_display() {
 #[test]
 fn reason_questions_offer_recent_then_fixed_reasons_and_the_option_caps_the_recent_ones() {
     use crate::options_gui_support::{Client, row, show_page};
+    use hydrus_store::content::tag_relations::{self, RelationAction, RelationUpdate};
     let recording = hydrus_testkit::fixture_json("relationship_reasons.json");
     let client = Client::basic();
     client
@@ -245,13 +246,35 @@ fn reason_questions_offer_recent_then_fixed_reasons_and_the_option_caps_the_rece
             Ok(())
         })
         .unwrap();
-    let ui = &client.ui;
-    for run in recording["runs"]
-        .as_array()
+    let repository = client
+        .store
+        .snapshot()
+        .services
+        .by_name("reasons repository")
         .unwrap()
-        .iter()
-        .filter(|run| run["kind"] == "siblings")
-    {
+        .id;
+    let ui = &client.ui;
+    for run in recording["runs"].as_array().unwrap() {
+        let kind = if run["kind"] == "siblings" {
+            hydrus_store::display::RelationKind::Siblings
+        } else {
+            hydrus_store::display::RelationKind::Parents
+        };
+        // the pairs the recording starts from are current on the repository
+        for pair in run["initial"].as_array().unwrap() {
+            let left = hydrus_core::Tag::new(pair[0].as_str().unwrap()).unwrap();
+            let right = hydrus_core::Tag::new(pair[1].as_str().unwrap()).unwrap();
+            let _ = tag_relations::apply(
+                &client.store,
+                kind,
+                vec![RelationUpdate {
+                    service: repository,
+                    left,
+                    right,
+                    action: RelationAction::Add,
+                }],
+            );
+        }
         // the count of reasons to remember, set in Options > tag editing
         let count = i32::try_from(run["count"].as_i64().unwrap()).unwrap();
         let options = client.open_options();
@@ -282,7 +305,7 @@ fn reason_questions_offer_recent_then_fixed_reasons_and_the_option_caps_the_rece
                     .row_data(i)
                     .unwrap()
                     .label
-                    .starts_with("siblings")
+                    .starts_with(run["kind"].as_str().unwrap())
             })
             .unwrap();
         ui.invoke_menu_line_clicked(0, i32::try_from(line).unwrap(), 0.0, 0.0, 0.0);
@@ -299,17 +322,36 @@ fn reason_questions_offer_recent_then_fixed_reasons_and_the_option_caps_the_rece
             .position(|name| name == "reasons repository")
             .unwrap();
         w.invoke_service_chosen(i32::try_from(at).unwrap());
-        for step in run["steps"]
-            .as_array()
-            .unwrap()
-            .iter()
-            .filter(|step| step["action"] == "add")
-        {
+        w.set_show_all(true);
+        w.invoke_filters_changed();
+        for step in run["steps"].as_array().unwrap() {
             let recorded = &step["asked"][0];
-            w.invoke_enter_tags(false, step["pair"][0].as_str().unwrap().into());
-            w.invoke_enter_tags(true, step["pair"][1].as_str().unwrap().into());
-            w.invoke_add();
+            let (left, right) = (
+                step["pair"][0].as_str().unwrap(),
+                step["pair"][1].as_str().unwrap(),
+            );
+            if step["action"] == "add" {
+                w.invoke_enter_tags(false, left.into());
+                w.invoke_enter_tags(true, right.into());
+                w.invoke_add();
+            } else {
+                // a current pair is selected in the list and deleted: a petition
+                let rows = w.get_rows();
+                let at = (0..rows.row_count())
+                    .find(|&i| {
+                        let cells = rows.row_data(i).unwrap().cells;
+                        cells.row_data(1).unwrap() == left && cells.row_data(2).unwrap() == right
+                    })
+                    .unwrap_or_else(|| panic!("{left}->{right} is listed"));
+                w.invoke_row_clicked(i32::try_from(at).unwrap(), false, false);
+                w.invoke_delete();
+            }
             assert!(w.get_ask_reason(), "{step}");
+            assert_eq!(
+                w.get_question().replace("\n\n", " "),
+                recorded["message"].as_str().unwrap().replace("\n\n", " "),
+                "{step}"
+            );
             let offered: Vec<String> = w
                 .get_reason_suggestions()
                 .iter()
@@ -338,9 +380,15 @@ fn reason_questions_offer_recent_then_fixed_reasons_and_the_option_caps_the_rece
             }
             assert!(w.get_question().is_empty(), "{step}");
             let kept: hydrus_store::reference_options::RecentPetitionReasons = client.setting();
+            let name = run["kind"].as_str().unwrap();
             assert_eq!(
-                serde_json::json!(kept.get("siblings/add", i64::from(count))),
+                serde_json::json!(kept.get(&format!("{name}/add"), i64::from(count))),
                 step["recent_add"],
+                "{step}"
+            );
+            assert_eq!(
+                serde_json::json!(kept.get(&format!("{name}/delete"), i64::from(count))),
+                step["recent_delete"],
                 "{step}"
             );
         }

@@ -62,8 +62,19 @@ pub(crate) fn open(
             w.set_real_service(s.real);
             w.set_single_label(s.single.to_permitted_string().into());
             w.set_selection_label(s.selection.to_permitted_string().into());
-            w.set_single_tooltip(w.get_single_label());
-            w.set_selection_tooltip(w.get_selection_label());
+            // (the reference's button text and tooltip: "tags shown: " and the
+            // filter in filter language; the label here has not that prefix)
+            let tooltip = |filter| {
+                hydrus_gui_model::tag_filter_editor::button_label(
+                    filter,
+                    false,
+                    "tags shown: ",
+                    true,
+                )
+                .1
+            };
+            w.set_single_tooltip(tooltip(&s.single).into());
+            w.set_selection_tooltip(tooltip(&s.selection).into());
             w.set_fetch_automatically(s.autocomplete.fetch_automatically);
             w.set_threshold(i32::from(s.autocomplete.exact_match_threshold.unwrap_or(0)));
             w.set_override_location(s.autocomplete.override_location);

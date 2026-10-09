@@ -2477,9 +2477,12 @@ Evidence (checkpoint `2e2a24281`, in git history before 2026-10-08).
 
 
 Suggested tags have real local-service most-used and recent consumers, per-service
-Options list drafts and width/layout controls. Related-tag searching, its weights
-and duration controls, and file-lookup scripts are still absent, so suggestion
-families and the default-notebook-page leaf remain partial. All four reference
+Options list drafts and width/layout controls. The related panel searches (with
+its weights, the three durations behind its quick, medium and thorough buttons,
+and a search from the selected tags; see "The related panel" in the section on
+tooltips, petition reasons and the related panel below), but file-lookup scripts
+are still absent, so suggestion families and the default-notebook-page leaf
+remain partial. All four reference
 page choices are retained and saved; unavailable choices fall back to the first
 available native page, as recorded with those Qt panels disabled. This does not
 claim normal Qt Related/File Lookup availability. Opening captures existing
@@ -4385,7 +4388,7 @@ directory.
   and per-player mute) is not ported. The control's two mute buttons show the
   reference's tooltips ("Global mute/unmute", "Mute/unmute: preview viewer",
   recorded in `oracle/fixtures/tag_filter_tooltips.json`) after the pointer rests
-  on them for half a second (Slint's `Tooltip`; only the text is tested).
+  on them for half a second (Slint's `Tooltip`; the popup and its text are tested).
 - A change to the preview's show action while a file plays restarts it within
   a quarter of a second, not at once.
 
@@ -4412,9 +4415,10 @@ directory.
   tooltip is on the button). The tag display options' button labels lack the
   reference's "tags shown: " prefix (a pre-existing difference), so their
   tooltip is the label. The editor's "show other panels" button has the
-  reference's tooltip. The tests assert the text each control hands to its
-  `Tooltip`, replayed from the reference (the headless test platform draws no
-  Slint tooltip popup, so the popup appearing on hover is untested and only checked by hand).
+  reference's tooltip. The popup is observed in the tests of "show other panels"
+  and the preview's mute buttons (a picture drawn after the pointer rests,
+  differing with the text); the other buttons use the same `TipButton` and their
+  windows' tests assert the text they hand it.
 - **Petition reasons.** The reason question (a tag repository's sibling or parent
   pend or petition) offers the recently typed reasons for that kind and action
   (as many as Options > tag editing > "Number of recent petition reasons to
@@ -4424,8 +4428,8 @@ directory.
   account's permission handling is not ported: the reference, for an account
   with moderate permission on the content type, skips the question and uses
   "Entered by a janitor."; hydrus-rs always asks. (Tag repositories are
-  out of scope; this was decided by the coordinator, not by the owner, and
-  `relationship-reasons` is tagged on that basis for a reviewer to confirm.)
+  out of scope: its own leaf, `relationship-reasons-account-handling`, is marked
+  out of scope with the PTR.)
 - **The related panel** (Manage tags > suggested tags) has the reference's
   quick, medium and thorough buttons, reading Options > tag suggestions' three
   durations, and searches from the selected tags alone (excluding the other tags

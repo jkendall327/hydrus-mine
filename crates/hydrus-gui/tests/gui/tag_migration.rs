@@ -264,7 +264,9 @@ fn an_open_filter_child_cannot_broaden_a_confirmed_delete() {
     filter.invoke_typed(1, "creator:retain".into());
     filter.invoke_apply();
     assert!(window.get_left_label().contains("creator"));
-    assert_eq!(window.get_left_tooltip(), window.get_left_label());
+    // the tooltip is the reference's button text, with its prefix
+    assert!(window.get_left_tooltip().starts_with("tags taken: "));
+    assert!(window.get_left_tooltip().contains("creator"));
     window.invoke_edit_filter(false);
     let filter = hydrus_gui::tag_filter_window::last_opened().unwrap();
     window.invoke_go();
@@ -273,7 +275,15 @@ fn an_open_filter_child_cannot_broaden_a_confirmed_delete() {
     filter.invoke_row_activated(1, 0);
     filter.invoke_apply();
     assert!(window.get_left_label().contains("all tags"));
-    assert_eq!(window.get_left_tooltip(), window.get_left_label());
+    // (the recorded button text for a filter that lets everything through)
+    let recorded = hydrus_testkit::fixture_json("tag_filter_tooltips.json");
+    let all = recorded["buttons"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|b| b["config"] == "migration_taken" && b["filter"] == "all")
+        .unwrap();
+    assert_eq!(window.get_left_tooltip(), all["tooltip"].as_str().unwrap());
     assert_eq!(window.get_question(), confirmed);
     window.invoke_answer(true);
     window.invoke_answer(true);
