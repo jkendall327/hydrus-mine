@@ -409,6 +409,9 @@ fn append_session_from_the_tab_menu_lands_where_the_reference_put_it() {
         tree(&bound.pages.borrow().session().pages),
         fixture["appended"]["tree"]
     );
-    // (which page is shown afterwards is compared where the recording's direct
-    // call is replayed, through Pages::append_session_to_notebook, above)
+    // (the recording's shown page, "outside", is the top-level page the
+    // recorder left current; the menu is reached only from inside the source
+    // notebook, so that state is not reachable here and is compared where the
+    // recording's direct call is replayed, through
+    // Pages::append_session_to_notebook, above)
 }

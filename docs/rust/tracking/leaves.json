@@ -21110,10 +21110,10 @@
     "Sort siblings by descending file count, importer total then completed progress; stable equal keys. Right-click routes to the clicked notebook depth and retains the selected leaf across reorder."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "No GUI test clicks the sort submenu. Model test crates/hydrus-gui-model/tests/model/tab_context.rs sorts_and_moves_match_the_reference replays tab_context.json (real PagesNotebook sort) against tab_context::order with Summary values built from the fixture; the GUI tests session.rs:1666 tab_reordering_keeps_nested_notebooks_and_shown_leaf and :1780 tab_size_sort_sums_open_nested_media_and_keeps_stable_ties call Pages::sort_tabs directly with typed expectations, never via the menu/window. Files sort (incl. importer progress tie-break) has no GUI test at all. Tests: hydrus-gui-model/tests/model/tab_context.rs:sorts_and_moves_match_the_reference; crates/hydrus-gui/tests/gui/session.rs:1666,1780"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "gui/tab_context_menu.rs sort_pages_by_files_from_the_tab_menu_orders_as_the_reference_did opens 'sort pages' on a tab menu and clicks the entry, with the recording's file counts and importer progress (real queues) seeded, and compares the order with tab_context.json `sorts`; the shown page stays current."
    }
   },
   {
@@ -21129,10 +21129,10 @@
     "Sort siblings by ascending file count, importer total then completed progress; stable equal keys. Right-click routes to the clicked notebook depth and retains the selected leaf across reorder."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "No GUI test clicks the sort submenu. Model test crates/hydrus-gui-model/tests/model/tab_context.rs sorts_and_moves_match_the_reference replays tab_context.json (real PagesNotebook sort) against tab_context::order with Summary values built from the fixture; the GUI tests session.rs:1666 tab_reordering_keeps_nested_notebooks_and_shown_leaf and :1780 tab_size_sort_sums_open_nested_media_and_keeps_stable_ties call Pages::sort_tabs directly with typed expectations, never via the menu/window. Files sort has no GUI test at all. Tests: hydrus-gui-model/tests/model/tab_context.rs:sorts_and_moves_match_the_reference; crates/hydrus-gui/tests/gui/session.rs:1666,1780"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "gui/tab_context_menu.rs sort_pages_by_files_from_the_tab_menu_orders_as_the_reference_did opens 'sort pages' on a tab menu and clicks the entry, with the recording's file counts and importer progress (real queues) seeded, and compares the order with tab_context.json `sorts`; the shown page stays current."
    }
   },
   {
@@ -21148,10 +21148,10 @@
     "Sort siblings by descending sum of initialized descendant file sizes, counting files once per page; stable equal-size ties. Right-click routes to the clicked notebook depth and retains the selected leaf across reorder."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "No GUI test clicks the sort submenu. Model test crates/hydrus-gui-model/tests/model/tab_context.rs sorts_and_moves_match_the_reference replays tab_context.json (real PagesNotebook sort) against tab_context::order with Summary values built from the fixture; the GUI tests session.rs:1666 tab_reordering_keeps_nested_notebooks_and_shown_leaf and :1780 tab_size_sort_sums_open_nested_media_and_keeps_stable_ties call Pages::sort_tabs directly with typed expectations, never via the menu/window. Size sum covered by session.rs:1780 with typed ids; not recording-driven. Tests: hydrus-gui-model/tests/model/tab_context.rs:sorts_and_moves_match_the_reference; crates/hydrus-gui/tests/gui/session.rs:1666,1780"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "gui/tab_context_menu.rs sort_pages_by_size_from_the_tab_menu_orders_as_the_reference_did clicks the entry from the tab menu and compares the order with tab_context.json `sorts`. The recorder stubbed each page's total size (80/10/80/10/10/0), so the database's largest and smallest files stand in for 80 and 10: the ties and leaders are the recorded ones, the byte sizes are not."
    }
   },
   {
@@ -21167,10 +21167,10 @@
     "Sort siblings by ascending sum of initialized descendant file sizes; unopened pages contribute zero like reference. Right-click routes to the clicked notebook depth and retains the selected leaf across reorder."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "No GUI test clicks the sort submenu. Model test crates/hydrus-gui-model/tests/model/tab_context.rs sorts_and_moves_match_the_reference replays tab_context.json (real PagesNotebook sort) against tab_context::order with Summary values built from the fixture; the GUI tests session.rs:1666 tab_reordering_keeps_nested_notebooks_and_shown_leaf and :1780 tab_size_sort_sums_open_nested_media_and_keeps_stable_ties call Pages::sort_tabs directly with typed expectations, never via the menu/window. Unopened pages contributing zero is checked only with typed values in session.rs:1780. Tests: hydrus-gui-model/tests/model/tab_context.rs:sorts_and_moves_match_the_reference; crates/hydrus-gui/tests/gui/session.rs:1666,1780"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "gui/tab_context_menu.rs sort_pages_by_size_from_the_tab_menu_orders_as_the_reference_did clicks the entry from the tab menu and compares the order with tab_context.json `sorts`. The recorder stubbed each page's total size (80/10/80/10/10/0), so the database's largest and smallest files stand in for 80 and 10: the ties and leaders are the recorded ones, the byte sizes are not."
    }
   },
   {
@@ -21186,10 +21186,10 @@
     "Sort siblings by exact case-sensitive lexical name ascending; same-name pages use descending file count/progress secondary key. Right-click routes to the clicked notebook depth and retains the selected leaf across reorder."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "No GUI test clicks the sort submenu. Model test crates/hydrus-gui-model/tests/model/tab_context.rs sorts_and_moves_match_the_reference replays tab_context.json (real PagesNotebook sort) against tab_context::order with Summary values built from the fixture; the GUI tests session.rs:1666 tab_reordering_keeps_nested_notebooks_and_shown_leaf and :1780 tab_size_sort_sums_open_nested_media_and_keeps_stable_ties call Pages::sort_tabs directly with typed expectations, never via the menu/window. Name tie-break covered in session.rs:1666 with typed values. Tests: hydrus-gui-model/tests/model/tab_context.rs:sorts_and_moves_match_the_reference; crates/hydrus-gui/tests/gui/session.rs:1666,1780"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "gui/tab_context_menu.rs sort_pages_by_name_from_the_tab_menu_orders_as_the_reference_did clicks the entry from the tab menu and compares the order with tab_context.json `sorts`, including the reference's file-count/progress tie-break of equal names."
    }
   },
   {
@@ -21205,10 +21205,10 @@
     "Sort siblings by exact case-sensitive lexical name descending; same-name pages keep descending count/progress secondary key. Right-click routes to the clicked notebook depth and retains the selected leaf across reorder."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "No GUI test clicks the sort submenu. Model test crates/hydrus-gui-model/tests/model/tab_context.rs sorts_and_moves_match_the_reference replays tab_context.json (real PagesNotebook sort) against tab_context::order with Summary values built from the fixture; the GUI tests session.rs:1666 tab_reordering_keeps_nested_notebooks_and_shown_leaf and :1780 tab_size_sort_sums_open_nested_media_and_keeps_stable_ties call Pages::sort_tabs directly with typed expectations, never via the menu/window. Name tie-break covered in session.rs:1666 with typed values. Tests: hydrus-gui-model/tests/model/tab_context.rs:sorts_and_moves_match_the_reference; crates/hydrus-gui/tests/gui/session.rs:1666,1780"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "gui/tab_context_menu.rs sort_pages_by_name_from_the_tab_menu_orders_as_the_reference_did clicks the entry from the tab menu and compares the order with tab_context.json `sorts`, including the reference's file-count/progress tie-break of equal names."
    }
   },
   {
