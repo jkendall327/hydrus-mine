@@ -1898,6 +1898,20 @@ the reference panels' labels and local/remote action-context transitions;
 model replay, snapshot/count rollback checks, and real-store menu/window tests
 cover the implementation.
 
+Recorded against the reference (bin E of #97): pair import from the clipboard
+or a .txt file (uneven lines, cleaning, blank lines, pre-existing and pending
+pairs, sibling conflicts, loops, re-imported petitions, more than ten pairs on
+a repository) and selected-pair export to the clipboard or a .txt file
+(`oracle/record_relationship_exchange.py`); the default service tab and saving
+it on change, shared with Manage tags, whose tabs read "name (tags)" with " *"
+while changes wait (`record_tag_service_tabs.py`); sibling and parent source
+precedence and what it does to each tag's ideal, parents and children
+(`record_relationship_application.py`); the tag filter's blacklist test against
+every service's siblings (`record_tag_filter_sibling_testing.py`); the write
+tag service and file-domain override reaching Manage tags' suggestions
+(`record_write_domain.py`); and Options > tag editing's three autocomplete
+decoration switches, each on its own (`record_autocomplete_decoration_flags.py`).
+
 
 The tag autocomplete tabs options page now opens a shared favourite-tag list
 editor with suggestions, manual fetch, domain controls and add-only manual/paste
