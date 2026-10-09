@@ -4391,6 +4391,13 @@ directory.
 - The CPU-busy check reads per-core times from `/proc/stat`, so it exists on
   Linux only; elsewhere the system never reads busy. The reference's
   just-woke-from-sleep condition is not part of the idle gate here.
+- **Trash maintenance order.** When the trash is over its maximum size,
+  hydrus-rs deletes the oldest-trashed files first. The reference asks its
+  database for the oldest 256 "oldest first" (its comment says so), but turns
+  them into a set of file ids before deleting, so it deletes as many files,
+  eight at a time, in roughly file-id (import) order instead
+  (`oracle/fixtures/trash_maintenance.json`, the two ordering scenarios). Which
+  files go differs; how many, and the size and age boundaries, are the same.
 
 ## Quick-leaf checks (notes)
 

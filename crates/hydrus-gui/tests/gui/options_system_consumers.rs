@@ -11,7 +11,7 @@ use hydrus_gui::{MainWindow, OptionRow, OptionsWindow, Pages, bind, headless};
 use hydrus_store::Store;
 use hydrus_store::import::import_legacy;
 
-fn store() -> ([tempfile::TempDir; 2], Arc<Store>) {
+pub(crate) fn store() -> ([tempfile::TempDir; 2], Arc<Store>) {
     let legacy = hydrus_testkit::legacy_fixture("basic");
     let native = tempfile::tempdir().unwrap();
     import_legacy(
@@ -24,15 +24,15 @@ fn store() -> ([tempfile::TempDir; 2], Arc<Store>) {
 }
 
 /// The main window, bound to a fresh store.
-struct Client {
-    _dirs: [tempfile::TempDir; 2],
-    store: Arc<Store>,
-    ui: MainWindow,
-    bound: hydrus_gui::Bound,
+pub(crate) struct Client {
+    pub(crate) _dirs: [tempfile::TempDir; 2],
+    pub(crate) store: Arc<Store>,
+    pub(crate) ui: MainWindow,
+    pub(crate) bound: hydrus_gui::Bound,
     _windows: hydrus_gui::headless::Windows,
 }
 
-fn client() -> Client {
+pub(crate) fn client() -> Client {
     let (dirs, store) = store();
     let windows = headless::init();
     let ui = MainWindow::new().unwrap();
@@ -49,7 +49,7 @@ fn client() -> Client {
 
 impl Client {
     /// file > options…, on `page`.
-    fn options(&self, page: &str) -> OptionsWindow {
+    pub(crate) fn options(&self, page: &str) -> OptionsWindow {
         let ui = &self.ui;
         ui.invoke_menu_title_pressed(0, 20.0, 22.0);
         let lines = ui.get_menu_panes().row_data(0).unwrap().lines;
@@ -62,7 +62,7 @@ impl Client {
         window
     }
 
-    fn get<T: hydrus_store::settings::Setting>(&self) -> T {
+    pub(crate) fn get<T: hydrus_store::settings::Setting>(&self) -> T {
         self.store.read(hydrus_store::settings::get::<T>).unwrap()
     }
 }
@@ -76,7 +76,7 @@ fn show_page(options: &OptionsWindow, name: &str) {
     options.invoke_page_chosen(i);
 }
 
-fn row(options: &OptionsWindow, label: &str) -> (i32, OptionRow) {
+pub(crate) fn row(options: &OptionsWindow, label: &str) -> (i32, OptionRow) {
     let rows = options.get_rows();
     (0..rows.row_count())
         .map(|i| (i as i32, rows.row_data(i).unwrap()))
@@ -85,14 +85,14 @@ fn row(options: &OptionsWindow, label: &str) -> (i32, OptionRow) {
 }
 
 /// A checkbox row, set.
-fn check(options: &OptionsWindow, label: &str, on: bool) {
+pub(crate) fn check(options: &OptionsWindow, label: &str, on: bool) {
     let (i, found) = row(options, label);
     assert_eq!(found.kind, 1, "{label:?} is a checkbox");
     options.invoke_check_toggled(i, on);
 }
 
 /// A number row (kind 2): its limits are the reference's.
-fn number(options: &OptionsWindow, label: &str, limits: (i32, i32), n: i32) {
+pub(crate) fn number(options: &OptionsWindow, label: &str, limits: (i32, i32), n: i32) {
     let (i, found) = row(options, label);
     assert_eq!(
         (found.kind, found.minimum, found.maximum),
@@ -103,7 +103,7 @@ fn number(options: &OptionsWindow, label: &str, limits: (i32, i32), n: i32) {
 }
 
 /// A number that may be none (kind 3): its none phrase is the reference's.
-fn noneable(options: &OptionsWindow, label: &str, phrase: &str, n: Option<i32>) {
+pub(crate) fn noneable(options: &OptionsWindow, label: &str, phrase: &str, n: Option<i32>) {
     let (i, found) = row(options, label);
     assert_eq!((found.kind, found.none_phrase.as_str()), (3, phrase));
     if let Some(n) = n {
@@ -398,141 +398,6 @@ fn archive_delete_filter_reinboxes_deletees_when_the_option_and_lock_are_set() {
     assert!(!inbox.contains(&deletee));
 }
 
-// leaf: audit-options-files-and-trash-number-of-hours-a-file-will-stay-in-the-trash-before-being-deleted
-// leaf: audit-options-files-and-trash-maximum-size-of-trash-mb
-#[test]
-fn trash_limits_decide_which_trashed_files_maintenance_deletes_for_good() {
-    use hydrus_store::trash::{TrashReport, TrashSettings, maintain_trash};
-
-    const HOUR_MS: i64 = 3_600_000;
-    let client = client();
-    // ten files in the trash, oldest first, each 200,000 bytes, trashed 9.5
-    // to 0.5 hours ago
-    let files = client
-        .store
-        .write_content(|w| {
-            let roles = w.roles().clone();
-            let ids_in = |w: &hydrus_store::content::ContentWriter<'_>, domain| {
-                let mut stmt = w.conn().prepare(
-                    "SELECT hash_id FROM file_domain_current WHERE service_id = ?1 ORDER BY hash_id",
-                )?;
-                let rows = stmt.query_map([domain], |r| r.get::<_, HashId>(0))?;
-                rows.collect::<rusqlite::Result<Vec<_>>>()
-            };
-            let already = ids_in(w, roles.trash)?;
-            w.delete_files(roles.trash, &already, None)?;
-            let files: Vec<HashId> = ids_in(w, roles.combined_local_media)?
-                .into_iter()
-                .take(10)
-                .collect();
-            w.delete_files(roles.combined_local_media, &files, None)?;
-            let now = w.now_ms();
-            for (i, &id) in files.iter().enumerate() {
-                let age = 10 - i64::try_from(i).unwrap();
-                w.conn().execute(
-                    "UPDATE file_domain_current SET added_ms = ?1 WHERE service_id = ?2 AND hash_id = ?3",
-                    rusqlite::params![now - age * HOUR_MS + HOUR_MS / 2, roles.trash, id],
-                )?;
-                w.conn()
-                    .execute("UPDATE files SET size = 200000 WHERE hash_id = ?1", [id])?;
-            }
-            Ok(files)
-        })
-        .unwrap();
-    assert_eq!(files.len(), 10);
-    let trash_role = hydrus_store::content::DomainRoles::new(&client.store.snapshot().services)
-        .unwrap()
-        .trash;
-    let in_trash = || -> Vec<HashId> {
-        client
-            .store
-            .read(move |c| {
-                let mut q = c.prepare(
-                    "SELECT hash_id FROM file_domain_current WHERE service_id = ?1 ORDER BY hash_id",
-                )?;
-                Ok(q.query_map([trash_role], |r| r.get(0))?
-                    .collect::<Result<_, _>>()?)
-            })
-            .unwrap()
-    };
-
-    let age = "Number of hours a file will stay in the trash before being deleted: ";
-    let size = "Maximum size of trash (MB): ";
-    let window = client.options("files and trash");
-    let (_, shown) = row(&window, age);
-    assert_eq!(
-        (
-            shown.kind,
-            shown.number,
-            shown.minimum,
-            shown.maximum,
-            shown.is_none
-        ),
-        (3, 72, 0, 8640, false)
-    );
-    assert_eq!(shown.none_phrase, "no age limit");
-    let (_, shown) = row(&window, size);
-    assert_eq!(
-        (
-            shown.kind,
-            shown.number,
-            shown.minimum,
-            shown.maximum,
-            shown.is_none
-        ),
-        (3, 2048, 0, 20480, false)
-    );
-    assert_eq!(shown.none_phrase, "no size limit");
-    // the defaults delete nothing from a trash this young and small
-    assert_eq!(
-        maintain_trash(&client.store, 256).unwrap(),
-        TrashReport::default()
-    );
-    assert_eq!(in_trash(), files);
-
-    // three hours, and no size limit: the seven older go
-    noneable(&window, age, "no age limit", Some(3));
-    noneable(&window, size, "no size limit", None);
-    window.invoke_apply();
-    assert_eq!(
-        client.get::<TrashSettings>(),
-        TrashSettings {
-            max_age_hours: Some(3),
-            max_size_mb: None
-        }
-    );
-    assert_eq!(
-        maintain_trash(&client.store, 256).unwrap(),
-        TrashReport {
-            over_size: 0,
-            over_age: 7
-        }
-    );
-    assert_eq!(in_trash(), files[7..]);
-
-    // no age limit, one megabyte: 600,000 bytes remain, under it
-    let window = client.options("files and trash");
-    noneable(&window, age, "no age limit", None);
-    noneable(&window, size, "no size limit", Some(0));
-    window.invoke_apply();
-    assert_eq!(
-        client.get::<TrashSettings>(),
-        TrashSettings {
-            max_age_hours: None,
-            max_size_mb: Some(0)
-        }
-    );
-    assert_eq!(
-        maintain_trash(&client.store, 256).unwrap(),
-        TrashReport {
-            over_size: 3,
-            over_age: 0
-        },
-        "a trash limited to nothing is emptied"
-    );
-    assert!(in_trash().is_empty());
-}
-
 // leaf: audit-options-files-and-trash-advanced-do-not-do-chmod-when-copying-files
 #[test]
 fn the_chmod_option_reaches_the_process_when_file_handling_is_applied() {
@@ -558,7 +423,7 @@ fn the_chmod_option_reaches_the_process_when_file_handling_is_applied() {
 
 /// `row`, but the one in the box titled `in_box` (the same label is in
 /// several boxes of the downloading page).
-fn row_in(options: &OptionsWindow, in_box: &str, label: &str) -> (i32, OptionRow) {
+pub(crate) fn row_in(options: &OptionsWindow, in_box: &str, label: &str) -> (i32, OptionRow) {
     let rows = options.get_rows();
     let mut current = String::new();
     for i in 0..rows.row_count() {
@@ -1327,149 +1192,6 @@ fn the_tracking_option_decides_whether_viewing_a_file_is_recorded() {
     window.invoke_apply();
     view(start + 20_000);
     assert_eq!(views().0, on.0 + 1);
-}
-
-const IDLE_ENABLED: &str =
-    "Run maintenance jobs when the client is idle and the system is not otherwise busy: ";
-const CPU_PERCENT: &str = "Consider the system busy if CPU usage is above: ";
-const CPU_CORES: &str = "% on ";
-
-// leaf: audit-options-maintenance-and-processing-when-to-run-high-cpu-jobs-idle-run-maintenance-jobs-when-the-client-is-idle-and-the-system-is-not-otherwise-busy
-// leaf: audit-options-maintenance-and-processing-when-to-run-high-cpu-jobs-idle-consider-the-system-busy-if-cpu-usage-is-above
-// leaf: audit-options-maintenance-and-processing-when-to-run-high-cpu-jobs-idle-on
-#[test]
-fn idle_and_cpu_busy_options_decide_whether_background_work_may_run() {
-    use hydrus_store::idle_state;
-    let client = client();
-    let options = client.options("maintenance and processing");
-    // The reference's controls and limits.
-    let (_, percent) = row_in(&options, "idle", CPU_PERCENT);
-    assert_eq!((percent.kind, percent.minimum, percent.maximum), (2, 5, 99));
-    let (_, cores) = row_in(&options, "idle", CPU_CORES);
-    assert_eq!(
-        (
-            cores.kind,
-            cores.none_phrase.as_str(),
-            cores.minimum,
-            cores.maximum
-        ),
-        (3, "ignore cpu usage", 1, 64)
-    );
-    // Idle on, no activity timeouts, busy at 5% on one core.
-    let (at, _) = row_in(&options, "idle", IDLE_ENABLED);
-    options.invoke_check_toggled(at, true);
-    for label in [
-        "Permit idle mode if no general browsing activity has occurred in the past: ",
-        "Permit idle mode if your mouse cursor has not been moved in the past: ",
-        "Permit idle mode if no Client API requests in the past: ",
-    ] {
-        let (i, _) = row_in(&options, "idle", label);
-        options.invoke_none_toggled(i, true);
-    }
-    let (i, _) = row_in(&options, "idle", CPU_PERCENT);
-    options.invoke_number_edited(i, 5);
-    let (i, _) = row_in(&options, "idle", CPU_CORES);
-    options.invoke_number_edited(i, 1);
-    options.invoke_none_toggled(i, false);
-    options.invoke_apply();
-    let saved: hydrus_store::settings::GuiIdleSettings = client.get();
-    assert!(saved.enabled);
-    assert_eq!((saved.busy_cpu_percent, saved.busy_cpu_count), (5, Some(1)));
-
-    // The runtime's first sample has nothing to compare with. The cores are
-    // read from a fake `/proc/stat`: this one core ran 60% busy in each
-    // minute (60 of 100 jiffies), however long the test takes.
-    let jiffies = std::rc::Rc::new(std::cell::Cell::new((0u64, 0u64)));
-    client.bound.maintenance.use_cpu_times({
-        let jiffies = jiffies.clone();
-        move || vec![jiffies.get()]
-    });
-    let dir = client.store.dir().to_owned();
-    let base = hydrus_core::TimestampMs::now().0 + 10_000_000;
-    let minute = |n: i64| {
-        jiffies.set((60 * n as u64, 100 * n as u64));
-        client.bound.maintenance.poll_at(base + 60_000 * n).unwrap();
-        base + 60_000 * n
-    };
-    let set_percent = |percent: i64| {
-        let options = client.options("maintenance and processing");
-        let (i, _) = row_in(&options, "idle", CPU_PERCENT);
-        options.invoke_number_edited(i, percent as _);
-        options.invoke_apply();
-    };
-    jiffies.set((0, 0));
-    client.bound.maintenance.poll_at(base).unwrap();
-    assert!(idle_state::is_idle(&dir, base));
-    // 60% is above 5%: busy, though still idle.
-    let at = minute(1);
-    assert!(!idle_state::is_idle(&dir, at), "busy system");
-    assert_eq!(client.ui.get_status_busy(), "CPU busy");
-    assert_eq!(client.ui.get_status_idle(), "idle", "still idle, but busy");
-    // (their tooltips are the reference's)
-    assert_eq!(
-        client.ui.get_status_idle_tip(),
-        "client is idle, it can do maintenance work"
-    );
-    assert_eq!(
-        client.ui.get_status_busy_tip(),
-        "this computer has been doing work recently, so some hydrus maintenance will not start"
-    );
-
-    // Raise the percent above what the cores ran: the same load is not busy,
-    // and work may run again.
-    set_percent(70);
-    let saved: hydrus_store::settings::GuiIdleSettings = client.get();
-    assert_eq!(saved.busy_cpu_percent, 70);
-    let at = minute(2);
-    assert!(idle_state::is_idle(&dir, at), "60% is not above 70%");
-    assert_eq!(client.ui.get_status_busy(), "");
-    // Exactly the load is not above it either (the reference compares with >).
-    set_percent(60);
-    let at = minute(3);
-    assert!(idle_state::is_idle(&dir, at), "60% is not above 60%");
-    set_percent(59);
-    let at = minute(4);
-    assert!(!idle_state::is_idle(&dir, at), "60% is above 59%");
-    assert_eq!(client.ui.get_status_busy(), "CPU busy");
-
-    // "ignore cpu usage" clears it at the next check, and the percent
-    // control is disabled while no core count is set (and enabled again
-    // once one is).
-    let options = client.options("maintenance and processing");
-    assert!(row_in(&options, "idle", CPU_PERCENT).1.enabled);
-    let (i, _) = row_in(&options, "idle", CPU_CORES);
-    options.invoke_none_toggled(i, true);
-    options.invoke_apply();
-    let options = client.options("maintenance and processing");
-    assert!(
-        !row_in(&options, "idle", CPU_PERCENT).1.enabled,
-        "no core count: the percent is not used"
-    );
-    let at = minute(5);
-    assert!(idle_state::is_idle(&dir, at));
-    assert_eq!(client.ui.get_status_busy(), "");
-    let (i, _) = row_in(&options, "idle", CPU_CORES);
-    options.invoke_none_toggled(i, false);
-    options.invoke_apply();
-    let options = client.options("maintenance and processing");
-    assert!(
-        row_in(&options, "idle", CPU_PERCENT).1.enabled,
-        "a core count is set again"
-    );
-    options.invoke_cancel();
-    let at = minute(6);
-    assert!(
-        !idle_state::is_idle(&dir, at),
-        "busy again, at 59% on 1 core"
-    );
-
-    // Switching the idle option off stops idle work whatever the CPU does.
-    let options = client.options("maintenance and processing");
-    let (i, _) = row_in(&options, "idle", IDLE_ENABLED);
-    options.invoke_check_toggled(i, false);
-    options.invoke_apply();
-    let at = minute(7);
-    assert!(!idle_state::is_idle(&dir, at));
 }
 
 // Exiting after editing the shutdown box (File > options…, then the window's close).

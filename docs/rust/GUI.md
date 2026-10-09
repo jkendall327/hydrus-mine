@@ -5133,7 +5133,22 @@ and the system is not busy, as the reference's `GoodTimeToStartBackgroundWork`
 does. The system counts as busy when at least "% on N cores" cores ran above
 "Consider the system busy if CPU usage is above" over the last minute;
 "ignore cpu usage" turns the check off, and forced idle mode never reads busy.
-The status bar still says "idle" and shows "CPU busy".
+The status bar still says "idle" and shows "CPU busy". Each core's use is
+worked out as the reference's psutil does (iowait idle, guest time out of the
+total, decreasing counters as no time, rounded to one decimal place before
+the strict "above"), the CPU is looked at again only once more than a minute
+has passed, and "ignore cpu usage" clears "CPU busy" at once; all as
+`oracle/fixtures/cpu_busy.json` records (`tests/gui/cpu_busy.rs`).
+
+### Options > files and trash: trash limits
+
+Trash maintenance deletes for good the files trashed longer ago than "Number
+of hours a file will stay in the trash" (cut off at a whole second, strictly
+older), and while the trash is bigger than "Maximum size of trash (MB)"
+(strictly bigger; a trash of exactly the limit stays) deletes eight files at a
+time, checking the size between groups, before the age limit. Both are
+replayed against the reference's own pass in
+`oracle/fixtures/trash_maintenance.json` (`tests/gui/trash_maintenance.rs`).
 
 ## Files and trash: local import copying
 

@@ -1,0 +1,741 @@
+[
+ {
+  "name": "60% at 5",
+  "percent": 5,
+  "count": 1,
+  "idle_on": true,
+  "baseline": "cpu  1000 0 0 1000 0 0 0 0 0 0\ncpu0 1000 0 0 1000 0 0 0 0 0 0\nintr 0\nctxt 0\nbtime 0\n",
+  "steps": [
+   {
+    "ms": 60001,
+    "change": {},
+    "stat": "cpu  1060 0 0 1040 0 0 0 0 0 0\ncpu0 1060 0 0 1040 0 0 0 0 0 0\nintr 0\nctxt 0\nbtime 0\n",
+    "looked": true,
+    "percents": [
+     60.0
+    ],
+    "busy": true,
+    "idle": true,
+    "good_time_for_background_work": false
+   }
+  ]
+ },
+ {
+  "name": "60% at 59",
+  "percent": 59,
+  "count": 1,
+  "idle_on": true,
+  "baseline": "cpu  1000 0 0 1000 0 0 0 0 0 0\ncpu0 1000 0 0 1000 0 0 0 0 0 0\nintr 0\nctxt 0\nbtime 0\n",
+  "steps": [
+   {
+    "ms": 60001,
+    "change": {},
+    "stat": "cpu  1060 0 0 1040 0 0 0 0 0 0\ncpu0 1060 0 0 1040 0 0 0 0 0 0\nintr 0\nctxt 0\nbtime 0\n",
+    "looked": true,
+    "percents": [
+     60.0
+    ],
+    "busy": true,
+    "idle": true,
+    "good_time_for_background_work": false
+   }
+  ]
+ },
+ {
+  "name": "60% at 60",
+  "percent": 60,
+  "count": 1,
+  "idle_on": true,
+  "baseline": "cpu  1000 0 0 1000 0 0 0 0 0 0\ncpu0 1000 0 0 1000 0 0 0 0 0 0\nintr 0\nctxt 0\nbtime 0\n",
+  "steps": [
+   {
+    "ms": 60001,
+    "change": {},
+    "stat": "cpu  1060 0 0 1040 0 0 0 0 0 0\ncpu0 1060 0 0 1040 0 0 0 0 0 0\nintr 0\nctxt 0\nbtime 0\n",
+    "looked": true,
+    "percents": [
+     60.0
+    ],
+    "busy": false,
+    "idle": true,
+    "good_time_for_background_work": true
+   }
+  ]
+ },
+ {
+  "name": "60% at 61",
+  "percent": 61,
+  "count": 1,
+  "idle_on": true,
+  "baseline": "cpu  1000 0 0 1000 0 0 0 0 0 0\ncpu0 1000 0 0 1000 0 0 0 0 0 0\nintr 0\nctxt 0\nbtime 0\n",
+  "steps": [
+   {
+    "ms": 60001,
+    "change": {},
+    "stat": "cpu  1060 0 0 1040 0 0 0 0 0 0\ncpu0 1060 0 0 1040 0 0 0 0 0 0\nintr 0\nctxt 0\nbtime 0\n",
+    "looked": true,
+    "percents": [
+     60.0
+    ],
+    "busy": false,
+    "idle": true,
+    "good_time_for_background_work": true
+   }
+  ]
+ },
+ {
+  "name": "60% at 70",
+  "percent": 70,
+  "count": 1,
+  "idle_on": true,
+  "baseline": "cpu  1000 0 0 1000 0 0 0 0 0 0\ncpu0 1000 0 0 1000 0 0 0 0 0 0\nintr 0\nctxt 0\nbtime 0\n",
+  "steps": [
+   {
+    "ms": 60001,
+    "change": {},
+    "stat": "cpu  1060 0 0 1040 0 0 0 0 0 0\ncpu0 1060 0 0 1040 0 0 0 0 0 0\nintr 0\nctxt 0\nbtime 0\n",
+    "looked": true,
+    "percents": [
+     60.0
+    ],
+    "busy": false,
+    "idle": true,
+    "good_time_for_background_work": true
+   }
+  ]
+ },
+ {
+  "name": "60% at 99",
+  "percent": 99,
+  "count": 1,
+  "idle_on": true,
+  "baseline": "cpu  1000 0 0 1000 0 0 0 0 0 0\ncpu0 1000 0 0 1000 0 0 0 0 0 0\nintr 0\nctxt 0\nbtime 0\n",
+  "steps": [
+   {
+    "ms": 60001,
+    "change": {},
+    "stat": "cpu  1060 0 0 1040 0 0 0 0 0 0\ncpu0 1060 0 0 1040 0 0 0 0 0 0\nintr 0\nctxt 0\nbtime 0\n",
+    "looked": true,
+    "percents": [
+     60.0
+    ],
+    "busy": false,
+    "idle": true,
+    "good_time_for_background_work": true
+   }
+  ]
+ },
+ {
+  "name": "6004/10000 at 60",
+  "percent": 60,
+  "count": 1,
+  "idle_on": true,
+  "baseline": "cpu  1000 0 0 1000 0 0 0 0 0 0\ncpu0 1000 0 0 1000 0 0 0 0 0 0\nintr 0\nctxt 0\nbtime 0\n",
+  "steps": [
+   {
+    "ms": 60001,
+    "change": {},
+    "stat": "cpu  7004 0 0 4996 0 0 0 0 0 0\ncpu0 7004 0 0 4996 0 0 0 0 0 0\nintr 0\nctxt 0\nbtime 0\n",
+    "looked": true,
+    "percents": [
+     60.0
+    ],
+    "busy": false,
+    "idle": true,
+    "good_time_for_background_work": true
+   }
+  ]
+ },
+ {
+  "name": "6005/10000 at 60",
+  "percent": 60,
+  "count": 1,
+  "idle_on": true,
+  "baseline": "cpu  1000 0 0 1000 0 0 0 0 0 0\ncpu0 1000 0 0 1000 0 0 0 0 0 0\nintr 0\nctxt 0\nbtime 0\n",
+  "steps": [
+   {
+    "ms": 60001,
+    "change": {},
+    "stat": "cpu  7005 0 0 4995 0 0 0 0 0 0\ncpu0 7005 0 0 4995 0 0 0 0 0 0\nintr 0\nctxt 0\nbtime 0\n",
+    "looked": true,
+    "percents": [
+     60.0
+    ],
+    "busy": false,
+    "idle": true,
+    "good_time_for_background_work": true
+   }
+  ]
+ },
+ {
+  "name": "6006/10000 at 60",
+  "percent": 60,
+  "count": 1,
+  "idle_on": true,
+  "baseline": "cpu  1000 0 0 1000 0 0 0 0 0 0\ncpu0 1000 0 0 1000 0 0 0 0 0 0\nintr 0\nctxt 0\nbtime 0\n",
+  "steps": [
+   {
+    "ms": 60001,
+    "change": {},
+    "stat": "cpu  7006 0 0 4994 0 0 0 0 0 0\ncpu0 7006 0 0 4994 0 0 0 0 0 0\nintr 0\nctxt 0\nbtime 0\n",
+    "looked": true,
+    "percents": [
+     60.1
+    ],
+    "busy": true,
+    "idle": true,
+    "good_time_for_background_work": false
+   }
+  ]
+ },
+ {
+  "name": "5996/10000 at 60",
+  "percent": 60,
+  "count": 1,
+  "idle_on": true,
+  "baseline": "cpu  1000 0 0 1000 0 0 0 0 0 0\ncpu0 1000 0 0 1000 0 0 0 0 0 0\nintr 0\nctxt 0\nbtime 0\n",
+  "steps": [
+   {
+    "ms": 60001,
+    "change": {},
+    "stat": "cpu  6996 0 0 5004 0 0 0 0 0 0\ncpu0 6996 0 0 5004 0 0 0 0 0 0\nintr 0\nctxt 0\nbtime 0\n",
+    "looked": true,
+    "percents": [
+     60.0
+    ],
+    "busy": false,
+    "idle": true,
+    "good_time_for_background_work": true
+   }
+  ]
+ },
+ {
+  "name": "6049/10000 at 60",
+  "percent": 60,
+  "count": 1,
+  "idle_on": true,
+  "baseline": "cpu  1000 0 0 1000 0 0 0 0 0 0\ncpu0 1000 0 0 1000 0 0 0 0 0 0\nintr 0\nctxt 0\nbtime 0\n",
+  "steps": [
+   {
+    "ms": 60001,
+    "change": {},
+    "stat": "cpu  7049 0 0 4951 0 0 0 0 0 0\ncpu0 7049 0 0 4951 0 0 0 0 0 0\nintr 0\nctxt 0\nbtime 0\n",
+    "looked": true,
+    "percents": [
+     60.5
+    ],
+    "busy": true,
+    "idle": true,
+    "good_time_for_background_work": false
+   }
+  ]
+ },
+ {
+  "name": "6050/10000 at 60",
+  "percent": 60,
+  "count": 1,
+  "idle_on": true,
+  "baseline": "cpu  1000 0 0 1000 0 0 0 0 0 0\ncpu0 1000 0 0 1000 0 0 0 0 0 0\nintr 0\nctxt 0\nbtime 0\n",
+  "steps": [
+   {
+    "ms": 60001,
+    "change": {},
+    "stat": "cpu  7050 0 0 4950 0 0 0 0 0 0\ncpu0 7050 0 0 4950 0 0 0 0 0 0\nintr 0\nctxt 0\nbtime 0\n",
+    "looked": true,
+    "percents": [
+     60.5
+    ],
+    "busy": true,
+    "idle": true,
+    "good_time_for_background_work": false
+   }
+  ]
+ },
+ {
+  "name": "iowait is not busy",
+  "percent": 50,
+  "count": 1,
+  "idle_on": true,
+  "baseline": "cpu  1000 0 0 1000 0 0 0 0 0 0\ncpu0 1000 0 0 1000 0 0 0 0 0 0\nintr 0\nctxt 0\nbtime 0\n",
+  "steps": [
+   {
+    "ms": 60001,
+    "change": {},
+    "stat": "cpu  1040 0 0 1000 60 0 0 0 0 0\ncpu0 1040 0 0 1000 60 0 0 0 0 0\nintr 0\nctxt 0\nbtime 0\n",
+    "looked": true,
+    "percents": [
+     40.0
+    ],
+    "busy": false,
+    "idle": true,
+    "good_time_for_background_work": true
+   }
+  ]
+ },
+ {
+  "name": "system and irq are busy",
+  "percent": 50,
+  "count": 1,
+  "idle_on": true,
+  "baseline": "cpu  1000 0 0 1000 0 0 0 0 0 0\ncpu0 1000 0 0 1000 0 0 0 0 0 0\nintr 0\nctxt 0\nbtime 0\n",
+  "steps": [
+   {
+    "ms": 60001,
+    "change": {},
+    "stat": "cpu  1000 0 30 1040 0 20 10 0 0 0\ncpu0 1000 0 30 1040 0 20 10 0 0 0\nintr 0\nctxt 0\nbtime 0\n",
+    "looked": true,
+    "percents": [
+     60.0
+    ],
+    "busy": true,
+    "idle": true,
+    "good_time_for_background_work": false
+   }
+  ]
+ },
+ {
+  "name": "guest leaves the total",
+  "percent": 50,
+  "count": 1,
+  "idle_on": true,
+  "baseline": "cpu  1000 0 0 1000 0 0 0 0 0 0\ncpu0 1000 0 0 1000 0 0 0 0 0 0\nintr 0\nctxt 0\nbtime 0\n",
+  "steps": [
+   {
+    "ms": 60001,
+    "change": {},
+    "stat": "cpu  1050 0 0 1050 0 0 0 0 20 0\ncpu0 1050 0 0 1050 0 0 0 0 20 0\nintr 0\nctxt 0\nbtime 0\n",
+    "looked": true,
+    "percents": [
+     50.0
+    ],
+    "busy": false,
+    "idle": true,
+    "good_time_for_background_work": true
+   }
+  ]
+ },
+ {
+  "name": "steal is busy",
+  "percent": 50,
+  "count": 1,
+  "idle_on": true,
+  "baseline": "cpu  1000 0 0 1000 0 0 0 0 0 0\ncpu0 1000 0 0 1000 0 0 0 0 0 0\nintr 0\nctxt 0\nbtime 0\n",
+  "steps": [
+   {
+    "ms": 60001,
+    "change": {},
+    "stat": "cpu  1000 0 0 1049 0 0 0 51 0 0\ncpu0 1000 0 0 1049 0 0 0 51 0 0\nintr 0\nctxt 0\nbtime 0\n",
+    "looked": true,
+    "percents": [
+     51.0
+    ],
+    "busy": true,
+    "idle": true,
+    "good_time_for_background_work": false
+   }
+  ]
+ },
+ {
+  "name": "no time passed",
+  "percent": 5,
+  "count": 1,
+  "idle_on": true,
+  "baseline": "cpu  1000 0 0 1000 0 0 0 0 0 0\ncpu0 1000 0 0 1000 0 0 0 0 0 0\nintr 0\nctxt 0\nbtime 0\n",
+  "steps": [
+   {
+    "ms": 60001,
+    "change": {},
+    "stat": "cpu  1000 0 0 1000 0 0 0 0 0 0\ncpu0 1000 0 0 1000 0 0 0 0 0 0\nintr 0\nctxt 0\nbtime 0\n",
+    "looked": true,
+    "percents": [
+     0.0
+    ],
+    "busy": false,
+    "idle": true,
+    "good_time_for_background_work": true
+   }
+  ]
+ },
+ {
+  "name": "idle went backwards",
+  "percent": 50,
+  "count": 1,
+  "idle_on": true,
+  "baseline": "cpu  1000 0 0 1000 0 0 0 0 0 0\ncpu0 1000 0 0 1000 0 0 0 0 0 0\nintr 0\nctxt 0\nbtime 0\n",
+  "steps": [
+   {
+    "ms": 60001,
+    "change": {},
+    "stat": "cpu  1010 0 0 500 0 0 0 0 0 0\ncpu0 1010 0 0 500 0 0 0 0 0 0\nintr 0\nctxt 0\nbtime 0\n",
+    "looked": true,
+    "percents": [
+     100.0
+    ],
+    "busy": true,
+    "idle": true,
+    "good_time_for_background_work": false
+   }
+  ]
+ },
+ {
+  "name": "three of four over 50, count 1",
+  "percent": 50,
+  "count": 1,
+  "idle_on": true,
+  "baseline": "cpu  4000 0 0 4000 0 0 0 0 0 0\ncpu0 1000 0 0 1000 0 0 0 0 0 0\ncpu1 1000 0 0 1000 0 0 0 0 0 0\ncpu2 1000 0 0 1000 0 0 0 0 0 0\ncpu3 1000 0 0 1000 0 0 0 0 0 0\nintr 0\nctxt 0\nbtime 0\n",
+  "steps": [
+   {
+    "ms": 60001,
+    "change": {},
+    "stat": "cpu  4231 0 0 4169 0 0 0 0 0 0\ncpu0 1090 0 0 1010 0 0 0 0 0 0\ncpu1 1080 0 0 1020 0 0 0 0 0 0\ncpu2 1010 0 0 1090 0 0 0 0 0 0\ncpu3 1051 0 0 1049 0 0 0 0 0 0\nintr 0\nctxt 0\nbtime 0\n",
+    "looked": true,
+    "percents": [
+     90.0,
+     80.0,
+     10.0,
+     51.0
+    ],
+    "busy": true,
+    "idle": true,
+    "good_time_for_background_work": false
+   }
+  ]
+ },
+ {
+  "name": "three of four over 50, count 2",
+  "percent": 50,
+  "count": 2,
+  "idle_on": true,
+  "baseline": "cpu  4000 0 0 4000 0 0 0 0 0 0\ncpu0 1000 0 0 1000 0 0 0 0 0 0\ncpu1 1000 0 0 1000 0 0 0 0 0 0\ncpu2 1000 0 0 1000 0 0 0 0 0 0\ncpu3 1000 0 0 1000 0 0 0 0 0 0\nintr 0\nctxt 0\nbtime 0\n",
+  "steps": [
+   {
+    "ms": 60001,
+    "change": {},
+    "stat": "cpu  4231 0 0 4169 0 0 0 0 0 0\ncpu0 1090 0 0 1010 0 0 0 0 0 0\ncpu1 1080 0 0 1020 0 0 0 0 0 0\ncpu2 1010 0 0 1090 0 0 0 0 0 0\ncpu3 1051 0 0 1049 0 0 0 0 0 0\nintr 0\nctxt 0\nbtime 0\n",
+    "looked": true,
+    "percents": [
+     90.0,
+     80.0,
+     10.0,
+     51.0
+    ],
+    "busy": true,
+    "idle": true,
+    "good_time_for_background_work": false
+   }
+  ]
+ },
+ {
+  "name": "three of four over 50, count 3",
+  "percent": 50,
+  "count": 3,
+  "idle_on": true,
+  "baseline": "cpu  4000 0 0 4000 0 0 0 0 0 0\ncpu0 1000 0 0 1000 0 0 0 0 0 0\ncpu1 1000 0 0 1000 0 0 0 0 0 0\ncpu2 1000 0 0 1000 0 0 0 0 0 0\ncpu3 1000 0 0 1000 0 0 0 0 0 0\nintr 0\nctxt 0\nbtime 0\n",
+  "steps": [
+   {
+    "ms": 60001,
+    "change": {},
+    "stat": "cpu  4231 0 0 4169 0 0 0 0 0 0\ncpu0 1090 0 0 1010 0 0 0 0 0 0\ncpu1 1080 0 0 1020 0 0 0 0 0 0\ncpu2 1010 0 0 1090 0 0 0 0 0 0\ncpu3 1051 0 0 1049 0 0 0 0 0 0\nintr 0\nctxt 0\nbtime 0\n",
+    "looked": true,
+    "percents": [
+     90.0,
+     80.0,
+     10.0,
+     51.0
+    ],
+    "busy": true,
+    "idle": true,
+    "good_time_for_background_work": false
+   }
+  ]
+ },
+ {
+  "name": "three of four over 50, count 4",
+  "percent": 50,
+  "count": 4,
+  "idle_on": true,
+  "baseline": "cpu  4000 0 0 4000 0 0 0 0 0 0\ncpu0 1000 0 0 1000 0 0 0 0 0 0\ncpu1 1000 0 0 1000 0 0 0 0 0 0\ncpu2 1000 0 0 1000 0 0 0 0 0 0\ncpu3 1000 0 0 1000 0 0 0 0 0 0\nintr 0\nctxt 0\nbtime 0\n",
+  "steps": [
+   {
+    "ms": 60001,
+    "change": {},
+    "stat": "cpu  4231 0 0 4169 0 0 0 0 0 0\ncpu0 1090 0 0 1010 0 0 0 0 0 0\ncpu1 1080 0 0 1020 0 0 0 0 0 0\ncpu2 1010 0 0 1090 0 0 0 0 0 0\ncpu3 1051 0 0 1049 0 0 0 0 0 0\nintr 0\nctxt 0\nbtime 0\n",
+    "looked": true,
+    "percents": [
+     90.0,
+     80.0,
+     10.0,
+     51.0
+    ],
+    "busy": false,
+    "idle": true,
+    "good_time_for_background_work": true
+   }
+  ]
+ },
+ {
+  "name": "three of four over 50, count None",
+  "percent": 50,
+  "count": null,
+  "idle_on": true,
+  "baseline": "cpu  4000 0 0 4000 0 0 0 0 0 0\ncpu0 1000 0 0 1000 0 0 0 0 0 0\ncpu1 1000 0 0 1000 0 0 0 0 0 0\ncpu2 1000 0 0 1000 0 0 0 0 0 0\ncpu3 1000 0 0 1000 0 0 0 0 0 0\nintr 0\nctxt 0\nbtime 0\n",
+  "steps": [
+   {
+    "ms": 60001,
+    "change": {},
+    "stat": "cpu  4231 0 0 4169 0 0 0 0 0 0\ncpu0 1090 0 0 1010 0 0 0 0 0 0\ncpu1 1080 0 0 1020 0 0 0 0 0 0\ncpu2 1010 0 0 1090 0 0 0 0 0 0\ncpu3 1051 0 0 1049 0 0 0 0 0 0\nintr 0\nctxt 0\nbtime 0\n",
+    "looked": true,
+    "percents": null,
+    "busy": false,
+    "idle": true,
+    "good_time_for_background_work": true
+   }
+  ]
+ },
+ {
+  "name": "once a minute",
+  "percent": 50,
+  "count": 1,
+  "idle_on": true,
+  "baseline": "cpu  1000 0 0 1000 0 0 0 0 0 0\ncpu0 1000 0 0 1000 0 0 0 0 0 0\nintr 0\nctxt 0\nbtime 0\n",
+  "steps": [
+   {
+    "ms": 30000,
+    "change": {},
+    "stat": "cpu  1090 0 0 1010 0 0 0 0 0 0\ncpu0 1090 0 0 1010 0 0 0 0 0 0\nintr 0\nctxt 0\nbtime 0\n",
+    "looked": false,
+    "percents": null,
+    "busy": false,
+    "idle": true,
+    "good_time_for_background_work": true
+   },
+   {
+    "ms": 60000,
+    "change": {},
+    "stat": "cpu  1180 0 0 1020 0 0 0 0 0 0\ncpu0 1180 0 0 1020 0 0 0 0 0 0\nintr 0\nctxt 0\nbtime 0\n",
+    "looked": false,
+    "percents": null,
+    "busy": false,
+    "idle": true,
+    "good_time_for_background_work": true
+   },
+   {
+    "ms": 60001,
+    "change": {},
+    "stat": "cpu  1190 0 0 1110 0 0 0 0 0 0\ncpu0 1190 0 0 1110 0 0 0 0 0 0\nintr 0\nctxt 0\nbtime 0\n",
+    "looked": true,
+    "percents": [
+     63.3
+    ],
+    "busy": true,
+    "idle": true,
+    "good_time_for_background_work": false
+   },
+   {
+    "ms": 90000,
+    "change": {},
+    "stat": "cpu  1280 0 0 1120 0 0 0 0 0 0\ncpu0 1280 0 0 1120 0 0 0 0 0 0\nintr 0\nctxt 0\nbtime 0\n",
+    "looked": false,
+    "percents": null,
+    "busy": true,
+    "idle": true,
+    "good_time_for_background_work": false
+   },
+   {
+    "ms": 120001,
+    "change": {},
+    "stat": "cpu  1280 0 0 1220 0 0 0 0 0 0\ncpu0 1280 0 0 1220 0 0 0 0 0 0\nintr 0\nctxt 0\nbtime 0\n",
+    "looked": false,
+    "percents": null,
+    "busy": true,
+    "idle": true,
+    "good_time_for_background_work": false
+   },
+   {
+    "ms": 120002,
+    "change": {},
+    "stat": "cpu  1370 0 0 1230 0 0 0 0 0 0\ncpu0 1370 0 0 1230 0 0 0 0 0 0\nintr 0\nctxt 0\nbtime 0\n",
+    "looked": true,
+    "percents": [
+     60.0
+    ],
+    "busy": true,
+    "idle": true,
+    "good_time_for_background_work": false
+   },
+   {
+    "ms": 180002,
+    "change": {},
+    "stat": "cpu  1470 0 0 1230 0 0 0 0 0 0\ncpu0 1470 0 0 1230 0 0 0 0 0 0\nintr 0\nctxt 0\nbtime 0\n",
+    "looked": false,
+    "percents": null,
+    "busy": true,
+    "idle": true,
+    "good_time_for_background_work": false
+   }
+  ]
+ },
+ {
+  "name": "idle off, quiet",
+  "percent": 50,
+  "count": 1,
+  "idle_on": false,
+  "baseline": "cpu  1000 0 0 1000 0 0 0 0 0 0\ncpu0 1000 0 0 1000 0 0 0 0 0 0\nintr 0\nctxt 0\nbtime 0\n",
+  "steps": [
+   {
+    "ms": 60001,
+    "change": {},
+    "stat": "cpu  1010 0 0 1090 0 0 0 0 0 0\ncpu0 1010 0 0 1090 0 0 0 0 0 0\nintr 0\nctxt 0\nbtime 0\n",
+    "looked": true,
+    "percents": [
+     10.0
+    ],
+    "busy": false,
+    "idle": false,
+    "good_time_for_background_work": false
+   }
+  ]
+ },
+ {
+  "name": "idle off, busy",
+  "percent": 50,
+  "count": 1,
+  "idle_on": false,
+  "baseline": "cpu  1000 0 0 1000 0 0 0 0 0 0\ncpu0 1000 0 0 1000 0 0 0 0 0 0\nintr 0\nctxt 0\nbtime 0\n",
+  "steps": [
+   {
+    "ms": 60001,
+    "change": {},
+    "stat": "cpu  1090 0 0 1010 0 0 0 0 0 0\ncpu0 1090 0 0 1010 0 0 0 0 0 0\nintr 0\nctxt 0\nbtime 0\n",
+    "looked": true,
+    "percents": [
+     90.0
+    ],
+    "busy": true,
+    "idle": false,
+    "good_time_for_background_work": false
+   }
+  ]
+ },
+ {
+  "name": "idle on, busy, cpu ignored",
+  "percent": 50,
+  "count": null,
+  "idle_on": true,
+  "baseline": "cpu  1000 0 0 1000 0 0 0 0 0 0\ncpu0 1000 0 0 1000 0 0 0 0 0 0\nintr 0\nctxt 0\nbtime 0\n",
+  "steps": [
+   {
+    "ms": 60001,
+    "change": {},
+    "stat": "cpu  1090 0 0 1010 0 0 0 0 0 0\ncpu0 1090 0 0 1010 0 0 0 0 0 0\nintr 0\nctxt 0\nbtime 0\n",
+    "looked": true,
+    "percents": null,
+    "busy": false,
+    "idle": true,
+    "good_time_for_background_work": true
+   }
+  ]
+ },
+ {
+  "name": "busy, then cpu ignored",
+  "percent": 50,
+  "count": 1,
+  "idle_on": true,
+  "baseline": "cpu  1000 0 0 1000 0 0 0 0 0 0\ncpu0 1000 0 0 1000 0 0 0 0 0 0\nintr 0\nctxt 0\nbtime 0\n",
+  "steps": [
+   {
+    "ms": 60001,
+    "change": {},
+    "stat": "cpu  1090 0 0 1010 0 0 0 0 0 0\ncpu0 1090 0 0 1010 0 0 0 0 0 0\nintr 0\nctxt 0\nbtime 0\n",
+    "looked": true,
+    "percents": [
+     90.0
+    ],
+    "busy": true,
+    "idle": true,
+    "good_time_for_background_work": false
+   },
+   {
+    "ms": 70001,
+    "change": {
+     "count": null
+    },
+    "stat": "cpu  1180 0 0 1020 0 0 0 0 0 0\ncpu0 1180 0 0 1020 0 0 0 0 0 0\nintr 0\nctxt 0\nbtime 0\n",
+    "looked": false,
+    "percents": null,
+    "busy": false,
+    "idle": true,
+    "good_time_for_background_work": true
+   },
+   {
+    "ms": 80001,
+    "change": {
+     "count": 1
+    },
+    "stat": "cpu  1270 0 0 1030 0 0 0 0 0 0\ncpu0 1270 0 0 1030 0 0 0 0 0 0\nintr 0\nctxt 0\nbtime 0\n",
+    "looked": false,
+    "percents": null,
+    "busy": false,
+    "idle": true,
+    "good_time_for_background_work": true
+   },
+   {
+    "ms": 120002,
+    "change": {},
+    "stat": "cpu  1360 0 0 1040 0 0 0 0 0 0\ncpu0 1360 0 0 1040 0 0 0 0 0 0\nintr 0\nctxt 0\nbtime 0\n",
+    "looked": true,
+    "percents": [
+     90.0
+    ],
+    "busy": true,
+    "idle": true,
+    "good_time_for_background_work": false
+   }
+  ]
+ },
+ {
+  "name": "percent raised between looks",
+  "percent": 50,
+  "count": 1,
+  "idle_on": true,
+  "baseline": "cpu  1000 0 0 1000 0 0 0 0 0 0\ncpu0 1000 0 0 1000 0 0 0 0 0 0\nintr 0\nctxt 0\nbtime 0\n",
+  "steps": [
+   {
+    "ms": 60001,
+    "change": {},
+    "stat": "cpu  1060 0 0 1040 0 0 0 0 0 0\ncpu0 1060 0 0 1040 0 0 0 0 0 0\nintr 0\nctxt 0\nbtime 0\n",
+    "looked": true,
+    "percents": [
+     60.0
+    ],
+    "busy": true,
+    "idle": true,
+    "good_time_for_background_work": false
+   },
+   {
+    "ms": 70001,
+    "change": {
+     "percent": 70
+    },
+    "stat": "cpu  1120 0 0 1080 0 0 0 0 0 0\ncpu0 1120 0 0 1080 0 0 0 0 0 0\nintr 0\nctxt 0\nbtime 0\n",
+    "looked": false,
+    "percents": null,
+    "busy": true,
+    "idle": true,
+    "good_time_for_background_work": false
+   },
+   {
+    "ms": 120002,
+    "change": {},
+    "stat": "cpu  1180 0 0 1120 0 0 0 0 0 0\ncpu0 1180 0 0 1120 0 0 0 0 0 0\nintr 0\nctxt 0\nbtime 0\n",
+    "looked": true,
+    "percents": [
+     60.0
+    ],
+    "busy": false,
+    "idle": true,
+    "good_time_for_background_work": true
+   }
+  ]
+ }
+]
