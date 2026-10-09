@@ -808,30 +808,32 @@ pub fn package(
             let export_draft = export_draft.clone();
             let selected = selected.clone();
             let refresh = refresh.clone();
-            Rc::new(move |window: &DownloaderExchangeWindow, action: &str| match action {
-                "add-domain" => {
-                    window.set_domain_text("".into());
-                    window.set_domain_prompt(true);
-                    Ok(())
-                }
-                "domain-cancel" => {
-                    window.set_domain_prompt(false);
-                    Ok(())
-                }
-                "domain-ok" => {
-                    window.set_domain_prompt(false);
-                    let domain = window.get_domain_text().to_string();
-                    let details = export_draft.borrow_mut().add_domain_exports(&domain)?;
-                    let count = export_draft.borrow().definitions().len();
-                    // (the new entries are the last ones)
-                    for index in count - details.len()..count {
-                        selected.borrow_mut().insert(index);
+            Rc::new(
+                move |window: &DownloaderExchangeWindow, action: &str| match action {
+                    "add-domain" => {
+                        window.set_domain_text("".into());
+                        window.set_domain_prompt(true);
+                        Ok(())
                     }
-                    refresh(window, &details.join("\n\n"));
-                    Ok(())
-                }
-                _ => Ok(()),
-            })
+                    "domain-cancel" => {
+                        window.set_domain_prompt(false);
+                        Ok(())
+                    }
+                    "domain-ok" => {
+                        window.set_domain_prompt(false);
+                        let domain = window.get_domain_text().to_string();
+                        let details = export_draft.borrow_mut().add_domain_exports(&domain)?;
+                        let count = export_draft.borrow().definitions().len();
+                        // (the new entries are the last ones)
+                        for index in count - details.len()..count {
+                            selected.borrow_mut().insert(index);
+                        }
+                        refresh(window, &details.join("\n\n"));
+                        Ok(())
+                    }
+                    _ => Ok(()),
+                },
+            )
         }),
     )?;
     window.set_json_enabled(true);

@@ -157,8 +157,8 @@ mod network_sessions;
 
 mod network_data;
 
-mod downloader_interchange;
 mod domain_metadata;
+mod downloader_interchange;
 mod tag_migration;
 
 mod manage_notes_replay;

@@ -18,7 +18,12 @@ fn setup() -> (tempfile::TempDir, Arc<Store>) {
 }
 
 fn header(store: &Store, domain: &str, name: &str, value: &str, approval: Approval, reason: &str) {
-    let (domain, name, value, reason) = (domain.to_owned(), name.to_owned(), value.to_owned(), reason.to_owned());
+    let (domain, name, value, reason) = (
+        domain.to_owned(),
+        name.to_owned(),
+        value.to_owned(),
+        reason.to_owned(),
+    );
     store
         .write(move |ctx| {
             network::set_header(
@@ -50,8 +55,12 @@ fn rules(store: &Store, domain: &str, recorded: &Value) {
     store
         .write(move |ctx| {
             let mut current: BandwidthSettings = settings::get(ctx.conn())?;
-            current.rules.retain(|(c, _)| c != &NetworkContext::domain(domain.clone()));
-            current.rules.push((NetworkContext::domain(domain), Rules::new(rules)));
+            current
+                .rules
+                .retain(|(c, _)| c != &NetworkContext::domain(domain.clone()));
+            current
+                .rules
+                .push((NetworkContext::domain(domain), Rules::new(rules)));
             settings::set(ctx.conn(), &current)
         })
         .unwrap();
@@ -108,7 +117,14 @@ fn seed_initial(store: &Store, fixture: &Value) {
     for (domain, set) in fixture["initial"]["headers"].as_object().unwrap() {
         for (name, row) in set.as_object().unwrap() {
             let approval = Approval::from_code(row[1].as_i64().unwrap()).unwrap();
-            header(store, domain, name, row[0].as_str().unwrap(), approval, row[2].as_str().unwrap());
+            header(
+                store,
+                domain,
+                name,
+                row[0].as_str().unwrap(),
+                approval,
+                row[2].as_str().unwrap(),
+            );
         }
     }
     // (rules in the order the reference held them, as its package lists them)
@@ -116,7 +132,9 @@ fn seed_initial(store: &Store, fixture: &Value) {
         if let Native::Domain(m) = &definition.native
             && let Some(recorded) = &m.rules
         {
-            let rows = recorded.iter().map(|r| json!([r.kind as i64, r.time_delta, r.max_allowed]));
+            let rows = recorded
+                .iter()
+                .map(|r| json!([r.kind as i64, r.time_delta, r.max_allowed]));
             rules(store, &m.domain, &Value::Array(rows.collect()));
         }
     }
@@ -132,7 +150,11 @@ fn seed_initial(store: &Store, fixture: &Value) {
 }
 
 fn choice_names(window: &hydrus_gui::DownloaderExchangeWindow) -> Vec<String> {
-    window.get_package_choices().iter().map(|c| c.label.to_string()).collect()
+    window
+        .get_package_choices()
+        .iter()
+        .map(|c| c.label.to_string())
+        .collect()
 }
 
 fn add_domain(window: &hydrus_gui::DownloaderExchangeWindow, text: Option<&str>) {
@@ -158,7 +180,9 @@ fn domain_metadata_is_prompted_exported_to_png_and_imported_as_the_reference_doe
     let slots = windows::Slots::default();
     let export = windows::package(&store, &slots, false).unwrap();
     assert!(
-        !choice_names(&export).iter().any(|n| n.starts_with("Domain Metadata")),
+        !choice_names(&export)
+            .iter()
+            .any(|n| n.starts_with("Domain Metadata")),
         "domain metadata is listed only once added"
     );
     // The recorded prompt steps: cancel, nothing, pending-only, subdomain, repeat.
@@ -178,7 +202,13 @@ fn domain_metadata_is_prompted_exported_to_png_and_imported_as_the_reference_doe
             .map(|s| s["name"].as_str().unwrap().to_owned())
             .collect()
     };
-    let prompts = ["", "nothing.example", "pendingonly.example", "www.api.packages.example", "packages.example"];
+    let prompts = [
+        "",
+        "nothing.example",
+        "pendingonly.example",
+        "www.api.packages.example",
+        "packages.example",
+    ];
     for (step, prompt) in steps.iter().zip(prompts) {
         if prompt.is_empty() {
             add_domain(&export, None);
@@ -187,7 +217,10 @@ fn domain_metadata_is_prompted_exported_to_png_and_imported_as_the_reference_doe
         }
         let notices = step["notices"].as_array().unwrap();
         if notices.len() == 1 && notices[0] == "No headers/bandwidth rules found!" {
-            assert_eq!(export.get_error().as_str(), "No headers/bandwidth rules found!");
+            assert_eq!(
+                export.get_error().as_str(),
+                "No headers/bandwidth rules found!"
+            );
         } else {
             assert!(export.get_error().is_empty(), "{}", export.get_error());
             for notice in notices {
@@ -207,26 +240,48 @@ fn domain_metadata_is_prompted_exported_to_png_and_imported_as_the_reference_doe
     assert_eq!(fixture["prompts"][0]["message"], "Enter domain.");
     // Choosing the recorded downloader packages its example domain's rules,
     // its URL class and its parser.
-    let gug = choice_names(&export).iter().position(|n| n == "GUG: rules only gallery").unwrap();
+    let gug = choice_names(&export)
+        .iter()
+        .position(|n| n == "GUG: rules only gallery")
+        .unwrap();
     export.invoke_package_chosen(-1, false);
     export.invoke_package_chosen(i32::try_from(gug).unwrap(), true);
     let exported = exchange::decode_text(export.get_text().as_str()).unwrap();
     let mut names: Vec<_> = exported.iter().map(|d| d.name().to_owned()).collect();
     names.sort();
-    assert_eq!(names, ["rules only gallery", "rules only gallery class", "rules only parser", "rulesonly.example"]);
+    assert_eq!(
+        names,
+        [
+            "rules only gallery",
+            "rules only gallery class",
+            "rules only parser",
+            "rulesonly.example"
+        ]
+    );
     // Everything chosen reproduces the recorded package, tuple for tuple.
     export.invoke_package_chosen(-1, true);
     let exported = exchange::decode_text(export.get_text().as_str()).unwrap();
     let recorded = exchange::decode_text(&fixture["reference"].to_string()).unwrap();
     assert_eq!(exported.len(), recorded.len());
     for definition in &recorded {
-        let same = exported.iter().find(|d| d.name() == definition.name()).unwrap();
+        let same = exported
+            .iter()
+            .find(|d| d.name() == definition.name())
+            .unwrap();
         if matches!(definition.native, Native::Domain(_)) {
-            assert_eq!(same.tuple().unwrap(), definition.tuple().unwrap(), "{}", definition.name());
+            assert_eq!(
+                same.tuple().unwrap(),
+                definition.tuple().unwrap(),
+                "{}",
+                definition.name()
+            );
         }
     }
     // The PNG the recorder wrote decodes to the same domain packages.
-    let png = exchange::decode_png(&std::fs::read(hydrus_testkit::fixture_path("domain_metadata_packages.png")).unwrap()).unwrap();
+    let png = exchange::decode_png(
+        &std::fs::read(hydrus_testkit::fixture_path("domain_metadata_packages.png")).unwrap(),
+    )
+    .unwrap();
     assert_eq!(png.len(), recorded.len());
     let path = dir.path().join("domains.png");
     export.set_path(path.to_string_lossy().as_ref().into());
@@ -241,7 +296,14 @@ fn domain_metadata_is_prompted_exported_to_png_and_imported_as_the_reference_doe
     for (domain, set) in fixture["before"]["headers"].as_object().unwrap() {
         for (name, row) in set.as_object().unwrap() {
             let approval = Approval::from_code(row[1].as_i64().unwrap()).unwrap();
-            header(&other, domain, name, row[0].as_str().unwrap(), approval, row[2].as_str().unwrap());
+            header(
+                &other,
+                domain,
+                name,
+                row[0].as_str().unwrap(),
+                approval,
+                row[2].as_str().unwrap(),
+            );
         }
     }
     for (domain, recorded) in fixture["before"]["rules"].as_object().unwrap() {
@@ -250,35 +312,72 @@ fn domain_metadata_is_prompted_exported_to_png_and_imported_as_the_reference_doe
     assert_eq!(state(&other), recorded_state(&fixture["before"]));
     let slots = windows::Slots::default();
     let import = windows::package(&other, &slots, true).unwrap();
-    import.set_path(hydrus_testkit::fixture_path("domain_metadata_packages.png").to_string_lossy().as_ref().into());
+    import.set_path(
+        hydrus_testkit::fixture_path("domain_metadata_packages.png")
+            .to_string_lossy()
+            .as_ref()
+            .into(),
+    );
     import.invoke_action("open".into());
     assert!(import.get_error().is_empty(), "{}", import.get_error());
     assert!(import.get_ready());
     for notice in fixture["accepted"]["notices"].as_array().unwrap() {
         let notice = notice.as_str().unwrap();
         if notice.starts_with("For domain") {
-            assert!(import.get_review().contains(notice), "{notice} missing from {}", import.get_review());
+            assert!(
+                import.get_review().contains(notice),
+                "{notice} missing from {}",
+                import.get_review()
+            );
         }
     }
-    for line in ["Domain Metadata: api.packages.example", "Domain Metadata: packages.example", "Domain Metadata: rulesonly.example"] {
-        assert!(import.get_review().contains(line), "{}", import.get_review());
+    for line in [
+        "Domain Metadata: api.packages.example",
+        "Domain Metadata: packages.example",
+        "Domain Metadata: rulesonly.example",
+    ] {
+        assert!(
+            import.get_review().contains(line),
+            "{}",
+            import.get_review()
+        );
     }
     // Reviewing and cancelling changes nothing.
     import.invoke_action("cancel".into());
     assert_eq!(state(&other), recorded_state(&fixture["declined"]["state"]));
     let import = windows::package(&other, &slots, true).unwrap();
-    import.set_path(hydrus_testkit::fixture_path("domain_metadata_packages.png").to_string_lossy().as_ref().into());
+    import.set_path(
+        hydrus_testkit::fixture_path("domain_metadata_packages.png")
+            .to_string_lossy()
+            .as_ref()
+            .into(),
+    );
     import.invoke_action("open".into());
     import.invoke_action("accept".into());
     assert!(import.get_error().is_empty(), "{}", import.get_error());
     assert_eq!(state(&other), recorded_state(&fixture["accepted"]["state"]));
     let saved: hydrus_parse::Downloaders = other.read(settings::get).unwrap();
-    assert!(saved.gugs.gugs.iter().any(|g| g.name() == "rules only gallery"));
+    assert!(
+        saved
+            .gugs
+            .gugs
+            .iter()
+            .any(|g| g.name() == "rules only gallery")
+    );
     // The second import keeps only what is still new, then sets the rules.
     let import = windows::package(&other, &slots, true).unwrap();
-    import.set_path(hydrus_testkit::fixture_path("domain_metadata_packages.png").to_string_lossy().as_ref().into());
+    import.set_path(
+        hydrus_testkit::fixture_path("domain_metadata_packages.png")
+            .to_string_lossy()
+            .as_ref()
+            .into(),
+    );
     import.invoke_action("open".into());
-    assert!(import.get_review().contains("Bandwidth rules: \n1 rqs per 2 seconds"));
+    assert!(
+        import
+            .get_review()
+            .contains("Bandwidth rules: \n1 rqs per 2 seconds")
+    );
     import.invoke_action("accept".into());
     assert_eq!(state(&other), recorded_state(&fixture["again"]["state"]));
 }

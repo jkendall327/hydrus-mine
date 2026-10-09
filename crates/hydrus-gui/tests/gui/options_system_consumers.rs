@@ -1753,7 +1753,10 @@ async fn the_direct_import_row_decides_whether_a_local_import_copies_to_a_temp_p
             let seeds = store.read(|conn| queues::file_seeds(conn, queue)).unwrap();
             panic!(
                 "the import did not finish: {:?}",
-                seeds.iter().map(|s| (s.status, s.note.clone())).collect::<Vec<_>>()
+                seeds
+                    .iter()
+                    .map(|s| (s.status, s.note.clone()))
+                    .collect::<Vec<_>>()
             );
         }
     };

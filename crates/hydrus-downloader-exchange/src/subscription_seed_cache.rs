@@ -19,7 +19,10 @@ fn note(value: &Value, version: u32) -> Result<String> {
             }
             Value::Number(value) if value.as_f64().is_some() => {
                 let mut out = String::new();
-                hydrus_core::pyjson::write_python_float(value.as_f64().unwrap_or_default(), &mut out);
+                hydrus_core::pyjson::write_python_float(
+                    value.as_f64().unwrap_or_default(),
+                    &mut out,
+                );
                 return Ok(out);
             }
             _ => {

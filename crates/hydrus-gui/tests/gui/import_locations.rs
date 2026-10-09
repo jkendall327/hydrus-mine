@@ -611,7 +611,10 @@ fn show_default_files(ui: &MainWindow) {
             .iter()
             .position(|l| l.starts_with(starts))
             .unwrap_or_else(|| panic!("{starts} in {:?}", pane(ui, pane_at)));
-        let (p, l) = (i32::try_from(pane_at).unwrap(), i32::try_from(line).unwrap());
+        let (p, l) = (
+            i32::try_from(pane_at).unwrap(),
+            i32::try_from(line).unwrap(),
+        );
         ui.invoke_menu_line_hovered(p, l, 300.0, 100.0, 10.0);
         ui.invoke_menu_line_clicked(p, l, 300.0, 100.0, 10.0);
     };

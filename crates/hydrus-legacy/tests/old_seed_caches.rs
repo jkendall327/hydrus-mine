@@ -5,8 +5,11 @@ use hydrus_legacy::objects::subscriptions::file_seed_cache;
 use hydrus_legacy::serialisable::SerialisableObject;
 use serde_json::{Value, json};
 
-fn read(cache: &Value) -> Result<Vec<hydrus_legacy::objects::subscriptions::LegacyFileSeed>, String> {
-    let object = SerialisableObject::from_tuple_str(&cache.to_string()).map_err(|e| e.to_string())?;
+fn read(
+    cache: &Value,
+) -> Result<Vec<hydrus_legacy::objects::subscriptions::LegacyFileSeed>, String> {
+    let object =
+        SerialisableObject::from_tuple_str(&cache.to_string()).map_err(|e| e.to_string())?;
     file_seed_cache(&object).map_err(|e| e.to_string())
 }
 
@@ -34,7 +37,15 @@ fn caches_of_versions_one_to_seven_upgrade_as_the_reference_does() {
         let ours: Vec<Value> = seeds
             .iter()
             .map(|s| {
-                json!([s.seed_type, s.data, s.created, s.modified, s.source_time, s.status, s.note])
+                json!([
+                    s.seed_type,
+                    s.data,
+                    s.created,
+                    s.modified,
+                    s.source_time,
+                    s.status,
+                    s.note
+                ])
             })
             .collect();
         assert_eq!(ours, recorded(&case["upgraded_cache"]), "version {version}");
@@ -45,7 +56,11 @@ fn caches_of_versions_one_to_seven_upgrade_as_the_reference_does() {
         }
         if version >= 5 {
             let repeated = read(&case["duplicate_cache"]).unwrap();
-            assert_eq!(repeated.len(), seeds.len(), "repeats are dropped, first wins");
+            assert_eq!(
+                repeated.len(),
+                seeds.len(),
+                "repeats are dropped, first wins"
+            );
             assert_eq!(repeated[0].note, seeds[0].note);
         }
     }
@@ -59,7 +74,8 @@ fn caches_of_versions_one_to_seven_upgrade_as_the_reference_does() {
     }
     for note in fixture["notes"].as_array().unwrap() {
         let result = read(&note["source"]);
-        if note["source"][2][0][1]["note"].is_array() || note["source"][2][0][1]["note"].is_object() {
+        if note["source"][2][0][1]["note"].is_array() || note["source"][2][0][1]["note"].is_object()
+        {
             assert!(result.is_err());
         } else {
             assert_eq!(
@@ -69,6 +85,9 @@ fn caches_of_versions_one_to_seven_upgrade_as_the_reference_does() {
         }
     }
     for failure in fixture["failures"].as_array().unwrap() {
-        assert!(read(&failure["source"]).is_err(), "a seed without a note is refused");
+        assert!(
+            read(&failure["source"]).is_err(),
+            "a seed without a note is refused"
+        );
     }
 }

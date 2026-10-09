@@ -117,7 +117,9 @@ fn decode_rules(value: &Value) -> Result<Vec<Rule>> {
     let bad = || Error::Invalid("Malformed bandwidth rules.".into());
     let array = value.as_array().ok_or_else(bad)?;
     if array.len() != 3 || array[0] != json!(38) || array[1] != json!(1) {
-        return Err(Error::Unsupported("bandwidth rules other than type 38 v1".into()));
+        return Err(Error::Unsupported(
+            "bandwidth rules other than type 38 v1".into(),
+        ));
     }
     let mut out: Vec<Rule> = Vec::new();
     for row in array[2].as_array().ok_or_else(bad)? {

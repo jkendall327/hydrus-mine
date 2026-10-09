@@ -6,7 +6,10 @@ use hydrus_store::{Store, network, settings};
 use serde_json::{Value, json};
 
 fn rule_state(store: &Store) -> Value {
-    let rules = store.read(|c| settings::get::<BandwidthSettings>(c)).unwrap().rules;
+    let rules = store
+        .read(|c| settings::get::<BandwidthSettings>(c))
+        .unwrap()
+        .rules;
     let mut map = serde_json::Map::new();
     for (context, rules) in rules {
         if context.kind == hydrus_core::network::CONTEXT_DOMAIN && !context.data.is_empty() {
@@ -40,7 +43,14 @@ fn header_domains(store: &Store) -> Vec<String> {
     domains
 }
 
-fn import(case: &Value) -> (tempfile::TempDir, std::sync::Arc<Store>, exchange::Draft, exchange::Review) {
+fn import(
+    case: &Value,
+) -> (
+    tempfile::TempDir,
+    std::sync::Arc<Store>,
+    exchange::Draft,
+    exchange::Review,
+) {
     let dir = tempfile::tempdir().unwrap();
     let store = Store::open(dir.path()).unwrap();
     let mut draft = Draft::load(&store).unwrap();
@@ -85,12 +95,14 @@ fn only_the_first_eight_new_packages_are_shown_in_detail() {
     draft.save(&store).unwrap();
     assert_eq!(rule_state(&store), case["state"]["rules"]);
     let context = NetworkContext::domain("site8.example");
-    assert!(store
-        .read(|c| settings::get::<BandwidthSettings>(c))
-        .unwrap()
-        .rules
-        .iter()
-        .any(|(c, _)| c == &context));
+    assert!(
+        store
+            .read(|c| settings::get::<BandwidthSettings>(c))
+            .unwrap()
+            .rules
+            .iter()
+            .any(|(c, _)| c == &context)
+    );
 }
 
 #[test]

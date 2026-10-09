@@ -1,6 +1,8 @@
 //! Staged, atomic downloader package imports and reference duplicate decisions.
 //! Reference-only editor data is kept separately from executable definitions.
 use crate::favourites::non_dupe_name;
+use hydrus_core::bandwidth::{Rule, Rules};
+use hydrus_core::network::NetworkContext;
 use hydrus_core::{
     pages::PageKey,
     url::{AnyGug, UrlClassSettings, UrlClasses, UrlType},
@@ -9,12 +11,10 @@ pub use hydrus_downloader_exchange::{
     Definition, Native, decode_png, decode_text, domain_metadata::DomainMetadata, encode_png,
     encode_text,
 };
-use hydrus_core::bandwidth::{Rule, Rules};
-use hydrus_core::network::NetworkContext;
-use hydrus_store::bandwidth::BandwidthSettings;
-use hydrus_store::network::{Approval, CustomHeader};
 use hydrus_parse::Downloaders;
 use hydrus_parse::login::LoginScript;
+use hydrus_store::bandwidth::BandwidthSettings;
+use hydrus_store::network::{Approval, CustomHeader};
 use hydrus_store::{
     Store, StoreError,
     settings::{self, Setting},
@@ -57,6 +57,12 @@ fn key(native: &Native) -> Option<String> {
     }
 }
 
+/// Domain headers and every context's bandwidth rules, as loaded.
+type NetworkState = (
+    BTreeMap<String, Vec<CustomHeader>>,
+    Vec<(NetworkContext, Rules)>,
+);
+
 /// A full package draft. Cancel simply drops this value.
 #[derive(Debug, Clone)]
 pub struct Draft {
@@ -76,7 +82,7 @@ pub struct Draft {
     original_downloaders: Downloaders,
     original_auxiliary: Auxiliary,
     original_login_scripts: Vec<LoginScript>,
-    original_network: (BTreeMap<String, Vec<CustomHeader>>, Vec<(NetworkContext, Rules)>),
+    original_network: NetworkState,
 }
 /// The review displayed before staging an import.
 #[derive(Debug, Clone, Default, PartialEq, Eq)]
@@ -675,8 +681,15 @@ fn domain_headers(
 impl Draft {
     /// `AlreadyHaveExactlyTheseHeaders`: the same names and values (reasons
     /// and approval aside). A domain without headers has exactly none.
-    fn has_exactly_these_headers(&self, domain: &str, headers: &[(String, String, String)]) -> bool {
-        let existing = self.domain_headers.get(domain).map_or(&[][..], Vec::as_slice);
+    fn has_exactly_these_headers(
+        &self,
+        domain: &str,
+        headers: &[(String, String, String)],
+    ) -> bool {
+        let existing = self
+            .domain_headers
+            .get(domain)
+            .map_or(&[][..], Vec::as_slice);
         existing.len() == headers.len()
             && headers.iter().all(|(name, value, _)| {
                 existing
