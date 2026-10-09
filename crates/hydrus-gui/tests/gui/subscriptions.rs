@@ -1219,6 +1219,7 @@ fn add_uses_a_separate_gallery_list_then_the_editor() {
     assert!(bound.edit_subscription.borrow().is_none());
 }
 
+// leaf: subscriptions-exchange
 #[test]
 fn full_subscription_exchange_is_staged_cancellable_and_reopens_with_complete_histories() {
     use hydrus_downloader_exchange::subscriptions as exchange;
@@ -1400,6 +1401,7 @@ fn subscription_exchange_file_menus_load_selected_packages_and_cancel_invalid_ba
     hydrus_gui::set_picker(|_, _| Vec::new());
 }
 
+// leaf: subscriptions-exchange
 #[test]
 fn legacy_subscription_clipboard_import_reaches_saved_query_settings_and_full_histories() {
     use hydrus_downloader_exchange::subscriptions as exchange;
@@ -1699,6 +1701,7 @@ fn subscription_reset_and_retries_refresh_persisted_export_caches_and_forget_fil
 /// reference's add-query header: unsynced, default velocity, no examples, so
 /// the reference's own Sync recalculates it
 /// (`oracle/fixtures/subscription_header_resync.json`).
+// leaf: subscriptions-exchange
 #[test]
 fn a_fresh_native_query_exports_through_the_window_as_the_references_unsynced_header() {
     use hydrus_core::subscriptions::QueryState;
@@ -1741,6 +1744,7 @@ fn a_fresh_native_query_exports_through_the_window_as_the_references_unsynced_he
     dialog.invoke_cancel();
 }
 
+// leaf: subscriptions-exchange
 #[test]
 fn direct_import_menus_replay_qt_type_warnings_file_prefixes_and_missing_rejection() {
     use hydrus_downloader_exchange::subscriptions as exchange;

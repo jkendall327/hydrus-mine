@@ -559,6 +559,60 @@ async fn a_subscription_without_its_downloader_pauses() {
     assert_eq!(s.downloader.next_work_time(&sub).unwrap(), None);
 }
 
+/// An accepted import whose query log is missing: the reference's own sync
+/// pauses the subscription and shows its message (`oracle/fixtures/
+/// subscription_missing_logs.json`, `record_subscription_missing_logs.py`).
+// leaf: subscriptions-exchange
+#[tokio::test(flavor = "multi_thread")]
+async fn a_subscription_with_a_missing_query_log_pauses_with_the_references_message() {
+    let s = setup().await;
+    let recorded = hydrus_testkit::fixture_json("subscription_missing_logs.json");
+    let settings = SubscriptionSettings {
+        gug_key: "ffff".into(),
+        gug_name: "anything".into(),
+        ..SubscriptionSettings::default()
+    };
+    let (id, queue) = s
+        .store
+        .write(move |ctx| {
+            let id = subs::create_subscription(ctx.conn(), "Artist", &settings)?.unwrap();
+            let queue = subs::add_query(ctx.conn(), id, &QueryState::new("blue artist"), 0)?;
+            subs::set_missing_log(ctx.conn(), queue, true)?;
+            Ok((id, queue))
+        })
+        .unwrap();
+    // (an unsynced header wants looking at at once)
+    let sub = s
+        .store
+        .read(|conn| subs::subscription(conn, id))
+        .unwrap()
+        .unwrap();
+    assert_eq!(s.downloader.next_work_time(&sub).unwrap(), Some(0));
+    let report = s
+        .downloader
+        .run_subscription(id, &Job::new())
+        .await
+        .unwrap();
+    assert_eq!(
+        report.notices,
+        [recorded["sync_texts"][0].as_str().unwrap()]
+    );
+    assert_eq!(
+        popups_shown(&s.store),
+        [(Some(report.notices[0].clone()), None)]
+    );
+    let sub = s
+        .store
+        .read(|conn| subs::subscription(conn, id))
+        .unwrap()
+        .unwrap();
+    assert!(sub.settings.paused);
+    assert_eq!(recorded["after_sync_paused"], true);
+    assert_eq!(s.downloader.next_work_time(&sub).unwrap(), None);
+    // paused until manage subscriptions reinitialises the log
+    assert!(s.store.read(subs::missing_logs).unwrap().contains(&queue));
+}
+
 #[tokio::test(flavor = "multi_thread")]
 async fn a_subscription_stops_when_its_bandwidth_runs_out() {
     use hydrus_core::bandwidth::{BandwidthType, Rule, Rules};

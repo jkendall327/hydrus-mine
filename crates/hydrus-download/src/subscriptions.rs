@@ -320,8 +320,14 @@ impl Downloader {
         }
         let queries = self.store.read(|conn| store_subs::queries(conn, sub.id))?;
         let mut earliest: Option<i64> = None;
+        let missing = self.store.read(store_subs::missing_logs)?;
         for q in &queries {
             if q.state.paused {
+                continue;
+            }
+            if missing.contains(&q.queue_id) {
+                // (an unsynced header wants to be looked at at once)
+                earliest = Some(0);
                 continue;
             }
             let file_work = self.has_file_work(q.queue_id)?;
@@ -382,6 +388,12 @@ impl Downloader {
         };
         if sub.settings.paused || now() < sub.settings.no_work_until || self.subscriptions_paused()
         {
+            return Ok(report);
+        }
+        if let Some(notice) = self.pause_for_missing_log(&mut sub)? {
+            report.notices.push(notice.clone());
+            tracing::warn!("{notice}");
+            popups::show_text(self.store(), notice);
             return Ok(report);
         }
         let started_with = sub.settings.clone();
@@ -475,6 +487,31 @@ impl Downloader {
             popups::show_text(self.store(), notice.clone());
         }
         Ok(report)
+    }
+
+    /// A query whose history is missing pauses its subscription and says so
+    /// (`_DealWithMissingQueryLogContainerError`); manage subscriptions
+    /// reinitialises it.
+    fn pause_for_missing_log(&self, sub: &mut Subscription) -> Result<Option<String>, WorkError> {
+        let (queries, missing) = self.store.read(|conn| {
+            Ok((
+                store_subs::queries(conn, sub.id)?,
+                store_subs::missing_logs(conn)?,
+            ))
+        })?;
+        let Some(query) = queries.iter().find(|q| missing.contains(&q.queue_id)) else {
+            return Ok(None);
+        };
+        let notice = format!(
+            "The subscription \"{}\"'s \"{}\" query was missing database data! This could be a serious error! Please go to _manage subscriptions_ to reset the data, and you may want to contact hydrus dev. The sub has paused!",
+            sub.name,
+            query.state.human_name(),
+        );
+        sub.settings.paused = true;
+        let (id, settings) = (sub.id, sub.settings.clone());
+        self.store
+            .write(move |ctx| store_subs::set_subscription_settings(ctx.conn(), id, &settings))?;
+        Ok(Some(notice))
     }
 
     /// Queries to sync now (`_GetQueryHeadersForProcessing`, `IsSyncDue`).

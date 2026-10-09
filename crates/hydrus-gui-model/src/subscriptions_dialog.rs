@@ -34,6 +34,12 @@ pub struct DialogQuery {
     pub copy_of: Option<i64>,
     /// Imported full history remains detached until the owner applies.
     pub exchange: Option<hydrus_downloader_exchange::subscriptions::Query>,
+    /// The dialog has read this query's history (to export, reset, retry or
+    /// duplicate it), as the reference's `_names_to_edited_query_log_containers`
+    /// holds it. An imported query's history is always loaded.
+    pub loaded: std::cell::Cell<bool>,
+    /// What the last checker options edit did to its cached header.
+    pub checker_edit: Option<hydrus_downloader_exchange::subscriptions::CheckerEdit>,
 }
 
 impl DialogQuery {
@@ -48,7 +54,14 @@ impl DialogQuery {
             log_changes: Vec::new(),
             copy_of: None,
             exchange: None,
+            loaded: std::cell::Cell::new(false),
+            checker_edit: None,
         }
+    }
+
+    /// Whether the dialog holds its history (see [`Self::loaded`]).
+    pub fn is_loaded(&self) -> bool {
+        self.exchange.is_some() || self.loaded.get() || !self.log_changes.is_empty()
     }
 
     /// How many of its files have this status.
@@ -123,6 +136,23 @@ impl DialogQuery {
         }
         state.next_check_time =
             checker.next_check_time(&self.seed_times, state.last_check_time, now);
+    }
+
+    /// New checker options for its subscription (`Subscription.SetCheckerOptions`
+    /// with the histories the dialog holds): its timing reckoned again, and
+    /// its cached header recalculated at once if the dialog holds its history,
+    /// else left for the reference's next load.
+    pub fn checker_changed(&mut self, checker: &CheckerOptions, now: i64) {
+        self.sync_to_checker(checker, now);
+        let last = self.state.last_check_time;
+        self.checker_edit = Some(if self.is_loaded() {
+            hydrus_downloader_exchange::subscriptions::CheckerEdit::Synced {
+                velocity: checker.raw_current_velocity(&self.seed_times, last),
+                words: checker.pretty_velocity(&self.seed_times, last, false),
+            }
+        } else {
+            hydrus_downloader_exchange::subscriptions::CheckerEdit::Unsynced
+        });
     }
 
     /// When its latest file was found (0 for none).
@@ -785,7 +815,7 @@ impl Subscriptions {
             if s.settings.checker != *checker {
                 s.settings.checker = checker.clone();
                 for q in &mut s.queries {
-                    q.sync_to_checker(checker, now);
+                    q.checker_changed(checker, now);
                 }
             }
         }
