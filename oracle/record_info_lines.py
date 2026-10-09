@@ -4,10 +4,12 @@
 On the `basic` fixture, at a fixed "now", each file's info lines: all of
 them (with whether each is "interesting", and submenus' lines), and the
 interesting ones the media viewer's top hover frame joins with " | ".
-Twice: with a new client's options, and with the file info line options
+With a new client's options, with the file info line options
 turned the other way (file services and their import times interesting,
 archived and trash times not, the trash reason shown, modified times
-always interesting, a different audio label, no nice resolutions).
+always interesting, a different audio label, no nice resolutions), once for each of the eight booleans turned the other
+way on its own ("only <name>"), and with file services and their add times
+both on.
 
 The phases' option values are recorded too, as hydrus-rs reads them.
 Tooltips are not recorded (they show ISO times in local time).
@@ -69,6 +71,9 @@ def record( session ):
 
     phases = {}
 
+    defaults = { name: options.GetBoolean( name ) for name in BOOLEANS }
+    defaults_label = options.GetString( 'has_audio_label' )
+
     real = ( HydrusTime.GetNow, HydrusTime.GetNowMS, HydrusTime.GetNowFloat )
 
     HydrusTime.GetNow = lambda: now
@@ -81,7 +86,46 @@ def record( session ):
 
         media_results = controller.Read( 'media_results', hashes )
 
-        for phase in ( 'defaults', 'changed' ):
+        # 'defaults', 'changed' (all eight turned the other way), and one phase
+        # per boolean turned the other way alone
+        for phase in ( 'defaults', 'changed' ) + tuple( 'only ' + name for name in BOOLEANS ) + ( 'services and their add times', ):
+
+            if phase.startswith( 'only ' ):
+
+                for name in BOOLEANS:
+
+                    options.SetBoolean( name, defaults[ name ] )
+
+
+                options.SetString( 'has_audio_label', defaults_label )
+
+                name = phase[ len( 'only ' ): ]
+
+                options.SetBoolean( name, not defaults[ name ] )
+
+            elif phase == 'services and their add times':
+
+                # (add times show only where services do)
+                for name in BOOLEANS:
+
+                    options.SetBoolean( name, defaults[ name ] )
+
+
+                options.SetString( 'has_audio_label', defaults_label )
+
+                for name in ( 'file_info_line_consider_file_services_interesting', 'file_info_line_consider_file_services_import_times_interesting' ):
+
+                    options.SetBoolean( name, not defaults[ name ] )
+
+
+            elif phase == 'defaults':
+
+                for name in BOOLEANS:
+
+                    options.SetBoolean( name, defaults[ name ] )
+
+
+                options.SetString( 'has_audio_label', defaults_label )
 
             if phase == 'changed':
 

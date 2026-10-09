@@ -14381,10 +14381,10 @@
     "Assessment covers this editable control and shared Apply/Cancel, not every control on its containing reference page or every background consumer."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "GUI test flips this one flag and compares the real viewer with top_line_with_format (circular); info_lines.json flips all eight booleans together, so the single-flag case the test runs (archived-time off with archived status on gives a bare 'archived'; the recording flips archived status off in the same phase so it never shows that text) is never recorded. Tests: crates/hydrus-gui/tests/gui/options_media_hovers.rs fn summary_option + crates/hydrus-gui/tests/gui/info_lines.rs:48 info_lines_are_the_reference_s"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "gui/options_media_hovers.rs: 'Show archived time' is flipped in the real Options window, applied, and the real viewer opened on every file shown (the viewer's clock held at the recording's now); its top line is compared with info_lines.json phase 'defaults' before and phase 'only file_info_line_consider_archived_time_interesting' after, both recorded from the reference by oracle/record_info_lines.py. gui/info_lines.rs replays all eleven phases against top_line."
    }
   },
   {
@@ -14401,10 +14401,10 @@
     "Assessment covers this editable control and shared Apply/Cancel, not every control on its containing reference page or every background consumer."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "GUI test flips this one flag and compares the real viewer with top_line_with_format (circular); info_lines.json flips all eight booleans together, so the single-flag case the test runs (services on and import times off gives bare 'added to art'; the recording has both on) is never recorded. Tests: crates/hydrus-gui/tests/gui/options_media_hovers.rs fn summary_option + crates/hydrus-gui/tests/gui/info_lines.rs:48 info_lines_are_the_reference_s"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "gui/options_media_hovers.rs: 'Show file service add times (file services on, so the add times show)' is flipped in the real Options window, applied, and the real viewer opened on every file shown (the viewer's clock held at the recording's now); its top line is compared with info_lines.json phase 'only file_info_line_consider_file_services_interesting' before and phase 'services and their add times' after, both recorded from the reference by oracle/record_info_lines.py. gui/info_lines.rs replays all eleven phases against top_line."
    }
   },
   {
@@ -14441,10 +14441,10 @@
     "Assessment covers this editable control and shared Apply/Cancel, not every control on its containing reference page or every background consumer."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "GUI test flips this one flag and compares the real viewer with top_line_with_format (circular); info_lines.json flips all eight booleans together, so the single-flag case the test runs (reason alone on/off; the recording flips trash time and reason together (default 'in the trash', changed 'sent to trash X ago (reason)')) is never recorded. Tests: crates/hydrus-gui/tests/gui/options_media_hovers.rs fn summary_option + crates/hydrus-gui/tests/gui/info_lines.rs:48 info_lines_are_the_reference_s"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "gui/options_media_hovers.rs: 'Show file trash reasons (searching the trash)' is flipped in the real Options window, applied, and the real viewer opened on every file shown (the viewer's clock held at the recording's now); its top line is compared with info_lines.json phase 'defaults' before and phase 'only file_info_line_consider_trash_reason_interesting' after, both recorded from the reference by oracle/record_info_lines.py. gui/info_lines.rs replays all eleven phases against top_line."
    }
   },
   {
@@ -14461,10 +14461,10 @@
     "Assessment covers this editable control and shared Apply/Cancel, not every control on its containing reference page or every background consumer."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "GUI test flips this one flag and compares the real viewer with top_line_with_format (circular); info_lines.json flips all eight booleans together, so the single-flag case the test runs (time alone on/off; the recording flips trash time and reason together) is never recorded. Tests: crates/hydrus-gui/tests/gui/options_media_hovers.rs fn summary_option + crates/hydrus-gui/tests/gui/info_lines.rs:48 info_lines_are_the_reference_s"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "gui/options_media_hovers.rs: 'Show file trash times (searching the trash)' is flipped in the real Options window, applied, and the real viewer opened on every file shown (the viewer's clock held at the recording's now); its top line is compared with info_lines.json phase 'defaults' before and phase 'only file_info_line_consider_trash_time_interesting' after, both recorded from the reference by oracle/record_info_lines.py. gui/info_lines.rs replays all eleven phases against top_line."
    }
   },
   {

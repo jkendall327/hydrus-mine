@@ -56,6 +56,33 @@ fn viewer_lines(client: &Client) -> Vec<String> {
         .collect()
 }
 
+/// The top hover line the reference made for each file shown (by hash) in the
+/// recording's `phase` (`oracle/record_info_lines.py`).
+fn recorded_lines(client: &Client, phase: &str) -> Vec<String> {
+    let fixture = hydrus_testkit::fixture_json("info_lines.json");
+    let files = client.bound.current.borrow().borrow().results().to_vec();
+    let hashes = client
+        .store
+        .read(|c| hydrus_store::master::hashes(c, &files))
+        .unwrap();
+    files
+        .iter()
+        .map(|file| {
+            fixture["phases"][phase]["files"][hashes[file].to_hex()]["top"]
+                .as_str()
+                .unwrap_or_else(|| panic!("{phase}: {file:?}"))
+                .to_owned()
+        })
+        .collect()
+}
+
+/// Hold the viewer's clock at the recording's "now", so the lines say what
+/// the reference's said ("9 days ago" and all).
+fn hold_time_at_the_recording() {
+    let fixture = hydrus_testkit::fixture_json("info_lines.json");
+    hydrus_gui::hold_viewer_time(Some(fixture["now"].as_i64().unwrap() * 1000));
+}
+
 /// The lines the reference's rule makes with these settings.
 fn expected_lines(client: &Client, settings: &InfoLineSettings) -> Vec<String> {
     let snapshot = client.store.snapshot();
@@ -73,7 +100,10 @@ fn expected_lines(client: &Client, settings: &InfoLineSettings) -> Vec<String> {
                 &media,
                 &snapshot.services,
                 settings,
-                hydrus_core::TimestampMs::now().0,
+                hydrus_testkit::fixture_json("info_lines.json")["now"]
+                    .as_i64()
+                    .unwrap()
+                    * 1000,
                 &hydrus_gui_model::gui_format::preferences(&client.store),
             )
         })
@@ -101,8 +131,14 @@ struct Base {
 
 /// Flip the summary option `label` (and `field` of the settings with it) and
 /// compare the viewer's lines with the rule's. The line must change for some file.
-fn summary_option(label: &str, field: fn(&mut InfoLineSettings) -> &mut bool, base: Base) {
+fn summary_option(
+    label: &str,
+    field: fn(&mut InfoLineSettings) -> &mut bool,
+    base: Base,
+    phases: (&str, &str),
+) {
     let client = Client::basic();
+    hold_time_at_the_recording();
     search_everything(&client, base.trash);
     let defaults = InfoLineSettings {
         file_services_interesting: base.services,
@@ -115,6 +151,7 @@ fn summary_option(label: &str, field: fn(&mut InfoLineSettings) -> &mut bool, ba
         .unwrap();
     let before = viewer_lines(&client);
     assert_eq!(before, expected_lines(&client, &defaults));
+    assert_eq!(before, recorded_lines(&client, phases.0), "before");
     flip(
         &client,
         "media viewer hovers",
@@ -127,6 +164,8 @@ fn summary_option(label: &str, field: fn(&mut InfoLineSettings) -> &mut bool, ba
     assert_eq!(saved, flipped, "saved");
     let after = viewer_lines(&client);
     assert_eq!(after, expected_lines(&client, &saved));
+    // and they are the lines the reference made with that option turned over
+    assert_eq!(after, recorded_lines(&client, phases.1), "after");
     assert_ne!(before, after, "{label:?} changes the lines");
 }
 
@@ -137,6 +176,10 @@ fn show_archived_status() {
         "Show archived status: ",
         |s| &mut s.archived_interesting,
         Base::default(),
+        (
+            "defaults",
+            "only file_info_line_consider_archived_interesting",
+        ),
     );
 }
 
@@ -147,6 +190,10 @@ fn show_archived_time() {
         "Show archived time: ",
         |s| &mut s.archived_time_interesting,
         Base::default(),
+        (
+            "defaults",
+            "only file_info_line_consider_archived_time_interesting",
+        ),
     );
 }
 
@@ -157,6 +204,10 @@ fn show_file_services() {
         "Show file services: ",
         |s| &mut s.file_services_interesting,
         Base::default(),
+        (
+            "defaults",
+            "only file_info_line_consider_file_services_interesting",
+        ),
     );
 }
 
@@ -170,6 +221,10 @@ fn show_file_service_add_times() {
             services: true,
             ..Base::default()
         },
+        (
+            "only file_info_line_consider_file_services_interesting",
+            "services and their add times",
+        ),
     );
 }
 
@@ -183,6 +238,10 @@ fn show_file_trash_times() {
             trash: true,
             ..Base::default()
         },
+        (
+            "defaults",
+            "only file_info_line_consider_trash_time_interesting",
+        ),
     );
 }
 
@@ -196,6 +255,10 @@ fn show_file_trash_reasons() {
             trash: true,
             ..Base::default()
         },
+        (
+            "defaults",
+            "only file_info_line_consider_trash_reason_interesting",
+        ),
     );
 }
 
@@ -206,6 +269,7 @@ fn hide_uninteresting_modified_times() {
         "Hide uninteresting modified times: ",
         |s| &mut s.hide_uninteresting_modified_time,
         Base::default(),
+        ("defaults", "only hide_uninteresting_modified_time"),
     );
 }
 
@@ -216,6 +280,7 @@ fn swap_in_common_resolution_labels() {
         "Swap in common resolution labels:",
         |s| &mut s.nice_resolutions,
         Base::default(),
+        ("defaults", "only use_nice_resolution_strings"),
     );
 }
 
@@ -223,6 +288,7 @@ fn swap_in_common_resolution_labels() {
 #[test]
 fn the_audio_label_is_the_text_the_viewer_uses_for_files_with_audio() {
     let client = Client::basic();
+    hold_time_at_the_recording();
     search_everything(&client, false);
     let before = viewer_lines(&client);
     let audible =
