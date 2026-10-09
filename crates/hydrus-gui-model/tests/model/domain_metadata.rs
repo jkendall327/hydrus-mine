@@ -7,7 +7,7 @@ use serde_json::{Value, json};
 
 fn rule_state(store: &Store) -> Value {
     let rules = store
-        .read(|c| settings::get::<BandwidthSettings>(c))
+        .read(settings::get::<BandwidthSettings>)
         .unwrap()
         .rules;
     let mut map = serde_json::Map::new();
@@ -97,7 +97,7 @@ fn only_the_first_eight_new_packages_are_shown_in_detail() {
     let context = NetworkContext::domain("site8.example");
     assert!(
         store
-            .read(|c| settings::get::<BandwidthSettings>(c))
+            .read(settings::get::<BandwidthSettings>)
             .unwrap()
             .rules
             .iter()

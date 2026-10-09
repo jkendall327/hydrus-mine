@@ -213,6 +213,8 @@ struct Codec<T> {
     actions: Option<ExtraActions>,
 }
 /// Handle an action the shared window does not know.
+/// Redraw the package choices and text after a selection or addition.
+type Refresh = Rc<dyn Fn(&DownloaderExchangeWindow, &str)>;
 type ExtraActions = Rc<dyn Fn(&DownloaderExchangeWindow, &str) -> Result<(), String>>;
 
 /// Import/export the shared processor editor's selected steps using reference
@@ -764,7 +766,7 @@ pub fn package(
     let selected = Rc::new(RefCell::new(
         (0..definitions.len()).collect::<BTreeSet<_>>(),
     ));
-    let refresh: Rc<dyn Fn(&DownloaderExchangeWindow, &str)> = Rc::new({
+    let refresh: Refresh = Rc::new({
         let export_draft = export_draft.clone();
         let selected = selected.clone();
         move |window: &DownloaderExchangeWindow, notice: &str| {
@@ -849,10 +851,10 @@ pub fn package(
                 let Some(window) = weak.upgrade() else {
                     return;
                 };
-                if !(window.get_active()
-                    && !window.get_png_child()
-                    && window.get_overwrite_question().is_empty()
-                    && !window.get_domain_prompt())
+                if !window.get_active()
+                    || window.get_png_child()
+                    || !window.get_overwrite_question().is_empty()
+                    || window.get_domain_prompt()
                 {
                     return;
                 }
