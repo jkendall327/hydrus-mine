@@ -283,10 +283,30 @@ pub fn undeletion(store: &Store, files: &[HashId]) -> Option<Undeletion> {
 }
 
 /// Restore those of `files` deleted from `domain` (every local domain they
-/// were deleted from, for an umbrella domain).
+/// were deleted from, for the umbrella domain; as the reference filters, only
+/// the files that were deleted from it, which for the umbrella is those no
+/// local domain holds now).
 pub fn undelete_to(store: &Store, files: &[HashId], domain: ServiceId) -> hydrus_store::Result<()> {
-    let files = files.to_vec();
-    store.write_content(move |w| w.undelete_files(domain, &files))
+    let snapshot = store.snapshot();
+    let roles = DomainRoles::new(&snapshot.services)?;
+    let batch = store.read(|conn| hydrus_store::media::load(conn, &snapshot.services, None, files))?;
+    let wanted: Vec<HashId> = batch
+        .results
+        .iter()
+        .filter(|m| {
+            if domain == roles.combined_local_media {
+                !roles.local.iter().any(|d| m.is_current_in(*d))
+                    && roles.local.iter().any(|d| m.is_deleted_from(*d))
+            } else {
+                m.is_deleted_from(domain)
+            }
+        })
+        .map(|m| m.hash_id)
+        .collect();
+    if wanted.is_empty() {
+        return Ok(());
+    }
+    store.write_content(move |w| w.undelete_files(domain, &wanted))
 }
 
 /// Whether `files` are still somewhere `location` searches (a file

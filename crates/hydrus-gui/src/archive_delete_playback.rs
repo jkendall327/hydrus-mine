@@ -8,6 +8,7 @@ use std::sync::Arc;
 use std::time::Duration;
 
 use hydrus_store::Store;
+use slint::ComponentHandle as _;
 
 use crate::{ArchiveDeleteWindow, animation, audio, playback, scanbar};
 
