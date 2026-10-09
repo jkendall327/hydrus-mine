@@ -62,6 +62,8 @@ pub(crate) fn open(
             w.set_real_service(s.real);
             w.set_single_label(s.single.to_permitted_string().into());
             w.set_selection_label(s.selection.to_permitted_string().into());
+            w.set_single_tooltip(w.get_single_label());
+            w.set_selection_tooltip(w.get_selection_label());
             w.set_fetch_automatically(s.autocomplete.fetch_automatically);
             w.set_threshold(i32::from(s.autocomplete.exact_match_threshold.unwrap_or(0)));
             w.set_override_location(s.autocomplete.override_location);

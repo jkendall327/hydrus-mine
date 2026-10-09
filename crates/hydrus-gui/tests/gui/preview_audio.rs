@@ -384,3 +384,20 @@ fn the_previews_volume_control_opens_under_the_pointer_and_moves_the_volume() {
     assert!(p.settings().global_mute);
     p.until(|| p.playing().1 == (100, true));
 }
+
+#[test]
+fn the_previews_mute_buttons_carry_the_references_tooltips() {
+    let recording = hydrus_testkit::fixture_json("tag_filter_tooltips.json");
+    let p = Preview::new();
+    let ui = &p.client.ui;
+    p.select("audio.mp3");
+    p.until(|| ui.get_preview_volume_shown());
+    assert_eq!(
+        ui.get_preview_global_tooltip(),
+        recording["global_mute"].as_str().unwrap()
+    );
+    assert_eq!(
+        ui.get_preview_mute_tooltip(),
+        recording["preview_mute"].as_str().unwrap()
+    );
+}

@@ -1,13 +1,13 @@
 //! One fallibly started worker per Manage Tags owner; newest requests replace pending work.
 use hydrus_store::{
     Store,
-    related_tags::{Query, Suggestion},
+    related_tags::{Query, Report},
 };
 use std::sync::{
     Arc, Condvar, Mutex,
     atomic::{AtomicU64, Ordering},
 };
-type Reply = Result<Vec<Suggestion>, String>;
+type Reply = Result<Report, String>;
 type TaggedReply = (u64, Reply);
 struct Pending {
     request: Option<(u64, Query)>,

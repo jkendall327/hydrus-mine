@@ -3536,7 +3536,13 @@
     "Broader maintenance/admin and multi-tag selection boundaries remain Partial; scoped regeneration and context-menu behaviors are cited separately.",
     "Native dropdown layout and synchronous query/presentation differ from Qt. Continuous dragging outside the viewport is not asserted.",
     "Redo restores the saved post-edit caret; Qt can retain a later command caret/selection at redo boundaries. Same-text programmatic resets cannot be distinguished from live model refreshes."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "Claude (tags leftovers, issue 86)",
+    "note": "Manage tags' write autocomplete, driven through the window: for every recorded option set (first-with-count, expanded/decorated parents and siblings, count service) the typed text's rows (the parents as an unordered bag, as Qt lists them) and what Enter enters match oracle/fixtures/write_tag_autocomplete.json; the recorded context menu on a result (two levels), the recorded multiline-paste questions with and without the skip option, and manual fetch (Ctrl+Space) with fetch-as-you-type off. The leaf's other listed behaviours (selection, keyboard, undo, drag) have their own tests in write_autocomplete.rs and the model tests. Native dropdown layout differs from Qt (DIFFERENCES.md). Tests: crates/hydrus-gui/tests/gui/write_autocomplete_leaves.rs."
+   }
   },
   {
    "id": "audit-media-tags-missing-cog",
@@ -21563,7 +21569,13 @@
     "Truth pass (2026-10-08): partial, small. Could be consumed by the existing sibling/parent reason prompts. Missing: A recent-reasons store fed by the sibling/parent reason prompts and capped by this count. Evidence: options.rs:4492-4496 row, tested, unread",
     "Reference editor/control 'Number of recent petition reasons to remember in dialogs:' is recorded on 'tag editing' and defined by the referenced options panel. No corresponding editable row exists in native options::pages; this is a missing GUI editing path, even if a setting is imported or consumed elsewhere.",
     "Native options registry has no editable 'Number of recent petition reasons to remember in dialogs:' control in this page/box path."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "Claude (tags leftovers, issue 86)",
+    "note": "Stale tracker note: the row exists (options_gui_kept.rs) and is now read: the sibling/parent petition reason questions remember and offer at most that many recent reasons (0 remembers none), driven through the Options row and the relationship window and replayed from oracle/fixtures/relationship_reasons.json for counts 2 and 0. Tests: crates/hydrus-gui/tests/gui/tag_relationships.rs reason_questions_offer_recent_then_fixed_reasons_and_the_option_caps_the_recent_ones; crates/hydrus-gui-model/tests/model/tag_relationships.rs."
+   }
   },
   {
    "id": "audit-options-tag-editing-tag-dialogs-remember-last-used-default-tag-service-in-manage-tag-dialogs",
@@ -23466,7 +23478,13 @@
    "notes": [
     "Truth pass (2026-10-08): partial, small. Not platform-blocked: Slint 1.18 has tooltips; DIFFERENCES.md's 'no tooltips' is stale. Missing: Wire Tooltip elements in tag_filter.slint (wrap the buttons) and test the model text against the reference. Evidence: tag_filter_editor.rs:47-70 computes the text; Slint 1.18.1 has a Tooltip element (i-slint-compiler builtin_elements.rs)",
     "The reference editor supplies explanatory control help/tooltips; native tag-filter buttons have no tooltip properties."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-09",
+    "class": "weak",
+    "by": "Claude (tags leftovers, issue 86)",
+    "note": "Tooltip elements (Slint 1.18) now wrap the tag filter editor's \"show other panels\" button and every native tag filter button (tag migration, tag display options, string tag filter, import options' get tags and blacklist, Client API permitted tags) through the shared TipButton. The button text and tooltip for every configuration are replayed from the reference's TagFilterButton (oracle/fixtures/tag_filter_tooltips.json, model test tag_filter_tooltips.rs); the windows' tests assert the text handed to each Tooltip. Not covered: the popup itself appearing after the pointer rests (the headless test platform draws none); Qt's 80-column wrapping is Slint's own wrapping here. Tests: crates/hydrus-gui/tests/gui/tag_filter_tooltips.rs, crates/hydrus-gui-model/tests/model/tag_filter_tooltips.rs, tag_migration.rs, tag_display.rs, import_options.rs."
+   }
   },
   {
    "id": "audit-shared-tag-whitelist",
@@ -24346,7 +24364,13 @@
     "Broader maintenance/admin and multi-tag selection boundaries remain Partial; scoped regeneration and context-menu behaviors are cited separately.",
     "Native dropdown layout and synchronous query/presentation differ from Qt. Continuous dragging outside the viewport is not asserted.",
     "Redo restores the saved post-edit caret; Qt can retain a later command caret/selection at redo boundaries. Same-text programmatic resets cannot be distinguished from live model refreshes."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "Claude (tags leftovers, issue 86)",
+    "note": "The parent editor's two write inputs driven through the window against the same recording as Manage tags: rows and entry for every option set, the recorded context menu (two levels), the multiline-paste questions and manual fetch. Menu actions and selection/keyboard/undo have their own tests (write_autocomplete.rs, model write_autocomplete.rs). Tests: crates/hydrus-gui/tests/gui/write_autocomplete_leaves.rs."
+   }
   },
   {
    "id": "parser-context",
@@ -24419,7 +24443,13 @@
     "Truth pass (2026-10-08): partial, medium. Reasons work; suggestions and account handling missing. Missing: Recent and fixed reason suggestions; account permission/moderator handling. Evidence: tag_relationships.rs:725-750; tests tag_relationships.rs:38,337 and GUI :198",
     "Local add/delete or repository pend/petition/rescind uses typed updates and stored reasons; repository tests reopen pending/reasons and rescind correctly.",
     "Reasons/rescinds exist; permission warnings, moderator bypass and recent/fixed suggestions are deferred."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-09",
+    "class": "weak",
+    "by": "Claude (tags leftovers, issue 86)",
+    "note": "The reason question of a tag repository's sibling/parent pend and petition now offers the recent reasons then the fixed ones (per kind and action) as buttons, remembers typed non-fixed reasons up to the options count, and matches oracle/fixtures/relationship_reasons.json (recorded from the real TagPairActionContext) in a model test and through the window. Not done, out of scope per the coordinating session and not decided by the owner: account permission/moderator handling (the reference skips the question with 'Entered by a janitor.' for a moderator). Tests: crates/hydrus-gui-model/tests/model/tag_relationships.rs petition_reasons_offer_recent_then_fixed_suggestions_capped_by_the_option; crates/hydrus-gui/tests/gui/tag_relationships.rs reason_questions_offer_recent_then_fixed_reasons_and_the_option_caps_the_recent_ones."
+   }
   },
   {
    "id": "service-ipfs",
@@ -24496,7 +24526,13 @@
     "Broader maintenance/admin and multi-tag selection boundaries remain Partial; scoped regeneration and context-menu behaviors are cited separately.",
     "Native dropdown layout and synchronous query/presentation differ from Qt. Continuous dragging outside the viewport is not asserted.",
     "Redo restores the saved post-edit caret; Qt can retain a later command caret/selection at redo boundaries. Same-text programmatic resets cannot be distinguished from live model refreshes."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "Claude (tags leftovers, issue 86)",
+    "note": "The sibling editor's two write inputs driven through the window against the same recording as Manage tags: rows and entry for every option set, the recorded context menu (two levels), the multiline-paste questions (a sibling's ideal side keeps one pasted tag) and manual fetch. Menu actions and selection/keyboard/undo have their own tests (write_autocomplete.rs, model write_autocomplete.rs). Tests: crates/hydrus-gui/tests/gui/write_autocomplete_leaves.rs."
+   }
   },
   {
    "id": "sidecar-details",

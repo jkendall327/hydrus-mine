@@ -22,6 +22,11 @@ use hydrus_store::Store;
 use slint::ComponentHandle as _;
 
 use crate::MainWindow;
+
+/// The tooltips on the volume control's two mute buttons (`VolumeControl`; the
+/// second is "Mute/unmute: " and the preview canvas's name).
+pub const GLOBAL_MUTE_TOOLTIP: &str = "Global mute/unmute";
+pub const PREVIEW_MUTE_TOOLTIP: &str = "Mute/unmute: preview viewer";
 use crate::playback::Playback;
 
 /// How often the volume and mutes are looked up again while playing (ctrl+g
@@ -140,7 +145,8 @@ impl PreviewAudio {
         self.playback.set_paused(paused);
     }
 
-    /// The volume and mutes, as kept, on the player and the control.
+    /// The volume and mutes, as kept, on the player and the control (with the
+    /// reference's tooltips on its two mute buttons).
     fn show_audio(&self, window: &MainWindow) {
         let settings = audio::settings(&self.store);
         let own = audio::preview_uses_its_own_volume(&self.store);
@@ -153,6 +159,8 @@ impl PreviewAudio {
         );
         window.set_preview_volume(i32::from(settings.current_preview_volume(own)));
         window.set_preview_global_muted(settings.global_mute);
+        window.set_preview_global_tooltip(GLOBAL_MUTE_TOOLTIP.into());
+        window.set_preview_mute_tooltip(PREVIEW_MUTE_TOOLTIP.into());
         window.set_preview_muted(settings.preview_mute);
     }
 

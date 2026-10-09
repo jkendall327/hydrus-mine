@@ -1,3 +1,5 @@
+import { Btn } from "btn.slint";
+import { TipButton, TipComboBox } from "tip_widgets.slint";
 import { MenuChoiceFrame } from "menu_choice_wheel.slint";
 import { Button, ComboBox, VerticalBox, HorizontalBox, ListView } from "std-widgets.slint";
 import { Theme } from "theme.slint";
@@ -11,7 +13,13 @@ export component TagSuggestionPanels inherits Rectangle {
     in property <string> related-status;
     in-out property <bool> related-local:true;
     in-out property <bool> related-display:true;
-    callback related-search();
+    // the last duration button used: 0 quick, 1 medium, 2 thorough
+    in-out property <int> related-level: 0;
+    // what the reference shows when the pointer rests on these
+    in property <string> related-button-tooltip;
+    in property <string> related-local-tooltip;
+    in property <string> related-display-tooltip;
+    callback related-search(int);
     in property <bool> most-used-enabled;
     in property <bool> recent-enabled;
     in property <bool> columns;
@@ -25,9 +33,9 @@ export component TagSuggestionPanels inherits Rectangle {
     horizontal-stretch: 0;
     VerticalLayout {
         if !root.columns: HorizontalLayout {
-            if root.most-used-enabled: Button { text:"most used"; primary:root.selected==0; clicked=>{root.selected-page(0);} }
-            if root.related-enabled: Button {text:"related"; primary:root.selected==2; clicked=>{root.selected-page(2);}}
-            if root.recent-enabled: Button { text:"recent"; primary:root.selected==1; clicked=>{root.selected-page(1);} }
+            if root.most-used-enabled: Btn { text:"most used"; primary:root.selected==0; clicked=>{root.selected-page(0);} }
+            if root.related-enabled: Btn {text:"related"; primary:root.selected==2; clicked=>{root.selected-page(2);}}
+            if root.recent-enabled: Btn { text:"recent"; primary:root.selected==1; clicked=>{root.selected-page(1);} }
         }
         HorizontalLayout {
             spacing:6px;
@@ -39,14 +47,19 @@ export component TagSuggestionPanels inherits Rectangle {
             if root.related-enabled && (root.columns || root.selected==2): VerticalLayout {
                 horizontal-stretch:0; min-width:root.column-width; max-width:root.column-width;
                 Text {text:root.related-status; color:Theme.text;wrap:word-wrap;}
-                Button {text:"quick"; clicked=>{root.related-search();}}
-                ComboBox {model:["just for my files","all known files"];current-index:root.related-local?0:1;selected(_)=>{root.related-local=self.current-index==0;root.related-search();}}
-                ComboBox {model:["siblings/parents","storage tags"];current-index:root.related-display?0:1;selected(_)=>{root.related-display=self.current-index==0;root.related-search();}}
+                HorizontalLayout {
+                    spacing:4px;
+                    TipButton {text:"quick"; tip:root.related-button-tooltip; clicked=>{root.related-level=0;root.related-search(0);}}
+                    TipButton {text:"medium"; tip:root.related-button-tooltip; clicked=>{root.related-level=1;root.related-search(1);}}
+                    TipButton {text:"thorough"; tip:root.related-button-tooltip; clicked=>{root.related-level=2;root.related-search(2);}}
+                }
+                TipComboBox {model:["just for my files","all known files"];current-index:root.related-local?0:1;tip:root.related-local-tooltip;selected(i)=>{root.related-local=i==0;root.related-search(root.related-level);}}
+                TipComboBox {model:["siblings/parents","storage tags"];current-index:root.related-display?0:1;tip:root.related-display-tooltip;selected(i)=>{root.related-display=i==0;root.related-search(root.related-level);}}
                 ListTable { background:Theme.tags-background;columns:[{title:"related",width:root.column-width,stretch:true}];rows:root.related;vertical-stretch:1;row-clicked(i,c,s)=>{root.clicked(2,i,c,s);}row-activated(i)=>{root.activated(2,i);}}
             }
             if root.recent-enabled && (root.columns || root.selected==1): VerticalLayout {
                 spacing:4px;
-                Button { text:"clear"; enabled:root.enabled; clicked=>{root.clear-recent();} }
+                Btn { text:"clear"; enabled:root.enabled; clicked=>{root.clear-recent();} }
                 ListTable { background:Theme.tags-background;
                     columns:[{title:"recent",width:root.column-width,stretch:true}]; rows:root.recent; vertical-stretch:1;
                     row-clicked(i,c,s)=>{root.clicked(1,i,c,s);}
@@ -75,7 +88,7 @@ export component MostUsedTagsWindow inherits Window {
         Text { text: "Add your most used tags for each particular service here, and then you can just double-click to add, rather than typing every time."; wrap: word-wrap; color: Theme.text; }
         HorizontalBox { Text {text:"Tag service: "; color:Theme.text;} service-choice := ComboBox { model:root.services; current-index:root.service; enabled:!root.child-open; selected(_)=>{root.service-chosen(self.current-index);} } }
         Rectangle { background:Theme.tags-background;vertical-stretch:1; ListView { for tag in root.tags: Text { text:tag; color:Theme.text; } } }
-        Button { text:"edit most used tags"; enabled:!root.child-open && root.services.length > 0; clicked=>{root.edit-tags();} }
-        HorizontalBox { alignment:end; Button {text:"apply"; enabled:!root.child-open; clicked=>{root.apply();}} Button {text:"cancel"; clicked=>{root.cancel();}} }
+        Btn { text:"edit most used tags"; enabled:!root.child-open && root.services.length > 0; clicked=>{root.edit-tags();} }
+        HorizontalBox { alignment:end; Btn {text:"apply"; enabled:!root.child-open; clicked=>{root.apply();}} Btn {text:"cancel"; clicked=>{root.cancel();}} }
     }
 }

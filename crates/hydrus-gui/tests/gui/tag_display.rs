@@ -114,6 +114,7 @@ fn dialogs_cancel_nested_editors_persist_and_refresh_locked_pages_and_viewer() {
     nested.invoke_apply();
     assert!(!w.get_child_open());
     assert!(w.get_single_label().contains("display lane own"));
+    assert_eq!(w.get_single_tooltip(), w.get_single_label());
     w.invoke_filter(true);
     let cancelled_child = hydrus_gui::tag_filter_window::last_opened().unwrap();
     cancelled_child.invoke_typed(2, "display lane own".into());

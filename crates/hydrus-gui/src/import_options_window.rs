@@ -402,8 +402,10 @@ fn show(window: &ImportOptionsWindow, state: &State) {
         );
     }
     if let Some(o) = &values.tag_filtering {
-        let (label, _) = crate::tag_filter_editor::button_label(&o.blacklist, true, "", false);
+        let (label, tooltip) =
+            crate::tag_filter_editor::button_label(&o.blacklist, true, "", false);
         window.set_tag_blacklist(label.into());
+        window.set_tag_blacklist_tooltip(tooltip.into());
         set_text(
             || window.get_tag_whitelist(),
             |t| window.set_tag_whitelist(t),
@@ -445,17 +447,13 @@ fn show_tag_services(window: &ImportOptionsWindow, state: &State) {
         .into_iter()
         .map(|(key, name)| {
             let s = o.service(&key).unwrap_or(&default);
+            let filter_label =
+                crate::tag_filter_editor::button_label(&s.get_tags_filter, false, "adding: ", true);
             TagServiceRow {
                 name: name.into(),
                 get_tags: s.get_tags,
-                filter: crate::tag_filter_editor::button_label(
-                    &s.get_tags_filter,
-                    false,
-                    "adding: ",
-                    true,
-                )
-                .0
-                .into(),
+                filter: filter_label.0.into(),
+                filter_tooltip: filter_label.1.into(),
                 additional: format!(
                     "{} additional tags",
                     hydrus_core::numbers::human_int(s.additional_tags.len() as u64)

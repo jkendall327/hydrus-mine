@@ -1029,7 +1029,7 @@ deleted sidecars by `crates/hydrus-download/tests/local_import.rs`.
 - **The tag filter editor** imports/exports reference JSON with an additional
   inline clipboard/file panel before naming an import. It does not yet offer
   repository serverside tag filters in the load menu (remote repositories are
-  not functional), or explanatory control tooltips. Favourite names/save/delete persist
+  not functional). Favourite names/save/delete persist
   immediately as in the reference; filter changes reach the owner on Apply.
 - **"clear and load" a session**: when pages object to closing, the
   question has "yes" and "no" (the reference's also has "no, but show me
@@ -3007,10 +3007,9 @@ command editor's mouse capture (press/release, double-click, vertical wheel,
 every button) are replayed against the reference's recordings in
 `tests/gui/options_shortcut_sets.rs`. "delete" with no custom set selected
 does nothing here, where the reference still asks "Remove all selected?".
-Four options the client keeps but does not consume (the Qt locale for
-integers, the media viewer rescue padding, the toaster's other-display freeze,
-the recent petition reasons count) are real, staged controls whose values
-round-trip (`tests/gui/options_gui_kept.rs`); nothing native reads them yet.
+Three options the client keeps but does not consume (the Qt locale for
+integers, the media viewer rescue padding, the toaster's other-display freeze)
+are real, staged controls whose values round-trip (`tests/gui/options_gui_kept.rs`); nothing native reads them yet.
 
 Shortcut capture now has an owned Options > set > command path and persisted
 keyboard consumers in the main GUI and media viewer. The two capture policies
@@ -3910,9 +3909,7 @@ change nothing). They are marked out of scope in `docs/rust/tracking/`.
   another display), the self-sizing media viewer rescue padding (there is no
   self-sizing viewer), the image tile cache and video buffer (hydrus-rs
   renders whole images and leaves video to mpv), the file system wake wait,
-  the petition reason count
-  (there are no tag repositories to petition), the related-tag search
-  durations (hydrus-rs ranks exactly rather than within time slices) and the
+  the related-tag search durations are read (see Manage tags, below) and the
   file lookup scripts switch (there are no file lookup scripts).
 - The mpv box lacks the audio device fetch button (it needs a running libmpv);
   the QtMediaPlayer box lacks its device choice and fetch button. The tag
@@ -4249,7 +4246,8 @@ directory.
 - The timeout is one seconds box (1 to 3,600,000) with the "this can live for a
   very long time" checkbox; the reference uses a minutes-and-seconds widget.
 - The reference's tooltips on the warning, timeout, hide terminal and text
-  controls are not shown (Slint has no tooltips here).
+  controls are not shown (Slint 1.18 has a `Tooltip` element, as the tag filter
+  and preview controls now use; these have not been wired).
 - The help menu button is a "help ▾" button with one entry, not the help icon.
 
 - The CPU-busy check reads per-core times from `/proc/stat`, so it exists on
@@ -4336,7 +4334,8 @@ directory.
   the copy button.
 - "What would you like to do?" is the shared native question overlay with the two
   choices as its buttons (the reference's local services never offer more); the
-  per-choice tooltips are computed (and tested) but not shown.
+  per-choice tooltips are computed (and tested) but not yet shown (Slint 1.18's
+  `Tooltip` could carry them).
 - Clicking an expanded parent row selects that row, but remove and copy use only
   the selected tag rows, not the parent rows; activating a parent row enters its
   originating tag, as the reference does.
@@ -4346,16 +4345,16 @@ directory.
   one (which does not follow the viewer).
 - Suggested tags: the file-lookup-script panel is not ported (the legacy
   parsing scripts it runs are not in hydrus-rs), and `show_file_lookup_script_tags`
-  stays an option nothing reads. The related panel has one search, not the
-  quick/medium/thorough buttons and their time budgets, and does not yet search
-  from the selected tags when some are selected (the reference then searches those
-  alone and excludes the others). `audit-media-tags-missing-suggestions` and
-  `audit-options-nested-tag-suggestions-tabs` are therefore not tagged.
+  stays an option nothing reads. The related panel has the quick, medium and
+  thorough buttons and searches from the selected tags (see "The related panel"
+  below for how the time budget differs). `audit-media-tags-missing-suggestions`
+  and `audit-options-nested-tag-suggestions-tabs` are therefore not tagged.
 - The write-autocomplete leaves (`audit-media-tags-autocomplete`,
-  `siblings-autocomplete`, `parents-autocomplete`) stay untagged: the empty-input
-  keys were the one concrete reference behaviour found missing and are now done,
-  but no test covers what those leaves name as a whole, and their long notes (context
-  menus, selection, undo history) were not re-verified here.
+  `siblings-autocomplete`, `parents-autocomplete`) are tagged on the tests in
+  `write_autocomplete_leaves.rs` (rows, entry, context menu, paste and manual
+  fetch against the recording); the rest of their long notes (selection,
+  keyboard, undo history, pointer drags) have tests of their own and were
+  not re-verified here.
 
 - **Out-of-range numbers in the services editor.** The Client API port, a numerical rating's star count and its icon padding refuse out-of-range values with an error on Apply; the reference's spin boxes clamp them as they are typed.
 
@@ -4383,8 +4382,10 @@ directory.
   so a file whose still cannot be decoded is not played; the reference sends
   the file to mpv whatever its thumbnail or still does.
 - The preview's right-click volume menu (`AddAudioVolumeMenu`: global, preview
-  and per-player mute) is not ported, and the control's tooltips ("Global
-  mute/unmute", "Mute/unmute: preview") are missing.
+  and per-player mute) is not ported. The control's two mute buttons show the
+  reference's tooltips ("Global mute/unmute", "Mute/unmute: preview viewer",
+  recorded in `oracle/fixtures/tag_filter_tooltips.json`) after the pointer rests
+  on them for half a second (Slint's `Tooltip`; only the text is tested).
 - A change to the preview's show action while a file plays restarts it within
   a quarter of a second, not at once.
 
@@ -4397,3 +4398,47 @@ directory.
 - **Importer destination: deleted domains and all-known mode.** The model supports them; no GUI caller offers them, so they are not driven through a window.
 
 - **Closing tabs while downloaders are running.** Closing other pages, or the pages to the left or right, asks a plain yes/no question with the recorded wording; the reference, when a closing page has a downloader at work, asks a longer question with a statement and a third "no, but show me the pages" button. That path is not implemented or tested, so those three menu leaves stay untagged.
+
+## Tooltips, petition reasons and the related panel (issue 86 leftovers)
+
+- **Tooltips** use Slint 1.18's `Tooltip` (a popup after the pointer rests half
+  a second), not Qt's; they wrap at Slint's width, not at `WrapToolTip`'s 80
+  characters, and use Slint's look. The tag filter controls carrying the
+  reference's `TagFilterButton` tooltip (the whole text its label may elide) are
+  tag migration's two, the tag display options' two, the string tag filter's, the
+  import options' "get tags" and blacklist buttons, and the Client API
+  permissions' "edit permitted tags" button (the reference shows a single
+  button labelled with the filter; hydrus-rs shows a line of text and a button, so the
+  tooltip is on the button). The tag display options' button labels lack the
+  reference's "tags shown: " prefix (a pre-existing difference), so their
+  tooltip is the label. The editor's "show other panels" button has the
+  reference's tooltip. The tests assert the text each control hands to its
+  `Tooltip`, replayed from the reference (the headless test platform draws no
+  Slint tooltip popup, so the popup appearing on hover is untested and only checked by hand).
+- **Petition reasons.** The reason question (a tag repository's sibling or parent
+  pend or petition) offers the recently typed reasons for that kind and action
+  (as many as Options > tag editing > "Number of recent petition reasons to
+  remember in dialogs" keeps; 0 remembers none), then the fixed reasons, as buttons
+  that answer with them; a typed reason that is not a fixed one is remembered.
+  Replayed from `oracle/fixtures/relationship_reasons.json`. A repository
+  account's permission handling is not ported: the reference, for an account
+  with moderate permission on the content type, skips the question and uses
+  "Entered by a janitor."; hydrus-rs always asks. (Tag repositories are
+  out of scope; this was decided by the coordinator, not by the owner, and
+  `relationship-reasons` is tagged on that basis for a reviewer to confirm.)
+- **The related panel** (Manage tags > suggested tags) has the reference's
+  quick, medium and thorough buttons, reading Options > tag suggestions' three
+  durations, and searches from the selected tags alone (excluding the other tags
+  on the files and their parents) when some are selected; the two toggles and the
+  buttons carry the reference's tooltips. The status line reads "Searched N tags
+  in T." (with "(S skipped)" for tags with no count), or "D/N tags searched
+  fully in T." when the time ran out. hydrus-rs scores exactly: the time is checked
+  between search tags, and a tag the time ran out before is not searched at all
+  (the reference stops partway through a tag and keeps what it had, and samples
+  at most a few hundred files per search tag). Results can therefore differ from
+  the reference's on large corpora; on the recorded one they match. The
+  file-lookup-script panel remains unported, so
+  `audit-media-tags-missing-suggestions` and
+  `audit-options-nested-tag-suggestions-tabs` stay untagged (the latter also
+  lacks the favourite file lookup script choice and the recent-tags count for quick
+  entry dialogs, which have no consumers).

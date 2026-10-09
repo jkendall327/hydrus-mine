@@ -1,3 +1,5 @@
+import { Btn } from "btn.slint";
+import { TipButton, TipComboBox } from "tip_widgets.slint";
 // The tag filter editor (the reference's `EditTagFilterPanel`, opened by a
 // "tag filter" button; its workings are hydrus-gui-model's
 // `tag_filter_editor`, bound by `src/tag_filter_window.rs`): one filter as
@@ -113,17 +115,17 @@ component Simple inherits VerticalLayout {
                             self.text = "";
                         }
                     }
-                    Button {
+                    Btn {
                         text: "paste";
                         enabled: root.enabled && !root.asking;
                         clicked => { root.paste(); }
                     }
-                    Button {
+                    Btn {
                         text: "remove";
                         enabled: root.enabled && !root.asking;
                         clicked => { root.remove(); }
                     }
-                    if root.block-everything: Button {
+                    if root.block-everything: Btn {
                         text: "block everything";
                         enabled: root.enabled && !root.asking;
                         clicked => { root.block(); }
@@ -164,17 +166,17 @@ component Rules inherits Box {
                 self.text = "";
             }
         }
-        Button {
+        Btn {
             text: "paste";
             enabled: root.input-enabled && !root.asking;
             clicked => { root.paste(); }
         }
-        Button {
+        Btn {
             text: "delete";
             enabled: !root.asking;
             clicked => { root.delete(); }
         }
-        if root.block-everything: Button {
+        if root.block-everything: Btn {
             text: "block everything";
             enabled: !root.asking;
             clicked => { root.block(); }
@@ -236,6 +238,7 @@ export component TagFilterWindow inherits Window {
     callback favourite-named(string);
     callback exchange-action(string);
     in property <bool> show-other-panels;
+    in property <string> show-other-panels-tooltip;
     callback show-panels();
     callback paste(int);
     callback tab-chosen(int);
@@ -267,7 +270,7 @@ export component TagFilterWindow inherits Window {
                 vertical-alignment: center;
                 color: Theme.text;
             }
-            Button {
+            Btn {
                 text: "?";
                 enabled: !root.asking;
                 clicked => { root.help(); }
@@ -285,7 +288,7 @@ export component TagFilterWindow inherits Window {
             title: "favourites";
             HorizontalLayout {
                 spacing: 6px;
-                for action in ["import", "export", "load", "save", "delete"] : Button {
+                for action in ["import", "export", "load", "save", "delete"] : Btn {
                     text: action;
                     enabled: !root.asking;
                     clicked => { root.favourite(action); }
@@ -301,8 +304,9 @@ export component TagFilterWindow inherits Window {
                 horizontal-alignment: center;
                 color: Theme.text;
             }
-            if root.show-other-panels: Button {
+            if root.show-other-panels: TipButton {
                 text: "show other panels";
+                tip: root.show-other-panels-tooltip;
                 enabled: !root.asking;
                 clicked => { root.show-panels(); }
             }
@@ -425,17 +429,17 @@ export component TagFilterWindow inherits Window {
                 text <=> root.favourite-name;
                 accepted(t) => { root.favourite-named(t); }
             }
-            Button { text: "save"; enabled: root.favourite-name != ""; clicked => { root.favourite-named(root.favourite-name); } }
+            Btn { text: "save"; enabled: root.favourite-name != ""; clicked => { root.favourite-named(root.favourite-name); } }
         }
         if root.favourite-exchange: Box {
             title: root.exchange-importing ? "import favourite" : "export favourite";
             TextEdit { height: 80px; text <=> root.exchange-text; read-only: !root.exchange-importing; }
             HorizontalLayout {
-                Button { text: root.exchange-importing ? "paste" : "copy"; clicked => { root.exchange-action(root.exchange-importing ? "paste" : "copy"); } }
-                if root.exchange-importing: Button { text: "import text"; clicked => { root.exchange-action("import"); } }
+                Btn { text: root.exchange-importing ? "paste" : "copy"; clicked => { root.exchange-action(root.exchange-importing ? "paste" : "copy"); } }
+                if root.exchange-importing: Btn { text: "import text"; clicked => { root.exchange-action("import"); } }
                 LineEdit { horizontal-stretch: 1; text <=> root.exchange-path; placeholder-text: "JSON file path"; }
-                Button { text: "browse"; clicked => { root.exchange-action("browse"); } }
-                Button { text: root.exchange-importing ? "open file" : "save JSON"; clicked => { root.exchange-action(root.exchange-importing ? "open" : "save"); } }
+                Btn { text: "browse"; clicked => { root.exchange-action("browse"); } }
+                Btn { text: root.exchange-importing ? "open file" : "save JSON"; clicked => { root.exchange-action(root.exchange-importing ? "open" : "save"); } }
             }
             if root.exchange-error != "": Text { text: root.exchange-error; color: Theme.error; wrap: word-wrap; }
         }
@@ -449,12 +453,12 @@ export component TagFilterWindow inherits Window {
         HorizontalLayout {
             alignment: end;
             spacing: 6px;
-            Button {
+            Btn {
                 text: "apply";
                 enabled: !root.asking;
                 clicked => { root.apply(); }
             }
-            Button {
+            Btn {
                 text: "cancel";
                 enabled: !root.asking;
                 clicked => { root.cancel(); }

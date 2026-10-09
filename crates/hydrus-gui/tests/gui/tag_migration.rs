@@ -264,6 +264,7 @@ fn an_open_filter_child_cannot_broaden_a_confirmed_delete() {
     filter.invoke_typed(1, "creator:retain".into());
     filter.invoke_apply();
     assert!(window.get_left_label().contains("creator"));
+    assert_eq!(window.get_left_tooltip(), window.get_left_label());
     window.invoke_edit_filter(false);
     let filter = hydrus_gui::tag_filter_window::last_opened().unwrap();
     window.invoke_go();
@@ -272,6 +273,7 @@ fn an_open_filter_child_cannot_broaden_a_confirmed_delete() {
     filter.invoke_row_activated(1, 0);
     filter.invoke_apply();
     assert!(window.get_left_label().contains("all tags"));
+    assert_eq!(window.get_left_tooltip(), window.get_left_label());
     assert_eq!(window.get_question(), confirmed);
     window.invoke_answer(true);
     window.invoke_answer(true);

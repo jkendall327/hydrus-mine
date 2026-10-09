@@ -92,6 +92,8 @@ fn show(window: &TagMigrationWindow, model: &Migration) {
         .into(),
     );
     window.set_right_label(format!("right: {}", model.right_filter.to_filter_string()).into());
+    window.set_left_tooltip(window.get_left_label());
+    window.set_right_tooltip(window.get_right_label());
     window.set_location_label(format!("file domain: {}", model.location_description()).into());
 }
 /// Open with an optional selected-file scope; notify consumers after committed work.
