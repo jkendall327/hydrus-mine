@@ -24,7 +24,7 @@ fn store() -> ([tempfile::TempDir; 2], Arc<Store>) {
     ([legacy, native], store)
 }
 
-fn titles(ui: &MainWindow) -> Vec<(String, bool)> {
+pub(crate) fn titles(ui: &MainWindow) -> Vec<(String, bool)> {
     let titles = ui.get_menu_titles();
     (0..titles.row_count())
         .map(|i| {
@@ -67,7 +67,7 @@ fn line(ui: &MainWindow, label: &str) -> (i32, i32) {
 }
 
 /// Point at a line (its submenu opens), or choose it.
-fn hover(ui: &MainWindow, label: &str) {
+pub(crate) fn hover(ui: &MainWindow, label: &str) {
     let (p, i) = line(ui, label);
     ui.invoke_menu_line_hovered(
         p,
@@ -78,7 +78,7 @@ fn hover(ui: &MainWindow, label: &str) {
     );
 }
 
-fn choose(ui: &MainWindow, label: &str) {
+pub(crate) fn choose(ui: &MainWindow, label: &str) {
     let (p, i) = line(ui, label);
     ui.invoke_menu_line_clicked(p, i, 0.0, 0.0, 0.0);
 }

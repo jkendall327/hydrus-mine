@@ -520,6 +520,13 @@ fn command_open(
     Ok(w)
 }
 
+thread_local! {
+    /// The last test value typed for each kind of input, which the next
+    /// editor starts with (the reference's `PARAM_TYPES_TO_LAST_SEEN_VALUES`).
+    static LAST_SEEN: RefCell<std::collections::BTreeMap<Parameter, String>> =
+        RefCell::default();
+}
+
 struct WorkerLease(Arc<std::sync::atomic::AtomicBool>);
 impl Drop for WorkerLease {
     fn drop(&mut self) {
@@ -547,14 +554,9 @@ fn rules_for(pipeline: Pipeline, process: &Process) -> Vec<RuleDraft> {
             RuleDraft {
                 enabled: rule.is_some(),
                 rule: rule.unwrap_or_else(|| Rule::new(*p)),
-                input: match p {
-                    Parameter::Url => "https://external.example/post/123".into(),
-                    Parameter::Path => "/synthetic/example.png".into(),
-                    Parameter::Uri => "file:///synthetic/example.png".into(),
-                    Parameter::Hash => "11".repeat(32),
-                    Parameter::FileId => "123".into(),
-                    Parameter::Paths | Parameter::Uris => String::new(),
-                },
+                input: LAST_SEEN
+                    .with(|seen| seen.borrow().get(p).cloned())
+                    .unwrap_or_else(|| p.example().into()),
             }
         })
         .collect()
@@ -830,6 +832,8 @@ pub fn open(
                 && let Some(rule) = state.borrow_mut().rules.get_mut(i)
             {
                 rule.input = text.to_string();
+                let parameter = rule.rule.parameter;
+                LAST_SEEN.with(|seen| seen.borrow_mut().insert(parameter, text.to_string()));
             }
             if let Some(w) = weak.upgrade() {
                 preview(&w, &state.borrow());
@@ -952,6 +956,30 @@ pub fn open(
             }
             let call = read(&w, &state.borrow()).call;
             let inputs = inputs(&state.borrow());
+            // An OS launch call opens the example path or URL for real, as
+            // the reference's does.
+            if !availability
+                && let Some(parameter) = match call {
+                    ActualCall::DefaultFile => Some(Parameter::Path),
+                    ActualCall::DefaultUrl => Some(Parameter::Url),
+                    ActualCall::Process(_) => None,
+                }
+            {
+                match inputs.get(&parameter).and_then(|values| values.first()) {
+                    Some(target) => {
+                        crate::launch(target);
+                        w.set_test_status("Looks good!".into());
+                    }
+                    None => w.set_test_status(
+                        format!(
+                            "ExecutableException: The expected input parameter \"{}\" was not in the call arguments!",
+                            parameter.label()
+                        )
+                        .into(),
+                    ),
+                }
+                return;
+            }
             if worker_running
                 .compare_exchange(
                     false,

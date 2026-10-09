@@ -114,6 +114,23 @@ impl Parameter {
             Self::FileId => "file id",
         }
     }
+    /// The value a test input starts with (the first of the reference's
+    /// `parameter_types_to_example_values`, the Linux ones off Windows).
+    pub fn example(self) -> &'static str {
+        match (self, cfg!(windows)) {
+            (Self::Path, false) => "/home/me/hydrus_files/f89/89...jpg",
+            (Self::Path, true) => "E:\\Hydrus_Files\\f89\\89...jpg",
+            (Self::Paths, false) => "/home/me/hydrus_files/f88/88...mp3",
+            (Self::Paths, true) => "E:\\Hydrus_Files\\f88\\88...mp3",
+            (Self::Uri, false) => "file:///home/me/hydrus_files/f89/89...jpg",
+            (Self::Uri, true) => "file://E:/Hydrus_Files/f89/89...jpg",
+            (Self::Uris, false) => "file:///home/me/hydrus_files/f88/88...mp3",
+            (Self::Uris, true) => "file://E:/Hydrus_Files/f88/88...mp3",
+            (Self::Url, _) => "https://somebooru.org/post/123456",
+            (Self::Hash, _) => "896aba496da94160475f7ac956beace2083733b5a2972ffd3053dd3d0ad1d36b",
+            (Self::FileId, _) => "117621484",
+        }
+    }
     /// The initial insertion token.
     pub fn token(self) -> &'static str {
         match self {

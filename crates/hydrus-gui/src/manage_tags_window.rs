@@ -136,6 +136,12 @@ pub(crate) fn open(
             window.set_deleted_count_visible(model.deleted_count() > 0);
             window.set_show_deleted(model.show_deleted());
             window.set_service_index(i32::try_from(model.service()).unwrap_or(0));
+            let labels: Vec<SharedString> = model
+                .tab_labels()
+                .into_iter()
+                .map(SharedString::from)
+                .collect();
+            window.set_service_labels(ModelRc::new(VecModel::from(labels)));
             let sort = model.sort_control().value;
             window.set_sort_type(
                 i32::try_from(
