@@ -73,10 +73,10 @@
     "Native applies/recalculates immediately; reference background sync status and saved default service tab are unavailable."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Only the model-level TagDisplayEditor is tested, with typed expected values; no GUI test drives the parents source queue (the one GUI test, tag_display.rs:44, uses the siblings list only: source_add(false)). The recording tag_display.json has application_initial/reordered/empty but is siblings-only and no test reads those keys. Tests: crates/hydrus-gui-model/tests/model/tag_application_queues.rs:112 parent_source_queue_adds_reorders_removes_and_reopens (via queue_test)"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "phase 2 session (bin E)",
+    "note": "GUI test opens tags > advanced > the application window, sets my tags' sibling and parent queues by removing and adding sources as a user does (own then downloader, downloader then own, downloader only, none, siblings in both orders, nothing applied, and the default), checks the shown queues against the reference panel's GetValue, applies, and checks every tag's ideal, sibling chain, parents and children on the display graph the client reads against the reference's own tag_siblings_and_parents_lookup after sync (oracle/record_relationship_application.py). Tests: crates/hydrus-gui/tests/gui/relationship_application.rs:65 source_queues_apply_services_rules_in_the_reference_order"
    }
   },
   {
@@ -2181,10 +2181,10 @@
     "Direct buttons replace reference import/export menus; no reference add-only autocomplete context option."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Import/export, 'Uneven number of tags in clipboard!' and selection are checked with typed values from the Python source; tag_relationships.json does not cover import/export. The GUI test drives the shared window's import/export buttons for siblings only, parents is model-only. Direct buttons replace the reference menus. Tests: crates/hydrus-gui-model/tests/model/tag_relationships.rs:167 per_service_inputs_cancel_import_and_selection, :429; crates/hydrus-gui/tests/gui/tag_relationships.rs:11 (siblings-kind, shared window)"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "phase 2 session (bin E)",
+    "note": "GUI test drives the real parents window's clipboard and .txt import and export on a local service and a tag repository, replaying oracle/record_relationship_exchange.py step by step (uneven lines, cleaning, blank lines, pre-existing pairs ignored, a loop's last link petitioned, more than ten pairs, empty import): every reason and yes/no question, rows after each import, default order, exported texts for no/one/three selected rows, and the committed result after Apply. Self-pairs are rejected where the reference stores them (DIFFERENCES.md); that step asserts the rejection. Tests: crates/hydrus-gui/tests/gui/relationship_exchange.rs:56 pair_import_and_export_replay_the_reference_on_local_and_repository_services"
    }
   },
   {
@@ -2866,10 +2866,10 @@
     "Native selector always starts with index zero and does not restore/save reference default tag-service-tab preference."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Model-only test with typed expectations (no recording, no GUI test driving the dialog's tab bar); the window does call choose_service_remembered (tag_relationships_window.rs:524) but that is untested. Tracker note 'selector always starts with index zero and does not save' is stale: the code now opens on the default service and saves it when the option is on. Tests: crates/hydrus-gui-model/tests/model/tag_relationships_default.rs:77,83 (run())"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "phase 2 session (bin E)",
+    "note": "GUI test opens tags > parents through the menu on the repositories fixture with each default service tab (two local services, the tag repository, a key that is no tab) and saving on change off and on, replaying oracle/record_tag_service_tabs.py: tab order, the tab it opens on, the saved default after opening and after choosing the last then the first tab. Tests: crates/hydrus-gui/tests/gui/tag_service_tabs.rs:414 relationship_dialogs_open_on_the_default_tab_and_save_it_on_change_as_the_reference_does"
    }
   },
   {
@@ -2885,10 +2885,10 @@
     "Native selector always starts with index zero and does not restore/save reference default tag-service-tab preference."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Model-only test with typed expectations (no recording, no GUI test driving the dialog's tab bar); the window does call choose_service_remembered (tag_relationships_window.rs:524) but that is untested. Tracker note 'selector always starts with index zero and does not save' is stale: the code now opens on the default service and saves it when the option is on. Tests: crates/hydrus-gui-model/tests/model/tag_relationships_default.rs:77,83 (run())"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "phase 2 session (bin E)",
+    "note": "GUI test opens tags > siblings through the menu on the repositories fixture with each default service tab (two local services, the tag repository, a key that is no tab) and saving on change off and on, replaying oracle/record_tag_service_tabs.py: tab order, the tab it opens on, the saved default after opening and after choosing the last then the first tab. Tests: crates/hydrus-gui/tests/gui/tag_service_tabs.rs:414 relationship_dialogs_open_on_the_default_tab_and_save_it_on_change_as_the_reference_does"
    }
   },
   {
@@ -3417,10 +3417,10 @@
     "Direct buttons replace reference import/export menus; no reference add-only autocomplete context option."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "GUI test drives clipboard export of one selected row, the 'Uneven number of tags' error and a .txt import, with typed values and no recording. Not covered: duplicate/conflict/reason questions during import, export of visible rows with no selection, and the sibling-specific import path beyond one clean file. Tests: crates/hydrus-gui/tests/gui/tag_relationships.rs:10 dialogs_stage_cancel_apply_questions_and_update_display; crates/hydrus-gui-model/tests/model/tag_relationships.rs:167 (tagged parents-exchange only)"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "phase 2 session (bin E)",
+    "note": "GUI test drives the real siblings window's clipboard and .txt import and its clipboard and .txt export on a local service and a tag repository, replaying oracle/record_relationship_exchange.py step by step: uneven lines (the reference's message), cleaning and blank lines, pre-existing and pending pairs ignored, a sibling conflict auto-petitioned, a loop's last link petitioned, re-importing a petitioned pair (rescind questions), more than ten pairs (repository reason text), an empty import; every reason question with its recent/fixed suggestions, every yes/no question, the listed rows after each import, the list's default order, the exported texts for no/one/three selected rows, and what Apply commits. Self-pairs and a batch giving one tag two ideals are rejected by hydrus-rs where the reference stores them (DIFFERENCES.md); those steps assert the rejection and are left out of later comparisons. Tests: crates/hydrus-gui/tests/gui/relationship_exchange.rs:56 pair_import_and_export_replay_the_reference_on_local_and_repository_services"
    }
   },
   {
@@ -3535,10 +3535,10 @@
     "Existing cited test checks threshold/manual-fetch and cancels a location child; it does not accept/persist a changed write-tag service/location and verify suggestions use it. Native callback/store validation support that behavior, but its green evidence claim was too broad."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Model-only: mutates editor.current_mut() directly and checks ManageTags suggestions use the override; no GUI test drives the write-service selector or nested location child in the window to accept a change, and no recording. The tracker note is garbled (it says the cited test does not accept a change, but the model test does). Tests: crates/hydrus-gui-model/tests/model/tag_display.rs:228 write_autocomplete_uses_override_or_launcher_domain_and_rejects_tag_locations"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "phase 2 session (bin E)",
+    "note": "GUI test sets my tags' write tag service (itself, the other local service, all known tags) and file-domain override (off, my files, trash, all known files) in the real tags > display/search window and its location child, applies, then opens Manage tags from the page and compares its file/tag domain labels and its suggestion rows with counts for three texts against oracle/record_write_domain.py (the reference's own autocomplete options panel and WriteFetch), including the all-files-plus-all-tags fallback to local file storage and a trashed file. The recording showed hydrus-rs offering zero-count tags the write service has never had; fixed. Tests: crates/hydrus-gui/tests/gui/write_domain.rs:41 write_service_and_location_override_reach_the_manage_tags_autocomplete"
    }
   },
   {
@@ -3696,10 +3696,10 @@
     "Local services only; repository tabs and saved default-tab preference are separate missing features."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Test chooses only 'my tags' and checks (n) count suffixes with typed literals; no recording of the service tabs, and per-service staged retention across switching services is not asserted in any test found (manage_tags_sort only checks sort). Local-only; repo tabs/default-tab missing. Tests: crates/hydrus-gui/tests/gui/manage_tags.rs:358 tags_are_added_and_removed_as_the_reference_does"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "phase 2 session (bin E)",
+    "note": "GUI test opens Manage tags from page selections (one file, two files, another file) on the repositories fixture and compares the local services' tab labels ('name (tags)', ' *' while changes wait) with oracle/record_tag_service_tabs.py, stages tags on two services and checks each stays staged while the other is used, and follows the viewer to other files with the labels recounted. The recording showed hydrus-rs's tabs were bare names; fixed. The reference's tag repository tabs are not in hydrus-rs's Manage tags (DIFFERENCES.md); the leaf is the local-service selector. Tests: crates/hydrus-gui/tests/gui/tag_service_tabs.rs:222 manage_tags_tabs_count_tags_mark_changes_keep_staging_and_follow_the_viewer"
    }
   },
   {
@@ -21856,10 +21856,10 @@
     "Native layout differs from Qt, including fixed row pixels for character-height sizing. Declining multiline paste preserves the current native text instead of handing the event to Qt normal paste. Full parent entries remain partial because maintenance/admin actions and multiple-tag selection menus are not yet implemented."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "The recording replay only ever flips autocomplete parent info together with sibling info (parents False only with siblings False and expanded False), so the parent flag is not shown to work independently, nor parents=False with expanded=True (code gates on expand && show_parents). Options toggle only through model Editor. Borderline: the on/off outputs are correct against the recording. Tests: crates/hydrus-gui-model/tests/model/write_autocomplete.rs:89 exact_rows_counts_domains_decorations_and_first_selection_match_reference, :240"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "phase 2 session (bin E)",
+    "note": "GUI test sets all eight combinations of the expand-parents, parent-info and sibling-info switches in the real Options window (tag editing page, Apply), then reads Manage tags' autocomplete rows for three texts against oracle/record_autocomplete_decoration_flags.py (the reference's TagEditingPanel UpdateOptions and a new write autocomplete). Expanded parent rows are compared as a set per suggestion (the reference keeps them in a Python set). The recording showed the reference expands parents with parent info off, which hydrus-rs did not; fixed. Tests: crates/hydrus-gui/tests/gui/autocomplete_decoration_flags.rs:90 each_decoration_switch_works_alone_in_the_manage_tags_autocomplete"
    }
   },
   {
@@ -21896,10 +21896,10 @@
     "Native layout differs from Qt, including fixed row pixels for character-height sizing. Declining multiline paste preserves the current native text instead of handing the event to Qt normal paste. Full parent entries remain partial because maintenance/admin actions and multiple-tag selection menus are not yet implemented."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Sibling decoration is only ever varied together with parent info (siblings False only with parents False and expanded False) in the recording, so independence from the parent flag is unproven; the all-known-tags display-service case is covered. Options toggle only through the model Editor. Borderline: outputs match the recording. Tests: crates/hydrus-gui-model/tests/model/write_autocomplete.rs:89, :240"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "phase 2 session (bin E)",
+    "note": "GUI test sets all eight combinations of the expand-parents, parent-info and sibling-info switches in the real Options window (tag editing page, Apply), then reads Manage tags' autocomplete rows (sibling arrows with each other switch on and off) for three texts against oracle/record_autocomplete_decoration_flags.py. Tests: crates/hydrus-gui/tests/gui/autocomplete_decoration_flags.rs:90 each_decoration_switch_works_alone_in_the_manage_tags_autocomplete"
    }
   },
   {
@@ -23585,10 +23585,10 @@
     "Store sibling resolution is inspected separately from the reference recording, which has no sibling groups."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "The recording has no sibling groups, so the sibling-aware blacklist result is only checked in a model test with a typed sibling closure and typed expected strings. The window's real sibling lookup from the store (tag_filter_window.rs siblings()) is never exercised by any test; no GUI test types into the test box with siblings present. Tests: crates/hydrus-gui-model/tests/model/tag_filter_editor.rs:173 a_blacklist_test_blocks_a_tag_when_a_sibling_is_blocked_as_the_reference_does; crates/hydrus-gui-model/tests/model/tag_filter_editor.rs:57 (test steps, no siblings)"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "phase 2 session (bin E)",
+    "note": "GUI test opens the real tag filter editor window (blacklist-only and full) on a store with siblings on two tag services and types 13 test texts (aliases, ideals, other-service chains, unnamespaced rules on namespaced tags, unknown tags, several lines, duplicates after cleaning, blank lines) for five blacklists; result text and pass/blocked style, and the empty-box text, match oracle/record_tag_filter_sibling_testing.py (the reference's own _UpdateTest with its tag_siblings_lookup). Tests: crates/hydrus-gui/tests/gui/tag_filter_sibling_testing.rs:12 blacklist_tests_check_every_sibling_on_every_tag_service_as_the_reference_does"
    }
   },
   {
