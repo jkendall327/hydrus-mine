@@ -401,7 +401,14 @@ mod tests {
         assert!(playback.paused());
         playback.play(Some(&path), || Some((20, 16)), |_| {});
         assert_eq!(playback.times_to_play.get(), 0);
-        assert!(until(|| playback.restarts.get() >= 2));
+        assert!(
+            until(|| playback.restarts.get() >= 2),
+            "restarts {}, at {:?}ms, paused {}, times to play {}",
+            playback.restarts.get(),
+            playback.position_ms(),
+            playback.paused(),
+            playback.times_to_play.get(),
+        );
         assert!(!playback.paused());
         playback.close();
     }
