@@ -585,18 +585,48 @@ fn the_recycle_bin_option_decides_whether_physical_deletes_go_to_the_os_bin() {
     };
     assert!(!recycle(), "(this store starts with it off)");
     let now = bound.maintenance.started_ms() + 30_000;
+    // each file's thumbnail, which goes with it
+    let thumbnail = |file: usize| {
+        let stem = files[file].1.file_stem().unwrap().to_str().unwrap();
+        let hash = Sha256::from_slice(&hex::decode(stem).unwrap()).unwrap();
+        store.snapshot().storage.thumbnail_path(&hash).unwrap()
+    };
+    let thumbnails = [thumbnail(0), thumbnail(1)];
+    for path in &thumbnails {
+        // (this copied storage has none; any thumbnail there goes with it)
+        if !path.is_file() {
+            std::fs::create_dir_all(path.parent().unwrap()).unwrap();
+            std::fs::write(path, b"thumbnail").unwrap();
+        }
+    }
 
-    // off: the file is gone for good
-    set_recycle(false);
-    delete(0, now);
-    assert!(!hydrus_store::paths::recycle_bin_holds(&files[0].1));
-
-    // on: it is in the OS's recycle bin
-    set_recycle(true);
-    delete(1, now + 120_000);
-    assert!(
-        hydrus_store::paths::recycle_bin_holds(&files[1].1),
-        "{} is in the bin",
-        files[1].1.display()
-    );
+    // The reference's own deferred physical delete, off then on
+    // (oracle/fixtures/file_paths_options.json, record_file_paths_options.py):
+    // off, file and thumbnail are gone for good; on, the file is in the OS's
+    // recycle bin (its .trashinfo naming where it was) and the thumbnail is
+    // still deleted for good.
+    let recorded = hydrus_testkit::fixture_json("file_paths_options.json");
+    let recorded = recorded["recycle"].as_array().unwrap();
+    for (file, case) in recorded.iter().enumerate() {
+        let on = case["recycle"].as_bool().unwrap();
+        set_recycle(on);
+        delete(file, now + 120_000 * file as i64);
+        assert_eq!(files[file].1.exists(), case["file_still_there"] == true);
+        assert_eq!(
+            hydrus_store::paths::recycle_bin_holds(&files[file].1),
+            case["file_in_trash"]["file"] == true,
+            "{on}: {} in the bin",
+            files[file].1.display()
+        );
+        if on {
+            assert_eq!(case["file_in_trash"]["info_path_is_original"], true);
+        }
+        wait(|| !thumbnails[file].exists());
+        assert_eq!(case["thumbnail_still_there"], false);
+        assert_eq!(
+            hydrus_store::paths::recycle_bin_holds(&thumbnails[file]),
+            case["thumbnail_in_trash"]["file"] == true,
+            "{on}: the thumbnail is never recycled"
+        );
+    }
 }

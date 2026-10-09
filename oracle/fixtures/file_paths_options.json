@@ -1,0 +1,128 @@
+{
+ "umask": 18,
+ "chmod": [
+  {
+   "do_not_chmod": false,
+   "seed": 101,
+   "source_mode": 256,
+   "stored_mode": 420
+  },
+  {
+   "do_not_chmod": false,
+   "seed": 102,
+   "source_mode": 384,
+   "stored_mode": 420
+  },
+  {
+   "do_not_chmod": false,
+   "seed": 103,
+   "source_mode": 388,
+   "stored_mode": 420
+  },
+  {
+   "do_not_chmod": false,
+   "seed": 104,
+   "source_mode": 416,
+   "stored_mode": 420
+  },
+  {
+   "do_not_chmod": false,
+   "seed": 105,
+   "source_mode": 420,
+   "stored_mode": 420
+  },
+  {
+   "do_not_chmod": false,
+   "seed": 106,
+   "source_mode": 436,
+   "stored_mode": 436
+  },
+  {
+   "do_not_chmod": false,
+   "seed": 107,
+   "source_mode": 448,
+   "stored_mode": 484
+  },
+  {
+   "do_not_chmod": false,
+   "seed": 108,
+   "source_mode": 493,
+   "stored_mode": 493
+  },
+  {
+   "do_not_chmod": true,
+   "seed": 109,
+   "source_mode": 256,
+   "stored_mode": 420
+  },
+  {
+   "do_not_chmod": true,
+   "seed": 110,
+   "source_mode": 384,
+   "stored_mode": 420
+  },
+  {
+   "do_not_chmod": true,
+   "seed": 111,
+   "source_mode": 388,
+   "stored_mode": 420
+  },
+  {
+   "do_not_chmod": true,
+   "seed": 112,
+   "source_mode": 416,
+   "stored_mode": 420
+  },
+  {
+   "do_not_chmod": true,
+   "seed": 113,
+   "source_mode": 420,
+   "stored_mode": 420
+  },
+  {
+   "do_not_chmod": true,
+   "seed": 114,
+   "source_mode": 436,
+   "stored_mode": 420
+  },
+  {
+   "do_not_chmod": true,
+   "seed": 115,
+   "source_mode": 448,
+   "stored_mode": 420
+  },
+  {
+   "do_not_chmod": true,
+   "seed": 116,
+   "source_mode": 493,
+   "stored_mode": 420
+  }
+ ],
+ "recycle": [
+  {
+   "recycle": false,
+   "seed": 117,
+   "file_still_there": false,
+   "file_in_trash": {
+    "file": false
+   },
+   "thumbnail_still_there": false,
+   "thumbnail_in_trash": {
+    "file": false
+   }
+  },
+  {
+   "recycle": true,
+   "seed": 118,
+   "file_still_there": false,
+   "file_in_trash": {
+    "file": true,
+    "info_path_is_original": true
+   },
+   "thumbnail_still_there": false,
+   "thumbnail_in_trash": {
+    "file": false
+   }
+  }
+ ]
+}

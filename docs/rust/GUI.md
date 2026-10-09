@@ -5155,6 +5155,16 @@ time, checking the size between groups, before the age limit. Both are
 replayed against the reference's own pass in
 `oracle/fixtures/trash_maintenance.json` (`tests/gui/trash_maintenance.rs`).
 
+## Files and trash: permissions and the recycle bin
+
+"ADVANCED: Do not do chmod when copying files" off, an imported file keeps its
+source's permissions with owner read/write and others' read added (0400 becomes
+0644, 0700 0744); on, every stored file has a new file's permissions (0644 under
+umask 022), as `oracle/fixtures/file_paths_options.json` records
+(`hydrus-import/tests/chmod.rs`). "send them to the OS's recycle bin" sends a
+physically deleted file to the freedesktop.org trash, its thumbnail always
+deleted for good (`normal_time_maintenance.rs`).
+
 ## Files and trash: local import copying
 
 Options > files and trash > "TEST: Import local files directly from source, do

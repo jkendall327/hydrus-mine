@@ -8799,10 +8799,10 @@
     "Assessment covers this editable control and shared Apply/Cancel, not every control on its containing reference page or every background consumer."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Real Options row sets the process flag via apply_file_handling and a separate unit test shows copy_file honours it; label/kind/default come from the Qt options recording. The chmod behaviour itself (reference sets HydrusPaths.DO_NOT_DO_CHMOD_MODE; shutil.copyfile vs copy2) is restated from the Python source, not recorded; give_nice_permission_bits reader untested. Tests: crates/hydrus-gui/tests/gui/options_system_consumers.rs:536 the_chmod_option_reaches_the_process_when_file_handling_is_applied; crates/hydrus-store/src/paths.rs:78 copies_keep_permissions_unless_told_not_to; options_dialog.json via options_window.rs"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "recheck bin E session (claude/recheck-e-dupes)",
+    "note": "Two tests: crates/hydrus-gui/tests/gui/options_system_consumers.rs the_chmod_option_reaches_the_process_when_file_handling_is_applied toggles the real Options row and shows apply_file_handling (what every FileImporter::new runs) setting the process flag; crates/hydrus-import/tests/chmod.rs imported_files_get_the_permissions_the_reference_gives_them (own binary, the flag being process-wide) replays oracle/fixtures/file_paths_options.json (record_file_paths_options.py: the reference's own Client API import, option set and ReinitGlobalSettings run, under umask 022): eight source modes 0400..0755, off (copy2 plus nice bits: 0400 -> 0644, 0700 -> 0744, 0755 stays) and on (every stored file 0644, a fresh file's mode). The recording exposed and this PR fixed 'on' storing 0600 (the temporary file's private mode)."
    }
   },
   {
@@ -9388,10 +9388,10 @@
     "Assessment covers this editable control and shared Apply/Cancel, not every control on its containing reference page or every background consumer."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "phase 2 session (blind agent)",
-    "note": "normal_time_maintenance.rs:518 the_recycle_bin_option_decides_whether_physical_deletes_go_to_the_os_bin toggles the real Options row and runs the real deferred-delete worker: off, the file is gone; on, it is in the OS recycle bin. The row's label and kind are literals, there is no recording, only the physical-delete worker is exercised (not the setting's other consumers), and the test skips where the OS has no usable bin."
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "recheck bin E session (claude/recheck-e-dupes)",
+    "note": "crates/hydrus-gui/tests/gui/normal_time_maintenance.rs the_recycle_bin_option_decides_whether_physical_deletes_go_to_the_os_bin toggles the real Options row and runs the real deferred physical delete worker, replaying oracle/fixtures/file_paths_options.json (record_file_paths_options.py: the reference's own DoDeferredPhysicalDeletes into a freedesktop trash): off, file and thumbnail gone for good; on, the file in the OS bin with its original path, the thumbnail still deleted for good. The test skips (and says so) where the OS has no usable bin for the disk. Other consumers (export/import folders, Client API delete-after-import) share delete_or_recycle but are not exercised here."
    }
   },
   {

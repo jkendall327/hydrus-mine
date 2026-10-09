@@ -575,6 +575,20 @@ pub(crate) fn thumbnail_spec(
     }
 }
 
+/// A temporary file in `dir` with the permissions any new file gets (as the
+/// reference's copy straight to the final path makes one), not a temporary
+/// file's private ones: in "do not chmod" mode nothing changes them after.
+fn new_partial(dir: &Path) -> std::io::Result<tempfile::NamedTempFile> {
+    let mut builder = tempfile::Builder::new();
+    #[cfg(unix)]
+    {
+        use std::os::unix::fs::PermissionsExt;
+        // (the umask applies, as to any new file)
+        builder.permissions(std::fs::Permissions::from_mode(0o666));
+    }
+    builder.tempfile_in(dir)
+}
+
 /// Copy a file into storage, via a temporary name in the destination
 /// directory so a partial copy never sits at the final path.
 fn write_into_storage(source: &Path, destination: &Path) -> Result<()> {
@@ -582,7 +596,7 @@ fn write_into_storage(source: &Path, destination: &Path) -> Result<()> {
         .parent()
         .ok_or_else(|| std::io::Error::other("storage path has no directory"))?;
     std::fs::create_dir_all(dir)?;
-    let partial = tempfile::NamedTempFile::new_in(dir)?;
+    let partial = new_partial(dir)?;
     hydrus_store::paths::copy_file(source, partial.path())?;
     partial
         .persist(destination)
@@ -597,7 +611,7 @@ fn write_bytes_into_storage(bytes: &[u8], destination: &Path) -> Result<()> {
         .parent()
         .ok_or_else(|| std::io::Error::other("storage path has no directory"))?;
     std::fs::create_dir_all(dir)?;
-    let mut partial = tempfile::NamedTempFile::new_in(dir)?;
+    let mut partial = new_partial(dir)?;
     std::io::Write::write_all(&mut partial, bytes)?;
     partial
         .persist(destination)

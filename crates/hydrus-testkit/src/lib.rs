@@ -131,3 +131,32 @@ mod tests {
         assert!(status.success());
     }
 }
+
+/// `oracle/record_trash_maintenance.py`'s `bmp()`, which several recorders
+/// import: a 64x64 24-bit BMP of exactly `size` bytes, its
+/// pixel data starting as late as the size needs.
+pub fn bmp(seed: u32, size: usize) -> Vec<u8> {
+    let (width, height) = (64u32, 64u32);
+    let row = width as usize * 3;
+    let pixels: Vec<u8> = (0..row * height as usize)
+        .map(|i| (((seed as usize * 31 + i * 7) ^ (i >> 8)) & 0xFF) as u8)
+        .collect();
+    let offset = size - pixels.len();
+    let mut out = Vec::with_capacity(size);
+    out.extend_from_slice(b"BM");
+    out.extend_from_slice(&(size as u32).to_le_bytes());
+    out.extend_from_slice(&[0; 4]);
+    out.extend_from_slice(&(offset as u32).to_le_bytes());
+    for value in [40u32, width, height] {
+        out.extend_from_slice(&value.to_le_bytes());
+    }
+    out.extend_from_slice(&1u16.to_le_bytes());
+    out.extend_from_slice(&24u16.to_le_bytes());
+    for value in [0u32, pixels.len() as u32, 2835, 2835, 0, 0] {
+        out.extend_from_slice(&value.to_le_bytes());
+    }
+    out.resize(offset, 0);
+    out.extend_from_slice(&pixels);
+    assert_eq!(out.len(), size);
+    out
+}
