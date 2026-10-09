@@ -154,6 +154,9 @@ impl Playback {
             if let Err(e) = player.load(path) {
                 eprintln!("mpv could not play {}: {e}", path.display());
             }
+            // (the load is asynchronous: a position read before it finishes
+            // is the last file's, and is no part of this one's)
+            self.last_position.set(None);
             // (each file plays from the start, though the last was paused,
             // as the reference's `SetMedia` has it)
             if let Err(e) = player.set_paused(false) {
@@ -320,13 +323,7 @@ mod tests {
 
     use super::*;
 
-    /// Run the timers until `done`, or fifteen seconds have passed; whether
-    /// done.
-    fn until(done: impl Fn() -> bool) -> bool {
-        until_within(Duration::from_secs(15), done)
-    }
-
-    /// As `until`, with `limit` to wait.
+    /// Run the timers until `done`, or `limit` has passed; whether done.
     fn until_within(limit: Duration, done: impl Fn() -> bool) -> bool {
         let started = Instant::now();
         while started.elapsed() < limit {
@@ -432,6 +429,10 @@ mod tests {
             })
             .unwrap();
         assert!(playback.paused());
+        // (and the next file is played by a player of its own, so nothing
+        // of the last one's position or pause is left to read as this one's)
+        playback.close();
+        let playback = Playback::for_store(store.clone());
         playback.play(Some(&path), || Some((20, 16)), |_| {});
         assert_eq!(playback.times_to_play.get(), 0);
         assert!(

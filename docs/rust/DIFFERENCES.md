@@ -550,7 +550,14 @@ separator.
   webm and other containers through mpv; embedded cover art; volume and mute
   reaching audio that is playing; and any recorded mpv session of the
   reference (the expected video and audio times are the native bar's
-  arithmetic). The headless harness gives mpv a null audio output.
+  arithmetic). Recorded but not replayed text for text: the seek-by-time
+  steps made while *playing* (the recording freezes the clock, the viewer
+  runs in real time, so the test checks only that a seek leaves it playing),
+  the `GotoFrame` entries made while playing (they are the bar drag and the
+  frame step, replayed paused and checked for pausing), and the status after
+  a scan is released while playing (checked as: it plays on). The headless
+  harness gives mpv a null audio output, which `headless::init` and
+  `mpv::use_audio_output` set for tests only.
 
 ## The duplicate filter (`hydrus-gui`, `hydrus-duplicates::statements`)
 

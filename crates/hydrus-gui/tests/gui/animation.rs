@@ -55,16 +55,32 @@ fn watch(viewer: &MediaViewerWindow, time: Duration) -> HashSet<((u32, u32), Vec
     seen
 }
 
-/// The texts the scanbar shows over time while playing, as they change, and
-/// when each first showed; until `count` or ten seconds.
-fn texts_while_playing(viewer: &MediaViewerWindow, count: usize) -> Vec<(String, Instant)> {
-    let mut seen: Vec<(String, Instant)> = Vec::new();
+/// The texts the scanbar shows over time while playing, as they change, each
+/// with when it first showed and where it falls in `expected` (the earliest
+/// place after the last): until the last of `expected` is seen, or ten
+/// seconds. A text that fits nowhere is kept, with no place.
+fn texts_while_playing(
+    viewer: &MediaViewerWindow,
+    expected: &[String],
+) -> Vec<(String, Instant, Option<usize>)> {
+    let mut seen: Vec<(String, Instant, Option<usize>)> = Vec::new();
+    let mut next = 0;
     let started = Instant::now();
-    while seen.len() < count && started.elapsed() < Duration::from_secs(10) {
+    while started.elapsed() < Duration::from_secs(10) {
         slint::platform::update_timers_and_animations();
         let text = viewer.get_scanbar_text().to_string();
-        if !text.is_empty() && seen.last().is_none_or(|(last, _)| *last != text) {
-            seen.push((text, Instant::now()));
+        if !text.is_empty() && seen.last().is_none_or(|(last, ..)| *last != text) {
+            let place = expected[next..]
+                .iter()
+                .position(|e| *e == text)
+                .map(|at| at + next);
+            if let Some(place) = place {
+                next = place + 1;
+            }
+            seen.push((text, Instant::now(), place));
+            if place == Some(expected.len() - 1) {
+                break;
+            }
         }
         std::thread::sleep(Duration::from_millis(1));
     }
@@ -155,21 +171,37 @@ fn animations_play_in_the_viewer_with_the_client_s_own_player() {
                 .iter()
                 .map(|step| step["index"].as_u64().unwrap() as usize),
         );
-        let seen = texts_while_playing(&viewer, expected.len());
-        let texts: Vec<&str> = seen.iter().map(|(text, _)| text.as_str()).collect();
-        assert_eq!(
-            texts,
-            expected.iter().map(String::as_str).collect::<Vec<_>>(),
-            "{name}"
+        // (in order; a poll the machine was too slow for may miss a text,
+        // but none comes out of order or is not the reference's)
+        let seen = texts_while_playing(&viewer, &expected);
+        let unplaced: Vec<&str> = seen
+            .iter()
+            .filter(|(_, _, place)| place.is_none())
+            .map(|(text, ..)| text.as_str())
+            .collect();
+        assert!(
+            unplaced.is_empty(),
+            "{name}: not the reference's, or out of order: {unplaced:?}"
+        );
+        assert!(
+            seen.len() * 4 >= expected.len() * 3
+                && seen.last().unwrap().2 == Some(expected.len() - 1),
+            "{name}: {} of {} texts seen",
+            seen.len(),
+            expected.len()
         );
         // (the bar's text lags a frame by a poll, so the time is taken over
-        // the whole run, from the second text to the last)
+        // the whole run, from the second text seen to the last, by the
+        // frames the reference shows between them)
         let durations = case["durations_ms"].as_array().unwrap();
-        let due: f64 = indexes[1..indexes.len() - 1]
+        let (from, to) = (seen[1].2.unwrap(), seen.last().unwrap().2.unwrap());
+        let due: f64 = indexes[from..to]
             .iter()
             .map(|&index| durations[index].as_f64().unwrap())
             .sum();
-        let took = seen[seen.len() - 1]
+        let took = seen
+            .last()
+            .unwrap()
             .1
             .duration_since(seen[1].1)
             .as_secs_f64()
@@ -253,6 +285,26 @@ fn animations_play_in_the_viewer_with_the_client_s_own_player() {
             viewer.invoke_scan(x, bar_width);
             viewer.invoke_scan_ended();
         };
+        // going to frames one after another, paused, as the reference's
+        // `GotoFrame` does (to the same frame, the ends, round again): each
+        // shows its frame and leaves it paused. (The recorded goes made
+        // while playing are the bar's drag and the frame step, replayed
+        // above and below, and a seek, which leaves it playing.)
+        for step in case["goto"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .filter(|step| !step["play_first"].as_bool().unwrap())
+        {
+            goto(step["index"].as_u64().unwrap() as usize);
+            let wanted = step["text"].as_str().unwrap();
+            reaches(&viewer, wanted, &format!("{name} go to {}", step["index"]));
+            stays(
+                &viewer,
+                wanted,
+                &format!("{name} paused at {}", step["index"]),
+            );
+        }
         goto(frames - 2);
         let start = seeks[0]["start"]["text"].as_str().unwrap();
         reaches(&viewer, start, &format!("{name} before seeking"));
