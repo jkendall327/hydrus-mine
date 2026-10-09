@@ -1,0 +1,164 @@
+{
+ "home": {
+  "1": "",
+  "2": "",
+  "3": "",
+  "4": "download",
+  "5": "",
+  "6": "special",
+  "7": "",
+  "8": "file search",
+  "9": ""
+ },
+ "leaves": [
+  {
+   "button": 2,
+   "location": [
+    "my files"
+   ],
+   "menu": "download",
+   "name": "simple downloader",
+   "page_type": 2,
+   "result": "page",
+   "text": "simple downloader"
+  },
+  {
+   "button": 4,
+   "location": [
+    "my files"
+   ],
+   "menu": "download",
+   "name": "watcher",
+   "page_type": 9,
+   "result": "page",
+   "text": "watcher"
+  },
+  {
+   "button": 6,
+   "location": [
+    "my files"
+   ],
+   "menu": "download",
+   "name": "gallery",
+   "page_type": 1,
+   "result": "page",
+   "text": "gallery"
+  },
+  {
+   "button": 8,
+   "location": [
+    "my files"
+   ],
+   "menu": "download",
+   "name": "url import",
+   "page_type": 7,
+   "result": "page",
+   "text": "urls"
+  },
+  {
+   "button": 4,
+   "location": [
+    "combined local file domains"
+   ],
+   "menu": "special",
+   "name": "duplicates",
+   "page_type": 8,
+   "result": "page",
+   "text": "duplicates processing"
+  },
+  {
+   "button": 8,
+   "menu": "special",
+   "result": "pages",
+   "text": "page of pages"
+  },
+  {
+   "button": 2,
+   "location": [
+    "trash"
+   ],
+   "menu": "file search",
+   "name": "files",
+   "page_type": 6,
+   "result": "page",
+   "text": "trash"
+  },
+  {
+   "button": 4,
+   "location": [
+    "my files"
+   ],
+   "menu": "file search",
+   "name": "files",
+   "page_type": 6,
+   "result": "page",
+   "text": "my files"
+  },
+  {
+   "button": 6,
+   "location": [
+    "combined local file domains"
+   ],
+   "menu": "file search",
+   "name": "files",
+   "page_type": 6,
+   "result": "page",
+   "text": "combined local file domains"
+  },
+  {
+   "button": 8,
+   "location": [
+    "art"
+   ],
+   "menu": "file search",
+   "name": "files",
+   "page_type": 6,
+   "result": "page",
+   "text": "art"
+  }
+ ],
+ "menus": {
+  "download": {
+   "button": 4,
+   "buttons": {
+    "1": "",
+    "2": "simple downloader",
+    "3": "",
+    "4": "watcher",
+    "5": "",
+    "6": "gallery",
+    "7": "",
+    "8": "urls",
+    "9": ""
+   }
+  },
+  "file search": {
+   "button": 8,
+   "buttons": {
+    "1": "",
+    "2": "trash",
+    "3": "",
+    "4": "my files",
+    "5": "",
+    "6": "combined local file domains",
+    "7": "",
+    "8": "art",
+    "9": ""
+   }
+  },
+  "special": {
+   "button": 6,
+   "buttons": {
+    "1": "",
+    "2": "",
+    "3": "",
+    "4": "duplicates processing",
+    "5": "",
+    "6": "",
+    "7": "",
+    "8": "page of pages",
+    "9": ""
+   }
+  }
+ }
+}

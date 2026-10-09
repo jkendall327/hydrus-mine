@@ -432,6 +432,10 @@ search.
   "apply" is pressed, where the reference's does as the focus leaves the
   time (the same, as pressing "apply" takes the focus).
 
+- **The page chooser also offers saved sessions.** When there are saved
+  sessions, a "sessions" button on the chooser's home screen (the second
+  button, which the reference leaves empty) leads to them, as the pages >
+  sessions > append menu does. The reference's chooser has no such button.
 - **The page chooser takes the top row's digits too.** The reference takes
   only the number pad's; Slint doesn't tell them apart.
 - **A closed URL downloader page's downloads wait** until it is reopened

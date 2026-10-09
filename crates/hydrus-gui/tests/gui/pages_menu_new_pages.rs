@@ -5,7 +5,7 @@
 //! as it names and types it, where it went (into the deepest page of
 //! pages, else beside the current page), and which tabs are current.
 
-use slint::Model as _;
+use slint::{ComponentHandle as _, Model as _};
 
 use hydrus_core::pages::{Page, PageContent, PageKey, Session};
 use hydrus_gui::{MainWindow, Pages, bind, headless};
@@ -597,4 +597,104 @@ fn closed_pages_come_back_and_clear_all_asks_as_the_reference_s_undo_menu_does()
             ui.invoke_menu_dismissed();
         }
     }
+}
+
+// leaf: audit-options-tabs-new
+#[test]
+fn ctrl_t_opens_the_chooser_the_reference_opens_and_each_choice_makes_its_page() {
+    let _windows = headless::init();
+    let recorded = hydrus_testkit::fixture_json("page_chooser_tree.json");
+    let legacy = hydrus_testkit::legacy_fixture("basic");
+    let native = tempfile::tempdir().unwrap();
+    import_legacy(
+        legacy.path(),
+        &native.path().join(hydrus_store::store::DB_FILE_NAME),
+    )
+    .unwrap();
+    let store = Store::open(native.path()).unwrap();
+    let session = Session {
+        name: sessions::LAST_SESSION.into(),
+        pages: vec![search("start")],
+    };
+    store
+        .write(move |ctx| sessions::save(ctx.conn(), &session, 1))
+        .unwrap();
+    let ui = MainWindow::new().unwrap();
+    ui.show().unwrap();
+    let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+    // (hydrus-rs's home also offers the saved sessions, in the button the
+    // reference leaves empty: DIFFERENCES.md; the rest is compared)
+    let labels_of = |ui: &MainWindow| -> Vec<String> {
+        let mut labels = chooser_labels(ui);
+        if labels[1] == "sessions" {
+            labels[1] = String::new();
+        }
+        labels
+    };
+    let recorded_buttons = |buttons: &serde_json::Value| -> Vec<String> {
+        (1..=9)
+            .map(|n| buttons[n.to_string()].as_str().unwrap().to_owned())
+            .collect()
+    };
+    let mut made = 0;
+    for leaf in recorded["leaves"].as_array().unwrap() {
+        // ctrl+t: the chooser, at its home screen
+        assert!(
+            ui.invoke_shortcut_key("t".into(), 1),
+            "ctrl+t is a shortcut"
+        );
+        assert_eq!(
+            labels_of(&ui),
+            recorded_buttons(&recorded["home"]),
+            "the chooser's home"
+        );
+        // its menu
+        let menu = &recorded["menus"][leaf["menu"].as_str().unwrap()];
+        ui.invoke_chooser_pressed(i32::try_from(menu["button"].as_u64().unwrap()).unwrap());
+        assert_eq!(
+            labels_of(&ui),
+            recorded_buttons(&menu["buttons"]),
+            "the {} menu",
+            leaf["menu"]
+        );
+        // the choice
+        let before = bound.pages.borrow().session().pages.len();
+        ui.invoke_chooser_pressed(i32::try_from(leaf["button"].as_u64().unwrap()).unwrap());
+        assert_eq!(ui.get_chooser_labels().row_count(), 0, "the chooser closed");
+        let pages = bound.pages.borrow();
+        let all = &pages.session().pages;
+        assert_eq!(all.len(), before + 1, "{leaf}");
+        let made_page = all.last().unwrap();
+        if leaf["result"] == "pages" {
+            assert_eq!(made_page.name, "pages");
+            assert!(matches!(made_page.content, PageContent::Pages(_)));
+        } else {
+            assert_eq!(made_page.name, leaf["name"].as_str().unwrap(), "{leaf}");
+            assert_eq!(
+                made_page.content.page_type(),
+                leaf["page_type"].as_i64().unwrap(),
+                "{leaf}"
+            );
+            if leaf["page_type"] == 6 {
+                let theirs = serde_json::json!({
+                    "current": leaf["location"],
+                    "deleted": [],
+                });
+                let t = tree(&store, std::slice::from_ref(made_page));
+                assert_eq!(t[0]["location"], theirs, "{leaf}");
+            }
+        }
+        drop(pages);
+        made += 1;
+        // (the page that was made goes, to keep the chooser's results alike)
+        ui.invoke_close_page();
+        if leaf["result"] == "pages" {
+            // (the page of pages had one page in it: shown, and closed now)
+            let last = bound.pages.borrow().session().pages.len();
+            if last > before {
+                ui.invoke_close_page();
+            }
+        }
+    }
+    assert_eq!(made, recorded["leaves"].as_array().unwrap().len());
 }

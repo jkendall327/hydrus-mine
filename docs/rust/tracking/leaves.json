@@ -21596,10 +21596,10 @@
     "New-page chooser creates the selected search/notebook/importer page in the requested notebook depth. Empty-space double clicks and Ctrl+T reach this chooser."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Tagged test drives double clicks (events and real pointer presses) and the chooser, but creates only a file-search page and calls invoke_new_page rather than Ctrl+T; expectations typed. The recorded notebook placement/insertion order is in untagged notebook_new_page.rs; importer page creation by the chooser is not in the tagged test. Tests: hydrus-gui/tests/gui/session.rs:1412 a_double_click_on_a_tab_rows_empty_space_chooses_a_page_for_it; notebook_new_page.rs:70,149 (tab_new_page.json, untagged for this leaf); session.rs:355 (ctrl+t)"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "Three recorded checks of the reference's new tab: gui/pages_menu_new_pages.rs ctrl_t_opens_the_chooser_the_reference_opens_and_each_choice_makes_its_page presses Ctrl+T through the shortcut table and compares the chooser's home, each menu (file search, download, special) and each choice's page (name, type, searched domain; a page of pages) with page_chooser_tree.json, recorded from the reference's DialogPageChooser (oracle/record_page_chooser_tree.py); notebook_new_page.rs replays tab_new_page.json (where the new page goes for the four insertion settings, here/not, cancelled); session.rs a_double_click_on_a_tab_rows_empty_space_chooses_a_page_for_it drives the double click. The home also offers saved sessions in a button the reference leaves empty (DIFFERENCES.md)."
    }
   },
   {
