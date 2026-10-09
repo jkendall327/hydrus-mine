@@ -25,11 +25,11 @@
   {
    "after": {
     "files": 3,
-    "synchronised": false
+    "synchronised": true
    },
    "before": {
     "files": 3,
-    "synchronised": false
+    "synchronised": true
    },
    "page": "opened on given files"
   },
