@@ -24,6 +24,33 @@ const SHORTEST_FRAME_MS: u32 = 10;
 thread_local! {
     /// How many frames the players started on this thread have decoded.
     static DECODED: Arc<AtomicU64> = Arc::default();
+    /// How many decoding threads the players started on this thread have
+    /// running.
+    static LIVE: Arc<AtomicU64> = Arc::default();
+}
+
+/// Counts a decoding thread while it lives.
+struct Live(Arc<AtomicU64>);
+
+impl Live {
+    fn start() -> Self {
+        let live = LIVE.with(Arc::clone);
+        live.fetch_add(1, Ordering::SeqCst);
+        Self(live)
+    }
+}
+
+impl Drop for Live {
+    fn drop(&mut self) {
+        self.0.fetch_sub(1, Ordering::SeqCst);
+    }
+}
+
+/// How many decoding threads the animation players started on this thread
+/// have running: a player that is stopped lets its thread go after the
+/// frame it is on.
+pub fn decoders_running() -> u64 {
+    LIVE.with(|live| live.load(Ordering::SeqCst))
 }
 
 /// How many frames the animation players started on this thread (the
@@ -294,9 +321,13 @@ impl Animator {
             shared.get_ready_for(index);
         }
         let decoded = DECODED.with(Arc::clone);
+        let live = Live::start();
         let decoding = std::thread::Builder::new().name("animation".into()).spawn({
             let shared = shared.clone();
-            move || decode(frames, &shared, &decoded)
+            move || {
+                let _live = live;
+                decode(frames, &shared, &decoded);
+            }
         });
         if let Err(e) = decoding {
             eprintln!("could not start playing the animation: {e}");
