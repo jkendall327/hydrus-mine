@@ -30,6 +30,10 @@ pub struct TagDisplayEditor {
     original: Vec<ServiceOptions>,
     services: Vec<ServiceOptions>,
     selected: usize,
+    /// Whether "Allow namespace:" and "Allow namespace:*" are enabled, per
+    /// service tab, where a namespace search change has set them (the
+    /// reference's tabs start with both enabled).
+    namespace_enabled: std::collections::HashMap<ServiceKey, (bool, bool)>,
 }
 impl TagDisplayEditor {
     pub fn new(store: Arc<Store>) -> Result<Self> {
@@ -85,6 +89,7 @@ impl TagDisplayEditor {
             original: services.clone(),
             services,
             selected,
+            namespace_enabled: std::collections::HashMap::new(),
         })
     }
     /// Application dialogs show only real tag services.
@@ -127,14 +132,14 @@ impl TagDisplayEditor {
     /// Checkbox interlocks from the reference: namespace search and any-
     /// namespace input exclude one another; namespace search enables both fetches.
     pub fn set_rule(&mut self, index: usize, on: bool) {
+        let (bare_enabled, star_enabled) = self.namespace_enabled();
+        let searched = self.current().rules.search_namespaces_into_full_tags;
         let r = &mut self.current_mut().rules;
         match index {
             0 => {
                 r.search_namespaces_into_full_tags = on;
                 if on {
                     r.unnamespaced_search_gives_any_namespace_wildcards = false;
-                    r.namespace_bare_fetch_all_allowed = true;
-                    r.namespace_fetch_all_allowed = true;
                 }
             }
             1 => {
@@ -143,11 +148,35 @@ impl TagDisplayEditor {
                     r.search_namespaces_into_full_tags = false;
                 }
             }
-            2 if !r.search_namespaces_into_full_tags => r.namespace_bare_fetch_all_allowed = on,
-            3 if !r.search_namespaces_into_full_tags => r.namespace_fetch_all_allowed = on,
+            2 if bare_enabled => r.namespace_bare_fetch_all_allowed = on,
+            3 if star_enabled => r.namespace_fetch_all_allowed = on,
             4 => r.fetch_all_allowed = on,
             _ => {}
         }
+        // (`_UpdateControlsFromSearchNamespacesIntoFullTags`, on a change)
+        let search = r.search_namespaces_into_full_tags;
+        if search != searched {
+            let enabled = (!search, !search && !r.namespace_bare_fetch_all_allowed);
+            let key = self.current().key.clone();
+            self.namespace_enabled.insert(key, enabled);
+        }
+        // (`_UpdateControls`: a disabled box is ticked)
+        let (bare_enabled, star_enabled) = self.namespace_enabled();
+        let r = &mut self.current_mut().rules;
+        if !bare_enabled {
+            r.namespace_bare_fetch_all_allowed = true;
+        }
+        if !star_enabled {
+            r.namespace_fetch_all_allowed = true;
+        }
+    }
+    /// Whether the shown tab's "Allow namespace:" and "Allow namespace:*"
+    /// boxes are enabled.
+    pub fn namespace_enabled(&self) -> (bool, bool) {
+        self.namespace_enabled
+            .get(&self.current().key)
+            .copied()
+            .unwrap_or((true, true))
     }
     pub fn add_source(&mut self, parents: bool, key: ServiceKey) -> bool {
         if !self.current().real || !self.services.iter().any(|s| s.real && s.key == key) {

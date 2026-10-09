@@ -56,10 +56,35 @@ struct State {
 /// whether it changed, if applied.
 type Edit = Rc<dyn Fn(TimeRange, Box<dyn Fn(TimeRange, bool)>)>;
 
+thread_local! {
+    /// The clock and time zone the dialogs run at in place of the
+    /// system's, if held (for tests replaying a recording).
+    static HELD: RefCell<Option<(i64, jiff::tz::TimeZone)>> = const { RefCell::new(None) };
+}
+
+/// Run the "manage times" dialogs opened after this, on this thread, at
+/// `now_ms` in `tz`, as the reference's recordings hold the time still.
+pub fn hold_time(now_ms: i64, tz: jiff::tz::TimeZone) {
+    HELD.with(|held| *held.borrow_mut() = Some((now_ms, tz)));
+}
+
+/// Go back to the system clock and time zone (after [`hold_time`]).
+pub fn release_time() {
+    HELD.with(|held| *held.borrow_mut() = None);
+}
+
 /// The time the dialog runs at: now, in seconds and milliseconds.
 fn now() -> (i64, i64) {
-    let ms = jiff::Timestamp::now().as_millisecond();
+    let ms = HELD
+        .with(|held| held.borrow().as_ref().map(|(ms, _)| *ms))
+        .unwrap_or_else(|| jiff::Timestamp::now().as_millisecond());
     (ms.div_euclid(1000), ms)
+}
+
+/// The time zone the dialog shows times in.
+fn time_zone() -> jiff::tz::TimeZone {
+    HELD.with(|held| held.borrow().as_ref().map(|(_, tz)| tz.clone()))
+        .unwrap_or_else(jiff::tz::TimeZone::system)
 }
 
 fn strings(items: impl IntoIterator<Item = String>) -> ModelRc<SharedString> {
@@ -230,7 +255,7 @@ pub(crate) fn open(
         })
         .collect();
     let (_, now_ms) = now();
-    let tz = jiff::tz::TimeZone::system();
+    let tz = time_zone();
     let window = crate::app_title::new::<crate::ManageTimesWindow>().map_err(|e| e.to_string())?;
     window.set_window_title(TITLE.into());
     let state = Rc::new(RefCell::new(State {

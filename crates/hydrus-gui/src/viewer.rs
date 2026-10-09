@@ -548,3 +548,23 @@ impl Drop for MediaViewer {
         self.retire_prefetch_cache();
     }
 }
+
+/// What the canvas background's copy of the file information says: the
+/// info line with the zoom put in as its second part, as the reference's
+/// `_GetInfoString` does (the top hover shows the zoom on its own).
+pub(crate) fn background_info_line(info: &str, zoom: &str) -> String {
+    if info.is_empty() {
+        return String::new();
+    }
+    let zoom = if zoom.is_empty() { "100%" } else { zoom };
+    let mut parts: Vec<&str> = info.split(" | ").collect();
+    parts.insert(1, zoom);
+    parts.join(" | ")
+}
+
+/// Keep the viewer's background copy of its info line up to date.
+pub(crate) fn refresh_background_info_line(window: &crate::MediaViewerWindow) {
+    window.set_background_info_line(
+        background_info_line(&window.get_info_line(), &window.get_zoom_text()).into(),
+    );
+}

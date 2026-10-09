@@ -113,6 +113,8 @@ fn defaults(
 struct DuplicateState {
     pending: std::collections::VecDeque<Callable>,
     added: Vec<[u8; 32]>,
+    /// Says a declined weird call stopped it (the reference's "Problem importing!").
+    declined: Rc<dyn Fn(&str)>,
 }
 fn duplicate_next(
     slots: &Slots,
@@ -164,8 +166,10 @@ fn duplicate_next(
                         state.borrow_mut().added.push(key);
                         changed();
                         duplicate_next(&slots, &active, &table, &state, &changed);
+                    } else {
+                        // A declined later import aborts the remainder, retaining unselected prefix additions.
+                        (state.borrow().declined)("User declined to add--the import looked weird.");
                     }
-                    // A declined later import aborts the remainder, retaining unselected prefix additions.
                 }
             });
             let _ = ask(&slots.question, active, message, done);
@@ -307,6 +311,14 @@ pub(crate) fn bind(
             let Some(w) = weak.upgrade() else {
                 return;
             };
+            let declined: Rc<dyn Fn(&str)> = Rc::new({
+                let weak = weak.clone();
+                move |error| {
+                    if let Some(w) = weak.upgrade() {
+                        w.set_external_call_error(error.into());
+                    }
+                }
+            });
             let result: Result<(), String> = match action.as_str() {
                 "add" | "edit" => {
                     let call = if action == "add" {
@@ -349,6 +361,7 @@ pub(crate) fn bind(
                     let state = Rc::new(RefCell::new(DuplicateState {
                         pending: table.borrow().selected().into(),
                         added: Vec::new(),
+                        declined: declined.clone(),
                     }));
                     duplicate_next(&slots, &active, &table, &state, &changed);
                     Ok(())
@@ -442,17 +455,8 @@ pub(crate) fn bind(
                     } else {
                         table.borrow().selected()
                     };
+                    // (a weird call is asked about as it is added, as the reference does)
                     let preview = Rc::new(|calls: Vec<Callable>| {
-                        for c in &calls {
-                            if let ActualCall::Process(p) = &c.call
-                                && let Some(issue) = p.import_warning()
-                            {
-                                return Err(format!(
-                                    "Inspect this call before importing: \"{}\". {issue}",
-                                    c.name
-                                ));
-                            }
-                        }
                         Ok(format!(
                             "{} external calls\n{}",
                             calls.len(),
@@ -467,12 +471,34 @@ pub(crate) fn bind(
                         let active = active.clone();
                         let table = table.clone();
                         let changed = changed.clone();
-                        move |calls| {
+                        let slots = slots.clone();
+                        let declined = declined.clone();
+                        move |calls: Vec<Callable>| {
                             if !active.get() {
                                 return Err("The Options owner has closed.".into());
                             }
-                            table.borrow_mut().add_selected(calls);
-                            changed();
+                            // (the reference's clipboard import sorts even after a
+                            // declined call, where a duplicate does not)
+                            let declined: Rc<dyn Fn(&str)> = Rc::new({
+                                let table = table.clone();
+                                let changed = changed.clone();
+                                let declined = declined.clone();
+                                move |error| {
+                                    let mut sorted = table.borrow_mut();
+                                    let (column, ascending) =
+                                        (sorted.sort_column, sorted.ascending);
+                                    sorted.sort(column, ascending);
+                                    drop(sorted);
+                                    changed();
+                                    declined(error);
+                                }
+                            });
+                            let state = Rc::new(RefCell::new(DuplicateState {
+                                pending: calls.into(),
+                                added: Vec::new(),
+                                declined,
+                            }));
+                            duplicate_next(&slots, &active, &table, &state, &changed);
                             Ok(())
                         }
                     });
