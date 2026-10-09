@@ -115,6 +115,7 @@ mod selected_deletion_records;
 mod selected_viewing_stats;
 mod session;
 mod session_autosave;
+mod session_backup_menu;
 mod session_startup;
 mod set_password;
 mod shell_geometry;
