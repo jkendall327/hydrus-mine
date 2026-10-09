@@ -449,10 +449,10 @@
     "Rearrange menu computes selectable insertion/shift positions and lib applies reordered files while retaining page selection. First-pass evidence scope: Reference rearrange menu tree and shared move transform are asserted; individual pointer selection of every insertion menu row is not independently replayed."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Real menu rows and resulting page order for to start/back/forward/to here/to end; expected orders are hand-written from the reference's algorithm, only the menu tree is recorded (thumbnail_menu.json). Tests: crates/hydrus-gui/tests/gui/media_selection_menu.rs:115 rearrange_rows_move_the_selected_thumbnails_as_the_reference_does"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "gui/media_selection_menu.rs rearrange_menu_offers_and_makes_the_moves_the_reference_did hits thumbnails as recorded (first plain, the rest ctrl; the last is the focus), compares the rearrange rows the thumbnail menu offers with the reference's GetMenu, then chooses each of the five moves (to start, back one, to here, forward one, to end) from the menu and compares the page's order and what stays selected with thumbnail_rearrange.json, which oracle/record_thumbnail_rearrange.py recorded from the reference (SIMPLE_REARRANGE_THUMBNAILS on a page of the basic fixture's local files, sorted by file size). Moves not offered are checked to have done nothing in the reference."
    }
   },
   {
