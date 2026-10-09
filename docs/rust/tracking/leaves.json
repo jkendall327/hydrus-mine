@@ -10564,10 +10564,10 @@
     "The native checks active weight on its one-second monitor, while the reference checks when its page-count menu becomes dirty."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "The model test replays the recorded threshold, seed weight (20 each), disabled and one-boot latch, with the weight computed from the fixture's hashes + 20*seeds rather than from real pages. The GUI test drives the checkbox (cancel/apply) but feeds typed weights (10_000_001 etc.) straight to check_size, so it never runs the monitor tick or Pages::session_weight (the real weight of open pages, with closed pages excluded and seeds at 20) into the warning. Only the popup text and latch are shown to come from the recording. Tests: crates/hydrus-gui/tests/gui/session_autosave.rs:332 applied_size_warning_creates_exact_popup_once_and_resets_only_at_new_boot; crates/hydrus-gui-model/tests/model/session_lifecycle.rs:136 size_warning_replays_real_threshold_seed_weight_disabled_and_one_boot_latch (fixture session_warning.json)"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "Claude (recheck bin C)",
+    "note": "The GUI test weighs a real session: a URL downloader page whose queue holds 500,000 then 500,001 URLs, the weight read by Pages::session_weight through the monitor's real tick (SessionAutosave::poll_at), against oracle/fixtures/session_warning.json. Exactly 10,000,000 does not warn (step 2); turned off in the real Options window and applied, 10,000,020 neither warns nor uses up the boot's warning (step 3); turned on, the tick posts the recorded 'Your session weight is 10,000,020, ...' text (step 6's 0 files + 500,001 URLs) once, shown in the popup stack; heavier and re-enabled, no second warning that boot (step 5); the page closed, the weight is 0 and a new boot is quiet; with the heavy page open in the new boot it warns again (step 6). Weighing URLs at 19 makes the test fail. Tests: crates/hydrus-gui/tests/gui/session_autosave.rs applied_size_warning_creates_exact_popup_once_and_resets_only_at_new_boot; model crates/hydrus-gui-model/tests/model/session_lifecycle.rs size_warning_replays_real_threshold_seed_weight_disabled_and_one_boot_latch"
    }
   },
   {
