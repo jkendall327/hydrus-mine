@@ -14741,7 +14741,7 @@
     "date": "2026-10-09",
     "class": "sound",
     "by": "phase 2 session",
-    "note": "gui/files_io_file_menu.rs checking_and_running_folders_from_the_file_menu_flags_and_says_what_the_reference_did drives the file menu's check/run entries (one folder, all) on real import and export folders, once with the folders running and once paused under the file menu, and compares the folders' flags (paused, check now / run now) afterwards and the text the client shows with folder_runs.json, recorded from the reference by oracle/record_folder_runs.py (_CheckImportFolder / _RunExportFolder). Checking a folder unpauses it, and a paused menu says the reference's 'currently paused' text while still flagging, as recorded."
+    "note": "gui/files_io_file_menu.rs checking_and_running_folders_from_the_file_menu_flags_and_says_what_the_reference_did drives the file menu's check/run entries (one folder, all) on real import and export folders, once with the folders running and once paused under the file menu, and compares the folders' flags (paused, check now / run now) afterwards and the text the client shows with folder_runs.json, recorded from the reference by oracle/record_folder_runs.py (_CheckImportFolder / _RunExportFolder). Checking a folder unpauses it, and a paused menu says the reference's 'currently paused' text while still flagging, as recorded. The import worker acts on the unpause: the old import test pauses a folder, checks it from the menu, and the worker then checks it."
    }
   },
   {
@@ -14761,7 +14761,7 @@
     "date": "2026-10-09",
     "class": "sound",
     "by": "phase 2 session",
-    "note": "gui/files_io_file_menu.rs checking_and_running_folders_from_the_file_menu_flags_and_says_what_the_reference_did drives the file menu's check/run entries (one folder, all) on real import and export folders, once with the folders running and once paused under the file menu, and compares the folders' flags (paused, check now / run now) afterwards and the text the client shows with folder_runs.json, recorded from the reference by oracle/record_folder_runs.py (_CheckImportFolder / _RunExportFolder). Checking a folder unpauses it, and a paused menu says the reference's 'currently paused' text while still flagging, as recorded."
+    "note": "gui/files_io_file_menu.rs checking_and_running_folders_from_the_file_menu_flags_and_says_what_the_reference_did drives the file menu's check/run entries (one folder, all) on real import and export folders, once with the folders running and once paused under the file menu, and compares the folders' flags (paused, check now / run now) afterwards and the text the client shows with folder_runs.json, recorded from the reference by oracle/record_folder_runs.py (_CheckImportFolder / _RunExportFolder). Checking a folder unpauses it, and a paused menu says the reference's 'currently paused' text while still flagging, as recorded. The import worker acts on the unpause: the old import test pauses a folder, checks it from the menu, and the worker then checks it."
    }
   },
   {
@@ -15024,7 +15024,7 @@
     "date": "2026-10-09",
     "class": "sound",
     "by": "phase 2 session",
-    "note": "gui/files_io_file_menu.rs checking_and_running_folders_from_the_file_menu_flags_and_says_what_the_reference_did drives the file menu's check/run entries (one folder, all) on real import and export folders, once with the folders running and once paused under the file menu, and compares the folders' flags (paused, check now / run now) afterwards and the text the client shows with folder_runs.json, recorded from the reference by oracle/record_folder_runs.py (_CheckImportFolder / _RunExportFolder). Checking a folder unpauses it, and a paused menu says the reference's 'currently paused' text while still flagging, as recorded."
+    "note": "gui/files_io_file_menu.rs checking_and_running_folders_from_the_file_menu_flags_and_says_what_the_reference_did drives the file menu's run entries (one export folder, run all) on real export folders, running and paused under the file menu, and compares each folder's run-now flag and the text shown (\"Export folders are currently paused under the 'file' menu...\") with folder_runs.json (oracle/record_folder_runs.py, _RunExportFolder); export_folders_are_paused_and_run_from_the_file_menu_and_the_worker_obeys then runs the export worker on the flagged folders."
    }
   },
   {
@@ -15044,7 +15044,7 @@
     "date": "2026-10-09",
     "class": "sound",
     "by": "phase 2 session",
-    "note": "gui/files_io_file_menu.rs checking_and_running_folders_from_the_file_menu_flags_and_says_what_the_reference_did drives the file menu's check/run entries (one folder, all) on real import and export folders, once with the folders running and once paused under the file menu, and compares the folders' flags (paused, check now / run now) afterwards and the text the client shows with folder_runs.json, recorded from the reference by oracle/record_folder_runs.py (_CheckImportFolder / _RunExportFolder). Checking a folder unpauses it, and a paused menu says the reference's 'currently paused' text while still flagging, as recorded."
+    "note": "gui/files_io_file_menu.rs checking_and_running_folders_from_the_file_menu_flags_and_says_what_the_reference_did drives the file menu's run entries (one export folder, run all) on real export folders, running and paused under the file menu, and compares each folder's run-now flag and the text shown (\"Export folders are currently paused under the 'file' menu...\") with folder_runs.json (oracle/record_folder_runs.py, _RunExportFolder); export_folders_are_paused_and_run_from_the_file_menu_and_the_worker_obeys then runs the export worker on the flagged folders."
    }
   },
   {
@@ -15389,10 +15389,10 @@
     "History maximum is fixed at twenty; latest row lacks Qt bold styling. This is tab history, not absent predicate undo history."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Real menu: Clear History empties the history and a later page starts a new one. Expectations typed from source; the recording (main_menu.json) holds only a one-entry structure. Stale note: the maximum is not fixed at twenty, main_menu.rs reads page_navigation.history_entries (page_nav_history_max_entries); the limit is untested here. Tests: crates/hydrus-gui/tests/gui/search_pages_menu.rs:142 the_history_menu_shows_pages_newest_first_and_clear_history_empties_it; model main_menu.rs:293"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "gui/pages_menu_new_pages.rs the_history_menu_follows_the_pages_shown_closed_and_cleared_as_the_reference_s_does shows pages, chooses entries, closes pages, changes the number of entries and clicks Clear History in the real window, and compares the pages > history menu's entries and the page shown after every step with page_history_menu.json, recorded from the reference's own history menu (oracle/record_page_history_menu.py): newest first, a revisited page moves to the top, closed pages leave, the limit cuts the list, and after Clear History only that entry is left. The first entry is bold in the reference; the native menu has no bold, so that is not compared (DIFFERENCES.md)."
    }
   },
   {
@@ -15408,10 +15408,10 @@
     "Creates the requested '{file domain / trash}' page through Pages::new_page with a new page key, persisted queue/importer state where required, and the selected file-domain context for searches. The resulting page is shown and included in session synchronization."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Only the 'new \"my files\"' entry is chosen (label prefix match) and its location checked; trash and other domains, the page name and the domain labels are not asserted here (labels are in main_menu.json, tested at model level). Tests: crates/hydrus-gui/tests/gui/search_pages_menu.rs:250 the_pages_menu_makes_download_special_and_search_pages_and_shows_them"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "gui/pages_menu_new_pages.rs pages_menu_entries_open_the_pages_the_reference_opened_where_it_opened_them chooses the entry from the real pages menu, with the current page a search page and with it a page of pages (the new page goes inside the deepest one), and compares the notebook tree afterwards (each page's name, type, pages, and for a search page the file domains it searches) and which tabs are current with new_page_menu.json, recorded by triggering the reference's own pages menu actions (oracle/record_new_page_menu.py). The submenu's entries (new \"art\" search page, new \"my files\" search page, new \"trash\" page) and each page's searched domain are the recorded ones; the page is named 'files'. What is inside a new downloader or duplicates page is not part of the recording."
    }
   },
   {
@@ -15428,10 +15428,10 @@
     "History maximum is fixed at twenty; latest row lacks Qt bold styling. This is tab history, not absent predicate undo history."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Real menu: newest-first '1: one','2: three','3: two' numbering and choosing shows the page. Order and numbering typed from the source (recording has one entry only); max entries and bold are untested. Stale note about fixed twenty (see clear-history). Tests: crates/hydrus-gui/tests/gui/search_pages_menu.rs:142"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "gui/pages_menu_new_pages.rs the_history_menu_follows_the_pages_shown_closed_and_cleared_as_the_reference_s_does shows pages, chooses entries from the history menu, closes pages, changes the number of entries and clicks Clear History in the real window, and compares the menu's entries and the page shown after every step with page_history_menu.json, recorded from the reference's own history menu (oracle/record_page_history_menu.py): newest first, a revisited or chosen page moves to the top, choosing an entry shows that page, closed pages leave, and the limit cuts the list (recorded at 3 and 20; the default of 100 is the same in both). The first entry is bold in the reference; the native menu has no bold, so that is not compared (DIFFERENCES.md)."
    }
   },
   {
@@ -15448,10 +15448,10 @@
     "This assesses page creation, not full importer/duplicates sidebar parity."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Real menu creates a page named 'duplicates' with system:everything in combined local file domains and it persists in the session; name and default search typed from source (CreatePageManager), no recording. Sidebar parity not part of this. Tests: crates/hydrus-gui/tests/gui/search_pages_menu.rs:413 the_download_and_special_menus_make_each_kind_of_page_named_as_the_reference_names_it"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "gui/pages_menu_new_pages.rs pages_menu_entries_open_the_pages_the_reference_opened_where_it_opened_them chooses the entry from the real pages menu, with the current page a search page and with it a page of pages (the new page goes inside the deepest one), and compares the notebook tree afterwards (each page's name, type, pages, and for a search page the file domains it searches) and which tabs are current with new_page_menu.json, recorded by triggering the reference's own pages menu actions (oracle/record_new_page_menu.py). The page is named 'duplicates' and typed as recorded. What is inside a new downloader or duplicates page is not part of the recording."
    }
   },
   {
@@ -15468,10 +15468,10 @@
     "This assesses page creation, not full importer/duplicates sidebar parity."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Real menu creates a 'gallery' Downloader page (kind Gallery), shown and persisted; the name is typed from the source's defaults, not recorded. Tests: crates/hydrus-gui/tests/gui/search_pages_menu.rs:413"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "gui/pages_menu_new_pages.rs pages_menu_entries_open_the_pages_the_reference_opened_where_it_opened_them chooses the entry from the real pages menu, with the current page a search page and with it a page of pages (the new page goes inside the deepest one), and compares the notebook tree afterwards (each page's name, type, pages, and for a search page the file domains it searches) and which tabs are current with new_page_menu.json, recorded by triggering the reference's own pages menu actions (oracle/record_new_page_menu.py). The page is named 'gallery' and typed as recorded. What is inside a new downloader or duplicates page is not part of the recording."
    }
   },
   {
@@ -15488,10 +15488,10 @@
     "Native chooser accepts both top-row digits and keypad digits; Qt uses keypad only."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "The tagged test only opens the chooser from the menu and cancels it. The chooser contents and a choice becoming Pages::new_page are tested elsewhere (page_chooser_options.rs with fixtures/page_chooser_options.json, notebook_new_page.rs with tab_new_page.json) but under other leaves; digit-key handling is not tested. Tests: crates/hydrus-gui/tests/gui/search_pages_menu.rs:220 new_page_asks_the_chooser_and_refresh_searches_a_paused_page_again"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "gui/pages_menu_new_pages.rs new_page_from_the_pages_menu_asks_the_chooser_the_reference_asked chooses pages > new page… in the real window and replays all 48 recorded chooser settings of page_chooser_options.json (one, two and ten local file domains, the four options): the choices offered, cancelling makes no page, and each recorded choice opens a search of exactly the recorded domain. pages_menu_entries_open_the_pages_the_reference_opened_where_it_opened_them chooses it with the current page a search page and with it a page of pages, picking a page of pages or cancelling, and compares the tree with new_page_menu.json (the new page goes inside the deepest page of pages). Keys (digits) inside the chooser are not driven from the menu."
    }
   },
   {
@@ -15507,10 +15507,10 @@
     "Creates the requested 'new page of pages' page through Pages::new_page with a new page key, persisted queue/importer state where required, and the selected file-domain context for searches. The resulting page is shown and included in session synchronization."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Real menu makes a page of pages named 'pages...' with one blank 'files' child, matching fixtures/tab_new_page.json by hand (typed), not loaded from it. Tests: crates/hydrus-gui/tests/gui/search_pages_menu.rs:249 the_pages_menu_makes_download_special_and_search_pages_and_shows_them"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "gui/pages_menu_new_pages.rs pages_menu_entries_open_the_pages_the_reference_opened_where_it_opened_them chooses the entry from the real pages menu, with the current page a search page and with it a page of pages (the new page goes inside the deepest one), and compares the notebook tree afterwards (each page's name, type, pages, and for a search page the file domains it searches) and which tabs are current with new_page_menu.json, recorded by triggering the reference's own pages menu actions (oracle/record_new_page_menu.py). The new page of pages comes with one blank 'files' page, selected, as recorded. What is inside a new downloader or duplicates page is not part of the recording."
    }
   },
   {
@@ -15527,10 +15527,10 @@
     "This assesses page creation, not full importer/duplicates sidebar parity."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Real menu creates a 'simple downloader' page of kind Simple, shown and persisted; name typed from the source defaults. The recording main_menu.json only fixes the menu label. Tests: crates/hydrus-gui/tests/gui/search_pages_menu.rs:413"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "gui/pages_menu_new_pages.rs pages_menu_entries_open_the_pages_the_reference_opened_where_it_opened_them chooses the entry from the real pages menu, with the current page a search page and with it a page of pages (the new page goes inside the deepest one), and compares the notebook tree afterwards (each page's name, type, pages, and for a search page the file domains it searches) and which tabs are current with new_page_menu.json, recorded by triggering the reference's own pages menu actions (oracle/record_new_page_menu.py). The page is named 'simple downloader' and typed as the reference types it. What is inside a new downloader or duplicates page is not part of the recording."
    }
   },
   {
@@ -15546,10 +15546,10 @@
     "Creates the requested 'new url download page' page through Pages::new_page with a new page key, persisted queue/importer state where required, and the selected file-domain context for searches. The resulting page is shown and included in session synchronization."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Real menu creates a Downloader/Urls page named 'url import' (typed from ClientGUIPageManager.py:145), shown; not recorded. Tests: crates/hydrus-gui/tests/gui/search_pages_menu.rs:249"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "gui/pages_menu_new_pages.rs pages_menu_entries_open_the_pages_the_reference_opened_where_it_opened_them chooses the entry from the real pages menu, with the current page a search page and with it a page of pages (the new page goes inside the deepest one), and compares the notebook tree afterwards (each page's name, type, pages, and for a search page the file domains it searches) and which tabs are current with new_page_menu.json, recorded by triggering the reference's own pages menu actions (oracle/record_new_page_menu.py). The page is named 'url import' and typed as recorded. What is inside a new downloader or duplicates page is not part of the recording."
    }
   },
   {
@@ -15566,10 +15566,10 @@
     "This assesses page creation, not full importer/duplicates sidebar parity."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Drives the real Pages > download menu (item order is in the main_menu recording) and checks a Watchers page named 'watcher' is added and shown; the name and kind are restated from ClientGUIPageManager.py, no recording of page creation. Persisted importer state and session sync named in the tracker note are not tested. Tests: crates/hydrus-gui/tests/gui/search_pages_menu.rs:412 the_download_and_special_menus_make_each_kind_of_page...; crates/hydrus-gui/tests/gui/menu_bar.rs:~140 the_bar_s_menus_open_and_do_what_they_say"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "gui/pages_menu_new_pages.rs pages_menu_entries_open_the_pages_the_reference_opened_where_it_opened_them chooses the entry from the real pages menu, with the current page a search page and with it a page of pages (the new page goes inside the deepest one), and compares the notebook tree afterwards (each page's name, type, pages, and for a search page the file domains it searches) and which tabs are current with new_page_menu.json, recorded by triggering the reference's own pages menu actions (oracle/record_new_page_menu.py). The page is named 'watcher' and typed as recorded. What is inside a new downloader or duplicates page is not part of the recording."
    }
   },
   {

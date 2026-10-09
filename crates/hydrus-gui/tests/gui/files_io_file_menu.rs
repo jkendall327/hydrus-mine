@@ -288,6 +288,9 @@ fn import_folders_are_paused_and_checked_from_the_file_menu_and_the_worker_obeys
             folder.settings.last_modified_time_skip_period = 0;
             folder.settings.actions = hydrus_parse::folders::FolderActions::default();
             import_folders::set_settings(ctx.conn(), folder.id(), &folder.settings)?;
+            // (paused by hand: checking it from the menu is to unpause it, or
+            // the worker below would never look at it)
+            hydrus_store::queues::set_paused(ctx.conn(), folder.id(), Some(true), None)?;
             let mut second = folder.settings.clone();
             second.path = std::env::temp_dir().to_string_lossy().into_owned();
             import_folders::create_import_folder(
@@ -335,6 +338,14 @@ fn import_folders_are_paused_and_checked_from_the_file_menu_and_the_worker_obeys
         ],
     );
     assert!(checks(&store).iter().all(|c| c.1), "all of them");
+    assert!(
+        store
+            .read(import_folders::import_folders)
+            .unwrap()
+            .iter()
+            .all(|f| !f.paused()),
+        "checking unpauses"
+    );
     // (only the one the worker is to look at stays flagged)
     store
         .write(|ctx| {

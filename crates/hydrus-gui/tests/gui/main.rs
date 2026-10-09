@@ -88,6 +88,7 @@ mod options_window;
 mod page_chooser_options;
 mod page_navigation_options;
 mod page_scroll;
+mod pages_menu_new_pages;
 mod parser_content_kinds;
 mod physical_delete_delay;
 mod popup_freeze;

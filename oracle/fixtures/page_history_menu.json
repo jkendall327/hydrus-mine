@@ -1,0 +1,469 @@
+{
+ "names": [
+  "one",
+  "two",
+  "three",
+  "four",
+  "five"
+ ],
+ "steps": [
+  {
+   "current": "one",
+   "entries": [
+    {
+     "bold": true,
+     "text": "1: one"
+    },
+    "---",
+    {
+     "bold": false,
+     "text": "Clear History"
+    }
+   ],
+   "step": [
+    "show",
+    "one"
+   ]
+  },
+  {
+   "current": "two",
+   "entries": [
+    {
+     "bold": true,
+     "text": "1: two"
+    },
+    {
+     "bold": false,
+     "text": "2: one"
+    },
+    "---",
+    {
+     "bold": false,
+     "text": "Clear History"
+    }
+   ],
+   "step": [
+    "show",
+    "two"
+   ]
+  },
+  {
+   "current": "three",
+   "entries": [
+    {
+     "bold": true,
+     "text": "1: three"
+    },
+    {
+     "bold": false,
+     "text": "2: two"
+    },
+    {
+     "bold": false,
+     "text": "3: one"
+    },
+    "---",
+    {
+     "bold": false,
+     "text": "Clear History"
+    }
+   ],
+   "step": [
+    "show",
+    "three"
+   ]
+  },
+  {
+   "current": "one",
+   "entries": [
+    {
+     "bold": true,
+     "text": "1: one"
+    },
+    {
+     "bold": false,
+     "text": "2: three"
+    },
+    {
+     "bold": false,
+     "text": "3: two"
+    },
+    "---",
+    {
+     "bold": false,
+     "text": "Clear History"
+    }
+   ],
+   "step": [
+    "show",
+    "one"
+   ]
+  },
+  {
+   "current": "five",
+   "entries": [
+    {
+     "bold": true,
+     "text": "1: five"
+    },
+    {
+     "bold": false,
+     "text": "2: one"
+    },
+    {
+     "bold": false,
+     "text": "3: three"
+    },
+    {
+     "bold": false,
+     "text": "4: two"
+    },
+    "---",
+    {
+     "bold": false,
+     "text": "Clear History"
+    }
+   ],
+   "step": [
+    "show",
+    "five"
+   ]
+  },
+  {
+   "current": "three",
+   "entries": [
+    {
+     "bold": true,
+     "text": "1: three"
+    },
+    {
+     "bold": false,
+     "text": "2: five"
+    },
+    {
+     "bold": false,
+     "text": "3: one"
+    },
+    {
+     "bold": false,
+     "text": "4: two"
+    },
+    "---",
+    {
+     "bold": false,
+     "text": "Clear History"
+    }
+   ],
+   "step": [
+    "show",
+    "three"
+   ]
+  },
+  {
+   "current": "one",
+   "entries": [
+    {
+     "bold": true,
+     "text": "1: one"
+    },
+    {
+     "bold": false,
+     "text": "2: three"
+    },
+    {
+     "bold": false,
+     "text": "3: five"
+    },
+    {
+     "bold": false,
+     "text": "4: two"
+    },
+    "---",
+    {
+     "bold": false,
+     "text": "Clear History"
+    }
+   ],
+   "step": [
+    "choose",
+    3
+   ]
+  },
+  {
+   "current": "one",
+   "entries": [
+    {
+     "bold": true,
+     "text": "1: one"
+    },
+    {
+     "bold": false,
+     "text": "2: three"
+    },
+    {
+     "bold": false,
+     "text": "3: five"
+    },
+    {
+     "bold": false,
+     "text": "4: two"
+    },
+    "---",
+    {
+     "bold": false,
+     "text": "Clear History"
+    }
+   ],
+   "step": [
+    "choose",
+    1
+   ]
+  },
+  {
+   "current": "two",
+   "entries": [
+    {
+     "bold": true,
+     "text": "1: two"
+    },
+    {
+     "bold": false,
+     "text": "2: one"
+    },
+    {
+     "bold": false,
+     "text": "3: three"
+    },
+    {
+     "bold": false,
+     "text": "4: five"
+    },
+    "---",
+    {
+     "bold": false,
+     "text": "Clear History"
+    }
+   ],
+   "step": [
+    "choose",
+    4
+   ]
+  },
+  {
+   "current": "two",
+   "entries": [
+    {
+     "bold": true,
+     "text": "1: two"
+    },
+    {
+     "bold": false,
+     "text": "2: one"
+    },
+    {
+     "bold": false,
+     "text": "3: three"
+    },
+    "---",
+    {
+     "bold": false,
+     "text": "Clear History"
+    }
+   ],
+   "step": [
+    "max",
+    3
+   ]
+  },
+  {
+   "current": "two",
+   "entries": [
+    {
+     "bold": true,
+     "text": "1: two"
+    },
+    {
+     "bold": false,
+     "text": "2: one"
+    },
+    {
+     "bold": false,
+     "text": "3: three"
+    },
+    "---",
+    {
+     "bold": false,
+     "text": "Clear History"
+    }
+   ],
+   "step": [
+    "show",
+    "two"
+   ]
+  },
+  {
+   "current": "two",
+   "entries": [
+    {
+     "bold": true,
+     "text": "1: two"
+    },
+    {
+     "bold": false,
+     "text": "2: one"
+    },
+    {
+     "bold": false,
+     "text": "3: three"
+    },
+    {
+     "bold": false,
+     "text": "4: five"
+    },
+    "---",
+    {
+     "bold": false,
+     "text": "Clear History"
+    }
+   ],
+   "step": [
+    "max",
+    20
+   ]
+  },
+  {
+   "current": "four",
+   "entries": [
+    {
+     "bold": true,
+     "text": "1: four"
+    },
+    {
+     "bold": false,
+     "text": "2: two"
+    },
+    {
+     "bold": false,
+     "text": "3: one"
+    },
+    {
+     "bold": false,
+     "text": "4: five"
+    },
+    "---",
+    {
+     "bold": false,
+     "text": "Clear History"
+    }
+   ],
+   "step": [
+    "close",
+    "three"
+   ]
+  },
+  {
+   "current": "four",
+   "entries": [
+    {
+     "bold": true,
+     "text": "1: four"
+    },
+    {
+     "bold": false,
+     "text": "2: one"
+    },
+    {
+     "bold": false,
+     "text": "3: five"
+    },
+    "---",
+    {
+     "bold": false,
+     "text": "Clear History"
+    }
+   ],
+   "step": [
+    "close",
+    "two"
+   ]
+  },
+  {
+   "current": "four",
+   "entries": [
+    {
+     "bold": true,
+     "text": "1: four"
+    },
+    {
+     "bold": false,
+     "text": "2: one"
+    },
+    {
+     "bold": false,
+     "text": "3: five"
+    },
+    "---",
+    {
+     "bold": false,
+     "text": "Clear History"
+    }
+   ],
+   "step": [
+    "show",
+    "four"
+   ]
+  },
+  {
+   "current": "four",
+   "entries": [
+    {
+     "bold": false,
+     "text": "Clear History"
+    }
+   ],
+   "step": [
+    "clear"
+   ]
+  },
+  {
+   "current": "five",
+   "entries": [
+    {
+     "bold": true,
+     "text": "1: five"
+    },
+    "---",
+    {
+     "bold": false,
+     "text": "Clear History"
+    }
+   ],
+   "step": [
+    "show",
+    "five"
+   ]
+  },
+  {
+   "current": "one",
+   "entries": [
+    {
+     "bold": true,
+     "text": "1: one"
+    },
+    {
+     "bold": false,
+     "text": "2: five"
+    },
+    "---",
+    {
+     "bold": false,
+     "text": "Clear History"
+    }
+   ],
+   "step": [
+    "show",
+    "one"
+   ]
+  }
+ ]
+}
