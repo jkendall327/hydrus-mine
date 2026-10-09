@@ -631,7 +631,7 @@ fn relationship(action: RuleAction) -> hydrus_store::duplicates::PairRelationshi
 fn read_rule(window: &AutoResolutionRuleWindow, store: &Store, state: &mut RuleState) {
     state.errors.clear();
     let rule = &mut state.rule;
-    window.get_name().trim().clone_into(&mut rule.name);
+    window.get_name().as_str().clone_into(&mut rule.name);
     rule.paused = window.get_paused();
     if let Some(c) = usize::try_from(window.get_operation())
         .ok()

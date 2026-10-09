@@ -1,0 +1,678 @@
+{
+ "rule": "pixel-perfect gifs vs pngs",
+ "start": {
+  "label": "Found 10 pairs.",
+  "rows": [
+   [
+    "b3f62f19da738731be45dbdf0a7bf76a76898584d20add4defa3d9856aaccf83",
+    "6887295caca6074b4634e8d1bba1ebcf3ade6be554c4d09a5bd4514392e9ed3c"
+   ],
+   [
+    "6cd48497a6ddf1c2fb116b61a234692db78387ddc0bcd501c79c9d97a5753add",
+    "94d843848915f5b3bbd07d1d2ef251b3fb417a675d8563178eb359ee1b046460"
+   ],
+   [
+    "d17cfbec55c579015262906e2bcb2cba16c022c9c33395d34e67f4c10d3cf671",
+    "e6fc343a8256954a180ff713e3392101b2fe7e86b45d8f44a07aaa256d499674"
+   ],
+   [
+    "d17cfbec55c579015262906e2bcb2cba16c022c9c33395d34e67f4c10d3cf671",
+    "3f229242c6df9c9e058e3707e51ffc0ccc96ab60f4ca8bf3e77626025908193c"
+   ],
+   [
+    "d17cfbec55c579015262906e2bcb2cba16c022c9c33395d34e67f4c10d3cf671",
+    "0daf04aa2b974fe35b1b6ade41f0998dc3b0ef033cbc7418a730a4bd64f9ecbe"
+   ],
+   [
+    "d17cfbec55c579015262906e2bcb2cba16c022c9c33395d34e67f4c10d3cf671",
+    "6cd48497a6ddf1c2fb116b61a234692db78387ddc0bcd501c79c9d97a5753add"
+   ],
+   [
+    "d17cfbec55c579015262906e2bcb2cba16c022c9c33395d34e67f4c10d3cf671",
+    "94d843848915f5b3bbd07d1d2ef251b3fb417a675d8563178eb359ee1b046460"
+   ],
+   [
+    "e6fc343a8256954a180ff713e3392101b2fe7e86b45d8f44a07aaa256d499674",
+    "3f229242c6df9c9e058e3707e51ffc0ccc96ab60f4ca8bf3e77626025908193c"
+   ],
+   [
+    "e6fc343a8256954a180ff713e3392101b2fe7e86b45d8f44a07aaa256d499674",
+    "0daf04aa2b974fe35b1b6ade41f0998dc3b0ef033cbc7418a730a4bd64f9ecbe"
+   ],
+   [
+    "e6fc343a8256954a180ff713e3392101b2fe7e86b45d8f44a07aaa256d499674",
+    "6cd48497a6ddf1c2fb116b61a234692db78387ddc0bcd501c79c9d97a5753add"
+   ]
+  ],
+  "selected": 0,
+  "actioned": "initialising",
+  "denied": "Found 1 pairs.",
+  "approve_enabled": false,
+  "deny_enabled": false,
+  "select_all_enabled": true
+ },
+ "fetch_box": {
+  "value": 250,
+  "none_phrase": "fetch all",
+  "minimum": 1,
+  "row_label": "only sample this many: "
+ },
+ "fetches": [
+  {
+   "label": "Found 1 pairs.",
+   "rows": [
+    [
+     "b3f62f19da738731be45dbdf0a7bf76a76898584d20add4defa3d9856aaccf83",
+     "6887295caca6074b4634e8d1bba1ebcf3ade6be554c4d09a5bd4514392e9ed3c"
+    ]
+   ],
+   "selected": 0,
+   "actioned": "initialising",
+   "denied": "Found 1 pairs.",
+   "approve_enabled": false,
+   "deny_enabled": false,
+   "select_all_enabled": true,
+   "limit": 1
+  },
+  {
+   "label": "Found 7 pairs.",
+   "rows": [
+    [
+     "b3f62f19da738731be45dbdf0a7bf76a76898584d20add4defa3d9856aaccf83",
+     "6887295caca6074b4634e8d1bba1ebcf3ade6be554c4d09a5bd4514392e9ed3c"
+    ],
+    [
+     "6cd48497a6ddf1c2fb116b61a234692db78387ddc0bcd501c79c9d97a5753add",
+     "94d843848915f5b3bbd07d1d2ef251b3fb417a675d8563178eb359ee1b046460"
+    ],
+    [
+     "d17cfbec55c579015262906e2bcb2cba16c022c9c33395d34e67f4c10d3cf671",
+     "e6fc343a8256954a180ff713e3392101b2fe7e86b45d8f44a07aaa256d499674"
+    ],
+    [
+     "d17cfbec55c579015262906e2bcb2cba16c022c9c33395d34e67f4c10d3cf671",
+     "3f229242c6df9c9e058e3707e51ffc0ccc96ab60f4ca8bf3e77626025908193c"
+    ],
+    [
+     "d17cfbec55c579015262906e2bcb2cba16c022c9c33395d34e67f4c10d3cf671",
+     "0daf04aa2b974fe35b1b6ade41f0998dc3b0ef033cbc7418a730a4bd64f9ecbe"
+    ],
+    [
+     "d17cfbec55c579015262906e2bcb2cba16c022c9c33395d34e67f4c10d3cf671",
+     "6cd48497a6ddf1c2fb116b61a234692db78387ddc0bcd501c79c9d97a5753add"
+    ],
+    [
+     "d17cfbec55c579015262906e2bcb2cba16c022c9c33395d34e67f4c10d3cf671",
+     "94d843848915f5b3bbd07d1d2ef251b3fb417a675d8563178eb359ee1b046460"
+    ]
+   ],
+   "selected": 0,
+   "actioned": "initialising",
+   "denied": "Found 1 pairs.",
+   "approve_enabled": false,
+   "deny_enabled": false,
+   "select_all_enabled": true,
+   "limit": 7
+  },
+  {
+   "label": "Found 10 pairs.",
+   "rows": [
+    [
+     "b3f62f19da738731be45dbdf0a7bf76a76898584d20add4defa3d9856aaccf83",
+     "6887295caca6074b4634e8d1bba1ebcf3ade6be554c4d09a5bd4514392e9ed3c"
+    ],
+    [
+     "6cd48497a6ddf1c2fb116b61a234692db78387ddc0bcd501c79c9d97a5753add",
+     "94d843848915f5b3bbd07d1d2ef251b3fb417a675d8563178eb359ee1b046460"
+    ],
+    [
+     "d17cfbec55c579015262906e2bcb2cba16c022c9c33395d34e67f4c10d3cf671",
+     "e6fc343a8256954a180ff713e3392101b2fe7e86b45d8f44a07aaa256d499674"
+    ],
+    [
+     "d17cfbec55c579015262906e2bcb2cba16c022c9c33395d34e67f4c10d3cf671",
+     "3f229242c6df9c9e058e3707e51ffc0ccc96ab60f4ca8bf3e77626025908193c"
+    ],
+    [
+     "d17cfbec55c579015262906e2bcb2cba16c022c9c33395d34e67f4c10d3cf671",
+     "0daf04aa2b974fe35b1b6ade41f0998dc3b0ef033cbc7418a730a4bd64f9ecbe"
+    ],
+    [
+     "d17cfbec55c579015262906e2bcb2cba16c022c9c33395d34e67f4c10d3cf671",
+     "6cd48497a6ddf1c2fb116b61a234692db78387ddc0bcd501c79c9d97a5753add"
+    ],
+    [
+     "d17cfbec55c579015262906e2bcb2cba16c022c9c33395d34e67f4c10d3cf671",
+     "94d843848915f5b3bbd07d1d2ef251b3fb417a675d8563178eb359ee1b046460"
+    ],
+    [
+     "e6fc343a8256954a180ff713e3392101b2fe7e86b45d8f44a07aaa256d499674",
+     "3f229242c6df9c9e058e3707e51ffc0ccc96ab60f4ca8bf3e77626025908193c"
+    ],
+    [
+     "e6fc343a8256954a180ff713e3392101b2fe7e86b45d8f44a07aaa256d499674",
+     "0daf04aa2b974fe35b1b6ade41f0998dc3b0ef033cbc7418a730a4bd64f9ecbe"
+    ],
+    [
+     "e6fc343a8256954a180ff713e3392101b2fe7e86b45d8f44a07aaa256d499674",
+     "6cd48497a6ddf1c2fb116b61a234692db78387ddc0bcd501c79c9d97a5753add"
+    ]
+   ],
+   "selected": 0,
+   "actioned": "initialising",
+   "denied": "Found 1 pairs.",
+   "approve_enabled": false,
+   "deny_enabled": false,
+   "select_all_enabled": true,
+   "limit": 10
+  },
+  {
+   "label": "Found 10 pairs.",
+   "rows": [
+    [
+     "b3f62f19da738731be45dbdf0a7bf76a76898584d20add4defa3d9856aaccf83",
+     "6887295caca6074b4634e8d1bba1ebcf3ade6be554c4d09a5bd4514392e9ed3c"
+    ],
+    [
+     "6cd48497a6ddf1c2fb116b61a234692db78387ddc0bcd501c79c9d97a5753add",
+     "94d843848915f5b3bbd07d1d2ef251b3fb417a675d8563178eb359ee1b046460"
+    ],
+    [
+     "d17cfbec55c579015262906e2bcb2cba16c022c9c33395d34e67f4c10d3cf671",
+     "e6fc343a8256954a180ff713e3392101b2fe7e86b45d8f44a07aaa256d499674"
+    ],
+    [
+     "d17cfbec55c579015262906e2bcb2cba16c022c9c33395d34e67f4c10d3cf671",
+     "3f229242c6df9c9e058e3707e51ffc0ccc96ab60f4ca8bf3e77626025908193c"
+    ],
+    [
+     "d17cfbec55c579015262906e2bcb2cba16c022c9c33395d34e67f4c10d3cf671",
+     "0daf04aa2b974fe35b1b6ade41f0998dc3b0ef033cbc7418a730a4bd64f9ecbe"
+    ],
+    [
+     "d17cfbec55c579015262906e2bcb2cba16c022c9c33395d34e67f4c10d3cf671",
+     "6cd48497a6ddf1c2fb116b61a234692db78387ddc0bcd501c79c9d97a5753add"
+    ],
+    [
+     "d17cfbec55c579015262906e2bcb2cba16c022c9c33395d34e67f4c10d3cf671",
+     "94d843848915f5b3bbd07d1d2ef251b3fb417a675d8563178eb359ee1b046460"
+    ],
+    [
+     "e6fc343a8256954a180ff713e3392101b2fe7e86b45d8f44a07aaa256d499674",
+     "3f229242c6df9c9e058e3707e51ffc0ccc96ab60f4ca8bf3e77626025908193c"
+    ],
+    [
+     "e6fc343a8256954a180ff713e3392101b2fe7e86b45d8f44a07aaa256d499674",
+     "0daf04aa2b974fe35b1b6ade41f0998dc3b0ef033cbc7418a730a4bd64f9ecbe"
+    ],
+    [
+     "e6fc343a8256954a180ff713e3392101b2fe7e86b45d8f44a07aaa256d499674",
+     "6cd48497a6ddf1c2fb116b61a234692db78387ddc0bcd501c79c9d97a5753add"
+    ]
+   ],
+   "selected": 0,
+   "actioned": "initialising",
+   "denied": "Found 1 pairs.",
+   "approve_enabled": false,
+   "deny_enabled": false,
+   "select_all_enabled": true,
+   "limit": 11
+  },
+  {
+   "label": "Found 10 pairs.",
+   "rows": [
+    [
+     "b3f62f19da738731be45dbdf0a7bf76a76898584d20add4defa3d9856aaccf83",
+     "6887295caca6074b4634e8d1bba1ebcf3ade6be554c4d09a5bd4514392e9ed3c"
+    ],
+    [
+     "6cd48497a6ddf1c2fb116b61a234692db78387ddc0bcd501c79c9d97a5753add",
+     "94d843848915f5b3bbd07d1d2ef251b3fb417a675d8563178eb359ee1b046460"
+    ],
+    [
+     "d17cfbec55c579015262906e2bcb2cba16c022c9c33395d34e67f4c10d3cf671",
+     "e6fc343a8256954a180ff713e3392101b2fe7e86b45d8f44a07aaa256d499674"
+    ],
+    [
+     "d17cfbec55c579015262906e2bcb2cba16c022c9c33395d34e67f4c10d3cf671",
+     "3f229242c6df9c9e058e3707e51ffc0ccc96ab60f4ca8bf3e77626025908193c"
+    ],
+    [
+     "d17cfbec55c579015262906e2bcb2cba16c022c9c33395d34e67f4c10d3cf671",
+     "0daf04aa2b974fe35b1b6ade41f0998dc3b0ef033cbc7418a730a4bd64f9ecbe"
+    ],
+    [
+     "d17cfbec55c579015262906e2bcb2cba16c022c9c33395d34e67f4c10d3cf671",
+     "6cd48497a6ddf1c2fb116b61a234692db78387ddc0bcd501c79c9d97a5753add"
+    ],
+    [
+     "d17cfbec55c579015262906e2bcb2cba16c022c9c33395d34e67f4c10d3cf671",
+     "94d843848915f5b3bbd07d1d2ef251b3fb417a675d8563178eb359ee1b046460"
+    ],
+    [
+     "e6fc343a8256954a180ff713e3392101b2fe7e86b45d8f44a07aaa256d499674",
+     "3f229242c6df9c9e058e3707e51ffc0ccc96ab60f4ca8bf3e77626025908193c"
+    ],
+    [
+     "e6fc343a8256954a180ff713e3392101b2fe7e86b45d8f44a07aaa256d499674",
+     "0daf04aa2b974fe35b1b6ade41f0998dc3b0ef033cbc7418a730a4bd64f9ecbe"
+    ],
+    [
+     "e6fc343a8256954a180ff713e3392101b2fe7e86b45d8f44a07aaa256d499674",
+     "6cd48497a6ddf1c2fb116b61a234692db78387ddc0bcd501c79c9d97a5753add"
+    ]
+   ],
+   "selected": 0,
+   "actioned": "initialising",
+   "denied": "Found 1 pairs.",
+   "approve_enabled": false,
+   "deny_enabled": false,
+   "select_all_enabled": true,
+   "limit": null
+  },
+  {
+   "label": "Found 10 pairs.",
+   "rows": [
+    [
+     "b3f62f19da738731be45dbdf0a7bf76a76898584d20add4defa3d9856aaccf83",
+     "6887295caca6074b4634e8d1bba1ebcf3ade6be554c4d09a5bd4514392e9ed3c"
+    ],
+    [
+     "6cd48497a6ddf1c2fb116b61a234692db78387ddc0bcd501c79c9d97a5753add",
+     "94d843848915f5b3bbd07d1d2ef251b3fb417a675d8563178eb359ee1b046460"
+    ],
+    [
+     "d17cfbec55c579015262906e2bcb2cba16c022c9c33395d34e67f4c10d3cf671",
+     "e6fc343a8256954a180ff713e3392101b2fe7e86b45d8f44a07aaa256d499674"
+    ],
+    [
+     "d17cfbec55c579015262906e2bcb2cba16c022c9c33395d34e67f4c10d3cf671",
+     "3f229242c6df9c9e058e3707e51ffc0ccc96ab60f4ca8bf3e77626025908193c"
+    ],
+    [
+     "d17cfbec55c579015262906e2bcb2cba16c022c9c33395d34e67f4c10d3cf671",
+     "0daf04aa2b974fe35b1b6ade41f0998dc3b0ef033cbc7418a730a4bd64f9ecbe"
+    ],
+    [
+     "d17cfbec55c579015262906e2bcb2cba16c022c9c33395d34e67f4c10d3cf671",
+     "6cd48497a6ddf1c2fb116b61a234692db78387ddc0bcd501c79c9d97a5753add"
+    ],
+    [
+     "d17cfbec55c579015262906e2bcb2cba16c022c9c33395d34e67f4c10d3cf671",
+     "94d843848915f5b3bbd07d1d2ef251b3fb417a675d8563178eb359ee1b046460"
+    ],
+    [
+     "e6fc343a8256954a180ff713e3392101b2fe7e86b45d8f44a07aaa256d499674",
+     "3f229242c6df9c9e058e3707e51ffc0ccc96ab60f4ca8bf3e77626025908193c"
+    ],
+    [
+     "e6fc343a8256954a180ff713e3392101b2fe7e86b45d8f44a07aaa256d499674",
+     "0daf04aa2b974fe35b1b6ade41f0998dc3b0ef033cbc7418a730a4bd64f9ecbe"
+    ],
+    [
+     "e6fc343a8256954a180ff713e3392101b2fe7e86b45d8f44a07aaa256d499674",
+     "6cd48497a6ddf1c2fb116b61a234692db78387ddc0bcd501c79c9d97a5753add"
+    ]
+   ],
+   "selected": 0,
+   "actioned": "initialising",
+   "denied": "Found 1 pairs.",
+   "approve_enabled": false,
+   "deny_enabled": false,
+   "select_all_enabled": true,
+   "limit": 250
+  }
+ ],
+ "select_all": {
+  "label": "Found 10 pairs.",
+  "rows": [
+   [
+    "b3f62f19da738731be45dbdf0a7bf76a76898584d20add4defa3d9856aaccf83",
+    "6887295caca6074b4634e8d1bba1ebcf3ade6be554c4d09a5bd4514392e9ed3c"
+   ],
+   [
+    "6cd48497a6ddf1c2fb116b61a234692db78387ddc0bcd501c79c9d97a5753add",
+    "94d843848915f5b3bbd07d1d2ef251b3fb417a675d8563178eb359ee1b046460"
+   ],
+   [
+    "d17cfbec55c579015262906e2bcb2cba16c022c9c33395d34e67f4c10d3cf671",
+    "e6fc343a8256954a180ff713e3392101b2fe7e86b45d8f44a07aaa256d499674"
+   ],
+   [
+    "d17cfbec55c579015262906e2bcb2cba16c022c9c33395d34e67f4c10d3cf671",
+    "3f229242c6df9c9e058e3707e51ffc0ccc96ab60f4ca8bf3e77626025908193c"
+   ],
+   [
+    "d17cfbec55c579015262906e2bcb2cba16c022c9c33395d34e67f4c10d3cf671",
+    "0daf04aa2b974fe35b1b6ade41f0998dc3b0ef033cbc7418a730a4bd64f9ecbe"
+   ],
+   [
+    "d17cfbec55c579015262906e2bcb2cba16c022c9c33395d34e67f4c10d3cf671",
+    "6cd48497a6ddf1c2fb116b61a234692db78387ddc0bcd501c79c9d97a5753add"
+   ],
+   [
+    "d17cfbec55c579015262906e2bcb2cba16c022c9c33395d34e67f4c10d3cf671",
+    "94d843848915f5b3bbd07d1d2ef251b3fb417a675d8563178eb359ee1b046460"
+   ],
+   [
+    "e6fc343a8256954a180ff713e3392101b2fe7e86b45d8f44a07aaa256d499674",
+    "3f229242c6df9c9e058e3707e51ffc0ccc96ab60f4ca8bf3e77626025908193c"
+   ],
+   [
+    "e6fc343a8256954a180ff713e3392101b2fe7e86b45d8f44a07aaa256d499674",
+    "0daf04aa2b974fe35b1b6ade41f0998dc3b0ef033cbc7418a730a4bd64f9ecbe"
+   ],
+   [
+    "e6fc343a8256954a180ff713e3392101b2fe7e86b45d8f44a07aaa256d499674",
+    "6cd48497a6ddf1c2fb116b61a234692db78387ddc0bcd501c79c9d97a5753add"
+   ]
+  ],
+  "selected": 10,
+  "actioned": "initialising",
+  "denied": "Found 1 pairs.",
+  "approve_enabled": true,
+  "deny_enabled": true,
+  "select_all_enabled": false
+ },
+ "steps": [
+  {
+   "button": "approve",
+   "rows": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6
+   ],
+   "answer": "no",
+   "asked": [
+    {
+     "message": "Are you sure you want to approve the 7 pairs?",
+     "pressed": "no"
+    }
+   ],
+   "before_rows": [
+    [
+     "b3f62f19da738731be45dbdf0a7bf76a76898584d20add4defa3d9856aaccf83",
+     "6887295caca6074b4634e8d1bba1ebcf3ade6be554c4d09a5bd4514392e9ed3c"
+    ],
+    [
+     "6cd48497a6ddf1c2fb116b61a234692db78387ddc0bcd501c79c9d97a5753add",
+     "94d843848915f5b3bbd07d1d2ef251b3fb417a675d8563178eb359ee1b046460"
+    ],
+    [
+     "d17cfbec55c579015262906e2bcb2cba16c022c9c33395d34e67f4c10d3cf671",
+     "e6fc343a8256954a180ff713e3392101b2fe7e86b45d8f44a07aaa256d499674"
+    ],
+    [
+     "d17cfbec55c579015262906e2bcb2cba16c022c9c33395d34e67f4c10d3cf671",
+     "3f229242c6df9c9e058e3707e51ffc0ccc96ab60f4ca8bf3e77626025908193c"
+    ],
+    [
+     "d17cfbec55c579015262906e2bcb2cba16c022c9c33395d34e67f4c10d3cf671",
+     "0daf04aa2b974fe35b1b6ade41f0998dc3b0ef033cbc7418a730a4bd64f9ecbe"
+    ],
+    [
+     "d17cfbec55c579015262906e2bcb2cba16c022c9c33395d34e67f4c10d3cf671",
+     "6cd48497a6ddf1c2fb116b61a234692db78387ddc0bcd501c79c9d97a5753add"
+    ],
+    [
+     "d17cfbec55c579015262906e2bcb2cba16c022c9c33395d34e67f4c10d3cf671",
+     "94d843848915f5b3bbd07d1d2ef251b3fb417a675d8563178eb359ee1b046460"
+    ],
+    [
+     "e6fc343a8256954a180ff713e3392101b2fe7e86b45d8f44a07aaa256d499674",
+     "3f229242c6df9c9e058e3707e51ffc0ccc96ab60f4ca8bf3e77626025908193c"
+    ],
+    [
+     "e6fc343a8256954a180ff713e3392101b2fe7e86b45d8f44a07aaa256d499674",
+     "0daf04aa2b974fe35b1b6ade41f0998dc3b0ef033cbc7418a730a4bd64f9ecbe"
+    ],
+    [
+     "e6fc343a8256954a180ff713e3392101b2fe7e86b45d8f44a07aaa256d499674",
+     "6cd48497a6ddf1c2fb116b61a234692db78387ddc0bcd501c79c9d97a5753add"
+    ]
+   ],
+   "button_texts": [],
+   "after": {
+    "label": "Found 10 pairs.",
+    "rows": [
+     [
+      "b3f62f19da738731be45dbdf0a7bf76a76898584d20add4defa3d9856aaccf83",
+      "6887295caca6074b4634e8d1bba1ebcf3ade6be554c4d09a5bd4514392e9ed3c"
+     ],
+     [
+      "6cd48497a6ddf1c2fb116b61a234692db78387ddc0bcd501c79c9d97a5753add",
+      "94d843848915f5b3bbd07d1d2ef251b3fb417a675d8563178eb359ee1b046460"
+     ],
+     [
+      "d17cfbec55c579015262906e2bcb2cba16c022c9c33395d34e67f4c10d3cf671",
+      "e6fc343a8256954a180ff713e3392101b2fe7e86b45d8f44a07aaa256d499674"
+     ],
+     [
+      "d17cfbec55c579015262906e2bcb2cba16c022c9c33395d34e67f4c10d3cf671",
+      "3f229242c6df9c9e058e3707e51ffc0ccc96ab60f4ca8bf3e77626025908193c"
+     ],
+     [
+      "d17cfbec55c579015262906e2bcb2cba16c022c9c33395d34e67f4c10d3cf671",
+      "0daf04aa2b974fe35b1b6ade41f0998dc3b0ef033cbc7418a730a4bd64f9ecbe"
+     ],
+     [
+      "d17cfbec55c579015262906e2bcb2cba16c022c9c33395d34e67f4c10d3cf671",
+      "6cd48497a6ddf1c2fb116b61a234692db78387ddc0bcd501c79c9d97a5753add"
+     ],
+     [
+      "d17cfbec55c579015262906e2bcb2cba16c022c9c33395d34e67f4c10d3cf671",
+      "94d843848915f5b3bbd07d1d2ef251b3fb417a675d8563178eb359ee1b046460"
+     ],
+     [
+      "e6fc343a8256954a180ff713e3392101b2fe7e86b45d8f44a07aaa256d499674",
+      "3f229242c6df9c9e058e3707e51ffc0ccc96ab60f4ca8bf3e77626025908193c"
+     ],
+     [
+      "e6fc343a8256954a180ff713e3392101b2fe7e86b45d8f44a07aaa256d499674",
+      "0daf04aa2b974fe35b1b6ade41f0998dc3b0ef033cbc7418a730a4bd64f9ecbe"
+     ],
+     [
+      "e6fc343a8256954a180ff713e3392101b2fe7e86b45d8f44a07aaa256d499674",
+      "6cd48497a6ddf1c2fb116b61a234692db78387ddc0bcd501c79c9d97a5753add"
+     ]
+    ],
+    "selected": 7,
+    "actioned": "initialising",
+    "denied": "Found 1 pairs.",
+    "approve_enabled": true,
+    "deny_enabled": true,
+    "select_all_enabled": true,
+    "database_pending": [
+     [
+      "b3f62f19da738731be45dbdf0a7bf76a76898584d20add4defa3d9856aaccf83",
+      "6887295caca6074b4634e8d1bba1ebcf3ade6be554c4d09a5bd4514392e9ed3c"
+     ],
+     [
+      "6cd48497a6ddf1c2fb116b61a234692db78387ddc0bcd501c79c9d97a5753add",
+      "94d843848915f5b3bbd07d1d2ef251b3fb417a675d8563178eb359ee1b046460"
+     ],
+     [
+      "d17cfbec55c579015262906e2bcb2cba16c022c9c33395d34e67f4c10d3cf671",
+      "e6fc343a8256954a180ff713e3392101b2fe7e86b45d8f44a07aaa256d499674"
+     ],
+     [
+      "d17cfbec55c579015262906e2bcb2cba16c022c9c33395d34e67f4c10d3cf671",
+      "3f229242c6df9c9e058e3707e51ffc0ccc96ab60f4ca8bf3e77626025908193c"
+     ],
+     [
+      "d17cfbec55c579015262906e2bcb2cba16c022c9c33395d34e67f4c10d3cf671",
+      "0daf04aa2b974fe35b1b6ade41f0998dc3b0ef033cbc7418a730a4bd64f9ecbe"
+     ],
+     [
+      "d17cfbec55c579015262906e2bcb2cba16c022c9c33395d34e67f4c10d3cf671",
+      "6cd48497a6ddf1c2fb116b61a234692db78387ddc0bcd501c79c9d97a5753add"
+     ],
+     [
+      "d17cfbec55c579015262906e2bcb2cba16c022c9c33395d34e67f4c10d3cf671",
+      "94d843848915f5b3bbd07d1d2ef251b3fb417a675d8563178eb359ee1b046460"
+     ],
+     [
+      "e6fc343a8256954a180ff713e3392101b2fe7e86b45d8f44a07aaa256d499674",
+      "3f229242c6df9c9e058e3707e51ffc0ccc96ab60f4ca8bf3e77626025908193c"
+     ],
+     [
+      "e6fc343a8256954a180ff713e3392101b2fe7e86b45d8f44a07aaa256d499674",
+      "0daf04aa2b974fe35b1b6ade41f0998dc3b0ef033cbc7418a730a4bd64f9ecbe"
+     ],
+     [
+      "e6fc343a8256954a180ff713e3392101b2fe7e86b45d8f44a07aaa256d499674",
+      "6cd48497a6ddf1c2fb116b61a234692db78387ddc0bcd501c79c9d97a5753add"
+     ]
+    ]
+   },
+   "popups": []
+  },
+  {
+   "button": "approve",
+   "rows": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6
+   ],
+   "answer": "yes",
+   "asked": [
+    {
+     "message": "Are you sure you want to approve the 7 pairs?",
+     "pressed": "yes"
+    }
+   ],
+   "before_rows": [
+    [
+     "b3f62f19da738731be45dbdf0a7bf76a76898584d20add4defa3d9856aaccf83",
+     "6887295caca6074b4634e8d1bba1ebcf3ade6be554c4d09a5bd4514392e9ed3c"
+    ],
+    [
+     "6cd48497a6ddf1c2fb116b61a234692db78387ddc0bcd501c79c9d97a5753add",
+     "94d843848915f5b3bbd07d1d2ef251b3fb417a675d8563178eb359ee1b046460"
+    ],
+    [
+     "d17cfbec55c579015262906e2bcb2cba16c022c9c33395d34e67f4c10d3cf671",
+     "e6fc343a8256954a180ff713e3392101b2fe7e86b45d8f44a07aaa256d499674"
+    ],
+    [
+     "d17cfbec55c579015262906e2bcb2cba16c022c9c33395d34e67f4c10d3cf671",
+     "3f229242c6df9c9e058e3707e51ffc0ccc96ab60f4ca8bf3e77626025908193c"
+    ],
+    [
+     "d17cfbec55c579015262906e2bcb2cba16c022c9c33395d34e67f4c10d3cf671",
+     "0daf04aa2b974fe35b1b6ade41f0998dc3b0ef033cbc7418a730a4bd64f9ecbe"
+    ],
+    [
+     "d17cfbec55c579015262906e2bcb2cba16c022c9c33395d34e67f4c10d3cf671",
+     "6cd48497a6ddf1c2fb116b61a234692db78387ddc0bcd501c79c9d97a5753add"
+    ],
+    [
+     "d17cfbec55c579015262906e2bcb2cba16c022c9c33395d34e67f4c10d3cf671",
+     "94d843848915f5b3bbd07d1d2ef251b3fb417a675d8563178eb359ee1b046460"
+    ],
+    [
+     "e6fc343a8256954a180ff713e3392101b2fe7e86b45d8f44a07aaa256d499674",
+     "3f229242c6df9c9e058e3707e51ffc0ccc96ab60f4ca8bf3e77626025908193c"
+    ],
+    [
+     "e6fc343a8256954a180ff713e3392101b2fe7e86b45d8f44a07aaa256d499674",
+     "0daf04aa2b974fe35b1b6ade41f0998dc3b0ef033cbc7418a730a4bd64f9ecbe"
+    ],
+    [
+     "e6fc343a8256954a180ff713e3392101b2fe7e86b45d8f44a07aaa256d499674",
+     "6cd48497a6ddf1c2fb116b61a234692db78387ddc0bcd501c79c9d97a5753add"
+    ]
+   ],
+   "button_texts": [
+    "approving: 0/7",
+    "approving: 4/7",
+    "approve"
+   ],
+   "after": {
+    "label": "3 pairs remaining.",
+    "rows": [
+     [
+      "e6fc343a8256954a180ff713e3392101b2fe7e86b45d8f44a07aaa256d499674",
+      "3f229242c6df9c9e058e3707e51ffc0ccc96ab60f4ca8bf3e77626025908193c"
+     ],
+     [
+      "e6fc343a8256954a180ff713e3392101b2fe7e86b45d8f44a07aaa256d499674",
+      "0daf04aa2b974fe35b1b6ade41f0998dc3b0ef033cbc7418a730a4bd64f9ecbe"
+     ],
+     [
+      "e6fc343a8256954a180ff713e3392101b2fe7e86b45d8f44a07aaa256d499674",
+      "6cd48497a6ddf1c2fb116b61a234692db78387ddc0bcd501c79c9d97a5753add"
+     ]
+    ],
+    "selected": 1,
+    "actioned": "initialising",
+    "denied": "Found 1 pairs.",
+    "approve_enabled": true,
+    "deny_enabled": true,
+    "select_all_enabled": true,
+    "database_pending": []
+   },
+   "popups": []
+  },
+  {
+   "button": "deny",
+   "rows": [
+    0,
+    1,
+    2
+   ],
+   "answer": "yes",
+   "asked": [],
+   "before_rows": [
+    [
+     "e6fc343a8256954a180ff713e3392101b2fe7e86b45d8f44a07aaa256d499674",
+     "3f229242c6df9c9e058e3707e51ffc0ccc96ab60f4ca8bf3e77626025908193c"
+    ],
+    [
+     "e6fc343a8256954a180ff713e3392101b2fe7e86b45d8f44a07aaa256d499674",
+     "0daf04aa2b974fe35b1b6ade41f0998dc3b0ef033cbc7418a730a4bd64f9ecbe"
+    ],
+    [
+     "e6fc343a8256954a180ff713e3392101b2fe7e86b45d8f44a07aaa256d499674",
+     "6cd48497a6ddf1c2fb116b61a234692db78387ddc0bcd501c79c9d97a5753add"
+    ]
+   ],
+   "button_texts": [
+    "denying: 0/3",
+    "deny"
+   ],
+   "after": {
+    "label": "Found 0 pairs.",
+    "rows": [],
+    "selected": 0,
+    "actioned": "initialising",
+    "denied": "Found 1 pairs.",
+    "approve_enabled": true,
+    "deny_enabled": true,
+    "select_all_enabled": false,
+    "database_pending": []
+   },
+   "popups": []
+  }
+ ],
+ "popups_late": [
+  {
+   "done": true,
+   "dismissed": true,
+   "text": "approving: 4/7"
+  },
+  {
+   "done": true,
+   "dismissed": true,
+   "text": "denying: 0/3"
+  }
+ ]
+}

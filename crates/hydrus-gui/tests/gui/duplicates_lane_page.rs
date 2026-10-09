@@ -86,7 +86,6 @@ fn choices(ui: &MainWindow) -> Vec<String> {
 
 // (numbers and tree regeneration are out of scope: the native store keeps no
 // such caches, so only their questions are shown)
-// leaf: audit-media-preparation-storage-resync
 #[test]
 fn the_preparation_cog_regenerates_numbers_and_tree_and_resyncs_pairs() {
     let Opened {
@@ -277,7 +276,6 @@ fn each_filter_decision_writes_its_relationship_when_committed() {
     assert!(r.false_positives.contains(&b), "false positive");
 }
 
-// leaf: audit-media-review-pending
 #[test]
 fn pending_pairs_are_sampled_refreshed_selected_and_approved() {
     use crate::auto_resolution_review::{listed, opened, review, settle};
@@ -434,7 +432,7 @@ pub(crate) fn list_of(bound: &Bound) -> hydrus_gui::AutoResolutionRulesWindow {
         .clone_strong()
 }
 
-// leaf: audit-media-comparator-hardcoded, audit-media-comparator-relative, audit-media-comparator-visual, audit-media-comparator-and
+// leaf: audit-media-comparator-relative, audit-media-comparator-and
 #[test]
 fn edited_comparators_are_accepted_and_persisted_with_their_summaries() {
     use hydrus_core::search::comparable::Comparable;
@@ -652,7 +650,7 @@ fn rule_rows(ui: &MainWindow) -> Vec<Vec<String>> {
         .collect()
 }
 
-// leaf: audit-media-rule-sidebar-progress, audit-media-rule-sidebar-resets
+// leaf: audit-media-rule-sidebar-progress
 #[test]
 fn the_rules_list_selects_pauses_shows_progress_and_resets_queues() {
     use hydrus_gui_model::duplicates_page::{Reset, reset_question, rule_progress};
@@ -787,7 +785,7 @@ fn edit_row(bound: &Bound, name: &str) -> hydrus_gui::AutoResolutionRuleWindow {
     rule_window(bound)
 }
 
-// leaf: audit-media-rules-list, audit-media-rule-identity, audit-media-duplicate-search-kind, audit-media-duplicate-search-pixels, audit-media-duplicate-search-predicates
+// leaf: audit-media-rules-list, audit-media-duplicate-search-kind, audit-media-duplicate-search-pixels, audit-media-duplicate-search-predicates
 #[test]
 fn rule_identity_and_search_choices_are_staged_then_persisted_on_apply() {
     use hydrus_core::duplicates::PairSearchKind as K;

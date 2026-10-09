@@ -67,7 +67,7 @@ fn choices(editor: &MergeOptionsWindow) -> Vec<String> {
         .collect()
 }
 
-// leaf: audit-media-merge-tags, audit-media-merge-note-settings, audit-media-merge-sync
+// leaf: audit-media-merge-tags, audit-media-merge-sync
 #[test]
 fn the_default_merge_options_are_edited_and_written() {
     let windows = headless::init();

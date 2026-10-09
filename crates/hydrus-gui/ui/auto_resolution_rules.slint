@@ -272,6 +272,9 @@ export component AutoResolutionRuleWindow inherits Window {
     in property <[string]> operation-choices;
     in-out property <bool> no-pending-limit;
     in-out property <int> pending-limit;
+    // the reference's box: on for a semi-automatic rule (its "no limit" tick
+    // and its number, which waits on the tick)
+    out property <bool> pending-limit-enabled: root.operation == 0;
     in-out property <int> tab;
     // search
     in property <string> search-text;
@@ -370,12 +373,12 @@ export component AutoResolutionRuleWindow inherits Window {
             label: "max pending pairs (semi-automatic only): ";
             CheckBox {
                 text: "no limit";
-                enabled: root.operation == 0;
+                enabled: root.pending-limit-enabled;
                 checked <=> root.no-pending-limit;
                 toggled => { root.changed(); }
             }
             SpinBox {
-                enabled: root.operation == 0 && !root.no-pending-limit;
+                enabled: root.pending-limit-enabled && !root.no-pending-limit;
                 minimum: 1;
                 maximum: 1000000;
                 value <=> root.pending-limit;

@@ -591,6 +591,8 @@ pub fn approve(store: &Store, rule_id: i64, pairs: &[(HashId, HashId)]) -> Resul
         action_pair(store, rule_id, &rule, (ga.min(gb), ga.max(gb)), a, b)?;
         n += 1;
     }
+    // pairs between files now in one group are no longer pairs to decide
+    store.write(|ctx| auto::drop_pairs_no_longer_potential(ctx.conn()).map(|_| ()))?;
     Ok(n)
 }
 

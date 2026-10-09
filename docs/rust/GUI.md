@@ -5438,6 +5438,16 @@ daemon's downloads in flight and the client's maintenance passes: above 3 and
 above 8), with the tooltip "There were N threads doing jobs at last check."
 It looks every ten seconds.
 
+## Auto-resolution rule editor: identity, comparators, note settings and resets
+
+A rule's name is kept exactly as typed (the reference does not trim it) and made
+unique case-insensitively against the list's other rules ("new rule (1)"). The
+maximum pending box and its "no limit" tick are enabled only for a semi-automatic
+rule. The one-file hardcoded and visual duplicates comparator editors, the merge
+options' note settings dialog and the tab's reset buttons are replayed against the
+reference's own panels from `oracle/fixtures/auto_resolution_editor.json` and
+`auto_resolution_resets.json`.
+
 ## Duplicate filter: batches, group mode, prefetch and quick processing
 
 The filter's batches, auto-commit, back, group mode (including "You appear to
