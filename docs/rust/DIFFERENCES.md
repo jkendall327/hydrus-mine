@@ -4088,6 +4088,12 @@ change nothing). They are marked out of scope in `docs/rust/tracking/`.
   shown. As in the reference v688, CPU busyness only reaches the status bar.
 - Similar-files search packets search 16 files at a time until the packet time
   passes, so a packet can run over by one batch.
+- Nothing wakes the daemon's worker loops from the GUI's process, so where the
+  reference sleeps ten minutes until woken by new work, auto-resolution (no
+  rule with work left) and file maintenance (no job due) check every minute.
+  Throttled or switched-off file maintenance asks again every second as the
+  reference does, but also when no job is due. A rest between packets is
+  never shorter than a tenth of a second (a 0% rest).
 - The status bar has no "hydrus busy" or database activity fields yet.
 
 ## Thumbnail manage > maintenance

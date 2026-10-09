@@ -102,7 +102,7 @@ impl FileImporter {
     ) -> Result<MaintenanceReport> {
         // Ordinary daemon/CLI work defers on contention. An uncancellable
         // spawn_blocking waiter must not prevent runtime shutdown.
-        self.run_file_maintenance_inner::<false>(
+        self.run_file_maintenance_inner::<false, false>(
             limit,
             max_weight,
             wanted,
@@ -112,6 +112,33 @@ impl FileImporter {
                 before_batch: &mut || Ok(()),
                 before_job: &mut |_| {},
                 committed: &mut |_| {},
+            },
+        )
+    }
+
+    /// One batch of due work (one `GetJobs`), as the background manager
+    /// takes it: `continue_work` is asked before each file (the throttle),
+    /// and `used` is told each file's jobs' weight once they are done. Defers
+    /// if the file lease is busy, as ordinary maintenance does.
+    pub fn run_file_maintenance_batch(
+        &self,
+        continue_work: &dyn Fn() -> bool,
+        used: &mut dyn FnMut(u64),
+    ) -> Result<MaintenanceReport> {
+        let mut last = 0;
+        self.run_file_maintenance_inner::<false, true>(
+            u64::MAX,
+            u64::MAX,
+            &|_| true,
+            None,
+            continue_work,
+            MaintenanceCallbacks {
+                before_batch: &mut || Ok(()),
+                before_job: &mut |_| {},
+                committed: &mut |report: &MaintenanceReport| {
+                    used(report.weight - last);
+                    last = report.weight;
+                },
             },
         )
     }
@@ -126,7 +153,7 @@ impl FileImporter {
         max_weight: u64,
         wanted: &dyn Fn(JobType) -> bool,
     ) -> Result<MaintenanceReport> {
-        self.run_file_maintenance_inner::<false>(
+        self.run_file_maintenance_inner::<false, false>(
             limit,
             max_weight,
             wanted,
@@ -173,7 +200,7 @@ impl FileImporter {
         continue_work: &dyn Fn() -> bool,
         callbacks: MaintenanceCallbacks<'_>,
     ) -> Result<MaintenanceReport> {
-        self.run_file_maintenance_inner::<true>(
+        self.run_file_maintenance_inner::<true, false>(
             limit,
             max_weight,
             wanted,
@@ -194,7 +221,7 @@ impl FileImporter {
         continue_work: &dyn Fn() -> bool,
         callbacks: MaintenanceCallbacks<'_>,
     ) -> Result<MaintenanceReport> {
-        self.run_file_maintenance_inner::<true>(
+        self.run_file_maintenance_inner::<true, false>(
             limit,
             max_weight,
             wanted,
@@ -204,7 +231,7 @@ impl FileImporter {
         )
     }
 
-    fn run_file_maintenance_inner<const WAIT: bool>(
+    fn run_file_maintenance_inner<const WAIT: bool, const ONE_BATCH: bool>(
         &self,
         limit: u64,
         max_weight: u64,
@@ -299,6 +326,9 @@ impl FileImporter {
                 report.bad_files = pass.bad_files;
                 report.redownload.clone_from(&pass.redownload);
                 (committed)(&report);
+            }
+            if ONE_BATCH {
+                break;
             }
         }
         report.bad_files = pass.bad_files;

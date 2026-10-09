@@ -1084,6 +1084,336 @@ fn packet(options: &OptionsWindow, in_box: &str, label: &str, seconds: i32, ms: 
     options.invoke_field_edited(i, 1, ms);
 }
 
+/// The background workers' pace (`oracle/fixtures/maintenance_pace.json`).
+mod pace {
+    use std::time::Duration;
+
+    use serde_json::Value;
+
+    use hydrus_core::HashId;
+    use hydrus_store::Store;
+    use hydrus_store::duplicates::auto::AutoResolutionSettings;
+    use hydrus_store::file_maintenance::{self, FileMaintenanceSettings, JobType};
+    use hydrus_store::similar::SimilarFilesSettings;
+    use hydrus_store::workers::{self, HeldClock, WorkClock as _};
+
+    pub fn recording() -> Value {
+        let path = concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../oracle/fixtures/maintenance_pace.json"
+        );
+        serde_json::from_str(&std::fs::read_to_string(path).unwrap()).unwrap()
+    }
+
+    pub fn int(saved: &Value, key: &str) -> i32 {
+        i32::try_from(saved[key].as_i64().unwrap_or_else(|| panic!("{key}"))).unwrap()
+    }
+
+    pub fn flag(saved: &Value, key: &str) -> bool {
+        saved[key].as_bool().unwrap_or_else(|| panic!("{key}"))
+    }
+
+    /// The settings the workers read, as the reference saved them.
+    pub fn assert_saved(store: &Store, saved: &Value) {
+        let n = |key| u32::try_from(int(saved, key)).unwrap();
+        let similar: SimilarFilesSettings = store.read(hydrus_store::settings::get).unwrap();
+        assert_eq!(
+            (
+                similar.during_idle,
+                similar.during_active,
+                similar.work_time_ms_idle,
+                similar.rest_percentage_idle,
+                similar.work_time_ms_active,
+                similar.rest_percentage_active
+            ),
+            (
+                flag(saved, "maintain_similar_files_duplicate_pairs_during_idle"),
+                flag(
+                    saved,
+                    "maintain_similar_files_duplicate_pairs_during_active"
+                ),
+                n("potential_duplicates_search_work_time_ms_idle"),
+                n("potential_duplicates_search_rest_percentage_idle"),
+                n("potential_duplicates_search_work_time_ms_active"),
+                n("potential_duplicates_search_rest_percentage_active"),
+            )
+        );
+        let auto: AutoResolutionSettings = store.read(hydrus_store::settings::get).unwrap();
+        assert_eq!(
+            (
+                auto.during_idle,
+                auto.during_active,
+                auto.work_time_ms_idle,
+                auto.rest_percentage_idle,
+                auto.work_time_ms_active,
+                auto.rest_percentage_active
+            ),
+            (
+                flag(saved, "duplicates_auto_resolution_during_idle"),
+                flag(saved, "duplicates_auto_resolution_during_active"),
+                n("duplicates_auto_resolution_work_time_ms_idle"),
+                n("duplicates_auto_resolution_rest_percentage_idle"),
+                n("duplicates_auto_resolution_work_time_ms_active"),
+                n("duplicates_auto_resolution_rest_percentage_active"),
+            )
+        );
+        let files: FileMaintenanceSettings = store.read(hydrus_store::settings::get).unwrap();
+        let n = |key| u64::from(n(key));
+        assert_eq!(
+            files,
+            FileMaintenanceSettings {
+                during_idle: flag(saved, "file_maintenance_during_idle"),
+                during_active: flag(saved, "file_maintenance_during_active"),
+                idle_files: n("file_maintenance_idle_throttle_files"),
+                idle_seconds: n("file_maintenance_idle_throttle_time_delta"),
+                active_files: n("file_maintenance_active_throttle_files"),
+                active_seconds: n("file_maintenance_active_throttle_time_delta"),
+            }
+        );
+    }
+
+    fn seconds(value: &Value) -> Duration {
+        Duration::from_secs_f64(value.as_f64().unwrap())
+    }
+
+    /// Everything a recorded pass waited, in all.
+    fn waited(events: &[Value]) -> Duration {
+        events
+            .iter()
+            .filter_map(|e| match e[0].as_str() {
+                Some("sleep") => Some(seconds(&e[1])),
+                Some("wait") => Some(seconds(&e[2])),
+                _ => None,
+            })
+            .sum()
+    }
+
+    /// The packet a recorded pass was given, if it worked.
+    fn worked(events: &[Value]) -> Option<Duration> {
+        events
+            .iter()
+            .find(|e| e[0] == "work")
+            .map(|e| seconds(&e[1]))
+    }
+
+    fn close(native: Duration, reference: Duration, what: &str) {
+        let gap = native.abs_diff(reference);
+        assert!(
+            gap <= Duration::from_millis(1),
+            "{what}: {native:?}, the reference {reference:?}"
+        );
+    }
+
+    /// The GUI's idle state, published as of the clock.
+    fn publish(store: &Store, clock: &HeldClock, idle: bool) {
+        hydrus_store::idle_state::publish(store.dir(), idle, clock.now_ms()).unwrap();
+    }
+
+    /// A recorded potential duplicates search or auto-resolution pass, run
+    /// through the real step: the work takes the recorded share of its packet.
+    pub fn replay_packet(store: &Store, t0_ms: i64, pass: &Value) {
+        let what = format!("{pass}");
+        let events = pass["events"].as_array().unwrap();
+        let idle = pass["idle"].as_bool().unwrap();
+        let share = pass["packet"][0].as_f64().unwrap();
+        let more = pass["packet"][1].as_bool().unwrap();
+        let files = usize::try_from(pass["packet"][2].as_u64().unwrap()).unwrap();
+        let clock = HeldClock::at(t0_ms);
+        publish(store, &clock, idle);
+        let reference_packet = worked(events);
+        let reference_wait = waited(events);
+        match pass["worker"].as_str().unwrap() {
+            "similar" => {
+                // a search packet goes on until its time is up or nothing is
+                // left: the first batch takes the recorded share of the
+                // packet, and a packet that isn't over finds nothing more
+                let calls = std::cell::Cell::new(0);
+                let wait = workers::similar_files_step(store, &clock, |_| {
+                    calls.set(calls.get() + 1);
+                    if calls.get() > 1 {
+                        return Ok(0);
+                    }
+                    clock.advance(reference_packet.unwrap().mul_f64(share));
+                    Ok(files)
+                });
+                if reference_packet.is_none() {
+                    assert_eq!(calls.get(), 0, "held: {what}");
+                    assert_eq!(reference_wait, Duration::from_secs(30), "{what}");
+                    assert_eq!(wait, workers::SIMILAR_FILES_HOLD, "{what}");
+                } else {
+                    // (the packet's end is where the reference's was)
+                    let expected_calls = if more { 1 } else { 2 };
+                    assert_eq!(calls.get(), expected_calls, "{what}");
+                    close(wait, reference_wait, &what);
+                }
+            }
+            "auto" => {
+                let given = std::cell::Cell::new(None);
+                let wait = workers::auto_resolution_step(store, &clock, |_, budget| {
+                    given.set(Some(budget));
+                    clock.advance(budget.mul_f64(share));
+                    Ok(more)
+                });
+                match (reference_packet, given.get()) {
+                    (None, None) => {
+                        close(wait, reference_wait, &what);
+                        assert_eq!(wait, workers::AUTO_RESOLUTION_HOLD);
+                    }
+                    (Some(reference), Some(native)) => {
+                        close(native, reference, &format!("packet: {what}"));
+                        if more {
+                            close(wait, reference_wait, &what);
+                        } else {
+                            // the reference rests ten minutes, woken by new
+                            // work; the daemon checks every minute instead
+                            close(reference_wait, Duration::from_secs(600), &what);
+                            assert_eq!(wait, workers::AUTO_RESOLUTION_DONE, "{what}");
+                        }
+                    }
+                    other => panic!("{other:?}: {what}"),
+                }
+            }
+            other => panic!("{other}"),
+        }
+    }
+
+    /// One trace line: a job (seconds from the start, its weight), a run of
+    /// one-second polls, the wait after a batch, or the wait for new jobs.
+    #[derive(Debug, PartialEq)]
+    enum Line {
+        Job(i64, &'static str),
+        Polls(u64),
+        AfterWork,
+        NothingDue,
+        GaveUp,
+    }
+
+    fn kind(weight: u64) -> &'static str {
+        match weight {
+            100 => "metadata",
+            25 => "exif",
+            5 => "presence",
+            other => panic!("weight {other}"),
+        }
+    }
+
+    fn recorded_trace(events: &[Value]) -> Vec<Line> {
+        let mut out = Vec::new();
+        for e in events {
+            match (e[0].as_str().unwrap(), e[1].as_str()) {
+                ("job", _) => {
+                    let name = match e[2].as_str().unwrap() {
+                        "metadata" => "metadata",
+                        "exif" => "exif",
+                        "presence" => "presence",
+                        other => panic!("{other}"),
+                    };
+                    out.push(Line::Job(e[1].as_i64().unwrap(), name));
+                }
+                ("sleeps", _) if e[1].as_f64() == Some(1.0) => {
+                    out.push(Line::Polls(e[2].as_u64().unwrap()));
+                }
+                // (a tenth of a millisecond's pause after each batch)
+                ("sleeps", _) => {}
+                ("wait", Some("work")) => {
+                    assert_eq!(e[2].as_f64(), Some(0.5));
+                    out.push(Line::AfterWork);
+                }
+                ("wait", Some("idle")) => {
+                    assert_eq!(e[2].as_f64(), Some(600.0));
+                    out.push(Line::NothingDue);
+                }
+                ("stopped", _) => out.push(Line::GaveUp),
+                other => panic!("{other:?}"),
+            }
+        }
+        out
+    }
+
+    /// The recorded queue on the store's first files: one job each.
+    pub fn queue(store: &Store, jobs: &[Value]) {
+        let jobs: Vec<JobType> = jobs
+            .iter()
+            .map(|j| match j.as_str().unwrap() {
+                "metadata" => JobType::FileMetadata,
+                "exif" => JobType::HasExif,
+                "presence" => JobType::IntegrityPresenceLogOnly,
+                other => panic!("{other}"),
+            })
+            .collect();
+        let limit = i64::try_from(jobs.len()).unwrap();
+        store
+            .write(move |ctx| {
+                let files: Vec<HashId> = ctx
+                    .conn()
+                    .prepare("SELECT hash_id FROM files ORDER BY hash_id LIMIT ?1")?
+                    .query_map([limit], |row| row.get(0))?
+                    .collect::<rusqlite::Result<_>>()?;
+                assert_eq!(files.len(), jobs.len());
+                file_maintenance::cancel_jobs(ctx.conn(), &JobType::ALL)?;
+                for (file, job) in files.into_iter().zip(jobs) {
+                    file_maintenance::add_jobs(ctx.conn(), &[file], job, 0)?;
+                }
+                Ok(())
+            })
+            .unwrap();
+    }
+
+    /// A recorded file maintenance run, through the real throttle and the
+    /// real maintenance batches, pass after pass on the held clock.
+    pub fn replay_files(store: &std::sync::Arc<Store>, recording: &Value, pass: &Value) {
+        let what = format!("{pass}");
+        let t0 = recording["t0"].as_i64().unwrap();
+        queue(store, recording["jobs"].as_array().unwrap());
+        let idle = pass["idle"].as_bool().unwrap();
+        let expected = recorded_trace(pass["events"].as_array().unwrap());
+        let importer =
+            hydrus_import::FileImporter::new(store.clone(), hydrus_media::MediaTools::new());
+        let clock = HeldClock::at(t0 * 1000);
+        let throttle = workers::FileMaintenanceThrottle::new(&clock);
+        let mut trace = Vec::new();
+        // as many polls as the reference waited before it was given up on
+        let most_polls: u64 = expected
+            .iter()
+            .map(|l| if let Line::Polls(n) = l { *n } else { 0 })
+            .sum();
+        let mut polls = 0;
+        loop {
+            publish(store, &clock, idle);
+            let wait = throttle.step(store, &clock, |able, used| {
+                let report = importer.run_file_maintenance_batch(able, &mut |weight| {
+                    trace.push(Line::Job(clock.now_ms() / 1000 - t0, kind(weight)));
+                    used(weight);
+                })?;
+                Ok::<_, hydrus_import::ImportError>(report.total())
+            });
+            clock.advance(wait);
+            match wait {
+                workers::FILE_MAINTENANCE_POLL => {
+                    polls += 1;
+                    if let Some(Line::Polls(n)) = trace.last_mut() {
+                        *n += 1;
+                    } else {
+                        trace.push(Line::Polls(1));
+                    }
+                    if polls >= most_polls && expected.last() == Some(&Line::GaveUp) {
+                        trace.push(Line::GaveUp);
+                        break;
+                    }
+                }
+                workers::FILE_MAINTENANCE_AFTER_WORK => trace.push(Line::AfterWork),
+                workers::FILE_MAINTENANCE_NOTHING_DUE => {
+                    trace.push(Line::NothingDue);
+                    break;
+                }
+                other => panic!("{other:?}: {what}"),
+            }
+            assert!(trace.len() < 200, "{trace:?}");
+        }
+        assert_eq!(trace, expected, "{what}");
+    }
+}
+
 // leaf: audit-options-maintenance-and-processing-file-maintenance-run-file-maintenance-during-idle-time
 // leaf: audit-options-maintenance-and-processing-file-maintenance-run-file-maintenance-during-normal-time
 // leaf: audit-options-maintenance-and-processing-file-maintenance-idle-throttle
@@ -1102,33 +1432,11 @@ fn packet(options: &OptionsWindow, in_box: &str, label: &str, seconds: i32, ms: 
 // leaf: audit-options-maintenance-and-processing-duplicates-auto-resolution-normal-rest-time-percentage
 #[test]
 fn background_work_options_set_the_pace_the_workers_take_in_idle_and_normal_time() {
-    use std::time::Duration;
+    use pace::{flag, int};
 
-    use hydrus_store::duplicates::auto::AutoResolutionSettings;
-    use hydrus_store::file_maintenance::FileMaintenanceSettings;
-    use hydrus_store::idle_state::Pace;
-    use hydrus_store::similar::SimilarFilesSettings;
-
+    let recording = pace::recording();
     let client = client();
-    let ms = Duration::from_millis;
-    let pace = |allowed, work, rest_percentage| Pace {
-        allowed,
-        work,
-        rest_percentage,
-    };
-    // the reference's defaults to begin with
-    let similar: SimilarFilesSettings = client.get();
-    assert_eq!(similar.pace(true), pace(true, ms(5000), 50));
-    assert_eq!(similar.pace(false), pace(true, ms(100), 1900));
-    let auto: AutoResolutionSettings = client.get();
-    assert_eq!(auto.pace(true), pace(true, ms(1000), 100));
-    assert_eq!(auto.pace(false), pace(true, ms(100), 900));
-    let files: FileMaintenanceSettings = client.get();
-    assert_eq!(files.allowance(true), (true, 1, 2));
-    assert_eq!(files.allowance(false), (true, 1, 20));
-
     let page = "maintenance and processing";
-    let window = client.options(page);
     let (files_box, similar_box, auto_box) = (
         "file maintenance",
         "potential duplicates search",
@@ -1140,107 +1448,102 @@ fn background_work_options_set_the_pace_the_workers_take_in_idle_and_normal_time
         "\"Idle\" rest time percentage: ",
         "\"Normal\" rest time percentage: ",
     );
-    // potential duplicates search
-    packet(&window, similar_box, idle, 7, 500);
-    packet(&window, similar_box, normal, 2, 40);
-    for (label, n) in [(rest_idle, 123), (rest_normal, 456)] {
-        let (i, found) = row_in(&window, similar_box, label);
-        assert_eq!((found.kind, found.minimum, found.maximum), (2, 0, 100_000));
-        window.invoke_number_edited(i, n);
-    }
-    // duplicates auto-resolution
-    packet(&window, auto_box, idle, 3, 250);
-    packet(&window, auto_box, normal, 0, 800);
-    for (label, n) in [(rest_idle, 77), (rest_normal, 88)] {
-        let (i, found) = row_in(&window, auto_box, label);
-        assert_eq!((found.kind, found.minimum, found.maximum), (2, 0, 100_000));
-        window.invoke_number_edited(i, n);
-    }
-    // file maintenance: five jobs every two and a half minutes when idle,
-    // nine every forty-five seconds otherwise
-    for (label, jobs, minutes, seconds) in [
-        ("Idle throttle: ", 5, 2, 30),
-        ("Normal throttle: ", 9, 0, 45),
-    ] {
-        let (i, found) = row_in(&window, files_box, label);
-        assert_eq!(
-            (found.kind, found.minimum, found.maximum, found.per.as_str()),
-            (9, 1, 1000, "heavy work units every"),
-            "{label:?}"
+    let t0_ms = recording["t0"].as_i64().unwrap() * 1000;
+    for case in recording["cases"].as_array().unwrap() {
+        let saved = &case["saved"];
+        // typed into the page, as the reference's were, and applied
+        let window = client.options(page);
+        for (in_box, prefix) in [
+            (similar_box, "potential_duplicates_search"),
+            (auto_box, "duplicates_auto_resolution"),
+        ] {
+            for (label, rest_label, time) in
+                [(idle, rest_idle, "idle"), (normal, rest_normal, "active")]
+            {
+                let ms = int(saved, &format!("{prefix}_work_time_ms_{time}"));
+                packet(&window, in_box, label, ms / 1000, ms % 1000);
+                let (i, found) = row_in(&window, in_box, rest_label);
+                assert_eq!((found.kind, found.minimum, found.maximum), (2, 0, 100_000));
+                window.invoke_number_edited(
+                    i,
+                    int(saved, &format!("{prefix}_rest_percentage_{time}")),
+                );
+            }
+        }
+        for (label, time) in [("Idle throttle: ", "idle"), ("Normal throttle: ", "active")] {
+            let (i, found) = row_in(&window, files_box, label);
+            assert_eq!(
+                (found.kind, found.minimum, found.maximum, found.per.as_str()),
+                (9, 1, 1000, "heavy work units every"),
+                "{label:?}"
+            );
+            let seconds = int(
+                saved,
+                &format!("file_maintenance_{time}_throttle_time_delta"),
+            );
+            window.invoke_number_edited(
+                i,
+                int(saved, &format!("file_maintenance_{time}_throttle_files")),
+            );
+            window.invoke_field_edited(i, 0, seconds / 60);
+            window.invoke_field_edited(i, 1, seconds % 60);
+        }
+        for (in_box, label, key) in [
+            (
+                files_box,
+                "Run file maintenance during idle time: ",
+                "file_maintenance_during_idle",
+            ),
+            (
+                files_box,
+                "Run file maintenance during normal time: ",
+                "file_maintenance_during_active",
+            ),
+            (
+                similar_box,
+                "Search for potential duplicates in \"idle\" time: ",
+                "maintain_similar_files_duplicate_pairs_during_idle",
+            ),
+            (
+                similar_box,
+                "Search for potential duplicates in \"normal\" time: ",
+                "maintain_similar_files_duplicate_pairs_during_active",
+            ),
+            (
+                auto_box,
+                "Work duplicates auto-resolution in \"idle\" time: ",
+                "duplicates_auto_resolution_during_idle",
+            ),
+            (
+                auto_box,
+                "Work duplicates auto-resolution in \"normal\" time: ",
+                "duplicates_auto_resolution_during_active",
+            ),
+        ] {
+            let (i, found) = row_in(&window, in_box, label);
+            assert_eq!(found.kind, 1, "{label:?}");
+            window.invoke_check_toggled(i, flag(saved, key));
+        }
+        window.invoke_apply();
+        pace::assert_saved(&client.store, saved);
+        // reopened, the page shows what was saved
+        let window = client.options(page);
+        let (_, found) = row_in(
+            &window,
+            files_box,
+            "Run file maintenance during idle time: ",
         );
-        window.invoke_number_edited(i, jobs);
-        window.invoke_field_edited(i, 0, minutes);
-        window.invoke_field_edited(i, 1, seconds);
-    }
-    window.invoke_apply();
+        assert_eq!(found.checked, flag(saved, "file_maintenance_during_idle"));
 
-    let similar: SimilarFilesSettings = client.get();
-    assert_eq!(similar.pace(true), pace(true, ms(7500), 123));
-    assert_eq!(similar.pace(false), pace(true, ms(2040), 456));
-    let auto: AutoResolutionSettings = client.get();
-    assert_eq!(auto.pace(true), pace(true, ms(3250), 77));
-    assert_eq!(auto.pace(false), pace(true, ms(800), 88));
-    let files: FileMaintenanceSettings = client.get();
-    assert_eq!(files.allowance(true), (true, 5, 150));
-    assert_eq!(files.allowance(false), (true, 9, 45));
-
-    // each time of day has its own switch, in each worker
-    let window = client.options(page);
-    let switches = [
-        (files_box, "Run file maintenance during idle time: "),
-        (files_box, "Run file maintenance during normal time: "),
-        (
-            similar_box,
-            "Search for potential duplicates in \"idle\" time: ",
-        ),
-        (
-            similar_box,
-            "Search for potential duplicates in \"normal\" time: ",
-        ),
-        (
-            auto_box,
-            "Work duplicates auto-resolution in \"idle\" time: ",
-        ),
-        (
-            auto_box,
-            "Work duplicates auto-resolution in \"normal\" time: ",
-        ),
-    ];
-    for (in_box, label) in switches {
-        let (_, found) = row_in(&window, in_box, label);
-        assert_eq!((found.kind, found.checked), (1, true), "{label:?}");
+        // and the workers take that pace, in idle and normal time
+        for pass in case["passes"].as_array().unwrap() {
+            if pass["worker"] == "files" {
+                pace::replay_files(&client.store, &recording, pass);
+            } else {
+                pace::replay_packet(&client.store, t0_ms, pass);
+            }
+        }
     }
-    for (in_box, label) in [switches[0], switches[2], switches[4]] {
-        let (i, _) = row_in(&window, in_box, label);
-        window.invoke_check_toggled(i, false);
-    }
-    window.invoke_apply();
-    assert!(!client.get::<FileMaintenanceSettings>().allowance(true).0);
-    assert!(client.get::<FileMaintenanceSettings>().allowance(false).0);
-    let similar: SimilarFilesSettings = client.get();
-    assert!(!similar.pace(true).allowed && similar.pace(false).allowed);
-    let auto: AutoResolutionSettings = client.get();
-    assert!(!auto.pace(true).allowed && auto.pace(false).allowed);
-
-    let window = client.options(page);
-    for (in_box, label) in [switches[0], switches[2], switches[4]] {
-        let (i, found) = row_in(&window, in_box, label);
-        assert!(!found.checked, "shown again as saved: {label:?}");
-        window.invoke_check_toggled(i, true);
-    }
-    for (in_box, label) in [switches[1], switches[3], switches[5]] {
-        let (i, _) = row_in(&window, in_box, label);
-        window.invoke_check_toggled(i, false);
-    }
-    window.invoke_apply();
-    assert!(client.get::<FileMaintenanceSettings>().allowance(true).0);
-    assert!(!client.get::<FileMaintenanceSettings>().allowance(false).0);
-    let similar: SimilarFilesSettings = client.get();
-    assert!(similar.pace(true).allowed && !similar.pace(false).allowed);
-    let auto: AutoResolutionSettings = client.get();
-    assert!(auto.pace(true).allowed && !auto.pace(false).allowed);
-    // (the numbers are kept)
-    assert_eq!(auto.pace(true), pace(true, ms(3250), 77));
 }
 
 // leaf: audit-options-importing-filetypes-inspect-for-cbz-properties-when-importing-rescanning-zip-files
