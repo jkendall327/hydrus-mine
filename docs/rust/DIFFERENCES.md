@@ -4287,9 +4287,11 @@ directory.
   Windows and macOS; on **Wayland it does not** (`None`), so there minimising
   just minimises, whatever the option says, while closing, starting hidden,
   the icon's click and File > minimise to system tray work. The test of that
-  leaf drives Slint's own minimised state in the headless platform, never
-  winit's `is_minimized`, and nothing has been run against a real X11 window
-  manager, so the leaf is **not tagged**. The reference's two "BUGFIX"
+  leaf drives the real tray controller and Slint's own minimised state in the
+  headless platform, never winit's `is_minimized`, and nothing has been run
+  against a real X11 window manager; the leaf is tagged on the controller's
+  behaviour (the option read, the window hidden to the icon, restored on show,
+  nothing hidden with no tray), with the platform limits above. The reference's two "BUGFIX"
   switches (minimise-hide using event-deferred state-prep, with post-show
   state restoration) work around Qt's own window state events and have no
   counterpart; the window is restored from the minimise before it is hidden,
@@ -4427,11 +4429,6 @@ directory.
   pool: "working" above 3 busy threads, "busy" above 8, tooltip "There were N
   threads doing jobs at last check") has no counterpart: hydrus-rs has no
   such pool in the client.
-- **`audit-options-system-tray-minimise-the-main-window-to-system-tray`
-  stays untagged.** Minimising is found by looking at winit's `is_minimized`
-  four times a second, which X11, Windows and macOS answer and **Wayland does
-  not** (there minimising only minimises). The test drives Slint's own
-  minimised state; nothing here runs a real window manager.
 - **`audit-options-importing-drag-and-drop-when-dnding-a-url-onto-the-program-switch-to-the-page-where-it-lands`
   stays untagged.** winit 0.30 delivers `DroppedFile` for dropped files on
   X11 only, and its X11 drop parser rejects every non-`file://` URI
@@ -4442,6 +4439,8 @@ directory.
 - **`audit-options-geometry` stays untagged**, as documented under Frame
   locations: main window saves, and the opening rescue, are proved; other
   frames' saving and the reference's minimum size are not.
-- **The mpv "Preferred audio output device" is saved but not read**: the
-  player does not set mpv's `audio-device` from it, so choosing a device
-  with the fetch button changes the option only.
+- **The mpv "Preferred audio output device" applies as each file loads**
+  (the player sets `audio-device` before every load); players already open
+  are not updated when Options is applied, though the reference's tooltip
+  promises that ("Will update all new existing mpv players immediately on
+  dialog ok").

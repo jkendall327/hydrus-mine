@@ -41,9 +41,10 @@ impl WakeGate {
             .state
             .lock()
             .unwrap_or_else(std::sync::PoisonError::into_inner);
+        // (as the reference's `SleepCheck`: with detection off it returns at
+        // once, touching nothing but the just-woke flag)
         if !settings.detect {
             state.awake_at_ms = None;
-            state.last_check_ms = Some(now_ms);
             return;
         }
         if state.last_check_ms.is_some_and(|t| now_ms - t > 60_000) {

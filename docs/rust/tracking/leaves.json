@@ -13252,7 +13252,7 @@
     "date": "2026-10-09",
     "class": "sound",
     "by": "Claude, options-shell-leftovers",
-    "note": "GUI test options_mpv_devices.rs clicks the real button in the real options window with the device list stubbed (parsed from mpv's JSON as recorded) and replays oracle/fixtures/mpv_audio_devices.json: the unavailable message, the chooser's title, message and labels, each choice (auto sets none) and cancel, the draft, and Apply. libmpv itself is not driven in the test. The preferred device is not read by the player (DIFFERENCES.md)."
+    "note": "GUI test options_mpv_devices.rs clicks the real button in the real options window with the device list stubbed (parsed from mpv's JSON as recorded) and replays oracle/fixtures/mpv_audio_devices.json: the unavailable message, the chooser's title, message and labels, each choice (auto sets none) and cancel, the draft, and Apply. libmpv itself is not driven in the test. The preferred device is applied as each file loads (mpv_options Plan); open players are not updated on Apply (DIFFERENCES.md)."
    }
   },
   {
@@ -20713,7 +20713,13 @@
     "Truth pass (2026-10-08): partial, medium. Depends on the tray; minimise detection impossible on Wayland. Missing: The tray, plus minimise detection (winit is_minimized: polled; not available on Wayland). Evidence: options.rs:4418-4421 row, unread",
     "Reference editor/control 'Minimise the main window to system tray:' is recorded on 'system tray' and defined by the referenced options panel. No corresponding editable row exists in native options::pages; this is a missing GUI editing path, even if a setting is imported or consumed elsewhere.",
     "Native options registry has no editable 'Minimise the main window to system tray:' control in this page/box path."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-09",
+    "class": "weak",
+    "by": "Claude, options-shell-leftovers",
+    "note": "GUI test system_tray.rs minimising_hides_the_window_to_the_icon_where_the_window_system_reports_it drives the real tray controller (option read, window hidden to the icon, restored with its prior state on show, nothing hidden with no tray) with Slint's own minimised state in the headless platform; winit's is_minimized (X11/Windows/macOS, not Wayland) and a real window manager are not exercised, and the reference's two BUGFIX switches have no counterpart (DIFFERENCES.md, System tray)."
+   }
   },
   {
    "id": "audit-options-system-tray-start-the-client-minimised-to-system-tray",

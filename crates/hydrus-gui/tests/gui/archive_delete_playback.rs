@@ -39,6 +39,30 @@ fn watch(window: &ArchiveDeleteWindow, time: Duration) -> HashSet<((u32, u32), V
     seen
 }
 
+/// Watch until `done` holds of the pictures seen so far, or ten seconds pass;
+/// say whether it did.
+fn watch_until(
+    window: &ArchiveDeleteWindow,
+    done: impl Fn(&HashSet<((u32, u32), Vec<u8>)>) -> bool,
+) -> bool {
+    let mut seen = HashSet::new();
+    let deadline = Instant::now() + Duration::from_secs(10);
+    while Instant::now() < deadline {
+        seen.extend(watch(window, Duration::from_millis(20)));
+        if done(&seen) {
+            return true;
+        }
+    }
+    false
+}
+
+/// Whether the picture holds still for `time`, once a frame in flight has
+/// landed.
+fn holds_still(window: &ArchiveDeleteWindow, time: Duration) -> bool {
+    watch(window, Duration::from_millis(100));
+    watch(window, time).len() <= 1
+}
+
 fn scanbar_reaches(window: &ArchiveDeleteWindow, wanted: &str) -> String {
     let started = Instant::now();
     loop {
@@ -147,20 +171,20 @@ fn the_filter_plays_files_with_a_scanbar_and_volume_as_the_viewer_does() {
     for (name, hash) in imported.iter().take(2) {
         let window = filter_on(hash);
         // plays frame after frame, looping
-        let shown = watch(&window, Duration::from_millis(1500));
-        assert!(shown.len() >= 3, "{name}: {} pictures", shown.len());
+        assert!(
+            watch_until(&window, |seen| seen.len() >= 3),
+            "{name}: plays"
+        );
         // space pauses; again plays on
         key(&window, " ");
-        watch(&window, Duration::from_millis(50));
-        assert_eq!(
-            watch(&window, Duration::from_millis(400)).len(),
-            1,
-            "{name}"
+        assert!(
+            holds_still(&window, Duration::from_millis(400)),
+            "{name}: paused"
         );
         key(&window, " ");
         assert!(
-            watch(&window, Duration::from_millis(1000)).len() >= 2,
-            "{name}"
+            watch_until(&window, |seen| seen.len() >= 2),
+            "{name}: plays on"
         );
 
         // the scanbar, by frame; a drag pauses and goes to the frame under
@@ -178,15 +202,14 @@ fn the_filter_plays_files_with_a_scanbar_and_volume_as_the_viewer_does() {
         let wanted = format!("{}/{frames} - ", target + 1);
         let there = scanbar_reaches(&window, &wanted);
         assert!(there.starts_with(&wanted), "{name}: {there}");
-        assert_eq!(
-            watch(&window, Duration::from_millis(300)).len(),
-            1,
-            "{name}: paused"
+        assert!(
+            holds_still(&window, Duration::from_millis(300)),
+            "{name}: dragging pauses"
         );
         let progress = window.get_scanbar_progress();
         window.invoke_scan_ended();
         assert!(
-            watch(&window, Duration::from_millis(1000)).len() >= 2,
+            watch_until(&window, |seen| seen.len() >= 2),
             "{name}: playing again"
         );
         window.invoke_close_requested();
@@ -263,18 +286,35 @@ fn the_filter_plays_files_with_a_scanbar_and_volume_as_the_viewer_does() {
     assert!(window.get_scanbar_progress() > 0.4 && window.get_scanbar_progress() < 0.6);
 
     // the tags are shown by the pointer at the left, the information at the
-    // top
+    // top: the same lines the viewer shows for this file
+    let tags: Vec<(String, String)> = window
+        .get_tags()
+        .iter()
+        .map(|t| (t.text.to_string(), format!("{:?}", t.colour)))
+        .collect();
+    assert!(!tags.is_empty(), "the file has tags to show");
+    let info = window.get_info_line().to_string();
+    assert!(!info.is_empty());
     headless::render(&drawn, 800, 600);
     window
         .window()
         .dispatch_event(slint::platform::WindowEvent::PointerMoved {
             position: slint::LogicalPosition::new(10.0, 300.0),
         });
-    assert_eq!(window.get_tags_showing(), window.get_tags().row_count() > 0);
+    assert!(window.get_tags_showing());
     window
         .window()
         .dispatch_event(slint::platform::WindowEvent::PointerMoved {
             position: slint::LogicalPosition::new(400.0, 3.0),
         });
     assert!(window.get_info_showing());
+    window.invoke_close_requested();
+    let viewer = viewer_on(audio);
+    assert_eq!(viewer.get_info_line().to_string(), info);
+    let viewer_tags: Vec<(String, String)> = viewer
+        .get_tags()
+        .iter()
+        .map(|t| (t.text.to_string(), format!("{:?}", t.colour)))
+        .collect();
+    assert_eq!(viewer_tags, tags);
 }
