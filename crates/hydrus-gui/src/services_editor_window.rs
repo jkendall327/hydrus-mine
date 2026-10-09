@@ -3,6 +3,7 @@ use crate::{
     EditServiceWindow, ServiceColourRow, ServiceRatingExampleRow, ServicesEditorWindow,
     TableColumn, TableRow,
 };
+use crate::import_options_window::advanced_mode;
 use hydrus_core::{ServiceId, ServiceKey};
 use hydrus_gui_model::services_editor::{self, Editor};
 use hydrus_store::{
@@ -96,7 +97,14 @@ fn edited_kind(
                 },
                 cors: window.get_api_cors(),
                 logs: window.get_api_logs(),
-                disable_https: window.get_api_disable_https(),
+                use_https: window.get_api_https(),
+                normie_eris: window.get_api_normie(),
+                external_scheme: (!window.get_api_scheme_none())
+                    .then(|| window.get_api_scheme().to_string()),
+                external_host: (!window.get_api_host_none())
+                    .then(|| window.get_api_host().to_string()),
+                external_port: (!window.get_api_external_port_none())
+                    .then(|| window.get_api_external_port().to_string()),
             },
         )
         .map(ServiceKind::ClientApi);
@@ -161,6 +169,7 @@ fn edit(
     done: Rc<dyn Fn(String, ServiceKind)>,
     parent_active: Rc<Cell<bool>>,
     sizes: [(f64, f64); 4],
+    advanced: bool,
 ) -> Result<(), String> {
     let window = EditServiceWindow::new().map_err(|e| e.to_string())?;
     window.set_service_name(service.name.as_str().into());
@@ -176,24 +185,28 @@ fn edit(
         window.set_api_cors(c.support_cors);
         window.set_api_logs(c.log_requests);
         window.set_api_https(c.use_https);
-        let enabled = |value| if value { "enabled" } else { "disabled" };
-        let scheme = c
-            .external_scheme_override
-            .as_deref()
-            .filter(|value| !value.is_empty())
-            .unwrap_or("not set");
-        let host = c
-            .external_host_override
-            .as_deref()
-            .filter(|value| !value.is_empty())
-            .unwrap_or("not set");
-        let port = c
-            .external_port_override
-            .map_or_else(|| "not set".to_owned(), |port| port.to_string());
-        window.set_api_unsupported(format!(
-            "Imported unsupported settings (preserved):\nHTTPS: {}\nnormie Eris: {}\nexternal URL scheme: {scheme}\nexternal URL host: {host}\nexternal URL port: {port}\nIf HTTPS is enabled, disable it before starting the HTTP listener.",
-            enabled(c.use_https), enabled(c.use_normie_eris)
-        ).into());
+        window.set_api_normie(c.use_normie_eris);
+        window.set_api_advanced(advanced);
+        let (scheme, host, port) = (
+            &c.external_scheme_override,
+            &c.external_host_override,
+            &c.external_port_override,
+        );
+        window.set_api_scheme_none(scheme.is_none());
+        window.set_api_scheme(scheme.clone().unwrap_or_default().into());
+        window.set_api_host_none(host.is_none());
+        window.set_api_host(host.clone().unwrap_or_default().into());
+        window.set_api_external_port_none(port.is_none());
+        window.set_api_external_port(port.clone().unwrap_or_default().into());
+        {
+            use hydrus_gui_model::client_api_admin::tooltips;
+            window.set_api_tooltip_non_local(tooltips::NON_LOCAL.into());
+            window.set_api_tooltip_https(tooltips::HTTPS.into());
+            window.set_api_tooltip_cors(tooltips::CORS.into());
+            window.set_api_tooltip_logs(tooltips::LOGS.into());
+            window.set_api_tooltip_normie(tooltips::NORMIE.into());
+            window.set_api_tooltip_external_port(tooltips::EXTERNAL_PORT.into());
+        }
     }
     let mut colours = Vec::new();
     let mut colour_rows = Vec::new();
@@ -598,6 +611,7 @@ pub fn open(
     });
     window.on_add_clicked({
         let editor = editor.clone();
+        let store = store.clone();
         let weak = window.as_weak();
         let slots = slots.clone();
         let active = active.clone();
@@ -635,13 +649,14 @@ pub fn open(
                     }
                 }
             });
-            if let Err(e) = edit(service, &slots, done, active.clone(), sizes) {
+            if let Err(e) = edit(service, &slots, done, active.clone(), sizes, advanced_mode(&store)) {
                 w.set_error(e.into());
             }
         }
     });
     window.on_edit_clicked({
         let editor = editor.clone();
+        let store = store.clone();
         let weak = window.as_weak();
         let slots = slots.clone();
         let active = active.clone();
@@ -681,7 +696,7 @@ pub fn open(
                     }
                 }
             });
-            if let Err(e) = edit(row.service, &slots, done, active.clone(), sizes) {
+            if let Err(e) = edit(row.service, &slots, done, active.clone(), sizes, advanced_mode(&store)) {
                 w.set_error(e.into());
             }
         }

@@ -119,7 +119,11 @@ fn listener_settings_preserve_unrelated_services_and_imported_flags() {
         binding: Binding::Network,
         cors: true,
         logs: true,
-        disable_https: true,
+        use_https: false,
+        normie_eris: true,
+        external_scheme: Some("https".into()),
+        external_host: original.external_host_override.clone(),
+        external_port: Some(String::new()),
     };
     let edited = server_config(&original, &fields).unwrap();
     assert_eq!(edited.port, Some(12345));
@@ -130,6 +134,7 @@ fn listener_settings_preserve_unrelated_services_and_imported_flags() {
         edited.external_host_override,
         original.external_host_override
     );
+    assert_eq!(edited.external_port_override.as_deref(), Some(""));
     assert!(
         server_config(
             &original,
@@ -149,6 +154,14 @@ fn listener_settings_preserve_unrelated_services_and_imported_flags() {
             }
         )
         .is_err()
+    );
+    assert_eq!(
+        client_api_admin::base_url(&ServerConfig {
+            port: Some(1),
+            ..original.clone()
+        })
+        .unwrap(),
+        "https://127.0.0.1:1/"
     );
     assert!(client_api_admin::base_url(&original).is_err());
     assert_eq!(

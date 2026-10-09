@@ -74,7 +74,7 @@ impl Selector {
     }
 }
 
-fn advanced_mode(store: &Store) -> bool {
+pub(crate) fn advanced_mode(store: &Store) -> bool {
     store
         .read(hydrus_store::settings::get::<hydrus_store::settings::AdvancedMode>)
         .unwrap_or_default()

@@ -2466,7 +2466,7 @@ fn service_kind(service: &LegacyService) -> Result<ServiceKind> {
             use_https: c.use_https,
             external_scheme_override: c.external_scheme_override.clone(),
             external_host_override: c.external_host_override.clone(),
-            external_port_override: c.external_port_override.and_then(|p| u16::try_from(p).ok()),
+            external_port_override: c.external_port_override.clone(),
         }),
         (_, ServiceType::TagRepository) => ServiceKind::TagRepository(verbatim()),
         (_, ServiceType::FileRepository) => ServiceKind::FileRepository(verbatim()),

@@ -1949,14 +1949,27 @@ controls/questions are recorded in `client_api_admin.json`; actual native-store
 GUI regressions render `client_api_keys.png`, `client_api_permissions.png` and
 `client_api_service.png` during the GUI test batch.
 
-Manage services narrowly permits editing the built-in API service's enabled
-state, port, local/network binding, CORS and anonymous request logging. Other
-imported flags remain preserved and display plain values, with unset external
-URL fields labeled "not set". Imported HTTPS can be disabled; enabling it
-is unsupported. The daemon notices configuration changes within one second and
+Manage services edits the built-in API service with the reference's rows and
+labels: "run the client api?:", "local port:", "allow non-local connections:",
+"use https", "support CORS headers", "log requests" and "normie-friendly
+welcome page", each with the reference's tooltip text shown beneath it. All but
+"run" are enabled only while the service runs. In advanced mode three more rows
+appear, each a text box with a "none" box: the scheme, host and port overrides
+"when copying external links" (an empty port text is kept, and means no `:`).
+Apply stores them; cancelling stores nothing.
+
+With "use https" the Client API serves TLS with `client.crt` and `client.key`
+from the db directory. If neither file exists the first start makes a
+self-signed pair there (RSA 2048, valid ten years, for `localhost`, both files
+read-only), as the reference does; a pair the user puts there is used as it is;
+only one of the two fails the start with the reference's message. The
+"normie-friendly welcome page" swaps the root page (`GET /`) for the
+reference's alternate one; the plain page is served otherwise. "View it in a
+web browser" opens `https://` when the service uses it. The daemon notices
+configuration changes within one second and
 restarts only the API listener, keeping downloads, queues and authentication
 sessions alive. A bind failure reports its cause and recovers after settings
-are corrected; HTTPS reports a failure instead of silently serving HTTP.
+are corrected.
 Explicit CLI `--port` and `--bind` overrides retain precedence.
 The local daemon regression additionally mints an authenticated session before
 listener reconfiguration and uses that same session after bind-failure recovery.
