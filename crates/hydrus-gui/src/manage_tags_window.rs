@@ -74,7 +74,7 @@ pub(crate) fn open(
     applied: Rc<dyn Fn()>,
     link: Option<ViewerLink>,
 ) -> Result<ManageTagsWindow, slint::PlatformError> {
-    let window = ManageTagsWindow::new()?;
+    let window = crate::app_title::new::<crate::ManageTagsWindow>()?;
     window.set_immediate(model.is_immediate());
     window
         .global::<crate::TagTextHistory<'_>>()

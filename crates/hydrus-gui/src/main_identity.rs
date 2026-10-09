@@ -17,6 +17,8 @@ pub(crate) fn bind(window: &MainWindow, store: Arc<Store>, active: Rc<Cell<bool>
             return;
         };
         let settings: GuiSettings = store.read(settings::get).unwrap_or_default();
+        // (windows opened from now on end their titles with it too)
+        crate::app_title::set_display_name(&settings.application_display_name);
         window.set_window_title(
             format!(
                 "{} {}",

@@ -4,7 +4,8 @@ import { Theme } from "theme.slint";
 import { ListTable, TableRow } from "list_table.slint";
 
 export component VacuumReviewWindow inherits Window {
-    title: "review vacuum data";
+    in property <string> title-suffix: "";
+    title: ("review vacuum data") + root.title-suffix;
     preferred-width: 980px;
     preferred-height: 420px;
     background: Theme.window;

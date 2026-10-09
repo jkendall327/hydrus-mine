@@ -11,7 +11,8 @@ export struct ImportOverwriteRow {
 }
 
 export component ImportOptionsOverwriteWindow inherits Window {
-    title: "customise import options overwrite";
+    in property <string> title-suffix: "";
+    title: ("customise import options overwrite") + root.title-suffix;
     preferred-width: 1180px;
     preferred-height: 430px;
     background: Theme.window;

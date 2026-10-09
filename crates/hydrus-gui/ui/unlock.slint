@@ -5,7 +5,8 @@ import { Button, LineEdit } from "std-widgets.slint";
 import { Theme } from "theme.slint";
 
 export component UnlockWindow inherits Window {
-    title: "hydrus client";
+    in property <string> title-suffix: "";
+    title: ("hydrus client") + root.title-suffix;
     preferred-width: 360px;
     background: Theme.window;
 

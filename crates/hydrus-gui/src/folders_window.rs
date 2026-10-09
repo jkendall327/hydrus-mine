@@ -716,7 +716,7 @@ fn open_import_folder(
     cache_applied: Rc<dyn Fn(Vec<queues::FileSeed>)>,
 ) -> Result<ImportFolderWindow, String> {
     let slot = &slots.import_edit;
-    let window = ImportFolderWindow::new().map_err(|e| e.to_string())?;
+    let window = crate::app_title::new::<crate::ImportFolderWindow>().map_err(|e| e.to_string())?;
     // New folders can review an empty cache before they receive a live queue.
     window.set_has_file_log(true);
     let s = &folder.settings;
@@ -1491,7 +1491,7 @@ fn open_export_folder(
     slot: &Rc<RefCell<Option<ExportFolderWindow>>>,
     done: &Rc<dyn Fn(ExportFolder)>,
 ) -> Result<ExportFolderWindow, String> {
-    let window = ExportFolderWindow::new().map_err(|e| e.to_string())?;
+    let window = crate::app_title::new::<crate::ExportFolderWindow>().map_err(|e| e.to_string())?;
     window.set_types_text(EXPORT_TYPES_TEXT.into());
     window.set_sidecars_text(SIDECARS_TEXT.into());
     window.set_name(folder.name.clone().into());

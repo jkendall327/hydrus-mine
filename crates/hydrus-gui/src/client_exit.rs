@@ -133,7 +133,7 @@ fn shutdown_work_with_timeout(
             then();
         }
         Decision::Ask(text) => {
-            let Ok(dialog) = crate::SessionDialog::new() else {
+            let Ok(dialog) = crate::app_title::new::<crate::SessionDialog>() else {
                 then();
                 return;
             };

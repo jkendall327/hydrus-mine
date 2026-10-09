@@ -30,13 +30,17 @@ pub struct QueueLive {
 
 /// The daemon's network use, for the main window's status bar: when its
 /// network engine started, what it has read since and in the last second,
-/// and when this was said.
+/// how many queues it is running, and when this was said.
 #[derive(Debug, Clone, Copy, Default, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
 pub struct DaemonLive {
     pub started: i64,
     pub bytes: u64,
     pub speed: u64,
     pub at: i64,
+    /// How many downloader queues are running, for the status bar's
+    /// application-busy field.
+    #[serde(default)]
+    pub jobs: u32,
 }
 
 impl crate::settings::Setting for DaemonLive {

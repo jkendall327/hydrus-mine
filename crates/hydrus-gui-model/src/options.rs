@@ -614,6 +614,9 @@ pub enum Kind {
     /// The media playback page's "fetch mpv audio devices" button, which
     /// fills the preferred audio device above it.
     FetchMpvAudioDevices,
+    /// A paragraph of help text the reference's panel shows above or among
+    /// its controls (its `label` is the text); shown, searched, never edited.
+    Note,
 }
 
 /// A tag sort's types, as the reference's control names them
@@ -892,6 +895,16 @@ pub fn rating_style_choices(store: &hydrus_store::Store) -> Vec<(hydrus_core::Se
     .flat_map(|kind| snapshot.services.of_type(kind).collect::<Vec<_>>())
     .map(|service| (service.key.clone(), service.name.clone()))
     .collect()
+}
+
+/// A paragraph of the reference's own help text, as its panel shows it.
+fn note(text: &'static str) -> Item {
+    opt(
+        text,
+        Kind::Note,
+        Rc::new(|_| Value::Text(String::new())),
+        Rc::new(|_, _| Ok(())),
+    )
 }
 
 /// The page's four example controls, with the labels the reference gives them.
@@ -5435,6 +5448,11 @@ impl Editor {
                 }
             }
         }
+    }
+
+    /// Everything the search offers, as captured on opening.
+    pub fn suggestions(&self) -> &[Suggestion] {
+        &self.suggestions
     }
 
     /// Suggestions containing the query, ignoring case; none for no query.

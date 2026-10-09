@@ -418,7 +418,7 @@ pub(crate) fn open_filter_with_cache(
     exited_after_work: Option<Rc<dyn Fn()>>,
     cache: Option<crate::image_cache::Handle>,
 ) -> Result<DuplicateFilterWindow, slint::PlatformError> {
-    let window = DuplicateFilterWindow::new()?;
+    let window = crate::app_title::new::<crate::DuplicateFilterWindow>()?;
     window.set_reviewing(model.reviewing());
     window.set_hover_pinned(hover_pinned(model.store()));
     let owns_cache = cache.is_none();

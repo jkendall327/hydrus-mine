@@ -761,14 +761,18 @@ fn run_server(dir: &Path, port: Option<u16>, bind: Option<IpAddr>, attached: boo
                     tokio::time::sleep(Duration::from_millis(250)).await;
                     let (started, bytes, speed) = downloads.downloader().net().session_usage();
                     let at = hydrus_core::time::TimestampMs::now().millis() / 1000;
+                    let queues = downloads.live();
                     let usage = hydrus_store::live::DaemonLive {
                         started,
                         bytes,
                         speed,
                         at,
+                        jobs: u32::try_from(queues.len()).unwrap_or(u32::MAX),
                     };
                     let stale = said.is_none_or(|s| {
-                        (s.started, s.bytes, s.speed) != (started, bytes, speed) || at - s.at >= 5
+                        (s.started, s.bytes, s.speed, s.jobs)
+                            != (started, bytes, speed, usage.jobs)
+                            || at - s.at >= 5
                     });
                     if stale {
                         said = Some(usage);
@@ -778,7 +782,7 @@ fn run_server(dir: &Path, port: Option<u16>, bind: Option<IpAddr>, attached: boo
                             tracing::error!(error = %e, "keeping the network's use failed");
                         }
                     }
-                    let changes = hydrus_store::live::changes(&mut last, downloads.live());
+                    let changes = hydrus_store::live::changes(&mut last, queues);
                     if changes.is_empty() {
                         continue;
                     }

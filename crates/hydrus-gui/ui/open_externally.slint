@@ -36,7 +36,8 @@ export component OpenExternallyTable inherits Rectangle {
 }
 export component OpenFileCallsWindow inherits Window {
     in property <string> window-title:"edit calls";
-    title:root.window-title;
+    in property <string> title-suffix: "";
+    title:(root.window-title) + root.title-suffix;
     preferred-width:580px;preferred-height:340px;background:Theme.window;
     in property <[TableRow]> rows;
     in property <bool> selected;
@@ -55,7 +56,8 @@ export component OpenFileCallsWindow inherits Window {
 }
 export component ExternalRoutingChoiceWindow inherits Window {
     in property <string> window-title;
-    title:root.window-title;
+    in property <string> title-suffix: "";
+    title:(root.window-title) + root.title-suffix;
     preferred-width:520px;preferred-height:440px;background:Theme.window;
     in property <[string]> choices;
     in property <string> choice-description;

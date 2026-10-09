@@ -185,7 +185,8 @@ component DefaultsButton inherits Rectangle {
 }
 
 export component PredicateEditorWindow inherits Window {
-    title: root.editing-existing ? "edit predicates" : "input predicate";
+    in property <string> title-suffix: "";
+    title: (root.editing-existing ? "edit predicates" : "input predicate") + root.title-suffix;
     in property <bool> editing-existing;
     in property <bool> batch-mode;
     in property <[string]> simple-texts;

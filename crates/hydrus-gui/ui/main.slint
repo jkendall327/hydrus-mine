@@ -612,6 +612,9 @@ export component MainWindow inherits Window {
     // the idle and CPU-busy fields ("idle", "CPU busy", or empty)
     in property <string> status-idle;
     in property <string> status-busy;
+    // the application-busy field (background jobs running) and its tooltip
+    in property <string> status-app-busy;
+    in property <string> status-app-busy-tip;
     // what the idle, CPU-busy and database fields say when hovered, and the
     // database's activity ("db writing", "db reading")
     in property <string> status-idle-tip;
@@ -2245,8 +2248,10 @@ export component MainWindow inherits Window {
                 // moment as the reference's status bar fields do
                 property <bool> hover-idle;
                 property <bool> hover-busy;
+                property <bool> hover-app;
                 property <bool> hover-db;
                 property <string> tip: self.hover-idle ? root.status-idle-tip
+                    : self.hover-app ? root.status-app-busy-tip
                     : self.hover-busy ? root.status-busy-tip
                     : self.hover-db ? root.status-db-tip : "";
                 out property <bool> tip-visible;
@@ -2274,6 +2279,15 @@ export component MainWindow inherits Window {
                             }
                         }
                         TouchArea { changed has-hover => { status-bar.hover-idle = self.has-hover; } }
+                    }
+                    if root.status-app-busy != "": Rectangle {
+                        HorizontalLayout {
+                            Text {
+                                text: root.status-app-busy;
+                                vertical-alignment: center;
+                            }
+                        }
+                        TouchArea { changed has-hover => { status-bar.hover-app = self.has-hover; } }
                     }
                     if root.status-busy != "": Rectangle {
                         HorizontalLayout {

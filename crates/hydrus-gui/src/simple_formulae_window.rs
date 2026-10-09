@@ -61,7 +61,7 @@ pub fn open(
     slots: &Slots,
     applied: Rc<dyn Fn()>,
 ) -> Result<SimpleFormulaeWindow, slint::PlatformError> {
-    let w = SimpleFormulaeWindow::new()?;
+    let w = crate::app_title::new::<crate::SimpleFormulaeWindow>()?;
     let mut values = store
         .read(settings::get::<SimpleDownloaderFormulae>)
         .unwrap_or_default();

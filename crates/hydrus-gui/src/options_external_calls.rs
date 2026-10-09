@@ -22,7 +22,7 @@ fn defaults(
     calls: Vec<Callable>,
     accepted: Rc<dyn Fn(Vec<Callable>)>,
 ) -> Result<(), String> {
-    let w = crate::ExternalDefaultsWindow::new().map_err(|e| e.to_string())?;
+    let w = crate::app_title::new::<crate::ExternalDefaultsWindow>().map_err(|e| e.to_string())?;
     let selected = Rc::new(RefCell::new(vec![false; calls.len()]));
     let alive = Rc::new(Cell::new(true));
     let show: Rc<dyn Fn()> = Rc::new({

@@ -22,7 +22,8 @@ component TextBox inherits Box {
 }
 
 export component EmbeddedMetadataWindow inherits Window {
-    title: "Detailed File Metadata";
+    in property <string> title-suffix: "";
+    title: ("Detailed File Metadata") + root.title-suffix;
     preferred-width: 780px;
     preferred-height: 760px;
     background: Theme.window;

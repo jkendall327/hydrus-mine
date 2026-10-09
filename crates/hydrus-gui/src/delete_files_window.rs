@@ -98,7 +98,7 @@ pub fn open_with_choice(
         }
         return Ok(None);
     }
-    let window = DeleteFilesWindow::new().map_err(|e| e.to_string())?;
+    let window = crate::app_title::new::<crate::DeleteFilesWindow>().map_err(|e| e.to_string())?;
     window.set_custom(draft.custom.as_str().into());
     show(&window, &draft);
     let initial_radio = i32::from(draft.choices.len() <= 1);

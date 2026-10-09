@@ -49,7 +49,7 @@ pub(crate) fn open(
     slot: &Rc<RefCell<Option<TagRelationshipsWindow>>>,
     applied: Rc<dyn Fn()>,
 ) -> Result<TagRelationshipsWindow, slint::PlatformError> {
-    let window = TagRelationshipsWindow::new()?;
+    let window = crate::app_title::new::<crate::TagRelationshipsWindow>()?;
     window
         .global::<crate::TagTextHistory<'_>>()
         .on_record(crate::write_tag_history::record);

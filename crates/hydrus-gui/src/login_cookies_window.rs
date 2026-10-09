@@ -158,7 +158,7 @@ pub fn open(
     if let Some(window) = slots.window.borrow().as_ref() {
         return Ok(window.clone_strong());
     }
-    let window = LoginCookiesWindow::new()?;
+    let window = crate::app_title::new::<crate::LoginCookiesWindow>()?;
     let editor = Rc::new(RefCell::new(CookiesEditor::new(rows)));
     let active = Rc::new(Cell::new(true));
     show(&window, &editor.borrow());

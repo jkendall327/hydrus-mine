@@ -91,7 +91,7 @@ pub(crate) fn open_with_flags(
     if let Some(window) = slot.borrow().as_ref() {
         return window.show().map_err(|e| e.to_string());
     }
-    let window = LocationsWindow::new().map_err(|e| e.to_string())?;
+    let window = crate::app_title::new::<crate::LocationsWindow>().map_err(|e| e.to_string())?;
     let ticks = domains::multiple_ticks_for(&store.snapshot().services, flags);
     let ticked = Rc::new(RefCell::new(ticked_for(&ticks, current)));
     let ticks = Rc::new(ticks);

@@ -780,7 +780,7 @@ fn select_gallery(
         .read(hydrus_store::settings::get::<hydrus_parse::Downloaders>)
         .map(|d| crate::gallery::offered_gugs(&d.gugs))
         .unwrap_or_default();
-    let Ok(window) = SubscriptionGalleryWindow::new() else {
+    let Ok(window) = crate::app_title::new::<crate::SubscriptionGalleryWindow>() else {
         return;
     };
     if gugs.is_empty() {
@@ -875,7 +875,7 @@ pub(crate) fn open(
     let exchange = edit_slots.exchange.clone();
     let state = Rc::new(RefCell::new(read(store).map_err(|e| e.to_string())?));
     let active = Rc::new(Cell::new(true));
-    let window = SubscriptionsWindow::new().map_err(|e| e.to_string())?;
+    let window = crate::app_title::new::<crate::SubscriptionsWindow>().map_err(|e| e.to_string())?;
     let paused = store
         .read(hydrus_store::settings::get::<hydrus_store::settings::Pauses>)
         .is_ok_and(|p| p.subscriptions);

@@ -219,7 +219,7 @@ fn open_data(
     slot: &Rc<RefCell<Option<NetworkDataWindow>>>,
     data: Data,
 ) -> Result<NetworkDataWindow, String> {
-    let window = NetworkDataWindow::new().map_err(|e| e.to_string())?;
+    let window = crate::app_title::new::<crate::NetworkDataWindow>().map_err(|e| e.to_string())?;
     let (title, headings, description) = match &data {
         Data::Sessions(_) => ("review session cookies", vec!["network context", "cookies", "expires"], "Network sessions keep cookies in separate domain silos. Select a session to review its cookies.".into()),
         Data::Cookies(d) => ("review network session", vec!["name", "value", "domain", "path", "expires", "secure"], format!("{}\nCookies for another domain in this silo will not be sent there. Changes are saved when you apply.", d.session.to_human_string())),
@@ -681,7 +681,7 @@ fn show_cookie_import(
         );
         return Ok(());
     }
-    let window = CookieImportWindow::new().map_err(|e| e.to_string())?;
+    let window = crate::app_title::new::<crate::CookieImportWindow>().map_err(|e| e.to_string())?;
     let choosing = matching.len() != cookies.len();
     window.set_choosing(choosing);
     window.set_message(if choosing {
@@ -792,7 +792,7 @@ fn edit_value(
     child: &Rc<RefCell<Option<EditNetworkValueWindow>>>,
     parent_active: Rc<Cell<bool>>,
 ) -> Result<(), String> {
-    let window = EditNetworkValueWindow::new().map_err(|e| e.to_string())?;
+    let window = crate::app_title::new::<crate::EditNetworkValueWindow>().map_err(|e| e.to_string())?;
     let data = state.borrow().data.clone();
     let original_cookie = match &data {
         Data::Cookies(d) => Some(index.map_or_else(

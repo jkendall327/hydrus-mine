@@ -29,7 +29,7 @@ pub fn question() -> Option<SessionDialog> {
 
 /// Ask yes/no, then `yes`.
 fn ask(message: &str, yes: impl Fn() + 'static) {
-    let Ok(window) = SessionDialog::new() else {
+    let Ok(window) = crate::app_title::new::<crate::SessionDialog>() else {
         return;
     };
     window.set_window_title("Are you sure?".into());

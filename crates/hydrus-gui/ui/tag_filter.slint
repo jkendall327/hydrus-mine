@@ -184,7 +184,8 @@ component Rules inherits Box {
 
 export component TagFilterWindow inherits Window {
     in property <string> window-title: "edit tag filter";
-    title: root.window-title;
+    in property <string> title-suffix: "";
+    title: (root.window-title) + root.title-suffix;
     preferred-width: 760px;
     preferred-height: 640px;
     background: Theme.window;

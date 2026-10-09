@@ -133,7 +133,7 @@ pub(crate) fn open(
 }
 
 fn open_list(slots: &Slots, store: Arc<Store>) -> Result<(), String> {
-    let window = FavouritesWindow::new().map_err(|e| e.to_string())?;
+    let window = crate::app_title::new::<crate::FavouritesWindow>().map_err(|e| e.to_string())?;
     let rows = store
         .read(hydrus_store::settings::get::<FavouriteSearches>)
         .map(|f| f.0)
@@ -406,7 +406,7 @@ fn open_edit(
     if let Some(old) = old {
         old.invoke_cancel();
     }
-    let window = FavouriteEditWindow::new().map_err(|e| e.to_string())?;
+    let window = crate::app_title::new::<crate::FavouriteEditWindow>().map_err(|e| e.to_string())?;
     let sorts: SortSettings = words
         .store
         .read(hydrus_store::settings::get)

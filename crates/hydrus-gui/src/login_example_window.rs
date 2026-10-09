@@ -32,7 +32,7 @@ pub fn open(
     if let Some(window) = slot.borrow().as_ref() {
         return Ok(window.clone_strong());
     }
-    let window = LoginExampleDomainWindow::new()?;
+    let window = crate::app_title::new::<crate::LoginExampleDomainWindow>()?;
     let draft = Rc::new(RefCell::new(ExampleDraft::new(value)));
     let rows = rows.to_vec();
     window.set_domain(draft.borrow().domain.as_str().into());

@@ -890,7 +890,7 @@ mod resource_tests {
     #[test]
     fn an_unavailable_worker_keeps_the_original_image_and_stops_polling() {
         let windows = crate::headless::init();
-        let window = crate::MediaViewerWindow::new().unwrap();
+        let window = crate::app_title::new::<crate::MediaViewerWindow>().unwrap();
         let raster = Arc::new(
             hydrus_media::Raster::new(
                 2,

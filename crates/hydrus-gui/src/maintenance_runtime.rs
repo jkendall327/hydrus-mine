@@ -55,6 +55,8 @@ struct Inner {
     cpu_times: RefCell<Option<CpuTimes>>,
     cpu_at: Cell<i64>,
     busy: Cell<bool>,
+    /// The application-busy field's last look at the running jobs.
+    app_busy: RefCell<hydrus_gui_model::status::AppBusy>,
 }
 impl Drop for Inner {
     fn drop(&mut self) {
@@ -120,6 +122,7 @@ impl Control {
             cpu_times: RefCell::new(None),
             cpu_at: Cell::new(i64::MIN),
             busy: Cell::new(false),
+            app_busy: RefCell::default(),
         }));
         control
             .0
@@ -192,6 +195,24 @@ impl Control {
             hydrus_gui_model::status::activity_tooltips(idle, self.0.busy.get());
         window.set_status_idle_tip(idle_tip.into());
         window.set_status_busy_tip(busy_tip.into());
+        // the background jobs running: the daemon's downloader queues (if
+        // what it last said is recent) and this client's maintenance passes
+        let (app_text, app_tip) = {
+            let mut app = self.0.app_busy.borrow_mut();
+            let (text, tip) = app.status(now_ms / 1000, || {
+                let daemon: hydrus_store::live::DaemonLive =
+                    store.read(hydrus_store::settings::get).unwrap_or_default();
+                let queues = if now_ms / 1000 - daemon.at <= 10 {
+                    daemon.jobs as usize
+                } else {
+                    0
+                };
+                queues + self.0.pending.iter().filter(|p| p.borrow().is_some()).count()
+            });
+            (text, tip.to_owned())
+        };
+        window.set_status_app_busy(app_text.into());
+        window.set_status_app_busy_tip(app_tip.into());
         // (the reference's job name has no counterpart here, so no tooltip)
         window.set_status_db(store.db_activity().into());
     }

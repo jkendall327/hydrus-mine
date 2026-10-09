@@ -3,7 +3,8 @@ import { Button, LineEdit, SpinBox } from "std-widgets.slint";
 import { Theme } from "theme.slint";
 export component PngExportWindow inherits Window {
     in property <string> window-title: "export to png";
-    title: root.window-title;
+    in property <string> title-suffix: "";
+    title: (root.window-title) + root.title-suffix;
     preferred-width: 690px;
     preferred-height: 310px;
     background: Theme.window;

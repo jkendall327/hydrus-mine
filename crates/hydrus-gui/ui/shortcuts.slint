@@ -1,7 +1,8 @@
 import { Button, CheckBox, ComboBox, LineEdit, ScrollView } from "std-widgets.slint";
 import { ListTable, TableRow } from "list_table.slint";
 export component ShortcutSetWindow inherits Window {
-    title:"edit shortcuts"; width:800px; height:500px;
+    in property <string> title-suffix: "";
+    title:("edit shortcuts") + root.title-suffix; width:800px; height:500px;
     in-out property <string> set-name;
     in property <bool> name-enabled;
     in property <string> description;
@@ -60,7 +61,8 @@ export component ShortcutSetsPanel inherits VerticalLayout {
     }
 }
 export component ShortcutCommandWindow inherits Window {
-    title:"edit shortcut command";width:700px;height:420px;
+    in property <string> title-suffix: "";
+    title:("edit shortcut command") + root.title-suffix;width:700px;height:420px;
     in property <string> keyboard-text;
     in property <string> mouse-text;
     in-out property <int> mode;

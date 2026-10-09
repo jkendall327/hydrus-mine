@@ -50,7 +50,7 @@ pub fn open_definition(
     if let Some(window) = slot.borrow().as_ref() {
         return Ok(window.clone_strong());
     }
-    let window = LoginCredentialDefinitionWindow::new()?;
+    let window = crate::app_title::new::<crate::LoginCredentialDefinitionWindow>()?;
     window.set_name(value.name.as_str().into());
     window.set_kind(i32::from(value.kind == CredentialKind::Hidden));
     window.set_matcher(value.string_match.describe(false, false).into());
@@ -180,7 +180,7 @@ pub fn open_credentials(
     if let Some(window) = slot.borrow().as_ref() {
         return Ok(window.clone_strong());
     }
-    let window = LoginCredentialsWindow::new()?;
+    let window = crate::app_title::new::<crate::LoginCredentialsWindow>()?;
     let editor = Rc::new(RefCell::new(CredentialsEditor::new(
         definitions,
         credentials,

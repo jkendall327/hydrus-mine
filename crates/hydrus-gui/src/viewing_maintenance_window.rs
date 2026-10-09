@@ -25,7 +25,7 @@ pub fn open(
     if let Some(predecessor) = predecessor {
         predecessor.invoke_cancelled();
     }
-    let window = SessionDialog::new().map_err(|error| error.to_string())?;
+    let window = crate::app_title::new::<crate::SessionDialog>().map_err(|error| error.to_string())?;
     window.set_window_title("Are you sure?".into());
     window.set_message(operation.question().into());
     window.set_yes_label("do it".into());

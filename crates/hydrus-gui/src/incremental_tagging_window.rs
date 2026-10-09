@@ -27,7 +27,7 @@ pub fn open(
     if let Some(window) = slot.borrow().as_ref() {
         return Ok(window.clone_strong());
     }
-    let window = IncrementalTaggingWindow::new()?;
+    let window = crate::app_title::new::<crate::IncrementalTaggingWindow>()?;
     let model = Rc::new(RefCell::new(model));
     let active = Rc::new(Cell::new(true));
     crate::gui_colours::bind(

@@ -66,7 +66,7 @@ pub(crate) fn open(
     if slot.borrow().is_some() {
         return Ok(());
     }
-    let window = NamespaceSortsWindow::new().map_err(|error| error.to_string())?;
+    let window = crate::app_title::new::<crate::NamespaceSortsWindow>().map_err(|error| error.to_string())?;
     let editor = Rc::new(RefCell::new(Editor::new(sorts)));
     let active = Rc::new(Cell::new(true));
     let removal: Rc<RefCell<Option<Vec<u64>>>> = Rc::default();

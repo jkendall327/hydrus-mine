@@ -98,7 +98,8 @@ component DuplicatePanel inherits Rectangle {
 }
 
 export component DuplicateFilterWindow inherits Window {
-    title: "duplicate filter";
+    in property <string> title-suffix: "";
+    title: ("duplicate filter") + root.title-suffix;
     preferred-width: 1200px;
     preferred-height: 800px;
     in property <brush> canvas-background: #ffffff;

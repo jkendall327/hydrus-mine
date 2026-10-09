@@ -171,7 +171,7 @@ fn edit(
     sizes: [(f64, f64); 4],
     advanced: bool,
 ) -> Result<(), String> {
-    let window = EditServiceWindow::new().map_err(|e| e.to_string())?;
+    let window = crate::app_title::new::<crate::EditServiceWindow>().map_err(|e| e.to_string())?;
     window.set_service_name(service.name.as_str().into());
     window.set_service_type(service.service_type().name().into());
     window.set_rating(display(&service.kind).is_some());
@@ -515,7 +515,7 @@ pub fn open(
     slots: &Slots,
     changed: Rc<dyn Fn()>,
 ) -> Result<ServicesEditorWindow, String> {
-    let window = ServicesEditorWindow::new().map_err(|e| e.to_string())?;
+    let window = crate::app_title::new::<crate::ServicesEditorWindow>().map_err(|e| e.to_string())?;
     let active = Rc::new(Cell::new(true));
     let editor = Rc::new(RefCell::new(Editor::new(store).map_err(|e| e.to_string())?));
     let sizes = store

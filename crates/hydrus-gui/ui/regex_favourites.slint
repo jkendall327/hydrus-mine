@@ -3,7 +3,8 @@ import { ListTable, TableRow } from "list_table.slint";
 import { Theme } from "theme.slint";
 import { MenuPane, MenuPanes } from "main_menu.slint";
 export component RegexFavouritesWindow inherits Window {
-    title: "manage regex favourites";
+    in property <string> title-suffix: "";
+    title: ("manage regex favourites") + root.title-suffix;
     preferred-width: 780px;
     preferred-height: 500px;
     background: Theme.window;

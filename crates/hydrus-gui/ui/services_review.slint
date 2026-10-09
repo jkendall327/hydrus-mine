@@ -2,7 +2,8 @@ import { Button, ComboBox, VerticalBox, HorizontalBox } from "std-widgets.slint"
 import { Theme } from "theme.slint";
 export component ServicesReviewWindow inherits Window {
     in property <string> window-title: "review services";
-    title: root.window-title;
+    in property <string> title-suffix: "";
+    title: (root.window-title) + root.title-suffix;
     width: 700px; height: 400px;
     background: Theme.window;
     in property <[string]> services;

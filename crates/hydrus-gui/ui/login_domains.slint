@@ -2,7 +2,8 @@ import { Button } from "std-widgets.slint";
 import { Theme } from "theme.slint";
 import { ListTable, TableRow } from "list_table.slint";
 export component LoginDomainsWindow inherits Window {
-    title: "manage logins";
+    in property <string> title-suffix: "";
+    title: ("manage logins") + root.title-suffix;
     preferred-width: 1080px;
     preferred-height: 520px;
     background: Theme.window;

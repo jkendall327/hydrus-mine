@@ -135,7 +135,7 @@ pub fn open(store: &Arc<Store>, slot: &Slot, job: Job) -> Result<(), String> {
     slot.0.clear();
     match job.asking() {
         Asking::YesNo { yes, no } => {
-            let window = SessionDialog::new().map_err(|e| e.to_string())?;
+            let window = crate::app_title::new::<crate::SessionDialog>().map_err(|e| e.to_string())?;
             window.set_window_title("Are you sure?".into());
             window.set_message(job.question().into());
             window.set_yes_label(yes.into());
@@ -248,7 +248,7 @@ fn ask_buttons(
         answer(Some(0));
         return Ok(());
     }
-    let window = ChoiceButtonsWindow::new().map_err(|e| e.to_string())?;
+    let window = crate::app_title::new::<crate::ChoiceButtonsWindow>().map_err(|e| e.to_string())?;
     window.set_window_title(ask.title.into());
     window.set_message(ask.message.into());
     window.set_no_label(ask.no_label.into());

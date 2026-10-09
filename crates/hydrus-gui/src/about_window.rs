@@ -137,7 +137,7 @@ pub fn facts(store: &Store) -> Facts {
 
 /// Open the about window.
 pub fn open(store: &Store) -> Result<AboutWindow, slint::PlatformError> {
-    let window = AboutWindow::new()?;
+    let window = crate::app_title::new::<crate::AboutWindow>()?;
     let about = about_with_format(
         &facts(store),
         Some(LICENSE),

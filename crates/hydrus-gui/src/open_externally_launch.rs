@@ -220,7 +220,7 @@ impl State {
         if let Some(window) = old {
             window.invoke_force_close();
         }
-        let Ok(window) = SessionDialog::new() else {
+        let Ok(window) = crate::app_title::new::<crate::SessionDialog>() else {
             return;
         };
         window.set_window_title("Information".into());

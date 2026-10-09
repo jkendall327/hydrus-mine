@@ -12,7 +12,7 @@ pub(crate) fn open(
     slot: &Rc<RefCell<Option<TagDisplayWindow>>>,
     applied: Rc<dyn Fn()>,
 ) -> Result<TagDisplayWindow, slint::PlatformError> {
-    let window = TagDisplayWindow::new()?;
+    let window = crate::app_title::new::<crate::TagDisplayWindow>()?;
     window.set_application(application);
     if application {
         model.application_only();

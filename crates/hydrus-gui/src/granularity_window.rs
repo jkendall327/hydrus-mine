@@ -63,7 +63,7 @@ pub(crate) fn open(store: &Arc<Store>, slots: &Slots, changed: &Rc<dyn Fn()>) {
         let _ = window.show();
         return;
     }
-    let Ok(window) = GranularityWindow::new() else {
+    let Ok(window) = crate::app_title::new::<crate::GranularityWindow>() else {
         return;
     };
     window.set_window_title(model::TITLE.into());

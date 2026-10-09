@@ -3,7 +3,8 @@ import { ListTable, TableColumn, TableRow } from "list_table.slint";
 import { Theme } from "theme.slint";
 export struct ApiPermissionRow { code:int, label:string, checked:bool }
 export component ClientApiKeysWindow inherits Window {
-    title: "client api access keys"; width: 1000px; height: 560px; background: Theme.window;
+    in property <string> title-suffix: "";
+    title: ("client api access keys") + root.title-suffix; width: 1000px; height: 560px; background: Theme.window;
     in property <[TableColumn]> columns;
     in property <[TableRow]> rows;
     in property <int> sort-column;
@@ -58,7 +59,8 @@ export component ClientApiKeysWindow inherits Window {
     }
 }
 export component EditApiPermissionsWindow inherits Window {
-    title: "edit api access permissions"; width: 720px; height: 740px; background: Theme.window;
+    in property <string> title-suffix: "";
+    title: ("edit api access permissions") + root.title-suffix; width: 720px; height: 740px; background: Theme.window;
     in-out property <string> access-key;
     in-out property <string> name;
     in-out property <bool> permits-everything;
@@ -116,7 +118,8 @@ export component EditApiPermissionsWindow inherits Window {
 
 // "waiting for API access permissions request" (`CaptureAPIAccessPermissionsRequestPanel`)
 export component ApiRequestWindow inherits Window {
-    title: "waiting for API access permissions request"; width: 480px; height: 140px; background: Theme.window;
+    in property <string> title-suffix: "";
+    title: ("waiting for API access permissions request") + root.title-suffix; width: 480px; height: 140px; background: Theme.window;
     in property <string> text: "waiting for request…";
     callback cancel-clicked();
     VerticalBox { padding: 16px; spacing: 12px;

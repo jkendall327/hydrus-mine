@@ -46,7 +46,7 @@ pub fn open(
         w.show()?;
         return Ok(w.clone_strong());
     }
-    let w = MostUsedTagsWindow::new()?;
+    let w = crate::app_title::new::<crate::MostUsedTagsWindow>()?;
     let mut services: Vec<_> = store
         .snapshot()
         .services

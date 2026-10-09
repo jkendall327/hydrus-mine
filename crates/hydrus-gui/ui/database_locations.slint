@@ -10,7 +10,8 @@ import { Theme } from "theme.slint";
 
 export component DatabaseLocationsWindow inherits Window {
     in property <string> window-title: "database locations";
-    title: root.window-title;
+    in property <string> title-suffix: "";
+    title: (root.window-title) + root.title-suffix;
     preferred-width: 980px;
     preferred-height: 520px;
     background: Theme.window;
@@ -118,7 +119,8 @@ export component DatabaseLocationsWindow inherits Window {
 // "set max size": a size, or none (`NoneableBytesControl`).
 export component LocationMaxSizeWindow inherits Window {
     in property <string> window-title: "edit max size";
-    title: root.window-title;
+    in property <string> title-suffix: "";
+    title: (root.window-title) + root.title-suffix;
     preferred-width: 520px;
     background: Theme.window;
     in property <string> message;
@@ -150,7 +152,8 @@ export component LocationMaxSizeWindow inherits Window {
 // migration between 2 and 3, and an offline folder's.
 export component GranularityWindow inherits Window {
     in property <string> window-title: "manage granularity";
-    title: root.window-title;
+    in property <string> title-suffix: "";
+    title: (root.window-title) + root.title-suffix;
     preferred-width: 640px;
     background: Theme.window;
     in property <string> warning;

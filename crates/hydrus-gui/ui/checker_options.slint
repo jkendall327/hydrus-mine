@@ -39,7 +39,8 @@ component Label inherits Text {
 }
 
 export component CheckerOptionsWindow inherits Window {
-    title: "edit checker options";
+    in property <string> title-suffix: "";
+    title: ("edit checker options") + root.title-suffix;
     preferred-width: 700px;
     background: Theme.window;
     in property <CheckerTexts> texts;

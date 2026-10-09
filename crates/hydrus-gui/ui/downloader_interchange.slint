@@ -3,7 +3,8 @@ import { Theme } from "theme.slint";
 export struct PackageChoice { label: string, included: bool }
 export component DownloaderExchangeWindow inherits Window {
     in property <string> window-title: root.importing ? "import downloader definitions" : "export downloader definitions";
-    title: root.window-title;
+    in property <string> title-suffix: "";
+    title: (root.window-title) + root.title-suffix;
     in property <string> instructions: root.importing ? "Paste reference downloader text or open a hydrus PNG. Review the definitions before importing." : "Copy reference downloader text or save a hydrus PNG to share these definitions.";
     preferred-width: 880px; preferred-height: 610px;
     background: Theme.window;

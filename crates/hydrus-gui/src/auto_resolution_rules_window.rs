@@ -389,7 +389,7 @@ fn open_comparator(
     stack: &ComparatorStack,
     done: Rc<dyn Fn(Comparator)>,
 ) -> Result<ComparatorWindow, String> {
-    let window = ComparatorWindow::new().map_err(|e| e.to_string())?;
+    let window = crate::app_title::new::<crate::ComparatorWindow>().map_err(|e| e.to_string())?;
     window.set_window_title(comparator_title(&comparator).into());
     window.set_kind(comparator_kind(&comparator).into());
     let state = Rc::new(RefCell::new(ComparatorState {
@@ -701,7 +701,7 @@ fn open_rule(
     slots: &Slots,
     done: Rc<dyn Fn(Rule)>,
 ) -> Result<AutoResolutionRuleWindow, String> {
-    let window = AutoResolutionRuleWindow::new().map_err(|e| e.to_string())?;
+    let window = crate::app_title::new::<crate::AutoResolutionRuleWindow>().map_err(|e| e.to_string())?;
     window.set_window_title(title.into());
     window.set_operation_choices(strings(
         OPERATION_CHOICES.iter().map(|c| c.0.to_owned()).collect(),
@@ -1262,7 +1262,7 @@ pub(crate) fn open(store: &Arc<Store>, slots: &Slots, applied: Rc<dyn Fn()>) -> 
         suggested: store_rules::suggested_rules(),
         context: text_context(store),
     }));
-    let window = AutoResolutionRulesWindow::new().map_err(|e| e.to_string())?;
+    let window = crate::app_title::new::<crate::AutoResolutionRulesWindow>().map_err(|e| e.to_string())?;
     window.set_warning(RULES_WARNING.into());
     window.set_note(RULES_ORDER_NOTE.into());
     window.set_suggestions(strings(

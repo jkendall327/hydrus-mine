@@ -133,7 +133,7 @@ pub(crate) fn bind(
             if editing.is_none() && question.is_none() {
                 return;
             }
-            let Ok(dialog) = SessionDialog::new() else {
+            let Ok(dialog) = crate::app_title::new::<crate::SessionDialog>() else {
                 return;
             };
             dialog.set_message(question.as_deref().unwrap_or("Enter the reason").into());

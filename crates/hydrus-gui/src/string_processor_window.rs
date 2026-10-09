@@ -200,7 +200,7 @@ pub fn open(
     applied: Rc<dyn Fn(StringProcessor)>,
 ) -> Result<StringProcessorWindow, slint::PlatformError> {
     slots.set_store(store);
-    let window = StringProcessorWindow::new()?;
+    let window = crate::app_title::new::<crate::StringProcessorWindow>()?;
     let active = Rc::new(Cell::new(true));
     let blocked: Rc<dyn Fn() -> bool> = Rc::new({
         let active = active.clone();
@@ -956,7 +956,7 @@ fn open_step(
     if slots.step.borrow().is_some() {
         return;
     }
-    let Ok(window) = StringStepWindow::new() else {
+    let Ok(window) = crate::app_title::new::<crate::StringStepWindow>() else {
         return;
     };
     let active = Rc::new(Cell::new(true));
@@ -1188,7 +1188,7 @@ pub fn open_converter(
     slots: &Slots,
     applied: Rc<dyn Fn(StringConverter)>,
 ) -> Result<StringConverterWindow, slint::PlatformError> {
-    let window = StringConverterWindow::new()?;
+    let window = crate::app_title::new::<crate::StringConverterWindow>()?;
     let active = Rc::new(Cell::new(true));
     let blocked: Rc<dyn Fn() -> bool> = Rc::new({
         let active = active.clone();
@@ -1545,7 +1545,7 @@ fn open_conversion(
     slot: &Rc<RefCell<Option<ConversionWindow>>>,
     done: Rc<dyn Fn(Conversion) -> Result<(), String>>,
 ) -> Result<ConversionWindow, slint::PlatformError> {
-    let window = ConversionWindow::new()?;
+    let window = crate::app_title::new::<crate::ConversionWindow>()?;
     let active = Rc::new(Cell::new(true));
     window.set_window_title(CONVERSION_TITLE.into());
     window.set_regex_components(strings(

@@ -3,7 +3,8 @@ import { ListTable, TableColumn, TableRow } from "list_table.slint";
 import { Theme } from "theme.slint";
 export component NetworkDataWindow inherits Window {
     in property <string> window-title;
-    title: root.window-title; width: 1100px; height: 620px; background: Theme.window;
+    in property <string> title-suffix: "";
+    title: (root.window-title) + root.title-suffix; width: 1100px; height: 620px; background: Theme.window;
     in property <[TableColumn]> columns; in property <[TableRow]> rows;
     in property <bool> browser; in property <bool> cookies; in property <bool> editing;
     in property <bool> can-edit; in property <bool> can-delete;
@@ -52,6 +53,7 @@ export component NetworkDataWindow inherits Window {
     }
 }
 export component EditNetworkValueWindow inherits Window {
+    in property <string> title-suffix: "";
     in property <string> window-title; title: root.window-title; width: 680px; height: 560px; background: Theme.window;
     in property <bool> cookie; in property <bool> session-only;
     in-out property <bool> global; in-out property <bool> session-cookie; in-out property <bool> secure;
@@ -95,7 +97,8 @@ export component EditNetworkValueWindow inherits Window {
 }
 
 export component CookieImportWindow inherits Window {
-    title: "import cookies"; width: 700px; height: 350px; background: Theme.window;
+    in property <string> title-suffix: "";
+    title: ("import cookies") + root.title-suffix; width: 700px; height: 350px; background: Theme.window;
     in property <string> message; in property <bool> choosing;
     in property <string> matching-label;
     callback action(string);
@@ -115,7 +118,8 @@ export component CookieImportWindow inherits Window {
 }
 
 export component HeaderApprovalWindow inherits Window {
-    title: "custom HTTP header approval"; width: 700px; height: 360px; background: Theme.window;
+    in property <string> title-suffix: "";
+    title: ("custom HTTP header approval") + root.title-suffix; width: 700px; height: 360px; background: Theme.window;
     in property <string> question; in property <string> error; in property <bool> busy;
     callback answer(bool); callback later();
     VerticalBox { padding: 18px; spacing: 12px;

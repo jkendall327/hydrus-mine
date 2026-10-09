@@ -683,7 +683,7 @@ fn build(
     sidecars: Option<Sidecars>,
     done: Done,
 ) -> Result<(FilenameTaggingWindow, Rc<RefCell<State>>), String> {
-    let window = FilenameTaggingWindow::new().map_err(|e| e.to_string())?;
+    let window = crate::app_title::new::<crate::FilenameTaggingWindow>().map_err(|e| e.to_string())?;
     // (the reference's defaults: the filename's namespace "filename")
     let misc: [(bool, String); 7] = std::array::from_fn(|i| {
         (

@@ -81,7 +81,8 @@ export component ImportFavouritesButton inherits Rectangle {
 }
 
 export component ImportFavouritePromptWindow inherits Window {
-    title: root.asking-name ? "Enter Text" : "Are you sure?";
+    in property <string> title-suffix: "";
+    title: (root.asking-name ? "Enter Text" : "Are you sure?") + root.title-suffix;
     preferred-width: 520px;
     background: Theme.window;
     in property <string> message;

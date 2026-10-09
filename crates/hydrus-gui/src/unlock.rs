@@ -18,7 +18,7 @@ pub fn unlock_window(
     lock: LockPassword,
     unlocked: impl FnOnce() + 'static,
 ) -> Result<UnlockWindow, slint::PlatformError> {
-    let window = UnlockWindow::new()?;
+    let window = crate::app_title::new::<crate::UnlockWindow>()?;
     let unlocked = Cell::new(Some(unlocked));
     let weak = window.as_weak();
     window.on_entered(move |password| {

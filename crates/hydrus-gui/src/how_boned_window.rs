@@ -107,7 +107,7 @@ pub fn open(store: &Arc<Store>, slot: &Slot) -> Result<(), String> {
     {
         return window.show().map_err(|e| e.to_string());
     }
-    let window = HowBonedWindow::new().map_err(|e| e.to_string())?;
+    let window = crate::app_title::new::<crate::HowBonedWindow>().map_err(|e| e.to_string())?;
     let snapshot = store.snapshot();
     let roles = DomainRoles::new(&snapshot.services).map_err(|e| e.to_string())?;
     let domains: Vec<(ServiceKey, String)> = snapshot

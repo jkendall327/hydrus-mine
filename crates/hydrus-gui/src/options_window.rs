@@ -513,7 +513,7 @@ pub(crate) fn open(
     let settings = store
         .read(Settings::load)
         .map_err(|e| format!("could not read the options: {e}"))?;
-    let window = OptionsWindow::new().map_err(|e| e.to_string())?;
+    let window = crate::app_title::new::<crate::OptionsWindow>().map_err(|e| e.to_string())?;
     let session_choices = Rc::new(crate::options::session_choices(store));
     window.set_search_at_top(settings.options_preferences.search_at_top);
     let resolved = settings

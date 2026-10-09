@@ -3,7 +3,8 @@ import { ListTable, TableColumn, TableRow } from "list_table.slint";
 import { Theme } from "theme.slint";
 
 export component DownloaderDisplayWindow inherits Window {
-    title: "downloader and url display";
+    in property <string> title-suffix: "";
+    title: ("downloader and url display") + root.title-suffix;
     width: 800px;
     height: 600px;
     background: Theme.window;

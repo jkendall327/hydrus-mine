@@ -42,7 +42,8 @@ export component MediaViewTable inherits Rectangle {
 
 export component MediaViewWindow inherits Window {
     in property <string> window-title: "edit media view options information";
-    title: root.window-title;
+    in property <string> title-suffix: "";
+    title: (root.window-title) + root.title-suffix;
     preferred-width: 640px;
     background: Theme.window;
     in property <string> intro;

@@ -278,7 +278,7 @@ pub fn open(
     slot: &Slot,
     applied: Rc<dyn Fn(TagFilter)>,
 ) -> Result<TagFilterWindow, slint::PlatformError> {
-    let window = TagFilterWindow::new()?;
+    let window = crate::app_title::new::<crate::TagFilterWindow>()?;
     window.set_window_title(title.into());
     window.set_message(message.into());
     window.set_instructions(INSTRUCTIONS.into());

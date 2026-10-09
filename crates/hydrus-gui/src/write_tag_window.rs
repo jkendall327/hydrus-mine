@@ -97,7 +97,7 @@ fn open_internal(
         existing.show()?;
         return Ok(existing.clone_strong());
     }
-    let window = WriteTagsWindow::new()?;
+    let window = crate::app_title::new::<crate::WriteTagsWindow>()?;
     window
         .global::<crate::TagTextHistory<'_>>()
         .on_record(crate::write_tag_history::record);

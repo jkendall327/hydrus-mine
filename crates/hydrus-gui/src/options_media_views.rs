@@ -71,7 +71,7 @@ fn edit(
     done: Rc<dyn Fn(Row)>,
 ) -> Option<MediaViewWindow> {
     let capability = model::capability(row.code)?;
-    let window = MediaViewWindow::new().ok()?;
+    let window = crate::app_title::new::<crate::MediaViewWindow>().ok()?;
     window.set_window_title(title.into());
     window.set_intro(capability.intro.into());
     let label = |a| model::action_text(a).to_owned();
@@ -438,7 +438,7 @@ mod tests {
         let original = initial.media_viewer.clone();
         let editor = Rc::new(RefCell::new(Editor::new(initial)));
         let active = Rc::new(Cell::new(true));
-        let window = OptionsWindow::new().unwrap();
+        let window = crate::app_title::new::<crate::OptionsWindow>().unwrap();
         window.show().unwrap();
         let binding = bind(&window, &editor, &active);
         (binding.show)();
@@ -586,7 +586,7 @@ mod tests {
         );
 
         // A new Options owner still permits its current Add path, while old callbacks stay inert.
-        let successor = OptionsWindow::new().unwrap();
+        let successor = crate::app_title::new::<crate::OptionsWindow>().unwrap();
         successor.show().unwrap();
         let successor_editor = Rc::new(RefCell::new(Editor::new(
             store.read(Settings::load).unwrap(),
@@ -658,7 +658,7 @@ mod tests {
             let editor = Rc::new(RefCell::new(Editor::new(
                 store.read(Settings::load).unwrap(),
             )));
-            let window = OptionsWindow::new().unwrap();
+            let window = crate::app_title::new::<crate::OptionsWindow>().unwrap();
             window.show().unwrap();
             let binding = bind(&window, &editor, &Rc::new(Cell::new(true)));
             (binding.show)();

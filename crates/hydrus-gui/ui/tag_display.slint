@@ -4,7 +4,8 @@ import { Theme } from "theme.slint";
 export component TagDisplayWindow inherits Window {
     in property <bool> application;
     in property <bool> child-open;
-    title: root.application ? "manage where tag siblings and parents apply" : "display/search";
+    in property <string> title-suffix: "";
+    title: (root.application ? "manage where tag siblings and parents apply" : "display/search") + root.title-suffix;
     preferred-width: 820px; preferred-height: 660px; background: Theme.window;
     in property <[string]> services;
     in-out property <int> service-index;

@@ -45,7 +45,8 @@ component Fields inherits VerticalLayout {
 
 export component DownloaderDefinitionsWindow inherits Window {
     in property <string> window-title;
-    title: root.window-title;
+    in property <string> title-suffix: "";
+    title: (root.window-title) + root.title-suffix;
     preferred-width: 1000px; preferred-height: 560px;
     background: Theme.window;
     in property <bool> generators;
@@ -105,7 +106,8 @@ export component DownloaderDefinitionsWindow inherits Window {
 
 export component DownloaderDefinitionEditWindow inherits Window {
     in property <string> window-title;
-    title: root.window-title;
+    in property <string> title-suffix: "";
+    title: (root.window-title) + root.title-suffix;
     preferred-width: 950px; preferred-height: 740px;
     min-width: 650px; min-height: 300px;
     out property <float> layout-height: root.height / 1px;

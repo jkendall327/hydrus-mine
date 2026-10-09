@@ -3,7 +3,8 @@ import { Button, ScrollView } from "std-widgets.slint";
 import { Theme } from "theme.slint";
 export component GallerySourceWindow inherits Window {
     in property <string> window-title: "select gallery";
-    title: root.window-title;
+    in property <string> title-suffix: "";
+    title: (root.window-title) + root.title-suffix;
     preferred-width: 720px;
     preferred-height: root.message == "" ? 340px : 190px;
     background: Theme.window;

@@ -44,7 +44,7 @@ impl Notices {
         if !parent.window().is_visible() {
             return Ok(());
         }
-        let window = SessionDialog::new().map_err(|error| error.to_string())?;
+        let window = crate::app_title::new::<crate::SessionDialog>().map_err(|error| error.to_string())?;
         window.set_window_title("Warning".into());
         window.set_message(message.into());
         window.set_notice_only(true);

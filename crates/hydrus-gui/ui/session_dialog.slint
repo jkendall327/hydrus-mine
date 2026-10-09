@@ -11,7 +11,8 @@ import { MenuChoiceFrame } from "menu_choice_wheel.slint";
 
 export component SessionDialog inherits Window {
     in property <string> window-title: "Enter Text";
-    title: root.window-title;
+    in property <string> title-suffix: "";
+    title: (root.window-title) + root.title-suffix;
     preferred-width: 520px;
     background: Theme.window;
     in property <string> message;

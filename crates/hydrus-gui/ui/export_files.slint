@@ -10,7 +10,8 @@ import { ListText } from "theme.slint";
 import { MenuPane } from "main_menu.slint";
 import { TagMenuOverlay } from "write_autocomplete.slint";
 export component ExportFilesWindow inherits Window {
-    title: "export files";
+    in property <string> title-suffix: "";
+    title: ("export files") + root.title-suffix;
     preferred-width: 1120px;
     preferred-height: 690px;
     background: Theme.window;

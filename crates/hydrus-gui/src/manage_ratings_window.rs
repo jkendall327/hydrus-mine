@@ -117,7 +117,7 @@ pub(crate) fn open(
         .iter()
         .map(|f| ratings.remove(f).unwrap_or_default())
         .collect();
-    let window = ManageRatingsWindow::new().map_err(|e| e.to_string())?;
+    let window = crate::app_title::new::<crate::ManageRatingsWindow>().map_err(|e| e.to_string())?;
     window.set_window_title(title(files.len()).into());
     let sizes = store
         .read(hydrus_store::settings::get::<hydrus_store::settings::RatingContextSizes>)
@@ -182,7 +182,7 @@ pub(crate) fn open(
             let Some(count) = state.borrow().editor.count(row) else {
                 return;
             };
-            let Ok(edit) = crate::EditValueWindow::new() else {
+            let Ok(edit) = crate::app_title::new::<crate::EditValueWindow>() else {
                 return;
             };
             edit.set_value(i32::try_from(count).unwrap_or(i32::MAX));

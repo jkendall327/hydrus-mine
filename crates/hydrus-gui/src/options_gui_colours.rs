@@ -154,7 +154,7 @@ pub(crate) fn bind(
             else {
                 return;
             };
-            let Ok(picker) = GuiColourPickerWindow::new() else {
+            let Ok(picker) = crate::app_title::new::<crate::GuiColourPickerWindow>() else {
                 return;
             };
             let [red, green, blue] = rgb.0;
@@ -262,7 +262,7 @@ pub(crate) fn bind(
                 }
                 Err(error) => error,
             };
-            let Ok(notice) = SessionDialog::new() else {
+            let Ok(notice) = crate::app_title::new::<crate::SessionDialog>() else {
                 return;
             };
             notice.set_window_title("Problem pasting!".into());

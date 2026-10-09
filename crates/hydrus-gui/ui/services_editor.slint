@@ -70,7 +70,8 @@ component RatingExamplePanel inherits VerticalBox {
 }
 export component ServicesEditorWindow inherits Window {
     in property <string> window-title: "edit services";
-    title: root.window-title;
+    in property <string> title-suffix: "";
+    title: (root.window-title) + root.title-suffix;
     width: 800px; height: 520px; background: Theme.window;
     in property <[TableColumn]> columns;
     in property <[TableRow]> rows;
@@ -119,7 +120,8 @@ export component ServicesEditorWindow inherits Window {
 }
 export component EditServiceWindow inherits Window {
     in property <string> window-title: "edit service";
-    title: root.window-title;
+    in property <string> title-suffix: "";
+    title: (root.window-title) + root.title-suffix;
     // Initial dimensions are preferences; live layout must depend on the
     // window's actual geometry after native Resize events.
     preferred-width: 640px; preferred-height: 640px; background: Theme.window;

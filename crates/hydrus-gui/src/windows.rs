@@ -483,7 +483,7 @@ mod tests {
     #[test]
     fn opening_observer_and_batched_files_share_the_same_owned_filter() {
         let _windows = crate::headless::init();
-        let owner = crate::OptionsWindow::new().unwrap();
+        let owner = crate::app_title::new::<crate::OptionsWindow>().unwrap();
         owner
             .window()
             .set_size(slint::LogicalSize::new(100.0, 100.0));

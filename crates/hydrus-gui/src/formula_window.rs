@@ -213,7 +213,7 @@ pub fn open(
     applied: Rc<dyn Fn(Formula)>,
 ) -> Result<FormulaWindow, slint::PlatformError> {
     slots.strings.set_store(store);
-    let w = FormulaWindow::new()?;
+    let w = crate::app_title::new::<crate::FormulaWindow>()?;
     let active = Rc::new(Cell::new(true));
     let fetch = crate::parser_test_fetch::Slot::default();
     w.set_fetch_url(
@@ -969,7 +969,7 @@ fn open_rule(
     slots: &Slots,
     applied: Rc<dyn Fn(Rule)>,
 ) -> Result<FormulaRuleWindow, slint::PlatformError> {
-    let w = FormulaRuleWindow::new()?;
+    let w = crate::app_title::new::<crate::FormulaRuleWindow>()?;
     let active = Rc::new(Cell::new(true));
     let blocked: Rc<dyn Fn() -> bool> = Rc::new({
         let active = active.clone();

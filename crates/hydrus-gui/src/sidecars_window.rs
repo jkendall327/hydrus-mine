@@ -367,7 +367,7 @@ pub fn open_node(
 ) -> Result<SidecarNodeWindow, slint::PlatformError> {
     slots.strings.set_store(store);
     let slot = &slots.node;
-    let window = SidecarNodeWindow::new()?;
+    let window = crate::app_title::new::<crate::SidecarNodeWindow>()?;
     let active = Rc::new(Cell::new(true));
     let snapshot = store.snapshot();
     let services = &snapshot.services;
@@ -856,7 +856,7 @@ pub fn open_router(
     slots: &Slots,
     done: Rc<dyn Fn(Router)>,
 ) -> Result<SidecarRouterWindow, slint::PlatformError> {
-    let window = SidecarRouterWindow::new()?;
+    let window = crate::app_title::new::<crate::SidecarRouterWindow>()?;
     let active = Rc::new(Cell::new(true));
     window.set_window_title(editors::ROUTER_TITLE.into());
     let state = Rc::new(RefCell::new(RouterState {
@@ -1241,7 +1241,7 @@ pub fn open_routers(
         routers: Rc::default(),
         ..slots.clone()
     };
-    let window = SidecarRoutersWindow::new()?;
+    let window = crate::app_title::new::<crate::SidecarRoutersWindow>()?;
     window.set_window_title(editors::ROUTERS_TITLE.into());
     let active = Rc::new(std::cell::Cell::new(true));
     let state = Rc::new(RefCell::new(RoutersState {

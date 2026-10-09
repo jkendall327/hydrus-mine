@@ -13,7 +13,8 @@ export struct LocationTick {
 }
 
 export component LocationsWindow inherits Window {
-    title: "edit multiple location";
+    in property <string> title-suffix: "";
+    title: ("edit multiple location") + root.title-suffix;
     preferred-width: 320px;
     background: Theme.window;
     in property <[LocationTick]> ticks;

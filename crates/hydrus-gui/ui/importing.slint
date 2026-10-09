@@ -27,7 +27,8 @@ export struct JobCogMenu {
 
 // Error clearing belongs to the owner, never to this visible menu.
 export component NetworkErrorWindow inherits Window {
-    title: "Network Error";
+    in property <string> title-suffix: "";
+    title: ("Network Error") + root.title-suffix;
     width: 660px;
     height: 370px;
     background: Theme.window;

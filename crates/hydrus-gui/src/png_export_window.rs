@@ -92,7 +92,7 @@ pub fn open_with_summary(
     if let Some(w) = slots.window() {
         return Ok(w);
     }
-    let w = PngExportWindow::new().map_err(|e| e.to_string())?;
+    let w = crate::app_title::new::<crate::PngExportWindow>().map_err(|e| e.to_string())?;
     let summary: slint::SharedString = summary.into();
     w.set_payload_description(summary.clone());
     w.set_png_title(summary.clone());

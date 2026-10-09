@@ -52,7 +52,8 @@ component Tab inherits Rectangle {
 
 export component FilenameTaggingWindow inherits Window {
     in property <string> window-title: "filename tagging";
-    title: root.window-title;
+    in property <string> title-suffix: "";
+    title: (root.window-title) + root.title-suffix;
     preferred-width: 1000px;
     preferred-height: 760px;
     background: Theme.window;

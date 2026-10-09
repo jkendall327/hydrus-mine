@@ -48,7 +48,7 @@ pub(crate) fn open(
         }
     }
     let dialog = ForceFiletype::new(&original, &forced);
-    let window = ForceFiletypeWindow::new().map_err(|e| e.to_string())?;
+    let window = crate::app_title::new::<crate::ForceFiletypeWindow>().map_err(|e| e.to_string())?;
     window.set_text(dialog.text.as_str().into());
     let labels: Vec<SharedString> = dialog.choices.iter().map(|(l, _)| l.into()).collect();
     window.set_choices(ModelRc::new(VecModel::from(labels)));

@@ -36,7 +36,7 @@ pub fn open_result(
     slot: &ResultSlot,
 ) -> Result<LoginTestResultWindow, slint::PlatformError> {
     cancel_result(slot);
-    let window = LoginTestResultWindow::new()?;
+    let window = crate::app_title::new::<crate::LoginTestResultWindow>()?;
     window.set_name(value.name.as_str().into());
     window.set_url(value.url.as_str().into());
     window.set_body(value.body.as_deref().unwrap_or_default().into());
@@ -392,7 +392,7 @@ pub fn open_text(
     if let Some(window) = slot.borrow().as_ref() {
         return Ok(window.clone_strong());
     }
-    let window = crate::SessionDialog::new()?;
+    let window = crate::app_title::new::<crate::SessionDialog>()?;
     window.set_window_title("Enter Text".into());
     window.set_message(message.into());
     window.set_name_ok_label("ok".into());

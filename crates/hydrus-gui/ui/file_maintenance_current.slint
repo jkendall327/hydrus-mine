@@ -3,7 +3,8 @@ import { Theme } from "theme.slint";
 import { ListTable, TableRow } from "list_table.slint";
 
 export component FileMaintenanceWindow inherits Window {
-    title: "file maintenance";
+    in property <string> title-suffix: "";
+    title: ("file maintenance") + root.title-suffix;
     preferred-width: 950px;
     preferred-height: 480px;
     min-width: 580px;

@@ -478,7 +478,7 @@ fn open_objects<T: Clone + 'static>(
     if let Some(w) = slots.0.borrow().as_ref() {
         return Ok(w.clone_strong());
     }
-    let w = DownloaderExchangeWindow::new().map_err(|e| e.to_string())?;
+    let w = crate::app_title::new::<crate::DownloaderExchangeWindow>().map_err(|e| e.to_string())?;
     w.set_importing(importing);
     w.set_active(true);
     if codec.processing {

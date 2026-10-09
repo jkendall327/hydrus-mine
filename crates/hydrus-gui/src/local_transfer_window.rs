@@ -47,7 +47,7 @@ pub fn open_with_result(
         applied(&files);
         return Ok(None);
     }
-    let window = LocalTransferWindow::new().map_err(|e| e.to_string())?;
+    let window = crate::app_title::new::<crate::LocalTransferWindow>().map_err(|e| e.to_string())?;
     window.set_question(transfer.question.as_str().into());
     let active = Rc::new(Cell::new(true));
     let close: Rc<dyn Fn()> = Rc::new({

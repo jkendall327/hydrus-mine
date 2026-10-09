@@ -183,7 +183,7 @@ pub fn open(
         return Ok(window.clone_strong());
     }
     let draft = Rc::new(RefCell::new(DomainEntry::new(manager, editing)?));
-    let window = LoginDomainEntryWindow::new().map_err(|error| error.to_string())?;
+    let window = crate::app_title::new::<crate::LoginDomainEntryWindow>().map_err(|error| error.to_string())?;
     let active = Rc::new(Cell::new(true));
     let close: Rc<dyn Fn()> = Rc::new({
         let weak = window.as_weak();

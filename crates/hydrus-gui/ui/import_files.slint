@@ -59,7 +59,8 @@ component Cells inherits HorizontalLayout {
 }
 
 export component ReviewImportsWindow inherits Window {
-    title: "review files to import";
+    in property <string> title-suffix: "";
+    title: ("review files to import") + root.title-suffix;
     preferred-width: 820px;
     preferred-height: 560px;
     background: Theme.window;

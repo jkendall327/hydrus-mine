@@ -63,7 +63,8 @@ component Row inherits HorizontalLayout {
 
 export component ImportOptionsWindow inherits Window {
     in property <string> window-title: "edit import options";
-    title: root.window-title;
+    in property <string> title-suffix: "";
+    title: (root.window-title) + root.title-suffix;
     preferred-width: 900px;
     preferred-height: 620px;
     background: Theme.window;

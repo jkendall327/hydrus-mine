@@ -164,7 +164,7 @@ pub fn open(
     if let Some(window) = slot.borrow().as_ref() {
         return Ok(window.clone_strong());
     }
-    let window = DownloaderDefinitionsWindow::new().map_err(|e| e.to_string())?;
+    let window = crate::app_title::new::<crate::DownloaderDefinitionsWindow>().map_err(|e| e.to_string())?;
     window.set_window_title(
         if classes {
             "edit url classes"
@@ -783,7 +783,7 @@ fn open_editor(
     slot: Rc<RefCell<Option<DownloaderDefinitionEditWindow>>>,
     done: Done,
 ) -> Result<DownloaderDefinitionEditWindow, String> {
-    let window = DownloaderDefinitionEditWindow::new().map_err(|e| e.to_string())?;
+    let window = crate::app_title::new::<crate::DownloaderDefinitionEditWindow>().map_err(|e| e.to_string())?;
     window.set_window_title(
         match &editor.value {
             Value::Class(_) => "edit url class",

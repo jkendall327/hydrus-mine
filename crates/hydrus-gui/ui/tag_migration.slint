@@ -1,7 +1,8 @@
 import { Button, CheckBox, ComboBox, LineEdit, VerticalBox, HorizontalBox } from "std-widgets.slint";
 import { Theme } from "theme.slint";
 export component TagMigrationWindow inherits Window {
-    title: "migrate tags";
+    in property <string> title-suffix: "";
+    title: ("migrate tags") + root.title-suffix;
     width: 760px; height: 780px;
     background: Theme.window;
     in property <[string]> services;
@@ -111,7 +112,8 @@ export component TagMigrationWindow inherits Window {
 }
 
 export component TagMigrationProgressWindow inherits Window {
-    title: "tag migration";
+    in property <string> title-suffix: "";
+    title: ("tag migration") + root.title-suffix;
     width: 500px; height: 190px;
     background: Theme.window;
     in property <string> job-title;

@@ -133,7 +133,7 @@ pub(crate) fn bind(
             let Some(row) = table.borrow().selected().cloned() else {
                 return;
             };
-            let Ok(window) = FrameLocationWindow::new() else {
+            let Ok(window) = crate::app_title::new::<crate::FrameLocationWindow>() else {
                 return;
             };
             let frame = normalised(row.frame);

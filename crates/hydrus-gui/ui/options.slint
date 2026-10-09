@@ -39,7 +39,7 @@ export struct OptionRow {
     // button, `text`, opening their editor), 14 regex favourites,
     // 15 tag service/session, 16 local location, 17 favourite tags,
     // 18 import options, 19 gallery source, 20 directory path,
-    // 21 namespace sorting schemes.
+    // 21 namespace sorting schemes, 41 a static note (its text is `label`).
     kind: int,
     label: string,
     // how many boxes it is in
@@ -116,7 +116,8 @@ export component TimeFields {
 
 export component OptionsWindow inherits Window {
     in property <string> prefetch-warning;
-    title: "manage options";
+    in property <string> title-suffix: "";
+    title: ("manage options") + root.title-suffix;
     preferred-width: 900px;
     preferred-height: 640px;
     background: Theme.window;

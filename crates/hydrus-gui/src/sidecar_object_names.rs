@@ -83,7 +83,7 @@ pub(super) fn bind(
             if action == "delete" && question.is_none() {
                 return;
             }
-            let Ok(child) = SessionDialog::new() else {
+            let Ok(child) = crate::app_title::new::<crate::SessionDialog>() else {
                 return;
             };
             child.set_asking_name(editing.is_some());

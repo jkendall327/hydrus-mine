@@ -99,7 +99,7 @@ pub fn open_owned(
     if let Some(window) = slot.borrow().as_ref() {
         return Ok(window.clone_strong());
     }
-    let window = RegexFavouritesWindow::new()?;
+    let window = crate::app_title::new::<crate::RegexFavouritesWindow>()?;
     let editor = Rc::new(RefCell::new(Editor::new(value)));
     let editing = Rc::new(Cell::new(None::<usize>));
     let active = Rc::new(Cell::new(true));

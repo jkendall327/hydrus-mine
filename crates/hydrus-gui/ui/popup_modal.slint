@@ -10,7 +10,8 @@ import { PopupData } from "popups.slint";
 
 export component PopupModalWindow inherits Window {
     in property <string> window-title: "important job";
-    title: root.window-title;
+    in property <string> title-suffix: "";
+    title: (root.window-title) + root.title-suffix;
     in property <PopupData> popup;
     in property <bool> hide-close-button;
     callback close-clicked();

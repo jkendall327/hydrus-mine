@@ -588,7 +588,7 @@ mod tests {
     fn native_accepted_add_queued_behind_writer_is_cancelled_by_tab_retirement() {
         let _windows = crate::headless::init();
         let (_directory, store) = store(1);
-        let window = FileMaintenanceWindow::new().unwrap();
+        let window = crate::app_title::new::<crate::FileMaintenanceWindow>().unwrap();
         window.show().unwrap();
         let tab = bind(&window, &store, Rc::new(|| true), Rc::new(|| {}));
         select(&window, 1);

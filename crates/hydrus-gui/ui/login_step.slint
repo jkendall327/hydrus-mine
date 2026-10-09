@@ -2,7 +2,8 @@ import { Button, CheckBox, ComboBox, LineEdit, ScrollView } from "std-widgets.sl
 import { Theme } from "theme.slint";
 import { ListTable, TableRow } from "list_table.slint";
 export component LoginStepWindow inherits Window {
-    title: "edit login step";
+    in property <string> title-suffix: "";
+    title: ("edit login step") + root.title-suffix;
     preferred-width: 880px;
     preferred-height: 680px;
     background: Theme.window;

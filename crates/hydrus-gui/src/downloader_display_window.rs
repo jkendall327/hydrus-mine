@@ -99,7 +99,7 @@ pub fn open(store: &Arc<Store>, slots: &Slots) -> Result<DownloaderDisplayWindow
         return Ok(w.clone_strong());
     }
     let draft = Draft::load(store).map_err(|e| e.to_string())?;
-    let w = DownloaderDisplayWindow::new().map_err(|e| e.to_string())?;
+    let w = crate::app_title::new::<crate::DownloaderDisplayWindow>().map_err(|e| e.to_string())?;
     w.set_show_unmatched(draft.show_unmatched);
     let state = Rc::new(RefCell::new(State {
         draft,

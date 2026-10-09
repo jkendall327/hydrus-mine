@@ -57,7 +57,8 @@ export component TagSuggestionPanels inherits Rectangle {
     }
 }
 export component MostUsedTagsWindow inherits Window {
-    title: "most used tags";
+    in property <string> title-suffix: "";
+    title: ("most used tags") + root.title-suffix;
     width: 520px; height: 440px; background: Theme.window;
     in property <[string]> services;
     in property <int> service;

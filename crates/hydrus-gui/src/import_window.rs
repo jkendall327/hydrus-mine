@@ -62,7 +62,7 @@ pub(crate) fn open(
     sidecars: &crate::filename_tagging_window::Sidecars,
     import_now: &ImportNow,
 ) -> Result<ReviewImportsWindow, String> {
-    let window = ReviewImportsWindow::new().map_err(|e| e.to_string())?;
+    let window = crate::app_title::new::<crate::ReviewImportsWindow>().map_err(|e| e.to_string())?;
     let tools = hydrus_media::MediaTools::new()
         .with_ffmpeg_timeout_reader(hydrus_store::ffmpeg_policy::reader(&sidecars.store));
     let review = Rc::new(RefCell::new(Review::with_tools(tools)));

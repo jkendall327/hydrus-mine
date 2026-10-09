@@ -92,7 +92,7 @@ pub(crate) fn open(
     slot: &Rc<RefCell<Option<CheckerOptionsWindow>>>,
     done: &Rc<dyn Fn(CheckerOptions)>,
 ) -> Result<CheckerOptionsWindow, String> {
-    let window = CheckerOptionsWindow::new().map_err(|e| e.to_string())?;
+    let window = crate::app_title::new::<crate::CheckerOptionsWindow>().map_err(|e| e.to_string())?;
     window.set_texts(CheckerTexts {
         warning: checker::WARNING.into(),
         defaults_box: checker::DEFAULTS_BOX.into(),

@@ -354,7 +354,7 @@ pub(crate) fn open(
         .read(hydrus_store::settings::get::<CustomDefaults>)
         .map_err(|e| e.to_string())?;
     editor.apply_defaults(&defaults, &context);
-    let window = PredicateEditorWindow::new().map_err(|e| e.to_string())?;
+    let window = crate::app_title::new::<crate::PredicateEditorWindow>().map_err(|e| e.to_string())?;
     window.set_editing_existing(editor.supplied.is_some());
     window.set_batch_mode(editor.batch.is_some());
     if let Some(batch) = &editor.batch {

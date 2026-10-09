@@ -300,6 +300,48 @@ pub fn activity_tooltips(idle: bool, cpu_busy: bool) -> (&'static str, &'static 
     )
 }
 
+/// The status bar's application-busy field: how many background jobs were
+/// running at the last look, which is taken at most every ten seconds
+/// (`HydrusThreadPool.GetThreadPoolBusyStatus`, where the jobs are worker
+/// threads doing work; here they are the daemon's running downloader queues
+/// and the client's running maintenance passes).
+#[derive(Debug, Default, Clone)]
+pub struct AppBusy {
+    checked_at: Option<i64>,
+    text: &'static str,
+    tooltip: String,
+}
+
+impl AppBusy {
+    /// Seconds between looks.
+    pub const PERIOD: i64 = 10;
+    /// "working" above this many jobs, as the reference's thread pool.
+    pub const WORKING_ABOVE: usize = 3;
+    /// "busy" above this many.
+    pub const BUSY_ABOVE: usize = 8;
+
+    /// The field's text ("", "working" or "busy") and its tooltip at `now`
+    /// (seconds); `jobs` counts the running jobs when it is looked at.
+    pub fn status(&mut self, now: i64, jobs: impl FnOnce() -> usize) -> (&'static str, &str) {
+        if self.checked_at.is_none_or(|at| now - at >= Self::PERIOD) {
+            let n = jobs();
+            self.text = if n <= Self::WORKING_ABOVE {
+                ""
+            } else if n <= Self::BUSY_ABOVE {
+                "working"
+            } else {
+                "busy"
+            };
+            self.tooltip = format!(
+                "There were {} threads doing jobs at last check.",
+                hydrus_core::numbers::human_int(n as u64)
+            );
+            self.checked_at = Some(now);
+        }
+        (self.text, &self.tooltip)
+    }
+}
+
 /// The status bar's idle and CPU-busy fields (`_RefreshStatusBar`).
 pub fn activity(idle: bool, cpu_busy: bool) -> (&'static str, &'static str) {
     (
@@ -337,6 +379,7 @@ mod bandwidth_tests {
                 bytes,
                 speed,
                 at,
+                jobs: 0,
             })
         };
         let mut session = SessionBytes::default();

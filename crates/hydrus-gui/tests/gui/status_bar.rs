@@ -136,6 +136,7 @@ fn the_main_window_says_what_the_network_has_read_and_what_is_paused() {
         bytes,
         speed,
         at: now(),
+        jobs: 0,
     };
     let first = said(5000, 0);
     store
