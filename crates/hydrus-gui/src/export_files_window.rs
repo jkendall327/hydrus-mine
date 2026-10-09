@@ -56,7 +56,7 @@ pub fn open(
         window.show()?;
         return Ok(window.clone_strong());
     }
-    let window = ExportFilesWindow::new()?;
+    let window = crate::app_title::new::<crate::ExportFilesWindow>()?;
     let active = Rc::new(Cell::new(true));
     crate::gui_colours::bind(window.global::<crate::Theme<'_>>(), store, active.clone());
     window.set_pattern_shortcuts(ModelRc::new(VecModel::from(

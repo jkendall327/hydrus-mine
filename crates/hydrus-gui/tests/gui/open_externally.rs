@@ -254,7 +254,9 @@ fn physical_url_choice(
     );
     assert!(window.get_search_text().is_empty());
     assert_eq!(window.get_matches().row_count(), 0);
-    let position = slint::LogicalPosition::new(if edit { 767.0 } else { 400.0 }, 339.0);
+    // (the reference's two paragraphs about opening, drawn above the buttons
+    // since these coordinates were pinned, move them down by about this much)
+    let position = slint::LogicalPosition::new(if edit { 767.0 } else { 400.0 }, 339.0 + 90.0);
     window
         .window()
         .dispatch_event(WindowEvent::PointerMoved { position });

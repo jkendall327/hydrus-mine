@@ -57,7 +57,10 @@ component CheckRow inherits HorizontalLayout {
 
 export component EditSubscriptionWindow inherits Window {
     in property <string> window-title: "edit subscription";
-    title: root.window-title;
+    in property <string> title-suffix: "";
+    // the title as composed, for tests and the platform
+    out property <string> composed-title: root.title;
+    title: (root.window-title) + root.title-suffix;
     preferred-width: 1100px;
     preferred-height: 720px;
     background: Theme.window;

@@ -3,7 +3,10 @@ import { Asking } from "subscriptions.slint";
 import { Theme } from "theme.slint";
 export component SearchLogImportWindow inherits Window {
     in property <string> window-title: "Are you sure?";
-    title: root.window-title;
+    in property <string> title-suffix: "";
+    // the title as composed, for tests and the platform
+    out property <string> composed-title: root.title;
+    title: (root.window-title) + root.title-suffix;
     preferred-width: 650px;
     preferred-height: 260px;
     background: Theme.window;

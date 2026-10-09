@@ -39,7 +39,10 @@ component TitledBox inherits Rectangle {
 
 export component ManageTimesWindow inherits Window {
     in property <string> window-title: "manage times";
-    title: root.window-title;
+    in property <string> title-suffix: "";
+    // the title as composed, for tests and the platform
+    out property <string> composed-title: root.title;
+    title: (root.window-title) + root.title-suffix;
     preferred-width: 720px;
     preferred-height: 620px;
     background: Theme.window;
@@ -250,7 +253,10 @@ export component ManageTimesWindow inherits Window {
 // millisecond, the cascading step when several files had a time, copy,
 // paste and now.
 export component DateTimeEditorWindow inherits Window {
-    title: "edit datetime";
+    in property <string> title-suffix: "";
+    // the title as composed, for tests and the platform
+    out property <string> composed-title: root.title;
+    title: ("edit datetime") + root.title-suffix;
     preferred-width: 420px;
     background: Theme.window;
     // "Originally, ..." (empty when one file had a time)

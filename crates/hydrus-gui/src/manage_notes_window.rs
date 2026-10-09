@@ -121,7 +121,7 @@ pub(crate) fn open(
     let notes = store
         .read(|c| hydrus_store::media::notes(c, file))
         .map_err(|e| e.to_string())?;
-    let window = ManageNotesWindow::new().map_err(|e| e.to_string())?;
+    let window = crate::app_title::new::<crate::ManageNotesWindow>().map_err(|e| e.to_string())?;
     window.set_window_title(TITLE.into());
     let active = Rc::new(Cell::new(true));
     let preferences: hydrus_store::settings::NotePreferences = store

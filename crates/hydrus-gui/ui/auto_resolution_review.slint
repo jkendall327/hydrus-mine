@@ -121,7 +121,10 @@ export component PairList inherits Rectangle {
 
 export component AutoResolutionReviewWindow inherits Window {
     in property <string> window-title: "review duplicate auto-resolution actions";
-    title: root.window-title;
+    in property <string> title-suffix: "";
+    // the title as composed, for tests and the platform
+    out property <string> composed-title: root.title;
+    title: (root.window-title) + root.title-suffix;
     preferred-width: 760px;
     preferred-height: 640px;
     background: Theme.window;

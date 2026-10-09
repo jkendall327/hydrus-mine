@@ -4,7 +4,10 @@ import { DownloadControl, DownloadLine, JobCogMenu } from "importing.slint";
 import { Theme } from "theme.slint";
 import { ListTable, TableRow } from "list_table.slint";
 export component LoginScriptsWindow inherits Window {
-    title: "manage login scripts";
+    in property <string> title-suffix: "";
+    // the title as composed, for tests and the platform
+    out property <string> composed-title: root.title;
+    title: ("manage login scripts") + root.title-suffix;
     preferred-width: 800px;
     preferred-height: 520px;
     background: Theme.window;
@@ -34,7 +37,10 @@ export component LoginScriptsWindow inherits Window {
     }
 }
 export component LoginScriptWindow inherits Window {
-    title: "edit login script";
+    in property <string> title-suffix: "";
+    // the title as composed, for tests and the platform
+    out property <string> composed-title: root.title;
+    title: ("edit login script") + root.title-suffix;
     preferred-width: 850px;
     preferred-height: 820px;
     background: Theme.window;

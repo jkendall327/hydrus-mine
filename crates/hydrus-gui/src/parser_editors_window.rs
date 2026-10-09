@@ -469,7 +469,7 @@ fn open_editor(
 ) -> Result<ParserEditWindow, slint::PlatformError> {
     slots.formula.strings.set_store(store);
     test.prepare_examples();
-    let w = ParserEditWindow::new()?;
+    let w = crate::app_title::new::<crate::ParserEditWindow>()?;
     let page = matches!(value, Value::Page(_));
     w.set_page(page);
     w.set_document(test.text.as_str().into());
@@ -1251,7 +1251,7 @@ pub fn open(store: &Arc<Store>, slots: &Slots, links: bool) -> Result<ParserList
         return Ok(w.clone_strong());
     }
     let draft = Draft::load(store).map_err(|e| e.to_string())?;
-    let w = ParserListWindow::new().map_err(|e| e.to_string())?;
+    let w = crate::app_title::new::<crate::ParserListWindow>().map_err(|e| e.to_string())?;
     w.set_links(links);
     w.set_columns(ModelRc::new(VecModel::from(
         (if links {
@@ -1503,7 +1503,7 @@ pub fn open(store: &Arc<Store>, slots: &Slots, links: bool) -> Result<ParserList
                         let selected = current.and_then(|key| choices.iter().position(|(_, p)| p.as_ref() == Some(key))).unwrap_or(0);
                         let title = format!("select parser for {}", class.name);
                         drop(s);
-                        let child = ParserPickerWindow::new().map_err(|e| e.to_string())?;
+                        let child = crate::app_title::new::<crate::ParserPickerWindow>().map_err(|e| e.to_string())?;
                         child.set_window_title(title.into());
                         child.set_selected_index(i32::try_from(selected).unwrap_or(0));
                         let choices = Rc::new(choices);

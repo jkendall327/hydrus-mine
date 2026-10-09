@@ -81,7 +81,7 @@ impl State {
         if !self.live() {
             return Ok(());
         }
-        let window = DebugFetchWindow::new()?;
+        let window = crate::app_title::new::<crate::DebugFetchWindow>()?;
         if let Some(response) = &response {
             window.set_input_mode(false);
             window.set_message(

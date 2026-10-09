@@ -255,8 +255,9 @@ fn six_write_options_replay_recorded_defaults_and_stay_staged_until_apply() {
         .enumerate()
         .filter_map(|(i, row)| match row {
             Row::Opt { option, value, .. }
-                if option.label.contains("autocomplete")
-                    || option.label == "Autocomplete list height: " =>
+                if (option.label.contains("autocomplete")
+                    || option.label == "Autocomplete list height: ")
+                    && option.kind != hydrus_gui_model::options::Kind::Note =>
             {
                 Some((i, (**value).clone()))
             }

@@ -37,7 +37,7 @@ pub(crate) fn open(
     return_to: Rc<dyn Fn(hydrus_core::HashId)>,
     image_cache: crate::image_cache::Handle,
 ) -> Result<ArchiveDeleteWindow, slint::PlatformError> {
-    let window = ArchiveDeleteWindow::new()?;
+    let window = crate::app_title::new::<crate::ArchiveDeleteWindow>()?;
     let parent_guard = guard.clone();
     let guard: Rc<dyn Fn() -> bool> = Rc::new({
         let weak = window.as_weak();

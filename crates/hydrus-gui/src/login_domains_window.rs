@@ -154,7 +154,7 @@ pub fn open(store: &Arc<Store>, slots: &Slots) -> Result<LoginDomainsWindow, Str
     if let Some(window) = slots.domains.borrow().as_ref() {
         return Ok(window.clone_strong());
     }
-    let window = LoginDomainsWindow::new().map_err(|e| e.to_string())?;
+    let window = crate::app_title::new::<crate::LoginDomainsWindow>().map_err(|e| e.to_string())?;
     let editor = Rc::new(RefCell::new(DomainsEditor::new(
         store
             .read(hydrus_store::logins::load)

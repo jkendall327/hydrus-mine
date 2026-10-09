@@ -40,7 +40,10 @@ component Row inherits HorizontalLayout {
 
 export component MergeOptionsWindow inherits Window {
     in property <string> window-title: "edit duplicate merge options";
-    title: root.window-title;
+    in property <string> title-suffix: "";
+    // the title as composed, for tests and the platform
+    out property <string> composed-title: root.title;
+    title: (root.window-title) + root.title-suffix;
     preferred-width: 720px;
     preferred-height: 720px;
     background: Theme.window;

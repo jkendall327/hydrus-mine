@@ -39,7 +39,10 @@ export component Question {
 }
 
 export component FavouritesWindow inherits Window {
-    title: "edit favourite searches";
+    in property <string> title-suffix: "";
+    // the title as composed, for tests and the platform
+    out property <string> composed-title: root.title;
+    title: ("edit favourite searches") + root.title-suffix;
     preferred-width: 980px;
     preferred-height: 420px;
     background: Theme.window;
@@ -175,7 +178,10 @@ export component FavouritesWindow inherits Window {
 }
 
 export component FavouriteEditWindow inherits Window {
-    title: "edit favourite search";
+    in property <string> title-suffix: "";
+    // the title as composed, for tests and the platform
+    out property <string> composed-title: root.title;
+    title: ("edit favourite search") + root.title-suffix;
     min-width: 700px;
     preferred-height: 900px;
     background: Theme.window;

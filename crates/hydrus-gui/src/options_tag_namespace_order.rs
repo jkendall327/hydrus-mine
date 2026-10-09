@@ -147,7 +147,7 @@ pub(crate) fn bind(
             if editing.is_none() && question.is_none() {
                 return;
             }
-            let dialog = match SessionDialog::new() {
+            let dialog = match crate::app_title::new::<crate::SessionDialog>() {
                 Ok(dialog) => dialog,
                 Err(error) => {
                     if let Some(window) = weak.upgrade() {

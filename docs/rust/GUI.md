@@ -5286,3 +5286,20 @@ tooltips ("client is idle, it can do maintenance work", "this computer has been
 doing work recently, so some hydrus maintenance will not start"), shown after
 half a second under the pointer. A new field at the right of them says "db
 writing" or "db reading" while this window's database connection is busy.
+
+### Options search: help text, and window titles with the name
+
+The options search finds the reference's help paragraphs, byte units and
+machine-dependent labels ("(you appear to have 4 cores)", "(about 36 frames
+of 720p video)") as well as control labels, and a paragraph is a row of text
+on its page that is highlighted when chosen. Every secondary window's title
+ends with " - {application display name} {version}" (File > Options >
+gui > Application display name); changing the name retitles the windows that
+are open.
+
+### Status bar: application busy
+
+A field after "idle" says "working" or "busy" while background jobs run (the
+daemon's downloads in flight and the client's maintenance passes: above 3 and
+above 8), with the tooltip "There were N threads doing jobs at last check."
+It looks every ten seconds.

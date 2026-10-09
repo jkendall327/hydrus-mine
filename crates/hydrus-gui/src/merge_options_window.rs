@@ -205,7 +205,7 @@ pub fn open(
     slot: &Slot,
     applied: Rc<dyn Fn(MergeOptions)>,
 ) -> Result<MergeOptionsWindow, slint::PlatformError> {
-    let window = MergeOptionsWindow::new()?;
+    let window = crate::app_title::new::<crate::MergeOptionsWindow>()?;
     window.set_window_title(TITLE.into());
     window.set_ratings_note(RATINGS_NOTE.into());
     window.set_row_labels(strings(ROW_LABELS.iter().map(|&l| l.to_owned())));

@@ -431,7 +431,7 @@ impl Bandwidth {
         let Some(review) = review.as_ref() else {
             return;
         };
-        let Ok(window) = EditBandwidthRulesWindow::new() else {
+        let Ok(window) = crate::app_title::new::<crate::EditBandwidthRulesWindow>() else {
             return;
         };
         window.set_window_title(
@@ -621,7 +621,7 @@ pub fn open_bandwidth(store: Arc<Store>, slots: &Slots) -> Result<BandwidthWindo
         w.show().map_err(|e| e.to_string())?;
         return Ok(w);
     }
-    let window = BandwidthWindow::new().map_err(|e| e.to_string())?;
+    let window = crate::app_title::new::<crate::BandwidthWindow>().map_err(|e| e.to_string())?;
     window.set_columns(columns(&[
         ("network context", 250.0),
         ("type", 105.0),
@@ -1177,7 +1177,7 @@ pub fn open_jobs(store: Arc<Store>, slots: &Slots) -> Result<NetworkJobsWindow, 
         w.show().map_err(|e| e.to_string())?;
         return Ok(w);
     }
-    let window = NetworkJobsWindow::new().map_err(|e| e.to_string())?;
+    let window = crate::app_title::new::<crate::NetworkJobsWindow>().map_err(|e| e.to_string())?;
     window.set_columns(columns(&[
         ("position", 150.0),
         ("url", 350.0),

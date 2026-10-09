@@ -203,7 +203,10 @@ export component WriteTagsWindow inherits Window {
     callback tag-menu-answered(bool);
 
     in property <string> window-title: "edit tags";
-    title: root.window-title;
+    in property <string> title-suffix: "";
+    // the title as composed, for tests and the platform
+    out property <string> composed-title: root.title;
+    title: (root.window-title) + root.title-suffix;
     preferred-width: 460px;
     preferred-height: 600px;
     background: Theme.window;

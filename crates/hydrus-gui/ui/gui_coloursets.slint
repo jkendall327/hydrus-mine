@@ -49,7 +49,10 @@ export component GuiColoursets {
 export struct GuiColourPickerFrame { x:length,y:length,w:length,h:length }
 export struct GuiColourPickerSize { w:length,h:length }
 export component GuiColourPickerWindow inherits Window {
-    title: "Select Color";
+    in property <string> title-suffix: "";
+    // the title as composed, for tests and the platform
+    out property <string> composed-title: root.title;
+    title: ("Select Color") + root.title-suffix;
     preferred-width: max(440px, content.min-width);
     preferred-height: content.preferred-height;
     min-width: content.min-width;

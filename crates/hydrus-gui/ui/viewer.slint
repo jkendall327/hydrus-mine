@@ -126,7 +126,10 @@ component HoverButton inherits Rectangle {
 import { TransparencyBackdrop } from "transparency_backdrop.slint";
 
 export component MediaViewerWindow inherits Window {
-    title: root.caption;
+    in property <string> title-suffix: "";
+    // the title as composed, for tests and the platform
+    out property <string> composed-title: root.title;
+    title: (root.caption) + root.title-suffix;
     in-out property <bool> viewer-window-top;
     in-out property <bool> viewer-top-while-playing;
     in-out property <bool> viewer-window-frameless;

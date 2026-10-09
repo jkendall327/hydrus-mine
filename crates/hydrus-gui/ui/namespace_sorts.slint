@@ -5,7 +5,10 @@ import { ListTable, TableRow } from "list_table.slint";
 import { Theme } from "theme.slint";
 export component NamespaceSortsWindow inherits Window {
     in property <string> window-title: "namespace file sorting";
-    title: root.window-title;
+    in property <string> title-suffix: "";
+    // the title as composed, for tests and the platform
+    out property <string> composed-title: root.title;
+    title: (root.window-title) + root.title-suffix;
     preferred-width: 760px;
     preferred-height: 580px;
     background: Theme.window;

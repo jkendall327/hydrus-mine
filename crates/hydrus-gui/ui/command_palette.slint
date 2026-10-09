@@ -3,7 +3,10 @@ import { LineEdit, ScrollView } from "std-widgets.slint";
 import { Theme } from "theme.slint";
 export struct PaletteRow { primary:string, secondary:string, heading:bool, enabled:bool, checked:int }
 export component CommandPaletteWindow inherits Window {
-    title:"command palette";
+    in property <string> title-suffix: "";
+    // the title as composed, for tests and the platform
+    out property <string> composed-title: root.title;
+    title:("command palette") + root.title-suffix;
     no-frame:true;
     always-on-top:true;
     preferred-width:800px;

@@ -74,7 +74,10 @@ component ApplyCancel inherits HorizontalLayout {
 
 export component StringProcessorWindow inherits Window {
     in property <string> window-title: "edit string processor";
-    title: root.window-title;
+    in property <string> title-suffix: "";
+    // the title as composed, for tests and the platform
+    out property <string> composed-title: root.title;
+    title: (root.window-title) + root.title-suffix;
     preferred-width: 820px;
     preferred-height: 640px;
     background: Theme.window;
@@ -229,7 +232,10 @@ export component StringProcessorWindow inherits Window {
 // string match (4) or tag filter (5).
 export component StringStepWindow inherits Window {
     in property <string> window-title: "edit processing step";
-    title: root.window-title;
+    in property <string> title-suffix: "";
+    // the title as composed, for tests and the platform
+    out property <string> composed-title: root.title;
+    title: (root.window-title) + root.title-suffix;
     preferred-width: 560px;
     preferred-height: 460px;
     background: Theme.window;
@@ -652,7 +658,10 @@ export component StringStepWindow inherits Window {
 // conversions numbered, each with the example converted up to it.
 export component StringConverterWindow inherits Window {
     in property <string> window-title: "edit string converter";
-    title: root.window-title;
+    in property <string> title-suffix: "";
+    // the title as composed, for tests and the platform
+    out property <string> composed-title: root.title;
+    title: (root.window-title) + root.title-suffix;
     preferred-width: 760px;
     preferred-height: 460px;
     background: Theme.window;
@@ -758,7 +767,10 @@ export component StringConverterWindow inherits Window {
 // type has, and the example converted.
 export component ConversionWindow inherits Window {
     in property <string> window-title: "edit conversion";
-    title: root.window-title;
+    in property <string> title-suffix: "";
+    // the title as composed, for tests and the platform
+    out property <string> composed-title: root.title;
+    title: (root.window-title) + root.title-suffix;
     preferred-width: 560px;
     preferred-height: 380px;
     background: Theme.window;

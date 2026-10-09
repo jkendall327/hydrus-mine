@@ -200,7 +200,7 @@ impl Monitor {
         }
     }
     fn show(&self, question: HeaderQuestion) {
-        let window = match HeaderApprovalWindow::new() {
+        let window = match crate::app_title::new::<crate::HeaderApprovalWindow>() {
             Ok(w) => w,
             Err(e) => {
                 eprintln!("Could not open header approval: {e}");

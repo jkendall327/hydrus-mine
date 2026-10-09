@@ -8,7 +8,10 @@ import { Theme } from "theme.slint";
 
 export component EditValueWindow inherits Window {
     in property <string> window-title: "edit value";
-    title: root.window-title;
+    in property <string> title-suffix: "";
+    // the title as composed, for tests and the platform
+    out property <string> composed-title: root.title;
+    title: (root.window-title) + root.title-suffix;
     background: Theme.window;
     in-out property <int> value;
     in property <int> minimum: 0;

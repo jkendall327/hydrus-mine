@@ -97,7 +97,7 @@ impl Binding {
             self.commit();
             return;
         }
-        let Ok(notice) = SessionDialog::new() else {
+        let Ok(notice) = crate::app_title::new::<crate::SessionDialog>() else {
             return;
         };
         notice.set_window_title("Information".into());

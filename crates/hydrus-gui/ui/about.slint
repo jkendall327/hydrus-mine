@@ -28,7 +28,10 @@ component Tab inherits Rectangle {
 
 export component AboutWindow inherits Window {
     in property <string> window-title: "about hydrus";
-    title: root.window-title;
+    in property <string> title-suffix: "";
+    // the title as composed, for tests and the platform
+    out property <string> composed-title: root.title;
+    title: (root.window-title) + root.title-suffix;
     preferred-width: 620px;
     preferred-height: 560px;
     background: Theme.window;

@@ -96,7 +96,7 @@ pub(crate) fn open(store: &Arc<Store>) {
             return;
         }
     };
-    let window = match TagSyncReviewWindow::new() {
+    let window = match crate::app_title::new::<crate::TagSyncReviewWindow>() {
         Ok(window) => window,
         Err(e) => {
             eprintln!("could not open the tag display sync: {e}");

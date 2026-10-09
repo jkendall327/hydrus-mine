@@ -36,7 +36,8 @@ pub fn open(
     if let Some(predecessor) = predecessor {
         predecessor.invoke_close_clicked();
     }
-    let window = ArchiveRepairWindow::new().map_err(|e| e.to_string())?;
+    let window =
+        crate::app_title::new::<crate::ArchiveRepairWindow>().map_err(|e| e.to_string())?;
     window.set_question(model::SCAN_QUESTION.into());
     let active = Rc::new(Cell::new(true));
     let repairing = Rc::new(Cell::new(false));

@@ -447,7 +447,7 @@ fn open_set(
     snapshot: &Arc<Snapshot>,
 ) -> Result<Owned<ShortcutSetWindow>, slint::PlatformError> {
     let snapshot = snapshot.clone();
-    let window = ShortcutSetWindow::new()?;
+    let window = crate::app_title::new::<crate::ShortcutSetWindow>()?;
     let live = Rc::new(Cell::new(true));
     let settings = editor.borrow().edited_shortcuts();
     let name = target.name();
@@ -689,7 +689,7 @@ fn open_command(
     applied: Rc<dyn Fn(Command)>,
 ) -> Result<Owned<ShortcutCommandWindow>, slint::PlatformError> {
     use hydrus_gui_model::shortcut_content as content;
-    let window = ShortcutCommandWindow::new()?;
+    let window = crate::app_title::new::<crate::ShortcutCommandWindow>()?;
     let live = Rc::new(Cell::new(true));
     // tag and rating commands, for the services that take them
     let services = Rc::new(content::services(&snapshot.services));

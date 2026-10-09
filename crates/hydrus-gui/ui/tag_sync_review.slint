@@ -5,7 +5,10 @@ import { Theme } from "theme.slint";
 import { TagServicePanels } from "tag_service_panels.slint";
 
 export component TagSyncReviewWindow inherits Window {
-    title: "tag display sync";
+    in property <string> title-suffix: "";
+    // the title as composed, for tests and the platform
+    out property <string> composed-title: root.title;
+    title: ("tag display sync") + root.title-suffix;
     preferred-width: 640px;
     preferred-height: 360px;
     background: Theme.window;

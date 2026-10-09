@@ -34,7 +34,7 @@ pub fn open(store: &Arc<Store>, slot: &Slot) -> Result<(), String> {
     if let Some(previous) = slot.borrow_mut().take() {
         previous.invoke_force_close();
     }
-    let window = SessionDialog::new().map_err(|e| e.to_string())?;
+    let window = crate::app_title::new::<crate::SessionDialog>().map_err(|e| e.to_string())?;
     let active = Rc::new(Cell::new(true));
     let mode = Rc::new(Cell::new(Mode::Text));
     let admitted = Rc::new({

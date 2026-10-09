@@ -277,7 +277,8 @@ pub(crate) fn open(
             ))
         })
         .unwrap_or_default();
-    let window = EditSubscriptionWindow::new().map_err(|e| e.to_string())?;
+    let window =
+        crate::app_title::new::<crate::EditSubscriptionWindow>().map_err(|e| e.to_string())?;
     window.set_most_files(if advanced.0 { 50000 } else { 1000 });
     show_fields(&window, &dialog);
     let original_queues = dialog

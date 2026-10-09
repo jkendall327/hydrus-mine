@@ -2,7 +2,10 @@ import { Btn } from "btn.slint";
 import { Button, ComboBox, LineEdit } from "std-widgets.slint";
 import { Theme } from "theme.slint";
 export component LoginExampleDomainWindow inherits Window {
-    title: "edit example domain"; preferred-width: 650px; preferred-height: 260px; background: Theme.window;
+    in property <string> title-suffix: "";
+    // the title as composed, for tests and the platform
+    out property <string> composed-title: root.title;
+    title: ("edit example domain") + root.title-suffix; preferred-width: 650px; preferred-height: 260px; background: Theme.window;
     in property <int> stage;
     in-out property <string> domain;
     in-out property <int> access;

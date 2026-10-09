@@ -61,7 +61,7 @@ pub fn open_with_worker(
     if let Some(predecessor) = predecessor {
         predecessor.invoke_close_clicked();
     }
-    let window = FileHistoryWindow::new().map_err(|e| e.to_string())?;
+    let window = crate::app_title::new::<crate::FileHistoryWindow>().map_err(|e| e.to_string())?;
     let roles = DomainRoles::new(&store.snapshot().services).map_err(|e| e.to_string())?;
     let domains = store
         .snapshot()

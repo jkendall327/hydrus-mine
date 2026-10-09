@@ -55,7 +55,7 @@ fn open(
     if slots.has_open() {
         return Ok(());
     }
-    let window = SessionDialog::new().map_err(|e| e.to_string())?;
+    let window = crate::app_title::new::<crate::SessionDialog>().map_err(|e| e.to_string())?;
     window.set_asking_name(question.is_none());
     window.set_window_title(
         if question.is_some() {

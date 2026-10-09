@@ -33,7 +33,7 @@ pub fn open(
         window.show()?;
         return Ok(window.clone_strong());
     }
-    let window = RelatedWeightsWindow::new()?;
+    let window = crate::app_title::new::<crate::RelatedWeightsWindow>()?;
     let active = Rc::new(Cell::new(true));
     let editor = Rc::new(RefCell::new(Editor::new(weights.clone())));
     let question: Rc<RefCell<Option<Question>>> = Rc::default();

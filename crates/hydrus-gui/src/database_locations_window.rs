@@ -194,7 +194,7 @@ pub(crate) fn open(
     if let Some(window) = slots.borrow().window.as_ref() {
         return window.show();
     }
-    let window = DatabaseLocationsWindow::new()?;
+    let window = crate::app_title::new::<crate::DatabaseLocationsWindow>()?;
     window.set_window_title(model::TITLE.into());
     window.set_warning(model::WARNING.into());
     let mut state = State {
@@ -347,7 +347,7 @@ fn act(state: &Rc<RefCell<State>>, refresh: &Rc<dyn Fn()>, slots: &Slots, action
             let Some(l) = l else {
                 return;
             };
-            let Ok(window) = LocationMaxSizeWindow::new() else {
+            let Ok(window) = crate::app_title::new::<crate::LocationMaxSizeWindow>() else {
                 return;
             };
             window.set_window_title(model::MAX_SIZE_TITLE.into());
@@ -529,7 +529,7 @@ fn rebalance(state: &Rc<RefCell<State>>, refresh: &Rc<dyn Fn()>, slots: &Slots) 
 
 /// "run for custom time": minutes, from two hours.
 fn custom_runtime(state: &Rc<RefCell<State>>, refresh: &Rc<dyn Fn()>, slots: &Slots) {
-    let Ok(window) = crate::EditValueWindow::new() else {
+    let Ok(window) = crate::app_title::new::<crate::EditValueWindow>() else {
         return;
     };
     window.set_window_title("set time to run (minutes)".into());

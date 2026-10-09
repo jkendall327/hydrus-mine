@@ -81,7 +81,8 @@ impl Errors {
         if let Some(window) = self.0.borrow_mut().take() {
             let _ = window.hide();
         }
-        let window = NetworkErrorWindow::new().map_err(|e| e.to_string())?;
+        let window =
+            crate::app_title::new::<crate::NetworkErrorWindow>().map_err(|e| e.to_string())?;
         window.set_error_text(text.into());
         let close = Rc::new({
             let owner = Rc::downgrade(&self.0);

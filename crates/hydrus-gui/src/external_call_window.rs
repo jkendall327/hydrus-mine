@@ -91,7 +91,7 @@ pub(crate) fn ask(
     if slot.borrow().is_some() {
         return Err("A question is already open.".into());
     }
-    let window = SessionDialog::new().map_err(|e| e.to_string())?;
+    let window = crate::app_title::new::<crate::SessionDialog>().map_err(|e| e.to_string())?;
     window.set_window_title("Are you sure?".into());
     window.set_message(message.into());
     let alive = Rc::new(Cell::new(true));
@@ -162,7 +162,7 @@ fn text_child(
     initial: String,
     accepted: Rc<dyn Fn(String)>,
 ) -> Result<(), String> {
-    let w = SessionDialog::new().map_err(|e| e.to_string())?;
+    let w = crate::app_title::new::<crate::SessionDialog>().map_err(|e| e.to_string())?;
     w.set_window_title("Enter parameter".into());
     w.set_asking_name(true);
     w.set_text(initial.into());
@@ -372,7 +372,7 @@ fn command_open(
     process: &Process,
     accepted: &Rc<dyn Fn(String, Vec<String>)>,
 ) -> Result<ExternalCommandWindow, String> {
-    let w = ExternalCommandWindow::new().map_err(|e| e.to_string())?;
+    let w = crate::app_title::new::<crate::ExternalCommandWindow>().map_err(|e| e.to_string())?;
     w.set_executable(process.executable.as_str().into());
     w.set_mac_delete_key(cfg!(target_os = "macos"));
     let state = Rc::new(RefCell::new(CommandState::new(process.arguments.clone())));
@@ -660,7 +660,7 @@ pub fn open(
     if slots.has_open() {
         return Err("An external-call child is already open.".into());
     }
-    let w = ExternalCallWindow::new().map_err(|e| e.to_string())?;
+    let w = crate::app_title::new::<crate::ExternalCallWindow>().map_err(|e| e.to_string())?;
     w.set_name(call.name.as_str().into());
     w.set_pipeline(i32::from(call.pipeline == Pipeline::Url));
     w.set_call_type(i32::from(!matches!(call.call, ActualCall::Process(_))));

@@ -492,7 +492,7 @@ fn open_source(
     applied: Option<Rc<dyn Fn(Vec<FileSeed>)>>,
     closed: Rc<dyn Fn()>,
 ) -> Result<FileLogWindow, String> {
-    let window = FileLogWindow::new().map_err(|e| e.to_string())?;
+    let window = crate::app_title::new::<crate::FileLogWindow>().map_err(|e| e.to_string())?;
     let alive = Rc::new(Cell::new(true));
     window.set_staged(applied.is_some());
     let state = Rc::new(RefCell::new(State {

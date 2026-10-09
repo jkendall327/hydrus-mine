@@ -24,7 +24,8 @@ pub fn open(
     if let Some(window) = slots.0.borrow().as_ref() {
         return Ok(window.clone_strong());
     }
-    let window = DownloaderExchangeWindow::new().map_err(|e| e.to_string())?;
+    let window =
+        crate::app_title::new::<crate::DownloaderExchangeWindow>().map_err(|e| e.to_string())?;
     window.set_importing(true);
     window.set_active(true);
     window.set_router_import(true);

@@ -12,7 +12,10 @@ export component ParserListWindow inherits Window {
     in property <[TableColumn]> api-columns;
     in property <[TableRow]> api-rows;
     callback api-sort(int,bool);
-    title: root.links ? "url class links" : "parsers";
+    in property <string> title-suffix: "";
+    // the title as composed, for tests and the platform
+    out property <string> composed-title: root.title;
+    title: (root.links ? "url class links" : "parsers") + root.title-suffix;
     preferred-width: 1000px; preferred-height: 580px;
     background: Theme.window;
     in property <[TableColumn]> columns;
@@ -75,7 +78,10 @@ export component ParserEditWindow inherits Window {
     in property <bool> subsidiary;
     in property <string> own-separator;
     in-out property <bool> own-sorted;
-    title: root.subsidiary ? "edit sub page parser" : root.page ? "edit page parser" : "edit content parser";
+    in property <string> title-suffix: "";
+    // the title as composed, for tests and the platform
+    out property <string> composed-title: root.title;
+    title: (root.subsidiary ? "edit sub page parser" : root.page ? "edit page parser" : "edit content parser") + root.title-suffix;
     preferred-width: 1000px; preferred-height: 780px;
     background: Theme.window;
     in property <[DefinitionField]> fields;
@@ -243,7 +249,10 @@ export component ParserEditWindow inherits Window {
 // Owned per-class selector, including the reference's selectable no-op separator.
 export component ParserPickerWindow inherits Window {
     in property <string> window-title;
-    title: root.window-title;
+    in property <string> title-suffix: "";
+    // the title as composed, for tests and the platform
+    out property <string> composed-title: root.title;
+    title: (root.window-title) + root.title-suffix;
     preferred-width: 540px; preferred-height: 380px;
     background: Theme.window;
     in property <[TableRow]> rows;

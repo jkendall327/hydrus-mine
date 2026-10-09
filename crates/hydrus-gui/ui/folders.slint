@@ -131,7 +131,10 @@ export component FoldersWindow inherits Window {
     in property <bool> waiting;
     in property <string> wait-message;
     in property <string> window-title;
-    title: root.window-title;
+    in property <string> title-suffix: "";
+    // the title as composed, for tests and the platform
+    out property <string> composed-title: root.title;
+    title: (root.window-title) + root.title-suffix;
     preferred-width: 860px;
     preferred-height: 420px;
     background: Theme.window;
@@ -229,7 +232,10 @@ export struct FolderActionRow {
 }
 
 export component ImportFolderWindow inherits Window {
-    title: "edit import folder";
+    in property <string> title-suffix: "";
+    // the title as composed, for tests and the platform
+    out property <string> composed-title: root.title;
+    title: ("edit import folder") + root.title-suffix;
     preferred-width: 860px;
     preferred-height: 760px;
     background: Theme.window;
@@ -471,7 +477,10 @@ export component ImportFolderWindow inherits Window {
 }
 
 export component ExportFolderWindow inherits Window {
-    title: "edit export folder";
+    in property <string> title-suffix: "";
+    // the title as composed, for tests and the platform
+    out property <string> composed-title: root.title;
+    title: ("edit export folder") + root.title-suffix;
     preferred-width: 760px;
     preferred-height: 820px;
     background: Theme.window;

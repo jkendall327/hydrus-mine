@@ -14,7 +14,10 @@ import { Button } from "std-widgets.slint";
 import { ListText, Theme } from "theme.slint";
 
 export component ArchiveDeleteWindow inherits Window {
-    title: "archive/delete filter " + root.caption;
+    in property <string> title-suffix: "";
+    // the title as composed, for tests and the platform
+    out property <string> composed-title: root.title;
+    title: ("archive/delete filter " + root.caption) + root.title-suffix;
     preferred-width: 1000px;
     preferred-height: 750px;
     background: Theme.colour(10,#202020);

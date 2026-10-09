@@ -47,7 +47,8 @@ pub(super) fn start(
     parent: slint::Weak<TagMigrationWindow>,
     changed: Rc<dyn Fn()>,
 ) -> Result<TagMigrationProgressWindow, String> {
-    let window = TagMigrationProgressWindow::new().map_err(|e| e.to_string())?;
+    let window =
+        crate::app_title::new::<crate::TagMigrationProgressWindow>().map_err(|e| e.to_string())?;
     window.set_job_title(title.into());
     window.set_running(true);
     window.set_can_control(true);

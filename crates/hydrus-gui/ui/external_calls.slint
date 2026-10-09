@@ -56,7 +56,10 @@ export component ExternalCallsTable inherits Rectangle {
     }
 }
 export component ExternalCallWindow inherits Window {
-    title:"edit external program call";
+    in property <string> title-suffix: "";
+    // the title as composed, for tests and the platform
+    out property <string> composed-title: root.title;
+    title:("edit external program call") + root.title-suffix;
     width:1050px;height:760px;
     in-out property <string> name;
     in-out property <int> pipeline;
@@ -137,7 +140,10 @@ export component ExternalCallWindow inherits Window {
     }
 }
 export component ExternalCommandWindow inherits Window {
-    title:"edit command and parameters";
+    in property <string> title-suffix: "";
+    // the title as composed, for tests and the platform
+    out property <string> composed-title: root.title;
+    title:("edit command and parameters") + root.title-suffix;
     width:760px;height:590px;
     in-out property <string> executable;
     in property <[TableRow]> rows;
@@ -204,7 +210,10 @@ export component ExternalCommandWindow inherits Window {
 
 }
 export component ExternalDefaultsWindow inherits Window {
-    title:"select the defaults to add";
+    in property <string> title-suffix: "";
+    // the title as composed, for tests and the platform
+    out property <string> composed-title: root.title;
+    title:("select the defaults to add") + root.title-suffix;
     width:600px;height:550px;
     in property <[TableRow]> rows;
     callback toggled(int);

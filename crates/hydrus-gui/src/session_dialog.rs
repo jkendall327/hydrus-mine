@@ -33,7 +33,7 @@ pub(crate) fn open(
         None => Saving::new_session(existing),
     };
     let saving = Rc::new(RefCell::new(saving));
-    let window = SessionDialog::new().map_err(|e| e.to_string())?;
+    let window = crate::app_title::new::<crate::SessionDialog>().map_err(|e| e.to_string())?;
     let close = {
         let weak = window.as_weak();
         let slot = slot.clone();

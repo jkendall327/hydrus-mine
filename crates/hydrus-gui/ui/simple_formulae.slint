@@ -4,7 +4,10 @@ import { Theme } from "theme.slint";
 import { ListTable, TableRow } from "list_table.slint";
 import { Asking } from "subscriptions.slint";
 export component SimpleFormulaeWindow inherits Window {
-    title: "edit simple downloader formulae";
+    in property <string> title-suffix: "";
+    // the title as composed, for tests and the platform
+    out property <string> composed-title: root.title;
+    title: ("edit simple downloader formulae") + root.title-suffix;
     preferred-width: 680px; preferred-height: 480px; background: Theme.window;
     in property <[TableRow]> rows;
     in property <bool> selected;

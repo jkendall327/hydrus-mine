@@ -268,7 +268,7 @@ pub fn open_script(
     if let Some(window) = slots.script.borrow().as_ref() {
         return Ok(window.clone_strong());
     }
-    let window = LoginScriptWindow::new()?;
+    let window = crate::app_title::new::<crate::LoginScriptWindow>()?;
     window.set_name(script.name.as_str().into());
     let state = Rc::new(RefCell::new(ScriptState {
         script: script.clone(),
@@ -1131,7 +1131,8 @@ pub fn open_scripts(store: &Arc<Store>, slots: &Slots) -> Result<LoginScriptsWin
     if let Some(window) = slots.scripts.borrow().as_ref() {
         return Ok(window.clone_strong());
     }
-    let window = LoginScriptsWindow::new().map_err(|error| error.to_string())?;
+    let window =
+        crate::app_title::new::<crate::LoginScriptsWindow>().map_err(|error| error.to_string())?;
     let editor = Rc::new(RefCell::new(ScriptsEditor::new(
         store
             .read(hydrus_store::logins::load)

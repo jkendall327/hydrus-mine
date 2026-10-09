@@ -4,7 +4,10 @@ import {Theme} from "theme.slint";
 import {ListTable, TableRow} from "list_table.slint";
 export component TagBannerWindow inherits Window {
     in property <string> window-title:"edit tag summary";
-    title:root.window-title; preferred-width:780px; preferred-height:670px; background:Theme.window;
+    in property <string> title-suffix: "";
+    // the title as composed, for tests and the platform
+    out property <string> composed-title: root.title;
+    title:(root.window-title) + root.title-suffix; preferred-width:780px; preferred-height:670px; background:Theme.window;
     in-out property <bool> showing;
     in-out property <string> separator;
     in-out property <string> examples;

@@ -505,6 +505,9 @@ fn page_problems(page: &Page, items: &Json, settings: &Settings, store: &Store) 
                 | Kind::TagNamespaceOrder
                 | Kind::TagBanner(_)
                 | Kind::ProviderOrder
+                // The reference's help paragraphs: checked by the search
+                // index test, which sees every recorded label.
+                | Kind::Note
         ) {
             continue;
         }
@@ -2172,4 +2175,89 @@ fn eye_menu_preferences_follow_all_reference_combinations_without_saving_detache
         saved.collapse_hovers,
         settings.viewer_eye_menu.collapse_hovers
     );
+}
+
+/// What the options search of ours and the reference's differ by, as
+/// (missing from ours, extra in ours), each with how often.
+/// Entries with how often each is there.
+type Counted = Vec<(String, usize)>;
+
+fn search_differences(recorded: &Json) -> (Counted, Counted) {
+    use std::collections::BTreeMap;
+    let (_dir, store) = fixture_store(recorded);
+    let settings = store.read(Settings::load).unwrap();
+    let mut editor = hydrus_gui_model::options::Editor::new(settings);
+    editor.resolve_tag_services(&store);
+    // (the machine the reference was recorded on: four cores, and a screen
+    // that makes its image cache hold what its label says)
+    editor.add_estimates(&hydrus_gui_model::options::Environment {
+        cores: 4,
+        screen: Some((800, 800)),
+        thumbnail_bounds: (150, 125),
+    });
+    let count = |texts: Vec<String>| {
+        let mut counts: BTreeMap<String, usize> = BTreeMap::new();
+        for text in texts {
+            *counts.entry(text).or_default() += 1;
+        }
+        counts
+    };
+    let ours = count(
+        editor
+            .suggestions()
+            .iter()
+            .map(|s| s.text.clone())
+            .collect(),
+    );
+    let theirs = count(
+        recorded["search"]["suggestions"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .filter_map(Json::as_str)
+            .map(str::to_owned)
+            .collect(),
+    );
+    let gap = |a: &BTreeMap<String, usize>, b: &BTreeMap<String, usize>| {
+        a.iter()
+            .filter_map(|(text, n)| {
+                let m = b.get(text).copied().unwrap_or(0);
+                (*n > m).then(|| (text.clone(), n - m))
+            })
+            .collect::<Vec<_>>()
+    };
+    (gap(&theirs, &ours), gap(&ours, &theirs))
+}
+
+// leaf: audit-options-options-search
+#[test]
+fn the_options_search_offers_every_entry_the_reference_does_but_the_known_few() {
+    let recorded = hydrus_testkit::fixture_json("options_dialog.json");
+    let (missing, extra) = search_differences(&recorded);
+    let shown = |list: &[(String, usize)]| {
+        list.iter()
+            .map(|(text, n)| format!("{n} x {}", text.chars().take(60).collect::<String>()))
+            .collect::<Vec<_>>()
+    };
+    // Pages hydrus-rs does not have (the import options page is its own
+    // window; Qt's style page has no counterpart; regex favourites is a
+    // child editor), Qt-only controls, and a few labels of controls drawn
+    // differently. See DIFFERENCES.md, "Options search".
+    let known_missing = hydrus_testkit::fixture_json("options_search_known_differences.json");
+    let expected = |key: &str| -> Vec<String> {
+        known_missing[key]
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|v| {
+                assert!(
+                    !v["reason"].as_str().unwrap().is_empty(),
+                    "every difference says why: {v}"
+                );
+                v["entry"].as_str().unwrap().to_owned()
+            })
+            .collect()
+    };
+    assert_eq!(shown(&missing), expected("missing"), "missing");
+    assert_eq!(shown(&extra), expected("extra"), "extra");
 }

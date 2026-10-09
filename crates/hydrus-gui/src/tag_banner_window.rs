@@ -72,7 +72,7 @@ pub fn open(
     if let Some(window) = slot.borrow().as_ref() {
         return Ok(window.clone_strong());
     }
-    let window = TagBannerWindow::new()?;
+    let window = crate::app_title::new::<crate::TagBannerWindow>()?;
     let editor = Rc::new(RefCell::new(Editor::new(value, presentation)));
     let active = Rc::new(Cell::new(true));
     let pending: Rc<RefCell<Option<Prompt>>> = Rc::default();

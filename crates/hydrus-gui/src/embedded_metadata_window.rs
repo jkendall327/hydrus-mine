@@ -199,7 +199,8 @@ pub(crate) fn open(
     if let Some(previous) = slot.borrow_mut().take() {
         let _ = previous.hide();
     }
-    let window = EmbeddedMetadataWindow::new().map_err(|e| e.to_string())?;
+    let window =
+        crate::app_title::new::<crate::EmbeddedMetadataWindow>().map_err(|e| e.to_string())?;
     window.set_basics(basics(&lines).into());
     window.set_instruction(exif_instruction(info.mime).into());
     window.set_loading(true);

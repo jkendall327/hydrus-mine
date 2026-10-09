@@ -248,7 +248,7 @@ impl Controller {
                     title,
                     hide_close_button,
                 } => {
-                    let Ok(dialog) = PopupModalWindow::new() else {
+                    let Ok(dialog) = crate::app_title::new::<crate::PopupModalWindow>() else {
                         eprintln!("could not show the modal popup");
                         continue;
                     };

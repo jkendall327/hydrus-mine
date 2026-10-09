@@ -45,7 +45,8 @@ pub fn open_with_changed(
     store: Arc<Store>,
     changed: Rc<dyn Fn()>,
 ) -> Result<ServicesReviewWindow, String> {
-    let window = ServicesReviewWindow::new().map_err(|e| e.to_string())?;
+    let window =
+        crate::app_title::new::<crate::ServicesReviewWindow>().map_err(|e| e.to_string())?;
     let active = Rc::new(Cell::new(true));
     let pending = Rc::new(RefCell::new(
         None::<(hydrus_core::ServiceKey, Action, bool)>,

@@ -186,6 +186,7 @@ pub fn thumbnail_recovery(
 ) -> hydrus_media::Raster {
     thumbnails::recovery(store, id, settings, allow)
 }
+pub mod app_title;
 mod archive_delete_playback;
 pub mod choice_buttons;
 pub mod database_maintenance_window;
@@ -6395,7 +6396,7 @@ fn open_viewer(
         edit_shortcuts,
     } = hooks;
     delete_files_window::cancel(&viewer_delete);
-    let window = MediaViewerWindow::new()?;
+    let window = crate::app_title::new::<crate::MediaViewerWindow>()?;
     let owner_valid: Rc<dyn Fn() -> bool> = Rc::new({
         let weak = window.as_weak();
         let slot = Rc::downgrade(slot);

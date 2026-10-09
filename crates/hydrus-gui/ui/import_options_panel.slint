@@ -77,7 +77,10 @@ component ImportList {
 }
 
 export component ImportOptionsPanelWindow inherits Window {
-    title: "import options";
+    in property <string> title-suffix: "";
+    // the title as composed, for tests and the platform
+    out property <string> composed-title: root.title;
+    title: ("import options") + root.title-suffix;
     preferred-width: 980px;
     preferred-height: 850px;
     background: Theme.window;

@@ -178,7 +178,8 @@ impl State {
         allowed: Rc<dyn Fn() -> bool>,
         accepted: Rc<dyn Fn(usize)>,
     ) -> Result<(), String> {
-        let window = ExternalRoutingChoiceWindow::new().map_err(|error| error.to_string())?;
+        let window = crate::app_title::new::<crate::ExternalRoutingChoiceWindow>()
+            .map_err(|error| error.to_string())?;
         window.set_window_title(title.into());
         window.set_choices(ModelRc::new(VecModel::from(
             labels
@@ -248,7 +249,8 @@ impl State {
         allowed: Rc<dyn Fn() -> bool>,
         accepted: Rc<dyn Fn()>,
     ) -> Result<(), String> {
-        let window = SessionDialog::new().map_err(|error| error.to_string())?;
+        let window =
+            crate::app_title::new::<crate::SessionDialog>().map_err(|error| error.to_string())?;
         window.set_window_title(title.into());
         window.set_message(text.into());
         window.set_notice_only(notice);
@@ -414,7 +416,8 @@ impl State {
             .cloned()
             .unwrap_or_default();
         let queue = Rc::new(RefCell::new(Queue::new(&values)));
-        let window = OpenFileCallsWindow::new().map_err(|error| error.to_string())?;
+        let window = crate::app_title::new::<crate::OpenFileCallsWindow>()
+            .map_err(|error| error.to_string())?;
         window.set_window_title(
             if new {
                 "edit calls"

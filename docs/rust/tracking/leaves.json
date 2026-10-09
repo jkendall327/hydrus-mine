@@ -9624,7 +9624,13 @@
     "Adds imported/persistent display-name editing with the reference empty-string fallback and preserved whitespace. Apply refreshes the main-window title with the chosen name and Rust version; Cancel/reopen follow the shared draft transaction.",
     "Secondary windows still use their existing captions, so this remains partial.",
     "Native title suffix uses the Rust package version rather than the reference 688 version."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-09",
+    "class": "source-restated",
+    "by": "Claude, options-shell-followups",
+    "note": "tests/gui/options_window.rs gui_identity_and_exit_confirmation_reach_the_main_window applies each recorded display name (gui_settings.json) and checks the main title, that the window just applied and the next Options window carry ' - {name} {version}' (and the composed title); tests/gui/window_titles.rs reads the composed title of windows of different files and that changing the name retitles open ones, as UpdateAppDisplayName does. Qt composes the title in the platform plugin, so the ' - ' form is from Qt's documentation, not a recording."
+   }
   },
   {
    "id": "audit-options-gui-main-window-confirm-client-exit",
@@ -16544,7 +16550,13 @@
     "Truth pass (2026-10-08): partial, small. Search, selection and highlight work; only native option rows are indexed. Missing: Index auxiliary/unit labels and combo current values on every page; expand boxes / switch inner tabs as the reference does. Evidence: options.rs:5432; tests options_window.rs:402-445, 1191-1225",
     "Search filters exposed option labels and headings case-insensitively, arrows/Enter select a match and highlight its actual row. Same-label native results retain distinct rows, unlike Qt last-match lookup.",
     "Auxiliary widget labels, unit labels and current combo choices are omitted; only exposed native rows are searchable."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-09",
+    "class": "source-restated",
+    "by": "Claude, options-shell-followups",
+    "note": "tests/model/options_dialog.rs compares the whole index the Editor builds (a machine of four cores and an 800x800 screen, as recorded) with the 738 entries of options_dialog.json and pins what is left, each with its reason, in options_search_known_differences.json: Qt's style page and the Qt media player device chooser, file lookup scripts (out of scope), the curl_cffi test control, the collect dropdown's current text ('chapter'), four blank labels, and 23 extra time-unit labels. Entries for widgets drawn elsewhere (import options page, the external calls help link, the most used tags service, the second recent-tags count) go to the nearest control, which is not where the reference puts them. tests/gui/options_search_notes.rs searches in the real options window for a paragraph, a computed label and a unit and checks the page and highlighted row. Inner-tab / box expansion has no native counterpart."
+   }
   },
   {
    "id": "audit-options-popup-notifications-popup-window-toaster-approximate-max-width-of-popup-messages-in-characters",
@@ -20615,7 +20627,13 @@
     "Truth pass (2026-10-08): partial, small. Idle and CPU-busy fields work; app-busy and DB-activity fields missing. Missing: The application-busy (thread pool) and DB-activity fields and their tooltips; may need a design decision (no native thread pool / DB-job status). Evidence: main.slint:599-600, 2222-2230; maintenance_runtime.rs:184-186; tested in options_system_consumers.rs:1358",
     "Reference updates independent status fields for idle/application/system busy and DB locking/actions. Native renders page status and network text only.",
     "No native action/editor path for this reference workflow."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-09",
+    "class": "source-restated",
+    "by": "Claude, options-shell-followups",
+    "note": "tests/gui/status_app_busy.rs drives the real status bar through the maintenance poll with held time: the app-busy thresholds (3/8), the ten-second look (strictly more than ten seconds, at 11), the tooltip, a stale daemon, a real client maintenance pass counted while it runs (a held writer keeps it in flight), and 'db writing' while a store write is in flight. hydrus-cli tests/serve.rs checks that the real daemon publishes jobs while a real download is in flight and 0 after it is cancelled. Idle and CPU-busy tooltips are asserted in options_system_consumers.rs. Expected values restate the reference's ClientGUI._RefreshStatusBar and HydrusThreading.GetThreadPoolBusyStatus; the counted jobs are hydrus-rs's (DIFFERENCES.md). The GUI reads the daemon's count from the store, which the status tests write directly."
+   }
   },
   {
    "id": "audit-options-style-qt-style",

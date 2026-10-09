@@ -102,7 +102,10 @@ component ApplyCancel inherits HorizontalLayout {
 // "edit metadata migration routers"
 export component SidecarRoutersWindow inherits Window {
     in property <string> window-title: "edit metadata migration routers";
-    title: root.window-title;
+    in property <string> title-suffix: "";
+    // the title as composed, for tests and the platform
+    out property <string> composed-title: root.title;
+    title: (root.window-title) + root.title-suffix;
     preferred-width: 760px;
     preferred-height: 420px;
     background: Theme.window;
@@ -184,7 +187,10 @@ export component SidecarRoutersWindow inherits Window {
 // "edit metadata migration router"
 export component SidecarRouterWindow inherits Window {
     in property <string> window-title: "edit metadata migration router";
-    title: root.window-title;
+    in property <string> title-suffix: "";
+    // the title as composed, for tests and the platform
+    out property <string> composed-title: root.title;
+    title: (root.window-title) + root.title-suffix;
     preferred-width: 1000px;
     preferred-height: 720px;
     background: Theme.window;
@@ -295,7 +301,10 @@ export component SidecarRouterWindow inherits Window {
 // a source's or a destination's editor
 export component SidecarNodeWindow inherits Window {
     in property <string> window-title: "edit metadata migration source";
-    title: root.window-title;
+    in property <string> title-suffix: "";
+    // the title as composed, for tests and the platform
+    out property <string> composed-title: root.title;
+    title: (root.window-title) + root.title-suffix;
     preferred-width: 640px;
     preferred-height: 560px;
     background: Theme.window;

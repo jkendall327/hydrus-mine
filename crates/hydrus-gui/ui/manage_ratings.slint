@@ -12,7 +12,10 @@ import { RatingRow } from "viewer.slint";
 
 export component ManageRatingsWindow inherits Window {
     in property <string> window-title: "manage ratings";
-    title: root.window-title;
+    in property <string> title-suffix: "";
+    // the title as composed, for tests and the platform
+    out property <string> composed-title: root.title;
+    title: (root.window-title) + root.title-suffix;
     preferred-width: 320px;
     background: Theme.window;
     in property <[string]> names;

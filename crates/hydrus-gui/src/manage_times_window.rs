@@ -231,7 +231,7 @@ pub(crate) fn open(
         .collect();
     let (_, now_ms) = now();
     let tz = jiff::tz::TimeZone::system();
-    let window = ManageTimesWindow::new().map_err(|e| e.to_string())?;
+    let window = crate::app_title::new::<crate::ManageTimesWindow>().map_err(|e| e.to_string())?;
     window.set_window_title(TITLE.into());
     let state = Rc::new(RefCell::new(State {
         editor: TimesEditor::new(results.iter().map(file_times).collect(), names, now_ms),
@@ -321,7 +321,7 @@ pub(crate) fn open(
                     return;
                 }
                 let alive = Rc::new(Cell::new(true));
-                let Ok(dialog) = DateTimeEditorWindow::new() else {
+                let Ok(dialog) = crate::app_title::new::<crate::DateTimeEditorWindow>() else {
                     return;
                 };
                 let (now_s, now_ms) = now();

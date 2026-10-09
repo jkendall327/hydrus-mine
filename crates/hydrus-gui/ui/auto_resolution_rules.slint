@@ -130,7 +130,10 @@ export component ComparatorList inherits VerticalLayout {
 
 // "edit rules"
 export component AutoResolutionRulesWindow inherits Window {
-    title: "edit rules";
+    in property <string> title-suffix: "";
+    // the title as composed, for tests and the platform
+    out property <string> composed-title: root.title;
+    title: ("edit rules") + root.title-suffix;
     preferred-width: 1100px;
     preferred-height: 560px;
     background: Theme.window;
@@ -256,7 +259,10 @@ export component AutoResolutionRulesWindow inherits Window {
 // a rule's editor ("edit rule", or "edit duplicates auto-resolution rule")
 export component AutoResolutionRuleWindow inherits Window {
     in property <string> window-title: "edit rule";
-    title: root.window-title;
+    in property <string> title-suffix: "";
+    // the title as composed, for tests and the platform
+    out property <string> composed-title: root.title;
+    title: (root.window-title) + root.title-suffix;
     preferred-width: 900px;
     preferred-height: 700px;
     background: Theme.window;
@@ -678,7 +684,10 @@ export component AutoResolutionRuleWindow inherits Window {
 // "hardcoded", "relative", "visual" or "list" (an OR's or AND's)
 export component ComparatorWindow inherits Window {
     in property <string> window-title;
-    title: root.window-title;
+    in property <string> title-suffix: "";
+    // the title as composed, for tests and the platform
+    out property <string> composed-title: root.title;
+    title: (root.window-title) + root.title-suffix;
     preferred-width: 640px;
     preferred-height: 420px;
     background: Theme.window;

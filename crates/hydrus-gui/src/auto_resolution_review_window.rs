@@ -368,7 +368,8 @@ pub(crate) fn open(
     open_viewer: Option<OpenViewer>,
     open_files: Option<OpenFiles>,
 ) -> Result<(), String> {
-    let window = AutoResolutionReviewWindow::new().map_err(|e| e.to_string())?;
+    let window =
+        crate::app_title::new::<crate::AutoResolutionReviewWindow>().map_err(|e| e.to_string())?;
     window.set_window_title(TITLE.into());
     window.set_rule_name(rule.name.as_str().into());
     window.set_tabs(strings(&TABS));

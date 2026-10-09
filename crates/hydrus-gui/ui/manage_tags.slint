@@ -30,7 +30,10 @@ export component ManageTagsWindow inherits Window {
 
     // ("manage tags for 3 files" from the thumbnails, as the reference has it)
     in property <string> window-title: "manage tags";
-    title: root.window-title;
+    in property <string> title-suffix: "";
+    // the title as composed, for tests and the platform
+    out property <string> composed-title: root.title;
+    title: (root.window-title) + root.title-suffix;
     preferred-width: root.use-listbook ? 580px : 420px;
     preferred-height: 560px;
     background: Theme.window;

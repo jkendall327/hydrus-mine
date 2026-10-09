@@ -331,7 +331,7 @@ pub(crate) fn bind(
                     .is_ok_and(|a| a.0);
                 let (message, yes, no) =
                     model::question(relationship, advanced, files.len(), pairs);
-                let Ok(dialog) = SessionDialog::new() else {
+                let Ok(dialog) = crate::app_title::new::<crate::SessionDialog>() else {
                     return;
                 };
                 dialog.set_window_title("Are you sure?".into());

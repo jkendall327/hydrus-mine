@@ -27,7 +27,7 @@ pub(crate) fn open(
     let Some(mut edit) = Edit::request(store.dir(), kind).map_err(|e| e.to_string())? else {
         return Err(format!("Another {} manager is already open.", kind.title()));
     };
-    let window = FoldersWindow::new().map_err(|e| e.to_string())?;
+    let window = crate::app_title::new::<crate::FoldersWindow>().map_err(|e| e.to_string())?;
     if edit.try_ready().map_err(|e| e.to_string())? {
         return ready(window, edit);
     }

@@ -133,7 +133,7 @@ pub(crate) fn open(
         .iter()
         .map(|f| urls.remove(f).unwrap_or_default())
         .collect();
-    let window = ManageUrlsWindow::new().map_err(|e| e.to_string())?;
+    let window = crate::app_title::new::<crate::ManageUrlsWindow>().map_err(|e| e.to_string())?;
     window.set_window_title(title(files.len()).into());
     let state = Rc::new(RefCell::new(State {
         editor: UrlsEditor::new(file_urls),

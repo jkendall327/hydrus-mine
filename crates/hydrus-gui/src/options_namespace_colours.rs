@@ -16,7 +16,8 @@ pub(crate) struct Binding {
 }
 // Warnings follow the completed Enter Text question in the same private owner slot.
 fn warning_notice(child: &Slot, show: &Rc<dyn Fn()>, message: &str) -> Result<(), String> {
-    let notice = SessionDialog::new().map_err(|error| error.to_string())?;
+    let notice =
+        crate::app_title::new::<crate::SessionDialog>().map_err(|error| error.to_string())?;
     notice.set_window_title("Warning".into());
     notice.set_message(message.into());
     notice.set_notice_only(true);
@@ -79,7 +80,7 @@ fn edit_next(
         return;
     }
     let (namespace, [red, green, blue]) = queue.remove(0);
-    let Ok(picker) = crate::GuiColourPickerWindow::new() else {
+    let Ok(picker) = crate::app_title::new::<crate::GuiColourPickerWindow>() else {
         return;
     };
     picker.set_red(i32::from(red));
@@ -237,7 +238,7 @@ pub(crate) fn bind(
             if let Some(window) = weak.upgrade() {
                 window.set_namespace_colour_error("".into());
             }
-            let dialog = match SessionDialog::new() {
+            let dialog = match crate::app_title::new::<crate::SessionDialog>() {
                 Ok(dialog) => dialog,
                 Err(error) => {
                     if let Some(window) = weak.upgrade() {

@@ -116,7 +116,7 @@ pub(crate) fn open(
     settings: CommandPaletteSettings,
     snapshotter: Snapshotter,
 ) -> Result<CommandPaletteWindow, slint::PlatformError> {
-    let window = CommandPaletteWindow::new()?;
+    let window = crate::app_title::new::<crate::CommandPaletteWindow>()?;
     let (sender, requests) = mpsc::channel::<Option<Request>>();
     let (replies, receiver) = mpsc::channel();
     std::thread::spawn(move || {

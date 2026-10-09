@@ -1,7 +1,10 @@
 import { Button, LineEdit } from "std-widgets.slint";
 import { Theme } from "theme.slint";
 export component DebugFetchWindow inherits Window {
-    title: root.input-mode ? "Enter Text" : "Are you sure?";
+    in property <string> title-suffix: "";
+    // the title as composed, for tests and the platform
+    out property <string> composed-title: root.title;
+    title: (root.input-mode ? "Enter Text" : "Are you sure?") + root.title-suffix;
     preferred-width: 560px;
     background: Theme.window;
     in property <bool> input-mode: true;

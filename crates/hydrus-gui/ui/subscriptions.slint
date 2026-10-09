@@ -92,7 +92,10 @@ export component Asking inherits Rectangle {
 // SelectGUGKeyAndName uses a separate list dialog, even for one gallery.
 export component SubscriptionGalleryWindow inherits Window {
     in property <string> window-title: "select gallery";
-    title: root.window-title;
+    in property <string> title-suffix: "";
+    // the title as composed, for tests and the platform
+    out property <string> composed-title: root.title;
+    title: (root.window-title) + root.title-suffix;
     preferred-width: 420px;
     preferred-height: root.message == "" ? 320px : 180px;
     background: Theme.window;
@@ -150,7 +153,10 @@ export component SubscriptionGalleryWindow inherits Window {
 
 export component SubscriptionsWindow inherits Window {
     in property <string> window-title: "manage subscriptions";
-    title: root.window-title;
+    in property <string> title-suffix: "";
+    // the title as composed, for tests and the platform
+    out property <string> composed-title: root.title;
+    title: (root.window-title) + root.title-suffix;
     preferred-width: 1180px;
     preferred-height: 560px;
     background: Theme.window;

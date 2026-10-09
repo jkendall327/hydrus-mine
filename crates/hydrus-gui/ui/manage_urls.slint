@@ -13,7 +13,10 @@ import { ListTable, TableColumn, TableRow } from "list_table.slint";
 
 export component ManageUrlsWindow inherits Window {
     in property <string> window-title: "manage urls";
-    title: root.window-title;
+    in property <string> title-suffix: "";
+    // the title as composed, for tests and the platform
+    out property <string> composed-title: root.title;
+    title: (root.window-title) + root.title-suffix;
     preferred-width: 560px;
     preferred-height: 400px;
     background: Theme.window;

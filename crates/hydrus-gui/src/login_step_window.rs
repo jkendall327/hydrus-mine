@@ -348,7 +348,7 @@ pub fn open(
     if let Some(window) = slots.step.borrow().as_ref() {
         return Ok(window.clone_strong());
     }
-    let window = LoginStepWindow::new()?;
+    let window = crate::app_title::new::<crate::LoginStepWindow>()?;
     window.set_name(step.name.as_str().into());
     window.set_scheme(i32::from(step.scheme == "https"));
     window.set_method(i32::from(step.method == "POST"));

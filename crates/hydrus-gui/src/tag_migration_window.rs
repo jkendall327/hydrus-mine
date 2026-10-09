@@ -124,7 +124,7 @@ pub fn open(
     let settings = Rc::new(RefCell::new(
         Migration::new(store, key, files).map_err(|e| e.to_string())?,
     ));
-    let window = TagMigrationWindow::new().map_err(|e| e.to_string())?;
+    let window = crate::app_title::new::<crate::TagMigrationWindow>().map_err(|e| e.to_string())?;
     window.set_services(strings(
         settings.borrow().services.iter().map(|s| s.name.clone()),
     ));

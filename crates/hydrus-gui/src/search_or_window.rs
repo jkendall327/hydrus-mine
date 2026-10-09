@@ -208,7 +208,7 @@ pub fn open(
     if let Some(window) = slot.borrow().as_ref() {
         return Ok(window.clone_strong());
     }
-    let window = SearchOrWindow::new()?;
+    let window = crate::app_title::new::<crate::SearchOrWindow>()?;
     window
         .global::<crate::TagTextHistory<'_>>()
         .on_record(crate::write_tag_history::record);

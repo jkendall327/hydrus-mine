@@ -91,7 +91,8 @@ pub fn open(
         current,
         for_subscription,
     )));
-    let window = GallerySourceWindow::new().map_err(|e| e.to_string())?;
+    let window =
+        crate::app_title::new::<crate::GallerySourceWindow>().map_err(|e| e.to_string())?;
     show(&window, &selector.borrow());
     let active = Rc::new(Cell::new(true));
     let close: Rc<dyn Fn()> = Rc::new({

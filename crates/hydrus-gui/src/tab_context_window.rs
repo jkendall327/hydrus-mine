@@ -52,7 +52,7 @@ fn open(
     if let Some(previous) = slot.borrow_mut().take() {
         let _ = previous.hide();
     }
-    let Ok(window) = SessionDialog::new() else {
+    let Ok(window) = crate::app_title::new::<crate::SessionDialog>() else {
         return;
     };
     window.set_asking_name(true);

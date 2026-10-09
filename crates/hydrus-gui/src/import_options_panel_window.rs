@@ -512,7 +512,8 @@ pub fn open(
     let classes = store
         .read(hydrus_store::settings::get::<hydrus_core::url::UrlClassSettings>)
         .map_err(|error| error.to_string())?;
-    let window = ImportOptionsPanelWindow::new().map_err(|error| error.to_string())?;
+    let window = crate::app_title::new::<crate::ImportOptionsPanelWindow>()
+        .map_err(|error| error.to_string())?;
     window.set_warning(WARNING.into());
     window.set_reset_labels(strings(
         Reset::ALL
