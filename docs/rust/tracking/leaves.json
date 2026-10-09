@@ -6679,10 +6679,10 @@
     "Bounds use the mode saved when opening the dialog; changing advanced mode takes effect after Apply and reopening, as Qt constructs its controls."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Only model tests: recorded ranges/clamps (options_ranges.json, real pages() get/set) plus page-shape replay of options_dialog.json. No GUI test applies this control and nothing checks that the engine/consumer then behaves with the saved value (engine reads it but only via NetOptions set directly in hydrus-net tests). Used at engine.rs:1790 for retry backoff. Tests: crates/hydrus-gui-model/tests/model/options_dialog.rs:664 advanced_network_ranges_and_clamps_match_the_reference, :862 reopening_numeric_options_clamps_saved_advanced_values, :540 the_options_pages_are_the_references"
+    "date": "2026-10-09",
+    "class": "source-restated",
+    "by": "phase 2 session",
+    "note": "The wait after the nth failed connection is n times the option, as the job announces it: with the option at 1 the waits are 1 s then 2 s, and with the option at 2 (two attempts) the one wait is 2 s. Each option is changed in the real options window (advanced mode on, so waits and timeouts may be a second) and applied; the test then reloads a real NetEngine with engine.reload_settings() (as the app's poll does; the poll itself is not driven) and asks a local axum server, a held socket that refuses connections, or a raw proxy listener. The engine's bandwidth rules are off (the default rules space out local requests), and, like the app's, it honours proxies named in the environment. The expected values are worked out from the reference's NetworkJob (hydrus/client/networking/) and not recorded from it: running the reference's job against the same server is not done, hence source-restated. Timing is bounded below only, and attempts and waits are read from the job's own status text and the server's counts. Test: crates/hydrus-gui/tests/gui/options_system_consumers.rs network_consumers::failed_connections_are_retried_as_often_and_as_slowly_as_the_options_say."
    }
   },
   {
@@ -6702,7 +6702,7 @@
     "date": "2026-10-08",
     "class": "weak",
     "by": "blind Sonnet agent, #97 phase 1",
-    "note": "GUI toggle reaches NetEngine.options().verify_https after reload, but nothing tests that http_client (engine.rs:564 tls_danger_accept_invalid_certs) actually accepts or rejects certificates; only the option snapshot is checked. Tests: crates/hydrus-gui/tests/gui/options_system_consumers.rs:133 connection_options_reach_the_running_network_engine"
+    "note": "GUI toggle reaches NetEngine.options().verify_https after reload, but nothing tests that http_client (engine.rs:564 tls_danger_accept_invalid_certs) actually accepts or rejects certificates; only the option snapshot is checked. Tests: crates/hydrus-gui/tests/gui/options_system_consumers.rs:133 connection_options_reach_the_running_network_engine (Untagged from connection_options_reach_the_running_network_engine, which only reads the engine's option snapshot.)"
    }
   },
   {
@@ -6734,10 +6734,10 @@
     "Assessment covers this editable control and shared Apply/Cancel, not every control on its containing reference page or every background consumer."
    ],
    "recheck": {
-    "date": "2026-10-08",
+    "date": "2026-10-09",
     "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "GUI test drives the real options window (labels/kinds/limits, Apply) and checks a standalone NetEngine reloads the new value; page shape is replayed from options_dialog.json. Reader behaviour is tested separately in hydrus-net with NetOptions set directly, and expected numbers are typed literals. Velocity editor checks only the count of unit fields (3), and number/hours/minutes/seconds to window seconds is a typed literal. Tests: crates/hydrus-gui/tests/gui/options_system_consumers.rs:133 connection_options_reach_the_running_network_engine; hydrus-net engine.rs/tests/engine.rs:1222 domain_ok"
+    "by": "phase 2 session",
+    "note": "Two server errors within twenty minutes (the window set through the velocity row, not the default ten) halt the domain: the next request's job waits with the domain wait reason; at three errors needed a request goes through, and at 0 (never wait) it does even with the errors still counted. Each option is changed in the real options window (advanced mode on, so waits and timeouts may be a second) and applied; the test then reloads a real NetEngine with engine.reload_settings() (as the app's poll does; the poll itself is not driven) and asks a local axum server, a held socket that refuses connections, or a raw proxy listener. The engine's bandwidth rules are off (the default rules space out local requests), and, like the app's, it honours proxies named in the environment. The expected values are worked out from the reference's NetworkJob (hydrus/client/networking/) and not recorded from it: running the reference's job against the same server is not done, hence source-restated. Timing is bounded below only, and attempts and waits are read from the job's own status text and the server's counts. Test: crates/hydrus-gui/tests/gui/options_system_consumers.rs network_consumers::a_domain_with_enough_errors_is_left_alone_for_as_long_as_the_options_say."
    }
   },
   {
@@ -6754,10 +6754,10 @@
     "Assessment covers this editable control and shared Apply/Cancel, not every control on its containing reference page or every background consumer."
    ],
    "recheck": {
-    "date": "2026-10-08",
+    "date": "2026-10-09",
     "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "GUI test drives the real options window (labels/kinds/limits, Apply) and checks a standalone NetEngine reloads the new value; page shape is replayed from options_dialog.json. Reader behaviour is tested separately in hydrus-net with NetOptions set directly, and expected numbers are typed literals. Tests: crates/hydrus-gui/tests/gui/options_system_consumers.rs:133; hydrus-net tests/engine.rs:1346"
+    "by": "phase 2 session",
+    "note": "A refused connection is retried: with the option at 3 the job announces waits of 1 s and 2 s (two retries), with 2 one wait of 1 s. Each option is changed in the real options window (advanced mode on, so waits and timeouts may be a second) and applied; the test then reloads a real NetEngine with engine.reload_settings() (as the app's poll does; the poll itself is not driven) and asks a local axum server, a held socket that refuses connections, or a raw proxy listener. The engine's bandwidth rules are off (the default rules space out local requests), and, like the app's, it honours proxies named in the environment. The expected values are worked out from the reference's NetworkJob (hydrus/client/networking/) and not recorded from it: running the reference's job against the same server is not done, hence source-restated. Timing is bounded below only, and attempts and waits are read from the job's own status text and the server's counts. Test: crates/hydrus-gui/tests/gui/options_system_consumers.rs network_consumers::failed_connections_are_retried_as_often_and_as_slowly_as_the_options_say."
    }
   },
   {
@@ -6774,10 +6774,10 @@
     "Bounds use the mode saved when opening the dialog; changing advanced mode takes effect after Apply and reopening, as Qt constructs its controls."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Only model tests: recorded ranges/clamps (options_ranges.json, real pages() get/set) plus page-shape replay of options_dialog.json. No GUI test applies this control and nothing checks that the engine/consumer then behaves with the saved value (engine reads it but only via NetOptions set directly in hydrus-net tests). The engine's slot rebuild is tested in engine.rs changed_options_are_picked_up, with max_jobs written to the store directly. Tests: crates/hydrus-gui-model/tests/model/options_dialog.rs:664 advanced_network_ranges_and_clamps_match_the_reference, :862 reopening_numeric_options_clamps_saved_advanced_values, :540 the_options_pages_are_the_references"
+    "date": "2026-10-09",
+    "class": "source-restated",
+    "by": "phase 2 session",
+    "note": "Six concurrent requests to a server that holds each: exactly 2 in flight with the option at 2 (and room on the domain). Each option is changed in the real options window (advanced mode on, so waits and timeouts may be a second) and applied; the test then reloads a real NetEngine with engine.reload_settings() (as the app's poll does; the poll itself is not driven) and asks a local axum server, a held socket that refuses connections, or a raw proxy listener. The engine's bandwidth rules are off (the default rules space out local requests), and, like the app's, it honours proxies named in the environment. The expected values are worked out from the reference's NetworkJob (hydrus/client/networking/) and not recorded from it: running the reference's job against the same server is not done, hence source-restated. Timing is bounded below only, and attempts and waits are read from the job's own status text and the server's counts. Test: crates/hydrus-gui/tests/gui/options_system_consumers.rs network_consumers::only_as_many_jobs_run_at_once_as_the_options_say."
    }
   },
   {
@@ -6794,10 +6794,10 @@
     "Bounds use the mode saved when opening the dialog; changing advanced mode takes effect after Apply and reopening, as Qt constructs its controls."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Only model tests: recorded ranges/clamps (options_ranges.json, real pages() get/set) plus page-shape replay of options_dialog.json. No GUI test applies this control and nothing checks that the engine/consumer then behaves with the saved value (engine reads it but only via NetOptions set directly in hydrus-net tests). Domain-slot rebuild is tested in engine.rs changed_options_are_picked_up via a direct store write. Tests: crates/hydrus-gui-model/tests/model/options_dialog.rs:664 advanced_network_ranges_and_clamps_match_the_reference, :862 reopening_numeric_options_clamps_saved_advanced_values, :540 the_options_pages_are_the_references"
+    "date": "2026-10-09",
+    "class": "source-restated",
+    "by": "phase 2 session",
+    "note": "With 5 overall and 3 per domain, six concurrent requests to one domain are never more than 3 in flight (and more than one). Each option is changed in the real options window (advanced mode on, so waits and timeouts may be a second) and applied; the test then reloads a real NetEngine with engine.reload_settings() (as the app's poll does; the poll itself is not driven) and asks a local axum server, a held socket that refuses connections, or a raw proxy listener. The engine's bandwidth rules are off (the default rules space out local requests), and, like the app's, it honours proxies named in the environment. The expected values are worked out from the reference's NetworkJob (hydrus/client/networking/) and not recorded from it: running the reference's job against the same server is not done, hence source-restated. Timing is bounded below only, and attempts and waits are read from the job's own status text and the server's counts. Test: crates/hydrus-gui/tests/gui/options_system_consumers.rs network_consumers::only_as_many_jobs_run_at_once_as_the_options_say."
    }
   },
   {
@@ -6814,10 +6814,10 @@
     "Assessment covers this editable control and shared Apply/Cancel, not every control on its containing reference page or every background consumer."
    ],
    "recheck": {
-    "date": "2026-10-08",
+    "date": "2026-10-09",
     "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "GUI test drives the real options window (labels/kinds/limits, Apply) and checks a standalone NetEngine reloads the new value; page shape is replayed from options_dialog.json. Reader behaviour is tested separately in hydrus-net with NetOptions set directly, and expected numbers are typed literals. Tests: crates/hydrus-gui/tests/gui/options_system_consumers.rs:133; hydrus-net engine.rs:1698 uses max_get_attempts"
+    "by": "phase 2 session",
+    "note": "A server that always answers 503 is asked 2 times with the option at 2 and 4 times at 4 (counted by the server). Each option is changed in the real options window (advanced mode on, so waits and timeouts may be a second) and applied; the test then reloads a real NetEngine with engine.reload_settings() (as the app's poll does; the poll itself is not driven) and asks a local axum server, a held socket that refuses connections, or a raw proxy listener. The engine's bandwidth rules are off (the default rules space out local requests), and, like the app's, it honours proxies named in the environment. The expected values are worked out from the reference's NetworkJob (hydrus/client/networking/) and not recorded from it: running the reference's job against the same server is not done, hence source-restated. Timing is bounded below only, and attempts and waits are read from the job's own status text and the server's counts. Test: crates/hydrus-gui/tests/gui/options_system_consumers.rs network_consumers::a_failing_server_is_asked_as_many_times_as_the_retries_option_says."
    }
   },
   {
@@ -6834,10 +6834,10 @@
     "Bounds use the mode saved when opening the dialog; changing advanced mode takes effect after Apply and reopening, as Qt constructs its controls."
    ],
    "recheck": {
-    "date": "2026-10-08",
+    "date": "2026-10-09",
     "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Only model tests: recorded ranges/clamps (options_ranges.json, real pages() get/set) plus page-shape replay of options_dialog.json. No GUI test applies this control and nothing checks that the engine/consumer then behaves with the saved value (engine reads it but only via NetOptions set directly in hydrus-net tests). Used for connect/read timeouts at engine.rs:562. Tests: crates/hydrus-gui-model/tests/model/options_dialog.rs:664 advanced_network_ranges_and_clamps_match_the_reference, :862 reopening_numeric_options_clamps_saved_advanced_values, :540 the_options_pages_are_the_references"
+    "by": "phase 2 session",
+    "note": "A server that goes quiet is given at least six times the option to answer (1 s: an error after at least 6 s; the default of ten would be a minute and the test gives up at forty seconds) through the real options window and engine (options_system_consumers.rs network_consumers::a_server_that_goes_quiet_is_given_the_timeout_the_option_says, untagged). The connect half of the timeout (the option itself) is not driven: it needs an address that never answers. Left untagged."
    }
   },
   {
@@ -6854,10 +6854,10 @@
     "Bounds use the mode saved when opening the dialog; changing advanced mode takes effect after Apply and reopening, as Qt constructs its controls."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Only model tests: recorded ranges/clamps (options_ranges.json, real pages() get/set) plus page-shape replay of options_dialog.json. No GUI test applies this control and nothing checks that the engine/consumer then behaves with the saved value (engine reads it but only via NetOptions set directly in hydrus-net tests). Used at engine.rs:1726. Tests: crates/hydrus-gui-model/tests/model/options_dialog.rs:664 advanced_network_ranges_and_clamps_match_the_reference, :862 reopening_numeric_options_clamps_saved_advanced_values, :540 the_options_pages_are_the_references"
+    "date": "2026-10-09",
+    "class": "source-restated",
+    "by": "phase 2 session",
+    "note": "A server answering 429 with no retry-after is asked twice and waited for at least 1.25^2 times the option (1 s: at least 1.56 s; 3 s: at least 4.7 s) before the bandwidth error; the job says it is waiting on the server's bandwidth. Each option is changed in the real options window (advanced mode on, so waits and timeouts may be a second) and applied; the test then reloads a real NetEngine with engine.reload_settings() (as the app's poll does; the poll itself is not driven) and asks a local axum server, a held socket that refuses connections, or a raw proxy listener. The engine's bandwidth rules are off (the default rules space out local requests), and, like the app's, it honours proxies named in the environment. The expected values are worked out from the reference's NetworkJob (hydrus/client/networking/) and not recorded from it: running the reference's job against the same server is not done, hence source-restated. Timing is bounded below only, and attempts and waits are read from the job's own status text and the server's counts. Test: crates/hydrus-gui/tests/gui/options_system_consumers.rs network_consumers::a_server_that_limits_bandwidth_is_waited_for_as_long_as_the_option_says."
    }
   },
   {
@@ -6889,10 +6889,10 @@
     "Assessment covers this editable control and shared Apply/Cancel, not every control on its containing reference page or every background consumer."
    ],
    "recheck": {
-    "date": "2026-10-08",
+    "date": "2026-10-09",
     "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "GUI test drives the real options window (labels/kinds/limits, Apply) and checks a standalone NetEngine reloads the new value; page shape is replayed from options_dialog.json. Reader behaviour is tested separately in hydrus-net with NetOptions set directly, and expected numbers are typed literals. Proxy use is tested at engine level with a local proxy server; reference text of the field (default placeholder socks5/http) not checked. Tests: crates/hydrus-gui/tests/gui/options_system_consumers.rs:133; hydrus-net tests/engine.rs:846 requests_go_through_the_clients_proxy"
+    "by": "phase 2 session",
+    "note": "With the local server as http proxy a request for another host is asked of it with the whole URL (the server counts it); hosts in no_proxy (the default has the local host) are asked directly; with the host named in no_proxy, or the proxy cleared, the proxy's count does not rise. Each option is changed in the real options window (advanced mode on, so waits and timeouts may be a second) and applied; the test then reloads a real NetEngine with engine.reload_settings() (as the app's poll does; the poll itself is not driven) and asks a local axum server, a held socket that refuses connections, or a raw proxy listener. The engine's bandwidth rules are off (the default rules space out local requests), and, like the app's, it honours proxies named in the environment. The expected values are worked out from the reference's NetworkJob (hydrus/client/networking/) and not recorded from it: running the reference's job against the same server is not done, hence source-restated. Timing is bounded below only, and attempts and waits are read from the job's own status text and the server's counts. Test: crates/hydrus-gui/tests/gui/options_system_consumers.rs network_consumers::the_http_proxy_and_the_hosts_it_is_not_used_for_decide_where_requests_go."
    }
   },
   {
@@ -6909,10 +6909,10 @@
     "Assessment covers this editable control and shared Apply/Cancel, not every control on its containing reference page or every background consumer."
    ],
    "recheck": {
-    "date": "2026-10-08",
+    "date": "2026-10-09",
     "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "GUI test drives the real options window (labels/kinds/limits, Apply) and checks a standalone NetEngine reloads the new value; page shape is replayed from options_dialog.json. Reader behaviour is tested separately in hydrus-net with NetOptions set directly, and expected numbers are typed literals. Only the http proxy path is exercised by the engine proxy test; the https proxy is only checked as an option snapshot. Tests: crates/hydrus-gui/tests/gui/options_system_consumers.rs:133; hydrus-net tests/engine.rs:846"
+    "by": "phase 2 session",
+    "note": "An https request asks the https proxy to CONNECT (the proxy, a raw listener, reads 'CONNECT booru.invalid:443 HTTP/1.1'); with the proxy cleared it is not asked. Each option is changed in the real options window (advanced mode on, so waits and timeouts may be a second) and applied; the test then reloads a real NetEngine with engine.reload_settings() (as the app's poll does; the poll itself is not driven) and asks a local axum server, a held socket that refuses connections, or a raw proxy listener. The engine's bandwidth rules are off (the default rules space out local requests), and, like the app's, it honours proxies named in the environment. The expected values are worked out from the reference's NetworkJob (hydrus/client/networking/) and not recorded from it: running the reference's job against the same server is not done, hence source-restated. Timing is bounded below only, and attempts and waits are read from the job's own status text and the server's counts. Test: crates/hydrus-gui/tests/gui/options_system_consumers.rs network_consumers::https_requests_ask_the_https_proxy_to_connect."
    }
   },
   {
@@ -6929,10 +6929,10 @@
     "Assessment covers this editable control and shared Apply/Cancel, not every control on its containing reference page or every background consumer."
    ],
    "recheck": {
-    "date": "2026-10-08",
+    "date": "2026-10-09",
     "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "GUI test drives the real options window (labels/kinds/limits, Apply) and checks a standalone NetEngine reloads the new value; page shape is replayed from options_dialog.json. Reader behaviour is tested separately in hydrus-net with NetOptions set directly, and expected numbers are typed literals. Tests: crates/hydrus-gui/tests/gui/options_system_consumers.rs:133; hydrus-net tests/engine.rs:846 (no_proxy host asked directly)"
+    "by": "phase 2 session",
+    "note": "Naming a host in no_proxy sends its requests direct though an http proxy is set (the proxy's count stays); the default's local host is asked directly. Each option is changed in the real options window (advanced mode on, so waits and timeouts may be a second) and applied; the test then reloads a real NetEngine with engine.reload_settings() (as the app's poll does; the poll itself is not driven) and asks a local axum server, a held socket that refuses connections, or a raw proxy listener. The engine's bandwidth rules are off (the default rules space out local requests), and, like the app's, it honours proxies named in the environment. The expected values are worked out from the reference's NetworkJob (hydrus/client/networking/) and not recorded from it: running the reference's job against the same server is not done, hence source-restated. Timing is bounded below only, and attempts and waits are read from the job's own status text and the server's counts. Test: crates/hydrus-gui/tests/gui/options_system_consumers.rs network_consumers::the_http_proxy_and_the_hosts_it_is_not_used_for_decide_where_requests_go."
    }
   },
   {
@@ -14618,10 +14618,10 @@
     "Assessment covers this editable control and shared Apply/Cancel, not every control on its containing reference page or every background consumer."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Only proves the option reaches the real viewer's menu check state (always/this-slideshow checked, default unchecked as slideshow.json menus). Its effect, holding a duration file until it has played once before moving on (Slideshow::due once_through gate), is not exercised through the viewer with this option; expected menu strings are typed. Tests: crates/hydrus-gui/tests/gui/options_media_slideshow.rs:67 the_viewer_s_slideshow_menu_lists_the_saved_durations_and_once_through"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "With the option off a 0.1 second slideshow leaves the animation at once; with it on the viewer waits until the animation has played through. The option under test is changed in the real options window (the other slideshow options are saved directly as the baseline) and a slideshow is run in the real media viewer on a real animated file (oracle/fixtures/media/gif_anim.gif, imported; frame delays 100/0/10/250 ms, about half a second as the viewer knows it; played by mpv where libmpv is present, and the test is skipped without it), timing when the viewer moves to the next file. The expected moments (1.0 s, 2.0 s, the animation's end) are worked out by hand from the reference's rule, not read from a recording: the viewer applies the same special_period function that slideshow.json validates over 2,205 recorded cases (files_with_durations_bend_the_period_as_the_reference_s). The comparison that matters is relative (the changed option moves on clearly sooner than the saved one, or holds longer); late moments are bounded below only (a delay can only make them later), the early one is the best of five tries, and there are no absolute upper margins. Test: crates/hydrus-gui/tests/gui/options_media_slideshow.rs a_slideshow_holds_an_animation_until_it_has_played_once_when_the_option_says. The menu's checked state: the_viewer_s_slideshow_menu_lists_the_saved_durations_and_once_through."
    }
   },
   {
@@ -14658,10 +14658,10 @@
     "Assessment covers this editable control and shared Apply/Cancel, not every control on its containing reference page or every background consumer."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Drives the Options row through the window, but then calls Slideshow::new/start/due directly (a decision function) instead of the viewer's slideshow timer; thresholds are typed literals (hundredths). special_period is replayed against slideshow.json elsewhere (tests/gui/slideshow.rs:15) but not through this path. Tests: crates/hydrus-gui/tests/gui/options_media_slideshow.rs:235 a_long_file_holds_a_slideshow_past_its_period_by_the_allowed_delay"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "A 0.3 second slideshow moves off the longer animation at 0.3 s with a 10% delay and holds it until it ends with 200%. The option under test is changed in the real options window (the other slideshow options are saved directly as the baseline) and a slideshow is run in the real media viewer on a real animated file (oracle/fixtures/media/gif_anim.gif, imported; frame delays 100/0/10/250 ms, about half a second as the viewer knows it; played by mpv where libmpv is present, and the test is skipped without it), timing when the viewer moves to the next file. The expected moments (1.0 s, 2.0 s, the animation's end) are worked out by hand from the reference's rule, not read from a recording: the viewer applies the same special_period function that slideshow.json validates over 2,205 recorded cases (files_with_durations_bend_the_period_as_the_reference_s). The comparison that matters is relative (the changed option moves on clearly sooner than the saved one, or holds longer); late moments are bounded below only (a delay can only make them later), the early one is the best of five tries, and there are no absolute upper margins. Test: crates/hydrus-gui/tests/gui/options_media_slideshow.rs a_long_file_holds_a_slideshow_past_its_period_by_the_allowed_delay."
    }
   },
   {
@@ -14678,10 +14678,10 @@
     "Assessment covers this editable control and shared Apply/Cancel, not every control on its containing reference page or every background consumer."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Drives the Options row through the window, but then calls Slideshow::new/start/due directly (a decision function) instead of the viewer's slideshow timer; thresholds are typed literals (hundredths). special_period is replayed against slideshow.json elsewhere (tests/gui/slideshow.rs:15) but not through this path. Tests: crates/hydrus-gui/tests/gui/options_media_slideshow.rs:198 a_short_file_moves_a_slideshow_on_after_the_skip_percentage_of_the_period"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "At 5% of 2 seconds the animation does not fit and waits the period; at 50% it moves on at about 1 second. The option under test is changed in the real options window (the other slideshow options are saved directly as the baseline) and a slideshow is run in the real media viewer on a real animated file (oracle/fixtures/media/gif_anim.gif, imported; frame delays 100/0/10/250 ms, about half a second as the viewer knows it; played by mpv where libmpv is present, and the test is skipped without it), timing when the viewer moves to the next file. The expected moments (1.0 s, 2.0 s, the animation's end) are worked out by hand from the reference's rule, not read from a recording: the viewer applies the same special_period function that slideshow.json validates over 2,205 recorded cases (files_with_durations_bend_the_period_as_the_reference_s). The comparison that matters is relative (the changed option moves on clearly sooner than the saved one, or holds longer); late moments are bounded below only (a delay can only make them later), the early one is the best of five tries, and there are no absolute upper margins. Test: crates/hydrus-gui/tests/gui/options_media_slideshow.rs a_short_file_moves_a_slideshow_on_after_the_skip_percentage_of_the_period."
    }
   },
   {
@@ -14698,10 +14698,10 @@
     "Assessment covers this editable control and shared Apply/Cancel, not every control on its containing reference page or every background consumer."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Drives the Options row through the window, but then calls Slideshow::new/start/due directly (a decision function) instead of the viewer's slideshow timer; thresholds are typed literals (hundredths). special_period is replayed against slideshow.json elsewhere (tests/gui/slideshow.rs:15) but not through this path. Tests: crates/hydrus-gui/tests/gui/options_media_slideshow.rs:179 a_short_file_moves_a_slideshow_on_after_the_skip_seconds"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "A 2 second slideshow holds a half-second animation to the period, and with the skip seconds at 1 moves on at about 1 second. The option under test is changed in the real options window (the other slideshow options are saved directly as the baseline) and a slideshow is run in the real media viewer on a real animated file (oracle/fixtures/media/gif_anim.gif, imported; frame delays 100/0/10/250 ms, about half a second as the viewer knows it; played by mpv where libmpv is present, and the test is skipped without it), timing when the viewer moves to the next file. The expected moments (1.0 s, 2.0 s, the animation's end) are worked out by hand from the reference's rule, not read from a recording: the viewer applies the same special_period function that slideshow.json validates over 2,205 recorded cases (files_with_durations_bend_the_period_as_the_reference_s). The comparison that matters is relative (the changed option moves on clearly sooner than the saved one, or holds longer); late moments are bounded below only (a delay can only make them later), the early one is the best of five tries, and there are no absolute upper margins. Test: crates/hydrus-gui/tests/gui/options_media_slideshow.rs a_short_file_moves_a_slideshow_on_after_the_skip_seconds."
    }
   },
   {
@@ -14718,10 +14718,10 @@
     "Assessment covers this editable control and shared Apply/Cancel, not every control on its containing reference page or every background consumer."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Drives the Options row through the window, but then calls Slideshow::new/start/due directly (a decision function) instead of the viewer's slideshow timer; thresholds are typed literals (hundredths). special_period is replayed against slideshow.json elsewhere (tests/gui/slideshow.rs:15) but not through this path. Tests: crates/hydrus-gui/tests/gui/options_media_slideshow.rs:216 a_file_longer_than_the_cutoff_part_of_the_period_moves_on_when_it_has_played_once"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "At 95% of 2 seconds the animation is not longer than the cutoff and waits the period; at 10% it moves on as it ends. The option under test is changed in the real options window (the other slideshow options are saved directly as the baseline) and a slideshow is run in the real media viewer on a real animated file (oracle/fixtures/media/gif_anim.gif, imported; frame delays 100/0/10/250 ms, about half a second as the viewer knows it; played by mpv where libmpv is present, and the test is skipped without it), timing when the viewer moves to the next file. The expected moments (1.0 s, 2.0 s, the animation's end) are worked out by hand from the reference's rule, not read from a recording: the viewer applies the same special_period function that slideshow.json validates over 2,205 recorded cases (files_with_durations_bend_the_period_as_the_reference_s). The comparison that matters is relative (the changed option moves on clearly sooner than the saved one, or holds longer); late moments are bounded below only (a delay can only make them later), the early one is the best of five tries, and there are no absolute upper margins. Test: crates/hydrus-gui/tests/gui/options_media_slideshow.rs a_file_longer_than_the_cutoff_part_of_the_period_moves_on_when_it_has_played_once."
    }
   },
   {
