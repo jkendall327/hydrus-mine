@@ -8,7 +8,7 @@ page "start" and a page of pages "outer" (holding "inner"), current being
 "start" and, again, "inner", the top notebook's `AppendGUISessionFreshest`
 (what the menu calls) is run, twice in a row. After each, the whole tree of
 pages (each page's name, a page of pages' pages) and which tabs are current
-are recorded.
+are recorded, with the name of the page shown.
 
 Usage: QT_QPA_PLATFORM=offscreen python oracle/record_sessions_append.py
        (writes fixtures/sessions_append.json)
@@ -124,6 +124,7 @@ def record( session ):
 
             before = qt( lambda: tree( gui._notebook ) )
             before_current = qt( current_path )
+            before_page = qt( lambda: gui._notebook.GetCurrentMediaPage().GetName() )
 
             steps = []
 
@@ -133,10 +134,10 @@ def record( session ):
 
                 time.sleep( 1.0 )
 
-                steps.append( { 'tree' : qt( lambda: tree( gui._notebook ) ), 'current' : qt( current_path ) } )
+                steps.append( { 'tree' : qt( lambda: tree( gui._notebook ) ), 'current' : qt( current_path ), 'page' : qt( lambda: gui._notebook.GetCurrentMediaPage().GetName() ) } )
 
 
-            cases.append( { 'mode' : mode, 'inside' : inside, 'before' : before, 'before_current' : before_current, 'steps' : steps } )
+            cases.append( { 'mode' : mode, 'before' : before, 'before_current' : before_current, 'before_page' : before_page, 'steps' : steps } )
 
 
     return { 'cases' : cases }

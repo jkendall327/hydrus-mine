@@ -910,6 +910,29 @@ fn appending_a_saved_session_from_the_menu_lands_where_the_reference_put_it() {
             case["before"],
             "{case}"
         );
+        // (the tabs and the page that are current, as the recording began)
+        let began: Vec<u64> = bound
+            .pages
+            .borrow()
+            .tabs()
+            .iter()
+            .map(|t| t.selected as u64)
+            .collect();
+        let recorded_began: Vec<u64> = case["before_current"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|c| c.as_u64().unwrap())
+            .collect();
+        assert_eq!(
+            began[..recorded_began.len().min(began.len())],
+            recorded_began[..recorded_began.len().min(began.len())]
+        );
+        assert_eq!(
+            bound.pages.borrow().shown().name,
+            case["before_page"].as_str().unwrap(),
+            "the page shown before {case}"
+        );
         for step in case["steps"].as_array().unwrap() {
             let titles = ui.get_menu_titles();
             let at = (0..titles.row_count())
@@ -934,6 +957,11 @@ fn appending_a_saved_session_from_the_menu_lands_where_the_reference_put_it() {
                 .map(|c| c.as_u64().unwrap())
                 .collect();
             assert_eq!(now, theirs, "the tabs that are current after {case}");
+            assert_eq!(
+                pages.shown().name,
+                step["page"].as_str().unwrap(),
+                "the page shown after {case}"
+            );
             made += 1;
         }
     }

@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """Record the reference's pages > refresh (`ClientGUI._RefreshCurrentPage`).
 
-In the running client, on the `basic` fixture, with new searches paused
-(`default_search_synchronised` off), these pages are made, each made current
+In the running client, on the `basic` fixture, with new searches running as
+they are given (`default_search_synchronised`, as it comes), these pages are made, each made current
 in turn, and "refresh" is run on it: a search page paused with a predicate typed since, a search page whose search has run and then been paused, a
 search page opened on given files (its search locked to their hashes), and a
 URL importer page. Before and after, whether the page's search is
@@ -46,7 +46,8 @@ def record( session ):
 
     given = [ bytes.fromhex( f[ 'hash' ] ) for f in MANIFEST[ 'files' ][ :3 ] ]
 
-    controller.new_options.SetBoolean( 'default_search_synchronised', False )
+    # (new searches run as they are given, the default; the cases pause them by hand)
+    controller.new_options.SetBoolean( 'default_search_synchronised', True )
 
     def state( page ):
 

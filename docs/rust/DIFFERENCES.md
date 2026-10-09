@@ -436,6 +436,12 @@ search.
   sessions, a "sessions" button on the chooser's home screen (the second
   button, which the reference leaves empty) leads to them, as the pages >
   sessions > append menu does. The reference's chooser has no such button.
+  Choosing one appends it to the notebook the chooser was opened for (the
+  deepest one, from Ctrl+T), where the pages > sessions > append menu entry
+  adds it to the top notebook, as the reference's menu does.
+- **Appending a saved session shows no "loading session" popup.** The
+  reference's append shows a popup, "loading session "work"…", while the
+  session loads; the native append is done at once and shows none.
 - **The page chooser takes the top row's digits too.** The reference takes
   only the number pad's; Slint doesn't tell them apart.
 - **A closed URL downloader page's downloads wait** until it is reopened

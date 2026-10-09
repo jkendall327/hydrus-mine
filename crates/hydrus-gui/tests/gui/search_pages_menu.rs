@@ -218,7 +218,6 @@ fn closed_pages_return_where_they_were_and_clear_all_asks_first() {
 }
 
 // leaf: audit-options-menu-menu-pages-new-page
-// leaf: audit-options-menu-menu-pages-refresh
 #[test]
 fn new_page_asks_the_chooser_and_refresh_searches_a_paused_page_again() {
     let _windows = headless::init();
@@ -304,7 +303,6 @@ fn the_pages_menu_makes_download_special_and_search_pages_and_shows_them() {
     );
 }
 
-// leaf: audit-options-menu-menu-pages-sessions-append-saved-session
 // leaf: audit-options-menu-menu-pages-sessions-delete-saved-session
 #[test]
 fn saved_sessions_append_as_a_page_of_pages_and_delete_after_asking() {
