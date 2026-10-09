@@ -583,8 +583,14 @@ fn closed_pages_come_back_and_clear_all_asks_as_the_reference_s_undo_menu_does()
         let menu = open_closed(&ui);
         if count == 0 {
             assert!(!step["undo_menu_enabled"].as_bool().unwrap());
+            assert!(!step["closed_enabled"].as_bool().unwrap());
             assert_eq!(menu, None, "the undo menu after {what}");
         } else {
+            // (the undo menu and its closed pages submenu are there to use)
+            assert!(step["undo_menu_enabled"].as_bool().unwrap());
+            assert!(step["closed_enabled"].as_bool().unwrap());
+            assert!(step["closed_visible"].as_bool().unwrap());
+            assert!(menu.is_some(), "the closed pages menu after {what}");
             let theirs: Vec<String> = step["closed"]
                 .as_array()
                 .unwrap()
@@ -823,4 +829,25 @@ fn ctrl_t_and_the_tab_row_double_click_put_the_new_page_where_the_reference_put_
         made += 1;
     }
     assert_eq!(made, 36);
+}
+
+#[test]
+fn the_chooser_has_no_sessions_button_without_saved_sessions() {
+    let _windows = headless::init();
+    let recorded = hydrus_testkit::fixture_json("page_chooser_tree.json");
+    let dir = tempfile::tempdir().unwrap();
+    let store = Store::open(dir.path()).unwrap();
+    let ui = MainWindow::new().unwrap();
+    ui.show().unwrap();
+    let _bound = bind(&ui, Pages::open(store).unwrap());
+    assert!(ui.invoke_shortcut_key("t".into(), 1));
+    let home: Vec<String> = (1..=9)
+        .map(|n| recorded["home"][n.to_string()].as_str().unwrap().to_owned())
+        .collect();
+    // a client with nothing saved has the reference's home exactly
+    let ours = chooser_labels(&ui);
+    assert_eq!(ours[1], "", "no sessions button");
+    assert_eq!(ours[3], home[3]);
+    assert_eq!(ours[5], home[5]);
+    assert_eq!(ours[7], home[7]);
 }
