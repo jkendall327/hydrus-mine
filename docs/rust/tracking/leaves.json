@@ -19211,7 +19211,7 @@
     "date": "2026-10-09",
     "class": "sound",
     "by": "phase 2 session",
-    "note": "Every recorded text (empty, padded, with spaces and a fragment, not a URL) and both has / does not have choices make the recorded predicate; the reference refuses none of them, and neither does the window. Test: crates/hydrus-gui/tests/gui/predicate_editors.rs the_url_panels_make_what_the_reference_s_make_for_every_text_and_choice, replaying oracle/fixtures/known_urls_panels.json (recorded from the reference's real panels) through the real editor window."
+    "note": "Every recorded text (empty, padded, with spaces and a fragment, not a URL) and both has / does not have choices make the recorded predicate; the reference refuses none of them (its CheckValid passes every text, recorded), and neither does the window; defaults, the domain hint and the choices are recorded too. Test: crates/hydrus-gui/tests/gui/predicate_editors.rs the_url_panels_make_what_the_reference_s_make_for_every_text_and_choice, replaying oracle/fixtures/known_urls_panels.json (recorded from the reference's real panels) through the real editor window."
    }
   },
   {
@@ -19268,7 +19268,7 @@
     "date": "2026-10-09",
     "class": "sound",
     "by": "phase 2 session",
-    "note": "With the client's URL classes (one not going with files) the panel offers the same classes and the 'has' / 'does not have' choices, and makes the recorded text for each class and choice. Test: crates/hydrus-gui/tests/gui/predicate_editors.rs the_url_panels_make_what_the_reference_s_make_for_every_text_and_choice, replaying oracle/fixtures/known_urls_panels.json (recorded from the reference's real panels) through the real editor window."
+    "note": "With the client's URL classes (one not going with files) the panel offers the same classes and the 'has' / 'does not have' choices, and makes the recorded text for each class and choice. Test: crates/hydrus-gui/tests/gui/predicate_editors.rs the_url_panels_make_what_the_reference_s_make_for_every_text_and_choice, replaying oracle/fixtures/known_urls_panels.json (recorded from the reference's real panels) through the real editor window. Defaults: it starts on the first offered class. With no class going with files the reference's panel offers nothing and raises on accept (recorded); the window makes no predicate (DIFFERENCES.md)."
    }
   },
   {
@@ -19287,7 +19287,7 @@
     "date": "2026-10-09",
     "class": "sound",
     "by": "phase 2 session",
-    "note": "The class rule: only classes that go with files are offered and each chosen class makes the recorded predicate. Test: crates/hydrus-gui/tests/gui/predicate_editors.rs the_url_panels_make_what_the_reference_s_make_for_every_text_and_choice, replaying oracle/fixtures/known_urls_panels.json (recorded from the reference's real panels) through the real editor window."
+    "note": "The class rule: only classes that go with files are offered and each chosen class makes the recorded predicate. Test: crates/hydrus-gui/tests/gui/predicate_editors.rs the_url_panels_make_what_the_reference_s_make_for_every_text_and_choice, replaying oracle/fixtures/known_urls_panels.json (recorded from the reference's real panels) through the real editor window. Defaults: it starts on the first offered class. With no class going with files the reference's panel offers nothing and raises on accept (recorded); the window makes no predicate (DIFFERENCES.md)."
    }
   },
   {

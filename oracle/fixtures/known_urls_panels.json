@@ -3,6 +3,7 @@
   {
    "text": "",
    "operator_index": 0,
+   "valid": true,
    "made": [
     {
      "text": "system:has url ",
@@ -16,6 +17,7 @@
   {
    "text": "",
    "operator_index": 1,
+   "valid": true,
    "made": [
     {
      "text": "system:does not have url ",
@@ -29,6 +31,7 @@
   {
    "text": "x",
    "operator_index": 0,
+   "valid": true,
    "made": [
     {
      "text": "system:has url x",
@@ -42,6 +45,7 @@
   {
    "text": "x",
    "operator_index": 1,
+   "valid": true,
    "made": [
     {
      "text": "system:does not have url x",
@@ -55,6 +59,7 @@
   {
    "text": "  padded  ",
    "operator_index": 0,
+   "valid": true,
    "made": [
     {
      "text": "system:has url   padded  ",
@@ -68,6 +73,7 @@
   {
    "text": "  padded  ",
    "operator_index": 1,
+   "valid": true,
    "made": [
     {
      "text": "system:does not have url   padded  ",
@@ -81,6 +87,7 @@
   {
    "text": "https://Example.com/a b?c=d#frag",
    "operator_index": 0,
+   "valid": true,
    "made": [
     {
      "text": "system:has url https://Example.com/a b?c=d#frag",
@@ -94,6 +101,7 @@
   {
    "text": "https://Example.com/a b?c=d#frag",
    "operator_index": 1,
+   "valid": true,
    "made": [
     {
      "text": "system:does not have url https://Example.com/a b?c=d#frag",
@@ -107,6 +115,7 @@
   {
    "text": "EXAMPLE.com",
    "operator_index": 0,
+   "valid": true,
    "made": [
     {
      "text": "system:has url EXAMPLE.com",
@@ -120,6 +129,7 @@
   {
    "text": "EXAMPLE.com",
    "operator_index": 1,
+   "valid": true,
    "made": [
     {
      "text": "system:does not have url EXAMPLE.com",
@@ -133,6 +143,7 @@
   {
    "text": "http://[bad",
    "operator_index": 0,
+   "valid": true,
    "made": [
     {
      "text": "system:has url http://[bad",
@@ -146,6 +157,7 @@
   {
    "text": "http://[bad",
    "operator_index": 1,
+   "valid": true,
    "made": [
     {
      "text": "system:does not have url http://[bad",
@@ -161,6 +173,7 @@
   {
    "text": "",
    "operator_index": 0,
+   "valid": true,
    "made": [
     {
      "text": "system:has url with domain ",
@@ -174,6 +187,7 @@
   {
    "text": "",
    "operator_index": 1,
+   "valid": true,
    "made": [
     {
      "text": "system:does not have url with domain ",
@@ -187,6 +201,7 @@
   {
    "text": "x",
    "operator_index": 0,
+   "valid": true,
    "made": [
     {
      "text": "system:has url with domain x",
@@ -200,6 +215,7 @@
   {
    "text": "x",
    "operator_index": 1,
+   "valid": true,
    "made": [
     {
      "text": "system:does not have url with domain x",
@@ -213,6 +229,7 @@
   {
    "text": "  padded  ",
    "operator_index": 0,
+   "valid": true,
    "made": [
     {
      "text": "system:has url with domain   padded  ",
@@ -226,6 +243,7 @@
   {
    "text": "  padded  ",
    "operator_index": 1,
+   "valid": true,
    "made": [
     {
      "text": "system:does not have url with domain   padded  ",
@@ -239,6 +257,7 @@
   {
    "text": "https://Example.com/a b?c=d#frag",
    "operator_index": 0,
+   "valid": true,
    "made": [
     {
      "text": "system:has url with domain https://Example.com/a b?c=d#frag",
@@ -252,6 +271,7 @@
   {
    "text": "https://Example.com/a b?c=d#frag",
    "operator_index": 1,
+   "valid": true,
    "made": [
     {
      "text": "system:does not have url with domain https://Example.com/a b?c=d#frag",
@@ -265,6 +285,7 @@
   {
    "text": "EXAMPLE.com",
    "operator_index": 0,
+   "valid": true,
    "made": [
     {
      "text": "system:has url with domain EXAMPLE.com",
@@ -278,6 +299,7 @@
   {
    "text": "EXAMPLE.com",
    "operator_index": 1,
+   "valid": true,
    "made": [
     {
      "text": "system:does not have url with domain EXAMPLE.com",
@@ -291,6 +313,7 @@
   {
    "text": "http://[bad",
    "operator_index": 0,
+   "valid": true,
    "made": [
     {
      "text": "system:has url with domain http://[bad",
@@ -304,6 +327,7 @@
   {
    "text": "http://[bad",
    "operator_index": 1,
+   "valid": true,
    "made": [
     {
      "text": "system:does not have url with domain http://[bad",
@@ -404,5 +428,11 @@
     }
    ]
   }
- ]
+ ],
+ "no_classes_for_files": {
+  "offered": [],
+  "value_is_none": true,
+  "valid": "'NoneType' object has no attribute 'GetName'",
+  "error": "AttributeError"
+ }
 }

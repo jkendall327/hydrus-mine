@@ -39,7 +39,10 @@ def record(session):
                 for operator in (0,1):
                     panel=cls(parent,pred(kind,''))
                     getattr(panel,line).setText(text);panel._operator.setCurrentIndex(operator)
-                    try:out[key].append({'text':text,'operator_index':operator,'made':made(panel)})
+                    try:
+                        panel.CheckValid();valid=True
+                    except Exception as e:valid=str(e)
+                    try:out[key].append({'text':text,'operator_index':operator,'valid':valid,'made':made(panel)})
                     except Exception as e:out[key].append({'text':text,'operator_index':operator,'error':str(e)})
                     panel.deleteLater()
             panel=cls(parent,pred(kind,''))
@@ -54,6 +57,16 @@ def record(session):
             for operator in (0,1):
                 panel._url_classes.setCurrentIndex(index);panel._operator.setCurrentIndex(operator)
                 out['classes'].append({'index':index,'operator_index':operator,'made':made(panel)})
+        manager.SetURLClasses([one('not for files',False,202)])
+        panel=P.PanelPredicateSystemKnownURLsURLClass(parent,pred('url_class',U.URLClass(name='posts b')))
+        none={'offered':[panel._url_classes.itemText(i) for i in range(panel._url_classes.count())],'value_is_none':panel._url_classes.GetValue() is None}
+        try:
+            panel.CheckValid();none['valid']=True
+        except Exception as e:none['valid']=str(e)
+        try:
+            panel.GetPredicates();none['made']=True
+        except Exception as e:none['error']=type(e).__name__
+        out['no_classes_for_files']=none
         manager.SetURLClasses(old)
         return out
     return c.CallBlockingToQt(c.gui,work)

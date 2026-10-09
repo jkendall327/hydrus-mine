@@ -1775,101 +1775,18 @@ fn dimensions_presets_cancel_hidden_and_retired_callbacks_do_not_change_owner() 
     ui.hide().unwrap();
 }
 
-// The URL class panel of system:urls, with the client's URL classes (the
-// recording had none to offer): it offers those that file URLs go with, and
-// makes the reference's `has url with class` / `does not have url with
-// class` (`ClientGUIPredicatesSingle.PanelPredicateSystemKnownURLsURLClass`,
-// text as recorded in `predicate_custom_defaults.json`).
-#[test]
-fn the_url_class_panel_offers_the_clients_url_classes_and_makes_has_or_not_has() {
-    use hydrus_core::url::{UrlClass, UrlClassSettings, UrlType};
-    let (_dirs, store) = store();
-    let _windows = headless::init();
-    let recording = hydrus_testkit::fixture_json("predicate_custom_defaults.json");
-    let recorded_text = recording["cases"]
-        .as_array()
-        .unwrap()
-        .iter()
-        .find(|p| p["class"] == "PanelPredicateSystemKnownURLsURLClass")
-        .map(|p| p["before"]["text"][0].as_str().unwrap().to_owned())
-        .expect("recorded");
-    let class = |name: &str, key: u8, files: bool| UrlClass {
-        name: name.into(),
-        key: vec![key],
-        url_type: UrlType::Post,
-        should_be_associated_with_files: files,
-        ..UrlClass::default()
-    };
-    store
-        .write_and_refresh(move |ctx| {
-            hydrus_store::settings::set(
-                ctx.conn(),
-                &UrlClassSettings {
-                    url_classes: vec![
-                        class("predicate defaults posts 0", 1, true),
-                        class("not for files", 2, false),
-                        class("second posts", 3, true),
-                    ],
-                    ..UrlClassSettings::default()
-                },
-            )
-        })
-        .unwrap();
-    let ui = MainWindow::new().unwrap();
-    ui.show().unwrap();
-    let bound = bind(&ui, Pages::single(SearchPage::new(store.clone())));
-    let open = || {
-        ui.invoke_search_edited("".into());
-        ui.invoke_suggestion_chosen(suggestion(&ui, "system:urls"));
-        bound
-            .predicate_editor
-            .borrow()
-            .as_ref()
-            .unwrap()
-            .clone_strong()
-    };
-    let window = open();
-    // panels: exact url, domain, regex, url class
-    let panel = window.get_panels().row_data(3).unwrap();
-    let field = |i: usize| panel.fields.row_data(i).unwrap();
-    assert_eq!(
-        field(3)
-            .options
-            .iter()
-            .map(|o| o.to_string())
-            .collect::<Vec<_>>(),
-        ["predicate defaults posts 0", "second posts"],
-        "only the classes that go with files"
-    );
-    assert_eq!(field(1).options.row_data(0).unwrap(), "has");
-    // has, the first class
-    window.invoke_ok(3);
-    let first = shown_predicates(&ui);
-    assert_eq!(
-        first,
-        ["system:has url with class predicate defaults posts 0"]
-    );
-    assert_eq!(first[0], recorded_text);
-    // does not have, the second class
-    let window = open();
-    window.invoke_chose(3, 1, 1);
-    window.invoke_chose(3, 3, 1);
-    window.invoke_ok(3);
-    assert!(
-        shown_predicates(&ui)
-            .contains(&"system:does not have url with class second posts".to_string())
-    );
-}
-
 // The exact URL and domain panels of system:urls, driven in the editor
 // window with the texts the reference's real panels were given
 // (oracle/record_known_urls_panels.py): it makes the predicate with the text
 // as typed, whether empty, padded or not a URL at all, for each choice of
 // has / does not have, and refuses nothing; the domain box's hint and both
-// choices are the recorded ones. And the URL class panel, with the client's
-// URL classes (some not going with files): the same classes offered, the
-// same first one chosen when the predicate's own is not among them, and the
-// reference's text for each class and choice.
+// choices, hint and empty starting text are the recorded ones. And the URL
+// class panel, with the client's URL classes (some not going with files): the
+// same classes offered, the same first one chosen to start with (the
+// reference's own default class is not a client class, so it is not
+// offered), and the reference's text for each class and choice. With no
+// class going with files the reference's panel offers nothing and raises
+// when it is accepted; the window makes no predicate there.
 // leaf: audit-options-predicate-urls-known-urls-knownurlsexacturl-rule
 // leaf: audit-options-predicate-urls-known-urls-knownurlsdomain-rule
 // leaf: audit-options-predicate-urls-known-urls-knownurlsurlclass-has
@@ -1937,6 +1854,25 @@ fn the_url_panels_make_what_the_reference_s_make_for_every_text_and_choice() {
             .map(|o| o.as_str().unwrap().to_owned())
             .collect();
         assert_eq!(options(&window, panel, 1), theirs, "{key}");
+        let shown = window
+            .get_panels()
+            .row_data(usize::try_from(panel).unwrap())
+            .unwrap();
+        let field = |i: usize| shown.fields.row_data(i).unwrap();
+        // the recorded default: has, and nothing typed
+        assert_eq!(
+            field(1).chosen,
+            i32::from(!recorded[key]["default"][0].as_bool().unwrap())
+        );
+        assert_eq!(
+            field(3).text.as_str(),
+            recorded[key]["default"][2].as_str().unwrap()
+        );
+        assert_eq!(
+            field(3).placeholder.as_str(),
+            recorded[key]["placeholder"].as_str().unwrap(),
+            "{key}"
+        );
     }
     window.invoke_cancel();
     for (panel, key) in [(0, "exact"), (1, "domain")] {
@@ -1945,12 +1881,18 @@ fn the_url_panels_make_what_the_reference_s_make_for_every_text_and_choice() {
             let operator = i32::try_from(case["operator_index"].as_i64().unwrap()).unwrap();
             window.invoke_text_edited(panel, 3, case["text"].as_str().unwrap().into());
             window.invoke_chose(panel, 1, operator);
+            let before = shown_predicates(&ui);
             window.invoke_ok(panel);
             let made = case["made"][0]["text"].as_str().unwrap();
+            let after = shown_predicates(&ui);
+            assert_eq!(after.len(), before.len() + 1, "{key} {case}: {after:?}");
             assert!(
-                shown_predicates(&ui).iter().any(|shown| shown == made),
-                "{key} {case}: {:?}",
-                shown_predicates(&ui)
+                after.iter().any(|shown| shown == made),
+                "{key} {case}: {after:?}"
+            );
+            assert!(
+                case["valid"].as_bool().unwrap(),
+                "the reference refuses none"
             );
         }
     }
@@ -1963,6 +1905,14 @@ fn the_url_panels_make_what_the_reference_s_make_for_every_text_and_choice() {
         .map(|c| c.as_str().unwrap().to_owned())
         .collect();
     assert_eq!(options(&window, 3, 3), offered);
+    let shown = window.get_panels().row_data(3).unwrap();
+    assert_eq!(
+        shown.fields.row_data(3).unwrap().chosen,
+        0,
+        "it starts on the first class, {}",
+        recorded["class_initial"]
+    );
+    assert_eq!(offered[0], recorded["class_initial"].as_str().unwrap());
     let operators: Vec<String> = recorded["class_operators"]
         .as_array()
         .unwrap()
@@ -1983,14 +1933,40 @@ fn the_url_panels_make_what_the_reference_s_make_for_every_text_and_choice() {
             3,
             i32::try_from(case["index"].as_i64().unwrap()).unwrap(),
         );
+        let before = shown_predicates(&ui);
         window.invoke_ok(3);
         let made = case["made"][0]["text"].as_str().unwrap();
-        assert!(
-            shown_predicates(&ui).iter().any(|shown| shown == made),
-            "{case}: {:?}",
-            shown_predicates(&ui)
-        );
+        let after = shown_predicates(&ui);
+        assert_eq!(after.len(), before.len() + 1, "{case}: {after:?}");
+        assert!(after.iter().any(|shown| shown == made), "{case}: {after:?}");
     }
+    // no class goes with files: nothing to offer, and accepting makes nothing
+    // (the reference's panel raises: its class choice has no value)
+    let none = &recorded["no_classes_for_files"];
+    assert!(none["offered"].as_array().unwrap().is_empty());
+    assert!(none["value_is_none"].as_bool().unwrap() && none["error"] == "AttributeError");
+    store
+        .write_and_refresh(|ctx| {
+            hydrus_store::settings::set(
+                ctx.conn(),
+                &UrlClassSettings {
+                    url_classes: vec![UrlClass {
+                        name: "not for files".into(),
+                        key: vec![9],
+                        url_type: UrlType::Post,
+                        should_be_associated_with_files: false,
+                        ..UrlClass::default()
+                    }],
+                    ..UrlClassSettings::default()
+                },
+            )
+        })
+        .unwrap();
+    let window = open();
+    assert!(options(&window, 3, 3).is_empty());
+    let before = shown_predicates(&ui);
+    window.invoke_ok(3);
+    assert_eq!(shown_predicates(&ui), before);
 }
 
 // system:rating offers one panel per rating service, each labelled with
