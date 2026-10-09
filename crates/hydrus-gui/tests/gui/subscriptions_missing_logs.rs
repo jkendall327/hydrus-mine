@@ -46,6 +46,7 @@ fn paste_and_apply(ui: &MainWindow, bound: &hydrus_gui::Bound, text: &str) {
     dialog.invoke_apply();
 }
 
+// leaf: subscriptions-exchange
 #[test]
 fn an_accepted_import_without_logs_is_asked_about_again_on_the_next_open() {
     let fixture = hydrus_testkit::fixture_json("subscription_missing_logs.json");
@@ -165,6 +166,7 @@ fn overwrite_with_slow_thread(dialog: &hydrus_gui::SubscriptionsWindow, bound: &
     dialog.invoke_apply();
 }
 
+// leaf: subscriptions-exchange
 #[test]
 fn a_checker_edit_marks_an_unloaded_history_unsynced_in_the_saved_header() {
     let fixture = hydrus_testkit::fixture_json("subscription_checker_edit.json");
@@ -195,6 +197,7 @@ fn a_checker_edit_marks_an_unloaded_history_unsynced_in_the_saved_header() {
     }
 }
 
+// leaf: subscriptions-exchange
 #[test]
 fn a_checker_edit_recalculates_a_history_the_dialog_holds() {
     let fixture = hydrus_testkit::fixture_json("subscription_checker_edit.json");
@@ -208,14 +211,14 @@ fn a_checker_edit_recalculates_a_history_the_dialog_holds() {
     let dialog = open_dialog(&ui, &bound);
     dialog.invoke_row_clicked(0, false, false);
     dialog.invoke_exchange();
-    bound
+    let child = bound
         .subscription_exchange
         .0
         .borrow()
         .as_ref()
         .unwrap()
-        .clone_strong()
-        .invoke_action("cancel".into());
+        .clone_strong();
+    child.invoke_action("cancel".into());
     overwrite_with_slow_thread(&dialog, &bound);
     let header = header_of(&store, only_queue(&store));
     for index in [8, 13, 14, 16] {

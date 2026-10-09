@@ -562,6 +562,7 @@ async fn a_subscription_without_its_downloader_pauses() {
 /// An accepted import whose query log is missing: the reference's own sync
 /// pauses the subscription and shows its message (`oracle/fixtures/
 /// subscription_missing_logs.json`, `record_subscription_missing_logs.py`).
+// leaf: subscriptions-exchange
 #[tokio::test(flavor = "multi_thread")]
 async fn a_subscription_with_a_missing_query_log_pauses_with_the_references_message() {
     let s = setup().await;

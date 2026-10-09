@@ -841,7 +841,7 @@ deleted sidecars by `crates/hydrus-download/tests/local_import.rs`.
   (`record_legacy_seed_caches.py`); there a URL seed's comparison form is
   worked out from the client's URL classes, as for any seed saved before version 8.
   Missing histories now ask the original message, title and decisions before
-  staging; accepted missing logs are initialised empty directly on Apply. The list owner now stages modern imports and
+  staging; accepted missing logs are marked missing until the next open (see below). The list owner now stages modern imports and
   persists both histories. JSON file export/overwrite and multi-file JSON/PNG
   import are wired. Known unrelated types now warn after permitted objects are
   added, including within nested lists. File selections keep their accepted
@@ -858,14 +858,24 @@ deleted sidecars by `crates/hydrus-download/tests/local_import.rs`.
   header is; the reference's own Sync then recalculates velocity, next check
   and the example gallery seed on load (recorded in
   `subscription_header_resync.json`), so native does not compute them.
-  Two reference behaviours are not matched yet (so `subscriptions-exchange`
-  stays untagged): accepting an import with missing query logs stores the
-  subscription with the log missing and the next open of manage subscriptions
-  asks "Missing Query Logs!" before writing empty logs and resetting the
-  headers (native creates empty logs on Apply); and editing the checker
-  options marks headers whose history was not loaded unsynced with the
-  velocity words "will recalculate when next fully loaded" (native recomputes
-  the next check itself and leaves the cached header as it was).
+  An import accepted with missing query logs is stored as the reference stores
+  it: the query has no log of its own and the next open of manage subscriptions
+  asks "Missing Query Logs!" (continue / back out) before writing empty logs
+  and resetting the headers; until then the subscription pauses itself with the
+  reference's message when it is next due. The pause does not mark the cached
+  header "missing" (log status 2) as the reference does, because native keeps
+  the mark in its own list of missing queries. The reference also asks about
+  surplus "orphaned" logs on that open; native keeps unreferenced history only
+  in a package it is exporting, so there is nothing to ask about.
+  Editing checker options leaves a cached header whose history the dialog does
+  not hold unsynced with the words "will recalculate when next fully loaded",
+  and recalculates the velocity, words and example gallery seed of one it
+  holds (an imported one, or one read for an export, reset, retry or
+  duplicate), as `Subscription.SetCheckerOptions` does
+  (`subscription_checker_edit.json`). The reference only recalculates a loaded
+  history's check times; native also reckons the next check of an unloaded
+  one at once instead of at its next load, and the example gallery seed is the
+  first of the last ten where the reference picks one at random.
 - **The manage subscriptions dialog is a first pass.** It lists the
   subscriptions and can delete, pause/resume, scrub delays, check
   queries now and select by query text, add and edit subscriptions,
