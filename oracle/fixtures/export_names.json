@@ -53,7 +53,11 @@
   "ééééééééé/日日日日日日日日日日日日日日日日日日日日日日日日日日日日日日",
   ".....",
   "   ",
-  "same"
+  "same",
+  "../up",
+  "a/../../b",
+  "/abs/../../c",
+  "../../../../../../../../../../../../../../../../../../../../deep"
  ],
  "cases": [
   {
@@ -254,6 +258,30 @@
      "/tmp/hx/same.flac",
      "/tmp/hx/same.jpg",
      "/tmp/hx/same (1).png"
+    ],
+    [
+     "INVALID, above destination directory: /tmp/up.png",
+     "INVALID, above destination directory: /tmp/up.flac",
+     "INVALID, above destination directory: /tmp/up.jpg",
+     "INVALID, above destination directory: /tmp/up (1).png"
+    ],
+    [
+     "INVALID, above destination directory: /tmp/b.png",
+     "INVALID, above destination directory: /tmp/b.flac",
+     "INVALID, above destination directory: /tmp/b.jpg",
+     "INVALID, above destination directory: /tmp/b (1).png"
+    ],
+    [
+     "INVALID, above destination directory: /tmp/c.png",
+     "INVALID, above destination directory: /tmp/c.flac",
+     "INVALID, above destination directory: /tmp/c.jpg",
+     "INVALID, above destination directory: /tmp/c (1).png"
+    ],
+    [
+     "INVALID, above destination directory: /deep.png",
+     "INVALID, above destination directory: /deep.flac",
+     "INVALID, above destination directory: /deep.jpg",
+     "INVALID, above destination directory: /deep (1).png"
     ]
    ]
   },
@@ -455,6 +483,30 @@
      "/tmp/hx/dddddddddddddddddddddddddddddddddddddddddddddddddd/same.flac",
      "/tmp/hx/dddddddddddddddddddddddddddddddddddddddddddddddddd/same.jpg",
      "/tmp/hx/dddddddddddddddddddddddddddddddddddddddddddddddddd/same (1).png"
+    ],
+    [
+     "INVALID, above destination directory: /tmp/hx/up.png",
+     "INVALID, above destination directory: /tmp/hx/up.flac",
+     "INVALID, above destination directory: /tmp/hx/up.jpg",
+     "INVALID, above destination directory: /tmp/hx/up (1).png"
+    ],
+    [
+     "INVALID, above destination directory: /tmp/hx/b.png",
+     "INVALID, above destination directory: /tmp/hx/b.flac",
+     "INVALID, above destination directory: /tmp/hx/b.jpg",
+     "INVALID, above destination directory: /tmp/hx/b (1).png"
+    ],
+    [
+     "INVALID, above destination directory: /tmp/hx/c.png",
+     "INVALID, above destination directory: /tmp/hx/c.flac",
+     "INVALID, above destination directory: /tmp/hx/c.jpg",
+     "INVALID, above destination directory: /tmp/hx/c (1).png"
+    ],
+    [
+     "INVALID, above destination directory: /deep.png",
+     "INVALID, above destination directory: /deep.flac",
+     "INVALID, above destination directory: /deep.jpg",
+     "INVALID, above destination directory: /deep (1).png"
     ]
    ]
   },
@@ -656,6 +708,30 @@
      "/tmp/hx/日本語ディレクトリ/same.flac",
      "/tmp/hx/日本語ディレクトリ/same.jpg",
      "/tmp/hx/日本語ディレクトリ/same (1).png"
+    ],
+    [
+     "INVALID, above destination directory: /tmp/hx/up.png",
+     "INVALID, above destination directory: /tmp/hx/up.flac",
+     "INVALID, above destination directory: /tmp/hx/up.jpg",
+     "INVALID, above destination directory: /tmp/hx/up (1).png"
+    ],
+    [
+     "INVALID, above destination directory: /tmp/hx/b.png",
+     "INVALID, above destination directory: /tmp/hx/b.flac",
+     "INVALID, above destination directory: /tmp/hx/b.jpg",
+     "INVALID, above destination directory: /tmp/hx/b (1).png"
+    ],
+    [
+     "INVALID, above destination directory: /tmp/hx/c.png",
+     "INVALID, above destination directory: /tmp/hx/c.flac",
+     "INVALID, above destination directory: /tmp/hx/c.jpg",
+     "INVALID, above destination directory: /tmp/hx/c (1).png"
+    ],
+    [
+     "INVALID, above destination directory: /deep.png",
+     "INVALID, above destination directory: /deep.flac",
+     "INVALID, above destination directory: /deep.jpg",
+     "INVALID, above destination directory: /deep (1).png"
     ]
    ]
   },
@@ -857,6 +933,30 @@
      "/tmp/hx/LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL/same.flac",
      "/tmp/hx/LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL/same.jpg",
      "/tmp/hx/LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL/same (1).png"
+    ],
+    [
+     "INVALID, above destination directory: /tmp/hx/up.png",
+     "INVALID, above destination directory: /tmp/hx/up.flac",
+     "INVALID, above destination directory: /tmp/hx/up.jpg",
+     "INVALID, above destination directory: /tmp/hx/up (1).png"
+    ],
+    [
+     "INVALID, above destination directory: /tmp/hx/b.png",
+     "INVALID, above destination directory: /tmp/hx/b.flac",
+     "INVALID, above destination directory: /tmp/hx/b.jpg",
+     "INVALID, above destination directory: /tmp/hx/b (1).png"
+    ],
+    [
+     "INVALID, above destination directory: /tmp/hx/c.png",
+     "INVALID, above destination directory: /tmp/hx/c.flac",
+     "INVALID, above destination directory: /tmp/hx/c.jpg",
+     "INVALID, above destination directory: /tmp/hx/c (1).png"
+    ],
+    [
+     "INVALID, above destination directory: /deep.png",
+     "INVALID, above destination directory: /deep.flac",
+     "INVALID, above destination directory: /deep.jpg",
+     "INVALID, above destination directory: /deep (1).png"
     ]
    ]
   },
@@ -1058,6 +1158,30 @@
      "/tmp/hx/same.flac",
      "/tmp/hx/same.jpg",
      "/tmp/hx/same (1).png"
+    ],
+    [
+     "/tmp/hx/empty/up.png",
+     "/tmp/hx/empty/up.flac",
+     "/tmp/hx/empty/up.jpg",
+     "/tmp/hx/empty/up (1).png"
+    ],
+    [
+     "/tmp/hx/a/empty/empty/b.png",
+     "/tmp/hx/a/empty/empty/b.flac",
+     "/tmp/hx/a/empty/empty/b.jpg",
+     "/tmp/hx/a/empty/empty/b (1).png"
+    ],
+    [
+     "/tmp/hx/abs/empty/empty/c.png",
+     "/tmp/hx/abs/empty/empty/c.flac",
+     "/tmp/hx/abs/empty/empty/c.jpg",
+     "/tmp/hx/abs/empty/empty/c (1).png"
+    ],
+    [
+     "/tmp/hx/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/deep.png",
+     "/tmp/hx/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/deep.flac",
+     "/tmp/hx/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/deep.jpg",
+     "/tmp/hx/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/deep (1).png"
     ]
    ]
   },
@@ -1259,6 +1383,30 @@
      "/tmp/hx/dddddddddddddddddddddddddddddddddddddddddddddddddd/same.flac",
      "/tmp/hx/dddddddddddddddddddddddddddddddddddddddddddddddddd/same.jpg",
      "/tmp/hx/dddddddddddddddddddddddddddddddddddddddddddddddddd/same (1).png"
+    ],
+    [
+     "/tmp/hx/dddddddddddddddddddddddddddddddddddddddddddddddddd/empty/up.png",
+     "/tmp/hx/dddddddddddddddddddddddddddddddddddddddddddddddddd/empty/up.flac",
+     "/tmp/hx/dddddddddddddddddddddddddddddddddddddddddddddddddd/empty/up.jpg",
+     "/tmp/hx/dddddddddddddddddddddddddddddddddddddddddddddddddd/empty/up (1).png"
+    ],
+    [
+     "/tmp/hx/dddddddddddddddddddddddddddddddddddddddddddddddddd/a/empty/empty/b.png",
+     "/tmp/hx/dddddddddddddddddddddddddddddddddddddddddddddddddd/a/empty/empty/b.flac",
+     "/tmp/hx/dddddddddddddddddddddddddddddddddddddddddddddddddd/a/empty/empty/b.jpg",
+     "/tmp/hx/dddddddddddddddddddddddddddddddddddddddddddddddddd/a/empty/empty/b (1).png"
+    ],
+    [
+     "/tmp/hx/dddddddddddddddddddddddddddddddddddddddddddddddddd/abs/empty/empty/c.png",
+     "/tmp/hx/dddddddddddddddddddddddddddddddddddddddddddddddddd/abs/empty/empty/c.flac",
+     "/tmp/hx/dddddddddddddddddddddddddddddddddddddddddddddddddd/abs/empty/empty/c.jpg",
+     "/tmp/hx/dddddddddddddddddddddddddddddddddddddddddddddddddd/abs/empty/empty/c (1).png"
+    ],
+    [
+     "/tmp/hx/dddddddddddddddddddddddddddddddddddddddddddddddddd/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/deep.png",
+     "/tmp/hx/dddddddddddddddddddddddddddddddddddddddddddddddddd/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/deep.flac",
+     "/tmp/hx/dddddddddddddddddddddddddddddddddddddddddddddddddd/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/deep.jpg",
+     "/tmp/hx/dddddddddddddddddddddddddddddddddddddddddddddddddd/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/deep (1).png"
     ]
    ]
   },
@@ -1460,6 +1608,30 @@
      "/tmp/hx/日本語ディレクトリ/same.flac",
      "/tmp/hx/日本語ディレクトリ/same.jpg",
      "/tmp/hx/日本語ディレクトリ/same (1).png"
+    ],
+    [
+     "/tmp/hx/日本語ディレクトリ/empty/up.png",
+     "/tmp/hx/日本語ディレクトリ/empty/up.flac",
+     "/tmp/hx/日本語ディレクトリ/empty/up.jpg",
+     "/tmp/hx/日本語ディレクトリ/empty/up (1).png"
+    ],
+    [
+     "/tmp/hx/日本語ディレクトリ/a/empty/empty/b.png",
+     "/tmp/hx/日本語ディレクトリ/a/empty/empty/b.flac",
+     "/tmp/hx/日本語ディレクトリ/a/empty/empty/b.jpg",
+     "/tmp/hx/日本語ディレクトリ/a/empty/empty/b (1).png"
+    ],
+    [
+     "/tmp/hx/日本語ディレクトリ/abs/empty/empty/c.png",
+     "/tmp/hx/日本語ディレクトリ/abs/empty/empty/c.flac",
+     "/tmp/hx/日本語ディレクトリ/abs/empty/empty/c.jpg",
+     "/tmp/hx/日本語ディレクトリ/abs/empty/empty/c (1).png"
+    ],
+    [
+     "/tmp/hx/日本語ディレクトリ/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/deep.png",
+     "/tmp/hx/日本語ディレクトリ/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/deep.flac",
+     "/tmp/hx/日本語ディレクトリ/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/deep.jpg",
+     "/tmp/hx/日本語ディレクトリ/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/deep (1).png"
     ]
    ]
   },
@@ -1661,6 +1833,30 @@
      "/tmp/hx/LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL/same.flac",
      "/tmp/hx/LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL/same.jpg",
      "/tmp/hx/LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL/same (1).png"
+    ],
+    [
+     "/tmp/hx/LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL/empty/up.png",
+     "/tmp/hx/LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL/empty/up.flac",
+     "/tmp/hx/LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL/empty/up.jpg",
+     "/tmp/hx/LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL/empty/up (1).png"
+    ],
+    [
+     "/tmp/hx/LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL/a/empty/empty/b.png",
+     "/tmp/hx/LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL/a/empty/empty/b.flac",
+     "/tmp/hx/LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL/a/empty/empty/b.jpg",
+     "/tmp/hx/LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL/a/empty/empty/b (1).png"
+    ],
+    [
+     "/tmp/hx/LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL/abs/empty/empty/c.png",
+     "/tmp/hx/LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL/abs/empty/empty/c.flac",
+     "/tmp/hx/LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL/abs/empty/empty/c.jpg",
+     "/tmp/hx/LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL/abs/empty/empty/c (1).png"
+    ],
+    [
+     "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!",
+     "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!",
+     "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!",
+     "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!"
     ]
    ]
   },
@@ -1862,6 +2058,30 @@
      "/tmp/hx/same.flac",
      "/tmp/hx/same.jpg",
      "/tmp/hx/same (1).png"
+    ],
+    [
+     "INVALID, above destination directory: /tmp/up.png",
+     "INVALID, above destination directory: /tmp/up.flac",
+     "INVALID, above destination directory: /tmp/up.jpg",
+     "INVALID, above destination directory: /tmp/up (1).png"
+    ],
+    [
+     "INVALID, above destination directory: /tmp/b.png",
+     "INVALID, above destination directory: /tmp/b.flac",
+     "INVALID, above destination directory: /tmp/b.jpg",
+     "INVALID, above destination directory: /tmp/b (1).png"
+    ],
+    [
+     "INVALID, above destination directory: /tmp/c.png",
+     "INVALID, above destination directory: /tmp/c.flac",
+     "INVALID, above destination directory: /tmp/c.jpg",
+     "INVALID, above destination directory: /tmp/c (1).png"
+    ],
+    [
+     "INVALID, above destination directory: /deep.png",
+     "INVALID, above destination directory: /deep.flac",
+     "INVALID, above destination directory: /deep.jpg",
+     "INVALID, above destination directory: /deep (1).png"
     ]
    ]
   },
@@ -2063,6 +2283,30 @@
      "/tmp/hx/dddddddddddddddddddddddddddddddddddddddddddddddddd/same.flac",
      "/tmp/hx/dddddddddddddddddddddddddddddddddddddddddddddddddd/same.jpg",
      "/tmp/hx/dddddddddddddddddddddddddddddddddddddddddddddddddd/same (1).png"
+    ],
+    [
+     "INVALID, above destination directory: /tmp/hx/up.png",
+     "INVALID, above destination directory: /tmp/hx/up.flac",
+     "INVALID, above destination directory: /tmp/hx/up.jpg",
+     "INVALID, above destination directory: /tmp/hx/up (1).png"
+    ],
+    [
+     "INVALID, above destination directory: /tmp/hx/b.png",
+     "INVALID, above destination directory: /tmp/hx/b.flac",
+     "INVALID, above destination directory: /tmp/hx/b.jpg",
+     "INVALID, above destination directory: /tmp/hx/b (1).png"
+    ],
+    [
+     "INVALID, above destination directory: /tmp/hx/c.png",
+     "INVALID, above destination directory: /tmp/hx/c.flac",
+     "INVALID, above destination directory: /tmp/hx/c.jpg",
+     "INVALID, above destination directory: /tmp/hx/c (1).png"
+    ],
+    [
+     "INVALID, above destination directory: /deep.png",
+     "INVALID, above destination directory: /deep.flac",
+     "INVALID, above destination directory: /deep.jpg",
+     "INVALID, above destination directory: /deep (1).png"
     ]
    ]
   },
@@ -2264,6 +2508,30 @@
      "/tmp/hx/日本語ディレクトリ/same.flac",
      "/tmp/hx/日本語ディレクトリ/same.jpg",
      "/tmp/hx/日本語ディレクトリ/same (1).png"
+    ],
+    [
+     "INVALID, above destination directory: /tmp/hx/up.png",
+     "INVALID, above destination directory: /tmp/hx/up.flac",
+     "INVALID, above destination directory: /tmp/hx/up.jpg",
+     "INVALID, above destination directory: /tmp/hx/up (1).png"
+    ],
+    [
+     "INVALID, above destination directory: /tmp/hx/b.png",
+     "INVALID, above destination directory: /tmp/hx/b.flac",
+     "INVALID, above destination directory: /tmp/hx/b.jpg",
+     "INVALID, above destination directory: /tmp/hx/b (1).png"
+    ],
+    [
+     "INVALID, above destination directory: /tmp/hx/c.png",
+     "INVALID, above destination directory: /tmp/hx/c.flac",
+     "INVALID, above destination directory: /tmp/hx/c.jpg",
+     "INVALID, above destination directory: /tmp/hx/c (1).png"
+    ],
+    [
+     "INVALID, above destination directory: /deep.png",
+     "INVALID, above destination directory: /deep.flac",
+     "INVALID, above destination directory: /deep.jpg",
+     "INVALID, above destination directory: /deep (1).png"
     ]
    ]
   },
@@ -2465,6 +2733,30 @@
      "/tmp/hx/LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL/same.flac",
      "/tmp/hx/LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL/same.jpg",
      "/tmp/hx/LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL/same (1).png"
+    ],
+    [
+     "INVALID, above destination directory: /tmp/hx/up.png",
+     "INVALID, above destination directory: /tmp/hx/up.flac",
+     "INVALID, above destination directory: /tmp/hx/up.jpg",
+     "INVALID, above destination directory: /tmp/hx/up (1).png"
+    ],
+    [
+     "INVALID, above destination directory: /tmp/hx/b.png",
+     "INVALID, above destination directory: /tmp/hx/b.flac",
+     "INVALID, above destination directory: /tmp/hx/b.jpg",
+     "INVALID, above destination directory: /tmp/hx/b (1).png"
+    ],
+    [
+     "INVALID, above destination directory: /tmp/hx/c.png",
+     "INVALID, above destination directory: /tmp/hx/c.flac",
+     "INVALID, above destination directory: /tmp/hx/c.jpg",
+     "INVALID, above destination directory: /tmp/hx/c (1).png"
+    ],
+    [
+     "INVALID, above destination directory: /deep.png",
+     "INVALID, above destination directory: /deep.flac",
+     "INVALID, above destination directory: /deep.jpg",
+     "INVALID, above destination directory: /deep (1).png"
     ]
    ]
   },
@@ -2666,6 +2958,30 @@
      "/tmp/hx/same.flac",
      "/tmp/hx/same.jpg",
      "/tmp/hx/same (1).png"
+    ],
+    [
+     "/tmp/hx/empty/up.png",
+     "/tmp/hx/empty/up.flac",
+     "/tmp/hx/empty/up.jpg",
+     "/tmp/hx/empty/up (1).png"
+    ],
+    [
+     "/tmp/hx/a/empty/empty/b.png",
+     "/tmp/hx/a/empty/empty/b.flac",
+     "/tmp/hx/a/empty/empty/b.jpg",
+     "/tmp/hx/a/empty/empty/b (1).png"
+    ],
+    [
+     "/tmp/hx/abs/empty/empty/c.png",
+     "/tmp/hx/abs/empty/empty/c.flac",
+     "/tmp/hx/abs/empty/empty/c.jpg",
+     "/tmp/hx/abs/empty/empty/c (1).png"
+    ],
+    [
+     "/tmp/hx/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/deep.png",
+     "/tmp/hx/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/deep.flac",
+     "/tmp/hx/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/deep.jpg",
+     "/tmp/hx/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/deep (1).png"
     ]
    ]
   },
@@ -2867,6 +3183,30 @@
      "/tmp/hx/dddddddddddddddddddddddddddddddddddddddddddddddddd/same.flac",
      "/tmp/hx/dddddddddddddddddddddddddddddddddddddddddddddddddd/same.jpg",
      "/tmp/hx/dddddddddddddddddddddddddddddddddddddddddddddddddd/same (1).png"
+    ],
+    [
+     "/tmp/hx/dddddddddddddddddddddddddddddddddddddddddddddddddd/empty/up.png",
+     "/tmp/hx/dddddddddddddddddddddddddddddddddddddddddddddddddd/empty/up.flac",
+     "/tmp/hx/dddddddddddddddddddddddddddddddddddddddddddddddddd/empty/up.jpg",
+     "/tmp/hx/dddddddddddddddddddddddddddddddddddddddddddddddddd/empty/up (1).png"
+    ],
+    [
+     "/tmp/hx/dddddddddddddddddddddddddddddddddddddddddddddddddd/a/empty/empty/b.png",
+     "/tmp/hx/dddddddddddddddddddddddddddddddddddddddddddddddddd/a/empty/empty/b.flac",
+     "/tmp/hx/dddddddddddddddddddddddddddddddddddddddddddddddddd/a/empty/empty/b.jpg",
+     "/tmp/hx/dddddddddddddddddddddddddddddddddddddddddddddddddd/a/empty/empty/b (1).png"
+    ],
+    [
+     "/tmp/hx/dddddddddddddddddddddddddddddddddddddddddddddddddd/abs/empty/empty/c.png",
+     "/tmp/hx/dddddddddddddddddddddddddddddddddddddddddddddddddd/abs/empty/empty/c.flac",
+     "/tmp/hx/dddddddddddddddddddddddddddddddddddddddddddddddddd/abs/empty/empty/c.jpg",
+     "/tmp/hx/dddddddddddddddddddddddddddddddddddddddddddddddddd/abs/empty/empty/c (1).png"
+    ],
+    [
+     "/tmp/hx/dddddddddddddddddddddddddddddddddddddddddddddddddd/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/deep.png",
+     "/tmp/hx/dddddddddddddddddddddddddddddddddddddddddddddddddd/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/deep.flac",
+     "/tmp/hx/dddddddddddddddddddddddddddddddddddddddddddddddddd/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/deep.jpg",
+     "/tmp/hx/dddddddddddddddddddddddddddddddddddddddddddddddddd/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/deep (1).png"
     ]
    ]
   },
@@ -3068,6 +3408,30 @@
      "/tmp/hx/日本語ディレクトリ/same.flac",
      "/tmp/hx/日本語ディレクトリ/same.jpg",
      "/tmp/hx/日本語ディレクトリ/same (1).png"
+    ],
+    [
+     "/tmp/hx/日本語ディレクトリ/empty/up.png",
+     "/tmp/hx/日本語ディレクトリ/empty/up.flac",
+     "/tmp/hx/日本語ディレクトリ/empty/up.jpg",
+     "/tmp/hx/日本語ディレクトリ/empty/up (1).png"
+    ],
+    [
+     "/tmp/hx/日本語ディレクトリ/a/empty/empty/b.png",
+     "/tmp/hx/日本語ディレクトリ/a/empty/empty/b.flac",
+     "/tmp/hx/日本語ディレクトリ/a/empty/empty/b.jpg",
+     "/tmp/hx/日本語ディレクトリ/a/empty/empty/b (1).png"
+    ],
+    [
+     "/tmp/hx/日本語ディレクトリ/abs/empty/empty/c.png",
+     "/tmp/hx/日本語ディレクトリ/abs/empty/empty/c.flac",
+     "/tmp/hx/日本語ディレクトリ/abs/empty/empty/c.jpg",
+     "/tmp/hx/日本語ディレクトリ/abs/empty/empty/c (1).png"
+    ],
+    [
+     "/tmp/hx/日本語ディレクトリ/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/deep.png",
+     "/tmp/hx/日本語ディレクトリ/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/deep.flac",
+     "/tmp/hx/日本語ディレクトリ/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/deep.jpg",
+     "/tmp/hx/日本語ディレクトリ/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/deep (1).png"
     ]
    ]
   },
@@ -3269,6 +3633,30 @@
      "/tmp/hx/LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL/same.flac",
      "/tmp/hx/LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL/same.jpg",
      "/tmp/hx/LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL/same (1).png"
+    ],
+    [
+     "/tmp/hx/LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL/empty/up.png",
+     "/tmp/hx/LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL/empty/up.flac",
+     "/tmp/hx/LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL/empty/up.jpg",
+     "/tmp/hx/LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL/empty/up (1).png"
+    ],
+    [
+     "/tmp/hx/LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL/a/empty/empty/b.png",
+     "/tmp/hx/LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL/a/empty/empty/b.flac",
+     "/tmp/hx/LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL/a/empty/empty/b.jpg",
+     "/tmp/hx/LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL/a/empty/empty/b (1).png"
+    ],
+    [
+     "/tmp/hx/LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL/abs/empty/empty/c.png",
+     "/tmp/hx/LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL/abs/empty/empty/c.flac",
+     "/tmp/hx/LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL/abs/empty/empty/c.jpg",
+     "/tmp/hx/LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL/abs/empty/empty/c (1).png"
+    ],
+    [
+     "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!",
+     "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!",
+     "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!",
+     "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!"
     ]
    ]
   },
@@ -3470,6 +3858,30 @@
      "/tmp/hx/same.flac",
      "/tmp/hx/same.jpg",
      "/tmp/hx/same (1).png"
+    ],
+    [
+     "INVALID, above destination directory: /tmp/up.png",
+     "INVALID, above destination directory: /tmp/up.flac",
+     "INVALID, above destination directory: /tmp/up.jpg",
+     "INVALID, above destination directory: /tmp/up (1).png"
+    ],
+    [
+     "INVALID, above destination directory: /tmp/b.png",
+     "INVALID, above destination directory: /tmp/b.flac",
+     "INVALID, above destination directory: /tmp/b.jpg",
+     "INVALID, above destination directory: /tmp/b (1).png"
+    ],
+    [
+     "INVALID, above destination directory: /tmp/c.png",
+     "INVALID, above destination directory: /tmp/c.flac",
+     "INVALID, above destination directory: /tmp/c.jpg",
+     "INVALID, above destination directory: /tmp/c (1).png"
+    ],
+    [
+     "INVALID, above destination directory: /deep.png",
+     "INVALID, above destination directory: /deep.flac",
+     "INVALID, above destination directory: /deep.jpg",
+     "INVALID, above destination directory: /deep (1).png"
     ]
    ]
   },
@@ -3671,6 +4083,30 @@
      "/tmp/hx/dddddddddddddddddddddddddddddddddddddddddddddddddd/same.flac",
      "/tmp/hx/dddddddddddddddddddddddddddddddddddddddddddddddddd/same.jpg",
      "/tmp/hx/dddddddddddddddddddddddddddddddddddddddddddddddddd/same (1).png"
+    ],
+    [
+     "INVALID, above destination directory: /tmp/hx/up.png",
+     "INVALID, above destination directory: /tmp/hx/up.flac",
+     "INVALID, above destination directory: /tmp/hx/up.jpg",
+     "INVALID, above destination directory: /tmp/hx/up (1).png"
+    ],
+    [
+     "INVALID, above destination directory: /tmp/hx/b.png",
+     "INVALID, above destination directory: /tmp/hx/b.flac",
+     "INVALID, above destination directory: /tmp/hx/b.jpg",
+     "INVALID, above destination directory: /tmp/hx/b (1).png"
+    ],
+    [
+     "INVALID, above destination directory: /tmp/hx/c.png",
+     "INVALID, above destination directory: /tmp/hx/c.flac",
+     "INVALID, above destination directory: /tmp/hx/c.jpg",
+     "INVALID, above destination directory: /tmp/hx/c (1).png"
+    ],
+    [
+     "INVALID, above destination directory: /deep.png",
+     "INVALID, above destination directory: /deep.flac",
+     "INVALID, above destination directory: /deep.jpg",
+     "INVALID, above destination directory: /deep (1).png"
     ]
    ]
   },
@@ -3872,6 +4308,30 @@
      "/tmp/hx/日本語ディレクトリ/same.flac",
      "/tmp/hx/日本語ディレクトリ/same.jpg",
      "/tmp/hx/日本語ディレクトリ/same (1).png"
+    ],
+    [
+     "INVALID, above destination directory: /tmp/hx/up.png",
+     "INVALID, above destination directory: /tmp/hx/up.flac",
+     "INVALID, above destination directory: /tmp/hx/up.jpg",
+     "INVALID, above destination directory: /tmp/hx/up (1).png"
+    ],
+    [
+     "INVALID, above destination directory: /tmp/hx/b.png",
+     "INVALID, above destination directory: /tmp/hx/b.flac",
+     "INVALID, above destination directory: /tmp/hx/b.jpg",
+     "INVALID, above destination directory: /tmp/hx/b (1).png"
+    ],
+    [
+     "INVALID, above destination directory: /tmp/hx/c.png",
+     "INVALID, above destination directory: /tmp/hx/c.flac",
+     "INVALID, above destination directory: /tmp/hx/c.jpg",
+     "INVALID, above destination directory: /tmp/hx/c (1).png"
+    ],
+    [
+     "INVALID, above destination directory: /deep.png",
+     "INVALID, above destination directory: /deep.flac",
+     "INVALID, above destination directory: /deep.jpg",
+     "INVALID, above destination directory: /deep (1).png"
     ]
    ]
   },
@@ -4073,6 +4533,30 @@
      "/tmp/hx/LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL/same.flac",
      "/tmp/hx/LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL/same.jpg",
      "/tmp/hx/LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL/same (1).png"
+    ],
+    [
+     "INVALID, above destination directory: /tmp/hx/up.png",
+     "INVALID, above destination directory: /tmp/hx/up.flac",
+     "INVALID, above destination directory: /tmp/hx/up.jpg",
+     "INVALID, above destination directory: /tmp/hx/up (1).png"
+    ],
+    [
+     "INVALID, above destination directory: /tmp/hx/b.png",
+     "INVALID, above destination directory: /tmp/hx/b.flac",
+     "INVALID, above destination directory: /tmp/hx/b.jpg",
+     "INVALID, above destination directory: /tmp/hx/b (1).png"
+    ],
+    [
+     "INVALID, above destination directory: /tmp/hx/c.png",
+     "INVALID, above destination directory: /tmp/hx/c.flac",
+     "INVALID, above destination directory: /tmp/hx/c.jpg",
+     "INVALID, above destination directory: /tmp/hx/c (1).png"
+    ],
+    [
+     "INVALID, above destination directory: /deep.png",
+     "INVALID, above destination directory: /deep.flac",
+     "INVALID, above destination directory: /deep.jpg",
+     "INVALID, above destination directory: /deep (1).png"
     ]
    ]
   },
@@ -4274,6 +4758,30 @@
      "/tmp/hx/same.flac",
      "/tmp/hx/same.jpg",
      "/tmp/hx/same (1).png"
+    ],
+    [
+     "/tmp/hx/empty/up.png",
+     "/tmp/hx/empty/up.flac",
+     "/tmp/hx/empty/up.jpg",
+     "/tmp/hx/empty/up (1).png"
+    ],
+    [
+     "/tmp/hx/a/empty/empty/b.png",
+     "/tmp/hx/a/empty/empty/b.flac",
+     "/tmp/hx/a/empty/empty/b.jpg",
+     "/tmp/hx/a/empty/empty/b (1).png"
+    ],
+    [
+     "/tmp/hx/abs/empty/empty/c.png",
+     "/tmp/hx/abs/empty/empty/c.flac",
+     "/tmp/hx/abs/empty/empty/c.jpg",
+     "/tmp/hx/abs/empty/empty/c (1).png"
+    ],
+    [
+     "/tmp/hx/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/deep.png",
+     "/tmp/hx/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/deep.flac",
+     "/tmp/hx/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/deep.jpg",
+     "/tmp/hx/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/deep (1).png"
     ]
    ]
   },
@@ -4475,6 +4983,30 @@
      "/tmp/hx/dddddddddddddddddddddddddddddddddddddddddddddddddd/same.flac",
      "/tmp/hx/dddddddddddddddddddddddddddddddddddddddddddddddddd/same.jpg",
      "/tmp/hx/dddddddddddddddddddddddddddddddddddddddddddddddddd/same (1).png"
+    ],
+    [
+     "/tmp/hx/dddddddddddddddddddddddddddddddddddddddddddddddddd/empty/up.png",
+     "/tmp/hx/dddddddddddddddddddddddddddddddddddddddddddddddddd/empty/up.flac",
+     "/tmp/hx/dddddddddddddddddddddddddddddddddddddddddddddddddd/empty/up.jpg",
+     "/tmp/hx/dddddddddddddddddddddddddddddddddddddddddddddddddd/empty/up (1).png"
+    ],
+    [
+     "/tmp/hx/dddddddddddddddddddddddddddddddddddddddddddddddddd/a/empty/empty/b.png",
+     "/tmp/hx/dddddddddddddddddddddddddddddddddddddddddddddddddd/a/empty/empty/b.flac",
+     "/tmp/hx/dddddddddddddddddddddddddddddddddddddddddddddddddd/a/empty/empty/b.jpg",
+     "/tmp/hx/dddddddddddddddddddddddddddddddddddddddddddddddddd/a/empty/empty/b (1).png"
+    ],
+    [
+     "/tmp/hx/dddddddddddddddddddddddddddddddddddddddddddddddddd/abs/empty/empty/c.png",
+     "/tmp/hx/dddddddddddddddddddddddddddddddddddddddddddddddddd/abs/empty/empty/c.flac",
+     "/tmp/hx/dddddddddddddddddddddddddddddddddddddddddddddddddd/abs/empty/empty/c.jpg",
+     "/tmp/hx/dddddddddddddddddddddddddddddddddddddddddddddddddd/abs/empty/empty/c (1).png"
+    ],
+    [
+     "/tmp/hx/dddddddddddddddddddddddddddddddddddddddddddddddddd/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/deep.png",
+     "/tmp/hx/dddddddddddddddddddddddddddddddddddddddddddddddddd/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/deep.flac",
+     "/tmp/hx/dddddddddddddddddddddddddddddddddddddddddddddddddd/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/deep.jpg",
+     "/tmp/hx/dddddddddddddddddddddddddddddddddddddddddddddddddd/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/deep (1).png"
     ]
    ]
   },
@@ -4676,6 +5208,30 @@
      "/tmp/hx/日本語ディレクトリ/same.flac",
      "/tmp/hx/日本語ディレクトリ/same.jpg",
      "/tmp/hx/日本語ディレクトリ/same (1).png"
+    ],
+    [
+     "/tmp/hx/日本語ディレクトリ/empty/up.png",
+     "/tmp/hx/日本語ディレクトリ/empty/up.flac",
+     "/tmp/hx/日本語ディレクトリ/empty/up.jpg",
+     "/tmp/hx/日本語ディレクトリ/empty/up (1).png"
+    ],
+    [
+     "/tmp/hx/日本語ディレクトリ/a/empty/empty/b.png",
+     "/tmp/hx/日本語ディレクトリ/a/empty/empty/b.flac",
+     "/tmp/hx/日本語ディレクトリ/a/empty/empty/b.jpg",
+     "/tmp/hx/日本語ディレクトリ/a/empty/empty/b (1).png"
+    ],
+    [
+     "/tmp/hx/日本語ディレクトリ/abs/empty/empty/c.png",
+     "/tmp/hx/日本語ディレクトリ/abs/empty/empty/c.flac",
+     "/tmp/hx/日本語ディレクトリ/abs/empty/empty/c.jpg",
+     "/tmp/hx/日本語ディレクトリ/abs/empty/empty/c (1).png"
+    ],
+    [
+     "/tmp/hx/日本語ディレクトリ/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/deep.png",
+     "/tmp/hx/日本語ディレクトリ/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/deep.flac",
+     "/tmp/hx/日本語ディレクトリ/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/deep.jpg",
+     "/tmp/hx/日本語ディレクトリ/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/deep (1).png"
     ]
    ]
   },
@@ -4877,6 +5433,30 @@
      "/tmp/hx/LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL/same.flac",
      "/tmp/hx/LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL/same.jpg",
      "/tmp/hx/LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL/same (1).png"
+    ],
+    [
+     "/tmp/hx/LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL/empty/up.png",
+     "/tmp/hx/LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL/empty/up.flac",
+     "/tmp/hx/LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL/empty/up.jpg",
+     "/tmp/hx/LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL/empty/up (1).png"
+    ],
+    [
+     "/tmp/hx/LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL/a/empty/empty/b.png",
+     "/tmp/hx/LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL/a/empty/empty/b.flac",
+     "/tmp/hx/LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL/a/empty/empty/b.jpg",
+     "/tmp/hx/LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL/a/empty/empty/b (1).png"
+    ],
+    [
+     "/tmp/hx/LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL/abs/empty/empty/c.png",
+     "/tmp/hx/LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL/abs/empty/empty/c.flac",
+     "/tmp/hx/LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL/abs/empty/empty/c.jpg",
+     "/tmp/hx/LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL/abs/empty/empty/c (1).png"
+    ],
+    [
+     "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!",
+     "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!",
+     "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!",
+     "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!"
     ]
    ]
   },
@@ -5078,6 +5658,30 @@
      "/tmp/hx/same.flac",
      "/tmp/hx/same.jpg",
      "/tmp/hx/same (1).png"
+    ],
+    [
+     "INVALID, above destination directory: /tmp/up.png",
+     "INVALID, above destination directory: /tmp/up.flac",
+     "INVALID, above destination directory: /tmp/up.jpg",
+     "INVALID, above destination directory: /tmp/up (1).png"
+    ],
+    [
+     "INVALID, above destination directory: /tmp/b.png",
+     "INVALID, above destination directory: /tmp/b.flac",
+     "INVALID, above destination directory: /tmp/b.jpg",
+     "INVALID, above destination directory: /tmp/b (1).png"
+    ],
+    [
+     "INVALID, above destination directory: /tmp/c.png",
+     "INVALID, above destination directory: /tmp/c.flac",
+     "INVALID, above destination directory: /tmp/c.jpg",
+     "INVALID, above destination directory: /tmp/c (1).png"
+    ],
+    [
+     "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!",
+     "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!",
+     "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!",
+     "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!"
     ]
    ]
   },
@@ -5088,6 +5692,30 @@
    "filename_limit": 220,
    "destination": "/tmp/hx/dddddddddddddddddddddddddddddddddddddddddddddddddd",
    "names": [
+    [
+     "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!",
+     "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!",
+     "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!",
+     "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!"
+    ],
+    [
+     "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!",
+     "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!",
+     "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!",
+     "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!"
+    ],
+    [
+     "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!",
+     "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!",
+     "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!",
+     "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!"
+    ],
+    [
+     "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!",
+     "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!",
+     "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!",
+     "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!"
+    ],
     [
      "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!",
      "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!",
@@ -5480,6 +6108,30 @@
      "/tmp/hx/日本語ディレクトリ/same.flac",
      "/tmp/hx/日本語ディレクトリ/same.jpg",
      "/tmp/hx/日本語ディレクトリ/same (1).png"
+    ],
+    [
+     "INVALID, above destination directory: /tmp/hx/up.png",
+     "INVALID, above destination directory: /tmp/hx/up.flac",
+     "INVALID, above destination directory: /tmp/hx/up.jpg",
+     "INVALID, above destination directory: /tmp/hx/up (1).png"
+    ],
+    [
+     "INVALID, above destination directory: /tmp/hx/b.png",
+     "INVALID, above destination directory: /tmp/hx/b.flac",
+     "INVALID, above destination directory: /tmp/hx/b.jpg",
+     "INVALID, above destination directory: /tmp/hx/b (1).png"
+    ],
+    [
+     "INVALID, above destination directory: /tmp/hx/c.png",
+     "INVALID, above destination directory: /tmp/hx/c.flac",
+     "INVALID, above destination directory: /tmp/hx/c.jpg",
+     "INVALID, above destination directory: /tmp/hx/c (1).png"
+    ],
+    [
+     "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!",
+     "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!",
+     "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!",
+     "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!"
     ]
    ]
   },
@@ -5490,6 +6142,30 @@
    "filename_limit": 220,
    "destination": "/tmp/hx/LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL",
    "names": [
+    [
+     "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!",
+     "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!",
+     "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!",
+     "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!"
+    ],
+    [
+     "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!",
+     "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!",
+     "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!",
+     "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!"
+    ],
+    [
+     "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!",
+     "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!",
+     "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!",
+     "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!"
+    ],
+    [
+     "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!",
+     "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!",
+     "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!",
+     "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!"
+    ],
     [
      "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!",
      "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!",
@@ -5882,6 +6558,30 @@
      "/tmp/hx/same.flac",
      "/tmp/hx/same.jpg",
      "/tmp/hx/same (1).png"
+    ],
+    [
+     "/tmp/hx/empty/up.png",
+     "/tmp/hx/empty/up.flac",
+     "/tmp/hx/empty/up.jpg",
+     "/tmp/hx/empty/up (1).png"
+    ],
+    [
+     "/tmp/hx/a/empty/empty/b.png",
+     "/tmp/hx/a/empty/empty/b.flac",
+     "/tmp/hx/a/empty/empty/b.jpg",
+     "/tmp/hx/a/empty/empty/b (1).png"
+    ],
+    [
+     "/tmp/hx/abs/empty/empty/c.png",
+     "/tmp/hx/abs/empty/empty/c.flac",
+     "/tmp/hx/abs/empty/empty/c.jpg",
+     "/tmp/hx/abs/empty/empty/c (1).png"
+    ],
+    [
+     "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!",
+     "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!",
+     "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!",
+     "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!"
     ]
    ]
   },
@@ -6083,6 +6783,30 @@
      "/tmp/hx/dddddddddddddddddddddddddddddddddddddddddddddddddd/same.flac",
      "/tmp/hx/dddddddddddddddddddddddddddddddddddddddddddddddddd/same.jpg",
      "/tmp/hx/dddddddddddddddddddddddddddddddddddddddddddddddddd/same (1).png"
+    ],
+    [
+     "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!",
+     "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!",
+     "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!",
+     "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!"
+    ],
+    [
+     "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!",
+     "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!",
+     "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!",
+     "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!"
+    ],
+    [
+     "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!",
+     "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!",
+     "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!",
+     "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!"
+    ],
+    [
+     "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!",
+     "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!",
+     "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!",
+     "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!"
     ]
    ]
   },
@@ -6284,6 +7008,30 @@
      "/tmp/hx/日本語ディレクトリ/same.flac",
      "/tmp/hx/日本語ディレクトリ/same.jpg",
      "/tmp/hx/日本語ディレクトリ/same (1).png"
+    ],
+    [
+     "/tmp/hx/日本語ディレクトリ/empty/up.png",
+     "/tmp/hx/日本語ディレクトリ/empty/up.flac",
+     "/tmp/hx/日本語ディレクトリ/empty/up.jpg",
+     "/tmp/hx/日本語ディレクトリ/empty/up (1).png"
+    ],
+    [
+     "/tmp/hx/日本語ディレクトリ/a/empty/empty/b.png",
+     "/tmp/hx/日本語ディレクトリ/a/empty/empty/b.flac",
+     "/tmp/hx/日本語ディレクトリ/a/empty/empty/b.jpg",
+     "/tmp/hx/日本語ディレクトリ/a/empty/empty/b (1).png"
+    ],
+    [
+     "/tmp/hx/日本語ディレクトリ/abs/empty/empty/c.png",
+     "/tmp/hx/日本語ディレクトリ/abs/empty/empty/c.flac",
+     "/tmp/hx/日本語ディレクトリ/abs/empty/empty/c.jpg",
+     "/tmp/hx/日本語ディレクトリ/abs/empty/empty/c (1).png"
+    ],
+    [
+     "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!",
+     "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!",
+     "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!",
+     "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!"
     ]
    ]
   },
@@ -6294,6 +7042,30 @@
    "filename_limit": 220,
    "destination": "/tmp/hx/LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL",
    "names": [
+    [
+     "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!",
+     "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!",
+     "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!",
+     "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!"
+    ],
+    [
+     "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!",
+     "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!",
+     "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!",
+     "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!"
+    ],
+    [
+     "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!",
+     "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!",
+     "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!",
+     "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!"
+    ],
+    [
+     "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!",
+     "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!",
+     "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!",
+     "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!"
+    ],
     [
      "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!",
      "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!",
@@ -6686,6 +7458,30 @@
      "/tmp/hx/same.flac",
      "/tmp/hx/same.jpg",
      "/tmp/hx/same (1).png"
+    ],
+    [
+     "INVALID, above destination directory: /tmp/up.png",
+     "INVALID, above destination directory: /tmp/up.flac",
+     "INVALID, above destination directory: /tmp/up.jpg",
+     "INVALID, above destination directory: /tmp/up (1).png"
+    ],
+    [
+     "INVALID, above destination directory: /tmp/b.png",
+     "INVALID, above destination directory: /tmp/b.flac",
+     "INVALID, above destination directory: /tmp/b.jpg",
+     "INVALID, above destination directory: /tmp/b (1).png"
+    ],
+    [
+     "INVALID, above destination directory: /tmp/c.png",
+     "INVALID, above destination directory: /tmp/c.flac",
+     "INVALID, above destination directory: /tmp/c.jpg",
+     "INVALID, above destination directory: /tmp/c (1).png"
+    ],
+    [
+     "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!",
+     "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!",
+     "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!",
+     "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!"
     ]
    ]
   },
@@ -6887,6 +7683,30 @@
      "/tmp/hx/dddddddddddddddddddddddddddddddddddddddddddddddddd/same.flac",
      "/tmp/hx/dddddddddddddddddddddddddddddddddddddddddddddddddd/same.jpg",
      "/tmp/hx/dddddddddddddddddddddddddddddddddddddddddddddddddd/same (1).png"
+    ],
+    [
+     "INVALID, above destination directory: /tmp/hx/up.png",
+     "INVALID, above destination directory: /tmp/hx/up.flac",
+     "INVALID, above destination directory: /tmp/hx/up.jpg",
+     "INVALID, above destination directory: /tmp/hx/up (1).png"
+    ],
+    [
+     "INVALID, above destination directory: /tmp/hx/b.png",
+     "INVALID, above destination directory: /tmp/hx/b.flac",
+     "INVALID, above destination directory: /tmp/hx/b.jpg",
+     "INVALID, above destination directory: /tmp/hx/b (1).png"
+    ],
+    [
+     "INVALID, above destination directory: /tmp/hx/c.png",
+     "INVALID, above destination directory: /tmp/hx/c.flac",
+     "INVALID, above destination directory: /tmp/hx/c.jpg",
+     "INVALID, above destination directory: /tmp/hx/c (1).png"
+    ],
+    [
+     "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!",
+     "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!",
+     "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!",
+     "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!"
     ]
    ]
   },
@@ -7088,6 +7908,30 @@
      "/tmp/hx/日本語ディレクトリ/same.flac",
      "/tmp/hx/日本語ディレクトリ/same.jpg",
      "/tmp/hx/日本語ディレクトリ/same (1).png"
+    ],
+    [
+     "INVALID, above destination directory: /tmp/hx/up.png",
+     "INVALID, above destination directory: /tmp/hx/up.flac",
+     "INVALID, above destination directory: /tmp/hx/up.jpg",
+     "INVALID, above destination directory: /tmp/hx/up (1).png"
+    ],
+    [
+     "INVALID, above destination directory: /tmp/hx/b.png",
+     "INVALID, above destination directory: /tmp/hx/b.flac",
+     "INVALID, above destination directory: /tmp/hx/b.jpg",
+     "INVALID, above destination directory: /tmp/hx/b (1).png"
+    ],
+    [
+     "INVALID, above destination directory: /tmp/hx/c.png",
+     "INVALID, above destination directory: /tmp/hx/c.flac",
+     "INVALID, above destination directory: /tmp/hx/c.jpg",
+     "INVALID, above destination directory: /tmp/hx/c (1).png"
+    ],
+    [
+     "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!",
+     "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!",
+     "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!",
+     "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!"
     ]
    ]
   },
@@ -7098,6 +7942,30 @@
    "filename_limit": 64,
    "destination": "/tmp/hx/LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL",
    "names": [
+    [
+     "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!",
+     "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!",
+     "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!",
+     "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!"
+    ],
+    [
+     "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!",
+     "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!",
+     "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!",
+     "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!"
+    ],
+    [
+     "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!",
+     "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!",
+     "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!",
+     "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!"
+    ],
+    [
+     "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!",
+     "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!",
+     "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!",
+     "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!"
+    ],
     [
      "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!",
      "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!",
@@ -7490,6 +8358,30 @@
      "/tmp/hx/same.flac",
      "/tmp/hx/same.jpg",
      "/tmp/hx/same (1).png"
+    ],
+    [
+     "/tmp/hx/empty/up.png",
+     "/tmp/hx/empty/up.flac",
+     "/tmp/hx/empty/up.jpg",
+     "/tmp/hx/empty/up (1).png"
+    ],
+    [
+     "/tmp/hx/a/empty/empty/b.png",
+     "/tmp/hx/a/empty/empty/b.flac",
+     "/tmp/hx/a/empty/empty/b.jpg",
+     "/tmp/hx/a/empty/empty/b (1).png"
+    ],
+    [
+     "/tmp/hx/abs/empty/empty/c.png",
+     "/tmp/hx/abs/empty/empty/c.flac",
+     "/tmp/hx/abs/empty/empty/c.jpg",
+     "/tmp/hx/abs/empty/empty/c (1).png"
+    ],
+    [
+     "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!",
+     "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!",
+     "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!",
+     "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!"
     ]
    ]
   },
@@ -7691,6 +8583,30 @@
      "/tmp/hx/dddddddddddddddddddddddddddddddddddddddddddddddddd/same.flac",
      "/tmp/hx/dddddddddddddddddddddddddddddddddddddddddddddddddd/same.jpg",
      "/tmp/hx/dddddddddddddddddddddddddddddddddddddddddddddddddd/same (1).png"
+    ],
+    [
+     "/tmp/hx/dddddddddddddddddddddddddddddddddddddddddddddddddd/empty/up.png",
+     "/tmp/hx/dddddddddddddddddddddddddddddddddddddddddddddddddd/empty/up.flac",
+     "/tmp/hx/dddddddddddddddddddddddddddddddddddddddddddddddddd/empty/up.jpg",
+     "/tmp/hx/dddddddddddddddddddddddddddddddddddddddddddddddddd/empty/up (1).png"
+    ],
+    [
+     "/tmp/hx/dddddddddddddddddddddddddddddddddddddddddddddddddd/a/empty/empty/b.png",
+     "/tmp/hx/dddddddddddddddddddddddddddddddddddddddddddddddddd/a/empty/empty/b.flac",
+     "/tmp/hx/dddddddddddddddddddddddddddddddddddddddddddddddddd/a/empty/empty/b.jpg",
+     "/tmp/hx/dddddddddddddddddddddddddddddddddddddddddddddddddd/a/empty/empty/b (1).png"
+    ],
+    [
+     "/tmp/hx/dddddddddddddddddddddddddddddddddddddddddddddddddd/abs/empty/empty/c.png",
+     "/tmp/hx/dddddddddddddddddddddddddddddddddddddddddddddddddd/abs/empty/empty/c.flac",
+     "/tmp/hx/dddddddddddddddddddddddddddddddddddddddddddddddddd/abs/empty/empty/c.jpg",
+     "/tmp/hx/dddddddddddddddddddddddddddddddddddddddddddddddddd/abs/empty/empty/c (1).png"
+    ],
+    [
+     "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!",
+     "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!",
+     "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!",
+     "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!"
     ]
    ]
   },
@@ -7892,6 +8808,30 @@
      "/tmp/hx/日本語ディレクトリ/same.flac",
      "/tmp/hx/日本語ディレクトリ/same.jpg",
      "/tmp/hx/日本語ディレクトリ/same (1).png"
+    ],
+    [
+     "/tmp/hx/日本語ディレクトリ/empty/up.png",
+     "/tmp/hx/日本語ディレクトリ/empty/up.flac",
+     "/tmp/hx/日本語ディレクトリ/empty/up.jpg",
+     "/tmp/hx/日本語ディレクトリ/empty/up (1).png"
+    ],
+    [
+     "/tmp/hx/日本語ディレクトリ/a/empty/empty/b.png",
+     "/tmp/hx/日本語ディレクトリ/a/empty/empty/b.flac",
+     "/tmp/hx/日本語ディレクトリ/a/empty/empty/b.jpg",
+     "/tmp/hx/日本語ディレクトリ/a/empty/empty/b (1).png"
+    ],
+    [
+     "/tmp/hx/日本語ディレクトリ/abs/empty/empty/c.png",
+     "/tmp/hx/日本語ディレクトリ/abs/empty/empty/c.flac",
+     "/tmp/hx/日本語ディレクトリ/abs/empty/empty/c.jpg",
+     "/tmp/hx/日本語ディレクトリ/abs/empty/empty/c (1).png"
+    ],
+    [
+     "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!",
+     "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!",
+     "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!",
+     "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!"
     ]
    ]
   },
@@ -7902,6 +8842,30 @@
    "filename_limit": 64,
    "destination": "/tmp/hx/LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL",
    "names": [
+    [
+     "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!",
+     "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!",
+     "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!",
+     "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!"
+    ],
+    [
+     "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!",
+     "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!",
+     "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!",
+     "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!"
+    ],
+    [
+     "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!",
+     "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!",
+     "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!",
+     "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!"
+    ],
+    [
+     "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!",
+     "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!",
+     "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!",
+     "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!"
+    ],
     [
      "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!",
      "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!",
@@ -8294,6 +9258,30 @@
      "/tmp/hx/same.flac",
      "/tmp/hx/same.jpg",
      "/tmp/hx/same (1).png"
+    ],
+    [
+     "INVALID, above destination directory: /tmp/up.png",
+     "INVALID, above destination directory: /tmp/up.flac",
+     "INVALID, above destination directory: /tmp/up.jpg",
+     "INVALID, above destination directory: /tmp/up (1).png"
+    ],
+    [
+     "INVALID, above destination directory: /tmp/b.png",
+     "INVALID, above destination directory: /tmp/b.flac",
+     "INVALID, above destination directory: /tmp/b.jpg",
+     "INVALID, above destination directory: /tmp/b (1).png"
+    ],
+    [
+     "INVALID, above destination directory: /tmp/c.png",
+     "INVALID, above destination directory: /tmp/c.flac",
+     "INVALID, above destination directory: /tmp/c.jpg",
+     "INVALID, above destination directory: /tmp/c (1).png"
+    ],
+    [
+     "INVALID, above destination directory: /deep.png",
+     "INVALID, above destination directory: /deep.flac",
+     "INVALID, above destination directory: /deep.jpg",
+     "INVALID, above destination directory: /deep (1).png"
     ]
    ]
   },
@@ -8495,6 +9483,30 @@
      "/tmp/hx/dddddddddddddddddddddddddddddddddddddddddddddddddd/same.flac",
      "/tmp/hx/dddddddddddddddddddddddddddddddddddddddddddddddddd/same.jpg",
      "/tmp/hx/dddddddddddddddddddddddddddddddddddddddddddddddddd/same (1).png"
+    ],
+    [
+     "INVALID, above destination directory: /tmp/hx/up.png",
+     "INVALID, above destination directory: /tmp/hx/up.flac",
+     "INVALID, above destination directory: /tmp/hx/up.jpg",
+     "INVALID, above destination directory: /tmp/hx/up (1).png"
+    ],
+    [
+     "INVALID, above destination directory: /tmp/hx/b.png",
+     "INVALID, above destination directory: /tmp/hx/b.flac",
+     "INVALID, above destination directory: /tmp/hx/b.jpg",
+     "INVALID, above destination directory: /tmp/hx/b (1).png"
+    ],
+    [
+     "INVALID, above destination directory: /tmp/hx/c.png",
+     "INVALID, above destination directory: /tmp/hx/c.flac",
+     "INVALID, above destination directory: /tmp/hx/c.jpg",
+     "INVALID, above destination directory: /tmp/hx/c (1).png"
+    ],
+    [
+     "INVALID, above destination directory: /deep.png",
+     "INVALID, above destination directory: /deep.flac",
+     "INVALID, above destination directory: /deep.jpg",
+     "INVALID, above destination directory: /deep (1).png"
     ]
    ]
   },
@@ -8696,6 +9708,30 @@
      "/tmp/hx/日本語ディレクトリ/same.flac",
      "/tmp/hx/日本語ディレクトリ/same.jpg",
      "/tmp/hx/日本語ディレクトリ/same (1).png"
+    ],
+    [
+     "INVALID, above destination directory: /tmp/hx/up.png",
+     "INVALID, above destination directory: /tmp/hx/up.flac",
+     "INVALID, above destination directory: /tmp/hx/up.jpg",
+     "INVALID, above destination directory: /tmp/hx/up (1).png"
+    ],
+    [
+     "INVALID, above destination directory: /tmp/hx/b.png",
+     "INVALID, above destination directory: /tmp/hx/b.flac",
+     "INVALID, above destination directory: /tmp/hx/b.jpg",
+     "INVALID, above destination directory: /tmp/hx/b (1).png"
+    ],
+    [
+     "INVALID, above destination directory: /tmp/hx/c.png",
+     "INVALID, above destination directory: /tmp/hx/c.flac",
+     "INVALID, above destination directory: /tmp/hx/c.jpg",
+     "INVALID, above destination directory: /tmp/hx/c (1).png"
+    ],
+    [
+     "INVALID, above destination directory: /deep.png",
+     "INVALID, above destination directory: /deep.flac",
+     "INVALID, above destination directory: /deep.jpg",
+     "INVALID, above destination directory: /deep (1).png"
     ]
    ]
   },
@@ -8897,6 +9933,30 @@
      "/tmp/hx/LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL/same.flac",
      "/tmp/hx/LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL/same.jpg",
      "/tmp/hx/LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL/same (1).png"
+    ],
+    [
+     "INVALID, above destination directory: /tmp/hx/up.png",
+     "INVALID, above destination directory: /tmp/hx/up.flac",
+     "INVALID, above destination directory: /tmp/hx/up.jpg",
+     "INVALID, above destination directory: /tmp/hx/up (1).png"
+    ],
+    [
+     "INVALID, above destination directory: /tmp/hx/b.png",
+     "INVALID, above destination directory: /tmp/hx/b.flac",
+     "INVALID, above destination directory: /tmp/hx/b.jpg",
+     "INVALID, above destination directory: /tmp/hx/b (1).png"
+    ],
+    [
+     "INVALID, above destination directory: /tmp/hx/c.png",
+     "INVALID, above destination directory: /tmp/hx/c.flac",
+     "INVALID, above destination directory: /tmp/hx/c.jpg",
+     "INVALID, above destination directory: /tmp/hx/c (1).png"
+    ],
+    [
+     "INVALID, above destination directory: /deep.png",
+     "INVALID, above destination directory: /deep.flac",
+     "INVALID, above destination directory: /deep.jpg",
+     "INVALID, above destination directory: /deep (1).png"
     ]
    ]
   },
@@ -9098,6 +10158,30 @@
      "/tmp/hx/same.flac",
      "/tmp/hx/same.jpg",
      "/tmp/hx/same (1).png"
+    ],
+    [
+     "/tmp/hx/empty/up.png",
+     "/tmp/hx/empty/up.flac",
+     "/tmp/hx/empty/up.jpg",
+     "/tmp/hx/empty/up (1).png"
+    ],
+    [
+     "/tmp/hx/a/empty/empty/b.png",
+     "/tmp/hx/a/empty/empty/b.flac",
+     "/tmp/hx/a/empty/empty/b.jpg",
+     "/tmp/hx/a/empty/empty/b (1).png"
+    ],
+    [
+     "/tmp/hx/abs/empty/empty/c.png",
+     "/tmp/hx/abs/empty/empty/c.flac",
+     "/tmp/hx/abs/empty/empty/c.jpg",
+     "/tmp/hx/abs/empty/empty/c (1).png"
+    ],
+    [
+     "/tmp/hx/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/deep.png",
+     "/tmp/hx/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/deep.flac",
+     "/tmp/hx/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/deep.jpg",
+     "/tmp/hx/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/deep (1).png"
     ]
    ]
   },
@@ -9299,6 +10383,30 @@
      "/tmp/hx/dddddddddddddddddddddddddddddddddddddddddddddddddd/same.flac",
      "/tmp/hx/dddddddddddddddddddddddddddddddddddddddddddddddddd/same.jpg",
      "/tmp/hx/dddddddddddddddddddddddddddddddddddddddddddddddddd/same (1).png"
+    ],
+    [
+     "/tmp/hx/dddddddddddddddddddddddddddddddddddddddddddddddddd/empty/up.png",
+     "/tmp/hx/dddddddddddddddddddddddddddddddddddddddddddddddddd/empty/up.flac",
+     "/tmp/hx/dddddddddddddddddddddddddddddddddddddddddddddddddd/empty/up.jpg",
+     "/tmp/hx/dddddddddddddddddddddddddddddddddddddddddddddddddd/empty/up (1).png"
+    ],
+    [
+     "/tmp/hx/dddddddddddddddddddddddddddddddddddddddddddddddddd/a/empty/empty/b.png",
+     "/tmp/hx/dddddddddddddddddddddddddddddddddddddddddddddddddd/a/empty/empty/b.flac",
+     "/tmp/hx/dddddddddddddddddddddddddddddddddddddddddddddddddd/a/empty/empty/b.jpg",
+     "/tmp/hx/dddddddddddddddddddddddddddddddddddddddddddddddddd/a/empty/empty/b (1).png"
+    ],
+    [
+     "/tmp/hx/dddddddddddddddddddddddddddddddddddddddddddddddddd/abs/empty/empty/c.png",
+     "/tmp/hx/dddddddddddddddddddddddddddddddddddddddddddddddddd/abs/empty/empty/c.flac",
+     "/tmp/hx/dddddddddddddddddddddddddddddddddddddddddddddddddd/abs/empty/empty/c.jpg",
+     "/tmp/hx/dddddddddddddddddddddddddddddddddddddddddddddddddd/abs/empty/empty/c (1).png"
+    ],
+    [
+     "/tmp/hx/dddddddddddddddddddddddddddddddddddddddddddddddddd/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/deep.png",
+     "/tmp/hx/dddddddddddddddddddddddddddddddddddddddddddddddddd/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/deep.flac",
+     "/tmp/hx/dddddddddddddddddddddddddddddddddddddddddddddddddd/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/deep.jpg",
+     "/tmp/hx/dddddddddddddddddddddddddddddddddddddddddddddddddd/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/deep (1).png"
     ]
    ]
   },
@@ -9500,6 +10608,30 @@
      "/tmp/hx/日本語ディレクトリ/same.flac",
      "/tmp/hx/日本語ディレクトリ/same.jpg",
      "/tmp/hx/日本語ディレクトリ/same (1).png"
+    ],
+    [
+     "/tmp/hx/日本語ディレクトリ/empty/up.png",
+     "/tmp/hx/日本語ディレクトリ/empty/up.flac",
+     "/tmp/hx/日本語ディレクトリ/empty/up.jpg",
+     "/tmp/hx/日本語ディレクトリ/empty/up (1).png"
+    ],
+    [
+     "/tmp/hx/日本語ディレクトリ/a/empty/empty/b.png",
+     "/tmp/hx/日本語ディレクトリ/a/empty/empty/b.flac",
+     "/tmp/hx/日本語ディレクトリ/a/empty/empty/b.jpg",
+     "/tmp/hx/日本語ディレクトリ/a/empty/empty/b (1).png"
+    ],
+    [
+     "/tmp/hx/日本語ディレクトリ/abs/empty/empty/c.png",
+     "/tmp/hx/日本語ディレクトリ/abs/empty/empty/c.flac",
+     "/tmp/hx/日本語ディレクトリ/abs/empty/empty/c.jpg",
+     "/tmp/hx/日本語ディレクトリ/abs/empty/empty/c (1).png"
+    ],
+    [
+     "/tmp/hx/日本語ディレクトリ/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/deep.png",
+     "/tmp/hx/日本語ディレクトリ/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/deep.flac",
+     "/tmp/hx/日本語ディレクトリ/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/deep.jpg",
+     "/tmp/hx/日本語ディレクトリ/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/deep (1).png"
     ]
    ]
   },
@@ -9701,6 +10833,30 @@
      "/tmp/hx/LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL/same.flac",
      "/tmp/hx/LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL/same.jpg",
      "/tmp/hx/LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL/same (1).png"
+    ],
+    [
+     "/tmp/hx/LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL/empty/up.png",
+     "/tmp/hx/LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL/empty/up.flac",
+     "/tmp/hx/LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL/empty/up.jpg",
+     "/tmp/hx/LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL/empty/up (1).png"
+    ],
+    [
+     "/tmp/hx/LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL/a/empty/empty/b.png",
+     "/tmp/hx/LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL/a/empty/empty/b.flac",
+     "/tmp/hx/LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL/a/empty/empty/b.jpg",
+     "/tmp/hx/LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL/a/empty/empty/b (1).png"
+    ],
+    [
+     "/tmp/hx/LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL/abs/empty/empty/c.png",
+     "/tmp/hx/LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL/abs/empty/empty/c.flac",
+     "/tmp/hx/LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL/abs/empty/empty/c.jpg",
+     "/tmp/hx/LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL/abs/empty/empty/c (1).png"
+    ],
+    [
+     "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!",
+     "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!",
+     "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!",
+     "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!"
     ]
    ]
   },
@@ -9902,6 +11058,30 @@
      "/tmp/hx/same.flac",
      "/tmp/hx/same.jpg",
      "/tmp/hx/same (1).png"
+    ],
+    [
+     "INVALID, above destination directory: /tmp/up.png",
+     "INVALID, above destination directory: /tmp/up.flac",
+     "INVALID, above destination directory: /tmp/up.jpg",
+     "INVALID, above destination directory: /tmp/up (1).png"
+    ],
+    [
+     "INVALID, above destination directory: /tmp/b.png",
+     "INVALID, above destination directory: /tmp/b.flac",
+     "INVALID, above destination directory: /tmp/b.jpg",
+     "INVALID, above destination directory: /tmp/b (1).png"
+    ],
+    [
+     "INVALID, above destination directory: /tmp/c.png",
+     "INVALID, above destination directory: /tmp/c.flac",
+     "INVALID, above destination directory: /tmp/c.jpg",
+     "INVALID, above destination directory: /tmp/c (1).png"
+    ],
+    [
+     "INVALID, above destination directory: /deep.png",
+     "INVALID, above destination directory: /deep.flac",
+     "INVALID, above destination directory: /deep.jpg",
+     "INVALID, above destination directory: /deep (1).png"
     ]
    ]
   },
@@ -10103,6 +11283,30 @@
      "/tmp/hx/dddddddddddddddddddddddddddddddddddddddddddddddddd/same.flac",
      "/tmp/hx/dddddddddddddddddddddddddddddddddddddddddddddddddd/same.jpg",
      "/tmp/hx/dddddddddddddddddddddddddddddddddddddddddddddddddd/same (1).png"
+    ],
+    [
+     "INVALID, above destination directory: /tmp/hx/up.png",
+     "INVALID, above destination directory: /tmp/hx/up.flac",
+     "INVALID, above destination directory: /tmp/hx/up.jpg",
+     "INVALID, above destination directory: /tmp/hx/up (1).png"
+    ],
+    [
+     "INVALID, above destination directory: /tmp/hx/b.png",
+     "INVALID, above destination directory: /tmp/hx/b.flac",
+     "INVALID, above destination directory: /tmp/hx/b.jpg",
+     "INVALID, above destination directory: /tmp/hx/b (1).png"
+    ],
+    [
+     "INVALID, above destination directory: /tmp/hx/c.png",
+     "INVALID, above destination directory: /tmp/hx/c.flac",
+     "INVALID, above destination directory: /tmp/hx/c.jpg",
+     "INVALID, above destination directory: /tmp/hx/c (1).png"
+    ],
+    [
+     "INVALID, above destination directory: /deep.png",
+     "INVALID, above destination directory: /deep.flac",
+     "INVALID, above destination directory: /deep.jpg",
+     "INVALID, above destination directory: /deep (1).png"
     ]
    ]
   },
@@ -10304,6 +11508,30 @@
      "/tmp/hx/日本語ディレクトリ/same.flac",
      "/tmp/hx/日本語ディレクトリ/same.jpg",
      "/tmp/hx/日本語ディレクトリ/same (1).png"
+    ],
+    [
+     "INVALID, above destination directory: /tmp/hx/up.png",
+     "INVALID, above destination directory: /tmp/hx/up.flac",
+     "INVALID, above destination directory: /tmp/hx/up.jpg",
+     "INVALID, above destination directory: /tmp/hx/up (1).png"
+    ],
+    [
+     "INVALID, above destination directory: /tmp/hx/b.png",
+     "INVALID, above destination directory: /tmp/hx/b.flac",
+     "INVALID, above destination directory: /tmp/hx/b.jpg",
+     "INVALID, above destination directory: /tmp/hx/b (1).png"
+    ],
+    [
+     "INVALID, above destination directory: /tmp/hx/c.png",
+     "INVALID, above destination directory: /tmp/hx/c.flac",
+     "INVALID, above destination directory: /tmp/hx/c.jpg",
+     "INVALID, above destination directory: /tmp/hx/c (1).png"
+    ],
+    [
+     "INVALID, above destination directory: /deep.png",
+     "INVALID, above destination directory: /deep.flac",
+     "INVALID, above destination directory: /deep.jpg",
+     "INVALID, above destination directory: /deep (1).png"
     ]
    ]
   },
@@ -10505,6 +11733,30 @@
      "/tmp/hx/LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL/same.flac",
      "/tmp/hx/LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL/same.jpg",
      "/tmp/hx/LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL/same (1).png"
+    ],
+    [
+     "INVALID, above destination directory: /tmp/hx/up.png",
+     "INVALID, above destination directory: /tmp/hx/up.flac",
+     "INVALID, above destination directory: /tmp/hx/up.jpg",
+     "INVALID, above destination directory: /tmp/hx/up (1).png"
+    ],
+    [
+     "INVALID, above destination directory: /tmp/hx/b.png",
+     "INVALID, above destination directory: /tmp/hx/b.flac",
+     "INVALID, above destination directory: /tmp/hx/b.jpg",
+     "INVALID, above destination directory: /tmp/hx/b (1).png"
+    ],
+    [
+     "INVALID, above destination directory: /tmp/hx/c.png",
+     "INVALID, above destination directory: /tmp/hx/c.flac",
+     "INVALID, above destination directory: /tmp/hx/c.jpg",
+     "INVALID, above destination directory: /tmp/hx/c (1).png"
+    ],
+    [
+     "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!",
+     "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!",
+     "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!",
+     "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!"
     ]
    ]
   },
@@ -10706,6 +11958,30 @@
      "/tmp/hx/same.flac",
      "/tmp/hx/same.jpg",
      "/tmp/hx/same (1).png"
+    ],
+    [
+     "/tmp/hx/empty/up.png",
+     "/tmp/hx/empty/up.flac",
+     "/tmp/hx/empty/up.jpg",
+     "/tmp/hx/empty/up (1).png"
+    ],
+    [
+     "/tmp/hx/a/empty/empty/b.png",
+     "/tmp/hx/a/empty/empty/b.flac",
+     "/tmp/hx/a/empty/empty/b.jpg",
+     "/tmp/hx/a/empty/empty/b (1).png"
+    ],
+    [
+     "/tmp/hx/abs/empty/empty/c.png",
+     "/tmp/hx/abs/empty/empty/c.flac",
+     "/tmp/hx/abs/empty/empty/c.jpg",
+     "/tmp/hx/abs/empty/empty/c (1).png"
+    ],
+    [
+     "/tmp/hx/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/deep.png",
+     "/tmp/hx/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/deep.flac",
+     "/tmp/hx/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/deep.jpg",
+     "/tmp/hx/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/deep (1).png"
     ]
    ]
   },
@@ -10907,6 +12183,30 @@
      "/tmp/hx/dddddddddddddddddddddddddddddddddddddddddddddddddd/same.flac",
      "/tmp/hx/dddddddddddddddddddddddddddddddddddddddddddddddddd/same.jpg",
      "/tmp/hx/dddddddddddddddddddddddddddddddddddddddddddddddddd/same (1).png"
+    ],
+    [
+     "/tmp/hx/dddddddddddddddddddddddddddddddddddddddddddddddddd/empty/up.png",
+     "/tmp/hx/dddddddddddddddddddddddddddddddddddddddddddddddddd/empty/up.flac",
+     "/tmp/hx/dddddddddddddddddddddddddddddddddddddddddddddddddd/empty/up.jpg",
+     "/tmp/hx/dddddddddddddddddddddddddddddddddddddddddddddddddd/empty/up (1).png"
+    ],
+    [
+     "/tmp/hx/dddddddddddddddddddddddddddddddddddddddddddddddddd/a/empty/empty/b.png",
+     "/tmp/hx/dddddddddddddddddddddddddddddddddddddddddddddddddd/a/empty/empty/b.flac",
+     "/tmp/hx/dddddddddddddddddddddddddddddddddddddddddddddddddd/a/empty/empty/b.jpg",
+     "/tmp/hx/dddddddddddddddddddddddddddddddddddddddddddddddddd/a/empty/empty/b (1).png"
+    ],
+    [
+     "/tmp/hx/dddddddddddddddddddddddddddddddddddddddddddddddddd/abs/empty/empty/c.png",
+     "/tmp/hx/dddddddddddddddddddddddddddddddddddddddddddddddddd/abs/empty/empty/c.flac",
+     "/tmp/hx/dddddddddddddddddddddddddddddddddddddddddddddddddd/abs/empty/empty/c.jpg",
+     "/tmp/hx/dddddddddddddddddddddddddddddddddddddddddddddddddd/abs/empty/empty/c (1).png"
+    ],
+    [
+     "/tmp/hx/dddddddddddddddddddddddddddddddddddddddddddddddddd/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/deep.png",
+     "/tmp/hx/dddddddddddddddddddddddddddddddddddddddddddddddddd/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/deep.flac",
+     "/tmp/hx/dddddddddddddddddddddddddddddddddddddddddddddddddd/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/deep.jpg",
+     "/tmp/hx/dddddddddddddddddddddddddddddddddddddddddddddddddd/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/deep (1).png"
     ]
    ]
   },
@@ -11108,6 +12408,30 @@
      "/tmp/hx/日本語ディレクトリ/same.flac",
      "/tmp/hx/日本語ディレクトリ/same.jpg",
      "/tmp/hx/日本語ディレクトリ/same (1).png"
+    ],
+    [
+     "/tmp/hx/日本語ディレクトリ/empty/up.png",
+     "/tmp/hx/日本語ディレクトリ/empty/up.flac",
+     "/tmp/hx/日本語ディレクトリ/empty/up.jpg",
+     "/tmp/hx/日本語ディレクトリ/empty/up (1).png"
+    ],
+    [
+     "/tmp/hx/日本語ディレクトリ/a/empty/empty/b.png",
+     "/tmp/hx/日本語ディレクトリ/a/empty/empty/b.flac",
+     "/tmp/hx/日本語ディレクトリ/a/empty/empty/b.jpg",
+     "/tmp/hx/日本語ディレクトリ/a/empty/empty/b (1).png"
+    ],
+    [
+     "/tmp/hx/日本語ディレクトリ/abs/empty/empty/c.png",
+     "/tmp/hx/日本語ディレクトリ/abs/empty/empty/c.flac",
+     "/tmp/hx/日本語ディレクトリ/abs/empty/empty/c.jpg",
+     "/tmp/hx/日本語ディレクトリ/abs/empty/empty/c (1).png"
+    ],
+    [
+     "/tmp/hx/日本語ディレクトリ/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/deep.png",
+     "/tmp/hx/日本語ディレクトリ/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/deep.flac",
+     "/tmp/hx/日本語ディレクトリ/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/deep.jpg",
+     "/tmp/hx/日本語ディレクトリ/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/deep (1).png"
     ]
    ]
   },
@@ -11309,6 +12633,30 @@
      "/tmp/hx/LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL/same.flac",
      "/tmp/hx/LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL/same.jpg",
      "/tmp/hx/LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL/same (1).png"
+    ],
+    [
+     "/tmp/hx/LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL/empty/up.png",
+     "/tmp/hx/LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL/empty/up.flac",
+     "/tmp/hx/LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL/empty/up.jpg",
+     "/tmp/hx/LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL/empty/up (1).png"
+    ],
+    [
+     "/tmp/hx/LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL/a/empty/empty/b.png",
+     "/tmp/hx/LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL/a/empty/empty/b.flac",
+     "/tmp/hx/LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL/a/empty/empty/b.jpg",
+     "/tmp/hx/LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL/a/empty/empty/b (1).png"
+    ],
+    [
+     "/tmp/hx/LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL/abs/empty/empty/c.png",
+     "/tmp/hx/LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL/abs/empty/empty/c.flac",
+     "/tmp/hx/LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL/abs/empty/empty/c.jpg",
+     "/tmp/hx/LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL/abs/empty/empty/c (1).png"
+    ],
+    [
+     "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!",
+     "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!",
+     "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!",
+     "INVALID, above destination directory: Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!"
     ]
    ]
   },
@@ -11510,6 +12858,30 @@
      "/tmp/hx/same.flac",
      "/tmp/hx/same.jpg",
      "/tmp/hx/same (1).png"
+    ],
+    [
+     "INVALID, above destination directory: /tmp/up.png",
+     "INVALID, above destination directory: /tmp/up.flac",
+     "INVALID, above destination directory: /tmp/up.jpg",
+     "INVALID, above destination directory: /tmp/up (1).png"
+    ],
+    [
+     "INVALID, above destination directory: /tmp/b.png",
+     "INVALID, above destination directory: /tmp/b.flac",
+     "INVALID, above destination directory: /tmp/b.jpg",
+     "INVALID, above destination directory: /tmp/b (1).png"
+    ],
+    [
+     "INVALID, above destination directory: /tmp/c.png",
+     "INVALID, above destination directory: /tmp/c.flac",
+     "INVALID, above destination directory: /tmp/c.jpg",
+     "INVALID, above destination directory: /tmp/c (1).png"
+    ],
+    [
+     "INVALID, above destination directory: /deep.png",
+     "INVALID, above destination directory: /deep.flac",
+     "INVALID, above destination directory: /deep.jpg",
+     "INVALID, above destination directory: /deep (1).png"
     ]
    ]
   },
@@ -11711,6 +13083,30 @@
      "/tmp/hx/dddddddddddddddddddddddddddddddddddddddddddddddddd/same.flac",
      "/tmp/hx/dddddddddddddddddddddddddddddddddddddddddddddddddd/same.jpg",
      "/tmp/hx/dddddddddddddddddddddddddddddddddddddddddddddddddd/same (1).png"
+    ],
+    [
+     "INVALID, above destination directory: /tmp/hx/up.png",
+     "INVALID, above destination directory: /tmp/hx/up.flac",
+     "INVALID, above destination directory: /tmp/hx/up.jpg",
+     "INVALID, above destination directory: /tmp/hx/up (1).png"
+    ],
+    [
+     "INVALID, above destination directory: /tmp/hx/b.png",
+     "INVALID, above destination directory: /tmp/hx/b.flac",
+     "INVALID, above destination directory: /tmp/hx/b.jpg",
+     "INVALID, above destination directory: /tmp/hx/b (1).png"
+    ],
+    [
+     "INVALID, above destination directory: /tmp/hx/c.png",
+     "INVALID, above destination directory: /tmp/hx/c.flac",
+     "INVALID, above destination directory: /tmp/hx/c.jpg",
+     "INVALID, above destination directory: /tmp/hx/c (1).png"
+    ],
+    [
+     "INVALID, above destination directory: /deep.png",
+     "INVALID, above destination directory: /deep.flac",
+     "INVALID, above destination directory: /deep.jpg",
+     "INVALID, above destination directory: /deep (1).png"
     ]
    ]
   },
@@ -11912,6 +13308,30 @@
      "/tmp/hx/日本語ディレクトリ/same.flac",
      "/tmp/hx/日本語ディレクトリ/same.jpg",
      "/tmp/hx/日本語ディレクトリ/same (1).png"
+    ],
+    [
+     "INVALID, above destination directory: /tmp/hx/up.png",
+     "INVALID, above destination directory: /tmp/hx/up.flac",
+     "INVALID, above destination directory: /tmp/hx/up.jpg",
+     "INVALID, above destination directory: /tmp/hx/up (1).png"
+    ],
+    [
+     "INVALID, above destination directory: /tmp/hx/b.png",
+     "INVALID, above destination directory: /tmp/hx/b.flac",
+     "INVALID, above destination directory: /tmp/hx/b.jpg",
+     "INVALID, above destination directory: /tmp/hx/b (1).png"
+    ],
+    [
+     "INVALID, above destination directory: /tmp/hx/c.png",
+     "INVALID, above destination directory: /tmp/hx/c.flac",
+     "INVALID, above destination directory: /tmp/hx/c.jpg",
+     "INVALID, above destination directory: /tmp/hx/c (1).png"
+    ],
+    [
+     "INVALID, above destination directory: /deep.png",
+     "INVALID, above destination directory: /deep.flac",
+     "INVALID, above destination directory: /deep.jpg",
+     "INVALID, above destination directory: /deep (1).png"
     ]
    ]
   },
@@ -12113,6 +13533,30 @@
      "/tmp/hx/LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL/same.flac",
      "/tmp/hx/LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL/same.jpg",
      "/tmp/hx/LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL/same (1).png"
+    ],
+    [
+     "INVALID, above destination directory: /tmp/hx/up.png",
+     "INVALID, above destination directory: /tmp/hx/up.flac",
+     "INVALID, above destination directory: /tmp/hx/up.jpg",
+     "INVALID, above destination directory: /tmp/hx/up (1).png"
+    ],
+    [
+     "INVALID, above destination directory: /tmp/hx/b.png",
+     "INVALID, above destination directory: /tmp/hx/b.flac",
+     "INVALID, above destination directory: /tmp/hx/b.jpg",
+     "INVALID, above destination directory: /tmp/hx/b (1).png"
+    ],
+    [
+     "INVALID, above destination directory: /tmp/hx/c.png",
+     "INVALID, above destination directory: /tmp/hx/c.flac",
+     "INVALID, above destination directory: /tmp/hx/c.jpg",
+     "INVALID, above destination directory: /tmp/hx/c (1).png"
+    ],
+    [
+     "INVALID, above destination directory: /deep.png",
+     "INVALID, above destination directory: /deep.flac",
+     "INVALID, above destination directory: /deep.jpg",
+     "INVALID, above destination directory: /deep (1).png"
     ]
    ]
   },
@@ -12314,6 +13758,30 @@
      "/tmp/hx/same.flac",
      "/tmp/hx/same.jpg",
      "/tmp/hx/same (1).png"
+    ],
+    [
+     "/tmp/hx/empty/up.png",
+     "/tmp/hx/empty/up.flac",
+     "/tmp/hx/empty/up.jpg",
+     "/tmp/hx/empty/up (1).png"
+    ],
+    [
+     "/tmp/hx/a/empty/empty/b.png",
+     "/tmp/hx/a/empty/empty/b.flac",
+     "/tmp/hx/a/empty/empty/b.jpg",
+     "/tmp/hx/a/empty/empty/b (1).png"
+    ],
+    [
+     "/tmp/hx/abs/empty/empty/c.png",
+     "/tmp/hx/abs/empty/empty/c.flac",
+     "/tmp/hx/abs/empty/empty/c.jpg",
+     "/tmp/hx/abs/empty/empty/c (1).png"
+    ],
+    [
+     "/tmp/hx/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/deep.png",
+     "/tmp/hx/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/deep.flac",
+     "/tmp/hx/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/deep.jpg",
+     "/tmp/hx/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/deep (1).png"
     ]
    ]
   },
@@ -12515,6 +13983,30 @@
      "/tmp/hx/dddddddddddddddddddddddddddddddddddddddddddddddddd/same.flac",
      "/tmp/hx/dddddddddddddddddddddddddddddddddddddddddddddddddd/same.jpg",
      "/tmp/hx/dddddddddddddddddddddddddddddddddddddddddddddddddd/same (1).png"
+    ],
+    [
+     "/tmp/hx/dddddddddddddddddddddddddddddddddddddddddddddddddd/empty/up.png",
+     "/tmp/hx/dddddddddddddddddddddddddddddddddddddddddddddddddd/empty/up.flac",
+     "/tmp/hx/dddddddddddddddddddddddddddddddddddddddddddddddddd/empty/up.jpg",
+     "/tmp/hx/dddddddddddddddddddddddddddddddddddddddddddddddddd/empty/up (1).png"
+    ],
+    [
+     "/tmp/hx/dddddddddddddddddddddddddddddddddddddddddddddddddd/a/empty/empty/b.png",
+     "/tmp/hx/dddddddddddddddddddddddddddddddddddddddddddddddddd/a/empty/empty/b.flac",
+     "/tmp/hx/dddddddddddddddddddddddddddddddddddddddddddddddddd/a/empty/empty/b.jpg",
+     "/tmp/hx/dddddddddddddddddddddddddddddddddddddddddddddddddd/a/empty/empty/b (1).png"
+    ],
+    [
+     "/tmp/hx/dddddddddddddddddddddddddddddddddddddddddddddddddd/abs/empty/empty/c.png",
+     "/tmp/hx/dddddddddddddddddddddddddddddddddddddddddddddddddd/abs/empty/empty/c.flac",
+     "/tmp/hx/dddddddddddddddddddddddddddddddddddddddddddddddddd/abs/empty/empty/c.jpg",
+     "/tmp/hx/dddddddddddddddddddddddddddddddddddddddddddddddddd/abs/empty/empty/c (1).png"
+    ],
+    [
+     "/tmp/hx/dddddddddddddddddddddddddddddddddddddddddddddddddd/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/deep.png",
+     "/tmp/hx/dddddddddddddddddddddddddddddddddddddddddddddddddd/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/deep.flac",
+     "/tmp/hx/dddddddddddddddddddddddddddddddddddddddddddddddddd/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/deep.jpg",
+     "/tmp/hx/dddddddddddddddddddddddddddddddddddddddddddddddddd/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/deep (1).png"
     ]
    ]
   },
@@ -12716,6 +14208,30 @@
      "/tmp/hx/日本語ディレクトリ/same.flac",
      "/tmp/hx/日本語ディレクトリ/same.jpg",
      "/tmp/hx/日本語ディレクトリ/same (1).png"
+    ],
+    [
+     "/tmp/hx/日本語ディレクトリ/empty/up.png",
+     "/tmp/hx/日本語ディレクトリ/empty/up.flac",
+     "/tmp/hx/日本語ディレクトリ/empty/up.jpg",
+     "/tmp/hx/日本語ディレクトリ/empty/up (1).png"
+    ],
+    [
+     "/tmp/hx/日本語ディレクトリ/a/empty/empty/b.png",
+     "/tmp/hx/日本語ディレクトリ/a/empty/empty/b.flac",
+     "/tmp/hx/日本語ディレクトリ/a/empty/empty/b.jpg",
+     "/tmp/hx/日本語ディレクトリ/a/empty/empty/b (1).png"
+    ],
+    [
+     "/tmp/hx/日本語ディレクトリ/abs/empty/empty/c.png",
+     "/tmp/hx/日本語ディレクトリ/abs/empty/empty/c.flac",
+     "/tmp/hx/日本語ディレクトリ/abs/empty/empty/c.jpg",
+     "/tmp/hx/日本語ディレクトリ/abs/empty/empty/c (1).png"
+    ],
+    [
+     "/tmp/hx/日本語ディレクトリ/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/deep.png",
+     "/tmp/hx/日本語ディレクトリ/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/deep.flac",
+     "/tmp/hx/日本語ディレクトリ/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/deep.jpg",
+     "/tmp/hx/日本語ディレクトリ/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/deep (1).png"
     ]
    ]
   },
@@ -12917,6 +14433,30 @@
      "/tmp/hx/LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL/same.flac",
      "/tmp/hx/LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL/same.jpg",
      "/tmp/hx/LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL/same (1).png"
+    ],
+    [
+     "/tmp/hx/LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL/empty/up.png",
+     "/tmp/hx/LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL/empty/up.flac",
+     "/tmp/hx/LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL/empty/up.jpg",
+     "/tmp/hx/LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL/empty/up (1).png"
+    ],
+    [
+     "/tmp/hx/LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL/a/empty/empty/b.png",
+     "/tmp/hx/LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL/a/empty/empty/b.flac",
+     "/tmp/hx/LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL/a/empty/empty/b.jpg",
+     "/tmp/hx/LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL/a/empty/empty/b (1).png"
+    ],
+    [
+     "/tmp/hx/LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL/abs/empty/empty/c.png",
+     "/tmp/hx/LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL/abs/empty/empty/c.flac",
+     "/tmp/hx/LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL/abs/empty/empty/c.jpg",
+     "/tmp/hx/LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL/abs/empty/empty/c (1).png"
+    ],
+    [
+     "/tmp/hx/LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/deep.png",
+     "/tmp/hx/LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/deep.flac",
+     "/tmp/hx/LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/deep.jpg",
+     "/tmp/hx/LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/empty/deep (1).png"
     ]
    ]
   }

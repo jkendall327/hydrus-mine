@@ -4698,7 +4698,7 @@
     "date": "2026-10-09",
     "class": "sound",
     "by": "Claude (recheck bin E, #97 phase 2)",
-    "note": "Real export folder editor: eleven typed entries (system predicates, an unparsable one, tags, a namespace, a wildcard, a negated tag replacing its positive, a repeated predicate removing itself, padded text) and two row removals, rows and leftover text compared with oracle/fixtures/export_folder_predicates.json (the reference's EditExportFolderPanel); then the real export worker runs the two-predicate folder and again with the png predicate removed, and the exported filenames match the reference's ExportFolder.DoWork. Fixed here: typed text is no longer trimmed, so padded 'system:' text is a tag as in the reference. Tests: crates/hydrus-gui/tests/gui/files_io_folder_editors.rs typed_predicates_make_the_export_folders_search_as_the_reference_does."
+    "note": "Real export folder editor: eleven typed entries (system predicates, an unparsable one, tags, a namespace, a wildcard, a negated tag replacing its positive, a repeated predicate removing itself, padded text) and two row removals, rows and leftover text compared with oracle/fixtures/export_folder_predicates.json (the reference's EditExportFolderPanel); then the real export worker runs the two-predicate folder and again with the png predicate removed, and the exported filenames match the reference's ExportFolder.DoWork. Fixed here: typed text is no longer trimmed: the recording shows the reference takes '  system:inbox  ' as a tag (predicate type 0, reading 'inbox'; the system predicate would read 'system:inbox'), and the test checks that. Tests: crates/hydrus-gui/tests/gui/files_io_folder_editors.rs typed_predicates_make_the_export_folders_search_as_the_reference_does."
    }
   },
   {
@@ -4757,7 +4757,7 @@
     "date": "2026-10-09",
     "class": "sound",
     "by": "Claude (recheck bin E, #97 phase 2)",
-    "note": "Real export window: browse with a scripted directory (a trailing slash and '..' tidied, a cancel, a folder that doesn't exist and so doesn't remake names, the rows then shown INVALID) and open location (empty, existing, missing) against oracle/fixtures/export_names.json; the real launcher runs a stub xdg-open, as the recorder put one on the reference's PATH, and its argv is compared. Fixed here: the picked path is now normpath'd and only an existing folder refreshes. The missing folder's message is a status line, not the reference's dialog (documented). Tests: crates/hydrus-gui/tests/gui/files_io_export_files.rs the_destination_is_browsed_for_and_its_location_opened_as_the_reference_does."
+    "note": "Real export window: browse with a scripted directory (a trailing slash and '..' tidied, a cancel, a folder that doesn't exist and so doesn't remake names, the rows then shown INVALID) and open location (empty, existing, missing) against oracle/fixtures/export_names.json; the real launcher runs a stub xdg-open, as the recorder put one on the reference's PATH, and its argv is compared. Fixed here: the picked path is now normpath'd and only an existing folder refreshes. Known partial: the reference's missing folder shows a 'Does not exist!' dialog; ours is a status line with the same text, and the picker's starting folder is not passed (both in DIFFERENCES.md). Tests: crates/hydrus-gui/tests/gui/files_io_export_files.rs the_destination_is_browsed_for_and_its_location_opened_as_the_reference_does."
    }
   },
   {
@@ -4814,7 +4814,7 @@
     "date": "2026-10-09",
     "class": "sound",
     "by": "Claude (recheck bin E, #97 phase 2)",
-    "note": "Real export window over five files, phrases '{#}' and '{#} {file_id}': middle, first-and-last and declined removals and an empty selection, with the question, numbers and names compared with oracle/fixtures/export_names.json (record_export_names.py, the reference's _DeletePaths). Names are remade at once where the reference keeps its stale names until the phrase changes; they are compared with the reference's names after that refresh (documented in DIFFERENCES.md). Tests: crates/hydrus-gui/tests/gui/files_io_export_files.rs selected_rows_are_removed_after_asking_and_renumbered_as_the_reference_does."
+    "note": "Real export window over five files, phrases '{#}' and '{#} {file_id}': middle, first-and-last and declined removals and an empty selection, with the question, numbers and names compared with oracle/fixtures/export_names.json (record_export_names.py, the reference's _DeletePaths). Names are remade at once where the reference keeps its stale names until the phrase changes; they are compared with the reference's names only after that refresh; the reference's stale names (which a later export would use) are neither reproduced nor tested (DIFFERENCES.md). Tests: crates/hydrus-gui/tests/gui/files_io_export_files.rs selected_rows_are_removed_after_asking_and_renumbered_as_the_reference_does."
    }
   },
   {

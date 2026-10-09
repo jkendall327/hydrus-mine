@@ -99,6 +99,10 @@ PHRASES = [
     '.....',
     '   ',
     'same',
+    '../up',
+    'a/../../b',
+    '/abs/../../c',
+    '../../../../../../../../../../../../../../../../../../../../deep',
 ]
 
 FILE_NAMES = ['apng_animated.png', 'audio.flac', 'jpeg_00.jpg', 'png_00.png']

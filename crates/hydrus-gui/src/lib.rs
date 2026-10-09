@@ -5926,6 +5926,11 @@ thread_local! {
     static LAUNCH_DIR: RefCell<Option<std::path::PathBuf>> = const { RefCell::new(None) };
 }
 
+/// Go back to looking for the OS's opener program on PATH.
+pub fn clear_launch_dir() {
+    LAUNCH_DIR.with(|d| *d.borrow_mut() = None);
+}
+
 /// Look for the OS's opener program (`xdg-open`) in `dir` rather than on
 /// PATH, on this thread (for tests, which put a stub there).
 pub fn set_launch_dir(dir: impl Into<std::path::PathBuf>) {

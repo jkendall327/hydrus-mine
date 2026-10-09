@@ -233,6 +233,16 @@ fn typed_predicates_make_the_export_folders_search_as_the_reference_does() {
             edit.invoke_predicate_removed(step["removed"].as_i64().unwrap() as i32);
         }
         assert_eq!(texts(&edit.get_predicates()), rows(&step["rows"]), "{step}");
+        // padded "system:" text is a tag in the reference (predicate type 0),
+        // which reads "inbox" where the system predicate reads "system:inbox"
+        if step["typed"] == "  system:inbox  " {
+            let at = rows(&step["rows"])
+                .iter()
+                .position(|r| r == "inbox")
+                .unwrap();
+            assert_eq!(step["types"][at], 0, "a tag in the reference");
+            assert!(!texts(&edit.get_predicates()).contains(&"system:inbox".to_owned()));
+        }
     }
     edit.invoke_cancel();
     list.invoke_cancel();

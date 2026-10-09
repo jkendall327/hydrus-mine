@@ -201,11 +201,14 @@ fn the_destination_is_browsed_for_and_its_location_opened_as_the_reference_does(
             assert_eq!(window.get_status(), critical[0][1].as_str().unwrap());
         }
     }
+    // (the stub runs on its own thread: wait for its whole line)
     let started = Instant::now();
-    while !launched.exists() && started.elapsed() < Duration::from_secs(10) {
+    while !std::fs::read_to_string(&launched).is_ok_and(|text| text.ends_with('\n'))
+        && started.elapsed() < Duration::from_secs(10)
+    {
         std::thread::sleep(Duration::from_millis(20));
     }
-    std::thread::sleep(Duration::from_millis(200));
+    hydrus_gui::clear_launch_dir();
     let ours: Vec<Vec<String>> = std::fs::read_to_string(&launched)
         .unwrap()
         .lines()

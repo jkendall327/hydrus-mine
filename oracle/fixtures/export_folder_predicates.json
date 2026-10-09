@@ -1,12 +1,16 @@
 {
  "typing": [
   {
-   "rows": []
+   "rows": [],
+   "types": []
   },
   {
    "typed": "system:filesize > 1B",
    "rows": [
     "system:filesize > 1B"
+   ],
+   "types": [
+    10
    ],
    "left": ""
   },
@@ -16,6 +20,10 @@
     "system:filesize > 1B",
     "system:filetype is png"
    ],
+   "types": [
+    10,
+    17
+   ],
    "left": ""
   },
   {
@@ -23,6 +31,10 @@
    "rows": [
     "system:filesize > 1B",
     "system:filetype is png"
+   ],
+   "types": [
+    10,
+    17
    ],
    "left": "system:nonsense words"
   },
@@ -33,6 +45,11 @@
     "system:filesize > 1B",
     "system:filetype is png"
    ],
+   "types": [
+    0,
+    10,
+    17
+   ],
    "left": ""
   },
   {
@@ -42,6 +59,12 @@
     "creator:*anything*",
     "system:filesize > 1B",
     "system:filetype is png"
+   ],
+   "types": [
+    0,
+    1,
+    10,
+    17
    ],
    "left": ""
   },
@@ -54,6 +77,13 @@
     "system:filesize > 1B",
     "system:filetype is png"
    ],
+   "types": [
+    0,
+    3,
+    1,
+    10,
+    17
+   ],
    "left": ""
   },
   {
@@ -64,6 +94,13 @@
     "creator:*anything*",
     "system:filesize > 1B",
     "system:filetype is png"
+   ],
+   "types": [
+    0,
+    3,
+    1,
+    10,
+    17
    ],
    "left": ""
   },
@@ -76,6 +113,14 @@
     "inbox",
     "system:filesize > 1B",
     "system:filetype is png"
+   ],
+   "types": [
+    0,
+    3,
+    1,
+    0,
+    10,
+    17
    ],
    "left": ""
   },
@@ -90,6 +135,15 @@
     "system:filetype is png",
     "system:width < 200"
    ],
+   "types": [
+    0,
+    3,
+    1,
+    0,
+    10,
+    17,
+    13
+   ],
    "left": ""
   },
   {
@@ -101,6 +155,14 @@
     "inbox",
     "system:filesize > 1B",
     "system:width < 200"
+   ],
+   "types": [
+    0,
+    3,
+    1,
+    0,
+    10,
+    13
    ],
    "left": ""
   },
@@ -115,6 +177,15 @@
     "system:filesize > 1B",
     "system:width < 200"
    ],
+   "types": [
+    0,
+    3,
+    1,
+    0,
+    0,
+    10,
+    13
+   ],
    "left": ""
   },
   {
@@ -126,6 +197,14 @@
     "series:examples",
     "system:filesize > 1B",
     "system:width < 200"
+   ],
+   "types": [
+    3,
+    1,
+    0,
+    0,
+    10,
+    13
    ]
   },
   {
@@ -136,6 +215,13 @@
     "series:examples",
     "system:filesize > 1B",
     "system:width < 200"
+   ],
+   "types": [
+    3,
+    1,
+    0,
+    10,
+    13
    ]
   }
  ],

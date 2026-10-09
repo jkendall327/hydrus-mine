@@ -4407,6 +4407,14 @@ above).
 The export folder editor says why a typed search can't be parsed, under the
 query; the reference's autocomplete leaves the text in place and says nothing.
 
+Manual export's browse button asks for a folder without the reference's
+starting folder (the destination typed so far); the picked path and the rows
+after it are the recording's, the picker's start is not. Its removal of rows
+remakes names at once; the test compares names after the reference's refresh
+(its stale names, which a later export would use, are not reproduced or tested).
+The recordings' phrases include `../` and absolute ones: rows that leave the
+destination read "INVALID, above destination directory" as the reference's do.
+
 Manual export's "open location" reports a missing destination in the window's
 status line ("That location does not seem to exist!") where the reference shows a
 critical dialog; File > open > installation directory opens the Rust executable's

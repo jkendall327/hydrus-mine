@@ -62,23 +62,30 @@ def record(session):
         box = panel._tag_autocomplete._predicates_listbox
         return [''.join(text for (text, _) in box._GetRowsOfTextsAndColours(term)[0]) for term in box._ordered_terms]
 
+    def types(panel):
+        # (a tag is predicate type 0; the system predicates have their own, so a
+        # row that reads 'inbox' tells a tag from `system:inbox`, which reads so too
+        # only as a tag)
+        box = panel._tag_autocomplete._predicates_listbox
+        return [term.GetPredicate().GetType() for term in box._ordered_terms]
+
     def enter(panel, typed):
         ac = panel._tag_autocomplete
         ac._text_ctrl.setText(typed)
         ac._BroadcastCurrentInputFromEnterKey(False)
-        return {'typed': typed, 'rows': rows(panel), 'left': ac._text_ctrl.text()}
+        return {'typed': typed, 'rows': rows(panel), 'types': types(panel), 'left': ac._text_ctrl.text()}
 
     def remove(panel, index):
         box = panel._tag_autocomplete._predicates_listbox
         box._selected_terms = {box._ordered_terms[index]}
         box._Activate(False, False)
-        return {'removed': index, 'rows': rows(panel)}
+        return {'removed': index, 'rows': rows(panel), 'types': types(panel)}
 
     out = {}
 
     def typing():
         (frame, panel) = editor('typing')
-        steps = [{'rows': rows(panel)}]
+        steps = [{'rows': rows(panel), 'types': types(panel)}]
         for typed in TYPED:
             steps.append(enter(panel, typed))
         steps.append(remove(panel, 0))
