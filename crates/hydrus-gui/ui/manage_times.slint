@@ -85,9 +85,10 @@ export component ManageTimesWindow inherits Window {
     callback cancel();
 
     copy-menu := PopupWindow {
-        x: copy-button.x;
-        y: copy-button.y - 6 * 28px;
+        x: copy-button.absolute-position.x - root.absolute-position.x;
+        y: copy-button.absolute-position.y - root.absolute-position.y - 6 * 28px - 8px;
         Rectangle {
+            min-width: 220px;
             background: Theme.panel;
             border-width: 1px;
             border-color: Theme.border;
@@ -95,6 +96,8 @@ export component ManageTimesWindow inherits Window {
                 padding: 4px;
                 for label[i] in ["all times", "file modified time", "archived time", "last viewed times", "web domain times", "file service times"]: Rectangle {
                     height: 28px;
+                    accessible-role: button;
+                    accessible-label: label;
                     background: item-touch.has-hover ? Theme.highlight : transparent;
                     Text {
                         x: 6px;

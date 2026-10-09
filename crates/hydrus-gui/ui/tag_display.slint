@@ -27,6 +27,10 @@ export component TagDisplayWindow inherits Window {
     in-out property <bool> any-namespace;
     in-out property <bool> bare-fetch;
     in-out property <bool> namespace-fetch;
+    // whether the namespace boxes are enabled (set as a namespace search
+    // changes, as the reference sets them)
+    in property <bool> bare-fetch-enabled: true;
+    in property <bool> namespace-fetch-enabled: true;
     in-out property <bool> fetch-all;
     in property <[string]> source-services;
     in-out property <int> source-index;
@@ -60,8 +64,8 @@ export component TagDisplayWindow inherits Window {
                 }
                 CheckBox { enabled: !root.child-open; text: "Search namespaces with normal input"; checked <=> root.search-namespaces; toggled => { root.rule-changed(0, self.checked); } }
                 CheckBox { enabled: !root.child-open; text: "Unnamespaced input gives (any namespace) wildcard results"; checked <=> root.any-namespace; toggled => { root.rule-changed(1, self.checked); } }
-                CheckBox { text: "Allow namespace:"; enabled: !root.search-namespaces && !root.child-open; checked <=> root.bare-fetch; toggled => { root.rule-changed(2, self.checked); } }
-                CheckBox { text: "Allow namespace:*"; enabled: !root.search-namespaces && !root.child-open; checked <=> root.namespace-fetch; toggled => { root.rule-changed(3, self.checked); } }
+                CheckBox { text: "Allow namespace:"; enabled: root.bare-fetch-enabled && !root.child-open; checked <=> root.bare-fetch; toggled => { root.rule-changed(2, self.checked); } }
+                CheckBox { text: "Allow namespace:*"; enabled: root.namespace-fetch-enabled && !root.child-open; checked <=> root.namespace-fetch; toggled => { root.rule-changed(3, self.checked); } }
                 CheckBox { enabled: !root.child-open; text: "Allow *"; checked <=> root.fetch-all; toggled => { root.rule-changed(4, self.checked); } }
                 Text { text: "Expansive namespace and * queries can be expensive on large libraries. Ctrl+Space fetches results manually."; wrap: word-wrap; color: Theme.text; }
             }

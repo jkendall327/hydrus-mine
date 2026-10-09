@@ -205,6 +205,20 @@ search.
 
 ## Pages (`hydrus-gui`)
 
+- **Extended selection in the import review list** (`ListSelection`,
+  shared by every list): a shift-click after a ctrl-click has taken the
+  range's origin out of the selection keeps, in the reference, the other
+  ctrl-selected rows (rows 0, 1, 2 after click 0, ctrl 2, ctrl 0, shift 1);
+  hydrus-rs makes a fresh range (0, 1). Recorded in
+  `oracle/record_import_review_remove.py`; the test pins the difference.
+- **Replayed only by the model, not through the window:** Manage Times'
+  "many files" case (over 100 files asks before applying; the test fixture
+  has 36 files) and whether the date-time editor's value is a change (the
+  window does not show it).
+- **Closing the last page** (Ctrl+W or a middle click on the only tab)
+  leaves the reference's main notebook empty; hydrus-rs's top notebook
+  always holds a page, so a new search page ("files") takes its place
+  (`oracle/record_page_close.py`, the last step).
 - **Active predicate editing remains Partial.** Represented system values and
   simple tags/namespaces/wildcards can now be edited together, with one atomic
   Apply and separate supplied values for repeated system families. Immutable
