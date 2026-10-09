@@ -1,0 +1,2236 @@
+{
+ "cases": [
+  {
+   "after": [
+    {
+     "name": "third"
+    },
+    {
+     "name": "second",
+     "pages": [
+      {
+       "name": "pages",
+       "pages": [
+        {
+         "name": "files"
+        }
+       ]
+      },
+      {
+       "name": "c"
+      },
+      {
+       "name": "b"
+      },
+      {
+       "name": "a"
+      }
+     ]
+    },
+    {
+     "name": "first"
+    }
+   ],
+   "before": [
+    {
+     "name": "third"
+    },
+    {
+     "name": "second",
+     "pages": [
+      {
+       "name": "c"
+      },
+      {
+       "name": "b"
+      },
+      {
+       "name": "a"
+      }
+     ]
+    },
+    {
+     "name": "first"
+    }
+   ],
+   "before_current": [
+    1,
+    1
+   ],
+   "cancel": false,
+   "current": [
+    1,
+    0,
+    0
+   ],
+   "how": "ctrl+t",
+   "inside": true,
+   "mode": 0
+  },
+  {
+   "after": [
+    {
+     "name": "third"
+    },
+    {
+     "name": "second",
+     "pages": [
+      {
+       "name": "c"
+      },
+      {
+       "name": "b"
+      },
+      {
+       "name": "a"
+      }
+     ]
+    },
+    {
+     "name": "first"
+    }
+   ],
+   "before": [
+    {
+     "name": "third"
+    },
+    {
+     "name": "second",
+     "pages": [
+      {
+       "name": "c"
+      },
+      {
+       "name": "b"
+      },
+      {
+       "name": "a"
+      }
+     ]
+    },
+    {
+     "name": "first"
+    }
+   ],
+   "before_current": [
+    1,
+    1
+   ],
+   "cancel": true,
+   "current": [
+    1,
+    1
+   ],
+   "how": "ctrl+t",
+   "inside": true,
+   "mode": 0
+  },
+  {
+   "after": [
+    {
+     "name": "pages",
+     "pages": [
+      {
+       "name": "files"
+      }
+     ]
+    },
+    {
+     "name": "third"
+    },
+    {
+     "name": "second",
+     "pages": [
+      {
+       "name": "c"
+      },
+      {
+       "name": "b"
+      },
+      {
+       "name": "a"
+      }
+     ]
+    },
+    {
+     "name": "first"
+    }
+   ],
+   "before": [
+    {
+     "name": "third"
+    },
+    {
+     "name": "second",
+     "pages": [
+      {
+       "name": "c"
+      },
+      {
+       "name": "b"
+      },
+      {
+       "name": "a"
+      }
+     ]
+    },
+    {
+     "name": "first"
+    }
+   ],
+   "before_current": [
+    1,
+    1
+   ],
+   "cancel": false,
+   "current": [
+    0,
+    0
+   ],
+   "how": "double click, top row",
+   "inside": true,
+   "mode": 0
+  },
+  {
+   "after": [
+    {
+     "name": "third"
+    },
+    {
+     "name": "second",
+     "pages": [
+      {
+       "name": "c"
+      },
+      {
+       "name": "b"
+      },
+      {
+       "name": "a"
+      }
+     ]
+    },
+    {
+     "name": "first"
+    }
+   ],
+   "before": [
+    {
+     "name": "third"
+    },
+    {
+     "name": "second",
+     "pages": [
+      {
+       "name": "c"
+      },
+      {
+       "name": "b"
+      },
+      {
+       "name": "a"
+      }
+     ]
+    },
+    {
+     "name": "first"
+    }
+   ],
+   "before_current": [
+    1,
+    1
+   ],
+   "cancel": true,
+   "current": [
+    1,
+    1
+   ],
+   "how": "double click, top row",
+   "inside": true,
+   "mode": 0
+  },
+  {
+   "after": [
+    {
+     "name": "third"
+    },
+    {
+     "name": "second",
+     "pages": [
+      {
+       "name": "pages",
+       "pages": [
+        {
+         "name": "files"
+        }
+       ]
+      },
+      {
+       "name": "c"
+      },
+      {
+       "name": "b"
+      },
+      {
+       "name": "a"
+      }
+     ]
+    },
+    {
+     "name": "first"
+    }
+   ],
+   "before": [
+    {
+     "name": "third"
+    },
+    {
+     "name": "second",
+     "pages": [
+      {
+       "name": "c"
+      },
+      {
+       "name": "b"
+      },
+      {
+       "name": "a"
+      }
+     ]
+    },
+    {
+     "name": "first"
+    }
+   ],
+   "before_current": [
+    1,
+    1
+   ],
+   "cancel": false,
+   "current": [
+    1,
+    0,
+    0
+   ],
+   "how": "double click, second row",
+   "inside": true,
+   "mode": 0
+  },
+  {
+   "after": [
+    {
+     "name": "pages",
+     "pages": [
+      {
+       "name": "files"
+      }
+     ]
+    },
+    {
+     "name": "third"
+    },
+    {
+     "name": "second",
+     "pages": [
+      {
+       "name": "c"
+      },
+      {
+       "name": "b"
+      },
+      {
+       "name": "a"
+      }
+     ]
+    },
+    {
+     "name": "first"
+    }
+   ],
+   "before": [
+    {
+     "name": "third"
+    },
+    {
+     "name": "second",
+     "pages": [
+      {
+       "name": "c"
+      },
+      {
+       "name": "b"
+      },
+      {
+       "name": "a"
+      }
+     ]
+    },
+    {
+     "name": "first"
+    }
+   ],
+   "before_current": [
+    0
+   ],
+   "cancel": false,
+   "current": [
+    0,
+    0
+   ],
+   "how": "ctrl+t",
+   "inside": false,
+   "mode": 0
+  },
+  {
+   "after": [
+    {
+     "name": "third"
+    },
+    {
+     "name": "second",
+     "pages": [
+      {
+       "name": "c"
+      },
+      {
+       "name": "b"
+      },
+      {
+       "name": "a"
+      }
+     ]
+    },
+    {
+     "name": "first"
+    }
+   ],
+   "before": [
+    {
+     "name": "third"
+    },
+    {
+     "name": "second",
+     "pages": [
+      {
+       "name": "c"
+      },
+      {
+       "name": "b"
+      },
+      {
+       "name": "a"
+      }
+     ]
+    },
+    {
+     "name": "first"
+    }
+   ],
+   "before_current": [
+    0
+   ],
+   "cancel": true,
+   "current": [
+    0
+   ],
+   "how": "ctrl+t",
+   "inside": false,
+   "mode": 0
+  },
+  {
+   "after": [
+    {
+     "name": "pages",
+     "pages": [
+      {
+       "name": "files"
+      }
+     ]
+    },
+    {
+     "name": "third"
+    },
+    {
+     "name": "second",
+     "pages": [
+      {
+       "name": "c"
+      },
+      {
+       "name": "b"
+      },
+      {
+       "name": "a"
+      }
+     ]
+    },
+    {
+     "name": "first"
+    }
+   ],
+   "before": [
+    {
+     "name": "third"
+    },
+    {
+     "name": "second",
+     "pages": [
+      {
+       "name": "c"
+      },
+      {
+       "name": "b"
+      },
+      {
+       "name": "a"
+      }
+     ]
+    },
+    {
+     "name": "first"
+    }
+   ],
+   "before_current": [
+    0
+   ],
+   "cancel": false,
+   "current": [
+    0,
+    0
+   ],
+   "how": "double click, top row",
+   "inside": false,
+   "mode": 0
+  },
+  {
+   "after": [
+    {
+     "name": "third"
+    },
+    {
+     "name": "second",
+     "pages": [
+      {
+       "name": "c"
+      },
+      {
+       "name": "b"
+      },
+      {
+       "name": "a"
+      }
+     ]
+    },
+    {
+     "name": "first"
+    }
+   ],
+   "before": [
+    {
+     "name": "third"
+    },
+    {
+     "name": "second",
+     "pages": [
+      {
+       "name": "c"
+      },
+      {
+       "name": "b"
+      },
+      {
+       "name": "a"
+      }
+     ]
+    },
+    {
+     "name": "first"
+    }
+   ],
+   "before_current": [
+    0
+   ],
+   "cancel": true,
+   "current": [
+    0
+   ],
+   "how": "double click, top row",
+   "inside": false,
+   "mode": 0
+  },
+  {
+   "after": [
+    {
+     "name": "third"
+    },
+    {
+     "name": "second",
+     "pages": [
+      {
+       "name": "c"
+      },
+      {
+       "name": "pages",
+       "pages": [
+        {
+         "name": "files"
+        }
+       ]
+      },
+      {
+       "name": "b"
+      },
+      {
+       "name": "a"
+      }
+     ]
+    },
+    {
+     "name": "first"
+    }
+   ],
+   "before": [
+    {
+     "name": "third"
+    },
+    {
+     "name": "second",
+     "pages": [
+      {
+       "name": "c"
+      },
+      {
+       "name": "b"
+      },
+      {
+       "name": "a"
+      }
+     ]
+    },
+    {
+     "name": "first"
+    }
+   ],
+   "before_current": [
+    1,
+    1
+   ],
+   "cancel": false,
+   "current": [
+    1,
+    1,
+    0
+   ],
+   "how": "ctrl+t",
+   "inside": true,
+   "mode": 1
+  },
+  {
+   "after": [
+    {
+     "name": "third"
+    },
+    {
+     "name": "second",
+     "pages": [
+      {
+       "name": "c"
+      },
+      {
+       "name": "b"
+      },
+      {
+       "name": "a"
+      }
+     ]
+    },
+    {
+     "name": "first"
+    }
+   ],
+   "before": [
+    {
+     "name": "third"
+    },
+    {
+     "name": "second",
+     "pages": [
+      {
+       "name": "c"
+      },
+      {
+       "name": "b"
+      },
+      {
+       "name": "a"
+      }
+     ]
+    },
+    {
+     "name": "first"
+    }
+   ],
+   "before_current": [
+    1,
+    1
+   ],
+   "cancel": true,
+   "current": [
+    1,
+    1
+   ],
+   "how": "ctrl+t",
+   "inside": true,
+   "mode": 1
+  },
+  {
+   "after": [
+    {
+     "name": "third"
+    },
+    {
+     "name": "pages",
+     "pages": [
+      {
+       "name": "files"
+      }
+     ]
+    },
+    {
+     "name": "second",
+     "pages": [
+      {
+       "name": "c"
+      },
+      {
+       "name": "b"
+      },
+      {
+       "name": "a"
+      }
+     ]
+    },
+    {
+     "name": "first"
+    }
+   ],
+   "before": [
+    {
+     "name": "third"
+    },
+    {
+     "name": "second",
+     "pages": [
+      {
+       "name": "c"
+      },
+      {
+       "name": "b"
+      },
+      {
+       "name": "a"
+      }
+     ]
+    },
+    {
+     "name": "first"
+    }
+   ],
+   "before_current": [
+    1,
+    1
+   ],
+   "cancel": false,
+   "current": [
+    1,
+    0
+   ],
+   "how": "double click, top row",
+   "inside": true,
+   "mode": 1
+  },
+  {
+   "after": [
+    {
+     "name": "third"
+    },
+    {
+     "name": "second",
+     "pages": [
+      {
+       "name": "c"
+      },
+      {
+       "name": "b"
+      },
+      {
+       "name": "a"
+      }
+     ]
+    },
+    {
+     "name": "first"
+    }
+   ],
+   "before": [
+    {
+     "name": "third"
+    },
+    {
+     "name": "second",
+     "pages": [
+      {
+       "name": "c"
+      },
+      {
+       "name": "b"
+      },
+      {
+       "name": "a"
+      }
+     ]
+    },
+    {
+     "name": "first"
+    }
+   ],
+   "before_current": [
+    1,
+    1
+   ],
+   "cancel": true,
+   "current": [
+    1,
+    1
+   ],
+   "how": "double click, top row",
+   "inside": true,
+   "mode": 1
+  },
+  {
+   "after": [
+    {
+     "name": "third"
+    },
+    {
+     "name": "second",
+     "pages": [
+      {
+       "name": "c"
+      },
+      {
+       "name": "pages",
+       "pages": [
+        {
+         "name": "files"
+        }
+       ]
+      },
+      {
+       "name": "b"
+      },
+      {
+       "name": "a"
+      }
+     ]
+    },
+    {
+     "name": "first"
+    }
+   ],
+   "before": [
+    {
+     "name": "third"
+    },
+    {
+     "name": "second",
+     "pages": [
+      {
+       "name": "c"
+      },
+      {
+       "name": "b"
+      },
+      {
+       "name": "a"
+      }
+     ]
+    },
+    {
+     "name": "first"
+    }
+   ],
+   "before_current": [
+    1,
+    1
+   ],
+   "cancel": false,
+   "current": [
+    1,
+    1,
+    0
+   ],
+   "how": "double click, second row",
+   "inside": true,
+   "mode": 1
+  },
+  {
+   "after": [
+    {
+     "name": "pages",
+     "pages": [
+      {
+       "name": "files"
+      }
+     ]
+    },
+    {
+     "name": "third"
+    },
+    {
+     "name": "second",
+     "pages": [
+      {
+       "name": "c"
+      },
+      {
+       "name": "b"
+      },
+      {
+       "name": "a"
+      }
+     ]
+    },
+    {
+     "name": "first"
+    }
+   ],
+   "before": [
+    {
+     "name": "third"
+    },
+    {
+     "name": "second",
+     "pages": [
+      {
+       "name": "c"
+      },
+      {
+       "name": "b"
+      },
+      {
+       "name": "a"
+      }
+     ]
+    },
+    {
+     "name": "first"
+    }
+   ],
+   "before_current": [
+    0
+   ],
+   "cancel": false,
+   "current": [
+    0,
+    0
+   ],
+   "how": "ctrl+t",
+   "inside": false,
+   "mode": 1
+  },
+  {
+   "after": [
+    {
+     "name": "third"
+    },
+    {
+     "name": "second",
+     "pages": [
+      {
+       "name": "c"
+      },
+      {
+       "name": "b"
+      },
+      {
+       "name": "a"
+      }
+     ]
+    },
+    {
+     "name": "first"
+    }
+   ],
+   "before": [
+    {
+     "name": "third"
+    },
+    {
+     "name": "second",
+     "pages": [
+      {
+       "name": "c"
+      },
+      {
+       "name": "b"
+      },
+      {
+       "name": "a"
+      }
+     ]
+    },
+    {
+     "name": "first"
+    }
+   ],
+   "before_current": [
+    0
+   ],
+   "cancel": true,
+   "current": [
+    0
+   ],
+   "how": "ctrl+t",
+   "inside": false,
+   "mode": 1
+  },
+  {
+   "after": [
+    {
+     "name": "pages",
+     "pages": [
+      {
+       "name": "files"
+      }
+     ]
+    },
+    {
+     "name": "third"
+    },
+    {
+     "name": "second",
+     "pages": [
+      {
+       "name": "c"
+      },
+      {
+       "name": "b"
+      },
+      {
+       "name": "a"
+      }
+     ]
+    },
+    {
+     "name": "first"
+    }
+   ],
+   "before": [
+    {
+     "name": "third"
+    },
+    {
+     "name": "second",
+     "pages": [
+      {
+       "name": "c"
+      },
+      {
+       "name": "b"
+      },
+      {
+       "name": "a"
+      }
+     ]
+    },
+    {
+     "name": "first"
+    }
+   ],
+   "before_current": [
+    0
+   ],
+   "cancel": false,
+   "current": [
+    0,
+    0
+   ],
+   "how": "double click, top row",
+   "inside": false,
+   "mode": 1
+  },
+  {
+   "after": [
+    {
+     "name": "third"
+    },
+    {
+     "name": "second",
+     "pages": [
+      {
+       "name": "c"
+      },
+      {
+       "name": "b"
+      },
+      {
+       "name": "a"
+      }
+     ]
+    },
+    {
+     "name": "first"
+    }
+   ],
+   "before": [
+    {
+     "name": "third"
+    },
+    {
+     "name": "second",
+     "pages": [
+      {
+       "name": "c"
+      },
+      {
+       "name": "b"
+      },
+      {
+       "name": "a"
+      }
+     ]
+    },
+    {
+     "name": "first"
+    }
+   ],
+   "before_current": [
+    0
+   ],
+   "cancel": true,
+   "current": [
+    0
+   ],
+   "how": "double click, top row",
+   "inside": false,
+   "mode": 1
+  },
+  {
+   "after": [
+    {
+     "name": "first"
+    },
+    {
+     "name": "second",
+     "pages": [
+      {
+       "name": "a"
+      },
+      {
+       "name": "b"
+      },
+      {
+       "name": "pages",
+       "pages": [
+        {
+         "name": "files"
+        }
+       ]
+      },
+      {
+       "name": "c"
+      }
+     ]
+    },
+    {
+     "name": "third"
+    }
+   ],
+   "before": [
+    {
+     "name": "first"
+    },
+    {
+     "name": "second",
+     "pages": [
+      {
+       "name": "a"
+      },
+      {
+       "name": "b"
+      },
+      {
+       "name": "c"
+      }
+     ]
+    },
+    {
+     "name": "third"
+    }
+   ],
+   "before_current": [
+    1,
+    1
+   ],
+   "cancel": false,
+   "current": [
+    1,
+    2,
+    0
+   ],
+   "how": "ctrl+t",
+   "inside": true,
+   "mode": 2
+  },
+  {
+   "after": [
+    {
+     "name": "first"
+    },
+    {
+     "name": "second",
+     "pages": [
+      {
+       "name": "a"
+      },
+      {
+       "name": "b"
+      },
+      {
+       "name": "c"
+      }
+     ]
+    },
+    {
+     "name": "third"
+    }
+   ],
+   "before": [
+    {
+     "name": "first"
+    },
+    {
+     "name": "second",
+     "pages": [
+      {
+       "name": "a"
+      },
+      {
+       "name": "b"
+      },
+      {
+       "name": "c"
+      }
+     ]
+    },
+    {
+     "name": "third"
+    }
+   ],
+   "before_current": [
+    1,
+    1
+   ],
+   "cancel": true,
+   "current": [
+    1,
+    1
+   ],
+   "how": "ctrl+t",
+   "inside": true,
+   "mode": 2
+  },
+  {
+   "after": [
+    {
+     "name": "first"
+    },
+    {
+     "name": "second",
+     "pages": [
+      {
+       "name": "a"
+      },
+      {
+       "name": "b"
+      },
+      {
+       "name": "c"
+      }
+     ]
+    },
+    {
+     "name": "pages",
+     "pages": [
+      {
+       "name": "files"
+      }
+     ]
+    },
+    {
+     "name": "third"
+    }
+   ],
+   "before": [
+    {
+     "name": "first"
+    },
+    {
+     "name": "second",
+     "pages": [
+      {
+       "name": "a"
+      },
+      {
+       "name": "b"
+      },
+      {
+       "name": "c"
+      }
+     ]
+    },
+    {
+     "name": "third"
+    }
+   ],
+   "before_current": [
+    1,
+    1
+   ],
+   "cancel": false,
+   "current": [
+    2,
+    0
+   ],
+   "how": "double click, top row",
+   "inside": true,
+   "mode": 2
+  },
+  {
+   "after": [
+    {
+     "name": "first"
+    },
+    {
+     "name": "second",
+     "pages": [
+      {
+       "name": "a"
+      },
+      {
+       "name": "b"
+      },
+      {
+       "name": "c"
+      }
+     ]
+    },
+    {
+     "name": "third"
+    }
+   ],
+   "before": [
+    {
+     "name": "first"
+    },
+    {
+     "name": "second",
+     "pages": [
+      {
+       "name": "a"
+      },
+      {
+       "name": "b"
+      },
+      {
+       "name": "c"
+      }
+     ]
+    },
+    {
+     "name": "third"
+    }
+   ],
+   "before_current": [
+    1,
+    1
+   ],
+   "cancel": true,
+   "current": [
+    1,
+    1
+   ],
+   "how": "double click, top row",
+   "inside": true,
+   "mode": 2
+  },
+  {
+   "after": [
+    {
+     "name": "first"
+    },
+    {
+     "name": "second",
+     "pages": [
+      {
+       "name": "a"
+      },
+      {
+       "name": "b"
+      },
+      {
+       "name": "pages",
+       "pages": [
+        {
+         "name": "files"
+        }
+       ]
+      },
+      {
+       "name": "c"
+      }
+     ]
+    },
+    {
+     "name": "third"
+    }
+   ],
+   "before": [
+    {
+     "name": "first"
+    },
+    {
+     "name": "second",
+     "pages": [
+      {
+       "name": "a"
+      },
+      {
+       "name": "b"
+      },
+      {
+       "name": "c"
+      }
+     ]
+    },
+    {
+     "name": "third"
+    }
+   ],
+   "before_current": [
+    1,
+    1
+   ],
+   "cancel": false,
+   "current": [
+    1,
+    2,
+    0
+   ],
+   "how": "double click, second row",
+   "inside": true,
+   "mode": 2
+  },
+  {
+   "after": [
+    {
+     "name": "first"
+    },
+    {
+     "name": "pages",
+     "pages": [
+      {
+       "name": "files"
+      }
+     ]
+    },
+    {
+     "name": "second",
+     "pages": [
+      {
+       "name": "a"
+      },
+      {
+       "name": "b"
+      },
+      {
+       "name": "c"
+      }
+     ]
+    },
+    {
+     "name": "third"
+    }
+   ],
+   "before": [
+    {
+     "name": "first"
+    },
+    {
+     "name": "second",
+     "pages": [
+      {
+       "name": "a"
+      },
+      {
+       "name": "b"
+      },
+      {
+       "name": "c"
+      }
+     ]
+    },
+    {
+     "name": "third"
+    }
+   ],
+   "before_current": [
+    0
+   ],
+   "cancel": false,
+   "current": [
+    1,
+    0
+   ],
+   "how": "ctrl+t",
+   "inside": false,
+   "mode": 2
+  },
+  {
+   "after": [
+    {
+     "name": "first"
+    },
+    {
+     "name": "second",
+     "pages": [
+      {
+       "name": "a"
+      },
+      {
+       "name": "b"
+      },
+      {
+       "name": "c"
+      }
+     ]
+    },
+    {
+     "name": "third"
+    }
+   ],
+   "before": [
+    {
+     "name": "first"
+    },
+    {
+     "name": "second",
+     "pages": [
+      {
+       "name": "a"
+      },
+      {
+       "name": "b"
+      },
+      {
+       "name": "c"
+      }
+     ]
+    },
+    {
+     "name": "third"
+    }
+   ],
+   "before_current": [
+    0
+   ],
+   "cancel": true,
+   "current": [
+    0
+   ],
+   "how": "ctrl+t",
+   "inside": false,
+   "mode": 2
+  },
+  {
+   "after": [
+    {
+     "name": "first"
+    },
+    {
+     "name": "pages",
+     "pages": [
+      {
+       "name": "files"
+      }
+     ]
+    },
+    {
+     "name": "second",
+     "pages": [
+      {
+       "name": "a"
+      },
+      {
+       "name": "b"
+      },
+      {
+       "name": "c"
+      }
+     ]
+    },
+    {
+     "name": "third"
+    }
+   ],
+   "before": [
+    {
+     "name": "first"
+    },
+    {
+     "name": "second",
+     "pages": [
+      {
+       "name": "a"
+      },
+      {
+       "name": "b"
+      },
+      {
+       "name": "c"
+      }
+     ]
+    },
+    {
+     "name": "third"
+    }
+   ],
+   "before_current": [
+    0
+   ],
+   "cancel": false,
+   "current": [
+    1,
+    0
+   ],
+   "how": "double click, top row",
+   "inside": false,
+   "mode": 2
+  },
+  {
+   "after": [
+    {
+     "name": "first"
+    },
+    {
+     "name": "second",
+     "pages": [
+      {
+       "name": "a"
+      },
+      {
+       "name": "b"
+      },
+      {
+       "name": "c"
+      }
+     ]
+    },
+    {
+     "name": "third"
+    }
+   ],
+   "before": [
+    {
+     "name": "first"
+    },
+    {
+     "name": "second",
+     "pages": [
+      {
+       "name": "a"
+      },
+      {
+       "name": "b"
+      },
+      {
+       "name": "c"
+      }
+     ]
+    },
+    {
+     "name": "third"
+    }
+   ],
+   "before_current": [
+    0
+   ],
+   "cancel": true,
+   "current": [
+    0
+   ],
+   "how": "double click, top row",
+   "inside": false,
+   "mode": 2
+  },
+  {
+   "after": [
+    {
+     "name": "first"
+    },
+    {
+     "name": "second",
+     "pages": [
+      {
+       "name": "a"
+      },
+      {
+       "name": "b"
+      },
+      {
+       "name": "c"
+      },
+      {
+       "name": "pages",
+       "pages": [
+        {
+         "name": "files"
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "name": "third"
+    }
+   ],
+   "before": [
+    {
+     "name": "first"
+    },
+    {
+     "name": "second",
+     "pages": [
+      {
+       "name": "a"
+      },
+      {
+       "name": "b"
+      },
+      {
+       "name": "c"
+      }
+     ]
+    },
+    {
+     "name": "third"
+    }
+   ],
+   "before_current": [
+    1,
+    1
+   ],
+   "cancel": false,
+   "current": [
+    1,
+    3,
+    0
+   ],
+   "how": "ctrl+t",
+   "inside": true,
+   "mode": 3
+  },
+  {
+   "after": [
+    {
+     "name": "first"
+    },
+    {
+     "name": "second",
+     "pages": [
+      {
+       "name": "a"
+      },
+      {
+       "name": "b"
+      },
+      {
+       "name": "c"
+      }
+     ]
+    },
+    {
+     "name": "third"
+    }
+   ],
+   "before": [
+    {
+     "name": "first"
+    },
+    {
+     "name": "second",
+     "pages": [
+      {
+       "name": "a"
+      },
+      {
+       "name": "b"
+      },
+      {
+       "name": "c"
+      }
+     ]
+    },
+    {
+     "name": "third"
+    }
+   ],
+   "before_current": [
+    1,
+    1
+   ],
+   "cancel": true,
+   "current": [
+    1,
+    1
+   ],
+   "how": "ctrl+t",
+   "inside": true,
+   "mode": 3
+  },
+  {
+   "after": [
+    {
+     "name": "first"
+    },
+    {
+     "name": "second",
+     "pages": [
+      {
+       "name": "a"
+      },
+      {
+       "name": "b"
+      },
+      {
+       "name": "c"
+      }
+     ]
+    },
+    {
+     "name": "third"
+    },
+    {
+     "name": "pages",
+     "pages": [
+      {
+       "name": "files"
+      }
+     ]
+    }
+   ],
+   "before": [
+    {
+     "name": "first"
+    },
+    {
+     "name": "second",
+     "pages": [
+      {
+       "name": "a"
+      },
+      {
+       "name": "b"
+      },
+      {
+       "name": "c"
+      }
+     ]
+    },
+    {
+     "name": "third"
+    }
+   ],
+   "before_current": [
+    1,
+    1
+   ],
+   "cancel": false,
+   "current": [
+    3,
+    0
+   ],
+   "how": "double click, top row",
+   "inside": true,
+   "mode": 3
+  },
+  {
+   "after": [
+    {
+     "name": "first"
+    },
+    {
+     "name": "second",
+     "pages": [
+      {
+       "name": "a"
+      },
+      {
+       "name": "b"
+      },
+      {
+       "name": "c"
+      }
+     ]
+    },
+    {
+     "name": "third"
+    }
+   ],
+   "before": [
+    {
+     "name": "first"
+    },
+    {
+     "name": "second",
+     "pages": [
+      {
+       "name": "a"
+      },
+      {
+       "name": "b"
+      },
+      {
+       "name": "c"
+      }
+     ]
+    },
+    {
+     "name": "third"
+    }
+   ],
+   "before_current": [
+    1,
+    1
+   ],
+   "cancel": true,
+   "current": [
+    1,
+    1
+   ],
+   "how": "double click, top row",
+   "inside": true,
+   "mode": 3
+  },
+  {
+   "after": [
+    {
+     "name": "first"
+    },
+    {
+     "name": "second",
+     "pages": [
+      {
+       "name": "a"
+      },
+      {
+       "name": "b"
+      },
+      {
+       "name": "c"
+      },
+      {
+       "name": "pages",
+       "pages": [
+        {
+         "name": "files"
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "name": "third"
+    }
+   ],
+   "before": [
+    {
+     "name": "first"
+    },
+    {
+     "name": "second",
+     "pages": [
+      {
+       "name": "a"
+      },
+      {
+       "name": "b"
+      },
+      {
+       "name": "c"
+      }
+     ]
+    },
+    {
+     "name": "third"
+    }
+   ],
+   "before_current": [
+    1,
+    1
+   ],
+   "cancel": false,
+   "current": [
+    1,
+    3,
+    0
+   ],
+   "how": "double click, second row",
+   "inside": true,
+   "mode": 3
+  },
+  {
+   "after": [
+    {
+     "name": "first"
+    },
+    {
+     "name": "second",
+     "pages": [
+      {
+       "name": "a"
+      },
+      {
+       "name": "b"
+      },
+      {
+       "name": "c"
+      }
+     ]
+    },
+    {
+     "name": "third"
+    },
+    {
+     "name": "pages",
+     "pages": [
+      {
+       "name": "files"
+      }
+     ]
+    }
+   ],
+   "before": [
+    {
+     "name": "first"
+    },
+    {
+     "name": "second",
+     "pages": [
+      {
+       "name": "a"
+      },
+      {
+       "name": "b"
+      },
+      {
+       "name": "c"
+      }
+     ]
+    },
+    {
+     "name": "third"
+    }
+   ],
+   "before_current": [
+    0
+   ],
+   "cancel": false,
+   "current": [
+    3,
+    0
+   ],
+   "how": "ctrl+t",
+   "inside": false,
+   "mode": 3
+  },
+  {
+   "after": [
+    {
+     "name": "first"
+    },
+    {
+     "name": "second",
+     "pages": [
+      {
+       "name": "a"
+      },
+      {
+       "name": "b"
+      },
+      {
+       "name": "c"
+      }
+     ]
+    },
+    {
+     "name": "third"
+    }
+   ],
+   "before": [
+    {
+     "name": "first"
+    },
+    {
+     "name": "second",
+     "pages": [
+      {
+       "name": "a"
+      },
+      {
+       "name": "b"
+      },
+      {
+       "name": "c"
+      }
+     ]
+    },
+    {
+     "name": "third"
+    }
+   ],
+   "before_current": [
+    0
+   ],
+   "cancel": true,
+   "current": [
+    0
+   ],
+   "how": "ctrl+t",
+   "inside": false,
+   "mode": 3
+  },
+  {
+   "after": [
+    {
+     "name": "first"
+    },
+    {
+     "name": "second",
+     "pages": [
+      {
+       "name": "a"
+      },
+      {
+       "name": "b"
+      },
+      {
+       "name": "c"
+      }
+     ]
+    },
+    {
+     "name": "third"
+    },
+    {
+     "name": "pages",
+     "pages": [
+      {
+       "name": "files"
+      }
+     ]
+    }
+   ],
+   "before": [
+    {
+     "name": "first"
+    },
+    {
+     "name": "second",
+     "pages": [
+      {
+       "name": "a"
+      },
+      {
+       "name": "b"
+      },
+      {
+       "name": "c"
+      }
+     ]
+    },
+    {
+     "name": "third"
+    }
+   ],
+   "before_current": [
+    0
+   ],
+   "cancel": false,
+   "current": [
+    3,
+    0
+   ],
+   "how": "double click, top row",
+   "inside": false,
+   "mode": 3
+  },
+  {
+   "after": [
+    {
+     "name": "first"
+    },
+    {
+     "name": "second",
+     "pages": [
+      {
+       "name": "a"
+      },
+      {
+       "name": "b"
+      },
+      {
+       "name": "c"
+      }
+     ]
+    },
+    {
+     "name": "third"
+    }
+   ],
+   "before": [
+    {
+     "name": "first"
+    },
+    {
+     "name": "second",
+     "pages": [
+      {
+       "name": "a"
+      },
+      {
+       "name": "b"
+      },
+      {
+       "name": "c"
+      }
+     ]
+    },
+    {
+     "name": "third"
+    }
+   ],
+   "before_current": [
+    0
+   ],
+   "cancel": true,
+   "current": [
+    0
+   ],
+   "how": "double click, top row",
+   "inside": false,
+   "mode": 3
+  }
+ ]
+}

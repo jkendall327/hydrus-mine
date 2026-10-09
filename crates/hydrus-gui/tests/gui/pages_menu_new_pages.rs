@@ -5,7 +5,7 @@
 //! as it names and types it, where it went (into the deepest page of
 //! pages, else beside the current page), and which tabs are current.
 
-use slint::Model as _;
+use slint::{ComponentHandle as _, Model as _};
 
 use hydrus_core::pages::{Page, PageContent, PageKey, Session};
 use hydrus_gui::{MainWindow, Pages, bind, headless};
@@ -477,4 +477,377 @@ fn the_history_menu_follows_the_pages_shown_closed_and_cleared_as_the_reference_
             step["step"]
         );
     }
+}
+
+// leaf: audit-options-menu-menu-undo-closed-page
+// leaf: audit-options-menu-menu-undo-clear-all
+#[test]
+fn closed_pages_come_back_and_clear_all_asks_as_the_reference_s_undo_menu_does() {
+    let _windows = headless::init();
+    let recorded = hydrus_testkit::fixture_json("undo_closed_pages.json");
+    let names: Vec<String> = recorded["names"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|n| n.as_str().unwrap().to_owned())
+        .collect();
+    let legacy = hydrus_testkit::legacy_fixture("basic");
+    let native = tempfile::tempdir().unwrap();
+    import_legacy(
+        legacy.path(),
+        &native.path().join(hydrus_store::store::DB_FILE_NAME),
+    )
+    .unwrap();
+    let store = Store::open(native.path()).unwrap();
+    let session = Session {
+        name: sessions::LAST_SESSION.into(),
+        pages: names.iter().map(|n| search(n)).collect(),
+    };
+    store
+        .write(move |ctx| sessions::save(ctx.conn(), &session, 1))
+        .unwrap();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+    let tab_of = |name: &str| -> i32 {
+        let at = bound.pages.borrow().tabs()[0]
+            .names
+            .iter()
+            .position(|n| n == name)
+            .unwrap_or_else(|| panic!("{name} open"));
+        i32::try_from(at).unwrap()
+    };
+    // (the closed pages menu's lines, or None while the undo menu has nothing
+    // to show: the reference greys it out then)
+    let open_closed = |ui: &MainWindow| -> Option<Vec<String>> {
+        let titles = ui.get_menu_titles();
+        let at = (0..titles.row_count())
+            .position(|i| titles.row_data(i).unwrap().label == "undo")
+            .unwrap();
+        ui.invoke_menu_title_pressed(i32::try_from(at).unwrap(), 80.0, 22.0);
+        if panes(ui).is_empty() {
+            return None;
+        }
+        hover(ui, "closed pages");
+        Some(panes(ui).last().unwrap().clone())
+    };
+    for step in recorded["steps"].as_array().unwrap() {
+        match step["step"][0].as_str().unwrap() {
+            "close" => {
+                ui.invoke_tab_chosen(0, tab_of(step["step"][1].as_str().unwrap()));
+                ui.invoke_close_page();
+            }
+            "undo" | "entry" => {
+                // (the most recent is the top entry of the menu)
+                let wanted = step["step"]
+                    .get(1)
+                    .and_then(serde_json::Value::as_u64)
+                    .unwrap_or(1) as usize;
+                if let Some(shown) = open_closed(&ui) {
+                    let entry = shown[1 + wanted].clone();
+                    let (p, i) = line(&ui, &entry);
+                    ui.invoke_menu_line_clicked(p, i, 0.0, 0.0, 0.0);
+                } else {
+                    // (nothing to bring back: the reference's did nothing)
+                    assert_eq!(step["closed_count"], 0, "{}", step["step"]);
+                }
+            }
+            _ => {
+                let shown = open_closed(&ui).expect("closed pages to clear");
+                assert_eq!(shown[0], "clear all\u{2026}");
+                let (p, i) = line(&ui, "clear all\u{2026}");
+                ui.invoke_menu_line_clicked(p, i, 0.0, 0.0, 0.0);
+                assert_eq!(
+                    ui.get_question(),
+                    step["questions"][0].as_str().unwrap(),
+                    "the question"
+                );
+                ui.invoke_answer(step["step"][1].as_bool().unwrap());
+            }
+        }
+        let what = &step["step"];
+        // the tabs in order and the page shown
+        assert_eq!(
+            serde_json::json!(bound.pages.borrow().tabs()[0].names),
+            step["tabs"],
+            "the tabs after {what}"
+        );
+        assert_eq!(
+            bound.pages.borrow().shown().name,
+            step["current"].as_str().unwrap(),
+            "the page shown after {what}"
+        );
+        // the closed pages menu: most recently closed first, with clear all
+        // above them; nothing at all once none are left (the reference's
+        // undo menu is disabled then)
+        let count = step["closed_count"].as_u64().unwrap();
+        let menu = open_closed(&ui);
+        if count == 0 {
+            assert!(!step["undo_menu_enabled"].as_bool().unwrap());
+            assert!(!step["closed_enabled"].as_bool().unwrap());
+            assert_eq!(menu, None, "the undo menu after {what}");
+        } else {
+            // (the undo menu and its closed pages submenu are there to use)
+            assert!(step["undo_menu_enabled"].as_bool().unwrap());
+            assert!(step["closed_enabled"].as_bool().unwrap());
+            assert!(step["closed_visible"].as_bool().unwrap());
+            assert!(menu.is_some(), "the closed pages menu after {what}");
+            let theirs: Vec<String> = step["closed"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .map(|e| e.as_str().unwrap().to_owned())
+                .collect();
+            let ours: Vec<String> = menu
+                .expect("the closed pages")
+                .into_iter()
+                .map(|l| if l.is_empty() { "---".to_owned() } else { l })
+                .collect();
+            assert_eq!(ours, theirs, "the closed pages after {what}");
+            ui.invoke_menu_dismissed();
+        }
+    }
+}
+
+// leaf: audit-options-tabs-new
+#[test]
+fn ctrl_t_opens_the_chooser_the_reference_opens_and_each_choice_makes_its_page() {
+    let _windows = headless::init();
+    let recorded = hydrus_testkit::fixture_json("page_chooser_tree.json");
+    let legacy = hydrus_testkit::legacy_fixture("basic");
+    let native = tempfile::tempdir().unwrap();
+    import_legacy(
+        legacy.path(),
+        &native.path().join(hydrus_store::store::DB_FILE_NAME),
+    )
+    .unwrap();
+    let store = Store::open(native.path()).unwrap();
+    let session = Session {
+        name: sessions::LAST_SESSION.into(),
+        pages: vec![search("start")],
+    };
+    store
+        .write(move |ctx| sessions::save(ctx.conn(), &session, 1))
+        .unwrap();
+    let ui = MainWindow::new().unwrap();
+    ui.show().unwrap();
+    let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+    // (hydrus-rs's home also offers the saved sessions, in the button the
+    // reference leaves empty: DIFFERENCES.md; the rest is compared)
+    let labels_of = |ui: &MainWindow| -> Vec<String> {
+        let mut labels = chooser_labels(ui);
+        if labels[1] == "sessions" {
+            labels[1] = String::new();
+        }
+        labels
+    };
+    let recorded_buttons = |buttons: &serde_json::Value| -> Vec<String> {
+        (1..=9)
+            .map(|n| buttons[n.to_string()].as_str().unwrap().to_owned())
+            .collect()
+    };
+    let mut made = 0;
+    for leaf in recorded["leaves"].as_array().unwrap() {
+        // ctrl+t: the chooser, at its home screen
+        assert!(
+            ui.invoke_shortcut_key("t".into(), 1),
+            "ctrl+t is a shortcut"
+        );
+        assert_eq!(
+            labels_of(&ui),
+            recorded_buttons(&recorded["home"]),
+            "the chooser's home"
+        );
+        // its menu
+        let menu = &recorded["menus"][leaf["menu"].as_str().unwrap()];
+        ui.invoke_chooser_pressed(i32::try_from(menu["button"].as_u64().unwrap()).unwrap());
+        assert_eq!(
+            labels_of(&ui),
+            recorded_buttons(&menu["buttons"]),
+            "the {} menu",
+            leaf["menu"]
+        );
+        // the choice
+        let before = bound.pages.borrow().session().pages.len();
+        ui.invoke_chooser_pressed(i32::try_from(leaf["button"].as_u64().unwrap()).unwrap());
+        assert_eq!(ui.get_chooser_labels().row_count(), 0, "the chooser closed");
+        let pages = bound.pages.borrow();
+        let all = &pages.session().pages;
+        assert_eq!(all.len(), before + 1, "{leaf}");
+        let made_page = all.last().unwrap();
+        if leaf["result"] == "pages" {
+            assert_eq!(made_page.name, "pages");
+            assert!(matches!(made_page.content, PageContent::Pages(_)));
+        } else {
+            assert_eq!(made_page.name, leaf["name"].as_str().unwrap(), "{leaf}");
+            assert_eq!(
+                made_page.content.page_type(),
+                leaf["page_type"].as_i64().unwrap(),
+                "{leaf}"
+            );
+            if leaf["page_type"] == 6 {
+                let theirs = serde_json::json!({
+                    "current": leaf["location"],
+                    "deleted": [],
+                });
+                let t = tree(&store, std::slice::from_ref(made_page));
+                assert_eq!(t[0]["location"], theirs, "{leaf}");
+            }
+        }
+        drop(pages);
+        made += 1;
+        // (the page that was made goes, to keep the chooser's results alike)
+        ui.invoke_close_page();
+        if leaf["result"] == "pages" {
+            // (the page of pages had one page in it: shown, and closed now)
+            let last = bound.pages.borrow().session().pages.len();
+            if last > before {
+                ui.invoke_close_page();
+            }
+        }
+    }
+    assert_eq!(made, recorded["leaves"].as_array().unwrap().len());
+}
+
+/// A notebook tree as `new_page_routes.json` writes it: names, and the pages
+/// inside a page of pages.
+fn names_tree(pages: &[Page]) -> serde_json::Value {
+    pages
+        .iter()
+        .map(|page| match &page.content {
+            PageContent::Pages(children) => {
+                serde_json::json!({ "name": page.name, "pages": names_tree(children) })
+            }
+            _ => serde_json::json!({ "name": page.name }),
+        })
+        .collect()
+}
+
+/// The pages of a recorded tree, as a session's.
+fn pages_of(tree: &serde_json::Value) -> Vec<Page> {
+    tree.as_array()
+        .unwrap()
+        .iter()
+        .map(|entry| {
+            let name = entry["name"].as_str().unwrap();
+            match entry.get("pages") {
+                Some(inner) => Page {
+                    key: PageKey::random(),
+                    name: name.into(),
+                    content: PageContent::Pages(pages_of(inner)),
+                },
+                None => search(name),
+            }
+        })
+        .collect()
+}
+
+// leaf: audit-options-tabs-new
+#[test]
+fn ctrl_t_and_the_tab_row_double_click_put_the_new_page_where_the_reference_put_it() {
+    use hydrus_store::settings::{self, PageInsertion};
+
+    let _windows = headless::init();
+    let recorded = hydrus_testkit::fixture_json("new_page_routes.json");
+    let legacy = hydrus_testkit::legacy_fixture("basic");
+    let native = tempfile::tempdir().unwrap();
+    import_legacy(
+        legacy.path(),
+        &native.path().join(hydrus_store::store::DB_FILE_NAME),
+    )
+    .unwrap();
+    let store = Store::open(native.path()).unwrap();
+    let mut made = 0;
+    for case in recorded["cases"].as_array().unwrap() {
+        let mode = PageInsertion::from_code(case["mode"].as_i64().unwrap()).unwrap();
+        let session = Session {
+            name: sessions::LAST_SESSION.into(),
+            pages: pages_of(&case["before"]),
+        };
+        store
+            .write(move |ctx| {
+                sessions::save(ctx.conn(), &session, 1)?;
+                settings::set(ctx.conn(), &mode)
+            })
+            .unwrap();
+        let ui = MainWindow::new().unwrap();
+        ui.show().unwrap();
+        let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+        // the tabs that are current, as the recording began
+        let current: Vec<usize> = case["before_current"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|c| usize::try_from(c.as_u64().unwrap()).unwrap())
+            .collect();
+        for (level, &index) in current.iter().enumerate() {
+            bound.pages.borrow_mut().select(level, index);
+        }
+        assert_eq!(
+            names_tree(&bound.pages.borrow().session().pages),
+            case["before"],
+            "{case}"
+        );
+
+        match case["how"].as_str().unwrap() {
+            "ctrl+t" => assert!(ui.invoke_shortcut_key("t".into(), 1), "ctrl+t"),
+            "double click, top row" => {
+                ui.invoke_tab_space_pressed(0, false);
+                ui.invoke_tab_space_pressed(0, false);
+            }
+            _ => {
+                ui.invoke_tab_space_pressed(1, false);
+                ui.invoke_tab_space_pressed(1, false);
+            }
+        }
+        assert!(
+            ui.get_chooser_labels().row_count() > 0,
+            "the chooser: {case}"
+        );
+        if case["cancel"] == true {
+            ui.invoke_chooser_cancel();
+        } else {
+            // (a page of pages, the reference's script)
+            ui.invoke_chooser_pressed(6);
+            ui.invoke_chooser_pressed(8);
+        }
+        assert_eq!(ui.get_chooser_labels().row_count(), 0);
+
+        let pages = bound.pages.borrow();
+        assert_eq!(
+            names_tree(&pages.session().pages),
+            case["after"],
+            "after {case}"
+        );
+        let now: Vec<u64> = pages.tabs().iter().map(|t| t.selected as u64).collect();
+        let theirs: Vec<u64> = case["current"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|c| c.as_u64().unwrap())
+            .collect();
+        assert_eq!(now, theirs, "the tabs that are current after {case}");
+        made += 1;
+    }
+    assert_eq!(made, 36);
+}
+
+#[test]
+fn the_chooser_has_no_sessions_button_without_saved_sessions() {
+    let _windows = headless::init();
+    let recorded = hydrus_testkit::fixture_json("page_chooser_tree.json");
+    let dir = tempfile::tempdir().unwrap();
+    let store = Store::open(dir.path()).unwrap();
+    let ui = MainWindow::new().unwrap();
+    ui.show().unwrap();
+    let _bound = bind(&ui, Pages::open(store).unwrap());
+    assert!(ui.invoke_shortcut_key("t".into(), 1));
+    let home: Vec<String> = (1..=9)
+        .map(|n| recorded["home"][n.to_string()].as_str().unwrap().to_owned())
+        .collect();
+    // a client with nothing saved has the reference's home exactly
+    let ours = chooser_labels(&ui);
+    assert_eq!(ours[1], "", "no sessions button");
+    assert_eq!(ours[3], home[3]);
+    assert_eq!(ours[5], home[5]);
+    assert_eq!(ours[7], home[7]);
 }

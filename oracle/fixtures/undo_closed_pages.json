@@ -1,0 +1,266 @@
+{
+ "names": [
+  "one",
+  "two",
+  "three",
+  "four",
+  "five"
+ ],
+ "steps": [
+  {
+   "closed": [
+    "clear all…",
+    "---",
+    "three"
+   ],
+   "closed_count": 1,
+   "closed_enabled": true,
+   "closed_visible": true,
+   "current": "four",
+   "questions": [],
+   "step": [
+    "close",
+    "three"
+   ],
+   "tabs": [
+    "one",
+    "two",
+    "four",
+    "five"
+   ],
+   "undo_menu_enabled": true
+  },
+  {
+   "closed": [
+    "clear all…",
+    "---",
+    "five",
+    "three"
+   ],
+   "closed_count": 2,
+   "closed_enabled": true,
+   "closed_visible": true,
+   "current": "four",
+   "questions": [],
+   "step": [
+    "close",
+    "five"
+   ],
+   "tabs": [
+    "one",
+    "two",
+    "four"
+   ],
+   "undo_menu_enabled": true
+  },
+  {
+   "closed": [
+    "clear all…",
+    "---",
+    "one",
+    "five",
+    "three"
+   ],
+   "closed_count": 3,
+   "closed_enabled": true,
+   "closed_visible": true,
+   "current": "two",
+   "questions": [],
+   "step": [
+    "close",
+    "one"
+   ],
+   "tabs": [
+    "two",
+    "four"
+   ],
+   "undo_menu_enabled": true
+  },
+  {
+   "closed": [
+    "clear all…",
+    "---",
+    "one",
+    "three"
+   ],
+   "closed_count": 2,
+   "closed_enabled": true,
+   "closed_visible": true,
+   "current": "five",
+   "questions": [],
+   "step": [
+    "entry",
+    2
+   ],
+   "tabs": [
+    "two",
+    "four",
+    "five"
+   ],
+   "undo_menu_enabled": true
+  },
+  {
+   "closed": [
+    "clear all…",
+    "---",
+    "three"
+   ],
+   "closed_count": 1,
+   "closed_enabled": true,
+   "closed_visible": true,
+   "current": "one",
+   "questions": [],
+   "step": [
+    "undo"
+   ],
+   "tabs": [
+    "one",
+    "two",
+    "four",
+    "five"
+   ],
+   "undo_menu_enabled": true
+  },
+  {
+   "closed": [
+    "clear all…",
+    "---",
+    "four",
+    "three"
+   ],
+   "closed_count": 2,
+   "closed_enabled": true,
+   "closed_visible": true,
+   "current": "five",
+   "questions": [],
+   "step": [
+    "close",
+    "four"
+   ],
+   "tabs": [
+    "one",
+    "two",
+    "five"
+   ],
+   "undo_menu_enabled": true
+  },
+  {
+   "closed": [
+    "clear all…",
+    "---",
+    "two",
+    "four",
+    "three"
+   ],
+   "closed_count": 3,
+   "closed_enabled": true,
+   "closed_visible": true,
+   "current": "five",
+   "questions": [],
+   "step": [
+    "close",
+    "two"
+   ],
+   "tabs": [
+    "one",
+    "five"
+   ],
+   "undo_menu_enabled": true
+  },
+  {
+   "closed": [
+    "clear all…",
+    "---",
+    "four",
+    "three"
+   ],
+   "closed_count": 2,
+   "closed_enabled": true,
+   "closed_visible": true,
+   "current": "two",
+   "questions": [],
+   "step": [
+    "entry",
+    1
+   ],
+   "tabs": [
+    "one",
+    "two",
+    "five"
+   ],
+   "undo_menu_enabled": true
+  },
+  {
+   "closed": [
+    "clear all…",
+    "---",
+    "four",
+    "three"
+   ],
+   "closed_count": 2,
+   "closed_enabled": true,
+   "closed_visible": true,
+   "current": "two",
+   "questions": [
+    "Clear the 2 closed pages?"
+   ],
+   "step": [
+    "clear",
+    false
+   ],
+   "tabs": [
+    "one",
+    "two",
+    "five"
+   ],
+   "undo_menu_enabled": true
+  },
+  {
+   "closed": [
+    "clear all…",
+    "---",
+    "four",
+    "three"
+   ],
+   "closed_count": 0,
+   "closed_enabled": false,
+   "closed_visible": true,
+   "current": "two",
+   "questions": [
+    "Clear the 2 closed pages?"
+   ],
+   "step": [
+    "clear",
+    true
+   ],
+   "tabs": [
+    "one",
+    "two",
+    "five"
+   ],
+   "undo_menu_enabled": false
+  },
+  {
+   "closed": [
+    "clear all…",
+    "---",
+    "four",
+    "three"
+   ],
+   "closed_count": 0,
+   "closed_enabled": false,
+   "closed_visible": true,
+   "current": "two",
+   "questions": [],
+   "step": [
+    "undo"
+   ],
+   "tabs": [
+    "one",
+    "two",
+    "five"
+   ],
+   "undo_menu_enabled": false
+  }
+ ]
+}
