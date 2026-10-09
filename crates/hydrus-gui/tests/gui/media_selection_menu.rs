@@ -112,7 +112,6 @@ fn select_and_remove_rows_count_and_act_on_each_filter_and_domain() {
     }
 }
 
-// leaf: audit-media-context-rearrange
 #[test]
 fn rearrange_rows_move_the_selected_thumbnails_as_the_reference_does() {
     let fixture = start();
@@ -175,6 +174,84 @@ fn rearrange_rows_move_the_selected_thumbnails_as_the_reference_does() {
             &cat(&[1, 5], &(7..n).collect::<Vec<_>>())
         ))
     );
+}
+
+/// The hash of each file, in hex, as the recordings name them.
+fn hex_names(fixture: &Fixture, files: &[HashId]) -> Vec<String> {
+    let hashes = fixture
+        .store
+        .read(|c| hydrus_store::master::hashes(c, files))
+        .unwrap();
+    files.iter().map(|f| hashes[f].to_hex()).collect()
+}
+
+// leaf: audit-media-context-rearrange
+#[test]
+fn rearrange_menu_offers_and_makes_the_moves_the_reference_did() {
+    let fixture = start();
+    let recorded = hydrus_testkit::fixture_json("thumbnail_rearrange.json");
+    let initial: Vec<String> = recorded["initial"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|h| h.as_str().unwrap().to_owned())
+        .collect();
+    assert_eq!(hex_names(&fixture, &fixture.results()), initial, "the page");
+    let strings = |v: &serde_json::Value| -> Vec<String> {
+        v.as_array()
+            .unwrap()
+            .iter()
+            .map(|h| h.as_str().unwrap().to_owned())
+            .collect()
+    };
+    let mut made = 0;
+    for case in recorded["cases"].as_array().unwrap() {
+        let hits: Vec<i32> = case["indices"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|i| i32::try_from(i.as_u64().unwrap()).unwrap())
+            .collect();
+        let hit = |fixture: &Fixture| fixture.select(hits[0], &hits[1..]);
+        hit(&fixture);
+        let menu = fixture.menu(-1);
+        let ours: Vec<String> = rows(&menu.rearrange).into_iter().map(|(l, _)| l).collect();
+        let offered = if case["offered"].is_null() {
+            Vec::new()
+        } else {
+            strings(&case["offered"])
+        };
+        assert_eq!(ours, offered, "the rearrange rows for {}", case["indices"]);
+        for (name, theirs) in case["moves"].as_object().unwrap() {
+            // (the page as it began)
+            fixture.ui.invoke_search_accepted();
+            assert_eq!(hex_names(&fixture, &fixture.results()), initial);
+            hit(&fixture);
+            let expected = strings(&theirs["order"]);
+            if offered.contains(name) {
+                let menu = fixture.menu(-1);
+                fixture
+                    .ui
+                    .invoke_menu_chosen(find(&rows(&menu.rearrange), name));
+                made += 1;
+            } else {
+                // (not offered: the reference's move did nothing)
+                assert_eq!(expected, initial, "{name} for {}", case["indices"]);
+            }
+            assert_eq!(
+                hex_names(&fixture, &fixture.results()),
+                expected,
+                "{name} for {}",
+                case["indices"]
+            );
+            let mut kept = hex_names(&fixture, &fixture.selected());
+            kept.sort();
+            let mut want = strings(&theirs["selected"]);
+            want.sort();
+            assert_eq!(kept, want, "still selected after {name}");
+        }
+    }
+    assert!(made > 30, "{made}");
 }
 
 // leaf: audit-media-context-share
