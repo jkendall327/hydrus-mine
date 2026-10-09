@@ -4713,8 +4713,13 @@ Options > maintenance and processing > shutdown sets whether to run jobs on
 shutdown ("do not run…", "…if needed", "…if needed, but ask first"), at most how
 often and for how many minutes. On exit, when due, the client runs the work or
 asks "Maintenance is due" (auto-no in 15 seconds; no stops it asking until the
-next period) listing the outstanding jobs. The work analyzes the tables that have
-no planner statistics, within the minutes allowed. File > exit/force maintenance
+next period) listing the outstanding jobs. The work analyzes the tables due
+under the reference's schedule (never analysed, or small, middling and large
+tables again after six hours, three days, three months or a year), told to stop
+at the exit's start plus the minutes allowed, and registers itself when it
+finishes; "due" means more than one period since then (exactly one period is
+not). All of this is replayed from `oracle/fixtures/shutdown_work.json`
+(`tests/gui/shutdown_jobs.rs`). File > exit/force maintenance
 runs it whatever the schedule, and File > restart asks the restart question,
 exits, and starts the client again once it has let go of the store.
 

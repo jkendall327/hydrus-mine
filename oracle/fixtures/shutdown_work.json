@@ -1,0 +1,462 @@
+{
+ "now": 1767225600,
+ "cases": [
+  {
+   "name": "ask first, due, no",
+   "action": 2,
+   "period": 86400,
+   "minutes": 5,
+   "ago": 1000000,
+   "answer": "no",
+   "how": "exit",
+   "questions": [
+    {
+     "title": "Maintenance is due",
+     "message": "Is now a good time for the client to do up to 5 minutes' maintenance work? (Will auto-no in 15 seconds)\n\nThe outstanding jobs appear to be:\n\nanalyze 391 table_names",
+     "kwargs": {
+      "auto_no_time": 15,
+      "check_for_cancelled": true
+     }
+    }
+   ],
+   "last_before": -1000000,
+   "exited": true,
+   "do_shutdown_work": false,
+   "restart": false,
+   "last_after_exit_question": 0,
+   "work_due_now": [
+    "analyze 391 table_names"
+   ]
+  },
+  {
+   "name": "ask first, due, yes",
+   "action": 2,
+   "period": 86400,
+   "minutes": 5,
+   "ago": 1000000,
+   "answer": "yes",
+   "how": "exit",
+   "questions": [
+    {
+     "title": "Maintenance is due",
+     "message": "Is now a good time for the client to do up to 5 minutes' maintenance work? (Will auto-no in 15 seconds)\n\nThe outstanding jobs appear to be:\n\nanalyze 391 table_names",
+     "kwargs": {
+      "auto_no_time": 15,
+      "check_for_cancelled": true
+     }
+    }
+   ],
+   "last_before": -1000000,
+   "exited": true,
+   "do_shutdown_work": true,
+   "restart": false,
+   "last_after_exit_question": -1000000,
+   "last_after_work": 180,
+   "maintain": [
+    {
+     "mode": 1,
+     "stop_time": 300
+    }
+   ],
+   "work_due_now": [
+    "analyze 391 table_names"
+   ]
+  },
+  {
+   "name": "ask first, due, cancelled",
+   "action": 2,
+   "period": 86400,
+   "minutes": 5,
+   "ago": 1000000,
+   "answer": "cancel",
+   "how": "exit",
+   "questions": [
+    {
+     "title": "Maintenance is due",
+     "message": "Is now a good time for the client to do up to 5 minutes' maintenance work? (Will auto-no in 15 seconds)\n\nThe outstanding jobs appear to be:\n\nanalyze 391 table_names",
+     "kwargs": {
+      "auto_no_time": 15,
+      "check_for_cancelled": true
+     }
+    }
+   ],
+   "last_before": -1000000,
+   "exited": false,
+   "do_shutdown_work": false,
+   "restart": false,
+   "last_after_exit_question": -1000000,
+   "work_due_now": [
+    "analyze 391 table_names"
+   ]
+  },
+  {
+   "name": "ask first, exactly one period ago",
+   "action": 2,
+   "period": 86400,
+   "minutes": 5,
+   "ago": 86400,
+   "answer": "no",
+   "how": "exit",
+   "questions": [],
+   "last_before": -86400,
+   "exited": true,
+   "do_shutdown_work": false,
+   "restart": false,
+   "last_after_exit_question": -86400,
+   "work_due_now": [
+    "analyze 391 table_names"
+   ]
+  },
+  {
+   "name": "ask first, one period and a second ago",
+   "action": 2,
+   "period": 86400,
+   "minutes": 5,
+   "ago": 86401,
+   "answer": "no",
+   "how": "exit",
+   "questions": [
+    {
+     "title": "Maintenance is due",
+     "message": "Is now a good time for the client to do up to 5 minutes' maintenance work? (Will auto-no in 15 seconds)\n\nThe outstanding jobs appear to be:\n\nanalyze 391 table_names",
+     "kwargs": {
+      "auto_no_time": 15,
+      "check_for_cancelled": true
+     }
+    }
+   ],
+   "last_before": -86401,
+   "exited": true,
+   "do_shutdown_work": false,
+   "restart": false,
+   "last_after_exit_question": 0,
+   "work_due_now": [
+    "analyze 391 table_names"
+   ]
+  },
+  {
+   "name": "ask first, never done",
+   "action": 2,
+   "period": 86400,
+   "minutes": 5,
+   "ago": null,
+   "answer": "no",
+   "how": "exit",
+   "questions": [
+    {
+     "title": "Maintenance is due",
+     "message": "Is now a good time for the client to do up to 5 minutes' maintenance work? (Will auto-no in 15 seconds)\n\nThe outstanding jobs appear to be:\n\nanalyze 391 table_names",
+     "kwargs": {
+      "auto_no_time": 15,
+      "check_for_cancelled": true
+     }
+    }
+   ],
+   "last_before": -1767225600,
+   "exited": true,
+   "do_shutdown_work": false,
+   "restart": false,
+   "last_after_exit_question": 0,
+   "work_due_now": [
+    "analyze 391 table_names"
+   ]
+  },
+  {
+   "name": "run if needed, due",
+   "action": 1,
+   "period": 86400,
+   "minutes": 5,
+   "ago": 1000000,
+   "answer": null,
+   "how": "exit",
+   "questions": [],
+   "last_before": -1000000,
+   "exited": true,
+   "do_shutdown_work": true,
+   "restart": false,
+   "last_after_exit_question": -1000000,
+   "last_after_work": 180,
+   "maintain": [
+    {
+     "mode": 1,
+     "stop_time": 300
+    }
+   ],
+   "work_due_now": [
+    "analyze 391 table_names"
+   ]
+  },
+  {
+   "name": "run if needed, not due",
+   "action": 1,
+   "period": 86400,
+   "minutes": 5,
+   "ago": 600,
+   "answer": null,
+   "how": "exit",
+   "questions": [],
+   "last_before": -600,
+   "exited": true,
+   "do_shutdown_work": false,
+   "restart": false,
+   "last_after_exit_question": -600,
+   "work_due_now": [
+    "analyze 391 table_names"
+   ]
+  },
+  {
+   "name": "never, due",
+   "action": 0,
+   "period": 86400,
+   "minutes": 5,
+   "ago": 1000000,
+   "answer": null,
+   "how": "exit",
+   "questions": [],
+   "last_before": -1000000,
+   "exited": true,
+   "do_shutdown_work": false,
+   "restart": false,
+   "last_after_exit_question": -1000000,
+   "work_due_now": [
+    "analyze 391 table_names"
+   ]
+  },
+  {
+   "name": "five-minute period, ten minutes ago",
+   "action": 2,
+   "period": 300,
+   "minutes": 5,
+   "ago": 600,
+   "answer": "no",
+   "how": "exit",
+   "questions": [
+    {
+     "title": "Maintenance is due",
+     "message": "Is now a good time for the client to do up to 5 minutes' maintenance work? (Will auto-no in 15 seconds)\n\nThe outstanding jobs appear to be:\n\nanalyze 391 table_names",
+     "kwargs": {
+      "auto_no_time": 15,
+      "check_for_cancelled": true
+     }
+    }
+   ],
+   "last_before": -600,
+   "exited": true,
+   "do_shutdown_work": false,
+   "restart": false,
+   "last_after_exit_question": 0,
+   "work_due_now": [
+    "analyze 391 table_names"
+   ]
+  },
+  {
+   "name": "two-hour period, ten minutes ago",
+   "action": 2,
+   "period": 7200,
+   "minutes": 5,
+   "ago": 600,
+   "answer": "no",
+   "how": "exit",
+   "questions": [],
+   "last_before": -600,
+   "exited": true,
+   "do_shutdown_work": false,
+   "restart": false,
+   "last_after_exit_question": -600,
+   "work_due_now": [
+    "analyze 391 table_names"
+   ]
+  },
+  {
+   "name": "seven minutes",
+   "action": 2,
+   "period": 86400,
+   "minutes": 7,
+   "ago": 1000000,
+   "answer": "yes",
+   "how": "exit",
+   "questions": [
+    {
+     "title": "Maintenance is due",
+     "message": "Is now a good time for the client to do up to 7 minutes' maintenance work? (Will auto-no in 15 seconds)\n\nThe outstanding jobs appear to be:\n\nanalyze 391 table_names",
+     "kwargs": {
+      "auto_no_time": 15,
+      "check_for_cancelled": true
+     }
+    }
+   ],
+   "last_before": -1000000,
+   "exited": true,
+   "do_shutdown_work": true,
+   "restart": false,
+   "last_after_exit_question": -1000000,
+   "last_after_work": 180,
+   "maintain": [
+    {
+     "mode": 1,
+     "stop_time": 420
+    }
+   ],
+   "work_due_now": [
+    "analyze 391 table_names"
+   ]
+  },
+  {
+   "name": "ninety minutes",
+   "action": 2,
+   "period": 86400,
+   "minutes": 90,
+   "ago": 1000000,
+   "answer": "yes",
+   "how": "exit",
+   "questions": [
+    {
+     "title": "Maintenance is due",
+     "message": "Is now a good time for the client to do up to 90 minutes' maintenance work? (Will auto-no in 15 seconds)\n\nThe outstanding jobs appear to be:\n\nanalyze 391 table_names",
+     "kwargs": {
+      "auto_no_time": 15,
+      "check_for_cancelled": true
+     }
+    }
+   ],
+   "last_before": -1000000,
+   "exited": true,
+   "do_shutdown_work": true,
+   "restart": false,
+   "last_after_exit_question": -1000000,
+   "last_after_work": 180,
+   "maintain": [
+    {
+     "mode": 1,
+     "stop_time": 5400
+    }
+   ],
+   "work_due_now": [
+    "analyze 391 table_names"
+   ]
+  },
+  {
+   "name": "a day of minutes",
+   "action": 2,
+   "period": 86400,
+   "minutes": 1440,
+   "ago": 1000000,
+   "answer": "yes",
+   "how": "exit",
+   "questions": [
+    {
+     "title": "Maintenance is due",
+     "message": "Is now a good time for the client to do up to 1,440 minutes' maintenance work? (Will auto-no in 15 seconds)\n\nThe outstanding jobs appear to be:\n\nanalyze 391 table_names",
+     "kwargs": {
+      "auto_no_time": 15,
+      "check_for_cancelled": true
+     }
+    }
+   ],
+   "last_before": -1000000,
+   "exited": true,
+   "do_shutdown_work": true,
+   "restart": false,
+   "last_after_exit_question": -1000000,
+   "last_after_work": 180,
+   "maintain": [
+    {
+     "mode": 1,
+     "stop_time": 86400
+    }
+   ],
+   "work_due_now": [
+    "analyze 391 table_names"
+   ]
+  },
+  {
+   "name": "force maintenance, never, not due",
+   "action": 0,
+   "period": 86400,
+   "minutes": 5,
+   "ago": 600,
+   "answer": null,
+   "how": "force",
+   "questions": [],
+   "last_before": -600,
+   "exited": true,
+   "do_shutdown_work": true,
+   "restart": false,
+   "last_after_exit_question": -600,
+   "last_after_work": 180,
+   "maintain": [
+    {
+     "mode": 1,
+     "stop_time": 300
+    }
+   ],
+   "work_due_now": [
+    "analyze 391 table_names"
+   ]
+  },
+  {
+   "name": "force maintenance, ask first, not due",
+   "action": 2,
+   "period": 86400,
+   "minutes": 20,
+   "ago": 600,
+   "answer": null,
+   "how": "force",
+   "questions": [],
+   "last_before": -600,
+   "exited": true,
+   "do_shutdown_work": true,
+   "restart": false,
+   "last_after_exit_question": -600,
+   "last_after_work": 180,
+   "maintain": [
+    {
+     "mode": 1,
+     "stop_time": 1200
+    }
+   ],
+   "work_due_now": [
+    "analyze 391 table_names"
+   ]
+  },
+  {
+   "name": "run if needed, due, the work done for real",
+   "action": 1,
+   "period": 86400,
+   "minutes": 5,
+   "ago": 1000000,
+   "answer": null,
+   "how": "exit",
+   "questions": [],
+   "last_before": -1000000,
+   "exited": true,
+   "do_shutdown_work": true,
+   "restart": false,
+   "last_after_exit_question": -1000000,
+   "last_after_work": 180,
+   "maintain": [
+    {
+     "mode": 1,
+     "stop_time": 300
+    }
+   ],
+   "work_due_now": []
+  },
+  {
+   "name": "ask first, due, but nothing left to do",
+   "action": 2,
+   "period": 86400,
+   "minutes": 5,
+   "ago": 1000000,
+   "answer": "no",
+   "how": "exit",
+   "questions": [],
+   "last_before": -1000000,
+   "exited": true,
+   "do_shutdown_work": false,
+   "restart": false,
+   "last_after_exit_question": -1000000,
+   "work_due_now": []
+  }
+ ]
+}

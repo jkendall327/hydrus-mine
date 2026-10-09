@@ -172,41 +172,112 @@ pub fn analyze(conn: &Connection, full: bool) -> Result<()> {
     Ok(())
 }
 
-/// Tables with no planner statistics yet (`GetTableNamesDueAnalysis`).
-pub fn tables_due_analysis(conn: &Connection) -> Result<Vec<String>> {
-    let has_stats = conn
-        .query_row(
-            "SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = 'sqlite_stat1'",
-            [],
-            |_| Ok(()),
-        )
-        .is_ok();
-    let sql = if has_stats {
-        "SELECT name FROM sqlite_master WHERE type = 'table' AND name NOT LIKE 'sqlite_%'
-         AND sql NOT LIKE 'CREATE VIRTUAL%'
-         AND name NOT IN (SELECT tbl FROM sqlite_stat1) ORDER BY name"
-    } else {
-        "SELECT name FROM sqlite_master WHERE type = 'table' AND name NOT LIKE 'sqlite_%'
-         AND sql NOT LIKE 'CREATE VIRTUAL%' ORDER BY name"
-    };
+/// When each table was last analysed and how many rows it had then (the
+/// reference's `analyze_timestamps`): table name to (rows, milliseconds).
+#[derive(Debug, Default, Clone, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
+pub struct AnalyzeTimestamps(pub std::collections::BTreeMap<String, (i64, i64)>);
+
+impl crate::settings::Setting for AnalyzeTimestamps {
+    const KEY: &'static str = "analyze_timestamps";
+}
+
+/// The reference's re-analysis schedule: tables of at most this many rows,
+/// whether they are analysed at once while looking (small ones are cheap),
+/// and how long after the last analysis.
+const ANALYZE_BOUNDARIES: [(i64, bool, i64); 4] = [
+    (100, true, 6 * 3600),
+    (10_000, true, 3 * 86_400),
+    (100_000, false, 3 * 30 * 86_400),
+    (10_000_000, false, 12 * 30 * 86_400),
+];
+
+fn analysable_tables(conn: &Connection) -> Result<Vec<String>> {
     Ok(conn
-        .prepare(sql)?
+        .prepare(
+            "SELECT name FROM sqlite_master WHERE type = 'table' AND name NOT LIKE 'sqlite_%'
+             AND sql NOT LIKE 'CREATE VIRTUAL%' ORDER BY name",
+        )?
         .query_map([], |r| r.get(0))?
         .collect::<rusqlite::Result<Vec<String>>>()?)
 }
 
-/// Analyze these tables one at a time until `stop` passes; returns how many.
-pub fn analyze_tables(
-    conn: &Connection,
-    tables: &[String],
-    stop: std::time::Instant,
-) -> Result<usize> {
+fn has_at_least(conn: &Connection, table: &str, rows: i64) -> Result<bool> {
+    let quoted = table.replace('"', "\"\"");
+    Ok(conn
+        .query_row(
+            &format!("SELECT COUNT(*) FROM (SELECT 1 FROM \"{quoted}\" LIMIT ?1)"),
+            [rows],
+            |r| r.get::<_, i64>(0),
+        )?
+        >= rows)
+}
+
+/// The tables due an analysis at `now_ms` (`GetTableNamesDueAnalysis`):
+/// those never analysed, and those whose time under the reference's
+/// schedule has passed, except small ones the reference analyses at once
+/// while looking (returned second). As in the reference, a table can be due
+/// under more than one boundary, and is listed once for each.
+pub fn tables_due_analysis_at(conn: &Connection, now_ms: i64) -> Result<(Vec<String>, Vec<String>)> {
+    let seen: AnalyzeTimestamps = crate::settings::get(conn)?;
+    let now = now_ms.div_euclid(1000);
+    let mut due = Vec::new();
+    let mut at_once = Vec::new();
+    for name in analysable_tables(conn)? {
+        let Some(&(rows, at_ms)) = seen.0.get(&name) else {
+            due.push(name);
+            continue;
+        };
+        let at = at_ms.div_euclid(1000);
+        for (limit, immediate, period) in ANALYZE_BOUNDARIES {
+            if rows > limit || now <= at + period {
+                continue;
+            }
+            if immediate && !has_at_least(conn, &name, limit)? {
+                at_once.push(name.clone());
+            } else {
+                due.push(name.clone());
+            }
+        }
+    }
+    Ok((due, at_once))
+}
+
+/// The tables due an analysis now (see [`tables_due_analysis_at`]).
+pub fn tables_due_analysis(conn: &Connection) -> Result<Vec<String>> {
+    Ok(tables_due_analysis_at(conn, hydrus_core::TimestampMs::now().0)?.0)
+}
+
+/// Analyse one table and remember it (`AnalyzeTable`): a table analysed
+/// with rows before that is empty now is not analysed again, only its time
+/// is renewed.
+pub fn analyze_table(conn: &Connection, table: &str, now_ms: i64) -> Result<()> {
+    let mut seen: AnalyzeTimestamps = crate::settings::get(conn)?;
+    let mut rows = seen.0.get(table).map_or(0, |&(rows, _)| rows);
+    let quoted = table.replace('"', "\"\"");
+    if !(rows > 0 && !has_at_least(conn, table, 1)?) {
+        conn.execute_batch(&format!("ANALYZE \"{quoted}\";"))?;
+        rows = conn.query_row(&format!("SELECT COUNT(*) FROM \"{quoted}\""), [], |r| {
+            r.get(0)
+        })?;
+    }
+    seen.0.insert(table.to_owned(), (rows, now_ms));
+    crate::settings::set(conn, &seen)
+}
+
+/// Analyse the tables due (those the reference analyses at once first)
+/// one at a time until `stop` passes; returns how many of the due ones.
+pub fn analyze_due_tables(conn: &Connection, stop: std::time::Instant) -> Result<usize> {
+    let now = || hydrus_core::TimestampMs::now().0;
+    let (due, at_once) = tables_due_analysis_at(conn, now())?;
+    for table in &at_once {
+        analyze_table(conn, table, now())?;
+    }
     let mut done = 0;
-    for table in tables {
+    for table in &due {
         if std::time::Instant::now() >= stop {
             break;
         }
-        conn.execute_batch(&format!("ANALYZE \"{}\";", table.replace('"', "\"\"")))?;
+        analyze_table(conn, table, now())?;
         done += 1;
     }
     Ok(done)

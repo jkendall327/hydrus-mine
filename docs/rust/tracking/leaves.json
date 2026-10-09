@@ -13175,10 +13175,10 @@
     "Native options registry has no editable 'Max number of minutes to run shutdown jobs:' control in this page/box path."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "phase 2 session (blind agent)",
-    "note": "options_system_consumers.rs:1644 the_edited_shutdown_minutes_are_in_the_question checks the row's kind and range (1..1440, default 5), that it is disabled when jobs are not run on shutdown, and that edited values 5, 7 and 90 reach the exit question text. The wording is a literal from the Python source, not recorded, and the deadline itself is not checked."
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "recheck bin E session (claude/recheck-e-dupes)",
+    "note": "crates/hydrus-gui/tests/gui/shutdown_jobs.rs exiting_does_the_shutdown_work_the_reference_does replays oracle/fixtures/shutdown_work.json: minutes 5, 7, 90 and 1,440 (and 20 under force maintenance) set through the real Options row reach the 'Maintenance is due' question as the reference words it ('1,440 minutes'') and the work is told to stop that many minutes after the exit's start, compared with the stop_time the reference's DoIdleShutdownWork gave MaintainDB (read back through shutdown_work::last_run). Row (1..1440, default 5, disabled under 'do not run') in the_shutdown_box_rows_are_the_references."
    }
   },
   {
@@ -13196,10 +13196,10 @@
     "Native options registry has no editable 'Only run shutdown jobs once per:' control in this page/box path."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "phase 2 session (blind agent)",
-    "note": "options_system_consumers.rs:1594 shutdown_jobs_run_only_once_per_the_edited_period edits the day/hour/minute row through Options, applies it and runs the real exit: a recent run is skipped under the one-day default, asked under a 5-minute period and skipped again under 2 hours. Expected behaviour comes from the Python logic, with no recording."
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "recheck bin E session (claude/recheck-e-dupes)",
+    "note": "crates/hydrus-gui/tests/gui/shutdown_jobs.rs exiting_does_the_shutdown_work_the_reference_does replays oracle/fixtures/shutdown_work.json (the reference's own TryToExit with held time) with the period set through the real Options day/hour/minute row: exactly one day since the last work is not due (strict), one day and a second is, never done is due; a five-minute period ten minutes on asks, a two-hour period does not; force maintenance runs whatever the period; and the last work time registered is the time the work finished (fixed here: it was the exit's start). The exit is started early in a second so the whole-second boundary holds."
    }
   },
   {
@@ -13217,10 +13217,10 @@
     "Native options registry has no editable 'Run jobs on shutdown:' control in this page/box path."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "phase 2 session (blind agent)",
-    "note": "options_system_consumers.rs:1544 run_jobs_on_shutdown_decides_what_the_exit_does checks the three choices (against the model's ACTIONS constant), the ask-first default, and picks each choice through Options then exits through the real client_exit path. The choice list, default and question title are source-derived, not recorded."
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "recheck bin E session (claude/recheck-e-dupes)",
+    "note": "crates/hydrus-gui/tests/gui/shutdown_jobs.rs exiting_does_the_shutdown_work_the_reference_does replays the 18 cases of oracle/fixtures/shutdown_work.json (record_shutdown_work.py: the reference's own TryToExit and DoIdleShutdownWork, question answered by script, time held still): the choice set through the real Options window, then the real window's close (or File > exit/force maintenance). Never: no question, no work; run if needed: work without asking when due, nothing when not; ask first: 'Maintenance is due' (title, wording up to the native table count, auto-no 15) with yes running the work, no registering so it is not asked again, cancel abandoning the exit; nothing left to do after a real run: not asked (fixed here: the native analysis never stopped being due). Choices/default in the_shutdown_box_rows_are_the_references."
    }
   },
   {

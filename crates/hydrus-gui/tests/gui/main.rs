@@ -106,6 +106,7 @@ mod rating_sizes;
 mod ratings;
 mod recent_predicates;
 mod scanbar;
+mod shutdown_jobs;
 mod search_domains;
 mod search_lock;
 mod search_log;

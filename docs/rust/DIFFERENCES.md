@@ -4099,10 +4099,12 @@ change nothing). They are marked out of scope in `docs/rust/tracking/`.
 
 ## Shutdown maintenance
 
-- The shutdown work is analyzing tables without statistics; there is no
-  repository processing (remote repositories are out of scope). It runs on the
-  UI thread before the window closes, without the reference's exit splash or
-  its cancel button.
+- The shutdown work is analyzing the tables due; there is no repository
+  processing (remote repositories are out of scope). It runs on the UI thread
+  before the window closes, without the reference's exit splash or its cancel
+  button. The native schema has its own tables, so "analyze N table_names"
+  counts differ from the reference's on the same library (391 on `basic` in
+  the reference); FTS virtual tables are never analysed.
 - Restart is offered on every platform (the reference hides it for frozen
   Linux builds).
 
