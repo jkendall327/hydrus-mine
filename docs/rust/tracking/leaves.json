@@ -8000,10 +8000,10 @@
     "Native options registry has no editable 'edit' control in this page/box path."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Real Edit button, child Apply/Cancel, parent staging, persistence with the key kept, reopen and retired owners. All expected values (e.g. 'edited 日本', 'saved 日本') are typed; the recorded edit flow (saved_manager, reopened_names, child_retains_key) is not replayed and existing-name dedupe on edit is untested. Stale tracker note (no editable row) is false. Tests: crates/hydrus-gui/tests/gui/external_calls.rs:75 callable_command_child_apply_cancel_parent_staging_reopen_and_retired_owner"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "phase 2 session (recheck bin D)",
+    "note": "Options > external programs, a fresh client: the real 'add defaults' (just for my platform) gives the reference's original_rows exactly (all three columns); the recorder's synthetic call imported twice gives its rows (names, job, command) with fresh, unique keys; Edit renames the first to 'edited 日本' in the real callable editor, the list unchanged until the child's Apply (names as recorded in parent_before_child_accept, compared as a set since the recorder appended without the button's sort), the key kept (child_retains_key), nothing saved until Options Apply; the saved manager equals the reference's saved_manager call for call, keys aside; reopening lists reopened_names in order. Recording: oracle/record_external_calls.py -> external_calls.json. Test: crates/hydrus-gui/tests/gui/external_calls_recorded.rs editing_a_call_replays_the_reference_s_list_staging_save_and_reopen. Not covered: an edit that renames a call to a name already in the list (the recording has no such case)."
    }
   },
   {
@@ -8040,10 +8040,10 @@
     "Native options registry has no editable 'import' control in this page/box path."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Imports the recorded export and one default, checks only the row count (2), rejection of a wrong-class text and Cancel/Apply. Does not check imported names/fresh keys/dedupe against after_import, nor the reference's 'seems to be a bit weird' confirm for imports: native import preview (options_external_calls.rs) refuses such calls with an error instead of asking (DIFFERENCES.md notes the override question is missing). Stale tracker note is false. Tests: crates/hydrus-gui/tests/gui/external_calls.rs:361 imported_reference_calls_review_cancel_and_saved_process_test_consumer"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "phase 2 session (recheck bin D)",
+    "note": "From the reference's saved_manager, the real import window takes the recorded export: the names become after_import (with the reference's ' (1)' dedupe; compared as a set, the recorder having called _AddCallableViaImport without the button's sort), each imported call equal to the exported one but for its name and a fresh key. A weird call (257-character path) now asks the reference's recorded question; no stops with the recorded 'User declined to add--the import looked weird.' and changes nothing, yes adds it; nothing is saved until Options Apply. Native import used to refuse such calls outright; fixed (options_external_calls.rs). Recording: oracle/record_external_calls.py -> external_calls.json. Test: crates/hydrus-gui/tests/gui/external_calls_recorded.rs importing_replays_the_reference_s_names_keys_and_weird_call_question."
    }
   },
   {
@@ -8591,10 +8591,10 @@
     "No native action/editor path for this reference workflow."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "phase 2 session (blind agent)",
-    "note": "system_tray.rs:471 file_minimise_to_system_tray_is_offered_with_a_tray_in_advanced_mode_and_hides_the_window drives the real File menu (not offered in simple mode on Linux or with no tray; offered in advanced mode between separators; choosing it hides the window and the icon's show entry restores it). The menu order and conditions are literals from ClientGUI.py:3490, not taken from system_tray.json."
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "phase 2 session (recheck bin D)",
+    "note": "Every recorded Linux file_menu case (system_tray.json: tray or not x advanced mode) is replayed through the real File menu: the entry is offered as recorded under the recorded text, and choosing it hides the client to the icon as recorded (hid_by_action), the icon's show entry bringing it back. The Windows cases are deferred with Windows; the menu's tooltips are not shown (native menus have none). Test: crates/hydrus-gui/tests/gui/system_tray.rs file_minimise_to_system_tray_follows_the_reference_s_recorded_cases."
    }
   },
   {
@@ -13992,10 +13992,10 @@
     "Existing native fonts, file-information-line content and rating layout remain in use, so these passive copies follow native hover presentation rather than Qt glyph metrics. Preview copies, top hover disable, menu/dominance rules and backend-specific controls remain separate gaps. The already-completed passive index leaf is excluded."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Real window toggles and saved values match the recorded combos, but what is drawn is checked only as presence: aggregate non-background pixel count > 0 and opaque-cover occupancy; the recording's per-item draws (kind, rect, text such as the 1.7 KB jpeg line) are never compared, so file information is not isolated or checked for content/position. Carried, no tag. Tests: crates/hydrus-gui/tests/gui/options_window.rs:3555 passive_background_options_paint_independent_copies_behind_opaque_media; crates/hydrus-gui-model/tests/model/options_dialog.rs:1720"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "phase 2 session (recheck bin D)",
+    "note": "All 32 recorded combinations through the real Options rows and viewer: the top copy is drawn when the reference's is, its title ('p3') and its info line equal the recorded ones (the age part aside: the recorder's clock), now with the zoom second as the reference's _GetInfoString puts it (ported); centred at the top within 8 px; covered by opaque media. Test: crates/hydrus-gui/tests/gui/viewer_background.rs background_copies_say_and_place_what_the_reference_draws."
    }
   },
   {
@@ -14032,10 +14032,10 @@
     "Existing native fonts, file-information-line content and rating layout remain in use, so these passive copies follow native hover presentation rather than Qt glyph metrics. Preview copies, top hover disable, menu/dominance rules and backend-specific controls remain separate gaps. The already-completed passive index leaf is excluded."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Same as file information: only presence/occupancy and the notes y-offset below ratings (input_y > 0) are checked against the recording; the recorded note texts and rects are not compared, so the notes content and right-side position are not proven. Carried, no tag. Tests: crates/hydrus-gui/tests/gui/options_window.rs:3555 passive_background_options_paint_independent_copies_behind_opaque_media; crates/hydrus-gui-model/tests/model/options_dialog.rs:1720"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "phase 2 session (recheck bin D)",
+    "note": "All 32 recorded combinations through the real Options rows and viewer: the notes copy is drawn when the reference's is, the names and texts as recorded, inside the reference's right-hand column within 8 px, starting under the ratings copy when that is drawn (the reference's input_y); covered by opaque media. Test: crates/hydrus-gui/tests/gui/viewer_background.rs background_copies_say_and_place_what_the_reference_draws."
    }
   },
   {
@@ -14052,10 +14052,10 @@
     "Existing native fonts, file-information-line content and rating layout remain in use, so these passive copies follow native hover presentation rather than Qt glyph metrics. Preview copies, top hover disable, menu/dominance rules and backend-specific controls remain separate gaps. The already-completed passive index leaf is excluded."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Real viewer and Options row driven over all 16x2 recorded combinations, but the only check on what is painted is whether any non-background pixel exists. The recording holds the drawn texts and rects (e.g. 'my files' at [953,80], the rating glyph at [970,42]) and the test never compares them, so presence is tested, not content or position. Tests: crates/hydrus-gui/tests/gui/options_window.rs:3557 passive_background_options_paint_independent_copies_behind_opaque_media; oracle/fixtures/viewer_background_options.json"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "phase 2 session (recheck bin D)",
+    "note": "All 32 recorded combinations through the real Options rows and viewer: the top-right copy is drawn when the reference's is, its texts (the inc/dec rating's value and the location 'my files') equal the recorded ones, its right edge and bottom within 8 px of the reference's (its stars are shapes the recording does not hold); covered by opaque media. Test: crates/hydrus-gui/tests/gui/viewer_background.rs background_copies_say_and_place_what_the_reference_draws."
    }
   },
   {
@@ -14072,10 +14072,10 @@
     "Existing native fonts, file-information-line content and rating layout remain in use, so these passive copies follow native hover presentation rather than Qt glyph metrics. Preview copies, top hover disable, menu/dominance rules and backend-specific controls remain separate gaps. The already-completed passive index leaf is excluded."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Same test: ink-present vs recorded visible_pixels>0 only. The recorded tag rows (text, left-edge rect) are never compared with the native rows, so what is drawn at the left is unverified. Opaque-cover behaviour is compared with the recording. Tests: crates/hydrus-gui/tests/gui/options_window.rs:3557 passive_background_options_paint_independent_copies_behind_opaque_media; oracle/fixtures/viewer_background_options.json"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "phase 2 session (recheck bin D)",
+    "note": "All 32 recorded combinations (viewer_background_options.json) set through the real Options rows on the real viewer: tags drawn exactly when the reference draws them, the rows being the recorded texts in order, the ink's left edge and top within 8 px of the reference's text rectangles, and covered by opaque media. Test: crates/hydrus-gui/tests/gui/viewer_background.rs background_copies_say_and_place_what_the_reference_draws."
    }
   },
   {
@@ -15965,10 +15965,10 @@
     "No native action/editor path for this reference workflow."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Drives the real test button and worker for an existing and a missing executable; 'Availability test worked!/failed!' are literals from the Python. external_calls.json records only the true result (availability) and the test does not read it; the interim 'Testing...' text, button disabling and the error/exception text are untested. Stale tracker note ('no test UI') is false. Tests: crates/hydrus-gui/tests/gui/external_calls_editor.rs:281 availability_test_is_a_which_call_with_the_reference_messages"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "phase 2 session (recheck bin D)",
+    "note": "New recording oracle/record_external_call_tests.py -> external_call_tests.json clicks the reference's TestCallablePanel 'test availability!' for sh, /bin/sh, a missing program and the OS file launcher; the test opens each call in the real callable editor (Options > external programs > edit) and replays it: button enabled or not (off for OS launchers), the interim 'Testing…' with the button off, then the verdict and the button back on. Test: crates/hydrus-gui/tests/gui/external_call_tests.rs test_availability_replays_the_reference_s_texts_and_button_states."
    }
   },
   {
@@ -15985,10 +15985,10 @@
     "No native action/editor path for this reference workflow."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Real editor typed input, owned worker and real /bin/sh process, with 'Looks good!' and 'Availability test worked!' (reference strings); preview is checked only with contains(value) in the GUI, while recorded preview/missing_preview/unused_preview are replayed only against ActualCall::preview in the model. Not covered: the error/failure feedback of Test call (reference shows the exception summary), pipeline-appropriate test-input rows per pipeline, the 'forcing a 15 second timeout' message for long-lived calls, and the recorded process_output is never compared. Tag over-claims. Tests: crates/hydrus-gui/tests/gui/external_calls.rs:411 reopened_saved_process_uses_real_editor_inputs_and_owned_test_call_worker; crates/hydrus-gui-model/tests/model/external_calls.rs actual_reference_substitution_validation_and_argument_cleaning, saved_call_executes_owned_harmless_process..."
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "phase 2 session (recheck bin D)",
+    "note": "Recording oracle/record_external_call_tests.py -> external_call_tests.json (the reference's TestCallablePanel). Through the real callable editor and its worker: each call's input rows start with the reference's labels and example values, its preview and both buttons' states equal the reference's (file and URL processes, OS launchers); 'test call!' for a working sh call, a missing program, a non-zero exit and a long-lived call gives the reference's interim text (with the forced 15 second timeout), its final text in full ('Looks good!', or the ExecutableException / BadReturnCodeException texts, now ported, with the program's stderr) and the file written; a later editor starts each input at the value last typed for its kind (PARAM_TYPES_TO_LAST_SEEN_VALUES, now ported); typing clears the result and redoes the preview; 'test call!' on the OS file and URL launchers (now enabled) opens the input as the reference's would, then says 'Looks good!'. Not compared: the OS launchers' brief 'Testing…' (native opens at once). Tests: crates/hydrus-gui/tests/gui/external_call_tests.rs test_inputs_and_preview_start_as_the_reference_s_for_each_call, test_call_runs_the_call_and_reports_as_the_reference_does."
    }
   },
   {
@@ -16137,10 +16137,10 @@
     "Current nested entry, arrows and child responses are callback-driven. Six native captures use explicit queue580x340, chooser520x440 and notice520x200 sizes; no physical nested-button coordinates, universal geometry or OS focus/modality are established."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Arrow reorder and Remove N selected? question are replayed against the recording (nested_checks 3/4/5/6, notices[4]). 'First is default' consumer side (main/viewer open-externally buttons use the first call, specific MIME overrides class, empty means OS) is driven through the real main window and viewer but with typed expectations (%path% etc. literals, hand-written Routing); the recorded dispatch/specific_empty entries are not compared with native results (specific_empty unused, dispatch[1] only used elsewhere). Tests: crates/hydrus-gui/tests/gui/open_externally.rs:528 options_routes_replay_qt_owned_choosers_cancel_order_apply_reopen_and_retirement; crates/hydrus-gui/tests/gui/open_externally.rs:1507 file_queue_replays_all_nested_reference_states_and_live_children; crates/hydrus-gui/tests/gui/open_externally.rs:2051 outer_mime_mapping_reference_replay_saved_keys_delete_and_retired_children; crates/hydrus-gui-model/tests/model/open_externally.rs:66 actual_qt_registered_choices_queue_order_and_protected_mime_rows; crates/hydrus-gui/tests/gui/open_externally.rs:1073 saved_registered_vectors_feed_actual_main_live_viewer_and_url_pipeline; crates/hydrus-gui/tests/gui/open_externally.rs:840; crates/hydrus-gui-model/tests/model/open_externally.rs:193"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "phase 2 session (recheck bin D)",
+    "note": "Replays the reference's recorded launches (dispatch, specific_empty in open_externally.json) with the recorder's calls and washed routes saved: a URL runs the first URL call with the URL; the JPEG selected in the main window runs its image row's first call with the recorded path (from the file store on), file URI, hash and file id 17; an explicitly empty JPEG row resolves to Default OS File Launch (specific_empty) and opens through the OS launcher; a missing URL call shows the recorded notice and runs nothing; an empty URL queue goes to the OS URL launcher. Reordering and removal in the nested queue are the existing replays (open_externally.rs). Test: crates/hydrus-gui/tests/gui/open_externally_dispatch.rs opening_runs_the_first_call_the_reference_ran_with_its_inputs."
    }
   },
   {
@@ -20680,10 +20680,10 @@
     "A clock gap strictly greater than 60000 ms starts the wait. Zero seconds permits immediate network access. The daemon owns periodic checking; GUI workflows do not run a separate sleep checker."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Control range 0..60, default 15 and clamps (-1->0, 61->60) are replayed from system_sleep_options.json and the GUI saves through the real row to NetOptions; but the delay's effect (deadline = detection + delay, requests held then released) is tested by engine tests with typed literals (61 s gap, 15 s delay, 0/15/60) and the recorded cases (gap_ms, deadline_ms) are never loaded. The 15 s CLI daemon loop is untested. Tests: crates/hydrus-gui/tests/gui/options_window.rs:1462 sleep_options_apply_to_the_network_consumer_and_cancel_drafts; crates/hydrus-gui-model/tests/model/options_dialog.rs:962 system_sleep_controls_match_reference_and_clamp; crates/hydrus-net/src/engine.rs:2628 sleep_detection_obeys_threshold_delay_and_disabled_pending_wait; crates/hydrus-net/tests/engine.rs:878,1049"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "phase 2 session (recheck bin D)",
+    "note": "The delays 0/15/60 of the recorded cases are typed into the real Options row and applied; the daemon-built engine's deadline after a 61 s gap is the recorded deadline_ms (detection time + delay), a 60 s gap is no wake, requests are held for the delay and go after it (none held at 0), and the recorded clamps (-1 -> 0, 61 -> 60) are what is saved. Test: crates/hydrus-gui/tests/gui/system_sleep.rs sleep_rows_reach_the_daemon_s_engine_and_replay_the_reference_s_checks. The daemon's 15 s tick (hydrus-cli) is not run: the test calls the engine's sleep check at the recorded times itself."
    }
   },
   {
@@ -20700,10 +20700,10 @@
     "The daemon owns periodic sleep checks; the GUI has no independent periodic detector. Filesystem wake waiting remains absent. The network engine gates requests by the wake deadline; it does not expose the reference controller’s transient just-woke GUI flag."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Checkbox default and Apply to NetOptions.detect_sleep replayed against the recording via the real window; engine tests show a real fetch is held after a >60 s gap and released after reload with detection disabled (matching reference SleepCheck), but with typed literals: recorded cases/disabled_pending are not loaded. Periodic daemon (hydrus-cli main.rs) not tested. Tests: crates/hydrus-gui/tests/gui/options_window.rs:1462 sleep_options_apply_to_the_network_consumer_and_cancel_drafts; crates/hydrus-gui-model/tests/model/options_dialog.rs:962 system_sleep_controls_match_reference_and_clamp; crates/hydrus-net/src/engine.rs:2628 sleep_detection_obeys_threshold_delay_and_disabled_pending_wait; crates/hydrus-net/tests/engine.rs:878,1049"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "phase 2 session (recheck bin D)",
+    "note": "Each recorded case (system_sleep_options.json) is set through the real Options > system rows and applied; a network engine built from the saved options as the daemon builds it then runs the reference's checks at its times: detected or not, deadline_ms, last check touched, and released after the delay; with real times a request is held (job status 'looks like computer just woke up, waiting a bit') exactly when a wake is pending. disabled_pending: unticking the row while a wait is pending ends it in the running engine at its next check after reloading the settings. Test: crates/hydrus-gui/tests/gui/system_sleep.rs sleep_rows_reach_the_daemon_s_engine_and_replay_the_reference_s_checks. The daemon's 15 s tick (hydrus-cli) is not run: the test calls the engine's sleep check at the recorded times itself."
    }
   },
   {
@@ -20742,10 +20742,10 @@
     "Native options registry has no editable 'Always show the hydrus system tray icon:' control in this page/box path."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "phase 2 session (blind agent)",
-    "note": "system_tray.rs:210 and :548 tick the real Options row and check the icon is made, hidden and kept on reopening, the tooltip and the Slint component state, through a recording stand-in host (the headless platform has no tray host). Expected strings are literals from the source; system_tray.json is used only by model tests and no real tray host is exercised."
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "phase 2 session (recheck bin D)",
+    "note": "Every recorded icon case (system_tray.json: tray or not x the Options row x hidden to the tray, the hiding done through File > minimise to system tray) gives the recorded icon and icon_visible through the real Options row and tray controller; the icon's tooltip equals the recorded four as network > pause flips the pauses, with the name 'my hydrus'. With no tray the client cannot be hidden (nothing offers it), so the recorded no-tray hidden cases are checked as: no icon, nothing to hide with. The tray host is a recording stand-in (the headless platform has none); Slint's own tray component is driven separately in system_tray.rs. Test: crates/hydrus-gui/tests/gui/system_tray.rs the_icon_follows_the_reference_s_recorded_cases."
    }
   },
   {

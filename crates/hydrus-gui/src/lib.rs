@@ -6506,6 +6506,7 @@ fn open_viewer(
             if let Some(window) = weak.upgrade() {
                 let text = zoom.map(viewer_menu::zoom_percentage).unwrap_or_default();
                 window.set_zoom_text(text.into());
+                viewer::refresh_background_info_line(&window);
             }
         }
     });
@@ -6654,6 +6655,7 @@ fn open_viewer(
             viewer_presentation::refresh(&window, model.store(), model.current());
             let shown = viewer::shown(model.store(), model.current());
             window.set_info_line(shown.line.into());
+            viewer::refresh_background_info_line(&window);
             window.set_location_strings(ModelRc::new(VecModel::from(
                 shown
                     .locations

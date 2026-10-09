@@ -227,6 +227,9 @@ export component MediaViewerWindow inherits Window {
     // the zoom, as the reference writes it ("100%"); empty for a file that
     // doesn't zoom
     in property <string> zoom-text;
+    // the file information the canvas background draws: the info line with
+    // the zoom as its second part (`_GetInfoString`)
+    in property <string> background-info-line;
     callback show-in-file-browser();
     // the file's ratings, for the top-right hover frame, as the reference
     // draws them
@@ -912,8 +915,8 @@ export component MediaViewerWindow inherits Window {
                     text: root.tag-banner; color: Theme.colour(11, #f0f0f0); font-size: 14px;
                     horizontal-alignment: center; overflow: elide;
                 }
-                if root.info-line != "": Text {
-                    text: root.info-line; color: Theme.colour(11, #f0f0f0); font-size: 14px;
+                if root.background-info-line != "": Text {
+                    text: root.background-info-line; color: Theme.colour(11, #f0f0f0); font-size: 14px;
                     horizontal-alignment: center; overflow: elide;
                 }
             }

@@ -2145,9 +2145,10 @@ execution or canonical inventory promotion is part of this slice.
 Passive tags, file-information, ratings/locations and notes copies now consume
 all four background preferences independently of popup and focus settings.
 They paint before the media, preserving occlusion and the reference's notes
-origin dependency on the top-right copy. Existing native fonts, information-line
-content and rating layout remain in use, so the copies follow the native hover
-presentation rather than reproducing Qt glyph metrics. Preview-window passive
+origin dependency on the top-right copy. Their texts are the reference's
+(the file-information copy puts the zoom second, as `_GetInfoString` does) and
+they land within a few pixels of the reference's; native fonts and rating
+layout remain in use, so glyph metrics differ by a few pixels. Preview-window passive
 copies and hover menu/dominance rules remain separate gaps. The already-supported
 index background preference is unchanged by these four controls.
 
@@ -2891,15 +2892,23 @@ External-call Add/Edit, import/export and nested process/command controls remain
 Partial. Recognized unsupported string-converter steps are preserved in native
 registered definitions but rejected by reference export encoding; mixed valid
 and wrong-class imports are rejected atomically instead of accepting the valid
-prefix, and unusually large imports do not offer the reference override question.
+prefix. An import asks the reference's "seems to be a bit weird" question for
+each unusual call as it is added; a no stops there with the reference's "User
+declined to add--the import looked weird.", shown on the list rather than in a
+"Problem importing!" dialog.
 Per-call PNG batches, drop import, input-rule clipboard controls and timeout
-minutes controls are not implemented. The native process test runs saved argument vectors with a
-single owner-scoped worker, a fallible thread start and bounded wait, discarding
-stdout/stderr. Cancellation owns/reaps the direct child only; descendant process
-groups, full reference output/error presentation and OS default-launch tests are
-not claimed. Ordinary executable arguments use the process API; batch/shell
-interpreters retain their own quoting semantics. Harmless owned Unicode fixtures
-are authored for hosted CI; no local Rust execution is represented as evidence.
+minutes controls are not implemented. The callable editor's test input rows
+are the rule rows (one per parameter the job offers, those in use enabled).
+'test call!' on an OS launch call opens its input at once, without the
+reference's brief "Testing…". Testing turns both test buttons off
+while it runs (the reference turns off only the one clicked). A test call's
+results and errors are the reference's (`Looks good!`, its
+`ExecutableException` and `BadReturnCodeException` texts with Python's list and
+string quoting, and the first 256 characters of the program's output);
+timeouts and cancellation say so in hydrus-rs's words. Cancellation owns/reaps
+the direct child only; descendant process groups are not claimed. Ordinary
+executable arguments use the process API; batch/shell interpreters retain their
+own quoting semantics.
 
 The command-editor checkpoint `6b5ca5ab4` validates only parameter editing and
 full-template Copy/Paste within the finite scope below. Actual Qt recording covers
