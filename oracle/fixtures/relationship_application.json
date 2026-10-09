@@ -1,0 +1,639 @@
+{
+  "pairs": [
+    [
+      "my tags",
+      "siblings",
+      "prec:kid",
+      "prec:child"
+    ],
+    [
+      "downloader tags",
+      "siblings",
+      "prec:kid",
+      "prec:other child"
+    ],
+    [
+      "downloader tags",
+      "siblings",
+      "prec:child",
+      "prec:downloader ideal"
+    ],
+    [
+      "my tags",
+      "parents",
+      "prec:child",
+      "prec:own parent"
+    ],
+    [
+      "downloader tags",
+      "parents",
+      "prec:child",
+      "prec:other parent"
+    ],
+    [
+      "downloader tags",
+      "parents",
+      "prec:other child",
+      "prec:other child parent"
+    ],
+    [
+      "downloader tags",
+      "parents",
+      "prec:downloader ideal",
+      "prec:ideal parent"
+    ],
+    [
+      "downloader tags",
+      "parents",
+      "prec:other parent",
+      "prec:grandparent"
+    ]
+  ],
+  "cases": [
+    {
+      "case": "default",
+      "siblings": [
+        "my tags"
+      ],
+      "parents": [
+        "my tags"
+      ],
+      "tags": {
+        "prec:kid": {
+          "ideal": "prec:child",
+          "chain": [
+            "prec:child",
+            "prec:kid"
+          ],
+          "parents": [
+            "prec:own parent"
+          ],
+          "children": []
+        },
+        "prec:child": {
+          "ideal": "prec:child",
+          "chain": [
+            "prec:child",
+            "prec:kid"
+          ],
+          "parents": [
+            "prec:own parent"
+          ],
+          "children": []
+        },
+        "prec:other child": {
+          "ideal": "prec:other child",
+          "chain": [
+            "prec:other child"
+          ],
+          "parents": [],
+          "children": []
+        },
+        "prec:downloader ideal": {
+          "ideal": "prec:downloader ideal",
+          "chain": [
+            "prec:downloader ideal"
+          ],
+          "parents": [],
+          "children": []
+        },
+        "prec:own parent": {
+          "ideal": "prec:own parent",
+          "chain": [
+            "prec:own parent"
+          ],
+          "parents": [],
+          "children": [
+            "prec:child"
+          ]
+        },
+        "prec:other parent": {
+          "ideal": "prec:other parent",
+          "chain": [
+            "prec:other parent"
+          ],
+          "parents": [],
+          "children": []
+        }
+      }
+    },
+    {
+      "case": "parents own then downloader",
+      "siblings": [
+        "my tags"
+      ],
+      "parents": [
+        "my tags",
+        "downloader tags"
+      ],
+      "tags": {
+        "prec:kid": {
+          "ideal": "prec:child",
+          "chain": [
+            "prec:child",
+            "prec:kid"
+          ],
+          "parents": [
+            "prec:grandparent",
+            "prec:other parent",
+            "prec:own parent"
+          ],
+          "children": []
+        },
+        "prec:child": {
+          "ideal": "prec:child",
+          "chain": [
+            "prec:child",
+            "prec:kid"
+          ],
+          "parents": [
+            "prec:grandparent",
+            "prec:other parent",
+            "prec:own parent"
+          ],
+          "children": []
+        },
+        "prec:other child": {
+          "ideal": "prec:other child",
+          "chain": [
+            "prec:other child"
+          ],
+          "parents": [
+            "prec:other child parent"
+          ],
+          "children": []
+        },
+        "prec:downloader ideal": {
+          "ideal": "prec:downloader ideal",
+          "chain": [
+            "prec:downloader ideal"
+          ],
+          "parents": [
+            "prec:ideal parent"
+          ],
+          "children": []
+        },
+        "prec:own parent": {
+          "ideal": "prec:own parent",
+          "chain": [
+            "prec:own parent"
+          ],
+          "parents": [],
+          "children": [
+            "prec:child"
+          ]
+        },
+        "prec:other parent": {
+          "ideal": "prec:other parent",
+          "chain": [
+            "prec:other parent"
+          ],
+          "parents": [
+            "prec:grandparent"
+          ],
+          "children": [
+            "prec:child"
+          ]
+        }
+      }
+    },
+    {
+      "case": "parents downloader then own",
+      "siblings": [
+        "my tags"
+      ],
+      "parents": [
+        "downloader tags",
+        "my tags"
+      ],
+      "tags": {
+        "prec:kid": {
+          "ideal": "prec:child",
+          "chain": [
+            "prec:child",
+            "prec:kid"
+          ],
+          "parents": [
+            "prec:grandparent",
+            "prec:other parent",
+            "prec:own parent"
+          ],
+          "children": []
+        },
+        "prec:child": {
+          "ideal": "prec:child",
+          "chain": [
+            "prec:child",
+            "prec:kid"
+          ],
+          "parents": [
+            "prec:grandparent",
+            "prec:other parent",
+            "prec:own parent"
+          ],
+          "children": []
+        },
+        "prec:other child": {
+          "ideal": "prec:other child",
+          "chain": [
+            "prec:other child"
+          ],
+          "parents": [
+            "prec:other child parent"
+          ],
+          "children": []
+        },
+        "prec:downloader ideal": {
+          "ideal": "prec:downloader ideal",
+          "chain": [
+            "prec:downloader ideal"
+          ],
+          "parents": [
+            "prec:ideal parent"
+          ],
+          "children": []
+        },
+        "prec:own parent": {
+          "ideal": "prec:own parent",
+          "chain": [
+            "prec:own parent"
+          ],
+          "parents": [],
+          "children": [
+            "prec:child"
+          ]
+        },
+        "prec:other parent": {
+          "ideal": "prec:other parent",
+          "chain": [
+            "prec:other parent"
+          ],
+          "parents": [
+            "prec:grandparent"
+          ],
+          "children": [
+            "prec:child"
+          ]
+        }
+      }
+    },
+    {
+      "case": "parents downloader only",
+      "siblings": [
+        "my tags"
+      ],
+      "parents": [
+        "downloader tags"
+      ],
+      "tags": {
+        "prec:kid": {
+          "ideal": "prec:child",
+          "chain": [
+            "prec:child",
+            "prec:kid"
+          ],
+          "parents": [
+            "prec:grandparent",
+            "prec:other parent"
+          ],
+          "children": []
+        },
+        "prec:child": {
+          "ideal": "prec:child",
+          "chain": [
+            "prec:child",
+            "prec:kid"
+          ],
+          "parents": [
+            "prec:grandparent",
+            "prec:other parent"
+          ],
+          "children": []
+        },
+        "prec:other child": {
+          "ideal": "prec:other child",
+          "chain": [
+            "prec:other child"
+          ],
+          "parents": [
+            "prec:other child parent"
+          ],
+          "children": []
+        },
+        "prec:downloader ideal": {
+          "ideal": "prec:downloader ideal",
+          "chain": [
+            "prec:downloader ideal"
+          ],
+          "parents": [
+            "prec:ideal parent"
+          ],
+          "children": []
+        },
+        "prec:own parent": {
+          "ideal": "prec:own parent",
+          "chain": [
+            "prec:own parent"
+          ],
+          "parents": [],
+          "children": []
+        },
+        "prec:other parent": {
+          "ideal": "prec:other parent",
+          "chain": [
+            "prec:other parent"
+          ],
+          "parents": [
+            "prec:grandparent"
+          ],
+          "children": [
+            "prec:child"
+          ]
+        }
+      }
+    },
+    {
+      "case": "parents none",
+      "siblings": [
+        "my tags"
+      ],
+      "parents": [],
+      "tags": {
+        "prec:kid": {
+          "ideal": "prec:child",
+          "chain": [
+            "prec:child",
+            "prec:kid"
+          ],
+          "parents": [],
+          "children": []
+        },
+        "prec:child": {
+          "ideal": "prec:child",
+          "chain": [
+            "prec:child",
+            "prec:kid"
+          ],
+          "parents": [],
+          "children": []
+        },
+        "prec:other child": {
+          "ideal": "prec:other child",
+          "chain": [
+            "prec:other child"
+          ],
+          "parents": [],
+          "children": []
+        },
+        "prec:downloader ideal": {
+          "ideal": "prec:downloader ideal",
+          "chain": [
+            "prec:downloader ideal"
+          ],
+          "parents": [],
+          "children": []
+        },
+        "prec:own parent": {
+          "ideal": "prec:own parent",
+          "chain": [
+            "prec:own parent"
+          ],
+          "parents": [],
+          "children": []
+        },
+        "prec:other parent": {
+          "ideal": "prec:other parent",
+          "chain": [
+            "prec:other parent"
+          ],
+          "parents": [],
+          "children": []
+        }
+      }
+    },
+    {
+      "case": "siblings downloader first",
+      "siblings": [
+        "downloader tags",
+        "my tags"
+      ],
+      "parents": [
+        "my tags",
+        "downloader tags"
+      ],
+      "tags": {
+        "prec:kid": {
+          "ideal": "prec:other child",
+          "chain": [
+            "prec:kid",
+            "prec:other child"
+          ],
+          "parents": [
+            "prec:other child parent"
+          ],
+          "children": []
+        },
+        "prec:child": {
+          "ideal": "prec:downloader ideal",
+          "chain": [
+            "prec:child",
+            "prec:downloader ideal"
+          ],
+          "parents": [
+            "prec:grandparent",
+            "prec:ideal parent",
+            "prec:other parent",
+            "prec:own parent"
+          ],
+          "children": []
+        },
+        "prec:other child": {
+          "ideal": "prec:other child",
+          "chain": [
+            "prec:kid",
+            "prec:other child"
+          ],
+          "parents": [
+            "prec:other child parent"
+          ],
+          "children": []
+        },
+        "prec:downloader ideal": {
+          "ideal": "prec:downloader ideal",
+          "chain": [
+            "prec:child",
+            "prec:downloader ideal"
+          ],
+          "parents": [
+            "prec:grandparent",
+            "prec:ideal parent",
+            "prec:other parent",
+            "prec:own parent"
+          ],
+          "children": []
+        },
+        "prec:own parent": {
+          "ideal": "prec:own parent",
+          "chain": [
+            "prec:own parent"
+          ],
+          "parents": [],
+          "children": [
+            "prec:downloader ideal"
+          ]
+        },
+        "prec:other parent": {
+          "ideal": "prec:other parent",
+          "chain": [
+            "prec:other parent"
+          ],
+          "parents": [
+            "prec:grandparent"
+          ],
+          "children": [
+            "prec:downloader ideal"
+          ]
+        }
+      }
+    },
+    {
+      "case": "siblings own first",
+      "siblings": [
+        "my tags",
+        "downloader tags"
+      ],
+      "parents": [
+        "downloader tags"
+      ],
+      "tags": {
+        "prec:kid": {
+          "ideal": "prec:downloader ideal",
+          "chain": [
+            "prec:child",
+            "prec:downloader ideal",
+            "prec:kid"
+          ],
+          "parents": [
+            "prec:grandparent",
+            "prec:ideal parent",
+            "prec:other parent"
+          ],
+          "children": []
+        },
+        "prec:child": {
+          "ideal": "prec:downloader ideal",
+          "chain": [
+            "prec:child",
+            "prec:downloader ideal",
+            "prec:kid"
+          ],
+          "parents": [
+            "prec:grandparent",
+            "prec:ideal parent",
+            "prec:other parent"
+          ],
+          "children": []
+        },
+        "prec:other child": {
+          "ideal": "prec:other child",
+          "chain": [
+            "prec:other child"
+          ],
+          "parents": [
+            "prec:other child parent"
+          ],
+          "children": []
+        },
+        "prec:downloader ideal": {
+          "ideal": "prec:downloader ideal",
+          "chain": [
+            "prec:child",
+            "prec:downloader ideal",
+            "prec:kid"
+          ],
+          "parents": [
+            "prec:grandparent",
+            "prec:ideal parent",
+            "prec:other parent"
+          ],
+          "children": []
+        },
+        "prec:own parent": {
+          "ideal": "prec:own parent",
+          "chain": [
+            "prec:own parent"
+          ],
+          "parents": [],
+          "children": []
+        },
+        "prec:other parent": {
+          "ideal": "prec:other parent",
+          "chain": [
+            "prec:other parent"
+          ],
+          "parents": [
+            "prec:grandparent"
+          ],
+          "children": [
+            "prec:downloader ideal"
+          ]
+        }
+      }
+    },
+    {
+      "case": "nothing applied",
+      "siblings": [],
+      "parents": [],
+      "tags": {
+        "prec:kid": {
+          "ideal": "prec:kid",
+          "chain": [
+            "prec:kid"
+          ],
+          "parents": [],
+          "children": []
+        },
+        "prec:child": {
+          "ideal": "prec:child",
+          "chain": [
+            "prec:child"
+          ],
+          "parents": [],
+          "children": []
+        },
+        "prec:other child": {
+          "ideal": "prec:other child",
+          "chain": [
+            "prec:other child"
+          ],
+          "parents": [],
+          "children": []
+        },
+        "prec:downloader ideal": {
+          "ideal": "prec:downloader ideal",
+          "chain": [
+            "prec:downloader ideal"
+          ],
+          "parents": [],
+          "children": []
+        },
+        "prec:own parent": {
+          "ideal": "prec:own parent",
+          "chain": [
+            "prec:own parent"
+          ],
+          "parents": [],
+          "children": []
+        },
+        "prec:other parent": {
+          "ideal": "prec:other parent",
+          "chain": [
+            "prec:other parent"
+          ],
+          "parents": [],
+          "children": []
+        }
+      }
+    }
+  ]
+}
