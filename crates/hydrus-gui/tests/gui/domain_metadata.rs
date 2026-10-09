@@ -163,7 +163,10 @@ fn add_domain(window: &hydrus_gui::DownloaderExchangeWindow, text: Option<&str>)
     // the label the window shows is the one the reference's EnterText showed
     let recorded = hydrus_testkit::fixture_json("domain_metadata_packages.json");
     for prompt in recorded["prompts"].as_array().unwrap() {
-        assert_eq!(window.get_domain_prompt_text(), prompt["message"].as_str().unwrap());
+        assert_eq!(
+            window.get_domain_prompt_text(),
+            prompt["message"].as_str().unwrap()
+        );
         assert_eq!(prompt["title"], "Enter Text");
     }
     match text {

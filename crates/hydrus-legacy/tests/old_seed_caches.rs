@@ -59,7 +59,15 @@ fn caches_of_versions_one_to_seven_upgrade_as_the_reference_does() {
             let ours: Vec<Value> = repeated
                 .iter()
                 .map(|s| {
-                    json!([s.seed_type, s.data, s.created, s.modified, s.source_time, s.status, s.note])
+                    json!([
+                        s.seed_type,
+                        s.data,
+                        s.created,
+                        s.modified,
+                        s.source_time,
+                        s.status,
+                        s.note
+                    ])
                 })
                 .collect();
             // the reference's list export of the same cache has no repeat ...
