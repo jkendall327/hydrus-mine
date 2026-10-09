@@ -91,7 +91,10 @@ pub fn apply_checker_edit(query: &mut Query, edit: &CheckerEdit, now: i64) -> Re
         log.gallery_seeds
             .iter()
             .find(|s| s.status == 0)
-            .or_else(|| log.gallery_seeds.iter().rev().take(10).last())
+            .or_else(|| {
+                log.gallery_seeds
+                    .get(log.gallery_seeds.len().saturating_sub(10))
+            })
             .map(gallery)
     });
     let Some(header) = &mut query.reference_header else {
