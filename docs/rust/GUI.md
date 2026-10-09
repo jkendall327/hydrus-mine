@@ -5151,8 +5151,8 @@ only (see DIFFERENCES.md). Proven by `options_gui_suggestions.rs`.
 **mpv.** "Set a new mpv.conf on dialog ok?" copies the chosen file over the
 database's `mpv.conf` when Options is OKed (never kept, and a path that isn't a
 file does nothing). The copy is the reference's mirror: it takes the source's
-modification time, leaves a destination with the same size and time alone, and
-replaces a read-only one (`oracle/record_mpv_conf.py`). The preferred audio device, "Loop Playlist instead of Loop
+modification time and leaves a destination with the same size and time alone
+(`oracle/record_mpv_conf.py`). The preferred audio device, "Loop Playlist instead of Loop
 File" and "Set null audio device on silent media" decide the commands a player
 is sent as each file loads (`mpv_options::Plan`); a file without sound plays on
 the `null` device when asked. Proven by `options_media_mpv.rs` and

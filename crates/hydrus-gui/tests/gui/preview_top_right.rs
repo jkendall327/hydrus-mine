@@ -150,6 +150,8 @@ fn the_preview_window_draws_its_ratings_at_the_sizes_the_options_say() {
     );
 }
 
+// leaf: audit-options-media-viewer-hovers-preview-window-hovers-draw-ratings-and-locations-top-right-in-preview-window-background
+// leaf: audit-options-media-viewer-hovers-preview-window-hovers-pop-in-this-hover-on-mouseover
 #[test]
 fn the_top_right_hover_draws_in_the_background_and_pops_in_as_the_options_say() {
     let client = Client::basic();
@@ -226,8 +228,6 @@ fn the_top_right_hover_draws_in_the_background_and_pops_in_as_the_options_say() 
 /// (oracle/record_preview_ratings.py).
 // leaf: audit-options-ratings-preview-window-preview-window-like-dislike-and-numerical-rating-icon-size
 // leaf: audit-options-ratings-preview-window-preview-window-inc-dec-rating-icon-height
-// leaf: audit-options-media-viewer-hovers-preview-window-hovers-draw-ratings-and-locations-top-right-in-preview-window-background
-// leaf: audit-options-media-viewer-hovers-preview-window-hovers-pop-in-this-hover-on-mouseover
 #[test]
 #[allow(
     clippy::cast_possible_truncation,
@@ -384,7 +384,6 @@ fn the_preview_ratings_and_hover_are_the_references_under_the_options() {
         pointer_to(&client, 1.0, 1.0);
         let (x, y) = (ui.get_preview_hover_x(), ui.get_preview_hover_y());
         let (w, h) = (ui.get_preview_hover_width(), ui.get_preview_hover_height());
-        let rw = num(&popin["hover"][0]);
         let map = |d: f32, size: f32, theirs: f32| -> f32 {
             if (d - (theirs - 1.0)).abs() < f32::EPSILON {
                 size - 1.0
@@ -404,10 +403,7 @@ fn the_preview_ratings_and_hover_are_the_references_under_the_options() {
         for point in &points {
             let (dx, dy) = (num(&point["from_left"]), num(&point["from_top"]));
             let (px, py) = if on {
-                (
-                    x + map(dx, w, ideal_w.max(rw.min(ideal_w))),
-                    y + map(dy, h, ideal_h),
-                )
+                (x + map(dx, w, ideal_w), y + map(dy, h, ideal_h))
             } else {
                 (x + dx, y + dy)
             };

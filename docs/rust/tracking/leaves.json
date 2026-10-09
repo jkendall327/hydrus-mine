@@ -13351,7 +13351,7 @@
     "date": "2026-10-09",
     "class": "sound",
     "by": "Claude (recheck bin E, #97 phase 2)",
-    "note": "The real Options row is typed with the path in 14 cases the reference's real panel was run through (oracle/fixtures/mpv_conf.json): no mpv.conf yet, other content, an empty source, bytes that aren't text, CRLF, a large file, a read-only destination, same size and time (left alone), same size and another time, a folder, a missing path, blank, spaces, and a cancelled dialog; the bytes, the modification time and the write bit afterwards match. Fixed here: the copy is now the reference's mirror (it was a plain copy that lost the time and failed on a read-only file). The running player reloading the file is not covered (libmpv is not available to the tests). Tests: crates/hydrus-gui/tests/gui/options_media_mpv.rs a_new_mpv_conf_is_mirrored_over_the_databases_as_the_reference_does."
+    "note": "The real Options row is typed with the path in 14 cases the reference's real panel was run through (oracle/fixtures/mpv_conf.json): no mpv.conf yet, other content, an empty source, bytes that aren't text, CRLF, a large file, a read-only destination, same size and time (left alone), same size and another time, a folder, a missing path, blank, spaces, and a cancelled dialog; the bytes, the modification time and the write bit afterwards match. Fixed here: the copy is now the reference's mirror (it was a plain copy that lost the time and failed on a read-only file). The running player reloading the file is not covered (libmpv is not available to the tests). Tests: crates/hydrus-gui/tests/gui/options_media_mpv.rs a_new_mpv_conf_is_mirrored_over_the_databases_as_the_reference_does. The recording ran as root: the read-only case replaced the file, but on Linux as another user the reference's mirror keeps it (it makes a file writable only on Windows); see DIFFERENCES.md."
    }
   },
   {
@@ -14136,9 +14136,9 @@
    ],
    "recheck": {
     "date": "2026-10-09",
-    "class": "sound",
+    "class": "likely-good",
     "by": "Claude (recheck bin E, #97 phase 2)",
-    "note": "The real Options row (default on) is toggled and the real duplicate filter window is resized to five window sizes; the hover's place (flush right, top at 30% of the height, width a fifth of the window or its contents), pinned always up, unpinned up only with the mouse inside that rectangle, at 90 points around its edges, match the reference's real hover frame (oracle/fixtures/duplicates_hover_pin.json). Fixed here: the hover was full height from the top and popped up for any height. Its contents are larger than the reference's, so points the reference's smaller hover doesn't cover aren't compared (DIFFERENCES.md). Tests: crates/hydrus-gui/tests/gui/duplicate_hover_pin.rs the_duplicates_hover_is_pinned_or_pops_in_as_the_reference_does."
+    "note": "The pin/unpin rule matches the recording: pinned the hover is always up, unpinned it comes up only with the mouse inside its rectangle (flush right, top at 30% of the window's height), over five window sizes (oracle/fixtures/duplicates_hover_pin.json). Sizes differ (ours is wider, 330 against 224 pixels, and taller; the height is only checked to be above zero) and the mouse points are placed relative to our own rectangle (DIFFERENCES.md). Fixed here: the hover was full height from the top. Tests: crates/hydrus-gui/tests/gui/duplicate_hover_pin.rs the_duplicates_hover_is_pinned_or_pops_in_as_the_reference_does."
    }
   },
   {
@@ -14216,9 +14216,9 @@
    ],
    "recheck": {
     "date": "2026-10-09",
-    "class": "sound",
+    "class": "weak",
     "by": "Claude (recheck bin E, #97 phase 2)",
-    "note": "The two switch combinations (draw and pop-in on and off) are set through the real Options window and what the preview draws (the reference's canvas makes the rating draw calls only with it on; ours draws or not) matches oracle/fixtures/preview_ratings.json. Sizes drawn are replayed as in the size leaves. The location text and icons are not compared (fonts). Tests: crates/hydrus-gui/tests/gui/preview_top_right.rs the_preview_ratings_and_hover_are_the_references_under_the_options."
+    "note": "Only part of the leaf is covered: the draw switch is checked as a flag (the reference's canvas makes its rating draw calls only with it on, oracle/fixtures/preview_ratings.json) and the ratings' sizes as in the size leaves; the locations and icons it also draws (the leaf's 'and locations') are not compared, and the flag is not checked against what is painted. Tests: crates/hydrus-gui/tests/gui/preview_top_right.rs the_top_right_hover_draws_in_the_background_and_pops_in_as_the_options_say; the_preview_ratings_and_hover_are_the_references_under_the_options."
    }
   },
   {
@@ -14236,9 +14236,9 @@
    ],
    "recheck": {
     "date": "2026-10-09",
-    "class": "sound",
+    "class": "source-restated",
     "by": "Claude (recheck bin E, #97 phase 2)",
-    "note": "The pop-in switch is set through the real Options window and the real preview pane's pointer is moved to points on, just inside and just outside each edge of the hover; it comes up where the reference's `_GetIdealSizeAndPosition` rectangle contains the point (flush right, from the top) with pop-in on, and never with it off (oracle/fixtures/preview_ratings.json). Tests: crates/hydrus-gui/tests/gui/preview_top_right.rs the_preview_ratings_and_hover_are_the_references_under_the_options."
+    "note": "Real preview pane and Options row: the sizes the popped-in hover takes and the points around its edges that pop it up are checked against the reference's `_GetIdealSizeAndPosition` rectangle (oracle/fixtures/preview_ratings.json), but the recording holds only that rectangle's `contains` for each point, not the reference's hide/show with the switch off; 'never with it off' is the test's own expectation, restated from the Python source. Tests: crates/hydrus-gui/tests/gui/preview_top_right.rs the_top_right_hover_draws_in_the_background_and_pops_in_as_the_options_say; the_preview_ratings_and_hover_are_the_references_under_the_options."
    }
   },
   {
@@ -16047,7 +16047,7 @@
     "date": "2026-10-09",
     "class": "sound",
     "by": "Claude (recheck bin E, #97 phase 2)",
-    "note": "The frame editor's maximised and fullscreen switches are set (with remember size and a remembered position or none) and the real media viewer is opened and closed, as the reference's window was in 40 cases (oracle/fixtures/frame_state.json): its state when it opens, after the user restores, maximises or fullscreens it by hand, and the switches kept when it closes. Fixed here: with both switches the window is fullscreen and not maximised, and a fullscreen window is saved as not maximised. Tests: crates/hydrus-gui/tests/gui/options_gui_frames.rs the_start_maximised_and_fullscreen_switches_open_and_keep_the_window_as_the_reference_does."
+    "note": "The frame editor's maximised and fullscreen switches are set (with remember size and a remembered position or none) and the real media viewer is opened and closed, as the reference's window was in 40 cases (oracle/fixtures/frame_state.json): its state when it opens, after the user restores, maximises or fullscreens it by hand, and the switches kept when it closes. Fixed here: with both switches the window is fullscreen and not maximised, and a fullscreen window is saved as not maximised. Tests: crates/hydrus-gui/tests/gui/options_gui_frames.rs the_start_maximised_and_fullscreen_switches_open_and_keep_the_window_as_the_reference_does. The recording is a plain QWidget opened by SetInitialTLWSizeAndPosition and closed through SaveTLWSizeAndPosition, not the media viewer's own frame; the last and opened positions are not compared, only the states and the saved switches and size."
    }
   },
   {
@@ -19382,7 +19382,7 @@
     "date": "2026-10-09",
     "class": "sound",
     "by": "Claude (recheck bin E, #97 phase 2)",
-    "note": "The real ratings page: the dropdown's choices, the look of the example stars as the page opens (the reference's default circles, pad four), after each choice, and rated at one to five stars, and when the page is opened again with each service saved, match the reference's real RatingsPanel (oracle/fixtures/rating_examples.json); every size box (eight) is typed 16 values and the example's whole pixels match, clamping as its spin box does. Fixed here: the default look was fat stars with no pad. Star outlines are compared by shape number, not drawn geometry. Tests: crates/hydrus-gui/tests/gui/options_gui_ratings_examples.rs the_examples_are_styled_by_the_chosen_service_as_the_reference_does."
+    "note": "The real ratings page: the dropdown's choices, the look of the example stars as the page opens (the reference's default circles, pad four), after each choice, and rated at one to five stars, and when the page is opened again with each service saved, match the reference's real RatingsPanel (oracle/fixtures/rating_examples.json); every size box (eight) is typed 16 values and the example's whole pixels match, clamping as its spin box does. Fixed here: the default look was fat stars with no pad. Star outlines are compared by shape number, not drawn geometry. Tests: crates/hydrus-gui/tests/gui/options_gui_ratings_examples.rs the_examples_are_styled_by_the_chosen_service_as_the_reference_does. When the page is opened again with a service saved, only the unrated look is compared (the rated one was recorded but not replayed)."
    }
   },
   {

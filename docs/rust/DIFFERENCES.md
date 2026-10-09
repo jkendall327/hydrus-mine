@@ -4476,6 +4476,10 @@ recorded for the first two columns and rows only, at one viewport per setting,
 and thumbnail positions are the layout's rule rather than read from the
 rendered grid.
 
+## Options > media playback
+
+The `mpv.conf` copy replaces a read-only mpv.conf; recorded as root the reference did too, but run as another user on Linux its mirror keeps the old file (it makes the destination writable only on Windows).
+
 ## Options > external programs
 
 - The job list has "send single file" and "send single URL" only; the
