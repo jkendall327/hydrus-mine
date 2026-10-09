@@ -362,6 +362,141 @@
       ]
     }
   ],
+  "empty_events": [
+    {
+      "provider": 3,
+      "query": "",
+      "rows": [
+        {
+          "text": [
+            "<b>files</b>",
+            "top level page"
+          ],
+          "toggled": false,
+          "close": true
+        },
+        {
+          "text": [
+            "<b>Palette Alpha</b>",
+            "top level page"
+          ],
+          "toggled": false,
+          "close": true
+        },
+        {
+          "text": [
+            "<b>Palette Nested</b>",
+            "top level page"
+          ],
+          "toggled": false,
+          "close": true
+        },
+        {
+          "text": [
+            "<b>Palette Beta</b>",
+            "child of 'Palette Nested'"
+          ],
+          "toggled": false,
+          "close": true
+        },
+        {
+          "text": [
+            "<b>Palette Gamma</b>",
+            "top level page"
+          ],
+          "toggled": false,
+          "close": true
+        }
+      ],
+      "option": "initially_show_all_pages",
+      "value": true
+    },
+    {
+      "provider": 3,
+      "query": "",
+      "rows": [],
+      "option": "initially_show_all_pages",
+      "value": false
+    },
+    {
+      "provider": 4,
+      "query": "",
+      "rows": [
+        {
+          "text": [
+            "<b>Palette Gamma</b>",
+            "1st result in history"
+          ],
+          "toggled": false,
+          "close": true
+        },
+        {
+          "text": [
+            "<b>Palette Beta</b>",
+            "2nd result in history"
+          ],
+          "toggled": false,
+          "close": true
+        },
+        {
+          "text": [
+            "<b>Palette Alpha</b>",
+            "3rd result in history"
+          ],
+          "toggled": false,
+          "close": true
+        },
+        {
+          "text": [
+            "<b>files</b>",
+            "4th result in history"
+          ],
+          "toggled": false,
+          "close": true
+        }
+      ],
+      "option": "initially_show_history",
+      "value": true
+    },
+    {
+      "provider": 4,
+      "query": "",
+      "rows": [],
+      "option": "initially_show_history",
+      "value": false
+    },
+    {
+      "provider": 5,
+      "query": "",
+      "rows": [
+        {
+          "text": [
+            "<b>Favourite Alpha</b>",
+            "<b>Palette Folder</b> - <i>favourite search</i>"
+          ],
+          "toggled": false,
+          "close": true
+        },
+        {
+          "text": [
+            "<b>Favourite Beta</b>",
+            ""
+          ],
+          "toggled": false,
+          "close": true
+        }
+      ],
+      "option": "initially_show_favourite_searches",
+      "value": true
+    },
+    {
+      "provider": 5,
+      "query": "",
+      "rows": [],
+      "option": "initially_show_favourite_searches",
+      "value": false
+    }
+  ],
   "selected": {
     "page": "Palette Alpha",
     "menu_calls": [
@@ -375,6 +510,10 @@
       "name": "Favourite Alpha",
       "new_pages": 0,
       "same_page": true
+    },
+    "notebook_row": {
+      "rows": 1,
+      "page": "Palette Beta"
     }
   },
   "window_route": {
@@ -403,6 +542,13 @@
     {
       "provider": 2,
       "query": "select",
+      "rows": []
+    }
+  ],
+  "media_events_off": [
+    {
+      "provider": 2,
+      "query": "refresh",
       "rows": []
     }
   ],
@@ -1230,7 +1376,7 @@
       "rows": [
         {
           "text": [
-            "0.020734499299199016",
+            "0.09637590592025036",
             "Calculator"
           ],
           "toggled": false,
