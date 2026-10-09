@@ -15408,10 +15408,10 @@
     "Creates the requested '{file domain / trash}' page through Pages::new_page with a new page key, persisted queue/importer state where required, and the selected file-domain context for searches. The resulting page is shown and included in session synchronization."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Only the 'new \"my files\"' entry is chosen (label prefix match) and its location checked; trash and other domains, the page name and the domain labels are not asserted here (labels are in main_menu.json, tested at model level). Tests: crates/hydrus-gui/tests/gui/search_pages_menu.rs:250 the_pages_menu_makes_download_special_and_search_pages_and_shows_them"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "gui/pages_menu_new_pages.rs pages_menu_entries_open_the_pages_the_reference_opened_where_it_opened_them chooses the entry from the real pages menu, with the current page a search page and with it a page of pages (the new page goes inside the deepest one), and compares the notebook tree afterwards (each page's name, type, pages, and for a search page the file domains it searches) and which tabs are current with new_page_menu.json, recorded by triggering the reference's own pages menu actions (oracle/record_new_page_menu.py). The submenu's entries (new \"art\" search page, new \"my files\" search page, new \"trash\" page) and each page's searched domain are the recorded ones; the page is named 'files'. What is inside a new downloader or duplicates page is not part of the recording."
    }
   },
   {
@@ -15448,10 +15448,10 @@
     "This assesses page creation, not full importer/duplicates sidebar parity."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Real menu creates a page named 'duplicates' with system:everything in combined local file domains and it persists in the session; name and default search typed from source (CreatePageManager), no recording. Sidebar parity not part of this. Tests: crates/hydrus-gui/tests/gui/search_pages_menu.rs:413 the_download_and_special_menus_make_each_kind_of_page_named_as_the_reference_names_it"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "gui/pages_menu_new_pages.rs pages_menu_entries_open_the_pages_the_reference_opened_where_it_opened_them chooses the entry from the real pages menu, with the current page a search page and with it a page of pages (the new page goes inside the deepest one), and compares the notebook tree afterwards (each page's name, type, pages, and for a search page the file domains it searches) and which tabs are current with new_page_menu.json, recorded by triggering the reference's own pages menu actions (oracle/record_new_page_menu.py). The page is named 'duplicates' and typed as recorded. What is inside a new downloader or duplicates page is not part of the recording."
    }
   },
   {
@@ -15468,10 +15468,10 @@
     "This assesses page creation, not full importer/duplicates sidebar parity."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Real menu creates a 'gallery' Downloader page (kind Gallery), shown and persisted; the name is typed from the source's defaults, not recorded. Tests: crates/hydrus-gui/tests/gui/search_pages_menu.rs:413"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "gui/pages_menu_new_pages.rs pages_menu_entries_open_the_pages_the_reference_opened_where_it_opened_them chooses the entry from the real pages menu, with the current page a search page and with it a page of pages (the new page goes inside the deepest one), and compares the notebook tree afterwards (each page's name, type, pages, and for a search page the file domains it searches) and which tabs are current with new_page_menu.json, recorded by triggering the reference's own pages menu actions (oracle/record_new_page_menu.py). The page is named 'gallery' and typed as recorded. What is inside a new downloader or duplicates page is not part of the recording."
    }
   },
   {
@@ -15507,10 +15507,10 @@
     "Creates the requested 'new page of pages' page through Pages::new_page with a new page key, persisted queue/importer state where required, and the selected file-domain context for searches. The resulting page is shown and included in session synchronization."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Real menu makes a page of pages named 'pages...' with one blank 'files' child, matching fixtures/tab_new_page.json by hand (typed), not loaded from it. Tests: crates/hydrus-gui/tests/gui/search_pages_menu.rs:249 the_pages_menu_makes_download_special_and_search_pages_and_shows_them"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "gui/pages_menu_new_pages.rs pages_menu_entries_open_the_pages_the_reference_opened_where_it_opened_them chooses the entry from the real pages menu, with the current page a search page and with it a page of pages (the new page goes inside the deepest one), and compares the notebook tree afterwards (each page's name, type, pages, and for a search page the file domains it searches) and which tabs are current with new_page_menu.json, recorded by triggering the reference's own pages menu actions (oracle/record_new_page_menu.py). The new page of pages comes with one blank 'files' page, selected, as recorded. What is inside a new downloader or duplicates page is not part of the recording."
    }
   },
   {
@@ -15527,10 +15527,10 @@
     "This assesses page creation, not full importer/duplicates sidebar parity."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Real menu creates a 'simple downloader' page of kind Simple, shown and persisted; name typed from the source defaults. The recording main_menu.json only fixes the menu label. Tests: crates/hydrus-gui/tests/gui/search_pages_menu.rs:413"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "gui/pages_menu_new_pages.rs pages_menu_entries_open_the_pages_the_reference_opened_where_it_opened_them chooses the entry from the real pages menu, with the current page a search page and with it a page of pages (the new page goes inside the deepest one), and compares the notebook tree afterwards (each page's name, type, pages, and for a search page the file domains it searches) and which tabs are current with new_page_menu.json, recorded by triggering the reference's own pages menu actions (oracle/record_new_page_menu.py). The page is named 'simple downloader' and typed as the reference types it. What is inside a new downloader or duplicates page is not part of the recording."
    }
   },
   {
@@ -15546,10 +15546,10 @@
     "Creates the requested 'new url download page' page through Pages::new_page with a new page key, persisted queue/importer state where required, and the selected file-domain context for searches. The resulting page is shown and included in session synchronization."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Real menu creates a Downloader/Urls page named 'url import' (typed from ClientGUIPageManager.py:145), shown; not recorded. Tests: crates/hydrus-gui/tests/gui/search_pages_menu.rs:249"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "gui/pages_menu_new_pages.rs pages_menu_entries_open_the_pages_the_reference_opened_where_it_opened_them chooses the entry from the real pages menu, with the current page a search page and with it a page of pages (the new page goes inside the deepest one), and compares the notebook tree afterwards (each page's name, type, pages, and for a search page the file domains it searches) and which tabs are current with new_page_menu.json, recorded by triggering the reference's own pages menu actions (oracle/record_new_page_menu.py). The page is named 'url import' and typed as recorded. What is inside a new downloader or duplicates page is not part of the recording."
    }
   },
   {
@@ -15566,10 +15566,10 @@
     "This assesses page creation, not full importer/duplicates sidebar parity."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Drives the real Pages > download menu (item order is in the main_menu recording) and checks a Watchers page named 'watcher' is added and shown; the name and kind are restated from ClientGUIPageManager.py, no recording of page creation. Persisted importer state and session sync named in the tracker note are not tested. Tests: crates/hydrus-gui/tests/gui/search_pages_menu.rs:412 the_download_and_special_menus_make_each_kind_of_page...; crates/hydrus-gui/tests/gui/menu_bar.rs:~140 the_bar_s_menus_open_and_do_what_they_say"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "gui/pages_menu_new_pages.rs pages_menu_entries_open_the_pages_the_reference_opened_where_it_opened_them chooses the entry from the real pages menu, with the current page a search page and with it a page of pages (the new page goes inside the deepest one), and compares the notebook tree afterwards (each page's name, type, pages, and for a search page the file domains it searches) and which tabs are current with new_page_menu.json, recorded by triggering the reference's own pages menu actions (oracle/record_new_page_menu.py). The page is named 'watcher' and typed as recorded. What is inside a new downloader or duplicates page is not part of the recording."
    }
   },
   {
